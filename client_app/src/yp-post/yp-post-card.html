@@ -267,6 +267,17 @@
       .share[mini] {
         display: none;
       }
+
+      .tagContainer {
+          color: var(--app-tags-text-color, #111) !important;
+          font-weight: var(--app-tags-font-weight, 500);
+      }
+
+      .middleDot {
+          padding-left: 2px;
+          padding-right: 2px;
+          color: var(--app-tags-color, #656565);
+      }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
     <lite-signal on-lite-signal-logged-in="_userLoggedIn"></lite-signal>
@@ -288,20 +299,29 @@
               </yp-magic-text>
             </div>
           </div>
-          <template is="dom-if" if="[[!post.public_data.structuredAnswersJson]]">
-            <yp-magic-text class="description layout horizontal" has-custom-ratings$="[[post.Group.configuration.customRatings]]" hidden$="[[hideDescription]]"
-                           text-type="postContent" content-language="[[post.language]]"
-                           on-tap="goToPostIfNotHeader" remove-urls
-                           text-only content="[[post.description]]" content-id="[[post.id]]" truncate="120">
-            </yp-magic-text>
+          <template is="dom-if" if="[[!post.Group.configuration.usePostTagsForPostCards]]">
+            <template is="dom-if" if="[[!post.public_data.structuredAnswersJson]]">
+              <yp-magic-text class="description layout horizontal" has-custom-ratings$="[[post.Group.configuration.customRatings]]" hidden$="[[hideDescription]]"
+                             text-type="postContent" content-language="[[post.language]]"
+                             on-tap="goToPostIfNotHeader" remove-urls
+                             text-only content="[[post.description]]" content-id="[[post.id]]" truncate="120">
+              </yp-magic-text>
+            </template>
+            <template is="dom-if" if="[[post.public_data.structuredAnswersJson]]">
+              <yp-magic-text id="description" text-type="postContent" content-language="[[post.language]]" hidden$="[[hideDescription]]"
+                             content="[[structuredAnswersFormatted]]" remove-urls
+                             disable-translation
+                             skip-sanitize
+                             content-id="[[post.id]]" class="description" truncate="120">
+              </yp-magic-text>
+            </template>
           </template>
-          <template is="dom-if" if="[[post.public_data.structuredAnswersJson]]">
-            <yp-magic-text id="description" text-type="postContent" content-language="[[post.language]]" hidden$="[[hideDescription]]"
-                           content="[[structuredAnswersFormatted]]" remove-urls
-                           disable-translation
-                           skip-sanitize
-                           content-id="[[post.id]]" class="description" truncate="120">
-            </yp-magic-text>
+          <template is="dom-if" if="[[post.Group.configuration.usePostTagsForPostCards]]">
+            <div class="description tagContainer wrap">
+              <template is="dom-repeat" items="[[postTags]]">
+                <span class="tagItem">[[item]]</span> <span class="middleDot" hidden$="[[computeSpanHidden(postTags, index)]]">&#9679; </span>
+              </template>
+            </div>
           </template>
         </a>
         <div hidden$="[[post.Group.configuration.hidePostActionsInGrid]]" on-tap="_onBottomClick">
@@ -379,37 +399,23 @@
         isAudioCover: {
           type: Boolean,
           value: false
+        },
+
+        postTags: {
+          type: String,
+          computed: '_postTags(post)'
         }
       },
 
-      _structuredAnswersFormattedOLDREMOVE: function (post) {
-        if (post && post.public_data && post.public_data.structuredAnswersJson &&
-          post.Group.configuration && post.Group.configuration.structuredQuestionsJson) {
-          var questionHash = {};
-          var outText = "";
-          post.Group.configuration.structuredQuestionsJson.forEach(function (question) {
-            if (question.uniqueId) {
-              questionHash[question.uniqueId] = question;
-            }
-          }.bind(this));
+      computeSpanHidden: function(items,index){
+        return (items.length - 1) === index
+      },
 
-          for (let i=0;i<post.public_data.structuredAnswersJson.length;i++) {
-            const answer = post.public_data.structuredAnswersJson[i];
-            if (answer && answer.value) {
-              var question = questionHash[answer.uniqueId];
-              if (question) {
-                outText+=question.text+": ";
-                outText+=answer.value+" ";
-              }
-              if (outText.length>120) {
-                break;
-              }
-            }
-          }
-
-          return outText;
+      _postTags: function (post) {
+        if (post && post.public_data && post.public_data.tags) {
+          return post.public_data.tags.split(",")
         } else {
-          return "";
+          return [];
         }
       },
 

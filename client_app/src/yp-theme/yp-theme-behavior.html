@@ -689,6 +689,34 @@
         'body': 'var(--primary-background-color)'
       });
       this.push('fonts', {});
+
+      this.push('themes', {
+        name: 'RoStartup',
+        '--primary-background-color': '#f7f7f7',
+        '--primary-color': '#154164',
+        '--primary-color-200': '#154164',
+        '--primary-color-300': '#154164',
+        '--primary-color-400': '#154164',
+        '--primary-color-600': '#154164',
+        '--primary-color-700': '#154164',
+        '--primary-color-800': '#154164',
+        '--primary-color-900': '#154164',
+        '--accent-color': '#1f52a5',
+        '--accent-color-100': '#1f52a5',
+        '--accent-color-200': '#1f52a5',
+        '--accent-color-300': '#1f52a5',
+        '--accent-color-400': '#1f52a5',
+        '--middle-color': 'var(--primary-color-400)',
+        '--icon-general-color': '#fff',
+        '--paper-font-common-base': "{ font-family: 'Montserrat', 'Roboto', sans-serif; }",
+        '--app-header-font-family': 'Montserrat',
+        '--app-header-font-weight': '500',
+        '--app-tags-text-color': '#1f52a5',
+        '--app-tags-font-weight': '500',
+
+    });
+
+      this.push('fonts', { htmlImport: "/styles/fonts/rostartup-font.html", fontName: 'Montserrat' });
     },
 
     _setupOverrideTheme: function (primary, accent, background) {

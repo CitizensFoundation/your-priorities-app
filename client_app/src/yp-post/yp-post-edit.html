@@ -264,6 +264,15 @@
                 <input type="hidden" name="categoryId" value="[[selectedCategoryId]]">
               </template>
 
+              <template is="dom-if" if="[[group.configuration.usePostTags]]">
+                <paper-input id="tags"
+                             name="tags"
+                             type="text"
+                             label="[[t('commaSeperatedTags')]]"
+                             value="{{post.public_data.tags}}">
+                </paper-input>
+              </template>
+
               <template is="dom-if" if="[[postDescriptionLimit]]">
                 <paper-textarea-aria id="description"
                                 hidden$="[[hasStructuredQuestions]]"

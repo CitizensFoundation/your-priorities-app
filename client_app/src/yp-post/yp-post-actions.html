@@ -323,7 +323,12 @@
 
         hideDebate: {
           type: Boolean,
-          computed: '_hideDebate(small,forceSmall,headerMode,post)'
+          computed: '_hideDebate(forceShowDebate, small,forceSmall,headerMode,post)'
+        },
+
+        forceShowDebate: {
+          type: Boolean,
+          value: false
         },
 
         onlyUpVoteShowing: {
@@ -456,8 +461,9 @@
         }
       },
 
-      _hideDebate: function (small, forceSmall, headerMode) {
-        return (small || forceSmall || headerMode || (this.post && this.post.Group && this.post.Group.configuration && this.post.Group.configuration.hideDebateIcon));
+      _hideDebate: function (forceShowDebate, small, forceSmall, headerMode) {
+        return (!forceShowDebate && (small || forceSmall || headerMode || (this.post && this.post.Group && this.post.Group.configuration &&
+            this.post.Group.configuration.hideDebateIcon)));
       },
 
       _onPostChanged: function (post, oldValue) {

@@ -20,7 +20,7 @@
 <link rel="import" href="yp-post-behaviors.html">
 <link rel="import" href="yp-post-survey-translation-behaviors.html">
 
-<dom-module id="yp-post-card">
+<dom-module id="yp-post-list-item">
 
   <template>
 
@@ -33,14 +33,15 @@
         margin:0 ;
         padding: 16px;
         padding-top: 20px;
-        padding-bottom: 14px;
+        padding-bottom: 8px;
         cursor: pointer;
         vertical-align: middle !important;
         font-size: 1.25rem;
         background-color: #fff;
         color: #000;
-        font-weight: 500;
         letter-spacing: .0125em;
+        font-weight: var(--app-header-font-weight, 500);
+        font-family: var(--app-header-font-family, Roboto);
       }
 
       .postNameContainer {
@@ -62,8 +63,8 @@
       }
 
       .postCard {
-        height: 435px;
-        width: 416px;
+        height: 100px;
+        width: 895px;
         border-radius: 4px;
       }
 
@@ -104,8 +105,8 @@
       }
 
       yp-post-cover-media {
-        width: 416px;
-        height: 234px;
+        width: 178px;
+        height: 100px;
       }
 
       yp-post-cover-media[mini] {
@@ -129,7 +130,7 @@
       .postActions  {
         position: absolute;
         right: 20px;
-        bottom: 2px;
+        bottom: 0;
         margin: 0;
       }
 
@@ -267,6 +268,23 @@
       .share[mini] {
         display: none;
       }
+
+      .description {
+        max-width: 500px;
+        font-size: 14px;
+        margin-left: 8px;
+      }
+
+      .tagContainer {
+        color: var(--app-tags-text-color, #111) !important;
+        font-weight: var(--app-tags-font-weight, 500);
+      }
+
+      .middleDot {
+        padding-left: 2px;
+        padding-right: 2px;
+        color: var(--app-tags-color, #656565);
+      }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
     <lite-signal on-lite-signal-logged-in="_userLoggedIn"></lite-signal>
@@ -279,34 +297,47 @@
                     class="card postCard layout vertical" elevation="[[elevation]]" animated>
       <div class="layout vertical">
         <a href="[[_getPostLink(post)]]" id="theMainA" on-tap="_savePostToBackCache">
-          <yp-post-cover-media mini$="[[mini]]" top-radius audio-cover$="[[isAudioCover]]" alt-tag="[[post.name]]" post="[[post]]" hidden$="[[post.Group.configuration.hidePostCover]]"></yp-post-cover-media>
-          <div class="postNameContainer">
-            <div class="post-name" mini$="[[mini]]" id="postName">
-              <yp-magic-text id="postNameMagicText" text-type="postName" content-language="[[post.language]]"
-                             on-tap="goToPostIfNotHeader"
-                             text-only content="[[postName]]" content-id="[[post.id]]">
-              </yp-magic-text>
+          <div class="layout horizontal">
+            <yp-post-cover-media mini$="[[mini]]" top-radius audio-cover$="[[isAudioCover]]" alt-tag="[[post.name]]" post="[[post]]"  hidden$="[[post.Group.configuration.hidePostCover]]"></yp-post-cover-media>
+            <div class="layout vertical">
+              <div class="postNameContainer">
+                <div class="post-name" mini$="[[mini]]" id="postName">
+                  <yp-magic-text id="postNameMagicText" text-type="postName" content-language="[[post.language]]"
+                                 on-tap="goToPostIfNotHeader"
+                                 text-only content="[[postName]]" content-id="[[post.id]]">
+                  </yp-magic-text>
+                </div>
+              </div>
+              <template is="dom-if" if="[[!post.Group.configuration.usePostTagsForPostListItems]]">
+                <template is="dom-if" if="[[!post.public_data.structuredAnswersJson]]">
+                  <yp-magic-text class="description layout horizontal" has-custom-ratings$="[[post.Group.configuration.customRatings]]" hidden$="[[hideDescription]]"
+                                 text-type="postContent" content-language="[[post.language]]"
+                                 on-tap="goToPostIfNotHeader" remove-urls
+                                 text-only content="[[post.description]]" content-id="[[post.id]]" truncate="200">
+                  </yp-magic-text>
+                </template>
+                <template is="dom-if" if="[[post.public_data.structuredAnswersJson]]">
+                  <yp-magic-text id="description" text-type="postContent" content-language="[[post.language]]" hidden$="[[hideDescription]]"
+                                 content="[[structuredAnswersFormatted]]" remove-urls
+                                 disable-translation
+                                 skip-sanitize
+                                 content-id="[[post.id]]" class="description" truncate="120">
+                  </yp-magic-text>
+                </template>
+              </template>
+              <template is="dom-if" if="[[post.Group.configuration.usePostTagsForPostListItems]]">
+                <div class="description tagContainer wrap">
+                  <template is="dom-repeat" items="[[postTags]]">
+                    <span class="tagItem">[[item]]</span> <span class="middleDot" hidden$="[[computeSpanHidden(postTags, index)]]">&#9679; </span>
+                  </template>
+                </div>
+              </template>
             </div>
           </div>
-          <template is="dom-if" if="[[!post.public_data.structuredAnswersJson]]">
-            <yp-magic-text class="description layout horizontal" has-custom-ratings$="[[post.Group.configuration.customRatings]]" hidden$="[[hideDescription]]"
-                           text-type="postContent" content-language="[[post.language]]"
-                           on-tap="goToPostIfNotHeader" remove-urls
-                           text-only content="[[post.description]]" content-id="[[post.id]]" truncate="120">
-            </yp-magic-text>
-          </template>
-          <template is="dom-if" if="[[post.public_data.structuredAnswersJson]]">
-            <yp-magic-text id="description" text-type="postContent" content-language="[[post.language]]" hidden$="[[hideDescription]]"
-                           content="[[structuredAnswersFormatted]]" remove-urls
-                           disable-translation
-                           skip-sanitize
-                           content-id="[[post.id]]" class="description" truncate="120">
-            </yp-magic-text>
-          </template>
         </a>
         <div hidden$="[[post.Group.configuration.hidePostActionsInGrid]]" on-tap="_onBottomClick">
           <template is="dom-if" if="[[!mini]]">
-            <div class="share" hidden$="[[post.Group.configuration.hideSharing]]">
+            <div class="share" hidden blah$="[[post.Group.configuration.hideSharing]]">
               <paper-share-button on-share-tap="_shareTap" class="shareIcon" less-margin$="[[post.Group.configuration.hideDownVoteForPost]]" endorsed$="[[isEndorsed]]"
                                   horizontal-align="right" id="shareButton"
                                   whatsapp="[[post.Group.configuration.allowWhatsAppSharing]]"
@@ -330,7 +361,7 @@
 
   <script>
     Polymer({
-      is: 'yp-post-card',
+      is: 'yp-post-list-item',
 
       behaviors: [
         Polymer.ypLanguageBehavior,
@@ -379,37 +410,23 @@
         isAudioCover: {
           type: Boolean,
           value: false
+        },
+
+        postTags: {
+          type: String,
+          computed: '_postTags(post)'
         }
       },
 
-      _structuredAnswersFormattedOLDREMOVE: function (post) {
-        if (post && post.public_data && post.public_data.structuredAnswersJson &&
-          post.Group.configuration && post.Group.configuration.structuredQuestionsJson) {
-          var questionHash = {};
-          var outText = "";
-          post.Group.configuration.structuredQuestionsJson.forEach(function (question) {
-            if (question.uniqueId) {
-              questionHash[question.uniqueId] = question;
-            }
-          }.bind(this));
+      computeSpanHidden: function(items,index){
+        return (items.length - 1) === index
+      },
 
-          for (let i=0;i<post.public_data.structuredAnswersJson.length;i++) {
-            const answer = post.public_data.structuredAnswersJson[i];
-            if (answer && answer.value) {
-              var question = questionHash[answer.uniqueId];
-              if (question) {
-                outText+=question.text+": ";
-                outText+=answer.value+" ";
-              }
-              if (outText.length>120) {
-                break;
-              }
-            }
-          }
-
-          return outText;
+      _postTags: function (post) {
+        if (post && post.public_data && post.public_data.tags) {
+          return post.public_data.tags.split(",")
         } else {
-          return "";
+          return [];
         }
       },
 
@@ -473,56 +490,13 @@
 
       _postChanged: function (post) {
         if (post) {
-          if (post.cover_media_type==='audio') {
+          if (post.cover_media_type === 'audio') {
             this.set('isAudioCover', true);
           } else {
             this.set('isAudioCover', false);
           }
 
           this._getSurveyTranslationsIfNeeded();
-
-          this.async(function () {
-            var postName = this.$$("#postName");
-            if (postName && false) {
-              if (this.mini) {
-                if (post.name.length>200) {
-                  postName.style.fontSize = "13px";
-                } else if (post.name.length>100) {
-                  postName.style.fontSize = "14px";
-                } else if (post.name.length>40) {
-                  postName.style.fontSize="16px";
-                } else if (post.name.length>20) {
-                  postName.style.fontSize="18px";
-                } else {
-                  postName.style.fontSize="19px";
-                }
-              } else if (!this.wide) {
-                if (post.name.length>200) {
-                  postName.style.fontSize = "15px";
-                } else if (post.name.length>100) {
-                  postName.style.fontSize = "17px";
-                } else if (post.name.length>40) {
-                  postName.style.fontSize="18px";
-                } else if (post.name.length>20) {
-                  postName.style.fontSize="21px";
-                } else {
-                  postName.style.fontSize="22px";
-                }
-              } else {
-                if (post.name.length>200) {
-                  postName.style.fontSize = "15px";
-                } else if (post.name.length>100) {
-                  postName.style.fontSize = "18px";
-                } else if (post.name.length>40) {
-                  postName.style.fontSize="19px";
-                } else if (post.name.length>20) {
-                  postName.style.fontSize="22px";
-                } else {
-                  postName.style.fontSize="24px";
-                }
-              }
-            }
-          });
         }
       },
 
