@@ -526,7 +526,7 @@ const copyPost = (fromPostId, toGroupId, options, done) => {
     console.log("Done copying post id "+fromPostId);
     if (error)
       console.error(error);
-    done(error);
+    done(error, newPost);
   })
 };
 

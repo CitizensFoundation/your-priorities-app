@@ -366,6 +366,7 @@ var updateGroupConfigParamters = function (req, group) {
   group.set('configuration.allowWhatsAppSharing', truthValueFromBody(req.body.allowWhatsAppSharing));
   group.set('configuration.optionalSortOrder', (req.body.optionalSortOrder && req.body.optionalSortOrder!="") ? req.body.optionalSortOrder : null);
   group.set('configuration.exportSubCodesForRadiosAndCheckboxes', truthValueFromBody(req.body.exportSubCodesForRadiosAndCheckboxes));
+  group.set('configuration.forceShowDebateCountOnPost', truthValueFromBody(req.body.forceShowDebateCountOnPost));
 };
 
 router.post('/:id/getPresignedAttachmentURL',  auth.can('add to group'), function(req, res) {
