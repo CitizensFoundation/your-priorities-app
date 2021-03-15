@@ -953,7 +953,21 @@ const copyCommunity = (fromCommunityId, toDomainId, options, done) => {
     console.log("Done copying community");
     if (error)
       console.error(error);
-    done(error, typeof newCommunity!="undefined" ? newCommunity : null);
+    models.Group.count({
+      where: {
+        community_id: newCommunity.id
+      }
+    }).then( count => {
+      models.Community.update({
+        counter_groups: count
+      }).then(()=>{
+        done(error, typeof newCommunity!="undefined" ? newCommunity : null);
+      }).catch( error => {
+        done(error);
+      })
+    }).catch( error=> {
+      done(error);
+    });
   });
 };
 
