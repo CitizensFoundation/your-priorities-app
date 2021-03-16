@@ -1,0 +1,533 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html" >
+<link rel="import" href="../../bower_components/lite-signal/lite-signal.html">
+
+<link rel="import" href="../yp-app-globals/yp-app-icons.html">
+<link rel="import" href="../yp-behaviors/yp-language-behavior.html">
+<link rel="import" href="../yp-behaviors/access-helpers.html">
+<link rel="import" href="../yp-behaviors/yp-got-admin-rights-behavior.html">
+<link rel="import" href="../yp-behaviors/yp-logged-in-user-behavior.html">
+<link rel="import" href="../yp-behaviors/yp-media-formats-behavior.html">
+<link rel="import" href="../yp-behaviors/yp-truncate-behavior.html">
+<link rel="import" href="../yp-behaviors/yp-goto-behavior.html">
+<link rel="import" href="../yp-magic-text/yp-magic-text.html">
+<link rel="import" href="../yp-rating/yp-post-ratings-info.html">
+
+<link rel="import" href="yp-post-actions.html">
+<link rel="import" href="yp-post-cover-media.html">
+<link rel="import" href="yp-post-behaviors.html">
+<link rel="import" href="yp-post-survey-translation-behaviors.html">
+
+<dom-module id="yp-post-list-item">
+
+  <template>
+
+    <style include="iron-flex iron-flex-alignment">
+
+      .card-actions {
+      }
+
+      .post-name {
+        margin:0 ;
+        padding: 16px;
+        padding-top: 20px;
+        padding-bottom: 8px;
+        cursor: pointer;
+        vertical-align: middle !important;
+        font-size: 1.25rem;
+        background-color: #fff;
+        color: #000;
+        letter-spacing: .0125em;
+        font-weight: var(--app-header-font-weight, 500);
+        font-family: var(--app-header-font-family, Roboto);
+      }
+
+      .postNameContainer {
+        width: 100%;
+      }
+
+      .postCardCursor {
+        cursor: pointer;
+      }
+
+      .postCard {
+        background-color: #fff;
+        @apply --layout-horizontal;
+      }
+
+      :host {
+        display: block;
+        @apply --layout-vertical;
+      }
+
+      .postCard {
+        height: 100px;
+        width: 895px;
+        border-radius: 4px;
+      }
+
+      .postCard[hide-post-cover] {
+        height: 190px;
+      }
+
+      .postCard[hide-post-cover][hide-actions] {
+        height: 165px;
+      }
+
+      .postCard[hide-post-cover][hide-description] {
+        height: 140px;
+      }
+
+      .postCard[hide-description] {
+        height: 372px;
+      }
+
+      .postCard[hide-description][hide-actions] {
+        height: 331px;
+      }
+
+      .postCard[hide-description][hide-post-cover][hide-actions] {
+        height: 110px;
+      }
+
+      .postCard[hide-actions] {
+        height: 402px;
+      }
+
+      .postCard[mini] {
+        width: 210px;
+        height: 100%;
+        margin: 0;
+        padding-top: 0;
+        padding-bottom: 0;
+      }
+
+      yp-post-cover-media {
+        width: 178px;
+        height: 100px;
+      }
+
+      yp-post-cover-media[mini] {
+        width: 210px;
+        height: 118px;
+        min-height: 118px;
+      }
+
+      .post-name[mini] {
+        padding: 16px;
+      }
+
+      .description {
+        font-size: 17px;
+        padding: 16px;
+        padding-top: 0;
+        cursor: pointer;
+        color: #555;
+      }
+
+      .postActions  {
+        position: absolute;
+        right: 20px;
+        bottom: 0;
+        margin: 0;
+      }
+
+      .shareIcon {
+        position: absolute;
+        left: 8px;
+        bottom: 2px;
+        --paper-share-button-icon-color: #656565;
+        --paper-share-button-icon-height: 46px;
+        --paper-share-button-icon-width: 46px;
+        text-align: right;
+        width: 48px;
+        height: 48px;
+      }
+
+      .customRatings {
+        position: absolute;
+        bottom: 10px;
+        right: 6px;
+      }
+
+      @media (max-width: 960px) {
+        .customRatings {
+          bottom: 12px;
+        }
+
+        :host {
+          width: 100%;
+          max-width: 423px;
+        }
+
+        .description[has-custom-ratings] {
+          padding-bottom: 28px;
+        }
+
+        .postCard {
+          margin-left: 0;
+          margin-right: 0;
+          padding-left: 0;
+          padding-right: 0;
+          width: 100%;
+          height: 100%;
+        }
+
+        .postCard[mini] {
+          width: 210px;
+          height: 100%;
+        }
+
+        .card {
+          margin-left: 0;
+          margin-right: 0;
+          padding-left: 0;
+          padding-right: 0;
+          width: 100%;
+          height: 100%;
+        }
+
+        .card[mini] {
+          width: 210px;
+          height: 100%;
+        }
+
+
+        yp-post-cover-media {
+          width: 100%;
+          height: 230px;
+        }
+
+        yp-post-cover-media[mini] {
+          width: 210px;
+          height: 118px;
+          min-height: 118px;
+        }
+
+        .card {
+          height: 100%;
+          padding-bottom: 48px;
+        }
+
+        .postCard {
+          height: 100% !important;
+        }
+
+        yp-post-cover-media[audio-cover] {
+          width: 100%;
+          height: 100px;
+        }
+      }
+
+      @media (max-width: 420px) {
+        yp-post-cover-media {
+          height: 225px;
+        }
+        yp-post-cover-media[audio-cover] {
+          height: 100px;
+        }
+      }
+
+      @media (max-width: 375px) {
+        yp-post-cover-media {
+          height: 207px;
+        }
+        yp-post-cover-media[audio-cover] {
+          height: 100px;
+        }
+      }
+
+      @media (max-width: 360px) {
+        yp-post-cover-media {
+          height: 200px;
+        }
+        yp-post-cover-media[audio-cover] {
+          height: 90px;
+        }
+      }
+
+      @media (max-width: 320px) {
+        yp-post-cover-media {
+          height: 180px;
+        }
+        yp-post-cover-media[audio-cover] {
+          height: 90px;
+        }
+      }
+
+      [hidden] {
+        display: none !important;
+      }
+
+      a {
+        text-decoration: none;
+      }
+
+      .share[mini] {
+        display: none;
+      }
+
+      .description {
+        max-width: 480px;
+        font-size: 14px;
+        margin-left: 8px;
+      }
+
+      .tagContainer {
+        color: var(--app-tags-text-color, #111) !important;
+        font-weight: var(--app-tags-font-weight, 500);
+      }
+
+      .middleDot {
+        padding-left: 2px;
+        padding-right: 2px;
+        color: var(--app-tags-color, #656565);
+      }
+    </style>
+    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
+    <lite-signal on-lite-signal-logged-in="_userLoggedIn"></lite-signal>
+    <iron-media-query query="(min-width: 600px)" query-matches="{{wide}}"></iron-media-query>
+
+    <paper-material mini$="[[mini]]" hide-post-cover$="[[post.Group.configuration.hidePostCover]]"
+                    hide-description$="[[post.Group.configuration.hidePostDescription]]"
+                    hide-actions$="[[post.Group.configuration.hidePostActionsInGrid]]"
+                    audio-cover$="[[isAudioCover]]"
+                    class="card postCard layout vertical" elevation="[[elevation]]" animated>
+      <div class="layout vertical">
+        <a href="[[_getPostLink(post)]]" id="theMainA" on-tap="_savePostToBackCache">
+          <div class="layout horizontal">
+            <yp-post-cover-media mini$="[[mini]]" top-radius audio-cover$="[[isAudioCover]]" alt-tag="[[post.name]]" post="[[post]]"  hidden$="[[post.Group.configuration.hidePostCover]]"></yp-post-cover-media>
+            <div class="layout vertical">
+              <div class="postNameContainer">
+                <div class="post-name" mini$="[[mini]]" id="postName">
+                  <yp-magic-text id="postNameMagicText" text-type="postName" content-language="[[post.language]]"
+                                 on-tap="goToPostIfNotHeader"
+                                 text-only content="[[postName]]" content-id="[[post.id]]">
+                  </yp-magic-text>
+                </div>
+              </div>
+              <template is="dom-if" if="[[!post.Group.configuration.usePostTagsForPostListItems]]">
+                <template is="dom-if" if="[[!post.public_data.structuredAnswersJson]]">
+                  <yp-magic-text class="description layout horizontal" has-custom-ratings$="[[post.Group.configuration.customRatings]]" hidden$="[[hideDescription]]"
+                                 text-type="postContent" content-language="[[post.language]]"
+                                 on-tap="goToPostIfNotHeader" remove-urls
+                                 text-only content="[[post.description]]" content-id="[[post.id]]" truncate="200">
+                  </yp-magic-text>
+                </template>
+                <template is="dom-if" if="[[post.public_data.structuredAnswersJson]]">
+                  <yp-magic-text id="description" text-type="postContent" content-language="[[post.language]]" hidden$="[[hideDescription]]"
+                                 content="[[structuredAnswersFormatted]]" remove-urls
+                                 disable-translation
+                                 skip-sanitize
+                                 content-id="[[post.id]]" class="description" truncate="120">
+                  </yp-magic-text>
+                </template>
+              </template>
+              <template is="dom-if" if="[[post.Group.configuration.usePostTagsForPostListItems]]">
+                <div class="description tagContainer wrap">
+                  <template is="dom-repeat" items="[[postTags]]">
+                    <span class="tagItem">[[item]]</span> <span class="middleDot" hidden$="[[computeSpanHidden(postTags, index)]]">&#9679; </span>
+                  </template>
+                </div>
+              </template>
+            </div>
+          </div>
+        </a>
+        <div hidden$="[[post.Group.configuration.hidePostActionsInGrid]]" on-tap="_onBottomClick">
+          <template is="dom-if" if="[[!mini]]">
+            <div class="share" hidden blah$="[[post.Group.configuration.hideSharing]]">
+              <paper-share-button on-share-tap="_shareTap" class="shareIcon" less-margin$="[[post.Group.configuration.hideDownVoteForPost]]" endorsed$="[[isEndorsed]]"
+                                  horizontal-align="right" id="shareButton"
+                                  whatsapp="[[post.Group.configuration.allowWhatsAppSharing]]"
+                                  title$="[[t('post.shareInfo')]]" facebook="" email=""
+                                  twitter="" popup="" url="[[fullPostUrl]]"></paper-share-button>
+            </div>
+            <template is="dom-if" if="[[post.Group.configuration.customRatings]]">
+              <yp-post-ratings-info class="customRatings" post="[[post]]"></yp-post-ratings-info>
+            </template>
+            <template is="dom-if" if="[[!post.Group.configuration.customRatings]]">
+              <yp-post-actions floating class="postActions" elevation="-1" endorse-mode="[[endorseMode]]" class="voting" post="[[post]]" hidden$="[[mini]]"></yp-post-actions>
+            </template>
+          </template>
+        </div>
+      </div>
+    </paper-material>
+    <lite-signal on-lite-signal-yp-auto-translate="_autoTranslateEvent"></lite-signal>
+
+    <yp-ajax hidden id="translatedSurveyAjax" on-response="_translatedSurveyResponse"></yp-ajax>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'yp-post-list-item',
+
+      behaviors: [
+        Polymer.ypLanguageBehavior,
+        Polymer.YpPostBehavior,
+        Polymer.AccessHelpers,
+        Polymer.ypLoggedInUserBehavior,
+        Polymer.ypMediaFormatsBehavior,
+        Polymer.ypTruncateBehavior,
+        Polymer.ypGotoBehavior,
+        Polymer.YpPostSurveyTranslationBehavior
+      ],
+
+      properties: {
+
+        hideDescription: {
+          type: Boolean,
+          computed: '_hideDescription(mini, post)'
+        },
+
+        selectedMenuItem: {
+          type: String
+        },
+
+        elevation: {
+          type: Number,
+          value: 1
+        },
+
+        post: {
+          type: Object,
+          observer: '_postChanged'
+        },
+
+        hasPostAccess: {
+          type: Boolean,
+          value: false,
+          notify: true,
+          computed: '_hasPostAccess(post, gotAdminRights)'
+        },
+
+        mini: {
+          type: Boolean,
+          value: false
+        },
+
+        isAudioCover: {
+          type: Boolean,
+          value: false
+        },
+
+        postTags: {
+          type: String,
+          computed: '_postTags(post)'
+        }
+      },
+
+      computeSpanHidden: function(items,index){
+        return (items.length - 1) === index
+      },
+
+      _postTags: function (post) {
+        if (post && post.public_data && post.public_data.tags) {
+          return post.public_data.tags.split(",")
+        } else {
+          return [];
+        }
+      },
+
+      _onBottomClick: function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+        event.stopImmediatePropagation();
+      },
+
+      clickOnA: function () {
+        if (this.$.theMainA) {
+          this.$.theMainA.click();
+        }
+      },
+
+      _savePostToBackCache: function () {
+        if (this.post) {
+          window.appGlobals.cachedPostItem = this.post;
+        }
+      },
+
+      _getPostLink: function (post) {
+        if (post) {
+          if (post.Group.configuration && post.Group.configuration.disablePostPageLink) {
+            return "#";
+          } else if (post.Group.configuration && post.Group.configuration.resourceLibraryLinkMode) {
+            return post.description.trim();
+          } else {
+            return "/post/"+post.id;
+          }
+        } else {
+          console.warn("Trying to get empty post link");
+        }
+      },
+
+      _shareTap: function (event, detail) {
+        window.appGlobals.activity('postShareCardOpen', detail.brand, this.post ? this.post.id : -1);
+      },
+
+      _hideDescription: function (mini, post) {
+        return (mini || (post && post.Group.configuration && post.Group.configuration.hidePostDescription))
+      },
+
+      _hasPostAccess: function(post, gotAdminRights) {
+        if (post) {
+          return this.checkPostAccess(post);
+        } else {
+          return false;
+        }
+      },
+
+      goToPostIfNotHeader: function () {
+        if (this.post.Group.configuration && this.post.Group.configuration.disablePostPageLink) {
+          console.log("goToPostDisabled");
+        } else if (this.post.Group.configuration && this.post.Group.configuration.resourceLibraryLinkMode) {
+          // Do nothing
+        } else {
+          this.goToPost(null, null, null, this.post);
+        }
+      },
+
+      _postChanged: function (post) {
+        if (post) {
+          if (post.cover_media_type === 'audio') {
+            this.set('isAudioCover', true);
+          } else {
+            this.set('isAudioCover', false);
+          }
+
+          this._getSurveyTranslationsIfNeeded();
+        }
+      },
+
+      updateDescriptionIfEmpty: function (description) {
+        if (!this.post.description || this.post.description=='') {
+          this.set('post.description', description);
+        }
+      },
+
+      _refresh: function () {
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("postEdit", function (dialog) {
+          dialog.selected = 0;
+          this.fire('refresh');
+        }.bind(this));
+      },
+
+      _openReport: function () {
+        window.appGlobals.activity('open', 'post.report');
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("apiActionDialog", function (dialog) {
+          dialog.setup('/api/posts/' + this.post.id + '/report',
+            this.t('reportConfirmation'),
+            this._onReport.bind(this),
+            this.t('post.report'),
+            'PUT');
+          dialog.open();
+        }.bind(this));
+      },
+
+      _onReport: function () {
+        window.appGlobals.notifyUserViaToast(this.t('post.report')+': '+this.post.name);
+      }
+    });
+  </script>
+</dom-module>
