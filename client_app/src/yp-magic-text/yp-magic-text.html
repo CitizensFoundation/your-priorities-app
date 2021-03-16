@@ -287,6 +287,7 @@
           switch(this.textType) {
             case 'postName':
             case 'postContent':
+            case 'postTags':
             case 'postTranscriptContent':
               this.$.getTranslationAjax.url = "/api/posts/"+this.contentId+"/translatedText";
               break;

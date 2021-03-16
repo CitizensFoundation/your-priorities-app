@@ -19,6 +19,7 @@
 <link rel="import" href="yp-post-cover-media.html">
 <link rel="import" href="yp-post-behaviors.html">
 <link rel="import" href="yp-post-survey-translation-behaviors.html">
+<link rel="import" href="yp-post-tags.html">
 
 <dom-module id="yp-post-list-item">
 
@@ -268,23 +269,6 @@
       .share[mini] {
         display: none;
       }
-
-      .description {
-        max-width: 500px;
-        font-size: 14px;
-        margin-left: 8px;
-      }
-
-      .tagContainer {
-        color: var(--app-tags-text-color, #111) !important;
-        font-weight: var(--app-tags-font-weight, 500);
-      }
-
-      .middleDot {
-        padding-left: 2px;
-        padding-right: 2px;
-        color: var(--app-tags-color, #656565);
-      }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
     <lite-signal on-lite-signal-logged-in="_userLoggedIn"></lite-signal>
@@ -326,11 +310,7 @@
                 </template>
               </template>
               <template is="dom-if" if="[[post.Group.configuration.usePostTagsForPostListItems]]">
-                <div class="description tagContainer wrap">
-                  <template is="dom-repeat" items="[[postTags]]">
-                    <span class="tagItem">[[item]]</span> <span class="middleDot" hidden$="[[computeSpanHidden(postTags, index)]]">&#9679; </span>
-                  </template>
-                </div>
+                <yp-post-tags post="[[post]]"></yp-post-tags>
               </template>
             </div>
           </div>
@@ -410,23 +390,6 @@
         isAudioCover: {
           type: Boolean,
           value: false
-        },
-
-        postTags: {
-          type: String,
-          computed: '_postTags(post)'
-        }
-      },
-
-      computeSpanHidden: function(items,index){
-        return (items.length - 1) === index
-      },
-
-      _postTags: function (post) {
-        if (post && post.public_data && post.public_data.tags) {
-          return post.public_data.tags.split(",")
-        } else {
-          return [];
         }
       },
 

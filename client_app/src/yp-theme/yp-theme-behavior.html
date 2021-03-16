@@ -692,7 +692,7 @@
 
       this.push('themes', {
         name: 'RoStartup',
-        '--primary-background-color': '#f7f7f7',
+        '--primary-background-color': '#F2F2F4',
         '--primary-color': '#154164',
         '--primary-color-200': '#154164',
         '--primary-color-300': '#154164',
@@ -713,7 +713,6 @@
         '--app-header-font-weight': '500',
         '--app-tags-text-color': '#1f52a5',
         '--app-tags-font-weight': '500',
-
     });
 
       this.push('fonts', { htmlImport: "/styles/fonts/rostartup-font.html", fontName: 'Montserrat' });
@@ -761,7 +760,12 @@
           configuration.themeOverrideBackgroundColor = "#"+configuration.themeOverrideBackgroundColor;
         }
 
-        Polymer.updateStyles(this._setupOverrideTheme(configuration.themeOverrideColorPrimary, configuration.themeOverrideColorAccent, configuration.themeOverrideBackgroundColor))
+        if (this.themes[number]) {
+          var overRideTheme = this._setupOverrideTheme(configuration.themeOverrideColorPrimary, configuration.themeOverrideColorAccent, configuration.themeOverrideBackgroundColor);
+          Polymer.updateStyles(__.merge(this.themes[number], overRideTheme))
+        } else {
+          Polymer.updateStyles(this._setupOverrideTheme(configuration.themeOverrideColorPrimary, configuration.themeOverrideColorAccent, configuration.themeOverrideBackgroundColor))
+        }
       } else {
         if (this.themes[number]) {
           Polymer.updateStyles(this.themes[number]);
