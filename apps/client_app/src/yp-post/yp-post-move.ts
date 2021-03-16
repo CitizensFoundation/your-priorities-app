@@ -50,7 +50,7 @@ class YpPostMoveLit extends YpBaseElement {
     <yp-edit-dialog id="editDialog" title="${this.editHeaderText}" .icon="language" confirmation-text="${this.t('post.statusChangeConfirmText')}" action="${this.action}" method="${this.method}" params="${this.params}" save-text="${this.saveText}" .toastText="${this.toastText}">
 
       ${ this.availableGroups.map(group => html`
-        <div class="groupName" @tap="${this._selectGroup}" data-args="${this.group.id}" data-args-name="${this.group.name}">${this.group.name}</div>
+        <div class="groupName" @tap="${this._selectGroup}" data-args="${this.group.id}" data-args-name="${this.group.name}">${this.group.id} - ${this.group.name}</div>
       `)}
 
       <div class="layout horizontal center-center">

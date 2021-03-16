@@ -452,6 +452,10 @@ render() {
         <paper-checkbox .name="hideDebateIcon" .checked="${this.group.configuration.hideDebateIcon}">
           ${this.t('hideDebateIcon')}
         </paper-checkbox>
+        <paper-checkbox .name="hideSharing" .checked="${this.group.configuration.hideSharing}">
+          ${this.t('hideSharing')}
+        </paper-checkbox>
+
         <paper-checkbox .name="hideEmoji" .checked="${thishideEmoji}">${this.t('hideEmoji')}</paper-checkbox>
 
         <paper-checkbox .name="hidePostFilterAndSearch" .checked="${this.group.configuration.hidePostFilterAndSearch}">
@@ -571,11 +575,15 @@ render() {
         <paper-checkbox .name="hideVoteCountUntilVoteCompleted" .checked="${this.group.configuration.hideVoteCountUntilVoteCompleted}">
           ${this.t('hideVoteCountUntilVoteCompleted')}
         </paper-checkbox>
+
         <paper-checkbox .name="hideDownVoteForPost" .checked="${this.group.configuration.hideDownVoteForPost}">
           ${this.t('hideDownVoteForPost')}
         </paper-checkbox>
 
-        <paper-input id="customVoteUpHoverText" .name="customVoteUpHoverText" .type="text" .label="${this.t('customVoteUpHoverText')}" .value="${this.group.configuration.customVoteUpHoverText}" .maxlength="100" char-counter>
+        <paper-input id="maxNumberOfGroupVotes" .name="maxNumberOfGroupVotes" .type="text" .label="${this.t('maxNumberOfGroupVotes')}" .value="${this.group.configuration.customVoteDownHoverText}" .maxlength="4" char-counter>
+        </paper-input>
+
+        <paper-input id="customVoteUpHoverText" .name="customVoteUpHoverText" .type="text" .label="${this.t('customVoteUpHoverText')}" allowed-pattern="[0-9]" .value="${this.group.configuration.customVoteUpHoverText}" .maxlength="100" char-counter>
         </paper-input>
 
         <paper-input id="customVoteDownHoverText" .name="customVoteDownHoverText" .type="text" .label="${this.t('customVoteDownHoverText')}" .value="${this.group.configuration.customVoteDownHoverText}" .maxlength="100" char-counter>
@@ -638,6 +646,19 @@ render() {
         </paper-input>
 
         <div class="subHeaders">${this.t('additionalGroupConfig')}</div>
+
+        <div class="layout horizontal config" hidden$="[[!pages]]">
+          <paper-dropdown-menu label="[[t('welcomeSelectPage')]]">
+            <paper-listbox slot="dropdown-content" attr-for-selected="name" selected="{{group.configuration.welcomePageId}}">
+              <template is="dom-repeat" items="[[translatedPages]]" as="page">
+                <paper-item name="[[page.id]]" data-args$="[[index]]">[[_getLocalizePageTitle(page)]]</paper-item>
+              </template>
+            </paper-listbox>
+          </paper-dropdown-menu>
+          <input type="hidden" name="welcomePageId" value="[[group.configuration.welcomePageId]]">
+        </div>
+
+        <yp-ajax id="pagesAjax" on-response="_pagesResponse"></yp-ajax>
 
         <paper-checkbox .name="hideAllTabs" .checked="${this.hideAllTabs}">${this.t('hideAllTabs')}</paper-checkbox>
         <paper-checkbox .name="hideHelpIcon" .checked="${this.hideHelpIcon}">${this.t('hideHelpIcon')}</paper-checkbox>
@@ -710,6 +731,12 @@ render() {
     ypMediaFormatsBehavior
   ],
 */
+
+  _pagesResponse(event, detail) {
+    var pages = detail.response;
+    pages.unshift({id: -1, title: { en: this.t('none') } });
+    this._setPages(event, pages);
+  }
 
   _objectivesChanged (event) {
     const description = event.target.value;

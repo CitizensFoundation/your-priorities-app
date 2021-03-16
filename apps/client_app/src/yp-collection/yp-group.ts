@@ -74,6 +74,14 @@ export class YpGroup extends YpCollection {
 
     this.haveGotTabCountInfoCount += 1;
 
+    this._setupOpenTab();
+
+    setTimeout(() => {
+      this.requestUpdate();
+    });
+  }
+
+  _setupOpenTab() {
     if (this.hasNonOpenPosts) {
       if (this.haveGotTabCountInfoCount == 4) {
         //TODO: Fix this logic of selecting a group with some ideas after we get the new counts from the server
@@ -99,10 +107,6 @@ export class YpGroup extends YpCollection {
         }
       }
     }
-
-    setTimeout(() => {
-      this.requestUpdate();
-    });
   }
 
   tabLabelWithCount(type: string): string {
@@ -284,6 +288,29 @@ export class YpGroup extends YpCollection {
     this.selectedGroupTab = event.detail.index;
   }
 
+  _openHelpPageIfNeededOnce() {
+    if (
+      this.collection &&
+      !sessionStorage.getItem('yp-welcome-for-group-' + this.collection.id)
+    ) {
+      setTimeout(() => {
+        if (
+          this.collection &&
+          this.collection.configuration &&
+          this.collection.configuration.welcomePageId
+        ) {
+          this.fire('yp-open-page', {
+            pageId: this.collection.configuration.welcomePageId,
+          });
+          sessionStorage.setItem(
+            'yp-welcome-for-group-' + this.collection.id,
+            'true'
+          );
+        }
+      }, 1200);
+    }
+  }
+
   //TODO: Check this and rename
   _refreshAjax() {
     setTimeout(() => {
@@ -386,11 +413,47 @@ export class YpGroup extends YpCollection {
     }
   }
 
+  //TODO: Make sure to capture the caching from this
+  /*_groupIdChanged: function (groupId, oldGroupId) {
+      if (groupId && groupId!=this.lastValidGroupId) {
+        this.set('lastValidGroupId', groupId);
+        this.set('group', null);
+        this.$.groupCard.resetGroup();
+        this.$.tabCountOpen.innerHTML = "";
+        if (this.hasNonOpenPosts) {
+          this.$$("#tabCountInProgress").innerHTML = "";
+          this.$$("#tabCountSuccessful").innerHTML = "";
+          this.$$("#tabCountFailed").innerHTML = "";
+        }
+        this.set('hasNonOpenPosts', false);
+        this.set('haveGotTabCountInfoCount', 0);
+        this.set('tabCounters', {});
+        var groupIdInt = parseInt(groupId);
+        if (window.appGlobals.groupItemsCache && window.appGlobals.groupItemsCache[groupIdInt]) {
+          this._groupResponse(null, { response: {
+              group: window.appGlobals.groupItemsCache[groupIdInt],
+              checkServerForNonOpenPosts: true
+            }});
+          window.appGlobals.groupItemsCache[groupIdInt] = null;
+          console.info("Using cache for group id "+groupId);
+        } else {
+          this._getGroup();
+        }
+        this.async(function () {
+          if (!this.selectedTab || (oldGroupId && this.selectedTab==='map')) {
+            this.set('selectedTab', 'open');
+            this._setupOpenTab();
+          }
+        });
+      }
+  },*/
+
   refresh() {
     super.refresh();
     const group = this.collection as YpGroupData;
 
     if (group) {
+      this._openHelpPageIfNeededOnce();
       group.configuration = window.appGlobals.overrideGroupConfigIfNeeded(
         group.id,
         group.configuration
@@ -544,6 +607,14 @@ export class YpGroup extends YpCollection {
       }
       if (group.configuration && group.configuration.makeMapViewDefault) {
         this.selectedGroupTab = GroupTabTypes.Map;
+      }
+
+      if (this.hasNonOpenPosts && this.tabCounters) {
+        this._setupOpenTab();
+      }
+
+      if (group.configuration && group.configuration.maxNumberOfGroupVotes) {
+        window.appUser.calculateVotesLeftForGroup(group);
       }
     }
 

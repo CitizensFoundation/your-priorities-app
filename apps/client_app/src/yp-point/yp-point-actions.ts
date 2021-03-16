@@ -25,8 +25,8 @@ export class YpPointActions extends YpBaseElement {
   @property({ type: Boolean })
   hideSharing = false;
 
-  @property({ type: Boolean })
-  allowWhatsAppSharing = false;
+  @property({ type: Object })
+  configuration: YpGroupConfiguration | undefined;
 
   @property({ type: Number })
   pointQualityValue: number | undefined;
@@ -122,7 +122,7 @@ export class YpPointActions extends YpBaseElement {
             </div>
             <mwc-icon-button
               icon="share"
-              ?hidden="${this.hideSharing}"
+              ?hidden="${this.masterHideSharing}"
               class="shareIcon"
               .label="${this.t('sharePoint')}"
               up-voted="${this.isUpVoted}"
@@ -146,6 +146,10 @@ export class YpPointActions extends YpBaseElement {
       'yp-got-endorsements-and-qualities',
       this._updateQualitiesFromSignal.bind(this)
     );
+  }
+
+  get masterHideSharing() {
+    return this.hideSharing || (this.configuration && this.configuration.hideSharing);
   }
 
   _sharedContent(event: CustomEvent) {

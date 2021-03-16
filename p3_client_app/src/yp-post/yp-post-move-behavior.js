@@ -13,6 +13,7 @@ export const ypPostMoveBehavior = {
     }
   },
 
+   //TODO: Don't show groups that are communitylinks
   _getGroupsResponse: function (event, detail) {
     if (detail.response) {
       var groups = [];

@@ -22,6 +22,7 @@ import { Checkbox } from '@material/mwc-checkbox';
 import { TextField } from '@material/mwc-textfield';
 import '@material/mwc-textfield';
 import { unsafeHTML } from 'lit-html/directives/unsafe-html';
+import './yp-simple-html-editor.js';
 
 @customElement('yp-structured-question-edit')
 export class YpStructuredQuestionEdit extends YpBaseElement {
@@ -353,27 +354,37 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
   }
 
   renderTextArea(skipLabel = false) {
-    return html`
-      <mwc-textarea
-        id="structuredQuestion_${this.index}"
-        data-type="text"
-        .label="${!skipLabel ? this.textWithIndex : ''}"
-        .value="${(this.question.value as string) || ''}"
-        minlength="2"
-        ?charCounter="${this.question.charCounter!=undefined ? this.question.charCounter : true }"
-        .pattern="${this.question.pattern || ""}"
-        @focus="${this.setLongFocus}"
-        @blur="${this.setLongUnFocus}"
-        ?use-small-font="${this.useSmallFont}"
-        @change="${this._debounceChangeEvent}"
-        name="${this.formName || ''}"
-        rows="3"
-        max-rows="5"
-        maxrows="5"
-        ?required="${this.question.required}"
-        .maxlength="${this.question.maxLength || 5000}">
-      </mwc-textarea>
+    if (this.question.richTextAllowed) {
+      return html`
+        <yp-simple-html-editor id="structuredQuestion_${this.index}"
+              .question="${this.question}"
+              @focus="${this.setLongFocus}"
+              @blur="${this.setLongUnFocus}"
+        >
+        </yp-simple-html-editor>`;
+    } else {
+      return html`
+        <mwc-textarea
+          id="structuredQuestion_${this.index}"
+          data-type="text"
+          .label="${!skipLabel ? this.textWithIndex : ''}"
+          .value="${(this.question.value as string) || ''}"
+          minlength="2"
+          ?charCounter="${this.question.charCounter!=undefined ? this.question.charCounter : true }"
+          .pattern="${this.question.pattern || ""}"
+          @focus="${this.setLongFocus}"
+          @blur="${this.setLongUnFocus}"
+          ?use-small-font="${this.useSmallFont}"
+          @change="${this._debounceChangeEvent}"
+          name="${this.formName || ''}"
+          rows="3"
+          max-rows="5"
+          maxrows="5"
+          ?required="${this.question.required}"
+          .maxlength="${this.question.maxLength || 5000}">
+        </mwc-textarea>
     `;
+    }
   }
 
   renderTextAreaLong() {
@@ -806,7 +817,11 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
 
       if (item && this.question.type) {
         if (this.isInputField) {
-          (item as HTMLInputElement).value = value;
+          if (this.question.richTextAllowed) {
+            (item as YpSimpleHtmlEditor).setRichValue(value);
+          } else {
+            (item as HTMLInputElement).value = value;
+          }
         } else if (
           this.question.type &&
           this.question.type.toLowerCase() === 'radios'

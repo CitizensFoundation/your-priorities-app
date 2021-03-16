@@ -1174,8 +1174,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
       this.post &&
       this.post.Group &&
       this.post.Group.configuration &&
-      this.post.Group.configuration.disableDebate &&
-      !this.isAdmin
+      this.post.Group.configuration.disableDebate
     ) {
       this.disableDebate = true;
     } else {
@@ -1232,8 +1231,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
       if (
         this.post.Group &&
         this.post.Group.configuration &&
-        this.post.Group.configuration.disableDebate &&
-        !this.isAdmin
+        this.post.Group.configuration.disableDebate
       ) {
         this.disableDebate = true;
       } else {
@@ -1295,30 +1293,26 @@ export class YpPostPoints extends YpBaseElementWithLogin {
 
   _processStoredPoints() {
     console.info('_processStoredPoints');
-    if (this.upPoints === undefined) {
-      if (this.storedPoints && this.storedPoints.length > 0) {
-        const upPoints = [];
-        const downPoints = [];
+    if (this.storedPoints && this.storedPoints.length > 0) {
+      const upPoints = [];
+      const downPoints = [];
 
-        for (let i = 0; i < this.storedPoints.length; i++) {
-          if (this.storedPoints[i].value > 0) {
-            upPoints.push(this.storedPoints[i]);
-          } else if (this.storedPoints[i].value < 0) {
-            downPoints.push(this.storedPoints[i]);
-          }
+      for (let i = 0; i < this.storedPoints.length; i++) {
+        if (this.storedPoints[i].value > 0) {
+          upPoints.push(this.storedPoints[i]);
+        } else if (this.storedPoints[i].value < 0) {
+          downPoints.push(this.storedPoints[i]);
         }
-        this.upPoints = upPoints;
-        this.downPoints = downPoints;
-      } else {
-        this.upPoints = [];
-        this.downPoints = [];
-        this.points = [];
       }
+      this.upPoints = upPoints;
+      this.downPoints = downPoints;
     } else {
-      console.log('Landscape points already setup');
+      this.upPoints = [];
+      this.downPoints = [];
+      this.points = [];
     }
 
-    if (!this.wide && !this.points && this.upPoints && this.downPoints) {
+    if (!this.wide && this.upPoints && this.downPoints) {
       this.points = this.interleaveArrays(this.upPoints, this.downPoints);
     }
     this._clearScrollTrigger();

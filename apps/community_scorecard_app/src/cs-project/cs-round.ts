@@ -364,36 +364,71 @@ export class CsRound extends YpBaseElement {
 
   renderProcesses(): TemplateResult | undefined {
     return html`
-      <div class="layout vertical center-center processes">
-        ${this.renderProcess(this.t('organizeMeetingTime'), 'calendar_today', 'choose_time/1')}
-        ${this.renderDivider()}
-        ${this.renderProcess(
-          this.t('createScorecardMeeting'),
-          'meeting_room',
-          'create_issues/1',
-          false
-        )}
-        ${this.renderDivider()}
-        ${this.renderProcess(
-          this.t('stakeHolderScoringStage'),
-          'rate_review',
-          'score/1',
-          false
-        )}
-        ${this.renderDivider()}
-        ${this.renderProcess(
-          this.t('organizeMeetingTime'),
-          'calendar_today',
-           'choose_time/1'
-        )}
-        ${this.renderDivider()}
-        ${this.renderProcess(
-          this.t('createActionPlan'),
-          'pending_actions',
-          'action_plan'
-        )}
-        ${this.renderDivider()}
-        ${this.renderProcess(this.t('monitoring'), 'equalizer', 'report')}
+      <div class="layout horizontal wrap">
+        <div class="layout vertical center-center processes">
+          <div class="processHeader">${this.t('community')}</div>
+          ${this.renderProcess(this.t('organizeMeetingTime'), 'calendar_today', 'choose_time/1')}
+          ${this.renderDivider()}
+          ${this.renderProcess(
+            this.t('createScorecardMeeting'),
+            'meeting_room',
+            'create_issues/1',
+            false
+          )}
+          ${this.renderDivider()}
+          ${this.renderProcess(
+            this.t('stakeHolderScoringStage'),
+            'rate_review',
+            'score/1',
+            false
+          )}
+          ${this.renderDivider()}
+          ${this.renderProcess(
+            this.t('organizeMeetingTime'),
+            'calendar_today',
+            'choose_time/1'
+          )}
+          ${this.renderDivider()}
+          ${this.renderProcess(
+            this.t('createActionPlan'),
+            'pending_actions',
+            'action_plan'
+          )}
+          ${this.renderDivider()}
+          ${this.renderProcess(this.t('monitoring'), 'equalizer', 'report')}
+        </div>
+        <div class="layout vertical center-center processes">
+          <div class="processHeader">${this.t('serviceProvider')}</div>
+          ${this.renderProcess(this.t('organizeMeetingTime'), 'calendar_today', 'choose_time/1')}
+          ${this.renderDivider()}
+          ${this.renderProcess(
+            this.t('createScorecardMeeting'),
+            'meeting_room',
+            'create_issues/1',
+            false
+          )}
+          ${this.renderDivider()}
+          ${this.renderProcess(
+            this.t('stakeHolderScoringStage'),
+            'rate_review',
+            'score/1',
+            false
+          )}
+          ${this.renderDivider()}
+          ${this.renderProcess(
+            this.t('organizeMeetingTime'),
+            'calendar_today',
+            'choose_time/1'
+          )}
+          ${this.renderDivider()}
+          ${this.renderProcess(
+            this.t('createActionPlan'),
+            'pending_actions',
+            'action_plan'
+          )}
+          ${this.renderDivider()}
+          ${this.renderProcess(this.t('monitoring'), 'equalizer', 'report')}
+        </div>
       </div>
     `;
   }

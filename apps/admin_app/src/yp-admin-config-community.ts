@@ -202,6 +202,7 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
     }
 
     this._getHelpPages('community');
+    
     if (this.collection) {
       if ((this.collection as YpCommunityData).access === 0) {
         this.communityAccess = 'public';
@@ -850,7 +851,7 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
                     id="ssnLoginListDataUpload"
                     raised
                     ?disable="${!this.hasSamlLoginProvider}"
-                    accept=".txt"
+                    accept=".txt,.csv"
                     .target="/api/communities/${this.collection
                       .id}/upload_ssn_login_list"
                     method="POST"
