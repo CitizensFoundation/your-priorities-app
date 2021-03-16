@@ -420,7 +420,9 @@ module.exports = (sequelize, DataTypes) => {
         const pointRevision = sequelize.models.PointRevision.build(options);
         pointRevision.save().then(() => {
           log.info("process-moderation point toxicity on news story");
-          queue.create('process-moderation', { type: 'estimate-point-toxicity', pointId: point.id }).priority('high').removeOnComplete(true).save();
+          if (!options.subType || options.subType!="bulkOperation") {
+            queue.create('process-moderation', { type: 'estimate-point-toxicity', pointId: point.id }).priority('high').removeOnComplete(true).save();
+          }
           sequelize.models.AcActivity.createActivity({
             type: 'activity.point.newsStory.new',
             userId: options.user_id,

@@ -1181,149 +1181,199 @@ router.delete('/:id/anonymize_content', auth.can('edit post'), function(req, res
 
 router.post('/:id/endorse', auth.can('vote on post'), function(req, res) {
   var post;
-
-  models.Endorsement.findOne({
+  models.Post.findOne({
     where: {
-      post_id: req.params.id,
-      user_id: req.user.id
+      id: req.params.id
     },
     include: [
       {
-        model: models.Post,
-        attributes: ['id','group_id']
+        model: models.Group,
+        attributes: ['id','configuration'],
       }
     ]
-  }).then(function(endorsement) {
-    var oldEndorsementValue;
-    if (endorsement) {
-      post = endorsement.Post;
-      if (endorsement.value>0)
-        oldEndorsementValue = 1;
-      else if (endorsement.value<0)
-        oldEndorsementValue = -1;
-      endorsement.value = req.body.value;
-      endorsement.status = 'active';
-    } else {
-      endorsement = models.Endorsement.build({
-        post_id: req.params.id,
-        value: req.body.value,
-        user_id: req.user.id,
-        status: 'active',
-        user_agent: req.useragent.source,
-        ip_address: req.clientIp
-      })
-    }
-    endorsement.save().then(function() {
-      log.info('Endorsements Created', { endorsement: toJson(endorsement), context: 'create', user: toJson(req.user) });
-      async.series([
-        function (seriesCallback) {
-          if (post) {
-            endorsement.dataValues.Post = post;
-            seriesCallback();
+  }).then( corePost  => {
+    if (corePost) {
+      if (corePost.Group.configuration && corePost.Group.configuration.canVote===true) {
+        models.Endorsement.findOne({
+          where: {
+            post_id: req.params.id,
+            user_id: req.user.id
+          },
+          include: [
+            {
+              model: models.Post,
+              attributes: ['id','group_id'],
+            }
+          ]
+        }).then(function(endorsement) {
+          var oldEndorsementValue;
+          if (endorsement) {
+            post = endorsement.Post;
+            if (endorsement.value>0)
+              oldEndorsementValue = 1;
+            else if (endorsement.value<0)
+              oldEndorsementValue = -1;
+            endorsement.value = req.body.value;
+            endorsement.status = 'active';
           } else {
-            models.Post.findOne( {
-              where: { id: endorsement.post_id },
-              attributes: ['id','group_id']
-            }).then(function (results) {
-              if (results) {
-                post = results;
-                endorsement.dataValues.Post = post;
-                seriesCallback();
+            endorsement = models.Endorsement.build({
+              post_id: req.params.id,
+              value: req.body.value,
+              user_id: req.user.id,
+              status: 'active',
+              user_agent: req.useragent.source,
+              ip_address: req.clientIp
+            })
+          }
+          endorsement.save().then(function() {
+            log.info('Endorsements Created', { endorsement: toJson(endorsement), context: 'create', user: toJson(req.user) });
+            async.series([
+              function (seriesCallback) {
+                if (post) {
+                  endorsement.dataValues.Post = post;
+                  seriesCallback();
+                } else {
+                  models.Post.findOne( {
+                    where: { id: endorsement.post_id },
+                    attributes: ['id','group_id']
+                  }).then(function (results) {
+                    if (results) {
+                      post = results;
+                      endorsement.dataValues.Post = post;
+                      seriesCallback();
+                    } else {
+                      seriesCallback("Can't find post")
+                    }
+                  });
+                }
+              },
+              function (seriesCallback) {
+                models.AcActivity.createActivity({
+                  type: endorsement.value>0 ? 'activity.post.endorsement.new' : 'activity.post.opposition.new',
+                  userId: endorsement.user_id,
+                  domainId: req.ypDomain.id,
+                  endorsementId: endorsement.id,
+//            communityId: req.ypCommunity ?  req.ypCommunity.id : null,
+                  groupId : post.group_id,
+                  postId : post.id,
+                  access: models.AcActivity.ACCESS_PRIVATE
+                }, function (error) {
+                  seriesCallback(error);
+                });
+              }
+            ], function (error) {
+              if (error) {
+                log.error("Endorsements Error", { context: 'create', endorsement: toJson(endorsement), user: toJson(req.user),
+                  err: error, errorStatus: 500 });
+                res.sendStatus(500);
               } else {
-                seriesCallback("Can't find post")
+                decrementOldCountersIfNeeded(req, oldEndorsementValue, req.params.id, endorsement, function () {
+                  if (endorsement.value>0) {
+                    changePostCounter(req, req.params.id, 'counter_endorsements_up', 1, function () {
+                      res.send({ endorsement: endorsement, oldEndorsementValue: oldEndorsementValue });
+                    })
+                  } else if (endorsement.value<0) {
+                    changePostCounter(req, req.params.id, 'counter_endorsements_down', 1, function () {
+                      res.send({ endorsement: endorsement, oldEndorsementValue: oldEndorsementValue });
+                    })
+                  } else {
+                    log.error("Endorsements Error State", { context: 'create', endorsement: toJson(endorsement), user: toJson(req.user),
+                      err: error, errorStatus: 500 });
+                    res.sendStatus(500);
+                  }
+                });
               }
             });
-          }
-        },
-        function (seriesCallback) {
-          models.AcActivity.createActivity({
-            type: endorsement.value>0 ? 'activity.post.endorsement.new' : 'activity.post.opposition.new',
-            userId: endorsement.user_id,
-            domainId: req.ypDomain.id,
-            endorsementId: endorsement.id,
-//            communityId: req.ypCommunity ?  req.ypCommunity.id : null,
-            groupId : post.group_id,
-            postId : post.id,
-            access: models.AcActivity.ACCESS_PRIVATE
-          }, function (error) {
-            seriesCallback(error);
+
           });
-        }
-      ], function (error) {
-        if (error) {
-          log.error("Endorsements Error", { context: 'create', endorsement: toJson(endorsement), user: toJson(req.user),
+        }).catch(function(error) {
+          log.error("Endorsements Error", { context: 'create', post: req.params.id, user: toJson(req.user),
             err: error, errorStatus: 500 });
           res.sendStatus(500);
-        } else {
-          decrementOldCountersIfNeeded(req, oldEndorsementValue, req.params.id, endorsement, function () {
-            if (endorsement.value>0) {
-              changePostCounter(req, req.params.id, 'counter_endorsements_up', 1, function () {
-                res.send({ endorsement: endorsement, oldEndorsementValue: oldEndorsementValue });
-              })
-            } else if (endorsement.value<0) {
-              changePostCounter(req, req.params.id, 'counter_endorsements_down', 1, function () {
-                res.send({ endorsement: endorsement, oldEndorsementValue: oldEndorsementValue });
-              })
-            } else {
-              log.error("Endorsements Error State", { context: 'create', endorsement: toJson(endorsement), user: toJson(req.user),
-                err: error, errorStatus: 500 });
-              res.sendStatus(500);
-            }
-          });
-        }
-      });
-
-    });
-  }).catch(function(error) {
-    log.error("Endorsements Error", { context: 'create', post: req.params.id, user: toJson(req.user),
+        });
+      } else {
+        log.error("Trying to vote but cant", { context: 'endorse', post: req.params.id });
+        res.sendStatus(401);
+      }
+    } else {
+      log.error("Post not found", { context: 'endorse', post: req.params.id });
+      res.sendStatus(404);
+    }
+  }).catch( error => {
+    log.error("Endorsements Error", { context: 'endorse', post: req.params.id, user: toJson(req.user),
       err: error, errorStatus: 500 });
     res.sendStatus(500);
-  });
+  })
 });
 
 router.delete('/:id/endorse', auth.can('vote on post'), function(req, res) {
-  console.log("user: "+req.user.id + " post: " + req.params.id);
-  models.Endorsement.findOne({
-    where: { post_id: req.params.id, user_id: req.user.id },
+  models.Post.findOne({
+    where: {
+      id: req.params.id
+    },
     include: [
       {
-        model: models.Post,
-        attributes: ['id','group_id']
+        model: models.Group,
+        attributes: ['id','configuration'],
       }
     ]
-  }).then(function(endorsement) {
-    if (endorsement) {
-      var oldEndorsementValue;
-      if (endorsement.value>0)
-        oldEndorsementValue = 1;
-      else if (endorsement.value<0)
-        oldEndorsementValue = -1;
-      endorsement.value = 0;
-      //endorsement.deleted = true;
-      endorsement.save().then(function() {
-        if (oldEndorsementValue>0) {
-          changePostCounter(req, req.params.id, 'counter_endorsements_up', -1, function () {
-            res.status(200).send({ endorsement: endorsement, oldEndorsementValue: oldEndorsementValue });
-          })
-        } else if (oldEndorsementValue<0) {
-          changePostCounter(req, req.params.id, 'counter_endorsements_down', -1, function () {
-            res.status(200).send({ endorsement: endorsement, oldEndorsementValue: oldEndorsementValue });
-          })
-        } else {
-          log.error("Endorsement Strange state", { context: 'delete', post: req.params.id, user: toJson(req.user),
-            err: "Strange state of endorsements", errorStatus: 500 });
+  }).then( corePost  => {
+    if (corePost) {
+      if (corePost.Group.configuration && corePost.Group.configuration.canVote===true) {
+        models.Endorsement.findOne({
+          where: { post_id: req.params.id, user_id: req.user.id },
+          include: [
+            {
+              model: models.Post,
+              attributes: ['id','group_id']
+            }
+          ]
+        }).then(function(endorsement) {
+          if (endorsement) {
+            var oldEndorsementValue;
+            if (endorsement.value>0)
+              oldEndorsementValue = 1;
+            else if (endorsement.value<0)
+              oldEndorsementValue = -1;
+            endorsement.value = 0;
+            //endorsement.deleted = true;
+            endorsement.save().then(function() {
+              if (oldEndorsementValue>0) {
+                changePostCounter(req, req.params.id, 'counter_endorsements_up', -1, function () {
+                  res.status(200).send({ endorsement: endorsement, oldEndorsementValue: oldEndorsementValue });
+                })
+              } else if (oldEndorsementValue<0) {
+                changePostCounter(req, req.params.id, 'counter_endorsements_down', -1, function () {
+                  res.status(200).send({ endorsement: endorsement, oldEndorsementValue: oldEndorsementValue });
+                })
+              } else {
+                log.error("Endorsement Strange state", { context: 'delete', post: req.params.id, user: toJson(req.user),
+                  err: "Strange state of endorsements", errorStatus: 500 });
+                res.sendStatus(500);
+              }
+            });
+          } else {
+            log.error("Endorsement Not found", { context: 'delete', post: req.params.id, user: toJson(req.user), errorStatus: 404 });
+            res.sendStatus(404);
+          }
+        }).catch(function(error) {
+          log.error("Endorsements Error", { context: 'delete', post: req.params.id, user: toJson(req.user),
+            err: error, errorStatus: 500 });
           res.sendStatus(500);
-        }
-      });
+        });
+      } else {
+        log.error("Trying to vote but cant", { context: 'endorse', post: req.params.id });
+        res.sendStatus(401);
+      }
     } else {
-      log.error("Endorsement Not found", { context: 'delete', post: req.params.id, user: toJson(req.user), errorStatus: 404 });
+      log.error("Post not found", { context: 'endorse', post: req.params.id });
       res.sendStatus(404);
     }
-  }).catch(function(error) {
-    log.error("Endorsements Error", { context: 'delete', post: req.params.id, user: toJson(req.user),
+  }).catch( error => {
+    log.error("Endorsements Error", { context: 'endorse', post: req.params.id, user: toJson(req.user),
       err: error, errorStatus: 500 });
     res.sendStatus(500);
-  });
+  })
 });
 
 module.exports = router;

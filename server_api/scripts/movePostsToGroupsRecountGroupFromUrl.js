@@ -274,12 +274,15 @@ async.series([
     });
   },
   (seriesCallback) => {
+    let index = 0;
     async.forEachSeries(config.split('\r\n'), (configLine, forEachCallback) => {
       const splitLine = configLine.split(",");
 
-      if (!configLine || configLine.length < 3 || !splitLine || splitLine.length !== 2) {
+      if (index===0 || !configLine || configLine.length < 3 || !splitLine || splitLine.length !== 2) {
+        index += 1;
         forEachCallback();
       } else {
+        index += 1;
         const postId = splitLine[0];
         const toGroupId = splitLine[1];
         moveOnePost(postId, toGroupId, forEachCallback);
