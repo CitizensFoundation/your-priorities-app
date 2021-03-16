@@ -647,6 +647,19 @@ render() {
 
         <div class="subHeaders">${this.t('additionalGroupConfig')}</div>
 
+        <div class="layout horizontal config" hidden$="[[!pages]]">
+          <paper-dropdown-menu label="[[t('welcomeSelectPage')]]">
+            <paper-listbox slot="dropdown-content" attr-for-selected="name" selected="{{group.configuration.welcomePageId}}">
+              <template is="dom-repeat" items="[[translatedPages]]" as="page">
+                <paper-item name="[[page.id]]" data-args$="[[index]]">[[_getLocalizePageTitle(page)]]</paper-item>
+              </template>
+            </paper-listbox>
+          </paper-dropdown-menu>
+          <input type="hidden" name="welcomePageId" value="[[group.configuration.welcomePageId]]">
+        </div>
+
+        <yp-ajax id="pagesAjax" on-response="_pagesResponse"></yp-ajax>
+
         <paper-checkbox .name="hideAllTabs" .checked="${this.hideAllTabs}">${this.t('hideAllTabs')}</paper-checkbox>
         <paper-checkbox .name="hideHelpIcon" .checked="${this.hideHelpIcon}">${this.t('hideHelpIcon')}</paper-checkbox>
 
@@ -718,6 +731,12 @@ render() {
     ypMediaFormatsBehavior
   ],
 */
+
+  _pagesResponse(event, detail) {
+    var pages = detail.response;
+    pages.unshift({id: -1, title: { en: this.t('none') } });
+    this._setPages(event, pages);
+  }
 
   _objectivesChanged (event) {
     const description = event.target.value;

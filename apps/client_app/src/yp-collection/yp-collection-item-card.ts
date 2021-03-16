@@ -297,7 +297,7 @@ export class YpCollectionItemCard extends YpBaseElement {
   }
 
   _setupFontNameFontSize() {
-    const collectionName = this.$$("#collectionName")as HTMLElement;
+    const collectionName = this.$$("#collectionName") as HTMLElement;
     if (collectionName && this.collection) {
       let classNames = "collection-name ";
       if (this.wide) {
@@ -343,6 +343,11 @@ export class YpCollectionItemCard extends YpBaseElement {
       this.collection = (this.item as YpCommunityData).Domain;
       this.itemType = 'community';
     }
+
+    //TODO!
+    //TODO!
+    //TODO figure out CommuntiyLinks https://github.com/CitizensFoundation/your-priorities-app/commit/cbf8ab76c07895f10a9a41b8953490421260f1d2
+
     return this.item && this.collection
       ? html`<a
             href="/${this.itemType}/${this.item.id}"

@@ -288,6 +288,29 @@ export class YpGroup extends YpCollection {
     this.selectedGroupTab = event.detail.index;
   }
 
+  _openHelpPageIfNeededOnce() {
+    if (
+      this.collection &&
+      !sessionStorage.getItem('yp-welcome-for-group-' + this.collection.id)
+    ) {
+      setTimeout(() => {
+        if (
+          this.collection &&
+          this.collection.configuration &&
+          this.collection.configuration.welcomePageId
+        ) {
+          this.fire('yp-open-page', {
+            pageId: this.collection.configuration.welcomePageId,
+          });
+          sessionStorage.setItem(
+            'yp-welcome-for-group-' + this.collection.id,
+            'true'
+          );
+        }
+      }, 1200);
+    }
+  }
+
   //TODO: Check this and rename
   _refreshAjax() {
     setTimeout(() => {
@@ -430,6 +453,7 @@ export class YpGroup extends YpCollection {
     const group = this.collection as YpGroupData;
 
     if (group) {
+      this._openHelpPageIfNeededOnce();
       group.configuration = window.appGlobals.overrideGroupConfigIfNeeded(
         group.id,
         group.configuration

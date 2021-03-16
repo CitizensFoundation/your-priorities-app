@@ -202,6 +202,7 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
     }
 
     this._getHelpPages('community');
+    
     if (this.collection) {
       if ((this.collection as YpCommunityData).access === 0) {
         this.communityAccess = 'public';
