@@ -230,6 +230,7 @@ export class PageEditTranslations extends YpBaseElement {
       ar_EG: 'اَلْعَرَبِيَّةُ (EG)',
       ca: 'Català',
       ro_MD: 'Moldovenească',
+      ro: 'Românește',
       de: 'Deutsch',
       da: 'Dansk',
       sv: 'Svenska',
@@ -358,6 +359,7 @@ export class PageEditTranslations extends YpBaseElement {
     switch (item.textType) {
       case 'postName':
       case 'postContent':
+      case 'postTags':
       case 'postTranscriptContent':
         url = `/api/posts/${item.contentId}/translatedText`;
         break;
