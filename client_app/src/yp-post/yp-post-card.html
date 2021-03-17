@@ -323,7 +323,7 @@
               <yp-post-ratings-info class="customRatings" post="[[post]]"></yp-post-ratings-info>
             </template>
             <template is="dom-if" if="[[!post.Group.configuration.customRatings]]">
-              <yp-post-actions floating class="postActions" elevation="-1" endorse-mode="[[endorseMode]]" class="voting" post="[[post]]" hidden$="[[mini]]"></yp-post-actions>
+              <yp-post-actions force-show-debate$="[[post.Group.configuration.forceShowDebateCountOnPost]]" floating class="postActions" elevation="-1" endorse-mode="[[endorseMode]]" class="voting" post="[[post]]" hidden$="[[mini]]"></yp-post-actions>
             </template>
           </template>
         </div>
