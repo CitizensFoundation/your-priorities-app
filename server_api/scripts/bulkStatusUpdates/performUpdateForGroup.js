@@ -6,7 +6,7 @@ var moment = require('moment');
 
 var id = process.argv[2];
 var userIdToPostNewsStory = process.argv[3];
-var groupId = process.argv[3];
+var groupId = process.argv[4];
 
 var getTemplateContent = function (templates, title) {
   var returnContent;
