@@ -419,6 +419,108 @@ router.get('/loggedInUser/adminRights', function (req, res) {
         models.User.findOne({
           where: {id: req.user.id},
           attributes: ['id'],
+          include: [
+            {
+              model: models.Domain,
+              as: 'DomainAdmins',
+              attributes: ['id'],
+              required: false
+            }
+          ]
+        }).then(function(user) {
+          adminAccess.DomainAdmins = user.DomainAdmins;
+          seriesCallback()
+        }).catch(function(error) {
+          seriesCallback(error);
+        });
+      },
+      function (seriesCallback) {
+        models.User.findOne({
+          where: {id: req.user.id},
+          attributes: ['id'],
+          include: [
+            {
+              model: models.Community,
+              as: 'CommunityAdmins',
+              attributes: ['id'],
+              required: false
+            }
+          ]
+        }).then(function(user) {
+          adminAccess.CommunityAdmins = user.CommunityAdmins;
+          seriesCallback()
+        }).catch(function(error) {
+          seriesCallback(error);
+        });
+      },
+      function (seriesCallback) {
+        models.User.findOne({
+          where: {id: req.user.id},
+          attributes: ['id'],
+          include: [
+            {
+              model: models.Group,
+              as: 'GroupAdmins',
+              attributes: ['id'],
+              required: false
+            }
+          ]
+        }).then(function(user) {
+          adminAccess.GroupAdmins = user.GroupAdmins;
+          seriesCallback()
+        }).catch(function(error) {
+          seriesCallback(error);
+        });
+      },
+      function (seriesCallback) {
+        models.User.findOne({
+          where: {id: req.user.id},
+          attributes: ['id'],
+          include: [
+            {
+              model: models.Organization,
+              as: 'OrganizationAdmins',
+              attributes: ['id','name'],
+              required: false
+            }
+          ]
+        }).then(function(user) {
+          adminAccess.OrganizationAdmins = user.OrganizationAdmins;
+          seriesCallback()
+        }).catch(function(error) {
+          seriesCallback(error);
+        });
+      }
+    ], function (error) {
+      if (!error) {
+        log.info('User Sent Admin Rights', { userId: req.user ? req.user.id : -1, context: 'adminRights'});
+        if (adminAccess.OrganizationAdmins.length===0 &&
+            adminAccess.GroupAdmins.length===0 &&
+            adminAccess.CommunityAdmins.length===0 &&
+            adminAccess.DomainAdmins.length===0) {
+          res.send('0');
+        } else {
+          res.send(adminAccess);
+        }
+      } else {
+        log.error("User AdminRights Error", { context: 'adminRights', err: error, errorStatus: 500 });
+        res.sendStatus(500);
+      }
+    });
+  } else {
+    log.info('User Not Logged in', { context: 'adminRights'});
+    res.send('0');
+  }
+});
+
+router.get('/loggedInUser/adminRightsWithNames', function (req, res) {
+  if (req.isAuthenticated() && req.user) {
+    var adminAccess = {};
+    async.parallel([
+      function (seriesCallback) {
+        models.User.findOne({
+          where: {id: req.user.id},
+          attributes: ['id'],
           order: [
             [ { model: models.Domain, as: 'DomainAdmins' } , 'updated_at', 'desc' ]
           ],
@@ -453,7 +555,7 @@ router.get('/loggedInUser/adminRights', function (req, res) {
             }
           ]
         }).then(function(user) {
-          adminAccess.CommunityAdmins = user.CommunityAdmins;
+          adminAccess.CommunityAdmins = _.take(user.CommunityAdmins, 500);
           seriesCallback()
         }).catch(function(error) {
           seriesCallback(error);
@@ -482,7 +584,7 @@ router.get('/loggedInUser/adminRights', function (req, res) {
             }
           ]
         }).then(function(user) {
-          adminAccess.GroupAdmins = user.GroupAdmins;
+          adminAccess.GroupAdmins = _.take(user.GroupAdmins, 500);
           seriesCallback()
         }).catch(function(error) {
           seriesCallback(error);
@@ -514,9 +616,9 @@ router.get('/loggedInUser/adminRights', function (req, res) {
       if (!error) {
         log.info('User Sent Admin Rights', { userId: req.user ? req.user.id : -1, context: 'adminRights'});
         if (adminAccess.OrganizationAdmins.length===0 &&
-            adminAccess.GroupAdmins.length===0 &&
-            adminAccess.CommunityAdmins.length===0 &&
-            adminAccess.DomainAdmins.length===0) {
+          adminAccess.GroupAdmins.length===0 &&
+          adminAccess.CommunityAdmins.length===0 &&
+          adminAccess.DomainAdmins.length===0) {
           res.send('0');
         } else {
           res.send(adminAccess);
@@ -533,6 +635,101 @@ router.get('/loggedInUser/adminRights', function (req, res) {
 });
 
 router.get('/loggedInUser/memberships', function (req, res) {
+  if (req.isAuthenticated() && req.user) {
+    var memberships = {};
+    async.parallel([
+      function (seriesCallback) {
+        models.User.findOne({
+          where: {id: req.user.id},
+          attributes: ['id'],
+          include: [
+            {
+              model: models.Domain,
+              as: 'DomainUsers',
+              attributes: ['id'],
+              required: false
+            }
+          ]
+        }).then(function(user) {
+          memberships.DomainUsers = user.DomainUsers;
+          seriesCallback()
+        }).catch(function(error) {
+          seriesCallback(error);
+        });
+      },
+      function (seriesCallback) {
+        models.User.findOne({
+          where: {id: req.user.id},
+          attributes: ['id'],
+          include: [
+            {
+              model: models.Community,
+              as: 'CommunityUsers',
+              attributes: ['id'],
+              required: false
+            }
+          ]
+        }).then(function(user) {
+          memberships.CommunityUsers = user.CommunityUsers;
+          seriesCallback()
+        }).catch(function(error) {
+          seriesCallback(error);
+        });
+      },
+      function (seriesCallback) {
+        models.User.findOne({
+          where: {id: req.user.id},
+          attributes: ['id'],
+          include: [
+            {
+              model: models.Group,
+              as: 'GroupUsers',
+              attributes: ['id'],
+              required: false
+            }
+          ]
+        }).then(function(user) {
+          memberships.GroupUsers = user.GroupUsers;
+          seriesCallback()
+        }).catch(function(error) {
+          seriesCallback(error);
+        });
+      },
+      function (seriesCallback) {
+        models.User.findOne({
+          where: {id: req.user.id},
+          attributes: ['id'],
+          include: [
+            {
+              model: models.Organization,
+              as: 'OrganizationUsers',
+              attributes: ['id'],
+              required: false
+            }
+          ]
+        }).then(function(user) {
+          memberships.OrganizationUsers = user.OrganizationUsers;
+          seriesCallback()
+        }).catch(function(error) {
+          seriesCallback(error);
+        });
+      }
+    ], function (error) {
+      if (!error) {
+        log.info('User Sent Memberships', { userId: req.user ? req.user.id : -1, context: 'memberships'});
+        res.send(memberships);
+      } else {
+        log.error("User Memberships Error", { context: 'memberships', err: error, errorStatus: 500 });
+        res.sendStatus(500);
+      }
+    });
+  } else {
+    log.info('User Not Logged in', { user: toJson(req.user), context: 'memberships'});
+    res.send('0');
+  }
+});
+
+router.get('/loggedInUser/membershipsWithNames', function (req, res) {
   if (req.isAuthenticated() && req.user) {
     var memberships = {};
     async.parallel([
