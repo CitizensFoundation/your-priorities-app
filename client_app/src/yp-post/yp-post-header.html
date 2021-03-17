@@ -465,7 +465,7 @@
                 <paper-listbox slot="dropdown-content" on-iron-select="_menuSelection">
                   <template is="dom-if" if="[[hasPostAccess]]">
                     <paper-item id="editMenuItem">[[t('post.edit')]]</paper-item>
-                    <paper-item id="moveMenuItem">[[t('post.move')]]</paper-item>
+                    <paper-item hidden$="[[!checkPostAdminOnlyAccess(post)]]" id="moveMenuItem">[[t('post.move')]]</paper-item>
                     <paper-item hidden$="[[!checkPostAdminOnlyAccess(post)]]" id="statusChangeMenuItem">[[t('post.statusChange')]]</paper-item>
                     <paper-item id="deleteMenuItem">[[t('post.delete')]]</paper-item>
                     <paper-item hidden$="[[!checkPostAdminOnlyAccess(post)]]" id="anonymizeMenuItem">[[t('anonymizePostAndContent')]]</paper-item>

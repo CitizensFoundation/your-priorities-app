@@ -326,7 +326,7 @@
 
       <app-drawer id="navDrawer" slot="drawer" align="start" position="left" swipe-open opened="{{navDrawOpened}}">
         <div style="height: 100%; overflow-x: hidden; max-width: 255px !important;">
-          <yp-app-nav-drawer id="ypNavDrawer" home-link="[[homeLink]]" on-yp-toggle-nav-drawer="_toggleNavDrawer" user="[[user]]" route="[[route]]"></yp-app-nav-drawer>
+          <yp-app-nav-drawer id="ypNavDrawer" home-link="[[homeLink]]" opened="[[navDrawOpened]]" on-yp-toggle-nav-drawer="_toggleNavDrawer" user="[[user]]" route="[[route]]"></yp-app-nav-drawer>
         </div>
       </app-drawer>
 
