@@ -79,7 +79,7 @@
 
     <div class="layout vertical newsContainer">
       <yp-magic-text id="content" class="story" text-type="pointContent" content-language="[[point.language]]"
-                     content="[[point.latestContent]]" content-id="[[point.id]]">
+                     simple-format content="[[point.latestContent]]" content-id="[[point.id]]" truncate="10000">
       </yp-magic-text>
 
       <yp-point-news-story-embed embed-data="[[point.embed_data]]"></yp-point-news-story-embed>
