@@ -1194,6 +1194,19 @@ router.get('/:id/checkNonOpenPosts', auth.can('view group'), (req, res) => {
   });
 });
 
+router.get('/:id/configuration', auth.can('view group'), (req, res) => {
+  models.Group.findOne({
+    where: {
+      id: req.params.id
+    },
+    attributes: ['id','configuration']
+  }).then(group => {
+    res.send(group.configuration);
+  }).catch( error => {
+    sendGroupOrError(res, null, 'configuration', req.user, error);
+  })
+});
+
 const addVideosToGroup = (group, done) => {
   models.Video.findAll({
     attributes:  ['id','formats','viewable','updated_at','public_meta'],
