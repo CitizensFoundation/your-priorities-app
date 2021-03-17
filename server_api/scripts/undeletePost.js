@@ -129,9 +129,9 @@ async.series([
   }
 ], error=> {
   if (error)
-    console.error(`Error undeleting group ${groupId} - ${error}`);
+    console.error(`Error undeleting post ${postId} - ${error}`);
   else
-    console.log(`Done undeleting group ${groupId}`);
+    console.log(`Done undeleting post ${postId}`);
   process.exit();
 });
 
