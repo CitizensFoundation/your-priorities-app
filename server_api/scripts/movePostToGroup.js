@@ -2,7 +2,6 @@ var models = require('../models');
 var async = require('async');
 var ip = require('ip');
 var _ = require('lodash');
-var csvParser = require('csv-parse');
 var fs = require('fs');
 
 var postId = process.argv[2];
