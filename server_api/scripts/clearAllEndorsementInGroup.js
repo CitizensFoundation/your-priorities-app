@@ -5,7 +5,7 @@ var _ = require('lodash');
 
 var groupId = process.argv[2];
 
-models.Post.findAll({
+models.Post.unscoped().findAll({
   where: {
     group_id: groupId
   },
@@ -13,7 +13,8 @@ models.Post.findAll({
   include: [
     {
       model: models.Endorsement,
-      attributes: ['id','deleted']
+      attributes: ['id','deleted'],
+      required: false
     }
   ]
 }).then((posts)=>{
