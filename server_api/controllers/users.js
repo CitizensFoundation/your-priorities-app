@@ -555,7 +555,7 @@ router.get('/loggedInUser/adminRightsWithNames', function (req, res) {
             }
           ]
         }).then(function(user) {
-          adminAccess.CommunityAdmins = _.take(user.CommunityAdmins, 500);
+          adminAccess.CommunityAdmins = _.take(user.CommunityAdmins, req.query.getAll ? 1000000 : 500);
           seriesCallback()
         }).catch(function(error) {
           seriesCallback(error);
@@ -584,7 +584,7 @@ router.get('/loggedInUser/adminRightsWithNames', function (req, res) {
             }
           ]
         }).then(function(user) {
-          adminAccess.GroupAdmins = _.take(user.GroupAdmins, 500);
+          adminAccess.GroupAdmins = _.take(user.GroupAdmins, req.query.getAll ? 1000000 : 500);
           seriesCallback()
         }).catch(function(error) {
           seriesCallback(error);
