@@ -33,12 +33,13 @@
     <yp-edit-dialog id="editDialog" title="[[editHeaderText]]" icon="language" confirmation-text="[[t('post.statusChangeConfirmText')]]"
                     action="[[action]]" method="[[method]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
       <template is="dom-repeat" items="[[availableGroups]]" as="group">
-        <div class="groupName" on-tap="_selectGroup" data-args$="[[group.id]]" data-args-name$="[[group.name]]">Group Id [[group.id]]</div>
+        <div class="groupName" on-tap="_selectGroup" data-args$="[[group.id]]" data-args-name$="[[group.name]]">[[group.id]] - [[group.name]]</div>
       </template>
 
       <div class="layout horizontal center-center">
         <yp-ajax method="GET" id="getAvailableGroupsAjax" url="/api/users/available/groups" on-response="_getGroupsResponse"></yp-ajax>
         <yp-ajax method="PUT" id="movePostAjax" on-response="_movePostResponse"></yp-ajax>
+        <yp-ajax id="adminRightsAjax" method="GET" url="/api/users/loggedInUser/adminRightsWithNames?getAll=1" on-response="_adminRightsResponse"></yp-ajax>
       </div>
     </yp-edit-dialog>
   </template>
@@ -100,6 +101,7 @@
       this.set('refreshFunction', refreshFunction);
       this._setupTranslation();
       this.$.getAvailableGroupsAjax.generateRequest();
+      this.$.adminRightsAjax.generateRequest();
       this.open();
     },
 

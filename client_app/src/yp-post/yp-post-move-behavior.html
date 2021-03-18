@@ -7,24 +7,54 @@
   Polymer.ypPostMoveBehavior = {
 
     properties: {
+      adminRights: {
+        type: Object,
+        value: null
+      },
 
       availableGroups: {
         type: Array,
         value: null
+      },
+
+      groups: {
+        type: Array,
+        value: null
+      },
+
+      domainId: {
+        type: Number,
+        value: null
+      }
+    },
+
+    _adminRightsResponse: function (event, detail) {
+      if (detail.response && detail.response != 0) {
+        this.set('adminRights', detail.response);
+      }
+
+      this._reset();
+    },
+
+    _reset: function () {
+      if (this.groups && this.adminRights) {
+        var groups = [];
+        groups = groups.concat(this.adminRights.GroupAdmins, this.groups);
+        groups = this._uniqueInDomain(groups, 1);
+        this.set("availableGroups", groups);
+        debugger;
+        this.async(function () {
+          this.$$("#editDialog").fire('iron-resize');
+        });
       }
     },
 
     //TODO: Don't show groups that are communitylinks
     _getGroupsResponse: function (event, detail) {
       if (detail.response) {
-        var groups = [];
-        groups = groups.concat(window.appUser.adminRights.GroupAdmins, window.appUser.memberships.GroupUsers);
-        groups = groups.concat(detail.response.groups);
-        groups = this._uniqueInDomain(groups, detail.response.domainId);
-        this.set("availableGroups", groups);
-        this.async(function () {
-          this.$$("#editDialog").fire('iron-resize');
-        });
+        this.set('groups', detail.response.groups);
+        this.set('domainId', detail.response.domainId);
+        this._reset();
       }
     },
 
