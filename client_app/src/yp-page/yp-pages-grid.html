@@ -254,7 +254,7 @@
       _editPageLocale: function (event) {
         this.set('currentlyEditingPage', JSON.parse(event.target.getAttribute('data-args-page')));
         this.set('currentlyEditingLocale', event.target.getAttribute('data-args-locale'));
-        this.set('currentlyEditingContent',this.wordwrap(120)(this.currentlyEditingPage["content"][this.currentlyEditingLocale]));
+        this.set('currentlyEditingContent',this.currentlyEditingPage["content"][this.currentlyEditingLocale]);
         this.set('currentlyEditingTitle',this.currentlyEditingPage["title"][this.currentlyEditingLocale]);
         this.$.editPageLocale.open();
       },
