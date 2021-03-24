@@ -1,4 +1,6 @@
 {
+  "voteReceived": "Atkvæði móttekið",
+  "hideGroupLevelTabs": "Fela stiku bara fyrir hóp",
   "groupConfigurationHasBeenUpdated": "Stillingum á hóp hefur verið breytt",
   "forceShowDebateCountOnPost": "Alltaf sýna fjölda raka á hugmyndarsíðu",
   "commaSeperatedTags": "Tags með kommu á milli",
@@ -436,7 +438,7 @@
   "additionalGroupConfig":"Viðbótastillingar",
   "defaultDataImage":"Sjálfgefin Data Mynd",
   "defaultPostImage":"Sjálfgefin Mynd fyrir hugmynd",
-  "hideAllTabs":"Fela tabs",
+  "hideAllTabs":"Fela allar stikur",
   "hideNewPostOnPostPage":"Fel nýja hugmynd á hugmyndasíðu",
   "newPointOptional":"Rök valkvæm á nýrri hugmynd",
   "hideHelpIcon":"Fela hjálp",

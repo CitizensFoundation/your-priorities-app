@@ -1,4 +1,6 @@
 {
+  "voteReceived": "Vote received",
+  "hideGroupLevelTabs": "Hide group level tabs",
   "groupConfigurationHasBeenUpdated": "Group configuration has been updated",
   "forceShowDebateCountOnPost": "Force show debate count on post",
   "commaSeperatedTags": "Comma seperated tags",
