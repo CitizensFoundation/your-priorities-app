@@ -20,6 +20,7 @@ var queue = require('../active-citizen/workers/queue');
 const getAllModeratedItemsByGroup = require('../active-citizen/engine/moderation/get_moderation_items').getAllModeratedItemsByGroup;
 const performSingleModerationAction = require('../active-citizen/engine/moderation/process_moderation_items').performSingleModerationAction;
 const request = require('request');
+const {updateAnswerTranslation} = require("../active-citizen/utils/translation_helpers");
 const {updateSurveyTranslation} = require("../active-citizen/utils/translation_helpers");
 
 const getFromAnalyticsApi = require('../active-citizen/engine/analytics/manager').getFromAnalyticsApi;
@@ -216,6 +217,7 @@ var updateGroupConfigParamters = function (req, group) {
   group.set('configuration.forceSecureSamlLogin', truthValueFromBody(req.body.forceSecureSamlLogin));
   group.set('configuration.forceSecureSamlEmployeeLogin', truthValueFromBody(req.body.forceSecureSamlEmployeeLogin));
 
+  group.set('configuration.hideGroupLevelTabs', truthValueFromBody(req.body.hideGroupLevelTabs));
   group.set('configuration.hidePostFilterAndSearch', truthValueFromBody(req.body.hidePostFilterAndSearch));
   group.set('configuration.hidePostImageUploads', truthValueFromBody(req.body.hidePostImageUploads));
   group.set('configuration.hideNewPointOnNewIdea', truthValueFromBody(req.body.hideNewPointOnNewIdea));
@@ -306,6 +308,8 @@ var updateGroupConfigParamters = function (req, group) {
       group.set('configuration.structuredQuestionsJson', null);
       log.error("Error in parsing structured questions", { error });
     }
+  } else {
+    group.set('configuration.structuredQuestionsJson', null);
   }
 
   group.set('configuration.registrationQuestions', (req.body.registrationQuestions && req.body.registrationQuestions!="") ? req.body.registrationQuestions : null);
@@ -2366,16 +2370,37 @@ router.put('/:id/update_translation', auth.can('edit group'), function(req, res)
 
 
 router.put('/:id/update_structured_translations', auth.can('edit group'), function(req, res) {
-  const textType = req.body.type=="registration" ? "GroupRegQuestions" : "GroupQuestions";
+  let textType;
+  if (req.body.type=="registration") {
+    textType = "GroupRegQuestions";
+  } else if (req.body.type.indexOf("PostAnswer")>-1) {
+    textType = "PostAnswer";
+  } else {
+    textType =  "GroupQuestions";
+  }
 
-  updateSurveyTranslation(req.params.id, textType, req.body.targetLocale, req.body.translations,req.body.questions,(results, error) => {
-    if (error) {
-      log.error("Error in updating survey translation", { error });
-      res.sendStatus(500);
-    } else {
-      res.send(results);
-    }
-  });
+  if (textType === "PostAnswer") {
+    let contentHash = req.body.type.split("-")[3];
+    let postId = req.body.type.split("-")[1];
+
+    updateAnswerTranslation(postId, textType, req.body.targetLocale, req.body.translations,contentHash,(results, error) => {
+      if (error) {
+        log.error("Error in updating survey translation", { error });
+        res.sendStatus(500);
+      } else {
+        res.send(results);
+      }
+    });
+  } else {
+    updateSurveyTranslation(req.params.id, textType, req.body.targetLocale, req.body.translations,req.body.questions,(results, error) => {
+      if (error) {
+        log.error("Error in updating survey translation", { error });
+        res.sendStatus(500);
+      } else {
+        res.send(results);
+      }
+    });
+  }
 });
 
 var upload = multer({
