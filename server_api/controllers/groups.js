@@ -1235,6 +1235,7 @@ const addVideosToGroup = (group, done) => {
       [ { model: models.Image, as: 'VideoImages' }, 'updated_at', 'asc' ]
     ]
   }).then(videos => {
+    videos = _.orderBy(videos, ['updated_at'],['desc']);
     group.dataValues.GroupLogoVideos = _.orderBy(videos, (video) => video.updated_at,['desc']);
     done();
   }).catch( error => {
@@ -1401,117 +1402,129 @@ var getPostsWithAllFromIds = function (postsWithIds, postOrder, done) {
   var collectedIds = _.map(postsWithIds, function (post) {
     return post.id;
   });
-  models.Post.findAll({
-    where: {
-      id: {
-        $in: collectedIds
-      }
-    },
-    attributes: ['id','name','description','public_data','status','content_type','official_status','counter_endorsements_up','cover_media_type',
-                 'counter_endorsements_down','group_id','language','counter_points','counter_flags','location','created_at','category_id'],
-    order: [
-      models.sequelize.literal(postOrder),
-      [ { model: models.Image, as: 'PostHeaderImages' } ,'updated_at', 'asc' ],
-      [ { model: models.Category }, { model: models.Image, as: 'CategoryIconImages' } ,'updated_at', 'asc' ],
-      [ { model: models.Group }, { model: models.Category }, 'name', 'asc' ],
-      [ { model: models.Audio, as: "PostAudios" }, 'updated_at', 'desc' ],
-      [ { model: models.Video, as: "PostVideos" }, 'updated_at', 'desc' ],
-      [ { model: models.Video, as: "PostVideos" }, { model: models.Image, as: 'VideoImages' } ,'updated_at', 'asc' ]
-    ],
-    include: [
-      {
-        model: models.Category,
-        attributes: { exclude: ['ip_address', 'user_agent'] },
-        required: false,
-        include: [
-          {
-            model: models.Image,
-            required: false,
-            attributes: { exclude: ['ip_address', 'user_agent'] },
-            as: 'CategoryIconImages'
+
+  let posts;
+  let videos;
+
+  async.parallel([
+    parallelCallback => {
+      models.Post.findAll({
+        where: {
+          id: {
+            $in: collectedIds
           }
-        ]
-      },
-      {
-        model: models.Audio,
-        required: false,
-        attributes: ['id','formats','updated_at','listenable'],
-        as: 'PostAudios',
-      },
-      {
-        model: models.Video,
-        attributes: ['id','formats','updated_at','viewable','public_meta'],
-        as: 'PostVideos',
-        required: false,
-        include: [
-          {
-            model: models.Image,
-            as: 'VideoImages',
-            attributes:["formats","updated_at"],
-            required: false
-          },
-        ]
-      },
-      {
-        model: models.User,
-        required: false,
-        attributes: models.User.defaultAttributesWithSocialMediaPublic,
-        include: [
-          {
-            model: models.Image, as: 'UserProfileImages',
-            attributes:['id',"formats",'updated_at'],
-            required: false
-          },
-          {
-            model: models.Organization,
-            as: 'OrganizationUsers',
-            required: false,
-            attributes: ['id', 'name'],
-            include: [
-              {
-                model: models.Image,
-                as: 'OrganizationLogoImages',
-                //TODO: Fix [ORANGE] [12-1]  sql_error_code = 42622 NOTICE:  identifier "User->OrganizationUsers->OrganizationLogoImages->OrganizationLogoImage" will be truncated to "User->OrganizationUsers->OrganizationLogoImages->OrganizationLo"
-                //TODO: Figure out why there are no formats attributes coming through here
-                attributes: ['id', 'formats'],
-                required: false
-              }
-            ]
-          }
-        ]
-      },
-      {
-        model: models.PostRevision,
-        attributes: { exclude: ['ip_address', 'user_agent'] },
-        required: false
-      },
-      {
-        model: models.Group,
-        required: true,
-        attributes: ['id','configuration','name','theme_id','access'],
+        },
+        attributes: ['id','name','description','public_data','status','content_type','official_status','counter_endorsements_up','cover_media_type',
+          'counter_endorsements_down','group_id','language','counter_points','counter_flags','location','created_at','category_id'],
+        order: [
+          models.sequelize.literal(postOrder),
+          [ { model: models.Image, as: 'PostHeaderImages' } ,'updated_at', 'asc' ],
+          [ { model: models.Category }, { model: models.Image, as: 'CategoryIconImages' } ,'updated_at', 'asc' ],
+          [ { model: models.Group }, { model: models.Category }, 'name', 'asc' ],
+          [ { model: models.Audio, as: "PostAudios" }, 'updated_at', 'desc' ]
+        ],
         include: [
           {
             model: models.Category,
+            attributes: { exclude: ['ip_address', 'user_agent'] },
+            required: false,
+            include: [
+              {
+                model: models.Image,
+                required: false,
+                attributes: { exclude: ['ip_address', 'user_agent'] },
+                as: 'CategoryIconImages'
+              }
+            ]
+          },
+          {
+            model: models.Audio,
+            required: false,
+            attributes: ['id','formats','updated_at','listenable'],
+            as: 'PostAudios',
+          },
+          {
+            model: models.User,
+            required: false,
+            attributes: models.User.defaultAttributesWithSocialMediaPublic,
+            include: [
+              {
+                model: models.Image, as: 'UserProfileImages',
+                attributes:['id',"formats",'updated_at'],
+                required: false
+              },
+              {
+                model: models.Organization,
+                as: 'OrganizationUsers',
+                required: false,
+                attributes: ['id', 'name'],
+                include: [
+                  {
+                    model: models.Image,
+                    as: 'OrganizationLogoImages',
+                    //TODO: Fix [ORANGE] [12-1]  sql_error_code = 42622 NOTICE:  identifier "User->OrganizationUsers->OrganizationLogoImages->OrganizationLogoImage" will be truncated to "User->OrganizationUsers->OrganizationLogoImages->OrganizationLo"
+                    //TODO: Figure out why there are no formats attributes coming through here
+                    attributes: ['id', 'formats'],
+                    required: false
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            model: models.PostRevision,
+            attributes: { exclude: ['ip_address', 'user_agent'] },
             required: false
           },
           {
-            model: models.Community,
-            attributes: ['id','name','theme_id','access','google_analytics_code','configuration'],
-            required: true
+            model: models.Group,
+            required: true,
+            attributes: ['id','configuration','name','theme_id','access'],
+            include: [
+              {
+                model: models.Category,
+                required: false
+              },
+              {
+                model: models.Community,
+                attributes: ['id','name','theme_id','access','google_analytics_code','configuration'],
+                required: true
+              }
+            ]
+          },
+          { model: models.Image,
+            attributes: { exclude: ['ip_address', 'user_agent'] },
+            as: 'PostHeaderImages',
+            required: false
           }
         ]
-      },
-      { model: models.Image,
-        attributes: { exclude: ['ip_address', 'user_agent'] },
-        as: 'PostHeaderImages',
-        required: false
+      }).then(function(postsIn) {
+        posts = postsIn;
+        parallelCallback();
+      }).catch(function (error) {
+        parallelCallback(error);
+      });
+    },
+    parallelCallback => {
+      models.Post.getVideosForPosts(collectedIds, (error, videosIn) => {
+        if (error) {
+          parallelCallback(error);
+        } else {
+          videos = videosIn;
+          parallelCallback();
+        }
+      })
+    },
+  ], error => {
+    if (error) {
+      done(error);
+    } else {
+      if (videos.length>0) {
+        models.Post.addVideosToAllPosts(posts, videos);
       }
-    ]
-  }).then(function(posts) {
-    done(null, posts);
-  }).catch(function (error) {
-    done(error);
-  });
+      done(null, posts);
+    }
+  })
 };
 
 router.get('/:id/posts/:filter/:categoryId/:status?', auth.can('view group'), function(req, res) {
@@ -1719,9 +1732,7 @@ router.get('/:id/post_locations', auth.can('view group'), function(req, res) {
       group_id: req.params.id
     },
     order: [
-      [ { model: models.Image, as: 'PostHeaderImages' } ,'updated_at', 'asc' ],
-      [ { model: models.Video, as: "PostVideos" }, 'updated_at', 'desc' ],
-      [ { model: models.Video, as: "PostVideos" }, { model: models.Image, as: 'VideoImages' } ,'updated_at', 'asc' ]
+      [ { model: models.Image, as: 'PostHeaderImages' } ,'updated_at', 'asc' ]
     ],
     include: [
       { model: models.Image,
@@ -1732,20 +1743,6 @@ router.get('/:id/post_locations', auth.can('view group'), function(req, res) {
         model: models.Group,
         attributes: ['id','configuration'],
         required: true
-      },
-      {
-        model: models.Video,
-        attributes: ['id','formats','updated_at','viewable','public_meta'],
-        as: 'PostVideos',
-        required: false,
-        include: [
-          {
-            model: models.Image,
-            as: 'VideoImages',
-            attributes:["formats","updated_at"],
-            required: false
-          },
-        ]
       }
     ],
     select: ['id', 'name', 'location']
@@ -1756,7 +1753,21 @@ router.get('/:id/post_locations', auth.can('view group'), function(req, res) {
         context: 'view',
         user: toJson(req.user)
       });
-      res.send(posts);
+
+      var collectedIds = _.map(posts, function (post) {
+        return post.id;
+      });
+
+      models.Post.getVideosForPosts(collectedIds, (error, videos) => {
+        if (error) {
+          sendGroupOrError(res, null, 'view post locations', req.user, 'Not found', 404);
+        } else {
+          if (videos.length>0) {
+            models.Post.addVideosToAllPosts(posts, videos);
+          }
+          res.send(posts);
+        }
+      })
     } else {
       sendGroupOrError(res, null, 'view post locations', req.user, 'Not found', 404);
     }

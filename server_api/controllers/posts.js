@@ -170,120 +170,128 @@ router.post('/:id/status_change', auth.can('send status change'), function(req, 
 });
 
 router.get('/:id', auth.can('view post'), function(req, res) {
-  models.Post.findOne({
-    where: {
-      id: req.params.id
-    },
-    attributes: ['id','name','description','public_data','status','content_type','official_status','counter_endorsements_up','cover_media_type',
-                 'counter_endorsements_down','group_id','language','counter_points','counter_flags','location','created_at','category_id'],
-    order: [
-      [ { model: models.Image, as: 'PostHeaderImages' } ,'updated_at', 'asc' ],
-      [ { model: models.Category }, { model: models.Image, as: 'CategoryIconImages' } ,'updated_at', 'asc' ],
-      [ { model: models.Video, as: "PostVideos" }, 'updated_at', 'desc' ],
-      [ { model: models.Audio, as: "PostAudios" }, 'updated_at', 'desc' ],
-      [ { model: models.Group }, { model: models.Category }, 'name', 'asc' ],
-      [ { model: models.Video, as: "PostVideos" }, { model: models.Image, as: 'VideoImages' } ,'updated_at', 'asc' ]
-    ],
-    include: [
-      {
-        // Category
-        model: models.Category,
-        attributes: { exclude: ['ip_address', 'user_agent'] },
-        required: false,
+  let post;
+  let videos;
+
+  async.parallel([
+    parallelCallback => {
+      models.Post.findOne({
+        where: {
+          id: req.params.id
+        },
+        attributes: ['id','name','description','public_data','status','content_type','official_status','counter_endorsements_up','cover_media_type',
+          'counter_endorsements_down','group_id','language','counter_points','counter_flags','location','created_at','category_id'],
+        order: [
+          [ { model: models.Image, as: 'PostHeaderImages' } ,'updated_at', 'asc' ],
+          [ { model: models.Category }, { model: models.Image, as: 'CategoryIconImages' } ,'updated_at', 'asc' ],
+          [ { model: models.Audio, as: "PostAudios" }, 'updated_at', 'desc' ],
+          [ { model: models.Group }, { model: models.Category }, 'name', 'asc' ]
+        ],
         include: [
           {
-            model: models.Image,
-            required: false,
-            as: 'CategoryIconImages'
-          }
-        ]
-      },
-      // Group
-      {
-        model: models.Group,
-        attributes: ['id','configuration','name','theme_id','access'],
-        include: [
-          {
+            // Category
             model: models.Category,
-            required: false
-          },
-          {
-            model: models.Community,
-            attributes: ['id','name','theme_id','google_analytics_code','configuration'],
-            required: true
-          }
-        ]
-      },
-      // User
-      {
-        model: models.User,
-        required: false,
-        attributes: models.User.defaultAttributesWithSocialMediaPublic,
-        include: [
-          {
-            model: models.Image, as: 'UserProfileImages',
-            attributes:['id',"formats",'updated_at'],
-            required: false
-          },
-          {
-            model: models.Organization,
-            as: 'OrganizationUsers',
+            attributes: { exclude: ['ip_address', 'user_agent'] },
             required: false,
-            attributes: ['id', 'name'],
             include: [
               {
                 model: models.Image,
-                as: 'OrganizationLogoImages',
-                //TODO: Figure out why there are no formats attributes coming through here
-                attributes: ['id', 'formats'],
-                required: false
+                required: false,
+                as: 'CategoryIconImages'
               }
             ]
-          }
-        ]
-      },
-      // Image
-      {
-        model: models.Image,
-        required: false,
-        as: 'PostHeaderImages'
-      },
-      {
-        model: models.Video,
-        required: false,
-        attributes: ['id','formats','updated_at','viewable','public_meta'],
-        as: 'PostVideos',
-        include: [
+          },
+          // Group
+          {
+            model: models.Group,
+            attributes: ['id','configuration','name','theme_id','access'],
+            include: [
+              {
+                model: models.Category,
+                required: false
+              },
+              {
+                model: models.Community,
+                attributes: ['id','name','theme_id','google_analytics_code','configuration'],
+                required: true
+              }
+            ]
+          },
+          // User
+          {
+            model: models.User,
+            required: false,
+            attributes: models.User.defaultAttributesWithSocialMediaPublic,
+            include: [
+              {
+                model: models.Image, as: 'UserProfileImages',
+                attributes:['id',"formats",'updated_at'],
+                required: false
+              },
+              {
+                model: models.Organization,
+                as: 'OrganizationUsers',
+                required: false,
+                attributes: ['id', 'name'],
+                include: [
+                  {
+                    model: models.Image,
+                    as: 'OrganizationLogoImages',
+                    //TODO: Figure out why there are no formats attributes coming through here
+                    attributes: ['id', 'formats'],
+                    required: false
+                  }
+                ]
+              }
+            ]
+          },
+          // Image
           {
             model: models.Image,
-            as: 'VideoImages',
-            attributes:["formats",'updated_at'],
-            required: false
+            required: false,
+            as: 'PostHeaderImages'
           },
+          {
+            model: models.Audio,
+            required: false,
+            attributes: ['id','formats','updated_at','listenable'],
+            as: 'PostAudios',
+          },
+          // PointRevision
+          {
+            model: models.PostRevision,
+            required: false
+          }
         ]
-      },
-      {
-        model: models.Audio,
-        required: false,
-        attributes: ['id','formats','updated_at','listenable'],
-        as: 'PostAudios',
-      },
-      // PointRevision
-      {
-        model: models.PostRevision,
-        required: false
-      }
-    ]
-  }).then(function(post) {
-    if (post) {
+      }).then(function(postIn) {
+        post = postIn;
+        parallelCallback();
+      }).catch( error => {
+        parallelCallback(error);
+      });
+    },
+    parallelCallback => {
+      models.Post.getVideosForPosts([req.params.id], (error, videosIn) => {
+        if (error) {
+          parallelCallback(error);
+        } else {
+          videos = videosIn;
+          parallelCallback();
+        }
+      })
+    }
+  ], error => {
+    if (error) {
+      sendPostOrError(res, req.params.id, 'view', req.user, error, 500);
+    } else if (post) {
       log.info('Post Viewed', { postId: post ? post.id : -1, context: 'view', userId: req.user ? req.user.id : -1 });
+      post.dataValues.PostVideos = videos;
       res.send(post);
     } else {
       sendPostOrError(res, req.params.id, 'view', req.user, 'Not found', 404);
     }
-  }).catch(function(error) {
-    sendPostOrError(res, null, 'view', req.user, error);
-  });
+  })
+
 });
 
 router.get('/:id/translatedSurvey', auth.can('view post'), function(req, res) {

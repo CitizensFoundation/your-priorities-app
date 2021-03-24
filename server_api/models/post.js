@@ -3,6 +3,7 @@
 const async = require("async");
 const queue = require('../active-citizen/workers/queue');
 const log = require('../utils/logger');
+const _ = require('lodash');
 
 module.exports = (sequelize, DataTypes) => {
   const Post = sequelize.define("Post", {
@@ -527,6 +528,64 @@ module.exports = (sequelize, DataTypes) => {
       }
     });
   };
+
+  Post.getVideosForPosts = (postIds, done) => {
+    sequelize.models.Video.findAll({
+      attributes:  ['id','formats','viewable','updated_at','public_meta'],
+      include: [
+        {
+          model: sequelize.models.Image,
+          as: 'VideoImages',
+          attributes:["formats",'updated_at'],
+          required: false
+        },
+        {
+          model: sequelize.models.Post,
+          where: {
+            id: {
+              $in: postIds
+            }
+          },
+          as: 'PostVideos',
+          required: true,
+          attributes: ['id'],
+
+        }
+      ],
+      order: [
+        [ { model: sequelize.models.Image, as: 'VideoImages' }, 'updated_at', 'asc' ]
+      ]
+    }).then(videos => {
+      videos = _.orderBy(videos, ['updated_at'],['desc']);
+      done(null, videos);
+    }).catch( error => {
+      done(error);
+    })
+  }
+
+  Post.addVideosToAllPosts = (posts, videos) => {
+    const postsHash = {};
+
+    for (let i=0;i<posts.length;i++) {
+      postsHash[posts[i].id] = posts[i];
+    }
+
+    for (let i=0;i<videos.length;i++) {
+      if (videos[i].PostVideos &&  videos[i].PostVideos.length>0) {
+        const postId = videos[i].PostVideos[0].id;
+        if (postsHash[postId]) {
+          if (!postsHash[postId].dataValues.PostVideos) {
+            postsHash[postId].dataValues.PostVideos = [];
+          }
+          postsHash[postId].dataValues.PostVideos.push(videos[i]);
+        } else {
+          log.error("Can't find post to add video to")
+        }
+      } else {
+        log.error("Can't find PostVideos");
+      }
+    }
+  }
 
   return Post;
 };

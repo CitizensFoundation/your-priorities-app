@@ -1523,29 +1523,13 @@ router.get('/:id/post_locations', auth.can('view community'), function(req, res)
       }
     },
     order: [
-      [ { model: models.Image, as: 'PostHeaderImages' } ,'updated_at', 'asc' ],
-      [ { model: models.Video, as: "PostVideos" }, 'updated_at', 'desc' ],
-      [ { model: models.Video, as: "PostVideos" }, { model: models.Image, as: 'VideoImages' } ,'updated_at', 'asc' ]
+      [ { model: models.Image, as: 'PostHeaderImages' } ,'updated_at', 'asc' ]
     ],
     select: ['id','name','location'],
     include: [
       { model: models.Image,
         as: 'PostHeaderImages',
         required: false
-      },
-      {
-        model: models.Video,
-        attributes: ['id','updated_at'],
-        as: 'PostVideos',
-        required: false,
-        include: [
-          {
-            model: models.Image,
-            as: 'VideoImages',
-            attributes:["formats","updated_at"],
-            required: false
-          },
-        ]
       },
       {
         model: models.Group,
@@ -1565,7 +1549,21 @@ router.get('/:id/post_locations', auth.can('view community'), function(req, res)
   }).then(function(posts) {
     if (posts) {
       log.info('Community Post Locations Viewed', { communityId: req.params.id, context: 'view', user: toJson(req.user) });
-      res.send(posts);
+
+      var collectedIds = _.map(posts, function (post) {
+        return post.id;
+      });
+
+      models.Post.getVideosForPosts(collectedIds, (error, videos) => {
+        if (error) {
+          sendCommunityOrError(res, null, 'view post locations', req.user, 'Not found', 404);
+        } else {
+          if (videos.length>0) {
+            models.Post.addVideosToAllPosts(posts, videos);
+          }
+          res.send(posts);
+        }
+      })
     } else {
       sendCommunityOrError(res, null, 'view post locations', req.user, 'Not found', 404);
     }
