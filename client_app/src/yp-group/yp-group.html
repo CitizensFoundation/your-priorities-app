@@ -186,7 +186,7 @@
         <yp-post-card-add group="[[group]]" disabled="[[disableNewPosts]]" on-new-post="_newPost" elevation="2" role="button" aria-label="Add idea"></yp-post-card-add>
       </div>
 
-      <div class="layout horizontal center-center tabContainer" hide$="[[group.configuration.hideAllTabs]]">
+      <div class="layout horizontal center-center tabContainer" hide$="[[group.configuration.hideAllTabs]]" hidden$="[[group.configuration.hideGroupLevelTabs]]">
         <paper-tabs scrollable$="[[shouldScrollTabs]]" id="paperTabs" has-non-open-posts$="[[hasNonOpenPosts]]" class="tabs" selected="{{selectedTab}}" attr-for-selected="name" focused>
           <paper-tab id="tab1" name="open">
             <div class="layout vertical center-center tabCounterContainer">

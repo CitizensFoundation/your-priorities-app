@@ -528,7 +528,7 @@
           this._updateEndorsementPostsIndex(this.user);
 
           if (group && group.configuration && group.configuration.maxNumberOfGroupVotes) {
-            this.calculateVotesLeftForGroup(group);
+            this.calculateVotesLeftForGroup(group, newEndorsement);
           } else {
             document.dispatchEvent(
               new CustomEvent("lite-signal", {
@@ -541,7 +541,7 @@
           }
         },
 
-        calculateVotesLeftForGroup:  function (group) {
+        calculateVotesLeftForGroup:  function (group, newEndorsement) {
           if (this.user && this.user.Endorsements) {
             this.async(function () {
               var lastVoteCount = this.groupCurrentVoteCountIndex[group.id];
@@ -550,7 +550,11 @@
               }).length;
 
               if (lastVoteCount!=this.groupCurrentVoteCountIndex[group.id]) {
-                var text = `${this.t('youHaveUsed')} ${this.groupCurrentVoteCountIndex[group.id]} ${this.t('ofNumber')} ${group.configuration.maxNumberOfGroupVotes} ${this.t('votesForGroup')}`;
+                var newVote = "";
+                if (newEndorsement && newEndorsement.value==1) {
+                  newVote = `${this.t('voteReceived')}. `
+                }
+                var text = `${newVote}${this.t('youHaveUsed')} ${this.groupCurrentVoteCountIndex[group.id]} ${this.t('ofNumber')} ${group.configuration.maxNumberOfGroupVotes} ${this.t('votesForGroup')}`;
 
                 var endorsementButtons = group.configuration.endorsementButtons ?
                        group.configuration.endorsementButtons : "hearts";
