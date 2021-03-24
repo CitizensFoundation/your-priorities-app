@@ -63,7 +63,10 @@ export class PageEditTranslations extends YpBaseElement {
 
         .textType {
           width: 120px;
+          min-width: 120px;
           padding: 8px;
+          word-break: break-all;
+          overflow: hidden;
         }
 
         .translatedText {
@@ -126,6 +129,7 @@ export class PageEditTranslations extends YpBaseElement {
       surveyQuestionTranslations: { type: Array },
       registrationQuestionTranslations: { type: Array },
       structuredQuestionsFlat: { type: Array },
+      structuredQuestionsForAnswers: { type: Array },
       registrationQuestionsFlat: { type: Array },
       waitingOnData: { type: Boolean },
       editActive: { type: Object },
@@ -153,6 +157,10 @@ export class PageEditTranslations extends YpBaseElement {
             this.structuredQuestionsFlat = this._flattenQuestions(
               this.collection.configuration.structuredQuestionsJson
             );
+
+            this.structuredQuestionsForAnswers = this.collection.configuration.structuredQuestionsJson.filter( question => {
+              return question.uniqueId!=null
+            })
           }
 
           if (this.collection.configuration.registrationQuestionsJson) {
@@ -311,7 +319,11 @@ export class PageEditTranslations extends YpBaseElement {
 
     let translationCounter = 0;
     for (let i = 0; i < questions.length; i++) {
-      translations.push(this.$$(`#${type}${translationCounter++}`).value);
+      if (this.$$(`#${type}${translationCounter}`)) {
+        translations.push(this.$$(`#${type}${translationCounter++}`).value);
+      } else {
+        translations.push("");
+      }
     }
 
     const updateUrl = `/api/${this.collectionType}/${this.collectionId}/update_structured_translations`;
@@ -326,6 +338,8 @@ export class PageEditTranslations extends YpBaseElement {
         type,
         targetLocale: this.targetLocale,
       }),
+    }).then(()=>{
+      this.getTranslationText();
     });
 
     delete this.editActive[type];
@@ -378,10 +392,12 @@ export class PageEditTranslations extends YpBaseElement {
       case 'communityContent':
         url = `/api/communities/${item.contentId}/translatedText`;
         break;
+      case 'alternativeTextForNewIdeaButton':
       case 'alternativeTextForNewIdeaButtonClosed':
       case 'alternativeTextForNewIdeaButtonHeader':
       case 'customThankYouTextNewPosts':
       case 'alternativePointForHeader':
+      case 'customTitleQuestionText':
       case 'customAdminCommentsTitle':
       case 'alternativePointAgainstHeader':
       case 'alternativePointForLabel':
@@ -473,6 +489,24 @@ export class PageEditTranslations extends YpBaseElement {
   }
 
   renderItem(item) {
+    if (item.textType=="PostAnswer") {
+      return this.renderItemAnswers(item);
+    } else {
+      return this.renderItemNormal(item);
+    }
+  }
+
+  renderItemAnswers(item) {
+    return this.structuredQuestionsForAnswers
+      ? this.renderQuestions(
+      item.indexKey,
+        this.structuredQuestionsForAnswers,
+      item.translatedText ? JSON.parse(item.translatedText) : []
+      )
+      : nothing
+  }
+
+  renderItemNormal(item) {
     return html`
       <div class="layout horizontal shadow-animation shadow-elevation-3dp item">
         <div class="textType layout vertical">
@@ -535,14 +569,16 @@ export class PageEditTranslations extends YpBaseElement {
       ${
         this.editActive[type]
           ? html`
-              <mwc-textfield
+              <mwc-textarea
                 id="${type}${index}"
-                maxLength="2000"
+                maxLength="20000"
+                rows="5"
+                style="width: 850px;"
                 class="surveyTextField"
                 .label="${this.t('editTranslation')}"
                 .value="${translatedText ? translatedText : ''}"
               >
-              </mwc-textfield>
+              </mwc-textarea>
             `
           : html`
               <div class="innerTranslatedText">
@@ -589,7 +625,7 @@ export class PageEditTranslations extends YpBaseElement {
           ${questions.map((question, index) => {
             return html`
               <div class="innerTranslatedText">
-                ${question}
+                ${question.text ? question.text : question}
               </div>
 
               <div>

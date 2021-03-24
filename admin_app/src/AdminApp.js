@@ -133,20 +133,23 @@ export class AdminApp extends YpBaseElement {
     super.connectedCallback();
     this._setupEventListeners();
     this.collectionURL ="/api/"+this.collectionType+"/"+this.collectionId;
+    this.fetchCollection();
+  }
 
+  fetchCollection() {
     fetch(this.collectionURL, { credentials: 'same-origin' })
-    .then(res => this.handleNetworkErrors(res))
-    .then(res => res.json())
-    .then(response => {
-      if (response.group) {
-        this.collection = response.group;
-      } else {
-        this.collection = response;
-      }
-    })
-    .catch(error => {
-      this.fire('app-error', error);
-    });
+      .then(res => this.handleNetworkErrors(res))
+      .then(res => res.json())
+      .then(response => {
+        if (response.group) {
+          this.collection = response.group;
+        } else {
+          this.collection = response;
+        }
+      })
+      .catch(error => {
+        this.fire('app-error', error);
+      });
   }
 
   disconnectedCallback() {
@@ -204,12 +207,14 @@ export class AdminApp extends YpBaseElement {
     this.addEventListener('set-total-posts', this._setTotalPosts);
     this.addEventListener('set-similarities-data', this._setSimilaritiesData);
     this.addEventListener('app-error', this._appError);
+    this.addEventListener("refresh-collection", this.fetchCollection.bind(this))
   }
 
   _removeEventListeners() {
     this.removeEventListener('set-total-posts', this._setTotalPosts);
     this.removeEventListener('set-similarities-data', this._setSimilaritiesData);
     this.removeEventListener('app-error', this._appError);
+    this.removeEventListener("refresh-collection", this.fetchCollection.bind(this))
   }
 
   _appError(event) {
