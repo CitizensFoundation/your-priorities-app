@@ -154,12 +154,12 @@
       }
 
       .islandIs {
-        width: 80px;
-        height: 18px;
-        padding-left: 16px;
+        width: 107px;
+        height: 19px;
+        padding-left: 8px;
         padding-top: 8px;
         padding-bottom: 8px;
-        padding-right: 8px;
+        padding-right: 32px;
         margin-left: 8px;
       }
 
@@ -324,6 +324,7 @@
         border: 1px solid;
         border-color: #ddd;
         padding: 12px;
+        padding-top: 18px;
       }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
@@ -366,17 +367,9 @@
                   </template>
 
                   <div class="layout horizontal">
-                    <template is="dom-if" if="[[hasFacebookLogin]]">
-                    <span hidden$="[[forceSecureSamlLogin]]">
-                      <div class="btn-auth btn-facebook cursor" on-tap="_facebookLogin" role="button" tabindex="0"
-                           hidden$="[[disableFacebookLoginForGroup]]">
-                        [[t('user.facebookLogin')]]
-                      </div>
-                    </span>
-                    </template>
                     <template is="dom-if" if="[[hasSamlLogin]]">
                       <template is="dom-if" if="[[samlLoginButtonUrl]]">
-                        <div class="islandIs cursor layout horizontal center-center">
+                        <div class="islandIs cursor layout horizontal center-center" role="button" tabindex="0">
                           <img hidden$="[[forceSecureSamlLogin]]" on-tap="_openSamlLogin" width="80" src="[[samlLoginButtonUrl]]"/>
                           <div hidden$="[[!forceSecureSamlLogin]]" class="largeSamlLogo" on-tap="_openSamlLogin" role="button" tabindex="0">
                             <img width="130" src="[[samlLoginButtonUrl]]"/>
@@ -384,13 +377,21 @@
                         </div>
                       </template>
                       <template is="dom-if" if="[[!samlLoginButtonUrl]]">
-                        <div class="islandIs cursor layout horizontal center-center">
-                          <img hidden$="[[forceSecureSamlLogin]]" on-tap="_openSamlLogin" width="80" height="18" src="https://s3.amazonaws.com/yrpri-direct-asset/yrpri6/islandisLogo.png"/>
+                        <div class="islandIs cursor layout horizontal center-center" role="button" tabindex="0" on-keydown="_keySaml">
+                          <img hidden$="[[forceSecureSamlLogin]]" on-tap="_openSamlLogin"  width="107" height="19" src="https://yrpri-eu-direct-assets.s3-eu-west-1.amazonaws.com/islanddotis.png"/>
                           <div hidden$="[[!forceSecureSamlLogin]]" class="largeSamlLogo" on-tap="_openSamlLogin" role="button" tabindex="0">
-                            <img width="130" height="30" src="https://s3.amazonaws.com/yrpri-direct-asset/yrpri6/islandisLogo.png"/>
+                            <img width="140" height="25" src="https://yrpri-eu-direct-assets.s3-eu-west-1.amazonaws.com/islanddotis.png"/>
                           </div>
                         </div>
                       </template>
+                    </template>
+                    <template is="dom-if" if="[[hasFacebookLogin]]">
+                      <span hidden$="[[forceSecureSamlLogin]]">
+                        <div class="btn-auth btn-facebook cursor" on-tap="_facebookLogin" role="button" tabindex="0"
+                             hidden$="[[disableFacebookLoginForGroup]]">
+                          [[t('user.facebookLogin')]]
+                        </div>
+                      </span>
                     </template>
                   </div>
                 </div>
@@ -701,6 +702,14 @@
           window.appGlobals.currentGroup.configuration &&
           window.appGlobals.currentGroup.configuration.registrationQuestionsJson) {
         this.set('registrationQuestionsGroup', window.appGlobals.currentGroup);
+      }
+    },
+
+    _keySaml: function (event) {
+      debugger;
+      if (event.keyCode==13) {
+        event.preventDefault();
+        this._openSamlLogin();
       }
     },
 
