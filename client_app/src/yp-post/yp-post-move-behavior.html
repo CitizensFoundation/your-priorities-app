@@ -40,9 +40,8 @@
       if (this.groups && this.adminRights) {
         var groups = [];
         groups = groups.concat(this.adminRights.GroupAdmins, this.groups);
-        groups = this._uniqueInDomain(groups, 1);
+        groups = this._uniqueInDomain(groups, this.domainId);
         this.set("availableGroups", groups);
-        debugger;
         this.async(function () {
           this.$$("#editDialog").fire('iron-resize');
         });
