@@ -54,7 +54,7 @@ models.BulkStatusUpdate.findOne({
                         if (user) {
                           doCallback();
                         } else {
-                          doCallback("User to post from not found!");
+                          doCallback("ERROR: User to post from not found!");
                         }
                       });
                     },
@@ -70,7 +70,7 @@ models.BulkStatusUpdate.findOne({
                             doCallback();
                           });
                         } else {
-                          doCallback("Cant find post: "+post.id)
+                          doCallback("ERROR: Cant find post: "+post.id)
                         }
                       });
                     },
@@ -92,7 +92,7 @@ models.BulkStatusUpdate.findOne({
                     postCallback(error);
                   });
                 } else {
-                  postCallback("No template content for postId: "+post.id);
+                  postCallback("ERROR: No template content for postId: "+post.id);
                 }
               } else {
                 postCallback();
