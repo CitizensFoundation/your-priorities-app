@@ -327,6 +327,23 @@ var updateGroupConfigParamters = function (req, group) {
     group.set('configuration.registrationQuestionsJson', null);
   }
 
+  group.set('configuration.isDataVisualizationGroup', truthValueFromBody(req.body.isDataVisualizationGroup));
+
+  group.set('configuration.dataForVisualization', (req.body.dataForVisualization && req.body.dataForVisualization!="") ? req.body.dataForVisualization : null);
+
+  if (group.configuration.dataForVisualization) {
+    try {
+      const cleaned = group.configuration.dataForVisualization.trim().replace(/\n/g, '').replace(/\r/g, '').replace(/"/, '"');
+      const jsonArray = JSON.parse(cleaned);
+      group.set('configuration.dataForVisualizationJson', jsonArray);
+    } catch (error) {
+      group.set('configuration.dataForVisualizationJson', null);
+      log.error("Error in parsing structured questions", {error});
+    }
+  } else {
+    group.set('configuration.dataForVisualizationJson', null);
+  }
+
   group.set('configuration.themeOverrideColorPrimary', (req.body.themeOverrideColorPrimary && req.body.themeOverrideColorPrimary!="") ? req.body.themeOverrideColorPrimary : null);
   group.set('configuration.themeOverrideColorAccent', (req.body.themeOverrideColorAccent && req.body.themeOverrideColorAccent!="") ? req.body.themeOverrideColorAccent : null);
   group.set('configuration.customUserNamePrompt', (req.body.customUserNamePrompt && req.body.customUserNamePrompt!="") ? req.body.customUserNamePrompt : null);
