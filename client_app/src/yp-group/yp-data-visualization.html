@@ -1,0 +1,247 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html" >
+
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+
+<link rel="import" href="../yp-app-globals/yp-app-icons.html">
+<link rel="import" href="../yp-behaviors/yp-language-behavior.html">
+<link rel="import" href="../yp-behaviors/yp-card-mouse-behavior.html">
+<script type="text/javascript" src="chart.min.js"></script>
+
+<dom-module id="yp-data-visualization">
+
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+      :host {
+          margin-top: 16px;
+      }
+
+      canvas {
+      }
+
+      .wrapper {
+        position: relative;
+        display: inline-block;
+        margin-left: 16px;
+        margin-right: 16px;
+      }
+
+      .text{
+        position: absolute;
+        text-align: center;
+        width: 100%;
+        line-height: 190px;
+        font-size: 28px;
+      }
+
+      .text[small] {
+        line-height: 170px;
+      }
+
+      canvas{
+        position: relative;
+        z-index: 1;
+      }
+
+      .header {
+        font-size: 28px;
+        margin-bottom: 8px;
+        margin-top: 16px;
+      }
+
+      .groupName {
+        font-size: 28px;
+        margin: 8px;
+        padding: 8px;
+        color: #222;
+        margin-top: 0;
+        padding-top: 0;
+      }
+
+      .topHeader {
+          font-size: 22px;
+        margin: 8px;
+        margin-top: 0;
+        color: #111;
+      }
+
+      .firstTopHeader {
+        color: #333;
+      }
+
+      .targetText {
+        margin-top: 8px;
+        margin-bottom: 8px;
+        font-size: 22px;
+        text-align: center;
+      }
+
+      .stage[not-small] {
+          box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14),
+          0 1px 5px 0 rgba(0, 0, 0, 0.12),
+          0 3px 1px -2px rgba(0, 0, 0, 0.2);
+      }
+
+      .stage {
+        background-color: #fefefe;
+        padding: 16px;
+        padding-top: 24px;
+        width: 520px;
+        margin: 16px;
+        margin-bottom: 8px;
+      }
+
+      .stageTop {
+        background-color: #fefefe;
+        padding: 16px;
+        width: 520px;
+        margin: 16px;
+        margin-bottom: 8px;
+        padding-top: 8px;
+      }
+
+      [hidden] {
+          display: none !important;;
+      }
+
+    </style>
+
+    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
+
+    <div class="layout vertical center-center">
+      <div class="layout vertical stage shadow-elevation-2dp center-center" not-small$="[[!small]]">
+        <div class="layout vertical groupName" hidden$="[[small]]">
+          Kyrgyz Casa-1000 CSP climate targets
+        </div>
+        <div class="topHeader firstTopHeader" hidden$="[[small]]">
+          [[t('overall')]]
+        </div>
+        <div class="layout horizontal center-center">
+          <div>
+            <div id="breakdownWrap" class="wrapper"><div class="text" small$="[[small]]">[[data.overallTargetPercent]]%</div>
+              <canvas id="overallTarget" width="[[canvasSize]]" height="[[canvasSize]]"></canvas>
+            </div>
+            <div class="layout vertical targetText">
+              [[t('target')]]:  [[formatAmount(data.overallTargetAmount)]]
+            </div>
+          </div>
+          <div>
+            <div id="breakdownWrapTwo" class="wrapper"><div class="text" small$="[[small]]">[[data.overallActualPercent]]%</div>
+              <canvas id="overallActual" width="[[canvasSize]]" height="[[canvasSize]]"></canvas>
+            </div>
+            <div class="layout vertical targetText">
+              [[t('actual')]]:   [[formatAmount(data.overallActualAmount)]]
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="layout vertical stage shadow-elevation-2dp center-center" not-small$="[[!small]]" hidden$="[[small]]">
+        <div class="layout vertical topHeader">
+          [[data.currentYear]]
+        </div>
+        <div class="layout horizontal center-center">
+          <div>
+            <div id="breakdownWrapA" class="wrapper"><div class="text" small$="[[small]]">[[data.yearTargetPercent]]%</div>
+              <canvas id="yearTarget" width="[[canvasSize]]" height="[[canvasSize]]"></canvas>
+            </div>
+            <div class="layout vertical targetText">
+              [[t('target')]]: [[formatAmount(data.yearTargetAmount)]]
+            </div>
+          </div>
+          <div>
+            <div id="breakdownWrapTwoA" class="wrapper"><div class="text" small$="[[small]]">[[data.yearActualPercent]]%</div>
+              <canvas id="yearActual" width="[[canvasSize]]" height="[[canvasSize]]"></canvas>
+            </div>
+            <div class="layout vertical targetText">
+              [[t('actual')]]: [[formatAmount(data.yearActualAmount)]]
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'yp-data-visualization',
+
+      properties: {
+        data: {
+          type: Object
+        },
+
+        small: {
+          type: Boolean,
+          value: true
+        },
+
+        canvasSize: {
+          type: Number,
+          computed: '_canvasSize(small)'
+        }
+      },
+
+      _canvasSize: function(small) {
+        return small ? 170 : 190;
+      },
+
+      behaviors: [
+        Polymer.ypLanguageBehavior,
+        Polymer.ypCardMouseBehavior
+      ],
+
+      ready: function(){
+        this.async(function () {
+          this._drawCharts();
+        }, 100);
+      },
+
+      formatAmount: function (amount) {
+        return `$${amount}m`;
+      },
+
+      _drawCharts: function () {
+        this._drawChart("#overallTarget", this.data.overallTargetPercent, this.t('overall'), '#5bac51');
+        this._drawChart("#overallActual", this.data.overallActualPercent, this.t('actual'), '#5bac51');
+        this._drawChart("#yearTarget", this.data.yearTargetPercent, this.t('overall'),'#004f77')
+        this._drawChart("#yearActual", this.data.yearActualPercent, this.t('actual'),'#004f77')
+      },
+
+      _drawChart: function(chartId, percentDone, labelText, color, hideGray){
+        var chart = new Chart(this.$$(chartId).getContext('2d'), {
+          type: 'doughnut',
+          data: {
+            labels: [labelText,labelText],
+            datasets: [{
+              data: [percentDone,percentDone-100],
+              borderColor: [
+                hideGray ? 'transparent' : '#FFF',
+                hideGray ? 'transparent' : '#FFF',
+              ],
+              backgroundColor: [
+                color,
+                hideGray ? 'transparent' : 'rgb(220,220,220)'
+              ],
+            }]
+          },
+          options: {
+            legend: {
+              display: false
+            },
+            tooltips: {
+              callbacks: {
+                label: function(tooltipItem) {
+                  return tooltipItem.yLabel;
+                }
+              }
+            }
+          }
+        });
+      }
+    });
+  </script>
+</dom-module>

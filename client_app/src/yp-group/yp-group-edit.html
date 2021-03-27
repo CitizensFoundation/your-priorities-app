@@ -108,7 +108,7 @@
         margin-top: 16px;
       }
 
-      #structuredQuestionsJsonErrorInfo {
+      #structuredQuestionsJsonErrorInfo, #registrationQuestionsJsonErrorInfo, #dataForVisualizationJsonError {
         margin-top: 0px;
         margin-bottom: 8px;
         color: #F00;
@@ -797,6 +797,23 @@
 
         <div id="registrationQuestionsJsonErrorInfo" hidden$="[[!registrationQuestionsJsonError]]">[[t('structuredQuestionsJsonFormatNotValid')]]</div>
 
+        <paper-checkbox id="isDataVisualizationGroup" name="isDataVisualizationGroup" on-tap="_isDataVisualizationGroupClick" checked$="{{group.configuration.isDataVisualizationGroup}}">[[t('isDataVisualizationGroup')]]</paper-checkbox>
+
+        <paper-textarea id="dataForVisualization"
+                        name="dataForVisualization"
+                        type="text"
+                        hidden$="[[!isDataVisualizationGroup]]"
+                        rows="4"
+                        always-float-label="[[group.configuration.dataForVisualization]]"
+                        maxrows="8"
+                        on-value-changed="_dataForVisualizationChanged"
+                        max-rows="8"
+                        label="[[t('dataForVisualization')]]"
+                        value="{{group.configuration.dataForVisualization}}">
+        </paper-textarea>
+
+        <div id="dataForVisualizationJsonError" hidden$="[[!dataForVisualizationJsonError]]">[[t('structuredQuestionsJsonFormatNotValid')]]</div>
+
         <input type="hidden" name="hideAllTabs" value$="[[hideAllTabs]]">
         <input type="hidden" name="hideNewPostOnPostPage" value$="[[hideNewPostOnPostPage]]">
         <input type="hidden" name="newPointOptional" value$="[[newPointOptional]]">
@@ -977,10 +994,24 @@
         value: false
       },
 
+      dataForVisualizationJsonError: {
+        type: Boolean,
+        value: false
+      },
+
       maxObjectivesLength: {
         type: Number,
         value: 300
+      },
+
+      isDataVisualizationGroup: {
+        type: Boolean,
+        value: false
       }
+    },
+
+    _isDataVisualizationGroupClick: function () {
+      this.set('isDataVisualizationGroup', this.$$("#isDataVisualizationGroup").checked);
     },
 
     _objectivesChanged: function (event) {
@@ -1035,6 +1066,25 @@
         }
       } else {
         this.set('registrationQuestionsJsonError', false);
+      }
+    },
+
+    _dataForVisualizationChanged: function (event, detail) {
+      if (detail && detail.value) {
+        var data = detail.value.trim();
+        if (data.startsWith("[") || data.startsWith("{")) {
+          var jsonError = false;
+          try {
+            JSON.parse(data);
+          } catch (e) {
+            jsonError = true;
+          }
+          this.set('dataForVisualizationJsonError', jsonError);
+        } else {
+          this.set('dataForVisualizationJsonError', false);
+        }
+      } else {
+        this.set('dataForVisualizationJsonError', false);
       }
     },
 
@@ -1183,6 +1233,10 @@
         this._setFromConfiguration('allowPointVideoUploads', true);
         this._setFromConfiguration('allowPostAudioUploads', true);
         this._setFromConfiguration('allowPointAudioUploads', true);
+
+        if (group.configuration && group.configuration.isDataVisualizationGroup) {
+          this.set('isDataVisualizationGroup', true);
+        }
 
         this.async(function () {
           if (this.community) {

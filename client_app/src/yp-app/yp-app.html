@@ -384,7 +384,8 @@
           <yp-domain id="domainPage" name="domain" id-route$="[[domainSubRoute]]" on-change-header="onChangeHeader"></yp-domain>
           <yp-community id="communityPage" name="community" id-route$="[[communitySubRoute]]" on-change-header="onChangeHeader"></yp-community>
           <yp-community-folder id="communityFolderPage" name="community_folder" id-route$="[[communityFolderSubRoute]]" on-change-header="onChangeHeader"></yp-community-folder>
-          <yp-group  id="groupPage" name="group" id-route$="[[groupSubRoute]]" on-change-header="onChangeHeader"></yp-group>
+          <yp-group id="groupPage" name="group" id-route$="[[groupSubRoute]]" on-change-header="onChangeHeader"></yp-group>
+          <yp-group-data-viz id="dataVizGroupPage" name="group_data_viz" id-route$="[[groupSubRoute]]" on-change-header="onChangeHeader"></yp-group-data-viz>
           <yp-post id="postPage" name="post" id-route$="[[postSubRoute]]" on-change-header="onChangeHeader"></yp-post>
           <yp-user id="userPage" name="user" id-route$="[[userSubRoute]]" on-change-header="onChangeHeader"></yp-user>
           <yp-survey-group id="surveyPage" name="survey" id-route$="[[surveySubRoute]]" on-change-header="onChangeHeader"></yp-survey-group>
@@ -912,6 +913,11 @@
             if (this.$$("#groupPage") && typeof this.$$("#groupPage").refresh !== "undefined") {
               this.$$("#groupPage").refresh(true);
             }
+          } else if (route.path.indexOf('data_viz_group') > -1) {
+            this.set('groupSubRoute', this.subRoute);
+            if (this.$$("#dataVizGroupPage") && typeof this.$$("#dataVizGroupPage").refresh !== "undefined") {
+              this.$$("#dataVizGroupPage").refresh(true);
+            }
           } else if (route.path.indexOf('post') > -1) {
             this.set('postSubRoute', this.subRoute);
             if (this.$$("#postPage") && typeof this.$$("#postPage").refresh !== "undefined") {
@@ -1079,7 +1085,11 @@
 
       _pageChanged: function(page, oldPage) {
         console.log("Page changed to "+page);
-        if (page && page!=="survey") {
+        if (page && page==='group_data_viz') {
+          this.loadDataViz();
+        }
+
+        if (page && (page!=="survey" && page!=="group_data_viz")) {
           var resolvedPageUrl;
           if (page=="view-404") {
             resolvedPageUrl = this.resolveUrl("yp-view-404.html");
@@ -1208,6 +1218,10 @@
 
       getRatingsDialogAsync: function (callback) {
         this.$$("#dialogContainer").getRatingsDialogAsync(callback);
+      },
+
+      loadDataViz: function () {
+        this.$$("#dialogContainer").loadDataViz();
       },
 
       getUsersGridAsync: function (callback) {

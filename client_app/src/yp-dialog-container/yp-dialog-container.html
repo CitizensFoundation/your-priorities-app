@@ -242,6 +242,11 @@
           value: false
         },
 
+        haveLoadedDataViz: {
+          type: Boolean,
+          value: false
+        },
+
         loadingStartedLoggedIn: {
           type: Boolean,
           value: false
@@ -316,6 +321,14 @@
             this.set('haveLoadedDelayed', true)
           }, null, true);
         }, 3000);
+      },
+
+      loadDataViz: function () {
+        if (!this.haveLoadedDataViz) {
+          this.haveLoadedDataViz = true;
+          this.importHref(this.resolveUrl("/src/yp-dialog-container/yp-dialog-container-data-viz.html"), function () {
+          }, null, true);
+        }
       },
 
       openPixelCookieConfirm: function (facebookPixelTrackingId) {
