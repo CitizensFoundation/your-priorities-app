@@ -1,4 +1,9 @@
 {
+  "actual": "Actual",
+  "target": "Target",
+  "overall": "Overall",
+  "dataForVisualization": "Data for visualization",
+  "isDataVisualizationGroup": "Is data visualization group",
   "voteReceived": "Vote received",
   "hideGroupLevelTabs": "Hide group level tabs",
   "groupConfigurationHasBeenUpdated": "Group configuration has been updated",
