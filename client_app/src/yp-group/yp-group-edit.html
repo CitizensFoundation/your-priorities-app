@@ -1187,7 +1187,11 @@
     },
 
     _finishRedirect: function (group) {
-      this.redirectTo("/group/" + group.id);
+      if (group && group.configuration.isDataVisualizationGroup) {
+        this.redirectTo("/group_data_viz/" + group.id);
+      } else {
+        this.redirectTo("/group/" + group.id);
+      }
       window.appGlobals.activity('completed', 'editGroup');
     },
 

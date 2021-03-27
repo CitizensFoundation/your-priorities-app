@@ -276,15 +276,25 @@
       [hidden] {
         display: none !important;
       }
+
+      .group-name[has-data-viz] {
+          padding-top: 26px;
+      }
     </style>
 
     <iron-media-query query="(min-width: 600px)" query-matches="{{wide}}"></iron-media-query>
 
     <paper-card class="groupCard" animated elevation="[[elevation]]" class="groupCard">
       <template is="dom-if" if="[[!group.CommunityLink]]">
-        <iron-image hidden$="[[!noImage]]" header-mode$="[[headerMode]]" archived$="[[archived]]" sizing="cover" class="main-image withPointer" src="https://i.imgur.com/sdsFAoT.png" on-tap="_goToGroup"></iron-image>
-        <iron-image hidden$="[[noImage]]" archived$="[[archived]]" class="logo withPointer" alt$="[[group.name]]" sizing="cover" on-tap="_goToGroup" preload src="[[groupLogoImagePath]]"></iron-image>
-        <yp-magic-text id="groupName"  class="group-name" widetext$="[[wideText]]" text-type="groupName" content-language="[[group.language]]"
+        <template is="dom-if" if="[[visualizationData]]">
+          <yp-data-visualization small data="[[visualizationData]]"></yp-data-visualization>
+        </template>
+        <template is="dom-if" if="[[!visualizationData]]">
+          <iron-image hidden$="[[!noImage]]" header-mode$="[[headerMode]]" archived$="[[archived]]" sizing="cover" class="main-image withPointer" src="https://i.imgur.com/sdsFAoT.png" on-tap="_goToGroup"></iron-image>
+          <iron-image hidden$="[[noImage]]" archived$="[[archived]]" class="logo withPointer" alt$="[[group.name]]" sizing="cover" on-tap="_goToGroup" preload src="[[groupLogoImagePath]]"></iron-image>
+        </template>
+
+        <yp-magic-text id="groupName" has-data-viz$="[[visualizationData]]" class="group-name" widetext$="[[wideText]]" text-type="groupName" content-language="[[group.language]]"
                        archived$="[[archived]]" featured$="[[featured]]" on-tap="_goToGroup"
                        disable-translation="[[group.configuration.disableNameAutoTranslation]]"
                        text-only content="[[groupName]]" content-id="[[group.id]]">
@@ -343,6 +353,11 @@
           type: Boolean,
           value: false,
           computed: '_hasGroupAccess(group, gotAdminRights)'
+        },
+
+        visualizationData: {
+          type: Object,
+          value: null
         }
       },
 
@@ -382,7 +397,7 @@
         } else {
           return false;
         }
-      },
+      }
     });
   </script>
 </dom-module>

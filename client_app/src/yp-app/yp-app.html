@@ -908,12 +908,12 @@
             if (this.$$("#communityPage") && typeof this.$$("#communityPage").refresh !== "undefined") {
               this.$$("#communityPage").refresh();
             }
-          } else if (route.path.indexOf('group') > -1) {
+          } else if ((route.path.indexOf('group') > -1) && !(route.path.indexOf('group_data_viz') > -1)) {
             this.set('groupSubRoute', this.subRoute);
             if (this.$$("#groupPage") && typeof this.$$("#groupPage").refresh !== "undefined") {
               this.$$("#groupPage").refresh(true);
             }
-          } else if (route.path.indexOf('data_viz_group') > -1) {
+          } else if (route.path.indexOf('group_data_viz') > -1) {
             this.set('groupSubRoute', this.subRoute);
             if (this.$$("#dataVizGroupPage") && typeof this.$$("#dataVizGroupPage").refresh !== "undefined") {
               this.$$("#dataVizGroupPage").refresh(true);

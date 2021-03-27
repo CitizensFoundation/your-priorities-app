@@ -55,9 +55,9 @@
       }
 
       .edit {
-        color: #FFF;
+        color: #000;
         position: absolute;
-        top: 0;
+        top: 64px;
         right: 0;
         padding-right: 0;
         margin-right: 0;
@@ -126,7 +126,7 @@
             </yp-magic-text>
           </div>
           <yp-data-visualization group="[[group]]" data="[[group.configuration.dataForVisualizationJson]]"></yp-data-visualization>
-          <paper-menu-button class="edit" horizontal-align="[[editMenuAlign]]" hidden hidddden$="[[!showMenuItem]]">
+          <paper-menu-button class="edit" horizontal-align="right" hidden$="[[!showMenuItem]]">
             <paper-icon-button aria-label$="[[t('openGroupMenu')]]" icon="more-vert" slot="dropdown-trigger"></paper-icon-button>
             <paper-listbox slot="dropdown-content" on-iron-select="_menuSelection">
               <paper-item hidden$="[[!hasGroupAccess]]" id="editMenuItem">[[t('group.edit')]]</paper-item>
@@ -195,6 +195,12 @@
           computed: '_hasGroupAccess(group, gotAdminRights)'
         },
 
+        showMenuItem: {
+          type: Boolean,
+          value: false,
+          computed: '_showMenuItem(hasGroupAccess, group)'
+        },
+
         groupAccessText: {
           type: String,
           computed: '_groupAccessText(group, language)'
@@ -204,6 +210,10 @@
           type: Boolean,
           value: false
         }
+      },
+
+      _showMenuItem: function (hasGroupAccess, group) {
+        return hasGroupAccess
       },
 
       observers: [
@@ -227,6 +237,13 @@
         if (groupId && groupId!=this.lastValidGroupId) {
           this._getGroup();
         }
+      },
+
+      _refresh: function (group) {
+        if (group) {
+          this.set('group', group);
+        }
+        this.fire("update-group");
       },
 
       setupTopHeaderImage: function (image) {
