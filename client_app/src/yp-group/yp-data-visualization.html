@@ -29,6 +29,12 @@
         margin-right: 16px;
       }
 
+      .wrapper[small] {
+        padding: 0;
+        margin-left: 8px;
+        margin-right: 8px;
+      }
+
       .text{
         position: absolute;
         text-align: center;
@@ -38,7 +44,8 @@
       }
 
       .text[small] {
-        line-height: 170px;
+        line-height: 155px;
+        font-size: 24px;
       }
 
       canvas{
@@ -94,6 +101,14 @@
         margin-bottom: 8px;
       }
 
+      .stage[small] {
+         width: 400px;
+         margin: 0;
+         padding: 8px;
+         padding-top: 20px;
+         padding-bottom: 14px;
+      }
+
       .stageTop {
         background-color: #fefefe;
         padding: 16px;
@@ -112,16 +127,16 @@
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
     <div class="layout vertical center-center">
-      <div class="layout vertical stage shadow-elevation-2dp center-center" not-small$="[[!small]]">
+      <div class="layout vertical stage shadow-elevation-2dp center-center" not-small$="[[!small]]" small$="[[small]]">
         <div class="layout vertical groupName" hidden$="[[small]]">
-          Kyrgyz Casa-1000 CSP climate targets
+          Ormosh Climate Co-Benefits Tracking
         </div>
         <div class="topHeader firstTopHeader" hidden$="[[small]]">
           [[t('overall')]]
         </div>
         <div class="layout horizontal center-center">
           <div>
-            <div id="breakdownWrap" class="wrapper"><div class="text" small$="[[small]]">[[data.overallTargetPercent]]%</div>
+            <div id="breakdownWrap" class="wrapper" small$="[[small]]"><div class="text" small$="[[small]]">[[data.overallTargetPercent]]%</div>
               <canvas id="overallTarget" width="[[canvasSize]]" height="[[canvasSize]]"></canvas>
             </div>
             <div class="layout vertical targetText">
@@ -129,7 +144,7 @@
             </div>
           </div>
           <div>
-            <div id="breakdownWrapTwo" class="wrapper"><div class="text" small$="[[small]]">[[data.overallActualPercent]]%</div>
+            <div id="breakdownWrapTwo" class="wrapper" small$="[[small]]"><div class="text" small$="[[small]]">[[data.overallActualPercent]]%</div>
               <canvas id="overallActual" width="[[canvasSize]]" height="[[canvasSize]]"></canvas>
             </div>
             <div class="layout vertical targetText">
@@ -174,9 +189,13 @@
           type: Object
         },
 
+        group: {
+          type: Object
+        },
+
         small: {
           type: Boolean,
-          value: true
+          value: false
         },
 
         canvasSize: {
@@ -186,7 +205,7 @@
       },
 
       _canvasSize: function(small) {
-        return small ? 170 : 190;
+        return small ? 155 : 190;
       },
 
       behaviors: [

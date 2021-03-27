@@ -118,29 +118,26 @@
     <div class="layout horizontal center-center wrap" aria-label="[[t('group')]]" role="banner">
       <yp-ajax large-spinner id="ajax" on-response="_groupResponse"></yp-ajax>
       <template is="dom-if" if="[[group]]">
-        <paper-material id="card" elevation="3" animated-shadow class="groupCsard textBox">
-          <div class="layout vertical center-center">
-            <div hidden admin$="[[hasGroupAccess]]" role="heading" aria-level="1" aria-label="[[group.name]]">
-              <yp-magic-text id="groupName" class="group-name"  widetext$="[[wideText]]" text-type="groupName" content-language="[[group.language]]"
-                             disable-translation="[[group.configuration.disableNameAutoTranslation]]"
-                             text-only content="[[groupName]]" content-id="[[group.id]]">
-              </yp-magic-text>
-            </div>
-            <yp-data-visualization data="[[group.configuration.dataForVisualizationJson]]"></yp-data-visualization>
-            <paper-menu-button class="edit" horizontal-align="[[editMenuAlign]]" hidden$="[[!showMenuItem]]">
-              <paper-icon-button aria-label$="[[t('openGroupMenu')]]" icon="more-vert" slot="dropdown-trigger"></paper-icon-button>
-              <paper-listbox slot="dropdown-content" on-iron-select="_menuSelection">
-                <paper-item hidden$="[[!hasGroupAccess]]" id="editMenuItem">[[t('group.edit')]]</paper-item>
-                <paper-item hidden$="[[!hasGroupAccess]]" id="usersMenuItem">[[t('group.users')]]</paper-item>
-                <paper-item hidden$="[[!hasGroupAccess]]" id="adminsMenuItem">[[t('group.admins')]]</paper-item>
-                <paper-item hidden$="[[!hasGroupAccess]]" id="pagesMenuItem">[[t('pages.managePages')]]</paper-item>
-                <paper-item hidden$="[[!hasGroupAccess]]" id="deleteMenuItem">[[t('group.delete')]]</paper-item>
-                <paper-item id="openAdminApp" hidden$="[[!hasGroupAccess]]">[[t('editTranslations')]]</paper-item>
-              </paper-listbox>
-            </paper-menu-button>
+        <div class="layout vertical center-center">
+          <div hidden admin$="[[hasGroupAccess]]" role="heading" aria-level="1" aria-label="[[group.name]]">
+            <yp-magic-text id="groupName" class="group-name"  widetext$="[[wideText]]" text-type="groupName" content-language="[[group.language]]"
+                           disable-translation="[[group.configuration.disableNameAutoTranslation]]"
+                           text-only content="[[groupName]]" content-id="[[group.id]]">
+            </yp-magic-text>
           </div>
-        </paper-material>
-
+          <yp-data-visualization group="[[group]]" data="[[group.configuration.dataForVisualizationJson]]"></yp-data-visualization>
+          <paper-menu-button class="edit" horizontal-align="[[editMenuAlign]]" hidden hidddden$="[[!showMenuItem]]">
+            <paper-icon-button aria-label$="[[t('openGroupMenu')]]" icon="more-vert" slot="dropdown-trigger"></paper-icon-button>
+            <paper-listbox slot="dropdown-content" on-iron-select="_menuSelection">
+              <paper-item hidden$="[[!hasGroupAccess]]" id="editMenuItem">[[t('group.edit')]]</paper-item>
+              <paper-item hidden$="[[!hasGroupAccess]]" id="usersMenuItem">[[t('group.users')]]</paper-item>
+              <paper-item hidden$="[[!hasGroupAccess]]" id="adminsMenuItem">[[t('group.admins')]]</paper-item>
+              <paper-item hidden$="[[!hasGroupAccess]]" id="pagesMenuItem">[[t('pages.managePages')]]</paper-item>
+              <paper-item hidden$="[[!hasGroupAccess]]" id="deleteMenuItem">[[t('group.delete')]]</paper-item>
+              <paper-item id="openAdminApp" hidden$="[[!hasGroupAccess]]">[[t('editTranslations')]]</paper-item>
+            </paper-listbox>
+          </paper-menu-button>
+        </div>
       </template>
       <yp-ajax id="pagesAjax" on-response="_pagesResponse"></yp-ajax>
 
