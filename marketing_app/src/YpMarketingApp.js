@@ -1,5 +1,5 @@
 import {  html, css } from 'lit-element';
-import { YpBaseElement } from './../../client_common/yp-base-element/YpBaseElement.js';
+import { YpBaseElement } from './YpBaseElement.js';
 import './YpMarketingList.js';
 import './YpMarketingCampaigns.js';
 import './YpEditMarketingCampaign.js';
