@@ -531,12 +531,12 @@ module.exports = (sequelize, DataTypes) => {
 
   Post.getVideosForPosts = (postIds, done) => {
     sequelize.models.Video.findAll({
-      attributes:  ['id','formats','viewable','updated_at','public_meta'],
+      attributes:  ['id','formats','viewable','created_at','public_meta'],
       include: [
         {
           model: sequelize.models.Image,
           as: 'VideoImages',
-          attributes:["formats",'updated_at'],
+          attributes:["formats",'created_at'],
           required: false
         },
         {
@@ -553,10 +553,10 @@ module.exports = (sequelize, DataTypes) => {
         }
       ],
       order: [
-        [ { model: sequelize.models.Image, as: 'VideoImages' }, 'updated_at', 'asc' ]
+        [ { model: sequelize.models.Image, as: 'VideoImages' }, 'created_at', 'asc' ]
       ]
     }).then(videos => {
-      videos = _.orderBy(videos, ['updated_at'],['desc']);
+      videos = _.orderBy(videos, ['created_at'],['desc']);
       done(null, videos);
     }).catch( error => {
       done(error);
