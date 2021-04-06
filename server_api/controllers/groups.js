@@ -1213,12 +1213,12 @@ router.get('/:id/configuration', auth.can('view group'), (req, res) => {
 
 const addVideosToGroup = (group, done) => {
   models.Video.findAll({
-    attributes:  ['id','formats','viewable','updated_at','public_meta'],
+    attributes:  ['id','formats','viewable','created_at','public_meta'],
     include: [
       {
         model: models.Image,
         as: 'VideoImages',
-        attributes:["formats",'updated_at'],
+        attributes:["formats",'created_at'],
         required: false
       },
       {
@@ -1232,11 +1232,10 @@ const addVideosToGroup = (group, done) => {
       }
     ],
     order: [
-      [ { model: models.Image, as: 'VideoImages' }, 'updated_at', 'asc' ]
+      [ { model: models.Image, as: 'VideoImages' }, 'created_at', 'asc' ]
     ]
   }).then(videos => {
-    videos = _.orderBy(videos, ['updated_at'],['desc']);
-    group.dataValues.GroupLogoVideos = _.orderBy(videos, (video) => video.updated_at,['desc']);
+    group.dataValues.GroupLogoVideos = _.orderBy(videos, ['created_at'],['desc']);
     done();
   }).catch( error => {
     done(error);

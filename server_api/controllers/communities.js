@@ -400,12 +400,12 @@ const addVideosAndCommunityLinksToGroup = (groups, done) => {
 
     //TODO: Limit then number of VideoImages to 1 - there is one very 10 sec
     models.Video.findAll({
-      attributes:  ['id','formats','viewable','public_meta','updated_at'],
+      attributes:  ['id','formats','viewable','public_meta','created_at'],
       include: [
         {
           model: models.Image,
           as: 'VideoImages',
-          attributes:["formats",'updated_at'],
+          attributes:["formats",'created_at'],
           required: false
         },
         {
@@ -419,13 +419,13 @@ const addVideosAndCommunityLinksToGroup = (groups, done) => {
         }
       ],
       order: [
-        [ { model: models.Image, as: 'VideoImages' } ,'updated_at', 'asc' ]
+        [ { model: models.Image, as: 'VideoImages' } ,'created_at', 'asc' ]
       ]
     }).then(videos => {
       if (group.dataValues) {
-        group.dataValues.GroupLogoVideos = _.orderBy(videos, (video) => video.updated_at,['desc']);
+        group.dataValues.GroupLogoVideos = _.orderBy(videos, ['created_at'],['desc']);
       } else {
-        group.GroupLogoVideos = _.orderBy(videos, (video) => video.updated_at,['desc']);
+        group.GroupLogoVideos = _.orderBy(videos, ['created_at'],['desc']);
       }
       forEachCallback();
     }).catch( error => {
