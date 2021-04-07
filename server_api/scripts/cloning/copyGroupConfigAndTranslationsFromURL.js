@@ -76,101 +76,105 @@ async.series([
         const fromGroupId = splitLine[0];
         const toGroupId = splitLine[1];
 
-        let fromGroup;
-        let toGroup;
+        if (fromGroupId===toGroupId) {
+          forEachCallback();
+        } else {
+          let fromGroup;
+          let toGroup;
 
-        async.series([
-          innerSeriesCallback => {
-            models.Group.findOne({
-              where: {
-                id: fromGroupId
-              },
-              attributes: ['id','name','configuration']
-            }).then( groupIn => {
-              if (groupIn) {
-                fromGroup = groupIn;
-                innerSeriesCallback();
-              } else {
-                innerSeriesCallback("from group not found");
-              }
-            }).catch( error => {
-              innerSeriesCallback(error)
-            })
-          },
-          innerSeriesCallback => {
-            models.Group.findOne({
-              where: {
-                id: toGroupId
-              },
-              attributes: ['id','name','configuration']
-            }).then( groupIn => {
-              if (groupIn) {
-                toGroup = groupIn;
-                innerSeriesCallback();
-              } else {
-                innerSeriesCallback("to group not found");
-              }
-            }).catch( error => {
-              innerSeriesCallback(error)
-            })
-          },
-          innerSeriesCallback => {
-            fromGroup.hasGroupAdmins(user).then((results=> {
-              if (results) {
-                innerSeriesCallback();
-              } else {
-                innerSeriesCallback("No access to fromGroup: "+fromGroup.id);
-              }
-            })).catch( error => {
-              innerSeriesCallback(error);
-            })
-          },
-          innerSeriesCallback => {
-            toGroup.hasGroupAdmins(user).then((results=> {
-              if (results) {
-                innerSeriesCallback();
-              } else {
-                innerSeriesCallback("No access to toGroup: "+toGroup.id);
-              }
-            })).catch( error => {
-              innerSeriesCallback(error);
-            })
-          },
-          innerSeriesCallback => {
-            if (type==="onlyRegistrationQuestions") {
-              toGroup.set('configuration.registrationQuestionsJson', fromGroup.configuration.registrationQuestionsJson);
-              toGroup.set('configuration.registrationQuestions', fromGroup.configuration.registrationQuestions);
-              toGroup.save().then(()=>{
-                finalOutput+=urlToAddAddFront+"group/"+toGroup.id+"\n";
-                innerSeriesCallback();
+          async.series([
+            innerSeriesCallback => {
+              models.Group.findOne({
+                where: {
+                  id: fromGroupId
+                },
+                attributes: ['id','name','configuration']
+              }).then( groupIn => {
+                if (groupIn) {
+                  fromGroup = groupIn;
+                  innerSeriesCallback();
+                } else {
+                  innerSeriesCallback("from group not found");
+                }
               }).catch( error => {
+                innerSeriesCallback(error)
+              })
+            },
+            innerSeriesCallback => {
+              models.Group.findOne({
+                where: {
+                  id: toGroupId
+                },
+                attributes: ['id','name','configuration']
+              }).then( groupIn => {
+                if (groupIn) {
+                  toGroup = groupIn;
+                  innerSeriesCallback();
+                } else {
+                  innerSeriesCallback("to group not found");
+                }
+              }).catch( error => {
+                innerSeriesCallback(error)
+              })
+            },
+            innerSeriesCallback => {
+              fromGroup.hasGroupAdmins(user).then((results=> {
+                if (results) {
+                  innerSeriesCallback();
+                } else {
+                  innerSeriesCallback("No access to fromGroup: "+fromGroup.id);
+                }
+              })).catch( error => {
                 innerSeriesCallback(error);
               })
-            } else if (type === "configurationObject") {
-              toGroup.set('configuration', fromGroup.configuration);
-              toGroup.save().then(()=>{
-                finalOutput+=urlToAddAddFront+"group/"+toGroup.id+"\n";
-                innerSeriesCallback();
-              }).catch( error => {
+            },
+            innerSeriesCallback => {
+              toGroup.hasGroupAdmins(user).then((results=> {
+                if (results) {
+                  innerSeriesCallback();
+                } else {
+                  innerSeriesCallback("No access to toGroup: "+toGroup.id);
+                }
+              })).catch( error => {
                 innerSeriesCallback(error);
               })
-            } else {
-              innerSeriesCallback();
+            },
+            innerSeriesCallback => {
+              if (type==="onlyRegistrationQuestions") {
+                toGroup.set('configuration.registrationQuestionsJson', fromGroup.configuration.registrationQuestionsJson);
+                toGroup.set('configuration.registrationQuestions', fromGroup.configuration.registrationQuestions);
+                toGroup.save().then(()=>{
+                  finalOutput+=urlToAddAddFront+"group/"+toGroup.id+"\n";
+                  innerSeriesCallback();
+                }).catch( error => {
+                  innerSeriesCallback(error);
+                })
+              } else if (type === "configurationObject") {
+                toGroup.set('configuration', fromGroup.configuration);
+                toGroup.save().then(()=>{
+                  finalOutput+=urlToAddAddFront+"group/"+toGroup.id+"\n";
+                  innerSeriesCallback();
+                }).catch( error => {
+                  innerSeriesCallback(error);
+                })
+              } else {
+                innerSeriesCallback();
+              }
+            },
+            innerSeriesCallback => {
+              if (type === "onlyRegistrationQuestions") {
+                cloneTranslationForConfig("GroupRegQuestions", fromGroup.id, toGroup.id, innerSeriesCallback);
+              } else if (type === "everything") {
+                cloneTranslationForConfig("GroupRegQuestions", fromGroup.id, toGroup.id, innerSeriesCallback);
+                cloneTranslationForConfig("GroupQuestions", fromGroup.id, toGroup.id, innerSeriesCallback);
+              } else {
+                innerSeriesCallback();
+              }
             }
-          },
-          innerSeriesCallback => {
-            if (type === "onlyRegistrationQuestions") {
-              cloneTranslationForConfig("GroupRegQuestions", fromGroup.id, toGroup.id, innerSeriesCallback);
-            } else if (type === "everything") {
-              cloneTranslationForConfig("GroupRegQuestions", fromGroup.id, toGroup.id, innerSeriesCallback);
-              cloneTranslationForConfig("GroupQuestions", fromGroup.id, toGroup.id, innerSeriesCallback);
-            } else {
-              innerSeriesCallback();
-            }
-          }
-        ], error => {
-          forEachCallback(error);
-        })
+          ], error => {
+            forEachCallback(error);
+          })
+        }
       }
     }, error => {
       seriesCallback(error)
