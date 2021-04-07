@@ -1,21 +1,23 @@
-const models = require('../models');
+const models = require('../../models');
 const async = require('async');
 const ip = require('ip');
 const _ = require('lodash');
 const fs = require('fs');
 const request = require('request');
-const cloneTranslationForConfig = require('../active-citizen/utils/translation_helpers').cloneTranslationForConfig;
+const cloneTranslationForConfig = require('../../active-citizen/utils/translation_cloning').cloneTranslationForConfig;
 
+/*
 const userId = process.argv[2];
 const type = process.argv[3];
 const urlToConfig = process.argv[4];
 const urlToAddAddFront = process.argv[5];
+*/
 
-/*
-const userId = "850" //process.argv[3];
-const urlToConfig = "https://yrpri-eu-direct-assets.s3-eu-west-1.amazonaws.com/ClonesARIS01.03-CFEdit.xlsx+-+OSH.csv";// process.argv[4];
-//const urlToAddAddFront = "https://kyrgyz-aris.yrpri.org/";
-const urlToAddAddFront = "http://localhost:4242/"; //process.argv[5];*/
+const userId = "84397" //process.argv[3];
+const type = "onlyRegistrationQuestions";
+const urlToConfig = "https://yrpri-eu-direct-assets.s3-eu-west-1.amazonaws.com/CopyConfigGroups7421.csv";
+const urlToConfigCommunity = "https://yrpri-eu-direct-assets.s3-eu-west-1.amazonaws.com/copyConfigCommunities7421.csv";
+const urlToAddAddFront = "https://kyrgyz-aris.yrpri.org/";
 
 // node server_api/scripts/cloneWBFromUrlScriptAndCreateLinks.js 3 84397 https://yrpri-eu-direct-assets.s3-eu-west-1.amazonaws.com/CF_clone_WB_140221.csv https://kyrgyz-aris.yrpri.org/
 
@@ -117,7 +119,7 @@ async.series([
               if (results) {
                 innerSeriesCallback();
               } else {
-                innerSeriesCallback("No access to fromGroup");
+                innerSeriesCallback("No access to fromGroup: "+fromGroup.id);
               }
             })).catch( error => {
               innerSeriesCallback(error);
@@ -128,7 +130,7 @@ async.series([
               if (results) {
                 innerSeriesCallback();
               } else {
-                innerSeriesCallback("No access to toGroup");
+                innerSeriesCallback("No access to toGroup: "+toGroup.id);
               }
             })).catch( error => {
               innerSeriesCallback(error);
@@ -144,7 +146,7 @@ async.series([
               }).catch( error => {
                 innerSeriesCallback(error);
               })
-            } else if (type === "everything") {
+            } else if (type === "configurationObject") {
               toGroup.set('configuration', fromGroup.configuration);
               toGroup.save().then(()=>{
                 finalOutput+=urlToAddAddFront+"group/"+toGroup.id+"\n";
@@ -167,7 +169,7 @@ async.series([
             }
           }
         ], error => {
-          seriesCallback(error);
+          forEachCallback(error);
         })
       }
     }, error => {

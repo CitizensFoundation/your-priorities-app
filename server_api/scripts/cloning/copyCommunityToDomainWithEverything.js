@@ -1,5 +1,5 @@
-const models = require('../models');
-const copyCommunityWithEverything = require('../utils/copy_utils').copyCommunityWithEverything;
+const models = require('../../models');
+const copyCommunityWithEverything = require('../../utils/copy_utils').copyCommunityWithEverything;
 const async = require('async');
 const ip = require('ip');
 

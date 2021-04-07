@@ -1,5 +1,5 @@
-const models = require('../models');
-const copyCommunityNoUsersNoEndorsements = require('../utils/copy_utils').copyCommunityNoUsersNoEndorsements;
+const models = require('../../models');
+const copyCommunityNoUsersNoEndorsements = require('../../utils/copy_utils').copyCommunityNoUsersNoEndorsements;
 const async = require('async');
 const ip = require('ip');
 

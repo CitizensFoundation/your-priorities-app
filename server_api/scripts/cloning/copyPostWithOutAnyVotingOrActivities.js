@@ -1,5 +1,5 @@
-const models = require('../models');
-const copyPost = require('../utils/copy_utils').copyPost;
+const models = require('../../models');
+const copyPost = require('../../utils/copy_utils').copyPost;
 const async = require('async');
 const ip = require('ip');
 

@@ -1,11 +1,11 @@
-const models = require('../models');
+const models = require('../../models');
 const async = require('async');
 const ip = require('ip');
 const _ = require('lodash');
 const fs = require('fs');
 const request = require('request');
-const copyCommunityWithEverything = require('../utils/copy_utils').copyCommunityWithEverything;
-const updateTranslation = require('../active-citizen/utils/translation_helpers').updateTranslation;
+const copyCommunityWithEverything = require('../../utils/copy_utils').copyCommunityWithEverything;
+const updateTranslation = require('../../active-citizen/utils/translation_helpers').updateTranslation;
 
 const domainId = process.argv[2];
 const userId = process.argv[3];

@@ -1,10 +1,10 @@
-const models = require('../models');
+const models = require('../../models');
 const async = require('async');
 const ip = require('ip');
 const _ = require('lodash');
 const fs = require('fs');
 const request = require('request');
-const copyCommunityWithEverything = require('../utils/copy_utils').copyCommunityWithEverything;
+const copyCommunityWithEverything = require('../../utils/copy_utils').copyCommunityWithEverything;
 
 const communityId = process.argv[2];
 const domainId = process.argv[3];
