@@ -1,4 +1,9 @@
 {
+  "actual": "Núverandi",
+  "target": "Takmark",
+  "overall": "Yfir all",
+  "dataForVisualization": "Sjónræn gögn",
+  "isDataVisualizationGroup": "Er hópur fyrir sjónræn gögn",
   "voteReceived": "Atkvæði móttekið",
   "hideGroupLevelTabs": "Fela stiku bara fyrir hóp",
   "groupConfigurationHasBeenUpdated": "Stillingum á hóp hefur verið breytt",
