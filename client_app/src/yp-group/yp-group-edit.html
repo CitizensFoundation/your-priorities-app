@@ -1053,17 +1053,13 @@
     _registrationQuestionsChanged: function (event, detail) {
       if (detail && detail.value) {
         var questions = detail.value.trim();
-        if (questions.startsWith("[") || questions.startsWith("{")) {
-          var jsonError = false;
-          try {
-            JSON.parse(questions);
-          } catch (e) {
-            jsonError = true;
-          }
-          this.set('registrationQuestionsJsonError', jsonError);
-        } else {
-          this.set('registrationQuestionsJsonError', false);
+        var jsonError = false;
+        try {
+          JSON.parse(questions);
+        } catch (e) {
+          jsonError = true;
         }
+        this.set('registrationQuestionsJsonError', jsonError);
       } else {
         this.set('registrationQuestionsJsonError', false);
       }
@@ -1072,16 +1068,11 @@
     _dataForVisualizationChanged: function (event, detail) {
       if (detail && detail.value) {
         var data = detail.value.trim();
-        if (data.startsWith("[") || data.startsWith("{")) {
-          var jsonError = false;
-          try {
-            JSON.parse(data);
-          } catch (e) {
-            jsonError = true;
-          }
-          this.set('dataForVisualizationJsonError', jsonError);
-        } else {
-          this.set('dataForVisualizationJsonError', false);
+        var jsonError = false;
+        try {
+          JSON.parse(data);
+        } catch (e) {
+          jsonError = true;
         }
       } else {
         this.set('dataForVisualizationJsonError', false);
