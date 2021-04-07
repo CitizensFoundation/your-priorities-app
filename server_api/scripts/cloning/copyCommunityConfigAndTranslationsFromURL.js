@@ -6,15 +6,15 @@ const fs = require('fs');
 const request = require('request');
 const cloneTranslationForConfig = require('../../active-citizen/utils/translation_cloning').cloneTranslationForConfig;
 
-/*const userId = process.argv[2];
+const userId = process.argv[2];
 const type = process.argv[3];
 const urlToConfig = process.argv[4];
-const urlToAddAddFront = process.argv[5];*/
+const urlToAddAddFront = process.argv[5];
 
-const userId = "89244" //process.argv[3];
+/*const userId = "89244" //process.argv[3];
 const type = "onlyThemeColors";
 const urlToConfig = "https://yrpri-eu-direct-assets.s3-eu-west-1.amazonaws.com/copyConfigCommunities7421.csv";
-const urlToAddAddFront = "https://kyrgyz-aris.yrpri.org/";
+const urlToAddAddFront = "https://kyrgyz-aris.yrpri.org/";*/
 
 // node server_api/scripts/cloneWBFromUrlScriptAndCreateLinks.js 3 84397 https://yrpri-eu-direct-assets.s3-eu-west-1.amazonaws.com/CF_clone_WB_140221.csv https://kyrgyz-aris.yrpri.org/
 
