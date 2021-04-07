@@ -6,18 +6,16 @@ const fs = require('fs');
 const request = require('request');
 const cloneTranslationForConfig = require('../../active-citizen/utils/translation_cloning').cloneTranslationForConfig;
 
-/*
 const userId = process.argv[2];
 const type = process.argv[3];
 const urlToConfig = process.argv[4];
 const urlToAddAddFront = process.argv[5];
-*/
 
-const userId = "84397" //process.argv[3];
-const type = "onlyRegistrationQuestions";
+/*const userId = "84397" //process.argv[3];
+const type = "onlyRegistrationQuestionsAndOneTimeLogin";
 const urlToConfig = "https://yrpri-eu-direct-assets.s3-eu-west-1.amazonaws.com/CopyConfigGroups7421.csv";
 const urlToConfigCommunity = "https://yrpri-eu-direct-assets.s3-eu-west-1.amazonaws.com/copyConfigCommunities7421.csv";
-const urlToAddAddFront = "https://kyrgyz-aris.yrpri.org/";
+const urlToAddAddFront = "https://kyrgyz-aris.yrpri.org/";*/
 
 // node server_api/scripts/cloneWBFromUrlScriptAndCreateLinks.js 3 84397 https://yrpri-eu-direct-assets.s3-eu-west-1.amazonaws.com/CF_clone_WB_140221.csv https://kyrgyz-aris.yrpri.org/
 
@@ -68,6 +66,7 @@ async.series([
     let index = 0;
     async.forEachSeries(config.split('\r\n'), (configLine, forEachCallback) => {
       const splitLine = configLine.split(",");
+      process.stdout.write(".");
 
       if (index==0 || !configLine || configLine.length<3 || !splitLine || splitLine.length!==2) {
         index+=1;
@@ -149,6 +148,16 @@ async.series([
                 }).catch( error => {
                   innerSeriesCallback(error);
                 })
+              } if (type==="onlyRegistrationQuestionsAndOneTimeLogin") {
+                toGroup.set('configuration.registrationQuestionsJson', fromGroup.configuration.registrationQuestionsJson);
+                toGroup.set('configuration.registrationQuestions', fromGroup.configuration.registrationQuestions);
+                toGroup.set('configuration.allowOneTimeLoginWithName', fromGroup.configuration.allowOneTimeLoginWithName);
+                toGroup.save().then(()=>{
+                  finalOutput+=urlToAddAddFront+"group/"+toGroup.id+"\n";
+                  innerSeriesCallback();
+                }).catch( error => {
+                  innerSeriesCallback(error);
+                })
               } else if (type === "configurationObject") {
                 toGroup.set('configuration', fromGroup.configuration);
                 toGroup.save().then(()=>{
@@ -162,7 +171,7 @@ async.series([
               }
             },
             innerSeriesCallback => {
-              if (type === "onlyRegistrationQuestions") {
+              if (type === "onlyRegistrationQuestions" || type === "onlyRegistrationQuestionsAndOneTimeLogin") {
                 cloneTranslationForConfig("GroupRegQuestions", fromGroup.id, toGroup.id, innerSeriesCallback);
               } else if (type === "everything") {
                 cloneTranslationForConfig("GroupRegQuestions", fromGroup.id, toGroup.id, innerSeriesCallback);
