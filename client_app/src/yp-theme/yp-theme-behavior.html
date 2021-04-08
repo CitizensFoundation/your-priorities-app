@@ -716,6 +716,33 @@
     });
 
       this.push('fonts', { htmlImport: "/styles/fonts/rostartup-font.html", fontName: 'Montserrat' });
+
+      this.push('themes', {
+        name: 'Frumbjörg',
+        '--primary-background-color': '#fefefe',
+        '--primary-color': '#17263e',
+        '--primary-color-200': '#17263e',
+        '--primary-color-300': '#17263e',
+        '--primary-color-400': '#17263e',
+        '--primary-color-600': '#17263e',
+        '--primary-color-700': '#17263e',
+        '--primary-color-800': '#17263e',
+        '--primary-color-900': '#17263e',
+        '--accent-color': '#d04c3c',
+        '--accent-color-100': '#d04c3c',
+        '--accent-color-200': '#d04c3c',
+        '--accent-color-300': '#d04c3c',
+        '--accent-color-400': '#d04c3c',
+        '--middle-color': 'var(--primary-color-400)',
+        '--icon-general-color': '#fff',
+        '--paper-font-common-base': "{ font-family: 'Merriweather', serif; }",
+        '--app-header-font-family': 'Merriweather',
+        '--app-header-font-weight': '500',
+        '--app-tags-text-color': '#17263e',
+        '--app-tags-font-weight': '500',
+      });
+
+      this.push('fonts', { htmlImport: "/styles/fonts/frumbjorg-font.html", fontName: 'Merriweather' });
     },
 
     _setupOverrideTheme: function (primary, accent, background) {
