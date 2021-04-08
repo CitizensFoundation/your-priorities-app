@@ -607,7 +607,7 @@ router.post('/:domainId/news_story', auth.isLoggedIn, auth.can('view domain'), f
   });
 });
 
-router.get('/', function(req, res) {
+router.get('/oldBoot', function(req, res) {
   getDomain(req, req.ypDomain.id, function (error, domain) {
     if (error) {
       if (error=='Not found')
@@ -626,7 +626,7 @@ router.get('/', function(req, res) {
   });
 });
 
-router.get('/boot', function(req, res) {
+router.get('/', function(req, res) {
   if (req.ypDomain && req.ypDomain.secret_api_keys &&
     req.ypDomain.secret_api_keys.saml && req.ypDomain.secret_api_keys.saml.entryPoint &&
     req.ypDomain.secret_api_keys.saml.entryPoint.length > 6) {
