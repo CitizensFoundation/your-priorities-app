@@ -242,8 +242,14 @@ var getDomain = function (req, domainId, done) {
             models.Community.findAll({
               where: {
                 domain_id: domain.id,
-                in_community_folder_id: null
+                in_community_folder_id: null,
+                configuration: {
+                  customBackURL: {
+                    [models.Sequelize.Op.is]: null
+                  }
+                },
               },
+              limit: 500,
               attributes: models.Community.defaultAttributesPublic,
               order: [
                 [ 'counter_users', 'desc'],
@@ -291,8 +297,14 @@ var getDomain = function (req, domainId, done) {
             models.Community.findAll({
               where: {
                 domain_id: domain.id,
-                in_community_folder_id: null
+                in_community_folder_id: null,
+                configuration: {
+                  customBackURL: {
+                    [models.Sequelize.Op.is]: null
+                  }
+                },
               },
+              limit: 500,
               attributes: models.Community.defaultAttributesPublic,
               order: [
                 [ 'counter_users', 'desc'],
