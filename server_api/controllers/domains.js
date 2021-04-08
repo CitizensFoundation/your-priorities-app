@@ -626,6 +626,27 @@ router.get('/', function(req, res) {
   });
 });
 
+router.get('/boot', function(req, res) {
+  if (req.ypDomain && req.ypDomain.secret_api_keys &&
+    req.ypDomain.secret_api_keys.saml && req.ypDomain.secret_api_keys.saml.entryPoint &&
+    req.ypDomain.secret_api_keys.saml.entryPoint.length > 6) {
+    req.ypDomain.dataValues.samlLoginProvided = true;
+  }
+  if (req.ypDomain && req.ypDomain.secret_api_keys &&
+    req.ypDomain.secret_api_keys.facebook && req.ypDomain.secret_api_keys.facebook.client_secret &&
+    req.ypDomain.secret_api_keys.facebook.client_secret.length > 6) {
+    req.ypDomain.dataValues.facebookLoginProvided = true;
+  }
+
+  const domain = {...req.ypDomain.dataValues}
+
+  delete domain["secret_api_keys"];
+  delete domain["user_agent"];
+  delete domain["ip_address"];
+
+  res.send({community: (req.ypCommunity && req.ypCommunity.id) ? req.ypCommunity : undefined, domain: domain});
+});
+
 router.get('/:id/translatedText', auth.can('view domain'), function(req, res) {
   if (req.query.textType.indexOf("domain") > -1) {
     models.Domain.findOne({
