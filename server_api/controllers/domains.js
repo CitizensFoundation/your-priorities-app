@@ -150,6 +150,11 @@ var getDomain = function (req, domainId, done) {
               access: {
                 $ne: models.Community.ACCESS_SECRET
               },
+              configuration: {
+                customBackURL: {
+                  [models.Sequelize.Op.is]: null
+                }
+              },
               $or: [
                 {
                   counter_users: {
@@ -170,6 +175,7 @@ var getDomain = function (req, domainId, done) {
               },
               in_community_folder_id: null
             },
+            limit: 500,
             attributes: models.Community.defaultAttributesPublic,
             order: [
               [ 'counter_users', 'desc'],
