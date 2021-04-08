@@ -35,7 +35,7 @@
 
     <yp-session id="session"></yp-session>
 
-    <yp-ajax id="boot" url="/api/domains/boot" on-response="_bootResponse"></yp-ajax>
+    <yp-ajax id="boot" url="/api/domains" on-response="_bootResponse"></yp-ajax>
     <yp-ajax hidden auto url="/api/videos/hasVideoUploadSupport" on-response="_hasVideoUploadSupport"></yp-ajax>
     <yp-ajax hidden auto url="/api/audios/hasAudioUploadSupport" on-response="_hasAudioUploadSupport"></yp-ajax>
     <yp-ajax id="videoViewsAjax" hidden method="PUT" url="/api/videos/videoView"></yp-ajax>
