@@ -229,7 +229,7 @@
       <div class="userInfoContainer layout horizontal" up-vote$="[[upVote(point)]]" down-vote$="[[downVote(point)]]" hidden$="[[hideUser]]">
         <iron-icon icon="thumb-up" class="thumbsIcon thumbsIconUp" hidden$="[[!pointValueUp]]"></iron-icon>
         <iron-icon icon="thumb-down" class="thumbsIcon thumbsIconDown" hidden$="[[pointValueUp]]"></iron-icon>
-        <div class="layout horizontal" hidden$="[[point.Post.Group.configuration.hidePointAuthor]]">
+        <div class="layout horizontal" hidden$="[[post.Group.configuration.hidePointAuthor]]">
           <yp-user-with-organization title-date="[[point.created_at]]" inverted user$="[[user]]"></yp-user-with-organization>
         </div>
       </div>
@@ -263,7 +263,7 @@
             <div class="transcriptText layout vertical center-center">
               <div class="layout horizontal">
                 <div class="transcriptHeader">[[t('automaticTranscript')]]</div>
-                <div hidden$="[[!point.Post.Group.configuration.collapsableTranscripts]]">
+                <div hidden$="[[!post.Group.configuration.collapsableTranscripts]]">
                   <paper-icon-button title$="[[t('openComments')]]" class="openCloseButton" icon="keyboard-arrow-right" on-tap="_setOpen" hidden$="[[openTranscript]]"></paper-icon-button>
                   <paper-icon-button title$="[[t('closeComments')]]" class="openCloseButton" icon="keyboard-arrow-down" on-tap="_setClosed" hidden$="[[!openTranscript]]"></paper-icon-button>
                 </div>
@@ -293,13 +293,13 @@
         <template is="dom-if" if="[[showAdminComments]]">
           <div class="commentFromAdmin" hidden$="[[isEditingSomething]]">
 
-            <template is="dom-if" if="[[point.Post.Group.configuration.customAdminCommentsTitle]]">
-              <yp-magic-text text-type="customAdminCommentsTitle" content-language="[[point.Post.Group.language]]"
-                             content="[[point.Post.Group.configuration.customAdminCommentsTitle]]" content-id="[[point.Post.Group.id]]">
+            <template is="dom-if" if="[[post.Group.configuration.customAdminCommentsTitle]]">
+              <yp-magic-text text-type="customAdminCommentsTitle" content-language="[[post.Group.language]]"
+                             content="[[post.Group.configuration.customAdminCommentsTitle]]" content-id="[[post.Group.id]]">
               </yp-magic-text>
             </template>
 
-            <template is="dom-if" if="[[!point.Post.Group.configuration.customAdminCommentsTitle]]">
+            <template is="dom-if" if="[[!post.Group.configuration.customAdminCommentsTitle]]">
               [[t('commentFromAdmin')]]
             </template>
 
@@ -335,7 +335,7 @@
           </div>
         </template>
         <div class="layout horizontal actionContainer" hidden$="[[hideActions]]">
-          <yp-point-actions point="[[point]]" point-url$="[[pointUrl]]" configuration="[[point.Post.Group.configuration]]"></yp-point-actions>
+          <yp-point-actions point="[[point]]" point-url$="[[pointUrl]]" configuration="[[post.Group.configuration]]"></yp-point-actions>
           <paper-icon-button title$="[[t('point.report')]]" id="reportPointIconButton" icon="warning" on-tap="_reportPoint"></paper-icon-button>
           <div class="flex"></div>
           <template is="dom-if" if="[[hasPointAccess]]">
@@ -387,6 +387,11 @@
           value: null
         },
 
+        post: {
+          type: Object,
+          value: null
+        },
+
         openTranscript: {
           type: Boolean,
           value: true
@@ -421,7 +426,7 @@
 
         hasAdminCommentAccess: {
           type: Boolean,
-          computed: '_hasAdminCommentAccess(point)'
+          computed: '_hasAdminCommentAccess(point, post)'
         },
 
         hasAdminComments: {
@@ -431,7 +436,7 @@
 
         showAdminComments: {
           type: Boolean,
-          computed: '_showAdminComments(point, hasAdminComments)'
+          computed: '_showAdminComments(point, post, hasAdminComments)'
         },
 
         maxNumberOfPointsBeforeEditFrozen: {
@@ -520,23 +525,23 @@
         return isEditing || isAdminCommentEditing;
       },
 
-      _showAdminComments: function (point, hasAdminComments) {
-        if (point && point.Post && point.Post.Group && point.public_data &&
+      _showAdminComments: function (point, post, hasAdminComments) {
+        if (point && post && post.Group && point.public_data &&
             point.public_data.admin_comment &&
             point.public_data.admin_comment.text &&
-            point.Post.Group.configuration &&
-            point.Post.Group.configuration.allowAdminAnswersToPoints) {
+            post.Group.configuration &&
+            post.Group.configuration.allowAdminAnswersToPoints) {
           return true;
         } else {
           return false;
         }
       },
 
-      _hasAdminCommentAccess: function (point) {
-        if (point && point.Post && point.Post.Group &&
+      _hasAdminCommentAccess: function (point, post) {
+        if (point && post && post.Group &&
           this.checkPostAdminOnlyAccess(point.Post) &&
-          point.Post.Group.configuration &&
-          point.Post.Group.configuration.allowAdminAnswersToPoints) {
+          post.Group.configuration &&
+          post.Group.configuration.allowAdminAnswersToPoints) {
           return true;
         } else {
           return false;
@@ -618,7 +623,7 @@
       },
 
       _saveAdminCommentEdit: function () {
-        this.$$("#editAdminCommentPointAjax").url = "/api/groups/"+this.point.Post.Group.id+"/"+this.point.id+"/adminComment";
+        this.$$("#editAdminCommentPointAjax").url = "/api/groups/"+this.post.group_id+"/"+this.point.id+"/adminComment";
         this.$$("#editAdminCommentPointAjax").body = { content: this.editAdminCommentText };
         this.$$("#editAdminCommentPointAjax").generateRequest();
       },
@@ -711,10 +716,10 @@
         this._resetMedia();
         if (point) {
           var disableMachineTranscripts = false;
-          if (point.Post && point.Post.Group && point.Post.Group.configuration && point.Post.Group.configuration.collapsableTranscripts) {
+          if (this.post && this.post.Group.configuration && this.post.Group.configuration.collapsableTranscripts) {
             this.set('openTranscript', false);
           }
-          if (point.Post && point.Post.Group && point.Post.Group.configuration && point.Post.Group.configuration.disableMachineTranscripts) {
+          if (this.post && this.post.Group.configuration && this.post.Group.configuration.disableMachineTranscripts) {
             disableMachineTranscripts = true;
           }
           this.set('user', this.point.User);
