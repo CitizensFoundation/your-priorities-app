@@ -204,7 +204,7 @@ router.get('/:id', auth.can('view post'), function(req, res) {
           // Group
           {
             model: models.Group,
-            attributes: ['id','configuration','name','theme_id','access'],
+            attributes: ['id','configuration','name','theme_id','access','language'],
             include: [
               {
                 model: models.Category,
@@ -648,18 +648,7 @@ router.get('/:id/points', auth.can('view post'), function(req, res) {
                 attributes: ['content', 'value', 'embed_data', 'created_at'],
                 required: false
               },
-              {
-                model: models.PointQuality,
-                attributes: ['value'],
-                required: false,
-                include: [
-                  {
-                    model: models.User,
-                    attributes: ["id"],
-                    required: false
-                  }
-                ]
-              },
+
               {
                 model: models.Video,
                 required: false,
@@ -684,13 +673,6 @@ router.get('/:id/points', auth.can('view post'), function(req, res) {
                 model: models.Post,
                 attributes: ['id', 'group_id'],
                 required: false,
-                include: [
-                  {
-                    model: models.Group,
-                    attributes: ['id', 'configuration'],
-                    required: false
-                  }
-                ]
               }
             ]
           }).then(function (points) {
