@@ -31,7 +31,8 @@ var sendDomain = function sendDomainForBot(id, req, res) {
     where: { id: id },
     attributes: ['id', 'name', 'description'],
     order: [
-      [ { model: models.Image, as: 'DomainLogoImages' } , 'created_at', 'desc' ]
+      [ { model: models.Image, as: 'DomainLogoImages' } , 'created_at', 'desc' ],
+      [ { model: models.Community } , 'created_at', 'desc' ]
     ],
     include: [
       {
