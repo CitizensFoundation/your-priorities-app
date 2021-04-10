@@ -386,6 +386,37 @@ const masterGroupIncludes = [
   }
 ];
 
+const addVideosToCommunity = (community, done) => {
+  models.Video.findAll({
+    attributes:  ['id','formats','viewable','created_at','public_meta'],
+    include: [
+      {
+        model: models.Image,
+        as: 'VideoImages',
+        attributes:["formats",'created_at'],
+        required: false
+      },
+      {
+        model: models.Community,
+        where: {
+          id: community.id
+        },
+        as: 'CommunityLogoVideos',
+        required: true,
+        attributes: ['id']
+      }
+    ],
+    order: [
+      [ { model: models.Image, as: 'VideoImages' }, 'created_at', 'asc' ]
+    ]
+  }).then(videos => {
+    community.dataValues.CommunityLogoVideos = _.orderBy(videos, ['created_at'],['desc']);
+    done();
+  }).catch( error => {
+    done(error);
+  })
+}
+
 const addVideosAndCommunityLinksToGroup = (groups, done) => {
 
   const linkedCommunityIds = [];
@@ -439,9 +470,7 @@ const addVideosAndCommunityLinksToGroup = (groups, done) => {
         },
         attributes: ['id','name','description','counter_posts','counter_points','counter_users','language'],
         order: [
-          [ { model: models.Image, as: 'CommunityLogoImages' } , 'created_at', 'asc' ],
-          [ { model: models.Video, as: "CommunityLogoVideos" }, 'updated_at', 'desc' ],
-          [ { model: models.Video, as: "CommunityLogoVideos" }, { model: models.Image, as: 'VideoImages' } ,'updated_at', 'asc' ]
+          [ { model: models.Image, as: 'CommunityLogoImages' } , 'created_at', 'asc' ]
         ],
         include: [
           {
@@ -449,32 +478,20 @@ const addVideosAndCommunityLinksToGroup = (groups, done) => {
             as: 'CommunityLogoImages',
             attributes:  models.Image.defaultAttributesPublic,
             required: false
-          },
-          {
-            model: models.Video,
-            as: 'CommunityLogoVideos',
-            attributes:  ['id','formats','viewable','public_meta'],
-            required: false,
-            include: [
-              {
-                model: models.Image,
-                as: 'VideoImages',
-                attributes:["formats",'updated_at'],
-                required: false
-              },
-            ]
           }
         ]
       }).then(communities => {
-        communities.forEach( community => {
+        async.eachOfLimit(communities, 20, (community, eachIndex, forEachVideoCallback) => {
           const index = linkedCommunityIdToGroupIndex[community.id];
           if (groups[index].dataValues) {
             groups[index].dataValues.CommunityLink = community;
           } else {
             groups[index].CommunityLink = community;
           }
+          addVideosToCommunity(community, forEachVideoCallback);
+        }, error => {
+          done(error);
         });
-        done(error);
       }).catch( error => {
         done(error);
       })
@@ -495,9 +512,7 @@ const getCommunity = function(req, done) {
         where: { id: req.params.id },
         order: [
           [ { model: models.Image, as: 'CommunityLogoImages' } , 'created_at', 'asc' ],
-          [ { model: models.Image, as: 'CommunityHeaderImages' } , 'created_at', 'asc' ],
-          [ { model: models.Video, as: "CommunityLogoVideos" }, 'updated_at', 'desc' ],
-          [ { model: models.Video, as: "CommunityLogoVideos" }, { model: models.Image, as: 'VideoImages' } ,'updated_at', 'asc' ]
+          [ { model: models.Image, as: 'CommunityHeaderImages' } , 'created_at', 'asc' ]
         ],
         attributes: models.Community.defaultAttributesPublic,
         include: [
@@ -522,27 +537,15 @@ const getCommunity = function(req, done) {
             required: false,
             as: 'CommunityFolder',
             attributes: ['id', 'name', 'description']
-          },
-          {
-            model: models.Video,
-            as: 'CommunityLogoVideos',
-            attributes:  ['id','formats','viewable','public_meta'],
-            required: false,
-            include: [
-              {
-                model: models.Image,
-                as: 'VideoImages',
-                attributes:["formats",'updated_at'],
-                required: false
-              },
-            ]
           }
         ]
       }).then(function(communityIn) {
         community = communityIn;
         if (community) {
           log.info('Community Viewed', { communityId: community.id, context: 'view', userId: req.user ? req.user.id : -1 });
-          seriesCallback()
+          addVideosToCommunity(community, error => {
+            seriesCallback(error);
+          })
         } else {
           seriesCallback("Not found");
         }
