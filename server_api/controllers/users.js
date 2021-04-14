@@ -11,6 +11,8 @@ var _ = require('lodash');
 var queue = require('../active-citizen/workers/queue');
 const url = require('url');
 
+const randomstring = require('randomstring');
+
 var getAllModeratedItemsByUser = require('../active-citizen/engine/moderation/get_moderation_items').getAllModeratedItemsByUser;
 const performSingleModerationAction = require('../active-citizen/engine/moderation/process_moderation_items').performSingleModerationAction;
 
@@ -1556,6 +1558,80 @@ router.delete('/disconnectSamlLogin', auth.isLoggedIn, function(req, res, next) 
     res.sendStatus(500);
   });
 });
+
+const completeCreationOfApiKey = (user, apiKey, res) => {
+  user.set('private_profile_data.apiKey', apiKey);
+  user.save().then(()=>{
+    log.info("ApiKey created for user", { userId: user.id });
+    res.send({ apiKey: user.private_profile_data.apiKey })
+  }).catch(error=>{
+    log.error("Error in createApiKey", { err: error });
+    res.sendStatus(500);
+  })
+}
+
+router.post('/createApiKey', auth.isLoggedIn, function(req, res, next) {
+  models.User.findOne({
+    where: {
+      id: req.user.id
+    }}).then( function (user) {
+    if (user) {
+      if (!user.private_profile_data) {
+        user.set('private_profile_data', {});
+      }
+
+      if (!user.profile_data) {
+        user.set('profile_data', {});
+      }
+
+      user.set('profile_data.hasApiKey', true);
+
+      let apiKey = randomstring.generate(48);
+
+      models.User.findOne({
+        where: {
+          private_profile_data: {
+            apiKey: apiKey
+          }
+        },
+        attributes: ['id']
+      }).then(findUser=>{
+        if (!findUser) {
+          completeCreationOfApiKey(user, apiKey, res);
+        } else {
+          apiKey = randomstring.generate(48);
+          models.User.findOne({
+            where: {
+              private_profile_data: {
+                apiKey: apiKey
+              }
+            },
+            attributes: ['id']
+          }).then(findUserTwo=>{
+            if (!findUserTwo) {
+              completeCreationOfApiKey(user, apiKey, res);
+            } else {
+              log.error("Error in createApiKey", { err: error });
+              res.sendStatus(500);
+            }
+          }).catch(error=>{
+            log.error("Error in createApiKey", { err: error });
+            res.sendStatus(500);
+          })
+        }
+      }).catch(error=>{
+        log.error("Error in createApiKey", { err: error });
+        res.sendStatus(500);
+      })
+    } else {
+      res.sendStatus(404);
+    }
+  }).catch(function (error) {
+    log.error("Error in disconnect from Saml", { err: error });
+    res.sendStatus(500);
+  });
+});
+
 
 router.put('/missingEmail/linkAccounts', auth.isLoggedIn, function(req, res, next) {
   log.info("User Serialized Link 1", {loginProvider: req.user.loginProvider});
