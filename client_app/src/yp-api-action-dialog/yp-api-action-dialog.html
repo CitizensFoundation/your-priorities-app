@@ -24,7 +24,7 @@
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
     <yp-ajax method$="[[method]]" id="apiAjax" on-response="_response"></yp-ajax>
-    <paper-dialog id="confirmationDialog">
+    <paper-dialog id="confirmationDialog" on-close="_onClose">
       <div>[[confirmationText]]</div>
       <div class="buttons">
         <paper-button dialog-dismiss>[[t('cancel')]]</paper-button>
@@ -67,6 +67,10 @@
         }
       },
 
+      _onClose: function () {
+        this.fire('close');
+      },
+
       setup: function (action, confirmationText, onFinishedFunction, confirmButtonText, method) {
         this.set('action', action);
         this.set('confirmationText', confirmationText);
@@ -105,10 +109,10 @@
         }
       },
 
-      _response: function () {
+      _response: function (response) {
         this.fire("api-action-finished");
         if (this.onFinishedFunction) {
-          this.onFinishedFunction();
+          this.onFinishedFunction(response);
         }
       }
     });

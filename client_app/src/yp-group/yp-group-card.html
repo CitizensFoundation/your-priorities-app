@@ -305,7 +305,7 @@
                        text-only content="[[groupObjectives]]" content-id="[[group.id]]" truncate="200">
         </yp-magic-text>
         <yp-group-stats class="stats" group="[[group]]"></yp-group-stats>
-        <yp-membership-button archived$="[[archived]]" group="[[group]]"></yp-membership-button>
+        <yp-membership-button archived$="[[archived]]" group="[[group]]" hidden$="[[visualizationData]]"></yp-membership-button>
       </template>
       <template is="dom-if" if="[[group.CommunityLink]]">
         <iron-image hidden$="[[!noImage]]" header-mode$="[[headerMode]]" archived$="[[archived]]" sizing="cover" c
