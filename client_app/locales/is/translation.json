@@ -1,4 +1,9 @@
 {
+  "areYouSureYouWantToRecreateApiKey": "Ertu viss um að þú viljir búa til nýjan Api lykil? Allar utanaðkomandi þjónustur sem nota núverandi Api lykil munu hætta að virka",
+  "createApiKey": "Nýr Api Lykill",
+  "reCreateApiKey": "Endurgera Api lykil",
+  "showingApiKeyOnce": "Api lykill er aðeins sýndur hérna einu sinni. Vinsamlegast afritaðu á öruggan stað.",
+  "copyApiKey": "Afrita",
   "actual": "Núverandi",
   "target": "Takmark",
   "overall": "Yfir all",
