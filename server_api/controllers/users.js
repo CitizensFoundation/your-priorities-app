@@ -1611,7 +1611,7 @@ router.post('/createApiKey', auth.isLoggedIn, function(req, res, next) {
             if (!findUserTwo) {
               completeCreationOfApiKey(user, apiKey, res);
             } else {
-              log.error("Error in createApiKey", { err: error });
+              log.error("Can't create unique createApiKey", {});
               res.sendStatus(500);
             }
           }).catch(error=>{

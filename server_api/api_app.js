@@ -50,6 +50,7 @@ const points = require('./controllers/points');
 const users = require('./controllers/users');
 const categories = require('./controllers/categories');
 const images = require('./controllers/images');
+const externalIds = require('./controllers/externalIds');
 const ratings = require('./controllers/ratings');
 const bulkStatusUpdates = require('./controllers/bulkStatusUpdates');
 const videos = require('./controllers/videos');
@@ -219,9 +220,13 @@ app.get('/sitemap.xml', function getSitemap(req, res) {
 
 app.use(function checkForBOT(req, res, next) {
   var ua = req.headers['user-agent'];
-  if (!/Googlebot|AdsBot-Google/.test(ua) && (isBot(ua) || /^(facebookexternalhit)|(web\/snippet)|(Twitterbot)|(Slackbot)|(Embedly)|(LinkedInBot)|(Pinterest)|(XING-contenttabreceiver)/gi.test(ua))) {
-    log.info('Request is from a bot', { ua });
-    nonSPArouter(req, res, next);
+  if (req.headers['content-type']!=="application/json") {
+    if (!/Googlebot|AdsBot-Google/.test(ua) && (isBot(ua) || /^(facebookexternalhit)|(web\/snippet)|(Twitterbot)|(Slackbot)|(Embedly)|(LinkedInBot)|(Pinterest)|(XING-contenttabreceiver)/gi.test(ua))) {
+      log.info('Request is from a bot', { ua });
+      nonSPArouter(req, res, next);
+    } else {
+      next();
+    }
   } else {
     next();
   }
@@ -432,6 +437,7 @@ app.use('/api/images', images);
 app.use('/api/videos', videos);
 app.use('/api/audios', audios);
 app.use('/api/categories', categories);
+app.use('/api/externalIds', externalIds);
 app.use('/api/users', users);
 app.use('/api/news_feeds', news_feeds);
 app.use('/api/activities', activities);
