@@ -784,7 +784,16 @@
       window.appGlobals.sendLoginAndSignupToAnalytics(null, 'Login Submit', 'Facebook');
     },
 
-    anonymousLogin: function (loginSubType, registrationAnswers) {
+    anonymousLogin: function () {
+      this.$$("#registerAnonymouslyAjax").body = {
+        groupId: window.appGlobals.currentAnonymousGroup.id,
+        trackingParameters: window.appGlobals.originalQueryParameters
+      };
+      this.$$("#registerAnonymouslyAjax").generateRequest();
+      window.appGlobals.sendLoginAndSignupToAnalytics(null, 'Signup Submit', 'Anonymous');
+    },
+
+    anonymousLoginWithName: function (registrationAnswers) {
       this.$$("#registerAnonymouslyAjax").body = {
         groupId: window.appGlobals.currentAnonymousGroup.id,
         trackingParameters: window.appGlobals.originalQueryParameters,
@@ -792,14 +801,14 @@
         registration_answers: registrationAnswers
       };
       this.$$("#registerAnonymouslyAjax").generateRequest();
-      window.appGlobals.sendLoginAndSignupToAnalytics(null, 'Signup Submit', loginSubType ? loginSubType : 'Anonymous');
+      window.appGlobals.sendLoginAndSignupToAnalytics(null, 'Signup Submit', 'Anonymous with name');
     },
 
     finishOneTimeLoginWithName: function () {
       if (this.oneTimeLoginName && (
           !this.registrationQuestionsGroup || this.$$("#registrationQuestionsOneTimeLogin").validate()
         )) {
-          this.anonymousLogin('One time name login', this.$$("#registrationQuestionsOneTimeLogin") ?
+          this.anonymousLoginWithName(this.$$("#registrationQuestionsOneTimeLogin") ?
             this.$$("#registrationQuestionsOneTimeLogin").getAnswers() : undefined);
       } else {
         this.$$("#loginAjax").showErrorDialog(this.t('user.completeForm'));
