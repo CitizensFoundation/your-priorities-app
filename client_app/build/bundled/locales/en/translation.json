@@ -1,4 +1,9 @@
 {
+  "areYouSureYouWantToRecreateApiKey": "Are you sure you want to recreate API key? All external services using the current API key will stop working.",
+  "createApiKey": "Create Api Key",
+  "reCreateApiKey": "Recreate Api Key",
+  "showingApiKeyOnce": "API key is only shown here once for security reasons, copy it to a save place for usage",
+  "copyApiKey": "Copy",
   "actual": "Actual",
   "target": "Target",
   "overall": "Overall",
