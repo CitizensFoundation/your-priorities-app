@@ -7,9 +7,8 @@ const request = require('request');
 const cloneTranslationForConfig = require('../../active-citizen/utils/translation_cloning').cloneTranslationForConfig;
 
 const userId = process.argv[2];
-const type = process.argv[3];
-const urlToConfig = process.argv[4];
-const urlToAddAddFront = process.argv[5];
+const urlToConfig = process.argv[3];
+const urlToAddAddFront = process.argv[4];
 
 /*const userId = "89244" //process.argv[3];
 const type = "onlyThemeColors";
@@ -24,7 +23,7 @@ let user;
 
 async.series([
   seriesCallback => {
-    if (userId && type && urlToConfig && urlToAddAddFront) {
+    if (userId && urlToConfig && urlToAddAddFront) {
       seriesCallback();
     } else {
       seriesCallback("Not all values set")
