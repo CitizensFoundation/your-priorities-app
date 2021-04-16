@@ -430,6 +430,7 @@ interface YpPostData extends YpDatabaseItem {
   public_data?: {
     structuredAnswersJson?: Array<YpStructuredAnswer>;
     structuredAnswers?: string;
+    tags?: string;
     law_issue: {
       sessionId: string;
       issueId: string;

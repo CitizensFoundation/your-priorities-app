@@ -1,148 +1,138 @@
-<link rel="import" href="../../bower_components/polymer/polymer.html">
+import { stylesFromModule } from '@polymer/polymer/lib/utils/style-gather';
+import { render } from 'lit-html';
+import { customElement, property, html, css } from 'lit-element';
+import { nothing } from 'lit-html';
+import { YpBaseElement } from '../common/yp-base-element.js';
+import { ShadowStyles } from '../common/ShadowStyles.js';
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
-<link rel="import" href="../../bower_components/iron-image/iron-image.html" >
-<link rel="import" href="../../bower_components/lite-signal/lite-signal.html">
+import '../yp-magic-text/yp-magic-text.js';
+import '@material/mwc-icon';
+import { ifDefined } from 'lit-html/directives/if-defined';
+import { YpMagicText } from '../yp-magic-text/yp-magic-text.js';
 
-<link rel="import" href="../yp-app-globals/yp-app-icons.html">
-<link rel="import" href="../yp-behaviors/yp-language-behavior.html">
-<link rel="import" href="../yp-behaviors/access-helpers.html">
-<link rel="import" href="../yp-behaviors/yp-got-admin-rights-behavior.html">
-<link rel="import" href="../yp-behaviors/yp-logged-in-user-behavior.html">
-<link rel="import" href="../yp-behaviors/yp-media-formats-behavior.html">
-<link rel="import" href="../yp-behaviors/yp-truncate-behavior.html">
-<link rel="import" href="../yp-behaviors/yp-goto-behavior.html">
-<link rel="import" href="../yp-magic-text/yp-magic-text.html">
-<link rel="import" href="../yp-rating/yp-post-ratings-info.html">
+@customElement('yp-simple-html-editor')
+export class YpPostTags extends YpBaseElement {
+  @property({ type: Object })
+  post!: YpPostData;
 
-<link rel="import" href="yp-post-actions.html">
-<link rel="import" href="yp-post-cover-media.html">
-<link rel="import" href="yp-post-behaviors.html">
-<link rel="import" href="yp-post-survey-translation-behaviors.html">
+  @property({ type: String })
+  translatedTags: string | undefined;
 
-<dom-module id="yp-post-tags">
-  <template>
-    <style include="iron-flex iron-flex-alignment">
-      .tagContainer {
-        max-width: 480px;
-        font-size: 14px;
-        margin-left: 8px;
-        vertical-align: middle;
-        padding-left: 16px;
-        color: var(--app-tags-text-color, #111) !important;
-        font-weight: var(--app-tags-font-weight, 500);
-      }
+  @property({ type: Boolean })
+  autoTranslate = false;
 
-      .middleDot {
-        padding-left: 7px;
-        padding-right: 2px;
-        vertical-align: middle;
-        color: var(--app-tags-color, #656565);
-      }
-
-      .tagItem {
-          vertical-align: middle;
-      }
-
-      @media (max-width: 800px) {
-        .middleDot {
-          font-size: 14px;
-          margin-bottom: 8px;
-        }
-
+  static get styles() {
+    return [
+      super.styles,
+      ShadowStyles,
+      css`
         .tagContainer {
-          font-size: 17px;
+          max-width: 480px;
+          font-size: 14px;
+          margin-left: 8px;
+          vertical-align: middle;
           padding-left: 16px;
-          padding-right: 16px;
-          padding-bottom: 16px;
+          color: var(--app-tags-text-color, #111) !important;
+          font-weight: var(--app-tags-font-weight, 500);
         }
-      }
 
-      [hidden] {
-        display: none !important;
-      }
-    </style>
-    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
-    <lite-signal on-lite-signal-yp-auto-translate="_autoTranslateEvent"></lite-signal>
-
-    <div class="tagContainer wrap">
-      <template is="dom-repeat" items="[[postTags]]">
-        <span class="tagItem">[[_trimmedItem(item)]]</span><span class="middleDot" hidden$="[[computeSpanHidden(postTags, index)]]">&#9679;</span>
-      </template>
-    </div>
-
-    <yp-magic-text id="postTagsTranslations" hidden
-                   content-id="[[post.id]]"
-                   text-only
-                   content="[[post.public_data.tags]]"
-                   content-language="[[post.language]]"
-                   on-new-translation="_newTranslation"
-                   text-type="postTags"></yp-magic-text>
-  </template>
-
-  <script>
-    Polymer({
-      is: 'yp-post-tags',
-
-      behaviors: [
-        Polymer.ypLanguageBehavior
-      ],
-
-      properties: {
-        post: {
-          type: Object
-        },
-
-        postTags: {
-          type: String,
-          computed: '_postTags(post,language,translatedTags,autoTranslate)'
-        },
-
-        translatedTags: {
-          type: String,
-          value: null
-        },
-
-        autoTranslate: {
-          type: Boolean,
-          value: false
+        .middleDot {
+          padding-left: 2px;
+          padding-right: 2px;
+          vertical-align: middle;
+          color: var(--app-tags-color, #656565);
         }
-      },
 
-      _trimmedItem: function (item) {
-        if (item) {
-          return item.trim();
-        } else {
-          return "";
+        .tagItem {
+          vertical-align: middle;
         }
-      },
 
-      _autoTranslateEvent(event, detail) {
-        this.set('autoTranslate', detail);
-      },
-
-      computeSpanHidden: function(items,index){
-        return (items.length - 1) === index
-      },
-
-      _newTranslation: function () {
-        this.async(function () {
-          var tagsTranslation = this.$$("#postTagsTranslations");
-          if (tagsTranslation && tagsTranslation.finalContent) {
-            this.set('translatedTags', tagsTranslation.finalContent);
+        @media (max-width: 800px) {
+          .middleDot {
+            font-size: 14px;
+            margin-bottom: 8px;
           }
-        });
-      },
 
-      _postTags: function (post, language, translatedTags) {
-        if (translatedTags && this.autoTranslate) {
-          return translatedTags.split(",");
-        } else if (post && post.public_data && post.public_data.tags) {
-          return post.public_data.tags.split(",")
-        } else {
-          return [];
+          .tagContainer {
+            font-size: 17px;
+            padding-left: 16px;
+            padding-right: 16px;
+            padding-bottom: 16px;
+          }
         }
+
+        [hidden] {
+          display: none !important;
+        }
+      `,
+    ];
+  }
+
+  render() {
+    return html`
+      <div class="tagContainer wrap">
+        ${this.postTags.map(
+          (item, index) => html`
+            <span class="tagItem">${this._trimmedItem(item)}</span
+            ><span
+              class="middleDot"
+              ?hidden="${this.computeSpanHidden(this.postTags, index)}"
+              >&#9679;</span
+            >
+          `
+        )}
+      </div>
+
+      <yp-magic-text
+        id="postTagsTranslations"
+        hidden
+        content-id="${this.post.id}"
+        text-only
+        content="${ifDefined(this.post.public_data?.tags)}"
+        content-language="${ifDefined(this.post.language)}"
+        @new-translation="${this._newTranslation}"
+        text-type="postTags"
+      >
+      </yp-magic-text>
+    `;
+  }
+
+  _trimmedItem(item: string) {
+    if (item) {
+      return item.trim();
+    } else {
+      return '';
+    }
+  }
+
+  _autoTranslateEvent(event: CustomEvent) {
+    this.autoTranslate = event.detail;
+  }
+
+  computeSpanHidden(items: Array<string>, index: number) {
+    return items.length - 1 === index;
+  }
+
+  _newTranslation() {
+    setTimeout(() => {
+      var tagsTranslation = this.$$('#postTagsTranslations') as YpMagicText;
+      if (tagsTranslation && tagsTranslation.finalContent) {
+        this.translatedTags = tagsTranslation.finalContent;
       }
     });
-  </script>
-</dom-module>
+  }
+
+  get postTags() {
+    if (this.translatedTags && this.autoTranslate) {
+      return this.translatedTags.split(',');
+    } else if (
+      this.post &&
+      this.post.public_data &&
+      this.post.public_data.tags
+    ) {
+      return this.post.public_data.tags.split(',');
+    } else {
+      return [];
+    }
+  }
+}
