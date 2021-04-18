@@ -1,0 +1,58 @@
+version: '8.10'
+services:
+  nginx:
+    container_name: nginx
+    restart: unless-stopped
+    posts:
+      - "80:80"
+      - "443:443"
+    build: ./nginx/
+    volumes:
+      - client-app-dist:/usr/src/your-priorities/client/build/bundle
+      - admin-app-dist:/usr/src/your-priorities/admin_app/dist
+      - analytics-app-dist:/usr/src/your-priorities/analytics_app/dist
+    networks:
+      - app-network
+
+  your-priorities-app:
+    container_name: your-priorities-app
+    build: ./your-priorities-app/
+    env_file: .yrpri-env
+    restart: unless-stopped
+    volumes:
+      - client-app-dist:/usr/src/your-priorities/client/build/bundle
+      - admin-app-dist:/usr/src/your-priorities/admin_app/dist
+      - analytics-app-dist:/usr/src/your-priorities/analytics_app/dist
+    environment:
+      - NODE_ENV=production
+    command: node --optimize_for_size --max_old_space_size=460 server_api/api_app.js
+    networks:
+      - app-network
+
+  your-priorities-worker:
+    container_name: your-priorities-worker
+    build: ./your-priorities-worker/
+    env_file: .yrpri-env
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+    command: node --optimize_for_size --max_old_space_size=960 server_api/active-citizen/workers/main.js
+    networks:
+      - app-network
+  #ac-analytics-api:
+  #  container_name: ac-anaylitcs-api
+  #  build: ./ac-anaylitcs-api/
+  #  env_file: .yrpri-env
+  #  environment:
+  #    - NODE_ENV=production
+  #  networks:
+  #    - app-network
+volumes:
+  client-app-dist:
+  admin-app-dist:
+  analytics-app-dist:
+
+networks:
+  app-network:
+    driver: bridge
+
