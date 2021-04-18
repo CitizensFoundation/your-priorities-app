@@ -1,4 +1,4 @@
-version: '3'
+version: '3.3'
 
 services:
   nginx:
@@ -33,7 +33,9 @@ services:
     command: node --optimize_for_size --max_old_space_size=460 server_api/api_app.js
     networks:
       - app-network
-
+    extra_hosts:
+      - "localhost:127.0.0.1"
+        
   your-priorities-worker:
     container_name: your-priorities-worker
     build: ./your-priorities-worker/
@@ -47,6 +49,80 @@ services:
     command: node --optimize_for_size --max_old_space_size=960 server_api/active-citizen/workers/main.js
     networks:
       - app-network
+    extra_hosts:
+      - "localhost:127.0.0.1"
+
+  minio1:
+    image: minio/minio
+    env_file: .env
+    volumes:
+      - data1-1:/minio_data1
+      - data1-2:/minio_data2
+    expose:
+      - "9000"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+    command: server http://minio{1...4}/data{1...2}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+
+  minio2:
+    image: minio/minio
+    env_file: .env
+    volumes:
+      - data2-1:/minio_data1
+      - data2-2:/minio_data2
+    expose:
+      - "9000"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+    command: server http://minio{1...4}/data{1...2}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+
+  minio3:
+    image: minio/minio
+    env_file: .env
+    volumes:
+      - data3-1:/minio_data1
+      - data3-2:/minio_data2
+    expose:
+      - "9000"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+    command: server http://minio{1...4}/data{1...2}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+
+  minio4:
+    image: minio/minio
+    env_file: .env
+    volumes:
+      - data4-1:/minio_data1
+      - data4-2:/minio_data2
+    expose:
+      - "9000"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+    command: server http://minio{1...4}/data{1...2}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
 
   certbot:
     image: certbot/certbot
@@ -75,8 +151,16 @@ volumes:
   admin-app-dist:
   analytics-app-dist:
   web-root:
+  data1-1:
+  data1-2:
+  data2-1:
+  data2-2:
+  data3-1:
+  data3-2:
+  data4-1:
+  data4-2:
 
 networks:
   app-network:
-    driver: bridge
+    driver: host
 

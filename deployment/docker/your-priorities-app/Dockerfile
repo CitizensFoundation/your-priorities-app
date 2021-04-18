@@ -12,11 +12,13 @@ COPY server_api .
 
 USER node
 
-RUN npm install
+RUN yarn config set ignore-engines
+RUN yarn install
 
 COPY --chown=node:node . .
 
 ENV PORT=8080
+
 EXPOSE 8080
 
 CMD [ "node --optimize_for_size --max_old_space_size=460 ", "server_api/api_app.js" ]

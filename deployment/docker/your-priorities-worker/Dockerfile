@@ -7,16 +7,13 @@ RUN mkdir -p /home/node/app/node_modules && chown -R node:node /home/node/app
 
 WORKDIR /home/node/app
 
-COPY ../../../package*.json ./
-COPY ../../../server_api ./
+COPY package.json .
+COPY server_api .
 
 USER node
 
-ENV PORT=5000
-
-EXPOSE 5000
-
-RUN npm install
+RUN yarn config set ignore-engines
+RUN yarn install
 
 COPY --chown=node:node . .
 
