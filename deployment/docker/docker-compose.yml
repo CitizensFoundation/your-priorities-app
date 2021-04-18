@@ -153,6 +153,5 @@ volumes:
   data4-1:
   data4-2:
 
-networks:
 
 
