@@ -538,10 +538,24 @@ app.use(function generalErrorHandler(err, req, res, next) {
   if (status == 404) {
     log.warn("Not found", {context: 'notFound', errorStatus: status, url: req.url});
   } else {
+    let body=null;
+
+    try {
+      if (req.body) {
+        body = JSON.stringify(req.body);
+      }
+    } catch(bodyError) {
+      log.error("General Error: Body JSON parsing error", { err: bodyError });
+    }
+
     log.error("General Error", {
       context: 'generalError',
       user: req.user ? toJson(req.user) : null,
       err: err,
+      protocol: req.protocol,
+      host: req.get('host'),
+      originalUrl: req.originalUrl,
+      body,
       errStack: err.stack,
       errorStatus: status
     });
