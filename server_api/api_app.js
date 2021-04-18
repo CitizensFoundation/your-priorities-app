@@ -1,5 +1,7 @@
 #!/usr/bin/env node
-require('newrelic');
+if (process.env.NEW_RELIC_APP_NAME) {
+  require('newrelic');
+}
 
 FORCE_PRODUCTION = false;
 
