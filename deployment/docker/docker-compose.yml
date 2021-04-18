@@ -13,8 +13,7 @@ services:
       - client-app-dist:/usr/src/your-priorities/client/build/bundle
       - admin-app-dist:/usr/src/your-priorities/admin_app/dist
       - analytics-app-dist:/usr/src/your-priorities/analytics_app/dist
-    networks:
-      - app-network
+    network_mode: host
 
   your-priorities-app:
     container_name: your-priorities-app
@@ -31,11 +30,8 @@ services:
     environment:
       - NODE_ENV=production
     command: node --optimize_for_size --max_old_space_size=460 server_api/api_app.js
-    networks:
-      - app-network
-    extra_hosts:
-      - "localhost:127.0.0.1"
-        
+    network_mode: host
+
   your-priorities-worker:
     container_name: your-priorities-worker
     build: ./your-priorities-worker/
@@ -47,10 +43,7 @@ services:
     environment:
       - NODE_ENV=production
     command: node --optimize_for_size --max_old_space_size=960 server_api/active-citizen/workers/main.js
-    networks:
-      - app-network
-    extra_hosts:
-      - "localhost:127.0.0.1"
+    network_mode: host
 
   minio1:
     image: minio/minio
@@ -161,6 +154,5 @@ volumes:
   data4-2:
 
 networks:
-  app-network:
-    driver: host
+
 
