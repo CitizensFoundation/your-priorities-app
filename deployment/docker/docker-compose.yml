@@ -4,14 +4,19 @@ services:
   webserver:
     container_name: webserver
     restart: unless-stopped
+    env_file: .env
     ports:
       - "80:80"
       - "443:443"
-    build: ./webserver/
+    build:
+      context: ./webserver/
+      dockerfile: ./webserver/Dockerfile
+      args:
+        - DOMAIN_NAME=${DOMAIN_NAME}
     volumes:
       - ./webserver/templates:/etc/nginx/templates
-      - certbot-etc:/etc/letsencrypt
-      - certbot-var:/var/lib/letsencrypt
+        #  - certbot-etc:/etc/letsencrypt
+        #      - certbot-var:/var/lib/letsencrypt
       - web-root:/var/www/html
       - client-app-dist:/usr/src/your-priorities/client/build/bundle
       - admin-app-dist:/usr/src/your-priorities/admin_app/dist
@@ -76,7 +81,7 @@ services:
       - web-root:/var/www/html
     depends_on:
       - webserver
-    command: certonly --webroot --webroot-path=/var/www/html --email ${CERTBOT_EMAIL} --agree-tos --no-eff-email ${CERTBOT_STAGING} -d ${DOMAIN_NAME} -d ${FULL_HOSTNAME}
+    command: certonly --webroot --webroot-path=/var/www/html --email ${CERTBOT_EMAIL} --agree-tos --no-eff-email ${CERTBOT_STAGING_OR_CREATE} -d ${DOMAIN_NAME} -d ${FULL_HOSTNAME}
 
   #ac-analytics-api:
   #  container_name: ac-anaylitcs-api
