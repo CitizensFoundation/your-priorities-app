@@ -10,7 +10,7 @@ services:
       - "443:443"
     build:
       context: ./webserver/
-      dockerfile: ./webserver/Dockerfile
+      dockerfile: Dockerfile
       args:
         - DOMAIN_NAME=${DOMAIN_NAME}
     volumes:
