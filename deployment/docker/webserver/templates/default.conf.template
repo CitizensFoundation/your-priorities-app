@@ -49,11 +49,11 @@ server {
         ssl_stapling_verify on;
         resolver 8.8.8.8;
 
-	location /minio {
-		try_files $uri @minio;
-	}
+#	location /minio {
+#		try_files $uri @minio;
+#	}
 
-	location @minio {
+	location /minio {
             proxy_set_header Host $http_host;
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
