@@ -92,7 +92,7 @@ async.series([
 
                       const linkModel = models.Group.build({
                         name: "Link for community - "+linkToCommunityId,
-                        description: "",
+                        objectives: "Link for community - "+linkToCommunityId,
                         access: models.Group.ACCESS_PUBLIC,
                         user_id: userId,
                         configuration: { actAsLinkToCommunityId: newCommunity.id },
