@@ -1,4 +1,4 @@
-version: '3.3'
+version: '3.9'
 
 services:
   webserver:
@@ -12,16 +12,16 @@ services:
       context: ./webserver/
       dockerfile: Dockerfile
       args:
-        - DOMAIN_NAME=${DOMAIN_NAME}
+        - CERTBOT_CERT_FOLDER=${CERTBOT_CERT_FOLDER}
     volumes:
       - ./webserver/templates:/etc/nginx/templates
-        #  - certbot-etc:/etc/letsencrypt
-        #      - certbot-var:/var/lib/letsencrypt
+      - certbot-env:/etc/letsencrypt/
+      - certbot-var:/var/lib/letsencrypt
       - web-root:/var/www/html
       - client-app-dist:/usr/src/your-priorities/client/build/bundle
       - admin-app-dist:/usr/src/your-priorities/admin_app/dist
       - analytics-app-dist:/usr/src/your-priorities/analytics_app/dist
-    network_mode: host
+        #network_mode: host
 
   your-priorities-app:
     container_name: your-priorities-app
@@ -76,12 +76,11 @@ services:
     container_name: certbot
     env_file: .env
     volumes:
-      - certbot-etc:/etc/letsencrypt
+      - certbot-env:/etc/letsencrypt
       - certbot-var:/var/lib/letsencrypt
       - web-root:/var/www/html
     depends_on:
       - webserver
-    command: certonly --webroot --webroot-path=/var/www/html --email ${CERTBOT_EMAIL} --agree-tos --no-eff-email ${CERTBOT_STAGING_OR_CREATE} -d ${DOMAIN_NAME} -d ${FULL_HOSTNAME}
 
   #ac-analytics-api:
   #  container_name: ac-anaylitcs-api
@@ -92,7 +91,6 @@ services:
   #  networks:
   #    - app-network
 volumes:
-  certbot-etc:
   certbot-var:
   client-app-dist:
   admin-app-dist:
@@ -100,5 +98,10 @@ volumes:
   web-root:
   data1-1:
   data1-2:
-
+  certbot-env:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /root/your-priorities-app/deployment/docker/webserver/letsEncryptCerts
 

@@ -1,2 +1,4 @@
-.yrpri-env
 .env
+certBotCreate.sh
+certBotCreatePERFORM.sh
+webserver/letsEncryptCerts

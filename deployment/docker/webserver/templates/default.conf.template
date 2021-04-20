@@ -6,6 +6,7 @@ server {
         location ~ /.well-known/acme-challenge {
           allow all;
           root /var/www/html;
+          break;
         }
 
         location / {
@@ -20,8 +21,8 @@ server {
 
         server_tokens off;
 
-        ssl_certificate /etc/letsencrypt/live/${DOMAIN_NAME}/fullchain.pem;
-        ssl_certificate_key /etc/letsencrypt/live/${DOMAIN_NAME}/privkey.pem;
+        ssl_certificate /etc/letsencrypt/live/${CERTBOT_CERT_FOLDER}/fullchain.pem;
+        ssl_certificate_key /etc/letsencrypt/live/${CERTBOT_CERT_FOLDER}/privkey.pem;
 
         ssl_buffer_size 8k;
 
