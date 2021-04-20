@@ -10,6 +10,8 @@ WORKDIR /home/node/app
 COPY package.json .
 COPY server_api .
 
+RUN apt-get install imagemagick
+
 USER node
 
 RUN yarn config set ignore-engines

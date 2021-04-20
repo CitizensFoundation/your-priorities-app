@@ -63,6 +63,7 @@ services:
     environment:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+      MINIO_HTTP_TRACE: /dev/stdout
     command: server --address localhost:9000 /minio_data
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
@@ -78,6 +79,10 @@ services:
     entrypoint: >
       /bin/sh -c "
       /usr/bin/mc config host add --quiet --api s3v4 local https://${FULL_HOSTNAME} ${MINIO_ROOT_USER} ${MINIO_ROOT_PASSWORD};
+      /usr/bin/mc mb --quiet local/${S3_ATTACHMENTS_BUCKET}/;
+      /usr/bin/mc policy set public local/${S3_ATTACHMENTS_BUCKET};
+      /usr/bin/mc mb --quiet local/${S3_REPORTS_BUCKET}/;
+      /usr/bin/mc policy set public local/${S3_REPORTS_BUCKET};
       /usr/bin/mc mb --quiet local/${S3_BUCKET}/;
       /usr/bin/mc policy set public local/${S3_BUCKET};
       "
