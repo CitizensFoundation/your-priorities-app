@@ -6,12 +6,22 @@ server {
         location ~ /.well-known/acme-challenge {
           allow all;
           root /var/www/html;
+          break;
         }
 
         location / {
                 rewrite ^ https://$host$request_uri? permanent;
         }
 }
+
+upstream minio {
+        server localhost:9000;
+}
+
+upstream nodejs {
+        server localhost:8080;
+}
+
 
 server {
         listen 443 ssl http2;
@@ -20,8 +30,8 @@ server {
 
         server_tokens off;
 
-        ssl_certificate /etc/letsencrypt/live/example.com/fullchain.pem;
-        ssl_certificate_key /etc/letsencrypt/live/example.com/privkey.pem;
+        ssl_certificate /etc/letsencrypt/live/${CERTBOT_CERT_FOLDER}/fullchain.pem;
+        ssl_certificate_key /etc/letsencrypt/live/${CERTBOT_CERT_FOLDER}/privkey.pem;
 
         ssl_buffer_size 8k;
 
@@ -40,6 +50,10 @@ server {
         resolver 8.8.8.8;
 
 	location /minio {
+		try_files $uri @minio;
+	}
+
+	location @minio {
             proxy_set_header Host $http_host;
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -51,15 +65,16 @@ server {
             proxy_set_header Connection "";
             chunked_transfer_encoding off;
 
-            proxy_pass http://localhost:9000;
+            proxy_pass http://minio;
         }
+
+  #      location / {
+   #             try_files $uri @nodejs;
+   #     }
 
         location / {
-                try_files $uri @nodejs;
-        }
-
-        location @nodejs {
-                proxy_pass http://localhost:8080;
+                proxy_set_header Host $http_host;
+                proxy_pass http://nodejs;
                 add_header X-Frame-Options "SAMEORIGIN" always;
                 add_header X-XSS-Protection "1; mode=block" always;
                 add_header X-Content-Type-Options "nosniff" always;
