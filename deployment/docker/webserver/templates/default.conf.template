@@ -14,6 +14,15 @@ server {
         }
 }
 
+upstream minio {
+        server localhost:9000;
+}
+
+upstream nodejs {
+        server localhost:8080;
+}
+
+
 server {
         listen 443 ssl http2;
         listen [::]:443 ssl http2;
@@ -41,6 +50,10 @@ server {
         resolver 8.8.8.8;
 
 	location /minio {
+		try_files $uri @minio;
+	}
+
+	location @minio {
             proxy_set_header Host $http_host;
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -52,7 +65,7 @@ server {
             proxy_set_header Connection "";
             chunked_transfer_encoding off;
 
-            proxy_pass http://localhost:9000;
+            proxy_pass http://minio;
         }
 
         location / {
@@ -60,7 +73,8 @@ server {
         }
 
         location @nodejs {
-                proxy_pass http://localhost:8080;
+                proxy_set_header Host $http_host;
+                proxy_pass http://nodejs;
                 add_header X-Frame-Options "SAMEORIGIN" always;
                 add_header X-XSS-Protection "1; mode=block" always;
                 add_header X-Content-Type-Options "nosniff" always;

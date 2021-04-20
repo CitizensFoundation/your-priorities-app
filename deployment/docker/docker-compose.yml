@@ -5,9 +5,9 @@ services:
     container_name: webserver
     restart: unless-stopped
     env_file: .env
-    ports:
-      - "80:80"
-      - "443:443"
+    # ports:
+    #  - "80:80"
+    #  - "443:443"
     build:
       context: ./webserver/
       dockerfile: Dockerfile
@@ -21,7 +21,7 @@ services:
       - client-app-dist:/usr/src/your-priorities/client/build/bundle
       - admin-app-dist:/usr/src/your-priorities/admin_app/dist
       - analytics-app-dist:/usr/src/your-priorities/analytics_app/dist
-        #network_mode: host
+    network_mode: host
 
   your-priorities-app:
     container_name: your-priorities-app
