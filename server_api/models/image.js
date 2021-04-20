@@ -346,7 +346,9 @@ module.exports = (sequelize, DataTypes) => {
       aws: {
         endpoint: process.env.S3_ENDPOINT || null,
         region: process.env.S3_REGION || (process.env.S3_ENDPOINT ? null : 'us-east-1'),
-        acl: 'public-read'
+        acl: 'public-read',
+        s3ForcePathStyle: process.env.MINIO_ROOT_USER ? true : undefined,
+        signatureVersion: process.env.MINIO_ROOT_USER ? 'v4' : undefined
       },
 
       cleanup: {
