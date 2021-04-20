@@ -49,6 +49,12 @@ server {
         ssl_stapling_verify on;
         resolver 8.8.8.8;
 
+	ignore_invalid_headers off;
+
+        client_max_body_size 0;
+
+        proxy_buffering off;
+
 #	location /minio {
 #		try_files $uri @minio;
 #	}
