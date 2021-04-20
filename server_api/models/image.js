@@ -79,9 +79,18 @@ module.exports = (sequelize, DataTypes) => {
     versions.forEach((version) => {
       const n = version.url.lastIndexOf(process.env.S3_BUCKET);
       const path = version.url.substring(n+process.env.S3_BUCKET.length, version.url.length);
-      const newUrl = "https://"
-        + process.env.S3_BUCKET + "." + (process.env.S3_ENDPOINT || "s3.amazonaws.com")
-        + path;
+      let newUrl;
+
+      if (process.env.MINIO_ROOT_USER) {
+        newUrl = "https://"
+          + process.env.S3_ENDPOINT
+          + "/" + process.env.S3_BUCKET
+          + path;
+      } else {
+        newUrl = "https://"
+          + process.env.S3_BUCKET + "." + (process.env.S3_ENDPOINT || "s3.amazonaws.com")
+          + path;
+      }
       formats.push(newUrl);
     });
     return formats;
