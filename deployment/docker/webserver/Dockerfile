@@ -1,4 +1,5 @@
 FROM nginx
+COPY nginx.conf /etc/nginx/nginx.conf
 
 ARG CERTBOT_CERT_FOLDER
 ENV CERTBOT_CERT_FOLDER=$CERTBOT_CERT_FOLDER

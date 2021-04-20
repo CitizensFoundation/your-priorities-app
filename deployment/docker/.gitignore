@@ -2,3 +2,4 @@
 certBotCreate.sh
 certBotCreatePERFORM.sh
 webserver/letsEncryptCerts
+minio_data/*
