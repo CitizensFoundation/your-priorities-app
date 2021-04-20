@@ -129,10 +129,6 @@ app.use(requestIp.mw());
 app.use(bodyParser.json({limit: '5mb'}));
 app.use(bodyParser.urlencoded({limit: '5mb', extended: true}));
 
-if (process.env.USING_NGINX_PROXY) {
-  app.enable('trust proxy');
-}
-
 var sessionConfig = {
   store: new RedisStore({url: process.env.REDIS_URL}),
   name: 'yrpri.sid',
