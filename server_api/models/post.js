@@ -237,12 +237,15 @@ module.exports = (sequelize, DataTypes) => {
         sequelize
           .query('ALTER TABLE "' + sequelize.models.Post.tableName + '" ADD COLUMN "' + vectorName + '" TSVECTOR')
           .then(() => {
+            console.log("addFullTextIndex: 1");
             return sequelize
               .query('UPDATE "' + sequelize.models.Post.tableName + '" SET "' + vectorName + '" = to_tsvector(\'english\', ' + searchFields.join(' || \' \' || ') + ')')
           }).then(() => {
-          return sequelize
-            .query('CREATE INDEX post_search_idx ON "' + sequelize.models.Post.tableName + '" USING gin("' + vectorName + '");')
+            console.log("addFullTextIndex: 2");
+            return sequelize
+              .query('CREATE INDEX post_search_idx ON "' + sequelize.models.Post.tableName + '" USING gin("' + vectorName + '");')
         }).then(() => {
+          console.log("addFullTextIndex: 3");
           return sequelize
             .query('CREATE TRIGGER post_vector_update BEFORE INSERT OR UPDATE ON "' + sequelize.models.Post.tableName + '" FOR EACH ROW EXECUTE PROCEDURE tsvector_update_trigger("' + vectorName + '", \'pg_catalog.english\', ' + searchFields.join(', ') + ')')
         }).catch(error=> {
