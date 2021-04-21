@@ -21,6 +21,12 @@ services:
       - client-app-dist:/usr/src/your-priorities/client/build/bundle
       - admin-app-dist:/usr/src/your-priorities/admin_app/dist
       - analytics-app-dist:/usr/src/your-priorities/analytics_app/dist
+    healthcheck:
+      test: ["CMD", "curl", "-f", "https://${FULL_HOSTNAME}/api/users/has/AutoTranslation"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+
     network_mode: host
 
   your-priorities-app:
@@ -38,6 +44,11 @@ services:
     environment:
       - NODE_ENV=production
     command: node --optimize_for_size --max_old_space_size=460 server_api/api_app.js
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/api/users/has/AutoTranslation"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
     network_mode: host
 
   your-priorities-worker:
