@@ -109,7 +109,6 @@ router.get('/:externalId/points', (req, res) => {
 
       let order = [
         pointOrder,
-        [models.PointRevision, 'created_at', 'asc'],
         [models.User, {model: models.Image, as: 'UserProfileImages'}, 'created_at', 'asc'],
         [{model: models.Video, as: "PointVideos"}, 'updated_at', 'desc'],
         [{model: models.Audio, as: "PointAudios"}, 'updated_at', 'desc'],
@@ -160,13 +159,16 @@ router.get('/:externalId/points', (req, res) => {
           {
             model: models.PointRevision,
             attributes: ['content', 'value', 'embed_data', 'created_at'],
-            required: false
+            required: false,
+            order: [['created_at', 'asc']],
+            separate: true
           },
           {
             model: models.Video,
             required: false,
             attributes: ['id', 'formats', 'updated_at', 'viewable', 'public_meta'],
             as: 'PointVideos',
+
             include: [
               {
                 model: models.Image,
