@@ -239,15 +239,12 @@ module.exports = (sequelize, DataTypes) => {
           .then(() => {
             return sequelize
               .query('UPDATE "' + sequelize.models.Post.tableName + '" SET "' + vectorName + '" = to_tsvector(\'english\', ' + searchFields.join(' || \' \' || ') + ')')
-              .error(console.log);
           }).then(() => {
           return sequelize
             .query('CREATE INDEX post_search_idx ON "' + sequelize.models.Post.tableName + '" USING gin("' + vectorName + '");')
-            .error(console.log);
         }).then(() => {
           return sequelize
             .query('CREATE TRIGGER post_vector_update BEFORE INSERT OR UPDATE ON "' + sequelize.models.Post.tableName + '" FOR EACH ROW EXECUTE PROCEDURE tsvector_update_trigger("' + vectorName + '", \'pg_catalog.english\', ' + searchFields.join(', ') + ')')
-            .error(console.log);
         }).catch(error=> {
           console.log(error);
         });
