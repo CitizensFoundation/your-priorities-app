@@ -85,6 +85,18 @@ services:
       retries: 3
     network_mode: host  
 
+
+  ac-analytics-api:
+    container_name: ac-analytics-api
+    build: ./ac-analytics-api/
+    env_file: .env
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8888/"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+    
   mc:
     image: minio/mc:latest
     depends_on:
