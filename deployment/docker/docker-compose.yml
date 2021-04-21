@@ -92,6 +92,9 @@ services:
     restart: unless-stopped
     environment:
       - PORT=8888
+    volumes:
+      - ./recModels:/ac-analytics-api/recModels        
+      - ./d2v_models:/ac-analytics-api/d2v_models
     expose:
       - "8888"        
     healthcheck:
@@ -100,11 +103,14 @@ services:
       timeout: 20s
       retries: 3
     network_mode: host  
- 
+
   ac-analytics-worker:
     container_name: ac-analytics-worker
     build: ./ac-analytics-worker/
     env_file: .env
+    volumes:
+      - ./rec_models:/ac-analytics-api/rec_models
+      - ./d2v_models:/ac-analytics-api/d2v_models
     restart: unless-stopped
     command: python3 worker.py
     network_mode: host

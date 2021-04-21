@@ -3,4 +3,6 @@ certBotCreate.sh
 certBotCreatePERFORM.sh
 webserver/letsEncryptCerts
 minio_data/*
-logs/*
+logs/
+d2v_models/
+rec_models/

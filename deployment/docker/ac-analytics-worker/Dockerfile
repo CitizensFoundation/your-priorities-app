@@ -22,3 +22,4 @@ RUN  python3 -m spacy download el_core_news_sm
 RUN  python3 -m spacy download ro_core_news_sm
 RUN  python3 -m spacy download xx_ent_wiki_sm
 RUN  python3 -m spacy download fr_core_news_sm
+RUN python3 setup_punkt.py
