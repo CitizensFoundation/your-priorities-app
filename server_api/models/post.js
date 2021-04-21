@@ -248,7 +248,9 @@ module.exports = (sequelize, DataTypes) => {
           return sequelize
             .query('CREATE TRIGGER post_vector_update BEFORE INSERT OR UPDATE ON "' + sequelize.models.Post.tableName + '" FOR EACH ROW EXECUTE PROCEDURE tsvector_update_trigger("' + vectorName + '", \'pg_catalog.english\', ' + searchFields.join(', ') + ')')
             .error(console.log);
-        }).error(console.log);
+        }).catch(error=> {
+          console.log(error);
+        });
       } else {
         log.info("PostText search index is already setup");
       }
