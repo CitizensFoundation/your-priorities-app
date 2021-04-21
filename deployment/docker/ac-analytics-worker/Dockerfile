@@ -1,4 +1,4 @@
-FROM tiangolo/meinheld-gunicorn-flask:python3.7
+FROM python:3.7
 
 RUN git clone https://github.com/CitizensFoundation/ac-analytics-api.git
 
@@ -22,15 +22,3 @@ RUN  python3 -m spacy download el_core_news_sm
 RUN  python3 -m spacy download ro_core_news_sm
 RUN  python3 -m spacy download xx_ent_wiki_sm
 RUN  python3 -m spacy download fr_core_news_sm
-
-RUN mv api.py main.py
-
-ENV PORT=8888
-ENV WORKERS_PER_CORE=0.5
-ENV HOST=127.0.0.1
-
-EXPOSE 8888
-
-COPY . /app
-
-
