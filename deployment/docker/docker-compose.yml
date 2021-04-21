@@ -54,6 +54,7 @@ services:
   your-priorities-worker:
     container_name: your-priorities-worker
     build: ./your-priorities-worker/
+    restart: unless-stopped
     env_file: .env
     build:
       context: ../../.
@@ -66,6 +67,7 @@ services:
 
   minio:
     image: minio/minio
+    restart: unless-stopped
     env_file: .env
     volumes:
       - ./minio_data:/minio_data
@@ -112,6 +114,7 @@ services:
   #ac-analytics-api:
   #  container_name: ac-anaylitcs-api
   #  build: ./ac-anaylitcs-api/
+  #  restart: unless-stopped
   #  env_file: .yrpri-env
   #  environment:
   #    - NODE_ENV=production
