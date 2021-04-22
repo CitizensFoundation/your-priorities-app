@@ -85,7 +85,7 @@ services:
       MINIO_HTTP_TRACE: /dev/stdout
     command: server --address minio:9000 /minio_data
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      test: ["CMD", "curl", "-f", "http://minio:9000/minio/health/live"]
       interval: 30s
       timeout: 20s
       retries: 3
@@ -106,7 +106,7 @@ services:
     expose:
       - "8888"        
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8888/"]
+      test: ["CMD", "curl", "-H","X-API-KEY: ${AC_ANALYTICS_KEY}","-f", "http://ac-analytics-api:8888/api/v1/healthcheck"]
       interval: 30s
       timeout: 20s
       retries: 3
