@@ -5,14 +5,14 @@ services:
     container_name: webserver
     restart: unless-stopped
     env_file: .env
-    # ports:
-    #  - "80:80"
-    #  - "443:443"
     build:
       context: ./webserver/
       dockerfile: Dockerfile
       args:
         - CERTBOT_CERT_FOLDER=${CERTBOT_CERT_FOLDER}
+    ports:
+      - "80:80"
+      - "443:443"
     volumes:
       - ./webserver/templates:/etc/nginx/templates
       - certbot-env:/etc/letsencrypt/
@@ -26,8 +26,8 @@ services:
       interval: 30s
       timeout: 20s
       retries: 3
-
-    network_mode: host
+    networks:
+      - yrpri-network
 
   your-priorities-app:
     container_name: your-priorities-app
@@ -49,7 +49,10 @@ services:
       interval: 30s
       timeout: 20s
       retries: 3
-    network_mode: host
+    networks:
+      - yrpri-network
+    extra_hosts:
+      host.docker.internal: ${PRIVATE_IP_ADDRESS_OF_HOST}
 
   your-priorities-worker:
     container_name: your-priorities-worker
@@ -63,7 +66,10 @@ services:
     environment:
       - NODE_ENV=production
     command: node --optimize_for_size --max_old_space_size=960 server_api/active-citizen/workers/main.js
-    network_mode: host
+    networks:
+      - yrpri-network
+    extra_hosts:
+      host.docker.internal: ${PRIVATE_IP_ADDRESS_OF_HOST}
 
   minio:
     image: minio/minio
@@ -77,13 +83,14 @@ services:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
       MINIO_HTTP_TRACE: /dev/stdout
-    command: server --address localhost:9000 /minio_data
+    command: server --address minio:9000 /minio_data
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
       interval: 30s
       timeout: 20s
       retries: 3
-    network_mode: host  
+    networks:
+      - yrpri-network
 
   ac-analytics-api:
     container_name: ac-analytics-api
@@ -92,6 +99,7 @@ services:
     restart: unless-stopped
     environment:
       - PORT=8888
+      - HOST=ac-analytics-api
     volumes:
       - ./rec_models:/ac-analytics-api/rec_models
       - ./d2v_models:/ac-analytics-api/d2v_models
@@ -102,7 +110,10 @@ services:
       interval: 30s
       timeout: 20s
       retries: 3
-    network_mode: host  
+    networks:
+      - yrpri-network
+    extra_hosts:
+      host.docker.internal: ${PRIVATE_IP_ADDRESS_OF_HOST}
 
   ac-analytics-worker:
     container_name: ac-analytics-worker
@@ -113,7 +124,8 @@ services:
       - ./d2v_models:/ac-analytics-api/d2v_models
     restart: unless-stopped
     command: python3 worker.py
-    network_mode: host
+    extra_hosts:
+      host.docker.internal: ${PRIVATE_IP_ADDRESS_OF_HOST}
 
   mc:
     image: minio/mc:latest
@@ -141,15 +153,10 @@ services:
     depends_on:
       - webserver
 
-  #ac-analytics-api:
-  #  container_name: ac-anaylitcs-api
-  #  build: ./ac-anaylitcs-api/
-  #  restart: unless-stopped
-  #  env_file: .yrpri-env
-  #  environment:
-  #    - NODE_ENV=production
-  #  networks:
-  #    - app-network
+networks:
+  yrpri-network:
+    name: yrpri-network
+
 volumes:
   certbot-var:
   client-app-dist:
