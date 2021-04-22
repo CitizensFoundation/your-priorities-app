@@ -93,7 +93,7 @@ services:
     environment:
       - PORT=8888
     volumes:
-      - ./recModels:/ac-analytics-api/recModels        
+      - ./rec_models:/ac-analytics-api/rec_models
       - ./d2v_models:/ac-analytics-api/d2v_models
     expose:
       - "8888"        
