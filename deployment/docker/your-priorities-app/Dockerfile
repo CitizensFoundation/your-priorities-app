@@ -19,6 +19,10 @@ RUN yarn install
 
 COPY --chown=node:node . .
 
+RUN rm -r client_app/build/bundled/images/manifest_yp
+
+COPY deployment/docker/manifest_images_yp client_app/build/bundled/images/
+
 ENV PORT=8080
 
 EXPOSE 8080
