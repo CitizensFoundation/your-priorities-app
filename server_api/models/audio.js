@@ -1,9 +1,16 @@
 "use strict";
-
 const log = require('../utils/logger');
 const aws = require('aws-sdk');
 const _ = require('lodash');
 const queue = require('../active-citizen/workers/queue');
+
+let bullAudioQueue;
+
+if (process.env.USE_YOUR_PRIORITIES_ENCODER) {
+  const Queue = require('bull');
+  const redisUrl = process.env.REDIS_URL ? process.env.REDIS_URL : undefined;
+  bullAudioQueue = new Queue('AudioEncoding', redisUrl);
+}
 
 module.exports = (sequelize, DataTypes) => {
   const Audio = sequelize.define("Audio", {
@@ -150,29 +157,33 @@ module.exports = (sequelize, DataTypes) => {
   };
 
   Audio.getTranscodingJobStatus = (audio, req, res ) => {
-    const params = {
-      Id: req.body.jobId
-    };
-    const eltr = new aws.ElasticTranscoder({
-      apiVersion: '2012–09–25',
-      region: process.env.S3_REGION ? process.env.S3_REGION : 'eu-west-1'
-    });
-    eltr.readJob(params, (error, data) => {
-      if (error) {
-        log.error("Could not get status of transcoding job", { error });
-        res.sendStatus(500);
-      } else {
-        const jobStatus = { status: data.Job.Status, statusDetail: data.Job.StatusDetail };
-        if (jobStatus.status==="Complete") {
-          res.send(jobStatus);
-        } else if (jobStatus.status==="Error") {
-          log.error("Could not transcode audio image and audio", { jobStatus: jobStatus, data: data });
+    if (process.env.USE_YOUR_PRIORITIES_ENCODER) {
+      Audio.getYrpriEncoderTranscodingJobStatus(audio, req, res);
+    } else {
+      const params = {
+        Id: req.body.jobId
+      };
+      const eltr = new aws.ElasticTranscoder({
+        apiVersion: '2012–09–25',
+        region: process.env.S3_REGION ? process.env.S3_REGION : 'eu-west-1'
+      });
+      eltr.readJob(params, (error, data) => {
+        if (error) {
+          log.error("Could not get status of transcoding job", { error });
           res.sendStatus(500);
         } else {
-          res.send(jobStatus);
+          const jobStatus = { status: data.Job.Status, statusDetail: data.Job.StatusDetail };
+          if (jobStatus.status==="Complete") {
+            res.send(jobStatus);
+          } else if (jobStatus.status==="Error") {
+            log.error("Could not transcode audio image and audio", { jobStatus: jobStatus, data: data });
+            res.sendStatus(500);
+          } else {
+            res.send(jobStatus);
+          }
         }
-      }
-    });
+      });
+    }
   };
 
   Audio.startTranscoding = (audio, options, req, res) => {
@@ -266,41 +277,45 @@ module.exports = (sequelize, DataTypes) => {
   };
 
   Audio.startTranscodingJob = (audio, callback) => {
-    const eltr = new aws.ElasticTranscoder({
-      apiVersion: '2012–09–25',
-      region: process.env.S3_REGION ? process.env.S3_REGION : 'eu-west-1'
-    });
-    const fileKey = audio.meta.fileKey;
-    const pipelineId = process.env.AWS_TRANSCODER_AUDIO_PIPELINE_ID;
-    const params = {
-      PipelineId: pipelineId,
-      Input: {
-        Key: fileKey,
-        Container: 'auto',
-        TimeSpan: {
-          Duration: audio.meta.maxDuration+'.000'
-        }
-      },
-      Outputs: [
-        {
-          Key:fileKey,
-          PresetId: process.env.AWS_TRANSCODER_AUDIO_PRESET_ID,
+    if (process.env.USE_YOUR_PRIORITIES_ENCODER) {
+      Audio.startYrpriEncoderTranscodingJob(audio, callback);
+    } else {
+      const eltr = new aws.ElasticTranscoder({
+        apiVersion: '2012–09–25',
+        region: process.env.S3_REGION ? process.env.S3_REGION : 'eu-west-1'
+      });
+      const fileKey = audio.meta.fileKey;
+      const pipelineId = process.env.AWS_TRANSCODER_AUDIO_PIPELINE_ID;
+      const params = {
+        PipelineId: pipelineId,
+        Input: {
+          Key: fileKey,
+          Container: 'auto',
+          TimeSpan: {
+            Duration: audio.meta.maxDuration+'.000'
+          }
         },
-        {
-          Key: fileKey.slice(0, fileKey.length-4)+'.flac',
-          PresetId: process.env.AWS_TRANSCODER_FLAC_PRESET_ID
+        Outputs: [
+          {
+            Key:fileKey,
+            PresetId: process.env.AWS_TRANSCODER_AUDIO_PRESET_ID,
+          },
+          {
+            Key: fileKey.slice(0, fileKey.length-4)+'.flac',
+            PresetId: process.env.AWS_TRANSCODER_FLAC_PRESET_ID
+          }
+        ]
+      };
+      log.info('Starting AWS transcoding Audio Job');
+      eltr.createJob(params, (error, data) => {
+        if (error) {
+          log.error("Error creating AWS Audio transcoding job", { error });
+          callback(error);
+        } else {
+          callback(null, data)
         }
-      ]
-    };
-    log.info('Starting AWS transcoding Audio Job');
-    eltr.createJob(params, (error, data) => {
-      if (error) {
-        log.error("Error creating AWS Audio transcoding job", { error });
-        callback(error);
-      } else {
-        callback(null, data)
-      }
-    });
+      });
+    }
   };
 
   Audio.prototype.createFormats = function (audio) {
@@ -352,6 +367,55 @@ module.exports = (sequelize, DataTypes) => {
         }).catch((error) => { callback(error) });
       }
     });
+  };
+
+
+  // Using Your Priorities Encoder
+
+  Audio.startYrpriEncoderTranscodingJob = (audio, callback) => {
+    const fileKey = audio.meta.fileKey;
+    const jobPackage = {
+      fileKey,
+      duration: audio.meta.maxDuration+'.000',
+      flacFilename: fileKey.slice(0, fileKey.length-4)+'.flac'
+    }
+
+    sequelize.models.AcBackgroundJob.createJob(jobPackage, async (error, jobId) => {
+      log.info('Starting YRPRI transcoding Job');
+      if (error) {
+        log.error("Error creating YRPRI transcoding job", { error });
+        callback(error);
+      } else {
+        await bullAudioQueue.add('transcode', jobPackage);
+        callback(null, { Job: { Id: jobId } });
+      }
+    });
+  };
+
+  Audio.getYrpriEncoderTranscodingJobStatus = (audio, req, res ) => {
+    sequelize.models.AcBackgroundJob.findOne({
+      where: {
+        id: req.body.jobId
+      }
+    }).then(job=>{
+      if (job) {
+        const jobStatus = { status: job.data.status, statusDetail: "" };
+        if (job.data.status==="Complete") {
+          res.send(jobStatus);
+        } else if (job.data.status==="Error") {
+          log.error("Could not transcode audio image and audio", { jobStatus: jobStatus, data: job.data });
+          res.sendStatus(500);
+        } else {
+          res.send(jobStatus);
+        }
+      } else {
+        log.error("Could not find transcoding job");
+        res.sendStatus(404);
+      }
+    }).catch(error=>{
+      log.error("Could not transcode image and audio", { error });
+      res.sendStatus(500);
+    })
   };
 
   return Audio;
