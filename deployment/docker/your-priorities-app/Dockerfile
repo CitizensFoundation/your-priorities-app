@@ -21,7 +21,9 @@ COPY --chown=node:node . .
 
 RUN rm -r client_app/build/bundled/images/manifest_yp
 
-COPY deployment/docker/manifest_images_yp client_app/build/bundled/images/
+COPY deployment/docker/manifest_images_yp/ ./client_app/build/bundled/images/manifest_yp/
+
+RUN ls -l client_app/build/bundled/images/manifest_yp
 
 ENV PORT=8080
 

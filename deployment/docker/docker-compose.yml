@@ -41,8 +41,6 @@ services:
       - client-app-dist:/usr/src/your-priorities/client/build/bundle
       - admin-app-dist:/usr/src/your-priorities/admin_app/dist
       - analytics-app-dist:/usr/src/your-priorities/analytics_app/dist
-    environment:
-      - NODE_ENV=production
     command: node --optimize_for_size --max_old_space_size=460 server_api/api_app.js
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/api/users/has/AutoTranslation"]
@@ -63,14 +61,26 @@ services:
       context: ../../.
       dockerfile: deployment/docker/your-priorities-worker/Dockerfile
     restart: unless-stopped
-    environment:
-      - NODE_ENV=production
     command: node --optimize_for_size --max_old_space_size=960 server_api/active-citizen/workers/main.js
     networks:
       - yrpri-network
     extra_hosts:
       host.docker.internal: ${PRIVATE_IP_ADDRESS_OF_HOST}
 
+  your-priorities-encoder:
+    container_name: your-priorities-encoder
+    build: ./your-priorities-encoder/
+    restart: unless-stopped
+    env_file: .env
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+    command: node out-tsc/worker.js
+    networks:
+      - yrpri-network
+    extra_hosts:
+      host.docker.internal: ${PRIVATE_IP_ADDRESS_OF_HOST}
+        
   minio:
     image: minio/minio
     restart: unless-stopped
@@ -134,6 +144,11 @@ services:
     entrypoint: >
       /bin/sh -c "
       /usr/bin/mc config host add --quiet --api s3v4 local https://${FULL_HOSTNAME} ${MINIO_ROOT_USER} ${MINIO_ROOT_PASSWORD};
+      /usr/bin/mc mb --quiet local/${S3_AUDIO_UPLOAD_BUCKET}/;
+      /usr/bin/mc mb --quiet local/${S3_AUDIO_PUBLIC_BUCKET}/;
+      /usr/bin/mc mb --quiet local/${S3_VIDEO_UPLOAD_BUCKET}/;
+      /usr/bin/mc mb --quiet local/${S3_VIDEO_PUBLIC_BUCKET}/;
+      /usr/bin/mc mb --quiet local/${S3_VIDEO_THUMBNAIL_BUCKET}/;
       /usr/bin/mc mb --quiet local/${S3_ATTACHMENTS_BUCKET}/;
       /usr/bin/mc policy set public local/${S3_ATTACHMENTS_BUCKET};
       /usr/bin/mc mb --quiet local/${S3_REPORTS_BUCKET}/;
