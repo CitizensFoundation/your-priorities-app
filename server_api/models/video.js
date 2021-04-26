@@ -114,7 +114,7 @@ module.exports = (sequelize, DataTypes) => {
     if (process.env.MINIO_ROOT_USER) {
       return "https://"
         + process.env.S3_ENDPOINT
-        + "/" + process.env.S3_BUCKET+'/'+fileKey;
+        + "/" + process.env.S3_VIDEO_THUMBNAIL_BUCKET+'/'+fileKey;
     } else {
       return 'https://'+video.meta.thumbnailBucket+'.'+video.meta.endPoint+'/'+fileKey;
     }

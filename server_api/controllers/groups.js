@@ -417,7 +417,7 @@ router.post('/:id/getPresignedAttachmentURL',  auth.can('add to group'), functio
     Bucket: bucketName,
     Key: fileKey,
     Expires: signedUrlExpireSeconds,
-    ACL: 'public-read',
+    ACL: process.env.S3_FORCE_PATH_STYLE ? undefined : 'public-read',
     ContentType: contentType
   };
 
