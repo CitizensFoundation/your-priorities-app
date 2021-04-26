@@ -332,6 +332,7 @@ module.exports = (sequelize, DataTypes) => {
       endpoint: accelEndPoint,
       useAccelerateEndpoint: process.env.S3_ACCELERATED_ENDPOINT!=null,
       region: process.env.S3_REGION || ((process.env.S3_ENDPOINT || process.env.S3_ACCELERATED_ENDPOINT) ? null : 'us-east-1'),
+      s3ForcePathStyle: process.env.S3_FORCE_PATH_STYLE ? true : false
     });
 
     const signedUrlExpireSeconds = 60 * 60;
