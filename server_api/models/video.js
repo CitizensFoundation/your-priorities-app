@@ -98,14 +98,26 @@ module.exports = (sequelize, DataTypes) => {
 
   Video.getFullUrl = (meta) => {
     if (meta) {
-      return 'https://'+meta.publicBucket+'.'+meta.endPoint+'/'+meta.fileKey;
+      if (process.env.MINIO_ROOT_USER) {
+        return "https://"
+          + meta.endPoint
+          + "/" + meta.publicBucket+'/'+meta.fileKey;
+      } else {
+        return 'https://'+meta.publicBucket+'.'+meta.endPoint+'/'+meta.fileKey;
+      }
     }
   };
 
   Video.getThumbnailUrl = (video, number) => {
     const zerofilled = ('00000'+number).slice(-5);
     const fileKey = video.meta.fileKey+'_thumbs-' + video.id + '-'+zerofilled+'.png';
-    return 'https://'+video.meta.thumbnailBucket+'.'+video.meta.endPoint+'/'+fileKey;
+    if (process.env.MINIO_ROOT_USER) {
+      return "https://"
+        + process.env.S3_ENDPOINT
+        + "/" + process.env.S3_BUCKET+'/'+fileKey;
+    } else {
+      return 'https://'+video.meta.thumbnailBucket+'.'+video.meta.endPoint+'/'+fileKey;
+    }
   };
 
   Video.createAndGetSignedUploadUrl = (req, res) => {
@@ -517,21 +529,25 @@ module.exports = (sequelize, DataTypes) => {
 
   Video.startYrpriEncoderTranscodingJob = (video, callback) => {
     const fileKey = video.meta.fileKey;
-    const jobPackage = {
+    let jobPackage = {
       portrait: (video.meta && video.meta.aspect && video.meta.aspect==="portrait"),
       fileKey,
       duration: video.meta.maxDuration+'.000',
       thumbnailPattern: fileKey+'_thumbs-' + video.id + '-{count}',
       flacFilename: fileKey.slice(0, fileKey.length-4)+'.flac'
     }
-
     sequelize.models.AcBackgroundJob.createJob(jobPackage, async (error, jobId) => {
       log.info('Starting YRPRI transcoding Job');
       if (error) {
         log.error("Error creating YRPRI transcoding job", { error });
         callback(error);
       } else {
-        await bullVideoQueue.add('transcode', jobPackage);
+
+        jobPackage = _.merge(jobPackage, {
+          acBackgroundJobId: jobId,
+        });
+
+        await bullVideoQueue.add(jobPackage);
         callback(null, { Job: { Id: jobId } });
       }
     });

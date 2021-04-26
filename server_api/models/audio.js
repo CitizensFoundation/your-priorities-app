@@ -374,7 +374,8 @@ module.exports = (sequelize, DataTypes) => {
 
   Audio.startYrpriEncoderTranscodingJob = (audio, callback) => {
     const fileKey = audio.meta.fileKey;
-    const jobPackage = {
+
+    let jobPackage = {
       fileKey,
       duration: audio.meta.maxDuration+'.000',
       flacFilename: fileKey.slice(0, fileKey.length-4)+'.flac'
@@ -386,7 +387,12 @@ module.exports = (sequelize, DataTypes) => {
         log.error("Error creating YRPRI transcoding job", { error });
         callback(error);
       } else {
-        await bullAudioQueue.add('transcode', jobPackage);
+        jobPackage = _.merge(jobPackage, {
+          acBackgroundJobId: jobId,
+        });
+
+
+        await bullAudioQueue.add(jobPackage);
         callback(null, { Job: { Id: jobId } });
       }
     });

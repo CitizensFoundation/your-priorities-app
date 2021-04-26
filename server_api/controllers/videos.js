@@ -110,10 +110,7 @@ router.get('/hasVideoUploadSupport', (req, res) => {
                            process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON!=null),
     hasVideoUploadSupport: (process.env.S3_VIDEO_UPLOAD_BUCKET!=null &&
                             process.env.S3_VIDEO_PUBLIC_BUCKET!=null &&
-                            process.env.S3_VIDEO_THUMBNAIL_BUCKET!=null &&
-                            process.env.AWS_TRANSCODER_PIPELINE_ID!=null &&
-                            process.env.AWS_TRANSCODER_PRESET_ID!=null &&
-                            process.env.AWS_TRANSCODER_FLAC_PRESET_ID!=null)
+                            process.env.S3_VIDEO_THUMBNAIL_BUCKET!=null)
   })
 });
 
