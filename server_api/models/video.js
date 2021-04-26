@@ -503,7 +503,7 @@ module.exports = (sequelize, DataTypes) => {
       Bucket: bucketName,
       Key: fileKey,
       Expires: signedUrlExpireSeconds,
-      ACL: 'bucket-owner-full-control',
+      ACL: process.env.S3_FORCE_PATH_STYLE ? undefined : 'bucket-owner-full-control',
       ContentType: contentType
     };
     s3.getSignedUrl('putObject', s3Params, (error, url) => {
