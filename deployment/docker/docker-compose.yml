@@ -83,9 +83,9 @@ services:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
       MINIO_HTTP_TRACE: /dev/stdout
-    command: server --address minio:9000 /minio_data
+    command: server --address localhost:9000 /minio_data
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://minio:9000/minio/health/live"]
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
       interval: 30s
       timeout: 20s
       retries: 3
@@ -98,14 +98,14 @@ services:
     restart: unless-stopped
     environment:
       - PORT=8888
-      - HOST=ac-analytics-api
+      - HOST=localhost
     volumes:
       - ./rec_models:/ac-analytics-api/rec_models
       - ./d2v_models:/ac-analytics-api/d2v_models
     expose:
       - "8888"
     healthcheck:
-      test: ["CMD", "curl", "-H","X-API-KEY: ${AC_ANALYTICS_KEY}","-f", "http://ac-analytics-api:8888/api/v1/healthcheck"]
+      test: ["CMD", "curl", "-H","X-API-KEY: ${AC_ANALYTICS_KEY}","-f", "http://localhost:8888/api/v1/healthcheck"]
       interval: 30s
       timeout: 20s
       retries: 3
