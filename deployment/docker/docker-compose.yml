@@ -28,7 +28,7 @@ services:
       retries: 3
     network_mode: host
     logging:
-      driver: "json-file"
+      driver: "local"
       options:
         max-file: 2000
         max-size: 25m
@@ -53,7 +53,7 @@ services:
       retries: 3
     network_mode: host
     logging:
-      driver: "json-file"
+      driver: "local"
       options:
         max-file: 2000
         max-size: 25m
@@ -70,7 +70,7 @@ services:
     command: node --optimize_for_size --max_old_space_size=960 server_api/active-citizen/workers/main.js
     network_mode: host
     logging:
-      driver: "json-file"
+      driver: "local"
       options:
         max-file: 1000
         max-size: 25m
@@ -86,7 +86,7 @@ services:
     command: node out-tsc/worker.js
     network_mode: host
     logging:
-      driver: "json-file"
+      driver: "local"
       options:
         max-file: 100
         max-size: 25m
@@ -111,7 +111,7 @@ services:
       retries: 3
     network_mode: host
     logging:
-      driver: "json-file"
+      driver: "local"
       options:
         max-file: 100
         max-size: 25m
@@ -136,7 +136,7 @@ services:
       retries: 3
     network_mode: host
     logging:
-      driver: "json-file"
+      driver: "local"
       options:
         max-file: 100
         max-size: 25m
@@ -152,7 +152,7 @@ services:
     command: python3 worker.py
     network_mode: host
     logging:
-      driver: "json-file"
+      driver: "local"
       options:
         max-file: 100
         max-size: 25m
