@@ -10,9 +10,9 @@ services:
       dockerfile: Dockerfile
       args:
         - CERTBOT_CERT_FOLDER=${CERTBOT_CERT_FOLDER}
-    #ports:
-    #  - "80:80"
-    #  - "443:443"
+    ports:
+      - "80:80"
+      - "443:443"
     volumes:
       - ./webserver/templates:/etc/nginx/templates
       - certbot-env:/etc/letsencrypt/
@@ -26,7 +26,8 @@ services:
       interval: 30s
       timeout: 20s
       retries: 3
-    network_mode: host
+    networks:
+      - yrpri-network
 
   your-priorities-app:
     container_name: your-priorities-app
@@ -46,7 +47,10 @@ services:
       interval: 30s
       timeout: 20s
       retries: 3
-    network_mode: host
+    networks:
+      - yrpri-network
+    extra_hosts:
+      host.docker.internal: ${PRIVATE_IP_ADDRESS_OF_HOST}
 
   your-priorities-worker:
     container_name: your-priorities-worker
@@ -58,7 +62,10 @@ services:
       dockerfile: deployment/docker/your-priorities-worker/Dockerfile
     restart: unless-stopped
     command: node --optimize_for_size --max_old_space_size=960 server_api/active-citizen/workers/main.js
-    network_mode: host
+    networks:
+      - yrpri-network
+    extra_hosts:
+      host.docker.internal: ${PRIVATE_IP_ADDRESS_OF_HOST}
 
   your-priorities-encoder:
     container_name: your-priorities-encoder
@@ -69,8 +76,11 @@ services:
     environment:
       - NODE_ENV=production
     command: node out-tsc/worker.js
-    network_mode: host
-
+    networks:
+      - yrpri-network
+    extra_hosts:
+      host.docker.internal: ${PRIVATE_IP_ADDRESS_OF_HOST}
+        
   minio:
     image: minio/minio
     restart: unless-stopped
@@ -83,13 +93,14 @@ services:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
       MINIO_HTTP_TRACE: /dev/stdout
-    command: server --address localhost:9000 /minio_data
+    command: server --address minio:9000 /minio_data
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      test: ["CMD", "curl", "-f", "http://minio:9000/minio/health/live"]
       interval: 30s
       timeout: 20s
       retries: 3
-    network_mode: host
+    networks:
+      - yrpri-network
 
   ac-analytics-api:
     container_name: ac-analytics-api
@@ -98,18 +109,21 @@ services:
     restart: unless-stopped
     environment:
       - PORT=8888
-      - HOST=localhost
+      - HOST=ac-analytics-api
     volumes:
       - ./rec_models:/ac-analytics-api/rec_models
       - ./d2v_models:/ac-analytics-api/d2v_models
     expose:
-      - "8888"
+      - "8888"        
     healthcheck:
-      test: ["CMD", "curl", "-H","X-API-KEY: ${AC_ANALYTICS_KEY}","-f", "http://localhost:8888/api/v1/healthcheck"]
+      test: ["CMD", "curl", "-H","X-API-KEY: ${AC_ANALYTICS_KEY}","-f", "http://ac-analytics-api:8888/api/v1/healthcheck"]
       interval: 30s
       timeout: 20s
       retries: 3
-    network_mode: host
+    networks:
+      - yrpri-network
+    extra_hosts:
+      host.docker.internal: ${PRIVATE_IP_ADDRESS_OF_HOST}
 
   ac-analytics-worker:
     container_name: ac-analytics-worker
@@ -120,7 +134,8 @@ services:
       - ./d2v_models:/ac-analytics-api/d2v_models
     restart: unless-stopped
     command: python3 worker.py
-    network_mode: host
+    extra_hosts:
+      host.docker.internal: ${PRIVATE_IP_ADDRESS_OF_HOST}
 
   mc:
     image: minio/mc:latest
@@ -143,7 +158,7 @@ services:
       /usr/bin/mc mb --quiet local/${S3_BUCKET}/;
       /usr/bin/mc policy set public local/${S3_BUCKET};
       "
-
+  
   certbot:
     image: certbot/certbot
     container_name: certbot
