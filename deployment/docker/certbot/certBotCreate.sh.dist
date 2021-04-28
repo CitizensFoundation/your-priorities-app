@@ -1,3 +1,3 @@
 COMPOSE="/usr/local/bin/docker-compose"
 
-$COMPOSE certonly --webroot --webroot-path=/var/www/html --email <YOUR EMAIL> --agree-tos --no-eff-email --dry-run -d <FULL HOSTNAME>
+$COMPOSE run certbot certonly --webroot --webroot-path=/var/www/html --email <YOUR EMAIL> --agree-tos --no-eff-email --dry-run -d <FULL HOSTNAME>
