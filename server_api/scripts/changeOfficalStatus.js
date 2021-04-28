@@ -4,19 +4,19 @@ var ip = require('ip');
 var _ = require('lodash');
 
 const postId = process.argv[2];
-const userId = process.argv[3];
+const officialStatus = process.argv[3];
 
-if (postId && userId) {
+if (postId && officialStatus) {
   models.Post.findOne({
     where: {
       id: postId
     },
-    attributes: ['id','user_id']
+    attributes: ['id','user_id','official_status']
   }).then((post)=>{
     if (post) {
-      post.user_id = userId;
+      post.official_status = officialStatus;
       post.save().then(()=> {
-        console.log("Done");
+        console.log("Done changing status: "+officialStatus);
         process.exit();
       })
     } else {
