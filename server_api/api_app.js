@@ -586,8 +586,14 @@ app.use(function generalErrorHandler(err, req, res, next) {
   }
 });
 
-var server = app.listen(app.get('port'), function () {
-  log.info('Your Priorities server listening on port ' + server.address().port);
-});
+if (process.env.YOUR_PRIORITIES_LISTEN_HOST) {
+  var server = app.listen(app.get('port'), process.env.YOUR_PRIORITIES_LISTEN_HOST, function () {
+    log.info('Your Priorities server listening on port ' + server.address().port);
+  });
+} else {
+  var server = app.listen(app.get('port'), function () {
+    log.info('Your Priorities server listening on port ' + server.address().port);
+  });
+}
 
 module.exports = app;
