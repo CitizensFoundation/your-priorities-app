@@ -134,7 +134,7 @@ var sessionConfig = {
   name: 'yrpri.sid',
   secret: process.env.SESSION_SECRET ? process.env.SESSION_SECRET : 'not so secret... use env var.',
   resave: false,
-  proxy: process.env.USING_NGINX_PROXY ? true : false,
+  proxy: process.env.USING_NGINX_PROXY ? true : undefined,
   cookie: {autoSubDomain: true},
   saveUninitialized: true
 };
