@@ -28,10 +28,10 @@ services:
       retries: 3
     network_mode: host
     logging:
-      driver: "local"
+      driver: "json-file"
       options:
-        max-file: 2000
-        max-size: 25m
+        max-file: "2000"
+        max-size: "25m"
 
   your-priorities-app:
     container_name: your-priorities-app
@@ -53,10 +53,10 @@ services:
       retries: 3
     network_mode: host
     logging:
-      driver: "local"
+      driver: "json-file"
       options:
-        max-file: 2000
-        max-size: 25m
+        max-file: "2000"
+        max-size: "25m"
 
   your-priorities-worker:
     container_name: your-priorities-worker
@@ -70,10 +70,10 @@ services:
     command: node --optimize_for_size --max_old_space_size=960 server_api/active-citizen/workers/main.js
     network_mode: host
     logging:
-      driver: "local"
+      driver: "json-file"
       options:
-        max-file: 1000
-        max-size: 25m
+        max-file: "1000"
+        max-size: "25m"
 
   your-priorities-encoder:
     container_name: your-priorities-encoder
@@ -86,10 +86,10 @@ services:
     command: node out-tsc/worker.js
     network_mode: host
     logging:
-      driver: "local"
+      driver: "json-file"
       options:
-        max-file: 100
-        max-size: 25m
+        max-file: "100"
+        max-size: "25m"
 
   minio:
     image: minio/minio
@@ -111,10 +111,10 @@ services:
       retries: 3
     network_mode: host
     logging:
-      driver: "local"
+      driver: "json-file"
       options:
-        max-file: 100
-        max-size: 25m
+        max-file: "100"
+        max-size: "25m"
 
   ac-analytics-api:
     container_name: ac-analytics-api
@@ -136,10 +136,10 @@ services:
       retries: 3
     network_mode: host
     logging:
-      driver: "local"
+      driver: "json-file"
       options:
-        max-file: 100
-        max-size: 25m
+        max-file: "100"
+        max-size: "25m"
 
   ac-analytics-worker:
     container_name: ac-analytics-worker
@@ -152,10 +152,10 @@ services:
     command: python3 worker.py
     network_mode: host
     logging:
-      driver: "local"
+      driver: "json-file"
       options:
-        max-file: 100
-        max-size: 25m
+        max-file: "100"
+        max-size: "25m"
 
   mc:
     image: minio/mc:latest
@@ -207,5 +207,5 @@ volumes:
     driver_opts:
       type: none
       o: bind
-      device: /root/your-priorities-app/deployment/docker/webserver/letsEncryptCerts
+      device: deployment/docker/webserver/letsEncryptCerts
 
