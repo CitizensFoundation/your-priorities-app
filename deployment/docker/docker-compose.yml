@@ -207,5 +207,5 @@ volumes:
     driver_opts:
       type: none
       o: bind
-      device: deployment/docker/webserver/letsEncryptCerts
+      device: webserver/letsEncryptCerts
 
