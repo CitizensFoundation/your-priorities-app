@@ -190,10 +190,6 @@ services:
     depends_on:
       - webserver
 
-networks:
-  yrpri-network:
-    name: yrpri-network
-
 volumes:
   certbot-var:
   client-app-dist:
