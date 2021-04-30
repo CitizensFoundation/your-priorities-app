@@ -91,6 +91,8 @@ router.get('/:externalId/points', (req, res) => {
 
       let where = {};
 
+      let postWhere = {};
+
       if (req.query.fromDate) {
         _.merge(where, {
           created_at: {
@@ -104,6 +106,12 @@ router.get('/:externalId/points', (req, res) => {
           created_at: {
             [models.Sequelize.Op.lte]: req.query.toDate
           }
+        })
+      }
+
+      if (req.query.postId) {
+        _.merge(postWhere, {
+          id: req.query.postId
         })
       }
 
@@ -188,6 +196,7 @@ router.get('/:externalId/points', (req, res) => {
             model: models.Post,
             attributes: ['id', 'group_id','name'],
             required: true,
+            where: postWhere,
             include: [
               {
                 model: models.Group,
