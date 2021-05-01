@@ -69,6 +69,7 @@
     "xml2js": "^0.4.23"
   },
   "devDependencies": {
+    "@maxmind/geoip2-node": "^2.3.2",
     "csv-parse": "^4.8.8",
     "diacritics": "^1.2.3",
     "docx4js": "^3.2.2",
