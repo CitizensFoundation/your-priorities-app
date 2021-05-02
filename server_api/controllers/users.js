@@ -36,16 +36,22 @@ var sendUserOrError = function (res, user, context, error, errorStatus) {
   }
 };
 
-var getUserWithAll = function (userId, callback) {
+var getUserWithAll = function (userId, getPrivateProfileData, callback) {
   var user, endorsements, ratings, pointQualities;
 
   //TODO: Optimize this and get those items above more on demand
+
+  let attributes =  _.concat(models.User.defaultAttributesWithSocialMediaPublic, ['notifications_settings','profile_data','email','ssn','default_locale']);
+
+  if (getPrivateProfileData) {
+    attributes = _.concat(attributes, ['private_profile_data']);
+  }
 
   async.parallel([
     function (seriesCallback) {
       models.User.findOne({
         where: {id: userId},
-        attributes: _.concat(models.User.defaultAttributesWithSocialMediaPublic, ['notifications_settings','profile_data','email','ssn','default_locale']),
+        attributes,
         order: [
           [ { model: models.Image, as: 'UserProfileImages' } , 'created_at', 'asc' ],
           [ { model: models.Image, as: 'UserHeaderImages' } , 'created_at', 'asc' ]
@@ -126,7 +132,7 @@ router.post('/login', function (req, res) {
   log.info('User Login start', { elapsedTime: (new Date()-startTime), context: 'view', userId: req.user ? req.user.id : null});
   req.sso.authenticate('local-strategy', {}, req, res, function(err, user) {
     log.info('User Login before get', { elapsedTime: (new Date()-startTime), context: 'view', userId: req.user ? req.user.id : null});
-    getUserWithAll(req.user.id, function (error, user) {
+    getUserWithAll(req.user.id, true,function (error, user) {
       log.info('User Login completed', { elapsedTime: (new Date()-startTime), context: 'view', userId: req.user ? req.user.id : null});
       if (error || !user) {
         log.error("User Login Error", {context: 'login', user: user ? user.id : null, err: error, errorStatus: 500});
@@ -137,14 +143,44 @@ router.post('/login', function (req, res) {
         } else {
           user.missingEmail = true;
         }
+
+        if (user.private_profile_data && user.private_profile_data.registration_answers) {
+          user.dataValues.hasRegistrationAnswers = true;
+        } else {
+          user.dataValues.hasRegistrationAnswers = false;
+        }
+
+        delete user.private_profile_data;
+
         res.send(user)
       }
     });
   });
 });
 
+router.put('/setRegistrationAnswers',  auth.isLoggedIn, (req, res) => {
+  getUserWithAll(req.user.id, true,function (error, user) {
+    if (error) {
+      log.error("Error in setRegistrationAnswers", { error });
+      res.sendStatus(500);
+    } else {
+      setUserProfileData(user, req.body.registration_answers);
+      user.save().then(()=>{
+        log.info("Have set registration questions");
+        res.sendStatus(200);
+      }).catch(error=>{
+        log.error("Error in setRegistrationAnswers", { error });
+        res.sendStatus(500);
+      })
+    }
+  });
+});
+
 const setUserProfileData = (user, profileData) => {
-  user.set('private_profile_data', { registration_answers: profileData })
+  if (!user.private_profile_data) {
+    user.set('private_profile_data', {});
+  }
+  user.set('private_profile_data.registration_answers',profileData);
 }
 
 // Register
@@ -155,10 +191,14 @@ router.post('/register', function (req, res) {
     notifications_settings: models.AcNotification.defaultNotificationSettings,
     status: 'active'
   });
+
   user.createPasswordHash(req.body.password);
 
   if (req.body.registration_answers) {
     setUserProfileData(user, req.body.registration_answers);
+    user.dataValues.hasRegistrationAnswers = true;
+  } else {
+    user.dataValues.hasRegistrationAnswers = false;
   }
 
   user.save().then(function () {
@@ -844,7 +884,7 @@ router.get('/loggedInUser/membershipsWithNames', function (req, res) {
 
 router.put('/loggedInUser/setLocale', function (req, res) {
   if (req.isAuthenticated() && req.user) {
-    getUserWithAll(req.user.id, function (error, user) {
+    getUserWithAll(req.user.id, false,function (error, user) {
       if (error || !user) {
         log.error("User setLocale Error", { context: 'setLocale', user: req.user.id, err: error, errorStatus: 500 });
         res.sendStatus(500);
@@ -1025,7 +1065,7 @@ router.get('/loggedInUser/isloggedin', function (req, res) {
     log.info('User Not Logged in', { user: toJson(req.user), context: 'isLoggedIn'});
   }
   if (req.isAuthenticated() && req.user) {
-    getUserWithAll(req.user.id, function (error, user) {
+    getUserWithAll(req.user.id, true,function (error, user) {
       if (error || !user) {
         log.error("User IsLoggedIn Error 1", { context: 'isloggedin', user: req.user.id, err: error, errorStatus: 500 });
         res.sendStatus(500);
@@ -1035,6 +1075,14 @@ router.get('/loggedInUser/isloggedin', function (req, res) {
         } else {
           user.dataValues.missingEmail = true;
         }
+
+        if (user.private_profile_data && user.private_profile_data.registration_answers) {
+          user.dataValues.hasRegistrationAnswers = true;
+        } else {
+          user.dataValues.hasRegistrationAnswers = false;
+        }
+
+        delete user.private_profile_data;
 
         if (req.user.loginProvider)
           user.dataValues.loginProvider = req.user.loginProvider;
@@ -1253,7 +1301,7 @@ router.get('/reset/:token', function(req, res) {
     }).then(function (user) {
       if (user) {
         log.info('Get User For Reset Password Token', { user: toJson(user), context: 'getUserToken', loggedInUser: toJson(req.user), errorStatus: 401 });
-        getUserWithAll(user.id, function (error, user) {
+        getUserWithAll(user.id, false,function (error, user) {
           if (error || !user) {
             log.error("User Error", { context: 'reset_password_expires', user: req.user.id, err: error, errorStatus: 500 });
             res.sendStatus(500);
@@ -1361,7 +1409,7 @@ router.post('/reset/:token', function(req, res) {
       }
     } else {
       log.info('User Reset Password Completed', { user: req.user, context: 'useResetToken', loggedInUser: toJson(req.user) });
-      getUserWithAll(req.user.id, function (error, user) {
+      getUserWithAll(req.user.id, false,function (error, user) {
         if (error || !user) {
           log.error("User Error", { context: 'useResetToken', user: req.user.id, err: error, errorStatus: 500 });
           res.sendStatus(500);
