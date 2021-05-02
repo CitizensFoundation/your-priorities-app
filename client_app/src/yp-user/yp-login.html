@@ -698,10 +698,10 @@
     },
 
     _setupCustomRegistrationQuestions: function () {
-      if (window.appGlobals.currentGroup &&
-          window.appGlobals.currentGroup.configuration &&
-          window.appGlobals.currentGroup.configuration.registrationQuestionsJson) {
-        this.set('registrationQuestionsGroup', window.appGlobals.currentGroup);
+      if (window.appGlobals.registrationQuestionsGroup) {
+        this.set('registrationQuestionsGroup', window.appGlobals.registrationQuestionsGroup);
+      } else {
+        this.set('registrationQuestionsGroup', null);
       }
     },
 

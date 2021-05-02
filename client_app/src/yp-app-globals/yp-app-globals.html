@@ -117,6 +117,11 @@
             value: null,
           },
 
+          registrationQuestionsGroup: {
+            type: Object,
+            value: null
+          },
+
           currentAnonymousUser: {
             type: Object,
             value: null
@@ -276,6 +281,16 @@
         setAnonymousUser: function (user) {
           this.set('currentAnonymousUser', user);
           console.debug("Set anon user "+user);
+        },
+
+        setRegistrationQuestionGroup: function (group) {
+          if (group &&
+            group.configuration &&
+            group.configuration.registrationQuestionsJson) {
+            this.set('registrationQuestionsGroup', group);
+          } else {
+            this.set('registrationQuestionsGroup', null);
+          }
         },
 
         setAnonymousGroupStatus: function (group) {
