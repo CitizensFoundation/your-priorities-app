@@ -5,6 +5,7 @@
 <link rel="import" href="../yp-ajax/yp-ajax-error-dialog.html">
 <link rel="import" href="../yp-user/yp-login.html">
 <link rel="import" href="../yp-user/yp-missing-email.html">
+<link rel="import" href="../yp-user/yp-registration-questions-dialog.html">
 <link rel="import" href="../yp-user/yp-forgot-password.html">
 <link rel="import" href="../yp-user/yp-reset-password.html">
 <link rel="import" href="../yp-page/yp-page-dialog.html">
@@ -119,6 +120,10 @@
 
         <template is="dom-if" name="missingEmail" restamp>
           <yp-missing-email id="missingEmail"></yp-missing-email>
+        </template>
+
+        <template is="dom-if" name="registrationQuestions" restamp>
+          <yp-registration-questions-dialog id="registrationQuestions"></yp-registration-questions-dialog>
         </template>
 
         <template is="dom-if" name="communityEdit" restamp>

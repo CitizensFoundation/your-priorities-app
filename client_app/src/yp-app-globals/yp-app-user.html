@@ -249,6 +249,10 @@
               window.location = window.appGlobals.originalQueryParameters['raLogin'];
             }
           });
+
+          this.async(function () {
+            this._checkRegistrationAnswers(user);
+          }, 750);
         },
 
         _checkLoginForParameters: function () {
@@ -695,6 +699,18 @@
           this.recheckAdminRights();
         },
 
+        _checkRegistrationAnswers: function (user) {
+          if (user &&
+            !user.notLoggedIn &&
+            window.appGlobals.registrationQuestionsGroup &&
+            !user.hasRegistrationAnswers &&
+            !window.appGlobals.currentAnonymousUser) {
+            Polymer.dom(document).querySelector('yp-app').getDialogAsync("registrationQuestions", function (dialog) {
+              dialog.open(window.appGlobals.registrationQuestionsGroup);
+            }.bind(this));
+          }
+        },
+
         _isLoggedInResponse: function(event, detail) {
           var user = detail.response;
 
@@ -725,6 +741,10 @@
               dialog.open(user.loginProvider, true, user.email);
             }.bind(this));
           }
+
+          this.async(function () {
+            this._checkRegistrationAnswers(user);
+          }, 1500)
 
           if (user) {
             if (user.customSamlDeniedMessage) {
