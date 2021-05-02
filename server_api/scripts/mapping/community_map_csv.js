@@ -3,6 +3,7 @@ const _ = require('lodash');
 const communityId = process.argv[2];
 
 let groupsInCommunity = [];
+let communities = [];
 
 async function getTranslationForMap(textType, model, targetLanguage) {
   return await new Promise((resolve, reject) => {
@@ -54,6 +55,7 @@ const getCommunityMap = async (communityId, map, options) => {
       ]
     }).then(async (community) => {
       if (community) {
+        communities.push(community);
         let communityName;
 
         if (options.targetLocale) {
@@ -125,6 +127,7 @@ const getMapForCommunity = async (communityId, options) => {
       },
       attributes: ['name','id']
     }).then( async community => {
+      communities.push(community);
       let map = { name: community.name, children: []};
       try {
         await getCommunityMap(communityId, map, options);
@@ -140,13 +143,16 @@ const getMapForCommunity = async (communityId, options) => {
 
 (async () => {
   await getMapForCommunity(communityId, {});
-  console.log("GROUPS")
-
+  console.log("Groups")
   groupsInCommunity = _.orderBy(groupsInCommunity, group => {
     return group.id
   })
   groupsInCommunity.forEach( group => {
     console.log(`${group.id},"${group.realGroupName}",${group.communityId}`)
   })
+  communities.forEach( community => {
+    console.log(`${community.id},"${community.name}"`)
+  })
+
   process.exit();
 })();
