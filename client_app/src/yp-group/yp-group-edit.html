@@ -830,7 +830,7 @@
           <template is="dom-repeat" items="[[group.Categories]]" as="category">
             <paper-item data-category$="[[category]]" data-category-name$="[[category.name]]" on-tap="_openCategoryEdit">
               <img sizing="cover" height="24" width="24" class="filterIcon" src="[[_categoryImageSrc(category)]]">
-              <span class="categoryName">[[category.name]]</span>
+              <span class="categoryName">[[category.name]] - [[category.id]]</span>
             </paper-item>
           </template>
         </div>

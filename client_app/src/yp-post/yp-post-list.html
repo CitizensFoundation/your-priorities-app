@@ -541,6 +541,15 @@
         this.set('randomSeed', Math.random());
         if (group) {
           this.set('moreToLoad', true);
+
+          if (window.appGlobals.originalQueryParameters &&
+            window.appGlobals.originalQueryParameters['categoryId']) {
+            this.set('categoryId', window.appGlobals.originalQueryParameters['categoryId']);
+            window.appGlobals.originalQueryParameters['categoryId'] = undefined;
+          } else {
+            this.set('categoryId', null);
+          }
+
           if (group.configuration && group.configuration.forcePostSortMethodAs && allowedForceByValues.indexOf(group.configuration.forcePostSortMethodAs) > -1) {
             this.set('filter', group.configuration.forcePostSortMethodAs);
           } else {
