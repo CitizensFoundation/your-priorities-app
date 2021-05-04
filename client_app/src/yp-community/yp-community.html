@@ -358,6 +358,7 @@
 
           if (this.community.Groups && this.community.Groups.length>0) {
             window.appGlobals.setAnonymousGroupStatus(this.community.Groups[0]);
+            window.appGlobals.setRegistrationQuestionGroup(this.community.Groups[0]);
           }
 
           this.async(function() {

@@ -1,5 +1,7 @@
 #!/usr/bin/env node
-require('newrelic');
+if (process.env.NEW_RELIC_APP_NAME) {
+  require('newrelic');
+}
 
 FORCE_PRODUCTION = false;
 
@@ -50,6 +52,7 @@ const points = require('./controllers/points');
 const users = require('./controllers/users');
 const categories = require('./controllers/categories');
 const images = require('./controllers/images');
+const externalIds = require('./controllers/externalIds');
 const ratings = require('./controllers/ratings');
 const bulkStatusUpdates = require('./controllers/bulkStatusUpdates');
 const videos = require('./controllers/videos');
@@ -69,8 +72,6 @@ const sso = require('passport-sso');
 const cors = require('cors');
 
 const Airbrake = require('@airbrake/node');
-const airbrakeExpress = require('@airbrake/node/dist/instrumentation/express');
-const airbrakePG = require('@airbrake/node/dist/instrumentation/pg');
 
 const ieVersion = (uaString) => {
   const match = /\b(MSIE |Trident.*?rv:|Edge\/)(\d+)/.exec(uaString);
@@ -92,10 +93,6 @@ if (process.env.AIRBRAKE_PROJECT_ID) {
 }
 
 const app = express();
-
-if (process.env.AIRBRAKE_PROJECT_ID) {
-  app.use(airbrakeExpress.makeMiddleware(airbrake));
-}
 
 if (app.get('env') !== 'development' && !process.env.DISABLE_FORCE_HTTPS) {
   app.use(function checkProtocol (req, res, next) {
@@ -137,6 +134,7 @@ var sessionConfig = {
   name: 'yrpri.sid',
   secret: process.env.SESSION_SECRET ? process.env.SESSION_SECRET : 'not so secret... use env var.',
   resave: false,
+  proxy: process.env.USING_NGINX_PROXY ? true : undefined,
   cookie: {autoSubDomain: true},
   saveUninitialized: true
 };
@@ -225,9 +223,13 @@ app.get('/sitemap.xml', function getSitemap(req, res) {
 
 app.use(function checkForBOT(req, res, next) {
   var ua = req.headers['user-agent'];
-  if (!/Googlebot|AdsBot-Google/.test(ua) && (isBot(ua) || /^(facebookexternalhit)|(web\/snippet)|(Twitterbot)|(Slackbot)|(Embedly)|(LinkedInBot)|(Pinterest)|(XING-contenttabreceiver)/gi.test(ua))) {
-    log.info('Request is from a bot', { ua });
-    nonSPArouter(req, res, next);
+  if (req.headers['content-type']!=="application/json") {
+    if (!/Googlebot|AdsBot-Google/.test(ua) && (isBot(ua) || /^(facebookexternalhit)|(web\/snippet)|(Twitterbot)|(Slackbot)|(Embedly)|(LinkedInBot)|(Pinterest)|(XING-contenttabreceiver)/gi.test(ua))) {
+      log.info('Request is from a bot', { ua });
+      nonSPArouter(req, res, next);
+    } else {
+      next();
+    }
   } else {
     next();
   }
@@ -235,6 +237,11 @@ app.use(function checkForBOT(req, res, next) {
 
 app.get('/manifest.json', function getManifest(req, res) {
   generateManifest(req, res);
+});
+
+app.get('/robots.txt', function (req, res) {
+  res.type('text/plain')
+  res.send(`User-agent: *\nDisallow:\nSitemap: https://${req.hostname}/sitemap.xml`);
 });
 
 var bearerCallback = function (req, token) {
@@ -433,6 +440,7 @@ app.use('/api/images', images);
 app.use('/api/videos', videos);
 app.use('/api/audios', audios);
 app.use('/api/categories', categories);
+app.use('/api/externalIds', externalIds);
 app.use('/api/users', users);
 app.use('/api/news_feeds', news_feeds);
 app.use('/api/activities', activities);
@@ -446,7 +454,7 @@ app.use('/pages', legacyPages);
 
 app.post('/authenticate_from_island_is', function (req, res) {
   log.info("SAML SAML 1", {domainId: req.ypDomain.id});
-  req.sso.authenticate('saml-strategy-' + req.ypDomain.id, {}, req, res, function (error, user) {
+  req.sso.authenticate('saml-strategy-' + req.ypDomain.id, {}, req, res, function (error) {
     log.info("SAML SAML 2", {domainId: req.ypDomain.id, err: error});
     if (error) {
       log.error("Error from SAML login", {err: error});
@@ -456,12 +464,19 @@ app.post('/authenticate_from_island_is', function (req, res) {
           if (airbrakeErr.error) {
             log.error("AirBrake Error", {context: 'airbrake', err: airbrakeErr.error, errorStatus: 500});
           }
-          res.sendStatus(500);
+          res.sendStatus(401);
         });
+      } else {
+        res.sendStatus(401);
       }
     } else {
-      log.info("SAML SAML 3", {domainId: req.ypDomain.id});
-      res.render('samlLoginComplete', {});
+      if (req.user.DestinationSSN==="6012101260") {
+        log.info("SAML SAML 3", {domainId: req.ypDomain.id});
+        res.render('samlLoginComplete', {});
+      } else {
+        log.error("Error from SAML login", {err: "Failed DestinationSSN check"});
+        res.sendStatus(401);
+      }
     }
   })
 });
@@ -526,10 +541,24 @@ app.use(function generalErrorHandler(err, req, res, next) {
   if (status == 404) {
     log.warn("Not found", {context: 'notFound', errorStatus: status, url: req.url});
   } else {
+    let body=null;
+
+    try {
+      if (req.body) {
+        body = JSON.stringify(req.body);
+      }
+    } catch(bodyError) {
+      log.error("General Error: Body JSON parsing error", { err: bodyError });
+    }
+
     log.error("General Error", {
       context: 'generalError',
       user: req.user ? toJson(req.user) : null,
       err: err,
+      protocol: req.protocol,
+      host: req.get('host'),
+      originalUrl: req.originalUrl,
+      body,
       errStack: err.stack,
       errorStatus: status
     });
@@ -557,12 +586,14 @@ app.use(function generalErrorHandler(err, req, res, next) {
   }
 });
 
-if (airbrake) {
-  app.use(airbrakeExpress.makeErrorHandler(airbrake));
+if (process.env.YOUR_PRIORITIES_LISTEN_HOST) {
+  var server = app.listen(app.get('port'), process.env.YOUR_PRIORITIES_LISTEN_HOST, function () {
+    log.info('Your Priorities server listening on port ' + server.address().port);
+  });
+} else {
+  var server = app.listen(app.get('port'), function () {
+    log.info('Your Priorities server listening on port ' + server.address().port);
+  });
 }
-
-var server = app.listen(app.get('port'), function () {
-  log.info('Your Priorities server listening on port ' + server.address().port);
-});
 
 module.exports = app;

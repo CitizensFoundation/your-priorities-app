@@ -106,11 +106,12 @@
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
     <iron-media-query query="(min-width: 1000px)" query-matches="{{wide}}"></iron-media-query>
+    <lite-signal on-lite-signal-yp-refresh-group-posts="refreshAjax"></lite-signal>
 
     <div class="layout vertical center-center">
       <template is="dom-if" if="[[posts]]">
         <paper-material id="mapContainer" elevation="2" class="mapContainer">
-          <google-map additional-map-options='{"keyboardShortcuts":false}' max-zoom="18" id="map" api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0">
+          <google-map additional-map-options='{"keyboardShortcuts":false,"fullscreenControl": false}' max-zoom="18" id="map" api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0">
             <template is="dom-repeat" items="[[posts]]" as="post">
               <google-map-marker slot="markers" latitude="[[post.location.latitude]]" longitude="[[post.location.longitude]]"
                                  click-events class="marker" on-google-map-marker-click="markerClick">
@@ -182,15 +183,20 @@
           map.style.width = Math.min(window.innerWidth-(this.wide ? 96 : 32), 1920) + 'px';
           map.style.height = height + 'px';
           map.style.marginBottom = "64px";
-          this.async(function () {
-            var gMap=this.$$("#map");
-            if (gMap) {
-              gMap.fitToMarkers=true;
-              this.async(function () {
-                gMap.fitToMarkers=false;
-              }, 1000);
-            }
-          });
+
+          if (this.skipFitToMarkersNext===true) {
+            this.skipFitToMarkersNext = false;
+          } else {
+            this.async(function () {
+              var gMap=this.$$("#map");
+              if (gMap) {
+                gMap.fitToMarkers=true;
+                this.async(function () {
+                  gMap.fitToMarkers=false;
+                }, 1000);
+              }
+            });
+          }
         }
      },
 
@@ -212,6 +218,11 @@
         } else {
           this.set("posts", null);
         }
+      },
+
+      refreshAjax: function() {
+        this.$.ajax.generateRequest();
+        this.skipFitToMarkersNext = true;
       },
 
       _response: function (event, detail) {

@@ -11,9 +11,11 @@
 
 <link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
 <link rel="import" href="../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
 
 <link rel="import" href="../yp-app-globals/paper-textarea-aria.html">
 <link rel="import" href="../yp-behaviors/yp-language-behavior.html">
+<link rel="import" href="./yp-simple-html-editor.html">
 
 <dom-module id="yp-structured-question-edit">
   <template>
@@ -342,22 +344,33 @@
            use-small-font$="[[useSmallFont]]" id="structuredQuestionIntro_[[index]]"
            inner-h-t-m-l="[[_getTextWithIndex(question)]]"></div>
 
-      <paper-textarea-aria id="structuredQuestion_[[index]]"
-                      data-type="text"
-                      value="{{question.value}}"
-                      minlength="2"
-                      char-counter
-                      on-focus="setLongFocus"
-                      on-blur="setLongUnFocus"
-                      no-label-float
-                      use-small-font$="[[useSmallFont]]"
-                      on-value-changed="_debounceChangeEvent"
-                      rows="3"
-                      max-rows="5"
-                      maxrows="5"
-                      required$="[[question.required]]"
-                      maxlength="[[question.maxLength]]">
-      </paper-textarea-aria>
+      <template is="dom-if" if="[[question.richTextAllowed]]">
+        <yp-simple-html-editor id="structuredQuestion_[[index]]"
+              question="[[question]]"
+              on-focus="setLongFocus"
+              on-blur="setLongUnFocus"
+        >
+        </yp-simple-html-editor>
+      </template>
+
+      <template is="dom-if" if="[[!question.richTextAllowed]]">
+        <paper-textarea-aria id="structuredQuestion_[[index]]"
+                             data-type="text"
+                             value="{{question.value}}"
+                             minlength="2"
+                             char-counter
+                             on-focus="setLongFocus"
+                             on-blur="setLongUnFocus"
+                             no-label-float
+                             use-small-font$="[[useSmallFont]]"
+                             on-value-changed="_debounceChangeEvent"
+                             rows="3"
+                             max-rows="5"
+                             maxrows="5"
+                             required$="[[question.required]]"
+                             maxlength="[[question.maxLength]]">
+        </paper-textarea-aria>
+      </template>
     </template>
 
     <template is="dom-if" if="[[_isTextHeader(question)]]">
@@ -712,7 +725,11 @@
               this.question.type.toLowerCase() === "textarealong" ||
               this.question.type.toLowerCase() === "numberfield"
             ) {
-              item.value = value;
+              if (this.question.richTextAllowed == true) {
+                item.setRichValue(value);
+              } else {
+                item.value = value;
+              }
             } else if (this.question.type.toLowerCase() === "dropdown") {
               var listBox = this.$$("#structuredQuestion_" + this.index+"_listbox");
               listBox.selected = value;

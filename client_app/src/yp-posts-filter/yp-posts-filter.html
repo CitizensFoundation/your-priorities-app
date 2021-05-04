@@ -333,7 +333,11 @@
           this.async(function () {
             var categoryMenu = this.$$("#categoryMenu");
             if (categoryMenu) {
-              categoryMenu.selected = "-1";
+              if (this.categoryId) {
+                categoryMenu.selected = this.categoryId;
+              } else {
+                categoryMenu.selected = "-1";
+              }
             } else {
               console.error("Cant set category menu");
             }
@@ -502,7 +506,6 @@
       _groupChanged: function (group) {
         this.set('categoriesWithCount', null);
         this.set('allPostCount', 0);
-        this.set('categoryId',null);
         if (group) {
           this._updateTitle();
           if (group.Categories && group.Categories.length>0) {

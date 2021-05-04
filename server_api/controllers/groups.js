@@ -20,6 +20,8 @@ var queue = require('../active-citizen/workers/queue');
 const getAllModeratedItemsByGroup = require('../active-citizen/engine/moderation/get_moderation_items').getAllModeratedItemsByGroup;
 const performSingleModerationAction = require('../active-citizen/engine/moderation/process_moderation_items').performSingleModerationAction;
 const request = require('request');
+const {updateAnswerTranslation} = require("../active-citizen/utils/translation_helpers");
+const {updateSurveyTranslation} = require("../active-citizen/utils/translation_helpers");
 
 const getFromAnalyticsApi = require('../active-citizen/engine/analytics/manager').getFromAnalyticsApi;
 const triggerSimilaritiesTraining = require('../active-citizen/engine/analytics/manager').triggerSimilaritiesTraining;
@@ -32,7 +34,6 @@ const getTranslatedTextsForGroup = require('../active-citizen/utils/translation_
 const updateTranslationForGroup = require('../active-citizen/utils/translation_helpers').updateTranslationForGroup;
 
 const convertDocxSurveyToJson = require('../active-citizen/engine/analytics/manager').convertDocxSurveyToJson;
-
 
 var s3 = new aws.S3({
   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
@@ -202,22 +203,32 @@ var updateGroupConfigParamters = function (req, group) {
   group.set('configuration.makeCategoryRequiredOnNewPost', truthValueFromBody(req.body.makeCategoryRequiredOnNewPost));
 
   group.set('configuration.showVideoUploadDisclaimer', truthValueFromBody(req.body.showVideoUploadDisclaimer));
+  group.set('configuration.welcomePageId', (req.body.welcomePageId && req.body.welcomePageId!="") ? req.body.welcomePageId : null);
 
   group.set('configuration.hideVoteCount', truthValueFromBody(req.body.hideVoteCount));
   group.set('configuration.hideVoteCountUntilVoteCompleted', truthValueFromBody(req.body.hideVoteCountUntilVoteCompleted));
   group.set('configuration.hidePostCover', truthValueFromBody(req.body.hidePostCover));
   group.set('configuration.hidePostDescription', truthValueFromBody(req.body.hidePostDescription));
   group.set('configuration.hideDebateIcon', truthValueFromBody(req.body.hideDebateIcon));
+  group.set('configuration.hideSharing', truthValueFromBody(req.body.hideSharing));
   group.set('configuration.hidePointAgainst', truthValueFromBody(req.body.hidePointAgainst));
   group.set('configuration.disablePostPageLink', truthValueFromBody(req.body.disablePostPageLink));
   group.set('configuration.hidePostActionsInGrid', truthValueFromBody(req.body.hidePostActionsInGrid));
   group.set('configuration.forceSecureSamlLogin', truthValueFromBody(req.body.forceSecureSamlLogin));
   group.set('configuration.forceSecureSamlEmployeeLogin', truthValueFromBody(req.body.forceSecureSamlEmployeeLogin));
 
+  group.set('configuration.hideGroupLevelTabs', truthValueFromBody(req.body.hideGroupLevelTabs));
   group.set('configuration.hidePostFilterAndSearch', truthValueFromBody(req.body.hidePostFilterAndSearch));
   group.set('configuration.hidePostImageUploads', truthValueFromBody(req.body.hidePostImageUploads));
   group.set('configuration.hideNewPointOnNewIdea', truthValueFromBody(req.body.hideNewPointOnNewIdea));
   group.set('configuration.maxDaysBackForRecommendations', (req.body.maxDaysBackForRecommendations && req.body.maxDaysBackForRecommendations!="") ? req.body.maxDaysBackForRecommendations : null);
+
+  group.set('configuration.externalId', (req.body.externalId && req.body.externalId!="") ? req.body.externalId : null);
+
+  group.set('configuration.usePostListFormatOnDesktop', truthValueFromBody(req.body.usePostListFormatOnDesktop));
+  group.set('configuration.usePostTagsForPostListItems', truthValueFromBody(req.body.usePostTagsForPostListItems));
+  group.set('configuration.usePostTagsForPostCards', truthValueFromBody(req.body.usePostTagsForPostCards));
+  group.set('configuration.usePostTags', truthValueFromBody(req.body.usePostTags));
 
   group.set('configuration.allowPostVideoUploads', truthValueFromBody(req.body.allowPostVideoUploads));
   group.set('configuration.allowPointVideoUploads', truthValueFromBody(req.body.allowPointVideoUploads));
@@ -262,6 +273,8 @@ var updateGroupConfigParamters = function (req, group) {
     }
   }
 
+  group.set('configuration.maxNumberOfGroupVotes', (req.body.maxNumberOfGroupVotes && req.body.maxNumberOfGroupVotes!="") ? req.body.maxNumberOfGroupVotes : null);
+
   if (group.configuration.audioPointUploadLimitSec && parseInt(group.configuration.audioPointUploadLimitSec)) {
     if (parseInt(group.configuration.audioPointUploadLimitSec)>600) {
       group.set('configuration.audioPointUploadLimitSec', 600);
@@ -295,6 +308,40 @@ var updateGroupConfigParamters = function (req, group) {
       group.set('configuration.structuredQuestionsJson', null);
       log.error("Error in parsing structured questions", { error });
     }
+  } else {
+    group.set('configuration.structuredQuestionsJson', null);
+  }
+
+  group.set('configuration.registrationQuestions', (req.body.registrationQuestions && req.body.registrationQuestions!="") ? req.body.registrationQuestions : null);
+
+  if (group.configuration.registrationQuestions) {
+    try {
+      const cleaned = group.configuration.registrationQuestions.trim().replace(/\n/g, '').replace(/\r/g, '').replace(/"/, '"');
+      const jsonArray = JSON.parse(cleaned);
+      group.set('configuration.registrationQuestionsJson', jsonArray);
+    } catch (error) {
+      group.set('configuration.registrationQuestionsJson', null);
+      log.error("Error in parsing structured questions", {error});
+    }
+  } else {
+    group.set('configuration.registrationQuestionsJson', null);
+  }
+
+  group.set('configuration.isDataVisualizationGroup', truthValueFromBody(req.body.isDataVisualizationGroup));
+
+  group.set('configuration.dataForVisualization', (req.body.dataForVisualization && req.body.dataForVisualization!="") ? req.body.dataForVisualization : null);
+
+  if (group.configuration.dataForVisualization) {
+    try {
+      const cleaned = group.configuration.dataForVisualization.trim().replace(/\n/g, '').replace(/\r/g, '').replace(/"/, '"');
+      const jsonArray = JSON.parse(cleaned);
+      group.set('configuration.dataForVisualizationJson', jsonArray);
+    } catch (error) {
+      group.set('configuration.dataForVisualizationJson', null);
+      log.error("Error in parsing structured questions", {error});
+    }
+  } else {
+    group.set('configuration.dataForVisualizationJson', null);
   }
 
   group.set('configuration.themeOverrideColorPrimary', (req.body.themeOverrideColorPrimary && req.body.themeOverrideColorPrimary!="") ? req.body.themeOverrideColorPrimary : null);
@@ -340,6 +387,7 @@ var updateGroupConfigParamters = function (req, group) {
   group.set('configuration.allowWhatsAppSharing', truthValueFromBody(req.body.allowWhatsAppSharing));
   group.set('configuration.optionalSortOrder', (req.body.optionalSortOrder && req.body.optionalSortOrder!="") ? req.body.optionalSortOrder : null);
   group.set('configuration.exportSubCodesForRadiosAndCheckboxes', truthValueFromBody(req.body.exportSubCodesForRadiosAndCheckboxes));
+  group.set('configuration.forceShowDebateCountOnPost', truthValueFromBody(req.body.forceShowDebateCountOnPost));
 };
 
 router.post('/:id/getPresignedAttachmentURL',  auth.can('add to group'), function(req, res) {
@@ -351,7 +399,8 @@ router.post('/:id/getPresignedAttachmentURL',  auth.can('add to group'), functio
     endpoint: accelEndPoint,
     signatureVersion: 'v4',
     useAccelerateEndpoint: process.env.S3_ACCELERATED_ENDPOINT!=null,
-    region: process.env.S3_REGION ? process.env.S3_REGION : 'eu-west-1'
+    region: process.env.S3_REGION ? process.env.S3_REGION : 'eu-west-1',
+    s3ForcePathStyle: process.env.S3_FORCE_PATH_STYLE ? true : false
   });
 
   const signedUrlExpireSeconds = 60 * 60;
@@ -368,7 +417,7 @@ router.post('/:id/getPresignedAttachmentURL',  auth.can('add to group'), functio
     Bucket: bucketName,
     Key: fileKey,
     Expires: signedUrlExpireSeconds,
-    ACL: 'public-read',
+    ACL: process.env.S3_FORCE_PATH_STYLE ? undefined : 'public-read',
     ContentType: contentType
   };
 
@@ -706,7 +755,7 @@ router.get('/:groupId/pages_for_admin', auth.can('edit group'), function(req, re
 });
 
 router.put('/:groupId/:type/start_report_creation', auth.can('edit group'), function(req, res) {
-  models.AcBackgroundJob.createJob((error, jobId) => {
+  models.AcBackgroundJob.createJob({}, (error, jobId) => {
     if (error) {
       log.error('Could not create backgroundJob', { err: error, context: 'start_report_creation', user: toJson(req.user.simple()) });
       res.sendStatus(500);
@@ -1167,14 +1216,27 @@ router.get('/:id/checkNonOpenPosts', auth.can('view group'), (req, res) => {
   });
 });
 
+router.get('/:id/configuration', auth.can('view group'), (req, res) => {
+  models.Group.findOne({
+    where: {
+      id: req.params.id
+    },
+    attributes: ['id','configuration']
+  }).then(group => {
+    res.send(group.configuration);
+  }).catch( error => {
+    sendGroupOrError(res, null, 'configuration', req.user, error);
+  })
+});
+
 const addVideosToGroup = (group, done) => {
   models.Video.findAll({
-    attributes:  ['id','formats','viewable','updated_at','public_meta'],
+    attributes:  ['id','formats','viewable','created_at','public_meta'],
     include: [
       {
         model: models.Image,
         as: 'VideoImages',
-        attributes:["formats",'updated_at'],
+        attributes:["formats",'created_at'],
         required: false
       },
       {
@@ -1188,10 +1250,10 @@ const addVideosToGroup = (group, done) => {
       }
     ],
     order: [
-      [ { model: models.Image, as: 'VideoImages' }, 'updated_at', 'asc' ]
+      [ { model: models.Image, as: 'VideoImages' }, 'created_at', 'asc' ]
     ]
   }).then(videos => {
-    group.dataValues.GroupLogoVideos = _.orderBy(videos, (video) => video.updated_at,['desc']);
+    group.dataValues.GroupLogoVideos = _.orderBy(videos, ['created_at'],['desc']);
     done();
   }).catch( error => {
     done(error);
@@ -1201,6 +1263,7 @@ const addVideosToGroup = (group, done) => {
 router.get('/:id', auth.can('view group'), function(req, res) {
   models.Group.findOne({
     where: { id: req.params.id },
+    attributes: models.Group.defaultPublicAttributes,
     order: [
       [ { model: models.Image, as: 'GroupLogoImages' } , 'created_at', 'asc' ],
       [ { model: models.Image, as: 'GroupHeaderImages' } , 'created_at', 'asc' ],
@@ -1210,7 +1273,7 @@ router.get('/:id', auth.can('view group'), function(req, res) {
     include: [
       {
         model: models.Community,
-        attributes: ['id','theme_id','name','access','google_analytics_code','configuration'],
+        attributes: ['id','theme_id','name','access','google_analytics_code','configuration','language'],
         include: [
           {
             model: models.Domain,
@@ -1317,6 +1380,28 @@ router.get('/:id/translatedText', auth.can('view group'), function(req, res) {
   }
 });
 
+router.get('/:id/translatedSurveyQuestions', auth.can('view group'), function(req, res) {
+  const targetLanguage = req.query.targetLanguage;
+  models.AcTranslationCache.getSurveyQuestionTranslations(req.params.id, targetLanguage, (error, translations) => {
+    if (error) {
+      sendGroupOrError(res, req.params.id, 'translatedSurveyQuestions', req.user, error, 500);
+    } else {
+      res.send(translations);
+    }
+  });
+});
+
+router.get('/:id/translatedRegistrationQuestions', auth.can('view group'), function(req, res) {
+  const targetLanguage = req.query.targetLanguage;
+  models.AcTranslationCache.getRegistrationQuestionTranslations(req.params.id, targetLanguage, (error, translations) => {
+    if (error) {
+      sendGroupOrError(res, req.params.id, 'translatedRegistrationQuestions', req.user, error, 500);
+    } else {
+      res.send(translations);
+    }
+  });
+});
+
 router.get('/:id/search/:term', auth.can('view group'), function(req, res) {
     log.info('Group Search', { groupId: req.params.id, context: 'view', user: toJson(req.user) });
     models.Post.search(req.params.term, req.params.id, models.Category).then(function(posts) {
@@ -1334,116 +1419,129 @@ var getPostsWithAllFromIds = function (postsWithIds, postOrder, done) {
   var collectedIds = _.map(postsWithIds, function (post) {
     return post.id;
   });
-  models.Post.findAll({
-    where: {
-      id: {
-        $in: collectedIds
-      }
-    },
-    attributes: ['id','name','description','public_data','status','content_type','official_status','counter_endorsements_up','cover_media_type',
-                 'counter_endorsements_down','group_id','language','counter_points','counter_flags','location','created_at','category_id'],
-    order: [
-      models.sequelize.literal(postOrder),
-      [ { model: models.Image, as: 'PostHeaderImages' } ,'updated_at', 'asc' ],
-      [ { model: models.Category }, { model: models.Image, as: 'CategoryIconImages' } ,'updated_at', 'asc' ],
-      [ { model: models.Group }, { model: models.Category }, 'name', 'asc' ],
-      [ { model: models.Audio, as: "PostAudios" }, 'updated_at', 'desc' ],
-      [ { model: models.Video, as: "PostVideos" }, 'updated_at', 'desc' ],
-      [ { model: models.Video, as: "PostVideos" }, { model: models.Image, as: 'VideoImages' } ,'updated_at', 'asc' ]
-    ],
-    include: [
-      {
-        model: models.Category,
-        attributes: { exclude: ['ip_address', 'user_agent'] },
-        required: false,
-        include: [
-          {
-            model: models.Image,
-            required: false,
-            attributes: { exclude: ['ip_address', 'user_agent'] },
-            as: 'CategoryIconImages'
+
+  let posts;
+  let videos;
+
+  async.parallel([
+    parallelCallback => {
+      models.Post.findAll({
+        where: {
+          id: {
+            $in: collectedIds
           }
-        ]
-      },
-      {
-        model: models.Audio,
-        required: false,
-        attributes: ['id','formats','updated_at','listenable'],
-        as: 'PostAudios',
-      },
-      {
-        model: models.Video,
-        attributes: ['id','formats','updated_at','viewable','public_meta'],
-        as: 'PostVideos',
-        required: false,
-        include: [
-          {
-            model: models.Image,
-            as: 'VideoImages',
-            attributes:["formats","updated_at"],
-            required: false
-          },
-        ]
-      },
-      {
-        model: models.User,
-        required: false,
-        attributes: models.User.defaultAttributesWithSocialMediaPublic,
-        include: [
-          {
-            model: models.Image, as: 'UserProfileImages',
-            attributes:['id',"formats",'updated_at'],
-            required: false
-          },
-          {
-            model: models.Organization,
-            as: 'OrganizationUsers',
-            required: false,
-            attributes: ['id', 'name'],
-            include: [
-              {
-                model: models.Image,
-                as: 'OrganizationLogoImages',
-                //TODO: Figure out why there are no formats attributes coming through here
-                attributes: ['id', 'formats'],
-                required: false
-              }
-            ]
-          }
-        ]
-      },
-      {
-        model: models.PostRevision,
-        attributes: { exclude: ['ip_address', 'user_agent'] },
-        required: false
-      },
-      {
-        model: models.Group,
-        required: true,
-        attributes: ['id','configuration','name','theme_id','access'],
+        },
+        attributes: ['id','name','description','public_data','status','content_type','official_status','counter_endorsements_up','cover_media_type',
+          'counter_endorsements_down','group_id','language','counter_points','counter_flags','location','created_at','category_id'],
+        order: [
+          models.sequelize.literal(postOrder),
+          [ { model: models.Image, as: 'PostHeaderImages' } ,'updated_at', 'asc' ],
+          [ { model: models.Category }, { model: models.Image, as: 'CategoryIconImages' } ,'updated_at', 'asc' ],
+          [ { model: models.Group }, { model: models.Category }, 'name', 'asc' ],
+          [ { model: models.Audio, as: "PostAudios" }, 'updated_at', 'desc' ]
+        ],
         include: [
           {
             model: models.Category,
+            attributes: { exclude: ['ip_address', 'user_agent'] },
+            required: false,
+            include: [
+              {
+                model: models.Image,
+                required: false,
+                attributes: { exclude: ['ip_address', 'user_agent'] },
+                as: 'CategoryIconImages'
+              }
+            ]
+          },
+          {
+            model: models.Audio,
+            required: false,
+            attributes: ['id','formats','updated_at','listenable'],
+            as: 'PostAudios',
+          },
+          {
+            model: models.User,
+            required: false,
+            attributes: models.User.defaultAttributesWithSocialMediaPublic,
+            include: [
+              {
+                model: models.Image, as: 'UserProfileImages',
+                attributes:['id',"formats",'updated_at'],
+                required: false
+              },
+              {
+                model: models.Organization,
+                as: 'OrganizationUsers',
+                required: false,
+                attributes: ['id', 'name'],
+                include: [
+                  {
+                    model: models.Image,
+                    as: 'OrganizationLogoImages',
+                    //TODO: Fix [ORANGE] [12-1]  sql_error_code = 42622 NOTICE:  identifier "User->OrganizationUsers->OrganizationLogoImages->OrganizationLogoImage" will be truncated to "User->OrganizationUsers->OrganizationLogoImages->OrganizationLo"
+                    //TODO: Figure out why there are no formats attributes coming through here
+                    attributes: ['id', 'formats'],
+                    required: false
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            model: models.PostRevision,
+            attributes: { exclude: ['ip_address', 'user_agent'] },
             required: false
           },
           {
-            model: models.Community,
-            attributes: ['id','name','theme_id','access','google_analytics_code','configuration'],
-            required: true
+            model: models.Group,
+            required: true,
+            attributes: ['id','configuration','name','theme_id','access'],
+            include: [
+              {
+                model: models.Category,
+                required: false
+              },
+              {
+                model: models.Community,
+                attributes: ['id','name','theme_id','access','google_analytics_code','configuration'],
+                required: true
+              }
+            ]
+          },
+          { model: models.Image,
+            attributes: { exclude: ['ip_address', 'user_agent'] },
+            as: 'PostHeaderImages',
+            required: false
           }
         ]
-      },
-      { model: models.Image,
-        attributes: { exclude: ['ip_address', 'user_agent'] },
-        as: 'PostHeaderImages',
-        required: false
+      }).then(function(postsIn) {
+        posts = postsIn;
+        parallelCallback();
+      }).catch(function (error) {
+        parallelCallback(error);
+      });
+    },
+    parallelCallback => {
+      models.Post.getVideosForPosts(collectedIds, (error, videosIn) => {
+        if (error) {
+          parallelCallback(error);
+        } else {
+          videos = videosIn;
+          parallelCallback();
+        }
+      })
+    },
+  ], error => {
+    if (error) {
+      done(error);
+    } else {
+      if (videos.length>0) {
+        models.Post.addVideosToAllPosts(posts, videos);
       }
-    ]
-  }).then(function(posts) {
-    done(null, posts);
-  }).catch(function (error) {
-    done(error);
-  });
+      done(null, posts);
+    }
+  })
 };
 
 router.get('/:id/posts/:filter/:categoryId/:status?', auth.can('view group'), function(req, res) {
@@ -1672,7 +1770,21 @@ router.get('/:id/post_locations', auth.can('view group'), function(req, res) {
         context: 'view',
         user: toJson(req.user)
       });
-      res.send(posts);
+
+      var collectedIds = _.map(posts, function (post) {
+        return post.id;
+      });
+
+      models.Post.getVideosForPosts(collectedIds, (error, videos) => {
+        if (error) {
+          sendGroupOrError(res, null, 'view post locations', req.user, 'Not found', 404);
+        } else {
+          if (videos.length>0) {
+            models.Post.addVideosToAllPosts(posts, videos);
+          }
+          res.send(posts);
+        }
+      })
     } else {
       sendGroupOrError(res, null, 'view post locations', req.user, 'Not found', 404);
     }
@@ -2282,6 +2394,41 @@ router.put('/:id/update_translation', auth.can('edit group'), function(req, res)
       res.send(results);
     }
   });
+});
+
+
+router.put('/:id/update_structured_translations', auth.can('edit group'), function(req, res) {
+  let textType;
+  if (req.body.type=="registration") {
+    textType = "GroupRegQuestions";
+  } else if (req.body.type.indexOf("PostAnswer")>-1) {
+    textType = "PostAnswer";
+  } else {
+    textType =  "GroupQuestions";
+  }
+
+  if (textType === "PostAnswer") {
+    let contentHash = req.body.type.split("-")[3];
+    let postId = req.body.type.split("-")[1];
+
+    updateAnswerTranslation(postId, textType, req.body.targetLocale, req.body.translations,contentHash,(results, error) => {
+      if (error) {
+        log.error("Error in updating survey translation", { error });
+        res.sendStatus(500);
+      } else {
+        res.send(results);
+      }
+    });
+  } else {
+    updateSurveyTranslation(req.params.id, textType, req.body.targetLocale, req.body.translations,req.body.questions,(results, error) => {
+      if (error) {
+        log.error("Error in updating survey translation", { error });
+        res.sendStatus(500);
+      } else {
+        res.send(results);
+      }
+    });
+  }
 });
 
 var upload = multer({

@@ -26,6 +26,7 @@
 <link rel="import" href="yp-post-cover-media.html">
 <link rel="import" href="yp-post-behaviors.html">
 <link rel="import" href="yp-post-name-with-author.html">
+<link rel="import" href="yp-post-survey-translation-behaviors.html">
 
 <dom-module id="yp-post-header">
 
@@ -438,6 +439,7 @@
                                  content="[[structuredAnswersFormatted]]" no-user-info$="[[!post.Group.configuration.showWhoPostedPosts]]"
                                  simple-format
                                  skip-sanitize
+                                 disable-translation
                                  content-id="[[post.id]]" class="description" truncate="[[post.Group.configuration.descriptionTruncateAmount]]"
                                  more-text="{{t('readMore')}}" close-dialog-text="[[t('close')]]">
                   </yp-magic-text>
@@ -448,11 +450,11 @@
                 <yp-post-ratings-info class="customRatings" post="[[post]]"></yp-post-ratings-info>
               </template>
               <template is="dom-if" if="[[!post.Group.configuration.customRatings]]">
-                <yp-post-actions hidden$="[[hideActions]]" hide-debate elevation="-1" floating header-mode="[[headerMode]]"
+                <yp-post-actions hidden$="[[hideActions]]" force-show-debate$="[[post.Group.configuration.forceShowDebateCountOnPost]]" elevation="-1" floating header-mode="[[headerMode]]"
                                  class="postActions" endorse-mode="[[endorseMode]]" class="voting" post="[[post]]"></yp-post-actions>
               </template>
 
-              <div class="share" >
+              <div class="share" hidden$="[[post.Group.configuration.hideSharing]]">
                 <paper-share-button on-share-tap="_shareTap" class="shareIcon" less-margin$="[[post.Group.configuration.hideDownVoteForPost]]" endorsed$="[[isEndorsed]]"
                                     horizontal-align="right" id="shareButton"
                                     whatsapp="[[post.Group.configuration.allowWhatsAppSharing]]"
@@ -463,7 +465,7 @@
                 <paper-listbox slot="dropdown-content" on-iron-select="_menuSelection">
                   <template is="dom-if" if="[[hasPostAccess]]">
                     <paper-item id="editMenuItem">[[t('post.edit')]]</paper-item>
-                    <paper-item id="moveMenuItem">[[t('post.move')]]</paper-item>
+                    <paper-item hidden$="[[!checkPostAdminOnlyAccess(post)]]" id="moveMenuItem">[[t('post.move')]]</paper-item>
                     <paper-item hidden$="[[!checkPostAdminOnlyAccess(post)]]" id="statusChangeMenuItem">[[t('post.statusChange')]]</paper-item>
                     <paper-item id="deleteMenuItem">[[t('post.delete')]]</paper-item>
                     <paper-item hidden$="[[!checkPostAdminOnlyAccess(post)]]" id="anonymizeMenuItem">[[t('anonymizePostAndContent')]]</paper-item>
@@ -479,6 +481,10 @@
       </paper-material>
     </div>
     <lite-signal on-lite-signal-got-admin-rights="_gotAdminRights"></lite-signal>
+    <lite-signal on-lite-signal-yp-auto-translate="_autoTranslateEvent"></lite-signal>
+
+    <yp-ajax id="translatedSurveyAjax" on-response="_translatedSurveyResponse"></yp-ajax>
+
   </template>
 
   <script>
@@ -493,7 +499,8 @@
         Polymer.ypLoggedInUserBehavior,
         Polymer.ypGotoBehavior,
         Polymer.ypTruncateBehavior,
-        Polymer.ypMediaFormatsBehavior
+        Polymer.ypMediaFormatsBehavior,
+        Polymer.YpPostSurveyTranslationBehavior
       ],
 
       properties: {
@@ -521,12 +528,7 @@
           type: Boolean,
           value: false,
           notify: true,
-          computed: '_hasPostAccess(post, gotAdminRights)'
-        },
-
-        structuredAnswersFormatted: {
-          type: String,
-          computed: '_structuredAnswersFormatted(post)'
+          computed: '_hasPostAccess(post, gotAdminRights, loggedInUser)'
         },
 
         isEditing: {
@@ -555,33 +557,6 @@
         hideActions: {
           type: Boolean,
           value: false
-        }
-      },
-
-      _structuredAnswersFormatted: function (post) {
-        if (post && post.public_data && post.public_data.structuredAnswersJson &&
-          post.Group.configuration && post.Group.configuration.structuredQuestionsJson) {
-          var questionHash = {};
-          var outText = "";
-          post.Group.configuration.structuredQuestionsJson.forEach(function (question) {
-            if (question.uniqueId) {
-              questionHash[question.uniqueId] = question;
-            }
-          }.bind(this));
-
-          post.public_data.structuredAnswersJson.forEach(function (answer) {
-            if (answer && answer.value) {
-              var question = questionHash[answer.uniqueId];
-              if (question) {
-                outText+="<b>"+question.text+"</b>\n";
-                outText+=answer.value+"\n\n";
-              }
-            }
-          }.bind(this));
-
-          return outText;
-        } else {
-          return "";
         }
       },
 
@@ -707,6 +682,7 @@
           } else {
             this.set('isAudioCover', false);
           }
+          this._getSurveyTranslationsIfNeeded();
         }
       },
 

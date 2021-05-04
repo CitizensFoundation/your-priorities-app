@@ -33,9 +33,27 @@
 
       .postsList {
         color: #000;
-        height: 800px;
+        height: 80vh;
         width: 100%;
         overflow: auto;
+      }
+
+      @media (max-height: 750px) {
+          .postsList {
+              height: 75vh;
+          }
+      }
+
+      @media (max-height: 650px) {
+          .postsList {
+              height: 70vh;
+          }
+      }
+
+      @media (max-height: 550px) {
+          .postsList {
+              height: 60vh;
+          }
       }
 
       .pageItem {
@@ -64,8 +82,14 @@
       }
 
       .postDropdown {
+        min-width: 150px;
         width: 150px;
         margin: 16px;
+      }
+
+      .dropDownSmall {
+        min-width: 100px;
+        width: 100px;
       }
 
       #editPageLocale {
@@ -80,9 +104,7 @@
       }
 
       paper-textarea {
-        height: 200px;
-        max-height: 220px;
-        overflow: auto;
+
       }
 
       .localeInput {
@@ -106,7 +128,6 @@
       }
 
       .postUniqueMessage {
-        width: 300px;
       }
 
       a {
@@ -136,16 +157,37 @@
       paper-listbox {
         max-height: 220px;
       }
+
+      .material {
+      }
+
+      .postUniqueMessage {
+          max-height: 220px;
+      }
+
+      .containerMain {
+          width: 100%;
+      }
+      :host{
+          --paper-input-container-input:{
+              max-height: 150px;
+              margin-bottom: 2px;
+          }
+
+          --paper-dialog-scrollable: {
+              max-height: none;;
+          }
+      }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
     <lite-signal on-lite-signal-bulk-status-updates-templates="_updatedTemplates"></lite-signal>
 
     <paper-dialog id="dialog" modal>
       <h2>[[t('bulkStatusUdateConfig')]] - [[bulkStatusUpdate.id]]</h2>
-      <paper-dialog-scrollable>
+      <paper-dialog-scrollable scroll-target="document">
         <div class="layout horizontal wrap">
           <paper-tabs selected="{{selectedGroup}}" attr-for-selected="name">
-            <template is="dom-repeat" items="[[config.groups]]" as="group">
+            <template is="dom-repeat" items="[[config.groups]]" as="group" on-dom-change="_domChanged">
               <paper-tab name="[[group.name]]">[[_getHeadGroupName(group.name)]]</paper-tab>
             </template>
           </paper-tabs>
@@ -157,8 +199,8 @@
                 <template is="dom-if" if="[[_selectedGroup(selectedGroup, group.name)]]">
                   <template is="dom-repeat" items="[[_orderPosts(group.posts)]]" as="post">
                     <div class="layout horizontal postItem">
-                      <paper-material elevation="2" class="layout horizontal">
-                        <div class="layout vertical">
+                      <paper-material elevation="2" class="layout horizontal flex">
+                        <div class="layout vertical containerMain">
                           <div class="layout horizontal">
                             <div class="id">[[post.id]]</div>
                             <div class="postName">
@@ -169,12 +211,11 @@
                             </div>
                           </div>
                           <div class="layout horizontal">
-                            <div class="postDropdown">
+                            <div class="postDropdown dropDownSmall">
                               <paper-dropdown-menu label="[[t('post.statusChangeSelectNewStatus')]]">
-                                <paper-listbox slot="dropdown-content" attr-for-selected="name" data-args$="[[post]]" selected="{{post.newOfficialStatus}}" on-iron-select="_selectNewOfficialStatus">
-                                  <template is="dom-repeat" items="[[officialStatusOptions]]" as="statusOption">
-                                    <paper-item name="[[statusOption.official_value]]">[[statusOption.translatedName]]</paper-item>
-                                  </template>
+                                <paper-listbox slot="dropdown-content" attr-for-selected="name" data-args$="[[post]]" selected="{{post.newOfficialStatus}}" on-iron-select="_selectNewOfficialStatus"><template is="dom-repeat" items="[[officialStatusOptions]]" as="statusOption">
+                                  <paper-item name="[[statusOption.official_value]]">[[statusOption.translatedName]]</paper-item>
+                                </template>
                                 </paper-listbox>
                               </paper-dropdown-menu>
                             </div>
@@ -196,13 +237,14 @@
                                 </paper-listbox>
                               </paper-dropdown-menu>
                             </div>
-                            <div class="postUniqueMessage">
+                            <div class="postUniqueMessage layout horizontal flex">
                               <paper-textarea id="emailFooter"
                                               name="emailFooter"
                                               always-float-label="[[post.uniqueStatusMessage]]"
                                               value="{{post.uniqueStatusMessage}}"
                                               label="[[t('uniqueStatusMessage')]]"
                                               rows="4"
+                                              style="width:100%"
                                               max-rows="4"
                                               maxlength="30000" class="mainInput">
                               </paper-textarea>
@@ -330,6 +372,10 @@
         this.set('config', null);
         this.set('templates', null);
         this.set('bulkStatusUpdates', null);
+      },
+
+      _domChanged: function () {
+        this.$.dialog.fire("iron-resize");
       },
 
       observers: [

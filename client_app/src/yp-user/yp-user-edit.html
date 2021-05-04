@@ -65,6 +65,31 @@
         margin-bottom: 4px;
         font-weight: 400;
       }
+
+      [hidden] {
+        display: none !important;
+      }
+
+      .tempApiKeyContainer {
+        margin-top: 16px;
+        margin-bottom: 16px;
+        padding-bottom: 8px;
+        padding-top: 8px;
+      }
+
+      .temporaryApiKeyInformation {
+        color: #F00;
+        font-size: 16px;
+        margin-bottom: 8px;
+
+      }
+
+      .apiKey {
+        font-size: 16px;
+        padding-right: 8px;
+        padding-top: 12px;
+        font-weight: bold;
+      }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
@@ -109,6 +134,18 @@
 
           <yp-language-selector name="defaultLocale" auto-translate-option-disabled selected-locale="{{user.default_locale}}"></yp-language-selector>
 
+          <paper-button hidden$="[[user.profile_data.hasApiKey]]" raised class="disconnectButtons" on-tap="_createApiKey">[[t('createApiKey')]]</paper-button>
+
+          <paper-button hidden$="[[!user.profile_data.hasApiKey]]" raised class="disconnectButtons" on-tap="_reCreateApiKey">[[t('reCreateApiKey')]]</paper-button>
+
+          <div class="layout vertical tempApiKeyContainer" hidden$="[[!currentApiKey]]">
+            <div class="temporaryApiKeyInformation">[[t('showingApiKeyOnce')]]</div>
+            <div class="layout horizontal">
+              <div class="apiKey">[[currentApiKey]]</div>
+              <paper-button raised on-tap="_copyApiKey">[[t('copyApiKey')]]</paper-button>
+            </div>
+          </div>
+
           <paper-button hidden$="[[!user.facebook_id]]" class="disconnectButtons" raised on-tap="_disconnectFromFacebookLogin">[[t('disconnectFromFacebookLogin')]]</paper-button>
 
           <paper-button hidden$="[[!user.ssn]]" raised class="disconnectButtons" on-tap="_disconnectFromSamlLogin">[[t('disconnectFromSamlLogin')]]</paper-button>
@@ -125,6 +162,7 @@
 
           <yp-ajax id="disconnectFacebookLoginAjax" method="DELETE" url="/api/users/disconnectFacebookLogin" on-response="_disconnectFacebookLoginResponse"></yp-ajax>
           <yp-ajax id="disconnectSamlLoginAjax" method="DELETE" url="/api/users/disconnectSamlLogin" on-response="_disconnectSamlLoginResponse"></yp-ajax>
+          <yp-ajax id="createApiKeyAjax" method="POST" url="/api/users/createApiKey" on-response="_apiKeyCreateResponse"></yp-ajax>
         </div>
       </div>
     </yp-edit-dialog>
@@ -161,6 +199,11 @@
 
       method: {
         type: String
+      },
+
+      currentApiKey: {
+        type: String,
+        value: null
       },
 
       selected: {
@@ -282,6 +325,10 @@
       window.appUser.checkLogin();
     },
 
+    _copyApiKey: function() {
+      navigator.clipboard.writeText(this.currentApiKey);
+    },
+
     _clear: function () {
       this.set('user', { name: '', email: '', access: 2 } );
       this.set('uploadedProfileImageId', null);
@@ -310,6 +357,26 @@
         this.editHeaderText = this.t('user.edit');
         this.toastText = this.t('userToastUpdated');
       }
+    },
+
+    _createApiKey: function () {
+      window.appGlobals.activity('open', 'user.createApiKey');
+      this.$.createApiKeyAjax.body = {};
+      this.$.createApiKeyAjax.generateRequest();
+    },
+
+    _apiKeyCreateResponse: function (event) {
+      this.set('currentApiKey', event.detail.response.apiKey);
+      this.set('user.profile_data.hasApiKey', true);
+    },
+
+    _reCreateApiKey: function () {
+      window.appGlobals.activity('open', 'user.reCreateApiKey');
+      Polymer.dom(document).querySelector('yp-app').getDialogAsync("apiActionDialog", function (dialog) {
+        dialog.setup('/api/users/createApiKey',
+          this.t('areYouSureYouWantToRecreateApiKey'), this._apiKeyCreateResponse.bind(this), this.t('recreate'), "POST");
+        dialog.open();
+      }.bind(this));
     },
 
     _deleteOrAnonymizeUser: function () {

@@ -119,8 +119,9 @@ module.exports = (sequelize, DataTypes) => {
   Group.ACCESS_SECRET = 2;
   Group.ACCESS_OPEN_TO_COMMUNITY = 3;
 
-  Group.defaultPublicAttributes = ['id','name','access','google_analytics_code','is_group_folder','in_group_folder_id','status',
-    'weight','theme_id','created_at','updated_at','configuration','language'];
+  Group.defaultPublicAttributes = ['id','name','access','google_analytics_code','is_group_folder','in_group_folder_id',
+    'status', 'weight','theme_id','community_id','created_at','updated_at','configuration','language','objectives','counter_posts',
+    'counter_points','counter_users','user_id'];
 
   Group.addUserToGroupIfNeeded = (groupId, req, done) => {
     sequelize.models.Group.findOne({

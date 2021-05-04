@@ -188,8 +188,14 @@
       .mediaTab {
         vertical-align: center;
       }
+
+      .attachmentInfo {
+        margin-top: -8px;
+        margin-left: 8px;
+      }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
+    <lite-signal on-lite-signal-yp-auto-translate="_autoTranslateEvent"></lite-signal>
 
     <yp-edit-dialog name="postEdit" double-width id="editDialog" icon="lightbulb-outline" action="[[action]]"
                     use-next-tab-action="[[newPost]]" on-next-tab-action="_nextTab" method="[[method]]"
@@ -258,6 +264,15 @@
                 <input type="hidden" name="categoryId" value="[[selectedCategoryId]]">
               </template>
 
+              <template is="dom-if" if="[[group.configuration.usePostTags]]">
+                <paper-input id="tags"
+                             name="tags"
+                             type="text"
+                             label="[[t('commaSeperatedTags')]]"
+                             value="{{post.public_data.tags}}">
+                </paper-input>
+              </template>
+
               <template is="dom-if" if="[[postDescriptionLimit]]">
                 <paper-textarea-aria id="description"
                                 hidden$="[[hasStructuredQuestions]]"
@@ -313,6 +328,7 @@
                   <iron-icon class="icon" icon="attach-file"></iron-icon>
                   <span>[[t('uploadAttachment')]]</span>
                 </yp-file-upload>
+                <small class="attachmentInfo">[[t('documentOnlyVisibleToAdmins')]]</small>
                 <template is="dom-if" if="[[post.data.attachment.url]]">
                   <paper-checkbox name="deleteAttachment">[[t('deleteAttachment')]]: [[post.data.attachment.filename]]</paper-checkbox>
                 </template>
@@ -466,6 +482,7 @@
                      text-type="customTitleQuestionText"></yp-magic-text>
     </template>
 
+    <yp-ajax hidden id="translatedQuestionsAjax" on-response="_translatedQuestionsResponse"></yp-ajax>
   </template>
 
 </dom-module>
@@ -515,7 +532,8 @@
       },
 
       group: {
-        type: Object
+        type: Object,
+        observer: "_groupChanged"
       },
 
       locationHidden: {
@@ -618,7 +636,7 @@
 
       structuredQuestions: {
         type: Array,
-        computed: '_structuredQuestions(post, group)'
+        computed: '_structuredQuestions(post, group, translatedQuestions)'
       },
 
       hasStructuredQuestions:  {
@@ -652,7 +670,99 @@
       hasOnlyOneTab: {
         type: Boolean,
         value: false
+      },
+
+      translatedQuestions: {
+        type: Array,
+        value: null
+      },
+
+      autoTranslate: {
+        type: Boolean,
+        value: false
       }
+    },
+
+    _autoTranslateEvent(event, detail) {
+      this.set('autoTranslate', detail);
+      this._getSurveyTranslationsIfNeeded();
+    },
+
+    _getQuestionLengthWithSubOptions: function (questions) {
+      let length = 0;
+      for (let i=0; i<questions.length;i++) {
+        length += 1;
+        var question = questions[i];
+        if (question.type==="radios" && question.radioButtons && question.radioButtons.length>0) {
+          length += question.radioButtons.length;
+        }  else if (question.type==="checkboxes" && question.checkboxes && question.checkboxes.length>0) {
+          length += question.checkboxes.length;
+        } else if(question.type==="dropdown" && question.dropdownOptions && question.dropdownOptions.length>0) {
+          length += question.dropdownOptions.length;
+        }
+      }
+
+      return length;
+    },
+
+    _getSurveyTranslationsIfNeeded: function () {
+      this.set('translatedQuestions', null);
+      if (this.autoTranslate && this.language!==this.group.language) {
+        this.$.translatedQuestionsAjax.url = `/api/groups/${this.group.id}/translatedSurveyQuestions?targetLanguage=${this.language}`;
+        this.$.translatedQuestionsAjax.generateRequest();
+      }
+    },
+
+    //TODO: Make sure to share this code with registration questions
+    _translatedQuestionsResponse: function (event, detail) {
+      if (this.autoTranslate && this.language!==this.group.language) {
+        var translatedTexts = detail.response;
+        var currentQuestions = JSON.parse(JSON.stringify(this.group.configuration.structuredQuestionsJson));
+
+        if (translatedTexts.length===this._getQuestionLengthWithSubOptions(currentQuestions)) {
+          var translatedItemCount = 0;
+          for (var questionCount=0; questionCount<currentQuestions.length;questionCount++) {
+            var question = currentQuestions[questionCount];
+            question.originalText = question.text;
+            question.text = translatedTexts[translatedItemCount++];
+
+            if (question.type==="radios" && question.radioButtons && question.radioButtons.length>0) {
+              for (var subOptionCount=0;subOptionCount<question.radioButtons.length;subOptionCount++) {
+                question.radioButtons[subOptionCount].originalText =  question.radioButtons[subOptionCount].text;
+                question.radioButtons[subOptionCount].text = translatedTexts[translatedItemCount++];
+              }
+            }  else if (question.type==="checkboxes" && question.checkboxes && question.checkboxes.length>0) {
+              for (var subOptionCount=0;subOptionCount<question.checkboxes.length;subOptionCount++) {
+                question.checkboxes[subOptionCount].originalText =  question.checkboxes[subOptionCount].text;
+                question.checkboxes[subOptionCount].text = translatedTexts[translatedItemCount++];
+              }
+            } else if(question.type==="dropdown" && question.dropdownOptions && question.dropdownOptions.length>0) {
+              for (var subOptionCount=0;subOptionCount<question.dropdownOptions.length;subOptionCount++) {
+                question.dropdownOptions[subOptionCount].originalText =  question.dropdownOptions[subOptionCount].text;
+                question.dropdownOptions[subOptionCount].text = translatedTexts[translatedItemCount++];
+              }
+            }
+          }
+
+          this.set('translatedQuestions', currentQuestions);
+        } else {
+          console.error("Questions and Translated texts length does not match");
+        }
+      } else {
+        this.set('translatedQuestions', null);
+      }
+    },
+
+    _groupChanged: function (group) {
+     if (group &&
+         group.configuration &&
+         group.configuration.structuredQuestionsJson &&
+         group.configuration.structuredQuestionsJson.length > 0) {
+       if (window.autoTranslate) {
+         this.set('autoTranslate', window.autoTranslate);
+       }
+       this._getSurveyTranslationsIfNeeded();
+     }
     },
 
     listeners: {
@@ -827,9 +937,15 @@
       this.$.editDialog.scrollResize();
     },
 
-    _structuredQuestions: function (post, group) {
+
+
+    _structuredQuestions: function (post, group, translatedQuestions) {
       if (post && group && group.configuration.structuredQuestionsJson) {
-        return group.configuration.structuredQuestionsJson;
+        if (translatedQuestions) {
+          return translatedQuestions;
+        } else {
+          return group.configuration.structuredQuestionsJson;
+        }
       } else if (post && group && group.configuration.structuredQuestions && group.configuration.structuredQuestions!=="") {
         var structuredQuestions = [];
 

@@ -8,6 +8,7 @@
 <link rel="import" href="yp-app-recommendations-behavior.html">
 <link rel="import" href="yp-app-cache-behavior.html">
 <link rel="import" href="yp-app-analytics-behavior.html">
+<link rel="import" href="yp-app-offline-behavior.html">
 
 <link rel="import" href="../yp-session/yp-session.html">
 <link rel="import" href="../yp-ajax/yp-ajax.html">
@@ -54,7 +55,8 @@
           Polymer.ypGotoBehavior,
           Polymer.ypAppRecommendationsBehavior,
           Polymer.ypAppCacheBehavior,
-          Polymer.ypAppAnalyticsBehavior
+          Polymer.ypAppAnalyticsBehavior,
+          Polymer.ypAppOfflineBehavior
         ],
 
         properties: {
@@ -113,6 +115,11 @@
           currentGroup: {
             type: Object,
             value: null,
+          },
+
+          registrationQuestionsGroup: {
+            type: Object,
+            value: null
           },
 
           currentAnonymousUser: {
@@ -274,6 +281,16 @@
         setAnonymousUser: function (user) {
           this.set('currentAnonymousUser', user);
           console.debug("Set anon user "+user);
+        },
+
+        setRegistrationQuestionGroup: function (group) {
+          if (group &&
+            group.configuration &&
+            group.configuration.registrationQuestionsJson) {
+            this.set('registrationQuestionsGroup', group);
+          } else {
+            this.set('registrationQuestionsGroup', null);
+          }
         },
 
         setAnonymousGroupStatus: function (group) {

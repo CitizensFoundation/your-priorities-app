@@ -1,10 +1,17 @@
 "use strict";
-
 const async = require("async");
 const log = require('../utils/logger');
 const aws = require('aws-sdk');
 const _ = require('lodash');
 const queue = require('../active-citizen/workers/queue');
+
+let bullVideoQueue;
+
+if (process.env.USE_YOUR_PRIORITIES_ENCODER) {
+  const Queue = require('bull');
+  const redisUrl = process.env.REDIS_URL ? process.env.REDIS_URL : undefined;
+  bullVideoQueue = new Queue('VideoEncoding', redisUrl);
+}
 
 module.exports = (sequelize, DataTypes) => {
   const Video = sequelize.define("Video", {
@@ -91,14 +98,26 @@ module.exports = (sequelize, DataTypes) => {
 
   Video.getFullUrl = (meta) => {
     if (meta) {
-      return 'https://'+meta.publicBucket+'.'+meta.endPoint+'/'+meta.fileKey;
+      if (process.env.MINIO_ROOT_USER) {
+        return "https://"
+          + meta.endPoint
+          + "/" + meta.publicBucket+'/'+meta.fileKey;
+      } else {
+        return 'https://'+meta.publicBucket+'.'+meta.endPoint+'/'+meta.fileKey;
+      }
     }
   };
 
   Video.getThumbnailUrl = (video, number) => {
     const zerofilled = ('00000'+number).slice(-5);
     const fileKey = video.meta.fileKey+'_thumbs-' + video.id + '-'+zerofilled+'.png';
-    return 'https://'+video.meta.thumbnailBucket+'.'+video.meta.endPoint+'/'+fileKey;
+    if (process.env.MINIO_ROOT_USER) {
+      return "https://"
+        + process.env.S3_ENDPOINT
+        + "/" + process.env.S3_VIDEO_THUMBNAIL_BUCKET+'/'+fileKey;
+    } else {
+      return 'https://'+video.meta.thumbnailBucket+'.'+video.meta.endPoint+'/'+fileKey;
+    }
   };
 
   Video.createAndGetSignedUploadUrl = (req, res) => {
@@ -244,51 +263,55 @@ module.exports = (sequelize, DataTypes) => {
   };
 
   Video.getTranscodingJobStatus = (video, req, res ) => {
-    const params = {
-      Id: req.body.jobId
-    };
-    const eltr = new aws.ElasticTranscoder({
-      apiVersion: '2012–09–25',
-      region: process.env.S3_REGION ? process.env.S3_REGION : 'eu-west-1'
-    });
-    eltr.readJob(params, (error, data) => {
-      if (error) {
-        log.error("Could not get status of transcoding job", { error });
-        res.sendStatus(500);
-      } else {
-        const jobStatus = { status: data.Job.Status, statusDetail: data.Job.StatusDetail };
-        if (jobStatus.status==="Complete") {
-          const duration = data.Job.Output.Duration;
-          sequelize.models.Video.setupThumbnailsAfterTranscoding(video, duration, req, (error) => {
-            if (error) {
-              log.error("Could not connect image and video", { error });
-              res.sendStatus(500);
-            } else {
-              res.send(jobStatus);
-            }
-          })
-        } else if (jobStatus.status==="Error") {
-          if (data.Job.Outputs && data.Job.Outputs.length>1 &&
-            data.Job.Outputs[0].Status==='Complete' && data.Job.Outputs[1].Status==='Error') {
-            log.info("Transcoding no audio channel found", { data });
+    if (process.env.USE_YOUR_PRIORITIES_ENCODER) {
+      Video.getYrpriEncoderTranscodingJobStatus(video, req, res);
+    } else {
+      const params = {
+        Id: req.body.jobId
+      };
+      const eltr = new aws.ElasticTranscoder({
+        apiVersion: '2012–09–25',
+        region: process.env.S3_REGION ? process.env.S3_REGION : 'eu-west-1'
+      });
+      eltr.readJob(params, (error, data) => {
+        if (error) {
+          log.error("Could not get status of transcoding job", { error });
+          res.sendStatus(500);
+        } else {
+          const jobStatus = { status: data.Job.Status, statusDetail: data.Job.StatusDetail };
+          if (jobStatus.status==="Complete") {
             const duration = data.Job.Output.Duration;
             sequelize.models.Video.setupThumbnailsAfterTranscoding(video, duration, req, (error) => {
               if (error) {
                 log.error("Could not connect image and video", { error });
                 res.sendStatus(500);
               } else {
-                res.send({ status: "Complete" });
+                res.send(jobStatus);
               }
             })
+          } else if (jobStatus.status==="Error") {
+            if (data.Job.Outputs && data.Job.Outputs.length>1 &&
+              data.Job.Outputs[0].Status==='Complete' && data.Job.Outputs[1].Status==='Error') {
+              log.info("Transcoding no audio channel found", { data });
+              const duration = data.Job.Output.Duration;
+              sequelize.models.Video.setupThumbnailsAfterTranscoding(video, duration, req, (error) => {
+                if (error) {
+                  log.error("Could not connect image and video", { error });
+                  res.sendStatus(500);
+                } else {
+                  res.send({ status: "Complete" });
+                }
+              })
+            } else {
+              log.error("Could not transcode video image and video", { jobStatus: jobStatus, data: data, dataJob: data.Job });
+              res.sendStatus(500);
+            }
           } else {
-            log.error("Could not transcode video image and video", { jobStatus: jobStatus, data: data, dataJob: data.Job });
-            res.sendStatus(500);
+            res.send(jobStatus);
           }
-        } else {
-          res.send(jobStatus);
         }
-      }
-    });
+      });
+    }
   };
 
   Video.startTranscoding = (video, options, req, res) => {
@@ -395,55 +418,59 @@ module.exports = (sequelize, DataTypes) => {
   };
 
   Video.startTranscodingJob = (video, callback) => {
-    const eltr = new aws.ElasticTranscoder({
-      apiVersion: '2012–09–25',
-      region: process.env.S3_REGION ? process.env.S3_REGION : 'eu-west-1'
-    });
-    const fileKey = video.meta.fileKey;
-    const pipelineId = process.env.AWS_TRANSCODER_PIPELINE_ID;
-    let videoPresetId;
-
-    if (video.meta.aspect && video.meta.aspect==="portrait") {
-      videoPresetId = process.env.AWS_TRANSCODER_PORTRAIT_PRESET_ID;
+    if (process.env.USE_YOUR_PRIORITIES_ENCODER) {
+      Video.startYrpriEncoderTranscodingJob(video, callback);
     } else {
-      videoPresetId = process.env.AWS_TRANSCODER_PRESET_ID;
-    }
+      const eltr = new aws.ElasticTranscoder({
+        apiVersion: '2012–09–25',
+        region: process.env.S3_REGION ? process.env.S3_REGION : 'eu-west-1'
+      });
+      const fileKey = video.meta.fileKey;
+      const pipelineId = process.env.AWS_TRANSCODER_PIPELINE_ID;
+      let videoPresetId;
 
-    const params = {
-      PipelineId: pipelineId,
-      Input: {
-        Key: fileKey,
-        FrameRate: 'auto',
-        Resolution: 'auto',
-        AspectRatio: 'auto',
-        Interlaced: 'auto',
-        Container: 'auto',
-        TimeSpan: {
-          Duration: video.meta.maxDuration+'.000'
-        }
-      },
-      Outputs: [
-        {
-          Key: fileKey,
-          ThumbnailPattern: fileKey+'_thumbs-' + video.id + '-{count}',
-          Rotate : "auto",
-          PresetId: videoPresetId,
-        },
-        {
-          Key: fileKey.slice(0, fileKey.length-4)+'.flac',
-          PresetId: process.env.AWS_TRANSCODER_FLAC_PRESET_ID
-        }
-      ]
-    };
-    log.info('Starting AWS transcoding Job');
-    eltr.createJob(params,  (error, data) => {
-      if (error) {
-        log.error("Error creating AWS transcoding job", { error });
-        callback(error);
+      if (video.meta.aspect && video.meta.aspect==="portrait") {
+        videoPresetId = process.env.AWS_TRANSCODER_PORTRAIT_PRESET_ID;
       } else {
-        callback(null, data)
+        videoPresetId = process.env.AWS_TRANSCODER_PRESET_ID;
       }
-    });
+
+      const params = {
+        PipelineId: pipelineId,
+        Input: {
+          Key: fileKey,
+          FrameRate: 'auto',
+          Resolution: 'auto',
+          AspectRatio: 'auto',
+          Interlaced: 'auto',
+          Container: 'auto',
+          TimeSpan: {
+            Duration: video.meta.maxDuration+'.000'
+          }
+        },
+        Outputs: [
+          {
+            Key: fileKey,
+            ThumbnailPattern: fileKey+'_thumbs-' + video.id + '-{count}',
+            Rotate : "auto",
+            PresetId: videoPresetId,
+          },
+          {
+            Key: fileKey.slice(0, fileKey.length-4)+'.flac',
+            PresetId: process.env.AWS_TRANSCODER_FLAC_PRESET_ID
+          }
+        ]
+      };
+      log.info('Starting AWS transcoding Job');
+      eltr.createJob(params,  (error, data) => {
+        if (error) {
+          log.error("Error creating AWS transcoding job", { error });
+          callback(error);
+        } else {
+          callback(null, data)
+        }
+      });
+    }
   };
 
   Video.prototype.createFormats = function (video) {
@@ -460,6 +487,7 @@ module.exports = (sequelize, DataTypes) => {
       endpoint: accelEndPoint,
       useAccelerateEndpoint: process.env.S3_ACCELERATED_ENDPOINT!=null,
       region: process.env.S3_REGION || ((process.env.S3_ENDPOINT || process.env.S3_ACCELERATED_ENDPOINT) ? null : 'us-east-1'),
+      s3ForcePathStyle: process.env.S3_FORCE_PATH_STYLE ? true : false
     });
 
     const signedUrlExpireSeconds = 60 * 60;
@@ -475,7 +503,7 @@ module.exports = (sequelize, DataTypes) => {
       Bucket: bucketName,
       Key: fileKey,
       Expires: signedUrlExpireSeconds,
-      ACL: 'bucket-owner-full-control',
+      ACL: process.env.S3_FORCE_PATH_STYLE ? undefined : 'bucket-owner-full-control',
       ContentType: contentType
     };
     s3.getSignedUrl('putObject', s3Params, (error, url) => {
@@ -496,6 +524,68 @@ module.exports = (sequelize, DataTypes) => {
         }).catch((error) => { callback(error) });
       }
     });
+  };
+
+  // Using Your Priorities Encoder
+
+  Video.startYrpriEncoderTranscodingJob = (video, callback) => {
+    const fileKey = video.meta.fileKey;
+    let jobPackage = {
+      portrait: (video.meta && video.meta.aspect && video.meta.aspect==="portrait"),
+      fileKey,
+      duration: video.meta.maxDuration+'.000',
+      thumbnailPattern: fileKey+'_thumbs-' + video.id + '-{count}',
+      flacFilename: fileKey.slice(0, fileKey.length-4)+'.flac'
+    }
+    sequelize.models.AcBackgroundJob.createJob(jobPackage, async (error, jobId) => {
+      log.info('Starting YRPRI transcoding Job');
+      if (error) {
+        log.error("Error creating YRPRI transcoding job", { error });
+        callback(error);
+      } else {
+
+        jobPackage = _.merge(jobPackage, {
+          acBackgroundJobId: jobId,
+        });
+
+        await bullVideoQueue.add(jobPackage);
+        callback(null, { Job: { Id: jobId } });
+      }
+    });
+  };
+
+  Video.getYrpriEncoderTranscodingJobStatus = (video, req, res ) => {
+    sequelize.models.AcBackgroundJob.findOne({
+      where: {
+        id: req.body.jobId
+      }
+    }).then(job=>{
+      if (job) {
+        const jobStatus = { status: job.data.status, statusDetail: "" };
+        if (job.data.status==="Complete") {
+          const duration = job.data.finalDuration;
+          sequelize.models.Video.setupThumbnailsAfterTranscoding(video, duration, req, (error) => {
+            if (error) {
+              log.error("Could not connect image and video", { error });
+              res.sendStatus(500);
+            } else {
+              res.send(jobStatus);
+            }
+          })
+        } else if (job.data.status==="Error") {
+          log.error("Could not transcode video image and video", { jobStatus: jobStatus, data: job.data });
+          res.sendStatus(500);
+        } else {
+          res.send(jobStatus);
+        }
+      } else {
+        log.error("Could not find transcoding job");
+        res.sendStatus(404);
+      }
+    }).catch(error=>{
+      log.error("Could not transcode image and video", { error });
+      res.sendStatus(500);
+    })
   };
 
   return Video;

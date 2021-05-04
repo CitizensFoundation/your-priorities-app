@@ -368,6 +368,13 @@
                       maxlength="150" class="mainInput">
       </paper-textarea>
 
+      <paper-input id="externalId"
+                   name="externalId"
+                   type="text"
+                   label="[[t('externalId')]]"
+                   value="{{community.configuration.externalId}}">
+      </paper-input>
+
       <div class="layout horizontal additionalSettings half" hidden$="[[!ssnLoginListDataId]]">
         <div>
           <b>[[t('ssnLoginListCount')]]: [[ssnLoginListDataCount]]</b>
@@ -378,7 +385,7 @@
       </div>
       <div class="layout vertical additionalSettings half" hidden$="[[ssnLoginListDataId]]">
         <yp-file-upload id="ssnLoginListDataUpload" raised="true" disabled$="[[!hasSamlLoginProvider]]" hidden$="[[!community.id]]"
-                        accept=".txt"
+                        accept=".txt,.csv"
                         multi="false" target="/api/communities/[[community.id]]/upload_ssn_login_list"
                         method="POST" on-success="_ssnLoginListDataUploaded">
           <iron-icon class="icon" icon="link"></iron-icon>

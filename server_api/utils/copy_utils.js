@@ -1,5 +1,59 @@
 var models = require('../models');
 var async = require('async');
+const {cloneTranslationForGroup} = require("../active-citizen/utils/translation_cloning");
+const {cloneTranslationForCommunity} = require("../active-citizen/utils/translation_cloning");
+const {cloneTranslationForPoint} = require("../active-citizen/utils/translation_cloning");
+const {cloneTranslationForPost} = require("../active-citizen/utils/translation_cloning");
+
+const clonePagesForCollection = (model, modelRelField, inCollection, outCollection, done) => {
+  const oldToNewHash = {};
+  models.Page.findAll({
+    include: [
+      {
+        model: model,
+        where: {
+          id: inCollection.id
+        }
+      }
+    ]
+  }).then( pages => {
+    async.forEach(pages, (oldPage, forEachCallback) => {
+      const pageJson = JSON.parse(JSON.stringify(oldPage.toJSON()));
+      delete pageJson['id'];
+      pageJson[modelRelField] = outCollection.id;
+      const newPage = models.Page.build(pageJson);
+      newPage.save().then( () => {
+        oldToNewHash[oldPage.id] = newPage.id;
+        forEachCallback();
+      }).catch( error => {
+        forEachCallback(error);
+      })
+    }, error => {
+      if (inCollection.configuration &&
+          inCollection.configuration.welcomePageId &&
+          inCollection.configuration.welcomePageId!=="") {
+        outCollection.set('configuration.welcomePageId', oldToNewHash[parseInt(inCollection.configuration.welcomePageId)]);
+        outCollection.save().then( () => {
+          done();
+        }).catch( error => {
+          done(error);
+        })
+      } else {
+        done(error);
+      }
+    })
+  }).catch( error => {
+    done(error);
+  })
+}
+
+const clonePagesForGroup = (inGroup, outGroup, done) => {
+  clonePagesForCollection(models.Group, "group_id", inGroup, outGroup, done);
+}
+
+const clonePagesForCommunity = (inCommunity, outCommunity, done) => {
+  clonePagesForCollection(models.Community, "community_id", inCommunity, outCommunity, done);
+}
 
 const copyPost = (fromPostId, toGroupId, options, done) => {
   var toGroup, toDomainId, toCommunityId;
@@ -80,9 +134,18 @@ const copyPost = (fromPostId, toGroupId, options, done) => {
           if (options && options.toCategoryId) {
             newPost.set('category_id', options.toCategoryId);
           }
+
+          if (options && options.resetEndorsementCounters) {
+            newPost.set('counter_endorsements_up', 0);
+            newPost.set('counter_endorsements_down', 0);
+          }
+
           newPost.save().then(function () {
             async.series(
               [
+                (postSeriesCallback) => {
+                  cloneTranslationForPost(oldPost, newPost, postSeriesCallback);
+                },
                 (postSeriesCallback) => {
                   if (options && options.createCopyActivities) {
                     models.AcActivity.createActivity({
@@ -130,74 +193,82 @@ const copyPost = (fromPostId, toGroupId, options, done) => {
                   }
                 },
                 (postSeriesCallback) => {
-                  models.Endorsement.findAll({
-                    where: {
-                      post_id: oldPost.id
-                    }
-                  }).then(function (endorsements) {
-                    async.eachSeries(endorsements, function (endorsement, endorsementCallback) {
-                      var endorsementJson = JSON.parse(JSON.stringify(endorsement.toJSON()));
-                      delete endorsementJson.id;
-                      var endorsementModel = models.Endorsement.build(endorsementJson);
-                      endorsementModel.set('post_id', newPost.id);
-                      endorsementModel.set('PostId', newPost.id);
-                      endorsementModel.save().then(function () {
-                        if (options && options.createCopyActivities) {
-                          models.AcActivity.createActivity({
-                            type: endorsementModel.value>0 ? 'activity.post.endorsement.copied' : 'activity.post.opposition.copied',
-                            userId: endorsementModel.user_id,
-                            domainId: toDomain.id,
-                            groupId: newPost.group_id,
-                            postId : newPost.id,
-                            access: models.AcActivity.ACCESS_PRIVATE
-                          }, function (error) {
-                            endorsementCallback(error);
-                          });
-                        } else {
-                          endorsementCallback();
-                        }
-                      }).catch((error) => {
-                        endorsementCallback(error);
+                  if (!options.skipEndorsementQualitiesAndRatings) {
+                    models.Endorsement.findAll({
+                      where: {
+                        post_id: oldPost.id
+                      }
+                    }).then(function (endorsements) {
+                      async.eachSeries(endorsements, function (endorsement, endorsementCallback) {
+                        var endorsementJson = JSON.parse(JSON.stringify(endorsement.toJSON()));
+                        delete endorsementJson.id;
+                        var endorsementModel = models.Endorsement.build(endorsementJson);
+                        endorsementModel.set('post_id', newPost.id);
+                        endorsementModel.set('PostId', newPost.id);
+                        endorsementModel.save().then(function () {
+                          if (options && options.createCopyActivities) {
+                            models.AcActivity.createActivity({
+                              type: endorsementModel.value>0 ? 'activity.post.endorsement.copied' : 'activity.post.opposition.copied',
+                              userId: endorsementModel.user_id,
+                              domainId: toDomain.id,
+                              groupId: newPost.group_id,
+                              postId : newPost.id,
+                              access: models.AcActivity.ACCESS_PRIVATE
+                            }, function (error) {
+                              endorsementCallback(error);
+                            });
+                          } else {
+                            endorsementCallback();
+                          }
+                        }).catch((error) => {
+                          endorsementCallback(error);
+                        });
+                      }, function (error) {
+                        postSeriesCallback(error);
                       });
-                    }, function (error) {
-                      postSeriesCallback(error);
                     });
-                  });
+                  } else {
+                    postSeriesCallback();
+                  }
                 },
                 (postSeriesCallback) => {
-                  models.Rating.findAll({
-                    where: {
-                      post_id: oldPost.id
-                    }
-                  }).then(function (ratings) {
-                    async.eachSeries(ratings, function (rating, ratingCallback) {
-                      var ratingJson = JSON.parse(JSON.stringify(rating.toJSON()));
-                      delete rating.id;
-                      var ratingModel = models.Endorsement.build(ratingJson);
-                      ratingModel.set('post_id', newPost.id);
-                      ratingModel.set('PostId', newPost.id);
-                      ratingModel.save().then(function () {
-                        if (options && options.createCopyActivities) {
-                          models.AcActivity.createActivity({
-                            type: 'activity.post.rating.copied',
-                            userId: ratingModel.user_id,
-                            domainId: toDomain.id,
-                            groupId: newPost.group_id,
-                            postId : newPost.id,
-                            access: models.AcActivity.ACCESS_PRIVATE
-                          }, function (error) {
-                            ratingCallback(error);
-                          });
-                        } else {
-                          ratingCallback();
-                        }
-                      }).catch((error) => {
-                        ratingCallback(error);
+                  if (!options.skipEndorsementQualitiesAndRatings) {
+                    models.Rating.findAll({
+                      where: {
+                        post_id: oldPost.id
+                      }
+                    }).then(function (ratings) {
+                      async.eachSeries(ratings, function (rating, ratingCallback) {
+                        var ratingJson = JSON.parse(JSON.stringify(rating.toJSON()));
+                        delete rating.id;
+                        var ratingModel = models.Endorsement.build(ratingJson);
+                        ratingModel.set('post_id', newPost.id);
+                        ratingModel.set('PostId', newPost.id);
+                        ratingModel.save().then(function () {
+                          if (options && options.createCopyActivities) {
+                            models.AcActivity.createActivity({
+                              type: 'activity.post.rating.copied',
+                              userId: ratingModel.user_id,
+                              domainId: toDomain.id,
+                              groupId: newPost.group_id,
+                              postId : newPost.id,
+                              access: models.AcActivity.ACCESS_PRIVATE
+                            }, function (error) {
+                              ratingCallback(error);
+                            });
+                          } else {
+                            ratingCallback();
+                          }
+                        }).catch((error) => {
+                          ratingCallback(error);
+                        });
+                      }, function (error) {
+                        postSeriesCallback(error);
                       });
-                    }, function (error) {
-                      postSeriesCallback(error);
                     });
-                  });
+                  } else {
+                    postSeriesCallback();
+                  }
                 },
                 function (postSeriesCallback) {
                   models.PostRevision.findAll({
@@ -295,6 +366,10 @@ const copyPost = (fromPostId, toGroupId, options, done) => {
             newPoint.save().then(function () {
               async.series([
                 (pointSeriesCallback) => {
+                  //cloneTranslationForPoint(point, newPoint, pointSeriesCallback);
+                  pointSeriesCallback();
+                },
+                (pointSeriesCallback) => {
                   if (options && options.createCopyActivities) {
                     models.AcActivity.createActivity({
                       type: 'activity.point.copied',
@@ -312,39 +387,43 @@ const copyPost = (fromPostId, toGroupId, options, done) => {
                   }
                 },
                 function (pointSeriesCallback) {
-                  models.PointQuality.findAll({
-                    where: {
-                      point_id: currentOldPoint.id
-                    }
-                  }).then(function (pointQualities) {
-                    async.eachSeries(pointQualities, function (pointQuality, pointQualityCallback) {
-                      var pointQualityJson = JSON.parse(JSON.stringify(pointQuality.toJSON()));
-                      delete pointQualityJson.id;
-                      var newPointQuality = models.PointQuality.build(pointQualityJson);
-                      newPointQuality.set('point_id', newPoint.id);
-                      newPointQuality.save().then(function () {
-                        if (options && options.createCopyActivities) {
-                          models.AcActivity.createActivity({
-                            type: newPointQuality.value > 0 ? 'activity.point.helpful.copied' : 'activity.point.unhelpful.copied',
-                            userId: newPointQuality.user_id,
-                            domainId: toDomain.id,
-                            groupId: newPost.group_id,
-                            postId: newPost.id,
-                            pointId: newPoint.id,
-                            access: models.AcActivity.ACCESS_PRIVATE
-                          }, function (error) {
-                            pointQualityCallback(error);
-                          });
-                        } else {
-                          pointQualityCallback();
-                        }
-                      }).catch((error) => {
-                        pointQualityCallback(error);
+                  if (!options.skipEndorsementQualitiesAndRatings) {
+                    models.PointQuality.findAll({
+                      where: {
+                        point_id: currentOldPoint.id
+                      }
+                    }).then(function (pointQualities) {
+                      async.eachSeries(pointQualities, function (pointQuality, pointQualityCallback) {
+                        var pointQualityJson = JSON.parse(JSON.stringify(pointQuality.toJSON()));
+                        delete pointQualityJson.id;
+                        var newPointQuality = models.PointQuality.build(pointQualityJson);
+                        newPointQuality.set('point_id', newPoint.id);
+                        newPointQuality.save().then(function () {
+                          if (options && options.createCopyActivities) {
+                            models.AcActivity.createActivity({
+                              type: newPointQuality.value > 0 ? 'activity.point.helpful.copied' : 'activity.point.unhelpful.copied',
+                              userId: newPointQuality.user_id,
+                              domainId: toDomain.id,
+                              groupId: newPost.group_id,
+                              postId: newPost.id,
+                              pointId: newPoint.id,
+                              access: models.AcActivity.ACCESS_PRIVATE
+                            }, function (error) {
+                              pointQualityCallback(error);
+                            });
+                          } else {
+                            pointQualityCallback();
+                          }
+                        }).catch((error) => {
+                          pointQualityCallback(error);
+                        });
+                      }, function (error) {
+                        pointSeriesCallback(error);
                       });
-                    }, function (error) {
-                      pointSeriesCallback(error);
                     });
-                  });
+                  } else {
+                    pointSeriesCallback();
+                  }
                 },
                 function (pointSeriesCallback) {
                   models.PointRevision.findAll({
@@ -368,31 +447,35 @@ const copyPost = (fromPostId, toGroupId, options, done) => {
                   });
                 },
                 function (pointSeriesCallback) {
-                  models.AcActivity.findAll({
-                    where: {
-                      point_id: currentOldPoint.id,
-                      post_id: {$not: null }
-                    }
-                  }).then(function (activities) {
-                    async.eachSeries(activities, function (activity, activitesSeriesCallback) {
-                      skipPointActivitiesIdsForPostCopy.push(activity.id);
-                      var activityJson = JSON.parse(JSON.stringify(activity.toJSON()));
-                      delete activityJson.id;
-                      var newActivity = models.AcActivity.build(activityJson);
-                      newActivity.set('group_id', toGroup.id);
-                      newActivity.set('community_id', toCommunityId);
-                      newActivity.set('domain_id', toDomainId);
-                      newActivity.set('point_id', newPoint.id);
-                      newActivity.save().then(function (results) {
-                        console.log("Have changed group and all activity: "+newActivity.id);
-                        activitesSeriesCallback();
-                      }).catch((error) => {
-                        activitesSeriesCallback(error);
-                      });
-                    }, function (error) {
-                      pointSeriesCallback(error);
-                    })
-                  });
+                  if (!options.skipActivities) {
+                    models.AcActivity.findAll({
+                      where: {
+                        point_id: currentOldPoint.id,
+                        post_id: {$not: null }
+                      }
+                    }).then(function (activities) {
+                      async.eachSeries(activities, function (activity, activitesSeriesCallback) {
+                        skipPointActivitiesIdsForPostCopy.push(activity.id);
+                        var activityJson = JSON.parse(JSON.stringify(activity.toJSON()));
+                        delete activityJson.id;
+                        var newActivity = models.AcActivity.build(activityJson);
+                        newActivity.set('group_id', toGroup.id);
+                        newActivity.set('community_id', toCommunityId);
+                        newActivity.set('domain_id', toDomainId);
+                        newActivity.set('point_id', newPoint.id);
+                        newActivity.save().then(function (results) {
+                          console.log("Have changed group and all activity: "+newActivity.id);
+                          activitesSeriesCallback();
+                        }).catch((error) => {
+                          activitesSeriesCallback(error);
+                        });
+                      }, function (error) {
+                        pointSeriesCallback(error);
+                      })
+                    });
+                  } else {
+                    pointSeriesCallback();
+                  }
                 }
               ], function (error) {
                 innerSeriesCallback(error);
@@ -407,39 +490,43 @@ const copyPost = (fromPostId, toGroupId, options, done) => {
       }
     },
     function (callback) {
-      models.AcActivity.findAll({
-        where: {
-          post_id: oldPost.id,
-          point_id: { $is: null }
-        }
-      }).then(function (activities) {
-        async.eachSeries(activities, function (activity, innerSeriesCallback) {
-          var activityJson = JSON.parse(JSON.stringify(activity.toJSON()));
-          delete activityJson.id;
-          var newActivity = models.AcActivity.build(activityJson);
-          newActivity.set('group_id', toGroup.id);
-          newActivity.set('community_id', toCommunityId);
-          newActivity.set('domain_id', toDomainId);
-          newActivity.set('post_id', newPost.id);
-          newActivity.set('PostId', newPost.id);
-          newActivity.save().then(function (results) {
-            console.log("Have changed group and all activity: "+newActivity.id);
-            innerSeriesCallback();
-          }).catch((error) => {
-            innerSeriesCallback(error);
-          });
-        }, function (error) {
+      if (!options.skipActivities) {
+        models.AcActivity.findAll({
+          where: {
+            post_id: oldPost.id,
+            point_id: { $is: null }
+          }
+        }).then(function (activities) {
+          async.eachSeries(activities, function (activity, innerSeriesCallback) {
+            var activityJson = JSON.parse(JSON.stringify(activity.toJSON()));
+            delete activityJson.id;
+            var newActivity = models.AcActivity.build(activityJson);
+            newActivity.set('group_id', toGroup.id);
+            newActivity.set('community_id', toCommunityId);
+            newActivity.set('domain_id', toDomainId);
+            newActivity.set('post_id', newPost.id);
+            newActivity.set('PostId', newPost.id);
+            newActivity.save().then(function (results) {
+              console.log("Have changed group and all activity: "+newActivity.id);
+              innerSeriesCallback();
+            }).catch((error) => {
+              innerSeriesCallback(error);
+            });
+          }, function (error) {
+            callback(error);
+          })
+        }).catch((error) => {
           callback(error);
-        })
-      }).catch((error) => {
-        callback(error);
-      });
+        });
+      } else {
+        callback();
+      }
     }
   ], function (error) {
     console.log("Done copying post id "+fromPostId);
     if (error)
       console.error(error);
-    done(error);
+    done(error, newPost);
   })
 };
 
@@ -471,56 +558,62 @@ const copyGroup = (fromGroupId, toCommunityId, options, done) => {
       })
     },
     (callback) => {
-      models.Group.findOne({
-        where: {
-          id: fromGroupId
+      var groupIncludes = [
+        {
+          model: models.Community,
+          attributes: ['id','theme_id','name','access','google_analytics_code','configuration'],
+          include: [
+            {
+              model: models.Domain,
+              attributes: ['id','theme_id','name']
+            }
+          ]
         },
-        include: [
-          {
-            model: models.Community,
-            attributes: ['id','theme_id','name','access','google_analytics_code','configuration'],
-            include: [
-              {
-                model: models.Domain,
-                attributes: ['id','theme_id','name']
-              }
-            ]
-          },
-          {
-            model: models.Category,
-            required: false,
-          },
-          {
-            model: models.User,
-            attributes: ['id'],
-            as: 'GroupAdmins',
-            required: false
-          },
-          {
+        {
+          model: models.Category,
+          required: false,
+        },
+        {
+          model: models.User,
+          attributes: ['id'],
+          as: 'GroupAdmins',
+          required: false
+        },
+        {
+          model: models.Image,
+          as: 'GroupLogoImages',
+          attributes:  models.Image.defaultAttributesPublic,
+          required: false
+        },
+        {
+          model: models.Video,
+          as: 'GroupLogoVideos',
+          attributes:  ['id','formats','viewable','public_meta'],
+          required: false
+        },
+        {
+          model: models.Image,
+          as: 'GroupHeaderImages',
+          attributes:  models.Image.defaultAttributesPublic,
+          required: false
+        }
+      ];
+
+      if (!options.skipUsers) {
+        groupIncludes.push({
             model: models.User,
             attributes: ['id'],
             as: 'GroupUsers',
             required: false
-          },
-          {
-            model: models.Image,
-            as: 'GroupLogoImages',
-            attributes:  models.Image.defaultAttributesPublic,
-            required: false
-          },
-          {
-            model: models.Video,
-            as: 'GroupLogoVideos',
-            attributes:  ['id','formats','viewable','public_meta'],
-            required: false
-          },
-          {
-            model: models.Image,
-            as: 'GroupHeaderImages',
-            attributes:  models.Image.defaultAttributesPublic,
-            required: false
           }
-        ]
+        )
+      }
+
+      models.Group.findOne({
+        where: {
+          id: fromGroupId
+        },
+        include: groupIncludes
       }).then(function (groupIn) {
         oldGroup = groupIn;
         var groupJson = JSON.parse(JSON.stringify(oldGroup.toJSON()));
@@ -530,6 +623,12 @@ const copyGroup = (fromGroupId, toCommunityId, options, done) => {
         newGroup.save().then(function () {
           async.series(
             [
+              (groupSeriesCallback) => {
+                clonePagesForGroup(oldGroup, newGroup, groupSeriesCallback);
+              },
+              (groupSeriesCallback) => {
+                cloneTranslationForGroup(oldGroup, newGroup, groupSeriesCallback);
+              },
               (groupSeriesCallback) => {
                 if (oldGroup.GroupLogoImages && oldGroup.GroupLogoImages.length>0) {
                   async.eachSeries(oldGroup.GroupLogoImages, function (image, mediaCallback) {
@@ -633,7 +732,7 @@ const copyGroup = (fromGroupId, toCommunityId, options, done) => {
                     attributes: ['id']
                   }).then((posts) => {
                     async.eachSeries(posts, function (post, postCallback) {
-                      copyPost(post.id, newGroup.id, { copyPoints: options.copyPoints }, postCallback);
+                      copyPost(post.id, newGroup.id, options, postCallback);
                     }, function (error) {
                       groupSeriesCallback(error);
                     });
@@ -681,46 +780,53 @@ const copyCommunity = (fromCommunityId, toDomainId, options, done) => {
       });
     },
     (callback) => {
-      models.Community.findOne({
-        where: {
-          id: fromCommunityId
+
+      var communityIncludes = [
+        {
+          model: models.Domain,
+          attributes: ['id','theme_id','name']
         },
-        include: [
-          {
-            model: models.Domain,
-            attributes: ['id','theme_id','name']
-          },
-          {
-            model: models.User,
-            attributes: ['id'],
-            as: 'CommunityAdmins',
-            required: false
-          },
-          {
+        {
+          model: models.User,
+          attributes: ['id'],
+          as: 'CommunityAdmins',
+          required: false
+        },
+        {
+          model: models.Image,
+          as: 'CommunityLogoImages',
+          attributes:  models.Image.defaultAttributesPublic,
+          required: false
+        },
+        {
+          model: models.Video,
+          as: 'CommunityLogoVideos',
+          attributes:  ['id','formats','viewable','public_meta'],
+          required: false
+        },
+        {
+          model: models.Image,
+          as: 'CommunityHeaderImages',
+          attributes:  models.Image.defaultAttributesPublic,
+          required: false
+        }
+      ];
+
+      if (!options.skipUsers) {
+        communityIncludes.push({
             model: models.User,
             attributes: ['id'],
             as: 'CommunityUsers',
             required: false
-          },
-          {
-            model: models.Image,
-            as: 'CommunityLogoImages',
-            attributes:  models.Image.defaultAttributesPublic,
-            required: false
-          },
-          {
-            model: models.Video,
-            as: 'CommunityLogoVideos',
-            attributes:  ['id','formats','viewable','public_meta'],
-            required: false
-          },
-          {
-            model: models.Image,
-            as: 'CommunityHeaderImages',
-            attributes:  models.Image.defaultAttributesPublic,
-            required: false
           }
-        ]
+        )
+      }
+
+      models.Community.findOne({
+        where: {
+          id: fromCommunityId
+        },
+        include: communityIncludes
       }).then(function (communityIn) {
         oldCommunity = communityIn;
         var communityJson = JSON.parse(JSON.stringify(oldCommunity.toJSON()));
@@ -733,6 +839,12 @@ const copyCommunity = (fromCommunityId, toDomainId, options, done) => {
         newCommunity.save().then(function () {
           async.series(
             [
+              (communitySeriesCallback) => {
+                clonePagesForCommunity(oldCommunity, newCommunity, communitySeriesCallback);
+              },
+              (communitySeriesCallback) => {
+                cloneTranslationForCommunity(oldCommunity, newCommunity, communitySeriesCallback);
+              },
               (communitySeriesCallback) => {
                 if (oldCommunity.CommunityLogoImages && oldCommunity.CommunityLogoImages.length>0) {
                   async.eachSeries(oldCommunity.CommunityLogoImages, function (image, mediaCallback) {
@@ -817,10 +929,7 @@ const copyCommunity = (fromCommunityId, toDomainId, options, done) => {
                     attributes: ['id']
                   }).then((groups) => {
                     async.eachSeries(groups, function (group, groupCallback) {
-                      copyGroup(group.id, newCommunity.id, {
-                        copyPosts: options.copyPosts,
-                        copyPoints: options.copyPoints
-                      }, groupCallback);
+                      copyGroup(group.id, newCommunity.id, options, groupCallback);
                     }, function (error) {
                       communitySeriesCallback(error);
                     });
@@ -844,11 +953,25 @@ const copyCommunity = (fromCommunityId, toDomainId, options, done) => {
     console.log("Done copying community");
     if (error)
       console.error(error);
-    done(error, typeof newCommunity!="undefined" ? newCommunity : null);
+    models.Group.count({
+      where: {
+        community_id: newCommunity.id
+      }
+    }).then( count => {
+      models.Community.update({
+        counter_groups: count
+      }).then(()=>{
+        done(error, typeof newCommunity!="undefined" ? newCommunity : null);
+      }).catch( error => {
+        done(error);
+      })
+    }).catch( error=> {
+      done(error);
+    });
   });
 };
 
-const copyCommunityWithEverything = (communityId, toDomainId, done) => {
+const copyCommunityWithEverything = (communityId, toDomainId, options, done) => {
   copyCommunity(communityId, toDomainId, {
     copyGroups: true,
     copyPosts: true,
@@ -866,7 +989,30 @@ const copyCommunityWithEverything = (communityId, toDomainId, done) => {
   });
 };
 
+const copyCommunityNoUsersNoEndorsements = (communityId, toDomainId, done) => {
+  copyCommunity(communityId, toDomainId, {
+    copyGroups: true,
+    copyPosts: true,
+    copyPoints: true,
+    skipUsers: true,
+    skipEndorsementQualitiesAndRatings: true,
+    resetEndorsementCounters: true,
+    skipActivities: true
+  }, (error, newCommunity) => {
+    if (newCommunity)
+      console.log(newCommunity.id);
+    if (error) {
+      console.error(error);
+      done(error, newCommunity);
+    } else {
+      //console.log("Done for new community "+ńewCommunity.id);
+      done(null, newCommunity);
+    }
+  });
+};
+
 module.exports = {
+  copyCommunityNoUsersNoEndorsements,
   copyCommunityWithEverything,
   copyCommunity,
   copyGroup,

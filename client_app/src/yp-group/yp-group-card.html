@@ -3,7 +3,10 @@
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../../bower_components/iron-image/iron-image.html">
 <link rel="import" href="../../bower_components/iron-media-query/iron-media-query.html">
+<link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html">
 
+<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../bower_components/paper-card/paper-card.html">
 
 <link rel="import" href="../yp-app-globals/yp-app-icons.html">
@@ -12,6 +15,8 @@
 <link rel="import" href="yp-group-behaviors.html">
 <link rel="import" href="../yp-membership-button/yp-membership-button.html">
 <link rel="import" href="../yp-behaviors/yp-truncate-behavior.html">
+<link rel="import" href="../yp-behaviors/yp-got-admin-rights-behavior.html">
+<link rel="import" href="../yp-behaviors/access-helpers.html">
 <link rel="import" href="../yp-behaviors/yp-media-formats-behavior.html">
 <link rel="import" href="../yp-behaviors/yp-goto-behavior.html">
 <link rel="import" href="../yp-magic-text/yp-magic-text.html">
@@ -175,7 +180,7 @@
 
       yp-membership-button {
         position: absolute;
-        right: 16px;
+        right: 24px;
         top: 214px;
         width: 32px;
         height: 32px;
@@ -258,29 +263,75 @@
         cursor: pointer;
       }
 
+      .edit {
+        color: #888;
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        padding-right: 0;
+        margin-right: 0;
+        text-align: right;
+      }
+
       [hidden] {
         display: none !important;
+      }
+
+      .group-name[has-data-viz] {
+          padding-top: 26px;
       }
     </style>
 
     <iron-media-query query="(min-width: 600px)" query-matches="{{wide}}"></iron-media-query>
 
     <paper-card class="groupCard" animated elevation="[[elevation]]" class="groupCard">
-      <iron-image hidden$="[[!noImage]]" header-mode$="[[headerMode]]" archived$="[[archived]]" sizing="cover" class="main-image withPointer" src="https://i.imgur.com/sdsFAoT.png" on-tap="_goToGroup"></iron-image>
-      <iron-image hidden$="[[noImage]]" archived$="[[archived]]" class="logo withPointer" alt$="[[group.name]]" sizing="cover" on-tap="_goToGroup" preload src="[[groupLogoImagePath]]"></iron-image>
-      <yp-magic-text id="groupName"  class="group-name" widetext$="[[wideText]]" text-type="groupName" content-language="[[group.language]]"
-                     archived$="[[archived]]" featured$="[[featured]]" on-tap="_goToGroup"
-                     disable-translation="[[group.configuration.disableNameAutoTranslation]]"
-                     text-only content="[[groupName]]" content-id="[[group.id]]">
-      </yp-magic-text>
-      <yp-magic-text id="objectives" widetext$="[[wideText]]" class="objectives withPointer" on-tap="_goToGroup"
-                     text-type="groupContent" content-language="[[group.language]]"
-                     remove-urls
-                     text-only content="[[groupObjectives]]" content-id="[[group.id]]" truncate="200">
-      </yp-magic-text>
-      <yp-group-stats hidden$="[[group.configuration.actAsLinkToCommunityId]]" class="stats" group="[[group]]"></yp-group-stats>
-      <yp-membership-button hidden$="[[group.configuration.actAsLinkToCommunityId]]" archived$="[[archived]]" group="[[group]]"></yp-membership-button>
+      <template is="dom-if" if="[[!group.CommunityLink]]">
+        <template is="dom-if" if="[[visualizationData]]">
+          <yp-data-visualization small data="[[visualizationData]]"></yp-data-visualization>
+        </template>
+        <template is="dom-if" if="[[!visualizationData]]">
+          <iron-image hidden$="[[!noImage]]" header-mode$="[[headerMode]]" archived$="[[archived]]" sizing="cover" class="main-image withPointer" src="https://i.imgur.com/sdsFAoT.png" on-tap="_goToGroup"></iron-image>
+          <iron-image hidden$="[[noImage]]" archived$="[[archived]]" class="logo withPointer" alt$="[[group.name]]" sizing="cover" on-tap="_goToGroup" preload src="[[groupLogoImagePath]]"></iron-image>
+        </template>
+
+        <yp-magic-text id="groupName" has-data-viz$="[[visualizationData]]" class="group-name" widetext$="[[wideText]]" text-type="groupName" content-language="[[group.language]]"
+                       archived$="[[archived]]" featured$="[[featured]]" on-tap="_goToGroup"
+                       disable-translation="[[group.configuration.disableNameAutoTranslation]]"
+                       text-only content="[[groupName]]" content-id="[[group.id]]">
+        </yp-magic-text>
+        <yp-magic-text id="objectives" widetext$="[[wideText]]" class="objectives withPointer" on-tap="_goToGroup"
+                       text-type="groupContent" content-language="[[group.language]]"
+                       remove-urls
+                       text-only content="[[groupObjectives]]" content-id="[[group.id]]" truncate="200">
+        </yp-magic-text>
+        <yp-group-stats class="stats" group="[[group]]"></yp-group-stats>
+        <yp-membership-button archived$="[[archived]]" group="[[group]]" hidden$="[[visualizationData]]"></yp-membership-button>
+      </template>
+      <template is="dom-if" if="[[group.CommunityLink]]">
+        <iron-image hidden$="[[!noImage]]" header-mode$="[[headerMode]]" archived$="[[archived]]" sizing="cover" c
+                    lass="main-image withPointer" src="https://i.imgur.com/sdsFAoT.png" on-tap="_goToGroup"></iron-image>
+        <iron-image hidden$="[[noImage]]" archived$="[[archived]]" class="logo withPointer" alt$="[[group.CommunityLink.name]]"
+                    sizing="cover" on-tap="_goToGroup" preload src="[[groupCommuntityLinkLogoImagePath]]"></iron-image>
+        <yp-magic-text id="groupName"  class="group-name" widetext$="[[wideText]]" text-type="communityName"
+                       content-language="[[group.CommunityLink.language]]"
+                       archived$="[[archived]]" featured$="[[featured]]" on-tap="_goToGroup"
+                       disable-translation="[[group.configuration.disableNameAutoTranslation]]"
+                       text-only content="[[group.CommunityLink.name]]" content-id="[[group.CommunityLink.id]]">
+        </yp-magic-text>
+        <yp-magic-text id="objectives" widetext$="[[wideText]]" class="objectives withPointer" on-tap="_goToGroup"
+                       text-type="communityContent" content-language="[[group.CommunityLink.language]]"
+                       remove-urls
+                       text-only content="[[group.CommunityLink.description]]" content-id="[[group.CommunityLink.id]]"
+                       truncate="200">
+        </yp-magic-text>
+
+        <div class="edit">
+          <paper-icon-button class="editButtons" hidden$="[[!hasGroupAccess]]" aria-label$="[[t('openDelete')]]" on-tap="_openDelete" icon="delete"></paper-icon-button>
+          <paper-icon-button class="editButtons" hidden$="[[!hasGroupAccess]]" aria-label$="[[t('openEdit')]]" on-tap="_openEdit" icon="create"></paper-icon-button>
+        </div>
+      </template>
     </paper-card>
+    <lite-signal on-lite-signal-got-admin-rights="_gotAdminRights"></lite-signal>
   </template>
 
   <script>
@@ -291,9 +342,62 @@
         Polymer.ypLanguageBehavior,
         Polymer.GroupBehaviors,
         Polymer.ypTruncateBehavior,
+        Polymer.ypGotAdminRightsBehavior,
         Polymer.ypMediaFormatsBehavior,
-        Polymer.ypGotoBehavior
-      ]
+        Polymer.ypGotoBehavior,
+        Polymer.AccessHelpers
+      ],
+
+      properties: {
+        hasGroupAccess: {
+          type: Boolean,
+          value: false,
+          computed: '_hasGroupAccess(group, gotAdminRights)'
+        },
+
+        visualizationData: {
+          type: Object,
+          value: null
+        }
+      },
+
+      _openDelete: function (event) {
+        event.preventDefault();
+        window.appGlobals.activity('open', 'group.delete');
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("apiActionDialog", function (dialog) {
+          dialog.setup('/api/groups/' + this.group.id,
+            this.t('groupDeleteConfirmation'),
+            this._onDeleted.bind(this));
+          dialog.open({finalDeleteWarning: true});
+        }.bind(this));
+      },
+
+      _onDeleted: function () {
+        this.dispatchEvent(new CustomEvent('yp-refresh-community', {bubbles: true, composed: true}));
+        this.redirectTo("/community/"+this.group.community_id);
+      },
+
+      _openEdit: function (event) {
+        event.preventDefault();
+        window.appGlobals.activity('open', 'group.edit');
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("groupEdit", function (dialog) {
+          dialog._clear();
+          dialog.setup(this.group, false, this._refresh.bind(this));
+          dialog.open('edit', {groupId: this.group.id});
+        }.bind(this));
+      },
+
+      _refresh: function (group) {
+        this.redirectTo("/community/"+this.group.community_id);
+      },
+
+      _hasGroupAccess: function(group, gotAdminRights) {
+        if (group && gotAdminRights) {
+          return (this.checkGroupAccess(group)!=null);
+        } else {
+          return false;
+        }
+      }
     });
   </script>
 </dom-module>

@@ -217,7 +217,7 @@
               </template>
               <template is="dom-if" if="[[item.is_point]]">
                 <div class="layout vertical center-center">
-                  <yp-point hide-actions point="[[item]]"></yp-point>
+                  <yp-point hide-actions point="[[item]]" post="[[item.Post]]"></yp-point>
                   <a hidden$="[[!item.post_id]]" href="/post/[[item.post_id]]/[[item.id]]" target="_blank"><paper-icon-button aria-label$="[[t('linkToContentItem')]]" class="linkIcon" icon="link"></paper-icon-button></a>
                 </div>
               </template>

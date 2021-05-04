@@ -90,10 +90,10 @@
         <div class="action-text">{{point.counter_quality_down}}</div>
       </div>
     </div>
-    <paper-share-button hidden$="[[hideSharing]]"
+    <paper-share-button hidden$="[[masterHideSharing]]"
                         on-share-tap="_shareTap" class="shareIcon"
                         up-voted$="[[isUpVoted]]" horizontal-align="right" id="shareButton"
-                        whatsapp$="[[allowWhatsAppSharing]]"
+                        whatsapp$="[[configuration.allowWhatsAppSharing]]"
                         title$="[[t('sharePoint')]]" facebook email twitter popup
                         url="[[pointUrl]]"></paper-share-button>
 
@@ -145,15 +145,24 @@
           value: false
         },
 
-        allowWhatsAppSharing: {
-          type: Boolean,
+        configuration: {
+          type: Object,
           value: false
+        },
+
+        masterHideSharing: {
+          type: Boolean,
+          computed: '_masterHideSharing(hideSharing, configuration)'
         }
       },
 
       observers: [
         '_qualityChanged(point.counter_quality_up, point.counter_quality_down)'
       ],
+
+      _masterHideSharing: function(hideSharing, configuration) {
+        return hideSharing || (configuration && configuration.hideSharing);
+      },
 
       _onPointChanged: function (newValue, oldValue) {
         if (newValue) {

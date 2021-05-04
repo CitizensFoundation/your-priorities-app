@@ -14,6 +14,7 @@
 <link rel="import" href="../yp-behaviors/yp-collection-status-options.html">
 <link rel="import" href="../yp-behaviors/emoji-selector.html">
 <link rel="import" href="../yp-behaviors/yp-goto-behavior.html">
+<link rel="import" href="../yp-behaviors/yp-translated-pages-behavior.html">
 <link rel="import" href="../yp-behaviors/yp-media-formats-behavior.html">
 <link rel="import" href="../yp-edit-dialog/yp-edit-dialog.html">
 <link rel="import" href="../yp-edit-dialog/yp-edit-dialog-behavior.html">
@@ -107,7 +108,7 @@
         margin-top: 16px;
       }
 
-      #structuredQuestionsJsonErrorInfo {
+      #structuredQuestionsJsonErrorInfo, #registrationQuestionsJsonErrorInfo, #dataForVisualizationJsonError {
         margin-top: 0px;
         margin-bottom: 8px;
         color: #F00;
@@ -365,6 +366,9 @@
         <paper-checkbox name="hideDebateIcon" checked$="{{group.configuration.hideDebateIcon}}">
           [[t('hideDebateIcon')]]
         </paper-checkbox>
+        <paper-checkbox name="hideSharing" checked$="{{group.configuration.hideSharing}}">
+          [[t('hideSharing')]]
+        </paper-checkbox>
         <paper-checkbox name="hideEmoji" checked$="{{hideEmoji}}">[[t('hideEmoji')]]</paper-checkbox>
 
         <paper-checkbox name="hidePostFilterAndSearch" checked$="{{group.configuration.hidePostFilterAndSearch}}">
@@ -537,6 +541,15 @@
           [[t('hideDownVoteForPost')]]
         </paper-checkbox>
 
+        <paper-input id="maxNumberOfGroupVotes"
+                     name="maxNumberOfGroupVotes"
+                     type="text"
+                     allowed-pattern="[0-9]"
+                     label="[[t('maxNumberOfGroupVotes')]]"
+                     value="{{group.configuration.maxNumberOfGroupVotes}}"
+                     maxlength="4">
+        </paper-input>
+
         <paper-input id="customVoteUpHoverText"
                      name="customVoteUpHoverText"
                      type="text"
@@ -564,6 +577,7 @@
                         label="[[t('customRatings')]]"
                         value="{{group.configuration.customRatingsText}}">
         </paper-textarea>
+
         <div class="structuredQuestionsInfo">[[t('customRatingsInfo')]]</div>
 
         <div class="subHeaders">[[t('pointSettings')]]</div>
@@ -668,6 +682,7 @@
 
         <div class="subHeaders">[[t('additionalGroupConfig')]]</div>
         <paper-checkbox name="hideAllTabs" checked$="{{hideAllTabs}}">[[t('hideAllTabs')]]</paper-checkbox>
+        <paper-checkbox name="hideGroupLevelTabs" checked$="{{group.configuration.hideGroupLevelTabs}}">[[t('hideGroupLevelTabs')]]</paper-checkbox>
         <paper-checkbox name="hideHelpIcon" checked$="{{hideHelpIcon}}">[[t('hideHelpIcon')]]</paper-checkbox>
         <paper-checkbox name="useCommunityTopBanner" checked$="{{group.configuration.useCommunityTopBanner}}">[[t('useCommunityTopBanner')]]</paper-checkbox>
         <paper-checkbox name="makeMapViewDefault" checked$="{{group.configuration.makeMapViewDefault}}">[[t('makeMapViewDefault')]]</paper-checkbox>
@@ -719,6 +734,13 @@
                      value="{{group.configuration.externalGoalTriggerUrl}}">
         </paper-input>
 
+        <paper-input id="externalId"
+                     name="externalId"
+                     type="text"
+                     label="[[t('externalId')]]"
+                     value="{{group.configuration.externalId}}">
+        </paper-input>
+
         <paper-input id="customBackURL"
                      name="customBackURL"
                      type="text"
@@ -744,6 +766,54 @@
                      maxlength="4">
         </paper-input>
 
+        <paper-checkbox name="usePostListFormatOnDesktop" checked$="{{group.configuration.usePostListFormatOnDesktop}}">[[t('usePostListFormatOnDesktop')]]</paper-checkbox>
+        <paper-checkbox name="usePostTags" checked$="{{group.configuration.usePostTags}}">[[t('usePostTags')]]</paper-checkbox>
+        <paper-checkbox name="usePostTagsForPostListItems"  checked$="{{group.configuration.usePostTagsForPostListItems}}">[[t('usePostTagsForPostListItems')]]</paper-checkbox>
+        <paper-checkbox name="usePostTagsForPostCards" checked$="{{group.configuration.usePostTagsForPostCards}}">[[t('usePostTagsForPostCards')]]</paper-checkbox>
+        <paper-checkbox name="forceShowDebateCountOnPost" checked$="{{group.configuration.forceShowDebateCountOnPost}}">[[t('forceShowDebateCountOnPost')]]</paper-checkbox>
+
+        <div class="layout horizontal config" hidden$="[[!pages]]">
+          <paper-dropdown-menu label="[[t('welcomeSelectPage')]]">
+            <paper-listbox slot="dropdown-content" attr-for-selected="name" selected="{{group.configuration.welcomePageId}}">
+              <template is="dom-repeat" items="[[translatedPages]]" as="page">
+                <paper-item name="[[page.id]]" data-args$="[[index]]">[[_getLocalizePageTitle(page)]]</paper-item>
+              </template>
+            </paper-listbox>
+          </paper-dropdown-menu>
+          <input type="hidden" name="welcomePageId" value="[[group.configuration.welcomePageId]]">
+        </div>
+
+        <paper-textarea id="registrationQuestions"
+                        name="registrationQuestions"
+                        type="text"
+                        rows="4"
+                        always-float-label="[[group.configuration.registrationQuestions]]"
+                        maxrows="8"
+                        on-value-changed="_registrationQuestionsChanged"
+                        max-rows="8"
+                        label="[[t('registrationQuestions')]]"
+                        value="{{group.configuration.registrationQuestions}}">
+        </paper-textarea>
+
+        <div id="registrationQuestionsJsonErrorInfo" hidden$="[[!registrationQuestionsJsonError]]">[[t('structuredQuestionsJsonFormatNotValid')]]</div>
+
+        <paper-checkbox id="isDataVisualizationGroup" name="isDataVisualizationGroup" on-tap="_isDataVisualizationGroupClick" checked$="{{group.configuration.isDataVisualizationGroup}}">[[t('isDataVisualizationGroup')]]</paper-checkbox>
+
+        <paper-textarea id="dataForVisualization"
+                        name="dataForVisualization"
+                        type="text"
+                        hidden$="[[!isDataVisualizationGroup]]"
+                        rows="4"
+                        always-float-label="[[group.configuration.dataForVisualization]]"
+                        maxrows="8"
+                        on-value-changed="_dataForVisualizationChanged"
+                        max-rows="8"
+                        label="[[t('dataForVisualization')]]"
+                        value="{{group.configuration.dataForVisualization}}">
+        </paper-textarea>
+
+        <div id="dataForVisualizationJsonError" hidden$="[[!dataForVisualizationJsonError]]">[[t('structuredQuestionsJsonFormatNotValid')]]</div>
+
         <input type="hidden" name="hideAllTabs" value$="[[hideAllTabs]]">
         <input type="hidden" name="hideNewPostOnPostPage" value$="[[hideNewPostOnPostPage]]">
         <input type="hidden" name="newPointOptional" value$="[[newPointOptional]]">
@@ -760,11 +830,13 @@
           <template is="dom-repeat" items="[[group.Categories]]" as="category">
             <paper-item data-category$="[[category]]" data-category-name$="[[category.name]]" on-tap="_openCategoryEdit">
               <img sizing="cover" height="24" width="24" class="filterIcon" src="[[_categoryImageSrc(category)]]">
-              <span class="categoryName">[[category.name]]</span>
+              <span class="categoryName">[[category.name]] - [[category.id]]</span>
             </paper-item>
           </template>
         </div>
       </div>
+
+      <yp-ajax id="pagesAjax" on-response="_pagesResponse"></yp-ajax>
 
     </yp-edit-dialog>
   </template>
@@ -783,7 +855,8 @@
       Polymer.ypEditDialogBehavior,
       Polymer.ypCollectionStatusOptions,
       Polymer.ypGotoBehavior,
-      Polymer.ypMediaFormatsBehavior
+      Polymer.ypMediaFormatsBehavior,
+      Polymer.ypTranslatedPagesBehavior
     ],
 
     properties: {
@@ -916,10 +989,29 @@
         value: false
       },
 
+      registrationQuestionsJsonError: {
+        type: Boolean,
+        value: false
+      },
+
+      dataForVisualizationJsonError: {
+        type: Boolean,
+        value: false
+      },
+
       maxObjectivesLength: {
         type: Number,
         value: 300
+      },
+
+      isDataVisualizationGroup: {
+        type: Boolean,
+        value: false
       }
+    },
+
+    _isDataVisualizationGroupClick: function () {
+      this.set('isDataVisualizationGroup', this.$$("#isDataVisualizationGroup").checked);
     },
 
     _objectivesChanged: function (event) {
@@ -955,6 +1047,35 @@
         }
       } else {
         this.set('structuredQuestionsJsonError', false);
+      }
+    },
+
+    _registrationQuestionsChanged: function (event, detail) {
+      if (detail && detail.value) {
+        var questions = detail.value.trim();
+        var jsonError = false;
+        try {
+          JSON.parse(questions);
+        } catch (e) {
+          jsonError = true;
+        }
+        this.set('registrationQuestionsJsonError', jsonError);
+      } else {
+        this.set('registrationQuestionsJsonError', false);
+      }
+    },
+
+    _dataForVisualizationChanged: function (event, detail) {
+      if (detail && detail.value) {
+        var data = detail.value.trim();
+        var jsonError = false;
+        try {
+          JSON.parse(data);
+        } catch (e) {
+          jsonError = true;
+        }
+      } else {
+        this.set('dataForVisualizationJsonError', false);
       }
     },
 
@@ -1057,7 +1178,11 @@
     },
 
     _finishRedirect: function (group) {
-      this.redirectTo("/group/" + group.id);
+      if (group && group.configuration.isDataVisualizationGroup) {
+        this.redirectTo("/group_data_viz/" + group.id);
+      } else {
+        this.redirectTo("/group/" + group.id);
+      }
       window.appGlobals.activity('completed', 'editGroup');
     },
 
@@ -1103,6 +1228,10 @@
         this._setFromConfiguration('allowPointVideoUploads', true);
         this._setFromConfiguration('allowPostAudioUploads', true);
         this._setFromConfiguration('allowPointAudioUploads', true);
+
+        if (group.configuration && group.configuration.isDataVisualizationGroup) {
+          this.set('isDataVisualizationGroup', true);
+        }
 
         this.async(function () {
           if (this.community) {
@@ -1205,6 +1334,8 @@
         if (group.GroupLogoVideos && group.GroupLogoVideos.length > 0) {
           this.set('uploadedVideoId', group.GroupLogoVideos[0].id)
         }
+        this.$.pagesAjax.url = "/api/groups/"+group.id+"/pages";
+        this.$.pagesAjax.generateRequest();
       }
       this.set('new', newNotEdit);
       this.set('refreshFunction', refreshFunction);
@@ -1238,6 +1369,12 @@
         }
       }
       this.set('group.access', defaultAccess);
+    },
+
+    _pagesResponse: function (event, detail) {
+      var pages = detail.response;
+      pages.unshift({id: -1, title: { en: this.t('none') } });
+      this._setPages(event, pages);
     },
 
     _setupTranslation: function (language, t) {

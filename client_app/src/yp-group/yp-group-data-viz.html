@@ -1,0 +1,511 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html" >
+<link rel="import" href="../../bower_components/lite-signal/lite-signal.html">
+
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+
+<link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html">
+<link rel="import" href="../../bower_components/neon-animation/web-animations.html">
+
+<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+
+<link rel="import" href="../yp-app-globals/yp-app-icons.html">
+<link rel="import" href="../yp-behaviors/yp-language-behavior.html">
+<link rel="import" href="../yp-behaviors/access-helpers.html">
+<link rel="import" href="../yp-behaviors/yp-got-admin-rights-behavior.html">
+<link rel="import" href="../yp-behaviors/yp-large-card-behaviors.html">
+<link rel="import" href="../yp-behaviors/yp-truncate-behavior.html">
+<link rel="import" href="../yp-magic-text/yp-magic-text.html">
+
+<dom-module id="yp-group-data-viz">
+
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+      :host {
+      }
+
+      .group-name {
+          padding-bottom: 4px;
+          margin: 0;
+          font-size: 24px;
+          font-weight: var(--app-header-font-weight, 700);
+          font-family: var(--app-header-font-family, Roboto);
+      }
+
+      .group-name[widetext] {
+          font-size: 22px;
+      }
+
+      .group-name[admin] {
+          padding-right: 32px;
+      }
+
+     .groupCard {
+        background-color: #fefefe;
+        color: #333;
+        height: 243px;
+        width: 432px;
+        padding: 0 !important;
+        margin-top: 0 !important;
+      }
+
+      .edit {
+        color: #000;
+        position: absolute;
+        top: 64px;
+        right: 0;
+        padding-right: 0;
+        margin-right: 0;
+      }
+
+      @media (max-width: 960px) {
+        :host {
+          max-width: 423px;
+          width: 100%;
+        }
+
+        .groupCard {
+          margin-bottom: 16px;
+          width: 100%;
+          height: 100%;
+          margin-left: 8px;
+          margin-right: 8px;
+        }
+
+        .top-card {
+          margin-top: 16px !important;
+        }
+      }
+
+      .group-name {
+          color: var(--primary-color-800, #000);
+          padding-left: 16px;
+          padding-top: 24px;
+          padding-bottom: 16px;
+          padding-right: 32px !important;
+          min-height: 28px;
+      }
+
+      .textBox {
+          margin-left: 32px;
+          position: relative;
+      }
+
+      @media (max-width: 960px) {
+          .group-name {
+              font-size: 20px;
+              min-height: 24px;
+          }
+      }
+
+      [hidden] {
+        display: none !important;
+      }
+
+      a {
+        text-decoration: none;
+        color: inherit;
+      }
+    </style>
+    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
+    <lite-signal on-lite-signal-yp-auto-translate="_autoTranslateEvent"></lite-signal>
+
+    <div class="layout horizontal center-center wrap" aria-label="[[t('group')]]" role="banner">
+      <yp-ajax large-spinner id="ajax" on-response="_groupResponse"></yp-ajax>
+      <template is="dom-if" if="[[group]]">
+        <div class="layout vertical center-center">
+          <div hidden admin$="[[hasGroupAccess]]" role="heading" aria-level="1" aria-label="[[group.name]]">
+            <yp-magic-text id="groupName" class="group-name"  widetext$="[[wideText]]" text-type="groupName" content-language="[[group.language]]"
+                           disable-translation="[[group.configuration.disableNameAutoTranslation]]"
+                           text-only content="[[groupName]]" content-id="[[group.id]]">
+            </yp-magic-text>
+          </div>
+          <yp-data-visualization group="[[group]]" data="[[group.configuration.dataForVisualizationJson]]"></yp-data-visualization>
+          <paper-menu-button class="edit" horizontal-align="right" hidden$="[[!showMenuItem]]">
+            <paper-icon-button aria-label$="[[t('openGroupMenu')]]" icon="more-vert" slot="dropdown-trigger"></paper-icon-button>
+            <paper-listbox slot="dropdown-content" on-iron-select="_menuSelection">
+              <paper-item hidden$="[[!hasGroupAccess]]" id="editMenuItem">[[t('group.edit')]]</paper-item>
+              <paper-item hidden$="[[!hasGroupAccess]]" id="usersMenuItem">[[t('group.users')]]</paper-item>
+              <paper-item hidden$="[[!hasGroupAccess]]" id="adminsMenuItem">[[t('group.admins')]]</paper-item>
+              <paper-item hidden$="[[!hasGroupAccess]]" id="pagesMenuItem">[[t('pages.managePages')]]</paper-item>
+              <paper-item hidden$="[[!hasGroupAccess]]" id="deleteMenuItem">[[t('group.delete')]]</paper-item>
+              <paper-item id="openAdminApp" hidden$="[[!hasGroupAccess]]">[[t('editTranslations')]]</paper-item>
+            </paper-listbox>
+          </paper-menu-button>
+        </div>
+      </template>
+      <yp-ajax id="pagesAjax" on-response="_pagesResponse"></yp-ajax>
+
+    </div>
+
+    <app-route
+            route="{{idRoute}}"
+            pattern="/:id"
+            data="{{idRouteData}}"
+            tail="{{tabRoute}}">
+    </app-route>
+
+    <app-route
+            route="{{tabRoute}}"
+            pattern="/:tabName"
+            data="{{tabRouteData}}"
+            tail="{{listRoute}}">
+    </app-route>
+
+    <iron-media-query query="(max-width: 800px)" query-matches="{{narrowScreen}}"></iron-media-query>
+    <lite-signal on-lite-signal-got-admin-rights="_gotAdminRights"></lite-signal>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'yp-group-data-viz',
+
+      behaviors: [
+        Polymer.ypLanguageBehavior,
+        Polymer.LargeCardBehaviors,
+        Polymer.AccessHelpers,
+        Polymer.ypGotAdminRightsBehavior,
+        Polymer.ypThemeBehavior
+      ],
+
+      properties: {
+        group: {
+          type: Object,
+          observer: '_groupChanged'
+        },
+
+        groupId: {
+          type: Number,
+          observer: "_groupIdChanged"
+        },
+
+        idRoute: Object,
+        tabRoute: Object,
+        idRouteData: Object,
+        tabRouteData: Object,
+
+        hasGroupAccess: {
+          type: Boolean,
+          value: false,
+          computed: '_hasGroupAccess(group, gotAdminRights)'
+        },
+
+        showMenuItem: {
+          type: Boolean,
+          value: false,
+          computed: '_showMenuItem(hasGroupAccess, group)'
+        },
+
+        groupAccessText: {
+          type: String,
+          computed: '_groupAccessText(group, language)'
+        },
+
+        autoTranslateActive: {
+          type: Boolean,
+          value: false
+        }
+      },
+
+      _showMenuItem: function (hasGroupAccess, group) {
+        return hasGroupAccess
+      },
+
+      observers: [
+        '_routeIdChanged(idRouteData.id)',
+        '_routeTabChanged(tabRouteData.tabName)'
+      ],
+
+      _routeIdChanged: function (newId) {
+        if (newId) {
+          this.set('groupId', newId);
+        }
+      },
+
+      _routeTabChanged: function (newTabName) {
+        if (newTabName) {
+          this.set('selectedTab', newTabName);
+        }
+      },
+
+      _groupIdChanged: function (groupId, oldGroupId) {
+        if (groupId && groupId!=this.lastValidGroupId) {
+          this._getGroup();
+        }
+      },
+
+      _refresh: function (group) {
+        if (group) {
+          this.set('group', group);
+        }
+        this.fire("update-group");
+      },
+
+      setupTopHeaderImage: function (image) {
+        if (this.wideWidth) {
+          var path;
+          if (image) {
+            path = 'url(' + this.getImageFormatUrl(image, 0) + ')';
+          } else {
+            path = 'none';
+          }
+          this.updateStyles( {'--top-area-background-image': path });
+        }
+      },
+
+      _getGroup: function () {
+        this.$.ajax.url = '/api/groups/' + this.groupId;
+        this.$.ajax.retryMethodAfter401Login = this._getGroup.bind(this);
+        this.$.ajax.generateRequest();
+      },
+
+      _autoTranslateEvent: function (event, detail) {
+        this.set('autoTranslateActive', detail);
+      },
+
+      _hasGroupAccess: function(group, gotAdminRights) {
+        if (group && gotAdminRights) {
+          return (this.checkGroupAccess(group)!=null);
+        } else {
+          return false;
+        }
+      },
+
+      resetGroup: function () {
+        this.set('group', null);
+      },
+
+      _groupChanged: function (group, previousGroup) {
+        if (group && group.configuration && group.configuration.useVideoCover && group.GroupLogoVideos) {
+        }
+      },
+
+      _groupResponse: function (event, detail) {
+        this.set('group', detail.response.group);
+        this.set('group.configuration', window.appGlobals.overrideGroupConfigIfNeeded(this.group.id, this.group.configuration));
+        this.refresh();
+
+        if (this.selectedTab=='edit') {
+          this.set('tabName', 'open');
+          this.$$("#groupCard")._openEdit();
+        }
+
+        window.appGlobals.postLoadGroupProcessing(this.group);
+      },
+
+
+      _menuSelection: function (event, detail) {
+        if (detail.item.id==="editMenuItem")
+          this._openEdit();
+        else if (detail.item.id==="deleteMenuItem")
+          this._openDelete();
+        else if (detail.item.id==="usersMenuItem")
+          this._openUsersDialog();
+        else if (detail.item.id==="adminsMenuItem")
+          this._openAdminsDialog();
+        else if (detail.item.id==="pagesMenuItem")
+          this._openPagesDialog();
+        else if (detail.item.id==="openAdminApp")
+          window.location = "/admin/group/"+this.group.id;
+        this.$$("paper-listbox").select(null);
+      },
+
+      _openPagesDialog: function () {
+        window.appGlobals.activity('open', 'group.pagesAdmin');
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("pagesGrid", function (dialog) {
+          dialog.setup(this.group.id, null, null, false);
+          dialog.open();
+        }.bind(this));
+      },
+
+      _openUsersDialog: function () {
+        window.appGlobals.activity('open', 'group.users');
+        Polymer.dom(document).querySelector('yp-app').getUsersGridAsync(function (dialog) {
+          dialog.setup(this.group.id, null, null, false);
+          dialog.open(this.group.name);
+        }.bind(this));
+      },
+
+      _openAdminsDialog: function () {
+        window.appGlobals.activity('open', 'group.admins');
+        Polymer.dom(document).querySelector('yp-app').getUsersGridAsync(function (dialog) {
+          dialog.setup(this.group.id, null, null, true);
+          dialog.open(this.group.name);
+        }.bind(this));
+      },
+
+      _openEdit: function () {
+        window.appGlobals.activity('open', 'group.edit');
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("groupEdit", function (dialog) {
+          dialog._clear();
+          this._refreshGroup(this.group.id, function (group) {
+            dialog.setup(group, false, this._refresh.bind(this));
+            dialog.open('edit', {groupId: group.id});
+          }.bind(this));
+        }.bind(this));
+      },
+
+      _refreshGroup: function (groupId, callback) {
+        var ajax = document.createElement('iron-ajax');
+        ajax.url = '/api/groups/'+groupId;
+        ajax.handleAs = 'json';
+        ajax.contentType = 'application/json';
+        ajax.body = {};
+        ajax.addEventListener('response', function (event, detail) {
+          callback(event.detail.response.group);
+        }.bind(this));
+        ajax.addEventListener('error', function (event, detail) {
+          console.error("Couldn't refresh grop");
+        }.bind(this));
+        ajax.generateRequest();
+      },
+
+      _openDelete: function () {
+        window.appGlobals.activity('open', 'group.delete');
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("apiActionDialog", function (dialog) {
+          dialog.setup('/api/groups/' + this.group.id,
+            this.t('groupDeleteConfirmation'),
+            this._onDeleted.bind(this));
+          dialog.open({finalDeleteWarning: true});
+        }.bind(this));
+      },
+
+      _onDeleted: function () {
+        this.dispatchEvent(new CustomEvent('yp-refresh-community', {bubbles: true, composed: true}));
+        this.redirectTo("/community/"+this.group.community_id);
+      },
+
+      refresh: function (fromMainApp) {
+        if (this.group) {
+          this._openHelpPageIfNeeded();
+          this.fire('yp-set-home-link', {
+            type: 'group',
+            id: this.group.id,
+            name: this.group.name
+          });
+
+          if (this.group.configuration.defaultLocale!=null) {
+            window.appGlobals.changeLocaleIfNeeded(this.group.configuration.defaultLocale);
+          }
+
+          window.appGlobals.setCommunityAnalyticsTracker(this.group.Community.google_analytics_code);
+
+          if (this.group.Community.configuration) {
+            window.appGlobals.setCommunityPixelTracker(this.group.Community.configuration.facebookPixelId);
+          }
+
+          if (this.group.theme_id!=null ||
+            (this.group.configuration && this.group.configuration.themeOverrideColorPrimary!=null)) {
+            this.setTheme(this.group.theme_id, this.group.configuration);
+          } else if (this.group.Community &&
+            (this.group.Community.theme_id!=null ||
+              (this.group.Community.configuration && this.group.Community.configuration.themeOverrideColorPrimary))) {
+            this.setTheme(this.group.Community.theme_id, this.group.Community.configuration);
+          } else if (this.group.Community && this.group.Community.Domain && this.group.Community.Domain.theme_id!=null) {
+            this.setTheme(this.group.Community.Domain.theme_id);
+          } else {
+            this.setTheme(1);
+          }
+
+          if (this.group.configuration.useCommunityTopBanner &&
+            this.group.Community.CommunityHeaderImages &&
+            this.group.Community.CommunityHeaderImages.length>0) {
+            this.setupTopHeaderImage(this.group.Community.CommunityHeaderImages);
+          } else if (this.group.GroupHeaderImages && this.group.GroupHeaderImages.length>0) {
+            this.setupTopHeaderImage(this.group.GroupHeaderImages);
+          } else {
+            this.setupTopHeaderImage(null);
+          }
+
+          this.fire("change-header", {
+            headerTitle: this.group.configuration.customBackName ?
+              this.group.configuration.customBackName :
+              this.group.Community.name,
+            headerDescription: this.group.Community.description,
+            headerIcon: "social:group",
+            documentTitle: this.group.name,
+            enableSearch: true,
+            hideHelpIcon: this.group.configuration.hideHelpIcon ? true : null,
+            backPath:  this.group.configuration.customBackURL ?
+              this.group.configuration.customBackURL :
+              "/community/" + this.group.community_id
+          });
+
+          this.$.pagesAjax.url = "/api/groups/"+this.group.id+"/pages";
+          this.$.pagesAjax.generateRequest();
+
+          window.appGlobals.setAnonymousGroupStatus(this.group);
+          window.appGlobals.setRegistrationQuestionGroup(this.group);
+
+          if (this.group.configuration && this.group.configuration.disableFacebookLoginForGroup===true) {
+            window.appGlobals.disableFacebookLoginForGroup = true;
+          } else {
+            window.appGlobals.disableFacebookLoginForGroup = false;
+          }
+
+          if (this.group.configuration && this.group.configuration.externalGoalTriggerUrl) {
+            window.appGlobals.externalGoalTriggerGroupId = this.group.id;
+          } else {
+            window.appGlobals.externalGoalTriggerGroupId = null;
+          }
+
+          if (this.group.Community && this.group.Community.configuration && this.group.Community.configuration.signupTermsPageId &&
+            this.group.Community.configuration.signupTermsPageId!=-1) {
+            window.appGlobals.signupTermsPageId = this.group.Community.configuration.signupTermsPageId;
+          } else {
+            window.appGlobals.signupTermsPageId = null;
+          }
+
+          if (this.group.Community && this.group.Community.configuration && this.group.Community.configuration.customSamlDeniedMessage) {
+            window.appGlobals.currentSamlDeniedMessage = this.group.Community.configuration.customSamlDeniedMessage;
+          } else {
+            window.appGlobals.currentSamlDeniedMessage = null;
+          }
+
+          if (this.group.Community.configuration && this.group.Community.configuration.customSamlLoginMessage) {
+            window.appGlobals.currentSamlLoginMessage = this.group.Community.configuration.customSamlLoginMessage;
+          } else {
+            window.appGlobals.currentSamlLoginMessage = null;
+          }
+
+          window.appGlobals.currentGroup = this.group;
+
+          if ((this.group.configuration &&
+            this.group.configuration.forceSecureSamlLogin &&
+            !this.checkGroupAccess(this.group)) ||
+            (this.group.Community &&
+              this.group.Community.configuration &&
+              this.group.Community.configuration.forceSecureSamlLogin &&
+              !this.checkCommunityAccess(this.group.Community))) {
+            window.appGlobals.currentForceSaml = true;
+          } else {
+            window.appGlobals.currentForceSaml = false;
+          }
+
+          if (this.group.Community && this.group.Community.configuration &&
+            this.group.Community.configuration.highlightedLanguages) {
+            window.appGlobals.setHighlightedLanguages(this.group.Community.configuration.highlightedLanguages);
+          } else {
+            window.appGlobals.setHighlightedLanguages(null);
+          }
+        }
+      },
+
+      _openHelpPageIfNeeded: function () {
+        if (!sessionStorage.getItem("yp-welcome-for-group-"+this.group.id)) {
+          if (this.group && this.group.configuration && this.group.configuration.welcomePageId) {
+            this.async(function () {
+              this.fire('yp-open-page', {pageId: this.group.configuration.welcomePageId});
+              sessionStorage.setItem("yp-welcome-for-group-"+this.group.id, true)
+            }, 1200);
+          }
+        }
+      },
+    });
+  </script>
+</dom-module>
