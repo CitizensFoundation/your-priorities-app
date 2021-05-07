@@ -177,25 +177,9 @@ app.use(function setupStaticPath(req, res, next) {
 
 app.use(session(sessionConfig));
 
-app.get('/sitemap.xml', function getSitemap(req, res) {
-  const redisKey = "cache:sitemapv14:" + req.ypDomain.id + (req.ypCommunity && req.ypCommunity.id && req.ypCommunity.hostname) ? req.ypCommunity.hostname : '';
-  req.redisClient.get(redisKey, (error, sitemap) => {
-    if (error) {
-      log.error("Error getting sitemap from redis", {error});
-      generateSitemap(req, res);
-    } else if (sitemap) {
-      res.header('Content-Type', 'application/xml');
-      res.set({ 'content-type': 'application/xml' });
-      res.send(sitemap);
-    } else {
-      generateSitemap(req, res);
-    }
-  });
-});
-
 app.use(function checkForBOT(req, res, next) {
   const ua = req.headers['user-agent'];
-  if (req.headers['content-type']!=="application/json") {
+  if (req.headers['content-type']!=="application/json" && (req.originalUrl && !req.originalUrl.endsWith("/sitemap.xml"))) {
     if (!/Googlebot|AdsBot-Google/.test(ua) && (isBot(ua) || /^(facebookexternalhit)|(web\/snippet)|(Twitterbot)|(Slackbot)|(Embedly)|(LinkedInBot)|(Pinterest)|(XING-contenttabreceiver)/gi.test(ua))) {
       log.info('Request is from a bot', { ua });
       nonSPArouter(req, res, next);
@@ -226,13 +210,30 @@ app.use(function setupCommunity(req, res, next) {
   });
 });
 
-app.use(passport.initialize());
-app.use(passport.session());
-
 app.use(function setupRedis(req, res, next) {
   req.redisClient = sessionConfig.store.client;
   next();
 });
+
+app.get('/sitemap.xml', function getSitemap(req, res) {
+  const url = req.get('host') + req.originalUrl;;
+  const redisKey = "cache:sitemapv14:" + url;
+  req.redisClient.get(redisKey, (error, sitemap) => {
+    if (error) {
+      log.error("Error getting sitemap from redis", {error});
+      generateSitemap(req, res);
+    } else if (sitemap) {
+      res.header('Content-Type', 'application/xml');
+      res.set({ 'content-type': 'application/xml' });
+      res.send(sitemap);
+    } else {
+      generateSitemap(req, res);
+    }
+  });
+});
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.get('/manifest.json', function getManifest(req, res) {
   generateManifest(req, res);
