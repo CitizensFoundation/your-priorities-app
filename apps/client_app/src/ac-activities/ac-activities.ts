@@ -1,9 +1,6 @@
 import { html, css, nothing } from 'lit';
 import { property, customElement } from 'lit/decorators.js';
 
-
-import 'lit-virtualizer';
-
 import '@material/mwc-button';
 import '../yp-point/yp-point-news-story-edit.js';
 
@@ -11,7 +8,7 @@ import './ac-activity.js';
 import './ac-activity-recommended-posts.js';
 
 import { YpBaseElementWithLogin } from '../common/yp-base-element-with-login.js';
-import { LitVirtualizer, RangeChangeEvent, Layout1d } from 'lit-virtualizer';
+import {RangeChangeEvent, Layout1d, LitVirtualizer } from '@lit-labs/virtualizer';
 import { ShadowStyles } from '../common/ShadowStyles.js';
 import { YpConfirmationDialog } from '../yp-dialog-container/yp-confirmation-dialog.js';
 
@@ -717,7 +714,7 @@ export class AcActivities extends YpBaseElementWithLogin {
     if (item && this.activities) {
       for (let i = 0; i < this.activities.length; i++) {
         if (this.activities[i] == item) {
-          (this.$$('#list') as LitVirtualizer<any, any>).scrollToIndex(i);
+          (this.$$('#list') as LitVirtualizer<any>).scrollToIndex(i);
           break;
         }
       }

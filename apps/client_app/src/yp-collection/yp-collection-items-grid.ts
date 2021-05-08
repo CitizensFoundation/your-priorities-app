@@ -1,6 +1,7 @@
 import {
   html,
   css,
+  nothing,
   TemplateResult
 } from 'lit';
 
@@ -13,8 +14,7 @@ import { YpBaseElement } from '../common/yp-base-element.js';
 import { ShadowStyles } from '../common/ShadowStyles.js';
 import { YpIronListHelpers } from '../common/YpIronListHelpers.js';
 import { YpCollectionHelpers } from '../common/YpCollectionHelpers.js';
-import { scroll } from 'lit-virtualizer/lib/scroll.js';
-import { Layout1d, LitVirtualizer } from 'lit-virtualizer';
+import {RangeChangeEvent, Layout1d, LitVirtualizer } from '@lit-labs/virtualizer';
 
 import { YpCollectionItemCard } from './yp-collection-item-card.js';
 import { YpServerApi } from '../common/YpServerApi.js';
@@ -192,7 +192,7 @@ export class YpCollectionItemsGrid extends YpBaseElement {
     if (item && this.sortedCollectionItems) {
       for (let i = 0; i < this.sortedCollectionItems.length; i++) {
         if (this.sortedCollectionItems[i] == item) {
-          (this.$$('#list') as LitVirtualizer<any, any>).scrollToIndex(i);
+          (this.$$('#list') as LitVirtualizer<any>).scrollToIndex(i);
           break;
         }
       }

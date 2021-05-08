@@ -21,7 +21,7 @@ import { YpEmojiSelector } from '../common/yp-emoji-selector.js';
 import '../yp-point/yp-point.js';
 import { YpFormattingHelpers } from '../common/YpFormattingHelpers.js';
 import { YpBaseElementWithLogin } from '../common/yp-base-element-with-login.js';
-import { RangeChangeEvent, LitVirtualizer , Layout1d } from 'lit-virtualizer';
+import {RangeChangeEvent, Layout1d, LitVirtualizer } from '@lit-labs/virtualizer';
 import { YpMagicText } from '../yp-magic-text/yp-magic-text.js';
 import { ifDefined } from 'lit/directives/if-defined';
 
@@ -965,13 +965,13 @@ export class YpPostPoints extends YpBaseElementWithLogin {
 
   _listResize() {
     if (this.$$('#listUp')) {
-      //((this.$$('#listUp') as LitVirtualizer<any,any>).scroller as Layout1d).reflowIfNeeded();
+      //((this.$$('#listUp') as LitVirtualizer<any>).scroller as Layout1d).reflowIfNeeded();
     }
     if (this.$$('#listDown')) {
-      ((this.$$('#listDown') as LitVirtualizer<any,any>).layout as Layout1d).reflowIfNeeded();
+      ((this.$$('#listDown') as LitVirtualizer<any>).layout as Layout1d).reflowIfNeeded(false);
     }
     if (this.$$('#listMobile')) {
-      ((this.$$('#listMobile') as LitVirtualizer<any,any>).layout as Layout1d).reflowIfNeeded();
+      ((this.$$('#listMobile') as LitVirtualizer<any>).layout as Layout1d).reflowIfNeeded(false);
     }
   }
 

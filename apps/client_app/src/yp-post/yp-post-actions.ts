@@ -460,7 +460,7 @@ export class YpPostActions extends YpBaseElement {
     }
   }
 
-  _updateEndorsements(event: CustomEvent) {
+  _updateEndorsements(event: CustomEvent | undefined = undefined) {
     if (
       window.appUser &&
       window.appUser.loggedIn() &&
@@ -473,7 +473,7 @@ export class YpPostActions extends YpBaseElement {
         this._setEndorsement(thisPostsEndorsement.value);
       else this._setEndorsement(0);
 
-      if (event.detail && event.detail.maxGroupId === this.post.Group.id) {
+      if (event && event.detail && event.detail.maxGroupId === this.post.Group.id) {
         this.numberOfGroupVotes = event.detail.groupCurrentVoteCount;
       }
     }

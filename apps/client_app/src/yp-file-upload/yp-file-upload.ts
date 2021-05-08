@@ -1,7 +1,7 @@
 /**
 @license
 Copyright (c) 2015 Winston Howes. All rights reserved.
-Copyright (c) 2016-2020 Citizens Foundation.
+Copyright (c) 2016-2021 Citizens Foundation.
 This code may only be used under the MIT license found at https://github.com/winhowes/file-upload/blob/master/LICENSE
 */
 /**
@@ -12,7 +12,7 @@ Example:
     <file-upload target="/path/to/destination"></file-upload>
 */
 
-import { html, css } from 'lit';
+import { html, css, nothing } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 
 import '@material/mwc-textarea';

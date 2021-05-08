@@ -2,9 +2,8 @@ import { html, css, nothing } from 'lit';
 import { property, customElement } from 'lit/decorators.js';
 
 import { reject } from 'lodash-es';
-import { RangeChangeEvent } from 'lit-virtualizer';
+import {RangeChangeEvent, Layout1d, LitVirtualizer } from '@lit-labs/virtualizer';
 
-import 'lit-virtualizer';
 import '@material/mwc-button';
 
 import '../yp-user/yp-user-info.js';

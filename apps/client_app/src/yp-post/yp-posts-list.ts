@@ -2,10 +2,10 @@ import { html, css } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { YpBaseElement } from '../common/yp-base-element.js';
 import { YpIronListHelpers } from '../common/YpIronListHelpers.js';
+import {RangeChangeEvent, Layout1d, LitVirtualizer } from '@lit-labs/virtualizer';
 
 import '@material/mwc-icon-button';
 import '@material/mwc-textfield';
-import 'lit-virtualizer';
 
 import './yp-posts-filter.js';
 import './yp-post-card.js';
@@ -15,7 +15,6 @@ import { YpPostCard } from './yp-post-card.js';
 import { YpPostsFilter } from './yp-posts-filter.js';
 import { nothing, TemplateResult } from 'lit';
 import { ifDefined } from 'lit/directives/if-defined';
-import { RangeChangeEvent, Layout1d, LitVirtualizer } from 'lit-virtualizer';
 import { TextField } from '@material/mwc-textfield';
 
 @customElement('yp-posts-list')
@@ -480,7 +479,7 @@ export class YpPostsList extends YpBaseElement {
       console.info('Scrolling to post: ' + post.id);
       for (let i = 0; i < this.posts.length; i++) {
         if (this.posts[i] == post) {
-          (this.$$('#list') as LitVirtualizer<any, any>).scrollToIndex(i);
+          (this.$$('#list') as LitVirtualizer<any>).scrollToIndex(i);
           break;
         }
       }

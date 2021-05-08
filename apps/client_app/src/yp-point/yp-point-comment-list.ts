@@ -9,7 +9,8 @@ import '@material/mwc-icon-button';
 
 import './yp-point-comment.js';
 import './yp-point-comment-edit.js';
-import { RangeChangeEvent } from 'lit-virtualizer';
+import {RangeChangeEvent, Layout1d, LitVirtualizer } from '@lit-labs/virtualizer';
+
 
 @customElement('yp-point-comment-list')
 export class YpPointCommentList extends YpBaseElement {

@@ -1,4 +1,4 @@
-import { html, css, LitElement } from 'lit';
+import { html, css, LitElement, nothing, TemplateResult } from 'lit';
 import { property, customElement } from 'lit/decorators.js';
 
 import { YpBaseElement } from '../common/yp-base-element.js';
@@ -91,7 +91,7 @@ export class YpAppDialogs extends YpBaseElement {
   }
 
   renderSelectedDialog() {
-    let selectedDialog = nothing;
+    let selectedDialog: TemplateResult<any>|{} = nothing;
 
     switch (this.selectedDialog) {
       case 'userLogin':

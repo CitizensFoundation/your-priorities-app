@@ -6,7 +6,7 @@ import '../yp-user/yp-user-image.js';
 import '../yp-app-globals/yp-sw-update-toast.js';
 */
 
-import { html, LitElement } from 'lit';
+import { html, LitElement, nothing } from 'lit';
 import { customElement, property} from 'lit/decorators.js';
 
 import { cache } from 'lit/directives/cache.js';
