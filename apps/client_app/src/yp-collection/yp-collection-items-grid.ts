@@ -1,10 +1,13 @@
 import {
-  property,
   html,
   css,
-  customElement,
-  TemplateResult,
-} from 'lit-element';
+  TemplateResult
+} from 'lit';
+
+import {
+  property,
+  customElement
+} from 'lit/decorators.js';
 
 import { YpBaseElement } from '../common/yp-base-element.js';
 import { ShadowStyles } from '../common/ShadowStyles.js';
@@ -15,8 +18,8 @@ import { Layout1d, LitVirtualizer } from 'lit-virtualizer';
 
 import { YpCollectionItemCard } from './yp-collection-item-card.js';
 import { YpServerApi } from '../common/YpServerApi.js';
-import { ifDefined } from 'lit-html/directives/if-defined';
-import { nothing } from 'lit-html';
+import { ifDefined } from 'lit/directives/if-defined';
+
 import './yp-collection-item-card.js';
 
 @customElement('yp-collection-items-grid')

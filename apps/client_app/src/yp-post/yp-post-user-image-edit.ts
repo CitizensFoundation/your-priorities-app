@@ -1,4 +1,5 @@
-import { customElement, html, property, css } from 'lit-element';
+import { html, css } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
 
 import { YpBaseElement } from '../common/yp-base-element.js';
 
@@ -15,7 +16,7 @@ import { YpEditBase } from '../common/yp-edit-base.js';
 import { YpFileUpload } from '../yp-file-upload/yp-file-upload.js';
 import { TextField } from '@material/mwc-textfield';
 import { TextArea } from '@material/mwc-textarea';
-import { nothing } from 'lit-html';
+
 
 @customElement('yp-post-user-image-edit')
 export class YpPostUserImageEdit extends YpEditBase {

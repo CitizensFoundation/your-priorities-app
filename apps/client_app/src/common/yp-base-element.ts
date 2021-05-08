@@ -1,4 +1,5 @@
-import { LitElement, css, property } from 'lit-element';
+import { LitElement, css } from 'lit';
+import { property } from 'lit/decorators.js';
 import { installMediaQueryWatcher } from 'pwa-helpers/media-query.js';
 import { Layouts } from 'lit-flexbox-literals';
 

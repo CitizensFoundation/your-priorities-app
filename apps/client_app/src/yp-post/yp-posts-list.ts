@@ -1,4 +1,5 @@
-import { customElement, html, property, css } from 'lit-element';
+import { html, css } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
 import { YpBaseElement } from '../common/yp-base-element.js';
 import { YpIronListHelpers } from '../common/YpIronListHelpers.js';
 
@@ -12,8 +13,8 @@ import './yp-post-card.js';
 import { ShadowStyles } from '../common/ShadowStyles.js';
 import { YpPostCard } from './yp-post-card.js';
 import { YpPostsFilter } from './yp-posts-filter.js';
-import { nothing, TemplateResult } from 'lit-html';
-import { ifDefined } from 'lit-html/directives/if-defined';
+import { nothing, TemplateResult } from 'lit';
+import { ifDefined } from 'lit/directives/if-defined';
 import { RangeChangeEvent, Layout1d, LitVirtualizer } from 'lit-virtualizer';
 import { TextField } from '@material/mwc-textfield';
 

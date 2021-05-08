@@ -1,7 +1,8 @@
-import { property, html, css, customElement } from 'lit-element';
-import { nothing } from 'lit-html';
-import { ifDefined } from 'lit-html/directives/if-defined';
-import { unsafeHTML } from 'lit-html/directives/unsafe-html';
+import { html, css, nothing } from 'lit';
+import { property, customElement } from 'lit/decorators.js';
+
+import { ifDefined } from 'lit/directives/if-defined';
+import { unsafeHTML } from 'lit/directives/unsafe-html';
 
 import { YpBaseElement } from '../common/yp-base-element.js';
 import { YpAccessHelpers } from '../common/YpAccessHelpers.js';

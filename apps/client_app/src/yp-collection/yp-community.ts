@@ -3,7 +3,7 @@ import { YpMediaHelpers } from '../common/YpMediaHelpers.js';
 
 import { YpCollection, CollectionTabTypes } from './yp-collection.js';
 import { YpCollectionItemsGrid } from './yp-collection-items-grid.js';
-import { customElement } from 'lit-element';
+import { customElement } from 'lit/decorators.js';
 import { AcActivities } from '../ac-activities/ac-activities.js';
 
 @customElement('yp-community')

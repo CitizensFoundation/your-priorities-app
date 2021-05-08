@@ -1,5 +1,5 @@
-import { property, html, css, customElement, LitElement } from 'lit-element';
-import { nothing } from 'lit-html';
+import { html, css, LitElement } from 'lit';
+import { property, customElement } from 'lit/decorators.js';
 
 import { YpBaseElement } from '../common/yp-base-element.js';
 import { Snackbar } from '@material/mwc-snackbar';

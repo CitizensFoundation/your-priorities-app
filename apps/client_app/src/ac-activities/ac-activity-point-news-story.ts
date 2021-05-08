@@ -1,10 +1,11 @@
-import { html, css, customElement } from 'lit-element';
+import { html, css } from 'lit';
+import { customElement } from 'lit/decorators.js';
 import { YpNavHelpers } from '../common/YpNavHelpers.js';
 import { AcActivityWithGroupBase } from './ac-activity-with-group-base.js';
 
 import '../yp-magic-text/yp-magic-text.js';
 import '../yp-point/yp-point-news-story.js';
-import { nothing } from 'lit-html';
+
 
 @customElement('ac-activity-point-news-story')
 export class AcActivityPointNewsStory extends AcActivityWithGroupBase {

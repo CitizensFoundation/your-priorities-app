@@ -1,4 +1,5 @@
-import { html, css, customElement } from 'lit-element';
+import { html, css } from 'lit';
+import { customElement } from 'lit/decorators.js';
 import { YpNavHelpers } from '../common/YpNavHelpers.js';
 import { AcActivityWithGroupBase } from './ac-activity-with-group-base.js';
 

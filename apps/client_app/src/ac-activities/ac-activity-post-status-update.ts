@@ -1,4 +1,5 @@
-import { property, html, css, customElement } from 'lit-element';
+import { html, css, nothing } from 'lit';
+import { property, customElement } from 'lit/decorators.js';
 import { YpBaseElement } from '../common/yp-base-element.js';
 import { YpNavHelpers } from '../common/YpNavHelpers.js';
 import '../yp-magic-text/yp-magic-text.js';

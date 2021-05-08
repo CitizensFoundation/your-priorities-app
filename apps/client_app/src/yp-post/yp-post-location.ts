@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-ignore */
 /* eslint-disable @typescript-eslint/camelcase */
-import { property, html, css, customElement } from 'lit-element';
+import { html, css, nothing } from 'lit';
+import { property, customElement } from 'lit/decorators.js';
 
 import '@material/mwc-button';
 import '@material/mwc-circular-progress-four-color';
@@ -8,7 +9,7 @@ import '@material/mwc-circular-progress-four-color';
 import 'lit-google-map';
 
 import { YpBaseElement } from '../common/yp-base-element.js';
-import { nothing } from 'lit-html';
+
 import { TextField } from '@material/mwc-textfield';
 
 @customElement('yp-post-location')

@@ -1,13 +1,13 @@
 import { stylesFromModule } from '@polymer/polymer/lib/utils/style-gather';
-import { render } from 'lit-html';
-import { customElement, property, html, css } from 'lit-element';
-import { nothing } from 'lit-html';
+import { html, css } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
+
 import { YpBaseElement } from '../common/yp-base-element.js';
 import { ShadowStyles } from '../common/ShadowStyles.js';
 
 import '../yp-magic-text/yp-magic-text.js';
 import '@material/mwc-icon';
-import { ifDefined } from 'lit-html/directives/if-defined';
+import { ifDefined } from 'lit/directives/if-defined';
 import { YpMagicText } from '../yp-magic-text/yp-magic-text.js';
 
 @customElement('yp-simple-html-editor')

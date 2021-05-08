@@ -13,7 +13,8 @@ found at http://polymer.github.io/PATENTS.txt
 // Originally from https://github.com/cimmwolf/yp-form
 
 import { YpBaseElement } from './yp-base-element.js';
-import { property, customElement, html, css } from 'lit-element';
+import { html, css } from 'lit';
+import { property, customElement } from 'lit/decorators.js';
 import { dom } from '@polymer/polymer/lib/legacy/polymer.dom.js';
 import { FlattenedNodesObserver } from '@polymer/polymer/lib/utils/flattened-nodes-observer.js';
 

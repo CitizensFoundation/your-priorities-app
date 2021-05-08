@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import { property, html, css, customElement } from 'lit-element';
+import { html, css, nothing } from 'lit';
+import { property, customElement } from 'lit/decorators.js';
 import { Button } from '@material/mwc-button';
-import { nothing } from 'lit-html';
 
 import '@material/mwc-textfield';
 
@@ -112,10 +112,10 @@ export class YpPointCommentEdit extends YpBaseElementWithLogin {
       : nothing;
   }
 
-  updated(changedProperties: Map<string | number | symbol, unknown>): void { 
+  updated(changedProperties: Map<string | number | symbol, unknown>): void {
     super.updated(changedProperties);
 
-    //TODO: See what this is about and fix the iron-resize if needed 
+    //TODO: See what this is about and fix the iron-resize if needed
     if (changedProperties.has('comment') && this.comment) {
       if (this.comment.value && this.comment.value % 7 === 2) {
         this.fire('iron-resize');
@@ -144,7 +144,7 @@ export class YpPointCommentEdit extends YpBaseElementWithLogin {
       (this.$$("#pointComment") as TextArea).value = ''
   }
 
-  async _sendComment() { 
+  async _sendComment() {
     this.comment!.content = this.newPointComment
     if (
       this.comment &&

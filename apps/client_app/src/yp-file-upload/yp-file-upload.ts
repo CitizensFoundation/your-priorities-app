@@ -12,8 +12,8 @@ Example:
     <file-upload target="/path/to/destination"></file-upload>
 */
 
-import { customElement, html, property, css } from 'lit-element';
-import { nothing } from 'lit-html';
+import { html, css } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
 
 import '@material/mwc-textarea';
 import '@material/mwc-linear-progress';
@@ -283,7 +283,7 @@ export class YpFileUpload extends YpBaseElement {
 
   render() {
     return html`
-    
+
       <div class="layout vertical center-center mainContainer">
         <div class="layout vertical center-center">
           <div class="layout horizontal center-center">

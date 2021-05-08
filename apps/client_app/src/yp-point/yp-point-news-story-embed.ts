@@ -1,9 +1,10 @@
-import { property, html, css, customElement } from 'lit-element';
+import { html, css, nothing } from 'lit';
+import { property, customElement } from 'lit/decorators.js';
 
 import { YpBaseElement } from '../common/yp-base-element.js';
 
 import '../common/yp-image.js';
-import { nothing } from 'lit-html';
+
 
 @customElement('yp-point-news-story-embed')
 export class YpPointNewsStoryEmbed extends YpBaseElement {

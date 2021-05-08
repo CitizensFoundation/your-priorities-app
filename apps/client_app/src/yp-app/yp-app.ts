@@ -6,9 +6,10 @@ import '../yp-user/yp-user-image.js';
 import '../yp-app-globals/yp-sw-update-toast.js';
 */
 
-import { customElement, property, html, LitElement } from 'lit-element';
-import { nothing } from 'lit-html';
-import { cache } from 'lit-html/directives/cache.js';
+import { html, LitElement } from 'lit';
+import { customElement, property} from 'lit/decorators.js';
+
+import { cache } from 'lit/directives/cache.js';
 
 //TODO: Fix moment
 //import moment from 'moment';

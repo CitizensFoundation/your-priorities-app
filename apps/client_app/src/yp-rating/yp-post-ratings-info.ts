@@ -1,5 +1,6 @@
-import { customElement, html, property, css } from 'lit-element';
-import { nothing } from 'lit-html';
+import { html, css } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
+
 import { YpBaseElement } from '../common/yp-base-element.js';
 import { YpFormattingHelpers } from '../common/YpFormattingHelpers.js';
 import { YpDialogRatings } from './yp-dialog-ratings.js';

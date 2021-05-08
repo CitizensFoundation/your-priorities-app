@@ -5,7 +5,7 @@ import { YpAppGlobals } from '../../yp-app/YpAppGlobals.js';
 import { YpAppUser } from '../../yp-app/YpAppUser.js';
 import i18next from 'i18next';
 import HttpApi from 'i18next-http-backend';
-import { html } from 'lit-html';
+import { html } from 'lit';
 import fetchMock from 'fetch-mock/esm/client';
 
 export class YpTestHelpers {
@@ -36,7 +36,7 @@ export class YpTestHelpers {
       name: 'Betri Reykjavik Test',
       description: '',
       counter_posts: 10,
-      counter_points: 11, 
+      counter_points: 11,
       counter_users: 12,
       Communities: [
         {
@@ -106,7 +106,7 @@ export class YpTestHelpers {
       }
     } as YpPostData;
   }
- 
+
   static getPoint() {
     return {
       id: 1,
@@ -154,19 +154,19 @@ export class YpTestHelpers {
 
   static getGroupResults() {
     return {
-      group: YpTestHelpers.getGroup(), 
+      group: YpTestHelpers.getGroup(),
       hasNonOpenPosts: true
     }
   }
 
   static getImages() {
     return [{
-      description: 'Tekinn af ', 
+      description: 'Tekinn af ',
       photographer_name: 'Alexander',
       id: 2,
       formats: '["https://yrpri6-production.s3.amazonaws.com/5dddb81c-6023-4636-aae6-29e013e084d4-desktop-retina.png","https://yrpri6-production.s3.amazonaws.com/5dddb81c-6023-4636-aae6-29e013e084d4-mobile-retina.png","https://yrpri6-production.s3.amazonaws.com/5dddb81c-6023-4636-aae6-29e013e084d4-thumb.png"]',
       user_id: 2,
-    }] as Array<YpImageData> 
+    }] as Array<YpImageData>
   }
 
   static getFetchMock() {

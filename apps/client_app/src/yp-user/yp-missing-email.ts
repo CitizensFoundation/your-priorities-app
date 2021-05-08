@@ -1,4 +1,5 @@
-import { customElement, html, property, css } from 'lit-element';
+import { html, css } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
 
 import '@material/mwc-button';
 import '@material/mwc-textfield';
@@ -8,7 +9,7 @@ import { YpBaseElement } from '../common/yp-base-element.js';
 
 import { Dialog } from '@material/mwc-dialog';
 import { TextField } from '@material/mwc-textfield';
-import { nothing } from 'lit-html';
+
 
 @customElement('yp-missing-email')
 export class YpMissingEmail extends YpBaseElement {

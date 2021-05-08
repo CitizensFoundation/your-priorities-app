@@ -3,8 +3,8 @@ import { YpAccessHelpers } from '../common/YpAccessHelpers.js';
 import { YpMediaHelpers } from '../common/YpMediaHelpers.js';
 
 import { YpCollection } from '../yp-collection/yp-collection.js';
-import { customElement, html, property, LitElement, css } from 'lit-element';
-import { nothing, TemplateResult } from 'lit-html';
+import { nothing, html, TemplateResult, LitElement, css } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
 
 import { TextArea } from '@material/mwc-textarea';
 import '@material/mwc-linear-progress';
@@ -23,7 +23,7 @@ import { YpFormattingHelpers } from '../common/YpFormattingHelpers.js';
 import { YpBaseElementWithLogin } from '../common/yp-base-element-with-login.js';
 import { RangeChangeEvent, LitVirtualizer , Layout1d } from 'lit-virtualizer';
 import { YpMagicText } from '../yp-magic-text/yp-magic-text.js';
-import { ifDefined } from 'lit-html/directives/if-defined';
+import { ifDefined } from 'lit/directives/if-defined';
 
 import { Select } from '@material/mwc-select';
 
@@ -1019,7 +1019,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
       this.storedUpPointsCount ? this.storedUpPointsCount : 0,
       this.storedDownPointsCount ? this.storedDownPointsCount : 0
     )) as YpGetPointsResponse;
-    
+
     let points = this._preProcessPoints(pointsData.points);
     if (points.length === 0) {
       this.noMorePoints = true;
@@ -1507,7 +1507,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
   }
 
   _updateCounterInfo() {
-   
+
     if (this.wide && this.upPoints) {
       this.fire('yp-debate-info', {
         count: this.totalCount,
@@ -1517,7 +1517,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
       this.fire('yp-debate-info', {
         count: this.totalCount,
         firstPoint: this.points[0],
-        
+
       });
     }
   }

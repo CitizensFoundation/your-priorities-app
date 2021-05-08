@@ -1,11 +1,12 @@
-import { customElement, html, property, css } from 'lit-element';
+import { html, css } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
 
 import { YpBaseElement } from '../common/yp-base-element.js';
 
 import '@material/mwc-select';
 import '@material/mwc-list/mwc-list-item';
 
-import { nothing } from 'lit-html';
+
 import { Select } from '@material/mwc-select';
 
 @customElement('yp-theme-selector')

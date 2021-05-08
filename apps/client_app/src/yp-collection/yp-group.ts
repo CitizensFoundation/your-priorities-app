@@ -3,8 +3,8 @@ import { YpMediaHelpers } from '../common/YpMediaHelpers.js';
 
 import { YpCollection } from './yp-collection.js';
 import { YpCollectionItemsGrid } from './yp-collection-items-grid.js';
-import { customElement, html, property, LitElement } from 'lit-element';
-import { nothing, TemplateResult } from 'lit-html';
+import { TemplateResult, html, nothing, LitElement } from 'lit';
+import { customElement,property } from 'lit/decorators.js';
 
 import '@material/mwc-tab';
 import '@material/mwc-tab-bar';

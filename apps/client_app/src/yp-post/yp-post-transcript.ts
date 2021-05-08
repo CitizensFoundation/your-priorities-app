@@ -2,8 +2,8 @@ import { YpAccessHelpers } from '../common/YpAccessHelpers.js';
 import { YpMediaHelpers } from '../common/YpMediaHelpers.js';
 
 import { YpCollection } from '../yp-collection/yp-collection.js';
-import { customElement, html, property, LitElement, css } from 'lit-element';
-import { nothing, TemplateResult } from 'lit-html';
+import { nothing, html, TemplateResult, LitElement, css } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
 
 import '@material/mwc-icon-button';
 import '@material/mwc-textarea';

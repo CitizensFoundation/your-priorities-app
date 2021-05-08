@@ -9,8 +9,9 @@ Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 */
 
-import { LitElement, css, property, html, customElement } from 'lit-element';
-import { ifDefined } from 'lit-html/directives/if-defined';
+import { LitElement, css, html } from 'lit';
+import { property, customElement } from 'lit/decorators.js';
+import { ifDefined } from 'lit/directives/if-defined';
 
 /**
 `yp-image` is an element for displaying an image that provides useful sizing and

@@ -1,6 +1,7 @@
-import { property, html, customElement } from 'lit-element';
-import { nothing } from 'lit-html';
-import { classMap } from 'lit-html/directives/class-map.js';
+import { html, nothing } from 'lit';
+import { property, customElement } from 'lit/decorators.js';
+
+import { classMap } from 'lit/directives/class-map.js';
 import { accessibleSnackbarLabel } from '@material/mwc-snackbar/accessible-snackbar-label-directive.js';
 
 import '../yp-user/yp-user-with-organization.js';

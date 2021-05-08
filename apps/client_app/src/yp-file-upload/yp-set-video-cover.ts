@@ -1,5 +1,5 @@
-import { customElement, html, property, css } from 'lit-element';
-import { nothing } from 'lit-html';
+import { html, css } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
 
 import '@material/mwc-textarea';
 import '@material/mwc-linear-progress';

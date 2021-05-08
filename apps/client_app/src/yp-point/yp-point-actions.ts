@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import { property, html, css, customElement } from 'lit-element';
-import { nothing } from 'lit-html';
+import { html, css, nothing } from 'lit';
+import { property, customElement } from 'lit/decorators.js';
 
 import '@material/mwc-icon-button';
 

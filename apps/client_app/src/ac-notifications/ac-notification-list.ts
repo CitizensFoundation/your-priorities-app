@@ -1,5 +1,6 @@
-import { property, html, css, customElement } from 'lit-element';
-import { nothing } from 'lit-html';
+import { html, css, nothing } from 'lit';
+import { property, customElement } from 'lit/decorators.js';
+
 import { reject } from 'lodash-es';
 import { RangeChangeEvent } from 'lit-virtualizer';
 
@@ -350,7 +351,7 @@ export class AcNotificationList extends YpBaseElementWithLogin {
     options: AcNotificationsDateFetchOptions | undefined = undefined
   ) {
     let url = this.url;
-     
+
     if (options && options.oldestProcessedNotificationAt) {
       url += '?beforeDate=' + options.oldestProcessedNotificationAt;
     } else if (options && options.latestProcessedNotificationAt) {

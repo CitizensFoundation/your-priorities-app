@@ -3,7 +3,7 @@
 Copyright (c) 2010-2020 Citizens Foundation
 */
 
-import { css } from 'lit-element';
+import { css } from 'lit';
 
 export const YpAppStyles = css`
  :host {

@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-ignore */
-import { customElement, html, property, css } from 'lit-element';
+import { html, css } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
 import { YpBaseElement } from '../common/yp-base-element.js';
 import { dom } from '@polymer/polymer/lib/legacy/polymer.dom.js';
 

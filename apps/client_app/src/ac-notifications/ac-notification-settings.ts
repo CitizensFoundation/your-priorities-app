@@ -1,4 +1,5 @@
-import { property, html, customElement } from 'lit-element';
+import { html } from 'lit';
+import { property, customElement } from 'lit/decorators.js';
 
 import { YpBaseElement } from '../common/yp-base-element.js';
 import './ac-notification-selection.js';

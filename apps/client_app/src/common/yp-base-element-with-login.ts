@@ -1,4 +1,4 @@
-import { LitElement, css, property } from 'lit-element';
+import { property } from 'lit/decorators.js';
 import { installMediaQueryWatcher } from 'pwa-helpers/media-query.js';
 import { Layouts } from 'lit-flexbox-literals';
 import { YpBaseElement } from './yp-base-element.js';

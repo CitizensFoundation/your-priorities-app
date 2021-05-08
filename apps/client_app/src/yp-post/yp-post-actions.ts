@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import { customElement, html, property, css } from 'lit-element';
+import { html, css } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
 import { YpFormattingHelpers } from '../common/YpFormattingHelpers.js';
 import { YpBaseElement } from '../common/yp-base-element.js';
 
 import '@material/mwc-icon-button';
-import { ifDefined } from 'lit-html/directives/if-defined';
+import { ifDefined } from 'lit/directives/if-defined';
 import { YpNavHelpers } from '../common/YpNavHelpers.js';
 import { IconButton } from '@material/mwc-icon-button';
 

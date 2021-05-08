@@ -1,11 +1,12 @@
-import { customElement, html, property, css } from 'lit-element';
+import { html, css } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
 
 import { YpBaseElement } from '../common/yp-base-element.js';
 
 import '@material/mwc-button';
 import './yp-post-user-image-card.js';
 
-import { nothing } from 'lit-html';
+
 import { YpPostUserImageEdit } from './yp-post-user-image-edit.js';
 
 @customElement('yp-post-user-images')

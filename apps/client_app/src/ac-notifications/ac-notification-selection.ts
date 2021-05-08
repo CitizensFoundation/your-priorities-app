@@ -1,4 +1,5 @@
-import { property, html, css, customElement } from 'lit-element';
+import { html, css, nothing } from 'lit';
+import { property, customElement } from 'lit/decorators.js';
 
 import '@material/mwc-radio';
 import '@material/mwc-formfield';

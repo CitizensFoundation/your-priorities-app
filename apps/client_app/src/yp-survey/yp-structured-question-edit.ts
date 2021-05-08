@@ -1,5 +1,5 @@
-import { property, html, css, customElement } from 'lit-element';
-import { nothing, TemplateResult } from 'lit-html';
+import { html, css, nothing, TemplateResult } from 'lit';
+import { property, customElement } from 'lit/decorators.js';
 import { YpBaseElement } from '../common/yp-base-element.js';
 import linkifyStr from 'linkifyjs/string.js';
 
@@ -21,7 +21,7 @@ import { Checkbox } from '@material/mwc-checkbox';
 
 import { TextField } from '@material/mwc-textfield';
 import '@material/mwc-textfield';
-import { unsafeHTML } from 'lit-html/directives/unsafe-html';
+import { unsafeHTML } from 'lit/directives/unsafe-html';
 import './yp-simple-html-editor.js';
 
 @customElement('yp-structured-question-edit')

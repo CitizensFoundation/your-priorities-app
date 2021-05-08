@@ -1,5 +1,5 @@
 import { YpBaseElement } from '../common/yp-base-element.js';
-import { property } from 'lit-element';
+import { property } from 'lit/decorators.js';
 
 export abstract class AcActivityWithGroupBase extends YpBaseElement {
   @property({ type: Number })

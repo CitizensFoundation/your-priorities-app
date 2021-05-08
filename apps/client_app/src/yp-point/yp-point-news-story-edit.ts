@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import { property, html, css, customElement } from 'lit-element';
+import { html, css, nothing } from 'lit';
+import { property, customElement } from 'lit/decorators.js';
 
 import { YpBaseElement } from '../common/yp-base-element.js';
 
@@ -14,7 +15,7 @@ import './yp-point-news-story-embed.js';
 import { YpBaseElementWithLogin } from '../common/yp-base-element-with-login.js';
 import { Button } from '@material/mwc-button';
 import { TextArea } from '@material/mwc-textarea';
-import { nothing } from 'lit-html';
+
 import { merge } from 'lodash-es';
 
 @customElement('yp-point-news-story-edit')

@@ -1,5 +1,5 @@
 import { YpBaseElement } from './yp-base-element.js';
-import { property } from 'lit-element';
+import { property } from 'lit/decorators.js';
 import { YpEditDialog } from '../yp-edit-dialog/yp-edit-dialog.js';
 
 export abstract class YpEditBase extends YpBaseElement {

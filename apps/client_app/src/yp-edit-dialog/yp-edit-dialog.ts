@@ -1,5 +1,6 @@
-import { property, html, css, customElement } from 'lit-element';
-import { nothing } from 'lit-html';
+import { html, css } from 'lit';
+import { property, customElement } from 'lit/decorators.js';
+
 import { YpBaseElement } from '../common/yp-base-element.js';
 
 import '@material/mwc-circular-progress-four-color';

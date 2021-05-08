@@ -1,4 +1,5 @@
-import { property, customElement, html } from 'lit-element';
+import { html } from 'lit';
+import { property, customElement} from 'lit/decorators.js';
 import { EmojiButton, EmojiSelection } from '@joeattardi/emoji-button';
 import { YpBaseElement } from './yp-base-element.js';
 
