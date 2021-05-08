@@ -125,7 +125,7 @@ export class AcNotificationListPoint extends YpBaseElement {
   }
 
   render() {
-    return html`S
+    return html`
       <div
         class="layout vertical pointerCursor"
         @click="${this.goToPost}"
@@ -197,7 +197,7 @@ export class AcNotificationListPoint extends YpBaseElement {
       this.point = this.notification.AcActivities[0].Point;
       this.post = this.notification.AcActivities[0].Post;
       this.user = this.notification.AcActivities[0].User;
-      
+
       if (this.point) {
         this.pointContent = YpFormattingHelpers.truncate(
           this.point.content,
