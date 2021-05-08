@@ -129,8 +129,15 @@ app.use(requestIp.mw());
 app.use(bodyParser.json({limit: '5mb'}));
 app.use(bodyParser.urlencoded({limit: '5mb', extended: true}));
 
+let redisClient;
+if (process.env.REDIS_URL) {
+  redisClient = redis.createClient(process.env.REDIS_URL);
+} else {
+  redisClient = redis.createClient();
+}
+
 var sessionConfig = {
-  store: new RedisStore({url: process.env.REDIS_URL}),
+  store: new RedisStore({ client: redisClient, ttl: 86400 }),
   name: 'yrpri.sid',
   secret: process.env.SESSION_SECRET ? process.env.SESSION_SECRET : 'not so secret... use env var.',
   resave: false,
