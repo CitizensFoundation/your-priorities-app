@@ -321,7 +321,7 @@ var updateGroupConfigParamters = function (req, group) {
       group.set('configuration.registrationQuestionsJson', jsonArray);
     } catch (error) {
       group.set('configuration.registrationQuestionsJson', null);
-      log.error("Error in parsing structured questions", {error});
+      log.error("Error in parsing registrationQuestions", {error});
     }
   } else {
     group.set('configuration.registrationQuestionsJson', null);
@@ -338,7 +338,7 @@ var updateGroupConfigParamters = function (req, group) {
       group.set('configuration.dataForVisualizationJson', jsonArray);
     } catch (error) {
       group.set('configuration.dataForVisualizationJson', null);
-      log.error("Error in parsing structured questions", {error});
+      log.error("Error in parsing dataForVisualization", {error});
     }
   } else {
     group.set('configuration.dataForVisualizationJson', null);
