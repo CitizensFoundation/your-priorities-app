@@ -41,7 +41,7 @@ router.post('/:post_id/:type_index', auth.can('rate post'), function(req, res) {
       })
     }
     rating.save().then(function() {
-      log.info('Rating Created', { rating: toJson(rating), context: 'create', user: toJson(req.user) });
+      log.info('Rating Created', { ratingId: rating ? rating.id : -1, userId: req.user ? req.user.id : -1 });
       async.series([
         function (seriesCallback) {
           if (post) {
