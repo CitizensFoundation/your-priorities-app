@@ -3,7 +3,7 @@ var async = require('async');
 var ip = require('ip');
 var _ = require('lodash');
 var http = require('http');
-var parseString = require('xml2js').parseString;
+//var parseString = require('xml2js').parseString;
 var concat = require('concat-stream');
 
 var SESSION_ID = process.argv[2]; // 146;
@@ -41,9 +41,11 @@ var getJsonFromXml = function(url, callback) {
     res.setEncoding('utf8');
 
     res.pipe(concat(function(data) {
-      parseString(data, function (err, result) {
-        callback(null, JSON.parse(JSON.stringify(result)));
-      });
+      callback(null, JSON.parse(JSON.stringify(data)));
+      // Removed parseString
+      //parseString(data, function (err, result) {
+       // callback(null, JSON.parse(JSON.stringify(result)));
+      //});
     }))
   });
 };
