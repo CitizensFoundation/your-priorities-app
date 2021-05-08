@@ -56,7 +56,7 @@ var sendDomain = function sendDomainForBot(id, communitiesOffset, req, res) {
         offset: communitiesOffset
       }).then( communitiesInfo => {
         const communities = communitiesInfo.rows;
-        log.info('Bot: Domain', { id: domain ? domain.id : -1 });
+        //log.info('Bot: Domain', { id: domain ? domain.id : -1 });
         var imageUrl = '';
         if (domain.DomainLogoImages && domain.DomainLogoImages.length>0) {
           var formats = JSON.parse(domain.DomainLogoImages[0].formats);
@@ -126,7 +126,7 @@ var sendCommunity = function sendCommunityForBot(id, req, res) {
     ]
   }).then(function(community) {
     if (community) {
-      log.info('Bot: Community', { communityId: community.id, context: 'view', bot: true });
+      //log.info('Bot: Community', { communityId: community.id, context: 'view', bot: true });
       var imageUrl = '';
       if (community.CommunityLogoImages && community.CommunityLogoImages.length>0) {
         var formats = JSON.parse(community.CommunityLogoImages[0].formats);
@@ -206,7 +206,7 @@ var sendGroup = function sendGroupForBot(id, postsOffset, req, res) {
         offset: postsOffset
       }).then((postsInfo)=>{
         group.Posts = postsInfo.rows;
-        log.info('Bot: Group', { groupId: group.id, context: 'view', bot: true });
+        //log.info('Bot: Group', { groupId: group.id, context: 'view', bot: true });
         var imageUrl = '';
         if (group.GroupLogoImages && group.GroupLogoImages.length>0) {
           formats = JSON.parse(group.GroupLogoImages[0].formats);
@@ -314,7 +314,7 @@ var sendPost = function sendPostforBot(id, pointsOffset, req, res) {
         offset: pointsOffset
       }).then((pointsInfo)=>{
         post.Points = pointsInfo.rows;
-        log.info('Bot: Post', { postId: post ? post.id : -1, context: 'view', bot: true });
+        //log.info('Bot: Post', { postId: post ? post.id : -1, context: 'view', bot: true });
         var imageUrl = '';
         if (post.PostHeaderImages && post.PostHeaderImages.length>0) {
           formats = JSON.parse(post.PostHeaderImages[0].formats);
