@@ -48,7 +48,8 @@ var sendDomain = function sendDomainForBot(id, communitiesOffset, req, res) {
         attributes: ['id','name'],
         order: [ ['created_at', 'desc'] ],
         where: {
-          access: models.Community.ACCESS_PUBLIC
+          access: models.Community.ACCESS_PUBLIC,
+          domain_id: domain.id
         },
         limit: 20,
         offset: communitiesOffset
@@ -445,18 +446,10 @@ router.get('/*', function botController(req, res, next) {
       sendGroup(id, postsOffset, req, res)
     } else if (splitUrl[splitPath]=='post') {
       sendPost(id, pointsOffset, req, res)
-    } else if (req.ypCommunity && req.ypCommunity.id != null) {
-      sendCommunity(req.ypCommunity.id, req, res);
-    } else if (req.ypDomain && req.ypDomain.id != null) {
-      sendDomain(req.ypDomain.id, communitiesOffset, req, res);
     } else {
       log.error("Cant find controller for nonSpa", { id, splitUrl });
       res.sendStatus(404);
     }
-  } else if (req.ypCommunity && req.ypCommunity.id != null) {
-    sendCommunity(req.ypCommunity.id, req, res)
-  } else if (req.ypDomain && req.ypDomain.id != null) {
-    sendDomain(req.ypDomain.id, communitiesOffset, req, res)
   } else {
     log.error("Id for nonSpa is not a number", { id: id });
     res.sendStatus(404);

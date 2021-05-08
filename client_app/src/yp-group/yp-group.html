@@ -70,6 +70,11 @@
         }
       }
 
+      .createFab[is-map] {
+        right: inherit;
+        left: 28px;
+      }
+
       .createFab[wide-layout] {
         width: 72px;
         height: 72px;
@@ -277,7 +282,7 @@
 
     <template is="dom-if" if="[[!disableNewPosts]]" restamp>
       <div class="create-fab-wrapper layout horizontal end-justified createFabContainer" hidden$="[[disableNewPosts]]">
-          <paper-fab class="createFab" icon="[[createFabIcon]]" elevation="5"
+          <paper-fab class="createFab" icon="[[createFabIcon]]" elevation="5" is-map$="[[mapActive]]"
                      wide-layout$="{{wideWidth}}" title$="[[t('post.new')]]" on-tap="_newPost"></paper-fab>
       </div>
     </template>

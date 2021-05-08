@@ -542,7 +542,7 @@ const getCommunity = function(req, done) {
       }).then(function(communityIn) {
         community = communityIn;
         if (community) {
-          log.info('Community Viewed', { communityId: community.id, context: 'view', userId: req.user ? req.user.id : -1 });
+          log.info('Community Viewed', { communityId: community.id, userId: req.user ? req.user.id : -1 });
           addVideosToCommunity(community, error => {
             seriesCallback(error);
           })

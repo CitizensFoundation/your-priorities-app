@@ -49,7 +49,7 @@ if (process.env.NODE_ENV === 'production') {
       ssl: false,
       rejectUnauthorized: false
     },
-    logging: process.env.DISABLE_DEV_DB_LOGGING ? false : true,
+    logging: false,
     operatorsAliases: operatorsAliases
   }));
 }

@@ -207,7 +207,7 @@ router.put('/:id/report', auth.can('vote on point'), function (req, res) {
               log.error("Point Report Error", { context: 'report', post: toJson(post), user: toJson(req.user), err: error });
               res.sendStatus(500);
             } else {
-              log.info('Point Report Created', { post: toJson(post), context: 'report', user: toJson(req.user) });
+              log.info('Point Report Created', { postId: post ? post.id : -1, userId: req.user ? req.user.id : -1 });
               res.sendStatus(200);
             }
           });
@@ -654,7 +654,7 @@ router.post('/:id/pointQuality', auth.can('vote on point'), function(req, res) {
       })
     }
     pointQuality.save().then(function() {
-      log.info('PointQuality Created or Updated', { pointQualityId: pointQuality ? pointQuality.id : -1, context: 'createOrUpdate', userId: req.user ? req.user.id : -1 });
+      log.info('PointQuality Created or Updated', { pointQualityId: pointQuality ? pointQuality.id : -1, userId: req.user ? req.user.id : -1 });
       async.series([
         function (seriesCallback) {
           if (point) {
@@ -736,7 +736,7 @@ router.delete('/:id/pointQuality', auth.can('vote on point'), function(req, res)
       pointQuality.value = 0;
       //pointQuality.deleted = true;
       pointQuality.save().then(function() {
-        log.info('PointQuality Deleted', { pointQuality: toJson(pointQuality), context: 'delete', user: toJson(req.user) });
+        log.info('PointQuality Deleted', { pointQualityId: pointQuality ? pointQuality.id : -1,  userId: req.user ? req.user.id : -1 });
         if (oldPointQualityValue>0) {
           changePointCounter(req.params.id, 'counter_quality_up', -1, function () {
             res.status(200).send({ pointQuality: pointQuality, oldPointQualityValue: oldPointQualityValue });
