@@ -1767,8 +1767,7 @@ router.get('/:id/post_locations', auth.can('view group'), function(req, res) {
     if (posts) {
       log.info('Group Post Locations Viewed', {
         communityId: req.params.id,
-        context: 'view',
-        user: toJson(req.user)
+        userId: req.user ? req.user.id : -1
       });
 
       var collectedIds = _.map(posts, function (post) {
