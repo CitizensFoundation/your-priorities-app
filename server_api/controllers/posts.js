@@ -284,7 +284,7 @@ router.get('/:id', auth.can('view post'), function(req, res) {
     if (error) {
       sendPostOrError(res, req.params.id, 'view', req.user, error, 500);
     } else if (post) {
-      log.info('Post Viewed', { postId: post ? post.id : -1, context: 'view', userId: req.user ? req.user.id : -1 });
+      log.info('Post Viewed', { postId: post ? post.id : -1, userId: req.user ? req.user.id : -1 });
       post.dataValues.PostVideos = videos;
       res.send(post);
     } else {
@@ -418,7 +418,7 @@ router.put('/:id/report', auth.can('vote on post'), function (req, res) {
           log.error("Post Report Error", { context: 'report', post: toJson(post), user: toJson(req.user), err: error });
           res.sendStatus(500);
         } else {
-          log.info('Post Report Created', { post: toJson(post), context: 'report', user: toJson(req.user) });
+          log.info('Post Report Created', { postId: post ? post.id : -1, userId: req.user ? req.user.id : -1 });
           res.sendStatus(200);
         }
       });
@@ -519,7 +519,7 @@ router.get('/:id/newPoints', auth.can('view post'), function(req, res) {
       ]
     }).then(function(points) {
       if (points) {
-        log.info('Points New Viewed', { postId: req.params.id, context: 'view', user: toJson(req.user) });
+        log.info('Points New Viewed', { postId: req.params.id, userId: req.user ? req.user.id : -1 });
         res.send(points);
       } else {
         sendPostOrError(res, null, 'view', req.user, 'Not found', 404);
@@ -671,7 +671,7 @@ const sendPostPoints = (req, res, redisKey) => {
         }).then(function (points) {
           if (points) {
             const pointsInfo = {points: points, count: upCount + downCount};
-            log.info('Points Viewed', {postId: req.params.id, context: 'view', userId: req.user ? req.user.id : -1});
+            log.info('Points', { postId: req.params.id, userId: req.user ? req.user.id : -1});
             if (redisKey) {
               req.redisClient.setex(redisKey, process.env.POINTS_CACHE_TTL ? parseInt(process.env.POINTS_CACHE_TTL) : 30, JSON.stringify(pointsInfo));
             }
@@ -803,7 +803,7 @@ router.post('/:groupId', auth.can('create post'), function(req, res) {
     updatePostData(req, post);
 
     post.save().then(function() {
-      log.info('Post Created', { post: toJson(post), context: 'create', user: toJson(req.user) });
+      log.info('Post Created', { id: post ? post.id : -1, userId: req.user ? req.user.id : -1 });
       queue.create('process-similarities', { type: 'update-collection', postId: post.id }).priority('low').removeOnComplete(true).save();
 
       post.setupAfterSave(req, res, function () {
@@ -1226,7 +1226,7 @@ router.post('/:id/endorse', auth.can('vote on post'), function(req, res) {
             })
           }
           endorsement.save().then(function() {
-            log.info('Endorsements Created', { endorsement: toJson(endorsement), context: 'create', user: toJson(req.user) });
+            log.info('Endorsements Created', { endorsementId: endorsement ? endorsement.id : -1, userId: req.user ? req.user.id : -1 });
             async.series([
               function (seriesCallback) {
                 if (post) {

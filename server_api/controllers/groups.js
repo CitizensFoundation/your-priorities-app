@@ -724,7 +724,7 @@ router.get('/:groupId/pages', auth.can('view group'), function(req, res) {
             });
             res.sendStatus(500);
           } else {
-            log.info('Got Pages', {context: 'pages', userId: req.user ? req.user.id : null });
+            log.info('Got Pages', { userId: req.user ? req.user.id : null });
             req.redisClient.setex(redisKey, process.env.PAGES_CACHE_TTL ? parseInt(process.env.PAGES_CACHE_TTL) : 3, JSON.stringify(pages));
             res.send(pages);
           }
@@ -1321,7 +1321,7 @@ router.get('/:id', auth.can('view group'), function(req, res) {
         if (error) {
           sendGroupOrError(res, null, 'count_posts', req.user, error);
         } else {
-          log.info('Group Viewed', { groupId: group.id, context: 'view', userId: req.user ? req.user.id : -1 });
+          log.info('Group Viewed', { id: group.id, userId: req.user ? req.user.id : -1 });
           var PostsByNotOpen = models.Post.scope('not_open');
           PostsByNotOpen.count({ where: { group_id: req.params.id} }).then(function (count) {
             res.send({group: group, hasNonOpenPosts: count != 0});
@@ -1636,7 +1636,7 @@ router.get('/:id/posts/:filter/:categoryId/:status?', auth.can('view group'), fu
           where['category_id'] = req.params.categoryId;
         }
 
-        log.info('Group Posts Viewed', { groupID: req.params.id, context: 'view', userId: req.user ? req.user.id : -1 });
+        log.info('Posts', { gId: req.params.id, f: req.params.filter, cId: req.params.categoryId, uId: req.user ? req.user.id : -1 });
 
         if (['open','failed','successful','in_progress'].indexOf(req.params.status) > -1) {
           var PostsByStatus = models.Post.scope(req.params.status);

@@ -194,10 +194,9 @@ app.use(function checkForBOT(req, res, next) {
 // Setup the current domain from the host
 app.use(function setupDomain(req, res, next) {
   models.Domain.setYpDomain(req, res, function () {
-    log.info("Setup Domain Completed", {context: 'setYpDomain',
-      domainId: req.ypDomain ? req.ypDomain.id : null,
-      domainName: req.ypDomain ? req.ypDomain.domain_name : null
-    });
+    log.info("Domain", {
+      id: (req.ypDomain ? req.ypDomain.id : "-1"),
+      n: (req.ypDomain ? req.ypDomain.domain_name : "?")});
     next();
   });
 });
@@ -205,7 +204,10 @@ app.use(function setupDomain(req, res, next) {
 // Setup the current community from the host
 app.use(function setupCommunity(req, res, next) {
   models.Community.setYpCommunity(req, res, function () {
-    log.info("Setup Community Completed", {context: 'setYpCommunity', community: req.ypCommunity.hostname});
+    log.info("Community", {
+      id: (req.ypCommunity ? req.ypCommunity.id : null),
+      n: (req.ypCommunity ? req.ypCommunity.hostname : null)
+    });
     next();
   });
 });
@@ -315,7 +317,7 @@ passport.serializeUser(function userSerialize(req, profile, done) {
         log.error("Error in User Serialized from Facebook", {err: error});
         done(error);
       } else {
-        log.info("User Serialized Connected to Facebook", {context: 'loginFromFacebook', userId: user.id });
+        log.info("User Serialized", {context: 'loginFromFacebook', userId: user.id });
         registerUserLogin(user, user.id, 'facebook', req, function () {
           done(null, {userId: user.id, loginProvider: 'facebook'});
         });
@@ -327,7 +329,7 @@ passport.serializeUser(function userSerialize(req, profile, done) {
         log.error("Error in User Serialized from SAML", {err: error});
         done(error);
       } else {
-        log.info("User Serialized Connected to SAML", {context: 'loginFromSaml', userId: user.id});
+        log.info("User Serialized", {context: 'loginFromSaml', userId: user.id});
         registerUserLogin(user, user.id, 'saml', req, function () {
           done(null, {userId: user.id, loginProvider: 'saml'});
         });
@@ -346,7 +348,6 @@ passport.serializeUser(function userSerialize(req, profile, done) {
 });
 
 passport.deserializeUser(function deserializeUser(sessionUser, done) {
-  log.info("Debug passport.deserializeUser", { sessionUser });
   models.User.findOne({
     where: {id: sessionUser.userId},
     attributes: ["id", "name", "email", "default_locale", "facebook_id", "twitter_id", "google_id", "github_id", "ssn", "profile_data", 'private_profile_data'],
@@ -362,7 +363,7 @@ passport.deserializeUser(function deserializeUser(sessionUser, done) {
     ]
   }).then(function (user) {
     if (user) {
-      log.info("User Deserialized", {context: 'deserializeUser', user: user.email});
+      //log.info("User Deserialized", {context: 'deserializeUser', user: user.email});
       user.loginProvider = sessionUser.loginProvider;
       if (user.private_profile_data && user.private_profile_data.saml_agency && sessionUser.loginProvider==='saml') {
         user.isSamlEmployee = true;

@@ -129,11 +129,11 @@ var getUserWithAll = function (userId, getPrivateProfileData, callback) {
 // Login
 router.post('/login', function (req, res) {
   const startTime = new Date();
-  log.info('User Login start', { elapsedTime: (new Date()-startTime), context: 'view', userId: req.user ? req.user.id : null});
+  log.info('User Login start', { elapsedTime: (new Date()-startTime), userId: req.user ? req.user.id : null});
   req.sso.authenticate('local-strategy', {}, req, res, function(err, user) {
-    log.info('User Login before get', { elapsedTime: (new Date()-startTime), context: 'view', userId: req.user ? req.user.id : null});
+    log.info('User Login before get', { elapsedTime: (new Date()-startTime), userId: req.user ? req.user.id : null});
     getUserWithAll(req.user.id, true,function (error, user) {
-      log.info('User Login completed', { elapsedTime: (new Date()-startTime), context: 'view', userId: req.user ? req.user.id : null});
+      log.info('User Login completed', { elapsedTime: (new Date()-startTime), userId: req.user ? req.user.id : null});
       if (error || !user) {
         log.error("User Login Error", {context: 'login', user: user ? user.id : null, err: error, errorStatus: 500});
         res.sendStatus(500);
@@ -550,7 +550,7 @@ router.get('/loggedInUser/adminRights', function (req, res) {
       }
     });
   } else {
-    log.info('User Not Logged in', { context: 'adminRights'});
+    log.info('Not Logged in', { context: 'adminRights'});
     res.send('0');
   }
 });
@@ -671,7 +671,7 @@ router.get('/loggedInUser/adminRightsWithNames', function (req, res) {
       }
     });
   } else {
-    log.info('User Not Logged in', { context: 'adminRights'});
+    log.info('Not Logged in', { context: 'adminRights'});
     res.send('0');
   }
 });
@@ -766,7 +766,7 @@ router.get('/loggedInUser/memberships', function (req, res) {
       }
     });
   } else {
-    log.info('User Not Logged in', { user: toJson(req.user), context: 'memberships'});
+    log.info('Not Logged in', { context: 'memberships'});
     res.send('0');
   }
 });
@@ -877,7 +877,7 @@ router.get('/loggedInUser/membershipsWithNames', function (req, res) {
       }
     });
   } else {
-    log.info('User Not Logged in', { user: toJson(req.user), context: 'memberships'});
+    log.info('Not Logged in', { context: 'memberships'});
     res.send('0');
   }
 });
@@ -1060,9 +1060,9 @@ const setSAMLSettingsOnUser = (req, user, done) => {
 
 router.get('/loggedInUser/isloggedin', function (req, res) {
   if (req.isAuthenticated()) {
-    log.info('User Logged in', { userId: req.user ? req.user.id : -1, context: 'isLoggedIn'});
+    log.info('Logged in', { userId: req.user ? req.user.id : -1, context: 'isLoggedIn'});
   } else {
-    log.info('User Not Logged in', { user: toJson(req.user), context: 'isLoggedIn'});
+    log.info('Not Logged in');
   }
   if (req.isAuthenticated() && req.user) {
     getUserWithAll(req.user.id, true,function (error, user) {
