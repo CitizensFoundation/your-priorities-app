@@ -3,6 +3,7 @@ var router = express.Router();
 var models = require("../models");
 var auth = require('../authorization');
 var log = require('../utils/logger');
+const async = require('async');
 var toJson = require('../utils/to_json');
 var url = require('url');
 var _ = require('lodash');
@@ -451,8 +452,32 @@ router.get('/*', function botController(req, res, next) {
       res.sendStatus(404);
     }
   } else {
-    log.error("Id for nonSpa is not a number", { id: id });
-    res.sendStatus(404);
+    async.series([
+      seriesCallback => {
+        models.Domain.setYpDomain(req, res, function (error) {
+          seriesCallback(error);
+        })
+      },
+      seriesCallback => {
+        models.Community.setYpCommunity(req, res, function (error) {
+          seriesCallback(error);
+        })
+      }
+    ], error => {
+      if (error) {
+        log.error("Id for nonSpa is not a number", { error });
+        res.sendStatus(404);
+      } else {
+        if (req.ypCommunity && req.ypCommunity.id != null) {
+          sendCommunity(req.ypCommunity.id, req, res)
+        } else if (req.ypDomain && req.ypDomain.id != null) {
+          sendDomain(req.ypDomain.id, communitiesOffset, req, res)
+        } else {
+          log.error("Can't find nonspa route", { });
+          res.sendStatus(404);
+        }
+      }
+    })
   }
 });
 
