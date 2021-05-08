@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-ignore */
 import { html, css } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 
@@ -245,7 +246,7 @@ export class YpSimpleHtmlEditor extends YpBaseElement {
   }
 
   _updateCharacterCounter() {
-    var textContent = this.shadowRoot!.querySelector("#htmlEditor")!.textContent;
+    const textContent = this.shadowRoot!.querySelector("#htmlEditor")!.textContent;
 
     if (textContent) {
       this.characterCount = textContent.length;
@@ -277,10 +278,13 @@ export class YpSimpleHtmlEditor extends YpBaseElement {
 
   _paste(event: ClipboardEvent | CustomEvent ) {
     if (this.question.maxLength) {
+      //@ts-ignore
       const clipboardData = event.clipboardData || window.clipboardData;
       const pastedText = clipboardData.getData('text/plain');
+      //@ts-ignore
       const content = event.target.textContent;
       const contentLength = content.length;
+      //@ts-ignore
       const selectedText = window.getSelection().toString();
       const allowedPasteLength = this.question.maxLength - contentLength + selectedText.length;
       const slicedPasteText = pastedText.substring(0, allowedPasteLength);

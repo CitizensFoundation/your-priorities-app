@@ -23,6 +23,7 @@ import { TextField } from '@material/mwc-textfield';
 import '@material/mwc-textfield';
 import { unsafeHTML } from 'lit/directives/unsafe-html';
 import './yp-simple-html-editor.js';
+import { YpSimpleHtmlEditor } from './yp-simple-html-editor.js';
 
 @customElement('yp-structured-question-edit')
 export class YpStructuredQuestionEdit extends YpBaseElement {
