@@ -131,7 +131,11 @@ app.use(bodyParser.urlencoded({limit: '5mb', extended: true}));
 
 let redisClient;
 if (process.env.REDIS_URL) {
-  redisClient = redis.createClient(process.env.REDIS_URL);
+  let redisUrl = process.env.REDIS_URL;
+  if (redisUrl.startsWith("redis://h:")) {
+    redisUrl = redisUrl.replace("redis://h:","redis://:")
+  }
+  redisClient = redis.createClient(redisUrl);
 } else {
   redisClient = redis.createClient();
 }
