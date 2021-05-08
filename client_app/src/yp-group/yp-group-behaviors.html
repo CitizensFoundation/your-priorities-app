@@ -22,6 +22,11 @@
         computed: '_groupLogoImagePath(group)'
       },
 
+      groupCommuntityLinkLogoImagePath: {
+        type: String,
+        computed: '_groupCommuntityLinkLogoImagePath(group)'
+      },
+
       groupHeaderImagePath: {
         type: String,
         computed: '_groupHeaderImagePath(group)'
@@ -63,7 +68,11 @@
         {
           this.set('noImage', false);
         } else {
-          this.set('noImage', true);
+          if (group.CommunityLink && group.CommunityLink.CommunityLogoImages.length>0) {
+            this.set('noImage', false);
+          } else {
+            this.set('noImage', true);
+          }
         }
 
         if (group.status=='featured') {
@@ -79,24 +88,32 @@
           var groupName = this.$$("#groupName");
           if (groupName) {
             var classNames = "group-name ";
+
+            var groupNameData;
+            if (group.CommunityLink) {
+              groupNameData = group.CommunityLink.name;
+            } else {
+              groupNameData = group.name;
+            }
+
             if (this.wide) {
-              if (group.name.length<=18) {
+              if (groupNameData.length<=18) {
                 classNames += "groupNameFontSize4Wide";
-              } else if (group.name.length>40) {
+              } else if (groupNameData.length>40) {
                 classNames += "groupNameFontSize1Wide";
-              } else if (group.name.length>30) {
+              } else if (groupNameData.length>30) {
                 classNames += "groupNameFontSize2Wide";
-              } else if (group.name.length>18) {
+              } else if (groupNameData.length>18) {
                 classNames += "groupNameFontSize3Wide";
               }
             } else {
-              if (group.name.length<=18) {
+              if (groupNameData.length<=18) {
                 classNames += "groupNameFontSize4Mobile";
-              } else if (group.name.length>40) {
+              } else if (groupNameData.length>40) {
                 classNames += "groupNameFontSize1Mobile";
-              } else if (group.name.length>30) {
+              } else if (groupNameData.length>30) {
                 classNames += "groupNameFontSize2Mobile";
-              } else if (group.name.length>18) {
+              } else if (groupNameData.length>18) {
                 classNames += "groupNameFontSize3Mobile";
               }
             }
@@ -109,6 +126,13 @@
         this.set('featured', false);
         this.set('archived', false);
       }
+
+      if (group && group.configuration && group.configuration.isDataVisualizationGroup && group.configuration.dataForVisualizationJson) {
+        Polymer.dom(document).querySelector('yp-app').loadDataViz();
+        this.set('visualizationData', group.configuration.dataForVisualizationJson);
+      } else {
+        this.set('visualizationData', null);
+      }
     },
 
     _goToGroup: function (e) {
@@ -119,7 +143,12 @@
           fromCommunityId: this.group.configuration.actAsLinkToCommunityId
         })
       } else {
-        var groupUrl = '/group/' + this.group.id + '/open';
+        var groupUrl;
+        if (this.group && this.group.configuration && this.group.configuration.isDataVisualizationGroup) {
+          groupUrl = '/group_data_viz/' + this.group.id;
+        } else {
+          groupUrl = '/group/' + this.group.id + '/open';
+        }
         window.appGlobals.activity('open', 'group', groupUrl, { id: this.group.id });
         if (window.appGlobals.backToCommunityGroupItems===null)
           window.appGlobals.backToCommunityGroupItems = {};
@@ -138,6 +167,14 @@
     _groupLogoImagePath: function (group) {
       if (group) {
         return this.getImageFormatUrl(group.GroupLogoImages, 0);
+      } else {
+        return "";
+      }
+    },
+
+    _groupCommuntityLinkLogoImagePath: function (group) {
+      if (group && group.CommunityLink) {
+        return this.getImageFormatUrl(group.CommunityLink.CommunityLogoImages, 0);
       } else {
         return "";
       }

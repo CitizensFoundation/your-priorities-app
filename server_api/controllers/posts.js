@@ -170,120 +170,162 @@ router.post('/:id/status_change', auth.can('send status change'), function(req, 
 });
 
 router.get('/:id', auth.can('view post'), function(req, res) {
-  models.Post.findOne({
-    where: {
-      id: req.params.id
-    },
-    attributes: ['id','name','description','public_data','status','content_type','official_status','counter_endorsements_up','cover_media_type',
-                 'counter_endorsements_down','group_id','language','counter_points','counter_flags','location','created_at','category_id'],
-    order: [
-      [ { model: models.Image, as: 'PostHeaderImages' } ,'updated_at', 'asc' ],
-      [ { model: models.Category }, { model: models.Image, as: 'CategoryIconImages' } ,'updated_at', 'asc' ],
-      [ { model: models.Video, as: "PostVideos" }, 'updated_at', 'desc' ],
-      [ { model: models.Audio, as: "PostAudios" }, 'updated_at', 'desc' ],
-      [ { model: models.Group }, { model: models.Category }, 'name', 'asc' ],
-      [ { model: models.Video, as: "PostVideos" }, { model: models.Image, as: 'VideoImages' } ,'updated_at', 'asc' ]
-    ],
-    include: [
-      {
-        // Category
-        model: models.Category,
-        attributes: { exclude: ['ip_address', 'user_agent'] },
-        required: false,
+  let post;
+  let videos;
+
+  async.parallel([
+    parallelCallback => {
+      models.Post.findOne({
+        where: {
+          id: req.params.id
+        },
+        attributes: ['id','name','description','public_data','status','content_type','official_status','counter_endorsements_up','cover_media_type',
+          'counter_endorsements_down','group_id','language','counter_points','counter_flags','location','created_at','category_id'],
+        order: [
+          [ { model: models.Image, as: 'PostHeaderImages' } ,'updated_at', 'asc' ],
+          [ { model: models.Category }, { model: models.Image, as: 'CategoryIconImages' } ,'updated_at', 'asc' ],
+          [ { model: models.Audio, as: "PostAudios" }, 'updated_at', 'desc' ],
+          [ { model: models.Group }, { model: models.Category }, 'name', 'asc' ]
+        ],
         include: [
           {
-            model: models.Image,
-            required: false,
-            as: 'CategoryIconImages'
-          }
-        ]
-      },
-      // Group
-      {
-        model: models.Group,
-        attributes: ['id','configuration','name','theme_id','access'],
-        include: [
-          {
+            // Category
             model: models.Category,
-            required: false
-          },
-          {
-            model: models.Community,
-            attributes: ['id','name','theme_id','google_analytics_code','configuration'],
-            required: true
-          }
-        ]
-      },
-      // User
-      {
-        model: models.User,
-        required: false,
-        attributes: models.User.defaultAttributesWithSocialMediaPublic,
-        include: [
-          {
-            model: models.Image, as: 'UserProfileImages',
-            attributes:['id',"formats",'updated_at'],
-            required: false
-          },
-          {
-            model: models.Organization,
-            as: 'OrganizationUsers',
+            attributes: { exclude: ['ip_address', 'user_agent'] },
             required: false,
-            attributes: ['id', 'name'],
             include: [
               {
                 model: models.Image,
-                as: 'OrganizationLogoImages',
-                //TODO: Figure out why there are no formats attributes coming through here
-                attributes: ['id', 'formats'],
-                required: false
+                required: false,
+                as: 'CategoryIconImages'
               }
             ]
-          }
-        ]
-      },
-      // Image
-      {
-        model: models.Image,
-        required: false,
-        as: 'PostHeaderImages'
-      },
-      {
-        model: models.Video,
-        required: false,
-        attributes: ['id','formats','updated_at','viewable','public_meta'],
-        as: 'PostVideos',
-        include: [
+          },
+          // Group
+          {
+            model: models.Group,
+            attributes: ['id','configuration','name','theme_id','access','language'],
+            include: [
+              {
+                model: models.Category,
+                required: false
+              },
+              {
+                model: models.Community,
+                attributes: ['id','name','theme_id','google_analytics_code','configuration'],
+                required: true
+              }
+            ]
+          },
+          // User
+          {
+            model: models.User,
+            required: false,
+            attributes: models.User.defaultAttributesWithSocialMediaPublic,
+            include: [
+              {
+                model: models.Image, as: 'UserProfileImages',
+                attributes:['id',"formats",'updated_at'],
+                required: false
+              },
+              {
+                model: models.Organization,
+                as: 'OrganizationUsers',
+                required: false,
+                attributes: ['id', 'name'],
+                include: [
+                  {
+                    model: models.Image,
+                    as: 'OrganizationLogoImages',
+                    //TODO: Figure out why there are no formats attributes coming through here
+                    attributes: ['id', 'formats'],
+                    required: false
+                  }
+                ]
+              }
+            ]
+          },
+          // Image
           {
             model: models.Image,
-            as: 'VideoImages',
-            attributes:["formats",'updated_at'],
-            required: false
+            required: false,
+            as: 'PostHeaderImages'
           },
+          {
+            model: models.Audio,
+            required: false,
+            attributes: ['id','formats','updated_at','listenable'],
+            as: 'PostAudios',
+          },
+          // PointRevision
+          {
+            model: models.PostRevision,
+            required: false
+          }
         ]
-      },
-      {
-        model: models.Audio,
-        required: false,
-        attributes: ['id','formats','updated_at','listenable'],
-        as: 'PostAudios',
-      },
-      // PointRevision
-      {
-        model: models.PostRevision,
-        required: false
-      }
-    ]
-  }).then(function(post) {
-    if (post) {
-      log.info('Post Viewed', { postId: post ? post.id : -1, context: 'view', userId: req.user ? req.user.id : -1 });
+      }).then(function(postIn) {
+        post = postIn;
+        parallelCallback();
+      }).catch( error => {
+        parallelCallback(error);
+      });
+    },
+    parallelCallback => {
+      models.Post.getVideosForPosts([req.params.id], (error, videosIn) => {
+        if (error) {
+          parallelCallback(error);
+        } else {
+          videos = videosIn;
+          parallelCallback();
+        }
+      })
+    }
+  ], error => {
+    if (error) {
+      sendPostOrError(res, req.params.id, 'view', req.user, error, 500);
+    } else if (post) {
+      log.info('Post Viewed', { postId: post ? post.id : -1, userId: req.user ? req.user.id : -1 });
+      post.dataValues.PostVideos = videos;
       res.send(post);
     } else {
       sendPostOrError(res, req.params.id, 'view', req.user, 'Not found', 404);
     }
-  }).catch(function(error) {
-    sendPostOrError(res, null, 'view', req.user, error);
-  });
+  })
+
+});
+
+router.get('/:id/translatedSurvey', auth.can('view post'), function(req, res) {
+  const targetLanguage = req.query.targetLanguage;
+  const groupId = req.query.groupId;
+  let questions, answers;
+  async.parallel([
+    (parallelCallback) => {
+      models.AcTranslationCache.getSurveyQuestionTranslations(groupId, targetLanguage, (error, translations) => {
+        if (error) {
+          parallelCallback(error);
+        } else {
+          questions = translations;
+          parallelCallback();
+        }
+      });
+    },
+    (parallelCallback) => {
+      models.AcTranslationCache.getSurveyAnswerTranslations(req.params.id, targetLanguage, (error, translations) => {
+        if (error) {
+          parallelCallback(error);
+        } else {
+          answers = translations;
+          parallelCallback();
+        }
+      });
+    }
+  ], error => {
+    if (error) {
+      sendPostOrError(res, req.params.id, 'translatedSurvey', req.user, error, 500);
+    } else {
+      res.send([questions, answers]);
+    }
+  })
 });
 
 router.get('/:id/translatedText', auth.can('view post'), function(req, res) {
@@ -376,7 +418,7 @@ router.put('/:id/report', auth.can('vote on post'), function (req, res) {
           log.error("Post Report Error", { context: 'report', post: toJson(post), user: toJson(req.user), err: error });
           res.sendStatus(500);
         } else {
-          log.info('Post Report Created', { post: toJson(post), context: 'report', user: toJson(req.user) });
+          log.info('Post Report Created', { postId: post ? post.id : -1, userId: req.user ? req.user.id : -1 });
           res.sendStatus(200);
         }
       });
@@ -477,7 +519,7 @@ router.get('/:id/newPoints', auth.can('view post'), function(req, res) {
       ]
     }).then(function(points) {
       if (points) {
-        log.info('Points New Viewed', { postId: req.params.id, context: 'view', user: toJson(req.user) });
+        log.info('Points New Viewed', { postId: req.params.id, userId: req.user ? req.user.id : -1 });
         res.send(points);
       } else {
         sendPostOrError(res, null, 'view', req.user, 'Not found', 404);
@@ -491,182 +533,174 @@ router.get('/:id/newPoints', auth.can('view post'), function(req, res) {
   }
 });
 
+const sendPostPoints = (req, res, redisKey) => {
+  let upPointsIn, downPointsIn, upCount, downCount;
+  async.parallel([
+      (parallelCallback) => {
+        models.Point.findAndCountAll({
+          where: {
+            post_id: req.params.id,
+            value: 1,
+            status: 'published'
+          },
+          attributes: ['id'],
+          order: [
+            models.sequelize.literal('(counter_quality_up-counter_quality_down) desc')
+          ],
+          limit: 100,
+          offset: req.query.offsetUp ? req.query.offsetUp : 0
+        }).then((pointsIn) => {
+          upPointsIn = pointsIn.rows;
+          upCount = pointsIn.count;
+          parallelCallback();
+        }).catch((error) => {
+          parallelCallback(error);
+        });
+      },
+      (parallelCallback) => {
+        models.Point.findAndCountAll({
+          where: {
+            post_id: req.params.id,
+            value: -1,
+            status: 'published'
+          },
+          attributes: ['id'],
+          order: [
+            models.sequelize.literal('(counter_quality_up-counter_quality_down) desc')
+          ],
+          limit: 100,
+          offset: req.query.offsetDown ? req.query.offsetDown : 0
+        }).then((pointsIn) => {
+          downPointsIn = pointsIn.rows;
+          downCount = pointsIn.count;
+          parallelCallback();
+        }).catch((error) => {
+          parallelCallback(error);
+        });
+      },
+    ],
+    (error) => {
+      if (error) {
+        sendPostOrError(res, null, 'postPoints', req.user, error);
+      } else {
+        models.Point.findAll({
+          where: {
+            id: {
+              $in: _.map(upPointsIn, (pointIn) => {
+                return pointIn.id
+              }).concat(_.map(downPointsIn, (pointIn) => {
+                return pointIn.id
+              }))
+            }
+          },
+          attributes: ['id', 'name', 'content', 'user_id', 'value', 'counter_quality_up', 'counter_quality_down', 'embed_data', 'language', 'created_at', 'public_data'],
+          order: [
+            models.sequelize.literal('(counter_quality_up-counter_quality_down) desc'),
+            [models.PointRevision, 'created_at', 'asc'],
+            [models.User, {model: models.Image, as: 'UserProfileImages'}, 'created_at', 'asc'],
+            [{model: models.Video, as: "PointVideos"}, 'updated_at', 'desc'],
+            [{model: models.Audio, as: "PointAudios"}, 'updated_at', 'desc'],
+            [{model: models.Video, as: "PointVideos"}, {
+              model: models.Image,
+              as: 'VideoImages'
+            }, 'updated_at', 'asc'],
+            [models.User, {model: models.Organization, as: 'OrganizationUsers'}, {
+              model: models.Image,
+              as: 'OrganizationLogoImages'
+            }, 'created_at', 'asc']
+          ],
+          include: [
+            {
+              model: models.User,
+              attributes: ["id", "name", "facebook_id", "twitter_id", "google_id", "github_id"],
+              required: true,
+              include: [
+                {
+                  model: models.Image, as: 'UserProfileImages',
+                  attributes: ['id', 'formats'],
+                  required: false
+                },
+                {
+                  model: models.Organization,
+                  as: 'OrganizationUsers',
+                  required: false,
+                  attributes: ['id', 'name'],
+                  include: [
+                    {
+                      model: models.Image,
+                      as: 'OrganizationLogoImages',
+                      attributes: ['id', 'formats'],
+                      required: false
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              model: models.PointRevision,
+              attributes: ['content', 'value', 'embed_data', 'created_at'],
+              required: false
+            },
+
+            {
+              model: models.Video,
+              required: false,
+              attributes: ['id', 'formats', 'updated_at', 'viewable', 'public_meta'],
+              as: 'PointVideos',
+              include: [
+                {
+                  model: models.Image,
+                  as: 'VideoImages',
+                  attributes: ["formats", 'updated_at'],
+                  required: false
+                },
+              ]
+            },
+            {
+              model: models.Audio,
+              required: false,
+              attributes: ['id', 'formats', 'updated_at', 'listenable'],
+              as: 'PointAudios'
+            },
+            {
+              model: models.Post,
+              attributes: ['id', 'group_id'],
+              required: false,
+            }
+          ]
+        }).then(function (points) {
+          if (points) {
+            const pointsInfo = {points: points, count: upCount + downCount};
+            log.info('Points', { postId: req.params.id, userId: req.user ? req.user.id : -1});
+            if (redisKey) {
+              req.redisClient.setex(redisKey, process.env.POINTS_CACHE_TTL ? parseInt(process.env.POINTS_CACHE_TTL) : 30, JSON.stringify(pointsInfo));
+            }
+            res.send(pointsInfo);
+          } else {
+            sendPostOrError(res, null, 'view', req.user, 'Not found', 404);
+          }
+        }).catch(function (error) {
+          sendPostOrError(res, null, 'view', req.user, error);
+        });
+      }
+    })
+}
+
 router.get('/:id/points', auth.can('view post'), function(req, res) {
   const redisKey = "cache:post_points:"+req.params.id+(req.query.offsetUp ? ":offsetup:"+req.query.offsetUp : "")+":"+(req.query.offsetDown ? ":offsetdown:"+req.query.offsetDown : "");
-  req.redisClient.get(redisKey, (error, points) => {
-    if (error) {
-      sendPostOrError(res, null, 'viewPoints', req.user, error);
-    } else if (points) {
-      res.send(JSON.parse(points));
-    } else {
-      let upPointsIn, downPointsIn, upCount, downCount;
-      async.parallel([
-        (parallelCallback) => {
-          models.Point.findAndCountAll({
-            where: {
-              post_id: req.params.id,
-              value: 1,
-              status: 'published'
-            },
-            attributes: ['id'],
-            order: [
-              models.sequelize.literal('(counter_quality_up-counter_quality_down) desc')
-            ],
-            limit: 100,
-            offset: req.query.offsetUp ? req.query.offsetUp : 0
-          }).then((pointsIn) => {
-            upPointsIn = pointsIn.rows;
-            upCount = pointsIn.count;
-            parallelCallback();
-          }).catch((error) => {
-            parallelCallback(error);
-          });
-        },
-        (parallelCallback) => {
-          models.Point.findAndCountAll({
-            where: {
-              post_id: req.params.id,
-              value: -1,
-              status: 'published'
-            },
-            attributes: ['id'],
-            order: [
-              models.sequelize.literal('(counter_quality_up-counter_quality_down) desc')
-            ],
-            limit: 100,
-            offset: req.query.offsetDown ? req.query.offsetDown : 0
-          }).then((pointsIn) => {
-            downPointsIn = pointsIn.rows;
-            downCount = pointsIn.count;
-            parallelCallback();
-          }).catch((error) => {
-            parallelCallback(error);
-          });
-        },
-      ],
-      (error) => {
-        if (error) {
-          sendPostOrError(res, null, 'postPoints', req.user, error);
-        } else {
-          models.Point.findAll({
-            where: {
-              id: {
-                $in: _.map(upPointsIn, (pointIn) => {
-                  return pointIn.id
-                }).concat(_.map(downPointsIn, (pointIn) => {
-                  return pointIn.id
-                }))
-              }
-            },
-            attributes: ['id', 'name', 'content', 'user_id', 'value', 'counter_quality_up', 'counter_quality_down', 'embed_data', 'language', 'created_at', 'public_data'],
-            order: [
-              models.sequelize.literal('(counter_quality_up-counter_quality_down) desc'),
-              [models.PointRevision, 'created_at', 'asc'],
-              [models.User, {model: models.Image, as: 'UserProfileImages'}, 'created_at', 'asc'],
-              [{model: models.Video, as: "PointVideos"}, 'updated_at', 'desc'],
-              [{model: models.Audio, as: "PointAudios"}, 'updated_at', 'desc'],
-              [{model: models.Video, as: "PointVideos"}, {
-                model: models.Image,
-                as: 'VideoImages'
-              }, 'updated_at', 'asc'],
-              [models.User, {model: models.Organization, as: 'OrganizationUsers'}, {
-                model: models.Image,
-                as: 'OrganizationLogoImages'
-              }, 'created_at', 'asc']
-            ],
-            include: [
-              {
-                model: models.User,
-                attributes: ["id", "name", "facebook_id", "twitter_id", "google_id", "github_id"],
-                required: true,
-                include: [
-                  {
-                    model: models.Image, as: 'UserProfileImages',
-                    attributes: ['id', 'formats'],
-                    required: false
-                  },
-                  {
-                    model: models.Organization,
-                    as: 'OrganizationUsers',
-                    required: false,
-                    attributes: ['id', 'name'],
-                    include: [
-                      {
-                        model: models.Image,
-                        as: 'OrganizationLogoImages',
-                        attributes: ['id', 'formats'],
-                        required: false
-                      }
-                    ]
-                  }
-                ]
-              },
-              {
-                model: models.PointRevision,
-                attributes: ['content', 'value', 'embed_data', 'created_at'],
-                required: false
-              },
-              {
-                model: models.PointQuality,
-                attributes: ['value'],
-                required: false,
-                include: [
-                  {
-                    model: models.User,
-                    attributes: ["id"],
-                    required: false
-                  }
-                ]
-              },
-              {
-                model: models.Video,
-                required: false,
-                attributes: ['id', 'formats', 'updated_at', 'viewable', 'public_meta'],
-                as: 'PointVideos',
-                include: [
-                  {
-                    model: models.Image,
-                    as: 'VideoImages',
-                    attributes: ["formats", 'updated_at'],
-                    required: false
-                  },
-                ]
-              },
-              {
-                model: models.Audio,
-                required: false,
-                attributes: ['id', 'formats', 'updated_at', 'listenable'],
-                as: 'PointAudios'
-              },
-              {
-                model: models.Post,
-                attributes: ['id', 'group_id'],
-                required: false,
-                include: [
-                  {
-                    model: models.Group,
-                    attributes: ['id', 'configuration'],
-                    required: false
-                  }
-                ]
-              }
-            ]
-          }).then(function (points) {
-            if (points) {
-              const pointsInfo = { points: points, count: upCount+downCount };
-              log.info('Points Viewed', {postId: req.params.id, context: 'view', userId: req.user ? req.user.id : -1});
-              req.redisClient.setex(redisKey, process.env.POINTS_CACHE_TTL ? parseInt(process.env.POINTS_CACHE_TTL) : 3, JSON.stringify(pointsInfo));
-              res.send(pointsInfo);
-            } else {
-              sendPostOrError(res, null, 'view', req.user, 'Not found', 404);
-            }
-          }).catch(function (error) {
-            sendPostOrError(res, null, 'view', req.user, error);
-          });
-        }
-      })
-    }
-  })
+  if (process.env.DISABLE_POST_POINTS_CACHE) {
+    sendPostPoints(req, res);
+  } else {
+    req.redisClient.get(redisKey, (error, points) => {
+      if (error) {
+        sendPostOrError(res, null, 'viewPoints', req.user, error);
+      } else if (points) {
+        res.send(JSON.parse(points));
+      } else {
+        sendPostPoints(req, res, redisKey);
+      }
+    })
+  }
 });
 
 var truthValueFromBody = function(bodyParameter) {
@@ -701,6 +735,10 @@ var updatePostData = function (req, post) {
 
   if (!post.public_data) {
     post.set('public_data', {});
+  }
+
+  if (req.body.tags && req.body.tags!=="") {
+    post.set('public_data.tags',req.body.tags);
   }
 
   if (req.body.structuredAnswers && req.body.structuredAnswers!="") {
@@ -765,7 +803,7 @@ router.post('/:groupId', auth.can('create post'), function(req, res) {
     updatePostData(req, post);
 
     post.save().then(function() {
-      log.info('Post Created', { post: toJson(post), context: 'create', user: toJson(req.user) });
+      log.info('Post Created', { id: post ? post.id : -1, userId: req.user ? req.user.id : -1 });
       queue.create('process-similarities', { type: 'update-collection', postId: post.id }).priority('low').removeOnComplete(true).save();
 
       post.setupAfterSave(req, res, function () {
@@ -1143,141 +1181,199 @@ router.delete('/:id/anonymize_content', auth.can('edit post'), function(req, res
 
 router.post('/:id/endorse', auth.can('vote on post'), function(req, res) {
   var post;
-
-  models.Endorsement.findOne({
+  models.Post.findOne({
     where: {
-      post_id: req.params.id,
-      user_id: req.user.id
+      id: req.params.id
     },
     include: [
       {
-        model: models.Post,
-        attributes: ['id','group_id']
+        model: models.Group,
+        attributes: ['id','configuration'],
       }
     ]
-  }).then(function(endorsement) {
-    var oldEndorsementValue;
-    if (endorsement) {
-      post = endorsement.Post;
-      if (endorsement.value>0)
-        oldEndorsementValue = 1;
-      else if (endorsement.value<0)
-        oldEndorsementValue = -1;
-      endorsement.value = req.body.value;
-      endorsement.status = 'active';
-    } else {
-      endorsement = models.Endorsement.build({
-        post_id: req.params.id,
-        value: req.body.value,
-        user_id: req.user.id,
-        status: 'active',
-        user_agent: req.useragent.source,
-        ip_address: req.clientIp
-      })
-    }
-    endorsement.save().then(function() {
-      log.info('Endorsements Created', { endorsement: toJson(endorsement), context: 'create', user: toJson(req.user) });
-      async.series([
-        function (seriesCallback) {
-          if (post) {
-            seriesCallback();
+  }).then( corePost  => {
+    if (corePost) {
+      if (corePost.Group.configuration && corePost.Group.configuration.canVote===true) {
+        models.Endorsement.findOne({
+          where: {
+            post_id: req.params.id,
+            user_id: req.user.id
+          },
+          include: [
+            {
+              model: models.Post,
+              attributes: ['id','group_id'],
+            }
+          ]
+        }).then(function(endorsement) {
+          var oldEndorsementValue;
+          if (endorsement) {
+            post = endorsement.Post;
+            if (endorsement.value>0)
+              oldEndorsementValue = 1;
+            else if (endorsement.value<0)
+              oldEndorsementValue = -1;
+            endorsement.value = req.body.value;
+            endorsement.status = 'active';
           } else {
-            models.Post.findOne( {
-              where: { id: endorsement.post_id },
-              attributes: ['id','group_id']
-            }).then(function (results) {
-              if (results) {
-                post = results;
-                seriesCallback();
+            endorsement = models.Endorsement.build({
+              post_id: req.params.id,
+              value: req.body.value,
+              user_id: req.user.id,
+              status: 'active',
+              user_agent: req.useragent.source,
+              ip_address: req.clientIp
+            })
+          }
+          endorsement.save().then(function() {
+            log.info('Endorsements Created', { endorsementId: endorsement ? endorsement.id : -1, userId: req.user ? req.user.id : -1 });
+            async.series([
+              function (seriesCallback) {
+                if (post) {
+                  endorsement.dataValues.Post = post;
+                  seriesCallback();
+                } else {
+                  models.Post.findOne( {
+                    where: { id: endorsement.post_id },
+                    attributes: ['id','group_id']
+                  }).then(function (results) {
+                    if (results) {
+                      post = results;
+                      endorsement.dataValues.Post = post;
+                      seriesCallback();
+                    } else {
+                      seriesCallback("Can't find post")
+                    }
+                  });
+                }
+              },
+              function (seriesCallback) {
+                models.AcActivity.createActivity({
+                  type: endorsement.value>0 ? 'activity.post.endorsement.new' : 'activity.post.opposition.new',
+                  userId: endorsement.user_id,
+                  domainId: req.ypDomain.id,
+                  endorsementId: endorsement.id,
+//            communityId: req.ypCommunity ?  req.ypCommunity.id : null,
+                  groupId : post.group_id,
+                  postId : post.id,
+                  access: models.AcActivity.ACCESS_PRIVATE
+                }, function (error) {
+                  seriesCallback(error);
+                });
+              }
+            ], function (error) {
+              if (error) {
+                log.error("Endorsements Error", { context: 'create', endorsement: toJson(endorsement), user: toJson(req.user),
+                  err: error, errorStatus: 500 });
+                res.sendStatus(500);
               } else {
-                seriesCallback("Can't find post")
+                decrementOldCountersIfNeeded(req, oldEndorsementValue, req.params.id, endorsement, function () {
+                  if (endorsement.value>0) {
+                    changePostCounter(req, req.params.id, 'counter_endorsements_up', 1, function () {
+                      res.send({ endorsement: endorsement, oldEndorsementValue: oldEndorsementValue });
+                    })
+                  } else if (endorsement.value<0) {
+                    changePostCounter(req, req.params.id, 'counter_endorsements_down', 1, function () {
+                      res.send({ endorsement: endorsement, oldEndorsementValue: oldEndorsementValue });
+                    })
+                  } else {
+                    log.error("Endorsements Error State", { context: 'create', endorsement: toJson(endorsement), user: toJson(req.user),
+                      err: error, errorStatus: 500 });
+                    res.sendStatus(500);
+                  }
+                });
               }
             });
-          }
-        },
-        function (seriesCallback) {
-          models.AcActivity.createActivity({
-            type: endorsement.value>0 ? 'activity.post.endorsement.new' : 'activity.post.opposition.new',
-            userId: endorsement.user_id,
-            domainId: req.ypDomain.id,
-            endorsementId: endorsement.id,
-//            communityId: req.ypCommunity ?  req.ypCommunity.id : null,
-            groupId : post.group_id,
-            postId : post.id,
-            access: models.AcActivity.ACCESS_PRIVATE
-          }, function (error) {
-            seriesCallback(error);
+
           });
-        }
-      ], function (error) {
-        if (error) {
-          log.error("Endorsements Error", { context: 'create', endorsement: toJson(endorsement), user: toJson(req.user),
+        }).catch(function(error) {
+          log.error("Endorsements Error", { context: 'create', post: req.params.id, user: toJson(req.user),
             err: error, errorStatus: 500 });
           res.sendStatus(500);
-        } else {
-          decrementOldCountersIfNeeded(req, oldEndorsementValue, req.params.id, endorsement, function () {
-            if (endorsement.value>0) {
-              changePostCounter(req, req.params.id, 'counter_endorsements_up', 1, function () {
-                res.send({ endorsement: endorsement, oldEndorsementValue: oldEndorsementValue });
-              })
-            } else if (endorsement.value<0) {
-              changePostCounter(req, req.params.id, 'counter_endorsements_down', 1, function () {
-                res.send({ endorsement: endorsement, oldEndorsementValue: oldEndorsementValue });
-              })
-            } else {
-              log.error("Endorsements Error State", { context: 'create', endorsement: toJson(endorsement), user: toJson(req.user),
-                err: error, errorStatus: 500 });
-              res.sendStatus(500);
-            }
-          });
-        }
-      });
-
-    });
-  }).catch(function(error) {
-    log.error("Endorsements Error", { context: 'create', post: req.params.id, user: toJson(req.user),
+        });
+      } else {
+        log.error("Trying to vote but cant", { context: 'endorse', post: req.params.id });
+        res.sendStatus(401);
+      }
+    } else {
+      log.error("Post not found", { context: 'endorse', post: req.params.id });
+      res.sendStatus(404);
+    }
+  }).catch( error => {
+    log.error("Endorsements Error", { context: 'endorse', post: req.params.id, user: toJson(req.user),
       err: error, errorStatus: 500 });
     res.sendStatus(500);
-  });
+  })
 });
 
 router.delete('/:id/endorse', auth.can('vote on post'), function(req, res) {
-  console.log("user: "+req.user.id + " post: " + req.params.id);
-  models.Endorsement.findOne({
-    where: { post_id: req.params.id, user_id: req.user.id }
-  }).then(function(endorsement) {
-    if (endorsement) {
-      var oldEndorsementValue;
-      if (endorsement.value>0)
-        oldEndorsementValue = 1;
-      else if (endorsement.value<0)
-        oldEndorsementValue = -1;
-      endorsement.value = 0;
-      //endorsement.deleted = true;
-      endorsement.save().then(function() {
-        if (oldEndorsementValue>0) {
-          changePostCounter(req, req.params.id, 'counter_endorsements_up', -1, function () {
-            res.status(200).send({ endorsement: endorsement, oldEndorsementValue: oldEndorsementValue });
-          })
-        } else if (oldEndorsementValue<0) {
-          changePostCounter(req, req.params.id, 'counter_endorsements_down', -1, function () {
-            res.status(200).send({ endorsement: endorsement, oldEndorsementValue: oldEndorsementValue });
-          })
-        } else {
-          log.error("Endorsement Strange state", { context: 'delete', post: req.params.id, user: toJson(req.user),
-            err: "Strange state of endorsements", errorStatus: 500 });
+  models.Post.findOne({
+    where: {
+      id: req.params.id
+    },
+    include: [
+      {
+        model: models.Group,
+        attributes: ['id','configuration'],
+      }
+    ]
+  }).then( corePost  => {
+    if (corePost) {
+      if (corePost.Group.configuration && corePost.Group.configuration.canVote===true) {
+        models.Endorsement.findOne({
+          where: { post_id: req.params.id, user_id: req.user.id },
+          include: [
+            {
+              model: models.Post,
+              attributes: ['id','group_id']
+            }
+          ]
+        }).then(function(endorsement) {
+          if (endorsement) {
+            var oldEndorsementValue;
+            if (endorsement.value>0)
+              oldEndorsementValue = 1;
+            else if (endorsement.value<0)
+              oldEndorsementValue = -1;
+            endorsement.value = 0;
+            //endorsement.deleted = true;
+            endorsement.save().then(function() {
+              if (oldEndorsementValue>0) {
+                changePostCounter(req, req.params.id, 'counter_endorsements_up', -1, function () {
+                  res.status(200).send({ endorsement: endorsement, oldEndorsementValue: oldEndorsementValue });
+                })
+              } else if (oldEndorsementValue<0) {
+                changePostCounter(req, req.params.id, 'counter_endorsements_down', -1, function () {
+                  res.status(200).send({ endorsement: endorsement, oldEndorsementValue: oldEndorsementValue });
+                })
+              } else {
+                log.error("Endorsement Strange state", { context: 'delete', post: req.params.id, user: toJson(req.user),
+                  err: "Strange state of endorsements", errorStatus: 500 });
+                res.sendStatus(500);
+              }
+            });
+          } else {
+            log.error("Endorsement Not found", { context: 'delete', post: req.params.id, user: toJson(req.user), errorStatus: 404 });
+            res.sendStatus(404);
+          }
+        }).catch(function(error) {
+          log.error("Endorsements Error", { context: 'delete', post: req.params.id, user: toJson(req.user),
+            err: error, errorStatus: 500 });
           res.sendStatus(500);
-        }
-      });
+        });
+      } else {
+        log.error("Trying to vote but cant", { context: 'endorse', post: req.params.id });
+        res.sendStatus(401);
+      }
     } else {
-      log.error("Endorsement Not found", { context: 'delete', post: req.params.id, user: toJson(req.user), errorStatus: 404 });
+      log.error("Post not found", { context: 'endorse', post: req.params.id });
       res.sendStatus(404);
     }
-  }).catch(function(error) {
-    log.error("Endorsements Error", { context: 'delete', post: req.params.id, user: toJson(req.user),
+  }).catch( error => {
+    log.error("Endorsements Error", { context: 'endorse', post: req.params.id, user: toJson(req.user),
       err: error, errorStatus: 500 });
     res.sendStatus(500);
-  });
+  })
 });
 
 module.exports = router;

@@ -19,6 +19,7 @@ var multerMultipartResolver = multer({ dest: 'uploads/' }).single('file');
 const fs = require('fs');
 const readline = require('readline');
 const stream = require('stream');
+const {getMapForCommunity} = require("../utils/community_mapping_tools");
 
 const getFromAnalyticsApi = require('../active-citizen/engine/analytics/manager').getFromAnalyticsApi;
 const triggerSimilaritiesTraining = require('../active-citizen/engine/analytics/manager').triggerSimilaritiesTraining;
@@ -385,16 +386,57 @@ const masterGroupIncludes = [
   }
 ];
 
-const addVideosToGroup = (groups, done) => {
-  //TODO: Limit then number of VideoImages to 1 - there is one very 10 sec
-  async.forEachLimit(groups, 20, (group, forEachCallback) => {
+const addVideosToCommunity = (community, done) => {
+  models.Video.findAll({
+    attributes:  ['id','formats','viewable','created_at','public_meta'],
+    include: [
+      {
+        model: models.Image,
+        as: 'VideoImages',
+        attributes:["formats",'created_at'],
+        required: false
+      },
+      {
+        model: models.Community,
+        where: {
+          id: community.id
+        },
+        as: 'CommunityLogoVideos',
+        required: true,
+        attributes: ['id']
+      }
+    ],
+    order: [
+      [ { model: models.Image, as: 'VideoImages' }, 'created_at', 'asc' ]
+    ]
+  }).then(videos => {
+    community.dataValues.CommunityLogoVideos = _.orderBy(videos, ['created_at'],['desc']);
+    done();
+  }).catch( error => {
+    done(error);
+  })
+}
+
+const addVideosAndCommunityLinksToGroup = (groups, done) => {
+
+  const linkedCommunityIds = [];
+  const linkedCommunityIdToGroupIndex = {};
+
+  async.eachOfLimit(groups, 20, (group, index, forEachCallback) => {
+
+    if (group.configuration && group.configuration.actAsLinkToCommunityId) {
+      linkedCommunityIds.push(group.configuration.actAsLinkToCommunityId);
+      linkedCommunityIdToGroupIndex[group.configuration.actAsLinkToCommunityId] = index;
+    }
+
+    //TODO: Limit then number of VideoImages to 1 - there is one very 10 sec
     models.Video.findAll({
-      attributes:  ['id','formats','viewable','public_meta','updated_at'],
+      attributes:  ['id','formats','viewable','public_meta','created_at'],
       include: [
         {
           model: models.Image,
           as: 'VideoImages',
-          attributes:["formats",'updated_at'],
+          attributes:["formats",'created_at'],
           required: false
         },
         {
@@ -408,16 +450,54 @@ const addVideosToGroup = (groups, done) => {
         }
       ],
       order: [
-        [ { model: models.Image, as: 'VideoImages' } ,'updated_at', 'asc' ]
+        [ { model: models.Image, as: 'VideoImages' } ,'created_at', 'asc' ]
       ]
     }).then(videos => {
-      group.dataValues.GroupLogoVideos = _.orderBy(videos, (video) => video.updated_at,['desc']);
+      if (group.dataValues) {
+        group.dataValues.GroupLogoVideos = _.orderBy(videos, ['created_at'],['desc']);
+      } else {
+        group.GroupLogoVideos = _.orderBy(videos, ['created_at'],['desc']);
+      }
       forEachCallback();
     }).catch( error => {
       forEachCallback(error);
     })
   }, error => {
-    done(error);
+    if (linkedCommunityIds.length>0) {
+      models.Community.findAll({
+        where: {
+          id:  { $in: linkedCommunityIds }
+        },
+        attributes: ['id','name','description','counter_posts','counter_points','counter_users','language'],
+        order: [
+          [ { model: models.Image, as: 'CommunityLogoImages' } , 'created_at', 'asc' ]
+        ],
+        include: [
+          {
+            model: models.Image,
+            as: 'CommunityLogoImages',
+            attributes:  models.Image.defaultAttributesPublic,
+            required: false
+          }
+        ]
+      }).then(communities => {
+        async.eachOfLimit(communities, 20, (community, eachIndex, forEachVideoCallback) => {
+          const index = linkedCommunityIdToGroupIndex[community.id];
+          if (groups[index].dataValues) {
+            groups[index].dataValues.CommunityLink = community;
+          } else {
+            groups[index].CommunityLink = community;
+          }
+          addVideosToCommunity(community, forEachVideoCallback);
+        }, error => {
+          done(error);
+        });
+      }).catch( error => {
+        done(error);
+      })
+    } else {
+      done(error);
+    }
   });
 }
 
@@ -432,9 +512,7 @@ const getCommunity = function(req, done) {
         where: { id: req.params.id },
         order: [
           [ { model: models.Image, as: 'CommunityLogoImages' } , 'created_at', 'asc' ],
-          [ { model: models.Image, as: 'CommunityHeaderImages' } , 'created_at', 'asc' ],
-          [ { model: models.Video, as: "CommunityLogoVideos" }, 'updated_at', 'desc' ],
-          [ { model: models.Video, as: "CommunityLogoVideos" }, { model: models.Image, as: 'VideoImages' } ,'updated_at', 'asc' ]
+          [ { model: models.Image, as: 'CommunityHeaderImages' } , 'created_at', 'asc' ]
         ],
         attributes: models.Community.defaultAttributesPublic,
         include: [
@@ -459,27 +537,15 @@ const getCommunity = function(req, done) {
             required: false,
             as: 'CommunityFolder',
             attributes: ['id', 'name', 'description']
-          },
-          {
-            model: models.Video,
-            as: 'CommunityLogoVideos',
-            attributes:  ['id','formats','viewable','public_meta'],
-            required: false,
-            include: [
-              {
-                model: models.Image,
-                as: 'VideoImages',
-                attributes:["formats",'updated_at'],
-                required: false
-              },
-            ]
           }
         ]
       }).then(function(communityIn) {
         community = communityIn;
         if (community) {
-          log.info('Community Viewed', { communityId: community.id, context: 'view', userId: req.user ? req.user.id : -1 });
-          seriesCallback()
+          log.info('Community Viewed', { communityId: community.id, userId: req.user ? req.user.id : -1 });
+          addVideosToCommunity(community, error => {
+            seriesCallback(error);
+          })
         } else {
           seriesCallback("Not found");
         }
@@ -608,14 +674,14 @@ const getCommunity = function(req, done) {
                 return group.id;
               }
             });
-            addVideosToGroup(combinedGroups, videoError => {
+            addVideosAndCommunityLinksToGroup(combinedGroups, videoError => {
               community.dataValues.Groups = combinedGroups;
               seriesCallback(videoError);
             })
           }
         });
       } else {
-        addVideosToGroup( community.dataValues.Groups, videoError => {
+        addVideosAndCommunityLinksToGroup( community.dataValues.Groups, videoError => {
           seriesCallback(videoError);
         })
       }
@@ -644,6 +710,7 @@ var updateCommunityConfigParameters = function (req, community) {
   community.set('configuration.customBackName', (req.body.customBackName && req.body.customBackName!="") ? req.body.customBackName : null);
 
   community.set('configuration.welcomeHTML', (req.body.welcomeHTML && req.body.welcomeHTML!="") ? req.body.welcomeHTML : null);
+  community.set('configuration.externalId', (req.body.externalId && req.body.externalId!="") ? req.body.externalId : null);
 
   community.set('configuration.customSamlDeniedMessage', (req.body.customSamlDeniedMessage && req.body.customSamlDeniedMessage!="") ? req.body.customSamlDeniedMessage : null);
   community.set('configuration.customSamlLoginMessage', (req.body.customSamlLoginMessage && req.body.customSamlLoginMessage!="") ? req.body.customSamlLoginMessage : null);
@@ -1485,7 +1552,21 @@ router.get('/:id/post_locations', auth.can('view community'), function(req, res)
   }).then(function(posts) {
     if (posts) {
       log.info('Community Post Locations Viewed', { communityId: req.params.id, context: 'view', user: toJson(req.user) });
-      res.send(posts);
+
+      var collectedIds = _.map(posts, function (post) {
+        return post.id;
+      });
+
+      models.Post.getVideosForPosts(collectedIds, (error, videos) => {
+        if (error) {
+          sendCommunityOrError(res, null, 'view post locations', req.user, 'Not found', 404);
+        } else {
+          if (videos.length>0) {
+            models.Post.addVideosToAllPosts(posts, videos);
+          }
+          res.send(posts);
+        }
+      })
     } else {
       sendCommunityOrError(res, null, 'view post locations', req.user, 'Not found', 404);
     }
@@ -1673,11 +1754,12 @@ router.post('/:communityId/upload_ssn_login_list', auth.can('edit community'), f
       const rl = readline.createInterface(instream, outstream);
       const ssns = [];
       rl.on('line', (line) => {
-        const isnum = /^\d+$/.test(line);
-        if (isnum && line.length==10) {
-          ssns.push(line);
+        var fixedLine = line.replace("-","");
+        const isnum = /^\d+$/.test(fixedLine);
+        if (isnum && fixedLine.length==10) {
+          ssns.push(fixedLine);
         } else {
-          log.warn("Malformatted line in upload_ssn_login_list", { line });
+          log.warn("Malformatted line in upload_ssn_login_list", { fixedLine });
         }
       });
       rl.on('close', () => {
@@ -1808,6 +1890,19 @@ router.put('/:id/update_translation', auth.can('edit community'), function(req, 
       res.send(results);
     }
   });
+});
+
+router.get('/:id/recursiveMap', auth.can('edit community'), async (req, res) => {
+  try {
+    let map = await getMapForCommunity(req.params.id, { targetLocale: req.query.useEnglish ? "en" : undefined });
+    if (map.children && map.children.length>0) {
+      map = map.children[0];
+    }
+    res.send(map);
+  } catch (error) {
+    log.error("Error in getting recursiveMap", { error });
+    res.sendStatus(500);
+  }
 });
 
 module.exports = router;

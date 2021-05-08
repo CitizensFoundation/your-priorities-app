@@ -122,6 +122,9 @@ module.exports = (sequelize, DataTypes) => {
           callbackDomainName = 'engage.'+domain.domain_name;
         } else if (domain.domain_name==='multicitychallenge.org') {
           callbackDomainName = 'yp.'+domain.domain_name;
+        } else if (process.env.LOGIN_CALLBACK_CUSTOM_HOSTNAME) {
+          console.log("Using custom login back name", { custom: process.env.LOGIN_CALLBACK_CUSTOM_HOSTNAME });
+          callbackDomainName = process.env.LOGIN_CALLBACK_CUSTOM_HOSTNAME+'.'+domain.domain_name;
         } else {
           callbackDomainName = 'login.'+domain.domain_name;
         }
@@ -153,6 +156,7 @@ module.exports = (sequelize, DataTypes) => {
           strategyObject   : 'Strategy',
           strategyPackage  : 'passport-saml',
           certInPemFormat  : true,
+          audience         : req.hostname,
           issuer           : domain.secret_api_keys.saml.issuer ? domain.secret_api_keys.saml.issuer : null,
           entryPoint       : domain.secret_api_keys.saml.entryPoint,
           identifierFormat : domain.secret_api_keys.saml.identifierFormat ? domain.secret_api_keys.saml.identifierFormat : undefined,
@@ -202,7 +206,8 @@ module.exports = (sequelize, DataTypes) => {
         configuration: {},
         user_agent: req.useragent.source,
         ip_address: req.clientIp}})
-      .spread((domain, created) => {
+      .then( results => {
+        const [ domain, created ] = results;
         if (created) {
           log.info('Domain Created', { domain: toJson(domain.simple()), context: 'create' });
           queue.create('process-similarities', { type: 'update-collection', domainId: domain.id }).priority('low').removeOnComplete(true).save();

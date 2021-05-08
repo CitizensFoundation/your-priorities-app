@@ -560,10 +560,27 @@
       },
 
       _formError: function(event, detail) {
-        this._setSubmitDisabledStatus(false);
-        console.log("Form error: ", detail.error);
-        this._showErrorDialog(detail.error);
-        this.$$("#spinner").active = false;
+        if (!navigator.onLine && this.method==="POST" && window.fetch) {
+          var serialized = this.$$("#form").serializeForm();
+          var action = this.$$("#form").action;
+          window.appGlobals.sendWhenOnlineNext({
+            body: serialized,
+            method: this.method,
+            params: this.params,
+            url: action
+          });
+          this.response = { offlineSendLater: true };
+          debugger;
+          this.close();
+        } else if (!navigator.onLine) {
+          debugger;
+          this._showErrorDialog(this.t('youAreOfflineCantSend'));
+        } else {
+          this._setSubmitDisabledStatus(false);
+          console.log("Form error: ", detail.error);
+          this._showErrorDialog(detail.error);
+          this.$$("#spinner").active = false;
+        }
       },
 
       _formInvalid: function(event) {

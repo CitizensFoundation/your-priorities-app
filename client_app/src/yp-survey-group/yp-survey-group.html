@@ -446,6 +446,7 @@
           this.$.pagesAjax.generateRequest();
 
           window.appGlobals.setAnonymousGroupStatus(this.surveyGroup);
+          window.appGlobals.setRegistrationQuestionGroup(this.surveyGroup);
 
           if (this.surveyGroup.configuration && this.surveyGroup.configuration.disableFacebookLoginForGroup===true) {
             window.appGlobals.disableFacebookLoginForGroup = true;

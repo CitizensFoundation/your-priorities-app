@@ -1,0 +1,201 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<script>
+  /**
+   * @polymerBehavior Polymer.YpPostSurveyTranslationBehavior
+   */
+  Polymer.YpPostSurveyTranslationBehavior = {
+
+    properties: {
+      structuredAnswersFormatted: {
+        type: String,
+        computed: '_structuredAnswersFormatted(post, translatedQuestions, translatedAnswers)'
+      },
+
+      translatedQuestions: {
+        type: Array,
+        value: null
+      },
+
+      translatedAnswers: {
+        type: Array,
+        value: null
+      },
+
+      autoTranslate: {
+        type: Boolean,
+        value: false
+      }
+    },
+
+    ready: function () {
+      if (window.autoTranslate) {
+        this.set('autoTranslate', true);
+      }
+    },
+
+    _getIndexTranslationKey: function(textType) {
+      return `${textType}-${this.post.id}-${this.language}`;
+    },
+
+    _languageEvent: function (event, detail) {
+      if (detail.type == 'language-loaded') {
+        this.async(function () {
+          this.language = detail.language;
+          this._getSurveyTranslationsIfNeeded();
+        });
+        //super._languageEvent(event, detail);
+      }
+    },
+
+    _autoTranslateEvent(event, detail) {
+      this.set('autoTranslate', detail);
+      this._getSurveyTranslationsIfNeeded();
+    },
+
+    _getSurveyTranslationsIfNeeded: function () {
+      this.set('translatedQuestions', null);
+      this.set('translatedAnswers', null);
+      if (this.post &&
+        this.post.public_data &&
+        this.post.public_data.structuredAnswersJson &&
+        this.autoTranslate &&
+        this.language!==this.post.language) {
+        var questionsIndexKey = this._getIndexTranslationKey("GroupQuestions");
+        var answersIndexKey = this._getIndexTranslationKey("PostAnswers");
+        if (window.appGlobals.autoTranslateCache[questionsIndexKey] &&
+          window.appGlobals.autoTranslateCache[answersIndexKey]) {
+          this.set('translatedQuestions', window.appGlobals.autoTranslateCache[questionsIndexKey]);
+          this.set('translatedAnswers', window.appGlobals.autoTranslateCache[answersIndexKey]);
+        } else {
+          this.$.translatedSurveyAjax.url = `/api/posts/${this.post.id}/translatedSurvey?targetLanguage=${this.language}&groupId=${this.post.Group.id}`;
+          this.$.translatedSurveyAjax.generateRequest();
+        }
+      }
+    },
+
+    //TODO: Don't repeat here for the 3rd time
+    _getQuestionLengthWithSubOptions: function (questions) {
+      let length = 0;
+      for (let i=0; i<questions.length;i++) {
+        length += 1;
+        var question = questions[i];
+        if (question.type==="radios" && question.radioButtons && question.radioButtons.length>0) {
+          length += question.radioButtons.length;
+        }  else if (question.type==="checkboxes" && question.checkboxes && question.checkboxes.length>0) {
+          length += question.checkboxes.length;
+        } else if(question.type==="dropdown" && question.dropdownOptions && question.dropdownOptions.length>0) {
+          length += question.dropdownOptions.length;
+        }
+      }
+
+      return length;
+    },
+
+    _translatedSurveyResponse: function (event, detail) {
+      if (this.post &&
+        this.autoTranslate &&
+        (this.language!==this.post.language || this.post.language=="??")
+      ) {
+        var translatedQuestionTexts = detail.response[0];
+        var translatedAnswerTexts = detail.response[1];
+        var currentQuestions = JSON.parse(JSON.stringify(this.post.Group.configuration.structuredQuestionsJson));
+        var currentAnswers = JSON.parse(JSON.stringify(this.post.public_data.structuredAnswersJson));
+
+        if (translatedQuestionTexts.length===this._getQuestionLengthWithSubOptions(currentQuestions)) {
+          var translationCounter = 0;
+          for (var i=0; i<currentQuestions.length;i++) {
+            var question = currentQuestions[i];
+            question.text = translatedQuestionTexts[translationCounter++];
+
+            if (question.type==="radios" && question.radioButtons && question.radioButtons.length>0) {
+              translationCounter += question.radioButtons.length;
+            }  else if (question.type==="checkboxes" && question.checkboxes && question.checkboxes.length>0) {
+              translationCounter += question.checkboxes.length;
+            } else if(question.type==="dropdown" && question.dropdownOptions && question.dropdownOptions.length>0) {
+              translationCounter += question.dropdownOptions.length;
+            }
+          }
+
+          for (var i=0; i<currentAnswers.length;i++) {
+            if (currentAnswers[i].value) {
+              currentAnswers[i].value = translatedAnswerTexts[i];
+            }
+          }
+
+          this.set('translatedQuestions', currentQuestions);
+          this.set('translatedAnswers', currentAnswers);
+
+          var questionsIndexKey = this._getIndexTranslationKey("GroupQuestions");
+          var answersIndexKey = this._getIndexTranslationKey("PostAnswers");
+
+          window.appGlobals.autoTranslateCache[questionsIndexKey] = currentQuestions;
+          window.appGlobals.autoTranslateCache[answersIndexKey] = currentAnswers;
+
+          } else {
+          console.error("Questions and Translated texts length does not match");
+        }
+      } else {
+        this.set('translatedQuestions', null);
+        this.set('translatedAnswers', null);
+      }
+    },
+
+    _structuredAnswersFormatted: function (post, translatedQuestions, translatedAnswers) {
+      if (post && post.public_data && post.public_data.structuredAnswersJson &&
+        post.Group.configuration && post.Group.configuration.structuredQuestionsJson) {
+
+        var currentQuestions = post.Group.configuration.structuredQuestionsJson;
+        var currentAnswers = post.public_data.structuredAnswersJson;
+
+        if (translatedQuestions && translatedAnswers) {
+          currentQuestions = translatedQuestions;
+          currentAnswers = translatedAnswers;
+        }
+
+        var questionHash = {};
+        var showDescriptionBeforeIdHash = {};
+        var showDescriptionAfterIdHash = {};
+        var outText = "";
+
+        currentQuestions.forEach(function (question) {
+          if (question.uniqueId) {
+            questionHash[question.uniqueId] = question;
+          } else {
+            if (question.showBeforeAnswerId) {
+              showDescriptionBeforeIdHash[question.showBeforeAnswerId] = question;
+            }
+
+            if (question.showAfterAnswerId) {
+              showDescriptionAfterIdHash[question.showAfterAnswerId] = question;
+            }
+          }
+        }.bind(this));
+
+        currentAnswers.forEach(function (answer) {
+          if (answer) {
+            var question = questionHash[answer.uniqueId];
+            if (question) {
+              if (showDescriptionBeforeIdHash[answer.uniqueId]) {
+                outText+=showDescriptionBeforeIdHash[answer.uniqueId].text+"\n\n";
+              }
+              outText+="<b>"+question.text+"</b>\n";
+              if (answer.value) {
+                outText+=answer.value+"\n\n";
+              } else {
+                outText+="\n\n";
+              }
+              if (showDescriptionAfterIdHash[answer.uniqueId]) {
+                outText+=showDescriptionAfterIdHash[answer.uniqueId].text+"\n\n";
+              }
+            }
+          }
+        }.bind(this));
+
+        return outText;
+      } else {
+        return "";
+      }
+    }
+  }
+</script>

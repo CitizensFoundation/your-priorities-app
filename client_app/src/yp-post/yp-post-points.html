@@ -389,7 +389,7 @@
                   <template>
                     <div class="item" tabindex$="[[tabIndex]]" role="listitem" aria-level="3">
                       <paper-material id="point[[point.id]]" elevation="1" animated class="pointMaterial">
-                        <yp-point point="[[point]]"></yp-point>
+                        <yp-point post="[[post]]" point="[[point]]"></yp-point>
                       </paper-material>
                     </div>
                   </template>
@@ -502,7 +502,7 @@
                   <template>
                     <div class="item" tabindex$="[[tabIndex]]" role="listitem" aria-level="3">
                       <paper-material id="point[[point.id]]" elevation="1" animated class="pointMaterial">
-                        <yp-point point="[[point]]"></yp-point>
+                        <yp-point post="[[post]]" point="[[point]]"></yp-point>
                       </paper-material>
                     </div>
                   </template>
@@ -603,7 +603,7 @@
             <template>
               <div class="item layout vertical center-center" tabindex$="[[tabIndex]]" role="listitem" aria-level="3">
                 <paper-material id="point[[point.id]]" elevation="0" animated class="pointMaterial pointMaterialMobile">
-                  <yp-point point="[[point]]"></yp-point>
+                  <yp-point post="[[post]]" point="[[point]]"></yp-point>
                 </paper-material>
               </div>
             </template>
@@ -1209,7 +1209,7 @@
         },
 
         _isAdminChanged: function (isAdmin) {
-          if (this.post && this.post.Group && this.post.Group.configuration && this.post.Group.configuration.disableDebate && !isAdmin) {
+          if (this.post && this.post.Group && this.post.Group.configuration && this.post.Group.configuration.disableDebate) {
             this.set('disableDebate', true);
           } else {
             this.set('disableDebate', false);
@@ -1232,7 +1232,7 @@
 
 
           if (newPost) {
-            if (newPost.Group && newPost.Group.configuration && newPost.Group.configuration.disableDebate && !this.isAdmin) {
+            if (newPost.Group && newPost.Group.configuration && newPost.Group.configuration.disableDebate) {
               this.set('disableDebate', true);
             } else {
               this.set('disableDebate', false);
@@ -1283,30 +1283,26 @@
 
         _processStoredPoints: function () {
           console.info("_processStoredPoints");
-          if (this.upPoints===null) {
-            if (this.storedPoints && this.storedPoints.length > 0) {
-              var upPoints = [];
-              var downPoints = [];
+          if (this.storedPoints && this.storedPoints.length > 0) {
+            var upPoints = [];
+            var downPoints = [];
 
-              for (var i = 0; i < this.storedPoints.length; i++) {
-                if (this.storedPoints[i].value>0) {
-                  upPoints.push(this.storedPoints[i]);
-                } else if (this.storedPoints[i].value<0) {
-                  downPoints.push(this.storedPoints[i]);
-                }
+            for (var i = 0; i < this.storedPoints.length; i++) {
+              if (this.storedPoints[i].value>0) {
+                upPoints.push(this.storedPoints[i]);
+              } else if (this.storedPoints[i].value<0) {
+                downPoints.push(this.storedPoints[i]);
               }
-              this.set('upPoints', upPoints);
-              this.set('downPoints', downPoints);
-            } else {
-              this.set('upPoints', []);
-              this.set('downPoints', []);
-              this.set('points', []);
             }
+            this.set('upPoints', upPoints);
+            this.set('downPoints', downPoints);
           } else {
-            console.log("Landscape points already setup");
+            this.set('upPoints', []);
+            this.set('downPoints', []);
+            this.set('points', []);
           }
 
-          if (!this.largeMode && !this.points) {
+          if (!this.largeMode) {
             this.set('points', this.interleaveArrays(this.upPoints, this.downPoints));
           }
 
@@ -1547,40 +1543,47 @@
         },
 
         _newPointResponse: function (inEvent, inDetail) {
-          if (this.currentVideoId) {
-            var point = this._preProcessPoints([inDetail.response])[0];
-            var ajax = document.createElement('iron-ajax');
-            ajax.handleAs = 'json';
-            ajax.contentType = 'application/json';
-            ajax.url = '/api/videos/'+point.id+'/completeAndAddToPoint';
-            ajax.method = 'PUT';
-            ajax.body = {
-              videoId: this.currentVideoId,
-              appLanguage: this.language
-            };
-            ajax.addEventListener('response', function (event, detail) {
-              this._completeNewPointResponse(event, event.detail);
-              window.appGlobals.showSpeechToTextInfoIfNeeded();
-            }.bind(this));
-            ajax.generateRequest();
-          } else if (this.currentAudioId) {
-            var point = this._preProcessPoints([inDetail.response])[0];
-            var ajax = document.createElement('iron-ajax');
-            ajax.handleAs = 'json';
-            ajax.contentType = 'application/json';
-            ajax.url = '/api/audios/'+point.id+'/completeAndAddToPoint';
-            ajax.method = 'PUT';
-            ajax.body = {
-              audioId: this.currentAudioId,
-              appLanguage: this.language
-            };
-            ajax.addEventListener('response', function (event, detail) {
-              this._completeNewPointResponse(event, event.detail);
-              window.appGlobals.showSpeechToTextInfoIfNeeded();
-            }.bind(this));
-            ajax.generateRequest();
+          if (inDetail && inDetail.offlineSendLater) {
+            this.set('addPointDisabled', false);
+            this.set("textValueUp", "");
+            this.set("textValueDown", "");
+            this.set("textValueMobileUpOrDown", "");
           } else {
-            this._completeNewPointResponse(inEvent, inDetail);
+            if (this.currentVideoId) {
+              var point = this._preProcessPoints([inDetail.response])[0];
+              var ajax = document.createElement('iron-ajax');
+              ajax.handleAs = 'json';
+              ajax.contentType = 'application/json';
+              ajax.url = '/api/videos/'+point.id+'/completeAndAddToPoint';
+              ajax.method = 'PUT';
+              ajax.body = {
+                videoId: this.currentVideoId,
+                appLanguage: this.language
+              };
+              ajax.addEventListener('response', function (event, detail) {
+                this._completeNewPointResponse(event, event.detail);
+                window.appGlobals.showSpeechToTextInfoIfNeeded();
+              }.bind(this));
+              ajax.generateRequest();
+            } else if (this.currentAudioId) {
+              var point = this._preProcessPoints([inDetail.response])[0];
+              var ajax = document.createElement('iron-ajax');
+              ajax.handleAs = 'json';
+              ajax.contentType = 'application/json';
+              ajax.url = '/api/audios/'+point.id+'/completeAndAddToPoint';
+              ajax.method = 'PUT';
+              ajax.body = {
+                audioId: this.currentAudioId,
+                appLanguage: this.language
+              };
+              ajax.addEventListener('response', function (event, detail) {
+                this._completeNewPointResponse(event, event.detail);
+                window.appGlobals.showSpeechToTextInfoIfNeeded();
+              }.bind(this));
+              ajax.generateRequest();
+            } else {
+              this._completeNewPointResponse(inEvent, inDetail);
+            }
           }
         },
 
@@ -1641,8 +1644,8 @@
               content: content,
               value: value
             };
-            this.$.newPointAjax.generateRequest();
             this.set('addPointDisabled', true);
+            this.$.newPointAjax.generateRequest();
             if (videoId)
               this.set('currentVideoId', videoId);
             else if (audioId)

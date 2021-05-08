@@ -26,7 +26,7 @@ var fullUrl = function (req) {
   return formattedUrl;
 };
 
-var sendDomain = function sendDomainForBot(id, req, res) {
+var sendDomain = function sendDomainForBot(id, communitiesOffset, req, res) {
   models.Domain.findOne({
     where: { id: id },
     attributes: ['id', 'name', 'description'],
@@ -38,37 +38,56 @@ var sendDomain = function sendDomainForBot(id, req, res) {
         attributes: ['id','formats'],
         model: models.Image, as: 'DomainLogoImages',
         required: false
-      },
-      {
-        attributes: ['id','name'],
-        model: models.Community,
-        where: {
-          access: models.Community.ACCESS_PUBLIC
-        },
-        required: false
       }
     ]
   }).then(function(domain) {
     if (domain) {
-      log.info('Domain Viewed From Bot', { domainId: domain ? domain.id : -1, context: 'view', bot: true });
-      var imageUrl = '';
-      if (domain.DomainLogoImages && domain.DomainLogoImages.length>0) {
-        var formats = JSON.parse(domain.DomainLogoImages[0].formats);
-        imageUrl = formats[0];
-      }
-      var botOptions = {
-        url       : fullUrl(req),
-        title     :  domain.name,
-        descriptionText : domain.description,
-        imageUrl  : imageUrl,
-        subItemsUrlbase: "/community/",
-        subItemContainerName: "Communities",
-        backUrl: "",
-        backText: "",
-        subItemPoints: [],
-        subItemIds: _.dropRight(domain.Communities, domain.Communities.length>10000 ? domain.Communities.length - 10000 : 0)
-      };
-      res.render('bot', botOptions);
+      if (!communitiesOffset)
+        communitiesOffset = 0;
+      models.Community.findAndCountAll({
+        attributes: ['id','name'],
+        order: [ ['created_at', 'desc'] ],
+        where: {
+          access: models.Community.ACCESS_PUBLIC,
+          domain_id: domain.id
+        },
+        limit: 20,
+        offset: communitiesOffset
+      }).then( communitiesInfo => {
+        const communities = communitiesInfo.rows;
+        log.info('Domain Viewed From Bot', { domainId: domain ? domain.id : -1, context: 'view', bot: true });
+        var imageUrl = '';
+        if (domain.DomainLogoImages && domain.DomainLogoImages.length>0) {
+          var formats = JSON.parse(domain.DomainLogoImages[0].formats);
+          imageUrl = formats[0];
+        }
+
+        const communitiesLeft = communitiesInfo.count-(communitiesOffset+communities.length);
+        if (communitiesLeft>0) {
+          communitiesOffset+=20;
+        } else {
+          communitiesOffset = null;
+        }
+
+        var botOptions = {
+          url       : fullUrl(req),
+          title     :  domain.name,
+          descriptionText : domain.description,
+          imageUrl  : imageUrl,
+          subItemsUrlbase: "/community/",
+          subItemContainerName: "Communities",
+          backUrl: "/domain/"+domain.id,
+          backText: "Back to domain",
+          moreUrl: communitiesOffset ? "/domain/"+domain.id+"?communitiesOffset="+communitiesOffset : null,
+          moreText: "More communities ("+communitiesLeft+")",
+          subItemPoints: [],
+          subItemIds: communities
+        };
+        res.render('bot', botOptions);
+      }).catch( error => {
+        log.error('Domain Error for Bot', { err: error, context: 'view', bot: true });
+        res.sendStatus(500);
+      })
     } else {
       log.warn('Domain Not Found for Bot', { err: 'Not found', context: 'view', bot: true });
       res.sendStatus(404);
@@ -401,7 +420,14 @@ router.get('/*', function botController(req, res, next) {
     id = id.split("?")[0];
   }
 
+  let communitiesOffset = 0;
+
+  if (url.indexOf("communitiesOffset=")>-1) {
+    communitiesOffset = parseInt(url.split("communitiesOffset=")[1].trim());
+  }
+
   let postsOffset = 0;
+
   if (url.indexOf("postsOffset=")>-1) {
     postsOffset = parseInt(url.split("postsOffset=")[1].trim());
   }
@@ -413,25 +439,17 @@ router.get('/*', function botController(req, res, next) {
 
   if(!isNaN(id)) {
     if (splitUrl[splitPath]=='domain') {
-      sendDomain(id, req, res)
+      sendDomain(id, communitiesOffset, req, res)
     } else if (splitUrl[splitPath]=='community') {
       sendCommunity(id, req, res)
     } else if (splitUrl[splitPath]=='group') {
       sendGroup(id, postsOffset, req, res)
     } else if (splitUrl[splitPath]=='post') {
       sendPost(id, pointsOffset, req, res)
-    } else if (req.ypCommunity && req.ypCommunity.id != null) {
-      sendCommunity(req.ypCommunity.id, req, res);
-    } else if (req.ypDomain && req.ypDomain.id != null) {
-      sendDomain(req.ypDomain.id, req, res);
     } else {
       log.error("Cant find controller for nonSpa", { id, splitUrl });
       res.sendStatus(404);
     }
-  } else if (req.ypCommunity && req.ypCommunity.id != null) {
-    sendCommunity(req.ypCommunity.id, req, res)
-  } else if (req.ypDomain && req.ypDomain.id != null) {
-    sendDomain(req.ypDomain.id, req, res)
   } else {
     log.error("Id for nonSpa is not a number", { id: id });
     res.sendStatus(404);

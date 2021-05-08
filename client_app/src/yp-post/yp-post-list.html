@@ -14,6 +14,8 @@
 <link rel="import" href="../yp-ajax/yp-ajax.html">
 <link rel="import" href="../yp-post/yp-post-card.html">
 
+<link rel="import" href="yp-post-list-item.html">
+
 <link rel="import" href="../yp-posts-filter/yp-posts-filter.html">
 
 <dom-module id="yp-post-list">
@@ -146,8 +148,14 @@
         padding-top: 8px;
       }
 
+
       .card[wide-padding] {
         padding: 16px !important;
+      }
+
+      .card[desktop-list] {
+        padding: 0 !important;
+        padding-top: 16px !important;
       }
 
       #searchInput {
@@ -169,6 +177,10 @@
 
       a {
         text-decoration: none;
+      }
+
+      .card[is-last-item] {
+        padding-bottom: 128px;
       }
     </style>
 
@@ -203,10 +215,15 @@
       </template>
 
       <div class="layout horizontal center-center">
-        <iron-list id="ironList" selection-enabled scroll-offset="[[scrollOffset]]" on-selected-item-changed="_selectedItemChanged" items="[[posts]]" as="post" scroll-target="document" grid$="[[wide]]" role="list">
+        <iron-list id="ironList" selection-enabled scroll-offset="[[scrollOffset]]" on-selected-item-changed="_selectedItemChanged" items="[[posts]]" as="post" scroll-target="document" grid$="[[wideNotListFormat]]" role="list">
           <template>
-            <div wide-padding$="[[wide]]" class="card layout vertical center-center" aria-label="[[post.name]]" role="listitem" aria-level="2" tabindex$="[[tabIndex]]">
-              <yp-post-card id="postCard[[post.id]]" on-refresh="_refreshPost" class="card" post="[[post]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-post-card>
+            <div wide-padding$="[[wide]]" desktop-list$="[[desktopListFormat]]" class="card layout vertical center-center" is-last-item$="[[_isLastItem(index)]]" aria-label="[[post.name]]" role="listitem" aria-level="2" tabindex$="[[tabIndex]]">
+              <template is="dom-if" if="[[!desktopListFormat]]">
+                <yp-post-card id="postCard[[post.id]]" on-refresh="_refreshPost" class="card" post="[[post]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-post-card>
+              </template>
+              <template is="dom-if" if="[[desktopListFormat]]">
+                <yp-post-list-item id="postCard[[post.id]]" on-refresh="_refreshPost" class="card" post="[[post]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-post-list-item>
+              </template>
             </div>
           </template>
         </iron-list>
@@ -351,7 +368,29 @@
         scrollOffset: {
           type: Number,
           computed: '_scrollOffset(wide, group, selectedTab)'
+        },
+
+        desktopListFormat: {
+          type: Boolean,
+          computed: '_desktopListFormat(wide, group, posts)'
+        },
+
+        wideNotListFormat: {
+          type: Boolean,
+          computed: '_wideNotListFormat(wide, desktopListFormat, group, posts)'
         }
+      },
+
+      _isLastItem: function(index) {
+        return (this.posts && index>=this.posts.length-1);
+      },
+
+      _wideNotListFormat: function (wide, desktopListFormat) {
+        return (wide && !desktopListFormat)===true;
+      },
+
+      _desktopListFormat: function (wide, group, posts) {
+        return (wide && group && group.configuration && group.configuration.usePostListFormatOnDesktop)===true;
       },
 
       _selectedItemChanged: function (event, detail) {
@@ -485,7 +524,7 @@
       scrollToPost: function (post) {
         if (post && this.posts) {
           console.info("Scrolling to post: "+post.id);
-          this.$.ironList.scrollToItem(post);
+          this.$$("#ironList").scrollToItem(post);
           document.dispatchEvent(
             new CustomEvent("lite-signal", {
               bubbles: true,
@@ -509,6 +548,15 @@
         this.set('randomSeed', Math.random());
         if (group) {
           this.set('moreToLoad', true);
+
+          if (window.appGlobals.originalQueryParameters &&
+            window.appGlobals.originalQueryParameters['categoryId']) {
+            this.set('categoryId', window.appGlobals.originalQueryParameters['categoryId']);
+            window.appGlobals.originalQueryParameters['categoryId'] = undefined;
+          } else {
+            this.set('categoryId', null);
+          }
+
           if (group.configuration && group.configuration.forcePostSortMethodAs && allowedForceByValues.indexOf(group.configuration.forcePostSortMethodAs) > -1) {
             this.set('filter', group.configuration.forcePostSortMethodAs);
           } else {
@@ -562,7 +610,8 @@
             this.$$('#ajax').url += '/'+this.statusFilter;
           }
           this.$$('#ajax').url += "?offset="+(this.posts!=null ? this.posts.length : 0);
-          if (this.randomSeed) {
+
+          if (this.filter=="random" && this.randomSeed) {
             this.$$('#ajax').url += "&randomSeed="+this.randomSeed;
           }
           this.$$('#ajax').generateRequest();
@@ -586,7 +635,9 @@
         }
 
         if (posts.length==0 && (this.posts==null || this.posts.length==0)) {
-          this.set('noPosts', true);
+          this.async(function () {
+            this.set('noPosts', true);
+          }, 250);
         }
 
         if (posts.length>0) {

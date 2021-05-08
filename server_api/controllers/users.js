@@ -11,6 +11,8 @@ var _ = require('lodash');
 var queue = require('../active-citizen/workers/queue');
 const url = require('url');
 
+const randomstring = require('randomstring');
+
 var getAllModeratedItemsByUser = require('../active-citizen/engine/moderation/get_moderation_items').getAllModeratedItemsByUser;
 const performSingleModerationAction = require('../active-citizen/engine/moderation/process_moderation_items').performSingleModerationAction;
 
@@ -29,18 +31,27 @@ var sendUserOrError = function (res, user, context, error, errorStatus) {
       res.status(500).send({ message: error.name });
     }
   } else {
+    delete user.dataValues.encrypted_password;
     res.send(user);
   }
 };
 
-var getUserWithAll = function (userId, callback) {
+var getUserWithAll = function (userId, getPrivateProfileData, callback) {
   var user, endorsements, ratings, pointQualities;
+
+  //TODO: Optimize this and get those items above more on demand
+
+  let attributes =  _.concat(models.User.defaultAttributesWithSocialMediaPublic, ['notifications_settings','profile_data','email','ssn','default_locale']);
+
+  if (getPrivateProfileData) {
+    attributes = _.concat(attributes, ['private_profile_data']);
+  }
 
   async.parallel([
     function (seriesCallback) {
       models.User.findOne({
         where: {id: userId},
-        attributes: _.concat(models.User.defaultAttributesWithSocialMediaPublic, ['notifications_settings','profile_data','email','ssn','default_locale']),
+        attributes,
         order: [
           [ { model: models.Image, as: 'UserProfileImages' } , 'created_at', 'asc' ],
           [ { model: models.Image, as: 'UserHeaderImages' } , 'created_at', 'asc' ]
@@ -67,7 +78,13 @@ var getUserWithAll = function (userId, callback) {
     function (seriesCallback) {
       models.Endorsement.findAll({
         where: {user_id: userId},
-        attributes: ['id', 'value', 'post_id']
+        attributes: ['id', 'value', 'post_id'],
+        include: [
+          {
+            model: models.Post,
+            attributes: ['group_id']
+          }
+        ]
       }).then(function(endorsementsIn) {
         endorsements = endorsementsIn;
         seriesCallback();
@@ -112,11 +129,11 @@ var getUserWithAll = function (userId, callback) {
 // Login
 router.post('/login', function (req, res) {
   const startTime = new Date();
-  log.info('User Login start', { elapsedTime: (new Date()-startTime), context: 'view', userId: req.user ? req.user.id : null});
+  log.info('User Login start', { elapsedTime: (new Date()-startTime), userId: req.user ? req.user.id : null});
   req.sso.authenticate('local-strategy', {}, req, res, function(err, user) {
-    log.info('User Login before get', { elapsedTime: (new Date()-startTime), context: 'view', userId: req.user ? req.user.id : null});
-    getUserWithAll(req.user.id, function (error, user) {
-      log.info('User Login completed', { elapsedTime: (new Date()-startTime), context: 'view', userId: req.user ? req.user.id : null});
+    log.info('User Login before get', { elapsedTime: (new Date()-startTime), userId: req.user ? req.user.id : null});
+    getUserWithAll(req.user.id, true,function (error, user) {
+      log.info('User Login completed', { elapsedTime: (new Date()-startTime), userId: req.user ? req.user.id : null});
       if (error || !user) {
         log.error("User Login Error", {context: 'login', user: user ? user.id : null, err: error, errorStatus: 500});
         res.sendStatus(500);
@@ -126,11 +143,45 @@ router.post('/login', function (req, res) {
         } else {
           user.missingEmail = true;
         }
+
+        if (user.private_profile_data && user.private_profile_data.registration_answers) {
+          user.dataValues.hasRegistrationAnswers = true;
+        } else {
+          user.dataValues.hasRegistrationAnswers = false;
+        }
+
+        delete user.private_profile_data;
+
         res.send(user)
       }
     });
   });
 });
+
+router.put('/setRegistrationAnswers',  auth.isLoggedIn, (req, res) => {
+  getUserWithAll(req.user.id, true,function (error, user) {
+    if (error) {
+      log.error("Error in setRegistrationAnswers", { error });
+      res.sendStatus(500);
+    } else {
+      setUserProfileData(user, req.body.registration_answers);
+      user.save().then(()=>{
+        log.info("Have set registration questions");
+        res.sendStatus(200);
+      }).catch(error=>{
+        log.error("Error in setRegistrationAnswers", { error });
+        res.sendStatus(500);
+      })
+    }
+  });
+});
+
+const setUserProfileData = (user, profileData) => {
+  if (!user.private_profile_data) {
+    user.set('private_profile_data', {});
+  }
+  user.set('private_profile_data.registration_answers',profileData);
+}
 
 // Register
 router.post('/register', function (req, res) {
@@ -140,7 +191,16 @@ router.post('/register', function (req, res) {
     notifications_settings: models.AcNotification.defaultNotificationSettings,
     status: 'active'
   });
+
   user.createPasswordHash(req.body.password);
+
+  if (req.body.registration_answers) {
+    setUserProfileData(user, req.body.registration_answers);
+    user.dataValues.hasRegistrationAnswers = true;
+  } else {
+    user.dataValues.hasRegistrationAnswers = false;
+  }
+
   user.save().then(function () {
     log.info('User Created', { user: toJson(user), context: 'create', loggedInUser: toJson(req.user) });
     req.logIn(user, function (error, detail) {
@@ -195,6 +255,11 @@ router.post('/register_anonymously', function (req, res) {
           user.set('profile_data', {});
           user.set('profile_data.isAnonymousUser', true);
           user.set('profile_data.trackingParameters', req.body.trackingParameters);
+
+          if (req.body.registration_answers) {
+            setUserProfileData(user, req.body.registration_answers);
+          }
+
           user.save().then(function () {
             log.info('User Created Anonymous', { user: toJson(user), context: 'register_anonymous' });
             req.logIn(user, function (error, detail) {
@@ -396,6 +461,108 @@ router.get('/loggedInUser/adminRights', function (req, res) {
         models.User.findOne({
           where: {id: req.user.id},
           attributes: ['id'],
+          include: [
+            {
+              model: models.Domain,
+              as: 'DomainAdmins',
+              attributes: ['id'],
+              required: false
+            }
+          ]
+        }).then(function(user) {
+          adminAccess.DomainAdmins = user.DomainAdmins;
+          seriesCallback()
+        }).catch(function(error) {
+          seriesCallback(error);
+        });
+      },
+      function (seriesCallback) {
+        models.User.findOne({
+          where: {id: req.user.id},
+          attributes: ['id'],
+          include: [
+            {
+              model: models.Community,
+              as: 'CommunityAdmins',
+              attributes: ['id'],
+              required: false
+            }
+          ]
+        }).then(function(user) {
+          adminAccess.CommunityAdmins = user.CommunityAdmins;
+          seriesCallback()
+        }).catch(function(error) {
+          seriesCallback(error);
+        });
+      },
+      function (seriesCallback) {
+        models.User.findOne({
+          where: {id: req.user.id},
+          attributes: ['id'],
+          include: [
+            {
+              model: models.Group,
+              as: 'GroupAdmins',
+              attributes: ['id'],
+              required: false
+            }
+          ]
+        }).then(function(user) {
+          adminAccess.GroupAdmins = user.GroupAdmins;
+          seriesCallback()
+        }).catch(function(error) {
+          seriesCallback(error);
+        });
+      },
+      function (seriesCallback) {
+        models.User.findOne({
+          where: {id: req.user.id},
+          attributes: ['id'],
+          include: [
+            {
+              model: models.Organization,
+              as: 'OrganizationAdmins',
+              attributes: ['id','name'],
+              required: false
+            }
+          ]
+        }).then(function(user) {
+          adminAccess.OrganizationAdmins = user.OrganizationAdmins;
+          seriesCallback()
+        }).catch(function(error) {
+          seriesCallback(error);
+        });
+      }
+    ], function (error) {
+      if (!error) {
+        log.info('User Sent Admin Rights', { userId: req.user ? req.user.id : -1, context: 'adminRights'});
+        if (adminAccess.OrganizationAdmins.length===0 &&
+            adminAccess.GroupAdmins.length===0 &&
+            adminAccess.CommunityAdmins.length===0 &&
+            adminAccess.DomainAdmins.length===0) {
+          res.send('0');
+        } else {
+          res.send(adminAccess);
+        }
+      } else {
+        log.error("User AdminRights Error", { context: 'adminRights', err: error, errorStatus: 500 });
+        res.sendStatus(500);
+      }
+    });
+  } else {
+    log.info('Not Logged in', { context: 'adminRights'});
+    res.send('0');
+  }
+});
+
+router.get('/loggedInUser/adminRightsWithNames', function (req, res) {
+  if (req.isAuthenticated() && req.user) {
+    var adminAccess = {};
+    async.parallel([
+      function (seriesCallback) {
+        models.User.findOne({
+          where: {id: req.user.id},
+          attributes: ['id'],
           order: [
             [ { model: models.Domain, as: 'DomainAdmins' } , 'updated_at', 'desc' ]
           ],
@@ -430,7 +597,7 @@ router.get('/loggedInUser/adminRights', function (req, res) {
             }
           ]
         }).then(function(user) {
-          adminAccess.CommunityAdmins = user.CommunityAdmins;
+          adminAccess.CommunityAdmins = _.take(user.CommunityAdmins, req.query.getAll ? 1000000 : 500);
           seriesCallback()
         }).catch(function(error) {
           seriesCallback(error);
@@ -459,7 +626,7 @@ router.get('/loggedInUser/adminRights', function (req, res) {
             }
           ]
         }).then(function(user) {
-          adminAccess.GroupAdmins = user.GroupAdmins;
+          adminAccess.GroupAdmins = _.take(user.GroupAdmins, req.query.getAll ? 1000000 : 500);
           seriesCallback()
         }).catch(function(error) {
           seriesCallback(error);
@@ -491,9 +658,9 @@ router.get('/loggedInUser/adminRights', function (req, res) {
       if (!error) {
         log.info('User Sent Admin Rights', { userId: req.user ? req.user.id : -1, context: 'adminRights'});
         if (adminAccess.OrganizationAdmins.length===0 &&
-            adminAccess.GroupAdmins.length===0 &&
-            adminAccess.CommunityAdmins.length===0 &&
-            adminAccess.DomainAdmins.length===0) {
+          adminAccess.GroupAdmins.length===0 &&
+          adminAccess.CommunityAdmins.length===0 &&
+          adminAccess.DomainAdmins.length===0) {
           res.send('0');
         } else {
           res.send(adminAccess);
@@ -504,12 +671,107 @@ router.get('/loggedInUser/adminRights', function (req, res) {
       }
     });
   } else {
-    log.info('User Not Logged in', { context: 'adminRights'});
+    log.info('Not Logged in', { context: 'adminRights'});
     res.send('0');
   }
 });
 
 router.get('/loggedInUser/memberships', function (req, res) {
+  if (req.isAuthenticated() && req.user) {
+    var memberships = {};
+    async.parallel([
+      function (seriesCallback) {
+        models.User.findOne({
+          where: {id: req.user.id},
+          attributes: ['id'],
+          include: [
+            {
+              model: models.Domain,
+              as: 'DomainUsers',
+              attributes: ['id'],
+              required: false
+            }
+          ]
+        }).then(function(user) {
+          memberships.DomainUsers = user.DomainUsers;
+          seriesCallback()
+        }).catch(function(error) {
+          seriesCallback(error);
+        });
+      },
+      function (seriesCallback) {
+        models.User.findOne({
+          where: {id: req.user.id},
+          attributes: ['id'],
+          include: [
+            {
+              model: models.Community,
+              as: 'CommunityUsers',
+              attributes: ['id'],
+              required: false
+            }
+          ]
+        }).then(function(user) {
+          memberships.CommunityUsers = user.CommunityUsers;
+          seriesCallback()
+        }).catch(function(error) {
+          seriesCallback(error);
+        });
+      },
+      function (seriesCallback) {
+        models.User.findOne({
+          where: {id: req.user.id},
+          attributes: ['id'],
+          include: [
+            {
+              model: models.Group,
+              as: 'GroupUsers',
+              attributes: ['id'],
+              required: false
+            }
+          ]
+        }).then(function(user) {
+          memberships.GroupUsers = user.GroupUsers;
+          seriesCallback()
+        }).catch(function(error) {
+          seriesCallback(error);
+        });
+      },
+      function (seriesCallback) {
+        models.User.findOne({
+          where: {id: req.user.id},
+          attributes: ['id'],
+          include: [
+            {
+              model: models.Organization,
+              as: 'OrganizationUsers',
+              attributes: ['id'],
+              required: false
+            }
+          ]
+        }).then(function(user) {
+          memberships.OrganizationUsers = user.OrganizationUsers;
+          seriesCallback()
+        }).catch(function(error) {
+          seriesCallback(error);
+        });
+      }
+    ], function (error) {
+      if (!error) {
+        log.info('User Sent Memberships', { userId: req.user ? req.user.id : -1, context: 'memberships'});
+        res.send(memberships);
+      } else {
+        log.error("User Memberships Error", { context: 'memberships', err: error, errorStatus: 500 });
+        res.sendStatus(500);
+      }
+    });
+  } else {
+    log.info('Not Logged in', { context: 'memberships'});
+    res.send('0');
+  }
+});
+
+router.get('/loggedInUser/membershipsWithNames', function (req, res) {
   if (req.isAuthenticated() && req.user) {
     var memberships = {};
     async.parallel([
@@ -615,14 +877,14 @@ router.get('/loggedInUser/memberships', function (req, res) {
       }
     });
   } else {
-    log.info('User Not Logged in', { user: toJson(req.user), context: 'memberships'});
+    log.info('Not Logged in', { context: 'memberships'});
     res.send('0');
   }
 });
 
 router.put('/loggedInUser/setLocale', function (req, res) {
   if (req.isAuthenticated() && req.user) {
-    getUserWithAll(req.user.id, function (error, user) {
+    getUserWithAll(req.user.id, false,function (error, user) {
       if (error || !user) {
         log.error("User setLocale Error", { context: 'setLocale', user: req.user.id, err: error, errorStatus: 500 });
         res.sendStatus(500);
@@ -692,8 +954,10 @@ const setSAMLSettingsOnUser = (req, user, done) => {
             }
           ]
         }).then((groupIn) => {
-          group = groupIn;
-          community = groupIn.Community;
+          if (groupIn) {
+            group = groupIn;
+            community = groupIn.Community;
+          }
           parallelCallback();
         }).catch((error)=> {
           parallelCallback(error);
@@ -796,12 +1060,12 @@ const setSAMLSettingsOnUser = (req, user, done) => {
 
 router.get('/loggedInUser/isloggedin', function (req, res) {
   if (req.isAuthenticated()) {
-    log.info('User Logged in', { userId: req.user ? req.user.id : -1, context: 'isLoggedIn'});
+    log.info('Logged in', { userId: req.user ? req.user.id : -1, context: 'isLoggedIn'});
   } else {
-    log.info('User Not Logged in', { user: toJson(req.user), context: 'isLoggedIn'});
+    log.info('Not Logged in');
   }
   if (req.isAuthenticated() && req.user) {
-    getUserWithAll(req.user.id, function (error, user) {
+    getUserWithAll(req.user.id, true,function (error, user) {
       if (error || !user) {
         log.error("User IsLoggedIn Error 1", { context: 'isloggedin', user: req.user.id, err: error, errorStatus: 500 });
         res.sendStatus(500);
@@ -811,6 +1075,14 @@ router.get('/loggedInUser/isloggedin', function (req, res) {
         } else {
           user.dataValues.missingEmail = true;
         }
+
+        if (user.private_profile_data && user.private_profile_data.registration_answers) {
+          user.dataValues.hasRegistrationAnswers = true;
+        } else {
+          user.dataValues.hasRegistrationAnswers = false;
+        }
+
+        delete user.private_profile_data;
 
         if (req.user.loginProvider)
           user.dataValues.loginProvider = req.user.loginProvider;
@@ -1029,7 +1301,7 @@ router.get('/reset/:token', function(req, res) {
     }).then(function (user) {
       if (user) {
         log.info('Get User For Reset Password Token', { user: toJson(user), context: 'getUserToken', loggedInUser: toJson(req.user), errorStatus: 401 });
-        getUserWithAll(user.id, function (error, user) {
+        getUserWithAll(user.id, false,function (error, user) {
           if (error || !user) {
             log.error("User Error", { context: 'reset_password_expires', user: req.user.id, err: error, errorStatus: 500 });
             res.sendStatus(500);
@@ -1137,7 +1409,7 @@ router.post('/reset/:token', function(req, res) {
       }
     } else {
       log.info('User Reset Password Completed', { user: req.user, context: 'useResetToken', loggedInUser: toJson(req.user) });
-      getUserWithAll(req.user.id, function (error, user) {
+      getUserWithAll(req.user.id, false,function (error, user) {
         if (error || !user) {
           log.error("User Error", { context: 'useResetToken', user: req.user.id, err: error, errorStatus: 500 });
           res.sendStatus(500);
@@ -1334,6 +1606,80 @@ router.delete('/disconnectSamlLogin', auth.isLoggedIn, function(req, res, next) 
     res.sendStatus(500);
   });
 });
+
+const completeCreationOfApiKey = (user, apiKey, res) => {
+  user.set('private_profile_data.apiKey', apiKey);
+  user.save().then(()=>{
+    log.info("ApiKey created for user", { userId: user.id });
+    res.send({ apiKey: user.private_profile_data.apiKey })
+  }).catch(error=>{
+    log.error("Error in createApiKey", { err: error });
+    res.sendStatus(500);
+  })
+}
+
+router.post('/createApiKey', auth.isLoggedIn, function(req, res, next) {
+  models.User.findOne({
+    where: {
+      id: req.user.id
+    }}).then( function (user) {
+    if (user) {
+      if (!user.private_profile_data) {
+        user.set('private_profile_data', {});
+      }
+
+      if (!user.profile_data) {
+        user.set('profile_data', {});
+      }
+
+      user.set('profile_data.hasApiKey', true);
+
+      let apiKey = randomstring.generate(48);
+
+      models.User.findOne({
+        where: {
+          private_profile_data: {
+            apiKey: apiKey
+          }
+        },
+        attributes: ['id']
+      }).then(findUser=>{
+        if (!findUser) {
+          completeCreationOfApiKey(user, apiKey, res);
+        } else {
+          apiKey = randomstring.generate(48);
+          models.User.findOne({
+            where: {
+              private_profile_data: {
+                apiKey: apiKey
+              }
+            },
+            attributes: ['id']
+          }).then(findUserTwo=>{
+            if (!findUserTwo) {
+              completeCreationOfApiKey(user, apiKey, res);
+            } else {
+              log.error("Can't create unique createApiKey", {});
+              res.sendStatus(500);
+            }
+          }).catch(error=>{
+            log.error("Error in createApiKey", { err: error });
+            res.sendStatus(500);
+          })
+        }
+      }).catch(error=>{
+        log.error("Error in createApiKey", { err: error });
+        res.sendStatus(500);
+      })
+    } else {
+      res.sendStatus(404);
+    }
+  }).catch(function (error) {
+    log.error("Error in disconnect from Saml", { err: error });
+    res.sendStatus(500);
+  });
+});
+
 
 router.put('/missingEmail/linkAccounts', auth.isLoggedIn, function(req, res, next) {
   log.info("User Serialized Link 1", {loginProvider: req.user.loginProvider});

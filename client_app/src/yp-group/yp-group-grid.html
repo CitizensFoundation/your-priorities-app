@@ -101,6 +101,8 @@
       _getGroupUrl: function (group) {
         if (group && group.configuration && group.configuration.actAsLinkToCommunityId) {
           return "/community/"+group.configuration.actAsLinkToCommunityId;
+        } else if (group && group.configuration && group.configuration.isDataVisualizationGroup && group.configuration.dataForVisualizationJson) {
+          return "/group_data_viz/"+group.id;
         } else {
          return "/group/"+group.id;
         }

@@ -5,6 +5,7 @@
 <link rel="import" href="../yp-ajax/yp-ajax-error-dialog.html">
 <link rel="import" href="../yp-user/yp-login.html">
 <link rel="import" href="../yp-user/yp-missing-email.html">
+<link rel="import" href="../yp-user/yp-registration-questions-dialog.html">
 <link rel="import" href="../yp-user/yp-forgot-password.html">
 <link rel="import" href="../yp-user/yp-reset-password.html">
 <link rel="import" href="../yp-page/yp-page-dialog.html">
@@ -72,6 +73,10 @@
       </paper-toast>
     </template>
 
+    <template is="dom-if" if="[[apiActionDialogOpen]]" restamp>
+      <yp-api-action-dialog id="apiActionDialog" on-close="_closeActionDialog"></yp-api-action-dialog>
+    </template>
+
     <div id="dialogs" hide$="[[hideDialogs]]">
       <paper-toast id="masterToast"></paper-toast>
       <yp-ajax-error-dialog id="errorDialog"></yp-ajax-error-dialog>
@@ -117,6 +122,10 @@
           <yp-missing-email id="missingEmail"></yp-missing-email>
         </template>
 
+        <template is="dom-if" name="registrationQuestions" restamp>
+          <yp-registration-questions-dialog id="registrationQuestions"></yp-registration-questions-dialog>
+        </template>
+
         <template is="dom-if" name="communityEdit" restamp>
           <yp-community-edit id="communityEdit"></yp-community-edit>
         </template>
@@ -131,10 +140,6 @@
 
         <template is="dom-if" name="userImageEdit" restamp>
           <yp-post-user-image-edit id="userImageEdit"></yp-post-user-image-edit>
-        </template>
-
-        <template is="dom-if" name="apiActionDialog" restamp>
-          <yp-api-action-dialog id="apiActionDialog"></yp-api-action-dialog>
         </template>
 
         <template is="dom-if" name="userEdit" restamp>
@@ -242,6 +247,11 @@
           value: false
         },
 
+        haveLoadedDataViz: {
+          type: Boolean,
+          value: false
+        },
+
         loadingStartedLoggedIn: {
           type: Boolean,
           value: false
@@ -302,6 +312,11 @@
           value: false
         },
 
+        apiActionDialogOpen: {
+          type: Boolean,
+          value: false
+        },
+
         autoTranslateDialogOpen: {
           type: Boolean,
           value: false
@@ -316,6 +331,18 @@
             this.set('haveLoadedDelayed', true)
           }, null, true);
         }, 3000);
+      },
+
+      _closeActionDialog: function () {
+        this.set('apiActionDialogOpen', false);
+      },
+
+      loadDataViz: function () {
+        if (!this.haveLoadedDataViz) {
+          this.haveLoadedDataViz = true;
+          this.importHref(this.resolveUrl("/src/yp-dialog-container/yp-dialog-container-data-viz.html"), function () {
+          }, null, true);
+        }
       },
 
       openPixelCookieConfirm: function (facebookPixelTrackingId) {
@@ -493,6 +520,8 @@
           this.set('confirmationDialogOpen', true);
         } else if (idName==="autoTranslateDialog") {
           this.set('autoTranslateDialogOpen', true);
+        }else if (idName==="apiActionDialog") {
+          this.set('apiActionDialogOpen', true);
         } else if (idName==="magicTextDialog") {
           this.set('magicTextDialogOpen', true);
         } else if (idName!=='notificationToast' && idName!=='masterToast') {

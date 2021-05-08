@@ -39,14 +39,17 @@ const attachEmptyGroupIfNeeded = (sequelize, options, callback) => {
     (options.domain_id || (options.community_id && options.communityAccess == sequelize.models.Community.ACCESS_PUBLIC))) {
     sequelize.models.Group.findOrCreate({where: { name: 'hidden_public_group_for_domain_level_points' },
       defaults: { access: sequelize.models.Group.ACCESS_PUBLIC }})
-      .spread((group, created) => {
+      .then( results => {
+        const [ group, created ] = results;
         if (group) {
           options.group_id = group.id;
           callback(null, options);
         } else {
           callback("Can't create hidden public group for domain level points");
         }
-      });
+      }).catch( error=> {
+        callback(error);
+    });
   } else {
     callback(null, options);
   }
@@ -417,7 +420,9 @@ module.exports = (sequelize, DataTypes) => {
         const pointRevision = sequelize.models.PointRevision.build(options);
         pointRevision.save().then(() => {
           log.info("process-moderation point toxicity on news story");
-          queue.create('process-moderation', { type: 'estimate-point-toxicity', pointId: point.id }).priority('high').removeOnComplete(true).save();
+          if (!options.subType || options.subType!="bulkOperation") {
+            queue.create('process-moderation', { type: 'estimate-point-toxicity', pointId: point.id }).priority('high').removeOnComplete(true).save();
+          }
           sequelize.models.AcActivity.createActivity({
             type: 'activity.point.newsStory.new',
             userId: options.user_id,

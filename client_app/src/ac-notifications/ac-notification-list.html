@@ -298,7 +298,12 @@
 
       _newNotificationsError: function (event, detail) {
         console.error("Error in getting new notifications");
-        this.cancelTimer();
+
+        if (navigator.onLine) {
+          this.cancelTimer();
+        } else {
+          this._startTimer();
+        }
 
         if (detail && detail.status && detail.status==401) {
           window.appUser.checkLogin();
@@ -321,6 +326,7 @@
       },
 
       cancelTimer: function () {
+        //debugger;
         if (this.timer) {
           clearTimeout(this.timer);
           this.set('timer', null);
@@ -423,6 +429,8 @@
         this._handleUnViewedCount(detail.response.unViewedCount);
         if (this.$$("#list"))
           this.$$("#list").fire("iron-resize");
+
+       //debugger;
 
         if (this.lastFetchStartedAt) {
           var duration = Date.now() - this.lastFetchStartedAt;

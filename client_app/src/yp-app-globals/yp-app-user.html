@@ -105,6 +105,11 @@
             type: Object
           },
 
+          groupCurrentVoteCountIndex: {
+            type: Object,
+            value: {}
+          },
+
           ratingPostsIndex: {
             type: Object
           },
@@ -244,6 +249,10 @@
               window.location = window.appGlobals.originalQueryParameters['raLogin'];
             }
           });
+
+          this.async(function () {
+            this._checkRegistrationAnswers(user);
+          }, 750);
         },
 
         _checkLoginForParameters: function () {
@@ -341,6 +350,8 @@
           } else {
             window.appGlobals.setAnonymousUser(null);
           }
+
+          window.appGlobals.checkContentToSendForLoggedInUser();
         },
 
         removeAnonymousUser: function () {
@@ -402,6 +413,8 @@
           } else {
             console.log("Not checking login in survey mode");
           }
+
+          this.groupCurrentVoteCountIndex = {};
         },
 
         cancelLoginPolling: function () {
@@ -484,11 +497,11 @@
         },
 
         checkLogin: function () {
-          this.$.isLoggedInAjax.url = "/api/users/loggedInUser/isloggedin" + "?" + (new Date()).getTime();
+          this.$.isLoggedInAjax.url = "/api/users/loggedInUser/isloggedin";
           this.$.isLoggedInAjax.generateRequest();
-          this.$.adminRightsAjax.url = "/api/users/loggedInUser/adminRights" + "?" + (new Date()).getTime();
+          this.$.adminRightsAjax.url = "/api/users/loggedInUser/adminRights";
           this.$.adminRightsAjax.generateRequest();
-          this.$.membershipsAjax.url = "/api/users/loggedInUser/memberships" + "?" + (new Date()).getTime();
+          this.$.membershipsAjax.url = "/api/users/loggedInUser/memberships";
           this.$.membershipsAjax.generateRequest();
         },
 
@@ -496,7 +509,7 @@
           this.$.adminRightsAjax.generateRequest();
         },
 
-        updateEndorsementForPost: function (postId, newEndorsement) {
+        updateEndorsementForPost: function (postId, newEndorsement, group) {
           if (!this.user.Endorsements) {
             this.user.Endorsements = [];
           }
@@ -512,9 +525,78 @@
               break;
             }
           }
+
           if (!hasChanged && newEndorsement)
             this.user.Endorsements.push(newEndorsement);
+
           this._updateEndorsementPostsIndex(this.user);
+
+          if (group && group.configuration && group.configuration.maxNumberOfGroupVotes) {
+            this.calculateVotesLeftForGroup(group, newEndorsement);
+          } else {
+            document.dispatchEvent(
+              new CustomEvent("lite-signal", {
+                bubbles: true,
+                compose: true,
+                detail: {
+                  name: 'got-endorsements-and-qualities'
+                }
+              }));
+          }
+        },
+
+        calculateVotesLeftForGroup:  function (group, newEndorsement) {
+          if (this.user && this.user.Endorsements) {
+            this.async(function () {
+              var lastVoteCount = this.groupCurrentVoteCountIndex[group.id];
+              this.groupCurrentVoteCountIndex[group.id] = this.user.Endorsements.filter(function (endorsement) {
+                return endorsement.Post.group_id === group.id && endorsement.value !== -1 && endorsement.value !== 0
+              }).length;
+
+              if (lastVoteCount!=this.groupCurrentVoteCountIndex[group.id]) {
+                var newVote = "";
+                if (newEndorsement && newEndorsement.value==1) {
+                  newVote = `${this.t('voteReceived')}. `
+                }
+                var text = `${newVote}${this.t('youHaveUsed')} ${this.groupCurrentVoteCountIndex[group.id]} ${this.t('ofNumber')} ${group.configuration.maxNumberOfGroupVotes} ${this.t('votesForGroup')}`;
+
+                var endorsementButtons = group.configuration.endorsementButtons ?
+                       group.configuration.endorsementButtons : "hearts";
+
+                var icon;
+
+                if (endorsementButtons=='thumbs') {
+                  icon = 'thumb-up';
+                }  else if (endorsementButtons=='hearts') {
+                  icon = 'favorite-border';
+                } else if (endorsementButtons=='hats') {
+                  icon = 'keyboard-arrow-up';
+                } else if (endorsementButtons=='arrows') {
+                  icon = 'arrow-upward';
+                }
+
+                Polymer.dom(document).querySelector('yp-app').getDialogAsync("notificationToast", function (dialog) {
+                  dialog.open(null, text, null, icon, 4000, true);
+                }.bind(this));
+              }
+
+              document.dispatchEvent(
+                new CustomEvent("lite-signal", {
+                  bubbles: true,
+                  compose: true,
+                  detail: {
+                    name: 'got-endorsements-and-qualities',
+                    data: {
+                      maxGroupId: group.id,
+                      groupCurrentVoteCount: this.groupCurrentVoteCountIndex[group.id],
+                    }
+                  }
+                })
+              );
+            });
+          } else {
+            console.warn("No user or endorsements for calculateVotesLeftForGroup");
+          }
         },
 
         _updateEndorsementPostsIndex: function (user) {
@@ -578,7 +660,7 @@
               }
             }
             if (hasChanged)
-              this._updateEndorsementPostsIndex(this.user);
+              this._updatePointQualitiesIndex(this.user);
           }
         },
 
@@ -617,6 +699,18 @@
           this.recheckAdminRights();
         },
 
+        _checkRegistrationAnswers: function (user) {
+          if (user &&
+            !user.notLoggedIn &&
+            window.appGlobals.registrationQuestionsGroup &&
+            !user.hasRegistrationAnswers &&
+            !window.appGlobals.currentAnonymousUser) {
+            Polymer.dom(document).querySelector('yp-app').getDialogAsync("registrationQuestions", function (dialog) {
+              dialog.open(window.appGlobals.registrationQuestionsGroup);
+            }.bind(this));
+          }
+        },
+
         _isLoggedInResponse: function(event, detail) {
           var user = detail.response;
 
@@ -647,6 +741,10 @@
               dialog.open(user.loginProvider, true, user.email);
             }.bind(this));
           }
+
+          this.async(function () {
+            this._checkRegistrationAnswers(user);
+          }, 1500)
 
           if (user) {
             if (user.customSamlDeniedMessage) {

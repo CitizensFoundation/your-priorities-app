@@ -3,6 +3,7 @@
 const async = require("async");
 const queue = require('../active-citizen/workers/queue');
 const log = require('../utils/logger');
+const _ = require('lodash');
 
 module.exports = (sequelize, DataTypes) => {
   const Post = sequelize.define("Post", {
@@ -236,18 +237,20 @@ module.exports = (sequelize, DataTypes) => {
         sequelize
           .query('ALTER TABLE "' + sequelize.models.Post.tableName + '" ADD COLUMN "' + vectorName + '" TSVECTOR')
           .then(() => {
+            console.log("addFullTextIndex: 1");
             return sequelize
               .query('UPDATE "' + sequelize.models.Post.tableName + '" SET "' + vectorName + '" = to_tsvector(\'english\', ' + searchFields.join(' || \' \' || ') + ')')
-              .error(console.log);
           }).then(() => {
-          return sequelize
-            .query('CREATE INDEX post_search_idx ON "' + sequelize.models.Post.tableName + '" USING gin("' + vectorName + '");')
-            .error(console.log);
+            console.log("addFullTextIndex: 2");
+            return sequelize
+              .query('CREATE INDEX post_search_idx ON "' + sequelize.models.Post.tableName + '" USING gin("' + vectorName + '");')
         }).then(() => {
+          console.log("addFullTextIndex: 3");
           return sequelize
             .query('CREATE TRIGGER post_vector_update BEFORE INSERT OR UPDATE ON "' + sequelize.models.Post.tableName + '" FOR EACH ROW EXECUTE PROCEDURE tsvector_update_trigger("' + vectorName + '", \'pg_catalog.english\', ' + searchFields.join(', ') + ')')
-            .error(console.log);
-        }).error(console.log);
+        }).catch(error=> {
+          console.log(error);
+        });
       } else {
         log.info("PostText search index is already setup");
       }
@@ -262,7 +265,7 @@ module.exports = (sequelize, DataTypes) => {
       return;
     }
 
-    query = sequelize.getQueryInterface().escape(query);
+    query = sequelize.escape(query);
     console.log(query);
 
     return sequelize.models.Post.findAll({
@@ -527,6 +530,64 @@ module.exports = (sequelize, DataTypes) => {
       }
     });
   };
+
+  Post.getVideosForPosts = (postIds, done) => {
+    sequelize.models.Video.findAll({
+      attributes:  ['id','formats','viewable','created_at','public_meta'],
+      include: [
+        {
+          model: sequelize.models.Image,
+          as: 'VideoImages',
+          attributes:["formats",'created_at'],
+          required: false
+        },
+        {
+          model: sequelize.models.Post,
+          where: {
+            id: {
+              $in: postIds
+            }
+          },
+          as: 'PostVideos',
+          required: true,
+          attributes: ['id'],
+
+        }
+      ],
+      order: [
+        [ { model: sequelize.models.Image, as: 'VideoImages' }, 'created_at', 'asc' ]
+      ]
+    }).then(videos => {
+      videos = _.orderBy(videos, ['created_at'],['desc']);
+      done(null, videos);
+    }).catch( error => {
+      done(error);
+    })
+  }
+
+  Post.addVideosToAllPosts = (posts, videos) => {
+    const postsHash = {};
+
+    for (let i=0;i<posts.length;i++) {
+      postsHash[posts[i].id] = posts[i];
+    }
+
+    for (let i=0;i<videos.length;i++) {
+      if (videos[i].PostVideos &&  videos[i].PostVideos.length>0) {
+        const postId = videos[i].PostVideos[0].id;
+        if (postsHash[postId]) {
+          if (!postsHash[postId].dataValues.PostVideos) {
+            postsHash[postId].dataValues.PostVideos = [];
+          }
+          postsHash[postId].dataValues.PostVideos.push(videos[i]);
+        } else {
+          log.error("Can't find post to add video to")
+        }
+      } else {
+        log.error("Can't find PostVideos");
+      }
+    }
+  }
 
   return Post;
 };

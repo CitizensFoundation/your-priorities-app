@@ -150,6 +150,11 @@ var getDomain = function (req, domainId, done) {
               access: {
                 $ne: models.Community.ACCESS_SECRET
               },
+              configuration: {
+                customBackURL: {
+                  [models.Sequelize.Op.is]: null
+                }
+              },
               $or: [
                 {
                   counter_users: {
@@ -170,6 +175,7 @@ var getDomain = function (req, domainId, done) {
               },
               in_community_folder_id: null
             },
+            limit: 500,
             attributes: models.Community.defaultAttributesPublic,
             order: [
               [ 'counter_users', 'desc'],
@@ -202,7 +208,7 @@ var getDomain = function (req, domainId, done) {
               }
             ]
           }).then(function (communities) {
-            log.info('Domain Viewed', {domainId: domain ? domain.id : -1, context: 'view', userId: req.user ? req.user.id : -1 });
+            log.info('Domain Viewed', {domainId: domain ? domain.id : -1, userId: req.user ? req.user.id : -1 });
             if (req.ypDomain && req.ypDomain.secret_api_keys &&
               req.ypDomain.secret_api_keys.saml && req.ypDomain.secret_api_keys.saml.entryPoint &&
               req.ypDomain.secret_api_keys.saml.entryPoint.length > 6) {
@@ -236,8 +242,14 @@ var getDomain = function (req, domainId, done) {
             models.Community.findAll({
               where: {
                 domain_id: domain.id,
-                in_community_folder_id: null
+                in_community_folder_id: null,
+                configuration: {
+                  customBackURL: {
+                    [models.Sequelize.Op.is]: null
+                  }
+                },
               },
+              limit: 500,
               attributes: models.Community.defaultAttributesPublic,
               order: [
                 [ 'counter_users', 'desc'],
@@ -285,8 +297,14 @@ var getDomain = function (req, domainId, done) {
             models.Community.findAll({
               where: {
                 domain_id: domain.id,
-                in_community_folder_id: null
+                in_community_folder_id: null,
+                configuration: {
+                  customBackURL: {
+                    [models.Sequelize.Op.is]: null
+                  }
+                },
               },
+              limit: 500,
               attributes: models.Community.defaultAttributesPublic,
               order: [
                 [ 'counter_users', 'desc'],
@@ -449,7 +467,7 @@ router.get('/:domainId/pages', auth.can('view domain'), function(req, res) {
       log.error('Could not get pages for domain', { err: error, context: 'pages', user: req.user ? toJson(req.user.simple()) : null });
       res.sendStatus(500);
     } else {
-      log.info('Got Pages', {context: 'pages', userId: req.user ? req.user.id : null });
+      log.info('Got Pages', { userId: req.user ? req.user.id : null });
       res.send(pages);
     }
   });
@@ -461,7 +479,7 @@ router.get('/:domainId/pages_for_admin', auth.can('edit domain'), function(req, 
       log.error('Could not get page for admin for domain', { err: error, context: 'pages_for_admin', user: toJson(req.user.simple()) });
       res.sendStatus(500);
     } else {
-      log.info('Got Pages For Admin', {context: 'pages_for_admin', userId: req.user ? req.user.id : null });
+      log.info('Got Pages For Admin', { userId: req.user ? req.user.id : null });
       res.send(pages);
     }
   });
@@ -607,7 +625,7 @@ router.post('/:domainId/news_story', auth.isLoggedIn, auth.can('view domain'), f
   });
 });
 
-router.get('/', function(req, res) {
+router.get('/oldBoot', function(req, res) {
   getDomain(req, req.ypDomain.id, function (error, domain) {
     if (error) {
       if (error=='Not found')
@@ -624,6 +642,31 @@ router.get('/', function(req, res) {
       }
     }
   });
+});
+
+router.get('/', function(req, res) {
+  if (req.ypDomain && req.ypDomain.secret_api_keys &&
+    req.ypDomain.secret_api_keys.saml && req.ypDomain.secret_api_keys.saml.entryPoint &&
+    req.ypDomain.secret_api_keys.saml.entryPoint.length > 6) {
+    req.ypDomain.dataValues.samlLoginProvided = true;
+  }
+  if (req.ypDomain && req.ypDomain.secret_api_keys &&
+    req.ypDomain.secret_api_keys.facebook && req.ypDomain.secret_api_keys.facebook.client_secret &&
+    req.ypDomain.secret_api_keys.facebook.client_secret.length > 6) {
+    req.ypDomain.dataValues.facebookLoginProvided = true;
+  }
+
+  if (req.ypDomain && process.env.LOGIN_CALLBACK_CUSTOM_HOSTNAME) {
+    req.ypDomain.dataValues.loginCallbackCustomHostName = process.env.LOGIN_CALLBACK_CUSTOM_HOSTNAME;
+  }
+
+  const domain = {...req.ypDomain.dataValues}
+
+  delete domain["secret_api_keys"];
+  delete domain["user_agent"];
+  delete domain["ip_address"];
+
+  res.send({community: (req.ypCommunity && req.ypCommunity.id) ? req.ypCommunity : undefined, domain: domain});
 });
 
 router.get('/:id/translatedText', auth.can('view domain'), function(req, res) {
@@ -659,7 +702,7 @@ router.get('/:id', auth.can('view domain'), function(req, res) {
     if (error) {
       sendDomainOrError(res, null, 'view', req.user, error);
     } else {
-      log.info('Domain Viewed', { domainId: domain ? domain.id : -1, context: 'index', userEmail: req.user ? req.user.email : null });
+      log.info('Domain Viewed', { id: domain ? domain.id : -1, userId: req.user ? req.user.id : null });
       res.send(domain);
     }
   });

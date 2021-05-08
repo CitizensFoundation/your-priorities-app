@@ -1,5 +1,7 @@
 #!/usr/bin/env node
-require('newrelic');
+if (process.env.NEW_RELIC_APP_NAME) {
+  require('newrelic');
+}
 
 FORCE_PRODUCTION = false;
 
@@ -50,6 +52,7 @@ const points = require('./controllers/points');
 const users = require('./controllers/users');
 const categories = require('./controllers/categories');
 const images = require('./controllers/images');
+const externalIds = require('./controllers/externalIds');
 const ratings = require('./controllers/ratings');
 const bulkStatusUpdates = require('./controllers/bulkStatusUpdates');
 const videos = require('./controllers/videos');
@@ -69,8 +72,6 @@ const sso = require('passport-sso');
 const cors = require('cors');
 
 const Airbrake = require('@airbrake/node');
-const airbrakeExpress = require('@airbrake/node/dist/instrumentation/express');
-const airbrakePG = require('@airbrake/node/dist/instrumentation/pg');
 
 const ieVersion = (uaString) => {
   const match = /\b(MSIE |Trident.*?rv:|Edge\/)(\d+)/.exec(uaString);
@@ -92,10 +93,6 @@ if (process.env.AIRBRAKE_PROJECT_ID) {
 }
 
 const app = express();
-
-if (process.env.AIRBRAKE_PROJECT_ID) {
-  app.use(airbrakeExpress.makeMiddleware(airbrake));
-}
 
 if (app.get('env') !== 'development' && !process.env.DISABLE_FORCE_HTTPS) {
   app.use(function checkProtocol (req, res, next) {
@@ -132,13 +129,21 @@ app.use(requestIp.mw());
 app.use(bodyParser.json({limit: '5mb'}));
 app.use(bodyParser.urlencoded({limit: '5mb', extended: true}));
 
+let redisClient;
+if (process.env.REDIS_URL) {
+  redisClient = redis.createClient(process.env.REDIS_URL);
+} else {
+  redisClient = redis.createClient();
+}
+
 var sessionConfig = {
-  store: new RedisStore({url: process.env.REDIS_URL}),
+  store: new RedisStore({ client: redisClient, ttl: 86400 }),
   name: 'yrpri.sid',
   secret: process.env.SESSION_SECRET ? process.env.SESSION_SECRET : 'not so secret... use env var.',
   resave: false,
+  proxy: process.env.USING_NGINX_PROXY ? true : undefined,
   cookie: {autoSubDomain: true},
-  saveUninitialized: true
+  saveUninitialized: false
 };
 
 if (app.get('env') === 'production') {
@@ -177,16 +182,28 @@ app.use(function setupStaticPath(req, res, next) {
   express.static(staticPath, { index: staticIndex, dotfiles:'allow' })(req,res,next);
 });
 
-
 app.use(session(sessionConfig));
+
+app.use(function checkForBOT(req, res, next) {
+  const ua = req.headers['user-agent'];
+  if (req.headers['content-type']!=="application/json" && (req.originalUrl && !req.originalUrl.endsWith("/sitemap.xml"))) {
+    if (!/Googlebot|AdsBot-Google/.test(ua) && (isBot(ua) || /^(facebookexternalhit)|(web\/snippet)|(Twitterbot)|(Slackbot)|(Embedly)|(LinkedInBot)|(Pinterest)|(XING-contenttabreceiver)/gi.test(ua))) {
+      log.info('Request is from a bot', { ua });
+      nonSPArouter(req, res, next);
+    } else {
+      next();
+    }
+  } else {
+    next();
+  }
+});
 
 // Setup the current domain from the host
 app.use(function setupDomain(req, res, next) {
   models.Domain.setYpDomain(req, res, function () {
-    log.info("Setup Domain Completed", {context: 'setYpDomain',
-      domainId: req.ypDomain ? req.ypDomain.id : null,
-      domainName: req.ypDomain ? req.ypDomain.domain_name : null
-    });
+    log.info("Domain", {
+      id: (req.ypDomain ? req.ypDomain.id : "-1"),
+      n: (req.ypDomain ? req.ypDomain.domain_name : "?")});
     next();
   });
 });
@@ -194,13 +211,13 @@ app.use(function setupDomain(req, res, next) {
 // Setup the current community from the host
 app.use(function setupCommunity(req, res, next) {
   models.Community.setYpCommunity(req, res, function () {
-    log.info("Setup Community Completed", {context: 'setYpCommunity', community: req.ypCommunity.hostname});
+    log.info("Community", {
+      id: (req.ypCommunity ? req.ypCommunity.id : null),
+      n: (req.ypCommunity ? req.ypCommunity.hostname : null)
+    });
     next();
   });
 });
-
-app.use(passport.initialize());
-app.use(passport.session());
 
 app.use(function setupRedis(req, res, next) {
   req.redisClient = sessionConfig.store.client;
@@ -208,7 +225,8 @@ app.use(function setupRedis(req, res, next) {
 });
 
 app.get('/sitemap.xml', function getSitemap(req, res) {
-  const redisKey = "cache:sitemapv14:" + req.ypDomain.id + (req.ypCommunity && req.ypCommunity.id && req.ypCommunity.hostname) ? req.ypCommunity.hostname : '';
+  const url = req.get('host') + req.originalUrl;;
+  const redisKey = "cache:sitemapv14:" + url;
   req.redisClient.get(redisKey, (error, sitemap) => {
     if (error) {
       log.error("Error getting sitemap from redis", {error});
@@ -223,18 +241,16 @@ app.get('/sitemap.xml', function getSitemap(req, res) {
   });
 });
 
-app.use(function checkForBOT(req, res, next) {
-  var ua = req.headers['user-agent'];
-  if (!/Googlebot|AdsBot-Google/.test(ua) && (isBot(ua) || /^(facebookexternalhit)|(web\/snippet)|(Twitterbot)|(Slackbot)|(Embedly)|(LinkedInBot)|(Pinterest)|(XING-contenttabreceiver)/gi.test(ua))) {
-    log.info('Request is from a bot', { ua });
-    nonSPArouter(req, res, next);
-  } else {
-    next();
-  }
-});
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.get('/manifest.json', function getManifest(req, res) {
   generateManifest(req, res);
+});
+
+app.get('/robots.txt', function (req, res) {
+  res.type('text/plain')
+  res.send(`User-agent: *\nDisallow:\nSitemap: https://${req.hostname}/sitemap.xml`);
 });
 
 var bearerCallback = function (req, token) {
@@ -308,7 +324,7 @@ passport.serializeUser(function userSerialize(req, profile, done) {
         log.error("Error in User Serialized from Facebook", {err: error});
         done(error);
       } else {
-        log.info("User Serialized Connected to Facebook", {context: 'loginFromFacebook', userId: user.id });
+        log.info("User Serialized", {context: 'loginFromFacebook', userId: user.id });
         registerUserLogin(user, user.id, 'facebook', req, function () {
           done(null, {userId: user.id, loginProvider: 'facebook'});
         });
@@ -320,7 +336,7 @@ passport.serializeUser(function userSerialize(req, profile, done) {
         log.error("Error in User Serialized from SAML", {err: error});
         done(error);
       } else {
-        log.info("User Serialized Connected to SAML", {context: 'loginFromSaml', userId: user.id});
+        log.info("User Serialized", {context: 'loginFromSaml', userId: user.id});
         registerUserLogin(user, user.id, 'saml', req, function () {
           done(null, {userId: user.id, loginProvider: 'saml'});
         });
@@ -339,7 +355,6 @@ passport.serializeUser(function userSerialize(req, profile, done) {
 });
 
 passport.deserializeUser(function deserializeUser(sessionUser, done) {
-  log.info("Debug passport.deserializeUser", { sessionUser });
   models.User.findOne({
     where: {id: sessionUser.userId},
     attributes: ["id", "name", "email", "default_locale", "facebook_id", "twitter_id", "google_id", "github_id", "ssn", "profile_data", 'private_profile_data'],
@@ -355,7 +370,7 @@ passport.deserializeUser(function deserializeUser(sessionUser, done) {
     ]
   }).then(function (user) {
     if (user) {
-      log.info("User Deserialized", {context: 'deserializeUser', user: user.email});
+      //log.info("User Deserialized", {context: 'deserializeUser', user: user.email});
       user.loginProvider = sessionUser.loginProvider;
       if (user.private_profile_data && user.private_profile_data.saml_agency && sessionUser.loginProvider==='saml') {
         user.isSamlEmployee = true;
@@ -433,6 +448,7 @@ app.use('/api/images', images);
 app.use('/api/videos', videos);
 app.use('/api/audios', audios);
 app.use('/api/categories', categories);
+app.use('/api/externalIds', externalIds);
 app.use('/api/users', users);
 app.use('/api/news_feeds', news_feeds);
 app.use('/api/activities', activities);
@@ -446,7 +462,7 @@ app.use('/pages', legacyPages);
 
 app.post('/authenticate_from_island_is', function (req, res) {
   log.info("SAML SAML 1", {domainId: req.ypDomain.id});
-  req.sso.authenticate('saml-strategy-' + req.ypDomain.id, {}, req, res, function (error, user) {
+  req.sso.authenticate('saml-strategy-' + req.ypDomain.id, {}, req, res, function (error) {
     log.info("SAML SAML 2", {domainId: req.ypDomain.id, err: error});
     if (error) {
       log.error("Error from SAML login", {err: error});
@@ -456,12 +472,19 @@ app.post('/authenticate_from_island_is', function (req, res) {
           if (airbrakeErr.error) {
             log.error("AirBrake Error", {context: 'airbrake', err: airbrakeErr.error, errorStatus: 500});
           }
-          res.sendStatus(500);
+          res.sendStatus(401);
         });
+      } else {
+        res.sendStatus(401);
       }
     } else {
-      log.info("SAML SAML 3", {domainId: req.ypDomain.id});
-      res.render('samlLoginComplete', {});
+      if (req.user.DestinationSSN==="6012101260") {
+        log.info("SAML SAML 3", {domainId: req.ypDomain.id});
+        res.render('samlLoginComplete', {});
+      } else {
+        log.error("Error from SAML login", {err: "Failed DestinationSSN check"});
+        res.sendStatus(401);
+      }
     }
   })
 });
@@ -526,10 +549,24 @@ app.use(function generalErrorHandler(err, req, res, next) {
   if (status == 404) {
     log.warn("Not found", {context: 'notFound', errorStatus: status, url: req.url});
   } else {
+    let body=null;
+
+    try {
+      if (req.body) {
+        body = JSON.stringify(req.body);
+      }
+    } catch(bodyError) {
+      log.error("General Error: Body JSON parsing error", { err: bodyError });
+    }
+
     log.error("General Error", {
       context: 'generalError',
       user: req.user ? toJson(req.user) : null,
       err: err,
+      protocol: req.protocol,
+      host: req.get('host'),
+      originalUrl: req.originalUrl,
+      body,
       errStack: err.stack,
       errorStatus: status
     });
@@ -557,12 +594,14 @@ app.use(function generalErrorHandler(err, req, res, next) {
   }
 });
 
-if (airbrake) {
-  app.use(airbrakeExpress.makeErrorHandler(airbrake));
+if (process.env.YOUR_PRIORITIES_LISTEN_HOST) {
+  var server = app.listen(app.get('port'), process.env.YOUR_PRIORITIES_LISTEN_HOST, function () {
+    log.info('Your Priorities server listening on port ' + server.address().port);
+  });
+} else {
+  var server = app.listen(app.get('port'), function () {
+    log.info('Your Priorities server listening on port ' + server.address().port);
+  });
 }
-
-var server = app.listen(app.get('port'), function () {
-  log.info('Your Priorities server listening on port ' + server.address().port);
-});
 
 module.exports = app;
