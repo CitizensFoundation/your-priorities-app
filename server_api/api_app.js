@@ -1,9 +1,12 @@
 #!/usr/bin/env node
+
+FORCE_PRODUCTION = false;
+
 if (process.env.NEW_RELIC_APP_NAME) {
   require('newrelic');
 }
 
-FORCE_PRODUCTION = false;
+process.env['SUPPRESS_WEB_QUEUE_MESSAGES'] = true;
 
 const log = require('./utils/logger');
 
