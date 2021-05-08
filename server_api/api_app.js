@@ -195,7 +195,6 @@ app.use(function checkForBOT(req, res, next) {
   const ua = req.headers['user-agent'];
   if (req.headers['content-type']!=="application/json" && (req.originalUrl && !req.originalUrl.endsWith("/sitemap.xml"))) {
     if (!/Googlebot|AdsBot-Google/.test(ua) && (isBot(ua) || /^(facebookexternalhit)|(web\/snippet)|(Twitterbot)|(Slackbot)|(Embedly)|(LinkedInBot)|(Pinterest)|(XING-contenttabreceiver)/gi.test(ua))) {
-      log.info('Request is from a bot', { ua });
       nonSPArouter(req, res, next);
     } else {
       next();

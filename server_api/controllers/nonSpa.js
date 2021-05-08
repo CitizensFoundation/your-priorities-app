@@ -56,7 +56,7 @@ var sendDomain = function sendDomainForBot(id, communitiesOffset, req, res) {
         offset: communitiesOffset
       }).then( communitiesInfo => {
         const communities = communitiesInfo.rows;
-        log.info('Domain Viewed From Bot', { domainId: domain ? domain.id : -1, context: 'view', bot: true });
+        log.info('Domain Viewed Bot', { id: domain ? domain.id : -1 });
         var imageUrl = '';
         if (domain.DomainLogoImages && domain.DomainLogoImages.length>0) {
           var formats = JSON.parse(domain.DomainLogoImages[0].formats);
