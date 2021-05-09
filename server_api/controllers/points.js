@@ -387,7 +387,6 @@ router.get('/:id/translatedText', auth.can('view point'), function(req, res) {
             res.send(translation);
           }
         });
-        log.info('Point translatedTitle', { pointId: point.id, context: 'translatedText' });
       } else {
         sendPointOrError(res, req.params.id, 'translated', req.user, 'Not found', 404);
       }

@@ -1,9 +1,12 @@
 #!/usr/bin/env node
+
+FORCE_PRODUCTION = false;
+
 if (process.env.NEW_RELIC_APP_NAME) {
   require('newrelic');
 }
 
-FORCE_PRODUCTION = false;
+process.env['SUPPRESS_WEB_QUEUE_MESSAGES'] = true;
 
 const log = require('./utils/logger');
 
@@ -131,7 +134,11 @@ app.use(bodyParser.urlencoded({limit: '5mb', extended: true}));
 
 let redisClient;
 if (process.env.REDIS_URL) {
-  redisClient = redis.createClient(process.env.REDIS_URL);
+  let redisUrl = process.env.REDIS_URL;
+  if (redisUrl.startsWith("redis://h:")) {
+    redisUrl = redisUrl.replace("redis://h:","redis://:")
+  }
+  redisClient = redis.createClient(redisUrl);
 } else {
   redisClient = redis.createClient();
 }
@@ -188,7 +195,6 @@ app.use(function checkForBOT(req, res, next) {
   const ua = req.headers['user-agent'];
   if (req.headers['content-type']!=="application/json" && (req.originalUrl && !req.originalUrl.endsWith("/sitemap.xml"))) {
     if (!/Googlebot|AdsBot-Google/.test(ua) && (isBot(ua) || /^(facebookexternalhit)|(web\/snippet)|(Twitterbot)|(Slackbot)|(Embedly)|(LinkedInBot)|(Pinterest)|(XING-contenttabreceiver)/gi.test(ua))) {
-      log.info('Request is from a bot', { ua });
       nonSPArouter(req, res, next);
     } else {
       next();

@@ -344,7 +344,6 @@ router.get('/:id/translatedText', auth.can('view post'), function(req, res) {
             res.send(translation);
           }
         });
-        log.info('Post translatedTitle', { post: toJson(post.simple()), context: 'view', user: toJson(req.user) });
       } else {
         sendPostOrError(res, req.params.id, 'translated', req.user, 'Not found', 404);
       }

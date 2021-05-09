@@ -3,6 +3,7 @@ var router = express.Router();
 var models = require("../models");
 var auth = require('../authorization');
 var log = require('../utils/logger');
+const async = require('async');
 var toJson = require('../utils/to_json');
 var url = require('url');
 var _ = require('lodash');
@@ -55,7 +56,7 @@ var sendDomain = function sendDomainForBot(id, communitiesOffset, req, res) {
         offset: communitiesOffset
       }).then( communitiesInfo => {
         const communities = communitiesInfo.rows;
-        log.info('Domain Viewed From Bot', { domainId: domain ? domain.id : -1, context: 'view', bot: true });
+        //log.info('Bot: Domain', { id: domain ? domain.id : -1 });
         var imageUrl = '';
         if (domain.DomainLogoImages && domain.DomainLogoImages.length>0) {
           var formats = JSON.parse(domain.DomainLogoImages[0].formats);
@@ -125,7 +126,7 @@ var sendCommunity = function sendCommunityForBot(id, req, res) {
     ]
   }).then(function(community) {
     if (community) {
-      log.info('Community Viewed From Bot', { communityId: community.id, context: 'view', bot: true });
+      //log.info('Bot: Community', { communityId: community.id, context: 'view', bot: true });
       var imageUrl = '';
       if (community.CommunityLogoImages && community.CommunityLogoImages.length>0) {
         var formats = JSON.parse(community.CommunityLogoImages[0].formats);
@@ -205,7 +206,7 @@ var sendGroup = function sendGroupForBot(id, postsOffset, req, res) {
         offset: postsOffset
       }).then((postsInfo)=>{
         group.Posts = postsInfo.rows;
-        log.info('Group Viewed From Bot', { groupId: group.id, context: 'view', bot: true });
+        //log.info('Bot: Group', { groupId: group.id, context: 'view', bot: true });
         var imageUrl = '';
         if (group.GroupLogoImages && group.GroupLogoImages.length>0) {
           formats = JSON.parse(group.GroupLogoImages[0].formats);
@@ -313,7 +314,7 @@ var sendPost = function sendPostforBot(id, pointsOffset, req, res) {
         offset: pointsOffset
       }).then((pointsInfo)=>{
         post.Points = pointsInfo.rows;
-        log.info('Post Viewed From Bot', { postId: post ? post.id : -1, context: 'view', bot: true });
+        //log.info('Bot: Post', { postId: post ? post.id : -1, context: 'view', bot: true });
         var imageUrl = '';
         if (post.PostHeaderImages && post.PostHeaderImages.length>0) {
           formats = JSON.parse(post.PostHeaderImages[0].formats);
@@ -451,8 +452,32 @@ router.get('/*', function botController(req, res, next) {
       res.sendStatus(404);
     }
   } else {
-    log.error("Id for nonSpa is not a number", { id: id });
-    res.sendStatus(404);
+    async.series([
+      seriesCallback => {
+        models.Domain.setYpDomain(req, res, function (error) {
+          seriesCallback(error);
+        })
+      },
+      seriesCallback => {
+        models.Community.setYpCommunity(req, res, function (error) {
+          seriesCallback(error);
+        })
+      }
+    ], error => {
+      if (error) {
+        log.error("Id for nonSpa is not a number", { error });
+        res.sendStatus(404);
+      } else {
+        if (req.ypCommunity && req.ypCommunity.id != null) {
+          sendCommunity(req.ypCommunity.id, req, res)
+        } else if (req.ypDomain && req.ypDomain.id != null) {
+          sendDomain(req.ypDomain.id, communitiesOffset, req, res)
+        } else {
+          log.error("Can't find nonspa route", { });
+          res.sendStatus(404);
+        }
+      }
+    })
   }
 });
 
