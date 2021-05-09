@@ -70,7 +70,7 @@ export class YpCollectionItemsGrid extends YpBaseElement {
             role="main"
             aria-label="${this.t(this.pluralItemType)}"
             .items="${this.sortedCollectionItems}"
-            layout="${Layout1d}"
+            .layout="${Layout1d}"
             .scrollTarget="${window}"
             .keyFunction="${(item: YpCollectionData) => item.id}"
             .renderItem="${this.renderItem.bind(this)}"></lit-virtualizer>
