@@ -7,6 +7,8 @@ import '../yp-point/yp-point-news-story-edit.js';
 import './ac-activity.js';
 import './ac-activity-recommended-posts.js';
 
+import '@lit-labs/virtualizer';
+
 import { YpBaseElementWithLogin } from '../common/yp-base-element-with-login.js';
 import {RangeChangeEvent, Layout1d, LitVirtualizer } from '@lit-labs/virtualizer';
 import { ShadowStyles } from '../common/ShadowStyles.js';

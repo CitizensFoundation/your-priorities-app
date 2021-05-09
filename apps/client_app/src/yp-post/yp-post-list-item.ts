@@ -3,6 +3,8 @@ import { customElement, property } from 'lit/decorators.js';
 
 import { YpBaseElement } from '../common/yp-base-element.js';
 import { ShadowStyles } from '../common/ShadowStyles.js';
+import { YpPostEdit } from './yp-post-edit.js';
+import { YpApiActionDialog } from '../yp-api-action-dialog/yp-api-action-dialog.js';
 
 @customElement('yp-post-list-item')
 export class YpPostListItem extends YpBaseElement {
@@ -371,7 +373,7 @@ export class YpPostListItem extends YpBaseElement {
                       <div class="description tagContainer wrap">
                         ${this.postTags.map(
                           (index, item) => html`
-                            <span class="tagItem">${this.item}</span>
+                            <span class="tagItem">${item}</span>
                             <span
                               class="middleDot"
                               ?hidden="${this.computeSpanHidden(
@@ -574,24 +576,21 @@ export class YpPostListItem extends YpBaseElement {
   }
 
   _refresh() {
-    Polymer.dom(document)
-      .querySelector('yp-app')
-      .getDialogAsync(
+    window.appDialogs.getDialogAsync(
         'postEdit',
-        function (dialog) {
+       (dialog: YpPostEdit) => {
           dialog.selected = 0;
           this.fire('refresh');
-        }.bind(this)
+        }
       );
   }
 
   _openReport() {
     window.appGlobals.activity('open', 'post.report');
-    Polymer.dom(document)
-      .querySelector('yp-app')
+    window.appDialogs
       .getDialogAsync(
         'apiActionDialog',
-        function (dialog) {
+       (dialog: YpApiActionDialog) => {
           dialog.setup(
             '/api/posts/' + this.post.id + '/report',
             this.t('reportConfirmation'),
@@ -600,7 +599,7 @@ export class YpPostListItem extends YpBaseElement {
             'PUT'
           );
           dialog.open();
-        }.bind(this)
+        }
       );
   }
 

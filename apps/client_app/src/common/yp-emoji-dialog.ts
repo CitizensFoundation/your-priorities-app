@@ -1,7 +1,8 @@
 import { html } from 'lit';
 import { property, customElement } from 'lit/decorators.js';
-import { EmojiButton, EmojiSelection } from '@joeattardi/emoji-button';
+import { EmojiButton } from '@joeattardi/emoji-button';
 import { YpBaseElement } from './yp-base-element.js';
+import { EmojiSelection } from '@joeattardi/emoji-button/dist/types';
 //import insertTextAtCursor from 'insert-text-at-cursor';
 
 //TODO: Load this one later emoji-button is 256KB!

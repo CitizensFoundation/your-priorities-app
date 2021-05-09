@@ -111,6 +111,7 @@ interface YpStructuredAnswer {
 }
 
 interface YpGroupConfiguration extends YpCollectionConfiguration {
+  usePostTagsForPostListItems?: boolean;
   allowAnonymousUsers?: boolean;
   allowAnonymousAutoLogin?: boolean;
   allowOneTimeLoginWithName?: boolean;
