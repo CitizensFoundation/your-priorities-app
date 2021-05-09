@@ -7,7 +7,7 @@ import { ShadowStyles } from '../common/ShadowStyles.js';
 
 import '../yp-magic-text/yp-magic-text.js';
 import '@material/mwc-icon';
-import { ifDefined } from 'lit/directives/if-defined';
+import { ifDefined } from 'lit/directives/if-defined.js';
 import { YpMagicText } from '../yp-magic-text/yp-magic-text.js';
 
 @customElement('yp-simple-html-editor')

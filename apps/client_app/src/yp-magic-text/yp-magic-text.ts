@@ -1,7 +1,7 @@
 import { html, css, nothing } from 'lit';
 import { property, customElement } from 'lit/decorators.js';
 
-import { ifDefined } from 'lit/directives/if-defined';
+import { ifDefined } from 'lit/directives/if-defined.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import { YpBaseElement } from '../common/yp-base-element.js';
 

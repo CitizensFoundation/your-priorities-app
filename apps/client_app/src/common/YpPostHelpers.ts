@@ -58,6 +58,15 @@ export class YpPostHelpers {
     }
   }
 
+  static fullPostUrl(post: YpPostData) {
+    if (post) {
+      return encodeURIComponent("https://"+window.location.host+"/post/"+post.id);
+    } else {
+      console.warn("Can't find post for action");
+      return "";
+    }
+  }
+
   static uniqueInDomain (array: Array<YpGroupData>, domainId: number) {
     const newArray: Array<YpGroupData> = [];
     const ids: Record<number, YpGroupData> = {};

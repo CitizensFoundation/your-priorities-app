@@ -14,7 +14,7 @@ import { ShadowStyles } from '../common/ShadowStyles.js';
 import { YpPostCard } from './yp-post-card.js';
 import { YpPostsFilter } from './yp-posts-filter.js';
 import { nothing, TemplateResult } from 'lit';
-import { ifDefined } from 'lit/directives/if-defined';
+import { ifDefined } from 'lit/directives/if-defined.js';
 import { TextField } from '@material/mwc-textfield';
 
 @customElement('yp-posts-list')

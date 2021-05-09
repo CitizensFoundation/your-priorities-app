@@ -5,6 +5,9 @@ import { YpBaseElement } from '../common/yp-base-element.js';
 import { ShadowStyles } from '../common/ShadowStyles.js';
 import { YpPostEdit } from './yp-post-edit.js';
 import { YpApiActionDialog } from '../yp-api-action-dialog/yp-api-action-dialog.js';
+import { YpPostHelpers } from '../common/YpPostHelpers.js';
+import { YpAccessHelpers } from '../common/YpAccessHelpers.js';
+import { YpNavHelpers } from '../common/YpNavHelpers.js';
 
 @customElement('yp-post-list-item')
 export class YpPostListItem extends YpBaseElement {
@@ -22,6 +25,10 @@ export class YpPostListItem extends YpBaseElement {
 
   @property({ type: Boolean })
   isAudioCover = false;
+
+  //TODO: Get this working
+  @property({ type: Boolean })
+  isEndorsed = false
 
   static get styles() {
     return [
@@ -299,7 +306,7 @@ export class YpPostListItem extends YpBaseElement {
       >
         <div class="layout vertical">
           <a
-            href="${this._getPostLink(post)}"
+            href="${this._getPostLink(this.post)}"
             id="theMainA"
             @tap="${this._savePostToBackCache}"
           >
@@ -309,7 +316,7 @@ export class YpPostListItem extends YpBaseElement {
                 top-radius
                 ?audio-cover="${this.isAudioCover}"
                 alt-tag="${this.post.name}"
-                post="${this.post}"
+                .post="${this.post}"
                 ?hidden="${this.post.Group.configuration.hidePostCover}"
               ></yp-post-cover-media>
               <div class="layout vertical">
@@ -321,7 +328,7 @@ export class YpPostListItem extends YpBaseElement {
                       .contentLanguage="${this.post.language}"
                       @click="${this.goToPostIfNotHeader}"
                       textOnly
-                      content="${this.postName}"
+                      content="${this.post.name}"
                       .contentId="${this.post.id}"
                     >
                     </yp-magic-text>
@@ -355,7 +362,7 @@ export class YpPostListItem extends YpBaseElement {
                               text-type="postContent"
                               .contentLanguage="${this.post.language}"
                               ?hidden="${this.hideDescription}"
-                              content="${this.structuredAnswersFormatted}"
+                              content="${YpPostHelpers.structuredAnswersFormatted(this.post)}"
                               remove-urls
                               disableTranslation
                               skipSanitize
@@ -377,7 +384,7 @@ export class YpPostListItem extends YpBaseElement {
                             <span
                               class="middleDot"
                               ?hidden="${this.computeSpanHidden(
-                                postTags,
+                                this.postTags,
                                 index
                               )}"
                               >&#9679;
@@ -415,14 +422,14 @@ export class YpPostListItem extends YpBaseElement {
                       email=""
                       twitter=""
                       popup=""
-                      url="${this.fullPostUrl}"
+                      url="${YpPostHelpers.fullPostUrl(this.post)}"
                     ></paper-share-button>
                   </div>
                   ${this.post.Group.configuration.customRatings
                     ? html`
                         <yp-post-ratings-info
                           class="customRatings"
-                          post="${this.post}"
+                          .post="${this.post}"
                         ></yp-post-ratings-info>
                       `
                     : nothing}
@@ -432,9 +439,8 @@ export class YpPostListItem extends YpBaseElement {
                           floating
                           class="postActions"
                           elevation="-1"
-                          endorse-mode="${this.endorseMode}"
                           class="voting"
-                          post="${this.post}"
+                          .post="${this.post}"
                           ?hidden="${this.mini}"
                         ></yp-post-actions>
                       `
@@ -444,12 +450,6 @@ export class YpPostListItem extends YpBaseElement {
           </div>
         </div>
       </paper-material>
-
-      <yp-ajax
-        hidden
-        id="translatedSurveyAjax"
-        @response="${this._translatedSurveyResponse}"
-      ></yp-ajax>
     `;
   }
 
@@ -466,8 +466,8 @@ export class YpPostListItem extends YpBaseElement {
       ],
 */
 
-  computeSpanHidden(items: Array<string>, index: number) {
-    return items.length - 1 === index;
+  computeSpanHidden(items: Array<string>, index: number | string) {
+    return items.length - 1 == index;
   }
 
   get postTags() {
@@ -486,17 +486,17 @@ export class YpPostListItem extends YpBaseElement {
 
   clickOnA() {
     if (this.$$('#theMainA')) {
-      this.$$('#theMainA').click();
+      (this.$$('#theMainA') as HTMLElement).click();
     }
   }
 
   _savePostToBackCache() {
     if (this.post) {
-      window.appGlobals.cachedPostItem = this.post;
+      window.appGlobals.cache.cachedPostItem = this.post;
     }
   }
 
-  _getPostLink(post) {
+  _getPostLink(post: YpPostData) {
     if (post) {
       if (
         post.Group.configuration &&
@@ -526,7 +526,7 @@ export class YpPostListItem extends YpBaseElement {
 
   get hideDescription() {
     return (
-      mini ||
+      this.mini ||
       (this.post &&
         this.post.Group.configuration &&
         this.post.Group.configuration.hidePostDescription)
@@ -535,7 +535,7 @@ export class YpPostListItem extends YpBaseElement {
 
   get hasPostAccess() {
     if (this.post) {
-      return this.checkPostAccess(this.post);
+      return YpAccessHelpers.checkPostAccess(this.post);
     } else {
       return false;
     }
@@ -553,19 +553,25 @@ export class YpPostListItem extends YpBaseElement {
     ) {
       // Do nothing
     } else {
-      this.goToPost(null, null, null, this.post);
+      YpNavHelpers.goToPost(this.post.id, undefined, undefined, this.post);
     }
   }
 
-  _postChanged(post) {
-    if (post) {
-      if (post.cover_media_type === 'audio') {
+  updated(changedProperties: Map<string | number | symbol, unknown>): void {
+    super.updated(changedProperties);
+
+    if (changedProperties.has('post')) {
+      this._postChanged();
+    }
+  }
+
+  _postChanged() {
+    if (this.post) {
+      if (this.post.cover_media_type === 'audio') {
         this.isAudioCover = true;
       } else {
         this.isAudioCover = false;
       }
-
-      this._getSurveyTranslationsIfNeeded();
     }
   }
 

@@ -18,7 +18,7 @@ import {RangeChangeEvent, Layout1d, LitVirtualizer } from '@lit-labs/virtualizer
 
 import { YpCollectionItemCard } from './yp-collection-item-card.js';
 import { YpServerApi } from '../common/YpServerApi.js';
-import { ifDefined } from 'lit/directives/if-defined';
+import { ifDefined } from 'lit/directives/if-defined.js';
 
 import './yp-collection-item-card.js';
 

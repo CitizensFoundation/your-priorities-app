@@ -23,7 +23,7 @@ import { YpFormattingHelpers } from '../common/YpFormattingHelpers.js';
 import { YpBaseElementWithLogin } from '../common/yp-base-element-with-login.js';
 import {RangeChangeEvent, Layout1d, LitVirtualizer } from '@lit-labs/virtualizer';
 import { YpMagicText } from '../yp-magic-text/yp-magic-text.js';
-import { ifDefined } from 'lit/directives/if-defined';
+import { ifDefined } from 'lit/directives/if-defined.js';
 
 import { Select } from '@material/mwc-select';
 

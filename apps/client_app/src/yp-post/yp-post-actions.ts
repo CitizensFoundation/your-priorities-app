@@ -5,7 +5,7 @@ import { YpFormattingHelpers } from '../common/YpFormattingHelpers.js';
 import { YpBaseElement } from '../common/yp-base-element.js';
 
 import '@material/mwc-icon-button';
-import { ifDefined } from 'lit/directives/if-defined';
+import { ifDefined } from 'lit/directives/if-defined.js';
 import { YpNavHelpers } from '../common/YpNavHelpers.js';
 import { IconButton } from '@material/mwc-icon-button';
 

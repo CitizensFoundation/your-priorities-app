@@ -22,11 +22,11 @@ export class YpShareDialog extends YpBaseElement {
   render() {
     return html`
       <share-menu
-          @share="${this.sharedContent}"
-          class="shareIcon"
-          id="shareButton"
-          .title="${this.t('post.shareInfo')}"
-          .url="${this.url || ''}"></share-menu>
+        @share="${this.sharedContent}"
+        class="shareIcon"
+        id="shareButton"
+        .title="${this.t('post.shareInfo')}"
+        .url="${this.url || ''}"></share-menu>
     `;
   }
 

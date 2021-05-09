@@ -1,7 +1,7 @@
 import { html, css, nothing, TemplateResult } from 'lit';
 import { property } from 'lit/decorators.js';
 
-//import { ifDefined } from 'lit/directives/if-defined';
+//import { ifDefined } from 'lit/directives/if-defined.js';
 import { YpBaseElement } from '../common/yp-base-element.js';
 import { YpAccessHelpers } from '../common/YpAccessHelpers.js';
 import { YpMediaHelpers } from '../common/YpMediaHelpers.js';

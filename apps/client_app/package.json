@@ -21,7 +21,7 @@
     "@open-wc/testing": "^3.0.0-next.1",
     "@open-wc/testing-helpers": "^2.0.0-next.0",
     "@open-wc/testing-karma": "^4.0.9",
-    "@rollup/plugin-commonjs": "^19.0.0",
+    "@rollup/plugin-commonjs": "^14.0.0",
     "@types/google.analytics": "0.0.41",
     "@types/i18next": "^13.0.0",
     "@types/insert-text-at-cursor": "^0.3.0",
