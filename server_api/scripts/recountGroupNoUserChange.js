@@ -199,7 +199,8 @@ recountGroupPosts(groupId, error => {
         {
           model: models.User,
           as: 'GroupUsers',
-          attributes: ['id']
+          attributes: ['id'],
+          required: false
         }
       ],
       attributes: ['id', 'counter_posts', 'counter_points', 'counter_users']
