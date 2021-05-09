@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import { each } from 'lodash-es';
 import { YpAccessHelpers } from './YpAccessHelpers';
 
 export class YpPostHelpers {
@@ -70,7 +70,7 @@ export class YpPostHelpers {
   static uniqueInDomain (array: Array<YpGroupData>, domainId: number) {
     const newArray: Array<YpGroupData> = [];
     const ids: Record<number, YpGroupData> = {};
-    _.each(array, (item) => {
+    each(array, (item) => {
       if (!ids[item.id]) {
         //@ts-ignore
         ids[item.id] = item.id;
