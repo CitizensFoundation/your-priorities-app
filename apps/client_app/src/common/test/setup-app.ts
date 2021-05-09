@@ -6,7 +6,7 @@ import { YpAppUser } from '../../yp-app/YpAppUser.js';
 import i18next from 'i18next';
 import HttpApi from 'i18next-http-backend';
 import { html } from 'lit';
-import fetchMock from 'fetch-mock/esm/client';
+import fetchMock from 'fetch-mock';
 
 export class YpTestHelpers {
   static async setupApp() {

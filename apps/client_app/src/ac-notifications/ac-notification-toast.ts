@@ -15,7 +15,8 @@ export class AcNotificationToast extends Snackbar {
   @property({ type: Object })
   user: YpUserData | undefined;
 
-  render() {
+  //TODO: Fix this and render the real thing when MWC Lit2
+  renderTwo() {
     const classes = {
       'mdc-snackbar--stacked': this.stacked,
       'mdc-snackbar--leading': this.leading,

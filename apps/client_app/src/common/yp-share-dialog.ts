@@ -1,6 +1,8 @@
 import { html } from 'lit';
 import { property, customElement} from 'lit/decorators.js';
-import { EmojiButton, EmojiSelection } from '@joeattardi/emoji-button';
+import { EmojiButton } from '@joeattardi/emoji-button';
+import { EmojiSelection } from '@joeattardi/emoji-button/dist/types';
+
 import { YpBaseElement } from './yp-base-element.js';
 
 import 'share-menu';
