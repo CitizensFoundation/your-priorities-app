@@ -921,9 +921,10 @@ const copyCommunity = (fromCommunityId, toDomainId, options, done) => {
                 }
               },
               (communitySeriesCallback) => {
-                if (options && options.copyGroups===true) {
+                if (options && (options.copyGroups===true || options.copyOneGroupId)) {
                   models.Group.findAll({
                     where: {
+                      id: options.copyOneGroupId ? options.copyOneGroupId : undefined,
                       community_id: oldCommunity.id
                     },
                     attributes: ['id']
@@ -1011,7 +1012,30 @@ const copyCommunityNoUsersNoEndorsements = (communityId, toDomainId, done) => {
   });
 };
 
+const copyCommunityNoUsersNoEndorsementsOneGroup = (communityId, groupId, toDomainId, done) => {
+  copyCommunity(communityId, toDomainId, {
+    copyOneGroupId: groupId,
+    copyPosts: true,
+    copyPoints: true,
+    skipUsers: true,
+    skipEndorsementQualitiesAndRatings: true,
+    resetEndorsementCounters: true,
+    skipActivities: true
+  }, (error, newCommunity) => {
+    if (newCommunity)
+      console.log(newCommunity.id);
+    if (error) {
+      console.error(error);
+      done(error, newCommunity);
+    } else {
+      //console.log("Done for new community "+ńewCommunity.id);
+      done(null, newCommunity);
+    }
+  });
+};
+
 module.exports = {
+  copyCommunityNoUsersNoEndorsementsOneGroup,
   copyCommunityNoUsersNoEndorsements,
   copyCommunityWithEverything,
   copyCommunity,
