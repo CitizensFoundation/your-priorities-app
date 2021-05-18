@@ -36,3 +36,24 @@
 
 -   Airbrake (for error monitoring)
 -   NewRelic (for detailed cluster monitoring)
+
+**The absolute minimum requirements to run everything (on a single server):**
+
+Server 1
+
+CPU: 4 x dedicated fast modern server CPUs
+
+RAM: 8GB
+
+**What we'd recommend for to start with (should easily support 100,000+ monthly visits):**
+*Server 1 - runs everything*
+
+CPU: 8 x dedicated fast modern server CPUs
+
+RAM: 16GB
+
+*Server 2  - continuous backups from PostresSQL and Minio (if not using S3)*
+
+CPU: 2-4 x dedicated fast modern server CPUs
+
+RAM: 8GB
