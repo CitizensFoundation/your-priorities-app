@@ -1210,7 +1210,11 @@
 
         _isAdminChanged: function (isAdmin) {
           if (this.post && this.post.Group && this.post.Group.configuration && this.post.Group.configuration.disableDebate) {
-            this.set('disableDebate', true);
+            if (isAdmin && this.post.Group.configuration.allowAdminsToDebate) {
+              this.set('disableDebate', false);
+            } else {
+              this.set('disableDebate', true);
+            }
           } else {
             this.set('disableDebate', false);
           }
