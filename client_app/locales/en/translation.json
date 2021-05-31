@@ -1,4 +1,5 @@
 {
+  "allowAdminsToDebate": "Debate open for admins",
   "registrationQuestionsInfo": "Registration question",
   "areYouSureYouWantToRecreateApiKey": "Are you sure you want to recreate API key? All external services using the current API key will stop working.",
   "createApiKey": "Create Api Key",
