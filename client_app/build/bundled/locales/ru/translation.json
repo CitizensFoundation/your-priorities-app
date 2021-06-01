@@ -1,4 +1,5 @@
 {
+  "allowAdminsToDebate": "Дебаты открыты для администраторов",
   "registrationQuestionsInfo": "Вопросы по регистрации",
   "errorSendingContentWhenOnline":"Ошибка при отправке сохраненных офлайн-данных",
   "storedDataSent": "Сохраненные данные отправлены",

@@ -367,9 +367,6 @@ var updateGroupConfigParamters = function (req, group) {
     group.set('configuration.customRatings', null);
   }
 
-
-
-
   group.set('configuration.allowAdminsToDebate', truthValueFromBody(req.body.allowAdminsToDebate));
   group.set('configuration.allowAdminAnswersToPoints', truthValueFromBody(req.body.allowAdminAnswersToPoints));
   group.set('configuration.forcePostSortMethodAs', (req.body.forcePostSortMethodAs && req.body.forcePostSortMethodAs!=="") ? req.body.forcePostSortMethodAs : null);
