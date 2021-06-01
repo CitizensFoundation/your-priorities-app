@@ -1,4 +1,5 @@
 {
+  "alwaysShowOnDomainPage": "Alltaf sýna á fremstu síðu",
   "allowAdminsToDebate": "Rökræður opnar fyrir vefstjóra",
   "registrationQuestionsInfo": "Skráninga spurningar",
   "areYouSureYouWantToRecreateApiKey": "Ertu viss um að þú viljir búa til nýjan Api lykil? Allar utanaðkomandi þjónustur sem nota núverandi Api lykil munu hætta að virka",
