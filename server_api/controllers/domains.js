@@ -151,9 +151,16 @@ var getDomain = function (req, domainId, done) {
                 $ne: models.Community.ACCESS_SECRET
               },
               configuration: {
-                customBackURL: {
-                  [models.Sequelize.Op.is]: null
-                }
+                [models.Sequelize.Op.or]: [
+                  {
+                    customBackURL: {
+                      [models.Sequelize.Op.is]: null
+                    }
+                  },
+                  {
+                    alwaysShowOnDomainPage: true
+                  }
+                ]
               },
               $or: [
                 {

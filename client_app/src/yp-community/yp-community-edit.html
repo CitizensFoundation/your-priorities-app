@@ -336,13 +336,15 @@
         </yp-file-upload>
       </div>
 
-      <paper-checkbox name="sortBySortOrder" checked$="{{community.configuration.sortBySortOrder}}">[[t('sortGroupsBySortOrder')]]</paper-checkbox>
+      <div class="layout vertical">
+        <paper-checkbox name="sortBySortOrder" checked$="{{community.configuration.sortBySortOrder}}">[[t('sortGroupsBySortOrder')]]</paper-checkbox>
+        <paper-checkbox name="alwaysShowOnDomainPage" checked$="{{community.configuration.alwaysShowOnDomainPage}}">[[t('alwaysShowOnDomainPage')]]</paper-checkbox>
+        <paper-checkbox name="hideRecommendationOnNewsFeed" checked$="{{community.configuration.hideRecommendationOnNewsFeed}}">[[t('hideRecommendationOnNewsFeed')]]</paper-checkbox>
 
-      <paper-checkbox name="hideRecommendationOnNewsFeed" checked$="{{community.configuration.hideRecommendationOnNewsFeed}}">[[t('hideRecommendationOnNewsFeed')]]</paper-checkbox>
-
-      <paper-checkbox name="forceSecureSamlLogin" disabled$="[[!hasSamlLoginProvider]]"
-                      checked$="{{community.configuration.forceSecureSamlLogin}}">[[t('forceSecureSamlLogin')]]
-      </paper-checkbox>
+        <paper-checkbox name="forceSecureSamlLogin" disabled$="[[!hasSamlLoginProvider]]"
+                        checked$="{{community.configuration.forceSecureSamlLogin}}">[[t('forceSecureSamlLogin')]]
+        </paper-checkbox>
+      </div>
 
       <paper-textarea id="customSamlLoginMessage"
                       name="customSamlLoginMessage"
