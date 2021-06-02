@@ -922,11 +922,20 @@ const copyCommunity = (fromCommunityId, toDomainId, options, done) => {
               },
               (communitySeriesCallback) => {
                 if (options && (options.copyGroups===true || options.copyOneGroupId)) {
-                  models.Group.findAll({
-                    where: {
+                  let whereOptions;
+
+                  if (options.copyOneGroupId) {
+                    whereOptions = {
                       id: options.copyOneGroupId ? options.copyOneGroupId : undefined,
                       community_id: oldCommunity.id
-                    },
+                    }
+                  } else {
+                    whereOptions = {
+                      community_id: oldCommunity.id
+                    }
+                  }
+                  models.Group.findAll({
+                    where: whereOptions,
                     attributes: ['id']
                   }).then((groups) => {
                     async.eachSeries(groups, function (group, groupCallback) {
@@ -952,23 +961,26 @@ const copyCommunity = (fromCommunityId, toDomainId, options, done) => {
     }
   ], function (error) {
     console.log("Done copying community");
-    if (error)
+    if (error) {
       console.error(error);
-    models.Group.count({
-      where: {
-        community_id: newCommunity.id
-      }
-    }).then( count => {
-      models.Community.update({
-        counter_groups: count
-      }).then(()=>{
-        done(error, typeof newCommunity!="undefined" ? newCommunity : null);
-      }).catch( error => {
-        done(error);
-      })
-    }).catch( error=> {
       done(error);
-    });
+    } else {
+      models.Group.count({
+        where: {
+          community_id: newCommunity.id
+        }
+      }).then( count => {
+        newCommunity.update({
+          counter_groups: count
+        }).then(()=>{
+          done(error, typeof newCommunity!="undefined" ? newCommunity : null);
+        }).catch( error => {
+          done(error);
+        })
+      }).catch( error=> {
+        done(error);
+      });
+    }
   });
 };
 
