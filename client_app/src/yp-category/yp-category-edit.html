@@ -51,6 +51,9 @@
         </yp-file-upload>
       </div>
 
+      <paper-button hidden$="[[!numberOfPosts]]" raised class="deleteButton" on-tap="_deleteCategory">[[t('deleteCategory')]]</paper-button>
+      <div hidden$="[[!numberOfPosts]]">[[t('numberOfPosts')]]: [[numberOfPosts]]</div>
+
       <input type="hidden" name="uploadedIconImageId" value="[[uploadedIconImageId]]">
       <input type="hidden" name="uploadedHeaderImageId" value="[[uploadedHeaderImageId]]">
 

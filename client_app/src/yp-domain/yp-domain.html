@@ -125,6 +125,7 @@
 
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
     <lite-signal on-lite-signal-logged-in="_userLoggedIn"></lite-signal>
+    <lite-signal on-lite-signal-got-admin-rights="_gotAdminRights"></lite-signal>
 
     <app-route
       route="{{idRoute}}"
@@ -160,7 +161,8 @@
         Polymer.YpNewsTabSelected,
         Polymer.ypLoggedInUserBehavior,
         Polymer.ypDetectOldiOs,
-        Polymer.ypGotoBehavior
+        Polymer.ypGotoBehavior,
+        Polymer.ypGotAdminRightsBehavior
       ],
 
       properties: {
@@ -214,6 +216,11 @@
         disableRefreshOnce: {
           type: Boolean,
           value: false
+        },
+
+        hasDomainAccess: {
+          type: Boolean,
+          computed: '_hasDomainAccess(domain, gotAdminRights, loggedInUser)'
         }
       },
 
@@ -225,6 +232,20 @@
       listeners: {
         'yp-new-community': '_newCommunity',
         'yp-new-community-folder': '_newCommunityFolder'
+      },
+
+      _hasDomainAccess: function (domain) {
+        if (domain) {
+          var hasDomainAccess =  this.checkDomainAccess(domain)
+          if (!domain.only_admins_can_create_communities || hasDomainAccess) {
+            this.set('createFabIcon', 'add');
+          } else {
+            this.set('createFabIcon', undefined);
+          }
+          return hasDomainAccess;
+        } else {
+          return false;
+        }
       },
 
       scrollToCommunityItem: function () {
@@ -340,10 +361,6 @@
           this.set('disableRefreshOnce', false);
         } else {
           this.refresh();
-        }
-
-        if (!this.domain.only_admins_can_create_communities || this.checkDomainAccess(this.domain)) {
-          this.set('createFabIcon', 'add');
         }
 
         window.appGlobals.setupGoogleAnalytics(this.domain);
