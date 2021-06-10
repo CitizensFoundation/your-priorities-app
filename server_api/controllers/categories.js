@@ -151,21 +151,35 @@ router.put('/:id', auth.can('edit category'), function(req, res) {
 });
 
 router.delete('/:id', auth.can('edit category'), function(req, res) {
-  models.Category.findOne({
-    where: {id: req.params.id, user_id: req.user.id }
-  }).then(function (category) {
-    if (category) {
-      category.deleted = true;
-      category.save().then(function () {
-        log.info('Category Deleted', { category: toJson(category), context: 'delete', user: toJson(req.user) });
-        res.sendStatus(200);
+  models.Post.count({
+    where: {
+      category_id: req.params.id
+    },
+    attributes: ['id']
+  }).then(count=>{
+    if (count==0) {
+      models.Category.findOne({
+        where: {id: req.params.id, user_id: req.user.id }
+      }).then(function (category) {
+        if (category) {
+          category.deleted = true;
+          category.save().then(function () {
+            log.info('Category Deleted', { category: toJson(category), context: 'delete', user: toJson(req.user) });
+            res.sendStatus(200);
+          });
+        } else {
+          sendCategoryOrError(res, req.params.id, 'update', req.user, 'Not found', 404);
+        }
+      }).catch(function(error) {
+        sendCategoryOrError(res, null, 'delete', req.user, error);
       });
     } else {
-      sendCategoryOrError(res, req.params.id, 'update', req.user, 'Not found', 404);
+      log.error("Trying to delete a category with posts")
+      res.sendStatus(401);
     }
-  }).catch(function(error) {
+  }).catch(error=>{
     sendCategoryOrError(res, null, 'delete', req.user, error);
-  });
+  })
 });
 
 module.exports = router;
