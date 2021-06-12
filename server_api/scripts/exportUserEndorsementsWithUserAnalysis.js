@@ -9,6 +9,14 @@ const outFile = process.argv[3];
 
 let registrationQuestions;
 
+const getAnswerFor = (text, answers) => {
+  for (let i=0;i<answers.length;i++) {
+    if (Object.keys(answers[i])[0]==text) return Object.values(answers[i])[0];
+  }
+
+  return '';
+}
+
 models.Group.findOne({
   where: {
     id: groupId
@@ -19,9 +27,9 @@ models.Group.findOne({
   }
   models.Endorsement.findAll({
     order: [
-      ['created_at', 'asc' ]
+      ['created_at', 'asc']
     ],
-    attributes: ['id','value','created_at'],
+    attributes: ['id','value','created_at','user_id'],
     include: [
       {
         model: models.User,
@@ -49,7 +57,7 @@ models.Group.findOne({
     var outFileContent = "";
     console.log(endorsements.length);
     outFileContent += "Post endorsements for Group Id: "+groupId+"\n";
-    outFileContent += "Post Id,Post Name,Value,Category Id,Category Name,User Id\n";
+    outFileContent += "Post Id,Post Name,Value,Category Id,Category Name,User Id";
 
     if (registrationQuestions) {
       for (let i=0;i<registrationQuestions.length;i++) {
@@ -57,19 +65,20 @@ models.Group.findOne({
       }
     }
 
+    outFileContent += "\n";
+
     async.eachSeries(endorsements, (endorsement, seriesCallback) => {
-      outFileContent +=
-        ','+endorsement.Post.id+
-        ','+endorsement.Post.name+
-        ','+endorsement.value+
-        ','+endorsement.Post.Category ? endorsement.Category.id : ''+
-        ','+endorsement.Post.Category ? endorsement.Category.name : ''+
-        ','+endorsement.user_id;
+      outFileContent += endorsement.Post.id;
+      outFileContent += ',"'+endorsement.Post.name+'"';
+      outFileContent += ','+endorsement.value;
+      outFileContent += ','+(endorsement.Post.Category ? endorsement.Post.Category.id : '')
+      outFileContent += ',"'+(endorsement.Post.Category ? endorsement.Post.Category.name : '')+'"'
+      outFileContent +=  ','+endorsement.user_id;
 
       if (endorsement.User.private_profile_data && endorsement.User.private_profile_data.registration_answers ) {
         const answers = endorsement.User.private_profile_data.registration_answers;
-        for (let i=0;i<answers.length;i++) {
-          outFileContent+=","+answers[i].value;
+        for (let i=0;i<registrationQuestions.length;i++) {
+          outFileContent+=","+getAnswerFor(registrationQuestions[i].text, answers);
         }
       }
       outFileContent += '\n';
