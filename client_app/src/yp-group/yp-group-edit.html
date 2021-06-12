@@ -1100,9 +1100,20 @@
     _openCategoryEdit: function (event) {
       window.appGlobals.activity('open', 'category.new');
       Polymer.dom(document).querySelector('yp-app').getDialogAsync("categoryEdit", function (dialog) {
-        dialog.setup(this.group, false, this._refreshCategories.bind(this), event.model.category);
+        dialog.setup(this.group, false, this._refreshCategories.bind(this), this._deleteCategory.bind(this), event.model.category);
         dialog.open("edit", {categoryId: event.model.category.id});
       }.bind(this));
+    },
+
+    _deleteCategory: function (deleteCategory) {
+      var newCategories = [];
+      debugger;
+      __.each(this.group.Categories, function (category) {
+        if (category.id !== deleteCategory.id) {
+          newCategories.push(category)
+        }
+      });
+      this.set('group.Categories', newCategories);
     },
 
     _refreshCategories: function (newCategory) {

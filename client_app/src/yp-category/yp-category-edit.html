@@ -13,6 +13,22 @@
 
 <dom-module id="yp-category-edit">
   <template>
+    <style include="iron-flex iron-flex-alignment">
+      .additionalSettings {
+        margin-top: 8px;
+      }
+
+      [hidden] {
+        display: none !important;
+      }
+
+      .deleteButton {
+        margin-top: 0;
+        max-width: 175px;
+        color: #F00;
+      }
+    </style>
+
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
     <yp-edit-dialog name="categoryEdit" id="editDialog" title="[[editHeaderText]]" icon="add"  action="[[action]]" method="[[method]]"
@@ -26,7 +42,7 @@
                    char-counter>
       </paper-input>
 
-      <paper-textarea id="description"
+      <paper-textarea id="description" hidden
                       name="description"
                       value="{{category.description}}"
                       always-float-label="[[category.description]]"
@@ -38,25 +54,29 @@
       </paper-textarea>
 
       <div class="layout vertical additionalSettings">
-        <yp-file-upload id="iconImageUpload" droppable="true" raised="true" multi="false" target="/api/images?itemType=category-icon" method="POST" on-success="_iconImageUploaded">
+        <yp-file-upload id="iconImageUpload" raised="true" multi="false" target="/api/images?itemType=category-icon" method="POST" on-success="_iconImageUploaded">
           <iron-icon class="icon" icon="photo-camera"></iron-icon>
-          <span>[[t('image.icon.upload')]]</span>
+          <span>[[t('image.logo.upload')]]</span>
         </yp-file-upload>
       </div>
 
       <div class="layout vertical additionalSettings" hidden>
         <yp-file-upload id="headerImageUpload" droppable="true" raised="true" multi="false" target="/api/images?itemType=category-header" method="POST" on-success="_headerImageUploaded">
           <iron-icon class="icon" icon="photo-camera"></iron-icon>
-          <span>[[t('image.header.upload')]]</span>
+          <span>[[t('image.upload')]]</span>
         </yp-file-upload>
       </div>
 
-      <paper-button hidden$="[[!numberOfPosts]]" raised class="deleteButton" on-tap="_deleteCategory">[[t('deleteCategory')]]</paper-button>
-      <div hidden$="[[!numberOfPosts]]">[[t('numberOfPosts')]]: [[numberOfPosts]]</div>
+      <div class="layout vertical additionalSettings" hidden$="[[new]]">
+        <paper-button hidden$="[[hasPosts]]" raised class="deleteButton" on-tap="_deleteCategory">[[t('deleteCategory')]]</paper-button>
+        <div hidden$="[[!hasPosts]]">[[t('numberOfPosts')]]: [[numberOfPosts]]</div>
+      </div>
 
       <input type="hidden" name="uploadedIconImageId" value="[[uploadedIconImageId]]">
       <input type="hidden" name="uploadedHeaderImageId" value="[[uploadedHeaderImageId]]">
 
+      <yp-ajax id="deleteCategoryAjax" method="DELETE" on-response="_categoryDeletedResponse"></yp-ajax>
+      <yp-ajax id="getPostsCountAjax" method="GET" on-response="_categoryCount"></yp-ajax>
     </yp-edit-dialog>
   </template>
 
@@ -66,6 +86,37 @@
 
   Polymer({
 
+    _deleteCategory: function () {
+      this.$.deleteCategoryAjax.url = "/api/categories/"+this.category.id;
+      this.$.deleteCategoryAjax.body = {};
+      this.$.deleteCategoryAjax.generateRequest();
+    },
+
+    _categoryCount: function (event) {
+      this.set('numberOfPosts',event.detail.response.count);
+      if (this.numberOfPosts>0) {
+        this.set('hasPosts', true);
+      } else {
+        this.set('hasPosts', false);
+      }
+    },
+
+    _getPostsCount: function () {
+      this.$.getPostsCountAjax.url = "/api/categories/"+this.category.id+"/getPostsCount";
+      this.$.getPostsCountAjax.generateRequest();
+    },
+
+    _categoryDeletedResponse: function () {
+      Polymer.dom(document).querySelector('yp-app').getDialogAsync("masterToast", function (toast) {
+        toast.text = this.t('categoryDeleted');
+        toast.duration = 4000;
+        toast.close();
+        toast.show();
+      }.bind(this));
+      this.deletedFunction(this.category);
+      this.$.editDialog.close();
+    },
+
     is: 'yp-category-edit',
 
     behaviors: [
@@ -74,6 +125,16 @@
     ],
 
     properties: {
+
+      numberOfPosts: {
+        type: Number,
+        value: null
+      },
+
+      hasPosts: {
+        type: Boolean,
+        value: true
+      },
 
       action: {
         type: String,
@@ -106,6 +167,10 @@
 
       uploadedHeaderImageId: {
         type: String
+      },
+
+      deletedFunction: {
+        type: Function
       }
     },
 
@@ -119,12 +184,14 @@
       this.set('uploadedHeaderImageId', image.id);
     },
 
-    setup: function (group, newNotEdit, refreshFunction, category) {
+    setup: function (group, newNotEdit, refreshFunction, deletedFunction, category) {
       this.set('group', group);
       this.set('new', newNotEdit);
       this.set('refreshFunction', refreshFunction);
+      this.set('deletedFunction', deletedFunction);
       if (category) {
         this.set('category', category);
+        this._getPostsCount();
       }
       this._setupTranslation();
       this._setupNewUpdateState();
@@ -134,6 +201,7 @@
       this.set('category', { name: '', description: '' });
       this.set('uploadedIconImageId', null);
       this.set('uploadedHeaderImageId', null);
+      this.set('numberOfPosts', null);
       this.$.headerImageUpload.clear();
       this.$.iconImageUpload.clear();
     },
