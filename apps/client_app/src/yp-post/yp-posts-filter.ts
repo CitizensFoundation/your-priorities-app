@@ -4,7 +4,6 @@ import { property, customElement } from 'lit/decorators.js';
 import { YpBaseElement } from '../common/yp-base-element.js';
 import { YpMediaHelpers } from '../common/YpMediaHelpers.js';
 import { YpNavHelpers } from '../common/YpNavHelpers.js';
-import { find, chunk } from 'lodash-es';
 
 import '../common/yp-image.js';
 import '@material/mwc-select';
@@ -252,7 +251,7 @@ export class YpPostsFilter extends YpBaseElement {
   }
 
   _getCategoryCount(id: number, categoryCounts: Array<YpCategoriesCount>) {
-    const foundCategory = find(categoryCounts, function (categoryCount) {
+    const foundCategory = categoryCounts.find(categoryCount => {
       return categoryCount.category_id == id;
     });
     if (foundCategory) {
@@ -477,8 +476,16 @@ export class YpPostsFilter extends YpBaseElement {
     }
   }
 
+  chunk(input: Array<any>, size: number)  {
+    return input.reduce((arr, item, idx) => {
+      return idx % size === 0
+        ? [...arr, [item]]
+        : [...arr.slice(0, -1), [...arr.slice(-1)[0], item]];
+    }, []);
+  }
+
   _categoryItems() {
-    if (this.group.Categories) return chunk(this.group.Categories, 7);
+    if (this.group.Categories) return this.chunk(this.group.Categories, 7);
     else return [];
   }
 

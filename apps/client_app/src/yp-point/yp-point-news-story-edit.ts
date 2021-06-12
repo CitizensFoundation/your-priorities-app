@@ -16,8 +16,6 @@ import { YpBaseElementWithLogin } from '../common/yp-base-element-with-login.js'
 import { Button } from '@material/mwc-button';
 import { TextArea } from '@material/mwc-textarea';
 
-import { merge } from 'lodash-es';
-
 @customElement('yp-point-news-story-edit')
 export class YpPointNewsStoryEdit extends YpBaseElementWithLogin {
   @property({ type: Boolean })
@@ -212,26 +210,25 @@ export class YpPointNewsStoryEdit extends YpBaseElementWithLogin {
   async _sendStory() {
     (this.$$('#storySubmitButton') as Button).disabled = true;
     this.point!.content = this.newPointContent
-    const body = { point: this.point };
+    let body = { point: this.point };
     let url;
     if (this.point && this.point.content && this.point.content.length > 2) {
       if (this.postId && this.postGroupId) {
-        merge(body, { post_id: this.postId });
+        body = {...body, ...{ post_id: this.postId }};
         url = '/api/groups/' + this.postGroupId + '/post/news_story';
       } else if (this.groupId) {
-        merge(body, { group_id: this.groupId });
+        body = {...body, ...{ group_id: this.groupId }};
         url =
           '/api/groups/' + this.groupId + '/news_story';
       } else if (this.communityId) {
-        merge(body, { community_id: this.communityId });
+        body = {...body, ...{community_id: this.communityId }};
         url = '/api/communities/' + this.communityId + '/news_story';
       } else if (this.domainId) {
         url = '/api/domains/' + this.domainId + '/news_story';
-        merge(body, { domain_id: this.domainId });
+        body = {...body, ...{ domain_id: this.domainId }};
       } else {
         console.error("Can't find send ids");
       }
-
       if (url) {
         await window.serverApi.postNewsStory(url, body)
         this.fire('refresh')

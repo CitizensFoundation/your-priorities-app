@@ -1,4 +1,3 @@
-import { sortBy, filter } from 'lodash-es';
 import { YpMediaHelpers } from './YpMediaHelpers.js';
 
 export class YpCollectionHelpers {
@@ -8,7 +7,7 @@ export class YpCollectionHelpers {
   ): YpSplitCollectionsReturn {
     if (containerConfig && containerConfig.sortBySortOrder) {
       try {
-        items = sortBy(items, item => {
+        items = items.sort(item => {
           return item?.configuration?.optionalSortOrder || 100000;
         });
       } catch (e) {
@@ -17,13 +16,13 @@ export class YpCollectionHelpers {
     }
 
     return {
-      active: filter(items, o => {
+      active: items.filter(o => {
         return o.status == 'active' || o.status == 'hidden';
       }),
-      archived: filter(items, o => {
+      archived: items.filter(o => {
         return o.status == 'archived';
       }),
-      featured: filter(items, o => {
+      featured: items.filter(o => {
         return o.status == 'featured';
       }),
     };

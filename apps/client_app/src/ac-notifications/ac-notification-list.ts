@@ -1,7 +1,6 @@
 import { html, css, nothing } from 'lit';
 import { property, customElement } from 'lit/decorators.js';
 
-import { reject } from 'lodash-es';
 import {RangeChangeEvent, Layout1d, LitVirtualizer } from '@lit-labs/virtualizer';
 
 import '@material/mwc-button';
@@ -552,10 +551,10 @@ export class AcNotificationList extends YpBaseElementWithLogin {
   }
 
   _displayToast(notifications: Array<AcNotificationData>) {
-    const notMyNotifications = reject(notifications, notification => {
+    const notMyNotifications = notifications.filter(notification => {
       const activityUser = notification.AcActivities[0].User;
       return (
-        !(
+        (
           window.appUser.user &&
           activityUser &&
           window.appUser.user.id != activityUser.id
