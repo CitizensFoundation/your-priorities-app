@@ -599,7 +599,7 @@
       </div>
       <div rtl$="[[rtl]]" class="layout vertical center-center">
         <iron-scroll-threshold id="ironScrollThesholdMobile"  scroll-target="document" on-lower-threshold="_loadMorePoints">
-          <iron-list id="ironListMobile" lower-threshold="150" debate-disabled$="[[disableDebate]]" role="list" items="[[points]]" as="point" scroll-target="document" scroll-offset="[[mobileScrollOffset]]">
+          <iron-list id="ironListMobile" lower-threshold="150" debate-disabled$="[[disableDebate]]" role="list" items="[[points]]" as="point" scroll-target="[[scrollTarget]]" scroll-offset="[[mobileScrollOffset]]">
             <template>
               <div class="item layout vertical center-center" tabindex$="[[tabIndex]]" role="listitem" aria-level="3">
                 <paper-material id="point[[point.id]]" elevation="0" animated class="pointMaterial pointMaterialMobile">
@@ -907,6 +907,24 @@
           pointMaxLength: {
             type: Number,
             computed: '_pointMaxLength(post, largeMode)'
+          },
+
+          isPostPage: {
+            type: Boolean,
+            value: false
+          },
+
+          scrollTarget: {
+            type: String,
+            computed: '_scrollTarget(isPostPage)'
+          }
+        },
+
+        _scrollTarget: function (isPostPage) {
+          if (isPostPage) {
+            return "document";
+          } else {
+            return undefined;
           }
         },
 

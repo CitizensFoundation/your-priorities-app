@@ -318,7 +318,7 @@
 
       <iron-pages id="pages" class="tabPages" selected="[[selectedTab]]" attr-for-selected="name" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
         <div name="debate" class="layout horizontal center-center" role="main" aria-label$="[[t('debate')]]">
-          <yp-post-points host="[[host]]" id="pointsSection" is-admin="[[isAdmin]]" post="[[post]]" scroll-to-id$="[[scrollToPointId]]"></yp-post-points>
+          <yp-post-points host="[[host]]" id="pointsSection" is-post-page=[[isPostPage]] is-admin="[[isAdmin]]" post="[[post]]" scroll-to-id$="[[scrollToPointId]]"></yp-post-points>
         </div>
         <section name="news" class="minHeightSection">
           <template is="dom-if" if="[[newsTabSelected]]">
@@ -432,6 +432,15 @@
             observer: '_selectedTabChanged'
           },
 
+          currentPage: {
+            type: String,
+          },
+
+          isPostPage: {
+            type: Boolean,
+            computed: '_isPostPage(currentPage)'
+          },
+
           small: {
             type: Boolean
           },
@@ -439,6 +448,7 @@
           method: {
             type: String
           },
+
 
           mapActive: {
             type: Boolean,
@@ -554,6 +564,10 @@
           } else {
             return "layout horizontal center-center";
           }
+        },
+
+        _isPostPage: function (page) {
+          return page==='post';
         },
 
         _headerClasses: function(small) {
