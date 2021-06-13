@@ -67,7 +67,7 @@
         </yp-file-upload>
       </div>
 
-      <div class="layout vertical additionalSettings" hidden$="[[new]]">
+      <div class="layout vertical additionalSettings" hidden$="[[isNew]]">
         <paper-button hidden$="[[hasPosts]]" raised class="deleteButton" on-tap="_deleteCategory">[[t('deleteCategory')]]</paper-button>
         <div hidden$="[[!hasPosts]]">[[t('numberOfPosts')]]: [[numberOfPosts]]</div>
       </div>
@@ -171,7 +171,16 @@
 
       deletedFunction: {
         type: Function
+      },
+
+      isNew: {
+        type: Boolean,
+        computed: '_isNew(new)'
       }
+    },
+
+    _isNew: function (isNew) {
+      return isNew;
     },
 
     _iconImageUploaded: function (event, detail) {
