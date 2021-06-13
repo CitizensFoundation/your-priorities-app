@@ -1,4 +1,7 @@
 {
+  "categoryDeleted": "Category deleted",
+  "deleteCategory": "Delete category",
+  "numberOfPosts": "Number of posts",
   "alwaysShowOnDomainPage": "Always show on domain page",
   "allowAdminsToDebate": "Debate open for admins",
   "registrationQuestionsInfo": "Registration question",

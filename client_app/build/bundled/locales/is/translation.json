@@ -1,4 +1,7 @@
 {
+  "categoryDeleted": "Flokki eytt",
+  "deleteCategory": "Eyða flokk",
+  "numberOfPosts": "Fjöldi hugmynd",
   "alwaysShowOnDomainPage": "Alltaf sýna á fremstu síðu",
   "allowAdminsToDebate": "Rökræður opnar fyrir vefstjóra",
   "registrationQuestionsInfo": "Skráninga spurningar",
