@@ -109,6 +109,7 @@
         window.appGlobals.activity('submit', 'registrationAnswers');
         this.$$("#sendRegistrationQuestionsAjax").body = {registration_answers:  this.$$("#registrationQuestions").getAnswers() };
         this.$$("#sendRegistrationQuestionsAjax").generateRequest();
+        window.appUser.setHasRegistrationAnswers();
       } else {
         this.$$("#sendRegistrationQuestionsAjax").showErrorDialog(this.t('user.completeForm'));
         return false;

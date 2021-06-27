@@ -288,6 +288,7 @@
             group.configuration &&
             group.configuration.registrationQuestionsJson) {
             this.set('registrationQuestionsGroup', group);
+            window.appUser.checkRegistrationAnswersCurrent();
           } else {
             this.set('registrationQuestionsGroup', null);
           }
