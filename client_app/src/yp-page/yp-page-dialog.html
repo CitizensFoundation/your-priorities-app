@@ -106,6 +106,7 @@
       _close: function () {
         this.set('title', null);
         this.$.content.innerHTML = '';
+        window.appGlobals.activity('close', 'pages');
       }
     });
   </script>

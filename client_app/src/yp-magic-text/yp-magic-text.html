@@ -233,7 +233,7 @@
           }
 
           if (this.contentLanguage &&
-             YpMagicTextBox.widerLanguages.indexOf(this.contentLanguage)>-1) {
+             window.appGlobals.largeFont || YpMagicTextBox.widerLanguages.indexOf(this.contentLanguage)>-1) {
             this.set('widetext', true);
           } else {
             this.set('widetext', false)

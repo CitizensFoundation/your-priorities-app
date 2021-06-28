@@ -60,7 +60,11 @@
       }
 
       .community-name[widetext] {
-          font-size: 20px;
+        font-size: 20px;
+      }
+
+      .community-name[largefont] {
+        font-size: 22px;
       }
 
       iron-image, video {
@@ -120,6 +124,11 @@
       .communityDescription[widetext] {
           font-size: 14px !important;
       }
+
+      .communityDescription[largefont] {
+          font-size: 15px !important;
+      }
+
 
       .community-name {
         background-color: var(--primary-color-800, #000);
@@ -330,6 +339,7 @@
                 <div role="heading" aria-level="1" aria-label="[[community.name]]">
                   <template is="dom-if" if="[[community]]">
                     <yp-magic-text text-type="communityName" widetext$="[[wideText]]" class="community-name" content-language="[[community.language]]"
+                                   largefont$="[[largeFont]]"
                                    disable-translation="[[community.configuration.disableNameAutoTranslation]]"
                                    text-only content="[[communityNameFull]]" content-id="[[community.id]]">
                     </yp-magic-text>
@@ -337,6 +347,7 @@
                 </div>
                 <div hidden class="communityAccess">[[_communityAccessText(community.access)]]</div>
                 <yp-magic-text id="description" class="communityDescription" widetext$="[[wideText]]"
+                               largefont$="[[largeFont]]"
                                text-type="communityContent" content-language="[[community.language]]"
                                content="[[community.description]]" content-id="[[community.id]]">
                 </yp-magic-text>
@@ -507,6 +518,10 @@
       },
 
       _communityChanged: function (community, previousCommunity) {
+        if (window.appGlobals.largeFont)
+          this.set('largeFont', true);
+        else
+          this.set('largeFont', false);
         if (community && community.description) {
           this.async(function () {
             if (community.configuration && community.configuration.welcomeHTML &&

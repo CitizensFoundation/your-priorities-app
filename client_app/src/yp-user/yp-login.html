@@ -69,6 +69,13 @@
         background: url(/images/auth-icons.png) no-repeat 99px 99px;
       }
 
+      paper-tab {
+        --paper-tabs: {
+            font-family: var(--app-header-font-family, Roboto);
+        };
+        font-family: var(--app-header-font-family, Roboto);
+      }
+
       /**
        * 36px
        */
@@ -123,6 +130,13 @@
         background: #4f6aa3;
         -webkit-box-shadow: inset 0 1px 0 #45619d;
         box-shadow: inset 0 1px 0 #45619d;
+      }
+
+      paper-textarea-aria, paper-input {
+          --paper-input-container-label: {
+              font-family: var(--app-header-font-family, Roboto);
+          };
+          font-family: var(--app-header-font-family, Roboto);
       }
 
       /*

@@ -59,10 +59,20 @@
 
       wide: {
         type: Boolean
+      },
+
+      largeFont: {
+        type: Boolean,
+        value: false
       }
     },
 
     _groupChanged: function (group) {
+      if (window.appGlobals.largeFont) {
+        this.set('largeFont', true);
+      } else {
+        this.set('largeFont', false);
+      }
       if (group) {
         if (group.GroupLogoImages && group.GroupLogoImages.length>0)
         {
