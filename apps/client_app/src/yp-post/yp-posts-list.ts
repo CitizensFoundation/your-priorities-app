@@ -2,7 +2,7 @@ import { html, css } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { YpBaseElement } from '../common/yp-base-element.js';
 import { YpIronListHelpers } from '../common/YpIronListHelpers.js';
-import {RangeChangeEvent, Layout1d, LitVirtualizer } from '@lit-labs/virtualizer';
+import {RangeChangeEvent, Layout1d, Layout1dSquareGrid, LitVirtualizer, Layout1dGrid } from '@lit-labs/virtualizer';
 
 import '@material/mwc-icon-button';
 import '@material/mwc-textfield';
@@ -58,6 +58,9 @@ export class YpPostsList extends YpBaseElement {
 
   @property({ type: Boolean })
   showSearchIcon = false;
+
+  @property({ type: Boolean, reflect: true })
+  grid = false;
 
   moreToLoad = false;
 
@@ -278,7 +281,7 @@ export class YpPostsList extends YpBaseElement {
               <lit-virtualizer
                 id="list"
                 .items=${this.posts}
-                .layout="${Layout1d}"
+                .layout="${this.grid ? Layout1dGrid : Layout1d}"
                 .scrollTarget="${window}"
                 .renderItem=${this.renderPostItem.bind(this)}
                 @rangeChanged=${this.scrollEvent}></lit-virtualizer>
@@ -479,7 +482,7 @@ export class YpPostsList extends YpBaseElement {
       console.info('Scrolling to post: ' + post.id);
       for (let i = 0; i < this.posts.length; i++) {
         if (this.posts[i] == post) {
-          (this.$$('#list') as LitVirtualizer<any>).scrollToIndex(i);
+          (this.$$('#list') as LitVirtualizer).scrollToIndex(i);
           break;
         }
       }
