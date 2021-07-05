@@ -29,7 +29,7 @@ models.Group.findOne({
     order: [
       ['created_at', 'asc']
     ],
-    attributes: ['id','value','created_at','user_id'],
+    attributes: ['id','value','created_at','user_id','ip_address','user_agent'],
     include: [
       {
         model: models.User,
@@ -65,23 +65,48 @@ models.Group.findOne({
       }
     }
 
+    outFileContent += ",IP Address,User Agent"
     outFileContent += "\n";
 
-    async.eachSeries(endorsements, (endorsement, seriesCallback) => {
-      outFileContent += endorsement.Post.id;
-      outFileContent += ',"'+endorsement.Post.name+'"';
-      outFileContent += ','+endorsement.value;
-      outFileContent += ','+(endorsement.Post.Category ? endorsement.Post.Category.id : '')
-      outFileContent += ',"'+(endorsement.Post.Category ? endorsement.Post.Category.name : '')+'"'
-      outFileContent +=  ','+endorsement.user_id;
+    let notValidCounter = 0;
+    let notValidUserCounter = 0;
+    let nullValueCounter = 0;
+    const notValidUsers = {};
+    const validUsers = {};
+    let validUsersCount = 0;
 
+    async.eachSeries(endorsements, (endorsement, seriesCallback) => {
       if (endorsement.User.private_profile_data && endorsement.User.private_profile_data.registration_answers ) {
-        const answers = endorsement.User.private_profile_data.registration_answers;
-        for (let i=0;i<registrationQuestions.length;i++) {
-          outFileContent+=","+getAnswerFor(registrationQuestions[i].text, answers);
+        if (endorsement.value!==0) {
+          outFileContent += endorsement.Post.id;
+          outFileContent += ',"'+endorsement.Post.name+'"';
+          outFileContent += ','+endorsement.value;
+          outFileContent += ','+(endorsement.Post.Category ? endorsement.Post.Category.id : '')
+          outFileContent += ',"'+(endorsement.Post.Category ? endorsement.Post.Category.name : '')+'"'
+          outFileContent +=  ','+endorsement.user_id;
+
+          const answers = endorsement.User.private_profile_data.registration_answers;
+          for (let i=0;i<registrationQuestions.length;i++) {
+            outFileContent+=","+getAnswerFor(registrationQuestions[i].text, answers);
+          }
+          outFileContent += ','+endorsement.ip_address;
+          outFileContent += ',"'+endorsement.user_agent+'"';
+          outFileContent += '\n';
+        } else {
+          nullValueCounter += 1;
+        }
+        if (!validUsers[endorsement.user_id]) {
+          validUsersCount += 1;
+          validUsers[endorsement.user_id] = true;
+        }
+
+      } else {
+        notValidCounter += 1;
+        if (!notValidUsers[endorsement.user_id]) {
+          notValidUserCounter += 1;
+          notValidUsers[endorsement.user_id] = true;
         }
       }
-      outFileContent += '\n';
       seriesCallback();
     }, function (error) {
       fs.writeFile(outFile, outFileContent, function(err) {
@@ -89,6 +114,8 @@ models.Group.findOne({
           console.log(err);
         }
         console.log("The file was saved!");
+        console.log(`${notValidCounter} not valid entries ${notValidUserCounter} not valid users ${nullValueCounter} 0 values`)
+        console.log(`${validUsersCount} valid users`)
         process.exit();
       });
     });

@@ -97,7 +97,7 @@
                         title$="[[t('sharePoint')]]" facebook email twitter popup
                         url="[[pointUrl]]"></paper-share-button>
 
-    <yp-ajax id="pointQualityAjax" method="POST" on-response="_pointQualityResponse"></yp-ajax>
+    <yp-ajax id="pointQualityAjax" hidden method="POST" on-response="_pointQualityResponse"></yp-ajax>
     <lite-signal on-lite-signal-got-endorsements-and-qualities="_updateQualitiesFromSignal"></lite-signal>
 
   </template>
