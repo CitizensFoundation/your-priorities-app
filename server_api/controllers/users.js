@@ -1250,7 +1250,7 @@ router.post('/forgot_password', function(req, res) {
     },
     function(token, done) {
       models.User.findOne({
-        where: { email: req.body.email },
+        where: { email: req.body.email.toLowerCase() },
         attributes: ['id','email','reset_password_token','reset_password_expires','legacy_passwords_disabled']
       }).then(function (user) {
         if (user) {
