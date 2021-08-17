@@ -58,7 +58,10 @@
           <yp-registration-questions
                   id="registrationQuestions"
                   on-dom-change="_questionsUpdated"
-                  group="[[registrationQuestionsGroup]]"></yp-registration-questions>
+                  on-question-changed="_questionsUpdated"
+                  on-resize-scroller="_questionsUpdated"
+                  group="[[registrationQuestionsGroup]]"
+          ></yp-registration-questions>
         </paper-dialog-scrollable>
         <div class="buttons">
           <yp-ajax id="sendRegistrationQuestionsAjax" dispatch-error method="PUT" url="/api/users/setRegistrationAnswers" on-response="_setRegistrationAnswerResponse"></yp-ajax>

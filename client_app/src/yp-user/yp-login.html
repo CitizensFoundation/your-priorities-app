@@ -453,6 +453,8 @@
                   <template is="dom-if" if="[[registrationQuestionsGroup]]" restamp>
                     <yp-registration-questions
                             id="registrationQuestions"
+                            on-questions-changed="_registrationQuestionsChanged"
+                            on-resize-scroller="_registrationQuestionsChanged"
                             group="[[registrationQuestionsGroup]]"></yp-registration-questions>
                   </template>
                 </template>
@@ -709,6 +711,10 @@
         type: Boolean,
         value: false
       }
+    },
+
+    _registrationQuestionsChanged: function () {
+      this.$.dialog.fire('iron-resize');
     },
 
     _setupCustomRegistrationQuestions: function () {

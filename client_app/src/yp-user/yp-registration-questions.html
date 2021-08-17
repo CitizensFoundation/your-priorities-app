@@ -28,6 +28,10 @@
       yp-structured-question-edit {
           max-width: 80%;
       }
+
+      .segmentQuestionIntro {
+          margin-top: 16px;
+      }
     </style>
 
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
@@ -37,27 +41,29 @@
     <iron-media-query query="(max-width: 700px)" query-matches="{{phoneWidth}}"></iron-media-query>
 
     <template is="dom-if" if="[[segments]]">
-      <div class="segmentQuestion">[[t('areyou')]]</div>
+      <div class="segmentQuestionIntro">[[t('choose')]]</div>
       <paper-radio-group required data-type="radios" on-selected-changed="_radioChanged"
                          id="segmentRadio_[[index]]" name="segmentRadio_[[index]]"
                          class="segmentRadio">
         <template is="dom-repeat" items="[[segments]]" as="radioButton" index-as="buttonIndex">
           <paper-radio-button use-small-font$="[[useSmallFont]]"
                               id="segmentRadio_[[index]]_[[buttonIndex]]" name="[[radioButton.segmentName]]">
-            [[radioButton.segmentName]]
+            [[radioButton.text]]
           </paper-radio-button>
         </template>
       </paper-radio-group>
 
     </template>
 
-    <template is="dom-repeat" items="[[filteredQuestions]]" as="question">
-      <yp-structured-question-edit index="[[index]]"
-                                   use-small-font
-                                   id="structuredQuestionContainer_[[index]]"
-                                   structured-answers="[[structuredAnswers]]"
-                                   question="[[question]]">
-      </yp-structured-question-edit>
+    <template is="dom-if" if="[[renderingQuestions]]" restamp>
+      <template is="dom-repeat" items="[[filteredQuestions]]" as="question">
+        <yp-structured-question-edit index="[[index]]"
+                                     use-small-font
+                                     id="structuredQuestionContainer_[[index]]"
+                                     structured-answers="[[structuredAnswers]]"
+                                     question="[[question]]">
+        </yp-structured-question-edit>
+      </template>
     </template>
 
     <yp-ajax hidden id="translatedQuestionsAjax" on-response="_translatedQuestionsResponse"></yp-ajax>
@@ -81,13 +87,13 @@
 
         structuredQuestions: {
           type: Array,
-          computed: '_structuredQuestions(group, translatedQuestions)'
+          computed: '_structuredQuestions(group, translatedQuestions)',
+          observer: '_filteredQuestionsChanged'
         },
 
         filteredQuestions: {
           type: Array,
-          computed: '_filteredQuestions(structuredQuestions, segments, selectedSegment)',
-          observer: '_filteredQuestionsChanged'
+          computed: '_filteredQuestions(structuredQuestions, segments, selectedSegment)'
         },
 
         structuredAnswers: {
@@ -113,11 +119,27 @@
         segments: {
           type: Array,
           value: null
+        },
+
+        renderingQuestions: {
+          type: Boolean,
+          value: true
         }
       },
 
       _radioChanged(event, detail) {
         this.set('selectedSegment', detail.value);
+        // HACK FOR DOM-REPEAT NOT SUPPORTING RESTAMP, not needed for Lit version and .map
+        this.set('renderingQuestions', false);
+        this.async(function () {
+          this.set('renderingQuestions', true);
+          this.async(function () {
+            this._setupQuestions();
+            this.async(function () {
+              this.fire('questions-changed');
+            })
+          })
+        })
       },
 
       _autoTranslateEvent(event, detail) {
@@ -211,8 +233,10 @@
         if (questions) {
           var filteredQuestions = [];
           questions.forEach(function (question) {
-            if (!segments || (selectedSegment && question.segmentName===selectedSegment)) {
-              filteredQuestions.push(questions);
+            if (!segments || (selectedSegment &&
+                              question.type!=="segment" &&
+                              question.segmentName===selectedSegment)) {
+              filteredQuestions.push(question);
             }
           }.bind(this));
           return filteredQuestions;
@@ -300,6 +324,10 @@
             valid = false;
           }
         }.bind(this));
+
+        if (this.segments && !this.selectedSegment) {
+          valid = false;
+        }
         return valid;
       }
     });
