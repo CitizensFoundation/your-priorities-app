@@ -931,19 +931,34 @@
             this.setupTopHeaderImage(null);
           }
 
+          var backPath;
+          var headerTitle;
+
+          var isAdmin = this.checkGroupAccess(this.group);
+
+          if (this.group.configuration.customBackURL) {
+            backPath = this.group.configuration.customBackURL;
+            headerTitle = this.group.configuration.customBackName;
+          } else if (this.group.Community &&
+                     this.group.Community.configuration &&
+                     this.group.Community.configuration.redirectToGroupId &&
+                     !isAdmin) {
+            backPath = "/domain/"+this.group.Community.Domain.id;
+            headerTitle = this.group.Community.Domain.name;
+          } else {
+            backPath =  "/community/" + this.group.community_id;
+            headerTitle = this.group.Community.name;
+          }
+
           this.fire("change-header", {
-            headerTitle: this.group.configuration.customBackName ?
-                           this.group.configuration.customBackName :
-                           this.group.Community.name,
+            headerTitle: headerTitle,
             headerDescription: this.group.Community.description,
             headerIcon: "social:group",
             documentTitle: this.group.name,
             enableSearch: true,
             hideHelpIcon: this.group.configuration.hideHelpIcon ? true : null,
             useHardBack: this._useHardBack(this.group.configuration),
-            backPath:  this.group.configuration.customBackURL ?
-                         this.group.configuration.customBackURL :
-                         "/community/" + this.group.community_id
+            backPath: backPath
           });
 
           this.$.pagesAjax.url = "/api/groups/"+this.group.id+"/pages";

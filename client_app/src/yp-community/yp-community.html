@@ -357,7 +357,6 @@
           if (!this.community.is_community_folder && (!this.community.only_admins_can_create_groups || this.checkCommunityAccess(this.community))) {
             this.set('createFabIcon', 'add');
           }
-
           var url = this._communityHeaderUrl(this.community);
 
           this.setupGroups(this.community.Groups, this.community.configuration);
@@ -429,7 +428,14 @@
       },
 
       refresh: function () {
-        if (this.community) {
+        var isAdmin = this.checkCommunityAccess(this.community);
+
+        if (this.community &&
+          this.community.configuration &&
+          this.community.configuration.redirectToGroupId &&
+          !isAdmin) {
+          this.redirectTo("/group/"+this.community.configuration.redirectToGroupId);
+        } else if (this.community) {
           this._openHelpPageIfNeeded();
           this.fire('yp-set-home-link', { type: 'community', id: this.community.id, name: this.community.name });
 
