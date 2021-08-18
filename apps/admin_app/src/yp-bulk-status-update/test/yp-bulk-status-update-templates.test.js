@@ -14,7 +14,7 @@ describe('YpBulkStatusUpdateTemplates', () => {
   });
 
   beforeEach(async () => {
-   
+
     element = await fixture(html`
       <yp-bulk-status-templates
         headerText="BLAHHA"

@@ -1,4 +1,6 @@
-import { LitElement, css, property, html, customElement } from 'lit-element';
+import { LitElement, css, html, nothing } from 'lit';
+import { property, customElement } from 'lit/decorators.js';
+
 import { installMediaQueryWatcher } from 'pwa-helpers/media-query.js';
 import { Layouts } from 'lit-flexbox-literals';
 import { YpBaseElementWithLogin } from './@yrpri/common/yp-base-element-with-login.js';
@@ -13,7 +15,6 @@ import '@material/mwc-select';
 import '@material/mwc-list/mwc-list-item';
 
 import { YpAdminConfigBase } from './yp-admin-config-base.js';
-import { nothing } from 'lit-html';
 import { YpNavHelpers } from './@yrpri/common/YpNavHelpers.js';
 import { YpFileUpload } from './@yrpri/yp-file-upload/yp-file-upload.js';
 import { YpEmojiSelector } from './@yrpri/common/yp-emoji-selector.js';
@@ -24,7 +25,7 @@ import './@yrpri/yp-theme/yp-theme-selector.js';
 import './@yrpri/yp-app/yp-language-selector.js';
 import { TextField } from '@material/mwc-textfield';
 import { YpConfirmationDialog } from './@yrpri/yp-dialog-container/yp-confirmation-dialog.js';
-import { ifDefined } from 'lit-html/directives/if-defined';
+import { ifDefined } from 'lit/directives/if-defined.js';
 import { Radio } from '@material/mwc-radio';
 
 @customElement('yp-admin-config-community')
@@ -202,7 +203,7 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
     }
 
     this._getHelpPages('community');
-    
+
     if (this.collection) {
       if ((this.collection as YpCommunityData).access === 0) {
         this.communityAccess = 'public';

@@ -1,4 +1,6 @@
-import { LitElement, css, property, html, customElement } from 'lit-element';
+import { LitElement, css, html, nothing } from 'lit';
+import { property, customElement } from 'lit/decorators.js';
+
 import { installMediaQueryWatcher } from 'pwa-helpers/media-query.js';
 import { Layouts } from 'lit-flexbox-literals';
 import { YpBaseElementWithLogin } from './@yrpri/common/yp-base-element-with-login.js';
@@ -11,7 +13,6 @@ import '@material/mwc-textfield';
 import '@material/mwc-textarea';
 
 import { YpAdminConfigBase } from './yp-admin-config-base.js';
-import { nothing } from 'lit-html';
 import { YpNavHelpers } from './@yrpri/common/YpNavHelpers.js';
 import { YpFileUpload } from './@yrpri/yp-file-upload/yp-file-upload.js';
 import { YpEmojiSelector } from './@yrpri/common/yp-emoji-selector.js';

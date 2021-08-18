@@ -1,6 +1,7 @@
 import 'chart.js';
-import { html, css, customElement, property } from 'lit-element';
-import { nothing } from 'lit-html';
+import { LitElement, css, html, nothing } from 'lit';
+import { property, customElement } from 'lit/decorators.js';
+
 import { ShadowStyles } from './@yrpri/common/ShadowStyles.js';
 
 import '@material/mwc-select';

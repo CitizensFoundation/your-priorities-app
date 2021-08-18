@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/camelcase */
 import { html, fixture, expect } from '@open-wc/testing';
 
-import { YpAdminConfigTranslations } from '../yp-admin-config-translations.js';
+import { YpAdminTranslations } from '../yp-admin-translations.js';
 import '../yp-admin-config-translation.js';
 import { YpTestHelpers } from '../@yrpri/common/test/setup-app.js';
 
 describe('YpAdminConfigTranslations', () => {
-  let element: YpAdminConfigTranslations; 
+  let element: YpAdminTranslations;
 
   before(async () => {
     await YpTestHelpers.setupApp();

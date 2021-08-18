@@ -1,4 +1,6 @@
-import { LitElement, css, property } from 'lit-element';
+import { LitElement, css, html } from 'lit';
+import { property, customElement } from 'lit/decorators.js';
+
 import { installMediaQueryWatcher } from 'pwa-helpers/media-query.js';
 import { Layouts } from 'lit-flexbox-literals';
 import { YpBaseElementWithLogin } from './@yrpri/common/yp-base-element-with-login.js';

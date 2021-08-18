@@ -716,7 +716,7 @@ export class AcActivities extends YpBaseElementWithLogin {
     if (item && this.activities) {
       for (let i = 0; i < this.activities.length; i++) {
         if (this.activities[i] == item) {
-          (this.$$('#list') as LitVirtualizer).scrollToIndex(i);
+          (this.$$('#list') as LitVirtualizer<any>).scrollToIndex(i);
           break;
         }
       }

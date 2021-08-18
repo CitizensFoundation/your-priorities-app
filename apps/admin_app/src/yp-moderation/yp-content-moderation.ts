@@ -1,5 +1,6 @@
-import { LitElement, css, property, html, customElement } from 'lit-element';
-import { nothing } from 'lit-html';
+import { LitElement, css, html, nothing } from 'lit';
+import { property, customElement } from 'lit/decorators.js';
+
 import { YpBaseElement } from '../@yrpri/common/yp-base-element';
 import { YpFormattingHelpers } from '../@yrpri/common/YpFormattingHelpers';
 import { YpConfirmationDialog } from '../@yrpri/yp-dialog-container/yp-confirmation-dialog';

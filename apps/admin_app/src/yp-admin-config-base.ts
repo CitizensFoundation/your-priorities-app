@@ -1,4 +1,6 @@
-import { LitElement, css, property, html, TemplateResult } from 'lit-element';
+import { LitElement, css, html, nothing, TemplateResult } from 'lit';
+import { property, customElement } from 'lit/decorators.js';
+
 import { installMediaQueryWatcher } from 'pwa-helpers/media-query.js';
 import { Layouts } from 'lit-flexbox-literals';
 import { YpBaseElementWithLogin } from './@yrpri/common/yp-base-element-with-login.js';
@@ -14,7 +16,6 @@ import { YpForm } from './@yrpri/common/yp-form.js';
 import './@yrpri/common/yp-form.js';
 import { CircularProgressFourColorBase } from '@material/mwc-circular-progress-four-color/mwc-circular-progress-four-color-base';
 import { YpEmojiSelector } from './@yrpri/common/yp-emoji-selector.js';
-import { nothing } from 'lit-html';
 import { YpFileUpload } from './@yrpri/yp-file-upload/yp-file-upload.js';
 
 export abstract class YpAdminConfigBase extends YpAdminPage {

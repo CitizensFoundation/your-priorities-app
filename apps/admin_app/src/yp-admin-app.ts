@@ -1,6 +1,7 @@
-import { html, css, customElement, property } from 'lit-element';
-import { nothing } from 'lit-html';
-import { classMap } from 'lit-html/directives/class-map.js';
+import { LitElement, css, html, nothing } from 'lit';
+import { property, customElement } from 'lit/decorators.js';
+
+import { classMap } from 'lit/directives/class-map.js';
 import { YpBaseElement } from './@yrpri/common/yp-base-element.js';
 import { ShadowStyles } from './@yrpri/common/ShadowStyles.js';
 
@@ -167,6 +168,7 @@ export class YpAdminApp extends YpBaseElement {
 
   constructor() {
     super();
+    debugger;
     window.serverApi = new YpServerApi();
     window.adminServerApi = new YpServerApiAdmin();
     window.appGlobals = new YpAppGlobals(window.serverApi);
@@ -199,6 +201,8 @@ export class YpAdminApp extends YpBaseElement {
     } else {
       this.collectionAction = 'config';
     }
+
+
   }
 
   connectedCallback() {

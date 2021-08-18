@@ -10,8 +10,9 @@ import '@polymer/paper-dialog-scrollable/paper-dialog-scrollable.js';
 import '@polymer/paper-dropdown-menu/paper-dropdown-menu.js';
 import '@polymer/paper-listbox/paper-listbox.js';
 import { IronAjaxElement } from '@polymer/iron-ajax';
-import { css, property, html, customElement } from 'lit-element';
-import { nothing } from 'lit-html';
+import { LitElement, css, html, nothing } from 'lit';
+import { property, customElement } from 'lit/decorators.js';
+
 import { YpBaseElement } from '../@yrpri/common/yp-base-element';
 import { YpImage } from '../@yrpri/common/yp-image';
 import { YpFormattingHelpers } from '../@yrpri/common/YpFormattingHelpers';

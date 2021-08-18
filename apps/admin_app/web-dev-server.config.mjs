@@ -8,7 +8,7 @@ export default {
   mimeTypes: {
     '**/*.cjs': 'js'
   },
-  port: 9000,
+  port: 9010,
   middleware: [
     proxy('/api/', {
       target: 'http://localhost:4242/',

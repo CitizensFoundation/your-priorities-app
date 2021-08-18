@@ -2,8 +2,9 @@ import '@material/mwc-button';
 import '@material/mwc-dialog';
 import '@material/mwc-textfield';
 import '@material/mwc-textarea';
-import { LitElement, css, property, html, customElement } from 'lit-element';
-import { nothing } from 'lit-html';
+import { LitElement, css, html, nothing } from 'lit';
+import { property, customElement } from 'lit/decorators.js';
+
 import { YpBaseElement } from '../@yrpri/common/yp-base-element';
 import { YpFormattingHelpers } from '../@yrpri/common/YpFormattingHelpers';
 import '@vaadin/vaadin-grid/vaadin-grid.js';

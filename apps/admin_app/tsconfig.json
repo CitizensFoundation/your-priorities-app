@@ -16,7 +16,7 @@
     "inlineSources": true,
     "rootDir": "./"
   },
-  "include": ["**/*.ts"],
+  "include": ["**/*.ts", "src/yp-bulk-status-update/yp-bulk-status-update-templates.js", "src/yp-bulk-status-update/yp-bulk-status-update-edit.js", "src/yp-bulk-status-update/yp-bulk-status-display.js", "src/yp-bulk-status-update/yp-bulk-status-update-config.js", "src/yp-bulk-status-update/test/yp-bulk-status-update-templates.test.js", "src/yp-bulk-status-update/test/yp-bulk-status-update-edit.test.js", "src/yp-bulk-status-update/test/yp-bulk-status-update-config.test.js", "src/yp-bulk-status-update/test/yp-bulk-status-display.test.js"],
   "importHelpers": true,
   "plugins": [
     {

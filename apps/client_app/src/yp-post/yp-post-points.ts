@@ -965,13 +965,13 @@ export class YpPostPoints extends YpBaseElementWithLogin {
 
   _listResize() {
     if (this.$$('#listUp')) {
-     ((this.$$('#listUp') as LitVirtualizer).layout as Layout1d).reflowIfNeeded(false);
+     ((this.$$('#listUp') as LitVirtualizer<any>).layout as Layout1d).reflowIfNeeded(false);
     }
     if (this.$$('#listDown')) {
-      ((this.$$('#listDown') as LitVirtualizer).layout as Layout1d).reflowIfNeeded(false);
+      ((this.$$('#listDown') as LitVirtualizer<any>).layout as Layout1d).reflowIfNeeded(false);
     }
     if (this.$$('#listMobile')) {
-      ((this.$$('#listMobile') as LitVirtualizer).layout as Layout1d).reflowIfNeeded(false);
+      ((this.$$('#listMobile') as LitVirtualizer<any>).layout as Layout1d).reflowIfNeeded(false);
     }
   }
 

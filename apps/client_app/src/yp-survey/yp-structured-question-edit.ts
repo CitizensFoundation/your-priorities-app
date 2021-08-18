@@ -21,7 +21,9 @@ import { Checkbox } from '@material/mwc-checkbox';
 
 import { TextField } from '@material/mwc-textfield';
 import '@material/mwc-textfield';
-import { unsafeHTML } from 'lit/directives/unsafe-html';
+import { ifDefined } from 'lit/directives/if-defined.js';
+import { unsafeHTML } from 'lit/directives/unsafe-html.js';
+
 import './yp-simple-html-editor.js';
 import { YpSimpleHtmlEditor } from './yp-simple-html-editor.js';
 

@@ -2,7 +2,7 @@ import { html, css } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { YpBaseElement } from '../common/yp-base-element.js';
 import { YpIronListHelpers } from '../common/YpIronListHelpers.js';
-import {RangeChangeEvent, Layout1d, Layout1dSquareGrid, LitVirtualizer, Layout1dGrid } from '@lit-labs/virtualizer';
+import {RangeChangeEvent, Layout1d, LitVirtualizer, Layout1dGrid } from '@lit-labs/virtualizer';
 
 import '@material/mwc-icon-button';
 import '@material/mwc-textfield';
@@ -482,7 +482,7 @@ export class YpPostsList extends YpBaseElement {
       console.info('Scrolling to post: ' + post.id);
       for (let i = 0; i < this.posts.length; i++) {
         if (this.posts[i] == post) {
-          (this.$$('#list') as LitVirtualizer).scrollToIndex(i);
+          (this.$$('#list') as LitVirtualizer<any>).scrollToIndex(i);
           break;
         }
       }

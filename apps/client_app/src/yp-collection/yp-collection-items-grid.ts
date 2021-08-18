@@ -192,7 +192,7 @@ export class YpCollectionItemsGrid extends YpBaseElement {
     if (item && this.sortedCollectionItems) {
       for (let i = 0; i < this.sortedCollectionItems.length; i++) {
         if (this.sortedCollectionItems[i] == item) {
-          (this.$$('#list') as LitVirtualizer).scrollToIndex(i);
+          (this.$$('#list') as LitVirtualizer<any>).scrollToIndex(i);
           break;
         }
       }
