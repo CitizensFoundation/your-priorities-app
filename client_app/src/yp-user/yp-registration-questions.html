@@ -26,7 +26,6 @@
       }
 
       yp-structured-question-edit {
-          max-width: 80%;
       }
 
       .segmentQuestionIntro {
@@ -59,6 +58,7 @@
       <template is="dom-repeat" items="[[filteredQuestions]]" as="question">
         <yp-structured-question-edit index="[[index]]"
                                      use-small-font
+                                     is-from-new-post
                                      id="structuredQuestionContainer_[[index]]"
                                      structured-answers="[[structuredAnswers]]"
                                      question="[[question]]">
