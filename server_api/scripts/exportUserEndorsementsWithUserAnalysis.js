@@ -41,7 +41,8 @@ models.Group.findOne({
         include: [
           {
             model: models.Category,
-            attributes: ['id','name']
+            attributes: ['id','name'],
+            required: false
           },
           {
             model: models.Group,
@@ -61,7 +62,9 @@ models.Group.findOne({
 
     if (registrationQuestions) {
       for (let i=0;i<registrationQuestions.length;i++) {
-        outFileContent+=","+registrationQuestions[i].text;
+        if (registrationQuestions[i].type!=="segment" && registrationQuestions[i].type!=="textDescription") {
+          outFileContent+=","+registrationQuestions[i].text;
+        }
       }
     }
 
@@ -87,7 +90,9 @@ models.Group.findOne({
 
           const answers = endorsement.User.private_profile_data.registration_answers;
           for (let i=0;i<registrationQuestions.length;i++) {
-            outFileContent+=","+getAnswerFor(registrationQuestions[i].text, answers);
+            if (registrationQuestions[i].type!=="segment" && registrationQuestions[i].type!=="textDescription") {
+              outFileContent+=","+getAnswerFor(registrationQuestions[i].text, answers);
+            }
           }
           outFileContent += ','+endorsement.ip_address;
           outFileContent += ',"'+endorsement.user_agent+'"';
