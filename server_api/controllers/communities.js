@@ -1907,4 +1907,44 @@ router.get('/:id/recursiveMap', auth.can('edit community'), async (req, res) => 
   }
 });
 
+router.put('/:communityId/:type/start_report_creation', auth.can('edit community'), function(req, res) {
+  models.AcBackgroundJob.createJob({}, (error, jobId) => {
+    if (error) {
+      log.error('Could not create backgroundJob', { err: error, context: 'start_report_creation', user: toJson(req.user.simple()) });
+      res.sendStatus(500);
+    } else {
+      let reportType;
+      if (req.params.type==='usersxls') {
+        reportType = 'start-xls-users-community-report-generation';
+      }
+
+      queue.create('process-reports', {
+        type: reportType,
+        userId: req.user.id,
+        exportType: req.params.type,
+        fileEnding: req.params.fileEnding ? req.params.fileEnding : 'xlsx',
+        translateLanguage: req.query.translateLanguage,
+        jobId: jobId,
+        communityId: req.params.communityId
+      }).priority('medium').removeOnComplete(true).save();
+
+      res.send({ jobId });
+    }
+  });
+});
+
+router.get('/:communityId/:jobId/report_creation_progress', auth.can('edit community'), function(req, res) {
+  models.AcBackgroundJob.findOne({
+    where: {
+      id: req.params.jobId
+    },
+    attributes: ['id','progress','error','data']
+  }).then( job => {
+    res.send(job);
+  }).catch( error => {
+    log.error('Could not get backgroundJob', { err: error, context: 'start_report_creation', user: toJson(req.user.simple()) });
+    res.sendStatus(500);
+  });
+});
+
 module.exports = router;
