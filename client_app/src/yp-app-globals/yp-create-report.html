@@ -153,7 +153,7 @@
       if (this.group) {
         this.$.reportCreationProgressAjax.url = "/api/groups/"+this.group.id+"/"+this.jobId+"/report_creation_progress";
       } else if (this.community) {
-        this.$.reportCreationProgressAjax.url = "/api/communities/"+this.group.id+"/"+this.jobId+"/report_creation_progress";
+        this.$.reportCreationProgressAjax.url = "/api/communities/"+this.community.id+"/"+this.jobId+"/report_creation_progress";
       }
 
       this._pollLaterForProgress();
@@ -206,7 +206,7 @@
          url = "/api/groups/"+this.group.id+"/"+this.type+"/start_report_creation";
       } else if (community) {
         this.set('community', community);
-        url = "/api/communties/"+this.community.id+"/"+this.type+"/start_report_creation";
+        url = "/api/communities/"+this.community.id+"/"+this.type+"/start_report_creation";
       }
 
       if (this.autoTranslateActive) {
@@ -227,6 +227,9 @@
         this.set('toastText', this.t('haveCreatedDocxReport'));
       } else if (this.type==="xls") {
         this.set('editHeaderText', this.t('createXlsReport'));
+        this.set('toastText', this.t('haveCreatedXLsReport'));
+      } else if (this.type==="usersxls") {
+        this.set('editHeaderText', this.t('createXlsUsersReport'));
         this.set('toastText', this.t('haveCreatedXLsReport'));
       }
       this.set('saveText', null);

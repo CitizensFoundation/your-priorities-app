@@ -368,7 +368,7 @@
                 [[t('manageAllContent')]]
               </paper-item>
               <a hidden$="[[!hasCommunityAccess]]" target="_blank" href$="[[exportLoginsUrl]]"><paper-item id="exportLogins">[[t('exportLogins')]]</paper-item></a>
-              <a hidden$="[[!hasCommunityAccess]]" target="_blank" href$="[[exportUsersUrl]]"><paper-item id="exportUsers">[[t('exportUsers')]]</paper-item></a>
+              <paper-item hidden$="[[!hasCommunityAccess]]" id="createReportXlsUsers">[[t('exportUsers')]]</paper-item>
 
               <paper-item hidden$="[[!hasCommunityAccess]]" id="deleteMenuItem">[[t('community.delete')]]</paper-item>
               <paper-item hidden$="[[!hasCommunityAccessAndNotFolder]]" id="anonymizeMenuItem">[[t('anonymizeCommunityContent')]]</paper-item>
@@ -593,6 +593,8 @@
           this._openAnonymizeContent();
         else if (detail.item.id==="deleteContentMenuItem")
           this._openDeleteContent();
+        else if (detail.item.id==="createReportXlsUsers")
+          this._openCreateXlsUsersReport();
         else if (detail.item.id==="addCommunityFolderMenuItem")
           this.fire('yp-new-community-folder');
         else if (detail.item.id==="openAnalyticsApp")
@@ -600,6 +602,13 @@
         else if (detail.item.id==="openAdminApp")
           window.location = "/admin/community/"+this.community.id;
         this.$$("paper-listbox").select(null);
+      },
+
+      _openCreateXlsUsersReport: function () {
+        window.appGlobals.activity('open', 'createReportXlsUsers');
+        Polymer.dom(document).querySelector('yp-app').getCreateReportAsync(function (dialog) {
+          dialog.setupAndOpen("usersxls", null, this.community);
+        }.bind(this));
       },
 
       _openContentModeration: function () {
