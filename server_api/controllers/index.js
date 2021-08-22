@@ -37,7 +37,7 @@ let replaceForParlScot = function (data) {
 
 let replaceForJungesWien = function (data) {
   data = data.replace(/XappNameX/g, "Junges Wien");
-  data = data.replace(/XdescriptionX/g, "Junges Wien");
+  data = data.replace(/XdescriptionX/g, "Die Junges Wien - Plattform dient der Stadt Wien zur Ideen-Einreichung und zur Projektabstimmung für die erste partizipative Wiener Kinder- und Jugendmillion. #jungeswien");
   return data.replace(/XmanifestPathX/g, "manifest_junges_wien");
 };
 
