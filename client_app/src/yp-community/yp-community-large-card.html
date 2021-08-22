@@ -122,13 +122,8 @@
       }
 
       .communityDescription[widetext] {
-          font-size: 14px !important;
+        font-size: 14px !important;
       }
-
-      .communityDescription[largefont] {
-          font-size: 15px !important;
-      }
-
 
       .community-name {
         background-color: var(--primary-color-800, #000);
@@ -535,7 +530,10 @@
              this.$$("#welcomeHTML").innerHTML = "";
             }
           });
-          if (community.description.length>220 && community.name && community.name.length>30) {
+
+          if (this.largeFont) {
+            this.$$("#description").style.fontSize = "14px";
+          } else if (community.description.length>220 && community.name && community.name.length>30) {
             this.$$("#description").style.fontSize = "15px";
           } else {
             this.$$("#description").style.fontSize = "16px";
