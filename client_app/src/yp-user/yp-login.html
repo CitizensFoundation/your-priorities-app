@@ -501,6 +501,8 @@
           <template is="dom-if" if="[[registrationQuestionsGroup]]" restamp>
             <yp-registration-questions
                     id="registrationQuestionsOneTimeLogin"
+                    on-questions-changed="_registrationQuestionsChanged"
+                    on-resize-scroller="_registrationQuestionsChanged"
                     group="[[registrationQuestionsGroup]]"></yp-registration-questions>
           </template>
 
@@ -715,6 +717,10 @@
 
     _registrationQuestionsChanged: function () {
       this.$.dialog.fire('iron-resize');
+      var oneTimeDialog = this.$$("#dialogOneTimeWithName");
+      if (oneTimeDialog) {
+        oneTimeDialog.fire('iron-resize');
+      }
     },
 
     _setupCustomRegistrationQuestions: function () {
