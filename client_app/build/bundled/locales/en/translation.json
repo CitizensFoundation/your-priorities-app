@@ -1,4 +1,6 @@
 {
+  "createXlsUsersReport": "Create XLS Users Report",
+  "choose": "Choose",
   "categoryDeleted": "Category deleted",
   "deleteCategory": "Delete category",
   "numberOfPosts": "Number of posts",
@@ -855,7 +857,7 @@
     "alreadyRegisterred": "This email is already registered. You can create a New Password if needed.",
     "registrationError": "Error in registration",
     "loginError": "Login error",
-    "completeForm": "Fill our the form correctly",
+    "completeForm": "Please fill out the form correctly",
     "loginNotAuthorized": "Email or password wrong",
     "setEmailConfirmationInfo": "This email address will be used to send you notifications, you can change it if you want to."
   },
