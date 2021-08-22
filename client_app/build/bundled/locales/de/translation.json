@@ -1,5 +1,6 @@
 {
   "choose": "Wähle",
+  "registrationQuestionsInfo": "Fragen zur Registrierung",
   "ssn": "Sozialversicherungsnummer",
   "hideRecommendationOnNewsFeed": "Empfehlungen vom Nachrichtenfeed verbergen",
   "customSamlLoginMessage": "Custom SAML login message",
