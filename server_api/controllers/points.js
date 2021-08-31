@@ -600,7 +600,7 @@ router.delete('/:id', auth.can('delete point'), function(req, res) {
     point.save().then(function () {
       log.info('Point Deleted', { point: toJson(point), context: 'delete', user: toJson(req.user) });
       queue.create('process-similarities', { type: 'update-collection', pointId: point.id }).priority('low').removeOnComplete(true).save();
-      queue.create('process-deletion', { type: 'delete-point-content', pointId: point.id, userId: req.user.id }).priority('high').removeOnComplete(true).save();
+      queue.create('process-deletion', { type: 'delete-point-content', pointId: point.id, userId: req.user.id }).priority('critical').removeOnComplete(true).save();
       if (point.Post) {
         point.Post.updateAllExternalCounters(req, 'down', 'counter_points', function () {
           point.Post.decrement('counter_points');

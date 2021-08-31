@@ -855,7 +855,7 @@ router.delete('/:domainId/:actionType/process_many_moderation_item', auth.can('e
       items: req.body.items,
       actionType: req.params.actionType,
       domainId: req.params.domainId
-    }).priority('high').removeOnComplete(true).save();
+    }).priority('critical').removeOnComplete(true).save();
   res.send({});
 });
 

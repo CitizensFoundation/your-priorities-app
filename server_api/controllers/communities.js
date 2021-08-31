@@ -1487,7 +1487,7 @@ router.delete('/:id/delete_content', auth.can('edit community'), function(req, r
       log.info('Community Delete Content', { community: toJson(community), user: toJson(req.user) });
       queue.create('process-deletion', { type: 'delete-community-content', communityName: community.name,
                                          communityId: community.id, userId: req.user.id, useNotification: true,
-                                         resetCounters: true }).priority('high').removeOnComplete(true).save();
+                                         resetCounters: true }).priority('critical').removeOnComplete(true).save();
       res.sendStatus(200);
     } else {
       sendCommunityOrError(res, req.params.id, 'delete', req.user, 'Not found', 404);
@@ -1594,7 +1594,7 @@ router.delete('/:communityId/:actionType/process_many_moderation_item', auth.can
     items: req.body.items,
     actionType: req.params.actionType,
     communityId: req.params.communityId
-  }).priority('high').removeOnComplete(true).save();
+  }).priority('critical').removeOnComplete(true).save();
   res.send({});
 });
 
@@ -1926,7 +1926,7 @@ router.put('/:communityId/:type/start_report_creation', auth.can('edit community
         translateLanguage: req.query.translateLanguage,
         jobId: jobId,
         communityId: req.params.communityId
-      }).priority('medium').removeOnComplete(true).save();
+      }).priority('critical').removeOnComplete(true).save();
 
       res.send({ jobId });
     }

@@ -775,7 +775,7 @@ router.put('/:groupId/:type/start_report_creation', auth.can('edit group'), func
         translateLanguage: req.query.translateLanguage,
         jobId: jobId,
         groupId: req.params.groupId
-      }).priority('medium').removeOnComplete(true).save();
+      }).priority('critical').removeOnComplete(true).save();
 
       res.send({ jobId });
     }
@@ -1153,7 +1153,7 @@ router.delete('/:id', auth.can('edit group'), function(req, res) {
         log.info('Group Deleted', { group: toJson(group), context: 'delete', user: toJson(req.user) });
         queue.create('process-similarities', { type: 'update-collection', groupId: group.id }).priority('low').removeOnComplete(true).save();
         queue.create('process-deletion', { type: 'delete-group-content', resetCounters: true, groupName: group.name,
-                                           userId: req.user.id, groupId: group.id }).priority('high').removeOnComplete(true).save();
+                                           userId: req.user.id, groupId: group.id }).priority('critical').removeOnComplete(true).save();
         group.updateAllExternalCounters(req, 'down', 'counter_groups', function () {
           res.sendStatus(200);
         });
@@ -1174,7 +1174,7 @@ router.delete('/:id/delete_content', auth.can('edit group'), function(req, res) 
       log.info('Group Delete Content', { group: toJson(group), context: 'delete', user: toJson(req.user) });
       queue.create('process-deletion', { type: 'delete-group-content', groupName: group.name,
                                          userId: req.user.id, groupId: group.id, useNotification: true,
-                                         resetCounters: true }).priority('high').removeOnComplete(true).save();
+                                         resetCounters: true }).priority('critical').removeOnComplete(true).save();
       res.sendStatus(200);
     } else {
       sendGroupOrError(res, req.params.id, 'delete', req.user, 'Not found', 404);
@@ -1977,7 +1977,7 @@ router.delete('/:groupId/:actionType/process_many_moderation_item', auth.can('ed
     items: req.body.items,
     actionType: req.params.actionType,
     groupId: req.params.groupId
-  }).priority('high').removeOnComplete(true).save();
+  }).priority('critical').removeOnComplete(true).save();
   res.send({});
 });
 

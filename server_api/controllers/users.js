@@ -308,7 +308,7 @@ router.delete('/:userId/:actionType/process_many_moderation_item', auth.can('edi
     items: req.body.items,
     actionType: req.params.actionType,
     userId: req.params.userId
-  }).priority('high').removeOnComplete(true).save();
+  }).priority('critical').removeOnComplete(true).save();
   res.send({});
 });
 
@@ -1127,7 +1127,7 @@ router.delete('/delete_current_user', function (req, res) {
         user.email = user.email+"_deleted_"+Math.floor(Math.random() * 9000);
         user.save().then(function () {
           log.info('User deleted', { context: 'delete', user: toJson(req.user) });
-          queue.create('process-deletion', { type: 'delete-user-content', userId: userId }).priority('high').removeOnComplete(true).save();
+          queue.create('process-deletion', { type: 'delete-user-content', userId: userId }).priority('critical').removeOnComplete(true).save();
           req.logOut();
           res.sendStatus(200);
         }).catch((error) => {
