@@ -584,6 +584,18 @@ router.put('/:domainId/:pageId/update_page_locale', auth.can('edit domain'), fun
   });
 });
 
+router.put('/:domainId/:pageId/update_page_weight', auth.can('edit domain'), function(req, res) {
+  models.Page.updatePageWeight(req, { domain_id: req.params.domainId, id: req.params.pageId }, function (error) {
+    if (error) {
+      log.error('Could not update weight for admin for domain', { err: error, context: 'update_page_weight', user: toJson(req.user.simple()) });
+      res.sendStatus(500);
+    } else {
+      log.info('Community Page Weight Updated', {context: 'update_page_weight', user: toJson(req.user.simple()) });
+      res.sendStatus(200);
+    }
+  });
+});
+
 router.put('/:domainId/:pageId/publish_page', auth.can('edit domain'), function(req, res) {
   models.Page.publishPage(req, { domain_id: req.params.domainId, id: req.params.pageId }, function (error) {
     if (error) {

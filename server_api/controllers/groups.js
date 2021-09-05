@@ -889,6 +889,18 @@ router.put('/:groupId/:pageId/update_page_locale', auth.can('edit group'), funct
   });
 });
 
+router.put('/:groupId/:pageId/update_page_weight', auth.can('edit group'), function(req, res) {
+  models.Page.updatePageWeight(req, { group_id: req.params.groupId, id: req.params.pageId }, function (error) {
+    if (error) {
+      log.error('Could not update locale for admin for group', { err: error, context: 'update_page_locale', user: toJson(req.user.simple()) });
+      res.sendStatus(500);
+    } else {
+      log.info('Community Page Locale Updated', {context: 'update_page_locale', user: toJson(req.user.simple()) });
+      res.sendStatus(200);
+    }
+  });
+});
+
 router.put('/:groupId/:pageId/publish_page', auth.can('edit group'), function(req, res) {
   models.Page.publishPage(req, { group_id: req.params.groupId, id: req.params.pageId }, function (error) {
     if (error) {

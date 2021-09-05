@@ -1076,6 +1076,18 @@ router.put('/:communityId/:pageId/update_page_locale', auth.can('edit community'
   });
 });
 
+router.put('/:communityId/:pageId/update_page_weight', auth.can('edit community'), function(req, res) {
+  models.Page.updatePageWeight(req, { community_id: req.params.communityId, id: req.params.pageId }, function (error) {
+    if (error) {
+      log.error('Could not update locale for admin for community', { err: error, context: 'update_page_locale', user: req.user ? toJson(req.user.simple()) : null });
+      res.sendStatus(500);
+    } else {
+      log.info('Community Page Locale Updated', {context: 'update_page_locale', user: req.user ? toJson(req.user.simple()) : null });
+      res.sendStatus(200);
+    }
+  });
+});
+
 router.put('/:communityId/:pageId/publish_page', auth.can('edit community'), function(req, res) {
   models.Page.publishPage(req, { community_id: req.params.communityId, id: req.params.pageId }, function (error) {
     if (error) {

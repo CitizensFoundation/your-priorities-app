@@ -113,6 +113,23 @@ module.exports = (sequelize, DataTypes) => {
     });
   };
 
+  Page.updatePageWeight = (req, options, callback) =>  {
+    sequelize.models.Page.findOne({ where: options }).then((page) => {
+      if (page) {
+        page.weight = req.body.weight;
+        page.save().then((results) => {
+          callback();
+        }).catch((error) => {
+          callback(error);
+        });
+      } else {
+        callback("Not found");
+      }
+    }).catch((error) => {
+      callback(error);
+    });
+  };
+
   Page.updatePageLocale = (req, options, callback) =>  {
     sequelize.models.Page.findOne({ where: options }).then((page) => {
       if (page) {
@@ -195,7 +212,11 @@ module.exports = (sequelize, DataTypes) => {
             where: {
               group_id: options.group_id,
               published: true
-            }
+            },
+            order: [
+              ['weight', 'asc'],
+              ['created_at', 'asc']
+            ]
           }).then((pages) => {
             if (pages) {
               groupPages = groupPages.concat(pages);
@@ -215,7 +236,11 @@ module.exports = (sequelize, DataTypes) => {
             where: {
               community_id: options.community_id,
               published: true
-            }
+            },
+            order: [
+              ['weight', 'asc'],
+              ['created_at', 'asc']
+            ]
           }).then((pages) => {
             if (pages) {
               communityPages = communityPages.concat(pages);
@@ -235,7 +260,11 @@ module.exports = (sequelize, DataTypes) => {
             where: {
               domain_id: options.domain_id,
               published: true
-            }
+            },
+            order: [
+              ['weight', 'asc'],
+              ['created_at', 'asc']
+            ]
           }).then((pages) => {
             if (pages) {
               domainPages = domainPages.concat(pages);
