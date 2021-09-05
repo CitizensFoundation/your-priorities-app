@@ -196,6 +196,16 @@
         font-weight: bold;
       }
 
+      .titleHeaderMobile[long-title-text] {
+        margin-top: 4px;
+      }
+
+      .titleHeaderMobile[long-button-text] {
+        font-size: 16px;
+        margin-top: 12px;
+      }
+
+
       #formErrorDialog {
         padding: 12px;
       }
@@ -211,6 +221,10 @@
       .smallButtonText {
         font-weight: bold;
         font-size: 17px;
+      }
+
+      .smallButtonText[long-button-text] {
+        font-size: 14px;
       }
 
       .outerMobile {
@@ -270,11 +284,18 @@
             <div class="layout horizontal smallHeader">
               <paper-icon-button id="dismissBtn" aria-label$="[[t('close')]]" icon="close" class="closeIconNarrow" dialog-dismiss></paper-icon-button>
               <iron-icon class="smallIcon" icon="[[icon]]"></iron-icon>
-              <div class="titleHeaderMobile">[[title]]</div>
+              <div class="titleHeaderMobile"
+                long-button-text$="[[hasLongSaveText]]"
+                long-title-text$="[[hasLongTitle]]"
+              >[[title]]</div>
               <div class="flex"></div>
               <template is="dom-if" if="[[!useNextTabAction]]">
                 <template is="dom-if" if="[[!uploadingState]]">
-                  <paper-button id="submit1" on-tap="_submit" hidden$="[[!saveText]]"><span class="smallButtonText">[[saveText]]</span></paper-button>
+                  <paper-button id="submit1" on-tap="_submit" hidden$="[[!saveText]]"
+                    class="smallButtonText" long-button-text$="[[hasLongSaveText]]"
+                  >
+                    <span >[[saveText]]</span>
+                  </paper-button>
                 </template>
                 <template is="dom-if" if="[[uploadingState]]">
                   <paper-button disabled on-tap="_nextTab">[[t('uploading.inProgress')]]</paper-button>
@@ -409,7 +430,8 @@
         },
 
         saveText: {
-          type: String
+          type: String,
+          value: null
         },
 
         narrowScreen: {
@@ -471,10 +493,28 @@
         customSubmit: {
           type: Boolean,
           value: false
+        },
+
+        hasLongSaveText: {
+          type: Boolean,
+          computed: '_hasLongSaveText(saveText)'
+        },
+
+        hasLongTitle: {
+          type: Boolean,
+          computed: '_hasLongTitle(title)'
         }
       },
 
-    _narrow: function(narrowScreen, tablet) {
+      _hasLongSaveText: function (saveText) {
+        return (saveText && saveText.length>12);
+      },
+
+      _hasLongTitle: function (title) {
+        return (title && title.length>14);
+      },
+
+      _narrow: function(narrowScreen, tablet) {
       return narrowScreen || tablet;
     },
 

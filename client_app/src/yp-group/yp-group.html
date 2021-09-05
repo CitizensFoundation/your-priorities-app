@@ -579,7 +579,7 @@
             tab.scrollToPost(window.appGlobals.cachedPostItem);
             window.appGlobals.cachedPostItem = null;
           } else {
-            console.error("Cant find tab or scroll post "+tabId+ " not retrying for item "+window.appGlobals.cachedPostItem);
+            console.warn("Cant find tab or scroll post "+tabId+ " not retrying for item "+window.appGlobals.cachedPostItem);
           }
         }, 100);
       },

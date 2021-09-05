@@ -404,15 +404,6 @@
                      maxlength="12">
         </paper-input>
 
-        <paper-input id="customThankYouTextNewPosts"
-                     name="customThankYouTextNewPosts"
-                     type="text"
-                     char-counter
-                     label="[[t('customThankYouTextNewPosts')]]"
-                     value="{{group.configuration.customThankYouTextNewPosts}}"
-                     maxlength="120">
-        </paper-input>
-
         <paper-input id="descriptionTruncateAmount"
                      name="descriptionTruncateAmount"
                      type="text"
@@ -490,6 +481,24 @@
                      value="{{group.configuration.alternativeTextForNewIdeaButtonHeader}}"
                      maxlength="30"
                      char-counter>
+        </paper-input>
+
+        <paper-input id="alternativeTextForNewIdeaSaveButton"
+                     name="alternativeTextForNewIdeaSaveButton"
+                     type="text"
+                     label="[[t('alternativeTextForNewIdeaSaveButton')]]"
+                     value="{{group.configuration.alternativeTextForNewIdeaSaveButton}}"
+                     maxlength="20"
+                     char-counter>
+        </paper-input>
+
+        <paper-input id="customThankYouTextNewPosts"
+                     name="customThankYouTextNewPosts"
+                     type="text"
+                     char-counter
+                     label="[[t('customThankYouTextNewPosts')]]"
+                     value="{{group.configuration.customThankYouTextNewPosts}}"
+                     maxlength="120">
         </paper-input>
 
         <div class="layout vertical additionalSettings defaultPostImage">

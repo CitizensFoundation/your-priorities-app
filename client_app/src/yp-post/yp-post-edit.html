@@ -481,6 +481,12 @@
                      text-type="alternativeTextForNewIdeaButtonHeader"></yp-magic-text>
     </template>
 
+    <template is="dom-if" if="[[group.configuration.alternativeTextForNewIdeaSaveButton]]">
+      <yp-magic-text id="alternativeTextForNewIdeaSaveButtonId" hidden content-id="[[group.id]]" text-only content="[[group.configuration.alternativeTextForNewIdeaSaveButton]]"
+                     content-language="[[group.language]]" on-new-translation="_alternativeTextForNewIdeaSaveButtonTranslation"
+                     text-type="alternativeTextForNewIdeaSaveButton"></yp-magic-text>
+    </template>
+
     <template is="dom-if" if="[[group.configuration.customThankYouTextNewPosts]]">
       <yp-magic-text id="customThankYouTextNewPostsId" hidden content-id="[[group.id]]" text-only content="[[group.configuration.customThankYouTextNewPosts]]"
                      content-language="[[group.language]]"
@@ -691,7 +697,16 @@
       autoTranslate: {
         type: Boolean,
         value: false
+      },
+
+      hasLongSaveText: {
+        type: Boolean,
+        computer: '_hasLongSaveText(saveText)'
       }
+    },
+
+    _hasLongSaveText: function (saveText) {
+      return (saveText && saveText.length>9);
     },
 
     _autoTranslateEvent(event, detail) {
@@ -1401,6 +1416,15 @@
       });
     },
 
+    _alternativeTextForNewIdeaSaveButtonTranslation: function () {
+      this.async(function () {
+        var label = this.$$("#alternativeTextForNewIdeaSaveButtonId");
+        if (label && label.finalContent) {
+          this.set('saveText', label.finalContent);
+        }
+      });
+    },
+
     _setupTranslation: function () {
       this.async(function () {
         if (this.t) {
@@ -1411,8 +1435,14 @@
             } else {
               this.editHeaderText = this.t('post.new');
             }
+
+            if (this.group && this.group.configuration && this.group.configuration.alternativeTextForNewIdeaSaveButton) {
+              var label = this.$$("#alternativeTextForNewIdeaSaveButtonId");
+              this.set('saveText', (label && label.finalContent) ? label.finalContent : this.group.configuration.alternativeTextForNewIdeaSaveButton);
+            } else {
+              this.set('saveText', this.t('create'));
+            }
             this.toastText = this.t('postCreated');
-            this.set('saveText', this.t('create'));
           } else {
             this.set('saveText', this.t('save'));
             this.editHeaderText = this.t('post.edit');
