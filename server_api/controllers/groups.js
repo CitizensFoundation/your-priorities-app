@@ -188,6 +188,7 @@ var updateGroupConfigParamters = function (req, group) {
   group.set('configuration.alternativeTextForNewIdeaButton', (req.body.alternativeTextForNewIdeaButton && req.body.alternativeTextForNewIdeaButton!=="") ? req.body.alternativeTextForNewIdeaButton : null);
   group.set('configuration.alternativeTextForNewIdeaButtonClosed', (req.body.alternativeTextForNewIdeaButtonClosed && req.body.alternativeTextForNewIdeaButtonClosed!=="") ? req.body.alternativeTextForNewIdeaButtonClosed : null);
   group.set('configuration.alternativeTextForNewIdeaButtonHeader', (req.body.alternativeTextForNewIdeaButtonHeader && req.body.alternativeTextForNewIdeaButtonHeader!=="") ? req.body.alternativeTextForNewIdeaButtonHeader : null);
+  group.set('configuration.alternativeTextForNewIdeaSaveButton', (req.body.alternativeTextForNewIdeaSaveButton && req.body.alternativeTextForNewIdeaSaveButton!=="") ? req.body.alternativeTextForNewIdeaSaveButton : null);
 
   group.set('configuration.alternativePointForHeader', (req.body.alternativePointForHeader && req.body.alternativePointForHeader!="") ? req.body.alternativePointForHeader : null);
   group.set('configuration.alternativePointAgainstHeader', (req.body.alternativePointAgainstHeader && req.body.alternativePointAgainstHeader!="") ? req.body.alternativePointAgainstHeader : null);
@@ -1356,6 +1357,7 @@ const allowedTextTypesForGroup = [
   "alternativeTextForNewIdeaButton",
   "alternativeTextForNewIdeaButtonClosed",
   "alternativeTextForNewIdeaButtonHeader",
+  "alternativeTextForNewIdeaSaveButton",
   "alternativePointForHeader",
   "customThankYouTextNewPosts",
   "customTitleQuestionText",
