@@ -42,7 +42,7 @@ https://citizens.is/getting-started/
 * https://yrpri.org/
 * https://betraisland.is/
 * https://betrireykjavik.is/
-* https://mineideer.forbrukerradet.no/
+* https://www.junges.wien/
 * https://engage.parliament.scot/
 * https://enjine.smarter.nj.gov/
 
