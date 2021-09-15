@@ -1,4 +1,4 @@
-# Your Priorities Version 8.11
+# Your Priorities Version 8.12
 
 ![alt text](https://citizens.is/wp-content/uploads/2018/08/Capture-2.png "Your Priorities screenshot")
 
