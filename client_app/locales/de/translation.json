@@ -153,7 +153,7 @@
   "audioPointUploadLimitSec": "Point audio limit in seconds (max 600s)",
   "postCoverVideo": "Video",
   "uploadVideo": "Video",
-  "uploadCompleted": "Upload abschlossen",
+  "uploadCompleted": "Upload abgeschlossen",
   "uploadingVideo":"Uploading video...",
   "uploadingImage":"Uploading image...",
   "transcodingVideo":"Preparing video...",
