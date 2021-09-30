@@ -718,6 +718,8 @@ var updateCommunityConfigParameters = function (req, community) {
   community.set('configuration.forceSecureSamlLogin', truthValueFromBody(req.body.forceSecureSamlLogin));
   community.set('configuration.hideRecommendationOnNewsFeed', truthValueFromBody(req.body.hideRecommendationOnNewsFeed));
 
+  community.set('configuration.recalculateCountersRecursively', truthValueFromBody(req.body.recalculateCountersRecursively));
+
   if (req.body.google_analytics_code && req.body.google_analytics_code!="") {
     community.google_analytics_code = req.body.google_analytics_code;
   } else {

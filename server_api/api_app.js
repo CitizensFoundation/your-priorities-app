@@ -256,7 +256,7 @@ app.get('/manifest.json', function getManifest(req, res) {
 
 app.get('/robots.txt', function (req, res) {
   res.type('text/plain')
-  res.send(`User-agent: *\nDisallow:\nSitemap: https://${req.hostname}/sitemap.xml`);
+  res.send(`User-agent: *\nDisallow:\n\nSitemap: https://${req.hostname}/sitemap.xml`);
 });
 
 var bearerCallback = function (req, token) {
