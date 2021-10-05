@@ -93,6 +93,9 @@ const recountCommunityRecursive = async (communityId, options) => {
   });
   for (let i=0;i<communities.length;i++) {
     console.log("Processing community: "+communities[i].id);
+    users = [];
+    postCount = 0;
+    pointCount = 0;
     await recountCommunityRecursive(communities[i].id, {});
   }
   process.exit();
