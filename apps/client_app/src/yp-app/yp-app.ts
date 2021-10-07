@@ -62,6 +62,7 @@ declare global {
     appDialogs: YpAppDialogs;
     serverApi: YpServerApi;
     app: YpApp;
+    MSStream: any;
     PasswordCredential?: any;
     FederatedCredential?: any;
   }

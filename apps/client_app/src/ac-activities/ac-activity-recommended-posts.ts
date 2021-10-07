@@ -3,7 +3,6 @@ import { property, customElement } from 'lit/decorators.js';
 import { YpBaseElement } from '../common/yp-base-element.js';
 import { YpNavHelpers } from '../common/YpNavHelpers.js';
 
-
 import '../yp-post/yp-post-cover-media.js';
 import { ShadowStyles } from '../common/ShadowStyles.js';
 
@@ -161,33 +160,37 @@ export class AcActivityRecommendedPosts extends YpBaseElement {
   }
 
   render() {
-    return this.recommendedPosts ? html`
-      <div class="headerText layout horizontal center-center">
-        ${this.t('recommendedPosts')}
-      </div>
+    return this.recommendedPosts
+      ? html`
+          <div class="headerText layout horizontal center-center">
+            ${this.t('recommendedPosts')}
+          </div>
 
-      ${this.recommendedPosts!.map(
-        post => html`
-          <div class="postContainer">
-            <div class="shadow-elevation-2dp shadow-transition postItem">
-              <div
-                class="layout vertical postItem"
-                @click="${() => {
-                  YpNavHelpers.goToPost(post.id);
-                }}">
-                <div class="layout horizontal">
-                  <yp-post-cover-media
-                    tiny
-                    .post="${post}"></yp-post-cover-media>
-                </div>
-                <div class="post-name layout horizontal center-center">
-                  ${post.name}
+          ${this.recommendedPosts!.map(
+            post => html`
+              <div class="postContainer">
+                <div class="shadow-elevation-2dp shadow-transition postItem">
+                  <div
+                    class="layout vertical postItem"
+                    @click="${() => {
+                      YpNavHelpers.goToPost(post.id);
+                    }}"
+                  >
+                    <div class="layout horizontal">
+                      <yp-post-cover-media
+                        tiny
+                        .post="${post}"
+                      ></yp-post-cover-media>
+                    </div>
+                    <div class="post-name layout horizontal center-center">
+                      ${post.name}
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-          </div>
+            `
+          )}
         `
-      )}
-    ` : nothing
+      : nothing;
   }
 }

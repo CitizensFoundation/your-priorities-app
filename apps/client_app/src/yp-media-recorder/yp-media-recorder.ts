@@ -504,36 +504,19 @@ export class YpMediaRecorder extends YpBaseElement {
         video: this.videoRecording ? this.videoSettings : undefined,
       };
 
-      const isFirefox =
-        /firefox/.test(navigator.userAgent.toLowerCase()) && !window.MSStream;
-
-      if (isFirefox) {
-        navigator.getUserMedia(
-          constraints,
-          stream => {
-            callback(stream);
-          },
-          function (error) {
-            console.error(error);
-            //TODO: Fire user error
-            callback(null);
-          }
-        );
-      } else {
-        navigator.mediaDevices
-          .getUserMedia(constraints)
-          .then(stream => {
-            stream.getTracks().forEach(function (track) {
-              console.info(track.getCapabilities());
-            });
-            callback(stream);
-          })
-          .catch(function (error) {
-            console.error(error);
-            //TODO: Fire user error
-            callback(null);
-          });
-      }
+      navigator.mediaDevices
+      .getUserMedia(constraints)
+      .then(stream => {
+        stream.getTracks().forEach(function (track) {
+          console.info(track.getCapabilities());
+        });
+        callback(stream);
+      })
+      .catch(function (error) {
+        console.error(error);
+        //TODO: Fire user error
+        callback(null);
+      });
     }
   }
 

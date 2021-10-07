@@ -338,7 +338,11 @@ export class AcNotificationList extends YpBaseElementWithLogin {
   //TODO: Add a way to detect an error through the Fetch API so we can implement this
   _newNotificationsError(event: CustomEvent) {
     console.error('Error in getting new notifications');
-    this.cancelTimer();
+    if (navigator.onLine) {
+      this.cancelTimer();
+    } else {
+      this._startTimer();
+    }
 
     if (event.detail && event.detail.status && event.detail.status == 401) {
       window.appUser.checkLogin();
