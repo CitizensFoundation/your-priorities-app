@@ -78,6 +78,13 @@
       <yp-api-action-dialog id="apiActionDialog" on-close="_closeActionDialog"></yp-api-action-dialog>
     </template>
 
+    <template is="dom-if" if="[[registrationQuestionsOpen]]" restamp>
+      <yp-registration-questions-dialog
+              id="registrationQuestions"
+              on-close="_closeRegistrationQuestionsDialog"
+      ></yp-registration-questions-dialog>
+    </template>
+
     <div id="dialogs" hide$="[[hideDialogs]]">
       <paper-toast id="masterToast"></paper-toast>
       <yp-ajax-error-dialog id="errorDialog"></yp-ajax-error-dialog>
@@ -121,10 +128,6 @@
 
         <template is="dom-if" name="missingEmail" restamp>
           <yp-missing-email id="missingEmail"></yp-missing-email>
-        </template>
-
-        <template is="dom-if" name="registrationQuestions" restamp>
-          <yp-registration-questions-dialog id="registrationQuestions"></yp-registration-questions-dialog>
         </template>
 
         <template is="dom-if" name="communityEdit" restamp>
@@ -318,6 +321,11 @@
           value: false
         },
 
+        registrationQuestionsOpen: {
+          type: Boolean,
+          value: false
+        },
+
         autoTranslateDialogOpen: {
           type: Boolean,
           value: false
@@ -336,6 +344,10 @@
 
       _closeActionDialog: function () {
         this.set('apiActionDialogOpen', false);
+      },
+
+      _closeRegistrationQuestionsDialog: function () {
+        this.set('registrationQuestionsOpen', false);
       },
 
       loadDataViz: function () {
@@ -521,8 +533,10 @@
           this.set('confirmationDialogOpen', true);
         } else if (idName==="autoTranslateDialog") {
           this.set('autoTranslateDialogOpen', true);
-        }else if (idName==="apiActionDialog") {
+        } else if (idName==="apiActionDialog") {
           this.set('apiActionDialogOpen', true);
+        } else if (idName==="registrationQuestions") {
+          this.set('registrationQuestionsOpen', true);
         } else if (idName==="magicTextDialog") {
           this.set('magicTextDialogOpen', true);
         } else if (idName!=='notificationToast' && idName!=='masterToast') {
