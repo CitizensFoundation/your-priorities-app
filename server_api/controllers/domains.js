@@ -251,9 +251,16 @@ var getDomain = function (req, domainId, done) {
                 domain_id: domain.id,
                 in_community_folder_id: null,
                 configuration: {
-                  customBackURL: {
-                    [models.Sequelize.Op.is]: null
-                  }
+                  [models.Sequelize.Op.or]: [
+                    {
+                      customBackURL: {
+                        [models.Sequelize.Op.is]: null
+                      }
+                    },
+                    {
+                      alwaysShowOnDomainPage: true
+                    }
+                  ]
                 },
               },
               limit: 500,
@@ -306,9 +313,16 @@ var getDomain = function (req, domainId, done) {
                 domain_id: domain.id,
                 in_community_folder_id: null,
                 configuration: {
-                  customBackURL: {
-                    [models.Sequelize.Op.is]: null
-                  }
+                  [models.Sequelize.Op.or]: [
+                    {
+                      customBackURL: {
+                        [models.Sequelize.Op.is]: null
+                      }
+                    },
+                    {
+                      alwaysShowOnDomainPage: true
+                    }
+                  ]
                 },
               },
               limit: 500,
