@@ -16,7 +16,8 @@ import { YpIronListHelpers } from '../common/YpIronListHelpers.js';
 import { YpCollectionHelpers } from '../common/YpCollectionHelpers.js';
 import { RangeChangedEvent } from '@lit-labs/virtualizer/Virtualizer.js';
 import { LitVirtualizer } from '@lit-labs/virtualizer';
-import { FlowLayout } from '@lit-labs/virtualizer/layouts/flow';
+import { FlowLayout } from '@lit-labs/virtualizer/layouts/flow.js';
+import { GridLayout } from '@lit-labs/virtualizer/layouts/grid.js';
 
 import { YpCollectionItemCard } from './yp-collection-item-card.js';
 import { YpServerApi } from '../common/YpServerApi.js';
@@ -37,6 +38,9 @@ export class YpCollectionItemsGrid extends YpBaseElement {
 
   @property({ type: Array })
   sortedCollectionItems: Array<YpCollectionData> | undefined;
+
+  @property({ type: Boolean, reflect: true })
+  grid = false;
 
   resetListSize: Function | undefined;
   skipIronListWidth = false;
@@ -70,6 +74,7 @@ export class YpCollectionItemsGrid extends YpBaseElement {
           <lit-virtualizer
             id="list"
             role="main"
+            .layout="${this.grid ? GridLayout : FlowLayout}"
             aria-label="${this.t(this.pluralItemType)}"
             .items="${this.sortedCollectionItems}"
             .scrollTarget="${window}"

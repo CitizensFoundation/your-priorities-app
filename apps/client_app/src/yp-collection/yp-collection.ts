@@ -95,7 +95,7 @@ export abstract class YpCollection extends YpBaseElement {
   }
 
   refresh(): void {
-    console.error('REFRESH');
+    console.info('REFRESH');
     if (this.collection) {
       if (this.collection.default_locale != null) {
         window.appGlobals.changeLocaleIfNeeded(this.collection.default_locale);

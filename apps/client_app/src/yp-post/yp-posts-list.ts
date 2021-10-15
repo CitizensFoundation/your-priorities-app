@@ -540,7 +540,7 @@ export class YpPostsList extends YpBaseElement {
             this.filter = 'newest';
           }
         }
-        console.error('LOADMORE FOR CONTAINER');
+        console.info('LOADMORE FOR CONTAINER');
         this._loadMoreData();
       }
     } else if (this.group && changedProperties.has('filter') && this.filter) {
