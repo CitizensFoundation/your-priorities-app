@@ -193,7 +193,7 @@ export class YpPostsFilter extends YpBaseElement {
                   @selected="${this._changeFilter}">
                   <mwc-list-item
                     graphic="icon"
-                    value="top"
+                    value="top">
                     <span>${this.t('post.top')}</span>
                   </mwc-list-item>
                   <mwc-list-item value="newest" graphic="icon">

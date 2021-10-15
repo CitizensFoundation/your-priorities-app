@@ -9,7 +9,9 @@ import '@material/mwc-icon-button';
 
 import './yp-point-comment.js';
 import './yp-point-comment-edit.js';
-import {RangeChangeEvent, Layout1d, LitVirtualizer } from '@lit-labs/virtualizer';
+import { RangeChangedEvent } from '@lit-labs/virtualizer/Virtualizer.js';
+import { LitVirtualizer } from '@lit-labs/virtualizer';
+import { FlowLayout } from '@lit-labs/virtualizer/layouts/flow';
 
 
 @customElement('yp-point-comment-list')
@@ -185,16 +187,13 @@ export class YpPointCommentList extends YpBaseElement {
     `;
   }
 
-  scrollEvent(event: CustomEvent) {
-    //TODO: Check this logic
-    const detail = event.detail as RangeChangeEvent;
-
+  scrollEvent(event: RangeChangedEvent) {
     if (
       this.comments &&
       //      !this.moreFromScrollTriggerActive &&
-      detail.lastVisible != -1 &&
-      detail.lastVisible < this.comments.length &&
-      detail.lastVisible + 5 >= this.comments.length
+      event.last != -1 &&
+      event.last < this.comments.length &&
+      event.last + 5 >= this.comments.length
     ) {
       //      this.moreFromScrollTriggerActive = true;
       //      this._loadMoreData();

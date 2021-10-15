@@ -2,7 +2,10 @@ import { html, css } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { YpBaseElement } from '../common/yp-base-element.js';
 import { YpIronListHelpers } from '../common/YpIronListHelpers.js';
-import {RangeChangeEvent, Layout1d, LitVirtualizer, Layout1dGrid } from '@lit-labs/virtualizer';
+import { RangeChangedEvent } from '@lit-labs/virtualizer/Virtualizer.js';
+import { LitVirtualizer } from '@lit-labs/virtualizer';
+import { FlowLayout } from '@lit-labs/virtualizer/layouts/flow.js';
+import { GridLayout } from '@lit-labs/virtualizer/layouts/grid.js';
 
 import '@material/mwc-icon-button';
 import '@material/mwc-textfield';
@@ -60,7 +63,7 @@ export class YpPostsList extends YpBaseElement {
   showSearchIcon = false;
 
   @property({ type: Boolean, reflect: true })
-  grid = false;
+  grid = true;
 
   moreToLoad = false;
 
@@ -281,7 +284,7 @@ export class YpPostsList extends YpBaseElement {
               <lit-virtualizer
                 id="list"
                 .items=${this.posts}
-                .layout="${this.grid ? Layout1dGrid : Layout1d}"
+                .layout="${this.grid ? GridLayout : FlowLayout}"
                 .scrollTarget="${window}"
                 .renderItem=${this.renderPostItem.bind(this)}
                 @rangeChanged=${this.scrollEvent}></lit-virtualizer>
@@ -333,16 +336,14 @@ export class YpPostsList extends YpBaseElement {
     (this.$$("#postsFilter") as YpPostsFilter)._updateAfterFiltering();
   }
 
-  scrollEvent(event: CustomEvent) {
+  scrollEvent(event: RangeChangedEvent) {
     //TODO: Check this logic
-    const detail = event.detail as RangeChangeEvent;
-
     if (
       this.posts &&
       !this.moreFromScrollTriggerActive &&
-      detail.lastVisible != -1 &&
-      detail.lastVisible < this.posts.length &&
-      detail.lastVisible + 5 >= this.posts.length
+      event.last != -1 &&
+      event.last < this.posts.length &&
+      event.last + 5 >= this.posts.length
     ) {
       this.moreFromScrollTriggerActive = true;
       this._loadMoreData();
@@ -482,7 +483,7 @@ export class YpPostsList extends YpBaseElement {
       console.info('Scrolling to post: ' + post.id);
       for (let i = 0; i < this.posts.length; i++) {
         if (this.posts[i] == post) {
-          (this.$$('#list') as LitVirtualizer<any>).scrollToIndex(i);
+          (this.$$('#list') as LitVirtualizer).scrollToIndex(i);
           break;
         }
       }

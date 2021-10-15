@@ -14,7 +14,9 @@ import { YpBaseElement } from '../common/yp-base-element.js';
 import { ShadowStyles } from '../common/ShadowStyles.js';
 import { YpIronListHelpers } from '../common/YpIronListHelpers.js';
 import { YpCollectionHelpers } from '../common/YpCollectionHelpers.js';
-import {RangeChangeEvent, Layout1d, LitVirtualizer } from '@lit-labs/virtualizer';
+import { RangeChangedEvent } from '@lit-labs/virtualizer/Virtualizer.js';
+import { LitVirtualizer } from '@lit-labs/virtualizer';
+import { FlowLayout } from '@lit-labs/virtualizer/layouts/flow';
 
 import { YpCollectionItemCard } from './yp-collection-item-card.js';
 import { YpServerApi } from '../common/YpServerApi.js';
@@ -70,7 +72,6 @@ export class YpCollectionItemsGrid extends YpBaseElement {
             role="main"
             aria-label="${this.t(this.pluralItemType)}"
             .items="${this.sortedCollectionItems}"
-            .layout="${Layout1d}"
             .scrollTarget="${window}"
             .keyFunction="${(item: YpCollectionData) => item.id}"
             .renderItem="${this.renderItem.bind(this)}"></lit-virtualizer>
@@ -192,7 +193,7 @@ export class YpCollectionItemsGrid extends YpBaseElement {
     if (item && this.sortedCollectionItems) {
       for (let i = 0; i < this.sortedCollectionItems.length; i++) {
         if (this.sortedCollectionItems[i] == item) {
-          (this.$$('#list') as LitVirtualizer<any>).scrollToIndex(i);
+          (this.$$('#list') as LitVirtualizer).scrollToIndex(i);
           break;
         }
       }

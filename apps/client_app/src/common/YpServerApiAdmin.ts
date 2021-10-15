@@ -4,7 +4,7 @@ export class YpServerApiAdmin extends YpServerApiBase {
   public addCollectionItem(
     collectionId: number,
     collectionItemType: string,
-    body: object
+    body: Record<string, unknown>
   ) {
     return this.fetchWrapper(
       this.baseUrlPath +
@@ -22,7 +22,7 @@ export class YpServerApiAdmin extends YpServerApiBase {
   public updateTranslation(
     collectionType: string,
     collectionId: number,
-    body: object
+    body: Record<string, unknown>
   ) {
     return this.fetchWrapper(
       this.baseUrlPath +
@@ -50,7 +50,7 @@ export class YpServerApiAdmin extends YpServerApiBase {
     );
   }
 
-  public addVideoToCollection(collectionId: number, body: object, type: string) {
+  public addVideoToCollection(collectionId: number, body: Record<string, unknown>, type: string) {
     return this.fetchWrapper(
       this.baseUrlPath + `/videos/${collectionId}/${type}`,
       {

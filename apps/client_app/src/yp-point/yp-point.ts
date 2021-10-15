@@ -604,7 +604,7 @@ export class YpPoint extends YpBaseElement {
             <yp-point-actions
               .point="${this.point}"
               .pointUrl="${this.pointUrl}"
-              .configuration="${this.point.Post?.Group.configuration}"
+              .configuration="${this.point.Post?.Group?.configuration}"
             ></yp-point-actions>
             <mwc-icon-button
               .label="${this.t('point.report')}"

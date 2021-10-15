@@ -27,7 +27,7 @@ export default {
         'node_modules/recordrtc/**/*',
         'node_modules/i18next/**/*',
         '**/*/node_modules/linkifyjs/**/*',
-        '**/*/node_modules/i18next-http-backend/**/*'
+//        '**/*/node_modules/i18next-http-backend/**/*'
       ],
     }),
     /** Enable using HTML as rollup entrypoint */

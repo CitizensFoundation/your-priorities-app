@@ -1,7 +1,9 @@
 import { html, css, nothing } from 'lit';
 import { property, customElement } from 'lit/decorators.js';
 
-import {RangeChangeEvent, Layout1d, LitVirtualizer } from '@lit-labs/virtualizer';
+import { RangeChangedEvent } from '@lit-labs/virtualizer/Virtualizer.js';
+import { LitVirtualizer } from '@lit-labs/virtualizer';
+import { FlowLayout } from '@lit-labs/virtualizer/layouts/flow';
 
 import '@material/mwc-button';
 
@@ -220,17 +222,16 @@ export class AcNotificationList extends YpBaseElementWithLogin {
       </div>
     `;
   }
-  scrollEvent(event: CustomEvent) {
-    //TODO: Check this logic
 
-    const detail = event.detail as RangeChangeEvent;
+  scrollEvent(event: RangeChangedEvent) {
+    //TODO: Check this logic
 
     if (
       this.notifications &&
       !this.moreToLoad &&
-      detail.lastVisible != -1 &&
-      detail.lastVisible < this.notifications.length &&
-      detail.lastVisible + 5 >= this.notifications.length
+      event.last != -1 &&
+      event.last < this.notifications.length &&
+      event.last + 5 >= this.notifications.length
     ) {
       this.moreToLoad = true;
       this._loadMoreData();

@@ -10,7 +10,9 @@ import './ac-activity-recommended-posts.js';
 import '@lit-labs/virtualizer';
 
 import { YpBaseElementWithLogin } from '../common/yp-base-element-with-login.js';
-import {RangeChangeEvent, Layout1d, LitVirtualizer } from '@lit-labs/virtualizer';
+import { RangeChangedEvent } from '@lit-labs/virtualizer/Virtualizer.js';
+import { LitVirtualizer } from '@lit-labs/virtualizer';
+import { FlowLayout } from '@lit-labs/virtualizer/layouts/flow.js';
 import { ShadowStyles } from '../common/ShadowStyles.js';
 import { YpConfirmationDialog } from '../yp-dialog-container/yp-confirmation-dialog.js';
 
@@ -308,7 +310,7 @@ export class AcActivities extends YpBaseElementWithLogin {
                   id="list"
                   .items=${this.activities}
                   .scrollTarget="${window}"
-                  .layout="${Layout1d}"
+                  .layout="${FlowLayout}"
                   id="activitiesList"
                   .renderItem=${this.renderItem.bind(this)}
                   @rangeChanged=${this.scrollEvent}></lit-virtualizer>
@@ -330,16 +332,15 @@ export class AcActivities extends YpBaseElementWithLogin {
     `;
   }
 
-  scrollEvent(event: CustomEvent) {
+  scrollEvent(event: RangeChangedEvent) {
     //TODO: Check this logic
-    const detail = event.detail as RangeChangeEvent;
 
     if (
       this.activities &&
       this._moreToLoad &&
-      detail.lastVisible != -1 &&
-      detail.lastVisible < this.activities.length &&
-      detail.lastVisible + 5 >= this.activities.length
+      event.last != -1 &&
+      event.last < this.activities.length &&
+      event.last + 5 >= this.activities.length
     ) {
       this._moreToLoad = true;
       this._loadMoreData();
@@ -716,7 +717,7 @@ export class AcActivities extends YpBaseElementWithLogin {
     if (item && this.activities) {
       for (let i = 0; i < this.activities.length; i++) {
         if (this.activities[i] == item) {
-          (this.$$('#list') as LitVirtualizer<any>).scrollToIndex(i);
+          (this.$$('#list') as LitVirtualizer).scrollToIndex(i);
           break;
         }
       }

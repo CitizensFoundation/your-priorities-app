@@ -21,7 +21,9 @@ import { YpEmojiSelector } from '../common/yp-emoji-selector.js';
 import '../yp-point/yp-point.js';
 import { YpFormattingHelpers } from '../common/YpFormattingHelpers.js';
 import { YpBaseElementWithLogin } from '../common/yp-base-element-with-login.js';
-import {RangeChangeEvent, Layout1d, LitVirtualizer } from '@lit-labs/virtualizer';
+import { RangeChangedEvent } from '@lit-labs/virtualizer/Virtualizer.js';
+import { LitVirtualizer } from '@lit-labs/virtualizer';
+import { FlowLayout } from '@lit-labs/virtualizer/layouts/flow.js';
 import { YpMagicText } from '../yp-magic-text/yp-magic-text.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 
@@ -714,7 +716,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
               <lit-virtualizer
                 id="list${type}"
                 .items=${points}
-                .layout="${Layout1d}"
+                .layout="${FlowLayout}"
                 .scrollTarget="${window}"
                 .renderItem=${this.renderPointItem}
                 @rangeChanged=${this.scrollEvent}></lit-virtualizer>
@@ -724,7 +726,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
     `;
   }
 
-  scrollEvent(event: RangeChangeEvent) {
+  scrollEvent(event: RangeChangedEvent) {
     //TODO
   }
 
@@ -964,14 +966,15 @@ export class YpPostPoints extends YpBaseElementWithLogin {
   }
 
   _listResize() {
+    //TODO: Check if this
     if (this.$$('#listUp')) {
-     ((this.$$('#listUp') as LitVirtualizer<any>).layout as Layout1d).reflowIfNeeded(false);
+//     ((this.$$('#listUp') as LitVirtualizer).layout).reflowIfNeeded(false);
     }
     if (this.$$('#listDown')) {
-      ((this.$$('#listDown') as LitVirtualizer<any>).layout as Layout1d).reflowIfNeeded(false);
+//      ((this.$$('#listDown') as LitVirtualizer).layout as Layout1d).reflowIfNeeded(false);
     }
     if (this.$$('#listMobile')) {
-      ((this.$$('#listMobile') as LitVirtualizer<any>).layout as Layout1d).reflowIfNeeded(false);
+//      ((this.$$('#listMobile') as LitVirtualizer).layout as Layout1d).reflowIfNeeded(false);
     }
   }
 
