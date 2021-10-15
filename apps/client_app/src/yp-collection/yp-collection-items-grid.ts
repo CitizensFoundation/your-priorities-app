@@ -168,27 +168,6 @@ export class YpCollectionItemsGrid extends YpBaseElement {
     }
   }
 
-  get _scrollOffset() {
-    const list = this.$$('#ironList');
-    if (list) {
-      let offset = list.offsetTop;
-      offset -= 100;
-      if (!this.wide) offset += 75;
-      if (list.offsetTop > 0 && offset > 0) {
-        console.info('Community list scroll offset: ' + offset);
-        return offset;
-      } else {
-        if (this.wide) offset = 390;
-        else offset = 610;
-        console.info('Community list (manual) scroll offset: ' + offset);
-        return offset;
-      }
-    } else {
-      console.warn('No community list for scroll offset');
-      return null;
-    }
-  }
-
   scrollToItem(item: YpDatabaseItem | undefined) {
     if (item && this.sortedCollectionItems) {
       for (let i = 0; i < this.sortedCollectionItems.length; i++) {
