@@ -129,10 +129,6 @@ export class YpCollectionItemsGrid extends YpBaseElement {
         this.collection.configuration
       );
 
-      //TODO: Revisit this, needed for lit-virtualizer to work with the cache directive
-      this.sortedCollectionItems = undefined;
-      await this.requestUpdate();
-
       this.sortedCollectionItems = splitCommunities.featured.concat(
         splitCommunities.active.concat(splitCommunities.archived)
       );

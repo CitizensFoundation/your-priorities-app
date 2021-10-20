@@ -356,14 +356,7 @@ export class YpPostsList extends YpBaseElement {
     this.addListener('yp-filter-changed', this._filterChanged);
     this.addListener('refresh', this._refreshPost);
 
-    //TODO: Hack to allow cache directive to work
     if (this.posts) {
-      const temp = this.posts;
-      this.posts = undefined;
-      await this.requestUpdate();
-      this.posts = [...temp];
-      await this.requestUpdate();
-
       if (window.appGlobals.cache.cachedPostItem !== undefined) {
         this.scrollToPost(window.appGlobals.cache.cachedPostItem);
         window.appGlobals.cache.cachedPostItem = undefined;

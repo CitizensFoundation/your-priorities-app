@@ -52,7 +52,6 @@
     "fetch-mock": "^9.11.0",
     "koa-proxies": "^0.12.1",
     "lint-staged": "^11.1.2",
-    "lit-html": "^2.0.0",
     "prettier": "^2.4.1",
     "rimraf": "^3.0.2",
     "rollup": "^2.58.0",
