@@ -131,8 +131,17 @@ const copyPost = (fromPostId, toGroupId, options, done) => {
           delete postJson['id'];
           newPost = models.Post.build(postJson);
           newPost.set('group_id', toGroup.id);
+
+          if (!options.copyPoints) {
+            newPost.set('counter_points', 0);
+          }
+
           if (options && options.toCategoryId) {
             newPost.set('category_id', options.toCategoryId);
+          }
+
+          if (options && options.skipUsers) {
+            newPost.set('counter_users', 0);
           }
 
           if (options && options.resetEndorsementCounters) {
@@ -530,8 +539,7 @@ const copyPost = (fromPostId, toGroupId, options, done) => {
   })
 };
 
-const copyGroup = (fromGroupId, toCommunityId, options, done) => {
-  let toDomainId;
+const copyGroup = (fromGroupId, toCommunityIn, toDomainId, options, done) => {
   let toCommunity;
   let toDomain;
   let newGroup;
@@ -541,7 +549,7 @@ const copyGroup = (fromGroupId, toCommunityId, options, done) => {
     (callback) => {
       models.Community.findOne({
         where: {
-          id: toCommunityId,
+          id: toCommunityIn.id,
         },
         attributes: ['id'],
         include: [
@@ -620,6 +628,15 @@ const copyGroup = (fromGroupId, toCommunityId, options, done) => {
         delete groupJson['id'];
         newGroup = models.Group.build(groupJson);
         newGroup.set('community_id', toCommunity.id);
+
+        if (options.skipUsers) {
+          newGroup.set('counter_users', 0);
+        }
+
+        if (!options.copyPoints) {
+          newGroup.set('counter_points', 0);
+        }
+
         newGroup.save().then(function () {
           async.series(
             [
@@ -628,6 +645,27 @@ const copyGroup = (fromGroupId, toCommunityId, options, done) => {
               },
               (groupSeriesCallback) => {
                 cloneTranslationForGroup(oldGroup, newGroup, groupSeriesCallback);
+              },
+              (groupSeriesCallback) => {
+                if (options.deepCopyLinks && oldGroup.configuration && oldGroup.configuration.actAsLinkToCommunityId) {
+                  copyCommunity(
+                    oldGroup.configuration.actAsLinkToCommunityId,
+                    toDomainId,
+                    options,
+                    { id: toCommunityIn.id, name: toCommunityIn.name },
+                    (error, newCommunity) =>{
+                      if(error) {
+                        groupSeriesCallback(error);
+                      } else {
+                        newGroup.set('configuration.actAsLinkToCommunityId', newCommunity.id);
+                        newGroup.save().then(function () {
+                          groupSeriesCallback();
+                        })
+                      }
+                  })
+                } else {
+                  groupSeriesCallback();
+                }
               },
               (groupSeriesCallback) => {
                 if (oldGroup.GroupLogoImages && oldGroup.GroupLogoImages.length>0) {
@@ -742,6 +780,24 @@ const copyGroup = (fromGroupId, toCommunityId, options, done) => {
                 } else {
                   groupSeriesCallback();
                 }
+              },
+              (groupSeriesCallback) => {
+                if (options.recountGroupPosts) {
+                  models.Post.count({
+                    where: {
+                      group_id: newGroup.id
+                    }
+                  }).then( count => {
+                    newGroup.set('counter_posts', count);
+                    newGroup.save().then(function () {
+                      groupSeriesCallback();
+                    })
+                  }).catch( error => {
+                    groupSeriesCallback(error);
+                  })
+                } else {
+                  groupSeriesCallback();
+                }
               }
             ], function (error) {
               console.log("Have copied post to group id");
@@ -760,7 +816,7 @@ const copyGroup = (fromGroupId, toCommunityId, options, done) => {
   })
 };
 
-const copyCommunity = (fromCommunityId, toDomainId, options, done) => {
+const copyCommunity = (fromCommunityId, toDomainId, options, linkFromOptions, done) => {
   let toDomain;
   let newCommunity=null;
   let oldCommunity;
@@ -833,6 +889,16 @@ const copyCommunity = (fromCommunityId, toDomainId, options, done) => {
         delete communityJson['id'];
         newCommunity = models.Community.build(communityJson);
         newCommunity.set('domain_id', toDomain.id);
+
+        if (options.skipUsers) {
+          newCommunity.set('counter_users', 0);
+        }
+
+        if (linkFromOptions) {
+          newCommunity.set('configuration.customBackURL', `/community/${linkFromOptions.id}`);
+          newCommunity.set('configuration.customBackName', linkFromOptions.name);
+        }
+
         if (newCommunity.hostname) {
           newCommunity.set('hostname', newCommunity.hostname+"-copy");
         }
@@ -939,7 +1005,7 @@ const copyCommunity = (fromCommunityId, toDomainId, options, done) => {
                     attributes: ['id']
                   }).then((groups) => {
                     async.eachSeries(groups, function (group, groupCallback) {
-                      copyGroup(group.id, newCommunity.id, options, groupCallback);
+                      copyGroup(group.id, newCommunity, toDomainId, options, groupCallback);
                     }, function (error) {
                       communitySeriesCallback(error);
                     });
@@ -989,7 +1055,31 @@ const copyCommunityWithEverything = (communityId, toDomainId, options, done) => 
     copyGroups: true,
     copyPosts: true,
     copyPoints: true
-  }, (error, newCommunity) => {
+  }, null,(error, newCommunity) => {
+    if (newCommunity)
+      console.log(newCommunity.id);
+    if (error) {
+      console.error(error);
+      done(error, newCommunity);
+    } else {
+      //console.log("Done for new community "+ńewCommunity.id);
+      done(null, newCommunity);
+    }
+  });
+};http://localhost:4242/group/9893
+
+const deepCopyCommunityOnlyStructureWithAdminsAndPosts = (communityId, toDomainId, done) => {
+  copyCommunity(communityId, toDomainId, {
+    copyGroups: true,
+    copyPosts: true,
+    copyPoints: false,
+    recountGroupPosts: true,
+    deepCopyLinks: true,
+    skipUsers: true,
+    skipEndorsementQualitiesAndRatings: true,
+    resetEndorsementCounters: true,
+    skipActivities: true
+  }, null, (error, newCommunity) => {
     if (newCommunity)
       console.log(newCommunity.id);
     if (error) {
@@ -1011,7 +1101,7 @@ const copyCommunityNoUsersNoEndorsements = (communityId, toDomainId, done) => {
     skipEndorsementQualitiesAndRatings: true,
     resetEndorsementCounters: true,
     skipActivities: true
-  }, (error, newCommunity) => {
+  }, null, (error, newCommunity) => {
     if (newCommunity)
       console.log(newCommunity.id);
     if (error) {
@@ -1033,7 +1123,7 @@ const copyCommunityNoUsersNoEndorsementsOneGroup = (communityId, groupId, toDoma
     skipEndorsementQualitiesAndRatings: true,
     resetEndorsementCounters: true,
     skipActivities: true
-  }, (error, newCommunity) => {
+  }, null, (error, newCommunity) => {
     if (newCommunity)
       console.log(newCommunity.id);
     if (error) {
@@ -1050,6 +1140,9 @@ module.exports = {
   copyCommunityNoUsersNoEndorsementsOneGroup,
   copyCommunityNoUsersNoEndorsements,
   copyCommunityWithEverything,
+  clonePagesForGroup,
+  deepCopyCommunityOnlyStructureWithAdminsAndPosts,
+  clonePagesForCommunity,
   copyCommunity,
   copyGroup,
   copyPost

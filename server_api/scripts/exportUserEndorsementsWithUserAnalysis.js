@@ -126,7 +126,7 @@ models.Group.findOne({
     });
   });
 }).catch( error=>{
-  console.erro(error);
+  console.error(error);
   process.exit();
 })
 
