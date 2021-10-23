@@ -91,6 +91,28 @@ router.delete('/:postId/:activityId/delete_activity', auth.can('edit post'), fun
   });
 });
 
+router.post('/:id/status_change_no_emails', auth.can('send status change'), function(req, res) {
+  models.Post.findOne({
+    where: {
+      id: req.params.id
+    },
+    attributes:['id','official_status']
+  }).then(function (post) {
+    if (post) {
+      if (post.official_status != parseInt(req.body.official_status)) {
+        post.official_status = req.body.official_status;
+        post.save().then(function (results) {
+          log.info('Post Status Change Created And New Status', { post: toJson(post), context: 'status_change', user: toJson(req.user) });
+          res.sendStatus(200);
+        });
+      } else {
+        log.info('Post Status Change Created', { post: toJson(post), context: 'status_change', user: toJson(req.user) });
+        res.sendStatus(200);
+      }
+    }
+  });
+});
+
 router.post('/:id/status_change', auth.can('send status change'), function(req, res) {
   models.Post.findOne({
     where: {
