@@ -24,8 +24,10 @@
 
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
-    <yp-edit-dialog id="editDialog" title="[[editHeaderText]]" double-width icon="language" confirmation-text="[[t('post.statusChangeConfirmText')]]"
-                    action="[[action]]" method="[[method]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
+    <yp-edit-dialog id="editDialog" title="[[editHeaderText]]" double-width icon="language"
+                    confirmation-text="[[confirmationText]]"
+                    action="[[action]]" method="[[method]]" params="[[params]]"
+                    save-text="[[saveText]]" toast-text="[[toastText]]">
       <div class="layout horizontal center-center">
         <paper-dropdown-menu label="[[t('post.statusChangeSelectNewStatus')]]">
           <paper-listbox slot="dropdown-content" attr-for-selected="name" selected="{{officialStatus}}">
@@ -35,23 +37,25 @@
           </paper-listbox>
         </paper-dropdown-menu>
         <input type="hidden" name="official_status" value="[[officialStatus]]">
+        <input type="hidden" name="disableStatusEmails" value="[[disableStatusEmails]]">
       </div>
 
-      <div class="layout vertical">
-        <paper-textarea id="content"
-                        name="content"
-                        value="{{postStatusChange.content}}"
-                        always-float-label="[[postStatusChange.content]]"
-                        label="[[t('post.statusChangeContent')]]"
-                        char-counter
-                        rows="10"
-                        max-rows="10"
-                        maxlength="100000" class="mainInput">
-        </paper-textarea>
-      </div>
+      <template is="dom-if" if="[[!disableStatusEmails]]">
+        <div class="layout vertical">
+          <paper-textarea id="content"
+                          name="content"
+                          value="{{postStatusChange.content}}"
+                          always-float-label="[[postStatusChange.content]]"
+                          label="[[t('post.statusChangeContent')]]"
+                          char-counter
+                          rows="10"
+                          max-rows="10"
+                          maxlength="100000" class="mainInput">
+          </paper-textarea>
+        </div>
+      </template>
     </yp-edit-dialog>
   </template>
-
 </dom-module>
 
 <script>
@@ -78,6 +82,10 @@
         observer: "_postChanged"
       },
 
+      confirmationText: {
+        type: String
+      },
+
       params: {
         type: String
       },
@@ -88,7 +96,12 @@
 
       officialStatus: Number,
 
-      postStatusChange: Object
+      postStatusChange: Object,
+
+      disableStatusEmails: {
+        type: Boolean,
+        value: false
+      }
     },
 
     _postChanged: function (newValue, oldValue) {
@@ -102,21 +115,34 @@
       this.set('post', null);
     },
 
-    setup: function (post, postStatusChange, refreshFunction) {
+    setup: function (post, postStatusChange, refreshFunction, disableStatusEmails) {
       this.set('post', post);
       if (!postStatusChange) {
         this.set('postStatusChange', { content: ''});
       } else {
         this.set('postStatusChange', postStatusChange);
       }
+
+      if (disableStatusEmails===true) {
+        this.set('disableStatusEmails', true);
+      } else {
+        this.set('disableStatusEmails', false);
+      }
       this.set('refreshFunction', refreshFunction);
       this._setupTranslation();
     },
 
     _setupTranslation: function () {
-      this.set('editHeaderText', this.t('post.statusChange'));
+      if (this.disableStatusEmails) {
+        this.set('editHeaderText', this.t('statusChangeNoEmails'));
+        this.set('saveText', this.t('statusChangeNoEmails'));
+        this.set('confirmationText', this.t('statusChangeConfirmTextNoEmail'));
+      } else {
+        this.set('confirmationText', this.t('post.statusChangeConfirmText'));
+        this.set('editHeaderText', this.t('post.statusChange'));
+        this.set('saveText', this.t('post.statusChange'));
+      }
       this.set('toastText', this.t('post.statusChangeSent'));
-      this.set('saveText', this.t('post.statusChange'));
     }
   });
 </script>

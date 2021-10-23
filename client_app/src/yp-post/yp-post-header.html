@@ -467,6 +467,7 @@
                     <paper-item id="editMenuItem">[[t('post.edit')]]</paper-item>
                     <paper-item hidden$="[[!checkPostAdminOnlyAccess(post)]]" id="moveMenuItem">[[t('post.move')]]</paper-item>
                     <paper-item hidden$="[[!checkPostAdminOnlyAccess(post)]]" id="statusChangeMenuItem">[[t('post.statusChange')]]</paper-item>
+                    <paper-item hidden$="[[!checkPostAdminOnlyAccess(post)]]" id="statusChangeNoEmailsMenuItem">[[t('statusChangeNoEmails')]]</paper-item>
                     <paper-item id="deleteMenuItem">[[t('post.delete')]]</paper-item>
                     <paper-item hidden$="[[!checkPostAdminOnlyAccess(post)]]" id="anonymizeMenuItem">[[t('anonymizePostAndContent')]]</paper-item>
                     <paper-item hidden$="[[!checkPostAdminOnlyAccess(post)]]" id="deleteContentMenuItem">[[t('deletePostContent')]]</paper-item>
@@ -706,6 +707,8 @@
           this._openDelete();
         else if (detail.item.id=="statusChangeMenuItem")
           this._openPostStatusChange();
+        else if (detail.item.id=="statusChangeNoEmailsMenuItem")
+          this._openPostStatusChange(true);
         else if (detail.item.id=="moveMenuItem")
           this._openMovePost();
         else if (detail.item.id=="anonymizeMenuItem")
@@ -723,10 +726,10 @@
         }.bind(this));
       },
 
-      _openPostStatusChange: function () {
+      _openPostStatusChange: function (disableStatusEmails) {
         Polymer.dom(document).querySelector('yp-app').getDialogAsync("postStatusChangeEdit", function (dialog) {
-          dialog.setup(this.post, null, this._refresh.bind(this));
-          dialog.open('new', {postId: this.post.id, statusChange: true});
+          dialog.setup(this.post, null, this._refresh.bind(this), disableStatusEmails===true);
+          dialog.open('new', {postId: this.post.id, statusChange: true, disableStatusEmails: disableStatusEmails===true});
         }.bind(this));
       },
 

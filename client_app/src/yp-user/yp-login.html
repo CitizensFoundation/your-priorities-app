@@ -920,9 +920,8 @@
     _openedChanged: function (newValue) {
       if (newValue) {
         if (window.appGlobals.currentAnonymousGroup &&
-          window.appGlobals.currentGroup &&
-          window.appGlobals.currentGroup.configuration &&
-          window.appGlobals.currentGroup.configuration.allowAnonymousUsers
+          window.appGlobals.currentAnonymousGroup.configuration &&
+          window.appGlobals.currentAnonymousGroup.configuration.allowAnonymousUsers
         ) {
           this.set('hasAnonymousLogin', true);
         } else {
@@ -930,9 +929,8 @@
         }
 
         if (window.appGlobals.currentAnonymousGroup &&
-            window.appGlobals.currentGroup &&
-            window.appGlobals.currentGroup.configuration &&
-            window.appGlobals.currentGroup.configuration.allowOneTimeLoginWithName) {
+            window.appGlobals.currentAnonymousGroup.configuration &&
+            window.appGlobals.currentAnonymousGroup.configuration.allowOneTimeLoginWithName) {
           this.set('hasOneTimeLoginWithName', true);
         } else {
           this.set('hasOneTimeLoginWithName', false);

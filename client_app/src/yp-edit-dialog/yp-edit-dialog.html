@@ -673,6 +673,8 @@
           this.action = this.baseAction + '/'+this.params.organizationId;
         } else if (this.params && this.params.userImages && this.params.postId) {
           this.action = this.baseAction + '/'+this.params.postId+'/user_images';
+        } else if (this.params && this.params.statusChange && this.params.disableStatusEmails===true && this.params.postId) {
+          this.action = this.baseAction + '/'+this.params.postId+'/status_change_no_emails';
         } else if (this.params && this.params.statusChange && this.params.postId) {
           this.action = this.baseAction + '/'+this.params.postId+'/status_change';
         } else if (this.params && this.params.postId && this.params.imageId) {
