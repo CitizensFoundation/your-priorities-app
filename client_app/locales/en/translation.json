@@ -1,4 +1,6 @@
 {
+  "statusChangeConfirmTextNoEmail": "Are you sure you want to change the status of this post without any record and without any notification to the users?",
+  "statusChangeNoEmails": "Change status silently/without record",
   "recalculateCountersRecursively": "Recalculate counters recursively",
   "alternativeTextForNewIdeaSaveButton": "Alternative text for save idea button",
   "createXlsUsersReport": "Create XLS Users Report",
