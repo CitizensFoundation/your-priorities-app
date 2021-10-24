@@ -1066,7 +1066,7 @@ const copyCommunityWithEverything = (communityId, toDomainId, options, done) => 
       done(null, newCommunity);
     }
   });
-};http://localhost:4242/group/9893
+};
 
 const deepCopyCommunityOnlyStructureWithAdminsAndPosts = (communityId, toDomainId, done) => {
   copyCommunity(communityId, toDomainId, {

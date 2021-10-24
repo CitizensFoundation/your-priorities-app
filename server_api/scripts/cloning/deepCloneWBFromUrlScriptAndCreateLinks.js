@@ -12,10 +12,10 @@ let userId = process.argv[3];
 let urlToConfig = process.argv[4];
 let urlToAddAddFront = process.argv[5];
 
-domainId = "3"; //process.argv[2];
+/*domainId = "3"; //process.argv[2];
 userId = "84397" //process.argv[3];
 urlToConfig = "https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/CESA+cloning+sheet+10202021-TEST.csv";// process.argv[4];
-urlToAddAddFront = "https://kyrgyz-aris.yrpri.org/";
+urlToAddAddFront = "https://kyrgyz-aris.yrpri.org/";*/
 
 // node server_api/scripts/cloneWBFromUrlScriptAndCreateLinks.js 3 84397 https://yrpri-eu-direct-assets.s3-eu-west-1.amazonaws.com/CF_clone_WB_140221.csv https://kyrgyz-aris.yrpri.org/
 
