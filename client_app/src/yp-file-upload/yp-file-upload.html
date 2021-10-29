@@ -439,6 +439,11 @@ Example:
       selectedVideoCoverIndex: {
         type: Number,
         value: 0
+      },
+
+      videoAspect: {
+        type: String,
+        value: null
       }
     },
 
@@ -568,7 +573,10 @@ Example:
       }
     },
 
-    _openFileInput: function () {
+    _openFileInput: function (aspect) {
+      if (aspect) {
+        this.set('videoAspect', aspect);
+      }
       var elem = this.$.fileInput;
       if (elem && document.createEvent) { // sanity check
         var evt = document.createEvent("MouseEvents");
@@ -812,11 +820,14 @@ Example:
         return;
       }
 
-      var aspect;
-      if (window.innerHeight>window.innerWidth) {
-        aspect = "portrait";
-      } else {
-        aspect = "landscape";
+      var aspect = this.videoAspect;
+
+      if (!aspect) {
+        if (window.innerHeight>window.innerWidth) {
+          aspect = "portrait";
+        } else {
+          aspect = "landscape";
+        }
       }
 
       this.fire('file-upload-starting');
@@ -838,7 +849,6 @@ Example:
           xhr.setRequestHeader(key, this.headers[key]);
         }
       }
-
 
       xhr.onload = function(e) {
         if (xhr.status === 200) {

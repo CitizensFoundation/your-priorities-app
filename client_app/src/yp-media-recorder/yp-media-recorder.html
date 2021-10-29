@@ -188,10 +188,16 @@
             <div class="buttonText">[[t('stop')]]</div>
           </paper-button>
           <span hidden$="[[isRecording]]">
-            <paper-button id="uploadFileButton" class="uploadFileButton" on-tap="_uploadFile" hidden$="[[recordedData]]">
-              <iron-icon icon="file-upload"></iron-icon>
-              <div class="buttonText uploadFileText">[[t('uploadFile')]]</div>
-            </paper-button>
+            <div class="layout horizontal">
+              <paper-button id="uploadFileButton" class="uploadFileButton" on-tap="_uploadFile" hidden$="[[recordedData]]">
+                <iron-icon icon="file-upload"></iron-icon>
+                <div class="buttonText uploadFileText">[[t('uploadFile')]]</div>
+              </paper-button>
+              <paper-radio-group name="aspect" class="aspect layout horizontal wrap" selected="{{videoAspect}}">
+                <paper-radio-button name="landscape">landscape</paper-radio-button>
+                <paper-radio-button name="portrait"">portrait</paper-radio-button>
+              </paper-radio-group>
+            </div>
           </span>
           <paper-button on-tap="_sendBack" class="actionButton" hidden$="[[!recordedData]]">
             <iron-icon icon="send"></iron-icon>
@@ -298,6 +304,11 @@
           surfer: {
             type: Object,
             value: null
+          },
+
+          aspect: {
+            type: String,
+            value: "portrait"
           }
         }
       }
@@ -381,7 +392,7 @@
 
       _uploadFile () {
         this._close();
-        this.uploadFileFunction();
+        this.uploadFileFunction(this.videoAspect);
       }
 
       _sendBack () {
@@ -690,6 +701,12 @@
           this.set('language', window.locale);
         }
         super.ready();
+
+        if (window.innerHeight>window.innerWidth) {
+          this.videoAspect = "portrait";
+        } else {
+          this.videoAspect = "landscape";
+        }
       }
 
       _languageEvent (event, detail) {
