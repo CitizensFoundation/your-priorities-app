@@ -114,11 +114,23 @@
         color: #F00;
         font-weight: bold;
       }
+
+      a {
+          color: #000;
+      }
+
+      .allGroupMenus {
+          margin-bottom: 16px;
+      }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
     <yp-edit-dialog name="groupEdit" id="editDialog" title="[[editHeaderText]]" icon="people" action="[[action]]"
                     method="[[method]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
+
+      <template is="dom-if" if="[[group.configuration.actAsLinkToCommunityId]]">
+        <div class="layout horizontal allGroupMenus" hidden$="[[!group.id]]"><a target="_blank" href="/group/[[group.id]]">[[t('fullGroupLinkMenus')]]</a></div>
+      </template>
 
       <paper-input id="name"
                    name="name"
