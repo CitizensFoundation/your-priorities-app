@@ -8,17 +8,17 @@ var id = process.argv[2];
 var userIdToPostNewsStory = process.argv[3];
 var groupId = process.argv[4];
 
-var getTemplateContent = function (templates, title) {
-  var returnContent;
+var getTemplate = function (templates, title) {
+  var returnTemplate;
   if (title) {
     _.forEach(templates, function (template) {
       //  console.log(template);
       if (title==template.title) {
-        returnContent = template.content;
+        returnTemplate = template;
       }
     });
   }
-  return returnContent;
+  return returnTemplate;
 };
 
 models.BulkStatusUpdate.findOne({
@@ -38,7 +38,8 @@ models.BulkStatusUpdate.findOne({
             async.eachSeries(group.posts, function (post, postCallback) {
 //            console.log("New status: "+post.newOfficialStatus+" template: "+post.selectedTemplateName+ " content: "+getTemplateContent(update.templates,post.selectedTemplateName));
               if (post.newOfficialStatus) {
-                var templateContent = getTemplateContent(update.templates,post.selectedTemplateName);
+                var template = getTemplate(update.templates,post.selectedTemplateName);
+                var templateContent = template ? template.content : null;
                 if (!templateContent && post.uniqueStatusMessage) {
                   templateContent = post.uniqueStatusMessage;
                 }
@@ -83,6 +84,7 @@ models.BulkStatusUpdate.findOne({
                         subType: 'bulkOperation',
                         post_id: post.id,
                         user_id: userIdToPostNewsStory,
+                        context: (template && template.silentMode===true) ? { silentMode: true } : null,
                         point: { content: templateContent }
                       }, function (error) {
                         doCallback(error);

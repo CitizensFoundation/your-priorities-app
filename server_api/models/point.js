@@ -430,6 +430,7 @@ module.exports = (sequelize, DataTypes) => {
             domainId: options.domain_id,
             groupId: options.group_id ? options.group_id : 1,
             pointId: options.point_id,
+            context: options.context ? options.context : null,
             communityId: options.community_id,
             postId: options.post_id,
             access: sequelize.models.AcActivity.ACCESS_PUBLIC

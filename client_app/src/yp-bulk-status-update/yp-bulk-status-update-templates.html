@@ -7,6 +7,7 @@
 <link rel="import" href="../../bower_components/paper-button/paper-button.html" >
 <link rel="import" href="../../bower_components/paper-input/paper-input.html" >
 <link rel="import" href="../../bower_components/paper-input/paper-textarea.html" >
+<link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html" >
 <link rel="import" href="../../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html" >
 
 <link rel="import" href="../yp-behaviors/yp-language-behavior.html" >
@@ -38,6 +39,10 @@
 
       .title {
         width: 200px;
+      }
+
+      paper-checkbox {
+          margin-top: 8px;
       }
 
       .email {
@@ -91,9 +96,15 @@
                         value="{{currentlyEditingContent}}"
                         always-float-label="[[currentlyEditingContent]]"
                         label="[[t('templateContent')]]"
-                        rows="7"
-                        max-rows="10">
+                        rows="6"
+                        max-rows="9">
         </paper-textarea>
+
+        <paper-checkbox
+          checked="{{currentlyEditingSilentMode}}"
+        >
+          [[t('bulkTemplateSilentMode')]]
+        </paper-checkbox>
       </paper-dialog-scrollable>
 
 
@@ -164,6 +175,10 @@
 
         currentlyEditingContent: {
           type: String
+        },
+
+        currentlyEditingSilentMode: {
+          type: Boolean
         }
       },
 
@@ -182,6 +197,7 @@
       _editTemplate: function (event) {
         this.set('currentlyEditingTemplate', JSON.parse(event.target.getAttribute('data-args')));
         this.set('currentlyEditingContent',this.templates[this.currentlyEditingTemplate]["content"]);
+        this.set('currentlyEditingSilentMode',this.templates[this.currentlyEditingTemplate]["silentMode"]);
         this.set('currentlyEditingTitle',this.templates[this.currentlyEditingTemplate]["title"]);
         this.$.editTemplateLocale.open();
       },
@@ -189,6 +205,7 @@
       _clearTemplateEdit: function () {
         this.set('currentlyEditingTemplate', null);
         this.set('currentlyEditingContent', null);
+        this.set('currentlyEditingSilentMode', null);
         this.set('currentlyEditingTitle', null);
       },
 
@@ -196,7 +213,11 @@
         var templatesCopy = JSON.parse(JSON.stringify(this.templates));
         this.templates.forEach(function (template, index) {
           if (index == this.currentlyEditingTemplate) {
-            templatesCopy[index] = { title: this.currentlyEditingTitle, content: this.currentlyEditingContent };
+            templatesCopy[index] = {
+              title: this.currentlyEditingTitle,
+              content: this.currentlyEditingContent,
+              silentMode: this.currentlyEditingSilentMode
+            };
           }
         }.bind(this));
         this.set('templates', templatesCopy);

@@ -120,6 +120,11 @@ var sendCommunity = function sendCommunityForBot(id, req, res) {
             { access: models.Group.ACCESS_PUBLIC },
             { access: models.Group.ACCESS_OPEN_TO_COMMUNITY },
           ],
+          configuration: {
+            actAsLinkToCommunityId: {
+              [models.Sequelize.Op.is]: null
+            }
+          },
         },
         required: false
       }

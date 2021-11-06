@@ -1,4 +1,5 @@
 {
+  "bulkTemplateSilentMode": "Ekki senda neina tölvupósta með þessu forsniði",
   "fullGroupLinkMenus": "Opna allar valmyndir fyrir tengi hóp",
   "statusChangeConfirmTextNoEmail": "Ertu viss um að þú viljir breyta stöðu þessarar hugmyndar án rekjanleika og án þess að láta notendur vita?",
   "statusChangeNoEmails": "Breyta stöðu án rekjanleika",
