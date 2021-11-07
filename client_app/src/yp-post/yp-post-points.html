@@ -274,7 +274,8 @@
         margin-bottom: 4px;
       }
 
-      .pointMaterialMobile {
+      .pointMaterialMobile[is-last-point] {
+        margin-bottom: 107px;
       }
 
       div[rtl] {
@@ -610,7 +611,13 @@
           <iron-list id="ironListMobile" lower-threshold="150" debate-disabled$="[[disableDebate]]" role="list" items="[[points]]" as="point" scroll-target="[[scrollTarget]]" scroll-offset="[[mobileScrollOffset]]">
             <template>
               <div class="item layout vertical center-center" tabindex$="[[tabIndex]]" role="listitem" aria-level="3">
-                <paper-material id="point[[point.id]]" elevation="0" animated class="pointMaterial pointMaterialMobile">
+                <paper-material
+                        id="point[[point.id]]"
+                        elevation="0"
+                        animated
+                        is-last-point$="[[point.isLastPointInList]]"
+                        class="pointMaterial pointMaterialMobile"
+                >
                   <yp-point post="[[post]]" point="[[point]]"></yp-point>
                 </paper-material>
               </div>
@@ -1353,6 +1360,7 @@
             }
             this.loadedPointIds[this.storedPoints[i].id]=true;
           }
+
           this._processStoredPoints();
           this.removeElementsByClass(this, 'inserted-outside-list');
           this._updateCounterInfo();
@@ -1433,6 +1441,12 @@
                 result.push(arr[i])
               }
             })
+          }
+
+          if (result.length>0 &&
+             (result.length===this.totalCount ||
+               (this.points && (this.points.length+result.length)===this.totalCount))) {
+            result[result.length-1].isLastPointInList = true;
           }
 
           return result
