@@ -29,6 +29,10 @@
         @apply --layout-horizontal;
       }
 
+      paper-button, paper-textarea-aria {
+          font-family: var(--app-header-font-family, Roboto);
+      }
+
       .main-container {
         @apply --layout-horizontal;
         background-color: var(--primary-background-color);
@@ -99,7 +103,9 @@
           height: 30px;
           overflow: visible;
           color: #AAAAAA;
-        }
+          font-family: var(--app-header-font-family, Roboto);
+        };
+        font-family: var(--app-header-font-family, Roboto);
       }
 
       .howToWriteInfoText {
@@ -180,7 +186,9 @@
       .mobilePaperTextArea {
         --paper-input-container-label: {
           font-size: 19px;
+            font-family: var(--app-header-font-family, Roboto);
         };
+        font-family: var(--app-header-font-family, Roboto);
       }
 
       .pointMainHeader {
@@ -266,7 +274,8 @@
         margin-bottom: 4px;
       }
 
-      .pointMaterialMobile {
+      .pointMaterialMobile[is-last-point] {
+        margin-bottom: 107px;
       }
 
       div[rtl] {
@@ -389,7 +398,7 @@
                   <template>
                     <div class="item" tabindex$="[[tabIndex]]" role="listitem" aria-level="3">
                       <paper-material id="point[[point.id]]" elevation="1" animated class="pointMaterial">
-                        <yp-point point="[[point]]"></yp-point>
+                        <yp-point post="[[post]]" point="[[point]]"></yp-point>
                       </paper-material>
                     </div>
                   </template>
@@ -502,7 +511,7 @@
                   <template>
                     <div class="item" tabindex$="[[tabIndex]]" role="listitem" aria-level="3">
                       <paper-material id="point[[point.id]]" elevation="1" animated class="pointMaterial">
-                        <yp-point point="[[point]]"></yp-point>
+                        <yp-point post="[[post]]" point="[[point]]"></yp-point>
                       </paper-material>
                     </div>
                   </template>
@@ -598,12 +607,18 @@
         </paper-material>
       </div>
       <div rtl$="[[rtl]]" class="layout vertical center-center">
-        <iron-scroll-threshold id="ironScrollThesholdMobile"  scroll-target="document" on-lower-threshold="_loadMorePoints">
-          <iron-list id="ironListMobile" lower-threshold="150" debate-disabled$="[[disableDebate]]" role="list" items="[[points]]" as="point" scroll-target="document" scroll-offset="[[mobileScrollOffset]]">
+        <iron-scroll-threshold id="ironScrollThesholdMobile" scroll-target="[[scrollTarget]]" on-lower-threshold="_loadMorePoints">
+          <iron-list id="ironListMobile" lower-threshold="150" debate-disabled$="[[disableDebate]]" role="list" items="[[points]]" as="point" scroll-target="[[scrollTarget]]" scroll-offset="[[mobileScrollOffset]]">
             <template>
               <div class="item layout vertical center-center" tabindex$="[[tabIndex]]" role="listitem" aria-level="3">
-                <paper-material id="point[[point.id]]" elevation="0" animated class="pointMaterial pointMaterialMobile">
-                  <yp-point point="[[point]]"></yp-point>
+                <paper-material
+                        id="point[[point.id]]"
+                        elevation="0"
+                        animated
+                        is-last-point$="[[point.isLastPointInList]]"
+                        class="pointMaterial pointMaterialMobile"
+                >
+                  <yp-point post="[[post]]" point="[[point]]"></yp-point>
                 </paper-material>
               </div>
             </template>
@@ -907,6 +922,24 @@
           pointMaxLength: {
             type: Number,
             computed: '_pointMaxLength(post, largeMode)'
+          },
+
+          isPostPage: {
+            type: Boolean,
+            value: false
+          },
+
+          scrollTarget: {
+            type: String,
+            computed: '_scrollTarget(isPostPage)'
+          }
+        },
+
+        _scrollTarget: function (isPostPage) {
+          if (isPostPage) {
+            return "document";
+          } else {
+            return undefined;
           }
         },
 
@@ -1209,8 +1242,12 @@
         },
 
         _isAdminChanged: function (isAdmin) {
-          if (this.post && this.post.Group && this.post.Group.configuration && this.post.Group.configuration.disableDebate && !isAdmin) {
-            this.set('disableDebate', true);
+          if (this.post && this.post.Group && this.post.Group.configuration && this.post.Group.configuration.disableDebate) {
+            if (isAdmin && this.post.Group.configuration.allowAdminsToDebate) {
+              this.set('disableDebate', false);
+            } else {
+              this.set('disableDebate', true);
+            }
           } else {
             this.set('disableDebate', false);
           }
@@ -1232,7 +1269,7 @@
 
 
           if (newPost) {
-            if (newPost.Group && newPost.Group.configuration && newPost.Group.configuration.disableDebate && !this.isAdmin) {
+            if (newPost.Group && newPost.Group.configuration && newPost.Group.configuration.disableDebate) {
               this.set('disableDebate', true);
             } else {
               this.set('disableDebate', false);
@@ -1283,30 +1320,26 @@
 
         _processStoredPoints: function () {
           console.info("_processStoredPoints");
-          if (this.upPoints===null) {
-            if (this.storedPoints && this.storedPoints.length > 0) {
-              var upPoints = [];
-              var downPoints = [];
+          if (this.storedPoints && this.storedPoints.length > 0) {
+            var upPoints = [];
+            var downPoints = [];
 
-              for (var i = 0; i < this.storedPoints.length; i++) {
-                if (this.storedPoints[i].value>0) {
-                  upPoints.push(this.storedPoints[i]);
-                } else if (this.storedPoints[i].value<0) {
-                  downPoints.push(this.storedPoints[i]);
-                }
+            for (var i = 0; i < this.storedPoints.length; i++) {
+              if (this.storedPoints[i].value>0) {
+                upPoints.push(this.storedPoints[i]);
+              } else if (this.storedPoints[i].value<0) {
+                downPoints.push(this.storedPoints[i]);
               }
-              this.set('upPoints', upPoints);
-              this.set('downPoints', downPoints);
-            } else {
-              this.set('upPoints', []);
-              this.set('downPoints', []);
-              this.set('points', []);
             }
+            this.set('upPoints', upPoints);
+            this.set('downPoints', downPoints);
           } else {
-            console.log("Landscape points already setup");
+            this.set('upPoints', []);
+            this.set('downPoints', []);
+            this.set('points', []);
           }
 
-          if (!this.largeMode && !this.points) {
+          if (!this.largeMode) {
             this.set('points', this.interleaveArrays(this.upPoints, this.downPoints));
           }
 
@@ -1327,6 +1360,7 @@
             }
             this.loadedPointIds[this.storedPoints[i].id]=true;
           }
+
           this._processStoredPoints();
           this.removeElementsByClass(this, 'inserted-outside-list');
           this._updateCounterInfo();
@@ -1407,6 +1441,12 @@
                 result.push(arr[i])
               }
             })
+          }
+
+          if (result.length>0 &&
+             (result.length===this.totalCount ||
+               (this.points && (this.points.length+result.length)===this.totalCount))) {
+            result[result.length-1].isLastPointInList = true;
           }
 
           return result
@@ -1547,40 +1587,47 @@
         },
 
         _newPointResponse: function (inEvent, inDetail) {
-          if (this.currentVideoId) {
-            var point = this._preProcessPoints([inDetail.response])[0];
-            var ajax = document.createElement('iron-ajax');
-            ajax.handleAs = 'json';
-            ajax.contentType = 'application/json';
-            ajax.url = '/api/videos/'+point.id+'/completeAndAddToPoint';
-            ajax.method = 'PUT';
-            ajax.body = {
-              videoId: this.currentVideoId,
-              appLanguage: this.language
-            };
-            ajax.addEventListener('response', function (event, detail) {
-              this._completeNewPointResponse(event, event.detail);
-              window.appGlobals.showSpeechToTextInfoIfNeeded();
-            }.bind(this));
-            ajax.generateRequest();
-          } else if (this.currentAudioId) {
-            var point = this._preProcessPoints([inDetail.response])[0];
-            var ajax = document.createElement('iron-ajax');
-            ajax.handleAs = 'json';
-            ajax.contentType = 'application/json';
-            ajax.url = '/api/audios/'+point.id+'/completeAndAddToPoint';
-            ajax.method = 'PUT';
-            ajax.body = {
-              audioId: this.currentAudioId,
-              appLanguage: this.language
-            };
-            ajax.addEventListener('response', function (event, detail) {
-              this._completeNewPointResponse(event, event.detail);
-              window.appGlobals.showSpeechToTextInfoIfNeeded();
-            }.bind(this));
-            ajax.generateRequest();
+          if (inDetail && inDetail.offlineSendLater) {
+            this.set('addPointDisabled', false);
+            this.set("textValueUp", "");
+            this.set("textValueDown", "");
+            this.set("textValueMobileUpOrDown", "");
           } else {
-            this._completeNewPointResponse(inEvent, inDetail);
+            if (this.currentVideoId) {
+              var point = this._preProcessPoints([inDetail.response])[0];
+              var ajax = document.createElement('iron-ajax');
+              ajax.handleAs = 'json';
+              ajax.contentType = 'application/json';
+              ajax.url = '/api/videos/'+point.id+'/completeAndAddToPoint';
+              ajax.method = 'PUT';
+              ajax.body = {
+                videoId: this.currentVideoId,
+                appLanguage: this.language
+              };
+              ajax.addEventListener('response', function (event, detail) {
+                this._completeNewPointResponse(event, event.detail);
+                window.appGlobals.showSpeechToTextInfoIfNeeded();
+              }.bind(this));
+              ajax.generateRequest();
+            } else if (this.currentAudioId) {
+              var point = this._preProcessPoints([inDetail.response])[0];
+              var ajax = document.createElement('iron-ajax');
+              ajax.handleAs = 'json';
+              ajax.contentType = 'application/json';
+              ajax.url = '/api/audios/'+point.id+'/completeAndAddToPoint';
+              ajax.method = 'PUT';
+              ajax.body = {
+                audioId: this.currentAudioId,
+                appLanguage: this.language
+              };
+              ajax.addEventListener('response', function (event, detail) {
+                this._completeNewPointResponse(event, event.detail);
+                window.appGlobals.showSpeechToTextInfoIfNeeded();
+              }.bind(this));
+              ajax.generateRequest();
+            } else {
+              this._completeNewPointResponse(inEvent, inDetail);
+            }
           }
         },
 
@@ -1641,8 +1688,8 @@
               content: content,
               value: value
             };
-            this.$.newPointAjax.generateRequest();
             this.set('addPointDisabled', true);
+            this.$.newPointAjax.generateRequest();
             if (videoId)
               this.set('currentVideoId', videoId);
             else if (audioId)
