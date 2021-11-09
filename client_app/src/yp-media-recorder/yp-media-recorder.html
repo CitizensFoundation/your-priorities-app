@@ -135,6 +135,10 @@
       #waveform {
         height: 128px;
       }
+
+      [hidden] {
+        display:none !important;
+      }
     </style>
 
     <paper-dialog id="selectDevices" modal>
@@ -193,7 +197,11 @@
                 <iron-icon icon="file-upload"></iron-icon>
                 <div class="buttonText uploadFileText">[[t('uploadFile')]]</div>
               </paper-button>
-              <paper-radio-group name="aspect" class="aspect layout horizontal wrap" selected="{{videoAspect}}">
+              <paper-radio-group
+                name="aspect"
+                hidden$="[[audioRecording]]"
+                class="aspect layout horizontal wrap"
+                selected="{{videoAspect}}">
                 <paper-radio-button name="landscape">landscape</paper-radio-button>
                 <paper-radio-button name="portrait">portrait</paper-radio-button>
               </paper-radio-group>
