@@ -1828,7 +1828,7 @@
               this.set("hideMobileText", false);
             }
             return false;
-          } else if (textValue!=null && textValue.length > 0) {
+          } else if (textValue!=null && textValue.length > 0 && textValue.trim().length > 0) {
             if (type==="up") {
               this.set("hideUpVideo", true);
               this.set('hideUpAudio', true);
@@ -1845,7 +1845,7 @@
               this.set("hideMobileText", false);
             }
             return true;
-          } else if (textValue!=null && textValue.length > 1) {
+          } else if (textValue!=null && textValue.length > 1 && textValue.trim().length > 1) {
             return true;
           } else {
             return false;
