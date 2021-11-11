@@ -179,18 +179,21 @@
             <audio id="audioPreviewer" controls preload="auto" class="audioRecorder" hidden$="[[!previewActive]]"></audio>
           </div>
         </template>
-        <div class="layout horizontal mainbuttons" hidden$="[[!recorder]]">
+        <div class="layout horizontal mainbuttons">
           <paper-icon-button aria-label$="[[t('closeRecordingWindow')]]" icon="clear" class="iconButtons" on-tap="_close"></paper-icon-button>
           <paper-icon-button aria-label$="[[t('deleteRecordedMedia')]]" icon="delete" class="iconButtons" on-tap="_deleteRecording" hidden$="[[!recordedData]]"></paper-icon-button>
-          <paper-button on-tap="_startRecording" hidden$="[[recordedData]]">
-            <iron-icon id="recordingIcon" icon="fiber-manual-record"></iron-icon>
-            <div class="buttonText">[[t('record')]]</div>
-          </paper-button>
-          <div id="secondsLeft" hidden$="[[recordedData]]">[[recordSecondsLeft]] [[t('seconds')]]</div>
-          <paper-button on-tap="_stopRecording" hidden$="[[!isRecording]]">
-            <iron-icon icon="stop"></iron-icon>
-            <div class="buttonText">[[t('stop')]]</div>
-          </paper-button>
+          <div class="layout horizontal" hidden$="[[!recorder]]">
+            <paper-button on-tap="_startRecording" hidden$="[[recordedData]]">
+              <iron-icon id="recordingIcon" icon="fiber-manual-record"></iron-icon>
+              <div class="buttonText">[[t('record')]]</div>
+            </paper-button>
+            <div id="secondsLeft" hidden$="[[recordedData]]">[[recordSecondsLeft]] [[t('seconds')]]</div>
+            <paper-button on-tap="_stopRecording" hidden$="[[!isRecording]]">
+              <iron-icon icon="stop"></iron-icon>
+              <div class="buttonText">[[t('stop')]]</div>
+            </paper-button>
+          </div>
+
           <span hidden$="[[isRecording]]">
             <div class="layout horizontal">
               <paper-button id="uploadFileButton" class="uploadFileButton" on-tap="_uploadFile" hidden$="[[recordedData]]">
