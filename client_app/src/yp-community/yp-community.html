@@ -529,7 +529,7 @@
             window.appGlobals.signupTermsPageId = null;
           }
 
-          if (this.community.configuration.highlightedLanguages) {
+          if (this.community.configuration && this.community.configuration.highlightedLanguages) {
             window.appGlobals.setHighlightedLanguages(this.community.configuration.highlightedLanguages);
           } else {
             window.appGlobals.setHighlightedLanguages(null);
