@@ -1,4 +1,4 @@
-const models = require('../models');
+const models = require('../../models');
 const moment = require('moment');
 
 const maxNumberFromPath = process.argv[2];
@@ -33,6 +33,7 @@ const chunk = (arr, size) =>
           }
         },
         attributes:['id'],
+        order: ['id'],
         offset: userOffset,
         limit: 500
       });
@@ -52,7 +53,7 @@ const chunk = (arr, size) =>
                 [models.Sequelize.Op.in]: userIds
               }
             },
-            limit: 500,
+            limit: 1000,
             offset: notificationsOffset,
             order: ['user_id'],
             attributes:['id'],
@@ -61,7 +62,7 @@ const chunk = (arr, size) =>
           console.log(`Found ${notifications.length} notifications offset ${notificationsOffset}`);
 
           if (notifications.length>0) {
-            notificationsOffset += 500;
+            notificationsOffset += 1000;
             const notificationIds = notifications.map(n=>{ return n.id});
 
             const chunkedIds = chunk(notificationIds, 100);
@@ -77,7 +78,7 @@ const chunk = (arr, size) =>
 
               numberOfDeletedNotifications+=destroyInfo;
 
-              console.log(`Destroyed ${destroyInfo} old notifications from chunk ${i} - total ${numberOfDeletedNotifications}`);
+              console.log(`${i} - ${numberOfDeletedNotifications}`);
 
               await sleep(100);
 
