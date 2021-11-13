@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
 import { html, fixture, expect, aTimeout } from '@open-wc/testing';
 
 import { YpPointNewsStoryEmbed } from '../yp-point-news-story-embed.js';
@@ -7,7 +6,7 @@ import { YpTestHelpers } from '../../common/test/setup-app.js';
 
 describe('YpPointNewsStoryEmbed', () => {
   let element: YpPointNewsStoryEmbed;
-  let fetchMock: any; 
+  let fetchMock: any;
 
   before(async () => {
     fetchMock = YpTestHelpers.getFetchMock();
@@ -25,7 +24,7 @@ describe('YpPointNewsStoryEmbed', () => {
   });
 
   it('passes the a11y audit', async () => {
-    debugger; 
+    debugger;
     await expect(element).shadowDom.to.be.accessible();
   });
 });

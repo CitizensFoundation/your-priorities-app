@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
 import { html, fixture, expect, aTimeout } from '@open-wc/testing';
 
 import { YpConfirmationDialog} from '../yp-confirmation-dialog.js';
@@ -15,7 +14,7 @@ describe('YpConfirmationDialog', () => {
   });
 
   beforeEach(async () => {
-  
+
     element = await fixture(html`
       ${YpTestHelpers.renderCommonHeader()}
       <yp-confirmation-dialog

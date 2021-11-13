@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
 import { html, fixture, expect, aTimeout } from '@open-wc/testing';
 
 import { YpUserInfo } from '../yp-user-info.js';
@@ -7,8 +6,8 @@ import { YpTestHelpers } from '../../common/test/setup-app.js';
 
 describe('YpUserInfo', () => {
   let element: YpUserInfo;
-  let fetchMock: any; 
-  
+  let fetchMock: any;
+
   before(async () => {
     fetchMock = YpTestHelpers.getFetchMock();
     await YpTestHelpers.setupApp();
@@ -21,9 +20,9 @@ describe('YpUserInfo', () => {
       `);
       await aTimeout(100);
   });
-  
+
   it('passes the a11y audit', async () => {
-    debugger; 
+    debugger;
     await expect(element).shadowDom.to.be.accessible();
   });
 });

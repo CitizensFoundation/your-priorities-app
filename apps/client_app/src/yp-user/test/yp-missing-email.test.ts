@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
 import { html, fixture, expect, aTimeout } from '@open-wc/testing';
 
 import { YpMissingEmail } from '../yp-missing-email.js';
@@ -7,11 +6,11 @@ import { YpTestHelpers } from '../../common/test/setup-app.js';
 
 describe('YpMissingEmail', () => {
   let element: YpMissingEmail;
-  let fetchMock: any; 
-  let server: any; 
+  let fetchMock: any;
+  let server: any;
 
   before(async () => {
-    fetchMock = YpTestHelpers.getFetchMock();     
+    fetchMock = YpTestHelpers.getFetchMock();
     await YpTestHelpers.setupApp();
   });
 
@@ -23,9 +22,9 @@ describe('YpMissingEmail', () => {
         await aTimeout(100);
     element.open(true, 'Alexman');
   });
-  
+
   it('passes the a11y audit', async () => {
-    debugger; 
+    debugger;
     await expect(element).shadowDom.to.be.accessible();
   });
 });

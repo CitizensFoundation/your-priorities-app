@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
 import { html, fixture, expect, aTimeout } from '@open-wc/testing';
 
 import { YpApiActionDialog } from '../yp-api-action-dialog.js';
@@ -13,7 +12,7 @@ describe('YpApiActionDialog', () => {
     fetchMock = YpTestHelpers.getFetchMock();
     await YpTestHelpers.setupApp();
   });
-  
+
   beforeEach(async () => {
     element = await fixture(html`
       ${YpTestHelpers.renderCommonHeader()}
@@ -25,7 +24,7 @@ describe('YpApiActionDialog', () => {
   });
 
   it('passes the a11y audit', async () => {
-    debugger; 
+    debugger;
     await expect(element).shadowDom.to.be.accessible();
   });
 });

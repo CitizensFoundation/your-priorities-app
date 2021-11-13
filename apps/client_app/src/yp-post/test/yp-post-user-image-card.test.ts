@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
 import { html, fixture, expect, aTimeout } from '@open-wc/testing';
 
 import { YpPostUserImageCard } from '../yp-post-user-image-card.js';
@@ -7,7 +6,7 @@ import { YpTestHelpers } from '../../common/test/setup-app.js';
 
 describe('YpPostUserImageCard', () => {
   let element: YpPostUserImageCard;
-  let fetchMock: any; 
+  let fetchMock: any;
 
   before(async () => {
     fetchMock = YpTestHelpers.getFetchMock();
@@ -21,7 +20,7 @@ describe('YpPostUserImageCard', () => {
       id: 2,
       formats: '["https://yrpri6-production.s3.amazonaws.com/5dddb81c-6023-4636-aae6-29e013e084d4-desktop-retina.png","https://yrpri6-production.s3.amazonaws.com/5dddb81c-6023-4636-aae6-29e013e084d4-mobile-retina.png","https://yrpri6-production.s3.amazonaws.com/5dddb81c-6023-4636-aae6-29e013e084d4-thumb.png"]',
       user_id: 2,
-    } as YpImageData 
+    } as YpImageData
 
     element = await fixture(html`
       ${YpTestHelpers.renderCommonHeader()}
@@ -34,7 +33,7 @@ describe('YpPostUserImageCard', () => {
   });
 
   it('passes the a11y audit', async () => {
-    debugger; 
+    debugger;
     await expect(element).shadowDom.to.be.accessible();
   });
 });

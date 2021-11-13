@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
 import { html, fixture, expect, aTimeout } from '@open-wc/testing';
 
 import { YpPostPoints } from '../yp-post-points.js';
@@ -7,7 +6,7 @@ import { YpTestHelpers } from '../../common/test/setup-app.js';
 
 describe('YpPostPoints', () => {
   let element: YpPostPoints;
-  let fetchMock: any; 
+  let fetchMock: any;
 
   before(async () => {
     fetchMock = YpTestHelpers.getFetchMock();
@@ -24,12 +23,12 @@ describe('YpPostPoints', () => {
           counter_quality_down: 2,
           public_data: {},
           value: -1,
-          
+
           PointRevisions: [
             {
               id: 1,
               content: "jokoko",
-            } 
+            }
           ]
         },
         {
@@ -44,7 +43,7 @@ describe('YpPostPoints', () => {
             {
               id: 2,
               content: "jok1oko"
-            } 
+            }
           ]
         },
         {
@@ -59,17 +58,17 @@ describe('YpPostPoints', () => {
             {
               id: 3,
               content: "jok1oko"
-            } 
+            }
           ]
         }
-      ]      
+      ]
     } as YpGetPointsResponse
 
     fetchMock.get('/api/posts/1/points',pointsResponse, YpTestHelpers.fetchMockConfig);
   });
-  
 
-  beforeEach(async () => { 
+
+  beforeEach(async () => {
     element = await fixture(html`
       ${YpTestHelpers.renderCommonHeader()}
       <yp-post-points
@@ -80,7 +79,7 @@ describe('YpPostPoints', () => {
   });
 
   it('passes the a11y audit', async () => {
-    debugger; 
+    debugger;
     await expect(element).shadowDom.to.be.accessible();
   });
 });

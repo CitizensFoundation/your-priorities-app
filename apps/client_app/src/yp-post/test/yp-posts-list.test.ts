@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
 import { html, fixture, expect, aTimeout } from '@open-wc/testing';
 
 import { YpPostsList } from '../yp-posts-list.js';
@@ -7,7 +6,7 @@ import { YpTestHelpers } from '../../common/test/setup-app.js';
 
 describe('YpPostslist', () => {
   let element: YpPostsList;
-  let fetchMock: any; 
+  let fetchMock: any;
 
   before(async () => {
     fetchMock = YpTestHelpers.getFetchMock();
@@ -54,7 +53,7 @@ describe('YpPostslist', () => {
         counter_points: 5,
       },
     ] as Array<YpPostData>
-  
+
     fetchMock.get('/api/groups/1/posts/newest/null/open?offset=0', posts, YpTestHelpers.fetchMockConfig);
   });
 
@@ -67,9 +66,9 @@ describe('YpPostslist', () => {
       `);
       await aTimeout(100);
     });
-  
+
     it('passes the a11y audit', async () => {
-      debugger; 
+      debugger;
       await expect(element).shadowDom.to.be.accessible();
-    });   
+    });
   });

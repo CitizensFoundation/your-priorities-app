@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
 import { html, fixture, expect, aTimeout } from '@open-wc/testing';
 
 import { AcActivityRecommendedPosts } from '../ac-activity-recommended-posts.js';
@@ -8,7 +7,7 @@ import { YpTestHelpers } from '../../common/test/setup-app.js';
 describe('AcActivityRecommendedPosts', () => {
   let element: AcActivityRecommendedPosts;
   let fetchMock: any;
-  
+
   before(async () => {
     fetchMock = YpTestHelpers.getFetchMock();
     await YpTestHelpers.setupApp();
@@ -39,7 +38,7 @@ describe('AcActivityRecommendedPosts', () => {
           }
         }
       } as YpPostData;
-  
+
       const recommendedPosts = [recommendedPost, recommendedPost]
 
     element = await fixture(html`
@@ -51,9 +50,9 @@ describe('AcActivityRecommendedPosts', () => {
     `);
     await aTimeout(100);
   });
-  
+
   it('passes the a11y audit', async () => {
-    debugger; 
+    debugger;
     await expect(element).shadowDom.to.be.accessible();
   });
 });

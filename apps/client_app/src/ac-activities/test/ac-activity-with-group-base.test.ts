@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
 import { html, fixture, expect } from '@open-wc/testing';
 
 import { AcActivityWithGroupBase } from '../ac-activity-with-group-base.js';
@@ -15,14 +14,14 @@ describe('AcActivityWithGroupBase', () => {
   });
 
   beforeEach(async () => {
-   
+
     const activity = {
       type: 'LEXO',
       created_at: new Date(),
       domain_id: 2,
       Point: YpTestHelpers.getPoint(),
       Post: YpTestHelpers.getPost(),
-      User: YpTestHelpers.getUser(), 
+      User: YpTestHelpers.getUser(),
   } as AcActivityData
 
     element = await fixture(html`
@@ -32,9 +31,9 @@ describe('AcActivityWithGroupBase', () => {
       >
     `);
   });
-  
+
   it('passes the a11y audit', async () => {
-    debugger; 
+    debugger;
     await expect(element).shadowDom.to.be.accessible();
   });
 });

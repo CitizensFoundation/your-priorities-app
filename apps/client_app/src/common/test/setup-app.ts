@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
-
 import { YpServerApi } from '../YpServerApi.js';
 import { YpAppGlobals } from '../../yp-app/YpAppGlobals.js';
 import { YpAppUser } from '../../yp-app/YpAppUser.js';

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
 import { html, fixture, expect, aTimeout } from '@open-wc/testing';
 
 import { YpRating } from '../yp-rating.js';
@@ -7,7 +6,7 @@ import { YpTestHelpers } from '../../common/test/setup-app.js';
 
 describe('YpRating', () => {
   let element: YpRating;
-  let fetchMock: any; 
+  let fetchMock: any;
 
   before(async () => {
     fetchMock = YpTestHelpers.getFetchMock();
@@ -19,7 +18,7 @@ describe('YpRating', () => {
       numberOf: 5,
       postId: 1,
       emoji: 'star',
-      ratingIndex: 5, 
+      ratingIndex: 5,
     }
 
     element = await fixture(html`
@@ -32,7 +31,7 @@ describe('YpRating', () => {
   });
 
   it('passes the a11y audit', async () => {
-    debugger; 
+    debugger;
     await expect(element).shadowDom.to.be.accessible();
   });
 });

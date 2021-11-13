@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
 import { html, fixture, expect, aTimeout, oneEvent, elementUpdated, fixtureCleanup, nextFrame } from '@open-wc/testing';
 
 import { AcActivities } from '../ac-activities.js';
@@ -8,11 +7,11 @@ import { YpTestHelpers } from '../../common/test/setup-app.js';
 describe('AcActivities', () => {
   let element: AcActivities;
   let fetchMock: any;
-  
+
   before(async () => {
     fetchMock = YpTestHelpers.getFetchMock();
     await YpTestHelpers.setupApp();
-    
+
     const activity = {
       type: 'activity.post.new',
       created_at: new Date(),
@@ -70,7 +69,7 @@ describe('AcActivities', () => {
   });
 
   it('passes the a11y audit', async () => {
-    debugger; 
+    debugger;
     await expect(element).shadowDom.to.be.accessible();
   });
 

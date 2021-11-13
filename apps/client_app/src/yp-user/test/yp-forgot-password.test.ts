@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
 import { html, fixture, expect, aTimeout } from '@open-wc/testing';
 
 import { YpForgotPassword } from '../yp-forgot-password.js';
@@ -7,10 +6,10 @@ import { YpTestHelpers } from '../../common/test/setup-app.js';
 
 describe('YpForgotPassword', () => {
   let element: YpForgotPassword;
-  let fetchMock: any; 
-  let server: any; 
+  let fetchMock: any;
+  let server: any;
 
-  before(async () => {    
+  before(async () => {
 
     await YpTestHelpers.setupApp();
   });
@@ -23,9 +22,9 @@ describe('YpForgotPassword', () => {
         await aTimeout(100);
     element.open({ email: "robert@citizens.is"});
   });
-  
+
   it('passes the a11y audit', async () => {
-    debugger; 
+    debugger;
     await expect(element).shadowDom.to.be.accessible();
   });
 });

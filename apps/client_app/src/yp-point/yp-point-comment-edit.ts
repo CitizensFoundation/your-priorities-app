@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
 import { html, css, nothing } from 'lit';
 import { property, customElement } from 'lit/decorators.js';
 import { Button } from '@material/mwc-button';

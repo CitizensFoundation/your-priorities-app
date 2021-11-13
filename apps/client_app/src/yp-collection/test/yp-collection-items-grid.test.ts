@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
 import { html, fixture, expect, aTimeout } from '@open-wc/testing';
 
 import { YpCollectionItemsGrid } from '../yp-collection-items-grid.js';
@@ -13,7 +12,7 @@ describe('YpCollectionItemsGrid', () => {
     fetchMock = YpTestHelpers.getFetchMock();
     await YpTestHelpers.setupApp();
   });
-  
+
 
   beforeEach(async () => {
     const collectionType = 'domain';
@@ -22,7 +21,7 @@ describe('YpCollectionItemsGrid', () => {
 
     const collectionItemType = 'community'
 
-  
+
     element = await fixture(html`
     ${YpTestHelpers.renderCommonHeader()}
       <yp-collection-items-grid
@@ -36,7 +35,7 @@ describe('YpCollectionItemsGrid', () => {
   });
 
   it('passes the a11y audit', async () => {
-    debugger; 
+    debugger;
     await expect(element).shadowDom.to.be.accessible();
   });
 });

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
 import { html, fixture, expect, aTimeout } from '@open-wc/testing';
 
 import { AcNotificationSettings } from '../ac-notification-settings.js';
@@ -31,28 +30,28 @@ describe('AcNotificationSettings', () => {
           frequency: 1,
         },
 
-        my_points_endorsements:{   
+        my_points_endorsements:{
           method: 3,
           frequency: 1,
-        }, 
+        },
 
         all_community: {
           method: 3,
           frequency: 1,
         },
 
-        all_group: { 
+        all_group: {
           method: 3,
           frequency: 1,
         },
-        
+
         newsletter: {
           method: 3,
           frequency: 1,
         }
       } as AcNotificationSettingsData
 
-      
+
 
       element = await fixture(html`
         ${YpTestHelpers.renderCommonHeader()}
@@ -62,7 +61,7 @@ describe('AcNotificationSettings', () => {
       `);
       await aTimeout(100);
     });
-  
+
     it('passes the a11y audit', async () => {
       debugger;
       await expect(element).shadowDom.to.be.accessible();

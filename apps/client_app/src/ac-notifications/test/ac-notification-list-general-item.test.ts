@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
 import { html, fixture, expect, aTimeout } from '@open-wc/testing';
 
 import { AcNotificationListGenaralItem } from '../ac-notification-list-general-item.js';
@@ -13,7 +12,7 @@ describe('AcNotificationListGenaralItem', () => {
     fetchMock = YpTestHelpers.getFetchMock();
     await YpTestHelpers.setupApp();
   });
-  
+
     beforeEach(async () => {
       const notification =  {
         id: 1,
@@ -38,7 +37,7 @@ describe('AcNotificationListGenaralItem', () => {
       `);
       await aTimeout(100);
     });
-  
+
     it('passes the a11y audit', async () => {
       debugger;
       await expect(element).shadowDom.to.be.accessible();

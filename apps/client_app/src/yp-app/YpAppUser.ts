@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
 import { YpServerApi } from '../common/YpServerApi.js';
 import { YpCodeBase } from '../common/YpCodeBaseclass.js';
 import { YpAccessHelpers } from '../common/YpAccessHelpers.js';

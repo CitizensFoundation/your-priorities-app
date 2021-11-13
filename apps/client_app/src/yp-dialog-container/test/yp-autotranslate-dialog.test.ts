@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
 import { html, fixture, expect, aTimeout } from '@open-wc/testing';
 
 import { YpAutoTranslateDialog} from '../yp-autotranslate-dialog.js';
@@ -17,7 +16,7 @@ describe('YpAutoTranslateDialog', () => {
   beforeEach(async () => {
     const translate = {
       confirmationText: 'Good-morning'
-    } 
+    }
 
     element = await fixture(html`
       ${YpTestHelpers.renderCommonHeader()}
@@ -29,7 +28,7 @@ describe('YpAutoTranslateDialog', () => {
   });
 
   it('passes the a11y audit', async () => {
-    debugger; 
+    debugger;
     await expect(element).shadowDom.to.be.accessible();
   });
 });

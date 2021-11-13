@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
 import { html, fixture, expect, aTimeout } from '@open-wc/testing';
 
 import { YpLanguageSelector } from '../yp-language-selector.js';
@@ -7,7 +6,7 @@ import { YpTestHelpers } from '../../common/test/setup-app.js';
 
 describe('YpLanguageSelector', () => {
   let element: YpLanguageSelector;
-  let fetchMock: any; 
+  let fetchMock: any;
 
   before(async () => {
     fetchMock = YpTestHelpers.getFetchMock();
@@ -15,7 +14,7 @@ describe('YpLanguageSelector', () => {
   });
 
   beforeEach(async () => {
-  
+
     element = await fixture(html`
       ${YpTestHelpers.renderCommonHeader()}
       <yp-language-selector
@@ -26,7 +25,7 @@ describe('YpLanguageSelector', () => {
   });
 
   it('passes the a11y audit', async () => {
-    debugger; 
+    debugger;
     await expect(element).shadowDom.to.be.accessible();
   });
 });

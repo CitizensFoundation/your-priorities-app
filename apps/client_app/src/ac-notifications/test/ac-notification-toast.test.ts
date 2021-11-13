@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
 import { html, fixture, expect, aTimeout } from '@open-wc/testing';
 
 import { AcNotificationToast } from '../ac-notification-toast.js';
@@ -13,7 +12,7 @@ describe('AcNotificationToast', () => {
     fetchMock = YpTestHelpers.getFetchMock();
     await YpTestHelpers.setupApp();
   });
-  
+
     beforeEach(async () => {
       element = await fixture(html`
         ${YpTestHelpers.renderCommonHeader()}
@@ -23,9 +22,9 @@ describe('AcNotificationToast', () => {
       `);
       await aTimeout(100);
     });
-  
+
     it('passes the a11y audit', async () => {
-      debugger; 
+      debugger;
       await expect(element).shadowDom.to.be.accessible();
     });
   });

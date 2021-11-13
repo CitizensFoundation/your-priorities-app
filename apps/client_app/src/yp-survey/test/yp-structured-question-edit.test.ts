@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
 import { html, fixture, expect, aTimeout } from '@open-wc/testing';
 
 import { YpStructuredQuestionEdit } from '../yp-structured-question-edit.js';
@@ -7,7 +6,7 @@ import { YpTestHelpers } from '../../common/test/setup-app.js';
 
 describe('YpStructuredQuestionEdit', () => {
   let element: YpStructuredQuestionEdit;
-  let fetchMock: any; 
+  let fetchMock: any;
 
   before(async () => {
     fetchMock = YpTestHelpers.getFetchMock();
@@ -18,7 +17,7 @@ describe('YpStructuredQuestionEdit', () => {
     const question = {
       text: 'ALEXO'
     } as YpStructuredQuestionData
-   
+
     element = await fixture(html`
       ${YpTestHelpers.renderCommonHeader()}
       <yp-structured-question-edit
@@ -29,7 +28,7 @@ describe('YpStructuredQuestionEdit', () => {
   });
 
   it('passes the a11y audit', async () => {
-    debugger; 
+    debugger;
     await expect(element).shadowDom.to.be.accessible();
   });
 });

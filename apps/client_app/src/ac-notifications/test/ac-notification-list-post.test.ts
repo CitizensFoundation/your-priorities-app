@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
 import { html, fixture, expect, aTimeout } from '@open-wc/testing';
 
 import { AcNotificationListPost } from '../ac-notification-list-post.js';
@@ -29,7 +28,7 @@ describe('AcNotificationListPost', () => {
           User: YpTestHelpers.getUser(),
         }]
       } as AcNotificationData;
-  
+
       element = await fixture(html`
         ${YpTestHelpers.renderCommonHeader()}
         <ac-notification-list-post
@@ -38,7 +37,7 @@ describe('AcNotificationListPost', () => {
       `);
       await aTimeout(100);
     });
-  
+
     it('passes the a11y audit', async () => {
       debugger;
       await expect(element).shadowDom.to.be.accessible();

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
 /* eslint-disable @typescript-eslint/ban-ts-ignore */
 import { html, css, nothing } from 'lit';
 import { customElement, property } from 'lit/decorators.js';

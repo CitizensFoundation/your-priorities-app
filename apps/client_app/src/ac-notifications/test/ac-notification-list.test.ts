@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
 import { html, fixture, expect, aTimeout } from '@open-wc/testing';
 
 import { AcNotificationList } from '../ac-notification-list.js';
@@ -28,7 +27,7 @@ describe('AcNotificationList', () => {
         User: YpTestHelpers.getUser()
       }]
     } as AcNotificationData;
-  
+
     const notificationList = [notification, notification, notification];
 
     fetchMock.get('/api/notification',{ notifications: notificationList }, YpTestHelpers.fetchMockConfig);
@@ -44,7 +43,7 @@ describe('AcNotificationList', () => {
     await aTimeout(200);
   });
 
-  it('passes the a11y audit', async () => { 
+  it('passes the a11y audit', async () => {
     await expect(element).shadowDom.to.be.accessible();
   });
 

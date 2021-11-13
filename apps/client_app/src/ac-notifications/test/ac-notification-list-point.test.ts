@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
 import { html, fixture, expect, aTimeout } from '@open-wc/testing';
 
 import { AcNotificationListPoint } from '../ac-notification-list-point.js';
@@ -14,7 +13,7 @@ describe('AcNotificationListPoint', () => {
     await YpTestHelpers.setupApp();
   });
 
-    beforeEach(async () => { 
+    beforeEach(async () => {
       const notification =  {
         id: 1,
         type: 'notification.point.new',
@@ -30,7 +29,7 @@ describe('AcNotificationListPoint', () => {
           User: YpTestHelpers.getUser()
         }]
     } as AcNotificationData;
-  
+
       element = await fixture(html`
         ${YpTestHelpers.renderCommonHeader()}
         <ac-notification-list-point
@@ -39,9 +38,9 @@ describe('AcNotificationListPoint', () => {
       `);
       await aTimeout(100);
     });
-  
+
     it('passes the a11y audit', async () => {
-      debugger; 
+      debugger;
       await expect(element).shadowDom.to.be.accessible();
     });
   });

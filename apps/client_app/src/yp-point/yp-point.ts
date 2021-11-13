@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
 import { YpAccessHelpers } from '../common/YpAccessHelpers.js';
 import { YpMediaHelpers } from '../common/YpMediaHelpers.js';
 

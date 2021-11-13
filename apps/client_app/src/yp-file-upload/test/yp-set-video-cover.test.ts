@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
 import { html, fixture, expect, aTimeout } from '@open-wc/testing';
 
 import { YpSetVideoCover } from '../yp-set-video-cover.js';
@@ -7,7 +6,7 @@ import { YpTestHelpers } from '../../common/test/setup-app.js';
 
 describe('YpSetVideoCover', () => {
   let element: YpSetVideoCover;
-  let fetchMock: any; 
+  let fetchMock: any;
 
   before(async () => {
     fetchMock = YpTestHelpers.getFetchMock();
@@ -18,7 +17,7 @@ describe('YpSetVideoCover', () => {
     const video = {
         videoId: 1
       }
-      
+
     const videoImages = [
       "https://yrpri6-production.s3.amazonaws.com/Bc/6V/M6-retina.png",
       "https://yrpri6-production.s3.amazonaws.com/Bc/6V/M6-retina.png"
@@ -35,7 +34,7 @@ describe('YpSetVideoCover', () => {
     });
 
   it('passes the a11y audit', async () => {
-    debugger; 
+    debugger;
     await expect(element).shadowDom.to.be.accessible();
   });
 });

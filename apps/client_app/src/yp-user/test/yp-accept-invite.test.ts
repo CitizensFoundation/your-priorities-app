@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
 import { html, fixture, expect, aTimeout } from '@open-wc/testing';
 
 import { YpAcceptInvite } from '../yp-accept-invite.js';
@@ -7,7 +6,7 @@ import { YpTestHelpers } from '../../common/test/setup-app.js';
 
 describe('YpAcceptInvite', () => {
   let element: YpAcceptInvite;
-  let fetchMock: any; 
+  let fetchMock: any;
 
   before(async () => {
     fetchMock = YpTestHelpers.getFetchMock();
@@ -23,7 +22,7 @@ describe('YpAcceptInvite', () => {
 
   beforeEach(async () => {
     element = await fixture(html`
-      ${YpTestHelpers.renderCommonHeader()} 
+      ${YpTestHelpers.renderCommonHeader()}
       <yp-accept-invite> </yp-accept-invite>
       `);
         await aTimeout(100);
@@ -31,7 +30,7 @@ describe('YpAcceptInvite', () => {
   });
 
   it('passes the a11y audit', async () => {
-    debugger; 
+    debugger;
     await expect(element).shadowDom.to.be.accessible();
   });
 });

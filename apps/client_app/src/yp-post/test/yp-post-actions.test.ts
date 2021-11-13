@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
 import { html, fixture, expect, aTimeout } from '@open-wc/testing';
 
 import { YpPostActions } from '../yp-post-actions.js';
@@ -8,7 +7,7 @@ import { YpTestHelpers } from '../../common/test/setup-app.js';
 
 describe('YpPostActions', () => {
   let element: YpPostActions;
-  let fetchMock: any; 
+  let fetchMock: any;
 
   before(async () => {
     fetchMock = YpTestHelpers.getFetchMock();

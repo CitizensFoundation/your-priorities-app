@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
 import { html, fixture, expect, aTimeout } from '@open-wc/testing';
 
 import { YpGroup } from '../yp-group.js';
@@ -12,11 +11,11 @@ describe('YpGroup', () => {
 
   before(async () => {
     fetchMock = YpTestHelpers.getFetchMock();
-    await YpTestHelpers.setupApp();   
-  
+    await YpTestHelpers.setupApp();
+
     fetchMock.get('/api/groups/1',YpTestHelpers.getGroupResults(), YpTestHelpers.fetchMockConfig);
-    fetchMock.get('/api/groups/1/pages',[], YpTestHelpers.fetchMockConfig);    
-    
+    fetchMock.get('/api/groups/1/pages',[], YpTestHelpers.fetchMockConfig);
+
   });
 
   beforeEach(async () => {
@@ -30,7 +29,7 @@ describe('YpGroup', () => {
   });
 
   it('passes the a11y audit', async () => {
-    debugger; 
+    debugger;
     await expect(element).shadowDom.to.be.accessible();
   });
 });

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
 import { html, fixture, expect, aTimeout } from '@open-wc/testing';
 
 import { YpCollectionItemCard } from '../yp-collection-item-card.js';
@@ -7,13 +6,13 @@ import { YpTestHelpers } from '../../common/test/setup-app.js';
 
 describe('YpCollectionItemCard', () => {
   let element: YpCollectionItemCard;
-  let fetchMock: any; 
+  let fetchMock: any;
 
   before(async () => {
     fetchMock = YpTestHelpers.getFetchMock();
     await YpTestHelpers.setupApp();
   });
-  
+
   beforeEach(async () => {
     const itemType = 'community';
 
@@ -28,7 +27,7 @@ describe('YpCollectionItemCard', () => {
   });
 
   it('passes the a11y audit', async () => {
-    debugger; 
+    debugger;
     await expect(element).shadowDom.to.be.accessible();
   });
 });

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
 import { html, css } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { YpFormattingHelpers } from '../common/YpFormattingHelpers.js';

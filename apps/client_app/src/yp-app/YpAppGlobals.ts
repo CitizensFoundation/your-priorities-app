@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
 import i18next from 'i18next';
 //TODO: Fix moment
 //import moment from 'moment';

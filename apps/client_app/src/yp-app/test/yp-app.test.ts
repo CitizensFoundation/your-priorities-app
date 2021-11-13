@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
 import { html, fixture, expect, aTimeout } from '@open-wc/testing';
 
 import { YpApp } from '../yp-app.js';
@@ -15,18 +14,18 @@ describe('YpApp', () => {
   });
 
   beforeEach(async () => {
-  
+
     element = await fixture(html`
       ${YpTestHelpers.renderCommonHeader()}
       <yp-app
-        
+
       ></yp-app>
     `);
     await aTimeout(100);
   });
 
   it('passes the a11y audit', async () => {
-    debugger; 
+    debugger;
     await expect(element).shadowDom.to.be.accessible();
   });
 });
