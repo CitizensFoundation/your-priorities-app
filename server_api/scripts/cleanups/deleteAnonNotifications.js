@@ -36,47 +36,58 @@ const chunk = (arr, size) =>
       });
 
       if (users.length>0) {
-        console.log(`Found ${users.length} users`);
+        console.log(`Found ${users.length} users offset ${userOffset}`);
         userOffset+=500;
         const userIds = users.map(n=>{ return n.id});
 
-        const notifications = await models.AcNotification.unscoped().findAll({
-          where: {
-            user_id: {
-              [models.Sequelize.Op.in]: userIds
-            }
-          },
-          attributes:['id'],
-        });
+        let haveNotificationsLeftToProcess = true;
+        let notificationsOffset = 0;
 
-        if (notifications.length>0) {
-          console.log(`Found ${notifications.length} notifications`);
-          const notificationIds = notifications.map(n=>{ return n.id});
-
-          const chunkedIds = chunk(notificationIds, 100);
-
-          for (let i=0; i<chunkedIds.length;i++) {
-            const destroyInfo =  await models.AcNotification.unscoped().destroy({
-              where: {
-                id: {
-                  [models.Sequelize.Op.in]: chunkedIds[i]
-                }
+        while (haveNotificationsLeftToProcess && numberOfDeletedNotifications<maxNumberOfNotificationsToDelete) {
+          const notifications = await models.AcNotification.unscoped().findAll({
+            where: {
+              user_id: {
+                [models.Sequelize.Op.in]: userIds
               }
-            });
+            },
+            limit: 500,
+            offset: notificationsOffset,
+            order: ['user_id'],
+            attributes:['id'],
+          });
 
-            numberOfDeletedNotifications+=destroyInfo;
+          console.log(`Found ${notifications.length} notifications offset ${notificationsOffset}`);
 
-            console.log(`Destroyed ${destroyInfo} old notifications from chunk ${i} - total ${numberOfDeletedNotifications}`);
+          if (notifications.length>0) {
+            notificationsOffset += 500;
+            const notificationIds = notifications.map(n=>{ return n.id});
 
-            await sleep(50);
+            const chunkedIds = chunk(notificationIds, 100);
 
-            if (numberOfDeletedNotifications>=maxNumberOfNotificationsToDelete) {
-              break;
+            for (let i=0; i<chunkedIds.length;i++) {
+              const destroyInfo =  await models.AcNotification.unscoped().destroy({
+                where: {
+                  id: {
+                    [models.Sequelize.Op.in]: chunkedIds[i]
+                  }
+                }
+              });
+
+              numberOfDeletedNotifications+=destroyInfo;
+
+              console.log(`Destroyed ${destroyInfo} old notifications from chunk ${i} - total ${numberOfDeletedNotifications}`);
+
+              await sleep(100);
+
+              if (numberOfDeletedNotifications>=maxNumberOfNotificationsToDelete) {
+                break;
+              }
             }
+          } else {
+            haveNotificationsLeftToProcess = false;
+            console.log("No more notifications left to process from user")
           }
         }
-
-        await sleep(50);
       } else {
         haveNotificationsToDelete = false;
       }
