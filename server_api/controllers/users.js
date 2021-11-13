@@ -990,7 +990,7 @@ const setSAMLSettingsOnUser = (req, user, done) => {
             group = postIn.Group;
             community = postIn.Group.Community;
           } else {
-            log.Error("Can't find post for SAML setup")
+            log.error("Can't find post for SAML setup")
           }
           parallelCallback();
         }).catch((error)=> {
