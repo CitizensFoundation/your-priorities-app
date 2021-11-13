@@ -1,7 +1,9 @@
 const models = require('../models');
 const moment = require('moment');
 
-const maxNumberOfNotificationsToDelete = 1000;
+const maxNumberFromPath = process.argv[2];
+
+const maxNumberOfNotificationsToDelete = maxNumberFromPath ? maxNumberFromPath : 1000;
 
 let numberOfDeletedNotifications = 0;
 
