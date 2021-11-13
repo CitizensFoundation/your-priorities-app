@@ -29,6 +29,9 @@ export class YpPoint extends YpBaseElement {
   point!: YpPointData;
 
   @property({ type: Object })
+  post!: YpPostData;
+
+  @property({ type: Object })
   user: YpUserData | undefined;
 
   @property({ type: Boolean })
@@ -343,19 +346,19 @@ export class YpPoint extends YpBaseElement {
   renderAdminComments() {
     html`
       <div class="commentFromAdmin" ?hidden="${this.isEditingSomething}">
-        ${this.point.Post!.Group.configuration.customAdminCommentsTitle
+        ${this.post!.Group.configuration.customAdminCommentsTitle
           ? html`
               <yp-magic-text
                 textType="customAdminCommentsTitle"
-                .contentLanguage="${this.point.Post!.Group.language}"
-                .content="${this.point.Post!.Group.configuration
+                .contentLanguage="${this.post!.Group.language}"
+                .content="${this.post!.Group.configuration
                   .customAdminCommentsTitle}"
-                .contentId="${this.point.Post!.Group.id}"
+                .contentId="${this.post!.Group.id}"
               >
               </yp-magic-text>
             `
           : ``}
-        ${!this.point.Post!.Group.configuration.customAdminCommentsTitle
+        ${!this.post!.Group.configuration.customAdminCommentsTitle
           ? html` ${this.t('commentFromAdmin')} `
           : ``}
       </div>
@@ -368,6 +371,7 @@ export class YpPoint extends YpBaseElement {
         <yp-magic-text
           simple-format
           textType="pointAdminCommentContent"
+          truncate="1500"
           .contentLanguage="${this.point.public_data?.admin_comment?.language}"
           .content="${this.point.public_data?.admin_comment?.text}"
           .contentId="${this.point.id}"
@@ -395,7 +399,7 @@ export class YpPoint extends YpBaseElement {
           >
           <div
             class="layout horizontal"
-            ?hidden="${this.point.Post!.Group.configuration.hidePointAuthor}"
+            ?hidden="${this.post!.Group.configuration.hidePointAuthor}"
           >
             <yp-user-with-organization
               .titleDate="${this.point.created_at}"
@@ -496,7 +500,7 @@ export class YpPoint extends YpBaseElement {
                   ${this.t('automaticTranscript')}
                 </div>
                 <div
-                  hidden$="[[!point.Post.Group.configuration.collapsableTranscripts]]"
+                  ?hidden="${!this.post.Group.configuration.collapsableTranscripts}"
                 >
                   <mwc-icon-button
                     .label="${this.t('openComments')}"
@@ -604,7 +608,7 @@ export class YpPoint extends YpBaseElement {
             <yp-point-actions
               .point="${this.point}"
               .pointUrl="${this.pointUrl}"
-              .configuration="${this.point.Post?.Group?.configuration}"
+              .configuration="${this.post?.Group?.configuration}"
             ></yp-point-actions>
             <mwc-icon-button
               .label="${this.t('point.report')}"
@@ -643,14 +647,13 @@ export class YpPoint extends YpBaseElement {
 
   get showAdminComments() {
     if (
-      this.point &&
-      this.point.Post &&
-      this.point.Post.Group &&
+      this.post &&
+      this.post.Group &&
       this.point.public_data &&
       this.point.public_data.admin_comment &&
       this.point.public_data.admin_comment.text &&
-      this.point.Post.Group.configuration &&
-      this.point.Post.Group.configuration.allowAdminAnswersToPoints
+      this.post.Group.configuration &&
+      this.post.Group.configuration.allowAdminAnswersToPoints
     ) {
       return true;
     } else {
@@ -660,12 +663,11 @@ export class YpPoint extends YpBaseElement {
 
   get hasAdminCommentAccess() {
     if (
-      this.point &&
-      this.point.Post &&
-      this.point.Post.Group &&
-      YpAccessHelpers.checkPostAdminOnlyAccess(this.point.Post) &&
-      this.point.Post.Group.configuration &&
-      this.point.Post.Group.configuration.allowAdminAnswersToPoints
+      this.post &&
+      this.post.Group &&
+      YpAccessHelpers.checkPostAdminOnlyAccess(this.post) &&
+      this.post.Group.configuration &&
+      this.post.Group.configuration.allowAdminAnswersToPoints
     ) {
       return true;
     } else {
@@ -694,13 +696,13 @@ export class YpPoint extends YpBaseElement {
   }
 
   get pointUrl() {
-    if (this.point && this.point.Post) {
+    if (this.point && this.post) {
       return (
         window.location.protocol +
         '//' +
         window.location.hostname +
         '/post/' +
-        this.point.Post.id +
+        this.post.id +
         '/' +
         this.point.id
       );
@@ -708,8 +710,8 @@ export class YpPoint extends YpBaseElement {
   }
 
   _linkIfNeeded() {
-    if (this.linkPoint && this.point.Post) {
-      YpNavHelpers.goToPost(this.point.Post.id, this.point.id);
+    if (this.linkPoint && this.post) {
+      YpNavHelpers.goToPost(this.post.id, this.point.id);
     }
   }
 
@@ -764,6 +766,7 @@ export class YpPoint extends YpBaseElement {
 
   async _saveAdminCommentEdit() {
     const response = await window.serverApi.updatePointAdminComment(
+      this.post.Group.id,
       this.point.id,
       {
         content: this.editAdminCommentText,
@@ -836,8 +839,8 @@ export class YpPoint extends YpBaseElement {
 
   _editAdminComment() {
     if (
-      this.point.Post &&
-      YpAccessHelpers.checkPostAdminOnlyAccess(this.point.Post)
+      this.post &&
+      YpAccessHelpers.checkPostAdminOnlyAccess(this.post)
     ) {
       this.editAdminCommentText =
         this.point.public_data && this.point.public_data.admin_comment
@@ -887,19 +890,19 @@ export class YpPoint extends YpBaseElement {
     this._resetMedia();
     if (this.point) {
       if (
-        this.point.Post &&
-        this.point.Post.Group &&
-        this.point.Post.Group.configuration &&
-        this.point.Post.Group.configuration.collapsableTranscripts
+        this.post &&
+        this.post.Group &&
+        this.post.Group.configuration &&
+        this.post.Group.configuration.collapsableTranscripts
       ) {
         this.openTranscript = false;
       }
       let disableMachineTranscripts = false;
       if (
-        this.point.Post &&
-        this.point.Post.Group &&
-        this.point.Post.Group.configuration &&
-        this.point.Post.Group.configuration.disableMachineTranscripts
+        this.post &&
+        this.post.Group &&
+        this.post.Group.configuration &&
+        this.post.Group.configuration.disableMachineTranscripts
       ) {
         disableMachineTranscripts = true;
       }

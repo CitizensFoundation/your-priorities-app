@@ -310,9 +310,9 @@ export class YpServerApi extends YpServerApiBase {
     );
   }
 
-  public updatePointAdminComment(pointId: number, body: Record<string, unknown>) {
+  public updatePointAdminComment(groupId: number, pointId: number, body: Record<string, unknown>) {
     return this.fetchWrapper(
-      this.baseUrlPath + `/points/${pointId}/adminComment`,
+      this.baseUrlPath + `/groups/${groupId}/${pointId}/adminComment`,
       {
         method: 'PUT',
         body: JSON.stringify(body),

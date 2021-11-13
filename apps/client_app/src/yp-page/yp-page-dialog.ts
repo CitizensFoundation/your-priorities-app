@@ -78,7 +78,8 @@ export class YpPageDialog extends YpBaseElement {
     }
   }
 
-  open(page: YpHelpPageData, language: string) {
+  async open(page: YpHelpPageData, language: string) {
+    await this.updateComplete;
     this.page = page;
     this.language = language;
     (this.$$('#content') as HTMLElement).innerHTML = this.page.content[

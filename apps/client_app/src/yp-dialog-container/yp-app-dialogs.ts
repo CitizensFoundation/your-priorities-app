@@ -123,7 +123,7 @@ export class YpAppDialogs extends YpBaseElement {
         break;
       case 'emojiDialog':
         selectedDialog = html`
-          <yp-emoji-dialog id="emojiDialog"></yp-emoji-dialog>>
+          <yp-emoji-dialog id="emojiDialog"></yp-emoji-dialog>
         `;
         break;
       case 'missingEmail':

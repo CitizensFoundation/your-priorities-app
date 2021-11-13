@@ -62,6 +62,7 @@ declare global {
     appDialogs: YpAppDialogs;
     serverApi: YpServerApi;
     app: YpApp;
+    locale: string;
     MSStream: any;
     PasswordCredential?: any;
     FederatedCredential?: any;
@@ -417,7 +418,7 @@ export class YpApp extends YpBaseElement {
           @click="${this._openHelpMenu}"
           title="${this.t('menu.help')}">
         </mwc-icon-button>
-        <mwc-menu id="helpMenu" menuCorner="END" corner="TOP_RIGHT">
+        <mwc-menu id="helpMenu" menuCorner="START" corner="TOP_END">
           ${this.translatedPages(this.pages).map(
             (page: YpHelpPageData, index) => html`
               <mwc-list-item
@@ -597,20 +598,30 @@ export class YpApp extends YpBaseElement {
     window.appDialogs.getDialogAsync(
       'pageDialog',
       (dialog: YpPageDialog) => {
-        let pageLocale = 'en';
-        if (window.appGlobals.locale && page.title[window.appGlobals.locale]) {
-          pageLocale = window.appGlobals.locale;
-        }
+        const pageLocale = this._getPageLocale(page);
         dialog.open(page, pageLocale);
       }
     );
   }
 
-  _getLocalizePageTitle(page: YpHelpPageData) {
+  _getPageLocale(page: YpHelpPageData) {
     let pageLocale = 'en';
-    if (window.appGlobals.locale && page.title[window.appGlobals.locale]) {
-      pageLocale = window.appGlobals.locale;
+    if (page.title[window.locale]) {
+      pageLocale = window.locale;
+    } else if (page.title["en"]) {
+      pageLocale = "en";
+    } else {
+      const key = Object.keys(page.title)[0];
+      if (key) {
+        pageLocale = key;
+      }
     }
+
+    return pageLocale;
+  }
+
+  _getLocalizePageTitle(page: YpHelpPageData) {
+    const pageLocale = this._getPageLocale(page);
     return page.title[pageLocale];
   }
 

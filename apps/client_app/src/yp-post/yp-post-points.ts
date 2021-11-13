@@ -743,7 +743,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
                 .items=${points}
                 .layout="${FlowLayout}"
                 .scrollTarget="${window}"
-                .renderItem=${this.renderPointItem}
+                .renderItem=${this.renderPointItem.bind(this)}
                 @rangeChanged=${this.scrollEvent}
               ></lit-virtualizer>
             `
