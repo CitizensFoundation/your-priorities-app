@@ -326,7 +326,7 @@
       },
 
       cancelTimer: function () {
-        //debugger;
+
         if (this.timer) {
           clearTimeout(this.timer);
           this.set('timer', null);
@@ -429,8 +429,6 @@
         this._handleUnViewedCount(detail.response.unViewedCount);
         if (this.$$("#list"))
           this.$$("#list").fire("iron-resize");
-
-       //debugger;
 
         if (this.lastFetchStartedAt) {
           var duration = Date.now() - this.lastFetchStartedAt;

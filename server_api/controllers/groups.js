@@ -188,6 +188,7 @@ var updateGroupConfigParamters = function (req, group) {
   group.set('configuration.alternativeTextForNewIdeaButton', (req.body.alternativeTextForNewIdeaButton && req.body.alternativeTextForNewIdeaButton!=="") ? req.body.alternativeTextForNewIdeaButton : null);
   group.set('configuration.alternativeTextForNewIdeaButtonClosed', (req.body.alternativeTextForNewIdeaButtonClosed && req.body.alternativeTextForNewIdeaButtonClosed!=="") ? req.body.alternativeTextForNewIdeaButtonClosed : null);
   group.set('configuration.alternativeTextForNewIdeaButtonHeader', (req.body.alternativeTextForNewIdeaButtonHeader && req.body.alternativeTextForNewIdeaButtonHeader!=="") ? req.body.alternativeTextForNewIdeaButtonHeader : null);
+  group.set('configuration.alternativeTextForNewIdeaSaveButton', (req.body.alternativeTextForNewIdeaSaveButton && req.body.alternativeTextForNewIdeaSaveButton!=="") ? req.body.alternativeTextForNewIdeaSaveButton : null);
 
   group.set('configuration.alternativePointForHeader', (req.body.alternativePointForHeader && req.body.alternativePointForHeader!="") ? req.body.alternativePointForHeader : null);
   group.set('configuration.alternativePointAgainstHeader', (req.body.alternativePointAgainstHeader && req.body.alternativePointAgainstHeader!="") ? req.body.alternativePointAgainstHeader : null);
@@ -367,6 +368,7 @@ var updateGroupConfigParamters = function (req, group) {
     group.set('configuration.customRatings', null);
   }
 
+  group.set('configuration.allowAdminsToDebate', truthValueFromBody(req.body.allowAdminsToDebate));
   group.set('configuration.allowAdminAnswersToPoints', truthValueFromBody(req.body.allowAdminAnswersToPoints));
   group.set('configuration.forcePostSortMethodAs', (req.body.forcePostSortMethodAs && req.body.forcePostSortMethodAs!=="") ? req.body.forcePostSortMethodAs : null);
   group.set('configuration.pointCharLimit', (req.body.pointCharLimit && req.body.pointCharLimit!=="") ? req.body.pointCharLimit : null);
@@ -774,7 +776,7 @@ router.put('/:groupId/:type/start_report_creation', auth.can('edit group'), func
         translateLanguage: req.query.translateLanguage,
         jobId: jobId,
         groupId: req.params.groupId
-      }).priority('medium').removeOnComplete(true).save();
+      }).priority('critical').removeOnComplete(true).save();
 
       res.send({ jobId });
     }
@@ -878,6 +880,18 @@ router.post('/:groupId/add_page', auth.can('edit group'), function(req, res) {
 
 router.put('/:groupId/:pageId/update_page_locale', auth.can('edit group'), function(req, res) {
   models.Page.updatePageLocale(req, { group_id: req.params.groupId, id: req.params.pageId }, function (error) {
+    if (error) {
+      log.error('Could not update locale for admin for group', { err: error, context: 'update_page_locale', user: toJson(req.user.simple()) });
+      res.sendStatus(500);
+    } else {
+      log.info('Community Page Locale Updated', {context: 'update_page_locale', user: toJson(req.user.simple()) });
+      res.sendStatus(200);
+    }
+  });
+});
+
+router.put('/:groupId/:pageId/update_page_weight', auth.can('edit group'), function(req, res) {
+  models.Page.updatePageWeight(req, { group_id: req.params.groupId, id: req.params.pageId }, function (error) {
     if (error) {
       log.error('Could not update locale for admin for group', { err: error, context: 'update_page_locale', user: toJson(req.user.simple()) });
       res.sendStatus(500);
@@ -1152,7 +1166,7 @@ router.delete('/:id', auth.can('edit group'), function(req, res) {
         log.info('Group Deleted', { group: toJson(group), context: 'delete', user: toJson(req.user) });
         queue.create('process-similarities', { type: 'update-collection', groupId: group.id }).priority('low').removeOnComplete(true).save();
         queue.create('process-deletion', { type: 'delete-group-content', resetCounters: true, groupName: group.name,
-                                           userId: req.user.id, groupId: group.id }).priority('high').removeOnComplete(true).save();
+                                           userId: req.user.id, groupId: group.id }).priority('critical').removeOnComplete(true).save();
         group.updateAllExternalCounters(req, 'down', 'counter_groups', function () {
           res.sendStatus(200);
         });
@@ -1173,7 +1187,7 @@ router.delete('/:id/delete_content', auth.can('edit group'), function(req, res) 
       log.info('Group Delete Content', { group: toJson(group), context: 'delete', user: toJson(req.user) });
       queue.create('process-deletion', { type: 'delete-group-content', groupName: group.name,
                                          userId: req.user.id, groupId: group.id, useNotification: true,
-                                         resetCounters: true }).priority('high').removeOnComplete(true).save();
+                                         resetCounters: true }).priority('critical').removeOnComplete(true).save();
       res.sendStatus(200);
     } else {
       sendGroupOrError(res, req.params.id, 'delete', req.user, 'Not found', 404);
@@ -1343,6 +1357,7 @@ const allowedTextTypesForGroup = [
   "alternativeTextForNewIdeaButton",
   "alternativeTextForNewIdeaButtonClosed",
   "alternativeTextForNewIdeaButtonHeader",
+  "alternativeTextForNewIdeaSaveButton",
   "alternativePointForHeader",
   "customThankYouTextNewPosts",
   "customTitleQuestionText",
@@ -1976,7 +1991,7 @@ router.delete('/:groupId/:actionType/process_many_moderation_item', auth.can('ed
     items: req.body.items,
     actionType: req.params.actionType,
     groupId: req.params.groupId
-  }).priority('high').removeOnComplete(true).save();
+  }).priority('critical').removeOnComplete(true).save();
   res.send({});
 });
 

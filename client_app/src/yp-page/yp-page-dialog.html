@@ -39,6 +39,10 @@
         direction: rtl;
       }
 
+      paper-button {
+        font-weight: bold;
+      }
+
       [hidden] {
         display: none !important;
       }
@@ -102,6 +106,7 @@
       _close: function () {
         this.set('title', null);
         this.$.content.innerHTML = '';
+        window.appGlobals.activity('close', 'pages');
       }
     });
   </script>

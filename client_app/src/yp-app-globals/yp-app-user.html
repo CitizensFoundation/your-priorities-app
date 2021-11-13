@@ -699,6 +699,18 @@
           this.recheckAdminRights();
         },
 
+        checkRegistrationAnswersCurrent: function () {
+          if (this.user) {
+            this._checkRegistrationAnswers(this.user);
+          }
+        },
+
+        setHasRegistrationAnswers: function() {
+          if (this.user) {
+            this.user.hasRegistrationAnswers = true;
+          }
+        },
+
         _checkRegistrationAnswers: function (user) {
           if (user &&
             !user.notLoggedIn &&
@@ -744,7 +756,7 @@
 
           this.async(function () {
             this._checkRegistrationAnswers(user);
-          }, 1500)
+          }, 750)
 
           if (user) {
             if (user.customSamlDeniedMessage) {

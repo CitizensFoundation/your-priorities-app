@@ -91,6 +91,28 @@ router.delete('/:postId/:activityId/delete_activity', auth.can('edit post'), fun
   });
 });
 
+router.post('/:id/status_change_no_emails', auth.can('send status change'), function(req, res) {
+  models.Post.findOne({
+    where: {
+      id: req.params.id
+    },
+    attributes:['id','official_status']
+  }).then(function (post) {
+    if (post) {
+      if (post.official_status != parseInt(req.body.official_status)) {
+        post.official_status = req.body.official_status;
+        post.save().then(function (results) {
+          log.info('Post Status Change Created And New Status', { post: toJson(post), context: 'status_change', user: toJson(req.user) });
+          res.sendStatus(200);
+        });
+      } else {
+        log.info('Post Status Change Created', { post: toJson(post), context: 'status_change', user: toJson(req.user) });
+        res.sendStatus(200);
+      }
+    }
+  });
+});
+
 router.post('/:id/status_change', auth.can('send status change'), function(req, res) {
   models.Post.findOne({
     where: {
@@ -1124,7 +1146,7 @@ router.delete('/:id', auth.can('edit post'), function(req, res) {
           post.updateAllExternalCountersBy(req, 'down', 'counter_points', countInfo, function () {
             log.info('Post Deleted Point Counters updates', { numberDeleted: countInfo, context: 'delete', user: toJson(req.user) });
             queue.create('process-deletion', { type: 'delete-post-content', postName: post.name, postId: post.id, includePoints: true,
-                                               userId: req.user.id}).priority('high').removeOnComplete(true).save();
+                                               userId: req.user.id}).priority('critical').removeOnComplete(true).save();
             res.sendStatus(200);
           });
         });
@@ -1144,7 +1166,7 @@ router.delete('/:id/delete_content', auth.can('edit post'), function(req, res) {
     log.info('Post Deleted Post Content', { context: 'delete', user: toJson(req.user) });
     queue.create('process-deletion', { type: 'delete-post-content', postName: post.name, postId: post.id, includePoints: true,
                                        userId: req.user.id, useNotification: true,
-                                       resetCounters: true}).priority('high').removeOnComplete(true).save();
+                                       resetCounters: true}).priority('critical').removeOnComplete(true).save();
     res.sendStatus(200);
   }).catch(function(error) {
     sendPostOrError(res, null, 'delete', req.user, error);

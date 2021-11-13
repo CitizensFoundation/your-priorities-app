@@ -45,6 +45,13 @@
         background-color: var(--primary-background-color) !important;
       }
 
+      paper-tab {
+        --paper-tabs: {
+            font-family: var(--app-header-font-family, Roboto);
+        };
+        font-family: var(--app-header-font-family, Roboto);
+      }
+
       .archivedText {
         font-size: 26px;
         color: #333;
@@ -350,7 +357,6 @@
           if (!this.community.is_community_folder && (!this.community.only_admins_can_create_groups || this.checkCommunityAccess(this.community))) {
             this.set('createFabIcon', 'add');
           }
-
           var url = this._communityHeaderUrl(this.community);
 
           this.setupGroups(this.community.Groups, this.community.configuration);
@@ -422,7 +428,14 @@
       },
 
       refresh: function () {
-        if (this.community) {
+        var isAdmin = this.checkCommunityAccess(this.community);
+
+        if (this.community &&
+          this.community.configuration &&
+          this.community.configuration.redirectToGroupId &&
+          !isAdmin) {
+          this.redirectTo("/group/"+this.community.configuration.redirectToGroupId);
+        } else if (this.community) {
           this._openHelpPageIfNeeded();
           this.fire('yp-set-home-link', { type: 'community', id: this.community.id, name: this.community.name });
 
@@ -516,7 +529,7 @@
             window.appGlobals.signupTermsPageId = null;
           }
 
-          if (this.community.configuration.highlightedLanguages) {
+          if (this.community.configuration && this.community.configuration.highlightedLanguages) {
             window.appGlobals.setHighlightedLanguages(this.community.configuration.highlightedLanguages);
           } else {
             window.appGlobals.setHighlightedLanguages(null);

@@ -29,6 +29,10 @@
         @apply --layout-horizontal;
       }
 
+      paper-button, paper-textarea-aria {
+          font-family: var(--app-header-font-family, Roboto);
+      }
+
       .main-container {
         @apply --layout-horizontal;
         background-color: var(--primary-background-color);
@@ -99,7 +103,9 @@
           height: 30px;
           overflow: visible;
           color: #AAAAAA;
-        }
+          font-family: var(--app-header-font-family, Roboto);
+        };
+        font-family: var(--app-header-font-family, Roboto);
       }
 
       .howToWriteInfoText {
@@ -180,7 +186,9 @@
       .mobilePaperTextArea {
         --paper-input-container-label: {
           font-size: 19px;
+            font-family: var(--app-header-font-family, Roboto);
         };
+        font-family: var(--app-header-font-family, Roboto);
       }
 
       .pointMainHeader {
@@ -266,7 +274,8 @@
         margin-bottom: 4px;
       }
 
-      .pointMaterialMobile {
+      .pointMaterialMobile[is-last-point] {
+        margin-bottom: 107px;
       }
 
       div[rtl] {
@@ -598,11 +607,17 @@
         </paper-material>
       </div>
       <div rtl$="[[rtl]]" class="layout vertical center-center">
-        <iron-scroll-threshold id="ironScrollThesholdMobile"  scroll-target="document" on-lower-threshold="_loadMorePoints">
-          <iron-list id="ironListMobile" lower-threshold="150" debate-disabled$="[[disableDebate]]" role="list" items="[[points]]" as="point" scroll-target="document" scroll-offset="[[mobileScrollOffset]]">
+        <iron-scroll-threshold id="ironScrollThesholdMobile" scroll-target="[[scrollTarget]]" on-lower-threshold="_loadMorePoints">
+          <iron-list id="ironListMobile" lower-threshold="150" debate-disabled$="[[disableDebate]]" role="list" items="[[points]]" as="point" scroll-target="[[scrollTarget]]" scroll-offset="[[mobileScrollOffset]]">
             <template>
               <div class="item layout vertical center-center" tabindex$="[[tabIndex]]" role="listitem" aria-level="3">
-                <paper-material id="point[[point.id]]" elevation="0" animated class="pointMaterial pointMaterialMobile">
+                <paper-material
+                        id="point[[point.id]]"
+                        elevation="0"
+                        animated
+                        is-last-point$="[[point.isLastPointInList]]"
+                        class="pointMaterial pointMaterialMobile"
+                >
                   <yp-point post="[[post]]" point="[[point]]"></yp-point>
                 </paper-material>
               </div>
@@ -907,6 +922,24 @@
           pointMaxLength: {
             type: Number,
             computed: '_pointMaxLength(post, largeMode)'
+          },
+
+          isPostPage: {
+            type: Boolean,
+            value: false
+          },
+
+          scrollTarget: {
+            type: String,
+            computed: '_scrollTarget(isPostPage)'
+          }
+        },
+
+        _scrollTarget: function (isPostPage) {
+          if (isPostPage) {
+            return "document";
+          } else {
+            return undefined;
           }
         },
 
@@ -1210,7 +1243,11 @@
 
         _isAdminChanged: function (isAdmin) {
           if (this.post && this.post.Group && this.post.Group.configuration && this.post.Group.configuration.disableDebate) {
-            this.set('disableDebate', true);
+            if (isAdmin && this.post.Group.configuration.allowAdminsToDebate) {
+              this.set('disableDebate', false);
+            } else {
+              this.set('disableDebate', true);
+            }
           } else {
             this.set('disableDebate', false);
           }
@@ -1323,6 +1360,7 @@
             }
             this.loadedPointIds[this.storedPoints[i].id]=true;
           }
+
           this._processStoredPoints();
           this.removeElementsByClass(this, 'inserted-outside-list');
           this._updateCounterInfo();
@@ -1403,6 +1441,12 @@
                 result.push(arr[i])
               }
             })
+          }
+
+          if (result.length>0 &&
+             (result.length===this.totalCount ||
+               (this.points && (this.points.length+result.length)===this.totalCount))) {
+            result[result.length-1].isLastPointInList = true;
           }
 
           return result
@@ -1784,7 +1828,7 @@
               this.set("hideMobileText", false);
             }
             return false;
-          } else if (textValue!=null && textValue.length > 0) {
+          } else if (textValue!=null && textValue.length > 0 && textValue.trim().length > 0) {
             if (type==="up") {
               this.set("hideUpVideo", true);
               this.set('hideUpAudio', true);
@@ -1801,7 +1845,7 @@
               this.set("hideMobileText", false);
             }
             return true;
-          } else if (textValue!=null && textValue.length > 1) {
+          } else if (textValue!=null && textValue.length > 1 && textValue.trim().length > 1) {
             return true;
           } else {
             return false;

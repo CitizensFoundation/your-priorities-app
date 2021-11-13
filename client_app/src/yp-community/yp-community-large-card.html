@@ -60,7 +60,11 @@
       }
 
       .community-name[widetext] {
-          font-size: 20px;
+        font-size: 20px;
+      }
+
+      .community-name[largefont] {
+        font-size: 22px;
       }
 
       iron-image, video {
@@ -118,7 +122,7 @@
       }
 
       .communityDescription[widetext] {
-          font-size: 14px !important;
+        font-size: 14px !important;
       }
 
       .community-name {
@@ -330,6 +334,7 @@
                 <div role="heading" aria-level="1" aria-label="[[community.name]]">
                   <template is="dom-if" if="[[community]]">
                     <yp-magic-text text-type="communityName" widetext$="[[wideText]]" class="community-name" content-language="[[community.language]]"
+                                   largefont$="[[largeFont]]"
                                    disable-translation="[[community.configuration.disableNameAutoTranslation]]"
                                    text-only content="[[communityNameFull]]" content-id="[[community.id]]">
                     </yp-magic-text>
@@ -337,6 +342,7 @@
                 </div>
                 <div hidden class="communityAccess">[[_communityAccessText(community.access)]]</div>
                 <yp-magic-text id="description" class="communityDescription" widetext$="[[wideText]]"
+                               largefont$="[[largeFont]]"
                                text-type="communityContent" content-language="[[community.language]]"
                                content="[[community.description]]" content-id="[[community.id]]">
                 </yp-magic-text>
@@ -357,7 +363,7 @@
                 [[t('manageAllContent')]]
               </paper-item>
               <a hidden$="[[!hasCommunityAccess]]" target="_blank" href$="[[exportLoginsUrl]]"><paper-item id="exportLogins">[[t('exportLogins')]]</paper-item></a>
-              <a hidden$="[[!hasCommunityAccess]]" target="_blank" href$="[[exportUsersUrl]]"><paper-item id="exportUsers">[[t('exportUsers')]]</paper-item></a>
+              <paper-item hidden$="[[!hasCommunityAccess]]" id="createReportXlsUsers">[[t('exportUsers')]]</paper-item>
 
               <paper-item hidden$="[[!hasCommunityAccess]]" id="deleteMenuItem">[[t('community.delete')]]</paper-item>
               <paper-item hidden$="[[!hasCommunityAccessAndNotFolder]]" id="anonymizeMenuItem">[[t('anonymizeCommunityContent')]]</paper-item>
@@ -507,6 +513,10 @@
       },
 
       _communityChanged: function (community, previousCommunity) {
+        if (window.appGlobals.largeFont)
+          this.set('largeFont', true);
+        else
+          this.set('largeFont', false);
         if (community && community.description) {
           this.async(function () {
             if (community.configuration && community.configuration.welcomeHTML &&
@@ -520,7 +530,10 @@
              this.$$("#welcomeHTML").innerHTML = "";
             }
           });
-          if (community.description.length>220 && community.name && community.name.length>30) {
+
+          if (this.largeFont) {
+            this.$$("#description").style.fontSize = "14px";
+          } else if (community.description.length>220 && community.name && community.name.length>30) {
             this.$$("#description").style.fontSize = "15px";
           } else {
             this.$$("#description").style.fontSize = "16px";
@@ -578,6 +591,8 @@
           this._openAnonymizeContent();
         else if (detail.item.id==="deleteContentMenuItem")
           this._openDeleteContent();
+        else if (detail.item.id==="createReportXlsUsers")
+          this._openCreateXlsUsersReport();
         else if (detail.item.id==="addCommunityFolderMenuItem")
           this.fire('yp-new-community-folder');
         else if (detail.item.id==="openAnalyticsApp")
@@ -585,6 +600,13 @@
         else if (detail.item.id==="openAdminApp")
           window.location = "/admin/community/"+this.community.id;
         this.$$("paper-listbox").select(null);
+      },
+
+      _openCreateXlsUsersReport: function () {
+        window.appGlobals.activity('open', 'createReportXlsUsers');
+        Polymer.dom(document).querySelector('yp-app').getCreateReportAsync(function (dialog) {
+          dialog.setupAndOpen("usersxls", null, this.community);
+        }.bind(this));
       },
 
       _openContentModeration: function () {

@@ -261,14 +261,6 @@
                    maxlength="40" style="width: 200px;">
       </paper-input>
 
-      <paper-input id="defaultLocationLongLat"
-                   name="defaultLocationLongLat"
-                   type="text"
-                   label="[[t('defaultLocationLongLat')]]"
-                   value="{{community.defaultLocationLongLat}}"
-                   maxlength="100" style="width: 300px;">
-      </paper-input>
-
       <h3 class="accessHeader">[[t('access')]]</h3>
       <paper-radio-group id="access" name="access" class="access" selected="{{communityAccess}}">
         <paper-radio-button name="public">[[t('public')]]</paper-radio-button>
@@ -336,13 +328,16 @@
         </yp-file-upload>
       </div>
 
-      <paper-checkbox name="sortBySortOrder" checked$="{{community.configuration.sortBySortOrder}}">[[t('sortGroupsBySortOrder')]]</paper-checkbox>
+      <div class="layout vertical">
+        <paper-checkbox name="sortBySortOrder" checked$="{{community.configuration.sortBySortOrder}}">[[t('sortGroupsBySortOrder')]]</paper-checkbox>
+        <paper-checkbox name="alwaysShowOnDomainPage" checked$="{{community.configuration.alwaysShowOnDomainPage}}">[[t('alwaysShowOnDomainPage')]]</paper-checkbox>
+        <paper-checkbox name="hideRecommendationOnNewsFeed" checked$="{{community.configuration.hideRecommendationOnNewsFeed}}">[[t('hideRecommendationOnNewsFeed')]]</paper-checkbox>
+        <paper-checkbox name="recalculateCountersRecursively" checked$="{{community.configuration.recalculateCountersRecursively}}">[[t('recalculateCountersRecursively')]]</paper-checkbox>
 
-      <paper-checkbox name="hideRecommendationOnNewsFeed" checked$="{{community.configuration.hideRecommendationOnNewsFeed}}">[[t('hideRecommendationOnNewsFeed')]]</paper-checkbox>
-
-      <paper-checkbox name="forceSecureSamlLogin" disabled$="[[!hasSamlLoginProvider]]"
-                      checked$="{{community.configuration.forceSecureSamlLogin}}">[[t('forceSecureSamlLogin')]]
-      </paper-checkbox>
+        <paper-checkbox name="forceSecureSamlLogin" disabled$="[[!hasSamlLoginProvider]]"
+                        checked$="{{community.configuration.forceSecureSamlLogin}}">[[t('forceSecureSamlLogin')]]
+        </paper-checkbox>
+      </div>
 
       <paper-textarea id="customSamlLoginMessage"
                       name="customSamlLoginMessage"

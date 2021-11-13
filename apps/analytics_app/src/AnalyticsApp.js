@@ -16,6 +16,7 @@ import './PageConnections';
 import './PageTrends';
 import './PageTopics';
 import './PageMap';
+import {nothing} from "lit-html";
 
 export class AnalyticsApp extends YpBaseElement {
   static get properties() {
@@ -183,7 +184,9 @@ export class AnalyticsApp extends YpBaseElement {
               <header>
                 <mwc-tab-bar @MDCTabBar:activated="${this._tabSelected}">
                   <mwc-tab label="Trends" icon="bar_chart" stacked></mwc-tab>
-                  <mwc-tab label="Map" icon="map" stacked ?hidden="${this.collectionType!=='communities'}"></mwc-tab>
+                  ${this.collectionType==='communities' ? html`
+                    <mwc-tab label="Map" icon="map" stacked></mwc-tab>
+                  ` : nothing}
                   <mwc-tab label="Topics" icon="blur_on" stacked></mwc-tab>
                   <mwc-tab label="Connections" icon="3d_rotation" stacked></mwc-tab>
                 </mwc-tab-bar>

@@ -1,4 +1,4 @@
-# Your Priorities Version 8.9
+# Your Priorities Version 8.12
 
 ![alt text](https://citizens.is/wp-content/uploads/2018/08/Capture-2.png "Your Priorities screenshot")
 
@@ -30,7 +30,7 @@
 * Authentication is configurable offering eID, Facebook, email and/or anonymous login
 * The client app is a progressive web app that can be very easily installed as a native app on mobile phones while also being a website
 * Built with Web Components making the app fast on inexpensive mobile phones
-* Open source, non profit and built with passion over 10 years
+* Open source, non profit and built with passion over 12 years
 * Supported by mass amounts of volunteer work, the EU, city of Reykjavik, World Bank, city of Kopavogur, Scottish Government and the Norwegian Consumer Authority
 
 ## Getting Started User Tutorial
@@ -42,7 +42,7 @@ https://citizens.is/getting-started/
 * https://yrpri.org/
 * https://betraisland.is/
 * https://betrireykjavik.is/
-* https://mineideer.forbrukerradet.no/
+* https://www.junges.wien/
 * https://engage.parliament.scot/
 * https://enjine.smarter.nj.gov/
 

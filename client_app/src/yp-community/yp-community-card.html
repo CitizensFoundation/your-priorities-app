@@ -31,10 +31,15 @@
         line-height: var(--description-line-height, 1.3);
         padding: 8px;
         margin-top: 4px;
+        font-family: var(--app-header-font-family, Roboto);
       }
 
       .description[widetext] {
-          font-size: 15px;
+        font-size: 15px;
+      }
+
+      .description[largefont] {
+        font-size: 16px;
       }
       
       .stats {
@@ -99,10 +104,15 @@
         cursor: pointer;
         vertical-align: middle;
         width: auto;
+        font-family: var(--app-header-font-family, Roboto);
       }
 
       .community-name[widetext] {
         font-size: 18px;
+      }
+
+      .community-name[largefont] {
+          font-size: 20px;
       }
 
       iron-image[archived] {
@@ -224,10 +234,12 @@
                          disable-translation="[[community.configuration.disableNameAutoTranslation]]"
                          archived$="[[archived]]" featured$="[[featured]]"
                          on-tap="_goToCommunity"
+                         largefont$="[[largeFont]]"
                          text-only content="[[communityName]]" content-id="[[community.id]]">
           </yp-magic-text>
         </div>
         <yp-magic-text id="description" class="description withPointer" featured$="[[featured]]" on-tap="_goToCommunity"
+                       largefont$="[[largeFont]]"
                        text-type="communityContent" widetext$="[[wideText]]" content-language="[[community.language]]"
                        text-only content="[[communityDescription]]" content-id="[[community.id]]" truncate="130">
         </yp-magic-text>

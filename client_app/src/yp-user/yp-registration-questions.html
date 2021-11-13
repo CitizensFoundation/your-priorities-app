@@ -26,7 +26,10 @@
       }
 
       yp-structured-question-edit {
-          max-width: 80%;
+      }
+
+      .segmentQuestionIntro {
+          margin-top: 16px;
       }
     </style>
 
@@ -36,13 +39,31 @@
     <iron-media-query query="(min-width: 1024px)" query-matches="{{wideWidth}}"></iron-media-query>
     <iron-media-query query="(max-width: 700px)" query-matches="{{phoneWidth}}"></iron-media-query>
 
-    <template is="dom-repeat" items="[[structuredQuestions]]" as="question">
-      <yp-structured-question-edit index="[[index]]"
-                                   use-small-font
-                                   id="structuredQuestionContainer_[[index]]"
-                                   structured-answers="[[structuredAnswers]]"
-                                   question="[[question]]">
-      </yp-structured-question-edit>
+    <template is="dom-if" if="[[segments]]">
+      <div class="segmentQuestionIntro">[[t('choose')]]</div>
+      <paper-radio-group required data-type="radios" on-selected-changed="_radioChanged"
+                         id="segmentRadio_[[index]]" name="segmentRadio_[[index]]"
+                         class="segmentRadio">
+        <template is="dom-repeat" items="[[segments]]" as="radioButton" index-as="buttonIndex">
+          <paper-radio-button use-small-font$="[[useSmallFont]]"
+                              id="segmentRadio_[[index]]_[[buttonIndex]]" name="[[radioButton.segmentName]]">
+            [[radioButton.text]]
+          </paper-radio-button>
+        </template>
+      </paper-radio-group>
+
+    </template>
+
+    <template is="dom-if" if="[[renderingQuestions]]" restamp>
+      <template is="dom-repeat" items="[[filteredQuestions]]" as="question">
+        <yp-structured-question-edit index="[[index]]"
+                                     use-small-font
+                                     is-from-new-post
+                                     id="structuredQuestionContainer_[[index]]"
+                                     structured-answers="[[structuredAnswers]]"
+                                     question="[[question]]">
+        </yp-structured-question-edit>
+      </template>
     </template>
 
     <yp-ajax hidden id="translatedQuestionsAjax" on-response="_translatedQuestionsResponse"></yp-ajax>
@@ -67,7 +88,12 @@
         structuredQuestions: {
           type: Array,
           computed: '_structuredQuestions(group, translatedQuestions)',
-          observer: '_structuredQuestionsChanged'
+          observer: '_filteredQuestionsChanged'
+        },
+
+        filteredQuestions: {
+          type: Array,
+          computed: '_filteredQuestions(structuredQuestions, segments, selectedSegment)'
         },
 
         structuredAnswers: {
@@ -83,7 +109,37 @@
         autoTranslate: {
           type: Boolean,
           value: false
+        },
+
+        selectedSegment: {
+          type: String,
+          value: null
+        },
+
+        segments: {
+          type: Array,
+          value: null
+        },
+
+        renderingQuestions: {
+          type: Boolean,
+          value: true
         }
+      },
+
+      _radioChanged(event, detail) {
+        this.set('selectedSegment', detail.value);
+        // HACK FOR DOM-REPEAT NOT SUPPORTING RESTAMP, not needed for Lit version and .map
+        this.set('renderingQuestions', false);
+        this.async(function () {
+          this.set('renderingQuestions', true);
+          this.async(function () {
+            this._setupQuestions();
+            this.async(function () {
+              this.fire('questions-changed');
+            })
+          })
+        })
       },
 
       _autoTranslateEvent(event, detail) {
@@ -173,36 +229,76 @@
         }
       },
 
-      _structuredQuestionsChanged: function (questions) {
+      _filteredQuestions: function (questions, segments, selectedSegment) {
         if (questions) {
+          var filteredQuestions = [];
+          questions.forEach(function (question) {
+            if (!segments || (selectedSegment &&
+                              question.type!=="segment" &&
+                              question.segmentName===selectedSegment)) {
+              filteredQuestions.push(question);
+            }
+          }.bind(this));
+          return filteredQuestions;
+        } else {
+          return null;
+        }
+      },
+
+      _setupQuestions: function () {
+        if (this.filteredQuestions) {
           if (window.autoTranslate) {
             this.set('autoTranslate', window.autoTranslate);
           }
-          this.async(function () {
-            this.liveQuestionIds = [];
-            this.liveUniqueIds = [];
-            this.liveUniqueIdsAll = [];
-            this.uniqueIdsToElementIndexes = {};
-            if (this.structuredQuestions) {
-              this.structuredQuestions.forEach(function (question, index) {
-                if (question.type.toLowerCase()==="textfield" ||
-                  question.type.toLowerCase()==="textfieldlong" ||
-                  question.type.toLowerCase()==="textarea" ||
-                  question.type.toLowerCase()==="textarealong" ||
-                  question.type.toLowerCase()==="numberfield" ||
-                  question.type.toLowerCase()==="checkboxes" ||
-                  question.type.toLowerCase()==="radios" ||
-                  question.type.toLowerCase()==="dropdown"
-                ) {
-                  this.liveQuestionIds.push(index);
-                  this.uniqueIdsToElementIndexes[question.uniqueId] = index;
-                  this.liveUniqueIds.push(question.uniqueId);
-                  this.liveUniqueIdsAll.push({uniqueId: question.uniqueId, atIndex: index});
-                }
-              }.bind(this));
+          var liveQuestionIds = [];
+          var liveUniqueIds = [];
+          var liveUniqueIdsAll = [];
+          var uniqueIdsToElementIndexes = {};
+          this.filteredQuestions.forEach(function (question, index) {
+            if (question.type.toLowerCase()==="textfield" ||
+              question.type.toLowerCase()==="textfieldlong" ||
+              question.type.toLowerCase()==="textarea" ||
+              question.type.toLowerCase()==="textarealong" ||
+              question.type.toLowerCase()==="numberfield" ||
+              question.type.toLowerCase()==="checkboxes" ||
+              question.type.toLowerCase()==="radios" ||
+              question.type.toLowerCase()==="dropdown"
+            ) {
+              if (!this.segments || (this.selectedSegment && question.segmentName===this.selectedSegment)) {
+                liveQuestionIds.push(index);
+                uniqueIdsToElementIndexes[question.uniqueId] = index;
+                liveUniqueIds.push(question.uniqueId);
+                liveUniqueIdsAll.push({uniqueId: question.uniqueId, atIndex: index});
+              }
             }
-          });
+          }.bind(this));
+          this.set('liveQuestionIds', liveQuestionIds);
+          this.set('liveUniqueIds', liveUniqueIds);
+          this.set('liveUniqueIdsAll', liveUniqueIdsAll);
+          this.set('uniqueIdsToElementIndexes', uniqueIdsToElementIndexes);
         }
+      },
+
+      _checkForSegments: function () {
+        if (this.structuredQuestions) {
+          var segments = [];
+          this.structuredQuestions.forEach(function (question, index) {
+            if (question.type.toLowerCase()==="segment") {
+              segments.push(question);
+            }
+          }.bind(this));
+
+          if (segments.length>0) {
+            this.set('segments', segments);
+          }
+        } else {
+          this.set('segments', null);
+        }
+      },
+
+      _filteredQuestionsChanged: function () {
+        this._checkForSegments();
+        this._setupQuestions();
       },
 
       getAnswers: function () {
@@ -228,6 +324,10 @@
             valid = false;
           }
         }.bind(this));
+
+        if (this.segments && !this.selectedSegment) {
+          valid = false;
+        }
         return valid;
       }
     });

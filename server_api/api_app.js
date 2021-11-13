@@ -193,8 +193,10 @@ app.use(session(sessionConfig));
 
 app.use(function checkForBOT(req, res, next) {
   const ua = req.headers['user-agent'];
-  if (req.headers['content-type']!=="application/json" && (req.originalUrl && !req.originalUrl.endsWith("/sitemap.xml"))) {
-    if (!/Googlebot|AdsBot-Google/.test(ua) && (isBot(ua) || /^(facebookexternalhit)|(web\/snippet)|(Twitterbot)|(Slackbot)|(Embedly)|(LinkedInBot)|(Pinterest)|(XING-contenttabreceiver)/gi.test(ua))) {
+  if (req.headers['content-type']!=="application/json" &&
+     (req.originalUrl && !req.originalUrl.endsWith("/sitemap.xml"))) {
+    if (!/Googlebot|AdsBot-Google|Google Page Speed|Chrome-Lighthouse/.test(ua) &&
+        (isBot(ua) || /^(facebookexternalhit)|(web\/snippet)|(Twitterbot)|(Slackbot)|(Embedly)|(LinkedInBot)|(Pinterest)|(XING-contenttabreceiver)/gi.test(ua))) {
       nonSPArouter(req, res, next);
     } else {
       next();
@@ -256,7 +258,7 @@ app.get('/manifest.json', function getManifest(req, res) {
 
 app.get('/robots.txt', function (req, res) {
   res.type('text/plain')
-  res.send(`User-agent: *\nDisallow:\nSitemap: https://${req.hostname}/sitemap.xml`);
+  res.send(`User-agent: *\nDisallow:\n\nSitemap: https://${req.hostname}/sitemap.xml`);
 });
 
 var bearerCallback = function (req, token) {

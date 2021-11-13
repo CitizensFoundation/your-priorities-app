@@ -142,6 +142,11 @@
             value: null
           },
 
+          largeFont: {
+            type: Boolean,
+            value: false
+          },
+
           currentSamlLoginMessage: {
             type: String,
             value: null
@@ -288,6 +293,7 @@
             group.configuration &&
             group.configuration.registrationQuestionsJson) {
             this.set('registrationQuestionsGroup', group);
+            window.appUser.checkRegistrationAnswersCurrent();
           } else {
             this.set('registrationQuestionsGroup', null);
           }

@@ -35,6 +35,12 @@ let replaceForParlScot = function (data) {
   return data.replace(/XmanifestPathX/g, "manifest_parlscott");
 };
 
+let replaceForJungesWien = function (data) {
+  data = data.replace(/XappNameX/g, "Junges Wien");
+  data = data.replace(/XdescriptionX/g, "Die Junges Wien - Plattform dient der Stadt Wien zur Ideen-Einreichung und zur Projektabstimmung für die erste partizipative Wiener Kinder- und Jugendmillion. #jungeswien");
+  return data.replace(/XmanifestPathX/g, "manifest_junges_wien");
+};
+
 let replaceForSmarterNJ = function (data) {
   data = data.replace(/XappNameX/g, "SmarterNJ");
   data = data.replace(/XdescriptionX/g, "SmarterNJ is an open government initiative that uses new and innovative technology to meaningfully engage New Jerseyans. Your participation in SmarterNJ will allow us to create policies, programs and services that are more effective, more efficient, and more impactful for all New Jerseyans.");
@@ -83,6 +89,8 @@ let sendIndex = function (req, res) {
           res.send(replaceForYrpri(indexFileData));
         } else if (req.hostname.indexOf('tarsalgo.net') > -1) {
           res.send(replaceForTarsalgo(indexFileData));
+        } else if (req.hostname.indexOf('junges.wien') > -1) {
+          res.send(replaceForJungesWien(indexFileData));
         } else if (req.hostname.indexOf('yrpri.org') > -1) {
           res.send(replaceForYrpri(indexFileData));
         } else {

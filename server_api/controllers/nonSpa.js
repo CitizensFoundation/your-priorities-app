@@ -120,6 +120,11 @@ var sendCommunity = function sendCommunityForBot(id, req, res) {
             { access: models.Group.ACCESS_PUBLIC },
             { access: models.Group.ACCESS_OPEN_TO_COMMUNITY },
           ],
+          configuration: {
+            actAsLinkToCommunityId: {
+              [models.Sequelize.Op.is]: null
+            }
+          },
         },
         required: false
       }
@@ -337,7 +342,7 @@ var sendPost = function sendPostforBot(id, pointsOffset, req, res) {
         var botOptions = {
           url       : fullUrl(req),
           title     :  post.name,
-          descriptionText : post.description,
+          descriptionText : post.description ? post.description : post.name,
           imageUrl  : imageUrl,
           contentType: 'article',
           subItemsUrlbase: "",

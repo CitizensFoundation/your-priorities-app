@@ -61,10 +61,19 @@
       archived: {
         type: Boolean,
         value: false
+      },
+
+      largeFont: {
+        type: Boolean,
+        value: false
       }
     },
 
     _communityChanged: function (community) {
+      if (window.appGlobals.largeFont)
+        this.set('largeFont', true);
+      else
+        this.set('largeFont', false);
       if (community) {
         if (community.CommunityLogoImages && community.CommunityLogoImages.length>0)
         {

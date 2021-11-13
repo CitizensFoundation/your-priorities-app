@@ -50,6 +50,10 @@
           font-size: 22px;
       }
 
+      .group-name[largefont] {
+          font-size: 22px;
+      }
+
       .group-name[admin] {
         padding-right: 32px;
       }
@@ -110,12 +114,16 @@
       .groupDescription {
         padding-left: 16px;
         padding-right: 16px;
-        padding-top: 16px;
+        padding-top: 12px;
         font-size: var(--group-description-font-size, 15px);
       }
 
       .groupDescription[widetext] {
          font-size: 14px;
+      }
+
+      .groupDescription[largefont] {
+          font-size: 14px;
       }
 
       .group-name {
@@ -170,7 +178,7 @@
         }
 
         .groupDescription {
-          padding-top: 6px;
+          padding-top: 12px;
           padding-bottom: 42px;
         }
 
@@ -249,13 +257,13 @@
               <div class="description">
                 <div admin$="[[hasGroupAccess]]" role="heading" aria-level="1" aria-label="[[group.name]]">
                   <yp-magic-text id="groupName" class="group-name"  widetext$="[[wideText]]" text-type="groupName" content-language="[[group.language]]"
-                                 disable-translation="[[group.configuration.disableNameAutoTranslation]]"
+                                 disable-translation="[[group.configuration.disableNameAutoTranslation]]" largefont$="[[largeFont]]"
                                  text-only content="[[groupName]]" content-id="[[group.id]]">
                   </yp-magic-text>
                 </div>
                 <div hidden class="groupAccess">[[groupAccessText]]</div>
                 <yp-magic-text id="objectives" class="groupDescription" widetext$="[[wideText]]"
-                               simple-format="[[group.configuration.simpleFormatDescription]]"
+                               simple-format="[[group.configuration.simpleFormatDescription]]" largefont$="[[largeFont]]"
                                text-type="groupContent" content-language="[[group.language]]"
                                content="[[group.objectives]]" content-id="[[group.id]]">
 
@@ -415,6 +423,13 @@
       },
 
       _groupChanged: function (group, previousGroup) {
+        this.async(function () {
+          if (window.appGlobals.largeFont) {
+            this.set('largeFont', true);
+          } else {
+            this.set('largeFont', false);
+          }
+        }, 100);
         if (group && group.configuration && group.configuration.useVideoCover && group.GroupLogoVideos) {
           var videoURL = this._getVideoURL(group.GroupLogoVideos);
           var videoPosterURL = this._getVideoPosterURL(group.GroupLogoVideos, group.GroupLogoImages);

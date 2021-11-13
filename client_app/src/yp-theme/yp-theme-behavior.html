@@ -8,16 +8,6 @@
 
     properties: {
 
-      themes: {
-        type: Array,
-        value: function () { return [] }
-      },
-
-      fonts: {
-        type: Array,
-        value: function () { return [] }
-      },
-
       selectedTheme: {
         type: Number,
         value: false
@@ -26,8 +16,44 @@
       selectedFont: String
     },
 
-    ready: function () {
-      this.push('themes', {
+    fonts: [
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      { htmlImport: "/styles/fonts/forbrukerradet-font.html", fontName: 'FFClanWebBook' },
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      { htmlImport: "/styles/fonts/rostartup-font.html", fontName: 'Montserrat' },
+      { htmlImport: "/styles/fonts/junges-wien-font.html", fontName: 'WienerMelange' },
+      { htmlImport: "/styles/fonts/frumbjorg-font.html", fontName: 'Merriweather' },
+    ],
+
+    themes: [
+      {
         name: 'Reykjavík',
         '--primary-background-color': '#f7f7f7',
         '--primary-color': '#103458',
@@ -46,12 +72,10 @@
         '--accent-color-400': 'var(--paper-orange-a700)',
         '--middle-color': 'var(--primary-color-400)',
         '--icon-general-color': '#fff'
-      });
-      this.push('fonts', {});
-
-      this.push('themes', {
+      },
+      {
         name: 'Basalt Gray',
-          '--primary-background-color': '#f7f7f7',
+        '--primary-background-color': '#f7f7f7',
         '--primary-color': 'var(--paper-blue-grey-500)',
         '--primary-color-100': 'var(--paper-blue-grey-100)',
         '--primary-color-200': 'var(--paper-blue-grey-200)',
@@ -69,10 +93,8 @@
         '--middle-color': 'var(--paper-blue-grey-600)',
         '--icon-general-color': '#fff',
         'body': 'var(--primary-background-color)'
-      });
-      this.push('fonts', {});
-
-      this.push('themes', {
+      },
+      {
         name: 'Green Moss',
         '--primary-background-color': 'var(--paper-light-green-100)',
         '--primary-color': 'var(--paper-light-green-900)',
@@ -92,10 +114,8 @@
         '--middle-color': 'var(--primary-color-400)',
         '--icon-general-color': '#fff',
         'body': 'var(--primary-background-color)'
-      });
-      this.push('fonts', {});
-
-      this.push('themes', {
+      },
+      {
         name: 'Google Blue',
         '--primary-background-color': 'var(--paper-blue-50)',
         '--primary-color': 'var(--paper-blue-500)',
@@ -114,10 +134,7 @@
         '--middle-color': 'var(--primary-color-400)',
         '--icon-general-color': '#fff',
         'body': 'var(--primary-background-color)'
-      });
-      this.push('fonts', {});
-
-      this.push('themes', {
+      }, {
         name: 'Red Rhubarb',
         '--primary-background-color': 'var(--paper-light-green-50)',
         '--primary-color':  'var(--paper-red-500)',
@@ -136,10 +153,8 @@
         '--middle-color': 'var(--primary-color-200)',
         '--icon-general-color': '#fff',
         'body': 'var(--primary-background-color)'
-      });
-      this.push('fonts', {});
-
-      this.push('themes', {
+      },
+      {
         name: 'Mountain Roses',
         '--primary-background-color': 'var(--paper-light-green-50)',
         '--primary-color':  'var(--paper-green-500)',
@@ -157,11 +172,7 @@
         '--accent-color-400': 'var(--paper-red-a700)',
         '--middle-color': 'var(--primary-background-color)',
         '--icon-general-color': '#fff'
-      });
-      this.push('fonts', {});
-
-
-      this.push('themes', {
+      }, {
         name: 'Purple Wizards',
         '--primary-background-color': 'var(--paper-deep-purple-50)',
         '--primary-color':  'var(--paper-deep-purple-500)',
@@ -179,10 +190,8 @@
         '--accent-color-400': 'var(--paper-red-a700)',
         '--middle-color': 'var(--primary-background-color)',
         '--icon-general-color': '#fff'
-      });
-      this.push('fonts', {});
-
-      this.push('themes', {
+      },
+      {
         name: 'Kópavogur',
         '--primary-background-color': '#F0F0F0',
         '--primary-color': '#00853E',
@@ -200,10 +209,8 @@
         '--accent-color-400': 'var(--paper-orange-a400)',
         '--middle-color': 'var(--primary-color-400)',
         '--icon-general-color': '#fff'
-      });
-      this.push('fonts', {});
-
-      this.push('themes', {
+      },
+      {
         name: 'Forbrukerrådet',
         '--primary-background-color': '#f5f5f5',
         '--primary-color': '#7dbdc9',
@@ -221,10 +228,8 @@
         '--accent-color-400': 'var(--paper-orange-a400)',
         '--middle-color': 'var(--primary-color-400)',
         '--icon-general-color': '#fff'
-      });
-      this.push('fonts', {});
-
-      this.push('themes', {
+      },
+      {
         name: 'Forbrukerrådet Fonts',
         '--primary-background-color': '#f5f5f5',
         '--primary-color': '#7dbdc9',
@@ -242,10 +247,8 @@
         '--accent-color-400': 'var(--paper-orange-a400)',
         '--middle-color': 'var(--primary-color-400)',
         '--icon-general-color': '#fff'
-      });
-      this.push('fonts', { htmlImport: "/styles/fonts/forbrukerradet-font.html", fontName: 'FFClanWebBook' });
-
-      this.push('themes', {
+      },
+      {
         name: 'I choose Malta',
         '--primary-background-color': 'var(--paper-blue-grey-100)',
         '--primary-color': '#001a4b',
@@ -263,10 +266,8 @@
         '--accent-color-400': '#d71920',
         '--middle-color': 'var(--primary-color-400)',
         '--icon-general-color': '#fff'
-      });
-      this.push('fonts', {});
-
-      this.push('themes', {
+      },
+      {
         name: 'Reykjavík Blue',
         '--primary-background-color': '#f7f7f7',
         '--primary-color': '#084F71',
@@ -285,10 +286,8 @@
         '--accent-color-400': 'var(--paper-orange-a700)',
         '--middle-color': 'var(--primary-color-400)',
         '--icon-general-color': '#fff'
-      });
-      this.push('fonts', {});
-
-      this.push('themes', {
+      },
+      {
         name: 'Unicorn 1',
         '--primary-background-color': '#f7f7f7',
         '--primary-color': '#aa3319',
@@ -307,10 +306,8 @@
         '--accent-color-400': 'var(--paper-blue-a700)',
         '--middle-color': 'var(--primary-color-400)',
         '--icon-general-color': '#fff'
-      });
-      this.push('fonts', {});
-
-      this.push('themes', {
+      },
+      {
         name: 'Unicorn 2',
         '--primary-background-color': '#f7f7f7',
         '--primary-color': '#282828',
@@ -329,10 +326,8 @@
         '--accent-color-400': '#aa3319',
         '--middle-color': 'var(--primary-color-400)',
         '--icon-general-color': '#fff'
-      });
-      this.push('fonts', {});
-
-      this.push('themes', {
+      },
+      {
         name: 'Mount Air',
         '--primary-background-color': '#f7f7f7',
         '--primary-color': '#0d3c55',
@@ -351,11 +346,8 @@
         '--accent-color-400': '#f16c20',
         '--middle-color': 'var(--primary-color-400)',
         '--icon-general-color': '#fff'
-      });
-      this.push('fonts', {});
-
-
-      this.push('themes', {
+      },
+      {
         name: 'Snjallborg',
         '--primary-background-color': 'var(--paper-blue-grey-100)',
         '--primary-color': '#1e9ac8',
@@ -374,10 +366,8 @@
         '--accent-color-400': '#ee7aa2',
         '--middle-color': 'var(--primary-color-400)',
         '--icon-general-color': '#fff'
-      });
-      this.push('fonts', {});
-
-      this.push('themes', {
+      },
+      {
         name: 'Black',
         '--primary-background-color': '#f7f7f7',
         '--primary-color': '#282828',
@@ -396,10 +386,8 @@
         '--accent-color-400': 'var(--paper-orange-a700)',
         '--middle-color': 'var(--primary-color-400)',
         '--icon-general-color': '#fff'
-      });
-      this.push('fonts', {});
-
-      this.push('themes', {
+      },
+      {
         name: 'Nesið Okkar',
         '--primary-background-color': 'var(--paper-blue-grey-100)',
         '--primary-color': '#525254',
@@ -418,11 +406,8 @@
         '--accent-color-400': '#e0701e',
         '--middle-color': 'var(--primary-color-400)',
         '--icon-general-color': '#fff'
-      });
-      this.push('fonts', {});
-
-
-      this.push('themes', {
+      },
+      {
         disabled: true,
         name: 'Snjallborg',
         '--primary-background-color': 'var(--paper-blue-grey-100)',
@@ -442,12 +427,10 @@
         '--accent-color-400': 'var(--paper-blue-a700)',
         '--middle-color': 'var(--primary-color-400)',
         '--icon-general-color': '#fff'
-      });
-      this.push('fonts', {});
-
-      this.push('themes', {
-          disabled: true,
-          name: 'Black',
+      },
+      {
+        disabled: true,
+        name: 'Black',
         '--primary-background-color': 'var(--paper-blue-grey-100)',
         '--primary-color': '#282828',
         '--primary-color-100': '#282828',
@@ -465,12 +448,10 @@
         '--accent-color-400': 'var(--paper-blue-a700)',
         '--middle-color': 'var(--primary-color-400)',
         '--icon-general-color': '#fff'
-      });
-      this.push('fonts', {});
-
-      this.push('themes', {
-          disabled: true,
-          name: 'Nesið Okkar',
+      },
+      {
+        disabled: true,
+        name: 'Nesið Okkar',
         '--primary-background-color': 'var(--paper-blue-grey-100)',
         '--primary-color': '#525254',
         '--primary-color-100': '#525254',
@@ -488,10 +469,8 @@
         '--accent-color-400': 'var(--paper-blue-a700)',
         '--middle-color': 'var(--primary-color-400)',
         '--icon-general-color': '#fff'
-      });
-      this.push('fonts', {});
-
-      this.push('themes', {
+      },
+      {
         name: 'Iceland',
         '--primary-background-color': 'var(--paper-blue-grey-100)',
         '--primary-color': '#282828',
@@ -510,10 +489,8 @@
         '--accent-color-400': '#dc1e35',
         '--middle-color': 'var(--primary-color-400)',
         '--icon-general-color': '#fff'
-      });
-      this.push('fonts', {});
-
-      this.push('themes', {
+      },
+      {
         name: 'Iceland 2',
         '--primary-background-color': 'var(--paper-blue-grey-100)',
         '--primary-color': '#02529c',
@@ -532,10 +509,8 @@
         '--accent-color-400': '#dc1e35',
         '--middle-color': 'var(--primary-color-400)',
         '--icon-general-color': '#fff'
-      });
-      this.push('fonts', {});
-
-      this.push('themes', {
+      },
+      {
         name: 'The Westbourne',
         '--primary-background-color': 'var(--paper-light-green-50)',
         '--primary-color':  'var(--paper-red-500)',
@@ -554,11 +529,8 @@
         '--middle-color': 'var(--primary-color-200)',
         '--icon-general-color': '#fff',
         'body': 'var(--primary-background-color)'
-      });
-      this.push('fonts', {});
-
-
-      this.push('themes', {
+      },
+      {
         name: 'Amsterdam',
         '--primary-background-color': 'var(--paper-blue-grey-100)',
         '--primary-color': '#164995',
@@ -577,10 +549,8 @@
         '--middle-color': 'var(--primary-color-200)',
         '--icon-general-color': '#fff',
         'body': 'var(--primary-background-color)'
-      });
-      this.push('fonts', {});
-
-      this.push('themes', {
+      },
+      {
         name: 'AS Roma',
         '--primary-background-color': '#DDDBDA',
         '--primary-color': '#970a2c',
@@ -599,10 +569,8 @@
         '--middle-color': 'var(--primary-color-200)',
         '--icon-general-color': '#fff',
         'body': 'var(--primary-background-color)'
-      });
-      this.push('fonts', {});
-
-      this.push('themes', {
+      },
+      {
         name: 'AS Roma Inverted',
         '--primary-background-color': '#DDDBDA',
         '--primary-color': '#970a2c',
@@ -621,10 +589,8 @@
         '--middle-color': 'var(--primary-color-200)',
         '--icon-general-color': '#fff',
         'body': 'var(--primary-background-color)'
-      });
-      this.push('fonts', {});
-
-      this.push('themes', {
+      },
+      {
         name: 'New Jersey',
         '--primary-background-color': '#f7f7f7',
         '--primary-color': '#56920C',
@@ -643,10 +609,8 @@
         '--middle-color': 'var(--primary-color-200)',
         '--icon-general-color': '#fff',
         'body': 'var(--primary-background-color)'
-      });
-      this.push('fonts', {});
-
-      this.push('themes', {
+      },
+      {
         name: 'New Jersey Inverted',
         '--primary-background-color': '#f7f7f7',
         '--primary-color': '#1880c7',
@@ -665,10 +629,8 @@
         '--middle-color': 'var(--primary-color-200)',
         '--icon-general-color': '#fff',
         'body': 'var(--primary-background-color)'
-      });
-      this.push('fonts', {});
-
-      this.push('themes', {
+      },
+      {
         name: 'Scottish Parliament',
         '--primary-background-color': '#f7f7f7',
         '--primary-color': '#500778',
@@ -687,10 +649,8 @@
         '--middle-color': 'var(--primary-color-200)',
         '--icon-general-color': '#fff',
         'body': 'var(--primary-background-color)'
-      });
-      this.push('fonts', {});
-
-      this.push('themes', {
+      },
+      {
         name: 'RoStartup',
         '--primary-background-color': '#F7F7F7',
         '--primary-color': '#154164',
@@ -713,11 +673,37 @@
         '--app-header-font-weight': '500',
         '--app-tags-text-color': '#1f52a5',
         '--app-tags-font-weight': '500',
-    });
-
-      this.push('fonts', { htmlImport: "/styles/fonts/rostartup-font.html", fontName: 'Montserrat' });
-
-      /*this.push('themes', {
+      },
+      {
+        name: 'wienExtra',
+        '--primary-background-color': '#F7F7F7',
+        '--primary-color': '#292929',
+        '--primary-color-200': '#292929',
+        '--primary-color-300': '#292929',
+        '--primary-color-400': '#292929',
+        '--primary-color-600': '#292929',
+        '--primary-color-700': '#292929',
+        '--primary-color-800': '#292929',
+        '--primary-color-900': '#292929',
+        '--accent-color': '#ff0000',
+        '--accent-color-100': '#ff0000',
+        '--accent-color-200': '#ff0000',
+        '--accent-color-300': '#ff0000',
+        '--accent-color-400': '#ff0000',
+        '--middle-color': 'var(--primary-color-400)',
+        '--icon-general-color': '#fff',
+        '--paper-font-common-base': "{font-family: 'WienerMelange', 'Roboto', sans-serif; }",
+        '--paper-input-container-input': "{font-family: 'WienerMelange', 'Roboto', sans-serif; }",
+        '--paper-input-container-label': "{font-family: 'WienerMelange', 'Roboto', sans-serif; }",
+        '--app-header-font-family': 'WienerMelange',
+        '--iron-autogrow-textarea':  "{font-family: 'WienerMelange', 'Roboto', sans-serif; }",
+        '--paper-button':  "{font-family: 'WienerMelange', 'Roboto', sans-serif !important; }",
+        '--paper-tabs': "{font-family: 'WienerMelange', 'Roboto', sans-serif !important; }",
+        '--app-header-font-weight': '500',
+        '--app-tags-text-color': '#292929',
+        '--app-tags-font-weight': '500',
+      },
+      {
         name: 'Frumbjörg',
         '--primary-background-color': '#fefefe',
         '--primary-color': '#17263e',
@@ -740,12 +726,11 @@
         '--app-header-font-weight': '500',
         '--app-tags-text-color': '#17263e',
         '--app-tags-font-weight': '500',
-      });
+      }
 
-      this.push('fonts', { htmlImport: "/styles/fonts/frumbjorg-font.html", fontName: 'Merriweather' });
 
-      */
-    },
+
+    ],
 
     _setupOverrideTheme: function (primary, accent, background) {
       if (!background) {
@@ -774,11 +759,29 @@
       }
     },
 
-    setTheme: function (number, configuration) {
+    _updateTheme: function (number, configuration) {
+      var resetValues = {};
+      if (this.themes[number] && this.themes[number]['--app-header-font-family']==null) {
+        resetValues = {
+          '--paper-font-common-base': "{font-family: 'Roboto', sans-serif; }",
+          '--paper-input-container-input': "{font-family: 'Roboto', sans-serif; }",
+          '--paper-input-container-label': "{font-family: 'Roboto', sans-serif; }",
+          '--app-header-font-family': 'Roboto',
+          '--iron-autogrow-textarea':  "{font-family: 'Roboto', sans-serif; }",
+          '--paper-button':  "{font-family: 'Roboto', sans-serif !important; }",
+          '--paper-tabs': "{font-family: 'Roboto', sans-serif !important; }",
+          '--app-header-font-weight': null,
+        }
+      }
+
+      if (this.themes[number] ) {
+        this.themes[number].originalName = this.themes[number].name;
+      }
+
       if (configuration && configuration.themeOverrideColorPrimary &&
-          configuration.themeOverrideColorPrimary.length>5 &&
-          configuration.themeOverrideColorAccent &&
-          configuration.themeOverrideColorAccent.length>5) {
+        configuration.themeOverrideColorPrimary.length>5 &&
+        configuration.themeOverrideColorAccent &&
+        configuration.themeOverrideColorAccent.length>5) {
         if (configuration.themeOverrideColorPrimary.length===6) {
           configuration.themeOverrideColorPrimary = "#"+configuration.themeOverrideColorPrimary;
         }
@@ -791,15 +794,27 @@
 
         if (this.themes[number]) {
           var overRideTheme = this._setupOverrideTheme(configuration.themeOverrideColorPrimary, configuration.themeOverrideColorAccent, configuration.themeOverrideBackgroundColor);
-          Polymer.updateStyles(__.merge(this.themes[number], overRideTheme))
+          var tmpTheme = JSON.parse(JSON.stringify(this.themes[number]));
+          Polymer.updateStyles(__.merge(__.merge(tmpTheme, resetValues), overRideTheme))
         } else {
           Polymer.updateStyles(this._setupOverrideTheme(configuration.themeOverrideColorPrimary, configuration.themeOverrideColorAccent, configuration.themeOverrideBackgroundColor))
         }
       } else {
         if (this.themes[number]) {
-          Polymer.updateStyles(this.themes[number]);
+          var tmpTheme = JSON.parse(JSON.stringify(this.themes[number]));
+          Polymer.updateStyles(__.merge(tmpTheme, resetValues));
         }
       }
+
+      if (this.themes[number] && this.themes[number]['--app-header-font-family']) {
+        window.app.style.setProperty('--app-header-font-family', this.themes[number]['--app-header-font-family']);
+      } else {
+        window.app.style.setProperty('--app-header-font-family', 'Roboto');
+      }
+    },
+
+    setTheme: function (number, configuration) {
+      this._updateTheme(number, configuration);
 
       var defaultFontPath = "/styles/fonts/default-font.html";
 
@@ -819,6 +834,9 @@
           this.importHref(fontHtmlImport+ "?random="+randomNumber, function(e) {
             this.async(function () {
               window.lastLoadedFont = fontHtmlImport;
+              this.async(function () {
+                this._updateTheme(number, configuration);
+              }, 50);
               console.log("I have loaded font");
             })
           }, function(e) {
@@ -827,6 +845,15 @@
         } else {
           console.log("Not loading the same font "+window.lastLoadedFont);
         }
+      }
+
+      if (this.themes[number] &&
+        (this.themes[number].originalName==="wienExtra" ||
+          this.themes[number].originalName==="RoStartup" ||
+          this.themes[number].originalName==="Frumbjörg")) {
+        window.appGlobals.largeFont = true;
+      } else if (this.themes[number]) {
+        window.appGlobals.largeFont = false;
       }
     }
   }

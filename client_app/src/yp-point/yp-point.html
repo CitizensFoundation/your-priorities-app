@@ -306,6 +306,7 @@
           </div>
           <div id="pointAdminCommentContent" link-point$="[[linkPoint]]" hidden$="[[isEditingSomething]]" on-tap="_linkIfNeeded">
             <yp-magic-text simple-format text-type="pointAdminCommentContent" content-language="[[point.public_data.admin_comment.language]]"
+                           truncate="1500"
                            content="[[point.public_data.admin_comment.text]]" content-id="[[point.id]]">
             </yp-magic-text>
           </div>

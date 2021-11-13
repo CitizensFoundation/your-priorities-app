@@ -56,6 +56,7 @@
       .locale {
         width: 30px;
         cursor: pointer;
+        text-decoration: underline;
       }
 
       paper-textarea {
@@ -82,6 +83,15 @@
 
       .buttons {
         margin-right: 16px;
+      }
+
+      .weightInput {
+        margin-right: 16px;
+      }
+
+      paper-button {
+        margin: 8px;
+        margin-left: 12px;
       }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
@@ -133,8 +143,11 @@
               <div class="pageItem id">
                 [[page.id]]
               </div>
+              <paper-input
+                      data-args$="[[page.id]]"
+                      no-label-float class="localeInput weightInput" length="2" maxlength="2" value="{{page.weight}}" on-change="_pageWeightChanged"></paper-input>
               <div class="pageItem title">
-                [[page.title.en]]
+                [[_getPageTitle(page)]]
               </div>
               <template is="dom-repeat" items="[[_toLocaleArray(page.title)]]" class="pageItem">
                 <div class="layout vertical center-center">
@@ -142,14 +155,14 @@
                 </div>
               </template>
               <paper-input no-label-float class="localeInput" length="2" maxlength="2" value="{{newLocaleValue}}"></paper-input>
-              <paper-button data-args$="[[page.id]]" on-tap="_addLocale">[[t('pages.addLocale')]]</paper-button>
+              <paper-button raised data-args$="[[page.id]]" on-tap="_addLocale">[[t('pages.addLocale')]]</paper-button>
               <div hidden$="[[page.published]]">
-                <paper-button data-args$="[[page.id]]" on-tap="_publishPage">[[t('pages.publish')]]</paper-button>
+                <paper-button raised data-args$="[[page.id]]" on-tap="_publishPage">[[t('pages.publish')]]</paper-button>
               </div>
               <div hidden$="[[!page.published]]">
-                <paper-button data-args$="[[page.id]]" on-tap="_unPublishPage">[[t('pages.unPublish')]]</paper-button>
+                <paper-button raised data-args$="[[page.id]]" on-tap="_unPublishPage">[[t('pages.unPublish')]]</paper-button>
               </div>
-              <paper-button data-args$="[[page.id]]" on-tap="_deletePage">[[t('pages.deletePage')]]</paper-button>
+              <paper-button raised data-args$="[[page.id]]" on-tap="_deletePage">[[t('pages.deletePage')]]</paper-button>
             </div>
           </template>
         </iron-list>
@@ -251,6 +264,19 @@
         return __.sortBy(array, function(o) { return o.item; });
       },
 
+      _getPageTitle: function (page) {
+        if (page.title.en) {
+          return page.title.en;
+        } else {
+          var key = Object.keys(page.title)[0];
+          if (key) {
+            return page.title[key];
+          } else {
+            return "";
+          }
+        }
+      },
+
       _editPageLocale: function (event) {
         this.set('currentlyEditingPage', JSON.parse(event.target.getAttribute('data-args-page')));
         this.set('currentlyEditingLocale', event.target.getAttribute('data-args-locale'));
@@ -341,6 +367,15 @@
           this._dispatchAjax(this.$.updatePageAjax, pageId, "update_page_locale")
           this.set('newLocaleValue', null);
         }
+      },
+
+      _pageWeightChanged: function (event) {
+        var pageId = event.target.getAttribute('data-args');
+        var weight = event.target.value;
+        this.$.updatePageAjax.body = {
+          weight: weight
+        };
+        this._dispatchAjax(this.$.updatePageAjax, pageId, "update_page_weight")
       },
 
       _addPage: function (event) {

@@ -93,6 +93,11 @@
         --disabled-text-color: #bdbdbd;
         --divider-color: #FF5722;
 
+        --app-header-font-family: Roboto;
+        --paper-button: {
+            font-family: var(--app-header-font-family, Roboto);
+        };
+
         --paper-tabs: {
           font-size: 18px;
           text-transform: uppercase;
@@ -386,7 +391,7 @@
           <yp-community-folder id="communityFolderPage" name="community_folder" id-route$="[[communityFolderSubRoute]]" on-change-header="onChangeHeader"></yp-community-folder>
           <yp-group id="groupPage" name="group" id-route$="[[groupSubRoute]]" on-change-header="onChangeHeader"></yp-group>
           <yp-group-data-viz id="dataVizGroupPage" name="group_data_viz" id-route$="[[groupSubRoute]]" on-change-header="onChangeHeader"></yp-group-data-viz>
-          <yp-post id="postPage" name="post" id-route$="[[postSubRoute]]" on-change-header="onChangeHeader"></yp-post>
+          <yp-post id="postPage" name="post" current-page="[[page]]" id-route$="[[postSubRoute]]" on-change-header="onChangeHeader"></yp-post>
           <yp-user id="userPage" name="user" id-route$="[[userSubRoute]]" on-change-header="onChangeHeader"></yp-user>
           <yp-survey-group id="surveyPage" name="survey" id-route$="[[surveySubRoute]]" on-change-header="onChangeHeader"></yp-survey-group>
           <yp-view-404 name="view-404"></yp-view-404>

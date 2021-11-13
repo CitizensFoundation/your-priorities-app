@@ -308,7 +308,7 @@ router.delete('/:userId/:actionType/process_many_moderation_item', auth.can('edi
     items: req.body.items,
     actionType: req.params.actionType,
     userId: req.params.userId
-  }).priority('high').removeOnComplete(true).save();
+  }).priority('critical').removeOnComplete(true).save();
   res.send({});
 });
 
@@ -986,8 +986,12 @@ const setSAMLSettingsOnUser = (req, user, done) => {
             }
           ]
         }).then((postIn) => {
-          group = postIn.Group;
-          community = postIn.Group.Community;
+          if (postIn) {
+            group = postIn.Group;
+            community = postIn.Group.Community;
+          } else {
+            log.error("Can't find post for SAML setup")
+          }
           parallelCallback();
         }).catch((error)=> {
           parallelCallback(error);
@@ -1127,7 +1131,7 @@ router.delete('/delete_current_user', function (req, res) {
         user.email = user.email+"_deleted_"+Math.floor(Math.random() * 9000);
         user.save().then(function () {
           log.info('User deleted', { context: 'delete', user: toJson(req.user) });
-          queue.create('process-deletion', { type: 'delete-user-content', userId: userId }).priority('high').removeOnComplete(true).save();
+          queue.create('process-deletion', { type: 'delete-user-content', userId: userId }).priority('critical').removeOnComplete(true).save();
           req.logOut();
           res.sendStatus(200);
         }).catch((error) => {
@@ -1250,7 +1254,7 @@ router.post('/forgot_password', function(req, res) {
     },
     function(token, done) {
       models.User.findOne({
-        where: { email: req.body.email },
+        where: { email: req.body.email.toLowerCase() },
         attributes: ['id','email','reset_password_token','reset_password_expires','legacy_passwords_disabled']
       }).then(function (user) {
         if (user) {

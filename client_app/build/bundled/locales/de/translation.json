@@ -1,4 +1,7 @@
 {
+  "alternativeTextForNewIdeaSaveButton": "Alternative zum Ideenspeicher-Button",
+  "choose": "Wähle",
+  "registrationQuestionsInfo": "Fragen zur Registrierung",
   "ssn": "Sozialversicherungsnummer",
   "hideRecommendationOnNewsFeed": "Empfehlungen vom Nachrichtenfeed verbergen",
   "customSamlLoginMessage": "Custom SAML login message",
@@ -150,7 +153,7 @@
   "audioPointUploadLimitSec": "Point audio limit in seconds (max 600s)",
   "postCoverVideo": "Video",
   "uploadVideo": "Video",
-  "uploadCompleted": "Upload abschlossen",
+  "uploadCompleted": "Upload abgeschlossen",
   "uploadingVideo":"Uploading video...",
   "uploadingImage":"Uploading image...",
   "transcodingVideo":"Preparing video...",
@@ -581,7 +584,7 @@
     },
     "cover": {
       "media": "Coverbild auswählen",
-      "imageInfo": "Wenn Sie ein Bild hinzufügen, teilen die Leute Ihre Idee wahrscheinlicher. Und teilen Sie es in den sozialen Medien!",
+      "imageInfo": "Wenn Sie ein Bild hinzufügen, werden die Leute Ihre Idee eher teilen. Aber stellen sie sicher, dass keine Personen ohne ihr Einverständnis abgebildet und erkennbar sind.",
       "map": "Karte",
       "streetview": "Street View",
       "image": "Bild",

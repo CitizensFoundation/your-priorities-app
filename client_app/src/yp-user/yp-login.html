@@ -69,6 +69,13 @@
         background: url(/images/auth-icons.png) no-repeat 99px 99px;
       }
 
+      paper-tab {
+        --paper-tabs: {
+            font-family: var(--app-header-font-family, Roboto);
+        };
+        font-family: var(--app-header-font-family, Roboto);
+      }
+
       /**
        * 36px
        */
@@ -125,6 +132,13 @@
         box-shadow: inset 0 1px 0 #45619d;
       }
 
+      paper-textarea-aria, paper-input {
+          --paper-input-container-label: {
+              font-family: var(--app-header-font-family, Roboto);
+          };
+          font-family: var(--app-header-font-family, Roboto);
+      }
+
       /*
        * Icon
        */
@@ -174,7 +188,7 @@
         margin-top: 20px;
         text-align: center;
         vertical-align: bottom;
-        margin-bottom: 3px;
+        margin-bottom: 16px;
       }
 
       .buttons[has-registration-questions] {
@@ -439,6 +453,8 @@
                   <template is="dom-if" if="[[registrationQuestionsGroup]]" restamp>
                     <yp-registration-questions
                             id="registrationQuestions"
+                            on-questions-changed="_registrationQuestionsChanged"
+                            on-resize-scroller="_registrationQuestionsChanged"
                             group="[[registrationQuestionsGroup]]"></yp-registration-questions>
                   </template>
                 </template>
@@ -485,6 +501,8 @@
           <template is="dom-if" if="[[registrationQuestionsGroup]]" restamp>
             <yp-registration-questions
                     id="registrationQuestionsOneTimeLogin"
+                    on-questions-changed="_registrationQuestionsChanged"
+                    on-resize-scroller="_registrationQuestionsChanged"
                     group="[[registrationQuestionsGroup]]"></yp-registration-questions>
           </template>
 
@@ -697,6 +715,14 @@
       }
     },
 
+    _registrationQuestionsChanged: function () {
+      this.$.dialog.fire('iron-resize');
+      var oneTimeDialog = this.$$("#dialogOneTimeWithName");
+      if (oneTimeDialog) {
+        oneTimeDialog.fire('iron-resize');
+      }
+    },
+
     _setupCustomRegistrationQuestions: function () {
       if (window.appGlobals.registrationQuestionsGroup) {
         this.set('registrationQuestionsGroup', window.appGlobals.registrationQuestionsGroup);
@@ -894,9 +920,8 @@
     _openedChanged: function (newValue) {
       if (newValue) {
         if (window.appGlobals.currentAnonymousGroup &&
-          window.appGlobals.currentGroup &&
-          window.appGlobals.currentGroup.configuration &&
-          window.appGlobals.currentGroup.configuration.allowAnonymousUsers
+          window.appGlobals.currentAnonymousGroup.configuration &&
+          window.appGlobals.currentAnonymousGroup.configuration.allowAnonymousUsers
         ) {
           this.set('hasAnonymousLogin', true);
         } else {
@@ -904,9 +929,8 @@
         }
 
         if (window.appGlobals.currentAnonymousGroup &&
-            window.appGlobals.currentGroup &&
-            window.appGlobals.currentGroup.configuration &&
-            window.appGlobals.currentGroup.configuration.allowOneTimeLoginWithName) {
+            window.appGlobals.currentAnonymousGroup.configuration &&
+            window.appGlobals.currentAnonymousGroup.configuration.allowOneTimeLoginWithName) {
           this.set('hasOneTimeLoginWithName', true);
         } else {
           this.set('hasOneTimeLoginWithName', false);

@@ -718,6 +718,8 @@ var updateCommunityConfigParameters = function (req, community) {
   community.set('configuration.forceSecureSamlLogin', truthValueFromBody(req.body.forceSecureSamlLogin));
   community.set('configuration.hideRecommendationOnNewsFeed', truthValueFromBody(req.body.hideRecommendationOnNewsFeed));
 
+  community.set('configuration.recalculateCountersRecursively', truthValueFromBody(req.body.recalculateCountersRecursively));
+
   if (req.body.google_analytics_code && req.body.google_analytics_code!="") {
     community.google_analytics_code = req.body.google_analytics_code;
   } else {
@@ -746,6 +748,8 @@ var updateCommunityConfigParameters = function (req, community) {
 
   community.set('configuration.useVideoCover', truthValueFromBody(req.body.useVideoCover));
   community.set('configuration.hideAllTabs', truthValueFromBody(req.body.hideAllTabs));
+
+  community.set('configuration.alwaysShowOnDomainPage', truthValueFromBody(req.body.alwaysShowOnDomainPage));
 
   community.set('configuration.themeOverrideColorPrimary', (req.body.themeOverrideColorPrimary && req.body.themeOverrideColorPrimary!="") ? req.body.themeOverrideColorPrimary : null);
   community.set('configuration.themeOverrideColorAccent', (req.body.themeOverrideColorAccent && req.body.themeOverrideColorAccent!="") ? req.body.themeOverrideColorAccent : null);
@@ -1064,6 +1068,18 @@ router.post('/:communityId/add_page', auth.can('edit community'), function(req, 
 
 router.put('/:communityId/:pageId/update_page_locale', auth.can('edit community'), function(req, res) {
   models.Page.updatePageLocale(req, { community_id: req.params.communityId, id: req.params.pageId }, function (error) {
+    if (error) {
+      log.error('Could not update locale for admin for community', { err: error, context: 'update_page_locale', user: req.user ? toJson(req.user.simple()) : null });
+      res.sendStatus(500);
+    } else {
+      log.info('Community Page Locale Updated', {context: 'update_page_locale', user: req.user ? toJson(req.user.simple()) : null });
+      res.sendStatus(200);
+    }
+  });
+});
+
+router.put('/:communityId/:pageId/update_page_weight', auth.can('edit community'), function(req, res) {
+  models.Page.updatePageWeight(req, { community_id: req.params.communityId, id: req.params.pageId }, function (error) {
     if (error) {
       log.error('Could not update locale for admin for community', { err: error, context: 'update_page_locale', user: req.user ? toJson(req.user.simple()) : null });
       res.sendStatus(500);
@@ -1485,7 +1501,7 @@ router.delete('/:id/delete_content', auth.can('edit community'), function(req, r
       log.info('Community Delete Content', { community: toJson(community), user: toJson(req.user) });
       queue.create('process-deletion', { type: 'delete-community-content', communityName: community.name,
                                          communityId: community.id, userId: req.user.id, useNotification: true,
-                                         resetCounters: true }).priority('high').removeOnComplete(true).save();
+                                         resetCounters: true }).priority('critical').removeOnComplete(true).save();
       res.sendStatus(200);
     } else {
       sendCommunityOrError(res, req.params.id, 'delete', req.user, 'Not found', 404);
@@ -1592,7 +1608,7 @@ router.delete('/:communityId/:actionType/process_many_moderation_item', auth.can
     items: req.body.items,
     actionType: req.params.actionType,
     communityId: req.params.communityId
-  }).priority('high').removeOnComplete(true).save();
+  }).priority('critical').removeOnComplete(true).save();
   res.send({});
 });
 
@@ -1903,6 +1919,46 @@ router.get('/:id/recursiveMap', auth.can('edit community'), async (req, res) => 
     log.error("Error in getting recursiveMap", { error });
     res.sendStatus(500);
   }
+});
+
+router.put('/:communityId/:type/start_report_creation', auth.can('edit community'), function(req, res) {
+  models.AcBackgroundJob.createJob({}, (error, jobId) => {
+    if (error) {
+      log.error('Could not create backgroundJob', { err: error, context: 'start_report_creation', user: toJson(req.user.simple()) });
+      res.sendStatus(500);
+    } else {
+      let reportType;
+      if (req.params.type==='usersxls') {
+        reportType = 'start-xls-users-community-report-generation';
+      }
+
+      queue.create('process-reports', {
+        type: reportType,
+        userId: req.user.id,
+        exportType: req.params.type,
+        fileEnding: req.params.fileEnding ? req.params.fileEnding : 'xlsx',
+        translateLanguage: req.query.translateLanguage,
+        jobId: jobId,
+        communityId: req.params.communityId
+      }).priority('critical').removeOnComplete(true).save();
+
+      res.send({ jobId });
+    }
+  });
+});
+
+router.get('/:communityId/:jobId/report_creation_progress', auth.can('edit community'), function(req, res) {
+  models.AcBackgroundJob.findOne({
+    where: {
+      id: req.params.jobId
+    },
+    attributes: ['id','progress','error','data']
+  }).then( job => {
+    res.send(job);
+  }).catch( error => {
+    log.error('Could not get backgroundJob', { err: error, context: 'start_report_creation', user: toJson(req.user.simple()) });
+    res.sendStatus(500);
+  });
 });
 
 module.exports = router;

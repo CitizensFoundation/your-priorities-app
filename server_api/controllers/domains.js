@@ -151,9 +151,16 @@ var getDomain = function (req, domainId, done) {
                 $ne: models.Community.ACCESS_SECRET
               },
               configuration: {
-                customBackURL: {
-                  [models.Sequelize.Op.is]: null
-                }
+                [models.Sequelize.Op.or]: [
+                  {
+                    customBackURL: {
+                      [models.Sequelize.Op.is]: null
+                    }
+                  },
+                  {
+                    alwaysShowOnDomainPage: true
+                  }
+                ]
               },
               $or: [
                 {
@@ -244,9 +251,16 @@ var getDomain = function (req, domainId, done) {
                 domain_id: domain.id,
                 in_community_folder_id: null,
                 configuration: {
-                  customBackURL: {
-                    [models.Sequelize.Op.is]: null
-                  }
+                  [models.Sequelize.Op.or]: [
+                    {
+                      customBackURL: {
+                        [models.Sequelize.Op.is]: null
+                      }
+                    },
+                    {
+                      alwaysShowOnDomainPage: true
+                    }
+                  ]
                 },
               },
               limit: 500,
@@ -299,9 +313,16 @@ var getDomain = function (req, domainId, done) {
                 domain_id: domain.id,
                 in_community_folder_id: null,
                 configuration: {
-                  customBackURL: {
-                    [models.Sequelize.Op.is]: null
-                  }
+                  [models.Sequelize.Op.or]: [
+                    {
+                      customBackURL: {
+                        [models.Sequelize.Op.is]: null
+                      }
+                    },
+                    {
+                      alwaysShowOnDomainPage: true
+                    }
+                  ]
                 },
               },
               limit: 500,
@@ -572,6 +593,18 @@ router.put('/:domainId/:pageId/update_page_locale', auth.can('edit domain'), fun
       res.sendStatus(500);
     } else {
       log.info('Community Page Locale Updated', {context: 'update_page_locale', user: toJson(req.user.simple()) });
+      res.sendStatus(200);
+    }
+  });
+});
+
+router.put('/:domainId/:pageId/update_page_weight', auth.can('edit domain'), function(req, res) {
+  models.Page.updatePageWeight(req, { domain_id: req.params.domainId, id: req.params.pageId }, function (error) {
+    if (error) {
+      log.error('Could not update weight for admin for domain', { err: error, context: 'update_page_weight', user: toJson(req.user.simple()) });
+      res.sendStatus(500);
+    } else {
+      log.info('Community Page Weight Updated', {context: 'update_page_weight', user: toJson(req.user.simple()) });
       res.sendStatus(200);
     }
   });
@@ -848,7 +881,7 @@ router.delete('/:domainId/:actionType/process_many_moderation_item', auth.can('e
       items: req.body.items,
       actionType: req.params.actionType,
       domainId: req.params.domainId
-    }).priority('high').removeOnComplete(true).save();
+    }).priority('critical').removeOnComplete(true).save();
   res.send({});
 });
 

@@ -37,11 +37,15 @@
         padding-bottom: 14px;
         cursor: pointer;
         vertical-align: middle !important;
-        font-size: 1.25rem;
+        font-size: 20px;
         background-color: #fff;
         color: #000;
         font-weight: 500;
         letter-spacing: .0125em;
+      }
+
+      .post-name[largefont] {
+        font-size: 19px;
       }
 
       .postNameContainer {
@@ -125,6 +129,14 @@
         padding-top: 0;
         cursor: pointer;
         color: #555;
+      }
+
+      .description[widetext] {
+        font-size: 16px;
+      }
+
+      .description[largefont] {
+        font-size: 15px;
       }
 
       .postActions  {
@@ -282,7 +294,7 @@
         <a href="[[_getPostLink(post)]]" id="theMainA" on-tap="_savePostToBackCache">
           <yp-post-cover-media mini$="[[mini]]" top-radius audio-cover$="[[isAudioCover]]" alt-tag="[[post.name]]" post="[[post]]" hidden$="[[post.Group.configuration.hidePostCover]]"></yp-post-cover-media>
           <div class="postNameContainer">
-            <div class="post-name" mini$="[[mini]]" id="postName">
+            <div class="post-name" mini$="[[mini]]" largefont$="[[largeFont]]" id="postName">
               <yp-magic-text id="postNameMagicText" text-type="postName" content-language="[[post.language]]"
                              on-tap="goToPostIfNotHeader"
                              text-only content="[[postName]]" content-id="[[post.id]]">
@@ -291,7 +303,7 @@
           </div>
           <template is="dom-if" if="[[!post.Group.configuration.usePostTagsForPostCards]]">
             <template is="dom-if" if="[[!post.public_data.structuredAnswersJson]]">
-              <yp-magic-text class="description layout horizontal" has-custom-ratings$="[[post.Group.configuration.customRatings]]" hidden$="[[hideDescription]]"
+              <yp-magic-text largefont$="[[largeFont]]" class="description layout horizontal" has-custom-ratings$="[[post.Group.configuration.customRatings]]" hidden$="[[hideDescription]]"
                              text-type="postContent" content-language="[[post.language]]"
                              on-tap="goToPostIfNotHeader" remove-urls
                              text-only content="[[post.description]]" content-id="[[post.id]]" truncate="120">
@@ -299,7 +311,6 @@
             </template>
             <template is="dom-if" if="[[post.public_data.structuredAnswersJson]]">
               <yp-magic-text id="description" text-type="postContent" content-language="[[post.language]]" hidden$="[[hideDescription]]"
-                             content="[[structuredAnswersFormatted]]" remove-urls
                              disable-translation
                              skip-sanitize
                              content-id="[[post.id]]" class="description" truncate="120">
@@ -385,6 +396,11 @@
         isAudioCover: {
           type: Boolean,
           value: false
+        },
+
+        largeFont: {
+          type: Boolean,
+          value: false
         }
       },
 
@@ -447,6 +463,11 @@
       },
 
       _postChanged: function (post) {
+        if (window.appGlobals.largeFont) {
+          this.set('largeFont', true);
+        } else {
+          this.set('largeFont', false);
+        }
         if (post) {
           if (post.cover_media_type==='audio') {
             this.set('isAudioCover', true);
@@ -457,6 +478,7 @@
           this._getSurveyTranslationsIfNeeded();
 
           this.async(function () {
+            var postName = this.$$("#postName");
             var postName = this.$$("#postName");
             if (postName && false) {
               if (this.mini) {
