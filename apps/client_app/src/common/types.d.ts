@@ -100,6 +100,12 @@ interface YpStructuredQuestionData {
   dropdownOptions?: Array<YpDropdownData>;
 }
 
+interface YpErrorData {
+  error: string;
+  errorStack: string;
+  offlineSendLater?: boolean;
+}
+
 interface YpStructuredQuestionJson extends YpStructuredQuestionData {
   uniqueId: string;
   type: string;
@@ -198,6 +204,7 @@ interface YpGroupConfiguration extends YpCollectionConfiguration {
   customTitleQuestionText?: string;
   hideSharing?: boolean;
   maxNumberOfGroupVotes?: number;
+  allowAdminsToDebate?: boolean;
 }
 
 interface YpCommunityConfiguration extends YpCollectionConfiguration {
@@ -492,6 +499,7 @@ interface YpPointData {
     };
   };
   embed_data?: YpEmbedData;
+  isLastPointInList?: boolean;
 }
 
 interface YpUserProfileData {

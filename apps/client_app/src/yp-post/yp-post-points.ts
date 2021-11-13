@@ -169,39 +169,32 @@ export class YpPostPoints extends YpBaseElementWithLogin {
   noMorePoints = false;
 
   get textValueUp() {
-    if (this.$$("#up_point"))
-      return ((this.$$("#up_point")) as TextArea).value
-    else
-      return ''
+    if (this.$$('#up_point')) return (this.$$('#up_point') as TextArea).value;
+    else return '';
   }
 
   _clearTextValueUp() {
-    if (this.$$("#up_point"))
-      ((this.$$("#up_point")) as TextArea).value = ''
+    if (this.$$('#up_point')) (this.$$('#up_point') as TextArea).value = '';
   }
 
   get textValueDown() {
-    if (this.$$("#down_point"))
-      return ((this.$$("#down_point")) as TextArea).value
-    else
-      return ''
+    if (this.$$('#down_point'))
+      return (this.$$('#down_point') as TextArea).value;
+    else return '';
   }
 
   _clearTextValueDown() {
-    if (this.$$("#down_point"))
-      ((this.$$("#down_point")) as TextArea).value = ''
+    if (this.$$('#down_point')) (this.$$('#down_point') as TextArea).value = '';
   }
 
   get textValueMobileUpOrDown() {
-    if (this.$$("#mobile_point"))
-      return ((this.$$("#mobile_point")) as TextArea).value
-    else
-      return ''
+    if (this.$$('#mobile_point'))
+      return (this.$$('#mobile_point') as TextArea).value;
+    else return '';
   }
 
   _clearTextValueMobileUpOrDown() {
-    if (this.$$("#up_point"))
-      ((this.$$("#up_point")) as TextArea).value = ''
+    if (this.$$('#up_point')) (this.$$('#up_point') as TextArea).value = '';
   }
 
   updated(changedProperties: Map<string | number | symbol, unknown>) {
@@ -320,6 +313,10 @@ export class YpPostPoints extends YpBaseElementWithLogin {
           margin-bottom: 18px;
         }
 
+        mwc-textarea {
+          font-family: var(--app-header-font-family, Roboto);
+        }
+
         .howToWriteInfoText {
           padding-top: 4px;
           color: var(--primary-color);
@@ -349,6 +346,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
         mwc-button {
           color: #fff;
           background-color: var(--accent-color);
+          font-family: var(--app-header-font-family, Roboto);
         }
 
         lit-virtualizer {
@@ -371,6 +369,10 @@ export class YpPostPoints extends YpBaseElementWithLogin {
             max-width: 600px;
             padding-left: 0;
             padding-right: 0;
+          }
+
+          .pointMaterial[is-last-point] {
+            margin-bottom: 107px;
           }
 
           #pointUpOrDownMaterial {
@@ -479,7 +481,8 @@ export class YpPostPoints extends YpBaseElementWithLogin {
           <div ?hidden="${hideAudio}" class="uploadSection">
             <div
               class="layout vertical center-center"
-              ?hidden="${!this.isLoggedIn}">
+              ?hidden="${!this.isLoggedIn}"
+            >
               <yp-file-upload
                 id="audioFileUpload${type}"
                 current-file="${ifDefined(hasCurrentAudio)}"
@@ -492,7 +495,8 @@ export class YpPostPoints extends YpBaseElementWithLogin {
                 buttonIcon="keyboard_voice"
                 .buttonText="${uploadAudioPointHeader}"
                 method="POST"
-                @success="${this._audioUpUploaded}">
+                @success="${this._audioUpUploaded}"
+              >
               </yp-file-upload>
             </div>
             <div class="layout horizontal center-center">
@@ -502,7 +506,8 @@ export class YpPostPoints extends YpBaseElementWithLogin {
                 raised
                 ?hidden="${this.isLoggedIn}"
                 @click="${this._openLogin}"
-                .label="${uploadAudioPointHeader}">
+                .label="${uploadAudioPointHeader}"
+              >
               </mwc-button>
             </div>
           </div>
@@ -523,13 +528,14 @@ export class YpPostPoints extends YpBaseElementWithLogin {
           <div ?hidden="${hideVideo}" class="uploadSection">
             <div
               class="layout vertical center-center self-start"
-              ?hidden="${!this.isLoggedIn}">
+              ?hidden="${!this.isLoggedIn}"
+            >
               <yp-file-upload
                 id="videoFileUpload${type}"
                 noDefaultCoverImage
                 .uploadLimitSeconds="${this.post.Group.configuration
                   .videoPointUploadLimitSec}"
-                .currentFile="${(hasCurrentVideo as unknown) as YpUploadFileData}"
+                .currentFile="${hasCurrentVideo as unknown as YpUploadFileData}"
                 containerType="points"
                 .group="${this.post.Group}"
                 raised
@@ -537,13 +543,15 @@ export class YpPostPoints extends YpBaseElementWithLogin {
                 method="POST"
                 buttonIcon="videocam"
                 .buttonText="${uploadVideoHeader}"
-                @success="${videoUploadedFunc}">
+                @success="${videoUploadedFunc}"
+              >
               </yp-file-upload>
             </div>
             <div
               class="videoUploadDisclamer"
               ?hidden="${!this.post.Group.configuration
-                .showVideoUploadDisclaimer || !uploadedVideoId}">
+                .showVideoUploadDisclaimer || !uploadedVideoId}"
+            >
               ${this.t('videoUploadDisclaimer')}
             </div>
             <div class="layout horizontal center-center">
@@ -553,7 +561,8 @@ export class YpPostPoints extends YpBaseElementWithLogin {
                 raised
                 ?hidden="${this.isLoggedIn}"
                 @click="${this._openLogin}"
-                .label="${uploadVideoHeader}">
+                .label="${uploadVideoHeader}"
+              >
               </mwc-button>
             </div>
           </div>
@@ -565,13 +574,15 @@ export class YpPostPoints extends YpBaseElementWithLogin {
     html` <div class="layout vertical end-justified">
       <div
         class="layout horizontal center-center pointButtons"
-        ?hidden="${this.post.Group.configuration.hidePointAgainst}">
+        ?hidden="${this.post.Group.configuration.hidePointAgainst}"
+      >
         <mwc-formfield .label="${this.t('pointForShort')}">
           <mwc-radio
             @click="${this._chooseUpOrDownRadio}"
             ?selected="${this.pointUpOrDownSelected == 'pointFor'}"
             id="upRadio"
-            name="upOrDown"></mwc-radio>
+            name="upOrDown"
+          ></mwc-radio>
         </mwc-formfield>
 
         <mwc-formfield .label="${this.t('pointAgainstShort')}">
@@ -579,7 +590,8 @@ export class YpPostPoints extends YpBaseElementWithLogin {
             @click="${this._chooseUpOrDownRadio}"
             ?selected="${this.pointUpOrDownSelected == 'pointAgainst'}"
             id="downRadio"
-            name="upOrDown"></mwc-radio>
+            name="upOrDown"
+          ></mwc-radio>
         </mwc-formfield>
       </div>
     </div>`;
@@ -590,9 +602,14 @@ export class YpPostPoints extends YpBaseElementWithLogin {
       class="item layout-horizontal"
       tabindex="${index}"
       role="listitem"
-      aria-level="3">
-      <div id="point${point.id}" class="pointMaterial">
-        <yp-point .point="${point}"></yp-point>
+      aria-level="3"
+    >
+      <div
+        id="point${point.id}"
+        class="pointMaterial"
+        ?is-last-point="${point.isLastPointInList}"
+      >
+        <yp-point .point="${point}" .post="${this.post}"></yp-point>
       </div>
     </div>`;
   }
@@ -607,8 +624,9 @@ export class YpPostPoints extends YpBaseElementWithLogin {
           <div
             class="pointMainHeader layout horizontal center-center"
             role="heading"
-            aria-level="2">
-             ${header}
+            aria-level="2"
+          >
+            ${header}
           </div>
         `
       : html`
@@ -621,7 +639,8 @@ export class YpPostPoints extends YpBaseElementWithLogin {
               role="heading"
               aria-level="2"
               class="ratingName"
-              textType="${headerTextType}">
+              textType="${headerTextType}"
+            >
             </yp-magic-text>
           </div>
         `;
@@ -657,7 +676,8 @@ export class YpPostPoints extends YpBaseElementWithLogin {
           class="pointInputMaterial
                     layout vertical
                   shadow-elevation-2dp shadow-transition"
-          ?hidden="${this.post.Group.configuration.disableDebate}">
+          ?hidden="${this.post.Group.configuration.disableDebate}"
+        >
           <mwc-textarea
             id="${type.toLowerCase()}_point"
             @focus="${pointFocusFunction}"
@@ -667,18 +687,22 @@ export class YpPostPoints extends YpBaseElementWithLogin {
             rows="2"
             ?hidden="${hideText}"
             maxrows="3"
-            .maxlength="${this.pointMaxLength}">
+            .maxlength="${this.pointMaxLength}"
+          >
           </mwc-textarea>
 
           ${mobile ? this.renderMobilePointSelection() : nothing}
 
           <div
-            class="layout horizontal end" ?rtl="${this.rtl}"
-            ?hidden="${this.post.Group.configuration.hideEmoji}">
+            class="layout horizontal end"
+            ?rtl="${this.rtl}"
+            ?hidden="${this.post.Group.configuration.hideEmoji}"
+          >
             <div class="flex"></div>
             <yp-emoji-selector
               id="point${type}EmojiSelector"
-              ?hidden="${hideText}"></yp-emoji-selector>
+              ?hidden="${hideText}"
+            ></yp-emoji-selector>
           </div>
 
           <div class="layout horizontal center-justified">
@@ -706,7 +730,8 @@ export class YpPostPoints extends YpBaseElementWithLogin {
                 ?disabled="${this.addPointDisabled}"
                 icon="add"
                 @click="${addPointFunc}"
-                .label="${this.t('postPoint')}"></mwc-button>
+                .label="${this.t('postPoint')}"
+              ></mwc-button>
             </div>
           </div>
         </div>
@@ -719,7 +744,8 @@ export class YpPostPoints extends YpBaseElementWithLogin {
                 .layout="${FlowLayout}"
                 .scrollTarget="${window}"
                 .renderItem=${this.renderPointItem}
-                @rangeChanged=${this.scrollEvent}></lit-virtualizer>
+                @rangeChanged=${this.scrollEvent}
+              ></lit-virtualizer>
             `
           : nothing}
       </div>
@@ -743,7 +769,8 @@ export class YpPostPoints extends YpBaseElementWithLogin {
             @new-translation="${this._updatePointLabels}"
             role="heading"
             aria-level="2"
-            textType="alternativePointForLabel">
+            textType="alternativePointForLabel"
+          >
           </yp-magic-text>
         `
       : nothing}
@@ -760,7 +787,8 @@ export class YpPostPoints extends YpBaseElementWithLogin {
             @new-translation="${this._updatePointLabels}"
             role="heading"
             aria-level="2"
-            textType="alternativePointAgainstLabel">
+            textType="alternativePointAgainstLabel"
+          >
           </yp-magic-text>
         `
       : nothing}`;
@@ -769,12 +797,18 @@ export class YpPostPoints extends YpBaseElementWithLogin {
   render() {
     return html`
       <div class="processBar layout horizontal center-center">
-        <mwc-linear-progress indeterminate ?hidden="${!this.fetchActive}"></mwc-linear-progress>
+        <mwc-linear-progress
+          indeterminate
+          ?hidden="${!this.fetchActive}"
+        ></mwc-linear-progress>
       </div>
 
       ${this.wideReady
         ? html`
-            <div ?rtl="${this.rtl}" class="layout vertical topContainer center-center">
+            <div
+              ?rtl="${this.rtl}"
+              class="layout vertical topContainer center-center"
+            >
               <div class="main-container layout horizontal">
                 ${this.renderPointList(
                   'Up',
@@ -968,13 +1002,13 @@ export class YpPostPoints extends YpBaseElementWithLogin {
   _listResize() {
     //TODO: Check if this
     if (this.$$('#listUp')) {
-//     ((this.$$('#listUp') as LitVirtualizer).layout).reflowIfNeeded(false);
+      //     ((this.$$('#listUp') as LitVirtualizer).layout).reflowIfNeeded(false);
     }
     if (this.$$('#listDown')) {
-//      ((this.$$('#listDown') as LitVirtualizer).layout as Layout1d).reflowIfNeeded(false);
+      //      ((this.$$('#listDown') as LitVirtualizer).layout as Layout1d).reflowIfNeeded(false);
     }
     if (this.$$('#listMobile')) {
-//      ((this.$$('#listMobile') as LitVirtualizer).layout as Layout1d).reflowIfNeeded(false);
+      //      ((this.$$('#listMobile') as LitVirtualizer).layout as Layout1d).reflowIfNeeded(false);
     }
   }
 
@@ -1120,7 +1154,8 @@ export class YpPostPoints extends YpBaseElementWithLogin {
         this.post.Group.configuration &&
         this.post.Group.configuration.alternativePointForLabel
       ) {
-        this.labelMobileUpOrDown = this.post.Group.configuration.alternativePointForLabel;
+        this.labelMobileUpOrDown =
+          this.post.Group.configuration.alternativePointForLabel;
       } else {
         this.labelMobileUpOrDown = this.t('point.for');
       }
@@ -1132,7 +1167,8 @@ export class YpPostPoints extends YpBaseElementWithLogin {
         this.post.Group.configuration &&
         this.post.Group.configuration.alternativePointAgainstLabel
       ) {
-        this.labelMobileUpOrDown = this.post.Group.configuration.alternativePointAgainstLabel;
+        this.labelMobileUpOrDown =
+          this.post.Group.configuration.alternativePointAgainstLabel;
       } else {
         this.labelMobileUpOrDown = this.t('point.against');
       }
@@ -1179,7 +1215,11 @@ export class YpPostPoints extends YpBaseElementWithLogin {
       this.post.Group.configuration &&
       this.post.Group.configuration.disableDebate
     ) {
-      this.disableDebate = true;
+      if (this.isAdmin && this.post.Group.configuration.allowAdminsToDebate) {
+        this.disableDebate = false;
+      } else {
+        this.disableDebate = true;
+      }
     } else {
       this.disableDebate = false;
     }
@@ -1257,7 +1297,8 @@ export class YpPostPoints extends YpBaseElementWithLogin {
         this.post.Group.configuration &&
         this.post.Group.configuration.alternativePointAgainstLabel
       ) {
-        this.labelDown = this.post.Group.configuration.alternativePointAgainstLabel;
+        this.labelDown =
+          this.post.Group.configuration.alternativePointAgainstLabel;
       } else {
         this.labelDown = this.t('point.against');
       }
@@ -1395,11 +1436,11 @@ export class YpPostPoints extends YpBaseElementWithLogin {
       }
 
       if (multipleLanguages) {
-         window.appDialogs.getDialogAsync(
-            'autoTranslateDialog',
-           (dialog: YpAutoTranslateDialog) => {
-              dialog.openLaterIfAutoTranslationEnabled();
-            }
+        window.appDialogs.getDialogAsync(
+          'autoTranslateDialog',
+          (dialog: YpAutoTranslateDialog) => {
+            dialog.openLaterIfAutoTranslationEnabled();
+          }
         );
       }
     }
@@ -1424,6 +1465,12 @@ export class YpPostPoints extends YpBaseElementWithLogin {
         }
       });
     }
+
+    if (result.length>0 &&
+      (result.length===this.totalCount ||
+        (this.points && (this.points.length+result.length)===this.totalCount))) {
+     result[result.length-1].isLastPointInList = true;
+   }
 
     return result;
   }
@@ -1499,9 +1546,10 @@ export class YpPostPoints extends YpBaseElementWithLogin {
         points![i].PointRevisions![points![i].PointRevisions!.length - 1]
           .content
       ) {
-        points[i].latestContent = points![i].PointRevisions![
-          points![i].PointRevisions!.length - 1
-        ].content;
+        points[i].latestContent =
+          points![i].PointRevisions![
+            points![i].PointRevisions!.length - 1
+          ].content;
       } else {
         console.warn('No content for point in _preProcessPoints');
       }
@@ -1510,7 +1558,6 @@ export class YpPostPoints extends YpBaseElementWithLogin {
   }
 
   _updateCounterInfo() {
-
     if (this.wide && this.upPoints) {
       this.fire('yp-debate-info', {
         count: this.totalCount,
@@ -1520,7 +1567,6 @@ export class YpPostPoints extends YpBaseElementWithLogin {
       this.fire('yp-debate-info', {
         count: this.totalCount,
         firstPoint: this.points[0],
-
       });
     }
   }
@@ -1538,7 +1584,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
         this.points?.unshift(point);
       }
       await this.requestUpdate();
-      setTimeout(()=>{
+      setTimeout(() => {
         this._listResize();
       }, 2500);
       this.storedPoints?.unshift(point);
@@ -1591,7 +1637,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
         this.t('point.againstAdded') +
         ' ' +
         YpFormattingHelpers.truncate(point.content, 21);
-      this._clearTextValueDown()
+      this._clearTextValueDown();
     }
     this._clearTextValueMobileUpOrDown();
     this._insertNewPoint(point);
@@ -1658,11 +1704,23 @@ export class YpPostPoints extends YpBaseElementWithLogin {
       if (videoId) this.currentVideoId = videoId;
       else if (audioId) this.currentAudioId = audioId;
       this.addPointDisabled = true;
-      let point = await window.serverApi.addPoint(this.post.group_id, {
-        postId: this.post.id,
-        content: content,
-        value: value,
-      });
+      let point;
+      try {
+        point = await window.serverApi.addPoint(this.post.group_id, {
+          postId: this.post.id,
+          content: content,
+          value: value,
+        });
+      } catch (error: unknown) {
+        if ((error as YpErrorData).offlineSendLater) {
+          this.addPointDisabled = false;
+          this._clearTextValueDown();
+          this._clearTextValueUp();
+          this._clearTextValueMobileUpOrDown();
+        } else {
+          console.error(error);
+        }
+      }
       point = this._preProcessPoints([point])[0];
       if (this.currentVideoId) {
         await window.serverApi.completeMediaPoint('videos', point.id, {
