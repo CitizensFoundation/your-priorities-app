@@ -7,7 +7,7 @@ import '../yp-app-globals/yp-sw-update-toast.js';
 */
 
 import { html, LitElement, nothing } from 'lit';
-import { customElement, property} from 'lit/decorators.js';
+import { customElement, property } from 'lit/decorators.js';
 
 import { cache } from 'lit/directives/cache.js';
 
@@ -372,14 +372,16 @@ export class YpApp extends YpBaseElement {
       icons = html`<mwc-icon-button
         title="${this.t('close')}"
         icon="close"
-        @click="${this._closePost}"></mwc-icon-button>`;
+        @click="${this._closePost}"
+      ></mwc-icon-button>`;
     else
       icons = html` <mwc-icon-button
         icon="arrow_upward"
         title="${this.t('goBack')}"
         slot="actionItems"
         ?hidden="${!this.backPath}"
-        @click="${this.goBack}">
+        @click="${this.goBack}"
+      >
       </mwc-icon-button>`;
 
     return html`${icons}
@@ -388,7 +390,8 @@ export class YpApp extends YpBaseElement {
           <mwc-icon-button
             icon="fast_forward"
             title="${this.t('forwardToPost')}"
-            @click="${this._goToNextPost}"></mwc-icon-button>
+            @click="${this._goToNextPost}"
+          ></mwc-icon-button>
         `
       : nothing}`;
   }
@@ -405,25 +408,34 @@ export class YpApp extends YpBaseElement {
         ?hidden="${!this.autoTranslate}"
         @click="${window.appGlobals.stopTranslation}"
         icon="translate"
-        .label="${this.t('stopAutoTranslate')}">
+        .label="${this.t('stopAutoTranslate')}"
+      >
       </mwc-icon-button>
 
       <div
         style="position: relative;"
         ?hidden="${this.hideHelpIcon}"
-        slot="actionItems">
+        slot="actionItems"
+      >
         <mwc-icon-button
           id="helpIconButton"
           icon="help_outline"
           @click="${this._openHelpMenu}"
-          title="${this.t('menu.help')}">
+          title="${this.t('menu.help')}"
+        >
         </mwc-icon-button>
-        <mwc-menu id="helpMenu" menuCorner="START" corner="TOP_END">
+        <mwc-menu
+          id="helpMenu"
+          .anchor="${this.$$('#helpIconButton')}"
+          menuCorner="START"
+          corner="TOP_END"
+        >
           ${this.translatedPages(this.pages).map(
             (page: YpHelpPageData, index) => html`
               <mwc-list-item
                 data-args="${index}"
-                @click="${this._openPageFromMenu}">
+                @click="${this._openPageFromMenu}"
+              >
                 ${this._getLocalizePageTitle(page)}
               </mwc-list-item>
             `
@@ -436,14 +448,16 @@ export class YpApp extends YpBaseElement {
             <div
               class="userImageNotificationContainer layout horizontal"
               @click="${this._toggleUserDrawer}"
-              slot="actionItems">
+              slot="actionItems"
+            >
               <yp-user-image id="userImage" small .user="${this.user}">
               </yp-user-image>
               <paper-badge
                 id="notificationBadge"
                 class="activeBadge"
                 .label="${this.numberOfUnViewedNotifications}"
-                ?hidden="${!this.numberOfUnViewedNotifications}">
+                ?hidden="${!this.numberOfUnViewedNotifications}"
+              >
               </paper-badge>
             </div>
           `
@@ -452,7 +466,8 @@ export class YpApp extends YpBaseElement {
               icon="login"
               slot="actionItems"
               @click="${this._login}"
-              title="${this.t('user.login')}">
+              title="${this.t('user.login')}"
+            >
             </mwc-icon-button>
           `}
     `;
@@ -466,9 +481,7 @@ export class YpApp extends YpBaseElement {
           ${this.goForwardToPostId ? this.goForwardPostName : this.headerTitle}
         </div>
         ${this.renderActionItems()}
-        <div>
-          ${this.renderPage()}
-        </div>
+        <div>${this.renderPage()}</div>
       </mwc-top-app-bar>
     `;
   }
@@ -479,9 +492,7 @@ export class YpApp extends YpBaseElement {
       switch (this.page) {
         case 'domain':
           pageHtml = cache(html`
-            <yp-domain
-              id="domainPage"
-              .subRoute="${this.subRoute}"></yp-domain>
+            <yp-domain id="domainPage" .subRoute="${this.subRoute}"></yp-domain>
           `);
           break;
         case 'community':
@@ -494,7 +505,8 @@ export class YpApp extends YpBaseElement {
           pageHtml = cache(html`
             <yp-community-folder
               id="communityFolderPage"
-              .subRoute="${this.subRoute}">
+              .subRoute="${this.subRoute}"
+            >
             </yp-community-folder>
           `);
           break;
@@ -527,14 +539,16 @@ export class YpApp extends YpBaseElement {
 
       <yp-sw-update-toast
         .buttonLabel="${this.t('reload')}"
-        .message="${this.t('newVersionAvailable')}">
+        .message="${this.t('newVersionAvailable')}"
+      >
       </yp-sw-update-toast>
 
       <mwc-dialog id="dialog">
         <div>${this.notifyDialogText}</div>
         <mwc-button
           slot="primaryAction"
-          @click="${this._resetNotifyDialogText}">
+          @click="${this._resetNotifyDialogText}"
+        >
           ${this.t('ok')}
         </mwc-button>
       </mwc-dialog>
@@ -542,7 +556,6 @@ export class YpApp extends YpBaseElement {
       <mwc-snackbar id="toast">
         <mwc-icon-button icon="close" slot="dismiss"></mwc-icon-button>
       </mwc-snackbar>
-
     `;
   }
 
@@ -595,21 +608,18 @@ export class YpApp extends YpBaseElement {
 
   _openPage(page: YpHelpPageData) {
     window.appGlobals.activity('open', 'pages', page.id);
-    window.appDialogs.getDialogAsync(
-      'pageDialog',
-      (dialog: YpPageDialog) => {
-        const pageLocale = this._getPageLocale(page);
-        dialog.open(page, pageLocale);
-      }
-    );
+    window.appDialogs.getDialogAsync('pageDialog', (dialog: YpPageDialog) => {
+      const pageLocale = this._getPageLocale(page);
+      dialog.open(page, pageLocale);
+    });
   }
 
   _getPageLocale(page: YpHelpPageData) {
     let pageLocale = 'en';
     if (page.title[window.locale]) {
       pageLocale = window.locale;
-    } else if (page.title["en"]) {
-      pageLocale = "en";
+    } else if (page.title['en']) {
+      pageLocale = 'en';
     } else {
       const key = Object.keys(page.title)[0];
       if (key) {
@@ -698,7 +708,6 @@ export class YpApp extends YpBaseElement {
   }
 
   _setupSamlCallback() {
-
     window.addEventListener(
       'message',
       e => {
@@ -862,83 +871,131 @@ export class YpApp extends YpBaseElement {
           if (oldRouteData && oldRouteData.page && this.routeData) {
             // Post -> Group
 
-
             // Group -> Community
-            if ((oldRouteData.page==="group" || oldRouteData.page==="post") && this.routeData.page==="community") {
-              if (this.$$("#communityPage")) {
-                (this.$$("#communityPage") as YpCommunity).scrollToGroupItem();
+            if (
+              (oldRouteData.page === 'group' || oldRouteData.page === 'post') &&
+              this.routeData.page === 'community'
+            ) {
+              if (this.$$('#communityPage')) {
+                (this.$$('#communityPage') as YpCommunity).scrollToGroupItem();
                 skipMasterScroll = true;
               } else {
-                console.warn("Can't find scroll communityPage for goToPostOrNewsItem, trying again");
+                console.warn(
+                  "Can't find scroll communityPage for goToPostOrNewsItem, trying again"
+                );
                 setTimeout(() => {
-                  if (this.$$("#communityPage")) {
-                    (this.$$("#communityPage") as YpCommunity).scrollToGroupItem();
+                  if (this.$$('#communityPage')) {
+                    (
+                      this.$$('#communityPage') as YpCommunity
+                    ).scrollToGroupItem();
                   } else {
-                    console.error("Can't find scroll communityPage for goToPostOrNewsItem");
+                    console.error(
+                      "Can't find scroll communityPage for goToPostOrNewsItem"
+                    );
                   }
                 }, 200);
               }
             }
 
             // Community/CommunityFolder -> Domain
-            else if ((oldRouteData.page==="community_folder" || oldRouteData.page==="community" || oldRouteData.page==="post")
-                  && this.routeData.page==="domain") {
-              if (this.$$("#domainPage")) {
-                (this.$$("#domainPage") as YpDomain).scrollToCommunityItem();
+            else if (
+              (oldRouteData.page === 'community_folder' ||
+                oldRouteData.page === 'community' ||
+                oldRouteData.page === 'post') &&
+              this.routeData.page === 'domain'
+            ) {
+              if (this.$$('#domainPage')) {
+                (this.$$('#domainPage') as YpDomain).scrollToCommunityItem();
                 skipMasterScroll = true;
               } else {
-                console.warn("Can't find scroll domainPage for scrollToCommunityItem, trying again");
-                setTimeout( () => {
-                  if (this.$$("#domainPage")) {
-                    (this.$$("#domainPage") as YpDomain).scrollToCommunityItem();
+                console.warn(
+                  "Can't find scroll domainPage for scrollToCommunityItem, trying again"
+                );
+                setTimeout(() => {
+                  if (this.$$('#domainPage')) {
+                    (
+                      this.$$('#domainPage') as YpDomain
+                    ).scrollToCommunityItem();
                   } else {
-                    console.error("Can't find scroll domainPage for scrollToCommunityItem");
+                    console.error(
+                      "Can't find scroll domainPage for scrollToCommunityItem"
+                    );
                   }
                 }, 200);
               }
             }
 
             // Community/CommunityFolder  -> Community
-            else if ((oldRouteData.page==="community" || oldRouteData.page==="community_folder") &&
-              this.routeData.page==="community_folder") {
-              if (this.$$("#communityFolderPage")) {
-                (this.$$("#communityFolderPage") as YpCommunity).scrollToGroupItem();
+            else if (
+              (oldRouteData.page === 'community' ||
+                oldRouteData.page === 'community_folder') &&
+              this.routeData.page === 'community_folder'
+            ) {
+              if (this.$$('#communityFolderPage')) {
+                (
+                  this.$$('#communityFolderPage') as YpCommunity
+                ).scrollToGroupItem();
                 skipMasterScroll = true;
               } else {
-                console.warn("Can't find scroll communityFolderPage for goToPostOrNewsItem, trying again");
+                console.warn(
+                  "Can't find scroll communityFolderPage for goToPostOrNewsItem, trying again"
+                );
                 setTimeout(() => {
-                  if (this.$$("#communityFolderPage")) {
-                    (this.$$("#communityFolderPage") as YpCommunity).scrollToGroupItem();
+                  if (this.$$('#communityFolderPage')) {
+                    (
+                      this.$$('#communityFolderPage') as YpCommunity
+                    ).scrollToGroupItem();
                   } else {
-                    console.error("Can't find scroll communityFolderPage for goToPostOrNewsItem");
+                    console.error(
+                      "Can't find scroll communityFolderPage for goToPostOrNewsItem"
+                    );
                   }
                 }, 200);
               }
             }
           }
 
-          if(this.routeData.page!=='post') {
+          if (this.routeData.page !== 'post') {
             this._clearNextPost();
           }
 
-          if (oldRouteData && this.subRoute && this.routeData && oldRouteData.page===this.routeData.page) {
+          if (
+            oldRouteData &&
+            this.subRoute &&
+            this.routeData &&
+            oldRouteData.page === this.routeData.page
+          ) {
             let testRoute = this.subRoute;
-            testRoute = testRoute.replace("/","");
+            testRoute = testRoute.replace('/', '');
             if (isNaN(parseInt(testRoute))) {
               skipMasterScroll = true;
             }
           }
 
-          if (map[this.routeData.page] != null && this.routeData.page!=='post' &&
-             !(oldRouteData && oldRouteData.page==="community" && this.routeData.page==="group")) {
+          if (
+            map[this.routeData.page] != null &&
+            this.routeData.page !== 'post' &&
+            !(
+              oldRouteData &&
+              oldRouteData.page === 'community' &&
+              this.routeData.page === 'group'
+            )
+          ) {
             if (!skipMasterScroll) {
               window.scrollTo(0, map[this.routeData.page]);
-              console.info("Main window scroll " + this.routeData.page + " to " + map[this.routeData.page]);
+              console.info(
+                'Main window scroll ' +
+                  this.routeData.page +
+                  ' to ' +
+                  map[this.routeData.page]
+              );
             } else {
-              console.info("Skipping master scroller for " + this.routeData.page);
+              console.info(
+                'Skipping master scroller for ' + this.routeData.page
+              );
             }
           } else if (!skipMasterScroll) {
-            console.info("AppLayout scroll to top");
+            console.info('AppLayout scroll to top');
             setTimeout(() => {
               window.scrollTo(0, 0);
             });
@@ -1085,12 +1142,12 @@ export class YpApp extends YpBaseElement {
   }
 
   closeDialog(idName: string) {
-    (this.$$("#dialogContainer") as YpAppDialogs).closeDialog(idName);
+    (this.$$('#dialogContainer') as YpAppDialogs).closeDialog(idName);
   }
 
   _dialogClosed(event: CustomEvent) {
     // TODO: Get working
-    (this.$$("#dialogContainer") as YpAppDialogs).dialogClosed(event.detail);
+    (this.$$('#dialogContainer') as YpAppDialogs).dialogClosed(event.detail);
   }
 
   scrollPageToTop() {
@@ -1170,9 +1227,9 @@ export class YpApp extends YpBaseElement {
       this.backPath &&
       window.location.pathname.indexOf('/community/') > -1
     ) {
-      const communityId = (window.location.pathname.split(
+      const communityId = window.location.pathname.split(
         '/community/'
-      )[1] as unknown) as number;
+      )[1] as unknown as number;
       if (communityId && this.communityBackOverride[communityId]) {
         this.backPath = this.communityBackOverride[communityId].backPath;
         this.headerTitle = this.communityBackOverride[communityId].backName;
