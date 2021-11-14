@@ -57,6 +57,9 @@ export abstract class YpCollection extends YpBaseElement {
   @property({ type: Boolean })
   hideCollection = false;
 
+  @property({ type: Boolean })
+  largeFont = false;
+
   @property({ type: String })
   createFabIcon: string | undefined;
 
@@ -294,6 +297,11 @@ export abstract class YpCollection extends YpBaseElement {
   collectionIdChanged() {
     this._getCollection();
     this._getHelpPages();
+
+    if (window.appGlobals.largeFont)
+      this.largeFont = true;
+    else
+      this.largeFont = false;
   }
 
   updated(changedProperties: Map<string | number | symbol, unknown>) {

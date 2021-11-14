@@ -27,6 +27,9 @@ export class YpCollectionItemCard extends YpBaseElement {
   @property({ type: Object })
   collection: YpCollectionData | undefined;
 
+  @property({ type: Boolean })
+  largeFont = false;
+
   static get styles() {
     return [
       super.styles,
@@ -37,10 +40,15 @@ export class YpCollectionItemCard extends YpBaseElement {
           font-size: 15px;
           padding: 8px;
           padding: 16px;
+          font-family: var(--app-header-font-family, Roboto);
         }
 
         .description[widetext] {
           font-size: 14px;
+        }
+
+        .description[largefont] {
+          font-size: 16px;
         }
 
         .stats {
@@ -103,6 +111,15 @@ export class YpCollectionItemCard extends YpBaseElement {
           padding-bottom: 0;
           vertical-align: middle;
           width: auto;
+          font-family: var(--app-header-font-family, Roboto);
+        }
+
+        .collection-name[widetext] {
+          font-size: 18px;
+        }
+
+        .collection-name[largefont] {
+            font-size: 20px;
         }
 
         yp-image[archived] {
@@ -111,7 +128,7 @@ export class YpCollectionItemCard extends YpBaseElement {
         yp-membership-button {
           position: absolute;
           top: 159px;
-          right: 18px;
+          right: 24px;
           width: 30px;
           height: 30px;
           color: var(--icon-general-color, #fff);
@@ -385,6 +402,8 @@ export class YpCollectionItemCard extends YpBaseElement {
                   class="collection-name"
                   ?archived="${this.archived}"
                   ?featured="${this.featured}"
+                  @click="${this.goToItem}"
+                  ?largefont="${this.largeFont}"
                   .textType="${YpCollectionHelpers.nameTextType(
                     this.itemType
                   )}"
@@ -398,6 +417,7 @@ export class YpCollectionItemCard extends YpBaseElement {
                   id="description"
                   class="description layout vertical withPointer"
                   ?featured="${this.featured}"
+                  ?largefont="${this.largeFont}"
                   textType="collectionContent"
                   .textType="${YpCollectionHelpers.descriptionTextType(
                     this.itemType
