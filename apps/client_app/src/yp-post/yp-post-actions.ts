@@ -46,6 +46,9 @@ export class YpPostActions extends YpBaseElement {
   @property({ type: Number })
   numberOfGroupVotes: number | undefined;
 
+  @property({ type: Boolean })
+  forceShowDebate = false;
+
   connectedCallback() {
     super.connectedCallback();
     this.addGlobalListener(
@@ -378,6 +381,7 @@ export class YpPostActions extends YpBaseElement {
 
   get hideDebate() {
     return (
+      !this.forceShowDebate && (
       !this.wide ||
       this.forceSmall ||
       this.headerMode ||
@@ -385,7 +389,7 @@ export class YpPostActions extends YpBaseElement {
         this.post.Group &&
         this.post.Group.configuration &&
         this.post.Group.configuration.hideDebateIcon)
-    );
+    ));
   }
 
   updated(changedProperties: Map<string | number | symbol, unknown>) {
