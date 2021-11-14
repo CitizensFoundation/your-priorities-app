@@ -6,10 +6,13 @@ import '@material/mwc-tab-bar';
 import '@material/mwc-textfield';
 import '@material/mwc-circular-progress-four-color';
 
+import './yp-registration-questions.js';
+
 import { YpBaseElement } from '../common/yp-base-element.js';
 import { YpNavHelpers } from '../common/YpNavHelpers.js';
 import { TextField } from '@material/mwc-textfield';
 import { Dialog } from '@material/mwc-dialog';
+import { YpRegistrationQuestions } from './yp-registration-questions.js';
 
 @customElement('yp-login')
 export class YpLogin extends YpBaseElement {
@@ -59,7 +62,10 @@ export class YpLogin extends YpBaseElement {
   opened = false;
 
   @property({ type: Object })
-  target: object | undefined;
+  target: any | undefined;
+
+  @property({ type: Boolean })
+  forceSecureSamlLogin = false;
 
   @property({ type: Boolean })
   hasAnonymousLogin = false;
@@ -67,8 +73,8 @@ export class YpLogin extends YpBaseElement {
   @property({ type: Boolean })
   disableFacebookLoginForGroup = false;
 
-  @property({ type: Boolean })
-  forceSecureSamlLogin = false;
+  @property({ type: String })
+  credentials: Record<string, unknown> | undefined;
 
   @property({ type: Object })
   pollingStartedAt: Date | undefined;
@@ -86,6 +92,9 @@ export class YpLogin extends YpBaseElement {
 
   @property({ type: Boolean })
   hasOneTimeLoginWithName = false;
+
+  @property({ type: Object })
+  registrationQuestionsGroup: YpGroupData | undefined;
 
   onLoginFunction: Function | undefined;
 
@@ -221,6 +230,11 @@ export class YpLogin extends YpBaseElement {
         :host {
         }
 
+        mwc-textarea,
+        mwc-textfield {
+          font-family: var(--app-header-font-family, Roboto);
+        }
+
         mwc-dialog {
           padding-left: 8px;
           padding-right: 8px;
@@ -233,19 +247,30 @@ export class YpLogin extends YpBaseElement {
         }
 
         .islandIs {
-          width: 80px;
-          height: 18px;
-          padding-left: 16px;
+          width: 107px;
+          height: 19px;
+          padding-left: 8px;
           padding-top: 8px;
           padding-bottom: 8px;
-          padding-right: 8px;
+          padding-right: 32px;
           margin-left: 8px;
         }
 
         .buttons {
           color: var(--accent-color, #000);
-          margin-top: 8px;
-          height: 40px;
+          font-size: 15px;
+          margin-top: 20px;
+          text-align: center;
+          vertical-align: bottom;
+          margin-bottom: 16px;
+        }
+
+        .buttons[has-registration-questions] {
+          padding-bottom: 16px;
+        }
+
+        mwc-tab {
+          font-family: var(--app-header-font-family, Roboto);
         }
 
         .boldButton {
@@ -392,6 +417,7 @@ export class YpLogin extends YpBaseElement {
           border: 1px solid;
           border-color: #ddd;
           padding: 12px;
+          padding-top: 18px;
         }
 
         mwc-circular-progress-four-color {
@@ -410,40 +436,54 @@ export class YpLogin extends YpBaseElement {
     return html`
       ${this.samlLoginButtonUrl
         ? html`
-            <div class="islandIs cursor layout horizontal center-center">
+            <div
+              class="islandIs cursor layout horizontal center-center"
+              role="button"
+              tabindex="0"
+            >
               <img
                 ?hidden="${this.forceSecureSamlLogin}"
                 @click="${this._openSamlLogin}"
                 width="80"
-                src="${this.samlLoginButtonUrl}" />
+                src="${this.samlLoginButtonUrl}"
+              />
               <div
                 ?hidden="${!this.forceSecureSamlLogin}"
                 class="largeSamlLogo"
                 @click="${this._openSamlLogin}"
                 role="button"
-                tabindex="0">
+                tabindex="0"
+              >
                 <img width="130" src="${this.samlLoginButtonUrl}" />
               </div>
             </div>
           `
         : html`
-            <div class="islandIs cursor layout horizontal center-center">
+            <div
+              class="islandIs cursor layout horizontal center-center"
+              role="button"
+              tabindex="0"
+              @keydown="${this._keySaml}"
+            >
               <img
                 ?hidden="${this.forceSecureSamlLogin}"
                 @click="${this._openSamlLogin}"
-                width="80"
-                height="18"
-                src="https://s3.amazonaws.com/yrpri-direct-asset/yrpri6/islandisLogo.png" />
+                width="107"
+                height="19"
+                src="https://yrpri-eu-direct-assets.s3-eu-west-1.amazonaws.com/islanddotis.png"
+              />
               <div
                 ?hidden="${!this.forceSecureSamlLogin}"
                 class="largeSamlLogo"
                 @click="${this._openSamlLogin}"
                 role="button"
-                tabindex="0">
+                tabindex="0"
+              >
                 <img
-                  width="130"
-                  height="30"
-                  src="https://s3.amazonaws.com/yrpri-direct-asset/yrpri6/islandisLogo.png" />
+                  width="140"
+                  height="25"
+                  src="https://yrpri-eu-direct-assets.s3-eu-west-1.amazonaws.com/islanddotis.png"
+                />
               </div>
             </div>
           `}
@@ -453,7 +493,8 @@ export class YpLogin extends YpBaseElement {
   renderAdditionalMethods() {
     return html`<div
       class="layout vertical center-center socialMediaLogin"
-      ?hidden="${!this.hasAdditionalAuthMethods}">
+      ?hidden="${!this.hasAdditionalAuthMethods}"
+    >
       <div class="layout vertical center-center">
         ${this.hasAnonymousLogin
           ? html`
@@ -485,7 +526,8 @@ export class YpLogin extends YpBaseElement {
                     @click="${this._facebookLogin}"
                     role="button"
                     tabindex="0"
-                    ?hidden="${this.disableFacebookLoginForGroup}">
+                    ?hidden="${this.disableFacebookLoginForGroup}"
+                  >
                     ${this.t('user.facebookLogin')}
                   </div>
                 </span>
@@ -509,7 +551,8 @@ export class YpLogin extends YpBaseElement {
               maxlength="50"
               minlength="2"
               required
-              charCounter>
+              charCounter
+            >
             </mwc-textfield>
           `
         : nothing}
@@ -521,7 +564,8 @@ export class YpLogin extends YpBaseElement {
         .value="${this.email}"
         name="username"
         autocomplete="username"
-        .validationMessage="${this.emailErrorMessage || ''}">
+        .validationMessage="${this.emailErrorMessage || ''}"
+      >
       </mwc-textfield>
 
       <mwc-textfield
@@ -531,18 +575,35 @@ export class YpLogin extends YpBaseElement {
         .value="${this.password}"
         autocomplete="current-password"
         @keyup="${this.onEnter}"
-        .validationMessage="${this.passwordErrorMessage || ''}">
+        .validationMessage="${this.passwordErrorMessage || ''}"
+      >
       </mwc-textfield>
+
+      ${this.registerMode && this.registrationQuestionsGroup
+        ? html`
+            <yp-registration-questions
+              id="registrationQuestions"
+              @questions-changed="${this._registrationQuestionsChanged}"
+              @resize-scroller="${this._registrationQuestionsChanged}"
+              .group="${this.registrationQuestionsGroup}"
+            >
+            </yp-registration-questions>
+          `
+        : nothing}
     </div>`;
   }
 
   renderButtons() {
     return html`
-      <div class="buttons layout horizontal self-end">
+      <div
+        class="buttons layout horizontal self-end"
+        ?has-registration-questions="${this.registrationQuestionsGroup != undefined}"
+      >
         <mwc-circular-progress-four-color
           class="mainSpinner"
           indeterminate
-          ?hidden="${!this.userSpinner}"></mwc-circular-progress-four-color>
+          ?hidden="${!this.userSpinner}"
+        ></mwc-circular-progress-four-color>
         <div class="flex"></div>
         <mwc-button dialogAction="cancel" @click="${this._cancel}"
           >${this.t('cancel')}</mwc-button
@@ -580,8 +641,20 @@ export class YpLogin extends YpBaseElement {
           .label="${this.userNameText}"
           maxlength="50"
           @keyup="${this._updateOneTimeLoginName}"
-          autocomplete="off">
+          autocomplete="off"
+        >
         </mwc-textfield>
+
+        ${ this.registrationQuestionsGroup
+          ? html`
+              <yp-registration-questions
+                id="registrationQuestionsOneTimeLogin"
+                @questions-changed="${this._registrationQuestionsChanged}"
+                @resize-scroller="${this._registrationQuestionsChanged}"
+                .group="${this.registrationQuestionsGroup}"
+              ></yp-registration-questions>
+            `
+          : nothing}
 
         <div class="buttons">
           <mwc-button dialogAction="cancel" @click="${this._cancel}"
@@ -589,7 +662,8 @@ export class YpLogin extends YpBaseElement {
           >
           <mwc-button
             ?disabled="${!this.oneTimeLoginName}"
-            @click="${this.finishOneTimeLogin}">
+            @click="${this.finishOneTimeLoginWithName}"
+          >
             ${this.t('user.login')}</mwc-button
           >
         </div>
@@ -597,13 +671,25 @@ export class YpLogin extends YpBaseElement {
     `;
   }
 
+  _setupJsonCredentials () {
+    this.credentials = {
+      name: this.fullnameValue,
+      email: this.emailValue,
+      identifier: this.emailValue,
+      username: this.emailValue,
+      password: this.passwordValue,
+      registration_answers: (this.registrationQuestionsGroup && this.$$("#registrationQuestions"))
+        ? (this.$$("#registrationQuestions") as YpRegistrationQuestions).getAnswers() : undefined
+    };
+  }
+
   _updateOneTimeLoginName(event: KeyboardEvent) {
-    this.oneTimeLoginName = (this.$$(
-      '#oneTimeLoginWithNameId'
-    ) as TextField).value;
+    this.oneTimeLoginName = (
+      this.$$('#oneTimeLoginWithNameId') as TextField
+    ).value;
     if (this.oneTimeLoginName && this.oneTimeLoginName.length > 0) {
       if (event.key == 'enter') {
-        this.finishOneTimeLogin();
+        this.finishOneTimeLoginWithName();
       }
     }
   }
@@ -615,43 +701,51 @@ export class YpLogin extends YpBaseElement {
         modal
         ?open="${this.opened}"
         @closed="${this.closeAndReset}"
-        hideActions>
+        hideActions
+      >
         <mwc-tab-bar
           @MDCTabBar:activated="${this._selectRegistrationMode}"
           .selected="${this.registerMode}"
           id="paper_tabs"
           focused
-          ?hidden="${this.forceSecureSamlLogin}">
+          ?hidden="${this.forceSecureSamlLogin}"
+        >
           <mwc-tab
             .label="${this.t('user.login')}"
             icon="login"
-            stacked></mwc-tab>
+            stacked
+          ></mwc-tab>
           <mwc-tab
             .label="${this.t('user.register')}"
             icon="how_to_reg"
-            stacked></mwc-tab>
+            stacked
+          ></mwc-tab>
         </mwc-tab-bar>
 
         <div class="layout vertical center-center">
           <span ?hidden="${!this.registerMode}">
             <div
               ?hidden="${!this.customUserRegistrationText}"
-              class="customUserRegistrationText">
+              class="customUserRegistrationText"
+            >
               <yp-magic-text
                 disableTranslation
                 linkifyCutoff="100"
-                .content="${this.customUserRegistrationText}"></yp-magic-text>
+                .content="${this.customUserRegistrationText}"
+              ></yp-magic-text>
             </div>
           </span>
 
           <div
             class="customUserRegistrationText"
-            ?hidden="${!this.forceSecureSamlLogin}">
+            ?hidden="${!this.forceSecureSamlLogin}"
+          >
             <div ?hidden="${!this.customSamlLoginText}">
               <yp-magic-text
                 disableTranslation
                 linkifyCutoff="100"
-                .content="${this.customSamlLoginText}"></yp-magic-text>
+                .content="${this.customSamlLoginText}"
+              ></yp-magic-text>
             </div>
             <div ?hidden="${this.customSamlLoginText != null}">
               ${this.t('forceSecureSamlLoginInfo')}
@@ -680,6 +774,29 @@ export class YpLogin extends YpBaseElement {
       </mwc-dialog>
       ${this.hasOneTimeLoginWithName ? this.renderOneTimeDialog() : nothing}
     `;
+  }
+
+  _registrationQuestionsChanged() {
+    //this.$.dialog.fire('iron-resize');
+    const oneTimeDialog = this.$$("#dialogOneTimeWithName");
+    if (oneTimeDialog) {
+      //oneTimeDialog.fire('iron-resize');
+    }
+  }
+
+  _setupCustomRegistrationQuestions () {
+    if (window.appGlobals.registrationQuestionsGroup) {
+      this.registrationQuestionsGroup = window.appGlobals.registrationQuestionsGroup;
+    } else {
+      this.registrationQuestionsGroup = undefined;
+    }
+  }
+
+  _keySaml(event: KeyboardEvent) {
+    if (event.keyCode==13) {
+      event.preventDefault();
+      this._openSamlLogin();
+    }
   }
 
   updated(changedProperties: Map<string | number | symbol, unknown>) {
@@ -749,6 +866,8 @@ export class YpLogin extends YpBaseElement {
       hostName = 'yp';
     } else if (domainName.indexOf('smarter.nj.gov') > -1) {
       hostName = 'enjine';
+    } else if (window.appGlobals.domain && window.appGlobals.domain.loginCallbackCustomHostName) {
+      hostName = window.appGlobals.domain.loginCallbackCustomHostName;
     } else {
       hostName = 'login';
     }
@@ -800,14 +919,21 @@ export class YpLogin extends YpBaseElement {
     }, 50);
   }
 
-  finishOneTimeLogin() {
+  finishOneTimeLoginWithName() {
     (this.$$('#dialogOneTimeWithName') as Dialog).open = false;
-    if (this.oneTimeLoginName) {
-      this.anonymousLogin('One Time Login');
+    if (this.oneTimeLoginName && (
+      !this.registrationQuestionsGroup || (this.$$("#registrationQuestionsOneTimeLogin") as YpRegistrationQuestions).validate()
+    )) {
+
+      let registrationAnswers: Record<string,string>[] | undefined = undefined;
+      if (this.registrationQuestionsGroup) {
+        registrationAnswers = (this.$$("#registrationQuestionsOneTimeLogin") as YpRegistrationQuestions).getAnswers();
+      }
+      this.anonymousLogin('One Time Login', registrationAnswers);
     }
   }
 
-  async anonymousLogin(loginSubType = 'Anonymous') {
+  async anonymousLogin(loginSubType = 'Anonymous', registrationAnswers:Record<string,string>[] | undefined = undefined) {
     if (window.appGlobals.currentAnonymousGroup) {
       window.appGlobals.analytics.sendLoginAndSignup(
         -1,
@@ -823,6 +949,7 @@ export class YpLogin extends YpBaseElement {
         oneTimeLoginName: this.hasOneTimeLoginWithName
           ? this.oneTimeLoginName
           : null,
+        registration_answers: registrationAnswers,
       })) as YpUserData;
 
       this._cancel();
@@ -836,6 +963,9 @@ export class YpLogin extends YpBaseElement {
           loginSubType
         );
         this._loginCompleted(user);
+        if (this.$$("#dialogOneTimeWithName") as Dialog) {
+          (this.$$("#dialogOneTimeWithName") as Dialog).open = false;
+        }
       } else {
         console.error('No user in anonymousLogin');
       }
@@ -1111,16 +1241,6 @@ export class YpLogin extends YpBaseElement {
     }
   }
 
-  get credentials() {
-    return {
-      name: this.fullnameValue,
-      email: this.emailValue,
-      identifier: this.emailValue,
-      username: this.emailValue,
-      password: this.passwordValue,
-    };
-  }
-
   get emailValue() {
     return (this.$$('#email') as HTMLInputElement).value.trim();
   }
@@ -1136,7 +1256,7 @@ export class YpLogin extends YpBaseElement {
 
   async _registerUser() {
     const user = (await window.serverApi.registerUser(
-      this.credentials
+      this.credentials!
     )) as YpUserData;
     this.isSending = false;
     if (user) {
@@ -1156,7 +1276,7 @@ export class YpLogin extends YpBaseElement {
 
   async _loginUser() {
     const user = (await window.serverApi.loginUser(
-      this.credentials
+      this.credentials!
     )) as YpUserData;
     this.isSending = false;
     if (user) {
@@ -1174,8 +1294,10 @@ export class YpLogin extends YpBaseElement {
         this.registerMode ? 'Signup Submit' : 'Login Submit',
         'Email'
       );
-      if (this.emailValue && this.passwordValue) {
+      if (this.emailValue && this.passwordValue && (
+        !this.registerMode || !this.registrationQuestionsGroup || (this.$$("#registrationQuestions") as YpRegistrationQuestions).validate())) {
         this.userSpinner = true;
+        this._setupJsonCredentials();
         if (this.registerMode) {
           this._registerUser();
         } else {
@@ -1287,6 +1409,8 @@ export class YpLogin extends YpBaseElement {
           });
       }
     });
+
+    this._setupCustomRegistrationQuestions();
   }
 
   close() {

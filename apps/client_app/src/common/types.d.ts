@@ -338,6 +338,7 @@ interface YpDomainData extends YpCollectionData {
   Communities: Array<YpCommunityData>;
   facebookLoginProvided?: boolean;
   samlLoginProvided?: boolean;
+  loginCallbackCustomHostName?: string;
 }
 
 interface YpCommunityData extends YpCollectionData {
