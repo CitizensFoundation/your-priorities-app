@@ -14,6 +14,7 @@ module.exports = {
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/no-non-null-assertion': 'off',
     "@typescript-eslint/explicit-module-boundary-types": "off",
+    "@typescript-eslint/camelcase": "off",
     'import/named': 'off',
     'import/no-unresolved': 'off',
     'import/extensions': ['error', 'always', { ignorePackages: true }],

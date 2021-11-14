@@ -63,6 +63,7 @@ declare global {
     serverApi: YpServerApi;
     app: YpApp;
     locale: string;
+    autoTranslate: boolean;
     MSStream: any;
     PasswordCredential?: any;
     FederatedCredential?: any;

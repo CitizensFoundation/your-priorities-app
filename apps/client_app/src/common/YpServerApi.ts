@@ -172,6 +172,25 @@ export class YpServerApi extends YpServerApiBase {
     return this.fetchWrapper(translateUrl);
   }
 
+  public getTranslatedRegistrationQuestions(groupId: number, targetLanguage: string) {
+    return this.fetchWrapper(
+      this.baseUrlPath + `/groups/${groupId}/translatedRegistrationQuestions?targetLanguage=${targetLanguage}`
+    ) as unknown as Array<string>;
+  }
+
+  public sendRegistrationQuestions(registrationAnswers: Array<Record<string,string>>) {
+    return this.fetchWrapper(
+      this.baseUrlPath + `/users/setRegistrationAnswers`,
+      {
+        method: 'PUT',
+        body: JSON.stringify({
+          registration_answers: registrationAnswers
+        }),
+      },
+      true
+    );
+  }
+
   public savePostTranscript(postId: number, body: Record<string, unknown>) {
     return this.fetchWrapper(
       this.baseUrlPath + `/posts/${postId}/editTranscript`,

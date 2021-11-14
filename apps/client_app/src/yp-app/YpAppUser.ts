@@ -3,6 +3,7 @@ import { YpCodeBase } from '../common/YpCodeBaseclass.js';
 import { YpAccessHelpers } from '../common/YpAccessHelpers.js';
 import { YpLogin } from '../yp-user/yp-login.js';
 import { Snackbar } from '@material/mwc-snackbar';
+import { YpRegistrationQuestionsDialog } from '../yp-user/yp-registration-questions-dialog.js';
 
 export class YpAppUser extends YpCodeBase {
   serverApi: YpServerApi;
@@ -274,6 +275,10 @@ export class YpAppUser extends YpCodeBase {
         ] as string;
       }
     });
+
+    setTimeout(() => {
+      this._checkRegistrationAnswers(user);
+    }, 7500);
   }
 
   _checkLoginForParameters() {
@@ -369,6 +374,8 @@ export class YpAppUser extends YpCodeBase {
     } else {
       window.appGlobals.setAnonymousUser(undefined);
     }
+
+    window.appGlobals.offline.checkContentToSendForLoggedInUser();
   }
 
   removeAnonymousUser() {
@@ -665,6 +672,30 @@ export class YpAppUser extends YpCodeBase {
     this.recheckAdminRights();
   }
 
+  checkRegistrationAnswersCurrent () {
+    if (this.user) {
+      this._checkRegistrationAnswers(this.user);
+    }
+  }
+
+  setHasRegistrationAnswers() {
+    if (this.user) {
+      this.user.hasRegistrationAnswers = true;
+    }
+  }
+
+  _checkRegistrationAnswers(user: YpUserData) {
+    if (user &&
+      !user.notLoggedIn &&
+      window.appGlobals.registrationQuestionsGroup &&
+      !user.hasRegistrationAnswers &&
+      !window.appGlobals.currentAnonymousUser) {
+      window.appDialogs.getDialogAsync("registrationQuestions", (dialog: YpRegistrationQuestionsDialog) => {
+        dialog.open(window.appGlobals.registrationQuestionsGroup!);
+      });
+    }
+  }
+
   async isloggedin() {
     const user = (await this.serverApi.isloggedin()) as YpUserData | void;
 
@@ -702,6 +733,10 @@ export class YpAppUser extends YpCodeBase {
         dialog.open(user.loginProvider, true, user.email);
       });
     }
+
+    setTimeout(() => {
+      this._checkRegistrationAnswers(user!);
+    }, 750)
 
     if (user) {
       if (user.customSamlDeniedMessage) {

@@ -23,6 +23,7 @@ interface YpRadioButtonData {
   text: string;
   isSpecify?: boolean;
   skipTo?: string;
+  originalText?: string;
   subType?:
     | 'number'
     | 'text'
@@ -42,6 +43,7 @@ interface YpRadioButtonData {
 interface YpCheckboxData {
   text: string;
   isSpecify?: boolean;
+  originalText?: string;
   subType?:
     | 'number'
     | 'text'
@@ -61,6 +63,7 @@ interface YpCheckboxData {
 interface YpDropdownData {
   text: string;
   isSpecify?: boolean;
+  originalText?: string;
   subType?:
     | 'number'
     | 'text'
@@ -98,6 +101,8 @@ interface YpStructuredQuestionData {
   radioButtons?: Array<YpRadioButtonData>;
   checkboxes?: Array<YpCheckboxData>;
   dropdownOptions?: Array<YpDropdownData>;
+  segmentName?: string;
+  originalText?: string;
 }
 
 interface YpErrorData {
@@ -148,6 +153,7 @@ interface YpGroupConfiguration extends YpCollectionConfiguration {
   hidePostDescription?: boolean;
   allowWhatsAppSharing?: boolean;
   structuredQuestionsJson?: Array<YpStructuredQuestionJson>;
+  registrationQuestionsJson?: Array<YpStructuredQuestionJson>;
   hideVoteCount?: boolean;
   customVoteUpHoverText?: string;
   customVoteDownHoverText?: string;
@@ -528,6 +534,7 @@ interface YpUserData {
   ssn?: number;
   notifications_settings?: AcNotificationSettingsData;
   default_locale?: string;
+  hasRegistrationAnswers?: boolean;
 }
 
 declare interface IronListInterface extends HTMLElement {
@@ -910,4 +917,17 @@ interface YpBulkStatusUpdateTemplatesData {
   title: string;
   posts: Array<YpStatusUpdatePostData>;
   content: string;
+}
+
+interface YpLocaleStorageItemToSendLater {
+  key: string;
+  content: YpContentToSendLater;
+}
+
+interface YpContentToSendLater {
+  content: string;
+  params: any;
+  url: string;
+  method: string;
+  body: any;
 }

@@ -8,6 +8,7 @@ import { YpNavHelpers } from '../common/YpNavHelpers.js';
 import { YpCodeBase } from '../common/YpCodeBaseclass.js';
 import { YpRecommendations } from './YpRecommendations.js';
 import { YpCache } from './YpCache.js';
+import { YpOffline } from './YpOffline.js';
 import { YpAnalytics } from './YpAnalytics.js';
 import { YpThemeManager } from './YpThemeManager.js';
 import { Snackbar } from '@material/mwc-snackbar';
@@ -29,6 +30,8 @@ export class YpAppGlobals extends YpCodeBase {
 
   currentGroup: YpGroupData | undefined;
 
+  registrationQuestionsGroup: YpGroupData | undefined;
+
   currentAnonymousGroup: YpGroupData | undefined;
 
   currentForceSaml = false;
@@ -38,6 +41,8 @@ export class YpAppGlobals extends YpCodeBase {
   currentSamlDeniedMessage: string | undefined;
 
   currentSamlLoginMessage: string | undefined;
+
+  largeFont = false;
 
   originalQueryParameters: Record<string, string | number> = {};
 
@@ -77,6 +82,8 @@ export class YpAppGlobals extends YpCodeBase {
 
   cache: YpCache;
 
+  offline: YpOffline;
+
   analytics: YpAnalytics;
 
   theme: YpThemeManager;
@@ -101,6 +108,7 @@ export class YpAppGlobals extends YpCodeBase {
     this.cache = new YpCache();
     this.analytics = new YpAnalytics();
     this.theme = new YpThemeManager();
+    this.offline = new YpOffline();
 
     // Boot
     this.boot();
@@ -227,6 +235,17 @@ export class YpAppGlobals extends YpCodeBase {
 
   setAnonymousUser(user: YpUserData | undefined) {
     this.currentAnonymousUser = user;
+  }
+
+  setRegistrationQuestionGroup(group: YpGroupData) {
+    if (group &&
+      group.configuration &&
+      group.configuration.registrationQuestionsJson) {
+      this.registrationQuestionsGroup = group;
+      window.appUser.checkRegistrationAnswersCurrent();
+    } else {
+      this.registrationQuestionsGroup = undefined;
+    }
   }
 
   setAnonymousGroupStatus(group: YpGroupData | undefined) {

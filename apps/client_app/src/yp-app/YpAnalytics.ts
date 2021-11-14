@@ -62,7 +62,8 @@ export class YpAnalytics extends YpCodeBase {
   }
 
   setCommunityAnalyticsTracker(trackerId: string | undefined) {
-    if (trackerId && trackerId!=='') {
+    trackerId = trackerId?.trim();
+    if (trackerId && trackerId.length>5) {
       const oldTrackerId = this.communityTrackerId;
       this.communityTrackerId=trackerId;
       if (trackerId!==oldTrackerId) {

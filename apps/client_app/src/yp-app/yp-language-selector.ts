@@ -55,11 +55,13 @@ export class YpLanguageSelector extends YpBaseElement {
     fr: 'Français',
     is: 'Íslenska',
     es: 'Español',
+    cs: 'čeština',
     it: 'Italiano',
     ar: 'اَلْعَرَبِيَّةُ',
     ar_EG: 'اَلْعَرَبِيَّةُ (EG)',
     ca: 'Català',
     ro_MD: 'Moldovenească',
+    ro: 'Românește',
     de: 'Deutsch',
     da: 'Dansk',
     sv: 'Svenska',
@@ -78,11 +80,13 @@ export class YpLanguageSelector extends YpBaseElement {
     ru: 'Русский',
     hu: 'Magyar',
     zh_TW: '国语 (TW)',
+    sk: 'Slovenčina',
+    sl: 'Slovenščina',
     sr: 'Srpski',
     sr_latin: 'Srpski (latin)',
-    hr: 'Hravtski',
+    hr: 'Hrvatski',
     kl: 'Kalaallisut',
-    sl: 'Slovenščina',
+    bg: 'български'
   };
 
   noGoogleTranslateLanguages = ['kl'];
