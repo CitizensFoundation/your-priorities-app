@@ -71,7 +71,7 @@ export class YpCollectionItemCard extends YpBaseElement {
 
         yp-image {
           width: 320px !important;
-          height: 180px  !important;;
+          height: 180px !important;
         }
 
         yp-image[featured] {
@@ -116,7 +116,7 @@ export class YpCollectionItemCard extends YpBaseElement {
         }
 
         .collection-name[largefont] {
-            font-size: 20px;
+          font-size: 20px;
         }
 
         yp-image[archived] {
@@ -131,12 +131,26 @@ export class YpCollectionItemCard extends YpBaseElement {
           color: var(--icon-general-color, #fff);
         }
 
+        .edit {
+          color: #888;
+          position: absolute;
+          bottom: 0;
+          right: 0;
+          padding-right: 0;
+          margin-right: 0;
+          text-align: right;
+        }
+
         .collection-name[featured] {
           background-color: var(--accent-color);
         }
 
         .collection-name[archived] {
           background-color: #aaa;
+        }
+
+        .collection-name[has-data-viz] {
+          padding-top: 26px;
         }
 
         yp-membership-button[archived] {
@@ -148,63 +162,63 @@ export class YpCollectionItemCard extends YpBaseElement {
         }
 
         .collectionNameFontSize3Wide {
-            font-size: 26px;
+          font-size: 26px;
         }
 
         .collectionNameFontSize2Wide {
-            font-size: 24px;
+          font-size: 24px;
         }
 
         .collectionNameFontSize1Wide {
-            font-size: 22px;
+          font-size: 22px;
         }
 
         .collectionNameFontSize4Mobile {
-            font-size: 28px;
+          font-size: 28px;
         }
 
         .collectionNameFontSize3Mobile {
-            font-size: 24px;
+          font-size: 24px;
         }
 
         .collectionNameFontSize2Mobile {
-            font-size: 22px;
+          font-size: 22px;
         }
 
         .collectionNameFontSize1Mobile {
-            font-size: 19px;
+          font-size: 19px;
         }
 
         .collectionNameFontSize4Wide[widetext] {
-            font-size: 26px;
+          font-size: 26px;
         }
 
         .collectionNameFontSize3Wide[widetext] {
-            font-size: 22px;
+          font-size: 22px;
         }
 
         .collectionNameFontSize2Wide[widetext] {
-            font-size: 20px;
+          font-size: 20px;
         }
 
         .collectionNameFontSize1Wide[widetext] {
-            font-size: 18px;
+          font-size: 18px;
         }
 
         .collectionNameFontSize4Mobile[widetext] {
-            font-size: 26px;
+          font-size: 26px;
         }
 
         .collectionNameFontSize3Mobile[widetext] {
-            font-size: 22px;
+          font-size: 22px;
         }
 
         .collectionNameFontSize2Mobile[widetext] {
-            font-size: 20px;
+          font-size: 20px;
         }
 
         .collectionNameFontSize1Mobile[widetext] {
-            font-size: 18px;
+          font-size: 18px;
         }
 
         @media (max-width: 960px) {
@@ -300,6 +314,25 @@ export class YpCollectionItemCard extends YpBaseElement {
     return this.item?.status === 'featured';
   }
 
+  connectedCallback() {
+    super.connectedCallback();
+    if (this.item && (this.item as YpGroupData).Community) {
+      this.collection = (this.item as YpGroupData).Community;
+      const group = this.collection as YpGroupData;
+
+      if (group.CommunityLink) {
+        this.itemType = 'groupCommunityLink';
+      } else if (group.configuration.dataForVisualizationJson) {
+        this.itemType = 'groupDataViz';
+      } else {
+        this.itemType = 'group';
+      }
+    } else if (this.item && (this.item as YpCommunityData).Domain) {
+      this.collection = (this.item as YpCommunityData).Domain;
+      this.itemType = 'community';
+    }
+  }
+
   goToItem(event: CustomEvent) {
     event.preventDefault();
     if (event.currentTarget && event.currentTarget) {
@@ -311,28 +344,28 @@ export class YpCollectionItemCard extends YpBaseElement {
   }
 
   _setupFontNameFontSize() {
-    const collectionName = this.$$("#collectionName") as HTMLElement;
+    const collectionName = this.$$('#collectionName') as HTMLElement;
     if (collectionName && this.collection) {
-      let classNames = "collection-name ";
+      let classNames = 'collection-name ';
       if (this.wide) {
-        if (this.collection.name.length<=18) {
-          classNames += "collectionNameFontSize4Wide";
-        } else if (this.collection.name.length>40) {
-          classNames += "collectionNameFontSize1Wide";
-        } else if (this.collection.name.length>30) {
-          classNames += "collectionNameFontSize2Wide";
-        } else if (this.collection.name.length>18) {
-          classNames += "collectionNameFontSize3Wide";
+        if (this.collection.name.length <= 18) {
+          classNames += 'collectionNameFontSize4Wide';
+        } else if (this.collection.name.length > 40) {
+          classNames += 'collectionNameFontSize1Wide';
+        } else if (this.collection.name.length > 30) {
+          classNames += 'collectionNameFontSize2Wide';
+        } else if (this.collection.name.length > 18) {
+          classNames += 'collectionNameFontSize3Wide';
         }
       } else {
-        if (this.collection.name.length<=18) {
-          classNames += "collectionNameFontSize4Mobile";
-        } else if (this.collection.name.length>40) {
-          classNames += "collectionNameFontSize1Mobile";
-        } else if (this.collection.name.length>30) {
-          classNames += "collectionNameFontSize2Mobile";
-        } else if (this.collection.name.length>18) {
-          classNames += "collectionNameFontSize3Mobile";
+        if (this.collection.name.length <= 18) {
+          classNames += 'collectionNameFontSize4Mobile';
+        } else if (this.collection.name.length > 40) {
+          classNames += 'collectionNameFontSize1Mobile';
+        } else if (this.collection.name.length > 30) {
+          classNames += 'collectionNameFontSize2Mobile';
+        } else if (this.collection.name.length > 18) {
+          classNames += 'collectionNameFontSize3Mobile';
         }
       }
 
@@ -349,93 +382,176 @@ export class YpCollectionItemCard extends YpBaseElement {
     }
   }
 
-  render() {
-    if (this.item && (this.item as YpGroupData).Community) {
-      this.collection = (this.item as YpGroupData).Community;
-      this.itemType = 'group';
-    } else if (this.item && (this.item as YpCommunityData).Domain) {
-      this.collection = (this.item as YpCommunityData).Domain;
-      this.itemType = 'community';
+  renderLogoImage() {
+    return html`
+      ${YpCollectionHelpers.logoImagePath(this.itemType, this.item!)
+        ? html`
+            <yp-image
+              sizing="cover"
+              ?archived="${this.archived}"
+              alt="${this.collection!.name}"
+              ?featured="${this.featured}"
+              preload
+              .src="${YpCollectionHelpers.logoImagePath(
+                this.itemType,
+                this.item!
+              )}"
+              class="post-image withPointer"
+            ></yp-image>
+          `
+        : html`
+            <yp-image
+              ?archived="${this.archived}"
+              sizing="cover"
+              class="main-image withPointer"
+              src="https://i.imgur.com/sdsFAoT.png"
+            ></yp-image>
+          `}
+    `;
+  }
+
+  renderDataViz() {
+    return html`
+      <yp-data-visualization
+        small
+        .data="${(this.item as YpGroupData).configuration
+          .dataForVisualizationJson}"
+      ></yp-data-visualization>
+    `;
+  }
+
+  renderCardInfo() {
+    return html`
+      <div class="layout horizontal">
+        ${this.itemType === 'groupDataViz'
+          ? html` ${this.renderDataViz()} `
+          : html` ${this.renderLogoImage()} `}
+      </div>
+      <div class="informationText">
+        <yp-magic-text
+          id="collectionName"
+          class="collection-name"
+          ?archived="${this.archived}"
+          ?featured="${this.featured}"
+          ?largefont="${this.largeFont}"
+          @click="${this.goToItem}"
+          .textType="${YpCollectionHelpers.nameTextType(this.itemType)}"
+          .contentLanguage="${this.contentLanguage}"
+          ?disableTranslation="${this.collection!.configuration
+            ?.disableNameAutoTranslation}"
+          text-only
+          .content="${this.contentName}"
+          .contentId="${this.contentId}"
+        ></yp-magic-text>
+        <yp-magic-text
+          id="description"
+          class="description layout vertical withPointer"
+          ?featured="${this.featured}"
+          ?largefont="${this.largeFont}"
+          textType="collectionContent"
+          .textType="${YpCollectionHelpers.descriptionTextType(this.itemType)}"
+          .contentLanguage="${this.contentLanguage}"
+          textOnly
+          removeUrls
+          .content="${this.contentDescription}"
+          .contentId="${this.contentId}"
+          truncate="300"
+        >
+        </yp-magic-text>
+      </div>
+
+      <div class="stats layout horizontal">
+        <yp-collection-stats
+          .collectionType="${this.statsCollectionType}"
+          .collection="${this.statsCollection}"
+        ></yp-collection-stats>
+      </div>
+
+      ${!this.collection
+        ? html`
+            <yp-membership-button
+              .archived="${this.archived}"
+              .featured="${this.featured}"
+              .collection="${this.collection}"
+            ></yp-membership-button>
+          `
+        : html``}
+    `;
+  }
+
+  get statsCollection() {
+    if (this.itemType === 'groupCommunityLink') {
+      return (this.item as YpGroupData).CommunityLink!;
+    } else {
+      return this.item!;
     }
+  }
 
-    //TODO!
-    //TODO!
-    //TODO figure out CommuntiyLinks https://github.com/CitizensFoundation/your-priorities-app/commit/cbf8ab76c07895f10a9a41b8953490421260f1d2
+  get statsCollectionType() {
+    if (this.itemType === 'groupCommunityLink') {
+      return 'communtiy';
+    } else if (this.itemType === 'groupDataViz') {
+      return 'group';
+    } else {
+      return this.itemType!;
+    }
+  }
 
+  get contentDescription() {
+    if (this.itemType === 'groupCommunityLink') {
+      return (this.item as YpGroupData).CommunityLink!.description;
+    } else {
+      return this.item!.description || this.item!.objectives;
+    }
+  }
+
+  get contentName() {
+    if (this.itemType === 'groupCommunityLink') {
+      return (this.item as YpGroupData).CommunityLink!.name;
+    } else {
+      return this.item!.name;
+    }
+  }
+
+  get contentId() {
+    if (this.itemType === 'groupCommunityLink') {
+      return (this.item as YpGroupData).CommunityLink!.id;
+    } else {
+      return this.item!.id;
+    }
+  }
+
+  get contentLanguage() {
+    if (this.itemType === 'groupCommunityLink') {
+      return (this.item as YpGroupData).CommunityLink!.language;
+    } else {
+      return this.item!.language;
+    }
+  }
+
+  get contentUrlBase() {
+    if (this.itemType === 'groupCommunityLink') {
+      return 'community';
+    } else if (this.itemType === 'groupDataViz') {
+      return 'group_data_viz';
+    } else {
+      return this.itemType;
+    }
+  }
+
+  render() {
     return this.item && this.collection
-      ? html`<a
-            href="/${this.itemType}/${this.item.id}"
+      ? html`
+          <a
+            href="/${this.contentUrlBase}/${this.contentId}"
             @click="${this.goToItem}"
-            class="layout vertical center-center">
+            class="layout vertical center-center"
+          >
             <div
               ?featured="${this.featured}"
-              class="collectionCard shadow-elevation-4dp shadow-transaction layout horizontal">
-              <div class="layout horizontal">
-                ${YpCollectionHelpers.logoImagePath(this.itemType, this.item)
-                  ? html`
-                      <yp-image
-                        sizing="cover"
-                        ?archived="${this.archived}"
-                        alt="${this.collection.name}"
-                        ?featured="${this.featured}"
-                        preload
-                        .src="${YpCollectionHelpers.logoImagePath(
-                          this.itemType,
-                          this.item
-                        )}"
-                        class="post-image withPointer"></yp-image>
-                    `
-                  : html`
-                      <yp-image
-                        ?archived="${this.archived}"
-                        sizing="cover"
-                        class="main-image withPointer"
-                        src="https://i.imgur.com/sdsFAoT.png"></yp-image>
-                    `}
-              </div>
-              <div class="informationText">
-                <yp-magic-text
-                  id="collectionName"
-                  class="collection-name"
-                  ?archived="${this.archived}"
-                  ?featured="${this.featured}"
-                  @click="${this.goToItem}"
-                  ?largefont="${this.largeFont}"
-                  .textType="${YpCollectionHelpers.nameTextType(
-                    this.itemType
-                  )}"
-                  .contentLanguage="${this.item?.language}"
-                  ?disableTranslation="${this.collection.configuration
-                    ?.disableNameAutoTranslation}"
-                  text-only
-                  .content="${this.item.name}"
-                  .contentId="${this.item.id}"></yp-magic-text>
-                <yp-magic-text
-                  id="description"
-                  class="description layout vertical withPointer"
-                  ?featured="${this.featured}"
-                  ?largefont="${this.largeFont}"
-                  textType="collectionContent"
-                  .textType="${YpCollectionHelpers.descriptionTextType(
-                    this.itemType
-                  )}"
-                  .contentLanguage="${this.item.language}"
-                  textOnly
-                  removeUrls
-                  .content="${this.item.description || this.item.objectives}"
-                  .contentId="${this.collection.id}"
-                  truncate="300">
-                </yp-magic-text>
-              </div>
-
-              ${!this.collection
-                ? html`
-                    <yp-membership-button
-                      .archived="${this.archived}"
-                      .featured="${this.featured}"
-                      .collection="${this.collection}"></yp-membership-button>
-                  `
-                : html``}
+              class="collectionCard shadow-elevation-4dp shadow-transaction layout horizontal"
+            >
+              ${this.renderCardInfo()}
             </div>
           </a>
         `

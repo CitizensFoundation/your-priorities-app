@@ -38,7 +38,10 @@ export class YpCollectionHelpers {
         return (collection as YpDomainData).DomainLogoImages;
       case 'community':
         return (collection as YpCommunityData).CommunityLogoImages;
+      case 'groupCommunityLink':
+        return (collection as YpGroupData).CommunityLink!.CommunityLogoImages;
       case 'group':
+      case 'groupDataViz':
         return (collection as YpGroupData).GroupLogoImages;
     }
   }
@@ -48,8 +51,10 @@ export class YpCollectionHelpers {
       case 'domain':
         return 'domainName';
       case 'community':
+      case 'groupCommunityLink':
         return 'communityName';
       case 'group':
+      case 'groupDataViz':
         return 'groupName';
     }
   }
@@ -59,6 +64,7 @@ export class YpCollectionHelpers {
       case 'domain':
         return 'domainContent';
       case 'community':
+      case 'groupCommunityLink':
         return 'communityContent';
       case 'group':
         return 'groupContent';

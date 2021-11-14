@@ -59,7 +59,7 @@ export class YpCollectionStats extends YpBaseElement {
                 ${YpFormattingHelpers.number(this.collection.counter_posts)}
               </div>
 
-              ${this.collectionType === 'community1'
+              ${this.collectionType === 'community'
                 ? html`
                     <mwc-icon
                       title="${this.t('stats.groups')}"
@@ -73,7 +73,7 @@ export class YpCollectionStats extends YpBaseElement {
                     </div>
                   `
                 : nothing}
-              ${this.collectionType === 'domain1'
+              ${this.collectionType === 'domain'
                 ? html`
                     <mwc-icon
                       title="${this.t('stats.communities')}"

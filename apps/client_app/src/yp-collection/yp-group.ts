@@ -87,7 +87,7 @@ export class YpGroup extends YpCollection {
     this._cancelConfigCheckTimer();
     if (this.collection) {
       this.configCheckTimer = setTimeout(
-        this._getGroupConfig,
+        this._getGroupConfig.bind(this),
         this.configCheckTTL
       );
     }

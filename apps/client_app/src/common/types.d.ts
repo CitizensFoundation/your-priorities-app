@@ -212,6 +212,7 @@ interface YpGroupConfiguration extends YpCollectionConfiguration {
   maxNumberOfGroupVotes?: number;
   allowAdminsToDebate?: boolean;
   hideGroupLevelTabs?: boolean;
+  dataForVisualizationJson?: string;
 }
 
 interface YpCommunityConfiguration extends YpCollectionConfiguration {
@@ -388,6 +389,7 @@ interface YpGroupData extends YpCollectionData {
   GroupLogoVideos?: Array<YpVideoData>;
   GroupHeaderImages?: Array<YpImageData>;
   GroupLogoImages?: Array<YpImageData>;
+  CommunityLink?: YpCommunityData;
 }
 
 interface YpBaseMedia {
