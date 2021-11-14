@@ -42,8 +42,12 @@
     </style>
     <div class="container" rtl$="[[rtl]]" more-text$="[[showMoreText]]">
        <!-- add max-width for IE11 -->
-      <div hidden$="[[!finalContent]]" inner-h-t-m-l="[[finalContent]]" style="max-width:100%"></div>
-      <div hidden$="[[finalContent]]" style="max-width:100%">[[truncatedContent]]</div>
+      <template is="dom-if" if="[[finalExists]]">
+        <div inner-h-t-m-l="[[finalContent]]" style="max-width:100%"></div>
+      </template>
+      <template is="dom-if" if="[[!finalExists]]">
+        <div style="max-width:100%">[[truncatedContent]]</div>
+      </template>
       <template is="dom-if" if="[[showMoreText]]">
         <paper-button raised elevation="1" class="moreText" on-tap="_openFullScreen">[[moreText]]</paper-button>
       </template>
@@ -97,6 +101,12 @@
           finalContent: {
             type: String,
             value: null
+          },
+
+          finalExists: {
+            type: Boolean,
+            value: false,
+            computed: '_finalExists(finalContent)'
           },
 
           autoTranslate: {
@@ -163,6 +173,12 @@
           removeUrls: {
             type: Boolean,
             value: false
+          },
+
+          widetext: {
+            type: Boolean,
+            value: false,
+            reflectToAttribute: true
           }
         }
       }
@@ -171,19 +187,29 @@
         return ['zh_TW','hy']
       }
 
+      static get widerLanguages() {
+        return ['uk','ky','uz','ru','sr','zh_TW','hy','bg']
+      }
+
       static get rtlLanguages() {
         return ['fa','ar','ar_EG']
       }
 
       _showMoreText(moreText, content, truncate) {
-        return moreText && content && (truncate && content.length>truncate);
+        if (!this.isDialog && !this.truncate) {
+          this.truncate = 500;
+        } else if (this.isDialog) {
+          this.truncate = null;
+        }
+
+        return moreText && content && (this.truncate  && content.length>this.truncate );
       }
 
       _openFullScreen() {
         Polymer.dom(document).querySelector('yp-app').getDialogAsync("magicTextDialog", function (dialog) {
           dialog.open(this.content, this.contentId, this.extraId,
                       this.textType, this.contentLanguage, this.closeDialogText,
-                      this.structuredQuestionsConfig, this.skipSanitize);
+                      this.structuredQuestionsConfig, this.skipSanitize, this.disableTranslation);
         }.bind(this));
       }
 
@@ -201,6 +227,14 @@
           } else {
             this.set('truncatedContent', content);
           }
+
+          if (this.contentLanguage &&
+             window.appGlobals.largeFont || YpMagicTextBox.widerLanguages.indexOf(this.contentLanguage)>-1) {
+            this.set('widetext', true);
+          } else {
+            this.set('widetext', false)
+          }
+
           this._update();
         } else {
           this.set('truncatedContent', null);
@@ -249,6 +283,7 @@
           switch(this.textType) {
             case 'postName':
             case 'postContent':
+            case 'postTags':
             case 'postTranscriptContent':
               this.$.getTranslationAjax.url = "/api/posts/"+this.contentId+"/translatedText";
               break;
@@ -270,6 +305,7 @@
             case 'alternativeTextForNewIdeaButton':
             case 'alternativeTextForNewIdeaButtonClosed':
             case 'alternativeTextForNewIdeaButtonHeader':
+            case 'alternativeTextForNewIdeaSaveButton':
             case 'customThankYouTextNewPosts':
             case 'customTitleQuestionText':
             case 'alternativePointForHeader':
@@ -356,10 +392,6 @@
           this._linksAndEmojis()
         }
 
-        if (!this.isDialog && !this.truncate) {
-          this.truncate = 500;
-        }
-
         if (this.truncate && this.content && (this.content.length>this.truncate || this.autoTranslate)) {
           let truncateBy = this.truncate;
           if (this.autoTranslate && YpMagicTextBox.doubleWidthLanguages.indexOf(this.language) > -1) {
@@ -398,7 +430,7 @@
 
       _linksAndEmojis () {
         if (!this.skipSanitize) {
-          this.processedContent = sanitizeHtml(this.processedContent, {allowedTags: ['b', 'i', 'em', 'strong']});
+          //this.processedContent = sanitizeHtml(this.processedContent, {allowedTags: ['b', 'i', 'em', 'strong']});
           this.processedContent = this.processedContent.replace(/&amp\;/g, "&");
           this.processedContent = linkifyStr(this.processedContent, {
             format: function (value, type) {
@@ -416,6 +448,15 @@
           });
           this.processedContent = this.processedContent.replace(/&amp\;/g, "&");
           this.processedContent = twemoji.parse(this.processedContent).replace(/&amp\;quot\;/g, "\"").replace(/class=\"emoji\" /g, 'style="height: 1em;width: 1em;margin: 0 .3em 0 .3em;vertical-align: -0.1em;" ');
+        } else {
+          this.processedContent = linkifyHtml(this.processedContent, {
+            format: function (value, type) {
+              if (type === 'url' && value.length > this.linkifyCutoff - 1) {
+                value = value.slice(0, this.linkifyCutoff) + '…';
+              }
+              return value;
+            }.bind(this)
+          });
         }
       }
 
