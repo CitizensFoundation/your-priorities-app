@@ -34,6 +34,11 @@
       .description {
       }
 
+      .description[largefont] {
+          font-size: 15px;
+      }
+
+
       .stats {
         position: absolute;
         bottom: 0;
@@ -52,6 +57,10 @@
         min-height: 54px;
         font-size: 42px;
         font-weight: bold;
+      }
+
+      .domain-name[largefont] {
+        font-size: 38px;
       }
 
       .large-card {
@@ -115,6 +124,11 @@
         padding-right: 32px;
         padding-bottom: 6px;
         padding-top: 14px;
+      }
+
+      .domain-name[largefont] {
+          padding-bottom: 10px;
+          padding-top: 10px;
       }
 
       @media (max-width: 960px) {
@@ -233,14 +247,16 @@
           <div class="layout horizontal wrap">
             <div class="layout vertical description-and-stats">
               <div class="descriptionContainer">
-                <div class="domain-name" role="heading" aria-level="1" aria-label="[[domain.name]]">
+                <div class="domain-name" largefont$="[[largeFont]]" role="heading" aria-level="1" aria-label="[[domain.name]]">
                   <yp-magic-text text-type="domainName" content-language="[[domain.language]]"
+
                                  disable-translation="[[domain.configuration.disableNameAutoTranslation]]"
                                  text-only content="[[domain.name]]" content-id="[[domain.id]]">
                   </yp-magic-text>
                 </div>
                 <template is="dom-if" if="[[domain.id]]">
                   <yp-magic-text id="description" class="description domainDescription"
+                                 largefont$="[[largeFont]]"
                                  text-type="domainContent" content-language="[[domain.language]]"
                                  content="[[domain.description]]" content-id="[[domain.id]]">
                   </yp-magic-text>
@@ -350,6 +366,11 @@
           type: String,
           computed: '_exportLoginsUrl(hasDomainAccess, domain)'
         },
+
+        largeFont: {
+          type: Boolean,
+          value: false
+        }
       },
 
       _exportLoginsUrl: function (access, domain) {
@@ -362,6 +383,12 @@
 
       _domainChanged: function (domain, previousDomain) {
         this.setupMediaEventListeners(domain, previousDomain);
+        this.async(function () {
+          if (window.appGlobals.largeFont)
+            this.set('largeFont', true);
+          else
+            this.set('largeFont', false);
+        })
       },
 
       _domainVideoURL: function (domain) {

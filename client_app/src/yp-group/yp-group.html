@@ -70,6 +70,18 @@
         }
       }
 
+      .createFab[is-map] {
+        right: inherit;
+        left: 28px;
+      }
+
+      paper-tab {
+        --paper-tabs: {
+            font-family: var(--app-header-font-family, Roboto);
+        };
+        font-family: var(--app-header-font-family, Roboto);
+      }
+
       .createFab[wide-layout] {
         width: 72px;
         height: 72px;
@@ -186,7 +198,7 @@
         <yp-post-card-add group="[[group]]" disabled="[[disableNewPosts]]" on-new-post="_newPost" elevation="2" role="button" aria-label="Add idea"></yp-post-card-add>
       </div>
 
-      <div class="layout horizontal center-center tabContainer" hide$="[[group.configuration.hideAllTabs]]">
+      <div class="layout horizontal center-center tabContainer" hide$="[[group.configuration.hideAllTabs]]" hidden$="[[group.configuration.hideGroupLevelTabs]]">
         <paper-tabs scrollable$="[[shouldScrollTabs]]" id="paperTabs" has-non-open-posts$="[[hasNonOpenPosts]]" class="tabs" selected="{{selectedTab}}" attr-for-selected="name" focused>
           <paper-tab id="tab1" name="open">
             <div class="layout vertical center-center tabCounterContainer">
@@ -269,7 +281,7 @@
         </template>
         <section name="map" hidden$="[[locationHidden]]" class="minHeightSection">
           <template is="dom-if" if="[[mapActive]]" restamp>
-            <yp-post-map group-id="[[group.id]]"></yp-post-map>
+            <yp-post-map id="postsMap" group-id="[[group.id]]"></yp-post-map>
           </template>
         </section>
       </iron-pages>
@@ -277,7 +289,7 @@
 
     <template is="dom-if" if="[[!disableNewPosts]]" restamp>
       <div class="create-fab-wrapper layout horizontal end-justified createFabContainer" hidden$="[[disableNewPosts]]">
-          <paper-fab class="createFab" icon="[[createFabIcon]]" elevation="5"
+          <paper-fab class="createFab" icon="[[createFabIcon]]" elevation="5" is-map$="[[mapActive]]"
                      wide-layout$="{{wideWidth}}" title$="[[t('post.new')]]" on-tap="_newPost"></paper-fab>
       </div>
     </template>

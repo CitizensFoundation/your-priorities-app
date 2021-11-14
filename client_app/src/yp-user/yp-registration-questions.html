@@ -1,0 +1,335 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/iron-scroll-threshold/iron-scroll-threshold.html">
+<link rel="import" href="../yp-behaviors/yp-language-behavior.html">
+<link rel="import" href="../yp-ajax/yp-ajax.html">
+<link rel="import" href="../yp-behaviors/yp-number-format-behavior.html">
+
+<dom-module id="yp-registration-questions">
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+      :host {
+        display: block;
+        width: 100%;
+      }
+
+      @media (max-width: 800px) {
+         yp-structured-question-edit {
+           padding-left: 0;
+           padding-right: 0;
+         }
+      }
+
+      [hidden] {
+          display: none !important;
+      }
+
+      yp-structured-question-edit {
+      }
+
+      .segmentQuestionIntro {
+          margin-top: 16px;
+      }
+    </style>
+
+    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
+    <lite-signal on-lite-signal-yp-auto-translate="_autoTranslateEvent"></lite-signal>
+
+    <iron-media-query query="(min-width: 1024px)" query-matches="{{wideWidth}}"></iron-media-query>
+    <iron-media-query query="(max-width: 700px)" query-matches="{{phoneWidth}}"></iron-media-query>
+
+    <template is="dom-if" if="[[segments]]">
+      <div class="segmentQuestionIntro">[[t('choose')]]</div>
+      <paper-radio-group required data-type="radios" on-selected-changed="_radioChanged"
+                         id="segmentRadio_[[index]]" name="segmentRadio_[[index]]"
+                         class="segmentRadio">
+        <template is="dom-repeat" items="[[segments]]" as="radioButton" index-as="buttonIndex">
+          <paper-radio-button use-small-font$="[[useSmallFont]]"
+                              id="segmentRadio_[[index]]_[[buttonIndex]]" name="[[radioButton.segmentName]]">
+            [[radioButton.text]]
+          </paper-radio-button>
+        </template>
+      </paper-radio-group>
+
+    </template>
+
+    <template is="dom-if" if="[[renderingQuestions]]" restamp>
+      <template is="dom-repeat" items="[[filteredQuestions]]" as="question">
+        <yp-structured-question-edit index="[[index]]"
+                                     use-small-font
+                                     is-from-new-post
+                                     id="structuredQuestionContainer_[[index]]"
+                                     structured-answers="[[structuredAnswers]]"
+                                     question="[[question]]">
+        </yp-structured-question-edit>
+      </template>
+    </template>
+
+    <yp-ajax hidden id="translatedQuestionsAjax" on-response="_translatedQuestionsResponse"></yp-ajax>
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'yp-registration-questions',
+
+      behaviors: [
+        Polymer.ypLanguageBehavior
+      ],
+
+      properties: {
+
+        group: {
+          type: Object,
+          value: null
+        },
+
+        structuredQuestions: {
+          type: Array,
+          computed: '_structuredQuestions(group, translatedQuestions)',
+          observer: '_filteredQuestionsChanged'
+        },
+
+        filteredQuestions: {
+          type: Array,
+          computed: '_filteredQuestions(structuredQuestions, segments, selectedSegment)'
+        },
+
+        structuredAnswers: {
+          type: Array,
+          value: null
+        },
+
+        translatedQuestions: {
+          type: Array,
+          value: null
+        },
+
+        autoTranslate: {
+          type: Boolean,
+          value: false
+        },
+
+        selectedSegment: {
+          type: String,
+          value: null
+        },
+
+        segments: {
+          type: Array,
+          value: null
+        },
+
+        renderingQuestions: {
+          type: Boolean,
+          value: true
+        }
+      },
+
+      _radioChanged(event, detail) {
+        this.set('selectedSegment', detail.value);
+        // HACK FOR DOM-REPEAT NOT SUPPORTING RESTAMP, not needed for Lit version and .map
+        this.set('renderingQuestions', false);
+        this.async(function () {
+          this.set('renderingQuestions', true);
+          this.async(function () {
+            this._setupQuestions();
+            this.async(function () {
+              this.fire('questions-changed');
+            })
+          })
+        })
+      },
+
+      _autoTranslateEvent(event, detail) {
+        this.set('autoTranslate', detail);
+        this._getTranslationsIfNeeded();
+      },
+
+      ready: function () {
+        this.async(function () {
+          this._getTranslationsIfNeeded();
+        })
+      },
+
+      _getTranslationsIfNeeded: function () {
+        this.set('translatedQuestions', null);
+        if (this.autoTranslate && this.language && this.language!==this.group.language) {
+          this.$.translatedQuestionsAjax.url = `/api/groups/${this.group.id}/translatedRegistrationQuestions?targetLanguage=${this.language}`;
+          this.$.translatedQuestionsAjax.generateRequest();
+        }
+      },
+
+      _getQuestionLengthWithSubOptions: function (questions) {
+        let length = 0;
+        for (let i=0; i<questions.length;i++) {
+          length += 1;
+          var question = questions[i];
+          if (question.type==="radios" && question.radioButtons && question.radioButtons.length>0) {
+            length += question.radioButtons.length;
+          }  else if (question.type==="checkboxes" && question.checkboxes && question.checkboxes.length>0) {
+            length += question.checkboxes.length;
+          } else if(question.type==="dropdown" && question.dropdownOptions && question.dropdownOptions.length>0) {
+            length += question.dropdownOptions.length;
+          }
+        }
+
+        return length;
+      },
+
+      _translatedQuestionsResponse: function (event, detail) {
+        if (this.autoTranslate && this.language!==this.group.language) {
+          var translatedTexts = detail.response;
+          var currentQuestions = JSON.parse(JSON.stringify(this.group.configuration.registrationQuestionsJson));
+
+          if (translatedTexts.length===this._getQuestionLengthWithSubOptions(currentQuestions)) {
+            var translatedItemCount = 0;
+            for (var questionCount=0; questionCount<currentQuestions.length;questionCount++) {
+              var question = currentQuestions[questionCount];
+              question.originalText = question.text;
+              question.text = translatedTexts[translatedItemCount++];
+
+              if (question.type==="radios" && question.radioButtons && question.radioButtons.length>0) {
+                for (var subOptionCount=0;subOptionCount<question.radioButtons.length;subOptionCount++) {
+                  question.radioButtons[subOptionCount].originalText =  question.radioButtons[subOptionCount].text;
+                  question.radioButtons[subOptionCount].text = translatedTexts[translatedItemCount++];
+                }
+              }  else if (question.type==="checkboxes" && question.checkboxes && question.checkboxes.length>0) {
+                for (var subOptionCount=0;subOptionCount<question.checkboxes.length;subOptionCount++) {
+                  question.checkboxes[subOptionCount].originalText =  question.checkboxes[subOptionCount].text;
+                  question.checkboxes[subOptionCount].text = translatedTexts[translatedItemCount++];
+                }
+              } else if(question.type==="dropdown" && question.dropdownOptions && question.dropdownOptions.length>0) {
+                for (var subOptionCount=0;subOptionCount<question.dropdownOptions.length;subOptionCount++) {
+                  question.dropdownOptions[subOptionCount].originalText =  question.dropdownOptions[subOptionCount].text;
+                  question.dropdownOptions[subOptionCount].text = translatedTexts[translatedItemCount++];
+                }
+              }
+            }
+
+            this.set('translatedQuestions', currentQuestions);
+          } else {
+            console.error("Questions and Translated texts length does not match");
+          }
+        } else {
+          this.set('translatedQuestions', null);
+        }
+      },
+
+      _structuredQuestions: function (group, translatedQuestions) {
+        if (group && group.configuration.registrationQuestionsJson) {
+          if (translatedQuestions) {
+            return translatedQuestions;
+          } else {
+            return group.configuration.registrationQuestionsJson;
+          }
+        }  else {
+          return null;
+        }
+      },
+
+      _filteredQuestions: function (questions, segments, selectedSegment) {
+        if (questions) {
+          var filteredQuestions = [];
+          questions.forEach(function (question) {
+            if (!segments || (selectedSegment &&
+                              question.type!=="segment" &&
+                              question.segmentName===selectedSegment)) {
+              filteredQuestions.push(question);
+            }
+          }.bind(this));
+          return filteredQuestions;
+        } else {
+          return null;
+        }
+      },
+
+      _setupQuestions: function () {
+        if (this.filteredQuestions) {
+          if (window.autoTranslate) {
+            this.set('autoTranslate', window.autoTranslate);
+          }
+          var liveQuestionIds = [];
+          var liveUniqueIds = [];
+          var liveUniqueIdsAll = [];
+          var uniqueIdsToElementIndexes = {};
+          this.filteredQuestions.forEach(function (question, index) {
+            if (question.type.toLowerCase()==="textfield" ||
+              question.type.toLowerCase()==="textfieldlong" ||
+              question.type.toLowerCase()==="textarea" ||
+              question.type.toLowerCase()==="textarealong" ||
+              question.type.toLowerCase()==="numberfield" ||
+              question.type.toLowerCase()==="checkboxes" ||
+              question.type.toLowerCase()==="radios" ||
+              question.type.toLowerCase()==="dropdown"
+            ) {
+              if (!this.segments || (this.selectedSegment && question.segmentName===this.selectedSegment)) {
+                liveQuestionIds.push(index);
+                uniqueIdsToElementIndexes[question.uniqueId] = index;
+                liveUniqueIds.push(question.uniqueId);
+                liveUniqueIdsAll.push({uniqueId: question.uniqueId, atIndex: index});
+              }
+            }
+          }.bind(this));
+          this.set('liveQuestionIds', liveQuestionIds);
+          this.set('liveUniqueIds', liveUniqueIds);
+          this.set('liveUniqueIdsAll', liveUniqueIdsAll);
+          this.set('uniqueIdsToElementIndexes', uniqueIdsToElementIndexes);
+        }
+      },
+
+      _checkForSegments: function () {
+        if (this.structuredQuestions) {
+          var segments = [];
+          this.structuredQuestions.forEach(function (question, index) {
+            if (question.type.toLowerCase()==="segment") {
+              segments.push(question);
+            }
+          }.bind(this));
+
+          if (segments.length>0) {
+            this.set('segments', segments);
+          }
+        } else {
+          this.set('segments', null);
+        }
+      },
+
+      _filteredQuestionsChanged: function () {
+        this._checkForSegments();
+        this._setupQuestions();
+      },
+
+      getAnswers: function () {
+        var answers = [];
+        this.liveQuestionIds.forEach(function (liveIndex) {
+          var questionElement = this.$$("#structuredQuestionContainer_"+liveIndex);
+          if (questionElement) {
+            var returnAnswer = {}
+            var text = questionElement.question.originalText ? questionElement.question.originalText : questionElement.question.text;
+            returnAnswer[text] = questionElement.getAnswer().value;
+            answers.push(returnAnswer);
+          }
+        }.bind(this));
+        this.structuredAnswers = answers;
+        return answers;
+      },
+
+      validate: function () {
+        var valid = true;
+        this.liveQuestionIds.forEach(function (liveIndex) {
+          var questionElement = this.$$("#structuredQuestionContainer_"+liveIndex);
+          if (questionElement && !questionElement.validate()) {
+            valid = false;
+          }
+        }.bind(this));
+
+        if (this.segments && !this.selectedSegment) {
+          valid = false;
+        }
+        return valid;
+      }
+    });
+  </script>
+</dom-module>

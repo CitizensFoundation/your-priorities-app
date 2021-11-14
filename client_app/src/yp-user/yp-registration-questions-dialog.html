@@ -1,0 +1,136 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-form/iron-form.html">
+<link rel="import" href="../../bower_components/iron-a11y-keys/iron-a11y-keys.html">
+<link rel="import" href="../../bower_components/lite-signal/lite-signal.html">
+
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+
+<link rel="import" href="../yp-behaviors/yp-language-behavior.html">
+
+<dom-module id="yp-registration-questions-dialog">
+
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+      paper-dialog {
+        background-color: #FFF;
+        width: 420px;
+      }
+
+      @media (max-width: 480px) {
+        paper-dialog {
+          padding: 0;
+          margin: 0;
+          width: 100%;
+        }
+      }
+
+      [hidden] {
+        display: none !important;
+      }
+
+      .buttons {
+        margin-bottom: 8px;
+        margin-right: 4px;
+        text-align: center;
+      }
+
+      .heading {
+        font-size: 22px;
+        font-weight: bold;
+        text-align: center;
+      }
+
+      yp-registration-questions {
+        margin-top: 0;
+        min-height: 15px;
+        margin-bottom: 16px;
+      }
+    </style>
+    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
+
+    <div id="outer">
+      <paper-dialog id="dialog" modal>
+        <div class="heading">[[t('registrationQuestionsInfo')]]</div>
+        <paper-dialog-scrollable id="scrollable">
+          <yp-registration-questions
+                  id="registrationQuestions"
+                  on-dom-change="_questionsUpdated"
+                  on-question-changed="_questionsUpdated"
+                  on-resize-scroller="_questionsUpdated"
+                  group="[[registrationQuestionsGroup]]"
+          ></yp-registration-questions>
+        </paper-dialog-scrollable>
+        <div class="buttons">
+          <yp-ajax id="sendRegistrationQuestionsAjax" dispatch-error method="PUT" url="/api/users/setRegistrationAnswers" on-response="_setRegistrationAnswerResponse"></yp-ajax>
+          <paper-button on-tap="_validateAndSend">[[t('save')]]</paper-button>
+        </div>
+      </paper-dialog>
+
+      <iron-a11y-keys id="a11y" keys="enter" on-keys-pressed="onEnter"></iron-a11y-keys>
+    </div>
+  </template>
+
+</dom-module>
+
+<script>
+
+  Polymer({
+
+    is: 'yp-registration-questions-dialog',
+
+    behaviors: [
+      Polymer.ypLanguageBehavior
+    ],
+
+    properties: {
+      registrationQuestionsGroup: {
+        type: Object
+      }
+    },
+
+    onEnter: function (event) {
+      this._validateAndSend();
+    },
+
+    _questionsUpdated: function () {
+      this.async(function (){
+        this.$$("#scrollable").fire('iron-resize');
+      }, 100);
+    },
+
+    ready: function () {
+      this.async(function () {
+        this.$$("#a11y").target = this.$$("#registrationQuestions");
+      }.bind(this), 50);
+    },
+
+    _validateAndSend: function(e) {
+      if (this.$$("#registrationQuestions").validate()){
+        window.appGlobals.activity('submit', 'registrationAnswers');
+        this.$$("#sendRegistrationQuestionsAjax").body = {registration_answers:  this.$$("#registrationQuestions").getAnswers() };
+        this.$$("#sendRegistrationQuestionsAjax").generateRequest();
+        window.appUser.setHasRegistrationAnswers();
+      } else {
+        this.$$("#sendRegistrationQuestionsAjax").showErrorDialog(this.t('user.completeForm'));
+        return false;
+      }
+    },
+
+    _setRegistrationAnswerResponse: function () {
+      this.close();
+    },
+
+    open: function(registrationQuestionsGroup) {
+      this.set('registrationQuestionsGroup', registrationQuestionsGroup);
+      this.$$("#dialog").open();
+    },
+
+    close: function() {
+      this.$$("#dialog").close();
+    }
+
+  });
+</script>

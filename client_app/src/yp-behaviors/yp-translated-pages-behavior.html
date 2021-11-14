@@ -69,19 +69,29 @@
     _openPage: function (page) {
       window.appGlobals.activity('open', 'pages', page.id);
       this.getDialogAsync("pageDialog", function (dialog) {
-        var pageLocale = 'en';
-        if (page.title[window.locale]) {
-          pageLocale = window.locale;
-        }
+        var pageLocale = this._getPageLocale(page);
         dialog.open(page.title[pageLocale], page.content[pageLocale]);
       }.bind(this));
     },
 
-    _getLocalizePageTitle: function (page) {
+    _getPageLocale: function (page) {
       var pageLocale = 'en';
       if (page.title[window.locale]) {
         pageLocale = window.locale;
+      } else if (page.title["en"]) {
+        pageLocale = "en";
+      } else {
+        var key = Object.keys(page.title)[0];
+        if (key) {
+          pageLocale = key;
+        }
       }
+
+      return pageLocale;
+    },
+
+    _getLocalizePageTitle: function (page) {
+      var pageLocale = this._getPageLocale(page);
       return page.title[pageLocale];
     },
 

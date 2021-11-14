@@ -16,6 +16,7 @@
 <link rel="import" href="../yp-behaviors/yp-language-behavior.html">
 <link rel="import" href="../yp-behaviors/yp-goto-behavior.html">
 <link rel="import" href="../yp-magic-text/yp-magic-text.html">
+<link rel="import" href="./yp-registration-questions.html">
 
 <dom-module id="yp-login">
 
@@ -66,6 +67,13 @@
         width: 22px;
         height: 22px;
         background: url(/images/auth-icons.png) no-repeat 99px 99px;
+      }
+
+      paper-tab {
+        --paper-tabs: {
+            font-family: var(--app-header-font-family, Roboto);
+        };
+        font-family: var(--app-header-font-family, Roboto);
       }
 
       /**
@@ -124,6 +132,13 @@
         box-shadow: inset 0 1px 0 #45619d;
       }
 
+      paper-textarea-aria, paper-input {
+          --paper-input-container-label: {
+              font-family: var(--app-header-font-family, Roboto);
+          };
+          font-family: var(--app-header-font-family, Roboto);
+      }
+
       /*
        * Icon
        */
@@ -153,12 +168,12 @@
       }
 
       .islandIs {
-        width: 80px;
-        height: 18px;
-        padding-left: 16px;
+        width: 107px;
+        height: 19px;
+        padding-left: 8px;
         padding-top: 8px;
         padding-bottom: 8px;
-        padding-right: 8px;
+        padding-right: 32px;
         margin-left: 8px;
       }
 
@@ -173,7 +188,11 @@
         margin-top: 20px;
         text-align: center;
         vertical-align: bottom;
-        margin-bottom: 3px;
+        margin-bottom: 16px;
+      }
+
+      .buttons[has-registration-questions] {
+          padding-bottom: 16px;
       }
 
       .boldButton {
@@ -319,6 +338,7 @@
         border: 1px solid;
         border-color: #ddd;
         padding: 12px;
+        padding-top: 18px;
       }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
@@ -356,18 +376,14 @@
                     <paper-button raised class="anonLoginButton" on-tap="anonymousLogin">[[t('participateAnonymously')]]</paper-button>
                   </template>
 
+                  <template is="dom-if" if="[[hasOneTimeLoginWithName]]">
+                    <paper-button raised class="anonLoginButton" on-tap="oneTimeLogin">[[t('oneTimeLoginWithName')]]</paper-button>
+                  </template>
+
                   <div class="layout horizontal">
-                    <template is="dom-if" if="[[hasFacebookLogin]]">
-                    <span hidden$="[[forceSecureSamlLogin]]">
-                      <div class="btn-auth btn-facebook cursor" on-tap="_facebookLogin" role="button" tabindex="0"
-                           hidden$="[[disableFacebookLoginForGroup]]">
-                        [[t('user.facebookLogin')]]
-                      </div>
-                    </span>
-                    </template>
                     <template is="dom-if" if="[[hasSamlLogin]]">
                       <template is="dom-if" if="[[samlLoginButtonUrl]]">
-                        <div class="islandIs cursor layout horizontal center-center">
+                        <div class="islandIs cursor layout horizontal center-center" role="button" tabindex="0">
                           <img hidden$="[[forceSecureSamlLogin]]" on-tap="_openSamlLogin" width="80" src="[[samlLoginButtonUrl]]"/>
                           <div hidden$="[[!forceSecureSamlLogin]]" class="largeSamlLogo" on-tap="_openSamlLogin" role="button" tabindex="0">
                             <img width="130" src="[[samlLoginButtonUrl]]"/>
@@ -375,13 +391,21 @@
                         </div>
                       </template>
                       <template is="dom-if" if="[[!samlLoginButtonUrl]]">
-                        <div class="islandIs cursor layout horizontal center-center">
-                          <img hidden$="[[forceSecureSamlLogin]]" on-tap="_openSamlLogin" width="80" height="18" src="https://s3.amazonaws.com/yrpri-direct-asset/yrpri6/islandisLogo.png"/>
+                        <div class="islandIs cursor layout horizontal center-center" role="button" tabindex="0" on-keydown="_keySaml">
+                          <img hidden$="[[forceSecureSamlLogin]]" on-tap="_openSamlLogin"  width="107" height="19" src="https://yrpri-eu-direct-assets.s3-eu-west-1.amazonaws.com/islanddotis.png"/>
                           <div hidden$="[[!forceSecureSamlLogin]]" class="largeSamlLogo" on-tap="_openSamlLogin" role="button" tabindex="0">
-                            <img width="130" height="30" src="https://s3.amazonaws.com/yrpri-direct-asset/yrpri6/islandisLogo.png"/>
+                            <img width="140" height="25" src="https://yrpri-eu-direct-assets.s3-eu-west-1.amazonaws.com/islanddotis.png"/>
                           </div>
                         </div>
                       </template>
+                    </template>
+                    <template is="dom-if" if="[[hasFacebookLogin]]">
+                      <span hidden$="[[forceSecureSamlLogin]]">
+                        <div class="btn-auth btn-facebook cursor" on-tap="_facebookLogin" role="button" tabindex="0"
+                             hidden$="[[disableFacebookLoginForGroup]]">
+                          [[t('user.facebookLogin')]]
+                        </div>
+                      </span>
                     </template>
                   </div>
                 </div>
@@ -404,6 +428,7 @@
                                required
                                char-counter>
                   </paper-input>
+
                 </template>
 
                 <paper-input id="email"
@@ -423,12 +448,22 @@
                              autocomplete="current-password"
                              error-message="[[passwordErrorMessage]]">
                 </paper-input>
+
+                <template is="dom-if" if="[[registerMode]]" restamp>
+                  <template is="dom-if" if="[[registrationQuestionsGroup]]" restamp>
+                    <yp-registration-questions
+                            id="registrationQuestions"
+                            on-questions-changed="_registrationQuestionsChanged"
+                            on-resize-scroller="_registrationQuestionsChanged"
+                            group="[[registrationQuestionsGroup]]"></yp-registration-questions>
+                  </template>
+                </template>
               </div>
             </div>
             <div class="signupTerms" hidden$="[[!showSignupTerms]]">[[customTermsIntroText]] - <span on-tap="_openTerms"
                                                                                                      class="openTerms">{{t('signupTermsOpen')}}</span>
             </div>
-            <div class="buttons layout vertical center-center">
+            <div class="buttons layout vertical center-center" has-registration-questions$="[[registrationQuestions]]">
               <div class="layout horizontal center-center">
                 <paper-button dialog-dismiss on-tap="_cancel">[[t('cancel')]]</paper-button>
                 <paper-button hidden$="[[forceSecureSamlLogin]]" on-tap="_forgotPassword">[[t('user.newPassword')]]</paper-button>
@@ -450,6 +485,36 @@
 
     <iron-a11y-keys id="a11y" keys="enter"
                     on-keys-pressed="onEnter"></iron-a11y-keys>
+
+    <template is="dom-if" if="[[hasOneTimeLoginWithName]]">
+      <paper-dialog id="dialogOneTimeWithName" modal>
+        <h3>[[t('oneTimeLoginWithName')]]</h3>
+        <paper-dialog-scrollable>
+          <paper-input id="oneTimeLoginWithNameId"
+                       type="text"
+                       label="[[userNameText]]"
+                       maxlength="50"
+                       value="{{oneTimeLoginName}}"
+                       autocomplete="off">
+          </paper-input>
+
+          <template is="dom-if" if="[[registrationQuestionsGroup]]" restamp>
+            <yp-registration-questions
+                    id="registrationQuestionsOneTimeLogin"
+                    on-questions-changed="_registrationQuestionsChanged"
+                    on-resize-scroller="_registrationQuestionsChanged"
+                    group="[[registrationQuestionsGroup]]"></yp-registration-questions>
+          </template>
+
+          <div class="buttons">
+            <paper-button dialog-dismiss>[[t('cancel')]]</paper-button>
+            <paper-button disabled$="[[!oneTimeLoginName]]" on-tap="finishOneTimeLoginWithName">[[t('user.login')]]</paper-button>
+          </div>
+        </paper-dialog-scrollable>
+      </paper-dialog>
+      <iron-a11y-keys id="a11yoneTimeWithName" keys="enter"
+                      on-keys-pressed="finishOneTimeLoginWithName"></iron-a11y-keys>
+    </template>
     <yp-ajax id="registerAnonymouslyAjax" method="POST" dispatch-error on-error="_registerError"
              url="/api/users/register_anonymously" on-response="_registerResponse"></yp-ajax>
   </template>
@@ -514,7 +579,7 @@
       credentials: {
         type: String,
         notify: true,
-        computed: '_computeCredentials(name, email, password)'
+        value: null
       },
 
       registerMode: {
@@ -526,6 +591,11 @@
       submitText: {
         type: String,
         value: ""
+      },
+
+      registrationQuestionsGroup: {
+        type: Object,
+        value: null
       },
 
       redirectToURL: {
@@ -581,7 +651,7 @@
 
       hasAdditionalAuthMethods: {
         type: Boolean,
-        computed: '_hasAdditionalAuthMethods(domain, hasAnonymousLogin, disableFacebookLoginForGroup)'
+        computed: '_hasAdditionalAuthMethods(domain, hasAnonymousLogin, hasOneTimeLoginWithName, disableFacebookLoginForGroup)'
       },
 
       userNameText: {
@@ -632,6 +702,40 @@
       customSamlLoginText: {
         type: String,
         value: null
+      },
+
+      oneTimeLoginName: {
+        type: String,
+        value: null
+      },
+
+      hasOneTimeLoginWithName: {
+        type: Boolean,
+        value: false
+      }
+    },
+
+    _registrationQuestionsChanged: function () {
+      this.$.dialog.fire('iron-resize');
+      var oneTimeDialog = this.$$("#dialogOneTimeWithName");
+      if (oneTimeDialog) {
+        oneTimeDialog.fire('iron-resize');
+      }
+    },
+
+    _setupCustomRegistrationQuestions: function () {
+      if (window.appGlobals.registrationQuestionsGroup) {
+        this.set('registrationQuestionsGroup', window.appGlobals.registrationQuestionsGroup);
+      } else {
+        this.set('registrationQuestionsGroup', null);
+      }
+    },
+
+    _keySaml: function (event) {
+      debugger;
+      if (event.keyCode==13) {
+        event.preventDefault();
+        this._openSamlLogin();
       }
     },
 
@@ -684,6 +788,8 @@
         hostName = "yp";
       } else if (domainName.indexOf("smarter.nj.gov") > -1) {
         hostName = "enjine";
+      } else if (window.appGlobals.domain && window.appGlobals.domain.loginCallbackCustomHostName) {
+        hostName = window.appGlobals.domain.loginCallbackCustomHostName;
       } else {
         hostName = "login";
       }
@@ -713,6 +819,37 @@
       };
       this.$$("#registerAnonymouslyAjax").generateRequest();
       window.appGlobals.sendLoginAndSignupToAnalytics(null, 'Signup Submit', 'Anonymous');
+    },
+
+    anonymousLoginWithName: function (registrationAnswers) {
+      this.$$("#registerAnonymouslyAjax").body = {
+        groupId: window.appGlobals.currentAnonymousGroup.id,
+        trackingParameters: window.appGlobals.originalQueryParameters,
+        oneTimeLoginName: this.hasOneTimeLoginWithName ? this.oneTimeLoginName : null,
+        registration_answers: registrationAnswers
+      };
+      this.$$("#registerAnonymouslyAjax").generateRequest();
+      window.appGlobals.sendLoginAndSignupToAnalytics(null, 'Signup Submit', 'Anonymous with name');
+    },
+
+    finishOneTimeLoginWithName: function () {
+      if (this.oneTimeLoginName && (
+          !this.registrationQuestionsGroup || this.$$("#registrationQuestionsOneTimeLogin").validate()
+        )) {
+          this.anonymousLoginWithName(this.$$("#registrationQuestionsOneTimeLogin") ?
+            this.$$("#registrationQuestionsOneTimeLogin").getAnswers() : undefined);
+      } else {
+        this.$$("#loginAjax").showErrorDialog(this.t('user.completeForm'));
+        window.appGlobals.sendLoginAndSignupToAnalytics(null, this.registerMode ? 'Signup Fail' : 'Login Fail', 'Email', 'Form not validated');
+      }
+    },
+
+    oneTimeLogin: function () {
+      this.set('oneTimeLoginName', null);
+      this.$$("#dialogOneTimeWithName").open();
+      this.async(function () {
+        this.$$("#oneTimeLoginWithNameId").focus();
+      }, 50);
     },
 
     _openSamlLogin: function () {
@@ -760,8 +897,8 @@
       }
     },
 
-    _hasAdditionalAuthMethods: function (domain, hasAnonymousLogin) {
-      return domain && ((this._hasFacebookLogin(domain) && !this.disableFacebookLoginForGroup) || this._hasSamlLogin(domain) || hasAnonymousLogin);
+    _hasAdditionalAuthMethods: function (domain, hasAnonymousLogin, hasOneTimeLoginWithName) {
+      return domain && ((this._hasFacebookLogin(domain) && !this.disableFacebookLoginForGroup) || this._hasSamlLogin(domain) || hasAnonymousLogin || hasOneTimeLoginWithName);
     },
 
     _hasFacebookLogin: function (domain) {
@@ -782,11 +919,23 @@
 
     _openedChanged: function (newValue) {
       if (newValue) {
-        if (window.appGlobals.currentAnonymousGroup) {
+        if (window.appGlobals.currentAnonymousGroup &&
+          window.appGlobals.currentAnonymousGroup.configuration &&
+          window.appGlobals.currentAnonymousGroup.configuration.allowAnonymousUsers
+        ) {
           this.set('hasAnonymousLogin', true);
         } else {
           this.set('hasAnonymousLogin', false);
         }
+
+        if (window.appGlobals.currentAnonymousGroup &&
+            window.appGlobals.currentAnonymousGroup.configuration &&
+            window.appGlobals.currentAnonymousGroup.configuration.allowOneTimeLoginWithName) {
+          this.set('hasOneTimeLoginWithName', true);
+        } else {
+          this.set('hasOneTimeLoginWithName', false);
+        }
+
         if (window.appGlobals.disableFacebookLoginForGroup) {
           this.set('disableFacebookLoginForGroup', true);
         } else {
@@ -822,6 +971,11 @@
         this.async(function () {
           this.$$("#a11y").target = this.$$("#form");
           this.$$("#email").focus();
+
+          if (this.$$("#oneTimeLoginWithNameId") &&
+              this.$$("#a11yoneTimeWithName")) {
+            this.$$("#a11yoneTimeWithName").target = this.$$("#oneTimeLoginWithNameId");
+          }
         }.bind(this), 50);
 
         if (window.appGlobals.signupTermsPageId) {
@@ -905,21 +1059,36 @@
       }
     },
 
-    _computeCredentials: function (name, email, password) {
-      return JSON.stringify({
-        name: name,
-        email: email,
-        identifier: email,
-        username: email,
-        password: password
+    _setupJsonCredentials: function () {
+      this.credentials = JSON.stringify({
+        name: this.name,
+        email: this.email,
+        identifier: this.email,
+        username: this.email,
+        password: this.password,
+        registration_answers: (this.registrationQuestionsGroup && this.$$("#registrationQuestions"))
+          ? this.$$("#registrationQuestions").getAnswers() : undefined
       });
+    },
+
+    _validateRegistrationAnswers: function () {
+      if (this.registrationQuestionsGroup) {
+        return this.$$("#registrationQuestions").validate();
+      } else {
+        return true;
+      }
     },
 
     _validateAndSend: function (e) {
       if (!this.isSending) {
         this.set('isSending', true);
         window.appGlobals.sendLoginAndSignupToAnalytics(null, this.registerMode ? 'Signup Submit' : 'Login Submit', 'Email');
-        if (this.$$("#form").validate() && this.email && this.password) {
+        if (this.$$("#form").validate() &&
+            this.email &&
+            this.password && (
+              !this.registerMode || !this.registrationQuestionsGroup || this.$$("#registrationQuestions").validate()
+          )) {
+          this._setupJsonCredentials();
           if (this.registerMode) {
             this.$$("#registerAjax").body = this.credentials;
             this.$$("#registerAjax").generateRequest();
@@ -942,7 +1111,10 @@
       this.set('isSending', false);
       window.appGlobals.sendLoginAndSignupToAnalytics(detail.response.id, "Signup Success", 'Email');
       this._loginCompleted(detail.response);
-      console.error("Got register response for: "+ detail.response ? detail.response.email : 'unknown');
+      console.info("Got register response for: "+ detail.response ? detail.response.email : 'unknown');
+      if (this.$$("#dialogOneTimeWithName")) {
+        this.$$("#dialogOneTimeWithName").close();
+      }
     },
 
     _loginResponse: function (event, detail) {
@@ -1023,6 +1195,8 @@
           }.bind(this));
         }
       });
+
+      this._setupCustomRegistrationQuestions();
     },
 
     close: function () {

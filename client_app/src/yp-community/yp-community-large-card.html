@@ -57,7 +57,14 @@
         margin: 0;
         font-size: 24px;
         font-weight: 700;
+      }
 
+      .community-name[widetext] {
+        font-size: 20px;
+      }
+
+      .community-name[largefont] {
+        font-size: 22px;
       }
 
       iron-image, video {
@@ -112,6 +119,10 @@
         padding-left: 16px;
         padding-right: 16px;
         padding-top: 16px;
+      }
+
+      .communityDescription[widetext] {
+        font-size: 14px !important;
       }
 
       .community-name {
@@ -320,16 +331,18 @@
           <div class="layout horizontal wrap">
             <div class="layout vertical description-and-stats">
               <div class="description">
-                <div class="community-name" role="heading" aria-level="1" aria-label="[[community.name]]">
+                <div role="heading" aria-level="1" aria-label="[[community.name]]">
                   <template is="dom-if" if="[[community]]">
-                    <yp-magic-text text-type="communityName" content-language="[[community.language]]"
+                    <yp-magic-text text-type="communityName" widetext$="[[wideText]]" class="community-name" content-language="[[community.language]]"
+                                   largefont$="[[largeFont]]"
                                    disable-translation="[[community.configuration.disableNameAutoTranslation]]"
                                    text-only content="[[communityNameFull]]" content-id="[[community.id]]">
                     </yp-magic-text>
                   </template>
                 </div>
                 <div hidden class="communityAccess">[[_communityAccessText(community.access)]]</div>
-                <yp-magic-text id="description" class="communityDescription"
+                <yp-magic-text id="description" class="communityDescription" widetext$="[[wideText]]"
+                               largefont$="[[largeFont]]"
                                text-type="communityContent" content-language="[[community.language]]"
                                content="[[community.description]]" content-id="[[community.id]]">
                 </yp-magic-text>
@@ -500,6 +513,10 @@
       },
 
       _communityChanged: function (community, previousCommunity) {
+        if (window.appGlobals.largeFont)
+          this.set('largeFont', true);
+        else
+          this.set('largeFont', false);
         if (community && community.description) {
           this.async(function () {
             if (community.configuration && community.configuration.welcomeHTML &&
@@ -513,7 +530,10 @@
              this.$$("#welcomeHTML").innerHTML = "";
             }
           });
-          if (community.description.length>220 && community.name && community.name.length>30) {
+
+          if (this.largeFont) {
+            this.$$("#description").style.fontSize = "14px";
+          } else if (community.description.length>220 && community.name && community.name.length>30) {
             this.$$("#description").style.fontSize = "15px";
           } else {
             this.$$("#description").style.fontSize = "16px";

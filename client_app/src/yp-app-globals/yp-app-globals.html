@@ -8,6 +8,7 @@
 <link rel="import" href="yp-app-recommendations-behavior.html">
 <link rel="import" href="yp-app-cache-behavior.html">
 <link rel="import" href="yp-app-analytics-behavior.html">
+<link rel="import" href="yp-app-offline-behavior.html">
 
 <link rel="import" href="../yp-session/yp-session.html">
 <link rel="import" href="../yp-ajax/yp-ajax.html">
@@ -54,7 +55,8 @@
           Polymer.ypGotoBehavior,
           Polymer.ypAppRecommendationsBehavior,
           Polymer.ypAppCacheBehavior,
-          Polymer.ypAppAnalyticsBehavior
+          Polymer.ypAppAnalyticsBehavior,
+          Polymer.ypAppOfflineBehavior
         ],
 
         properties: {
@@ -115,6 +117,11 @@
             value: null,
           },
 
+          registrationQuestionsGroup: {
+            type: Object,
+            value: null
+          },
+
           currentAnonymousUser: {
             type: Object,
             value: null
@@ -133,6 +140,11 @@
           currentSamlDeniedMessage: {
             type: String,
             value: null
+          },
+
+          largeFont: {
+            type: Boolean,
+            value: false
           },
 
           currentSamlLoginMessage: {
@@ -276,8 +288,22 @@
           console.debug("Set anon user "+user);
         },
 
+        setRegistrationQuestionGroup: function (group) {
+          if (group &&
+            group.configuration &&
+            group.configuration.registrationQuestionsJson) {
+            this.set('registrationQuestionsGroup', group);
+            window.appUser.checkRegistrationAnswersCurrent();
+          } else {
+            this.set('registrationQuestionsGroup', null);
+          }
+        },
+
         setAnonymousGroupStatus: function (group) {
-          if (group && group.configuration && group.configuration.allowAnonymousUsers) {
+          if (group &&
+              group.configuration &&
+              (group.configuration.allowAnonymousUsers ||
+               group.configuration.allowOneTimeLoginWithName)) {
             this.set('currentAnonymousGroup', group);
             console.debug("Have set anonymous group id: "+group.id);
             if (!window.appUser.user && this.currentAnonymousUser) {
