@@ -73,7 +73,8 @@ export class YpMagicTextDialog extends YpMagicText {
     contentLanguage: string,
     closeDialogText: string,
     structuredQuestionsConfig: string,
-    skipSanitize = false
+    skipSanitize = false,
+    disableTranslation = false
   ) {
     this.skipSanitize = skipSanitize;
     this.isDialog = true;
@@ -84,6 +85,11 @@ export class YpMagicTextDialog extends YpMagicText {
     this.contentLanguage = contentLanguage;
     this.structuredQuestionsConfig = structuredQuestionsConfig;
     this.closeDialogText = closeDialogText;
+    this.disableTranslation = disableTranslation;
     (this.$$('#dialog') as Dialog).open = true;
+    setTimeout(() => {
+      //TODO: What to fire here?
+      this.fire('iron-resize');
+    }, 50);
   }
 }

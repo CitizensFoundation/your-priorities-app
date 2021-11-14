@@ -270,6 +270,13 @@ export class YpServerApi extends YpServerApiBase {
     );
   }
 
+  public getGroupConfiguration(groupId: number) {
+    return this.fetchWrapper(
+      this.baseUrlPath + `/groups/${groupId}/configuration`
+    );
+  }
+
+
   public setVideoCover(videoId: number, body: Record<string, unknown>) {
     return this.fetchWrapper(
       this.baseUrlPath + `/videos/${videoId}/setVideoCover`,

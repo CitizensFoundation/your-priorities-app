@@ -4,7 +4,7 @@ import { YpMediaHelpers } from '../common/YpMediaHelpers.js';
 import { YpCollection } from './yp-collection.js';
 import { YpCollectionItemsGrid } from './yp-collection-items-grid.js';
 import { TemplateResult, html, nothing, LitElement } from 'lit';
-import { customElement,property } from 'lit/decorators.js';
+import { customElement, property, state } from 'lit/decorators.js';
 
 import '@material/mwc-tab';
 import '@material/mwc-tab-bar';
@@ -13,6 +13,8 @@ import '../yp-post/yp-posts-list.js';
 import '../yp-post/yp-post-card-add.js';
 import { YpPostsList } from '../yp-post/yp-posts-list.js';
 import { YpPostEdit } from '../yp-post/yp-post-edit.js';
+import { Snackbar } from '@material/mwc-snackbar';
+import { YpPostMap } from '../yp-post/yp-post-map.js';
 
 // TODO: Remove
 interface AcActivity extends LitElement {
@@ -43,8 +45,14 @@ export class YpGroup extends YpCollection {
   @property({ type: Number })
   selectedGroupTab = GroupTabTypes.Open;
 
-  haveGotTabCountInfoCount = 0;
+  @property({ type: Object })
+  configCheckTimer: ReturnType<typeof setTimeout> | undefined;
+
+  @state()
+  newGroupRefresh = false;
+
   tabCounters: Record<string, number> = {};
+  configCheckTTL = 45000;
 
   constructor() {
     super('group', 'post', 'lightbulb_outline', 'post.create');
@@ -68,11 +76,73 @@ export class YpGroup extends YpCollection {
     );
   }
 
+  _cancelConfigCheckTimer() {
+    if (this.configCheckTimer) {
+      clearTimeout(this.configCheckTimer);
+      this.configCheckTimer = undefined;
+    }
+  }
+
+  _startConfigCheckTimer() {
+    this._cancelConfigCheckTimer();
+    if (this.collection) {
+      this.configCheckTimer = setTimeout(
+        this._getGroupConfig,
+        this.configCheckTTL
+      );
+    }
+  }
+
+  async _getGroupConfig() {
+    if (this.collection) {
+      const groupConfiguration = (await window.serverApi.getGroupConfiguration(
+        this.collection.id
+      )) as YpGroupConfiguration;
+      if (groupConfiguration) {
+        if (
+          this._doesGroupRequireRefresh(
+            (this.collection as YpGroupData).configuration,
+            groupConfiguration
+          )
+        ) {
+          window.appDialogs.getDialogAsync('masterToast', (toast: Snackbar) => {
+            toast.textContent = this.t('groupConfigurationHasBeenUpdated');
+            toast.timeoutMs = 7500;
+          });
+          this._refreshAjax();
+        }
+        this._startConfigCheckTimer();
+      } else {
+        this._cancelConfigCheckTimer();
+      }
+    } else {
+      this._cancelConfigCheckTimer();
+    }
+  }
+
+  _doesGroupRequireRefresh(
+    groupConfigA: YpGroupConfiguration,
+    groupConfigB: YpGroupConfiguration
+  ) {
+    if (groupConfigA && groupConfigB) {
+      if (
+        groupConfigA.canVote !== groupConfigB.canVote ||
+        groupConfigA.canAddNewPosts !== groupConfigB.canAddNewPosts ||
+        groupConfigA.disableDebate !== groupConfigB.disableDebate ||
+        groupConfigA.hideNewPost !== groupConfigB.hideNewPost
+      ) {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      return false;
+    }
+  }
+
   _updateTabPostCount(event: CustomEvent) {
     const tabCounterInfo = event.detail;
     this.tabCounters[tabCounterInfo.type] = tabCounterInfo.count;
-
-    this.haveGotTabCountInfoCount += 1;
 
     this._setupOpenTab();
 
@@ -83,26 +153,34 @@ export class YpGroup extends YpCollection {
 
   _setupOpenTab() {
     if (this.hasNonOpenPosts) {
-      if (this.haveGotTabCountInfoCount == 4) {
-        //TODO: Fix this logic of selecting a group with some ideas after we get the new counts from the server
-        if (this.selectedGroupTab === GroupTabTypes.Open) {
-          if (this.tabCounters['open'] && this.tabCounters['open'] > 0) {
-            this.selectedGroupTab = GroupTabTypes.Open;
-          } else if (
-            this.tabCounters['inProgress'] &&
-            this.tabCounters['inProgress'] > 0
-          ) {
-            this.selectedGroupTab = GroupTabTypes.InProgress;
-          } else if (
-            this.tabCounters['successful'] &&
-            this.tabCounters['successful'] > 0
-          ) {
-            this.selectedGroupTab = GroupTabTypes.Successful;
-          } else if (
-            this.tabCounters['failed'] &&
-            this.tabCounters['failed'] > 0
-          ) {
-            this.selectedGroupTab = GroupTabTypes.Failed;
+      if (
+        this.collection!.configuration &&
+        (this.collection!.configuration as YpGroupConfiguration)
+          .makeMapViewDefault
+      ) {
+        console.log('Not opening tabs with ideas in map mode');
+      } else {
+        if (Object.keys(this.tabCounters).length === 4) {
+          //TODO: Fix this logic of selecting a group with some ideas after we get the new counts from the server
+          if (this.selectedGroupTab === GroupTabTypes.Open) {
+            if (this.tabCounters['open'] && this.tabCounters['open'] > 0) {
+              this.selectedGroupTab = GroupTabTypes.Open;
+            } else if (
+              this.tabCounters['inProgress'] &&
+              this.tabCounters['inProgress'] > 0
+            ) {
+              this.selectedGroupTab = GroupTabTypes.InProgress;
+            } else if (
+              this.tabCounters['successful'] &&
+              this.tabCounters['successful'] > 0
+            ) {
+              this.selectedGroupTab = GroupTabTypes.Successful;
+            } else if (
+              this.tabCounters['failed'] &&
+              this.tabCounters['failed'] > 0
+            ) {
+              this.selectedGroupTab = GroupTabTypes.Failed;
+            }
           }
         }
       }
@@ -150,7 +228,6 @@ export class YpGroup extends YpCollection {
   async _getCollection() {
     window.appGlobals.retryMethodAfter401Login = this._getCollection.bind(this);
     this.hasNonOpenPosts = false;
-    this.haveGotTabCountInfoCount = 0;
     this.tabCounters = {};
 
     if (
@@ -184,19 +261,25 @@ export class YpGroup extends YpCollection {
           <mwc-tab-bar @MDCTabBar:activated="${this._selectGroupTab}">
             <mwc-tab
               .label="${this.tabLabelWithCount('open')}"
-              icon="lightbulb_outline"></mwc-tab>
-            ${ this.hasNonOpenPosts ? html`
-              <mwc-tab
-                .label="${this.tabLabelWithCount('inProgress')}"
-                icon="lightbulb_outline"></mwc-tab>
-              <mwc-tab
-                .label="${this.tabLabelWithCount('successful')}"
-                icon="lightbulb_outline"></mwc-tab>
-              <mwc-tab
-                .label="${this.tabLabelWithCount('failed')}"
-                icon="lightbulb_outline">
-              </mwc-tab>
-            ` : nothing}
+              icon="lightbulb_outline"
+            ></mwc-tab>
+            ${this.hasNonOpenPosts
+              ? html`
+                  <mwc-tab
+                    .label="${this.tabLabelWithCount('inProgress')}"
+                    icon="lightbulb_outline"
+                  ></mwc-tab>
+                  <mwc-tab
+                    .label="${this.tabLabelWithCount('successful')}"
+                    icon="lightbulb_outline"
+                  ></mwc-tab>
+                  <mwc-tab
+                    .label="${this.tabLabelWithCount('failed')}"
+                    icon="lightbulb_outline"
+                  >
+                  </mwc-tab>
+                `
+              : nothing}
             ${this.renderNewsAndMapTabs()}
           </mwc-tab-bar>
         </div>
@@ -217,7 +300,8 @@ export class YpGroup extends YpCollection {
             .listRoute="${this.subRoute}"
             .statusFilter="${statusFilter}"
             .searchingFor="${this.searchingFor}"
-            .group="${this.collection as YpGroupData}"></yp-posts-list>
+            .group="${this.collection as YpGroupData}"
+          ></yp-posts-list>
         </div> `
       : html``;
   }
@@ -243,7 +327,8 @@ export class YpGroup extends YpCollection {
           id="newsfeed"
           .selectedGroupTab="${this.selectedGroupTab}"
           .collectionType="${this.collectionType}"
-          .collectionId="${this.collectionId}"></ac-activities>`;
+          .collectionId="${this.collectionId}"
+        ></ac-activities>`;
         break;
       case GroupTabTypes.Map:
         page = html``;
@@ -261,14 +346,16 @@ export class YpGroup extends YpCollection {
         ? html` <div
             class="layout vertical center-center"
             ?hidden="${(this.collection.configuration as YpGroupConfiguration)
-              .hideNewPost}">
+              .hideNewPost}"
+          >
             <div>
               <yp-post-card-add
                 role="button"
                 aria-label="${this.t('post.new')}"
                 .group="${this.collection as YpGroupData}"
                 ?disableNewPosts="${this.disableNewPosts}"
-                @new-post="${this._newPost}"></yp-post-card-add>
+                @new-post="${this._newPost}"
+              ></yp-post-card-add>
             </div>
           </div>`
         : nothing}
@@ -279,7 +366,8 @@ export class YpGroup extends YpCollection {
         ? html` <mwc-fab
             .label="${this.t('post.new')}"
             icon="lightbulb"
-            @click="${this._newPost}"></mwc-fab>`
+            @click="${this._newPost}"
+          ></mwc-fab>`
         : nothing}
     `;
   }
@@ -319,6 +407,12 @@ export class YpGroup extends YpCollection {
       if (newsfeed) {
         newsfeed.loadNewData();
       }
+
+      //TODO: Get this working
+      const postsMap = this.$$('#postsMap') as YpPostMap;
+      if (postsMap) {
+        postsMap.requestUpdate;
+      }
     }, 100);
   }
 
@@ -335,9 +429,9 @@ export class YpGroup extends YpCollection {
   }
 
   _clearScrollThreshold() {
-    (this.$$(
-      '#scrollTheshold'
-    ) as IronScrollThresholdInterface).clearTriggers();
+    (
+      this.$$('#scrollTheshold') as IronScrollThresholdInterface
+    ).clearTriggers();
   }
 
   _setSelectedTabFromRoute(routeTabName: string): void {
@@ -377,10 +471,12 @@ export class YpGroup extends YpCollection {
   }
 
   get _isCurrentPostsTab(): boolean {
-    return this.selectedGroupTab==GroupTabTypes.Open ||
-    this.selectedGroupTab==GroupTabTypes.InProgress ||
-    this.selectedGroupTab==GroupTabTypes.Successful ||
-    this.selectedGroupTab==GroupTabTypes.Failed
+    return (
+      this.selectedGroupTab == GroupTabTypes.Open ||
+      this.selectedGroupTab == GroupTabTypes.InProgress ||
+      this.selectedGroupTab == GroupTabTypes.Successful ||
+      this.selectedGroupTab == GroupTabTypes.Failed
+    );
   }
 
   _loadMoreData() {
@@ -398,7 +494,7 @@ export class YpGroup extends YpCollection {
 
   goToPostOrNewsItem() {
     if (this._isCurrentPostsTab) {
-       //TODO: See what if this is needed
+      //TODO: See what if this is needed
     } else if (
       this.selectedGroupTab === GroupTabTypes.Newsfeed &&
       window.appGlobals.cache.cachedActivityItem !== undefined
@@ -413,42 +509,100 @@ export class YpGroup extends YpCollection {
     }
   }
 
-  //TODO: Make sure to capture the caching from this
-  /*_groupIdChanged: function (groupId, oldGroupId) {
-      if (groupId && groupId!=this.lastValidGroupId) {
-        this.set('lastValidGroupId', groupId);
-        this.set('group', null);
-        this.$.groupCard.resetGroup();
-        this.$.tabCountOpen.innerHTML = "";
-        if (this.hasNonOpenPosts) {
-          this.$$("#tabCountInProgress").innerHTML = "";
-          this.$$("#tabCountSuccessful").innerHTML = "";
-          this.$$("#tabCountFailed").innerHTML = "";
-        }
-        this.set('hasNonOpenPosts', false);
-        this.set('haveGotTabCountInfoCount', 0);
-        this.set('tabCounters', {});
-        var groupIdInt = parseInt(groupId);
-        if (window.appGlobals.groupItemsCache && window.appGlobals.groupItemsCache[groupIdInt]) {
-          this._groupResponse(null, { response: {
-              group: window.appGlobals.groupItemsCache[groupIdInt],
-              checkServerForNonOpenPosts: true
-            }});
-          window.appGlobals.groupItemsCache[groupIdInt] = null;
-          console.info("Using cache for group id "+groupId);
-        } else {
-          this._getGroup();
-        }
+  //TODO: Implment this if needed
+  /*
+  _retryGoToPostIdTab: function (tabId) {
         this.async(function () {
-          if (!this.selectedTab || (oldGroupId && this.selectedTab==='map')) {
+          var tab = this.$$("#"+tabId);
+          if (tab && window.appGlobals.cachedPostItem!==null) {
+            tab.scrollToPost(window.appGlobals.cachedPostItem);
+            window.appGlobals.cachedPostItem = null;
+          } else {
+            console.warn("Cant find tab or scroll post "+tabId+ " not retrying for item "+window.appGlobals.cachedPostItem);
+          }
+        }, 100);
+      },
+
+      _selectedTabChanged: function (tabName) {
+        if (tabName=='config') {
+          this.async(function () {
+          });
+          var configRoute = this.listRoute.path;
+          var groupId = this.idRoute.path.split("/")[1];
+          var configOverride= configRoute.substring(1, configRoute.length);
+          if (groupId && configOverride && configOverride!="")
+            window.appGlobals.setupGroupConfigOverride(groupId, configOverride);
+          this.set('selectedTab', 'open');
+        } else {
+          if (this.group) {
+            //TODO (for new version): Change the URL to match the tab without reloading everything
+            //this.redirectTo("/group/" + this.group.id + '/' + tabName);
+          }
+
+          if (tabName == "map") {
+            this.set('mapActive', true);
+          } else {
+            this.set('mapActive', false);
+          }
+
+          if (tabName && window.appGlobals) {
+            window.appGlobals.activity('open', 'group_tab_' + tabName,'',
+              { id: this.groupId });
+          }
+
+          this.async(function () {
+            var news = this.$$("#groupActivities");
+            if (news) {
+              news.fireResize();
+            }
+          }, 300);
+        }
+        this._clearScrollThreshold();
+      },
+*/
+
+  //TODO: Make sure to capture the caching from this
+  /* _groupIdChanged: function (groupId, oldGroupId) {
+        this._cancelConfigCheckTimer();
+        if (groupId && groupId!=this.lastValidGroupId) {
+          this.newGroupRefresh = true;
+          this.set('lastValidGroupId', groupId);
+          this.set('group', null);
+          this.$.groupCard.resetGroup();
+          this.$.tabCountOpen.innerHTML = "";
+          if (this.hasNonOpenPosts) {
+            this.$$("#tabCountInProgress").innerHTML = "";
+            this.$$("#tabCountSuccessful").innerHTML = "";
+            this.$$("#tabCountFailed").innerHTML = "";
+          }
+          this.set('hasNonOpenPosts', false);
+          this.set('tabCounters', {});
+          var groupIdInt = parseInt(groupId);
+
+          if (!this.selectedTab ||
+             (oldGroupId &&
+              this.selectedTab==='map' &&
+              !this.group.configuration.makeMapViewDefault
+             )) {
             this.set('selectedTab', 'open');
             this._setupOpenTab();
           }
-        });
-      }
-  },*/
 
-  refresh() {
+          if (window.appGlobals.groupItemsCache && window.appGlobals.groupItemsCache[groupIdInt]) {
+            this._groupResponse(null, { response: {
+                group: window.appGlobals.groupItemsCache[groupIdInt],
+                checkServerForNonOpenPosts: true
+              }});
+            window.appGlobals.groupItemsCache[groupIdInt] = null;
+            console.info("Using cache for group id "+groupId);
+            this.refresh();
+          } else {
+            this._getGroup();
+          }
+        }
+      },*/
+
+  refresh(fromMainApp = false) {
     super.refresh();
     const group = this.collection as YpGroupData;
 
@@ -544,22 +698,42 @@ export class YpGroup extends YpCollection {
         YpMediaHelpers.setupTopHeaderImage(this, null);
       }
 
+      let backPath;
+      let headerTitle;
+
+      const isAdmin = YpAccessHelpers.checkGroupAccess(
+        this.collection as YpGroupData
+      );
+
+      if (group.configuration.customBackURL) {
+        backPath = group.configuration.customBackURL;
+        headerTitle = group.configuration.customBackName;
+      } else if (
+        group.Community &&
+        group.Community.configuration &&
+        group.Community.configuration.redirectToGroupId &&
+        !isAdmin
+      ) {
+        backPath = '/domain/' + group.Community!.Domain!.id;
+        headerTitle = group.Community!.Domain!.name;
+      } else {
+        backPath = '/community/' + group.community_id;
+        headerTitle = group.Community!.name;
+      }
+
       this.fire('yp-change-header', {
-        headerTitle: group.configuration.customBackName
-          ? group.configuration.customBackName
-          : group.Community?.name,
+        headerTitle: headerTitle,
         headerDescription: group.Community?.description,
         headerIcon: 'social:group',
         documentTitle: group.name,
         enableSearch: true,
         hideHelpIcon: group.configuration.hideHelpIcon ? true : null,
         useHardBack: this._useHardBack(group.configuration),
-        backPath: group.configuration.customBackURL
-          ? group.configuration.customBackURL
-          : '/community/' + group.community_id,
+        backPath: backPath,
       });
 
       window.appGlobals.setAnonymousGroupStatus(group);
+      window.appGlobals.setRegistrationQuestionGroup(group);
 
       if (
         group.configuration &&
@@ -605,8 +779,21 @@ export class YpGroup extends YpCollection {
       } else {
         window.appGlobals.currentForceSaml = false;
       }
+
       if (group.configuration && group.configuration.makeMapViewDefault) {
         this.selectedGroupTab = GroupTabTypes.Map;
+      }
+
+      if (
+        group.Community &&
+        group.Community.configuration &&
+        group.Community.configuration.highlightedLanguages
+      ) {
+        window.appGlobals.setHighlightedLanguages(
+          group.Community!.configuration.highlightedLanguages
+        );
+      } else {
+        window.appGlobals.setHighlightedLanguages(undefined);
       }
 
       if (this.hasNonOpenPosts && this.tabCounters) {
@@ -618,7 +805,19 @@ export class YpGroup extends YpCollection {
       }
     }
 
+    if (
+      this.hasNonOpenPosts &&
+      this.tabCounters &&
+      (this.newGroupRefresh || fromMainApp === true)
+    ) {
+      this._setupOpenTab();
+    }
+
+    this.newGroupRefresh = false;
+
     window.appGlobals.postLoadGroupProcessing(group);
+
+    this._startConfigCheckTimer();
   }
 
   _setupGroupSaml(group: YpGroupData) {
@@ -654,9 +853,8 @@ export class YpGroup extends YpCollection {
       (this.$$('#collectionItems') as YpCollectionItemsGrid).scrollToItem(
         window.appGlobals.cache.backToCommunityGroupItems[this.collection.id]
       );
-      window.appGlobals.cache.backToCommunityGroupItems[
-        this.collection.id
-      ] = undefined;
+      window.appGlobals.cache.backToCommunityGroupItems[this.collection.id] =
+        undefined;
     }
   }
 }

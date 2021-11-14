@@ -78,12 +78,18 @@ export class YpMagicText extends YpBaseElement {
 
   connectedCallback() {
     super.connectedCallback();
-    this.addGlobalListener('yp-auto-translate', this._autoTranslateEvent.bind(this));
+    this.addGlobalListener(
+      'yp-auto-translate',
+      this._autoTranslateEvent.bind(this)
+    );
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
-    this.removeGlobalListener('yp-auto-translate', this._autoTranslateEvent.bind(this));
+    this.removeGlobalListener(
+      'yp-auto-translate',
+      this._autoTranslateEvent.bind(this)
+    );
   }
 
   static get styles() {
@@ -121,20 +127,20 @@ export class YpMagicText extends YpBaseElement {
       <div
         class="container layout-center-center layout-vertical"
         ?rlt="${this.rtl}"
-        ?more-text="${this.showMoreText}">
+        ?more-text="${this.showMoreText}"
+      >
         <!-- add max-width for IE11 -->
 
         ${this.finalContent
-          ? html`
-              <div>${unsafeHTML(this.finalContent)}</div>
-            `
+          ? html` <div>${unsafeHTML(this.finalContent)}</div> `
           : html` <div>${this.truncatedContent}</div> `}
         ${this.showMoreText && this.moreText
           ? html`
               <mwc-button
                 class="moreText"
                 @click="${this._openFullScreen}"
-                .label="${this.moreText}"></mwc-button>
+                .label="${this.moreText}"
+              ></mwc-button>
             `
           : nothing}
       </div>
@@ -150,7 +156,7 @@ export class YpMagicText extends YpBaseElement {
   }
 
   static get widerLanguages() {
-    return ['uk','ky','uz','ru','sr','zh_TW','hy']
+    return ['uk', 'ky', 'uz', 'ru', 'sr', 'zh_TW', 'hy', 'bg'];
   }
 
   get showMoreText(): boolean {
@@ -182,7 +188,8 @@ export class YpMagicText extends YpBaseElement {
           arg4: string | undefined,
           arg5: string | undefined,
           arg6: string | undefined,
-          arg7: boolean
+          arg7: boolean,
+          arg8: boolean
         ) => void;
       }) => {
         dialog.open(
@@ -193,7 +200,8 @@ export class YpMagicText extends YpBaseElement {
           this.contentLanguage,
           this.closeDialogText,
           this.structuredQuestionsConfig,
-          this.skipSanitize
+          this.skipSanitize,
+          this.disableTranslation
         );
       }
     );
@@ -220,12 +228,14 @@ export class YpMagicText extends YpBaseElement {
           this.truncatedContent = this.content;
         }
 
-        if (this.contentLanguage &&
-          YpMagicText.widerLanguages.indexOf(this.contentLanguage)>-1) {
-         this.widetext = true;
-       } else {
-         this.widetext = false;
-       }
+        if (
+          (this.contentLanguage && this.largeFont) ||
+          YpMagicText.widerLanguages.indexOf(this.contentLanguage!) > -1
+        ) {
+          this.widetext = true;
+        } else {
+          this.widetext = false;
+        }
 
         this._update();
       } else {
@@ -261,6 +271,7 @@ export class YpMagicText extends YpBaseElement {
         switch (this.textType) {
           case 'postName':
           case 'postContent':
+          case 'postTags':
           case 'postTranscriptContent':
             url = '/api/posts/' + this.contentId + '/translatedText';
             break;
@@ -287,6 +298,7 @@ export class YpMagicText extends YpBaseElement {
           case 'alternativeTextForNewIdeaButton':
           case 'alternativeTextForNewIdeaButtonClosed':
           case 'alternativeTextForNewIdeaButtonHeader':
+          case 'alternativeTextForNewIdeaSaveButton':
           case 'customThankYouTextNewPosts':
           case 'customTitleQuestionText':
           case 'alternativePointForHeader':
@@ -322,9 +334,8 @@ export class YpMagicText extends YpBaseElement {
           | string
           | undefined;
         if (this.processedContent) {
-          window.appGlobals.cache.autoTranslateCache[
-            this.indexKey
-          ] = this.processedContent;
+          window.appGlobals.cache.autoTranslateCache[this.indexKey] =
+            this.processedContent;
           this.fire('new-translation');
         } else {
           console.error('No content from translation');
@@ -391,10 +402,6 @@ export class YpMagicText extends YpBaseElement {
       this._linksAndEmojis();
     }
 
-    if (!this.isDialog && !this.truncate) {
-      this.truncate = 500;
-    }
-
     if (
       this.truncate &&
       this.content &&
@@ -458,6 +465,7 @@ export class YpMagicText extends YpBaseElement {
 
   _linksAndEmojis() {
     if (!this.skipSanitize && this.processedContent) {
+      //this.processedContent = sanitizeHtml(this.processedContent, {allowedTags: ['b', 'i', 'em', 'strong']});
       this.processedContent = this.processedContent.replace(/&amp;/g, '&');
       this.processedContent = linkifyStr(this.processedContent, {
         format: (value: string, type: string) => {
@@ -474,7 +482,7 @@ export class YpMagicText extends YpBaseElement {
         .replace(
           /class="emoji" /g,
           'style="height: 1em;width: 1em;margin: 0 .3em 0 .3em;vertical-align: -0.1em;" '
-        )
+        );
     } else if (this.processedContent) {
       this.processedContent = linkifyHtml(this.processedContent, {
         format: (value: string, type: string) => {
