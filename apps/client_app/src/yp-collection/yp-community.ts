@@ -5,6 +5,7 @@ import { YpCollection, CollectionTabTypes } from './yp-collection.js';
 import { YpCollectionItemsGrid } from './yp-collection-items-grid.js';
 import { customElement } from 'lit/decorators.js';
 import { AcActivities } from '../ac-activities/ac-activities.js';
+import { YpNavHelpers } from '../common/YpNavHelpers.js';
 
 @customElement('yp-community')
 export class YpCommunity extends YpCollection {
@@ -14,8 +15,23 @@ export class YpCommunity extends YpCollection {
 
   refresh() {
     super.refresh();
+    const isAdmin = YpAccessHelpers.checkCommunityAccess(
+      this.collection as YpCommunityData
+    );
     const community = this.collection as YpCommunityData;
-    if (community) {
+    if (
+      this.collection &&
+      this.collection.configuration &&
+      (this.collection.configuration as YpCommunityConfiguration)
+        .redirectToGroupId &&
+      !isAdmin
+    ) {
+      YpNavHelpers.redirectTo(
+        '/group/' +
+          (this.collection.configuration as YpCommunityConfiguration)
+            .redirectToGroupId
+      );
+    } else if (community) {
       this.collectionItems = community.Groups;
       this.setFabIconIfAccess(
         community.only_admins_can_create_groups,
@@ -48,6 +64,9 @@ export class YpCommunity extends YpCollection {
         window.appGlobals.setAnonymousGroupStatus(
           this.collectionItems[0] as YpGroupData
         );
+        window.appGlobals.setRegistrationQuestionGroup(
+          this.collectionItems[0] as YpGroupData
+        );
       }
 
       this._hideMapIfNotUsedByGroups();
@@ -66,7 +85,10 @@ export class YpCommunity extends YpCollection {
         window.appGlobals.signupTermsPageId = undefined;
       }
 
-      if (community.configuration.highlightedLanguages) {
+      if (
+        community.configuration &&
+        community.configuration.highlightedLanguages
+      ) {
         window.appGlobals.setHighlightedLanguages(
           community.configuration.highlightedLanguages
         );
@@ -113,21 +135,30 @@ export class YpCommunity extends YpCollection {
   }
 
   scrollToGroupItem() {
-    if (this.selectedTab===CollectionTabTypes.News && window.appGlobals.cache.cachedActivityItem) {
-      const list = this.$$("#collectionActivities") as AcActivities;
+    if (
+      this.selectedTab === CollectionTabTypes.News &&
+      window.appGlobals.cache.cachedActivityItem
+    ) {
+      const list = this.$$('#collectionActivities') as AcActivities;
       if (list) {
         list.scrollToItem(window.appGlobals.cache.cachedActivityItem);
         window.appGlobals.cache.cachedActivityItem = undefined;
       } else {
-        console.warn("No community activities for scroll to item");
+        console.warn('No community activities for scroll to item');
       }
-    } else if (this.selectedTab===CollectionTabTypes.Collection && this.collection) {
-      if (window.appGlobals.cache.backToCommunityGroupItems &&
-        window.appGlobals.cache.backToCommunityGroupItems[this.collection.id]) {
-          (this.$$('#collectionItems') as YpCollectionItemsGrid).scrollToItem(
-            window.appGlobals.cache.backToCommunityGroupItems[this.collection.id]
-          );
-        window.appGlobals.cache.backToCommunityGroupItems[this.collection.id] = undefined;
+    } else if (
+      this.selectedTab === CollectionTabTypes.Collection &&
+      this.collection
+    ) {
+      if (
+        window.appGlobals.cache.backToCommunityGroupItems &&
+        window.appGlobals.cache.backToCommunityGroupItems[this.collection.id]
+      ) {
+        (this.$$('#collectionItems') as YpCollectionItemsGrid).scrollToItem(
+          window.appGlobals.cache.backToCommunityGroupItems[this.collection.id]
+        );
+        window.appGlobals.cache.backToCommunityGroupItems[this.collection.id] =
+          undefined;
       }
     }
   }
@@ -139,7 +170,7 @@ export class YpCommunity extends YpCollection {
         backPath = '/community_folder/' + community.CommunityFolder.id;
         headerTitle = community.CommunityFolder.name;
         headerDescription = community.CommunityFolder.description;
-      } else  {
+      } else {
         backPath = '/domain/' + community.domain_id;
         if (community.Domain) {
           headerTitle = community.Domain.name;
@@ -148,9 +179,8 @@ export class YpCommunity extends YpCollection {
       }
       this.fire('yp-change-header', {
         headerTitle:
-          community.configuration &&
-          community.configuration.customBackName
-              ? community.configuration.customBackName
+          community.configuration && community.configuration.customBackName
+            ? community.configuration.customBackName
             : headerTitle,
         headerDescription: headerDescription,
         headerIcon: 'group-work',
@@ -160,8 +190,7 @@ export class YpCommunity extends YpCollection {
           community.configuration.disableDomainUpLink === true,
         documentTitle: community.name,
         backPath:
-          community.configuration &&
-          community.configuration.customBackURL
+          community.configuration && community.configuration.customBackURL
             ? community.configuration.customBackURL
             : backPath,
       });
@@ -177,9 +206,8 @@ export class YpCommunity extends YpCollection {
       (this.$$('#collectionItems') as YpCollectionItemsGrid).scrollToItem(
         window.appGlobals.cache.backToCommunityGroupItems[this.collection.id]
       );
-      window.appGlobals.cache.backToCommunityGroupItems[
-        this.collection.id
-      ] = undefined;
+      window.appGlobals.cache.backToCommunityGroupItems[this.collection.id] =
+        undefined;
     }
   }
 

@@ -40,6 +40,7 @@ export class YpDomain extends YpCollection {
     }
 
     window.appGlobals.setAnonymousGroupStatus(undefined);
+    window.appGlobals.setRegistrationQuestionGroup(undefined);
     window.appGlobals.disableFacebookLoginForGroup = false;
     window.appGlobals.externalGoalTriggerGroupId = undefined;
     window.appGlobals.currentForceSaml = false;

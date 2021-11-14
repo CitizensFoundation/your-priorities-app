@@ -211,6 +211,7 @@ interface YpGroupConfiguration extends YpCollectionConfiguration {
   hideSharing?: boolean;
   maxNumberOfGroupVotes?: number;
   allowAdminsToDebate?: boolean;
+  hideGroupLevelTabs?: boolean;
 }
 
 interface YpCommunityConfiguration extends YpCollectionConfiguration {

@@ -27,9 +27,6 @@ export class YpCollectionItemCard extends YpBaseElement {
   @property({ type: Object })
   collection: YpCollectionData | undefined;
 
-  @property({ type: Boolean })
-  largeFont = false;
-
   static get styles() {
     return [
       super.styles,

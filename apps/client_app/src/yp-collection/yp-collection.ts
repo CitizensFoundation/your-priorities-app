@@ -57,9 +57,6 @@ export abstract class YpCollection extends YpBaseElement {
   @property({ type: Boolean })
   hideCollection = false;
 
-  @property({ type: Boolean })
-  largeFont = false;
-
   @property({ type: String })
   createFabIcon: string | undefined;
 
@@ -121,14 +118,18 @@ export abstract class YpCollection extends YpBaseElement {
           this.collection.description || this.collection.objectives,
       });
 
-      if (this.collection.configuration?.hideAllTabs) {
+      if (
+        this.collection.configuration?.hideAllTabs ||
+        (this.collection.configuration as YpGroupConfiguration)
+          ?.hideGroupLevelTabs
+      ) {
         this.tabsHidden = true;
       } else {
         this.tabsHidden = false;
       }
 
-      if (this.$$("#collectionItems")) {
-        (this.$$("#collectionItems") as YpCollectionItemsGrid).refresh();
+      if (this.$$('#collectionItems')) {
+        (this.$$('#collectionItems') as YpCollectionItemsGrid).refresh();
       }
     }
   }
@@ -185,6 +186,10 @@ export abstract class YpCollection extends YpBaseElement {
           right: 16px;
         }
 
+        mwc-tab {
+          font-family: var(--app-header-font-family, Roboto);
+        }
+
         mwc-tab-bar {
           width: 960px;
         }
@@ -193,6 +198,11 @@ export abstract class YpCollection extends YpBaseElement {
           background-color: var(--primary-background-color);
           background-image: var(--top-area-background-image, none);
           height: 300px;
+        }
+
+        .createFab[is-map] {
+          right: inherit;
+          left: 28px;
         }
       `,
     ];
@@ -206,7 +216,8 @@ export abstract class YpCollection extends YpBaseElement {
               .collection="${this.collection}"
               .collectionType="${this.collectionType}"
               aria-label="${this.collectionType}"
-              role="banner"></yp-collection-header>
+              role="banner"
+            ></yp-collection-header>
           </div>
         `
       : nothing;
@@ -218,12 +229,12 @@ export abstract class YpCollection extends YpBaseElement {
         ?hidden="${this.hideNewsfeed}"
         .label="${this.t('post.tabs.news')}"
         icon="rss_feed"
-        ></mwc-tab>
+      ></mwc-tab>
       <mwc-tab
-        ?hidden="${this.locationHidden || (this.collectionType=="domain")}"
+        ?hidden="${this.locationHidden || this.collectionType == 'domain'}"
         .label="${this.t('post.tabs.location')}"
         icon="location_on"
-        ></mwc-tab>
+      ></mwc-tab>
     `;
   }
 
@@ -236,7 +247,7 @@ export abstract class YpCollection extends YpBaseElement {
               ?hidden="${this.hideCollection}"
               .label="${this.collectionTabLabel}"
               icon="groups"
-              ></mwc-tab>
+            ></mwc-tab>
             ${this.renderNewsAndMapTabs()}
           </mwc-tab-bar>
         </div>
@@ -259,8 +270,8 @@ export abstract class YpCollection extends YpBaseElement {
                 .collection="${this.collection}"
                 .collectionType="${this.collectionType}"
                 .collectionItemType="${this.collectionItemType}"
-                .collectionId="${this
-                  .collectionId!}"></yp-collection-items-grid>`
+                .collectionId="${this.collectionId!}"
+              ></yp-collection-items-grid>`
             : html``;
         break;
       case CollectionTabTypes.Newsfeed:
@@ -268,12 +279,15 @@ export abstract class YpCollection extends YpBaseElement {
           id="collectionActivities"
           .selectedTab="${this.selectedTab}"
           .collectionType="${this.collectionType}"
-          .collectionId="${this.collectionId!}"></ac-activities>`;
+          .collectionId="${this.collectionId!}"
+        ></ac-activities>`;
         break;
       case CollectionTabTypes.Map:
         page = html`<yp-post-map
+          id="postsMap"
           .collectionType="${this.collectionType}"
-          .collectionId="${this.collectionId!}"></yp-post-map>`;
+          .collectionId="${this.collectionId!}"
+        ></yp-post-map>`;
         break;
     }
 
@@ -286,8 +300,11 @@ export abstract class YpCollection extends YpBaseElement {
       ${this.createFabIcon && this.createFabLabel
         ? html`<mwc-fab
             ?extended="${this.wide}"
+            class="createFab"
+            ?is-map="${this.selectedTab === CollectionTabTypes.Map}"
             .label="${this.t(this.createFabLabel)}"
-            .icon="${this.createFabIcon}"></mwc-fab>`
+            .icon="${this.createFabIcon}"
+          ></mwc-fab>`
         : nothing}
     `;
   }
@@ -297,11 +314,6 @@ export abstract class YpCollection extends YpBaseElement {
   collectionIdChanged() {
     this._getCollection();
     this._getHelpPages();
-
-    if (window.appGlobals.largeFont)
-      this.largeFont = true;
-    else
-      this.largeFont = false;
   }
 
   updated(changedProperties: Map<string | number | symbol, unknown>) {
@@ -379,9 +391,8 @@ export abstract class YpCollection extends YpBaseElement {
       (this.$$('#collectionItems') as YpCollectionItemsGrid).scrollToItem(
         window.appGlobals.cache.backToDomainCommunityItems[this.collection.id]
       );
-      window.appGlobals.cache.backToDomainCommunityItems[
-        this.collection.id
-      ] = undefined;
+      window.appGlobals.cache.backToDomainCommunityItems[this.collection.id] =
+        undefined;
     }
   }
 

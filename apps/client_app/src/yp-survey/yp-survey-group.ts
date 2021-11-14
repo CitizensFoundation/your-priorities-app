@@ -449,6 +449,7 @@ export class YpSurveyGroup extends YpBaseElement {
       }
 
       window.appGlobals.setAnonymousGroupStatus(this.surveyGroup);
+      window.appGlobals.setRegistrationQuestionGroup(this.surveyGroup);
 
       if (
         this.surveyGroup.configuration &&

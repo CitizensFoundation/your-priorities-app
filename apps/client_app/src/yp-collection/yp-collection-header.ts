@@ -169,6 +169,10 @@ export class YpCollectionHeader extends YpBaseElement {
           font-size: var(--mdc-typography-headline1-widetext-font-size, 20px);
         }
 
+        .collection-name[largeFont] {
+          font-size: var(--mdc-typography-headline1-widetext-font-size, 20px);
+        }
+
         .large-card {
           color: var(--mdc-theme-on-surface);
           background-color:  var(--mdc-theme-surface);
@@ -426,6 +430,7 @@ export class YpCollectionHeader extends YpBaseElement {
                       class="collection-name"
                       role="heading"
                       aria-level="1"
+                      ?largeFont="${this.largeFont}"
                       aria-label="${this.collection.name}"
                       .textType="${YpCollectionHelpers.nameTextType(
                         this.collectionType
@@ -443,6 +448,7 @@ export class YpCollectionHeader extends YpBaseElement {
                       .textType="${YpCollectionHelpers.descriptionTextType(
                         this.collectionType
                       )}"
+                      ?largeFont="${this.largeFont}"
                       .contentLanguage="${this.collection.language}"
                       truncate="150"
                       .content="${this.collection.description ||

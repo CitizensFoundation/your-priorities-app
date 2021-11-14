@@ -42,8 +42,6 @@ export class YpAppGlobals extends YpCodeBase {
 
   currentSamlLoginMessage: string | undefined;
 
-  largeFont = false;
-
   originalQueryParameters: Record<string, string | number> = {};
 
   externalGoalTriggerGroupId: number | undefined;
@@ -237,7 +235,7 @@ export class YpAppGlobals extends YpCodeBase {
     this.currentAnonymousUser = user;
   }
 
-  setRegistrationQuestionGroup(group: YpGroupData) {
+  setRegistrationQuestionGroup(group: YpGroupData | undefined) {
     if (group &&
       group.configuration &&
       group.configuration.registrationQuestionsJson) {

@@ -13,12 +13,21 @@ export abstract class YpBaseElement extends LitElement {
   @property({ type: Boolean })
   rtl = false;
 
-  constructor() {
-    super();
+  @property({ type: Boolean })
+  largeFont = false;
+
+  connectedCallback() {
+    super.connectedCallback();
 
     this.addGlobalListener(
       'yp-language-loaded',
       this._languageEvent.bind(this)
+    );
+
+    //TODO: Do the large font thing with css custom properties
+    this.addGlobalListener(
+      'yp-large-font',
+      this._largeFont.bind(this)
     );
 
     if (
@@ -27,10 +36,7 @@ export abstract class YpBaseElement extends LitElement {
       window.appGlobals.locale
     ) {
       this.language = window.appGlobals.locale;
-
-      if (this.rtl !== undefined) {
-        this._setupRtl();
-      }
+      this._setupRtl();
     } else {
       this.language = 'en';
     }
@@ -38,6 +44,19 @@ export abstract class YpBaseElement extends LitElement {
     installMediaQueryWatcher(`(min-width: 900px)`, matches => {
       this.wide = matches;
     });
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    this.removeGlobalListener(
+      'yp-language-loaded',
+      this._languageEvent.bind(this)
+    );
+
+    this.removeGlobalListener(
+      'yp-large-font',
+      this._largeFont.bind(this)
+    );
   }
 
   updated(changedProperties: Map<string | number | symbol, unknown>): void {
@@ -73,6 +92,10 @@ export abstract class YpBaseElement extends LitElement {
         }
       `,
     ];
+  }
+
+  _largeFont(event: CustomEvent) {
+    this.largeFont = event.detail;
   }
 
   _languageEvent(event: CustomEvent) {
