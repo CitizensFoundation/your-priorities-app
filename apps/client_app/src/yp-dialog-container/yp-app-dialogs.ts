@@ -9,8 +9,15 @@ import '@material/mwc-dialog';
 import '@material/mwc-snackbar';
 
 import '../yp-magic-text/yp-magic-text-dialog.js';
-
 import '../yp-user/yp-login.js';
+
+import '../yp-user/yp-missing-email.js';
+import '../yp-user/yp-registration-questions-dialog.js';
+import '../yp-user/yp-forgot-password.js';
+import '../yp-user/yp-reset-password.js';
+import '../yp-user/yp-accept-invite.js';
+import './yp-autotranslate-dialog.js';
+import '../yp-post/yp-post-edit.js';
 
 @customElement('yp-app-dialogs')
 export class YpAppDialogs extends YpBaseElement {
@@ -36,6 +43,12 @@ export class YpAppDialogs extends YpBaseElement {
   needsPixelCookieConfirm = false;
 
   @property({ type: Boolean })
+  apiActionDialogOpen = false;
+
+  @property({ type: Boolean })
+  registrationQuestionsOpen = false;
+
+  @property({ type: Boolean })
   autoTranslateDialogOpen = false;
 
   @property({ type: Boolean })
@@ -45,6 +58,7 @@ export class YpAppDialogs extends YpBaseElement {
   gotRatingsDialog = false;
   gotMediaRecorder = false;
   loadingStartedLoggedIn = false;
+  haveLoadedDataViz = false;
 
   waitForUpgradeCounter = 0;
 
@@ -139,11 +153,6 @@ export class YpAppDialogs extends YpBaseElement {
           <yp-post-user-image-edit id="userImageEdit"></yp-post-user-image-edit>
         `;
         break;
-      case 'apiActionDialog':
-        selectedDialog = html`
-          <yp-api-action-dialog id="apiActionDialog"></yp-api-action-dialog>
-        `;
-        break;
       case 'userEdit':
         selectedDialog = html`
           <yp-user-edit id="userEdit" method="PUT"></yp-user-edit>
@@ -192,6 +201,18 @@ export class YpAppDialogs extends YpBaseElement {
             </mwc-snackbar>
           `
         : nothing}
+
+        ${this.apiActionDialogOpen ? html`
+          <yp-api-action-dialog id="apiActionDialog" @close="${this._closeActionDialog}"></yp-api-action-dialog>
+        ` : nothing }
+
+        ${this.registrationQuestionsOpen ? html`
+          <yp-registration-questions-dialog
+            id="registrationQuestions"
+            @close="${this._closeRegistrationQuestionsDialog}"
+          ></yp-registration-questions-dialog>
+        ` : nothing}
+
 
       <mwc-snackbar id="masterToast"></mwc-snackbar>
 
@@ -304,6 +325,21 @@ export class YpAppDialogs extends YpBaseElement {
     }
   }
 
+  _closeActionDialog() {
+    this.apiActionDialogOpen = false;
+  }
+
+  _closeRegistrationQuestionsDialog() {
+    this.registrationQuestionsOpen = false;
+  }
+
+  loadDataViz() {
+    if (!this.haveLoadedDataViz) {
+      this.haveLoadedDataViz = true;
+      import('./yp-dialog-container-data-viz.js').then(async () => {});
+    }
+  }
+
   async openLoadingDialog() {
     this.loadingDialogOpen = true;
     await this.requestUpdate();
@@ -356,6 +392,10 @@ export class YpAppDialogs extends YpBaseElement {
       this.confirmationDialogOpen = true;
     } else if (idName === 'autoTranslateDialog') {
       this.autoTranslateDialogOpen = true;
+    } else if (idName==="apiActionDialog") {
+      this.apiActionDialogOpen = true;
+    } else if (idName==="registrationQuestions") {
+      this.registrationQuestionsOpen = true;
     } else if (idName === 'magicTextDialog') {
       this.magicTextDialogOpen = true;
     } else if (idName !== 'notificationToast' && idName !== 'masterToast' && idName !== 'mediaRecorder') {

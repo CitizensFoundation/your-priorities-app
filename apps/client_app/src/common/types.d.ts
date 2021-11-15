@@ -212,7 +212,21 @@ interface YpGroupConfiguration extends YpCollectionConfiguration {
   maxNumberOfGroupVotes?: number;
   allowAdminsToDebate?: boolean;
   hideGroupLevelTabs?: boolean;
-  dataForVisualizationJson?: string;
+  dataForVisualizationJson?: YpGroupDataVizData;
+}
+
+interface YpGroupDataVizData {
+  overallTargetPercent: number;
+  overallActualPercent: number;
+  yearTargetPercent: number;
+  yearActualPercent: number;
+  overallTargetAmount: number;
+  overallActualAmount: number;
+  currentYear: string;
+  overallColor: string;
+  yearColor: string;
+  yearTargetAmount: number;
+  yearActualAmount: number;
 }
 
 interface YpCommunityConfiguration extends YpCollectionConfiguration {

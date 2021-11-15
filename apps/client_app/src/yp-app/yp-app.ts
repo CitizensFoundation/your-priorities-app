@@ -516,7 +516,12 @@ export class YpApp extends YpBaseElement {
             <yp-group id="groupPage" .subRoute="${this.subRoute}"></yp-group>
           `);
           break;
-        case 'post':
+        case 'group_data_viz':
+          pageHtml = cache(html`
+             <yp-group-data-viz id="dataVizGroupPage" name="group_data_viz" .subRoute="${this.subRoute}"></yp-group-data-viz>
+          `);
+          break;
+          case 'post':
           pageHtml = cache(html`
             <yp-post id="postPage" .subRoute="${this.subRoute}"></yp-post>
           `);

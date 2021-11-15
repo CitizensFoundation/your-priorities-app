@@ -40,7 +40,7 @@ export class YpApiActionDialog extends YpBaseElement {
 
   render() {
     return html`
-      <mwc-dialog id="confirmationDialog">
+      <mwc-dialog id="confirmationDialog" @close="${this._onClose}">
         <div>${this.confirmationText}</div>
          <mwc-button
             slot="secondaryAction"
@@ -53,6 +53,10 @@ export class YpApiActionDialog extends YpBaseElement {
             .label="${this.confirmButtonText || ''}"></mwc-button>
       </mwc-dialog>
     `;
+  }
+
+  _onClose() {
+    this.fire('close');
   }
 
   setup(
@@ -86,10 +90,10 @@ export class YpApiActionDialog extends YpBaseElement {
 
   async _delete() {
     if (!this.finalDeleteWarning && this.action && this.method) {
-      await window.serverApi.apiAction(this.action, this.method, { deleteConfirmed: true })
+      const response = await window.serverApi.apiAction(this.action, this.method, { deleteConfirmed: true })
       this.fire('api-action-finished');
       if (this.onFinishedFunction) {
-        this.onFinishedFunction();
+        this.onFinishedFunction(response);
       }
     } else {
       this.finalDeleteWarning = false;

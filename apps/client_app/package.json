@@ -101,6 +101,7 @@
     "@material/mwc-top-app-bar": "^0.25.3",
     "@polymer/polymer": "^3.4.1",
     "@webcomponents/webcomponentsjs": "^2.6.0",
+    "chart.js": "^3.6.0",
     "i18next": "20.2.2",
     "i18next-http-backend": "1.2.3",
     "insert-text-at-cursor": "^0.3.0",
