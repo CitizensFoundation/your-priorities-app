@@ -92,6 +92,7 @@ export class YpEditDialog extends YpBaseElement {
       css`
         :host {
           background-color: #fff;
+          font-family: var(--app-header-font-family, Roboto);
         }
 
         .fullScreenDialog {
@@ -117,6 +118,18 @@ export class YpEditDialog extends YpBaseElement {
 
         #dismissBtn {
           margin-left: 0;
+        }
+
+        mwc-button {
+          font-family: var(--app-header-font-family, Roboto);
+        }
+
+        mwc-button[long-button-text] {
+
+        }
+
+        mwc-dialog[long-title-text] {
+
         }
 
         mwc-button[dialog-confirm] {
@@ -250,6 +263,15 @@ export class YpEditDialog extends YpBaseElement {
           font-weight: bold;
         }
 
+        .titleHeaderMobile[long-title-text] {
+          margin-top: 4px;
+        }
+
+        .titleHeaderMobile[long-button-text] {
+          font-size: 16px;
+          margin-top: 12px;
+        }
+
         #formErrorDialog {
           padding: 12px;
         }
@@ -265,6 +287,10 @@ export class YpEditDialog extends YpBaseElement {
         .smallButtonText {
           font-weight: bold;
           font-size: 17px;
+        }
+
+        .smallButtonText[long-button-text] {
+          font-size: 14px;
         }
 
         .outerMobile {
@@ -324,7 +350,8 @@ export class YpEditDialog extends YpBaseElement {
             icon="close"
             slot="secondaryAction"
             class="closeIconNarrow"
-            dialog-dismiss></mwc-icon-button>
+            dialog-dismiss
+          ></mwc-icon-button>
           <mwc-icon class="smallIcon">${this.icon}</mwc-icon>
           <div class="flex"></div>
 
@@ -336,15 +363,19 @@ export class YpEditDialog extends YpBaseElement {
                         id="submit1"
                         ?hidden="${!this.saveText}"
                         @click="${this._submit}"
+                        ?long-button-text="${this.hasLongSaveText}"
                         slot="primaryAction"
                         .label="${this.saveText ? this.saveText : ''}"
-                        class="smallButtonText"></mwc-button>
+                        class="smallButtonText"
+                      ></mwc-button>
                     `
                   : html`
                       <mwc-button
                         disabled
+                        ?long-button-text="${this.hasLongSaveText}"
                         slot="primaryAction"
-                        .label="${this.t('uploading.inProgress')}"></mwc-button>
+                        .label="${this.t('uploading.inProgress')}"
+                      ></mwc-button>
                     `}
               `
             : html``}
@@ -354,8 +385,10 @@ export class YpEditDialog extends YpBaseElement {
                 <mwc-button
                   @click="${this._nextTab}"
                   slot="primaryAction"
+                  ?long-button-text="${this.hasLongSaveText}"
                   class="smallButtonText"
-                  .label="${this.nextActionText!}"></mwc-button>
+                  .label="${this.nextActionText!}"
+                ></mwc-button>
               `}
         </div>
         <div id="scroller">
@@ -363,13 +396,15 @@ export class YpEditDialog extends YpBaseElement {
             <form
               name="ypForm"
               .method="${this.method}"
-              .action="${this.action ? this.action : ''}">
+              .action="${this.action ? this.action : ''}"
+            >
               <slot></slot>
             </form>
           </yp-form>
         </div>
         <mwc-circular-progress-four-color
-          id="spinner"></mwc-circular-progress-four-color>
+          id="spinner"
+        ></mwc-circular-progress-four-color>
       </div>
     `;
   }
@@ -380,58 +415,63 @@ export class YpEditDialog extends YpBaseElement {
         id="scrollable"
         .smallHeight="${!this.wide}"
         .mediumHeight="${!this.wide}"
-        .largeHeight="${this.wide}">
+        .largeHeight="${this.wide}"
+      >
         <yp-form id="form" .params="${this.params}">
           <form
             name="ypForm"
             .method="${this.method}"
-            .action="${this.action!}">
+            .action="${this.action!}"
+          >
             <slot></slot>
           </form>
         </yp-form>
         <mwc-circular-progress-four-color
-          id="spinner"></mwc-circular-progress-four-color>
+          id="spinner"
+        ></mwc-circular-progress-four-color>
       </div>
       ${this.cancelText
-          ? html`
-              <mwc-button
-                id="dismissBtn"
-                dialogAction="cancel"
-                slot="secondaryAction"
-                .label="${this.cancelText}"></mwc-button>
-            `
-          : html`
-              <mwc-button
-                id="dismissBtn"
-                dialogAction="cancel"
-                slot="secondaryAction"
-                .label="${this.t('cancel')}"></mwc-button>
-            `}
-        ${!this.uploadingState
-          ? html`
-              ${!this.useNextTabAction
-                ? html`
-                    <mwc-button
-                      raised
-                      class="actionButtons"
-                      slot="primaryAction"
-                      ?hidden="${!this.saveText}"
-                      id="submit2"
-                      @click="${this._submit}"
-                      .label="${this.saveText
-                        ? this.saveText
-                        : ''}"></mwc-button>
-                  `
-                : html`
-                    <mwc-button
-                      raised
-                      slot="primaryAction"
-                      class="actionButtons"
-                      @click="${this._nextTab}"
-                      .label="${this.nextActionText!}"></mwc-button>
-                  `}
-            `
-          : html`
+        ? html`
+            <mwc-button
+              id="dismissBtn"
+              dialogAction="cancel"
+              slot="secondaryAction"
+              .label="${this.cancelText}"
+            ></mwc-button>
+          `
+        : html`
+            <mwc-button
+              id="dismissBtn"
+              dialogAction="cancel"
+              slot="secondaryAction"
+              .label="${this.t('cancel')}"
+            ></mwc-button>
+          `}
+      ${!this.uploadingState
+        ? html`
+            ${!this.useNextTabAction
+              ? html`
+                  <mwc-button
+                    raised
+                    class="actionButtons"
+                    slot="primaryAction"
+                    ?hidden="${!this.saveText}"
+                    id="submit2"
+                    @click="${this._submit}"
+                    .label="${this.saveText ? this.saveText : ''}"
+                  ></mwc-button>
+                `
+              : html`
+                  <mwc-button
+                    raised
+                    slot="primaryAction"
+                    class="actionButtons"
+                    @click="${this._nextTab}"
+                    .label="${this.nextActionText!}"
+                  ></mwc-button>
+                `}
+          `
+        : html`
             <mwc-button
               disabled
               @click="${this._nextTab}"
@@ -450,10 +490,12 @@ export class YpEditDialog extends YpBaseElement {
         @closed="${this.close}"
         .name="${this.name}"
         .heading="${this.heading}"
+        ?long-title-text="${this.hasLongTitle}"
         id="editDialog"
         class="${this.computeClass}"
         with-backdrop="${!this.wide}"
-        modal>
+        modal
+      >
         ${this.narrow ? this.renderMobileView() : this.renderDesktopView()}
       </mwc-dialog>
 
@@ -464,12 +506,14 @@ export class YpEditDialog extends YpBaseElement {
             slot="primaryAction"
             autofocus
             @click="${this._clearErrorText}"
-            .label="${this.t('ok')}"></mwc-button>
+            .label="${this.t('ok')}"
+          ></mwc-button>
         </div>
       </mwc-dialog>
       <mwc-snackbar
         id="snackbar"
-        .labelText="${this.snackbarTextCombined}"></mwc-snackbar>
+        .labelText="${this.snackbarTextCombined}"
+      ></mwc-snackbar>
     `;
   }
 
@@ -572,10 +616,24 @@ export class YpEditDialog extends YpBaseElement {
   }
 
   _formError(event: CustomEvent) {
-    this._setSubmitDisabledStatus(false);
-    console.log('Form error: ', event.detail.error);
-    this._showErrorDialog(event.detail.error);
-    (this.$$('#spinner') as CircularProgressFourColorBase).hidden = false;
+    if (!navigator.onLine && this.method === 'POST' && window.fetch) {
+      const serialized = (this.$$('#form') as YpForm).serializeForm();
+      window.appGlobals.offline.sendWhenOnlineNext({
+        body: serialized,
+        method: this.method,
+        params: this.params,
+        url: this.action!,
+      });
+      this.response = { offlineSendLater: true };
+      this.close();
+    } else if (!navigator.onLine) {
+      this._showErrorDialog(this.t('youAreOfflineCantSend'));
+    } else {
+      this._setSubmitDisabledStatus(false);
+      console.log('Form error: ', event.detail.error);
+      this._showErrorDialog(event.detail.error);
+      (this.$$('#spinner') as CircularProgressFourColorBase).hidden = false;
+    }
   }
 
   _formInvalid() {
@@ -608,6 +666,14 @@ export class YpEditDialog extends YpBaseElement {
     if (submit2) submit2.disabled = status;
   }
 
+  get hasLongSaveText() {
+    return this.saveText && this.saveText.length > 12;
+  }
+
+  get hasLongTitle() {
+    return this.title && this.title.length > 14;
+  }
+
   async _reallySubmit() {
     this._setSubmitDisabledStatus(true);
     if (this.params && this.params.communityId) {
@@ -629,6 +695,15 @@ export class YpEditDialog extends YpBaseElement {
         '/' +
         this.params.imageId +
         '/user_images';
+      // eslint-disable-next-line no-dupe-else-if
+    } else if (
+      this.params &&
+      this.params.statusChange &&
+      this.params.disableStatusEmails === true &&
+      this.params.postId
+    ) {
+      this.action =
+        this.baseAction + '/' + this.params.postId + '/status_change_no_emails';
     } else if (this.params && this.params.postId) {
       this.action = this.baseAction + '/' + this.params.postId;
     } else if (this.params && this.params.userId) {
@@ -639,7 +714,7 @@ export class YpEditDialog extends YpBaseElement {
       this.action = this.baseAction + '/' + this.params.categoryId;
     }
 
-    await this.requestUpdate()
+    await this.requestUpdate();
 
     const form = this.$$('#form') as YpForm;
 

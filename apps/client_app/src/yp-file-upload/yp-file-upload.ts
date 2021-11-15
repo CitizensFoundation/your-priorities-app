@@ -181,6 +181,9 @@ export class YpFileUpload extends YpBaseElement {
   selectedVideoCoverIndex = 0;
 
   @property({ type: Boolean })
+  videoAspect: string | undefined;
+
+  @property({ type: Boolean })
   useMainPhotoForVideoCover = false;
 
   @property({ type: String })
@@ -510,7 +513,10 @@ export class YpFileUpload extends YpBaseElement {
     }
   }
 
-  _openFileInput() {
+  _openFileInput(aspect: string | undefined = undefined) {
+    if (aspect) {
+      this.videoAspect = aspect;
+    }
     const elem = this.$$('#fileInput');
     if (elem && document.createEvent) {
       // sanity check
@@ -743,11 +749,14 @@ export class YpFileUpload extends YpBaseElement {
       return;
     }
 
-    let aspect: string;
-    if (window.innerHeight > window.innerWidth) {
-      aspect = 'portrait';
-    } else {
-      aspect = 'landscape';
+    let aspect = this.videoAspect;
+
+    if (!aspect) {
+      if (window.innerHeight > window.innerWidth) {
+        aspect = 'portrait';
+      } else {
+        aspect = 'landscape';
+      }
     }
 
     this.fire('file-upload-starting');

@@ -108,6 +108,17 @@ export class YpServerApi extends YpServerApiBase {
     );
   }
 
+  public createApiKey() {
+    return this.fetchWrapper(
+      this.baseUrlPath + `/users/createApiKey`,
+      {
+        method: 'POST',
+        body: JSON.stringify({}),
+      },
+      false
+    );
+  }
+
   public triggerTrackingGoal(groupId: number, body: Record<string, unknown>) {
     return this.fetchWrapper(
       this.baseUrlPath + `/groups/${groupId}/triggerTrackingGoal`,

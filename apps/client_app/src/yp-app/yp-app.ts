@@ -192,6 +192,12 @@ export class YpApp extends YpBaseElement {
     this._removeEventListeners();
   }
 
+  _navDrawOpened(event: CustomEvent) {
+    setTimeout(() => {
+      this.navDrawOpenedDelayed = event.detail;
+    }, 500);
+  }
+
   _netWorkError(event: CustomEvent) {
     const detail = event.detail;
     let errorText = this.t('errorCantConnect')
@@ -548,6 +554,12 @@ export class YpApp extends YpBaseElement {
         .message="${this.t('newVersionAvailable')}"
       >
       </yp-sw-update-toast>
+
+      <app-drawer id="navDrawer" slot="drawer" align="start" position="left" swipe-open @opened="${this._navDrawOpened}">
+        <div style="height: 100%; overflow-x: hidden; max-width: 255px !important;">
+          <yp-app-nav-drawer id="ypNavDrawer" home-link="[[homeLink]]" opened="[[navDrawOpened]]" on-yp-toggle-nav-drawer="_toggleNavDrawer" user="[[user]]" route="[[route]]"></yp-app-nav-drawer>
+        </div>
+      </app-drawer>
 
       <mwc-dialog id="dialog">
         <div>${this.notifyDialogText}</div>
@@ -1018,8 +1030,16 @@ export class YpApp extends YpBaseElement {
     }
   }
 
+  loadDataViz() {
+    window.appDialogs.loadDataViz();
+  }
+
   _pageChanged() {
     const page = this.page;
+
+    if (page && page==='group_data_viz') {
+      this.loadDataViz();
+    }
 
     //TODO: Get bundling working
     /*if (page) {

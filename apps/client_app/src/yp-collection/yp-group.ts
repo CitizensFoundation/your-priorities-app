@@ -803,6 +803,15 @@ export class YpGroup extends YpCollection {
       if (group.configuration && group.configuration.maxNumberOfGroupVotes) {
         window.appUser.calculateVotesLeftForGroup(group);
       }
+
+      if (
+        group &&
+        group.configuration &&
+        group.configuration.isDataVisualizationGroup &&
+        group.configuration.dataForVisualizationJson
+      ) {
+        window.appDialogs.loadDataViz();
+      }
     }
 
     if (

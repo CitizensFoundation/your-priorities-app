@@ -12,6 +12,7 @@ import { YpEditBase } from '../common/yp-edit-base.js';
 import { YpFileUpload } from '../yp-file-upload/yp-file-upload.js';
 import { YpConfirmationDialog } from '../yp-dialog-container/yp-confirmation-dialog.js';
 import { YpUserDeleteOrAnonymize } from './yp-user-delete-or-anonymize.js';
+import { YpApiActionDialog } from '../yp-api-action-dialog/yp-api-action-dialog.js';
 
 @customElement('yp-user-edit')
 export class YpUserEdit extends YpEditBase {
@@ -26,6 +27,9 @@ export class YpUserEdit extends YpEditBase {
 
   @property({ type: String })
   encodedUserNotificationSettings: string | undefined;
+
+  @property({ type: String })
+  currentApiKey: string | undefined;
 
   @property({ type: Number })
   uploadedProfileImageId: number | undefined;
@@ -92,6 +96,31 @@ export class YpUserEdit extends YpEditBase {
           margin-top: 0;
           margin-bottom: 4px;
           font-weight: 400;
+        }
+
+        [hidden] {
+          display: none !important;
+        }
+
+        .tempApiKeyContainer {
+          margin-top: 16px;
+          margin-bottom: 16px;
+          padding-bottom: 8px;
+          padding-top: 8px;
+        }
+
+        .temporaryApiKeyInformation {
+          color: #F00;
+          font-size: 16px;
+          margin-bottom: 8px;
+
+        }
+
+        .apiKey {
+          font-size: 16px;
+          padding-right: 8px;
+          padding-top: 12px;
+          font-weight: bold;
         }
       `,
     ];
@@ -167,6 +196,18 @@ export class YpUserEdit extends YpEditBase {
                   auto-translate-option-disabled=""
                   .selectedLocale="${this.user
                     .default_locale}"></yp-language-selector>
+
+                <mwc-button ?hidden="${this.user.profile_data?.hasApiKey}" raised .label="${this.t('createApiKey')}" class="disconnectButtons" @click="${this._createApiKey}"></mwc-button>
+
+                <mwc-button ?hidden="${!this.user.profile_data?.hasApiKey}" .label="${this.t('reCreateApiKey')}" raised class="disconnectButtons" @click="${this._reCreateApiKey}"></mwc-button>
+
+                <div class="layout vertical tempApiKeyContainer" ?hidden$="${!this.currentApiKey}">
+                  <div class="temporaryApiKeyInformation">${this.t('showingApiKeyOnce')}</div>
+                  <div class="layout horizontal">
+                    <div class="apiKey">${this.currentApiKey}</div>
+                    <mwc-button raised .label="${this.t('copyApiKey')}" @click="${this._copyApiKey}"></mwc-button>
+                  </div>
+                </div>
 
                 <mwc-button
                   ?hidden="${!this.user.facebook_id}"
@@ -351,6 +392,26 @@ export class YpUserEdit extends YpEditBase {
     this.uploadedHeaderImageId = undefined;
     (this.$$('#headerImageUpload') as YpFileUpload).clear();
     (this.$$('#profileImageUpload') as YpFileUpload).clear();
+  }
+
+  _copyApiKey() {
+    navigator.clipboard.writeText(this.currentApiKey!);
+  }
+
+  async _createApiKey() {
+    window.appGlobals.activity('open', 'user.createApiKey');
+    const response = await window.serverApi.createApiKey() as YpCreateApiKeyResponse;
+    this.currentApiKey = response.apiKey;
+    this.user!.profile_data!.hasApiKey = true;
+  }
+
+  _reCreateApiKey() {
+    window.appGlobals.activity('open', 'user.reCreateApiKey');
+    window.appDialogs.getDialogAsync("apiActionDialog", (dialog: YpApiActionDialog) => {
+      dialog.setup('/api/users/createApiKey',
+        this.t('areYouSureYouWantToRecreateApiKey'), this._createApiKey.bind(this), this.t('recreate'), "POST");
+      dialog.open();
+    });
   }
 
   setup(

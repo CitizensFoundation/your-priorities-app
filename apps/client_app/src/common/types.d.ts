@@ -213,6 +213,7 @@ interface YpGroupConfiguration extends YpCollectionConfiguration {
   allowAdminsToDebate?: boolean;
   hideGroupLevelTabs?: boolean;
   dataForVisualizationJson?: YpGroupDataVizData;
+  isDataVisualizationGroup?: boolean;
 }
 
 interface YpGroupDataVizData {
@@ -529,6 +530,8 @@ interface YpPointData {
 interface YpUserProfileData {
   isAnonymousUser?: boolean;
   saml_show_confirm_email_completed?: boolean;
+  hasApiKey?: boolean;
+
 }
 
 interface YpUserData {
@@ -657,6 +660,7 @@ interface YpEditFormParams {
   categoryId?: number;
   userImages?: Array<YpImageData>;
   statusChange?: string;
+  disableStatusEmails?: boolean;
 }
 
 interface YpLocationData {
@@ -943,9 +947,12 @@ interface YpLocaleStorageItemToSendLater {
 }
 
 interface YpContentToSendLater {
-  content: string;
   params: any;
   url: string;
   method: string;
   body: any;
+}
+
+interface YpCreateApiKeyResponse {
+  apiKey: string;
 }
