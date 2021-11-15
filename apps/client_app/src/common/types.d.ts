@@ -214,6 +214,9 @@ interface YpGroupConfiguration extends YpCollectionConfiguration {
   hideGroupLevelTabs?: boolean;
   dataForVisualizationJson?: YpGroupDataVizData;
   isDataVisualizationGroup?: boolean;
+  usePostTags?: boolean;
+  alternativeTextForNewIdeaSaveButton?: string;
+
 }
 
 interface YpGroupDataVizData {

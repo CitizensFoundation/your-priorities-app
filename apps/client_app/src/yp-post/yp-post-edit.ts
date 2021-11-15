@@ -106,6 +106,12 @@ export class YpPostEdit extends YpEditBase {
   @property({ type: String })
   structuredAnswersString = '';
 
+  @property({ type: Array })
+  translatedQuestions: Array<YpStructuredQuestionData> | undefined;
+
+  @property({ type: Boolean })
+  autoTranslate = false;
+
   @property({ type: String })
   uploadedDocumentUrl: string | undefined;
 
@@ -152,6 +158,9 @@ export class YpPostEdit extends YpEditBase {
     if (changedProperties.has('selectedCoverMediaType')) {
       this._uploadedHeaderImageIdChanged();
     }
+    if (changedProperties.has('group')) {
+      this._groupChanged();
+    }
 
     if (changedProperties.has('selected')) {
       this._selectedChanged();
@@ -160,6 +169,140 @@ export class YpPostEdit extends YpEditBase {
 
     this._setupStructuredQuestions();
   }
+
+  //TODO: Share this code with registration questions
+  _getQuestionLengthWithSubOptions(questions: Array<YpStructuredQuestionData>) {
+    let length = 0;
+    for (let i = 0; i < questions.length; i++) {
+      length += 1;
+      const question = questions[i];
+      if (
+        question.type === 'radios' &&
+        question.radioButtons &&
+        question.radioButtons.length > 0
+      ) {
+        length += question.radioButtons.length;
+      } else if (
+        question.type === 'checkboxes' &&
+        question.checkboxes &&
+        question.checkboxes.length > 0
+      ) {
+        length += question.checkboxes.length;
+      } else if (
+        question.type === 'dropdown' &&
+        question.dropdownOptions &&
+        question.dropdownOptions.length > 0
+      ) {
+        length += question.dropdownOptions.length;
+      }
+    }
+
+    return length;
+  }
+
+
+  _getTranslationsIfNeeded() {
+    this.translatedQuestions = undefined;
+    if (
+      this.autoTranslate &&
+      this.language &&
+      this.group &&
+      this.language !== this.group.language
+    ) {
+      const translatedTexts =
+        window.serverApi.getTranslatedRegistrationQuestions(
+          this.group.id,
+          this.language
+        );
+      if (this.autoTranslate && this.language !== this.group.language) {
+        const currentQuestions = JSON.parse(
+          JSON.stringify(this.group.configuration.registrationQuestionsJson)
+        ) as Array<YpStructuredQuestionData>;
+
+        if (
+          translatedTexts.length ===
+          this._getQuestionLengthWithSubOptions(currentQuestions)
+        ) {
+          let translatedItemCount = 0;
+          for (
+            let questionCount = 0;
+            questionCount < currentQuestions.length;
+            questionCount++
+          ) {
+            const question = currentQuestions[questionCount];
+            question.originalText = question.text;
+            question.text = translatedTexts[translatedItemCount++];
+
+            if (
+              question.type === 'radios' &&
+              question.radioButtons &&
+              question.radioButtons.length > 0
+            ) {
+              for (
+                let subOptionCount = 0;
+                subOptionCount < question.radioButtons.length;
+                subOptionCount++
+              ) {
+                question.radioButtons[subOptionCount].originalText =
+                  question.radioButtons[subOptionCount].text;
+                question.radioButtons[subOptionCount].text =
+                  translatedTexts[translatedItemCount++];
+              }
+            } else if (
+              question.type === 'checkboxes' &&
+              question.checkboxes &&
+              question.checkboxes.length > 0
+            ) {
+              for (
+                let subOptionCount = 0;
+                subOptionCount < question.checkboxes.length;
+                subOptionCount++
+              ) {
+                question.checkboxes[subOptionCount].originalText =
+                  question.checkboxes[subOptionCount].text;
+                question.checkboxes[subOptionCount].text =
+                  translatedTexts[translatedItemCount++];
+              }
+            } else if (
+              question.type === 'dropdown' &&
+              question.dropdownOptions &&
+              question.dropdownOptions.length > 0
+            ) {
+              for (
+                let subOptionCount = 0;
+                subOptionCount < question.dropdownOptions.length;
+                subOptionCount++
+              ) {
+                question.dropdownOptions[subOptionCount].originalText =
+                  question.dropdownOptions[subOptionCount].text;
+                question.dropdownOptions[subOptionCount].text =
+                  translatedTexts[translatedItemCount++];
+              }
+            }
+          }
+
+          this.translatedQuestions = currentQuestions;
+        } else {
+          console.error('Questions and Translated texts length does not match');
+        }
+      } else {
+        this.translatedQuestions = undefined;
+      }
+    }
+  }
+
+
+  _groupChanged() {
+    if (this.group &&
+        this.group.configuration &&
+        this.group.configuration.structuredQuestionsJson &&
+        this.group.configuration.structuredQuestionsJson.length > 0) {
+      if (window.autoTranslate) {
+        this.autoTranslate = window.autoTranslate;
+      }
+      this._getTranslationsIfNeeded();
+    }
+   }
 
   static get styles() {
     return [
@@ -185,6 +328,10 @@ export class YpPostEdit extends YpEditBase {
 
         mwc-radio {
           display: block;
+        }
+
+        div {
+          font-family: var(--app-header-font-family, Roboto);
         }
 
         .container {
@@ -480,6 +627,17 @@ export class YpPostEdit extends YpEditBase {
                         ? this.selectedCategoryId.toString()
                         : ''}" />
                   `
+                : nothing}
+              ${this.group && this.group.configuration && this.group.configuration.usePostTags
+                ? html`
+                    <mwc-textfield
+                      id="name"
+                      name="tags"
+                      type="text"
+                      .label="${this.t('commaSeperatedTags')}"
+                      .value="${this.post!.public_data!.tags}"
+                      >
+                    </mwc-textfield>`
                 : nothing}
               ${this.postDescriptionLimit
                 ? html`
@@ -936,7 +1094,29 @@ export class YpPostEdit extends YpEditBase {
               text-type="customTitleQuestionText"></yp-magic-text>
           `
         : nothing}
+      ${this.group && this.group.configuration.alternativeTextForNewIdeaSaveButton
+        ? html`
+            <yp-magic-text
+              id="alternativeTextForNewIdeaSaveButtonId"
+              hidden
+              .contentId="${this.group.id}"
+              text-only
+              .content="${this.group.configuration.alternativeTextForNewIdeaSaveButton}"
+              .contentLanguage="${this.group.language}"
+              @new-translation="${this._alternativeTextForNewIdeaSaveButtonTranslation}"
+              text-type="alternativeTextForNewIdeaSaveButton"></yp-magic-text>
+          `
+        : nothing}
     `;
+  }
+
+  _alternativeTextForNewIdeaSaveButtonTranslation() {
+    setTimeout(() => {
+      const label = this.$$("#alternativeTextForNewIdeaSaveButtonId") as YpMagicText;
+      if (label && label.finalContent) {
+        this.saveText = label.finalContent;
+      }
+    });
   }
 
   _updatePostTitle() {
@@ -956,6 +1136,10 @@ export class YpPostEdit extends YpEditBase {
     this.addListener('yp-skip-to-unique-id', this._skipToId);
     this.addListener('yp-open-to-unique-id', this._openToId);
     this.addListener('yp-goto-next-index', this._goToNextIndex);
+    this.addGlobalListener(
+      'yp-auto-translate',
+      this._autoTranslateEvent.bind(this)
+    );
   }
 
   disconnectedCallback() {
@@ -965,6 +1149,19 @@ export class YpPostEdit extends YpEditBase {
     this.removeListener('yp-skip-to-unique-id', this._skipToId);
     this.removeListener('yp-open-to-unique-id', this._openToId);
     this.removeListener('yp-goto-next-index', this._goToNextIndex);
+    this.removeGlobalListener(
+      'yp-auto-translate',
+      this._autoTranslateEvent.bind(this)
+    );
+  }
+
+  hasLongSaveText() {
+    return (this.saveText && this.saveText.length>9);
+  }
+
+  _autoTranslateEvent(event: CustomEvent) {
+    this.autoTranslate = event.detail;
+    this._getTranslationsIfNeeded();
   }
 
   _isLastRating(index: number) {
@@ -1202,7 +1399,9 @@ export class YpPostEdit extends YpEditBase {
   _setupStructuredQuestions() {
     const post = this.post;
     const group = this.group;
-    if (post && group && group.configuration.structuredQuestionsJson) {
+    if (this.translatedQuestions) {
+      this.structuredQuestions = this.translatedQuestions;
+    } else if (post && group && group.configuration.structuredQuestionsJson) {
       this.structuredQuestions = group.configuration.structuredQuestionsJson;
     } else if (
       post &&
@@ -1702,8 +1901,14 @@ export class YpPostEdit extends YpEditBase {
           } else {
             this.editHeaderText = this.t('post.new');
           }
+
+          if (this.group && this.group.configuration && this.group.configuration.alternativeTextForNewIdeaSaveButton) {
+            const label = this.$$("#alternativeTextForNewIdeaSaveButtonId") as YpMagicText;
+            this.saveText = (label && label.finalContent) ? label.finalContent : this.group.configuration.alternativeTextForNewIdeaSaveButton;
+          } else {
+            this.saveText = this.t('create');
+          }
           this.snackbarText = this.t('postCreated');
-          this.saveText = this.t('create');
         } else {
           this.saveText = this.t('save');
           this.editHeaderText = this.t('post.edit');
