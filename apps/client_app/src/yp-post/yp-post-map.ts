@@ -1,5 +1,5 @@
 import { html, css, nothing } from 'lit';
-import { property, customElement } from 'lit/decorators.js';
+import { property, customElement, state } from 'lit/decorators.js';
 
 import { YpBaseElement } from '../common/yp-base-element.js';
 
@@ -31,15 +31,18 @@ export class YpPostMap extends YpBaseElement {
   @property({ type: String })
   collectionType!: string
 
+  @state()
+  skipFitToMarkersNext = false
+
   updated(changedProperties: Map<string | number | symbol, unknown>) {
     super.updated(changedProperties);
 
     if (changedProperties.has('groupId')) {
-      this._groupIdChanged();
+      this._groupChanged();
     }
 
     if (changedProperties.has('communityId')) {
-      this._communityIdChanged();
+      this._communityChanged();
     }
   }
 
@@ -155,7 +158,7 @@ export class YpPostMap extends YpBaseElement {
                 id="mapContainer"
                 class="mapContainer shadow-elevation-2dp shadow-transition">
                 <lit-google-map
-                  additionalMapOptions="{'keyboardShortcuts':false}"
+                  additionalMapOptions="{'keyboardShortcuts':false,'fullscreenControl': false}"
                   id="map"
                   version="weekly"
                   api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0"
@@ -209,15 +212,19 @@ export class YpPostMap extends YpBaseElement {
         Math.min(window.innerWidth - (this.wide ? 96 : 32), 1920) + 'px';
       map.style.height = height + 'px';
       map.style.marginBottom = '64px';
-      setTimeout(() => {
-        const gMap = this.$$('#map') as YpLitGoogleMapElement;
-        if (gMap) {
-          gMap.fitToMarkers = true;
-          setTimeout(() => {
-            gMap.fitToMarkers = false;
-          }, 1000);
-        }
-      });
+      if (this.skipFitToMarkersNext===true) {
+        this.skipFitToMarkersNext = false;
+      } else {
+        setTimeout(() => {
+          const gMap = this.$$('#map') as YpLitGoogleMapElement;
+          if (gMap) {
+            gMap.fitToMarkers = true;
+            setTimeout(() => {
+              gMap.fitToMarkers = false;
+            }, 1000);
+          }
+        });
+      }
     }
   }
 
@@ -230,10 +237,17 @@ export class YpPostMap extends YpBaseElement {
       case 'group':
         this.groupId = this.collectionId
         break
-     }
+    }
+
+    this.addGlobalListener("yp-refresh-group-posts", this._refreshAjax);
   }
 
-  async _groupIdChanged() {
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    this.removeGlobalListener("yp-refresh-group-posts", this._refreshAjax);
+  }
+
+  async _groupChanged() {
     if (this.groupId) {
       this.posts = undefined;
 
@@ -245,7 +259,7 @@ export class YpPostMap extends YpBaseElement {
     }
   }
 
-  async _communityIdChanged() {
+  async _communityChanged() {
     if (this.communityId) {
       this.posts = undefined;
       this._response(
@@ -254,6 +268,14 @@ export class YpPostMap extends YpBaseElement {
     } else {
       this.posts = undefined;
     }
+  }
+
+  _refreshAjax() {
+    if (this.groupId)
+      this._groupChanged();
+    else if (this.communityId)
+      this._communityChanged();
+    this.skipFitToMarkersNext = true;
   }
 
   _response(response: Array<YpPostData>) {

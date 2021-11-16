@@ -280,6 +280,7 @@ export class YpPostHeader extends YpBaseElementWithLogin {
                 content="${this.post.description}"
                 ?noUserInfo="${!this.post.Group.configuration
                   .showWhoPostedPosts}"
+                disableTranslation
                 .structuredQuestionsConfig="${this.post.Group.configuration
                   .structuredQuestions}"
                 ?hasCustomRatings="${this.post.Group.configuration
@@ -330,7 +331,9 @@ export class YpPostHeader extends YpBaseElementWithLogin {
                 <mwc-list-item @click="${this._openEdit}">
                   ${this.t('post.edit')}
                 </mwc-list-item>
-                <mwc-list-item @click="${this._openMovePost}">
+                <mwc-list-item @click="${this._openMovePost}" ?hidden="${!YpAccessHelpers.checkPostAdminOnlyAccess(
+                    this.post
+                  )}">
                   ${this.t('post.move')}
                 </mwc-list-item>
                 <mwc-list-item
@@ -339,6 +342,13 @@ export class YpPostHeader extends YpBaseElementWithLogin {
                     this.post
                   )}">
                   ${this.t('post.statusChange')}
+                </mwc-list-item>
+                <mwc-list-item
+                  @click="${this._openPostStatusChangeNoEmails}"
+                  ?hidden="${!YpAccessHelpers.checkPostAdminOnlyAccess(
+                    this.post
+                  )}">
+                  ${this.t('post.statusChangeNoEmails')}
                 </mwc-list-item>
                 <mwc-list-item @click="${this._openDelete}">
                   ${this.t('post.delete')}
@@ -379,6 +389,7 @@ export class YpPostHeader extends YpBaseElementWithLogin {
               ?hidden="${this.hideActions}"
               hideDebate
               elevation="-1"
+              ?forceShowDebate="${this.post.Group.configuration.forceShowDebateCountOnPost}"
               floating
               class="postActions"
               .post="${this.post}"></yp-post-actions>
@@ -557,14 +568,27 @@ export class YpPostHeader extends YpBaseElementWithLogin {
 
   _openMovePost() {
     (this.$$('#helpMenu') as Menu).select(-1);
+    window.appGlobals.activity('open', 'movePost');
+    //TODO: movePost
     /*window.appDialogs.getDialogAsync('postMove', dialog => {
       dialog.setupAndOpen(this.post, this._refresh.bind(this));
+    });*/
+  }
+
+  _openPostStatusChangeNoEmails() {
+    (this.$$('#helpMenu') as Menu).select(-1);
+    window.appGlobals.activity('open', 'statusChangeNoEmails');
+    //TODO: Finish
+    /*window.appDialogs.getDialogAsync('postStatusChangeEdit', dialog => {
+      dialog.setup(this.post, null, this._refresh.bind(this), true);
+      dialog.open('new', { postId: this.post.id, statusChange: true });
     });*/
   }
 
   _openPostStatusChange() {
     (this.$$('#helpMenu') as Menu).select(-1);
     window.appGlobals.activity('open', 'post.statusChangeEdit');
+    //TODO: Finish
     /*window.appDialogs.getDialogAsync('postStatusChangeEdit', dialog => {
       dialog.setup(this.post, null, this._refresh.bind(this));
       dialog.open('new', { postId: this.post.id, statusChange: true });

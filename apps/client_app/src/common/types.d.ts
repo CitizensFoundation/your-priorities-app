@@ -216,7 +216,7 @@ interface YpGroupConfiguration extends YpCollectionConfiguration {
   isDataVisualizationGroup?: boolean;
   usePostTags?: boolean;
   alternativeTextForNewIdeaSaveButton?: string;
-
+  forceShowDebateCountOnPost?: boolean;
 }
 
 interface YpGroupDataVizData {
