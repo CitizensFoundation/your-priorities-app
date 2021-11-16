@@ -112,6 +112,8 @@ export class YpPointNewsStory extends YpBaseElement {
           id="content"
           class="story"
           textType="pointContent"
+          simpleFormat
+          truncate="10000"
           .contentLanguage="${this.point.language}"
           .content="${this.point.latestContent}"
           .contentId="${this.point.id}">
