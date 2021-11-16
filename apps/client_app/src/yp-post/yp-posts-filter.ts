@@ -351,7 +351,7 @@ export class YpPostsFilter extends YpBaseElement {
       } else {
         this.categoryId = undefined;
         this.categoryName = undefined;
-       // (this.$$('#categoryMenu') as Select).value = '';
+        this.resetSelection();
       }
       this.fire('yp-filter-category-change', this.categoryId ? this.categoryId : null);
 
@@ -389,10 +389,10 @@ export class YpPostsFilter extends YpBaseElement {
     }
   }
 
-  resetSelection() {
+  resetSelection(id: string | undefined = undefined) {
     const categoryMenu = this.$$('#categoryMenu');
     if (categoryMenu) {
-      (this.$$('#categoryMenu') as Select).value = '';
+      (this.$$('#categoryMenu') as Select).value = id ? id : '';
     }
     //this._updateMainListMenuValue('');
   }
@@ -418,7 +418,7 @@ export class YpPostsFilter extends YpBaseElement {
       if (categoriesWithCount.length > 1) {
         this.categoriesWithCount = categoriesWithCount;
         setTimeout(() => {
-          //(this.$$('#categoryMenu') as Select).value = '';
+          this.resetSelection(this.categoryId ? this.categoryId.toString() : '');
         });
       } else {
         console.error('Unexpected categories count');
@@ -445,7 +445,6 @@ export class YpPostsFilter extends YpBaseElement {
     if (changedProperties.has('group') && this.group) {
       this.categoriesWithCount = undefined;
       this.allPostCount = 0;
-      this.categoryId = undefined;
       this._updateTitle();
       if (this.group.Categories && this.group.Categories.length > 0) {
         this._setupCategories();

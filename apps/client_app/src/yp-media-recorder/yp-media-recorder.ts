@@ -247,7 +247,7 @@ export class YpMediaRecorder extends YpBaseElement {
                   <audio
                     id="audioRecorder"
                     class="audioRecorder"
-                    ?hidden=""></audio>
+                    ?hidden></audio>
                   <audio
                     id="audioPreviewer"
                     controls
