@@ -1,5 +1,5 @@
 import { html, css, nothing } from 'lit';
-import { property, customElement } from 'lit/decorators.js';
+import { property, customElement, state } from 'lit/decorators.js';
 import { YpBaseElement } from '../common/yp-base-element.js';
 
 import RecordRTC from 'recordrtc';
@@ -87,6 +87,9 @@ export class YpMediaRecorder extends YpBaseElement {
 
   @property({ type: Object })
   surfer: WaveSurfer | undefined;
+
+  @state()
+  videoAspect = "portrait"
 
   selectedAudioDeviceId: string | null = null;
   selectedVideoDeviceId: string | null = null;
@@ -207,6 +210,10 @@ export class YpMediaRecorder extends YpBaseElement {
         #waveform {
           height: 128px;
         }
+
+        [hidden] {
+          display:none !important;
+        }
       `,
     ];
   }
@@ -253,47 +260,65 @@ export class YpMediaRecorder extends YpBaseElement {
 
           <div
             class="layout horizontal mainbuttons" slot="primaryAction"
-
-            ?hidden="${!this.recorder}">
+            >
             <mwc-icon-button
               .label="${this.t('closeRecordingWindow')}"
               icon="clear"
               class="iconButtons"
               @click="${this._close}"></mwc-icon-button>
-            <mwc-icon-button
-              .label="${this.t('deleteRecordedMedia')}"
-              icon="delete"
-              class="iconButtons"
-              @click="${this._deleteRecording}"
-              ?hidden="${!this.recordedData}"></mwc-icon-button>
-            <mwc-button
-              @click="${this._startRecording}"
-              class="buttonText"
-              .label="${this.t('record')}"
-              ?hidden="${this.recordedData != null}"
-              icon="fiber_manual_record">
-              <iron-icon id="recordingIcon"></iron-icon>
-            </mwc-button>
-            <div id="secondsLeft" ?hidden="${this.recordedData != null}">
-              ${this.recordSecondsLeft} ${this.t('seconds')}
-            </div>
-            <mwc-button
-              @click="${this._stopRecording}"
-              class="buttonText"
-              .label="${this.t('stop')}"
-              ?hidden="${!this.isRecording}"
-              icon="stop">
-            </mwc-button>
-            <span ?hidden="${this.isRecording}">
-              <mwc-button
-                id="uploadFileButton"
-                icon="file-upload"
-                class="uploadFileButton"
-                .label="${this.t('uploadFile')}"
-                @click="${this._uploadFile}"
-                ?hidden="${this.recordedData != null}">
-                <div class="buttonText uploadFileText"></div>
-              </mwc-button>
+              <div class="layout layout horizontal" ?hidden="${!this.recorder}">
+                <mwc-icon-button
+                .label="${this.t('deleteRecordedMedia')}"
+                icon="delete"
+                class="iconButtons"
+                @click="${this._deleteRecording}"
+                ?hidden="${!this.recordedData}"></mwc-icon-button>
+                <mwc-button
+                  @click="${this._startRecording}"
+                  class="buttonText"
+                  .label="${this.t('record')}"
+                  ?hidden="${this.recordedData != null}"
+                  icon="fiber_manual_record">
+                  <iron-icon id="recordingIcon"></iron-icon>
+                </mwc-button>
+                <div id="secondsLeft" ?hidden="${this.recordedData != null}">
+                  ${this.recordSecondsLeft} ${this.t('seconds')}
+                </div>
+                <mwc-button
+                  @click="${this._stopRecording}"
+                  class="buttonText"
+                  .label="${this.t('stop')}"
+                  ?hidden="${!this.isRecording}"
+                  icon="stop">
+                </mwc-button>
+              </div>
+            <span ?hidden="${this.isRecording || this.audioRecording}">
+              <div class="layout horizontal">
+                <mwc-button
+                  id="uploadFileButton"
+                  icon="file-upload"
+                  class="uploadFileButton"
+                  .label="${this.t('uploadFile')}"
+                  @click="${this._uploadFile}"
+                  ?hidden="${this.recordedData != null}">
+                  <div class="buttonText uploadFileText"></div>
+                </mwc-button>
+                <mwc-formfield label="landscape">
+                  <mwc-radio
+                    name="videoAspect"
+                    @change="${this._setVideoAspect}"
+                    value="landscape">
+                  </mwc-radio>
+                </mwc-formfield>
+                <mwc-formfield label="portrait">
+                  <mwc-radio
+                    name="videoAspect"
+                    @change="${this._setVideoAspect}"
+                    value="portrait">
+                  </mwc-radio>
+                </mwc-formfield>
+
+              </div>
             </span>
             <mwc-button
               @click="${this._sendBack}"
@@ -342,6 +367,10 @@ export class YpMediaRecorder extends YpBaseElement {
         </div>
       </mwc-dialog>
     `;
+  }
+
+  _setVideoAspect(event: CustomEvent) {
+    this.videoAspect = (event.target as HTMLInputElement).value as string;
   }
 
   _selectAudioDevice(event: CustomEvent) {
@@ -442,7 +471,7 @@ export class YpMediaRecorder extends YpBaseElement {
 
   _uploadFile() {
     this._close();
-    this.uploadFileFunction!();
+    this.uploadFileFunction!(this.videoAspect);
   }
 
   _sendBack() {
@@ -483,6 +512,15 @@ export class YpMediaRecorder extends YpBaseElement {
 
       this._checkVideoDevices();
     });
+  }
+
+  connectedCallback() {
+    super.connectedCallback();
+    if (window.innerHeight>window.innerWidth) {
+      this.videoAspect = "portrait";
+    } else {
+      this.videoAspect = "landscape";
+    }
   }
 
   captureUserMedia(callback: Function) {
