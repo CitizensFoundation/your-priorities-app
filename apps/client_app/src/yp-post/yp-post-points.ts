@@ -1465,11 +1465,13 @@ export class YpPostPoints extends YpBaseElementWithLogin {
       });
     }
 
-    if (result.length>0 &&
-      (result.length===this.totalCount ||
-        (this.points && (this.points.length+result.length)===this.totalCount))) {
-     result[result.length-1].isLastPointInList = true;
-   }
+    if (
+      result.length > 0 &&
+      (result.length === this.totalCount ||
+        (this.points && this.points.length + result.length === this.totalCount))
+    ) {
+      result[result.length - 1].isLastPointInList = true;
+    }
 
     return result;
   }
@@ -1908,7 +1910,11 @@ export class YpPostPoints extends YpBaseElementWithLogin {
         this.hideMobileText = false;
       }
       return false;
-    } else if (textValue != null && textValue.length > 0) {
+    } else if (
+      textValue != null &&
+      textValue.length > 0 &&
+      textValue.trim().length > 0
+    ) {
       if (type === 'up') {
         this.hideUpVideo = true;
         this.hideUpAudio = true;
@@ -1925,7 +1931,11 @@ export class YpPostPoints extends YpBaseElementWithLogin {
         this.hideMobileText = false;
       }
       return true;
-    } else if (textValue != null && textValue.length > 1) {
+    } else if (
+      textValue != null &&
+      textValue.length > 1 &&
+      textValue.trim().length > 0
+    ) {
       return true;
     } else {
       return false;
