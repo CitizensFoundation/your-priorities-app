@@ -115,7 +115,7 @@ export abstract class YpEditBase extends YpBaseElement {
     this.setupTranslation();
   }
 
-  open(newItem: boolean, params: Record<string,string | boolean | number | object>) {
+  async open(newItem: boolean, params: Record<string,string | boolean | number | object>) {
     if (window.appUser && window.appUser.loggedIn() === true) {
       if (newItem) {
         this.new = true;
@@ -126,6 +126,7 @@ export abstract class YpEditBase extends YpBaseElement {
       if (typeof this.setupAfterOpen === 'function') {
         this.setupAfterOpen(params);
       }
+      await this.updateComplete;
       (this.$$("#editDialog") as YpEditDialog).open();
     } else {
       window.appUser.loginForEdit(
