@@ -25,6 +25,10 @@ export class YpPageDialog extends YpBaseElement {
           background-color: var(--mdc-theme-surface);
         }
 
+        mwc-button {
+          font-weight: bold;
+        }
+
         #dialog {
           background-color: #fff;
           max-width: 50%;
@@ -92,6 +96,7 @@ export class YpPageDialog extends YpBaseElement {
     (this.$$('#dialog') as Dialog).open = false;
     setTimeout(()=>{
       (this.$$('#content') as HTMLElement).innerHTML = '';
-    }, 750)
+    }, 50)
+    window.appGlobals.activity('close', 'pages');
   }
 }
