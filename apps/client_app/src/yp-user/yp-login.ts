@@ -1159,13 +1159,14 @@ export class YpLogin extends YpBaseElement {
   }
 
   onEnter(event: KeyboardEvent) {
-    if (event.key == 'enter') {
+    debugger;
+    if (event.key == 'Enter') {
       this._validateAndSend();
     }
   }
 
   onEnterOneTimeLogin(event: KeyboardEvent) {
-    if (event.key == 'enter') {
+    if (event.key == 'Enter') {
       this._validateAndSend();
     }
   }
