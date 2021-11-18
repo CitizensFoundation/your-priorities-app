@@ -529,7 +529,7 @@ export class YpApp extends YpBaseElement {
           break;
           case 'post':
           pageHtml = cache(html`
-            <yp-post id="postPage" .subRoute="${this.subRoute}"></yp-post>
+            <yp-post id="postPage" .currentPage="${this.page}" .subRoute="${this.subRoute}"></yp-post>
           `);
           break;
         default:
