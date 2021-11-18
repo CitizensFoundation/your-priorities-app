@@ -216,6 +216,43 @@ export class YpThemeManager {
       '--mdc-theme-primary': '#500778',
       '--mdc-theme-secondary': '#E87722',
     });
+
+    this.themes.push({
+      name: 'RoStartup',
+      '--mdc-theme-background': '#F7F7F7',
+      '--mdc-theme-primary': '#154164',
+      '--mdc-theme-secondary': '#1f52a5',
+      '--app-header-font-weight': '500',
+      '--app-tags-text-color': '#1f52a5',
+      '--app-tags-font-weight': '500',
+      fonts: {
+        htmlImport: '/styles/fonts/rostartup-font.html',
+        fontName: 'Montserrat',
+      },
+    });
+
+    this.themes.push({
+      name: 'wienExtra',
+      '--mdc-theme-background': '#F7F7F7',
+      '--mdc-theme-primary': '#292929',
+      '--mdc-theme-secondary': '#ff0000',
+      fonts: {
+        htmlImport: '/styles/fonts/junges-wien-font.html',
+        fontName: 'WienerMelange',
+      },
+    });
+
+    this.themes.push({
+      name: 'Frumbjörg',
+      '--mdc-theme-background': '#fefefe',
+      '--mdc-theme-primary': '#17263e',
+      '--mdc-theme-secondary': '#1f5d04c3ca5',
+      fonts: {
+        htmlImport: '/styles/fonts/frumbjorg-font.html',
+        fontName: 'Merriweather',
+      },
+    });
+
   }
 
   private _setupOverrideTheme(
@@ -223,6 +260,28 @@ export class YpThemeManager {
     accent: string,
     background: string | undefined
   ) {
+
+    //TODO: Add a reset for fonts, if needed
+    /*
+      var resetValues = {};
+      if (this.themes[number] && this.themes[number]['--app-header-font-family']==null) {
+        resetValues = {
+          '--paper-font-common-base': "{font-family: 'Roboto', sans-serif; }",
+          '--paper-input-container-input': "{font-family: 'Roboto', sans-serif; }",
+          '--paper-input-container-label': "{font-family: 'Roboto', sans-serif; }",
+          '--app-header-font-family': 'Roboto',
+          '--iron-autogrow-textarea':  "{font-family: 'Roboto', sans-serif; }",
+          '--paper-button':  "{font-family: 'Roboto', sans-serif !important; }",
+          '--paper-tabs': "{font-family: 'Roboto', sans-serif !important; }",
+          '--app-header-font-weight': null,
+        }
+      }
+
+      if (this.themes[number] ) {
+        this.themes[number].originalName = this.themes[number].name;
+      }
+
+    */
     if (!background) {
       background = '#cfd8dc';
     }
@@ -319,5 +378,24 @@ export class YpThemeManager {
         );
       }
     }
+
+    if (number && this.themes[number] &&
+      (this.themes[number].originalName==="wienExtra" ||
+        this.themes[number].originalName==="RoStartup" ||
+        this.themes[number].originalName==="Frumbjörg")) {
+          const event = new CustomEvent("yp-large-font", {
+            detail: true,
+            bubbles: true,
+            composed: true,
+          });
+          document.dispatchEvent(event);
+    } else if (number && this.themes[number]) {
+      const event = new CustomEvent("yp-large-font", {
+        detail: false,
+        bubbles: true,
+        composed: true,
+      });
+      document.dispatchEvent(event);
+}
   }
 }
