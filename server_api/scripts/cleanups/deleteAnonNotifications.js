@@ -7,6 +7,8 @@ const maxNumberOfNotificationsToDelete = maxNumberFromPath ? maxNumberFromPath :
 
 let numberOfDeletedNotifications = 0;
 
+let startTime = moment();
+
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
@@ -102,5 +104,6 @@ const chunk = (arr, size) =>
     }
   }
   console.log(`Max ${maxNumberOfNotificationsToDelete} old anon notifications deleted`);
+  console.log(`Duration ${moment(moment()-startTime).format("HH:mm:ss.SSS")}`)
   process.exit();
 })();
