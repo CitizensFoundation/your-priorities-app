@@ -42,6 +42,9 @@ export class YpPost extends YpCollection {
   @property({ type: Boolean })
   disableNewPosts = false;
 
+  @property({ type: String })
+  currentPage: string | undefined;
+
   @property({ type: Object })
   post: YpPostData | undefined = undefined;
 
@@ -149,6 +152,7 @@ export class YpPost extends YpCollection {
             id="pointsSection"
             role="main"
             aria-label="${this.t('debate')}"
+            ?isPostPage="${this.isPostPage}"
             ?isAdmin="${this.isAdmin}"
             .post="${this.post}"
             .scrollToId="${this.scrollToPointId}"></yp-post-points>`;
@@ -252,6 +256,10 @@ export class YpPost extends YpCollection {
     if (changedProperties.has('selectedTab')) {
       this._selectedTabChanged();
     }
+  }
+
+  get isPostPage(): boolean {
+    return this.currentPage === "post";
   }
 
   _newPost() {
@@ -458,6 +466,7 @@ export class YpPost extends YpCollection {
       }
 
       window.appGlobals.setAnonymousGroupStatus(this.post.Group);
+      window.appGlobals.setRegistrationQuestionGroup(this.post.Group);
 
       if (
         this.post.Group.configuration &&
