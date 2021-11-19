@@ -30,6 +30,7 @@ import './yp-post-location.js';
 import { Radio } from '@material/mwc-radio';
 
 import '../yp-survey/yp-structured-question-edit.js';
+import { YpSurveyHelpers } from '../yp-survey/YpSurveyHelpers.js';
 
 export const EditPostTabs: Record<string, number> = {
   Description: 0,
@@ -170,37 +171,6 @@ export class YpPostEdit extends YpEditBase {
     this._setupStructuredQuestions();
   }
 
-  //TODO: Share this code with registration questions
-  _getQuestionLengthWithSubOptions(questions: Array<YpStructuredQuestionData>) {
-    let length = 0;
-    for (let i = 0; i < questions.length; i++) {
-      length += 1;
-      const question = questions[i];
-      if (
-        question.type === 'radios' &&
-        question.radioButtons &&
-        question.radioButtons.length > 0
-      ) {
-        length += question.radioButtons.length;
-      } else if (
-        question.type === 'checkboxes' &&
-        question.checkboxes &&
-        question.checkboxes.length > 0
-      ) {
-        length += question.checkboxes.length;
-      } else if (
-        question.type === 'dropdown' &&
-        question.dropdownOptions &&
-        question.dropdownOptions.length > 0
-      ) {
-        length += question.dropdownOptions.length;
-      }
-    }
-
-    return length;
-  }
-
-
   _getTranslationsIfNeeded() {
     this.translatedQuestions = undefined;
     if (
@@ -221,7 +191,7 @@ export class YpPostEdit extends YpEditBase {
 
         if (
           translatedTexts.length ===
-          this._getQuestionLengthWithSubOptions(currentQuestions)
+          YpSurveyHelpers.getQuestionLengthWithSubOptions(currentQuestions)
         ) {
           let translatedItemCount = 0;
           for (

@@ -115,7 +115,7 @@ export class YpPostTags extends YpBaseElement {
 
   _newTranslation() {
     setTimeout(() => {
-      var tagsTranslation = this.$$('#postTagsTranslations') as YpMagicText;
+      const tagsTranslation = this.$$('#postTagsTranslations') as YpMagicText;
       if (tagsTranslation && tagsTranslation.finalContent) {
         this.translatedTags = tagsTranslation.finalContent;
       }

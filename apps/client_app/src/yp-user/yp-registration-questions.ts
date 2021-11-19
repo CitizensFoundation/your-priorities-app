@@ -16,6 +16,7 @@ import '@material/mwc-radio';
 import '@material/mwc-formfield';
 
 import { YpStructuredQuestionEdit } from '../yp-survey/yp-structured-question-edit.js';
+import { YpSurveyHelpers } from '../yp-survey/YpSurveyHelpers.js';
 
 @customElement('yp-registration-questions')
 export class YpRegistrationQuestions extends YpBaseElement {
@@ -168,35 +169,6 @@ export class YpRegistrationQuestions extends YpBaseElement {
     this._getTranslationsIfNeeded();
   }
 
-  _getQuestionLengthWithSubOptions(questions: Array<YpStructuredQuestionData>) {
-    let length = 0;
-    for (let i = 0; i < questions.length; i++) {
-      length += 1;
-      const question = questions[i];
-      if (
-        question.type === 'radios' &&
-        question.radioButtons &&
-        question.radioButtons.length > 0
-      ) {
-        length += question.radioButtons.length;
-      } else if (
-        question.type === 'checkboxes' &&
-        question.checkboxes &&
-        question.checkboxes.length > 0
-      ) {
-        length += question.checkboxes.length;
-      } else if (
-        question.type === 'dropdown' &&
-        question.dropdownOptions &&
-        question.dropdownOptions.length > 0
-      ) {
-        length += question.dropdownOptions.length;
-      }
-    }
-
-    return length;
-  }
-
   _getTranslationsIfNeeded() {
     this.translatedQuestions = undefined;
     if (
@@ -217,7 +189,7 @@ export class YpRegistrationQuestions extends YpBaseElement {
 
         if (
           translatedTexts.length ===
-          this._getQuestionLengthWithSubOptions(currentQuestions)
+          YpSurveyHelpers.getQuestionLengthWithSubOptions(currentQuestions)
         ) {
           let translatedItemCount = 0;
           for (

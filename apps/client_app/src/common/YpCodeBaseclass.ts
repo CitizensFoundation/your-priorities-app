@@ -1,3 +1,4 @@
+import { Snackbar } from '@material/mwc-snackbar';
 import { LitElement } from 'lit';
 
 import { YpApp } from '../yp-app/yp-app.js';
@@ -72,6 +73,14 @@ export class YpCodeBase {
 
   addGlobalListener(name: string, callback: Function) {
     this.addListener(name, callback, document);
+  }
+
+  showToast(text: string, timeout = 4000) {
+    window.appDialogs.getDialogAsync("masterToast", (toast: Snackbar) => {
+      toast.labelText = text;
+      toast.timeoutMs = timeout;
+      toast.open = true;
+    });
   }
 
   removeListener(

@@ -16,7 +16,7 @@ export class YpCache extends YpCodeBase {
 
   postItemsCache: Record<number,YpPostData> = {};
 
-  autoTranslateCache: Record<string,string> = {};
+  autoTranslateCache: Record<string,string[] | string> = {};
 
   addPostsToCacheLater(posts: Array<YpPostData>) {
     const laterTimeoutMs = Math.floor(Math.random() * 1000) + 750;

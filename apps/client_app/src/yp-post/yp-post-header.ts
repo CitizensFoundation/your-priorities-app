@@ -25,7 +25,7 @@ import { YpBaseElementWithLogin } from '../common/yp-base-element-with-login.js'
 import './yp-post-transcript.js';
 import { YpPostEdit } from './yp-post-edit.js';
 import { YpApiActionDialog } from '../yp-api-action-dialog/yp-api-action-dialog.js';
-import { YpPostHelpers } from '../common/YpPostHelpers.js';
+import { YpPostHelpers } from './yp-post-base-with-answers.js';
 
 @customElement('yp-post-header')
 export class YpPostHeader extends YpBaseElementWithLogin {

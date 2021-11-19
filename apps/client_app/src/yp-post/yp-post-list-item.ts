@@ -5,7 +5,7 @@ import { YpBaseElement } from '../common/yp-base-element.js';
 import { ShadowStyles } from '../common/ShadowStyles.js';
 import { YpPostEdit } from './yp-post-edit.js';
 import { YpApiActionDialog } from '../yp-api-action-dialog/yp-api-action-dialog.js';
-import { YpPostHelpers } from '../common/YpPostHelpers.js';
+import { YpPostHelpers } from './yp-post-base-with-answers.js';
 import { YpAccessHelpers } from '../common/YpAccessHelpers.js';
 import { YpNavHelpers } from '../common/YpNavHelpers.js';
 

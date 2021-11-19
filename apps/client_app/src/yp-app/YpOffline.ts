@@ -6,12 +6,12 @@ export class YpOffline extends YpCodeBase {
   sendLaterStoragePrefix = "yp-send-later-";
 
   _onlineEvent() {
-    this._showToast(this.t('youAreOnline'));
+    this.showToast(this.t('youAreOnline'));
     this._checkContentToSend();
   }
 
   _offlineEvent() {
-    this._showToast(this.t('youAreNowOffline'));
+    this.showToast(this.t('youAreNowOffline'));
   }
 
   _urlWithQuery(url: string, params: any) {
@@ -36,18 +36,10 @@ export class YpOffline extends YpCodeBase {
     return items;
   }
 
-  _showToast(text: string) {
-    window.appDialogs.getDialogAsync("masterToast", (toast: Snackbar) => {
-      toast.labelText = text;
-      toast.timeoutMs = 4000;
-      toast.open = true;
-    });
-  }
-
   _sendItems(items: YpLocaleStorageItemToSendLater[]) {
     items.forEach((item) => {
       const content = item.content;
-      fetch(this._urlWithQuery(content.url, content.params), {
+      fetch(content.url, {
         method: content.method,
         headers: {
           'Accept': 'application/json',
@@ -55,11 +47,11 @@ export class YpOffline extends YpCodeBase {
         },
         body: JSON.stringify(content.body)
       }).then(() => {
-        this._showToast(this.t('storedDataSent'));
+        this.showToast(this.t('storedDataSent'));
         localStorage.removeItem(item.key);
       }).catch((error) => {
         console.error(error);
-        this._showToast(this.t('errorSendingContentWhenOnline'));
+        this.showToast(this.t('errorSendingContentWhenOnline'));
       })
     })
   }
@@ -69,15 +61,15 @@ export class YpOffline extends YpCodeBase {
       const items = this._getItemsFromLocalStorage();
       if (items.length>0) {
         if (!navigator.onLine) {
-          this._showToast(this.t('offlineContentSentWhenOnline'));
+          this.showToast(this.t('offlineContentSentWhenOnline'));
         } else if (!window.appUser.user) {
-          this._showToast(this.t('notLoggedInContentSentWhenLoggedIn'));
+          this.showToast(this.t('notLoggedInContentSentWhenLoggedIn'));
         } else {
           this._sendItems(items);
         }
       } else {
         if (!navigator.onLine) {
-          this._showToast(this.t('youAreOffline'));
+          this.showToast(this.t('youAreOffline'));
         }
       }
     }, 4000);
@@ -91,7 +83,7 @@ export class YpOffline extends YpCodeBase {
     setTimeout(() => {
       const key = this.sendLaterStoragePrefix+new Date().getTime();
       localStorage.setItem(key, JSON.stringify(contentToSendLater));
-      this._showToast(this.t('offlineContentSentWhenOnline'));
+      this.showToast(this.t('offlineContentSentWhenOnline'));
     });
   }
 

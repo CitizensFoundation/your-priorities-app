@@ -275,6 +275,12 @@ export class YpServerApi extends YpServerApiBase {
     );
   }
 
+  public getSurveyTranslations(post: YpPostData, language: string) {
+    return this.fetchWrapper(
+      this.baseUrlPath + `/posts/${post.id}/translatedSurvey?targetLanguage=${language}&groupId=${post.Group.id}`
+    );
+  }
+
   public getVideoFormatsAndImages(videoId: number) {
     return this.fetchWrapper(
       this.baseUrlPath + `/videos/${videoId}/formatsAndImages`

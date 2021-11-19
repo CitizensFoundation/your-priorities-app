@@ -10,8 +10,8 @@ export class YpOfficialStatusHelper {
   }
 
   static officialStatusOptionsName(official_status: number, t: Function) {
-    var statues = YpOfficialStatusHelper.officialStatusOptions(t);
-    var foundName = "Not found";
+    const statues = YpOfficialStatusHelper.officialStatusOptions(t);
+    let foundName = "Not found";
     statues.forEach((status) => {
       if (status.official_value==official_status) {
         foundName = status.translatedName;
@@ -21,8 +21,8 @@ export class YpOfficialStatusHelper {
   }
 
   static officialStatusOptionsNamePlural(official_status: number, t: Function) {
-    var statues = YpOfficialStatusHelper.officialStatusOptions(t);
-    var foundName = "Not found";
+    const statues = YpOfficialStatusHelper.officialStatusOptions(t);
+    let foundName = "Not found";
     statues.forEach(function (status) {
       if (status.official_value==official_status) {
         foundName = status.translatedNamePlural;
