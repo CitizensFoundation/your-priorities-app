@@ -25,10 +25,10 @@ import { YpBaseElementWithLogin } from '../common/yp-base-element-with-login.js'
 import './yp-post-transcript.js';
 import { YpPostEdit } from './yp-post-edit.js';
 import { YpApiActionDialog } from '../yp-api-action-dialog/yp-api-action-dialog.js';
-import { YpPostHelpers } from './yp-post-base-with-answers.js';
+import { YpPostBaseWithAnswers } from './yp-post-base-with-answers.js';
 
 @customElement('yp-post-header')
-export class YpPostHeader extends YpBaseElementWithLogin {
+export class YpPostHeader extends YpPostBaseWithAnswers(YpBaseElementWithLogin) {
   @property({ type: Boolean })
   isAudioCover = false;
 
@@ -467,10 +467,6 @@ export class YpPostHeader extends YpBaseElementWithLogin {
 
   _openPostMenu() {
     (this.$$('#postMenu') as Menu).open = true;
-  }
-
-  get structuredAnswersFormatted() {
-    return YpPostHelpers.structuredAnswersFormatted(this.post);
   }
 
   _sharedContent(event: CustomEvent) {

@@ -4,10 +4,13 @@ import { YpNavHelpers } from '../common/YpNavHelpers.js';
 import { AcActivityWithGroupBase } from './ac-activity-with-group-base.js';
 
 import '../yp-magic-text/yp-magic-text.js';
-import { YpPostHelpers } from '../common/YpPostHelpers.js';
+import { YpPostBaseWithAnswers } from '../yp-post/yp-post-base-with-answers.js';
+import { YpBaseElement } from '../common/yp-base-element.js';
 
 @customElement('ac-activity-post')
-export class AcActivityPost extends AcActivityWithGroupBase {
+export class AcActivityPost extends YpPostBaseWithAnswers(
+  AcActivityWithGroupBase
+) {
   static get styles() {
     return [
       super.styles,
@@ -165,12 +168,11 @@ export class AcActivityPost extends AcActivityWithGroupBase {
       ${this.activity && this.activity.Post
         ? html`
             <div class="layout vertical hasPointer" @click="${this._goToPost}">
-              <div class="actionInfo">
-                ${this.t('addedAnIdea')}
-              </div>
+              <div class="actionInfo">${this.t('addedAnIdea')}</div>
               <div class="layout horizontal center-center">
                 <yp-post-cover-media
-                  .post="${this.activity.Post!}"></yp-post-cover-media>
+                  .post="${this.activity.Post!}"
+                ></yp-post-cover-media>
               </div>
               <div class="layout vertical center-center">
                 <yp-magic-text
@@ -180,14 +182,16 @@ export class AcActivityPost extends AcActivityWithGroupBase {
                   textType="postName"
                   .contentLanguage="${this.activity.Post.language}"
                   .content="${this.activity.Post!.name}"
-                  .contentId="${this.activity.Post!.id}">
+                  .contentId="${this.activity.Post!.id}"
+                >
                 </yp-magic-text>
               </div>
               <div class="layout vertical center-center descriptionOuter">
                 <div
                   id="description"
                   class="description mainContainerItem"
-                  is-ie11="${this.isIE11}">
+                  is-ie11="${this.isIE11}"
+                >
                   <yp-magic-text
                     id="description"
                     text-type="postContent"
@@ -202,7 +206,8 @@ export class AcActivityPost extends AcActivityWithGroupBase {
                     .truncate="${this.activity.Post.Group.configuration
                       .descriptionTruncateAmount}"
                     .moreText="${this.t('readMore')}"
-                    .closeDialogText="${this.t('close')}">
+                    .closeDialogText="${this.t('close')}"
+                  >
                   </yp-magic-text>
                 </div>
 
@@ -220,14 +225,15 @@ export class AcActivityPost extends AcActivityWithGroupBase {
     `;
   }
 
+  connectedCallback() {
+    super.connectedCallback();
+    this.post = this.activity.Post;
+  }
+
   _goToPost() {
     if (this.activity.Post && !this.postId) {
       YpNavHelpers.goToPost(this.activity.Post.id, undefined, this.activity);
     }
-  }
-
-  get structuredAnswersFormatted() {
-    return YpPostHelpers.structuredAnswersFormatted(this.activity.Post!);
   }
 
   get isIE11() {

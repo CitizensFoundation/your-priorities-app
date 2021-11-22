@@ -1,7 +1,7 @@
 import { YpBaseElement } from '../common/yp-base-element.js';
 import { property } from 'lit/decorators.js';
 
-export abstract class AcActivityWithGroupBase extends YpBaseElement {
+export class AcActivityWithGroupBase extends YpBaseElement {
   @property({ type: Number })
   postId: number | undefined;
 

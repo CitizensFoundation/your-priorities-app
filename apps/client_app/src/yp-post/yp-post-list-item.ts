@@ -5,12 +5,13 @@ import { YpBaseElement } from '../common/yp-base-element.js';
 import { ShadowStyles } from '../common/ShadowStyles.js';
 import { YpPostEdit } from './yp-post-edit.js';
 import { YpApiActionDialog } from '../yp-api-action-dialog/yp-api-action-dialog.js';
-import { YpPostHelpers } from './yp-post-base-with-answers.js';
+import { YpPostBaseWithAnswers } from './yp-post-base-with-answers.js';
 import { YpAccessHelpers } from '../common/YpAccessHelpers.js';
 import { YpNavHelpers } from '../common/YpNavHelpers.js';
+import { YpPostHelpers } from './YpPostHelpers.js';
 
 @customElement('yp-post-list-item')
-export class YpPostListItem extends YpBaseElement {
+export class YpPostListItem extends YpPostBaseWithAnswers(YpBaseElement) {
   @property({ type: String })
   selectedMenuItem: string | undefined;
 
@@ -362,7 +363,7 @@ export class YpPostListItem extends YpBaseElement {
                               text-type="postContent"
                               .contentLanguage="${this.post.language}"
                               ?hidden="${this.hideDescription}"
-                              content="${YpPostHelpers.structuredAnswersFormatted(this.post)}"
+                              content="${this.structuredAnswersFormatted}"
                               remove-urls
                               disableTranslation
                               skipSanitize
