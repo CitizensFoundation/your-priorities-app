@@ -103,7 +103,7 @@ const chunk = (arr, size) =>
       haveNotificationsToDelete = false;
     }
   }
-  console.log(`Max ${maxNumberOfNotificationsToDelete} old anon notifications deleted`);
+  console.log(`${numberOfDeletedNotifications} old anon notifications deleted`);
   console.log(`Duration ${moment(moment()-startTime).format("HH:mm:ss.SSS")}`)
   process.exit();
 })();
