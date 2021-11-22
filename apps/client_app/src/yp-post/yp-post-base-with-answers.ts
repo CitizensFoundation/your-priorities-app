@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/ban-types */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { LitElement } from 'lit';
-import { property } from 'lit/decorators';
+import { property } from 'lit/decorators.js';
 import { YpBaseElement } from '../common/yp-base-element.js';
 import { YpAccessHelpers } from '../common/YpAccessHelpers.js';
 import { YpSurveyHelpers } from '../yp-survey/YpSurveyHelpers.js';
