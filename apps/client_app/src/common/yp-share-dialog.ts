@@ -8,6 +8,7 @@ import { YpBaseElement } from './yp-base-element.js';
 import 'share-menu';
 import { ShareMenu } from 'share-menu';
 
+
 @customElement('yp-share-dialog')
 export class YpShareDialog extends YpBaseElement {
   @property({ type: Object })
@@ -26,7 +27,10 @@ export class YpShareDialog extends YpBaseElement {
         class="shareIcon"
         id="shareButton"
         .title="${this.t('post.shareInfo')}"
-        .url="${this.url || ''}"></share-menu>
+        .url="${this.url || ''}">
+        <share-target-facebook></share-target-facebook>
+        
+      </share-menu>
     `;
   }
 
@@ -36,7 +40,7 @@ export class YpShareDialog extends YpBaseElement {
     this.sharedContent = sharedContent
 
     await this.requestUpdate();
-
+    (this.$$('#shareButton') as ShareMenu).socials = ['clipboard', 'facebook', 'twitter', 'whatsapp', 'email', 'linkedin'];
     (this.$$('#shareButton') as ShareMenu).share();
   }
 }
