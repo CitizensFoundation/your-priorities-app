@@ -408,7 +408,7 @@ export class YpPostHeader extends YpPostBaseWithAnswers(YpBaseElementWithLogin) 
     return html`
       <div class="layout horizontal center-center">
         <div
-          class="postCard layout-wrap layout-horizontal shadow-elevation-4dp shadow-transition">
+          class="postCard layout-wrap layout horizontal shadow-elevation-4dp shadow-transition">
           <div
             class="layout vertical headerTopLevel"
             role="heading"
@@ -457,8 +457,8 @@ export class YpPostHeader extends YpPostBaseWithAnswers(YpBaseElementWithLogin) 
               <div class="layout vertical">
                 ${this.renderPostInformation()}
               </div>
+              ${this.renderActions()} ${this.renderMenu()}
             </div>
-            ${this.renderActions()} ${this.renderMenu()}
           </div>
         </div>
       </div>
