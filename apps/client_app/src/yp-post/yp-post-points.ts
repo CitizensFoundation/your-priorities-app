@@ -167,7 +167,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
 
   noMorePoints = false;
 
-  get textValueUp() {
+  get textValueUp() { 
     if (this.$$('#up_point')) return (this.$$('#up_point') as TextArea).value;
     else return '';
   }
@@ -684,6 +684,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
             .label="${label ? label : ''}"
             charCounter
             rows="2"
+            @keyup="${()=>{this.requestUpdate()}}"
             ?hidden="${hideText}"
             maxrows="3"
             .maxlength="${this.pointMaxLength}"
@@ -727,6 +728,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
                 raised
                 class="submitButton"
                 ?disabled="${this.addPointDisabled}"
+                ?hidden="${!ifLengthIsRight}"
                 icon="add"
                 @click="${addPointFunc}"
                 .label="${this.t('postPoint')}"
@@ -1654,7 +1656,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
     this._clearVideo();
     this._clearAudio();
   }
-
+  
   addPointUp() {
     this.addPoint(
       this.textValueUp,
@@ -1827,6 +1829,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
   }
 
   get ifLengthUpIsRight() {
+    
     return this.ifLengthIsRight(
       'up',
       this.textValueUp,
