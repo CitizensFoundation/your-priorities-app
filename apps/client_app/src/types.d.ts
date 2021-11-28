@@ -217,6 +217,7 @@ interface YpGroupConfiguration extends YpCollectionConfiguration {
   usePostTags?: boolean;
   alternativeTextForNewIdeaSaveButton?: string;
   forceShowDebateCountOnPost?: boolean;
+  closeNewsfeedSubmissions?: boolean;
 }
 
 interface YpGroupDataVizData {
@@ -242,10 +243,10 @@ interface YpCommunityConfiguration extends YpCollectionConfiguration {
   customSamlLoginMessage?: string;
   signupTermsPageId?: number;
   ssnLoginListDataId?: number;
-
   disableFacebookLoginForCommunity?: boolean;
   hideRecommendationOnNewsFeed?: boolean;
   defaultLocationLongLat?: string;
+  closeNewsfeedSubmissions?: boolean;
 }
 
 interface YpDomainConfiguration extends YpCollectionConfiguration {

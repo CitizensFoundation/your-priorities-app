@@ -1,5 +1,5 @@
 import { html, css, nothing } from 'lit';
-import { property, customElement } from 'lit/decorators.js';
+import { property, customElement, state } from 'lit/decorators.js';
 
 import '@material/mwc-button';
 import '../yp-point/yp-point-news-story-edit.js';
@@ -71,6 +71,8 @@ export class AcActivities extends YpBaseElementWithLogin {
 
   @property({ type: Array })
   recommendedPosts: Array<YpPostData> | undefined;
+
+  @state() closeNewsfeedSubmissions = false
 
   _moreToLoad = false;
 
@@ -283,6 +285,7 @@ export class AcActivities extends YpBaseElementWithLogin {
                 <div
                   .loggedInUser="${this.isLoggedIn}"
                   elevation="1"
+                  ?hidden="${this.closeNewsfeedSubmissions || !this.activities}"
                   class="layout horizontal addNewsBox shadow-elevation-2dp shadow-transition">
                   <yp-point-news-story-edit
                     .domainId="${this.domainId}"
@@ -710,6 +713,20 @@ export class AcActivities extends YpBaseElementWithLogin {
       //TODO: Check out
       //this.$$("#activitiesList").fire('iron-resize');
     });
+
+    this.closeNewsfeedSubmissions = false;
+
+    if (this.activities && this.activities.length>0) {
+      if (this.activities[0].Group &&
+          this.activities[0].Group.configuration &&
+          this.activities[0].Group.configuration.closeNewsfeedSubmissions) {
+          this.closeNewsfeedSubmissions = true;
+      } else if (this.activities[0].Community &&
+          this.activities[0].Community.configuration &&
+          this.activities[0].Community.configuration.closeNewsfeedSubmissions) {
+          this.closeNewsfeedSubmissions = true;
+      }
+    }
   }
 
   scrollToItem(item: AcActivityData) {

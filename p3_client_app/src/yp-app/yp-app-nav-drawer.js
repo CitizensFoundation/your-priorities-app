@@ -70,10 +70,10 @@ Polymer({
         </div>
       </div>
       <div class="languageSelector layout vertical self-start">
-        <yp-language-selector class="languageSelector"></yp-language-selector>
+        <yp-language-selector class="languageSelector" selected-locale="{{selectedLocale}}"></yp-language-selector>
       </div>
-      <div class="layout vertical" hidden\$="[[!user]]">
-        <div hidden="">
+      <div class="layout vertical" hidden$="[[!user]]" role="navigation" aria-label="Community & Group navigation">
+        <div hidden>
           <div class="header">[[t('myDomains')]]</div>
           <template is="dom-repeat" items="[[myDomains]]" as="domain">
             <paper-item data-args\$="[[domain.id]]" on-tap="_goToDomain">[[domain.name]]</paper-item>
@@ -109,6 +109,10 @@ Polymer({
         </template>
       </div>
     </paper-material>
+
+    <yp-ajax id="adminRightsAjax" method="GET" url="/api/users/loggedInUser/adminRightsWithNames" on-response="_adminRightsResponse"></yp-ajax>
+    <yp-ajax id="membershipsAjax" method="GET" url="/api/users/loggedInUser/membershipsWithNames" on-response="_membershipsResponse"></yp-ajax>
+
     <lite-signal on-lite-signal-got-memberships="_userMembershipsReady"></lite-signal>
     <lite-signal on-lite-signal-got-admin-rights="_reset"></lite-signal>
 `,
@@ -131,7 +135,8 @@ Polymer({
     },
 
     opened: {
-      type: Boolean
+      type: Boolean,
+      observer: '_openChanged'
     },
 
     route: {
@@ -158,7 +163,28 @@ Polymer({
 
     myDomains: {
       type: Array
+    },
+
+    adminRights: {
+      type: Object,
+      value: null
+    },
+
+    memberships: {
+      type: Object,
+      value: null
     }
+  },
+
+  _openChanged: function (opened) {
+    if (opened===true) {
+      this.$.adminRightsAjax.generateRequest();
+      this.$.membershipsAjax.generateRequest();
+    }
+  },
+
+  _selectedLocale: function (user) {
+    return this.language;
   },
 
   _goBack: function (event) {
@@ -194,35 +220,51 @@ Polymer({
   },
 
   _reset: function () {
-    if (window.appUser && window.appUser.memberships) {
-      var groupUsers = __.reject(window.appUser.memberships.GroupUsers, function (item) {
+    if (this.memberships) {
+      var groupUsers = __.reject(this.memberships.GroupUsers, function (item) {
         return item.name=="hidden_public_group_for_domain_level_points";
       });
       this.set('myGroups', __.take(groupUsers, 1000));
-      this.set('myCommunities', __.take(window.appUser.memberships.CommunityUsers, 500));
-      this.set('myDomains', __.take(window.appUser.memberships.DomainUsers, 3));
+      this.set('myCommunities', __.take(this.memberships.CommunityUsers, 500));
+      this.set('myDomains', __.take(this.memberships.DomainUsers, 3));
     } else {
       this.set('myGroups', null);
       this.set('myCommunities', null);
       this.set('myDomains', null);
     }
 
-    if (window.appUser && window.appUser.adminRights &&
-        window.appUser.adminRights.CommunityAdmins && window.appUser.adminRights.CommunityAdmins.length>0) {
-      this.set('myAdminCommunities', window.appUser.adminRights.CommunityAdmins);
+    if (this.adminRights &&
+      this.adminRights.CommunityAdmins && this.adminRights.CommunityAdmins.length>0) {
+      this.set('myAdminCommunities', this.adminRights.CommunityAdmins);
     } else {
       this.set('myAdminCommunities', null);
     }
 
-    if (window.appUser && window.appUser.adminRights &&
-      window.appUser.adminRights.GroupAdmins && window.appUser.adminRights.GroupAdmins.length>0) {
-      var groupAdmins = __.reject(window.appUser.adminRights.GroupAdmins, function (item) {
+    if (this.adminRights &&
+      this.adminRights.GroupAdmins && this.adminRights.GroupAdmins.length>0) {
+      var groupAdmins = __.reject(this.adminRights.GroupAdmins, function (item) {
         return item.name=="hidden_public_group_for_domain_level_points";
       });
       this.set('myAdminGroups', groupAdmins);
     } else {
       this.set('myAdminGroups', null);
     }
+  },
+
+  _adminRightsResponse: function (event, detail) {
+    if (detail.response && detail.response != 0) {
+      this.set('adminRights', detail.response);
+    }
+
+    this._reset();
+  },
+
+  _membershipsResponse: function (event, detail) {
+    if (detail.response && detail.response != 0) {
+      this.set('memberships', detail.response);
+    }
+
+    this._reset();
   },
 
   _openEdit: function () {

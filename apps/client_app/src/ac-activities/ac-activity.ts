@@ -177,7 +177,7 @@ export class AcActivity extends YpBaseElementWithLogin {
             tabindex="${this.tabIndex}">
             <mwc-icon-button
               .label="${this.t('deleteActivity')}"
-              ?hidden="${!this._hasActivityAccess(this.activity)}"
+              ?hidden="${!this.hasActivityAccess}"
               icon="delete"
               data-args="${this.activity.id}"
               class="deleteIcon"
@@ -211,15 +211,19 @@ export class AcActivity extends YpBaseElementWithLogin {
     return moment(timeValue).format();
   }
 
-  _hasActivityAccess(activity: AcActivityData) {
-    if (this.domainId && activity.Domain) {
-      return YpAccessHelpers.checkDomainAccess(activity.Domain);
-    } else if (this.communityId && activity.Community) {
-      return YpAccessHelpers.checkCommunityAccess(activity.Community);
-    } else if (this.groupId && activity.Group) {
-      return YpAccessHelpers.checkGroupAccess(activity.Group);
-    } else if (this.postId && activity.Post) {
-      return YpAccessHelpers.checkPostAccess(activity.Post);
+  get hasActivityAccess() {
+    if (this.activity) {
+      if (this.domainId && this.activity.Domain) {
+        return YpAccessHelpers.checkDomainAccess(this.activity.Domain);
+      } else if (this.communityId && this.activity.Community) {
+        return YpAccessHelpers.checkCommunityAccess(this.activity.Community);
+      } else if (this.groupId && this.activity.Group) {
+        return YpAccessHelpers.checkGroupAccess(this.activity.Group);
+      } else if (this.postId && this.activity.Post) {
+        return YpAccessHelpers.checkPostAccess(this.activity.Post);
+      } else {
+        return false;
+      }
     } else {
       return false;
     }
