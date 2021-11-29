@@ -960,3 +960,9 @@ interface YpContentToSendLater {
 interface YpCreateApiKeyResponse {
   apiKey: string;
 }
+
+interface YpHomeLinkData {
+  type: string;
+  id: number;
+  name: string;
+}

@@ -24,6 +24,18 @@ export class YpServerApi extends YpServerApiBase {
     );
   }
 
+  public getAdminRightsWithNames() {
+    return this.fetchWrapper(
+      this.baseUrlPath + '/users/loggedInUser/adminRightsWithNames'
+    );
+  }
+
+  public getMembershipsWithNames() {
+    return this.fetchWrapper(
+      this.baseUrlPath + '/users/loggedInUser/membershipsWithNames'
+    );
+  }
+
   public logout() {
     return this.fetchWrapper(this.baseUrlPath + '/users/logout', {
       method: 'POST',

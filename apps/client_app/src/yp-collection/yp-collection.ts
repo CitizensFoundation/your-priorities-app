@@ -109,7 +109,7 @@ export abstract class YpCollection extends YpBaseElement {
         type: this.collectionType,
         id: this.collection.id,
         name: this.collection.name,
-      });
+      } as YpHomeLinkData);
 
       this.fire('yp-change-header', {
         headerTitle: null,

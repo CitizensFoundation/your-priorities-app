@@ -512,7 +512,7 @@ export class YpPost extends YpCollection {
         type: 'group',
         id: this.post.Group.id,
         name: this.post.Group.name,
-      });
+      } as YpHomeLinkData);
 
       if (
         this.post.Group &&

@@ -73,13 +73,13 @@ declare global {
 @customElement('yp-app')
 export class YpApp extends YpBaseElement {
   @property({ type: Object })
-  homeLink = undefined;
+  homeLink: YpHomeLinkData | undefined;
 
   @property({ type: String })
   page: string | undefined;
 
   @property({ type: Object })
-  user = undefined;
+  user: YpUserData | undefined;
 
   @property({ type: String })
   backPath: string | undefined;
@@ -524,12 +524,20 @@ export class YpApp extends YpBaseElement {
           break;
         case 'group_data_viz':
           pageHtml = cache(html`
-             <yp-group-data-viz id="dataVizGroupPage" name="group_data_viz" .subRoute="${this.subRoute}"></yp-group-data-viz>
+            <yp-group-data-viz
+              id="dataVizGroupPage"
+              name="group_data_viz"
+              .subRoute="${this.subRoute}"
+            ></yp-group-data-viz>
           `);
           break;
-          case 'post':
+        case 'post':
           pageHtml = cache(html`
-            <yp-post id="postPage" .currentPage="${this.page}" .subRoute="${this.subRoute}"></yp-post>
+            <yp-post
+              id="postPage"
+              .currentPage="${this.page}"
+              .subRoute="${this.subRoute}"
+            ></yp-post>
           `);
           break;
         default:
@@ -545,7 +553,19 @@ export class YpApp extends YpBaseElement {
 
   render() {
     return html`
-      ${this.renderAppBar()}
+      <mwc-drawer type="modal">
+        <div>
+          <yp-app-nav-drawer
+            id="ypNavDrawer"
+            .homeLink="${this.homeLink}"
+            .opened="${this.navDrawOpenedDelayed}"
+            @yp-toggle-nav-drawer="${this._toggleNavDrawer}"
+            .user="${this.user}"
+            .route="${this.route}"
+          ></yp-app-nav-drawer>
+        </div>
+        <div slot="appContent">${this.renderAppBar()}</div>
+      </mwc-drawer>
 
       <yp-app-dialogs id="dialogContainer"></yp-app-dialogs>
 
@@ -554,12 +574,6 @@ export class YpApp extends YpBaseElement {
         .message="${this.t('newVersionAvailable')}"
       >
       </yp-sw-update-toast>
-
-      <app-drawer id="navDrawer" slot="drawer" align="start" position="left" swipe-open @opened="${this._navDrawOpened}">
-        <div style="height: 100%; overflow-x: hidden; max-width: 255px !important;">
-          <yp-app-nav-drawer id="ypNavDrawer" home-link="[[homeLink]]" opened="[[navDrawOpened]]" on-yp-toggle-nav-drawer="_toggleNavDrawer" user="[[user]]" route="[[route]]"></yp-app-nav-drawer>
-        </div>
-      </app-drawer>
 
       <mwc-dialog id="dialog">
         <div>${this.notifyDialogText}</div>
@@ -1037,7 +1051,7 @@ export class YpApp extends YpBaseElement {
   _pageChanged() {
     const page = this.page;
 
-    if (page && page==='group_data_viz') {
+    if (page && page === 'group_data_viz') {
       this.loadDataViz();
     }
 
