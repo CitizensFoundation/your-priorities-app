@@ -182,7 +182,7 @@ export class YpAppNavDrawer extends YpBaseElement {
 
         .item {
           cursor: pointer;
-          content-visibility: auto;
+          padding: 8px;
         }
 
         mwc-icon {
@@ -245,7 +245,7 @@ export class YpAppNavDrawer extends YpBaseElement {
                       <div
                         role="button"
                         class="item"
-                        data-args$="${community.id}"
+                        data-args="${community.id}"
                         @click="${this._goToCommunity}"
                       >
                         ${community.name}
@@ -264,7 +264,7 @@ export class YpAppNavDrawer extends YpBaseElement {
                       <div
                         role="button"
                         class="item"
-                        data-args$="${group.id}"
+                        data-args="${group.id}"
                         @click="${this._goToGroup}"
                       >
                         ${group.name}
@@ -283,7 +283,7 @@ export class YpAppNavDrawer extends YpBaseElement {
                       <div
                         role="button"
                         class="item"
-                        data-args$="${community.id}"
+                        data-args="${community.id}"
                         @click="${this._goToCommunity}"
                       >
                         ${community.name}
@@ -302,7 +302,7 @@ export class YpAppNavDrawer extends YpBaseElement {
                       <div
                         role="button"
                         class="item"
-                        data-args$="${group.id}"
+                        data-args="${group.id}"
                         @click="${this._goToGroup}"
                       >
                         ${group.name}

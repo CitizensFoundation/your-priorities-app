@@ -48,12 +48,15 @@ import '../yp-collection/yp-domain.js';
 import '../yp-collection/yp-community.js';
 import '../yp-collection/yp-group.js';
 
+import './yp-app-nav-drawer.js';
+
 import { YpDomain } from '../yp-collection/yp-domain.js';
 import { YpCommunity } from '../yp-collection/yp-community.js';
 import { YpGroup } from '../yp-collection/yp-group.js';
 import '../yp-post/yp-post.js';
 import { YpCollection } from '../yp-collection/yp-collection.js';
 import { YpPageDialog } from '../yp-page/yp-page-dialog.js';
+import { YpAppNavDrawer } from './yp-app-nav-drawer.js';
 
 declare global {
   interface Window {
@@ -418,6 +421,14 @@ export class YpApp extends YpBaseElement {
         .label="${this.t('stopAutoTranslate')}"
       >
       </mwc-icon-button>
+
+      <mwc-icon-button
+          id="helpIconButton"
+          icon="menu"
+          slot="actionItems"
+          @click="${this._toggleNavDrawer}"
+          title="${this.t('menu.help')}"
+        ></mwc-icon-button>
 
       <div
         style="position: relative;"
@@ -1174,6 +1185,7 @@ export class YpApp extends YpBaseElement {
 
   _toggleNavDrawer() {
     (this.$$('mwc-drawer') as Drawer).open = true;
+    (this.$$('#ypNavDrawer') as YpAppNavDrawer).opened = true;
   }
 
   getDialogAsync(idName: string, callback: Function) {
