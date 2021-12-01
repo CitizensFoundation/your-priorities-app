@@ -1,5 +1,5 @@
 import { html, css } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { customElement, property, state } from 'lit/decorators.js';
 import { YpBaseElement } from '../common/yp-base-element.js';
 import { YpIronListHelpers } from '../common/YpIronListHelpers.js';
 import { RangeChangedEvent } from '@lit-labs/virtualizer/Virtualizer.js';
@@ -65,6 +65,8 @@ export class YpPostsList extends YpBaseElement {
   @property({ type: Boolean, reflect: true })
   grid = true;
 
+  @state() randomSeed: number | undefined;
+
   moreToLoad = false;
 
   moreFromScrollTriggerActive = false;
@@ -78,7 +80,6 @@ export class YpPostsList extends YpBaseElement {
       super.styles,
       ShadowStyles,
       css`
-
         .cardContainer {
           width: 100%;
           margin: 8px;
@@ -190,6 +191,15 @@ export class YpPostsList extends YpBaseElement {
           padding: 16px !important;
         }
 
+        .card[desktop-list] {
+          padding: 0 !important;
+          padding-top: 16px !important;
+        }
+
+        .card[is-last-item] {
+          padding-bottom: 128px;
+        }
+
         #searchInput {
           margin-left: 8px;
         }
@@ -229,16 +239,18 @@ export class YpPostsList extends YpBaseElement {
               <div class="layout horiztonal center-center">
                 <div
                   class="noIdeas layout horizontal center-center shadow-elevation-6dp shadow-transition"
-                  ?hidden="${this.group.configuration
-                    .allPostsBlockedByDefault}">
+                  ?hidden="${this.group.configuration.allPostsBlockedByDefault}"
+                >
                   <div class="noIdeasText">${this.t('noIdeasHere')}</div>
                 </div>
               </div>
             `
-          : nothing }
+          : nothing}
         <div
           class="searchContainer layout horizontal center-center wrap"
-          ?hidden="${this.group.configuration.hidePostFilterAndSearch || this.noPosts}">
+          ?hidden="${this.group.configuration.hidePostFilterAndSearch ||
+          this.noPosts}"
+        >
           <div class="layout horizontal center-center">
             <yp-posts-filter
               @click="${this._tapOnFilter}"
@@ -252,31 +264,35 @@ export class YpPostsList extends YpBaseElement {
               .statusFilter="${this.statusFilter}"
               .searchingFor="${this.searchingFor}"
               .categoryId="${this.categoryId}"
-              .postsCount="${this.postsCount}">
+              .postsCount="${this.postsCount}"
+            >
             </yp-posts-filter>
           </div>
           <div class="layout horizontal center-center">
-          ${this.searchingFor
-            ? html`
-                <mwc-icon-button
-                  aria-label="${this.t('clearSearchInput')}"
-                  icon="clear"
-                  @click="${this._clearSearch}"
-                  class="clear-search-trigger"></mwc-icon-button>
-              `
-            : nothing }
+            ${this.searchingFor
+              ? html`
+                  <mwc-icon-button
+                    aria-label="${this.t('clearSearchInput')}"
+                    icon="clear"
+                    @click="${this._clearSearch}"
+                    class="clear-search-trigger"
+                  ></mwc-icon-button>
+                `
+              : nothing}
             <mwc-textfield
               id="searchInput"
               @keydown="${this._searchKey}"
               .label="${this.t('searchFor')}"
               .value="${this.searchingFor ? this.searchingFor : ''}"
-              class="searchBox">
+              class="searchBox"
+            >
             </mwc-textfield>
             <mwc-icon-button
               .label="${this.t('startSearch')}"
               icon="search"
               @click="${this._search}"
-              ?hidden="${!this.showSearchIcon}"></mwc-icon-button>
+              ?hidden="${!this.showSearchIcon}"
+            ></mwc-icon-button>
           </div>
         </div>
         ${this.posts
@@ -287,29 +303,60 @@ export class YpPostsList extends YpBaseElement {
                 .layout="${this.grid ? GridLayout : FlowLayout}"
                 .scrollTarget="${window}"
                 .renderItem=${this.renderPostItem.bind(this)}
-                @rangeChanged=${this.scrollEvent}></lit-virtualizer>
+                @rangeChanged=${this.scrollEvent}
+              ></lit-virtualizer>
             `
-          : nothing }
+          : nothing}
       </div>
     `;
   }
 
   renderPostItem(post: YpPostData, index?: number | undefined): TemplateResult {
-    const tabindex = index!==undefined ? index+1 : 0;
-    return html`
-      <yp-post-card
-        aria-label="${post.name}"
-        @keypress="${this._keypress.bind(this)}"
-        @click="${this._selectedItemChanged.bind(this)}"
-        tabindex="${tabindex}"
-        id="postCard${post.id}"
-        class="card"
-        .post="${post}">
-      </yp-post-card>   `;
+    const tabindex = index !== undefined ? index + 1 : 0;
+    if (this.desktopListFormat) {
+      return html`
+        <yp-post-list-item
+          aria-label="${post.name}"
+          @keypress="${this._keypress.bind(this)}"
+          @click="${this._selectedItemChanged.bind(this)}"
+          tabindex="${tabindex}"
+          id="postCard${post.id}"
+          class="card"
+          .post="${post}"
+        >
+        </yp-post-list-item>
+      `;
+    } else {
+      return html`
+        <yp-post-card
+          aria-label="${post.name}"
+          ?is-last-item="${this._isLastItem(index!)}"
+          @keypress="${this._keypress.bind(this)}"
+          @click="${this._selectedItemChanged.bind(this)}"
+          tabindex="${tabindex}"
+          id="postCard${post.id}"
+          class="card"
+          .post="${post}"
+        >
+        </yp-post-card>
+      `;
+    }
+  }
+
+  get desktopListFormat() {
+    return this.wide && this.group!=undefined && this.posts!=undefined
+  }
+
+  get wideNotListFormat() {
+    return this.wide && !this.desktopListFormat && this.group!=undefined && this.posts!=undefined
+  }
+
+  _isLastItem(index:number) {
+    return (this.posts && index>=this.posts.length-1);
   }
 
   _keypress(event: KeyboardEvent) {
-    if (event.keyCode==13) {
+    if (event.keyCode == 13) {
       this._selectedItemChanged(event as unknown as CustomEvent);
     }
   }
@@ -333,7 +380,7 @@ export class YpPostsList extends YpBaseElement {
   _clearSearch() {
     this.searchingFor = undefined;
     this.filter = 'newest';
-    (this.$$("#postsFilter") as YpPostsFilter)._updateAfterFiltering();
+    (this.$$('#postsFilter') as YpPostsFilter)._updateAfterFiltering();
   }
 
   scrollEvent(event: RangeChangedEvent) {
@@ -377,7 +424,7 @@ export class YpPostsList extends YpBaseElement {
   }
 
   _selectedItemChanged(event: CustomEvent) {
-    const postCard = (event.target as YpPostCard);
+    const postCard = event.target as YpPostCard;
 
     postCard.clickOnA();
   }
@@ -461,7 +508,7 @@ export class YpPostsList extends YpBaseElement {
 
   _search() {
     window.appGlobals.activity('click', 'search');
-    this.searchingFor = (this.$$("#searchInput") as TextField).value;
+    this.searchingFor = (this.$$('#searchInput') as TextField).value;
     if (this.searchingFor && this.searchingFor != '') {
       this.refreshGroupFromFilter();
     }
@@ -502,10 +549,21 @@ export class YpPostsList extends YpBaseElement {
         'alphabetical',
       ];
 
+      this.randomSeed = Math.random();
+
       this.posts = undefined;
       this.noPosts = false;
       if (this.group) {
         this.moreToLoad = true;
+
+        if (window.appGlobals.originalQueryParameters &&
+          window.appGlobals.originalQueryParameters['categoryId']) {
+          this.categoryId = window.appGlobals.originalQueryParameters['categoryId'] as number;
+          window.appGlobals.originalQueryParameters['categoryId'] = undefined;
+        } else {
+          this.categoryId = undefined;
+        }
+
         if (
           this.group.configuration &&
           this.group.configuration.forcePostSortMethodAs &&
@@ -596,7 +654,13 @@ export class YpPostsList extends YpBaseElement {
         }
         url += '/' + this.statusFilter;
       }
-      if (this.posts) url += '?offset=' + this.posts.length;
+
+      const offset = this.posts ? this.posts.length : 0;
+      url += '?offset=' + offset;
+
+      if (this.filter=="random" && this.randomSeed) {
+        url += "&randomSeed="+this.randomSeed;
+      }
 
       const postsInfo = (await window.serverApi.getGroupPosts(
         url

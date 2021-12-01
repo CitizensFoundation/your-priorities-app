@@ -10,7 +10,7 @@ import '@material/mwc-icon';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { YpMagicText } from '../yp-magic-text/yp-magic-text.js';
 
-@customElement('yp-simple-html-editor')
+@customElement('yp-post-tags')
 export class YpPostTags extends YpBaseElement {
   @property({ type: Object })
   post!: YpPostData;

@@ -218,6 +218,7 @@ interface YpGroupConfiguration extends YpCollectionConfiguration {
   alternativeTextForNewIdeaSaveButton?: string;
   forceShowDebateCountOnPost?: boolean;
   closeNewsfeedSubmissions?: boolean;
+  usePostTagsForPostCards?: boolean;
 }
 
 interface YpGroupDataVizData {

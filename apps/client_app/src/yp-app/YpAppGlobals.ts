@@ -42,7 +42,7 @@ export class YpAppGlobals extends YpCodeBase {
 
   currentSamlLoginMessage: string | undefined;
 
-  originalQueryParameters: Record<string, string | number> = {};
+  originalQueryParameters: Record<string, string | number | undefined> = {};
 
   externalGoalTriggerGroupId: number | undefined;
 

@@ -11,6 +11,8 @@ import '../yp-magic-text/yp-magic-text.js';
 import './yp-post-cover-media.js';
 import './yp-post-actions.js';
 
+import './yp-post-tags.js';
+
 import '@material/mwc-icon-button';
 
 @customElement('yp-post-card')
@@ -49,10 +51,14 @@ export class YpPostCard extends YpBaseElement {
           padding-bottom: 14px;
           cursor: pointer;
           vertical-align: middle !important;
-          font-size: 1.25rem;
+          font-size: 20px;
           background-color: #fff;
           color: #000;
           font-weight: 500;
+        }
+
+        .post-name[largefont] {
+          font-size: 19px;
         }
 
         .postCardCursor {
@@ -130,6 +136,15 @@ export class YpPostCard extends YpBaseElement {
           padding-top: 0;
           cursor: pointer;
           color: #555;
+        }
+
+        .description[widetext] {
+          font-size: 16px;
+          line-height: 1.3;
+        }
+
+        .description[largefont] {
+          font-size: 15px;
         }
 
         .postActions {
@@ -273,6 +288,43 @@ export class YpPostCard extends YpBaseElement {
     ];
   }
 
+  renderDescription() {
+    return html`
+      ${!this.post.public_data?.structuredAnswersJson
+        ? html`
+            <yp-magic-text
+              class="description layout horizontal"
+              ?hasCustomRatings="${this.post.Group.configuration.customRatings}"
+              ?hidden="${this.hideDescription}"
+              textType="postContent"
+              .contentLanguage="${this.post.language}"
+              text-only
+              .content="${this.post.description}"
+              .contentId="${this.post.id}"
+              truncate="220"
+            >
+            </yp-magic-text>
+          `
+        : html`
+            <yp-magic-text
+              id="description"
+              textType="postContent"
+              .contentLanguage="${this.post.language}"
+              ?hidden="${this.hideDescription}"
+              .content="${this.structuredAnswersFormatted}"
+              .contentId="${this.post.id}"
+              class="description"
+              truncate="120"
+            >
+            </yp-magic-text>
+          `}
+    `;
+  }
+
+  renderTags() {
+    return html` <yp-post-tags .post="${this.post}"></yp-post-tags> `;
+  }
+
   //TODO: Write a server side script to make sure Group.configuration is always there
   render() {
     return this.post
@@ -287,89 +339,83 @@ export class YpPostCard extends YpBaseElement {
                 .hidePostActionsInGrid}"
               audio-cover="${this.isAudioCover}"
               class="card postCard layout vertical shadow-elevation-2dp shadow-transition"
-              animated>
+              animated
+            >
               <div class="layout vertical">
                 <a
                   href="${ifDefined(this._getPostLink(this.post))}"
                   @click="${this.goToPostIfNotHeader}"
-                  id="mainArea">
+                  id="mainArea"
+                >
                   <yp-post-cover-media
                     ?mini="${this.mini}"
                     top-radius
                     ?audioCover="${this.isAudioCover}"
                     .altTag="${this.post.name}"
                     .post="${this.post}"
-                    ?hidden="${this.post.Group.configuration
-                      .hidePostCover}"></yp-post-cover-media>
+                    ?hidden="${this.post.Group.configuration.hidePostCover}"
+                  ></yp-post-cover-media>
                   <div class="postNameContainer">
-                    <div class="post-name" ?mini="${this.mini}" id="postName">
+                    <div
+                      class="post-name"
+                      ?mini="${this.mini}"
+                      id="postName"
+                      ?largeFont="${this.largeFont}"
+                    >
                       <yp-magic-text
                         id="postNameMagicText"
                         textType="postName"
+                        ?largeFont="${this.largeFont}"
                         .contentLanguage="${this.post.language}"
                         text-only
                         .content="${this.post.name}"
-                        .contentId="${this.post.id}">
+                        .contentId="${this.post.id}"
+                      >
                       </yp-magic-text>
                     </div>
                   </div>
-                  ${!this.post.public_data?.structuredAnswersJson
-                    ? html`
-                        <yp-magic-text
-                          class="description layout horizontal"
-                          ?hasCustomRatings="${this.post.Group.configuration
-                            .customRatings}"
-                          ?hidden="${this.hideDescription}"
-                          textType="postContent"
-                          .contentLanguage="${this.post.language}"
-                          text-only
-                          .content="${this.post.description}"
-                          .contentId="${this.post.id}"
-                          truncate="220">
-                        </yp-magic-text>
-                      `
-                    : html`
-                        <yp-magic-text
-                          id="description"
-                          textType="postContent"
-                          .contentLanguage="${this.post.language}"
-                          ?hidden="${this.hideDescription}"
-                          .content="${this.structuredAnswersFormatted}"
-                          .contentId="${this.post.id}"
-                          class="description"
-                          truncate="120">
-                        </yp-magic-text>
-                      `}
+                  ${this.post.Group.configuration?.usePostTagsForPostCards
+                    ? this.renderTags()
+                    : this.renderDescription()}
                 </a>
                 <div
                   ?hidden="${this.post.Group.configuration
                     .hidePostActionsInGrid}"
-                  @click="${this._onBottomClick}">
+                  @click="${this._onBottomClick}"
+                >
                   ${!this.mini
                     ? html`
-                    <div class="layout horizontal">
+                        <div class="layout horizontal">
+                          ${this.post.Group.configuration?.hideSharing
+                            ? nothing
+                            : html`
                         <div class="share">
                           <mwc-icon-button
                             icon="share" .label="${this.t('post.shareInfo')}"
                             @click="${this._shareTap}"></mwc-icon-button>
                           </mwc-icon-button>
                         </div>
-                        ${
-                          this.post.Group.configuration.customRatings
+
+                        `}
+                          <
+                          ${this.post.Group.configuration.customRatings
                             ? html`
                                 <yp-post-ratings-info
                                   class="customRatings"
-                                  .post="${this.post}"></yp-post-ratings-info>
+                                  .post="${this.post}"
+                                ></yp-post-ratings-info>
                               `
                             : html`
                                 <yp-post-actions
                                   class="postActions"
                                   .post="${this.post}"
-                                  ?hidden="${this.mini}">
+                                  .forceShowDebate="${this.post.Group
+                                    .configuration.forceShowDebateCountOnPost}"
+                                  ?hidden="${this.mini}"
+                                >
                                 </yp-post-actions>
-                              `
-                        }
-                    </div>
+                              `}
+                        </div>
                       `
                     : nothing}
                 </div>
@@ -508,6 +554,10 @@ export class YpPostCard extends YpBaseElement {
       // Do nothing
     } else {
       YpNavHelpers.goToPost(this.post.id);
+    }
+
+    if (this.post && !this.mini) {
+      window.appGlobals.cache.cachedPostItem = this.post;
     }
   }
 
