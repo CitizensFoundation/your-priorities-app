@@ -15,7 +15,7 @@ import { PaperListboxElement } from '@polymer/paper-listbox';
 import '@polymer/paper-dialog';
 import { PaperDialogElement } from '@polymer/paper-dialog';
 import { YpConfirmationDialog } from '../@yrpri/yp-dialog-container/yp-confirmation-dialog';
-import { ItemCache } from '@vaadin/vaadin-grid/src/vaadin-grid-data-provider-mixin';
+//import { ItemCache } from '@vaadin/vaadin-grid/src/vaadin-grid-data-provider-mixin';
 import { GridColumnElement } from '@vaadin/vaadin-grid/src/vaadin-grid-column';
 
 interface RowData {

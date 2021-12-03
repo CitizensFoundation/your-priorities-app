@@ -1,7 +1,6 @@
-import { LitElement, css, html, nothing } from 'lit';
+import { html, css, nothing } from 'lit';
 import { property, customElement } from 'lit/decorators.js';
 
-import { classMap } from 'lit/directives/class-map.js';
 import { YpBaseElement } from './@yrpri/common/yp-base-element.js';
 import { ShadowStyles } from './@yrpri/common/ShadowStyles.js';
 
@@ -28,6 +27,8 @@ import './yp-admin-translations.js';
 import './yp-admin-config-domain.js';
 import './yp-admin-config-community.js';
 import { YpAccessHelpers } from './@yrpri/common/YpAccessHelpers.js';
+import { classMap } from 'lit/directives/class-map.js';
+//import { classMap } from 'lit/directives/class-map';
 
 declare global {
   interface Window {

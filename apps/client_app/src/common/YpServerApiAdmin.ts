@@ -22,7 +22,7 @@ export class YpServerApiAdmin extends YpServerApiBase {
   public updateTranslation(
     collectionType: string,
     collectionId: number,
-    body: Record<string, unknown>
+    body: YpTranslationTextData
   ) {
     return this.fetchWrapper(
       this.baseUrlPath +

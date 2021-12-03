@@ -1,4 +1,4 @@
-  {
+{
   "compilerOptions": {
     "target": "es2018",
     "module": "esnext",
@@ -12,11 +12,10 @@
     "importHelpers": true,
     "outDir": "out-tsc",
     "sourceMap": true,
-    "preserveSymlinks": true,
     "inlineSources": true,
     "rootDir": "./"
   },
-  "include": ["**/*.ts", "src/yp-bulk-status-update/yp-bulk-status-update-templates.js", "src/yp-bulk-status-update/yp-bulk-status-update-edit.js", "src/yp-bulk-status-update/yp-bulk-status-display.js", "src/yp-bulk-status-update/yp-bulk-status-update-config.js", "src/yp-bulk-status-update/test/yp-bulk-status-update-templates.test.js", "src/yp-bulk-status-update/test/yp-bulk-status-update-edit.test.js", "src/yp-bulk-status-update/test/yp-bulk-status-update-config.test.js", "src/yp-bulk-status-update/test/yp-bulk-status-display.test.js"],
+  "include": ["**/*.ts"],
   "importHelpers": true,
   "plugins": [
     {

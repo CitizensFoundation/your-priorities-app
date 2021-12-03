@@ -752,7 +752,7 @@ export class YpMediaRecorder extends YpBaseElement {
             videoElement.srcObject = stream;
           } catch (error) {
             console.error(error);
-            videoElement.src = window.URL.createObjectURL(stream);
+            videoElement.src = window.URL.createObjectURL(stream as any);
           }
           videoElement.play();
           videoElement.muted = true;
@@ -779,7 +779,7 @@ export class YpMediaRecorder extends YpBaseElement {
             audioElement.srcObject = stream;
           } catch (error) {
             console.error(error);
-            audioElement.src = window.URL.createObjectURL(stream);
+            audioElement.src = window.URL.createObjectURL(stream as any);
           }
           audioElement.play();
           audioElement.muted = true;

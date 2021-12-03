@@ -887,7 +887,7 @@ export class YpContentModeration extends YpBaseElement {
 
   _refreshGridAsyncBase(ms: number) {
     setTimeout(() => {
-      (this.$$('#grid') as GridElement).fire('iron-resize');
+//      (this.$$('#grid') as GridElement).fire('iron-resize');
       (this.$$('#grid') as GridElement).notifyResize();
     }, ms);
   }
