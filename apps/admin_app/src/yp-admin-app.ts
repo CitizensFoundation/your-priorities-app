@@ -28,7 +28,6 @@ import './yp-admin-config-domain.js';
 import './yp-admin-config-community.js';
 import { YpAccessHelpers } from './@yrpri/common/YpAccessHelpers.js';
 import { classMap } from 'lit/directives/class-map.js';
-//import { classMap } from 'lit/directives/class-map';
 
 declare global {
   interface Window {
