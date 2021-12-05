@@ -111,8 +111,8 @@ export class YpPostsList extends YpBaseElement {
         }
 
         lit-virtualizer {
-          height: 100%;
-          width: 100%;
+          height: 100vh;
+          width: 100vw;
           overflow: hidden;
         }
 
@@ -146,6 +146,41 @@ export class YpPostsList extends YpBaseElement {
           margin-bottom: 22px;
           margin-right: 8px;
         }
+
+        .card {
+          margin-left: 0;
+          margin-right: 0;
+          padding-left: 0;
+          padding-right: 0;
+          height: 435px !important;
+          width: 416px !important;
+          border-radius: 4px;
+        }
+
+        yp-post-card {
+          height: 435px !important;
+          width: 416px !important;
+        }
+
+        .card[mini] {
+          width: 210px;
+          height: 100%;
+        }
+
+        .card[wide-padding] {
+          padding: 16px !important;
+        }
+
+        .card[desktop-list] {
+          padding: 0 !important;
+          padding-top: 16px !important;
+        }
+
+        .card[is-last-item] {
+          padding-bottom: 128px;
+        }
+
+
 
         @media (max-width: 800px) {
           .searchBox {
@@ -187,17 +222,9 @@ export class YpPostsList extends YpBaseElement {
           padding-top: 8px;
         }
 
-        .card[wide-padding] {
-          padding: 16px !important;
-        }
-
-        .card[desktop-list] {
-          padding: 0 !important;
-          padding-top: 16px !important;
-        }
-
-        .card[is-last-item] {
-          padding-bottom: 128px;
+        yp-post-cover-media {
+          width: 100%;
+          height: 230px;
         }
 
         #searchInput {
@@ -300,7 +327,13 @@ export class YpPostsList extends YpBaseElement {
               <lit-virtualizer
                 id="list"
                 .items=${this.posts}
-                .layout="${this.grid ? GridLayout : FlowLayout}"
+                .layout="${this.grid ? {
+                    type: GridLayout,
+                    itemSize: { width: '424px', height: '435px' },
+                    flex: { preserve: 'aspect-ratio' },
+                    justify: 'space-around',
+                    padding: '0',
+                } : FlowLayout}"
                 .scrollTarget="${window}"
                 .renderItem=${this.renderPostItem.bind(this)}
                 @rangeChanged=${this.scrollEvent}
@@ -335,7 +368,7 @@ export class YpPostsList extends YpBaseElement {
           @click="${this._selectedItemChanged.bind(this)}"
           tabindex="${tabindex}"
           id="postCard${post.id}"
-          class="card"
+          class="csard"
           .post="${post}"
         >
         </yp-post-card>
