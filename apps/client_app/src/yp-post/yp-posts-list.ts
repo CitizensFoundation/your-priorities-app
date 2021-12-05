@@ -313,7 +313,7 @@ export class YpPostsList extends YpBaseElement {
 
   renderPostItem(post: YpPostData, index?: number | undefined): TemplateResult {
     const tabindex = index !== undefined ? index + 1 : 0;
-    if (this.desktopListFormat) {
+    if (false && this.desktopListFormat) {
       return html`
         <yp-post-list-item
           aria-label="${post.name}"
