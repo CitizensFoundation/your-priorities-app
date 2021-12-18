@@ -73,14 +73,11 @@ services:
       options:
         max-file: "2000"
         max-size: "25m"
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/api/users/has/AutoTranslation"]
     scale: 7
     environment:
       - PORT=8080
 
   your-priorities-worker:
-    container_name: your-priorities-worker
     build: ./your-priorities-worker/
     restart: unless-stopped
     env_file: .env
