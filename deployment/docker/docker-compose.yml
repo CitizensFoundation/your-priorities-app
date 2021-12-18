@@ -25,7 +25,6 @@ x-your-priorities-app-common: &your-priorities-app-common
       max-size: "25m"
 
 x-your-priorities-worker-common: &your-priorities-worker-common
-  container_name: your-priorities-worker
   build: ./your-priorities-worker/
   restart: unless-stopped
   env_file: .env
