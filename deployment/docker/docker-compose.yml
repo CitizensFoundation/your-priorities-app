@@ -110,6 +110,7 @@ services:
 
   your-priorities-worker:
     <<: *your-priorities-worker-common
+    scale: 2
 
   your-priorities-encoder:
     container_name: your-priorities-encoder
