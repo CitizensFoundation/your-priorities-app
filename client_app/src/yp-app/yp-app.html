@@ -634,6 +634,7 @@
         'yp-dialog-closed': '_dialogClosed',
         'yp-open-page': '_openPageFromEvent',
         'yp-open-login': '_login',
+        'yp-clipboard-copy-notification': '_haveCopiedNotification',
         'yp-reset-keep-open-for-page': '_resetKeepOpenForPage',
         'yp-add-back-community-override': '_addBackCommunityOverride'
       },
@@ -835,6 +836,13 @@
           toast.show();
         }.bind(this));
         sessionStorage.setItem("dontPromptForAutoTranslation", true);
+      },
+
+      _haveCopiedNotification: function () {
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("masterToast", function (toast) {
+          toast.text = this.t('copiedToClipboard');
+          toast.show();
+        }.bind(this));
       },
 
       _setLanguageName: function (event, detail) {
