@@ -1,4 +1,45 @@
 version: '3.9'
+x-your-priorities-app-common: &your-priorities-app-common:
+  container_name: your-priorities-app
+  build: ./your-priorities-app/
+  env_file: .env
+  restart: unless-stopped
+  build:
+    context: ../../.
+    dockerfile: deployment/docker/your-priorities-app/Dockerfile
+  volumes:
+    - client-app-dist:/usr/src/your-priorities/client/build/bundle
+    - admin-app-dist:/usr/src/your-priorities/admin_app/dist
+    - analytics-app-dist:/usr/src/your-priorities/analytics_app/dist
+  command: node --optimize_for_size --max_old_space_size=460 server_api/api_app.js
+  healthcheck:
+    test: ["CMD", "curl", "-f", "http://localhost:8080/api/users/has/AutoTranslation"]
+    interval: 30s
+    timeout: 20s
+    retries: 3
+  network_mode: host
+  logging:
+    driver: "json-file"
+    options:
+      max-file: "2000"
+      max-size: "25m"
+
+x-your-priorities-worker-common: &your-priorities-worker-common:
+  container_name: your-priorities-worker
+  build: ./your-priorities-worker/
+  restart: unless-stopped
+  env_file: .env
+  build:
+    context: ../../.
+    dockerfile: deployment/docker/your-priorities-worker/Dockerfile
+  restart: unless-stopped
+  command: node --optimize_for_size --max_old_space_size=960 server_api/active-citizen/workers/main.js
+  network_mode: host
+  logging:
+    driver: "json-file"
+    options:
+      max-file: "1000"
+      max-size: "25m"
 
 services:
   webserver:
@@ -33,47 +74,36 @@ services:
         max-file: "2000"
         max-size: "25m"
 
-  your-priorities-app:
-    container_name: your-priorities-app
-    build: ./your-priorities-app/
-    env_file: .env
-    restart: unless-stopped
-    build:
-      context: ../../.
-      dockerfile: deployment/docker/your-priorities-app/Dockerfile
-    volumes:
-      - client-app-dist:/usr/src/your-priorities/client/build/bundle
-      - admin-app-dist:/usr/src/your-priorities/admin_app/dist
-      - analytics-app-dist:/usr/src/your-priorities/analytics_app/dist
-    command: node --optimize_for_size --max_old_space_size=460 server_api/api_app.js
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/api/users/has/AutoTranslation"]
-      interval: 30s
-      timeout: 20s
-      retries: 3
-    network_mode: host
-    logging:
-      driver: "json-file"
-      options:
-        max-file: "2000"
-        max-size: "25m"
+  your-priorities-app1:
+    <<: *your-priorities-app-common
+    environment:
+      - PORT=8080
 
-  your-priorities-worker:
-    container_name: your-priorities-worker
-    build: ./your-priorities-worker/
-    restart: unless-stopped
-    env_file: .env
-    build:
-      context: ../../.
-      dockerfile: deployment/docker/your-priorities-worker/Dockerfile
-    restart: unless-stopped
-    command: node --optimize_for_size --max_old_space_size=960 server_api/active-citizen/workers/main.js
-    network_mode: host
-    logging:
-      driver: "json-file"
-      options:
-        max-file: "1000"
-        max-size: "25m"
+  your-priorities-app2:
+    <<: *your-priorities-app-common
+    environment:
+      - PORT=8081
+
+  your-priorities-app3:
+    <<: *your-priorities-app-common
+    environment:
+      - PORT=8082
+
+  your-priorities-app4:
+    <<: *your-priorities-app-common
+    environment:
+      - PORT=8083
+
+  your-priorities-app5:
+    <<: *your-priorities-app-common
+    environment:
+      - PORT=8084
+
+  your-priorities-worker1:
+    <<: *your-priorities-worker-common
+
+  your-priorities-worker2:
+    <<: *your-priorities-worker-common
 
   your-priorities-encoder:
     container_name: your-priorities-encoder
