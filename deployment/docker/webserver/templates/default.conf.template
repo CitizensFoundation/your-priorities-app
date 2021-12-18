@@ -24,6 +24,8 @@ upstream nodejs {
         server localhost:8082;
         server localhost:8083;
         server localhost:8084;
+        server localhost:8085;
+        server localhost:8086;
 }
 
 server {

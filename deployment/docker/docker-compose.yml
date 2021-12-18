@@ -108,6 +108,20 @@ services:
     environment:
       - PORT=8084
 
+  your-priorities-app6:
+    <<: *your-priorities-app-common
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8085/api/users/has/AutoTranslation"]
+    environment:
+      - PORT=8085
+
+  your-priorities-app7:
+    <<: *your-priorities-app-common
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8086/api/users/has/AutoTranslation"]
+    environment:
+      - PORT=8086
+
   your-priorities-worker:
     <<: *your-priorities-worker-common
     scale: 2
