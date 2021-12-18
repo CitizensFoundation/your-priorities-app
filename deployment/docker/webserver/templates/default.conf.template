@@ -60,7 +60,7 @@ server {
 	ignore_invalid_headers off;
 
         client_max_body_size 0;
-        client_body_buffer_size 8m;
+        client_body_buffer_size 64m;
 
         proxy_buffering off;
 
