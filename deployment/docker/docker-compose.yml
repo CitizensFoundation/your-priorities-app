@@ -61,7 +61,7 @@ services:
       - client-app-dist:/usr/src/your-priorities/client/build/bundle
       - admin-app-dist:/usr/src/your-priorities/admin_app/dist
       - analytics-app-dist:/usr/src/your-priorities/analytics_app/dist
-    command: node --optimize_for_size --max_old_space_size=460 server_api/api_app.js
+    command: node server_api/api_app.js
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/api/users/has/AutoTranslation"]
       interval: 30s
@@ -85,7 +85,7 @@ services:
       context: ../../.
       dockerfile: deployment/docker/your-priorities-worker/Dockerfile
     restart: unless-stopped
-    command: node --optimize_for_size --max_old_space_size=960 server_api/active-citizen/workers/main.js
+    command: node server_api/active-citizen/workers/main.js
     network_mode: host
     scale: 2
     logging:
