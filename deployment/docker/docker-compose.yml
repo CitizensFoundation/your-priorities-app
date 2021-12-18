@@ -6,7 +6,7 @@ x-your-priorities-app-common: &your-priorities-app-common
   build:
     context: ../../.
     dockerfile: deployment/docker/your-priorities-app/Dockerfile
-    image: your-priorities-app:current
+  image: your-priorities-app:current
   volumes:
     - client-app-dist:/usr/src/your-priorities/client/build/bundle
     - admin-app-dist:/usr/src/your-priorities/admin_app/dist
