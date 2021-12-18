@@ -1,4 +1,31 @@
 version: '3.9'
+
+x-minio-common: &minio-common
+  image: minio/minio
+  restart: unless-stopped
+  env_file: .env
+  volumes:
+    - ./minio_data:/minio_data
+  expose:
+    - "9000"
+    - "9002"
+    - "9004"
+    - "9006"
+  environment:
+    MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+    MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+    MINIO_HTTP_TRACE: /dev/stdout
+  healthcheck:
+    interval: 30s
+    timeout: 20s
+    retries: 3
+  network_mode: host
+  logging:
+    driver: "json-file"
+    options:
+      max-file: "100"
+      max-size: "25m"
+
 x-your-priorities-app-common: &your-priorities-app-common
   build: ./your-priorities-app/
   env_file: .env
@@ -142,30 +169,25 @@ services:
         max-file: "100"
         max-size: "25m"
 
-  minio:
-    image: minio/minio
-    restart: unless-stopped
-    env_file: .env
-    volumes:
-      - ./minio_data:/minio_data
-    expose:
-      - "9000"
-    environment:
-      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
-      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
-      MINIO_HTTP_TRACE: /dev/stdout
-    command: server --address localhost:9000 /minio_data
+  minio1:
+    command: server --address localhost:9000 --console-address localhost:9001 /minio_data
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
-      interval: 30s
-      timeout: 20s
-      retries: 3
-    network_mode: host
-    logging:
-      driver: "json-file"
-      options:
-        max-file: "100"
-        max-size: "25m"
+        test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+
+  minio2:
+    command: server --address localhost:9002 --console-address localhost:9003 /minio_data
+    healthcheck:
+        test: ["CMD", "curl", "-f", "http://localhost:9002/minio/health/live"]
+
+  minio3:
+    command: server --address localhost:9004 --console-address localhost:9005 /minio_data
+    healthcheck:
+        test: ["CMD", "curl", "-f", "http://localhost:9004/minio/health/live"]
+
+  minio4:
+    command: server --address localhost:9006 --console-address localhost:9007 /minio_data
+    healthcheck:
+        test: ["CMD", "curl", "-f", "http://localhost:9006/minio/health/live"]
 
   ac-analytics-api:
     container_name: ac-analytics-api

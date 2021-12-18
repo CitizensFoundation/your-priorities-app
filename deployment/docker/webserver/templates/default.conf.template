@@ -16,6 +16,9 @@ server {
 
 upstream minio {
         server localhost:9000;
+        server localhost:9002;
+        server localhost:9004;
+        server localhost:9006;
 }
 
 upstream nodejs {
