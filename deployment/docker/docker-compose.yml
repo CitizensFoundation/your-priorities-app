@@ -237,7 +237,7 @@ services:
   mc:
     image: minio/mc:latest
     depends_on:
-     - minio
+     - minio1
     entrypoint: >
       /bin/sh -c "
       /usr/bin/mc config host add --quiet --api s3v4 local https://${FULL_HOSTNAME} ${MINIO_ROOT_USER} ${MINIO_ROOT_PASSWORD};
