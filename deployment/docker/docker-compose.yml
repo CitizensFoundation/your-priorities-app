@@ -75,6 +75,8 @@ services:
         max-size: "25m"
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/api/users/has/AutoTranslation"]
+    deploy:
+      replicas: 7
     environment:
       - PORT=8080
 
@@ -89,6 +91,8 @@ services:
     restart: unless-stopped
     command: node --optimize_for_size --max_old_space_size=960 server_api/active-citizen/workers/main.js
     network_mode: host
+    deploy:
+      replicas: 2
     logging:
       driver: "json-file"
       options:
