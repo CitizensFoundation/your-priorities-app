@@ -1,5 +1,5 @@
 version: '3.9'
-x-your-priorities-app-common: &your-priorities-app-common:
+x-your-priorities-app-common: &your-priorities-app-common
   container_name: your-priorities-app
   build: ./your-priorities-app/
   env_file: .env
@@ -24,7 +24,7 @@ x-your-priorities-app-common: &your-priorities-app-common:
       max-file: "2000"
       max-size: "25m"
 
-x-your-priorities-worker-common: &your-priorities-worker-common:
+x-your-priorities-worker-common: &your-priorities-worker-common
   container_name: your-priorities-worker
   build: ./your-priorities-worker/
   restart: unless-stopped
