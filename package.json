@@ -54,7 +54,7 @@
     "passport-saml": "git+https://github.com/rbjarnason/passport-saml.git#smarternj",
     "passport-sso": "git+https://github.com/rbjarnason/passport-sso.git",
     "passport-twitter": "^1.0.3",
-    "perspective-api-client": "git+https://github.com/CitizensFoundation/perspective-api-client",
+    "perspective-api-client": "^3.1.0",
     "pg": "^8.5.1",
     "pg-native": "^3.0.0",
     "randomstring": "^1.1.4",
