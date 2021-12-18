@@ -76,26 +76,36 @@ services:
 
   your-priorities-app1:
     <<: *your-priorities-app-common
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/api/users/has/AutoTranslation"]
     environment:
       - PORT=8080
 
   your-priorities-app2:
     <<: *your-priorities-app-common
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8081/api/users/has/AutoTranslation"]
     environment:
       - PORT=8081
 
   your-priorities-app3:
     <<: *your-priorities-app-common
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8082/api/users/has/AutoTranslation"]
     environment:
       - PORT=8082
 
   your-priorities-app4:
     <<: *your-priorities-app-common
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8083/api/users/has/AutoTranslation"]
     environment:
       - PORT=8083
 
   your-priorities-app5:
     <<: *your-priorities-app-common
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8084/api/users/has/AutoTranslation"]
     environment:
       - PORT=8084
 
