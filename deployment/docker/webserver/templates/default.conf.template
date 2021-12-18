@@ -19,7 +19,11 @@ upstream minio {
 }
 
 upstream nodejs {
-        server your-priorities-app:8080;
+        server localhost:8080;
+        server localhost:8081;
+        server localhost:8082;
+        server localhost:8083;
+        server localhost:8084;
 }
 
 server {
