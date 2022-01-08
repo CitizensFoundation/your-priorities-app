@@ -70,7 +70,7 @@ x-your-priorities-worker-common: &your-priorities-worker-common
 services:
   webserver:
     container_name: webserver
-    restart: unless-stopped
+    restart: always
     env_file: .env
     build:
       context: ./webserver/
