@@ -806,6 +806,23 @@
           <input type="hidden" name="welcomePageId" value="[[group.configuration.welcomePageId]]">
         </div>
 
+        <paper-input id="urlToReview"
+            name="urlToReview"
+            type="text"
+            label="[[t('urlToReview')]]"
+            value="{{group.configuration.urlToReview}}"
+        >
+        </paper-input>
+
+        <paper-input id="urlToReviewActionText"
+            name="urlToReviewActionText"
+            type="text"
+            label="[[t('urlToReviewActionText')]]"
+            value="{{group.configuration.urlToReviewActionText}}"
+            maxlength="30"
+            char-counter>
+        </paper-input>
+
         <paper-textarea id="registrationQuestions"
                         name="registrationQuestions"
                         type="text"

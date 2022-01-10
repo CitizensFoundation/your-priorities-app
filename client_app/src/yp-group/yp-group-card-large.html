@@ -295,7 +295,27 @@
             </paper-listbox>
           </paper-menu-button>
         </div>
-        <yp-group-stats class="stats" group="[[group]]"></yp-group-stats>
+
+        <div
+          class="urlToReviewButton"
+          role="button"
+          hidden$="[[!group.configuration.urlToReview]]"
+        >
+          <a href="[[group.configuration.urlToReview]]" target="_blank">
+            <yp-magic-text class="urlToReviewActionText" widetext$="[[wideText]]"
+              largefont$="[[largeFont]]"
+              text-type="urlToReview" content-language="[[group.language]]"
+              content="[[group.configuration.urlToReviewActionText]]" content-id="[[group.id]]">
+            </yp-magic-text>
+          </a>
+        </div>
+
+        <yp-group-stats
+          class="stats"
+          group="[[group]]"
+          hidden$="[[group.configuration.urlToReview]]"
+        >
+        </yp-group-stats>
       </paper-material>
     </div>
 
