@@ -331,9 +331,12 @@ export class YpMagicText extends YpBaseElement {
 
         url = `${url}?textType=${this.textType}&contentId=${this.contentId}&targetLanguage=${this.language}`;
 
-        this.processedContent = (await window.serverApi.getTranslation(url)) as
-          | string
-          | undefined;
+        const translation =  (await window.serverApi.getTranslation(url)) as
+        | YpTranslationTextData
+        | undefined;
+
+        this.processedContent = translation?.content;
+
         if (this.processedContent) {
           window.appGlobals.cache.autoTranslateCache[this.indexKey] =
             this.processedContent;
