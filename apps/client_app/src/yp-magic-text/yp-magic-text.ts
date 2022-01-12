@@ -304,6 +304,7 @@ export class YpMagicText extends YpBaseElement {
           case 'alternativePointForHeader':
           case 'customAdminCommentsTitle':
           case 'alternativePointAgainstHeader':
+          case 'urlToReviewActionText':
           case 'alternativePointForLabel':
           case 'alternativePointAgainstLabel':
           case 'groupName':

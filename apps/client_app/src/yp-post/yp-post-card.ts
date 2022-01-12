@@ -397,7 +397,6 @@ export class YpPostCard extends YpBaseElement {
                         </div>
 
                         `}
-                          <
                           ${this.post.Group.configuration.customRatings
                             ? html`
                                 <yp-post-ratings-info

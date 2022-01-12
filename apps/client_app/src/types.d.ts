@@ -219,6 +219,8 @@ interface YpGroupConfiguration extends YpCollectionConfiguration {
   forceShowDebateCountOnPost?: boolean;
   closeNewsfeedSubmissions?: boolean;
   usePostTagsForPostCards?: boolean;
+  urlToReview?: string;
+  urlToReviewActionText?: string;
 }
 
 interface YpGroupDataVizData {

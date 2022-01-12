@@ -9,12 +9,15 @@ import { customElement, property, state } from 'lit/decorators.js';
 import '@material/mwc-tab';
 import '@material/mwc-tab-bar';
 
+import './yp-group-header.js';
+
 import '../yp-post/yp-posts-list.js';
 import '../yp-post/yp-post-card-add.js';
 import { YpPostsList } from '../yp-post/yp-posts-list.js';
 import { YpPostEdit } from '../yp-post/yp-post-edit.js';
 import { Snackbar } from '@material/mwc-snackbar';
 import { YpPostMap } from '../yp-post/yp-post-map.js';
+
 
 // TODO: Remove
 interface AcActivity extends LitElement {
@@ -33,6 +36,9 @@ export const GroupTabTypes: Record<string, number> = {
 
 @customElement('yp-group')
 export class YpGroup extends YpCollection {
+  @property({ type: Object })
+  collection: YpGroupData | undefined;
+
   @property({ type: String })
   searchingFor: string | undefined;
 
@@ -336,6 +342,21 @@ export class YpGroup extends YpCollection {
     }
 
     return page;
+  }
+
+  renderHeader() {
+    return this.collection && !this.noHeader
+      ? html`
+          <div class="layout vertical center-center header">
+            <yp-group-header
+              .collection="${this.collection}"
+              .collectionType="${this.collectionType}"
+              aria-label="${this.collectionType}"
+              role="banner"
+            ></yp-group-header>
+          </div>
+        `
+      : nothing;
   }
 
   render() {

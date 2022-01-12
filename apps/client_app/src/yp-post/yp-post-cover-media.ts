@@ -9,6 +9,8 @@ import { YpNavHelpers } from '../common/YpNavHelpers.js';
 
 import '../common/yp-image.js';
 
+//TODO: Integrate https://github.com/sachinchoolur/lightGallery/tree/master/lightgallery-lit
+
 @customElement('yp-post-cover-media')
 export class YpPostCoverMedia extends YpBaseElement {
   @property({ type: Object })

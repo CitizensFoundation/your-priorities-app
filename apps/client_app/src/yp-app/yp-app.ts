@@ -266,6 +266,8 @@ export class YpApp extends YpBaseElement {
     this.addListener('yp-set-next-post', this._setNextPost, this);
     this.addListener('yp-set-pages', this._setPages, this);
 
+    this.addListener('yp-clipboard-copy-notification', this._haveCopiedNotification, this);
+
     window.addEventListener('locationchange', this.updateLocation.bind(this));
     window.addEventListener('location-changed', this.updateLocation.bind(this));
     window.addEventListener('popstate', this.updateLocation.bind(this));
@@ -308,6 +310,8 @@ export class YpApp extends YpBaseElement {
     this.removeListener('yp-set-home-link', this._setHomeLink, this);
     this.removeListener('yp-set-next-post', this._setNextPost, this);
     this.removeListener('yp-set-pages', this._setPages, this);
+    this.removeListener('yp-clipboard-copy-notification', this._haveCopiedNotification, this);
+
     window.removeEventListener('locationchange', this.updateLocation);
     window.removeEventListener('location-changed', this.updateLocation);
     window.removeEventListener('popstate', this.updateLocation);
@@ -320,6 +324,11 @@ export class YpApp extends YpBaseElement {
 
   static get styles() {
     return [super.styles, YpAppStyles];
+  }
+
+  _haveCopiedNotification() {
+    this.notifyDialogText = this.t('copiedToClipboard');
+    (this.$$('#dialog') as Dialog).open = true;
   }
 
   _appDialogsReady(event: CustomEvent) {
