@@ -1,0 +1,225 @@
+import '@polymer/polymer/polymer-legacy.js';
+import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
+import 'lite-signal/lite-signal.js';
+import '@polymer/paper-button/paper-button.js';
+import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
+import { AccessHelpers } from '../yp-behaviors/access-helpers.js';
+import '../yp-ajax/yp-ajax.js';
+import '../yp-edit-dialog/yp-edit-dialog.js';
+import { ypEditDialogBehavior } from '../yp-edit-dialog/yp-edit-dialog-behavior.js';
+import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
+import { html } from '@polymer/polymer/lib/utils/html-tag.js';
+Polymer({
+  _template: html`
+    <style include="iron-flex iron-flex-alignment">
+      .additionalSettings {
+        padding-top: 16px;
+      }
+
+      paper-textarea {
+        padding-top: 16px;
+      }
+
+      .error {
+        padding: 16px;
+        color: red;
+      }
+
+      [hidden] {
+        display: none !important;
+      }
+
+      paper-button {
+        margin: 24px;
+        color: var(--accent-color);
+        margin-bottom: 0;
+      }
+
+      a {
+        text-decoration: none;
+      }
+
+      .infoText {
+        padding: 8px;
+      }
+
+      .reportText {
+        margin-top: 8px;
+      }
+
+      .expiredText {
+        color: red;
+      }
+    </style>
+    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
+    <lite-signal on-lite-signal-yp-auto-translate="_autoTranslateEvent"></lite-signal>
+
+    <yp-edit-dialog id="editDialog" title="[[editHeaderText]]" icon="language" confirmation-text="[[t('close')]]" action="[[action]]" method="[[method]]" cancel-text="[[t('close')]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
+
+      <div class="layout vertical center-center">
+        <paper-progress id="progress" value="[[progress]]"></paper-progress>
+
+        <div class="error" hidden\$="[[!error]]">[[error]]</div>
+
+        <div hidden\$="[[!reportUrl]]">
+          <a href="[[reportUrl]]" hidden\$="[[downloadDisabled]]">
+            <paper-button id="downloadReportButton" disabled\$="[[downloadDisabled]]" raised="">[[t('downloadReport')]]</paper-button>
+          </a>
+        </div>
+        <div class="infoText reportText" hidden\$="[[!reportUrl]]">[[t('reportLinkInfo')]]</div>
+        <div class="infoText expiredText" hidden\$="[[!downloadDisabled]]">
+          [[t('downloadHasExpired')]]
+        </div>
+      </div>
+
+      <div class="layout horizontal center-center" hidden="">
+        <yp-ajax hidden="" method="PUT" id="startReportCreationAjax" on-response="_startReportCreationResponse"></yp-ajax>
+        <yp-ajax hidden="" method="GET" id="reportCreationProgressAjax" on-response="_reportCreationProgressResponse"></yp-ajax>
+      </div>
+    </yp-edit-dialog>
+`,
+
+  is: 'yp-create-report',
+
+  behaviors: [
+    ypLanguageBehavior,
+    ypEditDialogBehavior,
+    AccessHelpers
+  ],
+
+  properties: {
+
+    action: {
+      type: String,
+      value: "/api/communities"
+    },
+
+    type: String,
+
+    community: {
+      type: Object
+    },
+
+    group: {
+      type: Object,
+    },
+
+    progress: {
+      type: Number,
+      value: 0
+    },
+
+    error: {
+      type: String,
+      value: null
+    },
+
+    jobId: {
+      type: Number,
+      value: null
+    },
+
+    reportUrl: {
+      type: String,
+      value: null
+    },
+
+    downloadDisabled: {
+      type: Boolean,
+      value: false
+    },
+
+    autoTranslateActive: {
+      type: Boolean,
+      value: false
+    }
+  },
+
+  _autoTranslateEvent: function (event, detail) {
+    this.set('autoTranslateActive', detail);
+  },
+
+  _startReportCreationResponse: function (event, detail) {
+    this.jobId = detail.response.jobId;
+    if (this.group) {
+      this.$.reportCreationProgressAjax.url = "/api/groups/"+this.group.id+"/"+this.jobId+"/report_creation_progress";
+    } else if (this.community) {
+      this.$.reportCreationProgressAjax.url = "/api/communities/"+this.group.id+"/"+this.jobId+"/report_creation_progress";
+    }
+
+    this._pollLaterForProgress();
+  },
+
+  _pollLaterForProgress: function () {
+    this.async(function () {
+      this.$.reportCreationProgressAjax.generateRequest();
+    }, 1000);
+  },
+
+  _reportCreationProgressResponse: function (event, detail) {
+    if (!detail.response.error && detail.response.progress!==null && detail.response.progress<100) {
+      this._pollLaterForProgress();
+    }
+
+    this.set('progress', detail.response.progress);
+    if (detail.response.error) {
+      this.set('error', this.t(detail.response.error));
+    }
+    if (detail.response.data) {
+      this.set('reportUrl', detail.response.data.reportUrl);
+      this.async(function () {
+        this.set('downloadDisabled', true);
+      }, 59*60*1000)
+    }
+  },
+
+  _clear: function () {
+    this.set('community', null);
+    this.set('group', null);
+    this.set('jobId', null);
+    this.set('error', null);
+    this.set('reportUrl', null);
+    this.set('downloadDisabled', false);
+    this.set('progress', 0);
+  },
+
+  setupAndOpen: function (type, group, community, refreshFunction) {
+    if (window.autoTranslate) {
+      this.set('autoTranslateActive', true);
+    } else {
+      this.set('autoTranslateActive', false);
+    }
+    this._clear();
+    this.set('type', type);
+    var url;
+    if (group) {
+      this.set('group', group);
+       url = "/api/groups/"+this.group.id+"/"+this.type+"/start_report_creation";
+    } else if (community) {
+      this.set('community', community);
+      url = "/api/communties/"+this.community.id+"/"+this.type+"/start_report_creation";
+    }
+
+    if (this.autoTranslateActive) {
+      url += "?translateLanguage="+this.language;
+    }
+
+    this.$.startReportCreationAjax.url = url;
+    this.$.startReportCreationAjax.body = {};
+    this.$.startReportCreationAjax.generateRequest();
+    this.set('refreshFunction', refreshFunction);
+    this._setupTranslation();
+    this.open();
+  },
+
+  _setupTranslation: function () {
+    if (this.type==="docx") {
+      this.set('editHeaderText', this.t('createDocxReport'));
+      this.set('toastText', this.t('haveCreatedDocxReport'));
+    } else if (this.type==="xls") {
+      this.set('editHeaderText', this.t('createXlsReport'));
+      this.set('toastText', this.t('haveCreatedXLsReport'));
+    }
+    this.set('saveText', null);
+  }
+});

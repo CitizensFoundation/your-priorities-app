@@ -1,0 +1,382 @@
+{
+  "uniqueStatusMessage": "Unique Status Message",
+  "templateContent": "Template content",
+  "bulkStatusUpdate": "Bulk Status Updates",
+  "close": "Zatvorite",
+  "editTemplates": "Edit Templates",
+  "editTemplate": "Edit Template",
+  "deleteTemplate": "Delete Template",
+  "addTemplate": "Add Template",
+  "save": "Sačuvajte",
+  "saved": "Sačuvano",
+  "config": "Config",
+  "newBulkStatusUpdate": "New Bulk Status Update",
+  "editBulkStatusUpdate": "Edit Bulk Status Update",
+  "bulkStatusUdateConfig": "Bulk Status Update Config",
+  "bulkStatusUpdatesTemplates": "Bulk Status Updates Templates",
+  "selectStatusTemplate": "Template",
+  "moveToGroup": "Pomerite",
+  "noIdeasHere": "Nema predloga.",
+  "organizationsAdmin": "Aministrator organizacija",
+  "unviewed": "Nije pogledano",
+  "notificationMarkAllViewed": "Označite kao pogledano",
+  "notificationConfirmMarkAllViewed": "Potvrdite da želite da označite sva svoja obaveštenja kao pregledana",
+  "upVotedPoint": "je glasao/la za vaš argument",
+  "downVotedPoint": "je glasao/la protiv vašeg argumenta",
+  "endorsedYourPost": "je podžao/la vašu ideju",
+  "opposedYourPost": "se suprotstavio/la vašoj ideji",
+  "notifications": "Obaveštenja",
+  "votingDisabled": "Glasanje nije aktivno",
+  "pageNotFound": "Tražena stranica nije pronađena",
+  "participate": "Učestvujte",
+  "emojiSearchResults": "Rezultati pretrage",
+  "recentlyUsedEmoji": "Nedavno korišćeno",
+  "findAnEmoji": "Pronađite emotikon",
+  "cancel": "Otkažite",
+  "ok": "U redu",
+  "next": "Sledeće",
+  "create": "Kreirajte",
+  "confirm": "Potvrdite",
+  "access": "Pristupite",
+  "searchFor": "Pretraga...",
+  "title": "Naziv",
+  "selectLanguage": "Izaberite jezik",
+  "update": "Ažurirajte",
+  "errorCantConnect": "Can't connect to the server. Please try again a bit later. This might be due to high traffic or a software upgrade.",
+  "errorNotFound": "Nije pronađeno",
+  "errorNotAuthorized": "Nemate pristup ovom sadržaju!",
+  "generalError": "Dogodila se neočekivana greška. Obavešteni smo o problemu.",
+  "stats": {
+    "posts": "Broj ideja",
+    "discussions": "Broj diskusija",
+    "communities": "Broj zajednica",
+    "groups": "Broj grupa",
+    "users": "Broj korisnika"
+  },
+  "notification": {
+    "passwordResetAndLoggedIn": "Vaša lozinka je promenjena i sada ste ulogovani. ",
+    "method": "Metod",
+    "frequency": "Učestalost",
+    "myPosts": "Moje ideje",
+    "muted": "Isključi",
+    "browser": "Pretraživač",
+    "email": "E-mail",
+    "asItHappens": "Odmah",
+    "daily": "Dnevno",
+    "hourly": "Na sat",
+    "weekly": "Nedeljno",
+    "monthly": "Mesečno",
+    "myPostsEndorsements": "Predlozi koji mi se sviđaju",
+    "myPoints": "Moji argumenti",
+    "myPointEndorsements": "Argumenti koji mi se sviđaju",
+    "allCommunity": "Sva obaveštenja od mojih zajednica",
+    "allGroup": "Sva obaveštenja od mojih grupa",
+    "invite_accepted_for": "Učestvuje u"
+  },
+
+  "pages": {
+    "addLocale": "Add locale",
+    "unPublish": "UnPublish",
+    "deletePage": "Obrišite",
+    "addPage": "Dodajte novu stranicu",
+    "managePages": "Upravljanje stranicama"
+  },
+
+  "archived": "Arhivirano",
+
+  "status": {
+    "select": "Izaberite status",
+    "active": "Aktivno",
+    "featured": "U fokusu",
+    "archived": "Arhivirano",
+    "published": "Opin",
+    "successful": "Samþykkt",
+    "failed": "Hafnað",
+    "inProgress": "Í ferli"
+  },
+
+  "activity": {
+    "post": {
+      "new": "Ideja",
+      "status": {
+       "change": "Ažuriranje statusa"
+      }
+    },
+    "point": {
+      "forAdded": "Dodat argument za",
+      "againstAdded": "Dodat argument protiv",
+      "new": "Argument",
+      "newFor": "Argument za",
+      "newAgainst": "Argument protiv",
+      "newComment": "Komentar",
+      "newsStory": {
+        "new": "Vesti od korisnika"
+      }
+    }
+  },
+  "name": "Ime",
+
+  "domain": {
+    "edit": "Izmenite domen"
+  },
+
+  "domains": "Domeni",
+  "communities": "Zajednice",
+  "groups": "Grupe",
+
+  "myDomains": "Moji domeni",
+  "myCommunities": "Moje zajednice",
+  "myGroups": "Moje grupe",
+  "myAdminCommunities": "Administrator zajednice",
+  "myAdminGroups": "Administrator grupe",
+
+  "community": {
+    "edit": "Promenite detalje zajednice",
+    "hostname": "Hostname",
+    "admins": "Administratori zajednice",
+    "users": "Korisnici zajednice",
+    "delete": "Obrišite zajednicu",
+    "new": "Kreirajte zajednicu",
+    "public": "Otvorena zajednica",
+    "closed": "Zatvorena zajednica",
+    "secret": "Tajna zajednica",
+    "pages":"Community Pages",
+    "onlyAdminsCanCreateGroups": "Samo administratori mogu da kreiraju grupe"
+  },
+
+  "posts": {
+    "posts": "Predlozi",
+    "open": "Otvoreno",
+    "inProgress": "U toku",
+    "successful": "Uspešno",
+    "failed": "Neuspešno",
+    "map": "Mapa",
+    "noMapPosts": "Nema ideja sa lokacijom",
+    "newUserImage": "Dodajte fotografiju"
+  },
+
+  "form": {
+    "invalid": "Popunite obrazac do kraja"
+  },
+
+  "post": {
+    "move": "Move idea",
+    "confirmMove": "Confirm that you want to move",
+    "statusChangeConfirmText": "Are you sure you want to send everybody that supports or opposes this idea an email?",
+    "statusChangeSelectNewStatus": "Novi status",
+    "statusChangeContent": "Status change content to be sent to all supporters and opposers",
+    "statusChange": "Send status change emails",
+    "statusChangeSent": "Sent status change emails",
+    "noLocation": "Bez lokacije",
+    "shareInfo": "Podelite ideju",
+    "description": "Opis",
+    "debate": "Diskusija",
+    "formInvalid": "Popunite obrazac do kraja",
+    "status": "Status ideje",
+    "new": "Nova ideja",
+    "searchingFor": "Pretraživanje",
+    "top": "Najpopularniji predlozi",
+    "newest": "Poslednji predlozi",
+    "random": "Slučajni raspored predloga",
+    "inProgress": "Ideas in progress",
+    "groups": "Post groups",
+    "search": "Pretražite predloge",
+    "add_new":"Dodajte novi predlog",
+    "up_vote":"Glasajte za predlog",
+    "down_vote":"Glasajte protiv predloga",
+    "report": "Prijavite predlog",
+    "notify": "Obavestite me o ovom predlogu",
+    "share": "Podelite ovaj predlog",
+    "yourPost": "Predlog",
+    "yourPoint": "Argument za",
+    "location": "Lokacija",
+    "photo": "Fotografija",
+    "photographerName": "Fotograf",
+    "newPhoto": "Nova fotografija",
+    "photoUpdate": "Ažurirajte fotografiju",
+    "photoDeleteConfirmation": "Da li ste sigurni da želite da obrišete ovu fotografiju?",
+    "tabs": {
+      "debate": "Debate",
+      "news": "Vesti",
+      "location": "Lokacija",
+      "photos": "Fotografije",
+      "solutions": "Rešenja",
+      "not_implemented": "No implemented yet"
+    },
+    "cover": {
+      "media": "Choose cover media",
+      "imageInfo": "Dodavanjem slike povećavate verovatnoću da će je ostali podeliti.",
+      "map": "Mapa",
+      "streetview": "Street view",
+      "image": "Slika",
+      "none": "None"
+    },
+    "edit": "Izmenite predlog",
+    "delete": "Obrišite predlog",
+    "addNewIntroBoxText": "Klinkinte na sijalicu da dodate novu ideju"
+  },
+
+  "short_word": {
+    "in": "u"
+  },
+
+  "category": {
+    "new": "Nova kategorija",
+    "select": "Izaberite kategoriju"
+  },
+
+  "categories": {
+    "all": "sve kategorije",
+    "the_all": "Sve kategorije"
+  },
+
+  "point": {
+    "againstAdded": "Dodat argument protiv",
+    "forAdded": "Dodat argument za",
+    "confirmDelete": "Potvrdite da želite da obrišete ovaj argument",
+    "theseAreFor": "Argument za",
+    "theseAreAgainst": "Argument protiv",
+    "point": "Argument",
+    "for": "Zašto poržavate...",
+    "against": "Zašte ne podržavate...",
+    "add_up": "Dodajte argument za",
+    "add_down": "Dodajte argument protiv",
+    "helpful": "Glasajte za argument / argument je koristan",
+    "not_helpful": "Glasajte protiv argumenta / argument nije koristan",
+    "addNewsStory": "Dodajte vest",
+    "postNewsStory": "Dodajte vest",
+    "addComment": "Vaš komentar",
+    "postComment": "Ostavite komentar",
+    "comments": "Komentari",
+    "howToWrite": "Let's brainstorm the best points for and against and think in solutions...",
+    "commentToShort": "Tekst je previše kratak!"
+  },
+
+  "news": "Vesti",
+
+  "uploading": {
+    "inProgress": "Ažuriranje..."
+  },
+
+  "notice": {
+    "ok": "U redu",
+    "feature_not_implemented_a": "This feature has not yet been implemented in this read-only preview of Your Priorities 6.0.",
+    "feature_not_implemented_b": "Recite nam šta mislite :)",
+    "welcome_a": "This is a read-only preview of Your Priorities 6.0 so you can only view content, not add to it. Feedback is most appreciated.",
+    "welcome_b": "Currently it only works in Chrome but will support all major browsers by release date in Q1 2015.",
+    "welcome_heading": "Welcome to Your Priorities 6.0 technology preview",
+    "continue": "Continue to preview",
+    "deleteConfirmation": "Da li želite da obrišete ovu grupu?"
+  },
+
+  "maps": {
+    "searchInput": "Adresa",
+    "search": "Pretraga"
+  },
+
+  "group": {
+    "locationHidden": "Onemogućite lokaciju",
+    "group": "Grupa",
+    "admins": "Administratori grupe",
+    "users": "Korisnici grupe",
+    "new": "Dodajte novu grupu",
+    "edit": "Izmenite grupu",
+    "invite": "Pozovite prijatelja",
+    "invite_to_group": "Pozovite prijatelja u ovu grupu",
+    "share_group": "Podelite ovu grupu",
+    "delete": "Obrišite grupu",
+    "objectives": "Ciljevi",
+    "public": "Otvorena grupa",
+    "closed": "Zatvorena grupa",
+    "secret": "Tajna grupa",
+    "openToCommunity": "Open to community",
+    "canVote": "Glasanje dozvoljeno",
+    "canAddNewPosts": "Novi predlozi dozvoljeni",
+    "config": "Config",
+    "update": "Ažurirajte grupu"
+  },
+
+  "membership": {
+    "joined": "Priključili ste se",
+    "left": "Isključili ste se"
+  },
+
+  "menu": {
+    "my_pages": "Moj profil",
+    "about": "About",
+    "help": "Pomoć",
+    "settings": "Podešavanja"
+
+  },
+
+  "users": {
+    "removeAdmin": "Uklonite administratora",
+    "addAdmin": "Dodajte administratora",
+    "removeUser": "Uklonite korisnika",
+    "inviteUser": "Pozovite korisnika",
+    "email": "elektronska pošta",
+    "removeFromOrganization": "Uklonite",
+    "addToOrganization": "Organizacija",
+    "selectOrganization": "Izaberite organizaciju"
+  },
+
+  "user": {
+    "loginCompleteFor": "Login for",
+    "acceptInvite": "Prihvatite pozovite učestvujte",
+    "hasSentYouAndInvitation": "vam je poslao poziv da učestvujete",
+    "acceptInviteInstructions": "Kliknite na dugme ispod da prihvatite poziv",
+    "setEmail": "Dodajte adresu elektronske pošte uz nalog",
+    "linkAccount": "Connect with account",
+    "setEmailInfo": "Dodajte adresu elektronske pošte uz nalog",
+    "existsLinkAccountInfo": "Enter your password to connect to this access your email account.",
+    "logoutCompleteFor": "Logout for",
+    "loggedInWithSaml": "Prijavljeni ste putem SAML",
+    "loggedInWithFacebook": "Prijavljeni ste putem Fejsbuka",
+    "facebookLogin": "Prijavite se putem Fejsbuka",
+    "info":"Informacije",
+    "notifications": "Obaveštenja",
+    "name": "Ime i prezime",
+    "email": "Elektronska pošta",
+    "edit": "Izmena detalja korisnika",
+    "password": "Lozinka",
+    "forgotPassword": "Kreirajte novu lozinku",
+    "forgotPasswordInstructions": "Upišite svoju mejl adresu i dobićete link putem koga možete napraviti novu lozinku. ",
+    "forgotPasswordEmailHasBeenSent": "Poslat vam je mejl sa uputstvom za promenu lozinke. ",
+    "resetPassword": "Promena lozinke",
+    "resetPasswordInstructions": "Zadajte novu lozinku koju nije lako pogoditi",
+    "login": "Ulogujte se",
+    "create": "Kreirajte",
+    "cancel": "Otkažite",
+    "logout": "Odjava",
+    "newPassword": "nova lozinka",
+    "register": "Novi korisnik",
+    "alreadyRegisterred": "Ovaj mejl je već registrovan. Možete napraviti novu lozinku. ",
+    "registrationError": "Greška pri registraciji",
+    "loginError": "Greška pri prijavi",
+    "completeForm": "Fill our the form correctly",
+    "loginNotAuthorized": "Pogrešan e-mail ili lozinka"
+  },
+
+  "other": "Ostalo",
+
+  "socialMedia": "Društveni mediji",
+
+  "location": {
+    "set": "Podesite lokaciju"
+  },
+  "image": {
+    "upload": "Ažurirajte sliku",
+    "logo": {
+      "upload": "Ažurirajte logo"
+    },
+    "header": {
+      "upload": "Upload header"
+    },
+    "profile": {
+      "upload": "Ažurirajte profilnu sliku"
+    }
+  },
+  "theme": {
+    "choose": "Izaberite temu"
+  }
+}

@@ -78,6 +78,7 @@
     "@open-wc/rollup-plugin-html": "^1.1.0",
     "@types/chart.js": "^2.9.23",
     "@types/core-js": "^2.5.3",
+    "@vaadin/vaadin-grid": "^5.7.5",
     "@webcomponents/webcomponentsjs": "^2.4.3",
     "chart.js": "^2.9.3",
     "core-js": "^3.6.5",
