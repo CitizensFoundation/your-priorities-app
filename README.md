@@ -10,9 +10,10 @@
 * Effective debating system that is highly resistant to trolling and personal arguments
 * Users can submit ideas and debate points as text, audio or video
 * Users can prioritize ideas and debate points by voting them up or down
+* Configurable surveys for ideas and user registration
 * Custom emoji ratings where admins can configure groups to allow up to 4 different custom emoji ratings per group instead of the voting up and down
 * AI driven recommendation engine that recommends relevant posts to users
-* Highly scalable audio and video processing engine (using Amazon Elastic Transcoder and S3)
+* Highly scalable audio and video processing engine (using Amazon Elastic Transcoder and S3 or the Your Priorities Encoder)
 * Automatic Speech to Text conversion in 28 languages (using Google's TextToSpeech API)
 * Machine translations between 28 languages (using Google Translate API)
 * Simple moderation of all content for community and groups in one place
@@ -30,7 +31,7 @@
 * Authentication is configurable offering eID, Facebook, email and/or anonymous login
 * The client app is a progressive web app that can be very easily installed as a native app on mobile phones while also being a website
 * Built with Web Components making the app fast on inexpensive mobile phones
-* Open source, non profit and built with passion over 12 years
+* Open source, non profit and built with passion over 14 years
 * Supported by mass amounts of volunteer work, the EU, city of Reykjavik, World Bank, city of Kopavogur, Scottish Government and the Norwegian Consumer Authority
 
 ## Getting Started User Tutorial
