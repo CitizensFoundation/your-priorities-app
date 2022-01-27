@@ -126,6 +126,13 @@
           font-size: 14px;
       }
 
+      .urlToReviewButton {
+        color: #FFF;
+        background-color: var(--accent-color, #000);
+        padding: 8px;
+        margin-top: 16px;
+      }
+
       .group-name {
         background-color: var(--primary-color-800, #000);
         color: #fafafa;
@@ -294,20 +301,21 @@
               <paper-item id="openAdminApp" hidden$="[[!hasGroupAccess]]">[[t('editTranslations')]]</paper-item>
             </paper-listbox>
           </paper-menu-button>
-        </div>
-
-        <div
-          class="urlToReviewButton"
-          role="button"
-          hidden$="[[!group.configuration.urlToReview]]"
-        >
-          <a href="[[group.configuration.urlToReview]]" target="_blank">
-            <yp-magic-text class="urlToReviewActionText" widetext$="[[wideText]]"
-              largefont$="[[largeFont]]"
-              text-type="urlToReview" content-language="[[group.language]]"
-              content="[[group.configuration.urlToReviewActionText]]" content-id="[[group.id]]">
-            </yp-magic-text>
-          </a>
+          <div class="layout horizontal center-center" style="width: 100%">
+            <paper-material
+                    class="urlToReviewButton layout vertical center-center"
+                    role="button"
+                    hidden$="[[!group.configuration.urlToReview]]"
+            >
+              <a href="[[group.configuration.urlToReview]]" target="_blank">
+                <yp-magic-text class="urlToReviewActionText" widetext$="[[wideText]]"
+                               largefont$="[[largeFont]]"
+                               text-type="urlToReviewActionText" content-language="[[group.language]]"
+                               content="[[group.configuration.urlToReviewActionText]]" content-id="[[group.id]]">
+                </yp-magic-text>
+              </a>
+            </paper-material>
+          </div>
         </div>
 
         <yp-group-stats
