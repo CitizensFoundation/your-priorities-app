@@ -47,6 +47,12 @@ https://citizens.is/getting-started/
 * https://engage.parliament.scot/
 * https://enjine.smarter.nj.gov/
 
+## Deployment with Docker Compose
+
+[Docker deployment guide](https://docs.google.com/document/d/1t9oZRIIOqmxtAszeWLGRb0_ixsmSLdXvwGeej2EA5R8/)
+
+[Docker admin guide](https://docs.google.com/document/d/1lG0FwKbsy5J2RMio08Q-viR7xG0YYGVmY2zqmENcNtM/)
+
 ## How to run
 
 ```
