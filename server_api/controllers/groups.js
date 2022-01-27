@@ -1375,7 +1375,8 @@ const allowedTextTypesForGroup = [
   "alternativePointAgainstHeader",
   "alternativePointForLabel",
   "alternativePointAgainstLabel",
-  "customAdminCommentsTitle"
+  "customAdminCommentsTitle",
+  "urlToReviewActionText"
 ];
 
 router.get('/:id/translatedText', auth.can('view group'), function(req, res) {
