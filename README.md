@@ -45,7 +45,6 @@ https://citizens.is/getting-started/
 * https://betrireykjavik.is/
 * https://www.junges.wien/
 * https://engage.parliament.scot/
-* https://enjine.smarter.nj.gov/
 
 ## Deployment with Docker Compose
 
