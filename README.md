@@ -38,7 +38,7 @@
 
 https://citizens.is/getting-started/
 
-Get started on Your Priorities on our cloud platform.
+Get started with Your Priorities on our cloud platform.
 
 ## Examples of live servers running Your Priorities
 
