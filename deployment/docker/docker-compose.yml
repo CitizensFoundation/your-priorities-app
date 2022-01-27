@@ -158,7 +158,6 @@ services:
     build: ./your-priorities-encoder/
     restart: unless-stopped
     env_file: .env
-    restart: unless-stopped
     environment:
       - NODE_ENV=production
     command: node out-tsc/worker.js
