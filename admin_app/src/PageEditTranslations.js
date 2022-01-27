@@ -399,6 +399,7 @@ export class PageEditTranslations extends YpBaseElement {
       case 'customThankYouTextNewPosts':
       case 'alternativePointForHeader':
       case 'customTitleQuestionText':
+      case 'urlToReviewActionText':
       case 'customAdminCommentsTitle':
       case 'alternativePointAgainstHeader':
       case 'alternativePointForLabel':
