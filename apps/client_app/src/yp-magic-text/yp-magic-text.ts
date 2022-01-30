@@ -261,8 +261,9 @@ export class YpMagicText extends YpBaseElement {
 
   async _startTranslationAndFinalize() {
     if (window.appGlobals.cache.autoTranslateCache[this.indexKey]) {
-      this.processedContent =
-        window.appGlobals.cache.autoTranslateCache[this.indexKey] as string;
+      this.processedContent = window.appGlobals.cache.autoTranslateCache[
+        this.indexKey
+      ] as string;
       this._finalize();
     } else {
       if (this.contentId) {
@@ -331,9 +332,9 @@ export class YpMagicText extends YpBaseElement {
 
         url = `${url}?textType=${this.textType}&contentId=${this.contentId}&targetLanguage=${this.language}`;
 
-        const translation =  (await window.serverApi.getTranslation(url)) as
-        | YpTranslationTextData
-        | undefined;
+        const translation = (await window.serverApi.getTranslation(url)) as
+          | YpTranslationTextData
+          | undefined;
 
         this.processedContent = translation?.content;
 

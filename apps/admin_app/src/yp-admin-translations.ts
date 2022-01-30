@@ -10,6 +10,7 @@ import '@material/mwc-list/mwc-list-item';
 import '@material/mwc-textarea';
 import '@material/mwc-linear-progress';
 import { YpAdminPage } from './yp-admin-page.js';
+import { YpLanguageSelector } from './@yrpri/yp-app/yp-language-selector.js';
 
 @customElement('yp-admin-translations')
 export class YpAdminTranslations extends YpAdminPage {
@@ -144,41 +145,7 @@ export class YpAdminTranslations extends YpAdminPage {
     this.waitingOnData = false;
     this.baseMaxLength = 300;
 
-    this.supportedLanguages = {
-      en: 'English (US)',
-      en_GB: 'English (GB)',
-      fr: 'Français',
-      is: 'Íslenska',
-      es: 'Español',
-      it: 'Italiano',
-      ar: 'اَلْعَرَبِيَّةُ',
-      ar_EG: 'اَلْعَرَبِيَّةُ (EG)',
-      ca: 'Català',
-      ro_MD: 'Moldovenească',
-      de: 'Deutsch',
-      da: 'Dansk',
-      sv: 'Svenska',
-      en_CA: 'English (CA)',
-      nl: 'Nederlands',
-      no: 'Norsk',
-      uk: 'українська',
-      sq: 'Shqip',
-      ky: 'Кыргызча',
-      uz: 'Ўзбек',
-      tr: 'Türkçe',
-      fa: 'فارسی',
-      pl: 'Polski',
-      pt: 'Português',
-      pt_BR: 'Português (Brazil)',
-      ru: 'Русский',
-      hu: 'Magyar',
-      zh_TW: '国语 (TW)',
-      sr: 'Srpski',
-      sr_latin: 'Srpski (latin)',
-      hr: 'Hravtski',
-      kl: 'Kalaallisut',
-      sl: 'Slovenščina',
-    };
+    this.supportedLanguages = YpLanguageSelector.supportedLanguages;
   }
 
   connectedCallback() {
@@ -273,8 +240,11 @@ export class YpAdminTranslations extends YpAdminPage {
       case 'alternativeTextForNewIdeaButtonHeader':
       case 'customThankYouTextNewPosts':
       case 'alternativePointForHeader':
+      case 'customTitleQuestionText':
       case 'customAdminCommentsTitle':
+      case 'urlToReviewActionText':
       case 'alternativePointAgainstHeader':
+      case 'customThankYouTextNewPoints':
       case 'alternativePointForLabel':
       case 'alternativePointAgainstLabel':
       case 'groupName':

@@ -49,7 +49,7 @@ export class YpLanguageSelector extends YpBaseElement {
     }
   }
 
-  supportedLanguages: Record<string, string> = {
+  static supportedLanguages: Record<string, string> = {
     en: 'English (US)',
     en_GB: 'English (GB)',
     fr: 'Français',
@@ -219,7 +219,7 @@ export class YpLanguageSelector extends YpBaseElement {
   _stopTranslation() {
     this.fireGlobal('yp-auto-translate', false);
     window.appGlobals.autoTranslate = false;
-    this.fire('yp-language-name', this.supportedLanguages[this.language]);
+    this.fire('yp-language-name', YpLanguageSelector.supportedLanguages[this.language]);
     /*window.appDialogs
       .getDialogAsync(
         'masterToast',
@@ -236,7 +236,7 @@ export class YpLanguageSelector extends YpBaseElement {
     if (this.canUseAutoTranslate) {
       this.fireGlobal('yp-auto-translate', true);
       window.appGlobals.autoTranslate = true;
-      this.fire('yp-language-name', this.supportedLanguages[this.language]);
+      this.fire('yp-language-name', YpLanguageSelector.supportedLanguages[this.language]);
       /*window.appDialogs.getDialogAsync("masterToast",  (toast) => {
         toast.text = this.t('autoTranslationStarted');
         toast.show();
@@ -260,23 +260,23 @@ export class YpLanguageSelector extends YpBaseElement {
   }
 
   get languages() {
-    if (this.supportedLanguages) {
+    if (YpLanguageSelector.supportedLanguages) {
       let arr = [];
       const highlighted = [];
       let highlightedLocales = ['en', 'en_GB', 'is', 'fr', 'de', 'es', 'ar'];
       if (window.appGlobals.highlightedLanguages) {
         highlightedLocales = window.appGlobals.highlightedLanguages.split(',');
       }
-      for (const key in this.supportedLanguages) {
+      for (const key in YpLanguageSelector.supportedLanguages) {
         // eslint-disable-next-line no-prototype-builtins
-        if (this.supportedLanguages.hasOwnProperty(key)) {
+        if (YpLanguageSelector.supportedLanguages.hasOwnProperty(key)) {
           if (highlightedLocales.indexOf(key) > -1) {
             highlighted.push({
               language: key,
-              name: this.supportedLanguages[key],
+              name: YpLanguageSelector.supportedLanguages[key],
             });
           } else {
-            arr.push({ language: key, name: this.supportedLanguages[key] });
+            arr.push({ language: key, name: YpLanguageSelector.supportedLanguages[key] });
           }
         }
       }
@@ -308,7 +308,7 @@ export class YpLanguageSelector extends YpBaseElement {
         }
         this.fire(
           'yp-language-name',
-          this.supportedLanguages[this.selectedLocale]
+          YpLanguageSelector.supportedLanguages[this.selectedLocale]
         );
         window.appGlobals.changeLocaleIfNeeded(this.selectedLocale, true);
         localStorage.setItem('yp-user-locale', this.selectedLocale);
