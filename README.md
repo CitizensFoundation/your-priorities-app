@@ -34,11 +34,17 @@
 * Open source, non profit and built with passion over 14 years
 * Supported by mass amounts of volunteer work, the EU, city of Reykjavik, World Bank, city of Kopavogur, Scottish Government and the Norwegian Consumer Authority
 
-## Getting Started User Tutorial
+## Getting Started Cloud Tutorial
 
 https://citizens.is/getting-started/
 
 Get started with Your Priorities on our cloud platform.
+
+## Deployment with Docker Compose
+
+[Docker deployment guide](https://docs.google.com/document/d/1t9oZRIIOqmxtAszeWLGRb0_ixsmSLdXvwGeej2EA5R8/)
+
+[Docker admin guide](https://docs.google.com/document/d/1lG0FwKbsy5J2RMio08Q-viR7xG0YYGVmY2zqmENcNtM/)
 
 ## Examples of live servers running Your Priorities
 
@@ -47,12 +53,6 @@ Get started with Your Priorities on our cloud platform.
 * https://betrireykjavik.is/
 * https://www.junges.wien/
 * https://engage.parliament.scot/
-
-## Deployment with Docker Compose
-
-[Docker deployment guide](https://docs.google.com/document/d/1t9oZRIIOqmxtAszeWLGRb0_ixsmSLdXvwGeej2EA5R8/)
-
-[Docker admin guide](https://docs.google.com/document/d/1lG0FwKbsy5J2RMio08Q-viR7xG0YYGVmY2zqmENcNtM/)
 
 ## How to run
 
