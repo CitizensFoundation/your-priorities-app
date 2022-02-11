@@ -126,9 +126,9 @@ module.exports = (sequelize, DataTypes) => {
   Group.addUserToGroupIfNeeded = (groupId, req, done) => {
     sequelize.models.Group.findOne({
       where: { id: groupId },
-      attributes: ['id','community_id','counter_users']
+      attributes: ['id','community_id','counter_users','name']
     }).then((group) => {
-      if (group) {
+      if (group && group.name!=='hidden_public_group_for_domain_level_points') {
         group.hasGroupUser(req.user).then((result) => {
           if (!result) {
             async.parallel([
