@@ -709,7 +709,8 @@ const sendPostPoints = (req, res, redisKey) => {
 
 router.get('/:id/points', auth.can('view post'), function(req, res) {
   const redisKey = "cache:post_points:"+req.params.id+(req.query.offsetUp ? ":offsetup:"+req.query.offsetUp : "")+":"+(req.query.offsetDown ? ":offsetdown:"+req.query.offsetDown : "");
-  if (process.env.DISABLE_POST_POINTS_CACHE) {
+  // Disable cache for now until we figure out to invalidate the cache on delete points
+  if (true || process.env.DISABLE_POST_POINTS_CACHE) {
     sendPostPoints(req, res);
   } else {
     req.redisClient.get(redisKey, (error, points) => {
