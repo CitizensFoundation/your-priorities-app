@@ -7,7 +7,7 @@ var communityId = process.argv[2];
 var groupId = process.argv[3];
 
 var endorsementsToAnalyse;
-var csvOut = "";
+var csvOut = "Method,E Id,E Value,Date,Browser Id,Fingerprint Id,IP Address,User Id,User Email,Post Id,Post Name,User Agent\n";
 
 var writeItemToCsv = function (item) {
   let browserId = "";
