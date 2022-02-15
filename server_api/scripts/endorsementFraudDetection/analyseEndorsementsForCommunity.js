@@ -44,7 +44,7 @@ var getTopItems = function (items, max) {
     return -item.count;
   });
 
-  if (max==-1) {
+  if (max===-1) {
     let out = [];
     _.each(topItems, function (item) {
       if (item.count>1) {
