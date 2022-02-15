@@ -52,6 +52,14 @@ var getTopItems = function (items, max) {
       }
     });
     return out;
+  } else if (max===-2) {
+    let out = [];
+    _.each(topItems, function (item) {
+      if (item.count>10) {
+        out.push(item);
+      }
+    });
+    return out;
   } else {
     return _.take(topItems, max);
   }
@@ -145,11 +153,11 @@ async.series([
     var groupedByIPs = _.groupBy(endorsementsToAnalyse, function (endorsement) {
       return endorsement.ip_address;
     });
-    writeItemsToCsv("Top votes from IPs", getTopItems(groupedByIPs));
+    writeItemsToCsv("Top votes from IPs", getTopItems(groupedByIPs, -2));
     seriesCallback();
   },
   // Top 10 IPs Unique User Agents
-  function (seriesCallback) {
+  /*function (seriesCallback) {
     var groupedByIPs = _.groupBy(endorsementsToAnalyse, function (endorsement) {
       return endorsement.ip_address+":"+endorsement.user_agent;
     });
@@ -157,7 +165,7 @@ async.series([
     seriesCallback();
   },
   // Top 10 IPs Unique User Agents + User Ids
-  /*function (seriesCallback) {
+  function (seriesCallback) {
     var groupedByIPs = _.groupBy(endorsementsToAnalyse, function (endorsement) {
       return endorsement.ip_address+":"+endorsement.user_id+":"+endorsement.user_agent;
     });

@@ -66,7 +66,7 @@ const recountPost = (postId, done) => {
         post.counter_endorsements_up = endorsementsCount;
         post.counter_endorsements_down = oppositionCount;
         post.save().then( (results) => {
-          console.log("Results: "+results);
+          console.log(`Recount for post ${post.id} done`);
           done();
         });
       }).catch( (error) => {

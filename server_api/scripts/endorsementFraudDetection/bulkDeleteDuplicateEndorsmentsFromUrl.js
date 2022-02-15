@@ -8,27 +8,37 @@ const request = require('request');
 const recountCommunity = require('../../utils/recount_utils').recountCommunity;
 const recountPost = require('../../utils/recount_utils').recountPost;
 
-const communityId = process.argv[2];
-const urlToConfig = process.argv[3];
+const communityId = 1067; //process.argv[2];
+//const urlToConfig = "https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/fireworks150222-V7+-+Delete+1.csv"; // process.argv[3];
+const urlToConfig = "https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/fireworks150222-V7+-+Delete+2+(1).csv"; // process.argv[3];
+const allowDeletingSingles = "true"; //process.argv[4];
 
-let allItems = [];
-let chunks = [];
-let communityId;
+const allItems = [];
+const parse = require('csv-parse/lib/sync');
+let deletedEndorsments = 0;
+
+const postsRecounted = {};
 
 const processItemsToDestroy = (itemsToDestroy, callback) => {
   async.forEachSeries(itemsToDestroy, (item, forEachItemCallback) => {
     models.Endorsement.findOne({
       where: {
-        id: item.eId
+        id: item.endorsementId
       },
       attributes: ['id']
-    }).then( endorsement=> {
-      endorsement.deleted = true;
-      endorsement.save().then(()=>{
+    }).then( endorsement => {
+      if (endorsement) {
+        endorsement.deleted = true;
+        endorsement.save().then(()=>{
+          deletedEndorsments++;
+          forEachItemCallback();
+        }).catch( error => {
+          forEachItemCallback(error);
+        })
+      } else {
+        console.warn("Endorsement not found: "+item.endorsementId);
         forEachItemCallback();
-      }).catch( error => {
-        forEachItemCallback(error);
-      })
+      }
     }).catch( error => {
       forEachItemCallback(error);
     })
@@ -36,34 +46,45 @@ const processItemsToDestroy = (itemsToDestroy, callback) => {
     if (error) {
       callback(error)
     } else {
-      recountPost(itemsToDestroy[0].post_id, callback);
+      if (true || !postsRecounted[itemsToDestroy[0].postId]) {
+        recountPost(itemsToDestroy[0].postId, callback);
+        postsRecounted[itemsToDestroy[0].postId] = true;
+      } else {
+        callback();
+      }
     }
   });
 }
 
 const getAllItemsExceptOne = (items) => {
-  const sortedItems = _.sortBy(items, function (item) {
-    return item.date;
-  });
+  if (items.length===1 && allowDeletingSingles) {
+    return items;
+  } else {
+    const sortedItems = _.sortBy(items, function (item) {
+      return item.date;
+    });
 
-  const finalItems = [];
-  let foundEmail = false;
+    const finalItems = [];
+    let foundEmail = false;
 
-  for (let i=0; i<sortedItems.length;i++) {
-    if (!foundEmail && sortedItems[i].userEmail.indexOf("_anonymous@citizens.i") === -1) {
-      foundEmail = true;
-    } else {
-      finalItems.push(sortedItems[i]);
+    for (let i=0; i<sortedItems.length;i++) {
+      if (!foundEmail && sortedItems[i].userEmail.indexOf("_anonymous@citizens.i") === -1) {
+        foundEmail = true;
+      } else {
+        finalItems.push(sortedItems[i]);
+      }
     }
-  }
 
-  if (items.length==finalItems.length) {
-    finalItems.pop();
-  }
+    if (items.length===finalItems.length) {
+      finalItems.pop();
+    }
 
-  return finalItems;
+    return finalItems;
+  }
 }
 
+let config;
+let parsedConfig;
 async.series([
   (seriesCallback) => {
     const options = {
@@ -75,18 +96,16 @@ async.series([
         seriesCallback(content.statusCode);
       } else {
         config = content.body;
+        parsedConfig = parse(config);
         seriesCallback();
       }
     });
   },
   (seriesCallback) => {
-    let index = 0;
-    let currentChunk;
-    async.forEachSeries(config.split('\r\n'), (configLine, forEachCallback) => {
-      const splitLine = configLine.split(",");
-
-      if (splitLine[0]==null && splitLine[0]==="") {
-        items.push({
+    for (let i=0;i<parsedConfig.length;i++) {
+      const splitLine = parsedConfig[i];
+      if (splitLine[0]==="" && splitLine[1]!=="") {
+        allItems.push({
           endorsementId: splitLine[1],
           endorsementValue: splitLine[2],
           date: splitLine[3],
@@ -99,19 +118,23 @@ async.series([
           postName: splitLine[10],
           userAgent: splitLine[11]
         });
+        console.log(`Will delete vote for ${splitLine[10]} from ${splitLine[8]}`)
       }
-      forEachCallback();
-    }, error => {
-      seriesCallback(error)
-    });
+    }
+    seriesCallback();
   },
   (seriesCallback) => {
-    const chunks = _.groupBy(items, function (endorsement) {
-      return endorsement.post_id;
+    const chunks = _.groupBy(allItems, function (endorsement) {
+      return endorsement.ipAddress+":"+endorsement.postId+":"+endorsement.userAgent;
     });
     async.forEachSeries(chunks, (items, forEachChunkCallback) => {
       const itemsToDestroy = getAllItemsExceptOne(items);
-      processItemsToDestroy(itemsToDestroy, forEachChunkCallback);
+      if (itemsToDestroy.length>0) {
+        processItemsToDestroy(itemsToDestroy, forEachChunkCallback);
+      } else {
+        console.warn("Items length == 0 and no allowDeletingSingles, skipping");
+        forEachChunkCallback();
+      }
     }, error => {
       seriesCallback(error)
     });
@@ -122,5 +145,7 @@ async.series([
 ], error => {
   if (error)
     console.error(error);
+  else
+    console.log(`Deleted ${deletedEndorsments} endorsements`)
   process.exit();
 });
