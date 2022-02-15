@@ -5,10 +5,15 @@ const _ = require('lodash');
 const fs = require('fs');
 const request = require('request');
 
-const urlToConfig = process.argv[2];
+const recountCommunity = require('../../utils/recount_utils').recountCommunity;
+const recountPost = require('../../utils/recount_utils').recountPost;
 
+const communityId = process.argv[2];
+const urlToConfig = process.argv[3];
+
+let allItems = [];
 let chunks = [];
-let groupIdsToDeleteCountsFrom = [];
+let communityId;
 
 const processItemsToDestroy = (itemsToDestroy, callback) => {
   async.forEachSeries(itemsToDestroy, (item, forEachItemCallback) => {
@@ -22,23 +27,41 @@ const processItemsToDestroy = (itemsToDestroy, callback) => {
       endorsement.save().then(()=>{
         forEachItemCallback();
       }).catch( error => {
-        forEachItemCallback();
+        forEachItemCallback(error);
       })
     }).catch( error => {
       forEachItemCallback(error);
     })
   }, error => {
-    callback(error)
+    if (error) {
+      callback(error)
+    } else {
+      recountPost(itemsToDestroy[0].post_id, callback);
+    }
   });
 }
 
-const processGroupCounters = (callback) => {
-  async.forEachSeries(groups, (groupIdsToDeleteCountsFrom, forEachGroupCallback) => {
-    // DO STUFF
-    forEachGroupCallback();
-  }, error => {
-    callback(error)
+const getAllItemsExceptOne = (items) => {
+  const sortedItems = _.sortBy(items, function (item) {
+    return item.date;
   });
+
+  const finalItems = [];
+  let foundEmail = false;
+
+  for (let i=0; i<sortedItems.length;i++) {
+    if (!foundEmail && sortedItems[i].userEmail.indexOf("_anonymous@citizens.i") === -1) {
+      foundEmail = true;
+    } else {
+      finalItems.push(sortedItems[i]);
+    }
+  }
+
+  if (items.length==finalItems.length) {
+    finalItems.pop();
+  }
+
+  return finalItems;
 }
 
 async.series([
@@ -62,13 +85,8 @@ async.series([
     async.forEachSeries(config.split('\r\n'), (configLine, forEachCallback) => {
       const splitLine = configLine.split(",");
 
-      if (splitLine[0]!=null && splitLine[0]!=="") {
-        currentChunk = {};
-        currentChunk.name = splitLine[0];
-        currentChunk.items = [];
-        chunks.push(currentChunk);
-      } else {
-        currentChunk.items.push({
+      if (splitLine[0]==null && splitLine[0]==="") {
+        items.push({
           endorsementId: splitLine[1],
           endorsementValue: splitLine[2],
           date: splitLine[3],
@@ -88,28 +106,18 @@ async.series([
     });
   },
   (seriesCallback) => {
-    async.forEachSeries(chunks, (chunk, forEachChunkCallback) => {
-      if (allSamePostIds(chunk.items)) {
-        const itemsToDestroy = getAllItemsExceptOne(chunk.items);
-        groupIdsToDeleteCountsFrom = getAllGroupIdsWithUsersDeleteCounts(chunk.items);
-        processItemsToDestroy(itemsToDestroy, forEachChunkCallback);
-      } else {
-        forEachChunkCallback("Not all posts are the same")
-      }
+    const chunks = _.groupBy(items, function (endorsement) {
+      return endorsement.post_id;
+    });
+    async.forEachSeries(chunks, (items, forEachChunkCallback) => {
+      const itemsToDestroy = getAllItemsExceptOne(items);
+      processItemsToDestroy(itemsToDestroy, forEachChunkCallback);
     }, error => {
       seriesCallback(error)
     });
   },
   (seriesCallback) => {
-    async.forEachSeries(chunks, (chunk, forEachChunkCallback) => {
-      const postId = chunk.items[0].post_id;
-      recountPost(postId, forEachChunkCallback);
-    }, error => {
-      seriesCallback(error)
-    });
-  },
-  (seriesCallback) => {
-    processGroupCounters(seriesCallback);
+    recountCommunity(communityId, seriesCallback);
   }
 ], error => {
   if (error)

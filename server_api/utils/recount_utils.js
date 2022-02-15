@@ -5,6 +5,78 @@ const _ = require('lodash');
 const fs = require('fs');
 const request = require('request');
 
+const recountPost = (postId, done) => {
+  var endorsementsCount;
+  var oppositionCount;
+  var pointCount;
+  async.parallel([
+    (parallelCallback) => {
+      models.Endorsement.count({
+        where: {
+          value: 1,
+          post_id: postId
+        }
+      }).then( (count) => {
+        endorsementsCount = count;
+        parallelCallback();
+      }).catch( (error) => {
+        parallelCallback(error);
+      });
+    },
+    (parallelCallback) => {
+      models.Endorsement.count({
+        where: {
+          value: -1,
+          post_id: postId
+        }
+      }).then( (count) => {
+        oppositionCount = count;
+        parallelCallback();
+      }).catch(function (error) {
+        parallelCallback(error);
+      });
+    },
+    (parallelCallback) => {
+      models.Point.count({
+        where: {
+          $or: [
+            {value: -1},
+            {value: 1}
+          ],
+          post_id: postId
+        }
+      }).then( (count) => {
+        pointCount = count;
+        parallelCallback();
+      }).catch( (error) => {
+        parallelCallback(error);
+      });
+    }
+  ],  (error) => {
+    if (error) {
+      done(error)
+    } else {
+      models.Post.findOne({
+        where: {
+          id: postId
+        },
+        attributes: ['id','counter_endorsements_up','counter_endorsements_down','counter_points']
+      }).then( (post) => {
+        post.counter_points = pointCount;
+        post.counter_endorsements_up = endorsementsCount;
+        post.counter_endorsements_down = oppositionCount;
+        post.save().then( (results) => {
+          console.log("Results: "+results);
+          done();
+        });
+      }).catch( (error) => {
+        done(error);
+      })
+    }
+  });
+};
+
+
 const countPostInGroup = (groupId, done) => {
   models.Post.count({
     where: {
@@ -267,5 +339,6 @@ const recountCommunity = (communityId, callback) => {
 
 module.exports = {
   recountCommunity,
-  recountGroup
+  recountGroup,
+  recountPost
 };
