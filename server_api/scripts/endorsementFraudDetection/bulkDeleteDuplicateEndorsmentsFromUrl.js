@@ -8,16 +8,15 @@ const request = require('request');
 const recountCommunity = require('../../utils/recount_utils').recountCommunity;
 const recountPost = require('../../utils/recount_utils').recountPost;
 
-const communityId = 1067; //process.argv[2];
-//const urlToConfig = "https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/fireworks150222-V7+-+Delete+1.csv"; // process.argv[3];
-const urlToConfig = "https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/fireworks150222-V7+-+Delete+2+(1).csv"; // process.argv[3];
-const allowDeletingSingles = "true"; //process.argv[4];
+const communityId = process.argv[2];
+const urlToConfig = process.argv[3];
+const allowDeletingSingles = process.argv[4];
 
 const allItems = [];
 const parse = require('csv-parse/lib/sync');
 let deletedEndorsments = 0;
 
-const postsRecounted = {};
+const postsToRecount = [];
 
 const processItemsToDestroy = (itemsToDestroy, callback) => {
   async.forEachSeries(itemsToDestroy, (item, forEachItemCallback) => {
@@ -46,12 +45,10 @@ const processItemsToDestroy = (itemsToDestroy, callback) => {
     if (error) {
       callback(error)
     } else {
-      if (true || !postsRecounted[itemsToDestroy[0].postId]) {
-        recountPost(itemsToDestroy[0].postId, callback);
-        postsRecounted[itemsToDestroy[0].postId] = true;
-      } else {
-        callback();
+      if (postsToRecount.indexOf(itemsToDestroy[0].postId) == -1) {
+        postsToRecount.push(itemsToDestroy[0].postId);
       }
+      callback();
     }
   });
 }
@@ -135,6 +132,13 @@ async.series([
         console.warn("Items length == 0 and no allowDeletingSingles, skipping");
         forEachChunkCallback();
       }
+    }, error => {
+      seriesCallback(error)
+    });
+  },
+  (seriesCallback) => {
+    async.forEachSeries(postsToRecount, (postId, forEachPostCallback) => {
+      recountPost(postId, forEachPostCallback);
     }, error => {
       seriesCallback(error)
     });
