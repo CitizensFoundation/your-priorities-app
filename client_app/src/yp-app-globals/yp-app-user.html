@@ -155,6 +155,11 @@
           browserFingerprint: {
             type: String,
             value: "-1"
+          },
+
+          browserFingerprintConfidence: {
+            type: Number,
+            value: -1.0
           }
         },
 
@@ -179,6 +184,7 @@
               .then(fp => fp.get())
               .then(result => {
                 this.browserFingerprint = result.visitorId;
+                this.browserFingerprintConfidence = result.confidence.score;
               })
           } catch(error) {
             console.error(error);

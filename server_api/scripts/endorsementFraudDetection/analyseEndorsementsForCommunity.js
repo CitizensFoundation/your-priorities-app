@@ -1,4 +1,4 @@
-var models = require('../models');
+var models = require('../../models');
 var async = require('async');
 var ip = require('ip');
 var _ = require('lodash');
@@ -10,7 +10,18 @@ var endorsementsToAnalyse;
 var csvOut = "";
 
 var writeItemToCsv = function (item) {
-  return ","+item.id+","+item.value+","+item.created_at+","+item.ip_address+","+item.user_id+","+item.User.email+","+item.post_id+',"'+item.Post.name+'","'+item.user_agent+'"\n';
+  let browserId = "";
+  let browserFingerprint = "";
+
+  if (item.data) {
+    browserId = item.data.browserId;
+    browserFingerprint = item.data.browserFingerprint;
+  }
+
+  return ","+item.id+","+item.value+","+item.created_at+
+    ","+browserId+","+browserFingerprint+
+    ","+item.ip_address+","+item.user_id+","+item.User.email+","+
+    item.post_id+',"'+item.Post.name+'","'+item.user_agent+'"\n';
 };
 
 var writeItemsToCsv = function (header, items) {
@@ -39,7 +50,7 @@ async.series([
   function (seriesCallback) {
     if (communityId && !groupId) {
       models.Endorsement.findAll({
-        attributes: ["id","created_at","value","post_id","user_id","user_agent","ip_address"],
+        attributes: ["id","created_at","value","post_id","user_id","user_agent","ip_address","data"],
         include: [
           {
             model: models.User,
@@ -67,6 +78,9 @@ async.series([
         ]
       }).then(function (endorsements) {
         endorsementsToAnalyse = endorsements;
+        endorsementsToAnalyse = _.sortBy(endorsementsToAnalyse, function (item) {
+          return item.post_id;
+        });
         seriesCallback();
       })
 
@@ -78,7 +92,7 @@ async.series([
   function (seriesCallback) {
     if (groupId) {
       models.Endorsement.findAll({
-        attributes: ["id","post_id","value","user_id","user_agent","ip_address"],
+        attributes: ["id","post_id","value","user_id","user_agent","ip_address","data"],
         include: [
           {
             model: models.User,

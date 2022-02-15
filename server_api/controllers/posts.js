@@ -1239,7 +1239,8 @@ router.post('/:id/endorse', auth.can('vote on post'), function(req, res) {
             endorsement.status = 'active';
             endorsement.set('data', {
               browserId: req.body.browserId,
-              browserFingerprint: req.body.browserFingerprint
+              browserFingerprint: req.body.browserFingerprint,
+              browserFingerprintConfidence: req.body.browserFingerprintConfidence
             });
           } else {
             endorsement = models.Endorsement.build({
@@ -1248,7 +1249,8 @@ router.post('/:id/endorse', auth.can('vote on post'), function(req, res) {
               user_id: req.user.id,
               data: {
                 browserId: req.body.browserId,
-                browserFingerprint: req.body.browserFingerprint
+                browserFingerprint: req.body.browserFingerprint,
+                browserFingerprintConfidence: req.body.browserFingerprintConfidence
               },
               status: 'active',
               user_agent: req.useragent.source,

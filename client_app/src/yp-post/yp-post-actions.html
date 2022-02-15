@@ -641,7 +641,8 @@
             post_id: this.post.id,
             value: value,
             browserId:  window.appUser.getBrowserId(),
-            browserFingerprint: window.appUser.browserFingerprint
+            browserFingerprint: window.appUser.browserFingerprint,
+            browserFingerprintConfidence: window.appUser.browserFingerprintConfidence
           };
           if (this.endorseValue === value) {
             this.$.endorseAjax.method = 'DELETE';
