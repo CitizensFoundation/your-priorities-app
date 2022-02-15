@@ -637,7 +637,12 @@
       generateEndorsement: function (value) {
         if (window.appUser.loggedIn()===true) {
           this.$.endorseAjax.url = '/api/posts/' + this.post.id + '/endorse';
-          this.$.endorseAjax.body = { post_id: this.post.id, value: value };
+          this.$.endorseAjax.body = {
+            post_id: this.post.id,
+            value: value,
+            browserId:  window.appUser.getBrowserId(),
+            browserFingerprint: window.appUser.browserFingerprint
+          };
           if (this.endorseValue === value) {
             this.$.endorseAjax.method = 'DELETE';
           } else {
