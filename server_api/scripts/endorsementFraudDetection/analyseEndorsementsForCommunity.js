@@ -27,14 +27,15 @@ var writeItemToCsv = function (item) {
 var writeItemsToCsv = function (header, items) {
   csvOut += '"'+header+'",,,,,,\n';
   _.forEach(items, function (item) {
-    csvOut += '"'+item.key+'('+item.count+")"+'",,,,,,\n';
+    csvOut += '"'+item.key+' ('+item.count+")"+'",,,,,,\n';
     _.forEach(item.items, function (innerItem) {
       csvOut += writeItemToCsv(innerItem);
     });
   });
 };
 
-var getTopItems = function (items) {
+var getTopItems = function (items, max) {
+  if (!max) max = 25;
   var topItems = [];
   _.each(items, function (items, key) {
     topItems.push({key: key, count: items.length, items: items });
@@ -42,7 +43,18 @@ var getTopItems = function (items) {
   topItems = _.sortBy(topItems, function (item) {
     return -item.count;
   });
-  return _.take(topItems, 25);
+
+  if (max==-1) {
+    let out = [];
+    _.each(topItems, function (item) {
+      if (item.count>1) {
+        out.push(item);
+      }
+    });
+    return out;
+  } else {
+    return _.take(topItems, max);
+  }
 };
 
 async.series([
@@ -79,7 +91,7 @@ async.series([
       }).then(function (endorsements) {
         endorsementsToAnalyse = endorsements;
         endorsementsToAnalyse = _.sortBy(endorsementsToAnalyse, function (item) {
-          return item.post_id;
+          return [item.post_id, item.user_agent];
         });
         seriesCallback();
       })
@@ -120,6 +132,14 @@ async.series([
       seriesCallback();
     }
   },
+  // Top 10 IPs Unique User Agents + Post Ids
+  function (seriesCallback) {
+    var groupedByIPs = _.groupBy(endorsementsToAnalyse, function (endorsement) {
+      return endorsement.ip_address+":"+endorsement.post_id+":"+endorsement.user_agent;
+    });
+    writeItemsToCsv("Top votes from IP, User agent, Post Id", getTopItems(groupedByIPs, -1));
+    seriesCallback();
+  },
   // Top 10 IPs
   function (seriesCallback) {
     var groupedByIPs = _.groupBy(endorsementsToAnalyse, function (endorsement) {
@@ -137,7 +157,7 @@ async.series([
     seriesCallback();
   },
   // Top 10 IPs Unique User Agents + User Ids
-  function (seriesCallback) {
+  /*function (seriesCallback) {
     var groupedByIPs = _.groupBy(endorsementsToAnalyse, function (endorsement) {
       return endorsement.ip_address+":"+endorsement.user_id+":"+endorsement.user_agent;
     });
@@ -151,15 +171,7 @@ async.series([
     });
     writeItemsToCsv("Top votes from IP, User agent, User Id, Post Id", getTopItems(groupedByIPs));
     seriesCallback();
-  },
-  // Top 10 IPs Unique User Agents + Post Ids
-  function (seriesCallback) {
-    var groupedByIPs = _.groupBy(endorsementsToAnalyse, function (endorsement) {
-      return endorsement.ip_address+":"+endorsement.post_id+":"+endorsement.user_agent;
-    });
-    writeItemsToCsv("Top votes from IP, User agent, Post Id", getTopItems(groupedByIPs));
-    seriesCallback();
-  }
+  }*/
 ], function (error) {
     if (error) {
       console.error(error);
