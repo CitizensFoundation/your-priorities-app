@@ -1237,11 +1237,19 @@ router.post('/:id/endorse', auth.can('vote on post'), function(req, res) {
               oldEndorsementValue = -1;
             endorsement.value = req.body.value;
             endorsement.status = 'active';
+            endorsement.set('data', {
+              browserId: req.body.browserId,
+              browserFingerprint: req.body.browserFingerprint
+            });
           } else {
             endorsement = models.Endorsement.build({
               post_id: req.params.id,
               value: req.body.value,
               user_id: req.user.id,
+              data: {
+                browserId: req.body.browserId,
+                browserFingerprint: req.body.browserFingerprint
+              },
               status: 'active',
               user_agent: req.useragent.source,
               ip_address: req.clientIp

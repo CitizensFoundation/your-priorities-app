@@ -10,7 +10,7 @@ var endorsementsToAnalyse;
 var csvOut = "";
 
 var writeItemToCsv = function (item) {
-  return ","+item.id+","+item.created_at+","+item.ip_address+","+item.user_id+","+item.post_id+',"'+item.user_agent+'"\n';
+  return ","+item.id+","+item.value+","+item.created_at+","+item.ip_address+","+item.user_id+","+item.User.email+","+item.post_id+',"'+item.Post.name+'","'+item.user_agent+'"\n';
 };
 
 var writeItemsToCsv = function (header, items) {
@@ -39,16 +39,23 @@ async.series([
   function (seriesCallback) {
     if (communityId && !groupId) {
       models.Endorsement.findAll({
-        attributes: ["id","created_at","post_id","user_id","user_agent","ip_address"],
+        attributes: ["id","created_at","value","post_id","user_id","user_agent","ip_address"],
         include: [
           {
+            model: models.User,
+            attributes: ['id','name','email'],
+          },
+          {
             model: models.Post,
+            attributes: ['id','name','group_id'],
             include: [
               {
                 model: models.Group,
+                attributes: ['id','name'],
                 include: [
                   {
                     model: models.Community,
+                    attributes: ['id','name'],
                     where: {
                       id: communityId
                     }
@@ -71,10 +78,15 @@ async.series([
   function (seriesCallback) {
     if (groupId) {
       models.Endorsement.findAll({
-        attributes: ["id","post_id","user_id","user_agent","ip_address"],
+        attributes: ["id","post_id","value","user_id","user_agent","ip_address"],
         include: [
           {
+            model: models.User,
+            attributes: ['id','name','email'],
+          },
+          {
             model: models.Post,
+            attributes: ['id','name','group_id'],
             include: [
               {
                 model: models.Group,
