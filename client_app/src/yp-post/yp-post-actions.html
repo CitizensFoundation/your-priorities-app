@@ -640,9 +640,9 @@
           this.$.endorseAjax.body = {
             post_id: this.post.id,
             value: value,
-            browserId:  window.appUser.getBrowserId(),
-            browserFingerprint: window.appUser.browserFingerprint,
-            browserFingerprintConfidence: window.appUser.browserFingerprintConfidence
+            endorsementBaseId:  window.appUser.getBrowserId(),
+            endorsementValCode: window.appUser.browserFingerprint,
+            endorsementConf: window.appUser.browserFingerprintConfidence
           };
           if (this.endorseValue === value) {
             this.$.endorseAjax.method = 'DELETE';
