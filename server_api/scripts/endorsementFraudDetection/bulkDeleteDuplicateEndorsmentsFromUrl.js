@@ -18,6 +18,8 @@ let deletedEndorsments = 0;
 
 const postsToRecount = [];
 
+console.log("Starting...");
+
 const processItemsToDestroy = (itemsToDestroy, callback) => {
   async.forEachSeries(itemsToDestroy, (item, forEachItemCallback) => {
     models.Endorsement.findOne({
@@ -88,12 +90,15 @@ async.series([
       url: urlToConfig,
     };
 
+    console.log(`Get ${urlToConfig}`);
+
     request.get(options, (error, content) => {
       if (content && content.statusCode!=200) {
         seriesCallback(content.statusCode);
       } else {
         config = content.body;
         parsedConfig = parse(config);
+        console.log("Got content");
         seriesCallback();
       }
     });
@@ -124,6 +129,9 @@ async.series([
     const chunks = _.groupBy(allItems, function (endorsement) {
       return endorsement.ipAddress+":"+endorsement.postId+":"+endorsement.userAgent;
     });
+
+    console.log("Processing chunks");
+
     async.forEachSeries(chunks, (items, forEachChunkCallback) => {
       const itemsToDestroy = getAllItemsExceptOne(items);
       if (itemsToDestroy.length>0) {
