@@ -1962,4 +1962,44 @@ router.get('/:communityId/:jobId/report_creation_progress', auth.can('edit commu
   });
 });
 
+router.put('/:communityId/:type/start_endorsement_fraud_action', auth.can('edit community'), function(req, res) {
+  models.AcBackgroundJob.createJob({
+    idsToDelete: req.body.idsToDelete
+  }, (error, jobId) => {
+    if (error) {
+      log.error('Could not create backgroundJob', { err: error, context: 'start_report_creation', user: toJson(req.user.simple()) });
+      res.sendStatus(500);
+    } else {
+      queue.create('process-endorsement-fraud-action', {
+        type: req.params.type,
+        userId: req.user.id,
+        jobId: jobId,
+        communityId: req.params.communityId
+      }).priority('critical').removeOnComplete(true).save();
+
+      res.send({ jobId });
+    }
+  });
+});
+
+router.get('/:communityId/:jobId/endorsement_fraud_action_status', auth.can('edit community'), function(req, res) {
+  models.AcBackgroundJob.findOne({
+    where: {
+      id: req.params.jobId
+    },
+    attributes: ['id','progress','error','data']
+  }).then( job => {
+    res.send(job);
+    if (job.progress===100) {
+      queue.create('process-endorsement-fraud-action', {
+        type: "delete-job",
+        jobId: jobId,
+      }).priority('critical').delay(30000).removeOnComplete(true).save();
+    }
+  }).catch( error => {
+    log.error('Could not get backgroundJob', { err: error, context: 'endorsement_fraud_action_status', user: toJson(req.user.simple()) });
+    res.sendStatus(500);
+  });
+});
+
 module.exports = router;
