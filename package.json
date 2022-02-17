@@ -15,6 +15,7 @@
     "bull": "^3.22.3",
     "bunyan": "^1.8.12",
     "bunyan-prettystream": "git+https://github.com/rbjarnason/node-bunyan-prettystream.git",
+    "color-hash": "^2.0.1",
     "compression": "^1.7.4",
     "concat-stream": "^2.0.0",
     "connect-redis": "^5.2.0",
