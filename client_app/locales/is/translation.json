@@ -1,4 +1,6 @@
 {
+  "fraudManagement": "Svindl eftirlit",
+  "enableFraudDetection": "Kveikja á svindleftirliti",
   "urlToReview": "Slóð á skjal í umsögn",
   "urlToReviewActionText": "Umsögn hnappur texti",
   "copiedToClipboard": "Afritað á klemmuspjald",

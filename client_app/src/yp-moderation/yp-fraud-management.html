@@ -229,47 +229,43 @@
           </div>
         </template>
 
-        <vaadin-grid-sort-column width="130px" flex-grow="0" path="ip_address" header="[[t('ipAddress')]]">
+        <vaadin-grid-sort-column style="background-color: #F00;" width="80px" flex-grow="0" path="ip_address" header="<G>">
+          <template>[[item.key]]</template>
+        </vaadin-grid-sort-column>
+
+        <vaadin-grid-sort-column width="140px" flex-grow="0" path="ip_address" header="IP Address">
           <template>[[item.ip_address]]</template>
         </vaadin-grid-sort-column>
 
-        <vaadin-grid-sort-column width="130px" flex-grow="0" path="confidenceScore" header="[[t('confidence')]]">
+        <vaadin-grid-sort-column width="100px" flex-grow="0" path="confidenceScore" header="%">
           <template>[[item.confidenceScore]]</template>
         </vaadin-grid-sort-column>
 
-        <vaadin-grid-sort-column width="130px" flex-grow="0" path="createAtValue" header="[[t('createdAt')]]">
+        <vaadin-grid-sort-column width="150px" flex-grow="0" path="createAtValue" header="[[t('date')]]">
           <template>[[item.created_at]]</template>
         </vaadin-grid-sort-column>
 
-        <vaadin-grid-sort-column width="100px" flex-grow="0" path="data.browserId" header="[[t('browserId')]]">
+        <vaadin-grid-sort-column width="150px" flex-grow="0" path="data.browserId" header="BrowserId">
           <template>[[item.data.browserId]]</template>
         </vaadin-grid-sort-column>
 
-        <vaadin-grid-sort-column width="100px" flex-grow="0" path="data.browserFingerprint" header="[[t('browserFingerprint')]]">
+        <vaadin-grid-sort-column width="150px" flex-grow="0" path="data.browserFingerprint" header="Fingerprint">
           <template>[[item.data.browserFingerprint]]</template>
         </vaadin-grid-sort-column>
 
-        <vaadin-grid-sort-column width="100px" flex-grow="0" path="User.id" header="[[t('userId')]]">
+        <vaadin-grid-sort-column width="100px" flex-grow="0" path="User.id" header="UserId">
           <template>[[item.User.id]]</template>
         </vaadin-grid-sort-column>
 
-        <vaadin-grid-sort-column width="130px" flex-grow="0" path="User.email" header="[[t('userEmail')]]">
+        <vaadin-grid-sort-column width="170px" flex-grow="0" path="User.email" header="[[t('email')]]">
           <template>[[item.User.email]]</template>
         </vaadin-grid-sort-column>
 
-        <vaadin-grid-sort-column width="130px" flex-grow="0" path="User.name" header="[[t('userName')]]">
-          <template>[[item.User.name]]</template>
-        </vaadin-grid-sort-column>
-
-        <vaadin-grid-sort-column width="70px" flex-grow="0" path="Post.id" header="[[t('postId')]]">
+        <vaadin-grid-sort-column width="100px" flex-grow="0" path="Post.id" header="PostId">
           <template>[[item.Post.id]]</template>
         </vaadin-grid-sort-column>
 
-        <vaadin-grid-sort-column width="150px" flex-grow="0" path="Post.name" header="[[t('postName')]]">
-          <template>[[item.Post.name]]</template>
-        </vaadin-grid-sort-column>
-
-        <vaadin-grid-sort-column width="150px" flex-grow="1" path="user_agent" header="[[t('userAgent')]]">
+        <vaadin-grid-sort-column width="150px" flex-grow="1" path="user_agent" header="UserAgent">
           <template>[[item.user_agent]]</template>
         </vaadin-grid-sort-column>
 
@@ -734,6 +730,14 @@
 
         if (detail.response.data && detail.response.progress===100) {
           this.set('forceSpinner', false);
+          debugger;
+          this.$.grid.columns[0].renderer = function (cell) {
+            cell.element.innerHTML = `
+            <div style="background-color: ${cell.row.data.backgroundColor}>
+              ${cell.row.data.key}
+            </div>
+          `;
+          }.bind(this);
           this.set('items', this._uncompressItems(detail.response.data));
           this._resetSelectedAndClearCache();
         }

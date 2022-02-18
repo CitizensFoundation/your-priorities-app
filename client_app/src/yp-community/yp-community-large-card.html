@@ -359,9 +359,11 @@
               <paper-item hidden$="[[!hasCommunityAccessAndNotFolder]]" id="moderationMenuItem">
                 [[t('flaggedContent')]] <span hidden$="[[!flaggedContentCount]]">&nbsp; ([[flaggedContentCount]])</span>
               </paper-item>
-              <paper-item hidden$="[[!hasCommunityAccessAndNotFolder]]" id="fraudManagementMenuItem">
-                [[t('fraudManagement')]] <span hidden hiddentempt$="[[!flaggedContentCount]]">&nbsp; ()</span>
-              </paper-item>
+              <template is="dom-if" if="[[community.configuration.enableFraudDetection]]">
+                <paper-item hidden$="[[!hasCommunityAccessAndNotFolder]]" id="fraudManagementMenuItem">
+                  [[t('fraudManagement')]] <span hidden hiddentempt$="[[!flaggedContentCount]]">&nbsp; ()</span>
+                </paper-item>
+              </template>
               <paper-item hidden$="[[!hasCommunityAccessAndNotFolder]]" id="moderationAllMenuItem">
                 [[t('manageAllContent')]]
               </paper-item>

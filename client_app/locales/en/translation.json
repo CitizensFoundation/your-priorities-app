@@ -1,4 +1,6 @@
 {
+  "fraudManagement": "Fraud management",
+  "enableFraudDetection": "Enable fraud detection",
   "urlToReview": "URL to a document for review",
   "urlToReviewActionText": "Action text for review",
   "copiedToClipboard": "Copied to clipboard",
