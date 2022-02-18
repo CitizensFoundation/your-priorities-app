@@ -444,6 +444,7 @@
 
       _selectedMethodChanged: function (method) {
         this.async(function () {
+          this.set('items', null);
           this._masterAjax(this.selectedMethod);
         })
       },
