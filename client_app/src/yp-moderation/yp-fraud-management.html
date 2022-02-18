@@ -229,8 +229,13 @@
           </div>
         </template>
 
-        <vaadin-grid-sort-column style="background-color: #F00;" width="80px" flex-grow="0" path="ip_address" header="<G>">
-          <template>[[item.key]]</template>
+        <vaadin-grid-sort-column id="keyCol"
+                                 style="background-color: #F00;" width="80px" flex-grow="0"
+                                 path="key" header="<G>">
+        </vaadin-grid-sort-column>
+
+        <vaadin-grid-sort-column width="60px" flex-grow="0" path="groupCount" header="#">
+          <template>[[item.groupCount]]</template>
         </vaadin-grid-sort-column>
 
         <vaadin-grid-sort-column width="140px" flex-grow="0" path="ip_address" header="IP Address">
@@ -245,11 +250,11 @@
           <template>[[item.created_at]]</template>
         </vaadin-grid-sort-column>
 
-        <vaadin-grid-sort-column width="150px" flex-grow="0" path="data.browserId" header="BrowserId">
+        <vaadin-grid-sort-column width="120px" flex-grow="0" path="data.browserId" header="BrowserId">
           <template>[[item.data.browserId]]</template>
         </vaadin-grid-sort-column>
 
-        <vaadin-grid-sort-column width="150px" flex-grow="0" path="data.browserFingerprint" header="Fingerprint">
+        <vaadin-grid-sort-column width="120px" flex-grow="0" path="data.browserFingerprint" header="Fingerprint">
           <template>[[item.data.browserFingerprint]]</template>
         </vaadin-grid-sort-column>
 
@@ -257,7 +262,7 @@
           <template>[[item.User.id]]</template>
         </vaadin-grid-sort-column>
 
-        <vaadin-grid-sort-column width="170px" flex-grow="0" path="User.email" header="[[t('email')]]">
+        <vaadin-grid-sort-column flex-grow="0" path="User.email" width="210px" header="[[t('email')]]">
           <template>[[item.User.email]]</template>
         </vaadin-grid-sort-column>
 
@@ -438,6 +443,9 @@
       },
 
       _selectedMethodChanged: function (method) {
+        this.async(function () {
+          this._masterAjax(this.selectedMethod);
+        })
       },
 
       _spinnerActive: function (count, force) {
@@ -544,7 +552,7 @@
           this.$.grid.style.height = (window.innerHeight).toFixed()+'px';
         } else {
           this.$.grid.style.width = (window.innerWidth-16).toFixed()+'px';
-          this.$.grid.style.height = (window.innerHeight).toFixed()+'px';
+          this.$.grid.style.height = (window.innerHeight-154).toFixed()+'px';
         }
       },
 
@@ -674,7 +682,6 @@
         if (newDomainId) {
           this._reset();
           this.set('modelType', 'domains');
-          this._masterAjax(this.selectedMethod);
         }
       },
 
@@ -682,7 +689,6 @@
         if (newGroupId) {
           this._reset();
           this.set('modelType', 'groups');
-          this._masterAjax(this.selectedMethod);
         }
       },
 
@@ -690,7 +696,6 @@
         if (newCommunityId) {
           this._reset();
           this.set('modelType', 'communities');
-          this._masterAjax(this.selectedMethod);
         }
       },
 
@@ -730,17 +735,20 @@
 
         if (detail.response.data && detail.response.progress===100) {
           this.set('forceSpinner', false);
-          debugger;
-          this.$.grid.columns[0].renderer = function (cell) {
-            cell.element.innerHTML = `
-            <div style="background-color: ${cell.row.data.backgroundColor}>
-              ${cell.row.data.key}
-            </div>
-          `;
-          }.bind(this);
+          this._setupRenderers();
           this.set('items', this._uncompressItems(detail.response.data));
           this._resetSelectedAndClearCache();
         }
+      },
+
+      _setupRenderers: function () {
+        this.$$('#keyCol').renderer = function (root, column, model) {
+          root.innerHTML = `
+            <div style="text-align: center;background-color: ${model.item.backgroundColor}">
+              ${model.item.key}
+            </div>
+          `;
+        }.bind(this);
       },
 
       setup: function (groupId, communityId, domainId, typeOfModeration, userId) {
