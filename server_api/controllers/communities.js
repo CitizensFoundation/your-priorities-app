@@ -1970,7 +1970,7 @@ router.put('/:communityId/:type/start_endorsement_fraud_action', auth.can('edit 
       log.error('Could not create backgroundJob', { err: error, context: 'start_report_creation', user: toJson(req.user.simple()) });
       res.sendStatus(500);
     } else {
-      queue.create('process-endorsement-fraud-action', {
+      queue.create('process-fraud-action', {
         type: req.params.type,
         userId: req.user.id,
         jobId: jobId,
@@ -1991,7 +1991,7 @@ router.get('/:communityId/:jobId/endorsement_fraud_action_status', auth.can('edi
   }).then( job => {
     res.send(job);
     if (job.progress===100) {
-      queue.create('process-endorsement-fraud-action', {
+      queue.create('process-fraud-action', {
         type: "delete-job",
         jobId: jobId,
       }).priority('critical').delay(30000).removeOnComplete(true).save();

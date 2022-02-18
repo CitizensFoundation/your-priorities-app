@@ -14,7 +14,7 @@
 <link rel="import" href="../yp-behaviors/yp-number-format-behavior.html" >
 <link rel="import" href="../yp-behaviors/yp-language-behavior.html" >
 
-<dom-module id="yp-endorsement-fraud">
+<dom-module id="yp-fraud-management">
   <template>
     <style include="iron-flex iron-flex-alignment">
       #dialog {
@@ -194,7 +194,9 @@
             <span hidden$="[[!totalItemsCount]]">([[totalItemsCount]] [[itemsCountText]])</span>
           </div>
         </div>
-        <div hidden$="[[!spinnerActive]]"><paper-spinner active></paper-spinner></div>
+
+        <paper-progress id="progress" value="[[progress]]" hidden$="[[items]]"></paper-progress>
+
         <div class="flex"></div>
         <div class="checkBox" hidden$="[[narrow]]"><paper-checkbox checked="{{multiSortEnabled}}">[[t('multiSortEnabled')]]</paper-checkbox></div>
         <div hidden$="[[!showReload]]">
@@ -202,6 +204,14 @@
         </div>
       </div>
 
+      <paper-tabs selected="{{selectedMethod}}" attr-for-selected="name">
+        <paper-tab name="byIpUserAgentPostId">[[t('byIpUserAgentPostId')]]</paper-tab>
+        <paper-tab name="byMissingBrowserFingerprint">[[t('byMissingBrowserFingerprint')]]</paper-tab>
+        <paper-tab name="byIpAddress">[[t('byIpAddress')]]</paper-tab>
+      </paper-tabs>
+
+      <template is="dom-if" if="[[items]]">
+      </template>
       <vaadin-grid id="grid" multi-sort="[[multiSortEnabled]]" active-item="{{activeItem}}" aria-label$="[[headerText]]" items="[[items]]" selected-items="{{selectedItems}}">
         <vaadin-grid-selection-column>
         </vaadin-grid-selection-column>
@@ -209,12 +219,6 @@
         <template class="row-details">
           <div class="details layout vertical center-center detailArea">
             <div class="layout horizontal">
-              <template is="dom-if" if="[[item.is_post]]">
-                <div class="layout vertical center-center">
-                  <yp-post-header hide-actions post="[[item]]" post-name="[[item.name]]"header-mode></yp-post-header>
-                  <a href="/post/[[item.id]]" target="_blank"><paper-icon-button aria-label$="[[t('linkToContentItem')]]" class="linkIcon" icon="link"></paper-icon-button></a>
-                </div>
-              </template>
               <template is="dom-if" if="[[item.is_point]]">
                 <div class="layout vertical center-center">
                   <yp-point hide-actions point="[[item]]" post="[[item.Post]]"></yp-point>
@@ -222,73 +226,52 @@
                 </div>
               </template>
             </div>
-            <div hidden$="[[!item.toxicityScore]]" class="layout horizontal analysis">
-              <div class="layout vertical leftColumn" hidden$="[[userId]]">
-                <div class="mainScore" hidden$="[[!item.moderation_data.moderation.toxicityScore]]">Toxicity Score: [[_toPercent(item.moderation_data.moderation.toxicityScore)]]</div>
-                <div hidden$="[[!item.moderation_data.moderation.identityAttackScore]]">Identity Attack Score: [[_toPercent(item.moderation_data.moderation.identityAttackScore)]]</div>
-                <div hidden$="[[!item.moderation_data.moderation.identityAttachScore]]">Identity Attack Score: [[_toPercent(item.moderation_data.moderation.identityAttachScore)]]</div>
-                <div hidden$="[[!item.moderation_data.moderation.threatScore]]">Threat Score: [[_toPercent(item.moderation_data.moderation.threatScore)]]</div>
-                <div hidden$="[[!item.moderation_data.moderation.insultScore]]">Insult Score: [[_toPercent(item.moderation_data.moderation.insultScore)]]</div>
-              </div>
-              <div class="layout vertical" hidden$="[[userId]]">
-                <div class="mainScore" hidden$="[[!item.moderation_data.moderation.severeToxicityScore]]">Severe Toxicity Score: [[_toPercent(item.moderation_data.moderation.severeToxicityScore)]]</div>
-                <div hidden$="[[!item.moderation_data.moderation.profanityScore]]">Profanity Score: [[_toPercent(item.moderation_data.moderation.profanityScore)]]</div>
-                <div hidden$="[[!item.moderation_data.moderation.sexuallyExplicitScore]]">Sexually Excplicit Score: [[_toPercent(item.moderation_data.moderation.sexuallyExplicitScore)]]</div>
-                <div hidden$="[[!item.moderation_data.moderation.flirtationScore]]">Flirtation Score: [[_toPercent(item.moderation_data.moderation.flirtationScore)]]</div>
-              </div>
-            </div>
           </div>
         </template>
 
-        <vaadin-grid-sort-column width="130px" flex-grow="0" path="firstReportedDate" header="[[t('firstReported')]]" hidden$="[[onlyFlaggedItems]]">
-          <template>[[item.firstReportedDateFormatted]]</template>
+        <vaadin-grid-sort-column width="130px" flex-grow="0" path="ip_address" header="[[t('ipAddress')]]">
+          <template>[[item.ip_address]]</template>
         </vaadin-grid-sort-column>
 
-        <vaadin-grid-sort-column width="130px" flex-grow="0" path="lastReportedAtDate" header="[[t('lastReported')]]" hidden$="[[userId]]">
-          <template>[[item.lastReportedAtDateFormatted]]</template>
+        <vaadin-grid-sort-column width="130px" flex-grow="0" path="confidenceScore" header="[[t('confidence')]]">
+          <template>[[item.confidenceScore]]</template>
         </vaadin-grid-sort-column>
 
-        <vaadin-grid-sort-column width="100px" text-align="start" flex-grow="0" path="type" header="[[t('type')]]">
-          <template>[[_getType(item.type)]]</template>
+        <vaadin-grid-sort-column width="130px" flex-grow="0" path="createAtValue" header="[[t('createdAt')]]">
+          <template>[[item.created_at]]</template>
         </vaadin-grid-sort-column>
 
-        <vaadin-grid-sort-column width="100px" text-align="start" flex-grow="0" path="status" header="[[t('publishStatus')]]">
-          <template>[[item.status]]</template>
+        <vaadin-grid-sort-column width="100px" flex-grow="0" path="data.browserId" header="[[t('browserId')]]">
+          <template>[[item.data.browserId]]</template>
         </vaadin-grid-sort-column>
 
-        <vaadin-grid-sort-column width="100px" text-align="center" flex-grow="0" path="counter_flags" header="[[t('flags')]]" hidden$="[[userId]]">
-          <template>[[item.counter_flags]]</template>
+        <vaadin-grid-sort-column width="100px" flex-grow="0" path="data.browserFingerprint" header="[[t('browserFingerprint')]]">
+          <template>[[item.data.browserFingerprint]]</template>
         </vaadin-grid-sort-column>
 
-        <vaadin-grid-sort-column  width="130px" text-align="start" flex-grow="0" path="source" header="[[t('source')]]" hidden$="[[!onlyFlaggedItems]]">
-          <template>[[item.source]]</template>
+        <vaadin-grid-sort-column width="100px" flex-grow="0" path="User.id" header="[[t('userId')]]">
+          <template>[[item.User.id]]</template>
         </vaadin-grid-sort-column>
 
-        <vaadin-grid-sort-column width="105px" text-align="center" flex-grow="0" path="toxicityScoreRaw" header="[[t('toxicityScore')]]?" hidden$="[[userId]]">
-          <template>[[item.toxicityScore]]</template>
+        <vaadin-grid-sort-column width="130px" flex-grow="0" path="User.email" header="[[t('userEmail')]]">
+          <template>[[item.User.email]]</template>
         </vaadin-grid-sort-column>
 
-        <vaadin-grid-sort-column width="150px" text-align="start" flex-grow="1" path="groupName" header="[[t('groupName')]]" hidden$="[[!userId]]">
-          <template>[[item.groupName]]</template>
+        <vaadin-grid-sort-column width="130px" flex-grow="0" path="User.name" header="[[t('userName')]]">
+          <template>[[item.User.name]]</template>
         </vaadin-grid-sort-column>
 
-        <vaadin-grid-filter-column width="200px" flex-grow="4" path="content" header="[[t('content')]]" hidden$="[[narrow]]">
-          <template>
-            <div class="layout horizontal">
-              <yp-magic-text content-id="[[item.id]]" content="[[item.pointTextContent]]" text-type="pointContent"></yp-magic-text>
-              <yp-magic-text content-id="[[item.id]]" content="[[item.postNameContent]]" text-type="postName"></yp-magic-text> &nbsp;
-              <yp-magic-text content-id="[[item.id]]" content="[[item.postTextContent]]" text-type="postContent"></yp-magic-text> &nbsp;
-              <yp-magic-text content-id="[[item.id]]" content="[[item.postTranscriptContent]]" text-type="postTranscriptContent"></yp-magic-text>
-            </div>
-          </template>
-        </vaadin-grid-filter-column>
+        <vaadin-grid-sort-column width="70px" flex-grow="0" path="Post.id" header="[[t('postId')]]">
+          <template>[[item.Post.id]]</template>
+        </vaadin-grid-sort-column>
 
-        <vaadin-grid-filter-column flex-grow="1" path="user_email" width="150px" header="[[t('creator')]]" hidden$="[[userId]]">
-          <template>[[item.user_email]]</template>
-        </vaadin-grid-filter-column>
+        <vaadin-grid-sort-column width="150px" flex-grow="0" path="Post.name" header="[[t('postName')]]">
+          <template>[[item.Post.name]]</template>
+        </vaadin-grid-sort-column>
 
-        <vaadin-grid-filter-column flex-grow="0" path="lastReportedByEmail" width="150px" header="[[t('flaggedBy')]]" hidden$="[[!onlyFlaggedItems]]">
-        </vaadin-grid-filter-column>
+        <vaadin-grid-sort-column width="150px" flex-grow="1" path="user_agent" header="[[t('userAgent')]]">
+          <template>[[item.user_agent]]</template>
+        </vaadin-grid-sort-column>
 
         <vaadin-grid-column width="70px" flex-grow="0">
           <template class="header">
@@ -296,18 +279,6 @@
               <paper-icon-button aria-label$="[[t('openSelectedItemsMenu')]]" icon="more-vert" slot="dropdown-trigger" on-tap="_menuOpened"></paper-icon-button>
               <paper-listbox slot="dropdown-content" on-iron-select="_menuSelection">
                 <template is="dom-if" if="[[!selectedItemsEmpty]]" restamp>
-                  <paper-item data-args$="[[item.id]]" hidden$="[[userId]]" on-tap="_approveSelected">
-                    [[t('approveSelectedContent')]] [[selectedItemsCount]]
-                  </paper-item>
-                  <paper-item data-args$="[[item.id]]" hidden$="[[!onlyFlaggedItems]]" on-tap="_clearSelectedFlags">
-                    [[t('clearSelectedFlags')]] [[selectedItemsCount]]
-                  </paper-item>
-                  <paper-item data-args$="[[item.id]]" hidden$="[[userId]]" on-tap="_blockSelected">
-                    [[t('blockSelectedContent')]] [[selectedItemsCount]]
-                  </paper-item>
-                  <paper-item data-args$="[[item.id]]" hidden$="[[!userId]]" on-tap="_anonymizeSelected">
-                    [[t('anonymizeSelectedContent')]] [[selectedItemsCount]]
-                  </paper-item>
                   <paper-item data-args$="[[item.id]]" on-tap="_deleteSelected">
                     [[t('deleteSelectedContent')]] [[selectedItemsCount]]
                   </paper-item>
@@ -319,18 +290,6 @@
             <paper-menu-button horizontal-align="right" class="helpButton" on-opened-changed="_refreshGridAsyncDelay">
               <paper-icon-button aria-label$="[[t('openOneItemMenu')]]" icon="more-vert" data-args$="[[item.id]]" on-tap="_setSelected" slot="dropdown-trigger"></paper-icon-button>
               <paper-listbox slot="dropdown-content" on-iron-select="_menuSelection">
-                <paper-item data-args$="[[item.id]]" data-model-class$="[[item.type]]" hidden$="[[userId]]" on-tap="_approve">
-                  [[t('approveContent')]]
-                </paper-item>
-                <paper-item data-args$="[[item.id]]" data-model-class$="[[item.type]]" hidden$="[[!onlyFlaggedItems]]" on-tap="_clearFlags">
-                  [[t('clearFlags')]]
-                </paper-item>
-                <paper-item data-args$="[[item.id]]" data-model-class$="[[item.type]]" hidden$="[[userId]]" on-tap="_block">
-                  [[t('blockContent')]]
-                </paper-item>
-                <paper-item data-args$="[[item.id]]" data-model-class$="[[item.type]]" hidden$="[[!userId]]" on-tap="_anonymize">
-                  [[t('anonymizeContent')]]
-                </paper-item>
                 <paper-item data-args$="[[item.id]]" data-model-class$="[[item.type]]" on-tap="_delete">
                   [[t('deleteContent')]]
                 </paper-item>
@@ -339,12 +298,12 @@
           </template>
         </vaadin-grid-column>
       </vaadin-grid>
+
     </paper-dialog>
 
-    <div class="layout horizontal center-center">
-      <yp-ajax id="ajax" on-response="_itemsResponse" on-error="_ajaxError"></yp-ajax>
-      <yp-ajax method="DELETE" id="singleItemAjax" on-error="_ajaxError" on-response="_singleItemResponse"></yp-ajax>
-      <yp-ajax method="DELETE" id="manyItemsAjax" on-error="_ajaxError" on-response="_manyItemsResponse"></yp-ajax>
+    <div class="layout horizontal center-center" hidden>
+      <yp-ajax hidden method="PUT" id="startAjax" on-response="_startResponse"></yp-ajax>
+      <yp-ajax hidden method="GET" id="progressAjax" on-response="_progressResponse"></yp-ajax>
     </div>
     <iron-media-query query="(max-width: 600px)" query-matches="{{narrow}}"></iron-media-query>
   </template>
@@ -352,7 +311,7 @@
   <script>
     Polymer({
 
-      is: 'yp-endorsement-fraud',
+      is: 'yp-fraud-management',
 
       behaviors: [
         Polymer.ypLanguageBehavior,
@@ -364,6 +323,11 @@
         multiSortEnabled: {
           type: Boolean,
           value: false
+        },
+
+        jobId: {
+          type: Number,
+          value: null
         },
 
         items: {
@@ -389,11 +353,6 @@
         communityId: {
           type: Number,
           observer: '_communityIdChanged'
-        },
-
-        userId: {
-          type: Number,
-          observer: '_userIdChanged'
         },
 
         selected: {
@@ -424,7 +383,7 @@
           value: true
         },
 
-        selectedItemIdsAndType: {
+        selectedItemIds: {
           type: Array
         },
 
@@ -455,14 +414,15 @@
           observer: '_activeItemChanged'
         },
 
+        selectedMethod: {
+          type: String,
+          observer: '_selectedMethodChanged',
+          value: 'byIpUserAgentPostId'
+        },
+
         typeOfModeration: {
           type: String,
           value: "/flagged_content"
-        },
-
-        onlyFlaggedItems: {
-          type: Boolean,
-          computed: '_onlyFlaggedItems(typeOfModeration)'
         },
 
         showReload: {
@@ -481,6 +441,9 @@
         }
       },
 
+      _selectedMethodChanged: function (method) {
+      },
+
       _spinnerActive: function (count, force) {
         return !count || force
       },
@@ -494,22 +457,9 @@
       },
 
       _reload: function () {
-        this.$.ajax.generateRequest();
+        this.$.startAjax.generateRequest();
+        this.set('items', null);
         this.set('forceSpinner', true);
-      },
-
-      _onlyFlaggedItems: function (typeOfModeration) {
-        return typeOfModeration==="/flagged_content";
-      },
-
-      _manyItemsResponse: function () {
-        this.set('forceSpinner', false);
-        this.set('showReload', true);
-        window.appGlobals.notifyUserViaToast(this.t('operationInProgressTryReloading'));
-      },
-
-      _singleItemResponse: function () {
-        this._reload();
       },
 
       _getType: function(type) {
@@ -546,6 +496,20 @@
           this.$.grid.fire('iron-resize');
           this.$.grid.notifyResize();
         }, ms);
+      },
+
+      _pollLaterForProgress: function () {
+        if (this.groupId) {
+          this.$.progressAjax.url = "/api/groups/"+this.groupId+"/"+this.jobId+"/endorsement_fraud_action_status";
+        } else if (this.communityId) {
+          this.$.progressAjax.url = "/api/communities/"+this.communityId+"/"+this.jobId+"/endorsement_fraud_action_status";
+        } else if (this.domainId) {
+          this.$.progressAjax.url = "/api/communities/"+this.domainId+"/"+this.jobId+"/endorsement_fraud_action_status";
+        }
+
+        this.async(function () {
+          this.$.progressAjax.generateRequest();
+        }, 1000);
       },
 
       _menuSelection: function (event, detail) {
@@ -604,7 +568,7 @@
           this.set('selectedItemsEmpty', true);
           this.set('selectedItemsCount', 0);
         }
-        this.selectedItemIdsAndType = this.selectedItems.map(function (item) { return { id: item.id, modelType: item.type }});
+        this.selectedItemIds = this.selectedItems.map(function (item) { return  item.id });
 
         this._refreshGridAsyncDelay();
       },
@@ -629,7 +593,7 @@
       },
 
       _reallyDeleteSelected: function () {
-        this._ajaxMaster(this.$.manyItemsAjax, 'delete', this.selectedItemIdsAndType);
+        this._masterAjax('delete', this.selectedItemIds);
       },
 
       _delete: function (event) {
@@ -640,87 +604,41 @@
       },
 
       _reallyDelete: function () {
-        this._ajaxMaster(this.$.singleItemAjax, 'delete');
+        this._masterAjax('delete');
       },
 
-      _anonymizeSelected: function (event) {
-        this._setupItemIdFromEvent(event);
-        Polymer.dom(document).querySelector('yp-app').getDialogAsync("confirmationDialog", function (dialog) {
-          dialog.open(this.t('areYouSureAnonymizeSelectedContent'), this._reallyAnonymizeSelected.bind(this), true, true);
-        }.bind(this));
-      },
-
-      _reallyAnonymizeSelected: function () {
-        this._ajaxMaster(this.$.manyItemsAjax, 'anonymize', this.selectedItemIdsAndType);
-      },
-
-      _anonymize: function (event) {
-        this._setupItemIdFromEvent(event);
-        Polymer.dom(document).querySelector('yp-app').getDialogAsync("confirmationDialog", function (dialog) {
-          dialog.open(this.t('areYouSureAnonymizeContent'), this._reallyAnonymize.bind(this), true, false);
-        }.bind(this));
-      },
-
-      _reallyAnonymize: function () {
-        this._ajaxMaster(this.$.singleItemAjax, 'anonymize');
-      },
-
-      _approve: function (event) {
-        this._setupItemIdFromEvent(event);
-        this._ajaxMaster(this.$.singleItemAjax, 'approve');
-      },
-
-      _approveSelected: function (event) {
-        this._setupItemIdFromEvent(event);
-        this._ajaxMaster(this.$.manyItemsAjax, 'approve', this.selectedItemIdsAndType);
-      },
-
-      _block: function (event) {
-        this._setupItemIdFromEvent(event);
-        this._ajaxMaster(this.$.singleItemAjax, 'block');
-      },
-
-      _blockSelected: function (event) {
-        this._setupItemIdFromEvent(event);
-        this._ajaxMaster(this.$.manyItemsAjax, 'block', this.selectedItemIdsAndType);
-      },
-
-      _clearFlags: function (event) {
-        this._setupItemIdFromEvent(event);
-        this._ajaxMaster(this.$.singleItemAjax, 'clearFlags');
-      },
-
-      _clearSelectedFlags: function (event) {
-        this._setupItemIdFromEvent(event);
-        this._ajaxMaster(this.$.manyItemsAjax, 'clearFlags', this.selectedItemIdsAndType);
-      },
-
-      _ajaxMaster: function (ajax, action, itemIdsAndType) {
+      _masterAjax: function (action, itemIds) {
         var url, collectionId;
+        this.set('jobId', null);
         if (this.modelType==="groups" && this.groupId) {
           collectionId = this.groupId;
         } else if (this.modelType==="communities" && this.communityId) {
           collectionId = this.communityId;
         } else if (this.modelType==="domains" && this.domainId) {
           collectionId = this.domainId;
-        } else if (this.modelType==="users" && this.userId) {
-          collectionId = this.userId;
         } else {
           console.error("Can't find model type or ids");
           return;
         }
-        if (itemIdsAndType && itemIdsAndType.length>0) {
-          url = "/api/" + this.modelType + "/" + collectionId + "/" +action+ "/process_many_moderation_item";
-          ajax.body = { items: itemIdsAndType };
-        } else if (this.selectedItemId) {
-          url = "/api/" + this.modelType + "/" + collectionId + "/" + this.selectedItemId+ '/'+this.selectedModelClass+'/'+action+"/process_one_moderation_item" ;
-          ajax.body = {};
+
+        url = "/api/" + this.modelType + "/" + collectionId + "/" +action+ "/start_endorsement_fraud_action";
+
+        if (action==="delete") {
+          if (itemIds && itemIds.length>0) {
+            this.$.startAjax.body = { idsToDelete: itemIds };
+          } else if (this.selectedItemId) {
+            this.$.startAjax.body = { idsToDelete: [this.selectedItemId] };
+          } else {
+            console.error("No item ids to process");
+            return;
+          }
         } else {
-          console.error("No item ids to process");
-          return;
+          this.$.startAjax.body = {};
         }
-        ajax.url = url;
-        ajax.generateRequest();
+
+        this.$.startAjax.url = url;
+        this.$.startAjax.generateRequest();
+
         this.set('forceSpinner', true);
 
         if (this.selectedItemId) {
@@ -760,7 +678,7 @@
         if (newDomainId) {
           this._reset();
           this.set('modelType', 'domains');
-          this._generateRequest(newDomainId);
+          this._masterAjax(this.selectedMethod);
         }
       },
 
@@ -768,7 +686,7 @@
         if (newGroupId) {
           this._reset();
           this.set('modelType', 'groups');
-          this._generateRequest(newGroupId);
+          this._masterAjax(this.selectedMethod);
         }
       },
 
@@ -776,40 +694,55 @@
         if (newCommunityId) {
           this._reset();
           this.set('modelType', 'communities');
-          this._generateRequest(newCommunityId);
+          this._masterAjax(this.selectedMethod);
         }
       },
 
-      _userIdChanged: function (userId) {
-        if (userId) {
-          this._reset();
-          this.set('modelType', 'users');
-          this._generateRequest(userId);
+      _uncompressItems: function (itemData) {
+        var outItems = [];
+
+        for (var i=0;i<itemData.items.length;i++) {
+          itemData.items[i].user_agent = itemData.cUserAgents[itemData.items[i].user_agent];
+          itemData.items[i].User.email  = itemData.cEmails[itemData.items[i].User.email ];
+          itemData.items[i].User.name = itemData.cNames[itemData.items[i].User.name];
+          itemData.items[i].Post.name = itemData.cPostNames[itemData.items[i].Post.name];
+          outItems.push(itemData.items[i]);
         }
+
+        return outItems;
       },
 
-      _generateRequest: function (id) {
-        this.$.ajax.url = "/api/"+this.modelType+"/"+id+this.typeOfModeration;
-        this.$.ajax.generateRequest();
+      _startResponse: function (event, detail) {
+        this.jobId = detail.response.jobId;
+        this._pollLaterForProgress();
       },
 
-      _itemsResponse: function (event, detail) {
-        this.set('forceSpinner', false);
-        this.set('items', detail.response);
-        this._resetSelectedAndClearCache();
+      _progressResponse: function (event, detail) {
+        if (!detail.response.error &&
+          detail.response.progress!==null &&
+          this.jobId &&
+          !detail.response.data &&
+          detail.response.progress<100) {
+          this._pollLaterForProgress();
+        }
+
+        this.set('progress', detail.response.progress);
+
+        if (detail.response.error) {
+          this.set('error', this.t(detail.response.error));
+        }
+
+        if (detail.response.data && detail.response.progress===100) {
+          this.set('forceSpinner', false);
+          this.set('items', this._uncompressItems(detail.response.data));
+          this._resetSelectedAndClearCache();
+        }
       },
 
       setup: function (groupId, communityId, domainId, typeOfModeration, userId) {
-        if (typeOfModeration) {
-          this.set('typeOfModeration', typeOfModeration);
-        } else {
-          this.set('typeOfModeration', "/flagged_content");
-        }
-
         this.set('groupId', null);
         this.set('communityId', null);
         this.set('domainId', null);
-        this.set('userId', null);
         this.set('items', null);
 
         if (groupId)
@@ -820,9 +753,6 @@
 
         if (domainId)
           this.set('domainId', domainId);
-
-        if (userId)
-          this.set('userId', userId);
 
         this._setupHeaderText();
       },
@@ -841,7 +771,7 @@
       _resetSelectedAndClearCache: function () {
         this.set('selectedItemsCount', 0);
         this.set('selectedItemsEmpty', true);
-        this.set('selectedItemIdsAndType', []);
+        this.set('selectedItemIds', []);
         this.set('selectedItems', []);
         this.$.grid.clearCache();
       },
@@ -853,13 +783,11 @@
           this.set('itemsCountText', this.t('items'));
         }
         if (this.groupId) {
-          this.set('headerText', this.t('groupContentModeration'));
+          this.set('headerText', this.t('groupFraudManagement'));
         } else if (this.communityId) {
-          this.set('headerText', this.t('communityContentModeration'));
+          this.set('headerText', this.t('communityFraudManagement'));
         } else if (this.domainId) {
-          this.set('headerText', this.t('domainContentModeration'));
-        } else if (this.userId) {
-          this.set('headerText', this.t('userContentModeration'));
+          this.set('headerText', this.t('domainFraudManagement'));
         }
       }
     });

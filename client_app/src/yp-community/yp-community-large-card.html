@@ -359,6 +359,9 @@
               <paper-item hidden$="[[!hasCommunityAccessAndNotFolder]]" id="moderationMenuItem">
                 [[t('flaggedContent')]] <span hidden$="[[!flaggedContentCount]]">&nbsp; ([[flaggedContentCount]])</span>
               </paper-item>
+              <paper-item hidden$="[[!hasCommunityAccessAndNotFolder]]" id="fraudManagementMenuItem">
+                [[t('fraudManagement')]] <span hidden hiddentempt$="[[!flaggedContentCount]]">&nbsp; ()</span>
+              </paper-item>
               <paper-item hidden$="[[!hasCommunityAccessAndNotFolder]]" id="moderationAllMenuItem">
                 [[t('manageAllContent')]]
               </paper-item>
@@ -585,6 +588,8 @@
           this.fire('yp-new-group');
         else if (detail.item.id==="moderationMenuItem")
           this._openContentModeration();
+        else if (detail.item.id==="fraudManagementMenuItem")
+          this._openFraudManagement();
         else if (detail.item.id==="moderationAllMenuItem")
           this._openAllContentModeration();
         else if (detail.item.id==="anonymizeMenuItem")
@@ -612,6 +617,14 @@
       _openContentModeration: function () {
         window.appGlobals.activity('open', 'communityContentModeration');
         Polymer.dom(document).querySelector('yp-app').getContentModerationAsync(function (dialog) {
+          dialog.setup(null, this.community.id, null, false);
+          dialog.open(this.community.name);
+        }.bind(this));
+      },
+
+      _openFraudManagement: function () {
+        window.appGlobals.activity('open', 'communityFraudManagement');
+        Polymer.dom(document).querySelector('yp-app').getFraudManagementAsync(function (dialog) {
           dialog.setup(null, this.community.id, null, false);
           dialog.open(this.community.name);
         }.bind(this));

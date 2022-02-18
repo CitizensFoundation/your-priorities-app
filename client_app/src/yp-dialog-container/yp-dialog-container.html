@@ -194,6 +194,10 @@
           <yp-content-moderation id="contentModeration"></yp-content-moderation>
         </template>
 
+        <template is="dom-if" name="fraudManagement" restamp>
+          <yp-fraud-management id="fraudManagement"></yp-fraud-management>
+        </template>
+
         <template is="dom-if" name="createReport" restamp>
           <yp-create-report id="createReport"></yp-create-report>
         </template>
@@ -292,6 +296,11 @@
         },
 
         gotContentModeration: {
+          type: Boolean,
+          value: false
+        },
+
+        gotFraudManagement: {
           type: Boolean,
           value: false
         },
@@ -476,6 +485,22 @@
               console.info("Have loaded contentModeration");
               this.set('gotContentModeration', true);
               this.getDialogAsync("contentModeration", callback);
+            }.bind(this), null, true);
+          }.bind(this), null, true);
+        }
+      },
+
+      getFraudManagementAsync: function (callback) {
+        if (this.gotFraudManagement) {
+          this.getDialogAsync("fraudManagement", callback);
+        } else {
+          this.$.loadingDialog.open();
+          this.importHref(this.resolveUrl("/src/yp-dialog-container/yp-dialog-vaadin-grid-shared.html"), function () {
+            this.importHref(this.resolveUrl("/src/yp-dialog-container/yp-dialog-container-moderation.html"), function () {
+              this.$.loadingDialog.close();
+              console.info("Have loaded fraudManagement");
+              this.set('gotFraudManagement', true);
+              this.getDialogAsync("fraudManagement", callback);
             }.bind(this), null, true);
           }.bind(this), null, true);
         }
