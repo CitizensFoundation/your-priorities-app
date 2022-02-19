@@ -1,8 +1,6 @@
 {
+  "fraudPostsAndPointsInfo": "WARNING: Use with care",
   "communityFraudManagement": "Community Fraud Management",
-  "byMissingBrowserFingerprint": "By missing brower fingerPrint",
-  "byIpUserAgentPostId": "By IP & UserAgent & PostId",
-  "byIpAddress": "By IP Address",
   "fraudManagement": "Fraud management",
   "enableFraudDetection": "Enable fraud detection",
   "urlToReview": "URL to a document for review",

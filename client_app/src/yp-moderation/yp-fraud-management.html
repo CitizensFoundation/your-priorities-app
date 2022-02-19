@@ -177,6 +177,18 @@
       vaadin-grid {
         font-size: 14px;
       }
+
+      .fraudPostsAndPointsInfo {
+        color: #F00;
+      }
+
+      .detailArea {
+        padding-top: 2px;
+      }
+      .detailAreas {
+          padding-bottom: 12px;
+          padding-left: 16px;
+      }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
@@ -198,6 +210,25 @@
         <paper-progress id="progress" value="[[progress]]" hidden$="[[items]]"></paper-progress>
 
         <div class="flex"></div>
+        <div class="layout horizontal">
+          <paper-radio-group required data-type="radios" on-selected-changed="_radioChanged" class="segmentRadio">
+            <div class="layout horizontal">
+              <div class="layout vertical">
+                <paper-radio-button name="endorsementsMode">Endorsements</paper-radio-button>
+                <paper-radio-button name="rankingsMode">Rankings</paper-radio-button>
+                <paper-radio-button name="qualitiesMode">PointQualities</paper-radio-button>
+              </div>
+              <div class="layout vertical">
+                <div class="fraudPostsAndPointsInfo">
+                  [[t(fraudPostsAndPointsInfo)]]
+                </div>
+                <paper-radio-button name="pointsMode">Points</paper-radio-button>
+                <paper-radio-button name="postsMode">Posts</paper-radio-button>
+              </div>
+            </div>
+          </paper-radio-group>
+        </div>
+
         <div class="checkBox" hidden$="[[narrow]]"><paper-checkbox checked="{{multiSortEnabled}}">[[t('multiSortEnabled')]]</paper-checkbox></div>
         <div hidden$="[[!showReload]]">
           <paper-icon-button aria-label$="[[t('reload')]]" icon="autorenew" class="closeButton" on-tap="_reload"></paper-icon-button>
@@ -205,9 +236,11 @@
       </div>
 
       <paper-tabs selected="{{selectedMethod}}" attr-for-selected="name">
-        <paper-tab name="byIpUserAgentPostId">[[t('byIpUserAgentPostId')]]</paper-tab>
-        <paper-tab name="byMissingBrowserFingerprint">[[t('byMissingBrowserFingerprint')]]</paper-tab>
-        <paper-tab name="byIpAddress">[[t('byIpAddress')]]</paper-tab>
+        <paper-tab name="byIpFingerprintPostId">IP & FINGERPRINT & PID</paper-tab>
+        <paper-tab name="byIpUserAgentPostId">IP & UA & PID</paper-tab>
+        <paper-tab name="byMissingBrowserFingerprint">NO FINGERPRINT</paper-tab>
+        <paper-tab name="byIpFingerprint">IP & FINGERPRINT</paper-tab>
+        <paper-tab name="byIpAddress">IP ADDRESS</paper-tab>
       </paper-tabs>
 
       <template is="dom-if" if="[[items]]">
@@ -218,13 +251,26 @@
 
         <template class="row-details">
           <div class="details layout vertical center-center detailArea">
-            <div class="layout horizontal">
-              <template is="dom-if" if="[[item.is_point]]">
-                <div class="layout vertical center-center">
-                  <yp-point hide-actions point="[[item]]" post="[[item.Post]]"></yp-point>
-                  <a hidden$="[[!item.post_id]]" href="/post/[[item.post_id]]/[[item.id]]" target="_blank"><paper-icon-button aria-label$="[[t('linkToContentItem')]]" class="linkIcon" icon="link"></paper-icon-button></a>
+            <div class="layout vertical">
+              <div class="layout horizontal">
+                <div class="layout vertical detailAreas">
+                  <div class="detailArea"><b>Group:</b> [[item.key]]</div>
+                  <div class="detailArea"><b>Count:</b> [[item.groupCount]]</div>
+                  <div class="detailArea"><b>IP Address:</b> [[item.ip_address]]</div>
+                  <div class="detailArea"><b>Browser Id:</b> [[item.data.browserId]]</div>
+                  <div class="detailArea"><b>Fingerprint:</b> [[item.data.browserFingerprint]]</div>
                 </div>
-              </template>
+                <div class="layout vertical detailAreas">
+                  <div class="detailArea"><b>User Id:</b> [[item.User.id]]</div>
+                  <div class="detailArea"><b>Email:</b> [[item.User.email]]</div>
+                  <div class="detailArea"><b>Post Id:</b> [[item.Post.id]]</div>
+                  <div class="detailArea"><b>Post Name:</b> [[item.Post.name]]</div>
+                  <div class="detailArea"><b>Confidence:</b> [[item.confidenceScore]]</div>
+                </div>
+              </div>
+              <div class="layout vertical detailAreas">
+                <div><b>User Agent:</b> [[item.user_agent]]</div>
+              </div>
             </div>
           </div>
         </template>
@@ -704,8 +750,10 @@
         var outItems = [];
 
         for (var i=0;i<itemData.items.length;i++) {
+          itemData.items[i].backgroundColor = itemData.cBackgroundColors[itemData.items[i].backgroundColor];
+          itemData.items[i].ip_address = itemData.cIpAddresses[itemData.items[i].ip_address];
           itemData.items[i].user_agent = itemData.cUserAgents[itemData.items[i].user_agent];
-          itemData.items[i].User.email  = itemData.cEmails[itemData.items[i].User.email ];
+          itemData.items[i].User.email = itemData.cEmails[itemData.items[i].User.email ];
           itemData.items[i].User.name = itemData.cNames[itemData.items[i].User.name];
           itemData.items[i].Post.name = itemData.cPostNames[itemData.items[i].Post.name];
           outItems.push(itemData.items[i]);
