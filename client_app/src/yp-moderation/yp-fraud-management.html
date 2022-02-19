@@ -236,8 +236,8 @@
       </div>
 
       <paper-tabs selected="{{selectedMethod}}" attr-for-selected="name">
-        <paper-tab name="byIpFingerprintPostId">IP & FINGERPRINT & PID</paper-tab>
-        <paper-tab name="byIpUserAgentPostId">IP & UA & PID</paper-tab>
+        <paper-tab name="byIpFingerprintPostId">IP & FINGERPRINT & POST</paper-tab>
+        <paper-tab name="byIpUserAgentPostId">IP & USER AGENT & POST</paper-tab>
         <paper-tab name="byMissingBrowserFingerprint">NO FINGERPRINT</paper-tab>
         <paper-tab name="byIpFingerprint">IP & FINGERPRINT</paper-tab>
         <paper-tab name="byIpAddress">IP ADDRESS</paper-tab>
@@ -288,7 +288,7 @@
           <template>[[item.ip_address]]</template>
         </vaadin-grid-sort-column>
 
-        <vaadin-grid-sort-column width="100px" flex-grow="0" path="confidenceScore" header="%">
+        <vaadin-grid-sort-column width="100px" flex-grow="0" path="confidenceScoreSort" header="%">
           <template>[[item.confidenceScore]]</template>
         </vaadin-grid-sort-column>
 
@@ -316,7 +316,7 @@
           <template>[[item.Post.id]]</template>
         </vaadin-grid-sort-column>
 
-        <vaadin-grid-sort-column width="150px" flex-grow="1" path="user_agent" header="UserAgent">
+        <vaadin-grid-sort-column width="150px" flex-grow="1" path="user_agent" header="User Agent">
           <template>[[item.user_agent]]</template>
         </vaadin-grid-sort-column>
 
@@ -327,7 +327,7 @@
               <paper-listbox slot="dropdown-content" on-iron-select="_menuSelection">
                 <template is="dom-if" if="[[!selectedItemsEmpty]]" restamp>
                   <paper-item data-args$="[[item.id]]" on-tap="_deleteSelected">
-                    [[t('deleteSelectedContent')]] [[selectedItemsCount]]
+                    [[t('deleteAllButOne')]] [[selectedItemsCount]]
                   </paper-item>
                 </template>
               </paper-listbox>
@@ -464,7 +464,7 @@
         selectedMethod: {
           type: String,
           observer: '_selectedMethodChanged',
-          value: 'byIpUserAgentPostId'
+          value: 'byIpFingerprintPostId'
         },
 
         typeOfModeration: {
@@ -489,10 +489,12 @@
       },
 
       _selectedMethodChanged: function (method) {
-        this.async(function () {
-          this.set('items', null);
-          this._masterAjax(this.selectedMethod);
-        })
+        if (method) {
+          this.async(function () {
+            this.set('items', null);
+            this._masterAjax(this.selectedMethod);
+          })
+        }
       },
 
       _spinnerActive: function (count, force) {
@@ -599,7 +601,7 @@
           this.$.grid.style.height = (window.innerHeight).toFixed()+'px';
         } else {
           this.$.grid.style.width = (window.innerWidth-16).toFixed()+'px';
-          this.$.grid.style.height = (window.innerHeight-154).toFixed()+'px';
+          this.$.grid.style.height = (window.innerHeight-175).toFixed()+'px';
         }
       },
 
@@ -821,6 +823,12 @@
       open: function (name) {
         this.set('collectionName', name);
         this.set('opened', true);
+        var method = this.selectedMethod;
+        this.set('items', null);
+        this.set('selectedMethod', null);
+        this.async(function () {
+          this.set('selectedMethod', method);
+        })
         this.$.dialog.open();
       },
 

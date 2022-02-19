@@ -1989,13 +1989,13 @@ router.get('/:communityId/:jobId/endorsement_fraud_action_status', auth.can('edi
     },
     attributes: ['id','progress','error','data']
   }).then( job => {
-    res.send(job);
     if (job.progress===100) {
       queue.create('process-fraud-action', {
         type: "delete-job",
-        jobId: jobId,
+        jobId: job.id,
       }).priority('critical').delay(30000).removeOnComplete(true).save();
     }
+    res.send(job);
   }).catch( error => {
     log.error('Could not get backgroundJob', { err: error, context: 'endorsement_fraud_action_status', user: toJson(req.user.simple()) });
     res.sendStatus(500);
