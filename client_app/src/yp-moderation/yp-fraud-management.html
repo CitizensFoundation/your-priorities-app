@@ -96,12 +96,20 @@
 
       paper-checkbox {
         color: #FFF !important;
-        margin-top: 16px;
+        margin-top: 14px;
         margin-right: 24px;
         --primary-color: #FFF;
         --primary-text-color: #FFF;
         --paper-checkbox-checked-ink-color: #FFF;
         --paper-checkbox-unchecked-ink-color: #FFF;
+      }
+
+      paper-progress {
+        --paper-progress-active-color: #444;
+        --paper-progress-secondary-color: #444;
+        --paper-progress-container-color: #FFF;
+          margin-top: 22px;
+          margin-left: 82px;
       }
 
       @media (max-width: 600px) {
@@ -161,15 +169,6 @@
         color: #000;
       }
 
-      paper-spinner {
-        margin-left: 20px;
-        margin-top: 8px;
-        --paper-spinner-layer-1-color: #FFF;
-        --paper-spinner-layer-2-color: #FFF;
-        --paper-spinner-layer-3-color: #FFF;
-        --paper-spinner-layer-4-color: #FFF;
-      }
-
       .linkIcon {
         color: #000;
       }
@@ -189,6 +188,18 @@
           padding-bottom: 12px;
           padding-left: 16px;
       }
+
+      paper-radio-group {
+        margin-right: 16px;
+      }
+
+      paper-radio-button {
+        color: #FFF;
+          margin-top: 4px;
+          --primary-color: #FFF;
+        --primary-text-color: #FFF;
+        margin-right: 0;
+      }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
@@ -207,25 +218,20 @@
           </div>
         </div>
 
-        <paper-progress id="progress" value="[[progress]]" hidden$="[[items]]"></paper-progress>
+        <paper-progress
+          id="progress"
+          indeterminate$="[[indeterminateProgress]]"
+          value="[[progress]]"
+          hidden$="[[!inProgress]]"></paper-progress>
 
         <div class="flex"></div>
         <div class="layout horizontal">
-          <paper-radio-group required data-type="radios" on-selected-changed="_radioChanged" class="segmentRadio">
-            <div class="layout horizontal">
-              <div class="layout vertical">
-                <paper-radio-button name="endorsementsMode">Endorsements</paper-radio-button>
-                <paper-radio-button name="rankingsMode">Rankings</paper-radio-button>
-                <paper-radio-button name="qualitiesMode">PointQualities</paper-radio-button>
-              </div>
-              <div class="layout vertical">
-                <div class="fraudPostsAndPointsInfo">
-                  [[t(fraudPostsAndPointsInfo)]]
-                </div>
-                <paper-radio-button name="pointsMode">Points</paper-radio-button>
-                <paper-radio-button name="postsMode">Posts</paper-radio-button>
-              </div>
-            </div>
+          <paper-radio-group selected="{{selectedCollectionType}}" class="radioButtons">
+            <paper-radio-button name="endorsements">Endorsements</paper-radio-button>
+            <paper-radio-button name="rankings">Rankings</paper-radio-button>
+            <paper-radio-button name="qualities">PointQualities</paper-radio-button>
+            <paper-radio-button name="points">Points</paper-radio-button>
+            <paper-radio-button name="posts">Posts</paper-radio-button>
           </paper-radio-group>
         </div>
 
@@ -467,6 +473,17 @@
           value: 'byIpFingerprintPostId'
         },
 
+        selectedCollectionType: {
+          type: String,
+          observer: '_selectedCollectionTypeChanged',
+          value: 'endorsements'
+        },
+
+        allSelected: {
+          type: Boolean,
+          computed: '_allSelected(selectedMethod, selectedCollectionType, modelType)'
+        },
+
         typeOfModeration: {
           type: String,
           value: "/flagged_content"
@@ -477,28 +494,47 @@
           value: false
         },
 
-        forceSpinner: {
+        inProgress: {
           type: Boolean,
+          observer: '_inProgressChanged',
           value: false
         },
 
-        spinnerActive: {
+        progress: {
+          type: Number,
+          value: 0
+        },
+
+        indeterminateProgress: {
           type: Boolean,
-          computed: '_spinnerActive(totalItemsCount, forceSpinner)'
+          value: false
+        }
+      },
+
+      _inProgressChanged: function (inProgress) {
+        if (inProgress===false) {
+          this.set('progress', 10);
+        }
+      },
+
+      _allSelected: function (method, collectionType, modelType) {
+        if (method && collectionType, modelType) {
+          this._reset();
+          this._masterAjax(method);
+          return true;
+        } else {
+          return false;
         }
       },
 
       _selectedMethodChanged: function (method) {
-        if (method) {
-          this.async(function () {
-            this.set('items', null);
-            this._masterAjax(this.selectedMethod);
-          })
+        if (method && this.selectedCollectionType && !this.inProgress) {
         }
       },
 
-      _spinnerActive: function (count, force) {
-        return !count || force
+      _selectedCollectionTypeChanged: function (selectedCollectionType) {
+        if (selectedCollectionType && this.selectedMethod && !this.inProgress) {
+        }
       },
 
       observers: [
@@ -512,7 +548,6 @@
       _reload: function () {
         this.$.startAjax.generateRequest();
         this.set('items', null);
-        this.set('forceSpinner', true);
       },
 
       _getType: function(type) {
@@ -601,7 +636,7 @@
           this.$.grid.style.height = (window.innerHeight).toFixed()+'px';
         } else {
           this.$.grid.style.width = (window.innerWidth-16).toFixed()+'px';
-          this.$.grid.style.height = (window.innerHeight-175).toFixed()+'px';
+          this.$.grid.style.height = (window.innerHeight-155).toFixed()+'px';
         }
       },
 
@@ -674,7 +709,16 @@
           return;
         }
 
-        url = "/api/" + this.modelType + "/" + collectionId + "/" +action+ "/start_endorsement_fraud_action";
+        this.set('inProgress', true);
+
+        if (action==="delete-items" ||
+            action==="delete-one-item") {
+          this.set('indeterminateProgress', false);
+        } else {
+          this.set('indeterminateProgress', true);
+        }
+
+        url = "/api/" + this.modelType + "/" + collectionId + "/" +action+ "/" +this.selectedCollectionType + "/start_endorsement_fraud_action";
 
         if (action==="delete") {
           if (itemIds && itemIds.length>0) {
@@ -691,8 +735,6 @@
 
         this.$.startAjax.url = url;
         this.$.startAjax.generateRequest();
-
-        this.set('forceSpinner', true);
 
         if (this.selectedItemId) {
           var item = this._findItemFromId(this.selectedItemId);
@@ -729,21 +771,18 @@
 
       _domainIdChanged: function (newDomainId) {
         if (newDomainId) {
-          this._reset();
           this.set('modelType', 'domains');
         }
       },
 
       _groupIdChanged: function (newGroupId) {
         if (newGroupId) {
-          this._reset();
           this.set('modelType', 'groups');
         }
       },
 
       _communityIdChanged: function (newCommunityId) {
         if (newCommunityId) {
-          this._reset();
           this.set('modelType', 'communities');
         }
       },
@@ -766,6 +805,7 @@
 
       _startResponse: function (event, detail) {
         this.jobId = detail.response.jobId;
+        this.set('progress', 25);
         this._pollLaterForProgress();
       },
 
@@ -781,14 +821,14 @@
         this.set('progress', detail.response.progress);
 
         if (detail.response.error) {
+          this.set('inProgress', false);
           this.set('error', this.t(detail.response.error));
         }
 
         if (detail.response.data && detail.response.progress===100) {
-          this.set('forceSpinner', false);
+          this.set('inProgress', false);
           this._setupRenderers();
           this.set('items', this._uncompressItems(detail.response.data));
-          this._resetSelectedAndClearCache();
         }
       },
 
@@ -806,7 +846,6 @@
         this.set('groupId', null);
         this.set('communityId', null);
         this.set('domainId', null);
-        this.set('items', null);
 
         if (groupId)
           this.set('groupId', groupId);
@@ -823,12 +862,10 @@
       open: function (name) {
         this.set('collectionName', name);
         this.set('opened', true);
-        var method = this.selectedMethod;
-        this.set('items', null);
-        this.set('selectedMethod', null);
-        this.async(function () {
-          this.set('selectedMethod', method);
-        })
+        if (this.items && this.selectedMethod && this.selectedCollectionType && this.modelType) {
+          this._reset();
+          this._masterAjax(this.selectedMethod);
+        }
         this.$.dialog.open();
       },
 

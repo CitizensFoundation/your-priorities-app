@@ -1962,7 +1962,7 @@ router.get('/:communityId/:jobId/report_creation_progress', auth.can('edit commu
   });
 });
 
-router.put('/:communityId/:type/start_endorsement_fraud_action', auth.can('edit community'), function(req, res) {
+router.put('/:communityId/:type/:collectionType/start_endorsement_fraud_action', auth.can('edit community'), function(req, res) {
   models.AcBackgroundJob.createJob({
     idsToDelete: req.body.idsToDelete
   }, (error, jobId) => {
@@ -1972,6 +1972,7 @@ router.put('/:communityId/:type/start_endorsement_fraud_action', auth.can('edit 
     } else {
       queue.create('process-fraud-action', {
         type: req.params.type,
+        collectionType: req.params.collectionType,
         userId: req.user.id,
         jobId: jobId,
         communityId: req.params.communityId
