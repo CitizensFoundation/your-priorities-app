@@ -735,14 +735,21 @@ var truthValueFromBody = function(bodyParameter) {
 
 var updatePostData = function (req, post) {
   if (!post.data) {
-    post.set('data', {});
+    post.set('data', {
+      browserId: req.body.postBaseId,
+      browserFingerprint: req.body.postValCode,
+      browserFingerprintConfidence: req.body.postConf
+    });
   }
+
   if (!post.data.contactInformation) {
     post.set('data.contact', {});
   }
+
   if (!post.data.attachment) {
     post.set('data.attachment', {});
   }
+
   post.set('data.contact.name', (req.body.contactName && req.body.contactName!="") ? req.body.contactName : null);
   post.set('data.contact.email', (req.body.contactEmail && req.body.contactEmail!="") ? req.body.contactEmail : null);
   post.set('data.contact.telephone', (req.body.contacTelephone && req.body.contacTelephone!="") ? req.body.contacTelephone : null);

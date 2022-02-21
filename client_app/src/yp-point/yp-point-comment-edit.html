@@ -161,7 +161,12 @@
           } else {
             console.error("Can't find send ids");
           }
-          this.$.postCommentAjax.body = __.merge(body, { comment: this.comment } );
+          this.$.postCommentAjax.body = __.merge(body, {
+            comment: this.comment,
+            pointBaseId:  window.appUser.getBrowserId(),
+            pointValCode: window.appUser.browserFingerprint,
+            pointConf: window.appUser.browserFingerprintConfidence
+          });
           this.$.postCommentAjax.generateRequest();
         } else {
           this.$.postCommentAjax.showErrorDialog(this.t('point.commentToShort'));

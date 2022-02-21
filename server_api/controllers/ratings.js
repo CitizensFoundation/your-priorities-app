@@ -30,12 +30,22 @@ router.post('/:post_id/:type_index', auth.can('rate post'), function(req, res) {
       oldRatingValue = rating.value;
       rating.value = req.body.value;
       post = rating.Post;
+      rating.set('data', {
+        browserId: req.body.ratingBaseId,
+        browserFingerprint: req.body.ratingValCode,
+        browserFingerprintConfidence: req.body.ratingConf
+      });
     } else {
       rating = models.Rating.build({
         post_id: req.params.post_id,
         type_index: req.params.type_index,
         value: req.body.value,
         user_id: req.user.id,
+        data: {
+          browserId: req.body.ratingBaseId,
+          browserFingerprint: req.body.ratingValCode,
+          browserFingerprintConfidence: req.body.ratingConf
+        },
         user_agent: req.useragent.source,
         ip_address: req.clientIp
       })

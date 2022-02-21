@@ -245,7 +245,13 @@
       generatePointQuality: function (value) {
         if (window.appUser.loggedIn()===true) {
           this.$.pointQualityAjax.url = "/api/points/" + this.point.id + "/pointQuality";
-          this.$.pointQualityAjax.body = { point_id: this.point.id, value: value };
+          this.$.pointQualityAjax.body = {
+            point_id: this.point.id,
+            value: value,
+            qualityBaseId:  window.appUser.getBrowserId(),
+            qualityValCode: window.appUser.browserFingerprint,
+            qualityConf: window.appUser.browserFingerprintConfidence
+          };
           if (this.pointQualityValue === value) {
             this.$.pointQualityAjax.method = "DELETE";
           } else {

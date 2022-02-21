@@ -228,7 +228,7 @@
         <div class="layout horizontal">
           <paper-radio-group selected="{{selectedCollectionType}}" class="radioButtons">
             <paper-radio-button name="endorsements">Endorsements</paper-radio-button>
-            <paper-radio-button name="rankings">Rankings</paper-radio-button>
+            <paper-radio-button name="ratings">Ratings</paper-radio-button>
             <paper-radio-button name="qualities">PointQualities</paper-radio-button>
             <paper-radio-button name="points">Points</paper-radio-button>
             <paper-radio-button name="posts">Posts</paper-radio-button>
@@ -520,7 +520,7 @@
       _allSelected: function (method, collectionType, modelType) {
         if (method && collectionType, modelType) {
           this._reset();
-          this._masterAjax(method);
+          this._masterAjax("get-items");
           return true;
         } else {
           return false;
@@ -681,7 +681,7 @@
       },
 
       _reallyDeleteSelected: function () {
-        this._masterAjax('delete', this.selectedItemIds);
+        this._masterAjax('delete-items', this.selectedItemIds);
       },
 
       _delete: function (event) {
@@ -692,10 +692,10 @@
       },
 
       _reallyDelete: function () {
-        this._masterAjax('delete');
+        this._masterAjax('delete-one-item');
       },
 
-      _masterAjax: function (action, itemIds) {
+      _masterAjax: function (type, itemIds) {
         var url, collectionId;
         this.set('jobId', null);
         if (this.modelType==="groups" && this.groupId) {
@@ -709,20 +709,18 @@
           return;
         }
 
-        this.set('inProgress', true);
-
-        if (action==="delete-items" ||
-            action==="delete-one-item") {
+        if (type==="delete-items" ||
+          type==="delete-one-item") {
           this.set('indeterminateProgress', false);
         } else {
           this.set('indeterminateProgress', true);
         }
 
-        url = "/api/" + this.modelType + "/" + collectionId + "/" +action+ "/" +this.selectedCollectionType + "/start_endorsement_fraud_action";
+        url = "/api/" + this.modelType + "/" + collectionId + "/" +type+ "/" +this.selectedMethod + "/" +this.selectedCollectionType + "/start_endorsement_fraud_action";
 
-        if (action==="delete") {
-          if (itemIds && itemIds.length>0) {
-            this.$.startAjax.body = { idsToDelete: itemIds };
+        if (type==="delete-one-item" || type==="delete-items") {
+          if (this.selectedItemIds && this.selectedItemIds.length>0) {
+            this.$.startAjax.body = { idsToDelete: this.selectedItemIds };
           } else if (this.selectedItemId) {
             this.$.startAjax.body = { idsToDelete: [this.selectedItemId] };
           } else {
@@ -735,6 +733,7 @@
 
         this.$.startAjax.url = url;
         this.$.startAjax.generateRequest();
+        this.set('inProgress', true);
 
         if (this.selectedItemId) {
           var item = this._findItemFromId(this.selectedItemId);
@@ -813,7 +812,6 @@
         if (!detail.response.error &&
           detail.response.progress!==null &&
           this.jobId &&
-          !detail.response.data &&
           detail.response.progress<100) {
           this._pollLaterForProgress();
         }
@@ -864,7 +862,7 @@
         this.set('opened', true);
         if (this.items && this.selectedMethod && this.selectedCollectionType && this.modelType) {
           this._reset();
-          this._masterAjax(this.selectedMethod);
+          this._masterAjax("get-items");
         }
         this.$.dialog.open();
       },

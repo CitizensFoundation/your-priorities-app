@@ -211,7 +211,12 @@
 
       _sendStory: function () {
         this.$.storySubmitButton.disabled = true;
-        var body = { point: this.point };
+        var body = {
+          point: this.point,
+          pointBaseId: window.appUser.getBrowserId(),
+          pointValCode: window.appUser.browserFingerprint,
+          pointConf: window.appUser.browserFingerprintConfidence
+        };
         if (this.point.content && this.point.content.length>2) {
           if (this.postId && this.postGroupId) {
             __.merge(body, { post_id: this.postId })

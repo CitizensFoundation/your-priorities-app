@@ -537,7 +537,7 @@ module.exports = (sequelize, DataTypes) => {
       thumbnailPattern: fileKey+'_thumbs-' + video.id + '-{count}',
       flacFilename: fileKey.slice(0, fileKey.length-4)+'.flac'
     }
-    sequelize.models.AcBackgroundJob.createJob(jobPackage, async (error, jobId) => {
+    sequelize.models.AcBackgroundJob.createJob(jobPackage, {}, async (error, jobId) => {
       log.info('Starting YRPRI transcoding Job');
       if (error) {
         log.error("Error creating YRPRI transcoding job", { error });

@@ -472,6 +472,11 @@
         <input type="hidden" name="uploadedDocumentFilename" value="[[uploadedDocumentFilename]]">
         <input type="hidden" name="structuredAnswers" value="[[structuredAnswers]]">
         <input type="hidden" name="structuredAnswersJson" value="[[structuredAnswersJson]]">
+
+        <input type="hidden" name="postBaseId" value="[[browserId]]">
+        <input type="hidden" name="postValCode" value="[[browserFingerprint]]">
+        <input type="hidden" name="postConf" value="[[browserFingerprintConfidence]]">
+
       </div>
     </yp-edit-dialog>
 
@@ -702,6 +707,21 @@
       hasLongSaveText: {
         type: Boolean,
         computer: '_hasLongSaveText(saveText)'
+      },
+
+      browserId: {
+        type: String,
+        value: null
+      },
+
+      browserFingerprint: {
+        type: String,
+        value: null
+      },
+
+      browserFingerprintConfidence: {
+        type: String,
+        value: null
       }
     },
 
@@ -873,6 +893,12 @@
     observers: [
       '_setupTranslation(language,t)'
     ],
+
+    ready: function () {
+      this.browserId = window.appUser.getBrowserId();
+      this.browserFingerprint = window.appUser.browserFingerprint;
+      this.browserFingerprintConfidence = window.appUser.browserFingerprintConfidence;
+    },
 
     _updatePostTitle: function () {
       this.async(function () {

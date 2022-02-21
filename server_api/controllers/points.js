@@ -519,7 +519,12 @@ router.post('/:groupId', auth.can('create point'), function(req, res) {
     user_id: req.user.id,
     status: 'published',
     user_agent: req.useragent.source,
-    ip_address: req.clientIp
+    ip_address: req.clientIp,
+    data: {
+      browserId: req.body.pointBaseId,
+      browserFingerprint: req.body.pointValCode,
+      browserFingerprintConfidence: req.body.pointConf
+    }
   });
   point.save().then(function() {
     log.info('Point Created', { pointId: point ? point.id : -1, context: 'create', userId: req.user ? req.user.id : -1 });
@@ -642,11 +647,21 @@ router.post('/:id/pointQuality', auth.can('vote on point'), function(req, res) {
         oldPointQualityValue = -1;
       pointQuality.value = req.body.value;
       pointQuality.status = 'active';
+      pointQuality.set('data', {
+        browserId: req.body.qualityBaseId,
+        browserFingerprint: req.body.qualityValCode,
+        browserFingerprintConfidence: req.body.qualityConf
+      });
     } else {
       pointQuality = models.PointQuality.build({
         point_id: req.params.id,
         value: req.body.value,
         user_id: req.user.id,
+        data: {
+          browserId: req.body.qualityBaseId,
+          browserFingerprint: req.body.qualityValCode,
+          browserFingerprintConfidence: req.body.qualityConf
+        },
         status: 'active',
         user_agent: req.useragent.source,
         ip_address: req.clientIp

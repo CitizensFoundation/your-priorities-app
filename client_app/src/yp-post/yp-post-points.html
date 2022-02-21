@@ -1686,7 +1686,10 @@
             this.$.newPointAjax.body = {
               postId: this.post.id,
               content: content,
-              value: value
+              value: value,
+              pointBaseId:  window.appUser.getBrowserId(),
+              pointValCode: window.appUser.browserFingerprint,
+              pointConf: window.appUser.browserFingerprintConfidence
             };
             this.set('addPointDisabled', true);
             this.$.newPointAjax.generateRequest();

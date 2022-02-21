@@ -768,7 +768,7 @@ router.get('/:groupId/pages_for_admin', auth.can('edit group'), function(req, re
 });
 
 router.put('/:groupId/:type/start_report_creation', auth.can('edit group'), function(req, res) {
-  models.AcBackgroundJob.createJob({}, (error, jobId) => {
+  models.AcBackgroundJob.createJob({}, {}, (error, jobId) => {
     if (error) {
       log.error('Could not create backgroundJob', { err: error, context: 'start_report_creation', user: toJson(req.user.simple()) });
       res.sendStatus(500);

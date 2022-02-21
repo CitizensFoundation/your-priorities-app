@@ -1923,7 +1923,7 @@ router.get('/:id/recursiveMap', auth.can('edit community'), async (req, res) => 
 });
 
 router.put('/:communityId/:type/start_report_creation', auth.can('edit community'), function(req, res) {
-  models.AcBackgroundJob.createJob({}, (error, jobId) => {
+  models.AcBackgroundJob.createJob({}, {}, (error, jobId) => {
     if (error) {
       log.error('Could not create backgroundJob', { err: error, context: 'start_report_creation', user: toJson(req.user.simple()) });
       res.sendStatus(500);
@@ -1962,8 +1962,8 @@ router.get('/:communityId/:jobId/report_creation_progress', auth.can('edit commu
   });
 });
 
-router.put('/:communityId/:type/:collectionType/start_endorsement_fraud_action', auth.can('edit community'), function(req, res) {
-  models.AcBackgroundJob.createJob({
+router.put('/:communityId/:type/:selectedMethod/:collectionType/start_endorsement_fraud_action', auth.can('edit community'), function(req, res) {
+  models.AcBackgroundJob.createJob({}, {
     idsToDelete: req.body.idsToDelete
   }, (error, jobId) => {
     if (error) {
@@ -1973,6 +1973,7 @@ router.put('/:communityId/:type/:collectionType/start_endorsement_fraud_action',
       queue.create('process-fraud-action', {
         type: req.params.type,
         collectionType: req.params.collectionType,
+        selectedMethod: req.params.selectedMethod,
         userId: req.user.id,
         jobId: jobId,
         communityId: req.params.communityId

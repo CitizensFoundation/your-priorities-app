@@ -364,6 +364,11 @@ module.exports = (sequelize, DataTypes) => {
       },
 
       (seriesCallback) => {
+        options.data = {
+          browserId: req.body.pointBaseId,
+          browserFingerprint: req.body.pointValCode,
+          browserFingerprintConfidence: req.body.pointConf
+        };
         sequelize.models.Point.build(options).save().then((point) => {
           options.point_id = point.id;
           const pointRevision = sequelize.models.PointRevision.build(options);
