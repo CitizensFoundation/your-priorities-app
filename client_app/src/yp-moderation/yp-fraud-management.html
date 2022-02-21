@@ -200,6 +200,10 @@
         --primary-text-color: #FFF;
         margin-right: 0;
       }
+
+      .reloadPlaceholder {
+          width: 64px;
+      }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
@@ -238,6 +242,9 @@
         <div class="checkBox" hidden$="[[narrow]]"><paper-checkbox checked="{{multiSortEnabled}}">[[t('multiSortEnabled')]]</paper-checkbox></div>
         <div hidden$="[[!showReload]]">
           <paper-icon-button aria-label$="[[t('reload')]]" icon="autorenew" class="closeButton" on-tap="_reload"></paper-icon-button>
+        </div>
+        <div class="reloadPlaceholder" hidden$="[[showReload]]">
+          &nbsp;
         </div>
       </div>
 
@@ -555,8 +562,8 @@
       },
 
       _reload: function () {
-        this.$.startAjax.generateRequest();
-        this.set('items', null);
+        this._reset();
+        this._masterAjax('get-items');
       },
 
       _getType: function(type) {
@@ -836,6 +843,7 @@
         }
 
         if (detail.response.progress===100) {
+          this.set('reload', true);
           this._setupRenderers();
           this.set('inProgress', false);
           if (this.currentType==="delete-one-item" || this.currentType==="delete-items") {
@@ -894,6 +902,7 @@
         this.set('selectedItemsEmpty', true);
         this.set('selectedItemIds', []);
         this.set('selectedItems', []);
+        this.set('reload', false);
         this.$.grid.clearCache();
       },
 
