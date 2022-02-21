@@ -322,6 +322,10 @@
           <template>[[item.Post.id]]</template>
         </vaadin-grid-sort-column>
 
+        <vaadin-grid-sort-column width="80px" flex-grow="0" path="value" header="Val">
+          <template>[[item.value]]</template>
+        </vaadin-grid-sort-column>
+
         <vaadin-grid-sort-column width="150px" flex-grow="1" path="user_agent" header="User Agent">
           <template>[[item.user_agent]]</template>
         </vaadin-grid-sort-column>
@@ -508,6 +512,11 @@
         indeterminateProgress: {
           type: Boolean,
           value: false
+        },
+
+        currentType: {
+          type: String,
+          value: null
         }
       },
 
@@ -696,6 +705,7 @@
       },
 
       _masterAjax: function (type, itemIds) {
+
         var url, collectionId;
         this.set('jobId', null);
         if (this.modelType==="groups" && this.groupId) {
@@ -730,6 +740,8 @@
         } else {
           this.$.startAjax.body = {};
         }
+
+        this.currentType = type;
 
         this.$.startAjax.url = url;
         this.$.startAjax.generateRequest();
@@ -823,10 +835,15 @@
           this.set('error', this.t(detail.response.error));
         }
 
-        if (detail.response.data && detail.response.progress===100) {
-          this.set('inProgress', false);
+        if (detail.response.progress===100) {
           this._setupRenderers();
-          this.set('items', this._uncompressItems(detail.response.data));
+          this.set('inProgress', false);
+          if (this.currentType==="delete-one-item" || this.currentType==="delete-items") {
+            this._reset();
+            this._masterAjax('get-items');
+          } else {
+            this.set('items', this._uncompressItems(detail.response.data));
+          }
         }
       },
 
