@@ -344,7 +344,7 @@
               <paper-listbox slot="dropdown-content" on-iron-select="_menuSelection">
                 <template is="dom-if" if="[[!selectedItemsEmpty]]" restamp>
                   <paper-item data-args$="[[item.id]]" on-tap="_deleteSelected">
-                    [[t('deleteAllButOne')]] [[selectedItemsCount]]
+                    [[deleteItemsMenuText]] [[selectedItemsCount]]
                   </paper-item>
                 </template>
               </paper-listbox>
@@ -521,9 +521,22 @@
           value: false
         },
 
+        deleteItemsMenuText: {
+          type: String,
+          computed: '_deleteItemsMenuText(selectedMethod)'
+        },
+
         currentType: {
           type: String,
           value: null
+        }
+      },
+
+      _deleteItemsMenuText(selectedMethod) {
+        if (['byIpAddress','byMissingBrowserFingerprint','byIpFingerprint'].indexOf(selectedMethod) >-1) {
+          return this.t('deleteAllButOne');
+        } else {
+          return this.t('deleteAllButOne');
         }
       },
 
@@ -902,6 +915,7 @@
         this.set('selectedItemsEmpty', true);
         this.set('selectedItemIds', []);
         this.set('selectedItems', []);
+        this.set('activeItem', null)
         this.set('reload', false);
         this.$.grid.clearCache();
       },

@@ -5,6 +5,14 @@ const _ = require('lodash');
 const fs = require('fs');
 const request = require('request');
 
+const recountPosts = (postIds, done) => {
+  async.forEachSeries(postIds, (postId, forEachPostCallback) => {
+    recountPost(postId, forEachPostCallback);
+  }, error => {
+    done(error)
+  });
+}
+
 const recountPost = (postId, done) => {
   var endorsementsCount;
   var oppositionCount;
@@ -340,5 +348,6 @@ const recountCommunity = (communityId, callback) => {
 module.exports = {
   recountCommunity,
   recountGroup,
-  recountPost
+  recountPost,
+  recountPosts
 };
