@@ -283,6 +283,7 @@
                   <div class="detailArea" hidden$="[[hidePoint]]"><b>Post Id:</b> [[item.Point.id]]</div>
                   <div class="detailArea" hidden$="[[hidePoint]]"><b>Point Id:</b> [[item.Point.Post.id]]</div>
                   <div class="detailArea" hidden$="[[hidePoint]]"><b>Post Name:</b> [[item.Point.Post.name]]</div>
+                  <div class="detailArea" hidden$="[[!postsCollectionActive]]"><b>Post Name:</b> [[item.name]]</div>
                   <div class="detailArea"><b>Confidence:</b> [[item.confidenceScore]]</div>
                 </div>
               </div>
@@ -338,7 +339,7 @@
           <template>[[item.Point.id]]</template>
         </vaadin-grid-sort-column>
 
-        <vaadin-grid-sort-column width="80px" flex-grow="0" path="value" header="Val">
+        <vaadin-grid-sort-column hidden$="[[hideValue]]" width="80px" flex-grow="0" path="value" header="Val">
           <template>[[item.value]]</template>
         </vaadin-grid-sort-column>
 
@@ -548,7 +549,25 @@
         hidePoint: {
           type: Boolean,
           computed: '_hidePoint(selectedCollectionType)'
+        },
+
+        hideValue: {
+          type: Boolean,
+          computed: '_hideValue(selectedCollectionType)'
+        },
+
+        postsCollectionActive: {
+          type: Boolean,
+          computed: '_postsCollection(selectedCollectionType)'
         }
+      },
+
+      _postsCollectionActive: function (selectedCollectionType) {
+        return (["posts"].indexOf(selectedCollectionType) > -1);
+      },
+
+      _hideValue: function (selectedCollectionType) {
+        return (["posts","points"].indexOf(selectedCollectionType) > -1);
       },
 
       _hidePost: function (selectedCollectionType) {
@@ -887,6 +906,10 @@
 
           if (this.selectedCollectionType==="pointQualities") {
             itemData.items[i].Point.Post.name = itemData.cPostNames[itemData.items[i].Point.Post.name];
+          }
+
+          if (this.selectedCollectionType==="posts") {
+            itemData.items[i].name = itemData.cPostNames[itemData.items[i].name];
           }
 
           outItems.push(itemData.items[i]);
