@@ -13,6 +13,14 @@ const recountPosts = (postIds, done) => {
   });
 }
 
+const recountPoints = (pointIds, done) => {
+  async.forEachSeries(pointIds, (pointId, forEachPostCallback) => {
+    recountPoint(pointId, forEachPostCallback);
+  }, error => {
+    done(error)
+  });
+}
+
 const recountPost = (postId, done) => {
   var endorsementsCount;
   var oppositionCount;
@@ -84,6 +92,59 @@ const recountPost = (postId, done) => {
   });
 };
 
+const recountPoint = (pointId, done) => {
+  var counter_quality_up;
+  var counter_quality_down;
+  var pointCount;
+  async.parallel([
+    (parallelCallback) => {
+      models.PointQuality.count({
+        where: {
+          value: 1,
+          point_id: pointId
+        }
+      }).then( (count) => {
+        counter_quality_up = count;
+        parallelCallback();
+      }).catch( (error) => {
+        parallelCallback(error);
+      });
+    },
+    (parallelCallback) => {
+      models.PointQuality.count({
+        where: {
+          value: -1,
+          point_id: pointId
+        }
+      }).then( (count) => {
+        counter_quality_down = count;
+        parallelCallback();
+      }).catch(function (error) {
+        parallelCallback(error);
+      });
+    }
+  ],  (error) => {
+    if (error) {
+      done(error)
+    } else {
+      models.Point.findOne({
+        where: {
+          id: pointId
+        },
+        attributes: ['id','counter_quality_up','counter_quality_down']
+      }).then( (point) => {
+        point.counter_quality_up = counter_quality_up;
+        point.counter_quality_down = counter_quality_down;
+        point.save().then( (results) => {
+          console.log(`Recount for point ${point.id} done`);
+          done();
+        });
+      }).catch( (error) => {
+        done(error);
+      })
+    }
+  });
+};
 
 const countPostInGroup = (groupId, done) => {
   models.Post.count({
@@ -349,5 +410,7 @@ module.exports = {
   recountCommunity,
   recountGroup,
   recountPost,
-  recountPosts
+  recountPosts,
+  recountPoint,
+  recountPoints
 };

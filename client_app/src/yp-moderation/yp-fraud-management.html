@@ -233,7 +233,7 @@
           <paper-radio-group selected="{{selectedCollectionType}}" class="radioButtons">
             <paper-radio-button name="endorsements">Endorsements</paper-radio-button>
             <paper-radio-button name="ratings">Ratings</paper-radio-button>
-            <paper-radio-button name="qualities">PointQualities</paper-radio-button>
+            <paper-radio-button name="pointQualities">PointQualities</paper-radio-button>
             <paper-radio-button name="points">Points</paper-radio-button>
             <paper-radio-button name="posts">Posts</paper-radio-button>
           </paper-radio-group>
@@ -249,10 +249,12 @@
       </div>
 
       <paper-tabs selected="{{selectedMethod}}" attr-for-selected="name">
-        <paper-tab name="byIpFingerprintPostId">IP & FINGERPRINT & POST</paper-tab>
-        <paper-tab name="byIpUserAgentPostId">IP & USER AGENT & POST</paper-tab>
-        <paper-tab name="byMissingBrowserFingerprint">NO FINGERPRINT</paper-tab>
+        <paper-tab name="byIpFingerprintPostId" hidden$="[[hidePost]]">IP & FINGERPRINT & POST</paper-tab>
+        <paper-tab name="byIpUserAgentPostId" hidden$="[[hidePost]]">IP & USER AGENT & POST</paper-tab>
+        <paper-tab name="byIpFingerprintPointId" hidden$="[[hidePoint]]">IP & FINGERPRINT & POINT</paper-tab>
+        <paper-tab name="byIpUserAgentPointId" hidden$="[[hidePoint]]">IP & USER AGENT & POINT</paper-tab>
         <paper-tab name="byIpFingerprint">IP & FINGERPRINT</paper-tab>
+        <paper-tab name="byMissingBrowserFingerprint">NO FINGERPRINT</paper-tab>
         <paper-tab name="byIpAddress">IP ADDRESS</paper-tab>
       </paper-tabs>
 
@@ -276,8 +278,11 @@
                 <div class="layout vertical detailAreas">
                   <div class="detailArea"><b>User Id:</b> [[item.User.id]]</div>
                   <div class="detailArea"><b>Email:</b> [[item.User.email]]</div>
-                  <div class="detailArea"><b>Post Id:</b> [[item.Post.id]]</div>
-                  <div class="detailArea"><b>Post Name:</b> [[item.Post.name]]</div>
+                  <div class="detailArea" hidden$="[[hidePost]]"><b>Post Id:</b> [[item.Post.id]]</div>
+                  <div class="detailArea" hidden$="[[hidePost]]"><b>Post Name:</b> [[item.Post.name]]</div>
+                  <div class="detailArea" hidden$="[[hidePoint]]"><b>Post Id:</b> [[item.Point.id]]</div>
+                  <div class="detailArea" hidden$="[[hidePoint]]"><b>Point Id:</b> [[item.Point.Post.id]]</div>
+                  <div class="detailArea" hidden$="[[hidePoint]]"><b>Post Name:</b> [[item.Point.Post.name]]</div>
                   <div class="detailArea"><b>Confidence:</b> [[item.confidenceScore]]</div>
                 </div>
               </div>
@@ -325,8 +330,12 @@
           <template>[[item.User.email]]</template>
         </vaadin-grid-sort-column>
 
-        <vaadin-grid-sort-column width="100px" flex-grow="0" path="Post.id" header="PostId">
+        <vaadin-grid-sort-column hidden$="[[hidePost]]" width="100px" flex-grow="0" path="Post.id" header="PostId">
           <template>[[item.Post.id]]</template>
+        </vaadin-grid-sort-column>
+
+        <vaadin-grid-sort-column hidden$="[[hidePoint]]" width="100px" flex-grow="0" path="Point.id" header="Point">
+          <template>[[item.Point.id]]</template>
         </vaadin-grid-sort-column>
 
         <vaadin-grid-sort-column width="80px" flex-grow="0" path="value" header="Val">
@@ -529,10 +538,28 @@
         currentType: {
           type: String,
           value: null
+        },
+
+        hidePost: {
+          type: Boolean,
+          computed: '_hidePost(selectedCollectionType)'
+        },
+
+        hidePoint: {
+          type: Boolean,
+          computed: '_hidePoint(selectedCollectionType)'
         }
       },
 
-      _deleteItemsMenuText(selectedMethod) {
+      _hidePost: function (selectedCollectionType) {
+        return !(selectedCollectionType==="endorsements" || selectedCollectionType==="ratings" || selectedCollectionType==="points")
+      },
+
+      _hidePoint: function (selectedCollectionType) {
+        return !(selectedCollectionType==="pointQualities")
+      },
+
+      _deleteItemsMenuText: function(selectedMethod) {
         if (['byIpAddress','byMissingBrowserFingerprint','byIpFingerprint'].indexOf(selectedMethod) >-1) {
           return this.t('deleteAllButOne');
         } else {
@@ -548,8 +575,20 @@
 
       _allSelected: function (method, collectionType, modelType) {
         if (method && collectionType, modelType) {
-          this._reset();
-          this._masterAjax("get-items");
+          if (
+            (method==="byIpFingerprintPostId" ||
+             method==="byIpUserAgentPostId") && (
+             collectionType!=="endorsements" && collectionType!=="ratings" && collectionType!=="points")) {
+            return true;
+          } else if (
+            (method==="byIpFingerprintPointId" ||
+              method==="byIpFingerprintPointId") && (
+              collectionType!=="pointQualities")) {
+            return true;
+          } else {
+            this._reset();
+            this._masterAjax("get-items");
+          }
           return true;
         } else {
           return false;
@@ -562,7 +601,19 @@
       },
 
       _selectedCollectionTypeChanged: function (selectedCollectionType) {
-        if (selectedCollectionType && this.selectedMethod && !this.inProgress) {
+        if (selectedCollectionType==="pointQualities") {
+          this.set('selectedMethod' ,'byIpFingerprintPointId')
+        }
+
+        if (selectedCollectionType==="posts" ||
+            selectedCollectionType==="points") {
+          this.set('selectedMethod' ,'byIpFingerprint')
+        }
+
+        if (selectedCollectionType==="endorsements" ||
+          selectedCollectionType==="ratings" ||
+          selectedCollectionType==="points") {
+          this.set('selectedMethod' ,'byIpFingerprintPostId')
         }
       },
 
@@ -827,7 +878,17 @@
           itemData.items[i].user_agent = itemData.cUserAgents[itemData.items[i].user_agent];
           itemData.items[i].User.email = itemData.cEmails[itemData.items[i].User.email ];
           itemData.items[i].User.name = itemData.cNames[itemData.items[i].User.name];
-          itemData.items[i].Post.name = itemData.cPostNames[itemData.items[i].Post.name];
+
+          if (this.selectedCollectionType==="endorsements" ||
+              this.selectedCollectionType==="ratings" ||
+              this.selectedCollectionType==="points") {
+            itemData.items[i].Post.name = itemData.cPostNames[itemData.items[i].Post.name];
+          }
+
+          if (this.selectedCollectionType==="pointQualities") {
+            itemData.items[i].Point.Post.name = itemData.cPostNames[itemData.items[i].Point.Post.name];
+          }
+
           outItems.push(itemData.items[i]);
         }
 
