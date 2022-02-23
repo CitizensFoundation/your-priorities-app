@@ -1,4 +1,7 @@
 {
+  "downloadFraudAuditReports": "Fraud Delete Audits",
+  "haveCreatedFraudAuditReport": "Have created fraud delete audit report",
+  "downloadFraudAuditReport": "Fraud Delete Audit Report",
   "deleteAllButOne": "Delete all but one in group",
   "fraudPostsAndPointsInfo": "WARNING: Use with care",
   "communityFraudManagement": "Community Fraud Management",

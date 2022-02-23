@@ -3,6 +3,7 @@
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../../bower_components/lite-signal/lite-signal.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
 
 <link rel="import" href="../yp-behaviors/yp-language-behavior.html">
 <link rel="import" href="../yp-behaviors/access-helpers.html">
@@ -53,6 +54,19 @@
       .expiredText {
         color: red;
       }
+
+      .fraudItemSelection {
+        cursor: pointer;
+        padding: 8px;
+        background-color: #444;
+        color: #fff;
+        margin-bottom: 8px;
+      }
+
+      paper-dialog-scrollable {
+        height: 350px;
+        width: 420px;
+      }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
     <lite-signal on-lite-signal-yp-auto-translate="_autoTranslateEvent"></lite-signal>
@@ -61,24 +75,41 @@
                     action="[[action]]" method="[[method]]" cancel-text="[[t('close')]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
 
       <div class="layout vertical center-center">
-        <paper-progress id="progress" value="[[progress]]"></paper-progress>
+        <template is="dom-if" if="[[fraudAuditSelectionActive]]">
+          <template is="dom-if" if="[[waitingOnFraudAudits]]">
+            <paper-progress id="progressFraudAudits" indeterminate></paper-progress>
+          </template>
 
-        <div class="error" hidden$="[[!error]]">[[error]]</div>
+          <paper-dialog-scrollable>
+            <template is="dom-if" if="[[!waitingOnFraudAudits]]">
+              <template is="dom-repeat" items="[[fraudAuditsAvailable]]" as="fraudItem">
+                <div class="layout horizontal fraudItemSelection"
+                     data-args$="[[fraudItem.logId]]" on-tap="_fraudItemSelection">[[fraudItem.date]] - [[fraudItem.userName]]</div>
+              </template>
+            </template>
+          </paper-dialog-scrollable>
+        </template>
 
-        <div hidden$="[[!reportUrl]]">
-          <a href="[[reportUrl]]" target="_blank" hidden$="[[downloadDisabled]]">
-            <paper-button id="downloadReportButton" disabled$="[[downloadDisabled]]" raised>[[t('downloadReport')]]</paper-button>
-          </a>
-        </div>
-        <div class="infoText reportText" hidden$="[[!reportUrl]]">[[t('reportLinkInfo')]]</div>
-        <div class="infoText expiredText" hidden$="[[!downloadDisabled]]">
-          [[t('downloadHasExpired')]]
-        </div>
+        <template is="dom-if" if="[[!fraudAuditSelectionActive]]">
+          <paper-progress id="progress" value="[[progress]]"></paper-progress>
+          <div class="error" hidden$="[[!error]]">[[error]]</div>
+
+          <div hidden$="[[!reportUrl]]">
+            <a href="[[reportUrl]]" target="_blank" hidden$="[[downloadDisabled]]">
+              <paper-button id="downloadReportButton" disabled$="[[downloadDisabled]]" raised>[[t('downloadReport')]]</paper-button>
+            </a>
+          </div>
+          <div class="infoText reportText" hidden$="[[!reportUrl]]">[[t('reportLinkInfo')]]</div>
+          <div class="infoText expiredText" hidden$="[[!downloadDisabled]]">
+            [[t('downloadHasExpired')]]
+          </div>
+        </template>
       </div>
 
       <div class="layout horizontal center-center" hidden>
         <yp-ajax hidden method="PUT" id="startReportCreationAjax" on-response="_startReportCreationResponse"></yp-ajax>
         <yp-ajax hidden method="GET" id="reportCreationProgressAjax" on-response="_reportCreationProgressResponse"></yp-ajax>
+        <yp-ajax hidden method="GET" id="getFraudAuditsAjax" on-response="_fraudAuditsAjaxResponse"></yp-ajax>
       </div>
     </yp-edit-dialog>
   </template>
@@ -141,7 +172,40 @@
       autoTranslateActive: {
         type: Boolean,
         value: false
+      },
+
+      selectedFraudAuditId: {
+        type: Number,
+        value: null
+      },
+
+      fraudAuditSelectionActive: {
+        type: Boolean,
+        computed: '_fraudAuditSelectionActive(type,selectedFraudAuditId)'
+      },
+
+      fraudAuditsAvailable: {
+        type: Array,
+        value: null
+      },
+
+      waitingOnFraudAudits: {
+        type: Boolean,
+        value: false
       }
+    },
+
+    _fraudItemSelection: function (event) {
+      this.set('selectedFraudAuditId', event.target.getAttribute('data-args'));
+      this.$.startReportCreationAjax.body = {
+        selectedFraudAuditId: this.selectedFraudAuditId
+      };
+      this.$.startReportCreationAjax.generateRequest();
+    },
+
+    _fraudAuditSelectionActive: function(type, selectedFraudAuditId) {
+      debugger;
+      return (type==="fraudAuditReport" && !selectedFraudAuditId)
     },
 
     _autoTranslateEvent: function (event, detail) {
@@ -163,6 +227,12 @@
       this.async(function () {
         this.$.reportCreationProgressAjax.generateRequest();
       }, 1000);
+    },
+
+    _fraudAuditsAjaxResponse: function (event, detail) {
+      this.set('waitingOnFraudAudits', false);
+      this.set('fraudAuditsAvailable', detail.response);
+      debugger;
     },
 
     _reportCreationProgressResponse: function (event, detail) {
@@ -215,7 +285,15 @@
 
       this.$.startReportCreationAjax.url = url;
       this.$.startReportCreationAjax.body = {};
-      this.$.startReportCreationAjax.generateRequest();
+      if (['fraudAuditReport'].indexOf(type) === -1) {
+        this.$.startReportCreationAjax.generateRequest();
+      }
+
+      if (type==="fraudAuditReport" && community) {
+        this.$.getFraudAuditsAjax.url = `/api/communities/${community.id}/getFraudAudits`;
+        this.$.getFraudAuditsAjax.generateRequest();
+        this.set('waitingOnFraudAudits', true);
+      }
       this.set('refreshFunction', refreshFunction);
       this._setupTranslation();
       this.open();
@@ -231,6 +309,9 @@
       } else if (this.type==="usersxls") {
         this.set('editHeaderText', this.t('createXlsUsersReport'));
         this.set('toastText', this.t('haveCreatedXLsReport'));
+      } else if (this.type==="fraudAuditReport") {
+        this.set('editHeaderText', this.t('downloadFraudAuditReport'));
+        this.set('toastText', this.t('haveCreatedFraudAuditReport'));
       }
       this.set('saveText', null);
     }

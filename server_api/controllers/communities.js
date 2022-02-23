@@ -1931,6 +1931,8 @@ router.put('/:communityId/:type/start_report_creation', auth.can('edit community
       let reportType;
       if (req.params.type==='usersxls') {
         reportType = 'start-xls-users-community-report-generation';
+      } else if (req.params.type==='fraudAuditReport') {
+        reportType = 'start-fraud-audit-report-generation';
       }
 
       queue.create('process-reports', {
@@ -1939,6 +1941,7 @@ router.put('/:communityId/:type/start_report_creation', auth.can('edit community
         exportType: req.params.type,
         fileEnding: req.params.fileEnding ? req.params.fileEnding : 'xlsx',
         translateLanguage: req.query.translateLanguage,
+        selectedFraudAuditId: req.body.selectedFraudAuditId,
         jobId: jobId,
         communityId: req.params.communityId
       }).priority('critical').removeOnComplete(true).save();
@@ -1996,6 +1999,29 @@ router.get('/:communityId/:jobId/endorsement_fraud_action_status', auth.can('edi
         type: "delete-job",
         jobId: job.id,
       }).priority('critical').delay(30000).removeOnComplete(true).save();
+    }
+    res.send(job);
+  }).catch( error => {
+    log.error('Could not get backgroundJob', { err: error, context: 'endorsement_fraud_action_status', user: toJson(req.user.simple()) });
+    res.sendStatus(500);
+  });
+});
+
+router.get('/:communityId/getFraudAudits', auth.can('edit community'), function(req, res) {
+  models.Community.findOne({
+    where: {
+      id: req.params.communityId
+    },
+    attributes: ['data']
+  }).then( community => {
+    if (community) {
+      if (community.data) {
+        res.send(community.data.fraudDeletionsAuditLogs)
+      } else {
+        res.send(null);
+      }
+    } else {
+      res.sendStatus(404);
     }
     res.send(job);
   }).catch( error => {
