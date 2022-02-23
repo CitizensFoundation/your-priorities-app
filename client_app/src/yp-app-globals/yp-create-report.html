@@ -56,17 +56,18 @@
       }
 
       .fraudItemSelection {
-        cursor: pointer;
-        padding: 8px;
-        background-color: #444;
-        color: #fff;
-        margin-bottom: 8px;
+        color: #000;
       }
 
       paper-dialog-scrollable {
         height: 350px;
         width: 420px;
       }
+
+      .auditContainer {
+          margin-bottom: 32px;
+      }
+
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
     <lite-signal on-lite-signal-yp-auto-translate="_autoTranslateEvent"></lite-signal>
@@ -82,10 +83,12 @@
 
           <paper-dialog-scrollable>
             <template is="dom-if" if="[[!waitingOnFraudAudits]]">
-              <template is="dom-repeat" items="[[fraudAuditsAvailable]]" as="fraudItem">
-                <div class="layout horizontal fraudItemSelection"
-                     data-args$="[[fraudItem.logId]]" on-tap="_fraudItemSelection">[[fraudItem.date]] - [[fraudItem.userName]]</div>
-              </template>
+              <div class="auditContainer">
+                <template is="dom-repeat" items="[[fraudAuditsAvailable]]" as="fraudItem">
+                  <paper-button raised class="layout horizontal fraudItemSelection"
+                                data-args$="[[fraudItem.logId]]" on-tap="_fraudItemSelection">[[fraudItem.date]]<br>[[fraudItem.userName]]</paper-button>
+                </template>
+              </div>
             </template>
           </paper-dialog-scrollable>
         </template>
