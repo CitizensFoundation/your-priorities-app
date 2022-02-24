@@ -1,4 +1,5 @@
 {
+  "errorFraudAuditReportGeneration": "Error creating Fraud Audit report",
   "downloadFraudAuditReports": "Fraud Delete Audits",
   "haveCreatedFraudAuditReport": "Have created fraud delete audit report",
   "downloadFraudAuditReport": "Fraud Delete Audit Report",

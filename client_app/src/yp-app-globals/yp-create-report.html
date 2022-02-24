@@ -57,6 +57,7 @@
 
       .fraudItemSelection {
         color: #000;
+        width: 200px;
       }
 
       paper-dialog-scrollable {
@@ -83,7 +84,7 @@
 
           <paper-dialog-scrollable>
             <template is="dom-if" if="[[!waitingOnFraudAudits]]">
-              <div class="auditContainer">
+              <div class="auditContainer layout vertical center-center">
                 <template is="dom-repeat" items="[[fraudAuditsAvailable]]" as="fraudItem">
                   <paper-button raised class="layout horizontal fraudItemSelection"
                                 data-args$="[[fraudItem.logId]]" on-tap="_fraudItemSelection">[[fraudItem.date]]<br>[[fraudItem.userName]]</paper-button>
@@ -207,7 +208,6 @@
     },
 
     _fraudAuditSelectionActive: function(type, selectedFraudAuditId) {
-      debugger;
       return (type==="fraudAuditReport" && !selectedFraudAuditId)
     },
 
@@ -232,10 +232,18 @@
       }, 1000);
     },
 
+    _formatAuditReportDates: function (data) {
+      for (var i=0;i<data.length;i++) {
+        if (data[i].date) {
+          data[i].date = moment(data[i].date).format("DD/MM/YYYY hh:mm:ss")
+        }
+      }
+      return data;
+    },
+
     _fraudAuditsAjaxResponse: function (event, detail) {
       this.set('waitingOnFraudAudits', false);
-      this.set('fraudAuditsAvailable', detail.response);
-      debugger;
+      this.set('fraudAuditsAvailable', this._formatAuditReportDates(detail.response));
     },
 
     _reportCreationProgressResponse: function (event, detail) {
@@ -263,6 +271,9 @@
       this.set('reportUrl', null);
       this.set('downloadDisabled', false);
       this.set('progress', 0);
+      this.set('selectedFraudAuditId', null);
+      this.set('fraudAuditsAvailable', null);
+      this.set('waitingOnFraudAudits', false);
     },
 
     setupAndOpen: function (type, group, community, refreshFunction) {
