@@ -2023,7 +2023,6 @@ router.get('/:communityId/getFraudAudits', auth.can('edit community'), function(
     } else {
       res.sendStatus(404);
     }
-    res.send(job);
   }).catch( error => {
     log.error('Could not get backgroundJob', { err: error, context: 'endorsement_fraud_action_status', user: toJson(req.user.simple()) });
     res.sendStatus(500);
