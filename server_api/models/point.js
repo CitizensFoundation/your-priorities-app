@@ -272,6 +272,12 @@ module.exports = (sequelize, DataTypes) => {
     tableName: 'points',
   });
 
+  Point.defaultAttributesPublic = [
+    'id','name','content_type','content','status','value',
+    'website','deleted','counter_revisions','counter_quality_up',
+    'embed_data', 'counter_quality_down','public_data','language'
+  ];
+
   Point.associate = (models) => {
     Point.belongsTo(sequelize.models.PostStatusChange, { foreignKey: 'post_status_change_id'});
     Point.belongsTo(sequelize.models.Post, { foreignKey: 'post_id'});

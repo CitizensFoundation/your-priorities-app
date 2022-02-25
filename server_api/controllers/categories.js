@@ -30,7 +30,7 @@ router.get('/:id', auth.can('view category'), function(req, res) {
     include: [
       {
         model: models.Group,
-        attributes: models.Group.defaultPublicAttributes
+        attributes: models.Group.defaultAttributesPublic
       },
       {
         model: models.Image, as: 'CategoryIconImages'

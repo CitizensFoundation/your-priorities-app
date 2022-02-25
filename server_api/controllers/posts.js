@@ -271,18 +271,14 @@ router.get('/:id', auth.can('view post'), function(req, res) {
           {
             model: models.Image,
             required: false,
-            as: 'PostHeaderImages'
+            as: 'PostHeaderImages',
+            attributes: models.Image.defaultAttributesPublic
           },
           {
             model: models.Audio,
             required: false,
             attributes: ['id','formats','updated_at','listenable'],
             as: 'PostAudios',
-          },
-          // PointRevision
-          {
-            model: models.PostRevision,
-            required: false
           }
         ]
       }).then(function(postIn) {

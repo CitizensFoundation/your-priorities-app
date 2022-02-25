@@ -40,6 +40,11 @@ module.exports = function(sequelize, DataTypes) {
     tableName: 'point_revisions'
   });
 
+  PointRevision.defaultAttributesPublic = [
+    'id','name','content','status','value',
+    'website','deleted','embed_data'
+  ];
+
   PointRevision.associate = (models) => {
     PointRevision.belongsTo(models.Point, { foreignKey: 'point_id'});
     PointRevision.belongsTo(models.User, { foreignKey: 'user_id'});

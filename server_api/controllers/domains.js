@@ -272,10 +272,12 @@ var getDomain = function (req, domainId, done) {
               include: [
                 {
                   model: models.Image, as: 'CommunityLogoImages',
+                  attributes:  models.Image.defaultAttributesPublic,
                   required: false
                 },
                 {
                   model: models.Image, as: 'CommunityHeaderImages',
+                  attributes:  models.Image.defaultAttributesPublic,
                   required: false
                 },
                 {
@@ -334,6 +336,7 @@ var getDomain = function (req, domainId, done) {
               include: [
                 {
                   model: models.Image, as: 'CommunityLogoImages',
+                  attributes:  models.Image.defaultAttributesPublic,
                   required: false
                 },
                 {

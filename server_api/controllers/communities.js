@@ -176,10 +176,12 @@ var getCommunityFolder = function (req, communityFolderId, done) {
               include: [
                 {
                   model: models.Image, as: 'CommunityLogoImages',
+                  attributes: models.Image.defaultAttributesPublic,
                   required: false
                 },
                 {
                   model: models.Image, as: 'CommunityHeaderImages',
+                  attributes: models.Image.defaultAttributesPublic,
                   required: false
                 },
                 {
@@ -229,10 +231,12 @@ var getCommunityFolder = function (req, communityFolderId, done) {
               include: [
                 {
                   model: models.Image, as: 'CommunityLogoImages',
+                  attributes: models.Image.defaultAttributesPublic,
                   required: false
                 },
                 {
                   model: models.Image, as: 'CommunityHeaderImages',
+                  attributes: models.Image.defaultAttributesPublic,
                   required: false
                 },
                 {
@@ -573,8 +577,10 @@ const getCommunity = function(req, done) {
                 $ne: 'hidden'
               }
             },
-            attributes: ['id', 'configuration', 'access', 'objectives', 'name', 'theme_id', 'community_id',
-              'access', 'status', 'counter_points', 'counter_posts', 'counter_users', 'language'],
+            attributes: ['id', 'configuration', 'access', 'objectives',
+              'name', 'theme_id', 'community_id',
+              'access', 'status', 'counter_points', 'counter_posts',
+              'counter_users', 'language'],
             required: false,
             order: [
               ['counter_users', 'desc'],
@@ -604,6 +610,7 @@ const getCommunity = function(req, done) {
               where: {
                 community_id: community.id
               },
+              attributes: models.Group.defaultAttributesPublic,
               order: [
                 [ 'counter_users', 'desc'],
                 [ { model: models.Image, as: 'GroupLogoImages' } , 'created_at', 'asc' ],
@@ -634,6 +641,7 @@ const getCommunity = function(req, done) {
               where: {
                 community_id: community.id
               },
+              attributes: models.Group.defaultAttributesPublic,
               order: [
                 [ 'counter_users', 'desc'],
                 [ { model: models.Image, as: 'GroupLogoImages' } , 'created_at', 'asc' ],
@@ -1240,6 +1248,7 @@ router.get('/:communityId/posts', auth.can('view community'), function (req, res
         include: [
           {
             model: models.Image, as: 'GroupLogoImages',
+            attributes: models.Image.defaultAttributesPublic,
             required: false
           },
           {
@@ -1253,7 +1262,7 @@ router.get('/:communityId/posts', auth.can('view community'), function (req, res
         ]
       },
       { model: models.Image,
-        attributes: { exclude: ['ip_address', 'user_agent'] },
+        attributes: models.Image.defaultAttributesPublic,
         as: 'PostHeaderImages',
         required: false
       }
@@ -1542,6 +1551,7 @@ router.get('/:id/post_locations', auth.can('view community'), function(req, res)
         $ne: null
       }
     },
+    attributes: models.Post.defaultAttributesPublic,
     order: [
       [ { model: models.Image, as: 'PostHeaderImages' } ,'updated_at', 'asc' ]
     ],
@@ -1549,10 +1559,12 @@ router.get('/:id/post_locations', auth.can('view community'), function(req, res)
     include: [
       { model: models.Image,
         as: 'PostHeaderImages',
+        attributes: models.Image.defaultAttributesPublic,
         required: false
       },
       {
         model: models.Group,
+        attributes: models.Group.defaultAttributesPublic,
         where: {
           access: { $in: [models.Group.ACCESS_OPEN_TO_COMMUNITY, models.Group.ACCESS_PUBLIC]}
         },
@@ -1560,6 +1572,7 @@ router.get('/:id/post_locations', auth.can('view community'), function(req, res)
         include: [
           {
             model: models.Community,
+            attributes: models.Community.defaultAttributesPublic,
             where: { id: req.params.id },
             required: true
           }

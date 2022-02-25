@@ -70,7 +70,8 @@ var getGroupAndUser = function (groupId, userId, userEmail, callback) {
       models.Group.findOne({
         where: {
           id: groupId
-        }
+        },
+        attributes: models.Group.defaultAttributesPublic
       }).then(function (groupIn) {
         if (groupIn) {
           group = groupIn;
@@ -1288,7 +1289,7 @@ const addVideosToGroup = (group, done) => {
 router.get('/:id', auth.can('view group'), function(req, res) {
   models.Group.findOne({
     where: { id: req.params.id },
-    attributes: models.Group.defaultPublicAttributes,
+    attributes: models.Group.defaultAttributesPublic,
     order: [
       [ { model: models.Image, as: 'GroupLogoImages' } , 'created_at', 'asc' ],
       [ { model: models.Image, as: 'GroupHeaderImages' } , 'created_at', 'asc' ],
@@ -1476,7 +1477,7 @@ var getPostsWithAllFromIds = function (postsWithIds, postOrder, done) {
               {
                 model: models.Image,
                 required: false,
-                attributes: { exclude: ['ip_address', 'user_agent'] },
+                attributes: models.Image.defaultAttributesPublic,
                 as: 'CategoryIconImages'
               }
             ]
@@ -1516,11 +1517,6 @@ var getPostsWithAllFromIds = function (postsWithIds, postOrder, done) {
             ]
           },
           {
-            model: models.PostRevision,
-            attributes: { exclude: ['ip_address', 'user_agent'] },
-            required: false
-          },
-          {
             model: models.Group,
             required: true,
             attributes: ['id','configuration','name','theme_id','access'],
@@ -1537,7 +1533,7 @@ var getPostsWithAllFromIds = function (postsWithIds, postOrder, done) {
             ]
           },
           { model: models.Image,
-            attributes: { exclude: ['ip_address', 'user_agent'] },
+            attributes: models.Image.defaultAttributesPublic,
             as: 'PostHeaderImages',
             required: false
           }
@@ -1775,12 +1771,14 @@ router.get('/:id/post_locations', auth.can('view group'), function(req, res) {
       },
       group_id: req.params.id
     },
+    attributes: models.Post.defaultAttributesPublic,
     order: [
       [ { model: models.Image, as: 'PostHeaderImages' } ,'updated_at', 'asc' ]
     ],
     include: [
       { model: models.Image,
         as: 'PostHeaderImages',
+        attributes: models.Image.defaultAttributesPublic,
         required: false
       },
       {

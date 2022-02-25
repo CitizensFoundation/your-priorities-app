@@ -26,6 +26,11 @@ module.exports = (sequelize, DataTypes) => {
     tableName: 'post_status_changes'
   });
 
+  PostStatusChange.defaultAttributesPublic = [
+    'id','subject','content','status','published_at','deleted',
+    'status_changed_to'
+  ];
+
   PostStatusChange.associate = (models) => {
     PostStatusChange.belongsTo(models.Post, { foreignKey: 'post_id'});
     PostStatusChange.belongsTo(models.User, { foreignKey: 'user_id'});
