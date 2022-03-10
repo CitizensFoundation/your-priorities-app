@@ -269,7 +269,6 @@ const countUsersInGroup = (groupId, done) => {
         seriesCallback();
       }).catch(seriesCallback)
     }
-
   ], error => {
     done(error, _.uniq(userIds).length, userIds);
   })

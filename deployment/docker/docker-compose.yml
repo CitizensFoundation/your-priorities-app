@@ -2,7 +2,7 @@ version: '3.9'
 
 x-minio-common: &minio-common
   image: minio/minio
-  restart: unless-stopped
+  restart: always
   env_file: .env
   volumes:
     - ./minio_data:/minio_data
@@ -29,7 +29,7 @@ x-minio-common: &minio-common
 x-your-priorities-app-common: &your-priorities-app-common
   build: ./your-priorities-app/
   env_file: .env
-  restart: unless-stopped
+  restart: always
   build:
     context: ../../.
     dockerfile: deployment/docker/your-priorities-app/Dockerfile
@@ -53,12 +53,11 @@ x-your-priorities-app-common: &your-priorities-app-common
 
 x-your-priorities-worker-common: &your-priorities-worker-common
   build: ./your-priorities-worker/
-  restart: unless-stopped
+  restart: always
   env_file: .env
   build:
     context: ../../.
     dockerfile: deployment/docker/your-priorities-worker/Dockerfile
-  restart: unless-stopped
   command: node server_api/active-citizen/workers/main.js
   network_mode: host
   logging:
@@ -156,7 +155,7 @@ services:
   your-priorities-encoder:
     container_name: your-priorities-encoder
     build: ./your-priorities-encoder/
-    restart: unless-stopped
+    restart: always
     env_file: .env
     environment:
       - NODE_ENV=production
@@ -196,7 +195,7 @@ services:
     container_name: ac-analytics-api
     build: ./ac-analytics-api/
     env_file: .env
-    restart: unless-stopped
+    restart: always
     environment:
       - PORT=8888
       - HOST=localhost
@@ -224,7 +223,7 @@ services:
     volumes:
       - ./rec_models:/ac-analytics-api/rec_models
       - ./d2v_models:/ac-analytics-api/d2v_models
-    restart: unless-stopped
+    restart: always
     command: python3 worker.py
     network_mode: host
     logging:
