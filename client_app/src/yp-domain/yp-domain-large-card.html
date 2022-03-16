@@ -38,7 +38,6 @@
           font-size: 15px;
       }
 
-
       .stats {
         position: absolute;
         bottom: 0;
@@ -61,6 +60,11 @@
 
       .domain-name[largefont] {
         font-size: 38px;
+      }
+
+      .domain-name[longname] {
+          font-size: 32px;
+          padding-bottom: 12px;
       }
 
       .large-card {
@@ -247,9 +251,8 @@
           <div class="layout horizontal wrap">
             <div class="layout vertical description-and-stats">
               <div class="descriptionContainer">
-                <div class="domain-name" largefont$="[[largeFont]]" role="heading" aria-level="1" aria-label="[[domain.name]]">
+                <div class="domain-name" longname$="[[longName]]" largefont$="[[largeFont]]" role="heading" aria-level="1" aria-label="[[domain.name]]">
                   <yp-magic-text text-type="domainName" content-language="[[domain.language]]"
-
                                  disable-translation="[[domain.configuration.disableNameAutoTranslation]]"
                                  text-only content="[[domain.name]]" content-id="[[domain.id]]">
                   </yp-magic-text>
@@ -370,6 +373,11 @@
         largeFont: {
           type: Boolean,
           value: false
+        },
+
+        longName: {
+          type: Boolean,
+          value: false
         }
       },
 
@@ -384,6 +392,11 @@
       _domainChanged: function (domain, previousDomain) {
         this.setupMediaEventListeners(domain, previousDomain);
         this.async(function () {
+          if (domain.name && domain.name.length>20) {
+            this.set('longName', true);
+          } else {
+            this.set('longName', false);
+          }
           if (window.appGlobals.largeFont)
             this.set('largeFont', true);
           else
