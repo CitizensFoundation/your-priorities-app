@@ -392,7 +392,7 @@
       _domainChanged: function (domain, previousDomain) {
         this.setupMediaEventListeners(domain, previousDomain);
         this.async(function () {
-          if (domain.name && domain.name.length>20) {
+          if (domain && domain.name && domain.name.length>20) {
             this.set('longName', true);
           } else {
             this.set('longName', false);
