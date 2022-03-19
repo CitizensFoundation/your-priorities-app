@@ -1,0 +1,437 @@
+{
+  "participateAnonymously": "Piedalīties anonīmi",
+  "copiedToClipboard": "Kopēts uz starpliktuvi",
+  "choose": "Izvēlies",
+  "numberOfPosts": "Ierakstu skaits",
+  "createApiKey": "Izveidot API atslēgu",
+  "voteReceived": "Balsojums pieņemts",
+  "youAreOnline": "Tu esi tiešsaistē",
+  "youAreNowOffline": "Tu šobrīd neesi tiešsaistē",
+  "youAreOffline": "Tu neesi tiešsaistē",
+  "youAreOfflineCantSend": "Tu neesi tiešsaistē, nav iespējams nosūtīt datus",
+  "notLoggedInContentSentWhenLoggedIn": "Dati tiks nosūtīti, kad pieteiksies sistēmā",
+  "offlineContentSentWhenOnline": "Tu esi bezsaistē, dati tiks nosūtīti, kad būsi tiešsaistē",
+  "youHaveUsed": "Tu esi izmantojis",
+  "votesForGroup": "balsojumi",
+  "ofNumber": "no",
+  "contactAddress": "Adrese",
+  "submitSurvey": "Iesniegt",
+  "thankYouForYourSubmission": "Paldies par satura papildināšanu!",
+  "userImage": {
+    "deleteConfirmation": "Vai esi pārliecināts, ka vēlies dzēst šo attēlu?"
+  },
+  "evaluatePost": "Novērtē ideju",
+  "evaluate": "Novērtē",
+  "videoUploadDisclaimer": "Augšuplādējot šo video, es apliecinu, ka man ir tiesības uz šo materiālu un tajā redzamie cilvēki ir snieguši savu piekrišanu tā publicēšanai.",
+  "backToPost": "Atgriezties pie ieraksta",
+  "forwardToPost": "Pārsūtīt uz ieteikto ierakstu",
+  "loginToShareALink": "Piesakies sistēmā,lai varētu dalīties ar šo saiti",
+  "addImage": "Pievienot attēlu",
+  "startSearch": "Sākt meklēšanu",
+  "deleteFile": "Dzēst failu",
+  "goBack": "Atgriezties",
+  "userContentModeration": "Mans saturs",
+  "items": "rīki",
+  "myContent": "Mans saturs",
+  "voiceRecorder": "Balss ierakstīšana",
+  "uploadFile": "Augšupielādēt failu",
+  "selectVideoDevice": "Izvēlēties videoiekārtu",
+  "selectAudioDevice": "Izvēlēties fotoiekārtu",
+  "rememberDevice": "Atcerēties šo ierīci",
+  "selectCoverImage": "Izvēlēties vāka attēlu",
+  "speechToTextInfo": "Mēs mēģināsim automātiski pārveidot tavu runu tekstā. Lai tas notiktu kvalitatīvi, ir svarīgi iestatīt lietotāja saskartnes valodu (augšējā kreisā izvēlne) uz valodu, kurā runāsi, un runāt skaidri.",
+  "edited": "labots",
+  "playVoiceRecording": "Atskaņot balss ierakstu",
+  "uploadAudio": "skaņas ieraksts",
+  "transcodingAudio": "Sagatavo skaņas ierakstu...",
+  "uploadingAudio": "Augšupielādē skaņas ierakstu...",
+  "automaticTranscript": "Automātiski ģenerēts skaņas transkripts",
+  "checkTranscriptError": "Nevar automātiski izveidot skaņas transkriptu",
+  "checkingForTranscript": "Notiek transkripta izveide no runas...",
+  "pointVideoInfo": "Augšupielādē video horizontālā formātā. Maksimālais video garums ir ",
+  "pointAudioInfo": "Runā skaidri un saprotami. Maksimālais audio garums ir ",
+  "pointAudioInfoAndroid": "Android ierīcēs ierakstīšanai izmanto video veidošanas funkciju. No video tiks izmantots tikai skaņas ieraksts.",
+  "seconds": "sekundes",
+  "uploadCompleted": "Augšupielāde pabeigta",
+  "uploadingVideo":"Augšupielādē video...",
+  "uploadingImage":"Augšupielādē attēlu...",
+  "transcodingVideo":"Sagatavo video...",
+  "useVideoCover": "Izmantot video attēlu",
+  "postCoverAudio": "Audio",
+  "postCoverAudioInfo": "Runā skaidrā balsī. Maksimālais audio garums ir ",
+  "media": "Attēli",
+  "email": "E-pasts",
+  "organization": "Organizācija",
+  "emailAlreadyRegisterred": "Tu nevari izmantot šo e-pasta adresi, tā jau tiek izmantota.",
+  "cantDisconnectFromFacebookWithoutValidEmail": "Bez derīgas e-pasta adreses tu nevari atvienoties no Facebook",
+  "cantDisconnectFromSamlWithoutValidEmail": "Bez derīgas e-pasta adreses tu nevari atvienoties no Elektroniskā ID",
+  "disconnectedSamlLoginFor": "Atvienoties no Elektroniskā ID priekš",
+  "disconnectedFacebookLoginFor": "Atvienoties no Facebook priekš",
+  "areYouSureYouWantToDisconnectSamlLogin": " Vai esi pārliecināts, ka vēlies atvienot savu profilu no Elektroniskā ID? Pēc šīs darbības tu nevarēsi pieteikties ar savu Elektronisko ID!",
+  "areYouSureYouWantToDisconnectFacebookLogin": "Vai esi pārliecināts, ka vēlies atvienot savu profilu no Facebook? Pēc šīs darbības tu vairs nevarēsi pieteikties ar savu Facebook!",
+  "disconnectFromSamlLogin": "Atvienot Elektronisko ID",
+  "disconnectFromFacebookLogin": "Atvienot Facebook",
+  "areYouSureYouWantToAnonymizeUser": "Vai esi pārliecināts, ka vēlies anonimizēt savu kontu?",
+  "areYouReallySureYouWantToAnonymizeUser": " Vai esi 100% pārliecināts, ka vēlies anonimizēt savu kontu? Visi tavi ieraksti, komentāri un ieteikumi tiks anonimizēti.",
+  "deleteAccount": "Izdzēst kontu",
+  "anonymizeAccount": "Anonimizēt kontu",
+  "anonymizeUserInfo": "Anonimizējot savu kontu, visi tavi ieraksti, ieteikumi un balsojumi tiks anonimizēti un tie vairs nebūs izsekojami.",
+  "deleteUserInfo": "Izdzēšot savu profilu, visi tavi ieraksti, ieteikumi un balsojumi tiks dzēsti uz visiem laikiem un šo informāciju vairs nevarēs atjaunot. Ja esi izveidojis kopienas vai grupas, tās tiks anonimizētas.",
+  "none": "Nav",
+  "signupTermsInfo": "Turpinot, tu piekrīti mūsu noteikumiem",
+  "signupTermsOpen": "lasīt noteikumus",
+  "uploadAttachment": "Augšupielādēt pielikumu",
+  "contactTelephone": "Tālrunis",
+  "contactInformation": "Kontaktinformācija",
+  "deleteAttachment": "Dzēst pielikumu",
+  "readMore": "Lasīt vairāk",
+  "inputError": "Nederīgs",
+  "postCreated": "Ideja izveidota",
+  "postUpdated": "Ideja atjaunota",
+  "closedForNewPosts": "Slēgts jaunām idejām",
+  "areYouSureYouWantToDeleteUser": "Vai esi pārliecināts, ka vēlies dzēst savu profilu?",
+  "areYouReallySureYouWantToDeleteUser": "Vai esi 100% pārliecināts, ka vēlies dzēst savu profilu? Visi tavi ieraksti, ieteikumi un komentāri tiks dzēsti!",
+  "or": "vai",
+  "filterIdeas": "Filtrēt idejas",
+  "edit": "Rediģēt",
+  "delete": "Dzēst",
+  "addEmoji": "Pievienot emocijzīmi",
+  "closeComments": "Aizvērt komentārus",
+  "openComments": "Atvērt komentārus",
+  "deleteActivity": "Dzēst aktivitāti no jaunumiem",
+  "pointsFor": "Punkti par",
+  "pointsAgainst": "Punkti pret",
+  "pointForShort": "Par",
+  "pointAgainstShort": "Pret",
+  "errorResetTokenNotFoundOrUsed": "Paroles atiestatīšanas saite nav atrasta vai jau ir izmantota",
+  "addedAnIdea": "Pievienot ideju...",
+  "recommendedPosts": "Ieteikts",
+  "noComments": "Nav komentāru",
+  "optional": "Pēc izvēles",
+  "inviteNotFoundOrAlreadyUsed": "Ielūgums nav atrasts vai jau ticis izmantots",
+  "reportConfirmation": "Vai esi pārliecināts, ka vēlies ziņot? Vai šis saturs neatbilst mājaslapas noteikumiem?",
+  "save": "Saglabāt",
+  "saved": "Saglabāts",
+  "unviewed": "nav skatīts",
+  "notificationMarkAllViewed": "Atzīmēt visus kā skatītus",
+  "notificationConfirmMarkAllViewed": "Apstiprini, ka vēlies visus paziņojumus atzīmēt kā skatītus",
+  "endorsedYourPost": "Atbalstīja Tavu ideju",
+  "opposedYourPost": "OIebilda Tavai idejai",
+  "notifications": "Paziņojumi",
+  "votingDisabled": " Balsošana nav aktīva",
+  "pageNotFound": "Šī lapa nav atrasta",
+  "participate": "Piedalies",
+  "emojiSearchResults": "Meklēt",
+  "recentlyUsedEmoji": "Nesen izmantotie",
+  "findAnEmoji": "Atrodi emocijzīmi",
+  "cancel": "Atcelt",
+  "ok": "Labi",
+  "next": "Nākamais",
+  "create": "Izveidot",
+  "confirm": "Apstiprināt",
+  "access": "Piekļūt",
+  "searchFor": "Meklēt...",
+  "title": "Virsraksts",
+  "selectLanguage": "Izvēlēties valodu",
+  "update": "Atjaunināt",
+  "errorCantConnect": "Neizdodas savienoties ar serveri. Lūdzu, mēģini vēlreiz nedaudz vēlāk. Iespējams, ka šobrīd mājaslapā ir daudz lietotāju vai arī tiek atjaunināta programmatūra.",
+  "errorNotFound": "Nav atrasts...",
+  "errorNotAuthorized": "Tev nav piekļuves!",
+  "generalError": "Notikusi neparedzēta kļūda. Esam par to informēti.",
+  "stats": {
+    "posts": "Ideju skaits",
+    "discussions": "Diskusiju skaits",
+    "communities": "Kopienu skaits",
+    "groups": "Grupu skaits",
+    "users": "Lietotāju skaits"
+  },
+  "notification": {
+    "passwordResetAndLoggedIn": "Tava parole ir nomainīta un tu esi pieteicies sistēmā.",
+    "method": "Metode",
+    "frequency": "Biežums",
+    "myPosts": "Manas idejas",
+    "muted": "Izslēgt",
+    "browser": "Interneta pārlūkprogramma",
+    "email": "E-pasts",
+    "asItHappens": "Tas notiek",
+    "daily": "Katru dienu",
+    "hourly": "Katru stundu",
+    "weekly": "Katru nedēļu",
+    "monthly": "Katru mēnesi",
+    "myPostsEndorsements": "Idejas, kuras man patīk",
+    "allCommunity": "Paziņojumi no manām kopienām",
+    "allGroup": "Paziņojumi no manām grupām",
+    "invite_accepted_for": "Piedalos"
+  },
+
+  "archived": "Saglabāts arhīvā",
+
+  "status": {
+    "select": " Izvēlēties statusu",
+    "active": "Aktīvs",
+    "featured": "Parādīts",
+    "archived": "Saglabāts arhīvā",
+    "hidden": "Noslēpts",
+    "published": "Atvērts",
+    "successful": "Veiksmīgs",
+    "failed": "Neveiksmīgs",
+    "inProgress": "Joprojām procesā"
+  },
+
+  "activity": {
+    "confirmDelete": "Apstiprini, ka vēlies dzēst šo aktivitāti!",
+    "post": {
+      "new": "Ideja",
+      "status": {
+        "change": "Statusa atjauninājums"
+      }
+    },
+    "point": {
+      "forAdded": "Pievienots punkts par",
+      "againstAdded": "Pievienots punkts pret",
+      "new": "Punkts",
+      "newFor": "Punkts par",
+      "newAgainst": "Punkts pret",
+      "newComment": "Komentārs",
+      "newsStory": {
+        "new": "Lietotāja jaunumi"
+      }
+    }
+  },
+
+  "name": "Vārds",
+
+
+  "domains": "Domēns",
+  "communities": "Kopienas",
+  "groups": "Grupas",
+
+  "myDomains": "Mani domēni",
+  "myCommunities": "Manas kopienas",
+  "myGroups": "Manas grupas",
+  "myAdminCommunities": "Kopienu administrators",
+  "myAdminGroups": "Grupu administrators",
+
+  "posts": {
+    "posts": "Idejas",
+    "post": "Ideja",
+    "open": "Atvērt",
+    "inProgress": "Ir procesā",
+    "successful": "Veiksmīgi",
+    "failed": "Neveiksmīgi",
+    "map": "Karte",
+    "noMapPosts": "Nav idejas ar norādītu atrašanās vietu",
+    "newUserImage": "Pievienot fotogrāfiju"
+  },
+
+  "form": {
+    "invalid": "Pabeidziet anketas aizpildīšanu"
+  },
+
+  "post": {
+    "most_debated": "Visvairāk apspriestais",
+    "deleteConfirmation": " Vai esi pārliecināts, ka vēlies dzēst šo ideju?",
+    "move": "Pārvietot ideju",
+    "confirmMove": " Apstiprini, ka vēlies pārvietot",
+    "statusChangeConfirmText": "Vai esi drošs, ka vēlies sūtīt e-pastu visiem: gan tiem, kas atbalsta, gan tiem, kas iebilst pret šo ideju?",
+    "statusChangeSelectNewStatus": "Jauns statuss",
+    "statusChangeContent": "Statusa izmaiņas tiks nosūtītas visiem idejas atbalstītājiem un arī tās pretiniekiem.",
+    "statusChange": "Nosūtīt statusa maiņas e-pastus",
+    "statusChangeSent": " Statusa maiņas e-pasti ir nosūtīti",
+    "noLocation": "Atrašanās vieta nav norādīta",
+    "shareInfo": "Dalies ar ideju",
+    "description": "Apraksts",
+    "debate": "Diskusija",
+    "formInvalid": "Pabeidziet anketas aizpildīšanu",
+    "status": "Šīs idejas statuss",
+    "new": " Jauna ideja",
+    "searchingFor": "Meklēt ",
+    "top": "Populārākās",
+    "newest": "Jaunākās",
+    "random": "Nejaušā secībā",
+    "inProgress": " Ir procesā",
+    "search": " Meklēt idejas",
+    "add_new":"Pievienot jaunu ideju",
+    "up_vote":"Balsot par ideju",
+    "down_vote":"Balsot pret ideju",
+    "report": "Ziņot par ideju",
+    "notify": "Vēlos saņemt paziņojumus par šo ideju",
+    "share": "Dalīties ar šo ideju",
+    "yourPost": "Ideja",
+    "yourPoint": "Punkts par",
+    "location": "Atrašanās vieta",
+    "photo": "Fotogrāfija",
+    "photographerName": "Fotogrāfs",
+    "newPhoto": " Jauna fotogrāfija",
+    "photoUpdate": "Atjaunināt fotogrāfiju",
+    "photoDeleteConfirmation": " Vai esi pārliecināts, ka vēlies dzēst šo fotogrāfiju?",
+    "tabs": {
+      "debate": "Diskusija",
+      "news": "Jaunumi",
+      "location": "Atrašanās vieta",
+      "photos": "Fotogrāfijas",
+      "solutions": "Risinājumi",
+      "not_implemented": "Vēl nav ieviests"
+    },
+    "cover": {
+      "media": "Izvēlies vāka attēlu",
+      "imageInfo": "Pievienojot attēlu, tavai idejai ir lielākas izredzes tikt pamanītai un kļūt populārai arī sociālajos medijos.",
+      "map": "Karte",
+      "streetview": " Ielas skats",
+      "image": "Attēls",
+      "none": "Nav"
+    },
+    "edit": "Labot ideju",
+    "delete": "Dzēst ideju",
+    "addNewIntroBoxText": "Izmantot 'spuldzes' pogu, lai pievienotu jaunas idejas"
+  },
+
+  "short_word": {
+    "in": "iekšā"
+  },
+
+
+  "point": {
+    "report": "ziņot",
+    "againstAdded": "Pievienots punkts pret",
+    "forAdded": "Pievienots punkts par",
+    "confirmDelete": "Apstipriniet, ka vēlaties dzēst šo punktu",
+    "theseAreFor": "Punkts par",
+    "theseAreAgainst": "Punkts pret",
+    "point": "Punkts",
+    "for": "Uzrakstiet punktu par...",
+    "against": "Rakstīt punktu pret...",
+    "add_up": "Pievienojiet punktu par",
+    "add_down": "APievienot punktu pret",
+    "helpful": "Noderīgs",
+    "not_helpful": "Nelietderīgs",
+    "addNewsStory": "Pievieno jaunumus vai dailies ar saiti",
+    "postNewsStory": "Pievieno jaunumus",
+    "addComment": "Tavs komentārs...",
+    "postComment": "Ieraksts",
+    "comments": "Komentāri",
+    "howToWrite": "Apkoposim labākās domas par un pret, lai kopīgi radītu risinājumus...",
+    "commentToShort": "Šis teksts ir par īsu!"
+  },
+
+  "news": "Jaunumi",
+
+  "uploading": {
+    "inProgress": "Augšupieladē..."
+  },
+
+  "maps": {
+    "searchInput": "Adrese",
+    "search": "Meklēt"
+  },
+
+  "group": {
+    "pages": "Palīdziba (?)",
+    "showWhoPostedPosts": "Rādīt, kurš ievietojis ziņas",
+    "locationHidden": "Nerādīt atrašanās vietu",
+    "group": "GrouGrupap",
+    "admins": "Grupas administratori",
+    "users": "Grupas lietotāji",
+    "new": "Pievienot jaunu grupu",
+    "edit": "Rediģēt grupu",
+    "invite": "Uzaicināt draugu",
+    "invite_to_group": "Uzaicināt draugu uz šo grupu",
+    "share_group": "Dalīties ar šo grupu",
+    "delete": "Izdzēst grupu",
+    "objectives": "Mērķi",
+    "public": "Publiska grupa",
+    "closed": "Slēgta grupa",
+    "secret": "Slepena grupa",
+    "openToCommunity": "O Atvērt kopienai",
+    "canVote": "VAtļauta balsošana",
+    "canAddNewPosts": "Atļautas jaunas idejas",
+    "config": "Konfigurators",
+    "update": " Atjaunot grupu"
+  },
+
+  "membership": {
+    "joined": " u esi pievienojies",
+    "left": "Tu esi aizgājis"
+  },
+
+  "menu": {
+    "my_pages": "Mans profils",
+    "about": "Par",
+    "help": "Palīdzība",
+    "settings": "Uzstādījumi"
+
+  },
+
+  "users": {
+    "userInvited": "Lietotājs uzaicināts",
+    "removeAdmin": "Noņemt administratora tiesības",
+    "addAdmin": "Pievienot administratoru",
+    "removeUser": "Noņemt lietotāju",
+    "inviteUser": "Uzaicināt lietotāju",
+    "email": "e-pasts",
+    "removeFromOrganization": "Noņemt organizāciju",
+    "addToOrganization": "Pievienot organizāciju",
+    "selectOrganization": "Atlasīt organizāciju"
+  },
+
+  "user": {
+    "loginCompleteFor": "Pieteikties, lai",
+    "acceptInvite": "Pieņemt uzaicinājumu, lai piedalītos",
+    "hasSentYouAndInvitation": "ir nosūtījis tev uzaicinājumu piedalīties",
+    "acceptInviteInstructions": "Nospied uz pogas, kura atrodas zemāk, lai apstiprinātu uzaicinājumu",
+    "setEmail": "Pievienot e-pastu profilam",
+    "linkAccount": "Savienoties, izmantojot profilu",
+    "setEmailInfo": "Pievienot e-pastu profilam",
+    "existsLinkAccountInfo": "TŠis e-pasts jau ir reģistrēts! Ievadi savu paroli, lai izveidotu savienojumu ar tavu e-pasta adresi.",
+    "logoutCompleteFor": "Izrakstīties, lai",
+    "loggedInWithSaml": "Pieteikties ar SAML",
+    "loggedInWithFacebook": "Pieteikties ar Facebook",
+    "facebookLogin": "Facebook pieteikšanās",
+    "info":"Informācija",
+    "notifications": "Paziņojumi",
+    "name": "Pilnais vārds",
+    "email": "E-pasts",
+    "edit": "Rediģēt lietotāju",
+    "password": "Parole",
+    "forgotPassword": "Izveidot jaunu paroli",
+    "forgotPasswordInstructions": "Ievadi savu e-pasta adresi, un mēs tev nosūtīsim e-pastu ar saiti, ko vari izmantot, lai izveidotu jaunu paroli.",
+    "forgotPasswordEmailHasBeenSent": "E-pasts ar paroles atjaunošanas pamācību ir nosūtīts.",
+    "resetPassword": "Atjaunot paroli",
+    "resetPasswordInstructions": " Izveido paroli, kuru nav viegli uzminēt",
+    "login": "Pieteikties",
+    "create": "Izveidot lietotāju",
+    "cancel": "Atcelt",
+    "logout": "Izrakstīties",
+    "newPassword": "jauna parole",
+    "register": "Jauns lietotājs",
+    "alreadyRegisterred": "Šis e-pasts jau ir reģistrēts. Tu vari izveidot jaunu paroli, ja tas ir nepieciešams.",
+    "registrationError": "Kļūda reģistrējoties",
+    "loginError": "Kļūda piesakoties",
+    "completeForm": "Lūdzu, aizpildi anketu pareizi!",
+    "loginNotAuthorized": "E-pasts vai parole ir nepareiza",
+    "setEmailConfirmationInfo": "Šī e-pasta adrese tiks izmantota, lai tev nosūtītu paziņojumus, ja vēlies, vari to mainīt."
+  },
+
+  "other": "Citi",
+
+  "socialMedia": "Sociālie mediji",
+
+  "location": {
+    "set": "Iestatīt atrašanās vietu"
+  },
+  "image": {
+    "upload": "Augšupielādēt attēlu",
+    "logo": {
+      "upload": "Augšupielādēt logo"
+    },
+    "header": {
+      "upload": "UAugšupielādēt galveni"
+    },
+    "profile": {
+      "upload": "Augšupielādēt profila attēlu"
+    }
+  },
+  "theme": {
+    "choose": "Izvēlēties tēmu"
+  }
+}
