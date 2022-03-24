@@ -23,6 +23,12 @@ let replaceForYrpri = function (data) {
   return data.replace(/XmanifestPathX/g, "manifest_yp");
 };
 
+let replaceForMyCityChallenge = function (data) {
+  data = data.replace(/XappNameX/g, "My City Challenge");
+  data = data.replace(/XdescriptionX/g, "My City Challenge");
+  return data.replace(/XmanifestPathX/g, "manifest_my_city_challenge");
+};
+
 let replaceForTarsalgo = function (data) {
   data = data.replace(/XappNameX/g, "társalgó");
   data = data.replace(/XdescriptionX/g, "tarsalgo.net");
@@ -85,6 +91,8 @@ let sendIndex = function (req, res) {
           res.send(replaceForParlScot(indexFileData));
         } else if (req.hostname.indexOf('ypus.org') > -1) {
           res.send(replaceForYrpri(indexFileData));
+        } else if (req.hostname.indexOf('mycitychallenge.org') > -1) {
+          res.send(replaceForMyCityChallenge(indexFileData));
         } else if (req.hostname.indexOf('tarsalgo.net') > -1) {
           res.send(replaceForTarsalgo(indexFileData));
         } else if (req.hostname.indexOf('junges.wien') > -1) {
