@@ -21,6 +21,7 @@
 * Users can view and moderate their own submitted content in one place
 * Full GDPR compliance
 * Localized in 28 languages
+* Advanced anti-Fraud system for detection malicious actors and deleting unwanted content
 * Post status system where posts can be set to open open, in progress, approved or rejected
 * Admins can easily and automatically email post status update all the people who supported or opposed posts
 * Optional categories system for posts with simple filters
