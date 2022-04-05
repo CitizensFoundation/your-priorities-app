@@ -301,6 +301,7 @@
               </paper-item>
               <paper-item hidden$="[[!hasGroupAccess]]" id="exportXlsMenuItem">[[t('exportGroupXls')]]</paper-item>
               <paper-item hidden$="[[!hasGroupAccess]]" id="exportDocxMenuItem">[[t('exportGroupDocx')]]</paper-item>
+              <paper-item hidden$="[[!hasGroupAccess]]" id="cloneMenuItem">[[t('cloneGroup')]]</paper-item>
               <paper-item hidden$="[[!hasGroupAccess]]" id="deleteMenuItem">[[t('group.delete')]]</paper-item>
               <paper-item hidden$="[[!hasGroupAccess]]" id="anonymizeMenuItem">[[t('anonymizeGroupContent')]]</paper-item>
               <paper-item hidden$="[[!hasGroupAccess]]" id="deleteContentMenuItem">[[t('deleteGroupContent')]]</paper-item>
@@ -513,6 +514,8 @@
           this._openCategoryEdit();
         else if (detail.item.id==="deleteMenuItem")
           this._openDelete();
+        else if (detail.item.id==="cloneMenuItem")
+          this._openClone();
         else if (detail.item.id==="usersMenuItem")
           this._openUsersDialog();
         else if (detail.item.id==="adminsMenuItem")
@@ -639,6 +642,16 @@
         }.bind(this));
       },
 
+      _openClone: function () {
+        window.appGlobals.activity('open', 'group.clone');
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("apiActionDialog", function (dialog) {
+          dialog.setup('/api/groups/' + this.group.id + '/clone',
+            this.t('areYouSureCloneGroup'),
+            this._onCloned.bind(this), this.t('cloneGroup'), "POST");
+          dialog.open({finalDeleteWarning: false});
+        }.bind(this));
+      },
+
       _openAnonymizeContent: function () {
         window.appGlobals.activity('open', 'group.anonymize');
         Polymer.dom(document).querySelector('yp-app').getDialogAsync("apiActionDialog", function (dialog) {
@@ -661,6 +674,11 @@
       },
 
       _onDeleted: function () {
+        this.dispatchEvent(new CustomEvent('yp-refresh-community', {bubbles: true, composed: true}));
+        this.redirectTo("/community/"+this.group.community_id);
+      },
+
+      _onCloned: function () {
         this.dispatchEvent(new CustomEvent('yp-refresh-community', {bubbles: true, composed: true}));
         this.redirectTo("/community/"+this.group.community_id);
       },

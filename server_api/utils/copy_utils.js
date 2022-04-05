@@ -637,6 +637,10 @@ const copyGroup = (fromGroupId, toCommunityIn, toDomainId, options, done) => {
           newGroup.set('counter_points', 0);
         }
 
+        if (!options.copyPosts) {
+          newGroup.set('counter_posts', 0);
+        }
+
         newGroup.save().then(function () {
           async.series(
             [

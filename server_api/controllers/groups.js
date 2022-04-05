@@ -35,6 +35,8 @@ const updateTranslationForGroup = require('../active-citizen/utils/translation_h
 
 const convertDocxSurveyToJson = require('../active-citizen/engine/analytics/manager').convertDocxSurveyToJson;
 
+const copyGroup = require('../utils/copy_utils.js').copyGroup;
+
 var s3 = new aws.S3({
   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
@@ -1225,6 +1227,41 @@ router.delete('/:id/anonymize_content', auth.can('edit group'), function(req, re
                                               resetCounters: true }).
                                               delay(anonymizationDelayMs).priority('high').removeOnComplete(true).save();
       res.sendStatus(200);
+    } else {
+      sendGroupOrError(res, req.params.id, 'delete', req.user, 'Not found', 404);
+    }
+  }).catch(function(error) {
+    sendGroupOrError(res, null, 'delete', req.user, error);
+  });
+});
+
+router.post('/:id/clone', auth.can('edit group'), function(req, res) {
+  models.Group.findOne({
+    attributes: ['id','community_id'],
+    where: {id: req.params.id },
+    include: [
+      {
+        model: models.Community,
+        attributes: ['id','domain_id'],
+        include: [
+          {
+            model: models.Domain,
+            attributes: ['id']
+          }
+        ]
+      }
+    ]
+  }).then(function (group) {
+    if (group) {
+      copyGroup(group.id, group.Community, group.Community.domain_id, {skipUser: true, skipActivities: true}, (error) => {
+        if (error) {
+          log.error('Group Cloned Failed', { error, groupId: req.params.id });
+          res.sendStatus(500);
+        } else {
+          log.info('Group Cloned', { groupId: req.params.id });
+          res.sendStatus(200);
+        }
+      });
     } else {
       sendGroupOrError(res, req.params.id, 'delete', req.user, 'Not found', 404);
     }
