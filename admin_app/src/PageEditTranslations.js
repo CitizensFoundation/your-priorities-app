@@ -233,6 +233,8 @@ export class PageEditTranslations extends YpBaseElement {
       fr: 'Français',
       is: 'Íslenska',
       es: 'Español',
+      et: 'Eesti',
+      cs: 'čeština',
       it: 'Italiano',
       ar: 'اَلْعَرَبِيَّةُ',
       ar_EG: 'اَلْعَرَبِيَّةُ (EG)',
@@ -244,7 +246,9 @@ export class PageEditTranslations extends YpBaseElement {
       sv: 'Svenska',
       en_CA: 'English (CA)',
       nl: 'Nederlands',
+      el: 'Ελληνικά',
       no: 'Norsk',
+      lv: "Latviešu",
       uk: 'українська',
       sq: 'Shqip',
       ky: 'Кыргызча',
@@ -257,11 +261,12 @@ export class PageEditTranslations extends YpBaseElement {
       ru: 'Русский',
       hu: 'Magyar',
       zh_TW: '国语 (TW)',
+      sk: 'Slovenčina',
+      sl: 'Slovenščina',
       sr: 'Srpski',
       sr_latin: 'Srpski (latin)',
-      hr: 'Hravtski',
-      kl: 'Kalaallisut',
-      sl: 'Slovenščina',
+      hr: 'Hrvatski',
+      bg: 'български'
     };
   }
 
@@ -401,6 +406,7 @@ export class PageEditTranslations extends YpBaseElement {
       case 'customTitleQuestionText':
       case 'urlToReviewActionText':
       case 'customAdminCommentsTitle':
+      case 'customTabTitleNewLocation':
       case 'alternativePointAgainstHeader':
       case 'alternativePointForLabel':
       case 'alternativePointAgainstLabel':

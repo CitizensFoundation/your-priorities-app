@@ -1,4 +1,5 @@
 {
+  "customTabTitleNewLocation": "Custom tab title for new location",
   "cloneGroup": "Clone group",
   "areYouSureCloneGroup": "Are you sure you want to clone this group?",
   "errorFraudAuditReportGeneration": "Error creating Fraud Audit report",
