@@ -340,6 +340,13 @@
                      value="{{group.configuration.hideNameInputAndReplaceWith}}">
         </paper-input>
 
+        <paper-input id="customTabTitleNewLocation"
+                     name="customTabTitleNewLocation"
+                     maxlength="60"
+                     label="[[t('customTabTitleNewLocation')]]"
+                     value="{{group.configuration.customTabTitleNewLocation}}">
+        </paper-input>
+
         <paper-checkbox name="makeCategoryRequiredOnNewPost" checked$="{{group.configuration.makeCategoryRequiredOnNewPost}}">[[t('makeCategoryRequiredOnNewPost')]]
         </paper-checkbox>
 

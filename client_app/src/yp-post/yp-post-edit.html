@@ -228,7 +228,16 @@
           </paper-tab>
         </template>
         <template is="dom-if" if="[[!locationHidden]]" restamp>
-          <paper-tab>[[t('post.location')]]</paper-tab>
+          <paper-tab>
+            <template is="dom-if" if="[[group.configuration.customTabTitleNewLocation]]">
+              <paper-tab><yp-magic-text id="customTabTitleNewLocation" content-id="[[group.id]]" text-only content="[[group.configuration.customTabTitleNewLocation]]"
+                                        content-language="[[group.language]]" role="heading" aria-level="2"
+                                        text-type="customTabTitleNewLocation"></yp-magic-text>
+            </template>
+            <template is="dom-if" if="[[!group.configuration.customTabTitleNewLocation]]">
+              <paper-tab>[[t('post.location')]]</paper-tab>
+            </template>
+          </paper-tab>
         </template>
         <template is="dom-if" if="[[!mediaHidden]]" restamp>
           <paper-tab>
