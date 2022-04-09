@@ -133,7 +133,7 @@ const getTranslation = (modelInstance, textType, targetLanguage, done) => {
 }
 
 const translateCommunity = (community, req, res) => {
-  const locale = req.query.locale;
+  const locale = req.query.locale || req.query.l;
   let translatedName, translatedDescription;
   async.series([
       (seriesCallback) => {
@@ -220,7 +220,7 @@ var sendCommunity = function sendCommunityForBot(id, req, res) {
     ]
   }).then(function(community) {
     if (community) {
-      if (req.query.locale && req.query.startAutoTranslate) {
+      if ((req.query.locale || req.query.l) && (req.query.startAutoTranslate || req.query.t)) {
         translateCommunity(community, req, res);
       } else {
         completeSendingCommunity(community, req, res);
