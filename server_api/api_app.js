@@ -137,6 +137,8 @@ if (process.env.REDIS_URL) {
   let redisUrl = process.env.REDIS_URL;
   if (redisUrl.startsWith("redis://h:")) {
     redisUrl = redisUrl.replace("redis://h:","redis://:")
+  } else if (redisUrl.startsWith("rediss://h:")) {
+    redisUrl = redisUrl.replace("rediss://h:","rediss://:")
   }
   redisClient = redis.createClient(redisUrl);
 } else {
