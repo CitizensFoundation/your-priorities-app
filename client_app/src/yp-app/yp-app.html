@@ -1067,6 +1067,13 @@
 
                 // Community/CommunityFolder  -> Community
                 else if ((oldPageData.page==="community" || oldPageData.page==="community_folder") &&
+                  pageData.page==="group") {
+                  this.async(function () {
+                    document.body.scrollTop = document.documentElement.scrollTop = 0;
+                  }, 10);
+                }
+                  // Community/CommunityFolder  -> Community
+                else if ((oldPageData.page==="community" || oldPageData.page==="community_folder") &&
                      pageData.page==="community_folder") {
                   if (this.$$("#communityFolderPage") && typeof this.$$("#communityFolderPage").scrollToGroupItem !== "undefined") {
                     this.$$("#communityFolderPage").scrollToGroupItem();
@@ -1297,14 +1304,7 @@
       _dialogClosed: function (event, detail) {
         this.$$("#dialogContainer").dialogClosed(detail);
       },
-
-      scrollPageToTop: function() {
-        var mainArea = document.getElementById('#mainArea');
-        if (mainArea) {
-          mainArea.scroller.scrollTop = 0;
-        }
-      },
-
+      
       _toggleUserDrawer: function () {
         this.$$("#drawer").toggle();
       },
