@@ -210,6 +210,14 @@
       }
 
       @media (max-width: 480px) {
+        #headerTitle[auto-translate][long-title] {
+          display: none !important;
+        }
+
+        #headerTitle[very-long-title] {
+            display: none !important;
+        }
+
         #forwardPostName {
           display: none !important;
         }
@@ -342,7 +350,7 @@
             <div class="layout horizontal navContainer" hidden$="[[closePostHeader]]">
               <paper-icon-button aria-label$="[[t('goBack')]]" title$="[[t('goBack')]]" icon="arrow-upward" on-tap="goBack" class="masterActionIcon" hidden$="[[!showBack]]"></paper-icon-button>
             </div>
-            <div hide$="[[closePostHeader]]" hidden$="[[goForwardToPostId]]" id="headerTitle" title class="layout vertical navContainer">[[headerTitle]]</div>
+            <div hide$="[[closePostHeader]]" hidden$="[[goForwardToPostId]]" long-title$="[[longTitleText]]" very-long-title$="[[veryLongTitleText]]" auto-translate$="[[autoTranslate]]" id="headerTitle" title class="layout vertical navContainer">[[headerTitle]]</div>
             <template is="dom-if" if="[[closePostHeader]]">
               <paper-icon-button aria-label$="[[t('close')]]" id="closePostButton" class="masterActionIcon" icon="arrow-back" on-tap="_closePost"></paper-icon-button>
             </template>
@@ -617,6 +625,16 @@
         goForwardCount:{
           type: String,
           value: 0
+        },
+
+        longTitleText: {
+          type: Boolean,
+          value: false
+        },
+
+        veryLongTitleText: {
+          type: Boolean,
+          value: false
         }
       },
 
@@ -759,13 +777,6 @@
           localeFromUrl = window.appGlobals.originalQueryParameters["locale"];
         }
 
-        if (window.appGlobals.originalQueryParameters &&
-          window.appGlobals.originalQueryParameters["startAutoTranslate"]) {
-          this.async(function () {
-            this._startTranslation();
-          }, 2500);
-        }
-
         if (localeFromUrl && (localeFromUrl.length > 1)) {
           defaultLocale = localeFromUrl;
           localStorage.setItem('yp-user-locale', localeFromUrl);
@@ -793,6 +804,15 @@
               detail: { name: 'yp-language', data: { type: 'language-loaded', language: defaultLocale }  }
             })
           );
+
+          this.async(function () {
+            if (window.appGlobals.originalQueryParameters) {
+              if (window.appGlobals.originalQueryParameters["startAutoTranslate"] ||
+                  window.appGlobals.originalQueryParameters["translate"]) {
+                this._startTranslation();
+              }
+            }
+          });
         }.bind(this));
       },
 
@@ -1292,6 +1312,18 @@
 
       onChangeHeader: function (event, header) {
         this.set('headerTitle', document.title = header.headerTitle);
+
+        if (this.headerTitle && this.headerTitle.length>16) {
+          this.set('longTitleText', true);
+        } else {
+          this.set('longTitleText', false);
+        }
+
+        if (this.headerTitle && this.headerTitle.length>45) {
+          this.set('veryLongTitleText', true);
+        } else {
+          this.set('veryLongTitleText', false);
+        }
 
         this.async(function () {
           var headerTitle = this.$$("#headerTitle");
