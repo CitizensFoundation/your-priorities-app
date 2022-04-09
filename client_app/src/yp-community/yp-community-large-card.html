@@ -118,7 +118,7 @@
       .communityDescription {
         padding-left: 16px;
         padding-right: 16px;
-        padding-top: 16px;
+        padding-top: 14px;
       }
 
       .communityDescription[widetext] {
@@ -536,12 +536,16 @@
             }
           });
 
-          if (this.largeFont) {
-            this.$$("#description").style.fontSize = "14px";
-          } else if (community.description.length>220 && community.name && community.name.length>30) {
-            this.$$("#description").style.fontSize = "15px";
-          } else {
-            this.$$("#description").style.fontSize = "16px";
+          if (window.innerWidth>480) {
+            if (this.largeFont) {
+              this.$$("#description").style.fontSize = "14px";
+            } else if (community.description.length>250 && community.name && community.name.length>35) {
+              this.$$("#description").style.fontSize = "14.3px";
+            } else if (community.description.length>220 && community.name && community.name.length>30) {
+              this.$$("#description").style.fontSize = "15px";
+            } else {
+              this.$$("#description").style.fontSize = "16px";
+            }
           }
         }
         this.setupMediaEventListeners(community, previousCommunity);

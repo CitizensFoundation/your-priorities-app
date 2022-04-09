@@ -772,9 +772,12 @@
 
         var localeFromUrl;
 
-        if (window.appGlobals.originalQueryParameters &&
-            window.appGlobals.originalQueryParameters["locale"]) {
-          localeFromUrl = window.appGlobals.originalQueryParameters["locale"];
+        if (window.appGlobals.originalQueryParameters) {
+          if (window.appGlobals.originalQueryParameters["locale"]) {
+            localeFromUrl = window.appGlobals.originalQueryParameters["locale"];
+          } else if (window.appGlobals.originalQueryParameters["l"]) {
+            localeFromUrl = window.appGlobals.originalQueryParameters["l"];
+          }
         }
 
         if (localeFromUrl && (localeFromUrl.length > 1)) {
@@ -808,7 +811,9 @@
           this.async(function () {
             if (window.appGlobals.originalQueryParameters) {
               if (window.appGlobals.originalQueryParameters["startAutoTranslate"] ||
-                  window.appGlobals.originalQueryParameters["translate"]) {
+                  window.appGlobals.originalQueryParameters["translate"] ||
+                  window.appGlobals.originalQueryParameters["t"]
+                 ) {
                 this._startTranslation();
               }
             }
