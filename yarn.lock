@@ -3716,9 +3716,10 @@ knuth-shuffle-seeded@^1.0.6:
   dependencies:
     seed-random "~2.2.0"
 
-"kue@git+https://github.com/CitizensFoundation/kue.git":
-  version "0.11.5"
-  resolved "git+https://github.com/CitizensFoundation/kue.git#e87aee4f38296fc7e33afb0438b21d6332e98079"
+kue@^0.11.6:
+  version "0.11.6"
+  resolved "https://registry.yarnpkg.com/kue/-/kue-0.11.6.tgz#5b76916bcedd56636a107861471c63c94611860a"
+  integrity sha512-56Jic22qSqdJ3nNpkhVr6RUx/QKalfdBdU0m70hgBKEkhBAgdt6Qr74evec+bM+LGmNbEC6zGGDskX4mcgBYcQ==
   dependencies:
     body-parser "^1.12.2"
     express "^4.12.2"

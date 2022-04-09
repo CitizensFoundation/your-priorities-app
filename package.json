@@ -37,7 +37,7 @@
     "isbot": "^3.0.23",
     "jade": "^1.11.0",
     "knuth-shuffle-seeded": "^1.0.6",
-    "kue": "git+https://github.com/CitizensFoundation/kue.git",
+    "kue": "^0.11.6",
     "lodash": "^4.17.15",
     "moment": "^2.24.0",
     "morgan": "~1.10.0",
