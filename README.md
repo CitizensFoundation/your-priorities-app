@@ -64,7 +64,7 @@ cd your-priorities-app
 git submodule init
 git submodule update
 
-# In app root folder
+# In web app root folder
 yarn install
 cd client_app
 bower install
