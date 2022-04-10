@@ -131,12 +131,12 @@ app.use(bodyParser.urlencoded({limit: '5mb', extended: true}));
 let redisClient;
 if (process.env.REDIS_URL) {
   let redisUrl = process.env.REDIS_URL;
-  const redis_uri = url.parse(REDIS_URL);
+
   if (redisUrl.startsWith("redis://h:")) {
     redisUrl = redisUrl.replace("redis://h:","redis://:")
   }
 
-  const redisOptions = REDIS_URL.includes("rediss://")
+  const redisOptions = redisUrl.includes("rediss://")
     ? {
       url: redisUrl,
       socket: {
