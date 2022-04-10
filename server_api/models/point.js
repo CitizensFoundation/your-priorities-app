@@ -3,6 +3,7 @@
 const async = require('async');
 const queue = require('../active-citizen/workers/queue');
 const log = require('../utils/logger');
+const _ = require("lodash");
 
 const findCommunityAndDomainForPointFromGroup = (sequelize, options, callback) => {
   sequelize.models.Group.findOne({
@@ -404,6 +405,67 @@ module.exports = (sequelize, DataTypes) => {
     });
   };
 
+  //TODO Refactor duplicate code with Post
+  Point.getVideosForPoints = (pointIds, done) => {
+    sequelize.models.Video.findAll({
+      attributes:  ['id','formats','viewable','created_at','public_meta'],
+      include: [
+        {
+          model: sequelize.models.Image,
+          as: 'VideoImages',
+          attributes:["formats",'created_at'],
+          required: false
+        },
+        {
+          model: sequelize.models.Point,
+          where: {
+            id: {
+              $in: pointIds
+            }
+          },
+          as: 'PointVideos',
+          required: true,
+          attributes: ['id'],
+
+        }
+      ],
+      order: [
+        [ { model: sequelize.models.Image, as: 'VideoImages' }, 'created_at', 'asc' ]
+      ]
+    }).then(videos => {
+      videos = _.orderBy(videos, ['created_at'],['desc']);
+      done(null, videos);
+    }).catch( error => {
+      done(error);
+    })
+  }
+
+  Point.addVideosToAllActivityPoints = (activities, videos) => {
+    const pointsHash = {};
+
+    for (let i=0;i<activities.length;i++) {
+      if (activities[i].Point) {
+        pointsHash[activities[i].Point.id] = activities[i].Point;
+      }
+    }
+
+    for (let i=0;i<videos.length;i++) {
+      if (videos[i].PointVideos &&  videos[i].PointVideos.length>0) {
+        const pointId = videos[i].PointVideos[0].id;
+        if (pointsHash[pointId]) {
+          if (!pointsHash[pointId].dataValues.PointVideos) {
+            pointsHash[pointId].dataValues.PointVideos = [];
+          }
+          pointsHash[pointId].dataValues.PointVideos.push(videos[i]);
+        } else {
+          log.error("Can't find point to add video to")
+        }
+      } else {
+        log.error("Can't find PointVideos");
+      }
+    }
+  }
+
   Point.createNewsStory = (req, options, callback) => {
     options.content = options.point.content;
     options.embed_data = options.point.embed_data;
@@ -463,6 +525,8 @@ module.exports = (sequelize, DataTypes) => {
       this.set('data.moderation', {});
     }
   };
+
+
 
   Point.prototype.report = function (req, source, post, callback) {
     this.setupModerationData();
