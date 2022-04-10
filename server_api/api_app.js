@@ -147,7 +147,7 @@ if (process.env.REDIS_URL) {
     : redisUrl
 
   if (redisUrl.includes("rediss://")) {
-    redisClient = redis.createClient(redisUrl, {tls:{}});
+    redisClient = redis.createClient(redisUrl, {tls:{rejectUnauthorized: false}});
   } else {
     redisClient = redis.createClient(redisUrl);
   }
