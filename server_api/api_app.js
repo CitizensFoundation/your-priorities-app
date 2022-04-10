@@ -146,7 +146,12 @@ if (process.env.REDIS_URL) {
     }
     : redisUrl
 
-  redisClient = redis.createClient(redisOptions);
+  if (redisUrl.includes("rediss://")) {
+    redisClient = redis.createClient(redisUrl, {tls:{}});
+  } else {
+    redisClient = redis.createClient(redisUrl);
+  }
+
 } else {
   redisClient = redis.createClient();
 }
