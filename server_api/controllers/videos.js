@@ -172,7 +172,7 @@ router.put('/:pointId/completeAndAddToPoint', auth.can('edit point'), (req, res)
                                   appLanguage: req.body.appLanguage,
                                   videoId: req.body.videoId,
                                   type: 'create-video-transcript' };
-            queue.create('process-voice-to-text', workPackage).priority('high').removeOnComplete(true).save();
+            queue.add('process-voice-to-text', workPackage, 'high');
           }
           res.send(point);
         }

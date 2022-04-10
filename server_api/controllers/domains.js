@@ -749,7 +749,7 @@ router.put('/:id', auth.can('edit domain'), function(req, res) {
     where: { id: req.params.id }
   }).then(function(domain) {
     if (domain) {
-      queue.create('process-similarities', { type: 'update-collection', domainId: domain.id }).priority('low').removeOnComplete(true).save();
+      queue.add('process-similarities', { type: 'update-collection', domainId: domain.id }, 'low');
       domain.ensureApiKeySetup();
       domain.set('secret_api_keys.facebook.client_id', req.body.facebookClientId);
       domain.set('secret_api_keys.facebook.client_secret', req.body.facebookClientSecret);
@@ -831,7 +831,7 @@ router.delete('/:id', auth.can('edit domain'), function(req, res) {
       domain.deleted = true;
       domain.save().then(function () {
         log.info('Domain Deleted', { group: toJson(group), context: 'delete', user: toJson(req.user) });
-        queue.create('process-similarities', { type: 'update-collection', domainId: domain.id }).priority('low').removeOnComplete(true).save();
+        queue.add('process-similarities', { type: 'update-collection', domainId: domain.id }, 'low');
         res.sendStatus(200);
       });
     } else {
@@ -879,12 +879,12 @@ router.delete('/:domainId/:itemId/:itemType/:actionType/process_one_moderation_i
 });
 
 router.delete('/:domainId/:actionType/process_many_moderation_item', auth.can('edit domain'), (req, res) => {
-  queue.create('process-moderation', {
+  queue.add('process-moderation', {
       type: 'perform-many-moderation-actions',
       items: req.body.items,
       actionType: req.params.actionType,
       domainId: req.params.domainId
-    }).priority('critical').removeOnComplete(true).save();
+    }, 'critical');
   res.send({});
 });
 
@@ -922,22 +922,19 @@ router.get('/:domainId/flagged_content_count',  auth.can('edit domain'), (req, r
 });
 
 router.delete('/:domainId/remove_many_admins', auth.can('edit domain'), (req, res) => {
-  queue.create('process-deletion', { type: 'remove-many-domain-admins', userIds: req.body.userIds, domainId: req.params.domainId }).
-  priority('high').removeOnComplete(true).save();
+  queue.add('process-deletion', { type: 'remove-many-domain-admins', userIds: req.body.userIds, domainId: req.params.domainId }, 'high');
   log.info('Remove many domain admins started', { context: 'remove_many_admins', domainId: req.params.domainId, user: toJson(req.user.simple()) });
   res.sendStatus(200);
 });
 
 router.delete('/:domainId/remove_many_users_and_delete_content', auth.can('edit domain'), function(req, res) {
-  queue.create('process-deletion', { type: 'remove-many-domain-users-and-delete-content', userIds: req.body.userIds, domainId: req.params.domainId }).
-  priority('high').removeOnComplete(true).save();
+  queue.add('process-deletion', { type: 'remove-many-domain-users-and-delete-content', userIds: req.body.userIds, domainId: req.params.domainId }, 'high');
   log.info('Remove many and delete many domain users content', { context: 'remove_many_users_and_delete_content', domainId: req.params.domainId, user: toJson(req.user.simple()) });
   res.sendStatus(200);
 });
 
 router.delete('/:domainId/remove_many_users', auth.can('edit domain'), function(req, res) {
-  queue.create('process-deletion', { type: 'remove-many-domain-users', userIds: req.body.userIds, domainId: req.params.domainId }).
-  priority('high').removeOnComplete(true).save();
+  queue.add('process-deletion', { type: 'remove-many-domain-users', userIds: req.body.userIds, domainId: req.params.domainId }, 'high');
   log.info('Remove many domain admins started', { context: 'remove_many_users', domainId: req.params.domainId, user: toJson(req.user.simple()) });
   res.sendStatus(200);
 });
@@ -949,8 +946,7 @@ router.delete('/:domainId/:userId/remove_and_delete_user_content', auth.can('edi
       res.sendStatus(500);
     } else if (user && domain) {
       domain.removeDomainUsers(user).then(function (results) {
-        queue.create('process-deletion', { type: 'delete-domain-user-content', userId: req.params.userId, domainId: req.params.domainId }).
-        priority('high').removeOnComplete(true).save();
+        queue.add('process-deletion', { type: 'delete-domain-user-content', userId: req.params.userId, domainId: req.params.domainId }, 'high');
         log.info('User removed from domain', {context: 'remove_and_delete_user_content', domainId: req.params.domainId, userRemovedId: req.params.userId, user: toJson(req.user.simple()) });
         res.sendStatus(200);
       });

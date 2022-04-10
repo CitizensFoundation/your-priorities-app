@@ -303,12 +303,12 @@ router.delete('/:userId/:itemId/:itemType/:actionType/process_one_moderation_ite
 });
 
 router.delete('/:userId/:actionType/process_many_moderation_item', auth.can('edit user'), (req, res) => {
-  queue.create('process-moderation', {
+  queue.add('process-moderation', {
     type: 'perform-many-moderation-actions',
     items: req.body.items,
     actionType: req.params.actionType,
     userId: req.params.userId
-  }).priority('critical').removeOnComplete(true).save();
+  }, 'critical');
   res.send({});
 });
 
@@ -1131,7 +1131,7 @@ router.delete('/delete_current_user', function (req, res) {
         user.email = user.email+"_deleted_"+Math.floor(Math.random() * 9000);
         user.save().then(function () {
           log.info('User deleted', { context: 'delete', user: toJson(req.user) });
-          queue.create('process-deletion', { type: 'delete-user-content', userId: userId }).priority('critical').removeOnComplete(true).save();
+          queue.add('process-deletion', { type: 'delete-user-content', userId: userId }, 'critical');
           req.logOut();
           res.sendStatus(200);
         }).catch((error) => {
@@ -1190,7 +1190,7 @@ router.delete('/anonymize_current_user', function (req, res) {
         user.setUserProfileImages([]).then(() => {
           user.save().then(function () {
             log.info('User anonymized', { context: 'delete', user: toJson(req.user) });
-            queue.create('process-anonymization', { type: 'anonymize-user-content', userId: userId }).priority('high').removeOnComplete(true).save();
+            queue.add('process-anonymization', { type: 'anonymize-user-content', userId: userId }, 'high');
             req.logOut();
             res.sendStatus(200);
           }).catch((error) => {
@@ -1349,7 +1349,7 @@ router.post('/createActivityFromApp', function(req, res) {
     postId: req.body.object ? req.body.object.postId : null
   };
 
-  queue.create('delayed-job', { type: 'create-activity-from-app', workData }).priority('low').removeOnComplete(true).save();
+  queue.add('delayed-job', { type: 'create-activity-from-app', workData }, 'low');
   res.sendStatus(200);
 });
 
@@ -1748,7 +1748,7 @@ router.put('/missingEmail/linkAccounts', auth.isLoggedIn, function(req, res, nex
               });
             }).then(function (result) {
               log.info("User Serialized Linked Accounts", { toUserSsn: user.ssn, fromUserSsn: req.user.ssn, userFrom: req.user, toUser: user });
-              queue.create('process-deletion', { type: 'move-user-endorsements', toUserId: user.id, fromUserId: req.user.id }).priority('high').removeOnComplete(true).save();
+              queue.add('process-deletion', { type: 'move-user-endorsements', toUserId: user.id, fromUserId: req.user.id }, 'high');
               req.logIn(user, function (error, detail) {
                 if (error) {
                   sendUserOrError(res, null, 'linkAccounts', error, 401);

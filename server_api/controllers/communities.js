@@ -938,22 +938,26 @@ router.post('/:communityId/:userEmail/invite_user', auth.can('edit community'), 
 });
 
 router.delete('/:communityId/remove_many_admins', auth.can('edit community'), (req, res) => {
-  queue.create('process-deletion', { type: 'remove-many-community-admins', userIds: req.body.userIds, communityId: req.params.communityId }).
-        priority('high').removeOnComplete(true).save();
+  queue.add('process-deletion', {
+    type: 'remove-many-community-admins', userIds: req.body.userIds, communityId: req.params.communityId
+  }, 'high');
   log.info('Remove many community admins started', { context: 'remove_many_admins', communityId: req.params.communityId, user: toJson(req.user.simple()) });
   res.sendStatus(200);
 });
 
 router.delete('/:communityId/remove_many_users_and_delete_content', auth.can('edit community'), function(req, res) {
-  queue.create('process-deletion', { type: 'remove-many-community-users-and-delete-content', userIds: req.body.userIds, communityId: req.params.communityId }).
-        priority('high').removeOnComplete(true).save();
+  queue.add('process-deletion',
+    { type: 'remove-many-community-users-and-delete-content', userIds: req.body.userIds, communityId: req.params.communityId
+    }, 'high');
   log.info('Remove many and delete many community users content', { context: 'remove_many_users_and_delete_content', communityId: req.params.communityId, user: toJson(req.user.simple()) });
   res.sendStatus(200);
 });
 
 router.delete('/:communityId/remove_many_users', auth.can('edit community'), function(req, res) {
-  queue.create('process-deletion', { type: 'remove-many-community-users', userIds: req.body.userIds, communityId: req.params.communityId }).
-        priority('high').removeOnComplete(true).save();
+  queue.add('process-deletion',
+    {
+      type: 'remove-many-community-users', userIds: req.body.userIds, communityId: req.params.communityId
+    }, 'high');
   log.info('Remove many community admins started', { context: 'remove_many_users', communityId: req.params.communityId, user: toJson(req.user.simple()) });
   res.sendStatus(200);
 });
@@ -968,8 +972,9 @@ router.delete('/:communityId/:userId/remove_and_delete_user_content', auth.can('
         if (community.counter_users>0) {
           community.decrement("counter_users");
         }
-        queue.create('process-deletion', { type: 'delete-community-user-content', userId: req.params.userId, communityId: req.params.communityId }).
-        priority('high').removeOnComplete(true).save();
+        queue.add('process-deletion', {
+          type: 'delete-community-user-content', userId: req.params.userId, communityId: req.params.communityId
+        }, 'high');
         log.info('User removed from community', {context: 'remove_and_delete_user_content', communityId: req.params.communityId, userRemovedId: req.params.userId, user: toJson(req.user.simple()) });
         res.sendStatus(200);
       });
@@ -1407,14 +1412,14 @@ const createNewCommunity = (req, res) => {
   updateCommunityConfigParameters(req, community);
   community.save().then(function() {
     log.info('Community Created', { community: toJson(community), context: 'create', user: toJson(req.user) });
-    queue.create('process-similarities', { type: 'update-collection', communityId: community.id }).priority('low').removeOnComplete(true).save();
+    queue.add('process-similarities', { type: 'update-collection', communityId: community.id }, 'low');
     community.updateAllExternalCounters(req, 'up', 'counter_communities', function () {
       community.setupImages(req.body, function(error) {
         community.addCommunityAdmins(req.user).then(function (results) {
-          queue.create('process-moderation', {
+          queue.add('process-moderation', {
             type: 'estimate-collection-toxicity',
             collectionId: community.id,
-            collectionType: 'community' }).priority('high').removeOnComplete(true).save();
+            collectionType: 'community' }, 'high');
           sendCommunityOrError(res, community, 'setupImages', req.user, error);
         });
       });
@@ -1464,12 +1469,12 @@ router.put('/:id', auth.can('edit community'), function(req, res) {
       updateCommunityConfigParameters(req, community);
       community.save().then(function () {
         log.info('Community Updated', { community: toJson(community), context: 'update', user: toJson(req.user) });
-        queue.create('process-similarities', { type: 'update-collection', communityId: community.id }).priority('low').removeOnComplete(true).save();
+        queue.add('process-similarities', { type: 'update-collection', communityId: community.id }, 'low');
         community.setupImages(req.body, function(error) {
-          queue.create('process-moderation', {
+          queue.add('process-moderation', {
             type: 'estimate-collection-toxicity',
             collectionId: community.id,
-            collectionType: 'community' }).priority('high').removeOnComplete(true).save();
+            collectionType: 'community' }, 'high');
           sendCommunityOrError(res, community, 'setupImages', req.user, error);
         });
       });
@@ -1489,8 +1494,8 @@ router.delete('/:id', auth.can('edit community'), function(req, res) {
       community.deleted = true;
       community.save().then(function () {
         log.info('Community Deleted', { community: toJson(community), user: toJson(req.user) });
-        queue.create('process-similarities', { type: 'update-collection', communityId: community.id }).priority('low').removeOnComplete(true).save();
-        queue.create('process-deletion', { type: 'delete-community-content', communityName: community.name, communityId: community.id, userId: req.user.id }).priority('high').removeOnComplete(true).save();
+        queue.add('process-similarities', { type: 'update-collection', communityId: community.id }, 'low');
+        queue.add('process-deletion', { type: 'delete-community-content', communityName: community.name, communityId: community.id, userId: req.user.id }, 'high');
         community.updateAllExternalCounters(req, 'down', 'counter_communities', function () {
           res.sendStatus(200);
         });
@@ -1509,9 +1514,9 @@ router.delete('/:id/delete_content', auth.can('edit community'), function(req, r
   }).then(function (community) {
     if (community) {
       log.info('Community Delete Content', { community: toJson(community), user: toJson(req.user) });
-      queue.create('process-deletion', { type: 'delete-community-content', communityName: community.name,
+      queue.add('process-deletion', { type: 'delete-community-content', communityName: community.name,
                                          communityId: community.id, userId: req.user.id, useNotification: true,
-                                         resetCounters: true }).priority('critical').removeOnComplete(true).save();
+                                         resetCounters: true }, 'critical');
       res.sendStatus(200);
     } else {
       sendCommunityOrError(res, req.params.id, 'delete', req.user, 'Not found', 404);
@@ -1528,13 +1533,11 @@ router.delete('/:id/anonymize_content', auth.can('edit community'), function(req
     if (community) {
       const anonymizationDelayMs = 1000*60*60*24*7;
       log.info('Community Anonymize Content', { community: toJson(community), user: toJson(req.user) });
-      queue.create('process-anonymization', { type: 'notify-community-users', communityName: community.name,
-        userId: req.user.id, communityId: community.id, delayMs: anonymizationDelayMs}).
-      priority('high').removeOnComplete(true).save();
-      queue.create('process-anonymization', { type: 'anonymize-community-content', communityName: community.name,
+      queue.add('process-anonymization', { type: 'notify-community-users', communityName: community.name,
+        userId: req.user.id, communityId: community.id, delayMs: anonymizationDelayMs}, 'high');
+      queue.add('process-anonymization', { type: 'anonymize-community-content', communityName: community.name,
                                               communityId: community.id, userId: req.user.id, useNotification: true,
-                                              resetCounters: true }).
-                                              delay(anonymizationDelayMs).priority('high').removeOnComplete(true).save();
+                                              resetCounters: true }, 'high', { delay: anonymizationDelayMs });
       res.sendStatus(200);
     } else {
       sendCommunityOrError(res, req.params.id, 'delete', req.user, 'Not found', 404);
@@ -1617,12 +1620,12 @@ router.delete('/:communityId/:itemId/:itemType/:actionType/process_one_moderatio
 });
 
 router.delete('/:communityId/:actionType/process_many_moderation_item', auth.can('edit community'), (req, res) => {
-  queue.create('process-moderation', {
+  queue.add('process-moderation', {
     type: 'perform-many-moderation-actions',
     items: req.body.items,
     actionType: req.params.actionType,
     communityId: req.params.communityId
-  }).priority('critical').removeOnComplete(true).save();
+  }, 'critical' );
   res.send({});
 });
 
@@ -1948,7 +1951,7 @@ router.put('/:communityId/:type/start_report_creation', auth.can('edit community
         reportType = 'start-fraud-audit-report-generation';
       }
 
-      queue.create('process-reports', {
+      queue.add('process-reports', {
         type: reportType,
         userId: req.user.id,
         exportType: req.params.type,
@@ -1957,7 +1960,7 @@ router.put('/:communityId/:type/start_report_creation', auth.can('edit community
         selectedFraudAuditId: req.body.selectedFraudAuditId,
         jobId: jobId,
         communityId: req.params.communityId
-      }).priority('critical').removeOnComplete(true).save();
+      }, 'critical');
 
       res.send({ jobId });
     }
@@ -1986,14 +1989,14 @@ router.put('/:communityId/:type/:selectedMethod/:collectionType/start_endorsemen
       log.error('Could not create backgroundJob', { err: error, context: 'start_report_creation', user: toJson(req.user.simple()) });
       res.sendStatus(500);
     } else {
-      queue.create('process-fraud-action', {
+      queue.add('process-fraud-action', {
         type: req.params.type,
         collectionType: req.params.collectionType,
         selectedMethod: req.params.selectedMethod,
         userId: req.user.id,
         jobId: jobId,
         communityId: req.params.communityId
-      }).priority('critical').removeOnComplete(true).save();
+      }, 'critical');
 
       res.send({ jobId });
     }
@@ -2008,10 +2011,10 @@ router.get('/:communityId/:jobId/endorsement_fraud_action_status', auth.can('edi
     attributes: ['id','progress','error','data']
   }).then( job => {
     if (job.progress===100) {
-      queue.create('process-fraud-action', {
+      queue.add('process-fraud-action', {
         type: "delete-job",
         jobId: job.id,
-      }).priority('critical').delay(30000).removeOnComplete(true).save();
+      }, 'critical', { delay: 30000 });
     }
     res.send(job);
   }).catch( error => {

@@ -139,7 +139,7 @@ module.exports = (sequelize, DataTypes) => {
             appLanguage:options.appLanguage,
             audioId: audio.id,
             type: 'create-audio-transcript' };
-          queue.create('process-voice-to-text', workPackage).priority('high').removeOnComplete(true).save();
+          queue.add('process-voice-to-text', workPackage, 'high');
           post.save().then( () => {
             callback();
           }).catch( error => {

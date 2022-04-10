@@ -623,22 +623,19 @@ router.delete('/:groupId/:userId/remove_admin', auth.can('edit group'), function
 });
 
 router.delete('/:groupId/remove_many_admins', auth.can('edit group'), function(req, res) {
-  queue.create('process-deletion', { type: 'remove-many-group-admins', userIds: req.body.userIds, groupId: req.params.groupId }).
-        priority('high').removeOnComplete(true).save();
+  queue.add('process-deletion', { type: 'remove-many-group-admins', userIds: req.body.userIds, groupId: req.params.groupId }, 'high');
   log.info('Remove many admins started', { context: 'remove_many_admins', groupId: req.params.groupId, user: toJson(req.user.simple()) });
   res.sendStatus(200);
 });
 
 router.delete('/:groupId/remove_many_users_and_delete_content', auth.can('edit group'), function(req, res) {
-  queue.create('process-deletion', { type: 'remove-many-group-users-and-delete-content', userIds: req.body.userIds, groupId: req.params.groupId }).
-        priority('high').removeOnComplete(true).save();
+  queue.add('process-deletion', { type: 'remove-many-group-users-and-delete-content', userIds: req.body.userIds, groupId: req.params.groupId }, 'high');
   log.info('Remove many and delete many users content', { context: 'remove_many_users_and_delete_content', groupId: req.params.groupId, user: toJson(req.user.simple()) });
   res.sendStatus(200);
 });
 
 router.delete('/:groupId/remove_many_users', auth.can('edit group'), function(req, res) {
-  queue.create('process-deletion', { type: 'remove-many-group-users', userIds: req.body.userIds, groupId: req.params.groupId }).
-        priority('high').removeOnComplete(true).save();
+  queue.add('process-deletion', { type: 'remove-many-group-users', userIds: req.body.userIds, groupId: req.params.groupId }, 'high');
   log.info('Remove many admins started', { context: 'remove_many_users', groupId: req.params.groupId, user: toJson(req.user.simple()) });
   res.sendStatus(200);
 });
@@ -653,8 +650,7 @@ router.delete('/:groupId/:userId/remove_and_delete_user_content', auth.can('edit
         if (group.counter_users > 0) {
           group.decrement("counter_users")
         }
-        queue.create('process-deletion', { type: 'delete-group-user-content', userId: req.params.userId, groupId: req.params.groupId }).
-              priority('high').removeOnComplete(true).save();
+        queue.add('process-deletion', { type: 'delete-group-user-content', userId: req.params.userId, groupId: req.params.groupId }, 'high');
         log.info('User removed', {context: 'remove_and_delete_user_content', groupId: req.params.groupId, userRemovedId: req.params.userId, user: toJson(req.user.simple()) });
         res.sendStatus(200);
       });
@@ -784,14 +780,14 @@ router.put('/:groupId/:type/start_report_creation', auth.can('edit group'), func
         reportType = 'start-xls-report-generation';
       }
 
-      queue.create('process-reports', {
+      queue.add('process-reports', {
         type: reportType,
         userId: req.user.id,
         exportType: req.params.type,
         translateLanguage: req.query.translateLanguage,
         jobId: jobId,
         groupId: req.params.groupId
-      }).priority('critical').removeOnComplete(true).save();
+      }, 'critical');
 
       res.send({ jobId });
     }
@@ -1081,16 +1077,16 @@ router.post('/:communityId', auth.can('create group'), function(req, res) {
 
   group.save().then(function(group) {
     log.info('Group Created', { group: toJson(group), context: 'create', user: toJson(req.user) });
-    queue.create('process-similarities', { type: 'update-collection', groupId: group.id }).priority('low').removeOnComplete(true).save();
+    queue.add('process-similarities', { type: 'update-collection', groupId: group.id }, 'low');
 
     group.updateAllExternalCounters(req, 'up', 'counter_groups', function () {
       models.Group.addUserToGroupIfNeeded(group.id, req, function () {
         group.addGroupAdmins(req.user).then(function (results) {
           group.setupImages(req.body, function(error) {
-            queue.create('process-moderation', {
+            queue.add('process-moderation', {
               type: 'estimate-collection-toxicity',
               collectionId: group.id,
-              collectionType: 'group' }).priority('high').removeOnComplete(true).save();
+              collectionType: 'group' }, 'high');
             sendGroupOrError(res, group, 'setupImages', req.user, error);
           });
         });
@@ -1152,12 +1148,12 @@ router.put('/:id', auth.can('edit group'), function(req, res) {
       updateGroupConfigParamters(req, group);
       group.save().then(function () {
         log.info('Group Updated', { group: toJson(group), context: 'update', user: toJson(req.user) });
-        queue.create('process-similarities', { type: 'update-collection', groupId: group.id }).priority('low').removeOnComplete(true).save();
+        queue.add('process-similarities', { type: 'update-collection', groupId: group.id }, 'low');
         group.setupImages(req.body, function(error) {
-          queue.create('process-moderation', {
+          queue.add('process-moderation', {
             type: 'estimate-collection-toxicity',
             collectionId: group.id,
-            collectionType: 'group' }).priority('high').removeOnComplete(true).save();
+            collectionType: 'group' }, 'high');
           sendGroupOrError(res, group, 'setupImages', req.user, error);
         });
       }).catch(function(error) {
@@ -1179,9 +1175,9 @@ router.delete('/:id', auth.can('edit group'), function(req, res) {
       group.deleted = true;
       group.save().then(function () {
         log.info('Group Deleted', { group: toJson(group), context: 'delete', user: toJson(req.user) });
-        queue.create('process-similarities', { type: 'update-collection', groupId: group.id }).priority('low').removeOnComplete(true).save();
-        queue.create('process-deletion', { type: 'delete-group-content', resetCounters: true, groupName: group.name,
-                                           userId: req.user.id, groupId: group.id }).priority('critical').removeOnComplete(true).save();
+        queue.add('process-similarities', { type: 'update-collection', groupId: group.id }, 'low');
+        queue.add('process-deletion', { type: 'delete-group-content', resetCounters: true, groupName: group.name,
+                                           userId: req.user.id, groupId: group.id }, 'critical');
         group.updateAllExternalCounters(req, 'down', 'counter_groups', function () {
           res.sendStatus(200);
         });
@@ -1200,9 +1196,9 @@ router.delete('/:id/delete_content', auth.can('edit group'), function(req, res) 
   }).then(function (group) {
     if (group) {
       log.info('Group Delete Content', { group: toJson(group), context: 'delete', user: toJson(req.user) });
-      queue.create('process-deletion', { type: 'delete-group-content', groupName: group.name,
+      queue.add('process-deletion', { type: 'delete-group-content', groupName: group.name,
                                          userId: req.user.id, groupId: group.id, useNotification: true,
-                                         resetCounters: true }).priority('critical').removeOnComplete(true).save();
+                                         resetCounters: true }, 'critical');
       res.sendStatus(200);
     } else {
       sendGroupOrError(res, req.params.id, 'delete', req.user, 'Not found', 404);
@@ -1220,13 +1216,11 @@ router.delete('/:id/anonymize_content', auth.can('edit group'), function(req, re
     if (group) {
       log.info('Group Anonymize Content with delay', { group: toJson(group), anonymizationDelayMs: anonymizationDelayMs,
                                                        context: 'delete', userId: toJson(req.user.id) });
-      queue.create('process-anonymization', { type: 'notify-group-users', groupName: group.name,
-                                              userId: req.user.id, groupId: group.id, delayMs: anonymizationDelayMs}).
-                                            priority('high').removeOnComplete(true).save();
-      queue.create('process-anonymization', { type: 'anonymize-group-content', groupName: group.name,
+      queue.add('process-anonymization', { type: 'notify-group-users', groupName: group.name,
+                                              userId: req.user.id, groupId: group.id, delayMs: anonymizationDelayMs}, 'high');
+      queue.add('process-anonymization', { type: 'anonymize-group-content', groupName: group.name,
                                               userId: req.user.id, groupId: group.id, useNotification: true,
-                                              resetCounters: true }).
-                                              delay(anonymizationDelayMs).priority('high').removeOnComplete(true).save();
+                                              resetCounters: true }, 'high', { delay: anonymizationDelayMs });
       res.sendStatus(200);
     } else {
       sendGroupOrError(res, req.params.id, 'delete', req.user, 'Not found', 404);
@@ -2035,12 +2029,12 @@ router.delete('/:groupId/:itemId/:itemType/:actionType/process_one_moderation_it
 });
 
 router.delete('/:groupId/:actionType/process_many_moderation_item', auth.can('edit group'), (req, res) => {
-  queue.create('process-moderation', {
+  queue.add('process-moderation', {
     type: 'perform-many-moderation-actions',
     items: req.body.items,
     actionType: req.params.actionType,
     groupId: req.params.groupId
-  }).priority('critical').removeOnComplete(true).save();
+  }, 'critical');
   res.send({});
 });
 

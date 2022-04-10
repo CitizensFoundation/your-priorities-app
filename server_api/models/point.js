@@ -380,7 +380,7 @@ module.exports = (sequelize, DataTypes) => {
           const pointRevision = sequelize.models.PointRevision.build(options);
           pointRevision.save().then(() => {
             log.info("process-moderation point toxicity on comment");
-            queue.create('process-moderation', { type: 'estimate-point-toxicity', pointId: point.id }).priority('high').removeOnComplete(true).save();
+            queue.add('process-moderation', { type: 'estimate-point-toxicity', pointId: point.id }, 'high');
             sequelize.models.AcActivity.createActivity({
               type: 'activity.point.comment.new',
               userId: options.user_id,
@@ -432,7 +432,7 @@ module.exports = (sequelize, DataTypes) => {
         pointRevision.save().then(() => {
           log.info("process-moderation point toxicity on news story");
           if (!options.subType || options.subType!="bulkOperation") {
-            queue.create('process-moderation', { type: 'estimate-point-toxicity', pointId: point.id }).priority('high').removeOnComplete(true).save();
+            queue.add('process-moderation', { type: 'estimate-point-toxicity', pointId: point.id }, 'high');
           }
           sequelize.models.AcActivity.createActivity({
             type: 'activity.point.newsStory.new',
@@ -472,7 +472,7 @@ module.exports = (sequelize, DataTypes) => {
           this.set('data.moderation.lastReportedBy', []);
           if ((source==='user' || source==='fromUser') && !this.data.moderation.toxicityScore) {
             log.info("process-moderation point toxicity on manual report");
-            queue.create('process-moderation', { type: 'estimate-point-toxicity', pointId: this.id }).priority('high').removeOnComplete(true).save();
+            queue.add('process-moderation', { type: 'estimate-point-toxicity', pointId: this.id }, 'high');
           }
         }
         this.set('data.moderation.lastReportedBy',

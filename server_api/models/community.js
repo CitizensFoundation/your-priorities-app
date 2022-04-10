@@ -4,6 +4,7 @@ const async = require("async");
 const log = require('../utils/logger');
 const toJson = require('../utils/to_json');
 const parseDomain = require('../utils/parse_domain');
+const queue = require('../active-citizen/workers/queue');
 
 module.exports = (sequelize, DataTypes) => {
   const Community = sequelize.define("Community", {
@@ -267,7 +268,7 @@ module.exports = (sequelize, DataTypes) => {
           this.set('data.moderation.lastReportedBy', []);
           if ((source==='user' || source==='fromUser') && !this.data.moderation.toxicityScore) {
             log.info("process-moderation post toxicity on manual report");
-            queue.create('process-moderation', { type: 'estimate-collection-toxicity', collectionId: this.id, collectionType: 'community' }).priority('high').removeOnComplete(true).save();
+            queue.add('process-moderation', { type: 'estimate-collection-toxicity', collectionId: this.id, collectionType: 'community' }, 'high');
           }
         }
         this.set('data.moderation.lastReportedBy',

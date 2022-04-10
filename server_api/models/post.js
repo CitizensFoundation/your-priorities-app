@@ -364,7 +364,7 @@ module.exports = (sequelize, DataTypes) => {
           this.set('data.moderation.lastReportedBy', []);
           if ((source==='user' || source==='fromUser') && !this.data.moderation.toxicityScore) {
             log.info("process-moderation post toxicity on manual report");
-            queue.create('process-moderation', { type: 'estimate-post-toxicity', postId: this.id }).priority('high').removeOnComplete(true).save();
+            queue.add('process-moderation', { type: 'estimate-post-toxicity', postId: this.id }, 'high');
           }
         }
         this.set('data.moderation.lastReportedBy',
@@ -525,8 +525,8 @@ module.exports = (sequelize, DataTypes) => {
           });
           pointRevision.save().then(() => {
             log.info("process-moderation point toxicity after post and point has been saved");
-            queue.create('process-moderation', { type: 'estimate-point-toxicity', pointId: point.id }).priority('high').removeOnComplete(true).save();
-            queue.create('process-similarities', { type: 'update-collection', pointId: point.id }).priority('low').removeOnComplete(true).save();
+            queue.add('process-moderation', { type: 'estimate-point-toxicity', pointId: point.id }, 'high');
+            queue.add('process-similarities', { type: 'update-collection', pointId: point.id }, 'low');
 
             post.updateAllExternalCounters(req, 'up', 'counter_points', () => {
               post.increment('counter_points');

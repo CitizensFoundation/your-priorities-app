@@ -214,7 +214,7 @@ module.exports = (sequelize, DataTypes) => {
         const [ domain, created ] = results;
         if (created) {
           log.info('Domain Created', { domain: toJson(domain.simple()), context: 'create' });
-          queue.create('process-similarities', { type: 'update-collection', domainId: domain.id }).priority('low').removeOnComplete(true).save();
+          queue.add('process-similarities', { type: 'update-collection', domainId: domain.id }, 'low');
         } else {
           //log.info('Domain Loaded', { domain: toJson(domain.simple()), context: 'create' });
         }

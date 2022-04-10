@@ -118,7 +118,7 @@ router.put('/:communityId/:id/perform_bulk_status_update', auth.can('edit bulkSt
     where: { id: req.params.id }
   }).then(function(bulkStatusUpdate) {
     if (bulkStatusUpdate) {
-      queue.create('process-notification-delivery', { bulkStatusUpdateId: bulkStatusUpdate.id }).priority('high').removeOnComplete(true).save();
+      queue.add('process-notification-delivery', { bulkStatusUpdateId: bulkStatusUpdate.id }, 'high');
     } else {
       sendBulkStatusUpdateOrError(res, req.params.id, 'perform', req.user, 'Not found', 404);
     }
