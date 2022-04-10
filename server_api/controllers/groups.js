@@ -1076,7 +1076,7 @@ router.post('/:communityId', auth.can('create group'), function(req, res) {
   updateGroupConfigParamters(req, group);
 
   group.save().then(function(group) {
-    log.info('Group Created', { group: toJson(group), context: 'create', user: toJson(req.user) });
+    log.info('Group Created', { groupId: group.id, context: 'create', userId: req.user.id });
     queue.add('process-similarities', { type: 'update-collection', groupId: group.id }, 'low');
 
     group.updateAllExternalCounters(req, 'up', 'counter_groups', function () {

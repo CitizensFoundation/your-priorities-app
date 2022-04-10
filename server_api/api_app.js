@@ -136,18 +136,8 @@ if (process.env.REDIS_URL) {
     redisUrl = redisUrl.replace("redis://h:","redis://:")
   }
 
-  const redisOptions = redisUrl.includes("rediss://")
-    ? {
-      url: redisUrl,
-      socket: {
-        tls: true,
-        rejectUnauthorized: false,
-      },
-    }
-    : redisUrl
-
   if (redisUrl.includes("rediss://")) {
-    redisClient = redis.createClient(redisUrl, {tls:{rejectUnauthorized: false}});
+    redisClient = redis.createClient(redisUrl, { tls: { rejectUnauthorized: false } });
   } else {
     redisClient = redis.createClient(redisUrl);
   }
