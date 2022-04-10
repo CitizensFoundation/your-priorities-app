@@ -161,7 +161,7 @@ const translateCommunity = (community, req, res) => {
 }
 
 const translateGroup = (group, postsInfo, postsOffset, req, res) => {
-  const locale = req.query.locale;
+  const locale = req.query.locale || req.query.l;
   let translatedName, translatedDescription;
   async.series([
       (seriesCallback) => {
@@ -322,7 +322,7 @@ var sendGroup = function sendGroupForBot(id, postsOffset, req, res) {
       }).then((postsInfo)=>{
         group.Posts = postsInfo.rows;
         //log.info('Bot: Group', { groupId: group.id, context: 'view', bot: true });
-        if (req.query.locale && req.query.startAutoTranslate) {
+        if ((req.query.locale || req.query.l) && (req.query.startAutoTranslate || req.query.t)) {
           translateGroup(group, postsInfo, postsOffset, req, res);
         } else {
           completeSendingGroup(group, postsInfo, postsOffset, req, res);
