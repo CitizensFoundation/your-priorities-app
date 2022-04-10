@@ -81,10 +81,6 @@ const ieVersion = (uaString) => {
   if (match) return parseInt(match[2])
 };
 
-if (process.env.REDISTOGO_URL) {
-  process.env.REDIS_URL = process.env.REDISTOGO_URL;
-}
-
 let airbrake = null;
 
 if (process.env.AIRBRAKE_PROJECT_ID) {
@@ -135,10 +131,24 @@ app.use(bodyParser.urlencoded({limit: '5mb', extended: true}));
 let redisClient;
 if (process.env.REDIS_URL) {
   let redisUrl = process.env.REDIS_URL;
+  const redis_uri = url.parse(REDIS_URL);
   if (redisUrl.startsWith("redis://h:")) {
     redisUrl = redisUrl.replace("redis://h:","redis://:")
   }
-  redisClient = redis.createClient(redisUrl);
+
+  const redisOptions = REDIS_URL.includes("rediss://")
+    ? {
+      port: Number(redis_uri.port),
+      host: redis_uri.hostname,
+      password: redis_uri.auth.split(":")[1],
+      db: 0,
+      tls: {
+        rejectUnauthorized: false,
+      },
+    }
+    : redisUrl
+
+  redisClient = redis.createClient(redisOptions);
 } else {
   redisClient = redis.createClient();
 }
