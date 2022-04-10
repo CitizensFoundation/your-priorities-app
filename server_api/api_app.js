@@ -138,11 +138,9 @@ if (process.env.REDIS_URL) {
 
   const redisOptions = REDIS_URL.includes("rediss://")
     ? {
-      port: Number(redis_uri.port),
-      host: redis_uri.hostname,
-      password: redis_uri.auth.split(":")[1],
-      db: 0,
-      tls: {
+      url: redisUrl,
+      socket: {
+        tls: true,
         rejectUnauthorized: false,
       },
     }
