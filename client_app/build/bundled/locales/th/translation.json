@@ -618,7 +618,7 @@
       "forAdded": "Added point for",
       "againstAdded": "Added point against",
       "new": "Point",
-      "newFor": "Point for",
+      "newFor": "ชี้ไปที่",
       "newAgainst": "Point against",
       "newComment": "Comment",
       "newsStory": {
@@ -711,7 +711,7 @@
     "share": "Share this idea",
     "yourPost": "ความคิด",
     "yourPoint": "Point for",
-    "location": "Location",
+    "location": "ที่ตั้ง",
     "photo": "Photo",
     "photographerName": "Photographer",
     "newPhoto": "New photo",
@@ -720,7 +720,7 @@
     "tabs": {
       "debate": "Debate",
       "news": "News",
-      "location": "Location",
+      "location": "ที่ตั้ง",
       "photos": "Photos",
       "solutions": "Solutions",
       "not_implemented": "No implemented yet"
