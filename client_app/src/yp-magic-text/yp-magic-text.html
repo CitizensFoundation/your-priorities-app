@@ -179,6 +179,12 @@
             type: Boolean,
             value: false,
             reflectToAttribute: true
+          },
+
+          hightext:  {
+            type: Boolean,
+            value: false,
+            reflectToAttribute: true
           }
         }
       }
@@ -192,7 +198,11 @@
       }
 
       static get widerLanguages() {
-        return ['uk','ky','uz','ru','sr','zh_TW','hy','bg','el']
+        return ['uk','ky','uz','ru','sr','zh_TW','hy','bg','el','th']
+      }
+
+      static get highLanguages() {
+        return ['th']
       }
 
       static get rtlLanguages() {
@@ -232,17 +242,25 @@
             this.set('truncatedContent', content);
           }
 
-          if (this.contentLanguage &&
-             window.appGlobals.largeFont || YpMagicTextBox.widerLanguages.indexOf(this.contentLanguage)>-1) {
-            this.set('widetext', true);
-          } else {
-            this.set('widetext', false)
-          }
-
           this._update();
         } else {
           this.set('truncatedContent', null);
           this.set('finalContent', null);
+        }
+      }
+
+      _setupWideText() {
+        if (this.contentLanguage &&
+          window.appGlobals.largeFont || YpMagicTextBox.widerLanguages.indexOf(this.contentLanguage)>-1) {
+          this.set('widetext', true);
+        } else {
+          this.set('widetext', false)
+        }
+
+        if (this.contentLanguage && YpMagicTextBox.highLanguages.indexOf(this.contentLanguage)>-1) {
+          this.set('hightext', true);
+        } else {
+          this.set('hightext', false)
         }
       }
 
@@ -272,11 +290,26 @@
         return `${this.textType}-${this.contentId}-${this.language}`;
       }
 
+      _setupTranslationWideFont() {
+        if (this.language && YpMagicTextBox.widerLanguages.indexOf(this.language)>-1) {
+          this.set('widetext', true);
+        } else {
+          this.set('widetext', false)
+        }
+
+        if (this.language && YpMagicTextBox.highLanguages.indexOf(this.language)>-1) {
+          this.set('hightext', true);
+        } else {
+          this.set('hightext', false)
+        }
+      }
+
       _startTranslationAndFinalize () {
         let indexKey = this._getIndexKey();
         if (window.appGlobals.autoTranslateCache[indexKey]) {
           //console.warn("Using cache: "+window.appGlobals.autoTranslateCache[indexKey]);
           this.set('processedContent', window.appGlobals.autoTranslateCache[indexKey]);
+          this._setupTranslationWideFont();
           this._finalize();
         } else {
           this.$.getTranslationAjax.params = {
@@ -350,6 +383,7 @@
           console.error("No content for magic text");
         }
         this.dispatchEvent(new CustomEvent('new-translation', { bubbles: true, composed: true }));
+        this._setupTranslationWideFont();
         this._finalize();
       }
 
@@ -361,8 +395,11 @@
               !this.disableTranslation) {
             this._startTranslationAndFinalize();
           } else {
+            this._setupWideText();
             this._finalize();
           }
+        } else {
+          this._setupWideText();
         }
       }
 

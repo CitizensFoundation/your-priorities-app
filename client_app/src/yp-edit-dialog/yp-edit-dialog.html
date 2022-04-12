@@ -191,20 +191,19 @@
 
       .titleHeaderMobile {
         font-size: 20px;
+        margin-bottom: auto;
         padding-left: 2px;
-        margin-top: 12px;
+        margin-top: auto;
         font-weight: bold;
       }
 
       .titleHeaderMobile[long-title-text] {
-        margin-top: 4px;
+          font-size: 19px;
       }
 
       .titleHeaderMobile[long-button-text] {
         font-size: 16px;
-        margin-top: 12px;
       }
-
 
       #formErrorDialog {
         padding: 12px;
@@ -221,6 +220,7 @@
       .smallButtonText {
         font-weight: bold;
         font-size: 17px;
+        text-align: center;
       }
 
       .smallButtonText[long-button-text] {
@@ -511,7 +511,7 @@
       },
 
       _hasLongTitle: function (title) {
-        return (title && title.length>19);
+        return (title && title.length>15);
       },
 
       _narrow: function(narrowScreen, tablet) {
