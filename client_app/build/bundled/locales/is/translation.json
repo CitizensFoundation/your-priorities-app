@@ -1,4 +1,8 @@
 {
+  "customTabTitleNewLocation": "Sértexti fyrir kortastiku",
+  "cloneGroup": "Klóna hóp",
+  "areYouSureCloneGroup": "Ertu viss um að þú viljir klóna hóp?",
+  "errorFraudAuditReportGeneration": "Villa við gerð svindls skýrslu",
   "downloadFraudAuditReports": "Svindl skýrslur",
   "haveCreatedFraudAuditReport": "Hef búið til svindl skýrslu",
   "downloadFraudAuditReport": "Svindl skýrslur",
