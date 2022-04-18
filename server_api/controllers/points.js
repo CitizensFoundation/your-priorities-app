@@ -574,6 +574,8 @@ router.post('/:groupId', auth.can('create point'), function(req, res) {
                     log.error('Could not reload point point', { err: error, context: 'createPoint', user: toJson(req.user.simple()) });
                     res.sendStatus(500);
                   } else {
+                    const newPointRedisKey = `newUserPoint_${req.user.id}`
+                    req.redisClient.setex(newPointRedisKey, 30, JSON.stringify({}));
                     models.Group.addUserToGroupIfNeeded(point.group_id, req, function () {
                       res.send(loadedPoint);
                     });

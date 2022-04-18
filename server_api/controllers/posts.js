@@ -690,7 +690,7 @@ const sendPostPoints = (req, res, redisKey) => {
             const pointsInfo = {points: points, count: upCount + downCount};
             log.info('Points', { postId: req.params.id, userId: req.user ? req.user.id : -1});
             if (redisKey) {
-              req.redisClient.setex(redisKey, process.env.POINTS_CACHE_TTL ? parseInt(process.env.POINTS_CACHE_TTL) : 30, JSON.stringify(pointsInfo));
+              req.redisClient.setex(redisKey, process.env.POINTS_CACHE_TTL ? parseInt(process.env.POINTS_CACHE_TTL) : 5, JSON.stringify(pointsInfo));
             }
             res.send(pointsInfo);
           } else {
@@ -703,22 +703,35 @@ const sendPostPoints = (req, res, redisKey) => {
     })
 }
 
+const shouldDisablePointRedisCache = (req, done) => {
+  if (req.user && req.user.id) {
+    const newPointRedisKey = `newUserPoint_${req.user.id}`
+    req.redisClient.get(newPointRedisKey, (error, found) => {
+      done(error, found!=null)
+    });
+  } else {
+    done(null, false);
+  }
+}
+
 router.get('/:id/points', auth.can('view post'), function(req, res) {
   const redisKey = "cache:post_points:"+req.params.id+(req.query.offsetUp ? ":offsetup:"+req.query.offsetUp : "")+":"+(req.query.offsetDown ? ":offsetdown:"+req.query.offsetDown : "");
-  //TODO: Enable again but disabled cache for now until we figure out to invalidate the cache on delete points
-  if (true || process.env.DISABLE_POST_POINTS_CACHE) {
-    sendPostPoints(req, res);
-  } else {
-    req.redisClient.get(redisKey, (error, points) => {
-      if (error) {
-        sendPostOrError(res, null, 'viewPoints', req.user, error);
-      } else if (points) {
-        res.send(JSON.parse(points));
-      } else {
-        sendPostPoints(req, res, redisKey);
-      }
-    })
-  }
+
+  shouldDisablePointRedisCache(req, (error, disableRedisCache) => {
+    if (disableRedisCache || process.env.DISABLE_POST_POINTS_CACHE) {
+      sendPostPoints(req, res);
+    } else {
+      req.redisClient.get(redisKey, (error, points) => {
+        if (error) {
+          sendPostOrError(res, null, 'viewPoints', req.user, error);
+        } else if (points) {
+          res.send(JSON.parse(points));
+        } else {
+          sendPostPoints(req, res, redisKey);
+        }
+      })
+    }
+  })
 });
 
 var truthValueFromBody = function(bodyParameter) {
