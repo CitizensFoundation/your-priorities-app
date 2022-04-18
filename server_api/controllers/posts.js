@@ -690,7 +690,7 @@ const sendPostPoints = (req, res, redisKey) => {
             const pointsInfo = {points: points, count: upCount + downCount};
             log.info('Points', { postId: req.params.id, userId: req.user ? req.user.id : -1});
             if (redisKey) {
-              req.redisClient.setex(redisKey, process.env.POINTS_CACHE_TTL ? parseInt(process.env.POINTS_CACHE_TTL) : 5, JSON.stringify(pointsInfo));
+              req.redisClient.setex(redisKey, process.env.POINTS_CACHE_TTL ? parseInt(process.env.POINTS_CACHE_TTL) : 3, JSON.stringify(pointsInfo));
             }
             res.send(pointsInfo);
           } else {
