@@ -193,6 +193,8 @@ var updateGroupConfigParamters = function (req, group) {
   group.set('configuration.alternativeTextForNewIdeaButtonHeader', (req.body.alternativeTextForNewIdeaButtonHeader && req.body.alternativeTextForNewIdeaButtonHeader!=="") ? req.body.alternativeTextForNewIdeaButtonHeader : null);
   group.set('configuration.alternativeTextForNewIdeaSaveButton', (req.body.alternativeTextForNewIdeaSaveButton && req.body.alternativeTextForNewIdeaSaveButton!=="") ? req.body.alternativeTextForNewIdeaSaveButton : null);
 
+  group.set('configuration.customCategoryQuestionText', (req.body.customCategoryQuestionText && req.body.customCategoryQuestionText!=="") ? req.body.customCategoryQuestionText : null);
+
   group.set('configuration.alternativePointForHeader', (req.body.alternativePointForHeader && req.body.alternativePointForHeader!="") ? req.body.alternativePointForHeader : null);
   group.set('configuration.alternativePointAgainstHeader', (req.body.alternativePointAgainstHeader && req.body.alternativePointAgainstHeader!="") ? req.body.alternativePointAgainstHeader : null);
 
@@ -1402,6 +1404,7 @@ const allowedTextTypesForGroup = [
   "alternativeTextForNewIdeaButtonClosed",
   "alternativeTextForNewIdeaButtonHeader",
   "alternativeTextForNewIdeaSaveButton",
+  "customCategoryQuestionText",
   "alternativePointForHeader",
   "customThankYouTextNewPosts",
   "customTitleQuestionText",

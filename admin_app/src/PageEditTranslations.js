@@ -401,6 +401,7 @@ export class PageEditTranslations extends YpBaseElement {
       case 'alternativeTextForNewIdeaButtonClosed':
       case 'alternativeTextForNewIdeaButtonHeader':
       case 'alternativeTextForNewIdeaSaveButton':
+      case 'customCategoryQuestionText':
       case 'customThankYouTextNewPosts':
       case 'alternativePointForHeader':
       case 'customTitleQuestionText':

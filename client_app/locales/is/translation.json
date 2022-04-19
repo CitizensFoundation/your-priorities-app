@@ -1,4 +1,6 @@
 {
+  "customCategoryQuestionText": "Texti fyrir spurningu um flokk",
+  "plausibleDataDomains": "Plausible data-domain kóði",
   "customTabTitleNewLocation": "Sértexti fyrir kortastiku",
   "cloneGroup": "Klóna hóp",
   "areYouSureCloneGroup": "Ertu viss um að þú viljir klóna hóp?",

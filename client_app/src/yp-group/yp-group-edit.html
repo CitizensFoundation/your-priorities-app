@@ -347,6 +347,15 @@
                      value="{{group.configuration.customTabTitleNewLocation}}">
         </paper-input>
 
+        <paper-input id="customCategoryQuestionText"
+                     name="customCategoryQuestionText"
+                     type="text"
+                     label="[[t('customCategoryQuestionText')]]"
+                     value="{{group.configuration.customCategoryQuestionText}}"
+                     maxlength="30"
+                     char-counter>
+        </paper-input>
+
         <paper-checkbox name="makeCategoryRequiredOnNewPost" checked$="{{group.configuration.makeCategoryRequiredOnNewPost}}">[[t('makeCategoryRequiredOnNewPost')]]
         </paper-checkbox>
 
