@@ -95,7 +95,7 @@ let sendIndex = function (req, res) {
           req.ypDomain.configuration.plausibleDataDomains.length>5) {
         indexFileData = indexFileData.replace('XplcX',getPlausibleCode(req.ypDomain.configuration.plausibleDataDomains));
       } else {
-        indexFileData = indexFileData.replace('XplcX','');
+        indexFileData = indexFileData.replace('XplcX', '');
       }
 
         if (req.hostname) {
