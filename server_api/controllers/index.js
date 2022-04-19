@@ -23,6 +23,12 @@ let replaceForYrpri = function (data) {
   return data.replace(/XmanifestPathX/g, "manifest_yp");
 };
 
+let replaceForEngageBritain = function (data) {
+  data = data.replace(/XappNameX/g, "Engage Britain");
+  data = data.replace(/XdescriptionX/g, "Engage Britain is a fully independent charity that brings people together to tackle our country’s biggest challenges.");
+  return data.replace(/XmanifestPathX/g, "manifest_eb");
+};
+
 let replaceForMyCityChallenge = function (data) {
   data = data.replace(/XappNameX/g, "My City Challenge");
   data = data.replace(/XdescriptionX/g, "My City Challenge");
@@ -111,6 +117,8 @@ let sendIndex = function (req, res) {
           res.send(replaceForYrpri(indexFileData));
         } else if (req.hostname.indexOf('mycitychallenge.org') > -1) {
           res.send(replaceForMyCityChallenge(indexFileData));
+        } else if (req.hostname.indexOf('engagebritain.org') > -1) {
+          res.send(replaceForEngageBritain(indexFileData));
         } else if (req.hostname.indexOf('tarsalgo.net') > -1) {
           res.send(replaceForTarsalgo(indexFileData));
         } else if (req.hostname.indexOf('junges.wien') > -1) {
