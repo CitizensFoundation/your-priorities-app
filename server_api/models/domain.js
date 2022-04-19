@@ -126,6 +126,8 @@ module.exports = (sequelize, DataTypes) => {
           callbackDomainName = 'yp.'+domain.domain_name;
         } else if (domain.domain_name==='mycitychallenge.org') {
           callbackDomainName = 'ideas.'+domain.domain_name;
+        } else if (domain.domain_name==='engagebritain.org') {
+          callbackDomainName = 'socialcare.'+domain.domain_name;
         } else if (process.env.LOGIN_CALLBACK_CUSTOM_HOSTNAME) {
           console.log("Using custom login back name", { custom: process.env.LOGIN_CALLBACK_CUSTOM_HOSTNAME });
           callbackDomainName = process.env.LOGIN_CALLBACK_CUSTOM_HOSTNAME+'.'+domain.domain_name;
