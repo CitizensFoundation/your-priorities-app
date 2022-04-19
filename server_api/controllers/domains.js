@@ -776,6 +776,8 @@ router.put('/:id', auth.can('edit domain'), function(req, res) {
       domain.set('configuration.samlLoginButtonUrl', (req.body.samlLoginButtonUrl && req.body.samlLoginButtonUrl!="") ? req.body.samlLoginButtonUrl : null);
       domain.set('configuration.customSAMLErrorHTML', (req.body.customSAMLErrorHTML && req.body.customSAMLErrorHTML!="") ? req.body.customSAMLErrorHTML : null);
 
+      domain.set('configuration.plausibleDataDomains', (req.body.plausibleDataDomains && req.body.plausibleDataDomains!="") ? req.body.plausibleDataDomains : null);
+
       if (req.body.google_analytics_code && req.body.google_analytics_code!="") {
         domain.google_analytics_code = req.body.google_analytics_code;
       } else {

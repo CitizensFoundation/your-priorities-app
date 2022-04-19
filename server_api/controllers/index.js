@@ -59,6 +59,15 @@ let replaceFromEnv = function (data) {
   return data.replace(/XmanifestPathX/g, process.env.YP_INDEX_MANIFEST_PATH ? process.env.YP_INDEX_MANIFEST_PATH : "manifest_yp");
 };
 
+const plausibleCode = `
+  <script defer data-domain="DATADOMAIN" src="https://plausible.io/js/plausible.js"></script>
+  <script>window.plausible = window.plausible || function() { (window.plausible.q = window.plausible.q || []).push(arguments) }</script>
+`;
+
+const getPlausibleCode = (dataDomain) => {
+  return plausibleCode.replace("DATADOMAIN", dataDomain);
+}
+
 let sendIndex = function (req, res) {
   let indexFilePath;
   log.info('Index Viewed', { userId: req.user ? req.user.id : null });
@@ -80,7 +89,16 @@ let sendIndex = function (req, res) {
         indexFileData = indexFileData.replace('<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE11">','');
       }
 
-      if (req.hostname) {
+      if (req.ypDomain &&
+          req.ypDomain.configuration &&
+          req.ypDomain.configuration.plausibleDataDomains &&
+          req.ypDomain.configuration.plausibleDataDomains.length>5) {
+        indexFileData = indexFileData.replace('XplcX',getPlausibleCode(req.ypDomain.configuration.plausibleDataDomains));
+      } else {
+        indexFileData = indexFileData.replace('XplcX','');
+      }
+
+        if (req.hostname) {
         if (req.hostname.indexOf('betrireykjavik.is') > -1) {
           res.send(replaceForBetterReykjavik(indexFileData));
         } else if (req.hostname.indexOf('betraisland.is') > -1) {

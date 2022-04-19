@@ -332,6 +332,12 @@
                 detail: { name: 'yp-domain-changed', data: { domain: domain } }
               })
             );
+
+            if (domain.configuration && domain.configuration.plausibleDataDomains) {
+              this.plausibleDomains = domain.configuration.plausibleDataDomains;
+            } else {
+              this.plausibleDomains = null;
+            }
           }
         },
 
