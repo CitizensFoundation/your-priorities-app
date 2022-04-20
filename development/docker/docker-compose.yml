@@ -181,7 +181,7 @@ services:
     environment:
       - POSTGRES_PASSWORD=postgres
 
-  plausible_events_db:
+  clickhouse:
     image: yandex/clickhouse-server:21.3.2.5
     container_name: clickhouse
     restart: always
@@ -201,7 +201,7 @@ services:
     command: sh -c "sleep 10 && /entrypoint.sh db createdb && /entrypoint.sh db migrate && /entrypoint.sh db init-admin && /entrypoint.sh run"
     depends_on:
       - db
-      - plausible_events_db
+      - clickhouse
       - mail
     ports:
       - 8000:8000
