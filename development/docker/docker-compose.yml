@@ -231,6 +231,10 @@ services:
     ports:
       - 9200:9200
 
+networks:
+  es-net:
+    driver: bridge
+
 volumes:
   client-app-dist:
   admin-app-dist:
