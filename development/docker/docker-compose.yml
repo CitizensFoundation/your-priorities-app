@@ -7,7 +7,7 @@ x-minio-common: &minio-common
   volumes:
     - ./minio_data:/minio_data
   expose:
-    - "9000"
+    - "9012"
   environment:
     MINIO_ROOT_USER: ${MINIO_ROOT_USER}
     MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
@@ -100,10 +100,10 @@ services:
 
   minio:
     <<: *minio-common
-    command: server --address minio:9000 --console-address minio:9001 /minio_data
+    command: server --address minio:9012 --console-address minio:9013 /minio_data
     container_name: minio
     healthcheck:
-        test: ["CMD", "curl", "-f", "http://minio:9000/minio/health/live"]
+        test: ["CMD", "curl", "-f", "http://minio:9012/minio/health/live"]
 
   ac-analytics-api:
     container_name: ac-analytics-api
@@ -152,7 +152,7 @@ services:
      - minio
     entrypoint: >
       /bin/sh -c "
-      /usr/bin/mc config host add --quiet --api s3v4 local http://minio:9000 ${MINIO_ROOT_USER} ${MINIO_ROOT_PASSWORD};
+      /usr/bin/mc config host add --quiet --api s3v4 local http://minio:9012 ${MINIO_ROOT_USER} ${MINIO_ROOT_PASSWORD};
       /usr/bin/mc mb --quiet local/${S3_AUDIO_UPLOAD_BUCKET}/;
       /usr/bin/mc mb --quiet local/${S3_AUDIO_PUBLIC_BUCKET}/;
       /usr/bin/mc policy set public local/${S3_AUDIO_PUBLIC_BUCKET};
@@ -180,6 +180,10 @@ services:
       - db-data:/var/lib/postgresql/data
     environment:
       - POSTGRES_PASSWORD=postgres
+    networks:
+      default:
+        aliases:
+          - plausible_db
 
   clickhouse:
     image: yandex/clickhouse-server:21.3.2.5
