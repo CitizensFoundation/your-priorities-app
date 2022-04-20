@@ -114,7 +114,10 @@ module.exports = (sequelize, DataTypes) => {
   Video.getThumbnailUrl = (video, number) => {
     const zerofilled = ('00000'+number).slice(-5);
     const fileKey = video.meta.fileKey+'_thumbs-' + video.id + '-'+zerofilled+'.png';
-    if (process.env.MINIO_ROOT_USER) {
+    if (process.env.MINIO_ROOT_USER && process.env.NODE_ENV === 'development') {
+      return process.env.S3_ENDPOINT
+        + "/" + process.env.S3_VIDEO_THUMBNAIL_BUCKET+'/'+fileKey;
+    } else if (process.env.MINIO_ROOT_USER) {
       return "https://"
         + process.env.S3_ENDPOINT
         + "/" + process.env.S3_VIDEO_THUMBNAIL_BUCKET+'/'+fileKey;
