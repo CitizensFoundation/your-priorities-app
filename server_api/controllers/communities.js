@@ -764,6 +764,7 @@ var updateCommunityConfigParameters = function (req, community) {
   community.set('configuration.themeOverrideColorAccent', (req.body.themeOverrideColorAccent && req.body.themeOverrideColorAccent!="") ? req.body.themeOverrideColorAccent : null);
   community.set('configuration.themeOverrideBackgroundColor', (req.body.themeOverrideBackgroundColor && req.body.themeOverrideBackgroundColor!="") ? req.body.themeOverrideBackgroundColor : null);
   community.set('configuration.sortBySortOrder', truthValueFromBody(req.body.sortBySortOrder));
+  community.set('configuration.orderByRandom', truthValueFromBody(req.body.orderByRandom));
   community.set('configuration.enableFraudDetection', truthValueFromBody(req.body.enableFraudDetection));
   community.set('configuration.highlightedLanguages', (req.body.highlightedLanguages && req.body.highlightedLanguages!="") ? req.body.highlightedLanguages : null);
 };
