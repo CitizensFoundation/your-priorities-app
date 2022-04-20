@@ -68,7 +68,7 @@ x-your-priorities-worker-common: &your-priorities-worker-common
       max-size: "25m"
 
 services:
-  your-priorities-app1:
+  your-priorities-app:
     container_name: your-priorities-app
     <<: *your-priorities-app-common
     healthcheck:
@@ -98,12 +98,12 @@ services:
         max-file: "100"
         max-size: "25m"
 
-  minio1:
+  minio:
     <<: *minio-common
-    command: server --address localhost:9000 --console-address localhost:9001 /minio_data
+    command: server --address minio:9000 --console-address minio:9001 /minio_data
     container_name: minio
     healthcheck:
-        test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+        test: ["CMD", "curl", "-f", "http://minio:9000/minio/health/live"]
 
   ac-analytics-api:
     container_name: ac-analytics-api
@@ -152,7 +152,7 @@ services:
      - minio1
     entrypoint: >
       /bin/sh -c "
-      /usr/bin/mc config host add --quiet --api s3v4 local http://${FULL_HOSTNAME}:9000 ${MINIO_ROOT_USER} ${MINIO_ROOT_PASSWORD};
+      /usr/bin/mc config host add --quiet --api s3v4 local http://minio:9000 ${MINIO_ROOT_USER} ${MINIO_ROOT_PASSWORD};
       /usr/bin/mc mb --quiet local/${S3_AUDIO_UPLOAD_BUCKET}/;
       /usr/bin/mc mb --quiet local/${S3_AUDIO_PUBLIC_BUCKET}/;
       /usr/bin/mc policy set public local/${S3_AUDIO_PUBLIC_BUCKET};
