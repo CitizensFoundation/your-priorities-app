@@ -169,7 +169,7 @@
             <div slot="dropdown-content" class="layout vertical dropDownContent">
               <div>
                 <div class="filterHeader layout horizontal center-center">
-                  [[t('filterIdeas')]]
+                  [[filterText]]
                 </div>
                 <template is="dom-if" if="[[categoriesWithCount]]" restamp>
                   <div class="layout vertical">
@@ -218,6 +218,12 @@
           <paper-icon-button aria-label$="[[t('clearSearchInput')]]" icon="clear" on-tap="_clearSearch" class="clear-search-trigger"></paper-icon-button>
         </template>
       </div>
+
+      <template is="dom-if" if="[[group.configuration.customFilterText]]">
+        <yp-magic-text id="customFilterTextId" hidden content-id="[[group.id]]" text-only content="[[group.configuration.customFilterText]]"
+                       content-language="[[group.language]]" on-new-translation="_updateFilterText"
+                       text-type="customFilterText"></yp-magic-text>
+      </template>
     </template>
   </template>
   <script>
@@ -238,6 +244,16 @@
           value: "newest",
           notify: true,
           observer: "_filterChanged"
+        },
+
+        filterText: {
+          type: String,
+          computed: '_filterText(group, customFilterText)'
+        },
+
+        customFilterText: {
+          type: String,
+          value: null
         },
 
         filterName: {
@@ -296,6 +312,25 @@
           type: Number,
           value: 0
         }
+      },
+
+      _filterText: function (group, customFilterText) {
+        if (group && customFilterText) {
+          return customFilterText;
+        } else if (group && group.configuration && group.configuration.customFilterText) {
+          return group.configuration.customFilterText;
+        } else {
+          return this.t('filterIdeas');
+        }
+      },
+
+      _updateFilterText: function () {
+        this.async(function () {
+          var label = this.$$("#customFilterTextId");
+          if (label && label.finalContent) {
+            this.set('customFilterText', label.finalContent);
+          }
+        });
       },
 
       observers: [

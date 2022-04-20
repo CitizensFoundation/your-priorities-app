@@ -405,6 +405,7 @@ export class PageEditTranslations extends YpBaseElement {
       case 'customThankYouTextNewPosts':
       case 'alternativePointForHeader':
       case 'customTitleQuestionText':
+      case 'customFilterText':
       case 'urlToReviewActionText':
       case 'customAdminCommentsTitle':
       case 'customTabTitleNewLocation':

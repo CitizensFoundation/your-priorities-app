@@ -356,6 +356,15 @@
                      char-counter>
         </paper-input>
 
+        <paper-input id="customFilterText"
+                     name="customFilterText"
+                     type="text"
+                     label="[[t('customFilterText')]]"
+                     value="{{group.configuration.customFilterText}}"
+                     maxlength="25"
+                     char-counter>
+        </paper-input>
+
         <paper-checkbox name="makeCategoryRequiredOnNewPost" checked$="{{group.configuration.makeCategoryRequiredOnNewPost}}">[[t('makeCategoryRequiredOnNewPost')]]
         </paper-checkbox>
 
