@@ -1,7 +1,7 @@
 FROM node:14
 MAINTAINER Robert Vidar Bjarnason <robert@citizens.is>
 
-RUN echo 'version 8.14'
+RUN echo 'version 8.14a'
 
 RUN mkdir -p /home/node/app/node_modules && chown -R node:node /home/node/app
 
@@ -24,6 +24,10 @@ RUN rm -r client_app/build/bundled/images/manifest_yp
 COPY deployment/docker/manifest_images_yp/ ./client_app/build/bundled/images/manifest_yp/
 
 RUN ls -l client_app/build/bundled/images/manifest_yp
+
+COPY deployment/docker/manifest_images_yp/ ./client_app/images/manifest_yp/
+
+RUN ls -l client_app/images/manifest_yp
 
 RUN tar -xzf ./development/docker/your-priorities-app/temp_bower_components.tar.gz -C ./client_app/
 
