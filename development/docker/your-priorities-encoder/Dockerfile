@@ -10,4 +10,6 @@ WORKDIR "your-priorities-encoder"
 RUN yarn config set ignore-engines
 RUN yarn install
 
+RUN cp config/config.json.dist config/config.json
+
 CMD [ "node", "out-tsc/worker.js" ]
