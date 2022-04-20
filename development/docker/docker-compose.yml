@@ -71,6 +71,9 @@ x-your-priorities-worker-common: &your-priorities-worker-common
 services:
   your-priorities-app:
     container_name: your-priorities-app
+    depends_on:
+      - db
+      - redis
     <<: *your-priorities-app-common
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:4242/api/users/has/AutoTranslation"]
@@ -84,6 +87,9 @@ services:
   your-priorities-worker:
     container_name: your-priorities-worker
     <<: *your-priorities-worker-common
+    depends_on:
+      - db
+      - redis
     scale: 1
 
   your-priorities-encoder:
@@ -94,7 +100,6 @@ services:
     environment:
       - NODE_ENV=production
     command: node out-tsc/worker.js
-    network_mode: host
     logging:
       driver: "json-file"
       options:
@@ -173,6 +178,7 @@ services:
       /usr/bin/mc mb --quiet local/${S3_BUCKET}/;
       /usr/bin/mc policy set public local/${S3_BUCKET};
       "
+
   mail:
     image: bytemark/smtp
     container_name: mail
