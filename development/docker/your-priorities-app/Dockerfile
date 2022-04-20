@@ -25,6 +25,8 @@ COPY deployment/docker/manifest_images_yp/ ./client_app/build/bundled/images/man
 
 RUN ls -l client_app/build/bundled/images/manifest_yp
 
+RUN tar -xzf ./development/docker/your-priorities-app/temp_bower_components.tar.gz -C ./client_app/
+
 ENV PORT=4242
 
 EXPOSE 4242
