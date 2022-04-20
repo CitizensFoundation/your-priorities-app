@@ -44,6 +44,8 @@ x-your-priorities-app-common: &your-priorities-app-common
   depends_on:
     - db
     - redis
+  expose:
+    - "4242"
   environment:
     REDIS_HOST: redis
     REDIS_PORT: 6379
