@@ -235,7 +235,7 @@ services:
 
 volumes:
   client-app-dist:
-  client-app-dev-dist:
+  client-app-dev:
   admin-app-dist:
   analytics-app-dist:
   web-root:
