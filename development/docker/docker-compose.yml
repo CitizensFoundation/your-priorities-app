@@ -101,6 +101,7 @@ services:
   minio1:
     <<: *minio-common
     command: server --address localhost:9000 --console-address localhost:9001 /minio_data
+    container_name: minio
     healthcheck:
         test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
 
@@ -146,6 +147,7 @@ services:
 
   mc:
     image: minio/mc:latest
+    container_name: minio_command_line
     depends_on:
      - minio1
     entrypoint: >
@@ -167,6 +169,7 @@ services:
       "
   mail:
     image: bytemark/smtp
+    container_name: mail
     restart: always
 
   db:
@@ -221,14 +224,8 @@ services:
     environment:
       - xpack.security.enabled=false
       - "discovery.type=single-node"
-    networks:
-      - es-net
     ports:
       - 9200:9200
-
-networks:
-  es-net:
-    driver: bridge
 
 volumes:
   client-app-dist:
