@@ -31,6 +31,7 @@ x-your-priorities-app-common: &your-priorities-app-common
     dockerfile: deployment/docker/your-priorities-app/Dockerfile
   image: your-priorities-app:current
   volumes:
+    - client-app-dev:/usr/src/your-priorities/client
     - client-app-dist:/usr/src/your-priorities/client/build/bundle
     - admin-app-dist:/usr/src/your-priorities/admin_app/dist
     - analytics-app-dist:/usr/src/your-priorities/analytics_app/dist
@@ -75,6 +76,7 @@ services:
       test: ["CMD", "curl", "-f", "http://localhost:4242/api/users/has/AutoTranslation"]
     expose:
       - "4242"
+    network_mode: host
     environment:
       - PORT=4242
 
@@ -233,6 +235,7 @@ services:
 
 volumes:
   client-app-dist:
+  client-app-dev-dist:
   admin-app-dist:
   analytics-app-dist:
   web-root:
