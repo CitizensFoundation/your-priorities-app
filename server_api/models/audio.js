@@ -87,7 +87,10 @@ module.exports = (sequelize, DataTypes) => {
   };
 
   Audio.getFullUrl = (meta) => {
-    if (process.env.MINIO_ROOT_USER) {
+    if (process.env.MINIO_ROOT_USER && process.env.NODE_ENV === 'development') {
+      return meta.endPoint
+        + "/" + meta.publicBucket+'/'+meta.fileKey;
+    } else if (process.env.MINIO_ROOT_USER) {
       return "https://"
         + meta.endPoint
         + "/" + meta.publicBucket+'/'+meta.fileKey;
