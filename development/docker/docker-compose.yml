@@ -28,7 +28,7 @@ x-your-priorities-app-common: &your-priorities-app-common
   restart: always
   build:
     context: ../../.
-    dockerfile: deployment/docker/your-priorities-app/Dockerfile
+    dockerfile: development/docker/your-priorities-app/Dockerfile
   image: your-priorities-app:current
   volumes:
     - client-app-dev:/usr/src/your-priorities/client
@@ -62,7 +62,7 @@ x-your-priorities-worker-common: &your-priorities-worker-common
   env_file: .env
   build:
     context: ../../.
-    dockerfile: deployment/docker/your-priorities-worker/Dockerfile
+    dockerfile: development/docker/your-priorities-worker/Dockerfile
   command: node server_api/active-citizen/workers/main.js
   logging:
     driver: "json-file"
