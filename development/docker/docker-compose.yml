@@ -16,7 +16,6 @@ x-minio-common: &minio-common
     interval: 30s
     timeout: 20s
     retries: 3
-  network_mode: host
   logging:
     driver: "json-file"
     options:
@@ -41,7 +40,6 @@ x-your-priorities-app-common: &your-priorities-app-common
     interval: 30s
     timeout: 20s
     retries: 3
-  network_mode: host
   depends_on:
     - db
     - redis
@@ -63,7 +61,6 @@ x-your-priorities-worker-common: &your-priorities-worker-common
     context: ../../.
     dockerfile: deployment/docker/your-priorities-worker/Dockerfile
   command: node server_api/active-citizen/workers/main.js
-  network_mode: host
   logging:
     driver: "json-file"
     options:
@@ -72,15 +69,19 @@ x-your-priorities-worker-common: &your-priorities-worker-common
 
 services:
   your-priorities-app1:
+    container_name: your-priorities-app
     <<: *your-priorities-app-common
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/api/users/has/AutoTranslation"]
+    expose:
+      - "4242"
     environment:
-      - PORT=8080
+      - PORT=4242
 
   your-priorities-worker:
+    container_name: your-priorities-worker
     <<: *your-priorities-worker-common
-    scale: 2
+    scale: 1
 
   your-priorities-encoder:
     container_name: your-priorities-encoder
@@ -137,7 +138,6 @@ services:
       - ./d2v_models:/ac-analytics-api/d2v_models
     restart: always
     command: python3 worker.py
-    network_mode: host
     logging:
       driver: "json-file"
       options:
@@ -169,17 +169,9 @@ services:
     image: bytemark/smtp
     restart: always
 
-  redis:
-    image: redis:6.2-alpine
-    restart: always
-    ports:
-      - '6379:6379'
-    command: redis-server --save 20 1 --loglevel warning --requirepass eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
-    volumes:
-      - redis:/data
-
   db:
     image: postgres:13
+    container_name: postgres
     restart: always
     volumes:
       - db-data:/var/lib/postgresql/data
@@ -188,6 +180,7 @@ services:
 
   plausible_events_db:
     image: yandex/clickhouse-server:21.3.2.5
+    container_name: clickhouse
     restart: always
     volumes:
       - event-data:/var/lib/clickhouse
@@ -200,6 +193,7 @@ services:
 
   plausible:
     image: plausible/analytics:latest
+    container_name: plausible
     restart: always
     command: sh -c "sleep 10 && /entrypoint.sh db createdb && /entrypoint.sh db migrate && /entrypoint.sh db init-admin && /entrypoint.sh run"
     depends_on:
@@ -213,6 +207,7 @@ services:
 
   redis:
     image: redis:6.2-alpine
+    container_name: redis
     restart: always
     ports:
       - '6379:6379'
@@ -221,7 +216,7 @@ services:
       - redis:/data
 
   elasticsearch:
-    container_name: es-container
+    container_name: elasticsearch
     image: docker.elastic.co/elasticsearch/elasticsearch:7.17.2
     environment:
       - xpack.security.enabled=false
