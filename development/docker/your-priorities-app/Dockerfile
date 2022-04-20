@@ -1,7 +1,7 @@
 FROM node:14
 MAINTAINER Robert Vidar Bjarnason <robert@citizens.is>
 
-RUN echo 'version 8.11'
+RUN echo 'version 8.14'
 
 RUN mkdir -p /home/node/app/node_modules && chown -R node:node /home/node/app
 
@@ -25,8 +25,8 @@ COPY deployment/docker/manifest_images_yp/ ./client_app/build/bundled/images/man
 
 RUN ls -l client_app/build/bundled/images/manifest_yp
 
-ENV PORT=8080
+ENV PORT=4242
 
-EXPOSE 8080
+EXPOSE 4242
 
 CMD [ "node --optimize_for_size --max_old_space_size=460 ", "server_api/api_app.js" ]
