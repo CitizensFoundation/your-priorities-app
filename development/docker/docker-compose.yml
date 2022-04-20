@@ -85,10 +85,13 @@ services:
       - "4242:4242"
     environment:
       - PORT=4242
+      - NODE_ENV=development
 
   your-priorities-worker:
     container_name: your-priorities-worker
     <<: *your-priorities-worker-common
+    environment:
+      - NODE_ENV=development
     depends_on:
       - db
       - redis
@@ -100,7 +103,7 @@ services:
     restart: always
     env_file: .env
     environment:
-      - NODE_ENV=production
+      - NODE_ENV=development
     command: node out-tsc/worker.js
     logging:
       driver: "json-file"
