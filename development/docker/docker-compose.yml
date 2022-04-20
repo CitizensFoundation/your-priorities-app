@@ -105,6 +105,9 @@ services:
     <<: *minio-common
     command: server --address minio:9012 --console-address minio:9013 /minio_data
     container_name: minio
+    ports:
+      - "9012:9012"
+
     healthcheck:
         test: ["CMD", "curl", "-f", "http://minio:9012/minio/health/live"]
 
