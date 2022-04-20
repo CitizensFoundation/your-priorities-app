@@ -128,7 +128,7 @@ services:
     restart: always
     environment:
       - PORT=8888
-      - HOST=localhost
+      - HOST=ac-analytics-api
     volumes:
       - ./rec_models:/ac-analytics-api/rec_models
       - ./d2v_models:/ac-analytics-api/d2v_models
