@@ -254,6 +254,7 @@ var updateGroupConfigParamters = function (req, group) {
   }
 
   group.set('configuration.customTitleQuestionText', (req.body.customTitleQuestionText && req.body.customTitleQuestionText!="") ? req.body.customTitleQuestionText : null);
+  group.set('configuration.customFilterText', (req.body.customFilterText && req.body.customFilterText!="") ? req.body.customFilterText : null);
 
   group.set('configuration.customBackURL', (req.body.customBackURL && req.body.customBackURL!="") ? req.body.customBackURL : null);
   group.set('configuration.customBackName', (req.body.customBackName && req.body.customBackName!="") ? req.body.customBackName : null);
@@ -1408,6 +1409,7 @@ const allowedTextTypesForGroup = [
   "alternativePointForHeader",
   "customThankYouTextNewPosts",
   "customTitleQuestionText",
+  "customFilterText",
   "customTabTitleNewLocation",
   "alternativePointAgainstHeader",
   "alternativePointForLabel",

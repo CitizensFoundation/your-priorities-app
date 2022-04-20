@@ -607,7 +607,7 @@ app.use(function generalErrorHandler(err, req, res, next) {
 
 if (process.env.YOUR_PRIORITIES_LISTEN_HOST) {
   var server = app.listen(app.get('port'), process.env.YOUR_PRIORITIES_LISTEN_HOST, function () {
-    log.info('Your Priorities server listening on port ' + server.address().port);
+    log.info(`Your Priorities server listening on port ${process.env.YOUR_PRIORITIES_LISTEN_HOST}:${app.get('port')}`);
   });
 } else {
   var server = app.listen(app.get('port'), function () {
