@@ -76,7 +76,8 @@ services:
       test: ["CMD", "curl", "-f", "http://localhost:4242/api/users/has/AutoTranslation"]
     expose:
       - "4242"
-    network_mode: host
+    ports:
+      - "4242:4242"
     environment:
       - PORT=4242
 
