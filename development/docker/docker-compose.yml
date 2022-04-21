@@ -228,7 +228,7 @@ services:
       - clickhouse
       - mail
     ports:
-      - 8000
+      - 8000:8000
     env_file:
       - plausible-conf.env
 
