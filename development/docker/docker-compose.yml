@@ -220,7 +220,7 @@ services:
         hard: 262144
 
   plausible:
-    image: plausible/analytics:latest
+    image: plausible/analytics:master
     container_name: plausible
     restart: always
     command: sh -c "sleep 10 && /entrypoint.sh db createdb && /entrypoint.sh db migrate && /entrypoint.sh db init-admin && /entrypoint.sh run"
