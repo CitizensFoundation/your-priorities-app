@@ -94,6 +94,7 @@ services:
     environment:
       - NODE_ENV=development
       - PLAUSIBLE_BASE_URL=http://plausible:8000/api/v1/
+      - PLAUSIBLE_EVENT_BASE_URL=http://plausible:8000/api/
     depends_on:
       - db
       - redis
