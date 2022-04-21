@@ -58,7 +58,7 @@ export class YpCommunityMarketing extends YpAdminPage {
       ? html`
           <div class="layout horizontal wrap">
             <div class="layout vertical">
-              <h1>A Plausible Chart</h1>
+              <h1>A Plausible "day" Chart</h1>
               <canvas class="chart" id="trend-chart"></canvas>
             </div>
           </div>
