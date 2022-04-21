@@ -145,7 +145,7 @@
               </div>
               <paper-input
                       data-args$="[[page.id]]"
-                      no-label-float class="localeInput weightInput" length="2" maxlength="2" value="{{page.weight}}" on-change="_pageWeightChanged"></paper-input>
+                      no-label-float class="localeInput weightInput" length="3" maxlength="3" value="{{page.weight}}" on-change="_pageWeightChanged"></paper-input>
               <div class="pageItem title">
                 [[_getPageTitle(page)]]
               </div>
@@ -154,7 +154,7 @@
                   <a class="locale" data-args-page$="[[page]]" data-args-locale$="[[item.locale]]" on-tap="_editPageLocale">[[item.locale]]</a>
                 </div>
               </template>
-              <paper-input no-label-float class="localeInput" length="2" maxlength="2" value="{{newLocaleValue}}"></paper-input>
+              <paper-input no-label-float class="localeInput" length="3" maxlength="3" value="{{newLocaleValue}}"></paper-input>
               <paper-button raised data-args$="[[page.id]]" on-tap="_addLocale">[[t('pages.addLocale')]]</paper-button>
               <div hidden$="[[page.published]]">
                 <paper-button raised data-args$="[[page.id]]" on-tap="_publishPage">[[t('pages.publish')]]</paper-button>
