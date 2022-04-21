@@ -93,6 +93,7 @@ services:
     <<: *your-priorities-worker-common
     environment:
       - NODE_ENV=development
+      - PLAUSIBLE_BASE_URL=http://plausible:8000/api/v1/
     depends_on:
       - db
       - redis
