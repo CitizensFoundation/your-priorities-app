@@ -128,20 +128,19 @@ services:
     restart: always
     environment:
       - PORT=8888
-      - HOST=0.0.0.0
+      - HOST=ac-analytics-api
     volumes:
       - ./rec_models:/ac-analytics-api/rec_models
       - ./d2v_models:/ac-analytics-api/d2v_models
     expose:
       - "8888"
     ports:
-      - "8888:8888"
+      - "8888:8792"
     healthcheck:
       test: ["CMD", "curl", "-H","X-API-KEY: ${AC_ANALYTICS_KEY}","-f", "http://localhost:8888/api/v1/healthcheck"]
       interval: 30s
       timeout: 20s
       retries: 3
-    network_mode: host
     logging:
       driver: "json-file"
       options:
