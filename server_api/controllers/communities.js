@@ -2057,6 +2057,8 @@ router.get('/:communityId/:type/getPlausibleSeries', auth.can('edit community'),
     const type = req.params.type.replace('realtime-visitors','realtime/visitors');
     const plausibleString = `${type}?${queryString}&site_id=${siteId}`;
     const plausibleData = await getPlausibleStats(plausibleString);
+    log.info("GOT DATA");
+    log.info(plausibleData);
     res.send(plausibleData);
   } catch (error) {
     log.error('Could not get getPlausibleSeries', { err: error, context: 'getPlausibleSeries', user: toJson(req.user.simple()) });
