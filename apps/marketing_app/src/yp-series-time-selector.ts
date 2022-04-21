@@ -7,18 +7,10 @@ import { Chart, registerables } from 'chart.js';
 import { YpServerApiAdmin } from './@yrpri/common/YpServerApiAdmin.js';
 import { YpBaseVisualization } from './yp-base-visualization.js';
 
-@customElement('yp-visitors-chart')
-export class YpVisitorsChart extends YpBaseVisualization {
+@customElement('yp-series-time-selector')
+export class YpSeriesTimeSelector extends YpBaseElement {
   constructor() {
     super();
-    this.chartLabel = this.t('Visitors');
-    this.chartType = 'bar';
-    this.type = 'timeseries';
-    this.paramsObject = { period: 'day' };
-
-    setTimeout(() => {
-      this.updateParam('period', '7d');
-    }, 30300);
   }
 
   get chartOptions() {
