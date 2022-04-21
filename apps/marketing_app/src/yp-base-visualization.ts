@@ -67,20 +67,24 @@ export class YpBaseVisualization extends YpBaseElement {
 
   _collectionIdChanged() {}
 
+  getChartData(response: any) {
+    const chartData = [];
+    for (const item of response) {
+      chartData.push({ x: item.date, y: item.visitors });
+    }
+
+    return chartData;
+  }
+
   updateStatsChart(response: any) {
     if (response) {
-      const lineChartElement = this.shadowRoot!.getElementById(
-        'chart'
-      ) as any;
+      const lineChartElement = this.shadowRoot!.getElementById('chart') as any;
 
       if (this.chart) {
         this.chart.destroy();
       }
 
-      const chartData = [];
-      for (const item of response) {
-        chartData.push({ x: item.date, y: item.visitors });
-      }
+      const chartData = this.getChartData(response);
 
       this.chart = new Chart(lineChartElement, {
         type: this.chartType as any,

@@ -7,6 +7,7 @@ import { YpAdminPage } from './yp-admin-page.js';
 import { Chart, registerables } from 'chart.js';
 
 import './yp-visitors-chart.js';
+import './yp-pages-chart.js';
 
 @customElement('yp-community-marketing')
 export class YpCommunityMarketing extends YpAdminPage {
@@ -24,6 +25,17 @@ export class YpCommunityMarketing extends YpAdminPage {
     return [
       super.styles,
       css`
+        .header {
+          font-size: 18px;
+          font-weight: bold;
+          text-align: center;
+          margin-top: 16px;
+          margin-bottom: 16px;
+        }
+
+        .nextHeader {
+          margin-top: 32px;
+        }
       `,
     ];
   }
@@ -33,13 +45,19 @@ export class YpCommunityMarketing extends YpAdminPage {
       ? html`
           <div class="layout horizontal wrap">
             <div class="layout vertical">
-              <h1>A Plausible "day" Chart</h1>
               ${this.collection
                 ? html`
+                    <div class="header">Visitors "day" Chart</div>
                     <yp-visitors-chart
                       .collection="${this.collection}"
                       .collectionId="${this.collectionId}"
                     ></yp-visitors-chart>
+
+                    <div class="header nextHeader">Pages "day" Chart</div>
+                    <yp-pages-chart
+                      .collection="${this.collection}"
+                      .collectionId="${this.collectionId}"
+                    ></yp-pages-chart>
                   `
                 : nothing}
             </div>
@@ -60,8 +78,7 @@ export class YpCommunityMarketing extends YpAdminPage {
     }
   }
 
-  async _communityChanged() {
-  }
+  async _communityChanged() {}
 
   _collectionIdChanged() {}
 }

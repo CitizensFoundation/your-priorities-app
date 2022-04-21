@@ -63,10 +63,10 @@ export class YpMarketingApp extends YpBaseElement {
   currentError: string | undefined;
 
   @property({ type: Boolean })
-  adminConfirmed = false
+  adminConfirmed = false;
 
   @property({ type: Boolean })
-  haveChekedAdminRights = false
+  haveChekedAdminRights = false;
 
   originalCollectionType: string | undefined;
 
@@ -198,8 +198,6 @@ export class YpMarketingApp extends YpBaseElement {
     } else {
       this.collectionAction = 'config';
     }
-
-
   }
 
   connectedCallback() {
@@ -260,32 +258,26 @@ export class YpMarketingApp extends YpBaseElement {
             icon="gesture"
             .label="${this.t('config')}"
           ></mwc-icon-button>
-          <div class="railMenuItem">
-            ${this.t('analytics')}
-          </div>
+          <div class="railMenuItem">${this.t('analytics')}</div>
           <mwc-icon-button
             icon="gavel"
             .label="${this.t('translation')}"
           ></mwc-icon-button>
-          <div class="railMenuItem">
-            ${this.t('marketing')}
-          </div>
+          <div class="railMenuItem">${this.t('marketing')}</div>
         </div>
         <div slot="appContent">
           <mwc-top-app-bar>
             <div slot="title">
               <div class="layout horizontal headerContainer">
                 <div class="analyticsText">
-                  ${this.t('contentAdminFor')} ${this.originalCollectionType}:
+                  ${this.t('analyticsFor')} ${this.originalCollectionType}:
                   ${this.collection ? this.collection.name : ''}
                 </div>
               </div>
             </div>
             <main>
               <div class="layout vertical center-center">
-                <div class="mainPageContainer">
-                  ${this._renderPage()}
-                </div>
+                <div class="mainPageContainer">${this._renderPage()}</div>
               </div>
             </main>
           </mwc-top-app-bar>
@@ -303,7 +295,10 @@ export class YpMarketingApp extends YpBaseElement {
     this.addListener('app-error', this._appError);
     this.addGlobalListener('yp-network-error', this._appError.bind(this));
     this.addListener('yp-app-dialogs-ready', this._appDialogsReady.bind(this));
-    this.addGlobalListener('yp-have-checked-admin-rights', this._gotAdminRights.bind(this));
+    this.addGlobalListener(
+      'yp-have-checked-admin-rights',
+      this._gotAdminRights.bind(this)
+    );
   }
 
   _removeEventListeners() {
@@ -313,28 +308,35 @@ export class YpMarketingApp extends YpBaseElement {
       'yp-app-dialogs-ready',
       this._appDialogsReady.bind(this)
     );
-    this.removeGlobalListener('yp-have-checked-admin-rights', this._gotAdminRights.bind(this));
+    this.removeGlobalListener(
+      'yp-have-checked-admin-rights',
+      this._gotAdminRights.bind(this)
+    );
   }
 
   _gotAdminRights(event: CustomEvent) {
-    this.haveChekedAdminRights = true
+    this.haveChekedAdminRights = true;
     this._setAdminConfirmed();
   }
 
   _setAdminConfirmed() {
     if (this.collection) {
-      switch(this.collectionType) {
+      switch (this.collectionType) {
         case 'domain':
-          this.adminConfirmed = YpAccessHelpers.checkDomainAccess(this.collection as YpDomainData);
-          break
+          this.adminConfirmed = YpAccessHelpers.checkDomainAccess(
+            this.collection as YpDomainData
+          );
+          break;
         case 'community':
-          this.adminConfirmed = YpAccessHelpers.checkCommunityAccess(this.collection as YpCommunityData);
-          break
-        }
+          this.adminConfirmed = YpAccessHelpers.checkCommunityAccess(
+            this.collection as YpCommunityData
+          );
+          break;
+      }
     }
 
     if (this.collection && this.haveChekedAdminRights && !this.adminConfirmed) {
-        this.fire('yp-network-error', { message: this.t('unauthorized')})
+      this.fire('yp-network-error', { message: this.t('unauthorized') });
     }
   }
 
@@ -398,7 +400,7 @@ export class YpMarketingApp extends YpBaseElement {
           `;
       }
     } else {
-      return nothing
+      return nothing;
     }
   }
 
