@@ -19,7 +19,9 @@ var multerMultipartResolver = multer({ dest: 'uploads/' }).single('file');
 const fs = require('fs');
 const readline = require('readline');
 const stream = require('stream');
-const {getMapForCommunity} = require("../utils/community_mapping_tools");
+const { getMapForCommunity } = require("../utils/community_mapping_tools");
+
+const { getPlausibleStats } = require("../active-citizen/engine/analytics/plausible/manager")
 
 const getFromAnalyticsApi = require('../active-citizen/engine/analytics/manager').getFromAnalyticsApi;
 const triggerSimilaritiesTraining = require('../active-citizen/engine/analytics/manager').triggerSimilaritiesTraining;
@@ -2044,6 +2046,21 @@ router.get('/:communityId/getFraudAudits', auth.can('edit community'), function(
     log.error('Could not get backgroundJob', { err: error, context: 'endorsement_fraud_action_status', user: toJson(req.user.simple()) });
     res.sendStatus(500);
   });
+});
+
+router.get('/:communityId/:type/getPlausibleSeries', auth.can('edit community'), async (req, res) => {
+  // Example: "timeseries?site_id=your-priorities&period=7d";
+  try {
+    const questionMarkIndex = req.url.indexOf('?');
+    const queryString = req.url.substr(questionMarkIndex+1);
+    const siteId = `community_${req.params.communityId}`;
+    const type = req.params.type.replace('realtime-visitors','realtime/visitors');
+    const plausibleData = await getPlausibleStats(`${type}?${queryString}&site_id=${siteId}`);
+    res.send(plausibleData);
+  } catch (error) {
+    log.error('Could not get getPlausibleSeries', { err: error, context: 'getPlausibleSeries', user: toJson(req.user.simple()) });
+    res.sendStatus(500);
+  }
 });
 
 module.exports = router;
