@@ -12,8 +12,8 @@ export class YpVisitorsChart extends YpBaseVisualization {
   constructor() {
     super();
     this.chartLabel = this.t('Visitors');
-    this.chartType = "bar";
-    this.type="timeseries";
-    this.params="period=day";
+    this.chartType = 'bar';
+    this.type = 'timeseries';
+    this.paramsObject = { period: 'day' };
   }
 }

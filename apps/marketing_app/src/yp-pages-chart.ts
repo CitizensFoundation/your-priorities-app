@@ -14,10 +14,10 @@ export class YpPagesChart extends YpBaseVisualization {
     this.chartLabel = this.t('topPages');
     this.chartType = 'bar';
     this.type = 'breakdown';
-    this.params = 'period=day&property=event:page';
+    this.paramsObject = { period: 'day', property: 'event:page' };
   }
 
-  getChartData(response: any) {
+  transformChartData(response: any) {
     const chartData = [];
     for (const item of response) {
       chartData.push({ x: item.page, y: item.visitors });
