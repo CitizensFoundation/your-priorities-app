@@ -54,8 +54,8 @@ export class YpBaseVisualization extends YpBaseElement {
 
   _convertParamsToUrlString() {
     this.paramsString = Object.keys(this.paramsObject)
-    .map(key => key + '=' + this.paramsObject[key])
-    .join('&');
+      .map(key => key + '=' + this.paramsObject[key])
+      .join('&');
   }
 
   updateParam(key: string, value: string) {
@@ -71,7 +71,6 @@ export class YpBaseVisualization extends YpBaseElement {
     super.updated(changedProperties);
 
     if (changedProperties.has('collection') && this.collection) {
-
     }
 
     if (changedProperties.has('paramsObject')) {
