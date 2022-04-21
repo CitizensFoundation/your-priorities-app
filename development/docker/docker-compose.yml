@@ -86,6 +86,7 @@ services:
     environment:
       - PORT=4242
       - NODE_ENV=development
+      - PLAUSIBLE_BASE_URL=http://plausible:8000/api/v1/
 
   your-priorities-worker:
     container_name: your-priorities-worker
@@ -226,7 +227,7 @@ services:
       - clickhouse
       - mail
     ports:
-      - 8000:8000
+      - 8000
     env_file:
       - plausible-conf.env
 
