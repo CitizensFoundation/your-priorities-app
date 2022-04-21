@@ -15,5 +15,9 @@ export class YpVisitorsChart extends YpBaseVisualization {
     this.chartType = 'bar';
     this.type = 'timeseries';
     this.paramsObject = { period: 'day' };
+
+    setTimeout( () => {
+      this.updateParam('period', '6mo');
+    }, 15000);
   }
 }
