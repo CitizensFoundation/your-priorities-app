@@ -28,7 +28,7 @@ RUN ls -l client_app/build/bundled/images/manifest_yp
 COPY deployment/docker/manifest_images_yp/ ./client_app/images/manifest_yp/
 
 RUN ls -l client_app/images/manifest_yp
-
+RUN cp ./server_api/config/config.json.dev ./server_api/config/config.json
 RUN tar -xzf ./development/docker/your-priorities-app/temp_bower_components.tar.gz -C ./client_app/
 
 ENV PORT=4242
