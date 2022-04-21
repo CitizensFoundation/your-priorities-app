@@ -29,7 +29,7 @@ import { YpConfirmationDialog } from './@yrpri/yp-dialog-container/yp-confirmati
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { Radio } from '@material/mwc-radio';
 import { YpBaseElement } from './@yrpri/common/yp-base-element.js';
-import { Chart } from 'chart.js';
+import { Chart, registerables } from 'chart.js';
 import { YpServerApiAdmin } from './@yrpri/common/YpServerApiAdmin.js';
 
 @customElement('yp-community-marketing')
@@ -41,10 +41,16 @@ export class YpCommunityMarketing extends YpAdminPage {
 
   constructor() {
     super();
+    Chart.register(...registerables);
   }
 
   static get styles() {
-    return [super.styles, css``];
+    return [super.styles, css`
+    .chart {
+      height: 400px;
+      width: 800px;
+    }
+    `];
   }
 
   render() {
@@ -52,8 +58,8 @@ export class YpCommunityMarketing extends YpAdminPage {
       ? html`
           <div class="layout horizontal wrap">
             <div class="layout vertical">
-             <h1>NICE CHART</h1>
-             <div id="trend-chart"></div>
+              <h1>A Plausible Chart</h1>
+              <canvas class="chart" id="trend-chart"></canvas>
             </div>
           </div>
         `
@@ -73,54 +79,70 @@ export class YpCommunityMarketing extends YpAdminPage {
   }
 
   async _communityChanged() {
-    const response = await new YpServerApiAdmin().getAnalyticsData(this.collectionId as number, "timeseries", "period=6mo");
-    this.updateStatsChart(response);
+    const response = await new YpServerApiAdmin().getAnalyticsData(
+      this.collectionId as number,
+      'timeseries',
+      'period=day'
+    );
+    this.updateStatsChart(response.results);
   }
 
-  _collectionIdChanged() {
-  }
+  _collectionIdChanged() {}
 
-  updateStatsChart (response: any) {
+  updateStatsChart(response: any) {
     if (response) {
-      const lineChartElement = this.shadowRoot!.getElementById("trend-chart") as any;
+      const lineChartElement = this.shadowRoot!.getElementById(
+        'trend-chart'
+      ) as any;
       const chartLabel = this.t('Visitors');
 
       if (this.chart) {
         this.chart.destroy();
       }
 
+      const chartData = [];
+      for (const item of response) {
+        chartData.push({x: item.date, y: item.visitors});
+      }
+
       this.chart = new Chart(lineChartElement, {
         type: 'bar',
-        data:  { datasets: [
-          {
-            label: `${chartLabel}`,
-            backgroundColor: "#1c96bd",
-            //@ts-ignore
-            fill: false,
-            response
-          }
-        ] },
+        data: {
+          datasets: [
+            {
+              label: `${chartLabel}`,
+              backgroundColor: '#1c96bd',
+              //@ts-ignore
+              //fill: false,
+              data: chartData,
+            },
+          ],
+        },
         options: {
           scales: {
-              //@ts-ignore
-              xAxes: [{
-                  type: 'time',
-                  time: {
-                    unit: "hours"
-                }
-              }],
-              //@ts-ignore
-              yAxes: [{
+            //@ts-ignore
+            xAxes: [
+              {
+                type: 'date',
+                time: {
+                  unit: 'hours',
+                },
+              },
+            ],
+            //@ts-ignore
+            yAxes: [
+              {
                 ticks: {
-                    beginAtZero: true,
-                    stepSize: 1
-                }
-            }]
-          }
-      }
+                  beginAtZero: true,
+                  stepSize: 1,
+                },
+              },
+            ],
+          },
+        },
       });
     } else {
-      console.error("Trying to update chart with a response");
+      console.error('Trying to update chart with a response');
     }
   }
 }
