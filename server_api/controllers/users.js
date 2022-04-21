@@ -1339,6 +1339,8 @@ router.post('/createActivityFromApp', function(req, res) {
       event_time: req.body.event_time,
       sessionId: req.body.sessionId,
       user_agent: req.body.user_agent,
+      screen_width: req.body.screen_width,
+      url: req.body.url,
       server_timestamp: Date.now()
     },
 
