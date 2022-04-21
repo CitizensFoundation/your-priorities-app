@@ -166,7 +166,6 @@ export class YpMarketingApp extends YpBaseElement {
 
   constructor() {
     super();
-    debugger;
     window.serverApi = new YpServerApi();
     window.adminServerApi = new YpServerApiAdmin();
     window.appGlobals = new YpAppGlobals(window.serverApi);
