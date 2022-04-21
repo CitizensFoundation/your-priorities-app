@@ -2053,7 +2053,7 @@ router.get('/:communityId/:type/getPlausibleSeries', auth.can('edit community'),
   try {
     const questionMarkIndex = req.url.indexOf('?');
     const queryString = req.url.substr(questionMarkIndex+1);
-    const siteId = `community_${req.params.communityId}`;
+    const siteId = "your-priorities"//`community_${req.params.communityId}`;
     const type = req.params.type.replace('realtime-visitors','realtime/visitors');
     const plausibleString = `${type}?${queryString}&site_id=${siteId}`;
     const plausibleData = await getPlausibleStats(plausibleString);
