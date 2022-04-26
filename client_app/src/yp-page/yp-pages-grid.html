@@ -45,7 +45,7 @@
 
       #editPageLocale {
         width: 80%;
-        max-height: 80%;
+        max-height: 90%;
         background-color: #FFF;
       }
 
@@ -92,6 +92,12 @@
       paper-button {
         margin: 8px;
         margin-left: 12px;
+      }
+
+      :host{
+        --paper-input-container-input:{
+            max-height: 45vh;
+        }
       }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
