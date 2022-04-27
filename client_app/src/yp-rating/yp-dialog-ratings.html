@@ -164,6 +164,7 @@
         window.appUser.updateRatingForPost(detail.postId, detail.ratingIndex, { post_id: detail.postId, type_index: detail.ratingIndex, value: detail.rate });
         this.$.ajax.method="POST";
         this.$.ajax.url="/api/ratings/"+detail.postId+"/"+detail.ratingIndex;
+        window.appGlobals.activity('add', 'post.ratings');
         this.$.ajax.body = {
           value: detail.rate,
           ratingBaseId:  window.appUser.getBrowserId(),
@@ -175,6 +176,7 @@
 
       _deleteRating: function (event, detail) {
         window.appUser.updateRatingForPost(detail.postId, detail.ratingIndex, null);
+        window.appGlobals.activity('delete', 'post.ratings');
         this.$.ajax.method="DELETE";
         this.$.ajax.url="/api/ratings/"+detail.postId+"/"+detail.ratingIndex;
         this.$.ajax.body = {};
