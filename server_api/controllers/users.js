@@ -1349,7 +1349,10 @@ router.post('/createActivityFromApp', function(req, res) {
     postId: req.body.object ? req.body.object.postId : null
   };
 
-  queue.add('delayed-job', { type: 'create-activity-from-app', workData }, 'low');
+  if (!process.env.DISABLE_RECORDING_OF_USER_EVENTS) {
+    queue.add('delayed-job', { type: 'create-activity-from-app', workData }, 'low');
+  }
+
   res.sendStatus(200);
 });
 
