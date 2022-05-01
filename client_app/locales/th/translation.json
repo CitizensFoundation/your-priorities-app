@@ -139,6 +139,7 @@
   "votingDisabled": "การโหวตยังไม่เริ่มขึ้น",
   "pageNotFound": "ไม่พบหน้าเพจที่คุณร้องขอ",
   "participate": "เข้าไปมีส่วนร่วม",
+  "participateAnonymously": "เข้าร่วมโดยไม่ระบุชื่อ",
   "emojiSearchResults": "ผลการค้นหา",
   "recentlyUsedEmoji": "Emoji ที่เพิ่งใช้",
   "findAnEmoji": "ค้นหาอีโมจิ",
