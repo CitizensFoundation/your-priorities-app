@@ -1342,6 +1342,7 @@ router.post('/createActivityFromApp', function(req, res) {
       screen_width: req.body.screen_width,
       referrer: req.body.referrer,
       url: req.body.url,
+      ipAddress: req.ip,
       server_timestamp: Date.now()
     },
 
