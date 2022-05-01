@@ -1340,6 +1340,7 @@ router.post('/createActivityFromApp', function(req, res) {
       sessionId: req.body.sessionId,
       user_agent: req.body.user_agent,
       screen_width: req.body.screen_width,
+      referrer: req.body.referrer,
       url: req.body.url,
       server_timestamp: Date.now()
     },
@@ -1351,7 +1352,7 @@ router.post('/createActivityFromApp', function(req, res) {
     postId: req.body.object ? req.body.object.postId : null
   };
 
-  queue.add('delayed-job', { type: 'create-activity-from-app', workData }, 'low');
+  queue.add('delayed-job', { type: 'create-activity-from-app', workData }, 'medium');
   res.sendStatus(200);
 });
 

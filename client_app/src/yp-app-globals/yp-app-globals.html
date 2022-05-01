@@ -504,6 +504,7 @@
             event_time: date.toISOString(),
             session_id: this.getSessionFromCookie(),
             user_agent: navigator.userAgent,
+            referrer: document.referrer,
             url: location.href,
             screen_width: window.screen.width
           };
