@@ -784,22 +784,6 @@ async function deleteAll() {
           }
         }});
 
-      console.log("Destroying temp data and not used")
-      await models.AcNewsFeedItem.unscoped().destroy({ truncate: true });
-      await models.AcNewsFeedProcessedRange.unscoped().destroy({ truncate: true });
-      await models.AcDelayedNotification.unscoped().destroy({ truncate: true });
-      await models.AcNotification.unscoped().destroy({ truncate: true });
-      await models.AcActivity.unscoped().destroy({ truncate: true });
-      await models.AcBackgroundJob.unscoped().destroy({ truncate: true });
-      await models.AcClientActivity.unscoped().destroy({ truncate: true });
-      await models.AcTranslationCache.unscoped().destroy({ truncate: true });
-      await models.GeneralDataStore.unscoped().destroy({ truncate: true });
-      await models.Invite.unscoped().destroy({ truncate: true });
-      await models.PostStatusChange.unscoped().destroy({ truncate: true });
-      await models.PostRevision.unscoped().destroy({ truncate: true });
-      await models.Rating.unscoped().destroy({ truncate: true });
-      await models.UserLegacyPassword.unscoped().destroy({ truncate: true });
-
       await deleteVideos();
 
       console.log("Destroying audios")
