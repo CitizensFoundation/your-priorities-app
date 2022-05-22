@@ -43,6 +43,7 @@ const addAudios = (audios) => {
   audioIdsToKeep = audioIdsToKeep.concat(audiosIds);
   audioIdsToKeep = _.uniq(audioIdsToKeep);
 }
+
 async function getDomain() {
   return await new Promise(async (resolve, reject) => {
     const domain = await models.Domain.findOne({
