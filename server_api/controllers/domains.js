@@ -227,6 +227,11 @@ var getDomain = function (req, domainId, done) {
               domain.dataValues.facebookLoginProvided = true;
             }
             domain.dataValues.Communities = communities;
+
+            if (process.env.LOGIN_CALLBACK_CUSTOM_HOSTNAME) {
+              domain.dataValues.loginCallbackCustomHostName = process.env.LOGIN_CALLBACK_CUSTOM_HOSTNAME;
+            }
+
             seriesCallback(null);
             return null;
           }).catch(function (error) {
