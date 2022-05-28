@@ -1,6 +1,8 @@
 const models = require('../../models');
 const _ = require('lodash');
-const http = require("http");
+const https = require("https");
+const fs = require("fs");
+const moment = require("moment");
 const domainIdToKeep = 1338; //process.argv[2];
 const minioDataPath = "/home/robert/Scratch/minio_data"; //process.argv[2];
 const minioBaseUrlPath = "https://www.junges.wien"
@@ -24,6 +26,16 @@ const addUsers = (users) => {
   const userIds = users.map(u => u.id);
   userIdsToKeep = userIdsToKeep.concat(userIds);
   userIdsToKeep = _.uniq(userIdsToKeep);
+  //console.log(userIdsToKeep.length);
+}
+
+const addUsersIds = (userIds) => {
+  if (userIds.indexOf(56884) > -1) {
+    console.log("adding 56884");
+  }
+  userIdsToKeep = userIdsToKeep.concat(userIds);
+  userIdsToKeep = _.uniq(userIdsToKeep);
+  //console.log(userIdsToKeep.length);
 }
 
 const addImages = (images) => {
@@ -431,7 +443,7 @@ async function setupIdsToKeep() {
       communityIdsToKeep = communities.map(c => c.id);
 
       for (let i=0;i<communities.length;i++) {
-        //addUsers([communities[i].user_id]);
+        //addUsersIds([communities[i].user_id]);
         addUsers(communities[i].CommunityUsers);
         addUsers(communities[i].CommunityAdmins);
         addImages(communities[i].CommunityLogoImages);
@@ -445,7 +457,7 @@ async function setupIdsToKeep() {
       groupIdsToKeep = groups.map(c => c.id);
 
       for (let i=0;i<groups.length;i++) {
-        //addUsers([groups[i].user_id]);
+        //addUsersIds([groups[i].user_id]);
         addUsers(groups[i].GroupUsers);
         addUsers(groups[i].GroupAdmins);
         addImages(groups[i].GroupLogoImages);
@@ -467,11 +479,15 @@ async function setupIdsToKeep() {
       postIdsToKeep = posts.map(p => p.id);
 
       for (let i=0;i<posts.length;i++) {
-        addUsers([posts[i].user_id]);
-        addImages(posts[i].PostImages);
-        addImages(posts[i].PostHeaderImages);
-        addVideos(posts[i].PostVideos);
-        addAudios(posts[i].PostAudios);
+        if (posts[i].user_id==null) {
+          console.error(`User id null for ${posts[i].id}`)
+        } else {
+          addUsersIds([posts[i].user_id]);
+          addImages(posts[i].PostImages);
+          addImages(posts[i].PostHeaderImages);
+          addVideos(posts[i].PostVideos);
+          addAudios(posts[i].PostAudios);
+        }
       }
 
       console.log("Setup points");
@@ -480,7 +496,7 @@ async function setupIdsToKeep() {
       pointIdsToKeep =  points.map(p => p.id);
 
       for (let i=0;i<points.length;i++) {
-        addUsers([points[i].user_id]);
+        addUsersIds([points[i].user_id]);
         addVideos(points[i].PointVideos);
         addAudios(points[i].PointAudios);
       }
@@ -490,7 +506,7 @@ async function setupIdsToKeep() {
       endorsementIdsToKeep =  endorsements.map(p => p.id);
 
       for (let i=0;i<endorsements.length;i++) {
-        addUsers([endorsements[i].user_id]);
+        addUsersIds([endorsements[i].user_id]);
       }
 
       const qualities = await getQualities();
@@ -498,7 +514,7 @@ async function setupIdsToKeep() {
       qualityIdsToKeep = qualities.map(p => p.id);
 
       for (let i=0;i<qualities.length;i++) {
-        addUsers([qualities[i].user_id]);
+        addUsersIds([qualities[i].user_id]);
       }
 
       const pointRevisions = await getPointRevisions();
@@ -513,7 +529,7 @@ async function setupIdsToKeep() {
 
       for (let i=0;i<activities.length;i++) {
         if (activities[i].user_id)
-          addUsers([activities[i].user_id]);
+          addUsersIds([activities[i].user_id]);
         else
           console.warn(`No user_id for activity ${activities[i].id}`)
       }
@@ -708,104 +724,284 @@ async function deleteDomainAssociations() {
   })
 }
 
+async function deleteActivityAssociations() {
+  return await new Promise(async (resolve, reject) => {
+    console.log("Destroying ActivitiesAssociations ")
+    const activities = await models.AcActivity.unscoped().findAll({
+      attributes: ['id']
+    });
+
+    for (let i=activities.length-1;i>1000000;i--) {
+      await activities[i].setUsers([]);
+      await activities[i].setAcActivities([]);
+    }
+
+    resolve();
+  })
+}
+
+
+async function deleteNotificationAssociations() {
+  return await new Promise(async (resolve, reject) => {
+    console.log("Destroying NoitficationAssociations ")
+    const notifications = await models.AcNotification.unscoped().findAll(
+      {
+        attributes: ['id'],
+      });
+
+    for (let i=0;i<notifications.length;i++) {
+      await notifications[i].setUsers([]);
+      await notifications[i].setAcActivities([]);
+      await notifications[i].setAcDelayedNotifications([]);
+    }
+
+    resolve();
+  })
+}
+
+async function deleteImageAssociations() {
+  return await new Promise(async (resolve, reject) => {
+    console.log("Destroying ImageAssociations ")
+    const images = await models.Image.unscoped().findAll(
+      {
+        attributes: ['id'],
+        where: {
+          id: {
+            [models.Sequelize.Op.notIn]: imageIdsToKeep
+          }
+        },
+    });
+
+    for (let i=0;i<images.length;i++) {
+      await images[i].setVideoImages([]);
+    }
+
+    resolve();
+  })
+}
+async function deleteInChunks(model, where) {
+  return await new Promise(async (resolve, reject) => {
+    try {
+      let haveItemsToDelete = true;
+      let offset = 0;
+      while (haveItemsToDelete) {
+        const items = await model.unscoped().findAll({
+          where,
+          attributes: ['id'],
+          order: ['id'],
+          offset: offset,
+          limit: 2500
+        });
+
+        if (items.length > 0) {
+          const modelIds = items.map(n=>{ return n.id});
+          offset += 2500;
+          console.log(`offset: ${offset}`)
+          const destroyResults = await model.unscoped().destroy({
+            where: {
+              id: {
+                [models.Sequelize.Op.in]: modelIds
+              }
+            }
+          });
+          const a = destroyResults;
+        } else {
+          haveItemsToDelete = false;
+        }
+      }
+      resolve();
+    } catch (error) {
+      reject(error)
+    }
+  })
+}
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 async function deleteAll() {
   return await new Promise(async (resolve, reject) => {
     try {
-      await deletePointAssociations();
-      await deletePostAssociations();
-      await deleteUserAssociations();
-      await deleteGroupAssociations();
-      await deleteCommunityAssociations();
-      await deleteDomainAssociations();
+      //Only needs to run once
+      //await deletePointAssociations();
+      //await deletePostAssociations();
+      //await deleteUserAssociations();
+      //await deleteGroupAssociations();
+      //await deleteCommunityAssociations();
+      //await deleteDomainAssociations();
+      //await deleteActivityAssociations();
+      //await deleteNotificationAssociations();
+      //await deleteImageAssociations();
 
       console.log("Destroying points")
 
-      await models.Point.unscoped().destroy({ where: {
-          id: {
-            [models.Sequelize.Op.notIn]: pointIdsToKeep
-          }
-        }});
+      await deleteInChunks(models.Point.unscoped(), {
+        id: {
+          [models.Sequelize.Op.notIn]: pointIdsToKeep
+        }
+      });
 
-      console.log("Destroying temp data and not used")
-      await models.AcNewsFeedItem.unscoped().destroy({ truncate: true });
-      await models.AcNewsFeedProcessedRange.unscoped().destroy({ truncate: true });
-      await models.AcDelayedNotification.unscoped().destroy({ truncate: true });
-      await models.AcNotification.unscoped().destroy({ truncate: true });
-      await models.AcActivity.unscoped().destroy({ truncate: true });
-      await models.AcBackgroundJob.unscoped().destroy({ truncate: true });
-      await models.AcClientActivity.unscoped().destroy({ truncate: true });
-      await models.AcTranslationCache.unscoped().destroy({ truncate: true });
-      await models.GeneralDataStore.unscoped().destroy({ truncate: true });
-      await models.Invite.unscoped().destroy({ truncate: true });
-      await models.PostStatusChange.unscoped().destroy({ truncate: true });
-      await models.PostRevision.unscoped().destroy({ truncate: true });
-      await models.Rating.unscoped().destroy({ truncate: true });
+      console.log("Destroying point qualities")
+
+      await deleteInChunks(models.PointQuality.unscoped(), {
+        id: {
+          [models.Sequelize.Op.notIn]: qualityIdsToKeep
+        }
+      });
+
+      console.log("Destroying point revision")
+
+      await deleteInChunks(models.PointRevision.unscoped(), {
+        id: {
+          [models.Sequelize.Op.notIn]: pointRevisionIdsToKeep
+        }
+      });
+
+      console.log("Destroying post revision")
+
+      await deleteInChunks(models.PostRevision.unscoped(), {
+        post_id: null
+      });
+
+      console.log("Destroying temp data and not used 1")
+      //await models.AcNewsFeedItem.unscoped().destroy({ truncate: true });
+      console.log("Destroying temp data and not used 2")
+      //await models.AcNewsFeedProcessedRange.unscoped().destroy({ truncate: true });
+      console.log("Destroying temp data and not used 3")
+      //await models.AcDelayedNotification.unscoped().destroy({ truncate: true });
+      console.log("Destroying temp data and not used 4")
+      // You will need to temporarily disable some foreign key constraints
+      //await models.AcNotification.unscoped().destroy({ truncate: true });
+      console.log("Destroying temp data and not used 5")
+      // You will need to temporarily disable some foreign key constraints
+      //await models.AcActivity.unscoped().destroy({ truncate: true });
+      console.log("Destroying temp data and not used 6")
+      //await models.AcBackgroundJob.unscoped().destroy({ truncate: true });
+      console.log("Destroying temp data and not used 7")
+      //await models.AcClientActivity.unscoped().destroy({ truncate: true });
+      console.log("Destroying temp data and not used 8")
+      //await models.AcTranslationCache.unscoped().destroy({ truncate: true });
+      console.log("Destroying temp data and not used 9")
+      //await models.GeneralDataStore.unscoped().destroy({ truncate: true });
+      console.log("Destroying temp data and not used 10")
+      await deleteInChunks(models.Invite.unscoped(), {
+      });
+      console.log("Destroying temp data and not used 11")
+      await deleteInChunks(models.PostStatusChange.unscoped(), {
+      });
+      await deleteInChunks(models.BulkStatusUpdate.unscoped(), {
+      });
+      console.log("Destroying temp data and not used 12")
+      //await deleteInChunks(models.PostRevision.unscoped(), {
+      //});
+      console.log("Destroying temp data and not used 13")
+      //await models.Rating.unscoped().destroy({ truncate: true });
+      console.log("Destroying temp data and not used 14")
       await models.UserLegacyPassword.unscoped().destroy({ truncate: true });
+      console.log("Destroying temp data and not used 15")
 
       console.log("Destroying posts")
-      await models.Post.unscoped().destroy({ where: {
-          id: {
-            [models.Sequelize.Op.notIn]: postIdsToKeep
-          }
-        }});
+      await deleteInChunks(models.Post.unscoped(), {
+        id: {
+          [models.Sequelize.Op.notIn]: postIdsToKeep
+        }
+      });
+
+      console.log("Destroying endorsements")
+      await deleteInChunks(models.Endorsement.unscoped(), {
+        id: {
+          [models.Sequelize.Op.notIn]: endorsementIdsToKeep
+        }
+      });
 
       console.log("Destroying pages")
-      await models.Page.unscoped().destroy({ where: {
+      await deleteInChunks(models.Page.unscoped(), {
           id: {
             [models.Sequelize.Op.notIn]: pageIdsToKeep
           }
-        }});
+        });
 
       console.log("Destroying categories")
-      await models.Category.unscoped().destroy({ where: {
-          id: {
-            [models.Sequelize.Op.notIn]: categoryIdsToKeep
-          }
-        }});
+      await deleteInChunks(models.Category.unscoped(), {
+        id: {
+          [models.Sequelize.Op.notIn]: categoryIdsToKeep
+        }
+      });
 
       console.log("Destroying groups")
-      await models.Group.unscoped().destroy({ where: {
+      await deleteInChunks(models.Group.unscoped(), {
           id: {
             [models.Sequelize.Op.notIn]: groupIdsToKeep
           }
-        }});
+        });
 
       console.log("Destroying communities")
-      await models.Community.unscoped().destroy({ where: {
+      await deleteInChunks(models.Community.unscoped(), {
           id: {
             [models.Sequelize.Op.notIn]: communityIdsToKeep
           }
-        }});
+        });
 
       console.log("Destroying domains")
-      await models.Community.unscoped().destroy({ where: {
-          id: {
-            [models.Sequelize.Op.notIn]: domainIdToKeep
-          }
-        }});
+      await deleteInChunks(models.Domain.unscoped(), {
+        id: {
+          [models.Sequelize.Op.notIn]: [domainIdToKeep]
+        }
+      });
 
       await deleteVideos();
 
       console.log("Destroying audios")
-      await models.Audio.unscoped().destroy({ where: {
+      await deleteInChunks(models.Audio.unscoped(), {
           id: {
             [models.Sequelize.Op.notIn]: audioIdsToKeep
           }
-        }});
+        });
 
       console.log("Destroying images")
-      await models.Image.unscoped().destroy({ where: {
-          id: {
-            [models.Sequelize.Op.notIn]: imageIdsToKeep
-          }
-        }});
+      await deleteInChunks(models.Image.unscoped(), {
+        id: {
+          [models.Sequelize.Op.notIn]: imageIdsToKeep
+        }
+      });
 
       console.log("Destroying users")
-      await models.User.unscoped().destroy({ where: {
-          id: {
-            [models.Sequelize.Op.notIn]: userIdsToKeep
-          }
-        }});
+      let haveItemsToDelete = true;
+      let offset = 0;
+      let deletedItems=0;
+      while (haveItemsToDelete) {
+        const allUsers = await models.User.unscoped().findAll({
+          attributes: ['id'],
+          limit: 2500,
+          offset: offset
+        });
+
+        const allUserIds = allUsers.map(u=>u.id);
+
+        const userIdsToDelete = allUserIds.filter(uid=>{
+          return userIdsToKeep.indexOf(uid) === -1;
+        });
+
+        if (userIdsToDelete.indexOf(56884) > -1) {
+          console.log("DELETING 56884");
+        }
+
+        if (userIdsToDelete.length>0) {
+          deletedItems+=userIdsToDelete.length;
+          await models.User.unscoped().destroy({
+            where: {
+              id: {
+                [models.Sequelize.Op.in]: userIdsToDelete
+              }
+            }
+          });
+          offset+=2500;
+          console.log(offset);
+        } else {
+          haveItemsToDelete=false;
+        }
+      }
 
       resolve();
     } catch (error) {
@@ -823,19 +1019,17 @@ async function copyVideosToMinio() {
       const videos = await models.Video.unscoped().findAll(
         {
           attributes: ['id','formats'],
-          where: {
-            id: {
-              [models.Sequelize.Op.in]: videoIdsToKeep
-            }
-          }});
+        });
 
       for (let i=0;i<videos.length;i++) {
-        const formats = JSON.parse(videos[i].formats);
+        const formats = videos[i].formats;
         for (let f=0;f<formats.length;f++) {
-          const newUrl = await copyFileFromS3ToMinio(formats[f]);
+          const newUrl = await copyFileFromS3ToMinio("minio-video-public", formats[f]);
           formats[f] = newUrl;
+          console.log(newUrl);
         }
-        videos[i].formats = JSON.stringify(formats);
+        videos[i].formats = formats;
+        videos[i].changed('formats', true);
         await videos[i].save();
       }
 
@@ -852,16 +1046,12 @@ async function copyImagesToMinio() {
       const images = await models.Image.unscoped().findAll(
         {
           attributes: ['id','formats'],
-          where: {
-            id: {
-              [models.Sequelize.Op.in]: imageIdsToKeep
-            }
-          }});
+          });
 
       for (let i=0;i<images.length;i++) {
         const formats = JSON.parse(images[i].formats);
         for (let f=0;f<formats.length;f++) {
-          const newUrl = await copyFileFromS3ToMinio(formats[f]);
+          const newUrl = await copyFileFromS3ToMinio("minio.yrpri.production", formats[f]);
           formats[f] = newUrl;
         }
         images[i].formats = JSON.stringify(formats);
@@ -880,19 +1070,17 @@ async function copyAudiosToMinio() {
       const audios = await models.Audio.unscoped().findAll(
         {
           attributes: ['id','formats'],
-          where: {
-            id: {
-              [models.Sequelize.Op.in]: audioIdsToKeep
-            }
-          }});
+          });
 
       for (let i=0;i<audios.length;i++) {
-        const formats = JSON.parse(audios[i].formats);
+        const formats = audios[i].formats;
         for (let f=0;f<formats.length;f++) {
-          const newUrl = await copyFileFromS3ToMinio(formats[f]);
+          const newUrl = await copyFileFromS3ToMinio("minio-audio-public", formats[f]);
           formats[f] = newUrl;
+          console.log(`New ${newUrl}`)
         }
-        audios[i].formats = JSON.stringify(formats);
+        audios[i].formats = formats;
+        audios[i].changed('formats', true);
         await audios[i].save();
       }
       resolve();
@@ -925,16 +1113,19 @@ async function copyFileFromS3ToMinio(bucket, url) {
       const fsContentType = ["png","jpeg","jpg"].indexOf(filetype) > -1 ? `image/${filetype}` : `application/octet-stream`
       const fsFileContent = `{"version":"1.0.2","checksum":{"algorithm":"","blocksize":0,"hashes":null},"meta":{"content-type":"${fsContentType}","etag":"3df11831a2ace04090b85676183f778a"}}`;
 
-      http.get(url, response => {
+      https.get(url, response => {
         if (response.statusCode === 200) {
           const stream = fs.createWriteStream(minioFilePath)
           response.pipe(stream)
-          fs.mkdirSync(minioMetaDataFolderPath, { recursive: true });
-          const fsMetaStream = fs.createWriteStream(`${minioMetaDataFolderPath}/fs.json`);
-          fsMetaStream.pipe(fsFileContent);
-          console.log(`Copy completed for ${url}`);
-          const newUrlPath = `${minioBaseUrlPath}/${bucket}/${filename}`;
-          resolve(newUrlPath);
+          stream.on('finish', function() {
+            stream.close(()=>{
+              fs.mkdirSync(minioMetaDataFolderPath, { recursive: true });
+              fs.writeFileSync(`${minioMetaDataFolderPath}/fs.json`,fsFileContent);
+              console.log(`Copy completed for ${url}`);
+              const newUrlPath = `${minioBaseUrlPath}/${bucket}/${filename}`;
+              resolve(newUrlPath);
+            });
+          });
         } else {
           reject("Can't find url to download");
         }
@@ -948,8 +1139,8 @@ async function copyFileFromS3ToMinio(bucket, url) {
 (async () => {
   console.log("Setup ids to keep");
   await setupIdsToKeep();
-  await deleteAll();
-  //await copyAllToMinio();
+  //await deleteAll();
+  await copyAllToMinio();
   console.log(`Destroying all except domain id ${domainIdToKeep} completed`)
   process.exit();
 })();
