@@ -697,8 +697,8 @@ router.get('/', function(req, res) {
     req.ypDomain.dataValues.facebookLoginProvided = true;
   }
 
-  if (req.ypDomain && process.env.LOGIN_CALLBACK_CUSTOM_HOSTNAME) {
-    req.ypDomain.dataValues.loginCallbackCustomHostName = process.env.LOGIN_CALLBACK_CUSTOM_HOSTNAME;
+  if (req.ypDomain && process.env.GOOGLE_MAPS_API_KEY) {
+    req.ypDomain.dataValues.googleMapsApiKey = process.env.GOOGLE_MAPS_API_KEY;
   }
 
   const domain = {...req.ypDomain.dataValues}
