@@ -111,7 +111,8 @@
     <div class="layout vertical center-center">
       <template is="dom-if" if="[[posts]]">
         <paper-material id="mapContainer" elevation="2" class="mapContainer">
-          <google-map additional-map-options='{"keyboardShortcuts":false,"fullscreenControl": false}' max-zoom="18" id="map" api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0">
+          <google-map additional-map-options='{"keyboardShortcuts":false,"fullscreenControl": false}'
+                      max-zoom="18" id="map" api-key="[[_getGoogleMapsKey()]]">
             <template is="dom-repeat" items="[[posts]]" as="post">
               <google-map-marker slot="markers" latitude="[[post.location.latitude]]" longitude="[[post.location.longitude]]"
                                  click-events class="marker" on-google-map-marker-click="markerClick">
@@ -218,6 +219,10 @@
         } else {
           this.set("posts", null);
         }
+      },
+
+      _getGoogleMapsKey: function () {
+        return window.appGlobals.googleMapsApiKey;
       },
 
       refreshAjax: function() {

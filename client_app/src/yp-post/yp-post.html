@@ -337,7 +337,7 @@
             <template is="dom-if" if="[[post.location]]" restamp>
               <template is="dom-if" if="[[mapActive]]" restamp>
                 <paper-material class="mapContainer" elevation="3">
-                  <google-map additional-map-options='{"keyboardShortcuts":false}' api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0" id="map" libraries="places" class="map" map-type="[[post.location.mapType]]" zoom="[[post.location.map_zoom]]" fit-to-markers>
+                  <google-map additional-map-options='{"keyboardShortcuts":false}' api-key$="[[_getGoogleMapsKey()]]" id="map" libraries="places" class="map" map-type="[[post.location.mapType]]" zoom="[[post.location.map_zoom]]" fit-to-markers>
                     <google-map-marker slot="markers" latitude="[[post.location.latitude]]" longitude="[[post.location.longitude]]" id="marker"></google-map-marker>
                   </google-map>
                 </paper-material>
@@ -497,6 +497,10 @@
           if (newId) {
             this.set('postId', newId);
           }
+        },
+
+        _getGoogleMapsKey: function () {
+          return window.appGlobals.googleMapsApiKey;
         },
 
         _routeTabChanged: function (newTabName) {

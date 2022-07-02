@@ -80,7 +80,8 @@
     <google-map-search id="mapSearch" map="[[map]]"
                        on-google-map-search-results="_mapSearchResults"></google-map-search>
 
-    <google-map additional-map-options='{"keyboardShortcuts":false}' id="map" zoom="[[mapZoom]]" api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0" map="{{map}}"
+    <google-map additional-map-options='{"keyboardShortcuts":false}' id="map" zoom="[[mapZoom]]"
+                api-key="[[_getGoogleMapsKey()]]" map="{{map}}"
                 libraries="places" on-map-type-changed="_mapTypeChanged" class="map" click-events
                 on-zoom-changed="_zoomChanged" on-google-map-click="_setLocation" fit-to-markers>
       <google-map-marker slot="markers" latitude="[[defaultLatitude]]" longitude="[[defaultLongitude]]"
@@ -217,6 +218,10 @@
             }
           }, 50);
         }
+      },
+
+      _getGoogleMapsKey: function () {
+        return window.appGlobals.googleMapsApiKey;
       },
 
       _zoomChanged: function (event, detail) {
