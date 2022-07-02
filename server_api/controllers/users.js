@@ -158,22 +158,26 @@ router.post('/login', function (req, res) {
   });
 });
 
-router.put('/setRegistrationAnswers',  auth.isLoggedIn, (req, res) => {
-  getUserWithAll(req.user.id, true,function (error, user) {
-    if (error) {
-      log.error("Error in setRegistrationAnswers", { error });
-      res.sendStatus(500);
-    } else {
-      setUserProfileData(user, req.body.registration_answers);
-      user.save().then(()=>{
-        log.info("Have set registration questions");
-        res.sendStatus(200);
-      }).catch(error=>{
+router.put('/setRegistrationAnswers', (req, res) => {
+  if (req.user) {
+    getUserWithAll(req.user.id, true,function (error, user) {
+      if (error) {
         log.error("Error in setRegistrationAnswers", { error });
         res.sendStatus(500);
-      })
-    }
-  });
+      } else {
+        setUserProfileData(user, req.body.registration_answers);
+        user.save().then(()=>{
+          log.info("Have set registration questions");
+          res.sendStatus(200);
+        }).catch(error=>{
+          log.error("Error in setRegistrationAnswers", { error });
+          res.sendStatus(500);
+        })
+      }
+    });
+  } else {
+    res.sendStatus(401);
+  }
 });
 
 const setUserProfileData = (user, profileData) => {
@@ -258,6 +262,9 @@ router.post('/register_anonymously', function (req, res) {
 
           if (req.body.registration_answers) {
             setUserProfileData(user, req.body.registration_answers);
+            user.dataValues.hasRegistrationAnswers = true;
+          } else {
+            user.dataValues.hasRegistrationAnswers = false;
           }
 
           user.save().then(function () {

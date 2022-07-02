@@ -215,6 +215,11 @@
         <paper-checkbox name="allowAnonymousUsers" checked$="{{group.configuration.allowAnonymousUsers}}">
           [[t('allowAnonymousUsers')]]
         </paper-checkbox>
+
+        <paper-checkbox name="anonymousAskRegistrationQuestions" checked$="{{group.configuration.anonymousAskRegistrationQuestions}}">
+          [[t('anonymousAskRegistrationQuestions')]]
+        </paper-checkbox>
+
         <paper-checkbox name="allowAnonymousAutoLogin" disabled$="[[!group.configuration.allowAnonymousUsers]]"  checked$="{{group.configuration.allowAnonymousAutoLogin}}">
           [[t('allowAnonymousAutoLogin')]]
         </paper-checkbox>
