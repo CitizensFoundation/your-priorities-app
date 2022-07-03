@@ -300,7 +300,13 @@
           <paper-checkbox name="disableNameAutoTranslation" checked$="{{domain.configuration.disableNameAutoTranslation}}">[[t('disableNameAutoTranslation')]]</paper-checkbox>
           <paper-checkbox name="hideDomainNews" checked$="{{domain.configuration.hideDomainNews}}">[[t('hideDomainNews')]]</paper-checkbox>
           <template is="dom-if" if="[[ziggeoEnabled()]]">
-            <paper-checkbox name="ziggeoApplicationToken" checked$="{{domain.configuration.ziggeoApplicationToken}}">[[t('ziggeoApplicationToken')]]</paper-checkbox>
+            <paper-input id="ziggeoApplicationToken"
+                  name="ziggeoApplicationToken"
+                  type="text"
+                  label="SAML CallbackUrl"
+                  value="{{domain.configuration.ziggeoApplicationToken}}"
+                  char-counter class="mainInput">
+            </paper-input>
           </template>
         </div>
       </div>

@@ -786,6 +786,7 @@ router.put('/:id', auth.can('edit domain'), function(req, res) {
       domain.set('configuration.customSAMLErrorHTML', (req.body.customSAMLErrorHTML && req.body.customSAMLErrorHTML!="") ? req.body.customSAMLErrorHTML : null);
 
       domain.set('configuration.plausibleDataDomains', (req.body.plausibleDataDomains && req.body.plausibleDataDomains!="") ? req.body.plausibleDataDomains : null);
+      domain.set('configuration.ziggeoApplicationToken', (req.body.ziggeoApplicationToken && req.body.ziggeoApplicationToken!="") ? req.body.ziggeoApplicationToken : null);
 
       if (req.body.google_analytics_code && req.body.google_analytics_code!="") {
         domain.google_analytics_code = req.body.google_analytics_code;
@@ -798,6 +799,7 @@ router.put('/:id', auth.can('edit domain'), function(req, res) {
       domain.set('configuration.forceSecureSamlEmployeeLogin', (req.body.forceSecureSamlEmployeeLogin && req.body.forceSecureSamlEmployeeLogin!="") ? true : false);
 
       domain.set('configuration.disableNameAutoTranslation', (req.body.disableNameAutoTranslation && req.body.disableNameAutoTranslation!="") ? true : false);
+
 
 
       if (req.body.appHomeScreenIconImageId && req.body.appHomeScreenIconImageId!="") {

@@ -1303,7 +1303,8 @@
           ajax.method = 'PUT';
           ajax.body = {
             videoId: this.uploadedVideoId,
-            appLanguage: this.language
+            appLanguage: this.language,
+            isZiggeo: window.appGlobals.isZiggeo
           };
           ajax.addEventListener('response', function (event) {
             this._finishRedirect(post);

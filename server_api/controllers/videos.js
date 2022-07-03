@@ -170,38 +170,6 @@ router.put("/videoView", (req, res) => {
     });
 });
 
-router.post(
-  "/:postId/addZiggeoVideoToPost",
-  auth.can("edit post"),
-  async (req, res) => {
-    await models.Video.addZiggeoVideo(req, res);
-  }
-);
-
-router.post(
-  "/:groupId/addZiggeoVideoToGroup",
-  auth.can("edit group"),
-  async (req, res) => {
-    await models.Video.addZiggeoVideo(req, res);
-  }
-);
-
-router.post(
-  "/:communityId/addZiggeoVideoToCommunity",
-  auth.can("edit community"),
-  async (req, res) => {
-    await models.Video.addZiggeoVideo(req, res);
-  }
-);
-
-router.post(
-  "/:domainId/addZiggeoVideoToDomain",
-  auth.can("edit domain"),
-  async (req, res) => {
-    await models.Video.addZiggeoVideo(req, res);
-  }
-);
-
 router.put(
   "/:postId/completeAndAddToPost",
   auth.can("edit post"),

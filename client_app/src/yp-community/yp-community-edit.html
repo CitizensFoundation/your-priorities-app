@@ -336,6 +336,9 @@
         <paper-checkbox name="hideRecommendationOnNewsFeed" checked$="{{community.configuration.hideRecommendationOnNewsFeed}}">[[t('hideRecommendationOnNewsFeed')]]</paper-checkbox>
         <paper-checkbox name="recalculateCountersRecursively" checked$="{{community.configuration.recalculateCountersRecursively}}">[[t('recalculateCountersRecursively')]]</paper-checkbox>
         <paper-checkbox name="enableFraudDetection" checked$="{{community.configuration.enableFraudDetection}}">[[t('enableFraudDetection')]]</paper-checkbox>
+        <template is="dom-if" if="[[ziggeoActive()]]">
+          <paper-checkbox name="useZiggeo" checked$="{{community.configuration.useZiggeo}}">[[t('useZiggeo')]]</paper-checkbox>
+        </template>
         <paper-checkbox name="forceSecureSamlLogin" disabled$="[[!hasSamlLoginProvider]]"
                         checked$="{{community.configuration.forceSecureSamlLogin}}">[[t('forceSecureSamlLogin')]]
         </paper-checkbox>
@@ -615,7 +618,8 @@
             ajax.url = '/api/videos/'+community.id+'/completeAndAddToCommunity';
             ajax.method = 'PUT';
             ajax.body = {
-              videoId: this.uploadedVideoId
+              videoId: this.uploadedVideoId,
+              isZiggeo: window.appGlobals.isZiggeo
             };
             ajax.addEventListener('response', function (event) {
               this._finishRedirect(community);

@@ -73,21 +73,9 @@
           computed: '_videoWidth(postId,domainId,communityId,groupId)'
         },
 
-        domainId: {
-          type: Number,
-        },
-
-        communityId: {
-          type: Number,
-        },
-
-        groupId: {
-          type: Number,
-        },
-
-        postId: {
-          type: Number,
-        },
+        callbackElement: {
+          type: Object
+        }
       },
 
       _videoHeight: function() {
@@ -124,45 +112,14 @@
       },
 
       _recordingFinished: function () {
-        var ajax = document.createElement('iron-ajax');
-        ajax.handleAs = 'json';
-        ajax.contentType = 'application/json';
-        var url;
-        if (this.postId)
-          url = `/api/videos/${this.postId}/createZiggeoVideoForPost`
-        else if (this.groupId)
-          url = `/api/videos/${this.groupId}/createZiggeoVideoForGroup`
-        else if (this.communityId)
-          url = `/api/videos/${this.communityId}/createZiggeoVideoForCommunity`
-        else if (this.domainId)
-          url = `/api/videos/${this.domainId}/createZiggeoVideoForDomain`
-        ajax.url = url;
-        ajax.method = 'POST';
-        ajax.body = {
-          videoKey: this.videoKey
-        };
-        ajax.addEventListener('response', function (event, detail) {
-          this.fire('success', {
-            videoId: detail.videoKey,
-            isZiggeo: true
-          });
-          ajax.remove();
-        }.bind(this));
-        ajax.generateRequest();
+        callbackElement.fire('success', {
+          videoId: detail.videoKey
+        });
       },
 
       open: function (options) {
-        if (options.postId) {
-          this.postId = options.postId;
-        } else if (options.groupId) {
-          this.groupId = options.groupId;
-        } else if (options.communityId) {
-          this.communityId = options.communityId;
-        } else if (options.domainId) {
-          this.domainId = options.domainId;
-        }
-
         this.$.dialog.open();
+        this.set('callbackElement', options.callbackElement)
       },
     });
   </script>

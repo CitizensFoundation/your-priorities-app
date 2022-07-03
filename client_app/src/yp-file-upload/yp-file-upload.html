@@ -562,7 +562,10 @@ Example:
       var isEdge = /Edge/.test(navigator.userAgent);
       var isIOs = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 
-      if (this._hasRecorderApp()) {
+      if (window.appGlobals.useZiggeo &&
+          this.videoUpload) {
+        this._openZiggeo();
+      } else if (this._hasRecorderApp()) {
         this._openFileInput();
       }  else {
         if (!isEdge && ((isIOs && this.audioUpload) || isFirefox || (chromeVersion && !isSamsungBrowser))) {
@@ -583,6 +586,14 @@ Example:
         evt.initEvent("click", true, false);
         elem.dispatchEvent(evt);
       }
+    },
+
+    _openZiggeo: function () {
+      window.appGlobals.activity('open', 'ziggeo');
+      Polymer.dom(document).querySelector('yp-app').getZiggeoAsync(function (dialog) {
+        dialog.open({ callbackElement: this,
+                      maxLength: this.uploadLimitSeconds });
+      }.bind(this));
     },
 
     _openMediaRecorder: function () {

@@ -74,17 +74,17 @@ const getPlausibleCode = (dataDomain) => {
   return plausibleCode.replace("DATADOMAIN", dataDomain);
 }
 
-const ziggeoHeaders = `
+const ziggeoHeaders = (ziggeoApplicationToken) => { return `
   <link rel="stylesheet" href="https://assets.ziggeo.com/v2-stable/ziggeo.css" />
   <script src="https://assets.ziggeo.com/v2-stable/ziggeo.js"></script>
   <script>
     var ziggeoApp = new ZiggeoApi.V2.Application({
-      token:"${process.env.ZIGGEO_APPLICATION_TOKEN}",
+      token:"${ziggeoApplicationToken}",
       webrtc_streaming_if_necessary: true,
       webrtc_on_mobile: true
     });
   </script>
-`
+` };
 
 let sendIndex = function (req, res) {
   let indexFilePath;
@@ -107,8 +107,8 @@ let sendIndex = function (req, res) {
         indexFileData = indexFileData.replace('<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE11">','');
       }
 
-      if (req.ypDomain.configuration.enableZiggeoMedia===true) {
-        indexFileData = indexFileData.replace('<head>',`<head>${ziggeoHeaders}`);
+      if (process.env.ZIGGEO_ENABLED && req.ypDomain.configuration.ziggeoApplicationToken) {
+        indexFileData = indexFileData.replace('<head>',`<head>${ziggeoHeaders(req.ypDomain.configuration.ziggeoApplicationToken)}`);
       }
 
       if (req.ypDomain &&

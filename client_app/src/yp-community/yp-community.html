@@ -443,6 +443,12 @@
 
           if (this.community.configuration) {
             window.appGlobals.setCommunityPixelTracker(this.community.configuration.facebookPixelId);
+
+            if (this.community.configuration.useZiggeo) {
+              window.appGlobals.useZiggeo = true;
+            } else {
+              window.appGlobals.useZiggeo = false;
+            }
           }
 
           if (this.community.theme_id!=null || (this.community.configuration && this.community.configuration.themeOverrideColorPrimary!=null)) {

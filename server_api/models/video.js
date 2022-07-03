@@ -605,62 +605,63 @@ module.exports = (sequelize, DataTypes) => {
       });
 
       await Video.addZiggeoVideoToContainer(req, video);
-
-      res.send({
-        videoId: video.id,
-      });
+      res.sendStatus(200);
     } catch (error) {
       console.error(error);
       res.sendStatus(500);
     }
   };
 
-  Video.completeUploadAndAddToCollection = (req, res, options) => {
-    sequelize.models.Video.findOne({
-      where: {
-        id: options.videoId,
-      },
-      attributes: sequelize.models.Video.defaultAttributesPublic.concat([
-        "user_id",
-        "meta",
-      ]),
-    })
-      .then((video) => {
-        if (video.user_id === req.user.id) {
-          video.viewable = true;
-          video.createFormats(video);
-          video
-            .save()
-            .then(() => {
-              sequelize.models.Video.addToCollection(
-                video,
-                options,
-                (error) => {
-                  if (error) {
-                    log.error("Could not add video to collection", {
-                      error,
-                      options,
-                    });
-                    res.sendStatus(500);
-                  } else {
-                    res.sendStatus(200);
-                  }
-                }
-              );
-            })
-            .catch((error) => {
-              log.error("Could not save video", { error });
-              res.sendStatus(500);
-            });
-        } else {
-          log.error("Could not get video for wrong user");
-          res.sendStatus(401);
-        }
+  Video.completeUploadAndAddToCollection = async (req, res, options) => {
+    if (req.body.useZiggeo) {
+      await Video.addZiggeoVideo(req, res);
+    } else {
+      sequelize.models.Video.findOne({
+        where: {
+          id: options.videoId,
+        },
+        attributes: sequelize.models.Video.defaultAttributesPublic.concat([
+          "user_id",
+          "meta",
+        ]),
       })
-      .catch((error) => {
-        log.error("Could not get video", { error });
-        res.sendStatus(500);
-      });
+        .then((video) => {
+          if (video.user_id === req.user.id) {
+            video.viewable = true;
+            video.createFormats(video);
+            video
+              .save()
+              .then(() => {
+                sequelize.models.Video.addToCollection(
+                  video,
+                  options,
+                  (error) => {
+                    if (error) {
+                      log.error("Could not add video to collection", {
+                        error,
+                        options,
+                      });
+                      res.sendStatus(500);
+                    } else {
+                      res.sendStatus(200);
+                    }
+                  }
+                );
+              })
+              .catch((error) => {
+                log.error("Could not save video", { error });
+                res.sendStatus(500);
+              });
+          } else {
+            log.error("Could not get video for wrong user");
+            res.sendStatus(401);
+          }
+        })
+        .catch((error) => {
+          log.error("Could not get video", { error });
+          res.sendStatus(500);
+        });
+    }
   };
 
   Video.startTranscodingJob = (video, callback) => {

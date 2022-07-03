@@ -1244,7 +1244,8 @@
           ajax.url = '/api/videos/' + group.id + '/completeAndAddToGroup';
           ajax.method = 'PUT';
           ajax.body = {
-            videoId: this.uploadedVideoId
+            videoId: this.uploadedVideoId,
+            isZiggeo: window.appGlobals.isZiggeo
           };
           ajax.addEventListener('response', function (event) {
             this._finishRedirect(group);

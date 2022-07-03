@@ -723,6 +723,11 @@
 
               if (this.post.Group.Community.configuration) {
                 window.appGlobals.setCommunityPixelTracker(this.post.Group.Community.configuration.facebookPixelId);
+                if (this.post.Group.Community.configuration.useZiggeo) {
+                  window.appGlobals.useZiggeo = true;
+                } else {
+                  window.appGlobals.useZiggeo = false;
+                }
               }
               window.appGlobals.setAnonymousGroupStatus(this.post.Group);
               window.appGlobals.setRegistrationQuestionGroup(this.post.Group);
