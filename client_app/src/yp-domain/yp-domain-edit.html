@@ -123,7 +123,9 @@
 
           <template is="dom-if" if="[[hasVideoUpload]]">
             <div class="layout vertical uploadSection">
-              <yp-file-upload id="videoFileUpload" raised="true" multi="false" video-upload method="POST" on-success="_videoUploaded">
+              <yp-file-upload id="videoFileUpload" raised="true" multi="false"
+                video-upload method="POST"
+                on-success="_videoUploaded">
                 <iron-icon class="icon" icon="videocam"></iron-icon>
                 <span>[[t('uploadVideo')]]</span>
               </yp-file-upload>
@@ -297,6 +299,9 @@
           <paper-checkbox name="downloadFacebookImagesForUser" checked$="{{domain.configuration.downloadFacebookImagesForUser}}">[[t('downloadFacebookImagesForUser')]]</paper-checkbox>
           <paper-checkbox name="disableNameAutoTranslation" checked$="{{domain.configuration.disableNameAutoTranslation}}">[[t('disableNameAutoTranslation')]]</paper-checkbox>
           <paper-checkbox name="hideDomainNews" checked$="{{domain.configuration.hideDomainNews}}">[[t('hideDomainNews')]]</paper-checkbox>
+          <template is="dom-if" if="[[ziggeoEnabled()]]">
+            <paper-checkbox name="ziggeoApplicationToken" checked$="{{domain.configuration.ziggeoApplicationToken}}">[[t('ziggeoApplicationToken')]]</paper-checkbox>
+          </template>
         </div>
       </div>
     </yp-edit-dialog>

@@ -701,6 +701,10 @@ router.get('/', function(req, res) {
     req.ypDomain.dataValues.googleMapsApiKey = process.env.GOOGLE_MAPS_API_KEY;
   }
 
+  if (req.ypDomain && process.env.ZIGGEO_ENABLED) {
+    req.ypDomain.dataValues.ziggeoEnabled = process.env.ZIGGEO_ENABLED;
+  }
+
   const domain = {...req.ypDomain.dataValues}
 
   delete domain["secret_api_keys"];

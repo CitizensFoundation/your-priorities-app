@@ -1,4 +1,6 @@
 {
+  "ziggeoApplicationToken": "Ziggeo Application Token",
+  "useZiggeoMedia": "Use Ziggeo Media",
   "anonymousAskRegistrationQuestions": "Ask anonymous registration questions",
   "customFilterText": "Custom filter text",
   "orderGroupsByRandom": "Order groups by random",

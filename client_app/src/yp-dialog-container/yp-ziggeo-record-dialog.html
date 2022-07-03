@@ -1,0 +1,169 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/lite-signal/lite-signal.html">
+
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+
+<link rel="import" href="../yp-behaviors/yp-language-behavior.html">
+
+<dom-module id="yp-ziggeo-record-dialog">
+  <template>
+
+    <style include="iron-flex iron-flex-alignment">
+      paper-dialog {
+        background-color: #FFF;
+        max-width: 400px;
+      }
+
+      iron-icon {
+        color: var(--accent-color);
+        width: 48px;
+        height: 48px;
+        margin-bottom: 16px;
+      }
+
+      .infoText {
+        font-size: 18px;
+        margin-bottom: 8px;
+      }
+    </style>
+
+    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
+
+    <paper-dialog id="dialog">
+      <div class="layout vertical center-center">
+        <ziggeorecorder
+          ziggeo-width=[[videoWidth]]
+          ziggeo-height="[[videoHeight]]"
+          ziggeo-theme="modern"
+          ziggeo-themecolor="red"
+          ziggeo-key="[[videoKey]]"
+          on-proccessed="_recordingFinished"
+        >
+        </ziggeorecorder>
+      </div>
+    </paper-dialog>
+
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'yp-ziggeo-record-dialog',
+
+      behaviors: [
+        Polymer.ypLanguageBehavior
+      ],
+
+      properties: {
+        videoKey: {
+          type: String,
+          computed: '_videoKey(postId,domainId,communityId,groupId)'
+        },
+
+        videoHeight: {
+          type: String,
+          computed: '_videoHeight(postId,domainId,communityId,groupId)'
+        },
+
+        videoWidth: {
+          type: String,
+          computed: '_videoWidth(postId,domainId,communityId,groupId)'
+        },
+
+        domainId: {
+          type: Number,
+        },
+
+        communityId: {
+          type: Number,
+        },
+
+        groupId: {
+          type: Number,
+        },
+
+        postId: {
+          type: Number,
+        },
+      },
+
+      _videoHeight: function() {
+        if (window.innerHeight > window.innerWidth) {
+          return "720px";
+        } else {
+          return "1280px";
+        }
+      },
+
+      _videoWidth: function () {
+        if (window.innerHeight > window.innerWidth) {
+          return "1280px";
+        } else {
+          return "720px";
+        }
+      },
+
+      //TODO: For version 9 call a common function as this is used in other places
+      _generateRandomString: function (length) {
+        if (!length) length = 36;
+        if (window.crypto) {
+          var a = window.crypto.getRandomValues(new Uint32Array(3)),
+            token = '';
+          for (var i = 0, l = a.length; i < l; i++) token += a[i].toString(36);
+          return token;
+        } else {
+          return (Math.random() * new Date().getTime()).toString(36).replace( /\./g , '');
+        }
+      },
+
+      _videoKey: function () {
+        return this._generateRandomString(16);
+      },
+
+      _recordingFinished: function () {
+        var ajax = document.createElement('iron-ajax');
+        ajax.handleAs = 'json';
+        ajax.contentType = 'application/json';
+        var url;
+        if (this.postId)
+          url = `/api/videos/${this.postId}/createZiggeoVideoForPost`
+        else if (this.groupId)
+          url = `/api/videos/${this.groupId}/createZiggeoVideoForGroup`
+        else if (this.communityId)
+          url = `/api/videos/${this.communityId}/createZiggeoVideoForCommunity`
+        else if (this.domainId)
+          url = `/api/videos/${this.domainId}/createZiggeoVideoForDomain`
+        ajax.url = url;
+        ajax.method = 'POST';
+        ajax.body = {
+          videoKey: this.videoKey
+        };
+        ajax.addEventListener('response', function (event, detail) {
+          this.fire('success', {
+            videoId: detail.videoKey,
+            isZiggeo: true
+          });
+          ajax.remove();
+        }.bind(this));
+        ajax.generateRequest();
+      },
+
+      open: function (options) {
+        if (options.postId) {
+          this.postId = options.postId;
+        } else if (options.groupId) {
+          this.groupId = options.groupId;
+        } else if (options.communityId) {
+          this.communityId = options.communityId;
+        } else if (options.domainId) {
+          this.domainId = options.domainId;
+        }
+
+        this.$.dialog.open();
+      },
+    });
+  </script>
+</dom-module>
