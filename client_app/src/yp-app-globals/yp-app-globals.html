@@ -180,7 +180,8 @@
 
           useZiggeo: {
             type: Boolean,
-            value: false
+            value: false,
+            observer: '_useZiggeoChanged'
           },
 
           haveLoadedZiggeo: {
@@ -189,8 +190,8 @@
           }
         },
 
-        loadZiggeoIfNeeded: function () {
-          if (this.useZiggeo && !window.appGlobals.haveLoadedZiggeo) {
+        _useZiggeoChanged: function (useZiggeo) {
+          if (useZiggeo && !this.haveLoadedZiggeo) {
             this.haveLoadedZiggeo = true;
             this.importHref(this.resolveUrl("/src/integrations/ziggeo/yp-ziggeo-player.html"), function () {
             }.bind(this), null, true);

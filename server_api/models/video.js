@@ -482,48 +482,53 @@ module.exports = (sequelize, DataTypes) => {
       });
   };
 
-  Video.completeUploadAndAddToPoint = (req, res, options, callback) => {
-    sequelize.models.Video.findOne({
-      where: {
-        id: options.videoId,
-      },
-      attributes: sequelize.models.Video.defaultAttributesPublic.concat([
-        "user_id",
-        "meta",
-      ]),
-    })
-      .then((video) => {
-        if (video.user_id === req.user.id) {
-          video.viewable = true;
-          video.createFormats(video);
-          video
-            .save()
-            .then(() => {
-              sequelize.models.Point.findOne({
-                where: {
-                  id: options.pointId,
-                },
-              })
-                .then((point) => {
-                  point.addPointVideo(video).then(() => {
-                    log.info("Have added video to point", {
-                      id: options.pointId,
-                    });
-                    callback();
-                  });
-                })
-                .catch((error) => callback(error));
-            })
-            .catch((error) => {
-              callback(error);
-            });
-        } else {
-          callback("Could not get video for wrong user");
-        }
+  Video.completeUploadAndAddToPoint = async (req, res, options, callback) => {
+    if (req.body.isZiggeo) {
+      await Video.addZiggeoVideo(req, res);
+      callback();
+    } else {
+      sequelize.models.Video.findOne({
+        where: {
+          id: options.videoId,
+        },
+        attributes: sequelize.models.Video.defaultAttributesPublic.concat([
+          "user_id",
+          "meta",
+        ]),
       })
-      .catch((error) => {
-        callback(error);
-      });
+        .then((video) => {
+          if (video.user_id === req.user.id) {
+            video.viewable = true;
+            video.createFormats(video);
+            video
+              .save()
+              .then(() => {
+                sequelize.models.Point.findOne({
+                  where: {
+                    id: options.pointId,
+                  },
+                })
+                  .then((point) => {
+                    point.addPointVideo(video).then(() => {
+                      log.info("Have added video to point", {
+                        id: options.pointId,
+                      });
+                      callback();
+                    });
+                  })
+                  .catch((error) => callback(error));
+              })
+              .catch((error) => {
+                callback(error);
+              });
+          } else {
+            callback("Could not get video for wrong user");
+          }
+        })
+        .catch((error) => {
+          callback(error);
+        });
+      }
   };
 
   Video.addZiggeoVideoToContainer = async (req, video) => {
@@ -605,25 +610,31 @@ module.exports = (sequelize, DataTypes) => {
   };
 
   Video.addZiggeoVideo = async (req, res) => {
-    try {
-      const video = await sequelize.models.Video.create({
-        user_id: req.user.id,
-        user_agent: req.useragent.source,
-        ip_address: req.clientIp,
-        formats: [req.body.videoId],
-        viewable: true,
-        public_meta: {
-          aspect: req.body.aspect,
-          isZiggeo: true,
-        },
-      });
+    return await new Promise(async (resolve, reject) => {
+      try {
+        const video = await sequelize.models.Video.create({
+          user_id: req.user.id,
+          user_agent: req.useragent.source,
+          ip_address: req.clientIp,
+          formats: [req.body.videoId],
+          viewable: true,
+          public_meta: {
+            aspect: req.body.aspect,
+            isZiggeo: true,
+          },
+        });
 
-      await Video.addZiggeoVideoToContainer(req, video);
-      res.sendStatus(200);
-    } catch (error) {
-      console.error(error);
-      res.sendStatus(500);
-    }
+        await Video.addZiggeoVideoToContainer(req, video);
+        if (!req.params.pointId) {
+          res.sendStatus(200);
+        }
+        resolve();
+      } catch (error) {
+        console.error(error);
+        res.sendStatus(500);
+        reject();
+      }
+    });
   };
 
   Video.completeUploadAndAddToCollection = async (req, res, options) => {

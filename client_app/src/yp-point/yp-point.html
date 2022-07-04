@@ -492,8 +492,19 @@
         portraitVideo: {
           type: Boolean,
           value: false
-        }
+        },
+
+        useZiggeo: {
+          type: Boolean,
+          computed: '_useZiggeo(videoActive)'
+        },
       },
+
+
+      _useZiggeo: function () {
+        return window.appGlobals.useZiggeo;
+      },
+
 
       behaviors: [
         Polymer.ypLanguageBehavior,

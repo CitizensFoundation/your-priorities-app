@@ -221,7 +221,7 @@
       </template>
 
       <template is="dom-if" if="[[videoActive]]" restamp>
-        <template is="dom-if" if="[[_useZiggeo()]]" restamp>
+        <template is="dom-if" if="[[useZiggeo]]" restamp>
           <template is="dom-if" if="[[postVideoPath]]" restamp>
             <yp-ziggeo-player
               video-token="[[postVideoPath]]"
@@ -230,7 +230,7 @@
             </yp-ziggeo-player>
           </template>
         </template>
-        <template is="dom-if" if="[[!_useZiggeo()]]">
+        <template is="dom-if" if="[[!useZiggeo]]">
           <template is="dom-if" if="[[showVideo]]" restamp>
             <video id="videoPlayer" portrait$="[[portraitVideo]]" data-id$="[[postVideoId]]" header-mode$="[[headerMode]]" controls on-tap="_goToPost" preload="meta" class="pointer" src="[[postVideoPath]]" playsinline poster="[[postVideoPosterPath]]"></video>
           </template>
@@ -494,11 +494,12 @@
         sizingMode: {
           type: String,
           computed: '_sizingMode(post)'
-        }
-      },
+        },
 
-      ready: function () {
-        window.appGlobals.loadZiggeoIfNeeded();
+        useZiggeo: {
+          type: Boolean,
+          computed: '_useZiggeo(post)'
+        },
       },
 
       _useZiggeo: function () {
