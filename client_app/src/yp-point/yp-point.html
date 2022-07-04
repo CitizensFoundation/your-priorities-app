@@ -749,7 +749,7 @@
             this.set('pointImageVideoPath', videoPosterURL);
             this.set('pointVideoId', point.PointVideos[0].id);
             this.set('checkTranscriptError', false);
-            if (!disableMachineTranscripts && point.checkTranscriptFor==="video" && window.appGlobals.hasTranscriptSupport===true) {
+            if (!this._useZiggeo() && !disableMachineTranscripts && point.checkTranscriptFor==="video" && window.appGlobals.hasTranscriptSupport===true) {
               this.$.checkTranscriptStatusAjax.url = "/api/points/"+point.id+'/videoTranscriptStatus';
               this.$.checkTranscriptStatusAjax.generateRequest();
               this.set('checkingTranscript', true);
