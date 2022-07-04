@@ -19,7 +19,12 @@
 
         callbackElement: {
           type: Object
-        }
+        },
+
+        timelimit: {
+          type: Number,
+          value: undefined
+        },
       },
 
       _createRecorder: function () {
@@ -40,6 +45,7 @@
                     theme: "modern",
                     themecolor: "red",
                     orientation: orientation,
+                    timelimit: this.timelimit,
                     allowcancel: true
                   }
             });
@@ -78,7 +84,11 @@
       },
 
       open: function (options) {
-        this.set('callbackElement', options.callbackElement)
+        this.set('callbackElement', options.callbackElement);
+        if (options.timelimit) {
+          this.set('timelimit', parseInt(options.timelimit));
+        }
+        debugger;
         this._createRecorder();
       },
     });

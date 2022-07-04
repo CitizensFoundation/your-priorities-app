@@ -592,7 +592,7 @@ Example:
       window.appGlobals.activity('open', 'ziggeo');
       Polymer.dom(document).querySelector('yp-app').getZiggeoAsync(function (dialog) {
         dialog.open({ callbackElement: this,
-                      maxLength: this.uploadLimitSeconds });
+                      timelimit: this.uploadLimitSeconds });
       }.bind(this));
     },
 
