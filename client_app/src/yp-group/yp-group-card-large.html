@@ -482,7 +482,7 @@
         if (group && group.configuration && group.configuration.useVideoCover && group.GroupLogoVideos) {
           var videoURL = this._getVideoURL(group.GroupLogoVideos);
           var videoPosterURL = this._getVideoPosterURL(group.GroupLogoVideos, group.GroupLogoImages);
-          if ((videoURL && videoPosterURL) || (group.Community.configuration.useZiggeo && videoURL)) {
+          if ((videoURL && videoPosterURL) || (group.Community && group.Community.configuration && group.Community.configuration.useZiggeo && videoURL)) {
             this.set('groupVideoURL', videoURL);
             this.set('groupVideoPosterURL', videoPosterURL);
             this.set('groupVideoId', group.GroupLogoVideos[0].id);

@@ -17,16 +17,6 @@
           type: Object,
         },
 
-        videoHeight: {
-          type: String,
-          computed: '_videoHeight(postId,domainId,communityId,groupId)'
-        },
-
-        videoWidth: {
-          type: String,
-          computed: '_videoWidth(postId,domainId,communityId,groupId)'
-        },
-
         callbackElement: {
           type: Object
         }
@@ -35,15 +25,23 @@
       _createRecorder: function () {
         if (!this.recorder) {
           ziggeoApp.on("ready", function() {
+            var videoWidth = this._videoWidth();
+            var videoHeight = this._videoHeight()
+            var uiWidth = Math.min(window.innerWidth, 1280)
+            var uiHeight = Math.min(window.innerHeight-64, 780)
+            var orientation = window.innerHeight < window.innerWidth ? "landscape" : "portrait"
             this.recorder = new ZiggeoApi.V2.PopupRecorder({
                 element: this.$.ziggeoRecorder,
                 attrs: {
-                    width: this.videoWidth,
-                    height: this.videoHeight,
+                    recordingwidth: videoWidth,
+                    recordingheight: videoHeight,
+                    height: uiHeight,
+                    width: uiWidth,
                     theme: "modern",
                     themecolor: "red",
-                    onProcessed: this._recordingFinished.bind(this)
-                }
+                    orientation: orientation,
+                    allowcancel: true
+                  }
             });
 
             this.recorder.on("processed",  this._recordingFinished.bind(this));
@@ -54,18 +52,18 @@
       },
 
       _videoHeight: function() {
-        if (window.innerHeight > window.innerWidth) {
-          return "720px";
+        if (window.innerHeight < window.innerWidth) {
+          return 720;
         } else {
-          return "1280px";
+          return 1280;
         }
       },
 
       _videoWidth: function () {
-        if (window.innerHeight > window.innerWidth) {
-          return "1280px";
+        if (window.innerHeight < window.innerWidth) {
+          return 1280;
         } else {
-          return "720px";
+          return 720;
         }
       },
 

@@ -45,6 +45,50 @@
         cursor: pointer;
       }
 
+      @media (max-width: 960px) {
+        iron-image {
+          width: 398px;
+          height: 211px;
+        }
+
+        iron-image[top-container] {
+          width: 398px;
+          height: 211px;
+        }
+
+        .playIcon {
+          top: 43px;
+          left: 135px;
+        }
+
+        .playIcon[top-container] {
+          top: 43px;
+          left: 135px;
+        }
+
+        @media (max-width: 360px) {
+          iron-image {
+            width: 359px;
+            height: 207px;
+          }
+
+          iron-image[top-container] {
+            width: 359px;
+            height: 207px;
+          }
+
+          .playIcon {
+            top: 42px;
+            left: 117px;
+          }
+
+          .playIcon[top-container] {
+            top: 42px;
+            left: 117px;
+          }
+
+      }
+
       [hidden] {
         display: none !important;
       }
@@ -122,6 +166,8 @@
                 attrs: {
                   theme: "modern",
                   themecolor: "red",
+                  maxwidth:  window.innerWidth,
+                  maxheight: window.innerHeight-85,
                   autoplay: true,
                   video: this.videoToken,
                 },
