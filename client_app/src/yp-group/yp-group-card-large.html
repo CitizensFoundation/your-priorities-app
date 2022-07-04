@@ -259,7 +259,7 @@
     <div class="layout horizontal center-center wrap" aria-label="[[t('group')]]" role="banner">
       <paper-material id="cardImage" elevation="3" is-video$="[[groupVideoURL]]" animated class="groupCard imageCard top-card">
         <template is="dom-if" if="[[groupVideoURL]]" restamp>
-          <template is="dom-if" if="[[useZiggeo]]" restamp>
+          <template is="dom-if" if="[[_useZiggeo()]]" restamp>
             <yp-ziggeo-player
               video-token="[[groupVideoURL]]"
               video-active=true
@@ -267,7 +267,7 @@
             >
             </yp-ziggeo-player>
           </template>
-          <template is="dom-if" if="[[!useZiggeo]]">
+          <template is="dom-if" if="[[!_useZiggeo()]]" restamp>
             <video id="videoPlayer" data-id$="[[groupVideoId]]" controls preload="meta" class="logo" src="[[groupVideoURL]]" playsinline poster="[[groupVideoPosterURL]]"></video>
           </template>
         </template>
@@ -424,12 +424,7 @@
         flaggedContentCount: {
           type: Number,
           value: null
-        },
-
-        useZiggeo: {
-          type: Boolean,
-          computed: '_useZiggeo(group)'
-        },
+        }
       },
 
       _autoTranslateEvent: function (event, detail) {

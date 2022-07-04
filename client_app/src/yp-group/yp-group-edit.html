@@ -185,9 +185,11 @@
                 <iron-icon class="icon" icon="videocam"></iron-icon>
                 <span>[[t('uploadVideo')]]</span>
               </yp-file-upload>
-              <paper-checkbox class="useVideoCover" name="useVideoCover" disabled$="[[!uploadedVideoId]]"
-                              checked$="{{group.configuration.useVideoCover}}">[[t('useVideoCover')]]
-              </paper-checkbox>
+              <template is="dom-if" if="[[hasVideos]]" restamp>
+                <paper-checkbox class="useVideoCover" name="useVideoCover"
+                  checked$="{{group.configuration.useVideoCover}}">[[t('useVideoCover')]]
+                </paper-checkbox>
+              </template>
             </div>
           </template>
 
@@ -1077,7 +1079,16 @@
       isDataVisualizationGroup: {
         type: Boolean,
         value: false
+      },
+
+      hasVideos: {
+        type: Boolean,
+        computed: '_hasVideos(group, uploadedVideoId)'
       }
+    },
+
+    _hasVideos: function(group, uploadedVideoId) {
+      return uploadedVideoId || (group && group.GroupLogoVideos && group.GroupLogoVideos.length > 0);
     },
 
     _isDataVisualizationGroupClick: function () {
@@ -1158,8 +1169,12 @@
      },
 
     _videoUploaded: function (event, detail) {
-      this.set('uploadedVideoId', detail.videoId);
-      this.set('group.configuration.useVideoCover', true);
+      if (detail.videoId) {
+        this.set('uploadedVideoId', detail.videoId);
+        this.set('group.configuration.useVideoCover', true);
+      } else {
+        console.log("Trying to set video uploaded again")
+      }
     },
 
     observers: [
@@ -1402,7 +1417,7 @@
 
     setup: function (group, newNotEdit, refreshFunction) {
       if (!group) {
-        this.set('group', {name: '', objectives: '', access: 0, status: 'active'});
+        this.set('group', {name: '', objectives: '', access: 0, status: 'active', configuration: {}});
       } else {
         if (group.configuration && group.configuration.customRatings && !group.configuration.customRatingsText) {
           var customRatingsText = "";
@@ -1413,8 +1428,14 @@
           group.configuration.customRatingsText = customRatingsText;
         }
         this.set('group', group);
-        if (group.GroupLogoVideos && group.GroupLogoVideos.length > 0) {
-          this.set('uploadedVideoId', group.GroupLogoVideos[0].id)
+
+        //TODO: REMOVE
+        if (false && group.GroupLogoVideos && group.GroupLogoVideos.length > 0) {
+          if (window.appGlobals.useZiggeo) {
+            this.set('uploadedVideoId', group.GroupLogoVideos[0].formats[0])
+          } else {
+            this.set('uploadedVideoId', group.GroupLogoVideos[0].id)
+          }
         }
         this.$.pagesAjax.url = "/api/groups/"+group.id+"/pages";
         this.$.pagesAjax.generateRequest();

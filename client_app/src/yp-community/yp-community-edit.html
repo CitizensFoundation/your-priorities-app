@@ -145,7 +145,7 @@
               <iron-icon class="icon" icon="videocam"></iron-icon>
               <span>[[t('uploadVideo')]]</span>
             </yp-file-upload>
-            <paper-checkbox class="useVideoCover" name="useVideoCover" disabled$="[[!uploadedVideoId]]" checked$="{{community.configuration.useVideoCover}}">[[t('useVideoCover')]]</paper-checkbox>
+            <paper-checkbox class="useVideoCover" name="useVideoCover" disabled$="[[!hasVideos]]" checked$="{{community.configuration.useVideoCover}}">[[t('useVideoCover')]]</paper-checkbox>
           </div>
         </template>
       </div>
@@ -502,7 +502,16 @@
       descriptionMaxLength: {
         type: Number,
         value: 300
+      },
+
+      hasVideos: {
+        type: Boolean,
+        compuited: '_hasVideos(community)'
       }
+    },
+
+    _hasVideos: function(community, uploadedVideoId) {
+      return uploadedVideoId || (community && community.CommunityLogoVideos && community.CommunityLogoVideos.length > 0);
     },
 
     observers: [
@@ -722,8 +731,13 @@
         this._checkCommunityFolders(this.community);
       } else {
         this.set('community', community);
-        if (community.CommunityLogoVideos && community.CommunityLogoVideos.length>0) {
-          this.set('uploadedVideoId', community.CommunityLogoVideos[0].id)
+        //TODO: Remove
+        if (false && community.CommunityLogoVideos && community.CommunityLogoVideos.length>0) {
+          if (window.appGlobals.useZiggeo) {
+            this.set('uploadedVideoId', community.CommunityLogoVideos[0].formats[0])
+          } else {
+            this.set('uploadedVideoId', community.CommunityLogoVideos[0].id)
+          }
         }
         this.$.pagesAjax.url = "/api/communities/"+community.id+"/pages";
         this.$.pagesAjax.generateRequest();
