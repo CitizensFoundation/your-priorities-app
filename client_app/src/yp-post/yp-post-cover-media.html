@@ -498,11 +498,7 @@
       },
 
       ready: function () {
-        if (this._useZiggeo() && !window.appGlobals.haveLoadedZiggeo) {
-          window.appGlobals.haveLoadedZiggeo = true;
-          this.importHref(this.resolveUrl("/src/integrations/ziggeo/yp-ziggeo-player.html"), function () {
-          }.bind(this), null, true);
-        }
+        window.appGlobals.loadZiggeoIfNeeded();
       },
 
       _useZiggeo: function () {

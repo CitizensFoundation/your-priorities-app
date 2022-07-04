@@ -181,6 +181,19 @@
           useZiggeo: {
             type: Boolean,
             value: false
+          },
+
+          haveLoadedZiggeo: {
+            type: Boolean,
+            value: false
+          }
+        },
+
+        loadZiggeoIfNeeded: function () {
+          if (this.useZiggeo && !window.appGlobals.haveLoadedZiggeo) {
+            this.haveLoadedZiggeo = true;
+            this.importHref(this.resolveUrl("/src/integrations/ziggeo/yp-ziggeo-player.html"), function () {
+            }.bind(this), null, true);
           }
         },
 

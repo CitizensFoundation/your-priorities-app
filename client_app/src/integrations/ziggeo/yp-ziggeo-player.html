@@ -22,12 +22,26 @@
         height: 236px;
       }
 
+      iron-image[top-container] {
+        width: 432px;
+        height: 243px;
+      }
+
       .playIcon {
         width: 128px;
         height: 128px;
         position: absolute;
         top: 52px;
         left: 146px;
+        cursor: pointer;
+      }
+
+      .playIcon[top-container] {
+        width: 128px;
+        height: 128px;
+        position: absolute;
+        top: 56px;
+        left: 156px;
         cursor: pointer;
       }
 
@@ -38,11 +52,13 @@
     <template is="dom-if" if="[[staticImageUrl]]" restamp>
       <div>
         <iron-image
+          top-container$="[[topContainer]]"
           src$="[[staticImageUrl]]"
           sizing="cover"
           class="yp-ziggeo-player-image"
         ></iron-image>
         <iron-image
+          top-container$="[[topContainer]]"
           src="https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/playIcon.png"
           class="playIcon"
           on-tap="_openPlayer"
@@ -65,6 +81,11 @@
 
         appToken: {
           type: String,
+        },
+
+        topContainer: {
+          type: Boolean,
+          value: false
         },
 
         videoActive: {
@@ -101,6 +122,7 @@
                 attrs: {
                   theme: "modern",
                   themecolor: "red",
+                  autoplay: true,
                   video: this.videoToken,
                 },
               });
