@@ -238,8 +238,18 @@
         <div class="topContainer" portrait$="[[portraitVideo]]">
           <template is="dom-if" if="[[videoActive]]" restamp>
             <div class="layout horizontal center-center">
-              <video id="videoPlayer" portrait$="[[portraitVideo]]" data-id$="[[pointVideoId]]" controls preload="none" class="video" src="[[pointVideoPath]]" playsinline poster="[[pointImageVideoPath]]"></video>
-            </div>
+              <template is="dom-if" if="[[_useZiggeo()]]" restamp>
+                <yp-ziggeo-player
+                  video-token="[[pointVideoPath]]"
+                  video-active=true
+                  point-video=true
+                >
+                </yp-ziggeo-player>
+              </template>
+              <template is="dom-if" if="[[!_useZiggeo()]]" restamp>
+                <video id="videoPlayer" portrait$="[[portraitVideo]]" data-id$="[[pointVideoId]]" controls preload="none" class="video" src="[[pointVideoPath]]" playsinline poster="[[pointImageVideoPath]]"></video>
+              </template>
+              </div>
           </template>
         </div>
 
@@ -492,12 +502,7 @@
         portraitVideo: {
           type: Boolean,
           value: false
-        },
-
-        useZiggeo: {
-          type: Boolean,
-          computed: '_useZiggeo(videoActive)'
-        },
+        }
       },
 
 
@@ -738,7 +743,7 @@
           var videoURL = this._getVideoURL(point.PointVideos);
           var videoPosterURL = this._getVideoPosterURL(point.PointVideos);
           this.set('portraitVideo', this._isPortraitVideo(point.PointVideos));
-          if (videoURL && videoPosterURL) {
+          if ((videoURL && videoPosterURL) || (videoURL && this._useZiggeo())) {
             this.set('videoActive', true);
             this.set('pointVideoPath', videoURL);
             this.set('pointImageVideoPath', videoPosterURL);

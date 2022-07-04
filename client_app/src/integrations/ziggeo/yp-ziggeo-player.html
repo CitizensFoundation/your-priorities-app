@@ -27,6 +27,11 @@
         height: 243px;
       }
 
+      iron-image[point-video] {
+        width: 398px;
+        height: 211px;
+      }
+
       .playIcon {
         width: 128px;
         height: 128px;
@@ -45,6 +50,15 @@
         cursor: pointer;
       }
 
+      .playIcon[point-video] {
+        width: 128px;
+        height: 128px;
+        position: absolute;
+        top: 126px;
+        left: 138px;
+        cursor: pointer;
+      }
+
       @media (max-width: 960px) {
         iron-image {
           width: 398px;
@@ -54,6 +68,11 @@
         iron-image[top-container] {
           width: 398px;
           height: 211px;
+        }
+
+        iron-image[point-video] {
+          width: 414px;
+          height: 233px;
         }
 
         .playIcon {
@@ -66,7 +85,12 @@
           left: 135px;
         }
 
-        @media (max-width: 360px) {
+        .playIcon[point-video] {
+          top: 132px;
+          left: 144px;
+        }
+
+        @media (max-width: 375px) {
           iron-image {
             width: 359px;
             height: 207px;
@@ -77,6 +101,11 @@
             height: 207px;
           }
 
+          iron-image[point-video] {
+            width: 375px;
+            height: 211px;
+          }
+
           .playIcon {
             top: 42px;
             left: 117px;
@@ -85,6 +114,11 @@
           .playIcon[top-container] {
             top: 42px;
             left: 117px;
+          }
+
+          .playIcon[point-video] {
+            top: 122px;
+            left: 120px;
           }
 
       }
@@ -99,10 +133,12 @@
           top-container$="[[topContainer]]"
           src$="[[staticImageUrl]]"
           sizing="cover"
+          point-video$="[[pointVideo]]"
           class="yp-ziggeo-player-image"
         ></iron-image>
         <iron-image
           top-container$="[[topContainer]]"
+          point-video$="[[pointVideo]]"
           src="https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/playIcon.png"
           class="playIcon"
           on-tap="_openPlayer"
@@ -133,6 +169,10 @@
         },
 
         videoActive: {
+          type: Boolean,
+        },
+
+        pointVideo: {
           type: Boolean,
         },
 
