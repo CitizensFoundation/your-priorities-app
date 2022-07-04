@@ -221,14 +221,25 @@
       </template>
 
       <template is="dom-if" if="[[videoActive]]" restamp>
-        <template is="dom-if" if="[[showVideo]]" restamp>
-          <video id="videoPlayer" portrait$="[[portraitVideo]]" data-id$="[[postVideoId]]" header-mode$="[[headerMode]]" controls on-tap="_goToPost" preload="meta" class="pointer" src="[[postVideoPath]]" playsinline poster="[[postVideoPosterPath]]"></video>
+        <template is="dom-if" if="[[_useZiggeo()]]" restamp>
+          <template is="dom-if" if="[[postVideoPath]]" restamp>
+            <yp-ziggeo-player
+              video-token="[[postVideoPath]]"
+              video-active="[[showVideo]]"
+            >
+            </yp-ziggeo-player>
+          </template>
         </template>
-        <template is="dom-if" if="[[!showVideo]]">
-          <div class="layout vertical center-center videoPreviewContainer" portrait$="[[portraitVideo]]" >
-            <iron-image id="videoPreviewImage" portrait$="[[portraitVideo]]" header-mode$="[[headerMode]]" on-tap="_goToPost" sizing="cover" class="main-image pointer" src="[[postVideoPosterPath]]"></iron-image>
-          </div>
-          <iron-icon icon="videocam" class="videoCamStatic"></iron-icon>
+        <template is="dom-if" if="[[!_useZiggeo()]]">
+          <template is="dom-if" if="[[showVideo]]" restamp>
+            <video id="videoPlayer" portrait$="[[portraitVideo]]" data-id$="[[postVideoId]]" header-mode$="[[headerMode]]" controls on-tap="_goToPost" preload="meta" class="pointer" src="[[postVideoPath]]" playsinline poster="[[postVideoPosterPath]]"></video>
+          </template>
+          <template is="dom-if" if="[[!showVideo]]">
+            <div class="layout vertical center-center videoPreviewContainer" portrait$="[[portraitVideo]]" >
+              <iron-image id="videoPreviewImage" portrait$="[[portraitVideo]]" header-mode$="[[headerMode]]" on-tap="_goToPost" sizing="cover" class="main-image pointer" src="[[postVideoPosterPath]]"></iron-image>
+            </div>
+            <iron-icon icon="videocam" class="videoCamStatic"></iron-icon>
+          </template>
         </template>
       </template>
 
@@ -486,6 +497,17 @@
         }
       },
 
+      ready: function () {
+        if (this._useZiggeo() && !window.appGlobals.haveLoadedZiggeo) {
+          window.appGlobals.haveLoadedZiggeo = true;
+          this.importHref(this.resolveUrl("/src/integrations/ziggeo/yp-ziggeo-player.html"), function () {
+          }.bind(this), null, true);
+        }
+      },
+
+      _useZiggeo: function () {
+        return window.appGlobals.useZiggeo;
+      },
 
       _sizingMode: function (post) {
         if (post && post.Group && post.Group.configuration && post.Group.configuration.useContainImageMode) {

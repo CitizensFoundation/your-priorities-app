@@ -1,0 +1,123 @@
+<link rel="import" href="../../../bower_components/polymer/polymer.html" />
+<link
+  rel="import"
+  href="../../../bower_components/iron-image/iron-image.html"
+/>
+<link rel="import" href="../../../bower_components/iron-icon/iron-icon.html" />
+
+<link
+  rel="import"
+  href="../../../bower_components/iron-flex-layout/iron-flex-layout-classes.html"
+/>
+
+<dom-module id="yp-ziggeo-player">
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+      :host {
+        background: transparent;
+      }
+
+      iron-image {
+        width: 420px;
+        height: 236px;
+      }
+
+      .playIcon {
+        width: 128px;
+        height: 128px;
+        position: absolute;
+        top: 52px;
+        left: 146px;
+        cursor: pointer;
+      }
+
+      [hidden] {
+        display: none !important;
+      }
+    </style>
+    <template is="dom-if" if="[[staticImageUrl]]" restamp>
+      <div>
+        <iron-image
+          src$="[[staticImageUrl]]"
+          sizing="cover"
+          class="yp-ziggeo-player-image"
+        ></iron-image>
+        <iron-image
+          src="https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/playIcon.png"
+          class="playIcon"
+          on-tap="_openPlayer"
+          hidden$="[[!videoActive]]"
+          sizing="contain"
+        ></iron-image>
+      </div>
+      <div hidden id="ziggeoVideoPlayer"></div>
+    </template>
+  </template>
+
+  <script>
+    Polymer({
+      is: "yp-ziggeo-player",
+
+      properties: {
+        videoToken: {
+          type: String,
+        },
+
+        appToken: {
+          type: String,
+        },
+
+        videoActive: {
+          type: Boolean,
+        },
+
+        staticImageUrl: {
+          type: String,
+          computed: `_staticImageUrl(videoToken,appToken)`,
+        },
+      },
+
+      attached: function () {
+        this.appToken =
+          window.appGlobals.domain.configuration.ziggeoApplicationToken;
+      },
+
+      _staticImageUrl: function (videoToken, appToken) {
+        if (videoToken && appToken) {
+          return `https://video-cdn-eu-west-1.ziggeo.com/v1/applications/${this.appToken}/videos/${this.videoToken}/image`;
+        } else {
+          return null;
+        }
+      },
+
+      _openPlayer: function () {
+        var ziggeoVideoPlayer = this.$$("#ziggeoVideoPlayer");
+        if (ziggeoVideoPlayer) {
+          ziggeoApp.on(
+            "ready",
+            function () {
+              var iframe_player = new ZiggeoApi.V2.PopupPlayer({
+                element: ziggeoVideoPlayer,
+                attrs: {
+                  theme: "modern",
+                  themecolor: "red",
+                  video: this.videoToken,
+                },
+              });
+
+              iframe_player.activate();
+            }.bind(this)
+          );
+        }
+      },
+
+      detached: function () {
+        var ziggeoVideoPlayer = this.$$("#ziggeoVideoPlayer");
+        if (ziggeoVideoPlayer) {
+          ziggeoVideoPlayer.destroy();
+          ziggeoVideoPlayer.remove();
+        }
+      },
+    });
+  </script>
+</dom-module>

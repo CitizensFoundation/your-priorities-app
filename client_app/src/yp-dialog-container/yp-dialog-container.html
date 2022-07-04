@@ -564,7 +564,7 @@
           this.getDialogAsync("ziggeo", callback);
         } else {
           this.$.loadingDialog.open();
-          this.importHref(this.resolveUrl("/src/yp-dialog-container/yp-ziggeo-record-dialog.html"), function () {
+          this.importHref(this.resolveUrl("/src/integrations/ziggeo/yp-ziggeo-record-dialog.html"), function () {
             this.$.loadingDialog.close();
             console.info("Have loaded ziggeo container");
             this.set('gotZiggeo', true);
