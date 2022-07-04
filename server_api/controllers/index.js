@@ -81,7 +81,8 @@ const ziggeoHeaders = (ziggeoApplicationToken) => { return `
     var ziggeoApp = new ZiggeoApi.V2.Application({
       token:"${ziggeoApplicationToken}",
       webrtc_streaming_if_necessary: true,
-      webrtc_on_mobile: true
+      webrtc_on_mobile: true,
+      debug: true
     });
   </script>
 ` };

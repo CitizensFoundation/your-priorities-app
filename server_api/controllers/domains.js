@@ -226,6 +226,15 @@ var getDomain = function (req, domainId, done) {
               req.ypDomain.secret_api_keys.facebook.client_secret.length > 6) {
               domain.dataValues.facebookLoginProvided = true;
             }
+
+            if (req.ypDomain && process.env.GOOGLE_MAPS_API_KEY) {
+              domain.dataValues.googleMapsApiKey = process.env.GOOGLE_MAPS_API_KEY;
+            }
+
+            if (req.ypDomain && process.env.ZIGGEO_ENABLED) {
+              domain.dataValues.ziggeoEnabled = process.env.ZIGGEO_ENABLED;
+            }
+
             domain.dataValues.Communities = communities;
 
             if (process.env.LOGIN_CALLBACK_CUSTOM_HOSTNAME) {

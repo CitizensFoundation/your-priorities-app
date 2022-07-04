@@ -11,41 +11,6 @@
 <dom-module id="yp-ziggeo-record-dialog">
   <template>
 
-    <style include="iron-flex iron-flex-alignment">
-      paper-dialog {
-        background-color: #FFF;
-        max-width: 400px;
-      }
-
-      iron-icon {
-        color: var(--accent-color);
-        width: 48px;
-        height: 48px;
-        margin-bottom: 16px;
-      }
-
-      .infoText {
-        font-size: 18px;
-        margin-bottom: 8px;
-      }
-    </style>
-
-    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
-
-    <paper-dialog id="dialog">
-      <div class="layout vertical center-center">
-        <ziggeorecorder
-          ziggeo-width=[[videoWidth]]
-          ziggeo-height="[[videoHeight]]"
-          ziggeo-theme="modern"
-          ziggeo-themecolor="red"
-          ziggeo-key="[[videoKey]]"
-          on-proccessed="_recordingFinished"
-        >
-        </ziggeorecorder>
-      </div>
-    </paper-dialog>
-
   </template>
 
   <script>
@@ -57,10 +22,13 @@
         Polymer.ypLanguageBehavior
       ],
 
+      ready: function () {
+
+      },
+
       properties: {
-        videoKey: {
-          type: String,
-          computed: '_videoKey(postId,domainId,communityId,groupId)'
+        recorder: {
+          type: Object,
         },
 
         videoHeight: {
@@ -75,6 +43,27 @@
 
         callbackElement: {
           type: Object
+        }
+      },
+
+      _createRecorder: function () {
+        if (!this.recorder) {
+          ziggeoApp.on("ready", function() {
+            this.recorder = new ZiggeoApi.V2.PopupRecorder({
+                element: this.$.ziggeoRecorder,
+                attrs: {
+                    width: this.videoWidth,
+                    height: this.videoHeight,
+                    theme: "modern",
+                    themecolor: "red",
+                    onProcessed: this._recordingFinished.bind(this)
+                }
+            });
+
+            this.recorder.on("processed",  this._recordingFinished.bind(this));
+
+            this.recorder.activate();
+          }.bind(this));
         }
       },
 
@@ -94,32 +83,19 @@
         }
       },
 
-      //TODO: For version 9 call a common function as this is used in other places
-      _generateRandomString: function (length) {
-        if (!length) length = 36;
-        if (window.crypto) {
-          var a = window.crypto.getRandomValues(new Uint32Array(3)),
-            token = '';
-          for (var i = 0, l = a.length; i < l; i++) token += a[i].toString(36);
-          return token;
-        } else {
-          return (Math.random() * new Date().getTime()).toString(36).replace( /\./g , '');
-        }
-      },
-
-      _videoKey: function () {
-        return this._generateRandomString(16);
-      },
-
-      _recordingFinished: function () {
-        callbackElement.fire('success', {
-          videoId: detail.videoKey
+      _recordingFinished: function (event, detail) {
+        this.callbackElement.fire('success', {
+          videoId: this.recorder.get('video')
         });
+        this.async(function (){
+          this.recorder = undefined;
+        });
+        this.recorder.destroy();
       },
 
       open: function (options) {
-        this.$.dialog.open();
         this.set('callbackElement', options.callbackElement)
+        this._createRecorder();
       },
     });
   </script>

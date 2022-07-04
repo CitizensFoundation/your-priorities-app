@@ -766,7 +766,7 @@ var updateCommunityConfigParameters = function (req, community) {
   community.set('configuration.sortBySortOrder', truthValueFromBody(req.body.sortBySortOrder));
   community.set('configuration.orderByRandom', truthValueFromBody(req.body.orderByRandom));
   community.set('configuration.enableFraudDetection', truthValueFromBody(req.body.enableFraudDetection));
-  community.set('configuration.useZiggeo', truthValueFromBody(req.body.enableFraudDetection));
+  community.set('configuration.useZiggeo', truthValueFromBody(req.body.useZiggeo));
   community.set('configuration.highlightedLanguages', (req.body.highlightedLanguages && req.body.highlightedLanguages!="") ? req.body.highlightedLanguages : null);
 };
 

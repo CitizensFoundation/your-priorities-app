@@ -526,57 +526,57 @@ module.exports = (sequelize, DataTypes) => {
       });
   };
 
-
-  Video.addZiggeoVideoToContainer = (req, video) =>  {
+  Video.addZiggeoVideoToContainer = async (req, video) => {
     return await new Promise(async (resolve, reject) => {
-      if (req.params.groupdId) {
-        const group = await models.Group.findOne({
+      if (req.params.groupId) {
+        const group = await sequelize.models.Group.findOne({
           where: {
-            id: req.params.groupdId,
+            id: req.params.groupId,
           },
-          attributes: ['id']
+          attributes: ["id"],
         });
         if (group) {
-          await group.addGroupVideo(video);
+          await group.addGroupLogoVideo(video);
+          let b = 100;
         } else {
           reject("Could not find group for Ziggeo video", {
-            groupId: req.params.groupdId,
+            groupId: req.params.groupId,
           });
         }
       } else if (req.params.communityId) {
-        const community = await models.Community.findOne({
+        const community = await sequelize.models.Community.findOne({
           where: {
             id: req.params.communityId,
           },
-          attributes: ['id']
+          attributes: ["id"],
         });
         if (community) {
-          await community.addCommunityVideo(video);
+          await community.addCommunityLogoVideo(video);
         } else {
           reject("Could not find community for Ziggeo video", {
             communityId: req.params.communityId,
           });
         }
       } else if (req.params.domainId) {
-        const domain = await models.Domain.findOne({
+        const domain = await sequelize.models.Domain.findOne({
           where: {
             id: req.params.domainId,
           },
-          attributes: ['id']
+          attributes: ["id"],
         });
         if (domain) {
-          await domain.addDomainVideo(video);
+          await domain.addDomainLogoVideo(video);
         } else {
           reject("Could not find domain for Ziggeo video", {
             domainId: req.params.domainId,
           });
         }
       } else if (req.params.postId) {
-        const post = await models.Post.findOne({
+        const post = await sequelize.models.Post.findOne({
           where: {
             id: req.params.postId,
           },
-          attributes: ['id']
+          attributes: ["id"],
         });
         if (post) {
           await post.addPostVideo(video);
@@ -585,18 +585,32 @@ module.exports = (sequelize, DataTypes) => {
             postId: req.params.postId,
           });
         }
+      } else if (req.params.pointId) {
+        const point = await sequelize.models.Point.findOne({
+          where: { id: req.params.pointId },
+          attributes: ["id"],
+        });
+        if (point) {
+          await point.addPointVideo(video);
+        } else {
+          reject("Could not find point for Ziggeo video", {
+            postId: req.params.pointId,
+          });
+        }
+      } else {
+        console.error("Can't find collection for Ziggeo video");
       }
       resolve();
     });
-  }
+  };
 
   Video.addZiggeoVideo = async (req, res) => {
     try {
-      const video = await models.Video.create({
+      const video = await sequelize.models.Video.create({
         user_id: req.user.id,
         user_agent: req.useragent.source,
         ip_address: req.clientIp,
-        formats: [req.body.videoKey],
+        formats: [req.body.videoId],
         viewable: true,
         public_meta: {
           aspect: req.body.aspect,
@@ -613,7 +627,7 @@ module.exports = (sequelize, DataTypes) => {
   };
 
   Video.completeUploadAndAddToCollection = async (req, res, options) => {
-    if (req.body.useZiggeo) {
+    if (req.body.isZiggeo) {
       await Video.addZiggeoVideo(req, res);
     } else {
       sequelize.models.Video.findOne({

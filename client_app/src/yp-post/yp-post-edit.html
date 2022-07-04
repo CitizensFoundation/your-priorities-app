@@ -1304,7 +1304,7 @@
           ajax.body = {
             videoId: this.uploadedVideoId,
             appLanguage: this.language,
-            isZiggeo: window.appGlobals.isZiggeo
+            isZiggeo: window.appGlobals.useZiggeo
           };
           ajax.addEventListener('response', function (event) {
             this._finishRedirect(post);
