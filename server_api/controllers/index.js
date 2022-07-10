@@ -109,7 +109,7 @@ let sendIndex = function (req, res) {
       }
 
       if (process.env.ZIGGEO_ENABLED && req.ypDomain.configuration.ziggeoApplicationToken) {
-        indexFileData = indexFileData.replace('<head>',`<head>${ziggeoHeaders(req.ypDomain.configuration.ziggeoApplicationToken)}`);
+        indexFileData = indexFileData.replace('<html lang="en">',`<html lang="en">${ziggeoHeaders(req.ypDomain.configuration.ziggeoApplicationToken)}`);
       }
 
       if (req.ypDomain &&
