@@ -8,6 +8,7 @@ import { Chart, registerables } from 'chart.js';
 
 import './yp-visitors-chart.js';
 import './yp-pages-chart.js';
+import './yp-bounce-rate-chart.js';
 
 @customElement('yp-community-marketing')
 export class YpCommunityMarketing extends YpAdminPage {
@@ -58,6 +59,13 @@ export class YpCommunityMarketing extends YpAdminPage {
                       .collection="${this.collection}"
                       .collectionId="${this.collectionId}"
                     ></yp-pages-chart>
+
+                    <div class="header nextHeader">Bounce rate Chart</div>
+                    <yp-bounce-rate-chart
+                      .collection="${this.collection}"
+                      .collectionId="${this.collectionId}"
+                    ></yp-bounce-rate-chart>
+
                   `
                 : nothing}
             </div>

@@ -18,7 +18,7 @@ export class YpVisitorsChart extends YpBaseVisualization {
 
     setTimeout(() => {
       this.updateParam('period', '7d');
-    }, 30300);
+    }, 4000);
   }
 
   get chartOptions() {
