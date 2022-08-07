@@ -109,7 +109,17 @@ let sendIndex = function (req, res) {
       }
 
       if (process.env.ZIGGEO_ENABLED && req.ypDomain.configuration.ziggeoApplicationToken) {
-        indexFileData = indexFileData.replace('<html lang="en">',`<html lang="en">${ziggeoHeaders(req.ypDomain.configuration.ziggeoApplicationToken)}`);
+        indexFileData = indexFileData.replace(
+          '<html lang="en">',
+          `<html lang="en">${ziggeoHeaders(req.ypDomain.configuration.ziggeoApplicationToken)}`
+        );
+      }
+
+      if (req.ypDomain.configuration && req.ypDomain.configuration.preloadCssUrl) {
+        indexFileData = indexFileData.replace(
+          '<html lang="en">',
+          `<html lang="en"><link rel="stylesheet" href="${req.ypDomain.configuration.preloadCssUrl}">`
+        );
       }
 
       if (req.ypDomain &&
@@ -121,7 +131,7 @@ let sendIndex = function (req, res) {
         indexFileData = indexFileData.replace('XplcX', '');
       }
 
-        if (req.hostname) {
+      if (req.hostname) {
         if (req.hostname.indexOf('betrireykjavik.is') > -1) {
           res.send(replaceForBetterReykjavik(indexFileData));
         } else if (req.hostname.indexOf('betraisland.is') > -1) {

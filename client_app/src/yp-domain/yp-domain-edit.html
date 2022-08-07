@@ -295,6 +295,15 @@
                         checked$="{{domain.configuration.forceSecureSamlEmployeeLogin}}">[[t('forceSecureSamlEmployeeLogin')]]
         </paper-checkbox>
 
+        <paper-input id="preloadCssUrl"
+                     name="preloadCssUrl"
+                     type="text"
+                     label="Preload CSS URL"
+                     value="{{domain.configuration.preloadCssUrl}}"
+                     maxlength="256"
+                     char-counter class="mainInput">
+        </paper-input>
+
         <div class="layout vertical">
           <paper-checkbox name="downloadFacebookImagesForUser" checked$="{{domain.configuration.downloadFacebookImagesForUser}}">[[t('downloadFacebookImagesForUser')]]</paper-checkbox>
           <paper-checkbox name="disableNameAutoTranslation" checked$="{{domain.configuration.disableNameAutoTranslation}}">[[t('disableNameAutoTranslation')]]</paper-checkbox>

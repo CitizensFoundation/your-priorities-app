@@ -339,7 +339,7 @@
                                   horizontal-align="right" id="shareButton"
                                   whatsapp="[[post.Group.configuration.allowWhatsAppSharing]]"
                                   title$="[[t('post.shareInfo')]]" facebook="" email=""
-                                  twitter="" popup="" url="[[fullPostUrl]]"></paper-share-button>
+                                  twitter="" popup-enabled url="[[fullPostUrl]]"></paper-share-button>
             </div>
             <template is="dom-if" if="[[post.Group.configuration.customRatings]]">
               <yp-post-ratings-info class="customRatings" post="[[post]]"></yp-post-ratings-info>

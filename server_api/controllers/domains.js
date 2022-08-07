@@ -794,6 +794,8 @@ router.put('/:id', auth.can('edit domain'), function(req, res) {
       domain.set('configuration.samlLoginButtonUrl', (req.body.samlLoginButtonUrl && req.body.samlLoginButtonUrl!="") ? req.body.samlLoginButtonUrl : null);
       domain.set('configuration.customSAMLErrorHTML', (req.body.customSAMLErrorHTML && req.body.customSAMLErrorHTML!="") ? req.body.customSAMLErrorHTML : null);
 
+      domain.set('configuration.preloadCssUrl', (req.body.preloadCssUrl && req.body.preloadCssUrl!="") ? req.body.preloadCssUrl : null);
+
       domain.set('configuration.plausibleDataDomains', (req.body.plausibleDataDomains && req.body.plausibleDataDomains!="") ? req.body.plausibleDataDomains : null);
       domain.set('configuration.ziggeoApplicationToken', (req.body.ziggeoApplicationToken && req.body.ziggeoApplicationToken!="") ? req.body.ziggeoApplicationToken : null);
 
