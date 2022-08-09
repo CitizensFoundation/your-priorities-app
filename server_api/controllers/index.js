@@ -60,7 +60,7 @@ let replaceForSmarterNJ = function (data) {
 };
 
 let replaceForCommunityFund = function (data) {
-  data = data.replace(/XappNameX/g, "Community Fund");
+  data = data.replace(/XappNameX/g, "The National Lottery Community Fund");
   data = data.replace(/XdescriptionX/g, "Now is the time for a conversation about how The National Lottery Community Fund can best support UK communities to prosper and thrive.");
   return data.replace(/XmanifestPathX/g, "manifest_community_fund");
 };
