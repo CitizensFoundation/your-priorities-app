@@ -59,6 +59,12 @@ let replaceForSmarterNJ = function (data) {
   return data.replace(/XmanifestPathX/g, "manifest_smarternj");
 };
 
+let replaceForCommunityFund = function (data) {
+  data = data.replace(/XappNameX/g, "Community Fund");
+  data = data.replace(/XdescriptionX/g, "Now is the time for a conversation about how The National Lottery Community Fund can best support UK communities to prosper and thrive.");
+  return data.replace(/XmanifestPathX/g, "manifest_community_fund");
+};
+
 let replaceFromEnv = function (data) {
   data = data.replace(/XappNameX/g, process.env.YP_INDEX_APP_NAME ? process.env.YP_INDEX_APP_NAME : "Your Priorities");
   data = data.replace(/XdescriptionX/g, process.env.YP_INDEX_DESCRIPTION ? process.env.YP_INDEX_DESCRIPTION : "Citizen participation application");
@@ -138,6 +144,8 @@ let sendIndex = function (req, res) {
           res.send(replaceForBetterIceland(indexFileData));
         } else if (req.hostname.indexOf('smarter.nj.gov') > -1) {
           res.send(replaceForSmarterNJ(indexFileData));
+        } else if (req.hostname.indexOf('puttingcommunitiesfirst.org.uk') > -1) {
+          res.send(replaceForCommunityFund(indexFileData));
         } else if (req.hostname.indexOf('parliament.scot') > -1) {
           res.send(replaceForParlScot(indexFileData));
         } else if (req.hostname.indexOf('ypus.org') > -1) {
