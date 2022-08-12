@@ -1,4 +1,9 @@
 {
+  "upload": "Hlaða upp",
+  "videoFormat": "Myndbandsform",
+  "ziggeoApplicationToken": "Ziggeo Application Token",
+  "useZiggeo": "Nota Ziggeo Media",
+  "anonymousAskRegistrationQuestions": "Spyrja innskráningaspurninga fyrir nafnlausa",
   "customFilterText": "Texti fyrir síu",
   "orderGroupsByRandom": "Raða hópum af handahófi",
   "customCategoryQuestionText": "Texti fyrir spurningu um flokk",
