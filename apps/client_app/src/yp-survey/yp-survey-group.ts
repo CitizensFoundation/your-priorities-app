@@ -167,7 +167,6 @@ export class YpSurveyGroup extends YpBaseElement {
               `
             : html`
                 <div class="surveyCompleted layout vertical center-center">
-                  ${this.t('thankYouForCompletingTheSurvey')}
                   ${this.surveyGroup.configuration.customThankYouTextNewPosts
                     ? html`
                         <yp-magic-text

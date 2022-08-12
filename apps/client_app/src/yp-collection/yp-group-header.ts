@@ -18,6 +18,17 @@ export class YpGroupHeader extends YpCollectionHeader {
           padding: 8px;
           margin-top: 16px;
         }
+
+        @media (max-width: 960px) {
+          .urlToReviewButton {
+              color: #FFF;
+              background-color: var(--accent-color, #000);
+              padding: 8px;
+              margin-top: 0;
+              margin-bottom: 16px;
+          }
+        }
+
       `,
     ];
   }
