@@ -44,6 +44,15 @@
         @apply --layout-flex;
       }
 
+      .optionsButtons {
+        margin-top: 24px;
+      }
+
+      .uploadFileButton {
+        width: 180px;
+        margin-bottom: 20px;
+      }
+
       .recording {
         color: #f00;
         animation-name: pulse;
@@ -165,6 +174,39 @@
       </div>
     </paper-dialog>
 
+    <paper-dialog id="optionsDialog" modal>
+      <div class="layout vertical center-center">
+        <div class="layout vertical center-center optionsButtons">
+          <div class="layout horizontal center-center">
+            <paper-button raised dialog-confirm class="uploadFileButton" on-tap="_openRecorderDialog">
+              <iron-icon icon="fiber-manual-record"></iron-icon>
+              <div class="buttonText">[[t('record')]]</div>
+            </paper-button>
+          </div>
+          <div class="layout horizontal center-center">
+            <paper-button raised dialog-confirm class="uploadFileButton" on-tap="_uploadFile">
+              <iron-icon icon="file-upload"></iron-icon>
+              <div class="buttonText">[[t('uploadFile')]]</div>
+            </paper-button>
+          </div>
+        </div>
+        <div class="videoAspectDescription">[[t('videoFormat')]]</div>
+        <div>
+          <paper-radio-group
+            name="aspect"
+            hidden$="[[audioRecording]]"
+            class="aspect layout horizontal wrap"
+            selected="{{videoAspect}}">
+            <paper-radio-button name="landscape">landscape</paper-radio-button>
+            <paper-radio-button name="portrait">portrait</paper-radio-button>
+          </paper-radio-group>
+        </div>
+        <div class="layout horizontal center-center">
+          <paper-button dialog-dismiss>[[t('cancel')]]</paper-button>
+        </div>
+      </div>
+    </paper-dialog>
+
     <paper-dialog id="dialog" modal audio-recording$="[[audioRecording]]">
       <div class="layout vertical no-padding mainContainer">
         <template is="dom-if" if="[[videoRecording]]">
@@ -194,22 +236,6 @@
             </paper-button>
           </div>
 
-          <span hidden$="[[isRecording]]">
-            <div class="layout horizontal">
-              <paper-button id="uploadFileButton" class="uploadFileButton" on-tap="_uploadFile" hidden$="[[recordedData]]">
-                <iron-icon icon="file-upload"></iron-icon>
-                <div class="buttonText uploadFileText">[[t('uploadFile')]]</div>
-              </paper-button>
-              <paper-radio-group
-                name="aspect"
-                hidden$="[[audioRecording]]"
-                class="aspect layout horizontal wrap"
-                selected="{{videoAspect}}">
-                <paper-radio-button name="landscape">landscape</paper-radio-button>
-                <paper-radio-button name="portrait">portrait</paper-radio-button>
-              </paper-radio-group>
-            </div>
-          </span>
           <paper-button on-tap="_sendBack" class="actionButton" hidden$="[[!recordedData]]">
             <iron-icon icon="send"></iron-icon>
             <div class="buttonText">[[t('send')]]</div>
@@ -387,7 +413,7 @@
         }
       }
 
-      _close () {
+      _closeMediaStream() {
         if (this.mediaStream) {
           this.mediaStream.getTracks().forEach(function (track) {
             track.stop();
@@ -398,6 +424,10 @@
           this.surfer.destroy();
         }
         this.set('previewActive', false);
+      }
+
+      _close () {
+        this._closeMediaStream();
         this.$.dialog.close();
       }
 
@@ -504,40 +534,44 @@
         this.set('uploadFileFunction', options.uploadFileFunction);
         this.$$("#secondsLeft").className = "";
 
-        setTimeout(function () {
-          if (this.videoRecording) {
-            var videoElement = this.shadowRoot.querySelector('#videoRecorder');
-            var videoPreviewElement = this.shadowRoot.querySelector('#videoPreviewer');
-            var width, height;
+        if (this.videoRecording) {
+          this.$.optionsDialog.open()
+        } else if (this.audioRecording) {
+          setTimeout(function () {
+            this._openRecorderDialog();
+          }.bind(this));
+        }
+    }
 
-            if (window.innerHeight>window.innerWidth) {
-              this.set('videoSettings', { width: 720, height: 1280 } );
-              height = Math.min(1280, Math.abs(window.innerHeight)).toFixed();
-              width = Math.min(720, Math.abs(height*0.5625)).toFixed();
-              console.info("Portrait - width: "+width+" height: "+height+" video width: "+720+" height: 1280");
-            } else {
-              this.set('videoSettings', { width: 1280, height: 720 });
-              var scaleFactor = 0.8;
-              if (window.innerHeight<700)
-                scaleFactor = 0.7;
-              if (window.innerHeight<500)
-                scaleFactor = 0.6;
-              height = Math.min(720, Math.abs(window.innerHeight*scaleFactor)).toFixed();
-              width = Math.min(1280, Math.abs(height*1.77777777778)).toFixed();
-              console.info("Landscape - width: "+width+" height: "+height);
-            }
-            videoElement.style.height = height + 'px';
-            videoElement.style.width = width + 'px';
-            videoPreviewElement.style.height = (height*0.8).toFixed() + 'px';
-            videoPreviewElement.style.width = (width*0.8).toFixed() + 'px';
-            setTimeout(function () {
-              this.$.dialog.open();
-            }.bind(this));
-          } else if (this.audioRecording) {
-            setTimeout(function () {
-              this.$.dialog.open();
-            }.bind(this));
+      _openRecorderDialog () {
+        if (this.videoRecording) {
+          var videoElement = this.shadowRoot.querySelector('#videoRecorder');
+          var videoPreviewElement = this.shadowRoot.querySelector('#videoPreviewer');
+          var width, height;
+
+          if (window.innerHeight>window.innerWidth) {
+            this.set('videoSettings', { width: 720, height: 1280 } );
+            height = Math.min(1280, Math.abs(window.innerHeight)).toFixed();
+            width = Math.min(720, Math.abs(height*0.5625)).toFixed();
+            console.info("Portrait - width: "+width+" height: "+height+" video width: "+720+" height: 1280");
+          } else {
+            this.set('videoSettings', { width: 1280, height: 720 });
+            var scaleFactor = 0.8;
+            if (window.innerHeight<700)
+              scaleFactor = 0.7;
+            if (window.innerHeight<500)
+              scaleFactor = 0.6;
+            height = Math.min(720, Math.abs(window.innerHeight*scaleFactor)).toFixed();
+            width = Math.min(1280, Math.abs(height*1.77777777778)).toFixed();
+            console.info("Landscape - width: "+width+" height: "+height);
           }
+          videoElement.style.height = height + 'px';
+          videoElement.style.width = width + 'px';
+          videoPreviewElement.style.height = (height*0.8).toFixed() + 'px';
+          videoPreviewElement.style.width = (width*0.8).toFixed() + 'px';
+        }
+        setTimeout(function () {
+          this.$.dialog.open();
         }.bind(this));
 
         setTimeout(function () {
@@ -660,7 +694,6 @@
             } else {
               console.error("Can't find stream");
               this.$.noDevices.open();
-              this.$$("#uploadFileButton").style.color = "#F00";
             }
           }.bind(this));
 
@@ -697,7 +730,6 @@
             } else {
               console.error("Can't find stream");
               this.$.noDevices.open();
-              this.$$("#uploadFileButton").style.color = "#F00";
             }
           }.bind(this));
 
