@@ -6,6 +6,8 @@
 <link rel="import" href="../yp-ajax/yp-ajax.html">
 <link rel="import" href="../yp-behaviors/access-helpers.html">
 
+<script type="text/javascript" src="fp.min.js"></script>
+
 <dom-module id="yp-app-user">
   <template>
     <style include="iron-flex iron-flex-alignment">
@@ -148,6 +150,57 @@
           hasIssuedLogout: {
             type: Boolean,
             value: false
+          },
+
+          browserFingerprint: {
+            type: String,
+            value: "-1"
+          },
+
+          browserFingerprintConfidence: {
+            type: Number,
+            value: -1.0
+          }
+        },
+
+        getBrowserId: function () {
+          var currentId = localStorage.getItem("yp-brid");
+
+          if (!currentId) {
+            currentId = this._generateRandomString(32);
+            localStorage.setItem("yp-brid", currentId);
+          }
+
+          return currentId;
+        },
+
+        _setupBrowserFingerprint: function () {
+          try {
+            var fpPromise = FingerprintJS.load({
+              monitoring: false
+            });
+
+            fpPromise
+              .then(fp => fp.get())
+              .then(result => {
+                this.browserFingerprint = result.visitorId;
+                this.browserFingerprintConfidence = result.confidence.score;
+              })
+          } catch(error) {
+            console.error(error);
+          }
+        },
+
+        //TODO: Make into module in V8
+        _generateRandomString: function (length) {
+          if (!length) length = 36;
+          if (window.crypto) {
+            var a = window.crypto.getRandomValues(new Uint32Array(3)),
+              token = '';
+            for (var i = 0, l = a.length; i < l; i++) token += a[i].toString(36);
+            return token;
+          } else {
+            return (Math.random() * new Date().getTime()).toString(36).replace( /\./g , '');
           }
         },
 
@@ -415,6 +468,10 @@
           }
 
           this.groupCurrentVoteCountIndex = {};
+
+          this.async(function () {
+            this._setupBrowserFingerprint();
+          }, 2500);
         },
 
         cancelLoginPolling: function () {
@@ -716,7 +773,10 @@
             !user.notLoggedIn &&
             window.appGlobals.registrationQuestionsGroup &&
             !user.hasRegistrationAnswers &&
-            !window.appGlobals.currentAnonymousUser) {
+            (!window.appGlobals.currentAnonymousUser || (
+              window.appGlobals.currentAnonymousUser &&
+              window.appGlobals.registrationQuestionsGroup.configuration.anonymousAskRegistrationQuestions
+            ))) {
             Polymer.dom(document).querySelector('yp-app').getDialogAsync("registrationQuestions", function (dialog) {
               dialog.open(window.appGlobals.registrationQuestionsGroup);
             }.bind(this));
@@ -730,9 +790,7 @@
             console.info("Remove user session");
             this.removeUserSession();
           } else if (user && user.name && user.profile_data && user.profile_data.isAnonymousUser) {
-            console.info("Logging in anon user");
             this.async(function () {
-              console.info("Logging in anon user 2");
               if (window.appGlobals.currentAnonymousGroup) {
                 this.setLoggedInUser(user);
               } else {

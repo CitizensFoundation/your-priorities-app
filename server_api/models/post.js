@@ -6,6 +6,7 @@ const log = require('../utils/logger');
 const _ = require('lodash');
 
 module.exports = (sequelize, DataTypes) => {
+
   const Post = sequelize.define("Post", {
     content_type: { type: DataTypes.INTEGER, allowNull: false },
     name: { type: DataTypes.STRING, allowNull: false },
@@ -193,6 +194,14 @@ module.exports = (sequelize, DataTypes) => {
     tableName: 'posts'
   });
 
+  Post.defaultAttributesPublic = [
+    'id','content_type','name','description','status',
+    'deleted','status_changed_at','official_status_changed_at',
+    'counter_endorsements_up','counter_endorsements_down','counter_points',
+    'public_data','position','location','cover_media_type','legacy_post_id',
+    'language'
+  ]
+
   Post.associate = (models) => {
     Post.hasMany(models.Point);
     Post.hasMany(models.Endorsement);
@@ -355,7 +364,7 @@ module.exports = (sequelize, DataTypes) => {
           this.set('data.moderation.lastReportedBy', []);
           if ((source==='user' || source==='fromUser') && !this.data.moderation.toxicityScore) {
             log.info("process-moderation post toxicity on manual report");
-            queue.create('process-moderation', { type: 'estimate-post-toxicity', postId: this.id }).priority('high').removeOnComplete(true).save();
+            queue.add('process-moderation', { type: 'estimate-post-toxicity', postId: this.id }, 'high');
           }
         }
         this.set('data.moderation.lastReportedBy',
@@ -516,8 +525,8 @@ module.exports = (sequelize, DataTypes) => {
           });
           pointRevision.save().then(() => {
             log.info("process-moderation point toxicity after post and point has been saved");
-            queue.create('process-moderation', { type: 'estimate-point-toxicity', pointId: point.id }).priority('high').removeOnComplete(true).save();
-            queue.create('process-similarities', { type: 'update-collection', pointId: point.id }).priority('low').removeOnComplete(true).save();
+            queue.add('process-moderation', { type: 'estimate-point-toxicity', pointId: point.id }, 'high');
+            queue.add('process-similarities', { type: 'update-collection', pointId: point.id }, 'low');
 
             post.updateAllExternalCounters(req, 'up', 'counter_points', () => {
               post.increment('counter_points');
@@ -563,6 +572,32 @@ module.exports = (sequelize, DataTypes) => {
     }).catch( error => {
       done(error);
     })
+  }
+
+  Post.addVideosToAllActivityPosts = (activities, videos) => {
+    const postsHash = {};
+
+    for (let i=0;i<activities.length;i++) {
+      if (activities[i].Post) {
+        postsHash[activities[i].Post.id] = activities[i].Post;
+      }
+    }
+
+    for (let i=0;i<videos.length;i++) {
+      if (videos[i].PostVideos &&  videos[i].PostVideos.length>0) {
+        const postId = videos[i].PostVideos[0].id;
+        if (postsHash[postId]) {
+          if (!postsHash[postId].dataValues.PostVideos) {
+            postsHash[postId].dataValues.PostVideos = [];
+          }
+          postsHash[postId].dataValues.PostVideos.push(videos[i]);
+        } else {
+          log.error("Can't find post to add video to")
+        }
+      } else {
+        log.error("Can't find PostVideos");
+      }
+    }
   }
 
   Post.addVideosToAllPosts = (posts, videos) => {

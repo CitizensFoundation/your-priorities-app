@@ -1,0 +1,267 @@
+version: '3.9'
+
+x-minio-common: &minio-common
+  image: minio/minio
+  restart: always
+  env_file: .env
+  volumes:
+    - ./minio_data:/minio_data
+  expose:
+    - "9012"
+  environment:
+    MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+    MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+    MINIO_HTTP_TRACE: /dev/stdout
+  healthcheck:
+    interval: 30s
+    timeout: 20s
+    retries: 3
+  logging:
+    driver: "json-file"
+    options:
+      max-file: "100"
+      max-size: "25m"
+
+x-your-priorities-app-common: &your-priorities-app-common
+  build: ./your-priorities-app/
+  env_file: .env
+  restart: always
+  build:
+    context: ../../.
+    dockerfile: development/docker/your-priorities-app/Dockerfile
+  image: your-priorities-app:current
+  volumes:
+    - client-app-dev:/usr/src/your-priorities/client
+    - client-app-dist:/usr/src/your-priorities/client/build/bundle
+    - admin-app-dist:/usr/src/your-priorities/admin_app/dist
+    - analytics-app-dist:/usr/src/your-priorities/analytics_app/dist
+  command: node server_api/api_app.js
+  healthcheck:
+    test: ["CMD", "curl", "-f", "http://localhost:4242/api/users/has/AutoTranslation"]
+    interval: 30s
+    timeout: 20s
+    retries: 3
+  depends_on:
+    - db
+    - redis
+  expose:
+    - "4242"
+  environment:
+    REDIS_HOST: redis
+    REDIS_PORT: 6379
+    REDIS_PASSWORD: redisPassword
+  logging:
+    driver: "json-file"
+    options:
+      max-file: "2000"
+      max-size: "25m"
+
+x-your-priorities-worker-common: &your-priorities-worker-common
+  build: ./your-priorities-worker/
+  restart: always
+  env_file: .env
+  build:
+    context: ../../.
+    dockerfile: development/docker/your-priorities-worker/Dockerfile
+  command: node server_api/active-citizen/workers/main.js
+  logging:
+    driver: "json-file"
+    options:
+      max-file: "1000"
+      max-size: "25m"
+
+services:
+  your-priorities-app:
+    container_name: your-priorities-app
+    depends_on:
+      - db
+      - redis
+    <<: *your-priorities-app-common
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4242/api/users/has/AutoTranslation"]
+    expose:
+      - "4242"
+    ports:
+      - "4242:4242"
+    environment:
+      - PORT=4242
+      - NODE_ENV=development
+
+  your-priorities-worker:
+    container_name: your-priorities-worker
+    <<: *your-priorities-worker-common
+    environment:
+      - NODE_ENV=development
+    depends_on:
+      - db
+      - redis
+    scale: 1
+
+  your-priorities-encoder:
+    container_name: your-priorities-encoder
+    build: ./your-priorities-encoder/
+    restart: always
+    env_file: .env
+    environment:
+      - NODE_ENV=development
+    command: node out-tsc/worker.js
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "100"
+        max-size: "25m"
+
+  minio:
+    <<: *minio-common
+    command: server --address minio:9012 --console-address minio:9013 /minio_data
+    container_name: minio
+    ports:
+      - "9012:9012"
+
+    healthcheck:
+        test: ["CMD", "curl", "-f", "http://minio:9012/minio/health/live"]
+
+  ac-analytics-api:
+    container_name: ac-analytics-api
+    build: ./ac-analytics-api/
+    env_file: .env
+    restart: always
+    environment:
+      - PORT=8888
+      - HOST=ac-analytics-api
+    volumes:
+      - ./rec_models:/ac-analytics-api/rec_models
+      - ./d2v_models:/ac-analytics-api/d2v_models
+    expose:
+      - "8888"
+    ports:
+      - "8888:8792"
+    healthcheck:
+      test: ["CMD", "curl", "-H","X-API-KEY: ${AC_ANALYTICS_KEY}","-f", "http://localhost:8888/api/v1/healthcheck"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "100"
+        max-size: "25m"
+
+  ac-analytics-worker:
+    container_name: ac-analytics-worker
+    build: ./ac-analytics-worker/
+    env_file: .env
+    volumes:
+      - ./rec_models:/ac-analytics-api/rec_models
+      - ./d2v_models:/ac-analytics-api/d2v_models
+    restart: always
+    command: python3 worker.py
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "100"
+        max-size: "25m"
+
+  mc:
+    image: minio/mc:latest
+    container_name: minio_command_line
+    depends_on:
+     - minio
+    entrypoint: >
+      /bin/sh -c "
+      /usr/bin/mc config host add --quiet --api s3v4 local http://minio:9012 ${MINIO_ROOT_USER} ${MINIO_ROOT_PASSWORD};
+      /usr/bin/mc mb --quiet local/${S3_AUDIO_UPLOAD_BUCKET}/;
+      /usr/bin/mc mb --quiet local/${S3_AUDIO_PUBLIC_BUCKET}/;
+      /usr/bin/mc policy set public local/${S3_AUDIO_PUBLIC_BUCKET};
+      /usr/bin/mc mb --quiet local/${S3_VIDEO_UPLOAD_BUCKET}/;
+      /usr/bin/mc mb --quiet local/${S3_VIDEO_PUBLIC_BUCKET}/;
+      /usr/bin/mc policy set public local/${S3_VIDEO_PUBLIC_BUCKET};
+      /usr/bin/mc mb --quiet local/${S3_VIDEO_THUMBNAIL_BUCKET}/;
+      /usr/bin/mc policy set public local/${S3_VIDEO_THUMBNAIL_BUCKET};
+      /usr/bin/mc mb --quiet local/${S3_ATTACHMENTS_BUCKET}/;
+      /usr/bin/mc policy set public local/${S3_ATTACHMENTS_BUCKET};
+      /usr/bin/mc mb --quiet local/${S3_REPORTS_BUCKET}/;
+      /usr/bin/mc mb --quiet local/${S3_BUCKET}/;
+      /usr/bin/mc policy set public local/${S3_BUCKET};
+      "
+
+  mail:
+    image: bytemark/smtp
+    container_name: mail
+    restart: always
+
+  db:
+    image: postgres:13
+    container_name: postgres
+    restart: always
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=postgres
+    networks:
+      default:
+        aliases:
+          - plausible_db
+
+  clickhouse:
+    image: yandex/clickhouse-server:21.3.2.5
+    container_name: clickhouse
+    restart: always
+    volumes:
+      - event-data:/var/lib/clickhouse
+      - ./clickhouse/clickhouse-config.xml:/etc/clickhouse-server/config.d/logging.xml:ro
+      - ./clickhouse/clickhouse-user-config.xml:/etc/clickhouse-server/users.d/logging.xml:ro
+    ulimits:
+      nofile:
+        soft: 262144
+        hard: 262144
+
+  plausible:
+    image: plausible/analytics:latest
+    container_name: plausible
+    restart: always
+    command: sh -c "sleep 10 && /entrypoint.sh db createdb && /entrypoint.sh db migrate && /entrypoint.sh db init-admin && /entrypoint.sh run"
+    depends_on:
+      - db
+      - clickhouse
+      - mail
+    ports:
+      - 8000:8000
+    env_file:
+      - plausible-conf.env
+
+  redis:
+    image: redis:6.2-alpine
+    container_name: redis
+    restart: always
+    ports:
+      - '6379'
+    command: redis-server --save 20 1 --loglevel warning
+    volumes:
+      - redis:/data
+
+  elasticsearch:
+    container_name: elasticsearch
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.2
+    environment:
+      - xpack.security.enabled=false
+      - "discovery.type=single-node"
+    ports:
+      - 9200:9200
+
+volumes:
+  client-app-dist:
+  client-app-dev:
+  admin-app-dist:
+  analytics-app-dist:
+  web-root:
+  data1-1:
+  data1-2:
+  redis:
+    driver: local
+  db-data:
+    driver: local
+  event-data:
+    driver: local
+  geoip:
+    driver: local

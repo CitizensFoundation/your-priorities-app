@@ -50,6 +50,8 @@
       { htmlImport: "/styles/fonts/rostartup-font.html", fontName: 'Montserrat' },
       { htmlImport: "/styles/fonts/junges-wien-font.html", fontName: 'WienerMelange' },
       { htmlImport: "/styles/fonts/frumbjorg-font.html", fontName: 'Merriweather' },
+      { htmlImport: "/styles/fonts/tnlc-font.html", fontName: 'Trebuchet MS' },
+      { htmlImport: "/styles/fonts/tnlc-font.html", fontName: 'Trebuchet MS' }
     ],
 
     themes: [
@@ -726,10 +728,57 @@
         '--app-header-font-weight': '500',
         '--app-tags-text-color': '#17263e',
         '--app-tags-font-weight': '500',
+      },
+      {
+        name: 'TNLC',
+        '--primary-background-color': '#FAFAFA',
+        '--primary-color': '#002b57',
+        '--primary-color-200': '#002b57',
+        '--primary-color-300': '#002b57',
+        '--primary-color-400': '#002b57',
+        '--primary-color-600': '#002b57',
+        '--primary-color-700': '#002b57',
+        '--primary-color-800': '#002b57',
+        '--primary-color-900': '#002b57',
+        '--accent-color': '#e6007e',
+        '--accent-color-100': '#e6007e',
+        '--accent-color-200': '#e6007e',
+        '--accent-color-300': '#e6007e',
+        '--accent-color-400': '#e6007e',
+        '--middle-color': 'var(--primary-color-400)',
+        '--icon-general-color': '#fff',
+        '--paper-font-common-base': "{ font-family: Trebuchet MS, Courier, Georgia, Times, serif; }",
+        '--app-header-font-family': 'Trebuchet MS',
+        '--app-header-font-weight': '500',
+        '--app-tags-text-color': '#333',
+        '--app-tags-font-weight': '500',
+      },
+      {
+        name: 'TNLC - Extra',
+        '--primary-background-color': '#FAFAFA',
+        '--primary-color': '#002b57',
+        '--primary-color-200': '#002b57',
+        '--primary-color-300': '#002b57',
+        '--primary-color-400': '#002b57',
+        '--primary-color-600': '#002b57',
+        '--primary-color-700': '#002b57',
+        '--primary-color-800': '#002b57',
+        '--primary-color-900': '#002b57',
+        '--accent-color': '#e6007e',
+        '--accent-color-100': '#e6007e',
+        '--accent-color-200': '#e6007e',
+        '--accent-color-300': '#e6007e',
+        '--accent-color-400': '#e6007e',
+        '--large-button-add-color': '#00a0a5',
+        '--dialog-header-color': '#002b57',
+        '--middle-color': 'var(--primary-color-400)',
+        '--icon-general-color': '#fff',
+        '--paper-font-common-base': "{ font-family: Trebuchet MS, Courier, Georgia, Times, serif; }",
+        '--app-header-font-family': 'Trebuchet MS',
+        '--app-header-font-weight': '500',
+        '--app-tags-text-color': '#333',
+        '--app-tags-font-weight': '500',
       }
-
-
-
     ],
 
     _setupOverrideTheme: function (primary, accent, background) {
@@ -850,6 +899,7 @@
       if (this.themes[number] &&
         (this.themes[number].originalName==="wienExtra" ||
           this.themes[number].originalName==="RoStartup" ||
+          this.themes[number].originalName==="TNLC" ||
           this.themes[number].originalName==="Frumbjörg")) {
         window.appGlobals.largeFont = true;
       } else if (this.themes[number]) {

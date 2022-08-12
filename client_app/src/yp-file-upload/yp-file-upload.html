@@ -493,7 +493,7 @@ Example:
       }
       if (this.videoUpload) {
         this.set('accept','video/*');
-        this.set('capture', true);
+        this.set('capture', false);
       } else if (this.audioUpload) {
         this.set('accept','audio/*');
         this.set('capture', true);
@@ -537,39 +537,14 @@ Example:
       }
     },
 
-    _hasRecorderApp: function () {
-      var isIOs = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-      var isAndroid = /Android/.test(navigator.userAgent) && !window.MSStream;
-      var isEdge = /Edge/.test(navigator.userAgent);
-      if (this.videoUpload) {
-        if ((isIOs || isAndroid) && !isEdge) {
-          return true;
-        } else {
-          return false;
-        }
-      } else if (this.audioUpload) {
-        return false;
-      } else {
-        return true;
-      }
-    },
-
     _fileClick: function() {
-      var isFirefox = /firefox/.test(navigator.userAgent.toLowerCase()) && !window.MSStream;
-      var rawChrome = navigator.userAgent.match(/Chrom(e|ium)\/([0-9]+)\./);
-      var chromeVersion = rawChrome ? parseInt(rawChrome[2], 10) : false;
-      var isSamsungBrowser = /SamsungBrowser/.test(navigator.userAgent);
-      var isEdge = /Edge/.test(navigator.userAgent);
-      var isIOs = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-
-      if (this._hasRecorderApp()) {
-        this._openFileInput();
+      if (window.appGlobals.useZiggeo &&
+          this.videoUpload) {
+        this._openZiggeo();
+      } else if (this.videoUpload || this.audioUpload) {
+        this._openMediaRecorder();
       }  else {
-        if (!isEdge && ((isIOs && this.audioUpload) || isFirefox || (chromeVersion && !isSamsungBrowser))) {
-          this._openMediaRecorder();
-        } else {
-          this._openFileInput();
-        }
+        this._openFileInput();
       }
     },
 
@@ -583,6 +558,14 @@ Example:
         evt.initEvent("click", true, false);
         elem.dispatchEvent(evt);
       }
+    },
+
+    _openZiggeo: function () {
+      window.appGlobals.activity('open', 'ziggeo');
+      Polymer.dom(document).querySelector('yp-app').getZiggeoAsync(function (dialog) {
+        dialog.open({ callbackElement: this,
+                      timelimit: this.uploadLimitSeconds });
+      }.bind(this));
     },
 
     _openMediaRecorder: function () {

@@ -90,6 +90,7 @@ router.get('/:imageId/comments', auth.can('view image'), function(req, res) {
     include: [
       {
         model: models.PointRevision,
+        attributes: models.PointRevision.defaultAttributesPublic,
         include: [
           {
             model: models.User,
@@ -183,6 +184,7 @@ router.get('/:postId/user_images', auth.can('view post'), function(req, res) {
       {
         model: models.Image,
         as: 'PostUserImages',
+        attributes: models.Image.defaultAttributesPublic,
         required: true,
         where: {
           deleted: false
@@ -259,10 +261,12 @@ router.put('/:postId/user_images', auth.can('add post user images'), function(re
       where: {
         id: req.body.oldUploadedPostUserImageId
       },
+      attributes: models.Image.defaultAttributesPublic,
       include: [
         {
           model: models.Post,
-          as: 'PostUserImages'
+          as: 'PostUserImages',
+          attributes: models.Image.defaultAttributesPublic
         }
       ]
     }).then(function (image) {

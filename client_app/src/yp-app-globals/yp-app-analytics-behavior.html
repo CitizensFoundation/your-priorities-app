@@ -17,6 +17,11 @@
         value: null
       },
 
+      plausibleDomains: {
+        type: String,
+        value: null
+      },
+
       communityTrackerIds: {
         type: Object,
         value: {}
@@ -112,6 +117,14 @@
 
       if (a!='sendOnlyCommunity') {
         this.facebookPixelTracking(b, c);
+      }
+
+      if (this.plausibleDomains && window.plausible) {
+        if (b==="pageview") {
+          //window.plausible(`Pageview`, c);
+        } else {
+          window.plausible(`${c} - ${d}`);
+        }
       }
     },
 

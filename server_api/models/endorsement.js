@@ -6,7 +6,8 @@ module.exports = function(sequelize, DataTypes) {
     status: { type: DataTypes.STRING, allowNull: false },
     ip_address: { type: DataTypes.STRING, allowNull: false },
     user_agent: { type: DataTypes.TEXT, allowNull: false },
-    deleted: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false }
+    deleted: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
+    data: { type: DataTypes.JSONB, allowNull: true}
   }, {
 
     underscored: true,

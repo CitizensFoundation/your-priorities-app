@@ -37,6 +37,10 @@
         line-height: 1.5;
       }
 
+      .question[less-margin-top] {
+         margin-top: 24px;
+      }
+
       .question[use-small-font] {
         font-size: 16px;
       }
@@ -184,6 +188,10 @@
         line-height: 1.5;
       }
 
+      .header[smaller-font] {
+        font-size: 24px;
+      }
+
       .header[is-first] {
         background-color: var(--accent-color);
         color: #FFF;
@@ -221,6 +229,10 @@
       @media (max-width: 600px) {
         .header {
           font-size: 22px;
+        }
+
+        .header[smaller-font] {
+          font-size: 20px;
         }
 
         .header[is-first] {
@@ -343,6 +355,7 @@
     <template is="dom-if" if="[[_isTextareaLong(question)]]">
       <div class="question general longQuestion" has-focus$="[[longFocus]]" has-content$="[[question.value]]"
            is-from-new-post$="[[isFromNewPost]]"
+           less-margin-top$="[[question.lessMarginTop]]"
            use-small-font$="[[useSmallFont]]" id="structuredQuestionIntro_[[index]]"
            inner-h-t-m-l="[[_getTextWithIndex(question)]]"></div>
 
@@ -376,7 +389,10 @@
     </template>
 
     <template is="dom-if" if="[[_isTextHeader(question)]]">
-      <div class="header" is-not-first$="[[index]]" is-first$="[[!index]]">[[question.text]]</div>
+      <div class="header"
+        is-not-first$="[[index]]"
+        smaller-font$="[[question.smallerFont]]"
+        is-first$="[[!index]]">[[question.text]]</div>
     </template>
 
     <template is="dom-if" if="[[_isTextDescription(question)]]">

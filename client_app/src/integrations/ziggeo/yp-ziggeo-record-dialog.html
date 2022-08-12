@@ -1,0 +1,96 @@
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+
+<dom-module id="yp-ziggeo-record-dialog">
+  <template>
+
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'yp-ziggeo-record-dialog',
+
+      properties: {
+        recorder: {
+          type: Object,
+        },
+
+        callbackElement: {
+          type: Object
+        },
+
+        timelimit: {
+          type: Number,
+          value: undefined
+        },
+      },
+
+      _createRecorder: function () {
+        if (!this.recorder) {
+          ziggeoApp.on("ready", function() {
+            var videoWidth = this._videoWidth();
+            var videoHeight = this._videoHeight()
+            var uiWidth = Math.min(window.innerWidth, 1280)
+            var uiHeight = Math.min(window.innerHeight-64, 780)
+            var orientation = window.innerHeight < window.innerWidth ? "landscape" : "portrait"
+            this.recorder = new ZiggeoApi.V2.PopupRecorder({
+                element: this.$.ziggeoRecorder,
+                attrs: {
+                    recordingwidth: videoWidth,
+                    recordingheight: videoHeight,
+                    height: uiHeight,
+                    width: uiWidth,
+                    theme: "modern",
+                    themecolor: "red",
+                    orientation: orientation,
+                    timelimit: this.timelimit,
+                    allowcancel: true
+                  }
+            });
+
+            this.recorder.on("processed",  this._recordingFinished.bind(this));
+
+            this.recorder.activate();
+          }.bind(this));
+        }
+      },
+
+      _videoHeight: function() {
+        if (window.innerHeight < window.innerWidth) {
+          return 720;
+        } else {
+          return 1280;
+        }
+      },
+
+      _videoWidth: function () {
+        if (window.innerHeight < window.innerWidth) {
+          return 1280;
+        } else {
+          return 720;
+        }
+      },
+
+      _recordingFinished: function (event, detail) {
+        this.callbackElement.fire('success', {
+          videoId: this.recorder.get('video')
+        });
+        this.async(function (){
+          this.recorder = undefined;
+        });
+        this.recorder.destroy();
+      },
+
+      open: function (options) {
+        this.set('callbackElement', options.callbackElement);
+        if (options.timelimit) {
+          this.set('timelimit', parseInt(options.timelimit));
+        }
+        debugger;
+        this._createRecorder();
+      },
+    });
+  </script>
+</dom-module>

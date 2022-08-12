@@ -130,9 +130,8 @@
 
     <template is="dom-if" if="[[surveyCompleted]]">
       <div class="surveyCompleted layout vertical center-center">
-        [[t('thankYouForCompletingTheSurvey')]]
         <template is="dom-if" if="[[surveyGroup.configuration.customThankYouTextNewPosts]]">
-          <yp-magic-text id="customThankYouTextNewPostsId" hidden content-id="[[surveyGroup.id]]" text-only content="[[surveyGroup.configuration.customThankYouTextNewPosts]]"
+          <yp-magic-text id="customThankYouTextNewPostsId" content-id="[[surveyGroup.id]]" text-only content="[[surveyGroup.configuration.customThankYouTextNewPosts]]"
                          content-language="[[surveyGroup.language]]"
                          text-type="customThankYouTextNewPosts"></yp-magic-text>
         </template>

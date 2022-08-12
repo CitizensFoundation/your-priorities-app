@@ -1,6 +1,7 @@
 "use strict";
 
 const async = require("async");
+const queue = require('../active-citizen/workers/queue');
 
 module.exports = (sequelize, DataTypes) => {
   const Group = sequelize.define("Group", {
@@ -119,16 +120,16 @@ module.exports = (sequelize, DataTypes) => {
   Group.ACCESS_SECRET = 2;
   Group.ACCESS_OPEN_TO_COMMUNITY = 3;
 
-  Group.defaultPublicAttributes = ['id','name','access','google_analytics_code','is_group_folder','in_group_folder_id',
+  Group.defaultAttributesPublic = ['id','name','access','google_analytics_code','is_group_folder','in_group_folder_id',
     'status', 'weight','theme_id','community_id','created_at','updated_at','configuration','language','objectives','counter_posts',
     'counter_points','counter_users','user_id'];
 
   Group.addUserToGroupIfNeeded = (groupId, req, done) => {
     sequelize.models.Group.findOne({
       where: { id: groupId },
-      attributes: ['id','community_id','counter_users']
+      attributes: ['id','community_id','counter_users','name']
     }).then((group) => {
-      if (group) {
+      if (group && group.name!=='hidden_public_group_for_domain_level_points') {
         group.hasGroupUser(req.user).then((result) => {
           if (!result) {
             async.parallel([
@@ -301,10 +302,10 @@ module.exports = (sequelize, DataTypes) => {
           this.set('data.moderation.lastReportedBy', []);
           if ((source==='user' || source==='fromUser') && !this.data.moderation.toxicityScore) {
             log.info("process-moderation post toxicity on manual report");
-            queue.create('process-moderation', {
+            queue.add('process-moderation', {
               type: 'estimate-collection-toxicity',
               collectionId: this.id,
-              collectionType: 'group' }).priority('high').removeOnComplete(true).save();
+              collectionType: 'group' }, 'high');
           }
         }
         this.set('data.moderation.lastReportedBy',

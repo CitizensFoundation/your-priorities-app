@@ -3,6 +3,7 @@
 const async = require('async');
 const queue = require('../active-citizen/workers/queue');
 const log = require('../utils/logger');
+const _ = require("lodash");
 
 const findCommunityAndDomainForPointFromGroup = (sequelize, options, callback) => {
   sequelize.models.Group.findOne({
@@ -272,6 +273,12 @@ module.exports = (sequelize, DataTypes) => {
     tableName: 'points',
   });
 
+  Point.defaultAttributesPublic = [
+    'id','name','content_type','content','status','value',
+    'website','deleted','counter_revisions','counter_quality_up',
+    'embed_data', 'counter_quality_down','public_data','language'
+  ];
+
   Point.associate = (models) => {
     Point.belongsTo(sequelize.models.PostStatusChange, { foreignKey: 'post_status_change_id'});
     Point.belongsTo(sequelize.models.Post, { foreignKey: 'post_id'});
@@ -364,12 +371,17 @@ module.exports = (sequelize, DataTypes) => {
       },
 
       (seriesCallback) => {
+        options.data = {
+          browserId: req.body.pointBaseId,
+          browserFingerprint: req.body.pointValCode,
+          browserFingerprintConfidence: req.body.pointConf
+        };
         sequelize.models.Point.build(options).save().then((point) => {
           options.point_id = point.id;
           const pointRevision = sequelize.models.PointRevision.build(options);
           pointRevision.save().then(() => {
             log.info("process-moderation point toxicity on comment");
-            queue.create('process-moderation', { type: 'estimate-point-toxicity', pointId: point.id }).priority('high').removeOnComplete(true).save();
+            queue.add('process-moderation', { type: 'estimate-point-toxicity', pointId: point.id }, 'high');
             sequelize.models.AcActivity.createActivity({
               type: 'activity.point.comment.new',
               userId: options.user_id,
@@ -392,6 +404,67 @@ module.exports = (sequelize, DataTypes) => {
       callback(error);
     });
   };
+
+  //TODO Refactor duplicate code with Post
+  Point.getVideosForPoints = (pointIds, done) => {
+    sequelize.models.Video.findAll({
+      attributes:  ['id','formats','viewable','created_at','public_meta'],
+      include: [
+        {
+          model: sequelize.models.Image,
+          as: 'VideoImages',
+          attributes:["formats",'created_at'],
+          required: false
+        },
+        {
+          model: sequelize.models.Point,
+          where: {
+            id: {
+              $in: pointIds
+            }
+          },
+          as: 'PointVideos',
+          required: true,
+          attributes: ['id'],
+
+        }
+      ],
+      order: [
+        [ { model: sequelize.models.Image, as: 'VideoImages' }, 'created_at', 'asc' ]
+      ]
+    }).then(videos => {
+      videos = _.orderBy(videos, ['created_at'],['desc']);
+      done(null, videos);
+    }).catch( error => {
+      done(error);
+    })
+  }
+
+  Point.addVideosToAllActivityPoints = (activities, videos) => {
+    const pointsHash = {};
+
+    for (let i=0;i<activities.length;i++) {
+      if (activities[i].Point) {
+        pointsHash[activities[i].Point.id] = activities[i].Point;
+      }
+    }
+
+    for (let i=0;i<videos.length;i++) {
+      if (videos[i].PointVideos &&  videos[i].PointVideos.length>0) {
+        const pointId = videos[i].PointVideos[0].id;
+        if (pointsHash[pointId]) {
+          if (!pointsHash[pointId].dataValues.PointVideos) {
+            pointsHash[pointId].dataValues.PointVideos = [];
+          }
+          pointsHash[pointId].dataValues.PointVideos.push(videos[i]);
+        } else {
+          log.error("Can't find point to add video to")
+        }
+      } else {
+        log.error("Can't find PointVideos");
+      }
+    }
+  }
 
   Point.createNewsStory = (req, options, callback) => {
     options.content = options.point.content;
@@ -421,7 +494,7 @@ module.exports = (sequelize, DataTypes) => {
         pointRevision.save().then(() => {
           log.info("process-moderation point toxicity on news story");
           if (!options.subType || options.subType!="bulkOperation") {
-            queue.create('process-moderation', { type: 'estimate-point-toxicity', pointId: point.id }).priority('high').removeOnComplete(true).save();
+            queue.add('process-moderation', { type: 'estimate-point-toxicity', pointId: point.id }, 'high');
           }
           sequelize.models.AcActivity.createActivity({
             type: 'activity.point.newsStory.new',
@@ -453,6 +526,8 @@ module.exports = (sequelize, DataTypes) => {
     }
   };
 
+
+
   Point.prototype.report = function (req, source, post, callback) {
     this.setupModerationData();
     async.series([
@@ -461,7 +536,7 @@ module.exports = (sequelize, DataTypes) => {
           this.set('data.moderation.lastReportedBy', []);
           if ((source==='user' || source==='fromUser') && !this.data.moderation.toxicityScore) {
             log.info("process-moderation point toxicity on manual report");
-            queue.create('process-moderation', { type: 'estimate-point-toxicity', pointId: this.id }).priority('high').removeOnComplete(true).save();
+            queue.add('process-moderation', { type: 'estimate-point-toxicity', pointId: this.id }, 'high');
           }
         }
         this.set('data.moderation.lastReportedBy',

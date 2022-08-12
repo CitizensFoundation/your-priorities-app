@@ -1,3 +1,7 @@
+**Deployment guide:**
+
+https://docs.google.com/document/d/1t9oZRIIOqmxtAszeWLGRb0_ixsmSLdXvwGeej2EA5R8/edit#heading=h.lxo9mbyc2gfz
+
 **Key components of the server platform:**
 
 -   PostgresSQL (the high-performance open-source database)

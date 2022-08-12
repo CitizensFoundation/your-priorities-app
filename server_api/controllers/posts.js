@@ -271,18 +271,14 @@ router.get('/:id', auth.can('view post'), function(req, res) {
           {
             model: models.Image,
             required: false,
-            as: 'PostHeaderImages'
+            as: 'PostHeaderImages',
+            attributes: models.Image.defaultAttributesPublic
           },
           {
             model: models.Audio,
             required: false,
             attributes: ['id','formats','updated_at','listenable'],
             as: 'PostAudios',
-          },
-          // PointRevision
-          {
-            model: models.PostRevision,
-            required: false
           }
         ]
       }).then(function(postIn) {
@@ -694,7 +690,7 @@ const sendPostPoints = (req, res, redisKey) => {
             const pointsInfo = {points: points, count: upCount + downCount};
             log.info('Points', { postId: req.params.id, userId: req.user ? req.user.id : -1});
             if (redisKey) {
-              req.redisClient.setex(redisKey, process.env.POINTS_CACHE_TTL ? parseInt(process.env.POINTS_CACHE_TTL) : 30, JSON.stringify(pointsInfo));
+              req.redisClient.setex(redisKey, process.env.POINTS_CACHE_TTL ? parseInt(process.env.POINTS_CACHE_TTL) : 3, JSON.stringify(pointsInfo));
             }
             res.send(pointsInfo);
           } else {
@@ -707,21 +703,35 @@ const sendPostPoints = (req, res, redisKey) => {
     })
 }
 
+const shouldDisablePointRedisCache = (req, done) => {
+  if (req.user && req.user.id) {
+    const newPointRedisKey = `newUserPoint_${req.user.id}`
+    req.redisClient.get(newPointRedisKey, (error, found) => {
+      done(error, found!=null)
+    });
+  } else {
+    done(null, false);
+  }
+}
+
 router.get('/:id/points', auth.can('view post'), function(req, res) {
   const redisKey = "cache:post_points:"+req.params.id+(req.query.offsetUp ? ":offsetup:"+req.query.offsetUp : "")+":"+(req.query.offsetDown ? ":offsetdown:"+req.query.offsetDown : "");
-  if (process.env.DISABLE_POST_POINTS_CACHE) {
-    sendPostPoints(req, res);
-  } else {
-    req.redisClient.get(redisKey, (error, points) => {
-      if (error) {
-        sendPostOrError(res, null, 'viewPoints', req.user, error);
-      } else if (points) {
-        res.send(JSON.parse(points));
-      } else {
-        sendPostPoints(req, res, redisKey);
-      }
-    })
-  }
+
+  shouldDisablePointRedisCache(req, (error, disableRedisCache) => {
+    if (disableRedisCache || process.env.DISABLE_POST_POINTS_CACHE) {
+      sendPostPoints(req, res);
+    } else {
+      req.redisClient.get(redisKey, (error, points) => {
+        if (error) {
+          sendPostOrError(res, null, 'viewPoints', req.user, error);
+        } else if (points) {
+          res.send(JSON.parse(points));
+        } else {
+          sendPostPoints(req, res, redisKey);
+        }
+      })
+    }
+  })
 });
 
 var truthValueFromBody = function(bodyParameter) {
@@ -734,14 +744,21 @@ var truthValueFromBody = function(bodyParameter) {
 
 var updatePostData = function (req, post) {
   if (!post.data) {
-    post.set('data', {});
+    post.set('data', {
+      browserId: req.body.postBaseId,
+      browserFingerprint: req.body.postValCode,
+      browserFingerprintConfidence: req.body.postConf
+    });
   }
+
   if (!post.data.contactInformation) {
     post.set('data.contact', {});
   }
+
   if (!post.data.attachment) {
     post.set('data.attachment', {});
   }
+
   post.set('data.contact.name', (req.body.contactName && req.body.contactName!="") ? req.body.contactName : null);
   post.set('data.contact.email', (req.body.contactEmail && req.body.contactEmail!="") ? req.body.contactEmail : null);
   post.set('data.contact.telephone', (req.body.contacTelephone && req.body.contacTelephone!="") ? req.body.contacTelephone : null);
@@ -825,7 +842,7 @@ router.post('/:groupId', auth.can('create post'), function(req, res) {
 
     post.save().then(function() {
       log.info('Post Created', { id: post ? post.id : -1, userId: req.user ? req.user.id : -1 });
-      queue.create('process-similarities', { type: 'update-collection', postId: post.id }).priority('low').removeOnComplete(true).save();
+      queue.add('process-similarities', { type: 'update-collection', postId: post.id }, 'low');
 
       post.setupAfterSave(req, res, function () {
         post.updateAllExternalCounters(req, 'up', 'counter_posts', function () {
@@ -851,7 +868,7 @@ router.post('/:groupId', auth.can('create post'), function(req, res) {
                   if (!error && post) {
                     post.setDataValue('newEndorsement', endorsement);
                     log.info("process-moderation post toxicity in post controller");
-                    queue.create('process-moderation', { type: 'estimate-post-toxicity', postId: post.id }).priority('high').removeOnComplete(true).save();
+                    queue.add('process-moderation', { type: 'estimate-post-toxicity', postId: post.id }, 'high');
                     sendPostOrError(res, post, 'setupImages', req.user, error);
                   } else {
                     sendPostOrError(res, post, 'setupImages', req.user, error);
@@ -902,7 +919,7 @@ router.get('/:id/videoTranscriptStatus', auth.can('edit post'), function(req, re
               post.set('public_data.transcript.text', video.meta.transcript.text);
               post.save().then( savedPost => {
                 log.info("process-moderation post toxicity after video transcript");
-                queue.create('process-moderation', { type: 'estimate-post-toxicity', postId: savedPost.id }).priority('high').removeOnComplete(true).save();
+                queue.add('process-moderation', { type: 'estimate-post-toxicity', postId: savedPost.id }, 'high');
                 res.send({ text:video.meta.transcript.text })
               }).catch( error => {
                 sendPostOrError(res, req.params.id, 'videoTranscriptStatus', req.user, error, 500);
@@ -965,10 +982,10 @@ router.get('/:id/audioTranscriptStatus', auth.can('edit post'), function(req, re
               post.set('public_data.transcript.text', audio.meta.transcript.text);
               post.save().then(savedPost => {
                 log.info("process-moderation post toxicity after audio transcript");
-                queue.create('process-moderation', {
+                queue.add('process-moderation', {
                   type: 'estimate-post-toxicity',
                   postId: savedPost.id
-                }).priority('high').removeOnComplete(true).save();
+                }, 'high');
                 res.send({text: audio.meta.transcript.text})
               }).catch(error => {
                 sendPostOrError(res, req.params.id, 'audioTranscriptStatus', req.user, error, 500);
@@ -1014,8 +1031,8 @@ router.put('/:id', auth.can('edit post'), function(req, res) {
       updatePostData(req, post);
       post.save().then(function () {
         log.info('Post Update', { post: toJson(post), context: 'create', user: toJson(req.user) });
-        queue.create('process-similarities', { type: 'update-collection', postId: post.id }).priority('low').removeOnComplete(true).save();
-        queue.create('process-moderation', { type: 'estimate-post-toxicity', postId: post.id }).priority('high').removeOnComplete(true).save();
+        queue.add('process-similarities', { type: 'update-collection', postId: post.id }, 'low');
+        queue.add('process-moderation', { type: 'estimate-post-toxicity', postId: post.id }, 'high');
 
         post.setupImages(req.body, function (error) {
           sendPostOrError(res, post, 'setupImages', req.user, error);
@@ -1135,7 +1152,7 @@ router.delete('/:id', auth.can('edit post'), function(req, res) {
     post.deleted = true;
     post.save().then(function () {
       log.info('Post Deleted Completed', { post: toJson(post), context: 'delete', user: toJson(req.user) });
-      queue.create('process-similarities', { type: 'update-collection', postId: post.id }).priority('low').removeOnComplete(true).save();
+      queue.add('process-similarities', { type: 'update-collection', postId: post.id }, 'low');
       post.updateAllExternalCounters(req, 'down', 'counter_posts', function () {
         log.info('Post Deleted Counters updates', { context: 'delete', user: toJson(req.user) });
         models.Point.count(
@@ -1145,8 +1162,8 @@ router.delete('/:id', auth.can('edit post'), function(req, res) {
         ).then(function (countInfo) {
           post.updateAllExternalCountersBy(req, 'down', 'counter_points', countInfo, function () {
             log.info('Post Deleted Point Counters updates', { numberDeleted: countInfo, context: 'delete', user: toJson(req.user) });
-            queue.create('process-deletion', { type: 'delete-post-content', postName: post.name, postId: post.id, includePoints: true,
-                                               userId: req.user.id}).priority('critical').removeOnComplete(true).save();
+            queue.add('process-deletion', { type: 'delete-post-content', postName: post.name, postId: post.id, includePoints: true,
+                                               userId: req.user.id}, 'critical');
             res.sendStatus(200);
           });
         });
@@ -1164,9 +1181,9 @@ router.delete('/:id/delete_content', auth.can('edit post'), function(req, res) {
     where: {id: postId }
   }).then(function (post) {
     log.info('Post Deleted Post Content', { context: 'delete', user: toJson(req.user) });
-    queue.create('process-deletion', { type: 'delete-post-content', postName: post.name, postId: post.id, includePoints: true,
+    queue.add('process-deletion', { type: 'delete-post-content', postName: post.name, postId: post.id, includePoints: true,
                                        userId: req.user.id, useNotification: true,
-                                       resetCounters: true}).priority('critical').removeOnComplete(true).save();
+                                       resetCounters: true}, 'critical');
     res.sendStatus(200);
   }).catch(function(error) {
     sendPostOrError(res, null, 'delete', req.user, error);
@@ -1186,8 +1203,8 @@ router.delete('/:id/anonymize_content', auth.can('edit post'), function(req, res
         post.ip_address = '127.0.0.1';
         post.save().then(function () {
           log.info('Post Anonymize Completed', { post: toJson(post), context: 'delete', user: toJson(req.user) });
-          queue.create('process-anonymization', { type: 'anonymize-post-content', postName: post.name, postId: post.id, includePoints: true,
-                                                  userId: req.user.id, useNotification: true }).priority('high').removeOnComplete(true).save();
+          queue.add('process-anonymization', { type: 'anonymize-post-content', postName: post.name, postId: post.id, includePoints: true,
+                                                  userId: req.user.id, useNotification: true }, 'high');
           res.sendStatus(200);
         });
       }).catch(function(error) {
@@ -1236,11 +1253,21 @@ router.post('/:id/endorse', auth.can('vote on post'), function(req, res) {
               oldEndorsementValue = -1;
             endorsement.value = req.body.value;
             endorsement.status = 'active';
+            endorsement.set('data', {
+              browserId: req.body.endorsementBaseId,
+              browserFingerprint: req.body.endorsementValCode,
+              browserFingerprintConfidence: req.body.endorsementConf
+            });
           } else {
             endorsement = models.Endorsement.build({
               post_id: req.params.id,
               value: req.body.value,
               user_id: req.user.id,
+              data: {
+                browserId: req.body.endorsementBaseId,
+                browserFingerprint: req.body.endorsementValCode,
+                browserFingerprintConfidence: req.body.endorsementConf
+              },
               status: 'active',
               user_agent: req.useragent.source,
               ip_address: req.clientIp

@@ -7,14 +7,20 @@
   Polymer.CollectionHelpers = {
 
     splitByStatus: function (items, containerConfig) {
-      if (containerConfig && containerConfig.sortBySortOrder) {
+       if (containerConfig && containerConfig.orderByRandom) {
         try {
-          items = __.sortBy(items, function (item) {
-            return item.configuration.optionalSortOrder | "100000";
-          });
+          items = __.shuffle(items);
         } catch (e) {
           console.error(e);
         }
+      } else if (containerConfig && containerConfig.sortBySortOrder) {
+         try {
+           items = __.sortBy(items, function (item) {
+             return item.configuration.optionalSortOrder | "100000";
+           });
+         } catch (e) {
+           console.error(e);
+         }
       }
       return {
         active: __.filter(items, function (o) {

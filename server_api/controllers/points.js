@@ -325,7 +325,7 @@ router.put('/:pointId', auth.can('edit point'), function(req, res) {
       });
       pointRevision.save().then(function() {
         log.info('PointRevision Created', { pointRevisionId: pointRevision ? pointRevision.id : -1, context: 'create', userId: req.user ? req.user.id : -1 });
-        queue.create('process-similarities', { type: 'update-collection', pointId: point.id }).priority('low').removeOnComplete(true).save();
+        queue.add('process-similarities', { type: 'update-collection', pointId: point.id }, 'low');
 
         models.AcActivity.createActivity({
           type:'activity.point.edited',
@@ -344,7 +344,7 @@ router.put('/:pointId', auth.can('edit point'), function(req, res) {
             } else {
               if (loadedPoint.content && loadedPoint.content!=='') {
                 log.info("process-moderation point toxicity after create point");
-                queue.create('process-moderation', { type: 'estimate-point-toxicity', pointId: loadedPoint.id }).priority('high').removeOnComplete(true).save();
+                queue.add('process-moderation', { type: 'estimate-point-toxicity', pointId: loadedPoint.id }, 'high');
               } else {
                 log.info("No process-moderation toxicity for empty text on point");
               }
@@ -428,7 +428,7 @@ router.get('/:id/videoTranscriptStatus', auth.can('view point'), function(req, r
                   res.sendStatus(500);
                 } else {
                   log.info("process-moderation point toxicity after video transcript");
-                  queue.create('process-moderation', { type: 'estimate-point-toxicity', pointId: loadedPoint.id }).priority('high').removeOnComplete(true).save();
+                  queue.add('process-moderation', { type: 'estimate-point-toxicity', pointId: loadedPoint.id }, 'high');
                   res.send({point: loadedPoint});
                 }
               });
@@ -482,7 +482,7 @@ router.get('/:id/audioTranscriptStatus', auth.can('view point'), function(req, r
                   res.sendStatus(500);
                 } else {
                   log.info("process-moderation point toxicity after audio transcript");
-                  queue.create('process-moderation', { type: 'estimate-point-toxicity', pointId: loadedPoint.id }).priority('high').removeOnComplete(true).save();
+                  queue.add('process-moderation', { type: 'estimate-point-toxicity', pointId: loadedPoint.id }, 'high');
                   res.send({point: loadedPoint});
                 }
               });
@@ -519,7 +519,12 @@ router.post('/:groupId', auth.can('create point'), function(req, res) {
     user_id: req.user.id,
     status: 'published',
     user_agent: req.useragent.source,
-    ip_address: req.clientIp
+    ip_address: req.clientIp,
+    data: {
+      browserId: req.body.pointBaseId,
+      browserFingerprint: req.body.pointValCode,
+      browserFingerprintConfidence: req.body.pointConf
+    }
   });
   point.save().then(function() {
     log.info('Point Created', { pointId: point ? point.id : -1, context: 'create', userId: req.user ? req.user.id : -1 });
@@ -536,7 +541,7 @@ router.post('/:groupId', auth.can('create point'), function(req, res) {
     });
     pointRevision.save().then(function() {
       log.info('PointRevision Created', { pointRevisionId: pointRevision ? pointRevision.id : -1, context: 'create', userId: req.user ? req.user.id : -1 });
-      queue.create('process-similarities', { type: 'update-collection', pointId: point.id }).priority('low').removeOnComplete(true).save();
+      queue.add('process-similarities', { type: 'update-collection', pointId: point.id }, 'low');
       models.AcActivity.createActivity({
         type:'activity.point.new',
         userId: point.user_id,
@@ -560,7 +565,7 @@ router.post('/:groupId', auth.can('create point'), function(req, res) {
                 post.increment('counter_points');
                 if (point.content && point.content!=='') {
                   log.info("process-moderation point toxicity after create point");
-                  queue.create('process-moderation', { type: 'estimate-point-toxicity', pointId: point.id }).priority('high').removeOnComplete(true).save();
+                  queue.add('process-moderation', { type: 'estimate-point-toxicity', pointId: point.id }, 'high');
                 } else {
                   log.info("No process-moderation toxicity for empty text on point");
                 }
@@ -569,6 +574,8 @@ router.post('/:groupId', auth.can('create point'), function(req, res) {
                     log.error('Could not reload point point', { err: error, context: 'createPoint', user: toJson(req.user.simple()) });
                     res.sendStatus(500);
                   } else {
+                    const newPointRedisKey = `newUserPoint_${req.user.id}`
+                    req.redisClient.setex(newPointRedisKey, 30, JSON.stringify({}));
                     models.Group.addUserToGroupIfNeeded(point.group_id, req, function () {
                       res.send(loadedPoint);
                     });
@@ -599,8 +606,8 @@ router.delete('/:id', auth.can('delete point'), function(req, res) {
     point.deleted = true;
     point.save().then(function () {
       log.info('Point Deleted', { point: toJson(point), context: 'delete', user: toJson(req.user) });
-      queue.create('process-similarities', { type: 'update-collection', pointId: point.id }).priority('low').removeOnComplete(true).save();
-      queue.create('process-deletion', { type: 'delete-point-content', pointId: point.id, userId: req.user.id }).priority('critical').removeOnComplete(true).save();
+      queue.add('process-similarities', { type: 'update-collection', pointId: point.id }, 'low');
+      queue.add('process-deletion', { type: 'delete-point-content', pointId: point.id, userId: req.user.id }, 'critical');
       if (point.Post) {
         point.Post.updateAllExternalCounters(req, 'down', 'counter_points', function () {
           point.Post.decrement('counter_points');
@@ -642,11 +649,21 @@ router.post('/:id/pointQuality', auth.can('vote on point'), function(req, res) {
         oldPointQualityValue = -1;
       pointQuality.value = req.body.value;
       pointQuality.status = 'active';
+      pointQuality.set('data', {
+        browserId: req.body.qualityBaseId,
+        browserFingerprint: req.body.qualityValCode,
+        browserFingerprintConfidence: req.body.qualityConf
+      });
     } else {
       pointQuality = models.PointQuality.build({
         point_id: req.params.id,
         value: req.body.value,
         user_id: req.user.id,
+        data: {
+          browserId: req.body.qualityBaseId,
+          browserFingerprint: req.body.qualityValCode,
+          browserFingerprintConfidence: req.body.qualityConf
+        },
         status: 'active',
         user_agent: req.useragent.source,
         ip_address: req.clientIp

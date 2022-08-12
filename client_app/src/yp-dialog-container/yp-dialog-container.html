@@ -194,6 +194,10 @@
           <yp-content-moderation id="contentModeration"></yp-content-moderation>
         </template>
 
+        <template is="dom-if" name="fraudManagement" restamp>
+          <yp-fraud-management id="fraudManagement"></yp-fraud-management>
+        </template>
+
         <template is="dom-if" name="createReport" restamp>
           <yp-create-report id="createReport"></yp-create-report>
         </template>
@@ -213,6 +217,11 @@
       <template is="dom-if" if="[[gotMediaRecorder]]" restamp>
         <yp-media-recorder id="mediaRecorder"></yp-media-recorder>
       </template>
+
+      <template is="dom-if" if="[[gotZiggeo]]" restamp>
+        <yp-ziggeo-record-dialog id="ziggeo"></yp-ziggeo-record-dialog>
+      </template>
+
     </div>
 
     <paper-dialog id="loadingDialog">
@@ -281,6 +290,11 @@
           value: false
         },
 
+        gotZiggeo: {
+          type: Boolean,
+          value: false
+        },
+
         magicTextDialogOpen: {
           type: Boolean,
           value: false
@@ -292,6 +306,11 @@
         },
 
         gotContentModeration: {
+          type: Boolean,
+          value: false
+        },
+
+        gotFraudManagement: {
           type: Boolean,
           value: false
         },
@@ -481,6 +500,22 @@
         }
       },
 
+      getFraudManagementAsync: function (callback) {
+        if (this.gotFraudManagement) {
+          this.getDialogAsync("fraudManagement", callback);
+        } else {
+          this.$.loadingDialog.open();
+          this.importHref(this.resolveUrl("/src/yp-dialog-container/yp-dialog-vaadin-grid-shared.html"), function () {
+            this.importHref(this.resolveUrl("/src/yp-dialog-container/yp-dialog-container-moderation.html"), function () {
+              this.$.loadingDialog.close();
+              console.info("Have loaded fraudManagement");
+              this.set('gotFraudManagement', true);
+              this.getDialogAsync("fraudManagement", callback);
+            }.bind(this), null, true);
+          }.bind(this), null, true);
+        }
+      },
+
       getCreateReportAsync: function (callback) {
         if (this.gotCreateReport) {
           this.getDialogAsync("createReport", callback);
@@ -520,6 +555,20 @@
             console.info("Have loaded media recorder container");
             this.set('gotMediaRecorder', true);
             this.getDialogAsync("mediaRecorder", callback);
+          }.bind(this), null, true);
+        }
+      },
+
+      getZiggeoAsync: function (callback) {
+        if (this.gotZiggeo) {
+          this.getDialogAsync("ziggeo", callback);
+        } else {
+          this.$.loadingDialog.open();
+          this.importHref(this.resolveUrl("/src/integrations/ziggeo/yp-ziggeo-record-dialog.html"), function () {
+            this.$.loadingDialog.close();
+            console.info("Have loaded ziggeo container");
+            this.set('gotZiggeo', true);
+            this.getDialogAsync("ziggeo", callback);
           }.bind(this), null, true);
         }
       },

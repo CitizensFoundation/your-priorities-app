@@ -81,7 +81,11 @@ module.exports = (sequelize, DataTypes) => {
       const path = version.url.substring(n+process.env.S3_BUCKET.length, version.url.length);
       let newUrl;
 
-      if (process.env.MINIO_ROOT_USER) {
+      if (process.env.MINIO_ROOT_USER && process.env.NODE_ENV === 'development') {
+        newUrl = process.env.S3_ENDPOINT
+          + "/" + process.env.S3_BUCKET
+          + path;
+      } else if (process.env.MINIO_ROOT_USER) {
         newUrl = "https://"
           + process.env.S3_ENDPOINT
           + "/" + process.env.S3_BUCKET

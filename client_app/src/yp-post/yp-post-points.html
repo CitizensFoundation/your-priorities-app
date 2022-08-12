@@ -1602,7 +1602,8 @@
               ajax.method = 'PUT';
               ajax.body = {
                 videoId: this.currentVideoId,
-                appLanguage: this.language
+                appLanguage: this.language,
+                isZiggeo: window.appGlobals.useZiggeo
               };
               ajax.addEventListener('response', function (event, detail) {
                 this._completeNewPointResponse(event, event.detail);
@@ -1686,7 +1687,10 @@
             this.$.newPointAjax.body = {
               postId: this.post.id,
               content: content,
-              value: value
+              value: value,
+              pointBaseId:  window.appUser.getBrowserId(),
+              pointValCode: window.appUser.browserFingerprint,
+              pointConf: window.appUser.browserFingerprintConfidence
             };
             this.set('addPointDisabled', true);
             this.$.newPointAjax.generateRequest();

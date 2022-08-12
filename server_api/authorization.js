@@ -574,6 +574,9 @@ auth.role('community.viewUser', function (community, req, done) {
     } else {
       auth.hasCommunityAccess(community, req, done);
     }
+  }).catch(function (error) {
+    log.error("Error in authentication", { error });
+    done(null, false);
   });
 });
 

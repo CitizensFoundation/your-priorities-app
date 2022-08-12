@@ -131,8 +131,19 @@
         color: #555;
       }
 
-      .description[widetext] {
-        font-size: 16px;
+      @media (min-width: 480px) {
+        .description[widetext] {
+          font-size: 16px;
+          line-height: 1.3;
+        }
+
+        .description[hightext] {
+          font-size: 15px;
+        }
+
+        #postNameMagicText[hightext] {
+            font-size: 19px;
+        }
       }
 
       .description[largefont] {
@@ -312,7 +323,7 @@
             <template is="dom-if" if="[[post.public_data.structuredAnswersJson]]">
               <yp-magic-text id="description" text-type="postContent" content-language="[[post.language]]" hidden$="[[hideDescription]]"
                              disable-translation
-                             skip-sanitize
+                             skip-sanitize  content="[[structuredAnswersFormatted]]" remove-urls
                              content-id="[[post.id]]" class="description" truncate="120">
               </yp-magic-text>
             </template>
@@ -328,7 +339,7 @@
                                   horizontal-align="right" id="shareButton"
                                   whatsapp="[[post.Group.configuration.allowWhatsAppSharing]]"
                                   title$="[[t('post.shareInfo')]]" facebook="" email=""
-                                  twitter="" popup="" url="[[fullPostUrl]]"></paper-share-button>
+                                  twitter="" popup-enabled url="[[fullPostUrl]]"></paper-share-button>
             </div>
             <template is="dom-if" if="[[post.Group.configuration.customRatings]]">
               <yp-post-ratings-info class="customRatings" post="[[post]]"></yp-post-ratings-info>

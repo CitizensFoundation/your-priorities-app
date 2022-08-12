@@ -226,7 +226,21 @@ var getDomain = function (req, domainId, done) {
               req.ypDomain.secret_api_keys.facebook.client_secret.length > 6) {
               domain.dataValues.facebookLoginProvided = true;
             }
+
+            if (req.ypDomain && process.env.GOOGLE_MAPS_API_KEY) {
+              domain.dataValues.googleMapsApiKey = process.env.GOOGLE_MAPS_API_KEY;
+            }
+
+            if (req.ypDomain && process.env.ZIGGEO_ENABLED) {
+              domain.dataValues.ziggeoEnabled = process.env.ZIGGEO_ENABLED;
+            }
+
             domain.dataValues.Communities = communities;
+
+            if (process.env.LOGIN_CALLBACK_CUSTOM_HOSTNAME) {
+              domain.dataValues.loginCallbackCustomHostName = process.env.LOGIN_CALLBACK_CUSTOM_HOSTNAME;
+            }
+
             seriesCallback(null);
             return null;
           }).catch(function (error) {
@@ -272,10 +286,12 @@ var getDomain = function (req, domainId, done) {
               include: [
                 {
                   model: models.Image, as: 'CommunityLogoImages',
+                  attributes:  models.Image.defaultAttributesPublic,
                   required: false
                 },
                 {
                   model: models.Image, as: 'CommunityHeaderImages',
+                  attributes:  models.Image.defaultAttributesPublic,
                   required: false
                 },
                 {
@@ -334,6 +350,7 @@ var getDomain = function (req, domainId, done) {
               include: [
                 {
                   model: models.Image, as: 'CommunityLogoImages',
+                  attributes:  models.Image.defaultAttributesPublic,
                   required: false
                 },
                 {
@@ -689,8 +706,12 @@ router.get('/', function(req, res) {
     req.ypDomain.dataValues.facebookLoginProvided = true;
   }
 
-  if (req.ypDomain && process.env.LOGIN_CALLBACK_CUSTOM_HOSTNAME) {
-    req.ypDomain.dataValues.loginCallbackCustomHostName = process.env.LOGIN_CALLBACK_CUSTOM_HOSTNAME;
+  if (req.ypDomain && process.env.GOOGLE_MAPS_API_KEY) {
+    req.ypDomain.dataValues.googleMapsApiKey = process.env.GOOGLE_MAPS_API_KEY;
+  }
+
+  if (req.ypDomain && process.env.ZIGGEO_ENABLED) {
+    req.ypDomain.dataValues.ziggeoEnabled = process.env.ZIGGEO_ENABLED;
   }
 
   const domain = {...req.ypDomain.dataValues}
@@ -746,7 +767,7 @@ router.put('/:id', auth.can('edit domain'), function(req, res) {
     where: { id: req.params.id }
   }).then(function(domain) {
     if (domain) {
-      queue.create('process-similarities', { type: 'update-collection', domainId: domain.id }).priority('low').removeOnComplete(true).save();
+      queue.add('process-similarities', { type: 'update-collection', domainId: domain.id }, 'low');
       domain.ensureApiKeySetup();
       domain.set('secret_api_keys.facebook.client_id', req.body.facebookClientId);
       domain.set('secret_api_keys.facebook.client_secret', req.body.facebookClientSecret);
@@ -773,6 +794,11 @@ router.put('/:id', auth.can('edit domain'), function(req, res) {
       domain.set('configuration.samlLoginButtonUrl', (req.body.samlLoginButtonUrl && req.body.samlLoginButtonUrl!="") ? req.body.samlLoginButtonUrl : null);
       domain.set('configuration.customSAMLErrorHTML', (req.body.customSAMLErrorHTML && req.body.customSAMLErrorHTML!="") ? req.body.customSAMLErrorHTML : null);
 
+      domain.set('configuration.preloadCssUrl', (req.body.preloadCssUrl && req.body.preloadCssUrl!="") ? req.body.preloadCssUrl : null);
+
+      domain.set('configuration.plausibleDataDomains', (req.body.plausibleDataDomains && req.body.plausibleDataDomains!="") ? req.body.plausibleDataDomains : null);
+      domain.set('configuration.ziggeoApplicationToken', (req.body.ziggeoApplicationToken && req.body.ziggeoApplicationToken!="") ? req.body.ziggeoApplicationToken : null);
+
       if (req.body.google_analytics_code && req.body.google_analytics_code!="") {
         domain.google_analytics_code = req.body.google_analytics_code;
       } else {
@@ -784,6 +810,7 @@ router.put('/:id', auth.can('edit domain'), function(req, res) {
       domain.set('configuration.forceSecureSamlEmployeeLogin', (req.body.forceSecureSamlEmployeeLogin && req.body.forceSecureSamlEmployeeLogin!="") ? true : false);
 
       domain.set('configuration.disableNameAutoTranslation', (req.body.disableNameAutoTranslation && req.body.disableNameAutoTranslation!="") ? true : false);
+
 
 
       if (req.body.appHomeScreenIconImageId && req.body.appHomeScreenIconImageId!="") {
@@ -828,7 +855,7 @@ router.delete('/:id', auth.can('edit domain'), function(req, res) {
       domain.deleted = true;
       domain.save().then(function () {
         log.info('Domain Deleted', { group: toJson(group), context: 'delete', user: toJson(req.user) });
-        queue.create('process-similarities', { type: 'update-collection', domainId: domain.id }).priority('low').removeOnComplete(true).save();
+        queue.add('process-similarities', { type: 'update-collection', domainId: domain.id }, 'low');
         res.sendStatus(200);
       });
     } else {
@@ -876,12 +903,12 @@ router.delete('/:domainId/:itemId/:itemType/:actionType/process_one_moderation_i
 });
 
 router.delete('/:domainId/:actionType/process_many_moderation_item', auth.can('edit domain'), (req, res) => {
-  queue.create('process-moderation', {
+  queue.add('process-moderation', {
       type: 'perform-many-moderation-actions',
       items: req.body.items,
       actionType: req.params.actionType,
       domainId: req.params.domainId
-    }).priority('critical').removeOnComplete(true).save();
+    }, 'critical');
   res.send({});
 });
 
@@ -919,22 +946,19 @@ router.get('/:domainId/flagged_content_count',  auth.can('edit domain'), (req, r
 });
 
 router.delete('/:domainId/remove_many_admins', auth.can('edit domain'), (req, res) => {
-  queue.create('process-deletion', { type: 'remove-many-domain-admins', userIds: req.body.userIds, domainId: req.params.domainId }).
-  priority('high').removeOnComplete(true).save();
+  queue.add('process-deletion', { type: 'remove-many-domain-admins', userIds: req.body.userIds, domainId: req.params.domainId }, 'high');
   log.info('Remove many domain admins started', { context: 'remove_many_admins', domainId: req.params.domainId, user: toJson(req.user.simple()) });
   res.sendStatus(200);
 });
 
 router.delete('/:domainId/remove_many_users_and_delete_content', auth.can('edit domain'), function(req, res) {
-  queue.create('process-deletion', { type: 'remove-many-domain-users-and-delete-content', userIds: req.body.userIds, domainId: req.params.domainId }).
-  priority('high').removeOnComplete(true).save();
+  queue.add('process-deletion', { type: 'remove-many-domain-users-and-delete-content', userIds: req.body.userIds, domainId: req.params.domainId }, 'high');
   log.info('Remove many and delete many domain users content', { context: 'remove_many_users_and_delete_content', domainId: req.params.domainId, user: toJson(req.user.simple()) });
   res.sendStatus(200);
 });
 
 router.delete('/:domainId/remove_many_users', auth.can('edit domain'), function(req, res) {
-  queue.create('process-deletion', { type: 'remove-many-domain-users', userIds: req.body.userIds, domainId: req.params.domainId }).
-  priority('high').removeOnComplete(true).save();
+  queue.add('process-deletion', { type: 'remove-many-domain-users', userIds: req.body.userIds, domainId: req.params.domainId }, 'high');
   log.info('Remove many domain admins started', { context: 'remove_many_users', domainId: req.params.domainId, user: toJson(req.user.simple()) });
   res.sendStatus(200);
 });
@@ -946,8 +970,7 @@ router.delete('/:domainId/:userId/remove_and_delete_user_content', auth.can('edi
       res.sendStatus(500);
     } else if (user && domain) {
       domain.removeDomainUsers(user).then(function (results) {
-        queue.create('process-deletion', { type: 'delete-domain-user-content', userId: req.params.userId, domainId: req.params.domainId }).
-        priority('high').removeOnComplete(true).save();
+        queue.add('process-deletion', { type: 'delete-domain-user-content', userId: req.params.userId, domainId: req.params.domainId }, 'high');
         log.info('User removed from domain', {context: 'remove_and_delete_user_content', domainId: req.params.domainId, userRemovedId: req.params.userId, user: toJson(req.user.simple()) });
         res.sendStatus(200);
       });

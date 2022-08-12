@@ -35,6 +35,8 @@ const updateTranslationForGroup = require('../active-citizen/utils/translation_h
 
 const convertDocxSurveyToJson = require('../active-citizen/engine/analytics/manager').convertDocxSurveyToJson;
 
+const copyGroup = require('../utils/copy_utils.js').copyGroup;
+
 var s3 = new aws.S3({
   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
@@ -70,7 +72,8 @@ var getGroupAndUser = function (groupId, userId, userEmail, callback) {
       models.Group.findOne({
         where: {
           id: groupId
-        }
+        },
+        attributes: models.Group.defaultAttributesPublic
       }).then(function (groupIn) {
         if (groupIn) {
           group = groupIn;
@@ -146,6 +149,7 @@ var updateGroupConfigParamters = function (req, group) {
   group.set('configuration.showWhoPostedPosts', truthValueFromBody(req.body.showWhoPostedPosts));
   group.set('configuration.allowAnonymousUsers', truthValueFromBody(req.body.allowAnonymousUsers));
   group.set('configuration.allowAnonymousAutoLogin', truthValueFromBody(req.body.allowAnonymousAutoLogin));
+  group.set('configuration.anonymousAskRegistrationQuestions', truthValueFromBody(req.body.anonymousAskRegistrationQuestions));
 
   group.set('configuration.hideAllTabs', truthValueFromBody(req.body.hideAllTabs));
   group.set('configuration.hideNewPostOnPostPage', truthValueFromBody(req.body.hideNewPostOnPostPage));
@@ -190,6 +194,8 @@ var updateGroupConfigParamters = function (req, group) {
   group.set('configuration.alternativeTextForNewIdeaButtonHeader', (req.body.alternativeTextForNewIdeaButtonHeader && req.body.alternativeTextForNewIdeaButtonHeader!=="") ? req.body.alternativeTextForNewIdeaButtonHeader : null);
   group.set('configuration.alternativeTextForNewIdeaSaveButton', (req.body.alternativeTextForNewIdeaSaveButton && req.body.alternativeTextForNewIdeaSaveButton!=="") ? req.body.alternativeTextForNewIdeaSaveButton : null);
 
+  group.set('configuration.customCategoryQuestionText', (req.body.customCategoryQuestionText && req.body.customCategoryQuestionText!=="") ? req.body.customCategoryQuestionText : null);
+
   group.set('configuration.alternativePointForHeader', (req.body.alternativePointForHeader && req.body.alternativePointForHeader!="") ? req.body.alternativePointForHeader : null);
   group.set('configuration.alternativePointAgainstHeader', (req.body.alternativePointAgainstHeader && req.body.alternativePointAgainstHeader!="") ? req.body.alternativePointAgainstHeader : null);
 
@@ -230,6 +236,7 @@ var updateGroupConfigParamters = function (req, group) {
   group.set('configuration.usePostTagsForPostListItems', truthValueFromBody(req.body.usePostTagsForPostListItems));
   group.set('configuration.usePostTagsForPostCards', truthValueFromBody(req.body.usePostTagsForPostCards));
   group.set('configuration.usePostTags', truthValueFromBody(req.body.usePostTags));
+  group.set('configuration.closeNewsfeedSubmissions', truthValueFromBody(req.body.closeNewsfeedSubmissions));
 
   group.set('configuration.allowPostVideoUploads', truthValueFromBody(req.body.allowPostVideoUploads));
   group.set('configuration.allowPointVideoUploads', truthValueFromBody(req.body.allowPointVideoUploads));
@@ -248,6 +255,7 @@ var updateGroupConfigParamters = function (req, group) {
   }
 
   group.set('configuration.customTitleQuestionText', (req.body.customTitleQuestionText && req.body.customTitleQuestionText!="") ? req.body.customTitleQuestionText : null);
+  group.set('configuration.customFilterText', (req.body.customFilterText && req.body.customFilterText!="") ? req.body.customFilterText : null);
 
   group.set('configuration.customBackURL', (req.body.customBackURL && req.body.customBackURL!="") ? req.body.customBackURL : null);
   group.set('configuration.customBackName', (req.body.customBackName && req.body.customBackName!="") ? req.body.customBackName : null);
@@ -281,6 +289,16 @@ var updateGroupConfigParamters = function (req, group) {
       group.set('configuration.audioPointUploadLimitSec', 600);
     }
   }
+
+  group.set(
+    'configuration.urlToReview',
+    (req.body.urlToReview && req.body.urlToReview!="") ?
+      req.body.urlToReview : null);
+
+  group.set(
+    'configuration.urlToReviewActionText',
+    (req.body.urlToReviewActionText && req.body.urlToReviewActionText!="") ?
+      req.body.urlToReviewActionText : null);
 
   group.set('configuration.structuredQuestions', (req.body.structuredQuestions && req.body.structuredQuestions!="") ? req.body.structuredQuestions : null);
 
@@ -368,6 +386,7 @@ var updateGroupConfigParamters = function (req, group) {
     group.set('configuration.customRatings', null);
   }
 
+  group.set('configuration.customTabTitleNewLocation', (req.body.customTabTitleNewLocation && req.body.customTabTitleNewLocation!=="") ? req.body.customTabTitleNewLocation : null);
   group.set('configuration.allowAdminsToDebate', truthValueFromBody(req.body.allowAdminsToDebate));
   group.set('configuration.allowAdminAnswersToPoints', truthValueFromBody(req.body.allowAdminAnswersToPoints));
   group.set('configuration.forcePostSortMethodAs', (req.body.forcePostSortMethodAs && req.body.forcePostSortMethodAs!=="") ? req.body.forcePostSortMethodAs : null);
@@ -608,22 +627,19 @@ router.delete('/:groupId/:userId/remove_admin', auth.can('edit group'), function
 });
 
 router.delete('/:groupId/remove_many_admins', auth.can('edit group'), function(req, res) {
-  queue.create('process-deletion', { type: 'remove-many-group-admins', userIds: req.body.userIds, groupId: req.params.groupId }).
-        priority('high').removeOnComplete(true).save();
+  queue.add('process-deletion', { type: 'remove-many-group-admins', userIds: req.body.userIds, groupId: req.params.groupId }, 'high');
   log.info('Remove many admins started', { context: 'remove_many_admins', groupId: req.params.groupId, user: toJson(req.user.simple()) });
   res.sendStatus(200);
 });
 
 router.delete('/:groupId/remove_many_users_and_delete_content', auth.can('edit group'), function(req, res) {
-  queue.create('process-deletion', { type: 'remove-many-group-users-and-delete-content', userIds: req.body.userIds, groupId: req.params.groupId }).
-        priority('high').removeOnComplete(true).save();
+  queue.add('process-deletion', { type: 'remove-many-group-users-and-delete-content', userIds: req.body.userIds, groupId: req.params.groupId }, 'high');
   log.info('Remove many and delete many users content', { context: 'remove_many_users_and_delete_content', groupId: req.params.groupId, user: toJson(req.user.simple()) });
   res.sendStatus(200);
 });
 
 router.delete('/:groupId/remove_many_users', auth.can('edit group'), function(req, res) {
-  queue.create('process-deletion', { type: 'remove-many-group-users', userIds: req.body.userIds, groupId: req.params.groupId }).
-        priority('high').removeOnComplete(true).save();
+  queue.add('process-deletion', { type: 'remove-many-group-users', userIds: req.body.userIds, groupId: req.params.groupId }, 'high');
   log.info('Remove many admins started', { context: 'remove_many_users', groupId: req.params.groupId, user: toJson(req.user.simple()) });
   res.sendStatus(200);
 });
@@ -638,8 +654,7 @@ router.delete('/:groupId/:userId/remove_and_delete_user_content', auth.can('edit
         if (group.counter_users > 0) {
           group.decrement("counter_users")
         }
-        queue.create('process-deletion', { type: 'delete-group-user-content', userId: req.params.userId, groupId: req.params.groupId }).
-              priority('high').removeOnComplete(true).save();
+        queue.add('process-deletion', { type: 'delete-group-user-content', userId: req.params.userId, groupId: req.params.groupId }, 'high');
         log.info('User removed', {context: 'remove_and_delete_user_content', groupId: req.params.groupId, userRemovedId: req.params.userId, user: toJson(req.user.simple()) });
         res.sendStatus(200);
       });
@@ -757,7 +772,7 @@ router.get('/:groupId/pages_for_admin', auth.can('edit group'), function(req, re
 });
 
 router.put('/:groupId/:type/start_report_creation', auth.can('edit group'), function(req, res) {
-  models.AcBackgroundJob.createJob({}, (error, jobId) => {
+  models.AcBackgroundJob.createJob({}, {}, (error, jobId) => {
     if (error) {
       log.error('Could not create backgroundJob', { err: error, context: 'start_report_creation', user: toJson(req.user.simple()) });
       res.sendStatus(500);
@@ -769,14 +784,14 @@ router.put('/:groupId/:type/start_report_creation', auth.can('edit group'), func
         reportType = 'start-xls-report-generation';
       }
 
-      queue.create('process-reports', {
+      queue.add('process-reports', {
         type: reportType,
         userId: req.user.id,
         exportType: req.params.type,
         translateLanguage: req.query.translateLanguage,
         jobId: jobId,
         groupId: req.params.groupId
-      }).priority('critical').removeOnComplete(true).save();
+      }, 'critical');
 
       res.send({ jobId });
     }
@@ -1065,17 +1080,17 @@ router.post('/:communityId', auth.can('create group'), function(req, res) {
   updateGroupConfigParamters(req, group);
 
   group.save().then(function(group) {
-    log.info('Group Created', { group: toJson(group), context: 'create', user: toJson(req.user) });
-    queue.create('process-similarities', { type: 'update-collection', groupId: group.id }).priority('low').removeOnComplete(true).save();
+    log.info('Group Created', { groupId: group.id, context: 'create', userId: req.user.id });
+    queue.add('process-similarities', { type: 'update-collection', groupId: group.id }, 'low');
 
     group.updateAllExternalCounters(req, 'up', 'counter_groups', function () {
       models.Group.addUserToGroupIfNeeded(group.id, req, function () {
         group.addGroupAdmins(req.user).then(function (results) {
           group.setupImages(req.body, function(error) {
-            queue.create('process-moderation', {
+            queue.add('process-moderation', {
               type: 'estimate-collection-toxicity',
               collectionId: group.id,
-              collectionType: 'group' }).priority('high').removeOnComplete(true).save();
+              collectionType: 'group' }, 'high');
             sendGroupOrError(res, group, 'setupImages', req.user, error);
           });
         });
@@ -1137,12 +1152,12 @@ router.put('/:id', auth.can('edit group'), function(req, res) {
       updateGroupConfigParamters(req, group);
       group.save().then(function () {
         log.info('Group Updated', { group: toJson(group), context: 'update', user: toJson(req.user) });
-        queue.create('process-similarities', { type: 'update-collection', groupId: group.id }).priority('low').removeOnComplete(true).save();
+        queue.add('process-similarities', { type: 'update-collection', groupId: group.id }, 'low');
         group.setupImages(req.body, function(error) {
-          queue.create('process-moderation', {
+          queue.add('process-moderation', {
             type: 'estimate-collection-toxicity',
             collectionId: group.id,
-            collectionType: 'group' }).priority('high').removeOnComplete(true).save();
+            collectionType: 'group' }, 'high');
           sendGroupOrError(res, group, 'setupImages', req.user, error);
         });
       }).catch(function(error) {
@@ -1164,9 +1179,9 @@ router.delete('/:id', auth.can('edit group'), function(req, res) {
       group.deleted = true;
       group.save().then(function () {
         log.info('Group Deleted', { group: toJson(group), context: 'delete', user: toJson(req.user) });
-        queue.create('process-similarities', { type: 'update-collection', groupId: group.id }).priority('low').removeOnComplete(true).save();
-        queue.create('process-deletion', { type: 'delete-group-content', resetCounters: true, groupName: group.name,
-                                           userId: req.user.id, groupId: group.id }).priority('critical').removeOnComplete(true).save();
+        queue.add('process-similarities', { type: 'update-collection', groupId: group.id }, 'low');
+        queue.add('process-deletion', { type: 'delete-group-content', resetCounters: true, groupName: group.name,
+                                           userId: req.user.id, groupId: group.id }, 'critical');
         group.updateAllExternalCounters(req, 'down', 'counter_groups', function () {
           res.sendStatus(200);
         });
@@ -1185,9 +1200,9 @@ router.delete('/:id/delete_content', auth.can('edit group'), function(req, res) 
   }).then(function (group) {
     if (group) {
       log.info('Group Delete Content', { group: toJson(group), context: 'delete', user: toJson(req.user) });
-      queue.create('process-deletion', { type: 'delete-group-content', groupName: group.name,
+      queue.add('process-deletion', { type: 'delete-group-content', groupName: group.name,
                                          userId: req.user.id, groupId: group.id, useNotification: true,
-                                         resetCounters: true }).priority('critical').removeOnComplete(true).save();
+                                         resetCounters: true }, 'critical');
       res.sendStatus(200);
     } else {
       sendGroupOrError(res, req.params.id, 'delete', req.user, 'Not found', 404);
@@ -1205,14 +1220,47 @@ router.delete('/:id/anonymize_content', auth.can('edit group'), function(req, re
     if (group) {
       log.info('Group Anonymize Content with delay', { group: toJson(group), anonymizationDelayMs: anonymizationDelayMs,
                                                        context: 'delete', userId: toJson(req.user.id) });
-      queue.create('process-anonymization', { type: 'notify-group-users', groupName: group.name,
-                                              userId: req.user.id, groupId: group.id, delayMs: anonymizationDelayMs}).
-                                            priority('high').removeOnComplete(true).save();
-      queue.create('process-anonymization', { type: 'anonymize-group-content', groupName: group.name,
+      queue.add('process-anonymization', { type: 'notify-group-users', groupName: group.name,
+                                              userId: req.user.id, groupId: group.id, delayMs: anonymizationDelayMs}, 'high');
+      queue.add('process-anonymization', { type: 'anonymize-group-content', groupName: group.name,
                                               userId: req.user.id, groupId: group.id, useNotification: true,
-                                              resetCounters: true }).
-                                              delay(anonymizationDelayMs).priority('high').removeOnComplete(true).save();
+                                              resetCounters: true }, 'high', { delay: anonymizationDelayMs });
       res.sendStatus(200);
+    } else {
+      sendGroupOrError(res, req.params.id, 'delete', req.user, 'Not found', 404);
+    }
+  }).catch(function(error) {
+    sendGroupOrError(res, null, 'delete', req.user, error);
+  });
+});
+
+router.post('/:id/clone', auth.can('edit group'), function(req, res) {
+  models.Group.findOne({
+    attributes: ['id','community_id'],
+    where: {id: req.params.id },
+    include: [
+      {
+        model: models.Community,
+        attributes: ['id','domain_id'],
+        include: [
+          {
+            model: models.Domain,
+            attributes: ['id']
+          }
+        ]
+      }
+    ]
+  }).then(function (group) {
+    if (group) {
+      copyGroup(group.id, group.Community, group.Community.domain_id, {skipUser: true, skipActivities: true}, (error) => {
+        if (error) {
+          log.error('Group Cloned Failed', { error, groupId: req.params.id });
+          res.sendStatus(500);
+        } else {
+          log.info('Group Cloned', { groupId: req.params.id });
+          res.sendStatus(200);
+        }
+      });
     } else {
       sendGroupOrError(res, req.params.id, 'delete', req.user, 'Not found', 404);
     }
@@ -1277,7 +1325,7 @@ const addVideosToGroup = (group, done) => {
 router.get('/:id', auth.can('view group'), function(req, res) {
   models.Group.findOne({
     where: { id: req.params.id },
-    attributes: models.Group.defaultPublicAttributes,
+    attributes: models.Group.defaultAttributesPublic,
     order: [
       [ { model: models.Image, as: 'GroupLogoImages' } , 'created_at', 'asc' ],
       [ { model: models.Image, as: 'GroupHeaderImages' } , 'created_at', 'asc' ],
@@ -1358,13 +1406,17 @@ const allowedTextTypesForGroup = [
   "alternativeTextForNewIdeaButtonClosed",
   "alternativeTextForNewIdeaButtonHeader",
   "alternativeTextForNewIdeaSaveButton",
+  "customCategoryQuestionText",
   "alternativePointForHeader",
   "customThankYouTextNewPosts",
   "customTitleQuestionText",
+  "customFilterText",
+  "customTabTitleNewLocation",
   "alternativePointAgainstHeader",
   "alternativePointForLabel",
   "alternativePointAgainstLabel",
-  "customAdminCommentsTitle"
+  "customAdminCommentsTitle",
+  "urlToReviewActionText"
 ];
 
 router.get('/:id/translatedText', auth.can('view group'), function(req, res) {
@@ -1464,7 +1516,7 @@ var getPostsWithAllFromIds = function (postsWithIds, postOrder, done) {
               {
                 model: models.Image,
                 required: false,
-                attributes: { exclude: ['ip_address', 'user_agent'] },
+                attributes: models.Image.defaultAttributesPublic,
                 as: 'CategoryIconImages'
               }
             ]
@@ -1504,11 +1556,6 @@ var getPostsWithAllFromIds = function (postsWithIds, postOrder, done) {
             ]
           },
           {
-            model: models.PostRevision,
-            attributes: { exclude: ['ip_address', 'user_agent'] },
-            required: false
-          },
-          {
             model: models.Group,
             required: true,
             attributes: ['id','configuration','name','theme_id','access'],
@@ -1525,7 +1572,7 @@ var getPostsWithAllFromIds = function (postsWithIds, postOrder, done) {
             ]
           },
           { model: models.Image,
-            attributes: { exclude: ['ip_address', 'user_agent'] },
+            attributes: models.Image.defaultAttributesPublic,
             as: 'PostHeaderImages',
             required: false
           }
@@ -1763,12 +1810,14 @@ router.get('/:id/post_locations', auth.can('view group'), function(req, res) {
       },
       group_id: req.params.id
     },
+    attributes: models.Post.defaultAttributesPublic,
     order: [
       [ { model: models.Image, as: 'PostHeaderImages' } ,'updated_at', 'asc' ]
     ],
     include: [
       { model: models.Image,
         as: 'PostHeaderImages',
+        attributes: models.Image.defaultAttributesPublic,
         required: false
       },
       {
@@ -1986,12 +2035,12 @@ router.delete('/:groupId/:itemId/:itemType/:actionType/process_one_moderation_it
 });
 
 router.delete('/:groupId/:actionType/process_many_moderation_item', auth.can('edit group'), (req, res) => {
-  queue.create('process-moderation', {
+  queue.add('process-moderation', {
     type: 'perform-many-moderation-actions',
     items: req.body.items,
     actionType: req.params.actionType,
     groupId: req.params.groupId
-  }).priority('critical').removeOnComplete(true).save();
+  }, 'critical');
   res.send({});
 });
 

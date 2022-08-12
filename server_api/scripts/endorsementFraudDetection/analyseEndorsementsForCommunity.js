@@ -1,4 +1,4 @@
-var models = require('../models');
+var models = require('../../models');
 var async = require('async');
 var ip = require('ip');
 var _ = require('lodash');
@@ -7,23 +7,35 @@ var communityId = process.argv[2];
 var groupId = process.argv[3];
 
 var endorsementsToAnalyse;
-var csvOut = "";
+var csvOut = "Method,E Id,E Value,Date,Browser Id,Fingerprint Id,IP Address,User Id,User Email,Post Id,Post Name,User Agent\n";
 
 var writeItemToCsv = function (item) {
-  return ","+item.id+","+item.created_at+","+item.ip_address+","+item.user_id+","+item.post_id+',"'+item.user_agent+'"\n';
+  let browserId = "";
+  let browserFingerprint = "";
+
+  if (item.data) {
+    browserId = item.data.browserId;
+    browserFingerprint = item.data.browserFingerprint;
+  }
+
+  return ","+item.id+","+item.value+","+item.created_at+
+    ","+browserId+","+browserFingerprint+
+    ","+item.ip_address+","+item.user_id+","+item.User.email+","+
+    item.post_id+',"'+item.Post.name+'","'+item.user_agent+'"\n';
 };
 
 var writeItemsToCsv = function (header, items) {
   csvOut += '"'+header+'",,,,,,\n';
   _.forEach(items, function (item) {
-    csvOut += '"'+item.key+'('+item.count+")"+'",,,,,,\n';
+    csvOut += '"'+item.key+' ('+item.count+")"+'",,,,,,\n';
     _.forEach(item.items, function (innerItem) {
       csvOut += writeItemToCsv(innerItem);
     });
   });
 };
 
-var getTopItems = function (items) {
+var getTopItems = function (items, max) {
+  if (!max) max = 25;
   var topItems = [];
   _.each(items, function (items, key) {
     topItems.push({key: key, count: items.length, items: items });
@@ -31,7 +43,26 @@ var getTopItems = function (items) {
   topItems = _.sortBy(topItems, function (item) {
     return -item.count;
   });
-  return _.take(topItems, 25);
+
+  if (max===-1) {
+    let out = [];
+    _.each(topItems, function (item) {
+      if (item.count>1) {
+        out.push(item);
+      }
+    });
+    return out;
+  } else if (max===-2) {
+    let out = [];
+    _.each(topItems, function (item) {
+      if (item.count>10) {
+        out.push(item);
+      }
+    });
+    return out;
+  } else {
+    return _.take(topItems, max);
+  }
 };
 
 async.series([
@@ -39,16 +70,23 @@ async.series([
   function (seriesCallback) {
     if (communityId && !groupId) {
       models.Endorsement.findAll({
-        attributes: ["id","created_at","post_id","user_id","user_agent","ip_address"],
+        attributes: ["id","created_at","value","post_id","user_id","user_agent","ip_address","data"],
         include: [
           {
+            model: models.User,
+            attributes: ['id','name','email'],
+          },
+          {
             model: models.Post,
+            attributes: ['id','name','group_id'],
             include: [
               {
                 model: models.Group,
+                attributes: ['id','name'],
                 include: [
                   {
                     model: models.Community,
+                    attributes: ['id','name'],
                     where: {
                       id: communityId
                     }
@@ -60,6 +98,9 @@ async.series([
         ]
       }).then(function (endorsements) {
         endorsementsToAnalyse = endorsements;
+        endorsementsToAnalyse = _.sortBy(endorsementsToAnalyse, function (item) {
+          return [item.post_id, item.user_agent];
+        });
         seriesCallback();
       })
 
@@ -71,10 +112,15 @@ async.series([
   function (seriesCallback) {
     if (groupId) {
       models.Endorsement.findAll({
-        attributes: ["id","post_id","user_id","user_agent","ip_address"],
+        attributes: ["id","post_id","value","user_id","user_agent","ip_address","data"],
         include: [
           {
+            model: models.User,
+            attributes: ['id','name','email'],
+          },
+          {
             model: models.Post,
+            attributes: ['id','name','group_id'],
             include: [
               {
                 model: models.Group,
@@ -94,16 +140,24 @@ async.series([
       seriesCallback();
     }
   },
+  // Top 10 IPs Unique User Agents + Post Ids
+  function (seriesCallback) {
+    var groupedByIPs = _.groupBy(endorsementsToAnalyse, function (endorsement) {
+      return endorsement.ip_address+":"+endorsement.post_id+":"+endorsement.user_agent;
+    });
+    writeItemsToCsv("Top votes from IP, User agent, Post Id", getTopItems(groupedByIPs, -1));
+    seriesCallback();
+  },
   // Top 10 IPs
   function (seriesCallback) {
     var groupedByIPs = _.groupBy(endorsementsToAnalyse, function (endorsement) {
       return endorsement.ip_address;
     });
-    writeItemsToCsv("Top votes from IPs", getTopItems(groupedByIPs));
+    writeItemsToCsv("Top votes from IPs", getTopItems(groupedByIPs, -2));
     seriesCallback();
   },
   // Top 10 IPs Unique User Agents
-  function (seriesCallback) {
+  /*function (seriesCallback) {
     var groupedByIPs = _.groupBy(endorsementsToAnalyse, function (endorsement) {
       return endorsement.ip_address+":"+endorsement.user_agent;
     });
@@ -125,15 +179,7 @@ async.series([
     });
     writeItemsToCsv("Top votes from IP, User agent, User Id, Post Id", getTopItems(groupedByIPs));
     seriesCallback();
-  },
-  // Top 10 IPs Unique User Agents + Post Ids
-  function (seriesCallback) {
-    var groupedByIPs = _.groupBy(endorsementsToAnalyse, function (endorsement) {
-      return endorsement.ip_address+":"+endorsement.post_id+":"+endorsement.user_agent;
-    });
-    writeItemsToCsv("Top votes from IP, User agent, Post Id", getTopItems(groupedByIPs));
-    seriesCallback();
-  }
+  }*/
 ], function (error) {
     if (error) {
       console.error(error);

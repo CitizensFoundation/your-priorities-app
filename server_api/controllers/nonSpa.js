@@ -99,6 +99,95 @@ var sendDomain = function sendDomainForBot(id, communitiesOffset, req, res) {
   });
 };
 
+const completeSendingCommunity = (community, req, res) => {
+  var imageUrl = '';
+  if (community.CommunityLogoImages && community.CommunityLogoImages.length>0) {
+    var formats = JSON.parse(community.CommunityLogoImages[0].formats);
+    imageUrl = formats[0];
+  }
+  var botOptions = {
+    url       : fullUrl(req),
+    title     :  community.name,
+    descriptionText : community.description,
+    imageUrl  : imageUrl,
+    contentType: 'article',
+    subItemsUrlbase: "/group/",
+    subItemContainerName: "Groups",
+    backUrl: "/domain/"+community.domain_id,
+    backText: "Back to domain",
+    subItemPoints: [],
+    subItemIds: _.dropRight(community.Groups, community.Groups.length>10000 ? community.Groups.length - 10000 : 0)
+  };
+  res.render('bot', botOptions);
+}
+
+const getTranslation = (modelInstance, textType, targetLanguage, done) => {
+  const translationReq = {query: {textType, targetLanguage}}
+  models.AcTranslationCache.getTranslation(translationReq, modelInstance, function (error, translation) {
+    if (error) {
+      done(error);
+    } else {
+      done(null,  translation.content);
+    }
+  });
+}
+
+const translateCommunity = (community, req, res) => {
+  const locale = req.query.locale || req.query.l;
+  let translatedName, translatedDescription;
+  async.series([
+      (seriesCallback) => {
+        getTranslation(community, "communityName", locale, (error, text) => {
+          translatedName = text;
+          seriesCallback(error);
+        })
+      },
+      (seriesCallback) => {
+        getTranslation(community, "communityContent", locale, (error, text) => {
+          translatedDescription = text;
+          seriesCallback(error);
+        })
+      },
+    ],
+    (error) => {
+      if (error) {
+        log.error(error);
+      } else {
+        community.name = translatedName;
+        community.description = translatedDescription;
+      }
+      completeSendingCommunity(community, req, res);
+    })
+}
+
+const translateGroup = (group, postsInfo, postsOffset, req, res) => {
+  const locale = req.query.locale || req.query.l;
+  let translatedName, translatedDescription;
+  async.series([
+      (seriesCallback) => {
+        getTranslation(group, "groupName", locale, (error, text) => {
+          translatedName = text;
+          seriesCallback(error);
+        })
+      },
+      (seriesCallback) => {
+        getTranslation(group, "groupContent", locale, (error, text) => {
+          translatedDescription = text;
+          seriesCallback(error);
+        })
+      },
+    ],
+    (error) => {
+      if (error) {
+        log.error(error);
+      } else {
+        group.name = translatedName;
+        group.objectives = translatedDescription;
+      }
+      completeSendingGroup(group, postsInfo, postsOffset, req, res);
+    })
+}
+
 var sendCommunity = function sendCommunityForBot(id, req, res) {
   models.Community.findOne({
     where: { id: id, access: models.Community.ACCESS_PUBLIC },
@@ -131,26 +220,12 @@ var sendCommunity = function sendCommunityForBot(id, req, res) {
     ]
   }).then(function(community) {
     if (community) {
-      //log.info('Bot: Community', { communityId: community.id, context: 'view', bot: true });
-      var imageUrl = '';
-      if (community.CommunityLogoImages && community.CommunityLogoImages.length>0) {
-        var formats = JSON.parse(community.CommunityLogoImages[0].formats);
-        imageUrl = formats[0];
+      if ((req.query.locale || req.query.l) && (req.query.startAutoTranslate || req.query.t)) {
+        translateCommunity(community, req, res);
+      } else {
+        completeSendingCommunity(community, req, res);
       }
-      var botOptions = {
-        url       : fullUrl(req),
-        title     :  community.name,
-        descriptionText : community.description,
-        imageUrl  : imageUrl,
-        contentType: 'article',
-        subItemsUrlbase: "/group/",
-        subItemContainerName: "Groups",
-        backUrl: "/domain/"+community.domain_id,
-        backText: "Back to domain",
-        subItemPoints: [],
-        subItemIds: _.dropRight(community.Groups, community.Groups.length>10000 ? community.Groups.length - 10000 : 0)
-      };
-      res.render('bot', botOptions);
+      //log.info('Bot: Community', { communityId: community.id, context: 'view', bot: true });
     } else {
       log.warn('Community Not Found for Bot', { err: 'Not found', context: 'view', bot: true });
       res.sendStatus(404);
@@ -160,6 +235,41 @@ var sendCommunity = function sendCommunityForBot(id, req, res) {
     res.sendStatus(500);
   });
 };
+
+const completeSendingGroup = (group, postsInfo, postsOffset, req, res) => {
+  var imageUrl = '';
+  if (group.GroupLogoImages && group.GroupLogoImages.length>0) {
+    formats = JSON.parse(group.GroupLogoImages[0].formats);
+    imageUrl = formats[0];
+  } else if (group.Community.CommunityLogoImages && group.Community.CommunityLogoImages.length>0) {
+    formats = JSON.parse(group.Community.CommunityLogoImages[0].formats);
+    imageUrl = formats[0];
+  }
+
+  const postsLeft = postsInfo.count-(postsOffset+postsInfo.rows.length);
+  if (postsLeft>0) {
+    postsOffset+=20;
+  } else {
+    postsOffset = null;
+  }
+
+  var botOptions = {
+    url       : fullUrl(req),
+    title     :  group.name,
+    descriptionText : group.objectives,
+    imageUrl  : imageUrl,
+    contentType: 'article',
+    subItemsUrlbase: "/post/",
+    subItemContainerName: "Posts",
+    backUrl: "/community/"+group.community_id,
+    backText: "Back to community",
+    moreUrl: postsOffset ? "/group/"+group.id+"?postsOffset="+postsOffset : null,
+    moreText: "More posts ("+postsLeft+")",
+    subItemPoints: [],
+    subItemIds: group.Posts
+  };
+  res.render('bot', botOptions);
+}
 
 var sendGroup = function sendGroupForBot(id, postsOffset, req, res) {
   models.Group.findOne({
@@ -212,38 +322,11 @@ var sendGroup = function sendGroupForBot(id, postsOffset, req, res) {
       }).then((postsInfo)=>{
         group.Posts = postsInfo.rows;
         //log.info('Bot: Group', { groupId: group.id, context: 'view', bot: true });
-        var imageUrl = '';
-        if (group.GroupLogoImages && group.GroupLogoImages.length>0) {
-          formats = JSON.parse(group.GroupLogoImages[0].formats);
-          imageUrl = formats[0];
-        } else if (group.Community.CommunityLogoImages && group.Community.CommunityLogoImages.length>0) {
-          formats = JSON.parse(group.Community.CommunityLogoImages[0].formats);
-          imageUrl = formats[0];
-        }
-
-        const postsLeft = postsInfo.count-(postsOffset+postsInfo.rows.length);
-        if (postsLeft>0) {
-          postsOffset+=20;
+        if ((req.query.locale || req.query.l) && (req.query.startAutoTranslate || req.query.t)) {
+          translateGroup(group, postsInfo, postsOffset, req, res);
         } else {
-          postsOffset = null;
+          completeSendingGroup(group, postsInfo, postsOffset, req, res);
         }
-
-        var botOptions = {
-          url       : fullUrl(req),
-          title     :  group.name,
-          descriptionText : group.objectives,
-          imageUrl  : imageUrl,
-          contentType: 'article',
-          subItemsUrlbase: "/post/",
-          subItemContainerName: "Posts",
-          backUrl: "/community/"+group.community_id,
-          backText: "Back to community",
-          moreUrl: postsOffset ? "/group/"+group.id+"?postsOffset="+postsOffset : null,
-          moreText: "More posts ("+postsLeft+")",
-          subItemPoints: [],
-          subItemIds: group.Posts
-        };
-        res.render('bot', botOptions);
       }).catch((error)=>{
         log.error('Group Not Found for Bot', { err: error, context: 'view', bot: true });
         res.sendStatus(500);

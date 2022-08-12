@@ -5,6 +5,147 @@ const _ = require('lodash');
 const fs = require('fs');
 const request = require('request');
 
+const recountPosts = (postIds, done) => {
+  async.forEachSeries(postIds, (postId, forEachPostCallback) => {
+    recountPost(postId, forEachPostCallback);
+  }, error => {
+    done(error)
+  });
+}
+
+const recountPoints = (pointIds, done) => {
+  async.forEachSeries(pointIds, (pointId, forEachPostCallback) => {
+    recountPoint(pointId, forEachPostCallback);
+  }, error => {
+    done(error)
+  });
+}
+
+const recountPost = (postId, done) => {
+  var endorsementsCount;
+  var oppositionCount;
+  var pointCount;
+  async.parallel([
+    (parallelCallback) => {
+      models.Endorsement.count({
+        where: {
+          value: 1,
+          post_id: postId
+        }
+      }).then( (count) => {
+        endorsementsCount = count;
+        parallelCallback();
+      }).catch( (error) => {
+        parallelCallback(error);
+      });
+    },
+    (parallelCallback) => {
+      models.Endorsement.count({
+        where: {
+          value: -1,
+          post_id: postId
+        }
+      }).then( (count) => {
+        oppositionCount = count;
+        parallelCallback();
+      }).catch(function (error) {
+        parallelCallback(error);
+      });
+    },
+    (parallelCallback) => {
+      models.Point.count({
+        where: {
+          $or: [
+            {value: -1},
+            {value: 1}
+          ],
+          post_id: postId
+        }
+      }).then( (count) => {
+        pointCount = count;
+        parallelCallback();
+      }).catch( (error) => {
+        parallelCallback(error);
+      });
+    }
+  ],  (error) => {
+    if (error) {
+      done(error)
+    } else {
+      models.Post.findOne({
+        where: {
+          id: postId
+        },
+        attributes: ['id','counter_endorsements_up','counter_endorsements_down','counter_points']
+      }).then( (post) => {
+        post.counter_points = pointCount;
+        post.counter_endorsements_up = endorsementsCount;
+        post.counter_endorsements_down = oppositionCount;
+        post.save().then( (results) => {
+          console.log(`Recount for post ${post.id} done`);
+          done();
+        });
+      }).catch( (error) => {
+        done(error);
+      })
+    }
+  });
+};
+
+const recountPoint = (pointId, done) => {
+  var counter_quality_up;
+  var counter_quality_down;
+  var pointCount;
+  async.parallel([
+    (parallelCallback) => {
+      models.PointQuality.count({
+        where: {
+          value: 1,
+          point_id: pointId
+        }
+      }).then( (count) => {
+        counter_quality_up = count;
+        parallelCallback();
+      }).catch( (error) => {
+        parallelCallback(error);
+      });
+    },
+    (parallelCallback) => {
+      models.PointQuality.count({
+        where: {
+          value: -1,
+          point_id: pointId
+        }
+      }).then( (count) => {
+        counter_quality_down = count;
+        parallelCallback();
+      }).catch(function (error) {
+        parallelCallback(error);
+      });
+    }
+  ],  (error) => {
+    if (error) {
+      done(error)
+    } else {
+      models.Point.findOne({
+        where: {
+          id: pointId
+        },
+        attributes: ['id','counter_quality_up','counter_quality_down']
+      }).then( (point) => {
+        point.counter_quality_up = counter_quality_up;
+        point.counter_quality_down = counter_quality_down;
+        point.save().then( (results) => {
+          console.log(`Recount for point ${point.id} done`);
+          done();
+        });
+      }).catch( (error) => {
+        done(error);
+      })
+    }
+  });
+};
+
 const countPostInGroup = (groupId, done) => {
   models.Post.count({
     where: {
@@ -128,7 +269,6 @@ const countUsersInGroup = (groupId, done) => {
         seriesCallback();
       }).catch(seriesCallback)
     }
-
   ], error => {
     done(error, _.uniq(userIds).length, userIds);
   })
@@ -267,5 +407,9 @@ const recountCommunity = (communityId, callback) => {
 
 module.exports = {
   recountCommunity,
-  recountGroup
+  recountGroup,
+  recountPost,
+  recountPosts,
+  recountPoint,
+  recountPoints
 };

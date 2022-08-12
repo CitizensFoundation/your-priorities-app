@@ -7,6 +7,8 @@ const maxNumberOfNotificationsToDelete = maxNumberFromPath ? maxNumberFromPath :
 
 let numberOfDeletedNotifications = 0;
 
+let startTime = moment();
+
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
@@ -39,7 +41,7 @@ const chunk = (arr, size) =>
       });
 
       if (users.length>0) {
-        console.log(`Found ${users.length} users offset ${userOffset}`);
+        console.log(`${users.length} users offset ${userOffset}`);
         userOffset+=500;
         const userIds = users.map(n=>{ return n.id});
 
@@ -59,7 +61,7 @@ const chunk = (arr, size) =>
             attributes:['id'],
           });
 
-          console.log(`Found ${notifications.length} notifications offset ${notificationsOffset}`);
+          console.log(`${notifications.length} notifications offset ${notificationsOffset}`);
 
           if (notifications.length>0) {
             notificationsOffset += 1000;
@@ -78,9 +80,9 @@ const chunk = (arr, size) =>
 
               numberOfDeletedNotifications+=destroyInfo;
 
-              console.log(`${i} - ${numberOfDeletedNotifications}`);
+              console.log(`${numberOfDeletedNotifications}`);
 
-              await sleep(100);
+              await sleep(50);
 
               if (numberOfDeletedNotifications>=maxNumberOfNotificationsToDelete) {
                 break;
@@ -90,6 +92,8 @@ const chunk = (arr, size) =>
             haveNotificationsLeftToProcess = false;
             console.log("No more notifications left to process from user")
           }
+
+          await sleep(100);
         }
       } else {
         haveNotificationsToDelete = false;
@@ -99,54 +103,7 @@ const chunk = (arr, size) =>
       haveNotificationsToDelete = false;
     }
   }
-  console.log("All old anon notifications deleted");
+  console.log(`${numberOfDeletedNotifications} old anon notifications deleted`);
+  console.log(`Duration ${moment(moment()-startTime).format("HH:mm:ss.SSS")}`)
   process.exit();
 })();
-
-/*(async ()=>{
-  let haveNotificationsToDelete = true;
-  while(haveNotificationsToDelete) {
-    try {
-      const notifications = await models.AcNotification.unscoped().findAll({
-        include: [
-          {
-            model: models.User,
-            where: {
-              created_at: {
-                [models.Sequelize.Op.lte]: moment().add(-3, 'days').toISOString()
-              },
-              private_profile_data: {
-                isAnonymousUser: true
-              }
-            },
-            attributes:['id','user_id','private_profile_data'],
-            required: true
-          }
-        ],
-        attributes: ['id','user_id'],
-        limit: 1000
-      });
-
-      if (notifications.length>0) {
-        const notificationIds = notifications.map(n=>n.id);
-
-        const destroyInfo =  await models.AcNotification.unscoped().destroy({
-          where: {
-            id: {
-              [models.Sequelize.Op.in]: notificationIds
-            }
-          }
-        });
-
-        const b = destroyInfo;
-      } else {
-        haveNotificationsToDelete = false;
-      }
-    } catch(error) {
-      console.error(error);
-      haveNotificationsToDelete = false;
-    }
-  }
-  console.log("All old anon notifications deleted");
-  process.exit();
-})();*/

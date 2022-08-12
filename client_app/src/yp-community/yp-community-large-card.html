@@ -118,7 +118,7 @@
       .communityDescription {
         padding-left: 16px;
         padding-right: 16px;
-        padding-top: 16px;
+        padding-top: 14px;
       }
 
       .communityDescription[widetext] {
@@ -239,8 +239,7 @@
         }
 
         .communityDescription {
-          padding-top: 6px;
-          padding-bottom: 4px;
+          padding-bottom: 8px;
         }
 
         .stats {
@@ -319,7 +318,17 @@
         </div>
         <div hidden$="[[community.configuration.welcomeHTML]]">
           <template is="dom-if" if="[[communityVideoURL]]" restamp>
-            <video id="videoPlayer" data-id$="[[communityVideoId]]" controls preload="meta" class="image pointer" src="[[communityVideoURL]]" playsinline poster="[[communityVideoPosterURL]]"></video>
+            <template is="dom-if" if="[[useZiggeo]]" restamp>
+              <yp-ziggeo-player
+                video-token="[[communityVideoURL]]"
+                video-active=true
+                top-container=true
+              >
+              </yp-ziggeo-player>
+            </template>
+            <template is="dom-if" if="[[!useZiggeo]]">
+              <video id="videoPlayer" data-id$="[[communityVideoId]]" controls preload="meta" class="image pointer" src="[[communityVideoURL]]" playsinline poster="[[communityVideoPosterURL]]"></video>
+            </template>
           </template>
           <template is="dom-if" if="[[!communityVideoURL]]">
             <iron-image class="image" sizing="cover" alt$="[[community.name]]" src$="[[communityLogoImagePath]]"></iron-image>
@@ -359,6 +368,12 @@
               <paper-item hidden$="[[!hasCommunityAccessAndNotFolder]]" id="moderationMenuItem">
                 [[t('flaggedContent')]] <span hidden$="[[!flaggedContentCount]]">&nbsp; ([[flaggedContentCount]])</span>
               </paper-item>
+              <template is="dom-if" if="[[community.configuration.enableFraudDetection]]">
+                <paper-item hidden$="[[!hasCommunityAccessAndNotFolder]]" id="fraudManagementMenuItem">
+                  [[t('fraudManagement')]] <span hidden hiddentempt$="[[!flaggedContentCount]]">&nbsp; ()</span>
+                </paper-item>
+                <paper-item hidden$="[[!hasCommunityAccess]]" id="createReportFraudReport">[[t('downloadFraudAuditReports')]]</paper-item>
+              </template>
               <paper-item hidden$="[[!hasCommunityAccessAndNotFolder]]" id="moderationAllMenuItem">
                 [[t('manageAllContent')]]
               </paper-item>
@@ -455,6 +470,19 @@
           type: String,
           computed: '_exportUsersUrl(hasCommunityAccess, community)'
         },
+
+        useZiggeo: {
+          type: Boolean,
+          computed: '_useZiggeo(community)'
+        }
+      },
+
+      _useZiggeo: function (community) {
+        if (community && community.configuration) {
+          return community.configuration.useZiggeo;
+        } else {
+          return false;
+        }
       },
 
       _exportLoginsUrl: function (access, community) {
@@ -531,12 +559,16 @@
             }
           });
 
-          if (this.largeFont) {
-            this.$$("#description").style.fontSize = "14px";
-          } else if (community.description.length>220 && community.name && community.name.length>30) {
-            this.$$("#description").style.fontSize = "15px";
-          } else {
-            this.$$("#description").style.fontSize = "16px";
+          if (window.innerWidth>480) {
+            if (this.largeFont) {
+              this.$$("#description").style.fontSize = "14px";
+            } else if (community.description.length>250 && community.name && community.name.length>35) {
+              this.$$("#description").style.fontSize = "14.3px";
+            } else if (community.description.length>220 && community.name && community.name.length>30) {
+              this.$$("#description").style.fontSize = "15px";
+            } else {
+              this.$$("#description").style.fontSize = "16px";
+            }
           }
         }
         this.setupMediaEventListeners(community, previousCommunity);
@@ -585,6 +617,8 @@
           this.fire('yp-new-group');
         else if (detail.item.id==="moderationMenuItem")
           this._openContentModeration();
+        else if (detail.item.id==="fraudManagementMenuItem")
+          this._openFraudManagement();
         else if (detail.item.id==="moderationAllMenuItem")
           this._openAllContentModeration();
         else if (detail.item.id==="anonymizeMenuItem")
@@ -593,6 +627,8 @@
           this._openDeleteContent();
         else if (detail.item.id==="createReportXlsUsers")
           this._openCreateXlsUsersReport();
+        else if (detail.item.id==="createReportFraudReport")
+          this.createReportFraudReport();
         else if (detail.item.id==="addCommunityFolderMenuItem")
           this.fire('yp-new-community-folder');
         else if (detail.item.id==="openAnalyticsApp")
@@ -609,9 +645,24 @@
         }.bind(this));
       },
 
+      createReportFraudReport: function () {
+        window.appGlobals.activity('open', 'createReportFraudReport');
+        Polymer.dom(document).querySelector('yp-app').getCreateReportAsync(function (dialog) {
+          dialog.setupAndOpen("fraudAuditReport", null, this.community);
+        }.bind(this));
+      },
+
       _openContentModeration: function () {
         window.appGlobals.activity('open', 'communityContentModeration');
         Polymer.dom(document).querySelector('yp-app').getContentModerationAsync(function (dialog) {
+          dialog.setup(null, this.community.id, null, false);
+          dialog.open(this.community.name);
+        }.bind(this));
+      },
+
+      _openFraudManagement: function () {
+        window.appGlobals.activity('open', 'communityFraudManagement');
+        Polymer.dom(document).querySelector('yp-app').getFraudManagementAsync(function (dialog) {
           dialog.setup(null, this.community.id, null, false);
           dialog.open(this.community.name);
         }.bind(this));

@@ -171,7 +171,31 @@
             value: ['newPost','endorse_up','endorse_down','newPointFor','newPointAgainst']
           },
 
-          notifyDialogText: String
+          notifyDialogText: String,
+
+          googleMapsApiKey: {
+            type: String,
+            value: null
+          },
+
+          useZiggeo: {
+            type: Boolean,
+            value: false,
+            observer: '_useZiggeoChanged'
+          },
+
+          haveLoadedZiggeo: {
+            type: Boolean,
+            value: false
+          }
+        },
+
+        _useZiggeoChanged: function (useZiggeo) {
+          if (useZiggeo && !this.haveLoadedZiggeo) {
+            this.haveLoadedZiggeo = true;
+            this.importHref(this.resolveUrl("/src/integrations/ziggeo/yp-ziggeo-player.html"), function () {
+            }.bind(this), null, true);
+          }
         },
 
         setHighlightedLanguages: function (languages) {
@@ -332,6 +356,12 @@
                 detail: { name: 'yp-domain-changed', data: { domain: domain } }
               })
             );
+
+            if (domain.configuration && domain.configuration.plausibleDataDomains) {
+              this.plausibleDomains = domain.configuration.plausibleDataDomains;
+            } else {
+              this.plausibleDomains = null;
+            }
           }
         },
 
@@ -364,6 +394,7 @@
         _bootResponse: function (event, detail) {
           this.set('requestInProgress', false);
           this.set('domain', detail.response.domain);
+          this.set('googleMapsApiKey', detail.response.domain.googleMapsApiKey);
 
           this.setupGoogleAnalytics(this.domain);
           if (window.location.pathname=="/") {

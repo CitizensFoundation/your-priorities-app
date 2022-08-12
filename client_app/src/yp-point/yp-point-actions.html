@@ -94,7 +94,7 @@
                         on-share-tap="_shareTap" class="shareIcon"
                         up-voted$="[[isUpVoted]]" horizontal-align="right" id="shareButton"
                         whatsapp$="[[configuration.allowWhatsAppSharing]]"
-                        title$="[[t('sharePoint')]]" facebook email twitter popup
+                        title$="[[t('sharePoint')]]" facebook email twitter popup-enabled
                         url="[[pointUrl]]"></paper-share-button>
 
     <yp-ajax id="pointQualityAjax" hidden method="POST" on-response="_pointQualityResponse"></yp-ajax>
@@ -245,7 +245,13 @@
       generatePointQuality: function (value) {
         if (window.appUser.loggedIn()===true) {
           this.$.pointQualityAjax.url = "/api/points/" + this.point.id + "/pointQuality";
-          this.$.pointQualityAjax.body = { point_id: this.point.id, value: value };
+          this.$.pointQualityAjax.body = {
+            point_id: this.point.id,
+            value: value,
+            qualityBaseId:  window.appUser.getBrowserId(),
+            qualityValCode: window.appUser.browserFingerprint,
+            qualityConf: window.appUser.browserFingerprintConfidence
+          };
           if (this.pointQualityValue === value) {
             this.$.pointQualityAjax.method = "DELETE";
           } else {

@@ -228,7 +228,16 @@
           </paper-tab>
         </template>
         <template is="dom-if" if="[[!locationHidden]]" restamp>
-          <paper-tab>[[t('post.location')]]</paper-tab>
+          <paper-tab>
+            <template is="dom-if" if="[[group.configuration.customTabTitleNewLocation]]">
+              <paper-tab><yp-magic-text id="customTabTitleNewLocation" content-id="[[group.id]]" text-only content="[[group.configuration.customTabTitleNewLocation]]"
+                                        content-language="[[group.language]]" role="heading" aria-level="2"
+                                        text-type="customTabTitleNewLocation"></yp-magic-text>
+            </template>
+            <template is="dom-if" if="[[!group.configuration.customTabTitleNewLocation]]">
+              <paper-tab>[[t('post.location')]]</paper-tab>
+            </template>
+          </paper-tab>
         </template>
         <template is="dom-if" if="[[!mediaHidden]]" restamp>
           <paper-tab>
@@ -265,7 +274,7 @@
               </template>
 
               <template is="dom-if" if="[[_showCategories(group)]]" restamp>
-                <paper-dropdown-menu class="categoryDropDown" label="[[t('category.select')]]" required$="[[group.configuration.makeCategoryRequiredOnNewPost]]">
+                <paper-dropdown-menu class="categoryDropDown" label="[[categoryQuestionText]]" required$="[[group.configuration.makeCategoryRequiredOnNewPost]]">
                   <paper-listbox slot="dropdown-content" selected="{{selectedCategoryArrayId}}">
                     <template is="dom-repeat" items="[[group.Categories]]" as="category">
                       <paper-item data-category-id$="[[category.id]]">[[category.name]]</paper-item>
@@ -472,6 +481,11 @@
         <input type="hidden" name="uploadedDocumentFilename" value="[[uploadedDocumentFilename]]">
         <input type="hidden" name="structuredAnswers" value="[[structuredAnswers]]">
         <input type="hidden" name="structuredAnswersJson" value="[[structuredAnswersJson]]">
+
+        <input type="hidden" name="postBaseId" value="[[browserId]]">
+        <input type="hidden" name="postValCode" value="[[browserFingerprint]]">
+        <input type="hidden" name="postConf" value="[[browserFingerprintConfidence]]">
+
       </div>
     </yp-edit-dialog>
 
@@ -495,8 +509,14 @@
 
     <template is="dom-if" if="[[group.configuration.customTitleQuestionText]]">
       <yp-magic-text id="customTitleQuestionTextId" hidden content-id="[[group.id]]" text-only content="[[group.configuration.customTitleQuestionText]]"
-                     content-language="[[group.language]]" on-new-translation="_updatePostTitle" role="heading" aria-level="2"
+                     content-language="[[group.language]]" on-new-translation="_updatePostTitle"
                      text-type="customTitleQuestionText"></yp-magic-text>
+    </template>
+
+    <template is="dom-if" if="[[group.configuration.customCategoryQuestionText]]">
+      <yp-magic-text id="customCategoryQuestionTextId" hidden content-id="[[group.id]]" text-only content="[[group.configuration.customCategoryQuestionText]]"
+                     content-language="[[group.language]]" on-new-translation="_updateCategoryQuestion"
+                     text-type="customCategoryQuestionText"></yp-magic-text>
     </template>
 
     <yp-ajax hidden id="translatedQuestionsAjax" on-response="_translatedQuestionsResponse"></yp-ajax>
@@ -546,6 +566,16 @@
       customTitleQuestionText: {
         type: String,
         value: null
+      },
+
+      customCategoryQuestionText: {
+        type: String,
+        value: null
+      },
+
+      categoryQuestionText: {
+        type: String,
+        computed: '_categoryQuestionText(post, customCategoryQuestionText, group)'
       },
 
       group: {
@@ -702,6 +732,21 @@
       hasLongSaveText: {
         type: Boolean,
         computer: '_hasLongSaveText(saveText)'
+      },
+
+      browserId: {
+        type: String,
+        value: null
+      },
+
+      browserFingerprint: {
+        type: String,
+        value: null
+      },
+
+      browserFingerprintConfidence: {
+        type: String,
+        value: null
       }
     },
 
@@ -809,6 +854,16 @@
       }
     },
 
+    _categoryQuestionText: function (post, customCategoryQuestionText, group) {
+      if (post && group && customCategoryQuestionText) {
+        return  customCategoryQuestionText;
+      } else if (post && group && group.configuration && group.configuration.customCategoryQuestionText) {
+        return group.configuration.customCategoryQuestionText;
+      } else {
+        return this.t('category.select');
+      }
+    },
+
     _isLastRating: function (index) {
       return (this.structuredQuestions[index].subType==="rating" &&
         (index+2)<this.structuredQuestions.length &&
@@ -873,6 +928,21 @@
     observers: [
       '_setupTranslation(language,t)'
     ],
+
+    ready: function () {
+      this.browserId = window.appUser.getBrowserId();
+      this.browserFingerprint = window.appUser.browserFingerprint;
+      this.browserFingerprintConfidence = window.appUser.browserFingerprintConfidence;
+    },
+
+    _updateCategoryQuestion: function () {
+      this.async(function () {
+        var label = this.$$("#customCategoryQuestionTextId");
+        if (label && label.finalContent) {
+          this.set('customCategoryQuestionText', label.finalContent);
+        }
+      });
+    },
 
     _updatePostTitle: function () {
       this.async(function () {
@@ -1233,7 +1303,8 @@
           ajax.method = 'PUT';
           ajax.body = {
             videoId: this.uploadedVideoId,
-            appLanguage: this.language
+            appLanguage: this.language,
+            isZiggeo: window.appGlobals.useZiggeo
           };
           ajax.addEventListener('response', function (event) {
             this._finishRedirect(post);

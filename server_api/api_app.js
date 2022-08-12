@@ -81,10 +81,6 @@ const ieVersion = (uaString) => {
   if (match) return parseInt(match[2])
 };
 
-if (process.env.REDISTOGO_URL) {
-  process.env.REDIS_URL = process.env.REDISTOGO_URL;
-}
-
 let airbrake = null;
 
 if (process.env.AIRBRAKE_PROJECT_ID) {
@@ -135,10 +131,17 @@ app.use(bodyParser.urlencoded({limit: '5mb', extended: true}));
 let redisClient;
 if (process.env.REDIS_URL) {
   let redisUrl = process.env.REDIS_URL;
+
   if (redisUrl.startsWith("redis://h:")) {
     redisUrl = redisUrl.replace("redis://h:","redis://:")
   }
-  redisClient = redis.createClient(redisUrl);
+
+  if (redisUrl.includes("rediss://")) {
+    redisClient = redis.createClient(redisUrl, { tls: { rejectUnauthorized: false } });
+  } else {
+    redisClient = redis.createClient(redisUrl);
+  }
+
 } else {
   redisClient = redis.createClient();
 }
@@ -604,7 +607,7 @@ app.use(function generalErrorHandler(err, req, res, next) {
 
 if (process.env.YOUR_PRIORITIES_LISTEN_HOST) {
   var server = app.listen(app.get('port'), process.env.YOUR_PRIORITIES_LISTEN_HOST, function () {
-    log.info('Your Priorities server listening on port ' + server.address().port);
+    log.info(`Your Priorities server listening on port ${process.env.YOUR_PRIORITIES_LISTEN_HOST}:${app.get('port')}`);
   });
 } else {
   var server = app.listen(app.get('port'), function () {

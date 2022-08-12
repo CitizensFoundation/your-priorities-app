@@ -145,7 +145,9 @@
               <iron-icon class="icon" icon="videocam"></iron-icon>
               <span>[[t('uploadVideo')]]</span>
             </yp-file-upload>
-            <paper-checkbox class="useVideoCover" name="useVideoCover" disabled$="[[!uploadedVideoId]]" checked$="{{community.configuration.useVideoCover}}">[[t('useVideoCover')]]</paper-checkbox>
+            <template is="dom-if" if="[[hasVideos]]" restamp>
+              <paper-checkbox class="useVideoCover" name="useVideoCover" checked$="{{community.configuration.useVideoCover}}">[[t('useVideoCover')]]</paper-checkbox>
+            </template>
           </div>
         </template>
       </div>
@@ -290,7 +292,7 @@
       <paper-input id="customBackName"
                    name="customBackName"
                    type="text"
-                   maxlength="20"
+                   maxlength="35"
                    label="[[t('customBackName')]]"
                    value="{{community.configuration.customBackName}}">
       </paper-input>
@@ -316,7 +318,7 @@
                    type="text"
                    label="[[t('appHomeScreenShortName')]]"
                    value="{{community.configuration.appHomeScreenShortName}}"
-                   maxlength="12" style="width: 200px;">
+                   maxlength="16" style="width: 200px;">
       </paper-input>
 
       <div class="layout vertical additionalSettings half">
@@ -329,11 +331,16 @@
       </div>
 
       <div class="layout vertical">
+        <paper-checkbox name="closeNewsfeedSubmissions" checked$="{{community.configuration.closeNewsfeedSubmissions}}">[[t('closeNewsfeedSubmissions')]]</paper-checkbox>
         <paper-checkbox name="sortBySortOrder" checked$="{{community.configuration.sortBySortOrder}}">[[t('sortGroupsBySortOrder')]]</paper-checkbox>
+        <paper-checkbox name="orderByRandom" checked$="{{community.configuration.orderByRandom}}">[[t('orderGroupsByRandom')]]</paper-checkbox>
         <paper-checkbox name="alwaysShowOnDomainPage" checked$="{{community.configuration.alwaysShowOnDomainPage}}">[[t('alwaysShowOnDomainPage')]]</paper-checkbox>
         <paper-checkbox name="hideRecommendationOnNewsFeed" checked$="{{community.configuration.hideRecommendationOnNewsFeed}}">[[t('hideRecommendationOnNewsFeed')]]</paper-checkbox>
         <paper-checkbox name="recalculateCountersRecursively" checked$="{{community.configuration.recalculateCountersRecursively}}">[[t('recalculateCountersRecursively')]]</paper-checkbox>
-
+        <paper-checkbox name="enableFraudDetection" checked$="{{community.configuration.enableFraudDetection}}">[[t('enableFraudDetection')]]</paper-checkbox>
+        <template is="dom-if" if="[[ziggeoActive()]]">
+          <paper-checkbox name="useZiggeo" checked$="{{community.configuration.useZiggeo}}">[[t('useZiggeo')]]</paper-checkbox>
+        </template>
         <paper-checkbox name="forceSecureSamlLogin" disabled$="[[!hasSamlLoginProvider]]"
                         checked$="{{community.configuration.forceSecureSamlLogin}}">[[t('forceSecureSamlLogin')]]
         </paper-checkbox>
@@ -497,7 +504,16 @@
       descriptionMaxLength: {
         type: Number,
         value: 300
+      },
+
+      hasVideos: {
+        type: Boolean,
+        computed: '_hasVideos(community, uploadedVideoId)'
       }
+    },
+
+    _hasVideos: function(community, uploadedVideoId) {
+      return uploadedVideoId || (community && community.CommunityLogoVideos && community.CommunityLogoVideos.length > 0);
     },
 
     observers: [
@@ -522,8 +538,12 @@
     },
 
     _videoUploaded: function (event, detail) {
-      this.set('uploadedVideoId', detail.videoId);
-      this.set('community.configuration.useVideoCover', true);
+      if (detail.videoId) {
+        this.set('uploadedVideoId', detail.videoId);
+        this.set('community.configuration.useVideoCover', true);
+        } else {
+        console.log("Trying to set video uploaded again")
+      }
     },
 
     _pagesResponse: function (event, detail) {
@@ -613,7 +633,8 @@
             ajax.url = '/api/videos/'+community.id+'/completeAndAddToCommunity';
             ajax.method = 'PUT';
             ajax.body = {
-              videoId: this.uploadedVideoId
+              videoId: this.uploadedVideoId,
+              isZiggeo: window.appGlobals.useZiggeo
             };
             ajax.addEventListener('response', function (event) {
               this._finishRedirect(community);
@@ -716,8 +737,13 @@
         this._checkCommunityFolders(this.community);
       } else {
         this.set('community', community);
-        if (community.CommunityLogoVideos && community.CommunityLogoVideos.length>0) {
-          this.set('uploadedVideoId', community.CommunityLogoVideos[0].id)
+        //TODO: Remove
+        if (false && community.CommunityLogoVideos && community.CommunityLogoVideos.length>0) {
+          if (window.appGlobals.useZiggeo) {
+            this.set('uploadedVideoId', community.CommunityLogoVideos[0].formats[0])
+          } else {
+            this.set('uploadedVideoId', community.CommunityLogoVideos[0].id)
+          }
         }
         this.$.pagesAjax.url = "/api/communities/"+community.id+"/pages";
         this.$.pagesAjax.generateRequest();

@@ -112,7 +112,9 @@
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
     <paper-material is-old-safari-or-ie$="[[isOldSafariOrIe]]" logged-in-user$="[[hasLoggedInUser]]" elevation="[[_elevationForType(activity.type)]]" class="layout vertical activity" tabindex$="[[tabIndex]]">
-      <paper-icon-button title$="[[t('deleteActivity')]]" hidden$="[[!_hasActivityAccess(activity)]]" icon="delete" data-args$="[[activity.id]]" class="deleteIcon" on-tap="_deleteActivity"></paper-icon-button>
+      <template is="dom-if" if="[[hasActivityAccess]]">
+        <paper-icon-button title$="[[t('deleteActivity')]]" icon="delete" data-args$="[[activity.id]]" class="deleteIcon" on-tap="_deleteActivity"></paper-icon-button>
+      </template>
       <div class="mainActivityContent">
         <div class="layout horizontal">
           <ac-activity-header class="layout horizontal headerUserImage" activity="[[activity]]"></ac-activity-header>
@@ -191,16 +193,14 @@
           computed: '_isOldSafariOrIe(wide)'
         },
 
-        hasLoggedInUser: {
-          type: Boolean
-        }
-      },
+        hasActivityAccess: {
+          type: Boolean,
+          computed: '_hasActivityAccess(activity, hasLoggedInUser)'
+        },
 
-      _hasLoggedInUser: function (user) {
-        if (user) {
-          return true;
-        } else {
-          return false;
+        hasLoggedInUser: {
+          type: Boolean,
+          value: false
         }
       },
 
@@ -222,15 +222,19 @@
         return 1;
       },
 
-      _hasActivityAccess: function (activity) {
-        if (this.domainId) {
-          return this.checkDomainAccess(activity.Domain)
-        } else if (this.communityId) {
-          return this.checkCommunityAccess(activity.Community)
-        } else if (this.groupId) {
-          return this.checkGroupAccess(activity.Group)
-        } else if (this.postId) {
-          return this.checkPostAccess(activity.Post)
+      _hasActivityAccess: function (activity, isLoggedInUser) {
+        if (activity) {
+          if (this.domainId) {
+            return this.checkDomainAccess(activity.Domain)
+          } else if (this.communityId) {
+            return this.checkCommunityAccess(activity.Community)
+          } else if (this.groupId) {
+            return this.checkGroupAccess(activity.Group)
+          } else if (this.postId) {
+            return this.checkPostAccess(activity.Post)
+          } else {
+            return false;
+          }
         } else {
           return false;
         }

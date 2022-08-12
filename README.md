@@ -1,4 +1,4 @@
-# Your Priorities Version 8.12
+# Your Priorities Version 8.14
 
 ![alt text](https://citizens.is/wp-content/uploads/2018/08/Capture-2.png "Your Priorities screenshot")
 
@@ -10,9 +10,10 @@
 * Effective debating system that is highly resistant to trolling and personal arguments
 * Users can submit ideas and debate points as text, audio or video
 * Users can prioritize ideas and debate points by voting them up or down
+* Configurable and powerful surveys for ideas and user registration
 * Custom emoji ratings where admins can configure groups to allow up to 4 different custom emoji ratings per group instead of the voting up and down
 * AI driven recommendation engine that recommends relevant posts to users
-* Highly scalable audio and video processing engine (using Amazon Elastic Transcoder and S3)
+* Highly scalable audio and video processing engine (using Amazon Elastic Transcoder and S3 or the Your Priorities Encoder)
 * Automatic Speech to Text conversion in 28 languages (using Google's TextToSpeech API)
 * Machine translations between 28 languages (using Google Translate API)
 * Simple moderation of all content for community and groups in one place
@@ -20,6 +21,7 @@
 * Users can view and moderate their own submitted content in one place
 * Full GDPR compliance
 * Localized in 28 languages
+* Advanced anti-Fraud system for detection malicious actors and quickly deleting unwanted content
 * Post status system where posts can be set to open open, in progress, approved or rejected
 * Admins can easily and automatically email post status update all the people who supported or opposed posts
 * Optional categories system for posts with simple filters
@@ -30,12 +32,20 @@
 * Authentication is configurable offering eID, Facebook, email and/or anonymous login
 * The client app is a progressive web app that can be very easily installed as a native app on mobile phones while also being a website
 * Built with Web Components making the app fast on inexpensive mobile phones
-* Open source, non profit and built with passion over 12 years
+* Open source, non profit and built with passion over 14 years
 * Supported by mass amounts of volunteer work, the EU, city of Reykjavik, World Bank, city of Kopavogur, Scottish Government and the Norwegian Consumer Authority
 
-## Getting Started User Tutorial
+## Getting Started Cloud Tutorial
 
 https://citizens.is/getting-started/
+
+Get started with Your Priorities on our cloud platform.
+
+## Deployment with Docker Compose
+
+[Docker deployment guide](https://docs.google.com/document/d/1t9oZRIIOqmxtAszeWLGRb0_ixsmSLdXvwGeej2EA5R8/)
+
+[Docker admin guide](https://docs.google.com/document/d/1lG0FwKbsy5J2RMio08Q-viR7xG0YYGVmY2zqmENcNtM/)
 
 ## Examples of live servers running Your Priorities
 
@@ -44,7 +54,6 @@ https://citizens.is/getting-started/
 * https://betrireykjavik.is/
 * https://www.junges.wien/
 * https://engage.parliament.scot/
-* https://enjine.smarter.nj.gov/
 
 ## How to run
 
@@ -55,7 +64,7 @@ cd your-priorities-app
 git submodule init
 git submodule update
 
-# In app root folder
+# In web app root folder
 yarn install
 cd client_app
 bower install

@@ -18,6 +18,13 @@ var size = function(obj) {
 
 models.Endorsement.findAll({
   attributes:["id","user_id"],
+  where: {
+    value: {
+      $or: [
+        -1,1
+      ]
+    }
+  },
   include: [
     {
       model: models.Post,

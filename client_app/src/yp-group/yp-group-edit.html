@@ -185,9 +185,11 @@
                 <iron-icon class="icon" icon="videocam"></iron-icon>
                 <span>[[t('uploadVideo')]]</span>
               </yp-file-upload>
-              <paper-checkbox class="useVideoCover" name="useVideoCover" disabled$="[[!uploadedVideoId]]"
-                              checked$="{{group.configuration.useVideoCover}}">[[t('useVideoCover')]]
-              </paper-checkbox>
+              <template is="dom-if" if="[[hasVideos]]" restamp>
+                <paper-checkbox class="useVideoCover" name="useVideoCover"
+                  checked$="{{group.configuration.useVideoCover}}">[[t('useVideoCover')]]
+                </paper-checkbox>
+              </template>
             </div>
           </template>
 
@@ -215,6 +217,11 @@
         <paper-checkbox name="allowAnonymousUsers" checked$="{{group.configuration.allowAnonymousUsers}}">
           [[t('allowAnonymousUsers')]]
         </paper-checkbox>
+
+        <paper-checkbox name="anonymousAskRegistrationQuestions" checked$="{{group.configuration.anonymousAskRegistrationQuestions}}">
+          [[t('anonymousAskRegistrationQuestions')]]
+        </paper-checkbox>
+
         <paper-checkbox name="allowAnonymousAutoLogin" disabled$="[[!group.configuration.allowAnonymousUsers]]"  checked$="{{group.configuration.allowAnonymousAutoLogin}}">
           [[t('allowAnonymousAutoLogin')]]
         </paper-checkbox>
@@ -338,6 +345,31 @@
                      maxlength="60"
                      label="[[t('hideNameInputAndReplaceWith')]]"
                      value="{{group.configuration.hideNameInputAndReplaceWith}}">
+        </paper-input>
+
+        <paper-input id="customTabTitleNewLocation"
+                     name="customTabTitleNewLocation"
+                     maxlength="60"
+                     label="[[t('customTabTitleNewLocation')]]"
+                     value="{{group.configuration.customTabTitleNewLocation}}">
+        </paper-input>
+
+        <paper-input id="customCategoryQuestionText"
+                     name="customCategoryQuestionText"
+                     type="text"
+                     label="[[t('customCategoryQuestionText')]]"
+                     value="{{group.configuration.customCategoryQuestionText}}"
+                     maxlength="30"
+                     char-counter>
+        </paper-input>
+
+        <paper-input id="customFilterText"
+                     name="customFilterText"
+                     type="text"
+                     label="[[t('customFilterText')]]"
+                     value="{{group.configuration.customFilterText}}"
+                     maxlength="17"
+                     char-counter>
         </paper-input>
 
         <paper-checkbox name="makeCategoryRequiredOnNewPost" checked$="{{group.configuration.makeCategoryRequiredOnNewPost}}">[[t('makeCategoryRequiredOnNewPost')]]
@@ -793,6 +825,7 @@
         <paper-checkbox name="usePostTagsForPostListItems"  checked$="{{group.configuration.usePostTagsForPostListItems}}">[[t('usePostTagsForPostListItems')]]</paper-checkbox>
         <paper-checkbox name="usePostTagsForPostCards" checked$="{{group.configuration.usePostTagsForPostCards}}">[[t('usePostTagsForPostCards')]]</paper-checkbox>
         <paper-checkbox name="forceShowDebateCountOnPost" checked$="{{group.configuration.forceShowDebateCountOnPost}}">[[t('forceShowDebateCountOnPost')]]</paper-checkbox>
+        <paper-checkbox name="closeNewsfeedSubmissions" checked$="{{group.configuration.closeNewsfeedSubmissions}}">[[t('closeNewsfeedSubmissions')]]</paper-checkbox>
 
         <div class="layout horizontal config" hidden$="[[!pages]]">
           <paper-dropdown-menu label="[[t('welcomeSelectPage')]]">
@@ -804,6 +837,23 @@
           </paper-dropdown-menu>
           <input type="hidden" name="welcomePageId" value="[[group.configuration.welcomePageId]]">
         </div>
+
+        <paper-input id="urlToReview"
+            name="urlToReview"
+            type="text"
+            label="[[t('urlToReview')]]"
+            value="{{group.configuration.urlToReview}}"
+        >
+        </paper-input>
+
+        <paper-input id="urlToReviewActionText"
+            name="urlToReviewActionText"
+            type="text"
+            label="[[t('urlToReviewActionText')]]"
+            value="{{group.configuration.urlToReviewActionText}}"
+            maxlength="30"
+            char-counter>
+        </paper-input>
 
         <paper-textarea id="registrationQuestions"
                         name="registrationQuestions"
@@ -1029,7 +1079,16 @@
       isDataVisualizationGroup: {
         type: Boolean,
         value: false
+      },
+
+      hasVideos: {
+        type: Boolean,
+        computed: '_hasVideos(group, uploadedVideoId)'
       }
+    },
+
+    _hasVideos: function(group, uploadedVideoId) {
+      return uploadedVideoId || (group && group.GroupLogoVideos && group.GroupLogoVideos.length > 0);
     },
 
     _isDataVisualizationGroupClick: function () {
@@ -1110,8 +1169,12 @@
      },
 
     _videoUploaded: function (event, detail) {
-      this.set('uploadedVideoId', detail.videoId);
-      this.set('group.configuration.useVideoCover', true);
+      if (detail.videoId) {
+        this.set('uploadedVideoId', detail.videoId);
+        this.set('group.configuration.useVideoCover', true);
+      } else {
+        console.log("Trying to set video uploaded again")
+      }
     },
 
     observers: [
@@ -1196,7 +1259,8 @@
           ajax.url = '/api/videos/' + group.id + '/completeAndAddToGroup';
           ajax.method = 'PUT';
           ajax.body = {
-            videoId: this.uploadedVideoId
+            videoId: this.uploadedVideoId,
+            isZiggeo: window.appGlobals.useZiggeo
           };
           ajax.addEventListener('response', function (event) {
             this._finishRedirect(group);
@@ -1353,7 +1417,7 @@
 
     setup: function (group, newNotEdit, refreshFunction) {
       if (!group) {
-        this.set('group', {name: '', objectives: '', access: 0, status: 'active'});
+        this.set('group', {name: '', objectives: '', access: 0, status: 'active', configuration: {}});
       } else {
         if (group.configuration && group.configuration.customRatings && !group.configuration.customRatingsText) {
           var customRatingsText = "";
@@ -1364,8 +1428,14 @@
           group.configuration.customRatingsText = customRatingsText;
         }
         this.set('group', group);
-        if (group.GroupLogoVideos && group.GroupLogoVideos.length > 0) {
-          this.set('uploadedVideoId', group.GroupLogoVideos[0].id)
+
+        //TODO: REMOVE
+        if (false && group.GroupLogoVideos && group.GroupLogoVideos.length > 0) {
+          if (window.appGlobals.useZiggeo) {
+            this.set('uploadedVideoId', group.GroupLogoVideos[0].formats[0])
+          } else {
+            this.set('uploadedVideoId', group.GroupLogoVideos[0].id)
+          }
         }
         this.$.pagesAjax.url = "/api/groups/"+group.id+"/pages";
         this.$.pagesAjax.generateRequest();

@@ -13,3 +13,5 @@ models.sequelize.sync({}).then(() => {
   console.error(error);
   process.exit();
 });
+
+

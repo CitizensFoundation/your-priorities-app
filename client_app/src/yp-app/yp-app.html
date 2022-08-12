@@ -210,6 +210,14 @@
       }
 
       @media (max-width: 480px) {
+        #headerTitle[auto-translate][long-title] {
+          display: none !important;
+        }
+
+        #headerTitle[very-long-title] {
+            display: none !important;
+        }
+
         #forwardPostName {
           display: none !important;
         }
@@ -342,7 +350,7 @@
             <div class="layout horizontal navContainer" hidden$="[[closePostHeader]]">
               <paper-icon-button aria-label$="[[t('goBack')]]" title$="[[t('goBack')]]" icon="arrow-upward" on-tap="goBack" class="masterActionIcon" hidden$="[[!showBack]]"></paper-icon-button>
             </div>
-            <div hide$="[[closePostHeader]]" hidden$="[[goForwardToPostId]]" id="headerTitle" title class="layout vertical navContainer">[[headerTitle]]</div>
+            <div hide$="[[closePostHeader]]" hidden$="[[goForwardToPostId]]" long-title$="[[longTitleText]]" very-long-title$="[[veryLongTitleText]]" auto-translate$="[[autoTranslate]]" id="headerTitle" title class="layout vertical navContainer">[[headerTitle]]</div>
             <template is="dom-if" if="[[closePostHeader]]">
               <paper-icon-button aria-label$="[[t('close')]]" id="closePostButton" class="masterActionIcon" icon="arrow-back" on-tap="_closePost"></paper-icon-button>
             </template>
@@ -617,6 +625,16 @@
         goForwardCount:{
           type: String,
           value: 0
+        },
+
+        longTitleText: {
+          type: Boolean,
+          value: false
+        },
+
+        veryLongTitleText: {
+          type: Boolean,
+          value: false
         }
       },
 
@@ -634,6 +652,7 @@
         'yp-dialog-closed': '_dialogClosed',
         'yp-open-page': '_openPageFromEvent',
         'yp-open-login': '_login',
+        'yp-clipboard-copy-notification': '_haveCopiedNotification',
         'yp-reset-keep-open-for-page': '_resetKeepOpenForPage',
         'yp-add-back-community-override': '_addBackCommunityOverride'
       },
@@ -753,16 +772,12 @@
 
         var localeFromUrl;
 
-        if (window.appGlobals.originalQueryParameters &&
-            window.appGlobals.originalQueryParameters["locale"]) {
-          localeFromUrl = window.appGlobals.originalQueryParameters["locale"];
-        }
-
-        if (window.appGlobals.originalQueryParameters &&
-          window.appGlobals.originalQueryParameters["startAutoTranslate"]) {
-          this.async(function () {
-            this._startTranslation();
-          }, 2500);
+        if (window.appGlobals.originalQueryParameters) {
+          if (window.appGlobals.originalQueryParameters["locale"]) {
+            localeFromUrl = window.appGlobals.originalQueryParameters["locale"];
+          } else if (window.appGlobals.originalQueryParameters["l"]) {
+            localeFromUrl = window.appGlobals.originalQueryParameters["l"];
+          }
         }
 
         if (localeFromUrl && (localeFromUrl.length > 1)) {
@@ -792,6 +807,17 @@
               detail: { name: 'yp-language', data: { type: 'language-loaded', language: defaultLocale }  }
             })
           );
+
+          this.async(function () {
+            if (window.appGlobals.originalQueryParameters) {
+              if (window.appGlobals.originalQueryParameters["startAutoTranslate"] ||
+                  window.appGlobals.originalQueryParameters["translate"] ||
+                  window.appGlobals.originalQueryParameters["t"]
+                 ) {
+                this._startTranslation();
+              }
+            }
+          });
         }.bind(this));
       },
 
@@ -835,6 +861,13 @@
           toast.show();
         }.bind(this));
         sessionStorage.setItem("dontPromptForAutoTranslation", true);
+      },
+
+      _haveCopiedNotification: function () {
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("masterToast", function (toast) {
+          toast.text = this.t('copiedToClipboard');
+          toast.show();
+        }.bind(this));
       },
 
       _setLanguageName: function (event, detail) {
@@ -1033,6 +1066,13 @@
                 }
 
                 // Community/CommunityFolder  -> Community
+                else if ((oldPageData.page==="community" || oldPageData.page==="community_folder") &&
+                  pageData.page==="group") {
+                  this.async(function () {
+                    document.body.scrollTop = document.documentElement.scrollTop = 0;
+                  }, 10);
+                }
+                  // Community/CommunityFolder  -> Community
                 else if ((oldPageData.page==="community" || oldPageData.page==="community_folder") &&
                      pageData.page==="community_folder") {
                   if (this.$$("#communityFolderPage") && typeof this.$$("#communityFolderPage").scrollToGroupItem !== "undefined") {
@@ -1237,8 +1277,16 @@
         this.$$("#dialogContainer").getMediaRecorderAsync(callback);
       },
 
+      getZiggeoAsync: function (callback) {
+        this.$$("#dialogContainer").getZiggeoAsync(callback);
+      },
+
       getContentModerationAsync: function (callback) {
         this.$$("#dialogContainer").getContentModerationAsync(callback);
+      },
+
+      getFraudManagementAsync: function (callback) {
+        this.$$("#dialogContainer").getFraudManagementAsync(callback);
       },
 
       getCreateReportAsync: function (callback) {
@@ -1261,13 +1309,6 @@
         this.$$("#dialogContainer").dialogClosed(detail);
       },
 
-      scrollPageToTop: function() {
-        var mainArea = document.getElementById('#mainArea');
-        if (mainArea) {
-          mainArea.scroller.scrollTop = 0;
-        }
-      },
-
       _toggleUserDrawer: function () {
         this.$$("#drawer").toggle();
       },
@@ -1280,6 +1321,18 @@
 
       onChangeHeader: function (event, header) {
         this.set('headerTitle', document.title = header.headerTitle);
+
+        if (this.headerTitle && this.headerTitle.length>16) {
+          this.set('longTitleText', true);
+        } else {
+          this.set('longTitleText', false);
+        }
+
+        if (this.headerTitle && this.headerTitle.length>45) {
+          this.set('veryLongTitleText', true);
+        } else {
+          this.set('veryLongTitleText', false);
+        }
 
         this.async(function () {
           var headerTitle = this.$$("#headerTitle");

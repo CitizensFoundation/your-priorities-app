@@ -87,7 +87,10 @@ module.exports = (sequelize, DataTypes) => {
   };
 
   Audio.getFullUrl = (meta) => {
-    if (process.env.MINIO_ROOT_USER) {
+    if (process.env.MINIO_ROOT_USER && process.env.NODE_ENV === 'development') {
+      return meta.endPoint
+        + "/" + meta.publicBucket+'/'+meta.fileKey;
+    } else if (process.env.MINIO_ROOT_USER) {
       return "https://"
         + meta.endPoint
         + "/" + meta.publicBucket+'/'+meta.fileKey;
@@ -139,7 +142,7 @@ module.exports = (sequelize, DataTypes) => {
             appLanguage:options.appLanguage,
             audioId: audio.id,
             type: 'create-audio-transcript' };
-          queue.create('process-voice-to-text', workPackage).priority('high').removeOnComplete(true).save();
+          queue.add('process-voice-to-text', workPackage, 'high');
           post.save().then( () => {
             callback();
           }).catch( error => {
@@ -386,7 +389,7 @@ module.exports = (sequelize, DataTypes) => {
       flacFilename: fileKey.slice(0, fileKey.length-4)+'.flac'
     }
 
-    sequelize.models.AcBackgroundJob.createJob(jobPackage, async (error, jobId) => {
+    sequelize.models.AcBackgroundJob.createJob(jobPackage, {}, async (error, jobId) => {
       log.info('Starting YRPRI transcoding Job');
       if (error) {
         log.error("Error creating YRPRI transcoding job", { error });

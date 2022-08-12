@@ -185,7 +185,8 @@
     <div class="layout horizontal topLevelActivitiesContainer" wide$="[[wide]]" rtl$="[[rtl]]">
       <div class="layout vertical self-start">
         <template is="dom-if" if="[[loggedInUser]]">
-          <paper-material logged-in-user$="[[hasLoggedInUser]]" elevation="1" class="layout horizontal addNewsBox">
+          <paper-material logged-in-user$="[[hasLoggedInUser]]" elevation="1"
+                          class="layout horizontal addNewsBox" hidden$="[[closeNewsfeedSubmissions]]">
             <yp-point-news-story-edit domain-id="[[domainId]]"
                                       community-id="[[communityId]]"
                                       group-id="[[groupId]]"
@@ -210,7 +211,7 @@
         <iron-list id="ironList" scroll-offset$="[[ironListPaddingTop]]" scroll-target="document" items="[[activities]]" as="activity">
           <template>
             <div tabindex$="[[tabIndex]]" class="layout vertical center-center">
-              <ac-activity has-logged-in-user$="[[hasLoggedInUser]]" class="activityContainer" activity="[[activity]]" post-id="[[postId]]" group-id="[[groupId]]" community-id="[[communityId]]"
+              <ac-activity has-logged-in-user="[[hasLoggedInUser]]" class="activityContainer" activity="[[activity]]" post-id="[[postId]]" group-id="[[groupId]]" community-id="[[communityId]]"
                            domain-id="[[domainId]]" on-ak-delete-activity="_deleteActivity"></ac-activity>
             </div>
           </template>
@@ -289,6 +290,11 @@
         },
 
         rtl: {
+          type: Boolean,
+          value: false
+        },
+
+        closeNewsfeedSubmissions: {
           type: Boolean,
           value: false
         },
@@ -566,16 +572,17 @@
 
       _recommendedPostsResponse: function (event, detail) {
         var allowRecommendations = true;
+
         if (this.activities && this.activities.length>0) {
-          if( this.activities[0].Group &&
-            this.activities[0].Group.configuration &&
-            this.activities[0].Group.configuration.hideRecommendationOnNewsFeed) {
-            allowRecommendations = false;
-          }
-          if( this.activities[0].Community &&
-            this.activities[0].Community.configuration &&
-            this.activities[0].Community.configuration.hideRecommendationOnNewsFeed) {
-            allowRecommendations = false;
+          if (this.activities[0].Group &&
+              this.activities[0].Group.configuration &&
+              this.activities[0].Group.configuration.hideRecommendationOnNewsFeed) {
+              allowRecommendations = false;
+            }
+          if (this.activities[0].Community &&
+              this.activities[0].Community.configuration &&
+              this.activities[0].Community.configuration.hideRecommendationOnNewsFeed) {
+              allowRecommendations = false;
           }
         }
         if (allowRecommendations && detail.response && detail.response.length>0) {
@@ -641,6 +648,20 @@
         this.async(function () {
           this.$.ironList.fire('iron-resize');
         });
+
+        this.set('closeNewsfeedSubmissions', false);
+
+        if (this.activities && this.activities.length>0) {
+          if (this.activities[0].Group &&
+              this.activities[0].Group.configuration &&
+              this.activities[0].Group.configuration.closeNewsfeedSubmissions) {
+              this.set('closeNewsfeedSubmissions', true);
+          } else if (this.activities[0].Community &&
+              this.activities[0].Community.configuration &&
+              this.activities[0].Community.configuration.closeNewsfeedSubmissions) {
+              this.set('closeNewsfeedSubmissions', true);
+          }
+        }
       },
 
       scrollToItem: function (item) {

@@ -140,7 +140,7 @@ router.put('/:pointId/completeAndAddToPoint', auth.can('edit point'), (req, res)
                                   appLanguage: req.body.appLanguage,
                                   audioId: req.body.audioId,
                                   type: 'create-audio-transcript' };
-            queue.create('process-voice-to-text', workPackage).priority('high').removeOnComplete(true).save();
+            queue.add('process-voice-to-text', workPackage, 'high');
           }
           res.send(point);
         }

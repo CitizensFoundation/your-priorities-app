@@ -340,6 +340,7 @@
         <yp-magic-text id="objectives" widetext$="[[wideText]]" class="objectives withPointer" on-tap="_goToGroup"
                        text-type="groupContent" content-language="[[group.language]]" largefont$="[[largeFont]]"
                        remove-urls
+                       truncate="[[truncateBy]]"
                        text-only content="[[groupObjectives]]" content-id="[[group.id]]" truncate="200">
         </yp-magic-text>
         <yp-group-stats class="stats" group="[[group]]"></yp-group-stats>
@@ -352,6 +353,7 @@
                     sizing="cover" on-tap="_goToGroup" preload src="[[groupCommuntityLinkLogoImagePath]]"></iron-image>
         <yp-magic-text id="groupName"  class="group-name" widetext$="[[wideText]]" text-type="communityName"
                        content-language="[[group.CommunityLink.language]]" largefont$="[[largeFont]]"
+                       long-title$="[[longTitle]]"
                        archived$="[[archived]]" featured$="[[featured]]" on-tap="_goToGroup"
                        disable-translation="[[group.configuration.disableNameAutoTranslation]]"
                        text-only content="[[group.CommunityLink.name]]" content-id="[[group.CommunityLink.id]]">
@@ -360,7 +362,7 @@
                        text-type="communityContent" content-language="[[group.CommunityLink.language]]"
                        remove-urls largefont$="[[largeFont]]"
                        text-only content="[[group.CommunityLink.description]]" content-id="[[group.CommunityLink.id]]"
-                       truncate="200">
+                       truncate="[[truncateBy]]">
         </yp-magic-text>
 
         <div class="edit">
@@ -393,6 +395,11 @@
           computed: '_hasGroupAccess(group, gotAdminRights)'
         },
 
+        truncateBy: {
+          type: Number,
+          computed: '_truncateBy(group, gotAdminRights)'
+        },
+
         visualizationData: {
           type: Object,
           value: null
@@ -401,6 +408,14 @@
         largeFont: {
           type: Boolean,
           value: false
+        }
+      },
+
+      _truncateBy: function (group) {
+        if (group && group.name && group.name.length>25) {
+          return 175;
+        } else {
+          return 200;
         }
       },
 
