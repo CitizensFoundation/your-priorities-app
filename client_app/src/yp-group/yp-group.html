@@ -687,7 +687,7 @@
           }
         }, 10);
       },
-      
+
       _updateTabPostCount: function (event, tabCounterInfo) {
         if (this.$.ajaxCheckNonOpenPosts.active===true) {
           this.async(function () {
@@ -894,6 +894,12 @@
 
           if (this.group.Community.configuration) {
             window.appGlobals.setCommunityPixelTracker(this.group.Community.configuration.facebookPixelId);
+
+            if (this.group.Community.configuration.useZiggeo) {
+              window.appGlobals.useZiggeo = true;
+            } else {
+              window.appGlobals.useZiggeo = false;
+            }
           }
 
           if (this.group.theme_id!=null ||

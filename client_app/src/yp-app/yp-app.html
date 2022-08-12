@@ -1277,6 +1277,10 @@
         this.$$("#dialogContainer").getMediaRecorderAsync(callback);
       },
 
+      getZiggeoAsync: function (callback) {
+        this.$$("#dialogContainer").getZiggeoAsync(callback);
+      },
+
       getContentModerationAsync: function (callback) {
         this.$$("#dialogContainer").getContentModerationAsync(callback);
       },
@@ -1304,7 +1308,7 @@
       _dialogClosed: function (event, detail) {
         this.$$("#dialogContainer").dialogClosed(detail);
       },
-      
+
       _toggleUserDrawer: function () {
         this.$$("#drawer").toggle();
       },

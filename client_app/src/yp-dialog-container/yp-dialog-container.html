@@ -217,6 +217,11 @@
       <template is="dom-if" if="[[gotMediaRecorder]]" restamp>
         <yp-media-recorder id="mediaRecorder"></yp-media-recorder>
       </template>
+
+      <template is="dom-if" if="[[gotZiggeo]]" restamp>
+        <yp-ziggeo-record-dialog id="ziggeo"></yp-ziggeo-record-dialog>
+      </template>
+
     </div>
 
     <paper-dialog id="loadingDialog">
@@ -281,6 +286,11 @@
         },
 
         pageDialogOpen: {
+          type: Boolean,
+          value: false
+        },
+
+        gotZiggeo: {
           type: Boolean,
           value: false
         },
@@ -545,6 +555,20 @@
             console.info("Have loaded media recorder container");
             this.set('gotMediaRecorder', true);
             this.getDialogAsync("mediaRecorder", callback);
+          }.bind(this), null, true);
+        }
+      },
+
+      getZiggeoAsync: function (callback) {
+        if (this.gotZiggeo) {
+          this.getDialogAsync("ziggeo", callback);
+        } else {
+          this.$.loadingDialog.open();
+          this.importHref(this.resolveUrl("/src/integrations/ziggeo/yp-ziggeo-record-dialog.html"), function () {
+            this.$.loadingDialog.close();
+            console.info("Have loaded ziggeo container");
+            this.set('gotZiggeo', true);
+            this.getDialogAsync("ziggeo", callback);
           }.bind(this), null, true);
         }
       },

@@ -1602,7 +1602,8 @@
               ajax.method = 'PUT';
               ajax.body = {
                 videoId: this.currentVideoId,
-                appLanguage: this.language
+                appLanguage: this.language,
+                isZiggeo: window.appGlobals.useZiggeo
               };
               ajax.addEventListener('response', function (event, detail) {
                 this._completeNewPointResponse(event, event.detail);

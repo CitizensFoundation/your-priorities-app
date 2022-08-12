@@ -113,6 +113,14 @@
       }
     },
 
+    ziggeoEnabled: function () {
+      return window.appGlobals.domain.ziggeoEnabled
+    },
+
+    ziggeoActive: function () {
+      return this.ziggeoEnabled && window.appGlobals.domain.configuration.ziggeoApplicationToken
+    },
+
     close: function () {
       this.$.editDialog.close();
     }

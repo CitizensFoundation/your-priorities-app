@@ -226,7 +226,21 @@ var getDomain = function (req, domainId, done) {
               req.ypDomain.secret_api_keys.facebook.client_secret.length > 6) {
               domain.dataValues.facebookLoginProvided = true;
             }
+
+            if (req.ypDomain && process.env.GOOGLE_MAPS_API_KEY) {
+              domain.dataValues.googleMapsApiKey = process.env.GOOGLE_MAPS_API_KEY;
+            }
+
+            if (req.ypDomain && process.env.ZIGGEO_ENABLED) {
+              domain.dataValues.ziggeoEnabled = process.env.ZIGGEO_ENABLED;
+            }
+
             domain.dataValues.Communities = communities;
+
+            if (process.env.LOGIN_CALLBACK_CUSTOM_HOSTNAME) {
+              domain.dataValues.loginCallbackCustomHostName = process.env.LOGIN_CALLBACK_CUSTOM_HOSTNAME;
+            }
+
             seriesCallback(null);
             return null;
           }).catch(function (error) {
@@ -692,8 +706,12 @@ router.get('/', function(req, res) {
     req.ypDomain.dataValues.facebookLoginProvided = true;
   }
 
-  if (req.ypDomain && process.env.LOGIN_CALLBACK_CUSTOM_HOSTNAME) {
-    req.ypDomain.dataValues.loginCallbackCustomHostName = process.env.LOGIN_CALLBACK_CUSTOM_HOSTNAME;
+  if (req.ypDomain && process.env.GOOGLE_MAPS_API_KEY) {
+    req.ypDomain.dataValues.googleMapsApiKey = process.env.GOOGLE_MAPS_API_KEY;
+  }
+
+  if (req.ypDomain && process.env.ZIGGEO_ENABLED) {
+    req.ypDomain.dataValues.ziggeoEnabled = process.env.ZIGGEO_ENABLED;
   }
 
   const domain = {...req.ypDomain.dataValues}
@@ -776,7 +794,10 @@ router.put('/:id', auth.can('edit domain'), function(req, res) {
       domain.set('configuration.samlLoginButtonUrl', (req.body.samlLoginButtonUrl && req.body.samlLoginButtonUrl!="") ? req.body.samlLoginButtonUrl : null);
       domain.set('configuration.customSAMLErrorHTML', (req.body.customSAMLErrorHTML && req.body.customSAMLErrorHTML!="") ? req.body.customSAMLErrorHTML : null);
 
+      domain.set('configuration.preloadCssUrl', (req.body.preloadCssUrl && req.body.preloadCssUrl!="") ? req.body.preloadCssUrl : null);
+
       domain.set('configuration.plausibleDataDomains', (req.body.plausibleDataDomains && req.body.plausibleDataDomains!="") ? req.body.plausibleDataDomains : null);
+      domain.set('configuration.ziggeoApplicationToken', (req.body.ziggeoApplicationToken && req.body.ziggeoApplicationToken!="") ? req.body.ziggeoApplicationToken : null);
 
       if (req.body.google_analytics_code && req.body.google_analytics_code!="") {
         domain.google_analytics_code = req.body.google_analytics_code;
@@ -789,6 +810,7 @@ router.put('/:id', auth.can('edit domain'), function(req, res) {
       domain.set('configuration.forceSecureSamlEmployeeLogin', (req.body.forceSecureSamlEmployeeLogin && req.body.forceSecureSamlEmployeeLogin!="") ? true : false);
 
       domain.set('configuration.disableNameAutoTranslation', (req.body.disableNameAutoTranslation && req.body.disableNameAutoTranslation!="") ? true : false);
+
 
 
       if (req.body.appHomeScreenIconImageId && req.body.appHomeScreenIconImageId!="") {

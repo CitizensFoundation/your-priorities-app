@@ -221,14 +221,25 @@
       </template>
 
       <template is="dom-if" if="[[videoActive]]" restamp>
-        <template is="dom-if" if="[[showVideo]]" restamp>
-          <video id="videoPlayer" portrait$="[[portraitVideo]]" data-id$="[[postVideoId]]" header-mode$="[[headerMode]]" controls on-tap="_goToPost" preload="meta" class="pointer" src="[[postVideoPath]]" playsinline poster="[[postVideoPosterPath]]"></video>
+        <template is="dom-if" if="[[_useZiggeo()]]" restamp>
+          <template is="dom-if" if="[[postVideoPath]]" restamp>
+            <yp-ziggeo-player
+              video-token="[[postVideoPath]]"
+              video-active="[[showVideo]]"
+            >
+            </yp-ziggeo-player>
+          </template>
         </template>
-        <template is="dom-if" if="[[!showVideo]]">
-          <div class="layout vertical center-center videoPreviewContainer" portrait$="[[portraitVideo]]" >
-            <iron-image id="videoPreviewImage" portrait$="[[portraitVideo]]" header-mode$="[[headerMode]]" on-tap="_goToPost" sizing="cover" class="main-image pointer" src="[[postVideoPosterPath]]"></iron-image>
-          </div>
-          <iron-icon icon="videocam" class="videoCamStatic"></iron-icon>
+        <template is="dom-if" if="[[!_useZiggeo()]]">
+          <template is="dom-if" if="[[showVideo]]" restamp>
+            <video id="videoPlayer" portrait$="[[portraitVideo]]" data-id$="[[postVideoId]]" header-mode$="[[headerMode]]" controls on-tap="_goToPost" preload="meta" class="pointer" src="[[postVideoPath]]" playsinline poster="[[postVideoPosterPath]]"></video>
+          </template>
+          <template is="dom-if" if="[[!showVideo]]">
+            <div class="layout vertical center-center videoPreviewContainer" portrait$="[[portraitVideo]]" >
+              <iron-image id="videoPreviewImage" portrait$="[[portraitVideo]]" header-mode$="[[headerMode]]" on-tap="_goToPost" sizing="cover" class="main-image pointer" src="[[postVideoPosterPath]]"></iron-image>
+            </div>
+            <iron-icon icon="videocam" class="videoCamStatic"></iron-icon>
+          </template>
         </template>
       </template>
 
@@ -246,13 +257,13 @@
       <template is="dom-if" if="[[!disableMaps]]">
 
         <template is="dom-if" if="[[streetViewActive]]">
-          <iron-image on-tap="_goToPost" class="main-image pointer" sizing="cover" src="https://maps.googleapis.com/maps/api/staticmap?center=[[latitude]],[[longitude]]&zoom=[[zoomLevel]]&size=432x243&maptype=hybrid&markers=color:red%7Clabel:%7C[[latitude]],[[longitude]]&key=[[staticMapsApiKey]]" hidden$="[[streetViewActivated]]"></iron-image>
+          <iron-image on-tap="_goToPost" class="main-image pointer" sizing="cover" src="https://maps.googleapis.com/maps/api/staticmap?center=[[latitude]],[[longitude]]&zoom=[[zoomLevel]]&size=432x243&maptype=hybrid&markers=color:red%7Clabel:%7C[[latitude]],[[longitude]]&key=[[_getGoogleMapsKey()]]" hidden$="[[streetViewActivated]]"></iron-image>
 
           <template is="dom-if" if="[[streetViewActivated]]">
             <google-streetview-pano
               position$="[[mapPosition]]"
               heading="330"
-              api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0"
+              api-key="[[_getGoogleMapsKey()]]"
               pitch="2"
               zoom="0.8"
               disable-default-ui>
@@ -263,7 +274,7 @@
 
         <template is="dom-if" if="[[mapActive]]">
           <iron-image on-tap="_goToPost" class="main-image pointer" hidden$="[[mapActivated]]"
-                      sizing="cover" src="https://maps.googleapis.com/maps/api/staticmap?center=[[latitude]],[[longitude]]&size=432x243&zoom=[[zoomLevel]]&maptype=[[mapType]]&markers=color:red%7Clabel:%7C[[latitude]],[[longitude]]&key=[[staticMapsApiKey]]"></iron-image>
+                      sizing="cover" src="https://maps.googleapis.com/maps/api/staticmap?center=[[latitude]],[[longitude]]&size=432x243&zoom=[[zoomLevel]]&maptype=[[mapType]]&markers=color:red%7Clabel:%7C[[latitude]],[[longitude]]&key=[[_getGoogleMapsKey()]]"></iron-image>
 
           <template is="dom-if" if="[[mapActivated]]">
             <google-map additional-map-options='{"keyboardShortcuts":false}' id="coverMediaMap" class="map"
@@ -271,7 +282,7 @@
                         fit-to-markers
                         zoom$="[[zoomLevel]]"
                         map-type$="[[mapType]]"
-                        api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0">
+                        api-key$="[[_getGoogleMapsKey()]]">
               <google-map-marker slot="markers" latitude="[[latitude]]" longitude="[[longitude]]"></google-map-marker>
             </google-map>
           </template>
@@ -439,11 +450,6 @@
           value: false
         },
 
-        staticMapsApiKey: {
-          type: String,
-          value: "AIzaSyBYy8UvdDD650mz7k1pY0j2hBFQmCPVnxA"
-        },
-
         tiny: {
           type: Boolean,
           value: false
@@ -491,6 +497,9 @@
         }
       },
 
+      _useZiggeo: function () {
+        return window.appGlobals.useZiggeo;
+      },
 
       _sizingMode: function (post) {
         if (post && post.Group && post.Group.configuration && post.Group.configuration.useContainImageMode) {
@@ -522,6 +531,10 @@
             console.error("No post in post cover media on goToPost");
           }
         }
+      },
+
+      _getGoogleMapsKey: function () {
+        return window.appGlobals.googleMapsApiKey;
       },
 
       _headerModeChanged: function (headerMode) {

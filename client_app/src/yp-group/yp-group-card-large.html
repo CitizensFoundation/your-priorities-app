@@ -123,7 +123,7 @@
       }
 
       .groupDescription[largefont] {
-          font-size: 14px;
+          font-size: 15px;
       }
 
       .urlToReviewButton {
@@ -259,7 +259,17 @@
     <div class="layout horizontal center-center wrap" aria-label="[[t('group')]]" role="banner">
       <paper-material id="cardImage" elevation="3" is-video$="[[groupVideoURL]]" animated class="groupCard imageCard top-card">
         <template is="dom-if" if="[[groupVideoURL]]" restamp>
-          <video id="videoPlayer" data-id$="[[groupVideoId]]" controls preload="meta" class="logo" src="[[groupVideoURL]]" playsinline poster="[[groupVideoPosterURL]]"></video>
+          <template is="dom-if" if="[[_useZiggeo()]]" restamp>
+            <yp-ziggeo-player
+              video-token="[[groupVideoURL]]"
+              video-active=true
+              top-container=true
+            >
+            </yp-ziggeo-player>
+          </template>
+          <template is="dom-if" if="[[!_useZiggeo()]]" restamp>
+            <video id="videoPlayer" data-id$="[[groupVideoId]]" controls preload="meta" class="logo" src="[[groupVideoURL]]" playsinline poster="[[groupVideoPosterURL]]"></video>
+          </template>
         </template>
         <template is="dom-if" if="[[!groupVideoURL]]" restamp>
           <iron-image class="logo" sizing="cover" alt$="[[group.name]]" preload src="[[groupLogoImagePath]]"></iron-image>
@@ -421,7 +431,9 @@
         this.set('autoTranslateActive', detail);
       },
 
-
+      _useZiggeo: function () {
+        return window.appGlobals.useZiggeo;
+      },
 
       _exportUrl: function (access, group) {
         if (access && group) {
@@ -470,7 +482,7 @@
         if (group && group.configuration && group.configuration.useVideoCover && group.GroupLogoVideos) {
           var videoURL = this._getVideoURL(group.GroupLogoVideos);
           var videoPosterURL = this._getVideoPosterURL(group.GroupLogoVideos, group.GroupLogoImages);
-          if (videoURL && videoPosterURL) {
+          if ((videoURL && videoPosterURL) || (group.Community && group.Community.configuration && group.Community.configuration.useZiggeo && videoURL)) {
             this.set('groupVideoURL', videoURL);
             this.set('groupVideoPosterURL', videoPosterURL);
             this.set('groupVideoId', group.GroupLogoVideos[0].id);

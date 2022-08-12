@@ -318,7 +318,17 @@
         </div>
         <div hidden$="[[community.configuration.welcomeHTML]]">
           <template is="dom-if" if="[[communityVideoURL]]" restamp>
-            <video id="videoPlayer" data-id$="[[communityVideoId]]" controls preload="meta" class="image pointer" src="[[communityVideoURL]]" playsinline poster="[[communityVideoPosterURL]]"></video>
+            <template is="dom-if" if="[[useZiggeo]]" restamp>
+              <yp-ziggeo-player
+                video-token="[[communityVideoURL]]"
+                video-active=true
+                top-container=true
+              >
+              </yp-ziggeo-player>
+            </template>
+            <template is="dom-if" if="[[!useZiggeo]]">
+              <video id="videoPlayer" data-id$="[[communityVideoId]]" controls preload="meta" class="image pointer" src="[[communityVideoURL]]" playsinline poster="[[communityVideoPosterURL]]"></video>
+            </template>
           </template>
           <template is="dom-if" if="[[!communityVideoURL]]">
             <iron-image class="image" sizing="cover" alt$="[[community.name]]" src$="[[communityLogoImagePath]]"></iron-image>
@@ -460,6 +470,19 @@
           type: String,
           computed: '_exportUsersUrl(hasCommunityAccess, community)'
         },
+
+        useZiggeo: {
+          type: Boolean,
+          computed: '_useZiggeo(community)'
+        }
+      },
+
+      _useZiggeo: function (community) {
+        if (community && community.configuration) {
+          return community.configuration.useZiggeo;
+        } else {
+          return false;
+        }
       },
 
       _exportLoginsUrl: function (access, community) {

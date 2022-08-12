@@ -59,6 +59,12 @@ let replaceForSmarterNJ = function (data) {
   return data.replace(/XmanifestPathX/g, "manifest_smarternj");
 };
 
+let replaceForCommunityFund = function (data) {
+  data = data.replace(/XappNameX/g, "The National Lottery Community Fund");
+  data = data.replace(/XdescriptionX/g, "Now is the time for a conversation about how The National Lottery Community Fund can best support UK communities to prosper and thrive.");
+  return data.replace(/XmanifestPathX/g, "manifest_community_fund");
+};
+
 let replaceFromEnv = function (data) {
   data = data.replace(/XappNameX/g, process.env.YP_INDEX_APP_NAME ? process.env.YP_INDEX_APP_NAME : "Your Priorities");
   data = data.replace(/XdescriptionX/g, process.env.YP_INDEX_DESCRIPTION ? process.env.YP_INDEX_DESCRIPTION : "Citizen participation application");
@@ -73,6 +79,19 @@ const plausibleCode = `
 const getPlausibleCode = (dataDomain) => {
   return plausibleCode.replace("DATADOMAIN", dataDomain);
 }
+
+const ziggeoHeaders = (ziggeoApplicationToken) => { return `
+  <link rel="stylesheet" href="https://assets.ziggeo.com/v2-stable/ziggeo.css" />
+  <script src="https://assets.ziggeo.com/v2-stable/ziggeo.js"></script>
+  <script>
+    var ziggeoApp = new ZiggeoApi.V2.Application({
+      token:"${ziggeoApplicationToken}",
+      webrtc_streaming_if_necessary: true,
+      webrtc_on_mobile: true,
+      debug: true
+    });
+  </script>
+` };
 
 let sendIndex = function (req, res) {
   let indexFilePath;
@@ -95,6 +114,20 @@ let sendIndex = function (req, res) {
         indexFileData = indexFileData.replace('<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE11">','');
       }
 
+      if (process.env.ZIGGEO_ENABLED && req.ypDomain.configuration.ziggeoApplicationToken) {
+        indexFileData = indexFileData.replace(
+          '<html lang="en">',
+          `<html lang="en">${ziggeoHeaders(req.ypDomain.configuration.ziggeoApplicationToken)}`
+        );
+      }
+
+      if (req.ypDomain.configuration && req.ypDomain.configuration.preloadCssUrl) {
+        indexFileData = indexFileData.replace(
+          '<html lang="en">',
+          `<html lang="en"><link rel="stylesheet" href="${req.ypDomain.configuration.preloadCssUrl}">`
+        );
+      }
+
       if (req.ypDomain &&
           req.ypDomain.configuration &&
           req.ypDomain.configuration.plausibleDataDomains &&
@@ -104,13 +137,15 @@ let sendIndex = function (req, res) {
         indexFileData = indexFileData.replace('XplcX', '');
       }
 
-        if (req.hostname) {
+      if (req.hostname) {
         if (req.hostname.indexOf('betrireykjavik.is') > -1) {
           res.send(replaceForBetterReykjavik(indexFileData));
         } else if (req.hostname.indexOf('betraisland.is') > -1) {
           res.send(replaceForBetterIceland(indexFileData));
         } else if (req.hostname.indexOf('smarter.nj.gov') > -1) {
           res.send(replaceForSmarterNJ(indexFileData));
+        } else if (req.hostname.indexOf('puttingcommunitiesfirst.org.uk') > -1) {
+          res.send(replaceForCommunityFund(indexFileData));
         } else if (req.hostname.indexOf('parliament.scot') > -1) {
           res.send(replaceForParlScot(indexFileData));
         } else if (req.hostname.indexOf('ypus.org') > -1) {
