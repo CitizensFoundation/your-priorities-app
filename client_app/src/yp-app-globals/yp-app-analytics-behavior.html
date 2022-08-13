@@ -126,6 +126,10 @@
           window.plausible(`${c} - ${d}`);
         }
       }
+
+      if (b==="pageview") {
+        window.appGlobals.activity('pageview', c);
+      }
     },
 
     sendLoginAndSignupToAnalytics: function (userId, eventType, authProvider, validationError) {

@@ -1346,6 +1346,10 @@ router.post('/createActivityFromApp', function(req, res) {
       event_time: req.body.event_time,
       sessionId: req.body.sessionId,
       user_agent: req.body.user_agent,
+      screen_width: req.body.screen_width,
+      referrer: req.body.referrer,
+      url: req.body.url,
+      ipAddress: req.ip,
       server_timestamp: Date.now()
     },
 
@@ -1357,7 +1361,7 @@ router.post('/createActivityFromApp', function(req, res) {
   };
 
   if (!process.env.DISABLE_RECORDING_OF_USER_EVENTS) {
-    queue.add('delayed-job', { type: 'create-activity-from-app', workData }, 'low');
+    queue.add('delayed-job', { type: 'create-activity-from-app', workData }, 'medium');
   }
 
   res.sendStatus(200);
