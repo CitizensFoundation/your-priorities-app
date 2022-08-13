@@ -48,7 +48,7 @@ export class YpMarketingApp extends YpBaseElement {
   collectionId: number | string;
 
   @property({ type: String })
-  collectionAction: string;
+  collectionAction: string = "config";
 
   @property({ type: String })
   page: string | undefined;
@@ -175,29 +175,12 @@ export class YpMarketingApp extends YpBaseElement {
     this.page = 'editTranslations';
 
     let pathname = window.location.pathname;
-
-    pathname = pathname.replace('/admin', '');
-
     if (pathname.endsWith('/'))
-      pathname = pathname.substring(0, pathname.length - 1);
-    if (pathname.startsWith('/'))
-      pathname = pathname.substring(1, pathname.length);
-
+      pathname = pathname.substring(0,pathname.length-1);
     const splitPath = pathname.split('/');
-
-    this.collectionType = splitPath[0];
-
-    if (splitPath[1] == 'new') {
-      this.collectionId = 'new';
-    } else {
-      this.collectionId = parseInt(splitPath[1]);
-    }
-
-    if (splitPath.length > 2) {
-      this.collectionAction = splitPath[2];
-    } else {
-      this.collectionAction = 'config';
-    }
+    this.collectionType = splitPath[splitPath.length-2];
+    this.collectionId = splitPath[splitPath.length-1];
+    debugger;
   }
 
   connectedCallback() {
