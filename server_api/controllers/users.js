@@ -1362,10 +1362,10 @@ router.post('/createActivityFromApp', function(req, res) {
       sessionId: req.body.sessionId,
       user_agent: req.body.user_agent,
       screen_width: req.body.screen_width,
+      originalQueryString: req.body.originalQueryString,
       referrer: req.body.referrer,
       url: req.body.url,
-      ipAddress: ipAddr,
-      server_timestamp: Date.now()
+      ipAddress: ipAddr, server_timestamp: Date.now()
     },
 
     userId: req.user ? req.user.id : null,

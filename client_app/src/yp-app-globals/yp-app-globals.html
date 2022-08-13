@@ -307,6 +307,14 @@
           this.originalQueryParameters = map;
         },
 
+        getOriginalQueryString: function () {
+          if (this.originalQueryParameters) {
+            return new URLSearchParams(this.originalQueryParameters).toString();
+          } else {
+            return null;
+          }
+        },
+
         setAnonymousUser: function (user) {
           this.set('currentAnonymousUser', user);
           console.debug("Set anon user "+user);
@@ -565,9 +573,11 @@
             postId: postId,
             communityId: communityId,
             domainId: domainId,
+            originalQueryString: window.appGlobals.getOriginalQueryString(),
             pointId: pointId,
             groupId: window.appGlobals.currentGroup ? window.appGlobals.currentGroup.id : groupId,
           };
+
           activityAjax.generateRequest();
 
           if (type==='completed' || type==='clicked') {
