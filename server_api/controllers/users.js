@@ -1350,8 +1350,6 @@ router.post('/createActivityFromApp', function(req, res) {
     ipAddr = req.connection.remoteAddress;
   }
 
-  log.info(`Plausible ip ${ipAddr} in`);
-
   const workData = {
     body: {
       actor: req.body.actor,
