@@ -1,5 +1,5 @@
-import { html } from 'lit';
-import { property, customElement } from 'lit/decorators.js';
+import { css, html } from 'lit';
+import { property, query, customElement } from 'lit/decorators.js';
 import { createPicker, EmojiPicker, EmojiSelection } from 'picmo';
 import { createPopup, PopupPickerController } from '@picmo/popup-picker';
 import { TwemojiRenderer } from '@picmo/renderer-twemoji';
@@ -32,22 +32,27 @@ export class YpEmojiDialog extends YpBaseElement {
         renderer: new TwemojiRenderer(),
       },
       {
-        triggerElement: this.trigger,
         referenceElement: this.trigger,
         position: 'bottom-start',
       }
     );
 
     this.picker.addEventListener('emoji:select', this.pickEmoji.bind(this));
-    this.picker.open();
-    console.log("CREATE PICKER")
+    setTimeout(() => {
+      this.picker?.open();
+    })
   }
 
   removePicker() {
     this.picker?.removeEventListener('emoji:select', this.pickEmoji.bind(this));
     this.picker?.destroy();
     this.picker = undefined;
-    console.log("REMOVE PICKER")
+  }
+
+  static get styles() {
+    return [
+      css`[hidden] { display: none !important; }`
+    ]
   }
 
   pickEmoji(selection: EmojiSelection) {
@@ -63,6 +68,7 @@ export class YpEmojiDialog extends YpBaseElement {
           inline: 'center',
           behavior: 'smooth',
         });
+        //TODO: Scroll to the right place in the input box
         this.inputTarget!.focus();
         this.inputTarget!.dispatchEvent(new CustomEvent('change'));
         this.inputTarget = undefined;
