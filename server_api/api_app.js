@@ -169,7 +169,6 @@ app.get('/*', function (req, res, next) {
   next();
 });
 
-
 app.use(function setupStaticPath(req, res, next) {
   let staticPath = path.join(__dirname, '../client_app/build/bundled');
   let staticIndex = false;

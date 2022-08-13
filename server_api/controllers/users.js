@@ -1342,6 +1342,14 @@ router.get('/reset/:token', function(req, res) {
 });
 
 router.post('/createActivityFromApp', function(req, res) {
+  var ipAddr = req.headers["x-forwarded-for"];
+  if (ipAddr){
+    var list = ipAddr.split(",");
+    ipAddr = list[list.length-1];
+  } else {
+    ipAddr = req.connection.remoteAddress;
+  }
+
   const workData = {
     body: {
       actor: req.body.actor,
@@ -1356,7 +1364,7 @@ router.post('/createActivityFromApp', function(req, res) {
       screen_width: req.body.screen_width,
       referrer: req.body.referrer,
       url: req.body.url,
-      ipAddress: req.ip,
+      ipAddress: ipAddr,
       server_timestamp: Date.now()
     },
 
