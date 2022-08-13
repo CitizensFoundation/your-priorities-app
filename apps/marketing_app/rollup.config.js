@@ -20,8 +20,12 @@ const baseConfig = createSpaConfig({
   // development mode creates a non-minified build for debugging or development
   developmentMode: process.env.ROLLUP_WATCH === 'true',
 
+  html: {
+    publicPath: '/marketing'
+  },
+
   // set to true to inject the service worker registration into your index.html
-  injectServiceWorker: true,
+  injectServiceWorker: false,
 });
 
 export default merge(baseConfig, {

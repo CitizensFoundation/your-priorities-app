@@ -924,10 +924,17 @@ const setSAMLSettingsOnUser = (req, user, done) => {
     log.warn("Can't find referrer for URL when setting up SAML");
   }
   if (urlComponents && urlComponents.pathname && urlComponents.pathname.split("/").length>1) {
-    id = urlComponents.pathname.split("/")[2];
+    if (urlComponents.pathname.split("/").length>3)
+      id = urlComponents.pathname.split("/")[3];
+    else
+      id = urlComponents.pathname.split("/")[2];
   }
 
   let community, group, isGroupAdmin, isCommunityAdmin;
+
+  if (isNaN(id)) {
+    id = undefined;
+  }
 
   async.parallel([
     (parallelCallback) => {
