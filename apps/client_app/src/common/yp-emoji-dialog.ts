@@ -21,11 +21,7 @@ export class YpEmojiDialog extends YpBaseElement {
 
   disconnectedCallback() {
     super.disconnectedCallback();
-    if (this.picker){
-      this.picker.removeEventListener('emoji:select', this.pickEmoji.bind(this));
-    }
-
-    this.picker = undefined;
+    this.removePicker();
     this.trigger = undefined;
   }
 
@@ -43,12 +39,15 @@ export class YpEmojiDialog extends YpBaseElement {
     );
 
     this.picker.addEventListener('emoji:select', this.pickEmoji.bind(this));
-    this.picker.toggle();
+    this.picker.open();
+    console.log("CREATE PICKER")
   }
 
   removePicker() {
     this.picker?.removeEventListener('emoji:select', this.pickEmoji.bind(this));
+    this.picker?.destroy();
     this.picker = undefined;
+    console.log("REMOVE PICKER")
   }
 
   pickEmoji(selection: EmojiSelection) {
