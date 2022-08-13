@@ -616,7 +616,7 @@ export class YpEditDialog extends YpBaseElement {
   }
 
   _formError(event: CustomEvent) {
-    if (!navigator.onLine && this.method === 'POST' && window.fetch) {
+    if (!navigator.onLine && this.method === 'POST' && window.fetch!==undefined) {
       const serialized = (this.$$('#form') as YpForm).serializeForm();
       window.appGlobals.offline.sendWhenOnlineNext({
         body: serialized,
