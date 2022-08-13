@@ -1354,10 +1354,12 @@ router.post('/createActivityFromApp', function(req, res) {
     },
 
     userId: req.user ? req.user.id : null,
-    domainId: req.ypDomain.id,
-    communityId: req.ypCommunity ? req.ypCommunity.id : null,
-    groupId: req.params.groupId,
-    postId: req.body.object ? req.body.object.postId : null
+    domainId: req.body.domainId ? req.body.domainId : req.ypDomain ? req.ypDomain.id : null,
+    communityId: req.body.communityId ? req.body.communityId : req.ypCommunity ? req.ypCommunity.id : null,
+    groupId: req.body.groupId ? req.body.groupId : null,
+    postId: req.body.postId ? req.body.postId :
+      (req.body.object && req.body.object.postId) ? req.body.object.postId.split('/post/')[1] : null,
+    pointId: req.body.pointId ? req.body.pointId : null,
   };
 
   if (!process.env.DISABLE_RECORDING_OF_USER_EVENTS) {

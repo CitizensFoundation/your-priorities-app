@@ -659,7 +659,7 @@
       upVote: function (event) {
         this.set('allDisabled', true);
         this.generateEndorsement(1);
-        window.appGlobals.activity('clicked', 'endorse_up', this.post ? this.post.id : -1);
+        window.appGlobals.activity('clicked', 'endorse_up', { postId: this.post ? this.post.id : null});
         this.set('isEndorsed', true);
         this.updateStyles();
         this._setVoteHidingStatus();
@@ -668,7 +668,7 @@
       downVote: function (event) {
         this.set('allDisabled', true);
         this.generateEndorsement(-1);
-        window.appGlobals.activity('clicked', 'endorse_down', this.post ? this.post.id : -1);
+        window.appGlobals.activity('clicked', 'endorse_down',{ postId: this.post ? this.post.id : null});
         this._setVoteHidingStatus();
       },
 

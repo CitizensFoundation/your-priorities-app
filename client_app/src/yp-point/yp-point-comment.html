@@ -148,7 +148,9 @@
       },
 
       _reportPoint: function () {
-        window.appGlobals.activity('open', 'point.report');
+        window.appGlobals.activity('open', 'point.report', {
+          pointId:  this.point.id
+        });
         var dialog = Polymer.dom(document).querySelector('yp-app').getDialogAsync("apiActionDialog", function (dialog) {
           dialog.setup('/api/points/' + this.point.id + '/report',
             this.t('reportConfirmation'),

@@ -191,6 +191,7 @@
             break;
         }
         this.sendToAnalyticsTrackers('send','event','Login and Signup', eventType, authProviderText, fieldsObjects);
+        window.appGlobals.activity(eventType, 'Login and Signup', fieldsObjects);
       }
     }
   }

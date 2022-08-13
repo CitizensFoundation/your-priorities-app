@@ -41,7 +41,9 @@
       }
 
       if (windowLocation.indexOf(postUrl) == -1) {
-        window.appGlobals.activity('open', 'post', postUrl, { id: postId, modelType: 'post' });
+        this.async(function () {
+          window.appGlobals.activity('open', 'post', postUrl, { id: postId, modelType: 'post' });
+        }, 50);
         if (skipKeepOpen!==true)
           window.app.setKeepOpenForPostsOn(window.location.pathname);
         this.async(function () {

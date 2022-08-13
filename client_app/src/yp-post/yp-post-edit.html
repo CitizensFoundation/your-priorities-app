@@ -1341,7 +1341,9 @@
 
     _finishRedirect: function (post) {
       this.fire('yp-reset-keep-open-for-page');
-      window.appGlobals.activity('completed', 'newPost');
+      window.appGlobals.activity('completed', 'newPost', {
+        postId: post.id
+      });
 
       var text = this.t('thankYouForYourSubmission');
       if (this.group && this.group.configuration &&

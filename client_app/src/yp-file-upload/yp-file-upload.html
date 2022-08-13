@@ -861,7 +861,7 @@ Example:
             this.$.startTranscodeAjax.body = options;
             this.$.startTranscodeAjax.generateRequest();
             window.appGlobals.activity('complete', 'videoUpload');
-            window.appGlobals.activity('start', 'mediaTranscoding');
+            window.appGlobals.activity('starting', 'mediaTranscoding');
           } else if (this.audioUpload) {
             this.set('indeterminateProgress', true);
             this.set('uploadStatus', this.t("transcodingAudio"));
@@ -887,7 +887,7 @@ Example:
             this.$.startTranscodeAjax.body = options;
             this.$.startTranscodeAjax.generateRequest();
             window.appGlobals.activity('complete', 'audioUpload');
-            window.appGlobals.activity('start', 'mediaTranscoding');
+            window.appGlobals.activity('starting', 'mediaTranscoding');
           } else if (this.attachmentUpload) {
             this.set('uploadStatus', this.t('uploadCompleted'));
             self.fire('file-upload-complete');

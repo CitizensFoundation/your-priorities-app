@@ -487,6 +487,22 @@
           }
         },
 
+        _getIdForCollection: function (name) {
+          var id = null;
+
+          if (window.location.href.indexOf(`/${name}/`) > -1) {
+            id = window.location.href.split(`/${name}/`)[1];
+            if (id.indexOf('/') > -1) {
+              id = id.split('/')[0];
+            }
+            if (id.indexOf('?') > -1) {
+              id = id.split('?')[0];
+            }
+          }
+
+          return id;
+        },
+
         activity: function (type, object, context, target) {
           var actor;
 
@@ -500,9 +516,6 @@
 
           console.log(logString);
 
-          if (context)
-            logString += ' ' + context;
-
           if (type=='open') {
             // Wait by sending open so pageview event can be completed before
             this.async(function ()  {
@@ -510,6 +523,23 @@
             }, 25);
           } else {
             this.sendToAnalyticsTrackers('send', 'event', object, type);
+          }
+
+          var postId = this._getIdForCollection('post');
+          var communityId = this._getIdForCollection('community');
+          var groupId = this._getIdForCollection('group');
+          var domainId = this._getIdForCollection('domain');
+
+          var pointId;
+
+          if (context && typeof context==='object') {
+            if (context.pointId) {
+              pointId = context.pointId;
+            }
+
+            if (!postId && context.postId) {
+              postId = context.postId;
+            }
           }
 
           //TODO: Use fetch here
@@ -531,7 +561,12 @@
             user_agent: navigator.userAgent,
             referrer: document.referrer,
             url: location.href,
-            screen_width: window.screen.width
+            screen_width: window.screen.width,
+            postId: postId,
+            communityId: communityId,
+            domainId: domainId,
+            pointId: pointId,
+            groupId: window.appGlobals.currentGroup ? window.appGlobals.currentGroup.id : groupId,
           };
           activityAjax.generateRequest();
 

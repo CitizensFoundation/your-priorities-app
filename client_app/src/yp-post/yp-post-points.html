@@ -1653,9 +1653,13 @@
           this.$.newPointToast.show();
           this._updateCounterInfo();
           if (point.value > 0) {
-            window.appGlobals.activity('completed', 'newPointFor');
+            window.appGlobals.activity('completed', 'newPointFor', {
+              pointId:  point.id
+            });
           } else {
-            window.appGlobals.activity('completed', 'newPointAgainst');
+            window.appGlobals.activity('completed', 'newPointAgainst', {
+              pointId:  point.id
+            });
           }
           this._clearVideo();
           this._clearAudio();

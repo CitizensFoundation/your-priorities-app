@@ -159,7 +159,9 @@
         } else {
           groupUrl = '/group/' + this.group.id + '/open';
         }
-        window.appGlobals.activity('open', 'group', groupUrl, { id: this.group.id });
+        this.async(function () {
+          window.appGlobals.activity('open', 'group', groupUrl, { id: this.group.id });
+        }, 50);
         if (window.appGlobals.backToCommunityGroupItems===null)
           window.appGlobals.backToCommunityGroupItems = {};
         window.appGlobals.backToCommunityGroupItems[this.group.community_id] = this.group;

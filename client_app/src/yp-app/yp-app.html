@@ -689,7 +689,7 @@
 
         if (this.goForwardToPostId) {
           this.goToPost(this.goForwardToPostId, null, null, null, true);
-          window.appGlobals.activity('recommendations', 'goForward', this.goForwardToPostId);
+          window.appGlobals.activity('goForward', 'recommendations', this.goForwardToPostId);
           this.goForwardCount += 1;
           this.set('showBackToPost', true);
         } else {
@@ -700,7 +700,7 @@
       _goToPreviousPost: function () {
         if (this.goForwardCount>0) {
           window.history.back();
-          window.appGlobals.activity('recommendations', 'goBack');
+          window.appGlobals.activity('goBack', 'recommendations');
         } else {
           this.set('showBackToPost', false);
         }

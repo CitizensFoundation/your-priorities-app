@@ -269,12 +269,16 @@
         this.generatePointQuality(1);
         this.set('isUpVoted', true);
         this.updateStyles();
-        window.appGlobals.activity('clicked', 'pointHelpful', this.point.id);
+        window.appGlobals.activity('clicked', 'pointHelpful', {
+          pointId:  this.point.id
+        });
       },
 
       pointNotHelpful: function () {
         this.set('allDisabled', true);
-        window.appGlobals.activity('clicked', 'pointNotHelpful', this.point.id);
+        window.appGlobals.activity('clicked', 'pointNotHelpful', {
+          pointId:  this.point.id
+        });
         this.generatePointQuality(-1);
       }
     });
