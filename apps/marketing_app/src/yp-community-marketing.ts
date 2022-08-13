@@ -9,6 +9,7 @@ import { Chart, registerables } from 'chart.js';
 import './yp-visitors-chart.js';
 import './yp-pages-chart.js';
 import './yp-bounce-rate-chart.js';
+import './pl-components/pl-dashboard.js';
 
 @customElement('yp-community-marketing')
 export class YpCommunityMarketing extends YpAdminPage {
@@ -41,7 +42,7 @@ export class YpCommunityMarketing extends YpAdminPage {
     ];
   }
 
-  render() {
+  renderTwo() {
     return this.collection
       ? html`
           <div class="layout horizontal wrap">
@@ -65,13 +66,16 @@ export class YpCommunityMarketing extends YpAdminPage {
                       .collection="${this.collection}"
                       .collectionId="${this.collectionId}"
                     ></yp-bounce-rate-chart>
-
                   `
                 : nothing}
             </div>
           </div>
         `
       : nothing;
+  }
+
+  render() {
+    return this.collection ? html` <pl-dashboard query="{ period: 'realtime'}"></pl-dashboard> ` : nothing;
   }
 
   updated(changedProperties: Map<string | number | symbol, unknown>): void {

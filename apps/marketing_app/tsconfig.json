@@ -6,6 +6,7 @@
     "noEmitOnError": true,
     "lib": ["es2017", "dom", "dom.iterable"],
     "strict": true,
+    "allowJs": true,
     "esModuleInterop": false,
     "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,

@@ -12,5 +12,6 @@ export default
     "postName": "Post name",
     "postContent": "Post description",
     "selectLanguage": "Select language",
-    "noTranslation": "No Translation!"
+    "noTranslation": "No Translation!",
+    "goalConversionsLast30Min": "Goal Conversions (last 30 min)"
 };
