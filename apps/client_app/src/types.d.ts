@@ -1,6 +1,7 @@
 declare module 'lit-flexbox-literals';
 declare module 'wavesurfer.js/dist/plugin/wavesurfer.microphone.min.js';
 declare module 'lit-google-map';
+declare module 'twemoji';
 
 interface YpCollectionConfiguration {
   themeOverrideColorPrimary?: string;

@@ -41,7 +41,7 @@ export class YpServerApiBase extends YpCodeBase {
         'Content-Type': 'application/json',
       };
     }
-    if (!navigator.onLine && options.method==="POST" && window.fetch) {
+    if (!navigator.onLine && options.method==="POST" && window.fetch!==undefined) {
       window.appGlobals.offline.sendWhenOnlineNext({
         body: options.body,
         method: options.method,
