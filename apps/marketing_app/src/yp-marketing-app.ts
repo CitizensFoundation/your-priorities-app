@@ -180,7 +180,6 @@ export class YpMarketingApp extends YpBaseElement {
     const splitPath = pathname.split('/');
     this.collectionType = splitPath[splitPath.length-2];
     this.collectionId = splitPath[splitPath.length-1];
-    debugger;
   }
 
   connectedCallback() {
@@ -250,6 +249,8 @@ export class YpMarketingApp extends YpBaseElement {
         </div>
         <div slot="appContent">
           <mwc-top-app-bar>
+            <mwc-icon-button class="exitButton" .label="${this.t('exitToMainApp')}" slot="navigationIcon" @click="${this.exitToMainApp}" icon="exit_to_app"></mwc-icon-button>
+
             <div slot="title">
               <div class="layout horizontal headerContainer">
                 <div class="analyticsText">

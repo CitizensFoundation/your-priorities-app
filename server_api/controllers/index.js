@@ -41,6 +41,12 @@ let replaceForTarsalgo = function (data) {
   return data.replace(/XmanifestPathX/g, "manifest_tarsalgo");
 };
 
+let replaceForOpenMontana = function (data) {
+  data = data.replace(/XappNameX/g, "Open Montana");
+  data = data.replace(/XdescriptionX/g, "For transparent, participatory, and collaborative governance.");
+  return data.replace(/XmanifestPathX/g, "manifest_open_montana");
+};
+
 let replaceForParlScot = function (data) {
   data = data.replace(/XappNameX/g, "Engage - Scottish Parliament");
   data = data.replace(/XdescriptionX/g, "Engage with the Scottish Parliament");
@@ -158,6 +164,8 @@ let sendIndex = function (req, res) {
           res.send(replaceForTarsalgo(indexFileData));
         } else if (req.hostname.indexOf('junges.wien') > -1) {
           res.send(replaceForJungesWien(indexFileData));
+        } else if (req.hostname.indexOf('openmontana.org') > -1) {
+          res.send(replaceForOpenMontana(indexFileData));
         } else if (req.hostname.indexOf('yrpri.org') > -1) {
           res.send(replaceForYrpri(indexFileData));
         } else {
