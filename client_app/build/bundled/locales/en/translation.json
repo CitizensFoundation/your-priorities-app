@@ -1,4 +1,6 @@
 {
+  "upload": "Upload",
+  "videoFormat": "Video format",
   "ziggeoApplicationToken": "Ziggeo Application Token",
   "useZiggeo": "Use Ziggeo Media",
   "anonymousAskRegistrationQuestions": "Ask anonymous registration questions",
