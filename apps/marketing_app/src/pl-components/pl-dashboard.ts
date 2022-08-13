@@ -66,9 +66,6 @@ export class PlausibleDashboard extends YpBaseElementWithLogin {
       embedded: false
     }
 
-    this.state.query = {
-      period: 'realtime'
-    }
     this.setState();
   }
 
@@ -77,6 +74,8 @@ export class PlausibleDashboard extends YpBaseElementWithLogin {
       query: parseQuery(this.query, this.site),
       timer: new Timer(),
     };
+
+    this.state.query = {...this.state.query, period: 'realtime'};
   }
 
   updated(changedProperties: Map<string | number | symbol, unknown>): void {
@@ -90,7 +89,7 @@ export class PlausibleDashboard extends YpBaseElementWithLogin {
 
   render() {
     if (this.state!.query!.period === 'realtime') {
-      return html`
+      return html`<h1>ijiji</h1>
         <pl-realtime
           .timer="${this.state.timer}"
           .site="${this.site}"
