@@ -125,7 +125,7 @@
     "lit-html": "^2.0.1",
     "lit-tailwindcss": "^0.1.0",
     "lodash-es": "^4.17.21",
-    "moment": "^2.29.1",
+    "moment": "^2.29.4",
     "pwa-helpers": "^0.9.1",
     "recordrtc": "^5.6.2",
     "rollup-plugin-postcss": "^4.0.2",
