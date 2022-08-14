@@ -28,6 +28,7 @@ interface PlausibleSiteData {
   domain?: string;
   hasGoals: boolean;
   embedded: boolean;
+  offset?: number;
 }
 
 interface PlausibleQueryData {

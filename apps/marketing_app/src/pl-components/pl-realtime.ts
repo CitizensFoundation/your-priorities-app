@@ -2,6 +2,8 @@ import { LitElement, css, html, nothing } from 'lit';
 import { property, customElement } from 'lit/decorators.js';
 import { YpBaseElementWithLogin } from '../@yrpri/common/yp-base-element-with-login';
 
+import './stats/graph/pl-visitors-graph.js';
+
 @customElement('pl-realtime')
 export class PlausibleRealtime extends YpBaseElementWithLogin {
   @property({ type: Object })
@@ -35,7 +37,6 @@ export class PlausibleRealtime extends YpBaseElementWithLogin {
 
   render() {
     const navClass = this.site.embedded ? 'relative' : 'sticky';
-
     return html`
       <div className="mb-12">
         <div id="stats-container-top"></div>
@@ -65,11 +66,11 @@ export class PlausibleRealtime extends YpBaseElementWithLogin {
             ></pl-datepicker>
           </div>
         </div>
-        <pl-visitor-graph
+        <pl-visitors-graph
           .site="${this.site}"
           .query="${this.query}"
           .timer="${this.timer}"
-        ></pl-visitor-graph>
+        ></pl-visitors-graph>
         <div className="items-start justify-between block w-full md:flex">
           <pl-sources
             .site="${this.site}"

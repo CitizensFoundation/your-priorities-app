@@ -21,7 +21,7 @@ const readline = require('readline');
 const stream = require('stream');
 const { getMapForCommunity } = require("../utils/community_mapping_tools");
 
-const { getPlausibleStats } = require("../active-citizen/engine/analytics/plausible/manager")
+const { getPlausibleStats, plausibleStatsProxy } = require("../active-citizen/engine/analytics/plausible/manager")
 
 const getFromAnalyticsApi = require('../active-citizen/engine/analytics/manager').getFromAnalyticsApi;
 const triggerSimilaritiesTraining = require('../active-citizen/engine/analytics/manager').triggerSimilaritiesTraining;
@@ -2063,6 +2063,19 @@ router.get('/:communityId/:type/getPlausibleSeries', auth.can('edit community'),
     res.send(plausibleData);
   } catch (error) {
     log.error('Could not get getPlausibleSeries', { err: error, context: 'getPlausibleSeries', user: toJson(req.user.simple()) });
+    res.sendStatus(500);
+  }
+});
+
+router.put('/:communityId/plausibleStatsProxy', auth.can('edit community'), async (req, res) => {
+  // Example: "timeseries?site_id=your-priorities&period=7d";
+  try {
+    const plausibleData = await plausibleStatsProxy(req.body.plausibleUrl);
+    log.info("GOT DATA");
+    log.info(plausibleData);
+    res.send(plausibleData);
+  } catch (error) {
+    log.error('Could not get plausibleStatsProxy', { err: error, context: 'getPlausibleSeries', user: toJson(req.user.simple()) });
     res.sendStatus(500);
   }
 });

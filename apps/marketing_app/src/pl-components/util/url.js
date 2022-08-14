@@ -1,5 +1,5 @@
 export function apiPath(site, path = '') {
-  return `/api/stats/${encodeURIComponent(site.domain)}${path}`
+  return `/api/v1/stats/${path}`
 }
 
 export function siteBasePath(site, path = '') {

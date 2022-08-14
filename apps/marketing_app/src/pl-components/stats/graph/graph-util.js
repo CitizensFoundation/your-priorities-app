@@ -11,7 +11,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable consistent-return */
 /* eslint-disable func-names */
-import { METRIC_LABELS, METRIC_FORMATTER } from './pl-visitor-graph.js';
+import { METRIC_LABELS, METRIC_FORMATTER } from './pl-visitors-graph.js';
 import {parseUTCDate, formatMonthYYYY, formatDay} from '../../util/date.js';
 
 export const dateFormatter = (interval, longForm) => {

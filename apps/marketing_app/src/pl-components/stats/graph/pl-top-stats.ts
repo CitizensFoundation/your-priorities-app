@@ -6,7 +6,7 @@ import { navigateToQuery, generateQueryString } from '../../query.js';
 import numberFormatter, {
   durationFormatter,
 } from '../../util/number-formatter.js';
-import { METRIC_MAPPING, METRIC_LABELS } from './pl-visitor-graph.js';
+import { METRIC_MAPPING, METRIC_LABELS } from './pl-visitors-graph.js';
 
 @customElement('pl-top-stats')
 export class PlausibleTopStats extends YpBaseElementWithLogin {

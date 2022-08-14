@@ -14,7 +14,7 @@ import * as url from '../../util/url.js';
 import { YpBaseElementWithLogin } from '../../../@yrpri/common/yp-base-element-with-login';
 import CanvasEntry from 'wavesurfer.js/src/drawer.canvasentry.js';
 
-import { METRIC_MAPPING, METRIC_FORMATTER, METRIC_LABELS } from './pl-visitor-graph.js';
+import { METRIC_MAPPING, METRIC_FORMATTER, METRIC_LABELS } from './pl-visitors-graph.js';
 
 @customElement('pl-line-graph')
 export class PlausibleLineGraph extends YpBaseElementWithLogin {

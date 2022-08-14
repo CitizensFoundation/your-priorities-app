@@ -63,7 +63,8 @@ export class PlausibleDashboard extends YpBaseElementWithLogin {
     this.site = {
       domain: "localhost",
       hasGoals: true,
-      embedded: false
+      embedded: false,
+      offset: 1
     }
 
     this.setState();
@@ -73,9 +74,10 @@ export class PlausibleDashboard extends YpBaseElementWithLogin {
     this.state = {
       query: parseQuery(this.query, this.site),
       timer: new Timer(),
+      metric: 'visitors'
     };
 
-    this.state.query = {...this.state.query, period: 'realtime'};
+    this.state.query = {...this.state.query, period: 'day'};
   }
 
   updated(changedProperties: Map<string | number | symbol, unknown>): void {
@@ -88,24 +90,26 @@ export class PlausibleDashboard extends YpBaseElementWithLogin {
   }
 
   render() {
-    if (this.state!.query!.period === 'realtime') {
-      return html`<h1>ijiji</h1>
-        <pl-realtime
-          .timer="${this.state.timer}"
-          .site="${this.site}"
-          .currentRole="${this.currentUserRole}"
-          .query="${this.state.query}"
-        ></pl-realtime>
-      `;
-    } else {
-      return html`
-        <pl-historical
-          .timer="${this.state.timer}"
-          .site="${this.site}"
-          .currentRole="${this.currentUserRole}"
-          .query="${this.state.query}"
-        ></pl-historical>
-      `;
+    if (this.state && this.state.query) {
+      if (this.state!.query!.period === 'day') {
+        return html`
+          <pl-realtime
+            .timer="${this.state.timer}"
+            .site="${this.site}"
+            .currentRole="${this.currentUserRole}"
+            .query="${this.state.query}"
+          ></pl-realtime>
+        `;
+      } else {
+        return html`
+          <pl-historical
+            .timer="${this.state.timer}"
+            .site="${this.site}"
+            .currentRole="${this.currentUserRole}"
+            .query="${this.state.query}"
+          ></pl-historical>
+        `;
+      }
     }
   }
 }
