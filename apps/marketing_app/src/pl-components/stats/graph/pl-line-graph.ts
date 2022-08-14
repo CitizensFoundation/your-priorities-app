@@ -11,19 +11,19 @@ import * as storage from '../../util/storage.js';
 import { GraphTooltip, buildDataSet, dateFormatter } from './graph-util.js';
 import './pl-top-stats.js';
 import * as url from '../../util/url.js';
-import { YpBaseElementWithLogin } from '../../../@yrpri/common/yp-base-element-with-login';
 import CanvasEntry from 'wavesurfer.js/src/drawer.canvasentry.js';
 import tailwind from 'lit-tailwindcss';
+import { PlausibleStyles } from '../../plausibleStyles.js';
+import { PlausibleBaseElement } from '../../pl-base-element.js';
 
 import {
   METRIC_MAPPING,
   METRIC_FORMATTER,
   METRIC_LABELS,
 } from './pl-visitors-graph.js';
-import { PlausibleStyles } from '../../plausibleStyles.js';
 
 @customElement('pl-line-graph')
-export class PlausibleLineGraph extends YpBaseElementWithLogin {
+export class PlausibleLineGraph extends PlausibleBaseElement {
   @property({ type: Object })
   state!: PlausibleStateData;
 
@@ -65,10 +65,9 @@ export class PlausibleLineGraph extends YpBaseElementWithLogin {
 
   constructor() {
     super();
-    this.state = {
-      ...this.state,
+    this.updateState({
       exported: false,
-    };
+    });
 
     this.repositionTooltip = this.repositionTooltip.bind(this);
   }
@@ -269,18 +268,16 @@ export class PlausibleLineGraph extends YpBaseElementWithLogin {
     if (document.cookie.includes('exporting')) {
       setTimeout(this.pollExportReady.bind(this), 1000);
     } else {
-      this.state = {
-        ...this.state,
+      this.updateState({
         exported: false,
-      };
+      });
     }
   }
 
   downloadSpinner() {
-    this.state = {
-      ...this.state,
+    this.updateState({
       exported: true,
-    };
+    });
     document.cookie = 'exporting=';
     setTimeout(this.pollExportReady.bind(this), 1000);
   }

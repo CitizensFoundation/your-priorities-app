@@ -1,5 +1,6 @@
 
 declare module 'lit-tailwindcss';
+
 interface PlausibleQueryFilters {
   goal?: string;
   props?: string;
@@ -52,14 +53,29 @@ interface PlausibleQueryStringsData {
   auth?: string;
 }
 
+interface PlausiblePropValueData {
+  value: number;
+  name: string;
+  unique_conversions: number;
+  total_conversions: number;
+}
+
 interface PlausibleStateData {
   query?: PlausibleQueryData;
   timer?: any;
   exported?: boolean;
-  loading?: number;
+  loading?: boolean;
+  loadingStage?: number;
   metric?: string;
+  viewport?: number;
   graphData?: any;
+  propKey?: string;
+  goals?: PlausibleGoalData[];
+  prevHeight?: number;
+  breakdown?: PlausiblePropValueData[];
   topStatData?: PlausibleTopStatsData;
+  page?: number;
+  moreResultsAvailable?: boolean;
 }
 
 interface PlausibleStatData {
@@ -73,4 +89,11 @@ interface PlausibleTopStatsData {
   sample_percent: number;
   imported_source: string;
   with_imported: boolean;
+}
+
+interface PlausibleGoalData {
+  prop_names: string[];
+  name: string;
+  total_conversions: number;
+  unique_conversions: number;
 }

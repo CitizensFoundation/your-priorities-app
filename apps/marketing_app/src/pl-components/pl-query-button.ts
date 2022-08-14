@@ -4,10 +4,10 @@ import { property, customElement } from 'lit/decorators.js';
 import { navigateToQuery, generateQueryString } from './query.js';
 import tailwind from 'lit-tailwindcss';
 import { PlausibleStyles } from './plausibleStyles.js';
-import { YpBaseElement } from '../@yrpri/common/yp-base-element.js';
+import { PlausibleBaseElement } from './pl-base-element.js';
 
 @customElement('pl-link')
-export class PlausibleLink extends YpBaseElement {
+export class PlausibleLink extends PlausibleBaseElement {
   @property({ type: Boolean })
   disabled = false;
 

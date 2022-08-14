@@ -1,6 +1,5 @@
 import { LitElement, css, html, nothing } from 'lit';
 import { property, customElement } from 'lit/decorators.js';
-import { YpBaseElementWithLogin } from '../../../@yrpri/common/yp-base-element-with-login.js';
 
 import { navigateToQuery, generateQueryString } from '../../query.js';
 import numberFormatter, {
@@ -10,9 +9,10 @@ import { METRIC_MAPPING, METRIC_LABELS } from './pl-visitors-graph.js';
 import tailwind from 'lit-tailwindcss';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { PlausibleStyles } from '../../plausibleStyles.js';
+import { PlausibleBaseElement } from '../../pl-base-element.js';
 
 @customElement('pl-top-stats')
-export class PlausibleTopStats extends YpBaseElementWithLogin {
+export class PlausibleTopStats extends PlausibleBaseElement {
   @property({ type: Boolean })
   disabled = false;
 

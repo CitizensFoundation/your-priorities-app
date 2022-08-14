@@ -12,12 +12,12 @@ import { GraphTooltip, buildDataSet, dateFormatter } from './graph-util.js';
 import * as url from '../../util/url.js';
 import './pl-top-stats.js';
 import './pl-line-graph.js';
-import { YpBaseElementWithLogin } from '../../../@yrpri/common/yp-base-element-with-login';
 import tailwind from 'lit-tailwindcss';
 import { PlausibleStyles } from '../../plausibleStyles';
+import { PlausibleBaseElement } from '../../pl-base-element';
 
 @customElement('pl-visitors-graph')
-export class PlausibleVisitorsGraph extends YpBaseElementWithLogin {
+export class PlausibleVisitorsGraph extends PlausibleBaseElement {
   @property({ type: Object })
   query!: PlausibleQueryData;
 
@@ -29,9 +29,6 @@ export class PlausibleVisitorsGraph extends YpBaseElementWithLogin {
 
   @property({ type: Object })
   timer: any;
-
-  @property({ type: Object })
-  state!: PlausibleStateData;
 
   @property({ type: String })
   metric!: string;
@@ -47,11 +44,6 @@ export class PlausibleVisitorsGraph extends YpBaseElementWithLogin {
 
   constructor() {
     super();
-    this.state = {
-      ...this.state,
-      loading: 2,
-      metric: 'visitors',
-    };
   }
 
   static get styles() {
@@ -64,11 +56,12 @@ export class PlausibleVisitorsGraph extends YpBaseElementWithLogin {
 
   connectedCallback(): void {
     super.connectedCallback();
-    this.state = {
-      ...this.state,
-      loading: 2,
+
+    this.updateState({
+      loadingStage: 2,
       metric: storage.getItem(`metric__${this.site.domain}`) || 'visitors',
-    };
+    });
+
     this.updateMetric = this.updateMetric.bind(this);
     this.fetchGraphData = this.fetchGraphData.bind(this);
     this.fetchTopStatData = this.fetchTopStatData.bind(this);
@@ -78,22 +71,20 @@ export class PlausibleVisitorsGraph extends YpBaseElementWithLogin {
     super.updated(changedProperties);
 
     if (changedProperties.get('query')) {
-      this.state = {
-        ...this.state,
-        loading: 3,
+      this.updateState({
+        loadingStage: 3,
         graphData: null,
         topStatData: undefined,
-      };
+      });
       this.fetchGraphData();
       this.fetchTopStatData();
     }
 
     if (changedProperties.get('metric')) {
-      this.state = {
-        ...this.state,
-        loading: 1,
+      this.updateState({
+        loadingStage: 1,
         graphData: null,
-      };
+      });
       this.fetchGraphData();
     }
 
@@ -111,21 +102,18 @@ export class PlausibleVisitorsGraph extends YpBaseElementWithLogin {
     if (topStatLabels && `${topStatLabels}` !== `${prevTopStatLabels}`) {
       if (!topStatLabels.includes(savedMetric) && savedMetric !== '') {
         if (this.query!.filters!.goal && this.metric !== 'conversions') {
-          this.state = {
-            ...this.state,
+          this.updateState({
             metric: 'conversions',
-          };
+          });
         } else {
-          this.state = {
-            ...this.state,
+          this.updateState({
             metric: topStatLabels[0],
-          };
+          });
         }
       } else {
-        this.state = {
-          ...this.state,
+        this.updateState({
           metric: savedMetric,
-        };
+        });
       }
     }
   }
@@ -142,16 +130,14 @@ export class PlausibleVisitorsGraph extends YpBaseElementWithLogin {
   updateMetric(newMetric: string) {
     if (newMetric === this.state.metric) {
       storage.setItem(`metric__${this.site.domain}`, '');
-      this.state = {
-        ...this.state,
+      this.updateState({
         metric: '',
-      };
+      });
     } else {
       storage.setItem(`metric__${this.site.domain}`, newMetric);
-      this.state = {
-        ...this.state,
+      this.updateState({
         metric: newMetric,
-      };
+      });
     }
   }
 
@@ -161,7 +147,7 @@ export class PlausibleVisitorsGraph extends YpBaseElementWithLogin {
   fetchGraphData() {
     if (this.state.metric) {
       api
-        .get(
+        .getWithProxy(
           "communities",
           this.collectionId,
           `/api/stats/${encodeURIComponent(this.site!.domain!)}/main-graph`,
@@ -169,46 +155,44 @@ export class PlausibleVisitorsGraph extends YpBaseElementWithLogin {
           { metric: this.state.metric || 'none' }
         )
         .then(res => {
-          this.state = {
-            ...this.state,
-            loading: this.state.loading! - 2,
+          this.updateState({
+            loadingStage: this.state.loadingStage! - 2,
             graphData: res,
-          };
+          });
           return res;
         });
     } else {
-      this.state = {
-        ...this.state,
-        loading: this.state.loading! - 2, graphData: null };
+      this.updateState({
+        loadingStage: this.state.loadingStage! - 2, graphData: null
+      });
     }
   }
 
   fetchTopStatData() {
     api
-      .get(
+      .getWithProxy(
         "communities",
         this.collectionId,
         `/api/stats/${encodeURIComponent(this.site!.domain!)}/top-stats`,
         this.query
       )
       .then(res => {
-        this.state = {
-          ...this.state,
-          loading: this.state!.loading! - 1,
+        this.updateState({
+          loadingStage: this.state.loadingStage! - 1,
           topStatData: res,
-        };
+        });
         return res;
       });
   }
 
   renderInner() {
-    const { graphData, metric, topStatData, loading } = this.state;
+    const { graphData, metric, topStatData, loadingStage } = this.state;
 
     const theme =
       document.querySelector('html')!.classList.contains('dark') || false;
 
     if (
-      (loading && loading <= 1 && topStatData) ||
+      (loadingStage && loadingStage <= 1 && topStatData) ||
       (topStatData && graphData)
     ) {
       return html`
@@ -229,7 +213,7 @@ export class PlausibleVisitorsGraph extends YpBaseElementWithLogin {
 
   render() {
     const { metric, topStatData, graphData } = this.state;
-    return html`${this.state!.loading! < 1
+    return html`${this.state.loadingStage! < 1
       ? html`
               <div class="graph-inner">
                 <div

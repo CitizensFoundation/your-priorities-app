@@ -1,13 +1,13 @@
 import { LitElement, css, html, nothing } from 'lit';
 import { property, customElement } from 'lit/decorators.js';
-import { YpBaseElementWithLogin } from '../@yrpri/common/yp-base-element-with-login';
 import tailwind from 'lit-tailwindcss';
 
 import './stats/graph/pl-visitors-graph.js';
-import { PlausibleStyles } from './plausibleStyles';
+import { PlausibleStyles } from './plausibleStyles.js';
+import { PlausibleBaseElement } from './pl-base-element.js';
 
 @customElement('pl-realtime')
-export class PlausibleRealtime extends YpBaseElementWithLogin {
+export class PlausibleRealtime extends PlausibleBaseElement {
   @property({ type: Object })
   state!: PlausibleStateData;
 

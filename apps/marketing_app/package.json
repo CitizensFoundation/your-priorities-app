@@ -120,6 +120,7 @@
     "intl-messageformat": "^9.1.7",
     "linkifyjs": "^3.0.1",
     "lit": "^2.0.0",
+    "lit-flatpickr": "^0.4.0",
     "lit-flexbox-literals": "0.0.7",
     "lit-google-map": "^0.1.1",
     "lit-html": "^2.0.1",

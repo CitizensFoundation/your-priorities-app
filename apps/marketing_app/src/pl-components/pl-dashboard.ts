@@ -14,8 +14,8 @@ import * as api from './api';
 
 //import { withComparisonProvider } from './comparison-provider-hoc';
 
-import { YpBaseElementWithLogin } from '../@yrpri/common/yp-base-element-with-login';
 import { PlausibleStyles } from './plausibleStyles.js';
+import { PlausibleBaseElement } from './pl-base-element.js';
 //import '@lit-labs/router';
 //import { Routes } from '@lit-labs/router';
 
@@ -39,11 +39,9 @@ class Timer {
     }
   }
 }
-@customElement('pl-dashboard')
-export class PlausibleDashboard extends YpBaseElementWithLogin {
-  @property({ type: Object })
-  state!: PlausibleStateData;
 
+@customElement('pl-dashboard')
+export class PlausibleDashboard extends PlausibleBaseElement {
   @property({ type: String })
   query!: string;
 
@@ -92,14 +90,13 @@ export class PlausibleDashboard extends YpBaseElementWithLogin {
   }
 
   setState() {
-    this.state = {
-      ...this.state,
+    this.updateState({
       query: parseQuery(this.query, this.site),
       timer: new Timer(),
       metric: 'visitors'
-    };
+    });
 
-    this.state.query = {...this.state.query, period: 'day'};
+    //this.state.query = {...this.state.query, period: 'day'};
   }
 
   updated(changedProperties: Map<string | number | symbol, unknown>): void {
