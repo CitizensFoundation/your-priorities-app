@@ -126,12 +126,14 @@ export class PlausibleVisitorsGraph extends YpBaseElementWithLogin {
     }
   }
 
+///api/stats/localhost/sources?period=day&date=2022-08-14&filters=%7B%7D&with_imported=true&show_noref=false
+///api/stats/localhost/sources?period=day&date=2022-08-14&filters=%7B%7D&with_imported=true&show_noref=false
+
   fetchGraphData() {
     if (this.state.metric) {
       api
         .get(
-          `/api/v1/stats/timeseries`,
-          this.query,
+          `/api/stats/${encodeURIComponent(this.site!.domain!)}/main-graph`,         this.query,
           { metric: this.state.metric || 'none' }
         )
         .then(res => {
@@ -141,36 +143,28 @@ export class PlausibleVisitorsGraph extends YpBaseElementWithLogin {
           return res;
         });
     } else {
-      this.state = {
-        ...this.state,
-        loading: this.state.loading! - 2, graphData: null };
+      this.state = { loading: this.state.loading! - 2, graphData: null };
     }
   }
 
   fetchTopStatData() {
-    return;
     api
       .get(
-        `/api/v1/stats/breakdown`,
+        `/api/stats/${encodeURIComponent(this.site!.domain!)}/top-stats`,
         this.query
       )
       .then(res => {
         debugger;
-        this.state = {
-          ...this.state,
-          loading: this.state!.loading! - 1, topStatData: res };
+        this.state = { loading: this.state!.loading! - 1, topStatData: res };
         return res;
       });
   }
 
   renderInner() {
-    let { graphData, metric, topStatData, loading } = this.state;
+    const { graphData, metric, topStatData, loading } = this.state;
 
     const theme =
       document.querySelector('html')!.classList.contains('dark') || false;
-    if (graphData) {
-      topStatData = graphData;
-    }
 
     if (
       (loading && loading <= 1 && topStatData) ||
@@ -192,7 +186,6 @@ export class PlausibleVisitorsGraph extends YpBaseElementWithLogin {
 
   render() {
     const { metric, topStatData, graphData } = this.state;
-
     return html`${this.state!.loading! > 0
       ? html`
               <div className="graph-inner">

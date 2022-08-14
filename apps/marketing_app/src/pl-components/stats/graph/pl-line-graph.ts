@@ -195,13 +195,18 @@ export class PlausibleLineGraph extends YpBaseElementWithLogin {
   }
 
   connectedCallback() {
+    super.connectedCallback();
+    window.addEventListener('mousemove', this.repositionTooltip);
+  }
+
+  protected firstUpdated(_changedProperties: Map<string | number | symbol, unknown>): void {
     if (this.metric && this.graphData) {
       this.chart = this.regenerateChart();
     }
-    window.addEventListener('mousemove', this.repositionTooltip);
   }
-  disconnectedCallback() {}
-  componentWillUnmount() {
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
     // Ensure that the tooltip doesn't hang around when we are loading more data
     const tooltip = document.getElementById('chartjs-tooltip');
     if (tooltip) {

@@ -1,5 +1,5 @@
 export function apiPath(site, path = '') {
-  return `/api/v1/stats/${path}`
+  return `/api/stats/${path}`
 }
 
 export function siteBasePath(site, path = '') {
