@@ -2,6 +2,7 @@ import { LitElement, css, html, nothing } from 'lit';
 import { property, customElement } from 'lit/decorators.js';
 
 import { navigateToQuery, generateQueryString } from './query.js';
+import tailwind from 'lit-tailwindcss';
 
 @customElement('pl-link')
 export class PlausibleLink extends LitElement {
@@ -27,17 +28,16 @@ export class PlausibleLink extends LitElement {
   children: any;
 
   static get styles() {
-    return css`
-      :host {
-        display: block;
-      }
-    `;
+    return [
+      super.styles,
+      tailwind
+    ];
   }
 
   render() {
     return html`
       <button
-        className="${this.className}"
+        class="${this.className}"
         @Click=${(event: CustomEvent) => {
           event.preventDefault();
           navigateToQuery(this.history, this.query, this.to);

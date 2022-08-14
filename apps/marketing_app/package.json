@@ -60,7 +60,11 @@
     "sinon": "^10.0.0",
     "ts-lit-plugin": "^1.2.1",
     "tslib": "^2.3.1",
-    "typescript": "^4.5.5"
+    "typescript": "^4.5.5",
+    "@tailwindcss/aspect-ratio": "^0.2.1",
+    "@tailwindcss/forms": "^0.3.2",
+    "@tailwindcss/typography": "^0.4.1",
+    "tailwindcss": "^2.1.2"
   },
   "eslintConfig": {
     "extends": [
@@ -119,10 +123,13 @@
     "lit-flexbox-literals": "0.0.7",
     "lit-google-map": "^0.1.1",
     "lit-html": "^2.0.1",
+    "lit-tailwindcss": "^0.1.0",
     "lodash-es": "^4.17.21",
     "moment": "^2.29.1",
     "pwa-helpers": "^0.9.1",
     "recordrtc": "^5.6.2",
+    "rollup-plugin-postcss": "^4.0.2",
+    "rollup-plugin-tailwindcss": "^1.0.0",
     "share-menu": "^4.0.0",
     "wavesurfer.js": "^5.2.0"
   }

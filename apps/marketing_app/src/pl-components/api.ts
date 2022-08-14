@@ -73,6 +73,8 @@ export function serializeQuery(
 }
 
 export function get(
+  collectionType: string,
+  collectionId: number,
   url: string | Request,
   query: PlausibleQueryData,
   ...extraQuery: any[]
@@ -87,7 +89,7 @@ export function get(
   //@ts-ignore
 
   url = url + serializeQuery(query, extraQuery);
-  return fetch('/api/communities/2/plausibleStatsProxy', {
+  return fetch(`/api/${collectionType}/${collectionId}/plausibleStatsProxy`, {
     method: 'PUT',
     body: JSON.stringify({
       plausibleUrl: url,

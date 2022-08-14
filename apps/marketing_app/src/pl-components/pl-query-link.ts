@@ -2,6 +2,7 @@ import { LitElement, css, html, nothing } from 'lit';
 import { property, customElement } from 'lit/decorators.js';
 
 import { navigateToQuery, generateQueryString } from './query.js';
+import tailwind from 'lit-tailwindcss';
 
 @customElement('pl-query-link')
 export class PlausibleQueryLink extends LitElement {
@@ -27,6 +28,13 @@ export class PlausibleQueryLink extends LitElement {
     navigateToQuery(this.history, this.query, this.to);
     //TODO Look into this
     if (this.onClickFunction) this.onClickFunction(e);
+  }
+
+  static get styles() {
+    return [
+      super.styles,
+      tailwind
+    ];
   }
 
   render() {

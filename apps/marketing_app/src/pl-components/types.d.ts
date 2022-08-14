@@ -1,4 +1,5 @@
 
+declare module 'lit-tailwindcss';
 interface PlausibleQueryFilters {
   goal?: string;
   props?: string;

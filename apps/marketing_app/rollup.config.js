@@ -3,6 +3,7 @@ import merge from 'deepmerge';
 import { createSpaConfig } from '@open-wc/building-rollup';
 import commonjs from '@rollup/plugin-commonjs';
 import analyze from 'rollup-plugin-analyzer';
+import tailwind from 'rollup-plugin-tailwindcss';
 
 // use createBasicConfig to do regular JS to JS bundling
 // import { createBasicConfig } from '@open-wc/building-rollup';
@@ -33,6 +34,12 @@ export default merge(baseConfig, {
   // any <script type="module"> inside will be bundled by rollup
   input: './index.html',
   plugins: [
+    tailwind({
+      input: 'path/to/entry.css', // required
+      // Tailor the emitted stylesheet to the bundle by removing any unused CSS
+      // (highly recommended when packaging for distribution).
+      purge: false,
+    }),
     commonjs({
       include: [
         'node_modules/linkifyjs/**/*',

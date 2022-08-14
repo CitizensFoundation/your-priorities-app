@@ -27,6 +27,11 @@ export class YpCommunityMarketing extends YpAdminPage {
     return [
       super.styles,
       css`
+        pl-dashboard {
+          height: 100vw;
+          background-color: #FFF;
+        }
+
         .header {
           font-size: 18px;
           font-weight: bold;
@@ -75,7 +80,15 @@ export class YpCommunityMarketing extends YpAdminPage {
   }
 
   render() {
-    return this.collection ? html` <pl-dashboard query="{ period: 'realtime'}"></pl-dashboard> ` : nothing;
+    return this.collection
+      ? html`
+          <pl-dashboard
+            .collectionId="${this.collection.id}"
+            collectionType="communities"
+            query="{ period: 'realtime'}"
+          ></pl-dashboard>
+        `
+      : nothing;
   }
 
   updated(changedProperties: Map<string | number | symbol, unknown>): void {

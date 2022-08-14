@@ -7,6 +7,8 @@ import numberFormatter, {
   durationFormatter,
 } from '../../util/number-formatter.js';
 import { METRIC_MAPPING, METRIC_LABELS } from './pl-visitors-graph.js';
+import tailwind from 'lit-tailwindcss';
+import { ifDefined } from 'lit/directives/if-defined.js';
 
 @customElement('pl-top-stats')
 export class PlausibleTopStats extends YpBaseElementWithLogin {
@@ -23,7 +25,7 @@ export class PlausibleTopStats extends YpBaseElementWithLogin {
   history!: any;
 
   @property({ type: String })
-  className!: string;
+  classsName!: string;
 
   @property({ type: Object })
   to!: PlausibleQueryData;
@@ -34,17 +36,21 @@ export class PlausibleTopStats extends YpBaseElementWithLogin {
   @property({ type: Object })
   topStatData: PlausibleTopStatsData | undefined;
 
+  static get styles() {
+    return [super.styles, tailwind];
+  }
+
   renderComparison(name: string, comparison: number) {
     const formattedComparison = numberFormatter(Math.abs(comparison));
 
     if (comparison > 0) {
       const color = name === 'Bounce rate' ? 'text-red-400' : 'text-green-500';
-      return html`<span className="text-xs dark:text-gray-100"><span className={color + ' font-bold'}>&uarr;</span>${formattedComparison}%</span>`;
+      return html`<span class="text-xs dark:text-gray-100"><span class="${color + ' font-bold'}">&uarr;</span>${formattedComparison}%</span>`;
     } else if (comparison < 0) {
       const color = name === 'Bounce rate' ? 'text-green-500' : 'text-red-400';
-      return html`<span className="text-xs dark:text-gray-100"><span className={color + ' font-bold'}>&darr;</span> {formattedComparison}%</span>`;
+      return html`<span class="text-xs dark:text-gray-100"><span class="${color + ' font-bold'}">&darr;</span> ${formattedComparison}%</span>`;
     } else if (comparison === 0) {
-      return html`<span className="text-xs text-gray-700 dark:text-gray-300"
+      return html`<span class="text-xs text-gray-700 dark:text-gray-300"
         >&#12336; N/A</span
       >`;
     }
@@ -93,11 +99,11 @@ export class PlausibleTopStats extends YpBaseElementWithLogin {
 
   renderStat(stat: PlausibleStatData) {
     return html` <div
-      className="flex items-center justify-between my-1 whitespace-nowrap"
+      class="flex items-center justify-between my-1 whitespace-nowrap"
     >
       <b
-        className="mr-4 text-xl md:text-2xl dark:text-gray-100"
-        tooltip="{this.topStatTooltip(stat)}"
+        class="mr-4 text-xl md:text-2xl dark:text-gray-100"
+        tooltip="${ifDefined(this.topStatTooltip(stat) === null ? undefined : this.topStatTooltip(stat))}"
         >${this.topStatNumberShort(stat)}</b
       >
       ${this.renderComparison(stat.name, stat.change)}
@@ -120,7 +126,7 @@ export class PlausibleTopStats extends YpBaseElementWithLogin {
           ${isClickable
             ? html`
                 <div
-                  className="${`px-4 md:px-6 w-1/2 my-4 lg:w-auto group cursor-pointer select-none ${border}`}"
+                  class="${`px-4 md:px-6 w-1/2 my-4 lg:w-auto group cursor-pointer select-none ${border}`}"
                   @click="${() => {
                     this.updateMetric(METRIC_MAPPING[stat.name]);
                   }}"
@@ -128,7 +134,7 @@ export class PlausibleTopStats extends YpBaseElementWithLogin {
                   .title="${this.titleFor(stat)}"
                 >
                   <div
-                    className="${`text-xs font-bold tracking-wide text-gray-500 uppercase dark:text-gray-400 whitespace-nowrap flex w-content
+                    class="${`text-xs font-bold tracking-wide text-gray-500 uppercase dark:text-gray-400 whitespace-nowrap flex w-content
                   ${
                     isSelected
                       ? html`text-indigo-700 dark:text-indigo-500
@@ -139,16 +145,16 @@ export class PlausibleTopStats extends YpBaseElementWithLogin {
                   >
                     ${statDisplayName}
                   </div>
-                  <span className="hidden sm:inline-block ml-1"
+                  <span class="hidden sm:inline-block ml-1"
                     >${statExtraName}</span
                   >
                   ${this.renderStat(stat)}
                 </div>
               `
             : html`
-                <div className=${`px-4 md:px-6 w-1/2 my-4 lg:w-auto ${border}`}>
+                <div class=${`px-4 md:px-6 w-1/2 my-4 lg:w-auto ${border}`}>
                   <div
-                    className="text-xs font-bold tracking-wide text-gray-500 uppercase dark:text-gray-400 whitespace-nowrap flex"
+                    class="text-xs font-bold tracking-wide text-gray-500 uppercase dark:text-gray-400 whitespace-nowrap flex"
                   >
                     ${stat.name}
                   </div>
@@ -162,7 +168,7 @@ export class PlausibleTopStats extends YpBaseElementWithLogin {
       stats!.push(
         html`<div
           key="dot"
-          className="block pulsating-circle"
+          class="block pulsating-circle"
           .style=${{ left: '125px', top: '52px' }}
         ></div>`
       );

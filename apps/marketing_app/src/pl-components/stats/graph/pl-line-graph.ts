@@ -13,6 +13,7 @@ import './pl-top-stats.js';
 import * as url from '../../util/url.js';
 import { YpBaseElementWithLogin } from '../../../@yrpri/common/yp-base-element-with-login';
 import CanvasEntry from 'wavesurfer.js/src/drawer.canvasentry.js';
+import tailwind from 'lit-tailwindcss';
 
 import {
   METRIC_MAPPING,
@@ -67,6 +68,15 @@ export class PlausibleLineGraph extends YpBaseElementWithLogin {
       ...this.state,
       exported: false,
     };
+
+    this.repositionTooltip = this.repositionTooltip.bind(this);
+  }
+
+  static get styles() {
+    return [
+      super.styles,
+      tailwind
+    ];
   }
 
   updated(changedProperties: Map<string | number | symbol, unknown>): void {
@@ -131,7 +141,7 @@ export class PlausibleLineGraph extends YpBaseElementWithLogin {
             mode: 'index',
             intersect: false,
             position: 'average',
-            external: GraphTooltip(this.graphData, this.metric),
+            external: GraphTooltip(this.graphData, this.metric, graphEl, this.$$('#chartjs-tooltip')),
           },
         },
         responsive: true,
@@ -277,15 +287,15 @@ export class PlausibleLineGraph extends YpBaseElementWithLogin {
     if (this.query.period !== 'realtime') {
       if (this.state.exported) {
         return html`
-          <div className="w-4 h-4 mx-2">
+          <div class="w-4 h-4 mx-2">
             <svg
-              className="animate-spin h-4 w-4 text-indigo-500"
+              class="animate-spin h-4 w-4 text-indigo-500"
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
             >
               <circle
-                className="opacity-25"
+                class="opacity-25"
                 cx="12"
                 cy="12"
                 r="10"
@@ -293,7 +303,7 @@ export class PlausibleLineGraph extends YpBaseElementWithLogin {
                 strokeWidth="4"
               ></circle>
               <path
-                className="opacity-75"
+                class="opacity-75"
                 fill="currentColor"
                 d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
               ></path>
@@ -307,13 +317,14 @@ export class PlausibleLineGraph extends YpBaseElementWithLogin {
 
         return html`
           <a
-            className="w-4 h-4 mx-2"
+            class="w-4 h-4 mx-2"
             href="{endpoint}"
             download
             onClick="{this.downloadSpinner.bind(this)}"
           >
             <svg
-              className="absolute text-gray-700 feather dark:text-gray-300"
+              style="max-width: 50px;max-height: 50px;"
+              class="absolute text-gray-700 feather dark:text-gray-300"
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
               fill="none"
@@ -339,10 +350,10 @@ export class PlausibleLineGraph extends YpBaseElementWithLogin {
       return html`
         <div
           tooltip=${`Stats based on a ${samplePercent}% sample of all visitors`}
-          className="cursor-pointer w-4 h-4 mx-2"
+          class="cursor-pointer w-4 h-4 mx-2"
         >
           <svg
-            className="absolute w-4 h-4 dark:text-gray-300 text-gray-700"
+            class="absolute w-4 h-4 dark:text-gray-300 text-gray-700"
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
@@ -370,13 +381,13 @@ export class PlausibleLineGraph extends YpBaseElementWithLogin {
       const tip = withImported ? '' : 'do not ';
 
       return html`
-        <pl-link .to=${target} className="w-4 h-4 mx-2">
+        <pl-link .to=${target} class="w-4 h-4 mx-2">
           <div
             tooltip=${`Stats ${tip}include data imported from ${source}.`}
-            className="cursor-pointer w-4 h-4"
+            class="cursor-pointer w-4 h-4"
           >
             <svg
-              className="absolute dark:text-gray-300 text-gray-700"
+              class="absolute dark:text-gray-300 text-gray-700"
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
@@ -387,7 +398,7 @@ export class PlausibleLineGraph extends YpBaseElementWithLogin {
                 y="18"
                 fontSize="24"
                 fill="currentColor"
-                className={'text-gray-700 dark:text-gray-300' + strike}
+                class={'text-gray-700 dark:text-gray-300' + strike}
               >
                 ${source[0].toUpperCase()}
               </text>
@@ -405,9 +416,8 @@ export class PlausibleLineGraph extends YpBaseElementWithLogin {
         : 'cursor-pointer';
 
     return html`
-    <h1>okokokokokokokokokokokokokokok</h1>
-      <div className="graph-inner">
-        <div className="flex flex-wrap">
+      <div class="graph-inner">
+        <div class="flex flex-wrap">
           <pl-top-stats
             .query=${this.query}
             .metric=${this.metric}
@@ -415,15 +425,15 @@ export class PlausibleLineGraph extends YpBaseElementWithLogin {
             .topStatData=${this.topStatData}
           ></pl-top-stats>
         </div>
-        <div className="relative px-2">
-          <div className="absolute right-4 -top-10 flex">
+        <div class="relative px-2">
+          <div class="absolute right-4 -top-10 flex">
             ${this.downloadLink()}
             ${this.samplingNotice()}
             ${this.importedNotice()}
           </div>
           <canvas
             id="main-graph-canvas"
-            className={'mt-4 select-none ' + extraClass}
+            class={'mt-4 select-none ' + extraClass}
             width="1054"
             height="342"
           ></canvas>

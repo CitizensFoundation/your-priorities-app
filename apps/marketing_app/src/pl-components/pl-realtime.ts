@@ -1,6 +1,7 @@
 import { LitElement, css, html, nothing } from 'lit';
 import { property, customElement } from 'lit/decorators.js';
 import { YpBaseElementWithLogin } from '../@yrpri/common/yp-base-element-with-login';
+import tailwind from 'lit-tailwindcss';
 
 import './stats/graph/pl-visitors-graph.js';
 
@@ -27,6 +28,12 @@ export class PlausibleRealtime extends YpBaseElementWithLogin {
   @property({ type: Object })
   timer: any;
 
+  @property({ type: Number })
+  collectionId!: number;
+
+  @property({ type: String })
+  collectionType!: string;
+
   constructor() {
     super();
   }
@@ -35,26 +42,39 @@ export class PlausibleRealtime extends YpBaseElementWithLogin {
     super.updated(changedProperties);
   }
 
+  static get styles() {
+    return [
+      super.styles,
+      tailwind,
+      css`
+        pl-realtime {
+          height: 100%;
+          background-color: #FFF;
+        }
+    `,
+    ];
+  }
+
   render() {
     const navClass = this.site.embedded ? 'relative' : 'sticky';
     return html`
-      <div className="mb-12">
+      <div class="mb-12">
         <div id="stats-container-top"></div>
         <div
-          className=${`${navClass} top-0 sm:py-3 py-2 z-10 ${
+          class=${`${navClass} top-0 sm:py-3 py-2 z-10 ${
             this.stuck && !this.site.embedded
               ? 'fullwidth-shadow bg-gray-50 dark:bg-gray-850'
               : ''
           }`}
         >
-          <div className="items-center w-full flex">
-            <div className="flex items-center w-full">
+          <div class="items-center w-full flex">
+            <div class="flex items-center w-full">
               <pl-siteswitcher
                 .site="${this.site}"
                 .currentUserRole="${this.currentUserRole}"
               ></pl-siteswitcher>
               <pl-filters
-                className="flex"
+                class="flex"
                 .site="${this.site}"
                 .query="${this.query}"
                 .history="${this.history}"
@@ -70,8 +90,10 @@ export class PlausibleRealtime extends YpBaseElementWithLogin {
           .site="${this.site}"
           .query="${this.query}"
           .timer="${this.timer}"
+          .collectionId="${this.collectionId}"
+          .collectionType="${this.collectionType}"
         ></pl-visitors-graph>
-        <div className="items-start justify-between block w-full md:flex">
+        <div class="items-start justify-between block w-full md:flex">
           <pl-sources
             .site="${this.site}"
             .query="${this.query}"
@@ -83,7 +105,7 @@ export class PlausibleRealtime extends YpBaseElementWithLogin {
             .timer="${this.timer}"
           ></pl-pages>
         </div>
-        <div className="items-start justify-between block w-full md:flex">
+        <div class="items-start justify-between block w-full md:flex">
           <pl-locations
             .site="${this.site}"
             .query="${this.query}"
@@ -104,7 +126,7 @@ export class PlausibleRealtime extends YpBaseElementWithLogin {
   renderConversions() {
     if (this.site.hasGoals) {
       return html`
-        <div className="items-start justify-between block w-full mt-6 md:flex">
+        <div class="items-start justify-between block w-full mt-6 md:flex">
           <pl-conversions
             .site=${this.site}
             .query=${this.query}

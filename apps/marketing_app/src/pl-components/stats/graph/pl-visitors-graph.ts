@@ -13,6 +13,7 @@ import * as url from '../../util/url.js';
 import './pl-top-stats.js';
 import './pl-line-graph.js';
 import { YpBaseElementWithLogin } from '../../../@yrpri/common/yp-base-element-with-login';
+import tailwind from 'lit-tailwindcss';
 
 @customElement('pl-visitors-graph')
 export class PlausibleVisitorsGraph extends YpBaseElementWithLogin {
@@ -37,6 +38,12 @@ export class PlausibleVisitorsGraph extends YpBaseElementWithLogin {
   @property({ type: Object })
   topStatData: PlausibleTopStatsData | undefined | null;
 
+  @property({ type: Number })
+  collectionId!: number;
+
+  @property({ type: String })
+  collectionType!: string;
+
   constructor() {
     super();
     this.state = {
@@ -46,6 +53,13 @@ export class PlausibleVisitorsGraph extends YpBaseElementWithLogin {
     };
   }
 
+  static get styles() {
+    return [
+      super.styles,
+      tailwind
+    ];
+  }
+
   connectedCallback(): void {
     super.connectedCallback();
     this.state = {
@@ -53,6 +67,9 @@ export class PlausibleVisitorsGraph extends YpBaseElementWithLogin {
       loading: 2,
       metric: storage.getItem(`metric__${this.site.domain}`) || 'visitors',
     };
+    this.updateMetric = this.updateMetric.bind(this);
+    this.fetchGraphData = this.fetchGraphData.bind(this);
+    this.fetchTopStatData = this.fetchTopStatData.bind(this);
   }
 
   updated(changedProperties: Map<string | number | symbol, unknown>): void {
@@ -61,7 +78,10 @@ export class PlausibleVisitorsGraph extends YpBaseElementWithLogin {
     if (changedProperties.get('query')) {
       this.state = {
         ...this.state,
-        loading: 3, graphData: null, topStatData: undefined };
+        loading: 3,
+        graphData: null,
+        topStatData: undefined,
+      };
       this.fetchGraphData();
       this.fetchTopStatData();
     }
@@ -69,7 +89,9 @@ export class PlausibleVisitorsGraph extends YpBaseElementWithLogin {
     if (changedProperties.get('metric')) {
       this.state = {
         ...this.state,
-        loading: 1, graphData: null };
+        loading: 1,
+        graphData: null,
+      };
       this.fetchGraphData();
     }
 
@@ -89,23 +111,26 @@ export class PlausibleVisitorsGraph extends YpBaseElementWithLogin {
         if (this.query!.filters!.goal && this.metric !== 'conversions') {
           this.state = {
             ...this.state,
-            metric: 'conversions' };
+            metric: 'conversions',
+          };
         } else {
           this.state = {
             ...this.state,
-            metric: topStatLabels[0] };
+            metric: topStatLabels[0],
+          };
         }
       } else {
         this.state = {
           ...this.state,
-          metric: savedMetric };
+          metric: savedMetric,
+        };
       }
     }
   }
 
   firstUpdated() {
-    this.fetchGraphData();
-    this.fetchTopStatData();
+    //this.fetchGraphData();
+    //this.fetchTopStatData();
     if (this.timer) {
       this.timer.onTick(this.fetchGraphData);
       this.timer.onTick(this.fetchTopStatData);
@@ -117,45 +142,59 @@ export class PlausibleVisitorsGraph extends YpBaseElementWithLogin {
       storage.setItem(`metric__${this.site.domain}`, '');
       this.state = {
         ...this.state,
-        metric: '' };
+        metric: '',
+      };
     } else {
       storage.setItem(`metric__${this.site.domain}`, newMetric);
       this.state = {
         ...this.state,
-        metric: newMetric };
+        metric: newMetric,
+      };
     }
   }
 
-///api/stats/localhost/sources?period=day&date=2022-08-14&filters=%7B%7D&with_imported=true&show_noref=false
-///api/stats/localhost/sources?period=day&date=2022-08-14&filters=%7B%7D&with_imported=true&show_noref=false
+  ///api/stats/localhost/sources?period=day&date=2022-08-14&filters=%7B%7D&with_imported=true&show_noref=false
+  ///api/stats/localhost/sources?period=day&date=2022-08-14&filters=%7B%7D&with_imported=true&show_noref=false
 
   fetchGraphData() {
     if (this.state.metric) {
       api
         .get(
-          `/api/stats/${encodeURIComponent(this.site!.domain!)}/main-graph`,         this.query,
+          "communities",
+          this.collectionId,
+          `/api/stats/${encodeURIComponent(this.site!.domain!)}/main-graph`,
+          this.query,
           { metric: this.state.metric || 'none' }
         )
         .then(res => {
           this.state = {
             ...this.state,
-            loading: this.state.loading! - 2, graphData: res };
+            loading: this.state.loading! - 2,
+            graphData: res,
+          };
           return res;
         });
     } else {
-      this.state = { loading: this.state.loading! - 2, graphData: null };
+      this.state = {
+        ...this.state,
+        loading: this.state.loading! - 2, graphData: null };
     }
   }
 
   fetchTopStatData() {
     api
       .get(
+        "communities",
+        this.collectionId,
         `/api/stats/${encodeURIComponent(this.site!.domain!)}/top-stats`,
         this.query
       )
       .then(res => {
-        debugger;
-        this.state = { loading: this.state!.loading! - 1, topStatData: res };
+        this.state = {
+          ...this.state,
+          loading: this.state!.loading! - 1,
+          topStatData: res,
+        };
         return res;
       });
   }
@@ -181,16 +220,18 @@ export class PlausibleVisitorsGraph extends YpBaseElementWithLogin {
           .updateMetric="${this.updateMetric}"
         ></pl-line-graph>
       `;
+    } else {
+      return nothing;
     }
   }
 
   render() {
     const { metric, topStatData, graphData } = this.state;
-    return html`${this.state!.loading! > 0
+    return html`${this.state!.loading! < 1
       ? html`
-              <div className="graph-inner">
+              <div class="graph-inner">
                 <div
-                  className="${
+                  class="${
                     topStatData && !graphData
                       ? 'pt-52 sm:pt-56 md:pt-60'
                       : metric
@@ -201,7 +242,6 @@ export class PlausibleVisitorsGraph extends YpBaseElementWithLogin {
                   <div></div>
                 </div>
               </div>
-            )}
             ${this.renderInner()}
           </div>
 

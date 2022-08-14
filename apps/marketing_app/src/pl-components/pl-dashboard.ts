@@ -1,5 +1,5 @@
 //import { withRouter } from 'react-router-dom';
-
+import tailwind from 'lit-tailwindcss';
 import { LitElement, css, html } from 'lit';
 import { property, customElement } from 'lit/decorators.js';
 
@@ -52,6 +52,13 @@ export class PlausibleDashboard extends YpBaseElementWithLogin {
   @property({ type: String })
   currentUserRole!: string;
 
+  @property({ type: Number })
+  collectionId!: number;
+
+  @property({ type: String })
+  collectionType!: string;
+
+
   /*private routes = new Routes(this, [
     { path: '/', render: () => html`<h1>Home</h1>` },
     { path: '/projects', render: () => html`<h1>Projects</h1>` },
@@ -68,6 +75,19 @@ export class PlausibleDashboard extends YpBaseElementWithLogin {
     }
 
     this.setState();
+  }
+
+  static get styles() {
+    return [
+      super.styles,
+      tailwind,
+      css`
+        pl-realtime {
+          height: 100%;
+          background-color: #FFF;
+        }
+    `,
+    ];
   }
 
   setState() {
@@ -99,6 +119,8 @@ export class PlausibleDashboard extends YpBaseElementWithLogin {
             .site="${this.site}"
             .currentRole="${this.currentUserRole}"
             .query="${this.state.query}"
+            .collectionId="${this.collectionId}"
+            .collectionType="${this.collectionType}"
           ></pl-realtime>
         `;
       } else {
@@ -108,6 +130,8 @@ export class PlausibleDashboard extends YpBaseElementWithLogin {
             .site="${this.site}"
             .currentRole="${this.currentUserRole}"
             .query="${this.state.query}"
+            .collectionId="${this.collectionId}"
+            .collectionType="${this.collectionType}"
           ></pl-historical>
         `;
       }

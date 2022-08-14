@@ -41,13 +41,13 @@ export const dateFormatter = (interval, longForm) => {
   }
 }
 
-export const GraphTooltip = (graphData, metric) => {
+export const GraphTooltip = (graphData, metric, mainCanvasElement, tooltipElement) => {
 	return (context) => {
 		const tooltipModel = context.tooltip;
-    const offset = document.getElementById("main-graph-canvas").getBoundingClientRect()
+    const offset = mainCanvasElement.getBoundingClientRect()
 
 		// Tooltip Element
-		let tooltipEl = document.getElementById('chartjs-tooltip');
+		let tooltipEl = tooltipElement;
 
 		// Create element on first render
 		if (!tooltipEl) {
