@@ -4,6 +4,7 @@ import { YpBaseElementWithLogin } from '../@yrpri/common/yp-base-element-with-lo
 import tailwind from 'lit-tailwindcss';
 
 import './stats/graph/pl-visitors-graph.js';
+import { PlausibleStyles } from './plausibleStyles';
 
 @customElement('pl-realtime')
 export class PlausibleRealtime extends YpBaseElementWithLogin {
@@ -46,6 +47,7 @@ export class PlausibleRealtime extends YpBaseElementWithLogin {
     return [
       super.styles,
       tailwind,
+      PlausibleStyles,
       css`
         pl-realtime {
           height: 100%;

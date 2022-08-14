@@ -14,6 +14,7 @@ import './pl-top-stats.js';
 import './pl-line-graph.js';
 import { YpBaseElementWithLogin } from '../../../@yrpri/common/yp-base-element-with-login';
 import tailwind from 'lit-tailwindcss';
+import { PlausibleStyles } from '../../plausibleStyles';
 
 @customElement('pl-visitors-graph')
 export class PlausibleVisitorsGraph extends YpBaseElementWithLogin {
@@ -56,7 +57,8 @@ export class PlausibleVisitorsGraph extends YpBaseElementWithLogin {
   static get styles() {
     return [
       super.styles,
-      tailwind
+      tailwind,
+      PlausibleStyles
     ];
   }
 

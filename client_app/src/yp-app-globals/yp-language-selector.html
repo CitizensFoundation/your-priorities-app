@@ -55,7 +55,7 @@
         <paper-dropdown-menu label="Select language" selected="{{selectedLocale}}" attr-for-selected="name">
           <paper-listbox slot="dropdown-content" selected="{{selectedLocale}}"  attr-for-selected="name">
             <template is="dom-repeat" items="[[languages]]">
-              <paper-item name="[[item.language]]">[[item.name]]</paper-item>
+              <paper-item name="[[item.language]]" on-tap="_clickedLanguagew">[[item.name]]</paper-item>
             </template>
           </paper-listbox>
         </paper-dropdown-menu>
@@ -301,6 +301,12 @@
         }
       },
 
+      _clickedLanguagew: function () {
+        this.async(function () {
+          window.appGlobals.activity('click', 'changeLanguage', locale);
+        }, 50);
+      },
+
       _selectedLocaleChanged: function (locale, oldLocale) {
         if (locale) {
           this.set('value', locale);
@@ -315,7 +321,6 @@
             if (window.appUser && window.appUser.user) {
               window.appUser.setLocale(locale);
             }
-            window.appGlobals.activity('click', 'changeLanguage', locale);
           }
         }
         this.isOutsideChangeEvent = false;

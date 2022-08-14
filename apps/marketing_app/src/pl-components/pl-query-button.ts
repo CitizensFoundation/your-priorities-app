@@ -3,9 +3,11 @@ import { property, customElement } from 'lit/decorators.js';
 
 import { navigateToQuery, generateQueryString } from './query.js';
 import tailwind from 'lit-tailwindcss';
+import { PlausibleStyles } from './plausibleStyles.js';
+import { YpBaseElement } from '../@yrpri/common/yp-base-element.js';
 
 @customElement('pl-link')
-export class PlausibleLink extends LitElement {
+export class PlausibleLink extends YpBaseElement {
   @property({ type: Boolean })
   disabled = false;
 
@@ -30,7 +32,8 @@ export class PlausibleLink extends LitElement {
   static get styles() {
     return [
       super.styles,
-      tailwind
+      PlausibleStyles,
+      //tailwind
     ];
   }
 
@@ -38,7 +41,7 @@ export class PlausibleLink extends LitElement {
     return html`
       <button
         class="${this.className}"
-        @Click=${(event: CustomEvent) => {
+        @click=${(event: CustomEvent) => {
           event.preventDefault();
           navigateToQuery(this.history, this.query, this.to);
           if (this.onClick) this.onClick(event);

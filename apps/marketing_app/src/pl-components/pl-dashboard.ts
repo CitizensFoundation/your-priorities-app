@@ -15,6 +15,7 @@ import * as api from './api';
 //import { withComparisonProvider } from './comparison-provider-hoc';
 
 import { YpBaseElementWithLogin } from '../@yrpri/common/yp-base-element-with-login';
+import { PlausibleStyles } from './plausibleStyles.js';
 //import '@lit-labs/router';
 //import { Routes } from '@lit-labs/router';
 
@@ -58,7 +59,6 @@ export class PlausibleDashboard extends YpBaseElementWithLogin {
   @property({ type: String })
   collectionType!: string;
 
-
   /*private routes = new Routes(this, [
     { path: '/', render: () => html`<h1>Home</h1>` },
     { path: '/projects', render: () => html`<h1>Projects</h1>` },
@@ -81,6 +81,7 @@ export class PlausibleDashboard extends YpBaseElementWithLogin {
     return [
       super.styles,
       tailwind,
+      PlausibleStyles,
       css`
         pl-realtime {
           height: 100%;

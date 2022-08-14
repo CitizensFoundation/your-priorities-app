@@ -20,6 +20,7 @@ import {
   METRIC_FORMATTER,
   METRIC_LABELS,
 } from './pl-visitors-graph.js';
+import { PlausibleStyles } from '../../plausibleStyles.js';
 
 @customElement('pl-line-graph')
 export class PlausibleLineGraph extends YpBaseElementWithLogin {
@@ -75,7 +76,8 @@ export class PlausibleLineGraph extends YpBaseElementWithLogin {
   static get styles() {
     return [
       super.styles,
-      tailwind
+      tailwind,
+      PlausibleStyles
     ];
   }
 

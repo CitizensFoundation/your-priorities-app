@@ -1,6 +1,7 @@
 import { LitElement, css, html, nothing } from 'lit';
 import { property, customElement } from 'lit/decorators.js';
 import tailwind from 'lit-tailwindcss';
+import { PlausibleStyles } from './plausibleStyles';
 
 @customElement('pl-link')
 export class PlausibleLink extends LitElement {
@@ -10,7 +11,8 @@ export class PlausibleLink extends LitElement {
   static get styles() {
     return [
       super.styles,
-      tailwind
+      tailwind,
+      PlausibleStyles
     ];
   }
 

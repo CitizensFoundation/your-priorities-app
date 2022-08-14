@@ -9,6 +9,7 @@ import numberFormatter, {
 import { METRIC_MAPPING, METRIC_LABELS } from './pl-visitors-graph.js';
 import tailwind from 'lit-tailwindcss';
 import { ifDefined } from 'lit/directives/if-defined.js';
+import { PlausibleStyles } from '../../plausibleStyles.js';
 
 @customElement('pl-top-stats')
 export class PlausibleTopStats extends YpBaseElementWithLogin {
@@ -37,7 +38,9 @@ export class PlausibleTopStats extends YpBaseElementWithLogin {
   topStatData: PlausibleTopStatsData | undefined;
 
   static get styles() {
-    return [super.styles, tailwind];
+    return [super.styles,
+      tailwind,
+      PlausibleStyles];
   }
 
   renderComparison(name: string, comparison: number) {
@@ -45,10 +48,16 @@ export class PlausibleTopStats extends YpBaseElementWithLogin {
 
     if (comparison > 0) {
       const color = name === 'Bounce rate' ? 'text-red-400' : 'text-green-500';
-      return html`<span class="text-xs dark:text-gray-100"><span class="${color + ' font-bold'}">&uarr;</span>${formattedComparison}%</span>`;
+      return html`<span class="text-xs dark:text-gray-100"
+        ><span class="${color + ' font-bold'}">&uarr;</span
+        >${formattedComparison}%</span
+      >`;
     } else if (comparison < 0) {
       const color = name === 'Bounce rate' ? 'text-green-500' : 'text-red-400';
-      return html`<span class="text-xs dark:text-gray-100"><span class="${color + ' font-bold'}">&darr;</span> ${formattedComparison}%</span>`;
+      return html`<span class="text-xs dark:text-gray-100"
+        ><span class="${color + ' font-bold'}">&darr;</span>
+        ${formattedComparison}%</span
+      >`;
     } else if (comparison === 0) {
       return html`<span class="text-xs text-gray-700 dark:text-gray-300"
         >&#12336; N/A</span
@@ -103,7 +112,11 @@ export class PlausibleTopStats extends YpBaseElementWithLogin {
     >
       <b
         class="mr-4 text-xl md:text-2xl dark:text-gray-100"
-        tooltip="${ifDefined(this.topStatTooltip(stat) === null ? undefined : this.topStatTooltip(stat))}"
+        tooltip="${ifDefined(
+          this.topStatTooltip(stat) === null
+            ? undefined
+            : this.topStatTooltip(stat)
+        )}"
         >${this.topStatNumberShort(stat)}</b
       >
       ${this.renderComparison(stat.name, stat.change)}

@@ -2,10 +2,12 @@ import { LitElement, css, html, nothing } from 'lit';
 import { property, customElement } from 'lit/decorators.js';
 
 import { navigateToQuery, generateQueryString } from './query.js';
-import tailwind from 'lit-tailwindcss';
+//import tailwind from 'lit-tailwindcss';
+import { PlausibleStyles } from './plausibleStyles.js';
+import { YpBaseElement } from '../@yrpri/common/yp-base-element.js';
 
 @customElement('pl-query-link')
-export class PlausibleQueryLink extends LitElement {
+export class PlausibleQueryLink extends YpBaseElement {
   @property({ type: Object })
   onClickFunction!: any;
 
@@ -33,7 +35,8 @@ export class PlausibleQueryLink extends LitElement {
   static get styles() {
     return [
       super.styles,
-      tailwind
+      //tailwind,
+      PlausibleStyles
     ];
   }
 

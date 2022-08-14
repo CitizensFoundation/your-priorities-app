@@ -1,4 +1,4 @@
-import{_ as t,e as i,n as e,a as n,r as o,p as s,Y as a,T as r,f as c,o as d,g as l}from"./bc9c360d.js";import"./aac99731.js";import"./8625a690.js";let h=class extends n{static get prssoperties(){return{setting:{type:Object,notify:!0,observer:"_settingChanged"},frequency:{type:Number,notify:!0,observer:"_frequencyChanged"},method:{type:Number,notify:!0,observer:"_methodChanged"}}}updated(t){super.updated(t),t.has("setting")&&this._settingChanged()}static get styles(){return[super.styles,o`
+import{_ as t,e as i,n as e,a as n,r as o,p as s,Y as a,T as r,f as c,o as d,g as l}from"./2b5b58c4.js";import"./b0c2f443.js";import"./9ae1092c.js";let h=class extends n{static get prssoperties(){return{setting:{type:Object,notify:!0,observer:"_settingChanged"},frequency:{type:Number,notify:!0,observer:"_frequencyChanged"},method:{type:Number,notify:!0,observer:"_methodChanged"}}}updated(t){super.updated(t),t.has("setting")&&this._settingChanged()}static get styles(){return[super.styles,o`
         .half {
           width: 50%;
         }
