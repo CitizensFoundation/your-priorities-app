@@ -94,11 +94,15 @@ export function get(
     }),
     signal: abortController.signal,
     headers: headers,
-  }).then(response => {
+  }).
+  then(response => {
     if (!response.ok) {
-      return response.json().then(msg => {
+      //@ts-ignore
+      return response.json();
+      /*return response.json().then(msg => {
         throw new ApiError(msg.error);
-      });
+      });*/
+
     }
     return response.json();
   });

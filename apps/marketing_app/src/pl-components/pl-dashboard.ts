@@ -72,6 +72,7 @@ export class PlausibleDashboard extends YpBaseElementWithLogin {
 
   setState() {
     this.state = {
+      ...this.state,
       query: parseQuery(this.query, this.site),
       timer: new Timer(),
       metric: 'visitors'

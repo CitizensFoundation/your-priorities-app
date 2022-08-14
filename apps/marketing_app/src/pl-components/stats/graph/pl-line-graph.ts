@@ -1,5 +1,5 @@
 import { LitElement, css, html, nothing } from 'lit';
-import { property, customElement } from 'lit/decorators.js';
+import { property, customElement, query } from 'lit/decorators.js';
 import Chart from 'chart.js/auto';
 import { navigateToQuery } from '../../query.js';
 import numberFormatter, {
@@ -14,7 +14,11 @@ import * as url from '../../util/url.js';
 import { YpBaseElementWithLogin } from '../../../@yrpri/common/yp-base-element-with-login';
 import CanvasEntry from 'wavesurfer.js/src/drawer.canvasentry.js';
 
-import { METRIC_MAPPING, METRIC_FORMATTER, METRIC_LABELS } from './pl-visitors-graph.js';
+import {
+  METRIC_MAPPING,
+  METRIC_FORMATTER,
+  METRIC_LABELS,
+} from './pl-visitors-graph.js';
 
 @customElement('pl-line-graph')
 export class PlausibleLineGraph extends YpBaseElementWithLogin {
@@ -54,9 +58,13 @@ export class PlausibleLineGraph extends YpBaseElementWithLogin {
   @property({ type: Object })
   topStatData: PlausibleTopStatsData | undefined;
 
+  @query('canvas')
+  canvasElement!: HTMLCanvasElement;
+
   constructor() {
     super();
     this.state = {
+      ...this.state,
       exported: false,
     };
   }
@@ -94,7 +102,10 @@ export class PlausibleLineGraph extends YpBaseElementWithLogin {
   }
 
   regenerateChart() {
-    const graphEl = this.$$('#main-graph-canvas') as HTMLCanvasElement;
+    let graphEl = this.$$('canvas') as HTMLCanvasElement;
+    if (!graphEl) {
+      graphEl = this.canvasElement as HTMLCanvasElement;
+    }
     this.ctx = graphEl!.getContext('2d');
     const dataSet = buildDataSet(
       this.graphData.plot,
@@ -241,12 +252,18 @@ export class PlausibleLineGraph extends YpBaseElementWithLogin {
     if (document.cookie.includes('exporting')) {
       setTimeout(this.pollExportReady.bind(this), 1000);
     } else {
-      this.state = { exported: false };
+      this.state = {
+        ...this.state,
+        exported: false,
+      };
     }
   }
 
   downloadSpinner() {
-    this.state = { exported: true };
+    this.state = {
+      ...this.state,
+      exported: true,
+    };
     document.cookie = 'exporting=';
     setTimeout(this.pollExportReady.bind(this), 1000);
   }
@@ -383,6 +400,7 @@ export class PlausibleLineGraph extends YpBaseElementWithLogin {
         : 'cursor-pointer';
 
     return html`
+    <h1>okokokokokokokokokokokokokokok</h1>
       <div className="graph-inner">
         <div className="flex flex-wrap">
           <pl-top-stats
