@@ -87,7 +87,7 @@ export function get(
   //@ts-ignore
 
   url = url + serializeQuery(query, extraQuery);
-  return fetch('/api/communities/1234/plausibleStatsProxy', {
+  return fetch('/api/communities/2/plausibleStatsProxy', {
     method: 'PUT',
     body: JSON.stringify({
       plausibleUrl: url,
