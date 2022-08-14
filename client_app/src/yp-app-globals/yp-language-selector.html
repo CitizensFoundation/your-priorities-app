@@ -303,7 +303,7 @@
 
       _clickedLanguagew: function () {
         this.async(function () {
-          window.appGlobals.activity('click', 'changeLanguage', locale);
+          window.appGlobals.activity('click', 'changeLanguage', this.selectedLocale);
         }, 50);
       },
 
