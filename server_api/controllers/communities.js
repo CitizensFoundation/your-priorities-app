@@ -2068,9 +2068,8 @@ router.get('/:communityId/:type/getPlausibleSeries', auth.can('edit community'),
 });
 
 router.put('/:communityId/plausibleStatsProxy', auth.can('edit community'), async (req, res) => {
-  // Example: "timeseries?site_id=your-priorities&period=7d";
   try {
-    const plausibleData = await plausibleStatsProxy(req.body.plausibleUrl);
+    const plausibleData = await plausibleStatsProxy(req.body.plausibleUrl, req.params.communityId);
     log.info("GOT DATA");
     log.info(plausibleData);
     res.send(plausibleData);
