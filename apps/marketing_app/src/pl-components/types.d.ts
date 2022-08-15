@@ -76,6 +76,7 @@ interface PlausibleStateData {
   topStatData?: PlausibleTopStatsData;
   page?: number;
   moreResultsAvailable?: boolean;
+  mode?: string;
 }
 
 interface PlausibleStatData {
@@ -97,4 +98,8 @@ interface PlausibleGoalData {
   total_conversions: number;
   unique_conversions: number;
   conversion_rate: number;
+}
+
+interface PlausiblePageData {
+  name: string;
 }
