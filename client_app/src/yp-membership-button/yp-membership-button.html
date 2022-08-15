@@ -156,13 +156,16 @@
         }
       },
 
-      _toggleMembership: function () {
+      _toggleMembership: function (event) {
         if (this.community) {
           window.appGlobals.activity('clicked', 'toggleCommunityMembership', this.community.id);
         } else if (this.group) {
           window.appGlobals.activity('clicked', 'toggleGroupMembership', this.group.id);
         }
-        this.generateMembership(!this.membershipValue)
+        this.generateMembership(!this.membershipValue);
+        event.stopPropagation();
+        event.preventDefault();
+        return false;
       },
 
       generateMembership: function (value) {
