@@ -72,6 +72,9 @@ export const PlausibleStyles = css`
     }
   }
   .loading {
+    display: none;
+  }
+  .loading {
     animation: loaderFadein 0.2s ease-in;
     height: 50px;
     width: 50px;

@@ -75,7 +75,7 @@ export class PlausibleBaseElement extends LitElement {
   static get styles() {
     return [
   //    super.styles,
-      //Layouts,
+      Layouts,
       //tailwind,
       PlausibleStyles,
       css`

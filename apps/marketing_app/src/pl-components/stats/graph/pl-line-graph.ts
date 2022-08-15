@@ -420,13 +420,14 @@ export class PlausibleLineGraph extends PlausibleBaseElement {
         : 'cursor-pointer';
 
     return html`
-      <div class="grapsh-inner">
+      <div class="w-full p-4 bg-white rounded shadow-xl dark:bg-gray-825">
         <div class="flex flex-wrap">
           <pl-top-stats
             .query=${this.query}
             .metric=${this.metric}
             .updateMetric=${this.updateMetric!}
             .topStatData=${this.topStatData}
+            class="layout horizontal"
           ></pl-top-stats>
         </div>
         <div class="relative px-2">
