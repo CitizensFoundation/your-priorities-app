@@ -198,7 +198,6 @@
               raised
               dialog-confirm
               class="uploadFileButton"
-              hidden$="[[isMobile]]"
               on-tap="_openRecorderDialog"
             >
               <iron-icon icon="fiber-manual-record"></iron-icon>
@@ -537,6 +536,11 @@
         this.uploadFileFunction(this.videoAspect);
       }
 
+      _uploadFileThroughPhoneCamera() {
+        this._close();
+        this.uploadFileFunction(this.videoAspect, true);
+      }
+
       _sendBack() {
         if (this.callbackFunction && this.recorder) {
           this.callbackFunction(this.recordedData);
@@ -659,7 +663,9 @@
       }
 
       _openRecorderDialog() {
-        if (this.videoRecording) {
+        if (this.videoRecording && this.isMobile) {
+          this._uploadFileThroughPhoneCamera();
+        } else if (this.videoRecording) {
           var videoElement = this.shadowRoot.querySelector("#videoRecorder");
           var videoPreviewElement =
             this.shadowRoot.querySelector("#videoPreviewer");
@@ -695,18 +701,21 @@
           videoPreviewElement.style.height = (height * 0.8).toFixed() + "px";
           videoPreviewElement.style.width = (width * 0.8).toFixed() + "px";
         }
-        setTimeout(
-          function () {
-            this.$.dialog.open();
-          }.bind(this)
-        );
 
-        setTimeout(
-          function () {
-            this.setupRecorders();
-          }.bind(this),
-          20
-        );
+        if (!this.isMobile) {
+          setTimeout(
+            function () {
+              this.$.dialog.open();
+            }.bind(this)
+          );
+
+          setTimeout(
+            function () {
+              this.setupRecorders();
+            }.bind(this),
+            20
+          );
+        }
       }
 
       _generateRandomString() {

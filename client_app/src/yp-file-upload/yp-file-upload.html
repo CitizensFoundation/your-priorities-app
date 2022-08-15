@@ -493,7 +493,7 @@ Example:
       }
       if (this.videoUpload) {
         this.set('accept','video/*');
-        this.set('capture', true);
+        this.set('capture', false);
       } else if (this.audioUpload) {
         this.set('accept','audio/*');
         this.set('capture', true);
@@ -548,10 +548,26 @@ Example:
       }
     },
 
-    _openFileInput: function (aspect) {
+    _openFileInput: function (aspect, throughPhoneCamera) {
       if (aspect) {
         this.set('videoAspect', aspect);
       }
+      if (throughPhoneCamera) {
+        this.set('capture', "environment");
+        this.async(function () {
+          this._reallyOpenFileInput();
+        }, 20);
+      } else {
+        if (this.videoUpload) {
+          this.set('capture', false);
+        } else if (this.audioUpload) {
+          this.set('capture', true);
+        }
+        this._reallyOpenFileInput();
+      }
+    },
+
+    _reallyOpenFileInput: function () {
       var elem = this.$.fileInput;
       if (elem && document.createEvent) { // sanity check
         var evt = document.createEvent("MouseEvents");
