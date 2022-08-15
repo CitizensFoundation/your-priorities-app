@@ -1545,7 +1545,7 @@ router.post('/accept_invite/:token', auth.isLoggedIn, function(req, res) {
   });
 });
 
-router.put('/missingEmail/setEmail', auth.isLoggedIn, function(req, res, next) {
+router.put('/missingEmail/setEmail', auth.isLoggedInNoAnonymousCheck, function(req, res, next) {
   models.User.findOne({
     where: {
       email: req.body.email

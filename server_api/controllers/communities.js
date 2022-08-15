@@ -806,7 +806,7 @@ router.delete('/:communityId/:activityId/delete_activity', auth.can('edit commun
   });
 });
 
-router.delete('/:communityId/user_membership', auth.isLoggedIn, auth.can('view community'), function(req, res) {
+router.delete('/:communityId/user_membership', auth.isLoggedInNoAnonymousCheck, auth.can('view community'), function(req, res) {
   getCommunityAndUser(req.params.communityId, req.user.id, null, function (error, community, user) {
     if (error) {
       log.error('Could not remove user', { err: error, communityId: req.params.communityId, userRemovedId: req.user.id, context: 'user_membership', user: toJson(req.user.simple()) });
@@ -822,7 +822,7 @@ router.delete('/:communityId/user_membership', auth.isLoggedIn, auth.can('view c
   });
 });
 
-router.post('/:communityId/user_membership', auth.isLoggedIn, auth.can('view community'), function(req, res) {
+router.post('/:communityId/user_membership', auth.isLoggedInNoAnonymousCheck, auth.can('view community'), function(req, res) {
   getCommunityAndUser(req.params.communityId, req.user.id, null, function (error, community, user) {
     if (error) {
       log.error('Could not add user', { err: error, communityId: req.params.communityId, userRemovedId: req.user.id, context: 'user_membership', user: toJson(req.user.simple())});
@@ -1144,7 +1144,7 @@ router.delete('/:communityId/:pageId/delete_page', auth.can('edit community'), f
   });
 });
 
-router.post('/:communityId/news_story', auth.isLoggedIn, auth.can('view community'), function(req, res) {
+router.post('/:communityId/news_story', auth.isLoggedInNoAnonymousCheck, auth.can('view community'), function(req, res) {
   models.Point.createNewsStory(req, req.body, function (error) {
     if (error) {
       log.error('Could not save news story point on community', { err: error, context: 'news_story', user: req.user ? toJson(req.user.simple()) : null });

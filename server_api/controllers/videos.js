@@ -266,7 +266,7 @@ router.post(
 
 router.post(
   "/createAndGetPreSignedUploadUrlLoggedIn",
-  auth.isLoggedIn,
+  auth.isLoggedInNoAnonymousCheck,
   (req, res) => {
     models.Video.createAndGetSignedUploadUrl(req, res);
   }
@@ -310,7 +310,7 @@ router.post(
 
 router.post(
   "/:videoId/startTranscodingLoggedIn",
-  auth.isLoggedIn,
+  auth.isLoggedInNoAnonymousCheck,
   (req, res) => {
     startTranscoding(req, res);
   }

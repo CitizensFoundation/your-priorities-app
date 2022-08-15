@@ -663,7 +663,7 @@ router.delete('/:domainId/:pageId/delete_page', auth.can('edit domain'), functio
   });
 });
 
-router.post('/:domainId/news_story', auth.isLoggedIn, auth.can('view domain'), function(req, res) {
+router.post('/:domainId/news_story', auth.isLoggedInNoAnonymousCheck, auth.can('view domain'), function(req, res) {
   models.Point.createNewsStory(req, req.body, function (error) {
     if (error) {
       log.error('Could not save news story point on domain', { err: error, context: 'news_story', user: toJson(req.user.simple()) });

@@ -153,7 +153,7 @@ router.post('/:groupId/createAndGetPreSignedUploadUrl', auth.can('create media')
   models.Audio.createAndGetSignedUploadUrl(req, res);
 });
 
-router.post('/createAndGetPreSignedUploadUrlLoggedIn', auth.isLoggedIn, (req, res) => {
+router.post('/createAndGetPreSignedUploadUrlLoggedIn', auth.isLoggedInNoAnonymousCheck, (req, res) => {
   models.Audio.createAndGetSignedUploadUrl(req, res);
 });
 
@@ -184,7 +184,7 @@ router.post('/:groupId/:audioId/startTranscoding', auth.can('create media'), (re
   startTranscoding(req, res);
 });
 
-router.post('/:audioId/startTranscodingLoggedIn', auth.isLoggedIn, (req, res) => {
+router.post('/:audioId/startTranscodingLoggedIn', auth.isLoggedInNoAnonymousCheck, (req, res) => {
   startTranscoding(req, res);
 });
 

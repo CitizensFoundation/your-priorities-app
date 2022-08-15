@@ -474,7 +474,7 @@ router.delete('/:groupId/:activityId/delete_activity', auth.can('edit group'), f
   });
 });
 
-router.delete('/:groupId/user_membership', auth.isLoggedIn, auth.can('view group'), function(req, res) {
+router.delete('/:groupId/user_membership', auth.isLoggedInNoAnonymousCheck, auth.can('view group'), function(req, res) {
   getGroupAndUser(req.params.groupId, req.user.id, null, function (error, group, user) {
     if (error) {
       log.error('Could not remove user', { err: error, groupId: req.params.groupId, userRemovedId: req.user.id, context: 'user_membership', user: toJson(req.user.simple()) });
@@ -490,7 +490,7 @@ router.delete('/:groupId/user_membership', auth.isLoggedIn, auth.can('view group
   });
 });
 
-router.post('/:groupId/user_membership', auth.isLoggedIn, auth.can('add to group'), function(req, res) {
+router.post('/:groupId/user_membership', auth.isLoggedInNoAnonymousCheck, auth.can('add to group'), function(req, res) {
   getGroupAndUser(req.params.groupId, req.user.id, null, function (error, group, user) {
     if (error) {
       log.error('Could not add user', { err: error, groupId: req.params.groupId, userRemovedId: req.user.id, context: 'user_membership', user: toJson(req.user.simple()) });
@@ -953,7 +953,7 @@ router.delete('/:groupId/:pageId/delete_page', auth.can('edit group'), function(
   });
 });
 
-router.post('/:groupId/post/news_story', auth.isLoggedIn, auth.can('add to group'), function(req, res) {
+router.post('/:groupId/post/news_story', auth.isLoggedInNoAnonymousCheck, auth.can('add to group'), function(req, res) {
   models.Point.createNewsStory(req, req.body, function (error) {
     if (error) {
       log.error('Could not save news story point on post', { err: error, context: 'news_story', user: toJson(req.user.simple()) });
@@ -965,7 +965,7 @@ router.post('/:groupId/post/news_story', auth.isLoggedIn, auth.can('add to group
   });
 });
 
-router.post('/:groupId/news_story', auth.isLoggedIn, auth.can('add to group'), function(req, res) {
+router.post('/:groupId/news_story', auth.isLoggedInNoAnonymousCheck, auth.can('add to group'), function(req, res) {
   models.Point.createNewsStory(req, req.body, function (error) {
     if (error) {
       log.error('Could not save news story point on group', { err: error, context: 'news_story', user: toJson(req.user.simple()) });
