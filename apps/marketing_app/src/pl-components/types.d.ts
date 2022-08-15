@@ -96,4 +96,5 @@ interface PlausibleGoalData {
   name: string;
   total_conversions: number;
   unique_conversions: number;
+  conversion_rate: number;
 }

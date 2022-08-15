@@ -74,9 +74,7 @@ export class PlausibleLineGraph extends PlausibleBaseElement {
 
   static get styles() {
     return [
-      super.styles,
-      tailwind,
-      PlausibleStyles
+      ...super.styles,
     ];
   }
 
@@ -142,7 +140,12 @@ export class PlausibleLineGraph extends PlausibleBaseElement {
             mode: 'index',
             intersect: false,
             position: 'average',
-            external: GraphTooltip(this.graphData, this.metric, graphEl, this.$$('#chartjs-tooltip')),
+            external: GraphTooltip(
+              this.graphData,
+              this.metric,
+              graphEl,
+              this.$$('#chartjs-tooltip')
+            ),
           },
         },
         responsive: true,
@@ -210,7 +213,9 @@ export class PlausibleLineGraph extends PlausibleBaseElement {
     window.addEventListener('mousemove', this.repositionTooltip);
   }
 
-  protected firstUpdated(_changedProperties: Map<string | number | symbol, unknown>): void {
+  protected firstUpdated(
+    _changedProperties: Map<string | number | symbol, unknown>
+  ): void {
     if (this.metric && this.graphData) {
       this.chart = this.regenerateChart();
     }
@@ -415,7 +420,7 @@ export class PlausibleLineGraph extends PlausibleBaseElement {
         : 'cursor-pointer';
 
     return html`
-      <div class="graph-inner">
+      <div class="grapsh-inner">
         <div class="flex flex-wrap">
           <pl-top-stats
             .query=${this.query}

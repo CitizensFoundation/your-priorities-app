@@ -1,6 +1,9 @@
 import { css } from 'lit';
 
 export const PlausibleStyles = css`
+  .bg-red-50 {
+    background-color: rgba(254, 242, 242, var(--tw-bg-opacity));
+  }
   .modal {
     display: none;
   }
@@ -48,9 +51,7 @@ export const PlausibleStyles = css`
     right: 24px;
     top: 12px;
   }
-  .modal__close:before {
-    content: '\2715';
-  }
+
   .modal__content {
     margin-bottom: 2rem;
   }

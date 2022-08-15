@@ -5,10 +5,15 @@ import { ifDefined } from 'lit/directives/if-defined';
 import { PlausibleStyles } from '../plausibleStyles';
 import { PlausibleBaseElement } from '../pl-base-element';
 
-function barWidth(count: number, all: PlausibleGoalData[], plot: string) {
+function barWidth(
+  count: number,
+  all: Array<Record<string, number>>,
+  plot: string
+) {
   let maxVal = all[0][plot];
 
   for (const val of all) {
+    // @ts-ignore
     if (val > maxVal) maxVal = val[plot];
   }
 
@@ -21,7 +26,7 @@ export class PlausibleBar extends PlausibleBaseElement {
   count!: number;
 
   @property({ type: Array })
-  all!: PlausibleGoalData[];
+  all!: Array<Record<string, number>>;
 
   @property({ type: String })
   maxWidthDeduction!: string;
@@ -33,7 +38,18 @@ export class PlausibleBar extends PlausibleBaseElement {
   bg: string | undefined;
 
   static get styles() {
-    return [super.styles, tailwind, PlausibleStyles];
+    return [
+      ...super.styles,
+     // tailwind,
+      //PlausibleStyles,
+      css`
+        :host {
+          width: 70%;
+        }
+      `,
+
+      css``,
+    ];
   }
 
   render() {
@@ -41,11 +57,13 @@ export class PlausibleBar extends PlausibleBaseElement {
     return html`
       <div
         class="w-full relative"
-        .style=${{ maxWidth: `calc(100% - ${this.maxWidthDeduction})` }}
+        .style="max-width: calc(100% - ${this.maxWidthDeduction});"
       >
         <div
-          class=${`absolute top-0 left-0 h-full ${this.bg || ''}`}
-          .style=${{ width: `${width}%` }}
+          class="${`absolute top-0 left-0 h-full test ${
+            this.bg || ''
+          }`}"
+          .style="width: ${width}%;"
         ></div>
         <slot></slot>
       </div>

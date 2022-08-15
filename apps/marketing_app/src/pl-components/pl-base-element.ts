@@ -1,6 +1,8 @@
 import { LitElement, css } from 'lit';
 import { property } from 'lit/decorators.js';
 import { Layouts } from 'lit-flexbox-literals';
+import { PlausibleStyles } from './plausibleStyles';
+import tailwind from 'lit-tailwindcss';
 
 export class PlausibleBaseElement extends LitElement {
   @property({ type: String })
@@ -50,6 +52,10 @@ export class PlausibleBaseElement extends LitElement {
     }
   }
 
+  updateState(updatedState: PlausibleStateData) {
+    this.state = {...this.state, ...updatedState};
+  }
+
   static get rtlLanguages() {
     return ['fa', 'ar', 'ar_EG'];
   }
@@ -68,7 +74,10 @@ export class PlausibleBaseElement extends LitElement {
 
   static get styles() {
     return [
-      Layouts,
+  //    super.styles,
+      //Layouts,
+      //tailwind,
+      PlausibleStyles,
       css`
         [hidden] {
           display: none !important;

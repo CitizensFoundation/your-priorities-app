@@ -1,16 +1,12 @@
 
 import * as storage from '../../util/storage.js';
-import Bar from '../plbar'
 import '../pl-bar.js';
-import numberFormatter from '../../util/number-formatter'
-import * as api from '../../api'
-
 
 import { LitElement, css, html, nothing } from 'lit';
 import { property, customElement } from 'lit/decorators.js';
+import { PlausibleStyles } from '../../plausibleStyles.js';
+import tailwind from 'lit-tailwindcss';
 
-import { PlausibleStyles } from './plausibleStyles.js';
-import { YpBaseElement } from '../@yrpri/common/yp-base-element.js';
 
 import numberFormatter from '../../util/number-formatter';
 import * as api from '../../api.js';
@@ -19,7 +15,6 @@ import { suppressDeprecationWarnings } from 'moment';
 
 import '../../pl-link.js';
 import '../pl-bar.js';
-import '../pl-prop-breakdown.js';
 import { PlausibleBaseElement } from '../../pl-base-element.js';
 
 const MOBILE_UPPER_WIDTH = 767;
@@ -101,6 +96,12 @@ export class PlausiblePropBreakdown extends PlausibleBaseElement {
     window.removeEventListener('resize', this.handleResize, false);
   }
 
+  static get styles() {
+    return [
+      ...super.styles,
+    ];
+  }
+
   handleResize() {
     this.updateState({ viewport: window.innerWidth });
   }
@@ -115,7 +116,7 @@ export class PlausiblePropBreakdown extends PlausibleBaseElement {
       api.getWithProxy(
         'communities',
         this.collectionId,
-        `/api/stats/${encodeURIComponent(this.site.domain!)}/property/${encodeURIComponent(this.state.propKey!)}`, this.props.query, {limit: 100, page: this.state.page})
+        `/api/stats/${encodeURIComponent(this.site.domain!)}/property/${encodeURIComponent(this.state.propKey!)}`, this.query, {limit: 100, page: this.state.page})
         .then((res) => this.updateState({
           loading: false,
           breakdown: this.state.breakdown!.concat(res),
@@ -163,11 +164,11 @@ export class PlausiblePropBreakdown extends PlausibleBaseElement {
     return html`
       <div class="flex items-center justify-between my-2" key={value.name}>
         <pl-bar
-          count={value.unique_conversions}
+          .count=${value.unique_conversions}
           plot="unique_conversions"
-          all={this.state.breakdown}
+          .all=${this.state.breakdown}
           bg="bg-red-50 dark:bg-gray-500 dark:bg-opacity-15"
-          maxWidthDeduction={this.getBarMaxWidth()}
+          maxWidthDeduction=${this.getBarMaxWidth()}
         >
           ${this.renderPropContent(value, query)}
         </pl-bar>
@@ -188,52 +189,54 @@ export class PlausiblePropBreakdown extends PlausibleBaseElement {
     `;
   }
 
-  changePropKey(newKey) {
+  changePropKey(newKey: string) {
     storage.setItem(this.storageKey, newKey)
-    this.setState({propKey: newKey, loading: true, breakdown: [], page: 1, moreResultsAvailable: false}, this.fetchPropBreakdown)
+    this.updateState({propKey: newKey, loading: true, breakdown: [], page: 1, moreResultsAvailable: false});
+    this.fetchPropBreakdown();
   }
 
   renderLoading() {
     if (this.state.loading) {
-      return <div class="px-4 py-2"><div class="loading sm mx-auto"><div></div></div></div>
+      return html` <div class="px-4 py-2"><div class="loading sm mx-auto"><div></div></div></div>`
     } else if (this.state.moreResultsAvailable) {
-      return (
-        <div class="w-full text-center my-4">
-          <button onClick={this.loadMore.bind(this)} type="button" class="button">
+      return html`
+              <div class="w-full text-center my-4">
+          <button @click=${this.loadMore.bind(this)} type="button" class="button">
             Load more
           </button>
         </div>
-      )
+
+      `
     }
   }
 
   renderBody() {
-    return this.state.breakdown.map((propValue) => this.renderPropValue(propValue))
+    return this.state.breakdown!.map((propValue) => this.renderPropValue(propValue))
   }
 
-  renderPill(key) {
+  renderPill(key: string) {
     const isActive = this.state.propKey === key
 
     if (isActive) {
-      return <li key={key} class="inline-block h-5 text-indigo-700 dark:text-indigo-500 font-bold mr-2 active-prop-heading">{key}</li>
+      return html`<li key="${key}" class="inline-block h-5 text-indigo-700 dark:text-indigo-500 font-bold mr-2 active-prop-heading">${key}</li>`
     } else {
-      return <li key={key} class="hover:text-indigo-600 cursor-pointer mr-2" onClick={this.changePropKey.bind(this, key)}>{key}</li>
+      return html`<li key="${key}" class="hover:text-indigo-600 cursor-pointer mr-2" @click=${this.changePropKey.bind(this, key)}>${key}</li>`
     }
   }
 
   render() {
-    return (
+    return html`
       <div class="w-full pl-3 sm:pl-6 mt-4">
         <div class="flex-col sm:flex-row flex items-center pb-1">
           <span class="text-xs font-bold text-gray-600 dark:text-gray-300 self-start sm:self-auto mb-1 sm:mb-0">Breakdown by:</span>
           <ul class="flex flex-wrap font-medium text-xs text-gray-500 dark:text-gray-400 leading-5 pl-1 sm:pl-2">
-            { this.props.goal.prop_names.map(this.renderPill.bind(this)) }
+            ${ this.goal.prop_names.map(this.renderPill.bind(this)) }
           </ul>
         </div>
-        { this.renderBody() }
-        { this.renderLoading()}
+        ${ this.renderBody() }
+        ${ this.renderLoading()}
       </div>
-    )
+    `
   }
 }
 

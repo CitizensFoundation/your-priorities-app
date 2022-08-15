@@ -77,15 +77,7 @@ export class PlausibleDashboard extends PlausibleBaseElement {
 
   static get styles() {
     return [
-      super.styles,
-      tailwind,
-      PlausibleStyles,
-      css`
-        pl-realtime {
-          height: 100%;
-          background-color: #FFF;
-        }
-    `,
+      ...super.styles,
     ];
   }
 
@@ -94,9 +86,9 @@ export class PlausibleDashboard extends PlausibleBaseElement {
       query: parseQuery(this.query, this.site),
       timer: new Timer(),
       metric: 'visitors'
-    });
+    } as PlausibleStateData);
 
-    //this.state.query = {...this.state.query, period: 'day'};
+    this.state.query = {...this.state.query, period: 'day'};
   }
 
   updated(changedProperties: Map<string | number | symbol, unknown>): void {

@@ -2,9 +2,11 @@ import { LitElement, css, html, nothing } from 'lit';
 import { property, customElement } from 'lit/decorators.js';
 import tailwind from 'lit-tailwindcss';
 
-import './stats/graph/pl-visitors-graph.js';
 import { PlausibleStyles } from './plausibleStyles.js';
 import { PlausibleBaseElement } from './pl-base-element.js';
+
+import './stats/graph/pl-visitors-graph.js';
+import './stats/conversions/pl-conversions.js';
 
 @customElement('pl-realtime')
 export class PlausibleRealtime extends PlausibleBaseElement {
@@ -45,15 +47,7 @@ export class PlausibleRealtime extends PlausibleBaseElement {
 
   static get styles() {
     return [
-      super.styles,
-      tailwind,
-      PlausibleStyles,
-      css`
-        pl-realtime {
-          height: 100%;
-          background-color: #FFF;
-        }
-    `,
+      ...super.styles,
     ];
   }
 
@@ -133,6 +127,8 @@ export class PlausibleRealtime extends PlausibleBaseElement {
             .site=${this.site}
             .query=${this.query}
             .title="${this.t('goalConversionsLast30Min')}"
+            .collectionId=${this.collectionId}
+            .collectionType=${this.collectionType}
           ></pl-conversions>
         </div>
       `;

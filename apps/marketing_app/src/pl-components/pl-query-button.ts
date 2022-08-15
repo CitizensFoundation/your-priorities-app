@@ -31,9 +31,7 @@ export class PlausibleLink extends PlausibleBaseElement {
 
   static get styles() {
     return [
-      super.styles,
-      PlausibleStyles,
-      //tailwind
+      ...super.styles,
     ];
   }
 

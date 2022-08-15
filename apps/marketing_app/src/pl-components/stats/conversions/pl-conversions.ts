@@ -1,8 +1,8 @@
 import { LitElement, css, html, nothing } from 'lit';
 import { property, customElement } from 'lit/decorators.js';
 
-import { PlausibleStyles } from './plausibleStyles.js';
-import { YpBaseElement } from '../@yrpri/common/yp-base-element.js';
+import { PlausibleStyles } from '../../plausibleStyles.js';
+import tailwind from 'lit-tailwindcss';
 
 import numberFormatter from '../../util/number-formatter';
 import * as api from '../../api.js';
@@ -11,7 +11,7 @@ import { suppressDeprecationWarnings } from 'moment';
 
 import '../../pl-link.js';
 import '../pl-bar.js';
-import '../pl-prop-breakdown.js';
+import './pl-prop-breakdown.js';
 import { PlausibleBaseElement } from '../../pl-base-element.js';
 
 const MOBILE_UPPER_WIDTH = 767;
@@ -65,6 +65,12 @@ export class PlausibleConversions extends PlausibleBaseElement {
     }
   }
 
+  static get styles() {
+    return [
+      ...super.styles,
+    ];
+  }
+
   handleResize() {
     this.updateState({ viewport: window.innerWidth });
   }
@@ -102,7 +108,7 @@ export class PlausibleConversions extends PlausibleBaseElement {
           <pl-bar
             .count="${goal.unique_conversions}"
             .all="${this.state.goals!}"
-            bg="bg-red-50 dark:bg-gray-500 dark:bg-opacity-15"
+            class="bg-red-50 dark:bg-gray-500 dark:bg-opacity-15"
             .maxWidthDeduction="${this.getBarMaxWidth()}"
             plot="unique_conversions"
           >
@@ -114,7 +120,7 @@ export class PlausibleConversions extends PlausibleBaseElement {
           </pl-bar>
           <div class="dark:text-gray-200">
             <span class="inline-block w-20 font-medium text-right"
-              >{numberFormatter(goal.unique_conversions)}</span
+              >${numberFormatter(goal.unique_conversions)}</span
             >
             ${viewport && viewport > MOBILE_UPPER_WIDTH
               ? html`<span class="inline-block w-20 font-medium text-right"
@@ -122,7 +128,7 @@ export class PlausibleConversions extends PlausibleBaseElement {
                 >`
               : nothing}
             <span class="inline-block w-20 font-medium text-right"
-              >{goal.conversion_rate}%</span
+              >${goal.conversion_rate}%</span
             >
           </div>
         </div>
@@ -131,6 +137,8 @@ export class PlausibleConversions extends PlausibleBaseElement {
               .site=${this.site}
               .query=${this.query}
               .goal=${goal}
+              .collectionId=${this.collectionId}
+              .collectionType=${this.collectionType}
             ></pl-prop-breakdown>`
           : nothing}
       </div>
@@ -144,7 +152,7 @@ export class PlausibleConversions extends PlausibleBaseElement {
     } else if (this.state.goals) {
       return html`
         <h3 class="font-bold dark:text-gray-100">
-          {this.props.title || "Goal Conversions"}
+          ${this.title || "Goal Conversions"}
         </h3>
         <div
           class="flex items-center justify-between mt-3 mb-2 text-xs font-bold tracking-wide text-gray-500 dark:text-gray-400"

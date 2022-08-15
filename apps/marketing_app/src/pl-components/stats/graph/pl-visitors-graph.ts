@@ -48,9 +48,7 @@ export class PlausibleVisitorsGraph extends PlausibleBaseElement {
 
   static get styles() {
     return [
-      super.styles,
-      tailwind,
-      PlausibleStyles
+      ...super.styles,
     ];
   }
 

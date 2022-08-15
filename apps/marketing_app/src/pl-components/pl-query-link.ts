@@ -34,11 +34,10 @@ export class PlausibleQueryLink extends PlausibleBaseElement {
 
   static get styles() {
     return [
-      super.styles,
-      //tailwind,
-      PlausibleStyles
+      ...super.styles,
     ];
   }
+
 
   render() {
     return html`
@@ -49,7 +48,7 @@ export class PlausibleQueryLink extends PlausibleBaseElement {
           pathname: window.location.pathname,
           search: generateQueryString(this.to),
         }}
-        @Click=${this.onClick}
+        @click=${this.onClick}
       ></pl-link>
     `;
   }

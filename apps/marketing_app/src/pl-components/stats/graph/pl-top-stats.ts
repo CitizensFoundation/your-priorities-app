@@ -38,10 +38,11 @@ export class PlausibleTopStats extends PlausibleBaseElement {
   topStatData: PlausibleTopStatsData | undefined;
 
   static get styles() {
-    return [super.styles,
-      tailwind,
-      PlausibleStyles];
+    return [
+      ...super.styles,
+    ];
   }
+
 
   renderComparison(name: string, comparison: number) {
     const formattedComparison = numberFormatter(Math.abs(comparison));
