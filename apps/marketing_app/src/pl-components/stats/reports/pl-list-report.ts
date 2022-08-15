@@ -9,6 +9,7 @@ import '../../pl-fade-in.js';
 import '../../pl-more-link.js';
 import '../pl-bar.js';
 import '../../components/lazy-loader.js';
+import numberFormatter from '../../util/number-formatter.js';
 
 @customElement('pl-pages')
 export class PlausablePages extends PlausibleBaseElement {
@@ -16,10 +17,22 @@ export class PlausablePages extends PlausibleBaseElement {
   query!: PlausibleQueryData;
 
   @property({ type: Object })
+  prevQuery!: PlausibleQueryData;
+
+  @property({ type: Object })
   site!: PlausibleSiteData;
 
   @property({ type: String })
   tabKey!: string;
+
+  @property({ type: String })
+  valueKey!: string;
+
+  @property({ type: String })
+  color: string | undefined;
+
+  @property({ type: String })
+  valueLabel: string | undefined;
 
   @property({ type: Number })
   collectionId!: number;
@@ -30,16 +43,21 @@ export class PlausablePages extends PlausibleBaseElement {
   @property({ type: String })
   storedTab: string | undefined;
 
-  @property({ type: String })
+  @property({ type: Object })
   timer!: any;
 
   @property({ type: Object })
   externalLinkDest: Function | undefined
 
+  @property({ type: Boolean })
+  showConversionRate: boolean | undefined
+
   constructor() {
     super();
-
     this.updateState({loading: true, list: undefined})
+    if (this.timer) this.timer.onTick(this.fetchData)
+    this.valueKey = this.valueKey || 'visitors'
+    this.showConversionRate = !!this.query.filters!.goal
   }
 
   getExternalLink(item: string) {
@@ -58,115 +76,101 @@ export class PlausablePages extends PlausibleBaseElement {
      } else {
       return nothing;
      }
-
   }
-}
 
+  protected firstUpdated(_changedProperties: Map<string | number | symbol, unknown>): void {
+    this.fetchData();
+  }
 
-export default function ListReport(props) {
-  const [state, setState] = useState({loading: true, list: null})
-  const valueKey = props.valueKey || 'visitors'
-  const showConversionRate = !!props.query.filters.goal
-  const prevQuery = useRef();
-
-  function fetchData() {
-    if (typeof(prevQuery.current) === 'undefined' || prevQuery.current !== props.query) {
-      prevQuery.current = props.query;
-      setState({loading: true, list: null})
-      props.fetchData()
-        .then((res) => setState({loading: false, list: res}))
+ fetchData() {
+    if (this.prevQuery !== this.query) {
+      this.prevQuery = this.query;
+      this.updateState({loading: true, list: null})
+      fetchData()
+        .then((res: any) => this.updateState({loading: false, list: res}))
     }
   }
 
-
-  function onVisible() {
-    fetchData()
-    if (props.timer) props.timer.onTick(fetchData)
-  }
-
-
-  function label() {
-    if (props.query.period === 'realtime') {
+  label() {
+    if (this.query.period === 'realtime') {
       return 'Current visitors'
     }
 
-    if (showConversionRate) {
+    if (this.showConversionRate) {
       return 'Conversions'
     }
 
-    return props.valueLabel || 'Visitors'
+    return this.valueLabel || 'Visitors'
   }
 
-  useEffect(fetchData, [props.query]);
-
-  function renderListItem(listItem) {
+ renderListItem(listItem: PlausibleListItemData) {
     const query = new URLSearchParams(window.location.search)
 
-    Object.entries(props.filter).forEach((([key, valueKey]) => {
+    Object.entries(this.filter).forEach((([key, valueKey]) => {
       query.set(key, listItem[valueKey])
     }))
 
-    const maxWidthDeduction =  showConversionRate ? "10rem" : "5rem"
-    const lightBackground = props.color || 'bg-green-50'
-    const noop = () => {}
+    const maxWidthDeduction =  this.showConversionRate ? "10rem" : "5rem"
+    const lightBackground = this.color || 'bg-green-50';
+    const noop = () => {};
 
-    return (
-      <div className="flex items-center justify-between my-1 text-sm" key={listItem.name}>
+    return html`
+      <div class="flex items-center justify-between my-1 text-sm" key={listItem.name}>
         <Bar
-          count={listItem[valueKey]}
-          all={state.list}
-          bg={`${lightBackground} dark:bg-gray-500 dark:bg-opacity-15`}
+          count=${listItem[this.valueKey]}
+          all=${this.state.list}
+          bg=${`${lightBackground} dark:bg-gray-500 dark:bg-opacity-15`}
           maxWidthDeduction={maxWidthDeduction}
           plot={valueKey}
         >
-          <span className="flex px-2 py-1.5 group dark:text-gray-300 relative z-9 break-all" tooltip={props.tooltipText && props.tooltipText(listItem)}>
-            <Link onClick={props.onClick || noop} className="md:truncate block hover:underline" to={{search: query.toString()}}>
+          <span class="flex px-2 py-1.5 group dark:text-gray-300 relative z-9 break-all" tooltip=${this.tooltipText && this.tooltipText(listItem)}>
+            <pl-link @click="${this.onClick || noop}" class="md:truncate block hover:underline" to=${{search: query.toString()}}>
               {props.renderIcon && props.renderIcon(listItem)}
               {props.renderIcon && ' '}
               {listItem.name}
-            </Link>
+            </pl-link>
             <ExternalLink item={listItem} externalLinkDest={props.externalLinkDest}  />
           </span>
         </Bar>
-        <span className="font-medium dark:text-gray-200 w-20 text-right" tooltip={listItem[valueKey]}>
-          {numberFormatter(listItem[valueKey])}
+        <span class="font-medium dark:text-gray-200 w-20 text-right" tooltip=${listItem[this.valueKey]}>
+          ${numberFormatter(listItem[this.valueKey])}
           {
             listItem.percentage >= 0
-              ? <span className="inline-block w-8 pl-1 text-xs text-right">({listItem.percentage}%)</span>
+              ? <span class="inline-block w-8 pl-1 text-xs text-right">(${listItem.percentage}%)</span>
               : null
           }
         </span>
-        {showConversionRate && <span className="font-medium dark:text-gray-200 w-20 text-right">{listItem.conversion_rate}%</span>}
+        ${ showConversionRate ? html `<span class="font-medium dark:text-gray-200 w-20 text-right">{listItem.conversion_rate}%</span>` : nothing }
       </div>
-    )
+    `;
+
   }
 
-  function renderList() {
-    if (state.list && state.list.length > 0) {
-      return (
-        <>
-          <div className="flex items-center justify-between mt-3 mb-2 text-xs font-bold tracking-wide text-gray-500 dark:text-gray-400">
+ renderList() {
+    if (this.state.list && this.state.list.length > 0) {
+      return html`
+                <div class="flex items-center justify-between mt-3 mb-2 text-xs font-bold tracking-wide text-gray-500 dark:text-gray-400">
             <span>{ props.keyLabel }</span>
-            <span className="text-right">
-              <span className="inline-block w-30">{label()}</span>
-              {showConversionRate && <span className="inline-block w-20">CR</span>}
+            <span class="text-right">
+              <span class="inline-block w-30">${this.label()}</span>
+              ${ this.showConversionRate ? html`<span class="inline-block w-20">CR</span>` : nothing }
             </span>
           </div>
-          { state.list && state.list.map(renderListItem) }
-        </>
-      )
-    }
+          ${ this.state.list ? this.state.list.map(this.renderListItem) : nothing }
 
-    return <div className="font-medium text-center text-gray-500 mt-44 dark:text-gray-400">No data yet</div>
+      `;
+    }
   }
 
-  return (
-    <LazyLoader onVisible={onVisible} className="flex flex-col flex-grow">
-      { state.loading && <div className="mx-auto loading mt-44"><div></div></div> }
-      <FadeIn show={!state.loading} className="flex-grow">
-        { renderList() }
-      </FadeIn>
-      {props.detailsLink && !state.loading && <MoreLink url={props.detailsLink} list={state.list} />}
-    </LazyLoader>
-  )
+  render() {
+    return html`
+        <div class="flex flex-col flex-grow">
+        ${ state.loading ?` <div class="mx-auto loading mt-44"><div></div></div>` : nothing}
+      <div class="flex-grow">
+        ${ renderList() }
+     </div>
+      ${ (this.detailsLink && !this.state.loading) ? `<MoreLink url=${this.detailsLink} list=${this.state.list} />`}
+    `
+
+  }
 }
