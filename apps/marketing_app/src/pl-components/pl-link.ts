@@ -12,6 +12,12 @@ export class PlausibleLink extends PlausibleBaseElement {
   static get styles() {
     return [
       ...super.styles,
+      css`
+        :host {
+          padding-top: 0.40rem;
+          padding-bottom: 0.40rem;
+        }
+      `
     ];
   }
 

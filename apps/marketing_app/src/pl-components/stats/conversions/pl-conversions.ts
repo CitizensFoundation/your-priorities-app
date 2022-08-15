@@ -108,7 +108,7 @@ export class PlausibleConversions extends PlausibleBaseElement {
           <pl-bar
             .count="${goal.unique_conversions}"
             .all="${this.state.goals!}"
-            class="bg-red-50 dark:bg-gray-500 dark:bg-opacity-15"
+            bg="bg-red-50 dark:bg-gray-500 dark:bg-opacity-15"
             .maxWidthDeduction="${this.getBarMaxWidth()}"
             plot="unique_conversions"
           >

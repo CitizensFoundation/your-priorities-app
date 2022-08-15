@@ -44,7 +44,7 @@ export class PlausibleBar extends PlausibleBaseElement {
       //PlausibleStyles,
       css`
         :host {
-          width: 70%;
+          width: 75%;
         }
       `,
 
@@ -57,7 +57,7 @@ export class PlausibleBar extends PlausibleBaseElement {
     return html`
       <div
         class="w-full relative"
-        .style="max-width: calc(100% - ${this.maxWidthDeduction});"
+        .not-used-old-style="max-width: calc(100% - ${this.maxWidthDeduction});"
       >
         <div
           class="${`absolute top-0 left-0 h-full test ${
