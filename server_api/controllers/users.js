@@ -1361,6 +1361,7 @@ router.post('/createActivityFromApp', function(req, res) {
       event_time: req.body.event_time,
       sessionId: req.body.sessionId,
       user_agent: req.body.user_agent,
+      userLocale: req.body.userLocale,
       screen_width: req.body.screen_width,
       originalQueryString: req.body.originalQueryString,
       referrer: req.body.referrer,
