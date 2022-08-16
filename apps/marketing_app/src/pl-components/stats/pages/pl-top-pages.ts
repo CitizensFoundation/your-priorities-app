@@ -1,7 +1,7 @@
 import * as storage from '../../util/storage.js';
 import * as url from '../../util/url.js';
 import * as api from '../../api.js';
-import ListReport from './../reports/list.js';
+import './../reports/pl-list-report.js';
 import { customElement, property } from 'lit/decorators.js';
 import { PlausibleBaseElement } from '../../pl-base-element.js';
 import { html } from 'lit';
@@ -17,11 +17,15 @@ export class PlausableTopPages extends PlausableBasePages {
   render() {
     return html`
       <pl-list-report
-        .fetchData=${this.fetchData}
+        .fetchDataFunction=${this.fetchData}
         .filter=${{ entry_page: 'name' }}
         keyLabel="Page"
+        .collectionId="${this.collectionId}"
+        .collectionType="${this.collectionType}"
         .detailsLink=${url.sitePath(this.site, this.pagePath)}
         .query=${this.query}
+        .pagePath="${this.pagePath}"
+        .site="${this.site}"
         .externalLinkDest=${this.externalLinkDest}
         color="bg-orange-50"
       ></pl-list-report>

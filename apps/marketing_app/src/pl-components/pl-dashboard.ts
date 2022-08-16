@@ -1,6 +1,6 @@
 //import { withRouter } from 'react-router-dom';
 import tailwind from 'lit-tailwindcss';
-import { LitElement, css, html } from 'lit';
+import { LitElement, css, html, nothing } from 'lit';
 import { property, customElement } from 'lit/decorators.js';
 
 import { installMediaQueryWatcher } from 'pwa-helpers/media-query.js';
@@ -101,7 +101,7 @@ export class PlausibleDashboard extends PlausibleBaseElement {
   }
 
   render() {
-    if (this.state && this.state.query) {
+    if (this.site && this.state && this.state.query) {
       if (this.state!.query!.period === 'day') {
         return html`
           <pl-realtime
@@ -125,6 +125,8 @@ export class PlausibleDashboard extends PlausibleBaseElement {
           ></pl-historical>
         `;
       }
+    } else {
+      return nothing;
     }
   }
 }

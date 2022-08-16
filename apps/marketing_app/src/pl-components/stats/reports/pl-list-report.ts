@@ -5,10 +5,8 @@ import { customElement, property } from 'lit/decorators.js';
 import { PlausibleBaseElement } from '../../pl-base-element.js';
 import { html, nothing } from 'lit';
 
-import '../../pl-fade-in.js';
 import '../../pl-more-link.js';
 import '../pl-bar.js';
-import '../../components/lazy-loader.js';
 import numberFormatter from '../../util/number-formatter.js';
 
 @customElement('pl-list-report')
@@ -27,6 +25,9 @@ export class PlausableListReport extends PlausibleBaseElement {
 
   @property({ type: String })
   valueKey!: string;
+
+  @property({ type: String })
+  keyLabel!: string;
 
   @property({ type: String })
   color: string | undefined;
@@ -55,8 +56,17 @@ export class PlausableListReport extends PlausibleBaseElement {
   @property({ type: String })
   detailsLink: string | undefined;
 
-  constructor() {
-    super();
+  @property({ type: Object })
+  onClick: Function | undefined;
+
+  @property({ type: Object })
+  fetchDataFunction!: Function;
+
+  @property({ type: Object })
+  filter: Record<any, any> | undefined = undefined;
+
+  connectedCallback() {
+    super.connectedCallback();
     this.updateState({ loading: true, list: undefined });
     if (this.timer) this.timer.onTick(this.fetchData);
     this.valueKey = this.valueKey || 'visitors';
@@ -101,8 +111,8 @@ export class PlausableListReport extends PlausibleBaseElement {
   fetchData() {
     if (this.prevQuery !== this.query) {
       this.prevQuery = this.query;
-      this.updateState({ loading: true, list: null });
-      fetchData().then((res: any) =>
+      this.updateState({ loading: true, list: undefined });
+      this.fetchDataFunction().then((res: any) =>
         this.updateState({ loading: false, list: res })
       );
     }
@@ -123,7 +133,8 @@ export class PlausableListReport extends PlausibleBaseElement {
   renderListItem(listItem: PlausibleListItemData) {
     const query = new URLSearchParams(window.location.search);
 
-    Object.entries(this.filter).forEach(([key, valueKey]) => {
+    Object.entries(this.filter!).forEach(([key, valueKey]) => {
+      // @ts-ignore
       query.set(key, listItem[valueKey]);
     });
 
@@ -134,10 +145,13 @@ export class PlausableListReport extends PlausibleBaseElement {
     return html`
       <div
         class="flex items-center justify-between my-1 text-sm"
-        key="{listItem.name}"
+        key="${listItem.name}"
       >
         <pl-bar
-          count=${listItem[this.valueKey]}
+          .count=${
+            // @ts-ignore
+            listItem[this.valueKey]
+          }
           .all=${this.state.list}
           .bg=${`${lightBackground} dark:bg-gray-500 dark:bg-opacity-15`}
           maxWidthDeduction="${maxWidthDeduction}"
@@ -145,15 +159,14 @@ export class PlausableListReport extends PlausibleBaseElement {
         >
           <span
             class="flex px-2 py-1.5 group dark:text-gray-300 relative z-9 break-all"
-            tooltip=${this.tooltipText && this.tooltipText(listItem)}
+            tooltip=${this.getTooltipText(listItem)}
           >
             <pl-link
               @click="${this.onClick || noop}"
               class="md:truncate block hover:underline"
-              to=${{ search: query.toString() }}
+              .to=${{ search: query.toString() }}
             >
-              ${this.renderIcon && props.renderIcon(listItem)} ${this.renderIcon
-              && ' '} ${listItem.name}
+              ${this.renderIcon(listItem)} ${listItem.name}
             </pl-link>
             <pl-external-link
               .item="${listItem}"
@@ -163,14 +176,20 @@ export class PlausableListReport extends PlausibleBaseElement {
         </pl-bar>
         <span
           class="font-medium dark:text-gray-200 w-20 text-right"
-          tooltip=${listItem[this.valueKey]}
+          tooltip=${
+            // @ts-ignore
+            listItem[this.valueKey]
+          }
         >
-          ${numberFormatter(listItem[this.valueKey])} { listItem.percentage >= 0
-          ?
-          <span class="inline-block w-8 pl-1 text-xs text-right"
-            >(${listItem.percentage}%)</span
-          >
-          : null }
+          ${
+            // @ts-ignore
+            numberFormatter(listItem[this.valueKey])
+          }
+          ${listItem.percentage >= 0
+            ? html`<span class="inline-block w-8 pl-1 text-xs text-right"
+                >(${listItem.percentage}%)</span
+              >`
+            : nothing}
         </span>
         ${this.showConversionRate
           ? html`<span class="font-medium dark:text-gray-200 w-20 text-right"
@@ -187,7 +206,7 @@ export class PlausableListReport extends PlausibleBaseElement {
         <div
           class="flex items-center justify-between mt-3 mb-2 text-xs font-bold tracking-wide text-gray-500 dark:text-gray-400"
         >
-          <span>${ this.keyLabel }</span>
+          <span>${this.keyLabel}</span>
           <span class="text-right">
             <span class="inline-block w-30">${this.label}</span>
             ${this.showConversionRate
@@ -195,7 +214,9 @@ export class PlausableListReport extends PlausibleBaseElement {
               : nothing}
           </span>
         </div>
-        ${this.state.list ? this.state.list.map(this.renderListItem) : nothing}
+        ${this.state.list
+          ? this.state.list.map(this.renderListItem.bind(this))
+          : nothing}
       `;
     }
   }

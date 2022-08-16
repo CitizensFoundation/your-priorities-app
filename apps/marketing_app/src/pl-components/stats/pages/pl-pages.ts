@@ -1,10 +1,16 @@
+import { customElement, property } from 'lit/decorators.js';
+import { html, nothing } from 'lit';
+
 import * as storage from '../../util/storage.js';
 import * as url from '../../util/url.js';
 import * as api from '../../api.js';
-import ListReport from './../reports/list.js';
-import { customElement, property } from 'lit/decorators.js';
+import './../reports/pl-list-report.js';
+
+import './pl-top-pages.js';
+import './pl-entry-pages.js';
+import './pl-exit-pages.js';
+
 import { PlausibleBaseElement } from '../../pl-base-element.js';
-import { html } from 'lit';
 
 @customElement('pl-pages')
 export class PlausablePages extends PlausibleBaseElement {
@@ -29,8 +35,8 @@ export class PlausablePages extends PlausibleBaseElement {
   @property({ type: String })
   timer!: any;
 
-  constructor() {
-    super();
+  connectedCallback() {
+    super.connectedCallback();
     this.tabKey = `pageTab__${this.site.domain}`;
     this.state = {
       mode: this.storedTab || 'pages',
@@ -45,7 +51,7 @@ export class PlausablePages extends PlausibleBaseElement {
   }
 
   labelFor = {
-    'pages': 'Top Pages',
+    pages: 'Top Pages',
     'entry-pages': 'Entry Pages',
     'exit-pages': 'Exit Pages',
   };
@@ -57,12 +63,16 @@ export class PlausablePages extends PlausibleBaseElement {
           .site=${this.site}
           .query=${this.query}
           .timer=${this.timer}
+          .collectionId="${this.collectionId}"
+          .collectionType="${this.collectionType}"
         ></pl-entry-pages>`;
       case 'exit-pages':
         return html`<pl-exit-pages
           .site=${this.site}
           .query=${this.query}
           .timer=${this.timer}
+          .collectionId="${this.collectionId}"
+          .collectionType="${this.collectionType}"
         ></pl-exit-pages>`;
       case 'pages':
       default:
@@ -70,6 +80,8 @@ export class PlausablePages extends PlausibleBaseElement {
           .site=${this.site}
           .query=${this.query}
           .timer=${this.timer}
+          .collectionId="${this.collectionId}"
+          .collectionType="${this.collectionType}"
         ></pl-top-pages>`;
     }
   }
@@ -98,26 +110,35 @@ export class PlausablePages extends PlausibleBaseElement {
   }
 
   render() {
-    return html`
-      <div class="stats-item flex flex-col w-full mt-6 stats-item--has-header">
+    if (this.site) {
+      return html`
         <div
-          class="stats-item-header flex flex-col flex-grow bg-white dark:bg-gray-825 shadow-xl rounded p-4 relative"
+          class="stats-item flex flex-col w-full mt-6 stats-item--has-header"
         >
-          <div class="w-full flex justify-between">
-            <h3 class="font-bold dark:text-gray-100">
-              ${this.labelFor[this.state.mode] || 'Page Visits'}
-            </h3>
-            <ul
-              class="flex font-medium text-xs text-gray-500 dark:text-gray-400 space-x-2"
-            >
-              ${this.renderPill('Top Pages', 'pages')}
-              ${this.renderPill('Entry Pages', 'entry-pages')}
-              ${this.renderPill('Exit Pages', 'exit-pages')}
-            </ul>
+          <div
+            class="stats-item-header flex flex-col flex-grow bg-white dark:bg-gray-825 shadow-xl rounded p-4 relative"
+          >
+            <div class="w-full flex justify-between" style="max-height: 40px !important">
+              <h3 class="font-bold dark:text-gray-100">
+                ${
+                  //@ts-ignore
+                  this.labelFor[this.state.mode] || 'Page Visits'
+                }
+              </h3>
+              <ul
+                class="flex font-medium text-xs text-gray-500 dark:text-gray-400 space-x-2"
+              >
+                ${this.renderPill('Top Pages', 'pages')}
+                ${this.renderPill('Entry Pages', 'entry-pages')}
+                ${this.renderPill('Exit Pages', 'exit-pages')}
+              </ul>
+            </div>
+            ${this.renderContent()}
           </div>
-          ${this.renderContent()}
         </div>
-      </div>
-    `;
+      `;
+    } else {
+      return nothing;
+    }
   }
 }

@@ -53,7 +53,7 @@ export class PlausibleBaseElement extends LitElement {
   }
 
   updateState(updatedState: PlausibleStateData) {
-    this.state = {...this.state, ...updatedState};
+    this.state = { ...this.state, ...updatedState };
   }
 
   static get rtlLanguages() {
@@ -74,7 +74,7 @@ export class PlausibleBaseElement extends LitElement {
 
   static get styles() {
     return [
-  //    super.styles,
+      //    super.styles,
       Layouts,
       //tailwind,
       PlausibleStyles,
@@ -146,6 +146,22 @@ export class PlausibleBaseElement extends LitElement {
       return translation;
     } else {
       return key;
+    }
+  }
+
+  getTooltipText(item: PlausibleListItemData): string | undefined {
+    if (item.tooltipTextToken) {
+      return this.t(item.tooltipTextToken);
+    } else {
+      return undefined;
+    }
+  }
+
+  renderIcon(item: PlausibleListItemData): string | undefined {
+    if (item.icon) {
+      return "icon";
+    } else {
+      return undefined;
     }
   }
 

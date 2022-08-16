@@ -1350,6 +1350,11 @@ router.post('/createActivityFromApp', function(req, res) {
     ipAddr = req.connection.remoteAddress;
   }
 
+  let userAutoTranslate = false;
+  if (req.body.userAutoTranslate) {
+    userAutoTranslate = (req.body.userAutoTranslate.toLowerCase() === 'true');
+  }
+
   const workData = {
     body: {
       actor: req.body.actor,
@@ -1362,6 +1367,7 @@ router.post('/createActivityFromApp', function(req, res) {
       sessionId: req.body.sessionId,
       user_agent: req.body.user_agent,
       userLocale: req.body.userLocale,
+      userAutoTranslate,
       screen_width: req.body.screen_width,
       originalQueryString: req.body.originalQueryString,
       referrer: req.body.referrer,

@@ -794,6 +794,7 @@
             }, function(loaded) {
           console.info("Have loaded languages for "+defaultLocale);
           window.locale = defaultLocale;
+          window.autoTranslate = false;
           window.i18nTranslation = i18next;
           window.haveLoadedLanguages = true;
           moment.locale([defaultLocale, 'en']);
@@ -856,6 +857,7 @@
           })
         );
         window.autoTranslate = false;
+        window.appGlobals.activity('click', 'stopTranslation', this.language);
         Polymer.dom(document).querySelector('yp-app').getDialogAsync("masterToast", function (toast) {
           toast.text = this.t('autoTranslationStopped');
           toast.show();
@@ -1148,7 +1150,9 @@
         }
 
         if (page) {
-          window.appGlobals.sendToAnalyticsTrackers('send', 'pageview', location.pathname);
+          this.async(function () {
+            window.appGlobals.sendToAnalyticsTrackers('send', 'pageview', location.pathname);
+          });
         }
 
         if (page && page==='survey') {

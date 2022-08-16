@@ -1,7 +1,7 @@
 import * as storage from '../../util/storage.js';
 import * as url from '../../util/url.js';
 import * as api from '../../api.js';
-import ListReport from './../reports/list.js';
+import './../reports/pl-list-report.js';
 import { property } from 'lit/decorators.js';
 import { PlausibleBaseElement } from '../../pl-base-element.js';
 

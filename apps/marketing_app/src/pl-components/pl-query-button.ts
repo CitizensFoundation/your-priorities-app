@@ -6,8 +6,8 @@ import tailwind from 'lit-tailwindcss';
 import { PlausibleStyles } from './plausibleStyles.js';
 import { PlausibleBaseElement } from './pl-base-element.js';
 
-@customElement('pl-link')
-export class PlausibleLink extends PlausibleBaseElement {
+@customElement('pl-query-button')
+export class PlausibleQueryButton extends PlausibleBaseElement {
   @property({ type: Boolean })
   disabled = false;
 

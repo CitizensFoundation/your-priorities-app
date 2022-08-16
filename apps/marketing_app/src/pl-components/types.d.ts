@@ -77,6 +77,7 @@ interface PlausibleStateData {
   page?: number;
   moreResultsAvailable?: boolean;
   mode?: string;
+  list?: PlausibleListItemData[];
 }
 
 interface PlausibleStatData {
@@ -102,4 +103,12 @@ interface PlausibleGoalData {
 
 interface PlausiblePageData {
   name: string;
+}
+
+interface PlausibleListItemData {
+  percentage: number;
+  conversion_rate: number;
+  name: string;
+  tooltipTextToken?: string;
+  icon?: string;
 }

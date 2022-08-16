@@ -7,6 +7,7 @@ import { PlausibleBaseElement } from './pl-base-element.js';
 
 import './stats/graph/pl-visitors-graph.js';
 import './stats/conversions/pl-conversions.js';
+import './stats/pages/pl-pages.js';
 
 @customElement('pl-realtime')
 export class PlausibleRealtime extends PlausibleBaseElement {
@@ -36,10 +37,6 @@ export class PlausibleRealtime extends PlausibleBaseElement {
 
   @property({ type: String })
   collectionType!: string;
-
-  constructor() {
-    super();
-  }
 
   updated(changedProperties: Map<string | number | symbol, unknown>): void {
     super.updated(changedProperties);
@@ -99,6 +96,8 @@ export class PlausibleRealtime extends PlausibleBaseElement {
             .site="${this.site}"
             .query="${this.query}"
             .timer="${this.timer}"
+            .collectionId="${this.collectionId}"
+            .collectionType="${this.collectionType}"
           ></pl-pages>
         </div>
         <div class="items-start justify-between block w-full md:flex">
