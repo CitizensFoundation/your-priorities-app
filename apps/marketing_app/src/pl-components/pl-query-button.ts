@@ -2,9 +2,9 @@ import { LitElement, css, html, nothing } from 'lit';
 import { property, customElement } from 'lit/decorators.js';
 
 import { navigateToQuery, generateQueryString } from './query.js';
-import tailwind from 'lit-tailwindcss';
 import { PlausibleStyles } from './plausibleStyles.js';
 import { PlausibleBaseElement } from './pl-base-element.js';
+import { BrowserHistory } from './util/history.js';
 
 @customElement('pl-query-button')
 export class PlausibleQueryButton extends PlausibleBaseElement {
@@ -18,7 +18,7 @@ export class PlausibleQueryButton extends PlausibleBaseElement {
   onClick: Function | undefined;
 
   @property({ type: Object })
-  history!: any;
+  history!: BrowserHistory;
 
   @property({ type: String })
   className!: string;

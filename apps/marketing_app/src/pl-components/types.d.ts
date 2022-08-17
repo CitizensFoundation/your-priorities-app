@@ -1,6 +1,3 @@
-
-declare module 'lit-tailwindcss';
-
 interface PlausibleQueryFilters {
   goal?: string;
   props?: string;
@@ -31,6 +28,7 @@ interface PlausibleSiteData {
   hasGoals: boolean;
   embedded: boolean;
   offset?: number;
+  statsBegin?: Date;
 }
 
 interface PlausibleQueryData {
@@ -78,6 +76,7 @@ interface PlausibleStateData {
   moreResultsAvailable?: boolean;
   mode?: string;
   list?: PlausibleListItemData[];
+  open?: boolean;
 }
 
 interface PlausibleStatData {
@@ -112,3 +111,5 @@ interface PlausibleListItemData {
   tooltipTextToken?: string;
   icon?: string;
 }
+
+

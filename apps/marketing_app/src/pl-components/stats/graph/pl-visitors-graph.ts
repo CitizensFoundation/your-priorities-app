@@ -12,7 +12,6 @@ import { GraphTooltip, buildDataSet, dateFormatter } from './graph-util.js';
 import * as url from '../../util/url.js';
 import './pl-top-stats.js';
 import './pl-line-graph.js';
-import tailwind from 'lit-tailwindcss';
 import { PlausibleStyles } from '../../plausibleStyles';
 import { PlausibleBaseElement } from '../../pl-base-element';
 

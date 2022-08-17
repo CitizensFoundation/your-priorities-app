@@ -1,5 +1,4 @@
 //import { withRouter } from 'react-router-dom';
-import tailwind from 'lit-tailwindcss';
 import { LitElement, css, html, nothing } from 'lit';
 import { property, customElement } from 'lit/decorators.js';
 
@@ -16,6 +15,7 @@ import * as api from './api';
 
 import { PlausibleStyles } from './plausibleStyles.js';
 import { PlausibleBaseElement } from './pl-base-element.js';
+import { BrowserHistory, createBrowserHistory } from './util/history.js';
 //import '@lit-labs/router';
 //import { Routes } from '@lit-labs/router';
 
@@ -57,6 +57,9 @@ export class PlausibleDashboard extends PlausibleBaseElement {
   @property({ type: String })
   collectionType!: string;
 
+  @property({ type: Object })
+  history!: BrowserHistory;
+
   /*private routes = new Routes(this, [
     { path: '/', render: () => html`<h1>Home</h1>` },
     { path: '/projects', render: () => html`<h1>Projects</h1>` },
@@ -71,7 +74,11 @@ export class PlausibleDashboard extends PlausibleBaseElement {
       embedded: false,
       offset: 1
     }
+  }
 
+  connectedCallback(): void {
+    super.connectedCallback();
+    this.history = createBrowserHistory()
     this.setState();
   }
 
@@ -82,13 +89,13 @@ export class PlausibleDashboard extends PlausibleBaseElement {
   }
 
   setState() {
+    debugger;
     this.updateState({
       query: parseQuery(this.query, this.site),
       timer: new Timer(),
       metric: 'visitors'
     } as PlausibleStateData);
-
-    this.state.query = {...this.state.query, period: 'day'};
+    debugger;
   }
 
   updated(changedProperties: Map<string | number | symbol, unknown>): void {
@@ -102,13 +109,14 @@ export class PlausibleDashboard extends PlausibleBaseElement {
 
   render() {
     if (this.site && this.state && this.state.query) {
-      if (this.state!.query!.period === 'day') {
+      if (true || this.state!.query!.period === 'day') {
         return html`
           <pl-realtime
             .timer="${this.state.timer}"
             .site="${this.site}"
             .currentRole="${this.currentUserRole}"
             .query="${this.state.query}"
+            .history="${this.history}"
             .collectionId="${this.collectionId}"
             .collectionType="${this.collectionType}"
           ></pl-realtime>
@@ -118,6 +126,7 @@ export class PlausibleDashboard extends PlausibleBaseElement {
           <pl-historical
             .timer="${this.state.timer}"
             .site="${this.site}"
+            .history="${this.history}"
             .currentRole="${this.currentUserRole}"
             .query="${this.state.query}"
             .collectionId="${this.collectionId}"

@@ -6,7 +6,6 @@ import numberFormatter, {
   durationFormatter,
 } from '../../util/number-formatter.js';
 import { METRIC_MAPPING, METRIC_LABELS } from './pl-visitors-graph.js';
-import tailwind from 'lit-tailwindcss';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { PlausibleStyles } from '../../plausibleStyles.js';
 import { PlausibleBaseElement } from '../../pl-base-element.js';

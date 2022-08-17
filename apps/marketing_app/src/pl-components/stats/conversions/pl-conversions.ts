@@ -1,9 +1,6 @@
 import { LitElement, css, html, nothing } from 'lit';
 import { property, customElement } from 'lit/decorators.js';
 
-import { PlausibleStyles } from '../../plausibleStyles.js';
-import tailwind from 'lit-tailwindcss';
-
 import numberFormatter from '../../util/number-formatter';
 import * as api from '../../api.js';
 import * as url from '../../util/url.js';
@@ -113,7 +110,7 @@ export class PlausibleConversions extends PlausibleBaseElement {
             plot="unique_conversions"
           >
             <pl-link
-              .to="${url.setQuery('goal', goal.name)}"
+              .to="${{search: url.setQuery('goal', goal.name)}}"
               class="block px-2 py-1.5 hover:underline relative z-9 break-all lg:truncate dark:text-gray-200"
               >${goal.name}</pl-link
             >

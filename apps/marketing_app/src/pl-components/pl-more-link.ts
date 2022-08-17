@@ -1,6 +1,5 @@
 import { LitElement, css, html, nothing } from 'lit';
 import { property, customElement } from 'lit/decorators.js';
-import tailwind from 'lit-tailwindcss';
 import { PlausibleStyles } from './plausibleStyles';
 import { PlausibleBaseElement } from './pl-base-element';
 

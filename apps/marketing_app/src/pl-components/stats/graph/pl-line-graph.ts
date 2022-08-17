@@ -11,9 +11,6 @@ import * as storage from '../../util/storage.js';
 import { GraphTooltip, buildDataSet, dateFormatter } from './graph-util.js';
 import './pl-top-stats.js';
 import * as url from '../../util/url.js';
-import CanvasEntry from 'wavesurfer.js/src/drawer.canvasentry.js';
-import tailwind from 'lit-tailwindcss';
-import { PlausibleStyles } from '../../plausibleStyles.js';
 import { PlausibleBaseElement } from '../../pl-base-element.js';
 
 import {

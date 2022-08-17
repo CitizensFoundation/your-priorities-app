@@ -2,7 +2,6 @@ import { LitElement, css } from 'lit';
 import { property } from 'lit/decorators.js';
 import { Layouts } from 'lit-flexbox-literals';
 import { PlausibleStyles } from './plausibleStyles';
-import tailwind from 'lit-tailwindcss';
 
 export class PlausibleBaseElement extends LitElement {
   @property({ type: String })
@@ -76,7 +75,6 @@ export class PlausibleBaseElement extends LitElement {
     return [
       //    super.styles,
       Layouts,
-      //tailwind,
       PlausibleStyles,
       css`
         [hidden] {

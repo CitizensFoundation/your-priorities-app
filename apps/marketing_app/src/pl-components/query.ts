@@ -4,6 +4,7 @@ import * as storage from './util/storage.js';
 const PERIODS = ['realtime', 'day', 'month', '7d', '30d', '6mo', '12mo', 'year', 'all', 'custom']
 
 import './pl-link.js';
+import { BrowserHistory } from './util/history.js';
 
 export function parseQuery(querystring: string, site: PlausibleSiteData): PlausibleQueryData {
   const q = new URLSearchParams(querystring)
@@ -69,7 +70,7 @@ export function generateQueryString(data: any) {
   return query.toString()
 }
 
-export function navigateToQuery(history: any, queryFrom: PlausibleQueryData, newData: PlausibleQueryData) {
+export function navigateToQuery(history: BrowserHistory, queryFrom: PlausibleQueryData, newData: PlausibleQueryData | PlausibleQueryStringsData) {
   // if we update any data that we store in localstorage, make sure going back in history will
   // revert them
   if (newData.period && newData.period !== queryFrom.period) {
@@ -77,6 +78,7 @@ export function navigateToQuery(history: any, queryFrom: PlausibleQueryData, new
     replaceQuery.set('period', queryFrom.period)
     history.replace({ search: replaceQuery.toString() })
   }
+  debugger;
 
   // then push the new query to the history
   history.push({ search: generateQueryString(newData) })

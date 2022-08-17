@@ -1,8 +1,5 @@
 import { LitElement, css, html, nothing } from 'lit';
 import { property, customElement } from 'lit/decorators.js';
-import tailwind from 'lit-tailwindcss';
-import { ifDefined } from 'lit/directives/if-defined';
-import { PlausibleStyles } from '../plausibleStyles';
 import { PlausibleBaseElement } from '../pl-base-element';
 
 function barWidth(
@@ -40,8 +37,6 @@ export class PlausibleBar extends PlausibleBaseElement {
   static get styles() {
     return [
       ...super.styles,
-     // tailwind,
-      //PlausibleStyles,
       css`
         :host {
           width: 75%;

@@ -4,9 +4,6 @@ import '../pl-bar.js';
 
 import { LitElement, css, html, nothing } from 'lit';
 import { property, customElement } from 'lit/decorators.js';
-import { PlausibleStyles } from '../../plausibleStyles.js';
-import tailwind from 'lit-tailwindcss';
-
 
 import numberFormatter from '../../util/number-formatter';
 import * as api from '../../api.js';

@@ -1,6 +1,5 @@
 import { LitElement, css, html, nothing } from 'lit';
 import { property, customElement } from 'lit/decorators.js';
-import tailwind from 'lit-tailwindcss';
 
 import { PlausibleStyles } from './plausibleStyles.js';
 import { PlausibleBaseElement } from './pl-base-element.js';
@@ -8,6 +7,8 @@ import { PlausibleBaseElement } from './pl-base-element.js';
 import './stats/graph/pl-visitors-graph.js';
 import './stats/conversions/pl-conversions.js';
 import './stats/pages/pl-pages.js';
+import './pl-date-picker.js';
+import { BrowserHistory } from './util/history.js';
 
 @customElement('pl-realtime')
 export class PlausibleRealtime extends PlausibleBaseElement {
@@ -24,7 +25,7 @@ export class PlausibleRealtime extends PlausibleBaseElement {
   currentUserRole!: string;
 
   @property({ type: Object })
-  history!: any;
+  history!: BrowserHistory;
 
   @property({ type: Boolean })
   stuck = false;
@@ -73,10 +74,11 @@ export class PlausibleRealtime extends PlausibleBaseElement {
                 .history="${this.history}"
               ></pl-filters>
             </div>
-            <pl-datepicker
+            <pl-date-picker
               .site="${this.site}"
               .query="${this.query}"
-            ></pl-datepicker>
+              .history="${this.history}"
+            ></pl-date-picker>
           </div>
         </div>
         <pl-visitors-graph

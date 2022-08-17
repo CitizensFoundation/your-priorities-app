@@ -2,9 +2,11 @@ import { LitElement, css, html, nothing } from 'lit';
 import { property, customElement } from 'lit/decorators.js';
 
 import { navigateToQuery, generateQueryString } from './query.js';
-//import tailwind from 'lit-tailwindcss';
 import { PlausibleStyles } from './plausibleStyles.js';
 import { PlausibleBaseElement } from './pl-base-element.js';
+import { BrowserHistory } from './util/history.js';
+
+import './pl-link.js';
 
 @customElement('pl-query-link')
 export class PlausibleQueryLink extends PlausibleBaseElement {
@@ -15,10 +17,10 @@ export class PlausibleQueryLink extends PlausibleBaseElement {
   query!: PlausibleQueryData;
 
   @property({ type: Object })
-  history!: any;
+  to!: PlausibleQueryData;
 
   @property({ type: Object })
-  to!: PlausibleQueryData;
+  history!: BrowserHistory;
 
   constructor() {
     super();
@@ -32,12 +34,10 @@ export class PlausibleQueryLink extends PlausibleBaseElement {
     if (this.onClickFunction) this.onClickFunction(e);
   }
 
-  static get styles() {
-    return [
-      ...super.styles,
-    ];
-  }
 
+  static get styles() {
+    return [...super.styles];
+  }
 
   render() {
     return html`
@@ -48,8 +48,7 @@ export class PlausibleQueryLink extends PlausibleBaseElement {
           pathname: window.location.pathname,
           search: generateQueryString(this.to),
         }}
-        @click=${this.onClick}
-      ></pl-link>
+        ><slot></slot></pl-link>
     `;
   }
 }

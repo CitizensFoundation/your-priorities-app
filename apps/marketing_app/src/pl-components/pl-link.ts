@@ -1,6 +1,5 @@
 import { LitElement, css, html, nothing } from 'lit';
 import { property, customElement } from 'lit/decorators.js';
-import tailwind from 'lit-tailwindcss';
 import { PlausibleStyles } from './plausibleStyles';
 import { PlausibleBaseElement } from './pl-base-element';
 
@@ -21,7 +20,11 @@ export class PlausibleLink extends PlausibleBaseElement {
     ];
   }
 
+  get currentUri() {
+    return `${location.pathname}?${this.to!.search}`;
+  }
+
   render() {
-    return html` <a href="${this.to}"><slot></slot></a> `;
+    return html`<a href="${this.currentUri}"><slot></slot></a> `;
   }
 }
