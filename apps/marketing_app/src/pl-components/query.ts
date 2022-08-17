@@ -79,7 +79,9 @@ export function navigateToQuery(history: BrowserHistory, queryFrom: PlausibleQue
 //    history.replace({ search: replaceQuery.toString() })
     const currentUri = `${location.pathname}?${replaceQuery.toString()}`;
     window.history.pushState({}, "", currentUri);
-    window.dispatchEvent(new CustomEvent('popstate'));
+    setTimeout(() => {
+      window.dispatchEvent(new CustomEvent('popstate'));
+    });
   }
 
   // then push the new query to the history

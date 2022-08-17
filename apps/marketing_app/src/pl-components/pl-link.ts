@@ -27,7 +27,9 @@ export class PlausibleLink extends PlausibleBaseElement {
   onClick(e: Event) {
     e.preventDefault();
     window.history.pushState({}, "", this.currentUri);
-    window.dispatchEvent(new CustomEvent('popstate'));
+    setTimeout(() => {
+      window.dispatchEvent(new CustomEvent('popstate'));
+    });
     //window.history.forward();
   }
 

@@ -108,6 +108,14 @@ export class PlausableListReport extends PlausibleBaseElement {
     this.fetchData();
   }
 
+  updated(changedProperties: Map<string | number | symbol, unknown>): void {
+    super.updated(changedProperties);
+
+    if (changedProperties.get('query')) {
+      this.fetchData();
+    }
+  }
+
   fetchData() {
     if (this.prevQuery !== this.query) {
       this.prevQuery = this.query;
@@ -201,6 +209,7 @@ export class PlausableListReport extends PlausibleBaseElement {
   }
 
   renderList() {
+    debugger;
     if (this.state.list && this.state.list.length > 0) {
       return html`
         <div

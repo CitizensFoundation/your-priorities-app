@@ -35,6 +35,9 @@ export class PlausibleVisitorsGraph extends PlausibleBaseElement {
   @property({ type: Object })
   topStatData: PlausibleTopStatsData | undefined | null;
 
+  @property({ type: Object })
+  graphData: any;
+
   @property({ type: Number })
   collectionId!: number;
 
@@ -46,18 +49,13 @@ export class PlausibleVisitorsGraph extends PlausibleBaseElement {
   }
 
   static get styles() {
-    return [
-      ...super.styles,
-    ];
+    return [...super.styles];
   }
 
   connectedCallback(): void {
     super.connectedCallback();
 
-    this.updateState({
-      loadingStage: 2,
-      metric: storage.getItem(`metric__${this.site.domain}`) || 'visitors',
-    });
+    this.metric = storage.getItem(`metric__${this.site.domain}`) || 'visitors';
 
     this.updateMetric = this.updateMetric.bind(this);
     this.fetchGraphData = this.fetchGraphData.bind(this);
@@ -68,22 +66,11 @@ export class PlausibleVisitorsGraph extends PlausibleBaseElement {
     super.updated(changedProperties);
 
     if (changedProperties.get('query')) {
-      debugger;
-
-      this.updateState({
-        loadingStage: 3,
-//        graphData: null,
-//        topStatData: undefined,
-      });
       this.fetchGraphData();
       this.fetchTopStatData();
     }
 
     if (changedProperties.get('metric')) {
-      this.updateState({
-        loadingStage: 1,
-//        graphData: null,
-      });
       this.fetchGraphData();
     }
 
@@ -101,18 +88,12 @@ export class PlausibleVisitorsGraph extends PlausibleBaseElement {
     if (topStatLabels && `${topStatLabels}` !== `${prevTopStatLabels}`) {
       if (!topStatLabels.includes(savedMetric) && savedMetric !== '') {
         if (this.query!.filters!.goal && this.metric !== 'conversions') {
-          this.updateState({
-            metric: 'conversions',
-          });
+          this.metric = 'conversions';
         } else {
-          this.updateState({
-            metric: topStatLabels[0],
-          });
+          this.metric = topStatLabels[0];
         }
       } else {
-        this.updateState({
-          metric: savedMetric,
-        });
+        this.metric = savedMetric;
       }
     }
   }
@@ -127,16 +108,12 @@ export class PlausibleVisitorsGraph extends PlausibleBaseElement {
   }
 
   updateMetric(newMetric: string) {
-    if (newMetric === this.state.metric) {
+    if (newMetric === this.metric) {
       storage.setItem(`metric__${this.site.domain}`, '');
-      this.updateState({
-        metric: '',
-      });
+      this.metric = '';
     } else {
       storage.setItem(`metric__${this.site.domain}`, newMetric);
-      this.updateState({
-        metric: newMetric,
-      });
+      this.metric = newMetric;
     }
   }
 
@@ -144,46 +121,31 @@ export class PlausibleVisitorsGraph extends PlausibleBaseElement {
   ///api/stats/localhost/sources?period=day&date=2022-08-14&filters=%7B%7D&with_imported=true&show_noref=false
 
   fetchGraphData() {
-    if (this.state.metric) {
+    if (this.metric) {
       api
         .getWithProxy(
-          "communities",
+          'communities',
           this.collectionId,
           `/api/stats/${encodeURIComponent(this.site!.domain!)}/main-graph`,
           this.query,
-          { metric: this.state.metric || 'none' }
+          { metric: this.metric || 'none' }
         )
         .then(res => {
-          this.updateState({
-            loadingStage: this.state.loadingStage! - 2,
-            graphData: res,
-          });
-          debugger;
-          this.requestUpdate();
-          return res;
+          this.graphData = res;
         });
-    } else {
-      this.updateState({
-        loadingStage: this.state.loadingStage! - 2, graphData: null
-      });
     }
   }
 
   fetchTopStatData() {
     api
       .getWithProxy(
-        "communities",
+        'communities',
         this.collectionId,
         `/api/stats/${encodeURIComponent(this.site!.domain!)}/top-stats`,
         this.query
       )
       .then(res => {
-        this.updateState({
-          loadingStage: this.state.loadingStage! - 1,
-          topStatData: res,
-        });
-        this.requestUpdate();
-        return res;
+        this.topStatData = res;
       });
   }
 
@@ -191,34 +153,28 @@ export class PlausibleVisitorsGraph extends PlausibleBaseElement {
     const theme =
       document.querySelector('html')!.classList.contains('dark') || false;
 
-    if (
-      (this.state.topStatData && this.state.graphData)
-    ) {
-      return html`
-        <pl-line-graph
-          .graphData="${this.state.graphData}"
-          .topStatData="${this.state.topStatData}"
-          .site="${this.site}"
-          .query="${this.query}"
-          .darkTheme="${theme}"
-          .metric="${this.state.metric!}"
-          .updateMetric="${this.updateMetric}"
-        ></pl-line-graph>
-      `;
-    } else {
-      return nothing;
-    }
+    return html`
+      <pl-line-graph
+        .graphData="${this.graphData}"
+        .topStatData="${this.topStatData}"
+        .site="${this.site}"
+        .query="${this.query}"
+        .darkTheme="${theme}"
+        .metric="${this.metric!}"
+        .updateMetric="${this.updateMetric}"
+      ></pl-line-graph>
+    `;
   }
 
   render() {
-    const { metric, topStatData, graphData } = this.state;
-    return html`${(this.state.graphData && this.state.topStatData) ? html`
+    return html`${this.graphData && this.topStatData
+      ? html`
               <div class="graph-inner">
                 <div
                   class="${
-                    topStatData && !graphData
+                    this.topStatData && !this.graphData
                       ? 'pt-52 sm:pt-56 md:pt-60'
-                      : metric
+                      : this.metric
                       ? 'pt-32 sm:pt-36 md:pt-48'
                       : 'pt-16 sm:pt-14 md:pt-18 lg:pt-5'
                   } mx-auto loading"
