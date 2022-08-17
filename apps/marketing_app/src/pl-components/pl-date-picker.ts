@@ -89,6 +89,7 @@ export class PlausibleDatePicker extends PlausibleBaseElement {
     let st = this.state;
 
     if (changedProperties.has('query')) {
+      this.close();
     }
   }
 
@@ -425,7 +426,7 @@ export class PlausibleDatePicker extends PlausibleBaseElement {
       return html`
         <div
           id="datemenu"
-          class="absolute w-full left-0 right-0 md:w-56 md:absolute md:top-auto md:left-auto md:right-0 mt-2 origin-top-right z-10"
+          class="absolute w-full md:w-56 md:absolute md:top-auto md:left-auto md:right-0 mt-2 origin-top-right z-10"
         >
           <div
             class="rounded-md shadow-lg  bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5

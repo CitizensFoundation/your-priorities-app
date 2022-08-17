@@ -42,8 +42,8 @@ class Timer {
 
 @customElement('pl-dashboard')
 export class PlausibleDashboard extends PlausibleBaseElement {
-  @property({ type: String })
-  query!: string;
+  @property({ type: Object })
+  query!: PlausibleQueryData;
 
   @property({ type: Object })
   site!: PlausibleSiteData;
@@ -78,8 +78,14 @@ export class PlausibleDashboard extends PlausibleBaseElement {
 
   connectedCallback(): void {
     super.connectedCallback();
-    this.history = createBrowserHistory()
     this.setState();
+    this.history = createBrowserHistory();
+    this.query = parseQuery(location.search, this.site);
+    window.addEventListener('popstate',  () => {
+      this.query = parseQuery(location.search, this.site);
+      debugger;
+      //update model accordingly
+    });
   }
 
   static get styles() {
@@ -89,18 +95,14 @@ export class PlausibleDashboard extends PlausibleBaseElement {
   }
 
   setState() {
-    debugger;
     this.updateState({
-      query: parseQuery(this.query, this.site),
       timer: new Timer(),
       metric: 'visitors'
     } as PlausibleStateData);
-    debugger;
   }
 
   updated(changedProperties: Map<string | number | symbol, unknown>): void {
     super.updated(changedProperties);
-
     if (changedProperties.has('query')) {
       api.cancelAll();
       this.setState();
@@ -108,14 +110,14 @@ export class PlausibleDashboard extends PlausibleBaseElement {
   }
 
   render() {
-    if (this.site && this.state && this.state.query) {
+    if (this.site && this.state && this.query) {
       if (true || this.state!.query!.period === 'day') {
         return html`
           <pl-realtime
             .timer="${this.state.timer}"
             .site="${this.site}"
             .currentRole="${this.currentUserRole}"
-            .query="${this.state.query}"
+            .query="${this.query}"
             .history="${this.history}"
             .collectionId="${this.collectionId}"
             .collectionType="${this.collectionType}"
@@ -128,7 +130,7 @@ export class PlausibleDashboard extends PlausibleBaseElement {
             .site="${this.site}"
             .history="${this.history}"
             .currentRole="${this.currentUserRole}"
-            .query="${this.state.query}"
+            .query="${this.query}"
             .collectionId="${this.collectionId}"
             .collectionType="${this.collectionType}"
           ></pl-historical>

@@ -85,7 +85,6 @@ export class YpCommunityMarketing extends YpAdminPage {
           <pl-dashboard
             .collectionId="${this.collection.id}"
             collectionType="communities"
-            query="{ period: 'realtime'}"
           ></pl-dashboard>
         `
       : nothing;

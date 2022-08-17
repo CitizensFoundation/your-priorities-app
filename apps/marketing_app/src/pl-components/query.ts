@@ -19,7 +19,7 @@ export function parseQuery(querystring: string, site: PlausibleSiteData): Plausi
       period = '30d'
     }
 
-  return {
+    return {
     period,
     date: q.get('date') ? parseUTCDate(q.get('date')) : nowForSite(site),
     from: q.get('from') ? parseUTCDate(q.get('from')) : undefined,
@@ -76,9 +76,11 @@ export function navigateToQuery(history: BrowserHistory, queryFrom: PlausibleQue
   if (newData.period && newData.period !== queryFrom.period) {
     const replaceQuery = new URLSearchParams(window.location.search)
     replaceQuery.set('period', queryFrom.period)
-    history.replace({ search: replaceQuery.toString() })
+//    history.replace({ search: replaceQuery.toString() })
+    const currentUri = `${location.pathname}?${replaceQuery.toString()}`;
+    window.history.pushState({}, "", currentUri);
+    window.dispatchEvent(new CustomEvent('popstate'));
   }
-  debugger;
 
   // then push the new query to the history
   history.push({ search: generateQueryString(newData) })

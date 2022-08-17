@@ -24,7 +24,14 @@ export class PlausibleLink extends PlausibleBaseElement {
     return `${location.pathname}?${this.to!.search}`;
   }
 
+  onClick(e: Event) {
+    e.preventDefault();
+    window.history.pushState({}, "", this.currentUri);
+    window.dispatchEvent(new CustomEvent('popstate'));
+    //window.history.forward();
+  }
+
   render() {
-    return html`<a href="${this.currentUri}"><slot></slot></a> `;
+    return html`<a href="${this.currentUri}" @click="${this.onClick}"><slot></slot></a> `;
   }
 }

@@ -57,7 +57,7 @@ export class PlausibleConversions extends PlausibleBaseElement {
     super.updated(changedProperties);
     if (changedProperties.get('query')) {
       const height = this.offsetHeight;
-      this.updateState({ loading: true, goals: undefined, prevHeight: height });
+      this.updateState({ loading: true, prevHeight: height });
       this.fetchConversions();
     }
   }
@@ -144,9 +144,9 @@ export class PlausibleConversions extends PlausibleBaseElement {
 
   renderInner() {
     const { viewport } = this.state;
-    if (this.state.loading) {
+    if (!this.state.goals) {
       return html`<div class="mx-auto my-2 loading"><div></div></div>`;
-    } else if (this.state.goals) {
+    } else {
       return html`
         <h3 class="font-bold dark:text-gray-100">
           ${this.title || "Goal Conversions"}

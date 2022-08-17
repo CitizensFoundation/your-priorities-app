@@ -68,10 +68,12 @@ export class PlausibleVisitorsGraph extends PlausibleBaseElement {
     super.updated(changedProperties);
 
     if (changedProperties.get('query')) {
+      debugger;
+
       this.updateState({
         loadingStage: 3,
-        graphData: null,
-        topStatData: undefined,
+//        graphData: null,
+//        topStatData: undefined,
       });
       this.fetchGraphData();
       this.fetchTopStatData();
@@ -80,7 +82,7 @@ export class PlausibleVisitorsGraph extends PlausibleBaseElement {
     if (changedProperties.get('metric')) {
       this.updateState({
         loadingStage: 1,
-        graphData: null,
+//        graphData: null,
       });
       this.fetchGraphData();
     }
@@ -116,8 +118,8 @@ export class PlausibleVisitorsGraph extends PlausibleBaseElement {
   }
 
   firstUpdated() {
-    //this.fetchGraphData();
-    //this.fetchTopStatData();
+    this.fetchGraphData();
+    this.fetchTopStatData();
     if (this.timer) {
       this.timer.onTick(this.fetchGraphData);
       this.timer.onTick(this.fetchTopStatData);
@@ -156,6 +158,8 @@ export class PlausibleVisitorsGraph extends PlausibleBaseElement {
             loadingStage: this.state.loadingStage! - 2,
             graphData: res,
           });
+          debugger;
+          this.requestUpdate();
           return res;
         });
     } else {
@@ -178,28 +182,26 @@ export class PlausibleVisitorsGraph extends PlausibleBaseElement {
           loadingStage: this.state.loadingStage! - 1,
           topStatData: res,
         });
+        this.requestUpdate();
         return res;
       });
   }
 
   renderInner() {
-    const { graphData, metric, topStatData, loadingStage } = this.state;
-
     const theme =
       document.querySelector('html')!.classList.contains('dark') || false;
 
     if (
-      (loadingStage && loadingStage <= 1 && topStatData) ||
-      (topStatData && graphData)
+      (this.state.topStatData && this.state.graphData)
     ) {
       return html`
         <pl-line-graph
-          .graphData="${graphData}"
-          .topStatData="${topStatData}"
+          .graphData="${this.state.graphData}"
+          .topStatData="${this.state.topStatData}"
           .site="${this.site}"
           .query="${this.query}"
           .darkTheme="${theme}"
-          .metric="${metric!}"
+          .metric="${this.state.metric!}"
           .updateMetric="${this.updateMetric}"
         ></pl-line-graph>
       `;
@@ -210,8 +212,7 @@ export class PlausibleVisitorsGraph extends PlausibleBaseElement {
 
   render() {
     const { metric, topStatData, graphData } = this.state;
-    return html`${this.state.loadingStage! < 1
-      ? html`
+    return html`${(this.state.graphData && this.state.topStatData) ? html`
               <div class="graph-inner">
                 <div
                   class="${
