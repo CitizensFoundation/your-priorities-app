@@ -101,7 +101,7 @@ export class PlausablePages extends PlausibleBaseElement {
       return html`
         <li
           class="hover:text-indigo-600 cursor-pointer"
-          @click=${() => this.setMode(mode)}
+          @click=${this.setMode(mode)}
         >
           ${name}
         </li>
@@ -125,6 +125,7 @@ export class PlausablePages extends PlausibleBaseElement {
                   this.labelFor[this.state.mode] || 'Page Visits'
                 }
               </h3>
+              <div class="flex"></div>
               <ul
                 class="flex font-medium text-xs text-gray-500 dark:text-gray-400 space-x-2"
               >

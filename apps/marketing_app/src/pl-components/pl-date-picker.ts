@@ -461,8 +461,14 @@ export class PlausibleDatePicker extends PlausibleBaseElement {
             <div class="py-1 date-option-group">
               ${this.renderLink('all', 'All time')}
               <span
-                @click="${() => {this.updateState({ mode: 'calendar'}); this.openCalendar()}}"
-                @keyPress=${() => {this.updateState({ mode: 'calendar'}); this.openCalendar()}}"
+                @click="${() => {
+                  this.updateState({ mode: 'calendar' });
+                  this.openCalendar();
+                }}"
+                @keyPress=${() => {
+                  this.updateState({ mode: 'calendar' });
+                  this.openCalendar();
+                }}"
                 class="px-4 py-2 text-sm leading-tight hover:bg-gray-100
                   dark:hover:bg-gray-900 hover:text-gray-900 dark:hover:text-gray-100
                   cursor-pointer flex items-center justify-between"
@@ -491,11 +497,10 @@ export class PlausibleDatePicker extends PlausibleBaseElement {
             maxDate="today"
             .minDate=${dayBeforeCreation}
             showMonths="1"
-            static="true,"
             animate="true"
-            className="invisible"
-            @change=${this.setCustomDate}
-          ></lit-flatpickr>
+            .onValueUpdate="${this.setCustomDate}"
+          >
+          </lit-flatpickr>
         </div>
       `;
     }
@@ -503,17 +508,14 @@ export class PlausibleDatePicker extends PlausibleBaseElement {
 
   renderPicker() {
     return html`
-      <div
-        id="dropdownNode"
-        class="w-20 sm:w-36 md:w-48 md:relative"
-      >
+      <div id="dropdownNode" class="w-20 sm:w-36 md:w-48 md:relative">
         <div
           @click=${this.toggle}
           @keyPress=${this.toggle}
           class="flex items-center justify-between rounded bg-white dark:bg-gray-800 shadow px-2 md:px-3
           py-2 leading-tight cursor-pointer text-xs md:text-sm text-gray-800
           dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-900"
-          tabIndex="0"
+          tabindex="0"
           role="button"
           aria-haspopup="true"
           aria-expanded="false"
@@ -523,10 +525,14 @@ export class PlausibleDatePicker extends PlausibleBaseElement {
             ${this.leadingText}
             <span class="font-medium">${this.timeFrameText()}</span>
           </span>
-          <div class="hidden sm:inline-block h-4 w-4 md:h-5 md:w-5 text-gray-500">C-ICON</div>
+          <div
+            class="hidden sm:inline-block h-4 w-4 md:h-5 md:w-5 text-gray-500"
+          >
+            C-ICON
+          </div>
         </div>
 
-        ${ (this.state.open) ? this.renderDropDownContent() : nothing}
+        ${this.state.open ? this.renderDropDownContent() : nothing}
       </div>
     `;
   }

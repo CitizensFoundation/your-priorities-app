@@ -60,7 +60,7 @@ export class PlausibleVisitorsGraph extends PlausibleBaseElement {
     this.updateMetric = this.updateMetric.bind(this);
     this.fetchGraphData = this.fetchGraphData.bind(this);
     this.fetchTopStatData = this.fetchTopStatData.bind(this);
-  }
+}
 
   updated(changedProperties: Map<string | number | symbol, unknown>): void {
     super.updated(changedProperties);
@@ -167,26 +167,24 @@ export class PlausibleVisitorsGraph extends PlausibleBaseElement {
   }
 
   render() {
-    return html`${this.graphData && this.topStatData
-      ? html`
-              <div class="graph-inner">
-                <div
-                  class="${
-                    this.topStatData && !this.graphData
-                      ? 'pt-52 sm:pt-56 md:pt-60'
-                      : this.metric
-                      ? 'pt-32 sm:pt-36 md:pt-48'
-                      : 'pt-16 sm:pt-14 md:pt-18 lg:pt-5'
-                  } mx-auto loading"
-                >
-                  <div></div>
-                </div>
-              </div>
-            ${this.renderInner()}
-          </div>
+    return html`
+    <div class="graph-inner">
+      <div
+        class="${
+          this.topStatData && !this.graphData
+            ? 'pt-52 sm:pt-56 md:pt-60'
+            : this.metric
+            ? 'pt-32 sm:pt-36 md:pt-48'
+            : 'pt-16 sm:pt-14 md:pt-18 lg:pt-5'
+        } mx-auto ${this.graphData && this.topStatData ? '' : 'loading'}"
+      >
+        <div></div>
+      </div>
+    </div>
+  ${this.graphData && this.topStatData ? this.renderInner() : nothing}
+</div>
 
-    `
-      : nothing}`;
+`;
   }
 }
 

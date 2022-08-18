@@ -124,7 +124,7 @@ export class PlausableListReport extends PlausibleBaseElement {
         this.updateState({ loading: false, list: res })
       );
     }
-  }
+}
 
   get label() {
     if (this.query.period === 'realtime') {
@@ -209,7 +209,6 @@ export class PlausableListReport extends PlausibleBaseElement {
   }
 
   renderList() {
-    debugger;
     if (this.state.list && this.state.list.length > 0) {
       return html`
         <div
@@ -237,7 +236,7 @@ export class PlausableListReport extends PlausibleBaseElement {
           ? html`<div class="mx-auto loading mt-44"><div></div></div>`
           : nothing}
         <div class="flex-grow">${this.renderList()}</div>
-        ${this.detailsLink && !this.state.loading
+        ${this.detailsLink && this.state.list
           ? html`<pl-more-link
               .url=${this.detailsLink}
               .list=${this.state.list}

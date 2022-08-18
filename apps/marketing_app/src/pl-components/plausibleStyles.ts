@@ -72,9 +72,6 @@ export const PlausibleStyles = css`
     }
   }
   .loading {
-    display: none;
-  }
-  .loading {
     animation: loaderFadein 0.2s ease-in;
     height: 50px;
     width: 50px;
@@ -787,10 +784,12 @@ export const PlausibleStyles = css`
     margin-left: 0.5rem;
     margin-right: 0.5rem;
   }
+
   .mx-auto {
     margin-left: auto;
     margin-right: auto;
   }
+
   .my-1 {
     margin-bottom: 0.25rem;
     margin-top: 0.25rem;
@@ -1300,9 +1299,16 @@ export const PlausibleStyles = css`
     cursor: default;
   }
   .cursor-pointer,
-  .hover\:cursor-pointer:hover {
+  .hover:\cursor-pointer:hover {
     cursor: pointer;
   }
+
+  .cursor-pointer {
+    cursor: pointer;
+  }
+
+
+  .cursor-pointer
   .select-none {
     -webkit-user-select: none;
     -moz-user-select: none;
@@ -2802,6 +2808,7 @@ export const PlausibleStyles = css`
       padding-top: 90px;
     }
   }
+
   .graph-inner {
     height: auto;
     left: 0;
@@ -2809,6 +2816,7 @@ export const PlausibleStyles = css`
     top: 0;
     width: 100%;
   }
+
   .light-text {
     color: #f0f4f8;
   }

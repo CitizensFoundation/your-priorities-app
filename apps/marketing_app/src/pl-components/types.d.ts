@@ -28,7 +28,7 @@ interface PlausibleSiteData {
   hasGoals: boolean;
   embedded: boolean;
   offset?: number;
-  statsBegin?: Date;
+  statsBegin?: string;
 }
 
 interface PlausibleQueryData {

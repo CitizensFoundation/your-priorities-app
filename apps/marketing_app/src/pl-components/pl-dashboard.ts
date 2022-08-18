@@ -72,7 +72,8 @@ export class PlausibleDashboard extends PlausibleBaseElement {
       domain: "localhost",
       hasGoals: true,
       embedded: false,
-      offset: 1
+      offset: 1,
+      statsBegin: "2022-05-05"
     }
   }
 
@@ -83,7 +84,6 @@ export class PlausibleDashboard extends PlausibleBaseElement {
     this.query = parseQuery(location.search, this.site);
     window.addEventListener('popstate',  () => {
       this.query = parseQuery(location.search, this.site);
-      debugger;
       //update model accordingly
     });
   }
