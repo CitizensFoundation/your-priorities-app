@@ -486,6 +486,12 @@
         <input type="hidden" name="postValCode" value="[[browserFingerprint]]">
         <input type="hidden" name="postConf" value="[[browserFingerprintConfidence]]">
 
+        <input type="hidden" name="originalQueryString" value="[[originalQueryStringVal()]]">
+        <input type="hidden" name="userLocale" value="[[userLocaleVal()]]">
+        <input type="hidden" name="userAutoTranslate" value="[[userAutoTranslateVal()]]">
+        <input type="hidden" name="referrer" value="[[referrerVal()]]">
+        <input type="hidden" name="url" value="[[urlVal()]]">
+        <input type="hidden" name="screen_width" value="[[screenWidthVal()]]">
       </div>
     </yp-edit-dialog>
 
@@ -1523,6 +1529,30 @@
           }
         }
       }.bind(this), 20);
+    },
+
+    originalQueryStringVal: function () {
+      return window.appGlobals.getOriginalQueryString();
+    },
+
+    userLocaleVal: function () {
+      return window.locale;
+    },
+
+    userAutoTranslateVal: function () {
+      return window.autoTranslate;
+    },
+
+    referrerVal: function () {
+      return document.referrer;
+    },
+
+    urlVal: function () {
+      return location.href;
+    },
+
+    screenWidthVal: function () {
+      return window.screen.width;
     }
   });
 </script>

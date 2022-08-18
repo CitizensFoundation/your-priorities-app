@@ -747,7 +747,13 @@ var updatePostData = function (req, post) {
     post.set('data', {
       browserId: req.body.postBaseId,
       browserFingerprint: req.body.postValCode,
-      browserFingerprintConfidence: req.body.postConf
+      browserFingerprintConfidence: req.body.postConf,
+      originalQueryString: req.body.originalQueryString,
+      userLocale: req.body.userLocale,
+      userAutoTranslate: req.body.userAutoTranslate,
+      referrer: req.body.referrer,
+      url: req.body.url,
+      screen_width: req.body.screen_width
     });
   }
 

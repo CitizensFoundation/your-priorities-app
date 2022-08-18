@@ -1694,8 +1694,15 @@
               value: value,
               pointBaseId:  window.appUser.getBrowserId(),
               pointValCode: window.appUser.browserFingerprint,
-              pointConf: window.appUser.browserFingerprintConfidence
+              pointConf: window.appUser.browserFingerprintConfidence,
+              originalQueryString: window.appGlobals.getOriginalQueryString(),
+              userLocale: window.locale,
+              userAutoTranslate: window.autoTranslate,
+              referrer: document.referrer,
+              url: location.href,
+              screen_width: window.screen.width
             };
+
             this.set('addPointDisabled', true);
             this.$.newPointAjax.generateRequest();
             if (videoId)

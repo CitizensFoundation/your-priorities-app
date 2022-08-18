@@ -523,7 +523,13 @@ router.post('/:groupId', auth.can('create point'), function(req, res) {
     data: {
       browserId: req.body.pointBaseId,
       browserFingerprint: req.body.pointValCode,
-      browserFingerprintConfidence: req.body.pointConf
+      browserFingerprintConfidence: req.body.pointConf,
+      originalQueryString: req.body.originalQueryString,
+      userLocale: req.body.userLocale,
+      userAutoTranslate: req.body.userAutoTranslate,
+      referrer: req.body.referrer,
+      url: req.body.url,
+      screen_width: req.body.screen_width
     }
   });
   point.save().then(function() {

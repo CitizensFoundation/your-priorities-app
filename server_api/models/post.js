@@ -509,7 +509,18 @@ module.exports = (sequelize, DataTypes) => {
           user_id: req.user.id,
           status: post.status,
           user_agent: req.useragent.source,
-          ip_address: req.clientIp
+          ip_address: req.clientIp,
+          data: {
+            browserId: req.body.pointBaseId,
+            browserFingerprint: req.body.pointValCode,
+            browserFingerprintConfidence: req.body.pointConf,
+            originalQueryString: req.body.originalQueryString,
+            userLocale: req.body.userLocale,
+            userAutoTranslate: req.body.userAutoTranslate,
+            referrer: req.body.referrer,
+            url: req.body.url,
+            screen_width: req.body.screen_width
+          }
         });
         point.save().then(() => {
           const pointRevision = sequelize.models.PointRevision.build({

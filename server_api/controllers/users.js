@@ -1342,19 +1342,6 @@ router.get('/reset/:token', function(req, res) {
 });
 
 router.post('/createActivityFromApp', function(req, res) {
-  var ipAddr = req.headers["x-forwarded-for"];
-  if (ipAddr){
-    var list = ipAddr.split(",");
-    ipAddr = list[0];
-  } else {
-    ipAddr = req.connection.remoteAddress;
-  }
-
-  let userAutoTranslate = false;
-  if (req.body.userAutoTranslate) {
-    userAutoTranslate = (req.body.userAutoTranslate.toLowerCase() === 'true');
-  }
-
   const workData = {
     body: {
       actor: req.body.actor,
@@ -1367,12 +1354,13 @@ router.post('/createActivityFromApp', function(req, res) {
       sessionId: req.body.sessionId,
       user_agent: req.body.user_agent,
       userLocale: req.body.userLocale,
-      userAutoTranslate,
+      userAutoTranslate: req.body.userAutoTranslate,
       screen_width: req.body.screen_width,
       originalQueryString: req.body.originalQueryString,
       referrer: req.body.referrer,
       url: req.body.url,
-      ipAddress: ipAddr, server_timestamp: Date.now()
+      ipAddress: req.clientIp,
+      server_timestamp: Date.now()
     },
 
     userId: req.user ? req.user.id : null,
@@ -1384,9 +1372,7 @@ router.post('/createActivityFromApp', function(req, res) {
     pointId: req.body.pointId ? req.body.pointId : null,
   };
 
-  if (!process.env.DISABLE_RECORDING_OF_USER_EVENTS) {
-    queue.add('delayed-job', { type: 'create-activity-from-app', workData }, 'medium');
-  }
+  queue.add('delayed-job', { type: 'create-activity-from-app', workData }, 'medium');
 
   res.sendStatus(200);
 });
