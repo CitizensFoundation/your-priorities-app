@@ -4,9 +4,9 @@ Your Priorities - Citizens participation application
 
 Everything in this repo is under AGPL-3.0 license unless otherwise specified.
 
-Copyright (c) 2008-2021 Citizens Foundation Iceland. All rights reserved.
+Copyright (c) 2008-2022 Citizens Foundation Iceland. All rights reserved.
 
-Developed in 2008-2021 by
+Developed in 2008-2022 by
 Robert Bjarnason, robert@citizens.is
 Gunnar Grimsson, gunnar@citizens.is
 Nathalie Stembert
