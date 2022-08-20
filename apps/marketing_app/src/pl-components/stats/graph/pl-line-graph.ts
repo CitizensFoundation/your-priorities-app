@@ -416,13 +416,12 @@ export class PlausibleLineGraph extends PlausibleBaseElementWithState {
           </div>
           <canvas
             id="main-graph-canvas"
-            class={'mt-4 select-none ' + extraClass}
+            class=${'mt-4 select-none ' + extraClass}
             width="1054"
             height="342"
           ></canvas>
-        </div>
+        </div>r
       </div>
-
     `;
   }
 }
