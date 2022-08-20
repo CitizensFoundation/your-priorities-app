@@ -108,6 +108,8 @@ export class PlausibleLineGraph extends PlausibleBaseElementWithState {
     // const prev_dataSet = graphData.prev_plot && buildDataSet(graphData.prev_plot, false, this.ctx, METRIC_LABELS[this.metric], true)
     // const combinedDataSets = comparison.enabled && prev_dataSet ? [...dataSet, ...prev_dataSet] : dataSet;
 
+    const graphData = this.graphData;
+
     return new Chart(this.ctx!, {
       type: 'line',
       data: {
@@ -154,11 +156,9 @@ export class PlausibleLineGraph extends PlausibleBaseElementWithState {
             grid: { display: false },
             ticks: {
               maxTicksLimit: 8,
-              callback: (val, _index, _ticks) => {
-                return dateFormatter(this.graphData.interval)(
-                  this.getLabelForValue(val as number)
-                );
-              },
+              callback: function(val, _index, _ticks) {
+                return dateFormatter(graphData.interval)(this.getLabelForValue(val as number)) },
+
               color: this.darkTheme ? 'rgb(243, 244, 246)' : undefined,
             },
           },
@@ -171,9 +171,6 @@ export class PlausibleLineGraph extends PlausibleBaseElementWithState {
     });
   }
 
-  getLabelForValue(val: number) {
-    return `getLabelForValue ${val}`;
-  }
 
   repositionTooltip(e: MouseEvent) {
     const tooltipEl = this.$$('#chartjs-tooltip');
