@@ -12,6 +12,7 @@ const getAllModeratedItemsByDomain = require('../active-citizen/engine/moderatio
 const getLoginsExportDataForDomain = require('../utils/export_utils').getLoginsExportDataForDomain;
 var sanitizeFilename = require("sanitize-filename");
 var moment = require('moment');
+const {plausibleStatsProxy} = require("../active-citizen/engine/analytics/plausible/manager");
 const getFromAnalyticsApi = require('../active-citizen/engine/analytics/manager').getFromAnalyticsApi;
 const triggerSimilaritiesTraining = require('../active-citizen/engine/analytics/manager').triggerSimilaritiesTraining;
 const sendBackAnalyticsResultsOrError = require('../active-citizen/engine/analytics/manager').sendBackAnalyticsResultsOrError;
@@ -1103,6 +1104,19 @@ router.get('/:id/stats_votes', auth.can('edit domain'), function(req, res) {
   }, getDomainIncludes(req.params.id), (error, results) => {
     sendBackAnalyticsResultsOrError(req,res,error,results);
   });
+});
+
+
+router.put('/:domainId/plausibleStatsProxy', auth.can('edit domain'), async (req, res) => {
+  try {
+    const plausibleData = await plausibleStatsProxy(req.body.plausibleUrl, { domainId: req.params.domainId });
+    log.info("GOT DATA");
+    log.info(plausibleData);
+    res.send(plausibleData);
+  } catch (error) {
+    log.error('Could not get plausibleStatsProxy', { err: error, context: 'getPlausibleSeries', user: toJson(req.user.simple()) });
+    res.sendStatus(500);
+  }
 });
 
 module.exports = router;
