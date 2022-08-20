@@ -156,8 +156,11 @@ export class PlausibleLineGraph extends PlausibleBaseElementWithState {
             grid: { display: false },
             ticks: {
               maxTicksLimit: 8,
-              callback: function(val, _index, _ticks) {
-                return dateFormatter(graphData.interval)(this.getLabelForValue(val as number)) },
+              callback: function (val, _index, _ticks) {
+                return dateFormatter(graphData.interval)(
+                  this.getLabelForValue(val as number)
+                );
+              },
 
               color: this.darkTheme ? 'rgb(243, 244, 246)' : undefined,
             },
@@ -170,7 +173,6 @@ export class PlausibleLineGraph extends PlausibleBaseElementWithState {
       },
     });
   }
-
 
   repositionTooltip(e: MouseEvent) {
     const tooltipEl = this.$$('#chartjs-tooltip');
