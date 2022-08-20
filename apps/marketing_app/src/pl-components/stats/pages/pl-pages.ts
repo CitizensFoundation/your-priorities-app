@@ -86,7 +86,7 @@ export class PlausablePages extends PlausibleBaseElementWithState {
       return html`
         <li
           class="hover:text-indigo-600 cursor-pointer"
-          @click=${this.setMode(mode)}
+          @click=${() => this.setMode(mode)}
         >
           ${name}
         </li>

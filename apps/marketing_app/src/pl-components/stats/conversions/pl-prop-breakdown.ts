@@ -102,7 +102,7 @@ export class PlausiblePropBreakdown extends PlausibleBaseElementWithState {
     if (this.query.filters!['goal']) {
       api
         .getWithProxy(
-          'communities',
+          this.collectionType,
           this.collectionId,
           `/api/stats/${encodeURIComponent(
             this.site.domain!

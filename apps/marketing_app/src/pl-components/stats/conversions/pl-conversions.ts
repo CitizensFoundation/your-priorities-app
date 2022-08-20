@@ -80,7 +80,7 @@ export class PlausibleConversions extends PlausibleBaseElementWithState {
   fetchConversions() {
     api
       .getWithProxy(
-        'communities',
+        this.collectionType,
         this.collectionId,
         `/api/stats/${encodeURIComponent(this.site.domain!)}/conversions`,
         this.query

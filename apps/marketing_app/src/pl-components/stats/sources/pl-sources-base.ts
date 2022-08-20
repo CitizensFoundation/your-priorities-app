@@ -73,6 +73,7 @@ export class PlausibleSourcesBase extends PlausibleBaseElementWithState {
   }
 
   renderTabs() {
+    return nothing;
     const activeClass =
       'inline-block h-5 text-indigo-700 dark:text-indigo-500 font-bold active-prop-heading truncate text-left';
     const defaultClass =

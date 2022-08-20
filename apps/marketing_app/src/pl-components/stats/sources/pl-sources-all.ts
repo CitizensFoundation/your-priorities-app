@@ -8,18 +8,16 @@ import * as api from '../../api.js';
 
 import '../../pl-link.js';
 import '../../stats/pl-bar.js';
+import '../../pl-fade-in.js';
 
 @customElement('pl-sources-all')
 export class PlausibleSourcesAll extends PlausibleSourcesBase {
   @property({ type: String })
   to: string | undefined = undefined;
 
-  firstUpdated() {
-    this.fetchReferrers();
-    if (this.timer) this.timer.onTick(this.fetchReferrers.bind(this));
-  }
-
   connectedCallback() {
+    super.connectedCallback();
+    if (this.timer) this.timer.onTick(this.fetchReferrers.bind(this));
     this.fetchReferrers();
   }
 
@@ -102,6 +100,7 @@ export class PlausibleSourcesAll extends PlausibleSourcesBase {
         <div class="flex-grow">
           ${this.referrers.map(r => this.renderReferrer(r))}
         </div>
+
         <pl-more-link
           .site=${this.site}
           .list=${this.referrers}
@@ -118,9 +117,9 @@ export class PlausibleSourcesAll extends PlausibleSourcesBase {
   }
 
   renderContent() {
-    html`
+    return html`
       <div class="flex flex-col flex-grow">
-        <div id="sources" class="flex justify-between w-full">
+        <div id="sources" class="justify-between w-full">
           <h3 class="font-bold dark:text-gray-100">Top Sources</h3>
           ${this.renderTabs()}
         </div>
@@ -129,9 +128,9 @@ export class PlausibleSourcesAll extends PlausibleSourcesBase {
               <div></div>
             </div>`
           : nothing}
-        <FadeIn show="${!this.loading}" class="flex flex-col flex-grow">
+        <pl-fade-in .show="${!this.loading}" class="flex flex-col flex-grow">
           ${this.renderList()}
-        </FadeIn>
+        </pl-fade-in>
       </div>
     `;
   }

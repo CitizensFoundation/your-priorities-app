@@ -110,7 +110,7 @@ export class PlausibleVisitorsGraph extends PlausibleBaseElementWithState {
     if (this.metric) {
       api
         .getWithProxy(
-          'communities',
+          this.collectionType,
           this.collectionId,
           `/api/stats/${encodeURIComponent(this.site!.domain!)}/main-graph`,
           this.query,
@@ -125,7 +125,7 @@ export class PlausibleVisitorsGraph extends PlausibleBaseElementWithState {
   fetchTopStatData() {
     api
       .getWithProxy(
-        'communities',
+        this.collectionType,
         this.collectionId,
         `/api/stats/${encodeURIComponent(this.site!.domain!)}/top-stats`,
         this.query

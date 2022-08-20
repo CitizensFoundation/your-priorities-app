@@ -14,13 +14,9 @@ export class PlausibleSourcesUtm extends PlausibleSourcesBase {
   @property({ type: String })
   to: string | undefined = undefined;
 
-  firstUpdated() {
-    if (this.timer) this.timer.onTick(this.fetchReferrers.bind(this));
-  }
-
   connectedCallback() {
-    this.fetchReferrers();
     if (this.timer) this.timer.onTick(this.fetchReferrers.bind(this));
+    this.fetchReferrers();
   }
 
   updated(changedProperties: Map<string | number | symbol, unknown>): void {

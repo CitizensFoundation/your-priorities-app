@@ -69,7 +69,6 @@ export class PlausibleDashboard extends PlausibleBaseElementWithState {
 
   resetState() {
     this.timer = new Timer();
-    this.metric = 'visitors';
   }
 
   connectedCallback(): void {
@@ -78,7 +77,6 @@ export class PlausibleDashboard extends PlausibleBaseElementWithState {
     this.query = parseQuery(location.search, this.site);
     window.addEventListener('popstate',  () => {
       this.query = parseQuery(location.search, this.site);
-      //update model accordingly
     });
   }
 

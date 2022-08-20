@@ -7,6 +7,8 @@ import { PlausibleBaseElement } from './pl-base-element.js';
 import './stats/graph/pl-visitors-graph.js';
 import './stats/conversions/pl-conversions.js';
 import './stats/pages/pl-pages.js';
+import './stats/sources/pl-sources-list.js';
+
 import './pl-date-picker.js';
 import { BrowserHistory } from './util/history.js';
 import { PlausibleBaseElementWithState } from './pl-base-element-with-state.js';
@@ -71,15 +73,17 @@ export class PlausibleRealtime extends PlausibleBaseElementWithState {
           .collectionId="${this.collectionId}"
           .collectionType="${this.collectionType}"
         ></pl-visitors-graph>
-        <div class="items-start justify-between block w-full md:flex">
-          <pl-sources
+        <div class="items-start justify-between block w-full md:flex flex">
+          <pl-sources-list
+            class="flex-col"
             .site="${this.site}"
             .query="${this.query}"
             .timer="${this.timer}"
             .collectionId="${this.collectionId}"
             .collectionType="${this.collectionType}"
-          ></pl-sources>
+          ></pl-sources-list>
           <pl-pages
+             class="flex-col"
             .site="${this.site}"
             .query="${this.query}"
             .timer="${this.timer}"

@@ -3,6 +3,10 @@ import { property, customElement } from 'lit/decorators.js';
 import * as storage from '../../util/storage.js';
 import { PlausibleBaseElementWithState } from '../../pl-base-element-with-state';
 
+import './pl-sources-all.js';
+import './pl-sources-utm.js';
+
+@customElement('pl-sources-list')
 export class PlausibleSourcesList extends PlausibleBaseElementWithState {
   @property({ type: String })
   tabKey!: string;
@@ -10,17 +14,18 @@ export class PlausibleSourcesList extends PlausibleBaseElementWithState {
   @property({ type: String })
   tab!: PlausibleSourcesTabOptions;
 
-  constructor() {
-    super();
+  connectedCallback() {
+    super.connectedCallback();
     this.tabKey = 'sourceTab__' + this.site.domain!;
     const storedTab = storage.getItem(this.tabKey);
     this.tab = storedTab || 'all';
   }
 
   tabChanged(e: CustomEvent) {
-    debugger;
-    this.tab = e.detail.tab;
-    storage.setItem(this.tabKey, this.tab);
+    this.tab = e.detail;
+    if (this.tab) {
+      storage.setItem(this.tabKey, this.tab);
+    }
   }
 
   render() {

@@ -2959,6 +2959,7 @@ export const PlausibleStyles = css`
   }
   .stats-item {
     min-height: 436px;
+    min-width: 545px;
   }
   @media (min-width: 768px) {
     .stats-item {
@@ -3304,6 +3305,7 @@ export const PlausibleStyles = css`
     .md\:flex {
       display: flex;
     }
+
     .md\:grid {
       display: grid;
     }
