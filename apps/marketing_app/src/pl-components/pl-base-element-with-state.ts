@@ -20,18 +20,10 @@ export class PlausibleBaseElementWithState extends PlausibleBaseElement {
   @property({ type: Object })
   timer: any;
 
-  @property({ type: Object })
-  state!: PlausibleStateData;
-
   @property({ type: String })
   currentUserRole!: string;
 
   constructor() {
     super();
-    this.state = {};
-  }
-
-  updateState(updatedState: PlausibleStateData) {
-    this.state = { ...this.state, ...updatedState };
   }
 }

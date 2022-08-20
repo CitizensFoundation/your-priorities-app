@@ -20,13 +20,20 @@ export class PlausibleConversions extends PlausibleBaseElementWithState {
   @property({ type: Object })
   onClickFunction!: any;
 
+  @property({ type: Boolean })
+  loading = false;
+
+  @property({ type: Number })
+  viewport = DEFAULT_WIDTH;
+
+  @property({ type: Number })
+  prevHeight: number | undefined;
+
+  @property({ type: Array })
+  goals?: PlausibleGoalData[];
+
   constructor() {
     super();
-
-    this.updateState({
-      loading: true,
-      viewport: DEFAULT_WIDTH,
-    });
 
     this.handleResize = this.handleResize.bind(this);
   }
@@ -46,7 +53,8 @@ export class PlausibleConversions extends PlausibleBaseElementWithState {
     super.updated(changedProperties);
     if (changedProperties.get('query')) {
       const height = this.offsetHeight;
-      this.updateState({ loading: true, prevHeight: height });
+      this.loading = true;
+      this.prevHeight = height;
       this.fetchConversions();
     }
   }
@@ -58,7 +66,7 @@ export class PlausibleConversions extends PlausibleBaseElementWithState {
   }
 
   handleResize() {
-    this.updateState({ viewport: window.innerWidth });
+    this.viewport = window.innerWidth;
   }
 
   firstUpdated() {
@@ -66,8 +74,7 @@ export class PlausibleConversions extends PlausibleBaseElementWithState {
   }
 
   getBarMaxWidth() {
-    const { viewport } = this.state;
-    return viewport! > MOBILE_UPPER_WIDTH ? '16rem' : '10rem';
+    return this.viewport! > MOBILE_UPPER_WIDTH ? '16rem' : '10rem';
   }
 
   fetchConversions() {
@@ -79,12 +86,11 @@ export class PlausibleConversions extends PlausibleBaseElementWithState {
         this.query
       )
       .then(res =>
-        this.updateState({ loading: false, goals: res, prevHeight: undefined })
+        { this.loading=false; this.goals= res; this.prevHeight = undefined }
       );
   }
 
   renderGoal(goal: PlausibleGoalData) {
-    const { viewport } = this.state;
     const renderProps =
       this.query.filters!['goal'] == goal.name && goal.prop_names;
 
@@ -93,7 +99,7 @@ export class PlausibleConversions extends PlausibleBaseElementWithState {
         <div class="flex items-center justify-between my-2">
           <pl-bar
             .count="${goal.unique_conversions}"
-            .all="${this.state.goals!}"
+            .all="${this.goals!}"
             bg="bg-red-50 dark:bg-gray-500 dark:bg-opacity-15"
             .maxWidthDeduction="${this.getBarMaxWidth()}"
             plot="unique_conversions"
@@ -108,7 +114,7 @@ export class PlausibleConversions extends PlausibleBaseElementWithState {
             <span class="inline-block w-20 font-medium text-right"
               >${numberFormatter(goal.unique_conversions)}</span
             >
-            ${viewport && viewport > MOBILE_UPPER_WIDTH
+            ${this.viewport && this.viewport > MOBILE_UPPER_WIDTH
               ? html`<span class="inline-block w-20 font-medium text-right"
                   >${numberFormatter(goal.total_conversions)}</span
                 >`
@@ -132,8 +138,7 @@ export class PlausibleConversions extends PlausibleBaseElementWithState {
   }
 
   renderInner() {
-    const { viewport } = this.state;
-    if (!this.state.goals) {
+    if (!this.goals) {
       return html`<div class="mx-auto my-2 loading"><div></div></div>`;
     } else {
       return html`
@@ -146,14 +151,14 @@ export class PlausibleConversions extends PlausibleBaseElementWithState {
           <span>Goal</span>
           <div class="text-right">
             <span class="inline-block w-20">Uniques</span>
-            ${viewport && viewport > MOBILE_UPPER_WIDTH
+            ${this.viewport && this.viewport > MOBILE_UPPER_WIDTH
               ? html`<span class="inline-block w-20">Total</span>`
               : nothing}
             <span class="inline-block w-20">CR</span>
           </div>
         </div>
 
-        ${this.state.goals.map(this.renderGoal.bind(this))}
+        ${this.goals.map(this.renderGoal.bind(this))}
       `;
     }
   }
@@ -164,7 +169,7 @@ export class PlausibleConversions extends PlausibleBaseElementWithState {
         class="w-full p-4 bg-white rounded shadow-xl dark:bg-gray-825"
         .style="${{
           minHeight: '132px',
-          height: this.state.prevHeight ?? 'auto',
+          height: this.prevHeight ?? 'auto',
         }}"
         .ref=${this}
       >

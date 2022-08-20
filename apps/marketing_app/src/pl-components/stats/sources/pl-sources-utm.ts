@@ -6,19 +6,13 @@ import { PlausibleSourcesBase, UTM_TAGS } from './pl-sources-base';
 import * as url from '../../util/url.js';
 import * as api from '../../api.js';
 
+import '../../pl-link.js';
+import '../../stats/pl-bar.js';
+
 @customElement('pl-sources-utm')
 export class PlausibleSourcesUtm extends PlausibleSourcesBase {
   @property({ type: String })
   to: string | undefined = undefined;
-
-  static get styles() {
-    return [...super.styles];
-  }
-
-  constructor() {
-    super();
-    this.state = { loading: true };
-  }
 
   firstUpdated() {
     if (this.timer) this.timer.onTick(this.fetchReferrers.bind(this));
@@ -32,13 +26,15 @@ export class PlausibleSourcesUtm extends PlausibleSourcesBase {
   updated(changedProperties: Map<string | number | symbol, unknown>): void {
     super.updated(changedProperties);
     if (changedProperties.has('query') || changedProperties.has('tab')) {
-      this.updateState({ loading: true, referrers: undefined });
       this.fetchReferrers();
     }
   }
 
   fetchReferrers() {
     const endpoint = UTM_TAGS[this.tab].endpoint;
+    this.loading = true;
+    this.referrers = undefined;
+
     api
       .getWithProxy(
         this.collectionType,
@@ -47,7 +43,7 @@ export class PlausibleSourcesUtm extends PlausibleSourcesBase {
         this.query,
         { show_noref: this.showNoRef }
       )
-      .then(res => this.updateState({ loading: false, referrers: res }));
+      .then(res => { this.loading = false; this.referrers= res });
   }
 
   renderReferrer(referrer: PlausibleReferrerData) {
@@ -58,11 +54,11 @@ export class PlausibleSourcesUtm extends PlausibleSourcesBase {
         class="flex items-center justify-between my-1 text-sm"
         key={referrer.name}
       >
-        <Bar
-          count={referrer.visitors}
-          all={this.state.referrers}
+        <pl-bar
+          .count=${referrer.visitors}
+          .all=${this.referrers}
           bg="bg-blue-50 dark:bg-gray-500 dark:bg-opacity-15"
-          maxWidthDeduction=${maxWidthDeduction}
+          .maxWidthDeduction=${maxWidthDeduction}
         >
 
           <span class="flex px-2 py-1.5 dark:text-gray-300 relative z-9 break-all">
@@ -73,7 +69,7 @@ export class PlausibleSourcesUtm extends PlausibleSourcesBase {
               ${referrer.name}
             </Link>
           </span>
-        </Bar>
+        </pl-bar>
         <span class="font-medium dark:text-gray-200 w-20 text-right" tooltip=${referrer.visitors}>${numberFormatter(referrer.visitors)}</span>
         ${
           this.showConversionRate
@@ -88,7 +84,7 @@ export class PlausibleSourcesUtm extends PlausibleSourcesBase {
   }
 
   renderList() {
-    if (this.state.referrers && this.state.referrers.length > 0) {
+    if (this.referrers && this.referrers.length > 0) {
       return html`
         <div class="flex flex-col flex-grow">
           <div
@@ -104,11 +100,11 @@ export class PlausibleSourcesUtm extends PlausibleSourcesBase {
           </div>
 
           <FlipMove class="flex-grow">
-            ${this.state.referrers.map(r => this.renderReferrer(r))}
+            ${this.referrers.map(r => this.renderReferrer(r))}
           </FlipMove>
           <pl-more-link
             .site=${this.site}
-            .list=${this.state.referrers}
+            .list=${this.referrers}
             .endpoint=${UTM_TAGS[this.tab].endpoint}
           ></pl-more-link>
         </div>
@@ -128,12 +124,12 @@ export class PlausibleSourcesUtm extends PlausibleSourcesBase {
         <h3 class="font-bold dark:text-gray-100">Top Sources</h3>
         ${this.renderTabs()}
       </div>
-      ${this.state.loading
+      ${this.loading
         ? html` <div class="mx-auto loading mt-44"><div></div></div>
             }`
         : nothing}
 
-      <FadeIn ?show="${!this.state.loading}" class="flex flex-col flex-grow">
+      <FadeIn ?show="${!this.loading}" class="flex flex-col flex-grow">
         ${this.renderList()}
       </FadeIn>
     `;

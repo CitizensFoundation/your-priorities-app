@@ -6,19 +6,13 @@ import { PlausibleSourcesBase } from './pl-sources-base';
 import * as url from '../../util/url.js';
 import * as api from '../../api.js';
 
+import '../../pl-link.js';
+import '../../stats/pl-bar.js';
+
 @customElement('pl-sources-all')
 export class PlausibleSourcesAll extends PlausibleSourcesBase {
   @property({ type: String })
   to: string | undefined = undefined;
-
-  static get styles() {
-    return [...super.styles];
-  }
-
-  constructor() {
-    super();
-    this.state = { loading: true };
-  }
 
   firstUpdated() {
     this.fetchReferrers();
@@ -26,11 +20,13 @@ export class PlausibleSourcesAll extends PlausibleSourcesBase {
   }
 
   connectedCallback() {
-    this.updateState({ loading: true, referrers: undefined });
     this.fetchReferrers();
   }
 
   fetchReferrers() {
+    this.loading = true;
+    this.referrers = undefined;
+
     api
       .getWithProxy(
         this.collectionType,
@@ -39,9 +35,10 @@ export class PlausibleSourcesAll extends PlausibleSourcesBase {
         this.query,
         { show_noref: this.showNoRef }
       )
-      .then((res: PlausibleReferrerData[]) =>
-        this.updateState({ loading: false, referrers: res })
-      );
+      .then((res: PlausibleReferrerData[]) => {
+        this.loading = false;
+        this.referrers = res;
+      });
   }
 
   renderReferrer(referrer: PlausibleReferrerData) {
@@ -54,7 +51,7 @@ export class PlausibleSourcesAll extends PlausibleSourcesBase {
       >
         <pl-bar
           .count=${referrer.visitors}
-          .all=${this.state.referrers}
+          .all=${this.referrers}
           bg="bg-blue-50 dark:bg-gray-500 dark:bg-opacity-15"
           .maxWidthDeduction=${maxWidthDeduction}
         >
@@ -75,7 +72,7 @@ export class PlausibleSourcesAll extends PlausibleSourcesBase {
         </pl-bar>
         <span
           class="font-medium dark:text-gray-200 w-20 text-right"
-          tooltip="{referrer.visitors}"
+          tooltip="${referrer.visitors}"
           >${numberFormatter(referrer.visitors)}</span
         >
         ${this.showConversionRate
@@ -88,7 +85,7 @@ export class PlausibleSourcesAll extends PlausibleSourcesBase {
   }
 
   renderList() {
-    if (this.state.referrers && this.state.referrers.length > 0) {
+    if (this.referrers && this.referrers.length > 0) {
       return html`
         <div
           class="flex items-center justify-between mt-3 mb-2 text-xs font-bold tracking-wide text-gray-500"
@@ -103,11 +100,11 @@ export class PlausibleSourcesAll extends PlausibleSourcesBase {
         </div>
 
         <div class="flex-grow">
-          ${this.state.referrers.map(r => this.renderReferrer(r))}
+          ${this.referrers.map(r => this.renderReferrer(r))}
         </div>
         <pl-more-link
           .site=${this.site}
-          .list=${this.state.referrers}
+          .list=${this.referrers}
           endpoint="sources"
         ></pl-more-link>
       `;
@@ -127,13 +124,13 @@ export class PlausibleSourcesAll extends PlausibleSourcesBase {
           <h3 class="font-bold dark:text-gray-100">Top Sources</h3>
           ${this.renderTabs()}
         </div>
-        ${this.state.loading
+        ${this.loading
           ? html`<div class="mx-auto loading mt-44">
               <div></div>
             </div>`
           : nothing}
-        <FadeIn show="{!this.state.loading}" class="flex flex-col flex-grow">
-          {this.renderList()}
+        <FadeIn show="${!this.loading}" class="flex flex-col flex-grow">
+          ${this.renderList()}
         </FadeIn>
       </div>
     `;

@@ -51,9 +51,14 @@ export class PlausableListReport extends PlausibleBaseElementWithState {
   @property({ type: Object })
   filter: Record<any, any> | undefined = undefined;
 
+  @property({ type: Array })
+  list?: PlausibleListItemData[];
+
+  @property({ type: Boolean })
+  loading = false;
+
   connectedCallback() {
     super.connectedCallback();
-    this.updateState({ loading: true, list: undefined });
     if (this.timer) this.timer.onTick(this.fetchData);
     this.valueKey = this.valueKey || 'visitors';
     this.showConversionRate = !!this.query.filters!.goal;
@@ -105,12 +110,14 @@ export class PlausableListReport extends PlausibleBaseElementWithState {
   fetchData() {
     if (this.prevQuery !== this.query) {
       this.prevQuery = this.query;
-      this.updateState({ loading: true, list: undefined });
-      this.fetchDataFunction().then((res: any) =>
-        this.updateState({ loading: false, list: res })
-      );
+      this.loading = true;
+      this.list = undefined;
+      this.fetchDataFunction().then((res: any) => {
+        this.loading = false;
+        this.list = res;
+      });
     }
-}
+  }
 
   get label() {
     if (this.query.period === 'realtime') {
@@ -146,7 +153,7 @@ export class PlausableListReport extends PlausibleBaseElementWithState {
             // @ts-ignore
             listItem[this.valueKey]
           }
-          .all=${this.state.list}
+          .all=${this.list}
           .bg=${`${lightBackground} dark:bg-gray-500 dark:bg-opacity-15`}
           maxWidthDeduction="${maxWidthDeduction}"
           .plot="${this.valueKey}"
@@ -195,7 +202,7 @@ export class PlausableListReport extends PlausibleBaseElementWithState {
   }
 
   renderList() {
-    if (this.state.list && this.state.list.length > 0) {
+    if (this.list && this.list.length > 0) {
       return html`
         <div
           class="flex items-center justify-between mt-3 mb-2 text-xs font-bold tracking-wide text-gray-500 dark:text-gray-400"
@@ -208,9 +215,7 @@ export class PlausableListReport extends PlausibleBaseElementWithState {
               : nothing}
           </span>
         </div>
-        ${this.state.list
-          ? this.state.list.map(this.renderListItem.bind(this))
-          : nothing}
+        ${this.list ? this.list.map(this.renderListItem.bind(this)) : nothing}
       `;
     }
   }
@@ -218,14 +223,14 @@ export class PlausableListReport extends PlausibleBaseElementWithState {
   render() {
     return html`
       <div class="flex flex-col flex-grow">
-        ${this.state.loading
+        ${this.loading
           ? html`<div class="mx-auto loading mt-44"><div></div></div>`
           : nothing}
         <div class="flex-grow">${this.renderList()}</div>
-        ${this.detailsLink && this.state.list
+        ${this.detailsLink && this.list
           ? html`<pl-more-link
               .url=${this.detailsLink}
-              .list=${this.state.list}
+              .list=${this.list}
             ></pl-more-link>`
           : nothing}
       </div>

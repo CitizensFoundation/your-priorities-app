@@ -58,28 +58,6 @@ interface PlausiblePropValueData {
   total_conversions: number;
 }
 
-interface PlausibleStateData {
-  query?: PlausibleQueryData;
-  timer?: any;
-  exported?: boolean;
-  loading?: boolean;
-  loadingStage?: number;
-  metric?: string;
-  viewport?: number;
-  graphData?: any;
-  propKey?: string;
-  goals?: PlausibleGoalData[];
-  prevHeight?: number;
-  breakdown?: PlausiblePropValueData[];
-  topStatData?: PlausibleTopStatsData;
-  page?: number;
-  moreResultsAvailable?: boolean;
-  mode?: string;
-  list?: PlausibleListItemData[];
-  open?: boolean;
-  referrers?: PlausibleReferrerData[];
-}
-
 interface PlausibleStatData {
   value: number;
   change: number;

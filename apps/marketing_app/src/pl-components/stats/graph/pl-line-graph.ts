@@ -49,19 +49,16 @@ export class PlausibleLineGraph extends PlausibleBaseElementWithState {
   @query('canvas')
   canvasElement!: HTMLCanvasElement;
 
+  @property({ type: Boolean })
+  exported = false;
+
   constructor() {
     super();
-    this.updateState({
-      exported: false,
-    });
-
     this.repositionTooltip = this.repositionTooltip.bind(this);
   }
 
   static get styles() {
-    return [
-      ...super.styles,
-    ];
+    return [...super.styles];
   }
 
   updated(changedProperties: Map<string | number | symbol, unknown>): void {
@@ -259,23 +256,19 @@ export class PlausibleLineGraph extends PlausibleBaseElementWithState {
     if (document.cookie.includes('exporting')) {
       setTimeout(this.pollExportReady.bind(this), 1000);
     } else {
-      this.updateState({
-        exported: false,
-      });
+      this.exported = false;
     }
   }
 
   downloadSpinner() {
-    this.updateState({
-      exported: true,
-    });
+    this.exported = true;
     document.cookie = 'exporting=';
     setTimeout(this.pollExportReady.bind(this), 1000);
   }
 
   downloadLink() {
     if (this.query.period !== 'realtime') {
-      if (this.state.exported) {
+      if (this.exported) {
         return html`
           <div class="w-4 h-4 mx-2">
             <svg
@@ -434,7 +427,3 @@ export class PlausibleLineGraph extends PlausibleBaseElementWithState {
     `;
   }
 }
-
-//import { withRouter, Link } from 'react-router-dom'
-
-//const LineGraphWithRouter = withRouter(LineGraph)

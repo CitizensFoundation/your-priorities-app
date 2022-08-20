@@ -21,19 +21,18 @@ export class PlausablePages extends PlausibleBaseElementWithState {
   @property({ type: String })
   storedTab: string | undefined;
 
+  @property({ type: String })
+  mode: string | undefined;
+
   connectedCallback() {
     super.connectedCallback();
     this.tabKey = `pageTab__${this.site.domain}`;
-    this.state = {
-      mode: this.storedTab || 'pages',
-    };
+    this.mode = this.storedTab || 'pages';
   }
 
   setMode(mode: string) {
-    return () => {
-      storage.setItem(this.tabKey, mode);
-      this.updateState({ mode });
-    };
+    storage.setItem(this.tabKey, mode);
+    this.mode = mode;
   }
 
   labelFor = {
@@ -43,7 +42,7 @@ export class PlausablePages extends PlausibleBaseElementWithState {
   };
 
   renderContent() {
-    switch (this.state.mode) {
+    switch (this.mode) {
       case 'entry-pages':
         return html`<pl-entry-pages
           .site=${this.site}
@@ -73,7 +72,7 @@ export class PlausablePages extends PlausibleBaseElementWithState {
   }
 
   renderPill(name: string, mode: string) {
-    const isActive = this.state.mode === mode;
+    const isActive = this.mode === mode;
 
     if (isActive) {
       return html`
@@ -108,7 +107,7 @@ export class PlausablePages extends PlausibleBaseElementWithState {
               <h3 class="font-bold dark:text-gray-100">
                 ${
                   //@ts-ignore
-                  this.labelFor[this.state.mode] || 'Page Visits'
+                  this.labelFor[this.mode] || 'Page Visits'
                 }
               </h3>
               <div class="flex"></div>

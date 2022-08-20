@@ -46,6 +46,12 @@ export class PlausibleDatePicker extends PlausibleBaseElementWithState {
   @property({ type: String })
   leadingText: string | undefined;
 
+  @property({ type: String })
+  mode = 'menu';
+
+  @property({ type: Boolean })
+  open = false;
+
   constructor() {
     super();
     this.handleKeydown = this.handleKeydown.bind(this);
@@ -54,7 +60,6 @@ export class PlausibleDatePicker extends PlausibleBaseElementWithState {
     this.openCalendar = this.openCalendar.bind(this);
     this.close = this.close.bind(this);
     this.toggle = this.toggle.bind(this);
-    this.state = { mode: 'menu', open: false };
   }
 
   connectedCallback(): void {
@@ -74,8 +79,6 @@ export class PlausibleDatePicker extends PlausibleBaseElementWithState {
 
   updated(changedProperties: Map<string | number | symbol, unknown>): void {
     super.updated(changedProperties);
-
-    let st = this.state;
 
     if (changedProperties.has('query')) {
       this.close();
@@ -244,7 +247,7 @@ export class PlausibleDatePicker extends PlausibleBaseElementWithState {
       }
     }
 
-    this.updateState({ open: false });
+    this.open = false;
 
     const keys = ['d', 'e', 'r', 'w', 'm', 'y', 't', 's', 'l', 'a'];
     const redirects = [
@@ -269,7 +272,8 @@ export class PlausibleDatePicker extends PlausibleBaseElementWithState {
         ...redirects[keys.indexOf(e.key.toLowerCase())],
       } as PlausibleQueryStringsData);
     } else if (e.key.toLowerCase() === 'c') {
-      this.updateState({ mode: 'calendar', open: true });
+      this.mode = 'calendar';
+      this.open = true;
       this.openCalendar();
     } else if (newSearch.date) {
       navigateToQuery(
@@ -356,15 +360,16 @@ export class PlausibleDatePicker extends PlausibleBaseElementWithState {
 
   toggle() {
     const newMode =
-      this.state.mode === 'calendar' && !this.state.open
+      this.mode === 'calendar' && !this.open
         ? 'menu'
-        : this.state.mode;
-    this.updateState({ mode: newMode, open: !this.state.open });
+        : this.mode;
+        this.mode = newMode;
+        this.open = !this.open;
     this.requestUpdate();
   }
 
   close() {
-    this.updateState({ open: false });
+    this.open = false;
   }
 
   openCalendar() {
@@ -411,7 +416,7 @@ export class PlausibleDatePicker extends PlausibleBaseElementWithState {
   }
 
   renderDropDownContent() {
-    if (this.state.mode === 'menu') {
+    if (this.mode === 'menu') {
       return html`
         <div
           id="datemenu"
@@ -451,11 +456,11 @@ export class PlausibleDatePicker extends PlausibleBaseElementWithState {
               ${this.renderLink('all', 'All time')}
               <span
                 @click="${() => {
-                  this.updateState({ mode: 'calendar' });
+                  this.mode = 'calendar';
                   this.openCalendar();
                 }}"
                 @keyPress=${() => {
-                  this.updateState({ mode: 'calendar' });
+                  this.mode = 'calendar';
                   this.openCalendar();
                 }}"
                 class="px-4 py-2 text-sm leading-tight hover:bg-gray-100
@@ -474,7 +479,7 @@ export class PlausibleDatePicker extends PlausibleBaseElementWithState {
           </div>
         </div>
       `;
-    } else if (this.state.mode === 'calendar') {
+    } else if (this.mode === 'calendar') {
       const insertionDate = new Date(this.site.statsBegin!);
       //@ts-ignore
       const dayBeforeCreation = insertionDate - 86400000;
@@ -521,7 +526,7 @@ export class PlausibleDatePicker extends PlausibleBaseElementWithState {
           </div>
         </div>
 
-        ${this.state.open ? this.renderDropDownContent() : nothing}
+        ${this.open ? this.renderDropDownContent() : nothing}
       </div>
     `;
   }

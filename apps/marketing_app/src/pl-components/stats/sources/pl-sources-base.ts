@@ -36,8 +36,13 @@ export class PlausibleSourcesBase extends PlausibleBaseElementWithState {
   @property({ type: String })
   tab!: PlausibleSourcesTabOptions;
 
+  @property({ type: Array })
+  referrers: PlausibleReferrerData[] | undefined;
+
+  @property({ type: Boolean })
+  loading = false;
+
   updated(changedProperties: Map<string | number | symbol, unknown>): void {
-    super.updated(changedProperties);
     if (changedProperties.has('tab')) {
       this.fire('tab-changed', this.tab);
     }

@@ -46,6 +46,9 @@ export class PlausibleDashboard extends PlausibleBaseElementWithState {
   @property({ type: Object })
   history!: BrowserHistory;
 
+  @property({ type: String })
+  metric = 'visitors'
+
   /*private routes = new Routes(this, [
     { path: '/', render: () => html`<h1>Home</h1>` },
     { path: '/projects', render: () => html`<h1>Projects</h1>` },
@@ -61,11 +64,16 @@ export class PlausibleDashboard extends PlausibleBaseElementWithState {
       offset: 1,
       statsBegin: "2022-05-05"
     }
+    this.resetState();
+  }
+
+  resetState() {
+    this.timer = new Timer();
+    this.metric = 'visitors';
   }
 
   connectedCallback(): void {
     super.connectedCallback();
-    this.setState();
     this.history = createBrowserHistory();
     this.query = parseQuery(location.search, this.site);
     window.addEventListener('popstate',  () => {
@@ -80,27 +88,20 @@ export class PlausibleDashboard extends PlausibleBaseElementWithState {
     ];
   }
 
-  setState() {
-    this.updateState({
-      timer: new Timer(),
-      metric: 'visitors'
-    } as PlausibleStateData);
-  }
-
   updated(changedProperties: Map<string | number | symbol, unknown>): void {
     super.updated(changedProperties);
     if (changedProperties.has('query')) {
       api.cancelAll();
-      this.setState();
+      this.resetState();
     }
   }
 
   render() {
-    if (this.site && this.state && this.query) {
-      if (true || this.state!.query!.period === 'day') {
+    if (this.site && this.query) {
+      if (true || this.query!.period === 'realtime') {
         return html`
           <pl-realtime
-            .timer="${this.state.timer}"
+            .timer="${this.timer}"
             .site="${this.site}"
             .currentRole="${this.currentUserRole}"
             .query="${this.query}"
@@ -112,7 +113,7 @@ export class PlausibleDashboard extends PlausibleBaseElementWithState {
       } else {
         return html`
           <pl-historical
-            .timer="${this.state.timer}"
+            .timer="${this.timer}"
             .site="${this.site}"
             .history="${this.history}"
             .currentRole="${this.currentUserRole}"
