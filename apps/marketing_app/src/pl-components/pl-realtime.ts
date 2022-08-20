@@ -9,18 +9,10 @@ import './stats/conversions/pl-conversions.js';
 import './stats/pages/pl-pages.js';
 import './pl-date-picker.js';
 import { BrowserHistory } from './util/history.js';
+import { PlausibleBaseElementWithState } from './pl-base-element-with-state.js';
 
 @customElement('pl-realtime')
-export class PlausibleRealtime extends PlausibleBaseElement {
-  @property({ type: Object })
-  state!: PlausibleStateData;
-
-  @property({ type: Object })
-  query!: PlausibleQueryData;
-
-  @property({ type: Object })
-  site!: PlausibleSiteData;
-
+export class PlausibleRealtime extends PlausibleBaseElementWithState {
   @property({ type: String })
   currentUserRole!: string;
 
@@ -29,15 +21,6 @@ export class PlausibleRealtime extends PlausibleBaseElement {
 
   @property({ type: Boolean })
   stuck = false;
-
-  @property({ type: Object })
-  timer: any;
-
-  @property({ type: Number })
-  collectionId!: number;
-
-  @property({ type: String })
-  collectionType!: string;
 
   updated(changedProperties: Map<string | number | symbol, unknown>): void {
     super.updated(changedProperties);
@@ -93,6 +76,8 @@ export class PlausibleRealtime extends PlausibleBaseElement {
             .site="${this.site}"
             .query="${this.query}"
             .timer="${this.timer}"
+            .collectionId="${this.collectionId}"
+            .collectionType="${this.collectionType}"
           ></pl-sources>
           <pl-pages
             .site="${this.site}"

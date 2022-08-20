@@ -18,21 +18,10 @@ import {
   METRIC_FORMATTER,
   METRIC_LABELS,
 } from './pl-visitors-graph.js';
+import { PlausibleBaseElementWithState } from '../../pl-base-element-with-state.js';
 
 @customElement('pl-line-graph')
-export class PlausibleLineGraph extends PlausibleBaseElement {
-  @property({ type: Object })
-  state!: PlausibleStateData;
-
-  @property({ type: Object })
-  query!: PlausibleQueryData;
-
-  @property({ type: Object })
-  site!: PlausibleSiteData;
-
-  @property({ type: Object })
-  timer: any;
-
+export class PlausibleLineGraph extends PlausibleBaseElementWithState {
   @property({ type: Object })
   graphData: any;
 

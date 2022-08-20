@@ -13,10 +13,10 @@ export class PlausibleLink extends PlausibleBaseElement {
       ...super.styles,
       css`
         :host {
-          padding-top: 0.40rem;
-          padding-bottom: 0.40rem;
+          padding-top: 0.4rem;
+          padding-bottom: 0.4rem;
         }
-      `
+      `,
     ];
   }
 
@@ -26,7 +26,7 @@ export class PlausibleLink extends PlausibleBaseElement {
 
   onClick(e: Event) {
     e.preventDefault();
-    window.history.pushState({}, "", this.currentUri);
+    window.history.pushState({}, '', this.currentUri);
     setTimeout(() => {
       window.dispatchEvent(new CustomEvent('popstate'));
     });
@@ -34,6 +34,8 @@ export class PlausibleLink extends PlausibleBaseElement {
   }
 
   render() {
-    return html`<a href="${this.currentUri}" @click="${this.onClick}"><slot></slot></a> `;
+    return html`<a href="${this.currentUri}" @click="${this.onClick}"
+      ><slot></slot
+    ></a> `;
   }
 }

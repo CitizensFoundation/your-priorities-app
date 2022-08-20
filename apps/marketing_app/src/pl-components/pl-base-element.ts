@@ -7,16 +7,8 @@ export class PlausibleBaseElement extends LitElement {
   @property({ type: String })
   language = 'en';
 
-  @property({ type: Object })
-  state: PlausibleStateData;
-
   @property({ type: Boolean })
   rtl = false;
-
-  constructor() {
-    super();
-    this.state = {};
-  }
 
   connectedCallback() {
     super.connectedCallback();
@@ -49,10 +41,6 @@ export class PlausibleBaseElement extends LitElement {
     if (changedProperties.has('language')) {
       this.languageChanged();
     }
-  }
-
-  updateState(updatedState: PlausibleStateData) {
-    this.state = { ...this.state, ...updatedState };
   }
 
   static get rtlLanguages() {

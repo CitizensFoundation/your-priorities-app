@@ -14,20 +14,12 @@ import './pl-top-stats.js';
 import './pl-line-graph.js';
 import { PlausibleStyles } from '../../plausibleStyles';
 import { PlausibleBaseElement } from '../../pl-base-element';
+import { PlausibleBaseElementWithState } from '../../pl-base-element-with-state';
 
 @customElement('pl-visitors-graph')
-export class PlausibleVisitorsGraph extends PlausibleBaseElement {
-  @property({ type: Object })
-  query!: PlausibleQueryData;
-
-  @property({ type: Object })
-  site!: PlausibleSiteData;
-
+export class PlausibleVisitorsGraph extends PlausibleBaseElementWithState {
   @property({ type: Object })
   history!: any;
-
-  @property({ type: Object })
-  timer: any;
 
   @property({ type: String })
   metric!: string;
@@ -37,12 +29,6 @@ export class PlausibleVisitorsGraph extends PlausibleBaseElement {
 
   @property({ type: Object })
   graphData: any;
-
-  @property({ type: Number })
-  collectionId!: number;
-
-  @property({ type: String })
-  collectionType!: string;
 
   constructor() {
     super();

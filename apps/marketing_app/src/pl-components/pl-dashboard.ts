@@ -16,6 +16,7 @@ import * as api from './api';
 import { PlausibleStyles } from './plausibleStyles.js';
 import { PlausibleBaseElement } from './pl-base-element.js';
 import { BrowserHistory, createBrowserHistory } from './util/history.js';
+import { PlausibleBaseElementWithState } from './pl-base-element-with-state.js';
 //import '@lit-labs/router';
 //import { Routes } from '@lit-labs/router';
 
@@ -41,22 +42,7 @@ class Timer {
 }
 
 @customElement('pl-dashboard')
-export class PlausibleDashboard extends PlausibleBaseElement {
-  @property({ type: Object })
-  query!: PlausibleQueryData;
-
-  @property({ type: Object })
-  site!: PlausibleSiteData;
-
-  @property({ type: String })
-  currentUserRole!: string;
-
-  @property({ type: Number })
-  collectionId!: number;
-
-  @property({ type: String })
-  collectionType!: string;
-
+export class PlausibleDashboard extends PlausibleBaseElementWithState {
   @property({ type: Object })
   history!: BrowserHistory;
 

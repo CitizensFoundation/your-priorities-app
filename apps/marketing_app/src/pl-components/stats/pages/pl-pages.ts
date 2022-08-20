@@ -11,29 +11,15 @@ import './pl-entry-pages.js';
 import './pl-exit-pages.js';
 
 import { PlausibleBaseElement } from '../../pl-base-element.js';
+import { PlausibleBaseElementWithState } from '../../pl-base-element-with-state.js';
 
 @customElement('pl-pages')
-export class PlausablePages extends PlausibleBaseElement {
-  @property({ type: Object })
-  query!: PlausibleQueryData;
-
-  @property({ type: Object })
-  site!: PlausibleSiteData;
-
+export class PlausablePages extends PlausibleBaseElementWithState {
   @property({ type: String })
   tabKey!: string;
 
-  @property({ type: Number })
-  collectionId!: number;
-
-  @property({ type: String })
-  collectionType!: string;
-
   @property({ type: String })
   storedTab: string | undefined;
-
-  @property({ type: String })
-  timer!: any;
 
   connectedCallback() {
     super.connectedCallback();

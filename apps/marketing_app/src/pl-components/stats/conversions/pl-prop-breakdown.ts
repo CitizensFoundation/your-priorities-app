@@ -13,6 +13,7 @@ import { suppressDeprecationWarnings } from 'moment';
 import '../../pl-link.js';
 import '../pl-bar.js';
 import { PlausibleBaseElement } from '../../pl-base-element.js';
+import { PlausibleBaseElementWithState } from '../../pl-base-element-with-state.js';
 
 const MOBILE_UPPER_WIDTH = 767;
 const DEFAULT_WIDTH = 1080;
@@ -32,15 +33,9 @@ function isValidHttpUrl(string: string) {
 
 
 @customElement('pl-prop-breakdown')
-export class PlausiblePropBreakdown extends PlausibleBaseElement {
+export class PlausiblePropBreakdown extends PlausibleBaseElementWithState {
   @property({ type: Object })
   onClickFunction!: any;
-
-  @property({ type: Object })
-  site!: PlausibleSiteData;
-
-  @property({ type: Object })
-  query!: PlausibleQueryData;
 
   @property({ type: Object })
   goal!: PlausibleGoalData;
@@ -50,12 +45,6 @@ export class PlausiblePropBreakdown extends PlausibleBaseElement {
 
   @property({ type: String })
   storageKey: string;
-
-  @property({ type: Number })
-  collectionId!: number;
-
-  @property({ type: String })
-  collectionType!: string;
 
   constructor() {
     super();

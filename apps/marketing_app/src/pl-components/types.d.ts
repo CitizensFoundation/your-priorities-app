@@ -24,11 +24,11 @@ interface PlausibleQueryFilters {
 }
 
 interface PlausibleSiteData {
-  domain?: string;
+  domain: string;
   hasGoals: boolean;
   embedded: boolean;
   offset?: number;
-  statsBegin?: string;
+  statsBegin: string;
 }
 
 interface PlausibleQueryData {
@@ -77,6 +77,7 @@ interface PlausibleStateData {
   mode?: string;
   list?: PlausibleListItemData[];
   open?: boolean;
+  referrers?: PlausibleReferrerData[];
 }
 
 interface PlausibleStatData {
@@ -112,4 +113,26 @@ interface PlausibleListItemData {
   icon?: string;
 }
 
+interface PlausibleReferrerData {
+  name: string;
+  conversion_rate: number;
+  visitors: number;
+}
+
+interface PlausibleUtmEntryData {
+  label: string;
+  shortLabel: string;
+  endpoint: string;
+}
+
+interface PlausibleUtmTagsData {
+  utm_source: PlausibleUtmEntryData;
+  utm_medium: PlausibleUtmEntryData;
+  utm_campaign: PlausibleUtmEntryData;
+  utm_content: PlausibleUtmEntryData;
+  utm_term: PlausibleUtmEntryData;
+  [key: string]: any;
+}
+
+type PlausibleSourcesTabOptions = 'all' | 'utm_source' | 'utm_medium' | 'utm_campaign' | 'utm_content' | 'utm_term';
 

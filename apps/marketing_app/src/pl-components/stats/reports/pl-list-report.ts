@@ -8,17 +8,12 @@ import { html, nothing } from 'lit';
 import '../../pl-more-link.js';
 import '../pl-bar.js';
 import numberFormatter from '../../util/number-formatter.js';
+import { PlausibleBaseElementWithState } from '../../pl-base-element-with-state.js';
 
 @customElement('pl-list-report')
-export class PlausableListReport extends PlausibleBaseElement {
-  @property({ type: Object })
-  query!: PlausibleQueryData;
-
+export class PlausableListReport extends PlausibleBaseElementWithState {
   @property({ type: Object })
   prevQuery!: PlausibleQueryData;
-
-  @property({ type: Object })
-  site!: PlausibleSiteData;
 
   @property({ type: String })
   tabKey!: string;
@@ -35,17 +30,8 @@ export class PlausableListReport extends PlausibleBaseElement {
   @property({ type: String })
   valueLabel: string | undefined;
 
-  @property({ type: Number })
-  collectionId!: number;
-
-  @property({ type: String })
-  collectionType!: string;
-
   @property({ type: String })
   storedTab: string | undefined;
-
-  @property({ type: Object })
-  timer!: any;
 
   @property({ type: Object })
   externalLinkDest: Function | undefined;

@@ -4,22 +4,11 @@ import * as api from '../../api.js';
 import './../reports/pl-list-report.js';
 import { property } from 'lit/decorators.js';
 import { PlausibleBaseElement } from '../../pl-base-element.js';
+import { PlausibleBaseElementWithState } from '../../pl-base-element-with-state.js';
 
-export class PlausableBasePages extends PlausibleBaseElement {
-  @property({ type: Object })
-  query!: PlausibleQueryData;
-
-  @property({ type: Object })
-  site!: PlausibleSiteData;
-
+export class PlausableBasePages extends PlausibleBaseElementWithState {
   @property({ type: String })
   pagePath: string | undefined;
-
-  @property({ type: Number })
-  collectionId!: number;
-
-  @property({ type: String })
-  collectionType!: string;
 
   fetchData() {
     return api.getWithProxy(

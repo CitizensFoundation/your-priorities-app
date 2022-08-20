@@ -27,23 +27,12 @@ import './pl-query-button.js';
 import './pl-query-link.js';
 import { LitFlatpickr } from 'lit-flatpickr';
 import { BrowserHistory } from './util/history';
+import { PlausibleBaseElementWithState } from './pl-base-element-with-state';
 
 @customElement('pl-date-picker')
-export class PlausibleDatePicker extends PlausibleBaseElement {
-  @property({ type: Object })
-  query!: PlausibleQueryData;
-
-  @property({ type: Object })
-  site!: PlausibleSiteData;
-
+export class PlausibleDatePicker extends PlausibleBaseElementWithState {
   @property({ type: String })
   currentUserRole!: string;
-
-  @property({ type: Number })
-  collectionId!: number;
-
-  @property({ type: String })
-  collectionType!: string;
 
   @property({ type: Object })
   history!: BrowserHistory;

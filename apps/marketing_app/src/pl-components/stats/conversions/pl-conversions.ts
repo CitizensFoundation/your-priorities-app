@@ -10,26 +10,15 @@ import '../../pl-link.js';
 import '../pl-bar.js';
 import './pl-prop-breakdown.js';
 import { PlausibleBaseElement } from '../../pl-base-element.js';
+import { PlausibleBaseElementWithState } from '../../pl-base-element-with-state';
 
 const MOBILE_UPPER_WIDTH = 767;
 const DEFAULT_WIDTH = 1080;
 
 @customElement('pl-conversions')
-export class PlausibleConversions extends PlausibleBaseElement {
+export class PlausibleConversions extends PlausibleBaseElementWithState {
   @property({ type: Object })
   onClickFunction!: any;
-
-  @property({ type: Object })
-  site!: PlausibleSiteData;
-
-  @property({ type: Object })
-  query!: PlausibleQueryData;
-
-  @property({ type: Number })
-  collectionId!: number;
-
-  @property({ type: String })
-  collectionType!: string;
 
   constructor() {
     super();
