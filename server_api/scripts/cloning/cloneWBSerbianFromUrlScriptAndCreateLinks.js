@@ -4,18 +4,19 @@ const ip = require('ip');
 const _ = require('lodash');
 const fs = require('fs');
 const request = require('request');
-const deepCopyCommunityOnlyStructureWithAdminsAndPosts = require('../../utils/copy_utils').deepCopyCommunityOnlyStructureWithAdminsAndPosts;
+const copyCommunityWithEverything = require('../../utils/copy_utils').copyCommunityWithEverything;
 const updateTranslation = require('../../active-citizen/utils/translation_helpers').updateTranslation;
 
-let domainId = process.argv[2];
-let userId = process.argv[3];
-let urlToConfig = process.argv[4];
-let urlToAddAddFront = process.argv[5];
+const domainId = process.argv[2];
+const userId = process.argv[3];
+const urlToConfig = process.argv[4];
+const urlToAddAddFront = process.argv[5];
 
-/*domainId = "3"; //process.argv[2];
-userId = "84397" //process.argv[3];
-urlToConfig = "https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/CESA+cloning+sheet+10202021-TEST.csv";// process.argv[4];
-urlToAddAddFront = "https://kyrgyz-aris.yrpri.org/";*/
+/*const domainId = "3"; //process.argv[2];
+const userId = "850" //process.argv[3];
+const urlToConfig = "https://yrpri-eu-direct-assets.s3-eu-west-1.amazonaws.com/ClonesARIS01.03-CFEdit.xlsx+-+OSH.csv";// process.argv[4];
+//const urlToAddAddFront = "https://kyrgyz-aris.yrpri.org/";
+const urlToAddAddFront = "http://localhost:4242/"; //process.argv[5];*/
 
 // node server_api/scripts/cloneWBFromUrlScriptAndCreateLinks.js 3 84397 https://yrpri-eu-direct-assets.s3-eu-west-1.amazonaws.com/CF_clone_WB_140221.csv https://kyrgyz-aris.yrpri.org/
 
@@ -42,9 +43,8 @@ async.series([
     let index = 0;
     async.forEachSeries(config.split('\r\n'), (configLine, forEachCallback) => {
       const splitLine = configLine.split(",");
-      console.log(splitLine)
 
-      if (index==0 || !configLine || configLine.length<3 || !splitLine || splitLine.length!==4 || splitLine[0].length<2) {
+      if (index==0 || !configLine || configLine.length<3 || !splitLine || splitLine.length!==5 || splitLine[0].length<2) {
         index+=1;
         forEachCallback();
       } else {
@@ -53,7 +53,7 @@ async.series([
         const serbianName = splitLine[2].trim();
         const englishName = splitLine[3].trim();
 
-        deepCopyCommunityOnlyStructureWithAdminsAndPosts(fromCommunityId, domainId, (error, newCommunity) => {
+        copyCommunityWithEverything(fromCommunityId, domainId, {}, (error, newCommunity) => {
           if (error) {
             forEachCallback(error);
           }  else {
@@ -70,6 +70,7 @@ async.series([
                 newCommunity.set('configuration.customBackURL', linkToCommunityId);
                 newCommunity.set('configuration.customBackName', linkCommunity.name);
                 newCommunity.save().then(() => {
+
                   updateTranslation({
                     contentId: newCommunity.id,
                     textType: "communityName",
