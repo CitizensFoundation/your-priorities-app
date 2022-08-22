@@ -215,7 +215,7 @@ export class PlausableListReport extends PlausibleBaseElementWithState {
               : nothing}
           </span>
         </div>
-        ${this.list ? this.list.map(this.renderListItem.bind(this)) : nothing}
+        ${this.list.map((i: PlausibleListItemData) => this.renderListItem(i)) }
       `;
     }
   }

@@ -29,6 +29,7 @@ interface PlausibleSiteData {
   embedded: boolean;
   offset?: number;
   statsBegin: string;
+  isDbip?: boolean;
 }
 
 interface PlausibleQueryData {
@@ -36,7 +37,7 @@ interface PlausibleQueryData {
   date?: Date;
   from?: Date;
   to?: Date;
-  filters?: PlausibleQueryFilters;
+  filters: PlausibleQueryFilters;
   with_imported?: boolean;
   auth?: string;
 }
@@ -113,4 +114,19 @@ interface PlausibleUtmTagsData {
 }
 
 type PlausibleSourcesTabOptions = 'all' | 'utm_source' | 'utm_medium' | 'utm_campaign' | 'utm_content' | 'utm_term';
+
+interface PlausibleCountryData {
+  name: string;
+  flag: string;
+}
+
+interface PlausibleRegionData {
+  name: string;
+  country_flag: string;
+}
+
+interface PlausibleCityData {
+  name: string;
+  country_flag: string;
+}
 

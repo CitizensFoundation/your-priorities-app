@@ -236,7 +236,7 @@ export class PlausibleLineGraph extends PlausibleBaseElementWithState {
       },
       false
     )[0];
-    const date = this.chart!.data!.labels![element.index] as Date;
+    const date = this.chart!.data!.labels![element.index] as string;
 
     if (this.graphData.interval === 'month') {
       navigateToQuery(this.history, this.query, {
@@ -420,7 +420,7 @@ export class PlausibleLineGraph extends PlausibleBaseElementWithState {
             width="1054"
             height="342"
           ></canvas>
-        </div>r
+        </div>
       </div>
     `;
   }

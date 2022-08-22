@@ -8,6 +8,7 @@ import './stats/graph/pl-visitors-graph.js';
 import './stats/conversions/pl-conversions.js';
 import './stats/pages/pl-pages.js';
 import './stats/sources/pl-sources-list.js';
+import './stats/devices/pl-devices.js';
 
 import './pl-date-picker.js';
 import { BrowserHistory } from './util/history.js';
@@ -101,9 +102,10 @@ export class PlausibleRealtime extends PlausibleBaseElementWithState {
             .site="${this.site}"
             .query="${this.query}"
             .timer="${this.timer}"
+            .collectionId="${this.collectionId}"
+            .collectionType="${this.collectionType}"
           ></pl-devices>
         </div>
-
         ${ this.renderConversions() }
       </div>
     `;

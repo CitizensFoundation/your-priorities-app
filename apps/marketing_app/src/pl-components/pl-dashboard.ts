@@ -62,7 +62,8 @@ export class PlausibleDashboard extends PlausibleBaseElementWithState {
       hasGoals: true,
       embedded: false,
       offset: 1,
-      statsBegin: "2022-05-05"
+      statsBegin: "2022-05-05",
+      isDbip: false
     }
     this.resetState();
   }
