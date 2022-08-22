@@ -1,3 +1,4 @@
+
 interface PlausibleQueryFilters {
   goal?: string;
   props?: string;
@@ -40,6 +41,10 @@ interface PlausibleQueryData {
   filters: PlausibleQueryFilters;
   with_imported?: boolean;
   auth?: string;
+  country?: string;
+  city?: string;
+  region?: string;
+  country_name?: string;
 }
 
 interface PlausibleQueryStringsData {
@@ -118,6 +123,9 @@ type PlausibleSourcesTabOptions = 'all' | 'utm_source' | 'utm_medium' | 'utm_cam
 interface PlausibleCountryData {
   name: string;
   flag: string;
+  visitors: number;
+  alpha_3?: string;
+  code: string;
 }
 
 interface PlausibleRegionData {

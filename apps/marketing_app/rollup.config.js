@@ -47,6 +47,7 @@ export default merge(baseConfig, {
         'node_modules/wavesurfer.js/**/*',
         'node_modules/recordrtc/**/*',
         'node_modules/i18next/**/*',
+        'node_modules/datamaps/**/*',
         '**/*/node_modules/linkifyjs/**/*',
         '**/*/node_modules/i18next-http-backend/**/*'
       ],

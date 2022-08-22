@@ -6,6 +6,8 @@ import * as url from '../../util/url.js';
 import * as api from '../../api.js';
 import '../reports/pl-list-report.js';
 
+import './pl-countries-map.js';
+
 import { apiPath, sitePath } from '../../util/url.js';
 import { PlausibleBaseElementWithState } from '../../pl-base-element-with-state.js';
 
@@ -129,7 +131,10 @@ export class PlausableLocations extends PlausibleBaseElementWithState {
 
   renderCities() {
     const fetchData = () => {
-      return api.get(apiPath(this.site, '/cities'), this.query, { limit: 9 });
+      return api.getWithProxy(
+        this.collectionType,
+        this.collectionId,
+        apiPath(this.site, '/cities'), this.query, { limit: 9 });
     };
 
     const renderIcon = (city: PlausibleCityData) => {
@@ -172,6 +177,8 @@ export class PlausableLocations extends PlausibleBaseElementWithState {
           .site=${this.site}
           .query=${this.query}
           .timer=${this.timer}
+          .collectionId=${this.collectionId}
+          .collectionType=${this.collectionType}
         ></pl-countries-map>`;
     }
   }
@@ -184,7 +191,7 @@ export class PlausableLocations extends PlausibleBaseElementWithState {
         <li
           class="inline-block h-5 text-indigo-700 dark:text-indigo-500 font-bold active-prop-heading"
         >
-          {name}
+          ${name}
         </li>
       `;
     } else {
