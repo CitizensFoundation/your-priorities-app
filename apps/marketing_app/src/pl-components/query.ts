@@ -73,6 +73,7 @@ export function generateQueryString(data: any) {
 export function navigateToQuery(history: BrowserHistory, queryFrom: PlausibleQueryData, newData: PlausibleQueryData | PlausibleQueryStringsData) {
   // if we update any data that we store in localstorage, make sure going back in history will
   // revert them
+  const newQueryString = generateQueryString(newData);
   if (newData.period && newData.period !== queryFrom.period) {
     const replaceQuery = new URLSearchParams(window.location.search)
     replaceQuery.set('period', queryFrom.period)
@@ -82,10 +83,16 @@ export function navigateToQuery(history: BrowserHistory, queryFrom: PlausibleQue
     setTimeout(() => {
       window.dispatchEvent(new CustomEvent('popstate'));
     });
+  } else {
+    const currentUri = `${location.pathname}?${newQueryString}`;
+    window.history.pushState({}, "", currentUri);
+    setTimeout(() => {
+      window.dispatchEvent(new CustomEvent('popstate'));
+    });
   }
 
   // then push the new query to the history
-  history.push({ search: generateQueryString(newData) })
+  history.push({ search: newQueryString })
 }
 
 //TODO: Fix routing
@@ -145,4 +152,4 @@ export const formattedFilters = {
   'page': 'Page',
   'entry_page': 'Entry Page',
   'exit_page': 'Exit Page'
-}
+} as Record<string,string>;

@@ -63,7 +63,10 @@ export class PlausibleDashboard extends PlausibleBaseElementWithState {
       embedded: false,
       offset: 1,
       statsBegin: "2022-05-05",
-      isDbip: false
+      isDbip: false,
+      flags: {
+        custom_dimension_filter: false
+      }
     }
     this.resetState();
   }

@@ -36,8 +36,6 @@ export class PlausibleBaseElement extends LitElement {
   }
 
   updated(changedProperties: Map<string | number | symbol, unknown>): void {
-    super.updated(changedProperties);
-
     if (changedProperties.has('language')) {
       this.languageChanged();
     }
@@ -61,8 +59,6 @@ export class PlausibleBaseElement extends LitElement {
 
   static get styles() {
     return [
-      //    super.styles,
-      Layouts,
       PlausibleStyles,
       css`
         [hidden] {

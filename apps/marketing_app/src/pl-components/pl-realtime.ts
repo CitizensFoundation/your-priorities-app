@@ -12,6 +12,7 @@ import './stats/devices/pl-devices.js';
 import './stats/locations/pl-locations.js';
 
 import './pl-date-picker.js';
+import './pl-filters.js';
 import { BrowserHistory } from './util/history.js';
 import { PlausibleBaseElementWithState } from './pl-base-element-with-state.js';
 
@@ -33,6 +34,10 @@ export class PlausibleRealtime extends PlausibleBaseElementWithState {
   static get styles() {
     return [
       ...super.styles,
+      css`
+      .mb-12 {
+        max-width: 1100px;
+      }`
     ];
   }
 
@@ -93,7 +98,7 @@ export class PlausibleRealtime extends PlausibleBaseElementWithState {
             .collectionType="${this.collectionType}"
           ></pl-pages>
         </div>
-        <div class="items-start justify-between block w-full md:flex">
+        <div class="items-start justify-between block w-full md:flex flex">
           <pl-locations
             .site="${this.site}"
             .query="${this.query}"

@@ -405,7 +405,7 @@ export class PlausibleLineGraph extends PlausibleBaseElementWithState {
             .metric=${this.metric}
             .updateMetric=${this.updateMetric!}
             .topStatData=${this.topStatData}
-            class="layout horizontal"
+            class="flex flex-wrap"
           ></pl-top-stats>
         </div>
         <div class="relative px-2">

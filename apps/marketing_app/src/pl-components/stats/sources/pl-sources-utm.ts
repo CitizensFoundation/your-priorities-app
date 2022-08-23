@@ -60,7 +60,7 @@ export class PlausibleSourcesUtm extends PlausibleSourcesBase {
           <span class="flex px-2 py-1.5 dark:text-gray-300 relative z-9 break-all">
             <Link
               class="md:truncate block hover:underline"
-              .to=${url.setQuery(this.tab, referrer.name)}
+              .to=${{ search: url.setQuerySearch(this.tab, referrer.name)}}
             >
               ${referrer.name}
             </Link>

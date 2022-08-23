@@ -22,8 +22,4 @@ export class PlausibleBaseElementWithState extends PlausibleBaseElement {
 
   @property({ type: String })
   currentUserRole!: string;
-
-  constructor() {
-    super();
-  }
 }

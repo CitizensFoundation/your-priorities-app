@@ -31,6 +31,9 @@ interface PlausibleSiteData {
   offset?: number;
   statsBegin: string;
   isDbip?: boolean;
+  flags?: {
+    custom_dimension_filter?: boolean;
+  }
 }
 
 interface PlausibleQueryData {
@@ -55,6 +58,11 @@ interface PlausibleQueryStringsData {
   filters?: PlausibleQueryFilters;
   with_imported?: boolean;
   auth?: string;
+}
+
+interface PlausibleFilterValue {
+  key: string;
+  value: string;
 }
 
 interface PlausiblePropValueData {
