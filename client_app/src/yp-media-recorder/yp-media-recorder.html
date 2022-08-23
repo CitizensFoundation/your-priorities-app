@@ -901,6 +901,7 @@
         if (
           navigator.userAgent.match(/Android/i) ||
           navigator.userAgent.match(/iPhone/i) ||
+          navigator.userAgent.match(/iPad/i) ||
           window.matchMedia("only screen and (max-width: 480px)").matches
         ) {
           this.set('isMobile', true);
