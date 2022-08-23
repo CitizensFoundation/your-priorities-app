@@ -1,4 +1,4 @@
-import{_ as e,e as o,n as i,Y as n,p as a,T as t,a as r,r as s}from"./ebe5d0d4.js";import"./85fcc8c2.js";import"./740671b7.js";let c=class extends n{constructor(){super(...arguments),this.new=!1,this.action="/images"}updated(e){super.updated(e),e.has("image")&&this._imageChanged(),e.has("post")&&this._postChanged()}render(){return a`
+import{_ as e,e as o,n as i,Y as n,p as a,T as t,a as r,r as s}from"./3b635374.js";import"./b31bf797.js";import"./7e4630f4.js";let c=class extends n{constructor(){super(...arguments),this.new=!1,this.action="/images"}updated(e){super.updated(e),e.has("image")&&this._imageChanged(),e.has("post")&&this._postChanged()}render(){return a`
       <yp-edit-dialog
         doubleWidth
         id="editDialog"
