@@ -6,19 +6,15 @@ import { installMediaQueryWatcher } from 'pwa-helpers/media-query.js';
 import { Layouts } from 'lit-flexbox-literals';
 
 import './pl-realtime.js';
-//import './pl-historical.js';
+import './pl-historical.js';
 
 import { parseQuery } from './query';
 import * as api from './api';
 
 //import { withComparisonProvider } from './comparison-provider-hoc';
 
-import { PlausibleStyles } from './plausibleStyles.js';
-import { PlausibleBaseElement } from './pl-base-element.js';
 import { BrowserHistory, createBrowserHistory } from './util/history.js';
 import { PlausibleBaseElementWithState } from './pl-base-element-with-state.js';
-//import '@lit-labs/router';
-//import { Routes } from '@lit-labs/router';
 
 const THIRTY_SECONDS = 30000;
 
@@ -100,7 +96,7 @@ export class PlausibleDashboard extends PlausibleBaseElementWithState {
 
   render() {
     if (this.site && this.query) {
-      if (true || this.query!.period === 'realtime') {
+      if (this.query!.period === 'realtime') {
         return html`
           <pl-realtime
             .timer="${this.timer}"

@@ -13,11 +13,14 @@ import './stats/locations/pl-locations.js';
 
 import './pl-date-picker.js';
 import './pl-filters.js';
+
+import './stats/pl-current-visitors.js';
+
 import { BrowserHistory } from './util/history.js';
 import { PlausibleBaseElementWithState } from './pl-base-element-with-state.js';
 
-@customElement('pl-realtime')
-export class PlausibleRealtime extends PlausibleBaseElementWithState {
+@customElement('pl-historical')
+export class PlausibleHistorical extends PlausibleBaseElementWithState {
   @property({ type: String })
   currentUserRole!: string;
 
@@ -27,17 +30,15 @@ export class PlausibleRealtime extends PlausibleBaseElementWithState {
   @property({ type: Boolean })
   stuck = false;
 
-  updated(changedProperties: Map<string | number | symbol, unknown>): void {
-    super.updated(changedProperties);
-  }
 
   static get styles() {
     return [
       ...super.styles,
       css`
-      .mb-12 {
-        max-width: 1100px;
-      }`
+        .mb-12 {
+          max-width: 1100px;
+        }
+      `,
     ];
   }
 
@@ -59,6 +60,13 @@ export class PlausibleRealtime extends PlausibleBaseElementWithState {
                 .site="${this.site}"
                 .currentUserRole="${this.currentUserRole}"
               ></pl-siteswitcher>
+              <pl-current-visitors
+                .timer=${this.timer}
+                .site=${this.site}
+                .query=${this.query}
+                .collectionId="${this.collectionId}"
+                .collectionType="${this.collectionType}"
+              ></pl-current-visitors>
               <pl-filters
                 class="flex"
                 .site="${this.site}"
@@ -76,7 +84,6 @@ export class PlausibleRealtime extends PlausibleBaseElementWithState {
         <pl-visitors-graph
           .site="${this.site}"
           .query="${this.query}"
-          .timer="${this.timer}"
           .collectionId="${this.collectionId}"
           .collectionType="${this.collectionType}"
         ></pl-visitors-graph>
@@ -85,15 +92,13 @@ export class PlausibleRealtime extends PlausibleBaseElementWithState {
             class="flex-col"
             .site="${this.site}"
             .query="${this.query}"
-            .timer="${this.timer}"
             .collectionId="${this.collectionId}"
             .collectionType="${this.collectionType}"
           ></pl-sources-list>
           <pl-pages
-             class="flex-col"
+            class="flex-col"
             .site="${this.site}"
             .query="${this.query}"
-            .timer="${this.timer}"
             .collectionId="${this.collectionId}"
             .collectionType="${this.collectionType}"
           ></pl-pages>
@@ -102,19 +107,17 @@ export class PlausibleRealtime extends PlausibleBaseElementWithState {
           <pl-locations
             .site="${this.site}"
             .query="${this.query}"
-            .timer="${this.timer}"
             .collectionId="${this.collectionId}"
             .collectionType="${this.collectionType}"
           ></pl-locations>
           <pl-devices
             .site="${this.site}"
             .query="${this.query}"
-            .timer="${this.timer}"
             .collectionId="${this.collectionId}"
             .collectionType="${this.collectionType}"
           ></pl-devices>
         </div>
-        ${ this.renderConversions() }
+        ${this.renderConversions()}
       </div>
     `;
   }
@@ -126,7 +129,6 @@ export class PlausibleRealtime extends PlausibleBaseElementWithState {
           <pl-conversions
             .site=${this.site}
             .query=${this.query}
-            .title="${this.t('goalConversionsLast30Min')}"
             .collectionId=${this.collectionId}
             .collectionType=${this.collectionType}
           ></pl-conversions>

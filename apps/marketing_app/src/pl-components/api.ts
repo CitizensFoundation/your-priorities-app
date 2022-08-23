@@ -76,7 +76,7 @@ export function getWithProxy(
   collectionType: string,
   collectionId: number,
   url: string | Request,
-  query: PlausibleQueryData,
+  query: PlausibleQueryData | undefined = undefined,
   ...extraQuery: any[]
 ) {
   const headers = SHARED_LINK_AUTH
