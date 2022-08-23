@@ -69,7 +69,7 @@ export class PlausibleHistorical extends PlausibleBaseElementWithState {
               ></pl-current-visitors>
               <pl-filters
                 class="flex"
-                .site="${this.site}"
+                .site=${this.site}
                 .query="${this.query}"
                 .history="${this.history}"
               ></pl-filters>

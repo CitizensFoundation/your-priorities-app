@@ -327,6 +327,7 @@ interface YpCollectionData extends YpDatabaseItem {
   theme_id?: number;
   language?: string;
   default_locale?: string;
+  created_at?: string;
   User?: YpUserData;
   user_id?: number;
   status?: string;

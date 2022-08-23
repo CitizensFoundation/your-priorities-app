@@ -177,9 +177,19 @@ export class YpMarketingApp extends YpBaseElement {
     let pathname = window.location.pathname;
     if (pathname.endsWith('/'))
       pathname = pathname.substring(0,pathname.length-1);
-    const splitPath = pathname.split('/');
-    this.collectionType = splitPath[splitPath.length-2];
-    this.collectionId = splitPath[splitPath.length-1];
+    const split = pathname.split('/');
+    this.collectionType = split[split.length-2];
+
+    this.originalCollectionType = this.collectionType;
+
+    if (this.collectionType==='community')
+      this.collectionType = 'communities';
+    if (this.collectionType==='domain')
+      this.collectionType = 'domains';
+    if (this.collectionType==='group')
+      this.collectionType = 'groups';
+
+    this.collectionId = split[split.length-1];
   }
 
   connectedCallback() {
@@ -306,12 +316,12 @@ export class YpMarketingApp extends YpBaseElement {
   _setAdminConfirmed() {
     if (this.collection) {
       switch (this.collectionType) {
-        case 'domain':
+        case 'domains':
           this.adminConfirmed = YpAccessHelpers.checkDomainAccess(
             this.collection as YpDomainData
           );
           break;
-        case 'community':
+        case 'communities':
           this.adminConfirmed = YpAccessHelpers.checkCommunityAccess(
             this.collection as YpCommunityData
           );
@@ -355,18 +365,18 @@ export class YpMarketingApp extends YpBaseElement {
           `;
         case 'config':
           switch (this.collectionType) {
-            case 'domain':
+            case 'domains':
               return html`
                 ${this.collection
-                  ? html`<yp-admin-config-domain
+                  ? html`<yp-community-marketing
                       .collectionType="${this.collectionType}"
                       .collection="${this.collection}"
                       .collectionId="${this.collectionId}"
                     >
-                    </yp-admin-config-domain>`
+                    </yp-community-marketing>`
                   : nothing}
               `;
-            case 'community':
+            case 'communities':
               return html`
                 ${this.collection
                   ? html`<yp-community-marketing

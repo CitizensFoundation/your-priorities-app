@@ -6,6 +6,10 @@ import '@spectrum-web-components/menu/sp-menu-group.js';
 import '@spectrum-web-components/menu/sp-menu-item.js';
 import '@spectrum-web-components/menu/sp-menu-divider.js';
 import '@spectrum-web-components/button/sp-button.js';
+import '@spectrum-web-components/button/sp-clear-button.js';
+import '@spectrum-web-components/button/sp-close-button.js';
+import '@spectrum-web-components/theme/sp-theme.js';
+import '@spectrum-web-components/theme/src/themes.js';
 
 import { appliedFilters, navigateToQuery, formattedFilters } from './query';
 
@@ -19,7 +23,6 @@ import {
 import { PlausibleBaseElementWithState } from './pl-base-element-with-state';
 import { BrowserHistory } from './util/history';
 import { AdjustmentsIcon, PencilIcon, SearchIcon, XIcon } from './pl-icons';
-import { type } from 'os';
 
 @customElement('pl-filters')
 export class PlausibleFilters extends PlausibleBaseElementWithState {
@@ -296,7 +299,6 @@ export class PlausibleFilters extends PlausibleBaseElementWithState {
 
     // For every filter DOM Node, check if its y value is higher than the previous (this indicates a wrap)
     [...items.childNodes].forEach(item => {
-
       // @ts-ignore
       if (typeof item.getBoundingClientRect === 'function') {
         // @ts-ignore
@@ -355,12 +357,13 @@ export class PlausibleFilters extends PlausibleBaseElementWithState {
       `;
     } else {
       return html`
+      <div class="flex">
         <div class="-ml-1 mr-1 h-4 w-4 md:h-4 md:w-4" aria-hidden="true">
           ${SearchIcon}
         </div>
         <!-- This would have been a good use-case for JSX! But in the interest of keeping the breakpoint width logic with TailwindCSS, this is a better long-term way to deal with it. -->
-        <span class="sm:hidden">Filter</span
-        ><span class="hidden sm:inline-block">Filter</span>
+        <span class="">Filter</span>
+      </div>
       `;
     }
   }
@@ -371,12 +374,8 @@ export class PlausibleFilters extends PlausibleBaseElementWithState {
 
   renderDropDown() {
     return html`
-      <div>
-        <sp-button
-          variant="primary"
-          class="flex items-center text-xs md:text-sm font-medium leading-tight px-3 py-2 cursor-pointer ml-auto text-gray-500 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-900 rounded"
-          @click="${this.toggleMenu}"
-        >
+      <div class="flex">
+        <sp-button variant="primary" @click="${this.toggleMenu}">
           ${this.renderDropdownButton()}
         </sp-button>
       </div>
@@ -416,6 +415,18 @@ export class PlausibleFilters extends PlausibleBaseElementWithState {
   }
 
   render() {
-    return html` ${this.renderFilterList()} ${this.renderDropDown()} `;
+    return html`
+      <sp-theme
+        theme="spectrum"
+        color="light"
+        scale="medium"
+        style="background-color: var(--spectrum-global-color-gray-100)"
+      >
+      <div class="flex ml-auto pl-2" style="width: 100%">
+        ${this.renderFilterList()}
+        ${this.renderDropDown()}
+      </div>
+      </sp-theme>
+    `;
   }
 }

@@ -45,6 +45,9 @@ export class PlausibleDashboard extends PlausibleBaseElementWithState {
   @property({ type: String })
   metric = 'visitors'
 
+  @property({ type: Object })
+  collection!: YpCollectionData;
+
   /*private routes = new Routes(this, [
     { path: '/', render: () => html`<h1>Home</h1>` },
     { path: '/projects', render: () => html`<h1>Projects</h1>` },
@@ -53,18 +56,6 @@ export class PlausibleDashboard extends PlausibleBaseElementWithState {
 
   constructor() {
     super();
-    this.site = {
-      domain: "localhost",
-      hasGoals: true,
-      embedded: false,
-      offset: 1,
-      statsBegin: "2022-05-05",
-      isDbip: false,
-      flags: {
-        custom_dimension_filter: false
-      }
-    }
-    this.resetState();
   }
 
   resetState() {
@@ -73,6 +64,19 @@ export class PlausibleDashboard extends PlausibleBaseElementWithState {
 
   connectedCallback(): void {
     super.connectedCallback();
+    this.site = {
+      domain: "localhost",
+      hasGoals: true,
+      embedded: false,
+      offset: 1,
+      statsBegin: this.collection.created_at!,
+      isDbip: false,
+      flags: {
+        custom_dimension_filter: false
+      }
+    }
+    this.resetState();
+
     this.history = createBrowserHistory();
     this.query = parseQuery(location.search, this.site);
     window.addEventListener('popstate',  () => {

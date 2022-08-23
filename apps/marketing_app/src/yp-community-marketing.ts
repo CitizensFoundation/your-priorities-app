@@ -29,7 +29,7 @@ export class YpCommunityMarketing extends YpAdminPage {
       css`
         pl-dashboard {
           height: 100vw;
-          background-color: #FFF;
+          background-color: #fff;
         }
 
         .header {
@@ -84,7 +84,8 @@ export class YpCommunityMarketing extends YpAdminPage {
       ? html`
           <pl-dashboard
             .collectionId="${this.collection.id}"
-            collectionType="communities"
+            .collectionType="${this.collectionType}"
+            .collection="${this.collection}"
           ></pl-dashboard>
         `
       : nothing;
