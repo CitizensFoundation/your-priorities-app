@@ -48,6 +48,10 @@ export class PlausibleDashboard extends PlausibleBaseElementWithState {
   @property({ type: Object })
   collection!: YpCollectionData;
 
+  @property({ type: String })
+  plausibleSiteName: string | undefined
+
+
   /*private routes = new Routes(this, [
     { path: '/', render: () => html`<h1>Home</h1>` },
     { path: '/projects', render: () => html`<h1>Projects</h1>` },
@@ -64,24 +68,20 @@ export class PlausibleDashboard extends PlausibleBaseElementWithState {
 
   connectedCallback(): void {
     super.connectedCallback();
-    this.site = {
-      domain: "localhost",
-      hasGoals: true,
-      embedded: false,
-      offset: 1,
-      statsBegin: this.collection.created_at!,
-      isDbip: false,
-      flags: {
-        custom_dimension_filter: false
-      }
-    }
-    this.resetState();
 
-    this.history = createBrowserHistory();
-    this.query = parseQuery(location.search, this.site);
-    window.addEventListener('popstate',  () => {
-      this.query = parseQuery(location.search, this.site);
-    });
+    try {
+      fetch('/api/users/has/PlausibleSiteName', {
+        headers: {
+          'Content-Type': 'application/json'
+        },
+      })
+      .then((response) => response.json())
+      .then((data) => {
+        this.plausibleSiteName = data.plausibleSiteName;
+      });
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   static get styles() {
@@ -96,10 +96,31 @@ export class PlausibleDashboard extends PlausibleBaseElementWithState {
       api.cancelAll();
       this.resetState();
     }
+
+    if (changedProperties.has("plausibleSiteName")) {
+      this.site = {
+        domain: this.plausibleSiteName!,
+        hasGoals: true,
+        embedded: false,
+        offset: 1,
+        statsBegin: this.collection.created_at!,
+        isDbip: false,
+        flags: {
+          custom_dimension_filter: false
+        }
+      }
+      this.resetState();
+
+      this.history = createBrowserHistory();
+      this.query = parseQuery(location.search, this.site);
+      window.addEventListener('popstate',  () => {
+        this.query = parseQuery(location.search, this.site);
+      });
+    }
   }
 
   render() {
-    if (this.site && this.query) {
+    if (this.site && this.query && this.plausibleSiteName) {
       if (this.query!.period === 'realtime') {
         return html`
           <pl-realtime

@@ -12,7 +12,7 @@ export class YpServerApiBase extends YpCodeBase {
           transformedApiType = 'domains';
         break;
       case 'community':
-      case 'communites':
+      case 'communities':
           transformedApiType = 'communities';
         break;
       case 'group':

@@ -1838,6 +1838,14 @@ router.get('/has/AutoTranslation', function(req, res) {
   }
 });
 
+router.get('/has/PlausibleSiteName', function(req, res) {
+  if (process.env.PLAUSIBLE_SITE_NAME) {
+    res.send({ plausibleSiteName: process.env.PLAUSIBLE_SITE_NAME });
+  } else {
+    res.sendStatus(404);
+  }
+});
+
 router.get('/:id/status_update/:bulkStatusUpdateId', function(req, res, next) {
   if (false) {
     log.error("In status_update status_update - Should not be called error", { context: 'user_get' });
