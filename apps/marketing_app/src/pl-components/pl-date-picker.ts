@@ -28,6 +28,7 @@ import './pl-query-link.js';
 import { LitFlatpickr } from 'lit-flatpickr';
 import { BrowserHistory } from './util/history';
 import { PlausibleBaseElementWithState } from './pl-base-element-with-state';
+import { ChevronDownIcon } from './pl-icons';
 
 @customElement('pl-date-picker')
 export class PlausibleDatePicker extends PlausibleBaseElementWithState {
@@ -319,43 +320,43 @@ export class PlausibleDatePicker extends PlausibleBaseElementWithState {
   timeFrameText() {
     if (this.query.period === 'day') {
       if (isToday(this.site, this.query.date)) {
-        return 'Today';
+        return this.t('Today');
       }
       return formatDay(this.query.date);
     }
     if (this.query.period === '7d') {
-      return 'Last 7 days';
+      return this.t('Last 7 days');
     }
     if (this.query.period === '30d') {
-      return 'Last 30 days';
+      return this.t('Last 30 days');
     }
     if (this.query.period === 'month') {
       if (isThisMonth(this.site, this.query.date)) {
-        return 'Month to Date';
+        return this.t('Month to Date');
       }
       return formatMonthYYYY(this.query.date);
     }
     if (this.query.period === '6mo') {
-      return 'Last 6 months';
+      return this.t('Last 6 months');
     }
     if (this.query.period === '12mo') {
-      return 'Last 12 months';
+      return this.t('Last 12 months');
     }
     if (this.query.period === 'year') {
       if (isThisYear(this.site, this.query.date)) {
-        return 'Year to Date';
+        return this.t('Year to Date');
       }
       return formatYear(this.query.date);
     }
     if (this.query.period === 'all') {
-      return 'All time';
+      return this.t('All time');
     }
     if (this.query.period === 'custom') {
       return `${formatDayShort(this.query.from)} - ${formatDayShort(
         this.query.to
       )}`;
     }
-    return 'Realtime';
+    return this.t('Realtime');
   }
 
   toggle() {
@@ -372,8 +373,11 @@ export class PlausibleDatePicker extends PlausibleBaseElementWithState {
     this.open = false;
   }
 
-  openCalendar() {
-    this.calendar && this.calendar.open();
+  async openCalendar() {
+    await this.updateComplete;
+    setTimeout( ()=>{
+      this.calendar.open();
+    }, 150)
   }
 
   renderLink(period: string, text: string, opts: any = {}) {
@@ -429,37 +433,33 @@ export class PlausibleDatePicker extends PlausibleBaseElementWithState {
             <div
               class="py-1 border-b border-gray-200 dark:border-gray-500 date-option-group"
             >
-              ${this.renderLink('day', 'Today')}
-              ${this.renderLink('realtime', 'Realtime')}
+              ${this.renderLink('day', this.t('Today'))}
+              ${this.renderLink('realtime', this.t('Realtime'))}
             </div>
             <div
               class="py-1 border-b border-gray-200 dark:border-gray-500 date-option-group"
             >
-              ${this.renderLink('7d', 'Last 7 days')}
-              ${this.renderLink('30d', 'Last 30 days')}
+              ${this.renderLink('7d', this.t('Last 7 days'))}
+              ${this.renderLink('30d', this.t('Last 30 days'))}
             </div>
             <div
               class="py-1 border-b border-gray-200 dark:border-gray-500 date-option-group"
             >
-              ${this.renderLink('month', 'Month to Date')}
-              ${this.renderLink('month', 'Last month', {
+              ${this.renderLink('month', this.t('Month to Date'))}
+              ${this.renderLink('month', this.t('Last month'), {
                 date: lastMonth(this.site),
               })}
             </div>
             <div
               class="py-1 border-b border-gray-200 dark:border-gray-500 date-option-group"
             >
-              ${this.renderLink('year', 'Year to Date')}
-              ${this.renderLink('12mo', 'Last 12 months')}
+              ${this.renderLink('year', this.t('Year to Date'))}
+              ${this.renderLink('12mo', this.t('Last 12 months'))}
             </div>
             <div class="py-1 date-option-group">
-              ${this.renderLink('all', 'All time')}
+              ${this.renderLink('all', this.t('All time'))}
               <span
                 @click="${() => {
-                  this.mode = 'calendar';
-                  this.openCalendar();
-                }}"
-                @keyPress=${() => {
                   this.mode = 'calendar';
                   this.openCalendar();
                 }}"
@@ -502,7 +502,7 @@ export class PlausibleDatePicker extends PlausibleBaseElementWithState {
 
   renderPicker() {
     return html`
-      <div id="dropdownNode" class="w-20 sm:w-36 md:w-48 md:relative">
+      <div id="dropdownNode" class="sm:w-36 md:w-48 md:relative">
         <div
           @click=${this.toggle}
           @keyPress=${this.toggle}
@@ -520,9 +520,9 @@ export class PlausibleDatePicker extends PlausibleBaseElementWithState {
             <span class="font-medium">${this.timeFrameText()}</span>
           </span>
           <div
-            class="hidden sm:inline-block h-4 w-4 md:h-5 md:w-5 text-gray-500"
+            class=" sm:inline-block h-4 w-4 md:h-5 md:w-5 text-gray-500"
           >
-            C-ICON
+           ${ChevronDownIcon}
           </div>
         </div>
 
