@@ -9,6 +9,7 @@ var _ = require('lodash');
 var queue = require('../active-citizen/workers/queue');
 const getAnonymousUser = require('../active-citizen/utils/get_anonymous_system_user');
 const moment = require('moment');
+const {plausibleStatsProxy} = require("../active-citizen/engine/analytics/plausible/manager");
 
 
 var changePostCounter = function (req, postId, column, upDown, next) {
@@ -1428,6 +1429,18 @@ router.delete('/:id/endorse', auth.can('vote on post'), function(req, res) {
       err: error, errorStatus: 500 });
     res.sendStatus(500);
   })
+});
+
+router.put('/:postId/plausibleStatsProxy', auth.can('edit post'), async (req, res) => {
+  try {
+    const plausibleData = await plausibleStatsProxy(req.body.plausibleUrl, {
+      postId: req.params.postId
+    });
+    res.send(plausibleData);
+  } catch (error) {
+    log.error('Could not get plausibleStatsProxy', { err: error, context: 'getPlausibleSeries', user: toJson(req.user.simple()) });
+    res.sendStatus(500);
+  }
 });
 
 module.exports = router;

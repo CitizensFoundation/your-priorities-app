@@ -437,6 +437,7 @@ app.use('/marketing', express.static(path.join(__dirname, '../apps/marketing_app
 app.use('/marketing/domain/*', express.static(path.join(__dirname, '../apps/marketing_app/dist')));
 app.use('/marketing/community/*', express.static(path.join(__dirname, '../apps/marketing_app/dist')));
 app.use('/marketing/group/*', express.static(path.join(__dirname, '../apps/marketing_app/dist')));
+app.use('/marketing/post/*', express.static(path.join(__dirname, '../apps/marketing_app/dist')));
 app.use('/analytics/', express.static(path.join(__dirname, '../apps/analytics_app/dist')));
 app.use('/analytics/domain/*', express.static(path.join(__dirname, '../apps/analytics_app/dist')));
 app.use('/analytics/community/*', express.static(path.join(__dirname, '../apps/analytics_app/dist')));

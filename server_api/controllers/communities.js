@@ -2070,8 +2070,6 @@ router.get('/:communityId/:type/getPlausibleSeries', auth.can('edit community'),
 router.put('/:communityId/plausibleStatsProxy', auth.can('edit community'), async (req, res) => {
   try {
     const plausibleData = await plausibleStatsProxy(req.body.plausibleUrl, { communityId: req.params.communityId });
-    log.info("GOT DATA");
-    log.info(plausibleData);
     res.send(plausibleData);
   } catch (error) {
     log.error('Could not get plausibleStatsProxy', { err: error, context: 'getPlausibleSeries', user: toJson(req.user.simple()) });

@@ -1110,8 +1110,6 @@ router.get('/:id/stats_votes', auth.can('edit domain'), function(req, res) {
 router.put('/:domainId/plausibleStatsProxy', auth.can('edit domain'), async (req, res) => {
   try {
     const plausibleData = await plausibleStatsProxy(req.body.plausibleUrl, { domainId: req.params.domainId });
-    log.info("GOT DATA");
-    log.info(plausibleData);
     res.send(plausibleData);
   } catch (error) {
     log.error('Could not get plausibleStatsProxy', { err: error, context: 'getPlausibleSeries', user: toJson(req.user.simple()) });

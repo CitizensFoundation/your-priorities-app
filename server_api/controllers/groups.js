@@ -22,6 +22,7 @@ const performSingleModerationAction = require('../active-citizen/engine/moderati
 const request = require('request');
 const {updateAnswerTranslation} = require("../active-citizen/utils/translation_helpers");
 const {updateSurveyTranslation} = require("../active-citizen/utils/translation_helpers");
+const {plausibleStatsProxy} = require("../active-citizen/engine/analytics/plausible/manager");
 
 const getFromAnalyticsApi = require('../active-citizen/engine/analytics/manager').getFromAnalyticsApi;
 const triggerSimilaritiesTraining = require('../active-citizen/engine/analytics/manager').triggerSimilaritiesTraining;
@@ -2539,6 +2540,18 @@ router.put('/:id/convert_docx_survey_to_json', uploadDox.single('file'), functio
       }
     }
   });
+});
+
+router.put('/:groupId/plausibleStatsProxy', auth.can('edit group'), async (req, res) => {
+  try {
+    const plausibleData = await plausibleStatsProxy(req.body.plausibleUrl, {
+      groupId: req.params.groupId
+    });
+    res.send(plausibleData);
+  } catch (error) {
+    log.error('Could not get plausibleStatsProxy', { err: error, context: 'getPlausibleSeries', user: toJson(req.user.simple()) });
+    res.sendStatus(500);
+  }
 });
 
 module.exports = router;

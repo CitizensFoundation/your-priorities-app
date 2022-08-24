@@ -48,7 +48,7 @@ export class YpMarketingApp extends YpBaseElement {
   collectionId: number | string;
 
   @property({ type: String })
-  collectionAction: string = "config";
+  collectionAction: string = 'config';
 
   @property({ type: String })
   page: string | undefined;
@@ -166,6 +166,7 @@ export class YpMarketingApp extends YpBaseElement {
 
   constructor() {
     super();
+
     window.serverApi = new YpServerApi();
     window.adminServerApi = new YpServerApiAdmin();
     window.appGlobals = new YpAppGlobals(window.serverApi);
@@ -176,20 +177,19 @@ export class YpMarketingApp extends YpBaseElement {
 
     let pathname = window.location.pathname;
     if (pathname.endsWith('/'))
-      pathname = pathname.substring(0,pathname.length-1);
+      pathname = pathname.substring(0, pathname.length - 1);
     const split = pathname.split('/');
-    this.collectionType = split[split.length-2];
+    this.collectionType = split[split.length - 2];
 
     this.originalCollectionType = this.collectionType;
 
-    if (this.collectionType==='community')
+    if (this.collectionType === 'community')
       this.collectionType = 'communities';
-    if (this.collectionType==='domain')
-      this.collectionType = 'domains';
-    if (this.collectionType==='group')
-      this.collectionType = 'groups';
+    if (this.collectionType === 'domain') this.collectionType = 'domains';
+    if (this.collectionType === 'group') this.collectionType = 'groups';
+    if (this.collectionType === 'post') this.collectionType = 'posts';
 
-    this.collectionId = split[split.length-1];
+    this.collectionId = split[split.length - 1];
   }
 
   connectedCallback() {
@@ -210,10 +210,15 @@ export class YpMarketingApp extends YpBaseElement {
   }
 
   async _getCollection() {
-    this.collection = await window.serverApi.getCollection(
+    const collection = (await window.serverApi.getCollection(
       this.collectionType,
       this.collectionId as number
-    );
+    )) as YpCollectionData | YpGroupResults;
+    if (this.collectionType == 'groups') {
+      this.collection = (collection as YpGroupResults).group;
+    } else {
+      this.collection = collection as YpCollectionData;
+    }
     this._setAdminConfirmed();
   }
 
@@ -259,7 +264,13 @@ export class YpMarketingApp extends YpBaseElement {
         </div>
         <div slot="appContent">
           <mwc-top-app-bar>
-            <mwc-icon-button class="exitButton" .label="${this.t('exitToMainApp')}" slot="navigationIcon" @click="${this.exitToMainApp}" icon="exit_to_app"></mwc-icon-button>
+            <mwc-icon-button
+              class="exitButton"
+              .label="${this.t('exitToMainApp')}"
+              slot="navigationIcon"
+              @click="${this.exitToMainApp}"
+              icon="exit_to_app"
+            ></mwc-icon-button>
 
             <div slot="title">
               <div class="layout horizontal headerContainer">
@@ -281,7 +292,7 @@ export class YpMarketingApp extends YpBaseElement {
   }
 
   exitToMainApp() {
-    window.location.href = `/${this.collectionType}/${this.collectionId}`;
+    window.location.href = `/${this.originalCollectionType}/${this.collectionId}`;
   }
 
   _setupEventListeners() {
@@ -326,6 +337,16 @@ export class YpMarketingApp extends YpBaseElement {
             this.collection as YpCommunityData
           );
           break;
+        case 'groups':
+          this.adminConfirmed = YpAccessHelpers.checkGroupAccess(
+            this.collection as YpGroupData
+          );
+          break;
+        case 'posts':
+          this.adminConfirmed = YpAccessHelpers.checkPostAccess(
+            this.collection as unknown as YpPostData
+          );
+          break;
       }
     }
 
@@ -366,6 +387,9 @@ export class YpMarketingApp extends YpBaseElement {
         case 'config':
           switch (this.collectionType) {
             case 'domains':
+            case 'communities':
+            case 'groups':
+            case 'posts':
               return html`
                 ${this.collection
                   ? html`<yp-community-marketing
@@ -376,7 +400,7 @@ export class YpMarketingApp extends YpBaseElement {
                     </yp-community-marketing>`
                   : nothing}
               `;
-            case 'communities':
+            case 'somethingelse':
               return html`
                 ${this.collection
                   ? html`<yp-community-marketing
