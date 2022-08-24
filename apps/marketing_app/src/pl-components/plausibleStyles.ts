@@ -2825,10 +2825,10 @@ export const PlausibleStyles = css`
   }
   .pulsating-circle {
     height: 10px;
-    left: 50%;
     position: absolute;
-    top: 50%;
     width: 10px;
+    margin-top: 44px;
+    margin-left: 127px;
   }
   .pulsating-circle:before {
     --tw-bg-opacity: 1;
