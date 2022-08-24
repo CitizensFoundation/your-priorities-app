@@ -42,7 +42,7 @@ export class PlausiblePropBreakdown extends PlausibleBaseElementWithState {
   propKey!: string;
 
   @property({ type: String })
-  storageKey: string;
+  storageKey!: string;
 
   @property({ type: Boolean })
   loading = true;
@@ -61,6 +61,10 @@ export class PlausiblePropBreakdown extends PlausibleBaseElementWithState {
 
   constructor() {
     super();
+  }
+
+  connectedCallback(): void {
+    super.connectedCallback();
     let propKey = this.goal.prop_names[0];
     this.storageKey = 'goalPropTab__' + this.site.domain + this.goal.name;
     const storedKey = storage.getItem(this.storageKey);
@@ -72,10 +76,6 @@ export class PlausiblePropBreakdown extends PlausibleBaseElementWithState {
     }
 
     this.handleResize = this.handleResize.bind(this);
-  }
-
-  connectedCallback(): void {
-    super.connectedCallback();
     window.addEventListener('resize', this.handleResize, false);
 
     this.handleResize();
@@ -261,21 +261,25 @@ export class PlausiblePropBreakdown extends PlausibleBaseElementWithState {
   }
 
   render() {
-    return html`
-      <div class="w-full pl-3 sm:pl-6 mt-4">
-        <div class="flex-col sm:flex-row flex items-center pb-1">
-          <span
-            class="text-xs font-bold text-gray-600 dark:text-gray-300 self-start sm:self-auto mb-1 sm:mb-0"
-            >Breakdown by:</span
-          >
-          <ul
-            class="flex flex-wrap font-medium text-xs text-gray-500 dark:text-gray-400 leading-5 pl-1 sm:pl-2"
-          >
-            ${this.goal.prop_names.map(this.renderPill.bind(this))}
-          </ul>
+    if (this.goal) {
+      return html`
+        <div class="w-full pl-3 sm:pl-6 mt-4">
+          <div class="flex-col sm:flex-row flex items-center pb-1">
+            <span
+              class="text-xs font-bold text-gray-600 dark:text-gray-300 self-start sm:self-auto mb-1 sm:mb-0"
+              >Breakdown by:</span
+            >
+            <ul
+              class="flex flex-wrap font-medium text-xs text-gray-500 dark:text-gray-400 leading-5 pl-1 sm:pl-2"
+            >
+              ${this.goal.prop_names.map(this.renderPill.bind(this))}
+            </ul>
+          </div>
+          ${this.renderBody()} ${this.renderLoading()}
         </div>
-        ${this.renderBody()} ${this.renderLoading()}
-      </div>
-    `;
+      `;
+    } else {
+      return nothing;
+    }
   }
 }
