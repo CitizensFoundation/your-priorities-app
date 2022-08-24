@@ -150,9 +150,9 @@ export class PlausibleTopStats extends PlausibleBaseElement {
                     class="${`text-xs font-bold tracking-wide text-gray-500 uppercase dark:text-gray-400 whitespace-nowrap flex w-content
                   ${
                     isSelected
-                      ? html`text-indigo-700 dark:text-indigo-500
+                      ? `text-indigo-700 dark:text-indigo-500
                         border-indigo-700 dark:border-indigo-500`
-                      : html`group-hover:text-indigo-700
+                      : `group-hover:text-indigo-700
                         dark:group-hover:text-indigo-500`
                   }`}"
                   >

@@ -54,9 +54,7 @@ export class PlausibleVisitorsGraph extends PlausibleBaseElementWithState {
     if (changedProperties.get('query')) {
       this.fetchGraphData();
       this.fetchTopStatData();
-    }
-
-    if (changedProperties.get('metric')) {
+    } else if (changedProperties.get('metric')) {
       this.fetchGraphData();
     }
 
@@ -97,6 +95,7 @@ export class PlausibleVisitorsGraph extends PlausibleBaseElementWithState {
     if (newMetric === this.metric) {
       storage.setItem(`metric__${this.site.domain}`, '');
       this.metric = '';
+      //this.graphData = undefined;
     } else {
       storage.setItem(`metric__${this.site.domain}`, newMetric);
       this.metric = newMetric;
@@ -160,12 +159,12 @@ export class PlausibleVisitorsGraph extends PlausibleBaseElementWithState {
             : this.metric
             ? 'pt-32 sm:pt-36 md:pt-48'
             : 'pt-16 sm:pt-14 md:pt-18 lg:pt-5'
-        } mx-auto ${this.graphData && this.topStatData ? '' : 'loading'}"
+        } mx-auto ${this.topStatData ? '' : 'loading'}"
       >
         <div></div>
       </div>
     </div>
-  ${this.graphData && this.topStatData ? this.renderInner() : nothing}
+  ${this.topStatData ? this.renderInner() : nothing}
 </div>
 
 `;

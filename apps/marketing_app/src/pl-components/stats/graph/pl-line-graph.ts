@@ -415,6 +415,7 @@ export class PlausibleLineGraph extends PlausibleBaseElementWithState {
             ${this.importedNotice()}
           </div>
           <canvas
+            ?hidden="${!this.metric}"
             id="main-graph-canvas"
             class=${'mt-4 select-none ' + extraClass}
             width="1054"

@@ -63,22 +63,25 @@ export class PlausiblePropBreakdown extends PlausibleBaseElementWithState {
     super();
   }
 
-  connectedCallback(): void {
+  async connectedCallback() {
     super.connectedCallback();
-    let propKey = this.goal.prop_names[0];
+    this.propKey = this.goal.prop_names[0];
     this.storageKey = 'goalPropTab__' + this.site.domain + this.goal.name;
     const storedKey = storage.getItem(this.storageKey);
     if (this.goal.prop_names.includes(storedKey)) {
-      propKey = storedKey;
+      this.propKey = storedKey;
     }
     if (this.query.filters!['props']) {
-      propKey = Object.keys(this.query.filters!['props'])[0];
+      this.propKey = Object.keys(this.query.filters!['props'])[0];
     }
+
+    debugger;
 
     this.handleResize = this.handleResize.bind(this);
     window.addEventListener('resize', this.handleResize, false);
 
     this.handleResize();
+    await this.updateComplete;
     this.fetchPropBreakdown();
   }
 
@@ -260,7 +263,7 @@ export class PlausiblePropBreakdown extends PlausibleBaseElementWithState {
   }
 
   render() {
-    if (this.goal) {
+    if (this.goal && this.propKey) {
       return html`
         <div class="w-full pl-3 sm:pl-6 mt-4">
           <div class="flex-col sm:flex-row flex items-center pb-1">
