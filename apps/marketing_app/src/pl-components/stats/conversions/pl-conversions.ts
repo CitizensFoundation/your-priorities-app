@@ -105,7 +105,7 @@ export class PlausibleConversions extends PlausibleBaseElementWithState {
             plot="unique_conversions"
           >
             <pl-link
-              .to="${{search: url.setQuery('goal', goal.name)}}"
+              .to="${{search: url.setQuerySearch('goal', goal.name)}}"
               class="block px-2 py-1.5 hover:underline relative z-9 break-all lg:truncate dark:text-gray-200"
               >${goal.name}</pl-link
             >

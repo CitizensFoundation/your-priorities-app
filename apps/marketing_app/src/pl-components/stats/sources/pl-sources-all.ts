@@ -61,7 +61,7 @@ export class PlausibleSourcesAll extends PlausibleSourcesBase {
               .to=${{search: url.setQuerySearch('source', referrer.name)}}
             >
               <img
-                src=${`/favicon/sources/${encodeURIComponent(referrer.name)}`}
+                src=${`/api/users/PlausibleFavIcon/${encodeURIComponent(referrer.name)}`}
                 class="inline w-4 h-4 mr-2 -mt-px align-middle"
               />
               ${referrer.name}

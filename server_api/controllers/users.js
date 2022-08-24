@@ -12,6 +12,7 @@ var queue = require('../active-citizen/workers/queue');
 const url = require('url');
 
 const randomstring = require('randomstring');
+const {sendPlausibleFavicon} = require("../active-citizen/engine/analytics/plausible/manager");
 
 var getAllModeratedItemsByUser = require('../active-citizen/engine/moderation/get_moderation_items').getAllModeratedItemsByUser;
 const performSingleModerationAction = require('../active-citizen/engine/moderation/process_moderation_items').performSingleModerationAction;
@@ -1843,6 +1844,20 @@ router.get('/has/PlausibleSiteName', function(req, res) {
     res.send({ plausibleSiteName: process.env.PLAUSIBLE_SITE_NAME });
   } else {
     res.sendStatus(404);
+  }
+});
+
+router.get('/PlausibleFavIcon/:sourceName', async (req, res) => {
+  try {
+    const iconFile = await sendPlausibleFavicon(req.params.sourceName);
+    if (iconFile) {
+      res.send(iconFile);
+    } else {
+      res.sendStatus(404);
+    }
+  } catch (error) {
+    log.error(error);
+    res.sendStatus(500);
   }
 });
 
