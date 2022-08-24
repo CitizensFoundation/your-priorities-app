@@ -1,6 +1,7 @@
-export default
 {
+    "Goal Conversions": "Goal onversions",
     "contentAdminFor": "Content admin",
+    "analyticsFor": "Analytics for",
     "editTranslation": "Edit translation",
     "editTranslations": "Edit translations",
     "cancel": "Cancel",
@@ -14,4 +15,4 @@ export default
     "selectLanguage": "Select language",
     "noTranslation": "No Translation!",
     "goalConversionsLast30Min": "Goal Conversions (last 30 min)"
-};
+}

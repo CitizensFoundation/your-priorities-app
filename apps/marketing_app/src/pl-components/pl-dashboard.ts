@@ -45,12 +45,6 @@ export class PlausibleDashboard extends PlausibleBaseElementWithState {
   @property({ type: String })
   metric = 'visitors'
 
-  @property({ type: Object })
-  collection!: YpCollectionData;
-
-  @property({ type: String })
-  plausibleSiteName: string | undefined
-
   @property({ type: String })
   proxyUrl: string | undefined
 
@@ -71,36 +65,6 @@ export class PlausibleDashboard extends PlausibleBaseElementWithState {
   connectedCallback(): void {
     super.connectedCallback();
     this.timer = new Timer();
-    try {
-      fetch('/api/users/has/PlausibleSiteName', {
-        headers: {
-          'Content-Type': 'application/json'
-        },
-      })
-      .then((response) => response.json())
-      .then((data) => {
-        this.plausibleSiteName = data.plausibleSiteName;
-        this.setupSite();
-      });
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-  setupSite() {
-    this.site = {
-      domain: this.plausibleSiteName!,
-      hasGoals: true,
-      embedded: false,
-      offset: 1,
-      statsBegin: this.collection.created_at!,
-      isDbip: false,
-      flags: {
-        custom_dimension_filter: false
-      }
-    }
-    this.resetState();
-
     this.history = createBrowserHistory();
     this.query = parseQuery(location.search, this.site);
     window.addEventListener('popstate',  () => {
@@ -123,7 +87,7 @@ export class PlausibleDashboard extends PlausibleBaseElementWithState {
   }
 
   render() {
-    if (this.site && this.query && this.plausibleSiteName) {
+    if (this.site && this.query) {
       if (this.query!.period === 'realtime') {
         return html`
           <pl-realtime

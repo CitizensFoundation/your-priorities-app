@@ -145,7 +145,7 @@ export class PlausibleConversions extends PlausibleBaseElementWithState {
     } else {
       return html`
         <h3 class="font-bold dark:text-gray-100">
-          ${this.title || "Goal Conversions"}
+          ${this.title || this.t("Goal Conversions")}
         </h3>
         <div
           class="flex items-center justify-between mt-3 mb-2 text-xs font-bold tracking-wide text-gray-500 dark:text-gray-400"

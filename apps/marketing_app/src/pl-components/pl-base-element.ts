@@ -12,7 +12,6 @@ export class PlausibleBaseElement extends LitElement {
 
   connectedCallback() {
     super.connectedCallback();
-
     this.addGlobalListener('language-loaded', this._languageEvent.bind(this));
 
     if (

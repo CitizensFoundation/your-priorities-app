@@ -16,11 +16,46 @@ export class YpCommunityMarketing extends YpAdminPage {
   @property({ type: String })
   communityAccess = 'public';
 
+  @property({ type: String })
+  plausibleSiteName: string | undefined
+
+  @property({ type: Object })
+  site: PlausibleSiteData | undefined;
+
   chart: any;
 
   constructor() {
     super();
     Chart.register(...registerables);
+  }
+
+  connectedCallback(): void {
+    super.connectedCallback();
+    try {
+      fetch('/api/users/has/PlausibleSiteName', {
+        headers: {
+          'Content-Type': 'application/json'
+        },
+      })
+      .then((response) => response.json())
+      .then((data) => {
+        this.plausibleSiteName = data.plausibleSiteName;
+        this.site = {
+          domain: this.plausibleSiteName!,
+          hasGoals: true,
+          embedded: false,
+          offset: 1,
+          statsBegin: this.collection!.created_at!,
+          isDbip: false,
+          flags: {
+            custom_dimension_filter: false
+          }
+        }
+
+      });
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   static get styles() {
@@ -80,11 +115,11 @@ export class YpCommunityMarketing extends YpAdminPage {
   }
 
   render() {
-    return this.collection
+    return this.collection && this.site
       ? html`
           <pl-dashboard
             .proxyUrl="${`/api/${this.collectionType}/${this.collectionId}/plausibleStatsProxy`}"
-            .collection="${this.collection}"
+            .site="${this.site}"
           ></pl-dashboard>
         `
       : nothing;
