@@ -30,7 +30,6 @@ export class PlausibleHistorical extends PlausibleBaseElementWithState {
   @property({ type: Boolean })
   stuck = false;
 
-
   static get styles() {
     return [
       ...super.styles,
@@ -64,8 +63,7 @@ export class PlausibleHistorical extends PlausibleBaseElementWithState {
                 .timer=${this.timer}
                 .site=${this.site}
                 .query=${this.query}
-                .collectionId="${this.collectionId}"
-                .collectionType="${this.collectionType}"
+                .proxyUrl="${this.proxyUrl}"
               ></pl-current-visitors>
               <pl-filters
                 class="flex"
@@ -84,37 +82,32 @@ export class PlausibleHistorical extends PlausibleBaseElementWithState {
         <pl-visitors-graph
           .site="${this.site}"
           .query="${this.query}"
-          .collectionId="${this.collectionId}"
-          .collectionType="${this.collectionType}"
+          .proxyUrl="${this.proxyUrl}"
         ></pl-visitors-graph>
         <div class="items-start justify-between block w-full md:flex flex">
           <pl-sources-list
             class="flex-col"
             .site="${this.site}"
             .query="${this.query}"
-            .collectionId="${this.collectionId}"
-            .collectionType="${this.collectionType}"
+            .proxyUrl="${this.proxyUrl}"
           ></pl-sources-list>
           <pl-pages
             class="flex-col"
             .site="${this.site}"
             .query="${this.query}"
-            .collectionId="${this.collectionId}"
-            .collectionType="${this.collectionType}"
+            .proxyUrl="${this.proxyUrl}"
           ></pl-pages>
         </div>
         <div class="items-start justify-between block w-full md:flex flex">
           <pl-locations
             .site="${this.site}"
             .query="${this.query}"
-            .collectionId="${this.collectionId}"
-            .collectionType="${this.collectionType}"
+            .proxyUrl="${this.proxyUrl}"
           ></pl-locations>
           <pl-devices
             .site="${this.site}"
             .query="${this.query}"
-            .collectionId="${this.collectionId}"
-            .collectionType="${this.collectionType}"
+            .proxyUrl="${this.proxyUrl}"
           ></pl-devices>
         </div>
         ${this.renderConversions()}
@@ -129,8 +122,7 @@ export class PlausibleHistorical extends PlausibleBaseElementWithState {
           <pl-conversions
             .site=${this.site}
             .query=${this.query}
-            .collectionId=${this.collectionId}
-            .collectionType=${this.collectionType}
+            .proxyUrl=${this.proxyUrl}
           ></pl-conversions>
         </div>
       `;

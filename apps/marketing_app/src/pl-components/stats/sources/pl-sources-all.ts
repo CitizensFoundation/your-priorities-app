@@ -26,9 +26,8 @@ export class PlausibleSourcesAll extends PlausibleSourcesBase {
     this.referrers = undefined;
 
     api
-      .getWithProxy(
-        this.collectionType,
-        this.collectionId,
+      .get(
+        this.proxyUrl,
         `/api/stats/${encodeURIComponent(this.site!.domain!)}/sources`,
         this.query,
         { show_noref: this.showNoRef }

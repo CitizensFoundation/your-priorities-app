@@ -20,8 +20,8 @@ export class PlausableTopPages extends PlausableBasePages {
         .fetchDataFunction=${this.fetchData}
         .filter=${{ entry_page: 'name' }}
         keyLabel="Page"
-        .collectionId="${this.collectionId}"
-        .collectionType="${this.collectionType}"
+
+        .proxyUrl="${this.proxyUrl}"
         .detailsLink=${url.sitePath(this.site, this.pagePath)}
         .query=${this.query}
         .pagePath="${this.pagePath}"

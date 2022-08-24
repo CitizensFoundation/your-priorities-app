@@ -51,6 +51,8 @@ export class PlausibleDashboard extends PlausibleBaseElementWithState {
   @property({ type: String })
   plausibleSiteName: string | undefined
 
+  @property({ type: String })
+  proxyUrl: string | undefined
 
   /*private routes = new Routes(this, [
     { path: '/', render: () => html`<h1>Home</h1>` },
@@ -130,8 +132,7 @@ export class PlausibleDashboard extends PlausibleBaseElementWithState {
             .currentRole="${this.currentUserRole}"
             .query="${this.query}"
             .history="${this.history}"
-            .collectionId="${this.collectionId}"
-            .collectionType="${this.collectionType}"
+            .proxyUrl="${this.proxyUrl}"
           ></pl-realtime>
         `;
       } else {
@@ -142,8 +143,7 @@ export class PlausibleDashboard extends PlausibleBaseElementWithState {
             .history="${this.history}"
             .currentRole="${this.currentUserRole}"
             .query="${this.query}"
-            .collectionId="${this.collectionId}"
-            .collectionType="${this.collectionType}"
+            .proxyUrl="${this.proxyUrl}"
           ></pl-historical>
         `;
       }

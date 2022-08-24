@@ -18,9 +18,8 @@ export class PlausibleCurrentVisitors extends PlausibleBaseElementWithState {
 
   updateCount() {
     return api
-      .getWithProxy(
-        this.collectionType,
-        this.collectionId,
+      .get(
+        this.proxyUrl,
         `/api/stats/${encodeURIComponent(this.site.domain)}/current-visitors`,
         {} as any
       )

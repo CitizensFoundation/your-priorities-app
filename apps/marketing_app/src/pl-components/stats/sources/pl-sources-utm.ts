@@ -32,9 +32,8 @@ export class PlausibleSourcesUtm extends PlausibleSourcesBase {
     this.referrers = undefined;
 
     api
-      .getWithProxy(
-        this.collectionType,
-        this.collectionId,
+      .get(
+        this.proxyUrl,
         `/api/stats/${encodeURIComponent(this.site!.domain!)}/${endpoint}`,
         this.query,
         { show_noref: this.showNoRef }

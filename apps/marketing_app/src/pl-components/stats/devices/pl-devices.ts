@@ -39,9 +39,8 @@ export class PlausableDevices extends PlausibleBaseElementWithState {
 
   renderBrowsers() {
     const fetchData = () => {
-      return api.getWithProxy(
-        this.collectionType,
-        this.collectionId,
+      return api.get(
+        this.proxyUrl,
         url.apiPath(this.site, '/browsers'),
         this.query
       );
@@ -59,9 +58,8 @@ export class PlausableDevices extends PlausibleBaseElementWithState {
 
   renderBrowserVersions() {
     const fetchData = () => {
-      return api.getWithProxy(
-        this.collectionType,
-        this.collectionId,
+      return api.get(
+        this.proxyUrl,
         url.apiPath(this.site, '/browser-versions'),
         this.query
       );
@@ -79,9 +77,8 @@ export class PlausableDevices extends PlausibleBaseElementWithState {
 
   renderOperatingSystems() {
     const fetchData = () => {
-      return api.getWithProxy(
-        this.collectionType,
-        this.collectionId,
+      return api.get(
+        this.proxyUrl,
         url.apiPath(this.site, '/operating-systems'),
         this.query
       );
@@ -99,9 +96,8 @@ export class PlausableDevices extends PlausibleBaseElementWithState {
 
   renderOperatingSystemVersions() {
     const fetchData = () => {
-      return api.getWithProxy(
-        this.collectionType,
-        this.collectionId,
+      return api.get(
+        this.proxyUrl,
         url.apiPath(this.site, '/operating-system-versions'),
         this.query
       );
@@ -119,9 +115,8 @@ export class PlausableDevices extends PlausibleBaseElementWithState {
 
   renderScreenSizes() {
     const fetchData = () => {
-      return api.getWithProxy(
-        this.collectionType,
-        this.collectionId,
+      return api.get(
+        this.proxyUrl,
         url.apiPath(this.site, '/screen-sizes'),
         this.query
       );

@@ -68,9 +68,8 @@ export class PlausableLocations extends PlausibleBaseElementWithState {
   renderCountries() {
     const fetchData = () => {
       return api
-        .getWithProxy(
-          this.collectionType,
-          this.collectionId,
+        .get(
+          this.proxyUrl,
           apiPath(this.site, '/countries'),
           this.query,
           { limit: 9 }
@@ -103,9 +102,8 @@ export class PlausableLocations extends PlausibleBaseElementWithState {
 
   renderRegions() {
     const fetchData = () => {
-      return api.getWithProxy(
-        this.collectionType,
-        this.collectionId,
+      return api.get(
+        this.proxyUrl,
         apiPath(this.site, '/regions'),
         this.query,
         { limit: 9 }
@@ -132,10 +130,9 @@ export class PlausableLocations extends PlausibleBaseElementWithState {
 
   renderCities() {
     const fetchData = () => {
-      return api.getWithProxy(
-        this.collectionType,
-        this.collectionId,
-        apiPath(this.site, '/cities'), this.query, { limit: 9 });
+      return api.get(this.proxyUrl, apiPath(this.site, '/cities'), this.query, {
+        limit: 9,
+      });
     };
 
     const renderIcon = (city: PlausibleCityData) => {
@@ -178,8 +175,7 @@ export class PlausableLocations extends PlausibleBaseElementWithState {
           .site=${this.site}
           .query=${this.query}
           .timer=${this.timer}
-          .collectionId=${this.collectionId}
-          .collectionType=${this.collectionType}
+          .proxyUrl=${this.proxyUrl}
         ></pl-countries-map>`;
     }
   }

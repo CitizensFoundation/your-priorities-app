@@ -104,10 +104,8 @@ export class PlausableCountriesMap extends PlausibleBaseElementWithState {
   }
 
   fetchCountries() {
-    return api.getWithProxy(
-      this.collectionType,
-      this.collectionId,
-
+    return api.get(
+      this.proxyUrl,
         `/api/stats/${encodeURIComponent(this.site.domain)}/countries`,
         this.query,
         { limit: 300 }

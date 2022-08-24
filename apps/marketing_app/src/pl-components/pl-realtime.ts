@@ -78,8 +78,8 @@ export class PlausibleRealtime extends PlausibleBaseElementWithState {
           .site="${this.site}"
           .query="${this.query}"
           .timer="${this.timer}"
-          .collectionId="${this.collectionId}"
-          .collectionType="${this.collectionType}"
+
+          .proxyUrl="${this.proxyUrl}"
         ></pl-visitors-graph>
         <div class="items-start justify-between block w-full md:flex flex">
           <pl-sources-list
@@ -87,16 +87,16 @@ export class PlausibleRealtime extends PlausibleBaseElementWithState {
             .site="${this.site}"
             .query="${this.query}"
             .timer="${this.timer}"
-            .collectionId="${this.collectionId}"
-            .collectionType="${this.collectionType}"
+
+            .proxyUrl="${this.proxyUrl}"
           ></pl-sources-list>
           <pl-pages
              class="flex-col"
             .site="${this.site}"
             .query="${this.query}"
             .timer="${this.timer}"
-            .collectionId="${this.collectionId}"
-            .collectionType="${this.collectionType}"
+
+            .proxyUrl="${this.proxyUrl}"
           ></pl-pages>
         </div>
         <div class="items-start justify-between block w-full md:flex flex">
@@ -104,15 +104,15 @@ export class PlausibleRealtime extends PlausibleBaseElementWithState {
             .site="${this.site}"
             .query="${this.query}"
             .timer="${this.timer}"
-            .collectionId="${this.collectionId}"
-            .collectionType="${this.collectionType}"
+
+            .proxyUrl="${this.proxyUrl}"
           ></pl-locations>
           <pl-devices
             .site="${this.site}"
             .query="${this.query}"
             .timer="${this.timer}"
-            .collectionId="${this.collectionId}"
-            .collectionType="${this.collectionType}"
+
+            .proxyUrl="${this.proxyUrl}"
           ></pl-devices>
         </div>
         ${ this.renderConversions() }
@@ -128,8 +128,8 @@ export class PlausibleRealtime extends PlausibleBaseElementWithState {
             .site=${this.site}
             .query=${this.query}
             .title="${this.t('goalConversionsLast30Min')}"
-            .collectionId=${this.collectionId}
-            .collectionType=${this.collectionType}
+
+            .proxyUrl=${this.proxyUrl}
           ></pl-conversions>
         </div>
       `;

@@ -11,9 +11,8 @@ export class PlausableBasePages extends PlausibleBaseElementWithState {
   pagePath: string | undefined;
 
   fetchData() {
-    return api.getWithProxy(
-      this.collectionType,
-      this.collectionId,
+    return api.get(
+      this.proxyUrl,
       url.apiPath(this.site, this.pagePath),
       this.query,
       { limit: 9 }

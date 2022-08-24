@@ -83,8 +83,7 @@ export class YpCommunityMarketing extends YpAdminPage {
     return this.collection
       ? html`
           <pl-dashboard
-            .collectionId="${this.collection.id}"
-            .collectionType="${this.collectionType}"
+            .proxyUrl="${`/api/${this.collectionType}/${this.collectionId}/plausibleStatsProxy`}"
             .collection="${this.collection}"
           ></pl-dashboard>
         `

@@ -48,16 +48,16 @@ export class PlausablePages extends PlausibleBaseElementWithState {
           .site=${this.site}
           .query=${this.query}
           .timer=${this.timer}
-          .collectionId="${this.collectionId}"
-          .collectionType="${this.collectionType}"
+
+          .proxyUrl="${this.proxyUrl}"
         ></pl-entry-pages>`;
       case 'exit-pages':
         return html`<pl-exit-pages
           .site=${this.site}
           .query=${this.query}
           .timer=${this.timer}
-          .collectionId="${this.collectionId}"
-          .collectionType="${this.collectionType}"
+
+          .proxyUrl="${this.proxyUrl}"
         ></pl-exit-pages>`;
       case 'pages':
       default:
@@ -65,8 +65,8 @@ export class PlausablePages extends PlausibleBaseElementWithState {
           .site=${this.site}
           .query=${this.query}
           .timer=${this.timer}
-          .collectionId="${this.collectionId}"
-          .collectionType="${this.collectionType}"
+
+          .proxyUrl="${this.proxyUrl}"
         ></pl-top-pages>`;
     }
   }

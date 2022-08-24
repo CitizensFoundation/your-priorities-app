@@ -109,9 +109,8 @@ export class PlausibleVisitorsGraph extends PlausibleBaseElementWithState {
   fetchGraphData() {
     if (this.metric) {
       api
-        .getWithProxy(
-          this.collectionType,
-          this.collectionId,
+        .get(
+          this.proxyUrl,
           `/api/stats/${encodeURIComponent(this.site!.domain!)}/main-graph`,
           this.query,
           { metric: this.metric || 'none' }
@@ -124,9 +123,8 @@ export class PlausibleVisitorsGraph extends PlausibleBaseElementWithState {
 
   fetchTopStatData() {
     api
-      .getWithProxy(
-        this.collectionType,
-        this.collectionId,
+      .get(
+        this.proxyUrl,
         `/api/stats/${encodeURIComponent(this.site!.domain!)}/top-stats`,
         this.query
       )

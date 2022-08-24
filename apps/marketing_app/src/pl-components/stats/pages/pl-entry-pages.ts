@@ -20,8 +20,8 @@ export class PlausableEntryPages extends PlausableBasePages {
         .fetchDataFunction=${this.fetchData}
         .filter=${{ entry_page: 'name' }}
         keyLabel="Entry page"
-        .collectionId="${this.collectionId}"
-        .collectionType="${this.collectionType}"
+
+        .proxyUrl="${this.proxyUrl}"
         valueLabel="Unique Entrances"
         valueKey="unique_entrances"
         .pagePath="${this.pagePath}"

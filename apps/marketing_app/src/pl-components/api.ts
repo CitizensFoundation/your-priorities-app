@@ -72,45 +72,21 @@ export function serializeQuery(
   return '?' + serialize(queryObj);
 }
 
-export function getWithProxy(
-  collectionType: string,
-  collectionId: number,
+export function get(
+  proxyUrl: string | undefined,
   url: string | Request,
-  query: PlausibleQueryData | undefined = undefined,
+  query: PlausibleQueryData,
   ...extraQuery: any[]
 ) {
-  const headers = SHARED_LINK_AUTH
-    ? {
-        'X-Shared-Link-Auth': SHARED_LINK_AUTH,
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      }
-    : { Accept: 'application/json', 'Content-Type': 'application/json' };
-  //@ts-ignore
-
-  url = url + serializeQuery(query, extraQuery);
-  return fetch(`/api/${collectionType}/${collectionId}/plausibleStatsProxy`, {
-    method: 'PUT',
-    body: JSON.stringify({
-      plausibleUrl: url,
-    }),
-    signal: abortController.signal,
-    headers: headers,
-  }).
-  then(response => {
-    if (!response.ok) {
-      //@ts-ignore
-      return response.json();
-      /*return response.json().then(msg => {
-        throw new ApiError(msg.error);
-      });*/
-
-    }
-    return response.json();
-  });
+  if (proxyUrl) {
+    return getWithProxy(proxyUrl, url, query, ...extraQuery);
+  } else {
+    return getDirect(url, query, ...extraQuery);
+  }
 }
 
-export function get(
+export function getWithProxy(
+  proxyUrl: string,
   url: string | Request,
   query: PlausibleQueryData,
   ...extraQuery: any[]
@@ -122,14 +98,44 @@ export function get(
         'Content-Type': 'application/json',
       }
     : { Accept: 'application/json', 'Content-Type': 'application/json' };
-  //@ts-ignore
+  url = url + serializeQuery(query, extraQuery);
+  return fetch(proxyUrl, {
+    method: 'PUT',
+    body: JSON.stringify({
+      plausibleUrl: url,
+    }),
+    signal: abortController.signal,
+    headers: headers,
+  }).then(response => {
+    if (!response.ok) {
+      //@ts-ignore
+      return response.json();
+      /*return response.json().then(msg => {
+        throw new ApiError(msg.error);
+      });*/
+    }
+    return response.json();
+  });
+}
+
+export function getDirect(
+  url: string | Request,
+  query: PlausibleQueryData,
+  ...extraQuery: any[]
+) {
+  const headers = SHARED_LINK_AUTH
+    ? {
+        'X-Shared-Link-Auth': SHARED_LINK_AUTH,
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      }
+    : { Accept: 'application/json', 'Content-Type': 'application/json' };
 
   url = url + serializeQuery(query, extraQuery);
   return fetch(url, {
     signal: abortController.signal,
     headers: headers,
-  }).
-  then(response => {
+  }).then(response => {
     if (!response.ok) {
       //@ts-ignore
       return response.json().then(msg => {

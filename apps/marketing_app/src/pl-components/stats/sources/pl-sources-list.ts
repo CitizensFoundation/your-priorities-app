@@ -33,8 +33,8 @@ export class PlausibleSourcesList extends PlausibleBaseElementWithState {
       return html`
         <pl-sources-all
           .tab=${this.tab}
-          .collectionId=${this.collectionId}
-          .collectionType=${this.collectionType}
+
+          .proxyUrl=${this.proxyUrl}
           .query=${this.query}
           .site=${this.site}
           .timer="${this.timer}"
@@ -45,8 +45,8 @@ export class PlausibleSourcesList extends PlausibleBaseElementWithState {
       return html`
         <pl-sources-utm
           .tab=${this.tab}
-          .collectionId=${this.collectionId}
-          .collectionType=${this.collectionType}
+
+          .proxyUrl=${this.proxyUrl}
           .query=${this.query}
           .site=${this.site}
           .timer="${this.timer}"

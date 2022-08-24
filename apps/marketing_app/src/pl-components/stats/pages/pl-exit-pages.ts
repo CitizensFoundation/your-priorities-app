@@ -20,8 +20,8 @@ export class PlausableExitPages extends PlausableBasePages {
         .fetchDataFunction=${this.fetchData}
         .filter=${{ entry_page: 'name' }}
         keyLabel="Exit page"
-        .collectionId="${this.collectionId}"
-        .collectionType="${this.collectionType}"
+
+        .proxyUrl="${this.proxyUrl}"
         valueLabel="Unique Exits"
         valueKey="unique_exits"
         .pagePath="${this.pagePath}"

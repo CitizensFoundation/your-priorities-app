@@ -101,9 +101,8 @@ export class PlausiblePropBreakdown extends PlausibleBaseElementWithState {
   fetchPropBreakdown() {
     if (this.query.filters!['goal']) {
       api
-        .getWithProxy(
-          this.collectionType,
-          this.collectionId,
+        .get(
+          this.proxyUrl,
           `/api/stats/${encodeURIComponent(
             this.site.domain!
           )}/property/${encodeURIComponent(this.propKey!)}`,

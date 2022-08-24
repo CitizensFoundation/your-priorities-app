@@ -11,11 +11,8 @@ export class PlausibleBaseElementWithState extends PlausibleBaseElement {
   @property({ type: Object })
   site!: PlausibleSiteData;
 
-  @property({ type: Number })
-  collectionId!: number;
-
   @property({ type: String })
-  collectionType!: string;
+  proxyUrl: string | undefined;
 
   @property({ type: Object })
   timer: any;

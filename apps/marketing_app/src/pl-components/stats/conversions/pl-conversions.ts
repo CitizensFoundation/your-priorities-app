@@ -82,9 +82,8 @@ export class PlausibleConversions extends PlausibleBaseElementWithState {
 
   fetchConversions() {
     api
-      .getWithProxy(
-        this.collectionType,
-        this.collectionId,
+      .get(
+        this.proxyUrl,
         `/api/stats/${encodeURIComponent(this.site.domain!)}/conversions`,
         this.query
       )
@@ -132,8 +131,8 @@ export class PlausibleConversions extends PlausibleBaseElementWithState {
               .site=${this.site}
               .query=${this.query}
               .goal=${goal}
-              .collectionId=${this.collectionId}
-              .collectionType=${this.collectionType}
+
+              .proxyUrl=${this.proxyUrl}
             ></pl-prop-breakdown>`
           : nothing}
       </div>
