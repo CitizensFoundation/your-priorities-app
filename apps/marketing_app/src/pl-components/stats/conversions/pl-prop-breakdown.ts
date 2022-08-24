@@ -198,7 +198,7 @@ export class PlausiblePropBreakdown extends PlausibleBaseElementWithState {
               `
             : null}
           <span class="font-medium inline-block w-20 text-right"
-            >{numberFormatter(value.conversion_rate)}%</span
+            >${numberFormatter(value.conversion_rate)}%</span
           >
         </div>
       </div>

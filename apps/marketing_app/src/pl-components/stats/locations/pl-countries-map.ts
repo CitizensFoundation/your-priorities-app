@@ -222,7 +222,7 @@ export class PlausableCountriesMap extends PlausibleBaseElementWithState {
       return html`
         <div
           class="mx-auto mt-4"
-          style="width: 100%; max-width: 475px; height: 335px"
+          style="overflow: hidden; width: 100%; max-width: 475px; height: 335px"
           id="map-container"
         ></div>
         <pl-more-link

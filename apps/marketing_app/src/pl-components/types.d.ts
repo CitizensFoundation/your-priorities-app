@@ -70,6 +70,7 @@ interface PlausiblePropValueData {
   name: string;
   unique_conversions: number;
   total_conversions: number;
+  conversion_rate: number;
 }
 
 interface PlausibleStatData {

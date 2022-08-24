@@ -26,6 +26,7 @@ export class PlausableExitPages extends PlausableBasePages {
         valueKey="unique_exits"
         .pagePath="${this.pagePath}"
         .site="${this.site}"
+        .timer="${this.timer}"
         .detailsLink=${url.sitePath(this.site, this.pagePath)}
         .query=${this.query}
         .externalLinkDest=${this.externalLinkDest}

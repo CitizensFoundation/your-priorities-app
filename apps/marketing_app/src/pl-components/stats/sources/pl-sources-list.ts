@@ -37,6 +37,7 @@ export class PlausibleSourcesList extends PlausibleBaseElementWithState {
           .collectionType=${this.collectionType}
           .query=${this.query}
           .site=${this.site}
+          .timer="${this.timer}"
           @tab-changed=${this.tabChanged}
         ></pl-sources-all>
       `;
@@ -48,6 +49,7 @@ export class PlausibleSourcesList extends PlausibleBaseElementWithState {
           .collectionType=${this.collectionType}
           .query=${this.query}
           .site=${this.site}
+          .timer="${this.timer}"
           @tab-changed=${this.tabChanged}
         ></pl-sources-utm>
       `;

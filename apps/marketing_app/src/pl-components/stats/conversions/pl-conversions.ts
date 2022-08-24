@@ -71,6 +71,9 @@ export class PlausibleConversions extends PlausibleBaseElementWithState {
 
   firstUpdated() {
     this.fetchConversions();
+    if (this.timer) {
+      this.timer.onTick(this.fetchConversions);
+    }
   }
 
   getBarMaxWidth() {

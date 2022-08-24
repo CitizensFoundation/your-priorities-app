@@ -94,6 +94,7 @@ export class PlausableLocations extends PlausibleBaseElementWithState {
         keyLabel="Country"
         .detailsLink=${sitePath(this.site, '/countries')}
         .query=${this.query}
+        .timer=${this.timer}
         .renderIcon=${renderIcon}
         color="bg-orange-50"
       ></pl-list-report>
