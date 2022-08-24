@@ -76,7 +76,29 @@
       "@typescript-eslint"
     ],
     "rules": {
+      "overrides": [
+        {
+          "rules": {
+            "no-unused-expressions": "off",
+            "no-unused-vars": "off",
+            "eslint-disable wc/guard-super-call": "off",
+            "eslint-disable no-nested-ternary": "off",
+            "eslint-disable no-else-return": "off",
+            "eslint-disable no-plusplus": "off",
+            "eslint-disable import/no-duplicates": "off",
+            "eslint-disable import/order": "off",
+            "eslint-disable class-methods-use-this": "off"
+         }
+        }
+      ],
       "no-unused-vars": "off",
+      "eslint-disable wc/guard-super-call": "off",
+      "eslint-disable no-nested-ternary": "off",
+      "eslint-disable no-else-return": "off",
+      "eslint-disable no-plusplus": "off",
+      "eslint-disable import/no-duplicates": "off",
+      "eslint-disable import/order": "off",
+      "eslint-disable class-methods-use-this": "off",
       "@typescript-eslint/no-unused-vars": [
         "error"
       ],

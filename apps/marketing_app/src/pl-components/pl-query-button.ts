@@ -51,7 +51,7 @@ export class PlausibleQueryButton extends PlausibleBaseElement {
         type="button"
         ?disabled=${this.disabled}
       >
-        ${this.children}
+        <slot></slot>
       </button>
     `;
   }

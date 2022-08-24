@@ -63,12 +63,12 @@ export class PlausibleDashboard extends PlausibleBaseElementWithState {
   }
 
   resetState() {
-    this.timer = new Timer();
+    //this.timer = new Timer();
   }
 
   connectedCallback(): void {
     super.connectedCallback();
-
+    this.timer = new Timer();
     try {
       fetch('/api/users/has/PlausibleSiteName', {
         headers: {
@@ -78,10 +78,32 @@ export class PlausibleDashboard extends PlausibleBaseElementWithState {
       .then((response) => response.json())
       .then((data) => {
         this.plausibleSiteName = data.plausibleSiteName;
+        this.setupSite();
       });
     } catch (error) {
       console.error(error);
     }
+  }
+
+  setupSite() {
+    this.site = {
+      domain: this.plausibleSiteName!,
+      hasGoals: true,
+      embedded: false,
+      offset: 1,
+      statsBegin: this.collection.created_at!,
+      isDbip: false,
+      flags: {
+        custom_dimension_filter: false
+      }
+    }
+    this.resetState();
+
+    this.history = createBrowserHistory();
+    this.query = parseQuery(location.search, this.site);
+    window.addEventListener('popstate',  () => {
+      this.query = parseQuery(location.search, this.site);
+    });
   }
 
   static get styles() {
@@ -95,27 +117,6 @@ export class PlausibleDashboard extends PlausibleBaseElementWithState {
     if (changedProperties.has('query')) {
       api.cancelAll();
       this.resetState();
-    }
-
-    if (changedProperties.has("plausibleSiteName")) {
-      this.site = {
-        domain: this.plausibleSiteName!,
-        hasGoals: true,
-        embedded: false,
-        offset: 1,
-        statsBegin: this.collection.created_at!,
-        isDbip: false,
-        flags: {
-          custom_dimension_filter: false
-        }
-      }
-      this.resetState();
-
-      this.history = createBrowserHistory();
-      this.query = parseQuery(location.search, this.site);
-      window.addEventListener('popstate',  () => {
-        this.query = parseQuery(location.search, this.site);
-      });
     }
   }
 
