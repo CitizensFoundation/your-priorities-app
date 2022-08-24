@@ -509,6 +509,7 @@ export class PlausibleDatePicker extends PlausibleBaseElementWithState {
           class="flex items-center justify-between rounded bg-white dark:bg-gray-800 shadow px-2 md:px-3
           py-2 leading-tight cursor-pointer text-xs md:text-sm text-gray-800
           dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-900"
+          style="width: 192px"
           tabindex="0"
           role="button"
           aria-haspopup="true"
