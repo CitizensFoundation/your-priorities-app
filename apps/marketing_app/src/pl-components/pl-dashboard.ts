@@ -45,9 +45,6 @@ export class PlausibleDashboard extends PlausibleBaseElementWithState {
   @property({ type: String })
   metric = 'visitors'
 
-  @property({ type: String })
-  proxyUrl: string | undefined
-
   /*private routes = new Routes(this, [
     { path: '/', render: () => html`<h1>Home</h1>` },
     { path: '/projects', render: () => html`<h1>Projects</h1>` },
@@ -97,6 +94,7 @@ export class PlausibleDashboard extends PlausibleBaseElementWithState {
             .query="${this.query}"
             .history="${this.history}"
             .proxyUrl="${this.proxyUrl}"
+            .proxyFaviconBaseUrl="${this.proxyFaviconBaseUrl}"
           ></pl-realtime>
         `;
       } else {
@@ -108,6 +106,7 @@ export class PlausibleDashboard extends PlausibleBaseElementWithState {
             .currentRole="${this.currentUserRole}"
             .query="${this.query}"
             .proxyUrl="${this.proxyUrl}"
+            .proxyFaviconBaseUrl="${this.proxyFaviconBaseUrl}"
           ></pl-historical>
         `;
       }

@@ -119,6 +119,7 @@ export class YpCommunityMarketing extends YpAdminPage {
       ? html`
           <pl-dashboard
             .proxyUrl="${`/api/${this.collectionType}/${this.collectionId}/plausibleStatsProxy`}"
+            proxyFaviconBaseUrl="/api/users/PlausibleFavIcon/"
             .site="${this.site}"
           ></pl-dashboard>
         `

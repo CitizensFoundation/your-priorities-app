@@ -38,7 +38,10 @@ export class PlausibleSourcesUtm extends PlausibleSourcesBase {
         this.query,
         { show_noref: this.showNoRef }
       )
-      .then(res => { this.loading = false; this.referrers= res });
+      .then(res => {
+        this.loading = false;
+        this.referrers = res;
+      });
   }
 
   renderReferrer(referrer: PlausibleReferrerData) {
@@ -59,13 +62,15 @@ export class PlausibleSourcesUtm extends PlausibleSourcesBase {
           <span class="flex px-2 py-1.5 dark:text-gray-300 relative z-9 break-all">
             <Link
               class="md:truncate block hover:underline"
-              .to=${{ search: url.setQuerySearch(this.tab, referrer.name)}}
+              .to=${{ search: url.setQuerySearch(this.tab, referrer.name) }}
             >
               ${referrer.name}
             </Link>
           </span>
         </pl-bar>
-        <span class="font-medium dark:text-gray-200 w-20 text-right" tooltip=${referrer.visitors}>${numberFormatter(referrer.visitors)}</span>
+        <span class="font-medium dark:text-gray-200 w-20 text-right" tooltip=${
+          referrer.visitors
+        }>${numberFormatter(referrer.visitors)}</span>
         ${
           this.showConversionRate
             ? html`<span class="font-medium dark:text-gray-200 w-20 text-right"

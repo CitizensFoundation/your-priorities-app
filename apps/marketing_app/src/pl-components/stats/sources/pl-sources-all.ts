@@ -57,10 +57,10 @@ export class PlausibleSourcesAll extends PlausibleSourcesBase {
           >
             <pl-link
               class="md:truncate block hover:underline"
-              .to=${{search: url.setQuerySearch('source', referrer.name)}}
+              .to=${{ search: url.setQuerySearch('source', referrer.name) }}
             >
               <img
-                src=${`/api/users/PlausibleFavIcon/${encodeURIComponent(referrer.name)}`}
+                src=${this.faviconUrl(referrer.name)}
                 class="inline w-4 h-4 mr-2 -mt-px align-middle"
               />
               ${referrer.name}

@@ -73,9 +73,17 @@ export class PlausibleSourcesBase extends PlausibleBaseElementWithState {
     this.tab = tab;
   }
 
+  faviconUrl(referrer: string) {
+    if (this.proxyFaviconBaseUrl) {
+      return `${this.proxyFaviconBaseUrl}${encodeURIComponent(referrer)}`
+    } else {
+      return `/favicon/sources/${encodeURIComponent(referrer)}`
+    }
+  }
+
   renderTabs() {
     return nothing;
-    const activeClass =
+    /*const activeClass =
       'inline-block h-5 text-indigo-700 dark:text-indigo-500 font-bold active-prop-heading truncate text-left';
     const defaultClass =
       'hover:text-indigo-600 cursor-pointer truncate text-left';
@@ -142,6 +150,6 @@ export class PlausibleSourcesBase extends PlausibleBaseElementWithState {
         </Menu>
       </div>
 
-    `;
+    `;*/
   }
 }

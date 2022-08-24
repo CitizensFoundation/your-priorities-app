@@ -12,7 +12,10 @@ export class PlausibleBaseElementWithState extends PlausibleBaseElement {
   site!: PlausibleSiteData;
 
   @property({ type: String })
-  proxyUrl: string | undefined;
+  proxyUrl: string | undefined
+
+  @property({ type: String })
+  proxyFaviconBaseUrl: string | undefined
 
   @property({ type: Object })
   timer: any;

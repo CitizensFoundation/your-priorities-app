@@ -90,6 +90,7 @@ export class PlausibleHistorical extends PlausibleBaseElementWithState {
             .site="${this.site}"
             .query="${this.query}"
             .proxyUrl="${this.proxyUrl}"
+            .proxyFaviconBaseUrl="${this.proxyFaviconBaseUrl}"
           ></pl-sources-list>
           <pl-pages
             class="flex-col"
