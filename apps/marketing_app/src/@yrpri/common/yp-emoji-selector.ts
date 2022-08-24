@@ -1,6 +1,5 @@
 import { html } from 'lit';
 import { property, customElement } from 'lit/decorators.js';
-import { EmojiButton } from '@joeattardi/emoji-button';
 import { YpBaseElement } from './yp-base-element.js';
 //import insertTextAtCursor from 'insert-text-at-cursor';
 
@@ -11,8 +10,6 @@ import '@material/mwc-icon-button';
 export class YpEmojiSelector extends YpBaseElement {
   @property({ type: Object })
   inputTarget: HTMLInputElement | undefined;
-
-  picker: EmojiButton | undefined;
 
   render() {
     return html`

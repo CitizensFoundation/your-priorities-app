@@ -22,7 +22,7 @@ describe('AcNotificationListPoint', () => {
         updated_at: new Date(),
         AcActivities: [{
           type: 'activity.point.new',
-          created_at: new Date(),
+          created_at: new Date().toISOString(),
           domain_id: 2,
           Point: YpTestHelpers.getPoint(),
           Post: YpTestHelpers.getPost(),

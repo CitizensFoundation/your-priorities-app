@@ -1,12 +1,19 @@
-import { fromRollup } from '@web/dev-server-rollup';
-import rollupCommonjs from '@rollup/plugin-commonjs';
+// import { hmrPlugin, presets } from '@open-wc/dev-server-hmr';
+
+import copy from 'rollup-plugin-copy';
 import proxy from 'koa-proxies';
+/** Use Hot Module replacement by adding --hmr to the start command */
+const hmr = process.argv.includes('--hmr');
 
-const commonjs = fromRollup(rollupCommonjs);
-
-export default {
+export default /** @type {import('@web/dev-server').DevServerConfig} */ ({
+  open: '/',
+  watch: !hmr,
+  /** Resolve bare module imports */
+  nodeResolve: {
+    exportConditions: ['browser', 'development'],
+  },
   mimeTypes: {
-    '**/*.cjs': 'js'
+    '**/*.cjs': 'js',
   },
   port: 9010,
   middleware: [
@@ -14,14 +21,4 @@ export default {
       target: 'http://localhost:4242/',
     }),
   ],
-  plugins: [
-    commonjs({
-      include: [
-        'node_modules/linkifyjs/**/*',
-        'node_modules/moment/**/*',
-        '**/*/node_modules/linkifyjs/**/*',
-        '**/*/node_modules/i18next-http-backend/**/*'
-      ],
-    }),
-  ],
-};
+});

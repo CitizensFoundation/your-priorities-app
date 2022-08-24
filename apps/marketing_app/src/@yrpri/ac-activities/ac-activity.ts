@@ -1,6 +1,7 @@
 import { html, css, nothing } from 'lit';
 import { property, customElement } from 'lit/decorators.js';
 
+import { DateTime } from 'luxon';
 
 import './ac-activity-point.js';
 import './ac-activity-post.js';
@@ -12,7 +13,7 @@ import '@material/mwc-icon-button';
 import { YpBaseElementWithLogin } from '../common/yp-base-element-with-login.js';
 
 import { YpAccessHelpers } from '../common/YpAccessHelpers.js';
-import moment from 'moment';
+
 import { ShadowStyles } from '../common/ShadowStyles.js';
 
 @customElement('ac-activity')
@@ -203,12 +204,12 @@ export class AcActivity extends YpBaseElementWithLogin {
       : nothing;
   }
 
-  fromTime(timeValue: moment.MomentInput) {
-    return moment(timeValue).fromNow();
+  fromTime(timeValue: string) {
+    return DateTime.fromISO(timeValue).toRelative();
   }
 
-  fromLongTime(timeValue: moment.MomentInput) {
-    return moment(timeValue).format();
+  fromLongTime(timeValue: string) {
+    return DateTime.fromISO(timeValue).toLocaleString(DateTime.DATETIME_FULL);
   }
 
   get hasActivityAccess() {

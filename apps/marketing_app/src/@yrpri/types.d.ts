@@ -1,6 +1,7 @@
 declare module 'lit-flexbox-literals';
 declare module 'wavesurfer.js/dist/plugin/wavesurfer.microphone.min.js';
 declare module 'lit-google-map';
+declare module 'twemoji';
 
 interface YpCollectionConfiguration {
   themeOverrideColorPrimary?: string;
@@ -692,7 +693,7 @@ interface AcActivityData extends YpDatabaseItem {
   type: string;
   domain_id: number;
   community_id?: number;
-  created_at: Date;
+  created_at: string;
   group_id?: number;
   Point?: YpPointData;
   Post?: YpPostData;
@@ -728,7 +729,7 @@ interface AcNotificationData extends YpDatabaseItem {
 
 interface AcActivitiesResponse {
   activities: Array<AcActivityData>;
-  oldestProcessedActivityAt: Date;
+  oldestProcessedActivityAt: string;
 }
 
 interface AcNotificationSettingsDataItem {

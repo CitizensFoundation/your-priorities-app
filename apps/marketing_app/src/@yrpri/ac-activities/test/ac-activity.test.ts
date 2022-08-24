@@ -16,7 +16,7 @@ describe('AcActivity', () => {
   beforeEach(async () => {
     const activity = {
       type: 'activity.post.new',
-      created_at: new Date(),
+      created_at: new Date().toISOString(),
       domain_id: 2,
       Point: YpTestHelpers.getPoint(),
       Post: YpTestHelpers.getPost(),

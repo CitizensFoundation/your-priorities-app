@@ -22,7 +22,7 @@ describe('AcNotificationListPost', () => {
         updated_at: new Date(),
         AcActivities: [{
           type: 'LEXI',
-          created_at: new Date(),
+          created_at: new Date().toISOString(),
           domain_id: 2,
           Post: YpTestHelpers.getPost(),
           User: YpTestHelpers.getUser(),

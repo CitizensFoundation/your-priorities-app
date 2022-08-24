@@ -14,7 +14,7 @@ describe('AcActivities', () => {
 
     const activity = {
       type: 'activity.post.new',
-      created_at: new Date(),
+      created_at: new Date().toISOString(),
       domain_id: 2,
       User: YpTestHelpers.getUser(),
       Point: YpTestHelpers.getPoint(),

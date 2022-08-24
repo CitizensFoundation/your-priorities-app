@@ -4,12 +4,12 @@ import { property, customElement } from 'lit/decorators.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 
+import * as linkify from 'linkifyjs';
+import linkifyHtml from 'linkify-html';
+
 import { YpBaseElement } from '../common/yp-base-element.js';
 
 import { twemoji } from '@kano/twemoji/index.es.js';
-
-import linkifyHtml from 'linkifyjs/html.js';
-import linkifyStr from 'linkifyjs/html.js';
 
 @customElement('yp-magic-text')
 export class YpMagicText extends YpBaseElement {
@@ -472,7 +472,7 @@ export class YpMagicText extends YpBaseElement {
     if (!this.skipSanitize && this.processedContent) {
       //this.processedContent = sanitizeHtml(this.processedContent, {allowedTags: ['b', 'i', 'em', 'strong']});
       this.processedContent = this.processedContent.replace(/&amp;/g, '&');
-      this.processedContent = linkifyStr(this.processedContent, {
+      this.processedContent = linkifyHtml(this.processedContent, {
         format: (value: string, type: string) => {
           if (type === 'url' && value.length > this.linkifyCutoff - 1) {
             value = value.slice(0, this.linkifyCutoff) + '…';
