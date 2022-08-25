@@ -72,6 +72,7 @@ var validateEmbedUrl = function(urlIn) {
 };
 
 var loadPointWithAll = function (pointId, callback) {
+  let outPoint;
   models.Point.findOne({
     where: {
       id: pointId
@@ -92,20 +93,6 @@ var loadPointWithAll = function (pointId, callback) {
           {
             model: models.Image, as: 'UserProfileImages',
             required: false
-          },
-          {
-            model: models.Organization,
-            as: 'OrganizationUsers',
-            required: false,
-            attributes: ['id', 'name'],
-            include: [
-              {
-                model: models.Image,
-                as: 'OrganizationLogoImages',
-                attributes: ['id', 'formats'],
-                required: false
-              }
-            ]
           }
         ]
       },
@@ -143,16 +130,38 @@ var loadPointWithAll = function (pointId, callback) {
     ]
   }).then(function(point) {
     if (point) {
-      models.Point.getVideosForPoints([point.id], (error, videos) => {
-        point.setDataValue('PointVideos', videos);
-        point.PointVideos = videos;
-        callback(error, point);
+      outPoint = point;
+      async.parallel([
+        (parallelCallback) => {
+          models.Point.getVideosForPoints([point.id], (error, videos) => {
+            if (error) {
+              parallelCallback(error);
+            } else {
+              outPoint.setDataValue('PointVideos', videos);
+              outPoint.PointVideos = videos;
+              parallelCallback();
+            }
+          })
+        },
+        (parallelCallback) => {
+          models.Point.getOrganizationUsersForPoints([point.id], (error, organizationUsers) => {
+            if (error) {
+              parallelCallback(error);
+            } else {
+              outPoint.setDataValue('OrganizationUsers', organizationUsers);
+              outPoint.OrganizationUsers = organizationUsers;
+              parallelCallback();
+            }
+          })
+        },
+      ], (error) => {
+        callback(error);
       })
     } else {
       callback("Can't find point");
     }
   }).catch(function(error) {
-    callback(error);
+    callback(error, outPoint);
   });
 };
 

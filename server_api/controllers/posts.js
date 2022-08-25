@@ -637,20 +637,6 @@ const sendPostPoints = (req, res, redisKey) => {
                   model: models.Image, as: 'UserProfileImages',
                   attributes: ['id', 'formats'],
                   required: false
-                },
-                {
-                  model: models.Organization,
-                  as: 'OrganizationUsers',
-                  required: false,
-                  attributes: ['id', 'name'],
-                  include: [
-                    {
-                      model: models.Image,
-                      as: 'OrganizationLogoImages',
-                      attributes: ['id', 'formats'],
-                      required: false
-                    }
-                  ]
                 }
               ]
             },
