@@ -250,21 +250,6 @@ router.get('/:id', auth.can('view post'), function(req, res) {
                 model: models.Image, as: 'UserProfileImages',
                 attributes:['id',"formats",'updated_at'],
                 required: false
-              },
-              {
-                model: models.Organization,
-                as: 'OrganizationUsers',
-                required: false,
-                attributes: ['id', 'name'],
-                include: [
-                  {
-                    model: models.Image,
-                    as: 'OrganizationLogoImages',
-                    //TODO: Figure out why there are no formats attributes coming through here
-                    attributes: ['id', 'formats'],
-                    required: false
-                  }
-                ]
               }
             ]
           },
@@ -284,7 +269,9 @@ router.get('/:id', auth.can('view post'), function(req, res) {
         ]
       }).then(function(postIn) {
         post = postIn;
-        parallelCallback();
+        models.Post.setOrganizationUsersForPosts([post], (error) => {
+          parallelCallback(error);
+        })
       }).catch( error => {
         parallelCallback(error);
       });
@@ -616,12 +603,7 @@ const sendPostPoints = (req, res, redisKey) => {
             models.sequelize.literal('(counter_quality_up-counter_quality_down) desc'),
             [models.PointRevision, 'created_at', 'asc'],
             [models.User, {model: models.Image, as: 'UserProfileImages'}, 'created_at', 'asc'],
-            [{model: models.Video, as: "PointVideos"}, 'updated_at', 'desc'],
             [{model: models.Audio, as: "PointAudios"}, 'updated_at', 'desc'],
-            [{model: models.Video, as: "PointVideos"}, {
-              model: models.Image,
-              as: 'VideoImages'
-            }, 'updated_at', 'asc'],
           ],
           include: [
             {
@@ -643,20 +625,6 @@ const sendPostPoints = (req, res, redisKey) => {
             },
 
             {
-              model: models.Video,
-              required: false,
-              attributes: ['id', 'formats', 'updated_at', 'viewable', 'public_meta'],
-              as: 'PointVideos',
-              include: [
-                {
-                  model: models.Image,
-                  as: 'VideoImages',
-                  attributes: ["formats", 'updated_at'],
-                  required: false
-                },
-              ]
-            },
-            {
               model: models.Audio,
               required: false,
               attributes: ['id', 'formats', 'updated_at', 'listenable'],
@@ -670,7 +638,18 @@ const sendPostPoints = (req, res, redisKey) => {
           ]
         }).then(function (points) {
           if (points) {
-            models.Point.setOrganizationUsersForPoints(points, (error) => {
+            async.parallel([
+              (parallelCallback) => {
+                models.Point.setVideosForPoints(points, (error) => {
+                  parallelCallback(error);
+                })
+              },
+              (parallelCallback) => {
+                models.Point.setOrganizationUsersForPoints(points, (error) => {
+                  parallelCallback(error);
+                })
+              },
+            ], (error) => {
               if (error) {
                 sendPostOrError(res, null, 'view', req.user, 'Point org users', 404);
               } else {

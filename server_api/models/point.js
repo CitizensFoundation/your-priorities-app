@@ -459,6 +459,31 @@ module.exports = (sequelize, DataTypes) => {
     })
   }
 
+  Point.setVideosForPoints = (points, done) =>  {
+    Point.getVideosForPoints(points.map(p=>p.id), (error, videos) => {
+      if (error) {
+        done(error);
+      } else if (!videos || videos.length===0) {
+        done()
+      } else {
+        for (let v=0; v<videos.length; v++) {
+          for (let p=0; p<points.length; p++) {
+            if (videos[v].PointVideos &&
+                videos[v].PointVideos.length > 0 &&
+                points[p].id===videos[v].PointVideos[0].id) {
+                if (!points[p].PointVideos) {
+                  points[p].PointVideos = [];
+                }
+                points[p].PointVideos.push(videos[v]);
+                points[p].setDataValue('PointVideos', points[p].PointVideos);
+            }
+          }
+        }
+        done();
+      }
+    })
+  }
+
   //TODO Refactor duplicate code with Post
   Point.getVideosForPoints = (pointIds, done) => {
     sequelize.models.Video.findAll({
@@ -480,7 +505,6 @@ module.exports = (sequelize, DataTypes) => {
           as: 'PointVideos',
           required: true,
           attributes: ['id'],
-
         }
       ],
       order: [
