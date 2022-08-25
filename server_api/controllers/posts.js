@@ -452,10 +452,7 @@ router.get('/:id/newPoints', auth.can('view post'), function(req, res) {
         ['created_at', 'asc'],
         [ models.PointRevision, 'created_at', 'asc' ],
         [ models.User, { model: models.Image, as: 'UserProfileImages' }, 'created_at', 'asc' ],
-        [ { model: models.Video, as: "PointVideos" }, 'updated_at', 'desc' ],
         [ { model: models.Audio, as: "PointAudios" }, 'updated_at', 'desc' ],
-        [ { model: models.Video, as: "PointVideos" }, { model: models.Image, as: 'VideoImages' } ,'updated_at', 'asc' ],
-        [ models.User, { model: models.Organization, as: 'OrganizationUsers' }, { model: models.Image, as: 'OrganizationLogoImages' }, 'created_at', 'asc' ]
       ],
       include: [
         { model: models.User,
@@ -466,40 +463,12 @@ router.get('/:id/newPoints', auth.can('view post'), function(req, res) {
               model: models.Image, as: 'UserProfileImages',
               required: false
             },
-            {
-              model: models.Organization,
-              as: 'OrganizationUsers',
-              required: false,
-              attributes: ['id', 'name'],
-              include: [
-                {
-                  model: models.Image,
-                  as: 'OrganizationLogoImages',
-                  attributes: ['id', 'formats'],
-                  required: false
-                }
-              ]
-            }
           ]
         },
         {
           model: models.PointRevision,
           attributes: { exclude: ['ip_address', 'user_agent'] },
           required: false
-        },
-        {
-          model: models.Video,
-          required: false,
-          attributes: ['id','formats','updated_at','viewable','public_meta'],
-          as: 'PointVideos',
-          include: [
-            {
-              model: models.Image,
-              as: 'VideoImages',
-              attributes:["formats",'updated_at'],
-              required: false
-            },
-          ]
         },
         {
           model: models.Audio,
@@ -523,12 +492,29 @@ router.get('/:id/newPoints', auth.can('view post'), function(req, res) {
         }
       ]
     }).then(function(points) {
-      if (points) {
-        log.info('Points New Viewed', { postId: req.params.id, userId: req.user ? req.user.id : -1 });
-        res.send(points);
-      } else {
-        sendPostOrError(res, null, 'view', req.user, 'Not found', 404);
-      }
+      async.parallel([
+        (parallelCallback) => {
+          models.Point.setVideosForPoints(points, (error) => {
+            parallelCallback(error);
+          })
+        },
+        (parallelCallback) => {
+          models.Point.setOrganizationUsersForPoints(points, (error) => {
+            parallelCallback(error);
+          })
+        }
+      ], (error) => {
+        if (error) {
+          sendPostOrError(res, null, 'view', req.user, error);
+        } else {
+          if (points) {
+            log.info('Points New Viewed', { postId: req.params.id, userId: req.user ? req.user.id : -1 });
+            res.send(points);
+          } else {
+            sendPostOrError(res, null, 'view', req.user, 'Not found', 404);
+          }
+        }
+      })
     }).catch(function(error) {
       sendPostOrError(res, null, 'view', req.user, error);
     });
