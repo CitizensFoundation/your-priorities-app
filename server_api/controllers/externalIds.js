@@ -180,7 +180,6 @@ router.get('/:externalId/points', (req, res) => {
           }
         ]
       }).then((pointsIn) => {
-
         for (let i=0; i<pointsIn.rows.length;i++) {
           if (pointsIn.rows[i].User.private_profile_data) {
             pointsIn.rows[i].User.private_profile_data = { registration_answers: pointsIn.rows[i].User.private_profile_data.registration_answers };
