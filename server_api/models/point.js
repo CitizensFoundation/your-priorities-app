@@ -414,11 +414,14 @@ module.exports = (sequelize, DataTypes) => {
 
   //TODO Refactor duplicate code with Post
   Point.setOrganizationUsersForPoints = (points, done) => {
+    const userIds = points.map(p=>{
+      return p.user_id
+    })
     sequelize.models.User.findAll({
       attributes:  ['id','created_at'],
       where: {
         id: {
-          $in: points.map(p=>p.user_id)
+          $in: userIds
         }
       },
       include: [

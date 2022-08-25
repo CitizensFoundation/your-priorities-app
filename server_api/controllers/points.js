@@ -143,7 +143,7 @@ var loadPointWithAll = function (pointId, callback) {
           })
         },
         (parallelCallback) => {
-          models.Point.setOrganizationUsersForPoints([outPoint], (error, organizationUsers) => {
+          models.Point.setOrganizationUsersForPoints([outPoint], (error) => {
             parallelCallback(error);
           })
         },
