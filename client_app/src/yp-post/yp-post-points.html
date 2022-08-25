@@ -1513,7 +1513,7 @@
             }
             if (points[i].PointRevisions[points[i].PointRevisions.length-1] && points[i].PointRevisions[points[i].PointRevisions.length-1].content) {
               points[i].latestContent = points[i].PointRevisions[points[i].PointRevisions.length-1].content;
-            } else {
+            } else if (!this.currentVideoId && !this.currentAudioId) {
               console.warn("No content for point in _preProcessPoints");
             }
           }
@@ -1593,42 +1593,10 @@
             this.set("textValueDown", "");
             this.set("textValueMobileUpOrDown", "");
           } else {
-            if (this.currentVideoId) {
-              var point = this._preProcessPoints([inDetail.response])[0];
-              var ajax = document.createElement('iron-ajax');
-              ajax.handleAs = 'json';
-              ajax.contentType = 'application/json';
-              ajax.url = '/api/videos/'+point.id+'/completeAndAddToPoint';
-              ajax.method = 'PUT';
-              ajax.body = {
-                videoId: this.currentVideoId,
-                appLanguage: this.language,
-                isZiggeo: window.appGlobals.useZiggeo
-              };
-              ajax.addEventListener('response', function (event, detail) {
-                this._completeNewPointResponse(event, event.detail);
-                window.appGlobals.showSpeechToTextInfoIfNeeded();
-              }.bind(this));
-              ajax.generateRequest();
-            } else if (this.currentAudioId) {
-              var point = this._preProcessPoints([inDetail.response])[0];
-              var ajax = document.createElement('iron-ajax');
-              ajax.handleAs = 'json';
-              ajax.contentType = 'application/json';
-              ajax.url = '/api/audios/'+point.id+'/completeAndAddToPoint';
-              ajax.method = 'PUT';
-              ajax.body = {
-                audioId: this.currentAudioId,
-                appLanguage: this.language
-              };
-              ajax.addEventListener('response', function (event, detail) {
-                this._completeNewPointResponse(event, event.detail);
-                window.appGlobals.showSpeechToTextInfoIfNeeded();
-              }.bind(this));
-              ajax.generateRequest();
-            } else {
-              this._completeNewPointResponse(inEvent, inDetail);
+            if (this.currentVideoId || this.currentAudioId) {
+              window.appGlobals.showSpeechToTextInfoIfNeeded();
             }
+            this._completeNewPointResponse(inEvent, inDetail);
           }
         },
 
@@ -1700,7 +1668,11 @@
               userAutoTranslate: window.autoTranslate,
               referrer: document.referrer,
               url: location.href,
-              screen_width: window.screen.width
+              screen_width: window.screen.width,
+              videoId: videoId,
+              audioId: audioId,
+              appLanguage: this.language,
+              isZiggeo: window.appGlobals.useZiggeo
             };
 
             this.set('addPointDisabled', true);

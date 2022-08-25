@@ -217,45 +217,6 @@ router.put(
     });
   }
 );
-
-router.put(
-  "/:pointId/completeAndAddToPoint",
-  auth.can("edit point"),
-  (req, res) => {
-    models.Video.completeUploadAndAddToPoint(
-      req,
-      res,
-      { pointId: req.params.pointId, videoId: req.body.videoId },
-      (error) => {
-        if (error) {
-          log.error("Error adding point to video", { error });
-          res.sendStatus(500);
-        } else {
-          loadPointWithAll(req.params.pointId, (error, point) => {
-            if (error) {
-              log.error("Error loading point ", { error });
-              res.sendStatus(500);
-            } else {
-              if (process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON) {
-                const workPackage = {
-                  browserLanguage: req.headers["accept-language"]
-                    ? req.headers["accept-language"].split(",")[0]
-                    : "en-US",
-                  appLanguage: req.body.appLanguage,
-                  videoId: req.body.videoId,
-                  type: "create-video-transcript",
-                };
-                queue.add("process-voice-to-text", workPackage, "high");
-              }
-              res.send(point);
-            }
-          });
-        }
-      }
-    );
-  }
-);
-
 router.post(
   "/:groupId/createAndGetPreSignedUploadUrl",
   auth.can("create media"),

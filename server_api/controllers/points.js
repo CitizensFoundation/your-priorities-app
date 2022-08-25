@@ -82,9 +82,7 @@ var loadPointWithAll = function (pointId, callback) {
       [ models.PointRevision, 'created_at', 'asc' ],
       [ models.User, { model: models.Image, as: 'UserProfileImages' }, 'created_at', 'asc' ],
       [ models.User, { model: models.Organization, as: 'OrganizationUsers' }, { model: models.Image, as: 'OrganizationLogoImages' }, 'created_at', 'asc' ],
-      [ { model: models.Video, as: "PointVideos" }, 'updated_at', 'desc' ],
       [ { model: models.Audio, as: "PointAudios" }, 'updated_at', 'desc' ],
-      [ { model: models.Video, as: "PointVideos" }, { model: models.Image, as: 'VideoImages' } ,'updated_at', 'asc' ]
     ],
     include: [
       { model: models.User,
@@ -125,20 +123,6 @@ var loadPointWithAll = function (pointId, callback) {
         ]
       },
       {
-        model: models.Video,
-        required: false,
-        attributes: ['id','formats','updated_at','viewable','public_meta'],
-        as: 'PointVideos',
-        include: [
-          {
-            model: models.Image,
-            as: 'VideoImages',
-            attributes:["formats",'updated_at'],
-            required: false
-          },
-        ]
-      },
-      {
         model: models.Audio,
         required: false,
         attributes: ['id','formats','updated_at','listenable'],
@@ -159,7 +143,11 @@ var loadPointWithAll = function (pointId, callback) {
     ]
   }).then(function(point) {
     if (point) {
-      callback(null, point);
+      models.Point.getVideosForPoints([point.id], (error, videos) => {
+        point.setDataValue('PointVideos', videos);
+        point.PointVideos = videos;
+        callback(error, point);
+      })
     } else {
       callback("Can't find point");
     }
@@ -507,7 +495,7 @@ router.get('/:id/audioTranscriptStatus', auth.can('view point'), function(req, r
 });
 
 router.post('/:groupId', auth.can('create point'), function(req, res) {
-  log.info("In  POST createPoint");
+  log.info("In POST createPoint");
   if (!req.body.content) {
     req.body.content="";
   }
@@ -534,68 +522,139 @@ router.post('/:groupId', auth.can('create point'), function(req, res) {
   });
   point.save().then(function() {
     log.info('Point Created', { pointId: point ? point.id : -1, context: 'create', userId: req.user ? req.user.id : -1 });
-    var pointRevision = models.PointRevision.build({
-      group_id: point.group_id,
-      post_id: point.post_id,
-      content: point.content,
-      user_id: req.user.id,
-      status: point.status,
-      value: point.value,
-      point_id: point.id,
-      user_agent: req.useragent.source,
-      ip_address: req.clientIp
-    });
-    pointRevision.save().then(function() {
-      log.info('PointRevision Created', { pointRevisionId: pointRevision ? pointRevision.id : -1, context: 'create', userId: req.user ? req.user.id : -1 });
-      queue.add('process-similarities', { type: 'update-collection', pointId: point.id }, 'low');
-      models.AcActivity.createActivity({
-        type:'activity.point.new',
-        userId: point.user_id,
-        domainId: req.ypDomain.id,
+    async.parallel([
+      (parallelCallback) => {
+        var pointRevision = models.PointRevision.build({
+          group_id: point.group_id,
+          post_id: point.post_id,
+          content: point.content,
+          user_id: req.user.id,
+          status: point.status,
+          value: point.value,
+          point_id: point.id,
+          user_agent: req.useragent.source,
+          ip_address: req.clientIp
+        });
+        pointRevision.save().then(function() {
+          log.info('PointRevision Created', {
+            pointRevisionId: pointRevision ? pointRevision.id : -1,
+            context: 'create',
+            userId: req.user ? req.user.id : -1
+          });
+          parallelCallback();
+        });
+      },
+
+      (parallelCallback) => {
+        models.AcActivity.createActivity({
+          type:'activity.point.new',
+          userId: point.user_id,
+          domainId: req.ypDomain.id,
 //        communityId: req.ypCommunity ?  req.ypCommunity.id : null,
-        groupId : point.group_id,
-        postId : point.post_id,
-        pointId: point.id,
-        access: models.AcActivity.ACCESS_PUBLIC
-      }, function (error) {
-        models.Point.findOne({
-          where: { id: point.id },
-          attributes: ['id','content','group_id','post_id']
-        }).then(function(point) {
-          models.Post.findOne({
-            where: { id: point.post_id },
-            attributes: ['id','counter_points','group_id']
-          }).then(function(post) {
-            if (post) {
-              post.updateAllExternalCounters(req, 'up', 'counter_points', function () {
-                post.increment('counter_points');
-                if (point.content && point.content!=='') {
-                  log.info("process-moderation point toxicity after create point");
-                  queue.add('process-moderation', { type: 'estimate-point-toxicity', pointId: point.id }, 'high');
-                } else {
-                  log.info("No process-moderation toxicity for empty text on point");
+          groupId : point.group_id,
+          postId : point.post_id,
+          pointId: point.id,
+          access: models.AcActivity.ACCESS_PUBLIC
+        }, function (error) {
+          parallelCallback(error);
+        });
+      },
+
+      (parallelCallback) => {
+        models.Group.addUserToGroupIfNeeded(point.group_id, req, function () {
+          parallelCallback();
+        })
+      },
+
+      (parallelCallback) => {
+        models.Post.findOne({
+          where: { id: point.post_id },
+          attributes: ['id','counter_points','group_id']
+        }).then(function(post) {
+          if (post) {
+            post.updateAllExternalCounters(req, 'up', 'counter_points', function () {
+              post.increment('counter_points');
+              parallelCallback();
+            });
+          } else {
+            parallelCallback("Post not found for point");
+          }
+        })
+      },
+
+      (parallelCallback) => {
+        if (req.body.videoId) {
+          models.Video.completeUploadAndAddToPoint(
+            req,
+            res,
+            { pointId: point.id, videoId: req.body.videoId },
+            (error) => {
+              if (error) {
+                parallelCallback(error);
+              } else {
+                if (process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON) {
+                  const workPackage = {
+                    browserLanguage: req.headers["accept-language"]
+                      ? req.headers["accept-language"].split(",")[0]
+                      : "en-US",
+                    appLanguage: req.body.appLanguage,
+                    videoId: req.body.videoId,
+                    type: "create-video-transcript",
+                  };
+                  queue.add("process-voice-to-text", workPackage, "high");
                 }
-                loadPointWithAll(point.id, function (error, loadedPoint) {
-                  if (error) {
-                    log.error('Could not reload point point', { err: error, context: 'createPoint', user: toJson(req.user.simple()) });
-                    res.sendStatus(500);
-                  } else {
-                    const newPointRedisKey = `newUserPoint_${req.user.id}`
-                    req.redisClient.setex(newPointRedisKey, 30, JSON.stringify({}));
-                    models.Group.addUserToGroupIfNeeded(point.group_id, req, function () {
-                      res.send(loadedPoint);
-                    });
-                  }
-                });
-              });
+                parallelCallback();
+              }
+            });
+        } else {
+          parallelCallback();
+        }
+      },
+
+      (parallelCallback) => {
+        if (req.body.audioId) {
+          models.Audio.completeUploadAndAddToPoint(req, res, { pointId: point.id, audioId: req.body.audioId }, (error) => {
+            if (error) {
+              parallelCallback(error);
             } else {
-              log.error("Can't find post for posting point", { pointId: point ? point.id : null});
-              res.sendStatus(404);
+              if (process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON) {
+                const workPackage = { browserLanguage: req.headers["accept-language"] ? req.headers["accept-language"].split(',')[0] : 'en-US',
+                  appLanguage: req.body.appLanguage,
+                  audioId: req.body.audioId,
+                  type: 'create-audio-transcript' };
+                queue.add('process-voice-to-text', workPackage, 'high');
+              }
+              parallelCallback();
             }
           });
+        } else {
+          parallelCallback();
+        }
+      }
+    ], (error) => {
+      if (error) {
+        log.error(error);
+        res.sendStatus(500);
+      } else {
+        if (point.content && point.content!=='') {
+          log.info("process-moderation point toxicity after create point");
+          queue.add('process-moderation', { type: 'estimate-point-toxicity', pointId: point.id }, 'high');
+          queue.add('process-similarities', { type: 'update-collection', pointId: point.id }, 'low');
+        } else {
+          log.info("No process-moderation toxicity for empty text on point");
+        }
+        loadPointWithAll(point.id, function (error, loadedPoint) {
+          if (error) {
+            log.error('Could not reload point point', { err: error, context: 'createPoint', user: toJson(req.user.simple()) });
+            res.sendStatus(500);
+          } else {
+            const newPointRedisKey = `newUserPoint_${req.user.id}`
+            req.redisClient.setex(newPointRedisKey, 30, JSON.stringify({}));
+            res.send(loadedPoint);
+          }
         });
-      });
-    });
+      }
+    })
   }).catch(function(error) {
     sendPointOrError(res, null, 'create', req.user, error);
   });
