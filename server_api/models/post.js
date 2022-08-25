@@ -611,6 +611,53 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
 
+  //TODO Refactor duplicate code with Post
+  Post.setOrganizationUsersForPosts = (posts, done) => {
+    sequelize.models.User.findAll({
+      attributes:  ['id','created_at'],
+      where: {
+        id: {
+          $in: posts.map(p=>p.User.id)
+        }
+      },
+      include: [
+        {
+          model: sequelize.models.Organization,
+          as: 'OrganizationUsers',
+          required: true,
+          attributes: ['id','name'],
+          include: [
+            {
+              model: sequelize.models.Image,
+              as: 'OrganizationLogoImages',
+              attributes: ['id', 'formats'],
+              required: false
+            }
+          ]
+        }
+      ],
+      order: [
+        [ { model: sequelize.models.Organization, as: 'OrganizationUsers' }, { model: sequelize.models.Image, as: 'OrganizationLogoImages' }, 'created_at', 'asc' ]
+      ]
+    }).then(users => {
+      if (users && users.length>0) {
+        for (let u=0; u<users.length; u++) {
+          for (let p=0; p<posts.length; p++) {
+            if (posts[p].User.id===users[u].id) {
+              posts[p].User.OrganizationUsers = users[u].OrganizationUsers;
+              posts[p].User.setDataValue('OrganizationUsers', users[u].OrganizationUsers);
+            }
+          }
+        }
+        done();
+      } else {
+        done();
+      }
+    }).catch( error => {
+      done(error);
+    })
+  }
+
   Post.addVideosToAllPosts = (posts, videos) => {
     const postsHash = {};
 

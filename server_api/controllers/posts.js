@@ -468,7 +468,7 @@ router.get('/:id/newPoints', auth.can('view post'), function(req, res) {
         [ { model: models.Video, as: "PointVideos" }, 'updated_at', 'desc' ],
         [ { model: models.Audio, as: "PointAudios" }, 'updated_at', 'desc' ],
         [ { model: models.Video, as: "PointVideos" }, { model: models.Image, as: 'VideoImages' } ,'updated_at', 'asc' ],
-          [ models.User, { model: models.Organization, as: 'OrganizationUsers' }, { model: models.Image, as: 'OrganizationLogoImages' }, 'created_at', 'asc' ]
+        [ models.User, { model: models.Organization, as: 'OrganizationUsers' }, { model: models.Image, as: 'OrganizationLogoImages' }, 'created_at', 'asc' ]
       ],
       include: [
         { model: models.User,
@@ -622,10 +622,6 @@ const sendPostPoints = (req, res, redisKey) => {
               model: models.Image,
               as: 'VideoImages'
             }, 'updated_at', 'asc'],
-            [models.User, {model: models.Organization, as: 'OrganizationUsers'}, {
-              model: models.Image,
-              as: 'OrganizationLogoImages'
-            }, 'created_at', 'asc']
           ],
           include: [
             {
@@ -674,12 +670,18 @@ const sendPostPoints = (req, res, redisKey) => {
           ]
         }).then(function (points) {
           if (points) {
-            const pointsInfo = {points: points, count: upCount + downCount};
-            log.info('Points', { postId: req.params.id, userId: req.user ? req.user.id : -1});
-            if (redisKey) {
-              req.redisClient.setex(redisKey, process.env.POINTS_CACHE_TTL ? parseInt(process.env.POINTS_CACHE_TTL) : 3, JSON.stringify(pointsInfo));
-            }
-            res.send(pointsInfo);
+            models.Point.setOrganizationUsersForPoints(points, (error) => {
+              if (error) {
+                sendPostOrError(res, null, 'view', req.user, 'Point org users', 404);
+              } else {
+                const pointsInfo = {points: points, count: upCount + downCount};
+                log.info('Points', { postId: req.params.id, userId: req.user ? req.user.id : -1});
+                if (redisKey) {
+                  req.redisClient.setex(redisKey, process.env.POINTS_CACHE_TTL ? parseInt(process.env.POINTS_CACHE_TTL) : 3, JSON.stringify(pointsInfo));
+                }
+                res.send(pointsInfo);
+              }
+            })
           } else {
             sendPostOrError(res, null, 'view', req.user, 'Not found', 404);
           }

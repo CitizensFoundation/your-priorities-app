@@ -4,6 +4,7 @@ const async = require('async');
 const queue = require('../active-citizen/workers/queue');
 const log = require('../utils/logger');
 const _ = require("lodash");
+const models = require("./index");
 
 const findCommunityAndDomainForPointFromGroup = (sequelize, options, callback) => {
   sequelize.models.Group.findOne({
@@ -412,35 +413,47 @@ module.exports = (sequelize, DataTypes) => {
   };
 
   //TODO Refactor duplicate code with Post
-  Point.getOrganizationUsersForPoint = (pointIds, done) => {
-    sequelize.models.Video.findAll({
-      attributes:  ['id','formats','viewable','created_at','public_meta'],
+  Point.setOrganizationUsersForPoints = (points, done) => {
+    sequelize.models.User.findAll({
+      attributes:  ['id','created_at'],
+      where: {
+        id: {
+          $in: points.map(p=>p.user_id)
+        }
+      },
       include: [
         {
-          model: sequelize.models.Image,
-          as: 'VideoImages',
-          attributes:["formats",'created_at'],
-          required: false
-        },
-        {
-          model: sequelize.models.Point,
-          where: {
-            id: {
-              $in: pointIds
-            }
-          },
-          as: 'PointVideos',
+          model: sequelize.models.Organization,
+          as: 'OrganizationUsers',
           required: true,
-          attributes: ['id'],
-
+          attributes: ['id','name'],
+          include: [
+            {
+              model: sequelize.models.Image,
+              as: 'OrganizationLogoImages',
+              attributes: ['id', 'formats'],
+              required: false
+            }
+          ]
         }
       ],
       order: [
-        [ { model: sequelize.models.Image, as: 'VideoImages' }, 'created_at', 'asc' ]
+          [ { model: sequelize.models.Organization, as: 'OrganizationUsers' }, { model: sequelize.models.Image, as: 'OrganizationLogoImages' }, 'created_at', 'asc' ]
       ]
-    }).then(videos => {
-      videos = _.orderBy(videos, ['created_at'],['desc']);
-      done(null, videos);
+    }).then(users => {
+      if (users && users.length>0) {
+        for (let u=0; u<users.length; u++) {
+          for (let p=0; p<points.length; p++) {
+            if (points[p].User.id===users[u].id) {
+              points[p].User.OrganizationUsers = users[u].OrganizationUsers;
+              points[p].User.setDataValue('OrganizationUsers', users[u].OrganizationUsers);
+            }
+          }
+        }
+        done();
+      } else {
+        done();
+      }
     }).catch( error => {
       done(error);
     })

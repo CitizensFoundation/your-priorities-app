@@ -1537,22 +1537,6 @@ var getPostsWithAllFromIds = function (postsWithIds, postOrder, done) {
                 model: models.Image, as: 'UserProfileImages',
                 attributes:['id',"formats",'updated_at'],
                 required: false
-              },
-              {
-                model: models.Organization,
-                as: 'OrganizationUsers',
-                required: false,
-                attributes: ['id', 'name'],
-                include: [
-                  {
-                    model: models.Image,
-                    as: 'OrganizationLogoImages',
-                    //TODO: Fix [ORANGE] [12-1]  sql_error_code = 42622 NOTICE:  identifier "User->OrganizationUsers->OrganizationLogoImages->OrganizationLogoImage" will be truncated to "User->OrganizationUsers->OrganizationLogoImages->OrganizationLo"
-                    //TODO: Figure out why there are no formats attributes coming through here
-                    attributes: ['id', 'formats'],
-                    required: false
-                  }
-                ]
               }
             ]
           },
@@ -1764,12 +1748,19 @@ router.get('/:id/posts/:filter/:categoryId/:status?', auth.can('view group'), fu
                   }], ['desc'])
                 }
 
-                const postsOut = {
-                  posts: finalRows,
-                  totalPostsCount: totalPostsCount
-                };
-                req.redisClient.setex(redisKey, process.env.POSTS_CACHE_TTL ? parseInt(process.env.POSTS_CACHE_TTL) : 3, JSON.stringify(postsOut));
-                res.send(postsOut);
+                models.Post.setOrganizationUsersForPosts(finalRows, (error) => {
+                  if (error) {
+                    log.error("Error getting group", { err: error });
+                    res.sendStatus(500);
+                  } else {
+                    const postsOut = {
+                      posts: finalRows,
+                      totalPostsCount: totalPostsCount
+                    };
+                    req.redisClient.setex(redisKey, process.env.POSTS_CACHE_TTL ? parseInt(process.env.POSTS_CACHE_TTL) : 3, JSON.stringify(postsOut));
+                    res.send(postsOut);
+                  }
+                })
               }
             });
           }).catch(function (error) {

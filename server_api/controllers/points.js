@@ -82,7 +82,6 @@ var loadPointWithAll = function (pointId, callback) {
     order: [
       [ models.PointRevision, 'created_at', 'asc' ],
       [ models.User, { model: models.Image, as: 'UserProfileImages' }, 'created_at', 'asc' ],
-      [ models.User, { model: models.Organization, as: 'OrganizationUsers' }, { model: models.Image, as: 'OrganizationLogoImages' }, 'created_at', 'asc' ],
       [ { model: models.Audio, as: "PointAudios" }, 'updated_at', 'desc' ],
     ],
     include: [
@@ -144,24 +143,18 @@ var loadPointWithAll = function (pointId, callback) {
           })
         },
         (parallelCallback) => {
-          models.Point.getOrganizationUsersForPoints([point.id], (error, organizationUsers) => {
-            if (error) {
-              parallelCallback(error);
-            } else {
-              outPoint.setDataValue('OrganizationUsers', organizationUsers);
-              outPoint.OrganizationUsers = organizationUsers;
-              parallelCallback();
-            }
+          models.Point.setOrganizationUsersForPoints([outPoint], (error, organizationUsers) => {
+            parallelCallback(error);
           })
         },
       ], (error) => {
-        callback(error);
+        callback(error, outPoint);
       })
     } else {
       callback("Can't find point");
     }
   }).catch(function(error) {
-    callback(error, outPoint);
+    callback(error);
   });
 };
 
