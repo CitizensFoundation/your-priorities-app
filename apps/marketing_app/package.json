@@ -88,7 +88,7 @@
             "eslint-disable import/no-duplicates": "off",
             "eslint-disable import/order": "off",
             "eslint-disable class-methods-use-this": "off"
-         }
+          }
         }
       ],
       "no-unused-vars": "off",
@@ -127,6 +127,7 @@
     "@kano/twemoji": "^1.0.0",
     "@lit-labs/router": "^0.1.1",
     "@lit-labs/virtualizer": "^0.7.2",
+    "@material/material-color-utilities": "^0.2.0",
     "@material/mwc-button": "^0.27.0",
     "@material/mwc-checkbox": "^0.27.0",
     "@material/mwc-circular-progress-four-color": "^0.27.0",
@@ -145,6 +146,7 @@
     "@material/mwc-textarea": "^0.27.0",
     "@material/mwc-textfield": "^0.27.0",
     "@material/mwc-top-app-bar": "^0.27.0",
+    "@material/web": "file:/./@material/web/material-web-0.27.0.tgz",
     "@picmo/popup-picker": "^5.6.0",
     "@picmo/renderer-twemoji": "^5.6.0",
     "@polymer/iron-ajax": "^3.0.1",
@@ -159,6 +161,8 @@
     "@webcomponents/webcomponentsjs": "^2.6.0",
     "chart.js": "^3.9.1",
     "classnames": "^2.3.1",
+    "d3": "3.5.6",
+    "datamaps": "0.5.9",
     "i18next": "21.9.1",
     "i18next-http-backend": "1.4.1",
     "insert-text-at-cursor": "^0.3.0",
@@ -179,9 +183,7 @@
     "rollup-plugin-postcss": "^4.0.2",
     "rollup-plugin-tailwindcss": "^1.0.0",
     "share-menu": "^4.0.0",
-    "wavesurfer.js": "^6.2.0",
-    "d3": "3.5.6",
-    "datamaps": "0.5.9",
-    "topojson": "1.6.19"
+    "topojson": "1.6.19",
+    "wavesurfer.js": "^6.2.0"
   }
 }
