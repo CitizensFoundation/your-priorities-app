@@ -2,6 +2,11 @@ import { LitElement, css } from 'lit';
 import { property } from 'lit/decorators.js';
 import { installMediaQueryWatcher } from 'pwa-helpers/media-query.js';
 import { Layouts } from 'lit-flexbox-literals';
+import {
+  argbFromHex,
+  themeFromSourceColor,
+  applyTheme,
+} from '@material/material-color-utilities';
 
 export class YpBaseElement extends LitElement {
   @property({ type: String })
@@ -16,6 +21,12 @@ export class YpBaseElement extends LitElement {
   @property({ type: Boolean })
   largeFont = false;
 
+  @property({ type: String })
+  themeColor = '#002255';
+
+  @property({ type: Boolean })
+  themeDarkMode: boolean | undefined;
+
   connectedCallback() {
     super.connectedCallback();
 
@@ -25,9 +36,13 @@ export class YpBaseElement extends LitElement {
     );
 
     //TODO: Do the large font thing with css custom properties
+    this.addGlobalListener('yp-large-font', this._largeFont.bind(this));
+
+    this.addGlobalListener('yp-theme-color', this._changeThemeColor.bind(this));
+
     this.addGlobalListener(
-      'yp-large-font',
-      this._largeFont.bind(this)
+      'yp-theme-dark-mode',
+      this._changeThemeDarkMode.bind(this)
     );
 
     if (
@@ -53,17 +68,60 @@ export class YpBaseElement extends LitElement {
       this._languageEvent.bind(this)
     );
 
+    this.removeGlobalListener('yp-large-font', this._largeFont.bind(this));
+
     this.removeGlobalListener(
-      'yp-large-font',
-      this._largeFont.bind(this)
+      'yp-theme-color',
+      this._changeThemeColor.bind(this)
+    );
+
+    this.removeGlobalListener(
+      'yp-theme-dark-mode',
+      this._changeThemeDarkMode.bind(this)
     );
   }
 
-  updated(changedProperties: Map<string | number | symbol, unknown>): void {
-    super.updated(changedProperties);
+  _changeThemeColor(event: CustomEvent) {
+    this.themeColor = event.detail;
+  }
 
+  _changeThemeDarkMode(event: CustomEvent) {
+    this.themeDarkMode = event.detail;
+  }
+
+  themeChanged(target: HTMLElement | undefined = undefined) {
+    const theme = themeFromSourceColor(argbFromHex(this.themeColor), [
+      {
+        name: 'custom-1',
+        value: argbFromHex('#ff00FF'),
+        blend: true,
+      },
+    ]);
+
+    // Print out the theme as JSON
+    console.log(JSON.stringify(theme, null, 2));
+
+    // Check if the user has dark mode turned on
+    const systemDark =
+      this.themeDarkMode === undefined
+        ? window.matchMedia('(prefers-color-scheme: dark)').matches
+        : this.themeDarkMode;
+
+    console.error(systemDark);
+    // Apply the theme to the body by updating custom properties for material tokens
+    applyTheme(theme, { target: target || this, dark: systemDark });
+  }
+
+  updated(changedProperties: Map<string | number | symbol, unknown>): void {
     if (changedProperties.has('language')) {
-      this.languageChanged()
+      this.languageChanged();
+    }
+
+    if (
+      changedProperties.has('themeColor') ||
+      changedProperties.has('themeDarkMode')
+    ) {
+      this.themeChanged();
     }
   }
 

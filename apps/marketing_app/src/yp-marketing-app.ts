@@ -4,15 +4,9 @@ import { property, customElement } from 'lit/decorators.js';
 import { YpBaseElement } from './@yrpri/common/yp-base-element.js';
 import { ShadowStyles } from './@yrpri/common/ShadowStyles.js';
 
-import '@material/mwc-button';
-import '@material/mwc-tab';
-import '@material/mwc-tab-bar';
-import '@material/mwc-drawer';
-import '@material/mwc-icon';
 import '@material/mwc-dialog';
-import '@material/mwc-top-app-bar';
-import '@material/mwc-icon-button';
-import '@material/mwc-textarea';
+import { Layouts } from 'lit-flexbox-literals';
+
 import { YpAppGlobals } from './@yrpri/yp-app/YpAppGlobals.js';
 import { YpAppUser } from './@yrpri/yp-app/YpAppUser.js';
 import { YpAppDialogs } from './@yrpri/yp-dialog-container/yp-app-dialogs.js';
@@ -23,9 +17,15 @@ import { YpServerApiAdmin } from './@yrpri/common/YpServerApiAdmin.js';
 
 import './@yrpri/yp-dialog-container/yp-app-dialogs.js';
 
-import './yp-community-marketing.js';
+import './yp-analytics/testing/yp-community-marketing.js';
 import { YpAccessHelpers } from './@yrpri/common/YpAccessHelpers.js';
 import { classMap } from 'lit/directives/class-map.js';
+
+import '@material/web/navigationbar/navigation-bar.js';
+import '@material/web/navigationtab/navigation-tab.js';
+import '@material/web/iconbutton/filled-link-icon-button.js';
+
+import './yp-analytics/yp-dashboard.js';
 
 declare global {
   interface Window {
@@ -76,85 +76,16 @@ export class YpMarketingApp extends YpBaseElement {
     return [
       super.styles,
       ShadowStyles,
+      Layouts,
       css`
         :host {
-          color: #1a2b42;
-          --mdc-theme-primary: #1c96bd;
+          width: 100vw;
+          height: 100vh;
+          background-color: var(--md-sys-color-surface, #fefefe);
         }
 
-        header {
-          width: 100%;
-          background: #fff;
-          margin-top: 24px;
-          max-width: 1024px;
-        }
-
-        header ul li {
-          display: flex;
-        }
-
-        header ul li a {
-          color: #5a5c5e;
-          text-decoration: none;
-          font-size: 16px;
-        }
-
-        header ul li a:hover,
-        header ul li a.active {
-          color: blue;
-        }
-
-        .mainPageContainer {
-          margin-top: 24px;
-        }
-
-        .app-footer {
-          font-size: calc(12px + 0.5vmin);
-          align-items: center;
-        }
-
-        .app-footer a {
-          margin-left: 5px;
-        }
-
-        [hidden] {
-          display: none !important;
-        }
-
-        mwc-tab {
-          color: #000;
-        }
-
-        .mainImage {
-          margin-right: auto;
-          margin-top: 4px;
-          margin-left: 48px;
-          margin-bottom: 2px;
-        }
-
-        .analyticsText {
-          margin-left: 8px;
-          margin-bottom: 4px;
-          font-size: 18px;
-          padding-top: 2px;
-        }
-
-        mwc-top-app-bar,
-        .exitButton {
-          --mdc-theme-on-primary: white;
-        }
-
-        .headerContainer {
-          padding-top: 8px;
-        }
-
-        mwc-drawer {
-          --mdc-drawer-width: 120px;
-        }
-
-        .railMenuItem {
-          font-size: 14px;
-          text-transform: uppercase;
+        body {
+          background-color: var(--md-sys-color-surface, #fefefe);
         }
       `,
     ];
@@ -173,7 +104,7 @@ export class YpMarketingApp extends YpBaseElement {
     window.appUser = new YpAppUser(window.serverApi);
     window.appGlobals.setupTranslationSystem();
 
-    this.page = 'editTranslations';
+    this.page = 'analytics';
 
     let pathname = window.location.pathname;
     if (pathname.endsWith('/'))
@@ -196,6 +127,14 @@ export class YpMarketingApp extends YpBaseElement {
     super.connectedCallback();
     this._setupEventListeners();
     this._getCollection();
+
+    setTimeout(() => {
+      this.fireGlobal('yp-theme-color', '#FFFFFF');
+    }, 5000);
+
+    setTimeout(() => {
+      //this.fireGlobal('yp-theme-dark-mode', true);
+    }, 9000);
   }
 
   disconnectedCallback() {
@@ -233,7 +172,14 @@ export class YpMarketingApp extends YpBaseElement {
         </mwc-button>
       </mwc-dialog>
 
-      <mwc-drawer hasHeader>
+      <div class="layout horizontal topAppBar">
+        <md-filled-link-icon-button
+          class="exitButton"
+          .label="${this.t('exitToMainApp')}"
+          slot="navigationIcon"
+          @click="${this.exitToMainApp}"
+          icon="close"
+        ></md-filled-link-icon-button>
         <div slot="title" class="layout vertical center-center">
           <div>
             <img
@@ -242,52 +188,35 @@ export class YpMarketingApp extends YpBaseElement {
               src="https://yrpri-eu-direct-assets.s3-eu-west-1.amazonaws.com/YpLogos/YourPriorites-Trans-Wide.png"
             />
           </div>
-          <mwc-icon-button
-            class="exitButton"
-            .label="${this.t('exitToMainApp')}"
-            slot="navigationIcon"
-            @click="${this.exitToMainApp}"
-            icon="close"
-          ></mwc-icon-button>
         </div>
-        <div class="layout vertical center-center">
-          <mwc-icon-button
-            icon="gesture"
-            .label="${this.t('config')}"
-          ></mwc-icon-button>
-          <div class="railMenuItem">${this.t('analytics')}</div>
-          <mwc-icon-button
-            icon="gavel"
-            .label="${this.t('translation')}"
-          ></mwc-icon-button>
-          <div class="railMenuItem">${this.t('marketing')}</div>
-        </div>
-        <div slot="appContent">
-          <mwc-top-app-bar>
-            <mwc-icon-button
-              class="exitButton"
-              .label="${this.t('exitToMainApp')}"
-              slot="navigationIcon"
-              @click="${this.exitToMainApp}"
-              icon="exit_to_app"
-            ></mwc-icon-button>
-
-            <div slot="title">
-              <div class="layout horizontal headerContainer">
-                <div class="analyticsText">
-                  ${this.t('analyticsFor')} ${this.originalCollectionType}:
-                  ${this.collection ? this.collection.name : ''}
-                </div>
-              </div>
+        <div slot="title">
+          <div class="layout horizontal headerContainer">
+            <div class="analyticsText">
+              ${this.t('analyticsFor')} ${this.originalCollectionType}:
+              ${this.collection ? this.collection.name : ''}
             </div>
-            <main>
-              <div class="layout vertical center-center">
-                <div class="mainPageContainer">${this._renderPage()}</div>
-              </div>
-            </main>
-          </mwc-top-app-bar>
+          </div>
         </div>
-      </mwc-drawer>
+      </div>
+
+      <md-navigation-bar>
+        <md-navigation-tab
+          @click="${this.__onNavClicked}"
+          icon="exit"
+          .label="${this.t('Analytics')}"
+        ></md-navigation-tab>
+        <md-navigation-tab
+          @click="${this.__onNavClicked}"
+          icon="exit"
+          .label="${this.t('Campaign')}"
+        ></md-navigation-tab>
+      </md-navigation-bar>
+
+      <main>
+        <div class="layout vertical center-center">
+          <div class="mainPageContainer">${this._renderPage()}</div>
+        </div>
+      </main>
     `;
   }
 
@@ -355,6 +284,16 @@ export class YpMarketingApp extends YpBaseElement {
     }
   }
 
+  updated(changedProperties: Map<string | number | symbol, unknown>): void {
+    super.updated(changedProperties);
+    if (
+      changedProperties.has('themeColor') ||
+      changedProperties.has('themeDarkMode')
+    ) {
+      this.themeChanged(document.body);
+    }
+  }
+
   _appError(event: CustomEvent) {
     console.error(event.detail.message);
     this.currentError = event.detail.message;
@@ -372,19 +311,19 @@ export class YpMarketingApp extends YpBaseElement {
 
   _renderPage() {
     if (this.adminConfirmed) {
-      switch (this.collectionAction) {
-        case 'translations':
+      switch (this.page) {
+        case 'campaign':
           return html`
             ${this.collection
-              ? html`<yp-admin-translations
+              ? html`<yp-campaign
                   .collectionType="${this.collectionType}"
                   .collection="${this.collection}"
                   .collectionId="${this.collectionId}"
                 >
-                </yp-admin-translations>`
+                </yp-campaign>`
               : nothing}
           `;
-        case 'config':
+        case 'analytics':
           switch (this.collectionType) {
             case 'domains':
             case 'communities':
@@ -392,23 +331,12 @@ export class YpMarketingApp extends YpBaseElement {
             case 'posts':
               return html`
                 ${this.collection
-                  ? html`<yp-community-marketing
+                  ? html`<yp-dashboard
                       .collectionType="${this.collectionType}"
                       .collection="${this.collection}"
                       .collectionId="${this.collectionId}"
                     >
-                    </yp-community-marketing>`
-                  : nothing}
-              `;
-            case 'somethingelse':
-              return html`
-                ${this.collection
-                  ? html`<yp-community-marketing
-                      .collectionType="${this.collectionType}"
-                      .collection="${this.collection}"
-                      .collectionId="${this.collectionId}"
-                    >
-                    </yp-community-marketing>`
+                    </yp-dashboard>`
                   : nothing}
               `;
           }
@@ -424,6 +352,7 @@ export class YpMarketingApp extends YpBaseElement {
 
   __onNavClicked(ev: CustomEvent) {
     ev.preventDefault();
+    debugger;
     this.page = (ev.target as HTMLAnchorElement).hash.substring(1);
   }
 

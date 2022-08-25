@@ -2,14 +2,14 @@ import { LitElement, css, html, nothing } from 'lit';
 import { property, customElement } from 'lit/decorators.js';
 import 'chart.js';
 
-import { YpAdminPage } from './yp-admin-page.js';
+import { YpAdminPage } from '../../yp-admin-page.js';
 
 import { Chart, registerables } from 'chart.js';
 
 import './yp-visitors-chart.js';
 import './yp-pages-chart.js';
 import './yp-bounce-rate-chart.js';
-import './pl-components/pl-dashboard.js';
+import '../../pl-components/pl-dashboard.js';
 
 @customElement('yp-community-marketing')
 export class YpCommunityMarketing extends YpAdminPage {

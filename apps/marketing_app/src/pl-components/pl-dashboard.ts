@@ -8,16 +8,6 @@ import { Layouts } from 'lit-flexbox-literals';
 import './pl-realtime.js';
 import './pl-historical.js';
 
-import '@material/web/button/tonal-link-button.js';
-import '@material/web/button/elevated-button.js';
-import '@material/web/navigationbar/navigation-bar.js';
-import '@material/web/navigationtab/navigation-tab.js';
-import '@material/web/textfield/outlined-text-field.js';
-import '@material/web/textfield/filled-text-field.js';
-
-import '@material/web/fab/fab.js';
-import { argbFromHex, themeFromSourceColor, applyTheme } from "@material/material-color-utilities";
-
 import { parseQuery } from './query';
 import * as api from './api';
 
@@ -77,23 +67,6 @@ export class PlausibleDashboard extends PlausibleBaseElementWithState {
     window.addEventListener('popstate',  () => {
       this.query = parseQuery(location.search, this.site);
     });
-
-    const theme = themeFromSourceColor(argbFromHex('#001177'), [
-      {
-        name: "custom-1",
-        value: argbFromHex("#ff00FF"),
-        blend: true,
-      },
-    ]);
-
-    // Print out the theme as JSON
-    console.log(JSON.stringify(theme, null, 2));
-
-    // Check if the user has dark mode turned on
-    const systemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-
-    // Apply the theme to the body by updating custom properties for material tokens
-    applyTheme(theme, {target: this, dark: systemDark});
   }
 
   static get styles() {
