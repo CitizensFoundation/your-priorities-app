@@ -412,6 +412,41 @@ module.exports = (sequelize, DataTypes) => {
   };
 
   //TODO Refactor duplicate code with Post
+  Point.getOrganizationUsersForPoint = (pointIds, done) => {
+    sequelize.models.Video.findAll({
+      attributes:  ['id','formats','viewable','created_at','public_meta'],
+      include: [
+        {
+          model: sequelize.models.Image,
+          as: 'VideoImages',
+          attributes:["formats",'created_at'],
+          required: false
+        },
+        {
+          model: sequelize.models.Point,
+          where: {
+            id: {
+              $in: pointIds
+            }
+          },
+          as: 'PointVideos',
+          required: true,
+          attributes: ['id'],
+
+        }
+      ],
+      order: [
+        [ { model: sequelize.models.Image, as: 'VideoImages' }, 'created_at', 'asc' ]
+      ]
+    }).then(videos => {
+      videos = _.orderBy(videos, ['created_at'],['desc']);
+      done(null, videos);
+    }).catch( error => {
+      done(error);
+    })
+  }
+
+  //TODO Refactor duplicate code with Post
   Point.getVideosForPoints = (pointIds, done) => {
     sequelize.models.Video.findAll({
       attributes:  ['id','formats','viewable','created_at','public_meta'],
