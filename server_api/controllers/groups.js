@@ -1538,22 +1538,6 @@ var getPostsWithAllFromIds = function (postsWithIds, postOrder, done) {
                 attributes:['id',"formats",'updated_at'],
                 required: false
               },
-              {
-                model: models.Organization,
-                as: 'OrganizationUsers',
-                required: false,
-                attributes: ['id', 'name'],
-                include: [
-                  {
-                    model: models.Image,
-                    as: 'OrganizationLogoImages',
-                    //TODO: Fix [ORANGE] [12-1]  sql_error_code = 42622 NOTICE:  identifier "User->OrganizationUsers->OrganizationLogoImages->OrganizationLogoImage" will be truncated to "User->OrganizationUsers->OrganizationLogoImages->OrganizationLo"
-                    //TODO: Figure out why there are no formats attributes coming through here
-                    attributes: ['id', 'formats'],
-                    required: false
-                  }
-                ]
-              }
             ]
           },
           {
