@@ -11,7 +11,7 @@ var _ = require('lodash');
 // TODO: Make sure to load the latest image
 // TODO: Make sure to still support the escaped_fragment routes after moving to the direct urls for backwards sharing capacity
 
-const ITEM_LIMIT = 500;
+const ITEM_LIMIT = 1000;
 
 var fullUrl = function (req) {
   var replacedUrl = req.originalUrl;
