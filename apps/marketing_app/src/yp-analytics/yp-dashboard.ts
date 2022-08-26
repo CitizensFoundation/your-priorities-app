@@ -2,6 +2,10 @@ import { css, html, nothing } from 'lit';
 import { property, customElement } from 'lit/decorators.js';
 
 import '../pl-components/pl-dashboard.js';
+
+import './yp-realtime.js';
+import './yp-historical.js';
+
 import { PlausibleDashboard } from '../pl-components/pl-dashboard.js';
 
 @customElement('yp-dashboard')
@@ -51,16 +55,34 @@ export class YpDashboard extends PlausibleDashboard {
   }
 
   render() {
-    return this.collection && this.site
-      ? html`
-          <pl-dashboard
+    if (this.site && this.query) {
+      if (this.query!.period === 'realtime') {
+        return html`
+          <yp-realtime
+            .timer="${this.timer}"
+            .site="${this.site}"
+            .currentRole="${this.currentUserRole}"
+            .query="${this.query}"
+            .history="${this.history}"
             .proxyUrl="${`/api/${this.collectionType}/${this.collectionId}/plausibleStatsProxy`}"
             proxyFaviconBaseUrl="/api/users/PlausibleFavIcon/"
+          ></yp-realtime>
+        `;
+      } else {
+        return html`
+          <yp-historical
+            .timer="${this.timer}"
             .site="${this.site}"
-          ></pl-dashboard>
-        `
-      : nothing;
+            .history="${this.history}"
+            .currentRole="${this.currentUserRole}"
+            .query="${this.query}"
+            .proxyUrl="${`/api/${this.collectionType}/${this.collectionId}/plausibleStatsProxy`}"
+            proxyFaviconBaseUrl="/api/users/PlausibleFavIcon/"
+          ></yp-historical>
+        `;
+      }
+    } else {
+      return nothing;
+    }
   }
-
-  updated(changedProperties: Map<string | number | symbol, unknown>): void {}
 }

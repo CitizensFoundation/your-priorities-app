@@ -107,7 +107,6 @@ export class YpBaseElement extends LitElement {
         ? window.matchMedia('(prefers-color-scheme: dark)').matches
         : this.themeDarkMode;
 
-    console.error(systemDark);
     // Apply the theme to the body by updating custom properties for material tokens
     applyTheme(theme, { target: target || this, dark: systemDark });
   }

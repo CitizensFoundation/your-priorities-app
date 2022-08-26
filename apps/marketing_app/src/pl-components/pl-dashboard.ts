@@ -87,26 +87,6 @@ export class PlausibleDashboard extends PlausibleBaseElementWithState {
     if (this.site && this.query) {
       if (this.query!.period === 'realtime') {
         return html`
-          <md-navigation-bar>
-            <md-navigation-tab @click=${() => this.history.push('/')} label="Home"></md-navigation-tab>
-            <md-navigation-tab @click=${() => this.history.push('/')} label="Home"></md-navigation-tab>
-            <md-navigation-tab @click=${() => this.history.push('/')} label="Home"></md-navigation-tab>
-            <md-navigation-tab @click=${() => this.history.push('/')} label="Home"></md-navigation-tab>
-          </md-navigation-bar>
-
-          <md-fab extened label="HELLO"></md-fab>
-
-          <md-elevated-button @click=${() => this.history.push('/')} label="Home"></md-elevated-button>
-          <md-tonal-link-button @click=${() => this.history.push('/')} label="Home"></md-tonal-link-button>
-
-          <md-chip label="hello"></md-chip>
-          <md-chip label="323"></md-chip>
-          <md-chip label="433"></md-chip>
-          <md-chip label="433"></md-chip>
-          <md-chip label="4343"></md-chip>
-
-          <md-outlined-text-field label="Search"></md-outlined-text-field>
-          <md-filled-text-field label="Search"></md-filled-text-field>
           <pl-realtime
             .timer="${this.timer}"
             .site="${this.site}"

@@ -24,6 +24,11 @@ import { classMap } from 'lit/directives/class-map.js';
 import '@material/web/navigationbar/navigation-bar.js';
 import '@material/web/navigationtab/navigation-tab.js';
 import '@material/web/iconbutton/filled-link-icon-button.js';
+import '@material/web/navigationdrawer/navigation-drawer.js';
+import '@material/web/list/list-item.js';
+import '@material/web/list/list-item-icon.js';
+import '@material/web/list/list.js';
+import '@material/web/list/list-divider.js';
 
 import './yp-analytics/yp-dashboard.js';
 
@@ -76,7 +81,6 @@ export class YpMarketingApp extends YpBaseElement {
     return [
       super.styles,
       ShadowStyles,
-      Layouts,
       css`
         :host {
           width: 100vw;
@@ -86,6 +90,30 @@ export class YpMarketingApp extends YpBaseElement {
 
         body {
           background-color: var(--md-sys-color-surface, #fefefe);
+        }
+
+        md-navigation-bar {
+          position: absolute;
+          bottom: 0;
+          left: 0;
+        }
+
+        md-navigation-drawer {
+        }
+
+        .headerContainer {
+          width :100%;
+        }
+
+        .analyticsHeaderText {
+          font-size: var(--md-sys-typescale-headline-large-size, 24px);
+          margin: 24px;
+          margin-left: auto;
+          margin-right: auto;
+        }
+
+        .ypLogo {
+          margin-top: 16px;
         }
       `,
     ];
@@ -162,62 +190,115 @@ export class YpMarketingApp extends YpBaseElement {
   }
 
   render() {
-    return html`
-      <yp-app-dialogs id="dialogContainer"></yp-app-dialogs>
-
-      <mwc-dialog id="errorDialog" .heading="${this.t('error')}">
-        <div>${this.currentError}</div>
-        <mwc-button dialogAction="cancel" slot="secondaryAction">
-          ${this.t('ok')}
-        </mwc-button>
-      </mwc-dialog>
-
-      <div class="layout horizontal topAppBar">
-        <md-filled-link-icon-button
-          class="exitButton"
-          .label="${this.t('exitToMainApp')}"
-          slot="navigationIcon"
-          @click="${this.exitToMainApp}"
-          icon="close"
-        ></md-filled-link-icon-button>
-        <div slot="title" class="layout vertical center-center">
+    if (this.collection) {
+      return html`
+        <div class="layout horizontal">
+          <div>${this.renderNavigationBar()}</div>
           <div>
-            <img
-              height="35"
-              alt="Your Priorities Logo"
-              src="https://yrpri-eu-direct-assets.s3-eu-west-1.amazonaws.com/YpLogos/YourPriorites-Trans-Wide.png"
-            />
+            <yp-app-dialogs id="dialogContainer"></yp-app-dialogs>
+
+            <mwc-dialog id="errorDialog" .heading="${this.t('error')}">
+              <div>${this.currentError}</div>
+              <mwc-button dialogAction="cancel" slot="secondaryAction">
+                ${this.t('ok')}
+              </mwc-button>
+            </mwc-dialog>
+
+            <div class="layout horizontal topAppBar">
+              <div class="layout horizontal headerContainer center-center">
+                <div
+                  class="analyticsHeaderText layout horizontal center-center"
+                >
+                  <div hidden>${this.t('analyticsFor')} ${this.originalCollectionType}:</div>
+                  ${this.collection ? this.collection.name : ''}
+                </div>
+              </div>
+            </div>
+
+            <main>
+              <div class="layout vertical center-center">
+                <div class="mainPageContainer">${this._renderPage()}</div>
+              </div>
+            </main>
           </div>
         </div>
-        <div slot="title">
-          <div class="layout horizontal headerContainer">
-            <div class="analyticsText">
-              ${this.t('analyticsFor')} ${this.originalCollectionType}:
-              ${this.collection ? this.collection.name : ''}
+      `;
+    } else {
+      return html`
+        <div class="layout horizontal center-center">
+          <div>Loading...</div>
+        </div>
+      `;
+    }
+  }
+
+  renderNavigationBar() {
+    if (this.wide) {
+      return html`
+        <md-navigation-drawer opened>
+          <div class="layout horizontal center-center">
+            <div>
+              <img
+                class="ypLogo"
+                height="65"
+                alt="Your Priorities Logo"
+                src="https://yrpri-eu-direct-assets.s3-eu-west-1.amazonaws.com/YpLogos/YourPriorites-Trans-Wide.png"
+              />
             </div>
           </div>
-        </div>
-      </div>
 
-      <md-navigation-bar>
-        <md-navigation-tab
-          @click="${this.__onNavClicked}"
-          icon="exit"
-          .label="${this.t('Analytics')}"
-        ></md-navigation-tab>
-        <md-navigation-tab
-          @click="${this.__onNavClicked}"
-          icon="exit"
-          .label="${this.t('Campaign')}"
-        ></md-navigation-tab>
-      </md-navigation-bar>
-
-      <main>
-        <div class="layout vertical center-center">
-          <div class="mainPageContainer">${this._renderPage()}</div>
-        </div>
-      </main>
-    `;
+          <md-list>
+            <md-list-item
+              headline="${this.t('Analytics')}"
+              supportingText="${this.t('Historical and realtime')}"
+            >
+              <md-list-item-icon slot="start">
+                <md-icon>insights</md-icon>
+              </md-list-item-icon></md-list-item
+            >
+            <md-list-item
+              headline="${this.t('Campaign')}"
+              supportingText="${this.collectionType == 'posts'
+                ? this.t('Promote your idea')
+                : this.t('Promote your project')}"
+            >
+              <md-list-item-icon slot="start"
+                ><md-icon>ads_click</md-icon></md-list-item-icon
+              ></md-list-item
+            >
+            <md-list-item-divider></md-list-item-divider>
+            <md-list-item
+              headline="${this.t('Exit')}"
+              supportingText="${this.t('Exit back to project')}"
+            >
+              <md-list-item-icon slot="start"
+                ><md-icon>arrow_back</md-icon></md-list-item-icon
+              ></md-list-item
+            >
+          </md-list>
+        </md-navigation-drawer>
+      `;
+    } else {
+      return html`
+        <md-navigation-bar>
+          <md-navigation-tab
+            @click="${this.__onNavClicked}"
+            icon="exit"
+            .label="${this.t('exit')}"
+          ></md-navigation-tab>
+          <md-navigation-tab
+            @click="${this.__onNavClicked}"
+            icon="exit"
+            .label="${this.t('Analytics')}"
+          ></md-navigation-tab>
+          <md-navigation-tab
+            @click="${this.__onNavClicked}"
+            icon="exit"
+            .label="${this.t('Campaign')}"
+          ></md-navigation-tab>
+        </md-navigation-bar>
+      `;
+    }
   }
 
   exitToMainApp() {
@@ -291,6 +372,12 @@ export class YpMarketingApp extends YpBaseElement {
       changedProperties.has('themeDarkMode')
     ) {
       this.themeChanged(document.body);
+      if (this.$$('md-navigation-bar')) {
+        this.themeChanged(this.$$('md-navigation-bar')!);
+      }
+      if (this.$$('md-navigation-drawer')) {
+        this.themeChanged(this.$$('md-navigation-drawer')!);
+      }
     }
   }
 
