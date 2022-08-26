@@ -116,9 +116,9 @@
     "singleQuote": true,
     "arrowParens": "avoid"
   },
-  "name": "admin-app",
+  "name": "Marketing and analytics app",
   "version": "1.0.0",
-  "description": "Webcomponent admin-app",
+  "description": "admin-app",
   "author": "Citizens Foundation",
   "license": "LGPL",
   "dependencies": {
@@ -146,7 +146,7 @@
     "@material/mwc-textarea": "^0.27.0",
     "@material/mwc-textfield": "^0.27.0",
     "@material/mwc-top-app-bar": "^0.27.0",
-    "@material/web": "file:/./@material/web/material-web-0.27.0.tgz",
+    "@material/web": "file:/./../../../material-web-0.27.0.tgz",
     "@picmo/popup-picker": "^5.6.0",
     "@picmo/renderer-twemoji": "^5.6.0",
     "@polymer/iron-ajax": "^3.0.1",
