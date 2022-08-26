@@ -22,10 +22,10 @@ export class YpRealtime extends PlausibleRealtime {
           }`}
         >
           <div class="items-center w-full flex">
-            <div class="flex items-center w-full">
+            <div class="flex w-full"></div>
+            <div class="flex">
               <pl-filters
-                class="flex flex-grow"
-                style="text-align: right;display: inline;"
+                class="flex"
                 .site=${this.site}
                 .query="${this.query}"
                 .history="${this.history}"

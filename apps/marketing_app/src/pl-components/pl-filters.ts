@@ -1,15 +1,6 @@
 import { LitElement, css, html, nothing } from 'lit';
 import { property, customElement } from 'lit/decorators.js';
 
-import '@spectrum-web-components/menu/sp-menu.js';
-import '@spectrum-web-components/menu/sp-menu-group.js';
-import '@spectrum-web-components/menu/sp-menu-item.js';
-import '@spectrum-web-components/menu/sp-menu-divider.js';
-import '@spectrum-web-components/button/sp-button.js';
-import '@spectrum-web-components/button/sp-clear-button.js';
-import '@spectrum-web-components/button/sp-close-button.js';
-import '@spectrum-web-components/theme/sp-theme.js';
-import '@spectrum-web-components/theme/src/themes.js';
 
 import { appliedFilters, navigateToQuery, formattedFilters } from './query';
 
@@ -82,7 +73,18 @@ export class PlausibleFilters extends PlausibleBaseElementWithState {
     this.handleResize();
     this.rewrapFilters();
   }
-
+  static get styles() {
+    return [
+      ...super.styles,
+      css`
+      .filterMain {
+        margin-right: 8px;
+        font-size: 14px;
+        color: #444;
+      }
+      `,
+    ];
+  }
   handleClick(e: MouseEvent) {
     if (this.menuOpen && !this.contains(e.target as Node)) {
       this.menuOpen = false;
@@ -171,7 +173,7 @@ export class PlausibleFilters extends PlausibleBaseElementWithState {
     const key = filter[0];
     const value = filter[1];
     return html`
-      <sp-menu-item key=${key}>
+      <div key=${key}>
         <div
           class="px-3 md:px-4 sm:py-2 py-3 text-sm leading-tight flex items-center justify-between"
           key="{key"
@@ -206,7 +208,7 @@ export class PlausibleFilters extends PlausibleBaseElementWithState {
             <div class="w-4 h-4">${XIcon}</div>
           </b>
         </div>
-      </sp-menu-item>
+          </div>
     `;
   }
 
@@ -214,7 +216,7 @@ export class PlausibleFilters extends PlausibleBaseElementWithState {
     //TODO: Fix this and find what item is active
     const active = true;
     return html`
-      <sp-menu-item key=${option}>
+      <div key=${option}>
         <pl-link
           .to=${{
             pathname: `/${encodeURIComponent(
@@ -228,7 +230,7 @@ export class PlausibleFilters extends PlausibleBaseElementWithState {
         >
           ${formatFilterGroup(option)}
         </pl-link>
-      </sp-menu-item>
+          </div>
     `;
   }
 
@@ -250,14 +252,14 @@ export class PlausibleFilters extends PlausibleBaseElementWithState {
         ${appliedFilters(this.query).map(filter =>
           this.renderDropdownFilter(filter)
         )}
-        <sp-menu-item key="clear">
+        <div key="clear">
           <div
             class="border-t border-gray-200 dark:border-gray-500 px-4 sm:py-2 py-3 text-sm leading-tight hover:text-indigo-700 dark:hover:text-indigo-500 hover:cursor-pointer"
             @click=${() => this.clearAllFilters()}
           >
             Clear All Filters
           </div>
-        </sp-menu-item>
+        </div>
       `;
     }
   }
@@ -358,7 +360,7 @@ export class PlausibleFilters extends PlausibleBaseElementWithState {
     } else {
       return html`
       <div class="flex">
-        <div class="-ml-1 mr-1 h-4 w-4 md:h-4 md:w-4" aria-hidden="true">
+        <div class="ml-1 mr-1 h-4 w-4 h-4 w-4" aria-hidden="true">
           ${SearchIcon}
         </div>
         <!-- This would have been a good use-case for JSX! But in the interest of keeping the breakpoint width logic with TailwindCSS, this is a better long-term way to deal with it. -->
@@ -375,14 +377,15 @@ export class PlausibleFilters extends PlausibleBaseElementWithState {
   renderDropDown() {
     return html`
       <div class="flex">
-        <sp-button variant="primary" @click="${this.toggleMenu}">
+        <div class="flex"></div>
+        <button @click="${this.toggleMenu}">
           ${this.renderDropdownButton()}
-        </sp-button>
+        </button>
       </div>
 
       ${this.menuOpen
         ? html`
-            <sp-menu as="div" class="md:relative ml-auto">
+            <div class="md:relative ml-auto">
               <div
                 static
                 class="absolute w-full left-0 right-0 md:w-72 md:absolute md:top-auto md:left-auto md:right-0 mt-2 origin-top-right z-10"
@@ -394,7 +397,7 @@ export class PlausibleFilters extends PlausibleBaseElementWithState {
                   ${this.renderDropdownContent()}
                 </div>
               </div>
-            </sp-menu>
+      </div>
           `
         : nothing}
     `;
@@ -416,17 +419,10 @@ export class PlausibleFilters extends PlausibleBaseElementWithState {
 
   render() {
     return html`
-      <sp-theme
-        theme="spectrum"
-        color="light"
-        scale="medium"
-        style="background-color: var(--spectrum-global-color-gray-100)"
-      >
-      <div class="flex ml-auto pl-2" style="width: 100%">
+      <div class="flex ml-auto pl-2 filterMain">
         ${this.renderFilterList()}
         ${this.renderDropDown()}
       </div>
-      </sp-theme>
     `;
   }
 }

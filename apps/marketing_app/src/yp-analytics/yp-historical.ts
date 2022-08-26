@@ -35,8 +35,10 @@ export class YpHistorical extends PlausibleHistorical {
                 .timer=${this.timer}
                 .site=${this.site}
                 .query=${this.query}
+                class="w-full"
                 .proxyUrl="${this.proxyUrl}"
               ></pl-current-visitors>
+              <div class="flex w-full"></div>
               <pl-filters
                 class="flex"
                 .site=${this.site}

@@ -65,6 +65,7 @@ export class PlausibleHistorical extends PlausibleBaseElementWithState {
                 .query=${this.query}
                 .proxyUrl="${this.proxyUrl}"
               ></pl-current-visitors>
+              <div class="flex w-full"></div>
               <pl-filters
                 class="flex"
                 .site=${this.site}

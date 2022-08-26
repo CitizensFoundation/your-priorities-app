@@ -59,6 +59,7 @@ export class PlausibleRealtime extends PlausibleBaseElementWithState {
                 .site="${this.site}"
                 .currentUserRole="${this.currentUserRole}"
               ></pl-siteswitcher>
+              <div class="flex w-full"></div>
               <pl-filters
                  class="flex flex-grow"
                  style="text-align: right;display: inline;"
