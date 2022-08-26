@@ -57,7 +57,7 @@
     "passport-twitter": "^1.0.3",
     "perspective-api-client": "^3.1.0",
     "pg": "^8.5.1",
-    "pg-native": "^3.0.0",
+    "pg-native": "^3.0.1",
     "randomstring": "^1.1.4",
     "redis": "^3.1.2",
     "request": "^2.88.2",
