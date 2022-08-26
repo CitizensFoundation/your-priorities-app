@@ -622,10 +622,13 @@
           else if (oldEndorsementValue<0)
             this.set('post.counter_endorsements_down', this.post.counter_endorsements_down-1);
         }
-        if (endorsement.value>0)
+        if (endorsement.value>0) {
           this.set('post.counter_endorsements_up', this.post.counter_endorsements_up+1);
-        else if (endorsement.value<0)
+          window.appGlobals.activity('completed', 'endorse_up');
+        }   else if (endorsement.value<0) {
           this.set('post.counter_endorsements_down', this.post.counter_endorsements_down+1);
+          window.appGlobals.activity('completed', 'endorse_down');
+        }
       },
 
       generateEndorsementFromLogin: function (value) {

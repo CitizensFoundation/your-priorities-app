@@ -230,10 +230,13 @@
           else if (oldPointQualityValue<0)
             this.set('point.counter_quality_down', this.point.counter_quality_down-1);
         }
-        if (pointQuality.value>0)
+        if (pointQuality.value>0) {
           this.set('point.counter_quality_up', this.point.counter_quality_up+1);
-        else if (pointQuality.value<0)
+          window.appGlobals.activity('completed', 'pointHelpful');
+        }  else if (pointQuality.value<0) {
           this.set('point.counter_quality_down', this.point.counter_quality_down+1)
+          window.appGlobals.activity('completed', 'pointNotHelpful');
+        }
       },
 
       generatePointQualityFromLogin: function (value) {
