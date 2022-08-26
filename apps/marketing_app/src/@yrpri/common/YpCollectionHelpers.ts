@@ -33,15 +33,20 @@ export class YpCollectionHelpers {
   }
 
   static logoImages(collectionType: string | undefined, collection: YpCollectionData): Array<YpImageData> | undefined {
+    debugger;
     switch (collectionType) {
       case 'domain':
-        return (collection as YpDomainData).DomainLogoImages;
+      case 'domains':
+          return (collection as YpDomainData).DomainLogoImages;
       case 'community':
-        return (collection as YpCommunityData).CommunityLogoImages;
+      case 'communities':
+          return (collection as YpCommunityData).CommunityLogoImages;
       case 'groupCommunityLink':
-        return (collection as YpGroupData).CommunityLink!.CommunityLogoImages;
+      case 'groupCommunityLinks':
+          return (collection as YpGroupData).CommunityLink!.CommunityLogoImages;
       case 'group':
-      case 'groupDataViz':
+      case 'groups':
+          case 'groupDataViz':
         return (collection as YpGroupData).GroupLogoImages;
     }
   }

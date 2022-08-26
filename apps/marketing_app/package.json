@@ -180,6 +180,7 @@
     "rollup-plugin-tailwindcss": "^1.0.0",
     "share-menu": "^4.0.0",
     "topojson": "1.6.19",
+    "vanilla-colorful": "^0.7.1",
     "wavesurfer.js": "^6.2.0"
   }
 }

@@ -39,6 +39,12 @@ import '@material/web/menu/menu.js';
 import './yp-analytics/yp-marketing-dashboard.js';
 import { cache } from 'lit/directives/cache.js';
 
+import './yp-campaign/yp-campaign.js';
+import { YpCollectionHelpers } from './@yrpri/common/YpCollectionHelpers.js';
+import { ifDefined } from 'lit/directives/if-defined.js';
+
+import './yp-marketing-settings.js';
+
 declare global {
   interface Window {
     appGlobals: YpAppGlobals;
@@ -54,7 +60,7 @@ declare global {
 const PagesTypes = {
   Analytics: 1,
   Campaign: 2,
-  Analysis: 3,
+  AiAnalysis: 3,
   Settings: 4,
 };
 
@@ -73,7 +79,7 @@ export class YpMarketingApp extends YpBaseElement {
   page: string | undefined;
 
   @property({ type: String })
-  pageIndex = 1;
+  pageIndex = 2;
 
   @property({ type: Object })
   collection: YpCollectionData | undefined;
@@ -97,7 +103,6 @@ export class YpMarketingApp extends YpBaseElement {
   static get styles() {
     return [
       super.styles,
-      ShadowStyles,
       css`
         :host {
           width: 100vw;
@@ -109,9 +114,6 @@ export class YpMarketingApp extends YpBaseElement {
           background-color: var(--md-sys-color-surface, #fefefe);
         }
 
-        md-navigation-bar {
-        }
-
         .navContainer {
           background-color: #f00;
           position: absolute;
@@ -121,13 +123,10 @@ export class YpMarketingApp extends YpBaseElement {
           z-index: 1000;
         }
 
-        md-navigation-drawer {
-        }
-
         .headerContainer {
           width: 100%;
           margin-bottom: 8px;
-          vertical-align:middel; ;
+          vertical-align: middel;
         }
 
         .analyticsHeaderText {
@@ -142,6 +141,7 @@ export class YpMarketingApp extends YpBaseElement {
 
         .rightPanel {
           margin-left: 16px;
+          width: 100%;
         }
 
         md-list-item {
@@ -155,7 +155,9 @@ export class YpMarketingApp extends YpBaseElement {
             --md-sys-color-secondary-container
           );
           color: var(--md-sys-color-on-secondary-container);
-          --md-list-list-item-label-text-color:var(--md-sys-color-on-secondary-container);
+          --md-list-list-item-label-text-color: var(
+            --md-sys-color-on-secondary-container
+          );
         }
 
         md-navigation-drawer {
@@ -166,6 +168,21 @@ export class YpMarketingApp extends YpBaseElement {
           --md-list-container-color: var(--md-sys-color-surface);
         }
 
+        .topAppBar {
+          border-radius: 48px;
+          background-color: var(--md-sys-color-primary-container);
+          color: var(--md-sys-color-on-primary-container);
+          margin-top: 32px;
+          padding: 0px;
+          padding-left: 32px;
+          padding-right: 32px;
+          text-align: center;
+        }
+
+        .collectionLogoImage {
+          width: 120px;
+          margin-right: 16px;
+        }
       `,
     ];
   }
@@ -207,13 +224,18 @@ export class YpMarketingApp extends YpBaseElement {
     this._setupEventListeners();
     this._getCollection();
 
+    const savedColor = localStorage.getItem("md3-yrpri-marketing-color");
+    if (savedColor) {
+      this.fireGlobal('yp-theme-color', savedColor);
+    }
+
     setTimeout(() => {
-      this.fireGlobal('yp-theme-color', '#FFFFFF');
+      //this.fireGlobal('yp-theme-color', '#FFFFFF');
     }, 5000);
 
     setTimeout(() => {
       //this.fireGlobal('yp-theme-dark-mode', true);
-      this.setRandomColor();
+      //this.setRandomColor();
     }, 9000);
   }
 
@@ -228,7 +250,7 @@ export class YpMarketingApp extends YpBaseElement {
     this.fireGlobal('yp-theme-color', randomColor);
     setTimeout(() => {
       this.setRandomColor();
-    }, 30000);
+    }, 10000);
   }
 
   disconnectedCallback() {
@@ -277,6 +299,22 @@ export class YpMarketingApp extends YpBaseElement {
     this._setAdminConfirmed();
   }
 
+  renderTopBar() {
+    return html`
+      <div class="layout vertical center-center">
+        <div class="layout horizontal topAppBar">
+          <div class="layout horizontal headerContainer">
+            <div class="analyticsHeaderText layout horizontal center-center">
+              <div><img class="collectionLogoImage" src="${ifDefined(YpCollectionHelpers.logoImagePath(this.collectionType, this.collection!))}"/></div>
+              <div></div>
+              ${this.collection ? this.collection.name : ''}
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
   render() {
     if (this.collection) {
       return html`
@@ -291,16 +329,7 @@ export class YpMarketingApp extends YpBaseElement {
               </mwc-button>
             </mwc-dialog>
 
-            <div class="layout horizontal topAppBar">
-              <div class="layout horizontal headerContainer">
-                <div class="analyticsHeaderText layout horizontal">
-                  <div hidden>
-                    ${this.t('analyticsFor')} ${this.originalCollectionType}:
-                  </div>
-                  ${this.collection ? this.collection.name : ''}
-                </div>
-              </div>
-            </div>
+            ${this.renderTopBar()}
 
             <main>
               <div class="layout vertical center-center">
@@ -361,8 +390,8 @@ export class YpMarketingApp extends YpBaseElement {
               class="${this.pageIndex == 3 && 'selectedContainer'}"
               @click="${() => (this.pageIndex = 3)}"
               ?hidden="${this.collectionType == 'posts'}"
-              headline="${this.t('Analysis')}"
-              supportingText="${this.t('Text analysis')}"
+              headline="${this.t('AI Analysis')}"
+              supportingText="${this.t('Text analysis with AI')}"
             >
               <md-list-item-icon slot="start"
                 ><md-icon>document_scanner</md-icon></md-list-item-icon
@@ -537,25 +566,25 @@ export class YpMarketingApp extends YpBaseElement {
           return html`
             ${cache(
               this.collection
-                ? html`<yp-marketing-campaign
+                ? html`<yp-campaign
                     .collectionType="${this.collectionType}"
                     .collection="${this.collection}"
                     .collectionId="${this.collectionId}"
                   >
-                  </yp-marketing-campaign>`
+                  </yp-campaign>`
                 : nothing
             )}
           `;
-        case PagesTypes.Analysis:
+        case PagesTypes.AiAnalysis:
           return html`
             ${cache(
               this.collection
-                ? html`<yp-text-analysis
+                ? html`<yp-ai-text-analysis
                     .collectionType="${this.collectionType}"
                     .collection="${this.collection}"
                     .collectionId="${this.collectionId}"
                   >
-                  </yp-text-analysis>`
+                  </yp-ai-text-analysis>`
                 : nothing
             )}
           `;
@@ -567,6 +596,7 @@ export class YpMarketingApp extends YpBaseElement {
                     .collectionType="${this.collectionType}"
                     .collection="${this.collection}"
                     .collectionId="${this.collectionId}"
+                    @color-changed="${this._settingsColorChanged}"
                   >
                   </yp-marketing-settings>`
                 : nothing
@@ -580,6 +610,10 @@ export class YpMarketingApp extends YpBaseElement {
     } else {
       return nothing;
     }
+  }
+
+  _settingsColorChanged(event: CustomEvent) {
+    this.fireGlobal('yp-theme-color', event.detail.value);
   }
 
   __onNavClicked(ev: CustomEvent) {
