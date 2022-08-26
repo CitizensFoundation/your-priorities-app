@@ -56,26 +56,28 @@ export class YpCampaign extends YpBaseElementWithLogin {
     };
   }
 
-
   static get styles() {
     return [
       super.styles,
       css`
-       .mainContainer {
-        width: 100%;
-        margin-top: 32px;
-        height: 100%;
-      }
-      `]
+        .mainContainer {
+          width: 100%;
+          margin-top: 32px;
+          height: 100%;
+        }
+      `,
+    ];
   }
 
   render() {
     return html`
-      <div class="layout horizontal center-center mainContainer">
-        <md-fab-extended
-          .label="${this.t('New promotion')}"
-          icon="add"
-        ></md-fab-extended>
+      <div class="layout vertical self-start mainContainer">
+        <div>
+          <md-fab-extended
+            .label="${this.t('New promotion')}"
+            icon="add"
+          ></md-fab-extended>
+        </div>
       </div>
     `;
   }

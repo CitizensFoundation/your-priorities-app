@@ -130,8 +130,8 @@ export class YpMarketingApp extends YpBaseElement {
         }
 
         .analyticsHeaderText {
-          font-size: var(--md-sys-typescale-headline-large-size, 24px);
-          margin-top: 24px;
+          font-size: var(--md-sys-typescale-headline-large-size, 18px);
+          margin-top: 16px;
           margin-bottom: 16px;
         }
 
@@ -183,6 +183,10 @@ export class YpMarketingApp extends YpBaseElement {
           width: 120px;
           margin-right: 16px;
         }
+
+        .mainPageContainer {
+          margin-top: 16px;
+        }
       `,
     ];
   }
@@ -224,7 +228,7 @@ export class YpMarketingApp extends YpBaseElement {
     this._setupEventListeners();
     this._getCollection();
 
-    const savedColor = localStorage.getItem("md3-yrpri-marketing-color");
+    const savedColor = localStorage.getItem('md3-yrpri-marketing-color');
     if (savedColor) {
       this.fireGlobal('yp-theme-color', savedColor);
     }
@@ -305,7 +309,17 @@ export class YpMarketingApp extends YpBaseElement {
         <div class="layout horizontal topAppBar">
           <div class="layout horizontal headerContainer">
             <div class="analyticsHeaderText layout horizontal center-center">
-              <div><img class="collectionLogoImage" src="${ifDefined(YpCollectionHelpers.logoImagePath(this.collectionType, this.collection!))}"/></div>
+              <div>
+                <img
+                  class="collectionLogoImage"
+                  src="${ifDefined(
+                    YpCollectionHelpers.logoImagePath(
+                      this.collectionType,
+                      this.collection!
+                    )
+                  )}"
+                />
+              </div>
               <div></div>
               ${this.collection ? this.collection.name : ''}
             </div>
@@ -328,9 +342,6 @@ export class YpMarketingApp extends YpBaseElement {
                 ${this.t('ok')}
               </mwc-button>
             </mwc-dialog>
-
-            ${this.renderTopBar()}
-
             <main>
               <div class="layout vertical center-center">
                 <div class="mainPageContainer">${this._renderPage()}</div>
@@ -352,14 +363,21 @@ export class YpMarketingApp extends YpBaseElement {
     if (this.wide) {
       return html`
         <md-navigation-drawer opened>
-          <div class="layout horizontal center-center">
-            <div>
-              <img
-                class="ypLogo"
-                height="65"
-                alt="Your Priorities Logo"
-                src="https://yrpri-eu-direct-assets.s3-eu-west-1.amazonaws.com/YpLogos/YourPriorites-Trans-Wide.png"
-              />
+          <div class="layout horizontal headerContainer">
+            <div class="analyticsHeaderText layout horizontal center-center">
+              <div>
+                <img
+                  class="collectionLogoImage"
+                  src="${ifDefined(
+                    YpCollectionHelpers.logoImagePath(
+                      this.collectionType,
+                      this.collection!
+                    )
+                  )}"
+                />
+              </div>
+              <div></div>
+              ${this.collection ? this.collection.name : ''}
             </div>
           </div>
 
@@ -416,6 +434,16 @@ export class YpMarketingApp extends YpBaseElement {
                 ><md-icon>arrow_back</md-icon></md-list-item-icon
               ></md-list-item
             >
+            <div class="layout horizontal center-center">
+              <div>
+                <img
+                  class="ypLogo"
+                  height="65"
+                  alt="Your Priorities Logo"
+                  src="https://yrpri-eu-direct-assets.s3-eu-west-1.amazonaws.com/YpLogos/YourPriorites-Trans-Wide.png"
+                />
+              </div>
+            </div>
           </md-list>
         </md-navigation-drawer>
       `;
