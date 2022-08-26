@@ -483,7 +483,13 @@
           value: null
         },
 
-        subRoute: Object,
+        subRoute: {
+          type: Object,
+          observer: '_subRoutePageChanged',
+          value: undefined
+        },
+
+        previousSubRoute: Object,
 
         appTitle: {
           type: String,
@@ -926,6 +932,21 @@
         }
       },
 
+      _subRoutePageChanged: function (route, previousRoute) {
+        if (!this.previousSubRoute
+            || (JSON.stringify(route) !== JSON.stringify(this.previousSubRoute))) {
+          if (!(route &&
+              this.previousSubRoute &&
+              route.prefix === this.previousSubRoute.prefix &&
+              route.path.replace("/open","")===this.previousSubRoute.path.replace("/open",""))) {
+            this.async(function () {
+              window.appGlobals.sendToAnalyticsTrackers('send', 'pageview', location.pathname);
+            })
+          }
+          this.previousSubRoute = route;
+        }
+      },
+
       _routeChanged: function (route) {
         // Support older pre version 6.1 links
         if (window.location.href.indexOf("/#!/") > -1) {
@@ -1147,12 +1168,6 @@
           }
           console.log("Trying to load "+resolvedPageUrl);
           this.importHref(resolvedPageUrl, null, this._showPage404, true);
-        }
-
-        if (page) {
-          this.async(function () {
-            window.appGlobals.sendToAnalyticsTrackers('send', 'pageview', location.pathname);
-          });
         }
 
         if (page && page==='survey') {
