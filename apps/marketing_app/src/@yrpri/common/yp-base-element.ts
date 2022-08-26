@@ -2,11 +2,6 @@ import { LitElement, css } from 'lit';
 import { property } from 'lit/decorators.js';
 import { installMediaQueryWatcher } from 'pwa-helpers/media-query.js';
 import { Layouts } from 'lit-flexbox-literals';
-import {
-  argbFromHex,
-  themeFromSourceColor,
-  applyTheme,
-} from '@material/material-color-utilities';
 
 export class YpBaseElement extends LitElement {
   @property({ type: String })
@@ -89,38 +84,9 @@ export class YpBaseElement extends LitElement {
     this.themeDarkMode = event.detail;
   }
 
-  themeChanged(target: HTMLElement | undefined = undefined) {
-    const theme = themeFromSourceColor(argbFromHex(this.themeColor), [
-      {
-        name: 'custom-1',
-        value: argbFromHex('#ff00FF'),
-        blend: true,
-      },
-    ]);
-
-    // Print out the theme as JSON
-    console.log(JSON.stringify(theme, null, 2));
-
-    // Check if the user has dark mode turned on
-    const systemDark =
-      this.themeDarkMode === undefined
-        ? window.matchMedia('(prefers-color-scheme: dark)').matches
-        : this.themeDarkMode;
-
-    // Apply the theme to the body by updating custom properties for material tokens
-    applyTheme(theme, { target: target || this, dark: systemDark });
-  }
-
   updated(changedProperties: Map<string | number | symbol, unknown>): void {
     if (changedProperties.has('language')) {
       this.languageChanged();
-    }
-
-    if (
-      changedProperties.has('themeColor') ||
-      changedProperties.has('themeDarkMode')
-    ) {
-      this.themeChanged();
     }
   }
 

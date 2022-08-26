@@ -8,8 +8,8 @@ import './yp-historical.js';
 
 import { PlausibleDashboard } from '../pl-components/pl-dashboard.js';
 
-@customElement('yp-dashboard')
-export class YpDashboard extends PlausibleDashboard {
+@customElement('yp-marketing-dashboard')
+export class YpMarketingDashboard extends PlausibleDashboard {
   @property({ type: String })
   plausibleSiteName: string | undefined;
 

@@ -29,10 +29,15 @@ import '@material/web/list/list-item.js';
 import '@material/web/list/list-item-icon.js';
 import '@material/web/list/list.js';
 import '@material/web/list/list-divider.js';
+import {
+  argbFromHex,
+  themeFromSourceColor,
+  applyTheme,
+} from '@material/material-color-utilities';
 
 import '@material/web/menu/menu.js';
-
-import './yp-analytics/yp-dashboard.js';
+import './yp-analytics/yp-marketing-dashboard.js';
+import { cache } from 'lit/directives/cache.js';
 
 declare global {
   interface Window {
@@ -45,6 +50,13 @@ declare global {
     FederatedCredential?: any;
   }
 }
+
+const PagesTypes = {
+  Analytics: 1,
+  Campaign: 2,
+  Analysis: 3,
+  Settings: 4,
+};
 
 @customElement('yp-marketing-app')
 export class YpMarketingApp extends YpBaseElement {
@@ -59,6 +71,9 @@ export class YpMarketingApp extends YpBaseElement {
 
   @property({ type: String })
   page: string | undefined;
+
+  @property({ type: String })
+  pageIndex = 1;
 
   @property({ type: Object })
   collection: YpCollectionData | undefined;
@@ -111,6 +126,8 @@ export class YpMarketingApp extends YpBaseElement {
 
         .headerContainer {
           width: 100%;
+          margin-bottom: 8px;
+          vertical-align:middel; ;
         }
 
         .analyticsHeaderText {
@@ -126,6 +143,29 @@ export class YpMarketingApp extends YpBaseElement {
         .rightPanel {
           margin-left: 16px;
         }
+
+        md-list-item {
+          --md-list-list-item-container-color: var(--md-sys-color-surface);
+          color: var(--md-sys-color-on-surface);
+          --md-list-list-item-label-text-color: var(--md-sys-color-on-surface);
+        }
+
+        .selectedContainer {
+          --md-list-list-item-container-color: var(
+            --md-sys-color-secondary-container
+          );
+          color: var(--md-sys-color-on-secondary-container);
+          --md-list-list-item-label-text-color:var(--md-sys-color-on-secondary-container);
+        }
+
+        md-navigation-drawer {
+          --md-navigation-drawer-container-color: var(--md-sys-color-surface);
+        }
+
+        md-list {
+          --md-list-container-color: var(--md-sys-color-surface);
+        }
+
       `,
     ];
   }
@@ -173,7 +213,22 @@ export class YpMarketingApp extends YpBaseElement {
 
     setTimeout(() => {
       //this.fireGlobal('yp-theme-dark-mode', true);
+      this.setRandomColor();
     }, 9000);
+  }
+
+  setRandomColor() {
+    let maxVal = 0xffffff; // 16777215
+    let randomNumber: number | string = Math.random() * maxVal;
+    randomNumber = Math.floor(randomNumber);
+    randomNumber = randomNumber.toString(16);
+    //@ts-ignore
+    let randColor = randomNumber.padStart(6, 0);
+    const randomColor = `#${randColor.toUpperCase()}`;
+    this.fireGlobal('yp-theme-color', randomColor);
+    setTimeout(() => {
+      this.setRandomColor();
+    }, 30000);
   }
 
   disconnectedCallback() {
@@ -185,6 +240,28 @@ export class YpMarketingApp extends YpBaseElement {
     if (event.detail) {
       window.appDialogs = event.detail;
     }
+  }
+
+  themeChanged(target: HTMLElement | undefined = undefined) {
+    const theme = themeFromSourceColor(argbFromHex(this.themeColor), [
+      {
+        name: 'custom-1',
+        value: argbFromHex('#ff00FF'),
+        blend: true,
+      },
+    ]);
+
+    // Print out the theme as JSON
+    console.log(JSON.stringify(theme, null, 2));
+
+    // Check if the user has dark mode turned on
+    const systemDark =
+      this.themeDarkMode === undefined
+        ? window.matchMedia('(prefers-color-scheme: dark)').matches
+        : this.themeDarkMode;
+
+    // Apply the theme to the body by updating custom properties for material tokens
+    applyTheme(theme, { target: target || this, dark: systemDark });
   }
 
   async _getCollection() {
@@ -204,10 +281,9 @@ export class YpMarketingApp extends YpBaseElement {
     if (this.collection) {
       return html`
         <yp-app-dialogs id="dialogContainer"></yp-app-dialogs>
-         <div class="layout horizontal">
+        <div class="layout horizontal">
           <div>${this.renderNavigationBar()}</div>
           <div class="rightPanel">
-
             <mwc-dialog id="errorDialog" .heading="${this.t('error')}">
               <div>${this.currentError}</div>
               <mwc-button dialogAction="cancel" slot="secondaryAction">
@@ -217,9 +293,7 @@ export class YpMarketingApp extends YpBaseElement {
 
             <div class="layout horizontal topAppBar">
               <div class="layout horizontal headerContainer">
-                <div
-                  class="analyticsHeaderText layout horizontal"
-                >
+                <div class="analyticsHeaderText layout horizontal">
                   <div hidden>
                     ${this.t('analyticsFor')} ${this.originalCollectionType}:
                   </div>
@@ -262,6 +336,8 @@ export class YpMarketingApp extends YpBaseElement {
 
           <md-list>
             <md-list-item
+              class="${this.pageIndex == 1 && 'selectedContainer'}"
+              @click="${() => (this.pageIndex = 1)}"
               headline="${this.t('Analytics')}"
               supportingText="${this.t('Historical and realtime')}"
             >
@@ -270,6 +346,8 @@ export class YpMarketingApp extends YpBaseElement {
               </md-list-item-icon></md-list-item
             >
             <md-list-item
+              class="${this.pageIndex == 2 && 'selectedContainer'}"
+              @click="${() => (this.pageIndex = 2)}"
               headline="${this.t('Campaign')}"
               supportingText="${this.collectionType == 'posts'
                 ? this.t('Promote your idea')
@@ -280,6 +358,8 @@ export class YpMarketingApp extends YpBaseElement {
               ></md-list-item
             >
             <md-list-item
+              class="${this.pageIndex == 3 && 'selectedContainer'}"
+              @click="${() => (this.pageIndex = 3)}"
               ?hidden="${this.collectionType == 'posts'}"
               headline="${this.t('Analysis')}"
               supportingText="${this.t('Text analysis')}"
@@ -288,7 +368,17 @@ export class YpMarketingApp extends YpBaseElement {
                 ><md-icon>document_scanner</md-icon></md-list-item-icon
               ></md-list-item
             >
-            <md-list-item-divider></md-list-item-divider>
+            <md-list-divider></md-list-divider>
+            <md-list-item
+              class="${this.pageIndex == 4 && 'selectedContainer'}"
+              @click="${() => (this.pageIndex = 4)}"
+              headline="${this.t('Setting')}"
+              supportingText="${this.t('Theme, language, etc.')}"
+            >
+              <md-list-item-icon slot="start"
+                ><md-icon>settings</md-icon></md-list-item-icon
+              ></md-list-item
+            >
             <md-list-item
               headline="${this.t('Exit')}"
               supportingText="${this.t('Exit back to project')}"
@@ -304,10 +394,6 @@ export class YpMarketingApp extends YpBaseElement {
       return html`
         <div class="navContainer">
           <md-navigation-bar @navigation-bar-activated="${this.tabChanged}">
-            <md-navigation-tab hidden .label="${this.t('Exit')}">
-              <md-icon slot="activeIcon">arrow_back</md-icon>
-              <md-icon slot="inactiveIcon">arrow_back</md-icon>
-            </md-navigation-tab>
             <md-navigation-tab .label="${this.t('Analytics')}"
               ><md-icon slot="activeIcon">insights</md-icon>
               <md-icon slot="inactiveIcon">insights</md-icon></md-navigation-tab
@@ -316,9 +402,9 @@ export class YpMarketingApp extends YpBaseElement {
               <md-icon slot="activeIcon">ads_click</md-icon>
               <md-icon slot="inactiveIcon">ads_click</md-icon>
             </md-navigation-tab>
-            <md-navigation-tab .label="${this.t('Analysis')}">
-              <md-icon slot="activeIcon">document_scanner</md-icon>
-              <md-icon slot="inactiveIcon">document_scanner</md-icon>
+            <md-navigation-tab .label="${this.t('Settings')}">
+              <md-icon slot="activeIcon">settings</md-icon>
+              <md-icon slot="inactiveIcon">settings</md-icon>
             </md-navigation-tab>
           </md-navigation-bar>
         </div>
@@ -328,8 +414,11 @@ export class YpMarketingApp extends YpBaseElement {
 
   tabChanged(event: CustomEvent) {
     if (event.detail.activeIndex == 0) {
+      this.pageIndex = 1;
     } else if (event.detail.activeIndex == 1) {
+      this.pageIndex = 2;
     } else if (event.detail.activeIndex == 2) {
+      this.pageIndex = 4;
     }
   }
 
@@ -404,12 +493,6 @@ export class YpMarketingApp extends YpBaseElement {
       changedProperties.has('themeDarkMode')
     ) {
       this.themeChanged(document.body);
-      if (this.$$('md-navigation-bar')) {
-        this.themeChanged(this.$$('md-navigation-bar')!);
-      }
-      if (this.$$('md-navigation-drawer')) {
-        this.themeChanged(this.$$('md-navigation-drawer')!);
-      }
     }
   }
 
@@ -430,35 +513,65 @@ export class YpMarketingApp extends YpBaseElement {
 
   _renderPage() {
     if (this.adminConfirmed) {
-      switch (this.page) {
-        case 'campaign':
-          return html`
-            ${this.collection
-              ? html`<yp-campaign
-                  .collectionType="${this.collectionType}"
-                  .collection="${this.collection}"
-                  .collectionId="${this.collectionId}"
-                >
-                </yp-campaign>`
-              : nothing}
-          `;
-        case 'analytics':
+      switch (this.pageIndex) {
+        case PagesTypes.Analytics:
           switch (this.collectionType) {
             case 'domains':
             case 'communities':
             case 'groups':
             case 'posts':
               return html`
-                ${this.collection
-                  ? html`<yp-dashboard
-                      .collectionType="${this.collectionType}"
-                      .collection="${this.collection}"
-                      .collectionId="${this.collectionId}"
-                    >
-                    </yp-dashboard>`
-                  : nothing}
+                ${cache(
+                  this.collection
+                    ? html`<yp-marketing-dashboard
+                        .collectionType="${this.collectionType}"
+                        .collection="${this.collection}"
+                        .collectionId="${this.collectionId}"
+                      >
+                      </yp-marketing-dashboard>`
+                    : nothing
+                )}
               `;
           }
+        case PagesTypes.Campaign:
+          return html`
+            ${cache(
+              this.collection
+                ? html`<yp-marketing-campaign
+                    .collectionType="${this.collectionType}"
+                    .collection="${this.collection}"
+                    .collectionId="${this.collectionId}"
+                  >
+                  </yp-marketing-campaign>`
+                : nothing
+            )}
+          `;
+        case PagesTypes.Analysis:
+          return html`
+            ${cache(
+              this.collection
+                ? html`<yp-text-analysis
+                    .collectionType="${this.collectionType}"
+                    .collection="${this.collection}"
+                    .collectionId="${this.collectionId}"
+                  >
+                  </yp-text-analysis>`
+                : nothing
+            )}
+          `;
+        case PagesTypes.Settings:
+          return html`
+            ${cache(
+              this.collection
+                ? html`<yp-marketing-settings
+                    .collectionType="${this.collectionType}"
+                    .collection="${this.collection}"
+                    .collectionId="${this.collectionId}"
+                  >
+                  </yp-marketing-settings>`
+                : nothing
+            )}
+          `;
         default:
           return html`
             <p>Page not found try going to <a href="#main">Main</a></p>
