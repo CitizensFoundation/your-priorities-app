@@ -30,6 +30,8 @@ import '@material/web/list/list-item-icon.js';
 import '@material/web/list/list.js';
 import '@material/web/list/list-divider.js';
 
+import '@material/web/menu/menu.js';
+
 import './yp-analytics/yp-dashboard.js';
 
 declare global {
@@ -93,27 +95,36 @@ export class YpMarketingApp extends YpBaseElement {
         }
 
         md-navigation-bar {
+        }
+
+        .navContainer {
+          background-color: #f00;
           position: absolute;
           bottom: 0;
           left: 0;
+          width: 100%;
+          z-index: 1000;
         }
 
         md-navigation-drawer {
         }
 
         .headerContainer {
-          width :100%;
+          width: 100%;
         }
 
         .analyticsHeaderText {
           font-size: var(--md-sys-typescale-headline-large-size, 24px);
-          margin: 24px;
-          margin-left: auto;
-          margin-right: auto;
+          margin-top: 24px;
+          margin-bottom: 16px;
         }
 
         .ypLogo {
           margin-top: 16px;
+        }
+
+        .rightPanel {
+          margin-left: 16px;
         }
       `,
     ];
@@ -192,10 +203,10 @@ export class YpMarketingApp extends YpBaseElement {
   render() {
     if (this.collection) {
       return html`
-        <div class="layout horizontal">
+        <yp-app-dialogs id="dialogContainer"></yp-app-dialogs>
+         <div class="layout horizontal">
           <div>${this.renderNavigationBar()}</div>
-          <div>
-            <yp-app-dialogs id="dialogContainer"></yp-app-dialogs>
+          <div class="rightPanel">
 
             <mwc-dialog id="errorDialog" .heading="${this.t('error')}">
               <div>${this.currentError}</div>
@@ -205,11 +216,13 @@ export class YpMarketingApp extends YpBaseElement {
             </mwc-dialog>
 
             <div class="layout horizontal topAppBar">
-              <div class="layout horizontal headerContainer center-center">
+              <div class="layout horizontal headerContainer">
                 <div
-                  class="analyticsHeaderText layout horizontal center-center"
+                  class="analyticsHeaderText layout horizontal"
                 >
-                  <div hidden>${this.t('analyticsFor')} ${this.originalCollectionType}:</div>
+                  <div hidden>
+                    ${this.t('analyticsFor')} ${this.originalCollectionType}:
+                  </div>
                   ${this.collection ? this.collection.name : ''}
                 </div>
               </div>
@@ -266,6 +279,15 @@ export class YpMarketingApp extends YpBaseElement {
                 ><md-icon>ads_click</md-icon></md-list-item-icon
               ></md-list-item
             >
+            <md-list-item
+              ?hidden="${this.collectionType == 'posts'}"
+              headline="${this.t('Analysis')}"
+              supportingText="${this.t('Text analysis')}"
+            >
+              <md-list-item-icon slot="start"
+                ><md-icon>document_scanner</md-icon></md-list-item-icon
+              ></md-list-item
+            >
             <md-list-item-divider></md-list-item-divider>
             <md-list-item
               headline="${this.t('Exit')}"
@@ -280,24 +302,34 @@ export class YpMarketingApp extends YpBaseElement {
       `;
     } else {
       return html`
-        <md-navigation-bar>
-          <md-navigation-tab
-            @click="${this.__onNavClicked}"
-            icon="exit"
-            .label="${this.t('exit')}"
-          ></md-navigation-tab>
-          <md-navigation-tab
-            @click="${this.__onNavClicked}"
-            icon="exit"
-            .label="${this.t('Analytics')}"
-          ></md-navigation-tab>
-          <md-navigation-tab
-            @click="${this.__onNavClicked}"
-            icon="exit"
-            .label="${this.t('Campaign')}"
-          ></md-navigation-tab>
-        </md-navigation-bar>
+        <div class="navContainer">
+          <md-navigation-bar @navigation-bar-activated="${this.tabChanged}">
+            <md-navigation-tab hidden .label="${this.t('Exit')}">
+              <md-icon slot="activeIcon">arrow_back</md-icon>
+              <md-icon slot="inactiveIcon">arrow_back</md-icon>
+            </md-navigation-tab>
+            <md-navigation-tab .label="${this.t('Analytics')}"
+              ><md-icon slot="activeIcon">insights</md-icon>
+              <md-icon slot="inactiveIcon">insights</md-icon></md-navigation-tab
+            >
+            <md-navigation-tab .label="${this.t('Campaign')}">
+              <md-icon slot="activeIcon">ads_click</md-icon>
+              <md-icon slot="inactiveIcon">ads_click</md-icon>
+            </md-navigation-tab>
+            <md-navigation-tab .label="${this.t('Analysis')}">
+              <md-icon slot="activeIcon">document_scanner</md-icon>
+              <md-icon slot="inactiveIcon">document_scanner</md-icon>
+            </md-navigation-tab>
+          </md-navigation-bar>
+        </div>
       `;
+    }
+  }
+
+  tabChanged(event: CustomEvent) {
+    if (event.detail.activeIndex == 0) {
+    } else if (event.detail.activeIndex == 1) {
+    } else if (event.detail.activeIndex == 2) {
     }
   }
 
