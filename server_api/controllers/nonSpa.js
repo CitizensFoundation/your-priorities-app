@@ -11,6 +11,8 @@ var _ = require('lodash');
 // TODO: Make sure to load the latest image
 // TODO: Make sure to still support the escaped_fragment routes after moving to the direct urls for backwards sharing capacity
 
+const ITEM_LIMIT = 500;
+
 var fullUrl = function (req) {
   var replacedUrl = req.originalUrl;
   if (replacedUrl.startsWith('/?_escaped_fragment_=')) {
@@ -52,7 +54,7 @@ var sendDomain = function sendDomainForBot(id, communitiesOffset, req, res) {
           access: models.Community.ACCESS_PUBLIC,
           domain_id: domain.id
         },
-        limit: 20,
+        limit: ITEM_LIMIT,
         offset: communitiesOffset
       }).then( communitiesInfo => {
         const communities = communitiesInfo.rows;
@@ -65,7 +67,7 @@ var sendDomain = function sendDomainForBot(id, communitiesOffset, req, res) {
 
         const communitiesLeft = communitiesInfo.count-(communitiesOffset+communities.length);
         if (communitiesLeft>0) {
-          communitiesOffset+=20;
+          communitiesOffset+=ITEM_LIMIT;
         } else {
           communitiesOffset = null;
         }
@@ -248,7 +250,7 @@ const completeSendingGroup = (group, postsInfo, postsOffset, req, res) => {
 
   const postsLeft = postsInfo.count-(postsOffset+postsInfo.rows.length);
   if (postsLeft>0) {
-    postsOffset+=20;
+    postsOffset+=ITEM_LIMIT;
   } else {
     postsOffset = null;
   }
@@ -317,7 +319,7 @@ var sendGroup = function sendGroupForBot(id, postsOffset, req, res) {
           group_id: group.id
         },
         attributes: ['id','name'],
-        limit: 20,
+        limit: ITEM_LIMIT,
         offset: postsOffset
       }).then((postsInfo)=>{
         group.Posts = postsInfo.rows;
@@ -398,7 +400,7 @@ var sendPost = function sendPostforBot(id, pointsOffset, req, res) {
           post_id: post.id
         },
         attributes: ['id','content'],
-        limit: 20,
+        limit: ITEM_LIMIT,
         offset: pointsOffset
       }).then((pointsInfo)=>{
         post.Points = pointsInfo.rows;
@@ -417,7 +419,7 @@ var sendPost = function sendPostforBot(id, pointsOffset, req, res) {
 
         const pointsLeft = pointsInfo.count-(pointsOffset+pointsInfo.rows.length);
         if (pointsLeft>0) {
-          pointsOffset+=20;
+          pointsOffset+=ITEM_LIMIT;
         } else {
           pointsOffset = null;
         }

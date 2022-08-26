@@ -424,87 +424,109 @@ const addVideosToCommunity = (community, done) => {
 }
 
 const addVideosAndCommunityLinksToGroup = (groups, done) => {
-
   const linkedCommunityIds = [];
   const linkedCommunityIdToGroupIndex = {};
+  const groupsHash = {};
+  const collectedGroupIds = [];
 
-  async.eachOfLimit(groups, 20, (group, index, forEachCallback) => {
-
-    if (group.configuration && group.configuration.actAsLinkToCommunityId) {
-      linkedCommunityIds.push(group.configuration.actAsLinkToCommunityId);
-      linkedCommunityIdToGroupIndex[group.configuration.actAsLinkToCommunityId] = index;
+  for (let g=0;g<groups.length;g++) {
+    if (groups[g].configuration && groups[g].configuration.actAsLinkToCommunityId) {
+      linkedCommunityIds.push(groups[g].configuration.actAsLinkToCommunityId);
+      linkedCommunityIdToGroupIndex[groups[g].configuration.actAsLinkToCommunityId] = g;
     }
+    groupsHash[groups[g].id] = groups[g];
+    collectedGroupIds.push(groups[g].id);
+  }
 
-    //TODO: Limit then number of VideoImages to 1 - there is one very 10 sec
-    models.Video.findAll({
-      attributes:  ['id','formats','viewable','public_meta','created_at'],
-      include: [
-        {
-          model: models.Image,
-          as: 'VideoImages',
-          attributes:["formats",'created_at'],
-          required: false
-        },
-        {
-          model: models.Group,
-          where: {
-            id: group.id
-          },
-          as: 'GroupLogoVideos',
-          required: true,
-          attributes: ['id']
-        }
-      ],
-      order: [
-        [ { model: models.Image, as: 'VideoImages' } ,'created_at', 'asc' ]
-      ]
-    }).then(videos => {
-      if (group.dataValues) {
-        group.dataValues.GroupLogoVideos = _.orderBy(videos, ['created_at'],['desc']);
-      } else {
-        group.GroupLogoVideos = _.orderBy(videos, ['created_at'],['desc']);
-      }
-      forEachCallback();
-    }).catch( error => {
-      forEachCallback(error);
-    })
-  }, error => {
-    if (linkedCommunityIds.length>0) {
-      models.Community.findAll({
-        where: {
-          id:  { $in: linkedCommunityIds }
-        },
-        attributes: ['id','name','description','counter_posts','counter_points','counter_users','language'],
-        order: [
-          [ { model: models.Image, as: 'CommunityLogoImages' } , 'created_at', 'asc' ]
-        ],
+  async.series([
+    (seriesCallback) => {
+      //TODO: Limit then number of VideoImages to 1 - there is one very 10 sec
+      models.Video.findAll({
+        attributes:  ['id','formats','viewable','public_meta','created_at'],
         include: [
           {
             model: models.Image,
-            as: 'CommunityLogoImages',
-            attributes:  models.Image.defaultAttributesPublic,
+            as: 'VideoImages',
+            attributes:["formats",'created_at'],
             required: false
+          },
+          {
+            model: models.Group,
+            where: {
+              id: {
+                $in: collectedGroupIds
+              }
+            },
+            as: 'GroupLogoVideos',
+            required: true,
+            attributes: ['id']
           }
+        ],
+        order: [
+          [ { model: models.Image, as: 'VideoImages' } ,'created_at', 'asc' ]
         ]
-      }).then(communities => {
-        async.eachOfLimit(communities, 20, (community, eachIndex, forEachVideoCallback) => {
-          const index = linkedCommunityIdToGroupIndex[community.id];
-          if (groups[index].dataValues) {
-            groups[index].dataValues.CommunityLink = community;
-          } else {
-            groups[index].CommunityLink = community;
+      }).then(videos => {
+        if (videos) {
+          videos = _.orderBy(videos, ['created_at'],['desc']);
+
+          for (let v=0;v<videos.length;v++) {
+            const groupId = videos[v].GroupLogoVideos[0].id;
+            if (groupId) {
+              groupsHash[groupId].dataValues.GroupLogoVideos = [videos[v]];
+              groupsHash[groupId].GroupLogoVideos = [videos[v]];
+            } else {
+              log.warn("Not finding group id in hash")
+            }
           }
-          addVideosToCommunity(community, forEachVideoCallback);
-        }, error => {
-          done(error);
-        });
+          seriesCallback();
+        } else {
+          seriesCallback();
+        }
       }).catch( error => {
-        done(error);
+        seriesCallback(error);
       })
-    } else {
-      done(error);
+    },
+
+    (seriesCallback) => {
+      if (linkedCommunityIds.length>0) {
+        models.Community.findAll({
+          where: {
+            id:  { $in: linkedCommunityIds }
+          },
+          attributes: ['id','name','description','counter_posts','counter_points','counter_users','language'],
+          order: [
+            [ { model: models.Image, as: 'CommunityLogoImages' } , 'created_at', 'asc' ]
+          ],
+          include: [
+            {
+              model: models.Image,
+              as: 'CommunityLogoImages',
+              attributes:  models.Image.defaultAttributesPublic,
+              required: false
+            }
+          ]
+        }).then(communities => {
+          async.eachOfLimit(communities, 20, (community, eachIndex, forEachVideoCallback) => {
+            const index = linkedCommunityIdToGroupIndex[community.id];
+            if (groups[index].dataValues) {
+              groups[index].dataValues.CommunityLink = community;
+            } else {
+              groups[index].CommunityLink = community;
+            }
+            addVideosToCommunity(community, forEachVideoCallback);
+          }, error => {
+            seriesCallback(error);
+          });
+        }).catch( error => {
+          seriesCallback(error);
+        })
+      } else {
+        seriesCallback();
+      }
     }
-  });
+  ], (error) => {
+    done(error);
+  })
 }
 
 const getCommunity = function(req, done) {
@@ -721,6 +743,7 @@ var updateCommunityConfigParameters = function (req, community) {
 
   community.set('configuration.welcomeHTML', (req.body.welcomeHTML && req.body.welcomeHTML!="") ? req.body.welcomeHTML : null);
   community.set('configuration.externalId', (req.body.externalId && req.body.externalId!="") ? req.body.externalId : null);
+  community.set('configuration.projectId', (req.body.projectId && req.body.projectId!="") ? req.body.projectId : null);
 
   community.set('configuration.customSamlDeniedMessage', (req.body.customSamlDeniedMessage && req.body.customSamlDeniedMessage!="") ? req.body.customSamlDeniedMessage : null);
   community.set('configuration.customSamlLoginMessage', (req.body.customSamlLoginMessage && req.body.customSamlLoginMessage!="") ? req.body.customSamlLoginMessage : null);
