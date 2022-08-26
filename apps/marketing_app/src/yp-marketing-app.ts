@@ -182,6 +182,7 @@ export class YpMarketingApp extends YpBaseElement {
         .collectionLogoImage {
           width: 120px;
           margin-right: 16px;
+          margin-left: 16px;
         }
 
         .mainPageContainer {
