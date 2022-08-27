@@ -52,7 +52,8 @@
       { htmlImport: "/styles/fonts/frumbjorg-font.html", fontName: 'Merriweather' },
       { htmlImport: "/styles/fonts/tnlc-font.html", fontName: 'Trebuchet MS' },
       { htmlImport: "/styles/fonts/tnlc-font.html", fontName: 'Trebuchet MS' },
-      { htmlImport: "/styles/fonts/tnlc-font.html", fontName: 'Trebuchet MS' }
+      { htmlImport: "/styles/fonts/tnlc-font.html", fontName: 'Trebuchet MS' },
+      { htmlImport: "/styles/fonts/rvk-font.html", fontName: 'Esja' },
     ],
 
     themes: [
@@ -673,6 +674,7 @@
         '--icon-general-color': '#fff',
         '--paper-font-common-base': "{ font-family: 'Montserrat', 'Roboto', sans-serif; }",
         '--app-header-font-family': 'Montserrat',
+        '--app-normal-font-family': 'Montserrat',
         '--app-header-font-weight': '500',
         '--app-tags-text-color': '#1f52a5',
         '--app-tags-font-weight': '500',
@@ -699,6 +701,7 @@
         '--paper-input-container-input': "{font-family: 'WienerMelange', 'Roboto', sans-serif; }",
         '--paper-input-container-label': "{font-family: 'WienerMelange', 'Roboto', sans-serif; }",
         '--app-header-font-family': 'WienerMelange',
+        '--app-normal-font-family': 'WienerMelange',
         '--iron-autogrow-textarea':  "{font-family: 'WienerMelange', 'Roboto', sans-serif; }",
         '--paper-button':  "{font-family: 'WienerMelange', 'Roboto', sans-serif !important; }",
         '--paper-tabs': "{font-family: 'WienerMelange', 'Roboto', sans-serif !important; }",
@@ -726,6 +729,7 @@
         '--icon-general-color': '#fff',
         '--paper-font-common-base': "{ font-family: 'Merriweather', serif; }",
         '--app-header-font-family': 'Merriweather',
+        '--app-normal-font-family': 'Merriweather',
         '--app-header-font-weight': '500',
         '--app-tags-text-color': '#17263e',
         '--app-tags-font-weight': '500',
@@ -750,6 +754,7 @@
         '--icon-general-color': '#fff',
         '--paper-font-common-base': "{ font-family: Trebuchet MS, Courier, Georgia, Times, serif; }",
         '--app-header-font-family': 'Trebuchet MS',
+        '--app-normal-font-family': 'Trebuchet MS',
         '--app-header-font-weight': '500',
         '--app-tags-text-color': '#333',
         '--app-tags-font-weight': '500',
@@ -777,6 +782,7 @@
         '--paper-font-common-base': "{ font-family: Trebuchet MS, Courier, Georgia, Times, serif; }",
         '--paper-font-subhead_-_font-family': "{ font-family: Trebuchet MS, Courier, Georgia, Times, serif; }",
         '--app-header-font-family': 'Trebuchet MS',
+        '--app-normal-font-family': 'Trebuchet MS',
         '--paper-input-container-input': "{ font-family: Trebuchet MS, Courier, Georgia, Times, serif; }",
         '--paper-input-container-label': "{ font-family: Trebuchet MS, Courier, Georgia, Times, serif; }",
         '--iron-autogrow-textarea':  "{ font-family: Trebuchet MS, Courier, Georgia, Times, serif; }",
@@ -809,6 +815,7 @@
         '--paper-font-common-base': "{ font-family: Trebuchet MS, Courier, Georgia, Times, serif; }",
         '--paper-font-subhead_-_font-family': "{ font-family: Trebuchet MS, Courier, Georgia, Times, serif; }",
         '--app-header-font-family': 'Trebuchet MS',
+        '--app-normal-font-family': 'Trebuchet MS',
         '--paper-input-container-input': "{ font-family: Trebuchet MS, Courier, Georgia, Times, serif; }",
         '--paper-input-container-label': "{ font-family: Trebuchet MS, Courier, Georgia, Times, serif; }",
         '--iron-autogrow-textarea':  "{ font-family: Trebuchet MS, Courier, Georgia, Times, serif; }",
@@ -820,7 +827,36 @@
         '--app-large-card-display-desktop': 'none',
         '--app-large-card-box-shadow-mobile': 'none',
         '--app-large-card-background-color-mobile': 'none'
-      }
+      },
+      {
+        name: 'Reykjavík - Font',
+        '--primary-background-color': '#f7f7f7',
+        '--primary-color': '#103458',
+        '--primary-color-100': '#3C6286',
+        '--primary-color-200': '#3C6286',
+        '--primary-color-300': '#234A6F',
+        '--primary-color-400': '#234A6F',
+        '--primary-color-600': '#234A6F',
+        '--primary-color-700': '#234A6F',
+        '--primary-color-800': '#103458',
+        '--primary-color-900': '#3C6286',
+        '--accent-color': 'var(--paper-orange-a700)',
+        '--accent-color-100': 'var(--paper-orange-a100)',
+        '--accent-color-200': 'var(--paper-orange-a200)',
+        '--accent-color-300': 'var(--paper-orange-a400)',
+        '--accent-color-400': 'var(--paper-orange-a700)',
+        '--middle-color': 'var(--primary-color-400)',
+        '--icon-general-color': '#fff',
+        '--paper-font-common-base': "{ font-family: Esja, Courier, Georgia, Times, serif; }",
+        '--paper-font-subhead_-_font-family': "{ font-family: Esja, Courier, Georgia, Times, serif; }",
+        '--app-header-font-family': 'Esja Bold',
+        '--app-normal-font-family': 'Esja',
+        '--paper-input-container-input': "{ font-family: Esja, Courier, Georgia, Times, serif; }",
+        '--paper-input-container-label': "{ font-family: Esja, Courier, Georgia, Times, serif; }",
+        '--iron-autogrow-textarea':  "{ font-family: Esja, Courier, Georgia, Times, serif; }",
+        '--paper-button': "{ font-family: Esja, Courier, Georgia, Times, serif; }",
+        '--paper-tabs': "{ font-family: Esja, Courier, Georgia, Times, serif; }",
+      },
     ],
 
     _setupOverrideTheme: function (primary, accent, background) {
@@ -943,6 +979,7 @@
           this.themes[number].originalName==="RoStartup" ||
           this.themes[number].originalName==="TNLC" ||
           this.themes[number].originalName==="TNLC - Extra" ||
+          this.themes[number].originalName==="TNLC - Headers" ||
           this.themes[number].originalName==="Frumbjörg")) {
         window.appGlobals.largeFont = true;
       } else if (this.themes[number]) {
