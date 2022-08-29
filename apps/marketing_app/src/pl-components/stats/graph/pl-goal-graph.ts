@@ -23,11 +23,33 @@ export class PlausibleGoalGraph extends PlausibleBaseGraph {
   events!: string[];
 
   static get styles() {
-    return [...super.styles, css`
-      .topContainer {
-        margin-top: 24px;
+    return [
+      ...super.styles,
+      css`
+        .topContainer {
+          margin-top: 24px;
+        }
+      `,
+    ];
+  }
+
+  get filterInStatsFormat() {
+    let filterString = '';
+    Object.keys(this.query.filters).map(key => {
+      //@ts-ignore
+      if (this.query.filters[key]) {
+        //@ts-ignore
+        filterString += `${key}==${this.query.filters[key]};`;
       }
-    `];
+    });
+
+    if (filterString)  {
+      filterString = `;${filterString}`;
+      filterString = filterString.slice(0, -1);
+    }
+
+    console.error(filterString);
+    return filterString;
   }
 
   async fetchGraphData() {
@@ -37,7 +59,7 @@ export class PlausibleGoalGraph extends PlausibleBaseGraph {
           metrics: 'events',
           statsBegin: this.site.statsBegin,
           site_id: encodeURIComponent(this.site!.domain!),
-          filters: `event:name==${this.events.join("|")}`,
+          filters: `event:name==${this.events.join('|')}${this.filterInStatsFormat}`,
         })
         .then(res => {
           this.setGraphData(res);
@@ -54,7 +76,7 @@ export class PlausibleGoalGraph extends PlausibleBaseGraph {
       interval: 'date',
     } as any;
 
-    for (let r=0;data.results.length > r;r++) {
+    for (let r = 0; data.results.length > r; r++) {
       newData.labels.push(data.results[r].date);
       newData.plot.push(data.results[r].visitors);
     }

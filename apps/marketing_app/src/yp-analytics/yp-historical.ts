@@ -100,6 +100,7 @@ export class YpHistorical extends PlausibleHistorical {
           chartHeigh="200">
         </pl-goal-graph>
         <pl-goal-graph
+          hidden
           .events="${[
            "endorse_up - completed",
            "endorse_down - completed",
