@@ -68,6 +68,15 @@ export class YpHistorical extends PlausibleHistorical {
           .query="${this.query}"
           .proxyUrl="${this.proxyUrl}"
           .site="${this.site}"
+          gradientColorStop1="rgba(205,116,101, 0.2)"
+          gradientColorStop2="rgba(205,116,101, 0.2)"
+          prevGradientColorStop1="rgba(205,116,101, 0.075)"
+          prevGradientColorStop2="rgba(205,116,101, 0)"
+          borderColor="rgba(205,116,101)"
+          pointBackgroundColor="rgba(205,116,101)"
+          pointHoverBackgroundColor="rgba(193, 87, 71)"
+          prevPointHoverBackgroundColor="rgba(166,187,210,0.8)"
+          prevBorderColor="rgba(210,187,166,0.5)"
           chartHeigh="200">
         </pl-goal-graph>
         <pl-goal-graph
@@ -75,13 +84,21 @@ export class YpHistorical extends PlausibleHistorical {
             "newPointAgainst - completed",
             "newPointFor - completed"
           ]}"
-          .chartTitle="${this.t('sers who added points')}"
+          .chartTitle="${this.t('Users who added points')}"
           .query="${this.query}"
           .proxyUrl="${this.proxyUrl}"
           .site="${this.site}"
+          gradientColorStop1="rgba(205,101,116, 0.2)"
+          gradientColorStop2="rgba(205,101,116, 0.2)"
+          prevGradientColorStop1="rgba(205,101,116, 0.075)"
+          prevGradientColorStop2="rgba(205,101,116, 0)"
+          borderColor="rgba(205,101,116)"
+          pointBackgroundColor="rgba(205,101,116)"
+          pointHoverBackgroundColor="rgba(193, 71, 87)"
+          prevPointHoverBackgroundColor="rgba(166,210,187,0.8)"
+          prevBorderColor="rgba(210,166,187,0.5)"
           chartHeigh="200">
         </pl-goal-graph>
-
         <pl-goal-graph
           .events="${[
            "endorse_up - completed",
