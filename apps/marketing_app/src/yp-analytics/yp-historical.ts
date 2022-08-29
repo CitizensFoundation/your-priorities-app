@@ -106,7 +106,7 @@ export class YpHistorical extends PlausibleHistorical {
            "pointHelpful - completed",
            "pointNotHelpful - completed"
           ]}"
-          .chartTitle="${this.t('Users who added ideas')}"
+          .chartTitle="${this.t('Users who liked/disliked')}"
           .query="${this.query}"
           .proxyUrl="${this.proxyUrl}"
           .site="${this.site}"
