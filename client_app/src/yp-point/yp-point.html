@@ -295,7 +295,7 @@
             </span>
             <div id="pointContent" link-point$="[[linkPoint]]" hidden$="[[isEditingSomething]]" on-tap="_linkIfNeeded">
               <yp-magic-text simple-format text-type="pointContent" content-language="[[point.language]]"
-                             content="[[point.latestContent]]" content-id="[[point.id]]">
+                             content="[[point.latestContent]]" content-id="[[point.id]]" truncate="[[post.Group.configuration.pointCharLimit]]">
               </yp-magic-text>
             </div>
           </div>
@@ -323,7 +323,7 @@
         </template>
         <template is="dom-if" if="[[isEditing]]" restamp>
           <div class="layout vertical">
-            <paper-textarea id="pointContentEditor" char-counter maxlength="1500" value="{{editText}}"></paper-textarea>
+            <paper-textarea id="pointContentEditor" char-counter maxlength="[[_getPointMaxLength(post.Group.configuration.pointCharLimit)]]" value="{{editText}}"></paper-textarea>
             <div class="horizontal end-justified layout">
               <emoji-selector id="pointEmojiSelector"></emoji-selector>
             </div>
@@ -505,11 +505,13 @@
         }
       },
 
+      _getPointMaxLength: function (maxLengthConfig) {
+        return maxLengthConfig || 500;
+      },
 
       _useZiggeo: function () {
         return window.appGlobals.useZiggeo;
       },
-
 
       behaviors: [
         Polymer.ypLanguageBehavior,
