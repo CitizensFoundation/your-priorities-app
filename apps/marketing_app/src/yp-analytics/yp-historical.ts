@@ -77,7 +77,7 @@ export class YpHistorical extends PlausibleHistorical {
           pointHoverBackgroundColor="rgba(193, 87, 71)"
           prevPointHoverBackgroundColor="rgba(166,187,210,0.8)"
           prevBorderColor="rgba(210,187,166,0.5)"
-          chartHeigh="200">
+          chartHeigh="150">
         </pl-goal-graph>
         <pl-goal-graph
           .events="${[
@@ -97,10 +97,9 @@ export class YpHistorical extends PlausibleHistorical {
           pointHoverBackgroundColor="rgba(193, 71, 87)"
           prevPointHoverBackgroundColor="rgba(166,210,187,0.8)"
           prevBorderColor="rgba(210,166,187,0.5)"
-          chartHeigh="200">
+          chartHeigh="150">
         </pl-goal-graph>
         <pl-goal-graph
-          hidden
           .events="${[
            "endorse_up - completed",
            "endorse_down - completed",
@@ -111,7 +110,7 @@ export class YpHistorical extends PlausibleHistorical {
           .query="${this.query}"
           .proxyUrl="${this.proxyUrl}"
           .site="${this.site}"
-          chartHeigh="200">
+          chartHeigh="150">
         </pl-goal-graph>
 
         <div class="items-start justify-between block w-full md:flex flex">

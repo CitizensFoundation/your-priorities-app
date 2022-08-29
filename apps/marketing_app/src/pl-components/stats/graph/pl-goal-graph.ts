@@ -56,7 +56,7 @@ export class PlausibleGoalGraph extends PlausibleBaseGraph {
     return new Promise((resolve, reject) => {
       api
         .get(this.proxyUrl, `/api/v1/stats/timeseries`, this.query, {
-          metrics: 'events',
+          metrics: 'visitors',
           statsBegin: this.site.statsBegin,
           site_id: encodeURIComponent(this.site!.domain!),
           filters: `event:name==${this.events.join('|')}${this.filterInStatsFormat}`,
