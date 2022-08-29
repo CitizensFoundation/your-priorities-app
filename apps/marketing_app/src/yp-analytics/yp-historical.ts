@@ -4,6 +4,8 @@ import { property, customElement } from 'lit/decorators.js';
 import { PlausibleHistorical } from '../pl-components/pl-historical.js';
 import { BrowserHistory } from '../pl-components/util/history.js';
 
+import '../pl-components/stats/graph/pl-goal-graph.js';
+
 @customElement('yp-historical')
 export class YpHistorical extends PlausibleHistorical {
   static get styles() {
@@ -58,6 +60,42 @@ export class YpHistorical extends PlausibleHistorical {
           .query="${this.query}"
           .proxyUrl="${this.proxyUrl}"
         ></pl-visitors-graph>
+        <pl-goal-graph
+          .events="${[
+            "newPost - completed",
+          ]}"
+          .chartTitle="${this.t('Users who added ideas')}"
+          .query="${this.query}"
+          .proxyUrl="${this.proxyUrl}"
+          .site="${this.site}"
+          chartHeigh="200">
+        </pl-goal-graph>
+        <pl-goal-graph
+          .events="${[
+            "newPointAgainst - completed",
+            "newPointFor - completed"
+          ]}"
+          .chartTitle="${this.t('sers who added points')}"
+          .query="${this.query}"
+          .proxyUrl="${this.proxyUrl}"
+          .site="${this.site}"
+          chartHeigh="200">
+        </pl-goal-graph>
+
+        <pl-goal-graph
+          .events="${[
+           "endorse_up - completed",
+           "endorse_down - completed",
+           "pointHelpful - completed",
+           "pointNotHelpful - completed"
+          ]}"
+          .chartTitle="${this.t('Users who added ideas')}"
+          .query="${this.query}"
+          .proxyUrl="${this.proxyUrl}"
+          .site="${this.site}"
+          chartHeigh="200">
+        </pl-goal-graph>
+
         <div class="items-start justify-between block w-full md:flex flex">
           <pl-sources-list
             class="flex-col"

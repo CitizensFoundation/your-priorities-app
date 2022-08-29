@@ -33,7 +33,6 @@ export class YpCollectionHelpers {
   }
 
   static logoImages(collectionType: string | undefined, collection: YpCollectionData): Array<YpImageData> | undefined {
-    debugger;
     switch (collectionType) {
       case 'domain':
       case 'domains':

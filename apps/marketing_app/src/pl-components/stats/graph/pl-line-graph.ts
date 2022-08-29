@@ -69,7 +69,7 @@ export class PlausibleLineGraph extends PlausibleBaseElementWithState {
     if (
       this.metric &&
       this.graphData &&
-      (changedProperties.get('graphData') || changedProperties.get('darkTheme'))
+      (changedProperties.has('graphData') || changedProperties.has('darkTheme'))
     ) {
       if (this.chart) {
         this.chart.destroy();

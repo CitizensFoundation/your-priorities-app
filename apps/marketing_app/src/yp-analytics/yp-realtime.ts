@@ -2,6 +2,7 @@ import { LitElement, css, html, nothing } from 'lit';
 import { property, customElement } from 'lit/decorators.js';
 
 import { PlausibleRealtime } from '../pl-components/pl-realtime.js';
+import '../pl-components/stats/graph/pl-goal-graph.js';
 
 @customElement('yp-realtime')
 export class YpRealtime extends PlausibleRealtime {
@@ -44,6 +45,16 @@ export class YpRealtime extends PlausibleRealtime {
           .timer="${this.timer}"
           .proxyUrl="${this.proxyUrl}"
         ></pl-visitors-graph>
+        <pl-goal-graph
+          .events="${[
+            "newPost - completed",
+          ]}"
+          .chartTitle="${this.t('New ideas')}"
+          .query="${this.query}"
+          .proxyUrl="${this.proxyUrl}"
+          .site="${this.site}"
+          chartHeigh="350">
+        </pl-goal-graph>
         <div class="items-start justify-between block w-full md:flex flex">
           <pl-sources-list
             class="flex-col"
