@@ -295,7 +295,9 @@
             </span>
             <div id="pointContent" link-point$="[[linkPoint]]" hidden$="[[isEditingSomething]]" on-tap="_linkIfNeeded">
               <yp-magic-text simple-format text-type="pointContent" content-language="[[point.language]]"
-                             content="[[point.latestContent]]" content-id="[[point.id]]" truncate="[[post.Group.configuration.pointCharLimit]]">
+                             content="[[point.latestContent]]" content-id="[[point.id]]" truncate="500"
+                             close-dialog-text="[[t('close')]]"
+                             more-text="[[t('readMore')]]">
               </yp-magic-text>
             </div>
           </div>
