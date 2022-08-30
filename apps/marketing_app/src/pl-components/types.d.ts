@@ -147,3 +147,9 @@ interface PlausibleCityData {
   country_flag: string;
 }
 
+
+type PlausibleTimeseriesMetricsOptions = 'visitors'|'pageviews'|'bounce_rate'|'visit_duration'|'visits';
+
+
+
+

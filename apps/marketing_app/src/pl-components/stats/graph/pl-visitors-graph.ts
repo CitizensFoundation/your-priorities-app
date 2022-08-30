@@ -94,7 +94,7 @@ export class PlausibleVisitorsGraph extends PlausibleBaseElementWithState {
   updateMetric(newMetric: string) {
     if (newMetric === this.metric) {
       storage.setItem(`metric__${this.site.domain}`, '');
-      this.metric = '';
+      //this.metric = '';
       //this.graphData = undefined;
     } else {
       storage.setItem(`metric__${this.site.domain}`, newMetric);

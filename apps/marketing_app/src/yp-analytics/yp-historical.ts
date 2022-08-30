@@ -61,9 +61,7 @@ export class YpHistorical extends PlausibleHistorical {
           .proxyUrl="${this.proxyUrl}"
         ></pl-visitors-graph>
         <pl-goal-graph
-          .events="${[
-            "newPost - completed",
-          ]}"
+          .events="${['newPost - completed']}"
           .chartTitle="${this.t('Users who added ideas')}"
           .query="${this.query}"
           .proxyUrl="${this.proxyUrl}"
@@ -77,12 +75,13 @@ export class YpHistorical extends PlausibleHistorical {
           pointHoverBackgroundColor="rgba(193, 87, 71)"
           prevPointHoverBackgroundColor="rgba(166,187,210,0.8)"
           prevBorderColor="rgba(210,187,166,0.5)"
-          chartHeigh="150">
+          chartHeigh="150"
+        >
         </pl-goal-graph>
         <pl-goal-graph
           .events="${[
-            "newPointAgainst - completed",
-            "newPointFor - completed"
+            'newPointAgainst - completed',
+            'newPointFor - completed',
           ]}"
           .chartTitle="${this.t('Users who added points')}"
           .query="${this.query}"
@@ -97,20 +96,22 @@ export class YpHistorical extends PlausibleHistorical {
           pointHoverBackgroundColor="rgba(193, 71, 87)"
           prevPointHoverBackgroundColor="rgba(166,210,187,0.8)"
           prevBorderColor="rgba(210,166,187,0.5)"
-          chartHeigh="150">
+          chartHeigh="150"
+        >
         </pl-goal-graph>
         <pl-goal-graph
           .events="${[
-           "endorse_up - completed",
-           "endorse_down - completed",
-           "pointHelpful - completed",
-           "pointNotHelpful - completed"
+            'endorse_up - completed',
+            'endorse_down - completed',
+            'pointHelpful - completed',
+            'pointNotHelpful - completed',
           ]}"
           .chartTitle="${this.t('Users who liked/disliked')}"
           .query="${this.query}"
           .proxyUrl="${this.proxyUrl}"
           .site="${this.site}"
-          chartHeigh="150">
+          chartHeigh="150"
+        >
         </pl-goal-graph>
 
         <div class="items-start justify-between block w-full md:flex flex">

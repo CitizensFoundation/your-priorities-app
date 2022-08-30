@@ -77,7 +77,6 @@ export abstract class PlausibleBaseGraph extends PlausibleBaseElementWithState {
 
   fetchGraphData(): any {}
 
-
   constructor() {
     super();
     this.repositionTooltip = this.repositionTooltip.bind(this);
