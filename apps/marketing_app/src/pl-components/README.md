@@ -1,0 +1,1 @@
+This is a port of the [Plausible Dashboard](https://github.com/plausible/analytics/tree/master/assets/js/dashboard).
