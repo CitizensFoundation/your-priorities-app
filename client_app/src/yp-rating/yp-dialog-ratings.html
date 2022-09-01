@@ -118,7 +118,7 @@
           </div>
       </template>
     </paper-dialog>
-    <yp-ajax id="ajax"></yp-ajax>
+    <yp-ajax id="ajax" on-response="_ratingCompleted"></yp-ajax>
   </template>
 
   <script>
@@ -164,7 +164,7 @@
         window.appUser.updateRatingForPost(detail.postId, detail.ratingIndex, { post_id: detail.postId, type_index: detail.ratingIndex, value: detail.rate });
         this.$.ajax.method="POST";
         this.$.ajax.url="/api/ratings/"+detail.postId+"/"+detail.ratingIndex;
-        window.appGlobals.activity('add', 'post.ratings');
+        window.appGlobals.activity('add', 'post.ratings', { postId: detail.postId });
         this.$.ajax.body = {
           value: detail.rate,
           ratingBaseId:  window.appUser.getBrowserId(),
@@ -176,11 +176,15 @@
 
       _deleteRating: function (event, detail) {
         window.appUser.updateRatingForPost(detail.postId, detail.ratingIndex, null);
-        window.appGlobals.activity('delete', 'post.ratings');
+        window.appGlobals.activity('delete', 'post.ratings', { postId: detail.postId });
         this.$.ajax.method="DELETE";
         this.$.ajax.url="/api/ratings/"+detail.postId+"/"+detail.ratingIndex;
         this.$.ajax.body = {};
         this.$.ajax.generateRequest();
+      },
+
+      _ratingCompleted: function () {
+        window.appGlobals.activity('completed', 'post.ratings', { postId: this.post.id });
       },
 
       open: function (post, refreshFunction) {

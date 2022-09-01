@@ -164,11 +164,11 @@
 
       openRatingsDialog: function () {
         if (!this.post.Group.configuration.canVote===false) {
-          window.appGlobals.activity('open', 'post.ratings');
           if (window.appUser.loggedIn()===true) {
             Polymer.dom(document).querySelector('yp-app').getRatingsDialogAsync(function (dialog) {
                 dialog.open(this.post, this._fireRefresh.bind(this));
             }.bind(this));
+            window.appGlobals.activity('open', 'post.ratings.dialog', { postId: this.post ? this.post.id : null });
           } else {
             window.appUser.loginForRatings(this);
           }

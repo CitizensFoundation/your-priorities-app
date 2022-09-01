@@ -624,10 +624,10 @@
         }
         if (endorsement.value>0) {
           this.set('post.counter_endorsements_up', this.post.counter_endorsements_up+1);
-          window.appGlobals.activity('completed', 'endorse_up');
+          window.appGlobals.activity('completed', 'endorse_up', { postId: this.post ? this.post.id : null});
         }   else if (endorsement.value<0) {
           this.set('post.counter_endorsements_down', this.post.counter_endorsements_down+1);
-          window.appGlobals.activity('completed', 'endorse_down');
+          window.appGlobals.activity('completed', 'endorse_down', { postId: this.post ? this.post.id : null});
         }
       },
 
