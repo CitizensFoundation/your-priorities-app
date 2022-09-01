@@ -752,6 +752,9 @@ var updateCommunityConfigParameters = function (req, community) {
   community.set('configuration.hideRecommendationOnNewsFeed', truthValueFromBody(req.body.hideRecommendationOnNewsFeed));
   community.set('configuration.closeNewsfeedSubmissions', truthValueFromBody(req.body.closeNewsfeedSubmissions));
 
+  community.set('configuration.disableGroupDynamicFontSizes', truthValueFromBody(req.body.disableGroupDynamicFontSizes));
+  community.set('configuration.hideGroupListCardObjectives', truthValueFromBody(req.body.hideGroupListCardObjectives));
+
   community.set('configuration.recalculateCountersRecursively', truthValueFromBody(req.body.recalculateCountersRecursively));
 
   if (req.body.google_analytics_code && req.body.google_analytics_code!="") {

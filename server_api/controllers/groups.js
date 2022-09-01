@@ -407,6 +407,12 @@ var updateGroupConfigParamters = function (req, group) {
   group.set('configuration.actAsLinkToCommunityId', (req.body.actAsLinkToCommunityId && req.body.actAsLinkToCommunityId!="") ? req.body.actAsLinkToCommunityId : null);
   group.set('configuration.hideQuestionIndexOnNewPost', truthValueFromBody(req.body.hideQuestionIndexOnNewPost));
   group.set('configuration.allowWhatsAppSharing', truthValueFromBody(req.body.allowWhatsAppSharing));
+  group.set('configuration.inheritThemeFromCommunity', truthValueFromBody(req.body.inheritThemeFromCommunity));
+
+  if (truthValueFromBody(req.body.inheritThemeFromCommunity)===true) {
+    group.set('theme_id', null);
+  }
+
   group.set('configuration.optionalSortOrder', (req.body.optionalSortOrder && req.body.optionalSortOrder!="") ? req.body.optionalSortOrder : null);
   group.set('configuration.exportSubCodesForRadiosAndCheckboxes', truthValueFromBody(req.body.exportSubCodesForRadiosAndCheckboxes));
   group.set('configuration.forceShowDebateCountOnPost', truthValueFromBody(req.body.forceShowDebateCountOnPost));
