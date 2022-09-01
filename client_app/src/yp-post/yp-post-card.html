@@ -335,10 +335,12 @@
         <div hidden$="[[post.Group.configuration.hidePostActionsInGrid]]" on-tap="_onBottomClick">
           <template is="dom-if" if="[[!mini]]">
             <div class="share" hidden$="[[post.Group.configuration.hideSharing]]">
-              <paper-share-button on-share-tap="_shareTap" class="shareIcon" less-margin$="[[post.Group.configuration.hideDownVoteForPost]]" endorsed$="[[isEndorsed]]"
+              <paper-share-button class="shareIcon" less-margin$="[[post.Group.configuration.hideDownVoteForPost]]" endorsed$="[[isEndorsed]]"
                                   horizontal-align="right" id="shareButton"
-                                  whatsapp="[[post.Group.configuration.allowWhatsAppSharing]]"
-                                  title$="[[t('post.shareInfo')]]" facebook="" email=""
+                                  on-tap="_shareTapOptions"
+                                  on-share-tap="_shareTap"
+                                  whatsapp
+                                  title$="[[t('post.shareInfo')]]" facebook=""
                                   twitter="" popup-enabled url="[[fullPostUrl]]"></paper-share-button>
             </div>
             <template is="dom-if" if="[[post.Group.configuration.customRatings]]">
@@ -448,7 +450,13 @@
       },
 
       _shareTap: function (event, detail) {
-        window.appGlobals.activity('postShareCardOpen', detail.brand, this.post ? this.post.id : -1);
+        window.appGlobals.activity('open', `share dialog - ${detail.brand}`, { postId: this.post ? this.post.id : undefined });
+      },
+
+      _shareTapOptions: function () {
+        if (this.$$("paper-share-button").open()) {
+          window.appGlobals.activity('open', "share dialog options", { postId: this.post ? this.post.id : undefined });
+        }
       },
 
       _hideDescription: function (mini, post) {

@@ -455,10 +455,13 @@
               </template>
 
               <div class="share" hidden$="[[post.Group.configuration.hideSharing]]">
-                <paper-share-button on-share-tap="_shareTap" class="shareIcon" less-margin$="[[post.Group.configuration.hideDownVoteForPost]]" endorsed$="[[isEndorsed]]"
+                <paper-share-button class="shareIcon" less-margin$="[[post.Group.configuration.hideDownVoteForPost]]" endorsed$="[[isEndorsed]]"
                                     horizontal-align="right" id="shareButton"
-                                    whatsapp="[[post.Group.configuration.allowWhatsAppSharing]]"
-                                    title$="[[t('post.shareInfo')]]" facebook="" email="" twitter="" popup-enabled="" url="[[fullPostUrl]]"></paper-share-button>
+                                    whatsapp
+                                    on-share-tap="_shareTap"
+                                    on-tap="_shareTapOptions"
+                                    title$="[[t('post.shareInfo')]]" facebook=""
+                                    twitter="" popup-enabled="" url="[[fullPostUrl]]"></paper-share-button>
               </div>
               <paper-menu-button vertical-align="top" horizontal-align="right" class="moreVert" class="edit" hidden$="[[hideActions]]">
                 <paper-icon-button aria-label$="[[t('openPostMenu')]]" class="moreVertButton" icon="more-vert" slot="dropdown-trigger"></paper-icon-button>
@@ -562,7 +565,13 @@
       },
 
       _shareTap: function (event, detail) {
-        window.appGlobals.activity('postShareHeaderOpen', detail.brand, this.post ? this.post.id : -1);
+        window.appGlobals.activity('open', `share dialog - ${detail.brand}`, { postId: this.post ? this.post.id : undefined });
+      },
+
+      _shareTapOptions: function () {
+        if (this.$$("paper-share-button").open()) {
+          window.appGlobals.activity('open', "share dialog options", { postId: this.post ? this.post.id : undefined });
+        }
       },
 
       _isEditingChanged: function (value) {
