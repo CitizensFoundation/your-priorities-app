@@ -42,6 +42,17 @@
         background-color: #fff;
       }
 
+      .groupCard[has-hidden-objectives] {
+         height: 324px;
+         background-color: var(--primary-color-800);
+      }
+
+      @media (max-width: 960px) {
+          .groupCard[has-hidden-objectives] {
+              height: 324px;
+          }
+      }
+
       .objectives {
         @apply --layout-vertical;
         color: var(--primary-color-more-darker, #424242);
@@ -212,6 +223,11 @@
         background-color: var(--accent-color);
       }
 
+      .group-name[has-hidden-objectives] {
+        padding-bottom: 2px;
+        margin-bottom: 0;
+      }
+
       yp-membership-button[archived] {
         display: none;
       }
@@ -318,11 +334,20 @@
       .group-name[has-data-viz] {
           padding-top: 26px;
       }
+
+      .stats[has-hidden-objectives] {
+          background-color: var(--primary-color-800);
+          color: #FFF !important;
+          position: inherit;
+          --main-stats-color-on-white: #fff;
+          padding-top: -4px;
+          margin-top: 0;
+      }
     </style>
 
     <iron-media-query query="(min-width: 600px)" query-matches="{{wide}}"></iron-media-query>
 
-    <paper-card class="groupCard" animated elevation="[[elevation]]" class="groupCard">
+    <paper-card class="groupCard" has-hidden-objectives$="[[group.Community.configuration.hideGroupListCardObjectives]]" animated elevation="[[elevation]]" class="groupCard">
       <template is="dom-if" if="[[!group.CommunityLink]]">
         <template is="dom-if" if="[[visualizationData]]">
           <yp-data-visualization small data="[[visualizationData]]"></yp-data-visualization>
@@ -332,7 +357,7 @@
           <iron-image hidden$="[[noImage]]" archived$="[[archived]]" class="logo withPointer" alt$="[[group.name]]" sizing="cover" on-tap="_goToGroup" preload src="[[groupLogoImagePath]]"></iron-image>
         </template>
 
-        <yp-magic-text id="groupName" has-data-viz$="[[visualizationData]]" class="group-name" widetext$="[[wideText]]" text-type="groupName" content-language="[[group.language]]"
+        <yp-magic-text id="groupName" has-hidden-objectives$="[[group.Community.configuration.hideGroupListCardObjectives]]" has-data-viz$="[[visualizationData]]" class="group-name" widetext$="[[wideText]]" text-type="groupName" content-language="[[group.language]]"
                        archived$="[[archived]]" featured$="[[featured]]" on-tap="_goToGroup" largefont$="[[largeFont]]"
                        disable-translation="[[group.configuration.disableNameAutoTranslation]]"
                        text-only content="[[groupName]]" content-id="[[group.id]]">
@@ -340,10 +365,11 @@
         <yp-magic-text id="objectives" widetext$="[[wideText]]" class="objectives withPointer" on-tap="_goToGroup"
                        text-type="groupContent" content-language="[[group.language]]" largefont$="[[largeFont]]"
                        remove-urls
+                       hidden$="[[group.Community.configuration.hideGroupListCardObjectives]]"
                        truncate="[[truncateBy]]"
                        text-only content="[[groupObjectives]]" content-id="[[group.id]]" truncate="200">
         </yp-magic-text>
-        <yp-group-stats class="stats" group="[[group]]"></yp-group-stats>
+        <yp-group-stats has-hidden-objectives$="[[group.Community.configuration.hideGroupListCardObjectives]]" class="stats" group="[[group]]"></yp-group-stats>
         <yp-membership-button archived$="[[archived]]" group="[[group]]" hidden$="[[visualizationData]]"></yp-membership-button>
       </template>
       <template is="dom-if" if="[[group.CommunityLink]]">

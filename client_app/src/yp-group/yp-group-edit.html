@@ -253,7 +253,18 @@
 
         <div class="subHeaders">[[t('themeSettings')]]</div>
 
-        <yp-theme-selector object="[[group]]" selected-theme="{{themeId}}"></yp-theme-selector>
+        <paper-checkbox
+          name="inheritThemeFromCommunity"
+          on-checked-changed="_inheritThemeChanged"
+          checked$="{{group.configuration.inheritThemeFromCommunity}}">
+          [[t('inheritThemeFromCommunity')]]
+        </paper-checkbox>
+
+        <yp-theme-selector
+          object="[[group]]"
+          disable-selection="[[group.configuration.inheritThemeFromCommunity]]"
+          selected-theme="{{themeId}}"
+        ></yp-theme-selector>
 
         <paper-input id="themeOverrideColorPrimary"
                      name="themeOverrideColorPrimary"
@@ -1095,6 +1106,15 @@
       this.set('isDataVisualizationGroup', this.$$("#isDataVisualizationGroup").checked);
     },
 
+    _inheritThemeChanged: function (event, detail) {
+      if (detail.value && detail.value===true) {
+        this.$$("yp-theme-selector").disableSelection = true;
+        this.$$("yp-theme-selector").selectedTheme = null;
+      } else {
+        this.$$("yp-theme-selector").disableSelection = false;
+      }
+    },
+
     _objectivesChanged: function (event) {
       var description = event.target.value;
       var urlRegex = new RegExp(/(?:https?|http?):\/\/[\n\S]+/g);
@@ -1417,16 +1437,24 @@
 
     setup: function (group, newNotEdit, refreshFunction) {
       if (!group) {
-        this.set('group', {name: '', objectives: '', access: 0, status: 'active', configuration: {}});
+        this.set('group', {name: '', objectives: '', access: 0, status: 'active', configuration: {
+            inheritThemeFromCommunity: true
+        }});
       } else {
-        if (group.configuration && group.configuration.customRatings && !group.configuration.customRatingsText) {
-          var customRatingsText = "";
-          group.configuration.customRatings.forEach(function (rating) {
+        if (group.configuration) {
+          if (group.configuration.customRatings && !group.configuration.customRatingsText) {
+            var customRatingsText = "";
+            group.configuration.customRatings.forEach(function (rating) {
               customRatingsText += rating.name+","+rating.numberOf+","+rating.emoji+","
-          });
-          customRatingsText = customRatingsText.substring(0, customRatingsText.length - 1);
-          group.configuration.customRatingsText = customRatingsText;
+            });
+            customRatingsText = customRatingsText.substring(0, customRatingsText.length - 1);
+            group.configuration.customRatingsText = customRatingsText;
+          }
+          if (group.theme_id===undefined || group.theme_id===null) {
+            group.configuration.inheritThemeFromCommunity = true;
+          }
         }
+
         this.set('group', group);
 
         //TODO: REMOVE

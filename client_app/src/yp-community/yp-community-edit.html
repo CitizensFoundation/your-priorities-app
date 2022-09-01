@@ -337,6 +337,15 @@
         <paper-checkbox name="alwaysShowOnDomainPage" checked$="{{community.configuration.alwaysShowOnDomainPage}}">[[t('alwaysShowOnDomainPage')]]</paper-checkbox>
         <paper-checkbox name="hideRecommendationOnNewsFeed" checked$="{{community.configuration.hideRecommendationOnNewsFeed}}">[[t('hideRecommendationOnNewsFeed')]]</paper-checkbox>
         <paper-checkbox name="recalculateCountersRecursively" checked$="{{community.configuration.recalculateCountersRecursively}}">[[t('recalculateCountersRecursively')]]</paper-checkbox>
+
+        <paper-checkbox name="hideGroupListCardObjectives" checked$="{{community.configuration.hideGroupListCardObjectives}}">
+          [[t('hideGroupListCardObjectives')]]
+        </paper-checkbox>
+
+        <paper-checkbox name="disableGroupDynamicFontSizes" checked$="{{community.configuration.disableGroupDynamicFontSizes}}">
+          [[t('disableGroupDynamicFontSizes')]]
+        </paper-checkbox>
+
         <paper-checkbox name="enableFraudDetection" checked$="{{community.configuration.enableFraudDetection}}">[[t('enableFraudDetection')]]</paper-checkbox>
         <template is="dom-if" if="[[ziggeoActive()]]">
           <paper-checkbox name="useZiggeo" checked$="{{community.configuration.useZiggeo}}">[[t('useZiggeo')]]</paper-checkbox>

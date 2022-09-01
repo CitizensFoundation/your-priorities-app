@@ -128,7 +128,12 @@
               }
             }
 
-            groupName.className = classNames;
+            if (!group.Community ||
+                !group.Community.configuration ||
+                (!group.Community.configuration.disableGroupDynamicFontSizes &&
+                  !group.Community.configuration.hideGroupListCardObjectives)) {
+              groupName.className = classNames;
+            }
           }
         });
 
