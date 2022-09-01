@@ -132,11 +132,18 @@
           </yp-file-upload>
         </div>
 
-        <div class="layout vertical additionalSettings uploadSection">
+        <div class="layout horizontal additionalSettings uploadSection">
           <yp-file-upload id="headerImageUpload" raised="true" multi="false" target="/api/images?itemType=community-header" method="POST" on-success="_headerImageUploaded">
             <iron-icon class="icon" icon="photo-camera"></iron-icon>
             <span>[[t('image.header.upload')]]</span>
           </yp-file-upload>
+          <paper-icon-button
+            aria-label$="[[t('deleteHeaderImage')]]"
+            class="removeButton layout self-start"
+            icon="delete"
+            on-tap="_deleteHeaderImage"
+            hidden$="[[!hasHeaderImage]]">
+          ></paper-icon-button>
         </div>
 
         <template is="dom-if" if="[[hasVideoUpload]]">
@@ -163,6 +170,8 @@
       </div>
 
       <input type="hidden" name="themeId" value="[[themeId]]">
+      <input type="hidden" name="deleteHeaderImage" value="[[deleteHeaderImage]]">
+
       <paper-input id="themeOverrideColorPrimary"
                    name="themeOverrideColorPrimary"
                    allowed-pattern="[#-#0-9A-Fa-f]"
@@ -525,11 +534,29 @@
       hasVideos: {
         type: Boolean,
         computed: '_hasVideos(community, uploadedVideoId)'
+      },
+
+      hasHeaderImage: {
+        type: Boolean,
+        computed: '_hasHeaderImage(community, deleteHeaderImage)'
+      },
+
+      deleteHeaderImage: {
+        type: Boolean,
+        value: false
       }
     },
 
     _hasVideos: function(community, uploadedVideoId) {
       return uploadedVideoId || (community && community.CommunityLogoVideos && community.CommunityLogoVideos.length > 0);
+    },
+
+    _hasHeaderImage: function(community, deleteHeaderImage) {
+      return !deleteHeaderImage && (community && community.CommunityHeaderImages && community.CommunityHeaderImages.length > 0);
+    },
+
+    _deleteHeaderImage: function () {
+      this.set('deleteHeaderImage', true);
     },
 
     observers: [

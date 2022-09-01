@@ -170,12 +170,19 @@
             </yp-file-upload>
           </div>
 
-          <div class="layout vertical additionalSettings uploadSection">
+          <div class="layout horizontal additionalSettings uploadSection">
             <yp-file-upload id="headerImageUpload" raised="true" multi="false" target="/api/images?itemType=group-header"
                             method="POST" on-success="_headerImageUploaded">
               <iron-icon class="icon" icon="photo-camera"></iron-icon>
               <span>[[t('image.header.upload')]]</span>
             </yp-file-upload>
+            <paper-icon-button
+              aria-label$="[[t('deleteHeaderImage')]]"
+              class="removeButton layout self-start"
+              icon="delete"
+              on-tap="_deleteHeaderImage"
+              hidden$="[[!hasHeaderImage]]">
+            ></paper-icon-button>
           </div>
 
           <template is="dom-if" if="[[hasVideoUpload]]">
@@ -195,6 +202,7 @@
 
           <input type="hidden" name="uploadedLogoImageId" value="[[uploadedLogoImageId]]">
           <input type="hidden" name="uploadedHeaderImageId" value="[[uploadedHeaderImageId]]">
+          <input type="hidden" name="deleteHeaderImage" value="[[deleteHeaderImage]]">
         </div>
 
         <div class="subHeaders exteraTopMargin">[[t('access')]]</div>
@@ -1095,11 +1103,29 @@
       hasVideos: {
         type: Boolean,
         computed: '_hasVideos(group, uploadedVideoId)'
+      },
+
+      hasHeaderImage: {
+        type: Boolean,
+        computed: '_hasHeaderImage(group, deleteHeaderImage)'
+      },
+
+      deleteHeaderImage: {
+        type: Boolean,
+        value: false
       }
     },
 
     _hasVideos: function(group, uploadedVideoId) {
       return uploadedVideoId || (group && group.GroupLogoVideos && group.GroupLogoVideos.length > 0);
+    },
+
+    _hasHeaderImage: function(group, deleteHeaderImage) {
+      return !deleteHeaderImage && (group && group.GroupHeaderImages && group.GroupHeaderImages.length > 0);
+    },
+
+    _deleteHeaderImage: function () {
+      this.set('deleteHeaderImage', true);
     },
 
     _isDataVisualizationGroupClick: function () {
@@ -1457,14 +1483,6 @@
 
         this.set('group', group);
 
-        //TODO: REMOVE
-        if (false && group.GroupLogoVideos && group.GroupLogoVideos.length > 0) {
-          if (window.appGlobals.useZiggeo) {
-            this.set('uploadedVideoId', group.GroupLogoVideos[0].formats[0])
-          } else {
-            this.set('uploadedVideoId', group.GroupLogoVideos[0].id)
-          }
-        }
         this.$.pagesAjax.url = "/api/groups/"+group.id+"/pages";
         this.$.pagesAjax.generateRequest();
       }

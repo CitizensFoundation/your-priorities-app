@@ -245,6 +245,17 @@ module.exports = (sequelize, DataTypes) => {
           if (err) return callback(err);
           callback();
         });
+      },
+      (callback) => {
+        if (body.deleteHeaderImage==="true") {
+          this.setCommunityHeaderImages([]).then(()=>{
+            callback();
+          }).catch(error => {
+            callback(error);
+          })
+        } else {
+          callback();
+        }
       }
     ], (err) => {
       done(err);
