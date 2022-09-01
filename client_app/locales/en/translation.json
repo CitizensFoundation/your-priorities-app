@@ -1,4 +1,7 @@
 {
+  "inheritThemeFromCommunity": "Inherit theme from community",
+  "disableGroupDynamicFontSizes": "Disable dynamic font sizes on groups",
+  "hideGroupListCardObjectives": "Hide group list card objectives",
   "projectId": "Project Id",
   "upload": "Upload",
   "videoFormat": "Video format",

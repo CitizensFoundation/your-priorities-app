@@ -1,4 +1,7 @@
 {
+  "inheritThemeFromCommunity": "Nota þema frá svæði",
+  "disableGroupDynamicFontSizes": "Slökkva á dýnamískum fontastærðum fyrir hópa",
+  "hideGroupListCardObjectives": "Fela lýsingu á hópum í listum",
   "projectId": "Verkefna númer",
   "upload": "Hlaða upp",
   "videoFormat": "Myndbandsform",
