@@ -139,7 +139,7 @@ var truthValueFromBody = function(bodyParameter) {
   }
 };
 
-var updateGroupConfigParamters = function (req, group) {
+var updateGroupConfigParameters = function (req, group) {
   if (!group.configuration) {
     group.set('configuration', {});
   }
@@ -1084,7 +1084,7 @@ router.post('/:communityId', auth.can('create group'), function(req, res) {
 
   group.theme_id = req.body.themeId ? parseInt(req.body.themeId) : null;
 
-  updateGroupConfigParamters(req, group);
+  updateGroupConfigParameters(req, group);
 
   group.save().then(function(group) {
     log.info('Group Created', { groupId: group.id, context: 'create', userId: req.user.id });
@@ -1156,7 +1156,7 @@ router.put('/:id', auth.can('edit group'), function(req, res) {
       group.objectives = req.body.objectives;
       group.theme_id = req.body.themeId ? parseInt(req.body.themeId) : null;
       group.access = models.Group.convertAccessFromRadioButtons(req.body);
-      updateGroupConfigParamters(req, group);
+      updateGroupConfigParameters(req, group);
       group.save().then(function () {
         log.info('Group Updated', { group: toJson(group), context: 'update', user: toJson(req.user) });
         queue.add('process-similarities', { type: 'update-collection', groupId: group.id }, 'low');
