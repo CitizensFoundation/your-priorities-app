@@ -31,12 +31,20 @@ export class YpNewAd extends YpBaseElementWithLogin {
     return [
       super.styles,
       css`
+        :host {
+          --mdc-shape-medium: 16px !important;
+        }
         mwc-dialog div {
           flex-direction: column;
         }
         mwc-dialog div,
         md-radio {
           display: flex;
+        }
+
+        mwc-dialog {
+          --mdc-shape-medium: 28px !important;
+          --mdc-theme-surface: #F00;
         }
         .button {
           padding-right: 16px;
@@ -56,7 +64,7 @@ export class YpNewAd extends YpBaseElementWithLogin {
   }
 
   render() {
-    return html`<style></style>
+    return html`
 
       <mwc-dialog heading="${this.t('newAdGroup')}">
         <div>
@@ -85,6 +93,7 @@ export class YpNewAd extends YpBaseElementWithLogin {
         </md-text-button>
         <md-tonal-button
           dialogAction="ok"
+          disable
           class="button okButton"
           .label="${this.t('create')}"
           slot="primaryAction"

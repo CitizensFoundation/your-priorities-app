@@ -49,6 +49,12 @@ export class YpNewAdGroup extends YpBaseElementWithLogin {
           padding-bottom: 24px;
         }
 
+        mwc-dialog {
+          --mdc-shape-medium: 28px !important;
+          --mdc-theme-surface: var(--md-sys-color-surface);
+          --mdc-dialog-heading-ink-color:  var(--md-sys-color-on-surface);
+          --mdc-dialog-box-shadow: none;
+        }
         .promotionText {
         }
 
@@ -94,6 +100,7 @@ export class YpNewAdGroup extends YpBaseElementWithLogin {
         </md-text-button>
         <md-tonal-button
           dialogAction="ok"
+          disabled
           class="button okButton"
           .label="${this.t('save')}"
           slot="primaryAction"
