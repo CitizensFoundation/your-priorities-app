@@ -241,7 +241,7 @@ export class YpMarketingApp extends YpBaseElement {
     setTimeout(() => {
       //this.fireGlobal('yp-theme-dark-mode', true);
       //this.setRandomColor();
-    }, 9000);
+    }, 3000);
   }
 
   setRandomColor() {

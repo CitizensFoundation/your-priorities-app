@@ -90,7 +90,7 @@ export class YpCampaign extends YpBaseElementWithLogin {
       <div class="layout vertical start mainContainer">
         <div>
           <md-fab-extended
-            .label="${this.t('New tracking promotion')}"
+            .label="${this.t('newTrackingPromotion')}"
             icon="add"
             @click="${this.newAdGroup}"
           ></md-fab-extended>
