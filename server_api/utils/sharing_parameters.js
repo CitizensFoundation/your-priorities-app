@@ -5,7 +5,9 @@ const updateParametersFromCampaign = async (utmContent, parameters) => {
     try {
       const campaign = await models.Campaign.findOne({
         where: {
-          id: utmContent
+          id: utmContent,
+          collectionType: collectionType,
+          collectionId: collectionId
         },
         attributes: ['id','configuration']
       });
