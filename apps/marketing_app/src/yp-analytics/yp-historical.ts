@@ -61,8 +61,11 @@ export class YpHistorical extends PlausibleHistorical {
           .proxyUrl="${this.proxyUrl}"
         ></pl-visitors-graph>
         <pl-goal-graph
-          .events="${['newPost - completed']}"
-          .chartTitle="${this.t('Users who added ideas')}"
+          .events="${['newPost - completed',
+                    'newPointAgainst - completed',
+                    'newPointFor - completed'
+                ]}"
+          .chartTitle="${this.t('Users who added content')}"
           .query="${this.query}"
           .proxyUrl="${this.proxyUrl}"
           .site="${this.site}"
@@ -80,33 +83,13 @@ export class YpHistorical extends PlausibleHistorical {
         </pl-goal-graph>
         <pl-goal-graph
           .events="${[
-            'newPointAgainst - completed',
-            'newPointFor - completed',
-          ]}"
-          .chartTitle="${this.t('Users who added points')}"
-          .query="${this.query}"
-          .proxyUrl="${this.proxyUrl}"
-          .site="${this.site}"
-          gradientColorStop1="rgba(205,101,116, 0.2)"
-          gradientColorStop2="rgba(205,101,116, 0.2)"
-          prevGradientColorStop1="rgba(205,101,116, 0.075)"
-          prevGradientColorStop2="rgba(205,101,116, 0)"
-          borderColor="rgba(205,101,116)"
-          pointBackgroundColor="rgba(205,101,116)"
-          pointHoverBackgroundColor="rgba(193, 71, 87)"
-          prevPointHoverBackgroundColor="rgba(166,210,187,0.8)"
-          prevBorderColor="rgba(210,166,187,0.5)"
-          chartHeigh="150"
-        >
-        </pl-goal-graph>
-        <pl-goal-graph
-          .events="${[
             'endorse_up - completed',
             'endorse_down - completed',
             'pointHelpful - completed',
             'pointNotHelpful - completed',
+            'post.ratings - completed'
           ]}"
-          .chartTitle="${this.t('Users who liked/disliked')}"
+          .chartTitle="${this.t('Users who rated content')}"
           .query="${this.query}"
           .proxyUrl="${this.proxyUrl}"
           .site="${this.site}"

@@ -1,8 +1,10 @@
 import { LitElement, css, html } from 'lit';
-import { property, customElement } from 'lit/decorators.js';
+import { property, customElement, query } from 'lit/decorators.js';
 import { YpBaseElementWithLogin } from '../@yrpri/common/yp-base-element-with-login';
 
 import '@material/web/fab/fab-extended.js';
+import './yp-new-ad-group.js';
+import { YpNewAdGroup } from './yp-new-ad-group.js';
 
 @customElement('yp-campaign')
 export class YpCampaign extends YpBaseElementWithLogin {
@@ -17,6 +19,9 @@ export class YpCampaign extends YpBaseElementWithLogin {
 
   @property({ type: Object })
   campaign: YpCampaignData | undefined;
+
+  @query("yp-new-ad-group")
+  private newAdGroupElement!: YpNewAdGroup;
 
   setupTestData() {
     this.campaign = {
@@ -69,13 +74,19 @@ export class YpCampaign extends YpBaseElementWithLogin {
     ];
   }
 
+  newAdGroup() {
+    this.newAdGroupElement.open();
+  }
+
   render() {
     return html`
+      <yp-new-ad-group></yp-new-ad-group>
       <div class="layout vertical self-start mainContainer">
         <div>
           <md-fab-extended
             .label="${this.t('New promotion')}"
             icon="add"
+            @click="${this.newAdGroup}"
           ></md-fab-extended>
         </div>
       </div>

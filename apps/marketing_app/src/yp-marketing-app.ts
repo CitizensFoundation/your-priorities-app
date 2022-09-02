@@ -79,7 +79,7 @@ export class YpMarketingApp extends YpBaseElement {
   page: string | undefined;
 
   @property({ type: Number })
-  pageIndex = 1;
+  pageIndex = 2;
 
   @property({ type: Object })
   collection: YpCollectionData | undefined;
