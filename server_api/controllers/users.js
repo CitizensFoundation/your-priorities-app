@@ -461,7 +461,34 @@ router.get('/:id', auth.can('edit user'), function (req, res) {
   }
 });
 
+const getDomainAdminAndUserIncludes = (req) => {
+  let groupAdminsOrUsersInclude, communityAdminsOrUsersInclude, domainAdminsOrUsersWhere;
+  domainAdminsOrUsersWhere = req.clientIp==="::1" ? {} : {
+    id: req.ypDomain.id
+  };
+
+  communityAdminsOrUsersInclude = [{
+    model: models.Domain,
+    attributes: ['id'],
+    required: true,
+    where: domainAdminsOrUsersWhere
+  }];
+
+  groupAdminsOrUsersInclude = [
+    {
+      model: models.Community,
+      attributes: ['id'],
+      required: true,
+      include: communityAdminsOrUsersInclude
+    }
+  ]
+
+  return  { groupAdminsOrUsersInclude, communityAdminsOrUsersInclude, domainAdminsOrUsersWhere }
+}
+
 router.get('/loggedInUser/adminRights', function (req, res) {
+  const { groupAdminsOrUsersInclude, communityAdminsOrUsersInclude, domainAdminsOrUsersWhere } = getDomainAdminAndUserIncludes(req);
+
   if (req.isAuthenticated() && req.user) {
     var adminAccess = {};
     async.parallel([
@@ -474,7 +501,8 @@ router.get('/loggedInUser/adminRights', function (req, res) {
               model: models.Domain,
               as: 'DomainAdmins',
               attributes: ['id'],
-              required: false
+              required: false,
+              where: domainAdminsOrUsersWhere
             }
           ]
         }).then(function(user) {
@@ -493,7 +521,8 @@ router.get('/loggedInUser/adminRights', function (req, res) {
               model: models.Community,
               as: 'CommunityAdmins',
               attributes: ['id'],
-              required: false
+              required: false,
+              include: communityAdminsOrUsersInclude
             }
           ]
         }).then(function(user) {
@@ -512,7 +541,8 @@ router.get('/loggedInUser/adminRights', function (req, res) {
               model: models.Group,
               as: 'GroupAdmins',
               attributes: ['id'],
-              required: false
+              required: false,
+              include: groupAdminsOrUsersInclude
             }
           ]
         }).then(function(user) {
@@ -564,6 +594,8 @@ router.get('/loggedInUser/adminRights', function (req, res) {
 });
 
 router.get('/loggedInUser/adminRightsWithNames', function (req, res) {
+  const {  communityAdminsOrUsersInclude, domainAdminsOrUsersWhere } = getDomainAdminAndUserIncludes(req);
+
   if (req.isAuthenticated() && req.user) {
     var adminAccess = {};
     async.parallel([
@@ -579,7 +611,8 @@ router.get('/loggedInUser/adminRightsWithNames', function (req, res) {
               model: models.Domain,
               as: 'DomainAdmins',
               attributes: ['id','name','updated_at'],
-              required: false
+              required: false,
+              where: domainAdminsOrUsersWhere
             }
           ]
         }).then(function(user) {
@@ -601,7 +634,8 @@ router.get('/loggedInUser/adminRightsWithNames', function (req, res) {
               model: models.Community,
               as: 'CommunityAdmins',
               attributes: ['id','name','updated_at'],
-              required: false
+              required: false,
+              include: communityAdminsOrUsersInclude
             }
           ]
         }).then(function(user) {
@@ -628,7 +662,8 @@ router.get('/loggedInUser/adminRightsWithNames', function (req, res) {
                 {
                   model: models.Community,
                   attributes: ['id','name','domain_id','updated_at'],
-                  required: false
+                  required: true,
+                  include: communityAdminsOrUsersInclude
                 }
               ]
             }
@@ -685,6 +720,8 @@ router.get('/loggedInUser/adminRightsWithNames', function (req, res) {
 });
 
 router.get('/loggedInUser/memberships', function (req, res) {
+  const { groupAdminsOrUsersInclude, communityAdminsOrUsersInclude, domainAdminsOrUsersWhere } = getDomainAdminAndUserIncludes(req);
+
   if (req.isAuthenticated() && req.user) {
     var memberships = {};
     async.parallel([
@@ -697,7 +734,8 @@ router.get('/loggedInUser/memberships', function (req, res) {
               model: models.Domain,
               as: 'DomainUsers',
               attributes: ['id'],
-              required: false
+              required: false,
+              where: domainAdminsOrUsersWhere
             }
           ]
         }).then(function(user) {
@@ -716,7 +754,8 @@ router.get('/loggedInUser/memberships', function (req, res) {
               model: models.Community,
               as: 'CommunityUsers',
               attributes: ['id'],
-              required: false
+              required: false,
+              include: communityAdminsOrUsersInclude
             }
           ]
         }).then(function(user) {
@@ -735,7 +774,8 @@ router.get('/loggedInUser/memberships', function (req, res) {
               model: models.Group,
               as: 'GroupUsers',
               attributes: ['id'],
-              required: false
+              required: false,
+              include: groupAdminsOrUsersInclude
             }
           ]
         }).then(function(user) {
@@ -780,6 +820,8 @@ router.get('/loggedInUser/memberships', function (req, res) {
 });
 
 router.get('/loggedInUser/membershipsWithNames', function (req, res) {
+  const { groupAdminsOrUsersInclude, communityAdminsOrUsersInclude, domainAdminsOrUsersWhere } = getDomainAdminAndUserIncludes(req);
+
   if (req.isAuthenticated() && req.user) {
     var memberships = {};
     async.parallel([
@@ -795,7 +837,8 @@ router.get('/loggedInUser/membershipsWithNames', function (req, res) {
               model: models.Domain,
               as: 'DomainUsers',
               attributes: ['id','name','counter_users','updated_at'],
-              required: false
+              required: false,
+              where: domainAdminsOrUsersWhere
             }
           ]
         }).then(function(user) {
@@ -817,7 +860,8 @@ router.get('/loggedInUser/membershipsWithNames', function (req, res) {
               model: models.Community,
               as: 'CommunityUsers',
               attributes: ['id','name','counter_users','updated_at'],
-              required: false
+              required: false,
+              include: communityAdminsOrUsersInclude
             }
           ]
         }).then(function(user) {
@@ -844,7 +888,8 @@ router.get('/loggedInUser/membershipsWithNames', function (req, res) {
                 {
                   model: models.Community,
                   attributes: ['id','name','domain_id','updated_at'],
-                  required: false
+                  required: true,
+                  include: communityAdminsOrUsersInclude
                 }
               ]
             }
