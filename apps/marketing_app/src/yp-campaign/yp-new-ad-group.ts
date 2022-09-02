@@ -50,7 +50,7 @@ export class YpNewAdGroup extends YpBaseElementWithLogin {
         }
 
         mwc-dialog {
-          --mdc-shape-medium: 28px !important;
+          --mdc-shape-medium: 48px !important;
           --mdc-theme-surface: var(--md-sys-color-surface);
           --mdc-dialog-heading-ink-color:  var(--md-sys-color-on-surface);
           --mdc-dialog-box-shadow: none;
@@ -60,10 +60,15 @@ export class YpNewAdGroup extends YpBaseElementWithLogin {
 
         mwc-textarea {
           width: 400px;
+          --mdc-theme-primary: var(--md-sys-color-primary);
+          --mdc-text-field-ink-color: var(--md-sys-color-on-surface);
+          --mdc-text-area-outlined-hover-border-color: #F00 !important;
+          --mdc-text-area-outlined-idle-border-color: #F00 !important;
+          --mdc-notched-outline-border-color: #F00;
         }
 
         mwc-textarea.rounded {
-          --mdc-shape-small: 0px;
+          --mdc-shape-small: 4px;
         }
         .formField {
           margin-top: 16px;
@@ -80,7 +85,7 @@ export class YpNewAdGroup extends YpBaseElementWithLogin {
   render() {
     return html`<style></style>
 
-      <mwc-dialog heading="${this.t('newAdGroup')}">
+      <mwc-dialog heading="${this.t('newAdGroup')}" opened>
         <div class="layout vertical">
           <md-outlined-text-field
             class="formField"

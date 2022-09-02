@@ -70,6 +70,12 @@ export class YpCampaign extends YpBaseElementWithLogin {
           margin-top: 32px;
           height: 100%;
         }
+
+        md-fab-extended {
+          position: absolute;
+          bottom: 24px;
+          right: 24px;
+        }
       `,
     ];
   }
@@ -81,10 +87,10 @@ export class YpCampaign extends YpBaseElementWithLogin {
   render() {
     return html`
       <yp-new-ad-group></yp-new-ad-group>
-      <div class="layout vertical self-start mainContainer">
+      <div class="layout vertical start mainContainer">
         <div>
           <md-fab-extended
-            .label="${this.t('New promotion')}"
+            .label="${this.t('New tracking promotion')}"
             icon="add"
             @click="${this.newAdGroup}"
           ></md-fab-extended>
