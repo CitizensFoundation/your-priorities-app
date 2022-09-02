@@ -20,7 +20,7 @@ export class YpCampaign extends YpBaseElementWithLogin {
   @property({ type: Object })
   campaign: YpCampaignData | undefined;
 
-  @query("yp-new-ad-group")
+  @query('yp-new-ad-group')
   private newAdGroupElement!: YpNewAdGroup;
 
   setupTestData() {
@@ -86,7 +86,11 @@ export class YpCampaign extends YpBaseElementWithLogin {
 
   render() {
     return html`
-      <yp-new-ad-group></yp-new-ad-group>
+      <yp-new-ad-group
+        .collectionType="${this.collectionType}"
+        .collection="${this.collection}"
+        .collectionId="${this.collectionId}"
+      ></yp-new-ad-group>
       <div class="layout vertical start mainContainer">
         <div>
           <md-fab-extended
