@@ -658,6 +658,11 @@ router.get('/loggedInUser/adminRightsWithNames', function (req, res) {
               as: 'GroupAdmins',
               attributes: ['id','name','configuration','updated_at'],
               required: false,
+              where: {
+                configuration: {
+                  actAsLinkToCommunityId: null
+                }
+              },
               include: [
                 {
                   model: models.Community,
@@ -820,7 +825,7 @@ router.get('/loggedInUser/memberships', function (req, res) {
 });
 
 router.get('/loggedInUser/membershipsWithNames', function (req, res) {
-  const { groupAdminsOrUsersInclude, communityAdminsOrUsersInclude, domainAdminsOrUsersWhere } = getDomainAdminAndUserIncludes(req);
+  const { communityAdminsOrUsersInclude, domainAdminsOrUsersWhere } = getDomainAdminAndUserIncludes(req);
 
   if (req.isAuthenticated() && req.user) {
     var memberships = {};
@@ -884,6 +889,11 @@ router.get('/loggedInUser/membershipsWithNames', function (req, res) {
               as: 'GroupUsers',
               attributes: ['id','name','counter_users','configuration','updated_at'],
               required: false,
+              where: {
+                configuration: {
+                  actAsLinkToCommunityId: null
+                }
+              },
               include: [
                 {
                   model: models.Community,
