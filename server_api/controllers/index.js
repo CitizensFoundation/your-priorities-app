@@ -86,12 +86,19 @@ const getCollection = async (req) => {
         if (splitUrl[splitPath]==='domain') {
           collection = req.ypDomain;
         } else if (splitUrl[splitPath]==='community') {
-          collection = await models.Community.findOne({
-            where: {
-              id: id
-            },
-            attributes: ['id','name','description','language']
-          });
+          if (req.ypCommunity &&
+              req.ypCommunity.id &&
+              req.ypCommunity.name &&
+              req.ypCommunity.description) {
+            collection = req.ypCommunity;
+          } else {
+            collection = await models.Community.findOne({
+              where: {
+                id: id
+              },
+              attributes: ['id','name','description','language']
+            });
+          }
         } else if (splitUrl[splitPath]==='group') {
           collection = await models.Group.findOne({
             where: {
