@@ -1,6 +1,7 @@
 const models = require('../models');
+const url = require("url");
 
-const updateParametersFromCampaign = async (utmContent, parameters) => {
+const updateParametersFromCampaign = async (utmContent, collectionType, collectionId, parameters) => {
   return await new Promise(async (resolve, reject) => {
     try {
       const campaign = await models.Campaign.findOne({
@@ -14,12 +15,12 @@ const updateParametersFromCampaign = async (utmContent, parameters) => {
 
       if (campaign &&
           campaign.configuration.shareImage) {
-        parameters.image = campaign.configuration.shareImage;
+        parameters.imageUrl = campaign.configuration.shareImageUrl;
       }
 
       if (campaign &&
         campaign.configuration.shareImage) {
-        parameters.description = campaign.configuration.shareText;
+        parameters.description = campaign.configuration.shareDescriptionText;
       }
 
       resolve(parameters);
@@ -29,25 +30,86 @@ const updateParametersFromCampaign = async (utmContent, parameters) => {
   });
 }
 
-const getSharingParameters = async (req, collection, url, imageUrl) => {
+const getSharingParameters = async (req,
+                                    collection,
+                                    url,
+                                    imageUrl) => {
   return await new Promise(async (resolve, reject) => {
-    let parameters = {
-      title: collection.title,
-      description: collection.description || collection.objectives,
-      url: url,
-      image: imageUrl
+    let description = collection.description || collection.objectives;
+    if (description) {
+      description = description.replace(/"/g,"'");
     }
+
+    let name = collection.name;
+    const collectionType = collection.constructor.name.toLowerCase();
+
+    if (collectionType==="domain" && url.indexOf("betrireykjavik.is") > -1) {
+      name = `Betri Reykjavík - ${name}`;
+    }
+
+    let parameters = {
+      title: name,
+      description: description,
+      url: url,
+      imageUrl: imageUrl,
+      locale: collection.language
+    }
+
+
+
     try {
-      if (req.query.utm_content && !isNaN(req.query.utm_content))  {
-        parameters = await updateParametersFromCampaign(req.query.utm_content, parameters)
+      if (models.Campaign && req.query.utm_content && !isNaN(req.query.utm_content))  {
+        parameters = await updateParametersFromCampaign(req.query.utm_content, collectionType, collection.id, parameters)
       }
       resolve(parameters);
     } catch (error) {
       reject(error);
     }
   });
+}
+
+const getFullUrl = (req) => {
+  var replacedUrl = req.originalUrl;
+  if (replacedUrl.startsWith('/?_escaped_fragment_=')) {
+    replacedUrl =  req.originalUrl.replace(/[?]_escaped_fragment_=/g,'');
+    replacedUrl =  replacedUrl.replace('//','/');
+  }
+
+  var formattedUrl = url.format({
+    protocol: req.protocol,
+    host: req.get('host'),
+    pathname: replacedUrl
+  });
+
+  return formattedUrl;
+};
+
+const getSplitUrl = req => {
+  let url = req.url;
+  let splitPath = 1;
+
+  if (url.startsWith('/?_escaped_fragment_=')) {
+    url = req.url.replace(/%2F/g, "/");
+    splitPath = 2;
+  }
+
+  let splitUrl = url.split('/');
+
+  let id = splitUrl[splitPath+1];
+  if (id) {
+    id = id.split("?")[0];
+  }
+
+  return {
+    splitUrl,
+    splitPath,
+    id,
+    url
+  }
 }
 
 module.exports = {
-  getSharingParameters
+  getSharingParameters,
+  getFullUrl,
+  getSplitUrl
 };

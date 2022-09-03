@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-FORCE_PRODUCTION = false;
+process.env.FORCE_PRODUCTION = "false";
 
 if (process.env.NEW_RELIC_APP_NAME) {
   require('newrelic');
@@ -183,7 +183,7 @@ app.use(function setupStaticPath(req, res, next) {
     staticPath = path.join(__dirname, './apps/admin_app/dist');
     staticIndex = "index.html";
   } else {
-    if (!FORCE_PRODUCTION && app.get('env') === 'development') {
+    if (process.env.FORCE_PRODUCTION !== "true" && app.get('env') === 'development') {
       staticPath = path.join(__dirname, '../client_app');
     }
   }
