@@ -107,11 +107,13 @@ const getCollection = async (req) => {
             attributes: ['id','name','description','language']
           });
         } else {
-          reject("Can't find a valid collection type")
+          collection = req.ypDomain;
+          resolve({collection});
         }
         resolve({collection});
       } else {
-        reject('Not valid id for collection')
+        collection = req.ypDomain;
+        resolve({collection});
       }
     } catch (error) {
       reject(error);
