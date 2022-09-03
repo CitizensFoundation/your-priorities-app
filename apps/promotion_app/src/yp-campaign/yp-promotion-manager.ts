@@ -3,11 +3,11 @@ import { property, customElement, query } from 'lit/decorators.js';
 import { YpBaseElementWithLogin } from '../@yrpri/common/yp-base-element-with-login';
 
 import '@material/web/fab/fab-extended.js';
-import './yp-new-ad-group.js';
-import { YpNewAdGroup } from './yp-new-ad-group.js';
+import './yp-new-promotion.js';
+import { YpNewPromotion } from './yp-new-promotion.js';
 
-@customElement('yp-campaign')
-export class YpCampaign extends YpBaseElementWithLogin {
+@customElement('yp-promotion-manager')
+export class YpPromotionManager extends YpBaseElementWithLogin {
   @property({ type: String })
   collectionType!: string;
 
@@ -20,8 +20,8 @@ export class YpCampaign extends YpBaseElementWithLogin {
   @property({ type: Object })
   campaign: YpCampaignData | undefined;
 
-  @query('yp-new-ad-group')
-  private newAdGroupElement!: YpNewAdGroup;
+  @query('yp-new-promotion')
+  private newPromotionElement!: YpNewPromotion;
 
   setupTestData() {
     this.campaign = {
@@ -80,23 +80,23 @@ export class YpCampaign extends YpBaseElementWithLogin {
     ];
   }
 
-  newAdGroup() {
-    this.newAdGroupElement.open();
+  newPromotion() {
+    this.newPromotionElement.open();
   }
 
   render() {
     return html`
-      <yp-new-ad-group
+      <yp-new-promotion
         .collectionType="${this.collectionType}"
         .collection="${this.collection}"
         .collectionId="${this.collectionId}"
-      ></yp-new-ad-group>
+      ></yp-new-promotion>
       <div class="layout vertical start mainContainer">
         <div>
           <md-fab-extended
             .label="${this.t('newTrackingPromotion')}"
             icon="add"
-            @click="${this.newAdGroup}"
+            @click="${this.newPromotion}"
           ></md-fab-extended>
         </div>
       </div>

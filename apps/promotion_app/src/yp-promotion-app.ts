@@ -39,7 +39,7 @@ import '@material/web/menu/menu.js';
 import './yp-analytics/yp-promotion-dashboard.js';
 import { cache } from 'lit/directives/cache.js';
 
-import './yp-campaign/yp-campaign.js';
+import './yp-campaign/yp-promotion-manager.js';
 import { YpCollectionHelpers } from './@yrpri/common/YpCollectionHelpers.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 
@@ -396,7 +396,7 @@ export class YpPromotionApp extends YpBaseElement {
             <md-list-item
               class="${this.pageIndex == 2 && 'selectedContainer'}"
               @click="${() => (this.pageIndex = 2)}"
-              headline="${this.t('Campaign')}"
+              headline="${this.t('Promotion')}"
               supportingText="${this.collectionType == 'posts'
                 ? this.t('Promote your idea')
                 : this.t('Promote your project')}"
@@ -595,12 +595,12 @@ export class YpPromotionApp extends YpBaseElement {
           return html`
             ${cache(
               this.collection
-                ? html`<yp-campaign
+                ? html`<yp-promotion-manager
                     .collectionType="${this.collectionType}"
                     .collection="${this.collection}"
                     .collectionId="${this.collectionId}"
                   >
-                  </yp-campaign>`
+                  </yp-promotion-manager>`
                 : nothing
             )}
           `;

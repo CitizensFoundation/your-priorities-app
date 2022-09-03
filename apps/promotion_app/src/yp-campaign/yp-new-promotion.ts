@@ -31,8 +31,8 @@ import { YpCollectionHelpers } from '../@yrpri/common/YpCollectionHelpers';
 import '../@yrpri/common/yp-image.js';
 import { YpFormattingHelpers } from '../@yrpri/common/YpFormattingHelpers';
 
-@customElement('yp-new-ad-group')
-export class YpNewAdGroup extends YpBaseElementWithLogin {
+@customElement('yp-new-promotion')
+export class YpNewPromotion extends YpBaseElementWithLogin {
   @property({ type: String })
   collectionType!: string;
 
@@ -68,12 +68,10 @@ export class YpNewAdGroup extends YpBaseElementWithLogin {
         }
 
         .button {
-          padding-right: 16px;
-          padding-bottom: 24px;
         }
 
         .okButton {
-          padding-right: 24px;
+          margin-right: 8px;
         }
 
         .collectionLogoImage {
@@ -137,7 +135,7 @@ export class YpNewAdGroup extends YpBaseElementWithLogin {
   }
 
   open() {
-    const dialog = this.$$('mwc-dialog') as Dialog;
+    const dialog = this.$$('#newPromotionDialog') as Dialog;
     dialog.show();
   }
 
@@ -177,6 +175,20 @@ export class YpNewAdGroup extends YpBaseElementWithLogin {
         okButton.disabled = true;
       }
     }, 50);
+  }
+
+  discard() {
+    const dialog = this.$$('#newPromotionDialog') as Dialog;
+    dialog.close();
+  }
+
+  cancel() {
+    if (this.previewEnabled) {
+      const dialog = this.$$('#confirmationDialog') as Dialog;
+      dialog.show();
+    } else {
+      this.discard();
+    }
   }
 
   renderAdMediums() {
@@ -234,6 +246,7 @@ export class YpNewAdGroup extends YpBaseElementWithLogin {
             label="${this.t('promotionText')}"
             outlined
             charCounter
+            maxLength="280"
             @keydown="${this.inputsChanged}"
           >
           </mwc-textarea>
@@ -253,34 +266,69 @@ export class YpNewAdGroup extends YpBaseElementWithLogin {
               class="collectionLogoImage"
               sizing="cover"
               .src="${YpCollectionHelpers.logoImagePath(
-                  this.collectionType,
-                  this.collection!
-                )}"
+                this.collectionType,
+                this.collection!
+              )}"
             ></yp-image>
           </div>
           <div class="linkContentPanel">
             <div class="linkTitle">${this.collection!.name}</div>
-            <div class="linkDescription">${YpFormattingHelpers.truncate(this.collection!.description!, 150)}</div>
+            <div class="linkDescription">
+              ${YpFormattingHelpers.truncate(
+                this.collection!.description!,
+                150
+              )}
+            </div>
           </div>
         </div>
       </div>
     `;
   }
 
+  renderConfirmationDialog() {
+    return html`
+      <mwc-dialog id="confirmationDialog" crimClickAction="" escapeKeyAction="">
+        <div class="layout horizontal center-center">
+          <div class="headerText">${this.t('discardDraft')}</div>
+        </div>
+        <md-text-button
+          .label="${this.t('cancel')}"
+          class="button"
+          dialogAction="cancel"
+          slot="secondaryAction"
+        >
+        </md-text-button>
+        <md-tonal-button
+          dialogAction="ok"
+          class="button okButton"
+          .label="${this.t('discard')}"
+          @click="${this.discard}"
+          slot="primaryAction"
+        >
+        </md-tonal-button>
+      </mwc-dialog>
+    `;
+  }
+
   render() {
     return html`
-      <mwc-dialog heading="${this.t('newTrackingPromotion')}">
+      <mwc-dialog
+        id="newPromotionDialog"
+        scrimClickAction=""
+        escapeKeyAction=""
+        modal
+        heading="${this.t('newTrackingPromotion')}"
+      >
         <div class="layout horizontal">
           <div class="layout vertical">
-            ${this.renderTextInputs()}
-            ${this.renderPreview()}
+            ${this.renderTextInputs()} ${this.renderPreview()}
           </div>
           ${this.renderAdMediums()}
         </div>
         <md-text-button
           .label="${this.t('cancel')}"
           class="button"
-          dialogAction="cancel"
+          @click="${this.cancel}"
           slot="secondaryAction"
         >
         </md-text-button>
@@ -293,6 +341,7 @@ export class YpNewAdGroup extends YpBaseElementWithLogin {
         >
         </md-tonal-button>
       </mwc-dialog>
+      ${this.renderConfirmationDialog()}
     `;
   }
 }
