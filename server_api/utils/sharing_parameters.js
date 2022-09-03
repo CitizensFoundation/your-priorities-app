@@ -54,27 +54,27 @@ const updateParametersFromCampaign = async (
 
 const getSharingParameters = async (req, collection, url, imageUrl) => {
   return await new Promise(async (resolve, reject) => {
-    let description = collection.description || collection.objectives || "";
-    if (description) {
-      description = description.replace(/"/g, "'");
-    }
-
-    let name = collection.name;
-    const collectionType = collection.constructor.name.toLowerCase();
-
-    if (collectionType === "domain" && url.indexOf("betrireykjavik.is") > -1) {
-      name = `Betri Reykjavík - ${name}`;
-    }
-
-    let parameters = {
-      title: name,
-      description: description,
-      url: url || "",
-      imageUrl: imageUrl || "",
-      locale: collection.language || "",
-    };
-
     try {
+      let description = collection.description || collection.objectives || "";
+      if (description) {
+        description = description.replace(/"/g, "'");
+      }
+
+      let name = collection.name;
+      const collectionType = collection.constructor.name.toLowerCase();
+
+      if (collectionType === "domain" && url.indexOf("betrireykjavik.is") > -1) {
+        name = `Betri Reykjavík - ${name}`;
+      }
+
+      let parameters = {
+        title: name,
+        description: description,
+        url: url || "",
+        imageUrl: imageUrl || "",
+        locale: collection.language || "",
+      };
+
       if (req.query.utm_content && !isNaN(req.query.utm_content)) {
         parameters = await updateParametersFromCampaign(
           req.query.utm_content,
