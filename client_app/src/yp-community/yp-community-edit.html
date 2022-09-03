@@ -166,6 +166,7 @@
         <paper-checkbox hidden$="[[!community.configuration.alternativeHeader]]" name="alternativeHeader" checked$="{{community.configuration.alternativeHeader}}">[[t('community.alternativeHeader')]]</paper-checkbox>
         <paper-checkbox name="disableDomainUpLink" checked$="{{community.configuration.disableDomainUpLink}}">[[t('disableCommunityDomainUpLink')]]</paper-checkbox>
         <paper-checkbox name="disableNameAutoTranslation" checked$="{{community.configuration.disableNameAutoTranslation}}">[[t('disableNameAutoTranslation')]]</paper-checkbox>
+        <paper-checkbox id="useReadMoreForDescription" name="useReadMoreForDescription" checked$="{{community.configuration.useReadMoreForDescription}}" on-tap="_updateReadMoreForDescription">[[t('useReadMoreForDescription')]]</paper-checkbox>
         <paper-checkbox name="hideAllTabs" checked$="{{community.configuration.hideAllTabs}}">[[t('hideAllTabs')]]</paper-checkbox>
       </div>
 
@@ -346,7 +347,6 @@
         <paper-checkbox name="alwaysShowOnDomainPage" checked$="{{community.configuration.alwaysShowOnDomainPage}}">[[t('alwaysShowOnDomainPage')]]</paper-checkbox>
         <paper-checkbox name="hideRecommendationOnNewsFeed" checked$="{{community.configuration.hideRecommendationOnNewsFeed}}">[[t('hideRecommendationOnNewsFeed')]]</paper-checkbox>
         <paper-checkbox name="recalculateCountersRecursively" checked$="{{community.configuration.recalculateCountersRecursively}}">[[t('recalculateCountersRecursively')]]</paper-checkbox>
-
         <paper-checkbox name="hideGroupListCardObjectives" checked$="{{community.configuration.hideGroupListCardObjectives}}">
           [[t('hideGroupListCardObjectives')]]
         </paper-checkbox>
@@ -528,6 +528,11 @@
 
       descriptionMaxLength: {
         type: Number,
+        computed: '_getDescriptionMaxLength(community, useReadMoreForDescription,descriptionMaxLengthWithUrl)'
+      },
+
+      descriptionMaxLengthWithUrl: {
+        type: Number,
         value: 300
       },
 
@@ -544,7 +549,25 @@
       deleteHeaderImage: {
         type: Boolean,
         value: false
+      },
+
+      useReadMoreForDescription: {
+        type: Boolean,
+        value: false
       }
+    },
+
+    _getDescriptionMaxLength: function (community, useReadMoreForDescription, descriptionMaxLengthWithUrl) {
+      if (useReadMoreForDescription) {
+        return 2000;
+      } else {
+        return descriptionMaxLengthWithUrl || 300;
+      }
+    },
+
+    _updateReadMoreForDescription: function () {
+      this.set('useReadMoreForDescription', this.$$("#useReadMoreForDescription").checked);
+      this.$$("#description").fire('iron-resize');
     },
 
     _hasVideos: function(community, uploadedVideoId) {
@@ -576,7 +599,9 @@
         var maxLength = 300;
         maxLength += urlsLength;
         maxLength -= Math.min(urlsLength, urlArray.length*30);
-        this.set('descriptionMaxLength', maxLength);
+        this.set('descriptionMaxLengthWithUrl', maxLength);
+      } else {
+        this.set('descriptionMaxLengthWithUrl', undefined);
       }
     },
 
@@ -780,14 +805,14 @@
         this._checkCommunityFolders(this.community);
       } else {
         this.set('community', community);
-        //TODO: Remove
-        if (false && community.CommunityLogoVideos && community.CommunityLogoVideos.length>0) {
-          if (window.appGlobals.useZiggeo) {
-            this.set('uploadedVideoId', community.CommunityLogoVideos[0].formats[0])
-          } else {
-            this.set('uploadedVideoId', community.CommunityLogoVideos[0].id)
-          }
+
+        if (this.community.configuration &&
+            this.community.configuration.useReadMoreForDescription) {
+          this.set('useReadMoreForDescription', true);
+        } else {
+          this.set('useReadMoreForDescription', false);
         }
+
         this.$.pagesAjax.url = "/api/communities/"+community.id+"/pages";
         this.$.pagesAjax.generateRequest();
         this._checkCommunityFolders(this.community);

@@ -18,7 +18,7 @@ module.exports = {
             type: Sequelize.DATE
           },
           configuration: Sequelize.JSONB,
-          deleted: { type: Sequelize.INTEGER, allowNull: false, defaultValue: false },
+          deleted: { type: Sequelize.BOOLEAN, allowNull: false, defaultValue: false },
           user_id: { type: Sequelize.INTEGER, allowNull: false },
           group_id: { type: Sequelize.INTEGER, allowNull: true },
           community_id: { type: Sequelize.INTEGER, allowNull: true },

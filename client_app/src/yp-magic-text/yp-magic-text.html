@@ -128,7 +128,7 @@
 
           showMoreText: {
             type: Boolean,
-            computed: '_showMoreText(moreText,content,truncate)'
+            computed: '_showMoreText(moreText,content,truncate, disableReadMore)'
           },
 
           closeDialogText: {
@@ -185,6 +185,11 @@
             type: Boolean,
             value: false,
             reflectToAttribute: true
+          },
+
+          disableReadMore: {
+            type: Boolean,
+            value: false
           }
         }
       }
@@ -209,14 +214,14 @@
         return ['fa','ar','ar_EG']
       }
 
-      _showMoreText(moreText, content, truncate) {
+      _showMoreText(moreText, content, truncate, disableReadMore) {
         if (!this.isDialog && !this.truncate) {
           this.truncate = 500;
         } else if (this.isDialog) {
           this.truncate = null;
         }
 
-        return moreText && content && (this.truncate  && content.length>this.truncate );
+        return !disableReadMore && moreText && content && (this.truncate  && content.length>this.truncate );
       }
 
       _openFullScreen() {

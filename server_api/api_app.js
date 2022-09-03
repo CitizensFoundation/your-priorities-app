@@ -173,8 +173,8 @@ app.use(function setupStaticPath(req, res, next) {
   let staticPath = path.join(__dirname, '../client_app/build/bundled');
   let staticIndex = false;
 
-  if (req.path.startsWith('/marketing/') || (req.headers.referrer && req.headers.referrer.indexOf('/marketing/')>-1)) {
-    staticPath = path.join(__dirname, './apps/marketing_app/dist');
+  if (req.path.startsWith('/promotion/') || (req.headers.referrer && req.headers.referrer.indexOf('/promotion/')>-1)) {
+    staticPath = path.join(__dirname, './apps/promotion_app/dist');
     staticIndex = "index.html";
   } else if (req.path.startsWith('/analytics/') || (req.headers.referrer && req.headers.referrer.indexOf('/analytics/'))>-1) {
     staticPath = path.join(__dirname, './apps/analytics_app/dist');
@@ -433,11 +433,11 @@ app.use(function cacheControlHeaders(req, res, next) {
   next();
 });
 
-app.use('/marketing', express.static(path.join(__dirname, '../apps/marketing_app/dist')));
-app.use('/marketing/domain/*', express.static(path.join(__dirname, '../apps/marketing_app/dist')));
-app.use('/marketing/community/*', express.static(path.join(__dirname, '../apps/marketing_app/dist')));
-app.use('/marketing/group/*', express.static(path.join(__dirname, '../apps/marketing_app/dist')));
-app.use('/marketing/post/*', express.static(path.join(__dirname, '../apps/marketing_app/dist')));
+app.use('/promotion', express.static(path.join(__dirname, '../apps/promotion_app/dist')));
+app.use('/promotion/domain/*', express.static(path.join(__dirname, '../apps/promotion_app/dist')));
+app.use('/promotion/community/*', express.static(path.join(__dirname, '../apps/promotion_app/dist')));
+app.use('/promotion/group/*', express.static(path.join(__dirname, '../apps/promotion_app/dist')));
+app.use('/promotion/post/*', express.static(path.join(__dirname, '../apps/promotion_app/dist')));
 app.use('/analytics/', express.static(path.join(__dirname, '../apps/analytics_app/dist')));
 app.use('/analytics/domain/*', express.static(path.join(__dirname, '../apps/analytics_app/dist')));
 app.use('/analytics/community/*', express.static(path.join(__dirname, '../apps/analytics_app/dist')));

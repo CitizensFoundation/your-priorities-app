@@ -35,15 +35,19 @@
         padding-left:8px;
         margin-right:4px;
       }
+
+      [hidden] {
+        display: none !important;
+      }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
     <div class="stats layout horizontal end-justified">
       <iron-icon title$="[[t('stats.posts')]]" icon="lightbulb-outline" class="stats-icon bulb"></iron-icon>
-      <div title$="[[t('stats.posts')]]" class="stats-text" style="">{{formatNumber(community.counter_posts)}}</div>
+      <div title$="[[t('stats.posts')]]" class="stats-text">{{formatNumber(community.counter_posts)}}</div>
 
-      <iron-icon title$="[[t('stats.groups')]]" icon="people" class="stats-icon"></iron-icon>
-      <div title$="[[t('stats.groups')]]" class="stats-text" style="">{{formatNumber(community.counter_groups)}}</div>
+      <iron-icon hidden$="[[hideGroups]]" title$="[[t('stats.groups')]]" icon="people" class="stats-icon"></iron-icon>
+      <div hidden$="[[hideGroups]]" title$="[[t('stats.groups')]]" class="stats-text">{{formatNumber(community.counter_groups)}}</div>
 
       <iron-icon title$="[[t('stats.users')]]" icon="face" class="stats-icon"></iron-icon>
       <div title$="[[t('stats.users')]]" class="stats-text">{{formatNumber(community.counter_users)}}</div>
@@ -64,6 +68,11 @@
         community: {
           type: Object,
           observer: '_communityChanged'
+        },
+
+        hideGroups: {
+          type: Boolean,
+          value: false
         }
       },
 

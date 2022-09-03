@@ -368,8 +368,8 @@
                 </div>
                 <div hidden class="communityAccess">[[_communityAccessText(community.access)]]</div>
                 <yp-magic-text id="description" class="communityDescription" widetext$="[[wideText]]"
-                               largefont$="[[largeFont]]"
-                               text-type="communityContent" content-language="[[community.language]]"
+                               largefont$="[[largeFont]]" truncate="[[truncateDescriptionAmount]]" more-text="[[t('readMore')]]" close-dialog-text="[[t('close')]]"
+                               text-type="communityContent" content-language="[[community.language]]" disable-read-more="[[!useReadMoreForDescription]]"
                                content="[[community.description]]" content-id="[[community.id]]">
                 </yp-magic-text>
               </div>
@@ -408,7 +408,7 @@
             </paper-listbox>
           </paper-menu-button>
         </div>
-        <yp-community-stats class="stats" community="[[community]]"></yp-community-stats>
+        <yp-community-stats hide-groups="[[useReadMoreForDescription]]" class="stats" community="[[community]]"></yp-community-stats>
       </paper-material>
     </div>
 
@@ -491,6 +491,34 @@
         useZiggeo: {
           type: Boolean,
           computed: '_useZiggeo(community)'
+        },
+
+        truncateDescriptionAmount: {
+          type: Boolean,
+          computed: '_truncateDescriptionAmount(community, useReadMoreForDescription)'
+        },
+
+        useReadMoreForDescription: {
+          type: Boolean,
+          computed: '_useReadMoreForDescription(community)'
+        }
+      },
+
+      _truncateDescriptionAmount: function(community, useReadMoreForDescription) {
+        if (community && useReadMoreForDescription) {
+          return 250;
+        } else {
+          return 300;
+        }
+      },
+
+      _useReadMoreForDescription: function(community) {
+        if (community &&
+            community.configuration &&
+            community.configuration.useReadMoreForDescription) {
+          return true;
+        } else {
+          return false;
         }
       },
 
