@@ -160,12 +160,6 @@ let sendIndex = async (req, res) => {
       console.error("Cant read index file");
       throw err;
     } else {
-      var userAgent = req.headers['user-agent'];
-      var ie11 = /Trident/.test(userAgent);
-      if (!ie11) {
-        indexFileData = indexFileData.replace('<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE11">','');
-      }
-
       if (process.env.ZIGGEO_ENABLED && req.ypDomain.configuration.ziggeoApplicationToken) {
         indexFileData = indexFileData.replace(
           '<html lang="en">',
