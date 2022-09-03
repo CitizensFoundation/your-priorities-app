@@ -107,13 +107,11 @@ const getCollection = async (req) => {
             attributes: ['id','name','description','language']
           });
         } else {
-          collection = req.ypDomain;
-          resolve({collection});
+          resolve({collection: req.ypDomain});
         }
         resolve({collection});
       } else {
-        collection = req.ypDomain;
-        resolve({collection});
+        resolve({collection: req.ypDomain});
       }
     } catch (error) {
       reject(error);
