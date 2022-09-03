@@ -2075,7 +2075,7 @@ router.get('/:communityId/getFraudAudits', auth.can('edit community'), function(
   });
 });
 
-router.get('/:communityId/:type/getPlausibleSeries', auth.can('edit community'), async (req, res) => {
+router.get('/:communityId/:type/getPlausibleSeries', auth.can('edit community marketing'), async (req, res) => {
   // Example: "timeseries?site_id=your-priorities&period=7d";
   try {
     const questionMarkIndex = req.url.indexOf('?');
@@ -2093,7 +2093,7 @@ router.get('/:communityId/:type/getPlausibleSeries', auth.can('edit community'),
   }
 });
 
-router.put('/:communityId/plausibleStatsProxy', auth.can('edit community'), async (req, res) => {
+router.put('/:communityId/plausibleStatsProxy', auth.can('edit community marketing'), async (req, res) => {
   try {
     const plausibleData = await plausibleStatsProxy(req.body.plausibleUrl, { communityId: req.params.communityId });
     res.send(plausibleData);

@@ -531,6 +531,72 @@ auth.entity('bulkStatusUpdates', function(req, done) {
   }
 });
 
+auth.role('community.marketing',  async (community, req, done) => {
+  if (!auth.isAuthenticated(req)) {
+    done();
+  } else {
+    models.Community.findOne({
+      where: { id: community.id },
+      attributes: ['id','access','user_id','configuration']
+    }).then( async community => {
+      if (community.user_id === req.user.id) {
+        done(null, true);
+      } else {
+        try {
+          if (await community.hasCommunityAdmins(req.user))
+            done(null, true);
+          else {
+            if (await community.hasCommunityPromoters(req.user)) {
+              done(null, true);
+            } else {
+              done(null, false);
+            }
+          }
+        } catch(error) {
+          log.error("Error in authentication", { error });
+          done(null, false);
+        }
+      }
+    }).catch(function (error) {
+      log.error("Error in authentication", { error });
+      done(null, false);
+    });
+  }
+});
+
+auth.role('group.marketing',  async (group, req, done) => {
+  if (!auth.isAuthenticated(req)) {
+    done();
+  } else {
+    models.Group.findOne({
+      where: { id: group.id },
+      attributes: ['id','access','user_id','configuration']
+    }).then( async group => {
+      if (group.user_id === req.user.id) {
+        done(null, true);
+      } else {
+        try {
+          if (await group.hasGroupAdmins(req.user))
+            done(null, true);
+          else {
+            if (await group.hasGroupPromoters(req.user)) {
+              done(null, true);
+            } else {
+              done(null, false);
+            }
+          }
+        } catch(error) {
+          log.error("Error in authentication", { error });
+          done(null, false);
+        }
+      }
+    }).catch(function (error) {
+      log.error("Error in authentication", { error });
+      done(null, false);
+    });
+  }
+});
+
 // Community admin and view
 auth.role('community.admin', function (community, req, done) {
   if (!auth.isAuthenticated(req)) {
@@ -1476,6 +1542,9 @@ auth.action('edit category', ['category.admin']);
 auth.action('edit point', ['point.admin']);
 auth.action('delete point', ['point.admin']);
 auth.action('edit bulkStatusUpdate', ['bulkStatusUpdates.admin']);
+
+auth.action('edit community marketing', ['community.marketing']);
+auth.action('edit group marketing', ['group.marketing']);
 
 auth.action('view organization', ['organization.viewUser']);
 auth.action('view domain', ['domain.viewUser']);

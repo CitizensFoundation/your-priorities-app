@@ -113,6 +113,8 @@ module.exports = (sequelize, DataTypes) => {
     Group.belongsToMany(models.Image, { as: 'GroupHeaderImages', through: 'GroupHeaderImage' });
     Group.belongsToMany(models.User, { as: 'GroupUsers', through: 'GroupUser' });
     Group.belongsToMany(models.User, { as: 'GroupAdmins', through: 'GroupAdmin' });
+    Group.belongsToMany(models.User, { as: 'GroupPromoters', through: 'GroupPromoter' });
+    Group.hasMany(models.Campaign);
   };
 
   Group.ACCESS_PUBLIC = 0;

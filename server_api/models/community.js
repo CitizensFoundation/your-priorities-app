@@ -111,6 +111,8 @@ module.exports = (sequelize, DataTypes) => {
     Community.belongsToMany(models.Image, { as: 'CommunityHeaderImages', through: 'CommunityHeaderImage' });
     Community.belongsToMany(models.User, { as: 'CommunityUsers', through: 'CommunityUser' });
     Community.belongsToMany(models.User, { as: 'CommunityAdmins', through: 'CommunityAdmin' });
+    Community.belongsToMany(models.User, { as: 'CommunityPromoters', through: 'CommunityPromoter' });
+    Community.hasMany(models.Campaign);
   };
 
   Community.ACCESS_PUBLIC = 0;

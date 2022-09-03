@@ -114,6 +114,7 @@ module.exports = (sequelize, DataTypes) => {
     User.belongsToMany(models.Organization, { as: 'OrganizationAdmins', through: 'OrganizationAdmin' });
     User.belongsToMany(models.Organization, { as: 'OrganizationUsers', through: 'OrganizationUser' });
     User.belongsToMany(models.Video, { as: 'UserProfileVideos', through: 'UserProfileVideo'});
+    User.hasMany(models.Campaign);
   };
 
   User.defaultAttributesWithSocialMedia = ['id', 'email', 'description', 'name', 'facebook_id', 'google_id', 'github_id', 'twitter_id', 'default_locale','legacy_passwords_disabled'];
