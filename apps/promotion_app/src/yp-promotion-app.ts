@@ -17,7 +17,7 @@ import { YpServerApiAdmin } from './@yrpri/common/YpServerApiAdmin.js';
 
 import './@yrpri/yp-dialog-container/yp-app-dialogs.js';
 
-import './yp-analytics/testing/yp-community-marketing.js';
+import './yp-analytics/testing/yp-community-promotion.js';
 import { YpAccessHelpers } from './@yrpri/common/YpAccessHelpers.js';
 import { classMap } from 'lit/directives/class-map.js';
 
@@ -36,14 +36,14 @@ import {
 } from '@material/material-color-utilities';
 
 import '@material/web/menu/menu.js';
-import './yp-analytics/yp-marketing-dashboard.js';
+import './yp-analytics/yp-promotion-dashboard.js';
 import { cache } from 'lit/directives/cache.js';
 
 import './yp-campaign/yp-campaign.js';
 import { YpCollectionHelpers } from './@yrpri/common/YpCollectionHelpers.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 
-import './yp-marketing-settings.js';
+import './yp-promotion-settings.js';
 
 declare global {
   interface Window {
@@ -64,8 +64,8 @@ const PagesTypes = {
   Settings: 4,
 };
 
-@customElement('yp-marketing-app')
-export class YpMarketingApp extends YpBaseElement {
+@customElement('yp-promotion-app')
+export class YpPromotionApp extends YpBaseElement {
   @property({ type: String })
   collectionType: string;
 
@@ -229,7 +229,7 @@ export class YpMarketingApp extends YpBaseElement {
     this._setupEventListeners();
     this._getCollection();
 
-    const savedColor = localStorage.getItem('md3-yrpri-marketing-color');
+    const savedColor = localStorage.getItem('md3-yrpri-promotion-color');
     if (savedColor) {
       this.fireGlobal('yp-theme-color', savedColor);
     }
@@ -581,12 +581,12 @@ export class YpMarketingApp extends YpBaseElement {
               return html`
                 ${cache(
                   this.collection
-                    ? html`<yp-marketing-dashboard
+                    ? html`<yp-promotion-dashboard
                         .collectionType="${this.collectionType}"
                         .collection="${this.collection}"
                         .collectionId="${this.collectionId}"
                       >
-                      </yp-marketing-dashboard>`
+                      </yp-promotion-dashboard>`
                     : nothing
                 )}
               `;
@@ -621,13 +621,13 @@ export class YpMarketingApp extends YpBaseElement {
           return html`
             ${cache(
               this.collection
-                ? html`<yp-marketing-settings
+                ? html`<yp-promotion-settings
                     .collectionType="${this.collectionType}"
                     .collection="${this.collection}"
                     .collectionId="${this.collectionId}"
                     @color-changed="${this._settingsColorChanged}"
                   >
-                  </yp-marketing-settings>`
+                  </yp-promotion-settings>`
                 : nothing
             )}
           `;

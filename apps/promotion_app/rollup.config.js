@@ -27,7 +27,7 @@ export default {
     /** Enable using HTML as rollup entrypoint */
     html({
       minify: true,
-      publicPath: '/marketing'
+      publicPath: '/promotion'
 //      injectServiceWorker: true,
 //      serviceWorkerPath: 'dist/sw.js',
     }),

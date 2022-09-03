@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/camelcase */
 import { html, fixture, expect } from '@open-wc/testing';
 
-import { YpMarketingApp } from '../yp-marketing-app.js';
+import { YpPromotionApp } from '../yp-promotion-app.js';
 import '../yp-admin-app.js';
 import { YpTestHelpers } from '../@yrpri/common/test/setup-app.js';
 
 
-describe('YpMarketingApp', () => {
-  let element: YpMarketingApp;
+describe('YpPromotionApp', () => {
+  let element: YpPromotionApp;
 
   before(async () => {
     await YpTestHelpers.setupApp();
@@ -16,9 +16,9 @@ describe('YpMarketingApp', () => {
   beforeEach(async () => {
 
     element = await fixture(html`
-      <yp-marketing-app
+      <yp-promotion-app
         collectionId="1"
-        collectionType="domain"></yp-marketing-app>
+        collectionType="domain"></yp-promotion-app>
     `);
   });
 

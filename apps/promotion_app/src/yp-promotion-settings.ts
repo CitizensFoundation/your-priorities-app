@@ -5,14 +5,14 @@ import { installMediaQueryWatcher } from 'pwa-helpers/media-query.js';
 import { Layouts } from 'lit-flexbox-literals';
 import { YpBaseElementWithLogin } from './@yrpri/common/yp-base-element-with-login.js';
 import 'vanilla-colorful';
-@customElement('yp-marketing-settings')
-export class YpMarketingSettings extends YpBaseElementWithLogin {
+@customElement('yp-promotion-settings')
+export class YpPromotionSettings extends YpBaseElementWithLogin {
   @property({ type: String })
   color: string | undefined;
 
   connectedCallback() {
     super.connectedCallback();
-    const savedColor = localStorage.getItem("md3-yrpri-marketing-color");
+    const savedColor = localStorage.getItem("md3-yrpri-promotion-color");
     if (savedColor) {
       this.color = savedColor;
     } else {
@@ -46,7 +46,7 @@ export class YpMarketingSettings extends YpBaseElementWithLogin {
     handleColorChanged(event: CustomEvent) {
       this.color = event.detail.value;
       this.fire("color-changed", { value: this.color });
-      localStorage.setItem("md3-yrpri-marketing-color", this.color!);
+      localStorage.setItem("md3-yrpri-promotion-color", this.color!);
     }
 
 }

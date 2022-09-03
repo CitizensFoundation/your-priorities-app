@@ -11,8 +11,8 @@ import './yp-pages-chart.js';
 import './yp-bounce-rate-chart.js';
 import '../../pl-components/pl-dashboard.js';
 
-@customElement('yp-community-marketing')
-export class YpCommunityMarketing extends YpAdminPage {
+@customElement('yp-community-promotion')
+export class YpCommunityPromotion extends YpAdminPage {
   @property({ type: String })
   communityAccess = 'public';
 
