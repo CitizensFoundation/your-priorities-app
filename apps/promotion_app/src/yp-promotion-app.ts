@@ -39,7 +39,7 @@ import '@material/web/menu/menu.js';
 import './yp-analytics/yp-promotion-dashboard.js';
 import { cache } from 'lit/directives/cache.js';
 
-import './yp-campaign/yp-promotion-manager.js';
+import './yp-promotion/yp-campaign-manager.js';
 import { YpCollectionHelpers } from './@yrpri/common/YpCollectionHelpers.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 
@@ -595,12 +595,12 @@ export class YpPromotionApp extends YpBaseElement {
           return html`
             ${cache(
               this.collection
-                ? html`<yp-promotion-manager
+                ? html`<yp-campaign-manager
                     .collectionType="${this.collectionType}"
                     .collection="${this.collection}"
                     .collectionId="${this.collectionId}"
                   >
-                  </yp-promotion-manager>`
+                  </yp-campaign-manager>`
                 : nothing
             )}
           `;
