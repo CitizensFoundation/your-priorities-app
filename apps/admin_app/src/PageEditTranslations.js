@@ -249,6 +249,7 @@ export class PageEditTranslations extends YpBaseElement {
       el: 'Ελληνικά',
       no: 'Norsk',
       lv: "Latviešu",
+      cnr: "Montenegrin",
       uk: 'українська',
       sq: 'Shqip',
       ky: 'Кыргызча',
@@ -264,9 +265,13 @@ export class PageEditTranslations extends YpBaseElement {
       sk: 'Slovenčina',
       sl: 'Slovenščina',
       sr: 'Srpski',
+      th: 'ภาษาไทย',
       sr_latin: 'Srpski (latin)',
       hr: 'Hrvatski',
-      bg: 'български'
+      kl: 'Kalaallisut',
+      mk: 'M;akedonski',
+      bg: 'български',
+      cy: 'Cymraeg'
     };
   }
 
