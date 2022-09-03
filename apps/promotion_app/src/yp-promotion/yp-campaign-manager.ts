@@ -4,6 +4,7 @@ import { YpBaseElementWithLogin } from '../@yrpri/common/yp-base-element-with-lo
 
 import '@material/web/fab/fab-extended.js';
 import './yp-new-campaign.js';
+import './yp-campaign.js';
 import { YpNewCampaign } from './yp-new-campaign.js';
 import { YpCampaignApi } from './YpCampaignApi';
 
@@ -13,7 +14,7 @@ export class YpCampaignManager extends YpBaseElementWithLogin {
   collectionType!: string;
 
   @property({ type: Number })
-  collectionId!: number | string;
+  collectionId!: number;
 
   @property({ type: Object })
   collection: YpCollectionData | undefined;
@@ -23,6 +24,8 @@ export class YpCampaignManager extends YpBaseElementWithLogin {
 
   @query('yp-new-campaign')
   private newCampaignElement!: YpNewCampaign;
+
+  campaignApi: YpCampaignApi = new YpCampaignApi();
 
   static get styles() {
     return [
@@ -64,7 +67,7 @@ export class YpCampaignManager extends YpBaseElementWithLogin {
       },
     } as YpCampaignData;
 
-    campaign = await YpCampaignApi.createCampaign(
+    campaign = await this.campaignApi.createCampaign(
       this.collectionType,
       this.collectionId,
       campaign
@@ -85,11 +88,13 @@ export class YpCampaignManager extends YpBaseElementWithLogin {
 
     campaign.configuration.mediums = mediums;
 
+    await this.campaignApi.updateCampaign(this.collectionType, this.collectionId, campaign);
+
     this.getCampaigns();
   }
 
   async getCampaigns() {
-    this.campaigns = await YpCampaignApi.getCampaigns(
+    this.campaigns = await this.campaignApi.getCampaigns(
       this.collectionType,
       this.collectionId
     );
