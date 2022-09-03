@@ -118,7 +118,6 @@ router.get('/:externalId/points', (req, res) => {
       let order = [
         pointOrder,
         [models.User, {model: models.Image, as: 'UserProfileImages'}, 'created_at', 'asc'],
-        [{model: models.Video, as: "PointVideos"}, 'updated_at', 'desc'],
         [{model: models.Audio, as: "PointAudios"}, 'updated_at', 'desc'],
       ];
 
