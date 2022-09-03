@@ -402,7 +402,19 @@
            is-from-new-post$="[[isFromNewPost]]"
            inner-h-t-m-l="[[_textWithLinks(question)]]"
            extra-top-margin$="[[question.extraTopMargin]]"
-           less-bottom-margin$="[[question.lessBottomMargin]]"></div>
+           less-bottom-margin$="[[question.lessBottomMargin]]">
+      </div>
+    </template>
+
+    <template is="dom-if" if="[[_isHtmlDescription(question)]]">
+      <div class="question general"
+           id="structuredQuestionQuestion_[[index]]"
+           use-small-font$="[[useSmallFont]]"
+           is-from-new-post$="[[isFromNewPost]]"
+           inner-h-t-m-l="[[question]]"
+           extra-top-margin$="[[question.extraTopMargin]]"
+           less-bottom-margin$="[[question.lessBottomMargin]]">
+      </div>
     </template>
 
     <template is="dom-if" if="[[_isSeparator(question)]]">
@@ -975,6 +987,10 @@
 
     _isTextDescription(question) {
       return (question.type && question.type.toLowerCase() === 'textdescription');
+    }
+
+    _isHtmlDescription(question) {
+      return (question.type && question.type.toLowerCase() === 'htmldescription');
     }
 
     _isCheckboxes(question) {

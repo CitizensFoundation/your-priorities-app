@@ -1,4 +1,5 @@
 {
+  "useReadMoreForDescription": "Use Read More for community description",
   "deleteHeaderImage": "Delete header image",
   "inheritThemeFromCommunity": "Inherit theme from community",
   "disableGroupDynamicFontSizes": "Disable dynamic font sizes on groups",
