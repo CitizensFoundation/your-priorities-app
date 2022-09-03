@@ -17,49 +17,11 @@ export class YpPromotionManager extends YpBaseElementWithLogin {
   @property({ type: Object })
   collection: YpCollectionData | undefined;
 
-  @property({ type: Object })
-  campaign: YpCampaignData | undefined;
+  @property({ type: Array })
+  promotions: YpPromotionData[] | undefined;
 
   @query('yp-new-promotion')
   private newPromotionElement!: YpNewPromotion;
-
-  setupTestData() {
-    this.campaign = {
-      id: 1,
-      created_at: '2020-01-01T00:00:00.000Z',
-      updated_at: '2020-01-01T00:00:00.000Z',
-      community_id: 1234,
-      user_id: 850,
-      configuration: {},
-      adGroups: [
-        {
-          id: 1,
-          created_at: '2020-01-01T00:00:00.000Z',
-          updated_at: '2020-01-01T00:00:00.000Z',
-          name: 'Ad Group 1',
-          configuration: {},
-          user_id: 850,
-          ads: [
-            {
-              id: 1,
-              created_at: '2020-01-01T00:00:00.000Z',
-              updated_at: '2020-01-01T00:00:00.000Z',
-              name: 'Ad 1',
-              configuration: {
-                utm_campaign: 'Eastbourne Action Network',
-                utm_source: 'Your Priorities',
-                utm_medium: 'Twitter',
-                utm_content: 'a-1',
-                content: 'This is an ad',
-              },
-              user_id: 850,
-              language: 'en',
-            },
-          ],
-        },
-      ],
-    };
-  }
 
   static get styles() {
     return [
@@ -84,12 +46,17 @@ export class YpPromotionManager extends YpBaseElementWithLogin {
     this.newPromotionElement.open();
   }
 
+  savePromotion(event: CustomEvent) {
+    console.log('savePromotion', event);
+  }
+
   render() {
     return html`
       <yp-new-promotion
         .collectionType="${this.collectionType}"
         .collection="${this.collection}"
         .collectionId="${this.collectionId}"
+        @save="${this.savePromotion}"
       ></yp-new-promotion>
       <div class="layout vertical start mainContainer">
         <div>

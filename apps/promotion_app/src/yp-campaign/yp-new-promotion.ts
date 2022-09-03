@@ -43,7 +43,7 @@ export class YpNewPromotion extends YpBaseElementWithLogin {
   collection: YpCollectionData | undefined;
 
   @property({ type: Object })
-  campaign: YpCampaignData | undefined;
+  promotion: YpPromotionData | undefined;
 
   @property({ type: Boolean })
   previewEnabled = false;
@@ -139,6 +139,22 @@ export class YpNewPromotion extends YpBaseElementWithLogin {
     dialog.show();
   }
 
+  getMediums() {
+    let mediums: string[] = [];
+
+    const checkboxes = this.shadowRoot!.querySelectorAll(
+      'md-checkbox'
+    ) as NodeListOf<Checkbox>;
+
+    checkboxes.forEach(checkbox => {
+      if (checkbox.checked) {
+        mediums.push(checkbox.name);
+      }
+    });
+
+    return mediums;
+  }
+
   async inputsChanged() {
     const okButton = this.$$('md-tonal-button') as TonalButton;
     const promotionTextTextArea = this.$$('mwc-textarea') as TextArea;
@@ -151,17 +167,7 @@ export class YpNewPromotion extends YpBaseElementWithLogin {
       this.targetAudience = targetAudienceTextField.value;
       this.promotionText = promotionTextTextArea.value;
 
-      let mediums = [];
-
-      const checkboxes = this.shadowRoot!.querySelectorAll(
-        'md-checkbox'
-      ) as NodeListOf<Checkbox>;
-
-      checkboxes.forEach(checkbox => {
-        if (checkbox.checked) {
-          mediums.push(checkbox.name);
-        }
-      });
+      const mediums = this.getMediums();
 
       if (
         mediums.length > 0 &&
@@ -177,7 +183,20 @@ export class YpNewPromotion extends YpBaseElementWithLogin {
     }, 50);
   }
 
+  save() {
+    this.fire('save', {
+      targetAudience: this.targetAudience,
+      promotionText: this.promotionText,
+      mediums: this.getMediums(),
+    });
+    this.close();
+  }
+
   discard() {
+    this.close();
+  }
+
+  close() {
     const dialog = this.$$('#newPromotionDialog') as Dialog;
     dialog.close();
   }
@@ -333,10 +352,10 @@ export class YpNewPromotion extends YpBaseElementWithLogin {
         >
         </md-text-button>
         <md-tonal-button
-          dialogAction="ok"
           disabled
           class="button okButton"
           .label="${this.t('save')}"
+          @click="${this.save}"
           slot="primaryAction"
         >
         </md-tonal-button>

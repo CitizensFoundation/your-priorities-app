@@ -1,44 +1,22 @@
-interface YpCampaignConfigurationData {
+interface YpPromotionConfigurationData {
   startDate?: string;
   endDate?: string;
-}
-
-interface YpCampaignAdConfigurationData {
+  mediums: YpPromotionMediumData[];
+  audience: string;
   utm_campaign: string;
   utm_source: string;
-  utm_medium: string;
-  utm_term?: string;
   utm_content: string;
-  content?: string;
-  finaUrl?: string;
-}
-
-interface YpCampaignAdGroupConfigurationData {
-  startDate?: string;
-  endDate?: string;
-}
-
-interface YpCampaignAd {
-  id: number;
-  created_at: string;
-  updated_at: string;
-  name: string;
-  configuration?: YpCampaignAdConfigurationData;
-  user_id: number;
+  utm_term?: string;
+  content: string;
   language: string;
 }
 
-interface YpCampaignAdGroupData {
-  id: number;
-  created_at: string;
-  updated_at: string;
-  name: string;
-  configuration?: YpCampaignAdGroupConfigurationData;
-  user_id: number;
-  ads?: YpCampaignAd[];
+interface YpPromotionMediumData {
+  utm_medium: string;
+  finaUrl?: string;
 }
 
-interface YpCampaignData {
+interface YpPromotionData {
   id: number;
   created_at: string;
   updated_at: string;
@@ -48,6 +26,5 @@ interface YpCampaignData {
   domain_id?: number;
   user_id: number;
   email_list_id?: number;
-  configuration: YpCampaignConfigurationData;
-  adGroups: YpCampaignAdGroupData[];
+  configuration: YpPromotionConfigurationData;
 }
