@@ -35,7 +35,7 @@ const getSharingParameters = async (req,
                                     url,
                                     imageUrl) => {
   return await new Promise(async (resolve, reject) => {
-    let description = collection.description || collection.objectives;
+    let description = collection.description || collection.objectives || "";
     if (description) {
       description = description.replace(/"/g,"'");
     }
@@ -50,13 +50,11 @@ const getSharingParameters = async (req,
     let parameters = {
       title: name,
       description: description,
-      url: url,
-      imageUrl: imageUrl,
-      locale: collection.language
+      url: url || "",
+      imageUrl: imageUrl || "",
+      locale: collection.language || ""
     }
-
-
-
+    
     try {
       if (models.Campaign && req.query.utm_content && !isNaN(req.query.utm_content))  {
         parameters = await updateParametersFromCampaign(req.query.utm_content, collectionType, collection.id, parameters)
