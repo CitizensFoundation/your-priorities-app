@@ -57,20 +57,20 @@ export class YpCampaignManager extends YpBaseElementWithLogin {
   async createCampaign(event: CustomEvent) {
     const data = event.detail as YpNewCampaignData;
 
-    let campaign = {
-      configuration: {
-        utm_campaign: data.targetAudience,
-        utm_source: this.collection!.name,
-        audience: data.targetAudience,
-        promotionText: data.promotionText,
-        mediums: [] as YpCampaignMediumData[],
-      },
-    } as YpCampaignData;
+    const configuration = {
+      utm_campaign: data.targetAudience,
+      utm_source: this.collection!.name,
+      audience: data.targetAudience,
+      promotionText: data.promotionText,
+      mediums: [] as YpCampaignMediumData[],
+    } as YpCampaignConfigurationData
 
-    campaign = await this.campaignApi.createCampaign(
+    const campaign = await this.campaignApi.createCampaign(
       this.collectionType,
       this.collectionId,
-      campaign
+      {
+        configuration
+      }
     );
 
     campaign.configuration.utm_campaign = `${campaign.id}`;
@@ -88,7 +88,9 @@ export class YpCampaignManager extends YpBaseElementWithLogin {
 
     campaign.configuration.mediums = mediums;
 
-    await this.campaignApi.updateCampaign(this.collectionType, this.collectionId, campaign);
+    await this.campaignApi.updateCampaign(this.collectionType, this.collectionId, campaign.id, {
+      configuration: campaign.configuration
+    });
 
     this.getCampaigns();
   }

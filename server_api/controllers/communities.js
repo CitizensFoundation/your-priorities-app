@@ -2104,4 +2104,59 @@ router.put('/:communityId/plausibleStatsProxy', auth.can('edit community marketi
   }
 });
 
+router.get('/:communityId/get_campaigns', auth.can('edit community marketing'), async (req, res) => {
+  try {
+    const campaigns = await models.Campaign.findAll({
+      where: {
+        community_id: req.params.communityId
+      },
+      attributes: ['id','configuration']
+    });
+    res.send(campaigns);
+  } catch (error) {
+    log.error('Could not get campaigns', { err: error, context: 'get_campaigns', user: toJson(req.user.simple()) });
+    res.sendStatus(500);
+  }
+});
+
+router.post('/:communityId/create_campaign', auth.can('edit community marketing'), async (req, res) => {
+  try {
+    const campaign = models.Campaign.build({
+      community_id: req.params.communityId,
+      configuration: req.body.configuration,
+      user_id: req.user.id
+    });
+
+    await campaign.save();
+    //TODO: Toxicity check
+
+    res.send(campaign);
+  } catch (error) {
+    log.error('Could not create_campaign campaigns', { err: error, context: 'create_campaign', user: toJson(req.user.simple()) });
+    res.sendStatus(500);
+  }
+});
+
+router.put('/:communityId/:campaignId/update_campaign', auth.can('edit community marketing'), async (req, res) => {
+  try {
+    const campaign = await models.Campaign.findOne({
+      where: {
+        id: req.params.campaignId,
+        community_id: req.params.communityId
+      },
+      attributes: ['id','configuration']
+    });
+
+    campaign.configuration = req.body.configuration;
+
+    await campaign.save();
+    //TODO: Toxicity check
+
+    res.send(campaign);
+  } catch (error) {
+    log.error('Could not create_campaign campaigns', { err: error, context: 'create_campaign', user: toJson(req.user.simple()) });
+    res.sendStatus(500);
+  }
+});
+
 module.exports = router;
