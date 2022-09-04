@@ -193,6 +193,12 @@ export class YpPromotionApp extends YpBaseElement {
 
         .mainPageContainer {
           margin-top: 16px;
+          max-width: 1100px;
+          width: 1100px;
+        }
+
+        yp-promotion-dashboard {
+          max-width: 1100px;
         }
       `,
     ];
@@ -589,10 +595,10 @@ export class YpPromotionApp extends YpBaseElement {
       switch (this.pageIndex) {
         case PagesTypes.Analytics:
           switch (this.collectionType) {
-            case 'domains':
-            case 'communities':
-            case 'groups':
-            case 'posts':
+            case 'domain':
+            case 'community':
+            case 'group':
+            case 'post':
               return html`
                 ${cache(
                   this.collection

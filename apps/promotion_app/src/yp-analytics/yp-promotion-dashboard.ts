@@ -7,6 +7,7 @@ import './yp-realtime.js';
 import './yp-historical.js';
 
 import { PlausibleDashboard } from '../pl-components/pl-dashboard.js';
+import { YpServerApi } from '../@yrpri/common/YpServerApi.js';
 
 @customElement('yp-promotion-dashboard')
 export class YpPromotionDashboard extends PlausibleDashboard {
@@ -51,7 +52,12 @@ export class YpPromotionDashboard extends PlausibleDashboard {
   }
 
   static get styles() {
-    return [css``];
+    return [css`
+      :host {
+        max-width: 1280px;
+        width: 1280px;
+      }
+    `];
   }
 
   render() {
@@ -64,7 +70,7 @@ export class YpPromotionDashboard extends PlausibleDashboard {
             .currentRole="${this.currentUserRole}"
             .query="${this.query}"
             .history="${this.history}"
-            .proxyUrl="${`/api/${this.collectionType}/${this.collectionId}/plausibleStatsProxy`}"
+            .proxyUrl="${`/api/${YpServerApi.transformCollectionTypeToApi(this.collectionType)}/${this.collectionId}/plausibleStatsProxy`}"
             proxyFaviconBaseUrl="/api/users/PlausibleFavIcon/"
           ></yp-realtime>
         `;
@@ -76,7 +82,7 @@ export class YpPromotionDashboard extends PlausibleDashboard {
             .history="${this.history}"
             .currentRole="${this.currentUserRole}"
             .query="${this.query}"
-            .proxyUrl="${`/api/${this.collectionType}/${this.collectionId}/plausibleStatsProxy`}"
+            .proxyUrl="${`/api/${YpServerApi.transformCollectionTypeToApi(this.collectionType)}/${this.collectionId}/plausibleStatsProxy`}"
             proxyFaviconBaseUrl="/api/users/PlausibleFavIcon/"
           ></yp-historical>
         `;
