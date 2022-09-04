@@ -215,7 +215,8 @@ export class YpPromotionApp extends YpBaseElement {
     window.adminServerApi = new YpServerApiAdmin();
     window.appGlobals = new YpAppGlobals(window.serverApi);
     window.appUser = new YpAppUser(window.serverApi);
-    window.appGlobals.setupTranslationSystem();
+
+    window.appGlobals.setupTranslationSystem("/promotion");
 
     this.page = 'analytics';
 

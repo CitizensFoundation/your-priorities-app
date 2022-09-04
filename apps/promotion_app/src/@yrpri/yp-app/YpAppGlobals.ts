@@ -305,7 +305,7 @@ export class YpAppGlobals extends YpCodeBase {
     this.recommendations.reset();
   }
 
-  setupTranslationSystem() {
+  setupTranslationSystem(loadPathPrefix: string | undefined = undefined) {
     const hostname = window.location.hostname;
     let defaultLocale = 'en';
     if (hostname.indexOf('betrireykjavik') > -1) {
@@ -363,7 +363,7 @@ export class YpAppGlobals extends YpCodeBase {
       {
         lng: defaultLocale,
         fallbackLng: 'en',
-        backend: { loadPath: '/locales/{{lng}}/{{ns}}.json' },
+        backend: { loadPath: `${loadPathPrefix}/locales/{{lng}}/{{ns}}.json` },
       },
       () => {
         window.appGlobals.locale = defaultLocale;
