@@ -2159,4 +2159,23 @@ router.put('/:communityId/:campaignId/update_campaign', auth.can('edit community
   }
 });
 
+router.delete('/:communityId/:campaignId/delete_campaign', auth.can('edit community marketing'), async (req, res) => {
+  try {
+    const campaign = await models.Campaign.findOne({
+      where: {
+        id: req.params.campaignId,
+        community_id: req.params.communityId
+      },
+      attributes: ['id']
+    });
+
+    campaign.deleted = true;
+    await campaign.save();
+    res.sendStatus(200);
+  } catch (error) {
+    log.error('Could not delete_campaign campaigns', { err: error, context: 'delete_campaign', user: toJson(req.user.simple()) });
+    res.sendStatus(500);
+  }
+});
+
 module.exports = router;

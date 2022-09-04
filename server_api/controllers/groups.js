@@ -22,7 +22,7 @@ const performSingleModerationAction = require('../active-citizen/engine/moderati
 const request = require('request');
 const {updateAnswerTranslation} = require("../active-citizen/utils/translation_helpers");
 const {updateSurveyTranslation} = require("../active-citizen/utils/translation_helpers");
-const {plausibleStatsProxy} = require("../active-citizen/engine/analytics/plausible/manager");
+const {plausibleStatsProxy, getPlausibleStats} = require("../active-citizen/engine/analytics/plausible/manager");
 
 const getFromAnalyticsApi = require('../active-citizen/engine/analytics/manager').getFromAnalyticsApi;
 const triggerSimilaritiesTraining = require('../active-citizen/engine/analytics/manager').triggerSimilaritiesTraining;
@@ -2547,6 +2547,98 @@ router.put('/:groupId/plausibleStatsProxy', auth.can('edit group'), async (req, 
     res.send(plausibleData);
   } catch (error) {
     log.error('Could not get plausibleStatsProxy', { err: error, context: 'getPlausibleSeries', user: toJson(req.user.simple()) });
+    res.sendStatus(500);
+  }
+});
+
+router.get('/:groupId/:type/getPlausibleSeries', auth.can('edit group marketing'), async (req, res) => {
+  // Example: "timeseries?site_id=your-priorities&period=7d";
+  try {
+    const questionMarkIndex = req.url.indexOf('?');
+    const queryString = req.url.substr(questionMarkIndex+1);
+    const siteId = process.env.PLAUSIBLE_SITE_NAME;
+    const type = req.params.type.replace('realtime-visitors','realtime/visitors');
+    const plausibleString = `${type}?${queryString}&site_id=${siteId}`;
+    const plausibleData = await getPlausibleStats(plausibleString);
+    log.info("GOT DATA");
+    log.info(plausibleData);
+    res.send(plausibleData);
+  } catch (error) {
+    log.error('Could not get getPlausibleSeries', { err: error, context: 'getPlausibleSeries', user: toJson(req.user.simple()) });
+    res.sendStatus(500);
+  }
+});
+
+router.get('/:groupId/get_campaigns', auth.can('edit group marketing'), async (req, res) => {
+  try {
+    const campaigns = await models.Campaign.findAll({
+      where: {
+        group_id: req.params.groupId
+      },
+      attributes: ['id','configuration']
+    });
+    res.send(campaigns);
+  } catch (error) {
+    log.error('Could not get campaigns', { err: error, context: 'get_campaigns', user: toJson(req.user.simple()) });
+    res.sendStatus(500);
+  }
+});
+
+router.post('/:groupId/create_campaign', auth.can('edit group marketing'), async (req, res) => {
+  try {
+    const campaign = models.Campaign.build({
+      group_id: req.params.groupId,
+      configuration: req.body.configuration,
+      user_id: req.user.id
+    });
+
+    await campaign.save();
+    //TODO: Toxicity check
+
+    res.send(campaign);
+  } catch (error) {
+    log.error('Could not create_campaign campaigns', { err: error, context: 'create_campaign', user: toJson(req.user.simple()) });
+    res.sendStatus(500);
+  }
+});
+
+router.put('/:groupId/:campaignId/update_campaign', auth.can('edit group marketing'), async (req, res) => {
+  try {
+    const campaign = await models.Campaign.findOne({
+      where: {
+        id: req.params.campaignId,
+        group_id: req.params.groupId
+      },
+      attributes: ['id','configuration']
+    });
+
+    campaign.configuration = req.body.configuration;
+
+    await campaign.save();
+    //TODO: Toxicity check
+
+    res.send(campaign);
+  } catch (error) {
+    log.error('Could not create_campaign campaigns', { err: error, context: 'create_campaign', user: toJson(req.user.simple()) });
+    res.sendStatus(500);
+  }
+});
+
+router.delete('/:groupId/:campaignId/delete_campaign', auth.can('edit group marketing'), async (req, res) => {
+  try {
+    const campaign = await models.Campaign.findOne({
+      where: {
+        id: req.params.campaignId,
+        group_id: req.params.groupId
+      },
+      attributes: ['id']
+    });
+
+    campaign.deleted = true;
+    await campaign.save();
+    res.sendStatus(200);
+  } catch (error) {
+    log.error('Could not delete_campaign campaigns', { err: error, context: 'delete_campaign', user: toJson(req.user.simple()) });
     res.sendStatus(500);
   }
 });
