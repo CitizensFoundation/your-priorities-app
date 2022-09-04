@@ -51,8 +51,14 @@ export class YpCampaign extends YpBaseElementWithLogin {
   @property({ type: Object })
   mediumToActivate: YpCampaignMediumData | undefined;
 
+  @property({ type: Object })
+  mediumToShow: YpCampaignMediumData | undefined;
+
   @property({ type: Boolean })
-  confirmedActive = false
+  confirmedActive = false;
+
+  @property({ type: Boolean })
+  haveCopied = false;
 
   async deleteCampaign() {
     this.fire('deleteCampaign', this.campaign.id);
@@ -62,7 +68,7 @@ export class YpCampaign extends YpBaseElementWithLogin {
     return [
       super.styles,
       css`
-           mwc-dialog {
+        mwc-dialog {
           --mdc-shape-medium: 24px !important;
           --mdc-theme-surface: var(--md-sys-color-surface);
           --mdc-dialog-heading-ink-color: var(--md-sys-color-on-surface);
@@ -88,8 +94,8 @@ export class YpCampaign extends YpBaseElementWithLogin {
 
         .mediumCard {
           width: 100px;
-          background-color: var(--md-sys-color-tertiary-container);
-          color: var(--md-sys-color-on-tertiary-container);
+          background-color: var(--md-sys-color-secondary-container);
+          color: var(--md-sys-color-on-secondary-container);
           margin-right: 8px;
           margin-left: 8px;
           padding: 16px;
@@ -144,10 +150,15 @@ export class YpCampaign extends YpBaseElementWithLogin {
           padding: 16px;
           border-radius: 16px;
           margin-bottom: 24px;
+          overflow-wrap: break-word;
         }
 
         .copyButton {
           margin-bottom: 32px;
+        }
+
+        .mediumShowImage {
+          margin-bottom: 24px;
         }
       `,
     ];
@@ -161,8 +172,10 @@ export class YpCampaign extends YpBaseElementWithLogin {
     switch (medium) {
       case 'facebook':
         return 'https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/SocialMediaImages/facebook.png';
-      case 'facebook':
+      case 'adwords':
         return 'https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/SocialMediaImages/adwords.png';
+      case 'snapchat':
+        return 'https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/SocialMediaImages/snapchat.png';
       case 'instagram':
         return 'https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/SocialMediaImages/instagram.png';
       case 'twitter':
@@ -184,8 +197,16 @@ export class YpCampaign extends YpBaseElementWithLogin {
 
   async activate(medium: YpCampaignMediumData) {
     this.mediumToActivate = medium;
+    this.confirmedActive = false;
+    this.haveCopied = false;
     await this.updateComplete;
     (this.$$('#activateDialog') as Dialog).show();
+  }
+
+  async showMedium(medium: YpCampaignMediumData) {
+    this.mediumToShow = medium;
+    await this.updateComplete;
+    (this.$$('#showMediumDialog') as Dialog).show();
   }
 
   cancelActivation() {
@@ -195,7 +216,10 @@ export class YpCampaign extends YpBaseElementWithLogin {
   reallyActivate() {
     if (this.mediumToActivate) {
       this.mediumToActivate.active = true;
-      this.fire('configurationUpdated');
+      this.fire('configurationUpdated', {
+        campaignId: this.campaign.id,
+        configuration: this.configuration,
+      });
       this.mediumToActivate = undefined;
     } else {
       console.error('No medium to activate');
@@ -206,30 +230,90 @@ export class YpCampaign extends YpBaseElementWithLogin {
     this.confirmedActive = (event.currentTarget as Checkbox)!.checked;
   }
 
-  copyCurrentTextWithLink() {
-    const textWithLink = `${this.configuration.promotionText} ${this.mediumToActivate?.finaUrl}`;
+  copyCurrentTextWithLink(medium: YpCampaignMediumData) {
+    const textWithLink = `${this.configuration.promotionText} ${medium.finaUrl}`;
     navigator.clipboard.writeText(textWithLink);
-    let mediumName = this.t(this.mediumToActivate!.utm_medium);
-    this.fire("display-snackbar", this.t('promotionWithLinkscopiedToClipboard')+` ${mediumName}`);
+    this.haveCopied = true;
+    let mediumName = this.t(medium.utm_medium);
+    this.fire(
+      'display-snackbar',
+      this.t('promotionWithLinksCopiedToClipboard') + ` ${mediumName}`
+    );
   }
 
-  renderTextWithLink() {
-    const mediumName = this.t(this.mediumToActivate!.utm_medium);
-    return html`
+  copyCurrentText(medium: YpCampaignMediumData) {
+    navigator.clipboard.writeText(this.configuration.promotionText);
+    this.haveCopied = true;
+    let mediumName = this.t(medium.utm_medium);
+    this.fire(
+      'display-snackbar',
+      this.t('promotionTextCopiedToClipboard') + ` ${mediumName}`
+    );
+  }
+
+  copyCurrentLink(medium: YpCampaignMediumData) {
+    navigator.clipboard.writeText(medium.finaUrl!);
+    this.haveCopied = true;
+    let mediumName = this.t(medium.utm_medium);
+    this.fire(
+      'display-snackbar',
+      this.t('promotionLinkCopiedToClipboard') + ` ${mediumName}`
+    );
+  }
+
+  closeShowMedium() {
+    this.mediumToShow = undefined;
+  }
+
+  renderTextWithLink(medium: YpCampaignMediumData) {
+    const mediumName = this.t(medium.utm_medium);
+    if (['facebook','twitter','linkedin'].includes(medium.utm_medium)) {
+      return html`
       <div class="textWithLink layout vertical">
         <div>
           ${this.configuration.promotionText}
-          <span class="url">${this.mediumToActivate?.finaUrl}</span>
+          <span class="url">${medium.finaUrl}</span>
         </div>
       </div>
       <div class="layout horizontal center-center">
         <md-filled-button
-           class="copyButton"
-           @click="${this.copyCurrentTextWithLink}"
-          .label="${this.t('copyTextAndLinkTo') + ` ${mediumName.toUpperCase()}`}"
+          class="copyButton"
+          @click="${() => this.copyCurrentTextWithLink(medium)}"
+          .label="${this.t('copyTextAndLinkTo') +
+          ` ${mediumName.toUpperCase()}`}"
         ></md-filled-button>
       </div>
     `;
+    } else {
+      return html`
+      <div class="textWithLink layout vertical">
+        <div>
+          ${this.configuration.promotionText}
+        </div>
+      </div>
+      <div class="layout horizontal center-center">
+        <md-filled-button
+          class="copyButton"
+          @click="${() => this.copyCurrentText(medium)}"
+          .label="${this.t('copyTextTo') +
+          ` ${mediumName.toUpperCase()}`}"
+        ></md-filled-button>
+      </div>
+      <div class="textWithLink layout vertical">
+        <div>
+          <span class="url">${medium.finaUrl}</span>
+        </div>
+      </div>
+      <div class="layout horizontal center-center">
+        <md-filled-button
+          class="copyButton"
+          @click="${() => this.copyCurrentLink(medium)}"
+          .label="${this.t('copyLinkTo') +
+          ` ${mediumName.toUpperCase()}`}"
+        ></md-filled-button>
+      </div>
+    `;
+    }
   }
 
   renderActivateDialog() {
@@ -255,15 +339,19 @@ export class YpCampaign extends YpBaseElementWithLogin {
             </yp-image>
           </div>
           <div class="activationInfo">
-            ${this.t('activationInformation_1')}: ${mediumName}.
+            ${this.t('activationInformation_1')} ${mediumName}.
             ${this.t('activationInformation_2')}
           </div>
-          ${this.renderTextWithLink()}
+          ${this.renderTextWithLink(this.mediumToActivate!)}
           <md-formfield
             .label="${this.t('confirmYouHavePastedTheTextAndLink') +
-            `: ${mediumName}`}"
+            ` ${mediumName}`}"
           >
-            <md-checkbox name="activeConfirmed" @change="${this.activeCheckboxChanged}"></md-checkbox>
+            <md-checkbox
+              ?disabled="${!this.haveCopied}"
+              name="activeConfirmed"
+              @change="${this.activeCheckboxChanged}"
+            ></md-checkbox>
           </md-formfield>
         </div>
         <md-text-button
@@ -281,6 +369,36 @@ export class YpCampaign extends YpBaseElementWithLogin {
           slot="primaryAction"
         >
         </md-tonal-button>
+      </mwc-dialog>
+    `;
+  }
+
+  renderShowDialog() {
+    return html`
+      <mwc-dialog
+        id="showMediumDialog"
+        heading="${this.t('textAndLinkDetails')}"
+      >
+        <div class="layout vertical">
+          <div class="layout horizontal center-center">
+            <yp-image
+              sizing="cover"
+              class="mediumActivationImage mediumShowImage"
+              .src="${this.getMediumImageUrl(
+                this.mediumToShow!.utm_medium
+              )}"
+            >
+            </yp-image>
+          </div>
+          ${this.renderTextWithLink(this.mediumToShow!)}
+        </div>
+        <md-text-button
+          .label="${this.t('close')}"
+          class="button"
+          @click="${this.closeShowMedium}"
+          slot="primaryAction"
+        >
+        </md-text-button>
       </mwc-dialog>
     `;
   }
@@ -306,6 +424,7 @@ export class YpCampaign extends YpBaseElementWithLogin {
                 <md-text-button
                   class="mediumButtons"
                   .label="${this.t('show')}"
+                  @click="${() => this.showMedium(medium)}"
                 ></md-text-button>
               `
             : html`
@@ -339,6 +458,7 @@ export class YpCampaign extends YpBaseElementWithLogin {
         </div>
       </div>
       ${this.mediumToActivate ? this.renderActivateDialog() : nothing}
+      ${this.mediumToShow ? this.renderShowDialog() : nothing}
     `;
   }
 }

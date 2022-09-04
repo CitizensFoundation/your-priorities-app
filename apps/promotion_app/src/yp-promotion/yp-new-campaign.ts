@@ -215,28 +215,31 @@ export class YpNewCampaign extends YpBaseElementWithLogin {
   renderAdMediums() {
     return html`
       <div class="layout vertical adMediumsList" @click="${this.inputsChanged}">
-        <md-formfield .label="${this.t('Facebook')}">
+        <md-formfield .label="${this.t('facebook')}">
           <md-checkbox name="facebook"></md-checkbox>
         </md-formfield>
-        <md-formfield .label="${this.t('Twitter')}">
+        <md-formfield .label="${this.t('twitter')}">
           <md-checkbox name="twitter"></md-checkbox>
         </md-formfield>
-        <md-formfield .label="${this.t('AdWords')}">
+        <md-formfield .label="${this.t('adwords')}">
           <md-checkbox name="adwords"></md-checkbox>
         </md-formfield>
-        <md-formfield .label="${this.t('LinkedIn')}">
+        <md-formfield .label="${this.t('linkedin')}">
           <md-checkbox name="linkedin"></md-checkbox>
         </md-formfield>
-        <md-formfield .label="${this.t('Instagram')}">
+        <md-formfield .label="${this.t('snapchat')}">
+          <md-checkbox name="snapchat"></md-checkbox>
+        </md-formfield>
+        <md-formfield .label="${this.t('instagram')}">
           <md-checkbox name="instagram"></md-checkbox>
         </md-formfield>
-        <md-formfield .label="${this.t('YouTube')}">
+        <md-formfield .label="${this.t('youtube')}">
           <md-checkbox name="youtube"></md-checkbox>
         </md-formfield>
-        <md-formfield .label="${this.t('TikTok')}">
+        <md-formfield .label="${this.t('tiktok')}">
           <md-checkbox name="tiktok"></md-checkbox>
         </md-formfield>
-        <md-formfield .label="${this.t('Email')}">
+        <md-formfield .label="${this.t('email')}">
           <md-checkbox name="email"></md-checkbox>
         </md-formfield>
         <md-formfield .label="${this.t('other')}" class="otherFormField">

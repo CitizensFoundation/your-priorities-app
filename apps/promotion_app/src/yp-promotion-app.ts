@@ -216,7 +216,8 @@ export class YpPromotionApp extends YpBaseElement {
     window.appGlobals = new YpAppGlobals(window.serverApi);
     window.appUser = new YpAppUser(window.serverApi);
 
-    window.appGlobals.setupTranslationSystem("/promotion");
+    //window.appGlobals.setupTranslationSystem("/promotion");
+    window.appGlobals.setupTranslationSystem();
 
     this.page = 'analytics';
 
@@ -247,7 +248,7 @@ export class YpPromotionApp extends YpBaseElement {
 
     setTimeout(() => {
       //this.fireGlobal('yp-theme-dark-mode', true);
-      this.setRandomColor();
+      //this.setRandomColor();
     }, 10000);
   }
 
@@ -259,7 +260,7 @@ export class YpPromotionApp extends YpBaseElement {
     //@ts-ignore
     let randColor = randomNumber.padStart(6, 0);
     const randomColor = `#${randColor.toUpperCase()}`;
-    console.error('Random color', randomColor);
+    console.warn('Random color', randomColor);
     this.fireGlobal('yp-theme-color', randomColor);
     setTimeout(() => {
       this.setRandomColor();

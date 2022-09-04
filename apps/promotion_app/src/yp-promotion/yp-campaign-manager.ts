@@ -90,6 +90,18 @@ export class YpCampaignManager extends YpBaseElementWithLogin {
     this.getCampaigns();
   }
 
+  async campaignConfigurationUpdated(event: CustomEvent) {
+    debugger;
+    await this.campaignApi.updateCampaign(
+      this.collectionType,
+      this.collectionId,
+      event.detail.campaignId,
+      {
+        configuration: event.detail.configuration,
+      }
+    );
+  }
+
   async getCampaigns() {
     this.campaignToDelete = undefined;
     this.campaigns = await this.campaignApi.getCampaigns(
@@ -170,6 +182,7 @@ export class YpCampaignManager extends YpBaseElementWithLogin {
 
   renderCampaign(campaign: YpCampaignData) {
     return html`<yp-campaign
+       @configurationUpdated="${this.campaignConfigurationUpdated}"
       .campaignApi="${this.campaignApi}"
       @deleteCampaign="${this.deleteCampaign}"
       .collectionType="${this.collectionType}"

@@ -305,7 +305,7 @@ export class YpAppGlobals extends YpCodeBase {
     this.recommendations.reset();
   }
 
-  setupTranslationSystem(loadPathPrefix: string | undefined = undefined) {
+  setupTranslationSystem(loadPathPrefix: string = "") {
     const hostname = window.location.hostname;
     let defaultLocale = 'en';
     if (hostname.indexOf('betrireykjavik') > -1) {
