@@ -10,13 +10,6 @@ const userId = process.argv[2];
 const urlToConfig = process.argv[3];
 const urlToAddAddFront = process.argv[4];
 
-/*const userId = "89244" //process.argv[3];
-const type = "onlyThemeColors";
-const urlToConfig = "https://yrpri-eu-direct-assets.s3-eu-west-1.amazonaws.com/copyConfigCommunities7421.csv";
-const urlToAddAddFront = "https://kyrgyz-aris.yrpri.org/";*/
-
-// node server_api/scripts/cloneWBFromUrlScriptAndCreateLinks.js 3 84397 https://yrpri-eu-direct-assets.s3-eu-west-1.amazonaws.com/CF_clone_WB_140221.csv https://kyrgyz-aris.yrpri.org/
-
 let config;
 let finalOutput = '';
 let user;
@@ -70,9 +63,9 @@ async.series([
         forEachCallback();
       } else {
         const toCommunityId = splitLine[0];
-        const externalId = splitLine[1];
+        const adminEmail = splitLine[1];
 
-        let toCommunity;
+        let toCommunity,adminUserToAdd;
 
         async.series([
           innerSeriesCallback => {
@@ -80,7 +73,13 @@ async.series([
               where: {
                 id: toCommunityId
               },
-              attributes: ['id','name','configuration']
+              attributes: ['id','name','configuration'],
+              include: [
+                {
+                  model: models.Group,
+                  attributes: ['id','name']
+                }
+              ]
             }).then( communityIn => {
               if (communityIn) {
                 toCommunity = communityIn;
@@ -104,14 +103,43 @@ async.series([
             })
           },
           innerSeriesCallback => {
-            toCommunity.set('configuration.externalId', externalId);
-            toCommunity.save().then(()=>{
-              finalOutput+=urlToAddAddFront+"community/"+toCommunity.id+"\n";
-              innerSeriesCallback();
-            }).catch( error => {
+            models.User.findOne({
+              where: {
+                email: adminEmail
+              },
+              attributes: ['id','email']
+            }).then((user=> {
+              if (user) {
+                adminUserToAdd = user;
+                innerSeriesCallback();
+              } else {
+                innerSeriesCallback("Could not find user for admin email");
+              }
+            })).catch( error => {
               innerSeriesCallback(error);
             })
-          }
+          },
+          innerSeriesCallback => {
+            toCommunity.addCommunityAdmins(adminUserToAdd).then((results=> {
+              if (results) {
+                console.log(`Have added ${adminUserToAdd.email} to community ${toCommunity.name}`);
+                finalOutput+=urlToAddAddFront+"community/"+toCommunity.id+"\n";
+                innerSeriesCallback();
+              } else {
+                innerSeriesCallback("Could not add admin user to community");
+              }
+            })).catch( error => {
+              innerSeriesCallback(error);
+            })
+          },
+          innerSeriesCallback => {
+            async.forEachSeries(toCommunity.Groups, (group, forEachCallback) => {
+              group.addGroupAdmins(adminUserToAdd).then(results=> {
+                console.log(`Have added ${adminUserToAdd.email} to group ${group.name}`)
+                forEachCallback();
+              })
+            }, innerSeriesCallback)
+          },
         ], error => {
           forEachCallback(error);
         })
@@ -123,7 +151,7 @@ async.series([
 ], error => {
   if (error)
     console.error(error);
-  console.log("All done copying config to communities");
+  console.log("All done copying admins to communities");
   console.log(finalOutput);
   process.exit();
 });
