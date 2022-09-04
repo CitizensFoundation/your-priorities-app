@@ -36,7 +36,7 @@ export default {
         { src: 'node_modules/d3/d3.min.js', dest: 'dist/node_modules/d3/d3.min.js' },
         { src: 'node_modules/topojson/topojson.min.js', dest: 'dist/node_modules/topojson/topojson.min.js' },
         { src: 'node_modules/datamaps/dist/datamaps.world.min.js', dest: 'dist/node_modules/datamaps/dist/datamaps.world.min.js' },
-        { src: 'locales', dest: 'dist/locales' }
+        { src: 'locales', dest: 'dist/' }
 
       ]
     }),
