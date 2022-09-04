@@ -62,8 +62,8 @@ async.series([
         index+=1;
         forEachCallback();
       } else {
-        const toCommunityId = splitLine[0];
-        const adminEmail = splitLine[1];
+        const toCommunityId = splitLine[0].trim();
+        const adminEmail = splitLine[1].trim();
 
         let toCommunity,adminUserToAdd;
 
