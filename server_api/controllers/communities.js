@@ -2111,6 +2111,9 @@ router.get('/:communityId/get_campaigns', auth.can('edit community marketing'), 
         community_id: req.params.communityId,
         active: true
       },
+      order: [
+        [ 'created_at', 'desc' ]
+      ],
       attributes: ['id','configuration']
     });
     res.send(campaigns);

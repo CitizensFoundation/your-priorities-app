@@ -2575,6 +2575,9 @@ router.get('/:groupId/get_campaigns', auth.can('edit group marketing'), async (r
       where: {
         group_id: req.params.groupId
       },
+      order: [
+        [ 'created_at', 'desc' ]
+      ],
       attributes: ['id','configuration']
     });
     res.send(campaigns);
