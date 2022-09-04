@@ -48,6 +48,8 @@ import { ifDefined } from 'lit/directives/if-defined.js';
 import './yp-promotion-settings.js';
 import { Snackbar } from '@material/mwc-snackbar';
 
+import './@yrpri/common/yp-image.js';
+
 declare global {
   interface Window {
     appGlobals: YpAppGlobals;
@@ -217,8 +219,8 @@ export class YpPromotionApp extends YpBaseElement {
     window.appGlobals = new YpAppGlobals(window.serverApi);
     window.appUser = new YpAppUser(window.serverApi);
 
-    window.appGlobals.setupTranslationSystem("/promotion");
-    //window.appGlobals.setupTranslationSystem();
+    //window.appGlobals.setupTranslationSystem("/promotion");
+    window.appGlobals.setupTranslationSystem();
 
     this.page = 'analytics';
 
@@ -362,10 +364,15 @@ export class YpPromotionApp extends YpBaseElement {
             </main>
           </div>
         </div>
-        ${this.lastSnackbarText ? html`
-        <mwc-snackbar id="snackbar" @MDCSnackbar:closed="${this.snackbarclosed}" .labelText="${this.lastSnackbarText}"></mwc-snackbar>
-
-        ` : nothing}
+        ${this.lastSnackbarText
+          ? html`
+              <mwc-snackbar
+                id="snackbar"
+                @MDCSnackbar:closed="${this.snackbarclosed}"
+                .labelText="${this.lastSnackbarText}"
+              ></mwc-snackbar>
+            `
+          : nothing}
       `;
     } else {
       return html`
@@ -385,11 +392,10 @@ export class YpPromotionApp extends YpBaseElement {
               <div>
                 <yp-image
                   class="collectionLogoImage"
-                  .src="${ifDefined(
-                    YpCollectionHelpers.logoImagePath(
-                      this.collectionType,
-                      this.collection!
-                    )
+                  sizing="contain"
+                  .src="${YpCollectionHelpers.logoImagePath(
+                    this.collectionType,
+                    this.collection!
                   )}"
                 ></yp-image>
               </div>
@@ -503,7 +509,7 @@ export class YpPromotionApp extends YpBaseElement {
   async _displaySnackbar(event: CustomEvent) {
     this.lastSnackbarText = event.detail;
     await this.updateComplete;
-    (this.$$("#snackbar") as Snackbar).show();
+    (this.$$('#snackbar') as Snackbar).show();
   }
 
   _setupEventListeners() {
