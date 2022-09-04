@@ -187,6 +187,7 @@ export class YpPromotionApp extends YpBaseElement {
 
         .collectionLogoImage {
           width: 120px;
+          height: 68px;
           margin-right: 16px;
           margin-left: 16px;
         }
@@ -382,15 +383,15 @@ export class YpPromotionApp extends YpBaseElement {
           <div class="layout horizontal headerContainer">
             <div class="analyticsHeaderText layout horizontal center-center">
               <div>
-                <img
+                <yp-image
                   class="collectionLogoImage"
-                  src="${ifDefined(
+                  .src="${ifDefined(
                     YpCollectionHelpers.logoImagePath(
                       this.collectionType,
                       this.collection!
                     )
                   )}"
-                />
+                ></yp-image>
               </div>
               <div></div>
               ${this.collection ? this.collection.name : ''}
