@@ -1,7 +1,7 @@
 interface YpCampaignConfigurationData {
   startDate?: string;
   endDate?: string;
-  audience: string;
+  audience?: string;
   utm_campaign: string;
   utm_source: string;
   utm_content?: string;
@@ -32,6 +32,7 @@ interface YpCampaignData {
 
 interface YpNewCampaignData {
   mediums: string[];
-  targetAudience: string;
+  targetAudience?: string;
+  name: string;
   promotionText: string;
 }

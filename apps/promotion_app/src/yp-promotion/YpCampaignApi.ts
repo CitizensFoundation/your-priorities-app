@@ -38,6 +38,24 @@ export class YpCampaignApi extends YpServerApiBase {
     );
   }
 
+  public deleteCampaign(
+    collectionType: string,
+    collectionId: number,
+    campaignId: number
+  ) {
+    return this.fetchWrapper(
+      this.baseUrlPath +
+        `/${YpCampaignApi.transformCollectionTypeToApi(
+          collectionType
+        )}/${collectionId}/${campaignId}/delete_campaign`,
+      {
+        method: 'DELETE',
+        body: JSON.stringify({}),
+      },
+      false
+    );
+  }
+
   public getCampaigns(collectionType: string, collectionId: number) {
     return this.fetchWrapper(
       this.baseUrlPath +

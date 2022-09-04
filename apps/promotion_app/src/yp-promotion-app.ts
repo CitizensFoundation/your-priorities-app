@@ -7,6 +7,8 @@ import { ShadowStyles } from './@yrpri/common/ShadowStyles.js';
 import '@material/mwc-dialog';
 import { Layouts } from 'lit-flexbox-literals';
 
+import '@material/mwc-snackbar/mwc-snackbar.js';
+
 import { YpAppGlobals } from './@yrpri/yp-app/YpAppGlobals.js';
 import { YpAppUser } from './@yrpri/yp-app/YpAppUser.js';
 import { YpAppDialogs } from './@yrpri/yp-dialog-container/yp-app-dialogs.js';
@@ -44,6 +46,7 @@ import { YpCollectionHelpers } from './@yrpri/common/YpCollectionHelpers.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 
 import './yp-promotion-settings.js';
+import { Snackbar } from '@material/mwc-snackbar';
 
 declare global {
   interface Window {
@@ -95,6 +98,9 @@ export class YpPromotionApp extends YpBaseElement {
 
   @property({ type: Boolean })
   haveChekedAdminRights = false;
+
+  @property({ type: String })
+  lastSnackbarText: string | undefined;
 
   originalCollectionType: string | undefined;
 
@@ -215,12 +221,6 @@ export class YpPromotionApp extends YpBaseElement {
 
     this.originalCollectionType = this.collectionType;
 
-    if (this.collectionType === 'community')
-      this.collectionType = 'communities';
-    if (this.collectionType === 'domain') this.collectionType = 'domains';
-    if (this.collectionType === 'group') this.collectionType = 'groups';
-    if (this.collectionType === 'post') this.collectionType = 'posts';
-
     this.collectionId = split[split.length - 1];
   }
 
@@ -240,8 +240,8 @@ export class YpPromotionApp extends YpBaseElement {
 
     setTimeout(() => {
       //this.fireGlobal('yp-theme-dark-mode', true);
-      //this.setRandomColor();
-    }, 3000);
+      this.setRandomColor();
+    }, 10000);
   }
 
   setRandomColor() {
@@ -252,6 +252,7 @@ export class YpPromotionApp extends YpBaseElement {
     //@ts-ignore
     let randColor = randomNumber.padStart(6, 0);
     const randomColor = `#${randColor.toUpperCase()}`;
+    console.error('Random color', randomColor);
     this.fireGlobal('yp-theme-color', randomColor);
     setTimeout(() => {
       this.setRandomColor();
@@ -330,6 +331,10 @@ export class YpPromotionApp extends YpBaseElement {
     `;
   }
 
+  snackbarclosed() {
+    this.lastSnackbarText = undefined;
+  }
+
   render() {
     if (this.collection) {
       return html`
@@ -344,12 +349,14 @@ export class YpPromotionApp extends YpBaseElement {
               </mwc-button>
             </mwc-dialog>
             <main>
-              <div class="layout vertical center-center">
-                <div class="mainPageContainer">${this._renderPage()}</div>
-              </div>
+              <div class="mainPageContainer">${this._renderPage()}</div>
             </main>
           </div>
         </div>
+        ${this.lastSnackbarText ? html`
+        <mwc-snackbar id="snackbar" @MDCSnackbar:closed="${this.snackbarclosed}" .labelText="${this.lastSnackbarText}"></mwc-snackbar>
+
+        ` : nothing}
       `;
     } else {
       return html`
@@ -484,9 +491,16 @@ export class YpPromotionApp extends YpBaseElement {
     window.location.href = `/${this.originalCollectionType}/${this.collectionId}`;
   }
 
+  async _displaySnackbar(event: CustomEvent) {
+    this.lastSnackbarText = event.detail;
+    await this.updateComplete;
+    (this.$$("#snackbar") as Snackbar).show();
+  }
+
   _setupEventListeners() {
     this.addListener('set-total-posts', this._setTotalPosts);
     this.addListener('app-error', this._appError);
+    this.addListener('display-snackbar', this._displaySnackbar);
     this.addGlobalListener('yp-network-error', this._appError.bind(this));
     this.addListener('yp-app-dialogs-ready', this._appDialogsReady.bind(this));
     this.addGlobalListener(
@@ -498,6 +512,7 @@ export class YpPromotionApp extends YpBaseElement {
   _removeEventListeners() {
     this.removeListener('set-total-posts', this._setTotalPosts);
     this.removeGlobalListener('yp-network-error', this._appError.bind(this));
+    this.removeListener('display-snackbar', this._displaySnackbar);
     this.removeListener(
       'yp-app-dialogs-ready',
       this._appDialogsReady.bind(this)
@@ -516,22 +531,22 @@ export class YpPromotionApp extends YpBaseElement {
   _setAdminConfirmed() {
     if (this.collection) {
       switch (this.collectionType) {
-        case 'domains':
+        case 'domain':
           this.adminConfirmed = YpAccessHelpers.checkDomainAccess(
             this.collection as YpDomainData
           );
           break;
-        case 'communities':
+        case 'community':
           this.adminConfirmed = YpAccessHelpers.checkCommunityAccess(
             this.collection as YpCommunityData
           );
           break;
-        case 'groups':
+        case 'group':
           this.adminConfirmed = YpAccessHelpers.checkGroupAccess(
             this.collection as YpGroupData
           );
           break;
-        case 'posts':
+        case 'post':
           this.adminConfirmed = YpAccessHelpers.checkPostAccess(
             this.collection as unknown as YpPostData
           );

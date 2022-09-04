@@ -7,6 +7,7 @@ import './yp-new-campaign.js';
 import './yp-campaign.js';
 import { YpNewCampaign } from './yp-new-campaign.js';
 import { YpCampaignApi } from './YpCampaignApi';
+import { Dialog } from '@material/mwc-dialog';
 
 @customElement('yp-campaign-manager')
 export class YpCampaignManager extends YpBaseElementWithLogin {
@@ -27,6 +28,101 @@ export class YpCampaignManager extends YpBaseElementWithLogin {
 
   campaignApi: YpCampaignApi = new YpCampaignApi();
 
+  campaignToDelete: number | undefined;
+
+  firstUpdated() {
+    this.getCampaigns();
+  }
+
+  newCampaign() {
+    this.newCampaignElement.open();
+  }
+
+  getTrackingUrl(campaign: YpCampaignData, medium: string) {
+    const fullHost = location.protocol + '//' + location.host;
+    return `${fullHost}/${this.collectionType}/${this.collectionId}?utm_source=${campaign.configuration.utm_source}&utm_medium=${medium}&utm_campaign=${campaign.configuration.utm_campaign}&utm_content=${campaign.id}`;
+  }
+
+  async createCampaign(event: CustomEvent) {
+    const data = event.detail as YpNewCampaignData;
+
+    const configuration = {
+      utm_campaign: data.name,
+      utm_source: this.collection!.name,
+      audience: data.targetAudience,
+      promotionText: data.promotionText,
+      mediums: [] as YpCampaignMediumData[],
+    } as YpCampaignConfigurationData;
+
+    debugger;
+    const campaign = await this.campaignApi.createCampaign(
+      this.collectionType,
+      this.collectionId,
+      {
+        configuration,
+      }
+    ) as YpCampaignData;
+
+    campaign.configuration.utm_content = `${campaign.id}`;
+
+    const mediums: YpCampaignMediumData[] = [];
+
+    for (let i = 0; i < data.mediums.length; i++) {
+      const medium = data.mediums[i];
+      mediums.push({
+        utm_medium: medium,
+        finaUrl: this.getTrackingUrl(campaign, medium),
+        active: false,
+      });
+    }
+
+    campaign.configuration.mediums = mediums;
+
+    await this.campaignApi.updateCampaign(
+      this.collectionType,
+      this.collectionId,
+      campaign.id!,
+      {
+        configuration: campaign.configuration,
+      }
+    );
+
+    this.getCampaigns();
+  }
+
+  async getCampaigns() {
+    this.campaignToDelete = undefined;
+    this.campaigns = await this.campaignApi.getCampaigns(
+      this.collectionType,
+      this.collectionId
+    );
+  }
+
+  async reallyDeleteCampaign() {
+    try {
+      await this.campaignApi.deleteCampaign(
+        this.collectionType,
+        this.collectionId,
+        this.campaignToDelete!
+      );
+
+    } catch (error) {
+      this.campaignToDelete = undefined;
+      console.error(error);
+    }
+
+    this.getCampaigns();
+  }
+
+  deleteCampaign(event: CustomEvent) {
+    this.campaignToDelete = event.detail;
+    (this.$$("#deleteConfirmationDialog") as Dialog).show();
+  }
+
+  cancelDeleteCampaign() {
+    this.campaignToDelete = undefined;
+  }
+
   static get styles() {
     return [
       super.styles,
@@ -46,64 +142,41 @@ export class YpCampaignManager extends YpBaseElementWithLogin {
     ];
   }
 
-  newCampaign() {
-    this.newCampaignElement.open();
-  }
-
-  getTrackingUrl(campaign: YpCampaignData, medium: string) {
-    return `https://www.yrpris.no/${this.collectionType}/${this.collectionId}?utm_source=${campaign.configuration.utm_source}&utm_medium=${medium}&utm_campaign=${campaign.configuration.utm_campaign}`;
-  }
-
-  async createCampaign(event: CustomEvent) {
-    const data = event.detail as YpNewCampaignData;
-
-    const configuration = {
-      utm_campaign: data.targetAudience,
-      utm_source: this.collection!.name,
-      audience: data.targetAudience,
-      promotionText: data.promotionText,
-      mediums: [] as YpCampaignMediumData[],
-    } as YpCampaignConfigurationData
-
-    const campaign = await this.campaignApi.createCampaign(
-      this.collectionType,
-      this.collectionId,
-      {
-        configuration
-      }
-    );
-
-    campaign.configuration.utm_campaign = `${campaign.id}`;
-
-    const mediums: YpCampaignMediumData[] = [];
-
-    for (let i = 0; i < data.mediums.length; i++) {
-      const medium = data.mediums[i];
-      mediums.push({
-        utm_medium: medium,
-        finaUrl: this.getTrackingUrl(campaign, medium),
-        active: false,
-      });
-    }
-
-    campaign.configuration.mediums = mediums;
-
-    await this.campaignApi.updateCampaign(this.collectionType, this.collectionId, campaign.id, {
-      configuration: campaign.configuration
-    });
-
-    this.getCampaigns();
-  }
-
-  async getCampaigns() {
-    this.campaigns = await this.campaignApi.getCampaigns(
-      this.collectionType,
-      this.collectionId
-    );
+  renderDeleteConfirmationDialog() {
+    return html`
+      <mwc-dialog id="deleteConfirmationDialog" crimClickAction="" escapeKeyAction="">
+        <div class="layout horizontal center-center">
+          <div class="headerText">${this.t('reallyDeletePromotion')}</div>
+        </div>
+        <md-text-button
+          .label="${this.t('cancel')}"
+          class="button"
+          dialogAction="cancel"
+          @click="${this.cancelDeleteCampaign}"
+          slot="secondaryAction"
+        >
+        </md-text-button>
+        <md-tonal-button
+          dialogAction="ok"
+          class="button okButton"
+          .label="${this.t('delete')}"
+          @click="${this.reallyDeleteCampaign}"
+          slot="primaryAction"
+        >
+        </md-tonal-button>
+      </mwc-dialog>
+    `;
   }
 
   renderCampaign(campaign: YpCampaignData) {
-    return html` <yp-campaign .campaign="${campaign}"></yp-campaign>`;
+    return html`<yp-campaign
+      .campaignApi="${this.campaignApi}"
+      @deleteCampaign="${this.deleteCampaign}"
+      .collectionType="${this.collectionType}"
+      .collection="${this.collection}"
+      .collectionId="${this.collectionId}"
+      .campaign="${campaign}"
+    ></yp-campaign>`;
   }
 
   render() {
@@ -114,10 +187,10 @@ export class YpCampaignManager extends YpBaseElementWithLogin {
         .collectionId="${this.collectionId}"
         @save="${this.createCampaign}"
       ></yp-new-campaign>
-      <div class="layout vertical">
-        ${this.campaigns?.map(campaign => this.renderCampaign(campaign))}
-      </div>
       <div class="layout vertical start mainContainer">
+        <div class="layout vertical">
+          ${this.campaigns?.map(campaign => this.renderCampaign(campaign))}
+        </div>
         <div>
           <md-fab-extended
             .label="${this.t('newTrackingPromotion')}"
@@ -126,6 +199,7 @@ export class YpCampaignManager extends YpBaseElementWithLogin {
           ></md-fab-extended>
         </div>
       </div>
+      ${this.renderDeleteConfirmationDialog()}
     `;
   }
 }

@@ -52,6 +52,9 @@ export class YpNewCampaign extends YpBaseElementWithLogin {
   targetAudience: string | undefined;
 
   @property({ type: String })
+  campaignName: string | undefined;
+
+  @property({ type: String })
   promotionText: string | undefined;
 
   static get styles() {
@@ -158,20 +161,18 @@ export class YpNewCampaign extends YpBaseElementWithLogin {
   async inputsChanged() {
     const okButton = this.$$('md-tonal-button') as TonalButton;
     const promotionTextArea = this.$$('mwc-textarea') as TextArea;
-    const targetAudienceTextField = this.$$(
-      'md-outlined-text-field'
-    ) as OutlinedTextField;
+    const nameTextField = this.$$('#campaignName') as OutlinedTextField;
 
     //TODO: don't use timeout here, find away to wait for all the checkboxes to be updated
     setTimeout(() => {
-      this.targetAudience = targetAudienceTextField.value;
+      this.campaignName = nameTextField.value;
       this.promotionText = promotionTextArea.value;
 
       const mediums = this.getMediums();
 
       if (
         mediums.length > 0 &&
-        targetAudienceTextField.value.length > 0 &&
+        nameTextField.value.length > 0 &&
         promotionTextArea.value.length > 0
       ) {
         this.previewEnabled = true;
@@ -187,6 +188,7 @@ export class YpNewCampaign extends YpBaseElementWithLogin {
     this.fire('save', {
       targetAudience: this.targetAudience,
       promotionText: this.promotionText,
+      name: this.campaignName,
       mediums: this.getMediums(),
     });
     this.close();
@@ -255,8 +257,9 @@ export class YpNewCampaign extends YpBaseElementWithLogin {
         <div class="layout vertical">
           <md-outlined-text-field
             class="formField"
+            id="campaignName"
             @keydown="${this.inputsChanged}"
-            .label="${this.t('targetAudience')}"
+            .label="${this.t('promotionName')}"
           ></md-outlined-text-field>
 
           <mwc-textarea
