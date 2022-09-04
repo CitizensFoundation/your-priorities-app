@@ -9,7 +9,7 @@ const updateParametersFromCampaign = async (
 ) => {
   return await new Promise(async (resolve, reject) => {
     let where = {
-      id: utmContent,
+      id: utmContent
     };
 
     switch (collectionType) {

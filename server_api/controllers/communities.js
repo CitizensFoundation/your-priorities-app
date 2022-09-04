@@ -2108,7 +2108,8 @@ router.get('/:communityId/get_campaigns', auth.can('edit community marketing'), 
   try {
     const campaigns = await models.Campaign.findAll({
       where: {
-        community_id: req.params.communityId
+        community_id: req.params.communityId,
+        active: true
       },
       attributes: ['id','configuration']
     });

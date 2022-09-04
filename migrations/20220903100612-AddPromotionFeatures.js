@@ -19,6 +19,7 @@ module.exports = {
           },
           configuration: Sequelize.JSONB,
           deleted: { type: Sequelize.BOOLEAN, allowNull: false, defaultValue: false },
+          active: { type: Sequelize.BOOLEAN, allowNull: false, defaultValue: true },
           user_id: { type: Sequelize.INTEGER, allowNull: false },
           group_id: { type: Sequelize.INTEGER, allowNull: true },
           community_id: { type: Sequelize.INTEGER, allowNull: true },
@@ -51,6 +52,26 @@ module.exports = {
 
       await queryInterface.addIndex('campaigns', {
         fields: ['id','domain_id','deleted'],
+      }),
+
+      await queryInterface.addIndex('campaigns', {
+        fields: ['id','user_id','deleted', 'active'],
+      }),
+
+      await queryInterface.addIndex('campaigns', {
+        fields: ['id','post_id','deleted', 'active'],
+      }),
+
+      await queryInterface.addIndex('campaigns', {
+        fields: ['id','group_id','deleted', 'active'],
+      }),
+
+      await queryInterface.addIndex('campaigns', {
+        fields: ['id','community_id','deleted', 'active'],
+      }),
+
+      await queryInterface.addIndex('campaigns', {
+        fields: ['id','domain_id','deleted', 'active'],
       }),
 
       await queryInterface.createTable(

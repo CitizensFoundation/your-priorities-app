@@ -17,6 +17,11 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         defaultValue: false,
       },
+      active: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: true,
+      },
     },
     {
       underscored: true,
@@ -51,6 +56,21 @@ module.exports = (sequelize, DataTypes) => {
         },
         {
           fields: ["id", "user_id", "deleted"],
+        },
+        {
+          fields: ["id", "group_id", "deleted", "active"],
+        },
+        {
+          fields: ["id", "community_id", "deleted", "active"],
+        },
+        {
+          fields: ["id", "domain_id", "deleted", "active"],
+        },
+        {
+          fields: ["id", "post_id", "deleted", "active"],
+        },
+        {
+          fields: ["id", "user_id", "deleted", "active"],
         },
       ],
     }
