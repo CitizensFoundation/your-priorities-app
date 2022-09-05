@@ -56,7 +56,8 @@ export class PlausibleGoalGraph extends PlausibleBaseGraph {
 
   async fetchGraphData() {
     return new Promise((resolve, reject) => {
-      api
+      if (this.query.period!="realtime") {
+        api
         .get(this.proxyUrl, `/api/v1/stats/timeseries`, this.query, {
           metrics: this.metrics,
           statsBegin: this.site.statsBegin,
@@ -68,6 +69,9 @@ export class PlausibleGoalGraph extends PlausibleBaseGraph {
           resolve(res);
         })
         .catch(error => reject(error));
+      } else {
+        resolve([]);
+      }
     });
   }
 
