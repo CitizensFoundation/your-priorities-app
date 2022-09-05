@@ -39,8 +39,38 @@ export class YpCampaignAnalysis extends YpCampaign {
       super.styles,
       css`
         .mediumImage {
-          width: 20px;
-          height: 20px;
+          width: 35px;
+          height: 35px;
+        }
+
+        .mediumTopStats {
+          font-size: 14px;
+          text-align: left;
+          width: 150px;
+        }
+
+        .mediumCard {
+          width: 150px;
+        }
+
+        .mediumInnerCard {
+          width: 150px;
+        }
+
+        .statValue {
+          text-align: right;
+          margin-bottom: 2px;
+          color: var(--md-sys-color-on-secondary-container);
+        }
+
+        .statLabel {
+          text-align: left;
+          margin-bottom: 2px;
+          color: var(--md-sys-color-on-secondary-container);
+        }
+
+        .mediumsContainer {
+          height: 220px;
         }
       `,
     ];
@@ -48,12 +78,17 @@ export class YpCampaignAnalysis extends YpCampaign {
 
   renderMediumTopStats(medium: YpCampaignAnalyticsMediumData) {
     return html`
-      <div class="layout vertical center-center mediumTopStats">
+      <div class="layout vertical mediumTopStats">
         ${medium.topStats.map(
           stat => html`
-            <div class="layout horizontal center-center">
-              <div class="statValue">${stat.value}</div>
-              <div class="statLabel">${stat.name}</div>
+            <div class="layout horizontal">
+              <div class="column self-start">
+                <div class="statLabel">${stat.name}</div>
+              </div>
+              <div class="flex"></div>
+              <div class="column self-end">
+                <div class="statValue">${stat.value}${stat.name==="Bounce rate" ? "%" : ""}</div>
+              </div>
             </div>
           `
         )}
