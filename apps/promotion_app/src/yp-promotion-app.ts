@@ -11,13 +11,10 @@ import '@material/mwc-snackbar/mwc-snackbar.js';
 
 import { YpAppGlobals } from './@yrpri/yp-app/YpAppGlobals.js';
 import { YpAppUser } from './@yrpri/yp-app/YpAppUser.js';
-import { YpAppDialogs } from './@yrpri/yp-dialog-container/yp-app-dialogs.js';
 import { YpServerApi } from './@yrpri/common/YpServerApi.js';
 import { AnchorableElement } from '@material/mwc-menu/mwc-menu-surface-base';
 import { Dialog } from '@material/mwc-dialog';
 import { YpServerApiAdmin } from './@yrpri/common/YpServerApiAdmin.js';
-
-import './@yrpri/yp-dialog-container/yp-app-dialogs.js';
 
 import { YpAccessHelpers } from './@yrpri/common/YpAccessHelpers.js';
 import { classMap } from 'lit/directives/class-map.js';
@@ -53,7 +50,6 @@ declare global {
   interface Window {
     appGlobals: YpAppGlobals;
     appUser: YpAppUser;
-    appDialogs: YpAppDialogs;
     serverApi: YpServerApi;
     adminServerApi: YpServerApiAdmin;
     PasswordCredential?: any;
@@ -348,7 +344,6 @@ export class YpPromotionApp extends YpBaseElement {
   render() {
     if (this.collection) {
       return html`
-        <yp-app-dialogs id="dialogContainer"></yp-app-dialogs>
         <div class="layout horizontal">
           <div>${this.renderNavigationBar()}</div>
           <div class="rightPanel">
