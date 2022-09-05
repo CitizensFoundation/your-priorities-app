@@ -38,6 +38,21 @@ export class YpCampaignsAnalytics extends PlausibleBaseElementWithState {
     super.connectedCallback();
     if (this.timer) this.timer.onTick(this.getCampaigns.bind(this));
   }
+  static get styles() {
+    return [
+      css`
+        .mainContainer {
+          width: 1000px;
+          margin-top: 32px;
+          min-height: 150px;
+        }
+
+        .textInfo {
+          margin-top: 32px;
+        }
+      `,
+    ];
+  }
 
   firstUpdated() {
     this.getCampaigns();
@@ -127,7 +142,7 @@ export class YpCampaignsAnalytics extends PlausibleBaseElementWithState {
   }
 
   render() {
-    if (this.foundCampaigns) {
+    if (this.foundCampaigns && this.foundCampaigns.length > 0) {
       return html`
         <div class="layout vertical start mainContainer">
           <div class="layout vertical">
@@ -137,15 +152,17 @@ export class YpCampaignsAnalytics extends PlausibleBaseElementWithState {
           </div>
         </div>
       `;
-    } else if (this.noData) {
+    } else if (this.foundCampaigns) {
       return html`
-        <div class="layout vertical start mainContainer">
-          <p>No campaigns found</p>
+        <div class="layout horizontal center-center mainContainer">
+          <div class="textInfo">No campaigns found</div>
         </div>
       `;
     } else {
-      return html` <div class="layout vertical start mainContainer">
-        <p>Loading...</p>
+      return html` <div class="layout horizontal center-center mainContainer">
+        <div class="layout horizontal center-center">
+          <div class="textInfo">Loading...</div>
+        </div>
       </div>`;
     }
   }
