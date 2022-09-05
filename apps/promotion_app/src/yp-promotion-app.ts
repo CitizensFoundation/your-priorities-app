@@ -99,7 +99,7 @@ export class YpPromotionApp extends YpBaseElement {
   adminConfirmed = false;
 
   @property({ type: Boolean })
-  haveChekedAdminRights = false;
+  haveCheckedAdminRights = false;
 
   @property({ type: String })
   lastSnackbarText: string | undefined;
@@ -530,7 +530,7 @@ export class YpPromotionApp extends YpBaseElement {
     this.addGlobalListener('yp-network-error', this._appError.bind(this));
     this.addListener('yp-app-dialogs-ready', this._appDialogsReady.bind(this));
     this.addGlobalListener(
-      'yp-have-checked-admin-rights',
+      'yp-got-admin-rights',
       this._gotAdminRights.bind(this)
     );
   }
@@ -544,18 +544,20 @@ export class YpPromotionApp extends YpBaseElement {
       this._appDialogsReady.bind(this)
     );
     this.removeGlobalListener(
-      'yp-have-checked-admin-rights',
+      'yp-got-admin-rights',
       this._gotAdminRights.bind(this)
     );
   }
 
   _gotAdminRights(event: CustomEvent) {
-    this.haveChekedAdminRights = true;
+    console.log(`Got admin rights for ${event.detail}`);
+    this.haveCheckedAdminRights = true;
     this._getCollection();
   }
 
   _setAdminConfirmed() {
     if (this.collection) {
+      console.log(`Collection type ${this.collectionType}`);
       switch (this.collectionType) {
         case 'domain':
           this.adminConfirmed = YpAccessHelpers.checkDomainAccess(
@@ -580,7 +582,9 @@ export class YpPromotionApp extends YpBaseElement {
       }
     }
 
-    if (this.collection && this.haveChekedAdminRights && !this.adminConfirmed) {
+    console.log(`this.adminConfirmed ${this.adminConfirmed}`);
+
+    if (this.collection && this.haveCheckedAdminRights && !this.adminConfirmed) {
       this.fire('yp-network-error', { message: this.t('unauthorized') });
     }
   }
