@@ -64,8 +64,9 @@ declare global {
 const PagesTypes = {
   Analytics: 1,
   Campaign: 2,
-  AiAnalysis: 3,
-  Settings: 4,
+  EmailLists: 3,
+  AiAnalysis: 4,
+  Settings: 5,
 };
 
 @customElement('yp-promotion-app')
@@ -430,6 +431,17 @@ export class YpPromotionApp extends YpBaseElement {
               class="${this.pageIndex == 3 && 'selectedContainer'}"
               @click="${() => (this.pageIndex = 3)}"
               ?hidden="${this.collectionType == 'posts'}"
+              headline="${this.t('Email Lists')}"
+              supportingText="${this.t('Send promotional emails')}"
+            >
+              <md-list-item-icon slot="start"
+                ><md-icon><span class="material-symbols-outlined">schedule_send</span></md-icon></md-list-item-icon
+              ></md-list-item
+            >
+            <md-list-item
+              class="${this.pageIndex == 4 && 'selectedContainer'}"
+              @click="${() => (this.pageIndex = 4)}"
+              ?hidden="${this.collectionType == 'posts'}"
               headline="${this.t('AI Analysis')}"
               supportingText="${this.t('Text analysis with AI')}"
             >
@@ -439,8 +451,8 @@ export class YpPromotionApp extends YpBaseElement {
             >
             <md-list-divider></md-list-divider>
             <md-list-item
-              class="${this.pageIndex == 4 && 'selectedContainer'}"
-              @click="${() => (this.pageIndex = 4)}"
+              class="${this.pageIndex == 5 && 'selectedContainer'}"
+              @click="${() => (this.pageIndex = 5)}"
               headline="${this.t('Setting')}"
               supportingText="${this.t('Theme, language, etc.')}"
             >
@@ -451,6 +463,7 @@ export class YpPromotionApp extends YpBaseElement {
             <md-list-item
               headline="${this.t('Exit')}"
               supportingText="${this.t('Exit back to project')}"
+              @click="${this.exitToMainApp}"
             >
               <md-list-item-icon slot="start"
                 ><md-icon>arrow_back</md-icon></md-list-item-icon
@@ -643,6 +656,19 @@ export class YpPromotionApp extends YpBaseElement {
                     .collectionId="${this.collectionId}"
                   >
                   </yp-ai-text-analysis>`
+                : nothing
+            )}
+          `;
+        case PagesTypes.EmailLists:
+          return html`
+            ${cache(
+              this.collection
+                ? html`<yp-email-lists
+                    .collectionType="${this.collectionType}"
+                    .collection="${this.collection}"
+                    .collectionId="${this.collectionId}"
+                  >
+                  </yp-email-lists>`
                 : nothing
             )}
           `;
