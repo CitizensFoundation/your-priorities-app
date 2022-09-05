@@ -105,7 +105,7 @@ export class YpHistorical extends PlausibleHistorical {
             'endorse_down - completed',
             'pointHelpful - completed',
             'pointNotHelpful - completed',
-            'post.ratings - completed'
+            'post.ratings - add'
           ]}"
           .chartTitle="${this.t('Users who rated content')}"
           .query="${this.query}"

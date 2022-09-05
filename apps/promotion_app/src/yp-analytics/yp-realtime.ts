@@ -63,14 +63,42 @@ export class YpRealtime extends PlausibleRealtime {
           .collectionId="${this.collectionId}"
         ></yp-campaigns-analytics>
         <pl-goal-graph
-          .events="${[
-            "newPost - completed",
-          ]}"
-          .chartTitle="${this.t('New ideas')}"
+          .events="${['newPost - completed',
+                    'newPointAgainst - completed',
+                    'newPointFor - completed'
+                ]}"
+          .chartTitle="${this.t('Users who added content')}"
           .query="${this.query}"
           .proxyUrl="${this.proxyUrl}"
+          .timer="${this.timer}"
           .site="${this.site}"
-          chartHeigh="350">
+          gradientColorStop1="rgba(205,116,101, 0.2)"
+          gradientColorStop2="rgba(205,116,101, 0.2)"
+          prevGradientColorStop1="rgba(205,116,101, 0.075)"
+          prevGradientColorStop2="rgba(205,116,101, 0)"
+          borderColor="rgba(205,116,101)"
+          pointBackgroundColor="rgba(205,116,101)"
+          pointHoverBackgroundColor="rgba(193, 87, 71)"
+          prevPointHoverBackgroundColor="rgba(166,187,210,0.8)"
+          prevBorderColor="rgba(210,187,166,0.5)"
+          chartHeigh="150"
+        >
+        </pl-goal-graph>
+        <pl-goal-graph
+          .events="${[
+            'endorse_up - completed',
+            'endorse_down - completed',
+            'pointHelpful - completed',
+            'pointNotHelpful - completed',
+            'post.ratings - add'
+          ]}"
+          .chartTitle="${this.t('Users who rated content')}"
+          .query="${this.query}"
+          .proxyUrl="${this.proxyUrl}"
+          .timer="${this.timer}"
+          .site="${this.site}"
+          chartHeigh="150"
+        >
         </pl-goal-graph>
         <div class="items-start justify-between block w-full md:flex flex">
           <pl-sources-list
