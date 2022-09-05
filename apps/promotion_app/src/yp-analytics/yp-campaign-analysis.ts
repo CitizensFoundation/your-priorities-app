@@ -48,7 +48,7 @@ export class YpCampaignAnalysis extends YpCampaign {
 
   renderMediumTopStats(medium: YpCampaignAnalyticsMediumData) {
     return html`
-      <div class="layout vertical center-center mediumStats">
+      <div class="layout vertical center-center mediumTopStats">
         ${medium.topStats.map(
           stat => html`
             <div class="layout horizontal center-center">
