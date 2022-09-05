@@ -69,6 +69,8 @@ export class YpPromotionDashboard extends PlausibleDashboard {
             .site="${this.site}"
             .currentRole="${this.currentUserRole}"
             .query="${this.query}"
+            .collectionType="${this.collectionType}"
+            .collectionId="${this.collectionId}"
             .history="${this.history}"
             .proxyUrl="${`/api/${YpServerApi.transformCollectionTypeToApi(this.collectionType)}/${this.collectionId}/plausibleStatsProxy`}"
             proxyFaviconBaseUrl="/api/users/PlausibleFavIcon/"
@@ -82,6 +84,8 @@ export class YpPromotionDashboard extends PlausibleDashboard {
             .history="${this.history}"
             .currentRole="${this.currentUserRole}"
             .query="${this.query}"
+            .collectionType="${this.collectionType}"
+            .collectionId="${this.collectionId}"
             .proxyUrl="${`/api/${YpServerApi.transformCollectionTypeToApi(this.collectionType)}/${this.collectionId}/plausibleStatsProxy`}"
             proxyFaviconBaseUrl="/api/users/PlausibleFavIcon/"
           ></yp-historical>

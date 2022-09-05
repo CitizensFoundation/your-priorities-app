@@ -36,3 +36,14 @@ interface YpNewCampaignData {
   name: string;
   promotionText: string;
 }
+
+interface YpCampaignAnalyticsMediumData extends YpCampaignMediumData {
+  conversion_rate: number;
+  visitors: number;
+  topStats: PlausibleStatData[];
+}
+
+interface YpCampaignAnalyticsData extends YpCampaignData {
+  hasData?: boolean;
+  mediums: YpCampaignAnalyticsMediumData[];
+}

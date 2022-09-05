@@ -6,6 +6,15 @@ import '../pl-components/stats/graph/pl-goal-graph.js';
 
 @customElement('yp-realtime')
 export class YpRealtime extends PlausibleRealtime {
+  @property({ type: Object })
+  collection!: YpCollectionData;
+
+  @property({ type: String })
+  collectionType!: string;
+
+  @property({ type: Number })
+  collectionId!: number;
+
   static get styles() {
     return [...super.styles, css``];
   }
@@ -45,6 +54,14 @@ export class YpRealtime extends PlausibleRealtime {
           .timer="${this.timer}"
           .proxyUrl="${this.proxyUrl}"
         ></pl-visitors-graph>
+        <yp-campaigns-analytics
+          .site="${this.site}"
+          .query="${this.query}"
+          .proxyUrl="${this.proxyUrl}"
+          .timer="${this.timer}"
+          .collectionType="${this.collectionType}"
+          .collectionId="${this.collectionId}"
+        ></yp-campaigns-analytics>
         <pl-goal-graph
           .events="${[
             "newPost - completed",

@@ -51,7 +51,6 @@ export class PlausibleGoalGraph extends PlausibleBaseGraph {
       filterString = filterString.slice(0, -1);
     }
 
-    console.error(filterString);
     return filterString;
   }
 

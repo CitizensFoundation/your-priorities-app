@@ -75,8 +75,6 @@ export class PlausiblePropBreakdown extends PlausibleBaseElementWithState {
       this.propKey = Object.keys(this.query.filters!['props'])[0];
     }
 
-    debugger;
-
     this.handleResize = this.handleResize.bind(this);
     window.addEventListener('resize', this.handleResize, false);
 

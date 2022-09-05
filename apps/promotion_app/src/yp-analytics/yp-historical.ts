@@ -6,8 +6,19 @@ import { BrowserHistory } from '../pl-components/util/history.js';
 
 import '../pl-components/stats/graph/pl-goal-graph.js';
 
+import './yp-campaigns-analytics.js';
+
 @customElement('yp-historical')
 export class YpHistorical extends PlausibleHistorical {
+  @property({ type: Object })
+  collection!: YpCollectionData;
+
+  @property({ type: String })
+  collectionType!: string;
+
+  @property({ type: Number })
+  collectionId!: number;
+
   static get styles() {
     return [
       ...super.styles,
@@ -60,6 +71,13 @@ export class YpHistorical extends PlausibleHistorical {
           .query="${this.query}"
           .proxyUrl="${this.proxyUrl}"
         ></pl-visitors-graph>
+        <yp-campaigns-analytics
+          .site="${this.site}"
+          .query="${this.query}"
+          .proxyUrl="${this.proxyUrl}"
+          .collectionType="${this.collectionType}"
+          .collectionId="${this.collectionId}"
+        ></yp-campaigns-analytics>
         <pl-goal-graph
           .events="${['newPost - completed',
                     'newPointAgainst - completed',

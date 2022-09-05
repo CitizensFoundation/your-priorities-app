@@ -19,7 +19,6 @@ import { YpServerApiAdmin } from './@yrpri/common/YpServerApiAdmin.js';
 
 import './@yrpri/yp-dialog-container/yp-app-dialogs.js';
 
-import './yp-analytics/testing/yp-community-promotion.js';
 import { YpAccessHelpers } from './@yrpri/common/YpAccessHelpers.js';
 import { classMap } from 'lit/directives/class-map.js';
 
