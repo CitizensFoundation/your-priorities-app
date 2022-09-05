@@ -551,7 +551,6 @@ export class YpPromotionApp extends YpBaseElement {
 
   _gotAdminRights(event: CustomEvent) {
     this.haveChekedAdminRights = true;
-    this._setAdminConfirmed();
     this._getCollection();
   }
 
