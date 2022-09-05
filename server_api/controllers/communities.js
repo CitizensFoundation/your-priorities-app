@@ -467,7 +467,7 @@ const addVideosAndCommunityLinksToGroup = (groups, done) => {
         ]
       }).then(videos => {
         if (videos) {
-          videos = _.orderBy(videos, ['created_at'],['desc']);
+          videos = _.orderBy(videos, ['created_at'],['asc']);
 
           for (let v=0;v<videos.length;v++) {
             const groupId = videos[v].GroupLogoVideos[0].id;
