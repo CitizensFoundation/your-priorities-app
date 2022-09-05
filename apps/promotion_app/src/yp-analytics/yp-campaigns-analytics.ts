@@ -44,7 +44,7 @@ export class YpCampaignsAnalytics extends PlausibleBaseElementWithState {
         .mainContainer {
           width: 1000px;
           margin-top: 32px;
-          min-height: 150px;
+          min-height: 310px;
         }
 
         .textInfo {
@@ -56,6 +56,14 @@ export class YpCampaignsAnalytics extends PlausibleBaseElementWithState {
 
   firstUpdated() {
     this.getCampaigns();
+  }
+
+  updated(changedProperties: Map<string | number | symbol, unknown>): void {
+    super.updated(changedProperties);
+    if (changedProperties.has('query')) {
+     this.foundCampaigns = undefined;
+     this.getCampaigns();
+    }
   }
 
   async getCampaigns() {
@@ -97,6 +105,10 @@ export class YpCampaignsAnalytics extends PlausibleBaseElementWithState {
 
         this.foundCampaigns = foundCampaigns;
       }
+    }
+
+    if (!this.foundCampaigns) {
+      this.foundCampaigns = [];
     }
   }
 
