@@ -312,6 +312,7 @@ export class YpPromotionApp extends YpBaseElement {
     } else {
       this.collection = collection as YpCollectionData;
     }
+    this._setAdminConfirmed();
   }
 
   renderTopBar() {
