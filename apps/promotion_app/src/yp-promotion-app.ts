@@ -238,7 +238,6 @@ export class YpPromotionApp extends YpBaseElement {
   connectedCallback() {
     super.connectedCallback();
     this._setupEventListeners();
-    this._getCollection();
 
     const savedColor = localStorage.getItem('md3-yrpri-promotion-color');
     if (savedColor) {
@@ -313,7 +312,6 @@ export class YpPromotionApp extends YpBaseElement {
     } else {
       this.collection = collection as YpCollectionData;
     }
-    this._setAdminConfirmed();
   }
 
   renderTopBar() {
@@ -553,6 +551,7 @@ export class YpPromotionApp extends YpBaseElement {
   _gotAdminRights(event: CustomEvent) {
     this.haveChekedAdminRights = true;
     this._setAdminConfirmed();
+    this._getCollection();
   }
 
   _setAdminConfirmed() {
