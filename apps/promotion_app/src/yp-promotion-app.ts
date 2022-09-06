@@ -45,6 +45,7 @@ import './yp-promotion-settings.js';
 import { Snackbar } from '@material/mwc-snackbar';
 
 import './@yrpri/common/yp-image.js';
+import { YpBaseElementWithLogin } from './@yrpri/common/yp-base-element-with-login.js';
 
 declare global {
   interface Window {
@@ -66,7 +67,7 @@ const PagesTypes = {
 };
 
 @customElement('yp-promotion-app')
-export class YpPromotionApp extends YpBaseElement {
+export class YpPromotionApp extends YpBaseElementWithLogin {
   @property({ type: String })
   collectionType: string;
 
@@ -284,20 +285,16 @@ export class YpPromotionApp extends YpBaseElement {
   }
 
   async _getCollection() {
-    console.log("_getCollection 1");
-
     const collection = (await window.serverApi.getCollection(
       this.collectionType,
       this.collectionId as number
     )) as YpCollectionData | YpGroupResults;
-    if (this.collectionType == 'groups') {
+    if (this.collectionType == 'group') {
       this.collection = (collection as YpGroupResults).group;
     } else {
       this.collection = collection as YpCollectionData;
     }
-    console.log("_getCollection 2");
     await this.updateComplete;
-    console.log("_getCollection 3");
     this._setAdminConfirmed();
   }
 
@@ -528,17 +525,11 @@ export class YpPromotionApp extends YpBaseElement {
   }
 
   _gotAdminRights(event: CustomEvent) {
-    console.log(`Got admin rights for ${event.detail}`);
     this.haveCheckedAdminRights = true;
-    this._getCollection();
   }
 
   _setAdminConfirmed() {
-    console.log("_setAdminConfirmed 1");
-
     if (this.collection) {
-      console.log("_setAdminConfirmed 2");
-      console.log(`Collection type ${this.collectionType}`);
       switch (this.collectionType) {
         case 'domain':
           this.adminConfirmed = YpAccessHelpers.checkDomainAccess(
@@ -563,8 +554,6 @@ export class YpPromotionApp extends YpBaseElement {
       }
     }
 
-    console.log(`this.adminConfirmed ${this.adminConfirmed}`);
-
     if (this.collection && this.haveCheckedAdminRights && !this.adminConfirmed) {
       this.fire('yp-network-error', { message: this.t('unauthorized') });
     }
@@ -577,6 +566,16 @@ export class YpPromotionApp extends YpBaseElement {
       changedProperties.has('themeDarkMode')
     ) {
       this.themeChanged(document.body);
+    }
+
+    if (
+      (changedProperties.has('loggedInUser') ||
+      changedProperties.has('haveCheckedAdminRights') &&
+      this.loggedInUser &&
+      this.haveCheckedAdminRights === true
+      )
+    ) {
+      this._getCollection();
     }
   }
 

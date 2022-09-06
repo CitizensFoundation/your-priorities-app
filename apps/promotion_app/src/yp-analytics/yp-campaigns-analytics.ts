@@ -49,6 +49,13 @@ export class YpCampaignsAnalytics extends PlausibleBaseElementWithState {
 
         .textInfo {
           margin-top: 32px;
+          text-align: center;
+          padding: 16px;
+        }
+
+        .smallContainer {
+          min-height: 70px;
+          height: 70px;
         }
       `,
     ];
@@ -166,7 +173,7 @@ export class YpCampaignsAnalytics extends PlausibleBaseElementWithState {
       `;
     } else if (this.foundCampaigns) {
       return html`
-        <div class="layout horizontal center-center mainContainer">
+        <div class="layout horizontal center-center mainContainer smallContainer">
           <div class="textInfo">No campaigns found</div>
         </div>
       `;
