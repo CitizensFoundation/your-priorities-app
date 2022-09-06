@@ -137,7 +137,6 @@ export class YpAccessHelpers {
 
   static checkDomainAccess(domain: YpDomainData): boolean {
     if (domain && window.appUser && window.appUser.adminRights) {
-      console.log('checkDomainAccess 2', domain);
       return this._hasAccess(
         domain,
         domain.id,

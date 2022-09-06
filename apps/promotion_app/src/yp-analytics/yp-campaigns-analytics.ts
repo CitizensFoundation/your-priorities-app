@@ -54,8 +54,8 @@ export class YpCampaignsAnalytics extends PlausibleBaseElementWithState {
         }
 
         .smallContainer {
-          min-height: 70px;
-          height: 70px;
+          min-height: 60px;
+          height: 60px;
         }
       `,
     ];
