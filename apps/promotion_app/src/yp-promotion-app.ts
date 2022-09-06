@@ -85,9 +85,6 @@ export class YpPromotionApp extends YpBaseElement {
   @property({ type: Object })
   collection: YpCollectionData | undefined;
 
-  @property({ type: Number })
-  totalNumberOfPosts: number | undefined;
-
   @property({ type: String })
   currentError: string | undefined;
 
@@ -203,10 +200,6 @@ export class YpPromotionApp extends YpBaseElement {
     ];
   }
 
-  static _camelCase(string: string) {
-    return string.charAt(0).toUpperCase() + string.slice(1);
-  }
-
   constructor() {
     super();
 
@@ -215,10 +208,8 @@ export class YpPromotionApp extends YpBaseElement {
     window.appGlobals = new YpAppGlobals(window.serverApi);
     window.appUser = new YpAppUser(window.serverApi);
 
-    window.appGlobals.setupTranslationSystem("/promotion");
-    //window.appGlobals.setupTranslationSystem();
-
-    this.page = 'analytics';
+    //window.appGlobals.setupTranslationSystem("/promotion");
+    window.appGlobals.setupTranslationSystem();
 
     let pathname = window.location.pathname;
     if (pathname.endsWith('/'))
@@ -270,12 +261,6 @@ export class YpPromotionApp extends YpBaseElement {
     this._removeEventListeners();
   }
 
-  _appDialogsReady(event: CustomEvent) {
-    if (event.detail) {
-      window.appDialogs = event.detail;
-    }
-  }
-
   themeChanged(target: HTMLElement | undefined = undefined) {
     const theme = themeFromSourceColor(argbFromHex(this.themeColor), [
       {
@@ -286,7 +271,7 @@ export class YpPromotionApp extends YpBaseElement {
     ]);
 
     // Print out the theme as JSON
-    console.log(JSON.stringify(theme, null, 2));
+    //console.log(JSON.stringify(theme, null, 2));
 
     // Check if the user has dark mode turned on
     const systemDark =
@@ -308,6 +293,7 @@ export class YpPromotionApp extends YpBaseElement {
     } else {
       this.collection = collection as YpCollectionData;
     }
+    await this.updateComplete;
     this._setAdminConfirmed();
   }
 
@@ -519,11 +505,9 @@ export class YpPromotionApp extends YpBaseElement {
   }
 
   _setupEventListeners() {
-    this.addListener('set-total-posts', this._setTotalPosts);
     this.addListener('app-error', this._appError);
     this.addListener('display-snackbar', this._displaySnackbar);
     this.addGlobalListener('yp-network-error', this._appError.bind(this));
-    this.addListener('yp-app-dialogs-ready', this._appDialogsReady.bind(this));
     this.addGlobalListener(
       'yp-got-admin-rights',
       this._gotAdminRights.bind(this)
@@ -531,13 +515,8 @@ export class YpPromotionApp extends YpBaseElement {
   }
 
   _removeEventListeners() {
-    this.removeListener('set-total-posts', this._setTotalPosts);
     this.removeGlobalListener('yp-network-error', this._appError.bind(this));
     this.removeListener('display-snackbar', this._displaySnackbar);
-    this.removeListener(
-      'yp-app-dialogs-ready',
-      this._appDialogsReady.bind(this)
-    );
     this.removeGlobalListener(
       'yp-got-admin-rights',
       this._gotAdminRights.bind(this)
@@ -600,14 +579,6 @@ export class YpPromotionApp extends YpBaseElement {
     (this.$$('#errorDialog') as Dialog).open = true;
   }
 
-  _setTotalPosts(event: CustomEvent) {
-    this.totalNumberOfPosts = event.detail;
-  }
-
-  _tabSelected(event: CustomEvent) {
-    this.page = event.detail.index.toString();
-    this.requestUpdate();
-  }
 
   _renderPage() {
     if (this.adminConfirmed) {
@@ -696,15 +667,5 @@ export class YpPromotionApp extends YpBaseElement {
 
   _settingsColorChanged(event: CustomEvent) {
     this.fireGlobal('yp-theme-color', event.detail.value);
-  }
-
-  __onNavClicked(ev: CustomEvent) {
-    ev.preventDefault();
-    debugger;
-    this.page = (ev.target as HTMLAnchorElement).hash.substring(1);
-  }
-
-  __navClass(page: string) {
-    return classMap({ active: this.page === page });
   }
 }
