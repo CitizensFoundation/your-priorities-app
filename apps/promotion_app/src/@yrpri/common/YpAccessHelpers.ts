@@ -3,6 +3,7 @@ export class YpAccessHelpers {
     objectId: number,
     adminRights: Array<YpCollectionData>
   ): boolean {
+    console.log(`YpAccessHelpers _hasAdminRights ${objectId} ${adminRights.length}`);
     return (
       adminRights.find((o: YpCollectionData) => {
         return o.id == objectId;
@@ -15,16 +16,24 @@ export class YpAccessHelpers {
     objectId: number,
     adminRights: Array<YpCollectionData>
   ): boolean {
+    console.log("_hasAccess 1")
     if (object) {
+      console.log("_hasAccess 2")
       if (window.appUser && window.appUser.user) {
+        console.log("_hasAccess 3")
         if (window.appUser.user.id == object.user_id) {
+          console.log("_hasAccess 4")
           return true;
         } else if (object.User && window.appUser.user.id == object.User.id) {
+          console.log("_hasAccess 5")
           return true;
         } else {
+          console.log("_hasAccess 5")
           if (window.appUser.adminRights) {
+            console.log("_hasAccess 6")
             return this._hasAdminRights(objectId, adminRights);
           } else {
+            console.log("_hasAccess 7")
             return false;
           }
         }
@@ -32,6 +41,7 @@ export class YpAccessHelpers {
         return false;
       }
     } else if (!window.appUser) {
+      console.log("_hasAccess 8")
       return false;
     } else {
       console.warn('No object in hasAccess');
