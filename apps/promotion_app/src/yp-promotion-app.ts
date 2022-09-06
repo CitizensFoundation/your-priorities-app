@@ -284,6 +284,8 @@ export class YpPromotionApp extends YpBaseElement {
   }
 
   async _getCollection() {
+    console.log("_getCollection 1");
+
     const collection = (await window.serverApi.getCollection(
       this.collectionType,
       this.collectionId as number
@@ -293,7 +295,9 @@ export class YpPromotionApp extends YpBaseElement {
     } else {
       this.collection = collection as YpCollectionData;
     }
+    console.log("_getCollection 2");
     await this.updateComplete;
+    console.log("_getCollection 3");
     this._setAdminConfirmed();
   }
 
@@ -530,7 +534,10 @@ export class YpPromotionApp extends YpBaseElement {
   }
 
   _setAdminConfirmed() {
+    console.log("_setAdminConfirmed 1");
+
     if (this.collection) {
+      console.log("_setAdminConfirmed 2");
       console.log(`Collection type ${this.collectionType}`);
       switch (this.collectionType) {
         case 'domain':

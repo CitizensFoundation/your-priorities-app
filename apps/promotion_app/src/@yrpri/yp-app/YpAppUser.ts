@@ -768,12 +768,14 @@ export class YpAppUser extends YpCodeBase {
   }
 
   async getAdminRights() {
+    console.log("getAdminRights 1");
     const response = (await this.serverApi.getAdminRights()) as
       | YpAdminRights
       | void
       | boolean;
 
     if (response) {
+      console.log("getAdminRights 2");
       this.adminRights = response as YpAdminRights;
       this.fireGlobal('yp-got-admin-rights', true);
 
@@ -782,7 +784,9 @@ export class YpAppUser extends YpCodeBase {
         this.fireGlobal('yp-got-admin-rights', true);
       }, 1000);*/
     } else {
+      console.log("getAdminRights 3");
       if (this.adminRights) {
+        console.log("getAdminRights 4");
         this.adminRights = undefined;
         this.fireGlobal('yp-got-admin-rights', false);
       }
