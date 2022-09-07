@@ -470,7 +470,7 @@ const getDomainAdminAndUserIncludes = (req) => {
 
   communityAdminsOrUsersInclude = [{
     model: models.Domain,
-    attributes: ['id'],
+    attributes: [],
     required: true,
     where: domainAdminsOrUsersWhere
   }];
@@ -478,7 +478,7 @@ const getDomainAdminAndUserIncludes = (req) => {
   groupAdminsOrUsersInclude = [
     {
       model: models.Community,
-      attributes: ['id'],
+      attributes: [],
       required: true,
       include: communityAdminsOrUsersInclude
     }
@@ -502,6 +502,9 @@ router.get('/loggedInUser/adminRights', function (req, res) {
               model: models.Domain,
               as: 'DomainAdmins',
               attributes: ['id'],
+              through: {
+                attributes: []
+              },
               required: false,
               where: domainAdminsOrUsersWhere
             }
@@ -522,6 +525,9 @@ router.get('/loggedInUser/adminRights', function (req, res) {
               model: models.Community,
               as: 'CommunityAdmins',
               attributes: ['id'],
+              through: {
+                attributes: []
+              },
               required: false,
               include: communityAdminsOrUsersInclude
             }
@@ -543,6 +549,9 @@ router.get('/loggedInUser/adminRights', function (req, res) {
               as: 'GroupAdmins',
               attributes: ['id'],
               required: false,
+              through: {
+                attributes: []
+              },
               include: groupAdminsOrUsersInclude
             }
           ]
@@ -561,6 +570,9 @@ router.get('/loggedInUser/adminRights', function (req, res) {
             {
               model: models.Organization,
               as: 'OrganizationAdmins',
+              through: {
+                attributes: []
+              },
               attributes: ['id','name'],
               required: false
             }
@@ -612,6 +624,9 @@ router.get('/loggedInUser/adminRightsWithNames', function (req, res) {
               model: models.Domain,
               as: 'DomainAdmins',
               attributes: ['id','name','updated_at'],
+              through: {
+                attributes: []
+              },
               required: false,
               where: domainAdminsOrUsersWhere
             }
@@ -635,6 +650,9 @@ router.get('/loggedInUser/adminRightsWithNames', function (req, res) {
               model: models.Community,
               as: 'CommunityAdmins',
               attributes: ['id','name','updated_at'],
+              through: {
+                attributes: []
+              },
               required: false,
               include: communityAdminsOrUsersInclude
             }
@@ -658,6 +676,9 @@ router.get('/loggedInUser/adminRightsWithNames', function (req, res) {
               model: models.Group,
               as: 'GroupAdmins',
               attributes: ['id','name','configuration','updated_at'],
+              through: {
+                attributes: []
+              },
               required: false,
               where: {
                 configuration: {
@@ -739,6 +760,9 @@ router.get('/loggedInUser/memberships', function (req, res) {
             {
               model: models.Domain,
               as: 'DomainUsers',
+              through: {
+                attributes: []
+              },
               attributes: ['id'],
               required: false,
               where: domainAdminsOrUsersWhere
@@ -759,6 +783,9 @@ router.get('/loggedInUser/memberships', function (req, res) {
             {
               model: models.Community,
               as: 'CommunityUsers',
+              through: {
+                attributes: []
+              },
               attributes: ['id'],
               required: false,
               include: communityAdminsOrUsersInclude
@@ -779,6 +806,9 @@ router.get('/loggedInUser/memberships', function (req, res) {
             {
               model: models.Group,
               as: 'GroupUsers',
+              through: {
+                attributes: []
+              },
               attributes: ['id'],
               required: false,
               include: groupAdminsOrUsersInclude
@@ -799,6 +829,9 @@ router.get('/loggedInUser/memberships', function (req, res) {
             {
               model: models.Organization,
               as: 'OrganizationUsers',
+              through: {
+                attributes: []
+              },
               attributes: ['id'],
               required: false
             }
@@ -842,6 +875,9 @@ router.get('/loggedInUser/membershipsWithNames', function (req, res) {
             {
               model: models.Domain,
               as: 'DomainUsers',
+              through: {
+                attributes: []
+              },
               attributes: ['id','name','counter_users','updated_at'],
               required: false,
               where: domainAdminsOrUsersWhere
@@ -889,6 +925,9 @@ router.get('/loggedInUser/membershipsWithNames', function (req, res) {
               model: models.Group,
               as: 'GroupUsers',
               attributes: ['id','name','counter_users','configuration','updated_at'],
+              through: {
+                attributes: []
+              },
               required: false,
               where: {
                 configuration: {
@@ -920,6 +959,9 @@ router.get('/loggedInUser/membershipsWithNames', function (req, res) {
             {
               model: models.Organization,
               as: 'OrganizationUsers',
+              through: {
+                attributes: []
+              },
               attributes: ['id','name'],
               required: false
             }

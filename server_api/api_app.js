@@ -30,6 +30,9 @@ const compression = require('compression');
 const isBot = require("isbot");
 const redis = require('redis');
 
+const rateLimit = require("express-rate-limit");
+const RedisLimitStore = require("rate-limit-redis");
+
 const passport = require('passport')
   , LocalStrategy = require('passport-local').Strategy
   , FacebookStrategy = require('passport-facebook').Strategy
@@ -75,6 +78,7 @@ const sso = require('passport-sso');
 const cors = require('cors');
 
 const Airbrake = require('@airbrake/node');
+const { robotsTxt, botsWithJavascript, isBadBot, isCustomBot } = require("./bot_control");
 
 const ieVersion = (uaString) => {
   const match = /\b(MSIE |Trident.*?rv:|Edge\/)(\d+)/.exec(uaString);
@@ -193,13 +197,35 @@ app.use(function setupStaticPath(req, res, next) {
 
 app.use(session(sessionConfig));
 
+app.get('/robots.txt', function (req, res) {
+  res.type('text/plain')
+  res.send(robotsTxt(req));
+});
+
+const botRateLimiter = rateLimit({
+  windowMs:  process.env.RATE_LIMITER_WINDOW_MS ? process.env.RATE_LIMITER_WINDOW_MS : 15 * 60 * 1000, // 15 minutes
+  max: process.env.RATE_LIMITER_MAX ? process.env.RATE_LIMIT_MAX :  5, //225
+//  standardHeaders: true,
+  store: new RedisLimitStore({
+    client: redisClient,
+    expiry: process.env.RATE_LIMITER_REDIS_EXPIRY ? process.env.RATE_LIMITER_REDIS_EXPIRY : 15 //15 * 60, // 15 minutes
+  }),
+});
+
 app.use(function checkForBOT(req, res, next) {
   const ua = req.headers['user-agent'];
   if (req.headers['content-type']!=="application/json" &&
      (req.originalUrl && !req.originalUrl.endsWith("/sitemap.xml"))) {
-    if (!/Googlebot|AdsBot-Google|Google Page Speed|Chrome-Lighthouse/.test(ua) &&
-        (isBot(ua) || /^(facebookexternalhit)|(web\/snippet)|(Twitterbot)|(Slackbot)|(Embedly)|(LinkedInBot)|(Pinterest)|(XING-contenttabreceiver)/gi.test(ua))) {
-      nonSPArouter(req, res, next);
+    const isBotBad = isBadBot(ua.toLowerCase());
+    if (!botsWithJavascript(ua) &&
+        (isBot(ua) || isCustomBot(ua) || isBotBad)) {
+      if (isBotBad) {
+        botRateLimiter(req, res, () => {
+          nonSPArouter(req, res, next);
+        })
+      } else {
+        nonSPArouter(req, res, next);
+      }
     } else {
       next();
     }
@@ -256,23 +282,6 @@ app.use(passport.session());
 
 app.get('/manifest.json', function getManifest(req, res) {
   generateManifest(req, res);
-});
-
-app.get('/robots.txt', function (req, res) {
-  const robotsTxt = `User-agent: SemrushBot
-Disallow: /
-
-User-agent: *
-Crawl-delay: 1
-
-User-agent: *
-Disallow:
-
-Sitemap: https://${req.hostname}/sitemap.xml
-`;
-
-  res.type('text/plain')
-  res.send(robotsTxt);
 });
 
 var bearerCallback = function (req, token) {
