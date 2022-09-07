@@ -204,7 +204,7 @@ app.get('/robots.txt', function (req, res) {
 
 const botRateLimiter = rateLimit({
   windowMs:  process.env.RATE_LIMITER_WINDOW_MS ? process.env.RATE_LIMITER_WINDOW_MS : 15 * 60 * 1000, // 15 minutes
-  max: process.env.RATE_LIMITER_MAX ? process.env.RATE_LIMIT_MAX : 100,
+  max: process.env.RATE_LIMITER_MAX ? process.env.RATE_LIMIT_MAX : 75,
 //  standardHeaders: true,
   store: new RedisLimitStore({
     client: redisClient,
@@ -213,9 +213,12 @@ const botRateLimiter = rateLimit({
 });
 
 app.use(function checkForBOT(req, res, next) {
-  const ua = req.headers['user-agent'];
+  let ua = req.headers['user-agent'];
   if (req.headers['content-type']!=="application/json" &&
      (req.originalUrl && !req.originalUrl.endsWith("/sitemap.xml"))) {
+    if (!ua) {
+      ua = "";
+    }
     const isBotBad = isBadBot(ua.toLowerCase());
     if (!botsWithJavascript(ua) &&
         (isBot(ua) || isCustomBot(ua) || isBotBad)) {
