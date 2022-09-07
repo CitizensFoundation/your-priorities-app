@@ -269,7 +269,7 @@ User-agent: *
 Disallow:
 
 Sitemap: https://${req.hostname}/sitemap.xml
- `;
+`;
 
   res.type('text/plain')
   res.send(robotsTxt);
