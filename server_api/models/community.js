@@ -159,7 +159,7 @@ module.exports = (sequelize, DataTypes) => {
           req.ypCommunity = community;
           next();
         } else {
-          log.warn('Cant find community', { user: toJson(req.user), context: 'setYpCommunity', err: 'Community not found', errorStatus: 404 });
+          //log.warn('Cant find community', { user: toJson(req.user), context: 'setYpCommunity', err: 'Community not found', errorStatus: 404 });
           req.ypCommunity = {
             id: null,
             hostname: 'not_found'
