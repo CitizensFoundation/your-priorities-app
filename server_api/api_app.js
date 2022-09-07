@@ -204,7 +204,7 @@ app.get('/robots.txt', function (req, res) {
 
 const botRateLimiter = rateLimit({
   windowMs:  process.env.RATE_LIMITER_WINDOW_MS ? process.env.RATE_LIMITER_WINDOW_MS : 15 * 60 * 1000, // 15 minutes
-  max: process.env.RATE_LIMITER_MAX ? process.env.RATE_LIMIT_MAX : 5,
+  max: process.env.RATE_LIMITER_MAX ? process.env.RATE_LIMIT_MAX : 100,
 //  standardHeaders: true,
   store: new RedisLimitStore({
     client: redisClient,
