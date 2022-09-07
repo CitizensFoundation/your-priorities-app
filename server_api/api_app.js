@@ -259,8 +259,17 @@ app.get('/manifest.json', function getManifest(req, res) {
 });
 
 app.get('/robots.txt', function (req, res) {
+  const robotsTxt = `User-agent: SemrushBot
+Disallow: /
+
+User-agent: *
+Disallow:
+
+Sitemap: https://${req.hostname}/sitemap.xml
+ `;
+
   res.type('text/plain')
-  res.send(`User-agent: *\nDisallow:\n\nSitemap: https://${req.hostname}/sitemap.xml`);
+  res.send(robotsTxt);
 });
 
 var bearerCallback = function (req, token) {
