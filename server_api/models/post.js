@@ -689,7 +689,11 @@ module.exports = (sequelize, DataTypes) => {
           if (!postsHash[postId].dataValues.PostVideos) {
             postsHash[postId].dataValues.PostVideos = [];
           }
+          if (!postsHash[postId].PostVideos) {
+            postsHash[postId].PostVideos = [];
+          }
           postsHash[postId].dataValues.PostVideos.push(videos[i]);
+          postsHash[postId].PostVideos.push(videos[i]);
         } else {
           log.error("Can't find post to add video to")
         }
