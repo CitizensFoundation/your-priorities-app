@@ -936,14 +936,22 @@ router.get('/:domainId/moderate_all_content', auth.can('edit domain'), (req, res
 });
 
 router.get('/:domainId/flagged_content_count',  auth.can('edit domain'), (req, res) => {
-  getAllModeratedItemsByDomain({ domainId: req.params.domainId }, (error, items) => {
-    if (error) {
-      log.error("Error getting items for moderation", { error });
-      res.sendStatus(500)
-    } else {
-      res.send({count: items ? items.length : 0});
-    }
-  });
+  //TODO: It's getting slow we need a new method (for example counting in Plausible
+  const disableFlaggedContentCountCheckOnDomain = true;
+  if (disableFlaggedContentCountCheckOnDomain) {
+    res.send({
+      "count": -1
+    })
+  } else {
+    getAllModeratedItemsByDomain({ domainId: req.params.domainId }, (error, items) => {
+      if (error) {
+        log.error("Error getting items for moderation", { error });
+        res.sendStatus(500)
+      } else {
+        res.send({count: items ? items.length : 0});
+      }
+    });
+  }
 });
 
 router.delete('/:domainId/remove_many_admins', auth.can('edit domain'), (req, res) => {

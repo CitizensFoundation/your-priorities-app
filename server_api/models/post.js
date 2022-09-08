@@ -551,6 +551,17 @@ module.exports = (sequelize, DataTypes) => {
     });
   };
 
+  Post.setVideosForPosts = (posts, done) => {
+    sequelize.models.Post.getVideosForPosts(posts.map(p=>p.id), (error, videos) => {
+      if (error) {
+        done(error);
+      } else {
+        sequelize.models.Post.addVideosToAllPosts(posts, videos);
+        done();
+      }
+    })
+  }
+
   Post.getVideosForPosts = (postIds, done) => {
     sequelize.models.Video.findAll({
       attributes:  ['id','formats','viewable','created_at','public_meta'],
