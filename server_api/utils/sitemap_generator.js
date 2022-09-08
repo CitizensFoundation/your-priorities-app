@@ -2,6 +2,7 @@ var models = require("../models");
 var _ = require("lodash");
 var sitemapLib = require('sitemap');
 var async = require('async');
+const log = require('./logger');
 
 const getCommunityURL = (hostname, domainName, path) => {
   return 'https://'+hostname+'.'+domainName+path;
@@ -164,6 +165,7 @@ var generateSitemap = function(req, res) {
                   where: {
                     id: domainId
                   },
+                  attributes: [],
                   required: true
                 }
               ]
