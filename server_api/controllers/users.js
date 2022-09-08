@@ -1954,8 +1954,12 @@ router.get('/PlausibleFavIcon/:sourceName', async (req, res) => {
       res.sendStatus(404);
     }
   } catch (error) {
-    log.error(error);
-    res.sendStatus(500);
+    if (error == 404) {
+      res.sendStatus(404);
+    } else {
+      log.error(`PlausibleFavIcon Error ${error}`);
+      res.sendStatus(500);
+    }
   }
 });
 
