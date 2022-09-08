@@ -18,7 +18,6 @@ export class PlausibleSourcesAll extends PlausibleSourcesBase {
   connectedCallback() {
     super.connectedCallback();
     if (this.timer) this.timer.onTick(this.fetchReferrers.bind(this));
-    this.fetchReferrers();
   }
 
   fetchReferrers() {

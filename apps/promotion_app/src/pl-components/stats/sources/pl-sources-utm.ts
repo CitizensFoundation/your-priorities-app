@@ -16,14 +16,6 @@ export class PlausibleSourcesUtm extends PlausibleSourcesBase {
 
   connectedCallback() {
     if (this.timer) this.timer.onTick(this.fetchReferrers.bind(this));
-    this.fetchReferrers();
-  }
-
-  updated(changedProperties: Map<string | number | symbol, unknown>): void {
-    super.updated(changedProperties);
-    if (changedProperties.has('query') || changedProperties.has('tab')) {
-      this.fetchReferrers();
-    }
   }
 
   fetchReferrers() {

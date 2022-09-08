@@ -43,9 +43,15 @@ export class PlausibleSourcesBase extends PlausibleBaseElementWithState {
   @property({ type: Boolean })
   loading = false;
 
+  fetchReferrers() {}
+
   updated(changedProperties: Map<string | number | symbol, unknown>): void {
     if (changedProperties.has('tab')) {
       this.fire('tab-changed', this.tab);
+    }
+
+    if (changedProperties.has('tab') || changedProperties.get('query')) {
+      this.fetchReferrers();
     }
   }
 
