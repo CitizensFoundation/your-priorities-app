@@ -104,6 +104,9 @@ var generateSitemap = function(req, res) {
           ],
           status: {
             $ne: 'hidden'
+          },
+          configuration: {
+            actAsLinkToCommunityId: null
           }
         },
         include: [
@@ -183,7 +186,10 @@ var generateSitemap = function(req, res) {
                 $or: [
                   { access: models.Group.ACCESS_PUBLIC },
                   { access: models.Group.ACCESS_OPEN_TO_COMMUNITY },
-                ]
+                ],
+                configuration: {
+                  actAsLinkToCommunityId: null
+                }
               },
               required: true,
               include: mainInclude
