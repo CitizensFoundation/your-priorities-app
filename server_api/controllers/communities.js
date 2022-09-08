@@ -22,6 +22,7 @@ const stream = require('stream');
 const { getMapForCommunity } = require("../utils/community_mapping_tools");
 
 const { getPlausibleStats, plausibleStatsProxy } = require("../active-citizen/engine/analytics/plausible/manager")
+const {countAllModeratedItemsByCommunity} = require("../active-citizen/engine/moderation/get_moderation_items");
 
 const getFromAnalyticsApi = require('../active-citizen/engine/analytics/manager').getFromAnalyticsApi;
 const triggerSimilaritiesTraining = require('../active-citizen/engine/analytics/manager').triggerSimilaritiesTraining;
@@ -1683,12 +1684,12 @@ router.get('/:communityId/moderate_all_content', auth.can('edit community'), (re
 });
 
 router.get('/:communityId/flagged_content_count',  auth.can('edit community'), (req, res) => {
-  getAllModeratedItemsByCommunity({ communityId: req.params.communityId }, (error, items) => {
+  countAllModeratedItemsByCommunity({ communityId: req.params.communityId }, (error, count) => {
     if (error) {
       log.error("Error getting items for moderation", { error });
       res.sendStatus(500)
     } else {
-      res.send({count: items ? items.length : 0});
+      res.send({ count });
     }
   });
 });

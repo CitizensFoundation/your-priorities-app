@@ -23,6 +23,7 @@ const request = require('request');
 const {updateAnswerTranslation} = require("../active-citizen/utils/translation_helpers");
 const {updateSurveyTranslation} = require("../active-citizen/utils/translation_helpers");
 const {plausibleStatsProxy, getPlausibleStats} = require("../active-citizen/engine/analytics/plausible/manager");
+const {countAllModeratedItemsByGroup} = require("../active-citizen/engine/moderation/get_moderation_items");
 
 const getFromAnalyticsApi = require('../active-citizen/engine/analytics/manager').getFromAnalyticsApi;
 const triggerSimilaritiesTraining = require('../active-citizen/engine/analytics/manager').triggerSimilaritiesTraining;
@@ -2065,12 +2066,12 @@ router.get('/:groupId/moderate_all_content', auth.can('edit group'), (req, res) 
 });
 
 router.get('/:groupId/flagged_content_count', auth.can('edit group'), (req, res) => {
-  getAllModeratedItemsByGroup({ groupId: req.params.groupId }, (error, items) => {
+  countAllModeratedItemsByGroup({ groupId: req.params.groupId }, (error, count) => {
     if (error) {
       log.error("Error getting items for moderation", { error });
       res.sendStatus(500)
     } else {
-      res.send({count: items ? items.length : 0});
+      res.send({ count });
     }
   });
 });

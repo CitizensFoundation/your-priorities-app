@@ -13,6 +13,7 @@ const getLoginsExportDataForDomain = require('../utils/export_utils').getLoginsE
 var sanitizeFilename = require("sanitize-filename");
 var moment = require('moment');
 const {plausibleStatsProxy} = require("../active-citizen/engine/analytics/plausible/manager");
+const {countAllModeratedItemsByDomain} = require("../active-citizen/engine/moderation/get_moderation_items");
 const getFromAnalyticsApi = require('../active-citizen/engine/analytics/manager').getFromAnalyticsApi;
 const triggerSimilaritiesTraining = require('../active-citizen/engine/analytics/manager').triggerSimilaritiesTraining;
 const sendBackAnalyticsResultsOrError = require('../active-citizen/engine/analytics/manager').sendBackAnalyticsResultsOrError;
@@ -936,22 +937,14 @@ router.get('/:domainId/moderate_all_content', auth.can('edit domain'), (req, res
 });
 
 router.get('/:domainId/flagged_content_count',  auth.can('edit domain'), (req, res) => {
-  //TODO: It's getting slow we need a new method (for example counting in Plausible
-  const disableFlaggedContentCountCheckOnDomain = true;
-  if (disableFlaggedContentCountCheckOnDomain) {
-    res.send({
-      "count": -1
-    })
-  } else {
-    getAllModeratedItemsByDomain({ domainId: req.params.domainId }, (error, items) => {
-      if (error) {
-        log.error("Error getting items for moderation", { error });
-        res.sendStatus(500)
-      } else {
-        res.send({count: items ? items.length : 0});
-      }
-    });
-  }
+  countAllModeratedItemsByDomain({ domainId: req.params.domainId }, (error, count) => {
+    if (error) {
+      log.error("Error getting items for moderation", { error });
+      res.sendStatus(500)
+    } else {
+      res.send({ count });
+    }
+  });
 });
 
 router.delete('/:domainId/remove_many_admins', auth.can('edit domain'), (req, res) => {
