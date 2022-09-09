@@ -48,6 +48,7 @@ export class YpHistorical extends PlausibleHistorical {
                 .timer=${this.timer}
                 .site=${this.site}
                 .query=${this.query}
+                useTopStatsForCurrentVisitors
                 class="w-full"
                 .proxyUrl="${this.proxyUrl}"
               ></pl-current-visitors>
@@ -70,6 +71,7 @@ export class YpHistorical extends PlausibleHistorical {
           .site="${this.site}"
           .query="${this.query}"
           .proxyUrl="${this.proxyUrl}"
+          useTopStatsForCurrentVisitors
         ></pl-visitors-graph>
         <yp-campaigns-analytics
           .site="${this.site}"

@@ -52,6 +52,7 @@ export class YpRealtime extends PlausibleRealtime {
           .site="${this.site}"
           .query="${this.query}"
           .timer="${this.timer}"
+          useTopStatsForCurrentVisitors
           .proxyUrl="${this.proxyUrl}"
         ></pl-visitors-graph>
         <yp-campaigns-analytics

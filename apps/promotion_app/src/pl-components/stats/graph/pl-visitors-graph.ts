@@ -15,6 +15,7 @@ import './pl-line-graph.js';
 import { PlausibleStyles } from '../../plausibleStyles';
 import { PlausibleBaseElement } from '../../pl-base-element';
 import { PlausibleBaseElementWithState } from '../../pl-base-element-with-state';
+import { threadId } from 'worker_threads';
 
 @customElement('pl-visitors-graph')
 export class PlausibleVisitorsGraph extends PlausibleBaseElementWithState {
@@ -29,6 +30,11 @@ export class PlausibleVisitorsGraph extends PlausibleBaseElementWithState {
 
   @property({ type: Object })
   graphData: any;
+
+  // The current-visitors API does not support filtering by custom properties
+  // this is a workaround
+  @property({ type: Boolean })
+  useTopStatsForCurrentVisitors = false;
 
   constructor() {
     super();
@@ -46,7 +52,7 @@ export class PlausibleVisitorsGraph extends PlausibleBaseElementWithState {
     this.updateMetric = this.updateMetric.bind(this);
     this.fetchGraphData = this.fetchGraphData.bind(this);
     this.fetchTopStatData = this.fetchTopStatData.bind(this);
-}
+  }
 
   updated(changedProperties: Map<string | number | symbol, unknown>): void {
     super.updated(changedProperties);
@@ -128,6 +134,12 @@ export class PlausibleVisitorsGraph extends PlausibleBaseElementWithState {
         this.query
       )
       .then(res => {
+        if (this.useTopStatsForCurrentVisitors && this.query.period=="realtime") {
+          res.top_stats[0] = { name: res.top_stats[0].name,
+            value: res.top_stats[1].value
+          }
+        };
+        ;
         this.topStatData = res;
       });
   }

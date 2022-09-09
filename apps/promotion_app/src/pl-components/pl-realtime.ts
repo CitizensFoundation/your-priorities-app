@@ -79,8 +79,8 @@ export class PlausibleRealtime extends PlausibleBaseElementWithState {
           .site="${this.site}"
           .query="${this.query}"
           .timer="${this.timer}"
-
           .proxyUrl="${this.proxyUrl}"
+          useTopStatsForCurrentVisitors
         ></pl-visitors-graph>
         <div class="items-start justify-between block w-full md:flex flex">
           <pl-sources-list
@@ -96,7 +96,6 @@ export class PlausibleRealtime extends PlausibleBaseElementWithState {
             .site="${this.site}"
             .query="${this.query}"
             .timer="${this.timer}"
-
             .proxyUrl="${this.proxyUrl}"
           ></pl-pages>
         </div>
@@ -105,7 +104,6 @@ export class PlausibleRealtime extends PlausibleBaseElementWithState {
             .site="${this.site}"
             .query="${this.query}"
             .timer="${this.timer}"
-
             .proxyUrl="${this.proxyUrl}"
           ></pl-locations>
           <pl-devices
@@ -129,7 +127,6 @@ export class PlausibleRealtime extends PlausibleBaseElementWithState {
             .site=${this.site}
             .query=${this.query}
             .title="${this.t('goalConversionsLast30Min')}"
-
             .proxyUrl=${this.proxyUrl}
           ></pl-conversions>
         </div>

@@ -4,11 +4,16 @@ import { appliedFilters } from '../query';
 import { LitElement, css, html, nothing } from 'lit';
 import { property, customElement } from 'lit/decorators.js';
 import { PlausibleBaseElementWithState } from '../pl-base-element-with-state';
+import { isThisMonth } from '../util/date';
 
 @customElement('pl-current-visitors')
 export class PlausibleCurrentVisitors extends PlausibleBaseElementWithState {
   @property({ type: Number })
   currentVisitors: number | undefined;
+
+  //TODO: This is a workaround to until current-visitors API supports custom properties
+  @property({ type: Boolean })
+  useTopStatsForCurrentVisitors = false;
 
   connectedCallback() {
     super.connectedCallback();
@@ -17,15 +22,30 @@ export class PlausibleCurrentVisitors extends PlausibleBaseElementWithState {
   }
 
   updateCount() {
-    return api
+    if (this.useTopStatsForCurrentVisitors) {
+      const query = { ...this.query }
+      query["period"] = "realtime";
+      api
+      .get(
+        this.proxyUrl,
+        `/api/stats/${encodeURIComponent(this.site!.domain!)}/top-stats`,
+        query
+      )
+      .then(res => {
+        this.currentVisitors = res.top_stats[1].value;
+      });
+    } else {
+      return api
       .get(
         this.proxyUrl,
         `/api/stats/${encodeURIComponent(this.site.domain)}/current-visitors`,
         {} as any
       )
       .then(res => {
+        debugger;
         this.currentVisitors = res;
       });
+    }
   }
 
   render() {
