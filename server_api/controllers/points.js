@@ -859,7 +859,9 @@ const translateToObsFormat = (json) => {
 router.get('/url_preview', auth.isLoggedInNoAnonymousCheck, function(req, res) {
   if (req.query.url && validateEmbedUrl(req.query.url)) {
     ogs({ url: req.query.url }, (error, result, response ) => {
-        if (error) {
+         if (error && result && result.error==="Page not found") {
+           res.sendStatus(404);
+         } else if (error) {
           log.error('Open graph not working', { err: error, url: req.query.url, context: 'url_preview', user: toJson(req.user) });
           res.sendStatus(500);
         } else {
