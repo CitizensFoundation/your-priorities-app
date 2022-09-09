@@ -40,7 +40,8 @@ export class YpCampaignManager extends YpBaseElementWithLogin {
 
   getTrackingUrl(campaign: YpCampaignData, medium: string) {
     const fullHost = location.protocol + '//' + location.host;
-    return `${fullHost}/${this.collectionType}/${this.collectionId}?utm_source=${campaign.configuration.utm_source}&utm_medium=${medium}&utm_campaign=${campaign.configuration.utm_campaign}&utm_content=${campaign.id}`;
+    const url = `${fullHost}/${this.collectionType}/${this.collectionId}?utm_source=${campaign.configuration.utm_source}&utm_medium=${medium}&utm_campaign=${campaign.configuration.utm_campaign}&utm_content=${campaign.id}`;
+    return encodeURIComponent(url);;
   }
 
   async createCampaign(event: CustomEvent) {
@@ -54,7 +55,6 @@ export class YpCampaignManager extends YpBaseElementWithLogin {
       mediums: [] as YpCampaignMediumData[],
     } as YpCampaignConfigurationData;
 
-    debugger;
     const campaign = await this.campaignApi.createCampaign(
       this.collectionType,
       this.collectionId,
@@ -156,7 +156,7 @@ export class YpCampaignManager extends YpBaseElementWithLogin {
 
   renderDeleteConfirmationDialog() {
     return html`
-      <mwc-dialog id="deleteConfirmationDialog" crimClickAction="" escapeKeyAction="">
+      <mwc-dialog id="deleteConfirmationDialog" crimClickAction escapeKeyAction>
         <div class="layout horizontal center-center">
           <div class="headerText">${this.t('reallyDeletePromotion')}</div>
         </div>
