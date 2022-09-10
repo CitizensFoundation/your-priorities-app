@@ -75,7 +75,11 @@ export class PlausibleDatePicker extends PlausibleBaseElementWithState {
   }
 
   static get styles() {
-    return [...super.styles];
+    return [...super.styles,css`
+      .pointer {
+        cursor: pointer;
+      }
+    `];
   }
 
   updated(changedProperties: Map<string | number | symbol, unknown>): void {
@@ -534,7 +538,7 @@ export class PlausibleDatePicker extends PlausibleBaseElementWithState {
 
   render() {
     return html`
-      <div class="flex ml-auto pl-2">
+      <div class="flex ml-auto pl-2 pointer">
         ${this.datePickerArrows()} ${this.renderPicker()}
       </div>
     `;

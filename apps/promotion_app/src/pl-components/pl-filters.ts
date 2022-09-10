@@ -72,6 +72,7 @@ export class PlausibleFilters extends PlausibleBaseElementWithState {
     this.handleResize();
     this.rewrapFilters();
   }
+
   static get styles() {
     return [
       ...super.styles,
@@ -95,6 +96,7 @@ export class PlausibleFilters extends PlausibleBaseElementWithState {
       `,
     ];
   }
+
   handleClick(e: MouseEvent) {
     if (this.menuOpen && !this.contains(e.target as Node)) {
       this.menuOpen = false;
@@ -381,7 +383,7 @@ export class PlausibleFilters extends PlausibleBaseElementWithState {
   }
 
   renderDropdownButton() {
-    console.error(this.wrapped)
+    console.error(this.wrapped);
     if (this.wrapped === 2) {
       const filterCount = appliedFilters(this.query).length;
       return html`
@@ -389,9 +391,7 @@ export class PlausibleFilters extends PlausibleBaseElementWithState {
           <div class="-ml-1 mr-1 h-4 w-4 layout horizontal" aria-hidden="true">
             ${AdjustmentsIcon}
           </div>
-          <div>
-            ${filterCount} Filter${filterCount === 1 ? '' : 's'}
-          </div>
+          <div>${filterCount} Filter${filterCount === 1 ? '' : 's'}</div>
         </div>
       `;
     } else if (this.wrapped === 1) {
