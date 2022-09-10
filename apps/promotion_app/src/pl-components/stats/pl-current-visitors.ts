@@ -42,7 +42,6 @@ export class PlausibleCurrentVisitors extends PlausibleBaseElementWithState {
         {} as any
       )
       .then(res => {
-        debugger;
         this.currentVisitors = res;
       });
     }

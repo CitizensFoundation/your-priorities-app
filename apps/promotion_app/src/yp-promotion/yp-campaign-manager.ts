@@ -41,7 +41,8 @@ export class YpCampaignManager extends YpBaseElementWithLogin {
   getTrackingUrl(campaign: YpCampaignData, medium: string) {
     const fullHost = location.protocol + '//' + location.host;
     const url = `${fullHost}/${this.collectionType}/${this.collectionId}?utm_source=${campaign.configuration.utm_source}&utm_medium=${medium}&utm_campaign=${campaign.configuration.utm_campaign}&utm_content=${campaign.id}`;
-    return encodeURIComponent(url);;
+    const encodedUrl = encodeURI(url);
+    return encodedUrl;
   }
 
   async createCampaign(event: CustomEvent) {
@@ -91,8 +92,7 @@ export class YpCampaignManager extends YpBaseElementWithLogin {
   }
 
   async campaignConfigurationUpdated(event: CustomEvent) {
-    debugger;
-    await this.campaignApi.updateCampaign(
+   await this.campaignApi.updateCampaign(
       this.collectionType,
       this.collectionId,
       event.detail.campaignId,
@@ -146,9 +146,12 @@ export class YpCampaignManager extends YpBaseElementWithLogin {
         }
 
         md-fab-extended {
-          position: absolute;
-          bottom: 24px;
-          right: 24px;
+          margin-top: 32px;
+          margin-bottom: 0;
+        }
+
+        .fabContainer {
+          width: 1000px;
         }
       `,
     ];
@@ -200,16 +203,16 @@ export class YpCampaignManager extends YpBaseElementWithLogin {
         .collectionId="${this.collectionId}"
         @save="${this.createCampaign}"
       ></yp-new-campaign>
-      <div class="layout vertical start mainContainer">
-        <div class="layout vertical">
-          ${this.campaigns?.map(campaign => this.renderCampaign(campaign))}
-        </div>
-        <div>
+      <div class="layout horizontal center-center fabContainer">
           <md-fab-extended
             .label="${this.t('newTrackingPromotion')}"
             icon="add"
             @click="${this.newCampaign}"
           ></md-fab-extended>
+        </div>
+      <div class="layout vertical start mainContainer">
+        <div class="layout vertical">
+          ${this.campaigns?.map(campaign => this.renderCampaign(campaign))}
         </div>
       </div>
       ${this.renderDeleteConfirmationDialog()}
