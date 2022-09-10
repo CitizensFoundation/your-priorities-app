@@ -133,6 +133,29 @@ export class YpNewCampaign extends YpBaseElementWithLogin {
         .adMediumsList {
           margin-top: 3px;
         }
+
+        .preview {
+          background-color: var(--md-sys-color-container);
+          color: var(--md-sys-color-on-container);
+          padding: 8px;
+          width: 350px;
+        }
+
+        .linkContentPanel {
+          background-color: var(--md-sys-color-secondary-container);
+          color: var(--md-sys-color-on-secondary-container);
+          padding: 8px;
+        }
+
+        .previewPromotionText {
+          margin-bottom: 8px;
+        }
+
+        .linkTitle {
+          font-weight:  bold;
+          margin-bottom: 8px;
+          margin-top: 6px;
+        }
       `,
     ];
   }

@@ -146,6 +146,10 @@ export class YpPromotionApp extends YpBaseElementWithLogin {
           width: 100%;
         }
 
+        .collectionName {
+          color: var(--md-sys-color-on-surface)
+        }
+
         md-list-item {
           --md-list-list-item-container-color: var(--md-sys-color-surface);
           color: var(--md-sys-color-on-surface);
@@ -209,8 +213,8 @@ export class YpPromotionApp extends YpBaseElementWithLogin {
     window.appGlobals = new YpAppGlobals(window.serverApi);
     window.appUser = new YpAppUser(window.serverApi);
 
-    window.appGlobals.setupTranslationSystem("/promotion");
-    //window.appGlobals.setupTranslationSystem();
+    //window.appGlobals.setupTranslationSystem("/promotion");
+    window.appGlobals.setupTranslationSystem();
 
     let pathname = window.location.pathname;
     if (pathname.endsWith('/'))
@@ -239,7 +243,7 @@ export class YpPromotionApp extends YpBaseElementWithLogin {
     setTimeout(() => {
       //this.fireGlobal('yp-theme-dark-mode', true);
       //this.setRandomColor();
-    }, 10000);
+    }, 1000);
   }
 
   setRandomColor() {
@@ -380,8 +384,8 @@ export class YpPromotionApp extends YpBaseElementWithLogin {
                   )}"
                 ></yp-image>
               </div>
-              <div></div>
-              ${this.collection ? this.collection.name : ''}
+              <div class="collectionName"> ${this.collection ? this.collection.name : ''}</div>
+
             </div>
           </div>
 
