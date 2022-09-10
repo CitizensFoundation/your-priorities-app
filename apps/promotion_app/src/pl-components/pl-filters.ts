@@ -1,7 +1,6 @@
 import { LitElement, css, html, nothing } from 'lit';
 import { property, customElement } from 'lit/decorators.js';
 
-
 import { appliedFilters, navigateToQuery, formattedFilters } from './query';
 
 import {
@@ -77,11 +76,22 @@ export class PlausibleFilters extends PlausibleBaseElementWithState {
     return [
       ...super.styles,
       css`
-      .filterMain {
-        margin-right: 8px;
-        font-size: 14px;
-        color: #444;
-      }
+        .filterMain {
+          margin-right: 0px;
+          font-size: 14px;
+          color: #444;
+        }
+
+        .filterKeys {
+          padding-top: 8px;
+        }
+
+        .filterContainer {
+          padding-top: 0px;
+          padding-bottom: 0px;
+          height: 32px;
+          font-size: 12px;
+        }
       `,
     ];
   }
@@ -89,6 +99,7 @@ export class PlausibleFilters extends PlausibleBaseElementWithState {
     if (this.menuOpen && !this.contains(e.target as Node)) {
       this.menuOpen = false;
     }
+    this.menuOpen = false;
   }
 
   removeFilter(key: string) {
@@ -114,6 +125,7 @@ export class PlausibleFilters extends PlausibleBaseElementWithState {
       {}
     );
     navigateToQuery(this.history, this.query, newOpts as any);
+    this.menuOpen = false;
   }
 
   filterText(key: string, rawValue: string) {
@@ -208,7 +220,7 @@ export class PlausibleFilters extends PlausibleBaseElementWithState {
             <div class="w-4 h-4">${XIcon}</div>
           </b>
         </div>
-          </div>
+      </div>
     `;
   }
 
@@ -230,11 +242,11 @@ export class PlausibleFilters extends PlausibleBaseElementWithState {
         >
           ${formatFilterGroup(option)}
         </pl-link>
-          </div>
+      </div>
     `;
   }
 
-  renderDropdownContent() {
+  renderDropdownContentOriginal() {
     if (this.wrapped === 0 || this.addingFilter) {
       return Object.keys(FILTER_GROUPS)
         .filter(option =>
@@ -255,6 +267,26 @@ export class PlausibleFilters extends PlausibleBaseElementWithState {
         <div key="clear">
           <div
             class="border-t border-gray-200 dark:border-gray-500 px-4 sm:py-2 py-3 text-sm leading-tight hover:text-indigo-700 dark:hover:text-indigo-500 hover:cursor-pointer"
+            @click=${() => this.clearAllFilters()}
+          >
+            Clear All Filters
+          </div>
+        </div>
+      `;
+    }
+  }
+
+  renderDropdownContent() {
+    if (this.wrapped === 0 || this.addingFilter) {
+      return nothing;
+    } else {
+      return html`
+        ${appliedFilters(this.query).map(filter =>
+          this.renderDropdownFilter(filter)
+        )}
+        <div key="clear">
+          <div
+            class="pointer border-t border-gray-200 dark:border-gray-500 px-4 sm:py-2 py-3 text-sm leading-tight hover:text-indigo-700 dark:hover:text-indigo-500 hover:cursor-pointer"
             @click=${() => this.clearAllFilters()}
           >
             Clear All Filters
@@ -321,7 +353,7 @@ export class PlausibleFilters extends PlausibleBaseElementWithState {
       <div
         .key=${key}
         .title=${value}
-        class="flex bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 shadow text-sm rounded mr-2 items-center"
+        class="flex bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 shadow text-sm rounded mr-2 items-center filterContainer"
       >
         <pl-link
           .title=${`Edit filter: ${formattedFilters[key]}`}
@@ -333,7 +365,7 @@ export class PlausibleFilters extends PlausibleBaseElementWithState {
             search: window.location.search,
           }}
         >
-          <span class="inline-block max-w-2xs md:max-w-xs truncate"
+          <span class="filterKeys inline-block max-w-2xs md:max-w-xs truncate"
             >${this.filterText(key, value)}</span
           >
         </pl-link>
@@ -349,23 +381,30 @@ export class PlausibleFilters extends PlausibleBaseElementWithState {
   }
 
   renderDropdownButton() {
+    console.error(this.wrapped)
     if (this.wrapped === 2) {
       const filterCount = appliedFilters(this.query).length;
       return html`
-        <div class="-ml-1 mr-1 h-4 w-4" aria-hidden="true">
-          ${AdjustmentsIcon}
+        <div class="flex">
+          <div class="-ml-1 mr-1 h-4 w-4 layout horizontal" aria-hidden="true">
+            ${AdjustmentsIcon}
+          </div>
+          <div>
+            ${filterCount} Filter${filterCount === 1 ? '' : 's'}
+          </div>
         </div>
-        ${filterCount} Filter${filterCount === 1 ? '' : 's'}
       `;
+    } else if (this.wrapped === 1) {
+      return nothing;
     } else {
       return html`
-      <div class="flex">
-        <div class="ml-1 mr-1 h-4 w-4 h-4 w-4" aria-hidden="true">
-          ${SearchIcon}
+        <div class="flex">
+          <div class="ml-1 mr-1 h-4 w-4 h-4 w-4" aria-hidden="true">
+            ${SearchIcon}
+          </div>
+          <!-- This would have been a good use-case for JSX! But in the interest of keeping the breakpoint width logic with TailwindCSS, this is a better long-term way to deal with it. -->
+          <span class="">Filter</span>
         </div>
-        <!-- This would have been a good use-case for JSX! But in the interest of keeping the breakpoint width logic with TailwindCSS, this is a better long-term way to deal with it. -->
-        <span class="">Filter</span>
-      </div>
       `;
     }
   }
@@ -397,7 +436,7 @@ export class PlausibleFilters extends PlausibleBaseElementWithState {
                   ${this.renderDropdownContent()}
                 </div>
               </div>
-      </div>
+            </div>
           `
         : nothing}
     `;
@@ -420,8 +459,7 @@ export class PlausibleFilters extends PlausibleBaseElementWithState {
   render() {
     return html`
       <div class="flex ml-auto pl-2 filterMain">
-        ${this.renderFilterList()}
-        ${this.renderDropDown()}
+        ${this.renderFilterList()} ${this.renderDropDown()}
       </div>
     `;
   }
