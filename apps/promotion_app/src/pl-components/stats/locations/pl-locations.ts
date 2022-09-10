@@ -28,6 +28,8 @@ export class PlausableLocations extends PlausibleBaseElementWithState {
     super.connectedCallback();
     this.tabKey = `pageTab__${this.site.domain}`;
     this.mode = this.storedTab || 'map';
+    if (this.timer) this.timer.onTick(this.renderCountries.bind(this));
+
   }
 
   setMode(mode: string) {

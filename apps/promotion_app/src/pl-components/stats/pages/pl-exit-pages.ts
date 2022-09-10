@@ -20,7 +20,6 @@ export class PlausableExitPages extends PlausableBasePages {
         .fetchDataFunction=${this.fetchData}
         .filter=${{ entry_page: 'name' }}
         keyLabel="Exit page"
-
         .proxyUrl="${this.proxyUrl}"
         valueLabel="Unique Exits"
         valueKey="unique_exits"

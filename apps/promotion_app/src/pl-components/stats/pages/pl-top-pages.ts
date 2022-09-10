@@ -20,7 +20,7 @@ export class PlausableTopPages extends PlausableBasePages {
         .fetchDataFunction=${this.fetchData}
         .filter=${{ entry_page: 'name' }}
         keyLabel="Page"
-
+        .timer="${this.timer}"
         .proxyUrl="${this.proxyUrl}"
         .detailsLink=${url.sitePath(this.site, this.pagePath)}
         .query=${this.query}

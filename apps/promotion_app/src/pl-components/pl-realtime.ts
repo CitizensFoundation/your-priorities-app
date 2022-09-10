@@ -110,7 +110,6 @@ export class PlausibleRealtime extends PlausibleBaseElementWithState {
             .site="${this.site}"
             .query="${this.query}"
             .timer="${this.timer}"
-
             .proxyUrl="${this.proxyUrl}"
           ></pl-devices>
         </div>
@@ -126,6 +125,7 @@ export class PlausibleRealtime extends PlausibleBaseElementWithState {
           <pl-conversions
             .site=${this.site}
             .query=${this.query}
+            .timer=${this.timer}
             .title="${this.t('goalConversionsLast30Min')}"
             .proxyUrl=${this.proxyUrl}
           ></pl-conversions>

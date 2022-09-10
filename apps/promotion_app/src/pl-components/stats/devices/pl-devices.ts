@@ -50,6 +50,7 @@ export class PlausableDevices extends PlausibleBaseElementWithState {
       <pl-list-report
         .fetchDataFunction=${fetchData}
         .filter=${{ browser: 'name' }}
+        .timer="${this.timer}"
         keyLabel="Browser"
         .query=${this.query}
       ></pl-list-report>
@@ -68,6 +69,7 @@ export class PlausableDevices extends PlausibleBaseElementWithState {
     return html`
       <pl-list-report
         .fetchDataFunction=${fetchData}
+        .timer="${this.timer}"
         .filter=${{ browser_version: 'name' }}
         .keyLabel=${this.query.filters.browser + ' version'}
         .query=${this.query}
@@ -87,6 +89,7 @@ export class PlausableDevices extends PlausibleBaseElementWithState {
     return html`
       <pl-list-report
         .fetchDataFunction=${fetchData}
+        .timer="${this.timer}"
         .filter=${{ os: 'name' }}
         keyLabel="Operating system"
         .query=${this.query}
@@ -106,6 +109,7 @@ export class PlausableDevices extends PlausibleBaseElementWithState {
     return html`
       <pl-list-report
         .fetchDataFunction=${fetchData}
+        .timer="${this.timer}"
         .filter=${{ os_version: 'name' }}
         .keyLabel=${this.query.filters.os + ' version'}
         .query=${this.query}
@@ -135,6 +139,7 @@ export class PlausableDevices extends PlausibleBaseElementWithState {
         .fetchDataFunction=${fetchData}
         .filter=${{ screen: 'name' }}
         keyLabel="Screen size"
+        .timer="${this.timer}"
         .query=${this.query}
         .renderIcon=${renderIcon}
         .tooltipText=${renderTooltipText}

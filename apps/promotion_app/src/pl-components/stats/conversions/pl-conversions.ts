@@ -34,7 +34,6 @@ export class PlausibleConversions extends PlausibleBaseElementWithState {
 
   constructor() {
     super();
-
     this.handleResize = this.handleResize.bind(this);
   }
 
@@ -42,6 +41,7 @@ export class PlausibleConversions extends PlausibleBaseElementWithState {
     super.connectedCallback();
     window.addEventListener('resize', this.handleResize, false);
     this.handleResize();
+    if (this.timer) this.timer.onTick(this.fetchConversions.bind(this));
   }
 
   disconnectedCallback() {
@@ -71,9 +71,6 @@ export class PlausibleConversions extends PlausibleBaseElementWithState {
 
   firstUpdated() {
     this.fetchConversions();
-    if (this.timer) {
-      this.timer.onTick(this.fetchConversions);
-    }
   }
 
   getBarMaxWidth() {

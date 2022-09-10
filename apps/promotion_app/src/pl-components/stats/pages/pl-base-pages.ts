@@ -10,6 +10,10 @@ export class PlausableBasePages extends PlausibleBaseElementWithState {
   @property({ type: String })
   pagePath: string | undefined;
 
+  connectedCallback() {
+    super.connectedCallback();
+  }
+
   fetchData() {
     return api.get(
       this.proxyUrl,

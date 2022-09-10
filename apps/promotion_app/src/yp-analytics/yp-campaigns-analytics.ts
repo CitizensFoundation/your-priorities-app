@@ -62,7 +62,6 @@ export class YpCampaignsAnalytics extends PlausibleBaseElementWithState {
   }
 
   firstUpdated() {
-    this.getCampaigns();
   }
 
   updated(changedProperties: Map<string | number | symbol, unknown>): void {

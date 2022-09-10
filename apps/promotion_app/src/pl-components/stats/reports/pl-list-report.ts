@@ -59,7 +59,7 @@ export class PlausableListReport extends PlausibleBaseElementWithState {
 
   connectedCallback() {
     super.connectedCallback();
-    if (this.timer) this.timer.onTick(this.fetchData);
+    if (this.timer) this.timer.onTick(this.fetchData.bind(this));
     this.valueKey = this.valueKey || 'visitors';
     this.showConversionRate = !!this.query.filters!.goal;
   }
@@ -108,7 +108,7 @@ export class PlausableListReport extends PlausibleBaseElementWithState {
   }
 
   fetchData() {
-    if (this.prevQuery !== this.query) {
+    if (true || this.prevQuery !== this.query) {
       this.prevQuery = this.query;
       this.loading = true;
       this.list = undefined;

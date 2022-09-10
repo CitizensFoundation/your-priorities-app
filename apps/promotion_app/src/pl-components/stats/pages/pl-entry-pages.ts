@@ -20,11 +20,11 @@ export class PlausableEntryPages extends PlausableBasePages {
         .fetchDataFunction=${this.fetchData}
         .filter=${{ entry_page: 'name' }}
         keyLabel="Entry page"
-
         .proxyUrl="${this.proxyUrl}"
         valueLabel="Unique Entrances"
         valueKey="unique_entrances"
         .pagePath="${this.pagePath}"
+        .timer="${this.timer}"
         .site="${this.site}"
         .detailsLink=${url.sitePath(this.site, this.pagePath)}
         .query=${this.query}

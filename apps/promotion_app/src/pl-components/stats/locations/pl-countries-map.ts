@@ -40,9 +40,13 @@ export class PlausableCountriesMap extends PlausibleBaseElementWithState {
     this.resizeMap = this.resizeMap.bind(this);
     this.drawMap = this.drawMap.bind(this);
     this.getDataset = this.getDataset.bind(this);
-
     this.darkTheme =
       document!.querySelector('html')!.classList.contains('dark') || false;
+  }
+
+  connectedCallback(): void {
+    super.connectedCallback();
+    if (this.timer) this.timer.onTick(this.updateCountries.bind(this));
   }
 
   updated(changedProperties: Map<string | number | symbol, unknown>): void {
@@ -63,7 +67,6 @@ export class PlausableCountriesMap extends PlausibleBaseElementWithState {
   firstUpdated() {
     this.fetchCountries();
     window.addEventListener('resize', this.resizeMap);
-    if (this.timer) this.timer.onTick(this.updateCountries.bind(this));
   }
 
   getDataset() {
