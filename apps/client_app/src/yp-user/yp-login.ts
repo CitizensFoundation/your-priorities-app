@@ -14,6 +14,8 @@ import { TextField } from '@material/mwc-textfield';
 import { Dialog } from '@material/mwc-dialog';
 import { YpRegistrationQuestions } from './yp-registration-questions.js';
 
+import '@material/web/button/filled-button.js';
+
 @customElement('yp-login')
 export class YpLogin extends YpBaseElement {
   @property({ type: Boolean })
@@ -613,13 +615,14 @@ export class YpLogin extends YpBaseElement {
           @click="${this._forgotPassword}"
           >${this.t('user.newPassword')}</mwc-button
         >
-        <mwc-button
+        <md-filled-button
           ?hidden="${this.forceSecureSamlLogin}"
           autofocus
           raised
           class="boldButton"
+          .label="${this.submitText}"
           @click="${this._validateAndSend}"
-          >${this.submitText}</mwc-button
+          ></md-filled-button
         >
       </div>
     `;
