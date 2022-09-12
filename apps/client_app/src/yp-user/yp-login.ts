@@ -15,6 +15,7 @@ import { Dialog } from '@material/mwc-dialog';
 import { YpRegistrationQuestions } from './yp-registration-questions.js';
 
 import '@material/web/button/filled-button.js';
+import '@material/web/button/text-button.js';
 
 @customElement('yp-login')
 export class YpLogin extends YpBaseElement {
