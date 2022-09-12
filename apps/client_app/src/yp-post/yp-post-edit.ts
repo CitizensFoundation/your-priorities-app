@@ -1,6 +1,5 @@
 import { html, css, nothing, TemplateResult } from 'lit';
 import { property, customElement } from 'lit/decorators.js';
-import { YpBaseElement } from '../common/yp-base-element.js';
 
 import '@material/mwc-circular-progress-four-color';
 import { CircularProgressFourColorBase } from '@material/mwc-circular-progress-four-color/mwc-circular-progress-four-color-base';
@@ -14,23 +13,25 @@ import '@material/mwc-tab';
 import '@material/mwc-radio';
 import '@material/mwc-formfield';
 import '@material/mwc-select';
+import { TextArea } from '@material/mwc-textarea';
+import { DateTime } from 'luxon';
 
+import { Radio } from '@material/mwc-radio';
 import { Snackbar } from '@material/mwc-snackbar';
 import { YpEditBase } from '../common/yp-edit-base.js';
 import { YpNavHelpers } from '../common/YpNavHelpers.js';
 import { YpMagicText } from '../yp-magic-text/yp-magic-text.js';
 import { YpFileUpload } from '../yp-file-upload/yp-file-upload.js';
-import moment from 'moment';
 import { YpEditDialog } from '../yp-edit-dialog/yp-edit-dialog.js';
 import { YpEmojiSelector } from '../common/yp-emoji-selector.js';
-import { TextArea } from '@material/mwc-textarea';
 import { YpStructuredQuestionEdit } from '../yp-survey/yp-structured-question-edit.js';
 
 import './yp-post-location.js';
-import { Radio } from '@material/mwc-radio';
-
+import { YpBaseElement } from '../common/yp-base-element.js';
 import '../yp-survey/yp-structured-question-edit.js';
 import { YpSurveyHelpers } from '../yp-survey/YpSurveyHelpers.js';
+
+import { DateTime } from 'luxon';
 
 export const EditPostTabs: Record<string, number> = {
   Description: 0,
@@ -535,7 +536,7 @@ export class YpPostEdit extends YpEditBase {
   get titleQuestionText() {
     if (this.post && this.group && this.customTitleQuestionText) {
       return this.customTitleQuestionText;
-    } else if (
+    } if (
       this.post &&
       this.group &&
       this.group.configuration &&
@@ -913,7 +914,7 @@ export class YpPostEdit extends YpEditBase {
   get _mediaPageHidden() {
     if (this.mediaHidden) {
       return true;
-    } else if (
+    } if (
       this.newPointShown &&
       !this.locationHidden &&
       this.selected !== EditPostTabs.Media
@@ -1223,32 +1224,32 @@ export class YpPostEdit extends YpEditBase {
   }
 
   get replacedName() {
-    const post = this.post;
-    const group = this.group;
+    const {post} = this;
+    const {group} = this;
     if (post && group && group.configuration.hideNameInputAndReplaceWith) {
       let text = group.configuration.hideNameInputAndReplaceWith;
       text = text.replace(
         '<DATESECONDS>',
-        moment(new Date()).format('DD/MM/YYYY hh:mm:ss')
+        DateTime.now().toFormat('DD/MM/YYYY hh:mm:ss')
       );
       text = text.replace(
         '<DATEMINUTES>',
-        moment(new Date()).format('DD/MM/YYYY hh:mm')
+        DateTime.now().toFormat('DD/MM/YYYY hh:mm')
       );
-      text = text.replace('<DATE>', moment(new Date()).format('DD/MM/YYYY'));
+      text = text.replace('<DATE>', DateTime.now().toFormat('DD/MM/YYYY'));
       return text;
-    } else {
-      return null;
     }
+
+    return null;
   }
 
   get pointMaxLength() {
-    const group = this.group;
+    const {group} = this;
     if (group && group.configuration && group.configuration.pointCharLimit) {
       return group.configuration.pointCharLimit;
-    } else {
-      return 500;
     }
+      return 500;
+
   }
 
   _floatIfValueOrIE(value: boolean) {
@@ -1367,8 +1368,8 @@ export class YpPostEdit extends YpEditBase {
   }
 
   _setupStructuredQuestions() {
-    const post = this.post;
-    const group = this.group;
+    const {post} = this;
+    const {group} = this;
     if (this.translatedQuestions) {
       this.structuredQuestions = this.translatedQuestions;
     } else if (post && group && group.configuration.structuredQuestionsJson) {
@@ -1453,7 +1454,7 @@ export class YpPostEdit extends YpEditBase {
         paperTabs.forceSynchronousItemUpdate();
       }
       console.log('Location hidden changed');
-    }, 10);*/
+    }, 10); */
   }
 
   _formInvalid() {
@@ -1569,9 +1570,9 @@ export class YpPostEdit extends YpEditBase {
   get showCategories() {
     if (this.group && this.group.Categories) {
       return this.group.Categories.length > 0;
-    } else {
-      return false;
     }
+      return false;
+
   }
 
   getPositionInArrayFromId(collection: Array<YpCategoryData>, id: number) {
@@ -1816,9 +1817,9 @@ export class YpPostEdit extends YpEditBase {
       this.group.configuration.hideMediaInput === true
     ) {
       return true;
-    } else {
-      return false;
     }
+      return false;
+
   }
 
   setupAfterOpen(params: YpEditFormParams) {

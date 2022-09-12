@@ -8,19 +8,19 @@ export class YpServerApiBase extends YpCodeBase {
 
     switch (type) {
       case 'domain':
-        transformedApiType = 'domains';
+          transformedApiType = 'domains';
         break;
       case 'community':
-        transformedApiType = 'communities';
+          transformedApiType = 'communities';
         break;
       case 'group':
-        transformedApiType = 'groups';
+          transformedApiType = 'groups';
         break;
       case 'post':
-        transformedApiType = 'posts';
+          transformedApiType = 'posts';
         break;
       case 'user':
-        transformedApiType = 'users';
+          transformedApiType = 'users';
         break;
       default:
         transformedApiType = '';

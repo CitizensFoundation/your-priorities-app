@@ -61,10 +61,10 @@ export class AcActivities extends YpBaseElementWithLogin {
   url: string | undefined;
 
   @property({ type: Object })
-  latestProcessedActivityAt: Date | undefined;
+  latestProcessedActivityAt: string | undefined;
 
   @property({ type: Object })
-  oldestProcessedActivityAt: Date | undefined;
+  oldestProcessedActivityAt: string | undefined;
 
   @property({ type: Number })
   activityIdToDelete: number | undefined;

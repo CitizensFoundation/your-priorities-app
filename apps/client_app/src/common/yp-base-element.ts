@@ -16,6 +16,12 @@ export class YpBaseElement extends LitElement {
   @property({ type: Boolean })
   largeFont = false;
 
+  @property({ type: String })
+  themeColor = '#002255';
+
+  @property({ type: Boolean })
+  themeDarkMode: boolean | undefined;
+
   connectedCallback() {
     super.connectedCallback();
 
@@ -25,9 +31,13 @@ export class YpBaseElement extends LitElement {
     );
 
     //TODO: Do the large font thing with css custom properties
+    this.addGlobalListener('yp-large-font', this._largeFont.bind(this));
+
+    this.addGlobalListener('yp-theme-color', this._changeThemeColor.bind(this));
+
     this.addGlobalListener(
-      'yp-large-font',
-      this._largeFont.bind(this)
+      'yp-theme-dark-mode',
+      this._changeThemeDarkMode.bind(this)
     );
 
     if (
@@ -53,17 +63,32 @@ export class YpBaseElement extends LitElement {
       this._languageEvent.bind(this)
     );
 
+    this.removeGlobalListener('yp-large-font', this._largeFont.bind(this));
+
     this.removeGlobalListener(
-      'yp-large-font',
-      this._largeFont.bind(this)
+      'yp-theme-color',
+      this._changeThemeColor.bind(this)
     );
+
+    this.removeGlobalListener(
+      'yp-theme-dark-mode',
+      this._changeThemeDarkMode.bind(this)
+    );
+  }
+
+  _changeThemeColor(event: CustomEvent) {
+    this.themeColor = event.detail;
+  }
+
+  _changeThemeDarkMode(event: CustomEvent) {
+    this.themeDarkMode = event.detail;
   }
 
   updated(changedProperties: Map<string | number | symbol, unknown>): void {
     super.updated(changedProperties);
 
     if (changedProperties.has('language')) {
-      this.languageChanged()
+      this.languageChanged();
     }
   }
 

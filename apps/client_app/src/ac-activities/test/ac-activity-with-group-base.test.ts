@@ -17,7 +17,7 @@ describe('AcActivityWithGroupBase', () => {
 
     const activity = {
       type: 'LEXO',
-      created_at: new Date(),
+      created_at: new Date().toISOString(),
       domain_id: 2,
       Point: YpTestHelpers.getPoint(),
       Post: YpTestHelpers.getPost(),

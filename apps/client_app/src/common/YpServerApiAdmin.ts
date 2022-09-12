@@ -67,6 +67,12 @@ export class YpServerApiAdmin extends YpServerApiBase {
     );
   }
 
+  public getAnalyticsData(communityId: number, type: string, params: string) {
+    return this.fetchWrapper(
+      this.baseUrlPath + `/communities/${communityId}/${type}/getPlausibleSeries?${params}`
+    );
+  }
+
   public getSsnListCount(communityId: number, ssnLoginListDataId: number) {
     return this.fetchWrapper(
       this.baseUrlPath +

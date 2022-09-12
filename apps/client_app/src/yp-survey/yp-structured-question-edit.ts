@@ -1,7 +1,8 @@
 import { html, css, nothing, TemplateResult } from 'lit';
 import { property, customElement } from 'lit/decorators.js';
-import { YpBaseElement } from '../common/yp-base-element.js';
-import linkifyStr from 'linkifyjs/string.js';
+
+import * as linkify from 'linkifyjs';
+import linkifyHtml from 'linkify-html';
 
 import '@material/mwc-circular-progress-four-color';
 import '@material/mwc-dialog';
@@ -25,7 +26,9 @@ import { ifDefined } from 'lit/directives/if-defined.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 
 import './yp-simple-html-editor.js';
+
 import { YpSimpleHtmlEditor } from './yp-simple-html-editor.js';
+import { YpBaseElement } from '../common/yp-base-element.js';
 
 @customElement('yp-structured-question-edit')
 export class YpStructuredQuestionEdit extends YpBaseElement {
@@ -666,7 +669,7 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
   }
 
   get textWithLinks() {
-    let text = linkifyStr(this.question.text);
+    let text = linkifyHtml(this.question.text);
     text = text.replace(/\n/g, '<br>');
     return text;
   }
