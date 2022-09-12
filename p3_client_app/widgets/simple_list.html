@@ -1,0 +1,149 @@
+<style>
+  .yrpriCommunity .yrpriPostImage {
+    width: 72px;
+    height: 41px;
+    vertical-align: top;
+  }
+
+  .yrpriCommunity {
+    font-size: 16px;
+    color: #333;
+    width: 300px;
+    padding-bottom: 8px;
+  }
+
+  .yrpriCommunity a {
+    color: #333;
+  }
+
+  .yrpriCommunity .yrpriHeader {
+    font-weight: bold;
+    padding-bottom: 4px;
+  }
+
+  .yrpriCommunity .yrpriPostTitle {
+    width: 150px;
+  }
+
+  .yrpriCommunity .yrpriPostStats {
+    float: right;
+    width: 60px;
+    vertical-align: center;
+  }
+</style>
+
+<div class="yrpriCommunity"
+     data-title="Betra Ísland 2017: Efstu hugmyndir"
+     data-community-id="706"
+     data-posts-limit="7"
+     data-host="http://localhost:4242/"
+     data-sort-by="top">
+</div>
+
+<div class="yrpriCommunity"
+     data-title="Betra Ísland 2017: Nýjustu hugmyndir"
+     data-community-id="706"
+     data-posts-limit="7"
+     data-host="http://localhost:4242/"
+     data-sort-by="newest">
+</div>
+
+<script>
+  var ajaxQueue = [];
+
+  var getHtmlHeader = function (title) {
+    return '<div class="yrpriHeader">'+title+'</div>';
+  };
+
+  var getHtmlStats = function (post) {
+    var html = '<div class="yrpriPostStats">'+post.counter_endorsements_up+'+ ';
+    if (post.counter_endorsements_down>0) {
+      html += post.counter_endorsements_down+'-';
+    }
+    html += '</div>';
+    return html;
+  };
+
+  var getHtmlImage = function(post) {
+    var formats, imageUrl;
+    if (post.PostHeaderImages && post.PostHeaderImages.length>0) {
+      formats = JSON.parse(post.PostHeaderImages[0].formats);
+      imageUrl = formats[0];
+    } else if (post.Group.GroupLogoImages && post.Group.GroupLogoImages.length>0) {
+      formats = JSON.parse(post.Group.GroupLogoImages[0].formats);
+      imageUrl = formats[0];
+    }
+    if (imageUrl) {
+      return '<img class="yrpriPostImage" src="'+imageUrl+'"/>';
+    } else {
+      return "";
+    }
+  };
+
+  var getPostUrl = function (post, host) {
+    return host+"post/"+post.id;
+  };
+
+  var getPostsHtmlFromResponse = function (responseText, host) {
+    var posts = JSON.parse(responseText);
+    var html = '<table class="yrpriPosts">';
+    posts.forEach(function(post) {
+      html += '<tr class="yrpriPost">';
+      html += '<td class="yrpriPostImage">';
+      html += '<a target="_blank" href="'+getPostUrl(post,host)+'">';
+      html += getHtmlImage(post)
+      html += '</a>';
+      html += '</td>';
+      html += '<td class="yrpriPostTitle">';
+      html += '<a target="_blank" href="'+getPostUrl(post,host)+'">';
+      html += post.name;
+      html += '</a>';
+      html += '</td>';
+      html += '<td class="yrpriPostStats">'+getHtmlStats(post)+'</td>';
+      html += '</tr>';
+    });
+    html += '</table>';
+    return html;
+  };
+
+  var processResponse = function(element, headerTitle, host, responseText) {
+    var html = getHtmlHeader(headerTitle);
+    html += getPostsHtmlFromResponse(responseText, host);
+    element.innerHTML = html;
+    processNextInQueue();
+  };
+
+  var getPostsAjax = function (element, headerTitle, host, communityId, limit, sortBy) {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+      if (this.readyState == 4 && this.status == 200) {
+        processResponse(element, headerTitle, host, this.responseText);
+      }
+    };
+    var url = host+"api/communities/"+communityId+"/posts?limit="+limit+"&sortBy="+sortBy;
+    xhttp.open("GET", url, true);
+    xhttp.send();
+  };
+
+  var processNextInQueue = function () {
+    if (ajaxQueue.length>0) {
+      var current = ajaxQueue.pop();
+      getPostsAjax(current.element,current.headerTitle,current.host,
+                   current.communityId,current.limit,current.sortBy);
+    }
+  };
+
+  var yrpriCommunityElements = document.getElementsByClassName("yrpriCommunity");
+
+  Array.prototype.forEach.call(yrpriCommunityElements, function (element) {
+    var sortBy = element.getAttribute("data-sort-by");
+    var host = element.getAttribute("data-host");
+    var limit = element.getAttribute("data-posts-limit");
+    var headerTitle = element.getAttribute("data-title");
+    var communityId = element.getAttribute("data-community-id");
+    ajaxQueue.push({element: element, sortBy: sortBy, host: host, communityId: communityId,
+      limit: limit, headerTitle: headerTitle })
+  });
+
+  processNextInQueue();
+</script>
