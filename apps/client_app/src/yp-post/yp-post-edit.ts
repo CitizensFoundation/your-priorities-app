@@ -31,7 +31,7 @@ import { YpBaseElement } from '../common/yp-base-element.js';
 import '../yp-survey/yp-structured-question-edit.js';
 import { YpSurveyHelpers } from '../yp-survey/YpSurveyHelpers.js';
 
-import { DateTime } from 'luxon';
+import '@material/web/iconbutton/filled-icon-button.js';
 
 export const EditPostTabs: Record<string, number> = {
   Description: 0,
