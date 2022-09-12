@@ -452,6 +452,7 @@
           this.hasIssuedLogout = true;
           this.$.logoutAjax.body = {};
           this.$.logoutAjax.generateRequest();
+          window.appGlobals.sendLoginAndSignupToAnalytics(this.user ? this.user.id : -1, "Logout", this.lastLoginMethod ? this.lastLoginMethod : 'Email');
         },
 
         setLocale: function (locale) {

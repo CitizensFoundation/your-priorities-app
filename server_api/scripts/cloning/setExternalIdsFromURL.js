@@ -69,8 +69,8 @@ async.series([
         index+=1;
         forEachCallback();
       } else {
-        const externalId = splitLine[0];
-        const toCommunityId = splitLine[1];
+        const toCommunityId = splitLine[0].trim();
+        const externalId = splitLine[1].trim();
 
         let toCommunity;
 

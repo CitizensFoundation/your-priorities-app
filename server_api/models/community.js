@@ -111,6 +111,8 @@ module.exports = (sequelize, DataTypes) => {
     Community.belongsToMany(models.Image, { as: 'CommunityHeaderImages', through: 'CommunityHeaderImage' });
     Community.belongsToMany(models.User, { as: 'CommunityUsers', through: 'CommunityUser' });
     Community.belongsToMany(models.User, { as: 'CommunityAdmins', through: 'CommunityAdmin' });
+    Community.belongsToMany(models.User, { as: 'CommunityPromoters', through: 'CommunityPromoter' });
+    Community.hasMany(models.Campaign);
   };
 
   Community.ACCESS_PUBLIC = 0;
@@ -157,7 +159,7 @@ module.exports = (sequelize, DataTypes) => {
           req.ypCommunity = community;
           next();
         } else {
-          log.warn('Cant find community', { user: toJson(req.user), context: 'setYpCommunity', err: 'Community not found', errorStatus: 404 });
+          //log.warn('Cant find community', { user: toJson(req.user), context: 'setYpCommunity', err: 'Community not found', errorStatus: 404 });
           req.ypCommunity = {
             id: null,
             hostname: 'not_found'
@@ -245,6 +247,17 @@ module.exports = (sequelize, DataTypes) => {
           if (err) return callback(err);
           callback();
         });
+      },
+      (callback) => {
+        if (body.deleteHeaderImage==="true") {
+          this.setCommunityHeaderImages([]).then(()=>{
+            callback();
+          }).catch(error => {
+            callback(error);
+          })
+        } else {
+          callback();
+        }
       }
     ], (err) => {
       done(err);

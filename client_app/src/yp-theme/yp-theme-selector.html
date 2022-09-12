@@ -22,7 +22,7 @@
 
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
-    <paper-dropdown-menu label="[[t('theme.choose')]]">
+    <paper-dropdown-menu label="[[t('theme.choose')]]" disabled$="[[disableSelection]]">
       <paper-listbox slot="dropdown-content" selected="{{selectedTheme}}">
         <template is="dom-repeat" items="[[themes]]" as="theme">
           <paper-item name="[[index]]" hidden$="[[theme.disabled]]">[[theme.name]]</paper-item>
@@ -54,8 +54,12 @@
         object: {
           type: Object,
           observer: '_objectChanged'
-        }
+        },
 
+        disableSelection: {
+          type: Boolean,
+          value: false
+        }
       },
 
       _objectChanged: function (newObject) {

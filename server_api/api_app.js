@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-FORCE_PRODUCTION = false;
+process.env.FORCE_PRODUCTION = "false";
 
 if (process.env.NEW_RELIC_APP_NAME) {
   require('newrelic');
@@ -29,6 +29,9 @@ const requestIp = require('request-ip');
 const compression = require('compression');
 const isBot = require("isbot");
 const redis = require('redis');
+
+const rateLimit = require("express-rate-limit");
+const RedisLimitStore = require("rate-limit-redis");
 
 const passport = require('passport')
   , LocalStrategy = require('passport-local').Strategy
@@ -75,6 +78,7 @@ const sso = require('passport-sso');
 const cors = require('cors');
 
 const Airbrake = require('@airbrake/node');
+const { robotsTxt, botsWithJavascript, isBadBot, isCustomBot } = require("./bot_control");
 
 const ieVersion = (uaString) => {
   const match = /\b(MSIE |Trident.*?rv:|Edge\/)(\d+)/.exec(uaString);
@@ -169,22 +173,21 @@ app.get('/*', function (req, res, next) {
   next();
 });
 
-
 app.use(function setupStaticPath(req, res, next) {
   let staticPath = path.join(__dirname, '../client_app/build/bundled');
   let staticIndex = false;
 
-  if (req.path.startsWith('/marketing/') || (req.headers.referrer && req.headers.referrer.indexOf('/marketing/')>-1)) {
-    staticPath = path.join(__dirname, '../marketing_app/dist');
+  if (req.path.startsWith('/promotion/') || (req.headers.referrer && req.headers.referrer.indexOf('/promotion/')>-1)) {
+    staticPath = path.join(__dirname, './apps/promotion_app/dist');
     staticIndex = "index.html";
   } else if (req.path.startsWith('/analytics/') || (req.headers.referrer && req.headers.referrer.indexOf('/analytics/'))>-1) {
-    staticPath = path.join(__dirname, '../analytics_app/dist');
+    staticPath = path.join(__dirname, './apps/analytics_app/dist');
     staticIndex = "index.html";
   } else if (req.path.startsWith('/admin/') || (req.headers.referrer && req.headers.referrer.indexOf('/admin/'))>-1) {
-    staticPath = path.join(__dirname, '../admin_app/dist');
+    staticPath = path.join(__dirname, './apps/admin_app/dist');
     staticIndex = "index.html";
   } else {
-    if (!FORCE_PRODUCTION && app.get('env') === 'development') {
+    if (process.env.FORCE_PRODUCTION !== "true" && app.get('env') === 'development') {
       staticPath = path.join(__dirname, '../client_app');
     }
   }
@@ -194,13 +197,38 @@ app.use(function setupStaticPath(req, res, next) {
 
 app.use(session(sessionConfig));
 
+app.get('/robots.txt', function (req, res) {
+  res.type('text/plain')
+  res.send(robotsTxt(req));
+});
+
+const botRateLimiter = rateLimit({
+  windowMs:  process.env.RATE_LIMITER_WINDOW_MS ? process.env.RATE_LIMITER_WINDOW_MS : 15 * 60 * 1000, // 15 minutes
+  max: process.env.RATE_LIMITER_MAX ? process.env.RATE_LIMIT_MAX : 30,
+//  standardHeaders: true,
+  store: new RedisLimitStore({
+    client: redisClient,
+    expiry: process.env.RATE_LIMITER_REDIS_EXPIRY ? process.env.RATE_LIMITER_REDIS_EXPIRY : 15 * 60, // 15 minutes
+  }),
+});
+
 app.use(function checkForBOT(req, res, next) {
-  const ua = req.headers['user-agent'];
+  let ua = req.headers['user-agent'];
   if (req.headers['content-type']!=="application/json" &&
      (req.originalUrl && !req.originalUrl.endsWith("/sitemap.xml"))) {
-    if (!/Googlebot|AdsBot-Google|Google Page Speed|Chrome-Lighthouse/.test(ua) &&
-        (isBot(ua) || /^(facebookexternalhit)|(web\/snippet)|(Twitterbot)|(Slackbot)|(Embedly)|(LinkedInBot)|(Pinterest)|(XING-contenttabreceiver)/gi.test(ua))) {
-      nonSPArouter(req, res, next);
+    if (!ua) {
+      ua = "";
+    }
+    const isBotBad = isBadBot(ua.toLowerCase());
+    if (!botsWithJavascript(ua) &&
+        (isBot(ua) || isCustomBot(ua) || isBotBad)) {
+      if (isBotBad) {
+        botRateLimiter(req, res, () => {
+          nonSPArouter(req, res, next);
+        })
+      } else {
+        nonSPArouter(req, res, next);
+      }
     } else {
       next();
     }
@@ -257,11 +285,6 @@ app.use(passport.session());
 
 app.get('/manifest.json', function getManifest(req, res) {
   generateManifest(req, res);
-});
-
-app.get('/robots.txt', function (req, res) {
-  res.type('text/plain')
-  res.send(`User-agent: *\nDisallow:\n\nSitemap: https://${req.hostname}/sitemap.xml`);
 });
 
 var bearerCallback = function (req, token) {
@@ -434,15 +457,20 @@ app.use(function cacheControlHeaders(req, res, next) {
   next();
 });
 
-app.use('/marketing', express.static(path.join(__dirname, '../marketing_app/dist')));
-app.use('/analytics/', express.static(path.join(__dirname, '../analytics_app/dist')));
-app.use('/analytics/domain/*', express.static(path.join(__dirname, '../analytics_app/dist')));
-app.use('/analytics/community/*', express.static(path.join(__dirname, '../analytics_app/dist')));
-app.use('/analytics/group/*', express.static(path.join(__dirname, '../analytics_app/dist')));
-app.use('/admin/', express.static(path.join(__dirname, '../admin_app/dist')));
-app.use('/admin/domain/*', express.static(path.join(__dirname, '../admin_app/dist')));
-app.use('/admin/community/*', express.static(path.join(__dirname, '../admin_app/dist')));
-app.use('/admin/group/*', express.static(path.join(__dirname, '../admin_app/dist')));
+app.use('/promotion', express.static(path.join(__dirname, '../apps/promotion_app/dist')));
+app.use('/promotion/domain/*', express.static(path.join(__dirname, '../apps/promotion_app/dist')));
+app.use('/promotion/community/*', express.static(path.join(__dirname, '../apps/promotion_app/dist')));
+app.use('/promotion/group/*', express.static(path.join(__dirname, '../apps/promotion_app/dist')));
+app.use('/promotion/post/*', express.static(path.join(__dirname, '../apps/promotion_app/dist')));
+app.use('/promotion/locales/en/*', express.static(path.join(__dirname, '../apps/promotion_app/dist/locales/en')));
+app.use('/analytics/', express.static(path.join(__dirname, '../apps/analytics_app/dist')));
+app.use('/analytics/domain/*', express.static(path.join(__dirname, '../apps/analytics_app/dist')));
+app.use('/analytics/community/*', express.static(path.join(__dirname, '../apps/analytics_app/dist')));
+app.use('/analytics/group/*', express.static(path.join(__dirname, '../apps/analytics_app/dist')));
+app.use('/admin/', express.static(path.join(__dirname, '../apps/admin_app/dist')));
+app.use('/admin/domain/*', express.static(path.join(__dirname, '../apps/admin_app/dist')));
+app.use('/admin/community/*', express.static(path.join(__dirname, '../apps/admin_app/dist')));
+app.use('/admin/group/*', express.static(path.join(__dirname, '../apps/admin_app/dist')));
 app.use('/domain', index);
 app.use('/community', index);
 app.use('/group', index);

@@ -548,10 +548,26 @@ Example:
       }
     },
 
-    _openFileInput: function (aspect) {
+    _openFileInput: function (aspect, throughPhoneCamera) {
       if (aspect) {
         this.set('videoAspect', aspect);
       }
+      if (throughPhoneCamera) {
+        this.set('capture', "environment");
+        this.async(function () {
+          this._reallyOpenFileInput();
+        }, 20);
+      } else {
+        if (this.videoUpload) {
+          this.set('capture', false);
+        } else if (this.audioUpload) {
+          this.set('capture', true);
+        }
+        this._reallyOpenFileInput();
+      }
+    },
+
+    _reallyOpenFileInput: function () {
       var elem = this.$.fileInput;
       if (elem && document.createEvent) { // sanity check
         var evt = document.createEvent("MouseEvents");
@@ -861,7 +877,7 @@ Example:
             this.$.startTranscodeAjax.body = options;
             this.$.startTranscodeAjax.generateRequest();
             window.appGlobals.activity('complete', 'videoUpload');
-            window.appGlobals.activity('start', 'mediaTranscoding');
+            window.appGlobals.activity('starting', 'mediaTranscoding');
           } else if (this.audioUpload) {
             this.set('indeterminateProgress', true);
             this.set('uploadStatus', this.t("transcodingAudio"));
@@ -887,7 +903,7 @@ Example:
             this.$.startTranscodeAjax.body = options;
             this.$.startTranscodeAjax.generateRequest();
             window.appGlobals.activity('complete', 'audioUpload');
-            window.appGlobals.activity('start', 'mediaTranscoding');
+            window.appGlobals.activity('starting', 'mediaTranscoding');
           } else if (this.attachmentUpload) {
             this.set('uploadStatus', this.t('uploadCompleted'));
             self.fire('file-upload-complete');

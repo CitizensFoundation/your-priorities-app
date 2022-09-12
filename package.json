@@ -5,8 +5,8 @@
   "dependencies": {
     "@airbrake/node": "^2.1.4",
     "@google-cloud/speech": "^4.2.0",
-    "@google-cloud/storage": "^5.7.4",
-    "@google-cloud/translate": "^6.1.0",
+    "@google-cloud/storage": "^6.4.1",
+    "@google-cloud/translate": "^7.0.1",
     "async": "^3.2.0",
     "authorized": "^1.0.0",
     "aws-sdk": "^2.656.0",
@@ -18,7 +18,7 @@
     "color-hash": "^2.0.1",
     "compression": "^1.7.4",
     "concat-stream": "^2.0.0",
-    "connect-redis": "^5.2.0",
+    "connect-redis": "^6.1.3",
     "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",
     "deep-equal": "^2.0.5",
@@ -28,10 +28,11 @@
     "email-templates": "^2.0.3",
     "exceljs": "^4.2.0",
     "express": "^4.17.1",
+    "express-rate-limit": "^5.5.1",
     "express-session": "git+https://github.com/rbjarnason/session.git#upgrade-21",
     "express-useragent": "^1.0.13",
     "farmhash": "2.1.0",
-    "i18next": "^20.2.2",
+    "i18next": "^21.9.1",
     "i18next-node-fs-backend": "^2.1.3",
     "ip": "^1.1.0",
     "isbot": "^3.0.23",
@@ -40,9 +41,9 @@
     "lodash": "^4.17.15",
     "moment": "^2.24.0",
     "morgan": "~1.10.0",
-    "multer": "^1.4.2",
-    "multer-s3": "^2.9.0",
-    "newrelic": "^7.1.1",
+    "multer": "1.4.5-lts.1",
+    "multer-s3": "^3.0.1",
+    "newrelic": "^9.0.2",
     "nodemailer": "^6.6.0",
     "nodemailer-sendgrid": "^1.0.3",
     "nodemailer-smtp-transport": "^2.7.4",
@@ -59,17 +60,18 @@
     "pg": "^8.5.1",
     "pg-native": "^3.0.0",
     "randomstring": "^1.1.4",
+    "rate-limit-redis": "^2.1.0",
     "redis": "^3.1.2",
     "request": "^2.88.2",
-    "request-ip": "^2.1.3",
+    "request-ip": "^3.3.0",
     "s3-uploader": "^2.0.3",
     "sanitize-filename": "^1.6.3",
-    "sequelize": "6.6.2",
-    "sequelize-cli": "6.2.0",
-    "sitemap": "^1.9.0"
+    "sequelize": "6.21.4",
+    "sequelize-cli": "6.4.1",
+    "sitemap": "^1.13.0"
   },
   "devDependencies": {
-    "@maxmind/geoip2-node": "^2.3.2",
+    "@maxmind/geoip2-node": "^3.4.0",
     "csv-parse": "^4.8.8",
     "diacritics": "^1.2.3",
     "docx4js": "^3.2.2",
@@ -89,6 +91,6 @@
     "node_modules"
   ],
   "engines": {
-    "node": "14.16.1"
+    "node": "16.17.0"
   }
 }

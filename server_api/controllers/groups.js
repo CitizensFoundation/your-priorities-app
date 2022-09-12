@@ -22,6 +22,8 @@ const performSingleModerationAction = require('../active-citizen/engine/moderati
 const request = require('request');
 const {updateAnswerTranslation} = require("../active-citizen/utils/translation_helpers");
 const {updateSurveyTranslation} = require("../active-citizen/utils/translation_helpers");
+const {plausibleStatsProxy, getPlausibleStats} = require("../active-citizen/engine/analytics/plausible/manager");
+const {countAllModeratedItemsByGroup} = require("../active-citizen/engine/moderation/get_moderation_items");
 
 const getFromAnalyticsApi = require('../active-citizen/engine/analytics/manager').getFromAnalyticsApi;
 const triggerSimilaritiesTraining = require('../active-citizen/engine/analytics/manager').triggerSimilaritiesTraining;
@@ -138,7 +140,7 @@ var truthValueFromBody = function(bodyParameter) {
   }
 };
 
-var updateGroupConfigParamters = function (req, group) {
+var updateGroupConfigParameters = function (req, group) {
   if (!group.configuration) {
     group.set('configuration', {});
   }
@@ -406,6 +408,12 @@ var updateGroupConfigParamters = function (req, group) {
   group.set('configuration.actAsLinkToCommunityId', (req.body.actAsLinkToCommunityId && req.body.actAsLinkToCommunityId!="") ? req.body.actAsLinkToCommunityId : null);
   group.set('configuration.hideQuestionIndexOnNewPost', truthValueFromBody(req.body.hideQuestionIndexOnNewPost));
   group.set('configuration.allowWhatsAppSharing', truthValueFromBody(req.body.allowWhatsAppSharing));
+  group.set('configuration.inheritThemeFromCommunity', truthValueFromBody(req.body.inheritThemeFromCommunity));
+
+  if (truthValueFromBody(req.body.inheritThemeFromCommunity)===true) {
+    group.set('theme_id', null);
+  }
+
   group.set('configuration.optionalSortOrder', (req.body.optionalSortOrder && req.body.optionalSortOrder!="") ? req.body.optionalSortOrder : null);
   group.set('configuration.exportSubCodesForRadiosAndCheckboxes', truthValueFromBody(req.body.exportSubCodesForRadiosAndCheckboxes));
   group.set('configuration.forceShowDebateCountOnPost', truthValueFromBody(req.body.forceShowDebateCountOnPost));
@@ -474,7 +482,7 @@ router.delete('/:groupId/:activityId/delete_activity', auth.can('edit group'), f
   });
 });
 
-router.delete('/:groupId/user_membership', auth.isLoggedIn, auth.can('view group'), function(req, res) {
+router.delete('/:groupId/user_membership', auth.isLoggedInNoAnonymousCheck, auth.can('view group'), function(req, res) {
   getGroupAndUser(req.params.groupId, req.user.id, null, function (error, group, user) {
     if (error) {
       log.error('Could not remove user', { err: error, groupId: req.params.groupId, userRemovedId: req.user.id, context: 'user_membership', user: toJson(req.user.simple()) });
@@ -490,7 +498,7 @@ router.delete('/:groupId/user_membership', auth.isLoggedIn, auth.can('view group
   });
 });
 
-router.post('/:groupId/user_membership', auth.isLoggedIn, auth.can('add to group'), function(req, res) {
+router.post('/:groupId/user_membership', auth.isLoggedInNoAnonymousCheck, auth.can('add to group'), function(req, res) {
   getGroupAndUser(req.params.groupId, req.user.id, null, function (error, group, user) {
     if (error) {
       log.error('Could not add user', { err: error, groupId: req.params.groupId, userRemovedId: req.user.id, context: 'user_membership', user: toJson(req.user.simple()) });
@@ -953,7 +961,7 @@ router.delete('/:groupId/:pageId/delete_page', auth.can('edit group'), function(
   });
 });
 
-router.post('/:groupId/post/news_story', auth.isLoggedIn, auth.can('add to group'), function(req, res) {
+router.post('/:groupId/post/news_story', auth.isLoggedInNoAnonymousCheck, auth.can('add to group'), function(req, res) {
   models.Point.createNewsStory(req, req.body, function (error) {
     if (error) {
       log.error('Could not save news story point on post', { err: error, context: 'news_story', user: toJson(req.user.simple()) });
@@ -965,7 +973,7 @@ router.post('/:groupId/post/news_story', auth.isLoggedIn, auth.can('add to group
   });
 });
 
-router.post('/:groupId/news_story', auth.isLoggedIn, auth.can('add to group'), function(req, res) {
+router.post('/:groupId/news_story', auth.isLoggedInNoAnonymousCheck, auth.can('add to group'), function(req, res) {
   models.Point.createNewsStory(req, req.body, function (error) {
     if (error) {
       log.error('Could not save news story point on group', { err: error, context: 'news_story', user: toJson(req.user.simple()) });
@@ -1077,7 +1085,7 @@ router.post('/:communityId', auth.can('create group'), function(req, res) {
 
   group.theme_id = req.body.themeId ? parseInt(req.body.themeId) : null;
 
-  updateGroupConfigParamters(req, group);
+  updateGroupConfigParameters(req, group);
 
   group.save().then(function(group) {
     log.info('Group Created', { groupId: group.id, context: 'create', userId: req.user.id });
@@ -1149,7 +1157,7 @@ router.put('/:id', auth.can('edit group'), function(req, res) {
       group.objectives = req.body.objectives;
       group.theme_id = req.body.themeId ? parseInt(req.body.themeId) : null;
       group.access = models.Group.convertAccessFromRadioButtons(req.body);
-      updateGroupConfigParamters(req, group);
+      updateGroupConfigParameters(req, group);
       group.save().then(function () {
         log.info('Group Updated', { group: toJson(group), context: 'update', user: toJson(req.user) });
         queue.add('process-similarities', { type: 'update-collection', groupId: group.id }, 'low');
@@ -1536,22 +1544,6 @@ var getPostsWithAllFromIds = function (postsWithIds, postOrder, done) {
                 model: models.Image, as: 'UserProfileImages',
                 attributes:['id',"formats",'updated_at'],
                 required: false
-              },
-              {
-                model: models.Organization,
-                as: 'OrganizationUsers',
-                required: false,
-                attributes: ['id', 'name'],
-                include: [
-                  {
-                    model: models.Image,
-                    as: 'OrganizationLogoImages',
-                    //TODO: Fix [ORANGE] [12-1]  sql_error_code = 42622 NOTICE:  identifier "User->OrganizationUsers->OrganizationLogoImages->OrganizationLogoImage" will be truncated to "User->OrganizationUsers->OrganizationLogoImages->OrganizationLo"
-                    //TODO: Figure out why there are no formats attributes coming through here
-                    attributes: ['id', 'formats'],
-                    required: false
-                  }
-                ]
               }
             ]
           },
@@ -1763,12 +1755,19 @@ router.get('/:id/posts/:filter/:categoryId/:status?', auth.can('view group'), fu
                   }], ['desc'])
                 }
 
-                const postsOut = {
-                  posts: finalRows,
-                  totalPostsCount: totalPostsCount
-                };
-                req.redisClient.setex(redisKey, process.env.POSTS_CACHE_TTL ? parseInt(process.env.POSTS_CACHE_TTL) : 3, JSON.stringify(postsOut));
-                res.send(postsOut);
+                models.Post.setOrganizationUsersForPosts(finalRows, (error) => {
+                  if (error) {
+                    log.error("Error getting group", { err: error });
+                    res.sendStatus(500);
+                  } else {
+                    const postsOut = {
+                      posts: finalRows,
+                      totalPostsCount: totalPostsCount
+                    };
+                    req.redisClient.setex(redisKey, process.env.POSTS_CACHE_TTL ? parseInt(process.env.POSTS_CACHE_TTL) : 3, JSON.stringify(postsOut));
+                    res.send(postsOut);
+                  }
+                })
               }
             });
           }).catch(function (error) {
@@ -2067,12 +2066,12 @@ router.get('/:groupId/moderate_all_content', auth.can('edit group'), (req, res) 
 });
 
 router.get('/:groupId/flagged_content_count', auth.can('edit group'), (req, res) => {
-  getAllModeratedItemsByGroup({ groupId: req.params.groupId }, (error, items) => {
+  countAllModeratedItemsByGroup({ groupId: req.params.groupId }, (error, count) => {
     if (error) {
       log.error("Error getting items for moderation", { error });
       res.sendStatus(500)
     } else {
-      res.send({count: items ? items.length : 0});
+      res.send({ count });
     }
   });
 });
@@ -2539,6 +2538,113 @@ router.put('/:id/convert_docx_survey_to_json', uploadDox.single('file'), functio
       }
     }
   });
+});
+
+router.put('/:groupId/plausibleStatsProxy', auth.can('edit group'), async (req, res) => {
+  try {
+    const plausibleData = await plausibleStatsProxy(req.body.plausibleUrl, {
+      groupId: req.params.groupId
+    });
+    res.send(plausibleData);
+  } catch (error) {
+    log.error('Could not get plausibleStatsProxy', { err: error, context: 'getPlausibleSeries', user: toJson(req.user.simple()) });
+    res.sendStatus(500);
+  }
+});
+
+router.get('/:groupId/:type/getPlausibleSeries', auth.can('edit group marketing'), async (req, res) => {
+  // Example: "timeseries?site_id=your-priorities&period=7d";
+  try {
+    const questionMarkIndex = req.url.indexOf('?');
+    const queryString = req.url.substr(questionMarkIndex+1);
+    const siteId = process.env.PLAUSIBLE_SITE_NAME;
+    const type = req.params.type.replace('realtime-visitors','realtime/visitors');
+    const plausibleString = `${type}?${queryString}&site_id=${siteId}`;
+    const plausibleData = await getPlausibleStats(plausibleString);
+    log.info("GOT DATA");
+    log.info(plausibleData);
+    res.send(plausibleData);
+  } catch (error) {
+    log.error('Could not get getPlausibleSeries', { err: error, context: 'getPlausibleSeries', user: toJson(req.user.simple()) });
+    res.sendStatus(500);
+  }
+});
+
+router.get('/:groupId/get_campaigns', auth.can('edit group marketing'), async (req, res) => {
+  try {
+    const campaigns = await models.Campaign.findAll({
+      where: {
+        group_id: req.params.groupId
+      },
+      order: [
+        [ 'created_at', 'desc' ]
+      ],
+      attributes: ['id','configuration']
+    });
+    res.send(campaigns);
+  } catch (error) {
+    log.error('Could not get campaigns', { err: error, context: 'get_campaigns', user: toJson(req.user.simple()) });
+    res.sendStatus(500);
+  }
+});
+
+router.post('/:groupId/create_campaign', auth.can('edit group marketing'), async (req, res) => {
+  try {
+    const campaign = models.Campaign.build({
+      group_id: req.params.groupId,
+      configuration: req.body.configuration,
+      user_id: req.user.id
+    });
+
+    await campaign.save();
+    //TODO: Toxicity check
+
+    res.send(campaign);
+  } catch (error) {
+    log.error('Could not create_campaign campaigns', { err: error, context: 'create_campaign', user: toJson(req.user.simple()) });
+    res.sendStatus(500);
+  }
+});
+
+router.put('/:groupId/:campaignId/update_campaign', auth.can('edit group marketing'), async (req, res) => {
+  try {
+    const campaign = await models.Campaign.findOne({
+      where: {
+        id: req.params.campaignId,
+        group_id: req.params.groupId
+      },
+      attributes: ['id','configuration']
+    });
+
+    campaign.configuration = req.body.configuration;
+
+    await campaign.save();
+    //TODO: Toxicity check
+
+    res.send(campaign);
+  } catch (error) {
+    log.error('Could not create_campaign campaigns', { err: error, context: 'create_campaign', user: toJson(req.user.simple()) });
+    res.sendStatus(500);
+  }
+});
+
+router.delete('/:groupId/:campaignId/delete_campaign', auth.can('edit group marketing'), async (req, res) => {
+  try {
+    const campaign = await models.Campaign.findOne({
+      where: {
+        id: req.params.campaignId,
+        group_id: req.params.groupId
+      },
+      attributes: ['id']
+    });
+
+    campaign.deleted = true;
+    await campaign.save();
+    res.sendStatus(200);
+  } catch (error) {
+    log.error('Could not delete_campaign campaigns', { err: error, context: 'delete_campaign', user: toJson(req.user.simple()) });
+    res.sendStatus(500);
+  }
 });
 
 module.exports = router;

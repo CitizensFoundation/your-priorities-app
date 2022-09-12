@@ -12,6 +12,8 @@ const getAllModeratedItemsByDomain = require('../active-citizen/engine/moderatio
 const getLoginsExportDataForDomain = require('../utils/export_utils').getLoginsExportDataForDomain;
 var sanitizeFilename = require("sanitize-filename");
 var moment = require('moment');
+const {plausibleStatsProxy} = require("../active-citizen/engine/analytics/plausible/manager");
+const {countAllModeratedItemsByDomain} = require("../active-citizen/engine/moderation/get_moderation_items");
 const getFromAnalyticsApi = require('../active-citizen/engine/analytics/manager').getFromAnalyticsApi;
 const triggerSimilaritiesTraining = require('../active-citizen/engine/analytics/manager').triggerSimilaritiesTraining;
 const sendBackAnalyticsResultsOrError = require('../active-citizen/engine/analytics/manager').sendBackAnalyticsResultsOrError;
@@ -663,7 +665,7 @@ router.delete('/:domainId/:pageId/delete_page', auth.can('edit domain'), functio
   });
 });
 
-router.post('/:domainId/news_story', auth.isLoggedIn, auth.can('view domain'), function(req, res) {
+router.post('/:domainId/news_story', auth.isLoggedInNoAnonymousCheck, auth.can('view domain'), function(req, res) {
   models.Point.createNewsStory(req, req.body, function (error) {
     if (error) {
       log.error('Could not save news story point on domain', { err: error, context: 'news_story', user: toJson(req.user.simple()) });
@@ -935,12 +937,12 @@ router.get('/:domainId/moderate_all_content', auth.can('edit domain'), (req, res
 });
 
 router.get('/:domainId/flagged_content_count',  auth.can('edit domain'), (req, res) => {
-  getAllModeratedItemsByDomain({ domainId: req.params.domainId }, (error, items) => {
+  countAllModeratedItemsByDomain({ domainId: req.params.domainId }, (error, count) => {
     if (error) {
       log.error("Error getting items for moderation", { error });
       res.sendStatus(500)
     } else {
-      res.send({count: items ? items.length : 0});
+      res.send({ count });
     }
   });
 });
@@ -1104,5 +1106,95 @@ router.get('/:id/stats_votes', auth.can('edit domain'), function(req, res) {
     sendBackAnalyticsResultsOrError(req,res,error,results);
   });
 });
+
+
+router.put('/:domainId/plausibleStatsProxy', auth.can('edit domain'), async (req, res) => {
+  try {
+    const plausibleData = await plausibleStatsProxy(req.body.plausibleUrl, { domainId: req.params.domainId });
+    res.send(plausibleData);
+  } catch (error) {
+    log.error('Could not get plausibleStatsProxy', { err: error, context: 'getPlausibleSeries', user: toJson(req.user.simple()) });
+    res.sendStatus(500);
+  }
+});
+
+router.get('/:postId/get_campaigns', auth.can('edit domain'), async (req, res) => {
+  try {
+    const campaigns = await models.Campaign.findAll({
+      where: {
+        domain_id: req.params.postId,
+        active: true
+      },
+      order: [
+        [ 'created_at', 'desc' ]
+      ],
+      attributes: ['id','configuration']
+    });
+    res.send(campaigns);
+  } catch (error) {
+    log.error('Could not get campaigns', { err: error, context: 'get_campaigns', user: toJson(req.user.simple()) });
+    res.sendStatus(500);
+  }
+});
+
+router.post('/:domainId/create_campaign', auth.can('edit domain'), async (req, res) => {
+  try {
+    const campaign = models.Campaign.build({
+      domain_id: req.params.domainId,
+      configuration: req.body.configuration,
+      user_id: req.user.id
+    });
+
+    await campaign.save();
+    //TODO: Toxicity check
+
+    res.send(campaign);
+  } catch (error) {
+    log.error('Could not create_campaign campaigns', { err: error, context: 'create_campaign', user: toJson(req.user.simple()) });
+    res.sendStatus(500);
+  }
+});
+
+router.put('/:domainId/:campaignId/update_campaign', auth.can('edit domain'), async (req, res) => {
+  try {
+    const campaign = await models.Campaign.findOne({
+      where: {
+        id: req.params.campaignId,
+        domain_id: req.params.domainId
+      },
+      attributes: ['id','configuration']
+    });
+
+    campaign.configuration = req.body.configuration;
+
+    await campaign.save();
+    //TODO: Toxicity check
+
+    res.send(campaign);
+  } catch (error) {
+    log.error('Could not create_campaign campaigns', { err: error, context: 'create_campaign', user: toJson(req.user.simple()) });
+    res.sendStatus(500);
+  }
+});
+
+router.delete('/:domainId/:campaignId/delete_campaign', auth.can('edit domain'), async (req, res) => {
+  try {
+    const campaign = await models.Campaign.findOne({
+      where: {
+        id: req.params.campaignId,
+        domain_id: req.params.domainId
+      },
+      attributes: ['id']
+    });
+
+    campaign.deleted = true;
+    await campaign.save();
+    res.sendStatus(200);
+  } catch (error) {
+    log.error('Could not delete_campaign campaigns', { err: error, context: 'delete_campaign', user: toJson(req.user.simple()) });
+    res.sendStatus(500);
+  }
+});
+
 
 module.exports = router;

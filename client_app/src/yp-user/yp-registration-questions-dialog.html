@@ -65,7 +65,8 @@
         </paper-dialog-scrollable>
         <div class="buttons">
           <yp-ajax id="sendRegistrationQuestionsAjax" dispatch-error method="PUT" url="/api/users/setRegistrationAnswers" on-response="_setRegistrationAnswerResponse"></yp-ajax>
-          <paper-button on-tap="_validateAndSend">[[t('save')]]</paper-button>
+          <paper-button on-tap="_logout">[[t('user.logout')]]</paper-button>
+          <paper-button raised on-tap="_validateAndSend">[[t('save')]]</paper-button>
         </div>
       </paper-dialog>
 
@@ -130,6 +131,14 @@
 
     close: function() {
       this.$$("#dialog").close();
+    },
+
+    _logout: function() {
+      this.close();
+      window.appUser.logout();
+      this.async(function () {
+        location.reload();
+      }, 450);
     }
 
   });

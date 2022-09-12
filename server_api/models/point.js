@@ -4,6 +4,7 @@ const async = require('async');
 const queue = require('../active-citizen/workers/queue');
 const log = require('../utils/logger');
 const _ = require("lodash");
+const models = require("./index");
 
 const findCommunityAndDomainForPointFromGroup = (sequelize, options, callback) => {
   sequelize.models.Group.findOne({
@@ -374,7 +375,13 @@ module.exports = (sequelize, DataTypes) => {
         options.data = {
           browserId: req.body.pointBaseId,
           browserFingerprint: req.body.pointValCode,
-          browserFingerprintConfidence: req.body.pointConf
+          browserFingerprintConfidence: req.body.pointConf,
+          originalQueryString: req.body.originalQueryString,
+          userLocale: req.body.userLocale,
+          userAutoTranslate: req.body.userAutoTranslate,
+          referrer: req.body.referrer,
+          url: req.body.url,
+          screen_width: req.body.screen_width
         };
         sequelize.models.Point.build(options).save().then((point) => {
           options.point_id = point.id;
@@ -406,6 +413,81 @@ module.exports = (sequelize, DataTypes) => {
   };
 
   //TODO Refactor duplicate code with Post
+  Point.setOrganizationUsersForPoints = (points, done) => {
+    const userIds = points.map(p=>{
+      return p.user_id
+    })
+    sequelize.models.User.findAll({
+      attributes:  ['id','created_at'],
+      where: {
+        id: {
+          $in: userIds
+        }
+      },
+      include: [
+        {
+          model: sequelize.models.Organization,
+          as: 'OrganizationUsers',
+          required: true,
+          attributes: ['id','name'],
+          include: [
+            {
+              model: sequelize.models.Image,
+              as: 'OrganizationLogoImages',
+              attributes: ['id', 'formats'],
+              required: false
+            }
+          ]
+        }
+      ],
+      order: [
+          [ { model: sequelize.models.Organization, as: 'OrganizationUsers' }, { model: sequelize.models.Image, as: 'OrganizationLogoImages' }, 'created_at', 'asc' ]
+      ]
+    }).then(users => {
+      if (users && users.length>0) {
+        for (let u=0; u<users.length; u++) {
+          for (let p=0; p<points.length; p++) {
+            if (points[p].User.id===users[u].id) {
+              points[p].User.OrganizationUsers = users[u].OrganizationUsers;
+              points[p].User.setDataValue('OrganizationUsers', users[u].OrganizationUsers);
+            }
+          }
+        }
+        done();
+      } else {
+        done();
+      }
+    }).catch( error => {
+      done(error);
+    })
+  }
+
+  Point.setVideosForPoints = (points, done) =>  {
+    Point.getVideosForPoints(points.map(p=>p.id), (error, videos) => {
+      if (error) {
+        done(error);
+      } else if (!videos || videos.length===0) {
+        done()
+      } else {
+        for (let v=0; v<videos.length; v++) {
+          for (let p=0; p<points.length; p++) {
+            if (videos[v].PointVideos &&
+                videos[v].PointVideos.length > 0 &&
+                points[p].id===videos[v].PointVideos[0].id) {
+                if (!points[p].PointVideos) {
+                  points[p].PointVideos = [];
+                }
+                points[p].PointVideos.push(videos[v]);
+                points[p].setDataValue('PointVideos', points[p].PointVideos);
+            }
+          }
+        }
+        done();
+      }
+    })
+  }
+
+  //TODO Refactor duplicate code with Post
   Point.getVideosForPoints = (pointIds, done) => {
     sequelize.models.Video.findAll({
       attributes:  ['id','formats','viewable','created_at','public_meta'],
@@ -426,7 +508,6 @@ module.exports = (sequelize, DataTypes) => {
           as: 'PointVideos',
           required: true,
           attributes: ['id'],
-
         }
       ],
       order: [

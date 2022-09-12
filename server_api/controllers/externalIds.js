@@ -118,16 +118,7 @@ router.get('/:externalId/points', (req, res) => {
       let order = [
         pointOrder,
         [models.User, {model: models.Image, as: 'UserProfileImages'}, 'created_at', 'asc'],
-        [{model: models.Video, as: "PointVideos"}, 'updated_at', 'desc'],
         [{model: models.Audio, as: "PointAudios"}, 'updated_at', 'desc'],
-        [{model: models.Video, as: "PointVideos"}, {
-          model: models.Image,
-          as: 'VideoImages'
-        }, 'updated_at', 'asc'],
-        [models.User, {model: models.Organization, as: 'OrganizationUsers'}, {
-          model: models.Image,
-          as: 'OrganizationLogoImages'
-        }, 'created_at', 'asc']
       ];
 
       models.Point.findAndCountAll({
@@ -147,20 +138,6 @@ router.get('/:externalId/points', (req, res) => {
                 model: models.Image, as: 'UserProfileImages',
                 attributes: ['id', 'formats'],
                 required: false
-              },
-              {
-                model: models.Organization,
-                as: 'OrganizationUsers',
-                required: false,
-                attributes: ['id', 'name'],
-                include: [
-                  {
-                    model: models.Image,
-                    as: 'OrganizationLogoImages',
-                    attributes: ['id', 'formats'],
-                    required: false
-                  }
-                ]
               }
             ]
           },
@@ -170,21 +147,6 @@ router.get('/:externalId/points', (req, res) => {
             required: false,
             order: [['created_at', 'asc']],
             separate: true
-          },
-          {
-            model: models.Video,
-            required: false,
-            attributes: ['id', 'formats', 'updated_at', 'viewable', 'public_meta'],
-            as: 'PointVideos',
-
-            include: [
-              {
-                model: models.Image,
-                as: 'VideoImages',
-                attributes: ["formats", 'updated_at'],
-                required: false
-              },
-            ]
           },
           {
             model: models.Audio,
@@ -217,15 +179,30 @@ router.get('/:externalId/points', (req, res) => {
           }
         ]
       }).then((pointsIn) => {
-
         for (let i=0; i<pointsIn.rows.length;i++) {
           if (pointsIn.rows[i].User.private_profile_data) {
             pointsIn.rows[i].User.private_profile_data = { registration_answers: pointsIn.rows[i].User.private_profile_data.registration_answers };
           }
         }
-
-        points = pointsIn;
-        seriesCallback();
+        async.parallel([
+          (parallelCallback) => {
+            models.Point.setVideosForPoints(pointsIn.rows, (error) => {
+              parallelCallback(error);
+            })
+          },
+          (parallelCallback) => {
+            models.Point.setOrganizationUsersForPoints(pointsIn.rows, (error) => {
+              parallelCallback(error);
+            })
+          }
+        ], (error) => {
+          if (error) {
+            seriesCallback(error);
+          } else {
+            points = pointsIn;
+            seriesCallback();
+          }
+        })
       }).catch((error) => {
         seriesCallback(error);
       });

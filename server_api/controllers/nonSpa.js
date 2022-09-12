@@ -7,25 +7,12 @@ const async = require('async');
 var toJson = require('../utils/to_json');
 var url = require('url');
 var _ = require('lodash');
+const {getSharingParameters, getFullUrl, getSplitUrl} = require("../utils/sharing_parameters");
 
 // TODO: Make sure to load the latest image
 // TODO: Make sure to still support the escaped_fragment routes after moving to the direct urls for backwards sharing capacity
 
-var fullUrl = function (req) {
-  var replacedUrl = req.originalUrl;
-  if (replacedUrl.startsWith('/?_escaped_fragment_=')) {
-    replacedUrl =  req.originalUrl.replace(/[?]_escaped_fragment_=/g,'');
-    replacedUrl =  replacedUrl.replace('//','/');
-  }
-
-  var formattedUrl = url.format({
-    protocol: req.protocol,
-    host: req.get('host'),
-    pathname: replacedUrl
-  });
-
-  return formattedUrl;
-};
+const ITEM_LIMIT = 1000;
 
 var sendDomain = function sendDomainForBot(id, communitiesOffset, req, res) {
   models.Domain.findOne({
@@ -41,7 +28,7 @@ var sendDomain = function sendDomainForBot(id, communitiesOffset, req, res) {
         required: false
       }
     ]
-  }).then(function(domain) {
+  }).then( (domain) => {
     if (domain) {
       if (!communitiesOffset)
         communitiesOffset = 0;
@@ -52,9 +39,9 @@ var sendDomain = function sendDomainForBot(id, communitiesOffset, req, res) {
           access: models.Community.ACCESS_PUBLIC,
           domain_id: domain.id
         },
-        limit: 20,
+        limit: ITEM_LIMIT,
         offset: communitiesOffset
-      }).then( communitiesInfo => {
+      }).then( async communitiesInfo => {
         const communities = communitiesInfo.rows;
         //log.info('Bot: Domain', { id: domain ? domain.id : -1 });
         var imageUrl = '';
@@ -65,16 +52,24 @@ var sendDomain = function sendDomainForBot(id, communitiesOffset, req, res) {
 
         const communitiesLeft = communitiesInfo.count-(communitiesOffset+communities.length);
         if (communitiesLeft>0) {
-          communitiesOffset+=20;
+          communitiesOffset+=ITEM_LIMIT;
         } else {
           communitiesOffset = null;
         }
 
+        const sharingParameters = await getSharingParameters(
+          req,
+          domain,
+          getFullUrl(req),
+          imageUrl
+        );
+
         var botOptions = {
-          url       : fullUrl(req),
-          title     :  domain.name,
-          descriptionText : domain.description,
-          imageUrl  : imageUrl,
+          url: sharingParameters.url,
+          title: sharingParameters.title,
+          descriptionText: sharingParameters.description,
+          imageUrl: sharingParameters.imageUrl,
+          locale: domain.language,
           subItemsUrlbase: "/community/",
           subItemContainerName: "Communities",
           backUrl: "/domain/"+domain.id,
@@ -99,17 +94,26 @@ var sendDomain = function sendDomainForBot(id, communitiesOffset, req, res) {
   });
 };
 
-const completeSendingCommunity = (community, req, res) => {
+const completeSendingCommunity = async (community, req, res) => {
   var imageUrl = '';
   if (community.CommunityLogoImages && community.CommunityLogoImages.length>0) {
     var formats = JSON.parse(community.CommunityLogoImages[0].formats);
     imageUrl = formats[0];
   }
+
+  const sharingParameters = await getSharingParameters(
+    req,
+    community,
+    getFullUrl(req),
+    imageUrl
+  );
+
   var botOptions = {
-    url       : fullUrl(req),
-    title     :  community.name,
-    descriptionText : community.description,
-    imageUrl  : imageUrl,
+    url: sharingParameters.url,
+    title: sharingParameters.title,
+    descriptionText: sharingParameters.description,
+    imageUrl: sharingParameters.imageUrl,
+    locale: community.language,
     contentType: 'article',
     subItemsUrlbase: "/group/",
     subItemContainerName: "Groups",
@@ -236,7 +240,7 @@ var sendCommunity = function sendCommunityForBot(id, req, res) {
   });
 };
 
-const completeSendingGroup = (group, postsInfo, postsOffset, req, res) => {
+const completeSendingGroup = async (group, postsInfo, postsOffset, req, res) => {
   var imageUrl = '';
   if (group.GroupLogoImages && group.GroupLogoImages.length>0) {
     formats = JSON.parse(group.GroupLogoImages[0].formats);
@@ -248,20 +252,28 @@ const completeSendingGroup = (group, postsInfo, postsOffset, req, res) => {
 
   const postsLeft = postsInfo.count-(postsOffset+postsInfo.rows.length);
   if (postsLeft>0) {
-    postsOffset+=20;
+    postsOffset+=ITEM_LIMIT;
   } else {
     postsOffset = null;
   }
 
-  var botOptions = {
-    url       : fullUrl(req),
-    title     :  group.name,
-    descriptionText : group.objectives,
-    imageUrl  : imageUrl,
+  const sharingParameters = await getSharingParameters(
+    req,
+    group,
+    getFullUrl(req),
+    imageUrl,
+  );
+
+  const botOptions = {
+    url       : sharingParameters.url,
+    title     :  sharingParameters.title,
+    descriptionText : sharingParameters.description,
+    imageUrl  : sharingParameters.imageUrl,
     contentType: 'article',
     subItemsUrlbase: "/post/",
     subItemContainerName: "Posts",
     backUrl: "/community/"+group.community_id,
+    locale: group.language,
     backText: "Back to community",
     moreUrl: postsOffset ? "/group/"+group.id+"?postsOffset="+postsOffset : null,
     moreText: "More posts ("+postsLeft+")",
@@ -317,7 +329,7 @@ var sendGroup = function sendGroupForBot(id, postsOffset, req, res) {
           group_id: group.id
         },
         attributes: ['id','name'],
-        limit: 20,
+        limit: ITEM_LIMIT,
         offset: postsOffset
       }).then((postsInfo)=>{
         group.Posts = postsInfo.rows;
@@ -398,7 +410,7 @@ var sendPost = function sendPostforBot(id, pointsOffset, req, res) {
           post_id: post.id
         },
         attributes: ['id','content'],
-        limit: 20,
+        limit: ITEM_LIMIT,
         offset: pointsOffset
       }).then((pointsInfo)=>{
         post.Points = pointsInfo.rows;
@@ -417,13 +429,13 @@ var sendPost = function sendPostforBot(id, pointsOffset, req, res) {
 
         const pointsLeft = pointsInfo.count-(pointsOffset+pointsInfo.rows.length);
         if (pointsLeft>0) {
-          pointsOffset+=20;
+          pointsOffset+=ITEM_LIMIT;
         } else {
           pointsOffset = null;
         }
 
         var botOptions = {
-          url       : fullUrl(req),
+          url       : getFullUrl(req),
           title     :  post.name,
           descriptionText : post.description ? post.description : post.name,
           imageUrl  : imageUrl,
@@ -431,6 +443,7 @@ var sendPost = function sendPostforBot(id, pointsOffset, req, res) {
           subItemsUrlbase: "",
           subItemIds: [],
           backUrl: "/group/"+post.group_id,
+          locale: post.language,
           backText: "Back to group",
           moreUrl: pointsOffset ? "/post/"+post.id+"?pointsOffset="+pointsOffset : null,
           moreText: "More points ("+pointsLeft+")",
@@ -476,10 +489,11 @@ var sendUser = function sendUserForBot(id, req, res) {
         imageUrl = formats[0];
       }
       var botOptions = {
-        url       : fullUrl(req),
+        url       : getFullUrl(req),
         title     :  user.name,
         descriptionText : user.description,
         imageUrl  : imageUrl,
+        locale: user.language,
         contentType: 'article'
       };
       res.render('bot', botOptions);
@@ -494,20 +508,8 @@ var sendUser = function sendUserForBot(id, req, res) {
 };
 
 router.get('/*', function botController(req, res, next) {
-  let url = req.url;
-  let splitPath = 1;
 
-  if (url.startsWith('/?_escaped_fragment_=')) {
-    url = req.url.replace(/%2F/g, "/");
-    splitPath = 2;
-  }
-
-  let splitUrl = url.split('/');
-
-  let id = splitUrl[splitPath+1];
-  if (id) {
-    id = id.split("?")[0];
-  }
+  const { splitUrl, splitPath, id, url } = getSplitUrl(req);
 
   let communitiesOffset = 0;
 

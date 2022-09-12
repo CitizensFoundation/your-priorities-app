@@ -56,7 +56,8 @@
         padding-right: 1px;
         margin: 0;
         font-size: 24px;
-        font-weight: 700;
+        font-weight: var(--app-header-font-weight, 700);
+        font-family: var(--app-header-font-family, Roboto);
       }
 
       .community-name[widetext] {
@@ -79,6 +80,22 @@
         width: 432px;
         padding: 0 !important;
         margin-top: 0 !important;
+      }
+
+      @media (max-width: 945px) {
+        .logo-card {
+          display: var(--app-large-card-display-mobile, block);
+          box-shadow: var(--app-large-card-box-shadow-mobile, var(--shadow-elevation-6dp_-_box-shadow, none));
+          background-color: var(--app-large-card-background-color-mobile,#fefefe);
+        }
+      }
+
+      @media (min-width: 945px) {
+        .logo-card {
+          display: var(--app-large-card-display-desktop, block);
+          box-shadow: var(--app-large-card-box-shadow-desktop, var(--shadow-elevation-6dp_-_box-shadow, none));
+          background-color: var(--app-large-card-background-color-desktop,#fefefe);
+        }
       }
 
       .image {
@@ -313,7 +330,7 @@
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
     <div class="layout horizontal wrap" aria-label="[[t('community')]]" role="banner">
-      <paper-material is-video$="[[communityVideoURL]]" id="cardImage" elevation="3" animated class="large-card imageCard top-card">
+      <paper-material is-video$="[[communityVideoURL]]" id="cardImage" elevation="3" animated class="large-card logo-card imageCard top-card">
         <div id="welcomeHTML" hidden$="[[!community.configuration.welcomeHTML]]" class="layout vertical center-center">
         </div>
         <div hidden$="[[community.configuration.welcomeHTML]]">
@@ -326,11 +343,11 @@
               >
               </yp-ziggeo-player>
             </template>
-            <template is="dom-if" if="[[!useZiggeo]]">
+            <template is="dom-if" if="[[!useZiggeo]]" restamp>
               <video id="videoPlayer" data-id$="[[communityVideoId]]" controls preload="meta" class="image pointer" src="[[communityVideoURL]]" playsinline poster="[[communityVideoPosterURL]]"></video>
             </template>
           </template>
-          <template is="dom-if" if="[[!communityVideoURL]]">
+          <template is="dom-if" if="[[!communityVideoURL]]" restamp>
             <iron-image class="image" sizing="cover" alt$="[[community.name]]" src$="[[communityLogoImagePath]]"></iron-image>
           </template>
         </div>
@@ -351,8 +368,8 @@
                 </div>
                 <div hidden class="communityAccess">[[_communityAccessText(community.access)]]</div>
                 <yp-magic-text id="description" class="communityDescription" widetext$="[[wideText]]"
-                               largefont$="[[largeFont]]"
-                               text-type="communityContent" content-language="[[community.language]]"
+                               largefont$="[[largeFont]]" truncate="[[truncateDescriptionAmount]]" more-text="[[t('readMore')]]" close-dialog-text="[[t('close')]]"
+                               text-type="communityContent" content-language="[[community.language]]" disable-read-more="[[!useReadMoreForDescription]]"
                                content="[[community.description]]" content-id="[[community.id]]">
                 </yp-magic-text>
               </div>
@@ -391,7 +408,7 @@
             </paper-listbox>
           </paper-menu-button>
         </div>
-        <yp-community-stats class="stats" community="[[community]]"></yp-community-stats>
+        <yp-community-stats hide-groups="[[useReadMoreForDescription]]" class="stats" community="[[community]]"></yp-community-stats>
       </paper-material>
     </div>
 
@@ -474,12 +491,40 @@
         useZiggeo: {
           type: Boolean,
           computed: '_useZiggeo(community)'
+        },
+
+        truncateDescriptionAmount: {
+          type: Boolean,
+          computed: '_truncateDescriptionAmount(community, useReadMoreForDescription)'
+        },
+
+        useReadMoreForDescription: {
+          type: Boolean,
+          computed: '_useReadMoreForDescription(community)'
+        }
+      },
+
+      _truncateDescriptionAmount: function(community, useReadMoreForDescription) {
+        if (community && useReadMoreForDescription) {
+          return 250;
+        } else {
+          return 300;
+        }
+      },
+
+      _useReadMoreForDescription: function(community) {
+        if (community &&
+            community.configuration &&
+            community.configuration.useReadMoreForDescription) {
+          return true;
+        } else {
+          return false;
         }
       },
 
       _useZiggeo: function (community) {
         if (community && community.configuration) {
-          return community.configuration.useZiggeo;
+          return (community.configuration.useZiggeo ? true : false);
         } else {
           return false;
         }

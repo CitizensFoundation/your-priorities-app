@@ -12,6 +12,7 @@ var queue = require('../active-citizen/workers/queue');
 const url = require('url');
 
 const randomstring = require('randomstring');
+const {sendPlausibleFavicon} = require("../active-citizen/engine/analytics/plausible/manager");
 
 var getAllModeratedItemsByUser = require('../active-citizen/engine/moderation/get_moderation_items').getAllModeratedItemsByUser;
 const performSingleModerationAction = require('../active-citizen/engine/moderation/process_moderation_items').performSingleModerationAction;
@@ -460,7 +461,35 @@ router.get('/:id', auth.can('edit user'), function (req, res) {
   }
 });
 
+const getDomainAdminAndUserIncludes = (req) => {
+  let groupAdminsOrUsersInclude, communityAdminsOrUsersInclude, domainAdminsOrUsersWhere;
+  domainAdminsOrUsersWhere = (req.clientIp.includes("::1") ||
+                              req.clientIp.includes("127.0.0.1")) ? {} : {
+    id: req.ypDomain.id
+  };
+
+  communityAdminsOrUsersInclude = [{
+    model: models.Domain,
+    attributes: [],
+    required: true,
+    where: domainAdminsOrUsersWhere
+  }];
+
+  groupAdminsOrUsersInclude = [
+    {
+      model: models.Community,
+      attributes: [],
+      required: true,
+      include: communityAdminsOrUsersInclude
+    }
+  ]
+
+  return  { groupAdminsOrUsersInclude, communityAdminsOrUsersInclude, domainAdminsOrUsersWhere }
+}
+
 router.get('/loggedInUser/adminRights', function (req, res) {
+  const { groupAdminsOrUsersInclude, communityAdminsOrUsersInclude, domainAdminsOrUsersWhere } = getDomainAdminAndUserIncludes(req);
+
   if (req.isAuthenticated() && req.user) {
     var adminAccess = {};
     async.parallel([
@@ -473,7 +502,11 @@ router.get('/loggedInUser/adminRights', function (req, res) {
               model: models.Domain,
               as: 'DomainAdmins',
               attributes: ['id'],
-              required: false
+              through: {
+                attributes: []
+              },
+              required: false,
+              where: domainAdminsOrUsersWhere
             }
           ]
         }).then(function(user) {
@@ -492,7 +525,11 @@ router.get('/loggedInUser/adminRights', function (req, res) {
               model: models.Community,
               as: 'CommunityAdmins',
               attributes: ['id'],
-              required: false
+              through: {
+                attributes: []
+              },
+              required: false,
+              include: communityAdminsOrUsersInclude
             }
           ]
         }).then(function(user) {
@@ -511,7 +548,11 @@ router.get('/loggedInUser/adminRights', function (req, res) {
               model: models.Group,
               as: 'GroupAdmins',
               attributes: ['id'],
-              required: false
+              required: false,
+              through: {
+                attributes: []
+              },
+              include: groupAdminsOrUsersInclude
             }
           ]
         }).then(function(user) {
@@ -529,6 +570,9 @@ router.get('/loggedInUser/adminRights', function (req, res) {
             {
               model: models.Organization,
               as: 'OrganizationAdmins',
+              through: {
+                attributes: []
+              },
               attributes: ['id','name'],
               required: false
             }
@@ -563,6 +607,8 @@ router.get('/loggedInUser/adminRights', function (req, res) {
 });
 
 router.get('/loggedInUser/adminRightsWithNames', function (req, res) {
+  const {  communityAdminsOrUsersInclude, domainAdminsOrUsersWhere } = getDomainAdminAndUserIncludes(req);
+
   if (req.isAuthenticated() && req.user) {
     var adminAccess = {};
     async.parallel([
@@ -578,7 +624,11 @@ router.get('/loggedInUser/adminRightsWithNames', function (req, res) {
               model: models.Domain,
               as: 'DomainAdmins',
               attributes: ['id','name','updated_at'],
-              required: false
+              through: {
+                attributes: []
+              },
+              required: false,
+              where: domainAdminsOrUsersWhere
             }
           ]
         }).then(function(user) {
@@ -600,7 +650,11 @@ router.get('/loggedInUser/adminRightsWithNames', function (req, res) {
               model: models.Community,
               as: 'CommunityAdmins',
               attributes: ['id','name','updated_at'],
-              required: false
+              through: {
+                attributes: []
+              },
+              required: false,
+              include: communityAdminsOrUsersInclude
             }
           ]
         }).then(function(user) {
@@ -622,12 +676,21 @@ router.get('/loggedInUser/adminRightsWithNames', function (req, res) {
               model: models.Group,
               as: 'GroupAdmins',
               attributes: ['id','name','configuration','updated_at'],
+              through: {
+                attributes: []
+              },
               required: false,
+              where: {
+                configuration: {
+                  actAsLinkToCommunityId: null
+                }
+              },
               include: [
                 {
                   model: models.Community,
                   attributes: ['id','name','domain_id','updated_at'],
-                  required: false
+                  required: true,
+                  include: communityAdminsOrUsersInclude
                 }
               ]
             }
@@ -684,6 +747,8 @@ router.get('/loggedInUser/adminRightsWithNames', function (req, res) {
 });
 
 router.get('/loggedInUser/memberships', function (req, res) {
+  const { groupAdminsOrUsersInclude, communityAdminsOrUsersInclude, domainAdminsOrUsersWhere } = getDomainAdminAndUserIncludes(req);
+
   if (req.isAuthenticated() && req.user) {
     var memberships = {};
     async.parallel([
@@ -695,8 +760,12 @@ router.get('/loggedInUser/memberships', function (req, res) {
             {
               model: models.Domain,
               as: 'DomainUsers',
+              through: {
+                attributes: []
+              },
               attributes: ['id'],
-              required: false
+              required: false,
+              where: domainAdminsOrUsersWhere
             }
           ]
         }).then(function(user) {
@@ -714,8 +783,12 @@ router.get('/loggedInUser/memberships', function (req, res) {
             {
               model: models.Community,
               as: 'CommunityUsers',
+              through: {
+                attributes: []
+              },
               attributes: ['id'],
-              required: false
+              required: false,
+              include: communityAdminsOrUsersInclude
             }
           ]
         }).then(function(user) {
@@ -733,8 +806,12 @@ router.get('/loggedInUser/memberships', function (req, res) {
             {
               model: models.Group,
               as: 'GroupUsers',
+              through: {
+                attributes: []
+              },
               attributes: ['id'],
-              required: false
+              required: false,
+              include: groupAdminsOrUsersInclude
             }
           ]
         }).then(function(user) {
@@ -752,6 +829,9 @@ router.get('/loggedInUser/memberships', function (req, res) {
             {
               model: models.Organization,
               as: 'OrganizationUsers',
+              through: {
+                attributes: []
+              },
               attributes: ['id'],
               required: false
             }
@@ -779,6 +859,8 @@ router.get('/loggedInUser/memberships', function (req, res) {
 });
 
 router.get('/loggedInUser/membershipsWithNames', function (req, res) {
+  const { communityAdminsOrUsersInclude, domainAdminsOrUsersWhere } = getDomainAdminAndUserIncludes(req);
+
   if (req.isAuthenticated() && req.user) {
     var memberships = {};
     async.parallel([
@@ -793,8 +875,12 @@ router.get('/loggedInUser/membershipsWithNames', function (req, res) {
             {
               model: models.Domain,
               as: 'DomainUsers',
+              through: {
+                attributes: []
+              },
               attributes: ['id','name','counter_users','updated_at'],
-              required: false
+              required: false,
+              where: domainAdminsOrUsersWhere
             }
           ]
         }).then(function(user) {
@@ -816,7 +902,8 @@ router.get('/loggedInUser/membershipsWithNames', function (req, res) {
               model: models.Community,
               as: 'CommunityUsers',
               attributes: ['id','name','counter_users','updated_at'],
-              required: false
+              required: false,
+              include: communityAdminsOrUsersInclude
             }
           ]
         }).then(function(user) {
@@ -838,12 +925,21 @@ router.get('/loggedInUser/membershipsWithNames', function (req, res) {
               model: models.Group,
               as: 'GroupUsers',
               attributes: ['id','name','counter_users','configuration','updated_at'],
+              through: {
+                attributes: []
+              },
               required: false,
+              where: {
+                configuration: {
+                  actAsLinkToCommunityId: null
+                }
+              },
               include: [
                 {
                   model: models.Community,
                   attributes: ['id','name','domain_id','updated_at'],
-                  required: false
+                  required: true,
+                  include: communityAdminsOrUsersInclude
                 }
               ]
             }
@@ -863,6 +959,9 @@ router.get('/loggedInUser/membershipsWithNames', function (req, res) {
             {
               model: models.Organization,
               as: 'OrganizationUsers',
+              through: {
+                attributes: []
+              },
               attributes: ['id','name'],
               required: false
             }
@@ -924,10 +1023,17 @@ const setSAMLSettingsOnUser = (req, user, done) => {
     log.warn("Can't find referrer for URL when setting up SAML");
   }
   if (urlComponents && urlComponents.pathname && urlComponents.pathname.split("/").length>1) {
-    id = urlComponents.pathname.split("/")[2];
+    if (urlComponents.pathname.split("/").length>3)
+      id = urlComponents.pathname.split("/")[3];
+    else
+      id = urlComponents.pathname.split("/")[2];
   }
 
   let community, group, isGroupAdmin, isCommunityAdmin;
+
+  if (isNaN(id)) {
+    id = undefined;
+  }
 
   async.parallel([
     (parallelCallback) => {
@@ -1346,19 +1452,26 @@ router.post('/createActivityFromApp', function(req, res) {
       event_time: req.body.event_time,
       sessionId: req.body.sessionId,
       user_agent: req.body.user_agent,
+      userLocale: req.body.userLocale,
+      userAutoTranslate: req.body.userAutoTranslate,
+      screen_width: req.body.screen_width,
+      originalQueryString: req.body.originalQueryString,
+      referrer: req.body.referrer,
+      url: req.body.url,
+      ipAddress: req.clientIp,
       server_timestamp: Date.now()
     },
 
     userId: req.user ? req.user.id : null,
-    domainId: req.ypDomain.id,
-    communityId: req.ypCommunity ? req.ypCommunity.id : null,
-    groupId: req.params.groupId,
-    postId: req.body.object ? req.body.object.postId : null
+    domainId: req.body.domainId ? req.body.domainId : req.ypDomain ? req.ypDomain.id : null,
+    communityId: req.body.communityId ? req.body.communityId : req.ypCommunity ? req.ypCommunity.id : null,
+    groupId: req.body.groupId ? req.body.groupId : null,
+    postId: req.body.postId ? req.body.postId :
+      (req.body.object && req.body.object.postId) ? req.body.object.postId.split('/post/')[1] : null,
+    pointId: req.body.pointId ? req.body.pointId : null,
   };
 
-  if (!process.env.DISABLE_RECORDING_OF_USER_EVENTS) {
-    queue.add('delayed-job', { type: 'create-activity-from-app', workData }, 'low');
-  }
+  queue.add('delayed-job', { type: 'create-activity-from-app', workData }, 'medium');
 
   res.sendStatus(200);
 });
@@ -1524,7 +1637,7 @@ router.post('/accept_invite/:token', auth.isLoggedIn, function(req, res) {
   });
 });
 
-router.put('/missingEmail/setEmail', auth.isLoggedIn, function(req, res, next) {
+router.put('/missingEmail/setEmail', auth.isLoggedInNoAnonymousCheck, function(req, res, next) {
   models.User.findOne({
     where: {
       email: req.body.email
@@ -1821,6 +1934,32 @@ router.get('/has/AutoTranslation', function(req, res) {
     res.send({ hasAutoTranslation: hasAutoTranslation });
   } else {
     res.sendStatus(500);
+  }
+});
+
+router.get('/has/PlausibleSiteName', function(req, res) {
+  if (process.env.PLAUSIBLE_SITE_NAME) {
+    res.send({ plausibleSiteName: process.env.PLAUSIBLE_SITE_NAME });
+  } else {
+    res.sendStatus(404);
+  }
+});
+
+router.get('/PlausibleFavIcon/:sourceName', async (req, res) => {
+  try {
+    const iconFile = await sendPlausibleFavicon(req.params.sourceName);
+    if (iconFile) {
+      res.send(iconFile);
+    } else {
+      res.sendStatus(404);
+    }
+  } catch (error) {
+    if (error == 404) {
+      res.sendStatus(404);
+    } else {
+      log.error(`PlausibleFavIcon Error ${error}`);
+      res.sendStatus(500);
+    }
   }
 });
 

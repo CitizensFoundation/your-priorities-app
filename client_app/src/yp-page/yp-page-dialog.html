@@ -46,6 +46,10 @@
       [hidden] {
         display: none !important;
       }
+
+      #content.h1 {
+        line-height: 1.5;
+      }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
@@ -95,9 +99,11 @@
         }
       },
 
+      h1Style: `<style>h1 { line-height: 1.4; }</style>`,
+
       open: function (title, content) {
         this.set('title', title);
-        this.$.content.innerHTML = content;
+        this.$.content.innerHTML = `${this.h1Style} ${content}`;
         this.$.dialog.fit();
         this.$.dialog.notifyResize();
         this.$.dialog.open();

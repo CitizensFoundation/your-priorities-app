@@ -118,6 +118,7 @@ export class PageTrends extends YpBaseElement {
     } else {
       console.error("Trying to update chart with a response");
     }
+
   }
 
   getStatsData(url) {

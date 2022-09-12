@@ -24,16 +24,16 @@
       :host {
         background-color: #FFF;
         --paper-input-container-label: {
-            font-family: var(--app-header-font-family, Roboto);
+            font-family: var(--app-normal-font-family, Roboto);
         };
-        font-family: var(--app-header-font-family, Roboto);
+        font-family: var(--app-normal-font-family, Roboto);
       }
 
       paper-button {
           --paper-button: {
-              font-family: var(--app-header-font-family, Roboto);
+              font-family: var(--app-normal-font-family, Roboto);
           };
-          font-family: var(--app-header-font-family, Roboto);
+          font-family: var(--app-normal-font-family, Roboto);
       }
 
       .fullScreenDialog {
@@ -161,7 +161,7 @@
       }
 
       .bigHeader {
-        background-color: var(--dialog-header-color, var(--accent-color, #000));
+        background-color: var(--header-color, var(--accent-color, #000));
         color: #FFF;
         margin: 0;
         padding: 16px;
@@ -186,7 +186,7 @@
         font-size: 32px;
         padding-left: 12px;
         padding-top: 14px;
-        font-weight: bold;
+        font-weight: var(--app-header-font-weight, bold);
       }
 
       .titleHeaderMobile {
@@ -234,7 +234,7 @@
       }
 
       .smallHeader {
-        background-color: var(--accent-color);
+        background-color: var(--header-color, var(--accent-color, #000));
         color: #FFF;
         margin: 0;
         padding: 8px;

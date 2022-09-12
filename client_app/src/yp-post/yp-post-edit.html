@@ -182,13 +182,13 @@
 
       paper-tab {
         --paper-tabs: {
-            font-family: var(--app-header-font-family, Roboto);
+            font-family: var(--app-normal-font-family, Roboto);
         };
-        font-family: var(--app-header-font-family, Roboto);
+        font-family: var(--app-normal-font-family, Roboto);
       }
 
       div {
-        font-family: var(--app-header-font-family, Roboto);
+        font-family: var(--app-normal-font-family, Roboto);
       }
 
       .videoCamIcon {
@@ -486,6 +486,12 @@
         <input type="hidden" name="postValCode" value="[[browserFingerprint]]">
         <input type="hidden" name="postConf" value="[[browserFingerprintConfidence]]">
 
+        <input type="hidden" name="originalQueryString" value="[[originalQueryStringVal()]]">
+        <input type="hidden" name="userLocale" value="[[userLocaleVal()]]">
+        <input type="hidden" name="userAutoTranslate" value="[[userAutoTranslateVal()]]">
+        <input type="hidden" name="referrer" value="[[referrerVal()]]">
+        <input type="hidden" name="url" value="[[urlVal()]]">
+        <input type="hidden" name="screen_width" value="[[screenWidthVal()]]">
       </div>
     </yp-edit-dialog>
 
@@ -1341,7 +1347,9 @@
 
     _finishRedirect: function (post) {
       this.fire('yp-reset-keep-open-for-page');
-      window.appGlobals.activity('completed', 'newPost');
+      window.appGlobals.activity('completed', 'newPost', {
+        postId: post.id
+      });
 
       var text = this.t('thankYouForYourSubmission');
       if (this.group && this.group.configuration &&
@@ -1521,6 +1529,30 @@
           }
         }
       }.bind(this), 20);
+    },
+
+    originalQueryStringVal: function () {
+      return window.appGlobals.getOriginalQueryString();
+    },
+
+    userLocaleVal: function () {
+      return window.locale;
+    },
+
+    userAutoTranslateVal: function () {
+      return window.autoTranslate;
+    },
+
+    referrerVal: function () {
+      return document.referrer;
+    },
+
+    urlVal: function () {
+      return location.href;
+    },
+
+    screenWidthVal: function () {
+      return window.screen.width;
     }
   });
 </script>

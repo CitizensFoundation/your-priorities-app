@@ -509,7 +509,18 @@ module.exports = (sequelize, DataTypes) => {
           user_id: req.user.id,
           status: post.status,
           user_agent: req.useragent.source,
-          ip_address: req.clientIp
+          ip_address: req.clientIp,
+          data: {
+            browserId: req.body.pointBaseId,
+            browserFingerprint: req.body.pointValCode,
+            browserFingerprintConfidence: req.body.pointConf,
+            originalQueryString: req.body.originalQueryString,
+            userLocale: req.body.userLocale,
+            userAutoTranslate: req.body.userAutoTranslate,
+            referrer: req.body.referrer,
+            url: req.body.url,
+            screen_width: req.body.screen_width
+          }
         });
         point.save().then(() => {
           const pointRevision = sequelize.models.PointRevision.build({
@@ -539,6 +550,17 @@ module.exports = (sequelize, DataTypes) => {
       }
     });
   };
+
+  Post.setVideosForPosts = (posts, done) => {
+    sequelize.models.Post.getVideosForPosts(posts.map(p=>p.id), (error, videos) => {
+      if (error) {
+        done(error);
+      } else {
+        sequelize.models.Post.addVideosToAllPosts(posts, videos);
+        done();
+      }
+    })
+  }
 
   Post.getVideosForPosts = (postIds, done) => {
     sequelize.models.Video.findAll({
@@ -600,6 +622,59 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
 
+  //TODO Refactor duplicate code with Post
+  Post.setOrganizationUsersForPosts = (posts, done) => {
+    const filteredPosts = posts.filter(p=>p.User);
+
+    if (filteredPosts && filteredPosts.length>0) {
+      sequelize.models.User.findAll({
+        attributes:  ['id','created_at'],
+        where: {
+          id: {
+            $in: posts.map(p=>p.User.id)
+          }
+        },
+        include: [
+          {
+            model: sequelize.models.Organization,
+            as: 'OrganizationUsers',
+            required: true,
+            attributes: ['id','name'],
+            include: [
+              {
+                model: sequelize.models.Image,
+                as: 'OrganizationLogoImages',
+                attributes: ['id', 'formats'],
+                required: false
+              }
+            ]
+          }
+        ],
+        order: [
+          [ { model: sequelize.models.Organization, as: 'OrganizationUsers' }, { model: sequelize.models.Image, as: 'OrganizationLogoImages' }, 'created_at', 'asc' ]
+        ]
+      }).then(users => {
+        if (users && users.length>0) {
+          for (let u=0; u<users.length; u++) {
+            for (let p=0; p<posts.length; p++) {
+              if (posts[p].User.id===users[u].id) {
+                posts[p].User.OrganizationUsers = users[u].OrganizationUsers;
+                posts[p].User.setDataValue('OrganizationUsers', users[u].OrganizationUsers);
+              }
+            }
+          }
+          done();
+        } else {
+          done();
+        }
+      }).catch( error => {
+        done(error);
+      })
+    } else {
+      done();
+    }
+  }
+
   Post.addVideosToAllPosts = (posts, videos) => {
     const postsHash = {};
 
@@ -614,7 +689,11 @@ module.exports = (sequelize, DataTypes) => {
           if (!postsHash[postId].dataValues.PostVideos) {
             postsHash[postId].dataValues.PostVideos = [];
           }
+          if (!postsHash[postId].PostVideos) {
+            postsHash[postId].PostVideos = [];
+          }
           postsHash[postId].dataValues.PostVideos.push(videos[i]);
+          postsHash[postId].PostVideos.push(videos[i]);
         } else {
           log.error("Can't find post to add video to")
         }

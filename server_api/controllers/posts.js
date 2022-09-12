@@ -9,6 +9,7 @@ var _ = require('lodash');
 var queue = require('../active-citizen/workers/queue');
 const getAnonymousUser = require('../active-citizen/utils/get_anonymous_system_user');
 const moment = require('moment');
+const {plausibleStatsProxy} = require("../active-citizen/engine/analytics/plausible/manager");
 
 
 var changePostCounter = function (req, postId, column, upDown, next) {
@@ -249,21 +250,6 @@ router.get('/:id', auth.can('view post'), function(req, res) {
                 model: models.Image, as: 'UserProfileImages',
                 attributes:['id',"formats",'updated_at'],
                 required: false
-              },
-              {
-                model: models.Organization,
-                as: 'OrganizationUsers',
-                required: false,
-                attributes: ['id', 'name'],
-                include: [
-                  {
-                    model: models.Image,
-                    as: 'OrganizationLogoImages',
-                    //TODO: Figure out why there are no formats attributes coming through here
-                    attributes: ['id', 'formats'],
-                    required: false
-                  }
-                ]
               }
             ]
           },
@@ -283,7 +269,9 @@ router.get('/:id', auth.can('view post'), function(req, res) {
         ]
       }).then(function(postIn) {
         post = postIn;
-        parallelCallback();
+        models.Post.setOrganizationUsersForPosts([post], (error) => {
+          parallelCallback(error);
+        })
       }).catch( error => {
         parallelCallback(error);
       });
@@ -464,10 +452,7 @@ router.get('/:id/newPoints', auth.can('view post'), function(req, res) {
         ['created_at', 'asc'],
         [ models.PointRevision, 'created_at', 'asc' ],
         [ models.User, { model: models.Image, as: 'UserProfileImages' }, 'created_at', 'asc' ],
-        [ { model: models.Video, as: "PointVideos" }, 'updated_at', 'desc' ],
         [ { model: models.Audio, as: "PointAudios" }, 'updated_at', 'desc' ],
-        [ { model: models.Video, as: "PointVideos" }, { model: models.Image, as: 'VideoImages' } ,'updated_at', 'asc' ],
-          [ models.User, { model: models.Organization, as: 'OrganizationUsers' }, { model: models.Image, as: 'OrganizationLogoImages' }, 'created_at', 'asc' ]
       ],
       include: [
         { model: models.User,
@@ -478,40 +463,12 @@ router.get('/:id/newPoints', auth.can('view post'), function(req, res) {
               model: models.Image, as: 'UserProfileImages',
               required: false
             },
-            {
-              model: models.Organization,
-              as: 'OrganizationUsers',
-              required: false,
-              attributes: ['id', 'name'],
-              include: [
-                {
-                  model: models.Image,
-                  as: 'OrganizationLogoImages',
-                  attributes: ['id', 'formats'],
-                  required: false
-                }
-              ]
-            }
           ]
         },
         {
           model: models.PointRevision,
           attributes: { exclude: ['ip_address', 'user_agent'] },
           required: false
-        },
-        {
-          model: models.Video,
-          required: false,
-          attributes: ['id','formats','updated_at','viewable','public_meta'],
-          as: 'PointVideos',
-          include: [
-            {
-              model: models.Image,
-              as: 'VideoImages',
-              attributes:["formats",'updated_at'],
-              required: false
-            },
-          ]
         },
         {
           model: models.Audio,
@@ -535,12 +492,29 @@ router.get('/:id/newPoints', auth.can('view post'), function(req, res) {
         }
       ]
     }).then(function(points) {
-      if (points) {
-        log.info('Points New Viewed', { postId: req.params.id, userId: req.user ? req.user.id : -1 });
-        res.send(points);
-      } else {
-        sendPostOrError(res, null, 'view', req.user, 'Not found', 404);
-      }
+      async.parallel([
+        (parallelCallback) => {
+          models.Point.setVideosForPoints(points, (error) => {
+            parallelCallback(error);
+          })
+        },
+        (parallelCallback) => {
+          models.Point.setOrganizationUsersForPoints(points, (error) => {
+            parallelCallback(error);
+          })
+        }
+      ], (error) => {
+        if (error) {
+          sendPostOrError(res, null, 'view', req.user, error);
+        } else {
+          if (points) {
+            log.info('Points New Viewed', { postId: req.params.id, userId: req.user ? req.user.id : -1 });
+            res.send(points);
+          } else {
+            sendPostOrError(res, null, 'view', req.user, 'Not found', 404);
+          }
+        }
+      })
     }).catch(function(error) {
       sendPostOrError(res, null, 'view', req.user, error);
     });
@@ -615,16 +589,7 @@ const sendPostPoints = (req, res, redisKey) => {
             models.sequelize.literal('(counter_quality_up-counter_quality_down) desc'),
             [models.PointRevision, 'created_at', 'asc'],
             [models.User, {model: models.Image, as: 'UserProfileImages'}, 'created_at', 'asc'],
-            [{model: models.Video, as: "PointVideos"}, 'updated_at', 'desc'],
             [{model: models.Audio, as: "PointAudios"}, 'updated_at', 'desc'],
-            [{model: models.Video, as: "PointVideos"}, {
-              model: models.Image,
-              as: 'VideoImages'
-            }, 'updated_at', 'asc'],
-            [models.User, {model: models.Organization, as: 'OrganizationUsers'}, {
-              model: models.Image,
-              as: 'OrganizationLogoImages'
-            }, 'created_at', 'asc']
           ],
           include: [
             {
@@ -636,20 +601,6 @@ const sendPostPoints = (req, res, redisKey) => {
                   model: models.Image, as: 'UserProfileImages',
                   attributes: ['id', 'formats'],
                   required: false
-                },
-                {
-                  model: models.Organization,
-                  as: 'OrganizationUsers',
-                  required: false,
-                  attributes: ['id', 'name'],
-                  include: [
-                    {
-                      model: models.Image,
-                      as: 'OrganizationLogoImages',
-                      attributes: ['id', 'formats'],
-                      required: false
-                    }
-                  ]
                 }
               ]
             },
@@ -659,20 +610,6 @@ const sendPostPoints = (req, res, redisKey) => {
               required: false
             },
 
-            {
-              model: models.Video,
-              required: false,
-              attributes: ['id', 'formats', 'updated_at', 'viewable', 'public_meta'],
-              as: 'PointVideos',
-              include: [
-                {
-                  model: models.Image,
-                  as: 'VideoImages',
-                  attributes: ["formats", 'updated_at'],
-                  required: false
-                },
-              ]
-            },
             {
               model: models.Audio,
               required: false,
@@ -687,12 +624,29 @@ const sendPostPoints = (req, res, redisKey) => {
           ]
         }).then(function (points) {
           if (points) {
-            const pointsInfo = {points: points, count: upCount + downCount};
-            log.info('Points', { postId: req.params.id, userId: req.user ? req.user.id : -1});
-            if (redisKey) {
-              req.redisClient.setex(redisKey, process.env.POINTS_CACHE_TTL ? parseInt(process.env.POINTS_CACHE_TTL) : 3, JSON.stringify(pointsInfo));
-            }
-            res.send(pointsInfo);
+            async.parallel([
+              (parallelCallback) => {
+                models.Point.setVideosForPoints(points, (error) => {
+                  parallelCallback(error);
+                })
+              },
+              (parallelCallback) => {
+                models.Point.setOrganizationUsersForPoints(points, (error) => {
+                  parallelCallback(error);
+                })
+              },
+            ], (error) => {
+              if (error) {
+                sendPostOrError(res, null, 'view', req.user, 'Point org users', 404);
+              } else {
+                const pointsInfo = {points: points, count: upCount + downCount};
+                log.info('Points', { postId: req.params.id, userId: req.user ? req.user.id : -1});
+                if (redisKey) {
+                  req.redisClient.setex(redisKey, process.env.POINTS_CACHE_TTL ? parseInt(process.env.POINTS_CACHE_TTL) : 3, JSON.stringify(pointsInfo));
+                }
+                res.send(pointsInfo);
+              }
+            })
           } else {
             sendPostOrError(res, null, 'view', req.user, 'Not found', 404);
           }
@@ -747,7 +701,13 @@ var updatePostData = function (req, post) {
     post.set('data', {
       browserId: req.body.postBaseId,
       browserFingerprint: req.body.postValCode,
-      browserFingerprintConfidence: req.body.postConf
+      browserFingerprintConfidence: req.body.postConf,
+      originalQueryString: req.body.originalQueryString,
+      userLocale: req.body.userLocale,
+      userAutoTranslate: req.body.userAutoTranslate,
+      referrer: req.body.referrer,
+      url: req.body.url,
+      screen_width: req.body.screen_width
     });
   }
 
@@ -1422,6 +1382,96 @@ router.delete('/:id/endorse', auth.can('vote on post'), function(req, res) {
       err: error, errorStatus: 500 });
     res.sendStatus(500);
   })
+});
+
+router.put('/:postId/plausibleStatsProxy', auth.can('edit post'), async (req, res) => {
+  try {
+    const plausibleData = await plausibleStatsProxy(req.body.plausibleUrl, {
+      postId: req.params.postId
+    });
+    res.send(plausibleData);
+  } catch (error) {
+    log.error('Could not get plausibleStatsProxy', { err: error, context: 'getPlausibleSeries', user: toJson(req.user.simple()) });
+    res.sendStatus(500);
+  }
+});
+
+router.get('/:postId/get_campaigns', auth.can('edit post'), async (req, res) => {
+  try {
+    const campaigns = await models.Campaign.findAll({
+      where: {
+        post_id: req.params.postId,
+        active: true
+      },
+      order: [
+        [ 'created_at', 'desc' ]
+      ],
+      attributes: ['id','configuration']
+    });
+    res.send(campaigns);
+  } catch (error) {
+    log.error('Could not get campaigns', { err: error, context: 'get_campaigns', user: toJson(req.user.simple()) });
+    res.sendStatus(500);
+  }
+});
+
+router.post('/:postId/create_campaign', auth.can('edit post'), async (req, res) => {
+  try {
+    const campaign = models.Campaign.build({
+      post_id: req.params.postId,
+      configuration: req.body.configuration,
+      user_id: req.user.id
+    });
+
+    await campaign.save();
+    //TODO: Toxicity check
+
+    res.send(campaign);
+  } catch (error) {
+    log.error('Could not create_campaign campaigns', { err: error, context: 'create_campaign', user: toJson(req.user.simple()) });
+    res.sendStatus(500);
+  }
+});
+
+router.put('/:postId/:campaignId/update_campaign', auth.can('edit post'), async (req, res) => {
+  try {
+    const campaign = await models.Campaign.findOne({
+      where: {
+        id: req.params.campaignId,
+        post_id: req.params.postId
+      },
+      attributes: ['id','configuration']
+    });
+
+    campaign.configuration = req.body.configuration;
+
+    await campaign.save();
+    //TODO: Toxicity check
+
+    res.send(campaign);
+  } catch (error) {
+    log.error('Could not create_campaign campaigns', { err: error, context: 'create_campaign', user: toJson(req.user.simple()) });
+    res.sendStatus(500);
+  }
+});
+
+router.delete('/:postId/:campaignId/delete_campaign', auth.can('edit post'), async (req, res) => {
+  try {
+    const campaign = await models.Campaign.findOne({
+      where: {
+        id: req.params.campaignId,
+        post_id: req.params.postId
+      },
+      attributes: ['id']
+    });
+
+    campaign.deleted = true;
+    await campaign.save();
+    res.sendStatus(200);
+  } catch (error) {
+    log.error('Could not delete_campaign campaigns', { err: error, context: 'delete_campaign', user: toJson(req.user.simple()) });
+    res.sendStatus(500);
+  }
 });
 
 module.exports = router;

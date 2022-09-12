@@ -128,7 +128,7 @@ router.get('/:imageId/commentsCount', auth.can('view image'), function(req, res)
   });
 });
 
-router.post('/:imageId/comment', auth.isLoggedIn, auth.can('view image'), function(req, res) {
+router.post('/:imageId/comment', auth.isLoggedInNoAnonymousCheck, auth.can('view image'), function(req, res) {
   models.Point.createComment(req, { image_id: req.params.imageId, comment: req.body.comment }, function (error) {
     if (error) {
       log.error('Could not save comment point on image', { err: error, context: 'comment', user: toJson(req.user.simple()) });

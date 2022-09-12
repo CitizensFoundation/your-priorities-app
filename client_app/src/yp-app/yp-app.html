@@ -95,7 +95,7 @@
 
         --app-header-font-family: Roboto;
         --paper-button: {
-            font-family: var(--app-header-font-family, Roboto);
+            font-family: var(--app-normal-font-family, Roboto);
         };
 
         --paper-tabs: {
@@ -483,7 +483,13 @@
           value: null
         },
 
-        subRoute: Object,
+        subRoute: {
+          type: Object,
+          observer: '_subRoutePageChanged',
+          value: undefined
+        },
+
+        previousSubRoute: Object,
 
         appTitle: {
           type: String,
@@ -689,7 +695,7 @@
 
         if (this.goForwardToPostId) {
           this.goToPost(this.goForwardToPostId, null, null, null, true);
-          window.appGlobals.activity('recommendations', 'goForward', this.goForwardToPostId);
+          window.appGlobals.activity('goForward', 'recommendations', this.goForwardToPostId);
           this.goForwardCount += 1;
           this.set('showBackToPost', true);
         } else {
@@ -700,7 +706,7 @@
       _goToPreviousPost: function () {
         if (this.goForwardCount>0) {
           window.history.back();
-          window.appGlobals.activity('recommendations', 'goBack');
+          window.appGlobals.activity('goBack', 'recommendations');
         } else {
           this.set('showBackToPost', false);
         }
@@ -794,6 +800,7 @@
             }, function(loaded) {
           console.info("Have loaded languages for "+defaultLocale);
           window.locale = defaultLocale;
+          window.autoTranslate = false;
           window.i18nTranslation = i18next;
           window.haveLoadedLanguages = true;
           moment.locale([defaultLocale, 'en']);
@@ -856,6 +863,7 @@
           })
         );
         window.autoTranslate = false;
+        window.appGlobals.activity('click', 'stopTranslation', this.language);
         Polymer.dom(document).querySelector('yp-app').getDialogAsync("masterToast", function (toast) {
           toast.text = this.t('autoTranslationStopped');
           toast.show();
@@ -921,6 +929,21 @@
       _redirectTo: function (event, detail) {
         if (detail.path) {
           this.set('route.path', detail.path);
+        }
+      },
+
+      _subRoutePageChanged: function (route, previousRoute) {
+        if (!this.previousSubRoute
+            || (JSON.stringify(route) !== JSON.stringify(this.previousSubRoute))) {
+          if (!(route &&
+              this.previousSubRoute &&
+              route.prefix === this.previousSubRoute.prefix &&
+              route.path.replace("/open","")===this.previousSubRoute.path.replace("/open",""))) {
+            this.async(function () {
+              window.appGlobals.sendToAnalyticsTrackers('send', 'pageview', location.pathname);
+            })
+          }
+          this.previousSubRoute = route;
         }
       },
 
@@ -1145,10 +1168,6 @@
           }
           console.log("Trying to load "+resolvedPageUrl);
           this.importHref(resolvedPageUrl, null, this._showPage404, true);
-        }
-
-        if (page) {
-          window.appGlobals.sendToAnalyticsTrackers('send', 'pageview', location.pathname);
         }
 
         if (page && page==='survey') {

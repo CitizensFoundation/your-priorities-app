@@ -19,7 +19,10 @@ var multerMultipartResolver = multer({ dest: 'uploads/' }).single('file');
 const fs = require('fs');
 const readline = require('readline');
 const stream = require('stream');
-const {getMapForCommunity} = require("../utils/community_mapping_tools");
+const { getMapForCommunity } = require("../utils/community_mapping_tools");
+
+const { getPlausibleStats, plausibleStatsProxy } = require("../active-citizen/engine/analytics/plausible/manager")
+const {countAllModeratedItemsByCommunity} = require("../active-citizen/engine/moderation/get_moderation_items");
 
 const getFromAnalyticsApi = require('../active-citizen/engine/analytics/manager').getFromAnalyticsApi;
 const triggerSimilaritiesTraining = require('../active-citizen/engine/analytics/manager').triggerSimilaritiesTraining;
@@ -422,87 +425,109 @@ const addVideosToCommunity = (community, done) => {
 }
 
 const addVideosAndCommunityLinksToGroup = (groups, done) => {
-
   const linkedCommunityIds = [];
   const linkedCommunityIdToGroupIndex = {};
+  const groupsHash = {};
+  const collectedGroupIds = [];
 
-  async.eachOfLimit(groups, 20, (group, index, forEachCallback) => {
-
-    if (group.configuration && group.configuration.actAsLinkToCommunityId) {
-      linkedCommunityIds.push(group.configuration.actAsLinkToCommunityId);
-      linkedCommunityIdToGroupIndex[group.configuration.actAsLinkToCommunityId] = index;
+  for (let g=0;g<groups.length;g++) {
+    if (groups[g].configuration && groups[g].configuration.actAsLinkToCommunityId) {
+      linkedCommunityIds.push(groups[g].configuration.actAsLinkToCommunityId);
+      linkedCommunityIdToGroupIndex[groups[g].configuration.actAsLinkToCommunityId] = g;
     }
+    groupsHash[groups[g].id] = groups[g];
+    collectedGroupIds.push(groups[g].id);
+  }
 
-    //TODO: Limit then number of VideoImages to 1 - there is one very 10 sec
-    models.Video.findAll({
-      attributes:  ['id','formats','viewable','public_meta','created_at'],
-      include: [
-        {
-          model: models.Image,
-          as: 'VideoImages',
-          attributes:["formats",'created_at'],
-          required: false
-        },
-        {
-          model: models.Group,
-          where: {
-            id: group.id
-          },
-          as: 'GroupLogoVideos',
-          required: true,
-          attributes: ['id']
-        }
-      ],
-      order: [
-        [ { model: models.Image, as: 'VideoImages' } ,'created_at', 'asc' ]
-      ]
-    }).then(videos => {
-      if (group.dataValues) {
-        group.dataValues.GroupLogoVideos = _.orderBy(videos, ['created_at'],['desc']);
-      } else {
-        group.GroupLogoVideos = _.orderBy(videos, ['created_at'],['desc']);
-      }
-      forEachCallback();
-    }).catch( error => {
-      forEachCallback(error);
-    })
-  }, error => {
-    if (linkedCommunityIds.length>0) {
-      models.Community.findAll({
-        where: {
-          id:  { $in: linkedCommunityIds }
-        },
-        attributes: ['id','name','description','counter_posts','counter_points','counter_users','language'],
-        order: [
-          [ { model: models.Image, as: 'CommunityLogoImages' } , 'created_at', 'asc' ]
-        ],
+  async.series([
+    (seriesCallback) => {
+      //TODO: Limit then number of VideoImages to 1 - there is one very 10 sec
+      models.Video.findAll({
+        attributes:  ['id','formats','viewable','public_meta','created_at'],
         include: [
           {
             model: models.Image,
-            as: 'CommunityLogoImages',
-            attributes:  models.Image.defaultAttributesPublic,
+            as: 'VideoImages',
+            attributes:["formats",'created_at'],
             required: false
+          },
+          {
+            model: models.Group,
+            where: {
+              id: {
+                $in: collectedGroupIds
+              }
+            },
+            as: 'GroupLogoVideos',
+            required: true,
+            attributes: ['id']
           }
+        ],
+        order: [
+          [ { model: models.Image, as: 'VideoImages' } ,'created_at', 'asc' ]
         ]
-      }).then(communities => {
-        async.eachOfLimit(communities, 20, (community, eachIndex, forEachVideoCallback) => {
-          const index = linkedCommunityIdToGroupIndex[community.id];
-          if (groups[index].dataValues) {
-            groups[index].dataValues.CommunityLink = community;
-          } else {
-            groups[index].CommunityLink = community;
+      }).then(videos => {
+        if (videos) {
+          videos = _.orderBy(videos, ['created_at'],['asc']);
+
+          for (let v=0;v<videos.length;v++) {
+            const groupId = videos[v].GroupLogoVideos[0].id;
+            if (groupId) {
+              groupsHash[groupId].dataValues.GroupLogoVideos = [videos[v]];
+              groupsHash[groupId].GroupLogoVideos = [videos[v]];
+            } else {
+              log.warn("Not finding group id in hash")
+            }
           }
-          addVideosToCommunity(community, forEachVideoCallback);
-        }, error => {
-          done(error);
-        });
+          seriesCallback();
+        } else {
+          seriesCallback();
+        }
       }).catch( error => {
-        done(error);
+        seriesCallback(error);
       })
-    } else {
-      done(error);
+    },
+
+    (seriesCallback) => {
+      if (linkedCommunityIds.length>0) {
+        models.Community.findAll({
+          where: {
+            id:  { $in: linkedCommunityIds }
+          },
+          attributes: ['id','name','description','counter_posts','counter_points','counter_users','language'],
+          order: [
+            [ { model: models.Image, as: 'CommunityLogoImages' } , 'created_at', 'asc' ]
+          ],
+          include: [
+            {
+              model: models.Image,
+              as: 'CommunityLogoImages',
+              attributes:  models.Image.defaultAttributesPublic,
+              required: false
+            }
+          ]
+        }).then(communities => {
+          async.eachOfLimit(communities, 20, (community, eachIndex, forEachVideoCallback) => {
+            const index = linkedCommunityIdToGroupIndex[community.id];
+            if (groups[index].dataValues) {
+              groups[index].dataValues.CommunityLink = community;
+            } else {
+              groups[index].CommunityLink = community;
+            }
+            addVideosToCommunity(community, forEachVideoCallback);
+          }, error => {
+            seriesCallback(error);
+          });
+        }).catch( error => {
+          seriesCallback(error);
+        })
+      } else {
+        seriesCallback();
+      }
     }
-  });
+  ], (error) => {
+    done(error);
+  })
 }
 
 const getCommunity = function(req, done) {
@@ -719,6 +744,7 @@ var updateCommunityConfigParameters = function (req, community) {
 
   community.set('configuration.welcomeHTML', (req.body.welcomeHTML && req.body.welcomeHTML!="") ? req.body.welcomeHTML : null);
   community.set('configuration.externalId', (req.body.externalId && req.body.externalId!="") ? req.body.externalId : null);
+  community.set('configuration.projectId', (req.body.projectId && req.body.projectId!="") ? req.body.projectId : null);
 
   community.set('configuration.customSamlDeniedMessage', (req.body.customSamlDeniedMessage && req.body.customSamlDeniedMessage!="") ? req.body.customSamlDeniedMessage : null);
   community.set('configuration.customSamlLoginMessage', (req.body.customSamlLoginMessage && req.body.customSamlLoginMessage!="") ? req.body.customSamlLoginMessage : null);
@@ -726,6 +752,9 @@ var updateCommunityConfigParameters = function (req, community) {
   community.set('configuration.forceSecureSamlLogin', truthValueFromBody(req.body.forceSecureSamlLogin));
   community.set('configuration.hideRecommendationOnNewsFeed', truthValueFromBody(req.body.hideRecommendationOnNewsFeed));
   community.set('configuration.closeNewsfeedSubmissions', truthValueFromBody(req.body.closeNewsfeedSubmissions));
+
+  community.set('configuration.disableGroupDynamicFontSizes', truthValueFromBody(req.body.disableGroupDynamicFontSizes));
+  community.set('configuration.hideGroupListCardObjectives', truthValueFromBody(req.body.hideGroupListCardObjectives));
 
   community.set('configuration.recalculateCountersRecursively', truthValueFromBody(req.body.recalculateCountersRecursively));
 
@@ -759,6 +788,7 @@ var updateCommunityConfigParameters = function (req, community) {
   community.set('configuration.hideAllTabs', truthValueFromBody(req.body.hideAllTabs));
 
   community.set('configuration.alwaysShowOnDomainPage', truthValueFromBody(req.body.alwaysShowOnDomainPage));
+  community.set('configuration.useReadMoreForDescription', truthValueFromBody(req.body.useReadMoreForDescription));
 
   community.set('configuration.themeOverrideColorPrimary', (req.body.themeOverrideColorPrimary && req.body.themeOverrideColorPrimary!="") ? req.body.themeOverrideColorPrimary : null);
   community.set('configuration.themeOverrideColorAccent', (req.body.themeOverrideColorAccent && req.body.themeOverrideColorAccent!="") ? req.body.themeOverrideColorAccent : null);
@@ -804,7 +834,7 @@ router.delete('/:communityId/:activityId/delete_activity', auth.can('edit commun
   });
 });
 
-router.delete('/:communityId/user_membership', auth.isLoggedIn, auth.can('view community'), function(req, res) {
+router.delete('/:communityId/user_membership', auth.isLoggedInNoAnonymousCheck, auth.can('view community'), function(req, res) {
   getCommunityAndUser(req.params.communityId, req.user.id, null, function (error, community, user) {
     if (error) {
       log.error('Could not remove user', { err: error, communityId: req.params.communityId, userRemovedId: req.user.id, context: 'user_membership', user: toJson(req.user.simple()) });
@@ -820,7 +850,7 @@ router.delete('/:communityId/user_membership', auth.isLoggedIn, auth.can('view c
   });
 });
 
-router.post('/:communityId/user_membership', auth.isLoggedIn, auth.can('view community'), function(req, res) {
+router.post('/:communityId/user_membership', auth.isLoggedInNoAnonymousCheck, auth.can('view community'), function(req, res) {
   getCommunityAndUser(req.params.communityId, req.user.id, null, function (error, community, user) {
     if (error) {
       log.error('Could not add user', { err: error, communityId: req.params.communityId, userRemovedId: req.user.id, context: 'user_membership', user: toJson(req.user.simple())});
@@ -1142,7 +1172,7 @@ router.delete('/:communityId/:pageId/delete_page', auth.can('edit community'), f
   });
 });
 
-router.post('/:communityId/news_story', auth.isLoggedIn, auth.can('view community'), function(req, res) {
+router.post('/:communityId/news_story', auth.isLoggedInNoAnonymousCheck, auth.can('view community'), function(req, res) {
   models.Point.createNewsStory(req, req.body, function (error) {
     if (error) {
       log.error('Could not save news story point on community', { err: error, context: 'news_story', user: req.user ? toJson(req.user.simple()) : null });
@@ -1654,12 +1684,12 @@ router.get('/:communityId/moderate_all_content', auth.can('edit community'), (re
 });
 
 router.get('/:communityId/flagged_content_count',  auth.can('edit community'), (req, res) => {
-  getAllModeratedItemsByCommunity({ communityId: req.params.communityId }, (error, items) => {
+  countAllModeratedItemsByCommunity({ communityId: req.params.communityId }, (error, count) => {
     if (error) {
       log.error("Error getting items for moderation", { error });
       res.sendStatus(500)
     } else {
-      res.send({count: items ? items.length : 0});
+      res.send({ count });
     }
   });
 });
@@ -2045,6 +2075,112 @@ router.get('/:communityId/getFraudAudits', auth.can('edit community'), function(
     log.error('Could not get backgroundJob', { err: error, context: 'endorsement_fraud_action_status', user: toJson(req.user.simple()) });
     res.sendStatus(500);
   });
+});
+
+router.get('/:communityId/:type/getPlausibleSeries', auth.can('edit community marketing'), async (req, res) => {
+  // Example: "timeseries?site_id=your-priorities&period=7d";
+  try {
+    const questionMarkIndex = req.url.indexOf('?');
+    const queryString = req.url.substr(questionMarkIndex+1);
+    const siteId = process.env.PLAUSIBLE_SITE_NAME;
+    const type = req.params.type.replace('realtime-visitors','realtime/visitors');
+    const plausibleString = `${type}?${queryString}&site_id=${siteId}`;
+    const plausibleData = await getPlausibleStats(plausibleString);
+    log.info("GOT DATA");
+    log.info(plausibleData);
+    res.send(plausibleData);
+  } catch (error) {
+    log.error('Could not get getPlausibleSeries', { err: error, context: 'getPlausibleSeries', user: toJson(req.user.simple()) });
+    res.sendStatus(500);
+  }
+});
+
+router.put('/:communityId/plausibleStatsProxy', auth.can('edit community marketing'), async (req, res) => {
+  try {
+    const plausibleData = await plausibleStatsProxy(req.body.plausibleUrl, { communityId: req.params.communityId });
+    res.send(plausibleData);
+  } catch (error) {
+    log.error('Could not get plausibleStatsProxy', { err: error, context: 'getPlausibleSeries', user: toJson(req.user.simple()) });
+    res.sendStatus(500);
+  }
+});
+
+router.get('/:communityId/get_campaigns', auth.can('edit community marketing'), async (req, res) => {
+  try {
+    const campaigns = await models.Campaign.findAll({
+      where: {
+        community_id: req.params.communityId,
+        active: true
+      },
+      order: [
+        [ 'created_at', 'desc' ]
+      ],
+      attributes: ['id','configuration']
+    });
+    res.send(campaigns);
+  } catch (error) {
+    log.error('Could not get campaigns', { err: error, context: 'get_campaigns', user: toJson(req.user.simple()) });
+    res.sendStatus(500);
+  }
+});
+
+router.post('/:communityId/create_campaign', auth.can('edit community marketing'), async (req, res) => {
+  try {
+    const campaign = models.Campaign.build({
+      community_id: req.params.communityId,
+      configuration: req.body.configuration,
+      user_id: req.user.id
+    });
+
+    await campaign.save();
+    //TODO: Toxicity check
+
+    res.send(campaign);
+  } catch (error) {
+    log.error('Could not create_campaign campaigns', { err: error, context: 'create_campaign', user: toJson(req.user.simple()) });
+    res.sendStatus(500);
+  }
+});
+
+router.put('/:communityId/:campaignId/update_campaign', auth.can('edit community marketing'), async (req, res) => {
+  try {
+    const campaign = await models.Campaign.findOne({
+      where: {
+        id: req.params.campaignId,
+        community_id: req.params.communityId
+      },
+      attributes: ['id','configuration']
+    });
+
+    campaign.configuration = req.body.configuration;
+
+    await campaign.save();
+    //TODO: Toxicity check
+
+    res.send(campaign);
+  } catch (error) {
+    log.error('Could not create_campaign campaigns', { err: error, context: 'create_campaign', user: toJson(req.user.simple()) });
+    res.sendStatus(500);
+  }
+});
+
+router.delete('/:communityId/:campaignId/delete_campaign', auth.can('edit community marketing'), async (req, res) => {
+  try {
+    const campaign = await models.Campaign.findOne({
+      where: {
+        id: req.params.campaignId,
+        community_id: req.params.communityId
+      },
+      attributes: ['id']
+    });
+
+    campaign.deleted = true;
+    await campaign.save();
+    res.sendStatus(200);
+  } catch (error) {
+    log.error('Could not delete_campaign campaigns', { err: error, context: 'delete_campaign', user: toJson(req.user.simple()) });
+    res.sendStatus(500);
+  }
 });
 
 module.exports = router;

@@ -113,6 +113,8 @@ module.exports = (sequelize, DataTypes) => {
     Group.belongsToMany(models.Image, { as: 'GroupHeaderImages', through: 'GroupHeaderImage' });
     Group.belongsToMany(models.User, { as: 'GroupUsers', through: 'GroupUser' });
     Group.belongsToMany(models.User, { as: 'GroupAdmins', through: 'GroupAdmin' });
+    Group.belongsToMany(models.User, { as: 'GroupPromoters', through: 'GroupPromoter' });
+    Group.hasMany(models.Campaign);
   };
 
   Group.ACCESS_PUBLIC = 0;
@@ -279,6 +281,17 @@ module.exports = (sequelize, DataTypes) => {
           if (err) return callback(err);
           callback();
         });
+      },
+      (callback) => {
+        if (body.deleteHeaderImage==="true") {
+          this.setGroupHeaderImages([]).then(()=>{
+            callback();
+          }).catch(error => {
+            callback(error);
+          })
+        } else {
+          callback();
+        }
       }
     ], (err) => {
       done(err);

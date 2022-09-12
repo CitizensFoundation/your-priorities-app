@@ -1,7 +1,6 @@
 ## editors
 /.idea
 /.vscode
-/out-tsc
 
 ## system files
 .DS_Store
