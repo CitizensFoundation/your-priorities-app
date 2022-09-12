@@ -6,6 +6,7 @@ server_api/bin/uploads
 .sass-cache
 app/bower_components
 client_app/bower_components
+client_app_p3/bower_components
 client_app/bower_components.p1
 .tmp
 test/bower_components/

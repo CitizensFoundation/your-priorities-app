@@ -143,7 +143,6 @@ export class YpAccessHelpers {
         window.appUser.adminRights.DomainAdmins
       );
     } else if (domain) {
-      console.log('checkDomainAccess 3', domain);
       return false;
     } else {
       console.warn('No domain in hasAccess');

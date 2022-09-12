@@ -56,13 +56,13 @@ export class YpCampaignManager extends YpBaseElementWithLogin {
       mediums: [] as YpCampaignMediumData[],
     } as YpCampaignConfigurationData;
 
-    const campaign = await this.campaignApi.createCampaign(
+    const campaign = (await this.campaignApi.createCampaign(
       this.collectionType,
       this.collectionId,
       {
         configuration,
       }
-    ) as YpCampaignData;
+    )) as YpCampaignData;
 
     campaign.configuration.utm_content = `${campaign.id}`;
 
@@ -92,7 +92,7 @@ export class YpCampaignManager extends YpBaseElementWithLogin {
   }
 
   async campaignConfigurationUpdated(event: CustomEvent) {
-   await this.campaignApi.updateCampaign(
+    await this.campaignApi.updateCampaign(
       this.collectionType,
       this.collectionId,
       event.detail.campaignId,
@@ -117,7 +117,6 @@ export class YpCampaignManager extends YpBaseElementWithLogin {
         this.collectionId,
         this.campaignToDelete!
       );
-
     } catch (error) {
       this.campaignToDelete = undefined;
       console.error(error);
@@ -128,7 +127,7 @@ export class YpCampaignManager extends YpBaseElementWithLogin {
 
   deleteCampaign(event: CustomEvent) {
     this.campaignToDelete = event.detail;
-    (this.$$("#deleteConfirmationDialog") as Dialog).show();
+    (this.$$('#deleteConfirmationDialog') as Dialog).show();
   }
 
   cancelDeleteCampaign() {
@@ -185,7 +184,7 @@ export class YpCampaignManager extends YpBaseElementWithLogin {
 
   renderCampaign(campaign: YpCampaignData) {
     return html`<yp-campaign
-       @configurationUpdated="${this.campaignConfigurationUpdated}"
+      @configurationUpdated="${this.campaignConfigurationUpdated}"
       .campaignApi="${this.campaignApi}"
       @deleteCampaign="${this.deleteCampaign}"
       .collectionType="${this.collectionType}"
@@ -204,12 +203,12 @@ export class YpCampaignManager extends YpBaseElementWithLogin {
         @save="${this.createCampaign}"
       ></yp-new-campaign>
       <div class="layout horizontal center-center fabContainer">
-          <md-fab-extended
-            .label="${this.t('newTrackingPromotion')}"
-            icon="add"
-            @click="${this.newCampaign}"
-          ></md-fab-extended>
-        </div>
+        <md-fab-extended
+          .label="${this.t('newTrackingPromotion')}"
+          icon="add"
+          @click="${this.newCampaign}"
+        ></md-fab-extended>
+      </div>
       <div class="layout vertical start mainContainer">
         <div class="layout vertical">
           ${this.campaigns?.map(campaign => this.renderCampaign(campaign))}

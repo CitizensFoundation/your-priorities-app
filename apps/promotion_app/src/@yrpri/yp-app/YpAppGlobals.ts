@@ -475,7 +475,7 @@ export class YpAppGlobals extends YpCodeBase {
 
   postLoadGroupProcessing(group: YpGroupData) {
     if (this.originalQueryParameters['yu']) {
-      this.serverApi.promotionTrackingOpen(
+      this.serverApi.marketingTrackingOpen(
         group.id,
         this.originalQueryParameters
       );

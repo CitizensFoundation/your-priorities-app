@@ -85,6 +85,8 @@ export class YpBaseElement extends LitElement {
   }
 
   updated(changedProperties: Map<string | number | symbol, unknown>): void {
+    super.updated(changedProperties);
+
     if (changedProperties.has('language')) {
       this.languageChanged();
     }

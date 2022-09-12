@@ -109,9 +109,9 @@ export class YpServerApi extends YpServerApiBase {
     );
   }
 
-  public promotionTrackingOpen(groupId: number, body: Record<string, unknown>) {
+  public marketingTrackingOpen(groupId: number, body: Record<string, unknown>) {
     return this.fetchWrapper(
-      this.baseUrlPath + `/groups/${groupId}/promotionTrackingOpen`,
+      this.baseUrlPath + `/groups/${groupId}/marketingTrackingOpen`,
       {
         method: 'POST',
         body: JSON.stringify(body),
