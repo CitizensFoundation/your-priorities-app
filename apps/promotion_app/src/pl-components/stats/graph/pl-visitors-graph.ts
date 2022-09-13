@@ -134,12 +134,15 @@ export class PlausibleVisitorsGraph extends PlausibleBaseElementWithState {
         this.query
       )
       .then(res => {
-        if (this.useTopStatsForCurrentVisitors && this.query.period=="realtime") {
-          res.top_stats[0] = { name: res.top_stats[0].name,
-            value: res.top_stats[1].value
-          }
-        };
-        ;
+        if (
+          this.useTopStatsForCurrentVisitors &&
+          this.query.period == 'realtime'
+        ) {
+          res.top_stats[0] = {
+            name: res.top_stats[0].name,
+            value: res.top_stats[1].value,
+          };
+        }
         this.topStatData = res;
       });
   }

@@ -73,6 +73,12 @@ export abstract class PlausibleBaseGraph extends PlausibleBaseElementWithState {
   @property({ type: Number })
   chartWidth = 1054
 
+  @property({ type: String })
+  metrics: PlausibleTimeseriesMetricsOptions = 'visitors';
+
+  @property({ type: String })
+  method: "aggregate" | "timeseries" = 'timeseries';
+
   regenerateChart(): any {}
 
   fetchGraphData(): any {}

@@ -22,9 +22,6 @@ export class PlausibleGoalGraph extends PlausibleBaseGraph {
   @property({ type: Array })
   events!: string[];
 
-  @property({ type: String })
-  metrics: PlausibleTimeseriesMetricsOptions = 'visitors';
-
   static get styles() {
     return [
       ...super.styles,
@@ -58,7 +55,7 @@ export class PlausibleGoalGraph extends PlausibleBaseGraph {
     return new Promise((resolve, reject) => {
       if (this.query.period!="realtime") {
         api
-        .get(this.proxyUrl, `/api/v1/stats/timeseries`, this.query, {
+        .get(this.proxyUrl, `/api/v1/stats/${this.method}`, this.query, {
           metrics: this.metrics,
           statsBegin: this.site.statsBegin,
           site_id: encodeURIComponent(this.site!.domain!),

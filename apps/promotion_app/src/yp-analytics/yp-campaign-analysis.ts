@@ -39,12 +39,15 @@ export class YpCampaignAnalysis extends YpCampaign {
       super.styles,
       css`
         .mediumImage {
-          width: 35px;
-          height: 35px;
+          width: 42px;
+          height: 42px;
+          margin-top: 12px;
+          margin-bottom: 16px;
         }
 
         .mainContainer {
           width: 1050px;
+          height: 200px;
         }
 
         .mediumTopStats {

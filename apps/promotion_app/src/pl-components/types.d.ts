@@ -75,8 +75,16 @@ interface PlausiblePropValueData {
 
 interface PlausibleStatData {
   value: number;
-  change: number;
+  change?: number;
   name: string;
+}
+
+interface PlausibleAggregateResultsData {
+  results: {
+    visitors:  {
+      value: number;
+    }
+  }
 }
 
 interface PlausibleTopStatsData {

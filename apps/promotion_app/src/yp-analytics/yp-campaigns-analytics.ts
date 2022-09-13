@@ -11,6 +11,7 @@ import { UpdateModeEnum } from 'chart.js';
 
 import './yp-campaign-analysis.js';
 import { YpCampaignAnalysis } from './yp-campaign-analysis.js';
+import { PlausibleGoalGraph } from '../pl-components/stats/graph/pl-goal-graph';
 
 @customElement('yp-campaigns-analytics')
 export class YpCampaignsAnalytics extends PlausibleBaseElementWithState {
@@ -61,14 +62,13 @@ export class YpCampaignsAnalytics extends PlausibleBaseElementWithState {
     ];
   }
 
-  firstUpdated() {
-  }
+  firstUpdated() {}
 
   updated(changedProperties: Map<string | number | symbol, unknown>): void {
     super.updated(changedProperties);
     if (changedProperties.has('query')) {
-     this.foundCampaigns = undefined;
-     this.getCampaigns();
+      this.foundCampaigns = undefined;
+      this.getCampaigns();
     }
   }
 
@@ -85,31 +85,33 @@ export class YpCampaignsAnalytics extends PlausibleBaseElementWithState {
     );
 
     if (utmContents && utmContents.length > 0) {
-      const utmMediums = await api.get(
-        this.proxyUrl,
-        `/api/stats/${encodeURIComponent(this.site!.domain!)}/utm_mediums`,
-        this.query
-      );
+      const campaignIds = utmContents.map((c: any) => {
+        if (!isNaN(c.name)) return parseInt(c.name);
+      });
 
-      if (utmMediums && utmMediums.length > 0) {
-        const campaignIds = utmContents.map((c: any) => {
-          if (!isNaN(c.name)) return parseInt(c.name);
-        });
+      if (campaignIds.length > 0) {
+        const utmMediums = await api.get(
+          this.proxyUrl,
+          `/api/stats/${encodeURIComponent(this.site!.domain!)}/utm_mediums`,
+          this.query
+        );
 
-        const foundCampaigns = this.campaigns?.filter(c => {
-          return campaignIds.includes(c.id);
-        });
+        if (utmMediums && utmMediums.length > 0) {
+          const foundCampaigns = this.campaigns?.filter(c => {
+            return campaignIds.includes(c.id);
+          });
 
-        if (foundCampaigns && foundCampaigns.length > 0) {
-          for (let c = 0; c < foundCampaigns.length; c++) {
-            foundCampaigns[c] = await this.getSourceData(
-              foundCampaigns[c],
-              utmMediums
-            );
+          if (foundCampaigns && foundCampaigns.length > 0) {
+            for (let c = 0; c < foundCampaigns.length; c++) {
+              foundCampaigns[c] = await this.getSourceData(
+                foundCampaigns[c],
+                utmMediums
+              );
+            }
           }
-        }
 
-        this.foundCampaigns = foundCampaigns;
+          this.foundCampaigns = foundCampaigns;
+        }
       }
     }
 
@@ -141,7 +143,37 @@ export class YpCampaignsAnalytics extends PlausibleBaseElementWithState {
         query
       )) as PlausibleTopStatsData;
 
-      medium.topStats = topStatsData.top_stats;
+      /*const goalGraph = new PlausibleGoalGraph();
+
+      goalGraph.query = query;
+      goalGraph.site = this.site;
+      goalGraph.proxyUrl = this.proxyUrl;
+      goalGraph.method = "aggregate";
+      debugger;
+      goalGraph.events = [
+        'endorse_up - completed',
+        'endorse_down - completed',
+        'pointHelpful - completed',
+        'pointNotHelpful - completed',
+        'post.ratings - add',
+      ];
+
+      const endorseGoalData = await goalGraph.fetchGraphData() as PlausibleAggregateResultsData;
+
+      goalGraph.events = [
+        'newPost - completed',
+        'newPointAgainst - completed',
+        'newPointFor - completed',
+      ];
+
+      const newContentGoalData = await goalGraph.fetchGraphData() as PlausibleAggregateResultsData;
+*/
+      medium.topStats = [
+        topStatsData.top_stats[0],
+        topStatsData.top_stats[1],
+ //       { name: this.t("Visitors new content"), value: newContentGoalData.results.visitors.value },
+ //       { name: this.t("Visitors endorsing"), value: endorseGoalData.results.visitors.value },
+      ];
     }
 
     campaign.configuration.mediums = mediumsToSearch;
@@ -172,7 +204,9 @@ export class YpCampaignsAnalytics extends PlausibleBaseElementWithState {
       `;
     } else if (this.foundCampaigns) {
       return html`
-        <div class="layout horizontal center-center mainContainer smallContainer">
+        <div
+          class="layout horizontal center-center mainContainer smallContainer"
+        >
           <div class="textInfo">No campaigns found</div>
         </div>
       `;

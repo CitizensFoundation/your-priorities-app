@@ -119,7 +119,7 @@ export class PlausibleTopStats extends PlausibleBaseElement {
         )}"
         >${this.topStatNumberShort(stat)}</b
       >
-      ${this.renderComparison(stat.name, stat.change)}
+      ${this.renderComparison(stat.name, stat.change!)}
     </div>`;
   }
 
