@@ -415,7 +415,7 @@ export class YpPromotionApp extends YpBaseElementWithLogin {
             <md-list-item
               class="${this.pageIndex == 3 && 'selectedContainer'}"
               @click="${() => (this.pageIndex = 3)}"
-              ?hidden="${this.collectionType == 'posts'}"
+              ?hidden="${true || this.collectionType == 'posts'}"
               headline="${this.t('Email Lists')}"
               supportingText="${this.t('Send promotional emails')}"
             >
@@ -426,7 +426,7 @@ export class YpPromotionApp extends YpBaseElementWithLogin {
             <md-list-item
               class="${this.pageIndex == 4 && 'selectedContainer'}"
               @click="${() => (this.pageIndex = 4)}"
-              ?hidden="${this.collectionType == 'posts'}"
+              ?hidden="${true || this.collectionType == 'posts'}"
               headline="${this.t('AI Analysis')}"
               supportingText="${this.t('Text analysis with AI')}"
             >

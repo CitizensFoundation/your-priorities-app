@@ -16,7 +16,7 @@ import * as api from './api';
 import { BrowserHistory, createBrowserHistory } from './util/history.js';
 import { PlausibleBaseElementWithState } from './pl-base-element-with-state.js';
 
-const THIRTY_SECONDS = 5000;
+const THIRTY_SECONDS = 30000;
 
 class Timer {
   listeners: Array<any> = [];
