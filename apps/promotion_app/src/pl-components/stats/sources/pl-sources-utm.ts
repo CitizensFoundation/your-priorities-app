@@ -113,7 +113,7 @@ export class PlausibleSourcesUtm extends PlausibleSourcesBase {
   renderContent() {
     return html`
       <div class="flex justify-between w-full">
-        <h3 class="font-bold dark:text-gray-100">Top Sources</h3>
+        <h3 class="font-bold dark:text-gray-100">${this.t('Top Sources')}</h3>
         ${this.renderTabs()}
       </div>
       ${this.loading

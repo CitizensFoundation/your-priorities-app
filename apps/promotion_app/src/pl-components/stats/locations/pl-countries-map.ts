@@ -128,7 +128,7 @@ export class PlausableCountriesMap extends PlausibleBaseElementWithState {
   drawMap() {
     const dataset = this.getDataset();
     const label =
-      this.query.period === 'realtime' ? 'Current visitors' : 'Visitors';
+      this.query.period === 'realtime' ? this.t('Current visitors') : this.t('Visitors');
     const defaultFill = this.darkTheme ? '#2d3747' : '#f8fafc';
     const highlightFill = this.darkTheme ? '#374151' : '#F5F5F5';
     const borderColor = this.darkTheme ? '#1f2937' : '#dae1e7';

@@ -106,7 +106,7 @@ export class PlausibleConversions extends PlausibleBaseElementWithState {
             <pl-link
               .to="${{search: url.setQuerySearch('goal', goal.name)}}"
               class="block px-2 py-1.5 hover:underline relative z-9 break-all lg:truncate dark:text-gray-200"
-              >${goal.name}</pl-link
+              >${this.t(goal.name)}</pl-link
             >
           </pl-bar>
           <div class="dark:text-gray-200">
@@ -128,7 +128,6 @@ export class PlausibleConversions extends PlausibleBaseElementWithState {
               .site=${this.site}
               .query=${this.query}
               .goal=${goal}
-
               .proxyUrl=${this.proxyUrl}
             ></pl-prop-breakdown>`
           : nothing}

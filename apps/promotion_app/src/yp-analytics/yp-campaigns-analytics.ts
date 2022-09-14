@@ -207,13 +207,13 @@ export class YpCampaignsAnalytics extends PlausibleBaseElementWithState {
         <div
           class="layout horizontal center-center mainContainer smallContainer"
         >
-          <div class="textInfo">No campaigns found</div>
+          <div class="textInfo">${this.t('No campaigns found')}</div>
         </div>
       `;
     } else {
       return html` <div class="layout horizontal center-center mainContainer">
         <div class="layout horizontal center-center">
-          <div class="textInfo">Loading...</div>
+          <div class="textInfo">${this.t('Loading...')}</div>
         </div>
       </div>`;
     }

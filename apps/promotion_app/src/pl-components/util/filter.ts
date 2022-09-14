@@ -107,7 +107,7 @@ export function formatFilterGroup(filterGroup: string) {
     return 'Property'
   } else {
     //@ts-ignore
-    return formattedFilters[filterGroup]
+    return this.t(formattedFilters[filterGroup])
   }
 }
 
@@ -118,7 +118,6 @@ export function filterGroupForFilter(filter: string) {
       //@ts-ignore
       filtersToAdd[filterInGroup] = group
     })
-
     return { ...filterToGroupMap, ...filtersToAdd}
   }, {})
 

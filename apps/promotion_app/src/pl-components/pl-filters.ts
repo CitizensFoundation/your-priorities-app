@@ -383,7 +383,6 @@ export class PlausibleFilters extends PlausibleBaseElementWithState {
   }
 
   renderDropdownButton() {
-    console.error(this.wrapped);
     if (this.wrapped === 2) {
       const filterCount = appliedFilters(this.query).length;
       return html`

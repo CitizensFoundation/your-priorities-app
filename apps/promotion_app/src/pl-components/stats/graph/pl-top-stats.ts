@@ -134,6 +134,7 @@ export class PlausibleTopStats extends PlausibleBaseElement {
           !(this.query.filters!.goal && stat.name === 'Unique visitors');
         const isSelected = this.metric === METRIC_MAPPING[stat.name];
         const [statDisplayName, statExtraName] = stat.name.split(/(\(.+\))/g);
+        const translatedName = this.t(statDisplayName);
 
         return html`
           ${isClickable
@@ -156,7 +157,7 @@ export class PlausibleTopStats extends PlausibleBaseElement {
                         dark:group-hover:text-indigo-500`
                   }`}"
                   >
-                    ${statDisplayName}
+                    ${translatedName}
                   </div>
                   <span class="hidden sm:inline-block ml-1"
                     >${statExtraName}</span

@@ -118,7 +118,7 @@ export class PlausibleSourcesAll extends PlausibleSourcesBase {
     return html`
       <div class="flex flex-col flex-grow">
         <div id="sources" class="justify-between w-full">
-          <h3 class="font-bold dark:text-gray-100">Top Sources</h3>
+          <h3 class="font-bold dark:text-gray-100">${this.t('Top Sources')}</h3>
           ${this.renderTabs()}
         </div>
         ${this.loading

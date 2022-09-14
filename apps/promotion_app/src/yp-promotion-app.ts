@@ -147,7 +147,7 @@ export class YpPromotionApp extends YpBaseElementWithLogin {
         }
 
         .collectionName {
-          color: var(--md-sys-color-on-surface)
+          color: var(--md-sys-color-on-surface);
         }
 
         md-list-item {
@@ -384,8 +384,9 @@ export class YpPromotionApp extends YpBaseElementWithLogin {
                   )}"
                 ></yp-image>
               </div>
-              <div class="collectionName"> ${this.collection ? this.collection.name : ''}</div>
-
+              <div class="collectionName">
+                ${this.collection ? this.collection.name : ''}
+              </div>
             </div>
           </div>
 
@@ -420,7 +421,11 @@ export class YpPromotionApp extends YpBaseElementWithLogin {
               supportingText="${this.t('Send promotional emails')}"
             >
               <md-list-item-icon slot="start"
-                ><md-icon><span class="material-symbols-outlined">schedule_send</span></md-icon></md-list-item-icon
+                ><md-icon
+                  ><span class="material-symbols-outlined"
+                    >schedule_send</span
+                  ></md-icon
+                ></md-list-item-icon
               ></md-list-item
             >
             <md-list-item
@@ -475,7 +480,7 @@ export class YpPromotionApp extends YpBaseElementWithLogin {
               ><md-icon slot="activeIcon">insights</md-icon>
               <md-icon slot="inactiveIcon">insights</md-icon></md-navigation-tab
             >
-            <md-navigation-tab .label="${this.t('Campaign')}">
+            <md-navigation-tab .label="${this.t('Promotion')}">
               <md-icon slot="activeIcon">ads_click</md-icon>
               <md-icon slot="inactiveIcon">ads_click</md-icon>
             </md-navigation-tab>
@@ -558,7 +563,11 @@ export class YpPromotionApp extends YpBaseElementWithLogin {
       }
     }
 
-    if (this.collection && this.haveCheckedAdminRights && !this.adminConfirmed) {
+    if (
+      this.collection &&
+      this.haveCheckedAdminRights &&
+      !this.adminConfirmed
+    ) {
       this.fire('yp-network-error', { message: this.t('unauthorized') });
     }
   }
@@ -573,11 +582,10 @@ export class YpPromotionApp extends YpBaseElementWithLogin {
     }
 
     if (
-      (changedProperties.has('loggedInUser') ||
-      changedProperties.has('haveCheckedAdminRights') &&
-      this.loggedInUser &&
-      this.haveCheckedAdminRights === true
-      )
+      changedProperties.has('loggedInUser') ||
+      (changedProperties.has('haveCheckedAdminRights') &&
+        this.loggedInUser &&
+        this.haveCheckedAdminRights === true)
     ) {
       this._getCollection();
     }
@@ -588,7 +596,6 @@ export class YpPromotionApp extends YpBaseElementWithLogin {
     this.currentError = event.detail.message;
     (this.$$('#errorDialog') as Dialog).open = true;
   }
-
 
   _renderPage() {
     if (this.adminConfirmed) {

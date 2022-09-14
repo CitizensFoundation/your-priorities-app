@@ -57,14 +57,14 @@ export class PlausibleSourcesBase extends PlausibleBaseElementWithState {
 
   get label() {
     if (this.query.period === 'realtime') {
-      return 'Current visitors';
+      return this.t('Current visitors');
     }
 
     if (this.showConversionRate) {
-      return 'Conversions';
+      return this.t('Conversions');
     }
 
-    return 'Visitors';
+    return this.t('Visitors');
   }
 
   get showConversionRate() {

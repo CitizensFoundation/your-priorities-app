@@ -67,7 +67,7 @@ export class PlausibleCurrentVisitors extends PlausibleBaseElementWithState {
           </svg>
           ${this.currentVisitors}
           <span class=" sm:inline-block"
-            >current visitor${this.currentVisitors === 1 ? '' : 's'}</span
+            >${this.currentVisitors === 1? this.t('current visitor') : this.t('current visitors')}</span
           >
         </pl-link>
       `;

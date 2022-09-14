@@ -3,7 +3,7 @@ import * as url from '../../util/url.js';
 import * as api from '../../api.js';
 import { customElement, property } from 'lit/decorators.js';
 import { PlausibleBaseElement } from '../../pl-base-element.js';
-import { html, nothing } from 'lit';
+import { css, html, nothing } from 'lit';
 
 import '../../pl-more-link.js';
 import '../pl-bar.js';
@@ -64,7 +64,19 @@ export class PlausableListReport extends PlausibleBaseElementWithState {
     this.showConversionRate = !!this.query.filters!.goal;
   }
 
-  getExternalLink(item: string) {
+  static get styles() {
+    return [
+      ...super.styles,
+      css`
+        .externalLinkSvg {
+          margin-top: 8px;
+          margin-left: 6px;
+        }
+      `,
+    ];
+  }
+
+  getExternalLink(item: PlausibleListItemData) {
     if (this.externalLinkDest) {
       const dest = this.externalLinkDest(item);
       return html`
@@ -72,10 +84,10 @@ export class PlausableListReport extends PlausibleBaseElementWithState {
           target="_blank"
           rel="noreferrer"
           href=${dest}
-          class="hidden group-hover:block"
+          class="group-hover:block"
         >
           <svg
-            class="inline w-4 h-4 ml-1 -mt-1 text-gray-600 dark:text-gray-400"
+            class="inline w-4 h-4 ml-1 -mt-1 text-gray-600 dark:text-gray-400 externalLinkSvg"
             fill="currentColor"
             viewBox="0 0 20 20"
           >
@@ -121,14 +133,14 @@ export class PlausableListReport extends PlausibleBaseElementWithState {
 
   get label() {
     if (this.query.period === 'realtime') {
-      return 'Current visitors';
+      return this.t('Current visitors');
     }
 
     if (this.showConversionRate) {
-      return 'Conversions';
+      return this.t('Conversions');
     }
 
-    return this.valueLabel || 'Visitors';
+    return this.valueLabel || this.t('Visitors');
   }
 
   renderListItem(listItem: PlausibleListItemData) {
@@ -169,10 +181,7 @@ export class PlausableListReport extends PlausibleBaseElementWithState {
             >
               ${this.renderIcon(listItem)} ${listItem.name}
             </pl-link>
-            <pl-external-link
-              .item="${listItem}"
-              .externalLinkDest="${this.externalLinkDest}"
-            ></pl-external-link>
+            ${this.getExternalLink(listItem)}
           </span>
         </pl-bar>
         <span
