@@ -222,7 +222,7 @@
           <paper-icon-button aria-label$="[[t('reload')]]"  icon="autorenew" class="closeButton" on-tap="_reload"></paper-icon-button>
         </div>
         <div hidden$="[[domainId]]">
-          <paper-material hidden$="[[adminUsers]]" class="layout horizontal wrap inputBox">
+          <paper-material hidden$="[[!isRegularUsers]]" class="layout horizontal wrap inputBox">
             <paper-input label="[[t('email')]]" class="emailClass" value="{{inviteUserEmail}}"></paper-input>
             <paper-radio-group id="typeOfInvite" name="typeOfInvite" class="typeOfInvite layout vertical" selected="{{inviteType}}">
               <paper-radio-button name="sendInviteByEmail">[[t('sendInviteByEmail')]]</paper-radio-button>
@@ -235,6 +235,11 @@
         <paper-material hidden$="[[!adminUsers]]" class="layout horizontal wrap inputBox">
           <paper-input label="[[t('email')]]" class="emailClass" value="{{addAdminEmail}}"></paper-input>
           <paper-button class="inviteButton" on-tap="_addAdmin">[[t('users.addAdmin')]]</paper-button>
+        </paper-material>
+
+        <paper-material hidden$="[[!promotionUsers]]" class="layout horizontal wrap inputBox">
+          <paper-input label="[[t('email')]]" class="emailClass" value="{{addPromotionEmail}}"></paper-input>
+          <paper-button class="inviteButton" on-tap="_addPromotionUser">[[t('addPromotionUser')]]</paper-button>
         </paper-material>
       </div>
 
@@ -272,10 +277,10 @@
               <paper-icon-button aria-label$="[[t('openSelectedItemsMenu')]]" icon="more-vert" slot="dropdown-trigger" ></paper-icon-button>
               <paper-listbox slot="dropdown-content" on-iron-select="_menuSelection">
                 <template is="dom-if" if="[[!selectedUsersEmpty]]" restamp>
-                  <paper-item data-args$="[[item.id]]" hidden$="[[adminUsers]]" on-tap="_removeAndDeleteContentSelectedUsers">
+                  <paper-item data-args$="[[item.id]]" hidden$="[[!isRegularUsers]]" on-tap="_removeAndDeleteContentSelectedUsers">
                     [[t('removeSelectedAndDeleteContent')]] [[selectedUsersCount]]
                   </paper-item>
-                  <paper-item data-args$="[[item.id]]" hidden$="[[adminUsers]]" on-tap="_removeSelectedUsersFromCollection">
+                  <paper-item data-args$="[[item.id]]" hidden$="[[!isRegularUsers]]" on-tap="_removeSelectedUsersFromCollection">
                     <div hidden$="[[!groupId]]">
                       [[t('removeSelectedFromGroup')]] [[selectedUsersCount]]
                     </div>
@@ -287,6 +292,7 @@
                     </div>
                   </paper-item>
                   <paper-item data-args$="[[item.id]]" hidden$="[[!adminUsers]]" on-tap="_removeSelectedAdmins">[[t('removeSelectedAdmins')]] [[selectedUsersCount]]</paper-item>
+                  <paper-item data-args$="[[item.id]]" hidden$="[[!promotionUsers]]" on-tap="_removeSelectedPromotionUsers">[[t('removeSelectedPromotionUsers')]] [[selectedUsersCount]]</paper-item>
                 </template>
               </paper-listbox>
             </paper-menu-button>
@@ -318,7 +324,7 @@
                   </div>
                 </paper-item>
                 <paper-item data-args$="[[item.id]]" hidden$="[[!adminUsers]]" on-tap="_removeAdmin">[[t('users.removeAdmin')]]</paper-item>
-
+                <paper-item data-args$="[[item.id]]" hidden$="[[!promotionUsers]]" on-tap="_removePromotionUser">[[t('removePromotionUser')]]</paper-item>
                 <paper-item data-args$="[[item.id]]" hidden$="[[_userOrganizationName(item)]]" on-tap="_addToOrganization">[[t('users.addToOrganization')]]</paper-item>
                 <paper-item data-args$="[[item.id]]" hidden$="[[!_userOrganizationName(item)]]" data-args-org$="[[_userOrganizationId(item)]]" on-tap="_removeFromOrganization">[[t('users.removeFromOrganization')]]</paper-item>
               </paper-listbox>
@@ -393,6 +399,11 @@
           value: false
         },
 
+        promotionUsers: {
+          type: Boolean,
+          value: false
+        },
+
         selected: {
           type: Object
         },
@@ -462,12 +473,21 @@
         inviteType: {
           type: String,
           value: 'sendInviteByEmail'
+        },
+
+        isRegularUsers: {
+          type: Boolean,
+          computed: '_isRegularUsers(adminUsers, promotionUsers)'
         }
       },
 
       observers: [
         '_selectedUsersChanged(selectedUsers.splices)'
       ],
+
+      _isRegularUsers: function(adminUsers, promotionUsers) {
+        return (!adminUsers && !promotionUsers)
+      },
 
       _spinnerActive: function (count, force) {
         return !count || force
@@ -586,6 +606,23 @@
           this.$.removeAdminAjax.generateRequest();
         } else if (this.modelType=="domains" && this.domainId) {
           this.$.removeAdminAjax.url = "/api/" + this.modelType + "/" + this.domainId + "/" + userId + "/remove_admin";
+          this.$.removeAdminAjax.generateRequest();
+        } else {
+          console.warn("Can't find model type or ids");
+        }
+      },
+
+      _removePromotionUser: function (event) {
+        var userId = event.target.getAttribute('data-args');
+        this.$.removeAdminAjax.body = {};
+        if (this.modelType=="groups" && this.groupId) {
+          this.$.removeAdminAjax.url = "/api/" + this.modelType + "/" + this.groupId + "/" + userId + "/remove_promotion_user";
+          this.$.removeAdminAjax.generateRequest();
+        } else if (this.modelType=="communities" && this.communityId) {
+          this.$.removeAdminAjax.url = "/api/" + this.modelType + "/" + this.communityId + "/" + userId + "/remove_promotion_user";
+          this.$.removeAdminAjax.generateRequest();
+        } else if (this.modelType=="domains" && this.domainId) {
+          this.$.removeAdminAjax.url = "/api/" + this.modelType + "/" + this.domainId + "/" + userId + "/remove_promotion_user";
           this.$.removeAdminAjax.generateRequest();
         } else {
           console.warn("Can't find model type or ids");
@@ -836,8 +873,17 @@
       },
 
       _generateRequest: function (id) {
-        var adminsOrUsers = this.adminUsers ? "admin_users" : "users";
-        this.$.ajax.url = "/api/"+this.modelType+"/"+id+"/"+adminsOrUsers;
+        var typeOfUsers;
+
+        if (this.adminUsers) {
+          typeOfUsers = "admin_users";
+        } else if (this.promotionUsers) {
+          typeOfUsers = "promotion_users";
+        } else {
+          typeOfUsers = "users";
+        }
+
+        this.$.ajax.url = "/api/"+this.modelType+"/"+id+"/"+typeOfUsers;
         this.$.ajax.generateRequest();
       },
 
@@ -847,12 +893,13 @@
         this._resetSelectedAndClearCache();
       },
 
-      setup: function (groupId, communityId, domainId, adminUsers) {
+      setup: function (groupId, communityId, domainId, adminUsers, promotionUsers) {
         this.set('groupId', null);
         this.set('communityId', null);
         this.set('domainId', null);
         this.set('users', null);
         this.set('adminUsers', adminUsers);
+        this.set('promotionUsers', promotionUsers);
 
         if (groupId)
           this.set('groupId', groupId);
