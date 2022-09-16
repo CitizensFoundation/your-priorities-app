@@ -24,5 +24,5 @@ export function setQuerySearch(key, value) {
 
 export function externalLinkForPage(domain, page) {
   const domainURL = new URL(`https://${domain}`)
-  return `https://${domainURL.host}${page}`
+  return `https://${window.location.hostname}${page}`
 }
