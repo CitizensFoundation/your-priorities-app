@@ -463,6 +463,7 @@ app.use('/promotion/community/*', express.static(path.join(__dirname, '../apps/p
 app.use('/promotion/group/*', express.static(path.join(__dirname, '../apps/promotion_app/dist')));
 app.use('/promotion/post/*', express.static(path.join(__dirname, '../apps/promotion_app/dist')));
 app.use('/promotion/locales/en/*', express.static(path.join(__dirname, '../apps/promotion_app/dist/locales/en')));
+app.use('/promotion/locales/is/*', express.static(path.join(__dirname, '../apps/promotion_app/dist/locales/is')));
 app.use('/analytics/', express.static(path.join(__dirname, '../apps/analytics_app/dist')));
 app.use('/analytics/domain/*', express.static(path.join(__dirname, '../apps/analytics_app/dist')));
 app.use('/analytics/community/*', express.static(path.join(__dirname, '../apps/analytics_app/dist')));
