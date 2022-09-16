@@ -28,7 +28,7 @@ export class PlausibleMoreLink extends PlausibleBaseElement {
   render() {
     if (this.list.length > 0) {
       return html`
-        <div
+        <div hidden
           class="text-center w-full py-3 md:pb-3 md:pt-0 md:absolute md:bottom-0 md:left-0"
         >
           <pl-link
