@@ -171,7 +171,7 @@ export class PlausableListReport extends PlausibleBaseElementWithState {
           .plot="${this.valueKey}"
         >
           <span
-            class="flex px-2 py-1.5 group dark:text-gray-300 relative z-9 break-all"
+            class="flex px-2 py-1.5 group dark:text-gray-300 relative z-2 break-all"
             tooltip=${this.getTooltipText(listItem)}
           >
             <pl-link

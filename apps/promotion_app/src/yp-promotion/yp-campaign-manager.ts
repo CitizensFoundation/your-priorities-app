@@ -141,7 +141,13 @@ export class YpCampaignManager extends YpBaseElementWithLogin {
         .mainContainer {
           width: 100%;
           margin-top: 32px;
-          height: 100%;
+        }
+
+        @media (max-width: 1100px) {
+          .mainContainer {
+            width: 100%;
+            max-width: calc(100vw - 80px);
+          }
         }
 
         md-fab-extended {

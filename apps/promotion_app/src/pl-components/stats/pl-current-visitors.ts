@@ -21,6 +21,14 @@ export class PlausibleCurrentVisitors extends PlausibleBaseElementWithState {
     this.updateCount();
   }
 
+  static get styles() {
+    return [...super.styles,css`
+      pl-link {
+        width: 100%;
+      }
+    `];
+  }
+
   updateCount() {
     if (this.useTopStatsForCurrentVisitors) {
       const query = { ...this.query }

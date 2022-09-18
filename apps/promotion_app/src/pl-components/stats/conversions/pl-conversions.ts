@@ -120,7 +120,7 @@ export class PlausibleConversions extends PlausibleBaseElementWithState {
           >
             <pl-link
               .to="${{search: url.setQuerySearch('goal', goal.name)}}"
-              class="block px-2 py-1.5 hover:underline relative z-9 break-all lg:truncate dark:text-gray-200"
+              class="block px-2 py-1.5 hover:underline relative z-2 break-all lg:truncate dark:text-gray-200"
               >${this.t(goal.name)}</pl-link
             >
           </pl-bar>

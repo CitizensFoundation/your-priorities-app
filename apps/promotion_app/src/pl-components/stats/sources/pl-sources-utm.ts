@@ -51,7 +51,7 @@ export class PlausibleSourcesUtm extends PlausibleSourcesBase {
           .maxWidthDeduction=${maxWidthDeduction}
         >
 
-          <span class="flex px-2 py-1.5 dark:text-gray-300 relative z-9 break-all">
+          <span class="flex px-2 py-1.5 dark:text-gray-300 relative z-2 break-all">
             <Link
               class="md:truncate block hover:underline"
               .to=${{ search: url.setQuerySearch(this.tab, referrer.name) }}

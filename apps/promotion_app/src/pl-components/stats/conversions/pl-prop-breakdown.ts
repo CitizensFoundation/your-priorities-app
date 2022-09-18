@@ -155,7 +155,7 @@ export class PlausiblePropBreakdown extends PlausibleBaseElementWithState {
   renderPropContent(value: PlausiblePropValueData, query: URLSearchParams) {
     return html`
       <span
-        class="flex px-2 py-1.5 group dark:text-gray-300 relative z-9 break-all"
+        class="flex px-2 py-1.5 group dark:text-gray-300 relative z-2 break-all"
       >
         <pl-link
           .to=${{

@@ -52,7 +52,7 @@ export class PlausibleSourcesAll extends PlausibleSourcesBase {
           .maxWidthDeduction=${maxWidthDeduction}
         >
           <span
-            class="flex px-2 py-1.5 dark:text-gray-300 relative z-9 break-all"
+            class="flex px-2 py-1.5 dark:text-gray-300 relative z-2 break-all"
           >
             <pl-link
               class="md:truncate block hover:underline"

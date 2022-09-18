@@ -53,6 +53,7 @@ export class YpCampaignAnalysis extends YpCampaign {
         @media (max-width: 1100px) {
           .mainContainer {
             width: 100%;
+            max-width: calc(100vw - 80px);
           }
         }
 

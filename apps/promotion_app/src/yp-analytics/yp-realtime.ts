@@ -101,7 +101,7 @@ export class YpRealtime extends PlausibleRealtime {
           chartHeigh="150"
         >
         </pl-goal-graph>
-        <div class="items-start justify-between block w-full md:flex flex">
+        <div class="items-start justify-between block w-full md:flex flex flex-wrap">
           <pl-sources-list
             class="flex-col"
             .site="${this.site}"
@@ -118,7 +118,7 @@ export class YpRealtime extends PlausibleRealtime {
             .proxyUrl="${this.proxyUrl}"
           ></pl-pages>
         </div>
-        <div class="items-start justify-between block w-full md:flex flex">
+        <div class="items-start justify-between block w-full md:flex flex flex-wrap">
           <pl-locations
             .site="${this.site}"
             .query="${this.query}"

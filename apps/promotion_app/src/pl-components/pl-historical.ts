@@ -102,7 +102,7 @@ export class PlausibleHistorical extends PlausibleBaseElementWithState {
             .proxyUrl="${this.proxyUrl}"
           ></pl-pages>
         </div>
-        <div class="items-start justify-between block w-full md:flex flex">
+        <div class="items-start justify-between block w-full md:flex flex flex-wrap">
           <pl-locations
             .site="${this.site}"
             .query="${this.query}"
@@ -122,7 +122,7 @@ export class PlausibleHistorical extends PlausibleBaseElementWithState {
   renderConversions() {
     if (this.site.hasGoals) {
       return html`
-        <div class="items-start justify-between block w-full mt-6 md:flex">
+        <div class="items-start justify-between block w-full mt-6 md:flex flex-wrap">
           <pl-conversions
             .site=${this.site}
             .query=${this.query}

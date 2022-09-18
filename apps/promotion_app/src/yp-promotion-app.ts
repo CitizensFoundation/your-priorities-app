@@ -117,18 +117,17 @@ export class YpPromotionApp extends YpBaseElementWithLogin {
         }
 
         .navContainer {
-          background-color: #f00;
-          position: absolute;
+          position: fixed;
           bottom: 0;
           left: 0;
           width: 100%;
-          z-index: 1000;
+          z-index: 7;
         }
 
         .headerContainer {
           width: 100%;
           margin-bottom: 8px;
-          vertical-align: middel;
+          vertical-align: middle;
         }
 
         .analyticsHeaderText {
@@ -224,8 +223,8 @@ export class YpPromotionApp extends YpBaseElementWithLogin {
     window.appGlobals = new YpAppGlobals(window.serverApi);
     window.appUser = new YpAppUser(window.serverApi);
 
-    window.appGlobals.setupTranslationSystem('/promotion');
-    //window.appGlobals.setupTranslationSystem();
+    //window.appGlobals.setupTranslationSystem('/promotion');
+    window.appGlobals.setupTranslationSystem();
 
     let pathname = window.location.pathname;
     if (pathname.endsWith('/'))
@@ -354,7 +353,7 @@ export class YpPromotionApp extends YpBaseElementWithLogin {
       ${this.collection
         ? html`
             <div class="layout horizontal">
-              <div>${this.renderNavigationBar()}</div>
+              ${this.renderNavigationBar()}
               <div class="rightPanel">
                 <main>
                   <div class="mainPageContainer">${this._renderPage()}</div>
@@ -511,7 +510,7 @@ export class YpPromotionApp extends YpBaseElementWithLogin {
     } else if (event.detail.activeIndex == 1) {
       this.pageIndex = 2;
     } else if (event.detail.activeIndex == 2) {
-      this.pageIndex = 4;
+      this.pageIndex = 5;
     }
   }
 

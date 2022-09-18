@@ -65,6 +65,10 @@ export class YpNewCampaign extends YpBaseElementWithLogin {
           flex-direction: column;
         }
 
+        @media (max-width: 1100px) {
+
+        }
+
         mwc-dialog div,
         md-radio {
           display: flex;

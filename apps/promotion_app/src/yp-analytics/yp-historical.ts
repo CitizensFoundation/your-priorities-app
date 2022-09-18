@@ -40,8 +40,8 @@ export class YpHistorical extends PlausibleHistorical {
               : ''
           }`}
         >
-          <div class="items-center w-full flex flex-wrap">
-            <div class="flex items-center w-full flex-wrap">
+          <div class="items-center w-full flex">
+            <div class="flex items-center w-full">
               <pl-current-visitors
                 .timer=${this.timer}
                 .site=${this.site}

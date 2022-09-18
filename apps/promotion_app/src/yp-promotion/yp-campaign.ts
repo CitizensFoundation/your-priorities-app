@@ -167,6 +167,7 @@ export class YpCampaign extends YpBaseElementWithLogin {
         .mediumShowImage {
           margin-bottom: 24px;
         }
+
       `,
     ];
   }
