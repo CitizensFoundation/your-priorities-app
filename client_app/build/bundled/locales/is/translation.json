@@ -1,4 +1,5 @@
 {
+  "hideLogoBoxShadow": "Fela skugga á lógóboxi",
   "hideLogoBoxExceptOnMobile": "Fela lógóbox nema á símum",
   "hideInfoBoxExceptForAdmins": "Fela upplýsingabox nema fyrir vefstjóra",
   "useReadMoreForDescription": "Nota 'Lesa meira' fyrir lýsingu á svæði",
@@ -197,7 +198,7 @@
   "pointSettings": "Rökræður",
   "samlLoginButtonUrl": "Slóð í SAML innskráningarhnapp",
   "setEmailConfirmationInfo": "Þetta nefang verður notað til þess að senda þér tilkynningar",
-  "themeOverrideColorInfo": "Settu liti fyrir bæði aðallit og áherslulit: #A1A1A1",
+  "themeOverrideColorInfo": "Breyttu litum í hex formi: #A1A1A1",
   "themeOverrideColorPrimary": "Aðallitur",
   "themeOverrideColorAccent": "Áherslulitur",
   "maxDaysBackForRecommendations": "Mælt með: hversu margir dagar til baka",
