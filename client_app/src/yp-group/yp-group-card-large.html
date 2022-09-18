@@ -251,13 +251,26 @@
         text-decoration: none;
         color: inherit;
       }
+
+      @media (min-width: 1024px) {
+        #cardImage[hide-logo-box-except-mobile] {
+          display: none;
+        }
+      }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
     <lite-signal on-lite-signal-yp-pause-media-playback="_pauseMediaPlayback"></lite-signal>
     <lite-signal on-lite-signal-yp-auto-translate="_autoTranslateEvent"></lite-signal>
 
     <div class="layout horizontal center-center wrap" aria-label="[[t('group')]]" role="banner">
-      <paper-material id="cardImage" elevation="3" is-video$="[[groupVideoURL]]" animated class="groupCard imageCard top-card">
+      <paper-material
+              id="cardImage"
+              elevation="3"
+              is-video$="[[groupVideoURL]]"
+              animated
+              hide-logo-box-except-mobile$="[[group.configuration.hideLogoBoxExceptOnMobile]]"
+              class="groupCard imageCard top-card"
+        >
         <template is="dom-if" if="[[groupVideoURL]]" restamp>
           <template is="dom-if" if="[[_useZiggeo()]]" restamp>
             <yp-ziggeo-player
@@ -275,7 +288,13 @@
           <iron-image class="logo" sizing="cover" alt$="[[group.name]]" preload src="[[groupLogoImagePath]]"></iron-image>
         </template>
       </paper-material>
-      <paper-material id="card" elevation="3" animated-shadow class="groupCard textBox">
+      <paper-material
+              id="card"
+              elevation="3"
+              animated-shadow
+              hidden$="[[hideInfoBoxExceptAdmin]]"
+              class="groupCard textBox"
+        >
         <div class="layout vertical">
           <div class="layout horizontal wrap">
             <div class="layout vertical description-and-stats">
@@ -424,6 +443,21 @@
         flaggedContentCount: {
           type: Number,
           value: null
+        },
+
+        hideInfoBoxExceptAdmin: {
+          type: Boolean,
+          computed: '_hideInfoBoxExceptAdmin(group, hasGroupAccess)'
+        }
+      },
+
+      _hideInfoBoxExceptAdmin: function (group, hasGroupAccess) {
+        if (hasGroupAccess) {
+          return false
+        } else if (group && group.configuration && group.configuration.hideInfoBoxExceptForAdmins) {
+          return true;
+        } else {
+          return false;
         }
       },
 

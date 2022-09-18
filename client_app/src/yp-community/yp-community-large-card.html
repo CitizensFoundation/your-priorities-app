@@ -325,12 +325,25 @@
         text-decoration: none;
         color: inherit;
       }
+
+      @media (min-width: 1024px) {
+        #cardImage[hide-logo-box-except-mobile] {
+          display: none;
+        }
+      }
     </style>
 
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
     <div class="layout horizontal wrap" aria-label="[[t('community')]]" role="banner">
-      <paper-material is-video$="[[communityVideoURL]]" id="cardImage" elevation="3" animated class="large-card logo-card imageCard top-card">
+      <paper-material
+              is-video$="[[communityVideoURL]]"
+              id="cardImage"
+              elevation="3"
+              animated
+              hide-logo-box-except-mobile$="[[community.configuration.hideLogoBoxExceptOnMobile]]"
+              class="large-card logo-card imageCard top-card"
+        >
         <div id="welcomeHTML" hidden$="[[!community.configuration.welcomeHTML]]" class="layout vertical center-center">
         </div>
         <div hidden$="[[community.configuration.welcomeHTML]]">
@@ -352,7 +365,13 @@
           </template>
         </div>
       </paper-material>
-      <paper-material id="card" elevation="3" animated class="large-card textBox">
+      <paper-material
+              id="card"
+              elevation="3"
+              animated
+              hidden$="[[hideInfoBoxExceptAdmin]]"
+              class="large-card textBox"
+       >
         <div class="layout vertical">
           <div class="layout horizontal wrap">
             <div class="layout vertical description-and-stats">
@@ -501,6 +520,21 @@
         useReadMoreForDescription: {
           type: Boolean,
           computed: '_useReadMoreForDescription(community)'
+        },
+
+        hideInfoBoxExceptAdmin: {
+          type: Boolean,
+          computed: '_hideInfoBoxExceptAdmin(community, hasCommunityAccess)'
+        }
+      },
+
+      _hideInfoBoxExceptAdmin: function (community, hasCommunityAccess) {
+        if (hasCommunityAccess) {
+          return false
+        } else if (community && community.configuration && community.configuration.hideInfoBoxExceptForAdmins) {
+          return true;
+        } else {
+          return false;
         }
       },
 

@@ -98,6 +98,7 @@
         .topArea {
           height: auto;
           min-height: auto;
+          background-image: none;
         }
       }
 
@@ -119,10 +120,6 @@
 
         .topArea[is-post] {
           min-height: 470px;
-        }
-
-        .topArea {
-            background-image: none;
         }
       }
 
@@ -227,15 +224,13 @@
       },
 
       setupTopHeaderImage: function (image) {
-        if (this.wideWidth) {
-          var path;
-          if (image) {
-            path = 'url(' + this.getImageFormatUrl(image, 0) + ')';
-          } else {
-            path = 'none';
-          }
-          this.updateStyles({ '--top-area-background-image': path });
+        var path;
+        if (image) {
+          path = 'url(' + this.getImageFormatUrl(image, 0) + ')';
+        } else {
+          path = 'none';
         }
+        this.updateStyles({ '--top-area-background-image': path });
       },
 
       _fabTabChanged: function (newValue) {
