@@ -1,4 +1,6 @@
 {
+  "hideLogoBoxExceptOnMobile": "Fela lógóbox nema á símum",
+  "hideInfoBoxExceptForAdmins": "Fela upplýsingabox nema fyrir vefstjóra",
   "useReadMoreForDescription": "Nota 'Lesa meira' fyrir lýsingu á svæði",
   "deleteHeaderImage": "Eyða haus mynd",
   "inheritThemeFromCommunity": "Nota þema frá svæði",
