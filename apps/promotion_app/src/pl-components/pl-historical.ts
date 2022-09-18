@@ -34,8 +34,10 @@ export class PlausibleHistorical extends PlausibleBaseElementWithState {
     return [
       ...super.styles,
       css`
-        .mb-12 {
-          max-width: 1100px;
+        @media (max-width: 768px) {
+          .mb-12 {
+            max-width: calc(100vw - 32px);
+          }
         }
       `,
     ];

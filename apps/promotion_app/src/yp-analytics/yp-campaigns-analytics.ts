@@ -48,6 +48,12 @@ export class YpCampaignsAnalytics extends PlausibleBaseElementWithState {
           min-height: 310px;
         }
 
+        @media (max-width: 1100px) {
+          .mainContainer {
+            width: 100%;
+          }
+        }
+
         .textInfo {
           margin-top: 32px;
           text-align: center;

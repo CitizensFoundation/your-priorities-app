@@ -62,6 +62,21 @@ export class PlausibleConversions extends PlausibleBaseElementWithState {
   static get styles() {
     return [
       ...super.styles,
+      css`
+        @media (max-width: 767px) {
+          .mainContainer {
+            max-width: calc(100vw - 32px);
+          }
+
+          .w-20 {
+            width: 2.6rem;
+          }
+
+          pl-bar {
+            max-width: 80%;
+          }
+        }
+      `
     ];
   }
 
@@ -164,7 +179,7 @@ export class PlausibleConversions extends PlausibleBaseElementWithState {
   render() {
     return html`
       <div
-        class="w-full p-4 bg-white rounded shadow-xl dark:bg-gray-825"
+        class="w-full p-4 bg-white rounded shadow-xl dark:bg-gray-825 mainContainer"
         .style="${{
           minHeight: '132px',
           height: this.prevHeight ?? 'auto',

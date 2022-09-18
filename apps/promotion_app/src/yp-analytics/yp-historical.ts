@@ -23,9 +23,7 @@ export class YpHistorical extends PlausibleHistorical {
     return [
       ...super.styles,
       css`
-        .mb-12 {
-          max-width: 100%;
-        }
+
       `,
     ];
   }
@@ -42,8 +40,8 @@ export class YpHistorical extends PlausibleHistorical {
               : ''
           }`}
         >
-          <div class="items-center w-full flex">
-            <div class="flex items-center w-full">
+          <div class="items-center w-full flex flex-wrap">
+            <div class="flex items-center w-full flex-wrap">
               <pl-current-visitors
                 .timer=${this.timer}
                 .site=${this.site}
@@ -117,7 +115,7 @@ export class YpHistorical extends PlausibleHistorical {
         >
         </pl-goal-graph>
 
-        <div class="items-start justify-between block w-full md:flex flex">
+        <div class="items-start justify-between block w-full md:flex flex flex-wrap">
           <pl-sources-list
             class="flex-col"
             .site="${this.site}"
@@ -132,7 +130,7 @@ export class YpHistorical extends PlausibleHistorical {
             .proxyUrl="${this.proxyUrl}"
           ></pl-pages>
         </div>
-        <div class="items-start justify-between block w-full md:flex flex">
+        <div class="items-start justify-between block w-full md:flex flex flex-wrap">
           <pl-locations
             .site="${this.site}"
             .query="${this.query}"

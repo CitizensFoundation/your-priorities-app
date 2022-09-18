@@ -2974,6 +2974,13 @@ export const PlausibleStyles = css`
       height: inherit;
     }
   }
+
+  @media (max-width: 768px) {
+    .stats-item {
+      min-width: calc(100vw - 32px);
+    }
+  }
+
   .stats-item:first-child {
     margin-left: 0;
   }

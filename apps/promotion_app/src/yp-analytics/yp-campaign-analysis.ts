@@ -50,6 +50,12 @@ export class YpCampaignAnalysis extends YpCampaign {
           height: 200px;
         }
 
+        @media (max-width: 1100px) {
+          .mainContainer {
+            width: 100%;
+          }
+        }
+
         .mediumTopStats {
           font-size: 14px;
           text-align: left;

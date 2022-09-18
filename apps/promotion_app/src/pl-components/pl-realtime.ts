@@ -35,9 +35,12 @@ export class PlausibleRealtime extends PlausibleBaseElementWithState {
     return [
       ...super.styles,
       css`
-      .mb-12 {
-        max-width: 1100px;
-      }`
+        @media (max-width: 768px) {
+          .mb-12 {
+            max-width: calc(100vw - 32px);
+          }
+        }
+      `,
     ];
   }
 
@@ -61,8 +64,8 @@ export class PlausibleRealtime extends PlausibleBaseElementWithState {
               ></pl-siteswitcher>
               <div class="flex w-full"></div>
               <pl-filters
-                 class="flex flex-grow"
-                 style="text-align: right;display: inline;"
+                class="flex flex-grow"
+                style="text-align: right;display: inline;"
                 .site=${this.site}
                 .query="${this.query}"
                 .history="${this.history}"
@@ -92,7 +95,7 @@ export class PlausibleRealtime extends PlausibleBaseElementWithState {
             .proxyFaviconBaseUrl="${this.proxyFaviconBaseUrl}"
           ></pl-sources-list>
           <pl-pages
-             class="flex-col"
+            class="flex-col"
             .site="${this.site}"
             .query="${this.query}"
             .timer="${this.timer}"
@@ -113,7 +116,7 @@ export class PlausibleRealtime extends PlausibleBaseElementWithState {
             .proxyUrl="${this.proxyUrl}"
           ></pl-devices>
         </div>
-        ${ this.renderConversions() }
+        ${this.renderConversions()}
       </div>
     `;
   }

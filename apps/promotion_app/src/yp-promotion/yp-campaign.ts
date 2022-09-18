@@ -92,6 +92,13 @@ export class YpCampaign extends YpBaseElementWithLogin {
           position: relative;
         }
 
+
+        @media (max-width: 1100px) {
+          .mainContainer {
+            width: 100%;
+          }
+        }
+
         .mediumCard {
           width: 100px;
           background-color: var(--md-sys-color-secondary-container);

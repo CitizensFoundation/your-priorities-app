@@ -152,6 +152,12 @@ export class YpCampaignManager extends YpBaseElementWithLogin {
         .fabContainer {
           width: 1000px;
         }
+
+        @media (max-width: 1100px) {
+          .fabContainer {
+            width: 100%;
+          }
+        }
       `,
     ];
   }
