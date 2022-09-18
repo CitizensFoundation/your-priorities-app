@@ -213,7 +213,7 @@ export class YpPromotionApp extends YpBaseElementWithLogin {
     window.appGlobals = new YpAppGlobals(window.serverApi);
     window.appUser = new YpAppUser(window.serverApi);
 
-    window.appGlobals.setupTranslationSystem("/promotion");
+    window.appGlobals.setupTranslationSystem('/promotion');
     //window.appGlobals.setupTranslationSystem();
 
     let pathname = window.location.pathname;
@@ -333,39 +333,39 @@ export class YpPromotionApp extends YpBaseElementWithLogin {
   }
 
   render() {
-    if (this.collection) {
-      return html`
-        <div class="layout horizontal">
-          <div>${this.renderNavigationBar()}</div>
-          <div class="rightPanel">
-            <mwc-dialog id="errorDialog" .heading="${this.t('error')}">
-              <div>${this.currentError}</div>
-              <mwc-button dialogAction="cancel" slot="secondaryAction">
-                ${this.t('ok')}
-              </mwc-button>
-            </mwc-dialog>
-            <main>
-              <div class="mainPageContainer">${this._renderPage()}</div>
-            </main>
-          </div>
-        </div>
-        ${this.lastSnackbarText
-          ? html`
-              <mwc-snackbar
-                id="snackbar"
-                @MDCSnackbar:closed="${this.snackbarclosed}"
-                .labelText="${this.lastSnackbarText}"
-              ></mwc-snackbar>
-            `
-          : nothing}
-      `;
-    } else {
-      return html`
-        <div class="layout horizontal center-center">
-          <div>Loading...</div>
-        </div>
-      `;
-    }
+    return html`
+      <mwc-dialog id="errorDialog" .heading="${this.t('error')}">
+        <div>${this.currentError}</div>
+        <mwc-button dialogAction="cancel" slot="secondaryAction">
+          ${this.t('ok')}
+        </mwc-button>
+      </mwc-dialog>
+      ${this.collection
+        ? html`
+            <div class="layout horizontal">
+              <div>${this.renderNavigationBar()}</div>
+              <div class="rightPanel">
+                <main>
+                  <div class="mainPageContainer">${this._renderPage()}</div>
+                </main>
+              </div>
+            </div>
+          `
+        : html`
+            <div class="layout horizontal center-center">
+              <div>Loading...</div>
+            </div>
+          `}
+      ${this.lastSnackbarText
+        ? html`
+            <mwc-snackbar
+              id="snackbar"
+              @MDCSnackbar:closed="${this.snackbarclosed}"
+              .labelText="${this.lastSnackbarText}"
+            ></mwc-snackbar>
+          `
+        : nothing}
+    `;
   }
 
   renderNavigationBar() {
@@ -563,11 +563,7 @@ export class YpPromotionApp extends YpBaseElementWithLogin {
       }
     }
 
-    if (
-      this.collection &&
-      this.haveCheckedAdminRights &&
-      !this.adminConfirmed
-    ) {
+    if (!this.adminConfirmed) {
       this.fire('yp-network-error', { message: this.t('unauthorized') });
     }
   }
@@ -592,8 +588,12 @@ export class YpPromotionApp extends YpBaseElementWithLogin {
   }
 
   _appError(event: CustomEvent) {
-    console.error(event.detail.message);
-    this.currentError = event.detail.message;
+    let error = event.detail.message;
+    if (event.detail && event.detail.response) {
+      error = event.detail.response.statusText;
+    }
+    console.error(error);
+    this.currentError = error;
     (this.$$('#errorDialog') as Dialog).open = true;
   }
 

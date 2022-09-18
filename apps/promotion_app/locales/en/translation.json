@@ -83,5 +83,6 @@
     "postContent": "Post description",
     "selectLanguage": "Select language",
     "noTranslation": "No Translation!",
-    "goalConversionsLast30Min": "Goal Conversions (last 30 min)"
+    "goalConversionsLast30Min": "Goal Conversions (last 30 min)",
+    "error": "An error has occured"
 }

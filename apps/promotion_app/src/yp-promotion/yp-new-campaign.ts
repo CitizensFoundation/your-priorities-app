@@ -323,7 +323,7 @@ export class YpNewCampaign extends YpBaseElementWithLogin {
             <div class="linkTitle">${this.collection!.name}</div>
             <div class="linkDescription">
               ${YpFormattingHelpers.truncate(
-                this.collection!.description!,
+                this.collection!.description || this.collection?.objectives!,
                 150
               )}
             </div>
