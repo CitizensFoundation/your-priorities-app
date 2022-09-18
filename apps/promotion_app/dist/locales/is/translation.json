@@ -99,5 +99,6 @@
     "postContent": "Efni hugmyndar",
     "selectLanguage": "Veldu tungumál",
     "noTranslation": "Engin þýðing!",
-    "goalConversionsLast30Min": "Markmiðum náð (síðustu 30 mín)"
+    "goalConversionsLast30Min": "Markmiðum náð (síðustu 30 mín)",
+    "error": "Villa hefur komið upp"
 }
