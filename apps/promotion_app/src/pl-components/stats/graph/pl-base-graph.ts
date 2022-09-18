@@ -476,10 +476,12 @@ export abstract class PlausibleBaseGraph extends PlausibleBaseElementWithState {
           this.site.domain!
         )}/export${api.serializeQuery(this.query)}`;
 
+        //TODO: Get export working
         return html`
           <a
+            hidden
             class="w-4 h-4 mx-2"
-            href="{endpoint}"
+            href="${endpoint}"
             download
             @click="${this.downloadSpinner.bind(this)}"
           >

@@ -296,11 +296,12 @@ export class PlausibleLineGraph extends PlausibleBaseElementWithState {
         const endpoint = `/${encodeURIComponent(
           this.site.domain!
         )}/export${api.serializeQuery(this.query)}`;
-
+        //TODO: Get export working
         return html`
           <a
+            hidden
             class="w-4 h-4 mx-2"
-            href="{endpoint}"
+            href="${endpoint}"
             download
             onClick="{this.downloadSpinner.bind(this)}"
           >
