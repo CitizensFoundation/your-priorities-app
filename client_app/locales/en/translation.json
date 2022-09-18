@@ -1,4 +1,6 @@
 {
+  "hideLogoBoxExceptOnMobile": "Hide logo box except on mobile",
+  "hideInfoBoxExceptForAdmins": "Hide info box except for admins",
   "useReadMoreForDescription": "Use Read More for community description",
   "deleteHeaderImage": "Delete header image",
   "inheritThemeFromCommunity": "Inherit theme from community",
