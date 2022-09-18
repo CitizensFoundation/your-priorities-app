@@ -1,4 +1,5 @@
 {
+  "hideLogoBoxShadow": "Hide logo box shadow",
   "hideLogoBoxExceptOnMobile": "Hide logo box except on mobile",
   "hideInfoBoxExceptForAdmins": "Hide info box except for admins",
   "useReadMoreForDescription": "Use Read More for community description",
@@ -202,7 +203,7 @@
   "pointSettings": "Point Settings",
   "samlLoginButtonUrl": "SAML login button URL",
   "setEmailConfirmationInfo": "This email will be used to send you notifications regarding content you submit.",
-  "themeOverrideColorInfo": "Set both theme override colors in hex. Example: #A1A1A1",
+  "themeOverrideColorInfo": "Set theme override colors in hex. Example: #A1A1A1",
   "themeOverrideColorPrimary": "Theme primary color override",
   "themeOverrideColorAccent": "Theme accent color override",
   "maxDaysBackForRecommendations": "Max days back for recommendations",

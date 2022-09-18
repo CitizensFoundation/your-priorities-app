@@ -331,6 +331,10 @@
           display: none;
         }
       }
+
+      .logo-card[hide-box-shadow] {
+        box-shadow: none;
+      }
     </style>
 
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
@@ -343,6 +347,7 @@
               animated
               hide-logo-box-except-mobile$="[[community.configuration.hideLogoBoxExceptOnMobile]]"
               class="large-card logo-card imageCard top-card"
+              hide-box-shadow$="[[community.configuration.hideLogoBoxShadow]]"
         >
         <div id="welcomeHTML" hidden$="[[!community.configuration.welcomeHTML]]" class="layout vertical center-center">
         </div>

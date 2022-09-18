@@ -100,6 +100,10 @@
         font-size: 14px;
       }
 
+      .themeOverrideInfo {
+        margin-bottom: 8px;
+      }
+
       .exteraTopMargin {
         margin-top: 8px;
       }
@@ -304,6 +308,12 @@
 
         <div class="themeOverrideInfo">
           <em>[[t('themeOverrideColorInfo')]]</em>
+        </div>
+
+        <div class="layout vertical">
+          <paper-checkbox name="hideInfoBoxExceptForAdmins" checked$="{{group.configuration.hideInfoBoxExceptForAdmins}}">[[t('hideInfoBoxExceptForAdmins')]]</paper-checkbox>
+          <paper-checkbox name="hideLogoBoxExceptOnMobile" checked$="{{group.configuration.hideLogoBoxExceptOnMobile}}">[[t('hideLogoBoxExceptOnMobile')]]</paper-checkbox>
+          <paper-checkbox name="hideLogoBoxShadow" checked$="{{group.configuration.hideLogoBoxShadow}}">[[t('hideLogoBoxShadow')]]</paper-checkbox>
         </div>
 
         <div class="subHeaders">[[t('postSettings')]]</div>
@@ -758,7 +768,6 @@
         <paper-checkbox name="hideGroupLevelTabs" checked$="{{group.configuration.hideGroupLevelTabs}}">[[t('hideGroupLevelTabs')]]</paper-checkbox>
         <paper-checkbox name="hideHelpIcon" checked$="{{hideHelpIcon}}">[[t('hideHelpIcon')]]</paper-checkbox>
         <paper-checkbox name="hideLogoBoxExceptOnMobile" checked$="{{group.configuration.hideLogoBoxExceptOnMobile}}">[[t('hideLogoBoxExceptOnMobile')]]</paper-checkbox>
-        <paper-checkbox name="hideInfoBoxExceptForAdmins" checked$="{{group.configuration.hideInfoBoxExceptForAdmins}}">[[t('hideInfoBoxExceptForAdmins')]]</paper-checkbox>
         <paper-checkbox name="useCommunityTopBanner" checked$="{{group.configuration.useCommunityTopBanner}}">[[t('useCommunityTopBanner')]]</paper-checkbox>
         <paper-checkbox name="makeMapViewDefault" checked$="{{group.configuration.makeMapViewDefault}}">[[t('makeMapViewDefault')]]</paper-checkbox>
         <paper-checkbox name="simpleFormatDescription" checked$="{{group.configuration.simpleFormatDescription}}">[[t('simpleFormatDescription')]]</paper-checkbox>

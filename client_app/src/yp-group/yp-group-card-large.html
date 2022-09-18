@@ -257,6 +257,10 @@
           display: none;
         }
       }
+
+      .top-card[hide-box-shadow] {
+        box-shadow: none;
+      }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
     <lite-signal on-lite-signal-yp-pause-media-playback="_pauseMediaPlayback"></lite-signal>
@@ -270,6 +274,7 @@
               animated
               hide-logo-box-except-mobile$="[[group.configuration.hideLogoBoxExceptOnMobile]]"
               class="groupCard imageCard top-card"
+              hide-box-shadow$="[[group.configuration.hideLogoBoxShadow]]"
         >
         <template is="dom-if" if="[[groupVideoURL]]" restamp>
           <template is="dom-if" if="[[_useZiggeo()]]" restamp>

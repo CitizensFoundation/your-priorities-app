@@ -271,6 +271,7 @@ var updateGroupConfigParameters = function (req, group) {
 
   group.set('configuration.hideLogoBoxExceptOnMobile', truthValueFromBody(req.body.hideLogoBoxExceptOnMobile));
   group.set('configuration.hideInfoBoxExceptForAdmins', truthValueFromBody(req.body.hideInfoBoxExceptForAdmins));
+  group.set('configuration.hideLogoBoxShadow', truthValueFromBody(req.body.hideLogoBoxShadow));
 
   group.set('configuration.descriptionTruncateAmount', (req.body.descriptionTruncateAmount && req.body.descriptionTruncateAmount!="") ? req.body.descriptionTruncateAmount : null);
   group.set('configuration.descriptionSimpleFormat', truthValueFromBody(req.body.descriptionSimpleFormat));

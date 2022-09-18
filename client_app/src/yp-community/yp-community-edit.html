@@ -70,6 +70,10 @@
         margin-top: 4px;
       }
 
+      .themeOverrideInfo {
+        margin-bottom: 16px;
+      }
+
       [hidden] {
         display: none !important;
       }
@@ -168,7 +172,6 @@
         <paper-checkbox name="disableNameAutoTranslation" checked$="{{community.configuration.disableNameAutoTranslation}}">[[t('disableNameAutoTranslation')]]</paper-checkbox>
         <paper-checkbox id="useReadMoreForDescription" name="useReadMoreForDescription" checked$="{{community.configuration.useReadMoreForDescription}}" on-tap="_updateReadMoreForDescription">[[t('useReadMoreForDescription')]]</paper-checkbox>
         <paper-checkbox name="hideLogoBoxExceptOnMobile" checked$="{{community.configuration.hideLogoBoxExceptOnMobile}}">[[t('hideLogoBoxExceptOnMobile')]]</paper-checkbox>
-        <paper-checkbox name="hideInfoBoxExceptForAdmins" checked$="{{community.configuration.hideInfoBoxExceptForAdmins}}">[[t('hideInfoBoxExceptForAdmins')]]</paper-checkbox>
         <paper-checkbox name="hideAllTabs" checked$="{{community.configuration.hideAllTabs}}">[[t('hideAllTabs')]]</paper-checkbox>
       </div>
 
@@ -205,6 +208,12 @@
 
       <div class="themeOverrideInfo">
         <b><em>[[t('themeOverrideColorInfo')]]</em></b>
+      </div>
+
+      <div class="layout vertical">
+        <paper-checkbox name="hideInfoBoxExceptForAdmins" checked$="{{community.configuration.hideInfoBoxExceptForAdmins}}">[[t('hideInfoBoxExceptForAdmins')]]</paper-checkbox>
+        <paper-checkbox name="hideLogoBoxExceptOnMobile" checked$="{{community.configuration.hideLogoBoxExceptOnMobile}}">[[t('hideLogoBoxExceptOnMobile')]]</paper-checkbox>
+        <paper-checkbox name="hideLogoBoxShadow" checked$="{{community.configuration.hideLogoBoxShadow}}">[[t('hideLogoBoxShadow')]]</paper-checkbox>
       </div>
 
       <input type="hidden" name="uploadedLogoImageId" value="[[uploadedLogoImageId]]">
