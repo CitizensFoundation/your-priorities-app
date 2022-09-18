@@ -790,6 +790,9 @@ var updateCommunityConfigParameters = function (req, community) {
   community.set('configuration.alwaysShowOnDomainPage', truthValueFromBody(req.body.alwaysShowOnDomainPage));
   community.set('configuration.useReadMoreForDescription', truthValueFromBody(req.body.useReadMoreForDescription));
 
+  community.set('configuration.hideLogoBoxExceptOnMobile', truthValueFromBody(req.body.hideLogoBoxExceptOnMobile));
+  community.set('configuration.hideInfoBoxExceptForAdmins', truthValueFromBody(req.body.hideInfoBoxExceptForAdmins));
+
   community.set('configuration.themeOverrideColorPrimary', (req.body.themeOverrideColorPrimary && req.body.themeOverrideColorPrimary!="") ? req.body.themeOverrideColorPrimary : null);
   community.set('configuration.themeOverrideColorAccent', (req.body.themeOverrideColorAccent && req.body.themeOverrideColorAccent!="") ? req.body.themeOverrideColorAccent : null);
   community.set('configuration.themeOverrideBackgroundColor', (req.body.themeOverrideBackgroundColor && req.body.themeOverrideBackgroundColor!="") ? req.body.themeOverrideBackgroundColor : null);
