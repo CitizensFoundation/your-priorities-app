@@ -787,12 +787,9 @@ export class YpAppUser extends YpCodeBase {
         this.fireGlobal('yp-got-admin-rights', true);
       }, 1000);*/
     } else {
-      if (this.adminRights) {
-        this.adminRights = undefined;
-        this.fireGlobal('yp-got-admin-rights', false);
-      }
+      this.adminRights = undefined;
+      this.fireGlobal('yp-got-admin-rights', false);
     }
-    this.fireGlobal('yp-have-checked-admin-rights');
   }
 
   async getPromoterRights() {
@@ -804,15 +801,10 @@ export class YpAppUser extends YpCodeBase {
     if (response) {
       this.promoterRights = response as YpPromoterRights;
       this.fireGlobal('yp-got-promoter-rights', true);
-      setTimeout(() => {
-        this.fireGlobal('yp-got-promoter-rights', true);
-      }, 1000);
     } else {
-      if (this.promoterRights) {
-        this.promoterRights = undefined;
-        this.fireGlobal('yp-got-promoter-rights', false);
-      }
-    }
+      this.promoterRights = undefined;
+      this.fireGlobal('yp-got-promoter-rights', false);
+  }
   }
 
   _updateMembershipsIndex(memberships: YpMemberships) {
