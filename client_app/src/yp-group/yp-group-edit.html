@@ -1147,7 +1147,7 @@
       if (detail.value && detail.value===true) {
         this.$$("yp-theme-selector").disableSelection = true;
         this.$$("yp-theme-selector").selectedTheme = null;
-      } else {
+      } else if (this.$$("yp-theme-selector")) {
         this.$$("yp-theme-selector").disableSelection = false;
       }
     },

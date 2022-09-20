@@ -468,6 +468,7 @@
                 <paper-listbox slot="dropdown-content" on-iron-select="_menuSelection">
                   <template is="dom-if" if="[[hasPostAccess]]">
                     <paper-item id="editMenuItem">[[t('post.edit')]]</paper-item>
+                    <paper-item id="openPromotionApp">[[t('analyticsAndPromotions')]]</paper-item>
                     <paper-item hidden$="[[!checkPostAdminOnlyAccess(post)]]" id="moveMenuItem">[[t('post.move')]]</paper-item>
                     <paper-item hidden$="[[!checkPostAdminOnlyAccess(post)]]" id="statusChangeMenuItem">[[t('post.statusChange')]]</paper-item>
                     <paper-item hidden$="[[!checkPostAdminOnlyAccess(post)]]" id="statusChangeNoEmailsMenuItem">[[t('statusChangeNoEmails')]]</paper-item>
@@ -712,6 +713,8 @@
       _menuSelection: function (event, detail) {
         if (detail.item.id=="editMenuItem")
           this._openEdit();
+        else if (detail.item.id=="openPromotionApp")
+          window.location = "/promotion/post/"+this.post.id;
         else if (detail.item.id=="deleteMenuItem")
           this._openDelete();
         else if (detail.item.id=="statusChangeMenuItem")

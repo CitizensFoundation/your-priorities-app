@@ -15,6 +15,7 @@
 <link rel="import" href="../yp-behaviors/yp-language-behavior.html">
 <link rel="import" href="../yp-behaviors/access-helpers.html">
 <link rel="import" href="../yp-behaviors/yp-got-admin-rights-behavior.html">
+<link rel="import" href="../yp-behaviors/yp-got-promoter-rights-behavior.html">
 <link rel="import" href="../yp-behaviors/yp-truncate-behavior.html">
 
 <link rel="import" href="../yp-behaviors/yp-large-card-behaviors.html">
@@ -403,8 +404,10 @@
             <paper-icon-button aria-label$="[[t('openCommunityMenu')]]" icon="more-vert" slot="dropdown-trigger"></paper-icon-button>
             <paper-listbox slot="dropdown-content" on-iron-select="_menuSelection">
               <paper-item hidden$="[[!hasCommunityAccess]]" id="editMenuItem">[[t('community.edit')]]</paper-item>
+              <paper-item hidden$="[[!hasCommunityOrPromoterAccess]]" id="openPromotionApp">[[t('analyticsAndPromotions')]]</paper-item>
               <paper-item hidden$="[[!hasCommunityAccess]]" id="usersMenuItem">[[t('community.users')]]</paper-item>
               <paper-item hidden$="[[!hasCommunityAccess]]" id="adminsMenuItem">[[t('community.admins')]]</paper-item>
+              <paper-item hidden$="[[!hasCommunityAccess]]" id="promotersMenuItem">[[t('communityPromoters')]]</paper-item>
               <paper-item hidden$="[[!hasCommunityAccess]]" id="pagesMenuItem">[[t('pages.managePages')]]</paper-item>
               <paper-item hidden$="[[!hasCommunityAccessAndNotFolder]]" id="moderationMenuItem">
                 [[t('flaggedContent')]] <span hidden$="[[!flaggedContentCount]]">&nbsp; ([[flaggedContentCount]])</span>
@@ -425,7 +428,7 @@
               <paper-item hidden$="[[!hasCommunityAccessAndNotFolder]]" id="anonymizeMenuItem">[[t('anonymizeCommunityContent')]]</paper-item>
               <paper-item hidden$="[[!hasCommunityAccessAndNotFolder]]" id="deleteContentMenuItem">[[t('deleteCommunityContent')]]</paper-item>
               <paper-item hidden$="[[!hasCommunityAccessAndNotFolder]]" id="bulkStatusUpdateMenuItem">[[t('bulkStatusUpdate')]]</paper-item>
-              <paper-item id="addGroupMenuItem" hidden$="[[community.is_community_folder]]">[[t('group.new')]]</paper-item>
+              <paper-item id="addGroupMenuItem" hidden$="[[newGroupHidden]]">[[t('group.new')]]</paper-item>
               <paper-item  hidden id="addCommunityFolderMenuItem">[[t('newCommunityFolder')]]</paper-item>
               <paper-item id="openAnalyticsApp" hidden$="[[!hasCommunityAccess]]">[[t('openAnalyticsApp')]]</paper-item>
               <paper-item id="openAdminApp" hidden$="[[!hasCommunityAccess]]">[[t('editTranslations')]]</paper-item>
@@ -444,6 +447,7 @@
 
     <iron-media-query query="(max-width: 800px)" query-matches="{{narrowScreen}}"></iron-media-query>
     <lite-signal on-lite-signal-got-admin-rights="_gotAdminRights"></lite-signal>
+    <lite-signal on-lite-signal-got-promoter-rights="_gotPromoterRights"></lite-signal>
     <lite-signal on-lite-signal-yp-pause-media-playback="_pauseMediaPlayback"></lite-signal>
   </template>
 
@@ -457,6 +461,7 @@
         Polymer.LargeCardBehaviors,
         Polymer.AccessHelpers,
         Polymer.ypGotAdminRightsBehavior,
+        Polymer.ypGotPromoterRightsBehavior,
         Polymer.ypGotoBehavior,
         Polymer.ypTruncateBehavior,
         Polymer.ypMediaFormatsBehavior
@@ -474,10 +479,27 @@
           computed: '_hasCommunityAccess(community, gotAdminRights)'
         },
 
+        newGroupHidden: {
+          type: Boolean,
+          computed: '_newGroupHidden(community, hasCommunityAccess)'
+        },
+
+        hasCommunityPromoterAccess: {
+          type: Boolean,
+          value: false,
+          computed: '_hasCommunityPromoterAccess(community, gotPromoterRights)'
+        },
+
+        hasCommunityOrPromoterAccess: {
+          type: Boolean,
+          value: false,
+          computed: '_hasCommunityOrPromoterAccess(hasCommunityAccess, hasCommunityPromoterAccess)'
+        },
+
         showMenuItem: {
           type: Boolean,
           value: false,
-          computed: '_showMenuItem(hasCommunityAccess, community)'
+          computed: '_showMenuItem(hasCommunityAccess, community, hasCommunityPromoterAccess)'
         },
 
         communityVideoURL: {
@@ -530,6 +552,16 @@
         hideInfoBoxExceptAdmin: {
           type: Boolean,
           computed: '_hideInfoBoxExceptAdmin(community, hasCommunityAccess)'
+        }
+      },
+
+      _newGroupHidden: function (community, hasCommunityAccess) {
+        if (community && community.configuration && !community.configuration.only_admins_can_create_groups) {
+          return false;
+        } else if (community) {
+          return community.is_community_folder || !hasCommunityAccess;
+        } else {
+          return true;
         }
       },
 
@@ -620,8 +652,8 @@
         }
       },
 
-      _showMenuItem: function (hasCommunityAccess, community) {
-        return hasCommunityAccess || (community && !community.only_admins_can_create_groups)
+      _showMenuItem: function (hasCommunityAccess, community, hasPromoterAccess) {
+        return hasCommunityAccess || hasPromoterAccess || (community && !community.only_admins_can_create_groups)
       },
 
       _communityChanged: function (community, previousCommunity) {
@@ -670,6 +702,18 @@
         }
       },
 
+      _hasCommunityPromoterAccess: function(community, gotPromoterRights) {
+        if (community && gotPromoterRights) {
+          return (this.checkCommunityPromoterAccess(community)!=null);
+        } else {
+          return false;
+        }
+      },
+
+      _hasCommunityOrPromoterAccess: function (communityAccess, promoterAccess) {
+        return communityAccess || promoterAccess;
+      },
+
       _communityAccessText: function(access) {
         switch (access) {
           case 0:
@@ -693,6 +737,8 @@
           this._openUsersDialog();
         else if (detail.item.id==="adminsMenuItem")
           this._openAdminsDialog();
+        else if (detail.item.id==="promotersMenuItem")
+          this._openPromotersDialog();
         else if (detail.item.id==="pagesMenuItem")
           this._openPagesDialog();
         else if (detail.item.id==="bulkStatusUpdateMenuItem")
@@ -715,6 +761,8 @@
           this.createReportFraudReport();
         else if (detail.item.id==="addCommunityFolderMenuItem")
           this.fire('yp-new-community-folder');
+        else if (detail.item.id==="openPromotionApp")
+          window.location = "/promotion/community/"+this.community.id;
         else if (detail.item.id==="openAnalyticsApp")
           window.location = "/analytics/community/"+this.community.id;
         else if (detail.item.id==="openAdminApp")
@@ -789,6 +837,14 @@
         window.appGlobals.activity('open', 'community.admins');
         Polymer.dom(document).querySelector('yp-app').getUsersGridAsync(function (dialog) {
           dialog.setup(null, this.community.id, null, true);
+          dialog.open(this.community.name);
+        }.bind(this));
+      },
+
+      _openPromotersDialog: function () {
+        window.appGlobals.activity('open', 'communityPromoters');
+        Polymer.dom(document).querySelector('yp-app').getUsersGridAsync(function (dialog) {
+          dialog.setup(null, this.community.id, null, false, true);
           dialog.open(this.community.name);
         }.bind(this));
       },

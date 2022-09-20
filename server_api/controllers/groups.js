@@ -638,9 +638,44 @@ router.delete('/:groupId/:userId/remove_admin', auth.can('edit group'), function
   });
 });
 
+router.delete('/:groupId/:userId/remove_promoter', auth.can('edit group'), function(req, res) {
+  getGroupAndUser(req.params.groupId, req.params.userId, null, function (error, group, user) {
+    if (error) {
+      log.error('Could not remove promoter', { err: error, groupId: req.params.groupId, userRemovedId: req.params.userId, context: 'remove_promoter', user: toJson(req.user.simple()) });
+      res.sendStatus(500);
+    } else if (user && group) {
+      group.removeGroupPromoters(user).then(function (results) {
+        log.info('Promoter removed', {context: 'remove_promoter', groupId: req.params.groupId, userRemovedId: req.params.userId, user: toJson(req.user.simple()) });
+        res.sendStatus(200);
+      });
+    } else {
+      res.sendStatus(404);
+    }
+  });
+});
+
+router.get('/:groupId/has_promotion_access', auth.can('view group'), async (req, res) => {
+  if (req.user) {
+    if (await req.user.hasPromotionAccess(req.params.groupId)) {
+      res.sendStatus(200);
+    } else {
+      res.sendStatus(401);
+    };
+
+  } else {
+    res.sendStatus(401);
+  }
+});
+
 router.delete('/:groupId/remove_many_admins', auth.can('edit group'), function(req, res) {
   queue.add('process-deletion', { type: 'remove-many-group-admins', userIds: req.body.userIds, groupId: req.params.groupId }, 'high');
   log.info('Remove many admins started', { context: 'remove_many_admins', groupId: req.params.groupId, user: toJson(req.user.simple()) });
+  res.sendStatus(200);
+});
+
+router.delete('/:groupId/remove_many_promoters', auth.can('edit group'), function(req, res) {
+  queue.add('process-deletion', { type: 'remove-many-group-promoters', userIds: req.body.userIds, groupId: req.params.groupId }, 'high');
+  log.info('Remove many promoters started', { context: 'remove_many_promoters', groupId: req.params.groupId, user: toJson(req.user.simple()) });
   res.sendStatus(200);
 });
 
@@ -698,11 +733,27 @@ router.delete('/:groupId/:userId/remove_user', auth.can('edit group'), function(
 router.post('/:groupId/:email/add_admin', auth.can('edit group'), function(req, res) {
   getGroupAndUser(req.params.groupId, null, req.params.email, function (error, group, user) {
     if (error) {
-      log.error('Could not add admin', { err: error, groupId: req.params.groupId, userAddEmail: req.params.email, context: 'remove_admin', user: toJson(req.user.simple()) });
+      log.error('Could not add admin', { err: error, groupId: req.params.groupId, userAddEmail: req.params.email, context: 'add_admin', user: toJson(req.user.simple()) });
       res.sendStatus(500);
     } else if (user && group) {
       group.addGroupAdmins(user).then(function (results) {
         log.info('Admin Added', {context: 'add_admin', groupId: req.params.groupId, userAddEmail: req.params.email, user: toJson(req.user.simple()) });
+        res.sendStatus(200);
+      });
+    } else {
+      res.sendStatus(404);
+    }
+  });
+});
+
+router.post('/:groupId/:email/add_promoter', auth.can('edit group'), function(req, res) {
+  getGroupAndUser(req.params.groupId, null, req.params.email, function (error, group, user) {
+    if (error) {
+      log.error('Could not add promoter', { err: error, groupId: req.params.groupId, userAddEmail: req.params.email, context: 'add_promoter', user: toJson(req.user.simple()) });
+      res.sendStatus(500);
+    } else if (user && group) {
+      group.addGroupPromoters(user).then(function (results) {
+        log.info('Promoter Added', {context: 'add_promoter', groupId: req.params.groupId, userAddEmail: req.params.email, user: toJson(req.user.simple()) });
         res.sendStatus(200);
       });
     } else {
@@ -1019,6 +1070,40 @@ router.get('/:groupId/admin_users', auth.can('edit group'), function (req, res) 
     }
   }).catch(function (error) {
     log.error('Could not get admin users', { err: error, context: 'admin_users', user: toJson(req.user.simple()) });
+    res.sendStatus(500);
+  });
+});
+
+router.get('/:groupId/promotion_users', auth.can('edit group'), function (req, res) {
+  models.Group.findOne({
+    where: {
+      id: req.params.groupId
+    },
+    include: [
+      {
+        model: models.User,
+        attributes: _.concat(models.User.defaultAttributesWithSocialMediaPublicAndEmail, ['created_at', 'last_login_at']),
+        as: 'GroupPromoters',
+        required: true,
+        include: [
+          {
+            model: models.Organization,
+            attributes: ['id', 'name'],
+            as: 'OrganizationUsers',
+            required: false
+          }
+        ]
+      }
+    ]
+  }).then(function (group) {
+    log.info('Got promotion users', { context: 'promotion_users', user: toJson(req.user.simple()) });
+    if (group) {
+      res.send(group.GroupPromoters);
+    } else {
+      res.send([]);
+    }
+  }).catch(function (error) {
+    log.error('Could not get promotion users', { err: error, context: 'promotion_users', user: toJson(req.user.simple()) });
     res.sendStatus(500);
   });
 });

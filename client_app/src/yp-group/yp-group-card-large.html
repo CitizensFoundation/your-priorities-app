@@ -18,6 +18,7 @@
 <link rel="import" href="../yp-behaviors/yp-language-behavior.html">
 <link rel="import" href="../yp-behaviors/access-helpers.html">
 <link rel="import" href="../yp-behaviors/yp-got-admin-rights-behavior.html">
+<link rel="import" href="../yp-behaviors/yp-got-promoter-rights-behavior.html">
 <link rel="import" href="../yp-behaviors/yp-large-card-behaviors.html">
 <link rel="import" href="../yp-behaviors/yp-goto-behavior.html">
 <link rel="import" href="../yp-behaviors/yp-truncate-behavior.html">
@@ -324,8 +325,10 @@
             <paper-listbox slot="dropdown-content" on-iron-select="_menuSelection">
               <paper-item hidden$="[[!hasGroupAccess]]" id="editMenuItem">[[t('group.edit')]]</paper-item>
               <paper-item hidden$="[[!hasGroupAccess]]" id="newCategoryMenuItem">[[t('category.new')]]</paper-item>
+              <paper-item hidden$="[[!hasGroupOrPromoterAccess]]" id="openPromotionApp">[[t('analyticsAndPromotions')]]</paper-item>
               <paper-item hidden$="[[!hasGroupAccess]]" id="usersMenuItem">[[t('group.users')]]</paper-item>
               <paper-item hidden$="[[!hasGroupAccess]]" id="adminsMenuItem">[[t('group.admins')]]</paper-item>
+              <paper-item hidden$="[[!hasGroupAccess]]" id="promotersMenuItem">[[t('groupPromoters')]]</paper-item>
               <paper-item hidden$="[[!hasGroupAccess]]" id="pagesMenuItem">[[t('pages.managePages')]]</paper-item>
               <paper-item hidden$="[[!hasGroupAccess]]" id="moderationMenuItem">
                 [[t('flaggedContent')]] <span hidden$="[[!flaggedContentCount]]">&nbsp; ([[flaggedContentCount]])</span>
@@ -378,6 +381,7 @@
 
     <iron-media-query query="(max-width: 800px)" query-matches="{{narrowScreen}}"></iron-media-query>
     <lite-signal on-lite-signal-got-admin-rights="_gotAdminRights"></lite-signal>
+    <lite-signal on-lite-signal-got-promoter-rights="_gotPromoterRights"></lite-signal>
   </template>
 
   <script>
@@ -390,6 +394,7 @@
         Polymer.LargeCardBehaviors,
         Polymer.AccessHelpers,
         Polymer.ypGotAdminRightsBehavior,
+        Polymer.ypGotPromoterRightsBehavior,
         Polymer.ypGotoBehavior,
         Polymer.ypTruncateBehavior,
         Polymer.ypMediaFormatsBehavior
@@ -407,6 +412,18 @@
           computed: '_hasGroupAccess(group, gotAdminRights)'
         },
 
+        hasGroupPromoterAccess: {
+          type: Boolean,
+          value: false,
+          computed: '_hasGroupPromoterAccess(group, gotPromoterRights)'
+        },
+
+        hasGroupOrPromoterAccess: {
+          type: Boolean,
+          value: false,
+          computed: '_hasGroupOrPromoterAccess(hasGroupAccess, hasGroupPromoterAccess)'
+        },
+
         groupAccessText: {
           type: String,
           computed: '_groupAccessText(group, language)'
@@ -415,7 +432,7 @@
         showMenuItem: {
           type: Boolean,
           value: false,
-          computed: '_showMenuItem(hasGroupAccess, group)'
+          computed: '_showMenuItem(hasGroupAccess, group, hasGroupPromoterAccess)'
         },
 
         exportUrl: {
@@ -494,8 +511,8 @@
         }
       },
 
-      _showMenuItem: function (hasGroupAccess, group) {
-        return hasGroupAccess || (group && group.configuration && group.configuration.canAddNewPosts===true)
+      _showMenuItem: function (hasGroupAccess, group, hasPromoterAccess) {
+        return hasGroupAccess || hasPromoterAccess || (group && group.configuration && group.configuration.canAddNewPosts===true)
       },
 
       _hasGroupAccess: function(group, gotAdminRights) {
@@ -504,6 +521,18 @@
         } else {
           return false;
         }
+      },
+
+      _hasGroupPromoterAccess: function(group, gotPromoterRights) {
+        if (group && gotPromoterRights) {
+          return (this.checkGroupPromoterAccess(group)!=null);
+        } else {
+          return false;
+        }
+      },
+
+      _hasGroupOrPromoterAccess: function (groupAccess, promoterAccess) {
+        return groupAccess || promoterAccess;
       },
 
       resetGroup: function () {
@@ -571,6 +600,8 @@
           this._openUsersDialog();
         else if (detail.item.id==="adminsMenuItem")
           this._openAdminsDialog();
+        else if (detail.item.id==="promotersMenuItem")
+          this._openPromotersDialog();
         else if (detail.item.id==="pagesMenuItem")
           this._openPagesDialog();
         else if (detail.item.id==="addPostMenuItem")
@@ -587,6 +618,8 @@
           this._openCreateXlsReport();
         else if (detail.item.id==="anonymizeMenuItem")
           this._openAnonymizeContent();
+        else if (detail.item.id==="openPromotionApp")
+          window.location = "/promotion/group/"+this.group.id;
         else if (detail.item.id==="openAnalyticsApp")
           window.location = "/analytics/group/"+this.group.id;
         else if (detail.item.id==="openAdminApp")
@@ -630,6 +663,14 @@
         window.appGlobals.activity('open', 'group.admins');
         Polymer.dom(document).querySelector('yp-app').getUsersGridAsync(function (dialog) {
           dialog.setup(this.group.id, null, null, true);
+          dialog.open(this.group.name);
+        }.bind(this));
+      },
+
+      _openPromotersDialog: function () {
+        window.appGlobals.activity('open', 'groupPromoters');
+        Polymer.dom(document).querySelector('yp-app').getUsersGridAsync(function (dialog) {
+          dialog.setup(this.group.id, null, null, false, true);
           dialog.open(this.group.name);
         }.bind(this));
       },

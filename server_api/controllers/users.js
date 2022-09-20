@@ -487,6 +487,78 @@ const getDomainAdminAndUserIncludes = (req) => {
   return  { groupAdminsOrUsersInclude, communityAdminsOrUsersInclude, domainAdminsOrUsersWhere }
 }
 
+router.get('/loggedInUser/promoterRights', function (req, res) {
+  const { groupAdminsOrUsersInclude, communityAdminsOrUsersInclude } = getDomainAdminAndUserIncludes(req);
+
+  if (req.isAuthenticated() && req.user) {
+    var promoterAccess = {};
+    async.parallel([
+      function (seriesCallback) {
+        models.User.findOne({
+          where: {id: req.user.id},
+          attributes: ['id'],
+          include: [
+            {
+              model: models.Community,
+              as: 'CommunityPromoters',
+              attributes: ['id'],
+              through: {
+                attributes: []
+              },
+              required: false,
+              include: communityAdminsOrUsersInclude
+            }
+          ]
+        }).then(function(user) {
+          promoterAccess.CommunityPromoters = user.CommunityPromoters;
+          seriesCallback()
+        }).catch(function(error) {
+          seriesCallback(error);
+        });
+      },
+      function (seriesCallback) {
+        models.User.findOne({
+          where: {id: req.user.id},
+          attributes: ['id'],
+          include: [
+            {
+              model: models.Group,
+              as: 'GroupPromoters',
+              attributes: ['id'],
+              required: false,
+              through: {
+                attributes: []
+              },
+              include: groupAdminsOrUsersInclude
+            }
+          ]
+        }).then(function(user) {
+          promoterAccess.GroupPromoters = user.GroupPromoters;
+          seriesCallback()
+        }).catch(function(error) {
+          seriesCallback(error);
+        });
+      },
+    ], function (error) {
+      if (!error) {
+        log.info('User Sent Promoter Rights', { userId: req.user ? req.user.id : -1, context: 'promoterRights'});
+        if (promoterAccess.GroupPromoters.length===0 &&
+          promoterAccess.CommunityPromoters.length===0) {
+          res.send('0');
+        } else {
+          res.send(promoterAccess);
+        }
+      } else {
+        log.error("User promoterRights Error", { context: 'promoterRights', err: error, errorStatus: 500 });
+        res.sendStatus(500);
+      }
+    });
+  } else {
+    log.info('Not Logged in', { context: 'promoterRights'});
+    res.send('0');
+  }
+});
+
 router.get('/loggedInUser/adminRights', function (req, res) {
   const { groupAdminsOrUsersInclude, communityAdminsOrUsersInclude, domainAdminsOrUsersWhere } = getDomainAdminAndUserIncludes(req);
 

@@ -27,6 +27,7 @@
       <yp-ajax id="pollForLoginAjax" url="/api/users/loggedInUser/isloggedin" on-response="_pollForLoginResponse"></yp-ajax>
       <yp-ajax id="isLoggedInAjax" method="GET" url="/api/users/loggedInUser/isloggedin" on-response="_isLoggedInResponse"></yp-ajax>
       <yp-ajax id="adminRightsAjax" method="GET" url="/api/users/loggedInUser/adminRights" on-response="_adminRightsResponse"></yp-ajax>
+      <yp-ajax id="promoterRightsAjax" method="GET" url="/api/users/loggedInUser/promoterRights" on-response="_promoterRightsResponse"></yp-ajax>
       <yp-ajax id="membershipsAjax" method="GET" url="/api/users/loggedInUser/memberships" on-response="_membershipsResponse"></yp-ajax>
       <yp-ajax id="logoutAjax" method="POST" url="/api/users/logout" on-response="_logoutResponse"></yp-ajax>
       <yp-ajax id="setLocaleAjax" method="PUT" url="/api/users/loggedInUser/setLocale"></yp-ajax>
@@ -126,6 +127,10 @@
 
           adminRights: {
             type: Object
+          },
+
+          promoterRights: {
+            type: Object,
           },
 
           memberships: {
@@ -289,6 +294,7 @@
             console.debug("Do not fetch admin or memberships for anonymous users");
           } else {
             this.$.adminRightsAjax.generateRequest();
+            this.$.promoterRightsAjax.generateRequest();
             this.$.membershipsAjax.generateRequest();
             this.toastLoginTextCombined = this.t("user.loginCompleteFor")+ " " + this.user.name;
             this.$.loginToast.show();
@@ -559,12 +565,16 @@
           this.$.isLoggedInAjax.generateRequest();
           this.$.adminRightsAjax.url = "/api/users/loggedInUser/adminRights";
           this.$.adminRightsAjax.generateRequest();
+          this.$.promoterRightsAjax.url = "/api/users/loggedInUser/promoterRights";
+          this.$.promoterRightsAjax.generateRequest();
+
           this.$.membershipsAjax.url = "/api/users/loggedInUser/memberships";
           this.$.membershipsAjax.generateRequest();
         },
 
         recheckAdminRights: function () {
           this.$.adminRightsAjax.generateRequest();
+          this.$.promoterRightsAjax.generateRequest();
         },
 
         updateEndorsementForPost: function (postId, newEndorsement, group) {
@@ -846,9 +856,7 @@
         },
 
         _adminRightsResponse: function (event, detail) {
-          console.debug("_adminRightsResponse 1");
           if (detail.response && detail.response!=0) {
-            console.debug("_adminRightsResponse 2");
             this.set('adminRights', detail.response);
             var randomChangeSignal = Math.floor(Math.random() * 10) + 1;
             document.dispatchEvent(
@@ -875,6 +883,29 @@
                 bubbles: true,
                 compose: true,
                 detail: { name: 'got-admin-rights', data: false }
+              })
+            );
+          }
+        },
+
+        _promoterRightsResponse: function (event, detail) {
+          if (detail.response && detail.response!=0) {
+            this.set('promoterRights', detail.response);
+            var randomChangeSignal = Math.floor(Math.random() * 10) + 1;
+            document.dispatchEvent(
+              new CustomEvent("lite-signal", {
+                bubbles: true,
+                compose: true,
+                detail: { name: 'got-promoter-rights', data: randomChangeSignal }
+              })
+            );
+          } else {
+            this.set('promoterRights', null);
+            document.dispatchEvent(
+              new CustomEvent("lite-signal", {
+                bubbles: true,
+                compose: true,
+                detail: { name: 'got-promoter-rights', data: false }
               })
             );
           }

@@ -110,7 +110,9 @@ module.exports = (sequelize, DataTypes) => {
     User.belongsToMany(models.Image, { as: 'UserHeaderImages', through: 'UserHeaderImage' });
     User.belongsToMany(models.Domain, { as: 'DomainAdmins', through: 'DomainAdmin' });
     User.belongsToMany(models.Community, { as: 'CommunityAdmins', through: 'CommunityAdmin' });
+    User.belongsToMany(models.Community, { as: 'CommunityPromoters', through: 'CommunityPromoter' });
     User.belongsToMany(models.Group, { as: 'GroupAdmins', through: 'GroupAdmin' });
+    User.belongsToMany(models.Group, { as: 'GroupPromoters', through: 'GroupPromoter' });
     User.belongsToMany(models.Organization, { as: 'OrganizationAdmins', through: 'OrganizationAdmin' });
     User.belongsToMany(models.Organization, { as: 'OrganizationUsers', through: 'OrganizationUser' });
     User.belongsToMany(models.Video, { as: 'UserProfileVideos', through: 'UserProfileVideo'});

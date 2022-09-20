@@ -75,6 +75,17 @@
       }
     },
 
+    checkGroupPromoterAccess: function (group) {
+      if (group && window.appUser && window.appUser.promoterRights) {
+        return this._hasAccess(group, group.id, window.appUser.promoterRights.GroupPromoters);
+      } else if (group) {
+        return false;
+      } else {
+        console.debug("No group in hasAccess");
+        return false;
+      }
+    },
+
     checkGroupAccess: function (group) {
       if (group && window.appUser && window.appUser.adminRights) {
         return this._hasAccess(group, group.id, window.appUser.adminRights.GroupAdmins);
@@ -96,6 +107,18 @@
         return false;
       }
     },
+
+    checkCommunityPromoterAccess: function (community) {
+      if (community && window.appUser && window.appUser.promoterRights) {
+        return this._hasAccess(community, community.id, window.appUser.promoterRights.CommunityPromoters);
+      } else if (community) {
+        return false;
+      } else {
+        console.debug("No community in hasAccess");
+        return false;
+      }
+    },
+
 
     checkDomainAccess: function(domain) {
       if (domain && window.appUser && window.appUser.adminRights) {

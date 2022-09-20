@@ -238,8 +238,8 @@
         </paper-material>
 
         <paper-material hidden$="[[!promotionUsers]]" class="layout horizontal wrap inputBox">
-          <paper-input label="[[t('email')]]" class="emailClass" value="{{addPromotionEmail}}"></paper-input>
-          <paper-button class="inviteButton" on-tap="_addPromotionUser">[[t('addPromotionUser')]]</paper-button>
+          <paper-input label="[[t('email')]]" class="emailClass" value="{{addPromoterEmail}}"></paper-input>
+          <paper-button class="inviteButton" on-tap="_addPromoter">[[t('addPromotionUser')]]</paper-button>
         </paper-material>
       </div>
 
@@ -292,7 +292,7 @@
                     </div>
                   </paper-item>
                   <paper-item data-args$="[[item.id]]" hidden$="[[!adminUsers]]" on-tap="_removeSelectedAdmins">[[t('removeSelectedAdmins')]] [[selectedUsersCount]]</paper-item>
-                  <paper-item data-args$="[[item.id]]" hidden$="[[!promotionUsers]]" on-tap="_removeSelectedPromotionUsers">[[t('removeSelectedPromotionUsers')]] [[selectedUsersCount]]</paper-item>
+                  <paper-item data-args$="[[item.id]]" hidden$="[[!promotionUsers]]" on-tap="_removeSelectedPromoters">[[t('removeSelectedPromotionUsers')]] [[selectedUsersCount]]</paper-item>
                 </template>
               </paper-listbox>
             </paper-menu-button>
@@ -301,7 +301,7 @@
             <paper-menu-button horizontal-align="right" class="helpButton">
               <paper-icon-button aria-label$="[[t('openOneItemMenu')]]" icon="more-vert" data-args$="[[item.id]]" on-tap="_setSelected" slot="dropdown-trigger"></paper-icon-button>
               <paper-listbox slot="dropdown-content" on-iron-select="_menuSelection">
-                <paper-item data-args$="[[item.id]]" hidden$="[[adminUsers]]" on-tap="_removeUserFromCollection">
+                <paper-item data-args$="[[item.id]]" hidden$="[[!isRegularUsers]]" on-tap="_removeUserFromCollection">
                   <div hidden$="[[!groupId]]">
                     [[t('removeFromGroup')]]
                   </div>
@@ -312,7 +312,7 @@
                     [[t('removeFromDomain')]]
                   </div>
                 </paper-item>
-                <paper-item data-args$="[[item.id]]" hidden$="[[adminUsers]]" on-tap="_removeAndDeleteUserContent">
+                <paper-item data-args$="[[item.id]]" hidden$="[[!isRegularUsers]]" on-tap="_removeAndDeleteUserContent">
                   <div hidden$="[[!groupId]]">
                     [[t('removeFromGroupDeleteContent')]]
                   </div>
@@ -338,6 +338,10 @@
       <yp-ajax id="ajax" on-response="_usersResponse"></yp-ajax>
       <yp-ajax method="DELETE" on-error="_ajaxError" id="removeAdminAjax" on-response="_removeAdminResponse"></yp-ajax>
       <yp-ajax method="DELETE" on-error="_ajaxError" id="removeManyAdminAjax" on-response="_removeManyAdminResponse"></yp-ajax>
+
+      <yp-ajax method="DELETE" on-error="_ajaxError" id="removePromoterAjax" on-response="_removePromoterResponse"></yp-ajax>
+      <yp-ajax method="DELETE" on-error="_ajaxError" id="removeManyPromotersAjax" on-response="_removeManyPromotersResponse"></yp-ajax>
+
       <yp-ajax method="DELETE" on-error="_ajaxError" id="removeUserAjax" on-response="_removeUserResponse"></yp-ajax>
       <yp-ajax method="DELETE" on-error="_ajaxError" id="removeManyUsersAjax" on-response="_removeManyUsersResponse"></yp-ajax>
       <yp-ajax method="DELETE" on-error="_ajaxError" id="removeOrganizationAjax" on-response="_removeOrganizationResponse"></yp-ajax>
@@ -345,11 +349,13 @@
       <yp-ajax method="DELETE" on-error="_ajaxError" id="removeAndDeleteManyAjax" on-response="_removeAndDeleteManyCompleted"></yp-ajax>
       <yp-ajax method="POST" on-error="_ajaxError" id="inviteUserAjax" on-response="_inviteUserResponse"></yp-ajax>
       <yp-ajax method="POST" on-error="_ajaxError" id="addAdminAjax" on-response="_addAdminResponse"></yp-ajax>
+      <yp-ajax method="POST" on-error="_ajaxError" id="addPromoterAjax" on-response="_addPromoterResponse"></yp-ajax>
       <yp-ajax method="POST" on-error="_ajaxError" id="addOrganizationAjax" on-response="_addOrganizationResponse"></yp-ajax>
     </div>
   </template>
 
   <script>
+    //TODO: Make this class based for simplicity
     Polymer({
 
       is: 'yp-users-grid',
@@ -362,6 +368,10 @@
       properties: {
 
         addAdminEmail: {
+          type: String
+        },
+
+        addPromoterEmail: {
           type: String
         },
 
@@ -614,16 +624,16 @@
 
       _removePromotionUser: function (event) {
         var userId = event.target.getAttribute('data-args');
-        this.$.removeAdminAjax.body = {};
+        this.$.removePromoterAjax.body = {};
         if (this.modelType=="groups" && this.groupId) {
-          this.$.removeAdminAjax.url = "/api/" + this.modelType + "/" + this.groupId + "/" + userId + "/remove_promotion_user";
-          this.$.removeAdminAjax.generateRequest();
+          this.$.removePromoterAjax.url = "/api/" + this.modelType + "/" + this.groupId + "/" + userId + "/remove_promoter";
+          this.$.removePromoterAjax.generateRequest();
         } else if (this.modelType=="communities" && this.communityId) {
-          this.$.removeAdminAjax.url = "/api/" + this.modelType + "/" + this.communityId + "/" + userId + "/remove_promotion_user";
-          this.$.removeAdminAjax.generateRequest();
+          this.$.removePromoterAjax.url = "/api/" + this.modelType + "/" + this.communityId + "/" + userId + "/remove_promoter";
+          this.$.removePromoterAjax.generateRequest();
         } else if (this.modelType=="domains" && this.domainId) {
-          this.$.removeAdminAjax.url = "/api/" + this.modelType + "/" + this.domainId + "/" + userId + "/remove_promotion_user";
-          this.$.removeAdminAjax.generateRequest();
+          this.$.removePromoterAjax.url = "/api/" + this.modelType + "/" + this.domainId + "/" + userId + "/remove_promoter";
+          this.$.removePromoterAjax.generateRequest();
         } else {
           console.warn("Can't find model type or ids");
         }
@@ -635,6 +645,15 @@
           dialog.open(this.t('areYouSureYouWantToRemoveAdmins'), this._reallyRemoveSelectedAdmins.bind(this), true, false);
         }.bind(this));
       },
+
+
+      _removeSelectedPromoters: function (event) {
+        this._setupUserIdFromEvent(event);
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("confirmationDialog", function (dialog) {
+          dialog.open(this.t('areYouSureYouWantToRemovePromoters'), this._reallyRemoveSelectedPromoters.bind(this), true, false);
+        }.bind(this));
+      },
+
 
       _removeAndDeleteContentSelectedUsers: function (event) {
         this._setupUserIdFromEvent(event);
@@ -666,6 +685,11 @@
 
       _reallyRemoveSelectedAdmins: function () {
         this._removeMaster(this.$.removeManyAdminAjax, 'remove_many_admins', this.selectedUserIds);
+      },
+
+
+      _reallyRemoveSelectedPromoters: function () {
+        this._removeMaster(this.$.removeManyPromotersAjax, 'remove_many_promoters', this.selectedUserIds);
       },
 
       _reallyRemoveAndDeleteContentSelectedUsers: function () {
@@ -767,6 +791,22 @@
         }
       },
 
+      _addPromoter: function (event) {
+        this.$.addPromoterAjax.body = {};
+        if (this.modelType==="groups" && this.groupId) {
+          this.$.addPromoterAjax.url = "/api/" + this.modelType + "/" + this.groupId + "/" + this.addPromoterEmail + "/add_promoter";
+          this.$.addPromoterAjax.generateRequest();
+        } else if (this.modelType==="communities" && this.communityId) {
+          this.$.addPromoterAjax.url = "/api/" + this.modelType + "/" + this.communityId + "/" + this.addPromoterEmail + "/add_promoter";
+          this.$.addPromoterAjax.generateRequest();
+        } else if (this.modelType==="domains" && this.domainId) {
+          this.$.addPromoterAjax.url = "/api/" + this.modelType + "/" + this.domainId + "/" + this.addPromoterEmail + "/add_promoter";
+          this.$.addPromoterAjax.generateRequest();
+        } else {
+          console.warn("Can't find model type or ids");
+        }
+      },
+
       _inviteUser: function (event) {
         this.$.inviteUserAjax.body = {};
         if (this.modelType==="groups" && this.groupId) {
@@ -782,7 +822,6 @@
 
       _manyItemsResponse: function (showToast) {
         this.set('forceSpinner', false);
-        debugger;
         this.set('showReload', true);
         if (showToast)
           window.appGlobals.notifyUserViaToast(this.t('operationInProgressTryReloading'));
@@ -793,7 +832,24 @@
         this._reload();
       },
 
+      _removePromoterResponse: function () {
+        window.appGlobals.notifyUserViaToast(this.t('promoterRemoved'));
+        this._reload();
+      },
+
+      _removeAdminResponse: function () {
+        window.appGlobals.notifyUserViaToast(this.t('promoterRemoved'));
+        this._reload();
+      },
+
       _removeManyAdminResponse: function () {
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("confirmationDialog", function (dialog) {
+          dialog.open(this.t('removalsInProgress'), null, true, false, true);
+        }.bind(this));
+        this._manyItemsResponse();
+      },
+
+      _removeManyPromotersResponse: function () {
         Polymer.dom(document).querySelector('yp-app').getDialogAsync("confirmationDialog", function (dialog) {
           dialog.open(this.t('removalsInProgress'), null, true, false, true);
         }.bind(this));
@@ -829,6 +885,12 @@
       _addAdminResponse: function () {
         window.appGlobals.notifyUserViaToast(this.t('adminAdded')+' '+this.addAdminEmail);
         this.set('addAdminEmail', null);
+        this._reload();
+      },
+
+      _addPromoterResponse: function () {
+        window.appGlobals.notifyUserViaToast(this.t('promoterAdded')+' '+this.addPromoterEmail);
+        this.set('addPromoterEmail', null);
         this._reload();
       },
 
@@ -934,18 +996,24 @@
       _setupHeaderText: function () {
         if (this.adminUsers) {
           this.set('usersCountText', this.t('adminsCount'));
+        } else if (this.promotionUsers) {
+          this.set('usersCountText', this.t('promotersCount'));
         } else {
           this.set('usersCountText', this.t('usersCount'));
         }
         if (this.groupId) {
           if (this.adminUsers) {
             this.set('headerText', this.t('group.admins'));
+          } else if (this.promotionUsers) {
+            this.set('headerText', this.t('groupPromoters'));
           } else {
             this.set('headerText', this.t('group.users'));
           }
         } else if (this.communityId) {
           if (this.adminUsers) {
             this.set('headerText', this.t('community.admins'));
+          } else if (this.promotionUsers) {
+            this.set('headerText', this.t('communityPromoters'));
           } else {
             this.set('headerText', this.t('community.users'));
           }

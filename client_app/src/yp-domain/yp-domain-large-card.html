@@ -269,6 +269,7 @@
             <paper-icon-button aria-label$="[[t('openDomainMenu')]]" icon="more-vert" slot="dropdown-trigger"></paper-icon-button>
             <paper-listbox slot="dropdown-content" on-iron-select="_menuSelection">
               <paper-item hidden$="[[!hasDomainAccess]]" id="editMenuItem">[[t('domain.edit')]]</paper-item>
+              <paper-item hidden$="[[!hasDomainAccess]]" id="openPromotionApp">[[t('analyticsAndPromotions')]]</paper-item>
               <paper-item hidden$="[[!hasDomainAccess]]" id="createOrganizationMenuItem">[[t('domain.createOrganization')]]</paper-item>
               <paper-item hidden$="[[!hasDomainAccess]]" id="pagesMenuItem">[[t('pages.managePages')]]</paper-item>
               <paper-item hidden$="[[!hasDomainAccess]]" id="usersMenuItem">[[t('domainUsers')]]</paper-item>
@@ -468,6 +469,8 @@
           this._openAllContentModeration();
         else if (detail.item.id==="addCommunityMenuItem")
           this.fire('yp-new-community');
+        else if (detail.item.id==="openPromotionApp")
+          window.location = "/promotion/domain/"+this.domain.id;
         else if (detail.item.id==="addCommunityFolderMenuItem")
           this.fire('yp-new-community-folder');
         else if (detail.item.id==="openAnalyticsApp")

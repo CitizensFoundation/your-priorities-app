@@ -981,6 +981,14 @@ router.delete('/:communityId/remove_many_admins', auth.can('edit community'), (r
   res.sendStatus(200);
 });
 
+router.delete('/:communityId/remove_many_promoters', auth.can('edit community'), (req, res) => {
+  queue.add('process-deletion', {
+    type: 'remove-many-community-promoters', userIds: req.body.userIds, communityId: req.params.communityId
+  }, 'high');
+  log.info('Remove many community promoters started', { context: 'remove_many_promoters', communityId: req.params.communityId, user: toJson(req.user.simple()) });
+  res.sendStatus(200);
+});
+
 router.delete('/:communityId/remove_many_users_and_delete_content', auth.can('edit community'), function(req, res) {
   queue.add('process-deletion',
     { type: 'remove-many-community-users-and-delete-content', userIds: req.body.userIds, communityId: req.params.communityId
@@ -1036,6 +1044,22 @@ router.delete('/:communityId/:userId/remove_admin', auth.can('edit community'), 
   });
 });
 
+router.delete('/:communityId/:userId/remove_promoter', auth.can('edit community'), function(req, res) {
+  getCommunityAndUser(req.params.communityId, req.params.userId, null, function (error, community, user) {
+    if (error) {
+      log.error('Could not remove promoter', { err: error, communityId: req.params.communityId, userRemovedId: req.params.userId, context: 'remove_admin', user: req.user ? toJson(req.user.simple()) : null });
+      res.sendStatus(500);
+    } else if (user && community) {
+      community.removeCommunityPromoters(user).then(function (results) {
+        log.info('Promoter removed', {context: 'remove_promoter', communityId: req.params.communityId, userRemovedId: req.params.userId, user: req.user ? toJson(req.user.simple()) : null });
+        res.sendStatus(200);
+      });
+    } else {
+      res.sendStatus(404);
+    }
+  });
+});
+
 router.delete('/:communityId/:userId/remove_user', auth.can('edit community'), function(req, res) {
   getCommunityAndUser(req.params.communityId, req.params.userId, null, function (error, community, user) {
     if (error) {
@@ -1063,6 +1087,22 @@ router.post('/:communityId/:email/add_admin', auth.can('edit community'), functi
     } else if (user && community) {
       community.addCommunityAdmins(user).then(function (results) {
         log.info('Admin Added', {context: 'add_admin', communityId: req.params.communityId, userAddEmail: req.params.email, user: req.user ? toJson(req.user.simple()) : null });
+        res.sendStatus(200);
+      });
+    } else {
+      res.sendStatus(404);
+    }
+  });
+});
+
+router.post('/:communityId/:email/add_promoter', auth.can('edit community'), function(req, res) {
+  getCommunityAndUser(req.params.communityId, null, req.params.email, function (error, community, user) {
+    if (error) {
+      log.error('Could not add admin', { err: error, communityId: req.params.communityId, userAddEmail: req.params.email, context: 'remove_admin', user: req.user ? toJson(req.user.simple()) : null });
+      res.sendStatus(500);
+    } else if (user && community) {
+      community.addCommunityPromoters(user).then(function (results) {
+        log.info('Promoter Added', {context: 'add_promoter', communityId: req.params.communityId, userAddEmail: req.params.email, user: req.user ? toJson(req.user.simple()) : null });
         res.sendStatus(200);
       });
     } else {
@@ -1218,6 +1258,40 @@ router.get('/:communityId/admin_users', auth.can('edit community'), function (re
     }
   }).catch(function (error) {
     log.error('Could not get admin users', { err: error, context: 'admin_users', user: toJson(req.user.simple()) });
+    res.sendStatus(500);
+  });
+});
+
+router.get('/:communityId/promotion_users', auth.can('edit community'), function (req, res) {
+  models.Community.findOne({
+    where: {
+      id: req.params.communityId
+    },
+    include: [
+      {
+        model: models.User,
+        attributes: _.concat(models.User.defaultAttributesWithSocialMediaPublicAndEmail, ['created_at', 'last_login_at']),
+        as: 'CommunityPromoters',
+        required: true,
+        include: [
+          {
+            model: models.Organization,
+            attributes: ['id', 'name'],
+            as: 'OrganizationUsers',
+            required: false
+          }
+        ]
+      }
+    ]
+  }).then(function (community) {
+    log.info('Got promotion users', { context: 'promotion_users', user: toJson(req.user.simple()) });
+    if (community) {
+      res.send(community.CommunityPromoters);
+    } else {
+      res.send([]);
+    }
+  }).catch(function (error) {
+    log.error('Could not get promotion users', { err: error, context: 'promotion_users', user: toJson(req.user.simple()) });
     res.sendStatus(500);
   });
 });

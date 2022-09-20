@@ -1,0 +1,34 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<script>
+  /**
+   * @polymerBehavior Polymer.ypGotPromoterRightsBehavior
+   */
+  Polymer.ypGotPromoterRightsBehavior = {
+
+    properties: {
+      gotPromoterRights: {
+        type: Boolean,
+        notify: true,
+        value: false,
+        observer: '_gotPromoterRightsChanged'
+      }
+    },
+
+    listeners: {
+      'yp-user-got-promoter-rights': '_gotPromoterRights'
+    },
+
+    _gotPromoterRightsChanged: function () {},
+
+    ready: function () {
+      if (window.appUser && window.appUser.promoterRights) {
+        this.set('gotPromoterRights', 1);
+      }
+    },
+
+    _gotPromoterRights: function (event, detail) {
+      this.set('gotPromoterRights', detail);
+    }
+  }
+</script>
