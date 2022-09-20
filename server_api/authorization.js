@@ -261,7 +261,9 @@ auth.hasDomainAdmin = function (domainId, req, done) {
 
 auth.isGroupMemberOrOpenToCommunityMember = function (group, req, done) {
   if (group) {
-    if (group.Community && group.access === models.Group.ACCESS_OPEN_TO_COMMUNITY && group.Community.access === models.Community.ACCESS_PUBLIC) {
+    if (group.Community &&
+        group.access === models.Group.ACCESS_OPEN_TO_COMMUNITY &&
+        group.Community.access === models.Community.ACCESS_PUBLIC) {
       done(null, true);
     } else if (!auth.isAuthenticated(req)) {
       done(null, false);
@@ -269,7 +271,10 @@ auth.isGroupMemberOrOpenToCommunityMember = function (group, req, done) {
       group.hasGroupUsers(req.user).then(function (result) {
         if (result) {
           done(null, true);
-        } else if (group.Community && group.access === models.Group.ACCESS_OPEN_TO_COMMUNITY) {
+        } else if (group.Community &&
+                  (group.access === models.Group.ACCESS_OPEN_TO_COMMUNITY ||
+                    group.access === models.Group.ACCESS_PUBLIC))
+        {
           if (group.Community.access === models.Community.ACCESS_PUBLIC) {
             done(null, true);
           } else {
