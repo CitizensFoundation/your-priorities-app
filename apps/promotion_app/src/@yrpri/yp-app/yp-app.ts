@@ -57,6 +57,7 @@ import '../yp-post/yp-post.js';
 import { YpCollection } from '../yp-collection/yp-collection.js';
 import { YpPageDialog } from '../yp-page/yp-page-dialog.js';
 import { YpAppNavDrawer } from './yp-app-nav-drawer.js';
+import structuredClone from '@ungap/structured-clone';
 
 declare global {
   interface Window {
@@ -348,7 +349,8 @@ export class YpApp extends YpBaseElement {
     const matched = [];
     const namedMatches: Record<string, string> = {};
 
-    const oldRouteData = { ...this.routeData };
+    const oldRouteData = structuredClone(this.routeData);
+
 
     for (let i = 0; i < patternPieces.length; i++) {
       const patternPiece = patternPieces[i];

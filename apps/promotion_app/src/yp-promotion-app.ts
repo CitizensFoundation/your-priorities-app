@@ -148,6 +148,10 @@ export class YpPromotionApp extends YpBaseElementWithLogin {
           width: 100%;
         }
 
+        .loadingText {
+          margin-top: 48px;
+        }
+
         .collectionName {
           color: var(--md-sys-color-on-surface);
         }
@@ -226,8 +230,8 @@ export class YpPromotionApp extends YpBaseElementWithLogin {
     window.appGlobals = new YpAppGlobals(window.serverApi);
     window.appUser = new YpAppUser(window.serverApi);
 
-    window.appGlobals.setupTranslationSystem('/promotion');
-    //window.appGlobals.setupTranslationSystem();
+    //window.appGlobals.setupTranslationSystem('/promotion');
+    window.appGlobals.setupTranslationSystem();
 
     let pathname = window.location.pathname;
     if (pathname.endsWith('/'))
@@ -365,8 +369,8 @@ export class YpPromotionApp extends YpBaseElementWithLogin {
             </div>
           `
         : html`
-            <div class="layout horizontal center-center">
-              <div>Loading...</div>
+            <div class="layout horizontal center-center loadingText">
+              <div>${this.t('Loading...')}</div>
             </div>
           `}
       ${this.lastSnackbarText
@@ -418,7 +422,7 @@ export class YpPromotionApp extends YpBaseElementWithLogin {
               class="${this.pageIndex == 2 && 'selectedContainer'}"
               @click="${() => (this.pageIndex = 2)}"
               headline="${this.t('Promotion')}"
-              supportingText="${this.collectionType == 'posts'
+              supportingText="${this.collectionType == 'post'
                 ? this.t('Promote your idea')
                 : this.t('Promote your project')}"
             >
@@ -429,7 +433,7 @@ export class YpPromotionApp extends YpBaseElementWithLogin {
             <md-list-item
               class="${this.pageIndex == 3 && 'selectedContainer'}"
               @click="${() => (this.pageIndex = 3)}"
-              ?hidden="${true || this.collectionType == 'posts'}"
+              ?hidden="${true || this.collectionType == 'post'}"
               headline="${this.t('Email Lists')}"
               supportingText="${this.t('Send promotional emails')}"
             >
@@ -444,7 +448,7 @@ export class YpPromotionApp extends YpBaseElementWithLogin {
             <md-list-item
               class="${this.pageIndex == 4 && 'selectedContainer'}"
               @click="${() => (this.pageIndex = 4)}"
-              ?hidden="${true || this.collectionType == 'posts'}"
+              ?hidden="${true || this.collectionType == 'post'}"
               headline="${this.t('AI Analysis')}"
               supportingText="${this.t('Text analysis with AI')}"
             >
@@ -465,7 +469,9 @@ export class YpPromotionApp extends YpBaseElementWithLogin {
             >
             <md-list-item
               headline="${this.t('Exit')}"
-              supportingText="${this.t('Exit back to project')}"
+              supportingText="${this.collectionType == 'post'
+                ? this.t('Exit back to idea')
+                : this.t('Exit back to project')}"
               @click="${this.exitToMainApp}"
             >
               <md-list-item-icon slot="start"

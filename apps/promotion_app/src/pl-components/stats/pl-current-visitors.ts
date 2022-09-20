@@ -5,6 +5,7 @@ import { LitElement, css, html, nothing } from 'lit';
 import { property, customElement } from 'lit/decorators.js';
 import { PlausibleBaseElementWithState } from '../pl-base-element-with-state';
 import { isThisMonth } from '../util/date';
+import structuredClone from '@ungap/structured-clone';
 
 @customElement('pl-current-visitors')
 export class PlausibleCurrentVisitors extends PlausibleBaseElementWithState {
@@ -31,7 +32,7 @@ export class PlausibleCurrentVisitors extends PlausibleBaseElementWithState {
 
   updateCount() {
     if (this.useTopStatsForCurrentVisitors) {
-      const query = { ...this.query }
+      const query = structuredClone(this.query);
       query["period"] = "realtime";
       api
       .get(

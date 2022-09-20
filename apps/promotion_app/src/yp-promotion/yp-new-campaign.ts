@@ -266,6 +266,9 @@ export class YpNewCampaign extends YpBaseElementWithLogin {
         <md-formfield .label="${this.t('tiktok')}">
           <md-checkbox name="tiktok"></md-checkbox>
         </md-formfield>
+        <md-formfield .label="${this.t('whatsapp')}">
+          <md-checkbox name="whatsapp"></md-checkbox>
+        </md-formfield>
         <md-formfield .label="${this.t('email')}">
           <md-checkbox name="email"></md-checkbox>
         </md-formfield>
@@ -372,7 +375,7 @@ export class YpNewCampaign extends YpBaseElementWithLogin {
         heading="${this.t('newTrackingPromotion')}"
       >
         <div class="layout horizontal">
-          <div class="layout vertical">
+          <div class="layout ${this.wide ? 'vertical' : ''}">
             ${this.renderTextInputs()} ${this.renderPreview()}
           </div>
           ${this.renderAdMediums()}

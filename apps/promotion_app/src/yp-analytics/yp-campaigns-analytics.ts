@@ -12,6 +12,7 @@ import { UpdateModeEnum } from 'chart.js';
 import './yp-campaign-analysis.js';
 import { YpCampaignAnalysis } from './yp-campaign-analysis.js';
 import { PlausibleGoalGraph } from '../pl-components/stats/graph/pl-goal-graph';
+import structuredClone from '@ungap/structured-clone';
 
 @customElement('yp-campaigns-analytics')
 export class YpCampaignsAnalytics extends PlausibleBaseElementWithState {
@@ -128,7 +129,7 @@ export class YpCampaignsAnalytics extends PlausibleBaseElementWithState {
   }
 
   async getSourceData(campaign: YpCampaignAnalyticsData, utmMediums: any) {
-    const query = { ...this.query };
+    const query = structuredClone(this.query);
 
     const avilableMediums = utmMediums.map((m: any) => {
       return m.name.toLowerCase();

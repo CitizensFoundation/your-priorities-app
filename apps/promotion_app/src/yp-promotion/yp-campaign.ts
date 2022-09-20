@@ -196,6 +196,8 @@ export class YpCampaign extends YpBaseElementWithLogin {
         return 'https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/SocialMediaImages/email.png';
       case 'tiktok':
         return 'https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/SocialMediaImages/tiktok.png';
+      case 'whatsapp':
+        return 'https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/SocialMediaImages/whatsapp.png';
       case 'other':
         return 'https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/SocialMediaImages/other.png';
       default:

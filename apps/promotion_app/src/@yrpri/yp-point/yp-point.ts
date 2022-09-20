@@ -21,6 +21,7 @@ import { YpNavHelpers } from '../common/YpNavHelpers.js';
 import { YpBaseElement } from '../common/yp-base-element.js';
 import { YpApiActionDialog } from '../yp-api-action-dialog/yp-api-action-dialog.js';
 import { YpConfirmationDialog } from '../yp-dialog-container/yp-confirmation-dialog.js';
+import structuredClone from '@ungap/structured-clone';
 
 @customElement('yp-point')
 export class YpPoint extends YpBaseElement {
@@ -777,7 +778,7 @@ export class YpPoint extends YpBaseElement {
       this.point.public_data.admin_comment = {
         text: response.content,
       };
-      this.point = JSON.parse(JSON.stringify(this.point));
+      this.point = structuredClone(this.point);
       this.isAdminCommentEditing = false;
       this.hasAdminComments = true;
     }

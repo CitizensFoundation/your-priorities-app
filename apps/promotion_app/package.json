@@ -153,6 +153,7 @@
     "@polymer/paper-dialog": "^3.0.1",
     "@polymer/paper-listbox": "^3.0.1",
     "@polymer/polymer": "^3.5.1",
+    "@ungap/structured-clone": "^1.0.1",
     "@vaadin/vaadin-grid": "^23.1.6",
     "@webcomponents/webcomponentsjs": "^2.6.0",
     "chart.js": "^3.9.1",
