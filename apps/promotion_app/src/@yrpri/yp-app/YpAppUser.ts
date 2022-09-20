@@ -804,6 +804,9 @@ export class YpAppUser extends YpCodeBase {
     if (response) {
       this.promoterRights = response as YpPromoterRights;
       this.fireGlobal('yp-got-promoter-rights', true);
+      setTimeout(() => {
+        this.fireGlobal('yp-got-promoter-rights', true);
+      }, 1000);
     } else {
       if (this.promoterRights) {
         this.promoterRights = undefined;
