@@ -2629,7 +2629,7 @@ router.put('/:id/convert_docx_survey_to_json', uploadDox.single('file'), functio
   });
 });
 
-router.put('/:groupId/plausibleStatsProxy', auth.can('edit group'), async (req, res) => {
+router.put('/:groupId/plausibleStatsProxy', auth.can('edit group marketing'), async (req, res) => {
   try {
     const plausibleData = await plausibleStatsProxy(req.body.plausibleUrl, {
       groupId: req.params.groupId

@@ -95,6 +95,9 @@ export class YpPromotionApp extends YpBaseElementWithLogin {
   @property({ type: Boolean })
   haveCheckedAdminRights = false;
 
+  @property({ type: Boolean })
+  haveCheckedPromoterRights = false;
+
   @property({ type: String })
   lastSnackbarText: string | undefined;
 
@@ -532,6 +535,10 @@ export class YpPromotionApp extends YpBaseElementWithLogin {
       'yp-got-admin-rights',
       this._gotAdminRights.bind(this)
     );
+    this.addGlobalListener(
+      'yp-got-promoter-rights',
+      this._gotPromoterRights.bind(this)
+    );
   }
 
   _removeEventListeners() {
@@ -541,10 +548,18 @@ export class YpPromotionApp extends YpBaseElementWithLogin {
       'yp-got-admin-rights',
       this._gotAdminRights.bind(this)
     );
+    this.removeGlobalListener(
+      'yp-got-promoter-rights',
+      this._gotPromoterRights.bind(this)
+    );
   }
 
   _gotAdminRights(event: CustomEvent) {
     this.haveCheckedAdminRights = true;
+  }
+
+  _gotPromoterRights(event: CustomEvent) {
+    this.haveCheckedPromoterRights = true;
   }
 
   _setAdminConfirmed() {
@@ -574,6 +589,21 @@ export class YpPromotionApp extends YpBaseElementWithLogin {
     }
 
     if (!this.adminConfirmed) {
+      switch (this.collectionType) {
+        case 'community':
+          this.adminConfirmed = YpAccessHelpers.checkCommunityPromoterAccess(
+            this.collection as YpCommunityData
+          );
+          break;
+        case 'group':
+          this.adminConfirmed = YpAccessHelpers.checkGroupPromoterAccess(
+            this.collection as YpGroupData
+          );
+          break;
+      }
+    }
+
+    if (!this.adminConfirmed) {
       this.fire('yp-network-error', { message: this.t('unauthorized') });
     }
   }
@@ -588,10 +618,12 @@ export class YpPromotionApp extends YpBaseElementWithLogin {
     }
 
     if (
-      changedProperties.has('loggedInUser') ||
-      (changedProperties.has('haveCheckedAdminRights') &&
-        this.loggedInUser &&
-        this.haveCheckedAdminRights === true)
+      (changedProperties.has('loggedInUser') ||
+        changedProperties.has('haveCheckedAdminRights') ||
+        changedProperties.has('haveCheckedPromoterRights')) &&
+      this.loggedInUser &&
+      this.haveCheckedAdminRights === true &&
+      this.haveCheckedPromoterRights == true
     ) {
       this._getCollection();
     }

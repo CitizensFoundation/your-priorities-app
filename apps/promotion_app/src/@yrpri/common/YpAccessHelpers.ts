@@ -120,12 +120,42 @@ export class YpAccessHelpers {
     }
   }
 
+  static checkGroupPromoterAccess(group: YpGroupData): boolean {
+    if (group && window.appUser && window.appUser.promoterRights) {
+      return this._hasAccess(
+        group,
+        group.id,
+        window.appUser.promoterRights.GroupPromoters
+      );
+    } else if (group) {
+      return false;
+    } else {
+      console.warn('No group in hasAccess');
+      return false;
+    }
+  }
+
   static checkCommunityAccess(community: YpCommunityData): boolean {
     if (community && window.appUser && window.appUser.adminRights) {
       return this._hasAccess(
         community,
         community.id,
         window.appUser.adminRights.CommunityAdmins
+      );
+    } else if (community) {
+      return false;
+    } else {
+      console.warn('No community in hasAccess');
+      return false;
+    }
+  }
+
+  static checkCommunityPromoterAccess(community: YpCommunityData): boolean {
+    if (community && window.appUser && window.appUser.promoterRights) {
+      return this._hasAccess(
+        community,
+        community.id,
+        window.appUser.promoterRights.CommunityPromoters
       );
     } else if (community) {
       return false;

@@ -66,6 +66,8 @@ export class YpAppUser extends YpCodeBase {
 
   adminRights: YpAdminRights | undefined;
 
+  promoterRights: YpPromoterRights | undefined;
+
   memberships: YpMemberships | undefined;
 
   completeExternalLoginText: string | undefined;
@@ -257,6 +259,7 @@ export class YpAppUser extends YpCodeBase {
       console.debug('Do not fetch admin or memberships for anonymous users');
     } else {
       this.getAdminRights();
+      this.getPromoterRights();
       this.getMemberShips();
       this.toastLoginTextCombined =
         this.t('user.loginCompleteFor') + ' ' + this.user?.name;
@@ -500,10 +503,12 @@ export class YpAppUser extends YpCodeBase {
     this.isloggedin();
     this.getMemberShips();
     this.getAdminRights();
+    this.getPromoterRights();
   }
 
   recheckAdminRights() {
     this.getAdminRights();
+    this.getPromoterRights();
   }
 
   updateEndorsementForPost(postId: number, newEndorsement: YpEndorsement, group: YpGroupData | undefined = undefined) {
@@ -788,6 +793,23 @@ export class YpAppUser extends YpCodeBase {
       }
     }
     this.fireGlobal('yp-have-checked-admin-rights');
+  }
+
+  async getPromoterRights() {
+    const response = (await this.serverApi.getPromoterRights()) as
+      | YpPromoterRights
+      | void
+      | boolean;
+
+    if (response) {
+      this.promoterRights = response as YpPromoterRights;
+      this.fireGlobal('yp-got-promoter-rights', true);
+    } else {
+      if (this.promoterRights) {
+        this.promoterRights = undefined;
+        this.fireGlobal('yp-got-promoter-rights', false);
+      }
+    }
   }
 
   _updateMembershipsIndex(memberships: YpMemberships) {

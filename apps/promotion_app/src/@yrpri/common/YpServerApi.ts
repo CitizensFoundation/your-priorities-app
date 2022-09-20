@@ -18,6 +18,12 @@ export class YpServerApi extends YpServerApiBase {
     );
   }
 
+  public getPromoterRights() {
+    return this.fetchWrapper(
+      this.baseUrlPath + '/users/loggedInUser/promoterRights'
+    );
+  }
+
   public getMemberships() {
     return this.fetchWrapper(
       this.baseUrlPath + '/users/loggedInUser/memberships'

@@ -347,6 +347,11 @@ interface YpAdminRights {
   OrganizationAdmins: Array<YpOrganizationData>;
 }
 
+interface YpPromoterRights {
+  GroupPromoters: Array<YpCollectionData>;
+  CommunityPromoters: Array<YpCollectionData>;
+}
+
 interface YpDomainData extends YpCollectionData {
   domain_name: string;
   google_analytics_code?: string;
