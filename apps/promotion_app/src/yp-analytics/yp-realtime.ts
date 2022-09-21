@@ -92,7 +92,7 @@ export class YpRealtime extends PlausibleRealtime {
           pointHoverBackgroundColor="rgba(193, 87, 71)"
           prevPointHoverBackgroundColor="rgba(166,187,210,0.8)"
           prevBorderColor="rgba(210,187,166,0.5)"
-          chartHeigh="150"
+          .chartHeigh="${this.wide ? 200 : 300}"
         >
         </pl-goal-graph>
         <pl-goal-graph
@@ -108,7 +108,7 @@ export class YpRealtime extends PlausibleRealtime {
           .proxyUrl="${this.proxyUrl}"
           .timer="${this.timer}"
           .site="${this.site}"
-          chartHeigh="150"
+          .chartHeigh="${this.wide ? 200 : 300}"
         >
         </pl-goal-graph>
         <div
@@ -124,6 +124,7 @@ export class YpRealtime extends PlausibleRealtime {
           ></pl-sources-list>
           <pl-pages
             class="flex-col"
+            ?hidden="${this.collectionType=="post"}"
             .site="${this.site}"
             .query="${this.query}"
             .timer="${this.timer}"
