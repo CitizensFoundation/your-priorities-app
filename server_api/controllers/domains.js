@@ -716,6 +716,10 @@ router.get('/', function(req, res) {
     req.ypDomain.dataValues.ziggeoEnabled = process.env.ZIGGEO_ENABLED;
   }
 
+  if (process.env.LOGIN_CALLBACK_CUSTOM_HOSTNAME) {
+    req.ypDomain.dataValues.loginCallbackCustomHostName = process.env.LOGIN_CALLBACK_CUSTOM_HOSTNAME;
+  }
+
   const domain = {...req.ypDomain.dataValues}
 
   delete domain["secret_api_keys"];
