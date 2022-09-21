@@ -739,6 +739,12 @@ var updatePostData = function (req, post) {
     post.set('public_data.tags',req.body.tags);
   }
 
+  if (req.body.displayUserNameWithIdea && req.body.displayUserNameWithIdea!=="") {
+    post.set('public_data.displayUserNameWithIdea', true);
+  } else if (post.public_data && post.public_data.displayUserNameWithIdea === true) {
+    post.set('public_data.displayUserNameWithIdea', false);
+  }
+
   if (req.body.structuredAnswers && req.body.structuredAnswers!="") {
     post.set('public_data.structuredAnswers',req.body.structuredAnswers);
   }

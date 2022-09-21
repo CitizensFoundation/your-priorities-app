@@ -240,6 +240,8 @@ var updateGroupConfigParameters = function (req, group) {
   group.set('configuration.usePostTags', truthValueFromBody(req.body.usePostTags));
   group.set('configuration.closeNewsfeedSubmissions', truthValueFromBody(req.body.closeNewsfeedSubmissions));
 
+  group.set('configuration.askUserIfNameShouldBeDisplayed', truthValueFromBody(req.body.askUserIfNameShouldBeDisplayed));
+
   group.set('configuration.allowPostVideoUploads', truthValueFromBody(req.body.allowPostVideoUploads));
   group.set('configuration.allowPointVideoUploads', truthValueFromBody(req.body.allowPointVideoUploads));
   group.set('configuration.useVideoCover', truthValueFromBody(req.body.useVideoCover));

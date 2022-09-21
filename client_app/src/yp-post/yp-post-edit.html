@@ -204,6 +204,15 @@
         margin-top: -8px;
         margin-left: 8px;
       }
+
+      .displayUserNameWithIdea {
+        margin-top: 16px;
+        margin-bottom: 16px;
+      }
+
+      .displayUserNameWithIdeaText {
+          color: #555555;
+      }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
     <lite-signal on-lite-signal-yp-auto-translate="_autoTranslateEvent"></lite-signal>
@@ -333,6 +342,12 @@
 
                   </template>
                 </div>
+              </template>
+
+              <template is="dom-if" if="[[group.configuration.askUserIfNameShouldBeDisplayed]]">
+                <paper-checkbox class="displayUserNameWithIdea" name="displayUserNameWithIdea" checked$="{{post.public_data.displayUserNameWithIdea}}">
+                  <span class="displayUserNameWithIdeaText">[[t('doYouWantToDisplayYourName')]]</span>
+                </paper-checkbox>
               </template>
 
               <template is="dom-if" if="[[group.configuration.attachmentsEnabled]]">

@@ -59,7 +59,7 @@
                        content="[[post.name]]" content-id="[[post.id]]">
         </yp-magic-text>
       </div>
-      <template is="dom-if" if="[[post.Group.configuration.showWhoPostedPosts]]">
+      <template is="dom-if" if="[[showUser]]">
         <div class="layout horizontal userInfo">
           <yp-user-with-organization class="userWithOrg" hide-image title-date="[[post.user.name]]" user$="[[post.User]]"></yp-user-with-organization>
         </div>
@@ -74,6 +74,11 @@
       properties: {
         post: {
           type: Object
+        },
+
+        showUser: {
+          type: Boolean,
+          computed: '_showUser(post)'
         },
 
         topLeftRadius: {
@@ -94,6 +99,10 @@
         loggedInUser: {
           type: Object
         }
+      },
+
+      _showUser: function (post) {
+        return (post && (post.Group.configuration.showWhoPostedPosts || (post.public_data && post.public_data.displayUserNameWithIdea)))
       },
 
       _newPost: function () {
