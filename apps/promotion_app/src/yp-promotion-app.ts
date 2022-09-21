@@ -212,6 +212,7 @@ export class YpPromotionApp extends YpBaseElementWithLogin {
           .mainPageContainer {
             max-width: 100%;
             width: 100%;
+            margin-bottom: 96px;
           }
 
           yp-promotion-dashboard {

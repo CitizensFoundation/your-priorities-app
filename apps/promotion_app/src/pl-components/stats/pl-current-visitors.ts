@@ -27,6 +27,10 @@ export class PlausibleCurrentVisitors extends PlausibleBaseElementWithState {
       pl-link {
         width: 100%;
       }
+
+      [hidden] {
+        display: none !important;
+      }
     `];
   }
 
@@ -75,7 +79,7 @@ export class PlausibleCurrentVisitors extends PlausibleBaseElementWithState {
             <circle cx="8" cy="8" r="8" />
           </svg>
           ${this.currentVisitors}
-          <span class=" sm:inline-block"
+          <span ?hidden="${!this.wide}" class=" sm:inline-block"
             >${this.currentVisitors === 1? this.t('current visitor') : this.t('current visitors')}</span
           >
         </pl-link>

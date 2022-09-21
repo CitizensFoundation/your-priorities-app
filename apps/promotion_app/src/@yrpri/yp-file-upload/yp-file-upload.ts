@@ -286,7 +286,6 @@ export class YpFileUpload extends YpBaseElement {
 
   render() {
     return html`
-
       <div class="layout vertical center-center mainContainer">
         <div class="layout vertical center-center">
           <div class="layout horizontal center-center">

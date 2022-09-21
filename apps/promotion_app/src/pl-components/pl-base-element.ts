@@ -2,6 +2,7 @@ import { LitElement, css } from 'lit';
 import { property } from 'lit/decorators.js';
 import { Layouts } from 'lit-flexbox-literals';
 import { PlausibleStyles } from './plausibleStyles';
+import { installMediaQueryWatcher } from 'pwa-helpers/media-query';
 
 export class PlausibleBaseElement extends LitElement {
   @property({ type: String })
@@ -9,6 +10,9 @@ export class PlausibleBaseElement extends LitElement {
 
   @property({ type: Boolean })
   rtl = false;
+
+  @property({ type: Boolean })
+  wide = false;
 
   connectedCallback() {
     super.connectedCallback();
@@ -24,6 +28,10 @@ export class PlausibleBaseElement extends LitElement {
     } else {
       this.language = 'en';
     }
+
+    installMediaQueryWatcher(`(min-width: 900px)`, matches => {
+      this.wide = matches;
+    });
   }
 
   disconnectedCallback() {

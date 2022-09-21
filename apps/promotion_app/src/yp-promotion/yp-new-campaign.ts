@@ -31,6 +31,8 @@ import { YpCollectionHelpers } from '../@yrpri/common/YpCollectionHelpers';
 import '../@yrpri/common/yp-image.js';
 import { YpFormattingHelpers } from '../@yrpri/common/YpFormattingHelpers';
 
+import '../@yrpri/yp-file-upload/yp-file-upload-icon.js';
+
 @customElement('yp-new-campaign')
 export class YpNewCampaign extends YpBaseElementWithLogin {
   @property({ type: String })
@@ -47,6 +49,9 @@ export class YpNewCampaign extends YpBaseElementWithLogin {
 
   @property({ type: Boolean })
   previewEnabled = false;
+
+  @property({ type: String })
+  uploadedImageUrl: string | undefined;
 
   @property({ type: String })
   targetAudience: string | undefined;
@@ -66,7 +71,6 @@ export class YpNewCampaign extends YpBaseElementWithLogin {
         }
 
         @media (max-width: 1100px) {
-
         }
 
         mwc-dialog div,
@@ -156,9 +160,20 @@ export class YpNewCampaign extends YpBaseElementWithLogin {
         }
 
         .linkTitle {
-          font-weight:  bold;
+          font-weight: bold;
           margin-bottom: 8px;
           margin-top: 6px;
+        }
+
+        .linkImage {
+        }
+
+        yp-file-upload-icon {
+          top: 16px;
+          right: 16px;
+          margin-bottom: -56px;
+          margin-left: 16px;
+          z-index: 8;
         }
       `,
     ];
@@ -216,6 +231,7 @@ export class YpNewCampaign extends YpBaseElementWithLogin {
       targetAudience: this.targetAudience,
       promotionText: this.promotionText,
       name: this.campaignName,
+      shareImageUrl: this.uploadedImageUrl,
       mediums: this.getMediums(),
     });
     this.close();
@@ -310,6 +326,19 @@ export class YpNewCampaign extends YpBaseElementWithLogin {
     `;
   }
 
+  imageUploadCompleted(event: CustomEvent) {
+    const file = JSON.parse(event.detail.xhr.response);
+    const formats = JSON.parse(file.formats);
+    this.uploadedImageUrl = formats[0];
+  }
+
+  get collectionImageUrl() {
+    return this.uploadedImageUrl || YpCollectionHelpers.logoImagePath(
+      this.collectionType,
+      this.collection!
+    )
+  }
+
   renderPreview() {
     return html`
       <div class="layout vertical center-center">
@@ -317,13 +346,14 @@ export class YpNewCampaign extends YpBaseElementWithLogin {
         <div class="preview">
           <div class="previewPromotionText">${this.promotionText}</div>
           <div class="linkImage">
+            <yp-file-upload-icon
+              target="/api/images?itemType=group-logo" method="POST"
+              @success="${this.imageUploadCompleted}"
+            ></yp-file-upload-icon>
             <yp-image
               class="collectionLogoImage"
               sizing="cover"
-              .src="${YpCollectionHelpers.logoImagePath(
-                this.collectionType,
-                this.collection!
-              )}"
+              .src="${this.collectionImageUrl}"
             ></yp-image>
           </div>
           <div class="linkContentPanel">
@@ -374,11 +404,13 @@ export class YpNewCampaign extends YpBaseElementWithLogin {
         modal
         heading="${this.t('newTrackingPromotion')}"
       >
-        <div class="layout horizontal">
-          <div class="layout ${this.wide ? 'vertical' : ''}">
-            ${this.renderTextInputs()} ${this.renderPreview()}
+        <div class="layout ${this.wide ? 'horizontal' : 'vertical'}">
+          <div class="layout vertical">
+            ${this.renderTextInputs()}
+            ${!this.wide ? this.renderAdMediums() : nothing}
+            ${this.renderPreview()}
           </div>
-          ${this.renderAdMediums()}
+          ${this.wide ? this.renderAdMediums() : nothing}
         </div>
         <md-text-button
           .label="${this.t('cancel')}"

@@ -53,6 +53,7 @@ export class YpCampaignManager extends YpBaseElementWithLogin {
       utm_source: this.collection!.name,
       audience: data.targetAudience,
       promotionText: data.promotionText,
+      shareImageUrl: data.shareImageUrl,
       mediums: [] as YpCampaignMediumData[],
     } as YpCampaignConfigurationData;
 

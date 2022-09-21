@@ -8,6 +8,7 @@ interface YpCampaignConfigurationData {
   utm_term?: string;
   promotionText: string;
   language?: string;
+  shareImageUrl?: string;
   mediums: YpCampaignMediumData[];
 }
 
@@ -35,6 +36,7 @@ interface YpNewCampaignData {
   targetAudience?: string;
   name: string;
   promotionText: string;
+  shareImageUrl?: string;
 }
 
 interface YpCampaignAnalyticsMediumData extends YpCampaignMediumData {
