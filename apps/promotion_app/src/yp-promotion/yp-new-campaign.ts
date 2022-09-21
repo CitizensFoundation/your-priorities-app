@@ -90,6 +90,12 @@ export class YpNewCampaign extends YpBaseElementWithLogin {
           height: 197px;
         }
 
+        @media (max-width: 1100px) {
+          .collectionLogoImage {
+            width: 100%;
+          }
+        }
+
         .headerText {
           color: var(--md-sys-color-on-surface);
           font-size: 18px;
@@ -123,6 +129,15 @@ export class YpNewCampaign extends YpBaseElementWithLogin {
           );
         }
 
+        @media (max-width: 1100px) {
+          md-outlined-text-field {
+            width: 300px;
+          }
+          mwc-textarea {
+            width: 300px;
+          }
+        }
+
         mwc-textarea.rounded {
           --mdc-shape-small: 4px;
         }
@@ -145,7 +160,8 @@ export class YpNewCampaign extends YpBaseElementWithLogin {
         .preview {
           background-color: var(--md-sys-color-container);
           color: var(--md-sys-color-on-container);
-          padding: 8px;
+          padding-top: 8px;
+          padding-bottom: 8px;
           width: 350px;
         }
 
@@ -157,6 +173,12 @@ export class YpNewCampaign extends YpBaseElementWithLogin {
 
         .previewPromotionText {
           margin-bottom: 8px;
+        }
+
+        @media (max-width: 1100px) {
+          .previewPromotionText {
+            padding: 16px;
+          }
         }
 
         .linkTitle {

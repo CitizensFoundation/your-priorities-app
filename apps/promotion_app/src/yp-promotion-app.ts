@@ -231,8 +231,8 @@ export class YpPromotionApp extends YpBaseElementWithLogin {
     window.appGlobals = new YpAppGlobals(window.serverApi);
     window.appUser = new YpAppUser(window.serverApi);
 
-    //window.appGlobals.setupTranslationSystem('/promotion');
-    window.appGlobals.setupTranslationSystem();
+    window.appGlobals.setupTranslationSystem('/promotion');
+    //window.appGlobals.setupTranslationSystem();
 
     let pathname = window.location.pathname;
     if (pathname.endsWith('/'))
@@ -536,6 +536,7 @@ export class YpPromotionApp extends YpBaseElementWithLogin {
 
   _setupEventListeners() {
     this.addListener('app-error', this._appError);
+    this.addListener('exit-to-app', this.exitToMainApp);
     this.addListener('display-snackbar', this._displaySnackbar);
     this.addGlobalListener('yp-network-error', this._appError.bind(this));
     this.addGlobalListener(
@@ -550,6 +551,7 @@ export class YpPromotionApp extends YpBaseElementWithLogin {
 
   _removeEventListeners() {
     this.removeGlobalListener('yp-network-error', this._appError.bind(this));
+    this.removeListener('exit-to-app', this.exitToMainApp);
     this.removeListener('display-snackbar', this._displaySnackbar);
     this.removeGlobalListener(
       'yp-got-admin-rights',

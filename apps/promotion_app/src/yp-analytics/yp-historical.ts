@@ -8,6 +8,8 @@ import '../pl-components/stats/graph/pl-goal-graph.js';
 
 import './yp-campaigns-analytics.js';
 
+import '@material/web/iconbutton/standard-icon-button.js';
+
 @customElement('yp-historical')
 export class YpHistorical extends PlausibleHistorical {
   @property({ type: Object })
@@ -20,12 +22,7 @@ export class YpHistorical extends PlausibleHistorical {
   collectionId!: number;
 
   static get styles() {
-    return [
-      ...super.styles,
-      css`
-
-      `,
-    ];
+    return [...super.styles, css``];
   }
 
   render() {
@@ -42,6 +39,14 @@ export class YpHistorical extends PlausibleHistorical {
         >
           <div class="items-center w-full flex">
             <div class="flex items-center w-full">
+              ${!this.wide
+                ? html`
+                    <md-standard-icon-button
+                      icon="close"
+                      @click="${() => this.fire('exit-to-app')}"
+                    ></md-standard-icon-button>
+                  `
+                : nothing}
               <pl-current-visitors
                 .timer=${this.timer}
                 .site=${this.site}
@@ -79,10 +84,11 @@ export class YpHistorical extends PlausibleHistorical {
           .collectionId="${this.collectionId}"
         ></yp-campaigns-analytics>
         <pl-goal-graph
-          .events="${['newPost - completed',
-                    'newPointAgainst - completed',
-                    'newPointFor - completed'
-                ]}"
+          .events="${[
+            'newPost - completed',
+            'newPointAgainst - completed',
+            'newPointFor - completed',
+          ]}"
           .chartTitle="${this.t('Users who added content')}"
           .query="${this.query}"
           .proxyUrl="${this.proxyUrl}"
@@ -105,7 +111,7 @@ export class YpHistorical extends PlausibleHistorical {
             'endorse_down - completed',
             'pointHelpful - completed',
             'pointNotHelpful - completed',
-            'post.ratings - add'
+            'post.ratings - add',
           ]}"
           .chartTitle="${this.t('Users who rated content')}"
           .query="${this.query}"
@@ -115,7 +121,9 @@ export class YpHistorical extends PlausibleHistorical {
         >
         </pl-goal-graph>
 
-        <div class="items-start justify-between block w-full md:flex flex flex-wrap">
+        <div
+          class="items-start justify-between block w-full md:flex flex flex-wrap"
+        >
           <pl-sources-list
             class="flex-col"
             .site="${this.site}"
@@ -130,7 +138,9 @@ export class YpHistorical extends PlausibleHistorical {
             .proxyUrl="${this.proxyUrl}"
           ></pl-pages>
         </div>
-        <div class="items-start justify-between block w-full md:flex flex flex-wrap">
+        <div
+          class="items-start justify-between block w-full md:flex flex flex-wrap"
+        >
           <pl-locations
             .site="${this.site}"
             .query="${this.query}"
