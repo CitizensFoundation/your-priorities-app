@@ -1,5 +1,5 @@
 {
-  "doYouWantToDisplayYourName": "Viltu birta nafnið þitt með hugmynd?",
+  "doYouWantToDisplayYourName": "Birta nafn með hugmynd",
   "askUserIfNameShouldBeDisplayed": "Notandi velur birtingu á nafni",
   "analyticsAndPromotions": "Notkun og kynningar",
   "addPromotionUser": "Bæta við",
@@ -93,7 +93,7 @@
   "ofNumber": "af",
   "maxNumberOfGroupVotes": "Fjöldi atkvæða á notanda",
   "hideSharing": "Fela deilingar hnapp",
-  "documentOnlyVisibleToAdmins": "Viðhengi aðeins sýnilegt vefstjórum.",
+  "documentOnlyVisibleToAdmins": "Viðhengi aðeins sýnilegt starfsfólki.",
   "public": "Opið",
   "closed": "Lokað",
   "secret": "Leynilegt",
