@@ -231,8 +231,11 @@ export class YpPromotionApp extends YpBaseElementWithLogin {
     window.appGlobals = new YpAppGlobals(window.serverApi);
     window.appUser = new YpAppUser(window.serverApi);
 
-    //window.appGlobals.setupTranslationSystem('/promotion');
-    window.appGlobals.setupTranslationSystem();
+    if (window.location.href.indexOf('localhost:9010') > -1) {
+      window.appGlobals.setupTranslationSystem();
+    } else {
+      window.appGlobals.setupTranslationSystem('/promotion');
+    }
 
     let pathname = window.location.pathname;
     if (pathname.endsWith('/'))

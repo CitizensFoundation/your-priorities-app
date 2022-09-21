@@ -181,6 +181,10 @@ export class YpNewCampaign extends YpBaseElementWithLogin {
           padding: 0;
         }
 
+        .linkDescription {
+          padding: 8px;
+        }
+
         .previewPromotionText {
           margin-bottom: 8px;
         }
@@ -195,18 +199,15 @@ export class YpNewCampaign extends YpBaseElementWithLogin {
           .previewPromotionText {
             padding: 16px;
           }
-
-          .linkContentPanel {
-            padding: 8px;
-            padding-top: 8px;
-            padding-bottom: 8px;
-          }
         }
 
         .linkTitle {
           font-weight: bold;
           margin-bottom: 8px;
           margin-top: 6px;
+          padding-left: 8px;
+          padding-right: 8px;
+          padding-top: 8px;
         }
 
         .linkImage {
@@ -216,7 +217,7 @@ export class YpNewCampaign extends YpBaseElementWithLogin {
           top: 16px;
           right: 16px;
           margin-bottom: -56px;
-          margin-left: 16px;
+          margin-left: 8px;
           z-index: 8;
         }
       `,
