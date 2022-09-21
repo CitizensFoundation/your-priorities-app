@@ -208,7 +208,7 @@ export class PlausibleFilters extends PlausibleBaseElementWithState {
             <span class="inline-block w-full truncate"
               >${this.filterText(key, value)}</span
             >
-            <div
+            <div hidden
               class="w-4 h-4 ml-1 cursor-pointer group-hover:text-indigo-700 dark:group-hover:text-indigo-500"
             >
               ${PencilIcon}

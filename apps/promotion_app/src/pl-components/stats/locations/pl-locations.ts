@@ -92,7 +92,7 @@ export class PlausableLocations extends PlausibleBaseElementWithState {
         .fetchDataFunction=${fetchData}
         .filter=${{ country: 'code', country_name: 'name' }}
         @click=${() => this.onCountryFilter('countries')}
-        keyLabel="Country"
+        .keyLabel=${this.t("Country")}
         .detailsLink=${sitePath(this.site, '/countries')}
         .query=${this.query}
         .timer=${this.timer}
@@ -121,7 +121,7 @@ export class PlausableLocations extends PlausibleBaseElementWithState {
         .fetchDataFunction=${fetchData}
         .filter=${{ region: 'code', region_name: 'name' }}
         @click=${this.onRegionFilter}
-        keyLabel="Region"
+        .keyLabel=${this.t("Region")}
         .detailsLink=${sitePath(this.site, '/regions')}
         .query=${this.query}
         .renderIcon=${renderIcon}
@@ -145,7 +145,7 @@ export class PlausableLocations extends PlausibleBaseElementWithState {
       <pl-list-report
         .fetchDataFunction=${fetchData}
         .filter=${{ city: 'code', city_name: 'name' }}
-        keyLabel="City"
+        .keyLabel=${this.t("City")}
         .detailsLink=${sitePath(this.site, '/cities')}
         .query=${this.query}
         .renderIcon=${renderIcon}
@@ -190,7 +190,7 @@ export class PlausableLocations extends PlausibleBaseElementWithState {
         <li
           class="inline-block h-5 text-indigo-700 dark:text-indigo-500 font-bold active-prop-heading"
         >
-          ${name}
+          ${this.t(name)}
         </li>
       `;
     } else {
@@ -199,7 +199,7 @@ export class PlausableLocations extends PlausibleBaseElementWithState {
           class="hover:text-indigo-600 cursor-pointer"
           @click=${() => this.setMode(mode)}
         >
-          ${name}
+          ${this.t(name)}
         </li>
       `;
     }
@@ -215,7 +215,7 @@ export class PlausableLocations extends PlausibleBaseElementWithState {
             <h3 class="font-bold dark:text-gray-100">
               ${
                 //@ts-ignore
-                this.labelFor[this.mode] || 'Locations'
+                this.t(this.labelFor[this.mode]) || this.t('Locations')
               }
             </h3>
             <ul

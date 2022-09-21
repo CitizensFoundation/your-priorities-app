@@ -76,7 +76,7 @@ export class PlausablePages extends PlausibleBaseElementWithState {
         <li
           class="inline-block h-5 text-indigo-700 dark:text-indigo-500 font-bold active-prop-heading"
         >
-          ${name}
+          ${this.t(name)}
         </li>
       `;
     } else {
@@ -85,7 +85,7 @@ export class PlausablePages extends PlausibleBaseElementWithState {
           class="hover:text-indigo-600 cursor-pointer"
           @click=${() => this.setMode(mode)}
         >
-          ${name}
+          ${this.t(name)}
         </li>
       `;
     }
@@ -104,7 +104,7 @@ export class PlausablePages extends PlausibleBaseElementWithState {
               <h3 class="font-bold dark:text-gray-100">
                 ${
                   //@ts-ignore
-                  this.labelFor[this.mode] || 'Page Visits'
+                  this.t(this.labelFor[this.mode]) || this.t('Page Visits')
                 }
               </h3>
               <div class="flex"></div>

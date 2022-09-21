@@ -75,6 +75,10 @@ export class PlausibleConversions extends PlausibleBaseElementWithState {
           pl-bar {
             max-width: 70%;
           }
+
+          .padOnMobile {
+            margin-right: 16px;
+          }
         }
 
         pl-bar {
@@ -165,11 +169,11 @@ export class PlausibleConversions extends PlausibleBaseElementWithState {
         <div
           class="flex items-center justify-between mt-3 mb-2 text-xs font-bold tracking-wide text-gray-500 dark:text-gray-400"
         >
-          <span>Goal</span>
+          <span>${this.t("Goal")}</span>
           <div class="text-right">
-            <span class="inline-block w-20">Uniques</span>
+            <span class="inline-block w-20 padOnMobile">${this.t("Uniques")}</span>
             ${this.viewport && this.viewport > MOBILE_UPPER_WIDTH
-              ? html`<span class="inline-block w-20">Total</span>`
+              ? html`<span class="inline-block w-20">${this.t("Total")}</span>`
               : nothing}
             <span class="inline-block w-20">CR</span>
           </div>

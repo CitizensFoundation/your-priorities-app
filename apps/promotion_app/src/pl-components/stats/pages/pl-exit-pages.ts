@@ -19,9 +19,9 @@ export class PlausableExitPages extends PlausableBasePages {
       <pl-list-report
         .fetchDataFunction=${this.fetchData}
         .filter=${{ entry_page: 'name' }}
-        keyLabel="Exit page"
+        .keyLabel="${this.t("Exit page")}"
         .proxyUrl="${this.proxyUrl}"
-        valueLabel="Unique Exits"
+        .valueLabel=${this.t("Unique Exits")}
         valueKey="unique_exits"
         .pagePath="${this.pagePath}"
         .site="${this.site}"

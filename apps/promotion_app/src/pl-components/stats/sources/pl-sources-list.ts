@@ -43,11 +43,11 @@ export class PlausibleSourcesList extends PlausibleBaseElementWithState {
       `;
     } else {
       return html`
-        <pl-sources-utm
+       <pl-sources-utm
           .tab=${this.tab}
           .proxyUrl=${this.proxyUrl}
-          .query=${this.query}
           .proxyFaviconBaseUrl="${this.proxyFaviconBaseUrl}"
+          .query=${this.query}
           .site=${this.site}
           .timer="${this.timer}"
           @tab-changed=${this.tabChanged}

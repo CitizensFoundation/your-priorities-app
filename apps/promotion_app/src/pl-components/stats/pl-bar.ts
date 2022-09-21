@@ -45,6 +45,10 @@ export class PlausibleBar extends PlausibleBaseElement {
         .faviconMargin {
           margin-left: 30px;
         }
+
+        .rounded {
+          border-radius: 12px;
+        }
       `,
 
       css``,
@@ -59,7 +63,7 @@ export class PlausibleBar extends PlausibleBaseElement {
         .not-used-old-style="max-width: calc(100% - ${this.maxWidthDeduction});"
       >
         <div
-          class="${`absolute top-0 left-0 h-full test ${
+          class="${`absolute top-0 left-0 h-full test rounded ${
             this.bg || ''
           }`}"
           .style="width: ${width}%;"

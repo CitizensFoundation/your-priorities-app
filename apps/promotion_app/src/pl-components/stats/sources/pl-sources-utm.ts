@@ -15,6 +15,7 @@ export class PlausibleSourcesUtm extends PlausibleSourcesBase {
   to: string | undefined = undefined;
 
   connectedCallback() {
+    super.connectedCallback();
     if (this.timer) this.timer.onTick(this.fetchReferrers.bind(this));
   }
 
@@ -42,7 +43,7 @@ export class PlausibleSourcesUtm extends PlausibleSourcesBase {
     return html`
           <div
         class="flex items-center justify-between my-1 text-sm"
-        key={referrer.name}
+        key=${referrer.name}
       >
         <pl-bar
           .count=${referrer.visitors}
@@ -82,7 +83,7 @@ export class PlausibleSourcesUtm extends PlausibleSourcesBase {
           <div
             class="flex items-center justify-between mt-3 mb-2 text-xs font-bold tracking-wide text-gray-500 dark:text-gray-400"
           >
-            <span>{UTM_TAGS[this.tab].label}</span>
+            <span>${UTM_TAGS[this.tab].label}</span>
             <div class="text-right">
               <span class="inline-block w-20">{this.label()}</span>
               ${this.showConversionRate
@@ -91,9 +92,9 @@ export class PlausibleSourcesUtm extends PlausibleSourcesBase {
             </div>
           </div>
 
-          <FlipMove class="flex-grow">
+          <div class="flex-grow">
             ${this.referrers.map(r => this.renderReferrer(r))}
-          </FlipMove>
+          </div>
           <pl-more-link
             .site=${this.site}
             .list=${this.referrers}
@@ -121,9 +122,9 @@ export class PlausibleSourcesUtm extends PlausibleSourcesBase {
             }`
         : nothing}
 
-      <FadeIn ?show="${!this.loading}" class="flex flex-col flex-grow">
+      <pl-fade-in ?show="${!this.loading}" class="flex flex-col flex-grow">
         ${this.renderList()}
-      </FadeIn>
+       </pl-fade-in>
     `;
   }
 

@@ -51,7 +51,7 @@ export class PlausableDevices extends PlausibleBaseElementWithState {
         .fetchDataFunction=${fetchData}
         .filter=${{ browser: 'name' }}
         .timer="${this.timer}"
-        keyLabel="Browser"
+        .keyLabel="${this.t("Browser")}"
         .query=${this.query}
       ></pl-list-report>
     `;
@@ -71,7 +71,7 @@ export class PlausableDevices extends PlausibleBaseElementWithState {
         .fetchDataFunction=${fetchData}
         .timer="${this.timer}"
         .filter=${{ browser_version: 'name' }}
-        .keyLabel=${this.query.filters.browser + ' version'}
+        .keyLabel=${this.query.filters.browser + ` ${this.t("version")}`}
         .query=${this.query}
       ></pl-list-report>
     `;
@@ -91,7 +91,7 @@ export class PlausableDevices extends PlausibleBaseElementWithState {
         .fetchDataFunction=${fetchData}
         .timer="${this.timer}"
         .filter=${{ os: 'name' }}
-        keyLabel="Operating system"
+        .keyLabel=${this.t("Operating system")}
         .query=${this.query}
       ></pl-list-report>
     `;
@@ -111,7 +111,7 @@ export class PlausableDevices extends PlausibleBaseElementWithState {
         .fetchDataFunction=${fetchData}
         .timer="${this.timer}"
         .filter=${{ os_version: 'name' }}
-        .keyLabel=${this.query.filters.os + ' version'}
+        .keyLabel=${this.query.filters.os + ` ${this.t("version")}`}
         .query=${this.query}
       ></pl-list-report>
     `;
@@ -138,7 +138,7 @@ export class PlausableDevices extends PlausibleBaseElementWithState {
       <pl-list-report
         .fetchDataFunction=${fetchData}
         .filter=${{ screen: 'name' }}
-        keyLabel="Screen size"
+        .keyLabel=${this.t("Screen size")}
         .timer="${this.timer}"
         .query=${this.query}
         .renderIcon=${renderIcon}
@@ -260,7 +260,7 @@ export class PlausableDevices extends PlausibleBaseElementWithState {
         <li
           class="inline-block h-5 font-bold text-indigo-700 active-prop-heading dark:text-indigo-500"
         >
-          ${name}
+          ${this.t(name)}
         </li>
       `;
     } else {
@@ -269,7 +269,7 @@ export class PlausableDevices extends PlausibleBaseElementWithState {
           class="cursor-pointer hover:text-indigo-600"
           @click=${() => this.setMode(mode)}
         >
-          ${name}
+          ${this.t(name)}
         </li>
       `;
     }
@@ -282,7 +282,7 @@ export class PlausableDevices extends PlausibleBaseElementWithState {
           class="stats-item-header flex flex-col flex-grow relative p-4 bg-white rounded shadow-xl dark:bg-gray-825"
         >
           <div class="flex justify-between w-full">
-            <h3 class="font-bold dark:text-gray-100">Devices</h3>
+            <h3 class="font-bold dark:text-gray-100">${this.t("Devices")}</h3>
             <ul
               class="flex text-xs font-medium text-gray-500 dark:text-gray-400 space-x-2"
             >

@@ -19,7 +19,7 @@ export class PlausableTopPages extends PlausableBasePages {
       <pl-list-report
         .fetchDataFunction=${this.fetchData}
         .filter=${{ entry_page: 'name' }}
-        keyLabel="Page"
+        .keyLabel=${this.t("Page")}
         .timer="${this.timer}"
         .proxyUrl="${this.proxyUrl}"
         .detailsLink=${url.sitePath(this.site, this.pagePath)}

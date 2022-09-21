@@ -19,9 +19,9 @@ export class PlausableEntryPages extends PlausableBasePages {
       <pl-list-report
         .fetchDataFunction=${this.fetchData}
         .filter=${{ entry_page: 'name' }}
-        keyLabel="Entry page"
+        .keyLabel=${this.t("Entry page")}
         .proxyUrl="${this.proxyUrl}"
-        valueLabel="Unique Entrances"
+        .valueLabel=${this.t("Unique Entrances")}
         valueKey="unique_entrances"
         .pagePath="${this.pagePath}"
         .timer="${this.timer}"
