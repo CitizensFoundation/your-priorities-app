@@ -1118,11 +1118,11 @@ router.put('/:domainId/plausibleStatsProxy', auth.can('edit domain'), async (req
   }
 });
 
-router.get('/:postId/get_campaigns', auth.can('edit domain'), async (req, res) => {
+router.get('/:domainId/get_campaigns', auth.can('edit domain'), async (req, res) => {
   try {
     const campaigns = await models.Campaign.findAll({
       where: {
-        domain_id: req.params.postId,
+        domain_id: req.params.domainId,
         active: true
       },
       order: [
