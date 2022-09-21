@@ -132,7 +132,7 @@ export class YpHistorical extends PlausibleHistorical {
             .proxyFaviconBaseUrl="${this.proxyFaviconBaseUrl}"
           ></pl-sources-list>
           <pl-pages
-            ?hidden="${this.collectionType=="post"}"
+            ?hidden="${this.collectionType=="post" && !this.wide}"
             class="flex-col"
             .site="${this.site}"
             .query="${this.query}"

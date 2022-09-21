@@ -124,7 +124,7 @@ export class YpRealtime extends PlausibleRealtime {
           ></pl-sources-list>
           <pl-pages
             class="flex-col"
-            ?hidden="${this.collectionType=="post"}"
+            ?hidden="${this.collectionType=="post" && !this.wide}"
             .site="${this.site}"
             .query="${this.query}"
             .timer="${this.timer}"
