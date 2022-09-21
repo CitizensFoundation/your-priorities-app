@@ -131,16 +131,26 @@ export class YpNewCampaign extends YpBaseElementWithLogin {
 
         @media (max-width: 1100px) {
           md-outlined-text-field {
-            width: 300px;
+            width: 290px;
           }
           mwc-textarea {
-            width: 300px;
+            width: 290px;
+          }
+        }
+
+        @media (max-width: 400px) {
+          md-outlined-text-field {
+            width: 270px;
+          }
+          mwc-textarea {
+            width: 270px;
           }
         }
 
         mwc-textarea.rounded {
           --mdc-shape-small: 4px;
         }
+
         .formField {
           margin-top: 16px;
         }
@@ -168,7 +178,7 @@ export class YpNewCampaign extends YpBaseElementWithLogin {
         .linkContentPanel {
           background-color: var(--md-sys-color-secondary-container);
           color: var(--md-sys-color-on-secondary-container);
-          padding: 8px;
+          padding: 0;
         }
 
         .previewPromotionText {
@@ -176,8 +186,20 @@ export class YpNewCampaign extends YpBaseElementWithLogin {
         }
 
         @media (max-width: 1100px) {
+          .preview {
+            width: 100%;
+            margin-left: -16px;
+            margin-right: -16px;
+          }
+
           .previewPromotionText {
             padding: 16px;
+          }
+
+          .linkContentPanel {
+            padding: 8px;
+            padding-top: 8px;
+            padding-bottom: 8px;
           }
         }
 

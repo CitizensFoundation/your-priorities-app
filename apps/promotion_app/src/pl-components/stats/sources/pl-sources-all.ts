@@ -48,7 +48,7 @@ export class PlausibleSourcesAll extends PlausibleSourcesBase {
         <pl-bar
           .count=${referrer.visitors}
           .all=${this.referrers}
-          bg="bg-blue-50 dark:bg-gray-500 dark:bg-opacity-15"
+          bg="bg-blue-50 dark:bg-gray-500 dark:bg-opacity-15 faviconMargin"
           .maxWidthDeduction=${maxWidthDeduction}
         >
           <span

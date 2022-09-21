@@ -39,7 +39,11 @@ export class PlausibleBar extends PlausibleBaseElement {
       ...super.styles,
       css`
         :host {
-          width: 75%;
+          width: 90%;
+        }
+
+        .faviconMargin {
+          margin-left: 30px;
         }
       `,
 

@@ -231,8 +231,8 @@ export class YpPromotionApp extends YpBaseElementWithLogin {
     window.appGlobals = new YpAppGlobals(window.serverApi);
     window.appUser = new YpAppUser(window.serverApi);
 
-    window.appGlobals.setupTranslationSystem('/promotion');
-    //window.appGlobals.setupTranslationSystem();
+    //window.appGlobals.setupTranslationSystem('/promotion');
+    window.appGlobals.setupTranslationSystem();
 
     let pathname = window.location.pathname;
     if (pathname.endsWith('/'))
