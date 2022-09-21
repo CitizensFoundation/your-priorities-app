@@ -97,7 +97,7 @@ export class YpCampaignAnalysis extends YpCampaign {
           stat => html`
             <div class="layout horizontal">
               <div class="column self-start">
-                <div class="statLabel">${stat.name}</div>
+                <div class="statLabel">${this.t(stat.name)}</div>
               </div>
               <div class="flex"></div>
               <div class="column self-end">
@@ -128,6 +128,15 @@ export class YpCampaignAnalysis extends YpCampaign {
     `;
   }
 
+  get orderedMedium() {
+    return this.campaign.configuration.mediums.sort((a, b) => {
+      return (
+        (b as YpCampaignAnalyticsMediumData).topStats[0].value -
+        (a as YpCampaignAnalyticsMediumData).topStats[0].value
+      );
+    });
+  }
+
   render() {
     return html`
       <div class="layout vertical mainContainer">
@@ -137,7 +146,7 @@ export class YpCampaignAnalysis extends YpCampaign {
           </div>
         </div>
         <div class="layout horizontal mediumsContainer">
-          ${this.campaign.configuration.mediums.map(medium =>
+          ${this.orderedMedium.map(medium =>
             this.renderMedium(medium as YpCampaignAnalyticsMediumData)
           )}
         </div>
