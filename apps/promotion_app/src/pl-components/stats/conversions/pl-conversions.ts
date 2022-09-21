@@ -73,8 +73,12 @@ export class PlausibleConversions extends PlausibleBaseElementWithState {
           }
 
           pl-bar {
-            max-width: 80%;
+            max-width: 70%;
           }
+        }
+
+        pl-bar {
+            max-width: 70%;
         }
       `
     ];
