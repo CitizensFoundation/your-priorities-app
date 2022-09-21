@@ -84,6 +84,7 @@ export class PlausibleSourcesBase extends PlausibleBaseElementWithState {
 
   setTab(tab: PlausibleSourcesTabOptions) {
     this.tab = tab;
+    this.open = false;
   }
 
   faviconUrl(referrer: string) {
@@ -92,6 +93,16 @@ export class PlausibleSourcesBase extends PlausibleBaseElementWithState {
     } else {
       return `/favicon/sources/${encodeURIComponent(referrer)}`;
     }
+  }
+  static get styles() {
+    return [...super.styles,css`
+
+    `];
+  }
+
+  setAllTab() {
+    this.fire('tab-changed', 'all');
+    this.open = false;
   }
 
   renderTabs() {
@@ -108,7 +119,7 @@ export class PlausibleSourcesBase extends PlausibleBaseElementWithState {
     ];
     let buttonText = UTM_TAGS[this.tab]
       ? this.t(UTM_TAGS[this.tab].label)
-      : this.t('Campaigns');
+      : this.t('UTM');
 
     return html`
       <div
@@ -116,7 +127,7 @@ export class PlausibleSourcesBase extends PlausibleBaseElementWithState {
       >
         <div
           class=${this.tab === 'all' ? activeClass : defaultClass}
-          @click=${() => this.setTab('all')}
+          @click=${this.setAllTab}
         >
           ${this.t("All")}
         </div>
@@ -128,7 +139,7 @@ export class PlausibleSourcesBase extends PlausibleBaseElementWithState {
               @click="${this.toggleOpen}"
             >
               <span
-                style="width: 4.2rem"
+                style="width: ${buttonText == "UTM" ? "1.8rem" : "4.5rem"}"
                 class="${this.tab.startsWith('utm_')
                   ? activeClass
                   : defaultClass}"
@@ -141,7 +152,7 @@ export class PlausibleSourcesBase extends PlausibleBaseElementWithState {
           </div>
 
           <div
-            ?hidden="${this.open}"
+            ?hidden="${!this.open}"
             class="text-left origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5 focus:outline-none z-10"
           >
             <div class="py-1">

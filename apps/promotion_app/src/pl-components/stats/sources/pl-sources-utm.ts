@@ -53,12 +53,12 @@ export class PlausibleSourcesUtm extends PlausibleSourcesBase {
         >
 
           <span class="flex px-2 py-1.5 dark:text-gray-300 relative z-2 break-all">
-            <Link
+            <pl-link
               class="md:truncate block hover:underline"
               .to=${{ search: url.setQuerySearch(this.tab, referrer.name) }}
             >
               ${referrer.name}
-            </Link>
+           </pl-link>
           </span>
         </pl-bar>
         <span class="font-medium dark:text-gray-200 w-20 text-right" tooltip=${
@@ -67,7 +67,7 @@ export class PlausibleSourcesUtm extends PlausibleSourcesBase {
         ${
           this.showConversionRate
             ? html`<span class="font-medium dark:text-gray-200 w-20 text-right"
-                >{referrer.conversion_rate}%</span
+                >${referrer.conversion_rate}%</span
               >`
             : nothing
         }
@@ -85,7 +85,7 @@ export class PlausibleSourcesUtm extends PlausibleSourcesBase {
           >
             <span>${UTM_TAGS[this.tab].label}</span>
             <div class="text-right">
-              <span class="inline-block w-20">{this.label()}</span>
+              <span class="inline-block w-20">${this.label}</span>
               ${this.showConversionRate
                 ? html`<span class="inline-block w-20">CR</span>`
                 : nothing}
