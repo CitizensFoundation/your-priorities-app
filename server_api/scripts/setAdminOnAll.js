@@ -20,7 +20,9 @@ async.series([
     });
   },
   function(callback) {
-    models.Domain.findAll({}).then(function (models) {
+    models.Domain.findAll({
+      attributes: ['id','name']
+    }).then(function (models) {
         async.eachSeries(models, function (model, seriesCallback) {
           model.hasDomainAdmins(user).then(function (results) {
             if (!results) {
@@ -57,6 +59,7 @@ async.series([
   },
   function(callback) {
     models.Community.findAll({
+      attributes: ['id','name']
     }).then(function (models) {
       async.eachSeries(models, function (model, seriesCallback) {
         model.hasCommunityAdmins(user).then(function (results) {
@@ -79,6 +82,7 @@ async.series([
   },
   function(callback) {
     models.Group.findAll({
+      attributes: ['id','name']
     }).then(function (models) {
       async.eachSeries(models, function (model, seriesCallback) {
         model.hasGroupAdmins(user).then(function (results) {
