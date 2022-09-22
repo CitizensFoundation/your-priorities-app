@@ -60,31 +60,30 @@ export class PlausibleVisitorsGraph extends PlausibleBaseElementWithState {
     if (changedProperties.get('query')) {
       this.fetchGraphData();
       this.fetchTopStatData();
+      const savedMetric = storage.getItem(`metric__${this.site.domain}`);
+      const topStatLabels =
+        this.topStatData &&
+        this.topStatData.top_stats
+          .map(({ name }) => METRIC_MAPPING[name])
+          .filter(name => name);
+      const prevTopStatLabels =
+        changedProperties.get('topStatData') &&
+        (changedProperties.get('topStatData') as PlausibleTopStatsData).top_stats
+          .map(({ name }) => METRIC_MAPPING[name])
+          .filter(name => name);
+      if (topStatLabels && `${topStatLabels}` !== `${prevTopStatLabels}`) {
+        if (!topStatLabels.includes(savedMetric) && savedMetric !== '') {
+          if (this.query!.filters!.goal && this.metric !== 'conversions') {
+            this.metric = 'conversions';
+          } else {
+            this.metric = topStatLabels[0];
+          }
+        } else {
+          this.metric = savedMetric;
+        }
+      }
     } else if (changedProperties.get('metric')) {
       this.fetchGraphData();
-    }
-
-    const savedMetric = storage.getItem(`metric__${this.site.domain}`);
-    const topStatLabels =
-      this.topStatData &&
-      this.topStatData.top_stats
-        .map(({ name }) => METRIC_MAPPING[name])
-        .filter(name => name);
-    const prevTopStatLabels =
-      changedProperties.get('topStatData') &&
-      (changedProperties.get('topStatData') as PlausibleTopStatsData).top_stats
-        .map(({ name }) => METRIC_MAPPING[name])
-        .filter(name => name);
-    if (topStatLabels && `${topStatLabels}` !== `${prevTopStatLabels}`) {
-      if (!topStatLabels.includes(savedMetric) && savedMetric !== '') {
-        if (this.query!.filters!.goal && this.metric !== 'conversions') {
-          this.metric = 'conversions';
-        } else {
-          this.metric = topStatLabels[0];
-        }
-      } else {
-        this.metric = savedMetric;
-      }
     }
   }
 
