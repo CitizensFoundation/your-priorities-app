@@ -86,7 +86,7 @@ export class PlausibleSourcesAll extends PlausibleSourcesBase {
         <div
           class="flex items-center justify-between mt-3 mb-2 text-xs font-bold tracking-wide text-gray-500"
         >
-          <span>Source</span>
+          <span>${this.t('Source')}</span>
           <div class="text-right">
             <span class="inline-block w-20">${this.label}</span>
             ${this.showConversionRate

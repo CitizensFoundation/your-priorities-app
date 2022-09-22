@@ -131,11 +131,12 @@ export class PlausibleFilters extends PlausibleBaseElementWithState {
   }
 
   filterText(key: string, rawValue: string) {
-    let type = toFilterType(rawValue);
+    const type = toFilterType(rawValue);
+    const translatedType = this.t(type);
     const value = valueWithoutPrefix(rawValue);
 
     if (key === 'goal') {
-      return html`Completed goal <b>${value}</b>`;
+      return html`${this.t('Completed goal')}: <b>${this.t(value)}</b>`;
     }
     if (key === 'props') {
       const [metaKey, metaValue] = Object.entries(value)[0];
@@ -148,36 +149,36 @@ export class PlausibleFilters extends PlausibleBaseElementWithState {
     if (key === 'browser_version') {
       const browserName = this.query.filters.browser
         ? this.query.filters.browser
-        : 'Browser';
-      return html`${browserName}.Version ${type} <b>${value}</b>`;
+        : this.t('Browser');
+      return html`${browserName}.Version ${translatedType} <b>${value}</b>`;
     }
     if (key === 'os_version') {
       const osName = this.query.filters.os ? this.query.filters.os : 'OS';
-      return html`${osName}.Version ${type} <b>${value}</b>`;
+      return html`${osName}.Version ${translatedType} <b>${value}</b>`;
     }
     if (key === 'country') {
       const q = new URLSearchParams(window.location.search);
       const countryName = q.get('country_name');
-      return html`Country ${type} <b>${countryName}</b>`;
+      return html`${this.t('Country')} ${translatedType} <b>${countryName}</b>`;
     }
 
     if (key === 'region') {
       const q = new URLSearchParams(window.location.search);
       const regionName = q.get('region_name');
-      return html`$Region {type} <b>${regionName}</b>`;
+      return html`${this.t('Region')} ${translatedType} <b>${regionName}</b>`;
     }
 
     if (key === 'city') {
       const q = new URLSearchParams(window.location.search);
       const cityName = q.get('city_name');
-      return html`City ${type} <b>${cityName}</b>`;
+      return html`${this.t('City')} ${translatedType} <b>${cityName}</b>`;
     }
 
     //@ts-ignore
     const formattedFilter = formattedFilters[key];
 
     if (formattedFilter) {
-      return html`${formattedFilter} ${type} <b>${value}</b>`;
+      return html`${this.t(formattedFilter)} ${translatedType} <b>${value}</b>`;
     }
 
     throw new Error(`Unknown filter: ${key}`);
@@ -271,7 +272,7 @@ export class PlausibleFilters extends PlausibleBaseElementWithState {
             class="border-t border-gray-200 dark:border-gray-500 px-4 sm:py-2 py-3 text-sm leading-tight hover:text-indigo-700 dark:hover:text-indigo-500 hover:cursor-pointer"
             @click=${() => this.clearAllFilters()}
           >
-            Clear All Filters
+           ${this.t("Clear All Filters")}
           </div>
         </div>
       `;
@@ -291,7 +292,7 @@ export class PlausibleFilters extends PlausibleBaseElementWithState {
             class="pointer border-t border-gray-200 dark:border-gray-500 px-4 sm:py-2 py-3 text-sm leading-tight hover:text-indigo-700 dark:hover:text-indigo-500 hover:cursor-pointer"
             @click=${() => this.clearAllFilters()}
           >
-            Clear All Filters
+            ${this.t("Clear All Filters")}
           </div>
         </div>
       `;
