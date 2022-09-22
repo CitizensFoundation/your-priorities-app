@@ -60,6 +60,7 @@ export class PlausibleVisitorsGraph extends PlausibleBaseElementWithState {
     if (changedProperties.get('query')) {
       this.fetchGraphData();
       this.fetchTopStatData();
+      //TODO: move this logic out of the updated call
       const savedMetric = storage.getItem(`metric__${this.site.domain}`);
       const topStatLabels =
         this.topStatData &&
