@@ -120,14 +120,18 @@ export class PlausableListReport extends PlausibleBaseElementWithState {
   }
 
   fetchData() {
-    if (true || this.prevQuery !== this.query) {
+    if (this.prevQuery !== this.query) {
       this.prevQuery = this.query;
       this.loading = true;
       this.list = undefined;
-      this.fetchDataFunction().then((res: any) => {
-        this.loading = false;
-        this.list = res;
-      });
+      try {
+        this.fetchDataFunction().then((res: any) => {
+          this.loading = false;
+          this.list = res;
+        });
+      } catch (error) {
+        console.error(error);
+      }
     }
   }
 
