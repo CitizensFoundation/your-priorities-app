@@ -14,6 +14,9 @@ export class PlausibleSourcesList extends PlausibleBaseElementWithState {
   @property({ type: String })
   tab!: PlausibleSourcesTabOptions;
 
+  @property({ type: Boolean })
+  alwaysShowNoRef = false
+
   connectedCallback() {
     super.connectedCallback();
     this.tabKey = 'sourceTab__' + this.site.domain!;
@@ -37,6 +40,7 @@ export class PlausibleSourcesList extends PlausibleBaseElementWithState {
           .proxyFaviconBaseUrl="${this.proxyFaviconBaseUrl}"
           .query=${this.query}
           .site=${this.site}
+          .alwaysShowNoRef="${this.alwaysShowNoRef}"
           .timer="${this.timer}"
           @tab-changed=${this.tabChanged}
         ></pl-sources-all>
@@ -47,6 +51,7 @@ export class PlausibleSourcesList extends PlausibleBaseElementWithState {
           .tab=${this.tab}
           .proxyUrl=${this.proxyUrl}
           .proxyFaviconBaseUrl="${this.proxyFaviconBaseUrl}"
+          .alwaysShowNoRef="${this.alwaysShowNoRef}"
           .query=${this.query}
           .site=${this.site}
           .timer="${this.timer}"

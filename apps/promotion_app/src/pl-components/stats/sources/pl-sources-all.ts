@@ -36,9 +36,23 @@ export class PlausibleSourcesAll extends PlausibleSourcesBase {
         this.referrers = res;
       });
   }
+  static get styles() {
+    return [...super.styles, css`
+      .directNoneIcon {
+        margin-right: 28px;
+      }
+    `];
+  }
+
 
   renderReferrer(referrer: PlausibleReferrerData) {
     const maxWidthDeduction = this.showConversionRate ? '10rem' : '5rem';
+
+    let translatedReferrerName;
+
+    if (referrer.name) {
+      translatedReferrerName = this.t(referrer.name);
+    }
 
     return html`
       <div
@@ -58,11 +72,15 @@ export class PlausibleSourcesAll extends PlausibleSourcesBase {
               class="md:truncate block hover:underline"
               .to=${{ search: url.setQuerySearch('source', referrer.name) }}
             >
+            ${ referrer.name !== "Direct / None" ? html`
               <img
-                src=${this.faviconUrl(referrer.name)}
-                class="inline w-4 h-4 mr-2 -mt-px align-middle"
-              />
-              ${referrer.name}
+                  src=${this.faviconUrl(referrer.name)}
+                  class="inline w-4 h-4 mr-2 -mt-px align-middle"
+                />
+            ` : html`
+              <div class="inline w-4 h-4 mr-2 -mt-px align-middle directNoneIcon"></div>
+            `}
+              ${translatedReferrerName}
             </pl-link>
           </span>
         </pl-bar>

@@ -46,6 +46,9 @@ export class PlausibleSourcesBase extends PlausibleBaseElementWithState {
   @property({ type: Boolean })
   open = false;
 
+  @property({ type: Boolean })
+  alwaysShowNoRef = false
+
   fetchReferrers() {}
 
   updated(changedProperties: Map<string | number | symbol, unknown>): void {
@@ -79,7 +82,7 @@ export class PlausibleSourcesBase extends PlausibleBaseElementWithState {
   }
 
   get showNoRef() {
-    return this.query.period === 'realtime';
+    return this.alwaysShowNoRef || this.query.period === 'realtime';
   }
 
   setTab(tab: PlausibleSourcesTabOptions) {
