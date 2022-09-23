@@ -51,7 +51,6 @@ export class PlausibleSourcesList extends PlausibleBaseElementWithState {
           .tab=${this.tab}
           .proxyUrl=${this.proxyUrl}
           .proxyFaviconBaseUrl="${this.proxyFaviconBaseUrl}"
-          .alwaysShowNoRef="${this.alwaysShowNoRef}"
           .query=${this.query}
           .site=${this.site}
           .timer="${this.timer}"
