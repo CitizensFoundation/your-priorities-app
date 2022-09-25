@@ -53,9 +53,9 @@ var decrementOldCountersIfNeeded = function (req, oldEndorsementValue, postId, e
 
 var sendPostOrError = function (res, post, context, user, error, errorStatus) {
   if (error || !post) {
-
-    if (errorStatus == 404) {
+    if (errorStatus === 404 || (error && error.message && error.message.indexOf("invalid input syntax for type integer") > -1)) {
       log.warn("Post Not Found", { context: context, post: toJson(post), user: toJson(user), err: error, errorStatus: 404 });
+      errorStatus = 404;
     } else {
       log.error("Post Error", { context: context, post: toJson(post), user: toJson(user), err: error, errorStatus: errorStatus ? errorStatus : 500 });
     }

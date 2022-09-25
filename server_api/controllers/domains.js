@@ -24,9 +24,10 @@ const getParsedSimilaritiesContent = require('../active-citizen/engine/analytics
 
 var sendDomainOrError = function (res, domain, context, user, error, errorStatus) {
   if (error || !domain) {
-    if (errorStatus == 404) {
+    if (errorStatus === 404 || (error && error.message && error.message.indexOf("invalid input syntax for type integer") > -1)) {
       log.warn("Domain Not Found", { context: context, domain: toJson(domain), user: toJson(user), err: error,
         errorStatus: 404 });
+      errorStatus = 404;
     } else {
       log.error("Domain Error", { context: context, domain: toJson(domain), user: toJson(user), err: error,
         errorStatus: errorStatus ? errorStatus : 500 });

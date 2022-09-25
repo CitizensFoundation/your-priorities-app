@@ -49,9 +49,10 @@ var s3 = new aws.S3({
 
 var sendGroupOrError = function (res, group, context, user, error, errorStatus) {
   if (error || !group) {
-    if (errorStatus == 404) {
+    if (errorStatus === 404 || (error && error.message && error.message.indexOf("invalid input syntax for type integer") > -1)) {
       log.warn("Group Not Found", { context: context, group: toJson(group), user: toJson(user), err: error,
                                        errorStatus: 404 });
+      errorStatus = 404;
     } else {
       log.error("Group Error", { context: context, group: toJson(group), user: toJson(user), err: error,
                                  errorStatus: errorStatus ? errorStatus : 500 });

@@ -36,9 +36,10 @@ const updateTranslationForCommunity = require('../active-citizen/utils/translati
 
 var sendCommunityOrError = function (res, community, context, user, error, errorStatus) {
   if (error || !community) {
-    if (errorStatus == 404) {
+    if (errorStatus === 404 || (error && error.message && error.message.indexOf("invalid input syntax for type integer") > -1)) {
       log.warn("Community Not Found", { context: context, community: toJson(community), user: toJson(user), err: error,
         errorStatus: 404 });
+      errorStatus = 404;
     } else {
       log.error("Community Error", { context: context, community: toJson(community), user: toJson(user), err: error,
         errorStatus: errorStatus ? errorStatus : 500 });

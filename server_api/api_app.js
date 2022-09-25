@@ -591,6 +591,10 @@ app.use(function generalErrorHandler(err, req, res, next) {
   } else {
     let body=null;
 
+    if (err && err.message && err.message.indexOf("Expected url like") > -1) {
+      status = 404;
+    }
+
     try {
       if (req.body) {
         body = JSON.stringify(req.body);
@@ -611,6 +615,7 @@ app.use(function generalErrorHandler(err, req, res, next) {
       errorStatus: status
     });
   }
+
   err.url = req.url;
   err.params = req.params;
   if (status != 404 && status != 401) {
