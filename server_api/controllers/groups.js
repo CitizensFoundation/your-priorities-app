@@ -1682,8 +1682,10 @@ var getPostsWithAllFromIds = function (postsWithIds, postOrder, done) {
     if (error) {
       done(error);
     } else {
-      if (videos.length>0) {
+      if (videos && videos.length>0) {
         models.Post.addVideosToAllPosts(posts, videos);
+      } else if (!videos) {
+        log.error("No videos for getVideosForPosts");
       }
       done(null, posts);
     }
