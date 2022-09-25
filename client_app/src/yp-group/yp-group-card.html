@@ -43,14 +43,14 @@
       }
 
       .groupCard[has-hidden-objectives] {
-         height: 324px;
+         height: 335px;
          background-color: var(--primary-color-800);
       }
 
       @media (max-width: 960px) {
-          .groupCard[has-hidden-objectives] {
-              height: 324px;
-          }
+        .groupCard[has-hidden-objectives] {
+            height: 335px;
+        }
       }
 
       .objectives {
@@ -226,6 +226,7 @@
       .group-name[has-hidden-objectives] {
         padding-bottom: 2px;
         margin-bottom: 0;
+        margin-left: 6px;
       }
 
       yp-membership-button[archived] {
@@ -234,10 +235,10 @@
 
       yp-membership-button {
         position: absolute;
-        right: 24px;
-        top: 214px;
-        width: 32px;
-        height: 32px;
+        right: 22px;
+        top: 217px;
+        width: 35px;
+        height: 35px;
         color: var(--icon-general-color, #FFF);
       }
 
@@ -338,12 +339,14 @@
       .stats[has-hidden-objectives] {
           background-color: var(--primary-color-800);
           color: #FFF !important;
-          position: inherit;
+          position: absolute;
           --main-stats-color-on-white: #fff;
           padding-top: -4px;
           margin-top: 0;
+          bottom: 4px;
+          left: 0;
       }
-    </style>
+   </style>
 
     <iron-media-query query="(min-width: 600px)" query-matches="{{wide}}"></iron-media-query>
 
