@@ -1,4 +1,4 @@
-# Your Priorities Version 8.14
+# Your Priorities Version 8.15
 
 ![alt text](https://citizens.is/wp-content/uploads/2018/08/Capture-2.png "Your Priorities screenshot")
 
@@ -12,6 +12,7 @@
 * Users can prioritize ideas and debate points by voting them up or down
 * Configurable and powerful surveys for ideas and user registration
 * Custom emoji ratings where admins can configure groups to allow up to 4 different custom emoji ratings per group instead of the voting up and down
+* Plausible Analytics is built in with useful promotion features
 * AI driven recommendation engine that recommends relevant posts to users
 * Highly scalable audio and video processing engine (using Amazon Elastic Transcoder and S3 or the Your Priorities Encoder)
 * Automatic Speech to Text conversion in 28 languages (using Google's TextToSpeech API)
@@ -22,6 +23,7 @@
 * Full GDPR compliance
 * Localized in 28 languages
 * Advanced anti-Fraud system for detection malicious actors and quickly deleting unwanted content
+* Bad BOT management system for managing badly behaving crawlers, includes rate control
 * Post status system where posts can be set to open open, in progress, approved or rejected
 * Admins can easily and automatically email post status update all the people who supported or opposed posts
 * Optional categories system for posts with simple filters
