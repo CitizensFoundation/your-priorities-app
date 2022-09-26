@@ -38,6 +38,8 @@ export class YpCollectionHelpers {
         return (collection as YpDomainData).DomainLogoImages;
       case 'community':
         return (collection as YpCommunityData).CommunityLogoImages;
+      case 'post':
+        return (collection as unknown as YpPostData).PostHeaderImages;
       case 'groupCommunityLink':
         return (collection as YpGroupData).CommunityLink!.CommunityLogoImages;
       case 'group':
