@@ -82,7 +82,7 @@ export class PlausibleGoalGraph extends PlausibleBaseGraph {
     const newData = {
       labels: [],
       plot: [],
-      interval: 'date',
+      interval: this.query.period == "day" ? 'hour' : 'date',
     } as any;
 
     for (let r = 0; data.results.length > r; r++) {
