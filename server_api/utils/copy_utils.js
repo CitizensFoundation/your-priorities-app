@@ -4,6 +4,7 @@ const {cloneTranslationForGroup} = require("../active-citizen/utils/translation_
 const {cloneTranslationForCommunity} = require("../active-citizen/utils/translation_cloning");
 const {cloneTranslationForPoint} = require("../active-citizen/utils/translation_cloning");
 const {cloneTranslationForPost} = require("../active-citizen/utils/translation_cloning");
+const {recountCommunity} = require("./recount_utils");
 
 const clonePagesForCollection = (model, modelRelField, inCollection, outCollection, done) => {
   const oldToNewHash = {};
@@ -1096,6 +1097,34 @@ const deepCopyCommunityOnlyStructureWithAdminsAndPosts = (communityId, toDomainI
   });
 };
 
+const copyCommunityNoUsersNoEndorsementsNoPoints = (communityId, toDomainId, done) => {
+  copyCommunity(communityId, toDomainId, {
+    copyGroups: true,
+    copyPosts: true,
+    copyPoints: false,
+    skipUsers: true,
+    skipEndorsementQualitiesAndRatings: true,
+    resetEndorsementCounters: true,
+    skipActivities: true
+  }, null, (error, newCommunity) => {
+    if (newCommunity)
+      console.log(newCommunity.id);
+    if (error) {
+      console.error(error);
+      done(error, newCommunity);
+    } else {
+      recountCommunity(newCommunity.id, (recountError) => {
+        if (recountError) {
+          console.error(error);
+          done(recountError, newCommunity);
+        } else {
+          done(null, newCommunity);
+        }
+      })
+    }
+  });
+};
+
 const copyCommunityNoUsersNoEndorsements = (communityId, toDomainId, done) => {
   copyCommunity(communityId, toDomainId, {
     copyGroups: true,
@@ -1166,6 +1195,7 @@ const copyCommunityOnlyGroups = (communityId, toDomainId, done) => {
 module.exports = {
   copyCommunityNoUsersNoEndorsementsOneGroup,
   copyCommunityNoUsersNoEndorsements,
+  copyCommunityNoUsersNoEndorsementsNoPoints,
   copyCommunityWithEverything,
   clonePagesForGroup,
   deepCopyCommunityOnlyStructureWithAdminsAndPosts,
