@@ -38,8 +38,14 @@ export class PlausibleGoalGraph extends PlausibleBaseGraph {
     Object.keys(this.query.filters).map(key => {
       //@ts-ignore
       if (this.query.filters[key]) {
-        //@ts-ignore
-        filterString += `${key}==${this.query.filters[key]};`;
+          //@ts-ignore
+          if (this.query.filters[key]=="page") {
+          //@ts-ignore
+          filterString += `${key}==${this.query.filters[key]};`;
+        } else {
+          //@ts-ignore
+          filterString += `visit:${key}==${this.query.filters[key]};`;
+        }
       }
     });
 
