@@ -1140,6 +1140,29 @@ const copyCommunityNoUsersNoEndorsementsOneGroup = (communityId, groupId, toDoma
   });
 };
 
+const copyCommunityOnlyGroups = (communityId, toDomainId, done) => {
+  copyCommunity(communityId, toDomainId, {
+    copyGroups: true,
+    copyPosts: false,
+    copyPoints: false,
+    skipUsers: true,
+    recountGroupPosts: true,
+    skipEndorsementQualitiesAndRatings: true,
+    resetEndorsementCounters: true,
+    skipActivities: true
+  }, null, (error, newCommunity) => {
+    if (newCommunity)
+      console.log(newCommunity.id);
+    if (error) {
+      console.error(error);
+      done(error, newCommunity);
+    } else {
+      //console.log("Done for new community "+ńewCommunity.id);
+      done(null, newCommunity);
+    }
+  });
+};
+
 module.exports = {
   copyCommunityNoUsersNoEndorsementsOneGroup,
   copyCommunityNoUsersNoEndorsements,
@@ -1148,6 +1171,7 @@ module.exports = {
   deepCopyCommunityOnlyStructureWithAdminsAndPosts,
   clonePagesForCommunity,
   copyCommunity,
+  copyCommunityOnlyGroups,
   copyGroup,
   copyPost
 };
