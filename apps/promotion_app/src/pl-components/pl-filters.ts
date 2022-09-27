@@ -118,6 +118,8 @@ export class PlausibleFilters extends PlausibleBaseElementWithState {
       newOpts.city_name = false;
     }
 
+    this.menuOpen = false;
+
     navigateToQuery(this.history, this.query, newOpts as any);
   }
 
