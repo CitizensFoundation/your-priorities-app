@@ -3,9 +3,9 @@ const moment = require('moment');
 
 const maxNumberFromPath = process.argv[2];
 
-const maxNumberOfNotificationsToDelete = maxNumberFromPath ? maxNumberFromPath : 1000;
+const maxNumberOfGroupsToDelete = maxNumberFromPath ? maxNumberFromPath : 1000;
 
-let numberOfDeletedNotifications = 0;
+let numberOfDeletedGroups = 0;
 
 let startTime = moment();
 
@@ -13,97 +13,58 @@ function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-const chunk = (arr, size) =>
-  Array.from({ length: Math.ceil(arr.length / size) }, (v, i) =>
-    arr.slice(i * size, i * size + size)
-  );
-
 (async ()=>{
-  let haveNotificationsToDelete = true;
-  let userOffset = 0;
-  while(haveNotificationsToDelete && numberOfDeletedNotifications<maxNumberOfNotificationsToDelete) {
-    try {
-      const users = await models.User.unscoped().findAll({
-        where: {
-          created_at: {
-            [models.Sequelize.Op.lte]: moment().add(-3, 'days').toISOString()
-          },
-          profile_data: {
-            isAnonymousUser: {
-              [models.Sequelize.Op.is]: true
-            }
-          }
-        },
-        attributes:['id'],
+  let haveGroupsToDelete = true;
+  let allDeletions = "";
+  try {
+
+    let haveGroupsLeftToProcess = true;
+    let groupsOffset = 0;
+
+    while (haveGroupsLeftToProcess && numberOfDeletedGroups<maxNumberOfGroupsToDelete) {
+      const groups = await models.Group.findAll({
+        limit: 100,
+        offset: groupsOffset,
         order: ['id'],
-        offset: userOffset,
-        limit: 500
+        attributes:['id','configuration','name','deleted'],
       });
 
-      if (users.length>0) {
-        console.log(`${users.length} users offset ${userOffset}`);
-        userOffset+=500;
-        const userIds = users.map(n=>{ return n.id});
+      console.log(`${groups.length} groups offset ${groupsOffset}`);
 
-        let haveNotificationsLeftToProcess = true;
-        let notificationsOffset = 0;
+      if (groups.length>0) {
+        groupsOffset += 100;
+        for (let i=0; i<groups.length;i++) {
+          if (groups[i].configuration &&
+            groups[i].configuration.actAsLinkToCommunityId) {
+            const community = await models.Community.findOne({
+              where: {
+                id: groups[i].configuration.actAsLinkToCommunityId
+              },
+              attributes: ['id']
+            });
 
-        while (haveNotificationsLeftToProcess && numberOfDeletedNotifications<maxNumberOfNotificationsToDelete) {
-          const notifications = await models.AcNotification.unscoped().findAll({
-            where: {
-              user_id: {
-                [models.Sequelize.Op.in]: userIds
-              }
-            },
-            limit: 1000,
-            offset: notificationsOffset,
-            order: ['user_id'],
-            attributes:['id'],
-          });
-
-          console.log(`${notifications.length} notifications offset ${notificationsOffset}`);
-
-          if (notifications.length>0) {
-            notificationsOffset += 1000;
-            const notificationIds = notifications.map(n=>{ return n.id});
-
-            const chunkedIds = chunk(notificationIds, 100);
-
-            for (let i=0; i<chunkedIds.length;i++) {
-              const destroyInfo =  await models.AcNotification.unscoped().destroy({
-                where: {
-                  id: {
-                    [models.Sequelize.Op.in]: chunkedIds[i]
-                  }
-                }
-              });
-
-              numberOfDeletedNotifications+=destroyInfo;
-
-              console.log(`${numberOfDeletedNotifications}`);
-
-              await sleep(50);
-
-              if (numberOfDeletedNotifications>=maxNumberOfNotificationsToDelete) {
-                break;
-              }
+            if (!community) {
+              const deleteText = `Deleting groupLink id ${groups[i].id} - name ${groups[i].name} - community id ${groups[i].configuration.actAsLinkToCommunityId}`;
+              console.log(deleteText);
+              allDeletions+=`${deleteText}\n`;
+              groups[i].deleted = true;
+              await groups[i].save();
             }
-          } else {
-            haveNotificationsLeftToProcess = false;
-            console.log("No more notifications left to process from user")
           }
-
-          await sleep(100);
         }
       } else {
-        haveNotificationsToDelete = false;
+        haveGroupsLeftToProcess = false;
+        console.log("No more groups left to process from user")
       }
-    } catch(error) {
-      console.error(error);
-      haveNotificationsToDelete = false;
+      await sleep(100);
     }
+  } catch(error) {
+    console.error(error);
+    haveGroupsToDelete = false;
   }
-  console.log(`${numberOfDeletedNotifications} old anon notifications deleted`);
+  console.log(`${numberOfDeletedGroups} old anon groups deleted`);
   console.log(`Duration ${moment(moment()-startTime).format("HH:mm:ss.SSS")}`)
+  console.log("ALL DELETIONS")
+  console.log(allDeletions);
   process.exit();
 })();

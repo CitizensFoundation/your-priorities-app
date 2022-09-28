@@ -3,6 +3,9 @@ const models = require('../../models');
 let users = [];
 let postCount = 0;
 let pointCount = 0;
+let groupCount = 0;
+const processedCommunityIds = [];
+const processedGroupIds = [];
 
 function mergeArrays(...arrays) {
   let jointArray = []
@@ -23,7 +26,7 @@ const countCommunities = async (communityId, options) => {
       include: [
         {
           model: models.Group,
-          attributes: ['id','name','configuration','counter_posts','counter_points'],
+          attributes: ['id','name','community_id','configuration','counter_posts','counter_points'],
           include: [
             {
               model: models.User,
@@ -41,11 +44,26 @@ const countCommunities = async (communityId, options) => {
         for (let i=0;i<community.Groups.length;i++) {
           const group = community.Groups[i];
           if (group.configuration.actAsLinkToCommunityId) {
-            await countCommunities(group.configuration.actAsLinkToCommunityId, options);
+            if (processedCommunityIds.indexOf(group.configuration.actAsLinkToCommunityId)>-1) {
+              console.warn(`DUPLICATE LINK Group Id ${group.id} in Community Id ${group.community_id} to Community Id ${group.configuration.actAsLinkToCommunityId}`)
+            } else {
+              processedCommunityIds.push(group.configuration.actAsLinkToCommunityId);
+              if (processedGroupIds.indexOf(group.id)>-1) {
+                console.warn(`DUPLICATE GROUP Group Id ${group.id} in Community Id ${group.community_id} to Community Id ${group.configuration.actAsLinkToCommunityId}`)
+              } else {
+                processedGroupIds.push(group.id);
+                await countCommunities(group.configuration.actAsLinkToCommunityId, options);
+              }
+            }
           } else {
             users = mergeArrays(users, group.GroupUsers.map((u) => u.id));
             postCount += group.counter_posts;
             pointCount += group.counter_points;
+            groupCount += 1;
+            const random = Math.random();
+            if (random < 0.05) {
+              //console.log(`Groups ${groupCount} Posts ${postCount} Points ${pointCount} Users ${users.length}`)
+            }
           }
         }
        resolve();
@@ -72,6 +90,7 @@ const recountCommunityRecursive = async (communityId, options) => {
         community.counter_users = users.length;
         community.counter_posts = postCount;
         community.counter_points = pointCount;
+        community.counter_groups = groupCount;
         await community.save();
         console.log(`Save community ${users.length} ${postCount} ${pointCount}`)
         resolve();
