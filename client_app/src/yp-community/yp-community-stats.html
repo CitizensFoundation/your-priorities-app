@@ -97,9 +97,17 @@
       },
 
       _resolvedStats: function (statsCollection) {
-        this.set('counterGroups', this.formatNumber(statsCollection.counter_groups));
-        this.set('counterPosts', this.formatNumber(statsCollection.counter_posts));
-        this.set('counterUsers', this.formatNumber(statsCollection.counter_users));
+        if (this.community && this.community.configuration &&
+          this.community.configuration.actAsLinkToExternalYPSite &&
+          this.community.configuration.actAsLinkToExternalYPSite.indexOf("/group/") > -1) {
+          this.set('counterGroups', this.formatNumber(statsCollection.group.counter_groups));
+          this.set('counterPosts', this.formatNumber(statsCollection.group.counter_posts));
+          this.set('counterUsers', this.formatNumber(statsCollection.group.counter_users));
+        } else {
+          this.set('counterGroups', this.formatNumber(statsCollection.counter_groups));
+          this.set('counterPosts', this.formatNumber(statsCollection.counter_posts));
+          this.set('counterUsers', this.formatNumber(statsCollection.counter_users));
+        }
       },
 
       _communityChanged: function (community) {
