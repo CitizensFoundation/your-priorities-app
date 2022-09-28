@@ -97,20 +97,24 @@
     },
 
     _goToCommunity: function (e) {
-      var communityUrl;
-      if (this.community.is_community_folder) {
-        communityUrl = '/community_folder/' + this.community.id;
+      if (this.community && this.community.configuration && this.community.configuration.actAsLinkToExternalYPSite) {
+        window.appGlobals.activity('open', 'externalYpSite', this.community.configuration.actAsLinkToExternalYPSite);
       } else {
-        communityUrl = '/community/' + this.community.id;
+        var communityUrl;
+        if (this.community.is_community_folder) {
+          communityUrl = '/community_folder/' + this.community.id;
+        } else {
+          communityUrl = '/community/' + this.community.id;
+        }
+        this.async(function () {
+          window.appGlobals.activity('open', 'community', communityUrl, { id: this.community.id });
+        }, 50);
+        if (window.appGlobals.backToDomainCommunityItems===null)
+          window.appGlobals.backToDomainCommunityItems = {};
+        window.appGlobals.backToDomainCommunityItems[this.community.domain_id] = this.community;
+        console.log("Saving community scroll item for domain "+this.community.domain_id);
+        this.redirectTo(communityUrl);
       }
-      this.async(function () {
-        window.appGlobals.activity('open', 'community', communityUrl, { id: this.community.id });
-      }, 50);
-      if (window.appGlobals.backToDomainCommunityItems===null)
-        window.appGlobals.backToDomainCommunityItems = {};
-      window.appGlobals.backToDomainCommunityItems[this.community.domain_id] = this.community;
-      console.log("Saving community scroll item for domain "+this.community.domain_id);
-      this.redirectTo(communityUrl);
     },
 
     _communityLogoImagePath: function (community) {

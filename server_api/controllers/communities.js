@@ -803,6 +803,7 @@ var updateCommunityConfigParameters = function (req, community) {
   community.set('configuration.enableFraudDetection', truthValueFromBody(req.body.enableFraudDetection));
   community.set('configuration.useZiggeo', truthValueFromBody(req.body.useZiggeo));
   community.set('configuration.highlightedLanguages', (req.body.highlightedLanguages && req.body.highlightedLanguages!="") ? req.body.highlightedLanguages : null);
+  community.set('configuration.actAsLinkToExternalYPSite', (req.body.actAsLinkToExternalYPSite && req.body.actAsLinkToExternalYPSite!="") ? req.body.actAsLinkToExternalYPSite : null);
 };
 
 router.get('/:communityFolderId/communityFolders', auth.can('view community'), function(req, res) {

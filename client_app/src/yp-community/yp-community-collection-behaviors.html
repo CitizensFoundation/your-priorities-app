@@ -29,6 +29,12 @@
       this.set('communitiesLength', communities.length);
       var splitCommunities = this.splitByStatus(communities, domainConfig);
 //      this.set('featuredCommunities', splitCommunities.featured);
+      splitCommunities.featured = splitCommunities.featured.sort(function (a, b) {
+        if (a.configuration && a.configuration.actAsLinkToExternalYPSite)
+          return -1;
+        else
+          return 1;
+      });
       this.set('activeCommunities', splitCommunities.featured.concat(splitCommunities.active.concat(splitCommunities.archived)));
     }
   };

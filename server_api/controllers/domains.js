@@ -168,7 +168,7 @@ var getDomain = function (req, domainId, done) {
               $or: [
                 {
                   counter_users: {
-                    $gt: process.env.MINIMUM_USERS_FOR_COMMUNITY_TO_SHOW ? parseInt(process.env.MINIMUM_USERS_FOR_COMMUNITY_TO_SHOW) : 5
+                    $gt: process.env.MINIMUM_USERS_FOR_COMMUNITY_TO_SHOW ? parseInt(process.env.MINIMUM_USERS_FOR_COMMUNITY_TO_SHOW) : 21
                   },
                 },
                 {
@@ -384,8 +384,8 @@ var getDomain = function (req, domainId, done) {
             });
           }
         ], function (error) {
-          var combinedCommunities = _.concat(userCommunities, domain.dataValues.Communities);
-          combinedCommunities = _.concat(adminCommunities, combinedCommunities);
+          var combinedCommunities = _.concat(adminCommunities, userCommunities);
+          combinedCommunities = _.concat(domain.dataValues.Communities, combinedCommunities);
           combinedCommunities = _.uniqBy(combinedCommunities, function (community) {
             return community.id;
           });

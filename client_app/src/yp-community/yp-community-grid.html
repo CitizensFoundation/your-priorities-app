@@ -65,7 +65,9 @@
     <iron-list id="ironList" selection-enabled scroll-offset="[[scrollOffset]]" on-selected-item-changed="_selectedItemChanged" items="[[activeCommunities]]" as="community" scroll-target="document" grid$="[[wide]]" role="list">
       <template>
         <div class="card layout vertical center-center" wide-padding$="[[wide]]" tabindex$="[[tabIndex]]" role="listitem" aria-level="2" aria-label="[[community.name]]">
-          <a href="/[[_communityPath(community)]]/[[community.id]]" id="communityCardHref[[community.id]]" class="layout vertical center-center"><yp-community-card wide$="[[wide]]" community="[[community]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-community-card></a>
+          <a target="[[_urlTarget(community)]]" href="[[_linkToUrl(community)]]" id="communityCardHref[[community.id]]" class="layout vertical center-center">
+            <yp-community-card wide$="[[wide]]" community="[[community]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-community-card>
+          </a>
         </div>
       </template>
     </iron-list>
@@ -73,11 +75,36 @@
 
   <script>
     Polymer({
+
+      _urlTarget: function (community) {
+        if (community && community.configuration && community.configuration.actAsLinkToExternalYPSite) {
+          return "_blank";
+        } else {
+          return undefined;
+        }
+      },
+
+      _linkToUrl: function (community) {
+        var communityPath = `/${this._communityPath(community)}/${community.id}`;
+        if (community &&
+            community.configuration &&
+            community.configuration.actAsLinkToExternalYPSite) {
+          if (this.checkCommunityAccess(community)) {
+            return communityPath;
+          } else {
+            return community.configuration.actAsLinkToExternalYPSite;
+          }
+        } else {
+          return communityPath;
+        }
+      },
+
       is: 'yp-community-grid',
 
       behaviors: [
         Polymer.ypLanguageBehavior,
         Polymer.ypIronListBehavior,
+        Polymer.AccessHelpers,
         Polymer.ypCardMouseBehavior
       ],
 

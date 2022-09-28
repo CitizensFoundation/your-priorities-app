@@ -128,7 +128,6 @@
       }
 
       .community-name[featured] {
-        background-color: var(--accent-color);
       }
 
       .community-name[archived] {
@@ -244,7 +243,7 @@
                        text-only content="[[communityDescription]]" content-id="[[community.id]]" truncate="130">
         </yp-magic-text>
       </div>
-      <yp-community-stats class="stats" community="[[community]]"></yp-community-stats>
+      <yp-community-stats class="stats" community="[[community]]" resolve-external-stats></yp-community-stats>
       <template is="dom-if" if="[[!community.is_community_folder]]">
         <yp-membership-button archived$="[[archived]]" featured$="[[featured]]" community="[[community]]"></yp-membership-button>
       </template>

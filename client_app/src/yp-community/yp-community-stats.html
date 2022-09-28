@@ -44,13 +44,13 @@
 
     <div class="stats layout horizontal end-justified">
       <iron-icon title$="[[t('stats.posts')]]" icon="lightbulb-outline" class="stats-icon bulb"></iron-icon>
-      <div title$="[[t('stats.posts')]]" class="stats-text">{{formatNumber(community.counter_posts)}}</div>
+      <div title$="[[t('stats.posts')]]" class="stats-text">[[counterPosts]]</div>
 
       <iron-icon hidden$="[[hideGroups]]" title$="[[t('stats.groups')]]" icon="people" class="stats-icon"></iron-icon>
-      <div hidden$="[[hideGroups]]" title$="[[t('stats.groups')]]" class="stats-text">{{formatNumber(community.counter_groups)}}</div>
+      <div hidden$="[[hideGroups]]" title$="[[t('stats.groups')]]" class="stats-text">[[counterGroups]]</div>
 
       <iron-icon title$="[[t('stats.users')]]" icon="face" class="stats-icon"></iron-icon>
-      <div title$="[[t('stats.users')]]" class="stats-text">{{formatNumber(community.counter_users)}}</div>
+      <div title$="[[t('stats.users')]]" class="stats-text">[[counterUsers]]</div>
     </div>
 
   </template>
@@ -73,10 +73,50 @@
         hideGroups: {
           type: Boolean,
           value: false
+        },
+
+        resolveExternalStats: {
+          type: Boolean,
+          value: false
+        },
+
+        counterGroups: {
+          type: Number,
+          value: 0
+        },
+
+        counterPosts: {
+          type: Number,
+          value: 0
+        },
+
+        counterUsers: {
+          type: Number,
+          value: 0
         }
       },
 
+      _resolvedStats: function (statsCollection) {
+        this.set('counterGroups', this.formatNumber(statsCollection.counter_groups));
+        this.set('counterPosts', this.formatNumber(statsCollection.counter_posts));
+        this.set('counterUsers', this.formatNumber(statsCollection.counter_users));
+      },
+
       _communityChanged: function (community) {
+        if (this.resolveExternalStats &&
+           community &&
+           community.configuration &&
+           community.configuration.actAsLinkToExternalYPSite) {
+          var url = community.configuration.actAsLinkToExternalYPSite;
+          url = url.replace("/domain","/api/domains");
+          url = url.replace("/community","/api/communities");
+          url = url.replace("/group","/api/groups");
+          window.appGlobals.resolveExternalStatsForCommunity(url, this._resolvedStats.bind(this));
+        } else if (community) {
+          this.set('counterGroups', this.formatNumber(community.counter_groups));
+          this.set('counterPosts', this.formatNumber(community.counter_posts));
+          this.set('counterUsers', this.formatNumber(community.counter_users));
+        }
         var communityFolders=null;
         if (community && community.is_community_folder &&
             !community.Communities && community.CommunityFolders) {

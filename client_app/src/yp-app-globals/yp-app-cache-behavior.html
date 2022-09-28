@@ -42,6 +42,11 @@
         value: null
       },
 
+      externalStatsCache: {
+        type: Object,
+        value: null,
+      },
+
       autoTranslateCache: Object,
     },
 
@@ -68,11 +73,40 @@
       this.postItemsCache[post.id] = post;
     },
 
+    resolveExternalStatsForCommunity: function (externalStatsApiUrl, communityStatsReturnFunction) {
+      this.communityStatsReturnFunctions[externalStatsApiUrl] = communityStatsReturnFunction;
+
+      if (this.externalStatsCache[externalStatsApiUrl]) {
+        this.communityStatsReturnFunctions[externalStatsApiUrl](this.externalStatsCache[externalStatsApiUrl]);
+      } else {
+        if (window.fetch) {
+          this.async(function () {
+            fetch(externalStatsApiUrl).then(function(response) {
+              return response.json();
+            }.bind(this)).then(function(collection) {
+              if (collection) {
+                this.externalStatsCache[externalStatsApiUrl] = collection;
+                this.communityStatsReturnFunctions[externalStatsApiUrl](collection);
+              } else {
+                console.error("resolveExternalStatsForCommunity no object to cache");
+              }
+            }.bind(this)).catch(function(ex) {
+              console.error("Recommendation: Error in getting post for cache", ex);
+            }.bind(this));
+          });
+        } else {
+          console.warn("resolveExternalStatsForCommunity: No fetch to download cache");
+        }
+      }
+    },
+
     ready: function () {
       this.autoTranslateCache = {};
       this.communityItemsCache = {};
       this.groupItemsCache = {};
       this.postItemsCache = {};
+      this.externalStatsCache = {};
+      this.communityStatsReturnFunctions = {};
     }
   }
 </script>
