@@ -306,7 +306,8 @@ export class YpPromotionApp extends YpBaseElementWithLogin {
         : this.themeDarkMode;
 
     // Apply the theme to the body by updating custom properties for material tokens
-    applyTheme(theme, { target: target || this, dark: systemDark });
+    //TODO: Get dark mode working again
+    applyTheme(theme, { target: target || this, dark: false });
   }
 
   async _getCollection() {
@@ -615,6 +616,7 @@ export class YpPromotionApp extends YpBaseElementWithLogin {
       }
     }
 
+    debugger;
     if (!this.adminConfirmed) {
       this.fire('yp-network-error', { message: this.t('unauthorized') });
     }

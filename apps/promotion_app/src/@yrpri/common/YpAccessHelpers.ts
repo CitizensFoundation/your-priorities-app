@@ -1,4 +1,5 @@
 export class YpAccessHelpers {
+
   static _hasAdminRights(
     objectId: number,
     adminRights: Array<YpCollectionData>
@@ -24,6 +25,35 @@ export class YpAccessHelpers {
         } else {
           if (window.appUser.adminRights) {
             return this._hasAdminRights(objectId, adminRights);
+          } else {
+            return false;
+          }
+        }
+      } else {
+        return false;
+      }
+    } else if (!window.appUser) {
+      return false;
+    } else {
+      console.warn('No object in hasAccess');
+      return false;
+    }
+  }
+
+  static _hasPromoterAccess(
+    object: YpCollectionData | YpImageData | YpPointData | YpPostData,
+    objectId: number,
+    promoterRights: Array<YpCollectionData>
+  ): boolean {
+    if (object) {
+      if (window.appUser && window.appUser.user) {
+        if (window.appUser.user.id == object.user_id) {
+          return true;
+        } else if (object.User && window.appUser.user.id == object.User.id) {
+          return true;
+        } else {
+          if (window.appUser.promoterRights) {
+            return this._hasAdminRights(objectId, promoterRights);
           } else {
             return false;
           }
@@ -122,7 +152,7 @@ export class YpAccessHelpers {
 
   static checkGroupPromoterAccess(group: YpGroupData): boolean {
     if (group && window.appUser && window.appUser.promoterRights) {
-      return this._hasAccess(
+      return this._hasPromoterAccess(
         group,
         group.id,
         window.appUser.promoterRights.GroupPromoters
@@ -152,7 +182,7 @@ export class YpAccessHelpers {
 
   static checkCommunityPromoterAccess(community: YpCommunityData): boolean {
     if (community && window.appUser && window.appUser.promoterRights) {
-      return this._hasAccess(
+      return this._hasPromoterAccess(
         community,
         community.id,
         window.appUser.promoterRights.CommunityPromoters
