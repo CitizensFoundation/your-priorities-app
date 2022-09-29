@@ -1706,13 +1706,17 @@ export const PlausibleStyles = css`
     --tw-bg-opacity: 1;
     background-color: rgba(31, 41, 55, var(--tw-bg-opacity));
   }
+  .bg-red-40 {
+    --tw-bg-opacity: 1;
+    background-color: rgba(254, 247, 247, var(--tw-bg-opacity));
+  }
   .bg-red-50 {
     --tw-bg-opacity: 1;
     background-color: rgba(254, 242, 242, var(--tw-bg-opacity));
   }
   .bg-red-60 {
     --tw-bg-opacity: 1;
-    background-color: rgba(254, 227, 227, var(--tw-bg-opacity));
+    background-color: rgba(254, 232, 232, var(--tw-bg-opacity));
   }
   .bg-red-100 {
     --tw-bg-opacity: 1;

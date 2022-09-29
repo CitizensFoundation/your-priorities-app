@@ -118,6 +118,8 @@ export class PlausibleConversions extends PlausibleBaseElementWithState {
   getPlBackground(goalName: string) {
     if (this.highlightedGoals && this.highlightedGoals.includes(goalName)) {
       return 'bg-red-60';
+    } else if (this.highlightedGoals) {
+      return 'bg-red-40';
     } else {
       return 'bg-red-50';
     }
