@@ -35,6 +35,7 @@ export const highlightedGoals = [
   "marker - clicked",
   "newUserImage",
   "filter - change",
+  "newPost - open",
   "post.ratings - completed",
   "post.ratings.dialog - open",
   "recommendations - goForward",
