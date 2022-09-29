@@ -27,6 +27,9 @@ export class PlausibleRealtime extends PlausibleBaseElementWithState {
   @property({ type: Boolean })
   stuck = false;
 
+  @property({ type: Array })
+  highlightedGoals?: string[];
+
   updated(changedProperties: Map<string | number | symbol, unknown>): void {
     super.updated(changedProperties);
   }
@@ -131,6 +134,7 @@ export class PlausibleRealtime extends PlausibleBaseElementWithState {
             .timer=${this.timer}
             .title="${this.t('goalConversionsLast30Min')}"
             .proxyUrl=${this.proxyUrl}
+            .highlightedGoals=${this.highlightedGoals}
           ></pl-conversions>
         </div>
       `;

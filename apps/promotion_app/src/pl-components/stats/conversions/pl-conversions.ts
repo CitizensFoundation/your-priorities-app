@@ -32,6 +32,9 @@ export class PlausibleConversions extends PlausibleBaseElementWithState {
   @property({ type: Array })
   goals?: PlausibleGoalData[];
 
+  @property({ type: Array })
+  highlightedGoals?: string[];
+
   constructor() {
     super();
     this.handleResize = this.handleResize.bind(this);
@@ -112,6 +115,14 @@ export class PlausibleConversions extends PlausibleBaseElementWithState {
       );
   }
 
+  getPlBackground(goalName: string) {
+    if (this.highlightedGoals && this.highlightedGoals.includes(goalName)) {
+      return 'bg-red-60';
+    } else {
+      return 'bg-red-50';
+    }
+  }
+
   renderGoal(goal: PlausibleGoalData) {
     const renderProps =
       this.query.filters!['goal'] == goal.name && goal.prop_names;
@@ -122,7 +133,7 @@ export class PlausibleConversions extends PlausibleBaseElementWithState {
           <pl-bar
             .count="${goal.unique_conversions}"
             .all="${this.goals!}"
-            bg="bg-red-50 dark:bg-gray-500 dark:bg-opacity-15"
+            bg="${this.getPlBackground(goal.name)} dark:bg-gray-500 dark:bg-opacity-15"
             .maxWidthDeduction="${this.getBarMaxWidth()}"
             plot="unique_conversions"
           >

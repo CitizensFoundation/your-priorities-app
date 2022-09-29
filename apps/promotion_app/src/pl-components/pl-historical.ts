@@ -30,6 +30,9 @@ export class PlausibleHistorical extends PlausibleBaseElementWithState {
   @property({ type: Boolean })
   stuck = false;
 
+  @property({ type: Array })
+  highlightedGoals?: string[];
+
   static get styles() {
     return [
       ...super.styles,
@@ -127,6 +130,7 @@ export class PlausibleHistorical extends PlausibleBaseElementWithState {
             .site=${this.site}
             .query=${this.query}
             .proxyUrl=${this.proxyUrl}
+            .highlightedGoals=${this.highlightedGoals}
           ></pl-conversions>
         </div>
       `;

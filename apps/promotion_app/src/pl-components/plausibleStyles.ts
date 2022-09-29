@@ -4,6 +4,11 @@ export const PlausibleStyles = css`
   .bg-red-50 {
     background-color: rgba(254, 242, 242, var(--tw-bg-opacity));
   }
+
+  .bg-red-60 {
+    background-color: rgba(254, 242, 242, var(--tw-bg-opacity));
+  }
+
   .modal {
     display: none;
   }
@@ -1704,6 +1709,10 @@ export const PlausibleStyles = css`
   .bg-red-50 {
     --tw-bg-opacity: 1;
     background-color: rgba(254, 242, 242, var(--tw-bg-opacity));
+  }
+  .bg-red-60 {
+    --tw-bg-opacity: 1;
+    background-color: rgba(254, 227, 227, var(--tw-bg-opacity));
   }
   .bg-red-100 {
     --tw-bg-opacity: 1;

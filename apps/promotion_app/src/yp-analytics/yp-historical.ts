@@ -9,6 +9,7 @@ import '../pl-components/stats/graph/pl-goal-graph.js';
 import './yp-campaigns-analytics.js';
 
 import '@material/web/iconbutton/standard-icon-button.js';
+import { highlightedGoals } from './ypHighlightedGoals.js';
 
 @customElement('yp-historical')
 export class YpHistorical extends PlausibleHistorical {
@@ -23,6 +24,11 @@ export class YpHistorical extends PlausibleHistorical {
 
   static get styles() {
     return [...super.styles, css``];
+  }
+
+  constructor() {
+    super();
+    this.highlightedGoals = highlightedGoals;
   }
 
   render() {

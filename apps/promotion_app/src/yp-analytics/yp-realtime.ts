@@ -3,6 +3,7 @@ import { property, customElement } from 'lit/decorators.js';
 
 import { PlausibleRealtime } from '../pl-components/pl-realtime.js';
 import '../pl-components/stats/graph/pl-goal-graph.js';
+import { highlightedGoals } from './ypHighlightedGoals.js';
 
 @customElement('yp-realtime')
 export class YpRealtime extends PlausibleRealtime {
@@ -17,6 +18,11 @@ export class YpRealtime extends PlausibleRealtime {
 
   static get styles() {
     return [...super.styles, css``];
+  }
+
+  constructor() {
+    super();
+    this.highlightedGoals = highlightedGoals;
   }
 
   render() {
