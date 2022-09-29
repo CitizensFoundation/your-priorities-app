@@ -16,7 +16,7 @@ export class PlausibleSourcesList extends PlausibleBaseElementWithState {
   tab!: PlausibleSourcesTabOptions;
 
   @property({ type: Boolean })
-  alwaysShowNoRef = false
+  alwaysShowNoRef = false;
 
   connectedCallback() {
     super.connectedCallback();
@@ -33,7 +33,10 @@ export class PlausibleSourcesList extends PlausibleBaseElementWithState {
   }
 
   render() {
-    if (this.query.filters["source"]) {
+    if (
+      this.query.filters['source'] &&
+      this.query.filters['source'] !== 'Direct / None'
+    ) {
       return html`
         <pl-sources-referrers
           .tab=${this.tab}
@@ -61,7 +64,7 @@ export class PlausibleSourcesList extends PlausibleBaseElementWithState {
       `;
     } else {
       return html`
-       <pl-sources-utm
+        <pl-sources-utm
           .tab=${this.tab}
           .proxyUrl=${this.proxyUrl}
           .proxyFaviconBaseUrl="${this.proxyFaviconBaseUrl}"

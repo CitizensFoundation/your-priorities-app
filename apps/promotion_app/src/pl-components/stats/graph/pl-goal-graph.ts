@@ -41,8 +41,6 @@ export class PlausibleGoalGraph extends PlausibleBaseGraph {
       //@ts-ignore
       if (this.query.filters[key]) {
         //@ts-ignore
-        console.error(this.query.filters[key]);
-        //@ts-ignore
         if (this.query.filters[key]=="page") {
           //@ts-ignore
           filterString += `${key}==${this.query.filters[key]};`;
@@ -63,7 +61,6 @@ export class PlausibleGoalGraph extends PlausibleBaseGraph {
     }
 
     if (events.length>0) {
-      console.error(`|${events.join('|')}` + filterString)
      return `|${events.join('|')}` + filterString;
     } else {
       return filterString;
