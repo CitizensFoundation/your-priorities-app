@@ -32,10 +32,15 @@
       }
 
       .description {
+        line-height: 1.3;
+      }
+
+      .description[longname] {
+        line-height: 1.2;
       }
 
       .description[largefont] {
-          font-size: 15px;
+        font-size: 15px;
       }
 
       .stats {
@@ -258,6 +263,7 @@
                 <template is="dom-if" if="[[domain.id]]">
                   <yp-magic-text id="description" class="description domainDescription"
                                  largefont$="[[largeFont]]"
+                                 longname$="[[longName]]"
                                  text-type="domainContent" content-language="[[domain.language]]"
                                  content="[[domain.description]]" content-id="[[domain.id]]">
                   </yp-magic-text>
