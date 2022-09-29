@@ -47,8 +47,10 @@ export function serializeQuery(
   if (query.period) {
     queryObj.period = query.period;
   }
-  if (query.date) {
+  if (query.date && query.date instanceof Date) {
     queryObj.date = formatISO(query.date);
+  } else {
+    queryObj.date = query.date;
   }
   if (query.from) {
     queryObj.from = formatISO(query.from);

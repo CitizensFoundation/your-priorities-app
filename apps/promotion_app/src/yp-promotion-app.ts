@@ -616,7 +616,6 @@ export class YpPromotionApp extends YpBaseElementWithLogin {
       }
     }
 
-    debugger;
     if (!this.adminConfirmed) {
       this.fire('yp-network-error', { message: this.t('unauthorized') });
     }

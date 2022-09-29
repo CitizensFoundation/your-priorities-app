@@ -11,6 +11,7 @@ import { GraphTooltip, buildDataSet, dateFormatter } from './graph-util.js';
 import './pl-top-stats.js';
 import * as url from '../../util/url.js';
 import { PlausibleBaseElementWithState } from '../../pl-base-element-with-state.js';
+import { formatISO } from '../../util/date.js';
 
 export abstract class PlausibleBaseGraph extends PlausibleBaseElementWithState {
   @property({ type: Object })
@@ -246,6 +247,17 @@ export abstract class PlausibleBaseGraph extends PlausibleBaseElementWithState {
           fill: true,
         },
       ];
+    }
+  }
+
+  transformCustomDateForStatsQuery(query: PlausibleQueryData) {
+    if (query.period == 'custom') {
+      query.date = `${formatISO(query.from)},${formatISO(query.to)}` as unknown as Date;
+      query.from = undefined;
+      query.to = undefined;
+      return query;
+    } else {
+      return query;
     }
   }
 

@@ -5,6 +5,7 @@ import { PlausibleBaseElementWithState } from '../../pl-base-element-with-state'
 
 import './pl-sources-all.js';
 import './pl-sources-utm.js';
+import './pl-sources-referrers.js';
 
 @customElement('pl-sources-list')
 export class PlausibleSourcesList extends PlausibleBaseElementWithState {
@@ -32,7 +33,20 @@ export class PlausibleSourcesList extends PlausibleBaseElementWithState {
   }
 
   render() {
-    if (this.tab === 'all') {
+    if (this.query.filters["source"]) {
+      return html`
+        <pl-sources-referrers
+          .tab=${this.tab}
+          .proxyUrl=${this.proxyUrl}
+          .proxyFaviconBaseUrl="${this.proxyFaviconBaseUrl}"
+          .query=${this.query}
+          .site=${this.site}
+          .alwaysShowNoRef="${this.alwaysShowNoRef}"
+          .timer="${this.timer}"
+          @tab-changed=${this.tabChanged}
+        ></pl-sources-referrers>
+      `;
+    } else if (this.tab === 'all') {
       return html`
         <pl-sources-all
           .tab=${this.tab}

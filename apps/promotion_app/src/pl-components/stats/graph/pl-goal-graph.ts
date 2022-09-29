@@ -16,6 +16,7 @@ import { PlausibleBaseElement } from '../../pl-base-element.js';
 import { PlausibleBaseElementWithState } from '../../pl-base-element-with-state.js';
 import { PlausibleBaseGraph } from './pl-base-graph.js';
 import { themeFromSourceColor } from '@material/material-color-utilities';
+import { formatISO } from '../../util/date.js';
 
 @customElement('pl-goal-graph')
 export class PlausibleGoalGraph extends PlausibleBaseGraph {
@@ -35,13 +36,20 @@ export class PlausibleGoalGraph extends PlausibleBaseGraph {
 
   get filterInStatsFormat() {
     let filterString = '';
-    Object.keys(this.query.filters).map(key => {
+    let events: string[] =[];
+    Object.keys(this.query.filters).map((key) => {
       //@ts-ignore
       if (this.query.filters[key]) {
-          //@ts-ignore
-          if (this.query.filters[key]=="page") {
+        //@ts-ignore
+        console.error(this.query.filters[key]);
+        //@ts-ignore
+        if (this.query.filters[key]=="page") {
           //@ts-ignore
           filterString += `${key}==${this.query.filters[key]};`;
+          //@ts-ignore
+        } else if (key=="goal") {
+          //@ts-ignore
+          events.push(this.query.filters[key]);
         } else {
           //@ts-ignore
           filterString += `visit:${key}==${this.query.filters[key]};`;
@@ -54,14 +62,21 @@ export class PlausibleGoalGraph extends PlausibleBaseGraph {
       filterString = filterString.slice(0, -1);
     }
 
-    return filterString;
+    if (events.length>0) {
+      console.error(`|${events.join('|')}` + filterString)
+     return `|${events.join('|')}` + filterString;
+    } else {
+      return filterString;
+    }
   }
 
   async fetchGraphData() {
     return new Promise((resolve, reject) => {
       if (this.query.period!="realtime") {
+        let query = structuredClone(this.query);
+        query = this.transformCustomDateForStatsQuery(query);
         api
-        .get(this.proxyUrl, `/api/v1/stats/${this.method}`, this.query, {
+        .get(this.proxyUrl, `/api/v1/stats/${this.method}`, query, {
           metrics: this.metrics,
           statsBegin: this.site.statsBegin,
           site_id: encodeURIComponent(this.site!.domain!),
