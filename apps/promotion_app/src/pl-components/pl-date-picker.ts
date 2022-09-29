@@ -1,5 +1,5 @@
 import { LitElement, css, html, nothing } from 'lit';
-import { property, customElement, query } from 'lit/decorators.js';
+import { property, customElement, query, queryAsync } from 'lit/decorators.js';
 import 'lit-flatpickr';
 
 import {
@@ -41,7 +41,7 @@ export class PlausibleDatePicker extends PlausibleBaseElementWithState {
   @query('#dropdownNode')
   dropdownNode!: HTMLDivElement;
 
-  @query('#calendar')
+  @queryAsync('#calendar')
   calendar!: LitFlatpickr;
 
   @property({ type: String })
@@ -52,6 +52,8 @@ export class PlausibleDatePicker extends PlausibleBaseElementWithState {
 
   @property({ type: Boolean })
   open = false;
+
+  dayBeforeCreation: number | undefined;
 
   constructor() {
     super();
@@ -67,6 +69,8 @@ export class PlausibleDatePicker extends PlausibleBaseElementWithState {
     super.connectedCallback();
     document.addEventListener('keydown', this.handleKeydown);
     document.addEventListener('mousedown', this.handleClick, false);
+    const statsBeginDateDate = new Date(this.site.statsBegin!);
+    this.dayBeforeCreation = statsBeginDateDate.getTime() - 86400000;
   }
 
   disconnectedCallback(): void {
@@ -75,11 +79,14 @@ export class PlausibleDatePicker extends PlausibleBaseElementWithState {
   }
 
   static get styles() {
-    return [...super.styles,css`
-      .pointer {
-        cursor: pointer;
-      }
-    `];
+    return [
+      ...super.styles,
+      css`
+        .pointer {
+          cursor: pointer;
+        }
+      `,
+    ];
   }
 
   updated(changedProperties: Map<string | number | symbol, unknown>): void {
@@ -277,8 +284,6 @@ export class PlausibleDatePicker extends PlausibleBaseElementWithState {
         ...redirects[keys.indexOf(e.key.toLowerCase())],
       } as PlausibleQueryStringsData);
     } else if (e.key.toLowerCase() === 'c') {
-      this.mode = 'calendar';
-      this.open = true;
       this.openCalendar();
     } else if (newSearch.date) {
       navigateToQuery(
@@ -364,12 +369,9 @@ export class PlausibleDatePicker extends PlausibleBaseElementWithState {
   }
 
   toggle() {
-    const newMode =
-      this.mode === 'calendar' && !this.open
-        ? 'menu'
-        : this.mode;
-        this.mode = newMode;
-        this.open = !this.open;
+    const newMode = this.mode === 'calendar' && !this.open ? 'menu' : this.mode;
+    this.mode = newMode;
+    this.open = !this.open;
     this.requestUpdate();
   }
 
@@ -378,10 +380,10 @@ export class PlausibleDatePicker extends PlausibleBaseElementWithState {
   }
 
   async openCalendar() {
-    await this.updateComplete;
-    setTimeout( ()=>{
-      this.calendar.open();
-    }, 150)
+    this.mode = 'calendar';
+    this.open = true;
+    const calendar = await this.calendar;
+    calendar.open();
   }
 
   renderLink(period: string, text: string, opts: any = {}) {
@@ -464,7 +466,6 @@ export class PlausibleDatePicker extends PlausibleBaseElementWithState {
               ${this.renderLink('all', this.t('All time'))}
               <span
                 @click="${() => {
-                  this.mode = 'calendar';
                   this.openCalendar();
                 }}"
                 class="px-4 py-2 text-sm leading-tight hover:bg-gray-100
@@ -476,7 +477,7 @@ export class PlausibleDatePicker extends PlausibleBaseElementWithState {
                 aria-expanded="false"
                 aria-controls="calendar"
               >
-                Custom range
+                ${this.t('Custom range')}
                 <span class="font-normal">C</span>
               </span>
             </div>
@@ -484,23 +485,7 @@ export class PlausibleDatePicker extends PlausibleBaseElementWithState {
         </div>
       `;
     } else if (this.mode === 'calendar') {
-      const insertionDate = new Date(this.site.statsBegin!);
-      //@ts-ignore
-      const dayBeforeCreation = insertionDate - 86400000;
-      return html`
-        <div class="h-0">
-          <lit-flatpickr
-            id="calendar"
-            mode="range"
-            maxDate="today"
-            .minDate=${dayBeforeCreation}
-            showMonths="1"
-            animate="true"
-            .onValueUpdate="${this.setCustomDate}"
-          >
-          </lit-flatpickr>
-        </div>
-      `;
+      return html``;
     }
   }
 
@@ -524,14 +509,23 @@ export class PlausibleDatePicker extends PlausibleBaseElementWithState {
             ${this.leadingText}
             <span class="font-medium">${this.timeFrameText()}</span>
           </span>
-          <div
-            class=" sm:inline-block h-4 w-4 md:h-5 md:w-5 text-gray-500"
-          >
-           ${ChevronDownIcon}
+          <div class=" sm:inline-block h-4 w-4 md:h-5 md:w-5 text-gray-500">
+            ${ChevronDownIcon}
           </div>
         </div>
 
         ${this.open ? this.renderDropDownContent() : nothing}
+        <lit-flatpickr
+          id="calendar"
+          mode="range"
+          style="height: 0; width: 0;"
+          maxDate="today"
+          .minDate=${this.dayBeforeCreation}
+          showMonths="1"
+          animate="true"
+          .onValueUpdate="${this.setCustomDate}"
+        >
+        </lit-flatpickr>
       </div>
     `;
   }
