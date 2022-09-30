@@ -7,8 +7,6 @@ export const highlightedGoals = [
   "Login and Signup - Signup Fail",
   "Login and Signup - Signup/Login Opened",
   "newPointFor - completed",
-  "Login and Signup - Login Submit",
-  "Login and Signup - Signup Submit",
   "newPointAgainst - completed",
   "Login and Signup - Login Success",
   "Login and Signup - Signup Success",
