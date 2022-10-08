@@ -144,7 +144,7 @@ const ziggeoHeaders = (ziggeoApplicationToken) => { return `
       token:"${ziggeoApplicationToken}",
       webrtc_streaming_if_necessary: true,
       "video_profile": "720p",
-      recordingwidth: "1920",
+      recordingwidth: "1280",
       recordingheight: "720",
       webrtc_on_mobile: true,
       debug: true
