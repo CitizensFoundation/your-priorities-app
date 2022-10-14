@@ -394,6 +394,8 @@
                        truncate="[[truncateBy]]">
         </yp-magic-text>
 
+        <yp-group-stats hidden$="[[hasGroupAccess]]" has-hidden-objectives$="[[group.Community.configuration.hideGroupListCardObjectives]]" class="stats" group="[[group.CommunityLink]]"></yp-group-stats>
+
         <div class="edit">
           <paper-icon-button class="editButtons" hidden$="[[!hasGroupAccess]]" aria-label$="[[t('openDelete')]]" on-tap="_openDelete" icon="delete"></paper-icon-button>
           <paper-icon-button class="editButtons" hidden$="[[!hasGroupAccess]]" aria-label$="[[t('openEdit')]]" on-tap="_openEdit" icon="create"></paper-icon-button>
