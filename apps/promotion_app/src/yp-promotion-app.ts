@@ -101,9 +101,13 @@ export class YpPromotionApp extends YpBaseElementWithLogin {
   @property({ type: String })
   lastSnackbarText: string | undefined;
 
+  @property({ type: Number })
+  useProjectId: string | undefined;
+
   originalCollectionType: string | undefined;
 
   collectionURL: string | undefined;
+
 
   static get styles() {
     return [
@@ -317,6 +321,14 @@ export class YpPromotionApp extends YpBaseElementWithLogin {
     )) as YpCollectionData | YpGroupResults;
     if (this.collectionType == 'group') {
       this.collection = (collection as YpGroupResults).group;
+    } else if (this.collectionType == 'community') {
+      if ((collection as YpCommunityData).configuration.useProjectIdForAnalytics &&
+        (collection as YpCommunityData).configuration.projectId) {
+        this.useProjectId = (collection as YpCommunityData).configuration.projectId;
+      } else {
+        this.useProjectId = undefined;
+      }
+      this.collection = collection as YpCollectionData;
     } else {
       this.collection = collection as YpCollectionData;
     }
@@ -668,6 +680,7 @@ export class YpPromotionApp extends YpBaseElementWithLogin {
                         .collectionType="${this.collectionType}"
                         .collection="${this.collection}"
                         .collectionId="${this.collectionId}"
+                        .useProjectId="${this.useProjectId}"
                       >
                       </yp-promotion-dashboard>`
                     : nothing

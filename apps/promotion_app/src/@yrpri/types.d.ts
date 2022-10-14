@@ -252,6 +252,8 @@ interface YpCommunityConfiguration extends YpCollectionConfiguration {
   hideRecommendationOnNewsFeed?: boolean;
   defaultLocationLongLat?: string;
   closeNewsfeedSubmissions?: boolean;
+  useProjectIdForAnalytics?: boolean;
+  projectId?: string;
 }
 
 interface YpDomainConfiguration extends YpCollectionConfiguration {
