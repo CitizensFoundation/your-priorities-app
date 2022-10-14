@@ -754,6 +754,8 @@ var updateCommunityConfigParameters = function (req, community) {
   community.set('configuration.hideRecommendationOnNewsFeed', truthValueFromBody(req.body.hideRecommendationOnNewsFeed));
   community.set('configuration.closeNewsfeedSubmissions', truthValueFromBody(req.body.closeNewsfeedSubmissions));
 
+  community.set('configuration.useProjectIdForAnalytics', truthValueFromBody(req.body.useProjectIdForAnalytics));
+
   community.set('configuration.disableGroupDynamicFontSizes', truthValueFromBody(req.body.disableGroupDynamicFontSizes));
   community.set('configuration.hideGroupListCardObjectives', truthValueFromBody(req.body.hideGroupListCardObjectives));
 
@@ -2176,8 +2178,17 @@ router.get('/:communityId/:type/getPlausibleSeries', auth.can('edit community ma
 });
 
 router.put('/:communityId/plausibleStatsProxy', auth.can('edit community marketing'), async (req, res) => {
+  const plausibleParams = {};
+
+  if (req.query.projectId) {
+    //TODO: check if user is allowed to see this project
+    plausibleParams.projectId = req.query.projectId;
+  } else {
+    plausibleParams.communityId = req.params.communityId;
+  }
+
   try {
-    const plausibleData = await plausibleStatsProxy(req.body.plausibleUrl, { communityId: req.params.communityId });
+    const plausibleData = await plausibleStatsProxy(req.body.plausibleUrl, plausibleParams);
     res.send(plausibleData);
   } catch (error) {
     log.error('Could not get plausibleStatsProxy', { err: error, context: 'getPlausibleSeries', user: toJson(req.user.simple()) });
