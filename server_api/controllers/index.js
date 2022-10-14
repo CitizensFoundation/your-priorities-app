@@ -139,7 +139,6 @@ const getGA4Code = (tag) => {
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-
       gtag('config', '${tag}',  { 'anonymize_ip': true });
     </script>
   `;
