@@ -98,7 +98,7 @@
       if (typeof ga == 'function') {
         if (a!='sendOnlyCommunity') {
           ga('send', b, c, d, e, f);
-          console.debug("Analytics global: send "+b+" "+c+" "+d);
+          //console.debug("Analytics global: send "+b+" "+c+" "+d);
         }
         if (this.communityTrackerId) {
           var sendName = 'tracker'+this.communityTrackerId.replace(/-/g,'');
@@ -108,11 +108,27 @@
             console.debug("Created tracker: "+sendName);
           }
           sendName += '.send';
-          console.debug("Analytics: "+sendName+": "+b+" "+c+" "+d);
+          //console.debug("Analytics: "+sendName+": "+b+" "+c+" "+d);
           ga(sendName, b, c, d, e, f);
         }
       } else {
         console.warn("Google analytics message not sent for a:"+a+" b:"+b+" c:"+c+" d:"+d+" e:"+e+" f:"+f);
+      }
+
+      if (typeof gtag == 'function') {
+        if (a!='sendOnlyCommunity') {
+          if (b==="pageview") {
+            gtag('set', 'page_path', window.location.pathname);
+            gtag('event', 'page_view');
+          } else if (b==="event") {
+            gtag('event', `${c} - ${d}`, {
+              'event_category': d,
+              'event_label': e,
+              'value': f,
+              })
+          }
+          //console.debug("Gtag Analytics global: send "+b+" "+c+" "+d);
+        }
       }
 
       if (a!='sendOnlyCommunity') {

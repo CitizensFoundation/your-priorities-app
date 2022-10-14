@@ -132,6 +132,19 @@ const plausibleCode = `
   <script>window.plausible = window.plausible || function() { (window.plausible.q = window.plausible.q || []).push(arguments) }</script>
 `;
 
+const getGA4Code = (tag) => {
+  return `
+    <script async src="https://www.googletagmanager.com/gtag/js?id=${tag}"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', '${tag}');
+    </script>
+  `;
+}
+
 const getPlausibleCode = (dataDomain) => {
   return plausibleCode.replace("DATADOMAIN", dataDomain);
 }
@@ -298,6 +311,15 @@ let sendIndex = async (req, res) => {
         indexFileData = indexFileData.replace('XplcX',getPlausibleCode(req.ypDomain.configuration.plausibleDataDomains));
       } else {
         indexFileData = indexFileData.replace('XplcX', '');
+      }
+
+      if (req.ypDomain &&
+          req.ypDomain.configuration &&
+          req.ypDomain.configuration.ga4Tag &&
+          req.ypDomain.configuration.ga4Tag.length>4) {
+          indexFileData = indexFileData.replace('Xga4X',getGA4Code(req.ypDomain.configuration.ga4Tag));
+      } else {
+          indexFileData = indexFileData.replace('Xga4X', '');
       }
 
       if (req.hostname) {

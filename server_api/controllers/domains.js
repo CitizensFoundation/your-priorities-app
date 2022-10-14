@@ -805,6 +805,7 @@ router.put('/:id', auth.can('edit domain'), function(req, res) {
 
       domain.set('configuration.plausibleDataDomains', (req.body.plausibleDataDomains && req.body.plausibleDataDomains!="") ? req.body.plausibleDataDomains : null);
       domain.set('configuration.ziggeoApplicationToken', (req.body.ziggeoApplicationToken && req.body.ziggeoApplicationToken!="") ? req.body.ziggeoApplicationToken : null);
+      domain.set('configuration.ga4Tag', (req.body.ga4Tag && req.body.ga4Tag!="") ? req.body.ga4Tag : null);
 
       if (req.body.google_analytics_code && req.body.google_analytics_code!="") {
         domain.google_analytics_code = req.body.google_analytics_code;

@@ -171,20 +171,28 @@
 
         <paper-checkbox name="onlyAdminsCanCreateCommunities" checked$="{{domain.only_admins_can_create_communities}}">[[t('domain.onlyAdminsCanCreateCommunities')]]</paper-checkbox>
 
-        <paper-input id="google_analytics_code"
-                     name="google_analytics_code"
-                     type="text"
-                     label="[[t('analyticsTrackerCode')]]"
-                     value="{{domain.google_analytics_code}}"
-                     maxlength="40" style="width: 200px;">
-        </paper-input>
-
         <paper-input id="plausibleDataDomains"
                      name="plausibleDataDomains"
                      type="text"
                      label="[[t('plausibleDataDomains')]]"
                      value="{{domain.configuration.plausibleDataDomains}}"
                      maxlength="512" style="width: 300px;">
+        </paper-input>
+
+        <paper-input id="google_analytics_code"
+                     name="google_analytics_code"
+                     type="text"
+                     label="Google Analytics Universal Code"
+                     value="{{domain.google_analytics_code}}"
+                     maxlength="40" style="width: 200px;">
+        </paper-input>
+
+        <paper-input id="google_analytics_gtag_code"
+                name="ga4Tag"
+                type="text"
+                label="Google Analytics 4 Tag"
+                value="{{domain.configuration.ga4Tag}}"
+                maxlength="50" style="width: 200px;">
         </paper-input>
 
         <paper-input id="facebookClientId"
