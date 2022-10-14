@@ -140,7 +140,7 @@ const getGA4Code = (tag) => {
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
 
-      gtag('config', '${tag}');
+      gtag('config', '${tag}',  { 'anonymize_ip': true });
     </script>
   `;
 }
