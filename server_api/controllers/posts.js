@@ -711,7 +711,7 @@ var updatePostData = function (req, post) {
     });
   }
 
-  if (!post.data.contactInformation) {
+  if (!post.data.contact) {
     post.set('data.contact', {});
   }
 
@@ -719,13 +719,17 @@ var updatePostData = function (req, post) {
     post.set('data.attachment', {});
   }
 
-  post.set('data.contact.name', (req.body.contactName && req.body.contactName!="") ? req.body.contactName : null);
-  post.set('data.contact.email', (req.body.contactEmail && req.body.contactEmail!="") ? req.body.contactEmail : null);
-  post.set('data.contact.telephone', (req.body.contacTelephone && req.body.contacTelephone!="") ? req.body.contacTelephone : null);
-  post.set('data.contact.address', (req.body.contactAddress && req.body.contactAddress!="") ? req.body.contactAddress : null);
+  if (req.body.contactName || req.body.contactEmail || req.body.contacTelephone) {
+    post.set('data.contact.name', (req.body.contactName && req.body.contactName!="") ? req.body.contactName : null);
+    post.set('data.contact.email', (req.body.contactEmail && req.body.contactEmail!="") ? req.body.contactEmail : null);
+    post.set('data.contact.telephone', (req.body.contacTelephone && req.body.contacTelephone!="") ? req.body.contacTelephone : null);
+    post.set('data.contact.address', (req.body.contactAddress && req.body.contactAddress!="") ? req.body.contactAddress : null);
+  }
 
-  post.set('data.attachment.url', (req.body.uploadedDocumentUrl && req.body.uploadedDocumentUrl!="") ? req.body.uploadedDocumentUrl : null);
-  post.set('data.attachment.filename', (req.body.uploadedDocumentFilename && req.body.uploadedDocumentFilename!="") ? req.body.uploadedDocumentFilename : null);
+  if (req.body.uploadedDocumentUrl && req.body.uploadedDocumentUrl!="") {
+    post.set('data.attachment.url', (req.body.uploadedDocumentUrl && req.body.uploadedDocumentUrl!="") ? req.body.uploadedDocumentUrl : null);
+    post.set('data.attachment.filename', (req.body.uploadedDocumentFilename && req.body.uploadedDocumentFilename!="") ? req.body.uploadedDocumentFilename : null);
+  }
 
   if (req.body.deleteAttachment && req.body.deleteAttachment!=="") {
     post.set('data.attachment', {});
