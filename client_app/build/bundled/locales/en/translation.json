@@ -1,4 +1,7 @@
 {
+  "newGroupFolder": "New Group Folder",
+  "groupFolder": "Group Folder",
+  "editGroupFolder": "Edit Group Folder",
   "useProjectIdForAnalytics": "Use this Project Id for analytics view",
   "actAsLinkToExternalYPSite": "Act as link to external Your Priorities site",
   "doYouWantToDisplayYourName": "Do you want to display your name?",
