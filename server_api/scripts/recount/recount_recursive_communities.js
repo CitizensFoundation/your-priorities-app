@@ -115,6 +115,7 @@ const recountCommunityRecursive = async (communityId, options) => {
     users = [];
     postCount = 0;
     pointCount = 0;
+    groupCount = 0;
     await recountCommunityRecursive(communities[i].id, {});
   }
   process.exit();
