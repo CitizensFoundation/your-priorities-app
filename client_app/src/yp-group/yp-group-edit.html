@@ -255,6 +255,43 @@
 
         <input type="hidden" name="status" value="[[status]]">
 
+        <paper-textarea id="registrationQuestions"
+                name="registrationQuestions"
+                type="text"
+                rows="4"
+                always-float-label="[[group.configuration.registrationQuestions]]"
+                maxrows="8"
+                on-value-changed="_registrationQuestionsChanged"
+                max-rows="8"
+                label="[[t('registrationQuestions')]]"
+                value="{{group.configuration.registrationQuestions}}">
+        </paper-textarea>
+
+        <paper-input id="customBackURL"
+          name="customBackURL"
+          type="text"
+          maxlength="256"
+          label="[[t('customBackURL')]]"
+          value="{{group.configuration.customBackURL}}">
+        </paper-input>
+
+        <paper-input id="customBackName"
+          name="customBackName"
+          type="text"
+          maxlength="20"
+          label="[[t('customBackName')]]"
+          value="{{group.configuration.customBackName}}">
+        </paper-input>
+
+        <paper-input id="optionalSortOrder"
+          name="optionalSortOrder"
+          type="number"
+          allowed-pattern="[0-9]"
+          label="[[t('optionalSortOrder')]]"
+          value="{{group.configuration.optionalSortOrder}}"
+          maxlength="4">
+        </paper-input>
+
         <div class="subHeaders">[[t('languageSettings')]]</div>
 
         <yp-language-selector name="defaultLocale" no-user-events
@@ -316,627 +353,594 @@
           <paper-checkbox name="hideLogoBoxShadow" checked$="{{group.configuration.hideLogoBoxShadow}}">[[t('hideLogoBoxShadow')]]</paper-checkbox>
         </div>
 
-        <div class="subHeaders">[[t('postSettings')]]</div>
+        <div hidden$="[[isGroupFolder]]" class="layout vertical">
+          <div class="subHeaders">[[t('postSettings')]]</div>
 
-        <paper-checkbox name="canAddNewPosts" checked$="{{canAddNewPosts}}">[[t('group.canAddNewPosts')]]</paper-checkbox>
-        <paper-checkbox name="locationHidden" checked$="{{locationHidden}}">[[t('group.locationHidden')]]</paper-checkbox>
-        <paper-checkbox name="showWhoPostedPosts" checked$="{{showWhoPostedPosts}}">[[t('group.showWhoPostedPosts')]]</paper-checkbox>
-        <paper-checkbox name="askUserIfNameShouldBeDisplayed" checked$="{{group.configuration.askUserIfNameShouldBeDisplayed}}">[[t('askUserIfNameShouldBeDisplayed')]]</paper-checkbox>
-        <paper-checkbox name="disableDebate" checked$="{{group.configuration.disableDebate}}">[[t('disableDebate')]]</paper-checkbox>
-        <paper-checkbox name="allowAdminsToDebate" checked$="{{group.configuration.allowAdminsToDebate}}">[[t('allowAdminsToDebate')]]</paper-checkbox>
+          <paper-checkbox name="canAddNewPosts" checked$="{{canAddNewPosts}}">[[t('group.canAddNewPosts')]]</paper-checkbox>
+          <paper-checkbox name="locationHidden" checked$="{{locationHidden}}">[[t('group.locationHidden')]]</paper-checkbox>
+          <paper-checkbox name="showWhoPostedPosts" checked$="{{showWhoPostedPosts}}">[[t('group.showWhoPostedPosts')]]</paper-checkbox>
+          <paper-checkbox name="askUserIfNameShouldBeDisplayed" checked$="{{group.configuration.askUserIfNameShouldBeDisplayed}}">[[t('askUserIfNameShouldBeDisplayed')]]</paper-checkbox>
+          <paper-checkbox name="disableDebate" checked$="{{group.configuration.disableDebate}}">[[t('disableDebate')]]</paper-checkbox>
+          <paper-checkbox name="allowAdminsToDebate" checked$="{{group.configuration.allowAdminsToDebate}}">[[t('allowAdminsToDebate')]]</paper-checkbox>
 
-        <paper-input id="postDescriptionLimit"
-                     name="postDescriptionLimit"
-                     type="text"
-                     allowed-pattern="[0-9]"
-                     label="[[t('postDescriptionLimit')]]"
-                     value="{{group.configuration.postDescriptionLimit}}"
-                     maxlength="4"
-                     char-counter>
-        </paper-input>
+          <paper-input id="postDescriptionLimit"
+                       name="postDescriptionLimit"
+                       type="text"
+                       allowed-pattern="[0-9]"
+                       label="[[t('postDescriptionLimit')]]"
+                       value="{{group.configuration.postDescriptionLimit}}"
+                       maxlength="4"
+                       char-counter>
+          </paper-input>
 
-        <paper-checkbox name="allowPostVideoUploads" disabled$="[[!hasVideoUpload]]"
-                        checked$="{{allowPostVideoUploads}}">[[t('allowPostVideoUploads')]]
-        </paper-checkbox>
+          <paper-checkbox name="allowPostVideoUploads" disabled$="[[!hasVideoUpload]]"
+                          checked$="{{allowPostVideoUploads}}">[[t('allowPostVideoUploads')]]
+          </paper-checkbox>
 
-        <paper-input id="videoPostUploadLimitSec"
-                     name="videoPostUploadLimitSec"
-                     allowed-pattern="[0-9]"
-                     maxlength="3"
-                     type="number"
-                     disabled$="[[!hasVideoUpload]]"
-                     label="[[t('videoPostUploadLimitSec')]]"
-                     value="{{group.configuration.videoPostUploadLimitSec}}">
-        </paper-input>
+          <paper-input id="videoPostUploadLimitSec"
+                       name="videoPostUploadLimitSec"
+                       allowed-pattern="[0-9]"
+                       maxlength="3"
+                       type="number"
+                       disabled$="[[!hasVideoUpload]]"
+                       label="[[t('videoPostUploadLimitSec')]]"
+                       value="{{group.configuration.videoPostUploadLimitSec}}">
+          </paper-input>
 
-        <paper-checkbox name="allowPostAudioUploads" disabled$="[[!hasAudioUpload]]"
-                        checked$="{{allowPostAudioUploads}}">[[t('allowPostAudioUploads')]]
-        </paper-checkbox>
+          <paper-checkbox name="allowPostAudioUploads" disabled$="[[!hasAudioUpload]]"
+                          checked$="{{allowPostAudioUploads}}">[[t('allowPostAudioUploads')]]
+          </paper-checkbox>
 
-        <paper-input id="audioPostUploadLimitSec"
-                     name="audioPostUploadLimitSec"
-                     allowed-pattern="[0-9]"
-                     maxlength="3"
-                     type="number"
-                     disabled$="[[!hasaudioUpload]]"
-                     label="[[t('audioPostUploadLimitSec')]]"
-                     value="{{group.configuration.audioPostUploadLimitSec}}">
-        </paper-input>
+          <paper-input id="audioPostUploadLimitSec"
+                       name="audioPostUploadLimitSec"
+                       allowed-pattern="[0-9]"
+                       maxlength="3"
+                       type="number"
+                       disabled$="[[!hasaudioUpload]]"
+                       label="[[t('audioPostUploadLimitSec')]]"
+                       value="{{group.configuration.audioPostUploadLimitSec}}">
+          </paper-input>
 
-        <paper-input id="customTitleQuestionText"
-                     name="customTitleQuestionText"
-                     maxlength="60"
-                     label="[[t('customTitleQuestionText')]]"
-                     value="{{group.configuration.customTitleQuestionText}}">
-        </paper-input>
+          <paper-input id="customTitleQuestionText"
+                       name="customTitleQuestionText"
+                       maxlength="60"
+                       label="[[t('customTitleQuestionText')]]"
+                       value="{{group.configuration.customTitleQuestionText}}">
+          </paper-input>
 
-        <paper-input id="hideNameInputAndReplaceWith"
-                     name="hideNameInputAndReplaceWith"
-                     maxlength="60"
-                     label="[[t('hideNameInputAndReplaceWith')]]"
-                     value="{{group.configuration.hideNameInputAndReplaceWith}}">
-        </paper-input>
+          <paper-input id="hideNameInputAndReplaceWith"
+                       name="hideNameInputAndReplaceWith"
+                       maxlength="60"
+                       label="[[t('hideNameInputAndReplaceWith')]]"
+                       value="{{group.configuration.hideNameInputAndReplaceWith}}">
+          </paper-input>
 
-        <paper-input id="customTabTitleNewLocation"
-                     name="customTabTitleNewLocation"
-                     maxlength="60"
-                     label="[[t('customTabTitleNewLocation')]]"
-                     value="{{group.configuration.customTabTitleNewLocation}}">
-        </paper-input>
+          <paper-input id="customTabTitleNewLocation"
+                       name="customTabTitleNewLocation"
+                       maxlength="60"
+                       label="[[t('customTabTitleNewLocation')]]"
+                       value="{{group.configuration.customTabTitleNewLocation}}">
+          </paper-input>
 
-        <paper-input id="customCategoryQuestionText"
-                     name="customCategoryQuestionText"
-                     type="text"
-                     label="[[t('customCategoryQuestionText')]]"
-                     value="{{group.configuration.customCategoryQuestionText}}"
-                     maxlength="30"
-                     char-counter>
-        </paper-input>
+          <paper-input id="customCategoryQuestionText"
+                       name="customCategoryQuestionText"
+                       type="text"
+                       label="[[t('customCategoryQuestionText')]]"
+                       value="{{group.configuration.customCategoryQuestionText}}"
+                       maxlength="30"
+                       char-counter>
+          </paper-input>
 
-        <paper-input id="customFilterText"
-                     name="customFilterText"
-                     type="text"
-                     label="[[t('customFilterText')]]"
-                     value="{{group.configuration.customFilterText}}"
-                     maxlength="17"
-                     char-counter>
-        </paper-input>
+          <paper-input id="customFilterText"
+                       name="customFilterText"
+                       type="text"
+                       label="[[t('customFilterText')]]"
+                       value="{{group.configuration.customFilterText}}"
+                       maxlength="17"
+                       char-counter>
+          </paper-input>
 
-        <paper-checkbox name="makeCategoryRequiredOnNewPost" checked$="{{group.configuration.makeCategoryRequiredOnNewPost}}">[[t('makeCategoryRequiredOnNewPost')]]
-        </paper-checkbox>
+          <paper-checkbox name="makeCategoryRequiredOnNewPost" checked$="{{group.configuration.makeCategoryRequiredOnNewPost}}">[[t('makeCategoryRequiredOnNewPost')]]
+          </paper-checkbox>
 
-        <paper-checkbox name="showVideoUploadDisclaimer" checked$="{{group.configuration.showVideoUploadDisclaimer}}">
-          [[t('showVideoUploadDisclaimer')]]
-        </paper-checkbox>
+          <paper-checkbox name="showVideoUploadDisclaimer" checked$="{{group.configuration.showVideoUploadDisclaimer}}">
+            [[t('showVideoUploadDisclaimer')]]
+          </paper-checkbox>
 
-        <paper-checkbox name="moreContactInformation" checked$="{{group.configuration.moreContactInformation}}">
-          [[t('moreContactInformation')]]
-        </paper-checkbox>
+          <paper-checkbox name="moreContactInformation" checked$="{{group.configuration.moreContactInformation}}">
+            [[t('moreContactInformation')]]
+          </paper-checkbox>
 
-        <paper-checkbox name="moreContactInformationAddress" checked$="{{group.configuration.moreContactInformationAddress}}">
-          [[t('moreContactInformationAddress')]]
-        </paper-checkbox>
+          <paper-checkbox name="moreContactInformationAddress" checked$="{{group.configuration.moreContactInformationAddress}}">
+            [[t('moreContactInformationAddress')]]
+          </paper-checkbox>
 
-        <paper-checkbox name="attachmentsEnabled" checked$="{{group.configuration.attachmentsEnabled}}">
-          [[t('attachmentsEnabled')]]
-        </paper-checkbox>
-        <paper-checkbox name="useContainImageMode" checked$="{{group.configuration.useContainImageMode}}">
-          [[t('useContainImageMode')]]
-        </paper-checkbox>
-        <paper-checkbox name="hideNewPost" checked$="{{group.configuration.hideNewPost}}">[[t('hideNewPost')]]</paper-checkbox>
-        <paper-checkbox name="hideRecommendationOnNewsFeed" checked$="{{group.configuration.hideRecommendationOnNewsFeed}}">[[t('hideRecommendationOnNewsFeed')]]</paper-checkbox>
-        <paper-checkbox name="hideNewPostOnPostPage" checked$="{{hideNewPostOnPostPage}}">
-          [[t('hideNewPostOnPostPage')]]
-        </paper-checkbox>
+          <paper-checkbox name="attachmentsEnabled" checked$="{{group.configuration.attachmentsEnabled}}">
+            [[t('attachmentsEnabled')]]
+          </paper-checkbox>
+          <paper-checkbox name="useContainImageMode" checked$="{{group.configuration.useContainImageMode}}">
+            [[t('useContainImageMode')]]
+          </paper-checkbox>
+          <paper-checkbox name="hideNewPost" checked$="{{group.configuration.hideNewPost}}">[[t('hideNewPost')]]</paper-checkbox>
+          <paper-checkbox name="hideRecommendationOnNewsFeed" checked$="{{group.configuration.hideRecommendationOnNewsFeed}}">[[t('hideRecommendationOnNewsFeed')]]</paper-checkbox>
+          <paper-checkbox name="hideNewPostOnPostPage" checked$="{{hideNewPostOnPostPage}}">
+            [[t('hideNewPostOnPostPage')]]
+          </paper-checkbox>
 
-        <paper-checkbox name="hidePostCover" checked$="{{group.configuration.hidePostCover}}">[[t('hidePostCover')]]
-        </paper-checkbox>
+          <paper-checkbox name="hidePostCover" checked$="{{group.configuration.hidePostCover}}">[[t('hidePostCover')]]
+          </paper-checkbox>
 
-        <paper-checkbox name="hidePostDescription" checked$="{{group.configuration.hidePostDescription}}">
-          [[t('hidePostDescription')]]
-        </paper-checkbox>
-        <paper-checkbox name="hidePostActionsInGrid" checked$="{{group.configuration.hidePostActionsInGrid}}">
-          [[t('hidePostActionsInGrid')]]
-        </paper-checkbox>
-        <paper-checkbox name="hideDebateIcon" checked$="{{group.configuration.hideDebateIcon}}">
-          [[t('hideDebateIcon')]]
-        </paper-checkbox>
-        <paper-checkbox name="hideSharing" checked$="{{group.configuration.hideSharing}}">
-          [[t('hideSharing')]]
-        </paper-checkbox>
-        <paper-checkbox name="hideEmoji" checked$="{{hideEmoji}}">[[t('hideEmoji')]]</paper-checkbox>
+          <paper-checkbox name="hidePostDescription" checked$="{{group.configuration.hidePostDescription}}">
+            [[t('hidePostDescription')]]
+          </paper-checkbox>
+          <paper-checkbox name="hidePostActionsInGrid" checked$="{{group.configuration.hidePostActionsInGrid}}">
+            [[t('hidePostActionsInGrid')]]
+          </paper-checkbox>
+          <paper-checkbox name="hideDebateIcon" checked$="{{group.configuration.hideDebateIcon}}">
+            [[t('hideDebateIcon')]]
+          </paper-checkbox>
+          <paper-checkbox name="hideSharing" checked$="{{group.configuration.hideSharing}}">
+            [[t('hideSharing')]]
+          </paper-checkbox>
+          <paper-checkbox name="hideEmoji" checked$="{{hideEmoji}}">[[t('hideEmoji')]]</paper-checkbox>
 
-        <paper-checkbox name="hidePostFilterAndSearch" checked$="{{group.configuration.hidePostFilterAndSearch}}">
-          [[t('hidePostFilterAndSearch')]]
-        </paper-checkbox>
+          <paper-checkbox name="hidePostFilterAndSearch" checked$="{{group.configuration.hidePostFilterAndSearch}}">
+            [[t('hidePostFilterAndSearch')]]
+          </paper-checkbox>
 
-        <paper-checkbox name="hideMediaInput" checked$="{{group.configuration.hideMediaInput}}">
-          [[t('hideMediaInput')]]
-        </paper-checkbox>
+          <paper-checkbox name="hideMediaInput" checked$="{{group.configuration.hideMediaInput}}">
+            [[t('hideMediaInput')]]
+          </paper-checkbox>
 
-        <paper-checkbox name="hidePostImageUploads" disabled$="[[!hasVideoUpload]]"
-                        checked$="{{group.configuration.hidePostImageUploads}}">[[t('hidePostImageUploads')]]
-        </paper-checkbox>
+          <paper-checkbox name="hidePostImageUploads" disabled$="[[!hasVideoUpload]]"
+                          checked$="{{group.configuration.hidePostImageUploads}}">[[t('hidePostImageUploads')]]
+          </paper-checkbox>
 
-        <paper-checkbox name="disablePostPageLink" checked$="{{group.configuration.disablePostPageLink}}">
-          [[t('disablePostPageLink')]]
-        </paper-checkbox>
+          <paper-checkbox name="disablePostPageLink" checked$="{{group.configuration.disablePostPageLink}}">
+            [[t('disablePostPageLink')]]
+          </paper-checkbox>
 
-        <paper-input id="defaultLocationLongLat"
-                     name="defaultLocationLongLat"
-                     type="text"
-                     label="[[t('defaultLocationLongLat')]]"
-                     value="{{group.configuration.defaultLocationLongLat}}"
-                     maxlength="100" style="width: 300px;">
-        </paper-input>
+          <paper-input id="defaultLocationLongLat"
+                       name="defaultLocationLongLat"
+                       type="text"
+                       label="[[t('defaultLocationLongLat')]]"
+                       value="{{group.configuration.defaultLocationLongLat}}"
+                       maxlength="100" style="width: 300px;">
+          </paper-input>
 
-        <paper-input id="forcePostSortMethodAs"
-                     name="forcePostSortMethodAs"
-                     type="text"
-                     label="[[t('forcePostSortMethodAs')]]"
-                     value="{{group.configuration.forcePostSortMethodAs}}"
-                     maxlength="12">
-        </paper-input>
+          <paper-input id="forcePostSortMethodAs"
+                       name="forcePostSortMethodAs"
+                       type="text"
+                       label="[[t('forcePostSortMethodAs')]]"
+                       value="{{group.configuration.forcePostSortMethodAs}}"
+                       maxlength="12">
+          </paper-input>
 
-        <paper-input id="descriptionTruncateAmount"
-                     name="descriptionTruncateAmount"
-                     type="text"
-                     allowed-pattern="[0-9]"
-                     label="[[t('descriptionTruncateAmount')]]"
-                     value="{{group.configuration.descriptionTruncateAmount}}"
-                     maxlength="4">
-        </paper-input>
+          <paper-input id="descriptionTruncateAmount"
+                       name="descriptionTruncateAmount"
+                       type="text"
+                       allowed-pattern="[0-9]"
+                       label="[[t('descriptionTruncateAmount')]]"
+                       value="{{group.configuration.descriptionTruncateAmount}}"
+                       maxlength="4">
+          </paper-input>
 
-        <paper-checkbox name="descriptionSimpleFormat" checked$="{{group.configuration.descriptionSimpleFormat}}">
-          [[t('descriptionSimpleFormat')]]
-        </paper-checkbox>
+          <paper-checkbox name="descriptionSimpleFormat" checked$="{{group.configuration.descriptionSimpleFormat}}">
+            [[t('descriptionSimpleFormat')]]
+          </paper-checkbox>
 
-        <paper-checkbox name="transcriptSimpleFormat" checked$="{{group.configuration.transcriptSimpleFormat}}">
-          [[t('transcriptSimpleFormat')]]
-        </paper-checkbox>
+          <paper-checkbox name="transcriptSimpleFormat" checked$="{{group.configuration.transcriptSimpleFormat}}">
+            [[t('transcriptSimpleFormat')]]
+          </paper-checkbox>
 
-        <paper-checkbox name="allPostsBlockedByDefault" checked$="{{group.configuration.allPostsBlockedByDefault}}">
-          [[t('allPostsBlockedByDefault')]]
-        </paper-checkbox>
+          <paper-checkbox name="allPostsBlockedByDefault" checked$="{{group.configuration.allPostsBlockedByDefault}}">
+            [[t('allPostsBlockedByDefault')]]
+          </paper-checkbox>
 
-        <paper-checkbox name="exportSubCodesForRadiosAndCheckboxes" checked$="{{group.configuration.exportSubCodesForRadiosAndCheckboxes}}">
-          [[t('exportSubCodesForRadiosAndCheckboxes')]]
-        </paper-checkbox>
+          <paper-checkbox name="exportSubCodesForRadiosAndCheckboxes" checked$="{{group.configuration.exportSubCodesForRadiosAndCheckboxes}}">
+            [[t('exportSubCodesForRadiosAndCheckboxes')]]
+          </paper-checkbox>
 
-        <paper-textarea id="structuredQuestions"
-                        name="structuredQuestions"
-                        type="text"
-                        rows="4"
-                        always-float-label="[[group.configuration.structuredQuestions]]"
-                        maxrows="8"
-                        on-value-changed="_structuredQuestionsChanged"
-                        max-rows="8"
-                        label="[[t('structuredQuestions')]]"
-                        value="{{group.configuration.structuredQuestions}}">
-        </paper-textarea>
+          <paper-textarea id="structuredQuestions"
+                          name="structuredQuestions"
+                          type="text"
+                          rows="4"
+                          always-float-label="[[group.configuration.structuredQuestions]]"
+                          maxrows="8"
+                          on-value-changed="_structuredQuestionsChanged"
+                          max-rows="8"
+                          label="[[t('structuredQuestions')]]"
+                          value="{{group.configuration.structuredQuestions}}">
+          </paper-textarea>
 
-        <div id="structuredQuestionsJsonErrorInfo" hidden$="[[!structuredQuestionsJsonError]]">[[t('structuredQuestionsJsonFormatNotValid')]]</div>
+          <div id="structuredQuestionsJsonErrorInfo" hidden$="[[!structuredQuestionsJsonError]]">[[t('structuredQuestionsJsonFormatNotValid')]]</div>
 
-        <div class="structuredQuestionsInfo">[[t('structuredQuestionsInfo')]]</div>
+          <div class="structuredQuestionsInfo">[[t('structuredQuestionsInfo')]]</div>
 
-        <div class="layout vertical additionalSettings uploadSection">
-          <yp-file-upload id="docxSurveyUpload" raised="true" multi="false"
-                          target="/api/groups/-1/convert_docx_survey_to_json"
-                          accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                          method="PUT" on-success="_haveUploadedDocxSurvey">
-            <iron-icon class="icon" icon="sort"></iron-icon>
-            <span>[[t('uploadDocxSurveyFormat')]]</span>
-          </yp-file-upload>
-        </div>
-
-
-        <paper-input id="alternativeTextForNewIdeaButton"
-                     name="alternativeTextForNewIdeaButton"
-                     type="text"
-                     label="[[t('alternativeTextForNewIdeaButton')]]"
-                     value="{{group.configuration.alternativeTextForNewIdeaButton}}"
-                     maxlength="30"
-                     char-counter>
-        </paper-input>
-
-        <paper-input id="alternativeTextForNewIdeaButtonClosed"
-                     name="alternativeTextForNewIdeaButtonClosed"
-                     type="text"
-                     label="[[t('alternativeTextForNewIdeaButtonClosed')]]"
-                     value="{{group.configuration.alternativeTextForNewIdeaButtonClosed}}"
-                     maxlength="30"
-                     char-counter>
-        </paper-input>
-
-        <paper-input id="alternativeTextForNewIdeaButtonHeader"
-                     name="alternativeTextForNewIdeaButtonHeader"
-                     type="text"
-                     label="[[t('alternativeTextForNewIdeaButtonHeader')]]"
-                     value="{{group.configuration.alternativeTextForNewIdeaButtonHeader}}"
-                     maxlength="30"
-                     char-counter>
-        </paper-input>
-
-        <paper-input id="alternativeTextForNewIdeaSaveButton"
-                     name="alternativeTextForNewIdeaSaveButton"
-                     type="text"
-                     label="[[t('alternativeTextForNewIdeaSaveButton')]]"
-                     value="{{group.configuration.alternativeTextForNewIdeaSaveButton}}"
-                     maxlength="20"
-                     char-counter>
-        </paper-input>
-
-        <paper-input id="customThankYouTextNewPosts"
-                     name="customThankYouTextNewPosts"
-                     type="text"
-                     char-counter
-                     label="[[t('customThankYouTextNewPosts')]]"
-                     value="{{group.configuration.customThankYouTextNewPosts}}"
-                     maxlength="120">
-        </paper-input>
-
-        <div class="layout vertical additionalSettings defaultPostImage">
-          <yp-file-upload id="defaultPostImageUpload" raised="true" multi="false"
-                          target="/api/images?itemType=group-logo" method="POST" on-success="_defaultPostImageUploaded">
-            <iron-icon class="icon" icon="photo-camera"></iron-icon>
-            <span>[[t('defaultPostImage')]]</span>
-          </yp-file-upload>
-        </div>
-
-        <div class="layout horizontal">
-          <div class="layout vertical additionalSettings">
-            <yp-file-upload id="defaultDataImageUpload" raised="true" multi="false"
-                            target="/api/images?itemType=group-logo" method="POST" on-success="_defaultDataImageUploaded">
-              <iron-icon class="icon" icon="photo-camera"></iron-icon>
-              <span>[[t('defaultDataImage')]]</span>
+          <div class="layout vertical additionalSettings uploadSection">
+            <yp-file-upload id="docxSurveyUpload" raised="true" multi="false"
+                            target="/api/groups/-1/convert_docx_survey_to_json"
+                            accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                            method="PUT" on-success="_haveUploadedDocxSurvey">
+              <iron-icon class="icon" icon="sort"></iron-icon>
+              <span>[[t('uploadDocxSurveyFormat')]]</span>
             </yp-file-upload>
           </div>
 
-          <input type="hidden" name="uploadedDefaultDataImageId" value="[[uploadedDefaultDataImageId]]">
-        </div>
 
-        <input type="hidden" name="canVote" value$="[[canVote]]">
-        <input type="hidden" name="canAddNewPosts" value$="[[canAddNewPosts]]">
-        <input type="hidden" name="locationHidden" value$="[[locationHidden]]">
-        <input type="hidden" name="showWhoPostedPosts" value$="[[showWhoPostedPosts]]">
-        <input type="hidden" name="themeId" value="[[themeId]]">
-        <input type="hidden" name="uploadedDefaultPostImageId" value="[[uploadedDefaultPostImageId]]">
+          <paper-input id="alternativeTextForNewIdeaButton"
+                       name="alternativeTextForNewIdeaButton"
+                       type="text"
+                       label="[[t('alternativeTextForNewIdeaButton')]]"
+                       value="{{group.configuration.alternativeTextForNewIdeaButton}}"
+                       maxlength="30"
+                       char-counter>
+          </paper-input>
 
-        <div class="subHeaders exteraTopMargin">[[t('voteSettings')]]</div>
+          <paper-input id="alternativeTextForNewIdeaButtonClosed"
+                       name="alternativeTextForNewIdeaButtonClosed"
+                       type="text"
+                       label="[[t('alternativeTextForNewIdeaButtonClosed')]]"
+                       value="{{group.configuration.alternativeTextForNewIdeaButtonClosed}}"
+                       maxlength="30"
+                       char-counter>
+          </paper-input>
 
-        <div class="layout horizontal">
-          <paper-dropdown-menu label="[[t('endorsementButtons')]]" disabled$="[[endorsementButtonsDisabled]]">
-            <paper-listbox slot="dropdown-content" attr-for-selected="name" selected="{{endorsementButtons}}">
-              <template is="dom-repeat" items="[[endorsementButtonsOptions]]" as="buttonsSelection">
-                <paper-item name="[[buttonsSelection.name]]">[[buttonsSelection.translatedName]]</paper-item>
-              </template>
-            </paper-listbox>
-          </paper-dropdown-menu>
-          <input type="hidden" name="endorsementButtons" value="[[endorsementButtons]]">
-        </div>
-        <paper-checkbox name="canVote" checked$="{{canVote}}">[[t('group.canVote')]]</paper-checkbox>
-        <paper-checkbox name="hideVoteCount" checked$="{{group.configuration.hideVoteCount}}">[[t('hideVoteCount')]]
-        </paper-checkbox>
-        <paper-checkbox name="hideVoteCountUntilVoteCompleted"
-                        checked$="{{group.configuration.hideVoteCountUntilVoteCompleted}}">
-          [[t('hideVoteCountUntilVoteCompleted')]]
-        </paper-checkbox>
-        <paper-checkbox name="hideDownVoteForPost" checked$="{{group.configuration.hideDownVoteForPost}}">
-          [[t('hideDownVoteForPost')]]
-        </paper-checkbox>
+          <paper-input id="alternativeTextForNewIdeaButtonHeader"
+                       name="alternativeTextForNewIdeaButtonHeader"
+                       type="text"
+                       label="[[t('alternativeTextForNewIdeaButtonHeader')]]"
+                       value="{{group.configuration.alternativeTextForNewIdeaButtonHeader}}"
+                       maxlength="30"
+                       char-counter>
+          </paper-input>
 
-        <paper-input id="maxNumberOfGroupVotes"
-                     name="maxNumberOfGroupVotes"
-                     type="text"
-                     allowed-pattern="[0-9]"
-                     label="[[t('maxNumberOfGroupVotes')]]"
-                     value="{{group.configuration.maxNumberOfGroupVotes}}"
-                     maxlength="4">
-        </paper-input>
+          <paper-input id="alternativeTextForNewIdeaSaveButton"
+                       name="alternativeTextForNewIdeaSaveButton"
+                       type="text"
+                       label="[[t('alternativeTextForNewIdeaSaveButton')]]"
+                       value="{{group.configuration.alternativeTextForNewIdeaSaveButton}}"
+                       maxlength="20"
+                       char-counter>
+          </paper-input>
 
-        <paper-input id="customVoteUpHoverText"
-                     name="customVoteUpHoverText"
-                     type="text"
-                     label="[[t('customVoteUpHoverText')]]"
-                     value="{{group.configuration.customVoteUpHoverText}}"
-                     maxlength="100"
-                     char-counter>
-        </paper-input>
+          <paper-input id="customThankYouTextNewPosts"
+                       name="customThankYouTextNewPosts"
+                       type="text"
+                       char-counter
+                       label="[[t('customThankYouTextNewPosts')]]"
+                       value="{{group.configuration.customThankYouTextNewPosts}}"
+                       maxlength="120">
+          </paper-input>
 
-        <paper-input id="customVoteDownHoverText"
-                     name="customVoteDownHoverText"
-                     type="text"
-                     label="[[t('customVoteDownHoverText')]]"
-                     value="{{group.configuration.customVoteDownHoverText}}"
-                     maxlength="100"
-                     char-counter>
-        </paper-input>
-        <paper-textarea id="customRatingsText"
-                        name="customRatingsText"
-                        type="text"
-                        rows="2"
-                        on-value-changed="_customRatingsTextChanged"
-                        always-float-label="[[group.configuration.customRatingsText]]"
-                        maxrows="2"
-                        label="[[t('customRatings')]]"
-                        value="{{group.configuration.customRatingsText}}">
-        </paper-textarea>
+          <div class="layout vertical additionalSettings defaultPostImage">
+            <yp-file-upload id="defaultPostImageUpload" raised="true" multi="false"
+                            target="/api/images?itemType=group-logo" method="POST" on-success="_defaultPostImageUploaded">
+              <iron-icon class="icon" icon="photo-camera"></iron-icon>
+              <span>[[t('defaultPostImage')]]</span>
+            </yp-file-upload>
+          </div>
 
-        <div class="structuredQuestionsInfo">[[t('customRatingsInfo')]]</div>
+          <div class="layout horizontal">
+            <div class="layout vertical additionalSettings">
+              <yp-file-upload id="defaultDataImageUpload" raised="true" multi="false"
+                              target="/api/images?itemType=group-logo" method="POST" on-success="_defaultDataImageUploaded">
+                <iron-icon class="icon" icon="photo-camera"></iron-icon>
+                <span>[[t('defaultDataImage')]]</span>
+              </yp-file-upload>
+            </div>
 
-        <div class="subHeaders">[[t('pointSettings')]]</div>
+            <input type="hidden" name="uploadedDefaultDataImageId" value="[[uploadedDefaultDataImageId]]">
+          </div>
 
-        <paper-checkbox name="newPointOptional" checked$="{{newPointOptional}}">[[t('newPointOptional')]]</paper-checkbox>
-        <paper-checkbox name="hideNewPointOnNewIdea" checked$="{{group.configuration.hideNewPointOnNewIdea}}">[[t('hideNewPointOnNewIdea')]]</paper-checkbox>
-        <paper-checkbox name="hidePointAuthor" checked$="{{group.configuration.hidePointAuthor}}">
-          [[t('hidePointAuthor')]]
-        </paper-checkbox>
+          <input type="hidden" name="canVote" value$="[[canVote]]">
+          <input type="hidden" name="canAddNewPosts" value$="[[canAddNewPosts]]">
+          <input type="hidden" name="locationHidden" value$="[[locationHidden]]">
+          <input type="hidden" name="showWhoPostedPosts" value$="[[showWhoPostedPosts]]">
+          <input type="hidden" name="themeId" value="[[themeId]]">
+          <input type="hidden" name="uploadedDefaultPostImageId" value="[[uploadedDefaultPostImageId]]">
 
-        <paper-checkbox name="hidePointAgainst" checked$="{{group.configuration.hidePointAgainst}}">
-          [[t('hidePointAgainst')]]
-        </paper-checkbox>
+          <div class="subHeaders exteraTopMargin">[[t('voteSettings')]]</div>
 
-        <paper-input id="pointCharLimit"
-                     name="pointCharLimit"
-                     type="text"
-                     allowed-pattern="[0-9]"
-                     label="[[t('pointCharLimit')]]"
-                     value="{{group.configuration.pointCharLimit}}"
-                     maxlength="4">
-        </paper-input>
+          <div class="layout horizontal">
+            <paper-dropdown-menu label="[[t('endorsementButtons')]]" disabled$="[[endorsementButtonsDisabled]]">
+              <paper-listbox slot="dropdown-content" attr-for-selected="name" selected="{{endorsementButtons}}">
+                <template is="dom-repeat" items="[[endorsementButtonsOptions]]" as="buttonsSelection">
+                  <paper-item name="[[buttonsSelection.name]]">[[buttonsSelection.translatedName]]</paper-item>
+                </template>
+              </paper-listbox>
+            </paper-dropdown-menu>
+            <input type="hidden" name="endorsementButtons" value="[[endorsementButtons]]">
+          </div>
+          <paper-checkbox name="canVote" checked$="{{canVote}}">[[t('group.canVote')]]</paper-checkbox>
+          <paper-checkbox name="hideVoteCount" checked$="{{group.configuration.hideVoteCount}}">[[t('hideVoteCount')]]
+          </paper-checkbox>
+          <paper-checkbox name="hideVoteCountUntilVoteCompleted"
+                          checked$="{{group.configuration.hideVoteCountUntilVoteCompleted}}">
+            [[t('hideVoteCountUntilVoteCompleted')]]
+          </paper-checkbox>
+          <paper-checkbox name="hideDownVoteForPost" checked$="{{group.configuration.hideDownVoteForPost}}">
+            [[t('hideDownVoteForPost')]]
+          </paper-checkbox>
 
-        <paper-input id="alternativePointForHeader"
-                     name="alternativePointForHeader"
-                     type="text"
-                     label="[[t('alternativePointForHeader')]]"
-                     value="{{group.configuration.alternativePointForHeader}}"
-                     maxlength="100"
-                     char-counter>
-        </paper-input>
+          <paper-input id="maxNumberOfGroupVotes"
+                       name="maxNumberOfGroupVotes"
+                       type="text"
+                       allowed-pattern="[0-9]"
+                       label="[[t('maxNumberOfGroupVotes')]]"
+                       value="{{group.configuration.maxNumberOfGroupVotes}}"
+                       maxlength="4">
+          </paper-input>
 
-        <paper-input id="alternativePointAgainstHeader"
-                     name="alternativePointAgainstHeader"
-                     type="text"
-                     label="[[t('alternativePointAgainstHeader')]]"
-                     value="{{group.configuration.alternativePointAgainstHeader}}"
-                     maxlength="100"
-                     char-counter>
-        </paper-input>
+          <paper-input id="customVoteUpHoverText"
+                       name="customVoteUpHoverText"
+                       type="text"
+                       label="[[t('customVoteUpHoverText')]]"
+                       value="{{group.configuration.customVoteUpHoverText}}"
+                       maxlength="100"
+                       char-counter>
+          </paper-input>
 
-        <paper-input id="alternativePointForLabel"
-                     name="alternativePointForLabel"
-                     type="text"
-                     label="[[t('alternativePointForLabel')]]"
-                     value="{{group.configuration.alternativePointForLabel}}"
-                     maxlength="100"
-                     char-counter>
-        </paper-input>
+          <paper-input id="customVoteDownHoverText"
+                       name="customVoteDownHoverText"
+                       type="text"
+                       label="[[t('customVoteDownHoverText')]]"
+                       value="{{group.configuration.customVoteDownHoverText}}"
+                       maxlength="100"
+                       char-counter>
+          </paper-input>
+          <paper-textarea id="customRatingsText"
+                          name="customRatingsText"
+                          type="text"
+                          rows="2"
+                          on-value-changed="_customRatingsTextChanged"
+                          always-float-label="[[group.configuration.customRatingsText]]"
+                          maxrows="2"
+                          label="[[t('customRatings')]]"
+                          value="{{group.configuration.customRatingsText}}">
+          </paper-textarea>
 
-        <paper-input id="alternativePointAgainstLabel"
-                     name="alternativePointAgainstLabel"
-                     type="text"
-                     label="[[t('alternativePointAgainstLabel')]]"
-                     value="{{group.configuration.alternativePointAgainstLabel}}"
-                     maxlength="100"
-                     char-counter>
-        </paper-input>
+          <div class="structuredQuestionsInfo">[[t('customRatingsInfo')]]</div>
 
-        <paper-checkbox name="allowPointVideoUploads" disabled$="[[!hasVideoUpload]]"
-                        checked$="{{allowPointVideoUploads}}">[[t('allowPointVideoUploads')]]
-        </paper-checkbox>
-        <paper-input id="videoPointUploadLimitSec"
-                     name="videoPointUploadLimitSec"
-                     type="text"
-                     maxlength="3"
-                     allowed-pattern="[0-9]"
-                     disabled$="[[!hasVideoUpload]]"
-                     label="[[t('videoPointUploadLimitSec')]]"
-                     value="{{group.configuration.videoPointUploadLimitSec}}">
-        </paper-input>
+          <div class="subHeaders">[[t('pointSettings')]]</div>
 
-        <paper-checkbox name="allowPointAudioUploads" disabled$="[[!hasAudioUpload]]"
-                        checked$="{{allowPointAudioUploads}}">[[t('allowPointAudioUploads')]]
-        </paper-checkbox>
-        <paper-input id="audioPointUploadLimitSec"
-                     name="audioPointUploadLimitSec"
-                     type="text"
-                     maxlength="3"
-                     allowed-pattern="[0-9]"
-                     disabled$="[[!hasaudioUpload]]"
-                     label="[[t('audioPointUploadLimitSec')]]"
-                     value="{{group.configuration.audioPointUploadLimitSec}}">
-        </paper-input>
+          <paper-checkbox name="newPointOptional" checked$="{{newPointOptional}}">[[t('newPointOptional')]]</paper-checkbox>
+          <paper-checkbox name="hideNewPointOnNewIdea" checked$="{{group.configuration.hideNewPointOnNewIdea}}">[[t('hideNewPointOnNewIdea')]]</paper-checkbox>
+          <paper-checkbox name="hidePointAuthor" checked$="{{group.configuration.hidePointAuthor}}">
+            [[t('hidePointAuthor')]]
+          </paper-checkbox>
 
-        <paper-checkbox name="disableMachineTranscripts" checked$="{{group.configuration.disableMachineTranscripts}}">
-          [[t('disableMachineTranscripts')]]
-        </paper-checkbox>
+          <paper-checkbox name="hidePointAgainst" checked$="{{group.configuration.hidePointAgainst}}">
+            [[t('hidePointAgainst')]]
+          </paper-checkbox>
 
-        <paper-checkbox name="allowAdminAnswersToPoints" checked$="{{group.configuration.allowAdminAnswersToPoints}}">
-          [[t('allowAdminAnswersToPoints')]]
-        </paper-checkbox>
+          <paper-input id="pointCharLimit"
+                       name="pointCharLimit"
+                       type="text"
+                       allowed-pattern="[0-9]"
+                       label="[[t('pointCharLimit')]]"
+                       value="{{group.configuration.pointCharLimit}}"
+                       maxlength="4">
+          </paper-input>
 
-        <paper-input id="customAdminCommentsTitle"
-                     name="customAdminCommentsTitle"
-                     type="text"
-                     label="[[t('customAdminCommentsTitle')]]"
-                     value="{{group.configuration.customAdminCommentsTitle}}"
-                     maxlength="50"
-                     char-counter>
-        </paper-input>
+          <paper-input id="alternativePointForHeader"
+                       name="alternativePointForHeader"
+                       type="text"
+                       label="[[t('alternativePointForHeader')]]"
+                       value="{{group.configuration.alternativePointForHeader}}"
+                       maxlength="100"
+                       char-counter>
+          </paper-input>
 
-        <div class="subHeaders">[[t('additionalGroupConfig')]]</div>
-        <paper-checkbox name="hideAllTabs" checked$="{{hideAllTabs}}">[[t('hideAllTabs')]]</paper-checkbox>
-        <paper-checkbox name="hideGroupLevelTabs" checked$="{{group.configuration.hideGroupLevelTabs}}">[[t('hideGroupLevelTabs')]]</paper-checkbox>
-        <paper-checkbox name="hideHelpIcon" checked$="{{hideHelpIcon}}">[[t('hideHelpIcon')]]</paper-checkbox>
-        <paper-checkbox name="useCommunityTopBanner" checked$="{{group.configuration.useCommunityTopBanner}}">[[t('useCommunityTopBanner')]]</paper-checkbox>
-        <paper-checkbox name="makeMapViewDefault" checked$="{{group.configuration.makeMapViewDefault}}">[[t('makeMapViewDefault')]]</paper-checkbox>
-        <paper-checkbox name="simpleFormatDescription" checked$="{{group.configuration.simpleFormatDescription}}">[[t('simpleFormatDescription')]]</paper-checkbox>
-        <paper-checkbox name="resourceLibraryLinkMode" checked$="{{group.configuration.resourceLibraryLinkMode}}">[[t('resourceLibraryLinkMode')]]</paper-checkbox>
-        <paper-checkbox name="collapsableTranscripts" checked$="{{group.configuration.collapsableTranscripts}}">[[t('collapsableTranscripts')]]</paper-checkbox>
-        <paper-checkbox name="allowWhatsAppSharing" checked$="{{group.configuration.allowWhatsAppSharing}}">[[t('allowWhatsAppSharing')]]</paper-checkbox>
+          <paper-input id="alternativePointAgainstHeader"
+                       name="alternativePointAgainstHeader"
+                       type="text"
+                       label="[[t('alternativePointAgainstHeader')]]"
+                       value="{{group.configuration.alternativePointAgainstHeader}}"
+                       maxlength="100"
+                       char-counter>
+          </paper-input>
 
-        <paper-input id="actAsLinkToCommunityId"
-                     name="actAsLinkToCommunityId"
-                     type="number"
-                     allowed-pattern="[0-9]"
-                     label="[[t('actAsLinkToCommunityId')]]"
-                     value="{{group.configuration.actAsLinkToCommunityId}}"
-                     maxlength="8">
-        </paper-input>
+          <paper-input id="alternativePointForLabel"
+                       name="alternativePointForLabel"
+                       type="text"
+                       label="[[t('alternativePointForLabel')]]"
+                       value="{{group.configuration.alternativePointForLabel}}"
+                       maxlength="100"
+                       char-counter>
+          </paper-input>
 
-        <paper-input id="maxDaysBackForRecommendations"
-                     name="maxDaysBackForRecommendations"
-                     type="text"
-                     maxlength="5"
-                     allowed-pattern="[0-9]"
-                     label="[[t('maxDaysBackForRecommendations')]]"
-                     value="{{group.configuration.maxDaysBackForRecommendations}}">
-        </paper-input>
+          <paper-input id="alternativePointAgainstLabel"
+                       name="alternativePointAgainstLabel"
+                       type="text"
+                       label="[[t('alternativePointAgainstLabel')]]"
+                       value="{{group.configuration.alternativePointAgainstLabel}}"
+                       maxlength="100"
+                       char-counter>
+          </paper-input>
 
-        <paper-input id="customUserNamePrompt"
-                     name="customUserNamePrompt"
-                     type="text"
-                     label="[[t('customUserNamePrompt')]]"
-                     value="{{group.configuration.customUserNamePrompt}}"
-                     maxlength="45"
-                     char-counter>
-        </paper-input>
+          <paper-checkbox name="allowPointVideoUploads" disabled$="[[!hasVideoUpload]]"
+                          checked$="{{allowPointVideoUploads}}">[[t('allowPointVideoUploads')]]
+          </paper-checkbox>
+          <paper-input id="videoPointUploadLimitSec"
+                       name="videoPointUploadLimitSec"
+                       type="text"
+                       maxlength="3"
+                       allowed-pattern="[0-9]"
+                       disabled$="[[!hasVideoUpload]]"
+                       label="[[t('videoPointUploadLimitSec')]]"
+                       value="{{group.configuration.videoPointUploadLimitSec}}">
+          </paper-input>
 
-        <paper-input id="customTermsIntroText"
-                     name="customTermsIntroText"
-                     type="text"
-                     label="[[t('customTermsIntroText')]]"
-                     value="{{group.configuration.customTermsIntroText}}"
-                     maxlength="100"
-                     char-counter>
-        </paper-input>
+          <paper-checkbox name="allowPointAudioUploads" disabled$="[[!hasAudioUpload]]"
+                          checked$="{{allowPointAudioUploads}}">[[t('allowPointAudioUploads')]]
+          </paper-checkbox>
+          <paper-input id="audioPointUploadLimitSec"
+                       name="audioPointUploadLimitSec"
+                       type="text"
+                       maxlength="3"
+                       allowed-pattern="[0-9]"
+                       disabled$="[[!hasaudioUpload]]"
+                       label="[[t('audioPointUploadLimitSec')]]"
+                       value="{{group.configuration.audioPointUploadLimitSec}}">
+          </paper-input>
 
-        <paper-input id="externalGoalTriggerUrl"
-                     name="externalGoalTriggerUrl"
-                     type="text"
-                     label="[[t('externalGoalTriggerUrl')]]"
-                     value="{{group.configuration.externalGoalTriggerUrl}}">
-        </paper-input>
+          <paper-checkbox name="disableMachineTranscripts" checked$="{{group.configuration.disableMachineTranscripts}}">
+            [[t('disableMachineTranscripts')]]
+          </paper-checkbox>
 
-        <paper-input id="externalId"
-                     name="externalId"
-                     type="text"
-                     label="[[t('externalId')]]"
-                     value="{{group.configuration.externalId}}">
-        </paper-input>
+          <paper-checkbox name="allowAdminAnswersToPoints" checked$="{{group.configuration.allowAdminAnswersToPoints}}">
+            [[t('allowAdminAnswersToPoints')]]
+          </paper-checkbox>
 
-        <paper-input id="customBackURL"
-                     name="customBackURL"
-                     type="text"
-                     maxlength="256"
-                     label="[[t('customBackURL')]]"
-                     value="{{group.configuration.customBackURL}}">
-        </paper-input>
+          <paper-input id="customAdminCommentsTitle"
+                       name="customAdminCommentsTitle"
+                       type="text"
+                       label="[[t('customAdminCommentsTitle')]]"
+                       value="{{group.configuration.customAdminCommentsTitle}}"
+                       maxlength="50"
+                       char-counter>
+          </paper-input>
 
-        <paper-input id="customBackName"
-                     name="customBackName"
-                     type="text"
-                     maxlength="20"
-                     label="[[t('customBackName')]]"
-                     value="{{group.configuration.customBackName}}">
-        </paper-input>
+          <div class="subHeaders">[[t('additionalGroupConfig')]]</div>
+          <paper-checkbox name="hideAllTabs" checked$="{{hideAllTabs}}">[[t('hideAllTabs')]]</paper-checkbox>
+          <paper-checkbox name="hideGroupLevelTabs" checked$="{{group.configuration.hideGroupLevelTabs}}">[[t('hideGroupLevelTabs')]]</paper-checkbox>
+          <paper-checkbox name="hideHelpIcon" checked$="{{hideHelpIcon}}">[[t('hideHelpIcon')]]</paper-checkbox>
+          <paper-checkbox name="useCommunityTopBanner" checked$="{{group.configuration.useCommunityTopBanner}}">[[t('useCommunityTopBanner')]]</paper-checkbox>
+          <paper-checkbox name="makeMapViewDefault" checked$="{{group.configuration.makeMapViewDefault}}">[[t('makeMapViewDefault')]]</paper-checkbox>
+          <paper-checkbox name="simpleFormatDescription" checked$="{{group.configuration.simpleFormatDescription}}">[[t('simpleFormatDescription')]]</paper-checkbox>
+          <paper-checkbox name="resourceLibraryLinkMode" checked$="{{group.configuration.resourceLibraryLinkMode}}">[[t('resourceLibraryLinkMode')]]</paper-checkbox>
+          <paper-checkbox name="collapsableTranscripts" checked$="{{group.configuration.collapsableTranscripts}}">[[t('collapsableTranscripts')]]</paper-checkbox>
+          <paper-checkbox name="allowWhatsAppSharing" checked$="{{group.configuration.allowWhatsAppSharing}}">[[t('allowWhatsAppSharing')]]</paper-checkbox>
 
-        <paper-input id="optionalSortOrder"
-                     name="optionalSortOrder"
-                     type="number"
-                     allowed-pattern="[0-9]"
-                     label="[[t('optionalSortOrder')]]"
-                     value="{{group.configuration.optionalSortOrder}}"
-                     maxlength="4">
-        </paper-input>
+          <paper-input id="actAsLinkToCommunityId"
+                       name="actAsLinkToCommunityId"
+                       type="number"
+                       allowed-pattern="[0-9]"
+                       label="[[t('actAsLinkToCommunityId')]]"
+                       value="{{group.configuration.actAsLinkToCommunityId}}"
+                       maxlength="8">
+          </paper-input>
 
-        <paper-checkbox name="usePostListFormatOnDesktop" checked$="{{group.configuration.usePostListFormatOnDesktop}}">[[t('usePostListFormatOnDesktop')]]</paper-checkbox>
-        <paper-checkbox name="usePostTags" checked$="{{group.configuration.usePostTags}}">[[t('usePostTags')]]</paper-checkbox>
-        <paper-checkbox name="usePostTagsForPostListItems"  checked$="{{group.configuration.usePostTagsForPostListItems}}">[[t('usePostTagsForPostListItems')]]</paper-checkbox>
-        <paper-checkbox name="usePostTagsForPostCards" checked$="{{group.configuration.usePostTagsForPostCards}}">[[t('usePostTagsForPostCards')]]</paper-checkbox>
-        <paper-checkbox name="forceShowDebateCountOnPost" checked$="{{group.configuration.forceShowDebateCountOnPost}}">[[t('forceShowDebateCountOnPost')]]</paper-checkbox>
-        <paper-checkbox name="closeNewsfeedSubmissions" checked$="{{group.configuration.closeNewsfeedSubmissions}}">[[t('closeNewsfeedSubmissions')]]</paper-checkbox>
+          <paper-input id="maxDaysBackForRecommendations"
+                       name="maxDaysBackForRecommendations"
+                       type="text"
+                       maxlength="5"
+                       allowed-pattern="[0-9]"
+                       label="[[t('maxDaysBackForRecommendations')]]"
+                       value="{{group.configuration.maxDaysBackForRecommendations}}">
+          </paper-input>
 
-        <div class="layout horizontal config" hidden$="[[!pages]]">
-          <paper-dropdown-menu label="[[t('welcomeSelectPage')]]">
-            <paper-listbox slot="dropdown-content" attr-for-selected="name" selected="{{group.configuration.welcomePageId}}">
-              <template is="dom-repeat" items="[[translatedPages]]" as="page">
-                <paper-item name="[[page.id]]" data-args$="[[index]]">[[_getLocalizePageTitle(page)]]</paper-item>
-              </template>
-            </paper-listbox>
-          </paper-dropdown-menu>
-          <input type="hidden" name="welcomePageId" value="[[group.configuration.welcomePageId]]">
-        </div>
+          <paper-input id="customUserNamePrompt"
+                       name="customUserNamePrompt"
+                       type="text"
+                       label="[[t('customUserNamePrompt')]]"
+                       value="{{group.configuration.customUserNamePrompt}}"
+                       maxlength="45"
+                       char-counter>
+          </paper-input>
 
-        <paper-input id="urlToReview"
-            name="urlToReview"
-            type="text"
-            label="[[t('urlToReview')]]"
-            value="{{group.configuration.urlToReview}}"
-        >
-        </paper-input>
+          <paper-input id="customTermsIntroText"
+                       name="customTermsIntroText"
+                       type="text"
+                       label="[[t('customTermsIntroText')]]"
+                       value="{{group.configuration.customTermsIntroText}}"
+                       maxlength="100"
+                       char-counter>
+          </paper-input>
 
-        <paper-input id="urlToReviewActionText"
-            name="urlToReviewActionText"
-            type="text"
-            label="[[t('urlToReviewActionText')]]"
-            value="{{group.configuration.urlToReviewActionText}}"
-            maxlength="30"
-            char-counter>
-        </paper-input>
+          <paper-input id="externalGoalTriggerUrl"
+                       name="externalGoalTriggerUrl"
+                       type="text"
+                       label="[[t('externalGoalTriggerUrl')]]"
+                       value="{{group.configuration.externalGoalTriggerUrl}}">
+          </paper-input>
 
-        <paper-textarea id="registrationQuestions"
-                        name="registrationQuestions"
-                        type="text"
-                        rows="4"
-                        always-float-label="[[group.configuration.registrationQuestions]]"
-                        maxrows="8"
-                        on-value-changed="_registrationQuestionsChanged"
-                        max-rows="8"
-                        label="[[t('registrationQuestions')]]"
-                        value="{{group.configuration.registrationQuestions}}">
-        </paper-textarea>
+          <paper-input id="externalId"
+                       name="externalId"
+                       type="text"
+                       label="[[t('externalId')]]"
+                       value="{{group.configuration.externalId}}">
+          </paper-input>
 
-        <div id="registrationQuestionsJsonErrorInfo" hidden$="[[!registrationQuestionsJsonError]]">[[t('structuredQuestionsJsonFormatNotValid')]]</div>
+          <paper-checkbox name="usePostListFormatOnDesktop" checked$="{{group.configuration.usePostListFormatOnDesktop}}">[[t('usePostListFormatOnDesktop')]]</paper-checkbox>
+          <paper-checkbox name="usePostTags" checked$="{{group.configuration.usePostTags}}">[[t('usePostTags')]]</paper-checkbox>
+          <paper-checkbox name="usePostTagsForPostListItems"  checked$="{{group.configuration.usePostTagsForPostListItems}}">[[t('usePostTagsForPostListItems')]]</paper-checkbox>
+          <paper-checkbox name="usePostTagsForPostCards" checked$="{{group.configuration.usePostTagsForPostCards}}">[[t('usePostTagsForPostCards')]]</paper-checkbox>
+          <paper-checkbox name="forceShowDebateCountOnPost" checked$="{{group.configuration.forceShowDebateCountOnPost}}">[[t('forceShowDebateCountOnPost')]]</paper-checkbox>
+          <paper-checkbox name="closeNewsfeedSubmissions" checked$="{{group.configuration.closeNewsfeedSubmissions}}">[[t('closeNewsfeedSubmissions')]]</paper-checkbox>
 
-        <paper-checkbox id="isDataVisualizationGroup" name="isDataVisualizationGroup" on-tap="_isDataVisualizationGroupClick" checked$="{{group.configuration.isDataVisualizationGroup}}">[[t('isDataVisualizationGroup')]]</paper-checkbox>
+          <div class="layout horizontal config" hidden$="[[!pages]]">
+            <paper-dropdown-menu label="[[t('welcomeSelectPage')]]">
+              <paper-listbox slot="dropdown-content" attr-for-selected="name" selected="{{group.configuration.welcomePageId}}">
+                <template is="dom-repeat" items="[[translatedPages]]" as="page">
+                  <paper-item name="[[page.id]]" data-args$="[[index]]">[[_getLocalizePageTitle(page)]]</paper-item>
+                </template>
+              </paper-listbox>
+            </paper-dropdown-menu>
+            <input type="hidden" name="welcomePageId" value="[[group.configuration.welcomePageId]]">
+          </div>
 
-        <paper-textarea id="dataForVisualization"
-                        name="dataForVisualization"
-                        type="text"
-                        hidden$="[[!isDataVisualizationGroup]]"
-                        rows="4"
-                        always-float-label="[[group.configuration.dataForVisualization]]"
-                        maxrows="8"
-                        on-value-changed="_dataForVisualizationChanged"
-                        max-rows="8"
-                        label="[[t('dataForVisualization')]]"
-                        value="{{group.configuration.dataForVisualization}}">
-        </paper-textarea>
+          <paper-input id="urlToReview"
+              name="urlToReview"
+              type="text"
+              label="[[t('urlToReview')]]"
+              value="{{group.configuration.urlToReview}}"
+          >
+          </paper-input>
 
-        <div id="dataForVisualizationJsonError" hidden$="[[!dataForVisualizationJsonError]]">[[t('structuredQuestionsJsonFormatNotValid')]]</div>
+          <paper-input id="urlToReviewActionText"
+              name="urlToReviewActionText"
+              type="text"
+              label="[[t('urlToReviewActionText')]]"
+              value="{{group.configuration.urlToReviewActionText}}"
+              maxlength="30"
+              char-counter>
+          </paper-input>
 
-        <input type="hidden" name="hideAllTabs" value$="[[hideAllTabs]]">
-        <input type="hidden" name="hideNewPostOnPostPage" value$="[[hideNewPostOnPostPage]]">
-        <input type="hidden" name="newPointOptional" value$="[[newPointOptional]]">
-        <input type="hidden" name="hideHelpIcon" value$="[[hideHelpIcon]]">
-        <input type="hidden" name="hideEmoji" value$="[[hideEmoji]]">
-        <input type="hidden" name="hideGroupHeader" value$="[[hideGroupHeader]]">
-        <input type="hidden" name="allowPostVideoUploads" value$="[[allowPostVideoUploads]]">
-        <input type="hidden" name="allowPointVideoUploads" value$="[[allowPointVideoUploads]]">
-        <input type="hidden" name="allowPostAudioUploads" value$="[[allowPostAudioUploads]]">
-        <input type="hidden" name="allowPointAudioUploads" value$="[[allowPointAudioUploads]]">
+          <div id="registrationQuestionsJsonErrorInfo" hidden$="[[!registrationQuestionsJsonError]]">[[t('structuredQuestionsJsonFormatNotValid')]]</div>
 
-        <div class="layout vertical config" hidden$="[[!group.Categories]]">
-          <div class="subHeaders">[[t('categories.the_all')]]</div>
-          <template is="dom-repeat" items="[[group.Categories]]" as="category">
-            <paper-item data-category$="[[category]]" data-category-name$="[[category.name]]" on-tap="_openCategoryEdit">
-              <img sizing="cover" height="24" width="24" class="filterIcon" src="[[_categoryImageSrc(category)]]">
-              <span class="categoryName">[[category.name]] - [[category.id]]</span>
-            </paper-item>
-          </template>
+          <paper-checkbox id="isDataVisualizationGroup" name="isDataVisualizationGroup" on-tap="_isDataVisualizationGroupClick" checked$="{{group.configuration.isDataVisualizationGroup}}">[[t('isDataVisualizationGroup')]]</paper-checkbox>
+
+          <paper-textarea id="dataForVisualization"
+                          name="dataForVisualization"
+                          type="text"
+                          hidden$="[[!isDataVisualizationGroup]]"
+                          rows="4"
+                          always-float-label="[[group.configuration.dataForVisualization]]"
+                          maxrows="8"
+                          on-value-changed="_dataForVisualizationChanged"
+                          max-rows="8"
+                          label="[[t('dataForVisualization')]]"
+                          value="{{group.configuration.dataForVisualization}}">
+          </paper-textarea>
+
+          <div id="dataForVisualizationJsonError" hidden$="[[!dataForVisualizationJsonError]]">[[t('structuredQuestionsJsonFormatNotValid')]]</div>
+
+          <div class="layout vertical config" hidden$="[[!group.Categories]]">
+            <div class="subHeaders">[[t('categories.the_all')]]</div>
+            <template is="dom-repeat" items="[[group.Categories]]" as="category">
+              <paper-item data-category$="[[category]]" data-category-name$="[[category.name]]" on-tap="_openCategoryEdit">
+                <img sizing="cover" height="24" width="24" class="filterIcon" src="[[_categoryImageSrc(category)]]">
+                <span class="categoryName">[[category.name]] - [[category.id]]</span>
+              </paper-item>
+            </template>
+          </div>
         </div>
       </div>
+
+      <input type="hidden" name="hideAllTabs" value$="[[hideAllTabs]]">
+      <input type="hidden" name="hideNewPostOnPostPage" value$="[[hideNewPostOnPostPage]]">
+      <input type="hidden" name="newPointOptional" value$="[[newPointOptional]]">
+      <input type="hidden" name="hideHelpIcon" value$="[[hideHelpIcon]]">
+      <input type="hidden" name="hideEmoji" value$="[[hideEmoji]]">
+      <input type="hidden" name="hideGroupHeader" value$="[[hideGroupHeader]]">
+      <input type="hidden" name="allowPostVideoUploads" value$="[[allowPostVideoUploads]]">
+      <input type="hidden" name="allowPointVideoUploads" value$="[[allowPointVideoUploads]]">
+      <input type="hidden" name="allowPostAudioUploads" value$="[[allowPostAudioUploads]]">
+      <input type="hidden" name="allowPointAudioUploads" value$="[[allowPointAudioUploads]]">
+      <input type="hidden" name="in_group_folder_id" value="[[inGroupFolderId]]">
+      <input type="hidden" name="is_group_folder" value="[[isGroupFolder]]">
 
       <yp-ajax id="pagesAjax" on-response="_pagesResponse"></yp-ajax>
 
@@ -1122,6 +1126,15 @@
       },
 
       deleteHeaderImage: {
+        type: Boolean,
+        value: false
+      },
+
+      inGroupFolderId: {
+        type: Number,
+      },
+
+      isGroupFolder: {
         type: Boolean,
         value: false
       }
@@ -1334,6 +1347,8 @@
     _finishRedirect: function (group) {
       if (group && group.configuration.isDataVisualizationGroup) {
         this.redirectTo("/group_data_viz/" + group.id);
+      } else if (group && group.is_group_folder) {
+        this.redirectTo("/group_folder/" + group.id);
       } else {
         this.redirectTo("/group/" + group.id);
       }
@@ -1492,6 +1507,18 @@
           }
         }
 
+        if (group.is_group_folder) {
+          this.set('isGroupFolder', true);
+        } else {
+          this.set('isGroupFolder', false);
+        }
+
+        if (group.in_group_folder_id) {
+          this.set('inGroupFolderId', group.inGroupFolderId);
+        } else {
+          this.set('inGroupFolderId', undefined);
+        }
+
         this.set('group', group);
 
         this.$.pagesAjax.url = "/api/groups/"+group.id+"/pages";
@@ -1515,6 +1542,20 @@
         this.community = params.community;
       }
 
+      if (params.isGroupFolder) {
+        this.set('group.is_group_folder', true);
+        this.set('isGroupFolder', true);
+      } else if (!this.group || !this.group.id) {
+        this.set('isGroupFolder', false);
+      }
+
+      if (params.inGroupFolderId) {
+        this.set('group.in_group_folder_id', params.inGroupFolderId);
+        this.set('inGroupFolderId', params.inGroupFolderId);
+      } else if (!this.group || !this.group.id) {
+        this.set('inGroupFolderId', undefined);
+      }
+
       var defaultAccess = 0;
       if (this.community) {
         if (this.community.access != 0) {
@@ -1529,6 +1570,7 @@
         }
       }
       this.set('group.access', defaultAccess);
+      this._setupTranslation();
     },
 
     _pagesResponse: function (event, detail) {
@@ -1539,14 +1581,26 @@
 
     _setupTranslation: function (language, t) {
       if (this.language && this.t) {
-        if (this.new) {
-          this.editHeaderText = this.t('group.new');
-          this.toastText = this.t('groupToastCreated');
-          this.set('saveText', this.t('create'));
+        if (this.isGroupFolder) {
+          if (this.new) {
+            this.editHeaderText = this.t('newGroupFolder');
+            this.toastText = this.t('groupToastCreated');
+            this.set('saveText', this.t('create'));
+          } else {
+            this.set('saveText', this.t('save'));
+            this.editHeaderText = this.t('editGroupFolder');
+            this.toastText = this.t('groupToastUpdated');
+          }
         } else {
-          this.set('saveText', this.t('save'));
-          this.editHeaderText = this.t('group.update');
-          this.toastText = this.t('groupToastUpdated');
+          if (this.new) {
+            this.editHeaderText = this.t('group.new');
+            this.toastText = this.t('groupToastCreated');
+            this.set('saveText', this.t('create'));
+          } else {
+            this.set('saveText', this.t('save'));
+            this.editHeaderText = this.t('group.update');
+            this.toastText = this.t('groupToastUpdated');
+          }
         }
       }
     },

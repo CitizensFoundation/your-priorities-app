@@ -57,7 +57,7 @@
 
 <link rel="import" href="../yp-app-globals/yp-sw-update-toast.html">
 <link rel="import" href="../yp-survey-group/yp-survey-group.html">
-
+<link rel="import" href="../yp-group/yp-group-folder.html">
 
 <dom-module id="yp-app">
 
@@ -398,6 +398,7 @@
           <yp-community id="communityPage" name="community" id-route$="[[communitySubRoute]]" on-change-header="onChangeHeader"></yp-community>
           <yp-community-folder id="communityFolderPage" name="community_folder" id-route$="[[communityFolderSubRoute]]" on-change-header="onChangeHeader"></yp-community-folder>
           <yp-group id="groupPage" name="group" id-route$="[[groupSubRoute]]" on-change-header="onChangeHeader"></yp-group>
+          <yp-group-folder id="groupFolderPage" name="group_folder" id-route$="[[groupFolderSubRoute]]" on-change-header="onChangeHeader"></yp-group-folder>
           <yp-group-data-viz id="dataVizGroupPage" name="group_data_viz" id-route$="[[groupSubRoute]]" on-change-header="onChangeHeader"></yp-group-data-viz>
           <yp-post id="postPage" name="post" current-page="[[page]]" id-route$="[[postSubRoute]]" on-change-header="onChangeHeader"></yp-post>
           <yp-user id="userPage" name="user" id-route$="[[userSubRoute]]" on-change-header="onChangeHeader"></yp-user>
@@ -445,6 +446,7 @@
         communitySubRoute: Object,
         communityFolderSubRoute: Object,
         groupSubRoute: Object,
+        groupFolderSubRoute: Object,
         postSubRoute: Object,
         userSubRoute: Object,
         surveySubRoute: Object,
@@ -969,15 +971,20 @@
             if (this.$$("#communityPage") && typeof this.$$("#communityPage").refresh !== "undefined") {
               this.$$("#communityPage").refresh();
             }
-          } else if ((route.path.indexOf('group') > -1) && !(route.path.indexOf('group_data_viz') > -1)) {
-            this.set('groupSubRoute', this.subRoute);
-            if (this.$$("#groupPage") && typeof this.$$("#groupPage").refresh !== "undefined") {
-              this.$$("#groupPage").refresh(true);
+          } else if ((route.path.indexOf('group_folder') > -1)) {
+            this.set('groupFolderSubRoute', this.subRoute);
+            if (this.$$("#groupFolderPage") && typeof this.$$("#groupFolderPage").refresh !== "undefined") {
+              this.$$("#groupFolderPage").refresh(true);
             }
           } else if (route.path.indexOf('group_data_viz') > -1) {
             this.set('groupSubRoute', this.subRoute);
             if (this.$$("#dataVizGroupPage") && typeof this.$$("#dataVizGroupPage").refresh !== "undefined") {
               this.$$("#dataVizGroupPage").refresh(true);
+            }
+          } else if ((route.path.indexOf('group') > -1)) {
+            this.set('groupSubRoute', this.subRoute);
+            if (this.$$("#groupPage") && typeof this.$$("#groupPage").refresh !== "undefined") {
+              this.$$("#groupPage").refresh(true);
             }
           } else if (route.path.indexOf('post') > -1) {
             this.set('postSubRoute', this.subRoute);
@@ -1157,7 +1164,7 @@
           this.loadDataViz();
         }
 
-        if (page && (page!=="survey" && page!=="group_data_viz")) {
+        if (page && (page!=="survey" && page!=="group_data_viz" && page!=="group_folder")) {
           var resolvedPageUrl;
           if (page=="view-404") {
             resolvedPageUrl = this.resolveUrl("yp-view-404.html");

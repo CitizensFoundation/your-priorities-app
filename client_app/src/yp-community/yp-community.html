@@ -215,7 +215,8 @@
       ],
 
       listeners: {
-        'yp-new-group': '_newGroup'
+        'yp-new-group': '_newGroup',
+        'yp-new-group-folder': '_newGroupFolder'
       },
 
       _userLoggedIn: function (user) {
@@ -339,6 +340,14 @@
         Polymer.dom(document).querySelector('yp-app').getDialogAsync("groupEdit", function (dialog) {
           dialog.setup(null, true, this._refreshAjax.bind(this));
           dialog.open('new', { communityId: this.communityId, community: this.community });
+        }.bind(this));
+      },
+
+      _newGroupFolder: function () {
+        window.appGlobals.activity('open', 'newGroupFolder');
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("groupEdit", function (dialog) {
+          dialog.setup(null, true, this._refreshAjax.bind(this));
+          dialog.open('new', { communityId: this.communityId, community: this.community, isGroupFolder: true });
         }.bind(this));
       },
 

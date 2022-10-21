@@ -103,6 +103,8 @@
           return "/community/"+group.configuration.actAsLinkToCommunityId;
         } else if (group && group.configuration && group.configuration.isDataVisualizationGroup && group.configuration.dataForVisualizationJson) {
           return "/group_data_viz/"+group.id;
+        } else if (group && group.is_group_folder) {
+          return "/group_folder/"+group.id;
         } else {
          return "/group/"+group.id;
         }

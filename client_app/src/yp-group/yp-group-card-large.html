@@ -262,6 +262,10 @@
       .top-card[hide-box-shadow] {
         box-shadow: none;
       }
+
+      paper-item[hideforfolder] {
+        display: none;
+      }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
     <lite-signal on-lite-signal-yp-pause-media-playback="_pauseMediaPlayback"></lite-signal>
@@ -324,27 +328,29 @@
             <paper-icon-button aria-label$="[[t('openGroupMenu')]]" icon="more-vert" slot="dropdown-trigger"></paper-icon-button>
             <paper-listbox slot="dropdown-content" on-iron-select="_menuSelection">
               <paper-item hidden$="[[!hasGroupAccess]]" id="editMenuItem">[[t('group.edit')]]</paper-item>
-              <paper-item hidden$="[[!hasGroupAccess]]" id="newCategoryMenuItem">[[t('category.new')]]</paper-item>
-              <paper-item hidden$="[[!hasGroupOrPromoterAccess]]" id="openPromotionApp">[[t('analyticsAndPromotions')]]</paper-item>
-              <paper-item hidden$="[[!hasGroupAccess]]" id="usersMenuItem">[[t('group.users')]]</paper-item>
+              <paper-item hidden$="[[!hasGroupAccess]]" hideforfolder$="[[group.is_group_folder]]" id="newCategoryMenuItem">[[t('category.new')]]</paper-item>
+              <paper-item hidden$="[[!hasGroupOrPromoterAccess]]" hideforfolder$="[[group.is_group_folder]]" id="openPromotionApp">[[t('analyticsAndPromotions')]]</paper-item>
+              <paper-item hidden$="[[!hasGroupAccess]]" hideforfolder$="[[group.is_group_folder]]" id="usersMenuItem">[[t('group.users')]]</paper-item>
               <paper-item hidden$="[[!hasGroupAccess]]" id="adminsMenuItem">[[t('group.admins')]]</paper-item>
-              <paper-item hidden$="[[!hasGroupAccess]]" id="promotersMenuItem">[[t('groupPromoters')]]</paper-item>
-              <paper-item hidden$="[[!hasGroupAccess]]" id="pagesMenuItem">[[t('pages.managePages')]]</paper-item>
-              <paper-item hidden$="[[!hasGroupAccess]]" id="moderationMenuItem">
+              <paper-item hidden$="[[!hasGroupAccess]]" hideforfolder$="[[group.is_group_folder]]" id="promotersMenuItem">[[t('groupPromoters')]]</paper-item>
+              <paper-item hidden$="[[!hasGroupAccess]]" hideforfolder$="[[group.is_group_folder]]" id="pagesMenuItem">[[t('pages.managePages')]]</paper-item>
+              <paper-item hidden$="[[!hasGroupAccess]]" hideforfolder$="[[group.is_group_folder]]" id="moderationMenuItem">
                 [[t('flaggedContent')]] <span hidden$="[[!flaggedContentCount]]">&nbsp; ([[flaggedContentCount]])</span>
               </paper-item>
-              <paper-item hidden$="[[!hasGroupAccess]]" id="moderationAllMenuItem">
+              <paper-item hidden$="[[!hasGroupAccess]]" hideforfolder$="[[group.is_group_folder]]" id="moderationAllMenuItem">
                 [[t('manageAllContent')]]
               </paper-item>
-              <paper-item hidden$="[[!hasGroupAccess]]" id="exportXlsMenuItem">[[t('exportGroupXls')]]</paper-item>
-              <paper-item hidden$="[[!hasGroupAccess]]" id="exportDocxMenuItem">[[t('exportGroupDocx')]]</paper-item>
-              <paper-item hidden$="[[!hasGroupAccess]]" id="cloneMenuItem">[[t('cloneGroup')]]</paper-item>
-              <paper-item hidden$="[[!hasGroupAccess]]" id="deleteMenuItem">[[t('group.delete')]]</paper-item>
-              <paper-item hidden$="[[!hasGroupAccess]]" id="anonymizeMenuItem">[[t('anonymizeGroupContent')]]</paper-item>
-              <paper-item hidden$="[[!hasGroupAccess]]" id="deleteContentMenuItem">[[t('deleteGroupContent')]]</paper-item>
-              <paper-item id="addPostMenuItem">[[t('post.new')]]</paper-item>
-              <paper-item id="openAnalyticsApp" hidden$="[[!hasGroupAccess]]">[[t('openAnalyticsApp')]]</paper-item>
-              <paper-item id="openAdminApp" hidden$="[[!hasGroupAccess]]">[[t('editTranslations')]]</paper-item>
+              <paper-item hidden$="[[!hasGroupAccess]]" hideforfolder$="[[group.is_group_folder]]" id="exportXlsMenuItem">[[t('exportGroupXls')]]</paper-item>
+              <paper-item hidden$="[[!hasGroupAccess]]" hideforfolder$="[[group.is_group_folder]]" id="exportDocxMenuItem">[[t('exportGroupDocx')]]</paper-item>
+              <paper-item hidden$="[[!hasGroupAccess]]" hideforfolder$="[[group.is_group_folder]]" id="cloneMenuItem">[[t('cloneGroup')]]</paper-item>
+              <paper-item hidden$="[[!hasGroupAccess]]" disabled$="[[disableDeleteIfNeeded]]" id="deleteMenuItem">[[t('group.delete')]]</paper-item>
+              <paper-item hidden$="[[!hasGroupAccess]]" hideforfolder$="[[group.is_group_folder]]" id="anonymizeMenuItem">[[t('anonymizeGroupContent')]]</paper-item>
+              <paper-item hidden$="[[!hasGroupAccess]]" hideforfolder$="[[group.is_group_folder]]" id="deleteContentMenuItem">[[t('deleteGroupContent')]]</paper-item>
+              <paper-item id="addPostMenuItem" hideforfolder$="[[group.is_group_folder]]" >[[t('post.new')]]</paper-item>
+              <paper-item id="openAnalyticsApp" hideforfolder$="[[group.is_group_folder]]" hidden$="[[!hasGroupAccess]]">[[t('openAnalyticsApp')]]</paper-item>
+              <paper-item id="openAdminApp" hideforfolder$="[[group.is_group_folder]]" hidden$="[[!hasGroupAccess]]">[[t('editTranslations')]]</paper-item>
+              <paper-item id="newGroupItem" hideforfolder$="[[!group.is_group_folder]]" hidden$="[[!hasGroupAccess]]">[[t('group.new')]]</paper-item>
+              <paper-item id="newGroupFolderItem" hideforfolder$="[[!group.is_group_folder]]" hidden$="[[!hasGroupAccess]]">[[t('newGroupFolder')]]</paper-item>
             </paper-listbox>
           </paper-menu-button>
           <div class="layout horizontal center-center" style="width: 100%">
@@ -470,6 +476,19 @@
         hideInfoBoxExceptAdmin: {
           type: Boolean,
           computed: '_hideInfoBoxExceptAdmin(group, hasGroupAccess)'
+        },
+
+        disableDeleteIfNeeded: {
+          type: Boolean,
+          computed: '_disableDeleteIfNeeded(group)'
+        },
+      },
+
+      _disableDeleteIfNeeded: function (group) {
+        if (group && group.is_group_folder && group.Groups) {
+          return group.Groups.length>0;
+        } else {
+          return false;
         }
       },
 
@@ -618,6 +637,10 @@
           this._openCreateXlsReport();
         else if (detail.item.id==="anonymizeMenuItem")
           this._openAnonymizeContent();
+        else if (detail.item.id==="newGroupItem")
+          this.fire('yp-new-group');
+        else if (detail.item.id==="newGroupFolderItem")
+          this.fire('yp-new-group-folder');
         else if (detail.item.id==="openPromotionApp")
           window.location = "/promotion/group/"+this.group.id;
         else if (detail.item.id==="openAnalyticsApp")

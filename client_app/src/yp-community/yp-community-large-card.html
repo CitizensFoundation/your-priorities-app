@@ -429,6 +429,7 @@
               <paper-item hidden$="[[!hasCommunityAccessAndNotFolder]]" id="deleteContentMenuItem">[[t('deleteCommunityContent')]]</paper-item>
               <paper-item hidden$="[[!hasCommunityAccessAndNotFolder]]" id="bulkStatusUpdateMenuItem">[[t('bulkStatusUpdate')]]</paper-item>
               <paper-item id="addGroupMenuItem" hidden$="[[newGroupHidden]]">[[t('group.new')]]</paper-item>
+              <paper-item id="addGroupFolderMenuItem" hidden$="[[newGroupHidden]]">[[t('newGroupFolder')]]</paper-item>
               <paper-item  hidden id="addCommunityFolderMenuItem">[[t('newCommunityFolder')]]</paper-item>
               <paper-item id="openAnalyticsApp" hidden$="[[!hasCommunityAccess]]">[[t('openAnalyticsApp')]]</paper-item>
               <paper-item id="openAdminApp" hidden$="[[!hasCommunityAccess]]">[[t('editTranslations')]]</paper-item>
@@ -745,6 +746,8 @@
           this._openBulkStatusUpdates();
         else if (detail.item.id==="addGroupMenuItem")
           this.fire('yp-new-group');
+        else if (detail.item.id==="addGroupFolderMenuItem")
+          this.fire('yp-new-group-folder');
         else if (detail.item.id==="moderationMenuItem")
           this._openContentModeration();
         else if (detail.item.id==="fraudManagementMenuItem")

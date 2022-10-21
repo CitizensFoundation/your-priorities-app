@@ -161,6 +161,8 @@
         var groupUrl;
         if (this.group && this.group.configuration && this.group.configuration.isDataVisualizationGroup) {
           groupUrl = '/group_data_viz/' + this.group.id;
+        } else if (this.group && this.group.is_group_folder) {
+          groupUrl = '/group_folder/' + this.group.id;
         } else {
           groupUrl = '/group/' + this.group.id + '/open';
         }
@@ -173,7 +175,11 @@
 
         if (!window.appGlobals.groupItemsCache)
           window.appGlobals.groupItemsCache = {};
-        window.appGlobals.groupItemsCache[this.group.id] = this.group;
+
+        //TODO: Look into if we can cache folders
+        if (!this.group.is_group_folder) {
+          window.appGlobals.groupItemsCache[this.group.id] = this.group;
+        }
 
         console.log("Cached saved for group id: "+this.group.id);
         console.log("Saving group item for community "+this.group.community_id);

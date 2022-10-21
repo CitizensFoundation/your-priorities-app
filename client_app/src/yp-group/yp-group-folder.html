@@ -1,0 +1,295 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html" />
+
+<link
+  rel="import"
+  href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html"
+/>
+<link
+  rel="import"
+  href="../../bower_components/iron-scroll-threshold/iron-scroll-threshold.html"
+/>
+<link rel="import" href="../../bower_components/lite-signal/lite-signal.html" />
+<link rel="import" href="../../bower_components/iron-pages/iron-pages.html" />
+
+<link rel="import" href="../../bower_components/paper-tabs/paper-tab.html" />
+<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html" />
+<link rel="import" href="../../bower_components/paper-fab/paper-fab.html" />
+
+<link rel="import" href="../../bower_components/app-route/app-route.html" />
+<link
+  rel="import"
+  href="../../bower_components/iron-scroll-threshold/iron-scroll-threshold.html"
+/>
+
+<link rel="import" href="../yp-app-globals/yp-app-icons.html" />
+<link rel="import" href="../yp-behaviors/yp-language-behavior.html" />
+<link rel="import" href="../yp-behaviors/yp-news-tab-selected.html" />
+<link rel="import" href="../yp-behaviors/yp-detect-old-ios.html" />
+<link rel="import" href="../yp-behaviors/yp-goto-behavior.html" />
+<link rel="import" href="../yp-behaviors/yp-media-formats-behavior.html" />
+<link rel="import" href="../yp-behaviors/collection-helpers.html" />
+
+<link rel="import" href="../ac-activities/ac-activities.html" />
+
+<link rel="import" href="../yp-ajax/yp-ajax.html" />
+
+<link rel="import" href="../yp-theme/yp-theme-behavior.html" />
+<link rel="import" href="../yp-behaviors/yp-number-format-behavior.html" />
+
+<link rel="import" href="./yp-group-base-behaviors.html" />
+
+<link rel="import" href="yp-group-card-large.html" />
+<link rel="import" href="yp-group-grid.html" />
+<link rel="import" href="./yp-group-collection-behaviors.html" />
+
+<dom-module id="yp-group-folder">
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+      yp-ajax {
+        background-color: var(--primary-background-color);
+      }
+
+      .topContainer {
+        margin-top: 16px;
+      }
+
+      .createFab {
+        position: fixed;
+        bottom: 24px;
+        right: 28px;
+        background-color: var(--accent-color);
+        color: #fff;
+
+        --paper-fab-iron-icon: {
+          color: var(--icon-general-color, #fff);
+          height: 40px;
+          width: 40px;
+        }
+      }
+
+      .createFab[wide-layout] {
+        width: 72px;
+        height: 72px;
+        --paper-fab-iron-icon: {
+          color: var(--icon-general-color, #fff);
+          width: 50px;
+          height: 50px;
+        }
+      }
+
+      .topArea {
+        background-color: var(--primary-background-color);
+        background-image: var(--top-area-background-image, none);
+        height: 300px;
+      }
+
+      .largeAddButton {
+        margin-bottom: 4px;
+      }
+
+      @media (max-width: 1000px) {
+        .topArea {
+          height: auto;
+          background-image: none;
+        }
+      }
+
+      @media (max-width: 600px) {
+        .largeAddButton[is-apple] {
+          margin-top: 32px;
+        }
+
+        .largeAddButton[is-ipad] {
+          margin-top: 48px;
+        }
+      }
+
+      .minHeightSection {
+        min-height: 450px;
+      }
+
+      [hidden] {
+        display: none !important;
+      }
+    </style>
+
+    <div id="topContainer">
+      <div
+        id="topArea"
+        class="large-card-wrapper layout horizontal center-center topArea"
+        hidden$="[[group.configuration.hideGroupHeader]]"
+      >
+        <yp-group-card-large
+          id="groupCard"
+          class="largeCard"
+          group="[[group]]"
+          on-update-group="_refreshAjax"
+        ></yp-group-card-large>
+      </div>
+
+      <section name="groups" role="main" aria-label$="[[t('groups')]]">
+        <div class="layout horizontal center-center">
+          <yp-group-grid
+            id="groupGrid"
+            featured-groups="[[featuredGroups]]"
+            active-groups="[[activeGroups]]"
+            archived-groups="[[archivedGroups]]"
+            hide-add$="[[!createFabIcon]]"
+            on-add-new-group="_newGroup"
+          >
+          </yp-group-grid>
+        </div>
+      </section>
+    </div>
+
+    <template is="dom-if" if="[[showAddButton]]" restamp>
+      <div
+        class="create-fab-wrapper layout horizontal end-justified createFabContainer"
+      >
+        <paper-fab
+          class="createFab"
+          icon="[[createFabIcon]]"
+          elevation="5"
+          wide-layout$="{{wideWidth}}"
+          title$="[[t('group.new')]]"
+          on-tap="_newGroup"
+        ></paper-fab>
+      </div>
+    </template>
+
+    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
+
+    <iron-media-query
+      query="(min-width: 1024px)"
+      query-matches="{{wideWidth}}"
+    ></iron-media-query>
+
+    <iron-media-query
+      query="(max-width: 700px)"
+      query-matches="{{phoneWidth}}"
+    ></iron-media-query>
+
+    <app-route
+      route="{{idRoute}}"
+      pattern="/:id"
+      data="{{idRouteData}}"
+      tail="{{tabRoute}}"
+    >
+    </app-route>
+
+    <app-route
+      route="{{tabRoute}}"
+      pattern="/:tabName"
+      data="{{tabRouteData}}"
+      tail="{{listRoute}}"
+    >
+    </app-route>
+
+    <div class="layout horizontal center-center">
+      <yp-ajax large-spinner id="ajax" on-response="_groupResponse"></yp-ajax>
+      <yp-ajax id="pagesAjax" on-response="_pagesResponse"></yp-ajax>
+      <yp-ajax
+        hidden
+        id="configurationAjax"
+        on-response="_configurationAjaxResponse"
+      ></yp-ajax>
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+      is: "yp-group-folder",
+
+      behaviors: [
+        Polymer.ypLanguageBehavior,
+        Polymer.ypThemeBehavior,
+        Polymer.AccessHelpers,
+        Polymer.CollectionHelpers,
+        Polymer.ypDetectOldiOs,
+        Polymer.ypGotoBehavior,
+        Polymer.ypMediaFormatsBehavior,
+        Polymer.ypNumberFormatBehavior,
+        Polymer.ypGroupBaseBehaviors,
+        Polymer.GroupCollectionBehaviors
+      ],
+
+      listeners: {
+        'yp-new-group': '_newGroup',
+        'yp-new-group-folder': '_newGroupFolder'
+      },
+
+      properties: {
+        showAddButton: {
+          type: Boolean,
+          computed: "_computeShowAddButton(group)",
+        },
+
+        createFabIcon: {
+          type: String,
+          value: "add"
+        }
+      },
+
+      _newGroup: function () {
+        window.appGlobals.activity("open", "newGroup");
+        Polymer.dom(document)
+          .querySelector("yp-app")
+          .getDialogAsync(
+            "groupEdit",
+            function (dialog) {
+              dialog.setup(null, true, this._refreshAjax.bind(this));
+              dialog.open("new", {
+                communityId: this.group.Community.id,
+                community: this.group.Community,
+                inGroupFolderId: this.group.id,
+              });
+            }.bind(this)
+          );
+      },
+
+      _newGroupFolder: function () {
+        window.appGlobals.activity("open", "newGroupFolder");
+        Polymer.dom(document)
+          .querySelector("yp-app")
+          .getDialogAsync(
+            "groupEdit",
+            function (dialog) {
+              dialog.setup(null, true, this._refreshAjax.bind(this));
+              dialog.open("new", {
+                communityId: this.group.Community.id,
+                community: this.group.Community,
+                isGroupFolder: true,
+                inGroupFolderId: this.group.id,
+              });
+            }.bind(this)
+          );
+      },
+
+      _getGroup: function () {
+        this.$.ajax.url = `/api/groups/${this.groupId}/groupFolder`;
+        this.$.ajax.retryMethodAfter401Login = this._getGroup.bind(this);
+        this.$.ajax.generateRequest();
+      },
+
+      _afterRefreshGroup: function () {
+        if (this.group) {
+          this.setupGroups(
+            this.group.Groups,
+            this.group.Community.configuration
+          );
+        }
+      },
+
+      _computeShowAddButton: function (group) {
+        if (group) {
+          return (
+            !group.Community.only_admins_can_create_groups ||
+            this.checkCommunityAccess(group.Community)
+          );
+        } else {
+          return false;
+        }
+      },
+    });
+  </script>
+</dom-module>
