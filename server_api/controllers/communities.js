@@ -459,10 +459,7 @@ const getCommunity = function(req, done) {
                 $eq: null
               }
             },
-            attributes: ['id', 'configuration', 'access', 'objectives',
-              'name', 'theme_id', 'community_id',
-              'access', 'status', 'counter_points', 'counter_posts',
-              'counter_users', 'language'],
+            attributes: models.Group.defaultAttributesPublic,
             required: false,
             order: [
               ['counter_users', 'desc'],

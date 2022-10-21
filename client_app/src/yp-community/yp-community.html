@@ -425,6 +425,7 @@
           var backUrl = configuration.customBackURL;
           if (backUrl.startsWith("/community/") ||
             backUrl.startsWith("/group/") ||
+            backUrl.startsWith("/group_folder/") ||
             backUrl.startsWith("/domain/") ||
             backUrl.startsWith("/post/")) {
             return false;
