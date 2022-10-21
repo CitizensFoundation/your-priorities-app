@@ -391,6 +391,15 @@ module.exports = (sequelize, DataTypes) => {
         } else {
           callback();
         }
+      },
+      (callback) => {
+        if (this.in_group_folder_id) {
+          queue.add('delayed-job', {
+            type: 'recount-group-folder',
+            groupId: this.id
+          }, 'low');
+        }
+        callback();
       }
     ], (err) => {
       done(err);

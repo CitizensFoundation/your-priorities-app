@@ -411,5 +411,6 @@ module.exports = {
   recountPost,
   recountPosts,
   recountPoint,
-  recountPoints
+  recountPoints,
+  countUsersInGroup
 };
