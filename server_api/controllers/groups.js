@@ -426,6 +426,186 @@ var updateGroupConfigParameters = function (req, group) {
   group.set('configuration.forceShowDebateCountOnPost', truthValueFromBody(req.body.forceShowDebateCountOnPost));
 };
 
+const getGroupFolder = function(req, done) {
+  var groupFolder;
+
+  log.info("getGroupFolder");
+
+  async.series([
+    function (seriesCallback) {
+      models.Group.findOne({
+        where: {
+          id: req.params.groupFolderId,
+          is_group_folder: true
+        },
+        attributes: ['id', 'configuration', 'access', 'objectives',
+          'name', 'theme_id', 'community_id',
+          'access', 'status', 'counter_points', 'counter_posts',
+          'counter_users', 'language'],
+        required: false,
+        order: [
+          ['counter_users', 'desc'],
+          [{model: models.Image, as: 'GroupLogoImages'}, 'created_at', 'asc'],
+          [{model: models.Image, as: 'GroupHeaderImages'}, 'created_at', 'asc'],
+          [{model: models.Category }, 'name', 'asc']
+        ],
+        include: models.Group.masterGroupIncludes
+      }).then(function (group) {
+        groupFolder = group;
+        if (groupFolder) {
+          log.info('Group Folder Viewed', { groupFolderId: groupFolder.id, userId: req.user ? req.user.id : -1 });
+          models.Group.addVideosAndCommunityLinksToGroups([groupFolder], videoError => {
+            seriesCallback(videoError);
+          })
+        } else {
+          seriesCallback("Not found");
+        }
+        return null;
+      }).catch(function(error) {
+        seriesCallback(error);
+      });
+    },
+    function (seriesCallback) {
+      const redisKey = "cache:groups_folder:"+groupFolder.id+":"+models.Group.ACCESS_SECRET;
+      req.redisClient.get(redisKey, (error, groups) => {
+        if (error) {
+          seriesCallback(error);
+        } else if (groups) {
+          groupFolder.dataValues.Groups = JSON.parse(groups);
+          seriesCallback();
+        } else {
+          models.Group.findAll({
+            where: {
+              in_group_folder_id: groupFolder.id,
+              access: {
+                $ne: models.Group.ACCESS_SECRET
+              },
+              status: {
+                $ne: 'hidden'
+              },
+            },
+            attributes: ['id', 'configuration', 'access', 'objectives',
+              'name', 'theme_id', 'community_id',
+              'access', 'status', 'counter_points', 'counter_posts',
+              'counter_users', 'language'],
+            required: false,
+            order: [
+              ['counter_users', 'desc'],
+              [{model: models.Image, as: 'GroupLogoImages'}, 'created_at', 'asc'],
+              [{model: models.Image, as: 'GroupHeaderImages'}, 'created_at', 'asc'],
+              [{model: models.Category }, 'name', 'asc']
+            ],
+            include: models.Group.masterGroupIncludes
+          }).then(function (groups) {
+            groupFolder.dataValues.Groups = groups;
+            req.redisClient.setex(redisKey, process.env.GROUPS_CACHE_TTL ? parseInt(process.env.GROUPS_CACHE_TTL) : 3, JSON.stringify(groups));
+            seriesCallback();
+          }).catch(error => {
+            seriesCallback(error);
+          });
+        }
+      });
+    },
+    function (seriesCallback) {
+      if (req.user && groupFolder) {
+        var adminGroups, userGroups;
+
+        async.parallel(
+          [
+            function (parallelCallback) {
+              models.Group.findAll({
+                where: {
+                  in_group_folder_id: groupFolder.id
+                },
+                attributes: models.Group.defaultAttributesPublic,
+                order: [
+                  [ 'counter_users', 'desc'],
+                  [ { model: models.Image, as: 'GroupLogoImages' } , 'created_at', 'asc' ],
+                  [ { model: models.Image, as: 'GroupHeaderImages' } , 'created_at', 'asc' ],
+                  [ { model: models.Category }, 'name', 'asc']
+                ],
+                include: [
+                  {
+                    model: models.User,
+                    as: 'GroupAdmins',
+                    attributes: ['id'],
+                    required: true,
+                    where: {
+                      id: req.user.id
+                    }
+                  }
+                ].concat(models.Group.masterGroupIncludes)
+              }).then(function (groups) {
+                adminGroups = groups;
+                parallelCallback(null, "admin");
+              }).catch(function (error) {
+                parallelCallback(error)
+              });
+            },
+
+            function (parallelCallback) {
+              models.Group.findAll({
+                where: {
+                  in_group_folder_id: groupFolder.id
+                },
+                attributes: models.Group.defaultAttributesPublic,
+                order: [
+                  [ 'counter_users', 'desc'],
+                  [ { model: models.Image, as: 'GroupLogoImages' } , 'created_at', 'asc' ],
+                  [ { model: models.Image, as: 'GroupHeaderImages' } , 'created_at', 'asc' ],
+                  [ {model: models.Category }, 'name', 'asc']
+                ],
+                include: [
+                  {
+                    model: models.User,
+                    as: 'GroupUsers',
+                    attributes: ['id'],
+                    required: true,
+                    where: {
+                      id: req.user.id
+                    }
+                  }
+                ].concat(models.Group.masterGroupIncludes)
+              }).then(function (groups) {
+                userGroups = groups;
+                parallelCallback(null, "users");
+              }).catch(function (error) {
+                parallelCallback(error)
+              });
+            }
+          ], function (error) {
+            if (error) {
+              seriesCallback(error);
+            }  else {
+              var combinedGroups = _.concat(userGroups, groupFolder.dataValues.Groups);
+              if (adminGroups) {
+                combinedGroups = _.concat(adminGroups, combinedGroups);
+              }
+              combinedGroups = _.uniqBy(combinedGroups, function (group) {
+                if (!group) {
+                  log.error("Can't find group in combinedGroups", { combinedGroupsL: combinedGroups.length, err: "Cant find group in combinedGroups" });
+                  return null;
+                } else {
+                  return group.id;
+                }
+              });
+              models.Group.addVideosAndCommunityLinksToGroup(combinedGroups, videoError => {
+                groupFolder.dataValues.Groups = combinedGroups;
+                seriesCallback(videoError);
+              })
+            }
+          });
+      } else {
+        models.Group.addVideosAndCommunityLinksToGroup(groupFolder.dataValues.Groups, videoError => {
+          seriesCallback(videoError);
+        })
+      }
+    }
+  ], function (error) {
+    done(error, groupFolder);
+  });
+};
+
 router.post('/:id/getPresignedAttachmentURL',  auth.can('add to group'), function(req, res) {
   const endPoint = process.env.S3_ENDPOINT || "s3.amazonaws.com";
   const accelEndPoint = process.env.S3_ACCELERATED_ENDPOINT || process.env.S3_ENDPOINT || "s3.amazonaws.com";
@@ -1177,6 +1357,14 @@ router.post('/:communityId', auth.can('create group'), function(req, res) {
 
   group.theme_id = req.body.themeId ? parseInt(req.body.themeId) : null;
 
+  if (req.body.in_group_folder_id) {
+    group.in_group_folder_id = parseInt(req.body.in_group_folder_id);
+  }
+
+  if (req.body.is_group_folder) {
+    group.is_group_folder = true;
+  }
+
   updateGroupConfigParameters(req, group);
 
   group.save().then(function(group) {
@@ -1421,6 +1609,19 @@ const addVideosToGroup = (group, done) => {
     done(error);
   })
 }
+
+router.get('/:groupFolderId/groupFolder', auth.can('view group'), function(req, res) {
+  getGroupFolder(req, function (error, groupFolder) {
+    if (error) {
+      log.error('Could not get groupFolder', { err: error, groupFolderId: req.params.groupFolderId, user: req.user ? toJson(req.user.simple()) : null });
+      res.sendStatus(500);
+    } else if (groupFolder) {
+      res.send(groupFolder);
+    } else {
+      res.sendStatus(404);
+    }
+  });
+});
 
 router.get('/:id', auth.can('view group'), function(req, res) {
   models.Group.findOne({

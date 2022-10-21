@@ -2,6 +2,8 @@
 
 const async = require("async");
 const queue = require('../active-citizen/workers/queue');
+const _ = require("lodash");
+const log = require("../utils/logger");
 
 module.exports = (sequelize, DataTypes) => {
   const Group = sequelize.define("Group", {
@@ -74,6 +76,9 @@ module.exports = (sequelize, DataTypes) => {
         fields: ['deleted', 'in_group_folder_id','status', 'access']
       },
       {
+        fields: ['community_id', 'deleted', 'in_group_folder_id', 'status', 'access']
+      },
+      {
         name: 'ComDelComAccCountStatInGroup',
         fields: ['deleted', 'community_id', 'access', 'counter_users', 'status', 'in_group_folder_id']
       },
@@ -123,8 +128,158 @@ module.exports = (sequelize, DataTypes) => {
   Group.ACCESS_OPEN_TO_COMMUNITY = 3;
 
   Group.defaultAttributesPublic = ['id','name','access','google_analytics_code','is_group_folder','in_group_folder_id',
-    'status', 'weight','theme_id','community_id','created_at','updated_at','configuration','language','objectives','counter_posts',
+    'status', 'weight','theme_id','community_id','created_at','updated_at','configuration','language','objectives',
+    'counter_posts','is_group_folder','in_group_folder_id',
     'counter_points','counter_users','user_id'];
+
+  Group.masterGroupIncludes = [
+    {
+      model: sequelize.models.Community,
+      required: false,
+      attributes: ['id','theme_id','name','access','google_analytics_code','configuration'],
+      include: [
+        {
+          model: sequelize.models.Domain,
+          attributes: ['id','theme_id','name']
+        }
+      ]
+    },
+    {
+      model: sequelize.models.Category,
+      required: false,
+      attributes: ['id','name'],
+      include: [
+        {
+          model: sequelize.models.Image,
+          required: false,
+          as: 'CategoryIconImages',
+          attributes: sequelize.models.Image.defaultAttributesPublic,
+          order: [
+            [ { model: sequelize.models.Image, as: 'CategoryIconImages' } ,'updated_at', 'asc' ]
+          ]
+        }
+      ]
+    },
+    {
+      model: sequelize.models.Image,
+      as: 'GroupLogoImages',
+      attributes: sequelize.models.Image.defaultAttributesPublic,
+      required: false
+    },
+    {
+      model: sequelize.models.Image,
+      as: 'GroupHeaderImages',
+      attributes: sequelize.models.Image.defaultAttributesPublic,
+      required: false
+    }
+  ];
+
+
+  Group.addVideosAndCommunityLinksToGroups = (groups, done) => {
+    const linkedCommunityIds = [];
+    const linkedCommunityIdToGroupIndex = {};
+    const groupsHash = {};
+    const collectedGroupIds = [];
+
+    for (let g=0;g<groups.length;g++) {
+      if (groups[g].configuration && groups[g].configuration.actAsLinkToCommunityId) {
+        linkedCommunityIds.push(groups[g].configuration.actAsLinkToCommunityId);
+        linkedCommunityIdToGroupIndex[groups[g].configuration.actAsLinkToCommunityId] = g;
+      }
+      groupsHash[groups[g].id] = groups[g];
+      collectedGroupIds.push(groups[g].id);
+    }
+
+    async.series([
+      (seriesCallback) => {
+        //TODO: Limit then number of VideoImages to 1 - there is one very 10 sec
+        sequelize.models.Video.findAll({
+          attributes:  ['id','formats','viewable','public_meta','created_at'],
+          include: [
+            {
+              model: sequelize.models.Image,
+              as: 'VideoImages',
+              attributes:["formats",'created_at'],
+              required: false
+            },
+            {
+              model: sequelize.models.Group,
+              where: {
+                id: {
+                  $in: collectedGroupIds
+                }
+              },
+              as: 'GroupLogoVideos',
+              required: true,
+              attributes: ['id']
+            }
+          ],
+          order: [
+            [ { model: sequelize.models.Image, as: 'VideoImages' } ,'created_at', 'asc' ]
+          ]
+        }).then(videos => {
+          if (videos) {
+            videos = _.orderBy(videos, ['created_at'],['asc']);
+
+            for (let v=0;v<videos.length;v++) {
+              const groupId = videos[v].GroupLogoVideos[0].id;
+              if (groupId) {
+                groupsHash[groupId].dataValues.GroupLogoVideos = [videos[v]];
+                groupsHash[groupId].GroupLogoVideos = [videos[v]];
+              } else {
+                log.warn("Not finding group id in hash")
+              }
+            }
+            seriesCallback();
+          } else {
+            seriesCallback();
+          }
+        }).catch( error => {
+          seriesCallback(error);
+        })
+      },
+
+      (seriesCallback) => {
+        if (linkedCommunityIds.length>0) {
+          sequelize.models.Community.findAll({
+            where: {
+              id:  { $in: linkedCommunityIds }
+            },
+            attributes: ['id','name','description','counter_posts','counter_points','counter_users','language'],
+            order: [
+              [ { model: sequelize.models.Image, as: 'CommunityLogoImages' } , 'created_at', 'asc' ]
+            ],
+            include: [
+              {
+                model: sequelize.models.Image,
+                as: 'CommunityLogoImages',
+                attributes:  sequelize.models.Image.defaultAttributesPublic,
+                required: false
+              }
+            ]
+          }).then(communities => {
+            async.eachOfLimit(communities, 20, (community, eachIndex, forEachVideoCallback) => {
+              const index = linkedCommunityIdToGroupIndex[community.id];
+              if (groups[index].dataValues) {
+                groups[index].dataValues.CommunityLink = community;
+              } else {
+                groups[index].CommunityLink = community;
+              }
+              addVideosToCommunity(community, forEachVideoCallback);
+            }, error => {
+              seriesCallback(error);
+            });
+          }).catch( error => {
+            seriesCallback(error);
+          })
+        } else {
+          seriesCallback();
+        }
+      }
+    ], (error) => {
+      done(error);
+    })
+  }
 
   Group.addUserToGroupIfNeeded = (groupId, req, done) => {
     sequelize.models.Group.findOne({

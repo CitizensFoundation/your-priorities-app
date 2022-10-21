@@ -295,7 +295,8 @@ var getCommunityAndUser = function (communityId, userId, userEmail, callback) {
       models.Community.findOne({
         where: {
           id: communityId
-        }
+        },
+        attributes: models.Community.defaultAttributesPublic,
       }).then(function (communityIn) {
         if (communityIn) {
           community = communityIn;
@@ -352,48 +353,6 @@ var getCommunityAndUser = function (communityId, userId, userEmail, callback) {
   });
 };
 
-const masterGroupIncludes = [
-  {
-    model: models.Community,
-    required: false,
-    attributes: ['id','theme_id','name','access','google_analytics_code','configuration'],
-    include: [
-      {
-        model: models.Domain,
-        attributes: ['id','theme_id','name']
-      }
-    ]
-  },
-  {
-    model: models.Category,
-    required: false,
-    attributes: ['id','name'],
-    include: [
-      {
-        model: models.Image,
-        required: false,
-        as: 'CategoryIconImages',
-        attributes:  models.Image.defaultAttributesPublic,
-        order: [
-          [ { model: models.Image, as: 'CategoryIconImages' } ,'updated_at', 'asc' ]
-        ]
-      }
-    ]
-  },
-  {
-    model: models.Image,
-    as: 'GroupLogoImages',
-    attributes:  models.Image.defaultAttributesPublic,
-    required: false
-  },
-  {
-    model: models.Image,
-    as: 'GroupHeaderImages',
-    attributes:  models.Image.defaultAttributesPublic,
-    required: false
-  }
-];
-
 const addVideosToCommunity = (community, done) => {
   models.Video.findAll({
     attributes:  ['id','formats','viewable','created_at','public_meta'],
@@ -421,112 +380,6 @@ const addVideosToCommunity = (community, done) => {
     community.dataValues.CommunityLogoVideos = _.orderBy(videos, ['created_at'],['desc']);
     done();
   }).catch( error => {
-    done(error);
-  })
-}
-
-const addVideosAndCommunityLinksToGroup = (groups, done) => {
-  const linkedCommunityIds = [];
-  const linkedCommunityIdToGroupIndex = {};
-  const groupsHash = {};
-  const collectedGroupIds = [];
-
-  for (let g=0;g<groups.length;g++) {
-    if (groups[g].configuration && groups[g].configuration.actAsLinkToCommunityId) {
-      linkedCommunityIds.push(groups[g].configuration.actAsLinkToCommunityId);
-      linkedCommunityIdToGroupIndex[groups[g].configuration.actAsLinkToCommunityId] = g;
-    }
-    groupsHash[groups[g].id] = groups[g];
-    collectedGroupIds.push(groups[g].id);
-  }
-
-  async.series([
-    (seriesCallback) => {
-      //TODO: Limit then number of VideoImages to 1 - there is one very 10 sec
-      models.Video.findAll({
-        attributes:  ['id','formats','viewable','public_meta','created_at'],
-        include: [
-          {
-            model: models.Image,
-            as: 'VideoImages',
-            attributes:["formats",'created_at'],
-            required: false
-          },
-          {
-            model: models.Group,
-            where: {
-              id: {
-                $in: collectedGroupIds
-              }
-            },
-            as: 'GroupLogoVideos',
-            required: true,
-            attributes: ['id']
-          }
-        ],
-        order: [
-          [ { model: models.Image, as: 'VideoImages' } ,'created_at', 'asc' ]
-        ]
-      }).then(videos => {
-        if (videos) {
-          videos = _.orderBy(videos, ['created_at'],['asc']);
-
-          for (let v=0;v<videos.length;v++) {
-            const groupId = videos[v].GroupLogoVideos[0].id;
-            if (groupId) {
-              groupsHash[groupId].dataValues.GroupLogoVideos = [videos[v]];
-              groupsHash[groupId].GroupLogoVideos = [videos[v]];
-            } else {
-              log.warn("Not finding group id in hash")
-            }
-          }
-          seriesCallback();
-        } else {
-          seriesCallback();
-        }
-      }).catch( error => {
-        seriesCallback(error);
-      })
-    },
-
-    (seriesCallback) => {
-      if (linkedCommunityIds.length>0) {
-        models.Community.findAll({
-          where: {
-            id:  { $in: linkedCommunityIds }
-          },
-          attributes: ['id','name','description','counter_posts','counter_points','counter_users','language'],
-          order: [
-            [ { model: models.Image, as: 'CommunityLogoImages' } , 'created_at', 'asc' ]
-          ],
-          include: [
-            {
-              model: models.Image,
-              as: 'CommunityLogoImages',
-              attributes:  models.Image.defaultAttributesPublic,
-              required: false
-            }
-          ]
-        }).then(communities => {
-          async.eachOfLimit(communities, 20, (community, eachIndex, forEachVideoCallback) => {
-            const index = linkedCommunityIdToGroupIndex[community.id];
-            if (groups[index].dataValues) {
-              groups[index].dataValues.CommunityLink = community;
-            } else {
-              groups[index].CommunityLink = community;
-            }
-            addVideosToCommunity(community, forEachVideoCallback);
-          }, error => {
-            seriesCallback(error);
-          });
-        }).catch( error => {
-          seriesCallback(error);
-        })
-      } else {
-        seriesCallback();
-      }
-    }
-  ], (error) => {
     done(error);
   })
 }
@@ -601,7 +454,8 @@ const getCommunity = function(req, done) {
               },
               status: {
                 $ne: 'hidden'
-              }
+              },
+              in_group_folder_id: null
             },
             attributes: ['id', 'configuration', 'access', 'objectives',
               'name', 'theme_id', 'community_id',
@@ -614,7 +468,7 @@ const getCommunity = function(req, done) {
               [{model: models.Image, as: 'GroupHeaderImages'}, 'created_at', 'asc'],
               [{model: models.Category }, 'name', 'asc']
             ],
-            include: masterGroupIncludes
+            include: models.Group.masterGroupIncludes
           }).then(function (groups) {
             community.dataValues.Groups = groups;
             req.redisClient.setex(redisKey, process.env.GROUPS_CACHE_TTL ? parseInt(process.env.GROUPS_CACHE_TTL) : 3, JSON.stringify(groups));
@@ -634,7 +488,8 @@ const getCommunity = function(req, done) {
           function (parallelCallback) {
             models.Group.findAll({
               where: {
-                community_id: community.id
+                community_id: community.id,
+                in_group_folder_id: null
               },
               attributes: models.Group.defaultAttributesPublic,
               order: [
@@ -653,7 +508,7 @@ const getCommunity = function(req, done) {
                     id: req.user.id
                   }
                 }
-              ].concat(masterGroupIncludes)
+              ].concat(models.Group.masterGroupIncludes)
             }).then(function (groups) {
               adminGroups = groups;
               parallelCallback(null, "admin");
@@ -665,7 +520,8 @@ const getCommunity = function(req, done) {
           function (parallelCallback) {
             models.Group.findAll({
               where: {
-                community_id: community.id
+                community_id: community.id,
+                in_group_folder_id: null
               },
               attributes: models.Group.defaultAttributesPublic,
               order: [
@@ -684,7 +540,7 @@ const getCommunity = function(req, done) {
                     id: req.user.id
                   }
                 }
-              ].concat(masterGroupIncludes)
+              ].concat(models.Group.masterGroupIncludes)
             }).then(function (groups) {
               userGroups = groups;
               parallelCallback(null, "users");
@@ -708,14 +564,14 @@ const getCommunity = function(req, done) {
                 return group.id;
               }
             });
-            addVideosAndCommunityLinksToGroup(combinedGroups, videoError => {
+            models.Group.addVideosAndCommunityLinksToGroups(combinedGroups, videoError => {
               community.dataValues.Groups = combinedGroups;
               seriesCallback(videoError);
             })
           }
         });
       } else {
-        addVideosAndCommunityLinksToGroup( community.dataValues.Groups, videoError => {
+        models.Group.addVideosAndCommunityLinksToGroups( community.dataValues.Groups, videoError => {
           seriesCallback(videoError);
         })
       }
