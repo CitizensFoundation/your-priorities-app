@@ -455,7 +455,9 @@ const getCommunity = function(req, done) {
               status: {
                 $ne: 'hidden'
               },
-              in_group_folder_id: null
+              in_group_folder_id: {
+                $eq: null
+              }
             },
             attributes: ['id', 'configuration', 'access', 'objectives',
               'name', 'theme_id', 'community_id',
@@ -468,7 +470,7 @@ const getCommunity = function(req, done) {
               [{model: models.Image, as: 'GroupHeaderImages'}, 'created_at', 'asc'],
               [{model: models.Category }, 'name', 'asc']
             ],
-            include: models.Group.masterGroupIncludes
+            include: models.Group.masterGroupIncludes(models)
           }).then(function (groups) {
             community.dataValues.Groups = groups;
             req.redisClient.setex(redisKey, process.env.GROUPS_CACHE_TTL ? parseInt(process.env.GROUPS_CACHE_TTL) : 3, JSON.stringify(groups));
@@ -489,7 +491,9 @@ const getCommunity = function(req, done) {
             models.Group.findAll({
               where: {
                 community_id: community.id,
-                in_group_folder_id: null
+                in_group_folder_id: {
+                  $eq: null
+                }
               },
               attributes: models.Group.defaultAttributesPublic,
               order: [
@@ -508,7 +512,7 @@ const getCommunity = function(req, done) {
                     id: req.user.id
                   }
                 }
-              ].concat(models.Group.masterGroupIncludes)
+              ].concat(models.Group.masterGroupIncludes(models))
             }).then(function (groups) {
               adminGroups = groups;
               parallelCallback(null, "admin");
@@ -521,7 +525,9 @@ const getCommunity = function(req, done) {
             models.Group.findAll({
               where: {
                 community_id: community.id,
-                in_group_folder_id: null
+                in_group_folder_id: {
+                  $eq: null
+                }
               },
               attributes: models.Group.defaultAttributesPublic,
               order: [
@@ -540,7 +546,7 @@ const getCommunity = function(req, done) {
                     id: req.user.id
                   }
                 }
-              ].concat(models.Group.masterGroupIncludes)
+              ].concat(models.Group.masterGroupIncludes(models))
             }).then(function (groups) {
               userGroups = groups;
               parallelCallback(null, "users");

@@ -4,6 +4,7 @@ const async = require("async");
 const queue = require('../active-citizen/workers/queue');
 const _ = require("lodash");
 const log = require("../utils/logger");
+const models = require("./index");
 
 module.exports = (sequelize, DataTypes) => {
   const Group = sequelize.define("Group", {
@@ -129,51 +130,58 @@ module.exports = (sequelize, DataTypes) => {
 
   Group.defaultAttributesPublic = ['id','name','access','google_analytics_code','is_group_folder','in_group_folder_id',
     'status', 'weight','theme_id','community_id','created_at','updated_at','configuration','language','objectives',
-    'counter_posts','is_group_folder','in_group_folder_id',
+    'counter_posts',
     'counter_points','counter_users','user_id'];
 
-  Group.masterGroupIncludes = [
-    {
-      model: sequelize.models.Community,
-      required: false,
-      attributes: ['id','theme_id','name','access','google_analytics_code','configuration'],
-      include: [
-        {
-          model: sequelize.models.Domain,
-          attributes: ['id','theme_id','name']
-        }
-      ]
-    },
-    {
-      model: sequelize.models.Category,
-      required: false,
-      attributes: ['id','name'],
-      include: [
-        {
-          model: sequelize.models.Image,
-          required: false,
-          as: 'CategoryIconImages',
-          attributes: sequelize.models.Image.defaultAttributesPublic,
-          order: [
-            [ { model: sequelize.models.Image, as: 'CategoryIconImages' } ,'updated_at', 'asc' ]
-          ]
-        }
-      ]
-    },
-    {
-      model: sequelize.models.Image,
-      as: 'GroupLogoImages',
-      attributes: sequelize.models.Image.defaultAttributesPublic,
-      required: false
-    },
-    {
-      model: sequelize.models.Image,
-      as: 'GroupHeaderImages',
-      attributes: sequelize.models.Image.defaultAttributesPublic,
-      required: false
-    }
-  ];
-
+  Group.masterGroupIncludes = (models) => {
+    return [
+      {
+        model: models.Community,
+        required: false,
+        attributes: ['id','theme_id','name','access','google_analytics_code','configuration'],
+        include: [
+          {
+            model: models.Domain,
+            attributes: ['id','theme_id','name']
+          }
+        ]
+      },
+      {
+        model: models.Group,
+        required: false,
+        as: 'GroupFolder',
+        attributes: ['id', 'name']
+      },
+      {
+        model: models.Category,
+        required: false,
+        attributes: ['id','name'],
+        include: [
+          {
+            model: models.Image,
+            required: false,
+            as: 'CategoryIconImages',
+            attributes: models.Image.defaultAttributesPublic,
+            order: [
+              [ { model: models.Image, as: 'CategoryIconImages' } ,'updated_at', 'asc' ]
+            ]
+          }
+        ]
+      },
+      {
+        model: models.Image,
+        as: 'GroupLogoImages',
+        attributes: models.Image.defaultAttributesPublic,
+        required: false
+      },
+      {
+        model: models.Image,
+        as: 'GroupHeaderImages',
+        attributes: models.Image.defaultAttributesPublic,
+        required: false
+      }
+    ]
+  };
 
   Group.addVideosAndCommunityLinksToGroups = (groups, done) => {
     const linkedCommunityIds = [];

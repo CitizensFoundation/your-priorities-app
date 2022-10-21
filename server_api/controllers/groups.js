@@ -438,10 +438,7 @@ const getGroupFolder = function(req, done) {
           id: req.params.groupFolderId,
           is_group_folder: true
         },
-        attributes: ['id', 'configuration', 'access', 'objectives',
-          'name', 'theme_id', 'community_id',
-          'access', 'status', 'counter_points', 'counter_posts',
-          'counter_users', 'language'],
+        attributes: models.Group.defaultAttributesPublic,
         required: false,
         order: [
           ['counter_users', 'desc'],
@@ -449,7 +446,7 @@ const getGroupFolder = function(req, done) {
           [{model: models.Image, as: 'GroupHeaderImages'}, 'created_at', 'asc'],
           [{model: models.Category }, 'name', 'asc']
         ],
-        include: models.Group.masterGroupIncludes
+        include: models.Group.masterGroupIncludes(models)
       }).then(function (group) {
         groupFolder = group;
         if (groupFolder) {
@@ -484,10 +481,7 @@ const getGroupFolder = function(req, done) {
                 $ne: 'hidden'
               },
             },
-            attributes: ['id', 'configuration', 'access', 'objectives',
-              'name', 'theme_id', 'community_id',
-              'access', 'status', 'counter_points', 'counter_posts',
-              'counter_users', 'language'],
+            attributes: models.Group.defaultAttributesPublic,
             required: false,
             order: [
               ['counter_users', 'desc'],
@@ -495,7 +489,7 @@ const getGroupFolder = function(req, done) {
               [{model: models.Image, as: 'GroupHeaderImages'}, 'created_at', 'asc'],
               [{model: models.Category }, 'name', 'asc']
             ],
-            include: models.Group.masterGroupIncludes
+            include: models.Group.masterGroupIncludes(models)
           }).then(function (groups) {
             groupFolder.dataValues.Groups = groups;
             req.redisClient.setex(redisKey, process.env.GROUPS_CACHE_TTL ? parseInt(process.env.GROUPS_CACHE_TTL) : 3, JSON.stringify(groups));
@@ -534,7 +528,7 @@ const getGroupFolder = function(req, done) {
                       id: req.user.id
                     }
                   }
-                ].concat(models.Group.masterGroupIncludes)
+                ].concat(models.Group.masterGroupIncludes(models))
               }).then(function (groups) {
                 adminGroups = groups;
                 parallelCallback(null, "admin");
@@ -565,7 +559,7 @@ const getGroupFolder = function(req, done) {
                       id: req.user.id
                     }
                   }
-                ].concat(models.Group.masterGroupIncludes)
+                ].concat(models.Group.masterGroupIncludes(models))
               }).then(function (groups) {
                 userGroups = groups;
                 parallelCallback(null, "users");
@@ -589,14 +583,14 @@ const getGroupFolder = function(req, done) {
                   return group.id;
                 }
               });
-              models.Group.addVideosAndCommunityLinksToGroup(combinedGroups, videoError => {
+              models.Group.addVideosAndCommunityLinksToGroups(combinedGroups, videoError => {
                 groupFolder.dataValues.Groups = combinedGroups;
                 seriesCallback(videoError);
               })
             }
           });
       } else {
-        models.Group.addVideosAndCommunityLinksToGroup(groupFolder.dataValues.Groups, videoError => {
+        models.Group.addVideosAndCommunityLinksToGroups(groupFolder.dataValues.Groups, videoError => {
           seriesCallback(videoError);
         })
       }
@@ -1361,7 +1355,7 @@ router.post('/:communityId', auth.can('create group'), function(req, res) {
     group.in_group_folder_id = parseInt(req.body.in_group_folder_id);
   }
 
-  if (req.body.is_group_folder) {
+  if (req.body.is_group_folder && req.body.is_group_folder==="true") {
     group.is_group_folder = true;
   }
 
@@ -1616,7 +1610,7 @@ router.get('/:groupFolderId/groupFolder', auth.can('view group'), function(req, 
       log.error('Could not get groupFolder', { err: error, groupFolderId: req.params.groupFolderId, user: req.user ? toJson(req.user.simple()) : null });
       res.sendStatus(500);
     } else if (groupFolder) {
-      res.send(groupFolder);
+      res.send({ group: groupFolder });
     } else {
       res.sendStatus(404);
     }
@@ -1649,6 +1643,12 @@ router.get('/:id', auth.can('view group'), function(req, res) {
             required: false
           }
         ]
+      },
+      {
+        model: models.Group,
+        required: false,
+        as: 'GroupFolder',
+        attributes: ['id', 'name']
       },
       {
         model: models.Category,
