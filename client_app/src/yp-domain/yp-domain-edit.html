@@ -316,6 +316,7 @@
           <paper-checkbox name="downloadFacebookImagesForUser" checked$="{{domain.configuration.downloadFacebookImagesForUser}}">[[t('downloadFacebookImagesForUser')]]</paper-checkbox>
           <paper-checkbox name="disableNameAutoTranslation" checked$="{{domain.configuration.disableNameAutoTranslation}}">[[t('disableNameAutoTranslation')]]</paper-checkbox>
           <paper-checkbox name="hideDomainNews" checked$="{{domain.configuration.hideDomainNews}}">[[t('hideDomainNews')]]</paper-checkbox>
+          <paper-checkbox name="hideDomainTabs" checked$="{{domain.configuration.hideDomainTabs}}">[[t('hideDomainTabs')]]</paper-checkbox>
           <template is="dom-if" if="[[ziggeoEnabled()]]">
             <paper-input id="ziggeoApplicationToken"
                   name="ziggeoApplicationToken"

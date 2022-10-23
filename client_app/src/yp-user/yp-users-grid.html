@@ -252,15 +252,15 @@
           <template>[[item.id]]</template>
         </vaadin-grid-column>
 
-        <vaadin-grid-filter-column flex-grow="2" width="140px" path="name" header="[[t('name')]]">
+        <vaadin-grid-filter-column flex-grow="2" width="120px" path="name" header="[[t('name')]]">
           <template>[[item.name]]</template>
         </vaadin-grid-filter-column>
 
-        <vaadin-grid-filter-column path="email" flex-grow="1" width="150px" header="[[t('email')]]">
+        <vaadin-grid-filter-column path="email" flex-grow="2" width="220px" header="[[t('email')]]">
           <template>[[item.email]]</template>
         </vaadin-grid-filter-column>
 
-        <vaadin-grid-column flex-grow="1" width="150px">
+        <vaadin-grid-column flex-grow="1" width="100px">
           <template class="header">[[t('organization')]]</template>
           <template>
             <div class="organization" hidden$="[[!_userOrganizationName(item)]]">

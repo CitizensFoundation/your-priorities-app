@@ -828,6 +828,7 @@ router.put('/:id', auth.can('edit domain'), function(req, res) {
       domain.set('configuration.appHomeScreenShortName', (req.body.appHomeScreenShortName && req.body.appHomeScreenShortName!="")? req.body.appHomeScreenShortName : null);
       domain.set('configuration.useVideoCover', truthValueFromBody(req.body.useVideoCover));
       domain.set('configuration.hideDomainNews', truthValueFromBody(req.body.hideDomainNews));
+      domain.set('configuration.hideDomainTabs', truthValueFromBody(req.body.hideDomainTabs));
 
       domain.name = req.body.name;
       domain.description = req.body.description;
