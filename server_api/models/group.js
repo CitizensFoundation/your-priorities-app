@@ -4,7 +4,6 @@ const async = require("async");
 const queue = require('../active-citizen/workers/queue');
 const _ = require("lodash");
 const log = require("../utils/logger");
-const models = require("./index");
 
 module.exports = (sequelize, DataTypes) => {
   const Group = sequelize.define("Group", {
@@ -273,7 +272,7 @@ module.exports = (sequelize, DataTypes) => {
               } else {
                 groups[index].CommunityLink = community;
               }
-              addVideosToCommunity(community, forEachVideoCallback);
+              sequelize.models.Community.addVideosToCommunity(community, forEachVideoCallback);
             }, error => {
               seriesCallback(error);
             });

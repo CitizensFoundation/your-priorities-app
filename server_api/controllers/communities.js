@@ -353,37 +353,6 @@ var getCommunityAndUser = function (communityId, userId, userEmail, callback) {
   });
 };
 
-const addVideosToCommunity = (community, done) => {
-  models.Video.findAll({
-    attributes:  ['id','formats','viewable','created_at','public_meta'],
-    include: [
-      {
-        model: models.Image,
-        as: 'VideoImages',
-        attributes:["formats",'created_at'],
-        required: false
-      },
-      {
-        model: models.Community,
-        where: {
-          id: community.id
-        },
-        as: 'CommunityLogoVideos',
-        required: true,
-        attributes: ['id']
-      }
-    ],
-    order: [
-      [ { model: models.Image, as: 'VideoImages' }, 'created_at', 'asc' ]
-    ]
-  }).then(videos => {
-    community.dataValues.CommunityLogoVideos = _.orderBy(videos, ['created_at'],['desc']);
-    done();
-  }).catch( error => {
-    done(error);
-  })
-}
-
 const getCommunity = function(req, done) {
   var community;
 
@@ -426,7 +395,7 @@ const getCommunity = function(req, done) {
         community = communityIn;
         if (community) {
           log.info('Community Viewed', { communityId: community.id, userId: req.user ? req.user.id : -1 });
-          addVideosToCommunity(community, error => {
+          models.Community.addVideosToCommunity(community, error => {
             seriesCallback(error);
           })
         } else {
@@ -574,7 +543,7 @@ const getCommunity = function(req, done) {
           }
         });
       } else {
-        models.Group.addVideosAndCommunityLinksToGroups( community.dataValues.Groups, videoError => {
+        models.Group.addVideosAndCommunityLinksToGroups(community.dataValues.Groups, videoError => {
           seriesCallback(videoError);
         })
       }

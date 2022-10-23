@@ -5,6 +5,7 @@ const log = require('../utils/logger');
 const toJson = require('../utils/to_json');
 const parseDomain = require('../utils/parse_domain');
 const queue = require('../active-citizen/workers/queue');
+const _ = require("lodash");
 
 module.exports = (sequelize, DataTypes) => {
   const Community = sequelize.define("Community", {
@@ -191,6 +192,37 @@ module.exports = (sequelize, DataTypes) => {
   Community.prototype.simple = function () {
     return { id: this.id, name: this.name, hostname: this.hostname };
   };
+
+  Community.addVideosToCommunity = (community, done) => {
+    sequelize.models.Video.findAll({
+      attributes:  ['id','formats','viewable','created_at','public_meta'],
+      include: [
+        {
+          model: sequelize.models.Image,
+          as: 'VideoImages',
+          attributes:["formats",'created_at'],
+          required: false
+        },
+        {
+          model: sequelize.models.Community,
+          where: {
+            id: community.id
+          },
+          as: 'CommunityLogoVideos',
+          required: true,
+          attributes: ['id']
+        }
+      ],
+      order: [
+        [ { model: sequelize.models.Image, as: 'VideoImages' }, 'created_at', 'asc' ]
+      ]
+    }).then(videos => {
+      community.dataValues.CommunityLogoVideos = _.orderBy(videos, ['created_at'],['desc']);
+      done();
+    }).catch( error => {
+      done(error);
+    })
+  }
 
   Community.prototype.updateAllExternalCounters = function (req, direction, column, done) {
     if (direction==='up')
