@@ -267,6 +267,8 @@
                 value="{{group.configuration.registrationQuestions}}">
         </paper-textarea>
 
+        <div id="registrationQuestionsJsonErrorInfo" hidden$="[[!registrationQuestionsJsonError]]">[[t('structuredQuestionsJsonFormatNotValid')]]</div>
+
         <paper-input id="customBackURL"
           name="customBackURL"
           type="text"
@@ -897,8 +899,6 @@
               maxlength="30"
               char-counter>
           </paper-input>
-
-          <div id="registrationQuestionsJsonErrorInfo" hidden$="[[!registrationQuestionsJsonError]]">[[t('structuredQuestionsJsonFormatNotValid')]]</div>
 
           <paper-checkbox id="isDataVisualizationGroup" name="isDataVisualizationGroup" on-tap="_isDataVisualizationGroupClick" checked$="{{group.configuration.isDataVisualizationGroup}}">[[t('isDataVisualizationGroup')]]</paper-checkbox>
 
