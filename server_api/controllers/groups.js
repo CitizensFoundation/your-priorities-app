@@ -1373,6 +1373,10 @@ router.post('/:communityId', auth.can('create group'), function(req, res) {
               type: 'estimate-collection-toxicity',
               collectionId: group.id,
               collectionType: 'group' }, 'high');
+            queue.add('process-moderation', {
+              type: 'collection-review-and-annotate-images',
+              collectionId: group.id,
+              collectionType: 'group' }, 'medium');
             sendGroupOrError(res, group, 'setupImages', req.user, error);
           });
         });

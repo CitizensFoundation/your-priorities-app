@@ -839,6 +839,7 @@ router.post('/:groupId', auth.can('create post'), function(req, res) {
                     post.setDataValue('newEndorsement', endorsement);
                     log.info("process-moderation post toxicity in post controller");
                     queue.add('process-moderation', { type: 'estimate-post-toxicity', postId: post.id }, 'high');
+                    queue.add('process-moderation', { type: 'post-review-and-annotate-images', postId: post.id }, 'medium');
                     sendPostOrError(res, post, 'setupImages', req.user, error);
                   } else {
                     sendPostOrError(res, post, 'setupImages', req.user, error);
@@ -1003,6 +1004,7 @@ router.put('/:id', auth.can('edit post'), function(req, res) {
         log.info('Post Update', { post: toJson(post), context: 'create', user: toJson(req.user) });
         queue.add('process-similarities', { type: 'update-collection', postId: post.id }, 'low');
         queue.add('process-moderation', { type: 'estimate-post-toxicity', postId: post.id }, 'high');
+        queue.add('process-moderation', { type: 'post-review-and-annotate-images', postId: post.id }, 'medium');
 
         post.setupImages(req.body, function (error) {
           sendPostOrError(res, post, 'setupImages', req.user, error);

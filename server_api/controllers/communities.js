@@ -1362,6 +1362,10 @@ const createNewCommunity = (req, res) => {
             type: 'estimate-collection-toxicity',
             collectionId: community.id,
             collectionType: 'community' }, 'high');
+          queue.add('process-moderation', {
+            type: 'collection-review-and-annotate-images',
+            collectionId: community.id,
+            collectionType: 'community' }, 'medium');
           sendCommunityOrError(res, community, 'setupImages', req.user, error);
         });
       });
@@ -1417,6 +1421,10 @@ router.put('/:id', auth.can('edit community'), function(req, res) {
             type: 'estimate-collection-toxicity',
             collectionId: community.id,
             collectionType: 'community' }, 'high');
+          queue.add('process-moderation', {
+            type: 'collection-review-and-annotate-images',
+            collectionId: community.id,
+            collectionType: 'community' }, 'medium');
           sendCommunityOrError(res, community, 'setupImages', req.user, error);
         });
       });

@@ -214,6 +214,7 @@ router.post('/:postId/user_images', auth.can('add post user images'), function(r
           log.info("Post User Image Added", {
             context: 'user image', postId: req.params.postId, imageId: image.id, user: toJson(req.user)
           });
+          queue.add('process-moderation', { type: 'post-review-and-annotate-images', postId: req.params.postId }, 'medium');
           res.sendStatus(200);
         });
       });

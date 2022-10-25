@@ -1,12 +1,13 @@
 {
   "name": "your-priorities-app",
-  "version": "8.9.9",
+  "version": "8.16.1",
   "license": "AGPL-3.0",
   "dependencies": {
     "@airbrake/node": "^2.1.4",
-    "@google-cloud/speech": "^4.2.0",
-    "@google-cloud/storage": "^6.4.1",
-    "@google-cloud/translate": "^7.0.1",
+    "@google-cloud/speech": "^5.1.0",
+    "@google-cloud/storage": "^6.6.0",
+    "@google-cloud/translate": "^7.0.3",
+    "@google-cloud/vision": "^3.0.1",
     "async": "^3.2.0",
     "authorized": "^1.0.0",
     "aws-sdk": "^2.656.0",

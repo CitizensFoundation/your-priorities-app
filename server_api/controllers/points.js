@@ -642,6 +642,7 @@ router.post('/:groupId', auth.can('create point'), function(req, res) {
           log.info("process-moderation point toxicity after create point");
           queue.add('process-moderation', { type: 'estimate-point-toxicity', pointId: point.id }, 'high');
           queue.add('process-similarities', { type: 'update-collection', pointId: point.id }, 'low');
+          queue.add('process-moderation', { type: 'point-review-and-annotate-images', pointId: point.id }, 'medium');
         } else {
           log.info("No process-moderation toxicity for empty text on point");
         }
