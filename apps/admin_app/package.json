@@ -59,7 +59,7 @@
   "author": "Citizens Foundation",
   "license": "MIT",
   "dependencies": {
-    "@amcharts/amcharts4": "^4.9.30",
+    "@amcharts/amcharts4": "^4.10.29",
     "@material/mwc-button": "^0.17.2",
     "@material/mwc-dialog": "^0.17.2",
     "@material/mwc-icon": "^0.17.2",
