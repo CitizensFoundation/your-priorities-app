@@ -668,6 +668,21 @@ module.exports = (sequelize, DataTypes) => {
                       });
                       res.sendStatus(500);
                     } else {
+                      if (options.postId) {
+                        queue.add('process-moderation', {
+                          type: 'post-review-and-annotate-images',
+                          postId: options.postId }, 'medium', { delay: 20000 });
+                      } else if (options.groupId) {
+                        queue.add('process-moderation', {
+                          type: 'collection-review-and-annotate-images',
+                          collectionId: options.groupId,
+                          collectionType: 'group' }, 'medium', { delay: 2000 });
+                      } else if (options.communityId) {
+                        queue.add('process-moderation', {
+                          type: 'collection-review-and-annotate-images',
+                          collectionId: options.communityId,
+                          collectionType: 'community' }, 'medium', { delay: 2000 });
+                      }
                       res.sendStatus(200);
                     }
                   }

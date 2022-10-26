@@ -1444,6 +1444,10 @@ router.put('/:id', auth.can('edit group'), function(req, res) {
             type: 'estimate-collection-toxicity',
             collectionId: group.id,
             collectionType: 'group' }, 'high');
+          queue.add('process-moderation', {
+            type: 'collection-review-and-annotate-images',
+            collectionId: group.id,
+            collectionType: 'group' }, 'medium');
           sendGroupOrError(res, group, 'setupImages', req.user, error);
         });
       }).catch(function(error) {

@@ -1322,6 +1322,7 @@
     _customRedirect: function (group) {
       if (group) {
         window.appUser.recheckAdminRights();
+        //TODO: Make this a part of the main POST
         if (this.uploadedVideoId) {
           var ajax = document.createElement('iron-ajax');
           ajax.handleAs = 'json';
