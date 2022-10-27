@@ -8,6 +8,7 @@ var log = require('../utils/logger');
 var toJson = require('../utils/to_json');
 const s3Storage = require('multer-sharp-s3');
 const crypto = require('crypto');
+var queue = require('../active-citizen/workers/queue');
 
 const aws = require('aws-sdk');
 aws.config.update({
