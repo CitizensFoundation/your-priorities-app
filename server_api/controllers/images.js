@@ -19,8 +19,6 @@ aws.config.update({
   region: process.env.S3_REGION ? process.env.S3_REGION : 'eu-west-1' // region of your bucket
 })
 
-const s3 = new aws.S3();
-
 var isAuthenticated = function (req, res, next) {
   if (req.isAuthenticated())
     return next();
@@ -156,6 +154,7 @@ router.post('/:imageId/comment', auth.isLoggedInNoAnonymousCheck, auth.can('view
 
 router.post('/', isAuthenticated, async function (req, res) {
   try {
+    const s3 = new aws.S3();
     //TODO: Look into making animated gifs work through sharp
     const isGif = (req.file && req.file.originalname.toLowerCase().indexOf(".gif"));
     const storage = s3Storage({
