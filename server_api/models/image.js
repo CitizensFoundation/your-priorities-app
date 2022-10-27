@@ -74,6 +74,17 @@ module.exports = (sequelize, DataTypes) => {
 
   Image.defaultAttributesPublic = ["id","updated_at","formats"];
 
+  Image.createFormatsFromSharpFile = (sharpFile) => {
+    const formats = [];
+    Object.keys(sharpFile).forEach((key) => {
+      if (sharpFile[key].ACL && sharpFile[key].Location) {
+        formats.push(sharpFile[key].Location)
+      }
+    })
+
+    return formats.reverse();
+  }
+
   Image.createFormatsFromVersions = (versions) => {
     const formats = [];
     versions.forEach((version) => {
@@ -99,6 +110,233 @@ module.exports = (sequelize, DataTypes) => {
     });
     return formats;
   };
+
+  Image.getSharpVersions = (itemType) => {
+    let versions;
+    if (itemType && itemType === 'user-profile') {
+      versions = [
+        {
+          height: 200,
+          width: 200,
+          suffix: '-small',
+          directory: 'up'
+        },
+        {
+          height: 50,
+          width: 50,
+          suffix: '-tiny',
+          directory: 'up'
+        }
+      ]
+    } else if (itemType && itemType === 'domain-logo') {
+      versions = [
+        {
+          width: 864,
+          height: 486,
+          suffix: '-retina',
+          directory: 'dl'
+        },
+        {
+          width: 432,
+          height: 243,
+          suffix: '-medium',
+          directory: 'dl'
+        }
+      ]
+    } else if (itemType && itemType === 'community-logo') {
+      versions = [
+        {
+          width: 864,
+          height: 486,
+          suffix: '-retina',
+          directory: 'cl'
+        },
+        {
+          width: 432,
+          height: 243,
+          suffix: '-medium',
+          directory: 'cl'
+        }
+      ]
+    } else if (itemType && itemType === 'app-home-screen-icon') {
+      versions = [
+        {
+          width: 512,
+          height: 512,
+          suffix: '-512',
+          directory: 'ai'
+        },
+        {
+          width: 384,
+          height: 384,
+          suffix: '-384',
+          directory: 'ai'
+        },
+        {
+          width: 256,
+          height: 256,
+          suffix: '-256',
+          directory: 'ai'
+        },
+        {
+          width: 192,
+          height: 192,
+          suffix: '-192',
+          directory: 'ai'
+        },
+        {
+          width: 180,
+          height: 180,
+          suffix: '-180',
+          directory: 'ai'
+        },
+        {
+          width: 152,
+          height: 152,
+          suffix: '-152',
+          directory: 'ai'
+        },
+        {
+          width: 144,
+          height: 144,
+          suffix: '-144',
+          directory: 'ai'
+        },
+        {
+          width: 96,
+          height: 96,
+          suffix: '-96',
+          directory: 'ai'
+        },
+        {
+          width: 48,
+          height: 48,
+          suffix: '-48',
+          directory: 'ai'
+        }
+      ]
+    } else if (itemType && itemType === 'organization-logo') {
+      versions = [
+        {
+          width: 1000,
+          height: 1000,
+          suffix: '-large',
+          directory: 'ol'
+        },
+        {
+          width: 200,
+          height: 200,
+          suffix: '-medium',
+          directory: 'ol'
+        },
+        {
+          width: 50,
+          height: 50,
+          suffix: '-small',
+          directory: 'ol'
+        }
+      ]
+    } else if (itemType && itemType === 'group-logo') {
+      versions = [
+        {
+          width: 864,
+          height: 486,
+          suffix: '-retina',
+          directory: 'gl'
+        },
+        {
+          width: 432,
+          height: 243,
+          suffix: '-medium',
+          directory: 'gl'
+        }
+      ]
+    } else if (itemType && itemType === 'post-header') {
+      versions = [
+        {
+          width: 864,
+          height: 486,
+          suffix: '-retina',
+          directory: 'ph'
+        },
+        {
+          width: 432,
+          height: 243,
+          suffix: '-medium',
+          directory: 'ph'
+        }
+      ]
+    } else if (itemType && itemType === 'category-icon') {
+      versions = [
+        {
+          width: 864,
+          height: 486,
+          suffix: '-retina',
+          directory: 'ci'
+        },
+        {
+          width: 432,
+          height: 243,
+          format: 'png',
+          suffix: '-medium',
+          directory: 'ci'
+        }
+      ]
+    } else if (itemType && itemType.indexOf('-header') > -1) {
+      versions = [
+        {
+          height: 300,
+          suffix: '-large',
+          directory: 'he'
+        }
+      ]
+    } else if (itemType && itemType.indexOf('post-user-image') > -1) {
+      versions = [
+        {
+          height: 2048,
+          width: 1536,
+          suffix: '-desktop-retina',
+          directory: 'pu'
+        },
+        {
+          height: 720,
+          width: 540,
+          format: 'png',
+          suffix: '-mobile-retina',
+          directory: 'pu'
+        },
+        {
+          height: 120,
+          width: 90,
+          format: 'png',
+          suffix: '-thumb',
+          directory: 'pu'
+        }
+      ]
+    } else {
+      versions = [
+        {
+          width: 945,
+          format: 'jpg',
+          suffix: '-16_9',
+          directory: 'df'
+        },
+        {
+          height: 512,
+          width: 512,
+          suffix: '-box',
+          directory: 'df'
+        },
+        {
+          width: 945,
+          suffix: '-header',
+          directory: 'df'
+        }
+      ]
+    }
+
+    return versions;
+  }
 
   Image.getUploadClient = (itemType) => {
     let versions;

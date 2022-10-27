@@ -6,6 +6,20 @@ var multerMultipartResolver = multer({ dest: 'uploads/' }).single('file');
 var auth = require('../authorization');
 var log = require('../utils/logger');
 var toJson = require('../utils/to_json');
+const s3Storage = require('multer-sharp-s3');
+const crypto = require('crypto');
+
+const aws = require('aws-sdk');
+aws.config.update({
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  endpoint: process.env.S3_ENDPOINT || null,
+  s3ForcePathStyle: process.env.MINIO_ROOT_USER ? true : undefined,
+  signatureVersion: process.env.MINIO_ROOT_USER ? 'v4' : undefined,
+  region: process.env.S3_REGION ? process.env.S3_REGION : 'eu-west-1' // region of your bucket
+})
+
+const s3 = new aws.S3();
 
 var isAuthenticated = function (req, res, next) {
   if (req.isAuthenticated())
@@ -140,7 +154,81 @@ router.post('/:imageId/comment', auth.isLoggedInNoAnonymousCheck, auth.can('view
   });
 });
 
-router.post('/', isAuthenticated, function(req, res) {
+router.post('/', isAuthenticated, async function (req, res) {
+  try {
+    //TODO: Look into making animated gifs work through sharp
+    const isGif = (req.file && req.file.originalname.toLowerCase().indexOf(".gif"));
+    const storage = s3Storage({
+      Key: (req, file, cb) => {
+        crypto.pseudoRandomBytes(16, (err, raw) => {
+          cb(err, err ? undefined : `${raw.toString('hex')}.${isGif ? 'gif' : 'png'}`)
+        })
+      },
+      s3,
+      Bucket: process.env.S3_BUCKET,
+      multiple: true,
+      resize: models.Image.getSharpVersions(req.query.itemType),
+      toFormat: isGif ? "gif" : "png"
+    });
+
+    const upload = multer({ storage });
+
+    upload.single("file")(req, res, async function (error) {
+      if (error) {
+        sendError(res, req.file.originalname, 'create', res.user, error);
+      } else {
+        const formats = JSON.stringify(models.Image.createFormatsFromSharpFile(req.file));
+        const image = models.Image.build({
+          user_id: req.user.id,
+          s3_bucket_name: process.env.S3_BUCKET,
+          original_filename: req.file.originalname,
+          formats,
+          user_agent: req.useragent.source,
+          ip_address: req.clientIp
+        });
+
+        await image.save();
+        log.info('Image Created', { imageId: image ? image.id : -1, context: 'create', userId: req.user ? req.user.id : -1 });
+        res.send(image);
+      }
+    });
+
+  } catch (error) {
+    sendError(res, req.file.originalname, 'create', res.user, error);
+  }
+});
+
+router.post('/oldMethod', isAuthenticated, function(req, res) {
+  multerMultipartResolver(req, res, function (error) {
+    if (error) {
+      sendError(res, null, 'multerMultipartResolver', res.user, error);
+    } else {
+      var s3UploadClient = models.Image.getUploadClient(req.query.itemType);
+      s3UploadClient.upload(req.file.path, {}, function(error, versions, meta) {
+        if (error) {
+          sendError(res, null, 's3UploadClient', res.user, error);
+        } else {
+          var image = models.Image.build({
+            user_id: req.user.id,
+            s3_bucket_name: process.env.S3_BUCKET,
+            original_filename: req.file.originalname,
+            formats: JSON.stringify(models.Image.createFormatsFromVersions(versions)),
+            user_agent: req.useragent.source,
+            ip_address: req.clientIp
+          });
+          image.save().then(function() {
+            log.info('Image Created', { imageId: image ? image.id : -1, context: 'create', userId: req.user ? req.user.id : -1 });
+            res.send(image);
+          }).catch(function(error) {
+            sendError(res, req.file.originalname, 'create', res.user, error);
+          });
+        }
+      });
+    }
+  });
+});
+
+router.post('/oldMethod', isAuthenticated, function(req, res) {
   multerMultipartResolver(req, res, function (error) {
     if (error) {
       sendError(res, null, 'multerMultipartResolver', res.user, error);

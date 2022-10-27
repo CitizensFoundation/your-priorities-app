@@ -129,8 +129,8 @@ app.use(cors());
 app.use(morgan('combined'));
 app.use(useragent.express());
 app.use(requestIp.mw());
-app.use(bodyParser.json({limit: '5mb'}));
-app.use(bodyParser.urlencoded({limit: '5mb', extended: true}));
+app.use(bodyParser.json({limit: '10mb'}));
+app.use(bodyParser.urlencoded({limit: '10mb', extended: true}));
 
 let redisClient;
 if (process.env.REDIS_URL) {
