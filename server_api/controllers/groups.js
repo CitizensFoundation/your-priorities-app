@@ -1632,6 +1632,7 @@ router.get('/:id', auth.can('view group'), function(req, res) {
     order: [
       [ { model: models.Image, as: 'GroupLogoImages' } , 'created_at', 'asc' ],
       [ { model: models.Image, as: 'GroupHeaderImages' } , 'created_at', 'asc' ],
+      [ { model: models.Category }, { model: models.Image, as: 'CategoryIconImages' } ,'updated_at', 'asc' ],
       [ { model: models.Category }, 'name', 'asc' ],
       [ { model: models.Community }, { model: models.Image, as: 'CommunityHeaderImages' } , 'created_at', 'asc' ]
     ],
