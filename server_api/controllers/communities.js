@@ -434,6 +434,7 @@ const getCommunity = function(req, done) {
               ['counter_users', 'desc'],
               [{model: models.Image, as: 'GroupLogoImages'}, 'created_at', 'asc'],
               [{model: models.Image, as: 'GroupHeaderImages'}, 'created_at', 'asc'],
+              [ { model: models.Category }, { model: models.Image, as: 'CategoryIconImages' } ,'updated_at', 'asc' ],
               [{model: models.Category }, 'name', 'asc']
             ],
             include: models.Group.masterGroupIncludes(models)
@@ -466,6 +467,7 @@ const getCommunity = function(req, done) {
                 [ 'counter_users', 'desc'],
                 [ { model: models.Image, as: 'GroupLogoImages' } , 'created_at', 'asc' ],
                 [ { model: models.Image, as: 'GroupHeaderImages' } , 'created_at', 'asc' ],
+                [ { model: models.Category }, { model: models.Image, as: 'CategoryIconImages' } ,'updated_at', 'asc' ],
                 [ { model: models.Category }, 'name', 'asc']
               ],
               include: [
@@ -500,6 +502,7 @@ const getCommunity = function(req, done) {
                 [ 'counter_users', 'desc'],
                 [ { model: models.Image, as: 'GroupLogoImages' } , 'created_at', 'asc' ],
                 [ { model: models.Image, as: 'GroupHeaderImages' } , 'created_at', 'asc' ],
+                [ { model: models.Category }, { model: models.Image, as: 'CategoryIconImages' } ,'updated_at', 'asc' ],
                 [ {model: models.Category }, 'name', 'asc']
               ],
               include: [
