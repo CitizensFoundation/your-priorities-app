@@ -14,6 +14,7 @@ var sanitizeFilename = require("sanitize-filename");
 var moment = require('moment');
 const {plausibleStatsProxy} = require("../active-citizen/engine/analytics/plausible/manager");
 const {countAllModeratedItemsByDomain} = require("../active-citizen/engine/moderation/get_moderation_items");
+const {isValidDbId} = require("../utils/is_valid_db_id");
 const getFromAnalyticsApi = require('../active-citizen/engine/analytics/manager').getFromAnalyticsApi;
 const triggerSimilaritiesTraining = require('../active-citizen/engine/analytics/manager').triggerSimilaritiesTraining;
 const sendBackAnalyticsResultsOrError = require('../active-citizen/engine/analytics/manager').sendBackAnalyticsResultsOrError;
@@ -759,14 +760,18 @@ router.get('/:id/translatedText', auth.can('view domain'), function(req, res) {
 });
 
 router.get('/:id', auth.can('view domain'), function(req, res) {
-  getDomain(req, req.params.id, function (error, domain) {
-    if (error) {
-      sendDomainOrError(res, null, 'view', req.user, error);
-    } else {
-      log.info('Domain Viewed', { id: domain ? domain.id : -1, userId: req.user ? req.user.id : null });
-      res.send(domain);
-    }
-  });
+  if (isValidDbId(req.params.id)) {
+    getDomain(req, req.params.id, function (error, domain) {
+      if (error) {
+        sendDomainOrError(res, null, 'view', req.user, error);
+      } else {
+        log.info('Domain Viewed', { id: domain ? domain.id : -1, userId: req.user ? req.user.id : null });
+        res.send(domain);
+      }
+    });
+  } else {
+    res.sendStatus(404);
+  }
 });
 
 router.put('/:id', auth.can('edit domain'), function(req, res) {

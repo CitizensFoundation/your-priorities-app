@@ -23,6 +23,7 @@ const { getMapForCommunity } = require("../utils/community_mapping_tools");
 
 const { getPlausibleStats, plausibleStatsProxy } = require("../active-citizen/engine/analytics/plausible/manager")
 const {countAllModeratedItemsByCommunity} = require("../active-citizen/engine/moderation/get_moderation_items");
+const {isValidDbId} = require("../utils/is_valid_db_id");
 
 const getFromAnalyticsApi = require('../active-citizen/engine/analytics/manager').getFromAnalyticsApi;
 const triggerSimilaritiesTraining = require('../active-citizen/engine/analytics/manager').triggerSimilaritiesTraining;
@@ -1231,15 +1232,19 @@ router.get('/:communityId/posts', auth.can('view community'), function (req, res
 });
 
 router.get('/:id', auth.can('view community'), function(req, res) {
-  getCommunity(req, function (error, community) {
-    if (community) {
-      res.send(community);
-    } else if (error && error!="Not found") {
-      sendCommunityOrError(res, null, 'view', req.user, error);
-    } else {
-      sendCommunityOrError(res, req.params.id, 'view', req.user, 'Not found', 404);
-    }
-  });
+  if (isValidDbId(req.params.id)) {
+    getCommunity(req, function (error, community) {
+      if (community) {
+        res.send(community);
+      } else if (error && error!="Not found") {
+        sendCommunityOrError(res, null, 'view', req.user, error);
+      } else {
+        sendCommunityOrError(res, req.params.id, 'view', req.user, 'Not found', 404);
+      }
+    });
+  } else {
+    res.sendStatus(404);
+  }
 });
 
 router.get('/:id/basic', auth.can('view community'), function(req, res) {

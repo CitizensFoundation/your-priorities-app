@@ -24,6 +24,7 @@ const {updateAnswerTranslation} = require("../active-citizen/utils/translation_h
 const {updateSurveyTranslation} = require("../active-citizen/utils/translation_helpers");
 const {plausibleStatsProxy, getPlausibleStats} = require("../active-citizen/engine/analytics/plausible/manager");
 const {countAllModeratedItemsByGroup} = require("../active-citizen/engine/moderation/get_moderation_items");
+const {isValidDbId} = require("../utils/is_valid_db_id");
 
 const getFromAnalyticsApi = require('../active-citizen/engine/analytics/manager').getFromAnalyticsApi;
 const triggerSimilaritiesTraining = require('../active-citizen/engine/analytics/manager').triggerSimilaritiesTraining;
@@ -1613,102 +1614,114 @@ const addVideosToGroup = (group, done) => {
 }
 
 router.get('/:groupFolderId/groupFolder', auth.can('view group'), function(req, res) {
-  getGroupFolder(req, function (error, groupFolder) {
-    if (error) {
-      log.error('Could not get groupFolder', { err: error, groupFolderId: req.params.groupFolderId, user: req.user ? toJson(req.user.simple()) : null });
-      res.sendStatus(500);
-    } else if (groupFolder) {
-      res.send({ group: groupFolder });
-    } else {
-      res.sendStatus(404);
-    }
-  });
+  if (isValidDbId(req.params.groupFolderId)) {
+    getGroupFolder(req, function (error, groupFolder) {
+      if (error) {
+        log.error('Could not get groupFolder', {
+          err: error,
+          groupFolderId: req.params.groupFolderId,
+          user: req.user ? toJson(req.user.simple()) : null
+        });
+        res.sendStatus(500);
+      } else if (groupFolder) {
+        res.send({group: groupFolder});
+      } else {
+        res.sendStatus(404);
+      }
+    });
+  } else {
+    res.sendStatus(404);
+  }
 });
 
 router.get('/:id', auth.can('view group'), function(req, res) {
-  models.Group.findOne({
-    where: { id: req.params.id },
-    attributes: models.Group.defaultAttributesPublic,
-    order: [
-      [ { model: models.Image, as: 'GroupLogoImages' } , 'created_at', 'asc' ],
-      [ { model: models.Image, as: 'GroupHeaderImages' } , 'created_at', 'asc' ],
-      [ { model: models.Category }, { model: models.Image, as: 'CategoryIconImages' } ,'updated_at', 'asc' ],
-      [ { model: models.Category }, 'name', 'asc' ],
-      [ { model: models.Community }, { model: models.Image, as: 'CommunityHeaderImages' } , 'created_at', 'asc' ]
-    ],
-    include: [
-      {
-        model: models.Community,
-        attributes: ['id','theme_id','name','access','google_analytics_code','configuration','language'],
-        include: [
-          {
-            model: models.Domain,
-            attributes: ['id','theme_id','name']
-          },
-          {
-            model: models.Image,
-            as: 'CommunityHeaderImages',
-            attributes:  models.Image.defaultAttributesPublic,
-            required: false
-          }
-        ]
-      },
-      {
-        model: models.Group,
-        required: false,
-        as: 'GroupFolder',
-        attributes: ['id', 'name']
-      },
-      {
-        model: models.Category,
-        required: false,
-        include: [
-          {
-            model: models.Image,
-            required: false,
-            as: 'CategoryIconImages',
-            attributes:  models.Image.defaultAttributesPublic,
-            order: [
-              [ { model: models.Image, as: 'CategoryIconImages' } ,'updated_at', 'asc' ]
-            ]
-          }
-        ]
-      },
-      {
-        model: models.Image,
-        as: 'GroupLogoImages',
-        attributes:  models.Image.defaultAttributesPublic,
-        required: false
-      },
-      {
-        model: models.Image,
-        as: 'GroupHeaderImages',
-        attributes:  models.Image.defaultAttributesPublic,
-        required: false
-      }
-    ]
-  }).then(function(group) {
-    if (group) {
-      addVideosToGroup(group, (error) => {
-        if (error) {
-          sendGroupOrError(res, null, 'count_posts', req.user, error);
-        } else {
-          log.info('Group Viewed', { id: group.id, userId: req.user ? req.user.id : -1 });
-          var PostsByNotOpen = models.Post.scope('not_open');
-          PostsByNotOpen.count({ where: { group_id: req.params.id} }).then(function (count) {
-            res.send({group: group, hasNonOpenPosts: count != 0});
-          }).catch(function (error) {
-            sendGroupOrError(res, null, 'count_posts', req.user, error);
-          });
+  if (isValidDbId(req.params.id)) {
+    models.Group.findOne({
+      where: { id: req.params.id },
+      attributes: models.Group.defaultAttributesPublic,
+      order: [
+        [ { model: models.Image, as: 'GroupLogoImages' } , 'created_at', 'asc' ],
+        [ { model: models.Image, as: 'GroupHeaderImages' } , 'created_at', 'asc' ],
+        [ { model: models.Category }, { model: models.Image, as: 'CategoryIconImages' } ,'updated_at', 'asc' ],
+        [ { model: models.Category }, 'name', 'asc' ],
+        [ { model: models.Community }, { model: models.Image, as: 'CommunityHeaderImages' } , 'created_at', 'asc' ]
+      ],
+      include: [
+        {
+          model: models.Community,
+          attributes: ['id','theme_id','name','access','google_analytics_code','configuration','language'],
+          include: [
+            {
+              model: models.Domain,
+              attributes: ['id','theme_id','name']
+            },
+            {
+              model: models.Image,
+              as: 'CommunityHeaderImages',
+              attributes:  models.Image.defaultAttributesPublic,
+              required: false
+            }
+          ]
+        },
+        {
+          model: models.Group,
+          required: false,
+          as: 'GroupFolder',
+          attributes: ['id', 'name']
+        },
+        {
+          model: models.Category,
+          required: false,
+          include: [
+            {
+              model: models.Image,
+              required: false,
+              as: 'CategoryIconImages',
+              attributes:  models.Image.defaultAttributesPublic,
+              order: [
+                [ { model: models.Image, as: 'CategoryIconImages' } ,'updated_at', 'asc' ]
+              ]
+            }
+          ]
+        },
+        {
+          model: models.Image,
+          as: 'GroupLogoImages',
+          attributes:  models.Image.defaultAttributesPublic,
+          required: false
+        },
+        {
+          model: models.Image,
+          as: 'GroupHeaderImages',
+          attributes:  models.Image.defaultAttributesPublic,
+          required: false
         }
-      })
-    } else {
-      sendGroupOrError(res, req.params.id, 'view', req.user, 'Not found', 404);
-    }
-    return null;
-  }).catch(function(error) {
-    sendGroupOrError(res, null, 'view', req.user, error);
-  });
+      ]
+    }).then(function(group) {
+      if (group) {
+        addVideosToGroup(group, (error) => {
+          if (error) {
+            sendGroupOrError(res, null, 'count_posts', req.user, error);
+          } else {
+            log.info('Group Viewed', { id: group.id, userId: req.user ? req.user.id : -1 });
+            var PostsByNotOpen = models.Post.scope('not_open');
+            PostsByNotOpen.count({ where: { group_id: req.params.id} }).then(function (count) {
+              res.send({group: group, hasNonOpenPosts: count != 0});
+            }).catch(function (error) {
+              sendGroupOrError(res, null, 'count_posts', req.user, error);
+            });
+          }
+        })
+      } else {
+        sendGroupOrError(res, req.params.id, 'view', req.user, 'Not found', 404);
+      }
+      return null;
+    }).catch(function(error) {
+      sendGroupOrError(res, null, 'view', req.user, error);
+    });
+  } else {
+    res.sendStatus(404);
+  }
 });
 
 const allowedTextTypesForGroup = [
