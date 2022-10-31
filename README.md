@@ -254,7 +254,6 @@ in the link below.
 ```
 [Transifex translation help](https://docs.google.com/document/d/1ASb4XKjncZHHf0TBo-w4vK6u5fhE3lE3tszrlFEl95k)
 
-
 ## Developed by the non-profit Citizens Foundation Iceland
 ```
 Our mission is to bring people together to debate and prioritize innovative ideas 
