@@ -607,8 +607,6 @@ module.exports = (sequelize, DataTypes) => {
     }
   };
 
-
-
   Point.prototype.report = function (req, source, post, callback) {
     this.setupModerationData();
     async.series([
@@ -637,11 +635,11 @@ module.exports = (sequelize, DataTypes) => {
           sequelize.models.AcActivity.createActivity({
             type: 'activity.report.content',
             userId: (req && req.user) ? req.user.id : null,
-            postId: post ? post.id : null,
-            groupId: post ? post.Group.id : this.group_id,
+            postId: post ? post.id : this.post_id,
+            groupId: (post && post.Group) ? post.Group.id : this.group_id,
             pointId: this.id,
-            communityId: post ? post.Group.Community.id : null,
-            domainId: post ? post.Group.Community.Domain.id : null
+            communityId: (post && post.Group && post.Group.Community) ? post.Group.Community.id : null,
+            domainId:  (post && post.Group && post.Group.Community && post.Group.Community.Domain) ? post.Group.Community.Domain.id : null
           }, (error) => {
             seriesCallback();
           });
