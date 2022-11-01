@@ -581,6 +581,14 @@ const copyGroup = (fromGroupId, toCommunityIn, toDomainId, options, done) => {
         {
           model: models.Category,
           required: false,
+          include: [
+            {
+              model: models.Image,
+              required: false,
+              as: 'CategoryIconImages',
+              attributes: ['id'],
+            }
+          ]
         },
         {
           model: models.User,
@@ -630,6 +638,10 @@ const copyGroup = (fromGroupId, toCommunityIn, toDomainId, options, done) => {
         newGroup = models.Group.build(groupJson);
         newGroup.set('community_id', toCommunity.id);
 
+        if (options.setInGroupFolderId) {
+          newGroup.set('in_group_folder_id', options.setInGroupFolderId);
+        }
+
         if (options.skipUsers) {
           newGroup.set('counter_users', 0);
         }
@@ -650,6 +662,26 @@ const copyGroup = (fromGroupId, toCommunityIn, toDomainId, options, done) => {
               },
               (groupSeriesCallback) => {
                 cloneTranslationForGroup(oldGroup, newGroup, groupSeriesCallback);
+              },
+              (groupSeriesCallback) => {
+                if (oldGroup.is_group_folder) {
+                  models.Group.findAll({
+                    where: {
+                      in_group_folder_id: oldGroup.id
+                    },
+                    attributes: ['id','in_group_folder_id']
+                  }).then(groupsInFolder =>{
+                    async.eachSeries(groupsInFolder, function (groupInFolder, groupInFolderCallback) {
+                      copyGroup(groupInFolder.id, toCommunity, toDomainId, { ...JSON.parse(JSON.stringify(options)), setInGroupFolderId: newGroup.id }, groupInFolderCallback);
+                    }, error => {
+                      groupSeriesCallback(error);
+                    });
+                  }).catch(error => {
+                    groupSeriesCallback(error);
+                  })
+                } else {
+                  groupSeriesCallback();
+                }
               },
               (groupSeriesCallback) => {
                 if (options.deepCopyLinks && oldGroup.configuration && oldGroup.configuration.actAsLinkToCommunityId) {
@@ -755,11 +787,23 @@ const copyGroup = (fromGroupId, toCommunityIn, toDomainId, options, done) => {
                     const newCategoryModel = models.Category.build(newCategoryJson);
                     newCategoryModel.set('group_id', newGroup.id);
                     newCategoryModel.save().then(()=>{
-                      categoryCallback();
+                      if (category.CategoryIconImages && category.CategoryIconImages.length>0) {
+                        async.eachSeries(category.CategoryIconImages,(image, categoryImageCallBack) => {
+                          newCategoryModel.addCategoryIconImage(image).then( () => {
+                            categoryImageCallBack();
+                          }).catch((error) => {
+                            categoryImageCallBack(error);
+                          });
+                        }, (error) => {
+                          categoryCallback(error);
+                        });
+                      } else {
+                        categoryCallback();
+                      }
                     }).catch((error)=>{
                       categoryCallback(error);
                     })
-                  }, function (error) {
+                  }, (error) => {
                     groupSeriesCallback(error);
                   });
                 } else {
@@ -993,16 +1037,16 @@ const copyCommunity = (fromCommunityId, toDomainId, options, linkFromOptions, do
               },
               (communitySeriesCallback) => {
                 if (options && (options.copyGroups===true || options.copyOneGroupId)) {
-                  let whereOptions;
+                  let whereOptions = {
+                    community_id: oldCommunity.id,
+                    in_group_folder_id: {
+                      $eq: null
+                    }
+                  }
 
                   if (options.copyOneGroupId) {
-                    whereOptions = {
+                    whereOptions = {...whereOptions,
                       id: options.copyOneGroupId ? options.copyOneGroupId : undefined,
-                      community_id: oldCommunity.id
-                    }
-                  } else {
-                    whereOptions = {
-                      community_id: oldCommunity.id
                     }
                   }
                   models.Group.findAll({
