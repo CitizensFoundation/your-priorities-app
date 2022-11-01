@@ -638,6 +638,21 @@ var updateCommunityConfigParameters = function (req, community) {
   community.set('configuration.useZiggeo', truthValueFromBody(req.body.useZiggeo));
   community.set('configuration.highlightedLanguages', (req.body.highlightedLanguages && req.body.highlightedLanguages!="") ? req.body.highlightedLanguages : null);
   community.set('configuration.actAsLinkToExternalYPSite', (req.body.actAsLinkToExternalYPSite && req.body.actAsLinkToExternalYPSite!="") ? req.body.actAsLinkToExternalYPSite : null);
+
+  community.set('configuration.registrationQuestions', (req.body.registrationQuestions && req.body.registrationQuestions!="") ? req.body.registrationQuestions : null);
+
+  if (community.configuration.registrationQuestions) {
+    try {
+      const cleaned = community.configuration.registrationQuestions.trim().replace(/\n/g, '').replace(/\r/g, '').replace(/"/, '"');
+      const jsonArray = JSON.parse(cleaned);
+      community.set('configuration.registrationQuestionsJson', jsonArray);
+    } catch (error) {
+      community.set('configuration.registrationQuestionsJson', null);
+      log.error("Error in parsing registrationQuestions", {error});
+    }
+  } else {
+    community.set('configuration.registrationQuestionsJson', null);
+  }
 };
 
 router.get('/:communityFolderId/communityFolders', auth.can('view community'), function(req, res) {

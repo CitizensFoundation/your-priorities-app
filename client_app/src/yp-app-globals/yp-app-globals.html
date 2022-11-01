@@ -324,10 +324,18 @@
 
         setRegistrationQuestionGroup: function (group) {
           if (group &&
-            group.configuration &&
-            group.configuration.registrationQuestionsJson) {
-            this.set('registrationQuestionsGroup', group);
-            window.appUser.checkRegistrationAnswersCurrent();
+              group.configuration &&
+              group.Community &&
+              group.Community.configuration &&
+              group.Community.configuration.registrationQuestionsJson) {
+                group.configuration.registrationQuestionsJson = group.Community.configuration.registrationQuestionsJson;
+          }
+
+          if (group &&
+              group.configuration &&
+              group.configuration.registrationQuestionsJson) {
+                this.set('registrationQuestionsGroup', group);
+                window.appUser.checkRegistrationAnswersCurrent();
           } else {
             this.set('registrationQuestionsGroup', null);
           }

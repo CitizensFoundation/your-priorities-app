@@ -40,6 +40,13 @@
         display: block;
       }
 
+      #registrationQuestionsJsonErrorInfo {
+        margin-top: 0px;
+        margin-bottom: 8px;
+        color: #F00;
+        font-weight: bold;
+      }
+
       .additionalSettings {
         padding-top: 16px;
       }
@@ -163,7 +170,27 @@
         </template>
       </div>
 
-      <yp-theme-selector object="[[community]]"  selected-theme="{{themeId}}"></yp-theme-selector>
+      <h3 class="accessHeader">[[t('access')]]</h3>
+
+      <paper-radio-group id="access" name="access" class="access" selected="{{communityAccess}}">
+        <paper-radio-button name="public">[[t('public')]]</paper-radio-button>
+        <paper-radio-button name="closed">[[t('closed')]]</paper-radio-button>
+        <paper-radio-button name="secret">[[t('secret')]]</paper-radio-button>
+      </paper-radio-group>
+
+      <paper-textarea id="registrationQuestions"
+            name="registrationQuestions"
+            type="text"
+            rows="4"
+            always-float-label="[[community.configuration.registrationQuestions]]"
+            maxrows="8"
+            on-value-changed="_registrationQuestionsChanged"
+            max-rows="8"
+            label="[[t('registrationQuestions')]]"
+            value="{{community.configuration.registrationQuestions}}">
+      </paper-textarea>
+
+      <div id="registrationQuestionsJsonErrorInfo" hidden$="[[!registrationQuestionsJsonError]]">[[t('structuredQuestionsJsonFormatNotValid')]]</div>
 
       <div class="layout vertical config" hidden$="[[community.is_community_folder]]">
         <paper-checkbox name="onlyAdminsCanCreateGroups" checked$="{{community.only_admins_can_create_groups}}">[[t('community.onlyAdminsCanCreateGroups')]]</paper-checkbox>
@@ -176,6 +203,8 @@
 
       <input type="hidden" name="themeId" value="[[themeId]]">
       <input type="hidden" name="deleteHeaderImage" value="[[deleteHeaderImage]]">
+
+      <yp-theme-selector object="[[community]]"  selected-theme="{{themeId}}"></yp-theme-selector>
 
       <paper-input id="themeOverrideColorPrimary"
                    name="themeOverrideColorPrimary"
@@ -282,13 +311,6 @@
                    value="{{community.configuration.facebookPixelId}}"
                    maxlength="40" style="width: 200px;">
       </paper-input>
-
-      <h3 class="accessHeader">[[t('access')]]</h3>
-      <paper-radio-group id="access" name="access" class="access" selected="{{communityAccess}}">
-        <paper-radio-button name="public">[[t('public')]]</paper-radio-button>
-        <paper-radio-button name="closed">[[t('closed')]]</paper-radio-button>
-        <paper-radio-button name="secret">[[t('secret')]]</paper-radio-button>
-      </paper-radio-group>
 
       <paper-textarea id="welcomeHTML"
                       name="welcomeHTML"
@@ -565,6 +587,11 @@
         computed: '_hasHeaderImage(community, deleteHeaderImage)'
       },
 
+      registrationQuestionsJsonError: {
+        type: Boolean,
+        value: false
+      },
+
       deleteHeaderImage: {
         type: Boolean,
         value: false
@@ -839,6 +866,21 @@
       this.set('new', newNotEdit);
       this.set('refreshFunction', refreshFunction);
       this._setupTranslation();
+    },
+
+    _registrationQuestionsChanged: function (event, detail) {
+      if (detail && detail.value) {
+        var questions = detail.value.trim();
+        var jsonError = false;
+        try {
+          JSON.parse(questions);
+        } catch (e) {
+          jsonError = true;
+        }
+        this.set('registrationQuestionsJsonError', jsonError);
+      } else {
+        this.set('registrationQuestionsJsonError', false);
+      }
     },
 
     _setupTranslation: function () {
