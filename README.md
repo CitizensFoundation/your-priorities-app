@@ -261,7 +261,6 @@ to improve their communities.
 ```
 [http://www.citizens.is/](http://www.citizens.is/)
 
-
 ## The Team
 - Robert Bjarnason
 - Guðný Maren Valsdóttir
