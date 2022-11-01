@@ -17,6 +17,33 @@ const {sendPlausibleFavicon} = require("../active-citizen/engine/analytics/plaus
 var getAllModeratedItemsByUser = require('../active-citizen/engine/moderation/get_moderation_items').getAllModeratedItemsByUser;
 const performSingleModerationAction = require('../active-citizen/engine/moderation/process_moderation_items').performSingleModerationAction;
 
+const logoutFromSession = (req, res, statusCode) => {
+  if (req.session) {
+    req.session.user = null
+    req.session.save(function (err) {
+      if (err) {
+        log.error("Error on destroying session", { err: err });
+        res.sendStatus(500);
+      } else {
+        req.session.regenerate(function (innerErr) {
+          if (innerErr) {
+            log.error("Error on destroying session", { err: innerErr });
+            res.sendStatus(500);
+          } else {
+            log.info("Have destroy session")
+            req.user = null;
+            req.session = null;
+            res.sendStatus(statusCode || 200);
+          }
+        })
+      }
+    })
+  } else {
+    req.user = null;
+    res.sendStatus(200);
+  }
+}
+
 var sendUserOrError = function (res, user, context, error, errorStatus) {
   if (error || !user) {
     if (errorStatus == 404) {
@@ -1317,8 +1344,7 @@ router.delete('/delete_current_user', function (req, res) {
         user.save().then(function () {
           log.info('User deleted', { context: 'delete', user: toJson(req.user) });
           queue.add('process-deletion', { type: 'delete-user-content', userId: userId }, 'critical');
-          req.logOut();
-          res.sendStatus(200);
+          logoutFromSession(req, res);
         }).catch((error) => {
           log.error('User delete error', { error: error, user: toJson(req.user), context: 'delete_current_user'});
           res.sendStatus(500);
@@ -1376,17 +1402,14 @@ router.delete('/anonymize_current_user', function (req, res) {
           user.save().then(function () {
             log.info('User anonymized', { context: 'delete', user: toJson(req.user) });
             queue.add('process-anonymization', { type: 'anonymize-user-content', userId: userId }, 'high');
-            req.logOut();
-            res.sendStatus(200);
+            logoutFromSession(req, res);
           }).catch((error) => {
             log.error('User delete error', { error: error, user: toJson(req.user), context: 'delete_current_user'});
-            req.logOut();
-            res.sendStatus(500);
+            logoutFromSession(req, res, 500);
           });
         }).catch((error) => {
           log.error('User delete error', { error: error, user: toJson(req.user), context: 'delete_current_user'});
-          req.logOut();
-          res.sendStatus(500);
+          logoutFromSession(req, res, 500);
         });
       } else {
         log.error('User anonymize user not found', { error: error, user: toJson(req.user), context: 'delete_current_user'});
@@ -1405,27 +1428,11 @@ router.delete('/anonymize_current_user', function (req, res) {
 router.post('/logout', function (req, res) {
   log.info("Anon debug logout");
   if (req.isAuthenticated()) {
-    log.info('User Logging out', { user: toJson(req.user), context: 'logout'});
+    log.info('User Logging out', { userId: req.user.id, context: 'logout'});
   } else {
-    log.warn('User Logging out but not logged in', { user: toJson(req.user), context: 'logout'});
+    log.warn('User Logging out but not logged in', { context: 'logout'});
   }
-  if (req.session) {
-    req.session.destroy(function(err) {
-      req.logOut();
-      if (err) {
-        log.error("Error on destroying session", { err: err });
-        res.sendStatus(500);
-      } else {
-        log.info("Have destroy session")
-        req.user = null;
-        req.session = null;
-        res.sendStatus(200);
-      }
-    })
-  } else {
-    req.logOut();
-    res.sendStatus(200);
-  }
+  logoutFromSession(req, res);
 });
 
 // Reset password
