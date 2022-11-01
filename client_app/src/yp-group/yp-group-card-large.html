@@ -348,7 +348,7 @@
               <paper-item hidden$="[[!hasGroupAccess]]" hideforfolder$="[[group.is_group_folder]]" id="deleteContentMenuItem">[[t('deleteGroupContent')]]</paper-item>
               <paper-item id="addPostMenuItem" hideforfolder$="[[group.is_group_folder]]" >[[t('post.new')]]</paper-item>
               <paper-item id="openAnalyticsApp" hideforfolder$="[[group.is_group_folder]]" hidden$="[[!hasGroupAccess]]">[[t('openAnalyticsApp')]]</paper-item>
-              <paper-item id="openAdminApp" hideforfolder$="[[group.is_group_folder]]" hidden$="[[!hasGroupAccess]]">[[t('editTranslations')]]</paper-item>
+              <paper-item id="openAdminApp" hidden$="[[!hasGroupAccess]]">[[t('editTranslations')]]</paper-item>
               <paper-item id="newGroupItem" hideforfolder$="[[!group.is_group_folder]]" hidden$="[[!hasGroupAccess]]">[[t('group.new')]]</paper-item>
               <paper-item id="newGroupFolderItem" hideforfolder$="[[!group.is_group_folder]]" hidden$="[[!hasGroupAccess]]">[[t('newGroupFolder')]]</paper-item>
             </paper-listbox>
