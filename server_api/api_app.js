@@ -95,6 +95,39 @@ if (process.env.AIRBRAKE_PROJECT_ID) {
   });
 }
 
+let redisClient;
+if (process.env.REDIS_URL) {
+  let redisUrl = process.env.REDIS_URL;
+
+  if (redisUrl.startsWith("redis://h:")) {
+    redisUrl = redisUrl.replace("redis://h:", "redis://:");
+  }
+
+  if (redisUrl.includes("rediss://")) {
+    redisClient = redis.createClient({
+      legacyMode: true,
+      url: redisUrl,
+      socket: { tls: true, rejectUnauthorized: false },
+    });
+  } else {
+    redisClient = redis.createClient({ legacyMode: true, url: redisUrl});
+  }
+} else {
+  redisClient = redis.createClient({ legacyMode: true });
+}
+
+redisClient.connect().catch(console.error);
+
+const botRateLimiter = rateLimit({
+  windowMs:  process.env.RATE_LIMITER_WINDOW_MS ? process.env.RATE_LIMITER_WINDOW_MS : 15 * 60 * 1000, // 15 minutes
+  max: process.env.RATE_LIMITER_MAX ? process.env.RATE_LIMIT_MAX : 30,
+//  standardHeaders: true,
+  store: new RedisLimitStore({
+    sendCommand: (...args) => redisClient.v4.sendCommand(args),
+    expiry: process.env.RATE_LIMITER_REDIS_EXPIRY ? process.env.RATE_LIMITER_REDIS_EXPIRY : 15 * 60, // 15 minutes
+  }),
+});
+
 const app = express();
 
 if (app.get('env') !== 'development' && !process.env.DISABLE_FORCE_HTTPS) {
@@ -131,24 +164,6 @@ app.use(useragent.express());
 app.use(requestIp.mw());
 app.use(bodyParser.json({limit: '10mb'}));
 app.use(bodyParser.urlencoded({limit: '10mb', extended: true}));
-
-let redisClient;
-if (process.env.REDIS_URL) {
-  let redisUrl = process.env.REDIS_URL;
-
-  if (redisUrl.startsWith("redis://h:")) {
-    redisUrl = redisUrl.replace("redis://h:","redis://:")
-  }
-
-  if (redisUrl.includes("rediss://")) {
-    redisClient = redis.createClient(redisUrl, { tls: { rejectUnauthorized: false } });
-  } else {
-    redisClient = redis.createClient(redisUrl);
-  }
-
-} else {
-  redisClient = redis.createClient();
-}
 
 var sessionConfig = {
   store: new RedisStore({ client: redisClient, ttl: 86400 }),
@@ -200,16 +215,6 @@ app.use(session(sessionConfig));
 app.get('/robots.txt', function (req, res) {
   res.type('text/plain')
   res.send(robotsTxt(req));
-});
-
-const botRateLimiter = rateLimit({
-  windowMs:  process.env.RATE_LIMITER_WINDOW_MS ? process.env.RATE_LIMITER_WINDOW_MS : 15 * 60 * 1000, // 15 minutes
-  max: process.env.RATE_LIMITER_MAX ? process.env.RATE_LIMIT_MAX : 30,
-//  standardHeaders: true,
-  store: new RedisLimitStore({
-    client: redisClient,
-    expiry: process.env.RATE_LIMITER_REDIS_EXPIRY ? process.env.RATE_LIMITER_REDIS_EXPIRY : 15 * 60, // 15 minutes
-  }),
 });
 
 app.use(function checkForBOT(req, res, next) {
