@@ -155,7 +155,7 @@ app.use(function checkShortenedRedirects(req, res, next) {
 app.set('port', process.env.PORT || 4242);
 app.use(compression());
 app.set('views', __dirname + '/views');
-app.set('view engine', 'jade');
+app.set('view engine', 'pug');
 
 app.use(cors());
 
