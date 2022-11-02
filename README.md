@@ -112,7 +112,6 @@ For production please define SESSION_SECRET=somethingrandomandlong
 
 Google Analytics can be disabled through DISABLE_GA=1
 
-
 ## Email Support
 
 For SMTP support define SMTP_SERVER, SMTP_USERNAME, SMTP_PASSWORD and SMTP_PORT.
