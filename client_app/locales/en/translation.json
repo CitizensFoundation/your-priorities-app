@@ -1,4 +1,7 @@
 {
+  "areYouSureCloneCommunity": "Are you sure you want to clone this community?",
+  "cloneCommunity": "Clone community",
+  "moveGroupTo": "Move group to",
   "cloneGroupFolder": "Clone group folder",
   "hideDomainTabs": "Hide domain tabs",
   "newGroupFolder": "New Group Folder",

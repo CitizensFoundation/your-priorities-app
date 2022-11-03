@@ -428,6 +428,7 @@
               <paper-item hidden$="[[!hasCommunityAccessAndNotFolder]]" id="anonymizeMenuItem">[[t('anonymizeCommunityContent')]]</paper-item>
               <paper-item hidden$="[[!hasCommunityAccessAndNotFolder]]" id="deleteContentMenuItem">[[t('deleteCommunityContent')]]</paper-item>
               <paper-item hidden$="[[!hasCommunityAccessAndNotFolder]]" id="bulkStatusUpdateMenuItem">[[t('bulkStatusUpdate')]]</paper-item>
+              <paper-item hidden$="[[!hasCommunityAccessAndNotFolder]]" id="cloneMenuItem">[[t('cloneCommunity')]]</paper-item>
               <paper-item id="addGroupMenuItem" hidden$="[[newGroupHidden]]">[[t('group.new')]]</paper-item>
               <paper-item id="addGroupFolderMenuItem" hidden$="[[newGroupHidden]]">[[t('newGroupFolder')]]</paper-item>
               <paper-item  hidden id="addCommunityFolderMenuItem">[[t('newCommunityFolder')]]</paper-item>
@@ -554,6 +555,27 @@
           type: Boolean,
           computed: '_hideInfoBoxExceptAdmin(community, hasCommunityAccess)'
         }
+      },
+
+      _openClone: function () {
+        window.appGlobals.activity('open', 'community.clone');
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("apiActionDialog", function (dialog) {
+          dialog.setup('/api/communities/' + this.community.id + '/clone',
+            this.t('areYouSureCloneCommunity'),
+            this._onCloned.bind(this), this.t('cloneCommunity'), "POST");
+          dialog.open({finalDeleteWarning: false});
+        }.bind(this));
+      },
+
+      _onCloned: function () {
+        if (this.community.in_community_folder_id) {
+          this.redirectTo("/community_folder/"+this.community.in_community_folder_id);
+          this.dispatchEvent(new CustomEvent('yp-refresh-community-folder', {bubbles: true, composed: true}));
+        } else {
+          this.redirectTo("/domain/"+this.community.domain_id);
+          this.dispatchEvent(new CustomEvent('yp-refresh-domain', {bubbles: true, composed: true}));
+        }
+        this.dispatchEvent(new CustomEvent('yp-refresh-admin-rights', {bubbles: true, composed: true}));
       },
 
       _newGroupHidden: function (community, hasCommunityAccess) {
@@ -752,6 +774,8 @@
           this._openContentModeration();
         else if (detail.item.id==="fraudManagementMenuItem")
           this._openFraudManagement();
+        else if (detail.item.id==="cloneMenuItem")
+          this._openClone();
         else if (detail.item.id==="moderationAllMenuItem")
           this._openAllContentModeration();
         else if (detail.item.id==="anonymizeMenuItem")

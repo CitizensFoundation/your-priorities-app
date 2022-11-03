@@ -917,6 +917,20 @@
 
           <div id="dataForVisualizationJsonError" hidden$="[[!dataForVisualizationJsonError]]">[[t('structuredQuestionsJsonFormatNotValid')]]</div>
 
+          <template is="dom-if" if="[[groupMoveToOptions]]" restamp>
+            <div class="layout horizontal config">
+              <paper-dropdown-menu name="moveGroupTo" label="[[t('moveGroupTo')]]">
+                <paper-listbox slot="dropdown-content" attr-for-selected="name">
+                  <template is="dom-repeat" items="[[groupMoveToOptions]]" as="option">
+                    <paper-item name="[[option.id]]" data-args$="[[index]]">
+                      [[option.name]]
+                    </paper-item>
+                  </template>
+                </paper-listbox>
+              </paper-dropdown-menu>
+            </div>
+          </template>
+
           <div class="layout vertical config" hidden$="[[!group.Categories]]">
             <div class="subHeaders">[[t('categories.the_all')]]</div>
             <template is="dom-repeat" items="[[group.Categories]]" as="category">
@@ -943,6 +957,7 @@
       <input type="hidden" name="is_group_folder" value="[[isGroupFolder]]">
 
       <yp-ajax id="pagesAjax" on-response="_pagesResponse"></yp-ajax>
+      <yp-ajax id="groupMoveToOptionsAjax" disable-user-error on-response="_groupMoveToOptionsResponse"></yp-ajax>
 
     </yp-edit-dialog>
   </template>
@@ -1137,6 +1152,11 @@
       isGroupFolder: {
         type: Boolean,
         value: false
+      },
+
+      groupMoveToOptions: {
+        type: Array,
+        value: null
       }
     },
 
@@ -1524,6 +1544,9 @@
 
         this.$.pagesAjax.url = "/api/groups/"+group.id+"/pages";
         this.$.pagesAjax.generateRequest();
+
+        this.$.groupMoveToOptionsAjax.url = "/api/communities/"+group.community_id+"/group_folders_simple";
+        this.$.groupMoveToOptionsAjax.generateRequest();
       }
       this.set('new', newNotEdit);
       this.set('refreshFunction', refreshFunction);
@@ -1578,6 +1601,20 @@
       var pages = detail.response;
       pages.unshift({id: -1, title: { en: this.t('none') } });
       this._setPages(event, pages);
+    },
+
+    _groupMoveToOptionsResponse: function (event, detail) {
+      const groupMoveToOptions = detail.response;
+      if (groupMoveToOptions && groupMoveToOptions.length>0) {
+        for (let i=0; i<groupMoveToOptions.length;i++) {
+          groupMoveToOptions[i].name = `${groupMoveToOptions[i].id} - ${groupMoveToOptions[i].name}`;
+        }
+        if (this.group.in_group_folder_id) {
+          groupMoveToOptions.unshift({id: 0, name: `${this.group.Community.id}C - ${this.group.Community.name}` });
+        }
+        groupMoveToOptions.unshift({id: -1, name: `0 - ${this.t('none')}` });
+        this.set('groupMoveToOptions', groupMoveToOptions);
+      }
     },
 
     _setupTranslation: function (language, t) {

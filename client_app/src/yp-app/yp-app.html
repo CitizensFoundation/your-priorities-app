@@ -654,11 +654,14 @@
         'yp-set-number-of-un-viewed-notifications': '_setNumberOfUnViewedNotifications',
         'yp-close-right-drawer': '_closeRightDrawer',
         'yp-refresh-group': '_refreshGroup',
+        'yp-refresh-group-folder': '_refreshGroupFolder',
         'yp-refresh-community': '_refreshCommunity',
+        'yp-refresh-community-folder': '_refreshCommunityFolder',
         'yp-refresh-domain': '_refreshDomain',
         'yp-language-name': '_setLanguageName',
         'yp-dialog-closed': '_dialogClosed',
         'yp-open-page': '_openPageFromEvent',
+        'yp-refresh-admin-rights': '_refreshAdminRights',
         'yp-open-login': '_login',
         'yp-clipboard-copy-notification': '_haveCopiedNotification',
         'yp-reset-keep-open-for-page': '_resetKeepOpenForPage',
@@ -892,8 +895,16 @@
         this._refreshByName("#groupPage");
       },
 
+      _refreshGroupFolder: function () {
+        this._refreshByName("#groupFolderPage");
+      },
+
       _refreshCommunity: function () {
         this._refreshByName("#communityPage");
+      },
+
+      _refreshCommunityFolder: function () {
+        this._refreshByName("#communityFolderPage");
       },
 
       _refreshDomain: function () {
@@ -1195,6 +1206,12 @@
           window.appUser.openNotificationSettings();
         } else {
           window.appUser.loginForNotificationSettings();
+        }
+      },
+
+      _refreshAdminRights: function () {
+        if (window.appUser && window.appUser.loggedIn()===true) {
+          window.appUser.recheckAdminRights();
         }
       },
 

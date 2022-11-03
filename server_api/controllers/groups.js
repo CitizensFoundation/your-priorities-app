@@ -142,6 +142,18 @@ var truthValueFromBody = function(bodyParameter) {
   }
 };
 
+const moveGroupTo = (req, group) => {
+  const splitMoveTo = req.body.moveGroupTo.split(" - ");
+  const id = splitMoveTo[0];
+  if (id && id.indexOf("C") > -1) {
+    group.set('in_group_folder_id', null);
+  } else if (!isNaN(id)) {
+    if (parseInt(id)!==0) {
+      group.set('in_group_folder_id', parseInt(id));
+    }
+  }
+}
+
 var updateGroupConfigParameters = function (req, group) {
   if (!group.configuration) {
     group.set('configuration', {});
@@ -1437,6 +1449,9 @@ router.put('/:id', auth.can('edit group'), function(req, res) {
       group.theme_id = req.body.themeId ? parseInt(req.body.themeId) : null;
       group.access = models.Group.convertAccessFromRadioButtons(req.body);
       updateGroupConfigParameters(req, group);
+      if (req.body.moveGroupTo) {
+        moveGroupTo(req, group);
+      }
       group.save().then(function () {
         log.info('Group Updated', { group: toJson(group), context: 'update', user: toJson(req.user) });
         queue.add('process-similarities', { type: 'update-collection', groupId: group.id }, 'low');

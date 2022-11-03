@@ -20,10 +20,17 @@
       paper-dialog {
         background-color: #FFF;
       }
+
+      .spinner {
+        margin-top: 8px;
+      }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
-    <yp-ajax method$="[[method]]" id="apiAjax" on-response="_response"></yp-ajax>
+    <div class="layout horizontal center-center spinner">
+      <yp-ajax method$="[[method]]" id="apiAjax" on-response="_response"></yp-ajax>
+    </div>
+
     <paper-dialog id="confirmationDialog" on-close="_onClose">
       <div>[[confirmationText]]</div>
       <div class="buttons">

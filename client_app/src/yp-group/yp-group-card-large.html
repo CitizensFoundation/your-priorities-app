@@ -343,7 +343,7 @@
               <paper-item hidden$="[[!hasGroupAccess]]" hideforfolder$="[[group.is_group_folder]]" id="exportXlsMenuItem">[[t('exportGroupXls')]]</paper-item>
               <paper-item hidden$="[[!hasGroupAccess]]" hideforfolder$="[[group.is_group_folder]]" id="exportDocxMenuItem">[[t('exportGroupDocx')]]</paper-item>
               <paper-item hidden$="[[!hasGroupAccess]]" hideforfolder$="[[group.is_group_folder]]" id="cloneMenuItem">[[t('cloneGroup')]]</paper-item>
-              <paper-item hidden$="[[!hasGroupAccess]]" hideforfolder$="[[!group.is_group_folder]]" id="cloneMenuItem">[[t('cloneGroupFolder')]]</paper-item>
+              <paper-item hidden$="[[!hasGroupAccess]]" hideforfolder$="[[!group.is_group_folder]]" id="cloneFolderMenuItem">[[t('cloneGroupFolder')]]</paper-item>
               <paper-item hidden$="[[!hasGroupAccess]]" disabled$="[[disableDeleteIfNeeded]]" id="deleteMenuItem">[[t('group.delete')]]</paper-item>
               <paper-item hidden$="[[!hasGroupAccess]]" hideforfolder$="[[group.is_group_folder]]" id="anonymizeMenuItem">[[t('anonymizeGroupContent')]]</paper-item>
               <paper-item hidden$="[[!hasGroupAccess]]" hideforfolder$="[[group.is_group_folder]]" id="deleteContentMenuItem">[[t('deleteGroupContent')]]</paper-item>
@@ -616,6 +616,8 @@
           this._openDelete();
         else if (detail.item.id==="cloneMenuItem")
           this._openClone();
+        else if (detail.item.id==="cloneFolderMenuItem")
+          this._openClone();
         else if (detail.item.id==="usersMenuItem")
           this._openUsersDialog();
         else if (detail.item.id==="adminsMenuItem")
@@ -795,8 +797,14 @@
       },
 
       _onCloned: function () {
-        this.dispatchEvent(new CustomEvent('yp-refresh-community', {bubbles: true, composed: true}));
-        this.redirectTo("/community/"+this.group.community_id);
+        if (this.group.in_group_folder_id) {
+          this.redirectTo("/group_folder/"+this.group.in_group_folder_id);
+          this.dispatchEvent(new CustomEvent('yp-refresh-group-folder', {bubbles: true, composed: true}));
+        } else {
+          this.redirectTo("/community/"+this.group.community_id);
+          this.dispatchEvent(new CustomEvent('yp-refresh-community', {bubbles: true, composed: true}));
+        }
+        this.dispatchEvent(new CustomEvent('yp-refresh-admin-rights', {bubbles: true, composed: true}));
       },
 
       _newCategory: function () {

@@ -24,6 +24,8 @@ const { getMapForCommunity } = require("../utils/community_mapping_tools");
 const { getPlausibleStats, plausibleStatsProxy } = require("../active-citizen/engine/analytics/plausible/manager")
 const {countAllModeratedItemsByCommunity} = require("../active-citizen/engine/moderation/get_moderation_items");
 const {isValidDbId} = require("../utils/is_valid_db_id");
+const {copyGroup, copyCommunity} = require("../utils/copy_utils");
+const {recountCommunity} = require("../utils/recount_utils");
 
 const getFromAnalyticsApi = require('../active-citizen/engine/analytics/manager').getFromAnalyticsApi;
 const triggerSimilaritiesTraining = require('../active-citizen/engine/analytics/manager').triggerSimilaritiesTraining;
@@ -1940,6 +1942,45 @@ router.put('/:communityId/:type/start_report_creation', auth.can('edit community
   });
 });
 
+router.post('/:id/clone', auth.can('edit community'), function(req, res) {
+  models.Community.findOne({
+    attributes: ['id','domain_id'],
+    where: {id: req.params.id },
+    include: [
+      {
+        model: models.Domain,
+        attributes: ['id']
+      }
+    ]
+  }).then(function (community) {
+    if (community) {
+      copyCommunity(
+        community.id,
+        community.domain_id,
+        {skipUser: true, skipActivities: true, copyGroups: true},
+        null,(error, newCommunity) =>
+        {
+          if (error) {
+            log.error('Community Clone Failed', { error, communityId: req.params.id });
+            res.sendStatus(500);
+          } else if (newCommunity) {
+            recountCommunity(newCommunity.id, () => {
+              log.info('Community Cloned', { communityId: req.params.id });
+              res.sendStatus(200);
+            })
+          } else {
+            log.error('Community Clone Failed', { error: "Unknown", communityId: req.params.id });
+            res.sendStatus(500);
+          }
+      });
+    } else {
+      sendCommunityOrError(res, req.params.id, 'clone', req.user, 'Not found', 404);
+    }
+  }).catch(function(error) {
+    sendCommunityOrError(res, null, 'clone', req.user, error);
+  });
+});
+
 router.get('/:communityId/:jobId/report_creation_progress', auth.can('edit community'), function(req, res) {
   models.AcBackgroundJob.findOne({
     where: {
@@ -2129,6 +2170,23 @@ router.delete('/:communityId/:campaignId/delete_campaign', auth.can('edit commun
     res.sendStatus(200);
   } catch (error) {
     log.error('Could not delete_campaign campaigns', { err: error, context: 'delete_campaign', user: toJson(req.user.simple()) });
+    res.sendStatus(500);
+  }
+});
+
+
+router.get('/:communityId/group_folders_simple', auth.can('edit community'), async (req, res) => {
+  try {
+    const groupFolders = await models.Group.findAll({
+      where: {
+        community_id: req.params.communityId,
+        is_group_folder: true
+      },
+      attributes: ['id','name','is_group_folder'],
+    });
+    res.send(groupFolders);
+  } catch (error) {
+    log.error('Could not get group_folders_simple', { err: error, context: 'group_folders_simple', user: toJson(req.user.simple()) });
     res.sendStatus(500);
   }
 });
