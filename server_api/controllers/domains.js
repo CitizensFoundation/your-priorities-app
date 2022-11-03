@@ -699,22 +699,22 @@ router.get('/oldBoot', function(req, res) {
 });
 
 router.get('/', function(req, res) {
-  if (req.ypDomain && req.ypDomain.secret_api_keys &&
+  if (req.ypDomain.secret_api_keys &&
     req.ypDomain.secret_api_keys.saml && req.ypDomain.secret_api_keys.saml.entryPoint &&
     req.ypDomain.secret_api_keys.saml.entryPoint.length > 6) {
     req.ypDomain.dataValues.samlLoginProvided = true;
   }
-  if (req.ypDomain && req.ypDomain.secret_api_keys &&
+  if (req.ypDomain.secret_api_keys &&
     req.ypDomain.secret_api_keys.facebook && req.ypDomain.secret_api_keys.facebook.client_secret &&
     req.ypDomain.secret_api_keys.facebook.client_secret.length > 6) {
     req.ypDomain.dataValues.facebookLoginProvided = true;
   }
 
-  if (req.ypDomain && process.env.GOOGLE_MAPS_API_KEY) {
+  if (process.env.GOOGLE_MAPS_API_KEY) {
     req.ypDomain.dataValues.googleMapsApiKey = process.env.GOOGLE_MAPS_API_KEY;
   }
 
-  if (req.ypDomain && process.env.ZIGGEO_ENABLED) {
+  if (process.env.ZIGGEO_ENABLED) {
     req.ypDomain.dataValues.ziggeoEnabled = process.env.ZIGGEO_ENABLED;
   }
 

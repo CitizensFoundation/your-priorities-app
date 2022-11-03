@@ -357,7 +357,7 @@ var updateGroupConfigParameters = function (req, group) {
 
   if (group.configuration.registrationQuestions) {
     try {
-      const cleaned = group.configuration.registrationQuestions.trim().replace(/\n/g, '').replace(/\r/g, '').replace(/"/, '"');
+      const cleaned = group.configuration.registrationQuestions.trim().replace(/\n/g, '').replace(/\r/g, '');
       const jsonArray = JSON.parse(cleaned);
       group.set('configuration.registrationQuestionsJson', jsonArray);
     } catch (error) {
@@ -374,7 +374,7 @@ var updateGroupConfigParameters = function (req, group) {
 
   if (group.configuration.dataForVisualization) {
     try {
-      const cleaned = group.configuration.dataForVisualization.trim().replace(/\n/g, '').replace(/\r/g, '').replace(/"/, '"');
+      const cleaned = group.configuration.dataForVisualization.trim().replace(/\n/g, '').replace(/\r/g, '');
       const jsonArray = JSON.parse(cleaned);
       group.set('configuration.dataForVisualizationJson', jsonArray);
     } catch (error) {
@@ -802,7 +802,7 @@ router.post('/:groupId/:userEmail/invite_user', auth.can('edit group'), function
       res.sendStatus(500);
     } else {
       if (!user && req.query.addToGroupDirectly) {
-        log.info('Send Invite User Not Found To add', { userEmail: req.params.userEmail, user: user ? toJson(user) : null, context: 'invite_user_community', loggedInUser: toJson(req.user) });
+        log.info('Send Invite User Not Found To add', { userEmail: req.params.userEmail, user: null, context: 'invite_user_community', loggedInUser: toJson(req.user) });
         res.sendStatus(404);
       } else {
         log.info('Send Invite Activity Created', { userEmail: req.params.userEmail, user: user ? toJson(user) : null, context: 'invite_user', loggedInUser: toJson(req.user) });

@@ -188,7 +188,7 @@ router.post('/', isAuthenticated, async function (req, res) {
         });
 
         await image.save();
-        log.info('Image Created', { imageId: image ? image.id : -1, context: 'create', userId: req.user ? req.user.id : -1 });
+        log.info('Image Created', { imageId: image.id, context: 'create', userId: req.user ? req.user.id : -1 });
         res.send(image);
       }
     });

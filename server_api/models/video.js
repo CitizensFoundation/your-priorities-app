@@ -836,33 +836,37 @@ module.exports = (sequelize, DataTypes) => {
   // Using Your Priorities Encoder
 
   Video.startYrpriEncoderTranscodingJob = (video, callback) => {
-    const fileKey = video.meta.fileKey;
-    let jobPackage = {
-      portrait:
-        video.meta && video.meta.aspect && video.meta.aspect === "portrait",
-      fileKey,
-      duration: video.meta.maxDuration + ".000",
-      thumbnailPattern: fileKey + "_thumbs-" + video.id + "-{count}",
-      flacFilename: fileKey.slice(0, fileKey.length - 4) + ".flac",
-    };
-    sequelize.models.AcBackgroundJob.createJob(
-      jobPackage,
-      {},
-      async (error, jobId) => {
-        log.info("Starting YRPRI transcoding Job");
-        if (error) {
-          log.error("Error creating YRPRI transcoding job", { error });
-          callback(error);
-        } else {
-          jobPackage = _.merge(jobPackage, {
-            acBackgroundJobId: jobId,
-          });
+    if (video & video.meta) {
+      const fileKey = video.meta.fileKey;
+      let jobPackage = {
+        portrait:
+          video.meta.aspect && video.meta.aspect === "portrait",
+        fileKey,
+        duration: video.meta.maxDuration + ".000",
+        thumbnailPattern: fileKey + "_thumbs-" + video.id + "-{count}",
+        flacFilename: fileKey.slice(0, fileKey.length - 4) + ".flac",
+      };
+      sequelize.models.AcBackgroundJob.createJob(
+        jobPackage,
+        {},
+        async (error, jobId) => {
+          log.info("Starting YRPRI transcoding Job");
+          if (error) {
+            log.error("Error creating YRPRI transcoding job", { error });
+            callback(error);
+          } else {
+            jobPackage = _.merge(jobPackage, {
+              acBackgroundJobId: jobId,
+            });
 
-          await bullVideoQueue.add(jobPackage);
-          callback(null, { Job: { Id: jobId } });
+            await bullVideoQueue.add(jobPackage);
+            callback(null, { Job: { Id: jobId } });
+          }
         }
-      }
-    );
+      );
+    } else {
+      callback("No video or video meta");
+    }
   };
 
   Video.getYrpriEncoderTranscodingJobStatus = (video, req, res) => {

@@ -150,7 +150,7 @@ async.series([
                 }).catch( error => {
                   innerSeriesCallback(error);
                 })
-              } if (type==="onlyRegistrationQuestionsAndOneTimeLogin") {
+              } else if (type==="onlyRegistrationQuestionsAndOneTimeLogin") {
                 toGroup.set('configuration.registrationQuestionsJson', fromGroup.configuration.registrationQuestionsJson);
                 toGroup.set('configuration.registrationQuestions', fromGroup.configuration.registrationQuestions);
                 toGroup.set('configuration.allowOneTimeLoginWithName', fromGroup.configuration.allowOneTimeLoginWithName);

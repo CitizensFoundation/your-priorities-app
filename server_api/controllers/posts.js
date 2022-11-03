@@ -292,7 +292,7 @@ router.get('/:id', auth.can('view post'), function(req, res) {
       if (error) {
         sendPostOrError(res, req.params.id, 'view', req.user, error, 500);
       } else if (post) {
-        log.info('Post Viewed', { postId: post ? post.id : -1, userId: req.user ? req.user.id : -1 });
+        log.info('Post Viewed', { postId: post.id, userId: req.user ? req.user.id : -1 });
         post.dataValues.PostVideos = videos;
         res.send(post);
       } else {
