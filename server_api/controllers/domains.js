@@ -819,7 +819,6 @@ router.put('/:id', auth.can('edit domain'), function(req, res) {
       }
 
       domain.set('configuration.customUserRegistrationText', (req.body.customUserRegistrationText && req.body.customUserRegistrationText!="") ? req.body.customUserRegistrationText : null);
-      domain.set('configuration.downloadFacebookImagesForUser', (req.body.downloadFacebookImagesForUser && req.body.downloadFacebookImagesForUser!="") ? true : false);
       domain.set('configuration.forceSecureSamlEmployeeLogin', (req.body.forceSecureSamlEmployeeLogin && req.body.forceSecureSamlEmployeeLogin!="") ? true : false);
 
       domain.set('configuration.disableNameAutoTranslation', (req.body.disableNameAutoTranslation && req.body.disableNameAutoTranslation!="") ? true : false);

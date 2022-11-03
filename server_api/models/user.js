@@ -356,16 +356,6 @@ module.exports = (sequelize, DataTypes) => {
         } else {
           seriesCallback();
         }
-      },
-      (seriesCallback) => {
-        if (domain && domain.configuration && domain.configuration.downloadFacebookImagesForUser===true) {
-          sequelize.models.Image.downloadFacebookImagesForUser(user, (error, newUser) => {
-            user = newUser;
-            seriesCallback(error);
-          });
-        } else {
-          seriesCallback();
-        }
       }
     ], (error) =>{
       if (error) {

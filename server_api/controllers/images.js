@@ -198,66 +198,6 @@ router.post('/', isAuthenticated, async function (req, res) {
   }
 });
 
-router.post('/oldMethod', isAuthenticated, function(req, res) {
-  multerMultipartResolver(req, res, function (error) {
-    if (error) {
-      sendError(res, null, 'multerMultipartResolver', res.user, error);
-    } else {
-      var s3UploadClient = models.Image.getUploadClient(req.query.itemType);
-      s3UploadClient.upload(req.file.path, {}, function(error, versions, meta) {
-        if (error) {
-          sendError(res, null, 's3UploadClient', res.user, error);
-        } else {
-          var image = models.Image.build({
-            user_id: req.user.id,
-            s3_bucket_name: process.env.S3_BUCKET,
-            original_filename: req.file.originalname,
-            formats: JSON.stringify(models.Image.createFormatsFromVersions(versions)),
-            user_agent: req.useragent.source,
-            ip_address: req.clientIp
-          });
-          image.save().then(function() {
-            log.info('Image Created', { imageId: image ? image.id : -1, context: 'create', userId: req.user ? req.user.id : -1 });
-            res.send(image);
-          }).catch(function(error) {
-            sendError(res, req.file.originalname, 'create', res.user, error);
-          });
-        }
-      });
-    }
-  });
-});
-
-router.post('/oldMethod', isAuthenticated, function(req, res) {
-  multerMultipartResolver(req, res, function (error) {
-    if (error) {
-      sendError(res, null, 'multerMultipartResolver', res.user, error);
-    } else {
-      var s3UploadClient = models.Image.getUploadClient(req.query.itemType);
-      s3UploadClient.upload(req.file.path, {}, function(error, versions, meta) {
-        if (error) {
-          sendError(res, null, 's3UploadClient', res.user, error);
-        } else {
-          var image = models.Image.build({
-            user_id: req.user.id,
-            s3_bucket_name: process.env.S3_BUCKET,
-            original_filename: req.file.originalname,
-            formats: JSON.stringify(models.Image.createFormatsFromVersions(versions)),
-            user_agent: req.useragent.source,
-            ip_address: req.clientIp
-          });
-          image.save().then(function() {
-            log.info('Image Created', { imageId: image ? image.id : -1, context: 'create', userId: req.user ? req.user.id : -1 });
-            res.send(image);
-          }).catch(function(error) {
-            sendError(res, req.file.originalname, 'create', res.user, error);
-          });
-        }
-      });
-    }
-  });
-});
-
 // Post User Images
 router.get('/:postId/user_images', auth.can('view post'), function(req, res) {
   models.Post.findOne({
