@@ -836,7 +836,7 @@ module.exports = (sequelize, DataTypes) => {
   // Using Your Priorities Encoder
 
   Video.startYrpriEncoderTranscodingJob = (video, callback) => {
-    if (video & video.meta) {
+    if (video && video.meta) {
       const fileKey = video.meta.fileKey;
       let jobPackage = {
         portrait:
