@@ -133,7 +133,7 @@ const copyPost = (fromPostId, toGroupId, options, done) => {
           newPost = models.Post.build(postJson);
           newPost.set('group_id', toGroup.id);
 
-          if (!options.copyPoints) {
+          if (options && !options.copyPoints) {
             newPost.set('counter_points', 0);
           }
 
@@ -1046,7 +1046,7 @@ const copyCommunity = (fromCommunityId, toDomainId, options, linkFromOptions, do
 
                   if (options.copyOneGroupId) {
                     whereOptions = {...whereOptions,
-                      id: options.copyOneGroupId ? options.copyOneGroupId : undefined,
+                      id: options.copyOneGroupId,
                     }
                   }
                   models.Group.findAll({

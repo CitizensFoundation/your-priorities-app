@@ -495,12 +495,12 @@ export class AcNotificationList extends YpBaseElementWithLogin {
 
     if (this.lastFetchStartedAt) {
       const duration = Date.now() - this.lastFetchStartedAt;
-      if (duration > 1000) {
+      if (duration > 10000) {
+        console.warn('Setting notificationGetTTL = 60000 * 5');
+        this.notificationGetTTL = 60000 * 5;
+      } else if (duration > 1000) {
         console.warn('Setting notificationGetTTL = 60000');
         this.notificationGetTTL = 60000;
-      } else if (duration > 10000) {
-        console.warn('Setting notificationGetTTL = 60000*5');
-        this.notificationGetTTL = 60000 * 5;
       }
     }
   }

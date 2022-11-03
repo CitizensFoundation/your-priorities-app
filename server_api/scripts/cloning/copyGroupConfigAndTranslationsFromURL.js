@@ -39,9 +39,11 @@ async.series([
     request.get(options, (error, content) => {
       if (content && content.statusCode!=200) {
         seriesCallback(content.statusCode);
-      } else {
+      } else if (content) {
         config = content.body;
         seriesCallback();
+      } else {
+        seriesCallback("No content");
       }
     });
   },

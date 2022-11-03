@@ -177,11 +177,13 @@ async.series([
     request.get(options, (error, content) => {
       if (content && content.statusCode!=200) {
         seriesCallback(content.statusCode);
-      } else {
+      } else if (content) {
         config = content.body;
         parsedConfig = CSVToArray(config);
         console.log("Got content");
         seriesCallback();
+      } else {
+        seriesCallback("No content");
       }
     });
   },

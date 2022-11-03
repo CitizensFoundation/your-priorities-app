@@ -527,52 +527,46 @@ async function exportGroupToDocx(group, hostName, targetLanguage, callback) {
     if (error) {
       callback(error);
     } else {
-      if (error) {
-        callback(error);
-      } else {
-        var outFileContent = "";
-        const posts = [];
+      const posts = [];
 
-        async.each(postsIn, async (post) => {
-          if (!post.deleted) {
-            const postRatings = (post.public_data && post.public_data.ratings) ? post.public_data.ratings : null;
+      async.each(postsIn, async (post) => {
+        if (!post.deleted) {
+          const postRatings = (post.public_data && post.public_data.ratings) ? post.public_data.ratings : null;
 
-            posts.push({
-              id: post.id,
-              name: clean(post.name),
-              translatedName: targetLanguage ? await getTranslation(post,'postName', targetLanguage) : null,
-              translatedDescription: targetLanguage ? await getTranslation(post,'postContent', targetLanguage) : null,
-              realPost: post,
-              url: getPostUrl(post, hostName),
-              category: getCategory(post),
-              userEmail: getUserEmail(post),
-              userName: post.User.name,
-              location: getLocation(post),
-              endorsementsUp: post.counter_endorsements_up,
-              endorsementsDown: post.counter_endorsements_down,
-              counterPoints: post.counter_points,
-              pointsUp: getPointsUp(post),
-              Points: post.Points,
-              translatedPoints: targetLanguage ? await getTranslatedPoints(post.Points, targetLanguage) : null,
-              images: getImages(post),
-              pointsDown: getPointsDown(post),
-              contactData: getContactData(post),
-              attachmentData: getAttachmentData(post),
-              mediaURLs: getMediaURLs(post),
-              mediaTranscripts: getMediaTranscripts(post),
-              postRatings: getPostRatings(customRatings, postRatings)
-            });
-          }
+          posts.push({
+            id: post.id,
+            name: clean(post.name),
+            translatedName: targetLanguage ? await getTranslation(post,'postName', targetLanguage) : null,
+            translatedDescription: targetLanguage ? await getTranslation(post,'postContent', targetLanguage) : null,
+            realPost: post,
+            url: getPostUrl(post, hostName),
+            category: getCategory(post),
+            userEmail: getUserEmail(post),
+            userName: post.User.name,
+            location: getLocation(post),
+            endorsementsUp: post.counter_endorsements_up,
+            endorsementsDown: post.counter_endorsements_down,
+            counterPoints: post.counter_points,
+            pointsUp: getPointsUp(post),
+            Points: post.Points,
+            translatedPoints: targetLanguage ? await getTranslatedPoints(post.Points, targetLanguage) : null,
+            images: getImages(post),
+            pointsDown: getPointsDown(post),
+            contactData: getContactData(post),
+            attachmentData: getAttachmentData(post),
+            mediaURLs: getMediaURLs(post),
+            mediaTranscripts: getMediaTranscripts(post),
+            postRatings: getPostRatings(customRatings, postRatings)
+          });
+        }
 //          seriesCallback();
-        }, function (error) {
-          if(error) {
-            callback(error)
-          } else {
-            exportToDocx(group, posts, customRatings, categories, callback);
-          }
-        });
-      }
-
+      }, function (error) {
+        if(error) {
+          callback(error)
+        } else {
+          exportToDocx(group, posts, customRatings, categories, callback);
+        }
+      });
     }
   });
 };
