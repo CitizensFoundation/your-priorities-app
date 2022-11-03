@@ -1,4 +1,7 @@
 {
+  "areYouSureCloneCommunity": "Ertu viss um að þú viljir klóna þetta svæði?",
+  "cloneCommunity": "Klóna svæði",
+  "moveGroupTo": "Færa hóp í",
   "cloneGroupFolder": "Klóna hópa möppu",
   "hideDomainTabs": "Fela stiku",
   "groupFolder": "Hópa mappa",
