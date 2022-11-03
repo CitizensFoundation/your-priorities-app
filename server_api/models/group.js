@@ -291,7 +291,7 @@ module.exports = (sequelize, DataTypes) => {
   Group.addUserToGroupIfNeeded = (groupId, req, done) => {
     sequelize.models.Group.findOne({
       where: { id: groupId },
-      attributes: ['id','community_id','counter_users','name']
+      attributes: ['id','community_id','counter_users','name','in_group_folder_id'],
     }).then((group) => {
       if (group && group.name!=='hidden_public_group_for_domain_level_points') {
         group.hasGroupUser(req.user).then((result) => {
@@ -337,6 +337,12 @@ module.exports = (sequelize, DataTypes) => {
                 });
               }
             ], (err) => {
+              if (group && group.in_group_folder_id) {
+                queue.add('delayed-job', {
+                  type: 'recount-group-folder',
+                  groupId: groupId
+                }, 'low');
+              }
               done(err);
             });
           } else {
