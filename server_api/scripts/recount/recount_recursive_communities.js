@@ -26,7 +26,10 @@ const countCommunities = async (communityId, options) => {
       include: [
         {
           model: models.Group,
-          attributes: ['id','name','community_id','configuration','counter_posts','counter_points'],
+          attributes: ['id','name','community_id','configuration','counter_posts','counter_points','is_group_folder'],
+          where: {
+            is_group_folder: false
+          },
           include: [
             {
               model: models.User,

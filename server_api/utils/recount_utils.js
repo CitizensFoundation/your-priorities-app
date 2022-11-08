@@ -360,7 +360,10 @@ const recountCommunity = (communityId, callback) => {
     include: [
       {
         model: models.Group,
-        attributes: ['id','counter_points','counter_users','counter_posts']
+        attributes: ['id','counter_points','counter_users','counter_posts'],
+        where: {
+          is_group_folder: false
+        }
       }
     ]
   }).then(community=>{
