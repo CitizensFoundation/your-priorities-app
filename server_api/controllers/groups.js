@@ -1664,7 +1664,7 @@ router.get('/:id', auth.can('view group'), function(req, res) {
       include: [
         {
           model: models.Community,
-          attributes: ['id','theme_id','name','access','google_analytics_code','configuration','language'],
+          attributes: ['id','theme_id','name','access','google_analytics_code','configuration','language','only_admins_can_create_groups'],
           include: [
             {
               model: models.Domain,
@@ -1888,7 +1888,7 @@ var getPostsWithAllFromIds = function (postsWithIds, postOrder, done) {
               },
               {
                 model: models.Community,
-                attributes: ['id','name','theme_id','access','google_analytics_code','configuration'],
+                attributes: ['id','name','theme_id','access','google_analytics_code','configuration','only_admins_can_create_groups'],
                 required: true
               }
             ]
@@ -2595,7 +2595,7 @@ router.get('/:groupId/survey', auth.can('view group'), (req, res) => {
     include: [
       {
         model: models.Community,
-        attributes: ['id','theme_id','name','access','google_analytics_code','configuration'],
+        attributes: ['id','theme_id','name','access','google_analytics_code','configuration','only_admins_can_create_groups'],
         include: [
           {
             model: models.Domain,

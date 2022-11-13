@@ -237,7 +237,7 @@ router.get('/:id', auth.can('view post'), function(req, res) {
                 },
                 {
                   model: models.Community,
-                  attributes: ['id','name','theme_id','google_analytics_code','configuration'],
+                  attributes: ['id','name','theme_id','google_analytics_code','configuration','only_admins_can_create_groups'],
                   required: true
                 }
               ]

@@ -137,7 +137,7 @@ module.exports = (sequelize, DataTypes) => {
       {
         model: models.Community,
         required: false,
-        attributes: ['id','theme_id','name','access','google_analytics_code','configuration'],
+        attributes: ['id','theme_id','name','access','google_analytics_code','configuration','only_admins_can_create_groups'],
         include: [
           {
             model: models.Domain,
