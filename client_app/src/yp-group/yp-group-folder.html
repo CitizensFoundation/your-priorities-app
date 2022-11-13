@@ -282,7 +282,6 @@
 
       _computeShowAddButton: function (group) {
         if (group) {
-          debugger;
           return (
             !group.Community.only_admins_can_create_groups ||
             this.checkCommunityAccess(group.Community)
