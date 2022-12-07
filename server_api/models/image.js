@@ -80,7 +80,16 @@ module.exports = (sequelize, DataTypes) => {
       }
     })
 
-    return formats.reverse();
+    formats.sort((a, b) => {
+      const aSplit = a.split('.png');
+      const bSplit = b.split('.png');
+      const aLast = aSplit[0].split('-').pop();
+      const bLast = bSplit[0].split('-').pop();
+      return aLast - bLast;
+    });
+
+
+    return formats;
   }
 
   Image.createFormatsFromVersions = (versions) => {
@@ -106,6 +115,7 @@ module.exports = (sequelize, DataTypes) => {
       }
       formats.push(newUrl);
     });
+
     return formats;
   };
 
@@ -116,13 +126,13 @@ module.exports = (sequelize, DataTypes) => {
         {
           height: 200,
           width: 200,
-          suffix: '-small',
+          suffix: '-small-1',
           directory: 'up'
         },
         {
           height: 50,
           width: 50,
-          suffix: '-tiny',
+          suffix: '-tiny-2',
           directory: 'up'
         }
       ]
@@ -131,13 +141,13 @@ module.exports = (sequelize, DataTypes) => {
         {
           width: 864,
           height: 486,
-          suffix: '-retina',
+          suffix: '-retina-1',
           directory: 'dl'
         },
         {
           width: 432,
           height: 243,
-          suffix: '-medium',
+          suffix: '-medium-2',
           directory: 'dl'
         }
       ]
@@ -146,13 +156,13 @@ module.exports = (sequelize, DataTypes) => {
         {
           width: 864,
           height: 486,
-          suffix: '-retina',
+          suffix: '-retina-1',
           directory: 'cl'
         },
         {
           width: 432,
           height: 243,
-          suffix: '-medium',
+          suffix: '-medium-2',
           directory: 'cl'
         }
       ]
@@ -161,55 +171,55 @@ module.exports = (sequelize, DataTypes) => {
         {
           width: 512,
           height: 512,
-          suffix: '-512',
+          suffix: '-512-1',
           directory: 'ai'
         },
         {
           width: 384,
           height: 384,
-          suffix: '-384',
+          suffix: '-384-2',
           directory: 'ai'
         },
         {
           width: 256,
           height: 256,
-          suffix: '-256',
+          suffix: '-256-3',
           directory: 'ai'
         },
         {
           width: 192,
           height: 192,
-          suffix: '-192',
+          suffix: '-192-4',
           directory: 'ai'
         },
         {
           width: 180,
           height: 180,
-          suffix: '-180',
+          suffix: '-180-5',
           directory: 'ai'
         },
         {
           width: 152,
           height: 152,
-          suffix: '-152',
+          suffix: '-152-6',
           directory: 'ai'
         },
         {
           width: 144,
           height: 144,
-          suffix: '-144',
+          suffix: '-144-7',
           directory: 'ai'
         },
         {
           width: 96,
           height: 96,
-          suffix: '-96',
+          suffix: '-96-8',
           directory: 'ai'
         },
         {
           width: 48,
           height: 48,
-          suffix: '-48',
+          suffix: '-48-9',
           directory: 'ai'
         }
       ]
@@ -218,19 +228,19 @@ module.exports = (sequelize, DataTypes) => {
         {
           width: 1000,
           height: 1000,
-          suffix: '-large',
+          suffix: '-large-1',
           directory: 'ol'
         },
         {
           width: 200,
           height: 200,
-          suffix: '-medium',
+          suffix: '-medium-2',
           directory: 'ol'
         },
         {
           width: 50,
           height: 50,
-          suffix: '-small',
+          suffix: '-small-3',
           directory: 'ol'
         }
       ]
@@ -239,13 +249,13 @@ module.exports = (sequelize, DataTypes) => {
         {
           width: 864,
           height: 486,
-          suffix: '-retina',
+          suffix: '-retina-1',
           directory: 'gl'
         },
         {
           width: 432,
           height: 243,
-          suffix: '-medium',
+          suffix: '-medium-2',
           directory: 'gl'
         }
       ]
@@ -254,13 +264,13 @@ module.exports = (sequelize, DataTypes) => {
         {
           width: 864,
           height: 486,
-          suffix: '-retina',
+          suffix: '-retina-1',
           directory: 'ph'
         },
         {
           width: 432,
           height: 243,
-          suffix: '-medium',
+          suffix: '-medium-2',
           directory: 'ph'
         }
       ]
@@ -269,14 +279,14 @@ module.exports = (sequelize, DataTypes) => {
         {
           width: 864,
           height: 486,
-          suffix: '-retina',
+          suffix: '-retina-3',
           directory: 'ci'
         },
         {
           width: 432,
           height: 243,
           format: 'png',
-          suffix: '-medium',
+          suffix: '-medium-4',
           directory: 'ci'
         }
       ]
@@ -284,7 +294,7 @@ module.exports = (sequelize, DataTypes) => {
       versions = [
         {
           height: 300,
-          suffix: '-large',
+          suffix: '-large-1',
           directory: 'he'
         }
       ]
@@ -293,21 +303,21 @@ module.exports = (sequelize, DataTypes) => {
         {
           height: 2048,
           width: 1536,
-          suffix: '-desktop-retina',
+          suffix: '-desktop-retina-1',
           directory: 'pu'
         },
         {
           height: 720,
           width: 540,
           format: 'png',
-          suffix: '-mobile-retina',
+          suffix: '-mobile-retina-2',
           directory: 'pu'
         },
         {
           height: 120,
           width: 90,
           format: 'png',
-          suffix: '-thumb',
+          suffix: '-thumb-3',
           directory: 'pu'
         }
       ]
@@ -316,18 +326,18 @@ module.exports = (sequelize, DataTypes) => {
         {
           width: 945,
           format: 'jpg',
-          suffix: '-16_9',
+          suffix: '-16_9-1',
           directory: 'df'
         },
         {
           height: 512,
           width: 512,
-          suffix: '-box',
+          suffix: '-box-2',
           directory: 'df'
         },
         {
           width: 945,
-          suffix: '-header',
+          suffix: '-header-3',
           directory: 'df'
         }
       ]
