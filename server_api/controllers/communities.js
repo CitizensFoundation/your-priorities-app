@@ -410,7 +410,7 @@ const getCommunity = function(req, done) {
       });
     },
     function (seriesCallback) {
-      const redisKey = "cache:community_groups:"+community.id+":"+models.Group.ACCESS_SECRET;
+      const redisKey = "cache:community_groups:"+community.id+`:${req.user ? req.user.id : 0}`;
       req.redisClient.get(redisKey, (error, groups) => {
         if (error) {
           seriesCallback(error);
@@ -442,9 +442,11 @@ const getCommunity = function(req, done) {
             ],
             include: models.Group.masterGroupIncludes(models)
           }).then(function (groups) {
-            community.dataValues.Groups = groups;
-            req.redisClient.setex(redisKey, process.env.GROUPS_CACHE_TTL ? parseInt(process.env.GROUPS_CACHE_TTL) : 3, JSON.stringify(groups));
-            seriesCallback();
+            models.Group.addVideosAndCommunityLinksToGroups(groups, videoError => {
+              community.dataValues.Groups = groups;
+              req.redisClient.setex(redisKey, process.env.GROUPS_CACHE_TTL ? parseInt(process.env.GROUPS_CACHE_TTL) : 3, JSON.stringify(groups));
+              seriesCallback(videoError);
+            })
           }).catch(error => {
             seriesCallback(error);
           });
