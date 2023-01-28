@@ -313,7 +313,7 @@
               <span>[[t('post.tabs.debate')]] (<span id="tabCountDebate"></span>)</span>
             </div>
           </paper-tab>
-          <paper-tab name="news">[[t('post.tabs.news')]]</paper-tab>
+          <paper-tab name="news" hidden$="[[post.Group.configuration.hideNewsfeeds]]">[[t('post.tabs.news')]]</paper-tab>
           <paper-tab name="location" hidden$="[[locationHidden]]">[[t('post.tabs.location')]]</paper-tab>
           <paper-tab name="photos">
             <div class="layout vertical center-center tabCounterContainer">
@@ -329,7 +329,7 @@
         </div>
         <section name="news" class="minHeightSection">
           <template is="dom-if" if="[[newsTabSelected]]">
-            <ac-activities id="postNews" selected-tab="[[selectedTab]]" disable-new-posts="[[disableNewPosts]]" post-group-id="[[post.group_id]]" post-id="[[post.id]]"></ac-activities>
+            <ac-activities hidden$="[[post.Group.configuration.hideNewsfeeds]]" id="postNews" selected-tab="[[selectedTab]]" disable-new-posts="[[disableNewPosts]]" post-group-id="[[post.group_id]]" post-id="[[post.id]]"></ac-activities>
           </template>
         </section>
         <section name="location" class="minHeightSection">

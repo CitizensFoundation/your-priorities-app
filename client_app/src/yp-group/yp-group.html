@@ -249,7 +249,7 @@
               </div>
             </paper-tab>
           </template>
-          <paper-tab name="news">[[t('news')]]</paper-tab>
+          <paper-tab name="news" hidden$="[[group.configuration.hideNewsfeeds]]">[[t('news')]]</paper-tab>
           <paper-tab name="map" hidden$="[[locationHidden]]">[[t('posts.map')]]</paper-tab>
         </paper-tabs>
       </div>

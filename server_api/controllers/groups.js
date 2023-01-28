@@ -253,6 +253,7 @@ var updateGroupConfigParameters = function (req, group) {
   group.set('configuration.usePostTagsForPostCards', truthValueFromBody(req.body.usePostTagsForPostCards));
   group.set('configuration.usePostTags', truthValueFromBody(req.body.usePostTags));
   group.set('configuration.closeNewsfeedSubmissions', truthValueFromBody(req.body.closeNewsfeedSubmissions));
+  group.set('configuration.hideNewsfeeds', truthValueFromBody(req.body.hideNewsfeeds));
 
   group.set('configuration.askUserIfNameShouldBeDisplayed', truthValueFromBody(req.body.askUserIfNameShouldBeDisplayed));
 
