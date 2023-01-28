@@ -47,7 +47,7 @@ const countCommunities = async (communityId, options) => {
         for (let i=0;i<community.Groups.length;i++) {
           const group = community.Groups[i];
           if (group.configuration.actAsLinkToCommunityId) {
-            if (processedCommunityIds.indexOf(group.configuration.actAsLinkToCommunityId)>-1) {
+            if (false && processedCommunityIds.indexOf(group.configuration.actAsLinkToCommunityId)>-1) {
               console.warn(`DUPLICATE LINK Group Id ${group.id} in Community Id ${group.community_id} to Community Id ${group.configuration.actAsLinkToCommunityId}`)
             } else {
               processedCommunityIds.push(group.configuration.actAsLinkToCommunityId);
