@@ -20,10 +20,10 @@ const wildCardDomainNames = [
   "localhost:4242",
 ];
 
-var generateSitemap = function (req, res) {
+var generateSitemap = async function (req, res) {
   const domainId = req.ypDomain.id;
   const domainName = req.ypDomain.domain_name;
-  const community =
+  let community =
     req.ypCommunity && req.ypCommunity.id ? req.ypCommunity : null;
 
   let siteHostname = community
@@ -34,7 +34,7 @@ var generateSitemap = function (req, res) {
     siteHostname = "https://engage.parliament.scot";
   }
 
-  const redisKey = "cache:sitemap:v1:" + req.ypDomain.id;
+  const redisKey = `cache:sitemap:v3:${siteHostname}-${domainId}`;
 
   req.redisClient.get(redisKey, (error, content) => {
     if (!error && content) {
@@ -47,7 +47,7 @@ var generateSitemap = function (req, res) {
         cacheTime: 1,
       });
 
-      const links = [];
+      let links = [];
 
       console.log(
         `generateSitemap ${domainName} ${
@@ -253,6 +253,12 @@ var generateSitemap = function (req, res) {
             res.status(500).end();
           } else {
             try {
+              // Remove all spaces from the links url parameters
+              links = _.map(links, (link) => {
+                link.url = link.url.replace(/\s/g, "");
+                return link;
+              });
+
               streamToPromise(Readable.from(links).pipe(sitemapStream)).then(
                 (xml) => {
                   xml = xml.toString();
