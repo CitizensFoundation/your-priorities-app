@@ -54,6 +54,7 @@
       { htmlImport: "/styles/fonts/tnlc-font.html", fontName: 'Trebuchet MS' },
       { htmlImport: "/styles/fonts/tnlc-font.html", fontName: 'Trebuchet MS' },
       { htmlImport: "/styles/fonts/rvk-font.html", fontName: 'Esja' },
+      { htmlImport: "/styles/fonts/carbon-font.html", fontName: 'Courier New' },
     ],
 
     themes: [
@@ -857,7 +858,36 @@
         '--paper-button': "{ font-family: Esja, Courier, Georgia, Times, serif; }",
         '--paper-tabs': "{ font-family: Esja, Courier, Georgia, Times, serif; }",
       },
-    ],
+      {
+        name: 'Carbon - Font',
+        '--primary-background-color': '#fafafa',
+        '--primary-color': '#2c353d',
+        '--primary-color-100': '#2c353d',
+        '--primary-color-200': '#2c353d',
+        '--primary-color-300': '#2c353d',
+        '--primary-color-400': '#2c353d',
+        '--primary-color-600': '#2c353d',
+        '--primary-color-700': '#2c353d',
+        '--primary-color-800': '#2c353d',
+        '--primary-color-900': '#2c353d',
+        '--accent-color': '#327981',
+        '--accent-color-100': '#327981',
+        '--accent-color-200':  '#327981',
+        '--accent-color-300':  '#327981',
+        '--accent-color-400':  '#327981',
+        '--middle-color':  '#2c353d',
+        '--icon-general-color': '#fff',
+        '--paper-font-common-base': "{ font-family: Courier New,Courier,Lucida Sans Typewriter,Lucida Typewriter,monospace; }",
+        '--paper-font-subhead_-_font-family': "{ font-family: Courier New,Courier,Lucida Sans Typewriter,Lucida Typewriter,monospace; }",
+        '--app-header-font-family': 'Courier New',
+        '--app-normal-font-family': 'Courier New',
+        '--paper-input-container-input': "{ font-family: Courier New,Courier,Lucida Sans Typewriter,Lucida Typewriter,monospace; }",
+        '--paper-input-container-label': "{ font-family: Courier New,Courier,Lucida Sans Typewriter,Lucida Typewriter,monospace; }",
+        '--iron-autogrow-textarea':  "{ font-family: Courier New,Courier,Lucida Sans Typewriter,Lucida Typewriter,monospace; }",
+        '--paper-button': "{ font-family: Courier New,Courier,Lucida Sans Typewriter,Lucida Typewriter,monospace; }",
+        '--paper-tabs': "{ font-family:  Courier New,Courier,Lucida Sans Typewriter,Lucida Typewriter,monospace; }",
+      }
+      ],
 
     _setupOverrideTheme: function (primary, accent, background) {
       if (!background) {
@@ -980,6 +1010,7 @@
           this.themes[number].originalName==="TNLC" ||
           this.themes[number].originalName==="TNLC - Extra" ||
           this.themes[number].originalName==="TNLC - Headers" ||
+          this.themes[number].originalName==="Carbon - Font" ||
           this.themes[number].originalName==="Frumbjörg")) {
         window.appGlobals.largeFont = true;
       } else if (this.themes[number]) {
