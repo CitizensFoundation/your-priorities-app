@@ -102,7 +102,7 @@
       },
 
       _showUser: function (post) {
-        return (post && (post.Group.configuration.showWhoPostedPosts || (post.public_data && post.public_data.displayUserNameWithIdea)))
+        return (post && post.Group.configuration && (post.Group.configuration.showWhoPostedPosts || (post.public_data && post.public_data.displayUserNameWithIdea)))
       },
 
       _newPost: function () {

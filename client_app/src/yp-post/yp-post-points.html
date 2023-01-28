@@ -7,6 +7,7 @@
 <link rel="import" href="../../bower_components/paper-radio-button/paper-radio-button.html">
 <link rel="import" href="../../bower_components/paper-radio-group/paper-radio-group.html">
 <link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
+<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html">
 
 <link rel="import" href="../yp-app-globals/paper-textarea-aria.html">
 <link rel="import" href="../yp-app-globals/yp-app-icons.html">
@@ -144,7 +145,17 @@
         background-color: var(--accent-color);
       }
 
+      paper-spinner {
+        margin-top: 7px;
+        margin-bottom: 6px;
+      }
+
       @media (max-width: 985px) {
+        paper-spinner {
+          margin-top: 4px;
+          margin-bottom: 4px;
+        }
+
         .pointInputMaterial {
           width: 100%;
           max-width: 568px;
@@ -287,6 +298,8 @@
           padding-right: 6px;
         }
       }
+
+
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
     <lite-signal on-lite-signal-yp-update-points-for-post="_loadNewPointsIfNeeded"></lite-signal>
@@ -386,8 +399,9 @@
 
               <div hidden="[[!ifLengthUpIsRight]]">
                 <div class="addPointFab layout horizontal center-center">
-                  <paper-button raised class="submitButton" disabled$="[[addPointDisabled]]" icon="add" mini="" elevation="3" on-tap="addPointUp"
+                  <paper-button raised class="submitButton" hidden$="[[addPointDisabled]]" icon="add" mini="" elevation="3" on-tap="addPointUp"
                                 title="[[t('postPoint')]]">[[t('postPoint')]]</paper-button>
+                  <paper-spinner hidden$="[[!addPointDisabled]]" active></paper-spinner>
                 </div>
               </div>
             </paper-material>
@@ -499,8 +513,9 @@
 
               <div hidden="[[!ifLengthDownIsRight]]">
                 <div class="addPointFab layout horizontal center-center">
-                  <paper-button raised disabled$="[[addPointDisabled]]" icon="add" elevation="3" on-tap="addPointDown"
+                  <paper-button raised hidden$="[[addPointDisabled]]" icon="add" elevation="3" on-tap="addPointDown"
                                 title="[[t('postPoint')]]">[[t('postPoint')]]</paper-button>
+                  <paper-spinner hidden$="[[!addPointDisabled]]" active></paper-spinner>
                 </div>
               </div>
             </paper-material>
@@ -597,11 +612,12 @@
           </div>
           <div hidden="[[!ifLengthMobileRight]]">
             <div class="addPointFab layout horizontal center-center mobileFab">
-              <paper-button raised disabled$="[[addPointDisabled]]" icon="add" elevation="3" on-tap="addMobilePointUpOrDown"
+              <paper-button raised hidden$="[[addPointDisabled]]" icon="add" elevation="3" on-tap="addMobilePointUpOrDown"
                             title="[[t('postPoint')]]">
                 <span hidden$="[[!selectedPointForMobile]]">[[t('postPointFor')]]</span>
                 <span hidden$="[[selectedPointForMobile]]">[[t('postPointAgainst')]]</span>
               </paper-button>
+              <paper-spinner hidden$="[[!addPointDisabled]]" active></paper-spinner>
             </div>
           </div>
         </paper-material>
