@@ -167,7 +167,7 @@ app.use(cors());
 app.use(morgan('combined'));
 app.use(useragent.express());
 app.use(requestIp.mw());
-app.use(bodyParser.json({limit: '10mb'}));
+app.use(bodyParser.json({limit: '10mb', strict: false}));
 app.use(bodyParser.urlencoded({limit: '10mb', extended: true}));
 
 var sessionConfig = {
