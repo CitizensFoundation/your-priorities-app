@@ -175,7 +175,7 @@ router.post('/', isAuthenticated, async function (req, res) {
 
     upload.single("file")(req, res, async function (error) {
       if (error) {
-        sendError(res, req.file.originalname, 'create', res.user, error);
+        sendError(res, req.file ? req.file.originalname : 'unknown filename', 'create', res.user, error);
       } else {
         const formats = JSON.stringify(models.Image.createFormatsFromSharpFile(req.file));
         const image = models.Image.build({
