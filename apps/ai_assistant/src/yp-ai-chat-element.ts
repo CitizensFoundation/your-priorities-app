@@ -3,6 +3,7 @@ import { property, customElement } from 'lit/decorators.js';
 
 import { Layouts } from './flexbox-literals/classes';
 import { YpBaseElement } from './yp-base-element';
+import { resolveMarkdown } from './litMarkdown.js';
 
 import './yp-image.js';
 
@@ -112,7 +113,7 @@ export class YpAiChatElement extends YpBaseElement {
     return html`
       <div class="userChatDialog layout horizontal bot-message">
         <div class="layout vertical chatImage">${this.renderCGImage()}</div>
-        <div class="layout vertical chatText">${this.message}</div>
+        <div class="layout vertical chatText">${resolveMarkdown(this.message, { includeImages: true, includeCodeBlockClassNames: true })}</div>
       </div>
     `;
   }

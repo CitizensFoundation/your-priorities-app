@@ -31,8 +31,10 @@
     "@types/i18next": "^13.0.0",
     "@types/insert-text-at-cursor": "^0.3.0",
     "@types/lodash-es": "^4.17.6",
+    "@types/marked": "^4.0.8",
     "@types/mocha": "^10.0.1",
     "@types/node": "18.14.5",
+    "@types/sanitize-html": "^2.8.1",
     "@types/webappsec-credential-management": "^0.6.2",
     "@typescript-eslint/eslint-plugin": "^5.34.0",
     "@typescript-eslint/parser": "^5.34.0",
@@ -148,8 +150,10 @@
     "lit": "^2.3.1",
     "lit-flexbox-literals": "0.0.7",
     "lodash-es": "^4.17.21",
+    "marked": "^4.2.12",
     "pwa-helpers": "^0.9.1",
     "rollup-plugin-copy": "^3.4.0",
+    "sanitize-html": "^2.10.0",
     "vanilla-colorful": "^0.7.1"
   }
 }

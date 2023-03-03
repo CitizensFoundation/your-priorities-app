@@ -208,15 +208,13 @@ export class YpChatAssistant extends YpBaseElement {
           border: none;
           padding: 10px;
           margin: 16px;
-          margin-bottom: 0;
+          margin-bottom: 16px;
         }
 
         md-tonal-button {
           padding: 16px;
           padding-left: 0;
           margin-top: 0;
-          max-width: 100px;
-          padding-top: 4px;
         }
       `,
     ];
@@ -225,7 +223,7 @@ export class YpChatAssistant extends YpBaseElement {
   renderChatInput() {
     return html`
       <div class="layout horizontal">
-        <div class="layout vertical center-center">
+        <div class="layout horizontal center-center">
           <md-outlined-text-field
             class="formField"
             id="chatInput"
