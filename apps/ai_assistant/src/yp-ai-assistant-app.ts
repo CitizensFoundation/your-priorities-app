@@ -237,8 +237,6 @@ export class YpAiAssistantApp extends YpBaseElement {
 
         .mainPageContainer {
           margin-top: 16px;
-          max-width: 1100px;
-          width: 1100px;
         }
 
         yp-promotion-dashboard {

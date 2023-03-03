@@ -36,7 +36,7 @@ export class YpChatAssistant extends YpBaseElement {
   infoMessage!: string;
 
   @property({ type: String })
-  defaultInfoMessage: string = 'Welcome to the YP AI Chat!';
+  defaultInfoMessage: string = 'Welcome to the YP AI Chat - Ask anything!';
 
   @property({ type: Object })
   wsEndpoint = 'ws://localhost:9000/chat';
@@ -81,18 +81,18 @@ export class YpChatAssistant extends YpBaseElement {
     data: YpAiChatWsMessage,
     message: string,
     changeButtonDisabledState: boolean | undefined = undefined,
-    changeButtonLabelTo: string | undefined = undefined,
+    changeButtonLabelTo: string | undefined = undefined
   ) {
     this.infoMessage = message;
     this.chatLog = [...this.chatLog, data];
 
     this.requestUpdate();
 
-    if (changeButtonDisabledState!==undefined) {
+    if (changeButtonDisabledState !== undefined) {
       this.sendButton.disabled = changeButtonDisabledState;
     }
 
-    if (changeButtonLabelTo!==undefined) {
+    if (changeButtonLabelTo !== undefined) {
       this.sendButton.label = changeButtonLabelTo;
     }
   }
@@ -100,26 +100,31 @@ export class YpChatAssistant extends YpBaseElement {
   addChatBotElement(data: YpAiChatWsMessage) {
     switch (data.type) {
       case 'start':
-        this.addToChatLogWithMessage(data, this.t('computingAnswer'));
+        this.addToChatLogWithMessage(data, this.t('Thinking...'));
         break;
       case 'info':
-        this.addToChatLogWithMessage(data, data.message);
+        this.infoMessage = data.message;
         break;
       case 'error':
-        this.addToChatLogWithMessage(data, data.message, false, this.t('send'));
+        this.addToChatLogWithMessage(data, data.message, false, this.t('Send'));
         break;
       case 'end':
         this.sendButton.disabled = false;
-        this.sendButton.label = this.t('send');
+        this.sendButton.label = this.t('Send');
+        this.infoMessage = this.defaultInfoMessage;
         break;
       case 'stream':
         //@ts-ignore
         this.infoMessage = this.t('typing');
-        this.chatLog[this.chatLog.length - 1].message = this.chatLog[this.chatLog.length - 1].message + data.message;
+        this.chatLog[this.chatLog.length - 1].message =
+          this.chatLog[this.chatLog.length - 1].message + data.message;
         //console.error(this.chatLog[this.chatLog.length - 1].message)
         this.requestUpdate();
         break;
     }
+
+    this.$$('#chat-messages').scrollTop =
+      this.$$('#chat-messages').scrollHeight;
   }
 
   addChatUserElement(data: YpAiChatWsMessage) {
@@ -134,14 +139,14 @@ export class YpChatAssistant extends YpBaseElement {
     this.ws.send(message);
     this.chatInputField.value = '';
     this.sendButton.disabled = false;
-    this.sendButton.label = this.t('loading');
+    this.sendButton.label = this.t('Thinking...');
   }
 
   static get styles() {
     return [
       Layouts,
       css`
-        mwc-textarea {
+        md-textfield {
           width: 600px;
           --mdc-theme-primary: var(--md-sys-color-primary);
           --mdc-text-field-ink-color: var(--md-sys-color-on-surface);
@@ -160,23 +165,58 @@ export class YpChatAssistant extends YpBaseElement {
           width: 350px;
         }
 
-        mwc-textarea.rounded {
-          --mdc-shape-small: 4px;
+        .infoMessage {
+          margin-bottom: 16px;
         }
 
-        .outerInput {
-          position: relative;
-        }
-
-        .innerInput {
-          position: absolute;
-          bottom: 0;
-          left: 0;
-        }
-
-        ul {
+        .chat-window {
+          display: flex;
+          flex-direction: column;
           height: 100vh;
-          list-style-type: none;
+          width: 100%;
+          max-width: 800px;
+          margin: 0 auto;
+          border-radius: 10px;
+          overflow: hidden;
+        }
+
+        .chat-messages {
+          flex: 1;
+          padding: 20px;
+          overflow-y: scroll;
+        }
+
+        .chat-messages ul {
+          list-style: none;
+          margin: 0;
+          padding: 0;
+          width: 100%;
+        }
+
+        .chat-input {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 10px;
+          background-color: white;
+          border-top: 1px solid #ccc;
+        }
+
+        md-outlined-text-field {
+          flex: 1;
+          border-radius: 10px;
+          border: none;
+          padding: 10px;
+          margin: 16px;
+          margin-bottom: 0;
+        }
+
+        md-tonal-button {
+          padding: 16px;
+          padding-left: 0;
+          margin-top: 0;
+          max-width: 100px;
+          padding-top: 4px;
         }
       `,
     ];
@@ -184,17 +224,22 @@ export class YpChatAssistant extends YpBaseElement {
 
   renderChatInput() {
     return html`
-      <div class="layout horizontal outerIsnput">
-        <div class="layout vertical innerInput">
+      <div class="layout horizontal">
+        <div class="layout vertical center-center">
           <md-outlined-text-field
             class="formField"
             id="chatInput"
-            label="${this.t('chatInput')}"
+            @keyup="${(e: KeyboardEvent) => {
+              if (e.key === 'Enter') {
+                this.sendChatMessage();
+              }
+            }}"
+            label="${this.t('Ask about My Neighborhood 2022')}"
           ></md-outlined-text-field>
           <md-tonal-button
             class="button okButton"
             id="sendButton"
-            .label="${this.t('send')}"
+            .label="${this.t('Send')}"
             @click="${this.sendChatMessage}"
           >
           </md-tonal-button>
@@ -205,20 +250,27 @@ export class YpChatAssistant extends YpBaseElement {
 
   render() {
     return html`
-      <div class="layout vertical center-center">
-        <ul>
-          ${virtualize({
-            items: this.chatLog,
-            renderItem: chatElement => html`<li>
-              <yp-ai-chat-element
-                .message="${chatElement.message}"
-                .type="${chatElement.type}"
-                .sender="${chatElement.sender}"
-              ></yp-ai-chat-element>
-            </li>`,
-          })}
-        </ul>
-        ${this.renderChatInput()}
+      <div class="chat-window" id="chat-window">
+        <div class="chat-messages" id="chat-messages">
+          <ul>
+            ${virtualize({
+              items: this.chatLog,
+              renderItem: chatElement => html`<li>
+                <yp-ai-chat-element
+                  .message="${chatElement.message}"
+                  .type="${chatElement.type}"
+                  .sender="${chatElement.sender}"
+                ></yp-ai-chat-element>
+              </li>`,
+            })}
+          </ul>
+        </div>
+        <div class="layout vertical">
+          <div class="infoMessage layout horizontal center-center">
+
+          </div>
+          <div class="chat-input layout vertical center-center">${this.renderChatInput()}</div>
+        </div>
       </div>
     `;
   }

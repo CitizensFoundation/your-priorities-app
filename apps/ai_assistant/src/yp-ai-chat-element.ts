@@ -24,6 +24,11 @@ export class YpAiChatElement extends YpBaseElement {
     return [
       Layouts,
       css`
+
+      :host {
+        display: flex;
+        flex: 1;
+      }
         .chatImage {
           padding: 8px;
           vertical-align: text-top;
@@ -32,28 +37,44 @@ export class YpAiChatElement extends YpBaseElement {
         .chatText {
           padding: 8px;
           padding-left: 8px;
-          vertical-align: text-top;
         }
 
         .chatGPTDialog {
-          max-width: 600px;
           color: var(--md-sys-color-on-primary);
           background-color: var(--md-sys-color-primary);
-          width: 600px;
           padding: 16px;
           margin: 16px;
           margin-bottom: 0px;
         }
 
         .userChatDialog {
-          max-width: 600px;
           color: var(--md-sys-color-on-secondary);
           background-color: var(--md-sys-color-secondary);
-          width: 600px;
           padding: 16px;
           margin: 16px;
           margin-bottom: 0px;
         }
+
+        .bot-message {
+          border-radius: 10px;
+          padding: 10px;
+          align-self: flex-start;
+          max-width: 80%;
+          width: 80%;
+        }
+
+        .user-message {
+          border-radius: 10px;
+          padding: 10px;
+          align-self: flex-end;
+          max-width: 80%;
+        }
+
+        .chat-message {
+          flex: 1;
+        }
+
+
       `,
     ];
   }
@@ -89,7 +110,7 @@ export class YpAiChatElement extends YpBaseElement {
 
   renderChatGPT() {
     return html`
-      <div class="chatGPTDialog layout horizontal">
+      <div class="userChatDialog layout horizontal bot-message">
         <div class="layout vertical chatImage">${this.renderCGImage()}</div>
         <div class="layout vertical chatText">${this.message}</div>
       </div>
@@ -98,18 +119,25 @@ export class YpAiChatElement extends YpBaseElement {
 
   renderUser() {
     return html`
-      <div class="userChatDialog layout horizontal">
+      <div class="chatGPTDialog layout horizontal user-message">
         <div class="layout vertical chatImage">${this.renderRoboImage()}</div>
         <div class="layout vertical chatText">${this.message}</div>
       </div>
     `;
   }
 
-  render() {
+  renderMessage() {
     if (this.sender==="you") {
       return this.renderUser();
     } else if (this.sender==="bot") {
       return this.renderChatGPT();
     }
+  }
+
+  render() {
+    return html`
+    ${this.renderMessage()}
+
+    `;
   }
 }
