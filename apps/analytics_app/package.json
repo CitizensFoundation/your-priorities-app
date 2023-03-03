@@ -59,7 +59,7 @@
   "author": "analytics-app",
   "license": "MIT",
   "dependencies": {
-    "@amcharts/amcharts4": "^4.9.1",
+    "@amcharts/amcharts4": "^4.10.29",
     "@material/mwc-button": "^0.15.0",
     "@material/mwc-dialog": "^0.15.0",
     "@material/mwc-icon": "^0.15.0",
@@ -82,7 +82,7 @@
     "@webcomponents/webcomponentsjs": "^2.4.1",
     "chart.js": "^2.9.3",
     "core-js": "^3.6.4",
-    "d3": "^6.5.0",
+    "d3": "^7.6.1",
     "intl-messageformat": "^8.3.18",
     "lit-element": "^2.3.1",
     "lit-flexbox-literals": "0.0.7",
