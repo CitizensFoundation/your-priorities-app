@@ -174,7 +174,7 @@ export class YpChatAssistant extends YpBaseElement {
           flex-direction: column;
           height: 100vh;
           width: 100%;
-          max-width: 800px;
+          max-width: 1200px;
           margin: 0 auto;
           border-radius: 10px;
           overflow: hidden;

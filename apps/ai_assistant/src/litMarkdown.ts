@@ -1,9 +1,12 @@
-import { directive } from "lit/directive.js";
-import { unsafeHTML } from "lit/directives/unsafe-html.js";
-import { AsyncDirective } from "lit/async-directive.js";
-import { marked } from "marked";
-import sanitizeHTML from "sanitize-html";
-
+import { directive } from 'lit/directive.js';
+import { unsafeHTML } from 'lit/directives/unsafe-html.js';
+import { AsyncDirective } from 'lit/async-directive.js';
+import { marked } from 'marked';
+import sanitizeHTML from 'sanitize-html';
+marked.setOptions({
+  // Enable table support
+  gfm: true,
+});
 type Options = typeof MarkdownDirective.defaultOptions;
 
 /**
@@ -14,37 +17,79 @@ export class MarkdownDirective extends AsyncDirective {
   static defaultOptions = {
     includeImages: false,
     includeCodeBlockClassNames: false,
-    loadingHTML: "<p>Loading...</p>",
+    loadingHTML: '<p>Loading...</p>',
     skipSanitization: false,
   };
 
   private sanitizeHTMLWithOptions(rawHTML: string, options: Options): string {
     return rawHTML;
- /*   const allowedTags = options.includeImages
+    /*   const allowedTags = options.includeImages
       ? [...sanitizeHTML.defaults.allowedTags, "img"]
       : sanitizeHTML.defaults.allowedTags;
     const allowedClasses: sanitizeHTML.IOptions["allowedClasses"] = options.includeCodeBlockClassNames
       ? { code: ["*"] }
       : {};
     return sanitizeHTML(rawHTML, { allowedTags, allowedClasses });*/
- }
+  }
 
   render(rawMarkdown: string, options?: Partial<Options>) {
-    const mergedOptions = Object.assign(MarkdownDirective.defaultOptions, options ?? {});
+    const mergedOptions = Object.assign(
+      MarkdownDirective.defaultOptions,
+      options ?? {}
+    );
 
     new Promise<string>((resolve, reject) => {
       marked.parse(rawMarkdown, (error: any, result: any) => {
         if (error) return reject(error);
-        resolve(result);
+
+        const cssStyles = `
+          table {
+            border-collapse: collapse;
+            width: 100%;
+            border-radius: 5px;
+            background-color: var(--md-sys-color-tertiary);
+            color: var(--md-sys-color-on-tertiary);
+          }
+
+          th, td {
+            padding: 8px;
+            text-align: left;
+            vertical-align: top;
+          }
+
+          th {
+            font-weight: bold;
+            background-color: var(--md-sys-color-tertiary-container);
+            color: var(--md-sys-color-on-tertiary-container);
+          }
+
+          tr:nth-child(even) {
+          }
+
+          tr:hover {
+          }
+        `;
+
+        // Combine the CSS styles with the generated HTML
+        const formattedMarkdown = `
+            <style>
+            ${cssStyles}
+          </style>
+          ${result}
+        `;
+
+        resolve(formattedMarkdown);
       });
     })
-      .then((rawHTML) => {
+      .then(rawHTML => {
         if (mergedOptions.skipSanitization) {
           return Promise.resolve(rawHTML);
         }
-        return Promise.resolve(this.sanitizeHTMLWithOptions(rawHTML, mergedOptions));
+        return Promise.resolve(
+          this.sanitizeHTMLWithOptions(rawHTML, mergedOptions)
+        );
       })
-      .then((preparedHTML) => {
+      .then(preparedHTML => {
         const renderedHTML = unsafeHTML(preparedHTML);
         this.setValue(renderedHTML);
       });
