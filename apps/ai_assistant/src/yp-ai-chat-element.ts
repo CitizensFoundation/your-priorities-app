@@ -40,34 +40,34 @@ export class YpAiChatElement extends YpBaseElement {
           padding-left: 8px;
         }
 
-        .chatGPTDialog {
+        .userChatDialog {
           color: var(--md-sys-color-on-primary);
           background-color: var(--md-sys-color-primary);
           padding: 16px;
           margin: 16px;
           margin-bottom: 0px;
+          border-radius: 16px;
         }
 
-        .userChatDialog {
+        .chatGPTDialog {
           color: var(--md-sys-color-on-secondary);
           background-color: var(--md-sys-color-secondary);
           padding: 16px;
           margin: 16px;
           margin-bottom: 0px;
+          border-radius: 10px;
         }
 
-        .bot-message {
+        .bot-messagesss {
           border-radius: 10px;
           padding: 10px;
           align-self: flex-start;
           max-width: 80%;
-          width: 80%;
         }
 
-        .user-message {
-          border-radius: 10px;
+        .user-messagesss {
           padding: 10px;
-          align-self: flex-end;
+          align-self: flex-start;
           max-width: 80%;
         }
 
@@ -111,7 +111,7 @@ export class YpAiChatElement extends YpBaseElement {
 
   renderChatGPT() {
     return html`
-      <div class="userChatDialog layout horizontal bot-message">
+      <div class="chatGPTDialog layout horizontal bot-message">
         <div class="layout vertical chatImage">${this.renderCGImage()}</div>
         <div class="layout vertical chatText">${resolveMarkdown(this.message, { includeImages: true, includeCodeBlockClassNames: true })}</div>
       </div>
@@ -120,7 +120,7 @@ export class YpAiChatElement extends YpBaseElement {
 
   renderUser() {
     return html`
-      <div class="chatGPTDialog layout horizontal user-message">
+      <div class="userChatDialog layout horizontal user-message">
         <div class="layout vertical chatImage">${this.renderRoboImage()}</div>
         <div class="layout vertical chatText">${this.message}</div>
       </div>

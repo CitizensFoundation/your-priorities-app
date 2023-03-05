@@ -51,6 +51,12 @@ export class MarkdownDirective extends AsyncDirective {
             color: var(--md-sys-color-on-tertiary);
           }
 
+          img {
+            width: 200px;
+            height: 113px;
+            object-fit: cover;
+          }
+
           th, td {
             padding: 8px;
             text-align: left;

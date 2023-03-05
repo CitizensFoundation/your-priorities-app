@@ -416,6 +416,10 @@ export class YpAiAssistantApp extends YpBaseElement {
   }
 
   render() {
+    return html`<yp-chat-assistant></yp-chat-assistant>`;
+  }
+
+  renderOld() {
     return html`
             <div class="mainPageContainer">${this._renderPage()}</div>
     `;

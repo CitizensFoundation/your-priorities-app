@@ -36,7 +36,7 @@ export class YpChatAssistant extends YpBaseElement {
   infoMessage!: string;
 
   @property({ type: String })
-  defaultInfoMessage: string = 'Welcome to the YP AI Chat - Ask anything!';
+  defaultInfoMessage: string = 'My Neighborhood Assistant is ready to help you.';
 
   @property({ type: Object })
   wsEndpoint = 'ws://localhost:9000/chat';
@@ -166,10 +166,10 @@ export class YpChatAssistant extends YpBaseElement {
         }
 
         .infoMessage {
-          margin-bottom: 16px;
+          margin-top: 8px;
         }
 
-        .chat-window {
+        chat-window {
           display: flex;
           flex-direction: column;
           height: 100vh;
@@ -181,16 +181,25 @@ export class YpChatAssistant extends YpBaseElement {
         }
 
         .chat-messages {
-          flex: 1;
+          display: flex;
+          flex-direction: column;
+          flex: 1 1;
           padding: 20px;
           overflow-y: scroll;
         }
 
-        .chat-messages ul {
-          list-style: none;
-          margin: 0;
-          padding: 0;
-          width: 100%;
+        .you-chat-element {
+          align-self: flex-end;
+          max-width: 80%;
+          justify-content: flex-end;
+          margin-right: 32px;
+        }
+
+        .bot-chat-element {
+          align-self: flex-start;
+          max-width: 80%;
+          justify-content: flex-start;
+          width: 80%;
         }
 
         .chat-input {
@@ -199,7 +208,10 @@ export class YpChatAssistant extends YpBaseElement {
           justify-content: space-between;
           padding: 10px;
           background-color: white;
-          border-top: 1px solid #ccc;
+          position: fixed;
+          bottom: 0;
+          left: 50%;
+          transform: translateX(-50%);
         }
 
         md-outlined-text-field {
@@ -215,6 +227,17 @@ export class YpChatAssistant extends YpBaseElement {
           padding: 16px;
           padding-left: 0;
           margin-top: 0;
+        }
+
+        .you-chat-element {
+          align-self: flex-end;
+          max-width: 80%;
+        }
+
+        .bot-chat-element {
+          align-self: flex-start;
+          max-width: 80%;
+          width: 80%;
         }
       `,
     ];
@@ -246,7 +269,7 @@ export class YpChatAssistant extends YpBaseElement {
     `;
   }
 
-  render() {
+  renderVirtualizer() {
     return html`
       <div class="chat-window" id="chat-window">
         <div class="chat-messages" id="chat-messages">
@@ -264,10 +287,37 @@ export class YpChatAssistant extends YpBaseElement {
           </ul>
         </div>
         <div class="layout vertical">
-          <div class="infoMessage layout horizontal center-center">
-
+          <div class="infoMessage layout horizontal center-center"></div>
+          <div class="chat-input layout vertical center-center">
+            ${this.renderChatInput()}
           </div>
-          <div class="chat-input layout vertical center-center">${this.renderChatInput()}</div>
+        </div>
+      </div>
+    `;
+  }
+
+  render() {
+    return html`
+      <div class="chat-window" id="chat-window">
+        <div class="chat-messages" id="chat-messages">
+          ${this.chatLog.map(
+            chatElement => html`
+              <yp-ai-chat-element
+                class="${chatElement.sender}-chat-element"
+                .message="${chatElement.message}"
+                .type="${chatElement.type}"
+                .sender="${chatElement.sender}"
+              ></yp-ai-chat-element>
+            `
+          )}
+        </div>
+        <div class="layout vertical chat-input ">
+          <div class="infoMessage layout horizontal center-center">
+            ${this.infoMessage}
+          </div>
+          <div class="layout vertical center-center">
+            ${this.renderChatInput()}
+          </div>
         </div>
       </div>
     `;
