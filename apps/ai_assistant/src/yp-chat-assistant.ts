@@ -169,7 +169,7 @@ export class YpChatAssistant extends YpBaseElement {
           margin-top: 8px;
         }
 
-        chat-window {
+        .chat-window {
           display: flex;
           flex-direction: column;
           height: 100vh;
@@ -183,7 +183,7 @@ export class YpChatAssistant extends YpBaseElement {
         .chat-messages {
           display: flex;
           flex-direction: column;
-          flex: 1 1;
+          flex: 1;
           padding: 20px;
           overflow-y: scroll;
         }
@@ -208,10 +208,6 @@ export class YpChatAssistant extends YpBaseElement {
           justify-content: space-between;
           padding: 10px;
           background-color: white;
-          position: fixed;
-          bottom: 0;
-          left: 50%;
-          transform: translateX(-50%);
         }
 
         md-outlined-text-field {
@@ -229,16 +225,6 @@ export class YpChatAssistant extends YpBaseElement {
           margin-top: 0;
         }
 
-        .you-chat-element {
-          align-self: flex-end;
-          max-width: 80%;
-        }
-
-        .bot-chat-element {
-          align-self: flex-start;
-          max-width: 80%;
-          width: 80%;
-        }
       `,
     ];
   }
@@ -311,7 +297,7 @@ export class YpChatAssistant extends YpBaseElement {
             `
           )}
         </div>
-        <div class="layout vertical chat-input ">
+        <div class="layout vertical center-center chat-input">
           <div class="infoMessage layout horizontal center-center">
             ${this.infoMessage}
           </div>
