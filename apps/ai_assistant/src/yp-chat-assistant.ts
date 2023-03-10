@@ -99,6 +99,9 @@ export class YpChatAssistant extends YpBaseElement {
 
   addChatBotElement(data: YpAiChatWsMessage) {
     switch (data.type) {
+      case 'thinking':
+        this.addToChatLogWithMessage(data, this.t('Thinking...'));
+        break;
       case 'start':
         this.addToChatLogWithMessage(data, this.t('Thinking...'));
         break;

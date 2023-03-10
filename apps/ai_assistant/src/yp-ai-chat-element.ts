@@ -16,7 +16,7 @@ export class YpAiChatElement extends YpBaseElement {
   sender: 'you' | 'bot';
 
   @property({ type: String })
-  type: 'start' | 'error' | 'info' | undefined;
+  type: 'start' | 'error' | 'info' | 'thinking' | undefined;
 
   @property({ type: Boolean })
   active = false;
@@ -59,6 +59,10 @@ export class YpAiChatElement extends YpBaseElement {
 
         .chat-message {
           flex: 1;
+        }
+
+        .thinkingText {
+          margin-left: 16px;
         }
 
 
@@ -113,9 +117,19 @@ export class YpAiChatElement extends YpBaseElement {
     `;
   }
 
+  renderThinking() {
+    return html`
+      <div class="thinkingText">
+        ${this.t('Searching...')}
+      </div>
+    `;
+  }
+
   renderMessage() {
     if (this.sender==="you") {
       return this.renderUser();
+    } else if (this.sender==="bot" && this.type==="thinking") {
+      return this.renderThinking();
     } else if (this.sender==="bot") {
       return this.renderChatGPT();
     }
