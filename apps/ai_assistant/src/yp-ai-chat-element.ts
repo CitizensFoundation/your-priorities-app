@@ -28,7 +28,6 @@ export class YpAiChatElement extends YpBaseElement {
 
       :host {
         display: flex;
-        flex: 1;
       }
         .chatImage {
           padding: 8px;
@@ -56,19 +55,6 @@ export class YpAiChatElement extends YpBaseElement {
           margin: 16px;
           margin-bottom: 0px;
           border-radius: 10px;
-        }
-
-        .bot-messagesss {
-          border-radius: 10px;
-          padding: 10px;
-          align-self: flex-start;
-          max-width: 80%;
-        }
-
-        .user-messagesss {
-          padding: 10px;
-          align-self: flex-start;
-          max-width: 80%;
         }
 
         .chat-message {
