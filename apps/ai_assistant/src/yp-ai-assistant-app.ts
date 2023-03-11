@@ -1,18 +1,12 @@
 import { html, css, nothing } from 'lit';
 import { property, customElement } from 'lit/decorators.js';
 
-import '@material/mwc-dialog';
-
-import '@material/mwc-snackbar/mwc-snackbar.js';
-
-import { Dialog } from '@material/mwc-dialog';
-
 import '@material/web/navigationbar/navigation-bar.js';
 import '@material/web/navigationtab/navigation-tab.js';
 import '@material/web/iconbutton/filled-link-icon-button.js';
 import '@material/web/navigationdrawer/navigation-drawer.js';
 import '@material/web/list/list-item.js';
-import '@material/web/list/list-item-icon.js';
+//import '@material/web/list/list-item-icon.js';
 import '@material/web/list/list.js';
 //import '@material/web/list/list-divider.js';
 import {
@@ -25,7 +19,6 @@ import '@material/web/menu/menu.js';
 import { cache } from 'lit/directives/cache.js';
 
 import './yp-app-settings.js';
-import { Snackbar } from '@material/mwc-snackbar';
 
 import './yp-image.js';
 import { YpBaseElement } from './yp-base-element.js';
@@ -127,7 +120,7 @@ export class YpAiAssistantApp extends YpBaseElement {
   async _displaySnackbar(event: CustomEvent) {
     this.lastSnackbarText = event.detail;
     await this.updateComplete;
-    (this.$$('#snackbar') as Snackbar).show();
+    //(this.$$('#snackbar') as Snackbar).show();
   }
 
   _setupEventListeners() {
@@ -152,7 +145,7 @@ export class YpAiAssistantApp extends YpBaseElement {
   _appError(event: CustomEvent) {
     console.error(event.detail.message);
     this.currentError = event.detail.message;
-    (this.$$('#errorDialog') as Dialog).open = true;
+    //(this.$$('#errorDialog') as Dialog).open = true;
   }
 
   get adminConfirmed() {
