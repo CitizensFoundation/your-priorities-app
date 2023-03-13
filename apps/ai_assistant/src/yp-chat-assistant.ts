@@ -1,5 +1,5 @@
 import { css, html } from 'lit';
-import { property, customElement, query } from 'lit/decorators.js';
+import { property, customElement, query, queryAll } from 'lit/decorators.js';
 import {
   virtualize,
   virtualizerRef,
@@ -44,8 +44,14 @@ export class YpChatAssistant extends YpBaseElement {
   @property({ type: Object })
   ws!: WebSocket;
 
+  @property({ type: String })
+  currentFollowUpQuestions: string = '';
+
   @query('#sendButton')
   sendButton: TonalButton;
+
+  @queryAll('yp-ai-chat-element')
+  chatElements: YpAiChatElement[];
 
   @query('#chatInput')
   chatInputField: OutlinedTextField;
@@ -65,7 +71,7 @@ export class YpChatAssistant extends YpBaseElement {
 
   onMessage(event: MessageEvent) {
     const data: YpAiChatWsMessage = JSON.parse(event.data);
-    console.error(event.data);
+    //console.error(event.data);
 
     switch (data.sender) {
       case 'bot':
@@ -84,6 +90,7 @@ export class YpChatAssistant extends YpBaseElement {
     changeButtonLabelTo: string | undefined = undefined
   ) {
     this.infoMessage = message;
+    data.postIds = [];
     this.chatLog = [...this.chatLog, data];
 
     this.requestUpdate();
@@ -98,6 +105,7 @@ export class YpChatAssistant extends YpBaseElement {
   }
 
   addChatBotElement(data: YpAiChatWsMessage) {
+    const lastElement = this.chatElements[this.chatElements.length - 1];
     switch (data.type) {
       case 'thinking':
         this.addToChatLogWithMessage(data, this.t('Thinking...'));
@@ -105,7 +113,14 @@ export class YpChatAssistant extends YpBaseElement {
       case 'start':
         this.addToChatLogWithMessage(data, this.t('Thinking...'));
         break;
-      case 'info':
+      case 'start_followup':
+        lastElement.followUpQuestionsRaw = "";
+        break;
+      case 'stream_followup':
+        lastElement.followUpQuestionsRaw += data.message;
+        this.requestUpdate();
+        break;
+        case 'info':
         this.infoMessage = data.message;
         break;
       case 'error':
@@ -121,6 +136,8 @@ export class YpChatAssistant extends YpBaseElement {
         this.infoMessage = this.t('typing');
         this.chatLog[this.chatLog.length - 1].message =
           this.chatLog[this.chatLog.length - 1].message + data.message;
+        this.chatLog[this.chatLog.length - 1] =
+          this.parsePosts(this.chatLog[this.chatLog.length - 1]);
         //console.error(this.chatLog[this.chatLog.length - 1].message)
         this.requestUpdate();
         break;
@@ -143,6 +160,17 @@ export class YpChatAssistant extends YpBaseElement {
     this.chatInputField.value = '';
     this.sendButton.disabled = false;
     this.sendButton.label = this.t('Thinking...');
+  }
+
+
+  parsePosts(data: YpAiChatWsMessage) {
+    data.message = data.message.replace(/\[([^\]]+)\]/g, (match, content) => {
+      if (data.postIds.indexOf(content) == -1)
+        data.postIds.push(content)
+        data.postIds = JSON.parse(JSON.stringify(data.postIds));
+      return `<span class="postCitation">${data.postIds.length}</span>`;
+    });
+    return data;
   }
 
   static get styles() {
@@ -232,6 +260,11 @@ export class YpChatAssistant extends YpBaseElement {
     ];
   }
 
+  followUpQuestion(event: CustomEvent) {
+    this.chatInputField.value = event.detail;
+    this.sendChatMessage();
+  }
+
   renderChatInput() {
     return html`
       <div class="layout horizontal">
@@ -267,9 +300,11 @@ export class YpChatAssistant extends YpBaseElement {
               items: this.chatLog,
               renderItem: chatElement => html`<li>
                 <yp-ai-chat-element
+                  @followup-question="${this.followUpQuestion}"
                   .message="${chatElement.message}"
                   .type="${chatElement.type}"
                   .sender="${chatElement.sender}"
+                  .postIds="${chatElement.postIds}"
                 ></yp-ai-chat-element>
               </li>`,
             })}
@@ -292,9 +327,11 @@ export class YpChatAssistant extends YpBaseElement {
           ${this.chatLog.map(
             chatElement => html`
               <yp-ai-chat-element
+                @followup-question="${this.followUpQuestion}"
                 class="${chatElement.sender}-chat-element"
                 .message="${chatElement.message}"
                 .type="${chatElement.type}"
+                .postIds="${chatElement.postIds}"
                 .sender="${chatElement.sender}"
               ></yp-ai-chat-element>
             `

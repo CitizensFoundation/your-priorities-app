@@ -13,8 +13,15 @@ interface YpCampaignConfigurationData {
 
 interface YpAiChatWsMessage {
   sender: string;
-  type: 'start' | 'end' | 'stream' | 'error' | 'info' | 'thinking';
+  type: 'start' | 'end' | 'stream' | 'error' | 'info' | 'thinking' | 'start_followup' | 'end_followup' | 'stream_followup';
   message: string;
+  postIds: number[];
+}
+
+interface YpSimplePost {
+  id: number;
+  name: string;
+  imageUrl: string;
 }
 
 interface YpCampaignMediumData {

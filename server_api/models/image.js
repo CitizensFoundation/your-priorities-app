@@ -119,6 +119,23 @@ module.exports = (sequelize, DataTypes) => {
     return formats;
   };
 
+  Image.getSharpGalleryVersions = (itemType) => {
+    return [
+      {
+        height: 200,
+        width: 200,
+        suffix: '-small-1',
+        directory: 'up'
+      },
+      {
+        height: 50,
+        width: 50,
+        suffix: '-tiny-2',
+        directory: 'up'
+      }
+    ]
+  }
+
   Image.getSharpVersions = (itemType) => {
     let versions;
     if (itemType && itemType === 'user-profile') {

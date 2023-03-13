@@ -17,8 +17,11 @@ export default /** @type {import('@web/dev-server').DevServerConfig} */ ({
   },
   port: 9172,
   middleware: [
-    proxy('/api/', {
+    /*proxy('/api/', {
       target: 'http://localhost:4242/',
+    }),*/
+    proxy('/api/v1/', {
+      target: 'http://localhost:9000/',
     }),
   ],
 });
