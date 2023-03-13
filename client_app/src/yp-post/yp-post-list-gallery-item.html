@@ -1,0 +1,313 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html" />
+
+<link
+  rel="import"
+  href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html"
+/>
+<link rel="import" href="../../bower_components/iron-image/iron-image.html" />
+<link rel="import" href="../../bower_components/lite-signal/lite-signal.html" />
+
+<link rel="import" href="../yp-app-globals/yp-app-icons.html" />
+<link rel="import" href="../yp-behaviors/yp-language-behavior.html" />
+<link rel="import" href="../yp-behaviors/access-helpers.html" />
+<link rel="import" href="../yp-behaviors/yp-got-admin-rights-behavior.html" />
+<link rel="import" href="../yp-behaviors/yp-logged-in-user-behavior.html" />
+<link rel="import" href="../yp-behaviors/yp-media-formats-behavior.html" />
+<link rel="import" href="../yp-behaviors/yp-truncate-behavior.html" />
+<link rel="import" href="../yp-behaviors/yp-goto-behavior.html" />
+<link rel="import" href="../yp-magic-text/yp-magic-text.html" />
+<link rel="import" href="../yp-rating/yp-post-ratings-info.html" />
+
+<link rel="import" href="yp-post-actions.html" />
+<link rel="import" href="yp-post-cover-media.html" />
+<link rel="import" href="yp-post-behaviors.html" />
+<link rel="import" href="yp-post-survey-translation-behaviors.html" />
+<link rel="import" href="yp-post-gallery-image.html" />
+
+<dom-module id="yp-post-list-gallery-item">
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+      .mainContainer {
+        margin: 32px;
+      }
+
+      .authorName,
+      .artName {
+        font-size: 26px;
+        text-transform: uppercase;
+        line-height: 1.4;
+        font-family: var(--app-header-font-family, Roboto);
+      }
+
+      .description {
+        font-family: var(--app-header-font-family, Roboto);
+      }
+
+      .image {
+        margin-bottom: 64px;
+      }
+
+      .postActions {
+        height: 30px;
+        margin-left: -16px;
+      }
+
+      .mainDataContainer {
+        max-width: 600px;
+        width: 600px;
+      }
+
+      [hidden] {
+        display: none !important;
+      }
+    </style>
+    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
+    <lite-signal on-lite-signal-logged-in="_userLoggedIn"></lite-signal>
+    <iron-media-query
+      query="(min-width: 600px)"
+      query-matches="{{wide}}"
+    ></iron-media-query>
+
+    <div class="layout vertical mainContainer">
+      <div class="layout vertical center-center">
+        <yp-post-gallery-image
+          image-width="[[post.public_data.galleryImageData.width]]"
+          image-height="[[post.public_data.galleryImageData.height]]"
+          alt-tag="[[post.name]]"
+          post="[[post]]"
+          sizingMode="cover"
+          class="image"
+        ></yp-post-gallery-image>
+        <div class="layout vertical mainDataContainer">
+          <div class="authorName">
+            [[post.public_data.galleryMetaData.ListamadurHofundur]]
+          </div>
+          <div class="artName">[[post.name]]</div>
+          <yp-post-actions
+            class="postActions"
+            elevation="-1"
+            hide-spinner
+            larger-icons
+            endorse-mode="[[endorseMode]]"
+            class="voting"
+            post="[[post]]"
+            hidden$="[[mini]]"
+          ></yp-post-actions>
+        </div>
+        <yp-magic-text
+          class="description layout horizontal"
+          has-custom-ratings$="[[post.Group.configuration.customRatings]]"
+          hidden$="[[hideDescription]]"
+          text-type="postContent"
+          content-language="[[post.language]]"
+          on-tapdd="goToPostIfNotHeader"
+          remove-urls
+          text-only
+          content="[[post.description]]"
+          content-id="[[post.id]]"
+          truncate="200"
+        >
+        </yp-magic-text>
+      </div>
+    </div>
+    <lite-signal
+      on-lite-signal-yp-auto-translate="_autoTranslateEvent"
+    ></lite-signal>
+
+    <yp-ajax
+      hidden
+      id="translatedSurveyAjax"
+      on-response="_translatedSurveyResponse"
+    ></yp-ajax>
+  </template>
+
+  <script>
+    Polymer({
+      is: "yp-post-list-gallery-item",
+
+      behaviors: [
+        Polymer.ypLanguageBehavior,
+        Polymer.YpPostBehavior,
+        Polymer.AccessHelpers,
+        Polymer.ypLoggedInUserBehavior,
+        Polymer.ypMediaFormatsBehavior,
+        Polymer.ypTruncateBehavior,
+        Polymer.ypGotoBehavior,
+        Polymer.YpPostSurveyTranslationBehavior,
+      ],
+
+      properties: {
+        hideDescription: {
+          type: Boolean,
+          computed: "_hideDescription(mini, post)",
+        },
+
+        selectedMenuItem: {
+          type: String,
+        },
+
+        elevation: {
+          type: Number,
+          value: 1,
+        },
+
+        post: {
+          type: Object,
+          observer: "_postChanged",
+        },
+
+        hasPostAccess: {
+          type: Boolean,
+          value: false,
+          notify: true,
+          computed: "_hasPostAccess(post, gotAdminRights)",
+        },
+
+        mini: {
+          type: Boolean,
+          value: false,
+        },
+
+        isAudioCover: {
+          type: Boolean,
+          value: false,
+        },
+      },
+
+      _onBottomClick: function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+        event.stopImmediatePropagation();
+      },
+
+      clickOnA: function () {
+        if (this.$.theMainA) {
+          this.$.theMainA.click();
+        }
+      },
+
+      _savePostToBackCache: function () {
+        if (this.post) {
+          window.appGlobals.cachedPostItem = this.post;
+        }
+      },
+
+      _getPostLink: function (post) {
+        if (post) {
+          if (
+            post.Group.configuration &&
+            post.Group.configuration.disablePostPageLink
+          ) {
+            return "#";
+          } else if (
+            post.Group.configuration &&
+            post.Group.configuration.resourceLibraryLinkMode
+          ) {
+            return post.description.trim();
+          } else {
+            return "/post/" + post.id;
+          }
+        } else {
+          console.warn("Trying to get empty post link");
+        }
+      },
+
+      _shareTap: function (event, detail) {
+        window.appGlobals.activity(
+          "postShareCardOpen",
+          detail.brand,
+          this.post ? this.post.id : -1
+        );
+      },
+
+      _hideDescription: function (mini, post) {
+        return (
+          true ||
+          mini ||
+          (post &&
+            post.Group.configuration &&
+            post.Group.configuration.hidePostDescription)
+        );
+      },
+
+      _hasPostAccess: function (post, gotAdminRights) {
+        if (post) {
+          return this.checkPostAccess(post);
+        } else {
+          return false;
+        }
+      },
+
+      goToPostIfNotHeader: function () {
+        if (
+          this.post.Group.configuration &&
+          this.post.Group.configuration.disablePostPageLink
+        ) {
+          console.log("goToPostDisabled");
+        } else if (
+          this.post.Group.configuration &&
+          this.post.Group.configuration.resourceLibraryLinkMode
+        ) {
+          // Do nothing
+        } else {
+          this.goToPost(null, null, null, this.post);
+        }
+      },
+
+      _postChanged: function (post) {
+        if (post) {
+          if (post.cover_media_type === "audio") {
+            this.set("isAudioCover", true);
+          } else {
+            this.set("isAudioCover", false);
+          }
+
+          this._getSurveyTranslationsIfNeeded();
+        }
+      },
+
+      updateDescriptionIfEmpty: function (description) {
+        if (!this.post.description || this.post.description == "") {
+          this.set("post.description", description);
+        }
+      },
+
+      _refresh: function () {
+        Polymer.dom(document)
+          .querySelector("yp-app")
+          .getDialogAsync(
+            "postEdit",
+            function (dialog) {
+              dialog.selected = 0;
+              this.fire("refresh");
+            }.bind(this)
+          );
+      },
+
+      _openReport: function () {
+        window.appGlobals.activity("open", "post.report");
+        Polymer.dom(document)
+          .querySelector("yp-app")
+          .getDialogAsync(
+            "apiActionDialog",
+            function (dialog) {
+              dialog.setup(
+                "/api/posts/" + this.post.id + "/report",
+                this.t("reportConfirmation"),
+                this._onReport.bind(this),
+                this.t("post.report"),
+                "PUT"
+              );
+              dialog.open();
+            }.bind(this)
+          );
+      },
+
+      _onReport: function () {
+        window.appGlobals.notifyUserViaToast(
+          this.t("post.report") + ": " + this.post.name
+        );
+      },
+    });
+  </script>
+</dom-module>

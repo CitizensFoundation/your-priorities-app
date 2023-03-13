@@ -134,6 +134,11 @@
         width: 48px;
       }
 
+      paper-icon-button[larger-icons] {
+        height: 64px;
+        width: 64px;
+      }
+
       .debate-icon {
         color: #757575;
       }
@@ -189,10 +194,10 @@
 
     <iron-media-query query="(max-width: 420px)" query-matches="{{small}}"></iron-media-query>
 
-    <yp-ajax id="endorseAjax" method="POST" on-response="_endorseResponse"></yp-ajax>
+    <yp-ajax id="endorseAjax" hidden$="[[hideSpinner]]" method="POST" on-response="_endorseResponse"></yp-ajax>
     <paper-material rtl$="[[rtl]]" elevation="[[elevationPlusOne]]" title$="[[disabledTitle]]" floating$="[[floating]]" animated class="action-bar layout horizontal">
       <div id="actionUp" class="action-up" only-up-vote-showing$="[[onlyUpVoteShowing]]">
-        <paper-icon-button id="iconUpButton" smaller-icons$="[[smallerIcons]]" disabled="[[votingStateDisabled]]" title$="[[customVoteUpHoverText]]"
+        <paper-icon-button id="iconUpButton" smaller-icons$="[[smallerIcons]]" larger-icons$="[[largerIcons]]" disabled="[[votingStateDisabled]]" title$="[[customVoteUpHoverText]]"
                            icon="[[endorseModeIconUp]]" class="action-icon up-vote-icon mainIcons" on-tap="upVote"></paper-icon-button>
         <div rtl$="[[rtl]]" class="action-text up-text" hidden$="[[post.Group.configuration.hideVoteCount]]">[[formattedUpCount]]</div>
       </div>
@@ -206,7 +211,7 @@
       <div class="" hidden$="[[!hideDebate]]"></div>
 
       <div id="actionDown" class="action-down" hidden$="[[post.Group.configuration.hideDownVoteForPost]]">
-        <paper-icon-button smaller-icons$="[[smallerIcons]]" disabled="[[votingStateDisabled]]" title$="[[customVoteDownHoverText]]"
+        <paper-icon-button smaller-icons$="[[smallerIcons]]" larger-icons$="[[largerIcons]]" disabled="[[votingStateDisabled]]" title$="[[customVoteDownHoverText]]"
                            icon="[[endorseModeIconDown]]" class="action-icon down-vote-icon mainIcons" on-tap="downVote"></paper-icon-button>
         <div class="action-text down-text" hidden$="[[post.Group.configuration.hideVoteCount]]">[[formattedDownCount]]</div>
       </div>
@@ -301,6 +306,11 @@
           value: false
         },
 
+        largerIcons: {
+          type: Boolean,
+          value: false
+        },
+
         formattedPointCount: {
           type: String,
           computed: '_formattedPointCount(post.counter_points)'
@@ -369,7 +379,12 @@
         votingStateDisabled: {
           type: Boolean,
           computed: '_votingStateDisabled(allDisabled, maxNumberOfGroupVotes, numberOfGroupVotes, isEndorsed)'
-        }
+        },
+
+        hideSpinner: {
+          type: Boolean,
+          value: false
+        },
       },
 
       _votingStateDisabled: function(allDisabled, maxNumberOfGroupVotes, numberOfGroupVotes, isEndorsed) {

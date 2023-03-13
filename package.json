@@ -35,6 +35,7 @@
     "farmhash": "3.2.2",
     "i18next": "^22.0.4",
     "i18next-node-fs-backend": "^2.1.3",
+    "image-size": "^1.0.2",
     "ip": "^1.1.0",
     "isbot": "^3.6.3",
     "knuth-shuffle-seeded": "^1.0.6",

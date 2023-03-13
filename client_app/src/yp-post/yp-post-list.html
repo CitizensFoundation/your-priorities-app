@@ -15,6 +15,7 @@
 <link rel="import" href="../yp-post/yp-post-card.html">
 
 <link rel="import" href="yp-post-list-item.html">
+<link rel="import" href="yp-post-list-gallery-item.html">
 
 <link rel="import" href="../yp-posts-filter/yp-posts-filter.html">
 
@@ -223,8 +224,11 @@
               <template is="dom-if" if="[[!desktopListFormat]]">
                 <yp-post-card id="postCard[[post.id]]" on-refresh="_refreshPost" class="card" post="[[post]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-post-card>
               </template>
-              <template is="dom-if" if="[[desktopListFormat]]">
+              <template is="dom-if" if="[[!desktopListFormat]]">
                 <yp-post-list-item id="postCard[[post.id]]" on-refresh="_refreshPost" class="card" post="[[post]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-post-list-item>
+              </template>
+              <template is="dom-if" if="[[desktopListFormat]]">
+                <yp-post-list-gallery-item id="postCard[[post.id]]" on-refresh="_refreshPost" class="card" post="[[post]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-post-list-gallery-item>
               </template>
             </div>
           </template>

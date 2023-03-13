@@ -1,0 +1,94 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html" >
+
+<link rel="import" href="../../bower_components/google-streetview-pano/google-streetview-pano.html">
+<link rel="import" href="../../bower_components/google-map/google-map.html">
+<link rel="import" href="../../bower_components/google-map/google-map-marker.html">
+
+<link rel="import" href="../yp-app-globals/yp-app-icons.html">
+<link rel="import" href="../yp-behaviors/yp-language-behavior.html">
+<link rel="import" href="../yp-behaviors/yp-media-formats-behavior.html">
+<link rel="import" href="../yp-behaviors/yp-goto-behavior.html">
+
+<dom-module id="yp-post-gallery-image">
+
+  <template>
+
+    <style include="iron-flex iron-flex-alignment">
+      img {
+        max-width: 700px;
+        max-height: 700px;
+        object-fit: scale-down;
+      }
+    </style>
+
+    <img width="[[imageWidth]]" height="[[imageHeight]]" alt$="[[altTag]]" src="[[postImagePath]]"></img>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'yp-post-gallery-image',
+
+      behaviors: [
+        Polymer.ypLanguageBehavior,
+        Polymer.ypMediaFormatsBehavior,
+        Polymer.ypGotoBehavior
+      ],
+
+      properties: {
+
+
+        post: {
+          type: Object,
+          notify: true,
+          observer: "_postChanged"
+        },
+
+        imageWidth: {
+          type: Number,
+        },
+
+        imageHeight: {
+          type: Number,
+        },
+
+
+        postImagePath: {
+          type: String,
+          computed: '_postImagePath(post)'
+        },
+
+        sizingMode: {
+          type: String,
+        }
+      },
+
+
+      _goToPost: function () {
+        if (this.post && this.post.Group.configuration && this.post.Group.configuration.resourceLibraryLinkMode) {
+          // Do nothing
+        } else {
+          if (this.post) {
+            if (this.headerMode) {
+              this.goToPost(this.post.id)
+            } else {
+              this.goToPost(this.post.id, null, null, this.post);
+            }
+          } else {
+            console.error("No post in post cover media on goToPost");
+          }
+        }
+      },
+
+      _postImagePath: function (post) {
+        if (post) {
+          return this.getImageFormatUrl(post.PostHeaderImages, 0);
+        } else {
+          return "";
+        }
+      }
+    });
+  </script>
+</dom-module>
