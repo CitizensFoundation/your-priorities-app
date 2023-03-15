@@ -45,10 +45,10 @@ export class MarkdownDirective extends AsyncDirective {
         const cssStyles = `
           table {
             border-collapse: collapse;
-            width: 100%;
             border-radius: 5px;
-            background-color: var(--md-sys-color-tertiary);
-            color: var(--md-sys-color-on-tertiary);
+            background-color: var(--md-sys-color-primary-container);
+            color: var(--md-sys-color-on-primary-container);
+            margin: 16px
           }
 
           img {
@@ -65,14 +65,19 @@ export class MarkdownDirective extends AsyncDirective {
 
           th {
             font-weight: bold;
-            background-color: var(--md-sys-color-tertiary-container);
-            color: var(--md-sys-color-on-tertiary-container);
+            background-color: var(--md-sys-color-primary-container);
+            color: var(--md-sys-color-on-primary-container);
           }
 
           tr:nth-child(even) {
           }
 
           tr:hover {
+          }
+
+          p {
+            margin-top: 0;
+            margin-bottom: 0;
           }
         `;
 

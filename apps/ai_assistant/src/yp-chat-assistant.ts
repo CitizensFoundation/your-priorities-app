@@ -19,6 +19,7 @@ import '@material/web/button/outlined-button.js';
 import '@material/web/button/tonal-button.js';
 import '@material/web/button/filled-button.js';
 import '@material/web/textfield/outlined-text-field.js';
+import '@material/web/icon/icon.js';
 
 import './yp-image.js';
 import { YpAiChatElement } from './yp-ai-chat-element';
@@ -26,6 +27,14 @@ import { TonalButton } from '@material/web/button/lib/tonal-button';
 import { OutlinedTextField } from '@material/web/textfield/lib/outlined-text-field';
 
 import './yp-ai-chat-element.js';
+
+// Minna rounded corners á followups, minnka aðeins
+// Meira línubil á chat
+// Laga liti
+// Hafa Emoji summary á undan mynd, aðgrein
+// Laga takka Send
+//
+// Hafa mest 7 svör
 
 @customElement('yp-chat-assistant')
 export class YpChatAssistant extends YpBaseElement {
@@ -36,7 +45,8 @@ export class YpChatAssistant extends YpBaseElement {
   infoMessage!: string;
 
   @property({ type: String })
-  defaultInfoMessage: string = 'My Neighborhood Assistant is ready to help you.';
+  defaultInfoMessage: string =
+    'My Neighborhood Assistant is ready to help you.';
 
   @property({ type: Object })
   wsEndpoint = 'ws://localhost:9000/chat';
@@ -64,6 +74,15 @@ export class YpChatAssistant extends YpBaseElement {
     this.ws.onmessage = this.onMessage.bind(this);
   }
 
+  firstUpdated(): void {
+    this.addChatBotElement({
+      message:
+        "Hello, I'm the My Neighborhood AI Assistant. How can I help you?",
+      sender: 'bot',
+      type: 'hello_message',
+    });
+  }
+
   disconnectedCallback(): void {
     this.ws.close();
     super.disconnectedCallback();
@@ -85,7 +104,7 @@ export class YpChatAssistant extends YpBaseElement {
 
   addToChatLogWithMessage(
     data: YpAiChatWsMessage,
-    message: string,
+    message: string | undefined = undefined,
     changeButtonDisabledState: boolean | undefined = undefined,
     changeButtonLabelTo: string | undefined = undefined
   ) {
@@ -107,6 +126,9 @@ export class YpChatAssistant extends YpBaseElement {
   addChatBotElement(data: YpAiChatWsMessage) {
     const lastElement = this.chatElements[this.chatElements.length - 1];
     switch (data.type) {
+      case 'hello_message':
+        this.addToChatLogWithMessage(data);
+        break;
       case 'thinking':
         this.addToChatLogWithMessage(data, this.t('Thinking...'));
         break;
@@ -114,13 +136,13 @@ export class YpChatAssistant extends YpBaseElement {
         this.addToChatLogWithMessage(data, this.t('Thinking...'));
         break;
       case 'start_followup':
-        lastElement.followUpQuestionsRaw = "";
+        lastElement.followUpQuestionsRaw = '';
         break;
       case 'stream_followup':
         lastElement.followUpQuestionsRaw += data.message;
         this.requestUpdate();
         break;
-        case 'info':
+      case 'info':
         this.infoMessage = data.message;
         break;
       case 'error':
@@ -136,8 +158,9 @@ export class YpChatAssistant extends YpBaseElement {
         this.infoMessage = this.t('typing');
         this.chatLog[this.chatLog.length - 1].message =
           this.chatLog[this.chatLog.length - 1].message + data.message;
-        this.chatLog[this.chatLog.length - 1] =
-          this.parsePosts(this.chatLog[this.chatLog.length - 1]);
+        this.chatLog[this.chatLog.length - 1] = this.parsePosts(
+          this.chatLog[this.chatLog.length - 1]
+        );
         //console.error(this.chatLog[this.chatLog.length - 1].message)
         this.requestUpdate();
         break;
@@ -162,12 +185,10 @@ export class YpChatAssistant extends YpBaseElement {
     this.sendButton.label = this.t('Thinking...');
   }
 
-
   parsePosts(data: YpAiChatWsMessage) {
     data.message = data.message.replace(/\[([^\]]+)\]/g, (match, content) => {
-      if (data.postIds.indexOf(content) == -1)
-        data.postIds.push(content)
-        data.postIds = JSON.parse(JSON.stringify(data.postIds));
+      if (data.postIds.indexOf(content) == -1) data.postIds.push(content);
+      data.postIds = JSON.parse(JSON.stringify(data.postIds));
       return `<span class="postCitation">${data.postIds.length}</span>`;
     });
     return data;
@@ -228,9 +249,9 @@ export class YpChatAssistant extends YpBaseElement {
 
         .bot-chat-element {
           align-self: flex-start;
-          max-width: 80%;
           justify-content: flex-start;
-          width: 80%;
+          width: 100%;
+          max-width:100%;
         }
 
         .chat-input {
@@ -248,6 +269,7 @@ export class YpChatAssistant extends YpBaseElement {
           padding: 10px;
           margin: 16px;
           margin-bottom: 16px;
+          width: 650px;
         }
 
         md-tonal-button {
@@ -256,6 +278,9 @@ export class YpChatAssistant extends YpBaseElement {
           margin-top: 0;
         }
 
+        .sendIcon {
+          cursor: pointer;
+        }
       `,
     ];
   }
@@ -267,27 +292,20 @@ export class YpChatAssistant extends YpBaseElement {
 
   renderChatInput() {
     return html`
-      <div class="layout horizontal">
-        <div class="layout horizontal center-center">
-          <md-outlined-text-field
-            class="formField"
-            id="chatInput"
-            @keyup="${(e: KeyboardEvent) => {
-              if (e.key === 'Enter') {
-                this.sendChatMessage();
-              }
-            }}"
-            label="${this.t('Ask about My Neighborhood 2022')}"
-          ></md-outlined-text-field>
-          <md-tonal-button
-            class="button okButton"
-            id="sendButton"
-            .label="${this.t('Send')}"
-            @click="${this.sendChatMessage}"
-          >
-          </md-tonal-button>
-        </div>
-      </div>
+      <md-outlined-text-field
+        class="textInput"
+        id="chatInput"
+        @keyup="${(e: KeyboardEvent) => {
+          if (e.key === 'Enter') {
+            this.sendChatMessage();
+          }
+        }}"
+        label="${this.t('Ask about My Neighborhood 2022')}"
+      >
+        <md-icon class="sendIcon" @click="${this.sendChatMessage}" slot="trailingicon"
+          >send</md-icon
+        >
+      </md-outlined-text-field>
     `;
   }
 
@@ -338,9 +356,6 @@ export class YpChatAssistant extends YpBaseElement {
           )}
         </div>
         <div class="layout vertical center-center chat-input">
-          <div class="infoMessage layout horizontal center-center">
-            ${this.infoMessage}
-          </div>
           <div class="layout vertical center-center">
             ${this.renderChatInput()}
           </div>
