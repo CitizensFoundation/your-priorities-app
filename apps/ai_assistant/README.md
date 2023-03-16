@@ -1,4 +1,4 @@
-## Hackathon starter kit September 2022
+## Your Priorities AI assistant
 
 ```
 npm install
