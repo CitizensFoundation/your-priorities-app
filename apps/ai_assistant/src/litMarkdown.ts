@@ -48,7 +48,8 @@ export class MarkdownDirective extends AsyncDirective {
             border-radius: 5px;
             background-color: var(--md-sys-color-primary-container);
             color: var(--md-sys-color-on-primary-container);
-            margin: 16px
+            margin: 16px;
+            width: 100%;
           }
 
           img {

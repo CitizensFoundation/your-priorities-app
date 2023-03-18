@@ -13,7 +13,7 @@ interface YpCampaignConfigurationData {
 
 interface YpAiChatWsMessage {
   sender: string;
-  type: 'hello_message' | 'start' | 'end' | 'stream' | 'error' | 'info' | 'thinking' | 'start_followup' | 'end_followup' | 'stream_followup';
+  type: 'hello_message' | 'moderation_error' | 'start' | 'end' | 'stream' | 'error' | 'info' | 'thinking' | 'start_followup' | 'end_followup' | 'stream_followup';
   message: string;
   postIds?: number[];
 }

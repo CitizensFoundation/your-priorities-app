@@ -7,6 +7,7 @@ import { resolveMarkdown } from './litMarkdown.js';
 import '@material/web/button/outlined-link-button.js';
 import '@material/web/button/elevated-link-button.js';
 import '@material/web/icon/icon.js';
+import '@material/web/progress/circular-progress.js';
 
 import './yp-image.js';
 
@@ -19,7 +20,13 @@ export class YpAiChatElement extends YpBaseElement {
   sender: 'you' | 'bot';
 
   @property({ type: String })
-  type: 'start' | 'error' | 'info' | 'thinking' | undefined;
+  type:
+    | 'start'
+    | 'error'
+    | 'moderation_error'
+    | 'info'
+    | 'thinking'
+    | undefined;
 
   @property({ type: Boolean })
   active = false;
@@ -54,7 +61,7 @@ export class YpAiChatElement extends YpBaseElement {
         .chatText {
           padding: 8px;
           padding-left: 8px;
-          margin-top: 0 !important;
+          margin-top: 4px !important;
         }
 
         .userChatDialog {
@@ -109,6 +116,11 @@ export class YpAiChatElement extends YpBaseElement {
           border-radius: 10px;
           max-width: 75%;
           margin-top: 12px;
+        }
+
+        .chatGPTDialog[error] {
+          background-color: var(--md-sys-color-error);
+          color: var(--md-sys-color-on-error);
         }
 
         .followup-question-container {
@@ -168,6 +180,10 @@ export class YpAiChatElement extends YpBaseElement {
     ];
   }
 
+  get isError() {
+    return this.type == 'error' || this.type == 'moderation_error';
+  }
+
   renderCGImage() {
     return html`
       <svg
@@ -204,7 +220,10 @@ export class YpAiChatElement extends YpBaseElement {
   renderChatGPT() {
     return html`
       <div class="layout vertical chatGPTDialogContainer">
-        <div class="chatGPTDialog layout vertical bot-message">
+        <div
+          class="chatGPTDialog layout vertical bot-message"
+          ?error="${this.isError}"
+        >
           <div class="layout horizontal">
             <div class="layout vertical chatImage">${this.renderCGImage()}</div>
             <div class="layout vertical chatText">
@@ -258,7 +277,7 @@ export class YpAiChatElement extends YpBaseElement {
         </div>
         ${this.followUpQuestions && this.followUpQuestions.length > 0
           ? html`
-              <div class="layout horizontal followup-question-container">
+              <div class="layout horizontal followup-question-container wrap">
                 <md-icon class="followUpQuestionMark">contact_support</md-icon
                 >${this.followUpQuestions.map(
                   question => html`
@@ -325,8 +344,8 @@ export class YpAiChatElement extends YpBaseElement {
   }
 
   renderThinking() {
-    return html`<md-icon class="doneIcon">done</md-icon><div class="thinkingText">${this.t('Thinking')}</div>
-      `;
+    return html`<md-icon class="doneIcon">done</md-icon>
+      <div class="thinkingText">${this.t('Hugsa')}</div> `;
   }
 
   renderMessage() {

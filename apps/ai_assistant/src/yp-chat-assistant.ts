@@ -77,8 +77,9 @@ export class YpChatAssistant extends YpBaseElement {
   firstUpdated(): void {
     this.addChatBotElement({
       message:
-        "Hello, I'm the My Neighborhood AI Assistant. How can I help you?",
-      sender: 'bot',
+        //"Hello, I'm the My Neighborhood AI Assistant. How can I help you?",
+        "Halló, ég er gervigreindar aðstoðarmaður fyrir Hverfið Mitt verkefnið. Hvernig get ég hjálpað?",
+        sender: 'bot',
       type: 'hello_message',
     });
   }
@@ -88,7 +89,7 @@ export class YpChatAssistant extends YpBaseElement {
     super.disconnectedCallback();
   }
 
-  onMessage(event: MessageEvent) {
+  async onMessage(event: MessageEvent) {
     const data: YpAiChatWsMessage = JSON.parse(event.data);
     //console.error(event.data);
 
@@ -100,6 +101,10 @@ export class YpChatAssistant extends YpBaseElement {
         this.addChatUserElement(data);
         break;
     }
+
+    await this.updateComplete;
+    this.$$('#chat-messages').scrollTop =
+      this.$$('#chat-messages').scrollHeight;
   }
 
   addToChatLogWithMessage(
@@ -145,6 +150,11 @@ export class YpChatAssistant extends YpBaseElement {
       case 'info':
         this.infoMessage = data.message;
         break;
+      case 'moderation_error':
+        data.message =
+          'OpenAI Moderation Flag Error. Please refine your question.';
+        this.addToChatLogWithMessage(data, data.message, false, this.t('Send'));
+        break;
       case 'error':
         this.addToChatLogWithMessage(data, data.message, false, this.t('Send'));
         break;
@@ -165,9 +175,6 @@ export class YpChatAssistant extends YpBaseElement {
         this.requestUpdate();
         break;
     }
-
-    this.$$('#chat-messages').scrollTop =
-      this.$$('#chat-messages').scrollHeight;
   }
 
   addChatUserElement(data: YpAiChatWsMessage) {
@@ -251,7 +258,7 @@ export class YpChatAssistant extends YpBaseElement {
           align-self: flex-start;
           justify-content: flex-start;
           width: 100%;
-          max-width:100%;
+          max-width: 100%;
         }
 
         .chat-input {
@@ -281,6 +288,12 @@ export class YpChatAssistant extends YpBaseElement {
         .sendIcon {
           cursor: pointer;
         }
+
+        @media (max-width: 600px) {
+          md-outlined-text-field {
+            width: 80%;
+          }
+        }
       `,
     ];
   }
@@ -300,9 +313,12 @@ export class YpChatAssistant extends YpBaseElement {
             this.sendChatMessage();
           }
         }}"
-        label="${this.t('Ask about My Neighborhood 2022')}"
+        label="${this.t('Spurðu mig um Hverfið mitt 2022')}"
       >
-        <md-icon class="sendIcon" @click="${this.sendChatMessage}" slot="trailingicon"
+        <md-icon
+          class="sendIcon"
+          @click="${this.sendChatMessage}"
+          slot="trailingicon"
           >send</md-icon
         >
       </md-outlined-text-field>
