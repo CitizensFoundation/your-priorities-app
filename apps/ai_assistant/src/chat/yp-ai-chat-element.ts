@@ -1,14 +1,14 @@
 import { css, html, nothing } from 'lit';
 import { property, customElement } from 'lit/decorators.js';
 
-import { Layouts } from './flexbox-literals/classes';
-import { YpBaseElement } from './yp-base-element';
+import { Layouts } from '../flexbox-literals/classes';
+import { YpBaseElement } from '../@yrpri/common/yp-base-element';
 import { resolveMarkdown } from './litMarkdown.js';
 import '@material/web/button/outlined-link-button.js';
 import '@material/web/button/elevated-link-button.js';
 import '@material/web/icon/icon.js';
 
-import './yp-image.js';
+import '../@yrpri/common/yp-image.js';
 
 @customElement('yp-ai-chat-element')
 export class YpAiChatElement extends YpBaseElement {

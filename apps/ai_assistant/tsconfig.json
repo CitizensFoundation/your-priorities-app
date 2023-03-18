@@ -17,8 +17,8 @@
     "importHelpers": true,
     "module": "es2015",
     "moduleResolution": "node",
-    "noFallthroughCasesInSwitch": true,
-    "noPropertyAccessFromIndexSignature": true,
+    "noFallthroughCasesInSwitch": false,
+    "noPropertyAccessFromIndexSignature": false,
     "paths": {
       "@material/web/*": ["./*"]
     },
@@ -29,7 +29,7 @@
     "strictNullChecks": false,
     "target": "es2020"
   },
-  "include": ["**/*.ts", "src/flexbox-literals/literals.ts"],
+  "include": ["**/*.ts", "src/flexbox-literals/literals.ts", "src/@yrpri/yp-post/yp-post-edit.ts.unused"],
   "importHelpers": true,
   "plugins": [
     {

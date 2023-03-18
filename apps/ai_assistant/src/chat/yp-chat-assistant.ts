@@ -5,8 +5,8 @@ import {
   virtualizerRef,
 } from '@lit-labs/virtualizer/virtualize.js';
 
-import { Layouts } from './flexbox-literals/classes';
-import { YpBaseElement } from './yp-base-element';
+import { Layouts } from '../flexbox-literals/classes';
+import { YpBaseElement } from '../@yrpri/common/yp-base-element';
 
 import '@material/web/fab/fab-extended.js';
 
@@ -21,7 +21,7 @@ import '@material/web/button/filled-button.js';
 import '@material/web/textfield/outlined-text-field.js';
 import '@material/web/icon/icon.js';
 
-import './yp-image.js';
+import '../@yrpri/common/yp-image.js';
 import { YpAiChatElement } from './yp-ai-chat-element';
 import { TonalButton } from '@material/web/button/lib/tonal-button';
 import { OutlinedTextField } from '@material/web/textfield/lib/outlined-text-field';

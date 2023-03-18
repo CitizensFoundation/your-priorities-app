@@ -1,5 +1,5 @@
 import { html, css, nothing } from 'lit';
-import { property, customElement } from 'lit/decorators.js';
+import { property, customElement, query } from 'lit/decorators.js';
 
 import '@material/web/navigationbar/navigation-bar.js';
 import '@material/web/navigationtab/navigation-tab.js';
@@ -18,14 +18,14 @@ import {
 import '@material/web/menu/menu.js';
 import { cache } from 'lit/directives/cache.js';
 
-import './yp-app-settings.js';
+import './@yrpri/common/yp-image.js';
+import { YpBaseElement } from './@yrpri/common/yp-base-element.js';
 
-import './yp-image.js';
-import { YpBaseElement } from './yp-base-element.js';
-
-import './yp-chat-assistant.js';
+import './chat/yp-chat-assistant.js';
 import { Layouts } from './flexbox-literals/classes.js';
 
+import './posts/yp-posts-dialog.js';
+import { YpPostsDialog } from './posts/yp-posts-dialog.js';
 
 const PagesTypes = {
   Analytics: 1,
@@ -33,7 +33,7 @@ const PagesTypes = {
   EmailLists: 3,
   AiAnalysis: 4,
   Settings: 5,
-  Chat: 6
+  Chat: 6,
 };
 
 declare global {
@@ -59,6 +59,9 @@ export class YpAiAssistantApp extends YpBaseElement {
   @property({ type: String })
   themeColor = '#013B70';
 
+  @query('#postsDialogs')
+  postsDialogs!: YpPostsDialog;
+
   constructor() {
     super();
   }
@@ -71,6 +74,77 @@ export class YpAiAssistantApp extends YpBaseElement {
     if (savedColor) {
       this.fireGlobal('yp-theme-color', savedColor);
     }
+
+    setTimeout(()=>{
+      const simplePosts = [
+        {
+          id: 72961,
+          emojiSummary: '',
+          name: 'How to get more traffic to your website',
+          description: 'Learn how to get more traffic to your website',
+          imageUrl: 'https://www.yrpri.com/wp-content/uploads/2020/10/traffic.jpg',
+          oneWordSummary: 'Helló',
+        },
+        {
+          id: 72248,
+          name: 'How to get more traffic to your website',
+          emojiSummary: '',
+          description: 'Learn how to get more traffic to your website',
+          imageUrl: 'https://www.yrpri.com/wp-content/uploads/2020/10/traffic.jpg',
+          oneWordSummary: 'Helló',
+        },
+        {
+          id: 72369,
+          emojiSummary: '',
+          name: 'How to get more traffic to your website',
+          description: 'Learn how to get more traffic to your website',
+          imageUrl: 'https://www.yrpri.com/wp-content/uploads/2020/10/traffic.jpg',
+          oneWordSummary: 'Helló',
+        },
+        {
+          id: 74170,
+          emojiSummary: '',
+          name: 'How to get more traffic to your website',
+          description: 'Learn how to get more traffic to your website',
+          imageUrl: 'https://www.yrpri.com/wp-content/uploads/2020/10/traffic.jpg',
+          oneWordSummary: 'Helló',
+        },
+        {
+          id: 70976,
+          emojiSummary: '',
+          name: 'How to get more traffic to your website',
+          description: 'Learn how to get more traffic to your website',
+          imageUrl: 'https://www.yrpri.com/wp-content/uploads/2020/10/traffic.jpg',
+          oneWordSummary: 'Helló',
+        },
+        {
+          id: 73121,
+          name: 'How to get more traffic to your website',
+          description: 'Learn how to get more traffic to your website',
+          imageUrl: 'https://www.yrpri.com/wp-content/uploads/2020/10/traffic.jpg',
+          emojiSummary: '',
+          oneWordSummary: 'Helló',
+        },
+        {
+          id: 73595,
+          name: 'How to get more traffic to your website',
+          emojiSummary: '',
+          description: 'Learn how to get more traffic to your website',
+          imageUrl: 'https://www.yrpri.com/wp-content/uploads/2020/10/traffic.jpg',
+          oneWordSummary: 'Helló',
+        },
+        {
+          id: 73515,
+          emojiSummary: '',
+          name: 'How to get more traffic to your website',
+          description: 'Learn how to get more traffic to your website',
+          imageUrl: 'https://www.yrpri.com/wp-content/uploads/2020/10/traffic.jpg',
+          oneWordSummary: 'Helló',
+        },
+      ];
+
+      this.postsDialogs.open(simplePosts as YpSimplePost[], 3);
+    }, 5000)
   }
 
   disconnectedCallback() {
@@ -87,7 +161,7 @@ export class YpAiAssistantApp extends YpBaseElement {
       },
     ]);
 
-    this.themeColor = "#013B70";
+    this.themeColor = '#013B70';
 
     // Check if the user has dark mode turned on
     const systemDark =
@@ -409,12 +483,11 @@ export class YpAiAssistantApp extends YpBaseElement {
   }
 
   render() {
-    return html`<yp-chat-assistant></yp-chat-assistant>`;
+    return html`<yp-posts-dialog id="postsDialogs"></yp-posts-dialog
+      ><yp-chat-assistant></yp-chat-assistant>`;
   }
 
   renderOld() {
-    return html`
-            <div class="mainPageContainer">${this._renderPage()}</div>
-    `;
+    return html` <div class="mainPageContainer">${this._renderPage()}</div> `;
   }
 }
