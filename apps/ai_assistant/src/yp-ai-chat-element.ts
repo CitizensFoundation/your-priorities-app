@@ -7,7 +7,6 @@ import { resolveMarkdown } from './litMarkdown.js';
 import '@material/web/button/outlined-link-button.js';
 import '@material/web/button/elevated-link-button.js';
 import '@material/web/icon/icon.js';
-import '@material/web/progress/circular-progress.js';
 
 import './yp-image.js';
 
@@ -29,7 +28,7 @@ export class YpAiChatElement extends YpBaseElement {
     | undefined;
 
   @property({ type: Boolean })
-  active = false;
+  active = true;
 
   @property({ type: Boolean })
   fullReferencesOpen = false;
@@ -152,6 +151,10 @@ export class YpAiChatElement extends YpBaseElement {
           color: var(--md-sys-color-secondary);
         }
 
+        .thinkingText[active] {
+          color: var(--md-sys-color-primary);
+        }
+
         .doneIcon {
           margin-left: 16px;
           margin-right: 4px;
@@ -175,6 +178,32 @@ export class YpAiChatElement extends YpBaseElement {
         .citationLink {
           margin-left: 8px;
           margin-bottom: 8px;
+        }
+
+        .progress-ring {
+          transform: rotate(-90deg);
+          color: var(--md-sys-color-secondary);
+          transform-origin: 50% 50%;
+          margin-left: 16px;
+          margin-right: 4px;
+
+        }
+        .progress-ring__circle {
+          stroke: var(--md-sys-color-primary);
+          stroke-dasharray: 75.4;
+          stroke-dashoffset: 75.4;
+          stroke-linecap: round;
+          animation: progress-ring 2.5s infinite;
+        }
+        @keyframes progress-ring {
+          0% {
+            stroke-dashoffset: 75.4;
+          }
+          50% {
+            stroke-dashoffset: 0;
+            transform: rotate(0deg);
+          }
+
         }
       `,
     ];
@@ -344,8 +373,21 @@ export class YpAiChatElement extends YpBaseElement {
   }
 
   renderThinking() {
-    return html`<md-icon class="doneIcon">done</md-icon>
-      <div class="thinkingText">${this.t('Hugsa')}</div> `;
+    return html`${this.active
+        ? html`<svg class="progress-ring" width="28" height="28">
+            <circle
+              class="progress-ring__circle"
+              ?active="${this.active}"
+              stroke="blue"
+              stroke-width="2"
+              fill="transparent"
+              r="10"
+              cx="12"
+              cy="12"
+            />
+          </svg>`
+        : html`<md-icon class="doneIcon">done</md-icon>`}
+      <div class="thinkingText" ?active="${this.active}">${this.t('Hugsa')}</div> `;
   }
 
   renderMessage() {

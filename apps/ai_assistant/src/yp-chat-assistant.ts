@@ -78,7 +78,7 @@ export class YpChatAssistant extends YpBaseElement {
     this.addChatBotElement({
       message:
         //"Hello, I'm the My Neighborhood AI Assistant. How can I help you?",
-        "Halló, ég er gervigreindar aðstoðarmaður fyrir Hverfið Mitt verkefnið. Hvernig get ég hjálpað?",
+        "Halló, ég er gervigreindar snjallmenni fyrir Hverfið Mitt verkefnið. Hvernig get ég hjálpað?",
         sender: 'bot',
       type: 'hello_message',
     });
@@ -135,9 +135,11 @@ export class YpChatAssistant extends YpBaseElement {
         this.addToChatLogWithMessage(data);
         break;
       case 'thinking':
+        lastElement.active = true;
         this.addToChatLogWithMessage(data, this.t('Thinking...'));
         break;
       case 'start':
+        lastElement.active = false;
         this.addToChatLogWithMessage(data, this.t('Thinking...'));
         break;
       case 'start_followup':
