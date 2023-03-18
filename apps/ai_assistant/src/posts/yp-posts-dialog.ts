@@ -12,9 +12,6 @@ import { YpServerApi } from '../@yrpri/common/YpServerApi.js';
 @customElement('yp-posts-dialog')
 export class YpPostsDialog extends YpBaseElement {
   static postsCache: YpCache = new YpCache();
-  static serverApi: YpServerApi = new YpServerApi(
-    'https://betrireykjavik.is/api'
-  );
 
   @property({ type: Array })
   simplePosts: YpSimplePost[] | undefined;
@@ -23,7 +20,7 @@ export class YpPostsDialog extends YpBaseElement {
   group: YpGroupData | undefined;
 
   @property({ type: Number })
-  groupId: number;
+  groupId: number = 22785;
 
   @property({ type: Number })
   currentPostId: number | undefined;
@@ -36,7 +33,7 @@ export class YpPostsDialog extends YpBaseElement {
 
   async connectedCallback() {
     super.connectedCallback();
-    this.group = await YpPostsDialog.serverApi.getGroup(this.groupId);
+    this.group = await window.serverApi.getGroup(this.groupId);
   }
 
   disconnectedCallback(): void {
@@ -47,30 +44,50 @@ export class YpPostsDialog extends YpBaseElement {
   dialog!: MdDialog;
 
   static get styles() {
-    return [Layouts, css``];
+    return [Layouts, css`
+
+    #dialog {
+      width: 100%;
+      height: 100%;
+    }
+
+    .indexNumber {
+      margin-top: 12px;
+      font-size: 20px;
+      margin-left: 8px;
+      margin-right: 8px;
+    }
+
+    .cancelButton {
+      margin-right: 332px
+    }
+    `];
   }
 
   async cacheAllPosts() {
-    const postIds = this.simplePosts?.map(post => post.id);
+    const postIds = this.simplePosts?.map(post => post.postId);
     for (let i = 0; i < postIds.length; i++) {
       let post = YpPostsDialog.postsCache.getPostFromCache(postIds[i]);
       if (!post) {
-        post = await YpPostsDialog.serverApi.getPost(this.currentPostId);
+        post = await window.serverApi.getPost(postIds[i]);
         YpPostsDialog.postsCache.addPostsToCache([post]);
       }
     }
   }
 
   async updatePost() {
-    const postIds = this.simplePosts?.map(post => post.id);
+    const postIds = this.simplePosts?.map(post => post.postId);
     if (postIds) {
+      debugger;
       this.currentPostId = postIds[this.currentIndex];
       let post = YpPostsDialog.postsCache.getPostFromCache(this.currentPostId);
 
       if (!post) {
-        post = await YpPostsDialog.serverApi.getPost(this.currentPostId);
+        post = await window.serverApi.getPost(this.currentPostId);
         YpPostsDialog.postsCache.addPostsToCache([post]);
       }
+
+      this.currentPost = post;
 
       this.cacheAllPosts();
     }
@@ -90,6 +107,7 @@ export class YpPostsDialog extends YpBaseElement {
   }
 
   open(posts: YpSimplePost[], postIndex: number) {
+    debugger;
     this.simplePosts = posts;
     this.currentIndex = postIndex;
     this.updatePost();
@@ -110,33 +128,33 @@ export class YpPostsDialog extends YpBaseElement {
     return html` <div class="layout horizontal">
       <md-outlined-icon-button
         label="Loka"
-        id="cancel"
+        class="cancelButton self-start"
         @click="${() => this.dialog.close()}"
         >close</md-outlined-icon-button
       >
-      <div class="flex"></div>
       <md-outlined-icon-button
         label="Loka"
         ?disabled="${this.currentIndex === 0}"
         id="cancel"
         @click="${this.previousPost}"
-        >left_arrow</md-outlined-icon-button
+        >navigate_before</md-outlined-icon-button
       >
-      <div class="indexNumber">${this.currentIndex + 1}</div>
+      <div class="indexNumber">${this.currentIndex + 1}.</div>
       <md-outlined-icon-button
         label="Loka"
         ?disabled="${this.currentIndex === this.simplePosts?.length - 1}"
         id="cancel"
         @click="${this.nextPost}"
-        >left_arrow</md-outlined-icon-button
+        >navigate_next</md-outlined-icon-button
       >
     </div>`;
   }
 
   render() {
-    return html`<md-dialog id="dialog">
-      <slot id="content"> ${this.renderContent()} </slot>
-      <slot id="footer">${this.renderFooter()} </slot>
+    return html`<md-dialog id="dialog" scrimClickAction="">
+      <div slot="header">${this.currentPost?.name}</div>
+      <div > ${this.renderContent()} </div>
+      <div slot="footer">${this.renderFooter()} </div>
     </md-dialog> `;
   }
 }

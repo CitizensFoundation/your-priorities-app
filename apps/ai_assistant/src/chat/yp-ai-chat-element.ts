@@ -103,6 +103,7 @@ export class YpAiChatElement extends YpBaseElement {
 
         .chatGPTDialogContainer {
           max-width: 100%;
+          width: 100%;
         }
 
         .chatGPTDialog {
@@ -269,6 +270,7 @@ export class YpAiChatElement extends YpBaseElement {
                     (post, index) => html`
                       <md-elevated-link-button
                         .label="${index + 1}. ${post.emojiSummary}"
+                        @click="${()=>this.fire('open-posts', { posts: this.posts, index})}"
                         class="citationLink layout horizontal center-justified"
                       >
                         <img src="${post.imageUrl}" class="postImage" />

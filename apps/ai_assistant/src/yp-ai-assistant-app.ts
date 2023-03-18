@@ -26,6 +26,8 @@ import { Layouts } from './flexbox-literals/classes.js';
 
 import './posts/yp-posts-dialog.js';
 import { YpPostsDialog } from './posts/yp-posts-dialog.js';
+import { YpAppGlobals } from './@yrpri/yp-app/YpAppGlobals.js';
+import { YpServerApi } from './@yrpri/common/YpServerApi.js';
 
 const PagesTypes = {
   Analytics: 1,
@@ -64,6 +66,10 @@ export class YpAiAssistantApp extends YpBaseElement {
 
   constructor() {
     super();
+    window.serverApi = new YpServerApi(
+      'https://betrireykjavik.is/api'
+    );
+    window.appGlobals = new YpAppGlobals(window.serverApi);
   }
 
   connectedCallback() {
@@ -78,7 +84,7 @@ export class YpAiAssistantApp extends YpBaseElement {
     setTimeout(()=>{
       const simplePosts = [
         {
-          id: 72961,
+          postId: 72961,
           emojiSummary: '',
           name: 'How to get more traffic to your website',
           description: 'Learn how to get more traffic to your website',
@@ -86,7 +92,7 @@ export class YpAiAssistantApp extends YpBaseElement {
           oneWordSummary: 'Helló',
         },
         {
-          id: 72248,
+          postId: 72248,
           name: 'How to get more traffic to your website',
           emojiSummary: '',
           description: 'Learn how to get more traffic to your website',
@@ -94,7 +100,7 @@ export class YpAiAssistantApp extends YpBaseElement {
           oneWordSummary: 'Helló',
         },
         {
-          id: 72369,
+          postId: 72369,
           emojiSummary: '',
           name: 'How to get more traffic to your website',
           description: 'Learn how to get more traffic to your website',
@@ -102,7 +108,7 @@ export class YpAiAssistantApp extends YpBaseElement {
           oneWordSummary: 'Helló',
         },
         {
-          id: 74170,
+          postId: 74170,
           emojiSummary: '',
           name: 'How to get more traffic to your website',
           description: 'Learn how to get more traffic to your website',
@@ -110,7 +116,7 @@ export class YpAiAssistantApp extends YpBaseElement {
           oneWordSummary: 'Helló',
         },
         {
-          id: 70976,
+          postId: 70976,
           emojiSummary: '',
           name: 'How to get more traffic to your website',
           description: 'Learn how to get more traffic to your website',
@@ -118,7 +124,7 @@ export class YpAiAssistantApp extends YpBaseElement {
           oneWordSummary: 'Helló',
         },
         {
-          id: 73121,
+          postId: 73121,
           name: 'How to get more traffic to your website',
           description: 'Learn how to get more traffic to your website',
           imageUrl: 'https://www.yrpri.com/wp-content/uploads/2020/10/traffic.jpg',
@@ -126,7 +132,7 @@ export class YpAiAssistantApp extends YpBaseElement {
           oneWordSummary: 'Helló',
         },
         {
-          id: 73595,
+          postId: 73595,
           name: 'How to get more traffic to your website',
           emojiSummary: '',
           description: 'Learn how to get more traffic to your website',
@@ -134,7 +140,7 @@ export class YpAiAssistantApp extends YpBaseElement {
           oneWordSummary: 'Helló',
         },
         {
-          id: 73515,
+          postId: 73515,
           emojiSummary: '',
           name: 'How to get more traffic to your website',
           description: 'Learn how to get more traffic to your website',
@@ -143,8 +149,8 @@ export class YpAiAssistantApp extends YpBaseElement {
         },
       ];
 
-      this.postsDialogs.open(simplePosts as YpSimplePost[], 3);
-    }, 5000)
+      this.postsDialogs.open(simplePosts as YpSimplePost[], 2);
+    }, 500)
   }
 
   disconnectedCallback() {
@@ -152,11 +158,20 @@ export class YpAiAssistantApp extends YpBaseElement {
     this._removeEventListeners();
   }
 
+  openPosts(event: CustomEvent) {
+    this.postsDialogs.open(event.detail.posts, event.detail.index);
+  }
+
   themeChanged(target: HTMLElement | undefined = undefined) {
     const theme = themeFromSourceColor(argbFromHex(this.themeColor), [
       {
-        name: 'custom-1',
-        value: argbFromHex('#013B70'),
+        name: 'up-vote',
+        value: argbFromHex('#0F0'),
+        blend: true,
+      },
+      {
+        name: 'down-vote',
+        value: argbFromHex('#F00'),
         blend: true,
       },
     ]);
@@ -170,7 +185,7 @@ export class YpAiAssistantApp extends YpBaseElement {
         : this.themeDarkMode;
 
     // Apply the theme to the body by updating custom properties for material tokens
-    applyTheme(theme, { target: target || this, dark: systemDark });
+    applyTheme(theme, { target: target || this, dark: false || systemDark });
   }
 
   snackbarclosed() {
@@ -484,7 +499,7 @@ export class YpAiAssistantApp extends YpBaseElement {
 
   render() {
     return html`<yp-posts-dialog id="postsDialogs"></yp-posts-dialog
-      ><yp-chat-assistant></yp-chat-assistant>`;
+      ><yp-chat-assistant @open-posts="${this.openPosts}"></yp-chat-assistant>`;
   }
 
   renderOld() {

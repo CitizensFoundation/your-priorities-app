@@ -70,7 +70,7 @@ export class YpPost extends YpCollection {
 
   static get styles() {
     return [
-      super.styles,
+//      super.styles,
       ShadowStyles,
       css`
         .postHeader {
@@ -124,6 +124,10 @@ export class YpPost extends YpCollection {
   }
 
   renderPostTabs() {
+    return nothing;
+  }
+
+  renderPostTabsTODO() {
     if (this.post && !this.post.Group.configuration.hideAllTabs) {
       return html`
         <div class="layout vertical center-center">

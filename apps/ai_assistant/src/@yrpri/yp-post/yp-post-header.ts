@@ -26,7 +26,9 @@ import './yp-post-transcript.js';
 import { YpPostBaseWithAnswers } from './yp-post-base-with-answers.js';
 
 @customElement('yp-post-header')
-export class YpPostHeader extends YpPostBaseWithAnswers(YpBaseElementWithLogin) {
+export class YpPostHeader extends YpPostBaseWithAnswers(
+  YpBaseElementWithLogin
+) {
   @property({ type: Boolean })
   isAudioCover = false;
 
@@ -52,7 +54,6 @@ export class YpPostHeader extends YpPostBaseWithAnswers(YpBaseElementWithLogin) 
         .infoContainer {
           color: var(--primary-color-more-darker, #111);
           line-height: var(--description-line-height, 1.3);
-          width: 540px;
           padding: 0px;
           padding-bottom: 0;
           padding-top: 16px;
@@ -74,7 +75,6 @@ export class YpPostHeader extends YpPostBaseWithAnswers(YpBaseElementWithLogin) 
         }
 
         .postCard {
-          width: 960px;
           background-color: #fff;
           position: relative;
           border-radius: 4px;
@@ -84,6 +84,7 @@ export class YpPostHeader extends YpPostBaseWithAnswers(YpBaseElementWithLogin) 
           padding-bottom: 2px;
           padding-left: 16px;
           padding-right: 16px;
+          line-height: 1.5;
         }
 
         .mobileName {
@@ -262,6 +263,10 @@ export class YpPostHeader extends YpPostBaseWithAnswers(YpBaseElementWithLogin) 
             margin-bottom: 16px;
           }
         }
+
+        [hidden] {
+          display: none !important;
+        }
       `,
     ];
   }
@@ -290,7 +295,8 @@ export class YpPostHeader extends YpPostBaseWithAnswers(YpBaseElementWithLogin) 
                 .truncate="${this.post.Group.configuration
                   .descriptionTruncateAmount}"
                 .moreText="${this.t('readMore')}"
-                .closeDialogText="${this.t('close')}">
+                .closeDialogText="${this.t('close')}"
+              >
               </yp-magic-text>
             `
           : html`
@@ -308,7 +314,8 @@ export class YpPostHeader extends YpPostBaseWithAnswers(YpBaseElementWithLogin) 
                 .truncate="${this.post.Group.configuration
                   .descriptionTruncateAmount}"
                 .moreText="${this.t('readMore')}"
-                .closeDialogText="${this.t('close')}">
+                .closeDialogText="${this.t('close')}"
+              >
               </yp-magic-text>
             `}
       </div>
@@ -321,7 +328,8 @@ export class YpPostHeader extends YpPostBaseWithAnswers(YpBaseElementWithLogin) 
         <md-outlined-icon-button
           icon="more_vert"
           @click="${this._openPostMenu}"
-          title="${this.t('openPostMenu')}">
+          title="${this.t('openPostMenu')}"
+        >
         </md-outlined-icon-button>
         <mwc-menu id="postMenu" menuCorner="END" corner="TOP_RIGHT">
           ${this.hasPostAccess
@@ -329,23 +337,28 @@ export class YpPostHeader extends YpPostBaseWithAnswers(YpBaseElementWithLogin) 
                 <mwc-list-item @click="${this._openEdit}">
                   ${this.t('post.edit')}
                 </mwc-list-item>
-                <mwc-list-item @click="${this._openMovePost}" ?hidden="${!YpAccessHelpers.checkPostAdminOnlyAccess(
+                <mwc-list-item
+                  @click="${this._openMovePost}"
+                  ?hidden="${!YpAccessHelpers.checkPostAdminOnlyAccess(
                     this.post
-                  )}">
+                  )}"
+                >
                   ${this.t('post.move')}
                 </mwc-list-item>
                 <mwc-list-item
                   @click="${this._openPostStatusChange}"
                   ?hidden="${!YpAccessHelpers.checkPostAdminOnlyAccess(
                     this.post
-                  )}">
+                  )}"
+                >
                   ${this.t('post.statusChange')}
                 </mwc-list-item>
                 <mwc-list-item
                   @click="${this._openPostStatusChangeNoEmails}"
                   ?hidden="${!YpAccessHelpers.checkPostAdminOnlyAccess(
                     this.post
-                  )}">
+                  )}"
+                >
                   ${this.t('post.statusChangeNoEmails')}
                 </mwc-list-item>
                 <mwc-list-item @click="${this._openDelete}">
@@ -355,14 +368,16 @@ export class YpPostHeader extends YpPostBaseWithAnswers(YpBaseElementWithLogin) 
                   @click="${this._openAnonymizeContent}"
                   ?hidden="${!YpAccessHelpers.checkPostAdminOnlyAccess(
                     this.post
-                  )}">
+                  )}"
+                >
                   ${this.t('anonymizePostAndContent')}
                 </mwc-list-item>
                 <mwc-list-item
                   @click="${this._openDeleteContent}"
                   ?hidden="${!YpAccessHelpers.checkPostAdminOnlyAccess(
                     this.post
-                  )}">
+                  )}"
+                >
                   ${this.t('deletePostContent')}
                 </mwc-list-item>
               `
@@ -380,17 +395,20 @@ export class YpPostHeader extends YpPostBaseWithAnswers(YpBaseElementWithLogin) 
         ? html`
             <yp-post-ratings-info
               class="customRatings"
-              .post="${this.post}"></yp-post-ratings-info>
+              .post="${this.post}"
+            ></yp-post-ratings-info>
           `
         : html`
             <yp-post-actions
               ?hidden="${this.hideActions}"
               hideDebate
               elevation="-1"
-              ?forceShowDebate="${this.post.Group.configuration.forceShowDebateCountOnPost}"
+              ?forceShowDebate="${this.post.Group.configuration
+                .forceShowDebateCountOnPost}"
               floating
               class="postActions"
-              .post="${this.post}"></yp-post-actions>
+              .post="${this.post}"
+            ></yp-post-actions>
           `}
 
       <div class="share" ?hidden="${this.post.Group.configuration.hideSharing}">
@@ -398,7 +416,8 @@ export class YpPostHeader extends YpPostBaseWithAnswers(YpBaseElementWithLogin) 
           ?less-margin="${this.post.Group.configuration.hideDownVoteForPost}"
           icon="share"
           .label="${this.t('post.shareInfo')}"
-          @click="${this._shareTap}"></md-outlined-icon-button>
+          @click="${this._shareTap}"
+        ></md-outlined-icon-button>
       </div>`;
   }
 
@@ -406,18 +425,22 @@ export class YpPostHeader extends YpPostBaseWithAnswers(YpBaseElementWithLogin) 
     return html`
       <div class="layout horizontal center-center">
         <div
-          class="postCard layout-wrap layout horizontal shadow-elevation-4dp shadow-transition">
+          class="postCard layout-wrap layout horizontal shsadow-elevation-4dp shasdow-transition"
+        >
           <div
-            class="layout vertical headerTopLevel"
+            class="layout vertical headerTopLevel center-center"
             role="heading"
             aria-level="1"
-            aria-label="${this.post.name}">
+            aria-label="${this.post.name}"
+          >
             <div>
               <yp-magic-text
                 textType="postName"
+                hidden
                 .contentLanguage="${this.post.language}"
                 .content="${this.post.name}"
-                .contentId="${this.post.id}">
+                .contentId="${this.post.id}"
+              >
               </yp-magic-text>
             </div>
             ${this.post.Group.configuration.showWhoPostedPosts
@@ -426,15 +449,18 @@ export class YpPostHeader extends YpPostBaseWithAnswers(YpBaseElementWithLogin) 
                     <yp-user-with-organization
                       class="userWithOrg"
                       hide-image
-                      .user="${this.post.User}"></yp-user-with-organization>
+                      .user="${this.post.User}"
+                    ></yp-user-with-organization>
                   </div>
                 `
               : nothing}
 
             <div
-              class="layout horizontal wrap mediaAndInfoContainer layout-center-center">
+              class="layout horizontal center-center wrap mediaAndInfoContainer layout-center-center"
+            >
               <div
-                class="layout vertical center-center self-start coverContainer">
+                class="layout vertical center-center coverContainer"
+              >
                 <yp-post-cover-media
                   top-left-radius
                   show-video
@@ -443,18 +469,18 @@ export class YpPostHeader extends YpPostBaseWithAnswers(YpBaseElementWithLogin) 
                   .altTag="${this.post.name}"
                   ?audio-cover="${this.isAudioCover}"
                   header-mode
-                  .post="${this.post}">
+                  .post="${this.post}"
+                >
                 </yp-post-cover-media>
                 ${this.transcriptActive
                   ? html`
                       <yp-post-transcript
-                        .post="${this.post}"></yp-post-transcript>
+                        .post="${this.post}"
+                      ></yp-post-transcript>
                     `
                   : nothing}
               </div>
-              <div class="layout vertical">
-                ${this.renderPostInformation()}
-              </div>
+              <div class="layout vertical">${this.renderPostInformation()}</div>
               ${this.renderActions()} ${this.renderMenu()}
             </div>
           </div>
@@ -464,7 +490,7 @@ export class YpPostHeader extends YpPostBaseWithAnswers(YpBaseElementWithLogin) 
   }
 
   _openPostMenu() {
-    (this.$$('#postMenu') as any /*Menu*/).open = true;
+    (this.$$('#postMenu') as any) /*Menu*/.open = true;
   }
 
   _sharedContent(event: CustomEvent) {
@@ -554,14 +580,18 @@ export class YpPostHeader extends YpPostBaseWithAnswers(YpBaseElementWithLogin) 
   }
 
   _refresh() {
-    window.appDialogs.getDialogAsync('postEdit', (dialog: any /*YpPostEdit*/) => {
-      dialog.selected = 0;
-      this.fire('refresh');
-    });
+    window.appDialogs.getDialogAsync(
+      'postEdit',
+      (dialog: any /*YpPostEdit*/) => {
+        dialog.selected = 0;
+        this.fire('refresh');
+      }
+    );
   }
 
   _openMovePost() {
-    (this.$$('#helpMenu') as any /*Menu*/).select(-1);
+    (this.$$('#helpMenu') as any) /*Menu*/
+      .select(-1);
     window.appGlobals.activity('open', 'movePost');
     //TODO: movePost
     /*window.appDialogs.getDialogAsync('postMove', dialog => {
@@ -570,7 +600,8 @@ export class YpPostHeader extends YpPostBaseWithAnswers(YpBaseElementWithLogin) 
   }
 
   _openPostStatusChangeNoEmails() {
-    (this.$$('#helpMenu') as any /*Menu*/).select(-1);
+    (this.$$('#helpMenu') as any) /*Menu*/
+      .select(-1);
     window.appGlobals.activity('open', 'statusChangeNoEmails');
     //TODO: Finish
     /*window.appDialogs.getDialogAsync('postStatusChangeEdit', dialog => {
@@ -580,7 +611,8 @@ export class YpPostHeader extends YpPostBaseWithAnswers(YpBaseElementWithLogin) 
   }
 
   _openPostStatusChange() {
-    (this.$$('#helpMenu') as any /*Menu*/).select(-1);
+    (this.$$('#helpMenu') as any) /*Menu*/
+      .select(-1);
     window.appGlobals.activity('open', 'post.statusChangeEdit');
     //TODO: Finish
     /*window.appDialogs.getDialogAsync('postStatusChangeEdit', dialog => {
@@ -590,12 +622,21 @@ export class YpPostHeader extends YpPostBaseWithAnswers(YpBaseElementWithLogin) 
   }
 
   _openEdit() {
-    (this.$$('#helpMenu') as any /*Menu*/).select(-1);
+    (this.$$('#helpMenu') as any) /*Menu*/
+      .select(-1);
     window.appGlobals.activity('open', 'post.edit');
-    window.appDialogs.getDialogAsync('postEdit', (dialog: any /*YpApiActionDialog*/) => {
-      dialog.setup(this.post, false, this._refresh.bind(this), this.post.Group);
-      dialog.open(false, { postId: this.post.id });
-    });
+    window.appDialogs.getDialogAsync(
+      'postEdit',
+      (dialog: any /*YpApiActionDialog*/) => {
+        dialog.setup(
+          this.post,
+          false,
+          this._refresh.bind(this),
+          this.post.Group
+        );
+        dialog.open(false, { postId: this.post.id });
+      }
+    );
   }
 
   _openReport() {
@@ -616,7 +657,8 @@ export class YpPostHeader extends YpPostBaseWithAnswers(YpBaseElementWithLogin) 
   }
 
   _openDelete() {
-    (this.$$('#helpMenu') as any /*Menu*/).select(-1);
+    (this.$$('#helpMenu') as any) /*Menu*/
+      .select(-1);
     window.appGlobals.activity('open', 'post.delete');
     window.appDialogs.getDialogAsync(
       'apiActionDialog',
@@ -632,7 +674,8 @@ export class YpPostHeader extends YpPostBaseWithAnswers(YpBaseElementWithLogin) 
   }
 
   _openDeleteContent() {
-    (this.$$('#helpMenu') as any /*Menu*/).select(-1);
+    (this.$$('#helpMenu') as any) /*Menu*/
+      .select(-1);
     window.appGlobals.activity('open', 'postDeleteContent');
     window.appDialogs.getDialogAsync(
       'apiActionDialog',
@@ -647,7 +690,8 @@ export class YpPostHeader extends YpPostBaseWithAnswers(YpBaseElementWithLogin) 
   }
 
   _openAnonymizeContent() {
-    (this.$$('#helpMenu') as any /*Menu*/).select(-1);
+    (this.$$('#helpMenu') as any) /*Menu*/
+      .select(-1);
     window.appGlobals.activity('open', 'postAnonymizeContent');
     window.appDialogs.getDialogAsync(
       'apiActionDialog',

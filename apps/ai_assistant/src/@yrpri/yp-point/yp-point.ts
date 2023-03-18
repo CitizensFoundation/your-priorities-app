@@ -507,14 +507,14 @@ export class YpPoint extends YpBaseElement {
                     class="openCloseButton"
                     icon="keyboard_arrow_right"
                     @click="${this._setOpen}"
-                    hidden$="${this.openTranscript}"
+                    ?hidden="${this.openTranscript}"
                   ></md-outlined-icon-button>
                   <md-outlined-icon-button
                     .label="${this.t('closeComments')}"
                     class="openCloseButton"
                     icon="keyboard_arrow_down"
                     @click="${this._setClosed}"
-                    hidden$="${!this.openTranscript}"
+                    ?hidden="${!this.openTranscript}"
                   ></md-outlined-icon-button>
                 </div>
               </div>

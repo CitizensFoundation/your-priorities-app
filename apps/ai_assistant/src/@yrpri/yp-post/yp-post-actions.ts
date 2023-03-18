@@ -7,6 +7,7 @@ import '@material/web/iconbutton/outlined-icon-button.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { YpNavHelpers } from '../common/YpNavHelpers.js';
 import { MdOutlinedIconButton } from '@material/web/iconbutton/outlined-icon-button.js';
+import { Layouts } from '../../flexbox-literals/classes.js';
 
 @customElement('yp-post-actions')
 export class YpPostActions extends YpBaseElement {
@@ -76,6 +77,7 @@ export class YpPostActions extends YpBaseElement {
   static get styles() {
     return [
       super.styles,
+      Layouts,
       css`
         :host {
           display: block;

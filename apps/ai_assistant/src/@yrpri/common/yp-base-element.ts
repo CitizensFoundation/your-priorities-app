@@ -21,6 +21,10 @@ export class YpBaseElement extends LitElement {
   @property({ type: Boolean })
   themeDarkMode: boolean | undefined;
 
+  static get styles() {
+    return [] as any;
+  }
+
   connectedCallback() {
     super.connectedCallback();
 
@@ -51,7 +55,9 @@ export class YpBaseElement extends LitElement {
     }
 
     installMediaQueryWatcher(`(min-width: 900px)`, matches => {
-      this.wide = matches;
+      //TODO: Fix this back!
+      this.wide = false;
+//      this.wide = matches;
     });
   }
 

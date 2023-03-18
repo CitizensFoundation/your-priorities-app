@@ -19,7 +19,7 @@ interface YpAiChatWsMessage {
 }
 
 interface YpSimplePost {
-  id: number;
+  postId: number;
   name: string;
   imageUrl: string;
   emojiSummary: string;

@@ -892,11 +892,13 @@ export class YpPostPoints extends YpBaseElementWithLogin {
   }
 
   get wideReady() {
-    return this.wide && this.post;
+    //TODO Fix back
+    return false //this.post//this.wide && this.post;
   }
 
   get smallReady() {
-    return !this.wide && this.post;
+    //TODO Fix back
+    return this.post//!this.wide && this.post;
   }
 
   get pointMaxLength() {
