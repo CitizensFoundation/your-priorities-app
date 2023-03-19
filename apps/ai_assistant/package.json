@@ -123,9 +123,8 @@
   "author": "Citizens Foundation",
   "license": "AGPL",
   "dependencies": {
-    "@kano/twemoji": "^1.0.0",
     "@lit-labs/virtualizer": "^1.0.1",
-    "@material/material-color-utilities": "^0.2.3",
+    "@material/material-color-utilities": "^0.2.4",
     "@material/mwc-circular-progress-four-color": "^0.27.0",
     "@material/mwc-linear-progress": "^0.27.0",
     "@material/web": "^1.0.0-pre.4",
@@ -149,6 +148,7 @@
     "rollup-plugin-copy": "^3.4.0",
     "sanitize-html": "^2.10.0",
     "share-menu": "^5.0.0-rc.4",
+    "twemoji": "^14.0.2",
     "vanilla-colorful": "^0.7.1"
   }
 }

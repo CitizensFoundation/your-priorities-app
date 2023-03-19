@@ -52,7 +52,6 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
         }
 
         .infoContainer {
-          color: var(--primary-color-more-darker, #111);
           line-height: var(--description-line-height, 1.3);
           padding: 0px;
           padding-bottom: 0;
@@ -68,6 +67,9 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
           position: relative;
           width: 420px;
           height: 236px;
+          margin-right: auto;
+          margin-left: auto;
+
         }
 
         yp-post-cover-media[audio-cover] {
@@ -75,7 +77,6 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
         }
 
         .postCard {
-          background-color: #fff;
           position: relative;
           border-radius: 4px;
         }
@@ -456,7 +457,7 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
               : nothing}
 
             <div
-              class="layout horizontal center-center wrap mediaAndInfoContainer layout-center-center"
+              class="layout horizontal center-center wrap mediaAndInfoContainer layout center-center"
             >
               <div
                 class="layout vertical center-center coverContainer"

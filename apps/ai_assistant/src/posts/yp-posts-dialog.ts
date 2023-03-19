@@ -78,7 +78,6 @@ export class YpPostsDialog extends YpBaseElement {
   async updatePost() {
     const postIds = this.simplePosts?.map(post => post.postId);
     if (postIds) {
-      debugger;
       this.currentPostId = postIds[this.currentIndex];
       let post = YpPostsDialog.postsCache.getPostFromCache(this.currentPostId);
 
@@ -107,7 +106,6 @@ export class YpPostsDialog extends YpBaseElement {
   }
 
   open(posts: YpSimplePost[], postIndex: number) {
-    debugger;
     this.simplePosts = posts;
     this.currentIndex = postIndex;
     this.updatePost();

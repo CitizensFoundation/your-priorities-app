@@ -9,7 +9,7 @@ import linkifyHtml from 'linkify-html';
 
 import { YpBaseElement } from '../common/yp-base-element.js';
 
-import { twemoji } from '@kano/twemoji/index.es.js';
+import './twemoji.min.js';
 
 @customElement('yp-magic-text')
 export class YpMagicText extends YpBaseElement {
@@ -481,6 +481,7 @@ export class YpMagicText extends YpBaseElement {
         },
       }) as string;
       this.processedContent = this.processedContent.replace(/&amp;/g, '&');
+      //@ts-ignore
       this.processedContent = twemoji
         .parse(this.processedContent)
         .replace(/&amp;quot;/g, '"')

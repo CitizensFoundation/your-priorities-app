@@ -291,7 +291,6 @@ export class YpPostMap extends YpBaseElement {
   }
 
   markerClick(post: YpPostData) {
-    debugger;
     //TODO: Review this, if this data handling with the click makes sense and is not too slow
     window.appGlobals.activity('clicked', 'marker');
     this.selectedPost = post;

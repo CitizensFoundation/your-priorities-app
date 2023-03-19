@@ -21,6 +21,9 @@ import '@material/web/button/filled-button.js';
 import '@material/web/textfield/outlined-text-field.js';
 import '@material/web/icon/icon.js';
 
+import '@material/web/iconbutton/outlined-link-icon-button.js';
+import '@material/web/iconbutton/outlined-icon-button-toggle.js';
+
 import '../@yrpri/common/yp-image.js';
 import { YpAiChatElement } from './yp-ai-chat-element';
 import { TonalButton } from '@material/web/button/lib/tonal-button';
@@ -54,6 +57,9 @@ export class YpChatAssistant extends YpBaseElement {
   @property({ type: Object })
   ws!: WebSocket;
 
+  @property({ type: Boolean })
+  darkMode = true;
+
   @property({ type: String })
   currentFollowUpQuestions: string = '';
 
@@ -75,13 +81,7 @@ export class YpChatAssistant extends YpBaseElement {
   }
 
   firstUpdated(): void {
-    this.addChatBotElement({
-      message:
-        //"Hello, I'm the My Neighborhood AI Assistant. How can I help you?",
-        "Halló, ég er gervigreindar snjallmenni fyrir Hverfið Mitt verkefnið. Hvernig get ég hjálpað?",
-        sender: 'bot',
-      type: 'hello_message',
-    });
+    this.reset();
   }
 
   disconnectedCallback(): void {
@@ -102,9 +102,17 @@ export class YpChatAssistant extends YpBaseElement {
         break;
     }
 
-    await this.updateComplete;
-    this.$$('#chat-messages').scrollTop =
-      this.$$('#chat-messages').scrollHeight;
+    if (data.type !== 'stream_followup') {
+      this.scrollDown();
+    }
+  }
+
+  scrollDown() {
+    //await this.updateComplete;
+    setTimeout(() => {
+      this.$$('#chat-messages').scrollTop =
+        this.$$('#chat-messages').scrollHeight;
+    }, 100);
   }
 
   addToChatLogWithMessage(
@@ -268,7 +276,6 @@ export class YpChatAssistant extends YpBaseElement {
           align-items: center;
           justify-content: space-between;
           padding: 10px;
-          background-color: white;
         }
 
         md-outlined-text-field {
@@ -278,6 +285,7 @@ export class YpChatAssistant extends YpBaseElement {
           padding: 10px;
           margin: 16px;
           margin-bottom: 16px;
+          margin-left: 8px;
           width: 650px;
         }
 
@@ -287,13 +295,29 @@ export class YpChatAssistant extends YpBaseElement {
           margin-top: 0;
         }
 
+        .restartButton {
+          margin-left: 16px;
+        }
+
         .sendIcon {
           cursor: pointer;
         }
 
-        @media (max-width: 600px) {
+        @media (max-width: 960px) {
           md-outlined-text-field {
-            width: 80%;
+            width: 400px;
+          }
+        }
+
+        @media (max-width: 450px) {
+          md-outlined-text-field {
+            width: 350px;
+          }
+        }
+
+        @media (max-width: 400px) {
+          md-outlined-text-field {
+            width: 320px;
           }
         }
       `,
@@ -305,8 +329,22 @@ export class YpChatAssistant extends YpBaseElement {
     this.sendChatMessage();
   }
 
+  reset() {
+    this.addChatBotElement({
+      message:
+        //"Hello, I'm the My Neighborhood AI Assistant. How can I help you?",
+        'Halló, ég er gervigreindar snjallmenni fyrir Hverfið Mitt verkefnið. Hvernig get ég hjálpað?',
+      sender: 'bot',
+      type: 'hello_message',
+    });
+    this.ws.send('<|--reset-chat--|>');
+  }
+
   renderChatInput() {
     return html`
+      <md-outlined-link-icon-button class="restartButton" @click="${this.reset}"
+        >restart_alt</md-outlined-link-icon-button
+      >
       <md-outlined-text-field
         class="textInput"
         id="chatInput"
@@ -324,6 +362,10 @@ export class YpChatAssistant extends YpBaseElement {
           >send</md-icon
         >
       </md-outlined-text-field>
+      <md-outlined-icon-button-toggle .selected="${this.darkMode}">
+        <md-icon slot="icon">light_mode</md-icon>
+        <md-icon slot="selectedIcon">dark_mode</md-icon>
+      </md-outlined-icon-button-toggle>
     `;
   }
 
@@ -373,10 +415,8 @@ export class YpChatAssistant extends YpBaseElement {
             `
           )}
         </div>
-        <div class="layout vertical center-center chat-input">
-          <div class="layout vertical center-center">
-            ${this.renderChatInput()}
-          </div>
+        <div class="layout horizontal center-center chat-input">
+          ${this.renderChatInput()}
         </div>
       </div>
     `;

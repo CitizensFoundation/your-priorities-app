@@ -58,6 +58,11 @@ export class MarkdownDirective extends AsyncDirective {
             object-fit: cover;
           }
 
+
+          ol {
+            margin: 8px;
+          }
+
           th, td {
             padding: 8px;
             text-align: left;
@@ -77,8 +82,13 @@ export class MarkdownDirective extends AsyncDirective {
           }
 
           p {
-            margin-top: 0;
-            margin-bottom: 0;
+            margin-top: 8px;
+            margin-bottom: 8px;
+          }
+
+          pre {
+            white-space: pre-wrap;
+            white-space: -moz-pre-wrap;
           }
         `;
 
