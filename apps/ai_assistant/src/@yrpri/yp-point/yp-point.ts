@@ -19,6 +19,7 @@ import './yp-point-actions.js';
 
 import { YpNavHelpers } from '../common/YpNavHelpers.js';
 import { YpBaseElement } from '../common/yp-base-element.js';
+import { Layouts } from '../../flexbox-literals/classes.js';
 //import { any /*YpApiActionDialog*/ } from '../yp-api-action-dialog/yp-api-action-dialog.js';
 //import { YpConfirmationDialog } from '../yp-dialog-container/yp-confirmation-dialog.js';
 
@@ -148,6 +149,7 @@ export class YpPoint extends YpBaseElement {
   static get styles() {
     return [
       super.styles,
+      Layouts,
       css`
         :host {
           display: block;
@@ -190,23 +192,20 @@ export class YpPoint extends YpBaseElement {
         }
 
         md-outlined-icon-button {
-          color: #ccc;
         }
 
         #reportPointIconButton {
-          color: #ddd;
           width: 36px;
           height: 36px;
         }
 
         .thumbsIcon {
-          padding-left: 16px;
-          padding-right: 16px;
+          padding-left: 0;
+          padding-right: 0;
         }
 
         @media (min-width: 985px) {
           .thumbsIcon {
-            display: none;
           }
         }
 
@@ -215,7 +214,6 @@ export class YpPoint extends YpBaseElement {
         }
 
         md-icon.thumbsIconDown {
-          color: var(--master-point-down-color);
         }
 
         yp-user-with-organization {
@@ -224,6 +222,7 @@ export class YpPoint extends YpBaseElement {
 
         .actionContainer {
           margin-top: 8px;
+          margin-bottom: 16px;
         }
 
         [hidden] {
@@ -283,7 +282,6 @@ export class YpPoint extends YpBaseElement {
           font-size: 16px;
           padding-bottom: 2px;
           font-weight: bold;
-          color: var(--accent-color, #111);
         }
 
         .commentFromAdminInput {
@@ -292,7 +290,7 @@ export class YpPoint extends YpBaseElement {
 
         .transcriptError {
           margin-top: 8px;
-          color: #f00;
+          color: var(--md-error-color);
         }
 
         mwc-circular-progress-four-color {
@@ -307,13 +305,11 @@ export class YpPoint extends YpBaseElement {
         .transcriptText {
           margin-top: 0;
           padding: 8px;
-          color: #222;
           padding-bottom: 0;
           font-style: italic;
         }
 
         .transcriptHeader {
-          color: #222;
           margin-bottom: 2px;
           font-style: normal;
         }
@@ -324,11 +320,9 @@ export class YpPoint extends YpBaseElement {
         }
 
         video {
-          background-color: #777;
         }
 
         #pointContent {
-          color: #111;
         }
 
         md-outlined-icon-button.openCloseButton {
@@ -337,7 +331,6 @@ export class YpPoint extends YpBaseElement {
           margin-top: -16px;
           padding-left: 0;
           margin-left: 0;
-          color: #777;
         }
       `,
     ];
@@ -383,25 +376,25 @@ export class YpPoint extends YpBaseElement {
 
   renderUserHeader() {
     return this.user
-      ? html` <div
+      ? html`<div
           class="userInfoContainer layout horizontal"
           ?up-vote="${this.isUpVote}"
           ?down-vote="${this.isDownVote}"
           ?hidden="${this.hideUser}"
         >
-          <md-icon
-            class="thumbsIcon thumbsIconUp"
-            ?hidden="${!this.isDownVote}"
-            >thumb_up</md-icon
-          >
-          <md-icon class="thumbsIcon thumbsIconDown" ?hidden="${this.isUpVote}"
-            >thumb_down</md-icon
-          >
-          <div
+        <div
             class="layout horizontal"
             ?hidden="${this.post!.Group.configuration.hidePointAuthor}"
           >
-            <yp-user-with-organization
+          <md-icon
+            class="thumbsIcon thumbsIconUp"
+            ?hidden="${!this.isUpVote}"
+            >thumb_up</md-icon
+          >
+          <md-icon class="thumbsIcon thumbsIconDown" ?hidden="${!this.isDownVote}"
+            >thumb_down</md-icon
+          >
+          <yp-user-with-organization
               .titleDate="${this.point.created_at}"
               inverted
               .user="${this.user}"
@@ -611,6 +604,7 @@ export class YpPoint extends YpBaseElement {
               .configuration="${this.post?.Group?.configuration}"
             ></yp-point-actions>
             <md-outlined-icon-button
+              hidden
               .label="${this.t('point.report')}"
               id="reportPointIconButton"
               icon="warning"

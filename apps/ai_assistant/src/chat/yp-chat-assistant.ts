@@ -84,6 +84,13 @@ export class YpChatAssistant extends YpBaseElement {
     this.reset();
   }
 
+  updated(changedProperties: Map<string | number | symbol, unknown>): void {
+    super.updated(changedProperties);
+    if (changedProperties.has('themeDarkMode')) {
+      debugger;
+    }
+  }
+
   disconnectedCallback(): void {
     this.ws.close();
     super.disconnectedCallback();
@@ -286,6 +293,7 @@ export class YpChatAssistant extends YpBaseElement {
           margin: 16px;
           margin-bottom: 16px;
           margin-left: 8px;
+          margin-right: 8px;
           width: 650px;
         }
 
@@ -299,11 +307,23 @@ export class YpChatAssistant extends YpBaseElement {
           margin-left: 16px;
         }
 
+        .darkModeButton {
+          margin-right: 16px;
+        }
+
         .sendIcon {
           cursor: pointer;
         }
 
         @media (max-width: 960px) {
+          .restartButton {
+            margin-left: 8px;
+          }
+
+          .darkModeButton {
+            margin-right: 8px;
+          }
+
           md-outlined-text-field {
             width: 400px;
           }
@@ -330,6 +350,7 @@ export class YpChatAssistant extends YpBaseElement {
   }
 
   reset() {
+    this.chatLog = [];
     this.addChatBotElement({
       message:
         //"Hello, I'm the My Neighborhood AI Assistant. How can I help you?",
@@ -338,6 +359,12 @@ export class YpChatAssistant extends YpBaseElement {
       type: 'hello_message',
     });
     this.ws.send('<|--reset-chat--|>');
+  }
+
+  toggleDarkMode() {
+    this.themeDarkMode = !this.themeDarkMode;
+    this.fire('theme-dark-mode', this.themeDarkMode);
+    this.requestUpdate();
   }
 
   renderChatInput() {
@@ -359,10 +386,15 @@ export class YpChatAssistant extends YpBaseElement {
           class="sendIcon"
           @click="${this.sendChatMessage}"
           slot="trailingicon"
+          id="sendButton"
           >send</md-icon
         >
       </md-outlined-text-field>
-      <md-outlined-icon-button-toggle .selected="${this.darkMode}">
+      <md-outlined-icon-button-toggle
+        class="darkModeButton"
+        ?selected="${!this.themeDarkMode}"
+        @change="${this.toggleDarkMode}"
+      >
         <md-icon slot="icon">light_mode</md-icon>
         <md-icon slot="selectedIcon">dark_mode</md-icon>
       </md-outlined-icon-button-toggle>

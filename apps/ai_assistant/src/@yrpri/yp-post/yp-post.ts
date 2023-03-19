@@ -217,6 +217,7 @@ export class YpPost extends YpCollection {
           !this.post.Group.configuration.hideNewPost &&
           !this.post.Group.configuration.hideNewPostOnPostPage
             ? html` <md-fab
+                hidden
                 .label="${this.t('post.new')}"
                 icon="lightbulb"
                 @click="${this._newPost}"></md-fab>`

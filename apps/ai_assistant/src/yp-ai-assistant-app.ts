@@ -149,7 +149,7 @@ export class YpAiAssistantApp extends YpBaseElement {
         },
       ];
 
-      this.postsDialogs.open(simplePosts as YpSimplePost[], 2);
+      //this.postsDialogs.open(simplePosts as YpSimplePost[], 2);
     }, 500)
   }
 
@@ -176,6 +176,7 @@ export class YpAiAssistantApp extends YpBaseElement {
       },
     ]);
 
+
     this.themeColor = '#013B70';
 
     // Check if the user has dark mode turned on
@@ -185,7 +186,7 @@ export class YpAiAssistantApp extends YpBaseElement {
         : this.themeDarkMode;
 
     // Apply the theme to the body by updating custom properties for material tokens
-    applyTheme(theme, { target: target || this, dark: true || systemDark });
+    applyTheme(theme, { target: target || this, dark: false || systemDark });
   }
 
   snackbarclosed() {

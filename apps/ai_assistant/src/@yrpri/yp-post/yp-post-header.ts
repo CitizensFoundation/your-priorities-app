@@ -85,7 +85,7 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
           padding-bottom: 2px;
           padding-left: 16px;
           padding-right: 16px;
-          line-height: 1.5;
+          line-height: 1.75;
         }
 
         .mobileName {
@@ -102,9 +102,10 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
         }
 
         .postActions {
-          position: absolute;
-          right: 92px;
-          bottom: 2px;
+          align-self: flex-end;
+          align-items: flex-end;
+          margin-top: 16px;
+          width: 100%;
         }
 
         .moreVert {
@@ -312,7 +313,7 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
                 skipSanitize
                 .contentId="${this.post.id}"
                 class="description"
-                .truncate="${this.post.Group.configuration
+                .truncate="${5000 || this.post.Group.configuration
                   .descriptionTruncateAmount}"
                 .moreText="${this.t('readMore')}"
                 .closeDialogText="${this.t('close')}"
@@ -327,6 +328,7 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
     return html`
       <div style="position: relative;" class="moreVert">
         <md-outlined-icon-button
+          hidden
           icon="more_vert"
           @click="${this._openPostMenu}"
           title="${this.t('openPostMenu')}"
@@ -383,7 +385,7 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
                 </mwc-list-item>
               `
             : nothing}
-          <mwc-list-item @click="${this._openReport}">
+          <mwc-list-item hidden @click="${this._openReport}">
             ${this.t('post.report')}
           </mwc-list-item>
         </mwc-menu>
@@ -412,7 +414,7 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
             ></yp-post-actions>
           `}
 
-      <div class="share" ?hidden="${this.post.Group.configuration.hideSharing}">
+      <div class="share" ?hidden="${true || this.post.Group.configuration.hideSharing}">
         <md-outlined-icon-button
           ?less-margin="${this.post.Group.configuration.hideDownVoteForPost}"
           icon="share"
@@ -457,7 +459,7 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
               : nothing}
 
             <div
-              class="layout horizontal center-center wrap mediaAndInfoContainer layout center-center"
+              class="layout horizontal center-center wrap mediaAndInfoContainer"
             >
               <div
                 class="layout vertical center-center coverContainer"
@@ -481,7 +483,7 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
                     `
                   : nothing}
               </div>
-              <div class="layout vertical">${this.renderPostInformation()}</div>
+              <div class="layout vertical self-end">${this.renderPostInformation()}</div>
               ${this.renderActions()} ${this.renderMenu()}
             </div>
           </div>

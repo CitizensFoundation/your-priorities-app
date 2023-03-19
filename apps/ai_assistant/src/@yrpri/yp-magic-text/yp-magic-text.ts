@@ -481,14 +481,13 @@ export class YpMagicText extends YpBaseElement {
         },
       }) as string;
       this.processedContent = this.processedContent.replace(/&amp;/g, '&');
-      //@ts-ignore
-      this.processedContent = twemoji
+      /*this.processedContent = twemoji
         .parse(this.processedContent)
         .replace(/&amp;quot;/g, '"')
         .replace(
           /class="emoji" /g,
           'style="height: 1em;width: 1em;margin: 0 .3em 0 .3em;vertical-align: -0.1em;" '
-        );
+        );*/
     } else if (this.processedContent) {
       this.processedContent = linkifyHtml(this.processedContent, {
         format: (value: string, type: string) => {

@@ -56,12 +56,20 @@ export class YpPostsDialog extends YpBaseElement {
       font-size: 20px;
       margin-left: 8px;
       margin-right: 8px;
+      color: var(--md-sys-color-on-surface);
     }
 
     .cancelButton {
       margin-right: 332px
     }
     `];
+  }
+
+  scrollUp() {
+    //await this.updateComplete;
+    setTimeout(() => {
+      this.$$('#content').scrollTop = 0;
+    }, 100);
   }
 
   async cacheAllPosts() {
@@ -87,6 +95,8 @@ export class YpPostsDialog extends YpBaseElement {
       }
 
       this.currentPost = post;
+
+      this.scrollUp();
 
       this.cacheAllPosts();
     }
@@ -151,7 +161,7 @@ export class YpPostsDialog extends YpBaseElement {
   render() {
     return html`<md-dialog id="dialog" scrimClickAction="">
       <div slot="header">${this.currentPost?.name}</div>
-      <div > ${this.renderContent()} </div>
+      <div id="content"> ${this.renderContent()} </div>
       <div slot="footer">${this.renderFooter()} </div>
     </md-dialog> `;
   }

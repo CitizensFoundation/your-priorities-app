@@ -6,6 +6,7 @@ import '@material/web/iconbutton/outlined-icon-button.js';
 import { removeClass } from '../common/RemoveClass.js';
 
 import { YpBaseElement } from '../common/yp-base-element.js';
+import { Layouts } from '../../flexbox-literals/classes.js';
 
 @customElement('yp-point-actions')
 export class YpPointActions extends YpBaseElement {
@@ -36,6 +37,7 @@ export class YpPointActions extends YpBaseElement {
   static get styles() {
     return [
       super.styles,
+      Layouts,
       css`
         :host {
           min-width: 125px;
@@ -44,6 +46,7 @@ export class YpPointActions extends YpBaseElement {
         .action-text {
           font-size: 12px;
           padding-top: 12px;
+          padding-left: 6px;
         }
 
         .action-up {
@@ -64,8 +67,8 @@ export class YpPointActions extends YpBaseElement {
         }
 
         .all-actions {
-          color: #aaa;
           padding-right: 8px;
+          margin-top: 8px;
         }
 
         yp-ajax {
@@ -89,6 +92,10 @@ export class YpPointActions extends YpBaseElement {
         [hidden] {
           display: none !important;
         }
+
+        .point-down-vote-icon {
+          margin-left: 16px;
+        }
       `,
     ];
   }
@@ -97,7 +104,7 @@ export class YpPointActions extends YpBaseElement {
     return this.point
       ? html`
           <div
-            class="all-actions layout horizontal flex start-justified"
+            class="all-actions layout horizontal center-center"
             ?hidden="${this.hideNotHelpful}">
             <div id="actionUp" class="actionUp layout horizontal">
               <md-outlined-icon-button
@@ -105,7 +112,7 @@ export class YpPointActions extends YpBaseElement {
                 ?disabled="${this.allDisabled}"
                 icon="arrow_upward"
                 class="point-up-vote-icon myButton"
-                @click="${this.pointHelpful}"></md-outlined-icon-button>
+                @click="${this.pointHelpful}">arrow_upward</md-outlined-icon-button>
               <div class="action-text action-up layouthorizontal ">
                 ${this.point.counter_quality_up}
               </div>
@@ -116,12 +123,12 @@ export class YpPointActions extends YpBaseElement {
                 ?disabled="${this.allDisabled}"
                 icon="arrow_downward"
                 class="point-down-vote-icon myButton"
-                @click="${this.pointNotHelpful}"></md-outlined-icon-button>
+                @click="${this.pointNotHelpful}">arrow_downward</md-outlined-icon-button>
               <div class="action-text">${this.point.counter_quality_down}</div>
             </div>
             <md-outlined-icon-button
               icon="share"
-              ?hidden="${this.masterHideSharing}"
+              ?hidden="${true || this.masterHideSharing}"
               class="shareIcon"
               .label="${this.t('sharePoint')}"
               up-voted="${this.isUpVoted}"

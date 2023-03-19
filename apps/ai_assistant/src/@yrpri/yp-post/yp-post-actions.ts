@@ -4,6 +4,9 @@ import { YpFormattingHelpers } from '../common/YpFormattingHelpers.js';
 import { YpBaseElement } from '../common/yp-base-element.js';
 
 import '@material/web/iconbutton/outlined-icon-button.js';
+import '@material/web/iconbutton/filled-tonal-link-icon-button.js';
+
+
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { YpNavHelpers } from '../common/YpNavHelpers.js';
 import { MdOutlinedIconButton } from '@material/web/iconbutton/outlined-icon-button.js';
@@ -85,12 +88,10 @@ export class YpPostActions extends YpBaseElement {
 
         .action-bar {
           position: absolute;
-          background-color: #fff;
         }
 
         .action-bar[floating] {
           position: relative;
-          background-color: #fff;
         }
 
         .action-bar-small {
@@ -152,12 +153,16 @@ export class YpPostActions extends YpBaseElement {
 
         .down-text {
           padding-right: 0px;
-          padding-top: 10px;
+          padding-top: 0px;
+          padding-left: 4px;
+          padding-bottom: 7px;
         }
 
         .up-text {
           padding-top: 10px;
-          margin-right: 8px;
+          margin-right: 12px;
+          padding-left: 4px;
+          padding-bottom: 8px;
         }
 
         .up-text[rtl] {
@@ -168,18 +173,18 @@ export class YpPostActions extends YpBaseElement {
           margin-right: 0px;
         }
 
-        md-outlined-icon-button.mainIcons {
+        md-filled-tonal-link-icon-button.mainIcons {
           width: 48px;
           height: 48px;
         }
 
-        md-outlined-icon-button.debateIcon {
+        md-filled-tonal-link-icon-button.debateIcon {
           width: 46px;
           height: 46px;
           margin-top: 2px;
         }
 
-        md-outlined-icon-button[smaller-icons] {
+        md-filled-tonal-link-icon-button[smaller-icons] {
           height: 48px;
           width: 48px;
         }
@@ -245,24 +250,24 @@ export class YpPostActions extends YpBaseElement {
         ?rtl="${this.rtl}"
         title="${ifDefined(this.disabledTitle)}"
         floating="${this.floating}"
-        class="action-bar layout horizontal"
+        class="action-bar layout horizontal center-center"
       >
         <div
           id="actionUp"
           ?only-up-vote-showing="${this.onlyUpVoteShowing}"
           class="action-up layout horizontal layout start justified"
         >
-          <md-outlined-icon-button
+          <md-filled-tonal-link-icon-button
             id="iconUpButton"
             .smaller-icons="${this.smallerIcons}"
-            ?disabled="${this.votingStateDisabled}"
+            ?disabled="${true || this.votingStateDisabled}"
             .title="${this.customVoteUpHoverText}"
             icon="${ifDefined(
               this.endorseModeIcon(this.endorsementButtons, 'up')
             )}"
             class="action-icon up-vote-icon largeButton"
             @click="${this.upVote}"
-          ></md-outlined-icon-button>
+          >favorite</md-filled-tonal-link-icon-button>
           <div
             ?rtl="${this.rtl}"
             class="action-text up-text"
@@ -274,15 +279,15 @@ export class YpPostActions extends YpBaseElement {
 
         <div
           class="action-debate layout horizontal"
-          ?hidden="${this.hideDebate}"
+          ?hidden="${true || this.hideDebate}"
         >
-          <md-outlined-icon-button
+          <md-filled-tonal-link-icon-button
             ?disabled="${this.allDisabled}"
             title="${this.t('post.debate')}"
             icon="chat_bubble_outline"
             class="action-icon debate-icon mainIcons debateIcon"
             @click="${this._goToPostIfNotHeader}"
-          ></md-outlined-icon-button>
+          >front_hand</md-filled-tonal-link-icon-button>
           <div class="action-text debate-text">
             ${YpFormattingHelpers.number(this.post.counter_points)}
           </div>
@@ -293,14 +298,14 @@ export class YpPostActions extends YpBaseElement {
           class="action-down layout horizontal layout center justified"
           ?hidden="${this.post.Group.configuration.hideDownVoteForPost}"
         >
-          <md-outlined-icon-button
+          <md-filled-tonal-link-icon-button
             smaller-icons="${this.smallerIcons}"
-            ?disabled="${this.votingStateDisabled}"
+            ?disabled="${true || this.votingStateDisabled}"
             title="${this.customVoteDownHoverText}"
             icon="${ifDefined(this.endorseModeIconDown)}"
             class="action-icon down-vote-icon mainIcons"
             @click="${this.downVote}"
-          ></md-outlined-icon-button>
+          >block</md-filled-tonal-link-icon-button>
           <div
             class="action-text down-text"
             ?hidden="${this.post.Group.configuration.hideVoteCount}"

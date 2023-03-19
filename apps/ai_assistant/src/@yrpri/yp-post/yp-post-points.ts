@@ -274,7 +274,6 @@ export class YpPostPoints extends YpBaseElementWithLogin {
           padding-right: 16px;
           padding-bottom: 16px;
           margin-bottom: 16px;
-          background-color: #fff;
         }
 
         yp-point {
@@ -283,7 +282,6 @@ export class YpPostPoints extends YpBaseElementWithLogin {
 
         .pointMaterial {
           padding-top: 8px;
-          background-color: #fff;
           padding-left: 0;
           padding-right: 0;
           width: 430px;
@@ -341,8 +339,6 @@ export class YpPostPoints extends YpBaseElementWithLogin {
         }
 
         md-outlined-button {
-          color: #fff;
-          background-color: var(--accent-color);
           font-family: var(--app-header-font-family, Roboto);
         }
 
@@ -392,9 +388,9 @@ export class YpPostPoints extends YpBaseElementWithLogin {
         }
 
         .pointMainHeader {
-          font-size: 26px;
-          margin-bottom: 16px;
-          color: #555;
+          font-size: 22px;
+          margin-bottom: 8px;
+          margin-top: 16px;
         }
 
         #pointUpMaterialNotUsed {
@@ -429,8 +425,6 @@ export class YpPostPoints extends YpBaseElementWithLogin {
 
         .uploadNotLoggedIn {
           min-width: 100px;
-          background-color: #fff;
-          color: #000;
           margin-bottom: 24px;
         }
 
@@ -664,7 +658,14 @@ export class YpPostPoints extends YpBaseElementWithLogin {
     points: Array<YpPointData> | undefined,
     mobile = false
   ) {
-    return html`
+    if (points && points.length==0) {
+      return html`<div class="point">
+        ${this.renderPointHeader(header, "Engin rök til", headerTextType)}
+        </div>
+        `
+
+    } else {
+      return html`
       <div class="point">
         ${this.renderPointHeader(header, alternativeHeader, headerTextType)}
 
@@ -749,6 +750,8 @@ export class YpPostPoints extends YpBaseElementWithLogin {
           : nothing}
       </div>
     `;
+
+    }
   }
 
   scrollEvent(event: any/*RangeChangedEvent*/) {
@@ -858,7 +861,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
             <div ?rtl="${this.rtl}" class="layout vertical center-center">
               ${this.renderPointList(
                 'Mobile',
-                this.t('pointsAgainst'),
+                this.t('Rök með og á móti'),
                 this.post.Group.configuration.alternativePointAgainstHeader,
                 'alternativePointAgainstHeader',
                 this.labelMobileUpOrDown,
@@ -1437,12 +1440,12 @@ export class YpPostPoints extends YpBaseElementWithLogin {
       }
 
       if (multipleLanguages) {
-        window.appDialogs.getDialogAsync(
+        /*window.appDialogs.getDialogAsync(
           'autoTranslateDialog',
-          (dialog: any  /*YpAutoTranslateDialog*/) => {
+          (dialog: any  YpAutoTranslateDialog) => {
             dialog.openLaterIfAutoTranslationEnabled();
           }
-        );
+        );*/
       }
     }
   }

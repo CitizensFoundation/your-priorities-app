@@ -1,6 +1,7 @@
 
 import { html, css, nothing } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
+import { Layouts } from '../../flexbox-literals/classes.js';
 
 import { YpBaseElement } from '../common/yp-base-element.js';
 import { YpMediaHelpers } from '../common/YpMediaHelpers.js';
@@ -26,6 +27,7 @@ export class YpUserWithOrganization extends YpBaseElement {
   static get styles() {
     return [
       super.styles,
+      Layouts,
       css`
         yp-user-image {
           padding-right: 16px;
