@@ -247,7 +247,7 @@ export class YpPost extends YpCollection {
     const tabName = Object.keys(PostTabTypes)[this.selectedTab].toLowerCase();
 
     if (this.post) {
-      YpNavHelpers.redirectTo('/post/' + this.post.id + '/' + tabName);
+      //YpNavHelpers.redirectTo('/post/' + this.post.id + '/' + tabName);
     }
 
     if (tabName) {

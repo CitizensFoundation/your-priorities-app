@@ -401,7 +401,7 @@ export class YpAppGlobals extends YpCodeBase {
     if (results) {
       this.domain = results.domain;
       this._domainChanged(this.domain);
-      this.analytics.setupGoogleAnalytics(this.domain);
+      //this.analytics.setupGoogleAnalytics(this.domain);
 
       if (window.location.pathname == '/') {
         if (

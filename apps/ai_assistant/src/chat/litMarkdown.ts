@@ -63,6 +63,12 @@ export class MarkdownDirective extends AsyncDirective {
             margin: 8px;
           }
 
+          @media (max-width: 800px) {
+            ol {
+              padding: 0px;
+            }
+          }
+
           th, td {
             padding: 8px;
             text-align: left;

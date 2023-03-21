@@ -47,8 +47,7 @@ export class YpPostsDialog extends YpBaseElement {
     return [Layouts, css`
 
     #dialog {
-      width: 100%;
-      height: 100%;
+      height: 100dvh;
     }
 
     .indexNumber {
@@ -61,6 +60,17 @@ export class YpPostsDialog extends YpBaseElement {
 
     .cancelButton {
       margin-right: 332px
+    }
+
+    @media (max-width: 800px) {
+      .cancelButton {
+      margin-right: 32px
+    }
+
+    .postHeader {
+      padding: 8px;
+      font-size: 22px;
+    }
     }
     `];
   }
@@ -159,8 +169,8 @@ export class YpPostsDialog extends YpBaseElement {
   }
 
   render() {
-    return html`<md-dialog id="dialog" scrimClickAction="">
-      <div slot="header">${this.currentPost?.name}</div>
+    return html`<md-dialog ?fullsffcreen="${!this.wide}" id="dialog" scrimClickAction="">
+      <div slot="header" class="postHeader">${this.currentPost?.name}</div>
       <div id="content"> ${this.renderContent()} </div>
       <div slot="footer">${this.renderFooter()} </div>
     </md-dialog> `;

@@ -51,14 +51,14 @@ export class YpChatAssistant extends YpBaseElement {
   defaultInfoMessage: string =
     'My Neighborhood Assistant is ready to help you.';
 
-  @property({ type: Object })
-  wsEndpoint = 'ws://localhost:9000/chat';
+  @property({ type: String })
+  wsEndpoint: string;
 
   @property({ type: Object })
   ws!: WebSocket;
 
   @property({ type: Boolean })
-  darkMode = true;
+  inputIsFocused = false;
 
   @property({ type: String })
   currentFollowUpQuestions: string = '';
@@ -72,13 +72,30 @@ export class YpChatAssistant extends YpBaseElement {
   @query('#chatInput')
   chatInputField: OutlinedTextField;
 
+  @query('#chat-window')
+  chatWindow: HTMLElement;
+
+  calcVH() {
+    const vH = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+    this.chatWindow.setAttribute("style", "height:" + vH + "px;");
+    console.error("dijsaidjsiodjasiodjsoij")
+  }
+
   connectedCallback() {
     if (!this.infoMessage) this.infoMessage = this.defaultInfoMessage;
     super.connectedCallback();
+    if (window.location.href.indexOf('localhost') > -1) {
+      this.wsEndpoint = 'ws://localhost:9000/chat';
+    } else {
+      this.wsEndpoint = 'wss://sp4.betrireykjavik.is:443/chat';
+    }
+
     this.ws = new WebSocket(this.wsEndpoint);
 
     this.ws.onmessage = this.onMessage.bind(this);
-  }
+    //window.addEventListener('onorientationchange', this.calcVH.bind(this), true);
+    //window.addEventListener('resize', this.calcVH.bind(this), true);
+}
 
   firstUpdated(): void {
     this.reset();
@@ -198,7 +215,7 @@ export class YpChatAssistant extends YpBaseElement {
     this.chatLog = [...this.chatLog, data];
   }
 
-  sendChatMessage() {
+  async sendChatMessage() {
     const message = this.chatInputField.value;
 
     if (message.length === 0) return;
@@ -207,6 +224,9 @@ export class YpChatAssistant extends YpBaseElement {
     this.chatInputField.value = '';
     this.sendButton.disabled = false;
     this.sendButton.label = this.t('Thinking...');
+    setTimeout(() => {
+      this.chatInputField.blur();
+    });
   }
 
   parsePosts(data: YpAiChatWsMessage) {
@@ -255,7 +275,6 @@ export class YpChatAssistant extends YpBaseElement {
           border-radius: 10px;
           overflow: hidden;
         }
-
         .chat-messages {
           display: flex;
           flex-direction: column;
@@ -263,6 +282,7 @@ export class YpChatAssistant extends YpBaseElement {
           padding: 20px;
           overflow-y: scroll;
         }
+
 
         .you-chat-element {
           align-self: flex-end;
@@ -285,6 +305,38 @@ export class YpChatAssistant extends YpBaseElement {
           padding: 10px;
         }
 
+
+        @media (max-width: 600px) {
+          .chat-window {
+            height: 100dvh;
+          }
+
+          .you-chat-element {
+            margin-right: 0;
+          }
+
+        }
+
+
+
+        md-tonal-button {
+          padding: 16px;
+          padding-left: 0;
+          margin-top: 0;
+        }
+
+        .sendIcon {
+          cursor: pointer;
+        }
+
+        .restartButton {
+          margin-left: 16px;
+        }
+
+        .darkModeButton {
+          margin-right: 16px;
+        }
+
         md-outlined-text-field {
           flex: 1;
           border-radius: 10px;
@@ -297,35 +349,34 @@ export class YpChatAssistant extends YpBaseElement {
           width: 650px;
         }
 
-        md-tonal-button {
-          padding: 16px;
-          padding-left: 0;
-          margin-top: 0;
-        }
-
-        .restartButton {
-          margin-left: 16px;
-        }
-
-        .darkModeButton {
-          margin-right: 16px;
-        }
-
-        .sendIcon {
-          cursor: pointer;
-        }
-
         @media (max-width: 960px) {
           .restartButton {
             margin-left: 8px;
+            display: none;
+          }
+
+          yp-ai-chat-element[thinking] {
+            margin-top: 12px;
           }
 
           .darkModeButton {
             margin-right: 8px;
+            display: none;
           }
 
           md-outlined-text-field {
+            transition: transform 0.5s;
             width: 400px;
+          }
+
+          .restartButton[input-is-focused] {
+          }
+
+          .darkModeButton[input-is-focused] {
+          }
+
+          md-outlined-text-field[focused] {
+            width: 100%;
           }
         }
 
@@ -333,11 +384,19 @@ export class YpChatAssistant extends YpBaseElement {
           md-outlined-text-field {
             width: 350px;
           }
+
+          md-outlined-text-field[focused] {
+            width: 100%;
+          }
         }
 
         @media (max-width: 400px) {
           md-outlined-text-field {
             width: 320px;
+          }
+
+          md-outlined-text-field[focused] {
+            width: 100%;
           }
         }
       `,
@@ -370,11 +429,17 @@ export class YpChatAssistant extends YpBaseElement {
   renderChatInput() {
     return html`
       <md-outlined-link-icon-button class="restartButton" @click="${this.reset}"
-        >restart_alt</md-outlined-link-icon-button
+      ?input-is-focused="${this.inputIsFocused}"
+
+      >restart_alt</md-outlined-link-icon-button
       >
       <md-outlined-text-field
         class="textInput"
         id="chatInput"
+
+        @focus="${()=>this.inputIsFocused=true}"
+        @blur="${()=>this.inputIsFocused=true}"
+
         @keyup="${(e: KeyboardEvent) => {
           if (e.key === 'Enter') {
             this.sendChatMessage();
@@ -387,6 +452,7 @@ export class YpChatAssistant extends YpBaseElement {
           @click="${this.sendChatMessage}"
           slot="trailingicon"
           id="sendButton"
+          ?input-is-focused="${this.inputIsFocused}"
           >send</md-icon
         >
       </md-outlined-text-field>
@@ -437,6 +503,7 @@ export class YpChatAssistant extends YpBaseElement {
           ${this.chatLog.map(
             chatElement => html`
               <yp-ai-chat-element
+                ?thinking="${chatElement.type === 'thinking'}"
                 @followup-question="${this.followUpQuestion}"
                 class="${chatElement.sender}-chat-element"
                 .message="${chatElement.message}"

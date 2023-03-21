@@ -127,6 +127,13 @@ export class YpAiChatElement extends YpBaseElement {
           margin-top: 12px;
         }
 
+        @media (max-width: 800px) {
+          .chatGPTDialog {
+            margin: 8px;
+            max-width: 100%;
+          }
+        }
+
         .chatGPTDialog[error] {
           background-color: var(--md-sys-color-error);
           color: var(--md-sys-color-on-error);

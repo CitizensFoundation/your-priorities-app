@@ -186,7 +186,7 @@ export class YpAiAssistantApp extends YpBaseElement {
         : this.themeDarkMode;
 
     // Apply the theme to the body by updating custom properties for material tokens
-    applyTheme(theme, { target: target || this, dark: false || systemDark });
+    applyTheme(theme, { target: target || this, dark: false /*|| systemDark*/ });
   }
 
   snackbarclosed() {
@@ -252,8 +252,6 @@ export class YpAiAssistantApp extends YpBaseElement {
       Layouts,
       css`
         :host {
-          width: 100vw;
-          height: 100vh;
           background-color: var(--md-sys-color-surface, #fefefe);
         }
 
