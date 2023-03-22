@@ -240,6 +240,12 @@ var updateGroupConfigParameters = function (req, group) {
   group.set('configuration.forceSecureSamlLogin', truthValueFromBody(req.body.forceSecureSamlLogin));
   group.set('configuration.forceSecureSamlEmployeeLogin', truthValueFromBody(req.body.forceSecureSamlEmployeeLogin));
 
+  group.set('configuration.galleryMode', truthValueFromBody(req.body.galleryMode));
+  group.set('configuration.showNameUnderLogoImage', truthValueFromBody(req.body.showNameUnderLogoImage));
+  group.set('configuration.alwaysHideLogoImage', truthValueFromBody(req.body.alwaysHideLogoImage));
+  group.set('configuration.hideStatsAndMembership', truthValueFromBody(req.body.hideStatsAndMembership));
+  group.set('configuration.centerGroupName', truthValueFromBody(req.body.hideStatsAndMembership));
+
   group.set('configuration.hideGroupLevelTabs', truthValueFromBody(req.body.hideGroupLevelTabs));
   group.set('configuration.hidePostFilterAndSearch', truthValueFromBody(req.body.hidePostFilterAndSearch));
   group.set('configuration.hidePostImageUploads', truthValueFromBody(req.body.hidePostImageUploads));
@@ -247,6 +253,7 @@ var updateGroupConfigParameters = function (req, group) {
   group.set('configuration.maxDaysBackForRecommendations', (req.body.maxDaysBackForRecommendations && req.body.maxDaysBackForRecommendations!="") ? req.body.maxDaysBackForRecommendations : null);
 
   group.set('configuration.externalId', (req.body.externalId && req.body.externalId!="") ? req.body.externalId : null);
+
 
   group.set('configuration.usePostListFormatOnDesktop', truthValueFromBody(req.body.usePostListFormatOnDesktop));
   group.set('configuration.usePostTagsForPostListItems', truthValueFromBody(req.body.usePostTagsForPostListItems));

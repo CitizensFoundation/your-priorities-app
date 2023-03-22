@@ -632,6 +632,10 @@ var updateCommunityConfigParameters = function (req, community) {
   community.set('configuration.hideLogoBoxExceptOnMobile', truthValueFromBody(req.body.hideLogoBoxExceptOnMobile));
   community.set('configuration.hideInfoBoxExceptForAdmins', truthValueFromBody(req.body.hideInfoBoxExceptForAdmins));
   community.set('configuration.hideLogoBoxShadow', truthValueFromBody(req.body.hideLogoBoxShadow));
+  community.set('configuration.muteNotificationsForEndorsements', truthValueFromBody(req.body.muteNotificationsForEndorsements));
+  community.set('configuration.useTextOnlyInfoBox', truthValueFromBody(req.body.useTextOnlyInfoBox));
+
+
 
   community.set('configuration.themeOverrideColorPrimary', (req.body.themeOverrideColorPrimary && req.body.themeOverrideColorPrimary!="") ? req.body.themeOverrideColorPrimary : null);
   community.set('configuration.themeOverrideColorAccent', (req.body.themeOverrideColorAccent && req.body.themeOverrideColorAccent!="") ? req.body.themeOverrideColorAccent : null);
