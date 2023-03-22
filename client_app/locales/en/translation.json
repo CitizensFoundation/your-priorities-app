@@ -1,4 +1,13 @@
 {
+  "centerGroupName": "Center group name in lists",
+  "hideStatsAndMembership": "Hide stats and membership in lists",
+  "alwaysHideLogoImage": "Always hide logo image",
+  "showNameUnderLogoImage": "Show name under logo image",
+  "galleryMode": "Gallery mode",
+  "muteNotificationsForEndorsements": "Mute notifications for endorsements",
+  "useTextOnlyInfoBox": "Use text only info box",
+  "openDescription": "Open description",
+  "closeDescription": "Close description",
   "hideNewsfeeds": "Hide newsfeeds",
   "areYouSureCloneCommunity": "Are you sure you want to clone this community?",
   "cloneCommunity": "Clone community",

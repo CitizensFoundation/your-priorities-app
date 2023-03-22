@@ -1,4 +1,13 @@
 {
+  "centerGroupName": "Miðja nafn á hóp í lista",
+  "hideStatsAndMembership": "Fela stöðu og meðlimi í lista",
+  "alwaysHideLogoImage": "Fela lógó alltaf",
+  "showNameUnderLogoImage": "Birta nafn undir lógói",
+  "galleryMode": "Gallerí hamur",
+  "muteNotificationsForEndorsements": "Slökkva á tilkynningum fyrir atkvæði",
+  "useTextOnlyInfoBox": "Nota texta upplýsingabox",
+  "openDescription": "Opna lýsingu",
+  "closeDescription": "Loka lýsingu",
   "hideNewsfeeds": "Fela fréttaveitu",
   "areYouSureCloneCommunity": "Ertu viss um að þú viljir klóna þetta svæði?",
   "cloneCommunity": "Klóna svæði",
