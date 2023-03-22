@@ -31,14 +31,6 @@ import { OutlinedTextField } from '@material/web/textfield/lib/outlined-text-fie
 
 import './yp-ai-chat-element.js';
 
-// Minna rounded corners á followups, minnka aðeins
-// Meira línubil á chat
-// Laga liti
-// Hafa Emoji summary á undan mynd, aðgrein
-// Laga takka Send
-//
-// Hafa mest 7 svör
-
 @customElement('yp-chat-assistant')
 export class YpChatAssistant extends YpBaseElement {
   @property({ type: Array })
@@ -60,6 +52,12 @@ export class YpChatAssistant extends YpBaseElement {
   @property({ type: Boolean })
   inputIsFocused = false;
 
+  @property({ type: Number })
+  clusterId: number;
+
+  @property({ type: Number })
+  communityId: number;
+
   @property({ type: String })
   currentFollowUpQuestions: string = '';
 
@@ -76,26 +74,32 @@ export class YpChatAssistant extends YpBaseElement {
   chatWindow: HTMLElement;
 
   calcVH() {
-    const vH = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
-    this.chatWindow.setAttribute("style", "height:" + vH + "px;");
-    console.error("dijsaidjsiodjasiodjsoij")
+    const vH = Math.max(
+      document.documentElement.clientHeight,
+      window.innerHeight || 0
+    );
+    this.chatWindow.setAttribute('style', 'height:' + vH + 'px;');
+    console.error('dijsaidjsiodjasiodjsoij');
   }
 
   connectedCallback() {
     if (!this.infoMessage) this.infoMessage = this.defaultInfoMessage;
     super.connectedCallback();
+
+    const urlParts = window.location.href.split('/');
+    this.clusterId = parseInt(urlParts[urlParts.length - 2]);
+    this.communityId = parseInt(urlParts[urlParts.length - 1]);
+
     if (window.location.href.indexOf('localhost') > -1) {
-      this.wsEndpoint = 'ws://localhost:9000/chat';
+      this.wsEndpoint = `ws://localhost:9000/chat/${this.clusterId}/${this.communityId}`;
     } else {
-      this.wsEndpoint = 'wss://sp4.betrireykjavik.is:443/chat';
+      this.wsEndpoint = `wss://sp4.betrireykjavik.is:443/chat/${this.clusterId}/${this.communityId}`;
     }
 
     this.ws = new WebSocket(this.wsEndpoint);
 
     this.ws.onmessage = this.onMessage.bind(this);
-    //window.addEventListener('onorientationchange', this.calcVH.bind(this), true);
-    //window.addEventListener('resize', this.calcVH.bind(this), true);
-}
+  }
 
   firstUpdated(): void {
     this.reset();
@@ -104,7 +108,7 @@ export class YpChatAssistant extends YpBaseElement {
   updated(changedProperties: Map<string | number | symbol, unknown>): void {
     super.updated(changedProperties);
     if (changedProperties.has('themeDarkMode')) {
-      debugger;
+
     }
   }
 
@@ -283,7 +287,6 @@ export class YpChatAssistant extends YpBaseElement {
           overflow-y: scroll;
         }
 
-
         .you-chat-element {
           align-self: flex-end;
           max-width: 80%;
@@ -305,7 +308,6 @@ export class YpChatAssistant extends YpBaseElement {
           padding: 10px;
         }
 
-
         @media (max-width: 600px) {
           .chat-window {
             height: 100dvh;
@@ -314,10 +316,7 @@ export class YpChatAssistant extends YpBaseElement {
           .you-chat-element {
             margin-right: 0;
           }
-
         }
-
-
 
         md-tonal-button {
           padding: 16px;
@@ -428,18 +427,17 @@ export class YpChatAssistant extends YpBaseElement {
 
   renderChatInput() {
     return html`
-      <md-outlined-link-icon-button class="restartButton" @click="${this.reset}"
-      ?input-is-focused="${this.inputIsFocused}"
-
-      >restart_alt</md-outlined-link-icon-button
+      <md-outlined-link-icon-button
+        class="restartButton"
+        @click="${this.reset}"
+        ?input-is-focused="${this.inputIsFocused}"
+        >restart_alt</md-outlined-link-icon-button
       >
       <md-outlined-text-field
         class="textInput"
         id="chatInput"
-
-        @focus="${()=>this.inputIsFocused=true}"
-        @blur="${()=>this.inputIsFocused=true}"
-
+        @focus="${() => (this.inputIsFocused = true)}"
+        @blur="${() => (this.inputIsFocused = true)}"
         @keyup="${(e: KeyboardEvent) => {
           if (e.key === 'Enter') {
             this.sendChatMessage();
