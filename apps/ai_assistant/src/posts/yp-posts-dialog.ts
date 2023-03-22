@@ -44,10 +44,9 @@ export class YpPostsDialog extends YpBaseElement {
   dialog!: MdDialog;
 
   static get styles() {
-    return [Layouts, css`
+    return [Layouts,css`
 
     #dialog {
-      height: 100dvh;
     }
 
     .indexNumber {
@@ -63,6 +62,13 @@ export class YpPostsDialog extends YpBaseElement {
     }
 
     @media (max-width: 800px) {
+      #dialog {
+      block-size: 100dvh;
+      max-block-size: 100dvh;;
+      --md-dialog-container-max-block-size: 100dvh;
+      --md-dialog-container-max-inline-size: 100dvh;
+    }
+
       .cancelButton {
       margin-right: 32px
     }
@@ -72,8 +78,15 @@ export class YpPostsDialog extends YpBaseElement {
       font-size: 22px;
     }
     }
+
+    [hidden] {
+      display: none !important;
+    }
     `];
   }
+
+  // Function to scroll to top of dialog
+
 
   scrollUp() {
     //await this.updateComplete;
@@ -154,12 +167,14 @@ export class YpPostsDialog extends YpBaseElement {
         label="Loka"
         ?disabled="${this.currentIndex === 0}"
         id="cancel"
+        ?hidden=="${this.simplePosts?.length<2}"
         @click="${this.previousPost}"
         >navigate_before</md-outlined-icon-button
       >
       <div class="indexNumber">${this.currentIndex + 1}.</div>
       <md-outlined-icon-button
         label="Loka"
+        ?hidden=="${this.simplePosts?.length<2}"
         ?disabled="${this.currentIndex === this.simplePosts?.length - 1}"
         id="cancel"
         @click="${this.nextPost}"
