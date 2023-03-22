@@ -169,7 +169,7 @@ export class YpPostsDialog extends YpBaseElement {
   }
 
   render() {
-    return html`<md-dialog ?fullsffcreen="${!this.wide}" id="dialog" scrimClickAction="">
+    return html`<md-dialog ?fullscreen="${!this.wide}" id="dialog" scrimClickAction="">
       <div slot="header" class="postHeader">${this.currentPost?.name}</div>
       <div id="content"> ${this.renderContent()} </div>
       <div slot="footer">${this.renderFooter()} </div>

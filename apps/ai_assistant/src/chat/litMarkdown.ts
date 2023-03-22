@@ -32,11 +32,24 @@ export class MarkdownDirective extends AsyncDirective {
     return sanitizeHTML(rawHTML, { allowedTags, allowedClasses });*/
   }
 
+  private closeCodeBlockIfNeeded(rawMarkdown: string): string {
+    const codeBlockDelimiterCount = (rawMarkdown.match(new RegExp('```', 'g')) || []).length;
+
+    // If there is an odd number of code block delimiters, add one to close the last code block
+    if (codeBlockDelimiterCount % 2 !== 0) {
+      rawMarkdown += "\n```";
+    }
+
+    return rawMarkdown;
+  }
+
   render(rawMarkdown: string, options?: Partial<Options>) {
     const mergedOptions = Object.assign(
       MarkdownDirective.defaultOptions,
       options ?? {}
     );
+
+    rawMarkdown = this.closeCodeBlockIfNeeded(rawMarkdown);
 
     new Promise<string>((resolve, reject) => {
       marked.parse(rawMarkdown, (error: any, result: any) => {
