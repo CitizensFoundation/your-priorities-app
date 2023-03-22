@@ -47,10 +47,15 @@
          background-color: var(--primary-color-800);
       }
 
+
       @media (max-width: 960px) {
         .groupCard[has-hidden-objectives] {
             height: 335px;
         }
+      }
+
+      .groupCard[hide-stats-and-membership] {
+        height: 297px;
       }
 
       .objectives {
@@ -78,6 +83,10 @@
 
       .group-name[archived] {
         background-color: #aaa;
+      }
+
+      .group-name[center-group-name] {
+        text-align: center;
       }
 
       iron-image[archived] {
@@ -354,7 +363,10 @@
 
     <iron-media-query query="(min-width: 600px)" query-matches="{{wide}}"></iron-media-query>
 
-    <paper-card class="groupCard" has-hidden-objectives$="[[group.Community.configuration.hideGroupListCardObjectives]]" animated elevation="[[elevation]]" class="groupCard">
+    <paper-card
+       class="groupCard"
+       hide-stats-and-membership$="[[hideStatsAndMembership]]"
+       has-hidden-objectives$="[[group.Community.configuration.hideGroupListCardObjectives]]" animated elevation="[[elevation]]" class="groupCard">
       <template is="dom-if" if="[[!group.CommunityLink]]">
         <template is="dom-if" if="[[visualizationData]]">
           <yp-data-visualization small data="[[visualizationData]]"></yp-data-visualization>
@@ -366,6 +378,7 @@
 
         <yp-magic-text id="groupName" has-hidden-objectives$="[[group.Community.configuration.hideGroupListCardObjectives]]" has-data-viz$="[[visualizationData]]" class="group-name" widetext$="[[wideText]]" text-type="groupName" content-language="[[group.language]]"
                        archived$="[[archived]]" featured$="[[featured]]" on-tap="_goToGroup" largefont$="[[largeFont]]"
+                       center-group-name$="[[centerGroupName]]"
                        disable-translation="[[group.configuration.disableNameAutoTranslation]]"
                        text-only content="[[groupName]]" content-id="[[group.id]]">
         </yp-magic-text>
@@ -376,8 +389,10 @@
                        truncate="[[truncateBy]]"
                        text-only content="[[groupObjectives]]" content-id="[[group.id]]" truncate="200">
         </yp-magic-text>
-        <yp-group-stats has-hidden-objectives$="[[group.Community.configuration.hideGroupListCardObjectives]]" class="stats" group="[[group]]"></yp-group-stats>
-        <yp-membership-button archived$="[[archived]]" group="[[group]]" hidden$="[[visualizationData]]"></yp-membership-button>
+        <div hidden$="[[hideStatsAndMembership]]">
+          <yp-group-stats has-hidden-objectives$="[[group.Community.configuration.hideGroupListCardObjectives]]" class="stats" group="[[group]]"></yp-group-stats>
+          <yp-membership-button archived$="[[archived]]" group="[[group]]" hidden$="[[visualizationData]]"></yp-membership-button>
+        </div>
       </template>
       <template is="dom-if" if="[[group.CommunityLink]]">
         <iron-image hidden$="[[!noImage]]" header-mode$="[[headerMode]]" archived$="[[archived]]" sizing="cover" c
@@ -435,6 +450,19 @@
           computed: '_truncateBy(group, gotAdminRights)'
         },
 
+        hideStatsAndMembership: {
+          type: Boolean,
+          value: false,
+          computed: '_hideStatsAndMembership(group, gotAdminRights)'
+        },
+
+
+        centerGroupName: {
+          type: Boolean,
+          value: false,
+          computed: '_centerGroupName(group, gotAdminRights)'
+        },
+
         visualizationData: {
           type: Object,
           value: null
@@ -443,6 +471,22 @@
         largeFont: {
           type: Boolean,
           value: false
+        }
+      },
+
+      _hideStatsAndMembership: function(group, gotAdminRights) {
+        if (group && group.configuration && group.configuration.hideStatsAndMembership) {
+          return true
+        } else {
+          return false
+        }
+      },
+
+      _centerGroupName: function(group, gotAdminRights) {
+        if (group && group.configuration && group.configuration.centerGroupName) {
+          return true
+        } else {
+          return false
         }
       },
 

@@ -45,6 +45,19 @@
         outline: none !important;
       }
 
+      .communityNameSimple {
+        text-transform: uppercase;
+        font-size: 28px;
+        margin-top: 16px;
+        font-family: var(--app-header-font-family, Roboto);
+      }
+
+      .communityDescriptionSimple {
+        padding-top: 16px;
+        line-height: 1.6;
+        font-family: var(--app-normal-font-family, Roboto);
+      }
+
       .stats {
         position: absolute;
         bottom: 0;
@@ -371,6 +384,21 @@
           </template>
         </div>
       </paper-material>
+      <template is="dom-if" if="[[useTextOnlyInfoBox]]">
+        <div hidden$="[[hasCommunityAccess]]" class="large-card">
+          <yp-magic-text text-type="communityName" widetext$="[[wideText]]"
+                class="communityNameSimple" content-language="[[community.language]]"
+                  largefont$="[[largeFont]]"
+                  disable-translation="[[community.configuration.disableNameAutoTranslation]]"
+                  text-only content="[[communityNameFull]]" content-id="[[community.id]]">
+          </yp-magic-text>
+          <yp-magic-text id="description" class="communityDescriptionSimple" widetext$="[[wideText]]"
+             largefont$="[[largeFont]]" truncate="[[truncateDescriptionAmount]]" more-text="[[t('readMore')]]" close-dialog-text="[[t('close')]]"
+             text-type="communityContent" content-language="[[community.language]]" disable-read-more="[[!useReadMoreForDescription]]"
+             content="[[community.description]]" content-id="[[community.id]]">
+          </yp-magic-text>
+        </div>
+      </template>
       <paper-material
               id="card"
               elevation="3"
@@ -470,6 +498,12 @@
       ],
 
       properties: {
+        useTextOnlyInfoBox: {
+          type: Boolean,
+          value: false,
+          computed: '_useTextOnlyInfoBox(community, gotAdminRights)'
+        },
+
         community: {
           type: Object,
           observer: '_communityChanged'
@@ -610,6 +644,14 @@
         if (community &&
             community.configuration &&
             community.configuration.useReadMoreForDescription) {
+          return true;
+        } else {
+          return false;
+        }
+      },
+
+      _useTextOnlyInfoBox: function(community,communityAccess) {
+        if (community && community.configuration && community.configuration.useTextOnlyInfoBox) {
           return true;
         } else {
           return false;

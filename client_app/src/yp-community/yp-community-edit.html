@@ -373,6 +373,8 @@
       </div>
 
       <div class="layout vertical">
+        <paper-checkbox name="useTextOnlyInfoBox" checked$="{{community.configuration.useTextOnlyInfoBox}}">[[t('useTextOnlyInfoBox')]]</paper-checkbox>
+        <paper-checkbox name="muteNotificationsForEndorsements" checked$="{{community.configuration.muteNotificationsForEndorsements}}">[[t('muteNotificationsForEndorsements')]]</paper-checkbox>
         <paper-checkbox name="closeNewsfeedSubmissions" checked$="{{community.configuration.closeNewsfeedSubmissions}}">[[t('closeNewsfeedSubmissions')]]</paper-checkbox>
         <paper-checkbox name="sortBySortOrder" checked$="{{community.configuration.sortBySortOrder}}">[[t('sortGroupsBySortOrder')]]</paper-checkbox>
         <paper-checkbox name="orderByRandom" checked$="{{community.configuration.orderByRandom}}">[[t('orderGroupsByRandom')]]</paper-checkbox>

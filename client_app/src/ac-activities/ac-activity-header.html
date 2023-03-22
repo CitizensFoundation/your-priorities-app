@@ -1,9 +1,12 @@
-<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/polymer/polymer.html" />
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link
+  rel="import"
+  href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html"
+/>
 
-<link rel="import" href="../yp-behaviors/yp-language-behavior.html">
-<link rel="import" href="../yp-user/yp-user-with-organization.html">
+<link rel="import" href="../yp-behaviors/yp-language-behavior.html" />
+<link rel="import" href="../yp-user/yp-user-with-organization.html" />
 
 <dom-module id="ac-activity-header">
   <template>
@@ -14,30 +17,45 @@
         margin: 0;
       }
     </style>
-    <yp-user-with-organization user$="[[activity.User]]" inverted></yp-user-with-organization>
+    <yp-user-with-organization
+      hidden$="[[hideUser]]"
+      user$="[[activity.User]]"
+      inverted
+    ></yp-user-with-organization>
   </template>
 
   <script>
     Polymer({
+      is: "ac-activity-header",
 
-      is: 'ac-activity-header',
-
-      behaviors: [
-        Polymer.ypLanguageBehavior
-      ],
+      behaviors: [Polymer.ypLanguageBehavior],
 
       properties: {
-
         activity: {
           type: Object,
-          observer: '_activityChanged'
-        }
+          observer: "_activityChanged",
+        },
+
+        hideUser: {
+          type: Boolean,
+          value: false,
+        },
       },
 
-      _activityChanged: function (newValue) {
-      }
-
-
+      _activityChanged: function (activity) {
+        if (
+          activity.type == "activity.post.new" &&
+          activity.Post &&
+          activity.Post.Group &&
+          activity.Post.Group.configuration &&
+          !activity.Post.Group.configuration.showWhoPostedPosts &&
+          !activity.Post.public_data.displayUserNameWithIdea
+        ) {
+          this.set("hideUser", true);
+        } else {
+          this.set("hideUser", false);
+        }
+      },
     });
   </script>
 </dom-module>

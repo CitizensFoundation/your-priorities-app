@@ -35,6 +35,24 @@
       :host {
       }
 
+      .underLogoGroupName {
+        font-size: 38px;
+        font-family: var(--app-header-font-family, Roboto);
+        margin-top: 16px;
+        text-align: center;
+        text-transform: uppercase;
+      }
+
+      .underLogoGroupName[always-hide-logo-image] {
+        margin-top: 116px;
+      }
+
+      @media (max-width: 960px) {
+        .underLogoGroupName[always-hide-logo-image] {
+          margin-top: 86px;
+        }
+      }
+
       .groupAccess {
         padding-bottom: 8px;
       }
@@ -295,7 +313,16 @@
           </template>
         </template>
         <template is="dom-if" if="[[!groupVideoURL]]" restamp>
-          <iron-image class="logo" sizing="cover" alt$="[[group.name]]" preload src="[[groupLogoImagePath]]"></iron-image>
+          <iron-image hidden$="[[alwaysHideLogoImage]]" class="logo" sizing="cover" alt$="[[group.name]]" preload src="[[groupLogoImagePath]]"></iron-image>
+        </template>
+        <template is="dom-if" if="[[showNameUnderLogoImage]]">
+          <div class="nameUnderLogoImage" hidden$="[[!showNameUnderLogoImage]]">
+            <yp-magic-text class="underLogoGroupName"  widetext$="[[wideText]]" text-type="groupName" content-language="[[group.language]]"
+                    always-hide-logo-image$="[[alwaysHideLogoImage]]"
+                    disable-translation="[[group.configuration.disableNameAutoTranslation]]" largefont$="[[largeFont]]"
+                    text-only content="[[groupName]]" content-id="[[group.id]]">
+            </yp-magic-text>
+          </div>
         </template>
       </paper-material>
       <paper-material
@@ -408,6 +435,18 @@
       ],
 
       properties: {
+        showNameUnderLogoImage: {
+          type: Boolean,
+          value: false,
+          computed: '_showNameUnderLogoImage(group, gotAdminRights)'
+        },
+
+        alwaysHideLogoImage: {
+          type: Boolean,
+          value: false,
+          computed: '_alwaysHideLogoImage(group, gotAdminRights)'
+        },
+
         group: {
           type: Object,
           observer: '_groupChanged'
@@ -483,6 +522,22 @@
           type: Boolean,
           computed: '_disableDeleteIfNeeded(group)'
         },
+      },
+
+      _showNameUnderLogoImage: function (group) {
+        if (group && group.configuration.showNameUnderLogoImage) {
+          return true;
+        } else {
+          return false;
+        }
+      },
+
+      _alwaysHideLogoImage: function (group) {
+        if (group && group.configuration.alwaysHideLogoImage) {
+          return true;
+        } else {
+          return false;
+        }
       },
 
       _disableDeleteIfNeeded: function (group) {

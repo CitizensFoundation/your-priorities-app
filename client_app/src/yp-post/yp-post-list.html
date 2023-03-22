@@ -221,13 +221,13 @@
         <iron-list id="ironList" selection-enabled scroll-offset="[[scrollOffset]]" on-selected-item-changed="_selectedItemChanged" items="[[posts]]" as="post" scroll-target="document" grid$="[[wideNotListFormat]]" role="list">
           <template>
             <div wide-padding$="[[wide]]" desktop-list$="[[desktopListFormat]]" class="card layout vertical center-center" is-last-item$="[[_isLastItem(index)]]" aria-label="[[post.name]]" role="listitem" aria-level="2" tabindex$="[[tabIndex]]">
-              <template is="dom-if" if="[[!desktopListFormat]]">
+              <template is="dom-if" if="[[cardListFormat]]">
                 <yp-post-card id="postCard[[post.id]]" on-refresh="_refreshPost" class="card" post="[[post]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-post-card>
               </template>
-              <template is="dom-if" if="[[!desktopListFormat]]">
+              <template is="dom-if" if="[[desktopListFormat]]">
                 <yp-post-list-item id="postCard[[post.id]]" on-refresh="_refreshPost" class="card" post="[[post]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-post-list-item>
               </template>
-              <template is="dom-if" if="[[desktopListFormat]]">
+              <template is="dom-if" if="[[galleryListFormat]]">
                 <yp-post-list-gallery-item id="postCard[[post.id]]" on-refresh="_refreshPost" class="card" post="[[post]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-post-list-gallery-item>
               </template>
             </div>
@@ -381,6 +381,16 @@
           computed: '_desktopListFormat(wide, group, posts)'
         },
 
+        cardListFormat: {
+          type: Boolean,
+          computed: '_cardListFormat(desktopListFormat, galleryListFormat, wide, group, posts)'
+        },
+
+        galleryListFormat: {
+          type: Boolean,
+          computed: '_galleryListFormat(wide, group, posts)'
+        },
+
         wideNotListFormat: {
           type: Boolean,
           computed: '_wideNotListFormat(wide, desktopListFormat, group, posts)'
@@ -395,8 +405,16 @@
         return (wide && !desktopListFormat)===true;
       },
 
+      _cardListFormat: function (desktopListFormat, galleryListFormat, wide, group, posts) {
+        return (!desktopListFormat && !galleryListFormat)===true;
+      },
+
       _desktopListFormat: function (wide, group, posts) {
         return (wide && group && group.configuration && group.configuration.usePostListFormatOnDesktop)===true;
+      },
+
+      _galleryListFormat: function (wide, group, posts) {
+        return (group && group.configuration && group.configuration.galleryMode)===true;
       },
 
       _selectedItemChanged: function (event, detail) {

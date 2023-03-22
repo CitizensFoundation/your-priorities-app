@@ -29,6 +29,8 @@
     <style include="iron-flex iron-flex-alignment">
       .mainContainer {
         margin: 32px;
+        margin-top: 48px;
+        margin-bottom: 16px;
       }
 
       .authorName,
@@ -37,10 +39,14 @@
         text-transform: uppercase;
         line-height: 1.4;
         font-family: var(--app-header-font-family, Roboto);
+        min-width: 350px;
       }
 
       .description {
         font-family: var(--app-header-font-family, Roboto);
+        font-size: 22px;
+        line-height: 1.4;
+        text-align: right;
       }
 
       .image {
@@ -55,6 +61,16 @@
       .mainDataContainer {
         max-width: 600px;
         width: 600px;
+      }
+
+      paper-icon-button.openCloseButton {
+        width: 64px;
+        height: 64px;
+        padding-left: 0;
+        margin-left: 0;
+        align-self: flex-end;
+        justify-content: flex-end;
+        margin-right: -24px;
       }
 
       [hidden] {
@@ -79,35 +95,65 @@
           class="image"
         ></yp-post-gallery-image>
         <div class="layout vertical mainDataContainer">
-          <div class="authorName">
-            [[post.public_data.galleryMetaData.ListamadurHofundur]]
+          <div class="layout horizontal">
+            <div class="layout vertical">
+              <div class="authorName">
+                [[post.public_data.galleryMetaData.ListamadurHofundur]]
+              </div>
+              <div class="artName">[[post.name]]</div>
+              <yp-post-actions
+                class="postActions"
+                elevation="-1"
+                hide-spinner
+                larger-icons
+                endorse-mode="[[endorseMode]]"
+                class="voting"
+                post="[[post]]"
+                hidden$="[[mini]]"
+              ></yp-post-actions>
+            </div>
+            <div class="flex"></div>
+            <div class="layout vertical">
+              <paper-icon-button
+                title$="[[t('openDescription')]]"
+                class="openCloseButton"
+                icon="keyboard-arrow-left"
+                on-tap="_setOpen"
+                hidden$="[[descriptionOpen]]"
+              ></paper-icon-button>
+              <paper-icon-button
+                title$="[[t('closeDescription')]]"
+                class="openCloseButton"
+                icon="keyboard-arrow-down"
+                on-tap="_setClosed"
+                hidden$="[[!descriptionOpen]]"
+              ></paper-icon-button>
+              <template is="dom-if" if="[[descriptionOpen]]" restamp>
+                <yp-magic-text
+                  class="description layout horizontal"
+                  has-custom-ratings$="[[post.Group.configuration.customRatings]]"
+                  hidden$="[[hideDescription]]"
+                  text-type="postContent"
+                  content-language="[[post.language]]"
+                  on-tapdd="goToPostIfNotHeader"
+                  remove-urls
+                  text-only
+                  content="[[post.description]]"
+                  content-id="[[post.id]]"
+                  truncate="200"
+                >
+                </yp-magic-text>
+                <div class="description">
+                  [[post.public_data.galleryMetaData.Upphafsar]]
+                </div>
+                <div class="description">
+                  [[post.public_data.galleryMetaData.Haed]] x
+                  [[post.public_data.galleryMetaData.Breidd]]cm
+                </div>
+              </template>
+            </div>
           </div>
-          <div class="artName">[[post.name]]</div>
-          <yp-post-actions
-            class="postActions"
-            elevation="-1"
-            hide-spinner
-            larger-icons
-            endorse-mode="[[endorseMode]]"
-            class="voting"
-            post="[[post]]"
-            hidden$="[[mini]]"
-          ></yp-post-actions>
         </div>
-        <yp-magic-text
-          class="description layout horizontal"
-          has-custom-ratings$="[[post.Group.configuration.customRatings]]"
-          hidden$="[[hideDescription]]"
-          text-type="postContent"
-          content-language="[[post.language]]"
-          on-tapdd="goToPostIfNotHeader"
-          remove-urls
-          text-only
-          content="[[post.description]]"
-          content-id="[[post.id]]"
-          truncate="200"
-        >
-        </yp-magic-text>
       </div>
     </div>
     <lite-signal
@@ -163,6 +209,11 @@
           computed: "_hasPostAccess(post, gotAdminRights)",
         },
 
+        descriptionOpen: {
+          type: Boolean,
+          value: false,
+        },
+
         mini: {
           type: Boolean,
           value: false,
@@ -172,6 +223,20 @@
           type: Boolean,
           value: false,
         },
+      },
+
+      _setOpen: function () {
+        this.set("descriptionOpen", true);
+        this.async(function () {
+          this.fire("iron-resize");
+        }, 20);
+      },
+
+      _setClosed: function () {
+        this.set("descriptionOpen", false);
+        this.async(function () {
+          this.fire("iron-resize");
+        }, 20);
       },
 
       _onBottomClick: function (event) {
@@ -222,11 +287,9 @@
 
       _hideDescription: function (mini, post) {
         return (
-          true ||
-          mini ||
-          (post &&
-            post.Group.configuration &&
-            post.Group.configuration.hidePostDescription)
+          post &&
+          post.Group.configuration &&
+          post.Group.configuration.hidePostDescription
         );
       },
 
