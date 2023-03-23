@@ -365,7 +365,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
           }
 
           .pointMaterial[is-last-point] {
-            margin-bottom: 107px;
+            margin-bottom: 32px;
           }
 
           #pointUpOrDownMaterial {
@@ -445,7 +445,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
         }
 
         .bottomDiv {
-          margin-bottom: 64px;
+          margin-bottom: 32px;
         }
 
         .uploadSection {
@@ -682,7 +682,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
           class="pointInputMaterial
                     layout vertical
                   shadow-elevation-2dp shadow-transition"
-          ?hidden="${this.post.Group.configuration.disableDebate}"
+          ?hidden="${true || this.post.Group.configuration.disableDebate}"
         >
           <md-outlined-text-field
             id="${type.toLowerCase()}_point"
