@@ -19,6 +19,9 @@ export class YpAiChatElement extends YpBaseElement {
   sender: 'you' | 'bot';
 
   @property({ type: String })
+  detectedLanguage: string
+
+  @property({ type: String })
   type:
     | 'start'
     | 'error'
@@ -386,7 +389,19 @@ export class YpAiChatElement extends YpBaseElement {
             />
           </svg>`
         : html`<md-icon class="doneIcon">done</md-icon>`}
-      <div class="thinkingText" ?active="${this.active}">${this.t('Hugsa')}</div> `;
+      <div class="thinkingText" ?active="${this.active}">${this.getThinkingText()}</div> `;
+  }
+
+  getThinkingText() {
+    //TODO: Fix this activate i18n
+    debugger;
+    if (this.detectedLanguage=="es") {
+      return "Mõeldes..."
+    } else if (this.detectedLanguage=="is") {
+      return "Hugsa...";
+    } else {
+      return "Thinking...";
+    }
   }
 
   renderMessage() {

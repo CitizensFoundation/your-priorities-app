@@ -43,6 +43,18 @@ export class MarkdownDirective extends AsyncDirective {
     return rawMarkdown;
   }
 
+  private removeCitations(rawMarkdown: string): string {
+    const regex = /<code>(.*?)<\/code>/g;
+
+    const output = rawMarkdown.replace(regex, (match, p1) => {
+      const innerRegex = /<span class="postCitation">(\d+)<\/span>/g;
+      const cleanedContent = p1.replace(innerRegex, '');
+      return `<code>${cleanedContent}</code>`;
+    });
+
+    return output;
+  }
+
   render(rawMarkdown: string, options?: Partial<Options>) {
     const mergedOptions = Object.assign(
       MarkdownDirective.defaultOptions,
@@ -50,6 +62,7 @@ export class MarkdownDirective extends AsyncDirective {
     );
 
     rawMarkdown = this.closeCodeBlockIfNeeded(rawMarkdown);
+    //rawMarkdown = this.removeCitations(rawMarkdown);
 
     new Promise<string>((resolve, reject) => {
       marked.parse(rawMarkdown, (error: any, result: any) => {
@@ -112,7 +125,7 @@ export class MarkdownDirective extends AsyncDirective {
         `;
 
         // Combine the CSS styles with the generated HTML
-        const formattedMarkdown = `
+        let formattedMarkdown = `
             <style>
             ${cssStyles}
           </style>
@@ -131,7 +144,8 @@ export class MarkdownDirective extends AsyncDirective {
         );
       })
       .then(preparedHTML => {
-        const renderedHTML = unsafeHTML(preparedHTML);
+        let renderedHTML = unsafeHTML(preparedHTML);
+
         this.setValue(renderedHTML);
       });
 

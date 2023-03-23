@@ -46,7 +46,10 @@ export class YpPostsDialog extends YpBaseElement {
   static get styles() {
     return [Layouts,css`
 
-    #dialog {
+    md-dialog[showing-fullscreen] {
+      /* hack: private! */
+      --_container-max-block-size: 100dvh;
+      --md-dialog-container-inset-block-start: 0px;
     }
 
     .indexNumber {
@@ -61,12 +64,13 @@ export class YpPostsDialog extends YpBaseElement {
       margin-right: 332px
     }
 
+    .postHeader {
+      text-align: center;
+    }
+
     @media (max-width: 800px) {
       #dialog {
-      block-size: 100dvh;
-      max-block-size: 100dvh;;
-      --md-dialog-container-max-block-size: 100dvh;
-      --md-dialog-container-max-inline-size: 100dvh;
+        --_fullscreen-header-block-size: 74px;
     }
 
       .cancelButton {
@@ -91,7 +95,8 @@ export class YpPostsDialog extends YpBaseElement {
   scrollUp() {
     //await this.updateComplete;
     setTimeout(() => {
-      this.$$('#content').scrollTop = 0;
+      //@ts-ignore
+      (this.$$('#dialog') as MdDialog).contentElement.scrollTop = 0;
     }, 100);
   }
 
@@ -167,14 +172,14 @@ export class YpPostsDialog extends YpBaseElement {
         label="Loka"
         ?disabled="${this.currentIndex === 0}"
         id="cancel"
-        ?hidden=="${this.simplePosts?.length<2}"
+        ?hidden="${this.simplePosts?.length<2}"
         @click="${this.previousPost}"
         >navigate_before</md-outlined-icon-button
       >
       <div class="indexNumber">${this.currentIndex + 1}.</div>
       <md-outlined-icon-button
         label="Loka"
-        ?hidden=="${this.simplePosts?.length<2}"
+        ?hidden="${this.simplePosts?.length<2}"
         ?disabled="${this.currentIndex === this.simplePosts?.length - 1}"
         id="cancel"
         @click="${this.nextPost}"

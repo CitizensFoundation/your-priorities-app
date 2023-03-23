@@ -177,8 +177,6 @@ export class YpAiAssistantApp extends YpBaseElement {
     ]);
 
 
-    this.themeColor = '#013B70';
-
     // Check if the user has dark mode turned on
     const systemDark =
       this.themeDarkMode === undefined
@@ -327,6 +325,10 @@ export class YpAiAssistantApp extends YpBaseElement {
     ];
   }
 
+  updateThemeColor(event: CustomEvent) {
+    this.themeColor = event.detail;
+  }
+
   _renderPage() {
     if (this.adminConfirmed) {
       switch (this.pageIndex) {
@@ -335,7 +337,7 @@ export class YpAiAssistantApp extends YpBaseElement {
             ${cache(html`<yp-email-templates> </yp-email-templates>`)}
           `;
         case PagesTypes.Chat:
-          return html`<yp-chat-assistant></yp-chat-assistant>`;
+          return html`<yp-chat-assistant @theme-color="${this.updateThemeColor}"></yp-chat-assistant>`;
 
         case PagesTypes.Campaign:
         case PagesTypes.AiAnalysis:
@@ -498,7 +500,7 @@ export class YpAiAssistantApp extends YpBaseElement {
 
   render() {
     return html`<yp-posts-dialog id="postsDialogs"></yp-posts-dialog
-      ><yp-chat-assistant @open-posts="${this.openPosts}"></yp-chat-assistant>`;
+      ><yp-chat-assistant @theme-color="${this.updateThemeColor}" @open-posts="${this.openPosts}"></yp-chat-assistant>`;
   }
 
   renderOld() {

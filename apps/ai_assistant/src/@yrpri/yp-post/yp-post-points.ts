@@ -377,7 +377,20 @@ export class YpPostPoints extends YpBaseElementWithLogin {
           }
 
           lit-virtualizer {
+            width: 100%;
           }
+
+          .point {
+            padding-left: 0;
+            padding-right: 0;
+          }
+        }
+
+
+        .pointMainHeader {
+          font-size: 22px;
+          margin-bottom: 32px;
+          margin-top: 16px;
         }
 
         @media (max-width: 420px) {
@@ -387,11 +400,6 @@ export class YpPostPoints extends YpBaseElementWithLogin {
           }
         }
 
-        .pointMainHeader {
-          font-size: 22px;
-          margin-bottom: 8px;
-          margin-top: 16px;
-        }
 
         #pointUpMaterialNotUsed {
           border-top: solid 2px;

@@ -37,7 +37,7 @@ export class YpChatAssistant extends YpBaseElement {
   chatLog: YpAiChatWsMessage[] = [];
 
   @property({ type: String })
-  infoMessage!: string;
+  infoMessage: string;
 
   @property({ type: String })
   defaultInfoMessage: string =
@@ -57,6 +57,9 @@ export class YpChatAssistant extends YpBaseElement {
 
   @property({ type: Number })
   communityId: number;
+
+  @property({ type: String })
+  textInputLabel: string
 
   @property({ type: String })
   currentFollowUpQuestions: string = '';
@@ -87,29 +90,62 @@ export class YpChatAssistant extends YpBaseElement {
     super.connectedCallback();
 
     const urlParts = window.location.href.split('/');
-    this.clusterId = parseInt(urlParts[urlParts.length - 2]);
-    this.communityId = parseInt(urlParts[urlParts.length - 1]);
+    this.clusterId = parseInt(urlParts[urlParts.length - 3]);
+    this.communityId = parseInt(urlParts[urlParts.length - 2]);
+    this.language = urlParts[urlParts.length - 1];
 
-    if (window.location.href.indexOf('localhost') > -1) {
-      this.wsEndpoint = `ws://localhost:9000/chat/${this.clusterId}/${this.communityId}`;
+    if (
+      window.location.href.indexOf('localhost') > -1 ||
+      window.location.href.indexOf('192.1.168') > -1
+    ) {
+      this.wsEndpoint = `ws://localhost:9000/chat/${this.clusterId}/${this.communityId}/${this.language}`;
     } else {
-      this.wsEndpoint = `wss://sp4.betrireykjavik.is:443/chat/${this.clusterId}/${this.communityId}`;
+      this.wsEndpoint = `wss://sp4.betrireykjavik.is:443/chat/${this.clusterId}/${this.communityId}/${this.language}`;
     }
 
     this.ws = new WebSocket(this.wsEndpoint);
 
     this.ws.onmessage = this.onMessage.bind(this);
+    this.ws.onopen = this.onWsOpen.bind(this);
   }
 
-  firstUpdated(): void {
+  async getCommunity() {
+    fetch(`/api/v1/communities/${this.communityId}/${this.language}`)
+      .then(response => {
+        return response.json();
+      })
+      .then(community => {
+        if (community) {
+          this.fire("theme-color", community.themeMainColor);
+          this.textInputLabel = community.textInputLabel;
+          this.addChatBotElement({
+            message: community.welcomeMessage,
+            sender: 'bot',
+            type: 'hello_message',
+          });
+        } else {
+          console.error('Recommendation no post to save to cache');
+        }
+      })
+      .catch(ex => {
+        console.error('Recommendation: Error in getting community', ex);
+      });
+  }
+
+  onWsOpen(): void {
     this.reset();
   }
 
   updated(changedProperties: Map<string | number | symbol, unknown>): void {
     super.updated(changedProperties);
     if (changedProperties.has('themeDarkMode')) {
-
     }
+  }
+
+  firstUpdated() {
+    setTimeout(()=>{
+      this.getCommunity();
+    },100)
   }
 
   disconnectedCallback(): void {
@@ -409,13 +445,6 @@ export class YpChatAssistant extends YpBaseElement {
 
   reset() {
     this.chatLog = [];
-    this.addChatBotElement({
-      message:
-        //"Hello, I'm the My Neighborhood AI Assistant. How can I help you?",
-        'Halló, ég er gervigreindar snjallmenni fyrir Hverfið Mitt verkefnið. Hvernig get ég hjálpað?',
-      sender: 'bot',
-      type: 'hello_message',
-    });
     this.ws.send('<|--reset-chat--|>');
   }
 
@@ -443,7 +472,7 @@ export class YpChatAssistant extends YpBaseElement {
             this.sendChatMessage();
           }
         }}"
-        label="${this.t('Spurðu mig um Hverfið mitt 2022')}"
+        .label="${this.textInputLabel}"
       >
         <md-icon
           class="sendIcon"
@@ -504,6 +533,7 @@ export class YpChatAssistant extends YpBaseElement {
                 ?thinking="${chatElement.type === 'thinking'}"
                 @followup-question="${this.followUpQuestion}"
                 class="${chatElement.sender}-chat-element"
+                .detectedLanguage="${this.language}"
                 .message="${chatElement.message}"
                 .type="${chatElement.type}"
                 .postIds="${chatElement.postIds}"
