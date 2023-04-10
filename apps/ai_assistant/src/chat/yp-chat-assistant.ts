@@ -134,18 +134,13 @@ export class YpChatAssistant extends YpBaseElement {
 
   onWsOpen(): void {
     this.reset();
+    this.getCommunity();
   }
 
   updated(changedProperties: Map<string | number | symbol, unknown>): void {
     super.updated(changedProperties);
     if (changedProperties.has('themeDarkMode')) {
     }
-  }
-
-  firstUpdated() {
-    setTimeout(()=>{
-      this.getCommunity();
-    },100)
   }
 
   disconnectedCallback(): void {
