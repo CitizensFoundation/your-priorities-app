@@ -36,15 +36,19 @@
       }
 
       .underLogoGroupName {
-        font-size: 38px;
+        font-size: 45px;
         font-family: var(--app-header-font-family, Roboto);
         margin-top: 16px;
         text-align: center;
-        text-transform: uppercase;
       }
 
       .underLogoGroupName[always-hide-logo-image] {
-        margin-top: 116px;
+        margin-top: 0px;
+      }
+
+      .groupDescriptionUnderImage {
+        font-size: 38px !important;
+        text-align: center;
       }
 
       @media (max-width: 960px) {
@@ -184,7 +188,7 @@
         .groupCard {
           margin-bottom: 16px;
           width: 100%;
-          height: 100%;
+          height: 100% !important;
           margin-left: 8px;
           margin-right: 8px;
         }
@@ -321,6 +325,11 @@
                     always-hide-logo-image$="[[alwaysHideLogoImage]]"
                     disable-translation="[[group.configuration.disableNameAutoTranslation]]" largefont$="[[largeFont]]"
                     text-only content="[[groupName]]" content-id="[[group.id]]">
+            </yp-magic-text>
+            <yp-magic-text id="objectives" class="groupDescription groupDescriptionUnderImage" widetext$="[[wideText]]"
+              simple-format="[[group.configuration.simpleFormatDescription]]" largefont$="[[largeFont]]"
+              text-type="groupContent" content-language="[[group.language]]"
+              content="[[group.objectives]]" content-id="[[group.id]]">
             </yp-magic-text>
           </div>
         </template>

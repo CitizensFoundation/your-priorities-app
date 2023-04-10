@@ -353,6 +353,12 @@
           <paper-checkbox name="hideInfoBoxExceptForAdmins" checked$="{{group.configuration.hideInfoBoxExceptForAdmins}}">[[t('hideInfoBoxExceptForAdmins')]]</paper-checkbox>
           <paper-checkbox name="hideLogoBoxExceptOnMobile" checked$="{{group.configuration.hideLogoBoxExceptOnMobile}}">[[t('hideLogoBoxExceptOnMobile')]]</paper-checkbox>
           <paper-checkbox name="hideLogoBoxShadow" checked$="{{group.configuration.hideLogoBoxShadow}}">[[t('hideLogoBoxShadow')]]</paper-checkbox>
+          <paper-checkbox name="galleryMode" checked$="{{group.configuration.galleryMode}}">[[t('galleryMode')]]</paper-checkbox>
+          <paper-checkbox name="showNameUnderLogoImage" checked$="{{group.configuration.showNameUnderLogoImage}}">[[t('showNameUnderLogoImage')]]</paper-checkbox>
+          <paper-checkbox name="alwaysHideLogoImage" checked$="{{group.configuration.alwaysHideLogoImage}}">[[t('alwaysHideLogoImage')]]</paper-checkbox>
+          <paper-checkbox name="hideStatsAndMembership" checked$="{{group.configuration.hideStatsAndMembership}}">[[t('hideStatsAndMembership')]]</paper-checkbox>
+          <paper-checkbox name="centerGroupName" checked$="{{group.configuration.centerGroupName}}">[[t('centerGroupName')]]</paper-checkbox>
+          <paper-checkbox name="noGroupCardShadow" checked$="{{group.configuration.noGroupCardShadow}}">[[t('noGroupCardShadow')]]</paper-checkbox>
         </div>
 
         <div hidden$="[[isGroupFolder]]" class="layout vertical">
@@ -814,12 +820,6 @@
           <paper-checkbox name="resourceLibraryLinkMode" checked$="{{group.configuration.resourceLibraryLinkMode}}">[[t('resourceLibraryLinkMode')]]</paper-checkbox>
           <paper-checkbox name="collapsableTranscripts" checked$="{{group.configuration.collapsableTranscripts}}">[[t('collapsableTranscripts')]]</paper-checkbox>
           <paper-checkbox name="allowWhatsAppSharing" checked$="{{group.configuration.allowWhatsAppSharing}}">[[t('allowWhatsAppSharing')]]</paper-checkbox>
-
-          <paper-checkbox name="galleryMode" checked$="{{group.configuration.galleryMode}}">[[t('galleryMode')]]</paper-checkbox>
-          <paper-checkbox name="showNameUnderLogoImage" checked$="{{group.configuration.showNameUnderLogoImage}}">[[t('showNameUnderLogoImage')]]</paper-checkbox>
-          <paper-checkbox name="alwaysHideLogoImage" checked$="{{group.configuration.alwaysHideLogoImage}}">[[t('alwaysHideLogoImage')]]</paper-checkbox>
-          <paper-checkbox name="hideStatsAndMembership" checked$="{{group.configuration.hideStatsAndMembership}}">[[t('hideStatsAndMembership')]]</paper-checkbox>
-          <paper-checkbox name="centerGroupName" checked$="{{group.configuration.centerGroupName}}">[[t('centerGroupName')]]</paper-checkbox>
 
           <paper-input id="actAsLinkToCommunityId"
                        name="actAsLinkToCommunityId"

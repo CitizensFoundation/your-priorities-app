@@ -45,18 +45,6 @@
         outline: none !important;
       }
 
-      .communityNameSimple {
-        text-transform: uppercase;
-        font-size: 28px;
-        margin-top: 16px;
-        font-family: var(--app-header-font-family, Roboto);
-      }
-
-      .communityDescriptionSimple {
-        padding-top: 16px;
-        line-height: 1.6;
-        font-family: var(--app-normal-font-family, Roboto);
-      }
 
       .stats {
         position: absolute;
@@ -88,10 +76,10 @@
       }
 
       .large-card {
-        background-color: #fefefe;
-        color: #333;
+        background-color: var(--app-community-large-card-background-color, #fefefe);
+        color: var(--app-community-large-card-color, #333);
         height: 243px;
-        width: 432px;
+        width: var(--app-community-large-card-desktop-width,  432px);
         padding: 0 !important;
         margin-top: 0 !important;
       }
@@ -349,6 +337,32 @@
       .logo-card[hide-box-shadow] {
         box-shadow: none;
       }
+
+      .communityNameSimple {
+        font-size: 55px;
+        margin-top: 0px;
+        font-family: var(--app-header-font-family, Roboto);
+      }
+
+      .communityDescriptionSimple {
+        padding-top: 16px;
+        line-height: 1.2;
+        font-weight: bold;
+        font-family: var(--app-normal-font-family, Roboto);
+        font-size: 22px !important;
+      }
+
+      @media (max-width: 1024px) {
+        .communityDescriptionSimple {
+          padding: 16px;
+          padding-bottom: 32px;
+        }
+
+        .communityNameSimple {
+          font-size: 46px;
+          padding: 16px;
+        }
+      }
     </style>
 
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
@@ -394,6 +408,7 @@
           </yp-magic-text>
           <yp-magic-text id="description" class="communityDescriptionSimple" widetext$="[[wideText]]"
              largefont$="[[largeFont]]" truncate="[[truncateDescriptionAmount]]" more-text="[[t('readMore')]]" close-dialog-text="[[t('close')]]"
+             simple-format
              text-type="communityContent" content-language="[[community.language]]" disable-read-more="[[!useReadMoreForDescription]]"
              content="[[community.description]]" content-id="[[community.id]]">
           </yp-magic-text>

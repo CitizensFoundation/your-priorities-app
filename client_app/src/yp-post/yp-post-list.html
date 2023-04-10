@@ -393,7 +393,7 @@
 
         wideNotListFormat: {
           type: Boolean,
-          computed: '_wideNotListFormat(wide, desktopListFormat, group, posts)'
+          computed: '_wideNotListFormat(wide, desktopListFormat, galleryListFormat, group, posts)'
         }
       },
 
@@ -401,8 +401,8 @@
         return (this.posts && index>=this.posts.length-1);
       },
 
-      _wideNotListFormat: function (wide, desktopListFormat) {
-        return (wide && !desktopListFormat)===true;
+      _wideNotListFormat: function (wide, desktopListFormat, galleryListFormat) {
+        return (wide && !desktopListFormat && !galleryListFormat)===true;
       },
 
       _cardListFormat: function (desktopListFormat, galleryListFormat, wide, group, posts) {

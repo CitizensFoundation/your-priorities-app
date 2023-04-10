@@ -22,6 +22,13 @@
         max-height: 700px;
         object-fit: scale-down;
       }
+
+      @media (max-width: 800px) {
+        img {
+          max-width: 80vw;
+          max-height: 350px;
+        }
+      }
     </style>
 
     <img width="[[imageWidth]]" height="[[imageHeight]]" alt$="[[altTag]]" src="[[postImagePath]]"></img>
@@ -52,7 +59,6 @@
         imageHeight: {
           type: Number,
         },
-
 
         postImagePath: {
           type: String,

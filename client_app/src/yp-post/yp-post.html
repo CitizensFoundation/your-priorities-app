@@ -29,6 +29,7 @@
 <link rel="import" href="yp-post-header.html">
 <link rel="import" href="yp-post-points.html">
 <link rel="import" href="yp-post-user-images.html">
+<link rel="import" href="yp-post-list-gallery-item.html">
 
 <dom-module id="yp-post">
   <template>
@@ -304,7 +305,18 @@
 
     <div class="topContainer layout vertical center-center" is-post create-fab-title="[[t('point.add')]]" on-yp-create-fab-tap="_newPoint">
 
-      <yp-post-header id="postCard" class="largeCard" post="[[post]]" on-refresh="_refreshAjax" header-mode></yp-post-header>
+      <template is="dom-if" if="[[isGalleryMode]]">
+        <yp-post-list-gallery-item
+          id="galleryPostItem"
+          post="[[post]]"
+          description-open
+        >
+        </yp-post-list-gallery-item>
+      </template>
+
+      <template is="dom-if" if="[[!isGalleryMode]]">
+        <yp-post-header id="postCard" class="largeCard" post="[[post]]" on-refresh="_refreshAjax" header-mode></yp-post-header>
+      </template>
 
       <div class="layout horizontal center-center" hidden$="[[post.Group.configuration.hideAllTabs]]">
         <paper-tabs id="paper_tabs" class="tabs" selected="{{selectedTab}}" attr-for-selected="name" focused>
@@ -448,6 +460,11 @@
             computed: '_isPostPage(currentPage)'
           },
 
+          isGalleryMode: {
+            type: Boolean,
+            value: false
+          },
+
           small: {
             type: Boolean
           },
@@ -455,7 +472,6 @@
           method: {
             type: String
           },
-
 
           mapActive: {
             type: Boolean,
@@ -581,6 +597,7 @@
           return page==='post';
         },
 
+
         _headerClasses: function(small) {
           if (small) {
             return "layout vertical postHeader wrap";
@@ -612,8 +629,16 @@
         _postChanged: function (post) {
           if (post) {
             this.set('isAdmin', this.checkPostAdminOnlyAccess(post));
+            if (post.Group &&
+                post.Group.configuration &&
+                post.Group.configuration.galleryMode===true) {
+              this.set('isGalleryMode', true);
+            } else {
+              this.set('isGalleryMode', false);
+            }
           } else {
             this.set('isAdmin', false);
+            this.set('isGalleryMode', false);
           }
         },
 

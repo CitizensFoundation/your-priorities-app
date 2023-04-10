@@ -27,6 +27,8 @@
 <dom-module id="yp-post-list-gallery-item">
   <template>
     <style include="iron-flex iron-flex-alignment">
+      :host {
+      }
       .mainContainer {
         margin: 32px;
         margin-top: 48px;
@@ -36,21 +38,35 @@
       .authorName,
       .artName {
         font-size: 26px;
-        text-transform: uppercase;
         line-height: 1.4;
-        font-family: var(--app-header-font-family, Roboto);
         min-width: 350px;
       }
 
+      .authorName {
+        font-weight: bold;
+        padding-top: 8px;
+        width: 100%;
+      }
+
+      .artName {
+        padding-top: 0;
+      }
+
       .description {
-        font-family: var(--app-header-font-family, Roboto);
-        font-size: 22px;
+        font-size: 20px;
         line-height: 1.4;
         text-align: right;
+        margin-bottom: 8px;
+      }
+
+      .descriptionText {
+        text-align: justify;
+        margin-bottom: 8px;
+        margin-top: 8px;
       }
 
       .image {
-        margin-bottom: 64px;
+        margin-bottom: 8px;
       }
 
       .postActions {
@@ -61,6 +77,7 @@
       .mainDataContainer {
         max-width: 600px;
         width: 600px;
+        border-top: 2px solid #000;
       }
 
       paper-icon-button.openCloseButton {
@@ -71,6 +88,40 @@
         align-self: flex-end;
         justify-content: flex-end;
         margin-right: -24px;
+        color: #000;
+      }
+
+      @media (max-width: 800px) {
+        .authorName,
+        .artName {
+          font-size: 26px;
+          min-width: 100%;
+          color: #000;
+        }
+
+        .image {
+          margin-bottom: 8px;
+        }
+
+        .mainDataContainer {
+          max-width: 100%;
+          width: 100%;
+        }
+      }
+
+
+      .shareIcon {
+        --paper-share-button-icon-color: #656565;
+        --paper-share-button-icon-height: 46px;
+        --paper-share-button-icon-width: 46px;
+        text-align: right;
+        width: 48px;
+        height: 48px;
+      }
+      .shareText {
+        font-size: 16px;
+        color: #656565;
+        margin-right: 5px;
       }
 
       [hidden] {
@@ -114,45 +165,62 @@
             </div>
             <div class="flex"></div>
             <div class="layout vertical">
-              <paper-icon-button
-                title$="[[t('openDescription')]]"
-                class="openCloseButton"
-                icon="keyboard-arrow-left"
-                on-tap="_setOpen"
-                hidden$="[[descriptionOpen]]"
-              ></paper-icon-button>
-              <paper-icon-button
-                title$="[[t('closeDescription')]]"
-                class="openCloseButton"
-                icon="keyboard-arrow-down"
-                on-tap="_setClosed"
-                hidden$="[[!descriptionOpen]]"
-              ></paper-icon-button>
-              <template is="dom-if" if="[[descriptionOpen]]" restamp>
-                <yp-magic-text
-                  class="description layout horizontal"
-                  has-custom-ratings$="[[post.Group.configuration.customRatings]]"
-                  hidden$="[[hideDescription]]"
-                  text-type="postContent"
-                  content-language="[[post.language]]"
-                  on-tapdd="goToPostIfNotHeader"
-                  remove-urls
-                  text-only
-                  content="[[post.description]]"
-                  content-id="[[post.id]]"
-                  truncate="200"
+              <template is="dom-if" if="[[!descriptionOpen]]" restamp>
+                <a
+                  href="[[_getPostLink(post)]]"
+                  id="theMainA"
+                  on-tap="_savePostToBackCache"
                 >
-                </yp-magic-text>
-                <div class="description">
-                  [[post.public_data.galleryMetaData.Upphafsar]]
-                </div>
-                <div class="description">
-                  [[post.public_data.galleryMetaData.Haed]] x
-                  [[post.public_data.galleryMetaData.Breidd]]cm
-                </div>
+                  <paper-icon-button
+                    title$="[[t('openDescription')]]"
+                    class="openCloseButton"
+                    icon="keyboard-arrow-right"
+                  ></paper-icon-button>
+                </a>
               </template>
             </div>
           </div>
+          <template is="dom-if" if="[[descriptionOpen]]" restamp>
+            <div class="description">
+              <div
+                class="share "
+                hidden$="[[post.Group.configuration.hideSharing]]"
+              >
+                <paper-share-button
+                  class="shareIcon"
+                  less-margin$="[[post.Group.configuration.hideDownVoteForPost]]"
+                  endorsed$="[[isEndorsed]]"
+                  horizontal-align="right"
+                  id="shareButton"
+                  on-tap="_shareTapOptions"
+                  on-share-tap="_shareTap"
+                  whatsapp
+                  title$="[[t('share')]]"
+                  facebook=""
+                  twitter=""
+                  popup-enabled
+                  url="[[fullPostUrl]]"
+                ></paper-share-button>
+                <div class="shareText">[[t('share')]]</div>
+              </div>
+            </div>
+            <div class="description">
+              [[post.public_data.galleryMetaData.Upphafsar]]
+            </div>
+            <div
+              class="description"
+              hidden$="[[!post.public_data.galleryMetaData.Haed]]"
+            >
+              [[post.public_data.galleryMetaData.Haed]] x
+              [[post.public_data.galleryMetaData.Breidd]]cm
+            </div>
+            <div
+              class="description descriptionText"
+              hidden$="[[!post.public_data.galleryMetaData.texti_um_verk_fyrir_vef]]"
+            >
+              [[post.public_data.galleryMetaData.texti_um_verk_fyrir_vef]]
+            </div>
+          </template>
         </div>
       </div>
     </div>
@@ -226,7 +294,8 @@
       },
 
       _setOpen: function () {
-        this.set("descriptionOpen", true);
+        //this.set("descriptionOpen", true);
+
         this.async(function () {
           this.fire("iron-resize");
         }, 20);

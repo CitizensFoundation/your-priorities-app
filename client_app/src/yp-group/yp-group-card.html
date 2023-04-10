@@ -39,14 +39,19 @@
 
       .groupCard {
         height: 445px;
-        background-color: #fff;
+        background-color: var(--app-group-card-background-color, #FFF);
+        color: var(--app-group-card-color, #000);
       }
 
       .groupCard[has-hidden-objectives] {
          height: 335px;
          background-color: var(--primary-color-800);
+         background-color: var(--app-group-card-background-color, var(--primary-color-800));
       }
 
+      .groupCard[no-group-card-shadow] {
+        box-shadow: none;
+      }
 
       @media (max-width: 960px) {
         .groupCard[has-hidden-objectives] {
@@ -122,8 +127,8 @@
         padding: 8px;
         padding-top: 16px;
         padding-bottom: 16px;
-        background-color: var(--primary-color-800);
-        color: #FFF;
+        background-color: var(--app-group-name-background-color, var(--primary-color-800));
+        color: var(--app-group-name-color, #FFF);
         font-weight: bold;
         cursor: pointer;
         vertical-align: middle;
@@ -366,6 +371,7 @@
     <paper-card
        class="groupCard"
        hide-stats-and-membership$="[[hideStatsAndMembership]]"
+       no-group-card-shadow$="[[noGroupCardShadow]]"
        has-hidden-objectives$="[[group.Community.configuration.hideGroupListCardObjectives]]" animated elevation="[[elevation]]" class="groupCard">
       <template is="dom-if" if="[[!group.CommunityLink]]">
         <template is="dom-if" if="[[visualizationData]]">
@@ -456,11 +462,16 @@
           computed: '_hideStatsAndMembership(group, gotAdminRights)'
         },
 
-
         centerGroupName: {
           type: Boolean,
           value: false,
           computed: '_centerGroupName(group, gotAdminRights)'
+        },
+
+        noGroupCardShadow: {
+          type: Boolean,
+          value: false,
+          computed: '_noGroupCardShadow(group, gotAdminRights)'
         },
 
         visualizationData: {
@@ -484,6 +495,14 @@
 
       _centerGroupName: function(group, gotAdminRights) {
         if (group && group.configuration && group.configuration.centerGroupName) {
+          return true
+        } else {
+          return false
+        }
+      },
+
+      _noGroupCardShadow: function(group, gotAdminRights) {
+        if (group && group.configuration && group.configuration.noGroupCardShadow) {
           return true
         } else {
           return false
