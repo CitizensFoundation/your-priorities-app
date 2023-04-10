@@ -244,7 +244,8 @@ var updateGroupConfigParameters = function (req, group) {
   group.set('configuration.showNameUnderLogoImage', truthValueFromBody(req.body.showNameUnderLogoImage));
   group.set('configuration.alwaysHideLogoImage', truthValueFromBody(req.body.alwaysHideLogoImage));
   group.set('configuration.hideStatsAndMembership', truthValueFromBody(req.body.hideStatsAndMembership));
-  group.set('configuration.centerGroupName', truthValueFromBody(req.body.hideStatsAndMembership));
+  group.set('configuration.centerGroupName', truthValueFromBody(req.body.centerGroupName));
+  group.set('configuration.noGroupCardShadow', truthValueFromBody(req.body.noGroupCardShadow));
 
   group.set('configuration.hideGroupLevelTabs', truthValueFromBody(req.body.hideGroupLevelTabs));
   group.set('configuration.hidePostFilterAndSearch', truthValueFromBody(req.body.hidePostFilterAndSearch));
