@@ -577,11 +577,11 @@
 
         _updateDebateInfo: function (event, detail) {
           var tabCounter = this.$$('#tabCountDebate');
-          if (tabCounter) {
+          if (tabCounter && detail) {
             tabCounter.innerHTML = this.formatNumber(detail.count);
           }
-          if (detail.firstPoint) {
-            this.$.postCard.updateDescriptionIfEmpty(detail.firstPoint.content);
+          if (detail && detail.firstPoint && this.$$("#postCard")) {
+            this.$$("#postCard").updateDescriptionIfEmpty(detail.firstPoint.content);
           }
         },
 
