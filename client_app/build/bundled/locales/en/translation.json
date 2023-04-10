@@ -1,4 +1,6 @@
 {
+  "share": "Share",
+  "noGroupCardShadow": "No group card shadow",
   "centerGroupName": "Center group name in lists",
   "hideStatsAndMembership": "Hide stats and membership in lists",
   "alwaysHideLogoImage": "Always hide logo image",

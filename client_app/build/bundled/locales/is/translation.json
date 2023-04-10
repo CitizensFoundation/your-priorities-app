@@ -1,4 +1,6 @@
 {
+  "share": "Deila",
+  "noGroupCardShadow": "Fela skugga á hópum í listum",
   "centerGroupName": "Miðja nafn á hóp í lista",
   "hideStatsAndMembership": "Fela stöðu og meðlimi í lista",
   "alwaysHideLogoImage": "Fela lógó alltaf",
