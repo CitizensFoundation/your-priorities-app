@@ -7,25 +7,25 @@ const sizeOf = require("image-size");
 
 const jsonPath =  process.argv[2]; // "/home/robert/Downloads/finalMyndThin.json";
 //TODO: Finna út úr að gera þetta frá URLI!
-const imageFolderPath = "/home/robert/Downloads/myndlistinOkkar/myndir/MyndlistinOkkar2023/"; //process.argv[3];
+const imageFolderPath = "/home/robert/Downloads/myndlistinOkkar/myndir/MyndlistinOkkar2023V2/"; //process.argv[3];
 //const groupId = 28478; //process.argv[4];
 const userId = 850; //process.argv[5];
 
 const groupIds = {
-  "Málverk - fyrir 1973": 28490,
-  "Málverk - eftir 1973": 28491,
-  "Málverk - án ártals": 28492,
-  "Þrívíð verk": 28479,
-  "Ljósmyndaverk": 28480,
-  "Önnur verk": 28488,
-  "Teikningar": 28484,
-  "Grafík": 28483,
+  "Málverk - fyrir 1973": 28838,
+  "Málverk - eftir 1973": 28837,
+  "Málverk - án ártals": 28839,
+  "Þrívíð verk": 28840,
+  "Ljósmyndaverk": 28841,
+  "Önnur verk": 28843,
+  "Teikningar": 28844,
+  "Grafík": 28842,
 }
 
 LOCAL_TEST = false
 
 const urlbase =
-  "https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/MyndlistinOkkar2023/";
+  "https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/MyndlistinOkkar2023V2/";
 
 
 const createPost = async (
