@@ -247,6 +247,8 @@ var updateGroupConfigParameters = function (req, group) {
   group.set('configuration.centerGroupName', truthValueFromBody(req.body.centerGroupName));
   group.set('configuration.noGroupCardShadow', truthValueFromBody(req.body.noGroupCardShadow));
 
+  group.set('configuration.hideNewestFromFilter', truthValueFromBody(req.body.hideNewestFromFilter));
+
   group.set('configuration.hideGroupLevelTabs', truthValueFromBody(req.body.hideGroupLevelTabs));
   group.set('configuration.hidePostFilterAndSearch', truthValueFromBody(req.body.hidePostFilterAndSearch));
   group.set('configuration.hidePostImageUploads', truthValueFromBody(req.body.hidePostImageUploads));
@@ -254,7 +256,6 @@ var updateGroupConfigParameters = function (req, group) {
   group.set('configuration.maxDaysBackForRecommendations', (req.body.maxDaysBackForRecommendations && req.body.maxDaysBackForRecommendations!="") ? req.body.maxDaysBackForRecommendations : null);
 
   group.set('configuration.externalId', (req.body.externalId && req.body.externalId!="") ? req.body.externalId : null);
-
 
   group.set('configuration.usePostListFormatOnDesktop', truthValueFromBody(req.body.usePostListFormatOnDesktop));
   group.set('configuration.usePostTagsForPostListItems', truthValueFromBody(req.body.usePostTagsForPostListItems));

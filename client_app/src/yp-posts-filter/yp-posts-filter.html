@@ -201,7 +201,7 @@
                     <iron-icon icon="trending-up" class="filterIcon"></iron-icon>
                     <span>[[t('post.top')]]</span>
                   </paper-item>
-                  <paper-item data-filter="newest">
+                  <paper-item data-filter="newest" hidden$="[[group.configuration.hideNewestFromFilter]]">
                     <iron-icon icon="new-releases" class="filterIcon"></iron-icon>
                     <span>[[t('post.newest')]]</span>
                   </paper-item>
