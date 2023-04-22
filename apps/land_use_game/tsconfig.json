@@ -1,0 +1,39 @@
+{
+  "compilerOptions": {
+    "target": "es2018",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "noEmitOnError": true,
+    "lib": ["es2017", "dom"],
+    "types": ["cesium","node", "google.analytics"],
+    "strict": true,
+    "esModuleInterop": false,
+    "allowSyntheticDefaultImports": true,
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "outDir": "out-tsc",
+    "sourceMap": true,
+    "inlineSources": true,
+    "rootDir": "./",
+    "allowUmdGlobalAccess": true,
+    "incremental": true,
+    "paths": {
+      "cesium": ["./node_modules/@types/cesium"]
+    }
+  },
+  "paths": {
+    "http": [
+        "node_modules/stream-http"
+    ],
+    "https": [
+        "node_modules/https-browserify"
+    ],
+    "stream": [
+        "node_modules/stream-browserify"
+    ],
+    "zlib": [
+        "node_modules/browserify-zlib"
+    ]
+  },
+  "include": ["**/*.ts"]
+}
