@@ -20,6 +20,9 @@ export class YpLandUseGame extends YpBaseElement {
   @property({ type: Object })
   viewer: Viewer | undefined;
 
+  @property({ type: Object })
+  existingBoxes: Map<string, any> = new Map();
+
   static get styles() {
     return [
       super.styles,
@@ -57,17 +60,37 @@ export class YpLandUseGame extends YpBaseElement {
 
         #landUseSelection {
           position: absolute;
-          top: 10px;
-          left: 10px;
+          bottom: 10px;
+          left: auto;
+          right: auto;
           z-index: 1;
-          padding: 5px;
-          background-color: rgba(255, 255, 255, 0.8);
+          padding: 8px;
+          background-color: rgba(255, 255, 255, 0.5);
           border-radius: 5px;
         }
 
         #landUseSelection button {
           margin: 5px;
+          font-size: 32px;
         }
+
+        #navigationButtons {
+          position: absolute;
+          top: 10px;
+          left: auto;
+          right: auto;
+          z-index: 1;
+          padding: 8px;
+          background-color: rgba(255, 255, 255, 0.5);
+          border-radius: 5px;
+        }
+
+        #navigationButtons button {
+          margin: 5px;
+          font-size: 32px;
+        }
+
+
         #emptyCreditContainer {
           display: none;
         }
@@ -79,6 +102,8 @@ export class YpLandUseGame extends YpBaseElement {
     // @ts-ignore
     window.CESIUM_BASE_URL = "";
     super.connectedCallback();
+
+
   }
 
   protected firstUpdated(
@@ -231,10 +256,6 @@ export class YpLandUseGame extends YpBaseElement {
     } catch (error) {
       console.error("Error fetching GeoJSON data:", error);
     }
-
-    this.viewer!.flyTo(this.viewer!.entities, {
-      offset: new Cesium.HeadingPitchRange(0, Cesium.Math.toRadians(-50), 0),
-    });
   }
 
   flyToPosition(
@@ -274,7 +295,7 @@ export class YpLandUseGame extends YpBaseElement {
   getGlowingMaterial(color: any) {
     const glowingMaterial = new Cesium.Material({
       fabric: {
-        type: 'Glowing',
+        type: "Glowing",
         uniforms: {
           glowColor: color,
           glowIntensity: 0.5,
@@ -307,7 +328,10 @@ export class YpLandUseGame extends YpBaseElement {
     const terrainProvider = this.viewer!.terrainProvider;
     const positions = [position];
 
-    const sampledPositions = await Cesium.sampleTerrainMostDetailed(terrainProvider, positions);
+    const sampledPositions = await Cesium.sampleTerrainMostDetailed(
+      terrainProvider,
+      positions
+    );
 
     return sampledPositions[0].height;
   }
@@ -340,6 +364,12 @@ export class YpLandUseGame extends YpBaseElement {
       this.selectedLandUse = "conservation";
     });
 
+    this.$$("#showAll")!.addEventListener("click", () => {
+      this.viewer!.flyTo(this.viewer!.entities, {
+        offset: new Cesium.HeadingPitchRange(0, Cesium.Math.toRadians(-50), 0),
+      });
+    });
+
     //@ts-ignore
     Cesium.Ion.defaultAccessToken = __CESIUM_ACCESS_TOKEN__;
 
@@ -364,9 +394,12 @@ export class YpLandUseGame extends YpBaseElement {
       terrainProvider: await Cesium.createWorldTerrainAsync(),
       /*imageryProvider: new Cesium.OpenStreetMapImageryProvider({
         url: "https://a.tile.openstreetmap.org/",
-      }),*/
+      }),
       imageryProvider: Cesium.createWorldImagery({
         style: Cesium.IonWorldImageryStyle.AERIAL_WITH_LABELS,
+      }),*/
+      imageryProvider: Cesium.createWorldImagery({
+        style: Cesium.IonWorldImageryStyle.AERIAL,
       }),
     });
 
@@ -400,7 +433,7 @@ export class YpLandUseGame extends YpBaseElement {
     const modelCache = new ModelCache();
 
     // Preload the model
-    const modelUrl = 'models/CesiumBalloon.glb';
+    const modelUrl = "models/CesiumBalloon.glb";
     modelCache.loadModel(this.viewer!, modelUrl);
 
     screenSpaceEventHandler.setInputAction(async (event: any) => {
@@ -411,110 +444,137 @@ export class YpLandUseGame extends YpBaseElement {
         (pickedFeature) => pickedFeature.id && pickedFeature.id.rectangle
       );
 
-      if (rectangleEntity && this.selectedLandUse) {
-        const newColor = this.getColorForLandUse(this.selectedLandUse).withAlpha(0.4);
-        rectangleEntity.id.rectangle.material.color = newColor;
+      if (rectangleEntity) {
+        const rectangleId = rectangleEntity.id.id;
 
-       // Calculate the dimensions of the 3D box based on the rectangle
-       const rectangle = rectangleEntity.id.rectangle.coordinates.getValue();
+        // Check if there is an existing box entity for the rectangle
+        if (this.selectedLandUse) {
+          const newColor = this.getColorForLandUse(
+            this.selectedLandUse
+          ).withAlpha(0.4);
+          rectangleEntity.id.rectangle.material.color = newColor;
 
-       const west = Cesium.Math.toDegrees(rectangle.west);
-       const south = Cesium.Math.toDegrees(rectangle.south);
-       const east = Cesium.Math.toDegrees(rectangle.east);
-       const north = Cesium.Math.toDegrees(rectangle.north);
+          // Calculate the dimensions of the 3D box based on the rectangle
+          const rectangle = rectangleEntity.id.rectangle.coordinates.getValue();
 
-       const centerPosition = Cesium.Rectangle.center(rectangle);
-       const centerLatitude = Cesium.Math.toDegrees(centerPosition.latitude);
+          const west = Cesium.Math.toDegrees(rectangle.west);
+          const south = Cesium.Math.toDegrees(rectangle.south);
+          const east = Cesium.Math.toDegrees(rectangle.east);
+          const north = Cesium.Math.toDegrees(rectangle.north);
 
-       const widthInRadians = rectangle.width;
-       const heightInRadians = rectangle.height;
+          const centerPosition = Cesium.Rectangle.center(rectangle);
+          const centerLatitude = Cesium.Math.toDegrees(centerPosition.latitude);
 
-       const width = Math.abs(widthInRadians * Math.cos(centerPosition.latitude) * Cesium.Ellipsoid.WGS84.maximumRadius);
-       const depth = Math.abs(heightInRadians * Cesium.Ellipsoid.WGS84.maximumRadius);
-       const height = 300; // Set the height of the box
+          const widthInRadians = rectangle.width;
+          const heightInRadians = rectangle.height;
 
-       // Get the terrain height at the center position
-       const terrainHeight = await this.getTerrainHeight(centerPosition);
+          const width = Math.abs(
+            widthInRadians *
+              Math.cos(centerPosition.latitude) *
+              Cesium.Ellipsoid.WGS84.maximumRadius
+          );
+          const depth = Math.abs(
+            heightInRadians * Cesium.Ellipsoid.WGS84.maximumRadius
+          );
+          const height = 300; // Set the height of the box
 
-       // Create a 3D box entity
-       const boxEntity = this.viewer!.entities.add({
-         position: Cesium.Ellipsoid.WGS84.cartographicToCartesian(
-           new Cesium.Cartographic(
-             centerPosition.longitude,
-             centerPosition.latitude,
-             terrainHeight + height / 2
-           )
-         ),
-         box: {
-           dimensions: new Cesium.Cartesian3(width, depth, height),
-           heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
-           material: this.getColorForLandUse(this.selectedLandUse) as any,
-         },
-       });
+          // Get the terrain height at the center position
+          const terrainHeight = await this.getTerrainHeight(centerPosition);
 
+          if (this.existingBoxes.has(rectangleId)) {
+            // Remove the existing box entity
+            const existingBoxEntity = this.existingBoxes.get(rectangleId);
+            this.viewer!.entities.remove(existingBoxEntity);
+            this.existingBoxes.delete(rectangleId);
+          }
 
-        // Remove the box after 3 seconds
-        setTimeout(() => {
-          this.viewer!.entities.remove(boxEntity);
-        }, 2000000000);
+          // Create a 3D box entity
+          const boxEntity = this.viewer!.entities.add({
+            position: Cesium.Ellipsoid.WGS84.cartographicToCartesian(
+              new Cesium.Cartographic(
+                centerPosition.longitude,
+                centerPosition.latitude,
+                terrainHeight + height / 2
+              )
+            ),
+            box: {
+              dimensions: new Cesium.Cartesian3(width, depth, height),
+              heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
+              material: this.getColorForLandUse(this.selectedLandUse) as any,
+            },
+          });
 
-        const url = "models/CesiumBalloon.glb";
-        const modelGraphics = await modelCache.loadModel(this.viewer!, url);
+          this.existingBoxes.set(rectangleId, boxEntity);
 
-        const startPosition = Cesium.Cartesian3.fromDegrees(
-          (west + east) / 2,
-          (south + north) / 2,
-          height / 2
-        );
-        const endPosition = Cesium.Cartesian3.fromDegrees(
-          (west + east) / 2,
-          (south + north) / 2,
-          height / 2 + 20000 // Adjust the value to control how far the model moves upward
-        );
-        const startColor = this.getColorForLandUse(this.selectedLandUse).withAlpha(1);
-        const endColor = this.getColorForLandUse(this.selectedLandUse).withAlpha(0);
+          // Remove the box after 3 seconds
+          setTimeout(() => {
+            this.viewer!.entities.remove(boxEntity);
+          }, 2000);
 
-        const currentTime = Cesium.JulianDate.now();
-        const endTime = new Cesium.JulianDate();
-        Cesium.JulianDate.addSeconds(currentTime, 30, endTime);
+          const url = "models/CesiumBalloon.glb";
+          const modelGraphics = await modelCache.loadModel(this.viewer!, url);
 
-        const positionProperty = new Cesium.SampledPositionProperty();
-        positionProperty.addSample(currentTime, startPosition);
-        positionProperty.addSample(endTime, endPosition);
+          const startPosition = Cesium.Cartesian3.fromDegrees(
+            (west + east) / 2,
+            (south + north) / 2,
+            height / 2
+          );
+          const endPosition = Cesium.Cartesian3.fromDegrees(
+            (west + east) / 2,
+            (south + north) / 2,
+            height / 2 + 20000 // Adjust the value to control how far the model moves upward
+          );
+          const startColor = this.getColorForLandUse(
+            this.selectedLandUse
+          ).withAlpha(1);
+          const endColor = this.getColorForLandUse(
+            this.selectedLandUse
+          ).withAlpha(0);
 
-        const colorProperty = new Cesium.SampledProperty(Cesium.Color);
-        colorProperty.addSample(currentTime, startColor);
-        colorProperty.addSample(endTime, endColor);
+          const currentTime = Cesium.JulianDate.now();
+          const endTime = new Cesium.JulianDate();
+          Cesium.JulianDate.addSeconds(currentTime, 30, endTime);
 
-        const startOrientation = Cesium.Transforms.headingPitchRollQuaternion(
-          startPosition,
-          new Cesium.HeadingPitchRoll(0, 0, 0)
-        );
+          const positionProperty = new Cesium.SampledPositionProperty();
+          positionProperty.addSample(currentTime, startPosition);
+          positionProperty.addSample(endTime, endPosition);
 
-        const endOrientation = Cesium.Transforms.headingPitchRollQuaternion(
-          endPosition,
-          new Cesium.HeadingPitchRoll(0, 0, 0)
-        );
+          const colorProperty = new Cesium.SampledProperty(Cesium.Color);
+          colorProperty.addSample(currentTime, startColor);
+          colorProperty.addSample(endTime, endColor);
 
-        const orientationProperty = new Cesium.SampledProperty(Cesium.Quaternion);
-        orientationProperty.addSample(currentTime, startOrientation);
-        orientationProperty.addSample(endTime, endOrientation);
+          const startOrientation = Cesium.Transforms.headingPitchRollQuaternion(
+            startPosition,
+            new Cesium.HeadingPitchRoll(0, 0, 0)
+          );
 
-        const landUseTypeModel = this.viewer!.entities.add({
-          position: positionProperty,
-          orientation: orientationProperty,
-          model: {
-            uri: modelGraphics.uri,
-            color: colorProperty,
-            scale: 100,
-            minimumPixelSize: 100,
-          },
-        });
+          const endOrientation = Cesium.Transforms.headingPitchRollQuaternion(
+            endPosition,
+            new Cesium.HeadingPitchRoll(0, 0, 0)
+          );
 
-        // Remove the model after 5 seconds
-        setTimeout(() => {
-          this.viewer!.entities.remove(landUseTypeModel);
-        }, 50000);
+          const orientationProperty = new Cesium.SampledProperty(
+            Cesium.Quaternion
+          );
+          orientationProperty.addSample(currentTime, startOrientation);
+          orientationProperty.addSample(endTime, endOrientation);
+
+          const landUseTypeModel = this.viewer!.entities.add({
+            position: positionProperty,
+            orientation: orientationProperty,
+            model: {
+              uri: modelGraphics.uri,
+              color: colorProperty,
+              scale: 100,
+              minimumPixelSize: 100,
+            },
+          });
+
+          // Remove the model after 5 seconds
+          setTimeout(() => {
+            this.viewer!.entities.remove(landUseTypeModel);
+          }, 50000);
+        }
       }
     }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 
@@ -573,6 +633,11 @@ export class YpLandUseGame extends YpBaseElement {
         <button id="landUse4">Recreation</button>
         <button id="landUse5">Restoration</button>
         <button id="landUse6">Conservation</button>
+      </div>
+
+      <div id="navigationButtons">
+        <button id="showAll">Show all</button>
+        <button id="horizonMode">Horizon mode</button>
       </div>
     `;
   }
