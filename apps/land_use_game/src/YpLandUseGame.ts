@@ -6,6 +6,7 @@ import { PropertyValueMap } from "lit";
 
 import { ShadowStyles } from "./@yrpri/common/ShadowStyles";
 import { Rectangle, Viewer } from "cesium";
+import { ModelCache } from "./ModelCache";
 
 //const logo = new URL("../../assets/open-wc-logo.svg", import.meta.url).href;
 
@@ -303,13 +304,6 @@ export class YpLandUseGame extends YpBaseElement {
   }
 
   async initScene() {
-    let preloadedModel: string | undefined;
-
-    //@ts-ignore
-    const modelPromise = Cesium.Resource.fetchBlob('models/CesiumBalloon.glb').then((blob) => {
-      preloadedModel = URL.createObjectURL(blob);
-    });
-
     const container = this.$$("#cesium-container")!;
     const emptyCreditContainer = this.$$("#emptyCreditContainer")!;
 
@@ -394,7 +388,13 @@ export class YpLandUseGame extends YpBaseElement {
       this.viewer.scene.canvas
     );
 
-    screenSpaceEventHandler.setInputAction((event: any) => {
+    const modelCache = new ModelCache();
+
+    // Preload the model
+    const modelUrl = 'models/CesiumBalloon.glb';
+    modelCache.loadModel(this.viewer!, modelUrl);
+
+    screenSpaceEventHandler.setInputAction(async (event: any) => {
       const pickedFeature = this.viewer!.scene.pick(event.position);
 
       if (pickedFeature &&  pickedFeature.id && pickedFeature.id.rectangle && this.selectedLandUse) {
@@ -432,6 +432,8 @@ export class YpLandUseGame extends YpBaseElement {
         }, 2000000000);
 
         const url = "models/CesiumBalloon.glb";
+        const modelGraphics = await modelCache.loadModel(this.viewer!, url);
+
         const startPosition = Cesium.Cartesian3.fromDegrees(
           (west + east) / 2,
           (south + north) / 2,
@@ -472,18 +474,15 @@ export class YpLandUseGame extends YpBaseElement {
         orientationProperty.addSample(endTime, endOrientation);
 
         const landUseTypeModel = this.viewer!.entities.add({
-          name: preloadedModel,
           position: positionProperty,
-          orientation: orientationProperty, // Use the orientation property here
+          orientation: orientationProperty,
           model: {
-            uri: preloadedModel,
+            uri: modelGraphics.uri,
             color: colorProperty,
-            scale: 100, // Adjust the model's scale
-            minimumPixelSize: 100, // To ensure the model is visible even when zoomed out
-           // heightReference: Cesium.HeightReference.CLAMP_TO_GROUND, // Set the model height relative to the ground
+            scale: 100,
+            minimumPixelSize: 100,
           },
         });
-
 
         // Remove the model after 5 seconds
         setTimeout(() => {
