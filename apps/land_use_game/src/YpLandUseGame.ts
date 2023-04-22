@@ -219,7 +219,7 @@ export class YpLandUseGame extends YpBaseElement {
             this.viewer!.entities.add({
               rectangle: {
                 coordinates: tile,
-                material: Cesium.Color.WHITE.withAlpha(0.2),
+                material: Cesium.Color.BLUE.withAlpha(0.1),
                 outline: true,
                 outlineColor: Cesium.Color.BLACK,
               },
@@ -230,6 +230,10 @@ export class YpLandUseGame extends YpBaseElement {
     } catch (error) {
       console.error("Error fetching GeoJSON data:", error);
     }
+
+    this.viewer!.flyTo(this.viewer!.entities, {
+      offset: new Cesium.HeadingPitchRange(0, Cesium.Math.toRadians(-50), 0),
+    });
   }
 
   flyToPosition(
@@ -299,6 +303,13 @@ export class YpLandUseGame extends YpBaseElement {
   }
 
   async initScene() {
+    let preloadedModel: string | undefined;
+
+    //@ts-ignore
+    const modelPromise = Cesium.Resource.fetchBlob('models/CesiumBalloon.glb').then((blob) => {
+      preloadedModel = URL.createObjectURL(blob);
+    });
+
     const container = this.$$("#cesium-container")!;
     const emptyCreditContainer = this.$$("#emptyCreditContainer")!;
 
@@ -348,23 +359,27 @@ export class YpLandUseGame extends YpBaseElement {
       vrButton: false,
       //ts-ignore
       terrainProvider: await Cesium.createWorldTerrainAsync(),
+      /*imageryProvider: new Cesium.OpenStreetMapImageryProvider({
+        url: "https://a.tile.openstreetmap.org/",
+      }),*/
       imageryProvider: Cesium.createWorldImagery({
-        style: Cesium.IonWorldImageryStyle.AERIAL,
+        style: Cesium.IonWorldImageryStyle.AERIAL_WITH_LABELS,
       }),
     });
 
     //Enable lighting based on the sun position
     this.viewer.scene.globe.enableLighting = true;
     this.viewer.scene.postProcessStages.bloom.enabled = true;
+
     //Enable depth testing so things behind the terrain disappear.
     //this.viewer.scene.globe.depthTestAgainstTerrain = true;
-    /*await this.flyToPosition(
+    await this.flyToPosition(
       -20.62592534987823,
       64.03985855384323,
       7000,
       7,
       -Cesium.Math.PI_OVER_TWO / 1.2
-    );*/
+    );
 
     // Second flyTo
     await this.flyToPosition(
@@ -414,7 +429,66 @@ export class YpLandUseGame extends YpBaseElement {
         // Remove the box after 3 seconds
         setTimeout(() => {
           this.viewer!.entities.remove(boxEntity);
-        }, 2000);
+        }, 2000000000);
+
+        const url = "models/CesiumBalloon.glb";
+        const startPosition = Cesium.Cartesian3.fromDegrees(
+          (west + east) / 2,
+          (south + north) / 2,
+          height / 2
+        );
+        const endPosition = Cesium.Cartesian3.fromDegrees(
+          (west + east) / 2,
+          (south + north) / 2,
+          height / 2 + 5000 // Adjust the value to control how far the model moves upward
+        );
+        const startColor = this.getColorForLandUse(this.selectedLandUse).withAlpha(1);
+        const endColor = this.getColorForLandUse(this.selectedLandUse).withAlpha(0);
+
+        const currentTime = Cesium.JulianDate.now();
+        const endTime = new Cesium.JulianDate();
+        Cesium.JulianDate.addSeconds(currentTime, 5, endTime);
+
+        const positionProperty = new Cesium.SampledPositionProperty();
+        positionProperty.addSample(currentTime, startPosition);
+        positionProperty.addSample(endTime, endPosition);
+
+        const colorProperty = new Cesium.SampledProperty(Cesium.Color);
+        colorProperty.addSample(currentTime, startColor);
+        colorProperty.addSample(endTime, endColor);
+
+        const startOrientation = Cesium.Transforms.headingPitchRollQuaternion(
+          startPosition,
+          new Cesium.HeadingPitchRoll(0, 0, 0)
+        );
+
+        const endOrientation = Cesium.Transforms.headingPitchRollQuaternion(
+          endPosition,
+          new Cesium.HeadingPitchRoll(0, 0, 0)
+        );
+
+        const orientationProperty = new Cesium.SampledProperty(Cesium.Quaternion);
+        orientationProperty.addSample(currentTime, startOrientation);
+        orientationProperty.addSample(endTime, endOrientation);
+
+        const landUseTypeModel = this.viewer!.entities.add({
+          name: preloadedModel,
+          position: positionProperty,
+          orientation: orientationProperty, // Use the orientation property here
+          model: {
+            uri: preloadedModel,
+            color: colorProperty,
+            scale: 100, // Adjust the model's scale
+            minimumPixelSize: 100, // To ensure the model is visible even when zoomed out
+           // heightReference: Cesium.HeightReference.CLAMP_TO_GROUND, // Set the model height relative to the ground
+          },
+        });
+
+
+        // Remove the model after 5 seconds
+        setTimeout(() => {
+          this.viewer!.entities.remove(landUseTypeModel);
+        }, 9000);
       }
     }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 
