@@ -412,44 +412,41 @@ export class YpLandUseGame extends YpBaseElement {
 
 
        // Calculate the dimensions of the 3D box based on the rectangle
-const rectangle = pickedFeature.id.rectangle.coordinates.getValue();
+       const rectangle = pickedFeature.id.rectangle.coordinates.getValue();
 
-const west = Cesium.Math.toDegrees(rectangle.west);
-const south = Cesium.Math.toDegrees(rectangle.south);
-const east = Cesium.Math.toDegrees(rectangle.east);
-const north = Cesium.Math.toDegrees(rectangle.north);
+       const west = Cesium.Math.toDegrees(rectangle.west);
+       const south = Cesium.Math.toDegrees(rectangle.south);
+       const east = Cesium.Math.toDegrees(rectangle.east);
+       const north = Cesium.Math.toDegrees(rectangle.north);
 
-const cartographicSW = Cesium.Cartographic.fromDegrees(west, south);
-const cartographicNE = Cesium.Cartographic.fromDegrees(east, north);
+       const centerPosition = Cesium.Rectangle.center(rectangle);
+       const centerLatitude = Cesium.Math.toDegrees(centerPosition.latitude);
 
-const cartesianSW = Cesium.Ellipsoid.WGS84.cartographicToCartesian(cartographicSW);
-const cartesianNE = Cesium.Ellipsoid.WGS84.cartographicToCartesian(cartographicNE);
+       const widthInRadians = rectangle.width;
+       const heightInRadians = rectangle.height;
 
-const width = Cesium.Cartesian3.distance(cartesianSW, Cesium.Cartesian3.fromDegrees(west, north)) / 2;
-const depth = Cesium.Cartesian3.distance(cartesianSW, Cesium.Cartesian3.fromDegrees(east, south));
-const height = 300; // Set the height of the box
+       const width = Math.abs(widthInRadians * Math.cos(centerPosition.latitude) * Cesium.Ellipsoid.WGS84.maximumRadius);
+       const depth = Math.abs(heightInRadians * Cesium.Ellipsoid.WGS84.maximumRadius);
+       const height = 300; // Set the height of the box
 
-// Calculate the center position of the rectangle
-const centerPosition = Cesium.Rectangle.center(rectangle);
+       // Get the terrain height at the center position
+       const terrainHeight = await this.getTerrainHeight(centerPosition);
 
-// Get the terrain height at the center position
-const terrainHeight = await this.getTerrainHeight(centerPosition);
-
-// Create a 3D box entity
-const boxEntity = this.viewer!.entities.add({
-  position: Cesium.Ellipsoid.WGS84.cartographicToCartesian(
-    new Cesium.Cartographic(
-      centerPosition.longitude,
-      centerPosition.latitude,
-      terrainHeight + height / 2
-    )
-  ),
-  box: {
-    dimensions: new Cesium.Cartesian3(width, depth, height),
-    heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
-    material: this.getColorForLandUse(this.selectedLandUse) as any,
-  },
-});
+       // Create a 3D box entity
+       const boxEntity = this.viewer!.entities.add({
+         position: Cesium.Ellipsoid.WGS84.cartographicToCartesian(
+           new Cesium.Cartographic(
+             centerPosition.longitude,
+             centerPosition.latitude,
+             terrainHeight + height / 2
+           )
+         ),
+         box: {
+           dimensions: new Cesium.Cartesian3(width, depth, height),
+           heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
+           material: this.getColorForLandUse(this.selectedLandUse) as any,
+         },
+       });
 
 
         // Remove the box after 3 seconds
