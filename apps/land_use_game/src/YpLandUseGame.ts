@@ -8,9 +8,8 @@ import { ShadowStyles } from "./@yrpri/common/ShadowStyles";
 import { Rectangle, Viewer } from "cesium";
 
 //const logo = new URL("../../assets/open-wc-logo.svg", import.meta.url).href;
-import * as turf from "@turf/turf";
-import * as GeoJSON from "geojson";
 
+//todo: Have a giant finger come from the sky to press the land areas (or a mouse arrow on desktop)
 export class YpLandUseGame extends YpBaseElement {
   @property({ type: String }) title = "Land Use Game";
 
@@ -220,7 +219,7 @@ export class YpLandUseGame extends YpBaseElement {
             this.viewer!.entities.add({
               rectangle: {
                 coordinates: tile,
-                material: color.withAlpha(0.3),
+                material: Cesium.Color.WHITE.withAlpha(0.2),
                 outline: true,
                 outlineColor: Cesium.Color.BLACK,
               },
@@ -268,7 +267,35 @@ export class YpLandUseGame extends YpBaseElement {
   }
 
   getGlowingMaterial(color: any) {
-    return null;
+    const glowingMaterial = new Cesium.Material({
+      fabric: {
+        type: 'Glowing',
+        uniforms: {
+          glowColor: color,
+          glowIntensity: 0.5,
+        },
+        source: `
+          uniform vec3 glowColor;
+          uniform float glowIntensity;
+
+          czm_material czm_getMaterial(czm_materialInput materialInput) {
+            czm_material material = czm_getDefaultMaterial(materialInput);
+            vec3 normal = normalize(materialInput.normalEC);
+            vec3 lightDirection = normalize(czm_sunDirectionEC);
+            float intensity = max(dot(normal, lightDirection), 0.0);
+            vec3 glow = glowColor * pow(intensity, glowIntensity) * glowIntensity;
+            material.diffuse = glow;
+            material.alpha = 1.0;
+            return material;
+          }
+        `,
+      },
+      translucent: false,
+    });
+
+    debugger;
+
+    return glowingMaterial;
   }
 
   async initScene() {
@@ -328,16 +355,16 @@ export class YpLandUseGame extends YpBaseElement {
 
     //Enable lighting based on the sun position
     this.viewer.scene.globe.enableLighting = true;
-
+    this.viewer.scene.postProcessStages.bloom.enabled = true;
     //Enable depth testing so things behind the terrain disappear.
     //this.viewer.scene.globe.depthTestAgainstTerrain = true;
-    await this.flyToPosition(
+    /*await this.flyToPosition(
       -20.62592534987823,
       64.03985855384323,
       7000,
       7,
       -Cesium.Math.PI_OVER_TWO / 1.2
-    );
+    );*/
 
     // Second flyTo
     await this.flyToPosition(
@@ -356,9 +383,38 @@ export class YpLandUseGame extends YpBaseElement {
       const pickedFeature = this.viewer!.scene.pick(event.position);
 
       if (pickedFeature &&  pickedFeature.id && pickedFeature.id.rectangle && this.selectedLandUse) {
-        const newColor = this.getColor(this.selectedLandUse).withAlpha(0.3);
+        const newColor = this.getColorForLandUse(this.selectedLandUse).withAlpha(0.4);
         pickedFeature.id.rectangle.material.color = newColor;
-        debugger;
+
+
+        // Calculate the dimensions of the 3D box based on the rectangle
+        const rectangle = pickedFeature.id.rectangle.coordinates.getValue();
+        const west = Cesium.Math.toDegrees(rectangle.west);
+        const south = Cesium.Math.toDegrees(rectangle.south);
+        const east = Cesium.Math.toDegrees(rectangle.east);
+        const north = Cesium.Math.toDegrees(rectangle.north);
+        const width = (east - west) * 111000/2; // Convert degrees to meters
+        const depth = (north - south) * 111000; // Convert degrees to meters
+        const height = 300; // Set the height of the box
+
+        // Create a 3D box entity
+        const boxEntity = this.viewer!.entities.add({
+          position: Cesium.Cartesian3.fromDegrees(
+            (west + east) / 2,
+            (south + north) / 2,
+            height / 2
+          ),
+          box: {
+            dimensions: new Cesium.Cartesian3(width, depth, height),
+            heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
+            material: this.getColorForLandUse(this.selectedLandUse) as any,
+          },
+        });
+
+        // Remove the box after 3 seconds
+        setTimeout(() => {
+          this.viewer!.entities.remove(boxEntity);
+        }, 2000);
       }
     }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 
@@ -367,6 +423,7 @@ export class YpLandUseGame extends YpBaseElement {
 
   getMaterialForLandUse(landUse: string) {
     // Return a Cesium.Color based on the selected land use
+    debugger;
     switch (landUse) {
       case "energy":
         return this.getGlowingMaterial(Cesium.Color.RED.withAlpha(0.3));
@@ -380,6 +437,26 @@ export class YpLandUseGame extends YpBaseElement {
         return this.getGlowingMaterial(Cesium.Color.PINK.withAlpha(0.3));
       case "conservation":
         return this.getGlowingMaterial(Cesium.Color.PURPLE.withAlpha(0.3));
+      default:
+        return Cesium.Color.TRANSPARENT;
+    }
+  }
+
+  getColorForLandUse(landUse: string) {
+    // Return a Cesium.Color based on the selected land use
+    switch (landUse) {
+      case "energy":
+        return Cesium.Color.RED.withAlpha(0.3);
+      case "farming":
+        return Cesium.Color.BLUE.withAlpha(0.3);
+      case "tourism":
+        return Cesium.Color.GREEN.withAlpha(0.3);
+      case "recreation":
+        return Cesium.Color.YELLOW.withAlpha(0.3);
+      case "restoration":
+        return Cesium.Color.PINK.withAlpha(0.3);
+      case "conservation":
+        return Cesium.Color.PURPLE.withAlpha(0.3);
       default:
         return Cesium.Color.TRANSPARENT;
     }
