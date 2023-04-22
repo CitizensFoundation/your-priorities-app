@@ -404,15 +404,19 @@ export class YpLandUseGame extends YpBaseElement {
     modelCache.loadModel(this.viewer!, modelUrl);
 
     screenSpaceEventHandler.setInputAction(async (event: any) => {
-      const pickedFeature = this.viewer!.scene.pick(event.position);
+      const pickedFeatures = this.viewer!.scene.drillPick(event.position);
 
-      if (pickedFeature &&  pickedFeature.id && pickedFeature.id.rectangle && this.selectedLandUse) {
+      // Filter the pickedFeatures to get the rectangle entity
+      const rectangleEntity = pickedFeatures.find(
+        (pickedFeature) => pickedFeature.id && pickedFeature.id.rectangle
+      );
+
+      if (rectangleEntity && this.selectedLandUse) {
         const newColor = this.getColorForLandUse(this.selectedLandUse).withAlpha(0.4);
-        pickedFeature.id.rectangle.material.color = newColor;
-
+        rectangleEntity.id.rectangle.material.color = newColor;
 
        // Calculate the dimensions of the 3D box based on the rectangle
-       const rectangle = pickedFeature.id.rectangle.coordinates.getValue();
+       const rectangle = rectangleEntity.id.rectangle.coordinates.getValue();
 
        const west = Cesium.Math.toDegrees(rectangle.west);
        const south = Cesium.Math.toDegrees(rectangle.south);
