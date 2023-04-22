@@ -10,6 +10,24 @@ import { ModelCache } from "./ModelCache";
 
 //const logo = new URL("../../assets/open-wc-logo.svg", import.meta.url).href;
 
+const landMarks = [
+  {
+    jsonText: `{"position":{"x":2603954.015915357,"y":-987894.1669974888,"z":5723474.387481297},"heading":0.7194597796017312,"pitch":-0.0744418474365669,"roll":0.00024785400735183316}`,
+  },
+  {
+    jsonText: `{"position":{"x":2608450.448217757,"y":-983956.0873921539,"z":5725021.02720951},"heading":0.4516151540332656,"pitch":-0.5574524531949243,"roll":0.0014720472302327536}`,
+  },
+  {
+    jsonText: `{"position":{"x":2610244.8435150534,"y":-983175.4728537177,"z":5725699.596588212},"heading":0.4588847589872893,"pitch":-0.37953853967140194,"roll":0.002438891621989292}`,
+  },
+  {
+    jsonText: `{"position":{"x":2594843.143514622,"y":-954502.41228975,"z":5730498.744925417},"heading":0.44818481070129224,"pitch":-0.2614333409478289,"roll":0.0000464284335048859}`
+  },
+  {
+    jsonText: `{"position":{"x":2613873.739571409,"y":-973586.3617570958,"z":5718332.700526537},"heading":0.04235783164121365,"pitch":-0.10943287945905267,"roll":0.00004924951058349336}`
+  }
+];
+
 //todo: Have a giant finger come from the sky to press the land areas (or a mouse arrow on desktop)
 export class YpLandUseGame extends YpBaseElement {
   @property({ type: String }) title = "Land Use Game";
@@ -22,6 +40,9 @@ export class YpLandUseGame extends YpBaseElement {
 
   @property({ type: Object })
   existingBoxes: Map<string, any> = new Map();
+
+  @property({ type: Object })
+  modelCache!: ModelCache;
 
   static get styles() {
     return [
@@ -90,7 +111,6 @@ export class YpLandUseGame extends YpBaseElement {
           font-size: 32px;
         }
 
-
         #emptyCreditContainer {
           display: none;
         }
@@ -98,12 +118,17 @@ export class YpLandUseGame extends YpBaseElement {
     ];
   }
 
+  constructor() {
+    super();
+    this.modelCache = new ModelCache();
+  }
+
   connectedCallback(): void {
     // @ts-ignore
     window.CESIUM_BASE_URL = "";
     super.connectedCallback();
 
-
+    document.addEventListener("keydown", this.handleKeyDown.bind(this));
   }
 
   protected firstUpdated(
@@ -113,6 +138,60 @@ export class YpLandUseGame extends YpBaseElement {
     this.initScene();
   }
 
+  handleKeyDown(event: KeyboardEvent) {
+    if (event.key === "c") {
+      this.copyCameraPositionAndRotation();
+    } else if (event.key === "h") {
+      this.horizonMode();
+    }
+
+    // If key is 1-9 choose camera data from landMarks and fly the camera to that position
+    const key = parseInt(event.key);
+    if (key >= 1 && key <= 9) {
+      const landMark = landMarks[key - 1];
+      if (landMark) {
+        const { position, heading, pitch, roll } = JSON.parse(
+          landMark.jsonText
+        );
+        this.viewer!.camera.setView({
+          destination: position,
+          orientation: {
+            heading: heading,
+            pitch: pitch,
+            roll: roll,
+          },
+        });
+      }
+    }
+  }
+
+  copyCameraPositionAndRotation() {
+    const position = this.viewer!.camera.position;
+    const heading = this.viewer!.camera.heading;
+    const pitch = this.viewer!.camera.pitch;
+    const roll = this.viewer!.camera.roll;
+    const clipboardData = {
+      position: position,
+      heading: heading,
+      pitch: pitch,
+      roll: roll,
+    };
+    navigator.clipboard.writeText(JSON.stringify(clipboardData));
+  }
+
+  async horizonMode() {
+    const clipboardData = await navigator.clipboard.readText();
+    const { position, heading, pitch, roll } = JSON.parse(clipboardData);
+
+    this.viewer!.camera.setView({
+      destination: position,
+      orientation: {
+        heading: heading,
+        pitch: pitch,
+        roll: roll,
+      },
+    });
+  }
   getColor(landuse: string) {
     const red = Math.floor(Math.random() * 256);
     const green = Math.floor(Math.random() * 256);
@@ -336,6 +415,58 @@ export class YpLandUseGame extends YpBaseElement {
     return sampledPositions[0].height;
   }
 
+  async setupAirplane() {
+    return;
+    const modelUrl = "models/Cesium_Air.glb";
+    const modelGraphics = await this.modelCache.loadModel(this.viewer!, modelUrl);
+
+    // Set the initial position and orientation of the airplane
+    const initialAltitude = 3000;
+    const startPosition = Cesium.Cartesian3.fromDegrees(64.47406339323166, -19.889920978664676, initialAltitude);
+    const startOrientation = Cesium.Transforms.headingPitchRollQuaternion(startPosition, new Cesium.HeadingPitchRoll(0, -Cesium.Math.PI_OVER_TWO / 3.5, 0));
+
+    // Create a SampledPositionProperty for the position of the airplane
+    const positionProperty = new Cesium.SampledPositionProperty();
+    positionProperty.addSample(Cesium.JulianDate.now(), startPosition);
+
+    // Create a SampledProperty for the orientation of the airplane
+    const orientationProperty = new Cesium.SampledProperty(Cesium.Quaternion);
+    orientationProperty.addSample(Cesium.JulianDate.now(), startOrientation);
+
+    // Add the airplane model to the scene with the position and orientation properties
+    this.viewer!.entities.add({
+      position: positionProperty,
+      orientation: orientationProperty,
+      model: {
+        uri: modelGraphics.uri,
+        scale: 100,
+        minimumPixelSize: 100,
+      },
+    });
+
+    // Update the position and orientation of the airplane every second
+    setInterval(() => {
+      // Get the current time
+      const currentTime = Cesium.JulianDate.now();
+
+      // Calculate a random heading and pitch based on the current time
+      const heading = 0.1 * Math.sin(currentTime.secondsOfDay);
+      const pitch = -0.1 * Math.cos(currentTime.secondsOfDay);
+
+      // Calculate the new position of the airplane based on the heading and pitch
+      const newPosition = Cesium.Cartesian3.fromRadians(startPosition.x + heading, startPosition.y + pitch, initialAltitude);
+
+      // Add the new position sample to the position property
+      positionProperty.addSample(currentTime, newPosition);
+
+      // Calculate the new orientation of the airplane based on its current position
+      const newOrientation = Cesium.Transforms.headingPitchRollQuaternion(newPosition, new Cesium.HeadingPitchRoll(0, -Cesium.Math.PI_OVER_TWO / 3.5, 0));
+
+      // Add the new orientation sample to the orientation property
+      orientationProperty.addSample(currentTime, newOrientation);
+    }, 1000);
+  }
+
   async initScene() {
     const container = this.$$("#cesium-container")!;
     const emptyCreditContainer = this.$$("#emptyCreditContainer")!;
@@ -412,29 +543,29 @@ export class YpLandUseGame extends YpBaseElement {
     await this.flyToPosition(
       -20.62592534987823,
       64.03985855384323,
-      7000,
-      7,
-      -Cesium.Math.PI_OVER_TWO / 1.2
+      25000,
+      10,
+      -Cesium.Math.PI_OVER_TWO / 1.3
     );
 
     // Second flyTo
     await this.flyToPosition(
-      -20.389429786089895,
-      64.34905999541063,
-      2500,
+      -20.258440222173007,
+      64.25486843430893,
+      7000,
       3,
-      -Cesium.Math.PI_OVER_TWO / 3.5
+      -Cesium.Math.PI_OVER_TWO / 4
     );
+
+    this.setupAirplane();
 
     const screenSpaceEventHandler = new Cesium.ScreenSpaceEventHandler(
       this.viewer.scene.canvas
     );
 
-    const modelCache = new ModelCache();
-
     // Preload the model
     const modelUrl = "models/CesiumBalloon.glb";
-    modelCache.loadModel(this.viewer!, modelUrl);
+    this.modelCache.loadModel(this.viewer!, modelUrl);
 
     screenSpaceEventHandler.setInputAction(async (event: any) => {
       const pickedFeatures = this.viewer!.scene.drillPick(event.position);
@@ -512,7 +643,7 @@ export class YpLandUseGame extends YpBaseElement {
           }, 2000);
 
           const url = "models/CesiumBalloon.glb";
-          const modelGraphics = await modelCache.loadModel(this.viewer!, url);
+          const modelGraphics = await this.modelCache.loadModel(this.viewer!, url);
 
           const startPosition = Cesium.Cartesian3.fromDegrees(
             (west + east) / 2,
