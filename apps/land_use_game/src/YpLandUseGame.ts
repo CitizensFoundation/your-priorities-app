@@ -5,7 +5,7 @@ import { YpBaseElement } from "./@yrpri/common/yp-base-element";
 import { PropertyValueMap } from "lit";
 
 import { ShadowStyles } from "./@yrpri/common/ShadowStyles";
-import { Rectangle, Viewer } from "cesium";
+import { Cartographic, Rectangle, Viewer } from "cesium";
 import { ModelCache } from "./ModelCache";
 
 //const logo = new URL("../../assets/open-wc-logo.svg", import.meta.url).href;
@@ -92,7 +92,7 @@ export class YpLandUseGame extends YpBaseElement {
     const red = Math.floor(Math.random() * 256);
     const green = Math.floor(Math.random() * 256);
     const blue = Math.floor(Math.random() * 256);
-    return new Cesium.Color(red / 255, green / 255, blue / 255, 0.5);
+    return new Cesium.Color(red / 255, green / 255, blue / 255, 0.2);
   }
 
   getColorOld(landuse: string) {
@@ -303,6 +303,15 @@ export class YpLandUseGame extends YpBaseElement {
     return glowingMaterial;
   }
 
+  async getTerrainHeight(position: Cartographic): Promise<number> {
+    const terrainProvider = this.viewer!.terrainProvider;
+    const positions = [position];
+
+    const sampledPositions = await Cesium.sampleTerrainMostDetailed(terrainProvider, positions);
+
+    return sampledPositions[0].height;
+  }
+
   async initScene() {
     const container = this.$$("#cesium-container")!;
     const emptyCreditContainer = this.$$("#emptyCreditContainer")!;
@@ -402,29 +411,46 @@ export class YpLandUseGame extends YpBaseElement {
         pickedFeature.id.rectangle.material.color = newColor;
 
 
-        // Calculate the dimensions of the 3D box based on the rectangle
-        const rectangle = pickedFeature.id.rectangle.coordinates.getValue();
-        const west = Cesium.Math.toDegrees(rectangle.west);
-        const south = Cesium.Math.toDegrees(rectangle.south);
-        const east = Cesium.Math.toDegrees(rectangle.east);
-        const north = Cesium.Math.toDegrees(rectangle.north);
-        const width = (east - west) * 111000/2; // Convert degrees to meters
-        const depth = (north - south) * 111000; // Convert degrees to meters
-        const height = 300; // Set the height of the box
+       // Calculate the dimensions of the 3D box based on the rectangle
+const rectangle = pickedFeature.id.rectangle.coordinates.getValue();
 
-        // Create a 3D box entity
-        const boxEntity = this.viewer!.entities.add({
-          position: Cesium.Cartesian3.fromDegrees(
-            (west + east) / 2,
-            (south + north) / 2,
-            height / 2
-          ),
-          box: {
-            dimensions: new Cesium.Cartesian3(width, depth, height),
-            heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
-            material: this.getColorForLandUse(this.selectedLandUse) as any,
-          },
-        });
+const west = Cesium.Math.toDegrees(rectangle.west);
+const south = Cesium.Math.toDegrees(rectangle.south);
+const east = Cesium.Math.toDegrees(rectangle.east);
+const north = Cesium.Math.toDegrees(rectangle.north);
+
+const cartographicSW = Cesium.Cartographic.fromDegrees(west, south);
+const cartographicNE = Cesium.Cartographic.fromDegrees(east, north);
+
+const cartesianSW = Cesium.Ellipsoid.WGS84.cartographicToCartesian(cartographicSW);
+const cartesianNE = Cesium.Ellipsoid.WGS84.cartographicToCartesian(cartographicNE);
+
+const width = Cesium.Cartesian3.distance(cartesianSW, Cesium.Cartesian3.fromDegrees(west, north)) / 2;
+const depth = Cesium.Cartesian3.distance(cartesianSW, Cesium.Cartesian3.fromDegrees(east, south));
+const height = 300; // Set the height of the box
+
+// Calculate the center position of the rectangle
+const centerPosition = Cesium.Rectangle.center(rectangle);
+
+// Get the terrain height at the center position
+const terrainHeight = await this.getTerrainHeight(centerPosition);
+
+// Create a 3D box entity
+const boxEntity = this.viewer!.entities.add({
+  position: Cesium.Ellipsoid.WGS84.cartographicToCartesian(
+    new Cesium.Cartographic(
+      centerPosition.longitude,
+      centerPosition.latitude,
+      terrainHeight + height / 2
+    )
+  ),
+  box: {
+    dimensions: new Cesium.Cartesian3(width, depth, height),
+    heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
+    material: this.getColorForLandUse(this.selectedLandUse) as any,
+  },
+});
+
 
         // Remove the box after 3 seconds
         setTimeout(() => {
@@ -442,14 +468,14 @@ export class YpLandUseGame extends YpBaseElement {
         const endPosition = Cesium.Cartesian3.fromDegrees(
           (west + east) / 2,
           (south + north) / 2,
-          height / 2 + 5000 // Adjust the value to control how far the model moves upward
+          height / 2 + 20000 // Adjust the value to control how far the model moves upward
         );
         const startColor = this.getColorForLandUse(this.selectedLandUse).withAlpha(1);
         const endColor = this.getColorForLandUse(this.selectedLandUse).withAlpha(0);
 
         const currentTime = Cesium.JulianDate.now();
         const endTime = new Cesium.JulianDate();
-        Cesium.JulianDate.addSeconds(currentTime, 5, endTime);
+        Cesium.JulianDate.addSeconds(currentTime, 30, endTime);
 
         const positionProperty = new Cesium.SampledPositionProperty();
         positionProperty.addSample(currentTime, startPosition);
@@ -487,7 +513,7 @@ export class YpLandUseGame extends YpBaseElement {
         // Remove the model after 5 seconds
         setTimeout(() => {
           this.viewer!.entities.remove(landUseTypeModel);
-        }, 9000);
+        }, 50000);
       }
     }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 
