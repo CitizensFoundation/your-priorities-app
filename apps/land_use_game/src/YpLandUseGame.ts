@@ -362,7 +362,7 @@ export class YpLandUseGame extends YpBaseElement {
       -20.62592534987823,
       64.03985855384323,
       35000,
-      10,
+      3,
       -Cesium.Math.PI_OVER_TWO / 1.3
     );
 
@@ -371,7 +371,7 @@ export class YpLandUseGame extends YpBaseElement {
       -20.62592534987823,
       64.03985855384323,
       20000,
-      3,
+      4,
       -Cesium.Math.PI_OVER_TWO / 3.2
     );
 

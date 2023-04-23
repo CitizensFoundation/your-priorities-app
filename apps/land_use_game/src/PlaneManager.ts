@@ -1,4 +1,4 @@
-import { Entity, SampledPositionProperty, Viewer } from "cesium";
+import { Cartesian3, Entity, SampledPositionProperty, Viewer } from "cesium";
 import { YpCodeBase } from "./@yrpri/common/YpCodeBaseclass";
 
 export class PlaneManager extends YpCodeBase {
@@ -6,6 +6,8 @@ export class PlaneManager extends YpCodeBase {
   viewer: Viewer | undefined;
   plane: Entity | undefined;
   geoJson: any;
+  MINIMUM_FLIGHT_HEIGHT = 900;
+  MINIMUM_DISTANCE = 20; // km
 
   constructor(viewer: Viewer, geoJson: any) {
     super();
@@ -13,12 +15,22 @@ export class PlaneManager extends YpCodeBase {
     this.geoJson = geoJson;
   }
 
-  computeBoundaryFlight(): [SampledPositionProperty, number] {
+   calculateDistanceInKm(position1: Cartesian3, position2: Cartesian3) {
+    const point1Cartographic = Cesium.Cartographic.fromCartesian(position1);
+    const point2Cartographic = Cesium.Cartographic.fromCartesian(position2);
+    const distance = Cesium.Cartesian3.distance(position1, position2);
+    const distanceInKm = distance / 1000.0;
+    return distanceInKm;
+  }
+
+  async computeBoundaryFlight(): Promise<[SampledPositionProperty, number]> {
     const start = Cesium.JulianDate.fromDate(new Date());
     const property = new Cesium.SampledPositionProperty();
+    const terrainProvider = this.viewer!.terrainProvider;
 
     let timeOffset = 0;
     let firstPosition = null;
+    let prevPosition = null;
     for (const feature of this.geoJson.features) {
       const geometry = feature.geometry;
       if (geometry.type === "MultiPolygon") {
@@ -31,11 +43,25 @@ export class PlaneManager extends YpCodeBase {
                 timeOffset,
                 new Cesium.JulianDate()
               );
-              const position = Cesium.Cartesian3.fromDegrees(
-                lon,
-                lat,
-                Cesium.Math.nextRandomNumber() * 500 + 1750
+
+              const cartographicPosition = Cesium.Cartographic.fromDegrees(lon, lat);
+              await Cesium.sampleTerrainMostDetailed(terrainProvider, [cartographicPosition]);
+              const terrainHeight = cartographicPosition.height;
+
+              const height = Math.max(
+                Cesium.Math.nextRandomNumber() * 3000 + 1000,
+                terrainHeight + this.MINIMUM_FLIGHT_HEIGHT
               );
+
+              const position = Cesium.Cartesian3.fromDegrees(lon, lat, height);
+
+              if (prevPosition !== null) {
+                const distanceInKm = this.calculateDistanceInKm(prevPosition, position);
+
+                if (distanceInKm < this.MINIMUM_DISTANCE) {
+                  continue;
+                }
+              }
 
               if (firstPosition === null) {
                 firstPosition = position;
@@ -44,7 +70,7 @@ export class PlaneManager extends YpCodeBase {
               property.addSample(time, position);
 
               // Also create a point for each sample we generate.
-              if (false) {
+              if (true) {
                 this.viewer!.entities.add({
                   position: position,
                   point: {
@@ -56,26 +82,20 @@ export class PlaneManager extends YpCodeBase {
                 });
               }
 
-              timeOffset += 45;
+              timeOffset += 35;
+              prevPosition = position;
             }
           }
         }
       }
     }
 
-    // Add a sample with the same position as the first one to loop the flight
-    const time = Cesium.JulianDate.addSeconds(
-      start,
-      timeOffset,
-      new Cesium.JulianDate()
-    );
-    property.addSample(time, firstPosition!);
-
     return [property, timeOffset];
   }
 
-  setup() {
-    const [position, timeOffset] = this.computeBoundaryFlight();
+
+  async setup() {
+    const [position, timeOffset] = await this.computeBoundaryFlight();
     const start = Cesium.JulianDate.fromDate(new Date());
     const stop = Cesium.JulianDate.addSeconds(
       start,
@@ -102,10 +122,9 @@ export class PlaneManager extends YpCodeBase {
       },
     });
 
-    //@ts-ignore
-    this.plane!.position!.setInterpolationOptions({
+    /*this.plane!.position!.setInterpolationOptions({
       interpolationDegree: 5,
       interpolationAlgorithm: Cesium.LagrangePolynomialApproximation,
-    });
+    });*/
   }
 }
