@@ -171,12 +171,10 @@ export class TileManager extends YpCodeBase {
     return new Cesium.Color(r, g, b, 1.0);
   }
 
-  createModel(url: string, x: number, y: number, height: number, positionProperty: PositionProperty, velocityVectorProperty: VelocityVectorProperty, scale = 1.0) {
-    const position = Cesium.Cartesian3.fromDegrees(x, y, height);
-
+  createModel(url: string, position: PositionProperty, scale = 1.0) {
     const entity = this.viewer!.entities.add({
       name: url,
-      position: position,//velocityVectorProperty as unknown as PositionProperty,
+      position: position,
       model: {
         uri: url,
         scale: scale
@@ -184,6 +182,7 @@ export class TileManager extends YpCodeBase {
     });
     return entity;
   }
+
 
   getGlowingMaterial(color: any) {
     const glowingMaterial = new Cesium.Material({
@@ -230,7 +229,7 @@ export class TileManager extends YpCodeBase {
       if (this.selectedLandUse) {
         const newColor = this.getColorForLandUse(
           this.selectedLandUse
-        ).withAlpha(0.4);
+        ).withAlpha(0.25);
 
         // Create a new material with the new color
         const newMaterial = new Cesium.ColorMaterialProperty(newColor);
@@ -373,11 +372,17 @@ export class TileManager extends YpCodeBase {
         const lat = Cesium.Math.toDegrees(centerPosition.latitude);
         const terrainHeightFinal = terrainHeight + height / 2;
 
-        const entity = this.createModel(url, lon, lat, terrainHeightFinal, positionProperty, velocityVectorProperty,100);
+        positionProperty.addSample(endTime, endPosition);
 
+        const modelInstance = this.createModel(url, new Cesium.ConstantPositionProperty(startPosition), 100);
+
+        // Remove the model after the animation is completed
         setTimeout(() => {
-          entity.position = velocityVectorProperty as unknown as PositionProperty;
-        }, 5000);
+          this.viewer!.entities.remove(modelInstance);
+        }, durationInSeconds * 40000);
+        setTimeout(() => {
+          modelInstance.position = positionProperty;
+        }, 3000);
 
         // Remove the model after 5 seconds
         setTimeout(() => {

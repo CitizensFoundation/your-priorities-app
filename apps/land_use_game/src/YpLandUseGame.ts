@@ -60,7 +60,6 @@ const landMarks = [
 // Add wall around the area: https://sandcastle.cesium.com/?src=Wall.html&label=Geometries
 // Animation basd on walking speed: https://sandcastle.cesium.com/?src=Manually%20Controlled%20Animation.html&label=All
 
-
 export class YpLandUseGame extends YpBaseElement {
   @property({ type: String }) title = "Land Use Game";
 
