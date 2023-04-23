@@ -1,6 +1,7 @@
 import {
   Cartesian3,
   Cartographic,
+  Color,
   Model,
   PositionProperty,
   Property,
@@ -55,6 +56,21 @@ export class TileManager extends YpCodeBase {
     }
 
     return intersections % 2 !== 0;
+  }
+
+  createWallFromGeoJSON(coordinates: any[], height: number, color: Color) {
+    // Convert GeoJSON coordinates to positions with height
+    const positions = coordinates.flatMap((coord) =>
+      Cesium.Cartesian3.fromDegrees(coord[0], coord[1], height)
+    );
+
+    // Create a Cesium Wall entity
+    this.viewer!.entities.add({
+      wall: {
+        positions: positions,
+        material: color,
+      },
+    });
   }
 
   createTiles(
@@ -121,6 +137,9 @@ export class TileManager extends YpCodeBase {
         const color = Cesium.Color.BLUE.withAlpha(0.0);
 
         coordinates.forEach((polygon) => {
+          const wallHeight = 1200; // Set the desired wawll height
+          const wallColor = Cesium.Color.BLUE.withAlpha(0.2); // Set the desired wall color: ;
+          this.createWallFromGeoJSON(polygon[0], wallHeight, wallColor);
           const rectangle = Cesium.Rectangle.fromCartographicArray(
             polygon[0].map((coord) =>
               Cesium.Cartographic.fromDegrees(coord[0], coord[1])
@@ -137,7 +156,7 @@ export class TileManager extends YpCodeBase {
                 this.viewer!.clock.startTime
               );
               const alpha = Math.max(
-                0.7 - elapsedSeconds / animationDuration,
+                0.2 - elapsedSeconds / animationDuration,
                 0
               );
               return Cesium.Color.fromAlpha(color, alpha, result);
@@ -230,7 +249,7 @@ export class TileManager extends YpCodeBase {
       if (this.selectedLandUse) {
         const newColor = this.getColorForLandUse(
           this.selectedLandUse
-        ).withAlpha(0.25);
+        ).withAlpha(0.32);
 
         // Create a new material with the new color
         const newMaterial = new Cesium.ColorMaterialProperty(newColor);

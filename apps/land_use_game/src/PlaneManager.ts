@@ -6,7 +6,7 @@ export class PlaneManager extends YpCodeBase {
   viewer: Viewer | undefined;
   plane: Entity | undefined;
   geoJson: any;
-  MINIMUM_FLIGHT_HEIGHT = 900;
+  MINIMUM_FLIGHT_HEIGHT = 1200;
   MINIMUM_DISTANCE = 20; // km
 
   constructor(viewer: Viewer, geoJson: any) {
@@ -70,7 +70,7 @@ export class PlaneManager extends YpCodeBase {
               property.addSample(time, position);
 
               // Also create a point for each sample we generate.
-              if (true) {
+              if (false) {
                 this.viewer!.entities.add({
                   position: position,
                   point: {
@@ -103,6 +103,11 @@ export class PlaneManager extends YpCodeBase {
       new Cesium.JulianDate()
     );
 
+    position.setInterpolationOptions({
+      interpolationDegree: 5,
+      interpolationAlgorithm: Cesium.LagrangePolynomialApproximation,
+    });
+
     // Actually create the entity
     this.plane = this.viewer!.entities.add({
       availability: new Cesium.TimeIntervalCollection([
@@ -122,9 +127,6 @@ export class PlaneManager extends YpCodeBase {
       },
     });
 
-    /*this.plane!.position!.setInterpolationOptions({
-      interpolationDegree: 5,
-      interpolationAlgorithm: Cesium.LagrangePolynomialApproximation,
-    });*/
+
   }
 }
