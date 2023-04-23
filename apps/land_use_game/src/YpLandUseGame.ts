@@ -60,7 +60,7 @@ const landMarks = [
 // 3D comment icon to make a comment on a rectangle
 // Add wall around the area: https://sandcastle.cesium.com/?src=Wall.html&label=Geometries
 // Animation basd on walking speed: https://sandcastle.cesium.com/?src=Manually%20Controlled%20Animation.html&label=All
-
+// Ómar lög https://www.youtube.com/watch?v=55T1VWOHGBo&list=OLAK5uy_nhsD368G66EbyitSjwI5YcNj5sks2QPEQ&index=14
 export class YpLandUseGame extends YpBaseElement {
   @property({ type: String }) title = "Land Use Game";
 
@@ -349,7 +349,8 @@ export class YpLandUseGame extends YpBaseElement {
     //Enable lighting based on the sun position
     this.viewer.scene.globe.enableLighting = true;
     //this.viewer.scene.postProcessStages.bloom.enabled = true;
-    this.tileManager.readGeoData().then(() => {
+    setTimeout(async () => {
+      await this.tileManager.readGeoData();
       this.planeManager = new PlaneManager(this.viewer!, this.tileManager.geojsonData);
       this.planeManager.setup();
     });

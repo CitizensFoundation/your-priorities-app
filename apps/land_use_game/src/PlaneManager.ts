@@ -13,11 +13,12 @@ export class PlaneManager extends YpCodeBase {
     this.geoJson = geoJson;
   }
 
-  computeBoundaryFlight(): SampledPositionProperty {
+  computeBoundaryFlight(): [SampledPositionProperty, number] {
     const start = Cesium.JulianDate.fromDate(new Date());
     const property = new Cesium.SampledPositionProperty();
 
     let timeOffset = 0;
+    let firstPosition = null;
     for (const feature of this.geoJson.features) {
       const geometry = feature.geometry;
       if (geometry.type === "MultiPolygon") {
@@ -35,18 +36,25 @@ export class PlaneManager extends YpCodeBase {
                 lat,
                 Cesium.Math.nextRandomNumber() * 500 + 1750
               );
+
+              if (firstPosition === null) {
+                firstPosition = position;
+              }
+
               property.addSample(time, position);
 
               // Also create a point for each sample we generate.
-              this.viewer!.entities.add({
-                position: position,
-                point: {
-                  pixelSize: 8,
-                  color: Cesium.Color.TRANSPARENT,
-                  outlineColor: Cesium.Color.YELLOW,
-                  outlineWidth: 3,
-                },
-              });
+              if (false) {
+                this.viewer!.entities.add({
+                  position: position,
+                  point: {
+                    pixelSize: 8,
+                    color: Cesium.Color.TRANSPARENT,
+                    outlineColor: Cesium.Color.YELLOW,
+                    outlineWidth: 3,
+                  },
+                });
+              }
 
               timeOffset += 45;
             }
@@ -55,15 +63,23 @@ export class PlaneManager extends YpCodeBase {
       }
     }
 
-    return property;
+    // Add a sample with the same position as the first one to loop the flight
+    const time = Cesium.JulianDate.addSeconds(
+      start,
+      timeOffset,
+      new Cesium.JulianDate()
+    );
+    property.addSample(time, firstPosition!);
+
+    return [property, timeOffset];
   }
 
   setup() {
-    const position = this.computeBoundaryFlight();
+    const [position, timeOffset] = this.computeBoundaryFlight();
     const start = Cesium.JulianDate.fromDate(new Date());
     const stop = Cesium.JulianDate.addSeconds(
       start,
-      360,
+      timeOffset,
       new Cesium.JulianDate()
     );
 
