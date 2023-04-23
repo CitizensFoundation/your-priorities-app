@@ -1,4 +1,14 @@
-import { Cartographic, Model, Rectangle, Viewer } from "cesium";
+import {
+  Cartesian3,
+  Cartographic,
+  Model,
+  PositionProperty,
+  Property,
+  Rectangle,
+  SampledPositionProperty,
+  VelocityVectorProperty,
+  Viewer,
+} from "cesium";
 import { YpCodeBase } from "./@yrpri/common/YpCodeBaseclass";
 
 export class TileManager extends YpCodeBase {
@@ -125,7 +135,10 @@ export class TileManager extends YpCodeBase {
                 time,
                 this.viewer!.clock.startTime
               );
-              const alpha = Math.max(0.7 - elapsedSeconds / animationDuration, 0);
+              const alpha = Math.max(
+                0.7 - elapsedSeconds / animationDuration,
+                0
+              );
               return Cesium.Color.fromAlpha(color, alpha, result);
             }, false)
           );
@@ -158,15 +171,18 @@ export class TileManager extends YpCodeBase {
     return new Cesium.Color(r, g, b, 1.0);
   }
 
-  createModel(url: string, x: number, y: number, height: number) {
+  createModel(url: string, x: number, y: number, height: number, positionProperty: PositionProperty, velocityVectorProperty: VelocityVectorProperty, scale = 1.0) {
     const position = Cesium.Cartesian3.fromDegrees(x, y, height);
-    this.viewer!.entities.add({
+
+    const entity = this.viewer!.entities.add({
       name: url,
-      position: position,
+      position: position,//velocityVectorProperty as unknown as PositionProperty,
       model: {
         uri: url,
+        scale: scale
       },
     });
+    return entity;
   }
 
   getGlowingMaterial(color: any) {
@@ -255,17 +271,24 @@ export class TileManager extends YpCodeBase {
           this.existingBoxes.delete(rectangleId);
         }
 
-          // Calculate the distance from the camera to the center of the rectangle
-          const cameraPosition = this.viewer!.camera.position;
-          const boxCenterPosition = Cesium.Ellipsoid.WGS84.cartographicToCartesian(centerPosition);
-          const distance = Cesium.Cartesian3.distance(cameraPosition, boxCenterPosition);
+        // Calculate the distance from the camera to the center of the rectangle
+        const cameraPosition = this.viewer!.camera.position;
+        const boxCenterPosition =
+          Cesium.Ellipsoid.WGS84.cartographicToCartesian(centerPosition);
+        const distance = Cesium.Cartesian3.distance(
+          cameraPosition,
+          boxCenterPosition
+        );
 
-          // Map the distance to the height range (300-20000)
-          const minDistance = 100;
-          const maxDistance = 50000;
-          const minHeight = 100;
-          const maxHeight = 4500;
-          const height = minHeight + ((distance - minDistance) / (maxDistance - minDistance)) * (maxHeight - minHeight);
+        // Map the distance to the height range (300-20000)
+        const minDistance = 100;
+        const maxDistance = 50000;
+        const minHeight = 100;
+        const maxHeight = 4500;
+        const height =
+          minHeight +
+          ((distance - minDistance) / (maxDistance - minDistance)) *
+            (maxHeight - minHeight);
 
         // Create a 3D box entity
         const boxEntity = this.viewer!.entities.add({
@@ -310,16 +333,26 @@ export class TileManager extends YpCodeBase {
         ).withAlpha(0);
 
         const currentTime = Cesium.JulianDate.now();
+        const durationInSeconds = 30;
         const endTime = new Cesium.JulianDate();
-        Cesium.JulianDate.addSeconds(currentTime, 30, endTime);
+        Cesium.JulianDate.addSeconds(currentTime, durationInSeconds, endTime);
+
+        const startVelocity = new Cesium.Cartesian3();
+        Cesium.Cartesian3.subtract(endPosition, startPosition, startVelocity);
+        Cesium.Cartesian3.divideByScalar(startVelocity, durationInSeconds, startVelocity);
+
+        const velocityProperty = new Cesium.SampledProperty(Cesium.Cartesian3);
+        velocityProperty.addSample(Cesium.JulianDate.now(), startVelocity);
 
         const positionProperty = new Cesium.SampledPositionProperty();
-        positionProperty.addSample(currentTime, startPosition);
-        positionProperty.addSample(endTime, endPosition);
+        positionProperty.setInterpolationOptions({
+          interpolationDegree: 5,
+          interpolationAlgorithm: Cesium.LagrangePolynomialApproximation,
+        });
 
-        const colorProperty = new Cesium.SampledProperty(Cesium.Color);
-        colorProperty.addSample(currentTime, startColor);
-        colorProperty.addSample(endTime, endColor);
+        positionProperty.addSample(Cesium.JulianDate.now(), startPosition);
+
+        const velocityVectorProperty = new Cesium.VelocityVectorProperty(positionProperty, true);
 
         const startOrientation = Cesium.Transforms.headingPitchRollQuaternion(
           startPosition,
@@ -340,7 +373,11 @@ export class TileManager extends YpCodeBase {
         const lat = Cesium.Math.toDegrees(centerPosition.latitude);
         const terrainHeightFinal = terrainHeight + height / 2;
 
-        this.createModel(url, lon, lat, terrainHeightFinal);
+        const entity = this.createModel(url, lon, lat, terrainHeightFinal, positionProperty, velocityVectorProperty,100);
+
+        setTimeout(() => {
+          entity.position = velocityVectorProperty as unknown as PositionProperty;
+        }, 5000);
 
         // Remove the model after 5 seconds
         setTimeout(() => {

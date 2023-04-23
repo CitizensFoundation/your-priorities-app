@@ -40,6 +40,9 @@ const landMarks = [
   },
   {
     jsonData: `{"position":{"x":2616466.5232743877,"y":-981239.4266582452,"z":5714685.454756667},"heading":0.5337684728326346,"pitch":-0.07168090089261958,"roll":6.283158352478661}`
+  },
+  {
+    jsonData: `{"position":{"x":2605468.8506080373,"y":-964598.5282954393,"z":5722305.954288225},"heading":6.179314307394964,"pitch":-0.4340799514568694,"roll":0.0000117225618820882}`
   }
 ];
 
@@ -53,6 +56,10 @@ const landMarks = [
 // Create JSON for FX animations like landvættir with options to fly or walk across the landscape or to stay in one place - with animation points
 // The four landvættir are traditionally regarded as the protectors of the four quarters of Iceland: the dragon (Dreki) in the east, the eagle (Gammur) in the north, the bull (Griðungur) in the west, and the giant (Bergrisi) in the south.
 // Have one land use type icon hovering over that type of land use areas flying between the rectangles
+// 3D comment icon to make a comment on a rectangle
+// Add wall around the area: https://sandcastle.cesium.com/?src=Wall.html&label=Geometries
+// Animation basd on walking speed: https://sandcastle.cesium.com/?src=Manually%20Controlled%20Animation.html&label=All
+
 
 export class YpLandUseGame extends YpBaseElement {
   @property({ type: String }) title = "Land Use Game";
@@ -361,6 +368,7 @@ export class YpLandUseGame extends YpBaseElement {
       baseLayerPicker: false,
       fullscreenButton: false,
       geocoder: false,
+//      requestRenderMode: true,
       homeButton: false,
       //    infoBox: false,
       sceneModePicker: false,
