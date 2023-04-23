@@ -348,7 +348,7 @@ export class YpLandUseGame extends YpBaseElement {
 
     //Enable lighting based on the sun position
     this.viewer.scene.globe.enableLighting = true;
-    this.viewer.scene.postProcessStages.bloom.enabled = true;
+    //this.viewer.scene.postProcessStages.bloom.enabled = true;
     this.tileManager.readGeoData().then(() => {
       this.planeManager = new PlaneManager(this.viewer!, this.tileManager.geojsonData);
       this.planeManager.setup();
