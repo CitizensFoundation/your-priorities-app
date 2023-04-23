@@ -244,7 +244,6 @@ export class TileManager extends YpCodeBase {
         const depth = Math.abs(
           heightInRadians * Cesium.Ellipsoid.WGS84.maximumRadius
         );
-        const height = 300; // Set the height of the box
 
         // Get the terrain height at the center position
         const terrainHeight = await this.getTerrainHeight(centerPosition);
@@ -255,6 +254,18 @@ export class TileManager extends YpCodeBase {
           this.viewer!.entities.remove(existingBoxEntity);
           this.existingBoxes.delete(rectangleId);
         }
+
+          // Calculate the distance from the camera to the center of the rectangle
+          const cameraPosition = this.viewer!.camera.position;
+          const boxCenterPosition = Cesium.Ellipsoid.WGS84.cartographicToCartesian(centerPosition);
+          const distance = Cesium.Cartesian3.distance(cameraPosition, boxCenterPosition);
+
+          // Map the distance to the height range (300-20000)
+          const minDistance = 100;
+          const maxDistance = 50000;
+          const minHeight = 100;
+          const maxHeight = 4500;
+          const height = minHeight + ((distance - minDistance) / (maxDistance - minDistance)) * (maxHeight - minHeight);
 
         // Create a 3D box entity
         const boxEntity = this.viewer!.entities.add({
