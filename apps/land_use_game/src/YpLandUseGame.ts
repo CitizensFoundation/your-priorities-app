@@ -6,7 +6,6 @@ import { PropertyValueMap } from "lit";
 
 import { ShadowStyles } from "./@yrpri/common/ShadowStyles";
 import { Cartographic, Rectangle, Viewer } from "cesium";
-import { ModelCache } from "./ModelCache";
 import { TileManager } from "./TileManager";
 
 //const logo = new URL("../../assets/open-wc-logo.svg", import.meta.url).href;
@@ -32,10 +31,29 @@ const landMarks = [
   },
   {
     jsonData: `{"position":{"x":2607037.2626592577,"y":-987102.9507233112,"z":5727420.9039692},"heading":0.6794331897043371,"pitch":-0.42845798915222355,"roll":0.00024172583265791303}`
+  },
+  {
+    jsonData: `{"position":{"x":2586527.6700988784,"y":-967547.8794308463,"z":5731526.940153026},"heading":3.4627563167442634,"pitch":-0.16078365173401377,"roll":0.00003878486565245254}`
+  },
+  {
+    jsonData: `{"position":{"x":2582967.5932254517,"y":-989522.1831641375,"z":5728775.872649812},"heading":3.7262135252909556,"pitch":-0.3873144529923971,"roll":0.00002876419102015859}`
+  },
+  {
+    jsonData: `{"position":{"x":2616466.5232743877,"y":-981239.4266582452,"z":5714685.454756667},"heading":0.5337684728326346,"pitch":-0.07168090089261958,"roll":6.283158352478661}`
   }
 ];
 
 //todo: Have a giant finger come from the sky to press the land areas (or a mouse arrow on desktop)
+//todo: Sounds effects when you choose a land are and also if nothing is selectes
+//todo: Engine sound for plane and muffled Ómar Ragnarsson songs in a meedle (less than 30 sec) loop
+//todo: Integrate three.js for the 3D UI icons and for intro texts and effects
+//// https://cesium.com/blog/2017/10/23/integrating-cesium-with-threejs/
+//Have overlay fully transparent except when very high up with an overview look
+// Íslensku landvættirnir eru með
+// Create JSON for FX animations like landvættir with options to fly or walk across the landscape or to stay in one place - with animation points
+// The four landvættir are traditionally regarded as the protectors of the four quarters of Iceland: the dragon (Dreki) in the east, the eagle (Gammur) in the north, the bull (Griðungur) in the west, and the giant (Bergrisi) in the south.
+// Have one land use type icon hovering over that type of land use areas flying between the rectangles
+
 export class YpLandUseGame extends YpBaseElement {
   @property({ type: String }) title = "Land Use Game";
 
@@ -47,8 +65,6 @@ export class YpLandUseGame extends YpBaseElement {
 
   @property({ type: Object })
   existingBoxes: Map<string, any> = new Map();
-
-  modelCache!: ModelCache;
 
   tileManager!: TileManager;
 
@@ -128,15 +144,12 @@ export class YpLandUseGame extends YpBaseElement {
 
   constructor() {
     super();
-    this.modelCache = new ModelCache();
   }
 
   connectedCallback(): void {
     // @ts-ignore
     window.CESIUM_BASE_URL = "";
     super.connectedCallback();
-
-    document.addEventListener("keydown", this.handleKeyDown.bind(this));
   }
 
   protected firstUpdated(
@@ -144,6 +157,7 @@ export class YpLandUseGame extends YpBaseElement {
   ): void {
     super.firstUpdated(_changedProperties);
     this.initScene();
+    this.setupEventListeners();
   }
 
   handleKeyDown(event: KeyboardEvent) {
@@ -243,7 +257,7 @@ export class YpLandUseGame extends YpBaseElement {
   async setupAirplane() {
     return;
     const modelUrl = "models/Cesium_Air.glb";
-    const modelGraphics = await this.modelCache.loadModel(this.viewer!, modelUrl);
+    //const modelGraphics = await this.modelCache.loadModel(this.viewer!, modelUrl);
 
     // Set the initial position and orientation of the airplane
     const initialAltitude = 3000;
@@ -263,7 +277,7 @@ export class YpLandUseGame extends YpBaseElement {
       position: positionProperty,
       orientation: orientationProperty,
       model: {
-        uri: modelGraphics.uri,
+       // uri: modelGraphics.uri,
         scale: 100,
         minimumPixelSize: 100,
       },
@@ -297,9 +311,8 @@ export class YpLandUseGame extends YpBaseElement {
     this.tileManager.selectedLandUse = landUse;
   }
 
-  async initScene() {
-    const container = this.$$("#cesium-container")!;
-    const emptyCreditContainer = this.$$("#emptyCreditContainer")!;
+  setupEventListeners() {
+    document.addEventListener("keydown", this.handleKeyDown.bind(this));
 
     this.$$("#landUse1")!.addEventListener("click", () => {
       this.setLandUse("energy");
@@ -330,6 +343,11 @@ export class YpLandUseGame extends YpBaseElement {
         offset: new Cesium.HeadingPitchRange(0, Cesium.Math.toRadians(-50), 0),
       });
     });
+  }
+
+  async initScene() {
+    const container = this.$$("#cesium-container")!;
+    const emptyCreditContainer = this.$$("#emptyCreditContainer")!;
 
     //@ts-ignore
     Cesium.Ion.defaultAccessToken = __CESIUM_ACCESS_TOKEN__;
@@ -364,11 +382,12 @@ export class YpLandUseGame extends YpBaseElement {
       }),
     });
 
-    this.tileManager = new TileManager(this.modelCache, this.viewer);
+    this.tileManager = new TileManager(this.viewer);
 
     //Enable lighting based on the sun position
     this.viewer.scene.globe.enableLighting = true;
     this.viewer.scene.postProcessStages.bloom.enabled = true;
+    this.tileManager.readGeoData();
 
     //Enable depth testing so things behind the terrain disappear.
     //this.viewer.scene.globe.depthTestAgainstTerrain = true;
@@ -382,11 +401,11 @@ export class YpLandUseGame extends YpBaseElement {
 
     // Second flyTo
     await this.flyToPosition(
-      -20.258440222173007,
-      64.25486843430893,
-      7000,
+      -20.62592534987823,
+      64.03985855384323,
+      15000,
       3,
-      -Cesium.Math.PI_OVER_TWO / 4
+      -Cesium.Math.PI_OVER_TWO / 3.2
     );
 
     this.setupAirplane();
@@ -395,13 +414,7 @@ export class YpLandUseGame extends YpBaseElement {
       this.viewer.scene.canvas
     );
 
-    // Preload the model
-    const modelUrl = "models/CesiumBalloon.glb";
-    this.modelCache.loadModel(this.viewer!, modelUrl);
-
     screenSpaceEventHandler.setInputAction(async (event: any) => this.tileManager.setInputAction(event), Cesium.ScreenSpaceEventType.LEFT_CLICK);
-
-    this.tileManager.readGeoData();
   }
 
   render() {

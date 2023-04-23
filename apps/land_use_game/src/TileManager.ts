@@ -1,17 +1,13 @@
-import { Cartographic, Rectangle, Viewer } from "cesium";
-import { ModelCache } from "./ModelCache";
+import { Cartographic, Model, Rectangle, Viewer } from "cesium";
 import { YpCodeBase } from "./@yrpri/common/YpCodeBaseclass";
-
 
 export class TileManager extends YpCodeBase {
   selectedLandUse: string | undefined;
   viewer: Viewer | undefined;
   existingBoxes: Map<string, any> = new Map();
-  modelCache!: ModelCache;
 
-  constructor(modelCache: ModelCache, viewer: Viewer) {
+  constructor(viewer: Viewer) {
     super();
-    this.modelCache = modelCache;
     this.viewer = viewer;
   }
 
@@ -111,7 +107,7 @@ export class TileManager extends YpCodeBase {
       geojsonData.features.forEach((feature: GeoJSONFeature) => {
         const landuse = feature.properties.LandUse;
         const coordinates = feature.geometry.coordinates;
-        const color = this.getColor(landuse);
+        const color = Cesium.Color.BLUE.withAlpha(0.0);
 
         coordinates.forEach((polygon) => {
           const rectangle = Cesium.Rectangle.fromCartographicArray(
@@ -119,21 +115,34 @@ export class TileManager extends YpCodeBase {
               Cesium.Cartographic.fromDegrees(coord[0], coord[1])
             )
           );
+          const animationDuration = 40;
 
-          // Create 1000m x 1000m tiles within the rectangle
           const tiles = this.createTiles(rectangle, coordinates);
+
+          const sharedMaterial = new Cesium.ColorMaterialProperty(
+            new Cesium.CallbackProperty((time, result) => {
+              const elapsedSeconds = Cesium.JulianDate.secondsDifference(
+                time,
+                this.viewer!.clock.startTime
+              );
+              const alpha = Math.max(0.7 - elapsedSeconds / animationDuration, 0);
+              return Cesium.Color.fromAlpha(color, alpha, result);
+            }, false)
+          );
 
           // Add each tile as a rectangle entity to the EntityCollection
           tiles.forEach((tile) => {
-            this.viewer!.entities.add({
+            const entity = this.viewer!.entities.add({
               rectangle: {
                 coordinates: tile,
-                material: Cesium.Color.BLUE.withAlpha(0.1),
-                outline: true,
-                outlineColor: Cesium.Color.BLACK,
+                material: sharedMaterial,
               },
             });
           });
+
+          setTimeout(() => {
+            sharedMaterial.color = new Cesium.ConstantProperty(color);
+          }, animationDuration * 1000);
         });
       });
     } catch (error) {
@@ -147,6 +156,17 @@ export class TileManager extends YpCodeBase {
     const g = ((bigint >> 8) & 255) / 255;
     const b = (bigint & 255) / 255;
     return new Cesium.Color(r, g, b, 1.0);
+  }
+
+  createModel(url: string, x: number, y: number, height: number) {
+    const position = Cesium.Cartesian3.fromDegrees(x, y, height);
+    this.viewer!.entities.add({
+      name: url,
+      position: position,
+      model: {
+        uri: url,
+      },
+    });
   }
 
   getGlowingMaterial(color: any) {
@@ -195,7 +215,12 @@ export class TileManager extends YpCodeBase {
         const newColor = this.getColorForLandUse(
           this.selectedLandUse
         ).withAlpha(0.4);
-        rectangleEntity.id.rectangle.material.color = newColor;
+
+        // Create a new material with the new color
+        const newMaterial = new Cesium.ColorMaterialProperty(newColor);
+
+        // Assign the new material to the picked rectangle
+        rectangleEntity.id.rectangle.material = newMaterial;
 
         // Calculate the dimensions of the 3D box based on the rectangle
         const rectangle = rectangleEntity.id.rectangle.coordinates.getValue();
@@ -255,7 +280,6 @@ export class TileManager extends YpCodeBase {
         }, 2000);
 
         const url = "models/CesiumBalloon.glb";
-        const modelGraphics = await this.modelCache.loadModel(this.viewer!, url);
 
         const startPosition = Cesium.Cartesian3.fromDegrees(
           (west + east) / 2,
@@ -301,21 +325,15 @@ export class TileManager extends YpCodeBase {
         );
         orientationProperty.addSample(currentTime, startOrientation);
         orientationProperty.addSample(endTime, endOrientation);
+        const lon = Cesium.Math.toDegrees(centerPosition.longitude);
+        const lat = Cesium.Math.toDegrees(centerPosition.latitude);
+        const terrainHeightFinal = terrainHeight + height / 2;
 
-        const landUseTypeModel = this.viewer!.entities.add({
-          position: positionProperty,
-          orientation: orientationProperty,
-          model: {
-            uri: modelGraphics.uri,
-            color: colorProperty,
-            scale: 100,
-            minimumPixelSize: 100,
-          },
-        });
+        this.createModel(url, lon, lat, terrainHeightFinal);
 
         // Remove the model after 5 seconds
         setTimeout(() => {
-          this.viewer!.entities.remove(landUseTypeModel);
+          //this.viewer!.entities.remove(modelInstance);
         }, 50000);
       }
     }
