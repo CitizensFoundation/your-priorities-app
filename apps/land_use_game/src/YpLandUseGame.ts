@@ -7,6 +7,7 @@ import { PropertyValueMap } from "lit";
 import { ShadowStyles } from "./@yrpri/common/ShadowStyles";
 import { Cartographic, Rectangle, Viewer } from "cesium";
 import { TileManager } from "./TileManager";
+import { PlaneManager } from "./PlaneManager";
 
 //const logo = new URL("../../assets/open-wc-logo.svg", import.meta.url).href;
 
@@ -73,6 +74,7 @@ export class YpLandUseGame extends YpBaseElement {
   existingBoxes: Map<string, any> = new Map();
 
   tileManager!: TileManager;
+  planeManager!: PlaneManager;
 
   static get styles() {
     return [
@@ -260,58 +262,6 @@ export class YpLandUseGame extends YpBaseElement {
     return sampledPositions[0].height;
   }
 
-  async setupAirplane() {
-    return;
-    const modelUrl = "models/Cesium_Air.glb";
-    //const modelGraphics = await this.modelCache.loadModel(this.viewer!, modelUrl);
-
-    // Set the initial position and orientation of the airplane
-    const initialAltitude = 3000;
-    const startPosition = Cesium.Cartesian3.fromDegrees(64.47406339323166, -19.889920978664676, initialAltitude);
-    const startOrientation = Cesium.Transforms.headingPitchRollQuaternion(startPosition, new Cesium.HeadingPitchRoll(0, -Cesium.Math.PI_OVER_TWO / 3.5, 0));
-
-    // Create a SampledPositionProperty for the position of the airplane
-    const positionProperty = new Cesium.SampledPositionProperty();
-    positionProperty.addSample(Cesium.JulianDate.now(), startPosition);
-
-    // Create a SampledProperty for the orientation of the airplane
-    const orientationProperty = new Cesium.SampledProperty(Cesium.Quaternion);
-    orientationProperty.addSample(Cesium.JulianDate.now(), startOrientation);
-
-    // Add the airplane model to the scene with the position and orientation properties
-    this.viewer!.entities.add({
-      position: positionProperty,
-      orientation: orientationProperty,
-      model: {
-       // uri: modelGraphics.uri,
-        scale: 100,
-        minimumPixelSize: 100,
-      },
-    });
-
-    // Update the position and orientation of the airplane every second
-    setInterval(() => {
-      // Get the current time
-      const currentTime = Cesium.JulianDate.now();
-
-      // Calculate a random heading and pitch based on the current time
-      const heading = 0.1 * Math.sin(currentTime.secondsOfDay);
-      const pitch = -0.1 * Math.cos(currentTime.secondsOfDay);
-
-      // Calculate the new position of the airplane based on the heading and pitch
-      const newPosition = Cesium.Cartesian3.fromRadians(startPosition.x + heading, startPosition.y + pitch, initialAltitude);
-
-      // Add the new position sample to the position property
-      positionProperty.addSample(currentTime, newPosition);
-
-      // Calculate the new orientation of the airplane based on its current position
-      const newOrientation = Cesium.Transforms.headingPitchRollQuaternion(newPosition, new Cesium.HeadingPitchRoll(0, -Cesium.Math.PI_OVER_TWO / 3.5, 0));
-
-      // Add the new orientation sample to the orientation property
-      orientationProperty.addSample(currentTime, newOrientation);
-    }, 1000);
-  }
-
   setLandUse(landUse: string) {
     this.selectedLandUse = landUse;
     this.tileManager.selectedLandUse = landUse;
@@ -345,9 +295,14 @@ export class YpLandUseGame extends YpBaseElement {
     });
 
     this.$$("#showAll")!.addEventListener("click", () => {
+      this.viewer!.trackedEntity = undefined;
       this.viewer!.flyTo(this.viewer!.entities, {
         offset: new Cesium.HeadingPitchRange(0, Cesium.Math.toRadians(-50), 0),
       });
+    });
+
+    this.$$("#trackPlane")!.addEventListener("click", () => {
+      this.viewer!.trackedEntity = this.planeManager.plane;
     });
   }
 
@@ -394,14 +349,18 @@ export class YpLandUseGame extends YpBaseElement {
     //Enable lighting based on the sun position
     this.viewer.scene.globe.enableLighting = true;
     this.viewer.scene.postProcessStages.bloom.enabled = true;
-    this.tileManager.readGeoData();
+    this.tileManager.readGeoData().then(() => {
+      this.planeManager = new PlaneManager(this.viewer!, this.tileManager.geojsonData);
+      this.planeManager.setup();
+    });
 
     //Enable depth testing so things behind the terrain disappear.
-    //this.viewer.scene.globe.depthTestAgainstTerrain = true;
+    this.viewer.scene.globe.depthTestAgainstTerrain = true;
+
     await this.flyToPosition(
       -20.62592534987823,
       64.03985855384323,
-      25000,
+      35000,
       10,
       -Cesium.Math.PI_OVER_TWO / 1.3
     );
@@ -410,12 +369,11 @@ export class YpLandUseGame extends YpBaseElement {
     await this.flyToPosition(
       -20.62592534987823,
       64.03985855384323,
-      15000,
+      20000,
       3,
       -Cesium.Math.PI_OVER_TWO / 3.2
     );
 
-    this.setupAirplane();
 
     const screenSpaceEventHandler = new Cesium.ScreenSpaceEventHandler(
       this.viewer.scene.canvas
@@ -440,6 +398,7 @@ export class YpLandUseGame extends YpBaseElement {
       <div id="navigationButtons">
         <button id="showAll">Show all</button>
         <button id="horizonMode">Horizon mode</button>
+        <button id="trackPlane">Plane</button>
       </div>
     `;
   }

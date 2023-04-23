@@ -15,6 +15,7 @@ export class TileManager extends YpCodeBase {
   selectedLandUse: string | undefined;
   viewer: Viewer | undefined;
   existingBoxes: Map<string, any> = new Map();
+  geojsonData: any;
 
   constructor(viewer: Viewer) {
     super();
@@ -112,9 +113,9 @@ export class TileManager extends YpCodeBase {
   async readGeoData() {
     try {
       const response = await fetch("/testData/geodata.json");
-      const geojsonData = await response.json();
+      this.geojsonData = await response.json();
 
-      geojsonData.features.forEach((feature: GeoJSONFeature) => {
+      this.geojsonData.features.forEach((feature: GeoJSONFeature) => {
         const landuse = feature.properties.LandUse;
         const coordinates = feature.geometry.coordinates;
         const color = Cesium.Color.BLUE.withAlpha(0.0);
@@ -324,54 +325,20 @@ export class TileManager extends YpCodeBase {
           (south + north) / 2,
           height / 2 + 20000 // Adjust the value to control how far the model moves upward
         );
-        const startColor = this.getColorForLandUse(
-          this.selectedLandUse
-        ).withAlpha(1);
-        const endColor = this.getColorForLandUse(
-          this.selectedLandUse
-        ).withAlpha(0);
 
         const currentTime = Cesium.JulianDate.now();
         const durationInSeconds = 30;
         const endTime = new Cesium.JulianDate();
         Cesium.JulianDate.addSeconds(currentTime, durationInSeconds, endTime);
 
-        const startVelocity = new Cesium.Cartesian3();
-        Cesium.Cartesian3.subtract(endPosition, startPosition, startVelocity);
-        Cesium.Cartesian3.divideByScalar(startVelocity, durationInSeconds, startVelocity);
-
-        const velocityProperty = new Cesium.SampledProperty(Cesium.Cartesian3);
-        velocityProperty.addSample(Cesium.JulianDate.now(), startVelocity);
-
         const positionProperty = new Cesium.SampledPositionProperty();
+
         positionProperty.setInterpolationOptions({
           interpolationDegree: 5,
           interpolationAlgorithm: Cesium.LagrangePolynomialApproximation,
         });
 
         positionProperty.addSample(Cesium.JulianDate.now(), startPosition);
-
-        const velocityVectorProperty = new Cesium.VelocityVectorProperty(positionProperty, true);
-
-        const startOrientation = Cesium.Transforms.headingPitchRollQuaternion(
-          startPosition,
-          new Cesium.HeadingPitchRoll(0, 0, 0)
-        );
-
-        const endOrientation = Cesium.Transforms.headingPitchRollQuaternion(
-          endPosition,
-          new Cesium.HeadingPitchRoll(0, 0, 0)
-        );
-
-        const orientationProperty = new Cesium.SampledProperty(
-          Cesium.Quaternion
-        );
-        orientationProperty.addSample(currentTime, startOrientation);
-        orientationProperty.addSample(endTime, endOrientation);
-        const lon = Cesium.Math.toDegrees(centerPosition.longitude);
-        const lat = Cesium.Math.toDegrees(centerPosition.latitude);
-        const terrainHeightFinal = terrainHeight + height / 2;
-
         positionProperty.addSample(endTime, endPosition);
 
         const modelInstance = this.createModel(url, new Cesium.ConstantPositionProperty(startPosition), 100);
