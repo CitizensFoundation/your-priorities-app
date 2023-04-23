@@ -8,10 +8,14 @@ import { ShadowStyles } from "./@yrpri/common/ShadowStyles";
 import { Cartographic, Rectangle, Viewer } from "cesium";
 import { TileManager } from "./TileManager";
 import { PlaneManager } from "./PlaneManager";
+import { CharacterManager } from "./CharacterManager";
 
 //const logo = new URL("../../assets/open-wc-logo.svg", import.meta.url).href;
 
 const landMarks = [
+  {
+    jsonData: `{"position":{"x":2654952.929606032,"y":-1016221.3487241162,"z":5741820.767140159},"heading":0.18514839426342977,"pitch":-0.6884926785509595,"roll":0.000004798763947988505}`
+  },
   {
     jsonData: `{"position":{"x":2603954.015915357,"y":-987894.1669974888,"z":5723474.387481297},"heading":0.7194597796017312,"pitch":-0.0744418474365669,"roll":0.00024785400735183316}`,
   },
@@ -75,6 +79,7 @@ export class YpLandUseGame extends YpBaseElement {
 
   tileManager!: TileManager;
   planeManager!: PlaneManager;
+  characterManager!: CharacterManager;
 
   static get styles() {
     return [
@@ -178,20 +183,7 @@ export class YpLandUseGame extends YpBaseElement {
     // If key is 1-9 choose camera data from landMarks and fly the camera to that position
     const key = parseInt(event.key);
     if (key >= 1 && key <= 9) {
-      const landMark = landMarks[key - 1];
-      if (landMark) {
-        const { position, heading, pitch, roll } = JSON.parse(
-          landMark.jsonData
-        );
-        this.viewer!.camera.setView({
-          destination: position,
-          orientation: {
-            heading: heading,
-            pitch: pitch,
-            roll: roll,
-          },
-        });
-      }
+      this.setCameraFromLandMark(key - 1);
     }
   }
 
@@ -267,6 +259,23 @@ export class YpLandUseGame extends YpBaseElement {
     this.tileManager.selectedLandUse = landUse;
   }
 
+  setCameraFromLandMark(landMarkIndex: number) {
+    const landMark = landMarks[landMarkIndex];
+    if (landMark) {
+      const { position, heading, pitch, roll } = JSON.parse(
+        landMark.jsonData
+      );
+      this.viewer!.camera.setView({
+        destination: position,
+        orientation: {
+          heading: heading,
+          pitch: pitch,
+          roll: roll,
+        },
+      });
+    }
+  }
+
   setupEventListeners() {
     document.addEventListener("keydown", this.handleKeyDown.bind(this));
 
@@ -296,9 +305,7 @@ export class YpLandUseGame extends YpBaseElement {
 
     this.$$("#showAll")!.addEventListener("click", () => {
       this.viewer!.trackedEntity = undefined;
-      this.viewer!.flyTo(this.viewer!.entities, {
-        offset: new Cesium.HeadingPitchRange(0, Cesium.Math.toRadians(-50), 0),
-      });
+      this.setCameraFromLandMark(0);
     });
 
     this.$$("#trackPlane")!.addEventListener("click", () => {
@@ -353,6 +360,22 @@ export class YpLandUseGame extends YpBaseElement {
       await this.tileManager.readGeoData();
       this.planeManager = new PlaneManager(this.viewer!, this.tileManager.geojsonData);
       this.planeManager.setup();
+      const longLatStart = [63.46578246639273, -18.86733120920245];
+      const longLatEnd = [64.74664895142547, -19.35433358999831];
+
+      // Convert lang/lat to cartesian
+      const start = Cesium.Cartesian3.fromDegrees(
+        longLatStart[1],
+        longLatStart[0]
+      );
+
+      const end = Cesium.Cartesian3.fromDegrees(
+        longLatEnd[1],
+        longLatEnd[0]
+      );
+
+      this.characterManager = new CharacterManager(this.viewer!, start, end);
+      this.characterManager.setupCharacter();
     });
 
     //Enable depth testing so things behind the terrain disappear.
