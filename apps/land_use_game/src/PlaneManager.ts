@@ -82,7 +82,7 @@ export class PlaneManager extends YpCodeBase {
                 });
               }
 
-              timeOffset += 35;
+              timeOffset += 5;
               prevPosition = position;
             }
           }
@@ -96,7 +96,7 @@ export class PlaneManager extends YpCodeBase {
 
   async setup() {
     const [position, timeOffset] = await this.computeBoundaryFlight();
-    const start = Cesium.JulianDate.fromDate(new Date());
+    const start = this.viewer!.clock.currentTime;
     const stop = Cesium.JulianDate.addSeconds(
       start,
       timeOffset,
