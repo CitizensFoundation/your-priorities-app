@@ -104,7 +104,7 @@ return {
         modelPrimitive.activeAnimations.addAll({
           loop: Cesium.ModelAnimationLoop.REPEAT,
 
-          multiplier: 0.5,
+          multiplier: 0.2,
         });
       });
       const rotation = new Cesium.Matrix3();
