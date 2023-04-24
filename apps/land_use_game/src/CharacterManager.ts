@@ -1,5 +1,5 @@
 
-import { Cartesian3, Entity, JulianDate, Model, Viewer } from "cesium";
+import { Cartesian3, Entity, JulianDate, Model, Quaternion, Viewer } from "cesium";
 import { YpCodeBase } from "./@yrpri/common/YpCodeBaseclass";
 
 export class CharacterManager extends YpCodeBase {
@@ -7,19 +7,21 @@ export class CharacterManager extends YpCodeBase {
   character: Entity | undefined;
   startPosition: Cartesian3;
   endPosition: Cartesian3;
+  previousQuaternion!: Quaternion;
 
   constructor(viewer: Viewer, startPosition: Cartesian3, endPosition: Cartesian3) {
     super();
     this.viewer = viewer;
     this.startPosition = startPosition;
     this.endPosition = endPosition;
+    this.previousQuaternion = new Cesium.Quaternion();
   }
 
   async createWalkingPath() {
     const position = new Cesium.SampledPositionProperty();
     const distance = new Cesium.SampledProperty(Number);
     const velocityVectorProperty = new Cesium.VelocityVectorProperty(position, false);
-    const totalSeconds = 80;
+    const totalSeconds = 100;
     const start = Cesium.JulianDate.fromDate(new Date());
     const stop = Cesium.JulianDate.addSeconds(start, totalSeconds, new Cesium.JulianDate());
     this.viewer.clock.startTime = start.clone();
@@ -52,70 +54,95 @@ export class CharacterManager extends YpCodeBase {
   const terrainProvider = this.viewer.terrainProvider;
   const clampedPositions = await Cesium.sampleTerrainMostDetailed(terrainProvider, cartographicPositions);
 
-  // Convert the clamped positions back to Cartesian coordinates and add them to the SampledPositionProperty
-  for (let i = 0; i < clampedPositions.length; ++i) {
-    const time = Cesium.JulianDate.addSeconds(start, i * (totalSeconds / numberOfSamples), new Cesium.JulianDate());
-    const cartesianPosition = Cesium.Cartographic.toCartesian(clampedPositions[i]);
-    position.addSample(time, cartesianPosition);
-    distance.addSample(time, (totalDistance += Cesium.Cartesian3.distance(cartesianPosition, prevLocation)));
-    prevLocation = cartesianPosition;
-  }
+// Compute the orientation values
+const orientationProperty = new Cesium.SampledProperty(Cesium.Quaternion);
+let prevVelocity = Cesium.Cartesian3.ZERO;
 
-    return {
-      position,
-      distance,
-      velocityVectorProperty,
-    };
-  }
+for (let i = 0; i < clampedPositions.length; ++i) {
+  const time = Cesium.JulianDate.addSeconds(start, i * (totalSeconds / numberOfSamples), new Cesium.JulianDate());
+  const cartesianPosition = Cesium.Cartographic.toCartesian(clampedPositions[i]);
+  position.addSample(time, cartesianPosition);
+  distance.addSample(time, (totalDistance += Cesium.Cartesian3.distance(cartesianPosition, prevLocation)));
+
+  // Compute the current velocity
+  const currentVelocity = Cesium.Cartesian3.subtract(cartesianPosition, prevLocation, new Cesium.Cartesian3());
+  Cesium.Cartesian3.normalize(currentVelocity, currentVelocity);
+
+  const rotationAxis = Cesium.Cartesian3.cross(prevVelocity, currentVelocity, new Cesium.Cartesian3());
+  Cesium.Cartesian3.normalize(rotationAxis, rotationAxis);
+  const rotationAngle = Cesium.Cartesian3.angleBetween(prevVelocity, currentVelocity);
+  const rotationQuaternion = Cesium.Quaternion.fromAxisAngle(rotationAxis, rotationAngle);
+
+  // Add the computed orientation to the SampledProperty
+  orientationProperty.addSample(time, rotationQuaternion);
+
+  prevLocation = cartesianPosition;
+  prevVelocity = currentVelocity;
+}
+
+return {
+  position,
+  distance,
+  velocityVectorProperty,
+  orientationProperty,
+};
+}
 
   async setupCharacter() {
-    const { position, distance, velocityVectorProperty } = await this.createWalkingPath();
+    const { position, distance, orientationProperty, velocityVectorProperty } = await this.createWalkingPath();
     let modelPrimitive: Model;
 
     try {
       modelPrimitive = this.viewer.scene.primitives.add(
         await Cesium.Model.fromGltfAsync({
           url: "models/Cesium_Man.glb",
-          scale: 2500,
+          scale: 4200,
         })
       );
 
       modelPrimitive.readyEvent.addEventListener(() => {
         modelPrimitive.activeAnimations.addAll({
           loop: Cesium.ModelAnimationLoop.REPEAT,
-          animationTime: (duration: number) => {
-            return distance.getValue(this.viewer.clock.currentTime) / duration;
-          },
-          multiplier: 0.004,
+
+          multiplier: 0.5,
         });
       });
       const rotation = new Cesium.Matrix3();
-      this.viewer.scene.preUpdate.addEventListener( () => {
+      this.viewer.scene.preUpdate.addEventListener(() => {
         const time = this.viewer.clock.currentTime;
         const pos = position.getValue(time);
         const vel = velocityVectorProperty.getValue(time);
-        Cesium.Cartesian3.normalize(vel, vel);
-        if (pos !== undefined) {
-          Cesium.Transforms.rotationMatrixFromPositionVelocity(
-            pos,
-            vel,
-            this.viewer.scene.globe.ellipsoid,
-            rotation
-          );
-          Cesium.Matrix4.fromRotationTranslation(
-            rotation,
-            pos,
-            modelPrimitive.modelMatrix
-          );
-        }
+
+        // Compute the orientation quaternion based on the velocity
+        const orientationProperty = new Cesium.VelocityOrientationProperty(position);
+        const currentQuaternion = orientationProperty.getValue(time);
+
+        // Smoothly interpolate between the previous and current quaternion using the SLERP method
+        const slerpFactor = 0.1; // Adjust this value for smoother or more abrupt transitions
+        const smoothedQuaternion = Cesium.Quaternion.slerp(
+          this.previousQuaternion,
+          currentQuaternion,
+          slerpFactor,
+          new Cesium.Quaternion()
+        );
+
+        // Update the previous quaternion
+        Cesium.Quaternion.clone(smoothedQuaternion, this.previousQuaternion);
+
+        // Apply the smoothed quaternion to the model matrix
+        const rotationMatrix = Cesium.Matrix3.fromQuaternion(smoothedQuaternion);
+        Cesium.Matrix4.fromRotationTranslation(rotationMatrix, pos, modelPrimitive.modelMatrix);
       });
+
+
+
     } catch (error) {
       window.alert(error);
     }
 
     const modelLabel = this.viewer.entities.add({
       position: position,
-      orientation: new Cesium.VelocityOrientationProperty(position),
+      orientation: orientationProperty,
       label: {
         text: "HALLO",
         font: "20px sans-serif",
