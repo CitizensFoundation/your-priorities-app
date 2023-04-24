@@ -13,6 +13,15 @@ import {
 } from "cesium";
 import { YpCodeBase } from "./@yrpri/common/YpCodeBaseclass";
 
+const landUseModelPaths = {
+"energy": "models/CesiumBalloon.glb",
+"farming": "models/Cesium_Man.glb",
+"tourism": "models/CesiumBalloon.glb",
+"recreation": "models/CesiumBalloon.glb",
+"restoration": "models/CesiumBalloon.glb",
+"conservation": "models/CesiumBalloon.glb",
+}
+
 export class TileManager extends YpCodeBase {
   selectedLandUse: string | undefined;
   viewer: Viewer | undefined;
@@ -158,7 +167,7 @@ export class TileManager extends YpCodeBase {
                 this.viewer!.clock.startTime
               );
               const alpha = Math.max(
-                0.2 - elapsedSeconds / animationDuration,
+                0.35 - elapsedSeconds / animationDuration,
                 0
               );
               return Cesium.Color.fromAlpha(color, alpha, result);
@@ -334,7 +343,8 @@ export class TileManager extends YpCodeBase {
           this.viewer!.entities.remove(boxEntity);
         }, 2000);
 
-        const url = "models/CesiumBalloon.glb";
+        //@ts-ignore
+        const url = landUseModelPaths[this.selectedLandUse];
 
         const startPosition = Cesium.Cartesian3.fromDegrees(
           (west + east) / 2,
@@ -344,7 +354,7 @@ export class TileManager extends YpCodeBase {
         const endPosition = Cesium.Cartesian3.fromDegrees(
           (west + east) / 2,
           (south + north) / 2,
-          20000 // Adjust the value to control how far the model moves upward
+          30000 // Adjust the value to control how far the model moves upward
         );
 
         const animationClock = new Cesium.Clock({
@@ -353,7 +363,7 @@ export class TileManager extends YpCodeBase {
         });
 
         const currentTime = animationClock.currentTime;
-        const durationInSeconds = 30;
+        const durationInSeconds = 10;
         const endTime = new Cesium.JulianDate();
         Cesium.JulianDate.addSeconds(currentTime, durationInSeconds, endTime);
 

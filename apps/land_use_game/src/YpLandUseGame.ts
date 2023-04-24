@@ -278,6 +278,12 @@ export class YpLandUseGame extends YpBaseElement {
     }
   }
 
+  cancelFlyToPosition() {
+    if (this.viewer) {
+      this.viewer.camera.cancelFlight();
+    }
+  }
+
   setupEventListeners() {
     document.addEventListener("keydown", this.handleKeyDown.bind(this));
 
@@ -307,6 +313,7 @@ export class YpLandUseGame extends YpBaseElement {
 
     this.$$("#showAll")!.addEventListener("click", () => {
       this.viewer!.trackedEntity = undefined;
+      this.cancelFlyToPosition();
       this.setCameraFromLandMark(0);
     });
 
@@ -387,7 +394,7 @@ export class YpLandUseGame extends YpBaseElement {
       -20.62592534987823,
       64.03985855384323,
       35000,
-      12,
+      7,
       -Cesium.Math.PI_OVER_TWO / 1.3
     );
 
