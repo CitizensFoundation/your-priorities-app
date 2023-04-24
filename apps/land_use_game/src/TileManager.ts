@@ -1,6 +1,7 @@
 import {
   Cartesian3,
   Cartographic,
+  Clock,
   Color,
   Model,
   PositionProperty,
@@ -22,6 +23,7 @@ export class TileManager extends YpCodeBase {
     super();
     this.viewer = viewer;
   }
+
 
   getColor(landuse: string) {
     const red = Math.floor(Math.random() * 256);
@@ -337,15 +339,20 @@ export class TileManager extends YpCodeBase {
         const startPosition = Cesium.Cartesian3.fromDegrees(
           (west + east) / 2,
           (south + north) / 2,
-          height / 2
+          500
         );
         const endPosition = Cesium.Cartesian3.fromDegrees(
           (west + east) / 2,
           (south + north) / 2,
-          height / 2 + 20000 // Adjust the value to control how far the model moves upward
+          20000 // Adjust the value to control how far the model moves upward
         );
 
-        const currentTime = Cesium.JulianDate.now();
+        const animationClock = new Cesium.Clock({
+          startTime: Cesium.JulianDate.now(),
+          currentTime: this.viewer!.clock.currentTime,
+        });
+
+        const currentTime = animationClock.currentTime;
         const durationInSeconds = 30;
         const endTime = new Cesium.JulianDate();
         Cesium.JulianDate.addSeconds(currentTime, durationInSeconds, endTime);
@@ -353,14 +360,14 @@ export class TileManager extends YpCodeBase {
         const positionProperty = new Cesium.SampledPositionProperty();
 
         positionProperty.setInterpolationOptions({
-          interpolationDegree: 5,
-          interpolationAlgorithm: Cesium.LagrangePolynomialApproximation,
+          interpolationDegree: 1,
+          interpolationAlgorithm: Cesium.LinearApproximation,
         });
 
-        positionProperty.addSample(Cesium.JulianDate.now(), startPosition);
+        positionProperty.addSample(animationClock.currentTime, startPosition);
         positionProperty.addSample(endTime, endPosition);
 
-        const modelInstance = this.createModel(url, new Cesium.ConstantPositionProperty(startPosition), 100);
+        const modelInstance = this.createModel(url, positionProperty, 100);
 
         // Remove the model after the animation is completed
         setTimeout(() => {
@@ -368,7 +375,7 @@ export class TileManager extends YpCodeBase {
         }, durationInSeconds * 40000);
         setTimeout(() => {
           modelInstance.position = positionProperty;
-        }, 3000);
+        }, Cesium.JulianDate.secondsDifference(endTime, currentTime) * 1000);
 
         // Remove the model after 5 seconds
         setTimeout(() => {
