@@ -6,8 +6,9 @@ export class PlaneManager extends YpCodeBase {
   viewer: Viewer | undefined;
   plane: Entity | undefined;
   geoJson: any;
-  MINIMUM_FLIGHT_HEIGHT = 1200;
+  MINIMUM_FLIGHT_HEIGHT = 1700;
   MINIMUM_DISTANCE = 20; // km
+  ANIMATION_TIME_OFFSET = 35;
 
   constructor(viewer: Viewer, geoJson: any) {
     super();
@@ -49,7 +50,7 @@ export class PlaneManager extends YpCodeBase {
               const terrainHeight = cartographicPosition.height;
 
               const height = Math.max(
-                Cesium.Math.nextRandomNumber() * 3000 + 1000,
+                Cesium.Math.nextRandomNumber() * 4000 + 1500,
                 terrainHeight + this.MINIMUM_FLIGHT_HEIGHT
               );
 
@@ -82,7 +83,7 @@ export class PlaneManager extends YpCodeBase {
                 });
               }
 
-              timeOffset += 5;
+              timeOffset += this.ANIMATION_TIME_OFFSET;
               prevPosition = position;
             }
           }
@@ -99,7 +100,7 @@ export class PlaneManager extends YpCodeBase {
     const start = this.viewer!.clock.currentTime;
     const stop = Cesium.JulianDate.addSeconds(
       start,
-      timeOffset,
+      60 * 60,
       new Cesium.JulianDate()
     );
 
