@@ -65,6 +65,8 @@ const landMarks = [
 // Add wall around the area: https://sandcastle.cesium.com/?src=Wall.html&label=Geometries
 // Animation basd on walking speed: https://sandcastle.cesium.com/?src=Manually%20Controlled%20Animation.html&label=All
 // Ómar lög https://www.youtube.com/watch?v=55T1VWOHGBo&list=OLAK5uy_nhsD368G66EbyitSjwI5YcNj5sks2QPEQ&index=14
+// Maybe use tween to animate the quick objects: https://groups.google.com/g/cesium-dev/c/k_Kk3CCuxDw
+
 export class YpLandUseGame extends YpBaseElement {
   @property({ type: String }) title = "Land Use Game";
 

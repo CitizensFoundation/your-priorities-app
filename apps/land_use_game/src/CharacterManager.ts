@@ -19,7 +19,7 @@ export class CharacterManager extends YpCodeBase {
     const position = new Cesium.SampledPositionProperty();
     const distance = new Cesium.SampledProperty(Number);
     const velocityVectorProperty = new Cesium.VelocityVectorProperty(position, false);
-    const totalSeconds = 300;
+    const totalSeconds = 80;
     const start = Cesium.JulianDate.fromDate(new Date());
     const stop = Cesium.JulianDate.addSeconds(start, totalSeconds, new Cesium.JulianDate());
     this.viewer.clock.startTime = start.clone();
@@ -70,12 +70,13 @@ export class CharacterManager extends YpCodeBase {
 
   async setupCharacter() {
     const { position, distance, velocityVectorProperty } = await this.createWalkingPath();
+    let modelPrimitive: Model;
 
     try {
-      const modelPrimitive = this.viewer.scene.primitives.add(
+      modelPrimitive = this.viewer.scene.primitives.add(
         await Cesium.Model.fromGltfAsync({
           url: "models/Cesium_Man.glb",
-          scale: 1000,
+          scale: 2500,
         })
       );
 
@@ -85,7 +86,7 @@ export class CharacterManager extends YpCodeBase {
           animationTime: (duration: number) => {
             return distance.getValue(this.viewer.clock.currentTime) / duration;
           },
-          multiplier: 0.04,
+          multiplier: 0.004,
         });
       });
       const rotation = new Cesium.Matrix3();
@@ -124,8 +125,8 @@ export class CharacterManager extends YpCodeBase {
       },
     });
 
-    this.viewer.trackedEntity = modelLabel;
-    modelLabel.viewFrom = new Cesium.ConstantProperty(Cesium.Cartesian3.fromElements(-30.0, -10.0, 10.0));
+    //this.viewer.trackedEntity = modelLabel;
+    //modelLabel.viewFrom = new Cesium.ConstantProperty(Cesium.Cartesian3.fromElements(-30.0, -10.0, 10.0));
     this.character = modelLabel;
   }
 }
