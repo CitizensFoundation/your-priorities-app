@@ -354,7 +354,7 @@ export class TileManager extends YpCodeBase {
         const endPosition = Cesium.Cartesian3.fromDegrees(
           (west + east) / 2,
           (south + north) / 2,
-          30000 // Adjust the value to control how far the model moves upward
+          150000 // Adjust the value to control how far the model moves upward
         );
 
         const animationClock = new Cesium.Clock({
@@ -363,7 +363,7 @@ export class TileManager extends YpCodeBase {
         });
 
         const currentTime = animationClock.currentTime;
-        const durationInSeconds = 10;
+        const durationInSeconds = 25;
         const endTime = new Cesium.JulianDate();
         Cesium.JulianDate.addSeconds(currentTime, durationInSeconds, endTime);
 
@@ -414,11 +414,11 @@ export class TileManager extends YpCodeBase {
       case "farming":
         return this.getGlowingMaterial(Cesium.Color.BLUE.withAlpha(0.3));
       case "tourism":
-        return this.getGlowingMaterial(Cesium.Color.GREEN.withAlpha(0.3));
+        return this.getGlowingMaterial(Cesium.Color.ORANGE.withAlpha(0.3));
       case "recreation":
         return this.getGlowingMaterial(Cesium.Color.YELLOW.withAlpha(0.3));
       case "restoration":
-        return this.getGlowingMaterial(Cesium.Color.PINK.withAlpha(0.3));
+        return this.getGlowingMaterial(Cesium.Color.CYAN.withAlpha(0.3));
       case "conservation":
         return this.getGlowingMaterial(Cesium.Color.PURPLE.withAlpha(0.3));
       default:
@@ -434,11 +434,11 @@ export class TileManager extends YpCodeBase {
       case "farming":
         return Cesium.Color.BLUE.withAlpha(0.3);
       case "tourism":
-        return Cesium.Color.GREEN.withAlpha(0.3);
+        return Cesium.Color.ORANGE.withAlpha(0.3);
       case "recreation":
         return Cesium.Color.YELLOW.withAlpha(0.3);
       case "restoration":
-        return Cesium.Color.PINK.withAlpha(0.3);
+        return Cesium.Color.CYAN.withAlpha(0.3);
       case "conservation":
         return Cesium.Color.PURPLE.withAlpha(0.3);
       default:
