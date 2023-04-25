@@ -109,6 +109,19 @@ export class PlaneManager extends YpCodeBase {
       interpolationAlgorithm: Cesium.LagrangePolynomialApproximation,
     });
 
+    // Create a rotation matrix for 90 degrees around the Z-axis
+    const rotationAngle = Cesium.Math.toRadians(90); // Convert 90 degrees to radians
+    const rotationMatrix = Cesium.Matrix3.fromRotationZ(rotationAngle);
+
+    // Create a new CallbackProperty to apply the rotation matrix to the orientation
+    const rotatedOrientation = new Cesium.CallbackProperty((time, result) => {
+      const velocityOrientation = new Cesium.VelocityOrientationProperty(position);
+      const orientation = velocityOrientation.getValue(time, result);
+
+      const rotationQuaternion = Cesium.Quaternion.fromRotationMatrix(rotationMatrix);
+      return Cesium.Quaternion.multiply(orientation, rotationQuaternion, result);
+    }, false);
+
     // Actually create the entity
     this.plane = this.viewer!.entities.add({
       availability: new Cesium.TimeIntervalCollection([
@@ -120,14 +133,13 @@ export class PlaneManager extends YpCodeBase {
 
       position: position,
 
-      orientation: new Cesium.VelocityOrientationProperty(position),
+      orientation: rotatedOrientation, // Use the rotated orientation
 
       model: {
-        uri: "models/Cesna3.glb",
+        uri: "models/Dragon.glb",
         scale: 100,
       },
     });
-
-
   }
+
 }

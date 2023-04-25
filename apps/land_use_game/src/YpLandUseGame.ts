@@ -24,6 +24,7 @@ import "@material/mwc-textarea/mwc-textarea.js";
 import { MdDialog } from "@material/web/dialog/dialog.js";
 import "@material/web/button/filled-button.js";
 import "@material/web/button/outlined-button.js";
+import { UIManager } from "./UIManager";
 
 //const logo = new URL("../../assets/open-wc-logo.svg", import.meta.url).href;
 
@@ -107,6 +108,7 @@ export class YpLandUseGame extends YpBaseElement {
   planeManager!: PlaneManager;
   characterManager!: CharacterManager;
   currentRectangleIdForComment: string | undefined;
+  uiManager: UIManager | undefined;
 
   static get styles() {
     return [
@@ -476,6 +478,17 @@ export class YpLandUseGame extends YpBaseElement {
     this.viewer.scene.globe.baseColor = Cesium.Color.GRAY;
 
     this.tileManager = new TileManager(this.viewer);
+    const iconUrls = [
+      "models/CesiumBalloon.glb",
+      "models/CesiumBalloon.glb",
+      "models/CesiumBalloon.glb",
+      "models/CesiumBalloon.glb",
+      "models/CesiumBalloon.glb",
+      "models/CesiumBalloon.glb",
+      "models/chatBubble5.glb",
+    ];
+
+    //this.uiManager = new UIManager(this.viewer, iconUrls);
 
     //Enable lighting based on the sun position
     this.viewer.scene.globe.enableLighting = true;
