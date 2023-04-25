@@ -1,4 +1,4 @@
-import { LitElement, html, css } from "lit";
+import { html, css } from "lit";
 import { property, query } from "lit/decorators.js";
 
 import "@material/web/dialog/dialog.js";
@@ -8,13 +8,7 @@ import { YpBaseElement } from "./@yrpri/common/yp-base-element";
 import { PropertyValueMap } from "lit";
 
 import { ShadowStyles } from "./@yrpri/common/ShadowStyles";
-import {
-  Cartographic,
-  ImageryProvider,
-  IonWorldImageryStyle,
-  Rectangle,
-  Viewer,
-} from "cesium";
+import { Cartographic, ImageryProvider, Viewer } from "cesium";
 import { TileManager } from "./TileManager";
 import { PlaneManager } from "./PlaneManager";
 import { CharacterManager } from "./CharacterManager";
@@ -26,68 +20,8 @@ import "@material/web/button/filled-button.js";
 import "@material/web/button/outlined-button.js";
 import { UIManager } from "./UIManager";
 
-//const logo = new URL("../../assets/open-wc-logo.svg", import.meta.url).href;
-
-const landMarks = [
-  {
-    jsonData: `{"position":{"x":2681153.3345786585,"y":-1020373.641531956,"z":5732000.507483105},"heading":0.2308371355878256,"pitch":-0.5229351907865474,"roll":0.0000034734011649106833}`,
-  },
-  {
-    jsonData: `{"position":{"x":2603954.015915357,"y":-987894.1669974888,"z":5723474.387481297},"heading":0.7194597796017312,"pitch":-0.0744418474365669,"roll":0.00024785400735183316}`,
-  },
-  {
-    jsonData: `{"position":{"x":2608450.448217757,"y":-983956.0873921539,"z":5725021.02720951},"heading":0.4516151540332656,"pitch":-0.5574524531949243,"roll":0.0014720472302327536}`,
-  },
-  {
-    jsonData: `{"position":{"x":2610244.8435150534,"y":-983175.4728537177,"z":5725699.596588212},"heading":0.4588847589872893,"pitch":-0.37953853967140194,"roll":0.002438891621989292}`,
-  },
-  {
-    jsonData: `{"position":{"x":2594843.143514622,"y":-954502.41228975,"z":5730498.744925417},"heading":0.44818481070129224,"pitch":-0.2614333409478289,"roll":0.0000464284335048859}`,
-  },
-  {
-    jsonData: `{"position":{"x":2613873.739571409,"y":-973586.3617570958,"z":5718332.700526537},"heading":0.04235783164121365,"pitch":-0.10943287945905267,"roll":0.00004924951058349336}`,
-  },
-  {
-    jsonData: `{"position":{"x":2853297.0191392438,"y":-1100646.51907959,"z":5735649.018466557},"heading":0.19435325899631994,"pitch":-0.4779283166323647,"roll":0.000010742544064967774}`,
-  },
-  {
-    jsonData: `{"position":{"x":2607037.2626592577,"y":-987102.9507233112,"z":5727420.9039692},"heading":0.6794331897043371,"pitch":-0.42845798915222355,"roll":0.00024172583265791303}`,
-  },
-  {
-    jsonData: `{"position":{"x":2586527.6700988784,"y":-967547.8794308463,"z":5731526.940153026},"heading":3.4627563167442634,"pitch":-0.16078365173401377,"roll":0.00003878486565245254}`,
-  },
-  {
-    jsonData: `{"position":{"x":2582967.5932254517,"y":-989522.1831641375,"z":5728775.872649812},"heading":3.7262135252909556,"pitch":-0.3873144529923971,"roll":0.00002876419102015859}`,
-  },
-  {
-    jsonData: `{"position":{"x":2616466.5232743877,"y":-981239.4266582452,"z":5714685.454756667},"heading":0.5337684728326346,"pitch":-0.07168090089261958,"roll":6.283158352478661}`,
-  },
-  {
-    jsonData: `{"position":{"x":2605468.8506080373,"y":-964598.5282954393,"z":5722305.954288225},"heading":6.179314307394964,"pitch":-0.4340799514568694,"roll":0.0000117225618820882}`,
-  },
-  {
-    jsonData: `{"position":{"x":2575296.8511799383,"y":-925826.7618476085,"z":5742479.521849897},"heading":6.228172042373732,"pitch":-0.14680628178295696,"roll":0.000005087652989566038}`,
-  },
-];
-
-//todo: Have a giant finger come from the sky to press the land areas (or a mouse arrow on desktop)
-//todo: Sounds effects when you choose a land are and also if nothing is selectes
-//todo: Engine sound for plane and muffled Ómar Ragnarsson songs in a meedle (less than 30 sec) loop
-//todo: Integrate three.js for the 3D UI icons and for intro texts and effects
-//// https://cesium.com/blog/2017/10/23/integrating-cesium-with-threejs/
-//Have overlay fully transparent except when very high up with an overview look
-// Íslensku landvættirnir eru með
-// Create JSON for FX animations like landvættir with options to fly or walk across the landscape or to stay in one place - with animation points
-// The four landvættir are traditionally regarded as the protectors of the four quarters of Iceland: the dragon (Dreki) in the east, the eagle (Gammur) in the north, the bull (Griðungur) in the west, and the giant (Bergrisi) in the south.
-// Have one land use type icon hovering over that type of land use areas flying between the rectangles
-// 3D comment icon to make a comment on a rectangle
-// Add wall around the area: https://sandcastle.cesium.com/?src=Wall.html&label=Geometries
-// Animation basd on walking speed: https://sandcastle.cesium.com/?src=Manually%20Controlled%20Animation.html&label=All
-// Ómar lög https://www.youtube.com/watch?v=55T1VWOHGBo&list=OLAK5uy_nhsD368G66EbyitSjwI5YcNj5sks2QPEQ&index=14
-// Maybe use tween to animate the quick objects: https://groups.google.com/g/cesium-dev/c/k_Kk3CCuxDw
-// Add cover % how much you have filled in of the tiles
-// Make layers load more smoothly when changing between aerial and other modes
-// Make chat bubbles float above the terrain at a fixed height
+import { landMarks } from "./TestData";
+import { DragonManager } from "./DragonManager";
 
 export class YpLandUseGame extends YpBaseElement {
   @property({ type: String }) title = "Land Use Game";
@@ -109,6 +43,7 @@ export class YpLandUseGame extends YpBaseElement {
   characterManager!: CharacterManager;
   currentRectangleIdForComment: string | undefined;
   uiManager: UIManager | undefined;
+  dragonManager!: DragonManager;
 
   static get styles() {
     return [
@@ -213,27 +148,51 @@ export class YpLandUseGame extends YpBaseElement {
         }
 
         #landUse1 {
-          background: rgba(255, 0, 0, 0.35); /* red with 0.25 opacity */
+          background: rgba(255, 0, 0, 0.2); /* red with 0.25 opacity */
+        }
+
+        #landUse1[selected] {
+          background: rgba(255, 0, 0, 0.55); /* red with 0.25 opacity */
         }
 
         #landUse2 {
-          background: rgba(0, 0, 255, 0.35); /* blue with 0.25 opacity */
+          background: rgba(0, 0, 255, 0.2); /* blue with 0.25 opacity */
+        }
+
+        #landUse2[selected] {
+          background: rgba(0, 0, 255, 0.55); /* blue with 0.25 opacity */
         }
 
         #landUse3 {
-          background: rgba(255, 165, 0, 0.35); /* orange with 0.25 opacity */
+          background: rgba(255, 165, 0, 0.2); /* orange with 0.25 opacity */
+        }
+
+        #landUse3[selected] {
+          background: rgba(255, 165, 0, 0.55); /* orange with 0.25 opacity */
         }
 
         #landUse4 {
-          background: rgba(255, 255, 0, 0.35); /* yellow with 0.25 opacity */
+          background: rgba(255, 255, 0, 0.2); /* yellow with 0.25 opacity */
+        }
+
+        #landUse4[selected] {
+          background: rgba(255, 255, 0, 0.55); /* yellow with 0.25 opacity */
         }
 
         #landUse5 {
-          background: rgba(0, 255, 255, 0.35); /* cyan with 0.25 opacity */
+          background: rgba(0, 255, 255, 0.2); /* cyan with 0.25 opacity */
+        }
+
+        #landUse5[selected] {
+          background: rgba(0, 255, 255, 0.55); /* cyan with 0.25 opacity */
         }
 
         #landUse6 {
-          background: rgba(128, 0, 128, 0.35); /* purple with 0.25 opacity */
+          background: rgba(128, 0, 128, 0.2); /* purple with 0.25 opacity */
+        }
+
+        #landUse6[selected] {
+          background: rgba(128, 0, 128, 0.55); /* purple with 0.25 opacity */
         }
       `,
     ];
@@ -533,19 +492,48 @@ export class YpLandUseGame extends YpBaseElement {
         this.tileManager.geojsonData
       );
       this.planeManager.setup();
+
       const longLatStart = [63.46578246639273, -18.86733120920245];
       const longLatEnd = [64.74664895142547, -19.35433358999831];
 
       // Convert lang/lat to cartesian
-      const start = Cesium.Cartesian3.fromDegrees(
+      const giantStart = Cesium.Cartesian3.fromDegrees(
         longLatStart[1],
         longLatStart[0]
       );
 
-      const end = Cesium.Cartesian3.fromDegrees(longLatEnd[1], longLatEnd[0]);
+      const giantEnd = Cesium.Cartesian3.fromDegrees(
+        longLatEnd[1],
+        longLatEnd[0]
+      );
 
-      this.characterManager = new CharacterManager(this.viewer!, start, end);
+      this.characterManager = new CharacterManager(
+        this.viewer!,
+        giantStart,
+        giantEnd
+      );
       this.characterManager.setupCharacter();
+
+      const dragonLongLatStart = [65.56472600995652, -14.117065946587537];
+      const dragonLongLatEnd = [64.80437929394297, -18.70322644445653];
+
+      // Convert lang/lat to cartesian
+      const dragonStart = Cesium.Cartesian3.fromDegrees(
+        dragonLongLatStart[1],
+        dragonLongLatStart[0]
+      );
+
+      const dragonEnd = Cesium.Cartesian3.fromDegrees(
+        dragonLongLatEnd[1],
+        dragonLongLatEnd[0]
+      );
+
+      this.dragonManager = new DragonManager(
+        this.viewer!,
+        dragonStart,
+        dragonEnd
+      );
+      this.dragonManager.setupCharacter();
     });
 
     //Enable depth testing so things behind the terrain disappear.
@@ -603,12 +591,33 @@ export class YpLandUseGame extends YpBaseElement {
       <div id="cesium-container"></div>
       <div id="emptyCreditContainer"></div>
       <div id="landUseSelection">
-        <button id="landUse1">Energy</button>
-        <button id="landUse2">Farming</button>
-        <button id="landUse3">Tourism</button>
-        <button id="landUse4">Recreation</button>
-        <button id="landUse5">Restoration</button>
-        <button id="landUse6">Conservation</button>
+        <button id="landUse1" ?selected=${this.selectedLandUse === "energy"}>
+          Energy
+        </button>
+        <button id="landUse2" ?selected=${this.selectedLandUse === "farming"}>
+          Farming
+        </button>
+        <button id="landUse3" ?selected=${this.selectedLandUse === "tourism"}>
+          Tourism
+        </button>
+        <button
+          id="landUse4"
+          ?selected=${this.selectedLandUse === "recreation"}
+        >
+          Recreation
+        </button>
+        <button
+          id="landUse5"
+          ?selected=${this.selectedLandUse === "restoration"}
+        >
+          Restoration
+        </button>
+        <button
+          id="landUse6"
+          ?selected=${this.selectedLandUse === "conservation"}
+        >
+          Conservation
+        </button>
         <button id="commentButton">Comment</button>
       </div>
 

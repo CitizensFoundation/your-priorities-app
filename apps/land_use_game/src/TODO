@@ -1,0 +1,20 @@
+
+
+//todo: Have a giant finger come from the sky to press the land areas (or a mouse arrow on desktop)
+//todo: Sounds effects when you choose a land are and also if nothing is selectes
+//todo: Engine sound for plane and muffled Ómar Ragnarsson songs in a meedle (less than 30 sec) loop
+//todo: Integrate three.js for the 3D UI icons and for intro texts and effects
+//// https://cesium.com/blog/2017/10/23/integrating-cesium-with-threejs/
+//Have overlay fully transparent except when very high up with an overview look
+// Íslensku landvættirnir eru með
+// Create JSON for FX animations like landvættir with options to fly or walk across the landscape or to stay in one place - with animation points
+// The four landvættir are traditionally regarded as the protectors of the four quarters of Iceland: the dragon (Dreki) in the east, the eagle (Gammur) in the north, the bull (Griðungur) in the west, and the giant (Bergrisi) in the south.
+// Have one land use type icon hovering over that type of land use areas flying between the rectangles
+// 3D comment icon to make a comment on a rectangle
+// Add wall around the area: https://sandcastle.cesium.com/?src=Wall.html&label=Geometries
+// Animation basd on walking speed: https://sandcastle.cesium.com/?src=Manually%20Controlled%20Animation.html&label=All
+// Ómar lög https://www.youtube.com/watch?v=55T1VWOHGBo&list=OLAK5uy_nhsD368G66EbyitSjwI5YcNj5sks2QPEQ&index=14
+// Maybe use tween to animate the quick objects: https://groups.google.com/g/cesium-dev/c/k_Kk3CCuxDw
+// Add cover % how much you have filled in of the tiles
+// Make layers load more smoothly when changing between aerial and other modes
+// Make chat bubbles float above the terrain at a fixed height

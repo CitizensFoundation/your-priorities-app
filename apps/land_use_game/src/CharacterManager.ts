@@ -16,6 +16,9 @@ export class CharacterManager extends YpCodeBase {
   endPosition: Cartesian3;
   previousQuaternion!: Quaternion;
   totalAnimationTime = 100 * 2;
+  characterModelUrl = "models/Cesium_Man.glb";
+  animationMultiplier = 0.2;
+  characterScale = 4200;
 
   constructor(
     viewer: Viewer,
@@ -185,8 +188,8 @@ export class CharacterManager extends YpCodeBase {
     try {
       modelPrimitive = this.viewer.scene.primitives.add(
         await Cesium.Model.fromGltfAsync({
-          url: "models/Cesium_Man.glb",
-          scale: 4200,
+          url: this.characterModelUrl,
+          scale: this.characterScale,
         })
       );
 
@@ -194,7 +197,7 @@ export class CharacterManager extends YpCodeBase {
         modelPrimitive.activeAnimations.addAll({
           loop: Cesium.ModelAnimationLoop.REPEAT,
 
-          multiplier: 0.2,
+          multiplier: this.animationMultiplier,
         });
       });
       const rotation = new Cesium.Matrix3();
