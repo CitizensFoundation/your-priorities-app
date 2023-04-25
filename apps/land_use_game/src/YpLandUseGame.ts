@@ -319,7 +319,37 @@ export class YpLandUseGame extends YpBaseElement {
     });
 
     this.$$("#trackPlane")!.addEventListener("click", () => {
+      this.cancelFlyToPosition();
       this.viewer!.trackedEntity = this.planeManager.plane;
+    });
+
+
+    // Add event listeners for terrainProvider change
+    this.$$("#chooseAerial")!.addEventListener("click", () => {
+      this.viewer!.imageryLayers.removeAll();
+      this.viewer!.imageryLayers.addImageryProvider(
+        Cesium.createWorldImagery({
+          style: Cesium.IonWorldImageryStyle.AERIAL
+        })
+      );
+    });
+
+    this.$$("#chooseAerialWithLabels")!.addEventListener("click", () => {
+      this.viewer!.imageryLayers.removeAll();
+      this.viewer!.imageryLayers.addImageryProvider(
+        Cesium.createWorldImagery({
+          style: Cesium.IonWorldImageryStyle.AERIAL_WITH_LABELS
+        })
+      );
+    });
+
+    this.$$("#chooseOpenStreetMap")!.addEventListener("click", () => {
+      this.viewer!.imageryLayers.removeAll();
+      this.viewer!.imageryLayers.addImageryProvider(
+        new Cesium.OpenStreetMapImageryProvider({
+          url: "https://a.tile.openstreetmap.org/"
+        })
+      );
     });
   }
 
@@ -431,8 +461,10 @@ export class YpLandUseGame extends YpBaseElement {
 
       <div id="navigationButtons">
         <button id="showAll">Show all</button>
-        <button id="horizonMode">Horizon mode</button>
         <button id="trackPlane">Plane</button>
+        <button id="chooseAerial">Areal</button>
+        <button id="chooseAerialWithLabels">Labels</button>
+        <button id="chooseOpenStreetMap">Map</button>
       </div>
     `;
   }
