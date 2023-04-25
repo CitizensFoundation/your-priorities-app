@@ -1,11 +1,13 @@
 import { LitElement, html, css } from "lit";
 import { property } from "lit/decorators.js";
 
+//import `@material/web/dialog/`
+
 import { YpBaseElement } from "./@yrpri/common/yp-base-element";
 import { PropertyValueMap } from "lit";
 
 import { ShadowStyles } from "./@yrpri/common/ShadowStyles";
-import { Cartographic, Rectangle, Viewer } from "cesium";
+import { Cartographic, ImageryProvider, IonWorldImageryStyle, Rectangle, Viewer } from "cesium";
 import { TileManager } from "./TileManager";
 import { PlaneManager } from "./PlaneManager";
 import { CharacterManager } from "./CharacterManager";
@@ -264,6 +266,11 @@ export class YpLandUseGame extends YpBaseElement {
   setLandUse(landUse: string) {
     this.selectedLandUse = landUse;
     this.tileManager.selectedLandUse = landUse;
+    this.setIsCommenting(false);
+  }
+
+  setIsCommenting(isCommenting: boolean) {
+    this.tileManager.isCommenting = isCommenting;
   }
 
   setCameraFromLandMark(landMarkIndex: number) {
@@ -292,8 +299,15 @@ export class YpLandUseGame extends YpBaseElement {
     }
   }
 
+  openComment(event: any) {
+
+
+  }
+
   setupEventListeners() {
     document.addEventListener("keydown", this.handleKeyDown.bind(this));
+
+    document.addEventListener("open-comment", this.openComment.bind(this));
 
     this.$$("#landUse1")!.addEventListener("click", () => {
       this.setLandUse("energy");
@@ -317,6 +331,10 @@ export class YpLandUseGame extends YpBaseElement {
 
     this.$$("#landUse6")!.addEventListener("click", () => {
       this.setLandUse("conservation");
+    });
+
+    this.$$("#commentButton")!.addEventListener("click", () => {
+      this.setIsCommenting(true);
     });
 
     this.$$("#showAll")!.addEventListener("click", () => {
@@ -367,6 +385,16 @@ export class YpLandUseGame extends YpBaseElement {
     //@ts-ignore
     Cesium.Ion.defaultAccessToken = __CESIUM_ACCESS_TOKEN__;
 
+    let imageProvider:false | ImageryProvider | undefined;
+
+    if (window.location.href.indexOf("localhost") > -1) {
+      imageProvider = new Cesium.IonImageryProvider({ assetId: 3954 });
+    } else {
+      imageProvider = Cesium.createWorldImagery({
+        style: Cesium.IonWorldImageryStyle.AERIAL,
+      })
+    }
+
     this.viewer = new Cesium.Viewer(container, {
       infoBox: false, //Disable InfoBox widget
       selectionIndicator: false, //Disable selection indicator
@@ -393,9 +421,7 @@ export class YpLandUseGame extends YpBaseElement {
       imageryProvider: Cesium.createWorldImagery({
         style: Cesium.IonWorldImageryStyle.AERIAL_WITH_LABELS,
       }),*/
-      imageryProvider: Cesium.createWorldImagery({
-        style: Cesium.IonWorldImageryStyle.AERIAL,
-      }),
+      imageryProvider: imageProvider
     });
 
     this.viewer.scene.globe.baseColor = Cesium.Color.GRAY;
@@ -466,6 +492,7 @@ export class YpLandUseGame extends YpBaseElement {
         <button id="landUse4">Recreation</button>
         <button id="landUse5">Restoration</button>
         <button id="landUse6">Conservation</button>
+        <button id="commentButton">Comment</button>
       </div>
 
       <div id="navigationButtons">

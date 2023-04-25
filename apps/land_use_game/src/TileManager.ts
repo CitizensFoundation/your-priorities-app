@@ -32,6 +32,7 @@ export class TileManager extends YpCodeBase {
   allTiles: Rectangle[] = [];
   tileEntities: LandUseEntity[] = [];
   landUseCount: Map<string, number> = new Map();
+  isCommenting = false;
 
   constructor(viewer: Viewer) {
     super();
@@ -201,14 +202,6 @@ export class TileManager extends YpCodeBase {
     }
   }
 
-  hexToCesiumColor(hex: string) {
-    const bigint = parseInt(hex.slice(1), 16);
-    const r = ((bigint >> 16) & 255) / 255;
-    const g = ((bigint >> 8) & 255) / 255;
-    const b = (bigint & 255) / 255;
-    return new Cesium.Color(r, g, b, 1.0);
-  }
-
   createModel(url: string, position: PositionProperty, scale = 1.0) {
     const entity = this.viewer!.entities.add({
       name: url,
@@ -221,35 +214,21 @@ export class TileManager extends YpCodeBase {
     return entity;
   }
 
+  addCommentToRectangle(rectangleId: string, comment: string) {
+    // Find the rectangle entity
+    const rectangleEntity = this.viewer!.entities.getById(rectangleId) as LandUseEntity;
 
-  getGlowingMaterial(color: any) {
-    const glowingMaterial = new Cesium.Material({
-      fabric: {
-        type: "Glowing",
-        uniforms: {
-          glowColor: color,
-          glowIntensity: 0.5,
-        },
-        source: `
-          uniform vec3 glowColor;
-          uniform float glowIntensity;
+    if (rectangleEntity) {
+      // Add the comment to the rectangle entity
+      rectangleEntity.comment = comment;
 
-          czm_material czm_getMaterial(czm_materialInput materialInput) {
-            czm_material material = czm_getDefaultMaterial(materialInput);
-            vec3 normal = normalize(materialInput.normalEC);
-            vec3 lightDirection = normalize(czm_sunDirectionEC);
-            float intensity = max(dot(normal, lightDirection), 0.0);
-            vec3 glow = glowColor * pow(intensity, glowIntensity) * glowIntensity;
-            material.diffuse = glow;
-            material.alpha = 1.0;
-            return material;
-          }
-        `,
-      },
-      translucent: false,
-    });
+      // Add a 3D comment models from models/comment.glb
+      const position = new Cesium.CallbackProperty((time, result) => {
+        const center = Cesium.Rectangle.center(rectangleEntity.rectangle?.coordinates?.getValue(time));        return Cesium.Cartesian3.fromRadians(center.longitude, center.latitude, 1200);
+      }, false) as unknown as PositionProperty;
 
-    return glowingMaterial;
+      rectangleEntity.commentEntity = this.createModel("/models/CesiumBalloon.glb", position, 0.5);
+    }
   }
 
   async setInputAction(event: any) {
@@ -265,8 +244,9 @@ export class TileManager extends YpCodeBase {
     if (rectangleEntity) {
       const rectangleId = rectangleEntity.id.id;
 
-      // Check if there is an existing box entity for the rectangle
-      if (this.selectedLandUse) {
+      if (this.isCommenting) {
+        this.fire("open-comment", {rectangleId}, document);
+      } else if (this.selectedLandUse) {
         console.log(`selectedLandUse: ${this.selectedLandUse}`)
         const newColor = this.getColorForLandUse(
           this.selectedLandUse
@@ -418,25 +398,6 @@ export class TileManager extends YpCodeBase {
     );
 
     return sampledPositions[0].height;
-  }
-
-  getMaterialForLandUse(landUse: string) {
-    switch (landUse) {
-      case "energy":
-        return this.getGlowingMaterial(Cesium.Color.RED.withAlpha(0.3));
-      case "farming":
-        return this.getGlowingMaterial(Cesium.Color.BLUE.withAlpha(0.3));
-      case "tourism":
-        return this.getGlowingMaterial(Cesium.Color.ORANGE.withAlpha(0.3));
-      case "recreation":
-        return this.getGlowingMaterial(Cesium.Color.YELLOW.withAlpha(0.3));
-      case "restoration":
-        return this.getGlowingMaterial(Cesium.Color.CYAN.withAlpha(0.3));
-      case "conservation":
-        return this.getGlowingMaterial(Cesium.Color.PURPLE.withAlpha(0.3));
-      default:
-        return Cesium.Color.TRANSPARENT;
-    }
   }
 
   getColorForLandUse(landUse: string) {

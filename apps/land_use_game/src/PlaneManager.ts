@@ -123,7 +123,7 @@ export class PlaneManager extends YpCodeBase {
       orientation: new Cesium.VelocityOrientationProperty(position),
 
       model: {
-        uri: "models/Cesium_Air.glb",
+        uri: "models/Cesna.glb",
         scale: 100,
       },
     });
