@@ -67,6 +67,7 @@ const landMarks = [
 // Ómar lög https://www.youtube.com/watch?v=55T1VWOHGBo&list=OLAK5uy_nhsD368G66EbyitSjwI5YcNj5sks2QPEQ&index=14
 // Maybe use tween to animate the quick objects: https://groups.google.com/g/cesium-dev/c/k_Kk3CCuxDw
 // Add cover % how much you have filled in of the tiles
+// Make layers load more smoothly when changing between aerial and other modes
 
 export class YpLandUseGame extends YpBaseElement {
   @property({ type: String }) title = "Land Use Game";
@@ -391,6 +392,8 @@ export class YpLandUseGame extends YpBaseElement {
       }),
     });
 
+    this.viewer.scene.globe.baseColor = Cesium.Color.GRAY;
+
     this.tileManager = new TileManager(this.viewer);
 
     //Enable lighting based on the sun position
@@ -462,7 +465,7 @@ export class YpLandUseGame extends YpBaseElement {
       <div id="navigationButtons">
         <button id="showAll">Show all</button>
         <button id="trackPlane">Plane</button>
-        <button id="chooseAerial">Areal</button>
+        <button id="chooseAerial">Aerial</button>
         <button id="chooseAerialWithLabels">Labels</button>
         <button id="chooseOpenStreetMap">Map</button>
       </div>
