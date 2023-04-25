@@ -138,6 +138,7 @@ export class PlaneManager extends YpCodeBase {
       model: {
         uri: "models/Cesna4b.glb",
         scale: 100,
+        shadows: Cesium.ShadowMode.ENABLED
       },
     });
   }

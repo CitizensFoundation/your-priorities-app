@@ -211,6 +211,30 @@ export class YpLandUseGame extends YpBaseElement {
         #emptyCreditContainer {
           display: none;
         }
+
+        #landUse1 {
+          background: rgba(255, 0, 0, 0.35); /* red with 0.25 opacity */
+        }
+
+        #landUse2 {
+          background: rgba(0, 0, 255, 0.35); /* blue with 0.25 opacity */
+        }
+
+        #landUse3 {
+          background: rgba(255, 165, 0, 0.35); /* orange with 0.25 opacity */
+        }
+
+        #landUse4 {
+          background: rgba(255, 255, 0, 0.35); /* yellow with 0.25 opacity */
+        }
+
+        #landUse5 {
+          background: rgba(0, 255, 255, 0.35); /* cyan with 0.25 opacity */
+        }
+
+        #landUse6 {
+          background: rgba(128, 0, 128, 0.35); /* purple with 0.25 opacity */
+        }
       `,
     ];
   }
@@ -246,7 +270,6 @@ export class YpLandUseGame extends YpBaseElement {
       if (key >= 1 && key <= 9) {
         this.setCameraFromLandMark(key - 1);
       }
-
     }
   }
 
