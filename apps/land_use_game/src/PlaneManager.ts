@@ -6,9 +6,9 @@ export class PlaneManager extends YpCodeBase {
   viewer: Viewer | undefined;
   plane: Entity | undefined;
   geoJson: any;
-  MINIMUM_FLIGHT_HEIGHT = 1700;
-  MINIMUM_DISTANCE = 20; // km
-  ANIMATION_TIME_OFFSET = 35;
+  MINIMUM_FLIGHT_HEIGHT = 1400;
+  MINIMUM_DISTANCE = 15; // km
+  ANIMATION_TIME_OFFSET = 45;
 
   constructor(viewer: Viewer, geoJson: any) {
     super();
@@ -50,7 +50,7 @@ export class PlaneManager extends YpCodeBase {
               const terrainHeight = cartographicPosition.height;
 
               const height = Math.max(
-                Cesium.Math.nextRandomNumber() * 4000 + 1500,
+                Cesium.Math.nextRandomNumber() * 3500 + 1400,
                 terrainHeight + this.MINIMUM_FLIGHT_HEIGHT
               );
 
@@ -136,7 +136,7 @@ export class PlaneManager extends YpCodeBase {
       orientation: rotatedOrientation, // Use the rotated orientation
 
       model: {
-        uri: "models/Dragon.glb",
+        uri: "models/Cesna4b.glb",
         scale: 100,
       },
     });
