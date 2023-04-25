@@ -227,7 +227,7 @@ export class TileManager extends YpCodeBase {
         const center = Cesium.Rectangle.center(rectangleEntity.rectangle?.coordinates?.getValue(time));        return Cesium.Cartesian3.fromRadians(center.longitude, center.latitude, 1200);
       }, false) as unknown as PositionProperty;
 
-      rectangleEntity.commentEntity = this.createModel("/models/CesiumBalloon.glb", position, 0.5);
+      rectangleEntity.commentEntity = this.createModel("/models/chatBubble5.glb", position, 275);
     }
   }
 

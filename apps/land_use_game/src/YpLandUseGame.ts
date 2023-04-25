@@ -1,22 +1,35 @@
 import { LitElement, html, css } from "lit";
-import { property } from "lit/decorators.js";
+import { property, query } from "lit/decorators.js";
 
-//import `@material/web/dialog/`
+import "@material/web/dialog/dialog.js";
+import "@material/web/textfield/outlined-text-field.js";
 
 import { YpBaseElement } from "./@yrpri/common/yp-base-element";
 import { PropertyValueMap } from "lit";
 
 import { ShadowStyles } from "./@yrpri/common/ShadowStyles";
-import { Cartographic, ImageryProvider, IonWorldImageryStyle, Rectangle, Viewer } from "cesium";
+import {
+  Cartographic,
+  ImageryProvider,
+  IonWorldImageryStyle,
+  Rectangle,
+  Viewer,
+} from "cesium";
 import { TileManager } from "./TileManager";
 import { PlaneManager } from "./PlaneManager";
 import { CharacterManager } from "./CharacterManager";
+import { Dialog } from "@material/web/dialog/lib/dialog";
+
+import "@material/mwc-textarea/mwc-textarea.js";
+import { MdDialog } from "@material/web/dialog/dialog.js";
+import "@material/web/button/filled-button.js";
+import "@material/web/button/outlined-button.js";
 
 //const logo = new URL("../../assets/open-wc-logo.svg", import.meta.url).href;
 
 const landMarks = [
   {
-    jsonData: `{"position":{"x":2654952.929606032,"y":-1016221.3487241162,"z":5741820.767140159},"heading":0.18514839426342977,"pitch":-0.6884926785509595,"roll":0.000004798763947988505}`
+    jsonData: `{"position":{"x":2654952.929606032,"y":-1016221.3487241162,"z":5741820.767140159},"heading":0.18514839426342977,"pitch":-0.6884926785509595,"roll":0.000004798763947988505}`,
   },
   {
     jsonData: `{"position":{"x":2603954.015915357,"y":-987894.1669974888,"z":5723474.387481297},"heading":0.7194597796017312,"pitch":-0.0744418474365669,"roll":0.00024785400735183316}`,
@@ -28,32 +41,32 @@ const landMarks = [
     jsonData: `{"position":{"x":2610244.8435150534,"y":-983175.4728537177,"z":5725699.596588212},"heading":0.4588847589872893,"pitch":-0.37953853967140194,"roll":0.002438891621989292}`,
   },
   {
-    jsonData: `{"position":{"x":2594843.143514622,"y":-954502.41228975,"z":5730498.744925417},"heading":0.44818481070129224,"pitch":-0.2614333409478289,"roll":0.0000464284335048859}`
+    jsonData: `{"position":{"x":2594843.143514622,"y":-954502.41228975,"z":5730498.744925417},"heading":0.44818481070129224,"pitch":-0.2614333409478289,"roll":0.0000464284335048859}`,
   },
   {
-    jsonData: `{"position":{"x":2613873.739571409,"y":-973586.3617570958,"z":5718332.700526537},"heading":0.04235783164121365,"pitch":-0.10943287945905267,"roll":0.00004924951058349336}`
+    jsonData: `{"position":{"x":2613873.739571409,"y":-973586.3617570958,"z":5718332.700526537},"heading":0.04235783164121365,"pitch":-0.10943287945905267,"roll":0.00004924951058349336}`,
   },
   {
-    jsonData: `{"position":{"x":2853297.0191392438,"y":-1100646.51907959,"z":5735649.018466557},"heading":0.19435325899631994,"pitch":-0.4779283166323647,"roll":0.000010742544064967774}`
+    jsonData: `{"position":{"x":2853297.0191392438,"y":-1100646.51907959,"z":5735649.018466557},"heading":0.19435325899631994,"pitch":-0.4779283166323647,"roll":0.000010742544064967774}`,
   },
   {
-    jsonData: `{"position":{"x":2607037.2626592577,"y":-987102.9507233112,"z":5727420.9039692},"heading":0.6794331897043371,"pitch":-0.42845798915222355,"roll":0.00024172583265791303}`
+    jsonData: `{"position":{"x":2607037.2626592577,"y":-987102.9507233112,"z":5727420.9039692},"heading":0.6794331897043371,"pitch":-0.42845798915222355,"roll":0.00024172583265791303}`,
   },
   {
-    jsonData: `{"position":{"x":2586527.6700988784,"y":-967547.8794308463,"z":5731526.940153026},"heading":3.4627563167442634,"pitch":-0.16078365173401377,"roll":0.00003878486565245254}`
+    jsonData: `{"position":{"x":2586527.6700988784,"y":-967547.8794308463,"z":5731526.940153026},"heading":3.4627563167442634,"pitch":-0.16078365173401377,"roll":0.00003878486565245254}`,
   },
   {
-    jsonData: `{"position":{"x":2582967.5932254517,"y":-989522.1831641375,"z":5728775.872649812},"heading":3.7262135252909556,"pitch":-0.3873144529923971,"roll":0.00002876419102015859}`
+    jsonData: `{"position":{"x":2582967.5932254517,"y":-989522.1831641375,"z":5728775.872649812},"heading":3.7262135252909556,"pitch":-0.3873144529923971,"roll":0.00002876419102015859}`,
   },
   {
-    jsonData: `{"position":{"x":2616466.5232743877,"y":-981239.4266582452,"z":5714685.454756667},"heading":0.5337684728326346,"pitch":-0.07168090089261958,"roll":6.283158352478661}`
+    jsonData: `{"position":{"x":2616466.5232743877,"y":-981239.4266582452,"z":5714685.454756667},"heading":0.5337684728326346,"pitch":-0.07168090089261958,"roll":6.283158352478661}`,
   },
   {
-    jsonData: `{"position":{"x":2605468.8506080373,"y":-964598.5282954393,"z":5722305.954288225},"heading":6.179314307394964,"pitch":-0.4340799514568694,"roll":0.0000117225618820882}`
+    jsonData: `{"position":{"x":2605468.8506080373,"y":-964598.5282954393,"z":5722305.954288225},"heading":6.179314307394964,"pitch":-0.4340799514568694,"roll":0.0000117225618820882}`,
   },
   {
-    jsonData: `{"position":{"x":2575296.8511799383,"y":-925826.7618476085,"z":5742479.521849897},"heading":6.228172042373732,"pitch":-0.14680628178295696,"roll":0.000005087652989566038}`
-  }
+    jsonData: `{"position":{"x":2575296.8511799383,"y":-925826.7618476085,"z":5742479.521849897},"heading":6.228172042373732,"pitch":-0.14680628178295696,"roll":0.000005087652989566038}`,
+  },
 ];
 
 //todo: Have a giant finger come from the sky to press the land areas (or a mouse arrow on desktop)
@@ -73,6 +86,7 @@ const landMarks = [
 // Maybe use tween to animate the quick objects: https://groups.google.com/g/cesium-dev/c/k_Kk3CCuxDw
 // Add cover % how much you have filled in of the tiles
 // Make layers load more smoothly when changing between aerial and other modes
+// Make chat bubbles float above the terrain at a fixed height
 
 export class YpLandUseGame extends YpBaseElement {
   @property({ type: String }) title = "Land Use Game";
@@ -86,9 +100,13 @@ export class YpLandUseGame extends YpBaseElement {
   @property({ type: Object })
   existingBoxes: Map<string, any> = new Map();
 
+  @query("#commentDialog")
+  commentDialog!: MdDialog;
+
   tileManager!: TileManager;
   planeManager!: PlaneManager;
   characterManager!: CharacterManager;
+  currentRectangleIdForComment: string | undefined;
 
   static get styles() {
     return [
@@ -111,6 +129,12 @@ export class YpLandUseGame extends YpBaseElement {
 
         main {
           flex-grow: 1;
+        }
+
+        #commentTextField {
+          text-align: left;
+          min-height: 220px;
+          min-width: 500px;
         }
 
         #cesium-container,
@@ -157,6 +181,31 @@ export class YpLandUseGame extends YpBaseElement {
           font-size: 32px;
         }
 
+        #terrainProviderSelection {
+          position: absolute;
+          top: 10px;
+          right: 32px;
+          z-index: 1;
+          padding: 8px;
+          background-color: rgba(255, 255, 255, 0.5);
+          border-radius: 5px;
+        }
+
+        #terrainProviderSelection button {
+          margin: 5px;
+          font-size: 32px;
+        }
+
+        #gameStats {
+          position: absolute;
+          top: 10px;
+          left: 32px;
+          z-index: 1;
+          padding: 8px;
+          background-color: rgba(255, 255, 255, 0.5);
+          border-radius: 5px;
+        }
+
         #emptyCreditContainer {
           display: none;
         }
@@ -183,16 +232,19 @@ export class YpLandUseGame extends YpBaseElement {
   }
 
   handleKeyDown(event: KeyboardEvent) {
-    if (event.key === "c") {
-      this.copyCameraPositionAndRotation();
-    } else if (event.key === "h") {
-      this.horizonMode();
-    }
+    if (!this.currentRectangleIdForComment) {
+      if (event.key === "c") {
+        this.copyCameraPositionAndRotation();
+      } else if (event.key === "h") {
+        this.horizonMode();
+      }
 
-    // If key is 1-9 choose camera data from landMarks and fly the camera to that position
-    const key = parseInt(event.key);
-    if (key >= 1 && key <= 9) {
-      this.setCameraFromLandMark(key - 1);
+      // If key is 1-9 choose camera data from landMarks and fly the camera to that position
+      const key = parseInt(event.key);
+      if (key >= 1 && key <= 9) {
+        this.setCameraFromLandMark(key - 1);
+      }
+
     }
   }
 
@@ -212,16 +264,18 @@ export class YpLandUseGame extends YpBaseElement {
 
   async horizonMode() {
     const clipboardData = await navigator.clipboard.readText();
-    const { position, heading, pitch, roll } = JSON.parse(clipboardData);
+    if (clipboardData) {
+      const { position, heading, pitch, roll } = JSON.parse(clipboardData);
 
-    this.viewer!.camera.setView({
-      destination: position,
-      orientation: {
-        heading: heading,
-        pitch: pitch,
-        roll: roll,
-      },
-    });
+      this.viewer!.camera.setView({
+        destination: position,
+        orientation: {
+          heading: heading,
+          pitch: pitch,
+          roll: roll,
+        },
+      });
+    }
   }
 
   flyToPosition(
@@ -250,7 +304,6 @@ export class YpLandUseGame extends YpBaseElement {
     });
   }
 
-
   async getTerrainHeight(position: Cartographic): Promise<number> {
     const terrainProvider = this.viewer!.terrainProvider;
     const positions = [position];
@@ -276,9 +329,7 @@ export class YpLandUseGame extends YpBaseElement {
   setCameraFromLandMark(landMarkIndex: number) {
     const landMark = landMarks[landMarkIndex];
     if (landMark && this.viewer) {
-      const { position, heading, pitch, roll } = JSON.parse(
-        landMark.jsonData
-      );
+      const { position, heading, pitch, roll } = JSON.parse(landMark.jsonData);
       this.cancelFlyToPosition();
       this.viewer.camera.setView({
         destination: position,
@@ -289,7 +340,7 @@ export class YpLandUseGame extends YpBaseElement {
         },
       });
     } else {
-      console.warn("No landMark or viewer found for index", landMarkIndex)
+      console.warn("No landMark or viewer found for index", landMarkIndex);
     }
   }
 
@@ -300,8 +351,13 @@ export class YpLandUseGame extends YpBaseElement {
   }
 
   openComment(event: any) {
+    (this.$$("#commentDialog") as Dialog).open = true;
+    this.currentRectangleIdForComment = event.detail.rectangleId;
+  }
 
-
+  closeComment() {
+    (this.$$("#commentDialog") as Dialog).open = false;
+    this.currentRectangleIdForComment = undefined;
   }
 
   setupEventListeners() {
@@ -348,13 +404,12 @@ export class YpLandUseGame extends YpBaseElement {
       this.viewer!.trackedEntity = this.planeManager.plane;
     });
 
-
     // Add event listeners for terrainProvider change
     this.$$("#chooseAerial")!.addEventListener("click", () => {
       this.viewer!.imageryLayers.removeAll();
       this.viewer!.imageryLayers.addImageryProvider(
         Cesium.createWorldImagery({
-          style: Cesium.IonWorldImageryStyle.AERIAL
+          style: Cesium.IonWorldImageryStyle.AERIAL,
         })
       );
     });
@@ -363,7 +418,7 @@ export class YpLandUseGame extends YpBaseElement {
       this.viewer!.imageryLayers.removeAll();
       this.viewer!.imageryLayers.addImageryProvider(
         Cesium.createWorldImagery({
-          style: Cesium.IonWorldImageryStyle.AERIAL_WITH_LABELS
+          style: Cesium.IonWorldImageryStyle.AERIAL_WITH_LABELS,
         })
       );
     });
@@ -372,7 +427,7 @@ export class YpLandUseGame extends YpBaseElement {
       this.viewer!.imageryLayers.removeAll();
       this.viewer!.imageryLayers.addImageryProvider(
         new Cesium.OpenStreetMapImageryProvider({
-          url: "https://a.tile.openstreetmap.org/"
+          url: "https://a.tile.openstreetmap.org/",
         })
       );
     });
@@ -385,14 +440,14 @@ export class YpLandUseGame extends YpBaseElement {
     //@ts-ignore
     Cesium.Ion.defaultAccessToken = __CESIUM_ACCESS_TOKEN__;
 
-    let imageProvider:false | ImageryProvider | undefined;
+    let imageProvider: false | ImageryProvider | undefined;
 
     if (window.location.href.indexOf("localhost") > -1) {
       imageProvider = new Cesium.IonImageryProvider({ assetId: 3954 });
     } else {
       imageProvider = Cesium.createWorldImagery({
         style: Cesium.IonWorldImageryStyle.AERIAL,
-      })
+      });
     }
 
     this.viewer = new Cesium.Viewer(container, {
@@ -404,7 +459,7 @@ export class YpLandUseGame extends YpBaseElement {
       baseLayerPicker: false,
       fullscreenButton: false,
       geocoder: false,
-//      requestRenderMode: true,
+      //      requestRenderMode: true,
       homeButton: false,
       //    infoBox: false,
       sceneModePicker: false,
@@ -415,13 +470,7 @@ export class YpLandUseGame extends YpBaseElement {
       vrButton: false,
       //ts-ignore
       terrainProvider: await Cesium.createWorldTerrainAsync(),
-      /*imageryProvider: new Cesium.OpenStreetMapImageryProvider({
-        url: "https://a.tile.openstreetmap.org/",
-      }),
-      imageryProvider: Cesium.createWorldImagery({
-        style: Cesium.IonWorldImageryStyle.AERIAL_WITH_LABELS,
-      }),*/
-      imageryProvider: imageProvider
+      imageryProvider: imageProvider,
     });
 
     this.viewer.scene.globe.baseColor = Cesium.Color.GRAY;
@@ -435,12 +484,18 @@ export class YpLandUseGame extends YpBaseElement {
       this.viewer.scene.canvas
     );
 
-    screenSpaceEventHandler.setInputAction(async (event: any) => this.tileManager.setInputAction(event), Cesium.ScreenSpaceEventType.LEFT_CLICK);
+    screenSpaceEventHandler.setInputAction(
+      async (event: any) => this.tileManager.setInputAction(event),
+      Cesium.ScreenSpaceEventType.LEFT_CLICK
+    );
 
     //this.viewer.scene.postProcessStages.bloom.enabled = true;
     setTimeout(async () => {
       await this.tileManager.readGeoData();
-      this.planeManager = new PlaneManager(this.viewer!, this.tileManager.geojsonData);
+      this.planeManager = new PlaneManager(
+        this.viewer!,
+        this.tileManager.geojsonData
+      );
       this.planeManager.setup();
       const longLatStart = [63.46578246639273, -18.86733120920245];
       const longLatEnd = [64.74664895142547, -19.35433358999831];
@@ -451,10 +506,7 @@ export class YpLandUseGame extends YpBaseElement {
         longLatStart[0]
       );
 
-      const end = Cesium.Cartesian3.fromDegrees(
-        longLatEnd[1],
-        longLatEnd[0]
-      );
+      const end = Cesium.Cartesian3.fromDegrees(longLatEnd[1], longLatEnd[0]);
 
       this.characterManager = new CharacterManager(this.viewer!, start, end);
       this.characterManager.setupCharacter();
@@ -481,6 +533,34 @@ export class YpLandUseGame extends YpBaseElement {
     );
   }
 
+  saveComment() {
+    const comment = (this.$$("#commentTextField") as HTMLInputElement)!.value;
+    this.commentDialog.close();
+    if (this.currentRectangleIdForComment) {
+      this.tileManager.addCommentToRectangle(
+        this.currentRectangleIdForComment,
+        comment
+      );
+    } else {
+      console.error("Can't find rectangle for comment");
+    }
+  }
+
+  renderFooter() {
+    return html` <div class="layout horizontal">
+      <md-outlined-button
+        label="Close"
+        class="cancelButton self-start"
+        @click="${this.closeComment}"
+      ></md-outlined-button>
+      <md-filled-button
+        label="Submit"
+        id="save"
+        @click="${this.saveComment}"
+      ></md-filled-button>
+    </div>`;
+  }
+
   render() {
     return html`
       <div id="cesium-container"></div>
@@ -498,10 +578,22 @@ export class YpLandUseGame extends YpBaseElement {
       <div id="navigationButtons">
         <button id="showAll">Show all</button>
         <button id="trackPlane">Plane</button>
+      </div>
+
+      <div id="terrainProviderSelection">
         <button id="chooseAerial">Aerial</button>
         <button id="chooseAerialWithLabels">Labels</button>
         <button id="chooseOpenStreetMap">Map</button>
       </div>
+
+      <div id="gameStats"></div>
+      <md-dialog id="commentDialog">
+        <div slot="header" class="postHeader">Your comment</div>
+        <div id="content">
+          <mwc-textarea rows="7" id="commentTextField" label=""></mwc-textarea>
+        </div>
+        <div slot="footer">${this.renderFooter()}</div>
+      </md-dialog>
     `;
   }
 }
