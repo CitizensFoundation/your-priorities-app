@@ -535,15 +535,16 @@ export class YpLandUseGame extends YpBaseElement {
 
   saveComment() {
     const comment = (this.$$("#commentTextField") as HTMLInputElement)!.value;
-    this.commentDialog.close();
     if (this.currentRectangleIdForComment) {
       this.tileManager.addCommentToRectangle(
         this.currentRectangleIdForComment,
         comment
       );
+      (this.$$("#commentTextField") as HTMLInputElement)!.value = "";
     } else {
       console.error("Can't find rectangle for comment");
     }
+    this.closeComment();
   }
 
   renderFooter() {
