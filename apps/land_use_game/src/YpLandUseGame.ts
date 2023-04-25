@@ -48,6 +48,9 @@ const landMarks = [
   },
   {
     jsonData: `{"position":{"x":2605468.8506080373,"y":-964598.5282954393,"z":5722305.954288225},"heading":6.179314307394964,"pitch":-0.4340799514568694,"roll":0.0000117225618820882}`
+  },
+  {
+    jsonData: `{"position":{"x":2575296.8511799383,"y":-925826.7618476085,"z":5742479.521849897},"heading":6.228172042373732,"pitch":-0.14680628178295696,"roll":0.000005087652989566038}`
   }
 ];
 
@@ -265,11 +268,12 @@ export class YpLandUseGame extends YpBaseElement {
 
   setCameraFromLandMark(landMarkIndex: number) {
     const landMark = landMarks[landMarkIndex];
-    if (landMark) {
+    if (landMark && this.viewer) {
       const { position, heading, pitch, roll } = JSON.parse(
         landMark.jsonData
       );
-      this.viewer!.camera.setView({
+      this.cancelFlyToPosition();
+      this.viewer.camera.setView({
         destination: position,
         orientation: {
           heading: heading,
@@ -277,6 +281,8 @@ export class YpLandUseGame extends YpBaseElement {
           roll: roll,
         },
       });
+    } else {
+      console.warn("No landMark or viewer found for index", landMarkIndex)
     }
   }
 
@@ -398,6 +404,13 @@ export class YpLandUseGame extends YpBaseElement {
 
     //Enable lighting based on the sun position
     this.viewer.scene.globe.enableLighting = true;
+
+    const screenSpaceEventHandler = new Cesium.ScreenSpaceEventHandler(
+      this.viewer.scene.canvas
+    );
+
+    screenSpaceEventHandler.setInputAction(async (event: any) => this.tileManager.setInputAction(event), Cesium.ScreenSpaceEventType.LEFT_CLICK);
+
     //this.viewer.scene.postProcessStages.bloom.enabled = true;
     setTimeout(async () => {
       await this.tileManager.readGeoData();
@@ -440,13 +453,6 @@ export class YpLandUseGame extends YpBaseElement {
       3,
       -Cesium.Math.PI_OVER_TWO / 3.2
     );
-
-
-    const screenSpaceEventHandler = new Cesium.ScreenSpaceEventHandler(
-      this.viewer.scene.canvas
-    );
-
-    screenSpaceEventHandler.setInputAction(async (event: any) => this.tileManager.setInputAction(event), Cesium.ScreenSpaceEventType.LEFT_CLICK);
   }
 
   render() {

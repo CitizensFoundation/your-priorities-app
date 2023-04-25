@@ -3,6 +3,7 @@ import {
   Cartographic,
   Clock,
   Color,
+  Entity,
   Model,
   PositionProperty,
   Property,
@@ -12,6 +13,7 @@ import {
   Viewer,
 } from "cesium";
 import { YpCodeBase } from "./@yrpri/common/YpCodeBaseclass";
+import { LandUseEntity } from "./LandUseEntity";
 
 const landUseModelPaths = {
 "energy": "models/CesiumBalloon.glb",
@@ -27,12 +29,18 @@ export class TileManager extends YpCodeBase {
   viewer: Viewer | undefined;
   existingBoxes: Map<string, any> = new Map();
   geojsonData: any;
+  allTiles: Rectangle[] = [];
+  tileEntities: LandUseEntity[] = [];
+  landUseCount: Map<string, number> = new Map();
 
   constructor(viewer: Viewer) {
     super();
     this.viewer = viewer;
   }
 
+  countAssignedRectangles(landUse: string): number {
+    return this.landUseCount.get(landUse) || 0;
+  }
 
   getColor(landuse: string) {
     const red = Math.floor(Math.random() * 256);
@@ -89,9 +97,7 @@ export class TileManager extends YpCodeBase {
     coordinates: any,
     width = 200000,
     height = 100000
-  ): Rectangle[] {
-    const tiles: Rectangle[] = [];
-
+  ):void {
     const west = rectangle.west;
     const south = rectangle.south;
     const east = rectangle.east;
@@ -129,12 +135,10 @@ export class TileManager extends YpCodeBase {
         }
 
         if (inside) {
-          tiles.push(rect);
+          this.allTiles.push(rect);
         }
       }
     }
-
-    return tiles;
   }
 
   async readGeoData() {
@@ -143,7 +147,6 @@ export class TileManager extends YpCodeBase {
       this.geojsonData = await response.json();
 
       this.geojsonData.features.forEach((feature: GeoJSONFeature) => {
-        const landuse = feature.properties.LandUse;
         const coordinates = feature.geometry.coordinates;
         const color = Cesium.Color.BLUE.withAlpha(0.0);
 
@@ -158,7 +161,7 @@ export class TileManager extends YpCodeBase {
           );
           const animationDuration = 40;
 
-          const tiles = this.createTiles(rectangle, coordinates);
+          this.createTiles(rectangle, coordinates);
 
           const sharedMaterial = new Cesium.ColorMaterialProperty(
             new Cesium.CallbackProperty((time, result) => {
@@ -175,13 +178,17 @@ export class TileManager extends YpCodeBase {
           );
 
           // Add each tile as a rectangle entity to the EntityCollection
-          tiles.forEach((tile) => {
-            const entity = this.viewer!.entities.add({
+          this.allTiles.forEach((tile) => {
+            const entity = new LandUseEntity({
               rectangle: {
                 coordinates: tile,
                 material: sharedMaterial,
               },
+              landUseType: this.selectedLandUse,
             });
+
+            this.viewer!.entities.add(entity);
+            this.tileEntities.push(entity);
           });
 
           setTimeout(() => {
@@ -253,14 +260,20 @@ export class TileManager extends YpCodeBase {
       (pickedFeature) => pickedFeature.id && pickedFeature.id.rectangle
     );
 
+    console.log(`rectangleEntity: ${rectangleEntity}`)
+
     if (rectangleEntity) {
       const rectangleId = rectangleEntity.id.id;
 
       // Check if there is an existing box entity for the rectangle
       if (this.selectedLandUse) {
+        console.log(`selectedLandUse: ${this.selectedLandUse}`)
         const newColor = this.getColorForLandUse(
           this.selectedLandUse
         ).withAlpha(0.32);
+
+        const currentCount = this.landUseCount.get(this.selectedLandUse) || 0;
+        this.landUseCount.set(this.selectedLandUse, currentCount + 1);
 
         // Create a new material with the new color
         const newMaterial = new Cesium.ColorMaterialProperty(newColor);
