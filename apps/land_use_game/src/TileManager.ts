@@ -248,7 +248,9 @@ export class TileManager extends YpCodeBase {
     event: any,
     rectangleId: string,
     rectangleEntity: LandUseEntity,
-    unsetIfSameLandUseType = true
+    unsetIfSameLandUseType = true,
+    landUseIconAnimation = true,
+    boxAnimation = true
   ) {
     if (this.selectedLandUse && rectangleEntity.rectangle) {
       if (
@@ -279,7 +281,9 @@ export class TileManager extends YpCodeBase {
         rectangleEntity.rectangle.material = newMaterial;
 
         // Calculate the dimensions of the 3D box based on the rectangle
-        const rectangle = rectangleEntity.rectangle.coordinates!.getValue(Cesium.JulianDate.now());
+        const rectangle = rectangleEntity.rectangle.coordinates!.getValue(
+          Cesium.JulianDate.now()
+        );
 
         const west = Cesium.Math.toDegrees(rectangle.west);
         const south = Cesium.Math.toDegrees(rectangle.south);
@@ -311,96 +315,100 @@ export class TileManager extends YpCodeBase {
           this.existingBoxes.delete(rectangleId);
         }
 
-        // Calculate the distance from the camera to the center of the rectangle
-        const cameraPosition = this.viewer!.camera.position;
-        const boxCenterPosition =
-          Cesium.Ellipsoid.WGS84.cartographicToCartesian(centerPosition);
-        const distance = Cesium.Cartesian3.distance(
-          cameraPosition,
-          boxCenterPosition
-        );
+        if (boxAnimation) {
+          // Calculate the distance from the camera to the center of the rectangle
+          const cameraPosition = this.viewer!.camera.position;
+          const boxCenterPosition =
+            Cesium.Ellipsoid.WGS84.cartographicToCartesian(centerPosition);
+          const distance = Cesium.Cartesian3.distance(
+            cameraPosition,
+            boxCenterPosition
+          );
 
-        // Map the distance to the height range (300-20000)
-        const minDistance = 100;
-        const maxDistance = 50000;
-        const minHeight = 100;
-        const maxHeight = 4500;
-        const height =
-          minHeight +
-          ((distance - minDistance) / (maxDistance - minDistance)) *
-            (maxHeight - minHeight);
+          // Map the distance to the height range (300-20000)
+          const minDistance = 100;
+          const maxDistance = 50000;
+          const minHeight = 100;
+          const maxHeight = 4500;
+          const height =
+            minHeight +
+            ((distance - minDistance) / (maxDistance - minDistance)) *
+              (maxHeight - minHeight);
 
-        // Create a 3D box entity
-        const boxEntity = this.viewer!.entities.add({
-          position: Cesium.Ellipsoid.WGS84.cartographicToCartesian(
-            new Cesium.Cartographic(
-              centerPosition.longitude,
-              centerPosition.latitude,
-              terrainHeight + height / 2
-            )
-          ),
-          box: {
-            dimensions: new Cesium.Cartesian3(width, depth, height),
-            heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
-            material: this.getColorForLandUse(this.selectedLandUse) as any,
-          },
-        });
+          // Create a 3D box entity
+          const boxEntity = this.viewer!.entities.add({
+            position: Cesium.Ellipsoid.WGS84.cartographicToCartesian(
+              new Cesium.Cartographic(
+                centerPosition.longitude,
+                centerPosition.latitude,
+                terrainHeight + height / 2
+              )
+            ),
+            box: {
+              dimensions: new Cesium.Cartesian3(width, depth, height),
+              heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
+              material: this.getColorForLandUse(this.selectedLandUse) as any,
+            },
+          });
 
-        this.existingBoxes.set(rectangleId, boxEntity);
+          this.existingBoxes.set(rectangleId, boxEntity);
 
-        // Remove the box after 3 seconds
-        setTimeout(() => {
-          this.viewer!.entities.remove(boxEntity);
-        }, 2000);
+          // Remove the box after 3 seconds
+          setTimeout(() => {
+            this.viewer!.entities.remove(boxEntity);
+          }, 2000);
+        }
 
-        //@ts-ignore
-        const url = landUseModelPaths[this.selectedLandUse];
+        if (landUseIconAnimation) {
+          //@ts-ignore
+          const url = landUseModelPaths[this.selectedLandUse];
 
-        const startPosition = Cesium.Cartesian3.fromDegrees(
-          (west + east) / 2,
-          (south + north) / 2,
-          500
-        );
-        const endPosition = Cesium.Cartesian3.fromDegrees(
-          (west + east) / 2,
-          (south + north) / 2,
-          150000 // Adjust the value to control how far the model moves upward
-        );
+          const startPosition = Cesium.Cartesian3.fromDegrees(
+            (west + east) / 2,
+            (south + north) / 2,
+            500
+          );
+          const endPosition = Cesium.Cartesian3.fromDegrees(
+            (west + east) / 2,
+            (south + north) / 2,
+            150000 // Adjust the value to control how far the model moves upward
+          );
 
-        const animationClock = new Cesium.Clock({
-          startTime: Cesium.JulianDate.now(),
-          currentTime: this.viewer!.clock.currentTime,
-        });
+          const animationClock = new Cesium.Clock({
+            startTime: Cesium.JulianDate.now(),
+            currentTime: this.viewer!.clock.currentTime,
+          });
 
-        const currentTime = animationClock.currentTime;
-        const durationInSeconds = 25;
-        const endTime = new Cesium.JulianDate();
-        Cesium.JulianDate.addSeconds(currentTime, durationInSeconds, endTime);
+          const currentTime = animationClock.currentTime;
+          const durationInSeconds = 25;
+          const endTime = new Cesium.JulianDate();
+          Cesium.JulianDate.addSeconds(currentTime, durationInSeconds, endTime);
 
-        const positionProperty = new Cesium.SampledPositionProperty();
+          const positionProperty = new Cesium.SampledPositionProperty();
 
-        positionProperty.setInterpolationOptions({
-          interpolationDegree: 1,
-          interpolationAlgorithm: Cesium.LinearApproximation,
-        });
+          positionProperty.setInterpolationOptions({
+            interpolationDegree: 1,
+            interpolationAlgorithm: Cesium.LinearApproximation,
+          });
 
-        positionProperty.addSample(animationClock.currentTime, startPosition);
-        positionProperty.addSample(endTime, endPosition);
+          positionProperty.addSample(animationClock.currentTime, startPosition);
+          positionProperty.addSample(endTime, endPosition);
 
-        const modelInstance = this.createModel(url, positionProperty, 100);
+          const modelInstance = this.createModel(url, positionProperty, 100);
 
-        // Remove the model after the animation is completed
-        setTimeout(() => {
-          this.viewer!.entities.remove(modelInstance);
-        }, durationInSeconds * 40000);
-        setTimeout(() => {
-          modelInstance.position = positionProperty;
-        }, Cesium.JulianDate.secondsDifference(endTime, currentTime) * 1000);
+          // Remove the model after the animation is completed
+          setTimeout(() => {
+            this.viewer!.entities.remove(modelInstance);
+          }, durationInSeconds * 40000);
+          setTimeout(() => {
+            modelInstance.position = positionProperty;
+          }, Cesium.JulianDate.secondsDifference(endTime, currentTime) * 1000);
 
-        // Remove the model after 5 seconds
-        setTimeout(() => {
-          //this.viewer!.entities.remove(modelInstance);
-        }, 50000);
+          // Remove the model after 5 seconds
+          setTimeout(() => {
+            //this.viewer!.entities.remove(modelInstance);
+          }, 50000);
+        }
       }
     }
   }
@@ -423,34 +431,47 @@ export class TileManager extends YpCodeBase {
       } else if (this.selectedLandUse) {
         console.log(`selectedLandUse: ${this.selectedLandUse}`);
         this.processInputForRectangle(event, rectangleId, rectangleEntity.id);
-        if (this.viewer!.camera!.positionCartographic!.height > 30000) {
+        if (this.viewer!.camera!.positionCartographic!.height > 20000) {
           const pickedRectangle = rectangleEntity.id.rectangle;
           const adjacentTiles = this.allTiles.filter((tile) => {
             const centerX1 = (tile.west + tile.east) / 2;
             const centerY1 = (tile.north + tile.south) / 2;
 
             const centerX2 = (pickedRectangle.west + pickedRectangle.east) / 2;
-            const centerY2 = (pickedRectangle.north + pickedRectangle.south) / 2;
+            const centerY2 =
+              (pickedRectangle.north + pickedRectangle.south) / 2;
 
-            const pickedRectangleCoordinates = pickedRectangle.coordinates.getValue(Cesium.JulianDate.now());
+            const pickedRectangleCoordinates =
+              pickedRectangle.coordinates.getValue(Cesium.JulianDate.now());
 
-            const deltaX = Math.abs(tile.west - pickedRectangleCoordinates.west);
-            const deltaY = Math.abs(tile.north - pickedRectangleCoordinates.north);
+            const deltaX = Math.abs(
+              tile.west - pickedRectangleCoordinates.west
+            );
+            const deltaY = Math.abs(
+              tile.north - pickedRectangleCoordinates.north
+            );
 
-            const tileSizeX = pickedRectangleCoordinates.east - pickedRectangleCoordinates.west;
-            const tileSizeY = pickedRectangleCoordinates.north - pickedRectangleCoordinates.south;
+            const tileSizeX =
+              pickedRectangleCoordinates.east - pickedRectangleCoordinates.west;
+            const tileSizeY =
+              pickedRectangleCoordinates.north -
+              pickedRectangleCoordinates.south;
 
-
-            const isAdjacentHorizontally = (deltaX === tileSizeX) && (deltaY <= tileSizeY * 1.1);
-            const isAdjacentVertically = (deltaX <= tileSizeX * 1.1) && (deltaY === tileSizeY);
+            const isAdjacentHorizontally =
+              deltaX === tileSizeX && deltaY <= tileSizeY * 1.1;
+            const isAdjacentVertically =
+              deltaX <= tileSizeX * 1.1 && deltaY === tileSizeY;
             return (
-              (isAdjacentHorizontally || isAdjacentVertically) && tile !== pickedRectangle
+              (isAdjacentHorizontally || isAdjacentVertically) &&
+              tile !== pickedRectangle
             );
           });
 
           for (const adjacentTile of adjacentTiles) {
             const adjacentEntity = this.tileEntities.find((entity) => {
-              const entityCoordinates = entity.rectangle!.coordinates!.getValue(Cesium.JulianDate.now());
+              const entityCoordinates = entity.rectangle!.coordinates!.getValue(
+                Cesium.JulianDate.now()
+              );
               const adjacentTileCoordinates = adjacentTile;
 
               return (
@@ -462,7 +483,13 @@ export class TileManager extends YpCodeBase {
             });
 
             if (adjacentEntity) {
-              this.processInputForRectangle(event, adjacentEntity.id, adjacentEntity, false);
+              this.processInputForRectangle(
+                event,
+                adjacentEntity.id,
+                adjacentEntity,
+                false,
+                false
+              );
 
               // Update the adjacentEntity with the desired changes
               // (e.g., landUseType, material, comment, etc.)
