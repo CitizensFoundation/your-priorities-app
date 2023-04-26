@@ -30,7 +30,7 @@ const landUseModelScales = {
   tourism:  1100,
   recreation: 540,
   restoration:  250,
-  conservation:  800,
+  conservation:  10,
 };
 
 export class TileManager extends YpCodeBase {
@@ -251,6 +251,7 @@ export class TileManager extends YpCodeBase {
 
       rectangleEntity.commentEntity = this.createModel(
         "/models/chatBubble5.glb",
+//        "/models/chatBubble6a.glb",
         position,
         275
       );
