@@ -1,4 +1,4 @@
-import { html, css } from "lit";
+import { html, css, nothing } from "lit";
 import { property, query } from "lit/decorators.js";
 
 import "@material/web/dialog/dialog.js";
@@ -29,6 +29,15 @@ export class YpLandUseGame extends YpBaseElement {
   @property({ type: String })
   selectedLandUse: string | undefined;
 
+  @property({ type: Number })
+  totalNumberOfTiles: number | undefined;
+
+  @property({ type: Number })
+  numberOfTilesWithLandUse: number | undefined;
+
+  @property({ type: Number })
+  numberOfTilesWithComments: number | undefined;
+
   @property({ type: Object })
   viewer: Viewer | undefined;
 
@@ -38,6 +47,7 @@ export class YpLandUseGame extends YpBaseElement {
   @query("#commentDialog")
   commentDialog!: MdDialog;
 
+  targetCommentCount = 5;
   tileManager!: TileManager;
   planeManager!: PlaneManager;
   characterManager!: CharacterManager;
@@ -194,6 +204,34 @@ export class YpLandUseGame extends YpBaseElement {
         #landUse6[selected] {
           background: rgba(128, 0, 128, 0.55); /* purple with 0.25 opacity */
         }
+
+        #progressBars {
+          display: flex;
+          flex-direction: column;
+          gap: 5px;
+          min-width: 250px;
+        }
+
+        .progressBarContainer {
+          width: 100%;
+          height: 30px;
+          background-color: rgba(220, 220, 220, 0.5);
+          border-radius: 5px;
+          position: relative;
+        }
+
+        .progressBar {
+          height: 100%;
+          width: 0%;
+          border-radius: 3px;
+          position: absolute;
+          left: 0;
+          background-color: #953000;
+        }
+
+        .progressBarComments {
+          background-color: #3c87f2;
+        }
       `,
     ];
   }
@@ -344,10 +382,21 @@ export class YpLandUseGame extends YpBaseElement {
     this.currentRectangleIdForComment = undefined;
   }
 
+  updateTileCount(event: any) {
+    this.totalNumberOfTiles = event.detail.totalNumberOfTiles;
+    this.numberOfTilesWithComments = event.detail.numberOfTilesWithComments;
+    this.numberOfTilesWithLandUse = event.detail.numberOfTilesWithLandUse;
+  }
+
   setupEventListeners() {
     document.addEventListener("keydown", this.handleKeyDown.bind(this));
 
     document.addEventListener("open-comment", this.openComment.bind(this));
+
+    document.addEventListener(
+      "update-tile-count",
+      this.updateTileCount.bind(this)
+    );
 
     this.$$("#landUse1")!.addEventListener("click", () => {
       this.setLandUse("energy");
@@ -632,7 +681,32 @@ export class YpLandUseGame extends YpBaseElement {
         <button id="chooseOpenStreetMap">Map</button>
       </div>
 
-      <div id="gameStats"></div>
+      <div id="gameStats">
+        <div id="progressBars">
+          ${this.numberOfTilesWithLandUse != undefined &&
+          this.totalNumberOfTiles != undefined &&
+          this.numberOfTilesWithComments != undefined
+            ? html`
+                <div class="progressBarContainer">
+                  <div
+                    class="progressBar"
+                    style="width: ${(this.numberOfTilesWithLandUse /
+                      this.totalNumberOfTiles) *
+                    100}%"
+                  ></div>
+                </div>
+                <div class="progressBarContainer">
+                  <div
+                    class="progressBar progressBarComments"
+                    style="width: ${(this.numberOfTilesWithComments /
+                      this.targetCommentCount) *
+                    100}%"
+                  ></div>
+                </div>
+              `
+            : nothing}
+        </div>
+      </div>
       <md-dialog id="commentDialog">
         <div slot="header" class="postHeader">Your comment</div>
         <div id="content">

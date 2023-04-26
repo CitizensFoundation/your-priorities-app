@@ -33,6 +33,8 @@ export class TileManager extends YpCodeBase {
   tileEntities: LandUseEntity[] = [];
   landUseCount: Map<string, number> = new Map();
   isCommenting = false;
+  numberOfTilesWithComments = 0;
+  numberOfTilesWithLandUse = 0;
 
   constructor(viewer: Viewer) {
     super();
@@ -197,6 +199,8 @@ export class TileManager extends YpCodeBase {
           }, animationDuration * 1000);
         });
       });
+      this.calculateTileCounts();
+
     } catch (error) {
       console.error("Error fetching GeoJSON data:", error);
     }
@@ -241,6 +245,8 @@ export class TileManager extends YpCodeBase {
         position,
         275
       );
+
+      this.calculateTileCounts();
     }
   }
 
@@ -413,6 +419,38 @@ export class TileManager extends YpCodeBase {
     }
   }
 
+  calculateTileCounts() {
+    let numberOfTilesWithComments = 0;
+    let numberOfTilesWithLandUse = 0;
+
+    this.tileEntities.forEach((landUseEntity: LandUseEntity) => {
+      if (landUseEntity.landUseType) {
+        numberOfTilesWithLandUse += 1;
+      }
+      if (landUseEntity.comment) {
+        numberOfTilesWithComments += 1;
+      }
+    });
+
+    this.numberOfTilesWithComments = numberOfTilesWithComments;
+    this.numberOfTilesWithLandUse = numberOfTilesWithLandUse;
+
+    this.fire(
+      "update-tile-count",
+      {
+        totalNumberOfTiles: this.tileEntities.length,
+        numberOfTilesWithComments: this.numberOfTilesWithComments,
+        numberOfTilesWithLandUse: this.numberOfTilesWithLandUse,
+      },
+      document
+    );
+
+    console.log(`numberOfTilesWithComments: ${numberOfTilesWithComments}`);
+    console.log(`numberOfTilesWithLandUse: ${numberOfTilesWithLandUse}`);
+    console.log(`totalNumberOfTiles: ${this.tileEntities.length}`)
+
+  }
+
   async setInputAction(event: any) {
     const pickedFeatures = this.viewer!.scene.drillPick(event.position);
 
@@ -496,6 +534,8 @@ export class TileManager extends YpCodeBase {
             }
           }
         }
+
+        this.calculateTileCounts();
       }
     }
   }
