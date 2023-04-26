@@ -17,7 +17,7 @@ import { LandUseEntity } from "./LandUseEntity";
 
 const landUseModelPaths = {
   energy: "models/Power.glb",
-  farming: "models/Cesium_Man.glb",
+  farming: "models/Farming.glb",
   tourism: "models/CesiumBalloon.glb",
   recreation: "models/CesiumBalloon.glb",
   restoration: "models/CesiumBalloon.glb",
@@ -26,7 +26,7 @@ const landUseModelPaths = {
 
 const landUseModelScales = {
   energy: 100,
-  farming:  100,
+  farming:  5,
   tourism:  100,
   recreation: 100,
   restoration:  100,
@@ -395,7 +395,7 @@ export class TileManager extends YpCodeBase {
           });
 
           const currentTime = animationClock.currentTime;
-          const durationInSeconds = 35;
+          const durationInSeconds = 60;
           const endTime = new Cesium.JulianDate();
           Cesium.JulianDate.addSeconds(currentTime, durationInSeconds, endTime);
 
