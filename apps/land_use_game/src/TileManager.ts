@@ -24,6 +24,15 @@ const landUseModelPaths = {
   conservation: "models/CesiumBalloon.glb",
 };
 
+const landUseModelScales = {
+  energy: 100,
+  farming:  100,
+  tourism:  100,
+  recreation: 100,
+  restoration:  100,
+  conservation:  100,
+};
+
 export class TileManager extends YpCodeBase {
   selectedLandUse: string | undefined;
   viewer: Viewer | undefined;
@@ -386,7 +395,7 @@ export class TileManager extends YpCodeBase {
           });
 
           const currentTime = animationClock.currentTime;
-          const durationInSeconds = 25;
+          const durationInSeconds = 35;
           const endTime = new Cesium.JulianDate();
           Cesium.JulianDate.addSeconds(currentTime, durationInSeconds, endTime);
 
@@ -400,7 +409,8 @@ export class TileManager extends YpCodeBase {
           positionProperty.addSample(animationClock.currentTime, startPosition);
           positionProperty.addSample(endTime, endPosition);
 
-          const modelInstance = this.createModel(url, positionProperty, 100);
+          //@ts-ignore
+          const modelInstance = this.createModel(url, positionProperty, landUseModelScales[this.selectedLandUse]);
 
           // Remove the model after the animation is completed
           setTimeout(() => {
