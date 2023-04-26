@@ -16,7 +16,7 @@ import { YpCodeBase } from "./@yrpri/common/YpCodeBaseclass";
 import { LandUseEntity } from "./LandUseEntity";
 
 const landUseModelPaths = {
-  energy: "models/CesiumBalloon.glb",
+  energy: "models/Power.glb",
   farming: "models/Cesium_Man.glb",
   tourism: "models/CesiumBalloon.glb",
   recreation: "models/CesiumBalloon.glb",
