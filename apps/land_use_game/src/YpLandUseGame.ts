@@ -22,6 +22,8 @@ import { UIManager } from "./UIManager";
 
 import { landMarks } from "./TestData";
 import { DragonManager } from "./DragonManager";
+import { BullManager } from "./BullManager";
+import { EagleManager } from "./EagleManager";
 
 export class YpLandUseGame extends YpBaseElement {
   @property({ type: String }) title = "Land Use Game";
@@ -54,6 +56,26 @@ export class YpLandUseGame extends YpBaseElement {
   currentRectangleIdForComment: string | undefined;
   uiManager: UIManager | undefined;
   dragonManager!: DragonManager;
+  bullManager!: BullManager;
+  eagleManager!: EagleManager;
+  frameCount = 0;
+  lastFPSLogTime = new Date().getTime();
+
+  logFramerate() {
+    this.frameCount++;
+
+    const currentTime = new Date().getTime();
+    const elapsedTime = currentTime - this.lastFPSLogTime;
+
+    if (elapsedTime >= 1000) { // Log framerate every second
+      const fps = (this.frameCount / elapsedTime) * 1000;
+      console.log(`Framerate: ${fps.toFixed(2)} FPS`);
+      this.frameCount = 0;
+      this.lastFPSLogTime = currentTime;
+    }
+
+    window.requestAnimationFrame(this.logFramerate.bind(this));
+  }
 
   static get styles() {
     return [
@@ -506,8 +528,9 @@ export class YpLandUseGame extends YpBaseElement {
       imageryProvider: imageProvider,
     });
 
-    this.viewer.scene.globe.baseColor = Cesium.Color.GRAY;
+    this.logFramerate();
 
+    this.viewer.scene.globe.baseColor = Cesium.Color.GRAY;
     this.tileManager = new TileManager(this.viewer);
     const iconUrls = [
       "models/CesiumBalloon.glb",
@@ -563,26 +586,71 @@ export class YpLandUseGame extends YpBaseElement {
       );
       this.characterManager.setupCharacter();
 
-      const dragonLongLatStart = [65.56472600995652, -14.117065946587537];
-      const dragonLongLatEnd = [64.80437929394297, -18.70322644445653];
+      setTimeout(() => {
+        const dragonLongLatStart = [65.56472600995652, -14.117065946587537];
+        const dragonLongLatEnd = [64.80437929394297, -18.70322644445653];
 
-      // Convert lang/lat to cartesian
-      const dragonStart = Cesium.Cartesian3.fromDegrees(
-        dragonLongLatStart[1],
-        dragonLongLatStart[0]
+        // Convert lang/lat to cartesian
+        const dragonStart = Cesium.Cartesian3.fromDegrees(
+          dragonLongLatStart[1],
+          dragonLongLatStart[0]
+        );
+
+        const dragonEnd = Cesium.Cartesian3.fromDegrees(
+          dragonLongLatEnd[1],
+          dragonLongLatEnd[0]
+        );
+
+        this.dragonManager = new DragonManager(
+          this.viewer!,
+          dragonStart,
+          dragonEnd
+        );
+        this.dragonManager.setupCharacter();
+      }, 1000*60*60)
+
+      setTimeout(() => {
+        const eagleLongLatStart = [66.13323697690669, -18.916804650989715];
+        const eagleLongLatEnd = [64.67281083721116, -18.55963945209211];
+
+        const eagleStart = Cesium.Cartesian3.fromDegrees(
+          eagleLongLatStart[1],
+          eagleLongLatStart[0]
+        );
+
+        const eagleEnd = Cesium.Cartesian3.fromDegrees(
+          eagleLongLatEnd[1],
+          eagleLongLatEnd[0]
+        );
+
+        this.eagleManager = new EagleManager(
+          this.viewer!,
+          eagleStart,
+          eagleEnd
+        );
+        this.eagleManager.setupCharacter();
+
+        }, 1000*60*60);
+
+      const bullLongLatStart = [64.80294898622358, -23.77641212993773];
+      const bullLongLatEnd = [64.7634513702002, -19.572002677195176];
+
+      const bullStart = Cesium.Cartesian3.fromDegrees(
+        bullLongLatStart[1],
+        bullLongLatStart[0]
       );
 
-      const dragonEnd = Cesium.Cartesian3.fromDegrees(
-        dragonLongLatEnd[1],
-        dragonLongLatEnd[0]
+      const bullEnd = Cesium.Cartesian3.fromDegrees(
+        bullLongLatEnd[1],
+        bullLongLatEnd[0]
       );
 
-      this.dragonManager = new DragonManager(
+      this.bullManager = new BullManager(
         this.viewer!,
-        dragonStart,
-        dragonEnd
+        bullStart,
+        bullEnd
       );
-      this.dragonManager.setupCharacter();
+      this.bullManager.setupCharacter();
     });
 
     //Enable depth testing so things behind the terrain disappear.

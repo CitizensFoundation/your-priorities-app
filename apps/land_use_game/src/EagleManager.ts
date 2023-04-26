@@ -10,8 +10,8 @@ import {
 import { YpCodeBase } from "./@yrpri/common/YpCodeBaseclass";
 import { CharacterManager } from "./CharacterManager";
 
-export class DragonManager extends CharacterManager {
+export class EagleManager extends CharacterManager {
   characterModelUrl = "models/Dragon.glb";
-  animationMultiplier = 0.05;
+  animationMultiplier = 0.7;
   characterScale = 430;
 }

@@ -27,7 +27,7 @@ const landUseModelPaths = {
 const landUseModelScales = {
   energy: 100,
   farming:  4.6,
-  tourism:  400,
+  tourism:  1100,
   recreation: 540,
   restoration:  250,
   conservation:  800,
@@ -386,7 +386,7 @@ export class TileManager extends YpCodeBase {
           const endPosition = Cesium.Cartesian3.fromDegrees(
             (west + east) / 2,
             (south + north) / 2,
-            150000 // Adjust the value to control how far the model moves upward
+            100001 // Adjust the value to control how far the model moves upward
           );
 
           const animationClock = new Cesium.Clock({
@@ -395,7 +395,7 @@ export class TileManager extends YpCodeBase {
           });
 
           const currentTime = animationClock.currentTime;
-          const durationInSeconds = 125;
+          const durationInSeconds = 100;
           const endTime = new Cesium.JulianDate();
           Cesium.JulianDate.addSeconds(currentTime, durationInSeconds, endTime);
 
