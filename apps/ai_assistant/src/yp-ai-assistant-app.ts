@@ -98,14 +98,15 @@ export class YpAiAssistantApp extends YpBaseElement {
       this.fireGlobal('yp-theme-color', savedColor);
     }
 
-    setTimeout(()=>{
+    setTimeout(() => {
       const simplePosts = [
         {
           postId: 72961,
           emojiSummary: '',
           name: 'How to get more traffic to your website',
           description: 'Learn how to get more traffic to your website',
-          imageUrl: 'https://www.yrpri.com/wp-content/uploads/2020/10/traffic.jpg',
+          imageUrl:
+            'https://www.yrpri.com/wp-content/uploads/2020/10/traffic.jpg',
           oneWordSummary: 'Helló',
         },
         {
@@ -113,7 +114,8 @@ export class YpAiAssistantApp extends YpBaseElement {
           name: 'How to get more traffic to your website',
           emojiSummary: '',
           description: 'Learn how to get more traffic to your website',
-          imageUrl: 'https://www.yrpri.com/wp-content/uploads/2020/10/traffic.jpg',
+          imageUrl:
+            'https://www.yrpri.com/wp-content/uploads/2020/10/traffic.jpg',
           oneWordSummary: 'Helló',
         },
         {
@@ -121,7 +123,8 @@ export class YpAiAssistantApp extends YpBaseElement {
           emojiSummary: '',
           name: 'How to get more traffic to your website',
           description: 'Learn how to get more traffic to your website',
-          imageUrl: 'https://www.yrpri.com/wp-content/uploads/2020/10/traffic.jpg',
+          imageUrl:
+            'https://www.yrpri.com/wp-content/uploads/2020/10/traffic.jpg',
           oneWordSummary: 'Helló',
         },
         {
@@ -129,7 +132,8 @@ export class YpAiAssistantApp extends YpBaseElement {
           emojiSummary: '',
           name: 'How to get more traffic to your website',
           description: 'Learn how to get more traffic to your website',
-          imageUrl: 'https://www.yrpri.com/wp-content/uploads/2020/10/traffic.jpg',
+          imageUrl:
+            'https://www.yrpri.com/wp-content/uploads/2020/10/traffic.jpg',
           oneWordSummary: 'Helló',
         },
         {
@@ -137,14 +141,16 @@ export class YpAiAssistantApp extends YpBaseElement {
           emojiSummary: '',
           name: 'How to get more traffic to your website',
           description: 'Learn how to get more traffic to your website',
-          imageUrl: 'https://www.yrpri.com/wp-content/uploads/2020/10/traffic.jpg',
+          imageUrl:
+            'https://www.yrpri.com/wp-content/uploads/2020/10/traffic.jpg',
           oneWordSummary: 'Helló',
         },
         {
           postId: 73121,
           name: 'How to get more traffic to your website',
           description: 'Learn how to get more traffic to your website',
-          imageUrl: 'https://www.yrpri.com/wp-content/uploads/2020/10/traffic.jpg',
+          imageUrl:
+            'https://www.yrpri.com/wp-content/uploads/2020/10/traffic.jpg',
           emojiSummary: '',
           oneWordSummary: 'Helló',
         },
@@ -153,7 +159,8 @@ export class YpAiAssistantApp extends YpBaseElement {
           name: 'How to get more traffic to your website',
           emojiSummary: '',
           description: 'Learn how to get more traffic to your website',
-          imageUrl: 'https://www.yrpri.com/wp-content/uploads/2020/10/traffic.jpg',
+          imageUrl:
+            'https://www.yrpri.com/wp-content/uploads/2020/10/traffic.jpg',
           oneWordSummary: 'Helló',
         },
         {
@@ -161,13 +168,14 @@ export class YpAiAssistantApp extends YpBaseElement {
           emojiSummary: '',
           name: 'How to get more traffic to your website',
           description: 'Learn how to get more traffic to your website',
-          imageUrl: 'https://www.yrpri.com/wp-content/uploads/2020/10/traffic.jpg',
+          imageUrl:
+            'https://www.yrpri.com/wp-content/uploads/2020/10/traffic.jpg',
           oneWordSummary: 'Helló',
         },
       ];
 
       //this.postsDialogs.open(simplePosts as YpSimplePost[], 2);
-    }, 500)
+    }, 500);
   }
 
   disconnectedCallback() {
@@ -177,6 +185,12 @@ export class YpAiAssistantApp extends YpBaseElement {
 
   openPosts(event: CustomEvent) {
     this.postsDialogs.open(event.detail.posts, event.detail.index);
+  }
+
+  updateThemeDarkMode(e: CustomEvent) {
+    this.themeDarkMode = e.detail;
+    this.themeChanged();
+    debugger;
   }
 
   themeChanged(target: HTMLElement | undefined = undefined) {
@@ -193,15 +207,15 @@ export class YpAiAssistantApp extends YpBaseElement {
       },
     ]);
 
-
     // Check if the user has dark mode turned on
     const systemDark =
       this.themeDarkMode === undefined
         ? window.matchMedia('(prefers-color-scheme: dark)').matches
         : this.themeDarkMode;
 
+    debugger;
     // Apply the theme to the body by updating custom properties for material tokens
-    applyTheme(theme, { target: target || this, dark: false /*|| systemDark*/ });
+    applyTheme(theme, { target: target || this, dark: systemDark });
   }
 
   snackbarclosed() {
@@ -346,7 +360,7 @@ export class YpAiAssistantApp extends YpBaseElement {
     this.themeColor = event.detail;
   }
 
-  _renderPage() {
+  NOTUSED_renderPage() {
     if (this.adminConfirmed) {
       switch (this.pageIndex) {
         case PagesTypes.EmailLists:
@@ -354,7 +368,10 @@ export class YpAiAssistantApp extends YpBaseElement {
             ${cache(html`<yp-email-templates> </yp-email-templates>`)}
           `;
         case PagesTypes.Chat:
-          return html`<yp-chat-assistant @theme-color="${this.updateThemeColor}"></yp-chat-assistant>`;
+          return html`<yp-chat-assistant
+            @theme-dark-mode="${this.updateThemeDarkMode}"
+            @theme-color="${this.updateThemeColor}"
+          ></yp-chat-assistant>`;
 
         case PagesTypes.Campaign:
         case PagesTypes.AiAnalysis:
@@ -516,11 +533,18 @@ export class YpAiAssistantApp extends YpBaseElement {
   }
 
   render() {
-    return html`<yp-posts-dialog id="postsDialogs" .clusterId="${this.clusterId}"></yp-posts-dialog
-      ><yp-chat-assistant @theme-color="${this.updateThemeColor}" @open-posts="${this.openPosts}"></yp-chat-assistant>`;
+    return html`<yp-posts-dialog
+        id="postsDialogs"
+        .clusterId="${this.clusterId}"
+      ></yp-posts-dialog
+      ><yp-chat-assistant
+        @theme-dark-mode="${this.updateThemeDarkMode}"
+        @theme-color="${this.updateThemeColor}"
+        @open-posts="${this.openPosts}"
+      ></yp-chat-assistant>`;
   }
 
   renderOld() {
-    return html` <div class="mainPageContainer">${this._renderPage()}</div> `;
+    //return html` <div class="mainPageContainer">${this._renderPage()}</div> `;
   }
 }

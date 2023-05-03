@@ -22,7 +22,7 @@ import '@material/web/textfield/outlined-text-field.js';
 import '@material/web/icon/icon.js';
 
 import '@material/web/iconbutton/outlined-link-icon-button.js';
-import '@material/web/iconbutton/outlined-icon-button-toggle.js';
+import '@material/web/iconbutton/outlined-icon-button.js';
 
 import '../@yrpri/common/yp-image.js';
 import { YpAiChatElement } from './yp-ai-chat-element';
@@ -59,7 +59,7 @@ export class YpChatAssistant extends YpBaseElement {
   communityId: number;
 
   @property({ type: String })
-  textInputLabel: string
+  textInputLabel: string;
 
   @property({ type: String })
   currentFollowUpQuestions: string = '';
@@ -110,13 +110,15 @@ export class YpChatAssistant extends YpBaseElement {
   }
 
   async getCommunity() {
-    fetch(`/api/v1/communities/${this.clusterId}/${this.communityId}/${this.language}`)
+    fetch(
+      `/api/v1/communities/${this.clusterId}/${this.communityId}/${this.language}`
+    )
       .then(response => {
         return response.json();
       })
       .then(community => {
         if (community) {
-          this.fire("theme-color", community.themeMainColor);
+          this.fire('theme-color', community.themeMainColor);
           this.textInputLabel = community.textInputLabel;
           this.addChatBotElement({
             message: community.welcomeMessage,
@@ -446,6 +448,7 @@ export class YpChatAssistant extends YpBaseElement {
   toggleDarkMode() {
     this.themeDarkMode = !this.themeDarkMode;
     this.fire('theme-dark-mode', this.themeDarkMode);
+    debugger;
     this.requestUpdate();
   }
 
@@ -478,14 +481,20 @@ export class YpChatAssistant extends YpBaseElement {
           >send</md-icon
         >
       </md-outlined-text-field>
-      <md-outlined-icon-button-toggle
-        class="darkModeButton"
-        ?selected="${!this.themeDarkMode}"
-        @change="${this.toggleDarkMode}"
-      >
-        <md-icon slot="icon">light_mode</md-icon>
-        <md-icon slot="selectedIcon">dark_mode</md-icon>
-      </md-outlined-icon-button-toggle>
+
+      ${!this.themeDarkMode
+        ? html`
+            <md-outlined-icon-button
+              class="darkModeButton"
+              @click="${this.toggleDarkMode}"
+            >dark_mode</md-outlined-icon-button>
+          `
+        : html`
+            <md-outlined-icon-button
+              class="darkModeButton"
+              @click="${this.toggleDarkMode}"
+            >light_mode</md-outlined-icon-button>
+          `}
     `;
   }
 
