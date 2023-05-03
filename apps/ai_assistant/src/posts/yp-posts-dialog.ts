@@ -23,6 +23,9 @@ export class YpPostsDialog extends YpBaseElement {
   groupId: number = 22785;
 
   @property({ type: Number })
+  clusterId!: number;
+
+  @property({ type: Number })
   currentPostId: number | undefined;
 
   @property({ type: Object })
@@ -32,6 +35,7 @@ export class YpPostsDialog extends YpBaseElement {
   currentIndex: number | undefined;
 
   async connectedCallback() {
+    this.groupId = this.clusterId == 1 ? 22785 : 442;
     super.connectedCallback();
     this.group = await window.serverApi.getGroup(this.groupId);
   }

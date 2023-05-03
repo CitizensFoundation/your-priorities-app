@@ -55,6 +55,9 @@ export class YpAiAssistantApp extends YpBaseElement {
   @property({ type: String })
   collectionType = 'domain';
 
+  @property({ type: Number })
+  clusterId!: number;
+
   @property({ type: String })
   currentError: string | undefined;
 
@@ -66,10 +69,24 @@ export class YpAiAssistantApp extends YpBaseElement {
 
   constructor() {
     super();
+
+    const urlParts = window.location.href.split('/');
+    this.clusterId = parseInt(urlParts[urlParts.length - 3]);
+
     window.serverApi = new YpServerApi(
-      'https://betrireykjavik.is/api'
+      this.getServerUrlFromClusterId(this.clusterId)
     );
     window.appGlobals = new YpAppGlobals(window.serverApi);
+  }
+
+  getServerUrlFromClusterId(clusterId: number) {
+    if (clusterId == 1) {
+      return 'https://betrireykjavik.is/api';
+    } else if (clusterId == 3) {
+      return 'https://ypus.org/api';
+    } else {
+      return 'https://yrpri.org/api';
+    }
   }
 
   connectedCallback() {
@@ -499,7 +516,7 @@ export class YpAiAssistantApp extends YpBaseElement {
   }
 
   render() {
-    return html`<yp-posts-dialog id="postsDialogs"></yp-posts-dialog
+    return html`<yp-posts-dialog id="postsDialogs" .clusterId="${this.clusterId}"></yp-posts-dialog
       ><yp-chat-assistant @theme-color="${this.updateThemeColor}" @open-posts="${this.openPosts}"></yp-chat-assistant>`;
   }
 

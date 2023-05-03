@@ -87,10 +87,10 @@ export class YpChatAssistant extends YpBaseElement {
 
   connectedCallback() {
     if (!this.infoMessage) this.infoMessage = this.defaultInfoMessage;
-    super.connectedCallback();
 
     const urlParts = window.location.href.split('/');
     this.clusterId = parseInt(urlParts[urlParts.length - 3]);
+    super.connectedCallback();
     this.communityId = parseInt(urlParts[urlParts.length - 2]);
     this.language = urlParts[urlParts.length - 1];
 
@@ -110,7 +110,7 @@ export class YpChatAssistant extends YpBaseElement {
   }
 
   async getCommunity() {
-    fetch(`/api/v1/communities/${this.communityId}/${this.language}`)
+    fetch(`/api/v1/communities/${this.clusterId}/${this.communityId}/${this.language}`)
       .then(response => {
         return response.json();
       })
@@ -489,7 +489,7 @@ export class YpChatAssistant extends YpBaseElement {
     `;
   }
 
-  renderVirtualizer() {
+  NOTUSEDrenderVirtualizer() {
     return html`
       <div class="chat-window" id="chat-window">
         <div class="chat-messages" id="chat-messages">
@@ -499,6 +499,7 @@ export class YpChatAssistant extends YpBaseElement {
               renderItem: chatElement => html`<li>
                 <yp-ai-chat-element
                   @followup-question="${this.followUpQuestion}"
+                  .clusterId="${this.clusterId}"
                   .message="${chatElement.message}"
                   .type="${chatElement.type}"
                   .sender="${chatElement.sender}"
@@ -527,6 +528,7 @@ export class YpChatAssistant extends YpBaseElement {
               <yp-ai-chat-element
                 ?thinking="${chatElement.type === 'thinking'}"
                 @followup-question="${this.followUpQuestion}"
+                .clusterId="${this.clusterId}"
                 class="${chatElement.sender}-chat-element"
                 .detectedLanguage="${this.language}"
                 .message="${chatElement.message}"

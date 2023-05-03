@@ -21,6 +21,9 @@ export class YpAiChatElement extends YpBaseElement {
   @property({ type: String })
   detectedLanguage: string
 
+  @property({ type: Number })
+  clusterId: number;
+
   @property({ type: String })
   type:
     | 'start'
@@ -339,7 +342,8 @@ export class YpAiChatElement extends YpBaseElement {
   checkPosts() {
     if (this.posts && this.postIds && this.posts.length < this.postIds.length) {
       const lastPostId = this.postIds[this.postIds.length - 1];
-      fetch(`/api/v1/posts/${lastPostId}`, {
+
+      fetch(`/api/v1/posts/${this.clusterId}/${lastPostId}`, {
         headers: {
           'Content-Type': 'application/json',
         },
@@ -394,7 +398,6 @@ export class YpAiChatElement extends YpBaseElement {
 
   getThinkingText() {
     //TODO: Fix this activate i18n
-    debugger;
     if (this.detectedLanguage=="es") {
       return "Mõeldes..."
     } else if (this.detectedLanguage=="is") {
