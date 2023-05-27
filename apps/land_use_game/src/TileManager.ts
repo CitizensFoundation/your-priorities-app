@@ -48,6 +48,9 @@ export class TileManager extends YpCodeBase {
   constructor(viewer: Viewer) {
     super();
     this.viewer = viewer;
+    setTimeout(() => {
+      this.exportJSON();
+    } , 40000);
   }
 
   countAssignedRectangles(landUse: string): number {
@@ -428,6 +431,13 @@ export class TileManager extends YpCodeBase {
         }
       }
     }
+  }
+
+  exportJSON(): string {
+    const entitiesWithLandUseType = this.tileEntities.filter(entity => (entity.landUseType !== undefined || entity.comment !== undefined));
+    const jsonData = JSON.stringify(entitiesWithLandUseType.map(entity => entity.toJSON()), null, 2);
+    console.log(`All entities length: ${this.tileEntities.length} entitiesWithLandUseType length: ${entitiesWithLandUseType.length}`);
+    return jsonData;
   }
 
   calculateTileCounts() {

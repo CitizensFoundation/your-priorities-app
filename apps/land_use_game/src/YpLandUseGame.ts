@@ -76,7 +76,6 @@ export class YpLandUseGame extends YpBaseElement {
   frameCount = 0;
   lastFPSLogTime = new Date().getTime();
 
-
   logFramerate() {
     this.frameCount++;
 
@@ -112,7 +111,6 @@ export class YpLandUseGame extends YpBaseElement {
           text-align: center;
           background-color: var(--yp-land-use-game-background-color);
         }
-
 
         main {
           flex-grow: 1;
@@ -298,7 +296,7 @@ export class YpLandUseGame extends YpBaseElement {
     this.group = await window.appGlobals.setupGroup();
     super.connectedCallback();
     setTimeout(async () => {
-      window.appUser.openUserlogin();
+      if (!this.loggedInUser) window.appUser.openUserlogin();
     }, 3000);
   }
 
@@ -760,6 +758,7 @@ export class YpLandUseGame extends YpBaseElement {
             Conservation
           </button>
           <button id="commentButton">Comment</button>
+          <button id="submitButton">Submit</button>
         </div>
 
         <div id="navigationButtons">

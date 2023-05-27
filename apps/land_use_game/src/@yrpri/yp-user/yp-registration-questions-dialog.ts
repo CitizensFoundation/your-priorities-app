@@ -113,8 +113,10 @@ export class YpRegistrationQuestionsDialog extends YpBaseElement {
     }
   }
 
-  open(registrationQuestionsGroup: YpGroupData) {
+  async open(registrationQuestionsGroup: YpGroupData) {
     this.registrationQuestionsGroup = registrationQuestionsGroup;
+    await this.requestUpdate();
+
     (this.$$('#dialog') as Dialog).open = true;
   }
 
