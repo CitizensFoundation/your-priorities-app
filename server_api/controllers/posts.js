@@ -715,6 +715,14 @@ var updatePostData = function (req, post) {
     });
   }
 
+  if (req.body.privateData) {
+    try {
+      post.set('data.privateData', JSON.parse(req.body.privateData));
+    } catch (error) {
+      log.error("Error in parsing json for privateData", error);
+    }
+  }
+
   if (!post.data.contact) {
     post.set('data.contact', {});
   }
@@ -798,7 +806,7 @@ router.post('/:groupId', auth.can('create post'), function(req, res) {
   }).then((group) => {
     var post = models.Post.build({
       name: req.body.name,
-      description: req.body.description,
+      description: req.body.description || "",
       group_id: req.params.groupId,
       category_id: req.body.categoryId != "" ? req.body.categoryId : null,
       location: req.body.location != "" ? JSON.parse(req.body.location) : null,
