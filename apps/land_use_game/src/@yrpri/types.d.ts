@@ -464,6 +464,7 @@ interface YpPostData extends YpDatabaseItem {
   counter_endorsements_up: number;
   counter_endorsements_down: number;
   counter_points: number;
+  publicPrivateData?: any;
   data?: {
     attachment?: {
       filename: string;

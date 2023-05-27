@@ -2,6 +2,12 @@ import { YpServerApiBase } from './YpServerApiBase.js';
 
 export class YpServerApi extends YpServerApiBase {
 
+  public getPublicPrivatePosts(groupId: number) {
+    return this.fetchWrapper(
+      this.baseUrlPath + `/groups/${groupId}/get_posts_with_public_private`
+    );
+  }
+
   constructor(urlPath: string = '/api') {
     super();
     this.baseUrlPath = urlPath;

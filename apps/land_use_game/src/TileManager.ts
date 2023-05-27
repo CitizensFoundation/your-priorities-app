@@ -13,7 +13,7 @@ import {
   Viewer,
 } from "cesium";
 import { YpCodeBase } from "./@yrpri/common/YpCodeBaseclass";
-import { LandUseEntity } from "./LandUseEntity";
+import { LandUseEntity, LandUseEntityOptions } from "./LandUseEntity";
 
 const landUseModelPaths = {
   energy: "models/Power.glb",
@@ -26,11 +26,11 @@ const landUseModelPaths = {
 
 const landUseModelScales = {
   energy: 100,
-  gracing:  4.6,
-  tourism:  1100,
+  gracing: 4.6,
+  tourism: 1100,
   recreation: 540,
-  restoration:  250,
-  conservation:  10,
+  restoration: 250,
+  conservation: 10,
 };
 
 export class TileManager extends YpCodeBase {
@@ -40,6 +40,8 @@ export class TileManager extends YpCodeBase {
   geojsonData: any;
   allTiles: Rectangle[] = [];
   tileEntities: LandUseEntity[] = [];
+  tileRectangleIndex: Map<string, LandUseEntity> = new Map();
+
   landUseCount: Map<string, number> = new Map();
   isCommenting = false;
   numberOfTilesWithComments = 0;
@@ -48,6 +50,104 @@ export class TileManager extends YpCodeBase {
   constructor(viewer: Viewer) {
     super();
     this.viewer = viewer;
+  }
+
+  setupTileResults(posts: YpPostData[]) {
+    const rectangleLandUseCounts = new Map<string, Map<string, number>>();
+    const landUseCount: Map<string, number> = new Map();
+
+    if (posts) {
+      posts.forEach((post) => {
+        // Iterate over each item in the privateData array
+        post.publicPrivateData.forEach(
+          (item: { landUseType: any; rectangleIndex: any }) => {
+            // Get the landUseType and rectangleIndex from the item
+            const { landUseType, rectangleIndex } = item;
+
+            // If the rectangleIndex doesn't exist in the map yet, add it with a new Map for its landUseCounts
+            if (!rectangleLandUseCounts.has(rectangleIndex)) {
+              rectangleLandUseCounts.set(rectangleIndex, new Map());
+            }
+
+            // Get the landUseCounts for this rectangleIndex
+            const landUseCounts = rectangleLandUseCounts.get(rectangleIndex)!;
+
+            // If the landUseType doesn't exist in the landUseCounts yet, add it with a count of 0
+            if (!landUseCounts.has(landUseType)) {
+              landUseCounts.set(landUseType, 0);
+            }
+
+            // Increment the count for this landUseType
+            landUseCounts.set(landUseType, landUseCounts.get(landUseType)! + 1);
+
+            // Count total landuse types
+            if (!landUseCount.has(landUseType)) {
+              landUseCount.set(landUseType, 0);
+            }
+            landUseCount.set(landUseType, landUseCount.get(landUseType)! + 1);
+          }
+        );
+      });
+
+      // Set landUseCount in the class scope
+      this.landUseCount = landUseCount;
+
+      const minDistance = 100;
+      const maxDistance = 50000;
+      const minHeight = 100;
+      const maxHeight = 4500;
+
+      // Now create box entities based on these counts
+      rectangleLandUseCounts.forEach(async (landUseCounts, rectangleIndex) => {
+        // Get the rectangle from the rectangleIndex
+        const rectangleEntity = this.tileRectangleIndex.get(rectangleIndex);
+        const rectangle = rectangleEntity!.rectangle!.coordinates!.getValue(
+          Cesium.JulianDate.now()
+        );
+
+        if (rectangleEntity && rectangle) {
+          const centerPosition = Cesium.Rectangle.center(rectangle);
+          const centerLatitude = Cesium.Math.toDegrees(centerPosition.latitude);
+          const terrainHeight = await this.getTerrainHeight(centerPosition);
+          const widthInRadians = rectangle.width;
+          const heightInRadians = rectangle.height;
+
+          const width = Math.abs(
+            widthInRadians *
+              Math.cos(centerPosition.latitude) *
+              Cesium.Ellipsoid.WGS84.maximumRadius
+          );
+          const depth = Math.abs(
+            heightInRadians * Cesium.Ellipsoid.WGS84.maximumRadius
+          );
+
+          landUseCounts.forEach((count, landUseType) => {
+            console.error("landUseType: " + landUseType + ", count: " + count)
+            // Create box entity with size based on the count
+            let height = count*3000;
+            const boxEntity = this.viewer!.entities.add({
+              position: Cesium.Ellipsoid.WGS84.cartographicToCartesian(
+                new Cesium.Cartographic(
+                  centerPosition.longitude,
+                  centerPosition.latitude,
+                  terrainHeight + height / 2
+                )
+              ),
+              box: {
+                dimensions: new Cesium.Cartesian3(width, depth, height),
+                heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
+                material: this.getColorForLandUse(landUseType, 0.2) as any,
+              },
+            });
+          });
+        } else {
+          console.error("No rectangle entity found for index: " + rectangleIndex);
+        }
+      });
+    } else {
+      console.error("No posts found")
+    }
+
   }
 
   countAssignedRectangles(landUse: string): number {
@@ -199,6 +299,8 @@ export class TileManager extends YpCodeBase {
               landUseType: this.selectedLandUse,
             });
 
+            this.tileRectangleIndex.set(entity.rectangleIndex!, entity);
+
             this.viewer!.entities.add(entity);
             this.tileEntities.push(entity);
           });
@@ -209,7 +311,6 @@ export class TileManager extends YpCodeBase {
         });
       });
       this.calculateTileCounts();
-
     } catch (error) {
       console.error("Error fetching GeoJSON data:", error);
     }
@@ -251,13 +352,49 @@ export class TileManager extends YpCodeBase {
 
       rectangleEntity.commentEntity = this.createModel(
         "/models/chatBubble5.glb",
-//        "/models/chatBubble6a.glb",
+        //        "/models/chatBubble6a.glb",
         position,
         275
       );
 
       this.calculateTileCounts();
     }
+  }
+
+  clearLandUsesAndComments(): void {
+    // Loop over all tile entities
+    for (const entity of this.tileEntities) {
+      // Clear the land use type and comment
+      entity.landUseType = undefined;
+      entity.comment = undefined;
+      entity.landUseVotes = new Map<string, number>();
+
+      // If there is a comment entity associated, remove it from the viewer's entities
+      if (entity.commentEntity) {
+        this.viewer!.entities.remove(entity.commentEntity);
+        entity.commentEntity = undefined;
+      }
+
+      // Reset the rectangle material to a default color (e.g., transparent white)
+      if (entity.rectangle) {
+        entity.rectangle.material = new Cesium.ColorMaterialProperty(
+          Cesium.Color.WHITE.withAlpha(0.0)
+        );
+      }
+    }
+
+    // Clear the existing boxes
+    for (const box of this.existingBoxes.values()) {
+      this.viewer!.entities.remove(box);
+    }
+    this.existingBoxes.clear();
+
+    // Reset the land use count
+    this.landUseCount.clear();
+
+    // Reset the number of tiles with comments and land use
+    this.numberOfTilesWithComments = 0;
+    this.numberOfTilesWithLandUse = 0;
   }
 
   async processInputForRectangle(
@@ -410,8 +547,12 @@ export class TileManager extends YpCodeBase {
           positionProperty.addSample(animationClock.currentTime, startPosition);
           positionProperty.addSample(endTime, endPosition);
 
-          //@ts-ignore
-          const modelInstance = this.createModel(url, positionProperty, landUseModelScales[this.selectedLandUse]);
+          const modelInstance = this.createModel(
+            url,
+            positionProperty,
+            //@ts-ignore
+            landUseModelScales[this.selectedLandUse]
+          );
 
           // Remove the model after the animation is completed
           setTimeout(() => {
@@ -431,9 +572,18 @@ export class TileManager extends YpCodeBase {
   }
 
   exportJSON(): string {
-    const entitiesWithLandUseType = this.tileEntities.filter(entity => (entity.landUseType !== undefined || entity.comment !== undefined));
-    const jsonData = JSON.stringify(entitiesWithLandUseType.map(entity => entity.toJSON()), null, 2);
-    console.log(`All entities length: ${this.tileEntities.length} entitiesWithLandUseType length: ${entitiesWithLandUseType.length}`);
+    const entitiesWithLandUseType = this.tileEntities.filter(
+      (entity) =>
+        entity.landUseType !== undefined || entity.comment !== undefined
+    );
+    const jsonData = JSON.stringify(
+      entitiesWithLandUseType.map((entity) => entity.toJSON()),
+      null,
+      2
+    );
+    console.log(
+      `All entities length: ${this.tileEntities.length} entitiesWithLandUseType length: ${entitiesWithLandUseType.length}`
+    );
     return jsonData;
   }
 
@@ -465,8 +615,7 @@ export class TileManager extends YpCodeBase {
 
     console.log(`numberOfTilesWithComments: ${numberOfTilesWithComments}`);
     console.log(`numberOfTilesWithLandUse: ${numberOfTilesWithLandUse}`);
-    console.log(`totalNumberOfTiles: ${this.tileEntities.length}`)
-
+    console.log(`totalNumberOfTiles: ${this.tileEntities.length}`);
   }
 
   async setInputAction(event: any) {
@@ -570,21 +719,21 @@ export class TileManager extends YpCodeBase {
     return sampledPositions[0].height;
   }
 
-  getColorForLandUse(landUse: string) {
+  getColorForLandUse(landUse: string, alpha = 0.3) {
     // Return a Cesium.Color based on the selected land use
     switch (landUse) {
       case "energy":
-        return Cesium.Color.RED.withAlpha(0.3);
+        return Cesium.Color.RED.withAlpha(alpha);
       case "gracing":
-        return Cesium.Color.BLUE.withAlpha(0.3);
+        return Cesium.Color.BLUE.withAlpha(alpha);
       case "tourism":
-        return Cesium.Color.ORANGE.withAlpha(0.3);
+        return Cesium.Color.ORANGE.withAlpha(alpha);
       case "recreation":
-        return Cesium.Color.YELLOW.withAlpha(0.3);
+        return Cesium.Color.YELLOW.withAlpha(alpha);
       case "restoration":
-        return Cesium.Color.CYAN.withAlpha(0.3);
+        return Cesium.Color.CYAN.withAlpha(alpha);
       case "conservation":
-        return Cesium.Color.PURPLE.withAlpha(0.3);
+        return Cesium.Color.PURPLE.withAlpha(alpha);
       default:
         return Cesium.Color.TRANSPARENT;
     }

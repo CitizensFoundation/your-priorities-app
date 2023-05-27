@@ -25,6 +25,7 @@ const {updateSurveyTranslation} = require("../active-citizen/utils/translation_h
 const {plausibleStatsProxy, getPlausibleStats} = require("../active-citizen/engine/analytics/plausible/manager");
 const {countAllModeratedItemsByGroup} = require("../active-citizen/engine/moderation/get_moderation_items");
 const {isValidDbId} = require("../utils/is_valid_db_id");
+const {Sequelize} = require("sequelize");
 
 const getFromAnalyticsApi = require('../active-citizen/engine/analytics/manager').getFromAnalyticsApi;
 const triggerSimilaritiesTraining = require('../active-citizen/engine/analytics/manager').triggerSimilaritiesTraining;
@@ -2985,6 +2986,28 @@ router.delete('/:groupId/:campaignId/delete_campaign', auth.can('edit group mark
     res.sendStatus(200);
   } catch (error) {
     log.error('Could not delete_campaign campaigns', { err: error, context: 'delete_campaign', user: toJson(req.user.simple()) });
+    res.sendStatus(500);
+  }
+});
+
+router.get('/:groupId/get_posts_with_public_private', auth.can('view group'), async (req, res) => {
+  try {
+    const posts = await models.Post.findAll({
+      where: {
+        group_id: req.params.groupId,
+        [Sequelize.Op.and]: [Sequelize.literal(`"data"->'publicPrivateData' IS NOT NULL`)]
+      },
+      order: [
+        ['created_at', 'desc']
+      ],
+      attributes: [
+        'id',
+        [models.sequelize.literal('"data"->\'publicPrivateData\''), 'publicPrivateData']
+      ]
+    });
+    res.send(posts);
+  } catch (error) {
+    log.error('Could not get get_posts_with_public_private', { err: error, context: 'get_campaigns', user: toJson(req.user.simple()) });
     res.sendStatus(500);
   }
 });

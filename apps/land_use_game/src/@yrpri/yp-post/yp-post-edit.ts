@@ -995,7 +995,7 @@ export class YpPostEdit extends YpEditBase {
         .value="${this.structuredAnswersJson}" />
         <input
         type="hidden"
-        name="privateData"
+        name="publicPrivateData"
         .value="${this.tileDataJson}" />
   `;
 

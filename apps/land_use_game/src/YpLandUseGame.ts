@@ -354,6 +354,11 @@ export class YpLandUseGame extends YpBaseElement {
     }
   }
 
+  async setupTileResults() {
+    const posts = await window.serverApi.getPublicPrivatePosts(this.group!.id);
+    this.tileManager.setupTileResults(posts);
+  }
+
   flyToPosition(
     longitude: number,
     latitude: number,
@@ -707,6 +712,8 @@ export class YpLandUseGame extends YpBaseElement {
 
       this.bullManager = new BullManager(this.viewer!, bullStart, bullEnd);
       this.bullManager.setupCharacter();
+
+      this.setupTileResults();
     });
 
     //Enable depth testing so things behind the terrain disappear.

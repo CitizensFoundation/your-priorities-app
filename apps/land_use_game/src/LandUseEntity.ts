@@ -2,6 +2,8 @@ import { Entity } from "cesium";
 
 export type LandUseEntityOptions = ConstructorParameters<typeof Entity>[0] & {
   landUseType?: string;
+  rectangleIndex?: string;
+  landUseVotes?: Map<string, number>;
 };
 
 export class LandUseEntity extends Cesium.Entity {
@@ -14,8 +16,8 @@ export class LandUseEntity extends Cesium.Entity {
   constructor(options: LandUseEntityOptions) {
     super(options);
     this.landUseType = options.landUseType;
-    const coordinates =
-      this.rectangle &&
+    if (this.rectangle) {
+      const coordinates =
       this.rectangle.coordinates &&
       this.rectangle.coordinates.getValue(Cesium.JulianDate.now());
     this.rectangleIndex = `${Cesium.Math.toDegrees(
@@ -23,6 +25,7 @@ export class LandUseEntity extends Cesium.Entity {
     )}|${Cesium.Math.toDegrees(coordinates.south)}|${Cesium.Math.toDegrees(
       coordinates.east
     )}|${Cesium.Math.toDegrees(coordinates.north)}`;
+    }
   }
 
   toJSON(): any {

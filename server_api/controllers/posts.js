@@ -715,11 +715,11 @@ var updatePostData = function (req, post) {
     });
   }
 
-  if (req.body.privateData) {
+  if (req.body.publicPrivateData) {
     try {
-      post.set('data.privateData', JSON.parse(req.body.privateData));
+      post.set('data.publicPrivateData', JSON.parse(req.body.publicPrivateData));
     } catch (error) {
-      log.error("Error in parsing json for privateData", error);
+      log.error("Error in parsing json for publicPrivateData", error);
     }
   }
 
