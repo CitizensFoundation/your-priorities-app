@@ -9,7 +9,7 @@ import rollupNodePolyfills from "rollup-plugin-polyfill-node";
 import rollupAlias from "@rollup/plugin-alias";
 
 /** Use Hot Module replacement by adding --hmr to the start command */
-const hmr = process.argv.includes("--hmr");
+
 
 import resolve from "@rollup/plugin-node-resolve";
 const nodeResolve = fromRollup(resolve);
@@ -22,7 +22,8 @@ const alias = fromRollup(rollupAlias);
 
 export default /** @type {import('@web/dev-server').DevServerConfig} */ ({
   open: "/",
-  watch: !hmr,
+  watch: true,
+  appIndex: "index.html",
   /** Resolve bare module imports */
   nodeResolve: false,
   mimeTypes: {
@@ -36,22 +37,13 @@ export default /** @type {import('@web/dev-server').DevServerConfig} */ ({
       preferBuiltins: true,
     }),
     //commonJs(),
-    commonJs({
-      include: [
-        "node_modules/mersenne-twister/**",
-        "node_modules/urijs/**",
-        //"node_modules/cesium/**",
-        //"node_modules/@cesium/**",
-        "node_modules/grapheme-splitter/**",
-        "node_modules/@turf/**",
-        "node_modules/bitmap-sdf/**",
-        "node_modules/earcut/**",
-        "node_modules/lerc/**",
-        "node_modules/nosleep.js/**",
-      ],
-    }),
+
     copy({
       targets: [
+        {
+          src: "src/@yrpri/yp-magic-text/twemoji.min.js",
+          dest: "out-tsc/src/@yrpri/yp-magic-text/twemoji.min.js"
+        },
         {
           src: "node_modules/cesium/Source/Workers",
           dest: "dist/Workers",
@@ -80,11 +72,8 @@ export default /** @type {import('@web/dev-server').DevServerConfig} */ ({
     }),
   ],
   middleware: [
-    /*proxy('/api/', {
+    proxy('/api/', {
       target: 'http://localhost:4242/',
-    }),*/
-    proxy("/api/v1/", {
-      target: "http://localhost:9000/",
     }),
   ],
 });

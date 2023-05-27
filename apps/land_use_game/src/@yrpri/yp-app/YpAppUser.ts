@@ -1,7 +1,7 @@
 import { YpServerApi } from '../common/YpServerApi.js';
 import { YpCodeBase } from '../common/YpCodeBaseclass.js';
 import { YpAccessHelpers } from '../common/YpAccessHelpers.js';
-//import { any /*YpLogin*/ } from '../yp-user/yp-login.js';
+import { YpLogin } from '../yp-user/yp-login.js';
 //import { Snackbar } from '@material/mwc-snackbar';
 //import { YpRegistrationQuestionsDialog } from '../yp-user/yp-registration-questions-dialog.js';
 

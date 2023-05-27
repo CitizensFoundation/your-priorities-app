@@ -12,6 +12,6 @@ import { CharacterManager } from "./CharacterManager";
 
 export class DragonManager extends CharacterManager {
   characterModelUrl = "models/Dragon.glb";
-  animationMultiplier = 0.05;
+  animationMultiplier = 0.5;
   characterScale = 430;
 }

@@ -102,18 +102,16 @@ export class YpAppGlobals extends YpCodeBase {
     this.appStartTime = new Date();
 
     this.serverApi = serverApi;
-    this.recommendations = new YpRecommendations(serverApi);
+    this.recommendations = new YpRecommendations(this.serverApi);
     this.cache = new YpCache();
     this.analytics = new YpAnalytics();
     this.theme = new YpThemeManager();
     this.offline = new YpOffline();
 
-    // Boot
     this.boot();
     this.hasVideoUploadSupport();
     this.hasAudioUploadSupport();
 
-    //TODO: See if this is recieved
     this.fireGlobal('app-ready');
     this.parseQueryString();
     this.addGlobalListener('yp-logged-in', this._userLoggedIn.bind(this));

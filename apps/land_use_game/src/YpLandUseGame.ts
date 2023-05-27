@@ -24,6 +24,12 @@ import { landMarks } from "./TestData";
 import { DragonManager } from "./DragonManager";
 import { BullManager } from "./BullManager";
 import { EagleManager } from "./EagleManager";
+import { YpServerApi } from "./@yrpri/common/YpServerApi";
+import { LandUseAppGlobals } from "./LandUseAppGlobals";
+import { YpAppUser } from "./@yrpri/yp-app/YpAppUser";
+import { YpAppDialogs } from "./@yrpri/yp-dialog-container/yp-app-dialogs";
+
+import "./@yrpri/yp-dialog-container/yp-app-dialogs.js";
 
 export class YpLandUseGame extends YpBaseElement {
   @property({ type: String }) title = "Land Use Game";
@@ -40,11 +46,20 @@ export class YpLandUseGame extends YpBaseElement {
   @property({ type: Number })
   numberOfTilesWithComments: number | undefined;
 
+  @property({ type: Boolean })
+  hideUI = true;
+
   @property({ type: Object })
   viewer: Viewer | undefined;
 
   @property({ type: Object })
+  loggedInUser: YpUserData | undefined;
+
+  @property({ type: Object })
   existingBoxes: Map<string, any> = new Map();
+
+  @property({ type: Object })
+  group: YpGroupData | undefined;
 
   @query("#commentDialog")
   commentDialog!: MdDialog;
@@ -61,13 +76,15 @@ export class YpLandUseGame extends YpBaseElement {
   frameCount = 0;
   lastFPSLogTime = new Date().getTime();
 
+
   logFramerate() {
     this.frameCount++;
 
     const currentTime = new Date().getTime();
     const elapsedTime = currentTime - this.lastFPSLogTime;
 
-    if (elapsedTime >= 1000) { // Log framerate every second
+    if (elapsedTime >= 1000) {
+      // Log framerate every second
       const fps = (this.frameCount / elapsedTime) * 1000;
       console.log(`Framerate: ${fps.toFixed(2)} FPS`);
       this.frameCount = 0;
@@ -95,6 +112,7 @@ export class YpLandUseGame extends YpBaseElement {
           text-align: center;
           background-color: var(--yp-land-use-game-background-color);
         }
+
 
         main {
           flex-grow: 1;
@@ -259,13 +277,29 @@ export class YpLandUseGame extends YpBaseElement {
   }
 
   constructor() {
+    window.serverApi = new YpServerApi();
+    window.appGlobals = new LandUseAppGlobals(window.serverApi);
+    window.appUser = new YpAppUser(window.serverApi);
     super();
+    this.addListener("yp-app-dialogs-ready", this._appDialogsReady.bind(this));
+    this.addGlobalListener("yp-logged-in", this._loggedIn.bind(this));
   }
 
-  connectedCallback(): void {
+  async _loggedIn(event: CustomEvent) {
+    this.loggedInUser = event.detail;
+    this.hideUI = false;
+    await this.updateComplete;
+    this.setupEventListeners();
+  }
+
+  async connectedCallback() {
     // @ts-ignore
     window.CESIUM_BASE_URL = "";
+    this.group = await window.appGlobals.setupGroup();
     super.connectedCallback();
+    setTimeout(async () => {
+      window.appUser.openUserlogin();
+    }, 3000);
   }
 
   protected firstUpdated(
@@ -273,7 +307,6 @@ export class YpLandUseGame extends YpBaseElement {
   ): void {
     super.firstUpdated(_changedProperties);
     this.initScene();
-    this.setupEventListeners();
   }
 
   handleKeyDown(event: KeyboardEvent) {
@@ -425,7 +458,7 @@ export class YpLandUseGame extends YpBaseElement {
     });
 
     this.$$("#landUse2")!.addEventListener("click", () => {
-      this.setLandUse("farming");
+      this.setLandUse("gracing");
     });
 
     this.$$("#landUse3")!.addEventListener("click", () => {
@@ -488,6 +521,12 @@ export class YpLandUseGame extends YpBaseElement {
     });
   }
 
+  _appDialogsReady(event: CustomEvent) {
+    if (event.detail) {
+      window.appDialogs = event.detail;
+    }
+  }
+
   async initScene() {
     const container = this.$$("#cesium-container")!;
     const emptyCreditContainer = this.$$("#emptyCreditContainer")!;
@@ -514,6 +553,7 @@ export class YpLandUseGame extends YpBaseElement {
       baseLayerPicker: false,
       fullscreenButton: false,
       geocoder: false,
+
       //      requestRenderMode: true,
       homeButton: false,
       //    infoBox: false,
@@ -528,19 +568,23 @@ export class YpLandUseGame extends YpBaseElement {
       imageryProvider: imageProvider,
     });
 
-    this.logFramerate();
+    //this.logFramerate();
 
     this.viewer.scene.globe.baseColor = Cesium.Color.GRAY;
-    this.tileManager = new TileManager(this.viewer);
-    const iconUrls = [
-      "models/CesiumBalloon.glb",
-      "models/CesiumBalloon.glb",
-      "models/CesiumBalloon.glb",
-      "models/CesiumBalloon.glb",
-      "models/CesiumBalloon.glb",
-      "models/CesiumBalloon.glb",
-      "models/chatBubble5.glb",
-    ];
+    try {
+      this.tileManager = new TileManager(this.viewer);
+      const iconUrls = [
+        "models/CesiumBalloon.glb",
+        "models/CesiumBalloon.glb",
+        "models/CesiumBalloon.glb",
+        "models/CesiumBalloon.glb",
+        "models/CesiumBalloon.glb",
+        "models/CesiumBalloon.glb",
+        "models/chatBubble5.glb",
+      ];
+    } catch (error) {
+      console.error(error);
+    }
 
     //this.uiManager = new UIManager(this.viewer, iconUrls);
 
@@ -607,7 +651,7 @@ export class YpLandUseGame extends YpBaseElement {
           dragonEnd
         );
         this.dragonManager.setupCharacter();
-      }, 1000*60*60)
+      }, 1000 * 60 * 60 * 60);
 
       setTimeout(() => {
         const eagleLongLatStart = [66.13323697690669, -18.916804650989715];
@@ -629,8 +673,7 @@ export class YpLandUseGame extends YpBaseElement {
           eagleEnd
         );
         this.eagleManager.setupCharacter();
-
-        }, 1000*60*60);
+      }, 1000 * 60 * 60 * 60);
 
       const bullLongLatStart = [64.80294898622358, -23.77641212993773];
       const bullLongLatEnd = [64.7634513702002, -19.572002677195176];
@@ -645,11 +688,7 @@ export class YpLandUseGame extends YpBaseElement {
         bullLongLatEnd[0]
       );
 
-      this.bullManager = new BullManager(
-        this.viewer!,
-        bullStart,
-        bullEnd
-      );
+      this.bullManager = new BullManager(this.viewer!, bullStart, bullEnd);
       this.bullManager.setupCharacter();
     });
 
@@ -660,7 +699,7 @@ export class YpLandUseGame extends YpBaseElement {
       -20.62592534987823,
       64.03985855384323,
       35000,
-      7,
+      44,
       -Cesium.Math.PI_OVER_TWO / 1.3
     );
 
@@ -688,6 +727,81 @@ export class YpLandUseGame extends YpBaseElement {
     this.closeComment();
   }
 
+  renderUI() {
+    if (this.hideUI) return nothing;
+    else
+      return html`
+        <div id="landUseSelection">
+          <button id="landUse1" ?selected=${this.selectedLandUse === "energy"}>
+            Energy
+          </button>
+          <button id="landUse2" ?selected=${this.selectedLandUse === "gracing"}>
+            Gracing
+          </button>
+          <button id="landUse3" ?selected=${this.selectedLandUse === "tourism"}>
+            Tourism
+          </button>
+          <button
+            id="landUse4"
+            ?selected=${this.selectedLandUse === "recreation"}
+          >
+            Recreation
+          </button>
+          <button
+            id="landUse5"
+            ?selected=${this.selectedLandUse === "restoration"}
+          >
+            Restoration
+          </button>
+          <button
+            id="landUse6"
+            ?selected=${this.selectedLandUse === "conservation"}
+          >
+            Conservation
+          </button>
+          <button id="commentButton">Comment</button>
+        </div>
+
+        <div id="navigationButtons">
+          <button id="showAll">Show all</button>
+          <button id="trackPlane">Plane</button>
+        </div>
+
+        <div id="terrainProviderSelection">
+          <button id="chooseAerial">Aerial</button>
+          <button id="chooseAerialWithLabels">Labels</button>
+          <button id="chooseOpenStreetMap">Map</button>
+        </div>
+
+        <div id="gameStats">
+          <div id="progressBars">
+            ${this.numberOfTilesWithLandUse != undefined &&
+            this.totalNumberOfTiles != undefined &&
+            this.numberOfTilesWithComments != undefined
+              ? html`
+                  <div class="progressBarContainer">
+                    <div
+                      class="progressBar"
+                      style="width: ${(this.numberOfTilesWithLandUse /
+                        this.totalNumberOfTiles) *
+                      100}%"
+                    ></div>
+                  </div>
+                  <div class="progressBarContainer">
+                    <div
+                      class="progressBar progressBarComments"
+                      style="width: ${(this.numberOfTilesWithComments /
+                        this.targetCommentCount) *
+                      100}%"
+                    ></div>
+                  </div>
+                `
+              : nothing}
+          </div>
+        </div>
+      `;
+  }
+
   renderFooter() {
     return html` <div class="layout horizontal">
       <md-outlined-button
@@ -705,76 +819,12 @@ export class YpLandUseGame extends YpBaseElement {
 
   render() {
     return html`
+      <yp-app-dialogs id="dialogContainer"></yp-app-dialogs>
       <div id="cesium-container"></div>
       <div id="emptyCreditContainer"></div>
-      <div id="landUseSelection">
-        <button id="landUse1" ?selected=${this.selectedLandUse === "energy"}>
-          Energy
-        </button>
-        <button id="landUse2" ?selected=${this.selectedLandUse === "farming"}>
-          Farming
-        </button>
-        <button id="landUse3" ?selected=${this.selectedLandUse === "tourism"}>
-          Tourism
-        </button>
-        <button
-          id="landUse4"
-          ?selected=${this.selectedLandUse === "recreation"}
-        >
-          Recreation
-        </button>
-        <button
-          id="landUse5"
-          ?selected=${this.selectedLandUse === "restoration"}
-        >
-          Restoration
-        </button>
-        <button
-          id="landUse6"
-          ?selected=${this.selectedLandUse === "conservation"}
-        >
-          Conservation
-        </button>
-        <button id="commentButton">Comment</button>
-      </div>
 
-      <div id="navigationButtons">
-        <button id="showAll">Show all</button>
-        <button id="trackPlane">Plane</button>
-      </div>
+      ${this.renderUI()}
 
-      <div id="terrainProviderSelection">
-        <button id="chooseAerial">Aerial</button>
-        <button id="chooseAerialWithLabels">Labels</button>
-        <button id="chooseOpenStreetMap">Map</button>
-      </div>
-
-      <div id="gameStats">
-        <div id="progressBars">
-          ${this.numberOfTilesWithLandUse != undefined &&
-          this.totalNumberOfTiles != undefined &&
-          this.numberOfTilesWithComments != undefined
-            ? html`
-                <div class="progressBarContainer">
-                  <div
-                    class="progressBar"
-                    style="width: ${(this.numberOfTilesWithLandUse /
-                      this.totalNumberOfTiles) *
-                    100}%"
-                  ></div>
-                </div>
-                <div class="progressBarContainer">
-                  <div
-                    class="progressBar progressBarComments"
-                    style="width: ${(this.numberOfTilesWithComments /
-                      this.targetCommentCount) *
-                    100}%"
-                  ></div>
-                </div>
-              `
-            : nothing}
-        </div>
-      </div>
       <md-dialog id="commentDialog">
         <div slot="header" class="postHeader">Your comment</div>
         <div id="content">

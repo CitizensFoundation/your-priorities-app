@@ -4,12 +4,13 @@ import { LitElement } from 'lit';
 //import { YpApp } from '../yp-app/yp-app.js';
 import { YpAppGlobals } from '../yp-app/YpAppGlobals.js';
 import { YpAppUser } from '../yp-app/YpAppUser.js';
-//import { YpAppDialogs } from '../yp-dialog-container/yp-app-dialogs.js';
+import { YpAppDialogs } from '../yp-dialog-container/yp-app-dialogs.js';
 import { YpServerApi } from './YpServerApi.js';
+import { LandUseAppGlobals } from '../../LandUseAppGlobals.js';
 
 declare global {
   interface Window {
-    appGlobals: any /*YpAppGlobals*/;
+    appGlobals: LandUseAppGlobals;
     appUser: YpAppUser;
     appDialogs: any /*YpAppDialogs*/;
     serverApi: YpServerApi;

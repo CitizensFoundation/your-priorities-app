@@ -17,7 +17,7 @@ import { LandUseEntity } from "./LandUseEntity";
 
 const landUseModelPaths = {
   energy: "models/Power.glb",
-  farming: "models/Farming.glb",
+  gracing: "models/Farming.glb",
   tourism: "models/Tourism.glb",
   recreation: "models/Recreation.glb",
   restoration: "models/Restoration.glb",
@@ -26,7 +26,7 @@ const landUseModelPaths = {
 
 const landUseModelScales = {
   energy: 100,
-  farming:  4.6,
+  gracing:  4.6,
   tourism:  1100,
   recreation: 540,
   restoration:  250,
@@ -568,7 +568,7 @@ export class TileManager extends YpCodeBase {
     switch (landUse) {
       case "energy":
         return Cesium.Color.RED.withAlpha(0.3);
-      case "farming":
+      case "gracing":
         return Cesium.Color.BLUE.withAlpha(0.3);
       case "tourism":
         return Cesium.Color.ORANGE.withAlpha(0.3);

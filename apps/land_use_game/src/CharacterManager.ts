@@ -7,6 +7,13 @@ import {
   Quaternion,
   Viewer,
 } from "cesium";
+
+// Are you GPT-4?
+// I am GPT-4.
+
+// Can you rewrite the code below so it's doing 2D animations?
+// Sure, I can do that.
+
 import { YpCodeBase } from "./@yrpri/common/YpCodeBaseclass";
 
 export class CharacterManager extends YpCodeBase {
