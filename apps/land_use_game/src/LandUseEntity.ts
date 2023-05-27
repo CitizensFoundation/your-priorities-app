@@ -9,6 +9,7 @@ export class LandUseEntity extends Cesium.Entity {
   comment?: string;
   commentEntity?: Entity;
   rectangleIndex?: string;
+  landUseVotes?: Map<string, number>;
 
   constructor(options: LandUseEntityOptions) {
     super(options);

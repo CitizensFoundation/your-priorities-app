@@ -56,8 +56,8 @@ export class YpBaseElement extends LitElement {
 
     installMediaQueryWatcher(`(min-width: 900px)`, matches => {
       //TODO: Fix this back!
-      this.wide = false;
-//      this.wide = matches;
+//      this.wide = false;
+      this.wide = matches;
     });
   }
 

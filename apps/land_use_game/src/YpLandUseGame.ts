@@ -30,6 +30,7 @@ import { YpAppUser } from "./@yrpri/yp-app/YpAppUser";
 import { YpAppDialogs } from "./@yrpri/yp-dialog-container/yp-app-dialogs";
 
 import "./@yrpri/yp-dialog-container/yp-app-dialogs.js";
+import { YpPostEdit } from "./@yrpri/yp-post/yp-post-edit";
 
 export class YpLandUseGame extends YpBaseElement {
   @property({ type: String }) title = "Land Use Game";
@@ -479,6 +480,10 @@ export class YpLandUseGame extends YpBaseElement {
       this.setIsCommenting(true);
     });
 
+    this.$$("#submitButton")!.addEventListener("click", () => {
+      this._newPost();
+    });
+
     this.$$("#showAll")!.addEventListener("click", () => {
       this.viewer!.trackedEntity = undefined;
       this.cancelFlyToPosition();
@@ -516,6 +521,20 @@ export class YpLandUseGame extends YpBaseElement {
           url: "https://a.tile.openstreetmap.org/",
         })
       );
+    });
+  }
+
+  _newPost() {
+    window.appGlobals.activity('open', 'newPost');
+    //TODO: Fix ts type
+    window.appDialogs.getDialogAsync('postEdit', (dialog: YpPostEdit) => {
+      setTimeout(() => {
+        dialog.setup(undefined, true, undefined, this.group as YpGroupData, {
+          groupId: this.group!.id,
+          group: this.group as YpGroupData,
+          tileData: this.tileManager.exportJSON()
+        });
+        }, 50);
     });
   }
 

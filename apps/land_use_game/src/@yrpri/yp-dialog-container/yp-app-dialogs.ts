@@ -17,7 +17,7 @@ import '../yp-user/yp-forgot-password.js';
 import '../yp-user/yp-reset-password.js';
 //import '../yp-user/yp-accept-invite.js';
 //import './yp-autotranslate-dialog.js';
-//import '../yp-post/yp-post-edit.js';
+import '../yp-post/yp-post-edit.js';
 
 @customElement('yp-app-dialogs')
 export class YpAppDialogs extends YpBaseElement {

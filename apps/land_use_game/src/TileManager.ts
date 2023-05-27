@@ -48,9 +48,6 @@ export class TileManager extends YpCodeBase {
   constructor(viewer: Viewer) {
     super();
     this.viewer = viewer;
-    setTimeout(() => {
-      this.exportJSON();
-    } , 40000);
   }
 
   countAssignedRectangles(landUse: string): number {
