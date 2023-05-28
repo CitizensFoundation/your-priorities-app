@@ -34,9 +34,17 @@ const landUseModelScales = {
 };
 
 export class TileManager extends YpCodeBase {
-  selectedLandUse: string | undefined;
+  selectedLandUse:
+    | "energy"
+    | "gracing"
+    | "tourism"
+    | "recreation"
+    | "restoration"
+    | "conservation"
+    | undefined;
   viewer: Viewer | undefined;
   existingBoxes: Map<string, any> = new Map();
+  resultsBoxes: Entity[] = [];
   geojsonData: any;
   allTiles: Rectangle[] = [];
   tileEntities: LandUseEntity[] = [];
@@ -46,14 +54,13 @@ export class TileManager extends YpCodeBase {
   isCommenting = false;
   numberOfTilesWithComments = 0;
   numberOfTilesWithLandUse = 0;
-
+  rectangleLandUseCounts = new Map<string, Map<string, number>>();
   constructor(viewer: Viewer) {
     super();
     this.viewer = viewer;
   }
 
   setupTileResults(posts: YpPostData[]) {
-    const rectangleLandUseCounts = new Map<string, Map<string, number>>();
     const landUseCount: Map<string, number> = new Map();
 
     if (posts) {
@@ -65,12 +72,13 @@ export class TileManager extends YpCodeBase {
             const { landUseType, rectangleIndex } = item;
 
             // If the rectangleIndex doesn't exist in the map yet, add it with a new Map for its landUseCounts
-            if (!rectangleLandUseCounts.has(rectangleIndex)) {
-              rectangleLandUseCounts.set(rectangleIndex, new Map());
+            if (!this.rectangleLandUseCounts.has(rectangleIndex)) {
+              this.rectangleLandUseCounts.set(rectangleIndex, new Map());
             }
 
             // Get the landUseCounts for this rectangleIndex
-            const landUseCounts = rectangleLandUseCounts.get(rectangleIndex)!;
+            const landUseCounts =
+              this.rectangleLandUseCounts.get(rectangleIndex)!;
 
             // If the landUseType doesn't exist in the landUseCounts yet, add it with a count of 0
             if (!landUseCounts.has(landUseType)) {
@@ -92,13 +100,86 @@ export class TileManager extends YpCodeBase {
       // Set landUseCount in the class scope
       this.landUseCount = landUseCount;
 
-      const minDistance = 100;
-      const maxDistance = 50000;
-      const minHeight = 100;
-      const maxHeight = 4500;
+      // Iterate over rectangleLandUseCounts to find the landUseType with the maximum count for each rectangle
+      this.rectangleLandUseCounts.forEach((landUseCounts, rectangleIndex) => {
+        let maxCount = 0;
+        let dominantLandUseType: string | null = null;
 
-      // Now create box entities based on these counts
-      rectangleLandUseCounts.forEach(async (landUseCounts, rectangleIndex) => {
+        landUseCounts.forEach((count, landUseType) => {
+          if (count > maxCount) {
+            maxCount = count;
+            dominantLandUseType = landUseType;
+          }
+        });
+
+        // Set the dominant landUseType to the corresponding entity
+        if (dominantLandUseType) {
+          const entity = this.tileRectangleIndex.get(rectangleIndex);
+          if (entity) {
+            entity.landUseType = dominantLandUseType;
+          }
+        }
+      });
+
+      this.updateTileResults();
+    } else {
+      console.error("No posts found");
+    }
+  }
+
+  isFarEnough(entity: LandUseEntity, top10: {entity: LandUseEntity, count: number}[]): boolean {
+    const currentRectangle = entity.rectangle!.coordinates!.getValue(Cesium.JulianDate.now());
+    for (const {entity: otherEntity} of top10) {
+      const otherRectangle = otherEntity.rectangle!.coordinates!.getValue(Cesium.JulianDate.now());
+      const dx = Math.abs(currentRectangle.east - otherRectangle.east);
+      const dy = Math.abs(currentRectangle.north - otherRectangle.north);
+      // Check if the rectangle is less than 4 rectangles away in either dimension
+      if (dx < 4 * currentRectangle.width || dy < 4 * currentRectangle.height) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  getTop10Rectangles(): { entity: LandUseEntity; count: number }[] {
+    // Extract and sort rectangle indexes by count
+    const sortedRectangleIndexes = Array.from(
+      this.rectangleLandUseCounts.entries()
+    )
+      .map(([index, counts]) => ({
+        index,
+        maxCount: Math.max(...Array.from(counts.values())),
+      }))
+      .sort((a, b) => b.maxCount - a.maxCount);
+
+    // Initialize the top 10 list
+    const top10: { entity: LandUseEntity; count: number }[] = [];
+
+    // Fill the top 10 list
+    for (const { index, maxCount } of sortedRectangleIndexes) {
+      const entity = this.tileRectangleIndex.get(index);
+      if (entity && this.isFarEnough(entity, top10)) {
+        top10.push({ entity, count: maxCount });
+        if (top10.length >= 10) {
+          break;
+        }
+      }
+    }
+
+    return top10;
+  }
+
+  clearResultsBoxes() {
+    this.resultsBoxes.forEach((box) => {
+      this.viewer!.entities.remove(box);
+    });
+    this.resultsBoxes = [];
+  }
+
+  updateTileResults() {
+    this.clearResultsBoxes();
+    this.rectangleLandUseCounts.forEach(
+      async (landUseCounts, rectangleIndex) => {
         // Get the rectangle from the rectangleIndex
         const rectangleEntity = this.tileRectangleIndex.get(rectangleIndex);
         const rectangle = rectangleEntity!.rectangle!.coordinates!.getValue(
@@ -121,33 +202,86 @@ export class TileManager extends YpCodeBase {
             heightInRadians * Cesium.Ellipsoid.WGS84.maximumRadius
           );
 
+          let maxCount = 1;
+          const upperCountNormalized = 5;
+
+          // Find the maxCount
+          this.landUseCount.forEach((count, landUseType) => {
+            if (count > maxCount) {
+              maxCount = count;
+            }
+          });
+
           landUseCounts.forEach((count, landUseType) => {
-            console.error("landUseType: " + landUseType + ", count: " + count)
-            // Create box entity with size based on the count
-            let height = count*3000;
-            const boxEntity = this.viewer!.entities.add({
-              position: Cesium.Ellipsoid.WGS84.cartographicToCartesian(
-                new Cesium.Cartographic(
-                  centerPosition.longitude,
-                  centerPosition.latitude,
-                  terrainHeight + height / 2
-                )
-              ),
-              box: {
-                dimensions: new Cesium.Cartesian3(width, depth, height),
-                heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
-                material: this.getColorForLandUse(landUseType, 0.2) as any,
-              },
-            });
+            if (!this.selectedLandUse || landUseType === this.selectedLandUse) {
+              console.error(
+                "landUseType: " + landUseType + ", count: " + count
+              );
+
+              //count = ((count - 1) / (maxCount - 1)) * (upperCountNormalized - 0.1) + 0.1;
+              //count = Math.sqrt(((count - 1) / (maxCount - 1)) * (upperCountNormalized - 0.1) + 0.1);
+
+              console.error(
+                "landUseType: " + landUseType + ", count: " + count
+              );
+              // Create box entity with size based on the count
+              let height = count * 3000;
+              const boxEntity = this.viewer!.entities.add({
+                position: Cesium.Ellipsoid.WGS84.cartographicToCartesian(
+                  new Cesium.Cartographic(
+                    centerPosition.longitude,
+                    centerPosition.latitude,
+                    terrainHeight + height / 2
+                  )
+                ),
+                box: {
+                  dimensions: new Cesium.Cartesian3(width, depth, height),
+                  heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
+                  material: this.getColorForLandUse(landUseType, 0.2) as any,
+                },
+              });
+              this.resultsBoxes.push(boxEntity);
+            }
           });
         } else {
-          console.error("No rectangle entity found for index: " + rectangleIndex);
+          console.error(
+            "No rectangle entity found for index: " + rectangleIndex
+          );
         }
-      });
-    } else {
-      console.error("No posts found")
-    }
+      }
+    );
 
+    const top10 = this.getTop10Rectangles();
+
+    top10.forEach(async ({ entity: rectangleEntity, count }) => {
+      const rectangle = rectangleEntity.rectangle!.coordinates!.getValue(
+        Cesium.JulianDate.now()
+      );
+      const centerPosition = Cesium.Rectangle.center(rectangle);
+      const terrainHeight = await this.getTerrainHeight(centerPosition);
+
+      const landUseType = rectangleEntity.landUseType;
+      if (landUseType) {
+        const modelUrl = landUseModelPaths[landUseType];
+        const modelScale = landUseModelScales[landUseType];
+
+        // Use count for calculating the height
+        const positionProperty = new Cesium.ConstantPositionProperty(
+          Cesium.Cartesian3.fromDegrees(
+            Cesium.Math.toDegrees(centerPosition.longitude),
+            Cesium.Math.toDegrees(centerPosition.latitude),
+            terrainHeight + 3000 * count // Adjust the height value based on count
+          )
+        );
+
+        // Create model instance
+        const modelInstance = this.createModel(
+          modelUrl,
+          positionProperty,
+          modelScale
+        );
+      }
+    });
   }
 
   countAssignedRectangles(landUse: string): number {

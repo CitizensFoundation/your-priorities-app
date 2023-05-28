@@ -7,7 +7,7 @@ export type LandUseEntityOptions = ConstructorParameters<typeof Entity>[0] & {
 };
 
 export class LandUseEntity extends Cesium.Entity {
-  landUseType?: string;
+  landUseType?: "energy" | "gracing" | "tourism" | "recreation" | "restoration" | "conservation";
   comment?: string;
   commentEntity?: Entity;
   rectangleIndex?: string;
@@ -15,7 +15,7 @@ export class LandUseEntity extends Cesium.Entity {
 
   constructor(options: LandUseEntityOptions) {
     super(options);
-    this.landUseType = options.landUseType;
+    this.landUseType = options.landUseType as any;
     if (this.rectangle) {
       const coordinates =
       this.rectangle.coordinates &&

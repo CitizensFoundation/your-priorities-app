@@ -32,11 +32,20 @@ import { YpAppDialogs } from "./@yrpri/yp-dialog-container/yp-app-dialogs";
 import "./@yrpri/yp-dialog-container/yp-app-dialogs.js";
 import { YpPostEdit } from "./@yrpri/yp-post/yp-post-edit";
 
+const GameStage = {
+  Intro: 1,
+  Play: 2,
+  Results: 3
+};
+
 export class YpLandUseGame extends YpBaseElement {
   @property({ type: String }) title = "Land Use Game";
 
+  @property({ type: Number })
+  gameStage = GameStage.Results;
+
   @property({ type: String })
-  selectedLandUse: string | undefined;
+  selectedLandUse: "energy" | "gracing" | "tourism" | "recreation" | "restoration" | "conservation" | undefined;
 
   @property({ type: Number })
   totalNumberOfTiles: number | undefined;
@@ -398,9 +407,17 @@ export class YpLandUseGame extends YpBaseElement {
   }
 
   setLandUse(landUse: string) {
-    this.selectedLandUse = landUse;
-    this.tileManager.selectedLandUse = landUse;
+    if (this.selectedLandUse===landUse) {
+      this.selectedLandUse = undefined;
+    } else {
+      this.selectedLandUse = landUse as any;
+    }
     this.setIsCommenting(false);
+    this.tileManager.selectedLandUse = this.selectedLandUse;
+
+    if (this.gameStage === GameStage.Results) {
+      this.tileManager.updateTileResults();
+    }
   }
 
   setIsCommenting(isCommenting: boolean) {
