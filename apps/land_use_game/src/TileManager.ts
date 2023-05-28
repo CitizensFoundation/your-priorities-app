@@ -44,7 +44,7 @@ export class TileManager extends YpCodeBase {
     | undefined;
   viewer: Viewer | undefined;
   existingBoxes: Map<string, any> = new Map();
-  resultsBoxes: Entity[] = [];
+  resultsModels: Entity[] = [];
   geojsonData: any;
   allTiles: Rectangle[] = [];
   tileEntities: LandUseEntity[] = [];
@@ -62,6 +62,34 @@ export class TileManager extends YpCodeBase {
     super();
     this.viewer = viewer;
   }
+
+  computeCenterOfArea() {
+    let lonTotal = 0;
+    let latTotal = 0;
+    let count = 0;
+
+    for (const feature of this.geojsonData.features) {
+        const geometry = feature.geometry;
+        if (geometry.type === "MultiPolygon") {
+            for (const polygon of geometry.coordinates) {
+                for (const coordinates of polygon) {
+                    for (let i = 0; i < coordinates.length - 1; i++) {
+                        const [lon, lat] = coordinates[i];
+                        lonTotal += lon;
+                        latTotal += lat;
+                        count++;
+                    }
+                }
+            }
+        }
+    }
+
+    const lonAvg = lonTotal / count;
+    const latAvg = latTotal / count;
+
+    return { lon: lonAvg, lat: latAvg };
+}
+
 
   setupTileResults(posts: YpPostData[]) {
     const landUseCount: Map<string, number> = new Map();
@@ -102,6 +130,15 @@ export class TileManager extends YpCodeBase {
             landUseCount.set(landUseType, landUseCount.get(landUseType)! + 1);
 
             if (comment && comment.trim() !== "") {
+              const rectangleEntity = this.tileRectangleIndex.get(rectangleIndex);
+              if (rectangleEntity) {
+                if (!rectangleEntity.comments)
+                  rectangleEntity.comments = [];
+                rectangleEntity.comments.push(comment);
+              } else {
+                console.error("rectangleEntity not found for rectangleIndex", rectangleIndex);
+              }
+
               if (!this.rectangleCommentsUseCounts.has(rectangleIndex)) {
                 this.rectangleCommentsUseCounts.set(rectangleIndex, 0);
               }
@@ -194,11 +231,11 @@ export class TileManager extends YpCodeBase {
     return top10;
   }
 
-  clearResultsBoxes() {
-    this.resultsBoxes.forEach((box) => {
+  clearresultsModels() {
+    this.resultsModels.forEach((box) => {
       this.viewer!.entities.remove(box);
     });
-    this.resultsBoxes = [];
+    this.resultsModels = [];
   }
 
   updateCommentResults() {
@@ -237,7 +274,10 @@ export class TileManager extends YpCodeBase {
           rectangleEntity.commentEntity = this.createModel(
             modelUrl,
             position,
-            chatBubbleHeight
+            chatBubbleHeight,
+            {
+              rectangleIndex: rectangleEntity.rectangleIndex!
+            }
           );
         }
       }
@@ -245,7 +285,7 @@ export class TileManager extends YpCodeBase {
   }
 
   updateTileResults() {
-    this.clearResultsBoxes();
+    this.clearresultsModels();
     this.rectangleLandUseCounts.forEach(
       async (landUseCounts, rectangleIndex) => {
         // Get the rectangle from the rectangleIndex
@@ -286,9 +326,9 @@ export class TileManager extends YpCodeBase {
               //count = Math.sqrt(((count - 1) / (maxCount - 1)) * (upperCountNormalized - 0.1) + 0.1);
 
               // Create box entity with size based on the count
-              console.log("count", count);
+              //console.log("count", count);
               const alpha = Math.min(0.4,0.05+(count/20));
-              console.log("alpha", alpha)
+              //console.log("alpha", alpha)
               let height = count * 3000;
               const boxEntity = this.viewer!.entities.add({
                 position: Cesium.Ellipsoid.WGS84.cartographicToCartesian(
@@ -305,7 +345,7 @@ export class TileManager extends YpCodeBase {
                 },
               });
 
-              this.resultsBoxes.push(boxEntity);
+              this.resultsModels.push(boxEntity);
 
               // Update the maximum height for the rectangle
               const currentMaxHeight =
@@ -367,6 +407,8 @@ export class TileManager extends YpCodeBase {
           positionProperty,
           modelScale
         );
+
+        this.resultsModels.push(modelInstance);
       }
     });
   }
@@ -537,10 +579,11 @@ export class TileManager extends YpCodeBase {
     }
   }
 
-  createModel(url: string, position: PositionProperty, scale = 1.0) {
+  createModel(url: string, position: PositionProperty, scale = 1.0, properties: any = undefined) {
     const entity = this.viewer!.entities.add({
       name: url,
       position: position,
+      properties: properties,
       model: {
         uri: url,
         scale: scale,
@@ -575,7 +618,10 @@ export class TileManager extends YpCodeBase {
         "/models/chatBubble5.glb",
         //        "/models/chatBubble6a.glb",
         position,
-        275
+        275,
+        {
+          rectangleIndex: rectangleEntity.rectangleIndex!
+        }
       );
 
       this.calculateTileCounts();
@@ -837,6 +883,26 @@ export class TileManager extends YpCodeBase {
     console.log(`numberOfTilesWithComments: ${numberOfTilesWithComments}`);
     console.log(`numberOfTilesWithLandUse: ${numberOfTilesWithLandUse}`);
     console.log(`totalNumberOfTiles: ${this.tileEntities.length}`);
+  }
+
+
+  async setInputActionForResults(event: any) {
+    const pickedFeatures = this.viewer!.scene.drillPick(event.position);
+
+    // Filter the pickedFeatures to get the rectangle entity
+    const rectangleEntityA = pickedFeatures.find(
+      (pickedFeature) => pickedFeature.id &&  pickedFeature.id._name && pickedFeature.id._name.indexOf("chat") > -1
+    );
+
+    const rectangleEntity = rectangleEntityA.id;
+
+    const index = rectangleEntity.properties.getValue("rectangleIndex").rectangleIndex;
+
+    const entity = this.tileRectangleIndex.get(index);
+    debugger;
+
+    const comments = entity!.comments;
+
   }
 
   async setInputAction(event: any) {

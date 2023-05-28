@@ -85,6 +85,7 @@ export class YpLandUseGame extends YpBaseElement {
   eagleManager!: EagleManager;
   frameCount = 0;
   lastFPSLogTime = new Date().getTime();
+  orbit: ((clock: any) => void) | undefined;
 
   logFramerate() {
     this.frameCount++;
@@ -298,6 +299,11 @@ export class YpLandUseGame extends YpBaseElement {
     this.hideUI = false;
     await this.updateComplete;
     this.setupEventListeners();
+    if (this.gameStage === GameStage.Results) {
+      setTimeout(() => {
+        this.setupTileResults();
+      }, 3000);
+    }
   }
 
   async connectedCallback() {
@@ -406,7 +412,7 @@ export class YpLandUseGame extends YpBaseElement {
     return sampledPositions[0].height;
   }
 
-  setLandUse(landUse: string) {
+  setLandUse(landUse: string | undefined) {
     if (this.selectedLandUse===landUse) {
       this.selectedLandUse = undefined;
     } else {
@@ -546,12 +552,84 @@ export class YpLandUseGame extends YpBaseElement {
     });
   }
 
+  async afterNewPost() {
+    this.gameStage = GameStage.Results;
+    this.tileManager.clearLandUsesAndComments();
+    await this.setupTileResults();
+    this.setLandUse(undefined);
+    //this.startOrbit();
+  }
+
+  startOrbit() {
+    const viewer = this.viewer!;
+    const center = this.tileManager.computeCenterOfArea();
+    const target = this.viewer!.scene.globe.ellipsoid.cartographicToCartesian(
+        Cesium.Cartographic.fromDegrees(center.lon, center.lat)
+    );
+
+    this.orbit = function (clock: any) {
+      const camera = viewer.camera;
+
+      // Save the original camera direction and up in the East-North-Up frame at the target
+      const enuCenter = new Cesium.Cartesian3();
+      const centerTransform = Cesium.Transforms.eastNorthUpToFixedFrame(target);
+      const originalDirection = Cesium.Matrix4.multiplyByPointAsVector(centerTransform, camera.direction, enuCenter);
+      const originalUp = Cesium.Matrix4.multiplyByPointAsVector(centerTransform, camera.up, enuCenter);
+
+      // Compute the angular distance and direction from the center to the camera
+      const cameraCenter = Cesium.Cartesian3.subtract(camera.position, target, new Cesium.Cartesian3());
+      const radius = Cesium.Cartesian3.magnitude(cameraCenter);
+      const directionToCamera = Cesium.Cartesian3.normalize(cameraCenter, cameraCenter);
+
+      // Rotate directionToCamera by the angular speed about the angular axis
+      const angularSpeed = 0.001; // radians per real-world second
+      const angularAxis = Cesium.Cartesian3.cross(directionToCamera, Cesium.Cartesian3.UNIT_Z, new Cesium.Cartesian3());
+      const rotation = Cesium.Quaternion.fromAxisAngle(angularAxis, clock._clock._systemTime.multiplyByScalar(angularSpeed));
+      const directionQuaternion = new Cesium.Quaternion();
+      Cesium.Quaternion.fromAxisAngle(directionToCamera, 0, directionQuaternion);
+      const rotatedQuaternion = new Cesium.Quaternion();
+      Cesium.Quaternion.multiply(rotation, directionQuaternion, rotatedQuaternion);
+
+      // Convert the quaternion back to a rotation matrix
+      const rotationMatrix = new Cesium.Matrix3();
+      Cesium.Matrix3.fromQuaternion(rotatedQuaternion, rotationMatrix);
+
+      // Rotate the direction vector by the rotation matrix
+      const directionToCameraRotated = new Cesium.Cartesian3();
+      Cesium.Matrix3.multiplyByVector(rotationMatrix, directionToCamera, directionToCameraRotated);
+
+      // Compute the new camera position
+      const newCameraPosition = Cesium.Cartesian3.multiplyByScalar(directionToCameraRotated, radius, new Cesium.Cartesian3());
+      Cesium.Cartesian3.add(target, newCameraPosition, newCameraPosition);
+
+      // Compute the new camera direction
+      const newDirection = Cesium.Cartesian3.negate(directionToCameraRotated, new Cesium.Cartesian3());
+      const newDirectionTransformed = Cesium.Matrix4.multiplyByPointAsVector(centerTransform, newDirection, enuCenter);
+      camera.direction = newDirectionTransformed;
+
+      // Compute the new camera up
+      const newUp = Cesium.Cartesian3.negate(angularAxis, new Cesium.Cartesian3());
+      const newUpTransformed = Cesium.Matrix4.multiplyByPointAsVector(centerTransform, newUp, enuCenter);
+      camera.up = newUpTransformed;
+
+      camera.position = newCameraPosition;
+    };
+
+    this.viewer!.clock.onTick.addEventListener(this.orbit);
+  }
+
+  // Add this method to your class
+  stopOrbit() {
+    if (this.orbit) {
+      this.viewer!.clock.onTick.removeEventListener(this.orbit);
+    }
+  }
   _newPost() {
     window.appGlobals.activity('open', 'newPost');
     //TODO: Fix ts type
     window.appDialogs.getDialogAsync('postEdit', (dialog: YpPostEdit) => {
       setTimeout(() => {
-        dialog.setup(undefined, true, undefined, this.group as YpGroupData, {
+        dialog.setup(undefined, true, this.afterNewPost.bind(this), this.group as YpGroupData, {
           groupId: this.group!.id,
           group: this.group as YpGroupData,
           tileData: this.tileManager.exportJSON()
@@ -563,6 +641,14 @@ export class YpLandUseGame extends YpBaseElement {
   _appDialogsReady(event: CustomEvent) {
     if (event.detail) {
       window.appDialogs = event.detail;
+    }
+  }
+
+  async inputAction(event: any) {
+    if (this.gameStage === GameStage.Play) {
+      this.tileManager.setInputAction(event)
+    } else if (this.gameStage === GameStage.Results) {
+      this.tileManager.setInputActionForResults(event)
     }
   }
 
@@ -635,7 +721,7 @@ export class YpLandUseGame extends YpBaseElement {
     );
 
     screenSpaceEventHandler.setInputAction(
-      async (event: any) => this.tileManager.setInputAction(event),
+      this.inputAction.bind(this),
       Cesium.ScreenSpaceEventType.LEFT_CLICK
     );
 
@@ -729,8 +815,6 @@ export class YpLandUseGame extends YpBaseElement {
 
       this.bullManager = new BullManager(this.viewer!, bullStart, bullEnd);
       this.bullManager.setupCharacter();
-
-      this.setupTileResults();
     });
 
     //Enable depth testing so things behind the terrain disappear.

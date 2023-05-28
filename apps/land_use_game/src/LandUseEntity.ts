@@ -9,6 +9,7 @@ export type LandUseEntityOptions = ConstructorParameters<typeof Entity>[0] & {
 export class LandUseEntity extends Cesium.Entity {
   landUseType?: "energy" | "gracing" | "tourism" | "recreation" | "restoration" | "conservation";
   comment?: string;
+  comments?: string[];
   commentEntity?: Entity;
   rectangleIndex?: string;
   landUseVotes?: Map<string, number>;

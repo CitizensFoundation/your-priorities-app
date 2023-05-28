@@ -168,7 +168,6 @@ export class YpPostEdit extends YpEditBase {
     if (changedProperties.has('selected')) {
       this._selectedChanged();
       const a = this.selected;
-      debugger;
     }
 
     this._setupStructuredQuestions();
@@ -1694,11 +1693,11 @@ export class YpPostEdit extends YpEditBase {
       }
     }
 
-    window.appDialogs.getDialogAsync('mastersnackbar', (snackbar: Snackbar) => {
+    /*window.appDialogs.getDialogAsync('mastersnackbar', (snackbar: Snackbar) => {
       snackbar.textContent = text;
       snackbar.timeoutMs = 5000;
       snackbar.open = true;
-    });
+    });*/
 
     if (
       this.group &&
