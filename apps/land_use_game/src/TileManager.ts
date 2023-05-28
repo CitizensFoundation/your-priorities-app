@@ -286,6 +286,9 @@ export class TileManager extends YpCodeBase {
               //count = Math.sqrt(((count - 1) / (maxCount - 1)) * (upperCountNormalized - 0.1) + 0.1);
 
               // Create box entity with size based on the count
+              console.log("count", count);
+              const alpha = Math.min(0.4,0.05+(count/20));
+              console.log("alpha", alpha)
               let height = count * 3000;
               const boxEntity = this.viewer!.entities.add({
                 position: Cesium.Ellipsoid.WGS84.cartographicToCartesian(
@@ -298,7 +301,7 @@ export class TileManager extends YpCodeBase {
                 box: {
                   dimensions: new Cesium.Cartesian3(width, depth, height),
                   heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
-                  material: this.getColorForLandUse(landUseType, 0.2) as any,
+                  material: this.getColorForLandUse(landUseType, alpha) as any,
                 },
               });
 
