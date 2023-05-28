@@ -55,6 +55,9 @@ export class TileManager extends YpCodeBase {
   numberOfTilesWithComments = 0;
   numberOfTilesWithLandUse = 0;
   rectangleLandUseCounts = new Map<string, Map<string, number>>();
+  rectangleCommentsUseCounts = new Map<string, number>();
+  rectangleMaxHeights = new Map<string, number>();
+
   constructor(viewer: Viewer) {
     super();
     this.viewer = viewer;
@@ -67,9 +70,13 @@ export class TileManager extends YpCodeBase {
       posts.forEach((post) => {
         // Iterate over each item in the privateData array
         post.publicPrivateData.forEach(
-          (item: { landUseType: any; rectangleIndex: any }) => {
+          (item: {
+            landUseType: any;
+            rectangleIndex: any;
+            comment: string;
+          }) => {
             // Get the landUseType and rectangleIndex from the item
-            const { landUseType, rectangleIndex } = item;
+            const { landUseType, rectangleIndex, comment } = item;
 
             // If the rectangleIndex doesn't exist in the map yet, add it with a new Map for its landUseCounts
             if (!this.rectangleLandUseCounts.has(rectangleIndex)) {
@@ -93,6 +100,16 @@ export class TileManager extends YpCodeBase {
               landUseCount.set(landUseType, 0);
             }
             landUseCount.set(landUseType, landUseCount.get(landUseType)! + 1);
+
+            if (comment && comment.trim() !== "") {
+              if (!this.rectangleCommentsUseCounts.has(rectangleIndex)) {
+                this.rectangleCommentsUseCounts.set(rectangleIndex, 0);
+              }
+              this.rectangleCommentsUseCounts.set(
+                rectangleIndex,
+                this.rectangleCommentsUseCounts.get(rectangleIndex)! + 1
+              );
+            }
           }
         );
       });
@@ -122,15 +139,23 @@ export class TileManager extends YpCodeBase {
       });
 
       this.updateTileResults();
+      this.updateCommentResults();
     } else {
       console.error("No posts found");
     }
   }
 
-  isFarEnough(entity: LandUseEntity, top10: {entity: LandUseEntity, count: number}[]): boolean {
-    const currentRectangle = entity.rectangle!.coordinates!.getValue(Cesium.JulianDate.now());
-    for (const {entity: otherEntity} of top10) {
-      const otherRectangle = otherEntity.rectangle!.coordinates!.getValue(Cesium.JulianDate.now());
+  isFarEnough(
+    entity: LandUseEntity,
+    top10: { entity: LandUseEntity; count: number }[]
+  ): boolean {
+    const currentRectangle = entity.rectangle!.coordinates!.getValue(
+      Cesium.JulianDate.now()
+    );
+    for (const { entity: otherEntity } of top10) {
+      const otherRectangle = otherEntity.rectangle!.coordinates!.getValue(
+        Cesium.JulianDate.now()
+      );
       const dx = Math.abs(currentRectangle.east - otherRectangle.east);
       const dy = Math.abs(currentRectangle.north - otherRectangle.north);
       // Check if the rectangle is less than 4 rectangles away in either dimension
@@ -176,6 +201,49 @@ export class TileManager extends YpCodeBase {
     this.resultsBoxes = [];
   }
 
+  updateCommentResults() {
+    this.rectangleCommentsUseCounts.forEach(
+      async (commentCount, rectangleIndex) => {
+        const rectangleEntity = this.tileRectangleIndex.get(rectangleIndex);
+        const rectangle = rectangleEntity!.rectangle!.coordinates!.getValue(
+          Cesium.JulianDate.now()
+        );
+
+        if (rectangleEntity && rectangle) {
+          const centerPosition = Cesium.Rectangle.center(rectangle);
+          const terrainHeight = await this.getTerrainHeight(centerPosition);
+          // Calculate the highest point in the rectangle
+          const maxEntityHeight =
+            this.rectangleMaxHeights.get(rectangleIndex) || terrainHeight;
+          const chatBubbleHeight = commentCount > 1 ? 550 : 275;
+          const positionHeight = maxEntityHeight + chatBubbleHeight;
+
+          // Calculate position for the chat bubble
+          const position = new Cesium.ConstantPositionProperty(
+            Cesium.Ellipsoid.WGS84.cartographicToCartesian(
+              new Cesium.Cartographic(
+                centerPosition.longitude,
+                centerPosition.latitude,
+                positionHeight
+              )
+            )
+          );
+
+          const modelUrl =
+            commentCount > 1
+              ? "/models/chatBubble5.glb"
+              : "/models/chatBubble5.glb";
+
+          rectangleEntity.commentEntity = this.createModel(
+            modelUrl,
+            position,
+            chatBubbleHeight
+          );
+        }
+      }
+    );
+  }
+
   updateTileResults() {
     this.clearResultsBoxes();
     this.rectangleLandUseCounts.forEach(
@@ -214,16 +282,9 @@ export class TileManager extends YpCodeBase {
 
           landUseCounts.forEach((count, landUseType) => {
             if (!this.selectedLandUse || landUseType === this.selectedLandUse) {
-              console.error(
-                "landUseType: " + landUseType + ", count: " + count
-              );
-
               //count = ((count - 1) / (maxCount - 1)) * (upperCountNormalized - 0.1) + 0.1;
               //count = Math.sqrt(((count - 1) / (maxCount - 1)) * (upperCountNormalized - 0.1) + 0.1);
 
-              console.error(
-                "landUseType: " + landUseType + ", count: " + count
-              );
               // Create box entity with size based on the count
               let height = count * 3000;
               const boxEntity = this.viewer!.entities.add({
@@ -240,7 +301,18 @@ export class TileManager extends YpCodeBase {
                   material: this.getColorForLandUse(landUseType, 0.2) as any,
                 },
               });
+
               this.resultsBoxes.push(boxEntity);
+
+              // Update the maximum height for the rectangle
+              const currentMaxHeight =
+                this.rectangleMaxHeights.get(rectangleIndex) || 0;
+              if (terrainHeight + height > currentMaxHeight) {
+                this.rectangleMaxHeights.set(
+                  rectangleIndex,
+                  terrainHeight + height
+                );
+              }
             }
           });
         } else {
@@ -266,13 +338,25 @@ export class TileManager extends YpCodeBase {
         const modelScale = landUseModelScales[landUseType];
 
         // Use count for calculating the height
+        const modelHeight = 3000 * count; // Adjust the height value based on count
         const positionProperty = new Cesium.ConstantPositionProperty(
           Cesium.Cartesian3.fromDegrees(
             Cesium.Math.toDegrees(centerPosition.longitude),
             Cesium.Math.toDegrees(centerPosition.latitude),
-            terrainHeight + 3000 * count // Adjust the height value based on count
+            terrainHeight + modelHeight
           )
         );
+
+        // Update the maximum height for the rectangle
+        const rectangleIndex = rectangleEntity.rectangleIndex!;
+        const currentMaxHeight =
+          this.rectangleMaxHeights.get(rectangleIndex) || 0;
+        if (terrainHeight + modelHeight > currentMaxHeight) {
+          this.rectangleMaxHeights.set(
+            rectangleIndex,
+            terrainHeight + modelHeight
+          );
+        }
 
         // Create model instance
         const modelInstance = this.createModel(
