@@ -184,12 +184,12 @@ export class TileManager extends YpCodeBase {
 
   isFarEnough(
     entity: LandUseEntity,
-    top10: { entity: LandUseEntity; count: number }[]
+    topRectangles: { entity: LandUseEntity; count: number }[]
   ): boolean {
     const currentRectangle = entity.rectangle!.coordinates!.getValue(
       Cesium.JulianDate.now()
     );
-    for (const { entity: otherEntity } of top10) {
+    for (const { entity: otherEntity } of topRectangles) {
       const otherRectangle = otherEntity.rectangle!.coordinates!.getValue(
         Cesium.JulianDate.now()
       );
@@ -203,7 +203,7 @@ export class TileManager extends YpCodeBase {
     return true;
   }
 
-  getTop10Rectangles(): { entity: LandUseEntity; count: number }[] {
+  getTopRectangles(): { entity: LandUseEntity; count: number }[] {
     // Extract and sort rectangle indexes by count
     const sortedRectangleIndexes = Array.from(
       this.rectangleLandUseCounts.entries()
@@ -214,21 +214,19 @@ export class TileManager extends YpCodeBase {
       }))
       .sort((a, b) => b.maxCount - a.maxCount);
 
-    // Initialize the top 10 list
-    const top10: { entity: LandUseEntity; count: number }[] = [];
+    const topRectangles: { entity: LandUseEntity; count: number }[] = [];
 
-    // Fill the top 10 list
     for (const { index, maxCount } of sortedRectangleIndexes) {
       const entity = this.tileRectangleIndex.get(index);
-      if (entity && this.isFarEnough(entity, top10)) {
-        top10.push({ entity, count: maxCount });
-        if (top10.length >= 10) {
+      if (entity && this.isFarEnough(entity, topRectangles)) {
+        topRectangles.push({ entity, count: maxCount });
+        if (topRectangles.length >= 20) {
           break;
         }
       }
     }
 
-    return top10;
+    return topRectangles;
   }
 
   clearresultsModels() {
@@ -273,8 +271,8 @@ export class TileManager extends YpCodeBase {
 
           // Find the maximum entity height among the 8 adjacent rectangles
           const adjacentMaxHeights = [];
-          for (let i = -2; i <= 2; i++) {
-            for (let j = -2; j <= 2; j++) {
+          for (let i = -10; i <= 10; i++) {
+            for (let j = -10; j <= 10; j++) {
               // Exclude the center rectangle (0, 0)
               if (!(i === 0 && j === 0)) {
                 const adjacentRectangleIndex = this.getRectangleIndexAtOffset(rectangleIndex, i, j);
@@ -285,7 +283,8 @@ export class TileManager extends YpCodeBase {
               }
             }
           }
-          const maxAdjacentEntityHeight = Math.max(...adjacentMaxHeights);
+          const maxAdjacentEntityHeight = Math.max(...adjacentMaxHeights) || maxEntityHeight;
+          console.error(maxAdjacentEntityHeight);
 
           const chatBubbleHeight = commentCount > 1 ? 550 : 275;
           const positionHeight = maxAdjacentEntityHeight + chatBubbleHeight;
@@ -402,9 +401,9 @@ export class TileManager extends YpCodeBase {
       }
     );
 
-    const top10 = this.getTop10Rectangles();
+    const topRectangles = this.getTopRectangles();
 
-    top10.forEach(async ({ entity: rectangleEntity, count }) => {
+    topRectangles.forEach(async ({ entity: rectangleEntity, count }) => {
       const rectangle = rectangleEntity.rectangle!.coordinates!.getValue(
         Cesium.JulianDate.now()
       );
