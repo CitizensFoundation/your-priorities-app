@@ -8,6 +8,12 @@ export class YpServerApi extends YpServerApiBase {
     );
   }
 
+  public getParentPoint(groupId: number, pointId: number) {
+    return this.fetchWrapper(
+      this.baseUrlPath + `/groups/${groupId}/${pointId}/get_parent_point`
+    );
+  }
+
   constructor(urlPath: string = '/api') {
     super();
     this.baseUrlPath = urlPath;

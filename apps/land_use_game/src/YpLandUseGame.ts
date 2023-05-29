@@ -31,11 +31,15 @@ import { YpAppDialogs } from "./@yrpri/yp-dialog-container/yp-app-dialogs";
 
 import "./@yrpri/yp-dialog-container/yp-app-dialogs.js";
 import { YpPostEdit } from "./@yrpri/yp-post/yp-post-edit";
+import { YpCommentDialog } from "./yp-comment-dialog.js";
+import "./yp-comment-dialog.js";
+import "./yp-new-comment-dialog.js";
+import { YpNewCommentDialog } from "./yp-new-comment-dialog.js";
 
 const GameStage = {
   Intro: 1,
   Play: 2,
-  Results: 3
+  Results: 3,
 };
 
 export class YpLandUseGame extends YpBaseElement {
@@ -45,7 +49,14 @@ export class YpLandUseGame extends YpBaseElement {
   gameStage = GameStage.Results;
 
   @property({ type: String })
-  selectedLandUse: "energy" | "gracing" | "tourism" | "recreation" | "restoration" | "conservation" | undefined;
+  selectedLandUse:
+    | "energy"
+    | "gracing"
+    | "tourism"
+    | "recreation"
+    | "restoration"
+    | "conservation"
+    | undefined;
 
   @property({ type: Number })
   totalNumberOfTiles: number | undefined;
@@ -71,8 +82,8 @@ export class YpLandUseGame extends YpBaseElement {
   @property({ type: Object })
   group: YpGroupData | undefined;
 
-  @query("#commentDialog")
-  commentDialog!: MdDialog;
+  @query("#newCommentDialog")
+  newCommentDialog!: MdDialog;
 
   targetCommentCount = 5;
   tileManager!: TileManager;
@@ -413,7 +424,7 @@ export class YpLandUseGame extends YpBaseElement {
   }
 
   setLandUse(landUse: string | undefined) {
-    if (this.selectedLandUse===landUse) {
+    if (this.selectedLandUse === landUse) {
       this.selectedLandUse = undefined;
     } else {
       this.selectedLandUse = landUse as any;
@@ -454,14 +465,22 @@ export class YpLandUseGame extends YpBaseElement {
     }
   }
 
-  openComment(event: any) {
-    (this.$$("#commentDialog") as Dialog).open = true;
+  openNewComment(event: any) {
+    (this.$$("#newCommentDialog") as YpNewCommentDialog).openDialog();
     this.currentRectangleIdForComment = event.detail.rectangleId;
   }
 
-  closeComment() {
-    (this.$$("#commentDialog") as Dialog).open = false;
+  closeNewComment() {
+    (this.$$("#newCommentDialog") as YpNewCommentDialog).openDialog();
     this.currentRectangleIdForComment = undefined;
+  }
+
+  openComment(event: any) {
+    (this.$$("#commentDialog") as YpCommentDialog).openDialog(event);
+  }
+
+  closeComment() {
+    (this.$$("#commentDialog") as YpCommentDialog).closeDialog();
   }
 
   updateTileCount(event: any) {
@@ -473,6 +492,10 @@ export class YpLandUseGame extends YpBaseElement {
   setupEventListeners() {
     document.addEventListener("keydown", this.handleKeyDown.bind(this));
 
+    document.addEventListener(
+      "open-new-comment",
+      this.openNewComment.bind(this)
+    );
     document.addEventListener("open-comment", this.openComment.bind(this));
 
     document.addEventListener(
@@ -564,7 +587,7 @@ export class YpLandUseGame extends YpBaseElement {
     const viewer = this.viewer!;
     const center = this.tileManager.computeCenterOfArea();
     const target = this.viewer!.scene.globe.ellipsoid.cartographicToCartesian(
-        Cesium.Cartographic.fromDegrees(center.lon, center.lat)
+      Cesium.Cartographic.fromDegrees(center.lon, center.lat)
     );
 
     this.orbit = function (clock: any) {
@@ -573,22 +596,52 @@ export class YpLandUseGame extends YpBaseElement {
       // Save the original camera direction and up in the East-North-Up frame at the target
       const enuCenter = new Cesium.Cartesian3();
       const centerTransform = Cesium.Transforms.eastNorthUpToFixedFrame(target);
-      const originalDirection = Cesium.Matrix4.multiplyByPointAsVector(centerTransform, camera.direction, enuCenter);
-      const originalUp = Cesium.Matrix4.multiplyByPointAsVector(centerTransform, camera.up, enuCenter);
+      const originalDirection = Cesium.Matrix4.multiplyByPointAsVector(
+        centerTransform,
+        camera.direction,
+        enuCenter
+      );
+      const originalUp = Cesium.Matrix4.multiplyByPointAsVector(
+        centerTransform,
+        camera.up,
+        enuCenter
+      );
 
       // Compute the angular distance and direction from the center to the camera
-      const cameraCenter = Cesium.Cartesian3.subtract(camera.position, target, new Cesium.Cartesian3());
+      const cameraCenter = Cesium.Cartesian3.subtract(
+        camera.position,
+        target,
+        new Cesium.Cartesian3()
+      );
       const radius = Cesium.Cartesian3.magnitude(cameraCenter);
-      const directionToCamera = Cesium.Cartesian3.normalize(cameraCenter, cameraCenter);
+      const directionToCamera = Cesium.Cartesian3.normalize(
+        cameraCenter,
+        cameraCenter
+      );
 
       // Rotate directionToCamera by the angular speed about the angular axis
       const angularSpeed = 0.001; // radians per real-world second
-      const angularAxis = Cesium.Cartesian3.cross(directionToCamera, Cesium.Cartesian3.UNIT_Z, new Cesium.Cartesian3());
-      const rotation = Cesium.Quaternion.fromAxisAngle(angularAxis, clock._clock._systemTime.multiplyByScalar(angularSpeed));
+      const angularAxis = Cesium.Cartesian3.cross(
+        directionToCamera,
+        Cesium.Cartesian3.UNIT_Z,
+        new Cesium.Cartesian3()
+      );
+      const rotation = Cesium.Quaternion.fromAxisAngle(
+        angularAxis,
+        clock._clock._systemTime.multiplyByScalar(angularSpeed)
+      );
       const directionQuaternion = new Cesium.Quaternion();
-      Cesium.Quaternion.fromAxisAngle(directionToCamera, 0, directionQuaternion);
+      Cesium.Quaternion.fromAxisAngle(
+        directionToCamera,
+        0,
+        directionQuaternion
+      );
       const rotatedQuaternion = new Cesium.Quaternion();
-      Cesium.Quaternion.multiply(rotation, directionQuaternion, rotatedQuaternion);
+      Cesium.Quaternion.multiply(
+        rotation,
+        directionQuaternion,
+        rotatedQuaternion
+      );
 
       // Convert the quaternion back to a rotation matrix
       const rotationMatrix = new Cesium.Matrix3();
@@ -596,20 +649,42 @@ export class YpLandUseGame extends YpBaseElement {
 
       // Rotate the direction vector by the rotation matrix
       const directionToCameraRotated = new Cesium.Cartesian3();
-      Cesium.Matrix3.multiplyByVector(rotationMatrix, directionToCamera, directionToCameraRotated);
+      Cesium.Matrix3.multiplyByVector(
+        rotationMatrix,
+        directionToCamera,
+        directionToCameraRotated
+      );
 
       // Compute the new camera position
-      const newCameraPosition = Cesium.Cartesian3.multiplyByScalar(directionToCameraRotated, radius, new Cesium.Cartesian3());
+      const newCameraPosition = Cesium.Cartesian3.multiplyByScalar(
+        directionToCameraRotated,
+        radius,
+        new Cesium.Cartesian3()
+      );
       Cesium.Cartesian3.add(target, newCameraPosition, newCameraPosition);
 
       // Compute the new camera direction
-      const newDirection = Cesium.Cartesian3.negate(directionToCameraRotated, new Cesium.Cartesian3());
-      const newDirectionTransformed = Cesium.Matrix4.multiplyByPointAsVector(centerTransform, newDirection, enuCenter);
+      const newDirection = Cesium.Cartesian3.negate(
+        directionToCameraRotated,
+        new Cesium.Cartesian3()
+      );
+      const newDirectionTransformed = Cesium.Matrix4.multiplyByPointAsVector(
+        centerTransform,
+        newDirection,
+        enuCenter
+      );
       camera.direction = newDirectionTransformed;
 
       // Compute the new camera up
-      const newUp = Cesium.Cartesian3.negate(angularAxis, new Cesium.Cartesian3());
-      const newUpTransformed = Cesium.Matrix4.multiplyByPointAsVector(centerTransform, newUp, enuCenter);
+      const newUp = Cesium.Cartesian3.negate(
+        angularAxis,
+        new Cesium.Cartesian3()
+      );
+      const newUpTransformed = Cesium.Matrix4.multiplyByPointAsVector(
+        centerTransform,
+        newUp,
+        enuCenter
+      );
       camera.up = newUpTransformed;
 
       camera.position = newCameraPosition;
@@ -625,16 +700,22 @@ export class YpLandUseGame extends YpBaseElement {
     }
   }
   _newPost() {
-    window.appGlobals.activity('open', 'newPost');
+    window.appGlobals.activity("open", "newPost");
     //TODO: Fix ts type
-    window.appDialogs.getDialogAsync('postEdit', (dialog: YpPostEdit) => {
+    window.appDialogs.getDialogAsync("postEdit", (dialog: YpPostEdit) => {
       setTimeout(() => {
-        dialog.setup(undefined, true, this.afterNewPost.bind(this), this.group as YpGroupData, {
-          groupId: this.group!.id,
-          group: this.group as YpGroupData,
-          tileData: this.tileManager.exportJSON()
-        });
-        }, 50);
+        dialog.setup(
+          undefined,
+          true,
+          this.afterNewPost.bind(this),
+          this.group as YpGroupData,
+          {
+            groupId: this.group!.id,
+            group: this.group as YpGroupData,
+            tileData: this.tileManager.exportJSON(),
+          }
+        );
+      }, 50);
     });
   }
 
@@ -646,9 +727,9 @@ export class YpLandUseGame extends YpBaseElement {
 
   async inputAction(event: any) {
     if (this.gameStage === GameStage.Play) {
-      this.tileManager.setInputAction(event)
+      this.tileManager.setInputAction(event);
     } else if (this.gameStage === GameStage.Results) {
-      this.tileManager.setInputActionForResults(event)
+      this.tileManager.setInputActionForResults(event);
     }
   }
 
@@ -838,18 +919,16 @@ export class YpLandUseGame extends YpBaseElement {
     );
   }
 
-  saveComment() {
-    const comment = (this.$$("#commentTextField") as HTMLInputElement)!.value;
+  saveComment(event: CustomEvent) {
+    const pointId = event.detail;
     if (this.currentRectangleIdForComment) {
       this.tileManager.addCommentToRectangle(
         this.currentRectangleIdForComment,
-        comment
+        pointId
       );
-      (this.$$("#commentTextField") as HTMLInputElement)!.value = "";
     } else {
       console.error("Can't find rectangle for comment");
     }
-    this.closeComment();
   }
 
   renderUI() {
@@ -928,21 +1007,6 @@ export class YpLandUseGame extends YpBaseElement {
       `;
   }
 
-  renderFooter() {
-    return html` <div class="layout horizontal">
-      <md-outlined-button
-        label="Close"
-        class="cancelButton self-start"
-        @click="${this.closeComment}"
-      ></md-outlined-button>
-      <md-filled-button
-        label="Submit"
-        id="save"
-        @click="${this.saveComment}"
-      ></md-filled-button>
-    </div>`;
-  }
-
   render() {
     return html`
       <yp-app-dialogs id="dialogContainer"></yp-app-dialogs>
@@ -951,13 +1015,15 @@ export class YpLandUseGame extends YpBaseElement {
 
       ${this.renderUI()}
 
-      <md-dialog id="commentDialog">
-        <div slot="header" class="postHeader">Your comment</div>
-        <div id="content">
-          <mwc-textarea rows="7" id="commentTextField" label=""></mwc-textarea>
-        </div>
-        <div slot="footer">${this.renderFooter()}</div>
-      </md-dialog>
+      <yp-new-comment-dialog
+        id="newCommentDialog"
+        .group="${this.group}"
+        @save="${this.saveComment}"
+      ></yp-new-comment-dialog>
+      <yp-comment-dialog
+        id="commentDialog"
+        .group="${this.group}"
+      ></yp-comment-dialog>
     `;
   }
 }

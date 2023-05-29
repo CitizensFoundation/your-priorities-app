@@ -13,3 +13,7 @@ interface GeoJSONFeature {
     coordinates: number[][][][];
   };
 }
+
+interface YpPostNewsStoryReturn {
+  point_id: number;
+}

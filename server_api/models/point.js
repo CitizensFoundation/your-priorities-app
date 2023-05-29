@@ -589,7 +589,7 @@ module.exports = (sequelize, DataTypes) => {
             postId: options.post_id,
             access: sequelize.models.AcActivity.ACCESS_PUBLIC
           }, (error) => {
-            callback(error);
+            callback(error, point);
           });
         })
       }).catch((error) => {

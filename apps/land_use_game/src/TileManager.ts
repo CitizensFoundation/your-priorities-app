@@ -101,10 +101,10 @@ export class TileManager extends YpCodeBase {
           (item: {
             landUseType: any;
             rectangleIndex: any;
-            comment: string;
+            pointId: number;
           }) => {
             // Get the landUseType and rectangleIndex from the item
-            const { landUseType, rectangleIndex, comment } = item;
+            const { landUseType, rectangleIndex, pointId } = item;
 
             // If the rectangleIndex doesn't exist in the map yet, add it with a new Map for its landUseCounts
             if (!this.rectangleLandUseCounts.has(rectangleIndex)) {
@@ -129,12 +129,12 @@ export class TileManager extends YpCodeBase {
             }
             landUseCount.set(landUseType, landUseCount.get(landUseType)! + 1);
 
-            if (comment && comment.trim() !== "") {
+            if (pointId) {
               const rectangleEntity = this.tileRectangleIndex.get(rectangleIndex);
               if (rectangleEntity) {
-                if (!rectangleEntity.comments)
-                  rectangleEntity.comments = [];
-                rectangleEntity.comments.push(comment);
+                if (!rectangleEntity.pointIds)
+                  rectangleEntity.pointIds = [];
+                rectangleEntity.pointIds.push(pointId);
               } else {
                 console.error("rectangleEntity not found for rectangleIndex", rectangleIndex);
               }
@@ -592,7 +592,7 @@ export class TileManager extends YpCodeBase {
     return entity;
   }
 
-  addCommentToRectangle(rectangleId: string, comment: string) {
+  addCommentToRectangle(rectangleId: string, pointId: number) {
     // Find the rectangle entity
     const rectangleEntity = this.viewer!.entities.getById(
       rectangleId
@@ -600,7 +600,7 @@ export class TileManager extends YpCodeBase {
 
     if (rectangleEntity) {
       // Add the comment to the rectangle entity
-      rectangleEntity.comment = comment;
+      rectangleEntity.pointId = pointId;
 
       // Add a 3D comment models from models/comment.glb
       const position = new Cesium.CallbackProperty((time, result) => {
@@ -633,7 +633,7 @@ export class TileManager extends YpCodeBase {
     for (const entity of this.tileEntities) {
       // Clear the land use type and comment
       entity.landUseType = undefined;
-      entity.comment = undefined;
+      entity.pointId = undefined;
       entity.landUseVotes = new Map<string, number>();
 
       // If there is a comment entity associated, remove it from the viewer's entities
@@ -841,7 +841,7 @@ export class TileManager extends YpCodeBase {
   exportJSON(): string {
     const entitiesWithLandUseType = this.tileEntities.filter(
       (entity) =>
-        entity.landUseType !== undefined || entity.comment !== undefined
+        entity.landUseType !== undefined || entity.pointId !== undefined
     );
     const jsonData = JSON.stringify(
       entitiesWithLandUseType.map((entity) => entity.toJSON()),
@@ -862,7 +862,7 @@ export class TileManager extends YpCodeBase {
       if (landUseEntity.landUseType) {
         numberOfTilesWithLandUse += 1;
       }
-      if (landUseEntity.comment) {
+      if (landUseEntity.pointId) {
         numberOfTilesWithComments += 1;
       }
     });
@@ -890,19 +890,16 @@ export class TileManager extends YpCodeBase {
     const pickedFeatures = this.viewer!.scene.drillPick(event.position);
 
     // Filter the pickedFeatures to get the rectangle entity
-    const rectangleEntityA = pickedFeatures.find(
+    const rectangleEntityContainer = pickedFeatures.find(
       (pickedFeature) => pickedFeature.id &&  pickedFeature.id._name && pickedFeature.id._name.indexOf("chat") > -1
     );
 
-    const rectangleEntity = rectangleEntityA.id;
-
-    const index = rectangleEntity.properties.getValue("rectangleIndex").rectangleIndex;
-
-    const entity = this.tileRectangleIndex.get(index);
-    debugger;
-
-    const comments = entity!.comments;
-
+    if (rectangleEntityContainer) {
+      const rectangleEntity = rectangleEntityContainer.id;
+      const index = rectangleEntity.properties.getValue("rectangleIndex").rectangleIndex;
+      const entity = this.tileRectangleIndex.get(index);
+      this.fire("open-comment", { entity }, document);
+    }
   }
 
   async setInputAction(event: any) {
@@ -919,7 +916,7 @@ export class TileManager extends YpCodeBase {
       const rectangleId = rectangleEntity.id.id;
 
       if (this.isCommenting) {
-        this.fire("open-comment", { rectangleId }, document);
+        this.fire("open-new-comment", { rectangleId }, document);
       } else if (this.selectedLandUse) {
         console.log(`selectedLandUse: ${this.selectedLandUse}`);
         this.processInputForRectangle(event, rectangleId, rectangleEntity.id);

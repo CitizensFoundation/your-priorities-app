@@ -1230,13 +1230,15 @@ router.post('/:groupId/post/news_story', auth.isLoggedInNoAnonymousCheck, auth.c
 });
 
 router.post('/:groupId/news_story', auth.isLoggedInNoAnonymousCheck, auth.can('add to group'), function(req, res) {
-  models.Point.createNewsStory(req, req.body, function (error) {
+  models.Point.createNewsStory(req, req.body, function (error, point) {
     if (error) {
       log.error('Could not save news story point on group', { err: error, context: 'news_story', user: toJson(req.user.simple()) });
       res.sendStatus(500);
     } else {
       log.info('Point News Story Created', {context: 'news_story', user: toJson(req.user.simple()) });
-      res.sendStatus(200);
+      res.send({
+        point_id: point ? point.id : null
+      });
     }
   });
 });
@@ -3008,6 +3010,25 @@ router.get('/:groupId/get_posts_with_public_private', auth.can('view group'), as
     res.send(posts);
   } catch (error) {
     log.error('Could not get get_posts_with_public_private', { err: error, context: 'get_campaigns', user: toJson(req.user.simple()) });
+    res.sendStatus(500);
+  }
+});
+
+router.get('/:groupId/:pointId/get_parent_point', auth.can('view group'), async (req, res) => {
+  try {
+    const point = await models.Point.findOne({
+      where: {
+        group_id: req.params.groupId,
+        id: req.params.pointId,
+      },
+      attributes: [
+        'id',
+        'content'
+      ]
+    });
+    res.send(point);
+  } catch (error) {
+    log.error('Could not get get_parent_point', { err: error, context: 'get_campaigns', user: toJson(req.user.simple()) });
     res.sendStatus(500);
   }
 });
