@@ -238,6 +238,24 @@ export class TileManager extends YpCodeBase {
     this.resultsModels = [];
   }
 
+  getRectangleIndexAtOffset(rectangleIndex: string, i: number, j: number): string {
+    const [westStr, southStr, eastStr, northStr] = rectangleIndex.split("|");
+    const west = parseFloat(westStr);
+    const south = parseFloat(southStr);
+    const east = parseFloat(eastStr);
+    const north = parseFloat(northStr);
+
+    const widthInDegrees = east - west;
+    const heightInDegrees = north - south;
+
+    const newWest = west + i * widthInDegrees;
+    const newEast = newWest + widthInDegrees;
+    const newSouth = south + j * heightInDegrees;
+    const newNorth = newSouth + heightInDegrees;
+
+    return `${newWest}|${newSouth}|${newEast}|${newNorth}`;
+  }
+
   updateCommentResults() {
     this.rectangleCommentsUseCounts.forEach(
       async (commentCount, rectangleIndex) => {
@@ -252,8 +270,25 @@ export class TileManager extends YpCodeBase {
           // Calculate the highest point in the rectangle
           const maxEntityHeight =
             this.rectangleMaxHeights.get(rectangleIndex) || terrainHeight;
+
+          // Find the maximum entity height among the 8 adjacent rectangles
+          const adjacentMaxHeights = [];
+          for (let i = -2; i <= 2; i++) {
+            for (let j = -2; j <= 2; j++) {
+              // Exclude the center rectangle (0, 0)
+              if (!(i === 0 && j === 0)) {
+                const adjacentRectangleIndex = this.getRectangleIndexAtOffset(rectangleIndex, i, j);
+                if (adjacentRectangleIndex) {
+                  const adjacentMaxHeight = this.rectangleMaxHeights.get(adjacentRectangleIndex) || 0;
+                  adjacentMaxHeights.push(adjacentMaxHeight);
+                }
+              }
+            }
+          }
+          const maxAdjacentEntityHeight = Math.max(...adjacentMaxHeights);
+
           const chatBubbleHeight = commentCount > 1 ? 550 : 275;
-          const positionHeight = maxEntityHeight + chatBubbleHeight;
+          const positionHeight = maxAdjacentEntityHeight + chatBubbleHeight;
 
           // Calculate position for the chat bubble
           const position = new Cesium.ConstantPositionProperty(
@@ -283,6 +318,7 @@ export class TileManager extends YpCodeBase {
       }
     );
   }
+
 
   updateTileResults() {
     this.clearresultsModels();
