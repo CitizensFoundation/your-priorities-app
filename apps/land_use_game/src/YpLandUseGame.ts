@@ -101,7 +101,7 @@ export class YpLandUseGame extends YpBaseElement {
   frameCount = 0;
   lastFPSLogTime = new Date().getTime();
   orbit: ((clock: any) => void) | undefined;
-
+  posts: YpPostData[] | undefined;
 
   logFramerate() {
     this.frameCount++;
@@ -232,6 +232,26 @@ export class YpLandUseGame extends YpBaseElement {
           opacity: 1;
         }
 
+        #resultsStats{
+          position: absolute;
+          top: 10px;
+          left: 32px;
+          z-index: 1;
+          padding: 16px;
+          background-color: rgba(255, 255, 255, 0.5);
+          border-radius: 5px;
+          opacity: 0;
+          transition: opacity 5s ease-in-out;
+        }
+
+        #resultsStats[hidden] {
+          opacity: 0;
+        }
+
+        #resultsStats:not([hidden]) {
+          opacity: 1;
+        }
+
         #emptyCreditContainer {
           display: none;
         }
@@ -320,10 +340,10 @@ export class YpLandUseGame extends YpBaseElement {
     window.serverApi = new YpServerApi();
     window.appGlobals = new LandUseAppGlobals(window.serverApi);
     window.appUser = new YpAppUser(window.serverApi);
-    if (window.location.href.indexOf('localhost:9175') > -1) {
+    if (window.location.href.indexOf("localhost:9175") > -1) {
       window.appGlobals.setupTranslationSystem();
     } else {
-      window.appGlobals.setupTranslationSystem('/land_use');
+      window.appGlobals.setupTranslationSystem("/land_use");
     }
     super();
     this.addListener("yp-app-dialogs-ready", this._appDialogsReady.bind(this));
@@ -424,8 +444,8 @@ export class YpLandUseGame extends YpBaseElement {
   }
 
   async setupTileResults() {
-    const posts = await window.serverApi.getPublicPrivatePosts(this.group!.id);
-    this.tileManager.setupTileResults(posts);
+    this.posts = await window.serverApi.getPublicPrivatePosts(this.group!.id);
+    this.tileManager.setupTileResults(this.posts!);
   }
 
   flyToPosition(
@@ -555,7 +575,7 @@ export class YpLandUseGame extends YpBaseElement {
     this.numberOfTilesWithComments = event.detail.numberOfTilesWithComments;
     this.numberOfTilesWithLandUse = event.detail.numberOfTilesWithLandUse;
 
-    if (this.numberOfTilesWithLandUse!/this.totalNumberOfTiles! > 0.1) {
+    if (this.numberOfTilesWithLandUse! / this.totalNumberOfTiles! > 0.1) {
       this.disableSubmitButton = false;
     }
   }
@@ -1009,7 +1029,10 @@ export class YpLandUseGame extends YpBaseElement {
     if (this.hideUI) return nothing;
     else
       return html`
-        <div id="landUseSelection" ?hidden="${this.gameStage===GameStage.Intro}">
+        <div
+          id="landUseSelection"
+          ?hidden="${this.gameStage === GameStage.Intro}"
+        >
           <button id="landUse1" ?selected=${this.selectedLandUse === "energy"}>
             Energy
           </button>
@@ -1037,21 +1060,41 @@ export class YpLandUseGame extends YpBaseElement {
           >
             Conservation
           </button>
-          <button id="commentButton" ?hidden="${this.gameStage===GameStage.Results}">Comment</button>
+          <button
+            id="commentButton"
+            ?hidden="${this.gameStage === GameStage.Results}"
+          >
+            Comment
+          </button>
         </div>
 
-        <div id="navigationButtons" ?hidden="${this.gameStage===GameStage.Intro}">
+        <div
+          id="navigationButtons"
+          ?hidden="${this.gameStage === GameStage.Intro}"
+        >
           <button id="showAll">Show all</button>
           <button id="trackPlane">Plane</button>
         </div>
 
-        <div id="terrainProviderSelection" ?hidden="${this.gameStage===GameStage.Intro}">
+        <div
+          id="terrainProviderSelection"
+          ?hidden="${this.gameStage === GameStage.Intro}"
+        >
           <button id="chooseAerial">Aerial</button>
           <button id="chooseAerialWithLabels">Labels</button>
           <button id="chooseOpenStreetMap">Map</button>
         </div>
 
-        <div id="gameStats" ?hidden="${this.gameStage!==GameStage.Play}">
+        ${this.posts
+          ? html`<div
+              id="resultsStats"
+              ?hidden="${this.gameStage !== GameStage.Results}"
+            >
+              ${this.posts!.length} ${this.t('participants')}
+            </div> `
+          : nothing}
+
+        <div id="gameStats" ?hidden="${this.gameStage !== GameStage.Play}">
           <div id="progressBars">
             ${this.numberOfTilesWithLandUse != undefined &&
             this.totalNumberOfTiles != undefined &&
@@ -1076,10 +1119,7 @@ export class YpLandUseGame extends YpBaseElement {
                 `
               : nothing}
           </div>
-          <button
-            id="submitButton"
-            ?disabled="${this.disableSubmitButton}"
-          >
+          <button id="submitButton" ?disabled="${this.disableSubmitButton}">
             Submit
           </button>
         </div>
