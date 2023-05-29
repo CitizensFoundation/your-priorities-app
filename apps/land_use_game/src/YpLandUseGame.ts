@@ -195,6 +195,10 @@ export class YpLandUseGame extends YpBaseElement {
           font-size: 24px;
         }
 
+        .participantsStats {
+          font-size: 24px;
+        }
+
         #navigationButtons button {
           margin: 5px;
           font-size: 32px;
@@ -207,8 +211,8 @@ export class YpLandUseGame extends YpBaseElement {
         #showAllButton button {
           margin: 5px;
           font-size: 32px;
+          margin-top: 16px;
         }
-
 
         #terrainProviderSelection {
           position: absolute;
@@ -245,7 +249,7 @@ export class YpLandUseGame extends YpBaseElement {
           opacity: 1;
         }
 
-        #resultsStats{
+        #resultsStats {
           position: absolute;
           top: 10px;
           left: 32px;
@@ -1138,11 +1142,18 @@ export class YpLandUseGame extends YpBaseElement {
               id="resultsStats"
               ?hidden="${this.gameStage !== GameStage.Results}"
             >
-              ${this.posts!.length} ${this.t('participants')}
-
-              <button id="showAllButton" @click="${this.toggleShowAllResults}" ?selected="${this.showAllTileResults}">
-                All votes
-              </button>
+              <div class="layout vertical">
+                <div class="participantsStats">${this.posts!.length} ${this.t("participants")}</div>
+                <div>
+                  <button
+                    id="showAllButton"
+                    @click="${this.toggleShowAllResults}"
+                    ?selected="${this.showAllTileResults}"
+                  >
+                    Show "losing" votes
+                  </button>
+                </div>
+              </div>
             </div> `
           : nothing}
 

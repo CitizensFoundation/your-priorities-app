@@ -292,7 +292,6 @@ export class TileManager extends YpCodeBase {
             }
           }
           const maxAdjacentEntityHeight = Math.max(...adjacentMaxHeights) || maxEntityHeight;
-          console.error(maxAdjacentEntityHeight);
 
           const chatBubbleHeight = commentCount > 1 ? 550 : 275;
           const positionHeight = maxAdjacentEntityHeight + chatBubbleHeight;
@@ -367,7 +366,6 @@ export class TileManager extends YpCodeBase {
           landUseCounts.forEach((count, landUseType) => {
             if (count > highestCount) {
               highestCount = count;
-              console.error(`highestCount: ${highestCount} for ${landUseType}`)
             }
           });
 
@@ -415,11 +413,11 @@ export class TileManager extends YpCodeBase {
                   );
                 }
               } else {
-                console.error("Model already used: " + modelIndex);
+                console.info("Model already used: " + modelIndex);
               }
             }
           });
-          console.log(`this.resultsModels ${this.resultsModels.length}`)
+          //console.log(`this.resultsModels ${this.resultsModels.length}`)
         } else {
           console.error(
             "No rectangle entity found for index: " + rectangleIndex
