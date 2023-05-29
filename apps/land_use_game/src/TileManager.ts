@@ -59,10 +59,16 @@ export class TileManager extends YpCodeBase {
   rectangleCommentsUseCounts = new Map<string, number>();
   rectangleMaxHeights = new Map<string, number>();
   resultsModelsUsed = new Map<string, boolean>();
+  showAllTileResults!: boolean;
 
   constructor(viewer: Viewer) {
     super();
     this.viewer = viewer;
+  }
+
+  setShowAllTileResults(showAllTileResults: boolean) {
+    this.showAllTileResults = showAllTileResults;
+    this.updateTileResults();
   }
 
   computeCenterOfArea() {
@@ -356,8 +362,19 @@ export class TileManager extends YpCodeBase {
             }
           });
 
+          let highestCount = 1;
+
           landUseCounts.forEach((count, landUseType) => {
-            if (!this.selectedLandUse || landUseType === this.selectedLandUse) {
+            if (count > highestCount) {
+              highestCount = count;
+              console.error(`highestCount: ${highestCount} for ${landUseType}`)
+            }
+          });
+
+          landUseCounts.forEach((count, landUseType) => {
+            if ((!this.selectedLandUse ||
+                landUseType === this.selectedLandUse) &&
+                (this.showAllTileResults || count === highestCount)) {
               //count = ((count - 1) / (maxCount - 1)) * (upperCountNormalized - 0.1) + 0.1;
               //count = Math.sqrt(((count - 1) / (maxCount - 1)) * (upperCountNormalized - 0.1) + 0.1);
 
@@ -402,7 +419,7 @@ export class TileManager extends YpCodeBase {
               }
             }
           });
-          //console.log(`this.resultsModels ${this.resultsModels.length}`)
+          console.log(`this.resultsModels ${this.resultsModels.length}`)
         } else {
           console.error(
             "No rectangle entity found for index: " + rectangleIndex

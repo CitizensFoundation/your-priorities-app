@@ -71,6 +71,9 @@ export class YpLandUseGame extends YpBaseElement {
   @property({ type: Boolean })
   hideUI = true;
 
+  @property({ type: Boolean })
+  showAllTileResults = false;
+
   @property({ type: Object })
   viewer: Viewer | undefined;
 
@@ -197,6 +200,16 @@ export class YpLandUseGame extends YpBaseElement {
           font-size: 32px;
         }
 
+        #showAllButton {
+          font-size: 24px;
+        }
+
+        #showAllButton button {
+          margin: 5px;
+          font-size: 32px;
+        }
+
+
         #terrainProviderSelection {
           position: absolute;
           top: 10px;
@@ -312,6 +325,14 @@ export class YpLandUseGame extends YpBaseElement {
           background: rgba(255, 255, 255, 0.55);
         }
 
+        #showAllButton {
+          background: rgba(255, 255, 255, 0.2);
+        }
+
+        #showAllButton[selected] {
+          background: rgba(255, 255, 255, 0.55);
+        }
+
         #progressBars {
           display: flex;
           flex-direction: column;
@@ -364,8 +385,10 @@ export class YpLandUseGame extends YpBaseElement {
     await this.updateComplete;
     this.setupEventListeners();
     if (this.gameStage === GameStage.Results) {
-      setTimeout(() => {
+      setTimeout(async () => {
         this.setupTileResults();
+        await this.setupTileResults();
+        this.setLandUse(undefined);
       }, 3000);
     }
   }
@@ -373,6 +396,7 @@ export class YpLandUseGame extends YpBaseElement {
   async connectedCallback() {
     // @ts-ignore
     window.CESIUM_BASE_URL = "";
+
     this.group = await window.appGlobals.setupGroup();
     super.connectedCallback();
     const helpPages = (await window.serverApi.getHelpPages(
@@ -681,8 +705,7 @@ export class YpLandUseGame extends YpBaseElement {
   async afterNewPost() {
     this.gameStage = GameStage.Results;
     this.tileManager.clearLandUsesAndComments();
-    // Await 5 seconds
-    await new Promise((resolve) => setTimeout(resolve, 5000));
+    await new Promise((resolve) => setTimeout(resolve, 200));
     await this.setupTileResults();
     this.setLandUse(undefined);
     //this.startOrbit();
@@ -839,6 +862,11 @@ export class YpLandUseGame extends YpBaseElement {
     }
   }
 
+  toggleShowAllResults() {
+    this.showAllTileResults = !this.showAllTileResults;
+    this.tileManager.setShowAllTileResults(this.showAllTileResults);
+  }
+
   async initScene() {
     const container = this.$$("#cesium-container")!;
     const emptyCreditContainer = this.$$("#emptyCreditContainer")!;
@@ -890,6 +918,8 @@ export class YpLandUseGame extends YpBaseElement {
     this.viewer.scene.globe.baseColor = Cesium.Color.GRAY;
     try {
       this.tileManager = new TileManager(this.viewer);
+      this.tileManager.showAllTileResults = this.showAllTileResults;
+
       const iconUrls = [
         "models/CesiumBalloon.glb",
         "models/CesiumBalloon.glb",
@@ -1109,6 +1139,10 @@ export class YpLandUseGame extends YpBaseElement {
               ?hidden="${this.gameStage !== GameStage.Results}"
             >
               ${this.posts!.length} ${this.t('participants')}
+
+              <button id="showAllButton" @click="${this.toggleShowAllResults}" ?selected="${this.showAllTileResults}">
+                All votes
+              </button>
             </div> `
           : nothing}
 
