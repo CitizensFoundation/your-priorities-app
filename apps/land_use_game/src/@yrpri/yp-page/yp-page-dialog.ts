@@ -33,6 +33,7 @@ export class YpPageDialog extends YpBaseElement {
         #dialog {
           background-color: #fff;
           max-width: 50%;
+          text-align: left;
         }
 
         @media (max-width: 1100px) {

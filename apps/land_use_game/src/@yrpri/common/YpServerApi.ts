@@ -1,7 +1,6 @@
 import { YpServerApiBase } from './YpServerApiBase.js';
 
 export class YpServerApi extends YpServerApiBase {
-
   public getPublicPrivatePosts(groupId: number) {
     return this.fetchWrapper(
       this.baseUrlPath + `/groups/${groupId}/get_posts_with_public_private`
@@ -415,6 +414,17 @@ export class YpServerApi extends YpServerApiBase {
   public registerUser(body: Record<string, unknown>) {
     return this.fetchWrapper(
       this.baseUrlPath + `/users/register`,
+      {
+        method: 'POST',
+        body: JSON.stringify(body),
+      },
+      false
+    );
+  }
+
+  public registerAnonymously(body: Record<string, unknown>) {
+    return this.fetchWrapper(
+      this.baseUrlPath + `/users/register_anonymously`,
       {
         method: 'POST',
         body: JSON.stringify(body),

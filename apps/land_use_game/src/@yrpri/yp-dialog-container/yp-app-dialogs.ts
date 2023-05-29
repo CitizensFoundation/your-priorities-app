@@ -1,26 +1,26 @@
-import { html, css, LitElement, nothing, TemplateResult } from 'lit';
-import { property, customElement } from 'lit/decorators.js';
+import { html, css, LitElement, nothing, TemplateResult } from "lit";
+import { property, customElement } from "lit/decorators.js";
 
-import { YpBaseElement } from '../common/yp-base-element.js';
-import { Snackbar } from '@material/mwc-snackbar';
-import { Dialog } from '@material/mwc-dialog';
+import { YpBaseElement } from "../common/yp-base-element.js";
+import { Snackbar } from "@material/mwc-snackbar";
+import { Dialog } from "@material/mwc-dialog";
 
-import '@material/mwc-dialog';
-import '@material/mwc-snackbar';
+import "@material/mwc-dialog";
+import "@material/mwc-snackbar";
 
-import '../yp-magic-text/yp-magic-text-dialog.js';
-import '../yp-user/yp-login.js';
+import "../yp-magic-text/yp-magic-text-dialog.js";
+import "../yp-user/yp-login.js";
 
-import '../yp-user/yp-missing-email.js';
-import '../yp-user/yp-registration-questions-dialog.js';
-import '../yp-user/yp-forgot-password.js';
-import '../yp-user/yp-reset-password.js';
+import "../yp-user/yp-missing-email.js";
+import "../yp-user/yp-registration-questions-dialog.js";
+import "../yp-user/yp-forgot-password.js";
+import "../yp-user/yp-reset-password.js";
 //import '../yp-user/yp-accept-invite.js';
 //import './yp-autotranslate-dialog.js';
-import '../yp-post/yp-post-edit.js';
-import '../yp-page/yp-page-dialog.js';
+import "../yp-post/yp-post-edit.js";
+import "../yp-page/yp-page-dialog.js";
 
-@customElement('yp-app-dialogs')
+@customElement("yp-app-dialogs")
 export class YpAppDialogs extends YpBaseElement {
   @property({ type: String })
   selectedDialog: string | undefined;
@@ -106,69 +106,71 @@ export class YpAppDialogs extends YpBaseElement {
   }
 
   renderSelectedDialog() {
-    let selectedDialog: TemplateResult<any>|{} = nothing;
-    console.error('renderSelectedDialog', this.selectedDialog)
+    let selectedDialog: TemplateResult<any> | {} = nothing;
+    console.error("renderSelectedDialog", this.selectedDialog);
 
     switch (this.selectedDialog) {
-      case 'userLogin':
+      case "userLogin":
         selectedDialog = html`
           <yp-login
             id="userLogin"
-            @yp-forgot-password="${this._forgotPassword}"></yp-login>
+            @yp-forgot-password="${this._forgotPassword}"
+          ></yp-login>
         `;
         break;
-      case 'forgotPassword':
+      case "forgotPassword":
         selectedDialog = html`
           <yp-forgot-password id="forgotPassword"></yp-forgot-password>
         `;
         break;
-      case 'resetPassword':
+      case "resetPassword":
         selectedDialog = html`
           <yp-reset-password id="resetPassword"></yp-reset-password>
         `;
         break;
-      case 'ratings':
+      case "ratings":
         selectedDialog = html`
           <yp-dialog-ratings id="ratings"></yp-dialog-ratings>
         `;
         break;
-      case 'acceptInvite':
+      case "acceptInvite":
         selectedDialog = html`
           <yp-accept-invite id="acceptInvite"></yp-accept-invite>
         `;
         break;
-      case 'emojiDialog':
+      case "emojiDialog":
         selectedDialog = html`
           <yp-emoji-dialog id="emojiDialog"></yp-emoji-dialog>
         `;
         break;
-      case 'missingEmail':
+      case "missingEmail":
         selectedDialog = html`
           <yp-missing-email id="missingEmail"></yp-missing-email>
         `;
         break;
-      case 'postEdit':
+      case "postEdit":
         selectedDialog = html` <yp-post-edit id="postEdit"></yp-post-edit> `;
         break;
-      case 'userImageEdit':
+      case "userImageEdit":
         selectedDialog = html`
           <yp-post-user-image-edit id="userImageEdit"></yp-post-user-image-edit>
         `;
         break;
-      case 'userEdit':
+      case "userEdit":
         selectedDialog = html`
           <yp-user-edit id="userEdit" method="PUT"></yp-user-edit>
         `;
         break;
-      case 'shareDialog':
+      case "shareDialog":
         selectedDialog = html`
           <yp-share-dialog id="shareDialog"></yp-share-dialog>
         `;
         break;
-      case 'userDeleteOrAnonymize':
+      case "userDeleteOrAnonymize":
         selectedDialog = html`
           <yp-user-delete-or-anonymize
-            id="userDeleteOrAnonymize"></yp-user-delete-or-anonymize>
+            id="userDeleteOrAnonymize"
+          ></yp-user-delete-or-anonymize>
         `;
         break;
     }
@@ -181,48 +183,55 @@ export class YpAppDialogs extends YpBaseElement {
       ${this.hasLoggedInUser
         ? html`
             <ac-notification-toast
-              id="notificationToast"></ac-notification-toast>
+              id="notificationToast"
+            ></ac-notification-toast>
           `
         : nothing}
       ${this.needsPixelCookieConfirm
         ? html`
             <mwc-snackbar
               id="pixelTrackingCookieConfirm"
-              .labelText="${this.t('facebookTrackingToastInfo')}"
-              timeoutMs="-1">
+              .labelText="${this.t("facebookTrackingToastInfo")}"
+              timeoutMs="-1"
+            >
               <mwc-button
                 raised
                 slot="dismiss"
                 @click="${this._disableFaceookPixelTracking}"
-                .label="${this.t('disableFacebookTracking')}"></mwc-button>
+                .label="${this.t("disableFacebookTracking")}"
+              ></mwc-button>
               <mwc-button
                 raised
                 slot="action"
                 @click="${this._agreeToFacebookPixelTracking}"
-                .label="${this.t('iAgree')}"></mwc-button>
+                .label="${this.t("iAgree")}"
+              ></mwc-button>
             </mwc-snackbar>
           `
         : nothing}
-
-        ${this.apiActionDialogOpen ? html`
-          <yp-api-action-dialog id="apiActionDialog" @close="${this._closeActionDialog}"></yp-api-action-dialog>
-        ` : nothing }
-
-        ${this.registrationQuestionsOpen ? html`
-          <yp-registration-questions-dialog
-            id="registrationQuestions"
-            @close="${this._closeRegistrationQuestionsDialog}"
-          ></yp-registration-questions-dialog>
-        ` : nothing}
-
+      ${this.apiActionDialogOpen
+        ? html`
+            <yp-api-action-dialog
+              id="apiActionDialog"
+              @close="${this._closeActionDialog}"
+            ></yp-api-action-dialog>
+          `
+        : nothing}
+      ${this.pageDialogOpen
+        ? html` <yp-page-dialog id="pageDialog"></yp-page-dialog> `
+        : nothing}
+      ${this.registrationQuestionsOpen
+        ? html`
+            <yp-registration-questions-dialog
+              id="registrationQuestions"
+              @close="${this._closeRegistrationQuestionsDialog}"
+            ></yp-registration-questions-dialog>
+          `
+        : nothing}
 
       <mwc-snackbar id="masterToast"></mwc-snackbar>
 
       ${this.renderSelectedDialog()}
-
-      ${this.pageDialogOpen
-        ? html` <yp-page-dialog id="pageDialog"></yp-page-dialog> `
-        : nothing}
       ${this.magicTextDialogOpen
         ? html`
             <yp-magic-text-dialog id="magicTextDialog"></yp-magic-text-dialog>
@@ -231,19 +240,20 @@ export class YpAppDialogs extends YpBaseElement {
       ${this.confirmationDialogOpen
         ? html`
             <yp-confirmation-dialog
-              id="confirmationDialog"></yp-confirmation-dialog>
+              id="confirmationDialog"
+            ></yp-confirmation-dialog>
           `
         : nothing}
       ${this.autoTranslateDialogOpen
         ? html`
             <yp-autotranslate-dialog
-              id="autoTranslateDialog"></yp-autotranslate-dialog>
+              id="autoTranslateDialog"
+            ></yp-autotranslate-dialog>
           `
         : nothing}
       ${this.mediaRecorderOpen
         ? html` <yp-media-recorder id="mediaRecorder"></yp-media-recorder> `
         : nothing}
-
       ${this.loadingDialogOpen
         ? html`
             <mwc-dialog id="loadingDialog">
@@ -256,12 +266,12 @@ export class YpAppDialogs extends YpBaseElement {
 
   constructor() {
     super();
-    this.addGlobalListener('yp-logged-in-user', this._loggedInUser.bind(this));
+    this.addGlobalListener("yp-logged-in-user", this._loggedInUser.bind(this));
   }
 
   connectedCallback() {
     super.connectedCallback();
-    this.fire('yp-app-dialogs-ready', this);
+    this.fire("yp-app-dialogs-ready", this);
     /*setTimeout(() => {
       import('./yp-dialog-container-delayed.js').then(() => {
         this.haveLoadedDelayed = true;
@@ -278,21 +288,21 @@ export class YpAppDialogs extends YpBaseElement {
     this.facebookPixelTrackingId = facebookPixelTrackingId;
     this.needsPixelCookieConfirm = true;
     await this.requestUpdate();
-    (this.$$('#pixelTrackingCookieConfirm') as Snackbar).open = true;
+    (this.$$("#pixelTrackingCookieConfirm") as Snackbar).open = true;
   }
 
   _disableFaceookPixelTracking() {
-    localStorage.setItem('disableFacebookPixelTracking', 'true');
-    (this.$$('#pixelTrackingCookieConfirm') as Snackbar).open = false;
+    localStorage.setItem("disableFacebookPixelTracking", "true");
+    (this.$$("#pixelTrackingCookieConfirm") as Snackbar).open = false;
   }
 
   _agreeToFacebookPixelTracking() {
-    localStorage.setItem('consentGivenForFacebookPixelTracking', 'true');
+    localStorage.setItem("consentGivenForFacebookPixelTracking", "true");
     if (this.facebookPixelTrackingId)
       window.appGlobals.analytics.setCommunityPixelTracker(
         this.facebookPixelTrackingId
       );
-    (this.$$('#pixelTrackingCookieConfirm') as Snackbar).open = false;
+    (this.$$("#pixelTrackingCookieConfirm") as Snackbar).open = false;
   }
 
   _loggedInUser(event: CustomEvent) {
@@ -306,18 +316,18 @@ export class YpAppDialogs extends YpBaseElement {
         });*/
       } else {
         console.warn(
-          'Trying to load logged in twice, see appUser potentially removing that second event'
+          "Trying to load logged in twice, see appUser potentially removing that second event"
         );
       }
     }
   }
 
   closeDialog(idName: string) {
-    const element = this.$$('#' + idName) as Dialog;
+    const element = this.$$("#" + idName) as Dialog;
     if (element) {
       element.open = false;
     } else {
-      console.error('Did not find dialog to close: ' + idName);
+      console.error("Did not find dialog to close: " + idName);
     }
   }
 
@@ -345,17 +355,17 @@ export class YpAppDialogs extends YpBaseElement {
   async openLoadingDialog() {
     this.loadingDialogOpen = true;
     await this.requestUpdate();
-    (this.$$('#loadingDialog') as Dialog).open = true;
+    (this.$$("#loadingDialog") as Dialog).open = true;
   }
 
   async closeLoadingDialog() {
-    (this.$$('#loadingDialog') as Dialog).open = false;
+    (this.$$("#loadingDialog") as Dialog).open = false;
     this.loadingDialogOpen = true;
   }
 
   async getRatingsDialogAsync(callback: Function) {
     if (this.gotRatingsDialog) {
-      this.getDialogAsync('ratings', callback);
+      this.getDialogAsync("ratings", callback);
     } else {
       this.openLoadingDialog();
       /* TODO: Implement
@@ -372,7 +382,7 @@ export class YpAppDialogs extends YpBaseElement {
 
   getMediaRecorderAsync(callback: Function) {
     if (this.gotMediaRecorder) {
-      this.getDialogAsync('mediaRecorder', callback);
+      this.getDialogAsync("mediaRecorder", callback);
     } else {
       this.openLoadingDialog();
       /*import('../yp-media-recorder/yp-media-recorder.js').then(async () => {
@@ -388,19 +398,23 @@ export class YpAppDialogs extends YpBaseElement {
 
   //TODO: Figure out how to bind to close of dialogs to remove from DOM when not open
   async getDialogAsync(idName: string, callback: Function) {
-    if (idName === 'pageDialog') {
+    if (idName === "pageDialog") {
       this.pageDialogOpen = true;
-    } else if (idName === 'confirmationDialog') {
+    } else if (idName === "confirmationDialog") {
       this.confirmationDialogOpen = true;
-    } else if (idName === 'autoTranslateDialog') {
+    } else if (idName === "autoTranslateDialog") {
       this.autoTranslateDialogOpen = true;
-    } else if (idName==="apiActionDialog") {
+    } else if (idName === "apiActionDialog") {
       this.apiActionDialogOpen = true;
-    } else if (idName==="registrationQuestions") {
+    } else if (idName === "registrationQuestions") {
       this.registrationQuestionsOpen = true;
-    } else if (idName === 'magicTextDialog') {
+    } else if (idName === "magicTextDialog") {
       this.magicTextDialogOpen = true;
-    } else if (idName !== 'notificationToast' && idName !== 'masterToast' && idName !== 'mediaRecorder') {
+    } else if (
+      idName !== "notificationToast" &&
+      idName !== "masterToast" &&
+      idName !== "mediaRecorder"
+    ) {
       this.pageDialogOpen = false;
       this.confirmationDialogOpen = false;
       this.autoTranslateDialogOpen = false;
@@ -409,14 +423,14 @@ export class YpAppDialogs extends YpBaseElement {
 
     await this.requestUpdate();
 
-    const element = this.$$('#' + idName) as LitElement;
-    if (element && typeof element.connectedCallback === 'function') {
+    const element = this.$$("#" + idName) as LitElement;
+    if (element && typeof element.connectedCallback === "function") {
       this.waitForUpgradeCounter = 0;
       callback(element);
     } else {
       this.waitForUpgradeCounter += 1;
       if (this.waitForUpgradeCounter > 100) {
-        console.error('Element not upgraded after wait: ' + idName);
+        console.error("Element not upgraded after wait: " + idName);
       }
       setTimeout(
         () => {
@@ -428,7 +442,7 @@ export class YpAppDialogs extends YpBaseElement {
   }
 
   _forgotPassword() {
-    this.getDialogAsync('forgotPassword', (dialog: Dialog) => {
+    this.getDialogAsync("forgotPassword", (dialog: Dialog) => {
       dialog.open = true;
     });
   }

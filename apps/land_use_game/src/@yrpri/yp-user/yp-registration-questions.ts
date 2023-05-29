@@ -72,6 +72,7 @@ export class YpRegistrationQuestions extends YpBaseElement {
         :host {
           display: block;
           width: 100%;
+          text-align: left;
         }
 
         @media (max-width: 800px) {
@@ -331,8 +332,14 @@ export class YpRegistrationQuestions extends YpBaseElement {
           ? questionElement.question.originalText
           : questionElement.question.text;
 
-        returnAnswer[text] = questionElement.getAnswer()!.value as string;
-        answers.push(returnAnswer);
+        const answer = questionElement.getAnswer();
+
+        if (answer) {
+          returnAnswer[text] = questionElement.getAnswer()!.value as string;
+          answers.push(returnAnswer);
+        } else {
+          console.warn("No answer for question: " + text);
+        }
       }
     });
     this.structuredAnswers = answers;

@@ -947,7 +947,7 @@ export class YpLogin extends YpBaseElement {
 
       this._startSpinner();
 
-      const user = (await window.serverApi.registerUser({
+      const user = (await window.serverApi.registerAnonymously({
         groupId: window.appGlobals.currentAnonymousGroup.id,
         trackingParameters: window.appGlobals.originalQueryParameters,
         oneTimeLoginName: this.hasOneTimeLoginWithName

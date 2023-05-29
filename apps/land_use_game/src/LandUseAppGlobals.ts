@@ -10,7 +10,8 @@ export class LandUseAppGlobals extends YpAppGlobals {
     }
     if (groupId) {
       const groupResults = await this.serverApi.getGroup(parseInt(groupId)) as YpGroupResults;
-      this.currentGroup = groupResults.group
+      this.currentGroup = groupResults.group;
+      this.currentAnonymousGroup = groupResults.group;
       setTimeout(() => {
         this.setRegistrationQuestionGroup(this.currentGroup );
       }, 1000);

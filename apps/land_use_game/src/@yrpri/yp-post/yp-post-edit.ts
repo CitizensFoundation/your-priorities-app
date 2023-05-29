@@ -280,6 +280,10 @@ export class YpPostEdit extends YpEditBase {
     return [
       super.styles,
       css`
+
+        :host {
+          text-align: left;
+        }
         .access {
         }
 

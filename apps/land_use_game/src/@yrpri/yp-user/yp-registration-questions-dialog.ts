@@ -24,6 +24,7 @@ export class YpRegistrationQuestionsDialog extends YpBaseElement {
         mwc-dialog {
           background-color: #fff;
           width: 420px;
+          text-align: left;
         }
 
         @media (max-width: 480px) {
@@ -59,6 +60,14 @@ export class YpRegistrationQuestionsDialog extends YpBaseElement {
     ];
   }
 
+  logout() {
+    this.close();
+    window.appUser.logout();
+    setTimeout(() => {
+      window.location.reload();
+    }, 450);
+  }
+
   render() {
     return html`
       <mwc-dialog id="dialog" modal>
@@ -75,6 +84,12 @@ export class YpRegistrationQuestionsDialog extends YpBaseElement {
         <div class="buttons">
           <mwc-button
             slot="primaryAction"
+            @click="${this.logout}"
+            .label="${this.t('user.logout')}"
+          ></mwc-button>
+          <mwc-button
+            slot="primaryAction"
+            @click="${this._validateAndSend}"
             .label="${this.t('save')}"
           ></mwc-button>
         </div>

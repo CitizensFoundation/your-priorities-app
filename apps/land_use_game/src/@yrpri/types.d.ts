@@ -130,6 +130,7 @@ interface YpGroupConfiguration extends YpCollectionConfiguration {
   allowOneTimeLoginWithName?: boolean;
   hideGroupHeader?: boolean;
   hideAllTabs?: boolean;
+  anonymousAskRegistrationQuestions?: boolean;
   disableMachineTranscripts?: boolean;
   hideHelpIcon?: boolean;
   forceSecureSamlEmployeeLogin?: boolean;

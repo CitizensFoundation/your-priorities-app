@@ -320,6 +320,11 @@ export class YpLandUseGame extends YpBaseElement {
     window.serverApi = new YpServerApi();
     window.appGlobals = new LandUseAppGlobals(window.serverApi);
     window.appUser = new YpAppUser(window.serverApi);
+    if (window.location.href.indexOf('localhost:9175') > -1) {
+      window.appGlobals.setupTranslationSystem();
+    } else {
+      window.appGlobals.setupTranslationSystem('/land_use');
+    }
     super();
     this.addListener("yp-app-dialogs-ready", this._appDialogsReady.bind(this));
     this.addGlobalListener("yp-logged-in", this._loggedIn.bind(this));

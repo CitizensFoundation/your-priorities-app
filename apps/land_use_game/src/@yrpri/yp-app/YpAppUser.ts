@@ -278,7 +278,7 @@ export class YpAppUser extends YpCodeBase {
 
     setTimeout(() => {
       this._checkRegistrationAnswers(user);
-    }, 7500);
+    }, 750);
   }
 
   _checkLoginForParameters() {
@@ -689,7 +689,10 @@ export class YpAppUser extends YpCodeBase {
       !user.notLoggedIn &&
       window.appGlobals.registrationQuestionsGroup &&
       !user.hasRegistrationAnswers &&
-      !window.appGlobals.currentAnonymousUser) {
+      (!window.appGlobals.currentAnonymousUser || (
+        window.appGlobals.currentAnonymousUser &&
+        window.appGlobals.registrationQuestionsGroup.configuration.anonymousAskRegistrationQuestions
+      ))) {
       window.appDialogs.getDialogAsync("registrationQuestions", (dialog: any /*YpRegistrationQuestionsDialog*/) => {
         dialog.open(window.appGlobals.registrationQuestionsGroup!);
       });
