@@ -45,6 +45,7 @@ export class TileManager extends YpCodeBase {
   viewer: Viewer | undefined;
   existingBoxes: Map<string, any> = new Map();
   resultsModels: Entity[] = [];
+  landAnimatedModels: Entity[] = [];
   geojsonData: any;
   allTiles: Rectangle[] = [];
   tileEntities: LandUseEntity[] = [];
@@ -691,6 +692,12 @@ export class TileManager extends YpCodeBase {
     }
     this.existingBoxes.clear();
 
+    for (const model of this.landAnimatedModels) {
+      this.viewer!.entities.remove(model);
+    }
+    this.landAnimatedModels = [];
+
+
     // Reset the land use count
     this.landUseCount.clear();
 
@@ -855,6 +862,8 @@ export class TileManager extends YpCodeBase {
             //@ts-ignore
             landUseModelScales[this.selectedLandUse]
           );
+
+          this.landAnimatedModels.push(modelInstance);
 
           // Remove the model after the animation is completed
           setTimeout(() => {

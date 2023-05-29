@@ -35,6 +35,7 @@ import { YpCommentDialog } from "./yp-comment-dialog.js";
 import "./yp-comment-dialog.js";
 import "./yp-new-comment-dialog.js";
 import { YpNewCommentDialog } from "./yp-new-comment-dialog.js";
+import { YpPageDialog } from "./@yrpri/yp-page/yp-page-dialog";
 
 const GameStage = {
   Intro: 1,
@@ -46,7 +47,7 @@ export class YpLandUseGame extends YpBaseElement {
   @property({ type: String }) title = "Land Use Game";
 
   @property({ type: Number })
-  gameStage = GameStage.Results;
+  gameStage = GameStage.Intro;
 
   @property({ type: String })
   selectedLandUse:
@@ -82,6 +83,9 @@ export class YpLandUseGame extends YpBaseElement {
   @property({ type: Object })
   group: YpGroupData | undefined;
 
+  @property({ type: Boolean })
+  disableSubmitButton = true;
+
   @query("#newCommentDialog")
   newCommentDialog!: MdDialog;
 
@@ -97,6 +101,7 @@ export class YpLandUseGame extends YpBaseElement {
   frameCount = 0;
   lastFPSLogTime = new Date().getTime();
   orbit: ((clock: any) => void) | undefined;
+
 
   logFramerate() {
     this.frameCount++;
@@ -322,9 +327,27 @@ export class YpLandUseGame extends YpBaseElement {
     window.CESIUM_BASE_URL = "";
     this.group = await window.appGlobals.setupGroup();
     super.connectedCallback();
-    setTimeout(async () => {
-      if (!this.loggedInUser) window.appUser.openUserlogin();
-    }, 3000);
+    const helpPages = (await window.serverApi.getHelpPages(
+      "group",
+      this.group!.id
+    )) as YpHelpPageData[];
+
+    let welcomePageId = this.group?.configuration?.welcomePageId;
+    let welcomePage;
+
+    if (welcomePageId) {
+      welcomePage = helpPages.find((page) => page.id === welcomePageId);
+    }
+
+    this._openPage(welcomePage || helpPages[0]);
+  }
+
+  openUserLoginOrStart() {
+    if (!this.loggedInUser) {
+      window.appUser.openUserlogin();
+    } else {
+      this.gameStage = GameStage.Play;
+    }
   }
 
   protected firstUpdated(
@@ -483,10 +506,38 @@ export class YpLandUseGame extends YpBaseElement {
     (this.$$("#commentDialog") as YpCommentDialog).closeDialog();
   }
 
+  _getPageLocale(page: YpHelpPageData) {
+    let pageLocale = "en";
+    if (page.title[window.locale]) {
+      pageLocale = window.locale;
+    } else if (page.title["en"]) {
+      pageLocale = "en";
+    } else {
+      const key = Object.keys(page.title)[0];
+      if (key) {
+        pageLocale = key;
+      }
+    }
+
+    return pageLocale;
+  }
+
+  _openPage(page: YpHelpPageData) {
+    window.appGlobals.activity("open", "pages", page.id);
+    window.appDialogs.getDialogAsync("pageDialog", (dialog: YpPageDialog) => {
+      const pageLocale = this._getPageLocale(page);
+      dialog.open(page, pageLocale, this.openUserLoginOrStart.bind(this));
+    });
+  }
+
   updateTileCount(event: any) {
     this.totalNumberOfTiles = event.detail.totalNumberOfTiles;
     this.numberOfTilesWithComments = event.detail.numberOfTilesWithComments;
     this.numberOfTilesWithLandUse = event.detail.numberOfTilesWithLandUse;
+
+    if (this.numberOfTilesWithLandUse!/this.totalNumberOfTiles! > 0.1) {
+      this.disableSubmitButton = false;
+    }
   }
 
   setupEventListeners() {
@@ -699,6 +750,7 @@ export class YpLandUseGame extends YpBaseElement {
       this.viewer!.clock.onTick.removeEventListener(this.orbit);
     }
   }
+
   _newPost() {
     window.appGlobals.activity("open", "newPost");
     //TODO: Fix ts type
@@ -964,7 +1016,6 @@ export class YpLandUseGame extends YpBaseElement {
             Conservation
           </button>
           <button id="commentButton">Comment</button>
-          <button id="submitButton">Submit</button>
         </div>
 
         <div id="navigationButtons">
@@ -1003,6 +1054,12 @@ export class YpLandUseGame extends YpBaseElement {
                 `
               : nothing}
           </div>
+          <button
+            id="submitButton"
+            ?disabled="${this.disableSubmitButton}"
+          >
+            Submit
+          </button>
         </div>
       `;
   }
