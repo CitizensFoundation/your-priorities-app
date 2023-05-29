@@ -176,7 +176,6 @@ export class TileManager extends YpCodeBase {
         }
       });
 
-      this.updateTileResults();
       this.updateCommentResults();
     } else {
       console.error("No posts found");
@@ -221,7 +220,7 @@ export class TileManager extends YpCodeBase {
       const entity = this.tileRectangleIndex.get(index);
       if (entity && this.isFarEnough(entity, topRectangles)) {
         topRectangles.push({ entity, count: maxCount });
-        if (topRectangles.length >= 20) {
+        if (topRectangles.length >= 10) {
           break;
         }
       }
@@ -318,7 +317,6 @@ export class TileManager extends YpCodeBase {
       }
     );
   }
-
 
   updateTileResults() {
     this.clearresultsModels();

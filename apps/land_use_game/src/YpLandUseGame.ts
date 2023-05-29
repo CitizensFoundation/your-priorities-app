@@ -188,6 +188,10 @@ export class YpLandUseGame extends YpBaseElement {
           border-radius: 5px;
         }
 
+        #submitButton {
+          font-size: 24px;
+        }
+
         #navigationButtons button {
           margin: 5px;
           font-size: 32px;
@@ -216,6 +220,16 @@ export class YpLandUseGame extends YpBaseElement {
           padding: 8px;
           background-color: rgba(255, 255, 255, 0.5);
           border-radius: 5px;
+          opacity: 0;
+          transition: opacity 5s ease-in-out;
+        }
+
+        #gameStats[hidden] {
+          opacity: 0;
+        }
+
+        #gameStats:not([hidden]) {
+          opacity: 1;
         }
 
         #emptyCreditContainer {
@@ -275,6 +289,7 @@ export class YpLandUseGame extends YpBaseElement {
           flex-direction: column;
           gap: 5px;
           min-width: 250px;
+          margin-bottom: 8px;
         }
 
         .progressBarContainer {
@@ -629,6 +644,8 @@ export class YpLandUseGame extends YpBaseElement {
   async afterNewPost() {
     this.gameStage = GameStage.Results;
     this.tileManager.clearLandUsesAndComments();
+    // Await 5 seconds
+    await new Promise((resolve) => setTimeout(resolve, 5000));
     await this.setupTileResults();
     this.setLandUse(undefined);
     //this.startOrbit();
@@ -987,7 +1004,7 @@ export class YpLandUseGame extends YpBaseElement {
     if (this.hideUI) return nothing;
     else
       return html`
-        <div id="landUseSelection">
+        <div id="landUseSelection" ?hidden="${this.gameStage===GameStage.Intro}">
           <button id="landUse1" ?selected=${this.selectedLandUse === "energy"}>
             Energy
           </button>
@@ -1015,21 +1032,21 @@ export class YpLandUseGame extends YpBaseElement {
           >
             Conservation
           </button>
-          <button id="commentButton">Comment</button>
+          <button id="commentButton" ?hidden="${this.gameStage===GameStage.Results}">Comment</button>
         </div>
 
-        <div id="navigationButtons">
+        <div id="navigationButtons" ?hidden="${this.gameStage===GameStage.Intro}">
           <button id="showAll">Show all</button>
           <button id="trackPlane">Plane</button>
         </div>
 
-        <div id="terrainProviderSelection">
+        <div id="terrainProviderSelection" ?hidden="${this.gameStage===GameStage.Intro}">
           <button id="chooseAerial">Aerial</button>
           <button id="chooseAerialWithLabels">Labels</button>
           <button id="chooseOpenStreetMap">Map</button>
         </div>
 
-        <div id="gameStats">
+        <div id="gameStats" ?hidden="${this.gameStage!==GameStage.Play}">
           <div id="progressBars">
             ${this.numberOfTilesWithLandUse != undefined &&
             this.totalNumberOfTiles != undefined &&
