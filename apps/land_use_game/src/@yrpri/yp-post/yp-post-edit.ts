@@ -1905,7 +1905,7 @@ export class YpPostEdit extends YpEditBase {
                 : this.group.configuration
                     .alternativeTextForNewIdeaButtonHeader;
           } else {
-            this.editHeaderText = this.t('post.new');
+            this.editHeaderText = this.t('Submit your land uses');
           }
 
           if (this.group && this.group.configuration && this.group.configuration.alternativeTextForNewIdeaSaveButton) {
