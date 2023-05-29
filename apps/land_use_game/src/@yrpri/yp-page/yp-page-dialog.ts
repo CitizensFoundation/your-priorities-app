@@ -71,7 +71,7 @@ export class YpPageDialog extends YpBaseElement {
         <mwc-button
           @click="${this._close}"
           slot="primaryAction"
-          .label="${this.t("close")}"
+          .label="${this.t("Start")}"
         ></mwc-button>
       </mwc-dialog>
     `;
