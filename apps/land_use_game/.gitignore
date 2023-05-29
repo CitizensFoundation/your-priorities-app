@@ -3,10 +3,10 @@
 /.vscode
 
 models
-Assets
-Workers
-Widgets
-ThirdParty
+/Assets
+/Workers
+/Widgets
+/ThirdParty
 
 ## system files
 .DS_Store
