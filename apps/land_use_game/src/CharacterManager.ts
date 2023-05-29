@@ -23,7 +23,7 @@ export class CharacterManager extends YpCodeBase {
   endPosition: Cartesian3;
   previousQuaternion!: Quaternion;
   totalAnimationTime = 100 * 2;
-  characterModelUrl = "models/Cesium_Man.glb";
+  characterModelUrl = "https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/landuse_game/Cesium_Man.glb";
   animationMultiplier = 0.2;
   characterScale = 4200;
 

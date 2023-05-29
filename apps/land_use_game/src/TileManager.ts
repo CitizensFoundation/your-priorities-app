@@ -16,12 +16,12 @@ import { YpCodeBase } from "./@yrpri/common/YpCodeBaseclass";
 import { LandUseEntity, LandUseEntityOptions } from "./LandUseEntity";
 
 const landUseModelPaths = {
-  energy: "models/Power.glb",
-  gracing: "models/Farming.glb",
-  tourism: "models/Tourism.glb",
-  recreation: "models/Recreation.glb",
-  restoration: "models/Restoration.glb",
-  conservation: "models/Conservation.glb",
+  energy: "https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/landuse_game/Power.glb",
+  gracing: "https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/landuse_game/Farming.glb",
+  tourism: "https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/landuse_game/Tourism.glb",
+  recreation: "https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/landuse_game/Recreation.glb",
+  restoration: "https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/landuse_game/Restoration.glb",
+  conservation: "https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/landuse_game/Conservation.glb",
 };
 
 const landUseModelScales = {
@@ -309,8 +309,8 @@ export class TileManager extends YpCodeBase {
 
           const modelUrl =
             commentCount > 1
-              ? "/models/chatBubble5.glb"
-              : "/models/chatBubble5.glb";
+              ? "https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/landuse_game/chatBubble5.glb"
+              : "https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/landuse_game/chatBubble5.glb";
 
           rectangleEntity.commentEntity = this.createModel(
             modelUrl,
@@ -662,7 +662,7 @@ export class TileManager extends YpCodeBase {
       // Add the comment to the rectangle entity
       rectangleEntity.pointId = pointId;
 
-      // Add a 3D comment models from models/comment.glb
+      // Add a 3D comment models from https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/landuse_game/comment.glb
       const position = new Cesium.CallbackProperty((time, result) => {
         const center = Cesium.Rectangle.center(
           rectangleEntity.rectangle?.coordinates?.getValue(time)
@@ -675,8 +675,8 @@ export class TileManager extends YpCodeBase {
       }, false) as unknown as PositionProperty;
 
       rectangleEntity.commentEntity = this.createModel(
-        "/models/chatBubble5.glb",
-        //        "/models/chatBubble6a.glb",
+        "https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/landuse_game/chatBubble5.glb",
+        //        "https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/landuse_game/chatBubble6a.glb",
         position,
         275,
         {

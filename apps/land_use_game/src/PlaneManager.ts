@@ -136,7 +136,7 @@ export class PlaneManager extends YpCodeBase {
       orientation: rotatedOrientation, // Use the rotated orientation
 
       model: {
-        uri: "models/Cesna4b.glb",
+        uri: "https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/landuse_game/Cesna4b.glb",
         scale: 100,
         shadows: Cesium.ShadowMode.ENABLED
       },

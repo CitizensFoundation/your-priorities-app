@@ -23,7 +23,6 @@ ThirdParty
 
 # build
 /_site/
-/dist/
 /out-tsc/
 
 storybook-static

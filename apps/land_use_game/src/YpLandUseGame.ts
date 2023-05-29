@@ -925,13 +925,13 @@ export class YpLandUseGame extends YpBaseElement {
       this.tileManager.showAllTileResults = this.showAllTileResults;
 
       const iconUrls = [
-        "models/CesiumBalloon.glb",
-        "models/CesiumBalloon.glb",
-        "models/CesiumBalloon.glb",
-        "models/CesiumBalloon.glb",
-        "models/CesiumBalloon.glb",
-        "models/CesiumBalloon.glb",
-        "models/chatBubble5.glb",
+        "https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/landuse_game/CesiumBalloon.glb",
+        "https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/landuse_game/CesiumBalloon.glb",
+        "https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/landuse_game/CesiumBalloon.glb",
+        "https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/landuse_game/CesiumBalloon.glb",
+        "https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/landuse_game/CesiumBalloon.glb",
+        "https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/landuse_game/CesiumBalloon.glb",
+        "https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/landuse_game/chatBubble5.glb",
       ];
     } catch (error) {
       console.error(error);

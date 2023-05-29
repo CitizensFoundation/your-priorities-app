@@ -6,8 +6,7 @@ import { terser } from 'rollup-plugin-terser';
 import { generateSW } from 'rollup-plugin-workbox';
 import path from 'path';
 import { replace } from '@rollup/plugin-replace';
-
-const accessToken = process.env.CESIUM_ACCESS_TOKEN;
+import copy from 'rollup-plugin-copy'
 
 export default {
   input: 'index.html',
@@ -24,8 +23,15 @@ export default {
     /** Enable using HTML as rollup entrypoint */
     html({
       minify: true,
-      injectServiceWorker: true,
+      publicPath: '/land_use',
+      injectServiceWorker: false,
       serviceWorkerPath: 'dist/sw.js',
+    }),
+    copy({
+      targets: [
+        { src: 'locales', dest: 'dist/' }
+
+      ]
     }),
     /** Resolve bare module imports */
     nodeResolve(),
@@ -69,20 +75,6 @@ export default {
           },
         ],
       ],
-    }),
-    /** Create and inject a service worker */
-    generateSW({
-      globIgnores: ['polyfills/*.js', 'nomodule-*.js'],
-      navigateFallback: '/index.html',
-      // where to output the generated sw
-      swDest: path.join('dist', 'sw.js'),
-      // directory to match patterns against to be precached
-      globDirectory: path.join('dist'),
-      // cache any html js and css by default
-      globPatterns: ['**/*.{html,js,css,webmanifest}'],
-      skipWaiting: true,
-      clientsClaim: true,
-      runtimeCaching: [{ urlPattern: 'polyfills/*.js', handler: 'CacheFirst' }],
     }),
   ],
 };

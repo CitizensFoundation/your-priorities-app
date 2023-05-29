@@ -200,6 +200,9 @@ app.use(function setupStaticPath(req, res, next) {
   if (req.path.startsWith('/promotion/') || (req.headers.referrer && req.headers.referrer.indexOf('/promotion/')>-1)) {
     staticPath = path.join(__dirname, './apps/promotion_app/dist');
     staticIndex = "index.html";
+  } else if (req.path.startsWith('/land_use/') || (req.headers.referrer && req.headers.referrer.indexOf('/land_use/')>-1)) {
+    staticPath = path.join(__dirname, './apps/land_use_game/dist');
+    staticIndex = "index.html";
   } else if (req.path.startsWith('/analytics/') || (req.headers.referrer && req.headers.referrer.indexOf('/analytics/'))>-1) {
     staticPath = path.join(__dirname, './apps/analytics_app/dist');
     staticIndex = "index.html";
@@ -474,6 +477,11 @@ app.use('/promotion/group/*', express.static(path.join(__dirname, '../apps/promo
 app.use('/promotion/post/*', express.static(path.join(__dirname, '../apps/promotion_app/dist')));
 app.use('/promotion/locales/en/*', express.static(path.join(__dirname, '../apps/promotion_app/dist/locales/en')));
 app.use('/promotion/locales/is/*', express.static(path.join(__dirname, '../apps/promotion_app/dist/locales/is')));
+
+app.use('/land_use', express.static(path.join(__dirname, '../apps/land_use_game/dist')));
+app.use('/land_use/locales/en/*', express.static(path.join(__dirname, '../apps/land_use_game/dist/locales/en')));
+app.use('/land_use/locales/is/*', express.static(path.join(__dirname, '../apps/land_use_game/dist/locales/is')));
+
 app.use('/analytics/', express.static(path.join(__dirname, '../apps/analytics_app/dist')));
 app.use('/analytics/domain/*', express.static(path.join(__dirname, '../apps/analytics_app/dist')));
 app.use('/analytics/community/*', express.static(path.join(__dirname, '../apps/analytics_app/dist')));
