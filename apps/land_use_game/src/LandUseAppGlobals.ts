@@ -4,7 +4,14 @@ import { YpAppGlobals } from "./@yrpri/yp-app/YpAppGlobals";
 export class LandUseAppGlobals extends YpAppGlobals {
   async setupGroup() {
     // Get the ID from the URL like /ID or /ID/ or /ID? or /ID/? or /ID/anything
-    let groupId = window.location.pathname.split("/")[1];
+    let groupId;
+
+    if (window.location.href.indexOf("/land_use/")>-1) {
+      groupId = window.location.pathname.split("/")[2];
+    } else {
+      groupId = window.location.pathname.split("/")[1];
+    }
+
     if (groupId) {
       groupId = groupId.split("?")[0];
     }

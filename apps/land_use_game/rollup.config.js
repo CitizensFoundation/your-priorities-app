@@ -29,8 +29,11 @@ export default {
     }),
     copy({
       targets: [
+        { src: 'Assets/*', dest: 'dist/Assets/' },
+        { src: 'ThirdParty/*', dest: 'dist/ThirdParty/' },
+        { src: 'Widgets/*', dest: 'dist/Widgets/' },
+        { src: 'Workers/*', dest: 'dist/Workers/' },
         { src: 'locales', dest: 'dist/' }
-
       ]
     }),
     /** Resolve bare module imports */

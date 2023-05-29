@@ -479,8 +479,14 @@ app.use('/promotion/locales/en/*', express.static(path.join(__dirname, '../apps/
 app.use('/promotion/locales/is/*', express.static(path.join(__dirname, '../apps/promotion_app/dist/locales/is')));
 
 app.use('/land_use', express.static(path.join(__dirname, '../apps/land_use_game/dist')));
+app.use('/land_use/*', express.static(path.join(__dirname, '../apps/land_use_game/dist')));
 app.use('/land_use/locales/en/*', express.static(path.join(__dirname, '../apps/land_use_game/dist/locales/en')));
 app.use('/land_use/locales/is/*', express.static(path.join(__dirname, '../apps/land_use_game/dist/locales/is')));
+
+app.use('/Assets', express.static(path.join(__dirname, '../apps/land_use_game/dist/Assets')));
+app.use('/ThirdParty', express.static(path.join(__dirname, '../apps/land_use_game/dist/ThirdParty')));
+app.use('/Widgets', express.static(path.join(__dirname, '../apps/land_use_game/dist/Widgets')));
+app.use('/Workers', express.static(path.join(__dirname, '../apps/land_use_game/dist/Workers')));
 
 app.use('/analytics/', express.static(path.join(__dirname, '../apps/analytics_app/dist')));
 app.use('/analytics/domain/*', express.static(path.join(__dirname, '../apps/analytics_app/dist')));

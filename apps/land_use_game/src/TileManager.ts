@@ -16,12 +16,18 @@ import { YpCodeBase } from "./@yrpri/common/YpCodeBaseclass";
 import { LandUseEntity, LandUseEntityOptions } from "./LandUseEntity";
 
 const landUseModelPaths = {
-  energy: "https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/landuse_game/Power.glb",
-  gracing: "https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/landuse_game/Farming.glb",
-  tourism: "https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/landuse_game/Tourism.glb",
-  recreation: "https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/landuse_game/Recreation.glb",
-  restoration: "https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/landuse_game/Restoration.glb",
-  conservation: "https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/landuse_game/Conservation.glb",
+  energy:
+    "https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/landuse_game/Power.glb",
+  gracing:
+    "https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/landuse_game/Farming.glb",
+  tourism:
+    "https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/landuse_game/Tourism.glb",
+  recreation:
+    "https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/landuse_game/Recreation.glb",
+  restoration:
+    "https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/landuse_game/Restoration.glb",
+  conservation:
+    "https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/landuse_game/Conservation.glb",
 };
 
 const landUseModelScales = {
@@ -77,27 +83,26 @@ export class TileManager extends YpCodeBase {
     let count = 0;
 
     for (const feature of this.geojsonData.features) {
-        const geometry = feature.geometry;
-        if (geometry.type === "MultiPolygon") {
-            for (const polygon of geometry.coordinates) {
-                for (const coordinates of polygon) {
-                    for (let i = 0; i < coordinates.length - 1; i++) {
-                        const [lon, lat] = coordinates[i];
-                        lonTotal += lon;
-                        latTotal += lat;
-                        count++;
-                    }
-                }
+      const geometry = feature.geometry;
+      if (geometry.type === "MultiPolygon") {
+        for (const polygon of geometry.coordinates) {
+          for (const coordinates of polygon) {
+            for (let i = 0; i < coordinates.length - 1; i++) {
+              const [lon, lat] = coordinates[i];
+              lonTotal += lon;
+              latTotal += lat;
+              count++;
             }
+          }
         }
+      }
     }
 
     const lonAvg = lonTotal / count;
     const latAvg = latTotal / count;
 
     return { lon: lonAvg, lat: latAvg };
-}
-
+  }
 
   setupTileResults(posts: YpPostData[]) {
     const landUseCount: Map<string, number> = new Map();
@@ -138,13 +143,16 @@ export class TileManager extends YpCodeBase {
             landUseCount.set(landUseType, landUseCount.get(landUseType)! + 1);
 
             if (pointId) {
-              const rectangleEntity = this.tileRectangleIndex.get(rectangleIndex);
+              const rectangleEntity =
+                this.tileRectangleIndex.get(rectangleIndex);
               if (rectangleEntity) {
-                if (!rectangleEntity.pointIds)
-                  rectangleEntity.pointIds = [];
+                if (!rectangleEntity.pointIds) rectangleEntity.pointIds = [];
                 rectangleEntity.pointIds.push(pointId);
               } else {
-                console.error("rectangleEntity not found for rectangleIndex", rectangleIndex);
+                console.error(
+                  "rectangleEntity not found for rectangleIndex",
+                  rectangleIndex
+                );
               }
 
               if (!this.rectangleCommentsUseCounts.has(rectangleIndex)) {
@@ -244,7 +252,11 @@ export class TileManager extends YpCodeBase {
     this.resultsModelsUsed = new Map<string, boolean>();
   }
 
-  getRectangleIndexAtOffset(rectangleIndex: string, i: number, j: number): string {
+  getRectangleIndexAtOffset(
+    rectangleIndex: string,
+    i: number,
+    j: number
+  ): string {
     const [westStr, southStr, eastStr, northStr] = rectangleIndex.split("|");
     const west = parseFloat(westStr);
     const south = parseFloat(southStr);
@@ -283,15 +295,21 @@ export class TileManager extends YpCodeBase {
             for (let j = -10; j <= 10; j++) {
               // Exclude the center rectangle (0, 0)
               if (!(i === 0 && j === 0)) {
-                const adjacentRectangleIndex = this.getRectangleIndexAtOffset(rectangleIndex, i, j);
+                const adjacentRectangleIndex = this.getRectangleIndexAtOffset(
+                  rectangleIndex,
+                  i,
+                  j
+                );
                 if (adjacentRectangleIndex) {
-                  const adjacentMaxHeight = this.rectangleMaxHeights.get(adjacentRectangleIndex) || 0;
+                  const adjacentMaxHeight =
+                    this.rectangleMaxHeights.get(adjacentRectangleIndex) || 0;
                   adjacentMaxHeights.push(adjacentMaxHeight);
                 }
               }
             }
           }
-          const maxAdjacentEntityHeight = Math.max(...adjacentMaxHeights) || maxEntityHeight;
+          const maxAdjacentEntityHeight =
+            Math.max(...adjacentMaxHeights) || maxEntityHeight;
 
           const chatBubbleHeight = commentCount > 1 ? 550 : 275;
           const positionHeight = maxAdjacentEntityHeight + chatBubbleHeight;
@@ -317,7 +335,7 @@ export class TileManager extends YpCodeBase {
             position,
             chatBubbleHeight,
             {
-              rectangleIndex: rectangleEntity.rectangleIndex!
+              rectangleIndex: rectangleEntity.rectangleIndex!,
             }
           );
         }
@@ -370,20 +388,25 @@ export class TileManager extends YpCodeBase {
           });
 
           landUseCounts.forEach((count, landUseType) => {
-            if ((!this.selectedLandUse ||
-                landUseType === this.selectedLandUse) &&
-                (this.showAllTileResults || count === highestCount)) {
+            if (
+              (!this.selectedLandUse || landUseType === this.selectedLandUse) &&
+              (this.showAllTileResults || count === highestCount)
+            ) {
               //count = ((count - 1) / (maxCount - 1)) * (upperCountNormalized - 0.1) + 0.1;
               //count = Math.sqrt(((count - 1) / (maxCount - 1)) * (upperCountNormalized - 0.1) + 0.1);
 
               // Create box entity with size based on the count
               //console.log("count", count);
-              const alpha = Math.min(0.4,0.05+(count/20));
+              const alpha = Math.min(0.4, 0.05 + count / 20);
               //console.log("alpha", alpha)
               let height = count * 3000;
 
               //TODO: Get some caching working even if this will not work
-              const modelIndex = `${rectangleIndex}|${landUseType}|${centerPosition.longitude}|${centerPosition.latitude}|${terrainHeight + height / 2}|${width}|${depth}|${height}|${alpha}`;
+              const modelIndex = `${rectangleIndex}|${landUseType}|${
+                centerPosition.longitude
+              }|${centerPosition.latitude}|${
+                terrainHeight + height / 2
+              }|${width}|${depth}|${height}|${alpha}`;
               if (this.resultsModelsUsed.get(modelIndex) !== true) {
                 const boxEntity = this.viewer!.entities.add({
                   position: Cesium.Ellipsoid.WGS84.cartographicToCartesian(
@@ -396,7 +419,10 @@ export class TileManager extends YpCodeBase {
                   box: {
                     dimensions: new Cesium.Cartesian3(width, depth, height),
                     heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
-                    material: this.getColorForLandUse(landUseType, alpha) as any,
+                    material: this.getColorForLandUse(
+                      landUseType,
+                      alpha
+                    ) as any,
                   },
                 });
 
@@ -576,10 +602,67 @@ export class TileManager extends YpCodeBase {
     }
   }
 
+  tempGeoData = {
+    type: "FeatureCollection",
+    name: "Bláskógabyggð_landuse_glacierclip",
+    crs: {
+      type: "name",
+      properties: { name: "urn:ogc:def:crs:OGC:1.3:CRS84" },
+    },
+    features: [
+      {
+        type: "Feature",
+        properties: { Name: "Bláskógabyggð", LandUse: "restoration" },
+        geometry: {
+          type: "MultiPolygon",
+          coordinates: [
+            [
+              [
+                [-20.9785, 64.166],
+                [-21.4109, 64.2274],
+                [-20.9341, 64.4662],
+                [-20.6552, 64.4225],
+                [-20.487056476815642, 64.567374468975785],
+                [-20.256090404275888, 64.490637877532507],
+                [-19.93232534484855, 64.587764524437418],
+                [-20.003651989270224, 64.621547161942843],
+                [-19.890666008911531, 64.642530449203576],
+                [-19.845464913107165, 64.721460510124004],
+                [-19.903084927859265, 64.73576763160419],
+                [-19.792920357034902, 64.754655909979562],
+                [-19.860739276440668, 64.805146902137764],
+                [-19.780989053048035, 64.867279294261749],
+                [-19.1336, 64.7653],
+                [-18.8118, 64.8105],
+                [-19.5049, 64.6843],
+                [-19.7333, 64.5634],
+                [-19.7646, 64.4736],
+                [-19.9683, 64.443],
+                [-20.4826, 64.1379],
+                [-20.4631, 64.0749],
+                [-20.6057, 64.0779],
+                [-20.6012, 64.197],
+                [-20.9785, 64.166],
+              ],
+              [
+                [-20.8679, 64.1819],
+                [-20.8975, 64.2439],
+                [-20.7115, 64.3711],
+                [-20.9302, 64.2798],
+                [-20.9621, 64.1835],
+                [-20.8679, 64.1819],
+              ],
+            ],
+          ],
+        },
+      },
+    ],
+  };
+
   async readGeoData() {
     try {
-      const response = await fetch("/testData/geodata.json");
-      this.geojsonData = await response.json();
+      //const response = await fetch("/testData/geodata.json");
+      this.geojsonData = this.tempGeoData; //await response.json();
 
       this.geojsonData.features.forEach((feature: GeoJSONFeature) => {
         const coordinates = feature.geometry.coordinates;
@@ -639,7 +722,12 @@ export class TileManager extends YpCodeBase {
     }
   }
 
-  createModel(url: string, position: PositionProperty, scale = 1.0, properties: any = undefined) {
+  createModel(
+    url: string,
+    position: PositionProperty,
+    scale = 1.0,
+    properties: any = undefined
+  ) {
     const entity = this.viewer!.entities.add({
       name: url,
       position: position,
@@ -680,7 +768,7 @@ export class TileManager extends YpCodeBase {
         position,
         275,
         {
-          rectangleIndex: rectangleEntity.rectangleIndex!
+          rectangleIndex: rectangleEntity.rectangleIndex!,
         }
       );
 
@@ -720,7 +808,6 @@ export class TileManager extends YpCodeBase {
       this.viewer!.entities.remove(model);
     }
     this.landAnimatedModels = [];
-
 
     // Reset the land use count
     this.landUseCount.clear();
@@ -953,18 +1040,21 @@ export class TileManager extends YpCodeBase {
     console.log(`totalNumberOfTiles: ${this.tileEntities.length}`);
   }
 
-
   async setInputActionForResults(event: any) {
     const pickedFeatures = this.viewer!.scene.drillPick(event.position);
 
     // Filter the pickedFeatures to get the rectangle entity
     const rectangleEntityContainer = pickedFeatures.find(
-      (pickedFeature) => pickedFeature.id &&  pickedFeature.id._name && pickedFeature.id._name.indexOf("chat") > -1
+      (pickedFeature) =>
+        pickedFeature.id &&
+        pickedFeature.id._name &&
+        pickedFeature.id._name.indexOf("chat") > -1
     );
 
     if (rectangleEntityContainer) {
       const rectangleEntity = rectangleEntityContainer.id;
-      const index = rectangleEntity.properties.getValue("rectangleIndex").rectangleIndex;
+      const index =
+        rectangleEntity.properties.getValue("rectangleIndex").rectangleIndex;
       const entity = this.tileRectangleIndex.get(index);
       this.fire("open-comment", { entity }, document);
     }

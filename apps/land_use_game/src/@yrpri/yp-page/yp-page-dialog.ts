@@ -78,8 +78,8 @@ export class YpPageDialog extends YpBaseElement {
   }
 
   get pageTitle(): string {
-    if (this.page) {
-      return this.page.title[this.language];
+    if (false && this.page) {
+      return this.page!.title[this.language];
     } else {
       return "";
     }

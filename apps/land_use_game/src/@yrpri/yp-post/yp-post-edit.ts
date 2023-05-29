@@ -1734,7 +1734,7 @@ export class YpPostEdit extends YpEditBase {
       this.selectedCoverMediaType = 'none';
       this.requestUpdate();
       if (this.$$('#imageFileUpload')) {
-        (this.$$('#imageFileUpload') as YpFileUpload).clear();
+        //(this.$$('#imageFileUpload') as YpFileUpload).clear();
       }
     }
   }

@@ -3,7 +3,7 @@ export class YpNavHelpers {
     //history.pushState({}, '', path);
     //window.dispatchEvent(new CustomEvent('location-changed'));
 
-    console.error('not redirecting to', path);
+    console.warn('not redirecting to', path);
 
     document.dispatchEvent(
       new CustomEvent('yp-pause-media-playback', { bubbles: true, detail: {} })

@@ -107,7 +107,6 @@ export class YpAppDialogs extends YpBaseElement {
 
   renderSelectedDialog() {
     let selectedDialog: TemplateResult<any> | {} = nothing;
-    console.error("renderSelectedDialog", this.selectedDialog);
 
     switch (this.selectedDialog) {
       case "userLogin":

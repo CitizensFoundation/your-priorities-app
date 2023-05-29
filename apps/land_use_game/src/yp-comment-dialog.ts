@@ -192,7 +192,8 @@ export class YpCommentDialog extends YpBaseElementWithLogin {
 
   _setOpen() {
     this.open = true;
-    (this.$$("#commentsList") as YpPointCommentList).setOpen();
+    if (this.$$("#commentsList"))
+      (this.$$("#commentsList") as YpPointCommentList).setOpen();
   }
 
   _setClosed() {
