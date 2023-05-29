@@ -418,6 +418,10 @@ export class YpLandUseGame extends YpBaseElement {
     this._openPage(welcomePage || helpPages[0]);
   }
 
+  registrationQuestionDone() {
+    this.gameStage = GameStage.Play;
+  }
+
   openUserLoginOrStart() {
     if (!this.loggedInUser) {
       window.appUser.openUserlogin();
@@ -623,6 +627,8 @@ export class YpLandUseGame extends YpBaseElement {
   setupEventListeners() {
     document.addEventListener("keydown", this.handleKeyDown.bind(this));
 
+    document.addEventListener("yp-registration-questions-done", this.registrationQuestionDone.bind(this));
+
     document.addEventListener(
       "open-new-comment",
       this.openNewComment.bind(this)
@@ -707,6 +713,7 @@ export class YpLandUseGame extends YpBaseElement {
   }
 
   async afterNewPost() {
+    debugger;
     this.gameStage = GameStage.Results;
     this.tileManager.clearLandUsesAndComments();
     await new Promise((resolve) => setTimeout(resolve, 200));

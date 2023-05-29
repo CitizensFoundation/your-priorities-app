@@ -122,6 +122,7 @@ export class YpRegistrationQuestionsDialog extends YpBaseElement {
         registrationQuestions.getAnswers()
       );
       window.appUser.setHasRegistrationAnswers();
+      this.fireGlobal('yp-registration-questions-done')
       this.close();
     } else {
       this.fire('yp-open-notify-dialog', this.t('user.completeForm'));

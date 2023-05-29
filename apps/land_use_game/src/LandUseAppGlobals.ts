@@ -20,7 +20,7 @@ export class LandUseAppGlobals extends YpAppGlobals {
       this.currentGroup = groupResults.group;
       this.currentAnonymousGroup = groupResults.group;
       setTimeout(() => {
-        this.setRegistrationQuestionGroup(this.currentGroup );
+        this.setRegistrationQuestionGroup(this.currentGroup);
       }, 1000);
       return this.currentGroup;
     } else {
