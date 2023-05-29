@@ -367,6 +367,7 @@ interface YpDomainData extends YpCollectionData {
   facebookLoginProvided?: boolean;
   samlLoginProvided?: boolean;
   loginCallbackCustomHostName?: string;
+  ionToken?: string;
 }
 
 interface YpCommunityData extends YpCollectionData {

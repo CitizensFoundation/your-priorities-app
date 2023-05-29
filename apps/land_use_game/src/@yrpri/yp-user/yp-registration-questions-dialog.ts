@@ -114,6 +114,7 @@ export class YpRegistrationQuestionsDialog extends YpBaseElement {
     const registrationQuestions = this.$$(
       '#registrationQuestions'
     ) as YpRegistrationQuestions;
+    debugger;
     if (registrationQuestions.validate()) {
       window.appGlobals.activity('submit', 'registrationAnswers');
       //TODO: Check all serverApi for catch errors and how to handle that

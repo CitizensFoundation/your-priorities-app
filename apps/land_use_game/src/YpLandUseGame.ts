@@ -301,7 +301,15 @@ export class YpLandUseGame extends YpBaseElement {
         }
 
         #landUse6[selected] {
-          background: rgba(128, 0, 128, 0.55); /* purple with 0.25 opacity */
+          background: rgba(128, 0, 128, 0.55);
+        }
+
+        #commentButton {
+          background: rgba(255, 255, 255, 0.2);
+        }
+
+        #commentButton[selected] {
+          background: rgba(255, 255, 255, 0.55);
         }
 
         #progressBars {
@@ -386,7 +394,9 @@ export class YpLandUseGame extends YpBaseElement {
     if (!this.loggedInUser) {
       window.appUser.openUserlogin();
     } else {
-      this.gameStage = GameStage.Play;
+      if (this.gameStage !== GameStage.Results) {
+        this.gameStage = GameStage.Play;
+      }
     }
   }
 
@@ -500,8 +510,10 @@ export class YpLandUseGame extends YpBaseElement {
     }
   }
 
+  //TODO: Fix and remove the selected land sue when commenting and also possible toggle commenting on and off
   setIsCommenting(isCommenting: boolean) {
     this.tileManager.isCommenting = isCommenting;
+    this.requestUpdate();
   }
 
   setCameraFromLandMark(landMarkIndex: number) {
@@ -575,7 +587,7 @@ export class YpLandUseGame extends YpBaseElement {
     this.numberOfTilesWithComments = event.detail.numberOfTilesWithComments;
     this.numberOfTilesWithLandUse = event.detail.numberOfTilesWithLandUse;
 
-    if (this.numberOfTilesWithLandUse! / this.totalNumberOfTiles! > 0.1) {
+    if (this.numberOfTilesWithLandUse! / this.totalNumberOfTiles! > 0.02) {
       this.disableSubmitButton = false;
     }
   }
@@ -831,8 +843,13 @@ export class YpLandUseGame extends YpBaseElement {
     const container = this.$$("#cesium-container")!;
     const emptyCreditContainer = this.$$("#emptyCreditContainer")!;
 
+    if (!window.appGlobals.domain?.ionToken) {
+      await new Promise((r) => setTimeout(r, 500));
+      console.warn("no ion token - waiting");
+    }
+
     //@ts-ignore
-    Cesium.Ion.defaultAccessToken = __CESIUM_ACCESS_TOKEN__;
+    Cesium.Ion.defaultAccessToken = window.appGlobals.domain!.ionToken;
 
     let imageProvider: false | ImageryProvider | undefined;
 
@@ -1063,6 +1080,7 @@ export class YpLandUseGame extends YpBaseElement {
           <button
             id="commentButton"
             ?hidden="${this.gameStage === GameStage.Results}"
+            ?selected=${this.tileManager?.isCommenting}
           >
             Comment
           </button>

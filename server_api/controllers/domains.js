@@ -718,6 +718,10 @@ router.get('/', function(req, res) {
     req.ypDomain.dataValues.ziggeoEnabled = process.env.ZIGGEO_ENABLED;
   }
 
+  if (process.env.CESIUM_ACCESS_TOKEN) {
+    req.ypDomain.dataValues.ionToken = process.env.CESIUM_ACCESS_TOKEN;
+  }
+
   if (process.env.LOGIN_CALLBACK_CUSTOM_HOSTNAME) {
     req.ypDomain.dataValues.loginCallbackCustomHostName = process.env.LOGIN_CALLBACK_CUSTOM_HOSTNAME;
   }

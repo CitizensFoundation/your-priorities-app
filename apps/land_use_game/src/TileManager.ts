@@ -58,6 +58,7 @@ export class TileManager extends YpCodeBase {
   rectangleLandUseCounts = new Map<string, Map<string, number>>();
   rectangleCommentsUseCounts = new Map<string, number>();
   rectangleMaxHeights = new Map<string, number>();
+  resultsModelsUsed = new Map<string, boolean>();
 
   constructor(viewer: Viewer) {
     super();
@@ -234,6 +235,7 @@ export class TileManager extends YpCodeBase {
       this.viewer!.entities.remove(box);
     });
     this.resultsModels = [];
+    this.resultsModelsUsed = new Map<string, boolean>();
   }
 
   getRectangleIndexAtOffset(rectangleIndex: string, i: number, j: number): string {
@@ -364,34 +366,43 @@ export class TileManager extends YpCodeBase {
               const alpha = Math.min(0.4,0.05+(count/20));
               //console.log("alpha", alpha)
               let height = count * 3000;
-              const boxEntity = this.viewer!.entities.add({
-                position: Cesium.Ellipsoid.WGS84.cartographicToCartesian(
-                  new Cesium.Cartographic(
-                    centerPosition.longitude,
-                    centerPosition.latitude,
-                    terrainHeight + height / 2
-                  )
-                ),
-                box: {
-                  dimensions: new Cesium.Cartesian3(width, depth, height),
-                  heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
-                  material: this.getColorForLandUse(landUseType, alpha) as any,
-                },
-              });
 
-              this.resultsModels.push(boxEntity);
+              //TODO: Get some caching working even if this will not work
+              const modelIndex = `${rectangleIndex}|${landUseType}|${centerPosition.longitude}|${centerPosition.latitude}|${terrainHeight + height / 2}|${width}|${depth}|${height}|${alpha}`;
+              if (this.resultsModelsUsed.get(modelIndex) !== true) {
+                const boxEntity = this.viewer!.entities.add({
+                  position: Cesium.Ellipsoid.WGS84.cartographicToCartesian(
+                    new Cesium.Cartographic(
+                      centerPosition.longitude,
+                      centerPosition.latitude,
+                      terrainHeight + height / 2
+                    )
+                  ),
+                  box: {
+                    dimensions: new Cesium.Cartesian3(width, depth, height),
+                    heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
+                    material: this.getColorForLandUse(landUseType, alpha) as any,
+                  },
+                });
 
-              // Update the maximum height for the rectangle
-              const currentMaxHeight =
-                this.rectangleMaxHeights.get(rectangleIndex) || 0;
-              if (terrainHeight + height > currentMaxHeight) {
-                this.rectangleMaxHeights.set(
-                  rectangleIndex,
-                  terrainHeight + height
-                );
+                this.resultsModels.push(boxEntity);
+                this.resultsModelsUsed.set(modelIndex, true);
+
+                // Update the maximum height for the rectangle
+                const currentMaxHeight =
+                  this.rectangleMaxHeights.get(rectangleIndex) || 0;
+                if (terrainHeight + height > currentMaxHeight) {
+                  this.rectangleMaxHeights.set(
+                    rectangleIndex,
+                    terrainHeight + height
+                  );
+                }
+              } else {
+                console.error("Model already used: " + modelIndex);
               }
             }
           });
+          //console.log(`this.resultsModels ${this.resultsModels.length}`)
         } else {
           console.error(
             "No rectangle entity found for index: " + rectangleIndex
