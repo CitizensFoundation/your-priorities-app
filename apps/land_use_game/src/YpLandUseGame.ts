@@ -89,6 +89,9 @@ export class YpLandUseGame extends YpBaseElement {
   @property({ type: Boolean })
   disableSubmitButton = true;
 
+  @property({ type: Boolean })
+  disableBrowserTouchEvents = false;
+
   @query("#newCommentDialog")
   newCommentDialog!: MdDialog;
 
@@ -129,17 +132,22 @@ export class YpLandUseGame extends YpBaseElement {
       ShadowStyles,
       css`
         :host {
-          min-height: 100vh;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: flex-start;
-          font-size: calc(10px + 2vmin);
-          color: #1a2b42;
-          max-width: 960px;
-          margin: 0 auto;
-          text-align: center;
           background-color: var(--yp-land-use-game-background-color);
+        }
+
+        @media (min-width: 960px) {
+          :host {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            font-size: calc(10px + 2vmin);
+            color: #1a2b42;
+            max-width: 960px;
+            margin: 0 auto;
+            text-align: center;
+          }
         }
 
         main {
@@ -365,6 +373,77 @@ export class YpLandUseGame extends YpBaseElement {
         .progressBarComments {
           background-color: #3c87f2;
         }
+
+        @media (max-width: 960px) {
+          #commentTextField {
+            min-width: 100%;
+          }
+
+          #landUseSelection {
+            bottom: 0;
+            text-align: center;
+            padding: 4px;
+            border-radius: 0;
+          }
+
+          #landUseSelection button {
+            font-size: 12px;
+          }
+
+          #navigationButtons {
+            text-align: center;
+            top: initial;
+            bottom: 68px;
+            left: 0;
+            border-radius: 0;
+          }
+
+          #submitButton {
+            font-size: 12px;
+          }
+
+          .participantsStats {
+            font-size: 12px;
+
+          }
+
+          #navigationButtons button {
+            font-size: 12px;
+          }
+
+          #showAllButton {
+            font-size: 12px;
+          }
+
+          #showAllButton button {
+            font-size: 12px;
+          }
+
+          #terrainProviderSelection {
+            top: initial;
+            bottom: 68px;
+            right: 0;
+            border-radius: 0;
+          }
+
+          #terrainProviderSelection button {
+            font-size: 12px;
+          }
+
+          #gameStats {
+            left: 50%;
+            transform: translateX(-50%);
+          }
+
+          #resultsStats {
+            left: 50%;
+            transform: translateX(-50%);
+          }
+
+          .progressBarContainer {
+            height: 15px;
+          }
+        }
       `,
     ];
   }
@@ -569,25 +648,30 @@ export class YpLandUseGame extends YpBaseElement {
   cancelFlyToPosition() {
     if (this.viewer) {
       this.viewer.camera.cancelFlight();
+      this.disableBrowserTouchEvents = true;
     }
   }
 
   openNewComment(event: any) {
     (this.$$("#newCommentDialog") as YpNewCommentDialog).openDialog();
     this.currentRectangleIdForComment = event.detail.rectangleId;
+    this.disableBrowserTouchEvents = false;
   }
 
   closeNewComment() {
     (this.$$("#newCommentDialog") as YpNewCommentDialog).openDialog();
     this.currentRectangleIdForComment = undefined;
+    this.disableBrowserTouchEvents = true;
   }
 
   openComment(event: any) {
     (this.$$("#commentDialog") as YpCommentDialog).openDialog(event);
+    this.disableBrowserTouchEvents = false;
   }
 
   closeComment() {
     (this.$$("#commentDialog") as YpCommentDialog).closeDialog();
+    this.disableBrowserTouchEvents = true;
   }
 
   _getPageLocale(page: YpHelpPageData) {
@@ -627,7 +711,10 @@ export class YpLandUseGame extends YpBaseElement {
   setupEventListeners() {
     document.addEventListener("keydown", this.handleKeyDown.bind(this));
 
-    document.addEventListener("yp-registration-questions-done", this.registrationQuestionDone.bind(this));
+    document.addEventListener(
+      "yp-registration-questions-done",
+      this.registrationQuestionDone.bind(this)
+    );
 
     document.addEventListener(
       "open-new-comment",
@@ -713,134 +800,17 @@ export class YpLandUseGame extends YpBaseElement {
   }
 
   async afterNewPost() {
-    debugger;
     this.gameStage = GameStage.Results;
     this.tileManager.clearLandUsesAndComments();
     await new Promise((resolve) => setTimeout(resolve, 200));
     await this.setupTileResults();
     this.setLandUse(undefined);
-    //this.startOrbit();
-  }
-
-  startOrbit() {
-    const viewer = this.viewer!;
-    const center = this.tileManager.computeCenterOfArea();
-    const target = this.viewer!.scene.globe.ellipsoid.cartographicToCartesian(
-      Cesium.Cartographic.fromDegrees(center.lon, center.lat)
-    );
-
-    this.orbit = function (clock: any) {
-      const camera = viewer.camera;
-
-      // Save the original camera direction and up in the East-North-Up frame at the target
-      const enuCenter = new Cesium.Cartesian3();
-      const centerTransform = Cesium.Transforms.eastNorthUpToFixedFrame(target);
-      const originalDirection = Cesium.Matrix4.multiplyByPointAsVector(
-        centerTransform,
-        camera.direction,
-        enuCenter
-      );
-      const originalUp = Cesium.Matrix4.multiplyByPointAsVector(
-        centerTransform,
-        camera.up,
-        enuCenter
-      );
-
-      // Compute the angular distance and direction from the center to the camera
-      const cameraCenter = Cesium.Cartesian3.subtract(
-        camera.position,
-        target,
-        new Cesium.Cartesian3()
-      );
-      const radius = Cesium.Cartesian3.magnitude(cameraCenter);
-      const directionToCamera = Cesium.Cartesian3.normalize(
-        cameraCenter,
-        cameraCenter
-      );
-
-      // Rotate directionToCamera by the angular speed about the angular axis
-      const angularSpeed = 0.001; // radians per real-world second
-      const angularAxis = Cesium.Cartesian3.cross(
-        directionToCamera,
-        Cesium.Cartesian3.UNIT_Z,
-        new Cesium.Cartesian3()
-      );
-      const rotation = Cesium.Quaternion.fromAxisAngle(
-        angularAxis,
-        clock._clock._systemTime.multiplyByScalar(angularSpeed)
-      );
-      const directionQuaternion = new Cesium.Quaternion();
-      Cesium.Quaternion.fromAxisAngle(
-        directionToCamera,
-        0,
-        directionQuaternion
-      );
-      const rotatedQuaternion = new Cesium.Quaternion();
-      Cesium.Quaternion.multiply(
-        rotation,
-        directionQuaternion,
-        rotatedQuaternion
-      );
-
-      // Convert the quaternion back to a rotation matrix
-      const rotationMatrix = new Cesium.Matrix3();
-      Cesium.Matrix3.fromQuaternion(rotatedQuaternion, rotationMatrix);
-
-      // Rotate the direction vector by the rotation matrix
-      const directionToCameraRotated = new Cesium.Cartesian3();
-      Cesium.Matrix3.multiplyByVector(
-        rotationMatrix,
-        directionToCamera,
-        directionToCameraRotated
-      );
-
-      // Compute the new camera position
-      const newCameraPosition = Cesium.Cartesian3.multiplyByScalar(
-        directionToCameraRotated,
-        radius,
-        new Cesium.Cartesian3()
-      );
-      Cesium.Cartesian3.add(target, newCameraPosition, newCameraPosition);
-
-      // Compute the new camera direction
-      const newDirection = Cesium.Cartesian3.negate(
-        directionToCameraRotated,
-        new Cesium.Cartesian3()
-      );
-      const newDirectionTransformed = Cesium.Matrix4.multiplyByPointAsVector(
-        centerTransform,
-        newDirection,
-        enuCenter
-      );
-      camera.direction = newDirectionTransformed;
-
-      // Compute the new camera up
-      const newUp = Cesium.Cartesian3.negate(
-        angularAxis,
-        new Cesium.Cartesian3()
-      );
-      const newUpTransformed = Cesium.Matrix4.multiplyByPointAsVector(
-        centerTransform,
-        newUp,
-        enuCenter
-      );
-      camera.up = newUpTransformed;
-
-      camera.position = newCameraPosition;
-    };
-
-    this.viewer!.clock.onTick.addEventListener(this.orbit);
-  }
-
-  // Add this method to your class
-  stopOrbit() {
-    if (this.orbit) {
-      this.viewer!.clock.onTick.removeEventListener(this.orbit);
-    }
+    this.disableBrowserTouchEvents = true;
   }
 
   _newPost() {
     window.appGlobals.activity("open", "newPost");
+    this.disableBrowserTouchEvents = false;
     //TODO: Fix ts type
     window.appDialogs.getDialogAsync("postEdit", (dialog: YpPostEdit) => {
       setTimeout(() => {
@@ -923,6 +893,21 @@ export class YpLandUseGame extends YpBaseElement {
       terrainProvider: await Cesium.createWorldTerrainAsync(),
       imageryProvider: imageProvider,
     });
+
+    window.addEventListener(
+      "touchmove",
+      (event) => {
+        //@ts-ignore
+        if (event.scale !== 1) {
+          if (this.disableBrowserTouchEvents) {
+            event.preventDefault();
+          }
+        }
+      },
+      { passive: false }
+    );
+
+    this.disableBrowserTouchEvents = true;
 
     //this.logFramerate();
 
@@ -1057,7 +1042,7 @@ export class YpLandUseGame extends YpBaseElement {
       -20.62592534987823,
       64.03985855384323,
       35000,
-      44,
+      30,
       -Cesium.Math.PI_OVER_TWO / 1.3
     );
 
@@ -1066,7 +1051,7 @@ export class YpLandUseGame extends YpBaseElement {
       -20.62592534987823,
       64.03985855384323,
       20000,
-      3,
+      2,
       -Cesium.Math.PI_OVER_TWO / 3.2
     );
   }
@@ -1150,7 +1135,9 @@ export class YpLandUseGame extends YpBaseElement {
               ?hidden="${this.gameStage !== GameStage.Results}"
             >
               <div class="layout vertical">
-                <div class="participantsStats">${this.posts!.length} ${this.t("participants")}</div>
+                <div class="participantsStats">
+                  ${this.posts!.length} ${this.t("participants")}
+                </div>
                 <div>
                   <button
                     id="showAllButton"

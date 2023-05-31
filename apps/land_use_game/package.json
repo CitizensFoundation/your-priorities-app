@@ -37,7 +37,7 @@
     "@types/webappsec-credential-management": "^0.6.4",
     "@web/dev-server-rollup": "^0.5.0",
     "browserify-zlib": "^0.2.0",
-    "cesium": "^1.104.0",
+    "cesium": "^1.105.1",
     "http": "^0.0.1-security",
     "https": "^1.0.0",
     "https-browserify": "^1.0.0",
