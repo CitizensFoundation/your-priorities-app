@@ -507,6 +507,8 @@ export class YpLandUseGame extends YpBaseElement {
     } else {
       if (this.gameStage !== GameStage.Results) {
         this.gameStage = GameStage.Play;
+        this.cancelFlyToPosition();
+        this.setCameraFromLandMark(0);
       }
     }
   }
@@ -966,12 +968,12 @@ export class YpLandUseGame extends YpBaseElement {
         longLatEnd[0]
       );
 
-      this.characterManager = new CharacterManager(
+      /*this.characterManager = new CharacterManager(
         this.viewer!,
         giantStart,
         giantEnd
       );
-      this.characterManager.setupCharacter();
+      this.characterManager.setupCharacter();*/
 
       setTimeout(() => {
         const dragonLongLatStart = [65.56472600995652, -14.117065946587537];
@@ -1031,8 +1033,8 @@ export class YpLandUseGame extends YpBaseElement {
         bullLongLatEnd[0]
       );
 
-      this.bullManager = new BullManager(this.viewer!, bullStart, bullEnd);
-      this.bullManager.setupCharacter();
+      //this.bullManager = new BullManager(this.viewer!, bullStart, bullEnd);
+      //this.bullManager.setupCharacter();
     });
 
     //Enable depth testing so things behind the terrain disappear.

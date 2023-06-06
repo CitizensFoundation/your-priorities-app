@@ -66,12 +66,12 @@ export class YpPageDialog extends YpBaseElement {
 
   render() {
     return html`
-      <mwc-dialog .heading="${this.pageTitle}" id="dialog" ?rtl="${this.rtl}">
+      <mwc-dialog escapeKeyAction="" scrimClickAction="" .heading="${this.pageTitle}" id="dialog" ?rtl="${this.rtl}">
         <div id="content"></div>
         <mwc-button
           @click="${this._close}"
           slot="primaryAction"
-          .label="${this.t("Start")}"
+          .label="${this.t("Start Game")}"
         ></mwc-button>
       </mwc-dialog>
     `;
