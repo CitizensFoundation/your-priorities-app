@@ -508,7 +508,7 @@ export class YpLandUseGame extends YpBaseElement {
       if (this.gameStage !== GameStage.Results) {
         this.gameStage = GameStage.Play;
         this.cancelFlyToPosition();
-        this.setCameraFromLandMark(0);
+        this.setCameraFromView(this.tileManager.showAllView);
       }
     }
   }
@@ -647,6 +647,23 @@ export class YpLandUseGame extends YpBaseElement {
     }
   }
 
+  setCameraFromView(cameraView: any) {
+    if (cameraView && this.viewer) {
+      const { position, heading, pitch, roll } = JSON.parse(cameraView.jsonData);
+      this.cancelFlyToPosition();
+      this.viewer.camera.setView({
+        destination: position,
+        orientation: {
+          heading: heading,
+          pitch: pitch,
+          roll: roll,
+        },
+      });
+    } else {
+      console.warn("No landMark or viewer found for view");
+    }
+  }
+
   cancelFlyToPosition() {
     if (this.viewer) {
       this.viewer.camera.cancelFlight();
@@ -764,7 +781,7 @@ export class YpLandUseGame extends YpBaseElement {
     this.$$("#showAll")!.addEventListener("click", () => {
       this.viewer!.trackedEntity = undefined;
       this.cancelFlyToPosition();
-      this.setCameraFromLandMark(0);
+      this.setCameraFromView(this.tileManager.showAllView);
     });
 
     this.$$("#trackPlane")!.addEventListener("click", () => {
@@ -947,7 +964,7 @@ export class YpLandUseGame extends YpBaseElement {
 
     //this.viewer.scene.postProcessStages.bloom.enabled = true;
     setTimeout(async () => {
-      await this.tileManager.readGeoData();
+      await this.tileManager.readGeoData(this.group!.id);
       this.planeManager = new PlaneManager(
         this.viewer!,
         this.tileManager.geojsonData
