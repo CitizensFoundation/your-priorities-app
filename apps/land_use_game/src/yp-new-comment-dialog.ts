@@ -114,12 +114,12 @@ export class YpNewCommentDialog extends YpBaseElementWithLogin {
   renderFooter() {
     return html` <div class="layout horizontal">
       <md-outlined-button
-        label="Close"
+        .label="${this.t("Close")}"
         class="cancelButton self-start"
         @click="${this.closeDialog}"
       ></md-outlined-button>
       <md-filled-button
-        label="Submit"
+        .label="${this.t("Submit")}"
         id="storySubmitButton"
         @click="${this._sendComment}"
       ></md-filled-button>

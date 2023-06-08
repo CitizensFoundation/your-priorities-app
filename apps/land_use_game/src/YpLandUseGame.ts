@@ -525,13 +525,13 @@ export class YpLandUseGame extends YpBaseElement {
       if (event.key === "c") {
         this.copyCameraPositionAndRotation();
       } else if (event.key === "h") {
-        this.horizonMode();
+        //this.horizonMode();
       }
 
       // If key is 1-9 choose camera data from landMarks and fly the camera to that position
       const key = parseInt(event.key);
       if (key >= 1 && key <= 9) {
-        this.setCameraFromLandMark(key - 1);
+        //this.setCameraFromLandMark(key - 1);
       }
     }
   }
@@ -1096,38 +1096,38 @@ export class YpLandUseGame extends YpBaseElement {
           ?hidden="${this.gameStage === GameStage.Intro}"
         >
           <button id="landUse1" ?selected=${this.selectedLandUse === "energy"}>
-            Energy
+            ${this.t("Energy")}
           </button>
           <button id="landUse2" ?selected=${this.selectedLandUse === "gracing"}>
-            Gracing
+          ${this.t("Gracing")}
           </button>
           <button id="landUse3" ?selected=${this.selectedLandUse === "tourism"}>
-            Tourism
+          ${this.t("Tourism")}
           </button>
           <button
             id="landUse4"
             ?selected=${this.selectedLandUse === "recreation"}
           >
-            Recreation
+          ${this.t("Recreation")}
           </button>
           <button
             id="landUse5"
             ?selected=${this.selectedLandUse === "restoration"}
           >
-            Restoration
+          ${this.t("Restoration")}
           </button>
           <button
             id="landUse6"
             ?selected=${this.selectedLandUse === "conservation"}
           >
-            Conservation
+          ${this.t("Conservation")}
           </button>
           <button
             id="commentButton"
             ?hidden="${this.gameStage === GameStage.Results}"
             ?selected=${this.tileManager?.isCommenting}
           >
-            Comment
+          ${this.t("Comment")}
           </button>
         </div>
 
@@ -1135,17 +1135,17 @@ export class YpLandUseGame extends YpBaseElement {
           id="navigationButtons"
           ?hidden="${this.gameStage === GameStage.Intro}"
         >
-          <button id="showAll">Show all</button>
-          <button id="trackPlane">Plane</button>
+          <button id="showAll">${this.t("Show all")}</button>
+          <button id="trackPlane">${this.t("Plane")}</button>
         </div>
 
         <div
           id="terrainProviderSelection"
           ?hidden="${this.gameStage === GameStage.Intro}"
         >
-          <button id="chooseAerial">Aerial</button>
-          <button id="chooseAerialWithLabels">Labels</button>
-          <button id="chooseOpenStreetMap">Map</button>
+          <button id="chooseAerial">${this.t("Aerial")}</button>
+          <button id="chooseAerialWithLabels">${this.t("Labels")}</button>
+          <button id="chooseOpenStreetMap">${this.t("Map")}</button>
         </div>
 
         ${this.posts
@@ -1163,7 +1163,7 @@ export class YpLandUseGame extends YpBaseElement {
                     @click="${this.toggleShowAllResults}"
                     ?selected="${this.showAllTileResults}"
                   >
-                    Show "losing" votes
+                  ${this.t("Show 'losing' votes")}
                   </button>
                 </div>
               </div>
@@ -1196,7 +1196,7 @@ export class YpLandUseGame extends YpBaseElement {
               : nothing}
           </div>
           <button id="submitButton" ?disabled="${this.disableSubmitButton}">
-            Submit
+            ${this.t("Submit")}
           </button>
         </div>
       `;
