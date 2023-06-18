@@ -5,11 +5,11 @@ import { YpCollection } from '../yp-collection/yp-collection.js';
 import { nothing, html, TemplateResult, LitElement, css } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 
-import '@material/web/navigationbar/navigation-bar.js';
-import { MdNavigationBar } from '@material/web/navigationbar/navigation-bar.js';
+//import '@material/web/navigationbar/navigation-bar.js';
+//import { MdNavigationBar } from '@material/web/navigationbar/navigation-bar.js';
 
-import '@material/web/navigationtab/navigation-tab.js';
-import { MdNavigationTab } from '@material/web/navigationtab/navigation-tab.js';
+//import '@material/web/navigationtab/navigation-tab.js';
+//import { MdNavigationTab } from '@material/web/navigationtab/navigation-tab.js';
 
 import '@material/web/fab/fab.js';
 

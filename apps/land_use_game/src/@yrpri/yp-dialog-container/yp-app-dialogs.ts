@@ -70,11 +70,9 @@ export class YpAppDialogs extends YpBaseElement {
       super.styles,
       css`
         :host {
-          background-color: var(--primary-background-color);
         }
 
         #dialogs {
-          background-color: var(--primary-background-color) !important;
         }
 
         #dialogs[hide] {
@@ -82,13 +80,10 @@ export class YpAppDialogs extends YpBaseElement {
         }
 
         mwc-dialog {
-          background-color: #fff;
         }
 
         .trackingInfo,
         #pixelTrackingCookieConfirm {
-          color: #fff;
-          background-color: #222;
         }
 
         .trackingInfo {
@@ -97,7 +92,6 @@ export class YpAppDialogs extends YpBaseElement {
         }
 
         mwc-button {
-          background-color: #555;
           margin-right: 12px;
           text-align: center;
         }

@@ -36,6 +36,7 @@ import "./yp-comment-dialog.js";
 import "./yp-new-comment-dialog.js";
 import { YpNewCommentDialog } from "./yp-new-comment-dialog.js";
 import { YpPageDialog } from "./@yrpri/yp-page/yp-page-dialog";
+import { applyTheme, argbFromHex, themeFromSourceColor } from "@material/material-color-utilities";
 
 const GameStage = {
   Intro: 1,
@@ -132,7 +133,6 @@ export class YpLandUseGame extends YpBaseElement {
       ShadowStyles,
       css`
         :host {
-          background-color: var(--yp-land-use-game-background-color);
         }
 
         @media (min-width: 960px) {
@@ -143,7 +143,6 @@ export class YpLandUseGame extends YpBaseElement {
             align-items: center;
             justify-content: flex-start;
             font-size: calc(10px + 2vmin);
-            color: #1a2b42;
             max-width: 960px;
             margin: 0 auto;
             text-align: center;
@@ -480,8 +479,10 @@ export class YpLandUseGame extends YpBaseElement {
     // @ts-ignore
     window.CESIUM_BASE_URL = "";
 
+    this.themeChanged();
     this.group = await window.appGlobals.setupGroup();
     super.connectedCallback();
+    this.themeChanged();
     const helpPages = (await window.serverApi.getHelpPages(
       "group",
       this.group!.id
@@ -499,6 +500,7 @@ export class YpLandUseGame extends YpBaseElement {
 
   registrationQuestionDone() {
     this.gameStage = GameStage.Play;
+    this.disableBrowserTouchEvents = true;
   }
 
   openUserLoginOrStart() {
@@ -509,6 +511,7 @@ export class YpLandUseGame extends YpBaseElement {
         this.gameStage = GameStage.Play;
         this.cancelFlyToPosition();
         this.setCameraFromView(this.tileManager.showAllView);
+        this.disableBrowserTouchEvents = true;
       }
     }
   }
@@ -667,7 +670,6 @@ export class YpLandUseGame extends YpBaseElement {
   cancelFlyToPosition() {
     if (this.viewer) {
       this.viewer.camera.cancelFlight();
-      this.disableBrowserTouchEvents = true;
     }
   }
 
@@ -926,7 +928,7 @@ export class YpLandUseGame extends YpBaseElement {
       { passive: false }
     );
 
-    this.disableBrowserTouchEvents = true;
+    this.disableBrowserTouchEvents = false;
 
     //this.logFramerate();
 
@@ -1073,6 +1075,33 @@ export class YpLandUseGame extends YpBaseElement {
       2,
       -Cesium.Math.PI_OVER_TWO / 3.2
     );
+  }
+
+  themeChanged(target: HTMLElement | undefined = undefined) {
+    let themeCss = {} as any;
+
+    const isDark =
+      this.themeDarkMode === undefined
+        ? window.matchMedia('(prefers-color-scheme: dark)').matches
+        : this.themeDarkMode;
+
+        const theme = themeFromSourceColor(
+          argbFromHex('#73ae2c'),
+          [
+            {
+              name: 'up-vote',
+              value: argbFromHex('#0F0'),
+              blend: true,
+            },
+            {
+              name: 'down-vote',
+              value: argbFromHex('#F00'),
+              blend: true,
+            },
+          ]
+        );
+
+        applyTheme(theme, { target: document.body, dark: isDark });
   }
 
   saveComment(event: CustomEvent) {

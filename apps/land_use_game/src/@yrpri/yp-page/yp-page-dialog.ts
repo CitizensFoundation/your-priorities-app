@@ -3,9 +3,10 @@ import { property, customElement } from "lit/decorators.js";
 
 import { YpBaseElement } from "../common/yp-base-element.js";
 import { Dialog } from "@material/mwc-dialog";
-
-import "@material/mwc-dialog";
-import "@material/mwc-button";
+import "@material/web/dialog/dialog.js";
+import "@material/web/button/text-button.js";
+import "@material/web/button/outlined-button.js";
+import "@material/web/icon/icon.js";
 
 @customElement("yp-page-dialog")
 export class YpPageDialog extends YpBaseElement {
@@ -21,30 +22,49 @@ export class YpPageDialog extends YpBaseElement {
     return [
       super.styles,
       css`
-        #content {
-          color: var(--mdc-theme-on-surface);
-          background-color: var(--mdc-theme-surface);
+        :host {
+          --md-dialog-container-color: var(--md-sys-color-surface);
         }
 
         mwc-button {
           font-weight: bold;
         }
 
+        .fab {
+          text-align: center;
+        }
+
+        #content {
+          padding: 16px;
+        }
+
+        #dialog[slot="footer"] {
+          display: flex;
+          align-items: center;
+          flex-direction: row-reverse;
+          text-align: center;
+        }
+
         #dialog {
-          background-color: #fff;
-          max-width: 50%;
-          text-align: left;
+          background-color: #FF0000;
         }
 
         @media (max-width: 1100px) {
-          #dialog {
-            max-width: 80%;
-          }
         }
 
         @media (max-width: 600px) {
-          #dialog {
-            max-width: 100%;
+          #content {
+            padding: 0;
+          }
+          .headline {
+            text-align: center;
+            padding-top: 8px;
+            padding-bottom: 8px;
+          }
+
+          .startButton {
+            padding-bottom: 8px;
+            margin-bottom: 8px;
           }
 
           mwc-dialog {
@@ -66,19 +86,23 @@ export class YpPageDialog extends YpBaseElement {
 
   render() {
     return html`
-      <mwc-dialog escapeKeyAction="" scrimClickAction="" .heading="${this.pageTitle}" id="dialog" ?rtl="${this.rtl}">
-        <div id="content"></div>
-        <mwc-button
-          @click="${this._close}"
-          slot="primaryAction"
-          .label="${this.t("Start Game")}"
-        ></mwc-button>
-      </mwc-dialog>
+      <md-dialog
+        escapeKeyAction=""
+        scrimClickAction=""
+        @closed="${this._close}"
+        .fullscreen="${!this.wide}"
+        id="dialog"
+        ?rtl="${this.rtl}"
+      >
+        <span slot="headline" class="headline">${this.pageTitle}</span>
+        <div id="content" style="text-align: left"></div>
+        <md-outlined-button class="startButton" slot="footer" dialogFocus dialogAction="${this._close}">${this.t("Start Game")}</md-outlined-button>
+      </md-dialog>
     `;
   }
 
   get pageTitle(): string {
-    if (false && this.page) {
+    if (this.page) {
       return this.page!.title[this.language];
     } else {
       return "";
