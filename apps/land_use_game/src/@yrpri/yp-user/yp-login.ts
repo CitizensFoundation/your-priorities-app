@@ -1,23 +1,27 @@
-import { html, css, nothing } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { html, css, nothing } from "lit";
+import { customElement, property } from "lit/decorators.js";
 
-import '@material/mwc-tab';
-import '@material/mwc-tab-bar';
-import '@material/mwc-textfield';
-import '@material/mwc-circular-progress-four-color';
+import "./yp-registration-questions.js";
 
-import './yp-registration-questions.js';
+import { YpBaseElement } from "../common/yp-base-element.js";
+import { YpNavHelpers } from "../common/YpNavHelpers.js";
+import { TextField } from "@material/mwc-textfield";
+import { Dialog } from "@material/mwc-dialog";
+import { YpRegistrationQuestions } from "./yp-registration-questions.js";
 
-import { YpBaseElement } from '../common/yp-base-element.js';
-import { YpNavHelpers } from '../common/YpNavHelpers.js';
-import { TextField } from '@material/mwc-textfield';
-import { Dialog } from '@material/mwc-dialog';
-import { YpRegistrationQuestions } from './yp-registration-questions.js';
+import "@material/web/iconbutton/standard-icon-button.js";
+import "@material/web/textfield/filled-text-field.js";
+import "@material/web/radio/radio.js";
+import "@material/web/icon/icon.js";
+import "@material/web/button/tonal-button.js";
+import "@material/web/button/filled-button.js";
+import "@material/web/button/text-button.js";
+import "@material/web/button/outlined-button.js";
+import "@material/web/dialog/dialog.js";
+import "@material/web/circularprogress/circular-progress.js";
+import { Layouts } from "../../flexbox-literals/classes.js";
 
-import '@material/web/button/filled-button.js';
-import '@material/web/button/text-button.js';
-
-@customElement('yp-login')
+@customElement("yp-login")
 export class YpLogin extends YpBaseElement {
   @property({ type: Boolean })
   userSpinner = false;
@@ -26,7 +30,7 @@ export class YpLogin extends YpBaseElement {
   domain: YpDomainData | undefined;
 
   @property({ type: String })
-  reCaptchaSiteKey = '';
+  reCaptchaSiteKey = "";
 
   @property({ type: String })
   emailErrorMessage: string | undefined;
@@ -35,19 +39,19 @@ export class YpLogin extends YpBaseElement {
   passwordErrorMessage: string | undefined;
 
   @property({ type: String })
-  name = '';
+  name = "";
 
   @property({ type: String })
-  email = '';
+  email = "";
 
   @property({ type: String })
-  password = '';
+  password = "";
 
   @property({ type: Number })
   registerMode = 0;
 
   @property({ type: String })
-  submitText = '';
+  submitText = "";
 
   @property({ type: String })
   redirectToURL: string | undefined;
@@ -106,7 +110,36 @@ export class YpLogin extends YpBaseElement {
   static get styles() {
     return [
       super.styles,
+      Layouts,
       css`
+        :host {
+          --md-dialog-container-color: var(--md-sys-color-surface);
+        }
+
+        .loginInfo {
+          padding-right: 4px;
+        }
+
+        .capitalize {
+          text-transform: capitalize;
+        }
+
+        .loginInfoOptions {
+          margin-top: 8px;
+        }
+
+        .login-button-row {
+          margin-top: 16px;
+          margin-bottom: 24px;
+        }
+
+        .loginInfoContainer {
+          margin-bottom: 8px;
+          text-align: left;
+          margin-left: 8px;
+          margin-right: 8px;
+        }
+
         .btn-auth,
         .btn-auth:visited {
           position: relative;
@@ -147,7 +180,7 @@ export class YpLogin extends YpBaseElement {
         }
 
         .btn-auth:before {
-          content: '';
+          content: "";
           float: left;
           width: 22px;
           height: 22px;
@@ -167,6 +200,10 @@ export class YpLogin extends YpBaseElement {
         .btn-auth.large:before {
           width: 36px;
           height: 36px;
+        }
+
+        .login-user-row {
+          text-align: left;
         }
 
         /*
@@ -280,6 +317,38 @@ export class YpLogin extends YpBaseElement {
           font-weight: bold;
         }
 
+        .create-user {
+          --md-dialog-container-min-inline-size: calc(100vw - 212px);
+        }
+
+        .create-user [slot="header"] {
+          display: flex;
+          flex-direction: row-reverse;
+          align-items: center;
+        }
+
+        .create-user[showing-fullscreen] [slot="header"] {
+          flex-direction: row;
+        }
+
+        .create-user .headline {
+          flex: 1;
+        }
+
+        .create-user-content,
+        .login-user-row {
+          display: flex;
+          gap: 8px;
+        }
+
+        .create-user-content {
+          flex-direction: column;
+        }
+
+        .login-user-row > * {
+          flex: 1;
+        }
+
         @media (max-width: 480px) {
           mwc-dialog {
             padding: 0;
@@ -330,7 +399,7 @@ export class YpLogin extends YpBaseElement {
 
         .strike > span:before,
         .strike > span:after {
-          content: '';
+          content: "";
           position: absolute;
           top: 50%;
           width: 9999px;
@@ -351,7 +420,6 @@ export class YpLogin extends YpBaseElement {
         .socialMediaLogin {
           padding-top: 8px;
           margin-top: 8px;
-          padding-bottom: 16px;
         }
 
         .cursor {
@@ -361,7 +429,7 @@ export class YpLogin extends YpBaseElement {
         .orContainer {
           padding-top: 0;
           margin-top: 0;
-          padding-bottom: 4px;
+          padding-bottom: 24px;
           color: #555;
         }
 
@@ -501,21 +569,21 @@ export class YpLogin extends YpBaseElement {
       <div class="layout vertical center-center">
         ${this.hasAnonymousLogin
           ? html`
-              <mwc-button
+              <md-tonal-button
                 raised
                 class="anonLoginButton"
                 @click="${this.anonymousLogin}"
-                >${this.t('participateAnonymously')}</mwc-button
+                >${this.t("participateAnonymously")}</md-tonal-button
               >
             `
           : nothing}
         ${this.hasOneTimeLoginWithName
           ? html`
-              <mwc-button
+              <md-tonal-button
                 raised
                 class="anonLoginButton"
                 @click="${this.oneTimeLogin}"
-                >${this.t('oneTimeLoginWithName')}</mwc-button
+                >${this.t("oneTimeLoginWithName")}</md-tonal-button
               >
             `
           : nothing}
@@ -531,7 +599,7 @@ export class YpLogin extends YpBaseElement {
                     tabindex="0"
                     ?hidden="${this.disableFacebookLoginForGroup}"
                   >
-                    ${this.t('user.facebookLogin')}
+                    ${this.t("user.facebookLogin")}
                   </div>
                 </span>
               `
@@ -542,204 +610,35 @@ export class YpLogin extends YpBaseElement {
     </div>`;
   }
 
-  renderInputFields() {
-    return html` <div ?hidden="${this.forceSecureSamlLogin}">
-      ${this.registerMode
-        ? html`
-            <mwc-textfield
-              id="fullname"
-              type="text"
-              .label="${this.userNameText}"
-              .value="${this.name}"
-              maxlength="50"
-              minlength="2"
-              required
-              charCounter
-            >
-            </mwc-textfield>
-          `
-        : nothing}
-
-      <mwc-textfield
-        id="email"
-        type="email"
-        .label="${this.t('user.email')}"
-        .value="${this.email}"
-        name="username"
-        autocomplete="username"
-        .validationMessage="${this.emailErrorMessage || ''}"
-      >
-      </mwc-textfield>
-
-      <mwc-textfield
-        id="password"
-        type="password"
-        .label="${this.t('user.password')}"
-        .value="${this.password}"
-        autocomplete="current-password"
-        @keyup="${this.onEnter}"
-        .validationMessage="${this.passwordErrorMessage || ''}"
-      >
-      </mwc-textfield>
-
-      ${this.registerMode && this.registrationQuestionsGroup
-        ? html`
-            <yp-registration-questions
-              id="registrationQuestions"
-              @questions-changed="${this._registrationQuestionsChanged}"
-              @resize-scroller="${this._registrationQuestionsChanged}"
-              .group="${this.registrationQuestionsGroup}"
-            >
-            </yp-registration-questions>
-          `
-        : nothing}
-    </div>`;
-  }
-
-  renderButtons() {
+  renderLogin() {
     return html`
-      <div
-        class="buttons layout horizontal self-end"
-        ?has-registration-questions="${this.registrationQuestionsGroup != undefined}"
-      >
-        <mwc-circular-progress-four-color
-          class="mainSpinner"
-          indeterminate
-          ?hidden="${!this.userSpinner}"
-        ></mwc-circular-progress-four-color>
-        <div class="flex"></div>
-        <mwc-button dialogAction="cancel" @click="${this._cancel}"
-          >${this.t('cancel')}</mwc-button
-        >
-        <mwc-button
-          ?hidden="${this.forceSecureSamlLogin}"
-          @click="${this._forgotPassword}"
-          >${this.t('user.newPassword')}</mwc-button
-        >
-        <md-filled-button
-          ?hidden="${this.forceSecureSamlLogin}"
-          autofocus
-          raised
-          class="boldButton"
-          .label="${this.submitText}"
-          @click="${this._validateAndSend}"
-          ></md-filled-button
-        >
-      </div>
-    `;
-  }
-
-  closeAndReset() {
-    this.close();
-    this.registerMode = 0;
-  }
-
-  renderOneTimeDialog() {
-    return html`
-      <mwc-dialog id="dialogOneTimeWithName" modal>
-        <h3>[[t('oneTimeLoginWithName')]]</h3>
-
-        <mwc-textfield
-          id="oneTimeLoginWithNameId"
-          type="text"
-          .label="${this.userNameText}"
-          maxlength="50"
-          @keyup="${this._updateOneTimeLoginName}"
-          autocomplete="off"
-        >
-        </mwc-textfield>
-
-        ${ this.registrationQuestionsGroup
-          ? html`
-              <yp-registration-questions
-                id="registrationQuestionsOneTimeLogin"
-                @questions-changed="${this._registrationQuestionsChanged}"
-                @resize-scroller="${this._registrationQuestionsChanged}"
-                .group="${this.registrationQuestionsGroup}"
-              ></yp-registration-questions>
-            `
-          : nothing}
-
-        <div class="buttons">
-          <mwc-button dialogAction="cancel" @click="${this._cancel}"
-            >${this.t('cancel')}</mwc-button
-          >
-          <mwc-button
-            ?disabled="${!this.oneTimeLoginName}"
-            @click="${this.finishOneTimeLoginWithName}"
-          >
-            ${this.t('user.login')}</mwc-button
-          >
-        </div>
-      </mwc-dialog>
-    `;
-  }
-
-  _setupJsonCredentials () {
-    this.credentials = {
-      name: this.fullnameValue,
-      email: this.emailValue,
-      identifier: this.emailValue,
-      username: this.emailValue,
-      password: this.passwordValue,
-      registration_answers: (this.registrationQuestionsGroup && this.$$("#registrationQuestions"))
-        ? (this.$$("#registrationQuestions") as YpRegistrationQuestions).getAnswers() : undefined
-    };
-  }
-
-  _updateOneTimeLoginName(event: KeyboardEvent) {
-    this.oneTimeLoginName = (
-      this.$$('#oneTimeLoginWithNameId') as TextField
-    ).value;
-    if (this.oneTimeLoginName && this.oneTimeLoginName.length > 0) {
-      if (event.key == 'enter') {
-        this.finishOneTimeLoginWithName();
-      }
-    }
-  }
-
-  render() {
-    return html`
-      <mwc-dialog
-        id="dialog"
-        modal
+      <md-dialog
+        id="loginDialog"
+        class="createUser"
+        transition="grow-right"
         ?open="${this.opened}"
+        footerHidden
         @closed="${this.closeAndReset}"
-        hideActions
+        .fullscreen=${!this.wide}
       >
-        <mwc-tab-bar
-          @MDCTabBar:activated="${this._selectRegistrationMode}"
-          .selected="${this.registerMode}"
-          id="paper_tabs"
-          focused
-          ?hidden="${this.forceSecureSamlLogin}"
-        >
-          <mwc-tab
-            .label="${this.t('user.login')}"
-            icon="login"
-            stacked
-          ></mwc-tab>
-          <mwc-tab
-            .label="${this.t('user.register')}"
-            icon="how_to_reg"
-            stacked
-          ></mwc-tab>
-        </mwc-tab-bar>
-
-        <div class="layout vertical center-center">
-          <span ?hidden="${!this.registerMode}">
-            <div
-              ?hidden="${!this.customUserRegistrationText}"
-              class="customUserRegistrationText"
-            >
-              <yp-magic-text
-                disableTranslation
-                linkifyCutoff="100"
-                .content="${this.customUserRegistrationText}"
-              ></yp-magic-text>
-            </div>
-          </span>
-
+        <span slot="headline">
+          <md-standard-icon-button
+            dialogAction="close"
+            icon="close"
+          ></md-standard-icon-button>
+          <span class="headline">${this.t("user.login")}</span>
+        </span>
+        <div class="create-user-content">
+          <div
+            ?hidden="${!this.customUserRegistrationText}"
+            class="customUserRegistrationText"
+          >
+            <yp-magic-text
+              disableTranslation
+              linkifyCutoff="100"
+              .content="${this.customUserRegistrationText}"
+            ></yp-magic-text>
+          </div>
           <div
             class="customUserRegistrationText"
             ?hidden="${!this.forceSecureSamlLogin}"
@@ -752,30 +651,252 @@ export class YpLogin extends YpBaseElement {
               ></yp-magic-text>
             </div>
             <div ?hidden="${this.customSamlLoginText != null}">
-              ${this.t('forceSecureSamlLoginInfo')}
+              ${this.t("forceSecureSamlLoginInfo")}
             </div>
           </div>
 
           ${this.renderAdditionalMethods()}
 
-          <div class="orContainer" ?hidden="${!this.hasAdditionalAuthMethods}">
-            <div class="strike" ?hidden="${this.forceSecureSamlLogin}">
-              <span>${this.t('or')}</span>
+          <div ?hidden="${this.forceSecureSamlLogin}">
+            <div
+              class="orContainer"
+              ?hidden="${!this.hasAdditionalAuthMethods}"
+            >
+              <div class="strike">
+                <span>${this.t("or")}</span>
+              </div>
+            </div>
+
+            <div class="login-user-row">
+              <md-outlined-text-field
+                id="email"
+                type="email"
+                .label="${this.t("user.email")}"
+                name="username"
+                .value="${this.email}"
+                autocomplete="username"
+              ></md-outlined-text-field>
+              <md-outlined-text-field
+                id="password"
+                type="password"
+                .label="${this.t("user.password")}"
+                autocomplete="current-password"
+                .value="${this.password}"
+                @keyup="${this.onEnter}"
+              ></md-outlined-text-field>
+            </div>
+            <div class="login-button-row">
+              <md-filled-button
+                autofocus
+                raised
+                class="loginButton"
+                @click="${this._validateAndSend}"
+                ><span class="capitalize">${this.submitText}</span></md-filled-button
+              >
+            </div>
+
+            <div class="loginInfoOptions layout horizontal center-center wrap">
+              <div class="loginInfoContainer layout vertical">
+                <div class="loginInfo">${this.t("dontHaveAccount")}</div>
+                <md-text-button @click="${this.openCreateUser}"
+                  >${this.t("user.create")}</md-text-button
+                >
+              </div>
+              <div class="loginInfoContainer layout vertical">
+                <div class="loginInfo">${this.t("cantRememberPassword")}</div>
+                <md-text-button @click="${this._forgotPassword}"
+                  ><span class="capitalize"
+                    >${this.t("user.newPassword")}</span
+                  ></md-text-button
+                >
+              </div>
             </div>
           </div>
-
-          ${this.renderInputFields()}
         </div>
+      </md-dialog>
+    `;
+  }
 
-        <div class="signupTerms" ?hidden="${!this.showSignupTerms}">
-          ${this.customTermsIntroText} -
-          <span @click="${this._openTerms}" class="openTerms"
-            >${this.t('signupTermsOpen')}</span
+  renderCreateUser() {
+    return html`
+      <md-dialog
+        id="createUserDialog"
+        class="createUser"
+        .fullscreen=${!this.wide}
+      >
+        <span slot="header">
+          <md-standard-icon-button dialogAction="close"
+            >close</md-standard-icon-button
+          >
+          <span class="headline">${this.t("user.create")}</span>
+        </span>
+        <div class="create-user-content">
+          <md-filled-text-field
+            id="fullname"
+            type="text"
+            .label="${this.userNameText}"
+            maxlength="50"
+            minlength="2"
+            required
+            charCounter
+          ></md-filled-text-field>
+          <md-filled-text-field
+            id="email"
+            type="email"
+            .label="${this.t("user.email")}"
+            name="username"
+            autocomplete="username"
+          ></md-filled-text-field>
+          <md-filled-text-field
+            id="password"
+            type="password"
+            .label="${this.t("user.password")}"
+            autocomplete="current-password"
+            @keyup="${this.onEnter}"
+          ></md-filled-text-field>
+          ${this.registerMode && this.registrationQuestionsGroup
+            ? html`
+                <yp-registration-questions
+                  id="registrationQuestions"
+                  @questions-changed="${this._registrationQuestionsChanged}"
+                  @resize-scroller="${this._registrationQuestionsChanged}"
+                  .group="${this.registrationQuestionsGroup}"
+                >
+                </yp-registration-questions>
+              `
+            : nothing}
+          <div class="signupTerms" ?hidden="${!this.showSignupTerms}">
+            ${this.customTermsIntroText} -
+            <span @click="${this._openTerms}" class="openTerms"
+              >${this.t("signupTermsOpen")}</span
+            >
+          </div>
+        </div>
+        <md-text-button slot="footer" dialogAction="cancel"
+          >${this.t("cancel")}</md-text-button
+        >
+        <md-text-button slot="footer" dialogAction="save"
+          >${this.t("Save")}</md-text-button
+        >
+      </md-dialog>
+    `;
+  }
+
+  renderButtons() {
+    return html`
+      <div
+        class="buttons layout horizontal self-end"
+        ?has-registration-questions="${this.registrationQuestionsGroup !=
+        undefined}"
+      >
+        <md-circular-progress
+          class="mainSpinner"
+          indeterminate
+          ?hidden="${!this.userSpinner}"
+        ></md-circular-progress>
+        <div class="flex"></div>
+        <md-text-button dialogAction="cancel" @click="${this._cancel}"
+          >${this.t("cancel")}</md-text-button
+        >
+        <md-text-button
+          ?hidden="${this.forceSecureSamlLogin}"
+          @click="${this._forgotPassword}"
+          >${this.t("user.newPassword")}</md-text-button
+        >
+        <md-filled-button
+          ?hidden="${this.forceSecureSamlLogin}"
+          autofocus
+          raised
+          class="boldButton"
+          .label="${this.submitText}"
+          @click="${this._validateAndSend}"
+        ></md-filled-button>
+      </div>
+    `;
+  }
+
+  closeAndReset() {
+    this.close();
+    this.registerMode = 0;
+  }
+
+  renderOneTimeDialog() {
+    return html`
+      <md-dialog id="dialogOneTimeWithName" modal>
+        <h3>[[t('oneTimeLoginWithName')]]</h3>
+        <md-filled-text-field
+          id="oneTimeLoginWithNameId"
+          type="text"
+          .label="${this.userNameText}"
+          maxlength="50"
+          @keyup="${this._updateOneTimeLoginName}"
+          autocomplete="off"
+        ></md-filled-text-field>
+        ${this.registrationQuestionsGroup
+          ? html`
+              <yp-registration-questions
+                id="registrationQuestionsOneTimeLogin"
+                @questions-changed="${this._registrationQuestionsChanged}"
+                @resize-scroller="${this._registrationQuestionsChanged}"
+                .group="${this.registrationQuestionsGroup}"
+              ></yp-registration-questions>
+            `
+          : nothing}
+
+        <div class="buttons">
+          <md-text-button
+            slot="footer"
+            dialogAction="cancel"
+            @click="${this._cancel}"
+            >${this.t("cancel")}</md-text-button
+          >
+          <md-text-button
+            slot="footer"
+            ?disabled="${!this.oneTimeLoginName}"
+            @click="${this.finishOneTimeLoginWithName}"
+          >
+            ${this.t("user.login")}</md-text-button
           >
         </div>
+      </md-dialog>
+    `;
+  }
 
-        ${this.renderButtons()}
-      </mwc-dialog>
+  openCreateUser() {
+    (this.$$("createUserDialog") as Dialog).open = true;
+    (this.$$("loginDialog") as Dialog).open = false;
+  }
+
+  _setupJsonCredentials() {
+    this.credentials = {
+      name: this.fullnameValue,
+      email: this.emailValue,
+      identifier: this.emailValue,
+      username: this.emailValue,
+      password: this.passwordValue,
+      registration_answers:
+        this.registrationQuestionsGroup && this.$$("#registrationQuestions")
+          ? (
+              this.$$("#registrationQuestions") as YpRegistrationQuestions
+            ).getAnswers()
+          : undefined,
+    };
+  }
+
+  _updateOneTimeLoginName(event: KeyboardEvent) {
+    this.oneTimeLoginName = (
+      this.$$("#oneTimeLoginWithNameId") as TextField
+    ).value;
+    if (this.oneTimeLoginName && this.oneTimeLoginName.length > 0) {
+      if (event.key == "enter") {
+        this.finishOneTimeLoginWithName();
+      }
+    }
+  }
+
+  render() {
+    return html`
+      ${this.renderLogin()} ${this.renderCreateUser()}
       ${this.hasOneTimeLoginWithName ? this.renderOneTimeDialog() : nothing}
     `;
   }
@@ -788,16 +909,17 @@ export class YpLogin extends YpBaseElement {
     }
   }
 
-  _setupCustomRegistrationQuestions () {
+  _setupCustomRegistrationQuestions() {
     if (window.appGlobals.registrationQuestionsGroup) {
-      this.registrationQuestionsGroup = window.appGlobals.registrationQuestionsGroup;
+      this.registrationQuestionsGroup =
+        window.appGlobals.registrationQuestionsGroup;
     } else {
       this.registrationQuestionsGroup = undefined;
     }
   }
 
   _keySaml(event: KeyboardEvent) {
-    if (event.keyCode==13) {
+    if (event.keyCode == 13) {
       event.preventDefault();
       this._openSamlLogin();
     }
@@ -806,11 +928,11 @@ export class YpLogin extends YpBaseElement {
   updated(changedProperties: Map<string | number | symbol, unknown>) {
     super.updated(changedProperties);
 
-    if (changedProperties.has('registerMode')) {
+    if (changedProperties.has("registerMode")) {
       this._onRegisterChanged();
     }
 
-    if (changedProperties.has('opened')) {
+    if (changedProperties.has("opened")) {
       this._openedChanged();
     }
   }
@@ -823,7 +945,7 @@ export class YpLogin extends YpBaseElement {
     ) {
       return window.appGlobals.currentGroup.configuration.customTermsIntroText;
     } else {
-      return this.t('signupTermsInfo');
+      return this.t("signupTermsInfo");
     }
   }
 
@@ -835,7 +957,7 @@ export class YpLogin extends YpBaseElement {
     ) {
       return window.appGlobals.currentGroup.configuration.customUserNamePrompt;
     } else {
-      return this.t('user.name');
+      return this.t("user.name");
     }
   }
 
@@ -854,55 +976,58 @@ export class YpLogin extends YpBaseElement {
   }
 
   _openTerms() {
-    this.fire('yp-open-page', { pageId: this.signupTermsId });
+    this.fire("yp-open-page", { pageId: this.signupTermsId });
   }
 
   _facebookLogin() {
-    const domainName = window.location.hostname.split('.').slice(-2).join('.');
+    const domainName = window.location.hostname.split(".").slice(-2).join(".");
 
     let hostName;
 
-    if (domainName.indexOf('forbrukerradet') > -1) {
-      hostName = 'mineideer';
-    } else if (domainName.indexOf('parliament.scot') > -1) {
-      hostName = 'engage';
-    } else if (domainName.indexOf('multicitychallenge.org') > -1) {
-      hostName = 'yp';
-    } else if (domainName.indexOf('smarter.nj.gov') > -1) {
-      hostName = 'enjine';
-    } else if (window.appGlobals.domain && window.appGlobals.domain.loginCallbackCustomHostName) {
+    if (domainName.indexOf("forbrukerradet") > -1) {
+      hostName = "mineideer";
+    } else if (domainName.indexOf("parliament.scot") > -1) {
+      hostName = "engage";
+    } else if (domainName.indexOf("multicitychallenge.org") > -1) {
+      hostName = "yp";
+    } else if (domainName.indexOf("smarter.nj.gov") > -1) {
+      hostName = "enjine";
+    } else if (
+      window.appGlobals.domain &&
+      window.appGlobals.domain.loginCallbackCustomHostName
+    ) {
       hostName = window.appGlobals.domain.loginCallbackCustomHostName;
     } else {
-      hostName = 'login';
+      hostName = "login";
     }
 
     const url =
-      'https://' + hostName + '.' + domainName + '/api/users/auth/facebook';
+      "https://" + hostName + "." + domainName + "/api/users/auth/facebook";
 
     const width = 1000,
       height = 650,
       top = (window.outerHeight - height) / 2,
       left = (window.outerWidth - width) / 2,
-      name = '_blank';
+      name = "_blank";
     if (this._isInApp()) {
       document.cookie =
-        'ypRedirectCookie=' +
+        "ypRedirectCookie=" +
         encodeURI(window.location.href) +
-        ';domain=.' +
+        ";domain=." +
         domainName +
-        ';path=/';
+        ";path=/";
       window.location.href = url;
     } else {
       window.appUser.facebookPopupWindow = window.open(
         url,
         name,
-        'width=' +
+        "width=" +
           width +
-          ',height=' +
+          ",height=" +
           height +
-          ',scrollbars=0,top=' +
+          ",scrollbars=0,top=" +
           top +
-          ',left=' +
+          ",left=" +
           left
       );
     }
@@ -910,38 +1035,50 @@ export class YpLogin extends YpBaseElement {
     this._startSpinner();
     window.appGlobals.analytics.sendLoginAndSignup(
       -1,
-      'Login Submit',
-      'Facebook'
+      "Login Submit",
+      "Facebook"
     );
   }
 
   oneTimeLogin() {
     this.oneTimeLoginName = undefined;
-    (this.$$('#dialogOneTimeWithName') as Dialog).open = true;
+    (this.$$("#dialogOneTimeWithName") as Dialog).open = true;
     setTimeout(() => {
-      this.$$('#oneTimeLoginWithNameId')?.focus();
+      this.$$("#oneTimeLoginWithNameId")?.focus();
     }, 50);
   }
 
   finishOneTimeLoginWithName() {
-    (this.$$('#dialogOneTimeWithName') as Dialog).open = false;
-    if (this.oneTimeLoginName && (
-      !this.registrationQuestionsGroup || (this.$$("#registrationQuestionsOneTimeLogin") as YpRegistrationQuestions).validate()
-    )) {
-
-      let registrationAnswers: Record<string,string>[] | undefined = undefined;
+    (this.$$("#dialogOneTimeWithName") as Dialog).open = false;
+    if (
+      this.oneTimeLoginName &&
+      (!this.registrationQuestionsGroup ||
+        (
+          this.$$(
+            "#registrationQuestionsOneTimeLogin"
+          ) as YpRegistrationQuestions
+        ).validate())
+    ) {
+      let registrationAnswers: Record<string, string>[] | undefined = undefined;
       if (this.registrationQuestionsGroup) {
-        registrationAnswers = (this.$$("#registrationQuestionsOneTimeLogin") as YpRegistrationQuestions).getAnswers();
+        registrationAnswers = (
+          this.$$(
+            "#registrationQuestionsOneTimeLogin"
+          ) as YpRegistrationQuestions
+        ).getAnswers();
       }
-      this.anonymousLogin('One Time Login', registrationAnswers);
+      this.anonymousLogin("One Time Login", registrationAnswers);
     }
   }
 
-  async anonymousLogin(loginSubType = 'Anonymous', registrationAnswers:Record<string,string>[] | undefined = undefined) {
+  async anonymousLogin(
+    loginSubType = "Anonymous",
+    registrationAnswers: Record<string, string>[] | undefined = undefined
+  ) {
     if (window.appGlobals.currentAnonymousGroup) {
       window.appGlobals.analytics.sendLoginAndSignup(
         -1,
-        'Signup Submit',
+        "Signup Submit",
         loginSubType
       );
 
@@ -963,7 +1100,7 @@ export class YpLogin extends YpBaseElement {
       if (user) {
         window.appGlobals.analytics.sendLoginAndSignup(
           user.id,
-          'Signup Success',
+          "Signup Success",
           loginSubType
         );
         this._loginCompleted(user);
@@ -971,10 +1108,10 @@ export class YpLogin extends YpBaseElement {
           (this.$$("#dialogOneTimeWithName") as Dialog).open = false;
         }
       } else {
-        console.error('No user in anonymousLogin');
+        console.error("No user in anonymousLogin");
       }
     } else {
-      console.error('No anon group in config');
+      console.error("No anon group in config");
     }
   }
 
@@ -996,39 +1133,43 @@ export class YpLogin extends YpBaseElement {
       });
     }
 
-    const domainName = window.location.hostname.split('.').slice(-2).join('.');
+    const domainName = window.location.hostname.split(".").slice(-2).join(".");
 
-    const url = '/api/users/auth/saml',
+    const url = "/api/users/auth/saml",
       width = 1200,
       height = 650,
       top = (window.outerHeight - height) / 2,
       left = (window.outerWidth - width) / 2,
-      name = '_blank';
+      name = "_blank";
     if (this._isInApp()) {
       document.cookie =
-        'ypRedirectCookie=' +
+        "ypRedirectCookie=" +
         encodeURI(window.location.href) +
-        ';domain=.' +
+        ";domain=." +
         domainName +
-        ';path=/';
+        ";path=/";
       window.location.href = url;
     } else {
       window.appUser.samlPopupWindow = window.open(
         url,
         name,
-        'width=' +
+        "width=" +
           width +
-          ',height=' +
+          ",height=" +
           height +
-          ',scrollbars=0,top=' +
+          ",scrollbars=0,top=" +
           top +
-          ',left=' +
+          ",left=" +
           left
       );
     }
     window.appUser.startPollingForLogin();
     this._startSpinner();
-    window.appGlobals.analytics.sendLoginAndSignup(-1, 'Login Submit', 'Saml2');
+    window.appGlobals.analytics.sendLoginAndSignup(-1, "Login Submit", "Saml2");
+  }
+
+  firstUpdated() {
+    //    (this.$$("#createUserDialog") as Dialog).open = true;
   }
 
   _startSpinner() {
@@ -1163,13 +1304,13 @@ export class YpLogin extends YpBaseElement {
   }
 
   onEnter(event: KeyboardEvent) {
-    if (event.key == 'Enter') {
+    if (event.key == "Enter") {
       this._validateAndSend();
     }
   }
 
   onEnterOneTimeLogin(event: KeyboardEvent) {
-    if (event.key == 'Enter') {
+    if (event.key == "Enter") {
       this._validateAndSend();
     }
   }
@@ -1178,34 +1319,34 @@ export class YpLogin extends YpBaseElement {
   _networkError(event: CustomEvent) {
     const response = event.detail.response;
 
-    if (response.url.indexOf('/api/users/register') > -1) {
+    if (response.url.indexOf("/api/users/register") > -1) {
       this.isSending = false;
       window.appGlobals.analytics.sendLoginAndSignup(
         -1,
-        'Signup Fail',
-        'Email',
+        "Signup Fail",
+        "Email",
         response.message
       );
-    } else if (response.url.indexOf('/api/users/login') > -1) {
+    } else if (response.url.indexOf("/api/users/login") > -1) {
       this.isSending = false;
       window.appGlobals.analytics.sendLoginAndSignup(
         -1,
-        'Login Fail',
-        'Email',
+        "Login Fail",
+        "Email",
         response.message
       );
     }
   }
 
   _forgotPassword() {
-    this.fire('yp-forgot-password');
+    this.fire("yp-forgot-password");
   }
 
   _onRegisterChanged() {
     this._setTexts();
     // this.$$('#dialog').fire('iron-resize');
     if (this.registerMode == 1) {
-      const nameElement = this.$$('#name');
+      const nameElement = this.$$("#name");
       if (nameElement) {
         nameElement.focus();
       }
@@ -1217,14 +1358,14 @@ export class YpLogin extends YpBaseElement {
     if (window.appGlobals && window.appGlobals.domain) {
       this.domain = window.appGlobals.domain;
     }
-    this.addListener('yp-domain-changed', this._domainEvent.bind(this));
-    this.addListener('yp-network-error', this._networkError.bind(this));
+    this.addListener("yp-domain-changed", this._domainEvent.bind(this));
+    this.addListener("yp-network-error", this._networkError.bind(this));
   }
 
   disconnectedCallback() {
     super.connectedCallback();
-    this.removeListener('yp-domain-changed', this._domainEvent.bind(this));
-    this.removeListener('yp-network-error', this._networkError.bind(this));
+    this.removeListener("yp-domain-changed", this._domainEvent.bind(this));
+    this.removeListener("yp-network-error", this._networkError.bind(this));
   }
 
   setup(onLoginFunction: Function, domain: YpDomainData) {
@@ -1236,26 +1377,26 @@ export class YpLogin extends YpBaseElement {
   }
 
   _setTexts() {
-    this.emailErrorMessage = this.t('inputError');
-    this.passwordErrorMessage = this.t('inputError');
+    this.emailErrorMessage = this.t("inputError");
+    this.passwordErrorMessage = this.t("inputError");
     if (this.registerMode === 1) {
-      this.submitText = this.t('user.create');
+      this.submitText = this.t("user.create");
     } else {
-      this.submitText = this.t('user.login');
+      this.submitText = this.t("user.login");
     }
   }
 
   get emailValue() {
-    return (this.$$('#email') as HTMLInputElement).value.trim();
+    return (this.$$("#email") as HTMLInputElement).value.trim();
   }
 
   get passwordValue() {
-    return (this.$$('#password') as HTMLInputElement).value.trim();
+    return (this.$$("#password") as HTMLInputElement).value.trim();
   }
 
   get fullnameValue(): string | void {
-    if (this.$$('#fullname'))
-      return (this.$$('#fullname') as HTMLInputElement).value.trim();
+    if (this.$$("#fullname"))
+      return (this.$$("#fullname") as HTMLInputElement).value.trim();
   }
 
   async _registerUser() {
@@ -1266,15 +1407,15 @@ export class YpLogin extends YpBaseElement {
     if (user) {
       window.appGlobals.analytics.sendLoginAndSignup(
         user.id,
-        'Signup Success',
-        'Email'
+        "Signup Success",
+        "Email"
       );
       this._loginCompleted(user);
       console.debug(
-        'Got register response for: ' + user ? user.email : 'unknown'
+        "Got register response for: " + user ? user.email : "unknown"
       );
     } else {
-      console.error('No user in registerUser');
+      console.error("No user in registerUser");
     }
   }
 
@@ -1286,7 +1427,7 @@ export class YpLogin extends YpBaseElement {
     if (user) {
       this._loginCompleted(user);
     } else {
-      console.error('No user in loginUser');
+      console.error("No user in loginUser");
     }
   }
 
@@ -1295,11 +1436,18 @@ export class YpLogin extends YpBaseElement {
       this.isSending = true;
       window.appGlobals.analytics.sendLoginAndSignup(
         -1,
-        this.registerMode ? 'Signup Submit' : 'Login Submit',
-        'Email'
+        this.registerMode ? "Signup Submit" : "Login Submit",
+        "Email"
       );
-      if (this.emailValue && this.passwordValue && (
-        !this.registerMode || !this.registrationQuestionsGroup || (this.$$("#registrationQuestions") as YpRegistrationQuestions).validate())) {
+      if (
+        this.emailValue &&
+        this.passwordValue &&
+        (!this.registerMode ||
+          !this.registrationQuestionsGroup ||
+          (
+            this.$$("#registrationQuestions") as YpRegistrationQuestions
+          ).validate())
+      ) {
         this.userSpinner = true;
         this._setupJsonCredentials();
         if (this.registerMode) {
@@ -1309,18 +1457,18 @@ export class YpLogin extends YpBaseElement {
         }
         this.userSpinner = false;
       } else {
-        this.fire('yp-error', this.t('user.completeForm'));
+        this.fire("yp-error", this.t("user.completeForm"));
         window.appGlobals.analytics.sendLoginAndSignup(
           -1,
-          this.registerMode ? 'Signup Fail' : 'Login Fail',
-          'Email',
-          'Form not validated'
+          this.registerMode ? "Signup Fail" : "Login Fail",
+          "Email",
+          "Form not validated"
         );
         this.isSending = false;
         return false;
       }
     } else {
-      console.warn('Trying to call _validateAndSend while sending');
+      console.warn("Trying to call _validateAndSend while sending");
     }
   }
 
@@ -1332,7 +1480,7 @@ export class YpLogin extends YpBaseElement {
       window.appUser.setLoggedInUser(user);
     }
     this.close();
-    this.fireGlobal('yp-logged-in', user);
+    this.fireGlobal("yp-logged-in", user);
   }
 
   _loginCompleted(user: YpUserData) {
@@ -1347,7 +1495,7 @@ export class YpLogin extends YpBaseElement {
         .then(() => {
           this._loginAfterSavePassword(user);
         })
-        .catch(error => {
+        .catch((error) => {
           console.error(error);
           this._loginAfterSavePassword(user);
         });
@@ -1382,8 +1530,8 @@ export class YpLogin extends YpBaseElement {
 
     window.appGlobals.analytics.sendLoginAndSignup(
       -1,
-      'Signup/Login Opened',
-      'Undecided'
+      "Signup/Login Opened",
+      "Undecided"
     );
 
     setTimeout(() => {
@@ -1395,22 +1543,22 @@ export class YpLogin extends YpBaseElement {
         navigator.credentials
           // @ts-ignore
           .get({ password: true })
-          .then(async credentials => {
+          .then(async (credentials) => {
             // @ts-ignore
             const passwordCredentials = credentials as PasswordCredential;
             if (credentials && credentials.id && passwordCredentials.password) {
               this.email = credentials.id;
               this.password = passwordCredentials.password
                 ? passwordCredentials.password
-                : '';
+                : "";
               await this.requestUpdate();
               if (window.appUser.hasIssuedLogout === true) {
-                console.log('Have issued logout not auto logging in');
+                console.log("Have issued logout not auto logging in");
               } else {
                 //this._validateAndSend();
               }
             } else {
-              console.warn('Canceling credentials.get');
+              console.warn("Canceling credentials.get");
             }
           });
       }
