@@ -46,7 +46,7 @@ export class YpPageDialog extends YpBaseElement {
         }
 
         #dialog {
-          background-color: #FF0000;
+          background-color: #ff0000;
         }
 
         @media (max-width: 1100px) {
@@ -90,13 +90,19 @@ export class YpPageDialog extends YpBaseElement {
         escapeKeyAction=""
         scrimClickAction=""
         @closed="${this._close}"
-        .fullscreen="${!this.wide}"
         id="dialog"
         ?rtl="${this.rtl}"
       >
+        <md-icon slot="headline-prefix">joystick</md-icon>
         <span slot="headline" class="headline">${this.pageTitle}</span>
         <div id="content" style="text-align: left"></div>
-        <md-outlined-button class="startButton" slot="footer" dialogFocus dialogAction="${this._close}">${this.t("Start Game")}</md-outlined-button>
+        <md-outlined-button
+          class="startButton"
+          slot="footer"
+          dialogFocus
+          dialogAction="${this._close}"
+          >${this.t("Start Game")}</md-outlined-button
+        >
       </md-dialog>
     `;
   }
