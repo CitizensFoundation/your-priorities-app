@@ -132,7 +132,7 @@ export class YpCommentDialog extends YpBaseElementWithLogin {
 
   render() {
     return html`
-      <md-dialog id="commentDialog">
+      <md-dialog id="commentDialog" footerHidden>
         ${this.point
           ? html`
               <div id="content">

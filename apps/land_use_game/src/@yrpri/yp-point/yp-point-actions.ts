@@ -56,11 +56,11 @@ export class YpPointActions extends YpBaseElement {
         }
 
         .up-selected {
-          color: #444;
+
         }
 
         .down-selected {
-          color: #444;
+
         }
 
         .middle {
@@ -112,7 +112,7 @@ export class YpPointActions extends YpBaseElement {
                 ?disabled="${this.allDisabled}"
                 icon="arrow_upward"
                 class="point-up-vote-icon myButton"
-                @click="${this.pointHelpful}">arrow_upward</md-outlined-icon-button>
+                @click="${this.pointHelpful}"><md-icon>arrow_upward</md-icon></md-outlined-icon-button>
               <div class="action-text action-up layouthorizontal ">
                 ${this.point.counter_quality_up}
               </div>
@@ -123,7 +123,7 @@ export class YpPointActions extends YpBaseElement {
                 ?disabled="${this.allDisabled}"
                 icon="arrow_downward"
                 class="point-down-vote-icon myButton"
-                @click="${this.pointNotHelpful}">arrow_downward</md-outlined-icon-button>
+                @click="${this.pointNotHelpful}"><md-icon>arrow_downward</md-icon></md-outlined-icon-button>
               <div class="action-text">${this.point.counter_quality_down}</div>
             </div>
             <md-outlined-icon-button
@@ -278,11 +278,18 @@ export class YpPointActions extends YpBaseElement {
     const oldPointQualityValue = pointQualityResponse.oldPointQualityValue;
     this._setPointQuality(pointQuality.value);
     window.appUser.updatePointQualityForPost(this.point!.id, pointQuality);
+
+    if (this.point!.counter_quality_up === undefined)
+      this.point!.counter_quality_up = 0;
+
+    if (this.point!.counter_quality_down === undefined)
+      this.point!.counter_quality_down = 0;
+
     if (oldPointQualityValue) {
       if (oldPointQualityValue > 0)
-        this.point!.counter_quality_up = this.point!.counter_quality_up - 1;
+        this.point!.counter_quality_up = Math.max(0,this.point!.counter_quality_up - 1);
       else if (oldPointQualityValue < 0)
-        this.point!.counter_quality_down = this.point!.counter_quality_down - 1;
+        this.point!.counter_quality_down = Math.max(this.point!.counter_quality_down - 1);
     }
     if (pointQuality.value > 0)
       this.point!.counter_quality_up = this.point!.counter_quality_up + 1;

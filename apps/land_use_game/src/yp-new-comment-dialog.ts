@@ -37,12 +37,23 @@ export class YpNewCommentDialog extends YpBaseElementWithLogin {
         mwc-textarea {
           width: 460px;
           margin-top: -8px;
+          --mdc-theme-primary: var(--md-sys-color-primary);
+          --mdc-text-field-ink-color: var(--md-sys-color-on-surface);
+          --mdc-text-field-label-ink-color: var(--md-sys-color-on-surface);
+          --mdc-text-field-fill-color: var(--md-sys-color-surface);
+
+          --mdc-text-area-outlined-hover-border-color: var(
+            --md-sys-color-surface
+          );
+          --mdc-text-area-outlined-idle-border-color: var(
+            --md-sys-color-surface
+          );
+          --mdc-notched-outline-border-color: var(
+            --md-sys-color-surface-variant
+          );
         }
 
         mwc-button {
-          margin-top: 16px;
-          background-color: var(--accent-color);
-          color: #fff;
         }
 
         .embedData {
@@ -114,15 +125,13 @@ export class YpNewCommentDialog extends YpBaseElementWithLogin {
   renderFooter() {
     return html` <div class="layout horizontal">
       <md-outlined-button
-        .label="${this.t("Close")}"
         class="cancelButton self-start"
         @click="${this.closeDialog}"
-      ></md-outlined-button>
+      >${this.t("Close")}</md-outlined-button>
       <md-filled-button
-        .label="${this.t("Submit")}"
         id="storySubmitButton"
         @click="${this._sendComment}"
-      ></md-filled-button>
+      >${this.t("Submit")}</md-filled-button>
     </div>`;
   }
 

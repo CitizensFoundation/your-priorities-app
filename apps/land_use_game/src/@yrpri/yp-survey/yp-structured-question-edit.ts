@@ -98,7 +98,6 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
         .question {
           margin-top: 32px;
           margin-bottom: 8px;
-          color: #000;
           font-size: 18px;
           line-height: 1.5;
         }

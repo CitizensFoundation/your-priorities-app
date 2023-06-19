@@ -3,13 +3,15 @@ import { property, customElement } from "lit/decorators.js";
 
 import { YpBaseElement } from "../common/yp-base-element.js";
 import { Snackbar } from "@material/mwc-snackbar";
-import { Dialog } from "@material/mwc-dialog";
 
 import "@material/mwc-dialog";
 import "@material/mwc-snackbar";
 
 import "../yp-magic-text/yp-magic-text-dialog.js";
 import "../yp-user/yp-login.js";
+
+import './yp-confirmation-dialog.js'
+import '../yp-api-action-dialog/yp-api-action-dialog.js';
 
 import "../yp-user/yp-missing-email.js";
 import "../yp-user/yp-registration-questions-dialog.js";
@@ -19,6 +21,7 @@ import "../yp-user/yp-reset-password.js";
 //import './yp-autotranslate-dialog.js';
 import "../yp-post/yp-post-edit.js";
 import "../yp-page/yp-page-dialog.js";
+import { Dialog } from "@material/web/dialog/lib/dialog.js";
 
 @customElement("yp-app-dialogs")
 export class YpAppDialogs extends YpBaseElement {

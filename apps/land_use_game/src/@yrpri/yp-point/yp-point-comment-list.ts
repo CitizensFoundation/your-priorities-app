@@ -5,7 +5,7 @@ import { YpBaseElement } from '../common/yp-base-element.js';
 
 import '../common/yp-image.js';
 
-import '@material/mwc-icon-button';
+import '@material/web/iconbutton/standard-icon-button.js';
 
 import '@lit-labs/virtualizer'
 
@@ -158,18 +158,18 @@ export class YpPointCommentList extends YpBaseElement {
             <div class="commentText">${this.t('noComments')}</div>
           </div>
           <div class="layout horizontal">
-            <mwc-icon-button
+            <md-standard-icon-button
               .label="${this.t('openComments')}"
               class="openCloseButton"
               icon="keyboard_arrow_right"
               @click="${this.setOpen}"
-              ?hidden="${this.open}"></mwc-icon-button>
-            <mwc-icon-button
+              ?hidden="${this.open}"><md-icon>keyboard_arrow_right</md-icon></md-standard-icon-button>
+            <md-standard-icon-button
               .label="${this.t('closeComments')}"
               class="openCloseButton"
               icon="keyboard_arrow_down"
               @click="${this.setClosed}"
-              ?hidden="${!this.open}"></mwc-icon-button>
+              ?hidden="${!this.open}"><md-icon>keyboard_arrow_down</md-icon></md-standard-icon-button>
           </div>
         </div>
 

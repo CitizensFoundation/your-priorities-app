@@ -1,13 +1,13 @@
-import { html, css } from 'lit';
-import { property, customElement } from 'lit/decorators.js';
+import { html, css } from "lit";
+import { property, customElement } from "lit/decorators.js";
 
-import { YpBaseElement } from '../common/yp-base-element.js';
-import { Dialog } from '@material/mwc-dialog';
+import { YpBaseElement } from "../common/yp-base-element.js";
+import { Dialog } from "@material/mwc-dialog";
 
-import '@material/mwc-dialog';
-import '@material/mwc-button';
+import "@material/web/dialog/dialog.js";
+import "@material/web/button/text-button.js";
 
-@customElement('yp-confirmation-dialog')
+@customElement("yp-confirmation-dialog")
 export class YpConfirmationDialog extends YpBaseElement {
   @property({ type: String })
   confirmationText: string | undefined;
@@ -25,29 +25,25 @@ export class YpConfirmationDialog extends YpBaseElement {
   hideCancel = false;
 
   static get styles() {
-    return [
-      css`
-        mwc-dialog {
-          background-color: #fff;
-        }
-      `,
-    ];
+    return [css``];
   }
 
   render() {
     return html`
-      <mwc-dialog id="confirmationDialog">
+      <md-dialog id="confirmationDialog" escapeKeyAction="" scrimClickAction="">
         <div>${this.confirmationText}</div>
-        <mwc-button
+        <md-text-button
           ?hidden="${this.hideCancel}"
           @click="${this._reset}"
-          slot="secondaryAction"
-          .label="${this.t('cancel')}"></mwc-button>
-        <mwc-button
-          @click="${this._confirm}"
-          slot="primaryAction"
-          .label="${this.t('confirm')}"></mwc-button>
-      </mwc-dialog>
+          dialogAction="close"
+          slot="footer"
+          >${this.t("cancel")}</md-text-button
+        >
+        <md-text-button @click="${this._confirm}" slot="footer"
+        dialogAction="save"
+        >${this.t("confirm")}</md-text-button
+        >
+      </md-dialog>
     `;
   }
 
@@ -59,7 +55,7 @@ export class YpConfirmationDialog extends YpBaseElement {
     this.hideCancel = false;
   }
 
-  open(
+  async open(
     confirmationText: string,
     onConfirmedFunction: Function | undefined,
     useModal = false,
@@ -75,7 +71,8 @@ export class YpConfirmationDialog extends YpBaseElement {
       //TODO: Implrement when ready
       //(this.$$('#confirmationDialog') as Dialog).modal = false;
     }
-    (this.$$('#confirmationDialog') as Dialog).open = true;
+    await this.updateComplete;
+    (this.$$("#confirmationDialog") as Dialog).open = true;
     if (useFinalWarning) {
       this.useFinalWarning = true;
     } else {
@@ -92,10 +89,10 @@ export class YpConfirmationDialog extends YpBaseElement {
   _confirm() {
     if (this.useFinalWarning && !this.haveIssuedFinalWarning) {
       this.haveIssuedFinalWarning = true;
-      (this.$$('#confirmationDialog') as Dialog).open = false;
-      this.confirmationText = this.t('finalDeleteWarning');
+      (this.$$("#confirmationDialog") as Dialog).open = false;
+      this.confirmationText = this.t("finalDeleteWarning");
       setTimeout(() => {
-        (this.$$('#confirmationDialog') as Dialog).open = true;
+        (this.$$("#confirmationDialog") as Dialog).open = true;
       });
     } else {
       if (this.onConfirmedFunction) {

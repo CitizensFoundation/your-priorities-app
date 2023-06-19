@@ -2,6 +2,7 @@ import { html, css, nothing } from 'lit';
 import { property, customElement } from 'lit/decorators.js';
 
 import '@material/mwc-icon-button';
+import '@material/web/iconbutton/standard-icon-button.js';
 
 import '../yp-user/yp-user-image.js';
 import '../yp-user/yp-user-with-organization.js';
@@ -11,6 +12,7 @@ import { YpAccessHelpers } from '../common/YpAccessHelpers.js';
 import { YpBaseElementWithLogin } from '../common/yp-base-element-with-login.js';
 import { YpConfirmationDialog } from '../yp-dialog-container/yp-confirmation-dialog.js';
 import { YpApiActionDialog } from '../yp-api-action-dialog/yp-api-action-dialog.js';
+import { Layouts } from '../../flexbox-literals/classes.js';
 
 @customElement('yp-point-comment')
 export class YpPointComment extends YpBaseElementWithLogin {
@@ -33,9 +35,14 @@ export class YpPointComment extends YpBaseElementWithLogin {
 
   static get styles() {
     return [
+      Layouts,
       css`
         .userName {
-          color: #777;
+
+        }
+
+        .extraActions {
+          margin-top: 16px;
         }
 
         yp-user-image {
@@ -56,7 +63,7 @@ export class YpPointComment extends YpBaseElementWithLogin {
         }
 
         .commentDash {
-          border-bottom: dashed #ddd;
+          border-bottom: dashed;
           border-bottom-width: 1px;
         }
 
@@ -65,7 +72,7 @@ export class YpPointComment extends YpBaseElementWithLogin {
         }
 
         #reportPointIconButton {
-          color: #ddd;
+
           width: 36px;
           height: 36px;
         }
@@ -75,7 +82,7 @@ export class YpPointComment extends YpBaseElementWithLogin {
         }
 
         #deleteButton {
-          color: #bbb;
+
         }
       `,
     ];
@@ -94,25 +101,26 @@ export class YpPointComment extends YpBaseElementWithLogin {
               <yp-point-actions
                 .point="${this.point}"
                 hideSharing></yp-point-actions>
-              <mwc-icon-button
+              <div class="extraActions layout horizontal">
+              <md-standard-icon-button
                 ?hidden=""
                 ?hidden="${!this.loggedInUser}"
                 .label="${this.t('point.report')}"
                 id="reportPointIconButton"
-                icon="warning"
-                @click="${this._reportPoint}"></mwc-icon-button>
+                @click="${this._reportPoint}"><md-icon>warning</md-icon></md-standard-icon-button>
 
               ${this.hasPointAccess
                 ? html`
                     <div class="layout horizontal self-end">
-                      <mwc-icon-button
+                      <md-standard-icon-button
                         id="deleteButton"
                         .label="${this.t('delete')}"
-                        icon="clear"
-                        @click="${this._deletePoint}"></mwc-icon-button>
+                        @click="${this._deletePoint}"><md-icon>clear</md-icon></md-standard-icon-button>
                     </div>
                   `
                 : html``}
+
+              </div>
             </div>
           </div>
         </div>

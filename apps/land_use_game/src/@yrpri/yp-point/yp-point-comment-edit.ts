@@ -1,14 +1,16 @@
 import { html, css, nothing } from 'lit';
 import { property, customElement } from 'lit/decorators.js';
-import { Button } from '@material/mwc-button';
+
 
 import '@material/mwc-textfield';
+import '@material/web/button/filled-button.js';
 
 import '../common/yp-image.js';
 import '../yp-user/yp-user-info.js';
 
 import { YpBaseElementWithLogin } from '../common/yp-base-element-with-login.js';
 import { TextArea } from '@material/mwc-textarea';
+import { Button } from '@material/web/button/lib/button.js';
 
 @customElement('yp-point-comment-edit')
 export class YpPointCommentEdit extends YpBaseElementWithLogin {
@@ -34,14 +36,26 @@ export class YpPointCommentEdit extends YpBaseElementWithLogin {
 
         mwc-textfield {
           width: 370px;
-          max-height: 300px;
+          max-height: 400px;
+          --mdc-theme-primary: var(--md-sys-color-primary);
+          --mdc-text-field-ink-color: var(--md-sys-color-on-surface);
+          --mdc-text-field-label-ink-color: var(--md-sys-color-on-surface);
+          --mdc-text-field-fill-color: var(--md-sys-color-surface);
+
+          --mdc-text-area-outlined-hover-border-color: var(
+            --md-sys-color-surface
+          );
+          --mdc-text-area-outlined-idle-border-color: var(
+            --md-sys-color-surface
+          );
+          --mdc-notched-outline-border-color: var(
+            --md-sys-color-surface-variant
+          );
         }
 
-        mwc-button {
+        md-filled-button {
           margin-top: 16px;
           margin-bottom: 16px;
-          background-color: var(--accent-color);
-          color: #fff;
         }
 
         .userImage {
@@ -98,11 +112,11 @@ export class YpPointCommentEdit extends YpBaseElementWithLogin {
                   aria-label="${this.t('point.addComment')}">
                 </mwc-textfield>
                 <div class="layout horizontal">
-                  <mwc-button
+                  <md-filled-button
                     id="submitButton"
                     raised
                     @click="${this._sendComment}"
-                    .label="${this.t('point.postComment')}"></mwc-button>
+                    .label="${this.t('point.postComment')}">${this.t('point.postComment')}</md-filled-button>
                 </div>
               </div>
             </div>
