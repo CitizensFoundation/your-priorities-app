@@ -1,18 +1,17 @@
-import { html, css } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { html, css } from "lit";
+import { customElement, property } from "lit/decorators.js";
 
-import '@material/mwc-button';
-import '@material/mwc-textfield';
-import '@material/mwc-dialog';
-import './yp-registration-questions.js';
+import "@material/web/button/text-button.js";
+import "@material/web/dialog/dialog.js";
 
-import { YpBaseElement } from '../common/yp-base-element.js';
+import "./yp-registration-questions.js";
 
-import { Dialog } from '@material/mwc-dialog';
-import { TextField } from '@material/mwc-textfield';
-import { YpRegistrationQuestions } from './yp-registration-questions.js';
+import { YpBaseElement } from "../common/yp-base-element.js";
 
-@customElement('yp-registration-questions-dialog')
+import { YpRegistrationQuestions } from "./yp-registration-questions.js";
+import { Dialog } from "@material/web/dialog/lib/dialog.js";
+
+@customElement("yp-registration-questions-dialog")
 export class YpRegistrationQuestionsDialog extends YpBaseElement {
   @property({ type: Object })
   registrationQuestionsGroup: YpGroupData | undefined;
@@ -21,40 +20,19 @@ export class YpRegistrationQuestionsDialog extends YpBaseElement {
     return [
       super.styles,
       css`
-        mwc-dialog {
-          background-color: #fff;
-          width: 420px;
-          text-align: left;
-        }
-
-        @media (max-width: 480px) {
-          mwc-dialog {
-            padding: 0;
-            margin: 0;
-            width: 100%;
-          }
-        }
-
         [hidden] {
           display: none !important;
-        }
-
-        .buttons {
-          margin-bottom: 8px;
-          margin-right: 4px;
-          text-align: center;
-        }
-
-        .heading {
-          font-size: 22px;
-          font-weight: bold;
-          text-align: center;
         }
 
         yp-registration-questions {
           margin-top: 0;
           min-height: 15px;
           margin-bottom: 16px;
+          text-align: left;
+        }
+
+        .upper {
+          text-transform: capitalize;
         }
       `,
     ];
@@ -70,8 +48,8 @@ export class YpRegistrationQuestionsDialog extends YpBaseElement {
 
   render() {
     return html`
-      <mwc-dialog id="dialog" modal>
-        <div class="heading">${this.t('registrationQuestionsInfo')}</div>
+      <md-dialog id="dialog" escapeKeyAction="" scrimClickAction="">
+        <div slot="header">${this.t("registrationQuestionsInfo")}</div>
 
         <yp-registration-questions
           id="registrationQuestions"
@@ -81,19 +59,13 @@ export class YpRegistrationQuestionsDialog extends YpBaseElement {
           .group="${this.registrationQuestionsGroup}"
         ></yp-registration-questions>
 
-        <div class="buttons">
-          <mwc-button
-            slot="primaryAction"
-            @click="${this.logout}"
-            .label="${this.t('user.logout')}"
-          ></mwc-button>
-          <mwc-button
-            slot="primaryAction"
-            @click="${this._validateAndSend}"
-            .label="${this.t('save')}"
-          ></mwc-button>
-        </div>
-      </mwc-dialog>
+        <md-text-button slot="footer" @click="${this.logout}"
+          ><span class="upper">${this.t("user.logout")}</span></md-text-button
+        >
+        <md-text-button slot="footer" @click="${this._validateAndSend}"
+          ><span class="upper">${this.t("save")}</span></md-text-button
+        >
+      </md-dialog>
     `;
   }
 
@@ -112,20 +84,19 @@ export class YpRegistrationQuestionsDialog extends YpBaseElement {
 
   async _validateAndSend() {
     const registrationQuestions = this.$$(
-      '#registrationQuestions'
+      "#registrationQuestions"
     ) as YpRegistrationQuestions;
-    debugger;
     if (registrationQuestions.validate()) {
-      window.appGlobals.activity('submit', 'registrationAnswers');
+      window.appGlobals.activity("submit", "registrationAnswers");
       //TODO: Check all serverApi for catch errors and how to handle that
       await window.appGlobals.serverApi.sendRegistrationQuestions(
         registrationQuestions.getAnswers()
       );
       window.appUser.setHasRegistrationAnswers();
-      this.fireGlobal('yp-registration-questions-done')
+      this.fireGlobal("yp-registration-questions-done");
       this.close();
     } else {
-      this.fire('yp-open-notify-dialog', this.t('user.completeForm'));
+      this.fire("yp-open-notify-dialog", this.t("user.completeForm"));
       return false;
     }
   }
@@ -134,10 +105,10 @@ export class YpRegistrationQuestionsDialog extends YpBaseElement {
     this.registrationQuestionsGroup = registrationQuestionsGroup;
     await this.requestUpdate();
 
-    (this.$$('#dialog') as Dialog).open = true;
+    (this.$$("#dialog") as Dialog).open = true;
   }
 
   close() {
-    (this.$$('#dialog') as Dialog).open = false;
+    (this.$$("#dialog") as Dialog).open = false;
   }
 }

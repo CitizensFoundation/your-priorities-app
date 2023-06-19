@@ -70,9 +70,7 @@ export class YpRegistrationQuestions extends YpBaseElement {
       super.styles,
       css`
         :host {
-          display: block;
-          width: 100%;
-          text-align: left;
+
         }
 
         @media (max-width: 800px) {

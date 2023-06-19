@@ -171,7 +171,7 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
 
         .radiosLabel {
           margin-bottom: 16px;
-          margin-top: 48px;
+          margin-top: 16px;
         }
 
         .radiosLabel[is-first-rating] {
@@ -225,15 +225,12 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
         }
 
         .general[less-bottom-margin] {
-          margin-bottom: -32px;
         }
 
         .general[extra-top-margin] {
-          margin-top: 32px;
         }
 
         .lessBottomMargin {
-          margin-bottom: -32px;
         }
 
         [hidden] {

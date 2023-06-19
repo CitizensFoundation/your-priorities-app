@@ -1485,7 +1485,6 @@ export class YpLogin extends YpBaseElement {
         registerMode ? "Signup Submit" : "Login Submit",
         "Email"
       );
-      debugger;
       if (
         this.emailValue(registerMode) &&
         this.passwordValue(registerMode) &&
