@@ -342,8 +342,10 @@ export class YpLogin extends YpBaseElement {
           flex-direction: row;
         }
 
-        .create-user .headline {
-          flex: 1;
+        .headline {
+          flex-direction: row-reverse;
+          align-items: center;
+          text-align:center;
         }
 
         .create-user-content,
@@ -716,7 +718,7 @@ export class YpLogin extends YpBaseElement {
                 autofocus
                 raised
                 class="loginButton"
-                @click="${this._validateAndSend}"
+                @click="${() => this._validateAndSend(false)}"
                 ><span class="capitalize"
                   >${this.submitText}</span
                 ></md-filled-button
@@ -755,9 +757,9 @@ export class YpLogin extends YpBaseElement {
         transition="grow-left"
         .fullscreen=${!this.wide}
       >
-        <span slot="header">
-          <span class="headline">${this.t("user.create")}</span>
-        </span>
+        <div slot="header" class="layout horizontal center-center">
+         ${this.t("user.create")}
+        </div>
         <div class="create-user-content">
           <md-filled-text-field
             id="fullname"
@@ -806,7 +808,7 @@ export class YpLogin extends YpBaseElement {
         <md-text-button slot="footer" @click="${this.cancelRegistration}" dialogAction="cancel"
           >${this.t("cancel")}</md-text-button
         >
-        <md-text-button @click="${this._validateAndSend}" slot="footer"
+        <md-text-button @click="${() => this._validateAndSend(true)}" slot="footer"
           >${this.t("user.create")}</md-text-button
         >
       </md-dialog>
@@ -907,7 +909,7 @@ export class YpLogin extends YpBaseElement {
       email: this.emailValue(registerMode),
       identifier: this.emailValue(registerMode),
       username: this.emailValue(registerMode),
-      password: this.passwordValue,
+      password: this.passwordValue(registerMode),
       registration_answers:
         this.registrationQuestionsGroup && this.$$("#registrationQuestions")
           ? (
@@ -1411,12 +1413,30 @@ export class YpLogin extends YpBaseElement {
     this.submitText = this.t("user.login");
   }
 
-  emailValue(registerMode: boolean) {
-    return (this.$$(registerMode ? "#regEmail" : "#email") as TextField).value.trim();
+  emailValue(registerMode: boolean | undefined = undefined) {
+    const email = (this.$$("#email") as TextField).value.trim();
+    const regEmail = (this.$$("#regEmail") as TextField).value.trim();
+
+    if (registerMode===undefined) {
+      return email || regEmail;
+    } else if (registerMode===true) {
+      return regEmail;
+    } else {
+      return email;
+    }
   }
 
-  passwordValue(registerMode: boolean) {
-    return (this.$$(registerMode ? "#regPassword" : "#password") as TextField).value.trim();
+  passwordValue(registerMode: boolean | undefined = undefined) {
+    const password = (this.$$("#password") as TextField).value.trim();
+    const regPassword = (this.$$("#regPassword") as TextField).value.trim();
+
+    if (registerMode===undefined) {
+      return password || regPassword;
+    } else if (registerMode===true) {
+      return regPassword;
+    } else {
+      return password;
+    }
   }
 
   get fullnameValue(): string | void {
@@ -1439,6 +1459,7 @@ export class YpLogin extends YpBaseElement {
       console.debug(
         "Got register response for: " + user ? user.email : "unknown"
       );
+      (this.$$("#createUserDialog") as Dialog).open = false;
     } else {
       console.error("No user in registerUser");
     }
@@ -1510,11 +1531,13 @@ export class YpLogin extends YpBaseElement {
   }
 
   _loginCompleted(user: YpUserData) {
-    if (window.PasswordCredential && this.emailValue(false) && this.passwordValue) {
+    if (window.PasswordCredential &&
+        this.emailValue() &&
+        this.passwordValue()) {
       const c = new window.PasswordCredential({
-        name: this.emailValue(false),
-        id: this.emailValue(false),
-        password: this.passwordValue,
+        name: this.emailValue(),
+        id: this.emailValue(),
+        password: this.passwordValue(),
       });
       navigator.credentials
         .store(c)

@@ -4,24 +4,14 @@ import { property, customElement } from 'lit/decorators.js';
 import * as linkify from 'linkifyjs';
 import linkifyHtml from 'linkify-html';
 
-import '@material/mwc-circular-progress-four-color';
-import '@material/mwc-dialog';
-import '@material/mwc-button';
-import '@material/mwc-icon-button';
 import '@material/mwc-select';
 import '@material/mwc-list/mwc-list-item';
 import '@material/mwc-snackbar';
 
-import '@material/mwc-checkbox';
-import '@material/mwc-radio';
+import '@material/web/checkbox/checkbox.js'
+import '@material/web/textfield/filled-text-field.js'
+import '@material/web/radio/radio.js'
 
-import '@material/mwc-formfield';
-import { Radio } from '@material/mwc-radio';
-
-import { Checkbox } from '@material/mwc-checkbox';
-
-import { TextField } from '@material/mwc-textfield';
-import '@material/mwc-textfield';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 
@@ -29,6 +19,10 @@ import './yp-simple-html-editor.js';
 
 import { YpSimpleHtmlEditor } from './yp-simple-html-editor.js';
 import { YpBaseElement } from '../common/yp-base-element.js';
+import { TextField } from '@material/web/textfield/lib/text-field.js';
+import { Checkbox } from '@material/web/checkbox/lib/checkbox.js';
+import { Radio } from '@material/web/radio/lib/radio.js';
+import { Layouts } from '../../flexbox-literals/classes.js';
 
 @customElement('yp-structured-question-edit')
 export class YpStructuredQuestionEdit extends YpBaseElement {
@@ -85,6 +79,7 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
 
   static get styles() {
     return [
+      Layouts,
       super.styles,
       css`
         :host {
@@ -92,8 +87,12 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
           font-size: 16px;
         }
 
+        md-filled-text-field {
+          --md-filled-field-container-color: var(--md-sys-color-surface) !important;
+        }
+
+
         a {
-          color: #000;
         }
 
         .question {
@@ -115,7 +114,6 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
         }
 
         .general {
-          color: #000;
         }
 
         .noBottomMargin {
@@ -133,27 +131,22 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
         .numberInput {
         }
 
-        mwc-checkbox {
+        md-checkbox {
           margin-bottom: 16px;
         }
 
-        mwc-textfield,
+        md-filled-text-field,
         mwc-textarea {
-          width: 100%;
-          --mwc-textfield-container-label: {
-            color: #000;
-            font-size: 18px;
-          }
         }
 
-        mwc-textfield[use-small-font],
+        md-filled-text-field[use-small-font],
         mwc-textarea[use-small-font] {
-          --mwc-textfield-container-label: {
+          --md-filled-text-field-container-label: {
             font-size: 16px;
           }
         }
 
-        mwc-textfield {
+        md-filled-text-field {
           margin-bottom: 32px;
         }
 
@@ -163,9 +156,13 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
           font-size: 16px;
         }
 
-        mwc-radio {
-          --mwc-radio-label-color: #252525;
-          font-size: 16px;
+        .radioLabel {
+          width: 100%;
+          margin: 8px;
+        }
+
+        md-radio {
+          width: 40px;
         }
 
         .checkBoxesLabel {
@@ -182,14 +179,14 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
         }
 
         mwc-textarea.textAreaLong {
-          --mwc-textfield-container: {
+          --md-filled-text-field-container: {
             margin: 0;
             padding: 0;
           }
         }
 
-        mwc-textfield.textAreaLong {
-          --mwc-textfield-container: {
+        md-filled-text-field.textAreaLong {
+          --md-filled-text-field-container: {
             margin: 0;
             padding: 0;
           }
@@ -224,10 +221,7 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
           color: var(--accent-color);
         }
 
-        mwc-checkbox {
-          --mwc-checkbox-label-color: #252525;
-          margin-left: 42px;
-          margin-bottom: 24px;
+        md-checkbox {
         }
 
         .general[less-bottom-margin] {
@@ -260,7 +254,7 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
         }
 
         @media (min-width: 800px) {
-          mwc-textfield[half-width-desktop] {
+          md-filled-text-field[half-width-desktop] {
             width: 50%;
           }
 
@@ -270,8 +264,7 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
           }
         }
 
-        mwc-radio {
-          margin-left: 24px;
+        md-radio {
         }
 
         .specifyInput {
@@ -296,9 +289,6 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
           }
         }
 
-      .radioGroup[invalid] mwc-radio {
-        --mdc-radio-unchecked-color: red;
-      }
 
       mwc-dropdown-menu {
           background-color: transparent;
@@ -328,7 +318,7 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
 
   renderTextField(skipLabel = false) {
     return html`
-      <mwc-textfield
+      <md-filled-text-field
         id="structuredQuestion_${this.index}"
         .value="${(this.question.value as string) || ''}"
         .label="${!skipLabel ? this.textWithIndex : ''}"
@@ -344,7 +334,7 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
         @change="${this._debounceChangeEvent}"
         ?required="${this.question.required}"
         .maxlength="${this.question.maxLength || 100000}">
-      </mwc-textfield>
+      </md-filled-text-field>
     `;
   }
 
@@ -437,16 +427,17 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
 
   renderRadioButton(radioButton: YpRadioButtonData, buttonIndex: number) {
     return html`
-      <mwc-formfield .label="${radioButton.text}">
-        <mwc-radio
+      <label class="layout horizontal center-center">
+        <md-radio
           ?use-small-font="${this.useSmallFont}"
           @keypress="${this.setRadioEventType}"
           @change="${this._radioChanged}"
           .value="${radioButton.text}"
           id="structuredQuestionRatioGroup_${this.index}_${buttonIndex}"
           .name="radioButtons${this.index}">
-        </mwc-radio>
-      </mwc-formfield>
+        </md-radio>
+        <div class="radioLabel">${radioButton.text}</div>
+      </label>
     `;
   }
 
@@ -471,7 +462,7 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
                   ? html` ${this.renderRadioButton(radioButton, buttonIndex)} `
                   : html`
                       ${this.renderRadioButton(radioButton, buttonIndex)}
-                      <mwc-textfield
+                      <md-filled-text-field
                         class="specifyInput"
                         hidden
                         @change="${this._debounceChangeEvent}"
@@ -481,7 +472,7 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
                           : ''}"
                         type="text"
                         id="structuredQuestion_${this
-                          .index}_${buttonIndex}__radioOther"></mwc-textfield>
+                          .index}_${buttonIndex}__radioOther"></md-filled-text-field>
                     `}
               `
             )}
@@ -493,15 +484,16 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
   renderCheckbox(text: string, buttonIndex: number, useTopLevelId = false) {
     const id = useTopLevelId ? `structuredQuestion_${this.index}` : `structuredQuestionCheckbox_${this.index}_${buttonIndex}`
     return html`
-      <mwc-formfield .label="${text}">
-        <mwc-checkbox
+      <label>
+        <md-checkbox
           id="${id}"
-          .name="${this.formName || null}"
+          .name="${this.formName || ""}"
           ?disabled="${this.disabled}"
           ?checked="${(this.question.value as boolean) || false}"
           @change="${this._checkboxChanged}">
-        </mwc-checkbox>
-      </mwc-formfield>
+        </md-checkbox>
+        ${text}"
+      </label>
     `;
   }
 
@@ -524,13 +516,13 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
                   ? html` ${this.renderCheckbox(checkbox.text, buttonIndex)} `
                   : html`
                       ${this.renderCheckbox(checkbox.text, buttonIndex)}
-                      <mwc-textfield
+                      <md-filled-text-field
                         class="specifyInput specifyCheckBox"
                         hidden
                         @change="${this._debounceChangeEvent}"
                         .type="${checkbox.subType || 'text'}"
                         id="structuredQuestion_${this
-                          .index}_${buttonIndex}_checkboxOther"></mwc-textfield>
+                          .index}_${buttonIndex}_checkboxOther"></md-filled-text-field>
                     `}
               `
             )}
@@ -745,7 +737,9 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
           const radioButtonElement = this.$$(
             '#structuredQuestionRatioGroup_' + this.index + '_' + buttonIndex
           ) as Radio
-          if (radioButtonElement && button.text === radioButtonElement.value) {
+          if (radioButtonElement &&
+              button.text === radioButtonElement.value &&
+              radioButtonElement.checked) {
             selectedRadio = radioButtonElement;
             if (button.isSpecify) {
               const radioInput = this.$$(
