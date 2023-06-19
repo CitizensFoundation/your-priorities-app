@@ -696,6 +696,8 @@ export class YpAppUser extends YpCodeBase {
       window.appDialogs.getDialogAsync("registrationQuestions", (dialog: any /*YpRegistrationQuestionsDialog*/) => {
         dialog.open(window.appGlobals.registrationQuestionsGroup!);
       });
+    } else {
+      this.fireGlobal('yp-registration-questions-done');
     }
   }
 
@@ -738,8 +740,10 @@ export class YpAppUser extends YpCodeBase {
     }
 
     setTimeout(() => {
-      this._checkRegistrationAnswers((user as YpUserData)!);
-    }, 750)
+      if (this.lastLoginMethod === 'Saml2' || this.lastLoginMethod === 'Facebook') {
+        this._checkRegistrationAnswers((user as YpUserData)!);
+      }
+    }, 250)
 
     if (user) {
       if (user.customSamlDeniedMessage) {

@@ -1,22 +1,22 @@
-import { html, css } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { html, css } from "lit";
+import { customElement, property } from "lit/decorators.js";
 
-import '@material/mwc-button';
-import '@material/mwc-textfield';
-import '@material/mwc-dialog';
+import "@material/web/dialog/dialog.js";
+import "@material/web/textfield/outlined-text-field.js";
+import "@material/web/button/text-button.js";
+import { Dialog } from "@material/web/dialog/lib/dialog.js";
+import { TextField } from "@material/web/textfield/lib/text-field.js";
 
-import { YpBaseElement } from '../common/yp-base-element.js';
+import { YpBaseElement } from "../common/yp-base-element.js";
+import { Layouts } from "../../flexbox-literals/classes.js";
 
-import { Dialog } from '@material/mwc-dialog';
-import { TextField } from '@material/mwc-textfield';
-
-@customElement('yp-forgot-password')
+@customElement("yp-forgot-password")
 export class YpForgotPassword extends YpBaseElement {
   @property({ type: String })
   emailErrorMessage: string | undefined;
 
   @property({ type: String })
-  email = '';
+  email = "";
 
   @property({ type: Boolean })
   emailHasBeenSent = false;
@@ -27,22 +27,22 @@ export class YpForgotPassword extends YpBaseElement {
   static get styles() {
     return [
       super.styles,
+      Layouts,
       css`
-        mwc-dialog {
-          padding-left: 8px;
-          padding-right: 8px;
-          width: 420px;
-          background-color: #fff;
-          z-index: 9999;
+        :host {
+          --md-dialog-container-color: var(--md-sys-color-surface);
+          --md-filled-field-container-color: var(
+            --md-sys-color-surface
+          ) !important;
         }
 
-        @media (max-width: 480px) {
-          mwc-dialog {
-            padding: 0;
-            margin: 0;
-            height: 100%;
-            width: 100%;
-          }
+        md-filled-text-field {
+          --md-filled-field-container-color: var(
+            --md-sys-color-surface
+          ) !important;
+        }
+        md-outlined-text-field {
+          text-align: left;
         }
       `,
     ];
@@ -50,44 +50,52 @@ export class YpForgotPassword extends YpBaseElement {
 
   render() {
     return html`
-      <mwc-dialog id="dialog">
-        <h3>${this.t('user.forgotPassword')}</h3>
+      <md-dialog
+        id="dialog"
+        scrimClickAction=""
+        escapeKeyAction=""
+        class="layout vertical center-center"
+      >
+        <div slot="headline">${this.t("user.forgotPassword")}</div>
 
         <p ?hidden="${this.emailHasBeenSent}">
-          ${this.t('user.forgotPasswordInstructions')}
+          ${this.t("user.forgotPasswordInstructions")}
         </p>
 
         <p ?hidden="${!this.emailHasBeenSent}">
-          ${this.t('user.forgotPasswordEmailHasBeenSent')}
+          ${this.t("user.forgotPasswordEmailHasBeenSent")}
         </p>
 
-        <mwc-textfield
+        <md-outlined-text-field
           id="email"
           type="email"
           @keydown="${this._onEnter}"
-          .label="${this.t('email')}"
+          .label="${this.t("email")}"
           .value="${this.email}"
+          pattern=".+@.+"
+          minLength="3"
           ?hidden="${this.emailHasBeenSent}"
-          .validationMessage="${this.emailErrorMessage || ''}">
-        </mwc-textfield>
+        >
+        </md-outlined-text-field>
 
-        <div
-          class="buttons"
+        <md-text-button
+          dialogAction="cancel"
           ?hidden="${this.emailHasBeenSent}"
-          slot="secondaryAction">
-          <mwc-button .label="${this.t('cancel')}"></mwc-button>
-          <mwc-button
-            autofocus
-            @click="${this._validateAndSend}"
-            .label="${this.t('user.forgotPassword')}"></mwc-button>
-        </div>
+          slot="footer"
+          >${this.t("cancel")}</md-text-button
+        >
+        <md-text-button
+          autofocus
+          ?hidden="${this.emailHasBeenSent}"
+          slot="footer"
+          @click="${this._validateAndSend}"
+          >${this.t("user.forgotPassword")}</md-text-button
+        >
 
-        <div class="buttons" ?hidden="${!this.emailHasBeenSent}">
-          <mwc-button
-            slot="primaryAction"
-            .label="${this.t('ok')}"></mwc-button>
-        </div>
-      </mwc-dialog>
+        <md-text-button slot="footer" dialogAction="ok" ?hidden="${!this.emailHasBeenSent}"
+          >${this.t("ok")}</md-text-button
+        >
+      </md-dialog>
     `;
   }
 
@@ -99,22 +107,26 @@ export class YpForgotPassword extends YpBaseElement {
   }
 
   async _validateAndSend() {
-    const email = this.$$('#email') as TextField;
+    const email = this.$$("#email") as TextField;
     if (email && email.checkValidity() && email.value) {
       if (!this.isSending) {
         this.isSending = true;
 
-        await window.serverApi.forgotPassword({
+        const response = await window.serverApi.forgotPassword({
           email: email.value,
         });
 
         this.isSending = false;
-        window.appGlobals.notifyUserViaToast(
-          this.t('user.forgotPasswordEmailHasBeenSent')
-        );
-        this.emailHasBeenSent = true;
+
+        if (response) {
+          window.appGlobals.notifyUserViaToast(
+            this.t("user.forgotPasswordEmailHasBeenSent")
+          );
+          this.emailHasBeenSent = true;
+        }
       }
     } else {
+      this.fire("yp-error", this.t("user.completeForm"));
       return false;
     }
   }
@@ -122,7 +134,7 @@ export class YpForgotPassword extends YpBaseElement {
   connectedCallback() {
     super.connectedCallback();
     this.addGlobalListener(
-      'yp-network-error',
+      "yp-network-error",
       this._forgotPasswordError.bind(this)
     );
   }
@@ -130,13 +142,13 @@ export class YpForgotPassword extends YpBaseElement {
   disconnectedCallback() {
     super.disconnectedCallback();
     this.removeGlobalListener(
-      'yp-network-error',
+      "yp-network-error",
       this._forgotPasswordError.bind(this)
     );
   }
 
   _forgotPasswordError(event: CustomEvent) {
-    if (event.detail.errorId && event.detail.errorId == 'forgotPassword') {
+    if (event.detail.errorId && event.detail.errorId == "forgotPassword") {
       this.isSending = false;
     }
   }
@@ -146,10 +158,10 @@ export class YpForgotPassword extends YpBaseElement {
       this.email = detail.email;
     }
 
-    (this.$$('#dialog') as Dialog).open = true;
+    (this.$$("#dialog") as Dialog).open = true;
   }
 
   close() {
-    (this.$$('#dialog') as Dialog).open = false;
+    (this.$$("#dialog") as Dialog).open = false;
   }
 }

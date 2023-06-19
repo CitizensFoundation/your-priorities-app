@@ -1,10 +1,10 @@
-import { LitElement, css } from 'lit';
-import { property } from 'lit/decorators.js';
-import { installMediaQueryWatcher } from 'pwa-helpers/media-query.js';
+import { LitElement, css } from "lit";
+import { property } from "lit/decorators.js";
+import { installMediaQueryWatcher } from "pwa-helpers/media-query.js";
 
 export class YpBaseElement extends LitElement {
   @property({ type: String })
-  language = 'en';
+  language = "en";
 
   @property({ type: Boolean })
   wide = false;
@@ -16,30 +16,36 @@ export class YpBaseElement extends LitElement {
   largeFont = false;
 
   @property({ type: String })
-  themeColor = '#FFE800';
+  themeColor = "#FFE800";
 
   @property({ type: Boolean })
   themeDarkMode: boolean | undefined;
 
   static get styles() {
-    return [] as any;
+    return [
+      css`
+        [hidden] {
+          display: none !important;
+        }
+      `,
+    ] as any;
   }
 
   connectedCallback() {
     super.connectedCallback();
 
     this.addGlobalListener(
-      'yp-language-loaded',
+      "yp-language-loaded",
       this._languageEvent.bind(this)
     );
 
     //TODO: Do the large font thing with css custom properties
-    this.addGlobalListener('yp-large-font', this._largeFont.bind(this));
+    this.addGlobalListener("yp-large-font", this._largeFont.bind(this));
 
-    this.addGlobalListener('yp-theme-color', this._changeThemeColor.bind(this));
+    this.addGlobalListener("yp-theme-color", this._changeThemeColor.bind(this));
 
     this.addGlobalListener(
-      'yp-theme-dark-mode',
+      "yp-theme-dark-mode",
       this._changeThemeDarkMode.bind(this)
     );
 
@@ -51,12 +57,12 @@ export class YpBaseElement extends LitElement {
       this.language = window.appGlobals.locale;
       this._setupRtl();
     } else {
-      this.language = 'en';
+      this.language = "en";
     }
 
-    installMediaQueryWatcher(`(min-width: 900px)`, matches => {
+    installMediaQueryWatcher(`(min-width: 900px)`, (matches) => {
       //TODO: Fix this back!
-//      this.wide = false;
+      //      this.wide = false;
       this.wide = matches;
     });
   }
@@ -64,19 +70,19 @@ export class YpBaseElement extends LitElement {
   disconnectedCallback() {
     super.disconnectedCallback();
     this.removeGlobalListener(
-      'yp-language-loaded',
+      "yp-language-loaded",
       this._languageEvent.bind(this)
     );
 
-    this.removeGlobalListener('yp-large-font', this._largeFont.bind(this));
+    this.removeGlobalListener("yp-large-font", this._largeFont.bind(this));
 
     this.removeGlobalListener(
-      'yp-theme-color',
+      "yp-theme-color",
       this._changeThemeColor.bind(this)
     );
 
     this.removeGlobalListener(
-      'yp-theme-dark-mode',
+      "yp-theme-dark-mode",
       this._changeThemeDarkMode.bind(this)
     );
   }
@@ -90,13 +96,13 @@ export class YpBaseElement extends LitElement {
   }
 
   updated(changedProperties: Map<string | number | symbol, unknown>): void {
-    if (changedProperties.has('language')) {
+    if (changedProperties.has("language")) {
       this.languageChanged();
     }
   }
 
   static get rtlLanguages() {
-    return ['fa', 'ar', 'ar_EG'];
+    return ["fa", "ar", "ar_EG"];
   }
 
   languageChanged() {
@@ -172,7 +178,7 @@ export class YpBaseElement extends LitElement {
     const key = args[0];
     if (window.appGlobals && window.appGlobals.i18nTranslation) {
       let translation = window.appGlobals.i18nTranslation.t(key);
-      if (!translation) translation = '';
+      if (!translation) translation = "";
       return translation;
     } else {
       return key;

@@ -3,14 +3,11 @@ import { customElement, property } from 'lit/decorators.js';
 
 import { YpBaseElement } from '../common/yp-base-element.js';
 
-import '@material/mwc-circular-progress-four-color';
-import '@material/mwc-button';
-
-import '@material/mwc-textfield';
-import '@material/mwc-dialog';
-
-import { Dialog } from '@material/mwc-dialog';
-import { TextField } from '@material/mwc-textfield';
+import '@material/web/dialog/dialog.js';
+import '@material/web/textfield/outlined-text-field.js';
+import '@material/web/button/text-button.js';
+import { Dialog } from '@material/web/dialog/lib/dialog.js';
+import { TextField } from '@material/web/textfield/lib/text-field.js';
 
 @customElement('yp-reset-password')
 export class YpResetPassword extends YpBaseElement {
@@ -27,34 +24,19 @@ export class YpResetPassword extends YpBaseElement {
     return [
       super.styles,
       css`
-        mwc-dialog {
-          padding-left: 8px;
-          padding-right: 8px;
-          width: 420px;
-          background-color: #fff;
-          z-index: 9999;
-        }
 
-        @media (max-width: 480px) {
-          mwc-dialog {
-            padding: 0;
-            margin: 0;
-            height: 100%;
-            width: 100%;
-          }
-        }
       `,
     ];
   }
 
   render() {
     return html`
-      <mwc-dialog id="dialog" modal>
-        <h3>${this.t('user.resetPassword')}</h3>
+      <md-dialog id="dialog" escapeKeyAction="" scrimClickAction="">
+        <div slot="headline">${this.t('user.resetPassword')}</div>
 
         <p>${this.t('user.resetPasswordInstructions')}</p>
 
-        <mwc-textfield
+        <md-outlined-textfield
           id="password"
           @keydown="${this.onEnter}"
           type="password"
@@ -62,20 +44,20 @@ export class YpResetPassword extends YpBaseElement {
           .value="${this.password}"
           autocomplete="off"
           .validationMessage="${this.passwordErrorMessage}">
-        </mwc-textfield>
+        </md-outlined-textfield>
 
         <div class="buttons">
-          <mwc-button @click="${this._cancel}" slot="secondaryAction"
-            >${this.t('cancel')}</mwc-button
+          <md-text-button @click="${this._cancel}" slot="secondaryAction"
+            >${this.t('cancel')}</md-text-button
           >
-          <mwc-button
+          <md-text-button
             autofocus
             @click="${this._validateAndSend}"
             slot="primaryAction"
-            >${this.t('user.resetPassword')}</mwc-button
+            >${this.t('user.resetPassword')}</md-text-button
           >
         </div>
-      </mwc-dialog>
+      </md-dialog>
     `;
   }
 
@@ -94,7 +76,7 @@ export class YpResetPassword extends YpBaseElement {
       });
 
       //TODO Figure out the error here and test if it works
-      if (response.error && response.error == 'not_found') {
+      if (!response || (response.error && response.error == 'not_found')) {
         this.fire('yp-error', this.t('errorResetTokenNotFoundOrUsed'));
       } else {
         this.close();
@@ -102,17 +84,17 @@ export class YpResetPassword extends YpBaseElement {
           this.t('notification.passwordResetAndLoggedIn')
         );
         this._loginCompleted(response);
-        window.location.href = '/';
       }
     }
   }
 
   _cancel() {
-    window.location.href = '/';
+    this.fire('cancel');
   }
 
   _loginCompleted(user: YpUserData) {
     window.appUser.setLoggedInUser(user);
+    this.fire('logged-in');
   }
 
   open(token: string) {

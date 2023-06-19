@@ -1,4 +1,6 @@
 {
+  "Error": "Error",
+  "loginAndRegistration": "Login and registration",
   "cantRememberPassword": "Can't remember your password?",
   "dontHaveAccount": "Don't have an account?",
   "infoAndSharing": "Information and share",

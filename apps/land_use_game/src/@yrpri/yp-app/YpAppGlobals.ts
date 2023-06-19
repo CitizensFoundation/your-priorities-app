@@ -239,7 +239,7 @@ export class YpAppGlobals extends YpCodeBase {
       group.configuration &&
       group.configuration.registrationQuestionsJson) {
       this.registrationQuestionsGroup = group;
-      window.appUser.checkRegistrationAnswersCurrent();
+      //window.appUser.checkRegistrationAnswersCurrent();
     } else {
       this.registrationQuestionsGroup = undefined;
     }

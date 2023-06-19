@@ -36,7 +36,11 @@ import "./yp-comment-dialog.js";
 import "./yp-new-comment-dialog.js";
 import { YpNewCommentDialog } from "./yp-new-comment-dialog.js";
 import { YpPageDialog } from "./@yrpri/yp-page/yp-page-dialog";
-import { applyTheme, argbFromHex, themeFromSourceColor } from "@material/material-color-utilities";
+import {
+  applyTheme,
+  argbFromHex,
+  themeFromSourceColor,
+} from "@material/material-color-utilities";
 
 const GameStage = {
   Intro: 1,
@@ -90,6 +94,9 @@ export class YpLandUseGame extends YpBaseElement {
   @property({ type: Boolean })
   disableSubmitButton = true;
 
+  @property({ type: String })
+  currentErrorText = "";
+
   @property({ type: Boolean })
   disableBrowserTouchEvents = false;
 
@@ -127,12 +134,56 @@ export class YpLandUseGame extends YpBaseElement {
     window.requestAnimationFrame(this.logFramerate.bind(this));
   }
 
+  errorDialogClosed() {
+    this.currentErrorText = "";
+  }
+
+  ypError(event: any) {
+    let error;
+
+    if (event.detail && event.detail.message) {
+      error = event.detail.message;
+    } else if (
+      event.detail &&
+      event.detail.response &&
+      event.detail.response.statusText
+    ) {
+      error = event.detail.response.statusText;
+    } else {
+      error = event.detail;
+    }
+
+    this.currentErrorText = error;
+    (this.$$("#errorDialog") as Dialog).open = true;
+  }
+
   static get styles() {
     return [
       super.styles,
       ShadowStyles,
       css`
         :host {
+          --md-dialog-container-color: var(--md-sys-color-surface);
+          --md-filled-field-container-color: var(
+            --md-sys-color-surface
+          ) !important;
+        }
+
+        #errorDialog {
+          --md-dialog-container-color: var(--md-sys-color-error-container);
+          --md-dialog-headline-color: var(--md-sys-color-on-error-container);
+          --md-text-button-label-text-color: var(
+            --md-sys-color-on-error-container
+          );
+          --md-text-button-focus-label-text-color: var(
+            --md-sys-color-on-error-container
+          );
+          --md-text-button-hover-label-text-color: var(
+            --md-sys-color-on-error-container
+          );
+          --md-dialog-supporting-text-color: var(
+            --md-sys-color-on-error-container
+          );
         }
 
         @media (min-width: 960px) {
@@ -403,7 +454,6 @@ export class YpLandUseGame extends YpBaseElement {
 
           .participantsStats {
             font-size: 12px;
-
           }
 
           #navigationButtons button {
@@ -499,8 +549,7 @@ export class YpLandUseGame extends YpBaseElement {
   }
 
   registrationQuestionDone() {
-    this.gameStage = GameStage.Play;
-    this.disableBrowserTouchEvents = true;
+    this.startGame();
   }
 
   openUserLoginOrStart() {
@@ -508,12 +557,16 @@ export class YpLandUseGame extends YpBaseElement {
       window.appUser.openUserlogin();
     } else {
       if (this.gameStage !== GameStage.Results) {
-        this.gameStage = GameStage.Play;
-        this.cancelFlyToPosition();
-        this.setCameraFromView(this.tileManager.showAllView);
-        this.disableBrowserTouchEvents = true;
+        window.appUser.checkRegistrationAnswersCurrent();
       }
     }
+  }
+
+  startGame() {
+    this.gameStage = GameStage.Play;
+    this.cancelFlyToPosition();
+    this.setCameraFromView(this.tileManager.showAllView);
+    this.disableBrowserTouchEvents = true;
   }
 
   protected firstUpdated(
@@ -652,7 +705,9 @@ export class YpLandUseGame extends YpBaseElement {
 
   setCameraFromView(cameraView: any) {
     if (cameraView && this.viewer) {
-      const { position, heading, pitch, roll } = JSON.parse(cameraView.jsonData);
+      const { position, heading, pitch, roll } = JSON.parse(
+        cameraView.jsonData
+      );
       this.cancelFlyToPosition();
       this.viewer.camera.setView({
         destination: position,
@@ -730,6 +785,8 @@ export class YpLandUseGame extends YpBaseElement {
   }
 
   setupEventListeners() {
+    document.addEventListener("yp-error", this.ypError.bind(this));
+    document.addEventListener("yp-network-error", this.ypError.bind(this));
     document.addEventListener("keydown", this.handleKeyDown.bind(this));
 
     document.addEventListener(
@@ -1082,26 +1139,23 @@ export class YpLandUseGame extends YpBaseElement {
 
     const isDark =
       this.themeDarkMode === undefined
-        ? window.matchMedia('(prefers-color-scheme: dark)').matches
+        ? window.matchMedia("(prefers-color-scheme: dark)").matches
         : this.themeDarkMode;
 
-        const theme = themeFromSourceColor(
-          argbFromHex('#73ae2c'),
-          [
-            {
-              name: 'up-vote',
-              value: argbFromHex('#0F0'),
-              blend: true,
-            },
-            {
-              name: 'down-vote',
-              value: argbFromHex('#F00'),
-              blend: true,
-            },
-          ]
-        );
+    const theme = themeFromSourceColor(argbFromHex("#73ae2c"), [
+      {
+        name: "up-vote",
+        value: argbFromHex("#0F0"),
+        blend: true,
+      },
+      {
+        name: "down-vote",
+        value: argbFromHex("#F00"),
+        blend: true,
+      },
+    ]);
 
-        applyTheme(theme, { target: document.body, dark: isDark });
+    applyTheme(theme, { target: document.body, dark: false });
   }
 
   saveComment(event: CustomEvent) {
@@ -1128,35 +1182,35 @@ export class YpLandUseGame extends YpBaseElement {
             ${this.t("Energy")}
           </button>
           <button id="landUse2" ?selected=${this.selectedLandUse === "gracing"}>
-          ${this.t("Gracing")}
+            ${this.t("Gracing")}
           </button>
           <button id="landUse3" ?selected=${this.selectedLandUse === "tourism"}>
-          ${this.t("Tourism")}
+            ${this.t("Tourism")}
           </button>
           <button
             id="landUse4"
             ?selected=${this.selectedLandUse === "recreation"}
           >
-          ${this.t("Recreation")}
+            ${this.t("Recreation")}
           </button>
           <button
             id="landUse5"
             ?selected=${this.selectedLandUse === "restoration"}
           >
-          ${this.t("Restoration")}
+            ${this.t("Restoration")}
           </button>
           <button
             id="landUse6"
             ?selected=${this.selectedLandUse === "conservation"}
           >
-          ${this.t("Conservation")}
+            ${this.t("Conservation")}
           </button>
           <button
             id="commentButton"
             ?hidden="${this.gameStage === GameStage.Results}"
             ?selected=${this.tileManager?.isCommenting}
           >
-          ${this.t("Comment")}
+            ${this.t("Comment")}
           </button>
         </div>
 
@@ -1192,7 +1246,7 @@ export class YpLandUseGame extends YpBaseElement {
                     @click="${this.toggleShowAllResults}"
                     ?selected="${this.showAllTileResults}"
                   >
-                  ${this.t("Show 'losing' votes")}
+                    ${this.t("Show 'losing' votes")}
                   </button>
                 </div>
               </div>
@@ -1231,8 +1285,21 @@ export class YpLandUseGame extends YpBaseElement {
       `;
   }
 
+  renderErrorDialog() {
+    return html`
+      <md-dialog id="errorDialog" @closed="${this.errorDialogClosed}">
+        <span slot="header">${this.t("Error")}</span>
+        <span>${this.currentErrorText}</span>
+        <md-text-button slot="footer" dialogAction="ok"
+          >${this.t("ok")}</md-text-button
+        >
+      </md-dialog>
+    `;
+  }
+
   render() {
     return html`
+      ${this.renderErrorDialog()}
       <yp-app-dialogs id="dialogContainer"></yp-app-dialogs>
       <div id="cesium-container"></div>
       <div id="emptyCreditContainer"></div>
