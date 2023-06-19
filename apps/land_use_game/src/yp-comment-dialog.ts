@@ -7,7 +7,7 @@ import "@material/mwc-icon-button";
 import "./@yrpri/yp-point/yp-point-comment-list.js";
 import "./@yrpri/yp-point/yp-point-actions.js";
 import "./@yrpri/yp-magic-text/yp-magic-text.js";
-import './@yrpri/yp-user/yp-user-with-organization.js';
+import "./@yrpri/yp-user/yp-user-with-organization.js";
 import { YpPointCommentList } from "./@yrpri/yp-point/yp-point-comment-list.js";
 import { Dialog } from "@material/mwc-dialog";
 import { YpBaseElementWithLogin } from "./@yrpri/common/yp-base-element-with-login.js";
@@ -51,8 +51,12 @@ export class YpCommentDialog extends YpBaseElementWithLogin {
       super.styles,
       css`
         :host {
-          width: 100%;
-          margin-top: 8px;
+        }
+
+        @media (max-width: 600px) {
+          md-dialog {
+
+          }
         }
 
         .userName {
@@ -113,31 +117,39 @@ export class YpCommentDialog extends YpBaseElementWithLogin {
 
   async openDialog(event: CustomEvent) {
     (this.$$("#commentDialog") as Dialog).open = true;
-    this.point = await window.serverApi.getParentPoint(this.group.id, event.detail.entity.pointIds[0]);
+    this.point = await window.serverApi.getParentPoint(
+      this.group.id,
+      event.detail.entity.pointIds[0]
+    );
   }
 
   closeDialog() {
+    debugger;
     (this.$$("#commentDialog") as Dialog).open = false;
   }
 
   renderFooter() {
-    return html``;
+    return html`
+      <md-text-button dialogAction="close" slot="footer">${this.t("close")}</md-text-button>
+    `;
   }
 
-  protected firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
-    setTimeout(() => {
-      this._setOpen();
-    }, 1000);
+  protected firstUpdated(
+    _changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>
+  ): void {
+
   }
 
   render() {
     return html`
-      <md-dialog id="commentDialog" footerHidden>
+      <md-dialog id="commentDialog" .fullscreen="${!this.wide}" escapeKeyAction="" scrimClickAction="">
         ${this.point
           ? html`
               <div id="content">
                 <div class="layout vertical newsContainer">
-                  <yp-user-with-organization .user="${this.loggedInUser}"></yp-user-with-organization>
+                  <yp-user-with-organization
+                    .user="${this.loggedInUser}"
+                  ></yp-user-with-organization>
                   <yp-magic-text
                     id="content"
                     class="story"

@@ -10,10 +10,10 @@ import { YpPointCommentList } from "./@yrpri/yp-point/yp-point-comment-list.js";
 import { TextArea } from "@material/mwc-textarea";
 import { Button } from "@material/mwc-button";
 import { YpBaseElementWithLogin } from "./@yrpri/common/yp-base-element-with-login.js";
-import { MdDialog } from "@material/web/dialog/dialog.js";
 
 import "@material/web/dialog/dialog.js";
 import "@material/web/circularprogress/circular-progress.js";
+import { Dialog } from "@material/web/dialog/lib/dialog.js";
 
 @customElement("yp-new-comment-dialog")
 export class YpNewCommentDialog extends YpBaseElementWithLogin {
@@ -113,13 +113,13 @@ export class YpNewCommentDialog extends YpBaseElementWithLogin {
     ];
   }
 
-  openDialog() {
+  async openDialog() {
     this._reset();
-    (this.$$("#commentDialog") as MdDialog).open = true;
+    (this.$$("#commentDialog") as Dialog).open = true;
   }
 
   closeDialog() {
-    (this.$$("#commentDialog") as MdDialog).open = false;
+    (this.$$("#commentDialog") as Dialog).open = false;
   }
 
   renderFooter() {
@@ -137,7 +137,7 @@ export class YpNewCommentDialog extends YpBaseElementWithLogin {
 
   render() {
     return html`
-      <md-dialog id="commentDialog">
+      <md-dialog id="commentDialog" escapeKeyAction="" scrimClickAction="">
         ${this.point
           ? html`
               <div class="layout vertical container">

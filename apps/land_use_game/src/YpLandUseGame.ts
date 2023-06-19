@@ -52,7 +52,7 @@ export class YpLandUseGame extends YpBaseElement {
   @property({ type: String }) title = "Land Use Game";
 
   @property({ type: Number })
-  gameStage = GameStage.Results;
+  gameStage = GameStage.Intro;
 
   @property({ type: String })
   selectedLandUse:
@@ -188,15 +188,7 @@ export class YpLandUseGame extends YpBaseElement {
 
         @media (min-width: 960px) {
           :host {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
-            font-size: calc(10px + 2vmin);
-            max-width: 960px;
-            margin: 0 auto;
-            text-align: center;
+
           }
         }
 
@@ -1155,7 +1147,7 @@ export class YpLandUseGame extends YpBaseElement {
       },
     ]);
 
-    applyTheme(theme, { target: document.body, dark: true });
+    applyTheme(theme, { target: document.body, dark: false });
   }
 
   saveComment(event: CustomEvent) {
@@ -1279,7 +1271,7 @@ export class YpLandUseGame extends YpBaseElement {
               : nothing}
           </div>
           <button id="submitButton" ?disabled="${this.disableSubmitButton}">
-            ${this.t("Submit")}
+            ${this.t("submitLandUse")}
           </button>
         </div>
       `;
@@ -1304,8 +1296,6 @@ export class YpLandUseGame extends YpBaseElement {
       <div id="cesium-container"></div>
       <div id="emptyCreditContainer"></div>
 
-      ${this.renderUI()}
-
       <yp-new-comment-dialog
         id="newCommentDialog"
         .group="${this.group}"
@@ -1315,6 +1305,7 @@ export class YpLandUseGame extends YpBaseElement {
         id="commentDialog"
         .group="${this.group}"
       ></yp-comment-dialog>
+      ${this.renderUI()}
     `;
   }
 }
