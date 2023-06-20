@@ -7,6 +7,7 @@ import { YpAppUser } from '../yp-app/YpAppUser.js';
 import { YpAppDialogs } from '../yp-dialog-container/yp-app-dialogs.js';
 import { YpServerApi } from './YpServerApi.js';
 import { LandUseAppGlobals } from '../../LandUseAppGlobals.js';
+import { installMediaQueryWatcher } from 'pwa-helpers/media-query.js';
 
 declare global {
   interface Window {
@@ -25,8 +26,13 @@ declare global {
 
 export class YpCodeBase {
   language: string | undefined;
+  wide = false;
 
   constructor() {
+    installMediaQueryWatcher(`(min-width: 900px)`, (matches) => {
+      this.wide = matches;
+    });
+
     this.addGlobalListener(
       'yp-language-loaded',
       this._languageEvent.bind(this)

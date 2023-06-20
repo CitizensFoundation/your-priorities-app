@@ -13,11 +13,13 @@ import { TileManager } from "./TileManager";
 import { PlaneManager } from "./PlaneManager";
 import { CharacterManager } from "./CharacterManager";
 import { Dialog } from "@material/web/dialog/lib/dialog";
+import "@material/web/iconbutton/filled-tonal-icon-button.js";
 
 import "@material/mwc-textarea/mwc-textarea.js";
 import { MdDialog } from "@material/web/dialog/dialog.js";
 import "@material/web/button/filled-button.js";
 import "@material/web/button/outlined-button.js";
+
 import { UIManager } from "./UIManager";
 
 import { landMarks } from "./TestData";
@@ -41,6 +43,7 @@ import {
 } from "@material/material-color-utilities";
 import { YpCommentDialog } from "./yp-comment-dialog";
 import { Tutorial } from "./Tutorial";
+import { Layouts } from "./flexbox-literals/classes";
 
 const GameStage = {
   Intro: 1,
@@ -96,6 +99,9 @@ export class YpLandUseGame extends YpBaseElement {
 
   @property({ type: String })
   currentErrorText = "";
+
+  @property({ type: Boolean })
+  planeDisabled = true;
 
   @property({ type: Boolean })
   disableBrowserTouchEvents = false;
@@ -161,6 +167,7 @@ export class YpLandUseGame extends YpBaseElement {
   static get styles() {
     return [
       super.styles,
+      Layouts,
       ShadowStyles,
       css`
         :host {
@@ -241,13 +248,22 @@ export class YpLandUseGame extends YpBaseElement {
 
         #navigationButtons {
           position: absolute;
-          top: 10px;
-          left: auto;
-          right: auto;
+          top: 50%;
+          right: 0;
+          transform: translateY(-50%);
           z-index: 1;
           padding: 8px;
-          background-color: rgba(255, 255, 255, 0.5);
+          background-color: transparent;
           border-radius: 5px;
+        }
+
+        .navButton {
+          margin: 8px;
+          margin-right: 0;
+        }
+
+        .divider {
+          height: 32px;
         }
 
         #submitButton {
@@ -256,11 +272,6 @@ export class YpLandUseGame extends YpBaseElement {
 
         .participantsStats {
           font-size: 24px;
-        }
-
-        #navigationButtons button {
-          margin: 5px;
-          font-size: 32px;
         }
 
         #showAllButton {
@@ -279,7 +290,7 @@ export class YpLandUseGame extends YpBaseElement {
           right: 32px;
           z-index: 1;
           padding: 8px;
-          background-color: rgba(255, 255, 255, 0.5);
+          background-color: transparent
           border-radius: 5px;
         }
 
@@ -291,7 +302,8 @@ export class YpLandUseGame extends YpBaseElement {
         #gameStats {
           position: absolute;
           top: 10px;
-          left: 32px;
+          left: 50%;
+          transform: translateX(-50%);
           z-index: 1;
           padding: 8px;
           background-color: rgba(255, 255, 255, 0.5);
@@ -418,7 +430,7 @@ export class YpLandUseGame extends YpBaseElement {
           border-radius: 3px;
           position: absolute;
           left: 0;
-          background-color: #953000;
+          background-color: var(--md-sys-color-primary);
         }
 
         .progressBarComments {
@@ -441,13 +453,6 @@ export class YpLandUseGame extends YpBaseElement {
             font-size: 12px;
           }
 
-          #navigationButtons {
-            text-align: center;
-            top: initial;
-            bottom: 68px;
-            left: 0;
-            border-radius: 0;
-          }
 
           #submitButton {
             font-size: 12px;
@@ -516,8 +521,6 @@ export class YpLandUseGame extends YpBaseElement {
   async _loggedIn(event: CustomEvent) {
     this.loggedInUser = event.detail;
     this.hideUI = false;
-    await this.updateComplete;
-    this.setupEventListeners();
     if (this.gameStage === GameStage.Results) {
       setTimeout(async () => {
         this.setupTileResults();
@@ -530,7 +533,7 @@ export class YpLandUseGame extends YpBaseElement {
   async connectedCallback() {
     // @ts-ignore
     window.CESIUM_BASE_URL = "";
-
+    this.setupEventListeners();
     this.themeChanged();
     this.group = await window.appGlobals.setupGroup();
     super.connectedCallback();
@@ -564,14 +567,14 @@ export class YpLandUseGame extends YpBaseElement {
     }
   }
 
-  startGame() {
+  async startGame() {
     this.gameStage = GameStage.Play;
     this.cancelFlyToPosition();
     this.setCameraFromView(this.tileManager.showAllView);
     this.disableBrowserTouchEvents = true;
     this.tutorial.openStage("navigation", async () => {
       await new Promise((resolve) => setTimeout(resolve, 3000));
-      this.tutorial.openStage("chooseType")
+      this.tutorial.openStage("chooseType");
     });
   }
 
@@ -580,6 +583,9 @@ export class YpLandUseGame extends YpBaseElement {
   ): void {
     super.firstUpdated(_changedProperties);
     this.initScene();
+    setTimeout(() => {
+      this.planeDisabled = false;
+    }, 24000);
   }
 
   handleKeyDown(event: KeyboardEvent) {
@@ -796,6 +802,15 @@ export class YpLandUseGame extends YpBaseElement {
     document.addEventListener("keydown", this.handleKeyDown.bind(this));
 
     document.addEventListener(
+      "disableBrowserTouch",
+      () => (this.disableBrowserTouchEvents = true)
+    );
+    document.addEventListener(
+      "enableBrowserTouch",
+      () => (this.disableBrowserTouchEvents = false)
+    );
+
+    document.addEventListener(
       "yp-registration-questions-done",
       this.registrationQuestionDone.bind(this)
     );
@@ -810,77 +825,6 @@ export class YpLandUseGame extends YpBaseElement {
       "update-tile-count",
       this.updateTileCount.bind(this)
     );
-
-    this.$$("#landUse1")!.addEventListener("click", () => {
-      this.setLandUse("energy");
-    });
-
-    this.$$("#landUse2")!.addEventListener("click", () => {
-      this.setLandUse("gracing");
-    });
-
-    this.$$("#landUse3")!.addEventListener("click", () => {
-      this.setLandUse("tourism");
-    });
-
-    this.$$("#landUse4")!.addEventListener("click", () => {
-      this.setLandUse("recreation");
-    });
-
-    this.$$("#landUse5")!.addEventListener("click", () => {
-      this.setLandUse("restoration");
-    });
-
-    this.$$("#landUse6")!.addEventListener("click", () => {
-      this.setLandUse("conservation");
-    });
-
-    this.$$("#commentButton")!.addEventListener("click", () => {
-      this.setIsCommenting(true);
-    });
-
-    this.$$("#submitButton")!.addEventListener("click", () => {
-      this._newPost();
-    });
-
-    this.$$("#showAll")!.addEventListener("click", () => {
-      this.viewer!.trackedEntity = undefined;
-      this.cancelFlyToPosition();
-      this.setCameraFromView(this.tileManager.showAllView);
-    });
-
-    this.$$("#trackPlane")!.addEventListener("click", () => {
-      this.cancelFlyToPosition();
-      this.viewer!.trackedEntity = this.planeManager.plane;
-    });
-
-    // Add event listeners for terrainProvider change
-    this.$$("#chooseAerial")!.addEventListener("click", () => {
-      this.viewer!.imageryLayers.removeAll();
-      this.viewer!.imageryLayers.addImageryProvider(
-        Cesium.createWorldImagery({
-          style: Cesium.IonWorldImageryStyle.AERIAL,
-        })
-      );
-    });
-
-    this.$$("#chooseAerialWithLabels")!.addEventListener("click", () => {
-      this.viewer!.imageryLayers.removeAll();
-      this.viewer!.imageryLayers.addImageryProvider(
-        Cesium.createWorldImagery({
-          style: Cesium.IonWorldImageryStyle.AERIAL_WITH_LABELS,
-        })
-      );
-    });
-
-    this.$$("#chooseOpenStreetMap")!.addEventListener("click", () => {
-      this.viewer!.imageryLayers.removeAll();
-      this.viewer!.imageryLayers.addImageryProvider(
-        new Cesium.OpenStreetMapImageryProvider({
-          url: "https://a.tile.openstreetmap.org/",
-        })
-      );
-    });
   }
 
   async afterNewPost() {
@@ -985,6 +929,7 @@ export class YpLandUseGame extends YpBaseElement {
         if (event.scale !== 1) {
           if (this.disableBrowserTouchEvents) {
             event.preventDefault();
+          } else {
           }
         }
       },
@@ -1176,6 +1121,44 @@ export class YpLandUseGame extends YpBaseElement {
     }
   }
 
+  showAll() {
+    this.viewer!.trackedEntity = undefined;
+    this.cancelFlyToPosition();
+    this.setCameraFromView(this.tileManager.showAllView);
+  }
+
+  trackPlane() {
+    this.cancelFlyToPosition();
+    this.viewer!.trackedEntity = this.planeManager.plane;
+  }
+
+  chooseAerial() {
+    this.viewer!.imageryLayers.removeAll();
+    this.viewer!.imageryLayers.addImageryProvider(
+      Cesium.createWorldImagery({
+        style: Cesium.IonWorldImageryStyle.AERIAL,
+      })
+    );
+  }
+
+  chooseAerialWithLabels() {
+    this.viewer!.imageryLayers.removeAll();
+    this.viewer!.imageryLayers.addImageryProvider(
+      Cesium.createWorldImagery({
+        style: Cesium.IonWorldImageryStyle.AERIAL_WITH_LABELS,
+      })
+    );
+  }
+
+  chooseOpenStreetMap() {
+    this.viewer!.imageryLayers.removeAll();
+    this.viewer!.imageryLayers.addImageryProvider(
+      new Cesium.OpenStreetMapImageryProvider({
+        url: "https://a.tile.openstreetmap.org/",
+      })
+    );
+  }
+
   renderUI() {
     if (this.hideUI) return nothing;
     else
@@ -1184,35 +1167,51 @@ export class YpLandUseGame extends YpBaseElement {
           id="landUseSelection"
           ?hidden="${this.gameStage === GameStage.Intro}"
         >
-          <button id="landUse1" ?selected=${this.selectedLandUse === "energy"}>
+          <button
+            id="landUse1"
+            @click="${() => this.setLandUse("energy")}"
+            ?selected=${this.selectedLandUse === "energy"}
+          >
             ${this.t("Energy")}
           </button>
-          <button id="landUse2" ?selected=${this.selectedLandUse === "gracing"}>
+          <button
+            id="landUse2"
+            @click="${() => this.setLandUse("gracing")}"
+            ?selected=${this.selectedLandUse === "gracing"}
+          >
             ${this.t("Gracing")}
           </button>
-          <button id="landUse3" ?selected=${this.selectedLandUse === "tourism"}>
+          <button
+            id="landUse3"
+            @click="${() => this.setLandUse("tourism")}"
+            ?selected=${this.selectedLandUse === "tourism"}
+          >
             ${this.t("Tourism")}
           </button>
           <button
             id="landUse4"
+            @click="${() => this.setLandUse("recreation")}"
             ?selected=${this.selectedLandUse === "recreation"}
           >
             ${this.t("Recreation")}
           </button>
           <button
             id="landUse5"
+            @click="${() => this.setLandUse("restoration")}"
             ?selected=${this.selectedLandUse === "restoration"}
           >
             ${this.t("Restoration")}
           </button>
           <button
             id="landUse6"
+            @click="${() => this.setLandUse("conservation")}"
             ?selected=${this.selectedLandUse === "conservation"}
           >
             ${this.t("Conservation")}
           </button>
           <button
             id="commentButton"
+            @click="${() => this.setIsCommenting(true)}"
             ?hidden="${this.gameStage === GameStage.Results}"
             ?selected=${this.tileManager?.isCommenting}
           >
@@ -1224,17 +1223,49 @@ export class YpLandUseGame extends YpBaseElement {
           id="navigationButtons"
           ?hidden="${this.gameStage === GameStage.Intro}"
         >
-          <button id="showAll">${this.t("Show all")}</button>
-          <button id="trackPlane">${this.t("Plane")}</button>
-        </div>
+          <div class="layout vertical navButtonsContainer">
+            <md-filled-icon-button
+              id="showAll"
+              class="navButton"
+              @click="${this.showAll}"
+              .label="${this.t("Show all")}"
+              ><md-icon>home_pin</md-icon></md-filled-icon-button
+            >
 
-        <div
-          id="terrainProviderSelection"
-          ?hidden="${this.gameStage === GameStage.Intro}"
-        >
-          <button id="chooseAerial">${this.t("Aerial")}</button>
-          <button id="chooseAerialWithLabels">${this.t("Labels")}</button>
-          <button id="chooseOpenStreetMap">${this.t("Map")}</button>
+            <md-filled-icon-button
+              id="trackPlane"
+              class="navButton"
+              @click="${this.trackPlane}"
+              .label="${this.t("Plane")}"
+              ?disabled="${this.planeDisabled}"
+              ><md-icon>travel</md-icon></md-filled-icon-button
+            >
+            <div class="divider"></div>
+
+            <md-filled-tonal-icon-button
+              id="chooseAerial"
+              class="navButton"
+              @click="${this.chooseAerial}"
+              .label="${this.t("Aerial")}"
+              ><md-icon>satellite</md-icon></md-filled-tonal-icon-button
+            >
+
+            <md-filled-tonal-icon-button
+              id="chooseAerialWithLabels"
+              class="navButton"
+              @click="${this.chooseAerialWithLabels}"
+              .label="${this.t("Aerial with labels")}"
+              ><md-icon>travel_explore</md-icon></md-filled-tonal-icon-button
+            >
+
+            <md-filled-tonal-icon-button
+              id="chooseOpenStreetMap"
+              class="navButton"
+              @click="${this.chooseOpenStreetMap}"
+              .label="${this.t("Map")}"
+              ><md-icon>map</md-icon></md-filled-tonal-icon-button
+            >
+          </div>
         </div>
 
         ${this.posts
@@ -1273,7 +1304,7 @@ export class YpLandUseGame extends YpBaseElement {
                       100}%"
                     ></div>
                   </div>
-                  <div class="progressBarContainer">
+                  <div hidden class="progressBarContainer">
                     <div
                       class="progressBar progressBarComments"
                       style="width: ${(this.numberOfTilesWithComments /
@@ -1284,9 +1315,13 @@ export class YpLandUseGame extends YpBaseElement {
                 `
               : nothing}
           </div>
-          <button id="submitButton" ?disabled="${this.disableSubmitButton}">
-            ${this.t("submitLandUse")}
-          </button>
+          <md-filled-button
+            id="submitButton"
+            @click="${() => this._newPost()}"
+            ?disabled="${this.disableSubmitButton}"
+          >
+          ${this.t("submitLandUse")}
+          </md-filled-button>
         </div>
       `;
   }

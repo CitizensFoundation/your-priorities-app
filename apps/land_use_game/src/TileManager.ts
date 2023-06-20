@@ -977,7 +977,7 @@ export class TileManager extends YpCodeBase {
         const color = Cesium.Color.BLUE.withAlpha(0.0);
 
         coordinates.forEach((polygon) => {
-          const wallHeight = 1500; // Set the desired wall height
+          const wallHeight = this.wide ? 1800 : 2500;
           const wallColor = Cesium.Color.BLUE.withAlpha(0.2); // Set the desired wall color: ;
           this.createWallFromGeoJSON(polygon[0], wallHeight, wallColor);
           const rectangle = Cesium.Rectangle.fromCartographicArray(
