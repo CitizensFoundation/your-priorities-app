@@ -1,4 +1,10 @@
 {
+  "continue": "Continue",
+  "submitLandUse": "Submit land use",
+  "Error": "Error",
+  "loginAndRegistration": "Login and registration",
+  "cantRememberPassword": "Can't remember your password?",
+  "dontHaveAccount": "Don't have an account?",
   "infoAndSharing": "Information and share",
   "hideNewestFromFilter": "Hide newest from filter",
   "share": "Share",
