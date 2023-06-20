@@ -155,6 +155,8 @@ export class YpLandUseGame extends YpBaseElement {
   ypError(event: any) {
     let error;
 
+    console.error(JSON.stringify(event.detail));
+
     if (event.detail && event.detail.message) {
       error = event.detail.message;
     } else if (
