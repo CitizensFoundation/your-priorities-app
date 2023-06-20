@@ -43,7 +43,7 @@ import {
 } from "@material/material-color-utilities";
 import { YpCommentDialog } from "./yp-comment-dialog";
 
-import './yp-comment-dialog.js';
+import "./yp-comment-dialog.js";
 
 import { Tutorial } from "./Tutorial";
 import { Layouts } from "./flexbox-literals/classes";
@@ -102,7 +102,7 @@ export class YpLandUseGame extends YpBaseElement {
   disableSubmitButton = true;
 
   @property({ type: Boolean })
-  landUseTypeDisabled = false
+  landUseTypeDisabled = false;
 
   @property({ type: String })
   currentErrorText = "";
@@ -535,12 +535,18 @@ export class YpLandUseGame extends YpBaseElement {
     super();
     this.addListener("yp-app-dialogs-ready", this._appDialogsReady.bind(this));
     this.addGlobalListener("yp-logged-in", this._loggedIn.bind(this));
-    this.addGlobalListener("yp-logged-in-via-polling", this.afterLogginPolling.bind(this));
+    this.addGlobalListener(
+      "yp-logged-in-via-polling",
+      this.afterLogginPolling.bind(this)
+    );
     this.tutorial = new Tutorial();
   }
 
   afterLogginPolling() {
-    window.appUser.checkRegistrationAnswersCurrent();
+    setTimeout(() => {
+      console.log("afterLogginPolling checkRegistrationAnswersCurrent")
+      window.appUser.checkRegistrationAnswersCurrent();
+    }, 400);
   }
 
   async _loggedIn(event: CustomEvent) {
@@ -1367,7 +1373,7 @@ export class YpLandUseGame extends YpBaseElement {
             @click="${() => this._newPost()}"
             ?disabled="${this.disableSubmitButton}"
           >
-          ${this.t("submitLandUse")}
+            ${this.t("submitLandUse")}
           </md-filled-button>
         </div>
       `;
@@ -1395,13 +1401,13 @@ export class YpLandUseGame extends YpBaseElement {
       <yp-new-comment-dialog
         id="newCommentDialog"
         .group="${this.group}"
-        @close="${() => this.disableBrowserTouchEvents = true}"
+        @close="${() => (this.disableBrowserTouchEvents = true)}"
         @save="${this.saveComment}"
       ></yp-new-comment-dialog>
 
       <yp-comment-dialog
         id="commentDialog"
-        @close="${() => this.disableBrowserTouchEvents = true}"
+        @close="${() => (this.disableBrowserTouchEvents = true)}"
         .group="${this.group}"
       ></yp-comment-dialog>
       ${this.renderUI()}
