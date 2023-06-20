@@ -61,7 +61,7 @@ export class Tutorial extends YpCodeBase {
       stage: "chooseType",
       title: {
         en: "Choose land use type or comment",
-        is: "Veldu landnotkun eða athugasemd",
+        is: "Veldu landnýtingu eða bættu við athugasemd",
       },
       content: {
         en: `
