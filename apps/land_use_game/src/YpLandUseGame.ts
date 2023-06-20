@@ -535,8 +535,12 @@ export class YpLandUseGame extends YpBaseElement {
     super();
     this.addListener("yp-app-dialogs-ready", this._appDialogsReady.bind(this));
     this.addGlobalListener("yp-logged-in", this._loggedIn.bind(this));
-    this.addGlobalListener("yp-logged-in-via-polling", this._loggedIn.bind(this));
+    this.addGlobalListener("yp-logged-in-via-polling", this.afterLogginPolling.bind(this));
     this.tutorial = new Tutorial();
+  }
+
+  afterLogginPolling() {
+    window.appUser.checkRegistrationAnswersCurrent();
   }
 
   async _loggedIn(event: CustomEvent) {
@@ -548,8 +552,6 @@ export class YpLandUseGame extends YpBaseElement {
         await this.setLandUse(undefined);
         await this.tileManager.updateCommentResults();
       }, 3000);
-    } else {
-      window.appUser.checkRegistrationAnswersCurrent();
     }
   }
 
@@ -592,7 +594,6 @@ export class YpLandUseGame extends YpBaseElement {
 
   async startGame() {
     this.gameStage = GameStage.Play;
-    this.cancelFlyToPosition();
     if (this.tileManager) {
       this.finishStartingGame();
     } else {
@@ -604,6 +605,7 @@ export class YpLandUseGame extends YpBaseElement {
   async finishStartingGame() {
     this.disableBrowserTouchEvents = true;
     this.tutorial.openStage("navigation", async () => {
+      this.cancelFlyToPosition();
       this.setCameraFromView(this.tileManager.showAllView);
       await new Promise((resolve) => setTimeout(resolve, 1500));
       this.tutorial.openStage("chooseType");
