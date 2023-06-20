@@ -278,7 +278,7 @@ export class YpAppUser extends YpCodeBase {
 
     setTimeout(() => {
       this._checkRegistrationAnswers(user);
-    }, 750);
+    }, 450);
   }
 
   _checkLoginForParameters() {

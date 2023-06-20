@@ -49,7 +49,7 @@ export class YpRegistrationQuestionsDialog extends YpBaseElement {
   render() {
     return html`
       <md-dialog id="dialog" escapeKeyAction="" scrimClickAction="">
-        <div slot="header">${this.t("registrationQuestionsInfo")}</div>
+        <div slot="headline">${this.t("registrationQuestionsInfo")}</div>
 
         <yp-registration-questions
           id="registrationQuestions"
@@ -96,7 +96,7 @@ export class YpRegistrationQuestionsDialog extends YpBaseElement {
       this.fireGlobal("yp-registration-questions-done");
       this.close();
     } else {
-      this.fire("yp-open-notify-dialog", this.t("user.completeForm"));
+      this.fire("yp-error", this.t("user.completeForm"));
       return false;
     }
   }

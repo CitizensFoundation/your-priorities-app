@@ -490,7 +490,7 @@ export class YpEditDialog extends YpBaseElement {
         class="${this.computeClass}"
         with-backdrop="${!this.wide}"
       >
-        <div slot="header">${this.heading}</div>
+        <div slot="headline">${this.heading}</div>
         ${
           /*this.narrow*/ false
             ? this.renderMobileView()

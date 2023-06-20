@@ -160,6 +160,13 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
           margin: 8px;
         }
 
+        .checkboxLabel {
+          width: 100%;
+          align-self: start;
+          margin-top: 14px;
+          margin-left: 4px;
+        }
+
         md-radio {
           width: 40px;
         }
@@ -480,7 +487,7 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
   renderCheckbox(text: string, buttonIndex: number, useTopLevelId = false) {
     const id = useTopLevelId ? `structuredQuestion_${this.index}` : `structuredQuestionCheckbox_${this.index}_${buttonIndex}`
     return html`
-      <label>
+       <label class="layout horizontal center-center">
         <md-checkbox
           id="${id}"
           .name="${this.formName || ""}"
@@ -488,7 +495,7 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
           ?checked="${(this.question.value as boolean) || false}"
           @change="${this._checkboxChanged}">
         </md-checkbox>
-        ${text}"
+        <div class="checkboxLabel">${text}</div>
       </label>
     `;
   }

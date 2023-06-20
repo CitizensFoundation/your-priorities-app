@@ -1274,7 +1274,7 @@ export class YpLandUseGame extends YpBaseElement {
               class="navButton"
               @click="${this.chooseAerial}"
               .label="${this.t("Aerial")}"
-              ><md-icon>satellite</md-icon></md-filled-tonal-icon-button
+              ><md-icon>public</md-icon></md-filled-tonal-icon-button
             >
 
             <md-filled-tonal-icon-button
