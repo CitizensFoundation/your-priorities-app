@@ -4,6 +4,12 @@ interface FeatureProperties {
   LandUse: string;
 }
 
+type TutorialStage =
+  | "navigation"
+  | "chooseType"
+  | "clickOnMap"
+  | "afterFirstSelection";
+
 // Interface for GeoJSON feature
 interface GeoJSONFeature {
   type: string;
@@ -16,4 +22,8 @@ interface GeoJSONFeature {
 
 interface YpPostNewsStoryReturn {
   point_id: number;
+}
+
+interface TutorialPageData extends YpHelpPageData {
+  stage: TutorialStage
 }

@@ -263,7 +263,7 @@ interface YpDomainConfiguration extends YpCollectionConfiguration {
 }
 
 interface YpHelpPageData {
-  id: number;
+  id?: number;
   content: Record<string, string>;
   title: Record<string, string>;
   published?: boolean;

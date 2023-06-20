@@ -31,8 +31,6 @@ import { YpAppDialogs } from "./@yrpri/yp-dialog-container/yp-app-dialogs";
 
 import "./@yrpri/yp-dialog-container/yp-app-dialogs.js";
 import { YpPostEdit } from "./@yrpri/yp-post/yp-post-edit";
-import { YpCommentDialog } from "./yp-comment-dialog.js";
-import "./yp-comment-dialog.js";
 import "./yp-new-comment-dialog.js";
 import { YpNewCommentDialog } from "./yp-new-comment-dialog.js";
 import { YpPageDialog } from "./@yrpri/yp-page/yp-page-dialog";
@@ -41,6 +39,8 @@ import {
   argbFromHex,
   themeFromSourceColor,
 } from "@material/material-color-utilities";
+import { YpCommentDialog } from "./yp-comment-dialog";
+import { Tutorial } from "./Tutorial";
 
 const GameStage = {
   Intro: 1,
@@ -116,6 +116,7 @@ export class YpLandUseGame extends YpBaseElement {
   lastFPSLogTime = new Date().getTime();
   orbit: ((clock: any) => void) | undefined;
   posts: YpPostData[] | undefined;
+  tutorial: Tutorial;
 
   logFramerate() {
     this.frameCount++;
@@ -188,7 +189,15 @@ export class YpLandUseGame extends YpBaseElement {
 
         @media (min-width: 960px) {
           :host {
-
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            font-size: calc(10px + 2vmin);
+            max-width: 960px;
+            margin: 0 auto;
+            text-align: center;
           }
         }
 
@@ -501,6 +510,7 @@ export class YpLandUseGame extends YpBaseElement {
     super();
     this.addListener("yp-app-dialogs-ready", this._appDialogsReady.bind(this));
     this.addGlobalListener("yp-logged-in", this._loggedIn.bind(this));
+    this.tutorial = new Tutorial();
   }
 
   async _loggedIn(event: CustomEvent) {
@@ -559,6 +569,10 @@ export class YpLandUseGame extends YpBaseElement {
     this.cancelFlyToPosition();
     this.setCameraFromView(this.tileManager.showAllView);
     this.disableBrowserTouchEvents = true;
+    this.tutorial.openStage("navigation", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 3000));
+      this.tutorial.openStage("chooseType")
+    });
   }
 
   protected firstUpdated(
@@ -744,8 +758,8 @@ export class YpLandUseGame extends YpBaseElement {
 
   _getPageLocale(page: YpHelpPageData) {
     let pageLocale = "en";
-    if (page.title[window.locale]) {
-      pageLocale = window.locale;
+    if (page.title[window.appGlobals.locale!]) {
+      pageLocale = window.appGlobals.locale!;
     } else if (page.title["en"]) {
       pageLocale = "en";
     } else {

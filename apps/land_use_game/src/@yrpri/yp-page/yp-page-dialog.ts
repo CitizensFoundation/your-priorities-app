@@ -16,6 +16,9 @@ export class YpPageDialog extends YpBaseElement {
   @property({ type: Object })
   page: YpHelpPageData | undefined;
 
+  @property({ type: String })
+  textButtonText: string | undefined;
+
   closeFunction: Function | undefined;
 
   static get styles() {
@@ -96,6 +99,15 @@ export class YpPageDialog extends YpBaseElement {
         <md-icon slot="headline-prefix">joystick</md-icon>
         <span slot="headline" class="headline">${this.pageTitle}</span>
         <div id="content" style="text-align: left"></div>
+
+        ${this.textButtonText ? html`
+          <md-text-button
+            class="startButton"
+            slot="footer"
+            dialogAction="${this._close}"
+            >${this.textButtonText}</md-text-button
+          >
+        ` : html`
         <md-outlined-button
           class="startButton"
           slot="footer"
@@ -103,6 +115,8 @@ export class YpPageDialog extends YpBaseElement {
           dialogAction="${this._close}"
           >${this.t("Start Game")}</md-outlined-button
         >
+
+        `}
       </md-dialog>
     `;
   }
@@ -118,24 +132,30 @@ export class YpPageDialog extends YpBaseElement {
   async open(
     page: YpHelpPageData,
     language: string,
-    closeFunction: Function | undefined = undefined
+    closeFunction: Function | undefined = undefined,
+    textButtonText: string | undefined = undefined
   ) {
     if (closeFunction) {
       this.closeFunction = closeFunction;
+    } else {
+      this.closeFunction = undefined;
     }
-    await this.updateComplete;
+    if (textButtonText) {
+      this.textButtonText = textButtonText;
+    } else {
+      this.textButtonText = undefined;
+    }
     this.page = page;
     this.language = language;
-    (this.$$("#content") as HTMLElement).innerHTML =
-      this.page.content[this.language];
+    await this.updateComplete;
+    const contentEl = (this.$$("#content") as HTMLElement);
+    contentEl.innerHTML = this.page.content[this.language];
     (this.$$("#dialog") as Dialog).open = true;
   }
 
   _close() {
     (this.$$("#dialog") as Dialog).open = false;
-    setTimeout(() => {
-      (this.$$("#content") as HTMLElement).innerHTML = "";
-    }, 50);
+    (this.$$("#content") as HTMLElement).innerHTML = "";
     window.appGlobals.activity("close", "pages");
     if (this.closeFunction) {
       this.closeFunction();

@@ -124,7 +124,6 @@ export class YpCommentDialog extends YpBaseElementWithLogin {
   }
 
   closeDialog() {
-    debugger;
     (this.$$("#commentDialog") as Dialog).open = false;
   }
 
