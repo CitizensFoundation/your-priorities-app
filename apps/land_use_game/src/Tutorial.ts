@@ -41,19 +41,6 @@ export class Tutorial extends YpCodeBase {
               <em>Aðdráttur</em>: Hægri smella + draga, eða skrolla með músarhjóli.<br/>
               <em>Snúa</em>: Miðsmella + draga, eða CTRL + Vinstri/Hægri smella + draga<br/>
               <em>Halla</em>: Dragðu með tveimur fingrum, í sömu átt.
-            </p><p>
-              <b>Stjórn með snertiskjá</b><br/>
-              <em>Færsla</em>: Dragðu með einum fingri<br/>
-              <em>Aðdráttur</em>: Færðu tvo fingur saman.<br/>
-              <em>Snúa</em>: Dragðu með tveimur fingrum, í mismunandi átt.<br/>
-              <em>Halla</em>: Dragðu með tveimur fingrum, í sömu átt.
-            </p>
-            <p>
-              <b>Stjórn með mús</b><br/>
-              <em>Færsla</em>: Vinstri smella + draga<br/>
-              <em>Aðdráttur</em>: Hægri smella + draga, eða skrolla með músarhjóli.<br/>
-              <em>Snúa</em>: Miðsmella + draga, eða CTRL + Vinstri/Hægri smella + draga<br/>
-              <em>Halla</em>: Dragðu með tveimur fingrum, í sömu átt.
             </p>`,
       },
     } as TutorialPageData,
