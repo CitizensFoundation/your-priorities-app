@@ -58,7 +58,7 @@ export class YpLandUseGame extends YpBaseElement {
   @property({ type: String }) title = "Land Use Game";
 
   @property({ type: Number })
-  gameStage = GameStage.Results;
+  gameStage = GameStage.Intro;
 
   @property({ type: String })
   selectedLandUse:
@@ -248,8 +248,8 @@ export class YpLandUseGame extends YpBaseElement {
         }
 
         #landUseSelection button {
-          margin: 5px;
-          font-size: 32px;
+          margin: 8px;
+          font-size: 34px;
         }
 
         #navigationButtons {
@@ -266,6 +266,14 @@ export class YpLandUseGame extends YpBaseElement {
         .navButton {
           margin: 6px;
           margin-right: 0;
+        }
+
+        @media (min-width: 900px) {
+          .navButton {
+          }
+
+          .navButton md-icon {
+          }
         }
 
         .divider {
@@ -457,7 +465,8 @@ export class YpLandUseGame extends YpBaseElement {
           }
 
           #landUseSelection button {
-            font-size: 12px;
+            margin: 5px;
+            font-size: 16px;
           }
 
 
@@ -495,6 +504,7 @@ export class YpLandUseGame extends YpBaseElement {
           #gameStats {
             left: 50%;
             transform: translateX(-50%);
+            text-align:center;
           }
 
           #resultsStats {
@@ -580,7 +590,7 @@ export class YpLandUseGame extends YpBaseElement {
     this.setCameraFromView(this.tileManager.showAllView);
     this.disableBrowserTouchEvents = true;
     this.tutorial.openStage("navigation", async () => {
-      await new Promise((resolve) => setTimeout(resolve, 3000));
+      await new Promise((resolve) => setTimeout(resolve, 1500));
       this.tutorial.openStage("chooseType");
     });
   }
@@ -590,9 +600,6 @@ export class YpLandUseGame extends YpBaseElement {
   ): void {
     super.firstUpdated(_changedProperties);
     this.initScene();
-    setTimeout(() => {
-      this.planeDisabled = false;
-    }, 24000);
   }
 
   handleKeyDown(event: KeyboardEvent) {
@@ -839,6 +846,7 @@ export class YpLandUseGame extends YpBaseElement {
   async afterNewPost() {
     this.gameStage = GameStage.Results;
     this.tileManager.clearLandUsesAndComments();
+    this.tutorial.openStage("openResults");
     await new Promise((resolve) => setTimeout(resolve, 200));
     await this.setupTileResults();
     this.setLandUse(undefined);
@@ -986,11 +994,13 @@ export class YpLandUseGame extends YpBaseElement {
     //this.viewer.scene.postProcessStages.bloom.enabled = true;
     setTimeout(async () => {
       await this.tileManager.readGeoData(this.group!.id);
+      this.planeDisabled = true;
       this.planeManager = new PlaneManager(
         this.viewer!,
         this.tileManager.geojsonData
       );
-      this.planeManager.setup();
+      await this.planeManager.setup();
+      this.planeDisabled = false;
 
       const longLatStart = [63.46578246639273, -18.86733120920245];
       const longLatEnd = [64.74664895142547, -19.35433358999831];
@@ -1365,11 +1375,13 @@ export class YpLandUseGame extends YpBaseElement {
       <yp-new-comment-dialog
         id="newCommentDialog"
         .group="${this.group}"
+        @close="${() => this.disableBrowserTouchEvents = true}"
         @save="${this.saveComment}"
       ></yp-new-comment-dialog>
 
       <yp-comment-dialog
         id="commentDialog"
+        @close="${() => this.disableBrowserTouchEvents = true}"
         .group="${this.group}"
       ></yp-comment-dialog>
       ${this.renderUI()}

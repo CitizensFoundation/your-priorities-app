@@ -8,7 +8,8 @@ type TutorialStage =
   | "navigation"
   | "chooseType"
   | "clickOnMap"
-  | "afterFirstSelection";
+  | "afterFirstSelection"
+  | "openResults";
 
 // Interface for GeoJSON feature
 interface GeoJSONFeature {

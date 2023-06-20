@@ -97,6 +97,33 @@ export class Tutorial extends YpCodeBase {
           </ul>`,
       },
     } as TutorialPageData,
+    openResults: {
+      stage: "openResults",
+      title: {
+        en: "Explore the results and debate",
+        is: "Kynntu þér niðurstöður og ræddu",
+      },
+      content: {
+        en: `
+             <ul>
+              <li>
+                  You can choose a land use to filter by that type.
+              </li>
+              <li>
+                You can click on the comment icons to take part in the discussion.
+              </li>
+             </ul>
+             `,
+        is: `<ul>
+            <li>
+                Þú getur valið tegund landnýtingar til að sía eftir. Ef ekkert er valið sérðu allar tegundir landnýtinga
+            </li>
+            <li>
+              Þú getur smellt á athugasemdartáknin til að taka þátt í umræðunni.
+            </li>
+          </ul>`,
+      },
+    } as TutorialPageData,
   } as Record<TutorialStage, TutorialPageData>;
 
   haveShown: Array<TutorialStage> = [];

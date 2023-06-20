@@ -55,7 +55,6 @@ export class YpCommentDialog extends YpBaseElementWithLogin {
 
         @media (max-width: 600px) {
           md-dialog {
-
           }
         }
 
@@ -125,23 +124,33 @@ export class YpCommentDialog extends YpBaseElementWithLogin {
 
   closeDialog() {
     (this.$$("#commentDialog") as Dialog).open = false;
+    this.fire("close");
   }
 
   renderFooter() {
     return html`
-      <md-text-button dialogAction="close" slot="footer">${this.t("close")}</md-text-button>
+      <md-text-button
+        dialogAction="close"
+        @click="${this.closeDialog}"
+        slot="footer"
+        >${this.t("close")}</md-text-button
+      >
     `;
   }
 
   protected firstUpdated(
     _changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>
-  ): void {
-
-  }
+  ): void {}
 
   render() {
     return html`
-      <md-dialog id="commentDialog" .fullscreen="${!this.wide}" escapeKeyAction="" scrimClickAction="">
+      <md-dialog
+        id="commentDialog"
+        @closed="${this.closeDialog}"
+        .fullscreen="${!this.wide}"
+        escapeKeyAction=""
+        scrimClickAction=""
+      >
         ${this.point
           ? html`
               <div id="content">
