@@ -604,9 +604,9 @@ export class YpLandUseGame extends YpBaseElement {
   async finishStartingGame() {
     this.disableBrowserTouchEvents = true;
     this.tutorial.openStage("navigation", async () => {
+      this.setCameraFromView(this.tileManager.showAllView);
       await new Promise((resolve) => setTimeout(resolve, 1500));
       this.tutorial.openStage("chooseType");
-      this.setCameraFromView(this.tileManager.showAllView);
     });
   }
 
