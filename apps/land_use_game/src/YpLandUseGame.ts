@@ -535,6 +535,7 @@ export class YpLandUseGame extends YpBaseElement {
     super();
     this.addListener("yp-app-dialogs-ready", this._appDialogsReady.bind(this));
     this.addGlobalListener("yp-logged-in", this._loggedIn.bind(this));
+    this.addGlobalListener("yp-logged-in-via-polling", this._loggedIn.bind(this));
     this.tutorial = new Tutorial();
   }
 
@@ -547,6 +548,8 @@ export class YpLandUseGame extends YpBaseElement {
         await this.setLandUse(undefined);
         await this.tileManager.updateCommentResults();
       }, 3000);
+    } else {
+      window.appUser.checkRegistrationAnswersCurrent();
     }
   }
 
