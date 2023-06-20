@@ -280,7 +280,7 @@ export class TileManager extends YpCodeBase {
     this.rectangleCommentsUseCounts.forEach(
       async (commentCount, rectangleIndex) => {
         const rectangleEntity = this.tileRectangleIndex.get(rectangleIndex);
-        const rectangle = rectangleEntity!.rectangle!.coordinates!.getValue(
+        const rectangle = rectangleEntity?.rectangle!.coordinates!.getValue(
           Cesium.JulianDate.now()
         );
 
@@ -345,160 +345,165 @@ export class TileManager extends YpCodeBase {
     );
   }
 
-  updateTileResults() {
-    this.clearresultsModels();
-    this.rectangleLandUseCounts.forEach(
-      async (landUseCounts, rectangleIndex) => {
-        // Get the rectangle from the rectangleIndex
-        const rectangleEntity = this.tileRectangleIndex.get(rectangleIndex);
-        const rectangle = rectangleEntity!.rectangle!.coordinates!.getValue(
+  async updateTileResults() {
+    return new Promise<void>((resolve) => {
+      this.clearresultsModels();
+      this.rectangleLandUseCounts.forEach(
+        async (landUseCounts, rectangleIndex) => {
+          // Get the rectangle from the rectangleIndex
+          const rectangleEntity = this.tileRectangleIndex.get(rectangleIndex);
+
+          const rectangle = rectangleEntity?.rectangle!.coordinates!.getValue(
+            Cesium.JulianDate.now()
+          );
+
+          if (rectangleEntity && rectangle) {
+            const centerPosition = Cesium.Rectangle.center(rectangle);
+            const centerLatitude = Cesium.Math.toDegrees(centerPosition.latitude);
+            const terrainHeight = await this.getTerrainHeight(centerPosition);
+            const widthInRadians = rectangle.width;
+            const heightInRadians = rectangle.height;
+
+            const width = Math.abs(
+              widthInRadians *
+                Math.cos(centerPosition.latitude) *
+                Cesium.Ellipsoid.WGS84.maximumRadius
+            );
+            const depth = Math.abs(
+              heightInRadians * Cesium.Ellipsoid.WGS84.maximumRadius
+            );
+
+            let maxCount = 1;
+            const upperCountNormalized = 5;
+
+            // Find the maxCount
+            this.landUseCount.forEach((count, landUseType) => {
+              if (count > maxCount) {
+                maxCount = count;
+              }
+            });
+
+            let highestCount = 1;
+
+            landUseCounts.forEach((count, landUseType) => {
+              if (count > highestCount) {
+                highestCount = count;
+              }
+            });
+
+            landUseCounts.forEach((count, landUseType) => {
+              if (
+                (!this.selectedLandUse || landUseType === this.selectedLandUse) &&
+                (this.showAllTileResults || count === highestCount)
+              ) {
+                //count = ((count - 1) / (maxCount - 1)) * (upperCountNormalized - 0.1) + 0.1;
+                //count = Math.sqrt(((count - 1) / (maxCount - 1)) * (upperCountNormalized - 0.1) + 0.1);
+
+                // Create box entity with size based on the count
+                //console.log("count", count);
+                const alpha = Math.min(0.4, 0.05 + count / 20);
+                //console.log("alpha", alpha)
+                let height = count * 3000;
+
+                //TODO: Get some caching working even if this will not work
+                const modelIndex = `${rectangleIndex}|${landUseType}|${
+                  centerPosition.longitude
+                }|${centerPosition.latitude}|${
+                  terrainHeight + height / 2
+                }|${width}|${depth}|${height}|${alpha}`;
+                if (this.resultsModelsUsed.get(modelIndex) !== true) {
+                  const boxEntity = this.viewer!.entities.add({
+                    position: Cesium.Ellipsoid.WGS84.cartographicToCartesian(
+                      new Cesium.Cartographic(
+                        centerPosition.longitude,
+                        centerPosition.latitude,
+                        terrainHeight + height / 2
+                      )
+                    ),
+                    box: {
+                      dimensions: new Cesium.Cartesian3(width, depth, height),
+                      heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
+                      material: this.getColorForLandUse(
+                        landUseType,
+                        alpha
+                      ) as any,
+                    },
+                  });
+
+                  this.resultsModels.push(boxEntity);
+                  this.resultsModelsUsed.set(modelIndex, true);
+
+                  // Update the maximum height for the rectangle
+                  const currentMaxHeight =
+                    this.rectangleMaxHeights.get(rectangleIndex) || 0;
+                  if (terrainHeight + height > currentMaxHeight) {
+                    this.rectangleMaxHeights.set(
+                      rectangleIndex,
+                      terrainHeight + height
+                    );
+                  }
+                } else {
+                  console.info("Model already used: " + modelIndex);
+                }
+              }
+            });
+            //console.log(`this.resultsModels ${this.resultsModels.length}`)
+            resolve();
+          } else {
+            console.error(
+              "No rectangle entity found for index: " + rectangleIndex
+            );
+            resolve();
+          }
+        }
+      );
+
+      const topRectangles = this.getTopRectangles();
+
+      topRectangles.forEach(async ({ entity: rectangleEntity, count }) => {
+        const rectangle = rectangleEntity.rectangle!.coordinates!.getValue(
           Cesium.JulianDate.now()
         );
+        const centerPosition = Cesium.Rectangle.center(rectangle);
+        const terrainHeight = await this.getTerrainHeight(centerPosition);
 
-        if (rectangleEntity && rectangle) {
-          const centerPosition = Cesium.Rectangle.center(rectangle);
-          const centerLatitude = Cesium.Math.toDegrees(centerPosition.latitude);
-          const terrainHeight = await this.getTerrainHeight(centerPosition);
-          const widthInRadians = rectangle.width;
-          const heightInRadians = rectangle.height;
+        const landUseType = rectangleEntity.landUseType;
+        if (landUseType) {
+          const modelUrl = landUseModelPaths[landUseType];
+          const modelScale = landUseModelScales[landUseType];
 
-          const width = Math.abs(
-            widthInRadians *
-              Math.cos(centerPosition.latitude) *
-              Cesium.Ellipsoid.WGS84.maximumRadius
+          // Use count for calculating the height
+          const modelHeight = 3000 * count; // Adjust the height value based on count
+          const positionProperty = new Cesium.ConstantPositionProperty(
+            Cesium.Cartesian3.fromDegrees(
+              Cesium.Math.toDegrees(centerPosition.longitude),
+              Cesium.Math.toDegrees(centerPosition.latitude),
+              terrainHeight + modelHeight
+            )
           );
-          const depth = Math.abs(
-            heightInRadians * Cesium.Ellipsoid.WGS84.maximumRadius
+
+          // Update the maximum height for the rectangle
+          const rectangleIndex = rectangleEntity.rectangleIndex!;
+          const currentMaxHeight =
+            this.rectangleMaxHeights.get(rectangleIndex) || 0;
+          if (terrainHeight + modelHeight > currentMaxHeight) {
+            this.rectangleMaxHeights.set(
+              rectangleIndex,
+              terrainHeight + modelHeight
+            );
+          }
+
+          // Create model instance
+          const modelInstance = this.createModel(
+            modelUrl,
+            positionProperty,
+            modelScale
           );
 
-          let maxCount = 1;
-          const upperCountNormalized = 5;
-
-          // Find the maxCount
-          this.landUseCount.forEach((count, landUseType) => {
-            if (count > maxCount) {
-              maxCount = count;
-            }
-          });
-
-          let highestCount = 1;
-
-          landUseCounts.forEach((count, landUseType) => {
-            if (count > highestCount) {
-              highestCount = count;
-            }
-          });
-
-          landUseCounts.forEach((count, landUseType) => {
-            if (
-              (!this.selectedLandUse || landUseType === this.selectedLandUse) &&
-              (this.showAllTileResults || count === highestCount)
-            ) {
-              //count = ((count - 1) / (maxCount - 1)) * (upperCountNormalized - 0.1) + 0.1;
-              //count = Math.sqrt(((count - 1) / (maxCount - 1)) * (upperCountNormalized - 0.1) + 0.1);
-
-              // Create box entity with size based on the count
-              //console.log("count", count);
-              const alpha = Math.min(0.4, 0.05 + count / 20);
-              //console.log("alpha", alpha)
-              let height = count * 3000;
-
-              //TODO: Get some caching working even if this will not work
-              const modelIndex = `${rectangleIndex}|${landUseType}|${
-                centerPosition.longitude
-              }|${centerPosition.latitude}|${
-                terrainHeight + height / 2
-              }|${width}|${depth}|${height}|${alpha}`;
-              if (this.resultsModelsUsed.get(modelIndex) !== true) {
-                const boxEntity = this.viewer!.entities.add({
-                  position: Cesium.Ellipsoid.WGS84.cartographicToCartesian(
-                    new Cesium.Cartographic(
-                      centerPosition.longitude,
-                      centerPosition.latitude,
-                      terrainHeight + height / 2
-                    )
-                  ),
-                  box: {
-                    dimensions: new Cesium.Cartesian3(width, depth, height),
-                    heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
-                    material: this.getColorForLandUse(
-                      landUseType,
-                      alpha
-                    ) as any,
-                  },
-                });
-
-                this.resultsModels.push(boxEntity);
-                this.resultsModelsUsed.set(modelIndex, true);
-
-                // Update the maximum height for the rectangle
-                const currentMaxHeight =
-                  this.rectangleMaxHeights.get(rectangleIndex) || 0;
-                if (terrainHeight + height > currentMaxHeight) {
-                  this.rectangleMaxHeights.set(
-                    rectangleIndex,
-                    terrainHeight + height
-                  );
-                }
-              } else {
-                console.info("Model already used: " + modelIndex);
-              }
-            }
-          });
-          //console.log(`this.resultsModels ${this.resultsModels.length}`)
-        } else {
-          console.error(
-            "No rectangle entity found for index: " + rectangleIndex
-          );
+          this.resultsModels.push(modelInstance);
         }
-      }
-    );
-
-    const topRectangles = this.getTopRectangles();
-
-    topRectangles.forEach(async ({ entity: rectangleEntity, count }) => {
-      const rectangle = rectangleEntity.rectangle!.coordinates!.getValue(
-        Cesium.JulianDate.now()
-      );
-      const centerPosition = Cesium.Rectangle.center(rectangle);
-      const terrainHeight = await this.getTerrainHeight(centerPosition);
-
-      const landUseType = rectangleEntity.landUseType;
-      if (landUseType) {
-        const modelUrl = landUseModelPaths[landUseType];
-        const modelScale = landUseModelScales[landUseType];
-
-        // Use count for calculating the height
-        const modelHeight = 3000 * count; // Adjust the height value based on count
-        const positionProperty = new Cesium.ConstantPositionProperty(
-          Cesium.Cartesian3.fromDegrees(
-            Cesium.Math.toDegrees(centerPosition.longitude),
-            Cesium.Math.toDegrees(centerPosition.latitude),
-            terrainHeight + modelHeight
-          )
-        );
-
-        // Update the maximum height for the rectangle
-        const rectangleIndex = rectangleEntity.rectangleIndex!;
-        const currentMaxHeight =
-          this.rectangleMaxHeights.get(rectangleIndex) || 0;
-        if (terrainHeight + modelHeight > currentMaxHeight) {
-          this.rectangleMaxHeights.set(
-            rectangleIndex,
-            terrainHeight + modelHeight
-          );
-        }
-
-        // Create model instance
-        const modelInstance = this.createModel(
-          modelUrl,
-          positionProperty,
-          modelScale
-        );
-
-        this.resultsModels.push(modelInstance);
-      }
-    });
+      });
+    })
   }
 
   countAssignedRectangles(landUse: string): number {

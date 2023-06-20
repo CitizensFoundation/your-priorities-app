@@ -97,6 +97,9 @@ export class YpLandUseGame extends YpBaseElement {
   @property({ type: Boolean })
   disableSubmitButton = true;
 
+  @property({ type: Boolean })
+  landUseTypeDisabled = false
+
   @property({ type: String })
   currentErrorText = "";
 
@@ -258,7 +261,7 @@ export class YpLandUseGame extends YpBaseElement {
         }
 
         .navButton {
-          margin: 8px;
+          margin: 6px;
           margin-right: 0;
         }
 
@@ -677,7 +680,7 @@ export class YpLandUseGame extends YpBaseElement {
     return sampledPositions[0].height;
   }
 
-  setLandUse(landUse: string | undefined) {
+  async setLandUse(landUse: string | undefined) {
     if (this.selectedLandUse === landUse) {
       this.selectedLandUse = undefined;
     } else {
@@ -687,7 +690,9 @@ export class YpLandUseGame extends YpBaseElement {
     this.tileManager.selectedLandUse = this.selectedLandUse;
 
     if (this.gameStage === GameStage.Results) {
-      this.tileManager.updateTileResults();
+      this.landUseTypeDisabled = true;
+      await this.tileManager.updateTileResults();
+      this.landUseTypeDisabled = false;
     }
   }
 
@@ -1169,6 +1174,7 @@ export class YpLandUseGame extends YpBaseElement {
         >
           <button
             id="landUse1"
+            ?disabled=${this.landUseTypeDisabled}
             @click="${() => this.setLandUse("energy")}"
             ?selected=${this.selectedLandUse === "energy"}
           >
@@ -1176,6 +1182,7 @@ export class YpLandUseGame extends YpBaseElement {
           </button>
           <button
             id="landUse2"
+            ?disabled=${this.landUseTypeDisabled}
             @click="${() => this.setLandUse("gracing")}"
             ?selected=${this.selectedLandUse === "gracing"}
           >
@@ -1183,6 +1190,7 @@ export class YpLandUseGame extends YpBaseElement {
           </button>
           <button
             id="landUse3"
+            ?disabled=${this.landUseTypeDisabled}
             @click="${() => this.setLandUse("tourism")}"
             ?selected=${this.selectedLandUse === "tourism"}
           >
@@ -1190,6 +1198,7 @@ export class YpLandUseGame extends YpBaseElement {
           </button>
           <button
             id="landUse4"
+            ?disabled=${this.landUseTypeDisabled}
             @click="${() => this.setLandUse("recreation")}"
             ?selected=${this.selectedLandUse === "recreation"}
           >
@@ -1197,6 +1206,7 @@ export class YpLandUseGame extends YpBaseElement {
           </button>
           <button
             id="landUse5"
+            ?disabled=${this.landUseTypeDisabled}
             @click="${() => this.setLandUse("restoration")}"
             ?selected=${this.selectedLandUse === "restoration"}
           >
@@ -1204,6 +1214,7 @@ export class YpLandUseGame extends YpBaseElement {
           </button>
           <button
             id="landUse6"
+            ?disabled=${this.landUseTypeDisabled}
             @click="${() => this.setLandUse("conservation")}"
             ?selected=${this.selectedLandUse === "conservation"}
           >
