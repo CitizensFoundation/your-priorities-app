@@ -47,6 +47,7 @@ import './yp-comment-dialog.js';
 
 import { Tutorial } from "./Tutorial";
 import { Layouts } from "./flexbox-literals/classes";
+import { set } from "@polymer/polymer/lib/utils/path";
 
 const GameStage = {
   Intro: 1,
@@ -58,7 +59,7 @@ export class YpLandUseGame extends YpBaseElement {
   @property({ type: String }) title = "Land Use Game";
 
   @property({ type: Number })
-  gameStage = GameStage.Intro;
+  gameStage = GameStage.Results;
 
   @property({ type: String })
   selectedLandUse:
@@ -540,9 +541,9 @@ export class YpLandUseGame extends YpBaseElement {
     this.hideUI = false;
     if (this.gameStage === GameStage.Results) {
       setTimeout(async () => {
-        this.setupTileResults();
         await this.setupTileResults();
-        this.setLandUse(undefined);
+        await this.setLandUse(undefined);
+        await this.tileManager.updateCommentResults();
       }, 3000);
     }
   }
@@ -650,7 +651,7 @@ export class YpLandUseGame extends YpBaseElement {
 
   async setupTileResults() {
     this.posts = await window.serverApi.getPublicPrivatePosts(this.group!.id);
-    this.tileManager.setupTileResults(this.posts!);
+    await this.tileManager.setupTileResults(this.posts!);
   }
 
   flyToPosition(
@@ -697,7 +698,6 @@ export class YpLandUseGame extends YpBaseElement {
     } else {
       this.selectedLandUse = landUse as any;
     }
-    this.setIsCommenting(false);
     this.tileManager.selectedLandUse = this.selectedLandUse;
 
     if (this.gameStage === GameStage.Results) {
@@ -705,6 +705,9 @@ export class YpLandUseGame extends YpBaseElement {
       await this.tileManager.updateTileResults();
       this.landUseTypeDisabled = false;
     }
+    setTimeout(() => {
+      this.setIsCommenting(false);
+    });
   }
 
   //TODO: Fix and remove the selected land sue when commenting and also possible toggle commenting on and off
@@ -849,7 +852,8 @@ export class YpLandUseGame extends YpBaseElement {
     this.tutorial.openStage("openResults");
     await new Promise((resolve) => setTimeout(resolve, 200));
     await this.setupTileResults();
-    this.setLandUse(undefined);
+    await this.setLandUse(undefined);
+    await this.tileManager.updateCommentResults();
     this.disableBrowserTouchEvents = true;
   }
 
@@ -1304,7 +1308,7 @@ export class YpLandUseGame extends YpBaseElement {
                 <div class="participantsStats">
                   ${this.posts!.length} ${this.t("participants")}
                 </div>
-                <div>
+                <div hidden>
                   <button
                     id="showAllButton"
                     @click="${this.toggleShowAllResults}"

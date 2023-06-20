@@ -106,7 +106,7 @@ export class TileManager extends YpCodeBase {
     return { lon: lonAvg, lat: latAvg };
   }
 
-  async setupTileResults(posts: YpPostData[]) {
+  async setupTileResults(posts: YpPostData[], skipComments = false) {
     const landUseCount: Map<string, number> = new Map();
 
     if (posts) {
@@ -192,8 +192,6 @@ export class TileManager extends YpCodeBase {
           }
         }
       });
-
-      await this.updateCommentResults();
     } else {
       console.error("No posts found");
     }
@@ -293,8 +291,8 @@ export class TileManager extends YpCodeBase {
 
           // Find the maximum entity height among the 8 adjacent rectangles
           const adjacentMaxHeights = [];
-          for (let i = -10; i <= 10; i++) {
-            for (let j = -10; j <= 10; j++) {
+          for (let i = -4; i <= 4; i++) {
+            for (let j = -4; j <= 4; j++) {
               // Exclude the center rectangle (0, 0)
               if (!(i === 0 && j === 0)) {
                 const adjacentRectangleIndex = this.getRectangleIndexAtOffset(
@@ -304,14 +302,16 @@ export class TileManager extends YpCodeBase {
                 );
                 if (adjacentRectangleIndex) {
                   const adjacentMaxHeight =
-                    this.rectangleMaxHeights.get(adjacentRectangleIndex) || 0;
+                    this.rectangleMaxHeights.get(adjacentRectangleIndex) || maxEntityHeight;
                   adjacentMaxHeights.push(adjacentMaxHeight);
                 }
               }
             }
           }
           const maxAdjacentEntityHeight =
-            Math.max(...adjacentMaxHeights) || maxEntityHeight;
+            Math.max(...adjacentMaxHeights) || (maxEntityHeight + 5500);
+
+          console.error(`maxAdjacentEntityHeight: ${maxAdjacentEntityHeight}`);
 
           const chatBubbleHeight = commentCount > 1 ? 550 : 275;
           const positionHeight = maxAdjacentEntityHeight + chatBubbleHeight;
@@ -454,9 +454,7 @@ export class TileManager extends YpCodeBase {
             });
           } else {
             if (window.location.href.indexOf("localhost") > -1) {
-              console.error(
-                "No rectangle entity found for index: " + rectangleIndex
-              );
+              //console.error("No rectangle entity found for index: " + rectangleIndex);
             }
           }
         }
