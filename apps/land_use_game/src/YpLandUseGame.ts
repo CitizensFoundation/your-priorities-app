@@ -593,12 +593,21 @@ export class YpLandUseGame extends YpBaseElement {
   async startGame() {
     this.gameStage = GameStage.Play;
     this.cancelFlyToPosition();
-    this.setCameraFromView(this.tileManager.showAllView);
+    if (this.tileManager) {
+      this.finishStartingGame();
+    } else {
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+      this.finishStartingGame();
+    }
+  }
+
+  async finishStartingGame() {
     this.disableBrowserTouchEvents = true;
     this.tutorial.openStage("navigation", async () => {
       await new Promise((resolve) => setTimeout(resolve, 1500));
       this.tutorial.openStage("chooseType");
     });
+    this.setCameraFromView(this.tileManager.showAllView);
   }
 
   protected firstUpdated(
