@@ -456,6 +456,7 @@ export class YpAppUser extends YpCodeBase {
           this.pollingStartedAt = undefined;
         }
       } else if (user && user.name) {
+        this.fireGlobal('yp-logged-in-via-polling', user);
         this.cancelLoginPolling();
         if (this.facebookPopupWindow) {
           this.loginFromFacebook();

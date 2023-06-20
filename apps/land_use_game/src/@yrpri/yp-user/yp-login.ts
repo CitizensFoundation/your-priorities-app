@@ -1391,12 +1391,14 @@ export class YpLogin extends YpBaseElement {
     }
     this.addListener("yp-domain-changed", this._domainEvent.bind(this));
     this.addListener("yp-network-error", this._networkError.bind(this));
+    this.addGlobalListener("yp-logged-in-via-polling", this.close.bind(this));
   }
 
   disconnectedCallback() {
     super.connectedCallback();
     this.removeListener("yp-domain-changed", this._domainEvent.bind(this));
     this.removeListener("yp-network-error", this._networkError.bind(this));
+    this.removeGlobalListener("yp-logged-in-via-polling", this.close.bind(this));
   }
 
   setup(onLoginFunction: Function, domain: YpDomainData) {
@@ -1618,5 +1620,6 @@ export class YpLogin extends YpBaseElement {
   close() {
     this.opened = false;
     this.userSpinner = false;
+    console.log("Closed login dialog");
   }
 }
