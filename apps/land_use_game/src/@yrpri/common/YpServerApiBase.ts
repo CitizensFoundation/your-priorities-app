@@ -99,7 +99,7 @@ export class YpServerApiBase extends YpCodeBase {
       try {
         responseJson = await response.json();
       } catch (error) {
-        if (response.status === 200 && response.statusText === 'OK') {
+        if (response.status === 200 || response.statusText === 'OK') {
           // Do nothing
         } else {
           this.fireGlobal('yp-network-error', {
