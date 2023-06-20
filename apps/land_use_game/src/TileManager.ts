@@ -74,9 +74,9 @@ export class TileManager extends YpCodeBase {
     this.viewer = viewer;
   }
 
-  setShowAllTileResults(showAllTileResults: boolean) {
+  async setShowAllTileResults(showAllTileResults: boolean) {
     this.showAllTileResults = showAllTileResults;
-    this.updateTileResults();
+    await this.updateTileResults();
   }
 
   computeCenterOfArea() {
@@ -106,7 +106,7 @@ export class TileManager extends YpCodeBase {
     return { lon: lonAvg, lat: latAvg };
   }
 
-  setupTileResults(posts: YpPostData[]) {
+  async setupTileResults(posts: YpPostData[]) {
     const landUseCount: Map<string, number> = new Map();
 
     if (posts) {
@@ -193,7 +193,7 @@ export class TileManager extends YpCodeBase {
         }
       });
 
-      this.updateCommentResults();
+      await this.updateCommentResults();
     } else {
       console.error("No posts found");
     }
@@ -276,9 +276,9 @@ export class TileManager extends YpCodeBase {
     return `${newWest}|${newSouth}|${newEast}|${newNorth}`;
   }
 
-  updateCommentResults() {
-    this.rectangleCommentsUseCounts.forEach(
-      async (commentCount, rectangleIndex) => {
+  async updateCommentResults() {
+    const commentPromises = Array.from(this.rectangleCommentsUseCounts.entries()).map(
+      async ([rectangleIndex, commentCount]) => {
         const rectangleEntity = this.tileRectangleIndex.get(rectangleIndex);
         const rectangle = rectangleEntity?.rectangle!.coordinates!.getValue(
           Cesium.JulianDate.now()
@@ -343,13 +343,18 @@ export class TileManager extends YpCodeBase {
         }
       }
     );
+
+    // Wait for all computations to finish
+    await Promise.all(commentPromises);
   }
 
+
   async updateTileResults() {
-    return new Promise<void>((resolve) => {
+    return new Promise<void>(async (resolve) => {
       this.clearresultsModels();
-      this.rectangleLandUseCounts.forEach(
-        async (landUseCounts, rectangleIndex) => {
+
+      const tilePromises = Array.from(this.rectangleLandUseCounts.entries()).map(
+        async ([rectangleIndex, landUseCounts]) => {
           // Get the rectangle from the rectangleIndex
           const rectangleEntity = this.tileRectangleIndex.get(rectangleIndex);
 
@@ -447,64 +452,69 @@ export class TileManager extends YpCodeBase {
                 }
               }
             });
-            //console.log(`this.resultsModels ${this.resultsModels.length}`)
-            resolve();
           } else {
-            console.error(
-              "No rectangle entity found for index: " + rectangleIndex
-            );
-            resolve();
+            if (window.location.href.indexOf("localhost") > -1) {
+              console.error(
+                "No rectangle entity found for index: " + rectangleIndex
+              );
+            }
           }
         }
       );
 
-      const topRectangles = this.getTopRectangles();
-
-      topRectangles.forEach(async ({ entity: rectangleEntity, count }) => {
-        const rectangle = rectangleEntity.rectangle!.coordinates!.getValue(
-          Cesium.JulianDate.now()
-        );
-        const centerPosition = Cesium.Rectangle.center(rectangle);
-        const terrainHeight = await this.getTerrainHeight(centerPosition);
-
-        const landUseType = rectangleEntity.landUseType;
-        if (landUseType) {
-          const modelUrl = landUseModelPaths[landUseType];
-          const modelScale = landUseModelScales[landUseType];
-
-          // Use count for calculating the height
-          const modelHeight = 3000 * count; // Adjust the height value based on count
-          const positionProperty = new Cesium.ConstantPositionProperty(
-            Cesium.Cartesian3.fromDegrees(
-              Cesium.Math.toDegrees(centerPosition.longitude),
-              Cesium.Math.toDegrees(centerPosition.latitude),
-              terrainHeight + modelHeight
-            )
+      const topRectanglePromises = this.getTopRectangles().map(
+        async ({ entity: rectangleEntity, count }) => {
+          const rectangle = rectangleEntity.rectangle!.coordinates!.getValue(
+            Cesium.JulianDate.now()
           );
+          const centerPosition = Cesium.Rectangle.center(rectangle);
+          const terrainHeight = await this.getTerrainHeight(centerPosition);
 
-          // Update the maximum height for the rectangle
-          const rectangleIndex = rectangleEntity.rectangleIndex!;
-          const currentMaxHeight =
-            this.rectangleMaxHeights.get(rectangleIndex) || 0;
-          if (terrainHeight + modelHeight > currentMaxHeight) {
-            this.rectangleMaxHeights.set(
-              rectangleIndex,
-              terrainHeight + modelHeight
+          const landUseType = rectangleEntity.landUseType;
+          if (landUseType) {
+            const modelUrl = landUseModelPaths[landUseType];
+            const modelScale = landUseModelScales[landUseType];
+
+            // Use count for calculating the height
+            const modelHeight = 3000 * count; // Adjust the height value based on count
+            const positionProperty = new Cesium.ConstantPositionProperty(
+              Cesium.Cartesian3.fromDegrees(
+                Cesium.Math.toDegrees(centerPosition.longitude),
+                Cesium.Math.toDegrees(centerPosition.latitude),
+                terrainHeight + modelHeight
+              )
             );
+
+            // Update the maximum height for the rectangle
+            const rectangleIndex = rectangleEntity.rectangleIndex!;
+            const currentMaxHeight =
+              this.rectangleMaxHeights.get(rectangleIndex) || 0;
+            if (terrainHeight + modelHeight > currentMaxHeight) {
+              this.rectangleMaxHeights.set(
+                rectangleIndex,
+                terrainHeight + modelHeight
+              );
+            }
+
+            // Create model instance
+            const modelInstance = this.createModel(
+              modelUrl,
+              positionProperty,
+              modelScale
+            );
+
+            this.resultsModels.push(modelInstance);
           }
-
-          // Create model instance
-          const modelInstance = this.createModel(
-            modelUrl,
-            positionProperty,
-            modelScale
-          );
-
-          this.resultsModels.push(modelInstance);
         }
-      });
-    })
+      );
+
+      await Promise.all(tilePromises);
+      await Promise.all(topRectanglePromises);
+
+      resolve();
+    });
   }
+
 
   countAssignedRectangles(landUse: string): number {
     return this.landUseCount.get(landUse) || 0;

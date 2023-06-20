@@ -42,6 +42,9 @@ import {
   themeFromSourceColor,
 } from "@material/material-color-utilities";
 import { YpCommentDialog } from "./yp-comment-dialog";
+
+import './yp-comment-dialog.js';
+
 import { Tutorial } from "./Tutorial";
 import { Layouts } from "./flexbox-literals/classes";
 
@@ -55,7 +58,7 @@ export class YpLandUseGame extends YpBaseElement {
   @property({ type: String }) title = "Land Use Game";
 
   @property({ type: Number })
-  gameStage = GameStage.Intro;
+  gameStage = GameStage.Results;
 
   @property({ type: String })
   selectedLandUse:
@@ -326,7 +329,8 @@ export class YpLandUseGame extends YpBaseElement {
         #resultsStats {
           position: absolute;
           top: 10px;
-          left: 32px;
+          left: 50%;
+          transform: translateX(-50%);
           z-index: 1;
           padding: 16px;
           background-color: rgba(255, 255, 255, 0.5);
@@ -876,9 +880,11 @@ export class YpLandUseGame extends YpBaseElement {
     }
   }
 
-  toggleShowAllResults() {
+  async toggleShowAllResults() {
     this.showAllTileResults = !this.showAllTileResults;
-    this.tileManager.setShowAllTileResults(this.showAllTileResults);
+    this.landUseTypeDisabled = true;
+    await this.tileManager.setShowAllTileResults(this.showAllTileResults);
+    this.landUseTypeDisabled = false;
   }
 
   async initScene() {
@@ -1240,7 +1246,7 @@ export class YpLandUseGame extends YpBaseElement {
               class="navButton"
               @click="${this.showAll}"
               .label="${this.t("Show all")}"
-              ><md-icon>home_pin</md-icon></md-filled-icon-button
+              ><md-icon>home</md-icon></md-filled-icon-button
             >
 
             <md-filled-icon-button
@@ -1361,6 +1367,7 @@ export class YpLandUseGame extends YpBaseElement {
         .group="${this.group}"
         @save="${this.saveComment}"
       ></yp-new-comment-dialog>
+
       <yp-comment-dialog
         id="commentDialog"
         .group="${this.group}"
