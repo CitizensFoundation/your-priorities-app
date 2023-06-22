@@ -546,7 +546,7 @@ export class YpLandUseGame extends YpBaseElement {
     setTimeout(() => {
       console.log("afterLogginPolling checkRegistrationAnswersCurrent")
       window.appUser.checkRegistrationAnswersCurrent();
-    }, 400);
+    }, 550);
   }
 
   async _loggedIn(event: CustomEvent) {
