@@ -4,6 +4,7 @@
   "license": "AGPL-3.0",
   "dependencies": {
     "@airbrake/node": "^2.1.4",
+    "@aws-sdk/client-s3": "^3.357.0",
     "@google-cloud/speech": "^5.1.0",
     "@google-cloud/storage": "^6.7.0",
     "@google-cloud/translate": "^7.0.3",
