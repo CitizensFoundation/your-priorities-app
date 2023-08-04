@@ -31,7 +31,7 @@ const main = async () => {
   let outFileContent = `"${group.name}"\n"Atkvæðafjöldi","Nafn listmanns","Heiti verks ísl.","Heiti verks en.","Ártal verks"\n`;
 
   for (const post of posts) {
-    if (!post.deleted && post.counter_endorsements_up > 0) {
+    if (!post.deleted) {
       outFileContent +=
         `${post.counter_endorsements_up},"${clean(post.description)}","${clean(
           post.name
