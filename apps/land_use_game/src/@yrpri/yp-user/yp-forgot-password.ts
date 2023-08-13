@@ -4,8 +4,8 @@ import { customElement, property } from "lit/decorators.js";
 import "@material/web/dialog/dialog.js";
 import "@material/web/textfield/outlined-text-field.js";
 import "@material/web/button/text-button.js";
-import { Dialog } from "@material/web/dialog/lib/dialog.js";
-import { TextField } from "@material/web/textfield/lib/text-field.js";
+import { Dialog } from "@material/web/dialog/internal/dialog.js";
+import { TextField } from "@material/web/textfield/internal/text-field.js";
 
 import { YpBaseElement } from "../common/yp-base-element.js";
 import { Layouts } from "../../flexbox-literals/classes.js";
@@ -58,43 +58,45 @@ export class YpForgotPassword extends YpBaseElement {
       >
         <div slot="headline">${this.t("user.forgotPassword")}</div>
 
-        <p ?hidden="${this.emailHasBeenSent}">
-          ${this.t("user.forgotPasswordInstructions")}
-        </p>
+        <div slot="content">
+          <p ?hidden="${this.emailHasBeenSent}">
+            ${this.t("user.forgotPasswordInstructions")}
+          </p>
 
-        <p ?hidden="${!this.emailHasBeenSent}">
-          ${this.t("user.forgotPasswordEmailHasBeenSent")}
-        </p>
+          <p ?hidden="${!this.emailHasBeenSent}">
+            ${this.t("user.forgotPasswordEmailHasBeenSent")}
+          </p>
 
-        <md-outlined-text-field
-          id="email"
-          type="email"
-          @keydown="${this._onEnter}"
-          .label="${this.t("email")}"
-          .value="${this.email}"
-          pattern=".+@.+"
-          minLength="3"
-          ?hidden="${this.emailHasBeenSent}"
-        >
-        </md-outlined-text-field>
+          <md-outlined-text-field
+            id="email"
+            type="email"
+            @keydown="${this._onEnter}"
+            .label="${this.t("email")}"
+            .value="${this.email}"
+            pattern=".+@.+"
+            minLength="3"
+            ?hidden="${this.emailHasBeenSent}"
+          >
+          </md-outlined-text-field>
+        </div>
 
-        <md-text-button
-          dialogAction="cancel"
-          ?hidden="${this.emailHasBeenSent}"
-          slot="footer"
-          >${this.t("cancel")}</md-text-button
-        >
-        <md-text-button
-          autofocus
-          ?hidden="${this.emailHasBeenSent}"
-          slot="footer"
-          @click="${this._validateAndSend}"
-          >${this.t("user.forgotPassword")}</md-text-button
-        >
+        <div slot="actions">
+          <md-text-button
+            dialogAction="cancel"
+            ?hidden="${this.emailHasBeenSent}"
+            >${this.t("cancel")}</md-text-button
+          >
+          <md-text-button
+            autofocus
+            ?hidden="${this.emailHasBeenSent}"
+            @click="${this._validateAndSend}"
+            >${this.t("user.forgotPassword")}</md-text-button
+          >
 
-        <md-text-button slot="footer" dialogAction="ok" ?hidden="${!this.emailHasBeenSent}"
-          >${this.t("ok")}</md-text-button
-        >
+          <md-text-button dialogAction="ok" ?hidden="${!this.emailHasBeenSent}"
+            >${this.t("ok")}</md-text-button
+          >
+        </div>
       </md-dialog>
     `;
   }

@@ -1,60 +1,55 @@
-import { html, css } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { html, css } from "lit";
+import { customElement, property } from "lit/decorators.js";
 
-import { YpBaseElement } from '../common/yp-base-element.js';
+import { YpBaseElement } from "../common/yp-base-element.js";
 
-import '@material/web/dialog/dialog.js';
-import '@material/web/textfield/outlined-text-field.js';
-import '@material/web/button/text-button.js';
-import { Dialog } from '@material/web/dialog/lib/dialog.js';
-import { TextField } from '@material/web/textfield/lib/text-field.js';
+import "@material/web/dialog/dialog.js";
+import "@material/web/textfield/outlined-text-field.js";
+import "@material/web/button/text-button.js";
+import { Dialog } from "@material/web/dialog/internal/dialog.js";
+import { TextField } from "@material/web/textfield/internal/text-field.js";
 
-@customElement('yp-reset-password')
+@customElement("yp-reset-password")
 export class YpResetPassword extends YpBaseElement {
   @property({ type: String })
-  password = '';
+  password = "";
 
   @property({ type: String })
-  token = '';
+  token = "";
 
   @property({ type: String })
-  passwordErrorMessage = '';
+  passwordErrorMessage = "";
 
   static get styles() {
-    return [
-      super.styles,
-      css`
-
-      `,
-    ];
+    return [super.styles, css``];
   }
 
   render() {
     return html`
       <md-dialog id="dialog" escapeKeyAction="" scrimClickAction="">
-        <div slot="headline">${this.t('user.resetPassword')}</div>
+        <div slot="headline">${this.t("user.resetPassword")}</div>
 
-        <p>${this.t('user.resetPasswordInstructions')}</p>
+        <div slot="content">
+          <p>${this.t("user.resetPasswordInstructions")}</p>
 
-        <md-outlined-textfield
-          id="password"
-          @keydown="${this.onEnter}"
-          type="password"
-          .label="${this.t('password')}"
-          .value="${this.password}"
-          autocomplete="off"
-          .validationMessage="${this.passwordErrorMessage}">
-        </md-outlined-textfield>
-
-        <div class="buttons">
-          <md-text-button @click="${this._cancel}" slot="secondaryAction"
-            >${this.t('cancel')}</md-text-button
+          <md-outlined-textfield
+            id="password"
+            @keydown="${this.onEnter}"
+            type="password"
+            .label="${this.t("password")}"
+            .value="${this.password}"
+            autocomplete="off"
+            .validationMessage="${this.passwordErrorMessage}"
           >
-          <md-text-button
-            autofocus
-            @click="${this._validateAndSend}"
-            slot="primaryAction"
-            >${this.t('user.resetPassword')}</md-text-button
+          </md-outlined-textfield>
+        </div>
+
+        <div class="buttons" slot="actions">
+          <md-text-button @click="${this._cancel}"
+            >${this.t("cancel")}</md-text-button
+          >
+          <md-text-button autofocus @click="${this._validateAndSend}"
+            >${this.t("user.resetPassword")}</md-text-button
           >
         </div>
       </md-dialog>
@@ -69,19 +64,19 @@ export class YpResetPassword extends YpBaseElement {
   }
 
   async _validateAndSend() {
-    const passwordField = this.$$('#password') as TextField;
+    const passwordField = this.$$("#password") as TextField;
     if (passwordField && passwordField.checkValidity() && passwordField.value) {
       const response = await window.serverApi.resetPassword(this.token, {
         password: passwordField.value,
       });
 
       //TODO Figure out the error here and test if it works
-      if (!response || (response.error && response.error == 'not_found')) {
-        this.fire('yp-error', this.t('errorResetTokenNotFoundOrUsed'));
+      if (!response || (response.error && response.error == "not_found")) {
+        this.fire("yp-error", this.t("errorResetTokenNotFoundOrUsed"));
       } else {
         this.close();
         window.appGlobals.notifyUserViaToast(
-          this.t('notification.passwordResetAndLoggedIn')
+          this.t("notification.passwordResetAndLoggedIn")
         );
         this._loginCompleted(response);
       }
@@ -89,20 +84,20 @@ export class YpResetPassword extends YpBaseElement {
   }
 
   _cancel() {
-    this.fire('cancel');
+    this.fire("cancel");
   }
 
   _loginCompleted(user: YpUserData) {
     window.appUser.setLoggedInUser(user);
-    this.fire('logged-in');
+    this.fire("logged-in");
   }
 
   open(token: string) {
     if (token) this.token = token;
-    (this.$$('#dialog') as Dialog).open = true;
+    (this.$$("#dialog") as Dialog).open = true;
   }
 
   close() {
-    (this.$$('#dialog') as Dialog).open = false;
+    (this.$$("#dialog") as Dialog).open = false;
   }
 }

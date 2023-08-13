@@ -96,27 +96,32 @@ export class YpPageDialog extends YpBaseElement {
         id="dialog"
         ?rtl="${this.rtl}"
       >
-        <md-icon slot="headline-prefix">joystick</md-icon>
+        <md-icon slot="icon">joystick</md-icon>
         <span slot="headline" class="headline">${this.pageTitle}</span>
-        <div id="content" style="text-align: left"></div>
+        <div id="content" slot="content" style="text-align: left"></div>
 
-        ${this.textButtonText ? html`
-          <md-text-button
-            class="startButton"
-            slot="footer"
-            dialogAction="${this._close}"
-            >${this.textButtonText}</md-text-button
-          >
-        ` : html`
+        <div slot="actions">
+          ${this.textButtonText
+            ? html`
+                <md-text-button
+                  class="startButton"
+                  dialogAction="${this._close}"
+                  >${this.textButtonText}</md-text-button
+                >
+              `
+            : html`
         <md-outlined-button
           class="startButton"
-          slot="footer"
           dialogFocus
           dialogAction="${this._close}"
           >${this.t("Start Game")}</md-outlined-button
         >
 
+        </div>
+
+
         `}
+        </div>
       </md-dialog>
     `;
   }
@@ -148,7 +153,7 @@ export class YpPageDialog extends YpBaseElement {
     this.page = page;
     this.language = language;
     await this.updateComplete;
-    const contentEl = (this.$$("#content") as HTMLElement);
+    const contentEl = this.$$("#content") as HTMLElement;
     contentEl.innerHTML = this.page.content[this.language];
     (this.$$("#dialog") as Dialog).open = true;
   }

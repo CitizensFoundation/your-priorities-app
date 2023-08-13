@@ -3,6 +3,8 @@ import { property, query } from "lit/decorators.js";
 
 import "@material/web/dialog/dialog.js";
 import "@material/web/textfield/outlined-text-field.js";
+import "@material/web/chips/chip-set.js";
+import "@material/web/chips/filter-chip.js";
 
 import { YpBaseElement } from "./@yrpri/common/yp-base-element";
 import { PropertyValueMap } from "lit";
@@ -12,7 +14,7 @@ import { Cartographic, ImageryProvider, Viewer } from "cesium";
 import { TileManager } from "./TileManager";
 import { PlaneManager } from "./PlaneManager";
 import { CharacterManager } from "./CharacterManager";
-import { Dialog } from "@material/web/dialog/lib/dialog";
+import { Dialog } from "@material/web/dialog/internal/dialog.js";
 import "@material/web/iconbutton/filled-tonal-icon-button.js";
 
 import "@material/mwc-textarea/mwc-textarea.js";
@@ -239,6 +241,18 @@ export class YpLandUseGame extends YpBaseElement {
           left: 0;
         }
 
+        #cesium-container {
+          cursor: all-scroll;
+        }
+
+        #cesium-container[has-landuse-selected] {
+          cursor: crosshair;
+        }
+
+        #cesium-container[is-commenting] {
+          cursor: text;
+        }
+
         #landUseSelection {
           position: absolute;
           bottom: 10px;
@@ -246,8 +260,17 @@ export class YpLandUseGame extends YpBaseElement {
           right: auto;
           z-index: 1;
           padding: 8px;
-          background-color: rgba(255, 255, 255, 0.5);
+          background-color: transparent;
+          color: var(--md-sys-color-on-surface);
           border-radius: 5px;
+        }
+
+        md-filter-chip {
+          background-color: var(--md-sys-color-surface);
+        }
+
+        md-outlined-icon-button {
+          background-color: var(--md-sys-color-surface);
         }
 
         #landUseSelection button {
@@ -363,67 +386,93 @@ export class YpLandUseGame extends YpBaseElement {
         }
 
         #landUse1 {
-          background: rgba(255, 0, 0, 0.2); /* red with 0.25 opacity */
+          border-top: solid 4px rgba(255, 0, 0, 0.4);
+          margin-top: 6px;
+          border-radius: 2px;
         }
 
         #landUse1[selected] {
-          background: rgba(255, 0, 0, 0.55); /* red with 0.25 opacity */
+          border-top: solid 7px rgba(255, 0, 0, 0.99);
+          margin-top: 0;
+          border-radius: 2px;
         }
 
         #landUse2 {
-          background: rgba(0, 0, 255, 0.2); /* blue with 0.25 opacity */
+          border-top: solid 4px rgba(0, 0, 255, 0.4);
+          margin-top: 6px;
+          border-radius: 2px;
         }
 
         #landUse2[selected] {
-          background: rgba(0, 0, 255, 0.55); /* blue with 0.25 opacity */
+          border-top: solid 7px rgba(0, 0, 255, 0.99);
+          margin-top: 0;
+          border-radius: 2px;
         }
 
         #landUse3 {
-          background: rgba(255, 165, 0, 0.2); /* orange with 0.25 opacity */
+          border-top: solid 4px rgba(255, 165, 0, 0.4);
+          margin-top: 6px;
+          border-radius: 2px;
         }
 
         #landUse3[selected] {
-          background: rgba(255, 165, 0, 0.55); /* orange with 0.25 opacity */
+          border-top: solid 7px rgba(255, 165, 0, 0.99);
+          margin-top: 0;
+          border-radius: 2px;
         }
 
         #landUse4 {
-          background: rgba(255, 255, 0, 0.2); /* yellow with 0.25 opacity */
+          border-top: solid 4px rgba(255, 255, 0, 0.4);
+          margin-top: 6px;
+          border-radius: 2px;
         }
 
         #landUse4[selected] {
-          background: rgba(255, 255, 0, 0.55); /* yellow with 0.25 opacity */
+          border-top: solid 7px rgba(255, 255, 0, 0.99);
+          margin-top: 0;
+          border-radius: 2px;
         }
 
         #landUse5 {
-          background: rgba(0, 255, 255, 0.2); /* cyan with 0.25 opacity */
+          border-top: solid 4px rgba(0, 255, 255, 0.4);
+          margin-top: 6px;
+          border-radius: 2px;
         }
 
         #landUse5[selected] {
-          background: rgba(0, 255, 255, 0.55); /* cyan with 0.25 opacity */
+          border-top: solid 7px rgba(0, 255, 255, 0.99);
+          margin-top: 0;
+          border-radius: 2px;
         }
 
         #landUse6 {
-          background: rgba(128, 0, 128, 0.2); /* purple with 0.25 opacity */
+          border-top: solid 4px rgba(128, 0, 128, 0.4);
+          margin-top: 6px;
+          border-radius: 2px;
         }
 
         #landUse6[selected] {
-          background: rgba(128, 0, 128, 0.55);
+          border-top: solid 7px rgba(128, 0, 128, 0.99);
+          margin-top: 0;
+          border-radius: 2px;
         }
 
         #commentButton {
-          background: rgba(255, 255, 255, 0.2);
+          border-top: solid 4px rgba(255, 255, 255, 0.0);
+          margin-left: 4px;
+          margin-top: -8px;
         }
 
-        #commentButton[selected] {
-          background: rgba(255, 255, 255, 0.55);
+        #commentButton[is-selected] {
+          border-top: solid 4px rgba(255, 255, 255, 0.0);
         }
 
         #showAllButton {
-          background: rgba(255, 255, 255, 0.2);
+          border-top: solid 4px rgba(255, 255, 255, 0.4);
         }
 
         #showAllButton[selected] {
-          background: rgba(255, 255, 255, 0.55);
+          border-top: solid 7px rgba(255, 255, 255, 0.9);
         }
 
         #progressBars {
@@ -461,9 +510,8 @@ export class YpLandUseGame extends YpBaseElement {
           }
 
           #landUseSelection {
-            bottom: 0;
-            text-align: center;
-            padding: 4px;
+            bottom: 4px;
+            padding: 12px;
             border-radius: 0;
           }
 
@@ -472,6 +520,11 @@ export class YpLandUseGame extends YpBaseElement {
             font-size: 16px;
           }
 
+          #commentButton {
+            position: absolute;
+            left: 12px;
+            bottom: 112px;
+          }
 
           #submitButton {
             font-size: 12px;
@@ -544,7 +597,7 @@ export class YpLandUseGame extends YpBaseElement {
 
   afterLogginPolling() {
     setTimeout(() => {
-      console.log("afterLogginPolling checkRegistrationAnswersCurrent")
+      console.log("afterLogginPolling checkRegistrationAnswersCurrent");
       window.appUser.checkRegistrationAnswersCurrent();
     }, 550);
   }
@@ -735,6 +788,9 @@ export class YpLandUseGame extends YpBaseElement {
   //TODO: Fix and remove the selected land sue when commenting and also possible toggle commenting on and off
   setIsCommenting(isCommenting: boolean) {
     this.tileManager.isCommenting = isCommenting;
+    if (isCommenting) {
+      this.selectedLandUse = undefined;
+    }
     this.requestUpdate();
   }
 
@@ -1212,65 +1268,87 @@ export class YpLandUseGame extends YpBaseElement {
       return html`
         <div
           id="landUseSelection"
+          class="layout vertical center-center">
           ?hidden="${this.gameStage === GameStage.Intro}"
         >
-          <button
-            id="landUse1"
-            ?disabled=${this.landUseTypeDisabled}
-            @click="${() => this.setLandUse("energy")}"
-            ?selected=${this.selectedLandUse === "energy"}
+          <md-chip-set
+            type="filter"
+            class="layout horizontal center-center  ${!this.wide ? "wrap" : "start"}"
           >
-            ${this.t("Energy")}
-          </button>
-          <button
-            id="landUse2"
-            ?disabled=${this.landUseTypeDisabled}
-            @click="${() => this.setLandUse("gracing")}"
-            ?selected=${this.selectedLandUse === "gracing"}
-          >
-            ${this.t("Gracing")}
-          </button>
-          <button
-            id="landUse3"
-            ?disabled=${this.landUseTypeDisabled}
-            @click="${() => this.setLandUse("tourism")}"
-            ?selected=${this.selectedLandUse === "tourism"}
-          >
-            ${this.t("Tourism")}
-          </button>
-          <button
-            id="landUse4"
-            ?disabled=${this.landUseTypeDisabled}
-            @click="${() => this.setLandUse("recreation")}"
-            ?selected=${this.selectedLandUse === "recreation"}
-          >
-            ${this.t("Recreation")}
-          </button>
-          <button
-            id="landUse5"
-            ?disabled=${this.landUseTypeDisabled}
-            @click="${() => this.setLandUse("restoration")}"
-            ?selected=${this.selectedLandUse === "restoration"}
-          >
-            ${this.t("Restoration")}
-          </button>
-          <button
-            id="landUse6"
-            ?disabled=${this.landUseTypeDisabled}
-            @click="${() => this.setLandUse("conservation")}"
-            ?selected=${this.selectedLandUse === "conservation"}
-          >
-            ${this.t("Conservation")}
-          </button>
-          <button
-            id="commentButton"
-            @click="${() => this.setIsCommenting(true)}"
-            ?hidden="${this.gameStage === GameStage.Results}"
-            ?selected=${this.tileManager?.isCommenting}
-          >
-            ${this.t("Comment")}
-          </button>
+            <md-filter-chip
+              id="landUse1"
+              .label="${this.t("Energy")}"
+              ?disabled=${this.landUseTypeDisabled}
+              @click="${() => this.setLandUse("energy")}"
+              ?selected=${this.selectedLandUse === "energy"}
+            >
+              <md-icon slot="icon" aria-hidden="true">electric_bolt</md-icon>
+            </md-filter-chip>
+            <md-filter-chip
+              id="landUse2"
+              .label="${this.t("Gracing")}"
+              ?disabled=${this.landUseTypeDisabled}
+              @click="${() => this.setLandUse("gracing")}"
+              ?selected=${this.selectedLandUse === "gracing"}
+            >
+              <md-icon slot="icon" aria-hidden="true">grass</md-icon>
+            </md-filter-chip>
+            <md-filter-chip
+              id="landUse3"
+              .label="${this.t("Tourism")}"
+              ?disabled=${this.landUseTypeDisabled}
+              @click="${() => this.setLandUse("tourism")}"
+              ?selected=${this.selectedLandUse === "tourism"}
+            >
+              <md-icon slot="icon" aria-hidden="true">hiking</md-icon>
+            </md-filter-chip>
+            <md-filter-chip
+              id="landUse4"
+              .label="${this.t("Recreation")}"
+              ?disabled=${this.landUseTypeDisabled}
+              @click="${() => this.setLandUse("recreation")}"
+              ?selected=${this.selectedLandUse === "recreation"}
+            >
+              <md-icon slot="icon" aria-hidden="true">snowmobile</md-icon>
+            </md-filter-chip>
+            <md-filter-chip
+              id="landUse5"
+              .label="${this.t("Restoration")}"
+              ?disabled=${this.landUseTypeDisabled}
+              @click="${() => this.setLandUse("restoration")}"
+              ?selected=${this.selectedLandUse === "restoration"}
+            >
+              <md-icon slot="icon" aria-hidden="true">eco</md-icon>
+            </md-filter-chip>
+            <md-filter-chip
+              id="landUse6"
+              .label="${this.t("Conservation")}"
+              ?disabled=${this.landUseTypeDisabled}
+              @click="${() => this.setLandUse("conservation")}"
+              ?selected=${this.selectedLandUse === "conservation"}
+            >
+              <md-icon slot="icon" aria-hidden="true">landscape</md-icon>
+            </md-filter-chip>
+            <md-filled-icon-button
+              id="commentButton"
+              toggle
+              .label="${this.t("Comment")}"
+              ?is-selected="${this.tileManager?.isCommenting}"
+              .selected="${this.tileManager?.isCommenting}"
+              @click="${() =>
+                this.setIsCommenting(
+                  this.tileManager?.isCommenting ? false : true
+                )}"
+              class="navButton"
+              ?hidden="${this.gameStage === GameStage.Results}"
+            >
+              <md-icon slot="selectedIcon">stylus</md-icon>
+              <md-icon>edit</md-icon>
+            </md-filled-icon-button>
+
+          </md-chip-set>
         </div>
+
 
         <div
           id="navigationButtons"
@@ -1382,11 +1460,13 @@ export class YpLandUseGame extends YpBaseElement {
   renderErrorDialog() {
     return html`
       <md-dialog id="errorDialog" @closed="${this.errorDialogClosed}">
-        <span slot="header">${this.t("Error")}</span>
-        <span>${this.currentErrorText}</span>
-        <md-text-button slot="footer" dialogAction="ok"
-          >${this.t("ok")}</md-text-button
-        >
+        <div slot="headliner">${this.t("Error")}</div>
+        <div slot="content">${this.currentErrorText}</div>
+        <div slot="actions">
+          <md-text-button slot="footer" dialogAction="ok"
+            >${this.t("ok")}</md-text-button
+          >
+        </div>
       </md-dialog>
     `;
   }
@@ -1395,7 +1475,11 @@ export class YpLandUseGame extends YpBaseElement {
     return html`
       ${this.renderErrorDialog()}
       <yp-app-dialogs id="dialogContainer"></yp-app-dialogs>
-      <div id="cesium-container"></div>
+      <div
+        id="cesium-container"
+        ?has-landuse-selected="${this.selectedLandUse}"
+        ?is-commenting="${this.tileManager?.isCommenting}"
+      ></div>
       <div id="emptyCreditContainer"></div>
 
       <yp-new-comment-dialog

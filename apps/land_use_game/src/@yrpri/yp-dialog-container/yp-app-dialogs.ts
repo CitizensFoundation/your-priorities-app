@@ -21,7 +21,7 @@ import "../yp-user/yp-reset-password.js";
 //import './yp-autotranslate-dialog.js';
 import "../yp-post/yp-post-edit.js";
 import "../yp-page/yp-page-dialog.js";
-import { Dialog } from "@material/web/dialog/lib/dialog.js";
+import { Dialog } from "@material/web/dialog/internal/dialog.js";
 
 @customElement("yp-app-dialogs")
 export class YpAppDialogs extends YpBaseElement {

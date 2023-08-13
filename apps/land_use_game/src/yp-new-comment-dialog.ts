@@ -12,8 +12,8 @@ import { Button } from "@material/mwc-button";
 import { YpBaseElementWithLogin } from "./@yrpri/common/yp-base-element-with-login.js";
 
 import "@material/web/dialog/dialog.js";
-import "@material/web/circularprogress/circular-progress.js";
-import { Dialog } from "@material/web/dialog/lib/dialog.js";
+import "@material/web/progress/circular-progress.js";
+import { Dialog } from "@material/web/dialog/internal/dialog.js";
 
 @customElement("yp-new-comment-dialog")
 export class YpNewCommentDialog extends YpBaseElementWithLogin {
@@ -140,7 +140,7 @@ export class YpNewCommentDialog extends YpBaseElementWithLogin {
       <md-dialog id="commentDialog" escapeKeyAction="" scrimClickAction="">
         ${this.point
           ? html`
-              <div class="layout vertical container">
+              <div class="layout vertical container" slot="content">
                 <div class="layout horizontal">
                   <yp-user-image
                     class="userImage"
@@ -163,7 +163,7 @@ export class YpNewCommentDialog extends YpBaseElementWithLogin {
                   </div>
                 </div>
               </div>
-              <div slot="footer">${this.renderFooter()}</div>
+              <div slot="actions">${this.renderFooter()}</div>
             `
           : nothing}
       </md-dialog>

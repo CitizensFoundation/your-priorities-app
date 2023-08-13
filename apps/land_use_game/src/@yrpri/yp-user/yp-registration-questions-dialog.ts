@@ -9,7 +9,7 @@ import "./yp-registration-questions.js";
 import { YpBaseElement } from "../common/yp-base-element.js";
 
 import { YpRegistrationQuestions } from "./yp-registration-questions.js";
-import { Dialog } from "@material/web/dialog/lib/dialog.js";
+import { Dialog } from "@material/web/dialog/internal/dialog.js";
 
 @customElement("yp-registration-questions-dialog")
 export class YpRegistrationQuestionsDialog extends YpBaseElement {
@@ -50,21 +50,24 @@ export class YpRegistrationQuestionsDialog extends YpBaseElement {
     return html`
       <md-dialog id="dialog" escapeKeyAction="" scrimClickAction="">
         <div slot="headline">${this.t("registrationQuestionsInfo")}</div>
+        <div slot="content">
+          <yp-registration-questions
+            id="registrationQuestions"
+            @dom-change="${this._questionsUpdated}"
+            @question-changed="${this._questionsUpdated}"
+            @resize-scroller="${this._questionsUpdated}"
+            .group="${this.registrationQuestionsGroup}"
+          ></yp-registration-questions>
+        </div>
 
-        <yp-registration-questions
-          id="registrationQuestions"
-          @dom-change="${this._questionsUpdated}"
-          @question-changed="${this._questionsUpdated}"
-          @resize-scroller="${this._questionsUpdated}"
-          .group="${this.registrationQuestionsGroup}"
-        ></yp-registration-questions>
-
-        <md-text-button slot="footer" @click="${this.logout}"
-          ><span class="upper">${this.t("user.logout")}</span></md-text-button
-        >
-        <md-text-button slot="footer" @click="${this._validateAndSend}"
-          ><span class="upper">${this.t("save")}</span></md-text-button
-        >
+        <div slot="actions">
+          <md-text-button @click="${this.logout}"
+            ><span class="upper">${this.t("user.logout")}</span></md-text-button
+          >
+          <md-text-button @click="${this._validateAndSend}"
+            ><span class="upper">${this.t("save")}</span></md-text-button
+          >
+        </div>
       </md-dialog>
     `;
   }

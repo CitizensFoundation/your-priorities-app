@@ -34,16 +34,15 @@ export class YpApiActionDialog extends YpBaseElement {
   render() {
     return html`
       <md-dialog id="confirmationDialog" @close="${this._onClose}">
-        <div>${this.confirmationText}</div>
-        <md-text-button slot="footer" dialogAction="cancel"
-          >${this.t("cancel")}</md-text-button
-        >
-        <md-text-button
-          slot="footer"
-          dialogAction="accept"
-          @click="${this._delete}"
-          >${this.confirmButtonText || ""}</md-text-button
-        >
+        <div slot="content">${this.confirmationText}</div>
+        <div slot="actions">
+          <md-text-button dialogAction="cancel"
+            >${this.t("cancel")}</md-text-button
+          >
+          <md-text-button dialogAction="accept" @click="${this._delete}"
+            >${this.confirmButtonText || ""}</md-text-button
+          >
+        </div>
       </md-dialog>
     `;
   }

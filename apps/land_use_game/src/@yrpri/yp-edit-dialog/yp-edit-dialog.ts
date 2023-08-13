@@ -3,7 +3,7 @@ import { property, customElement } from "lit/decorators.js";
 
 import { YpBaseElement } from "../common/yp-base-element.js";
 
-import "@material/web/circularprogress/circular-progress.js";
+import "@material/web/progress/circular-progress.js";
 import { CircularProgressFourColorBase } from "@material/mwc-circular-progress-four-color/mwc-circular-progress-four-color-base";
 import "@material/web/button/text-button.js";
 import "@material/web/dialog/dialog.js";
@@ -17,7 +17,7 @@ import "../common/yp-form.js";
 import { YpForm } from "../common/yp-form.js";
 import { Snackbar } from "@material/mwc-snackbar";
 import { YpConfirmationDialog } from "../yp-dialog-container/yp-confirmation-dialog.js";
-import { Dialog } from "@material/web/dialog/lib/dialog.js";
+import { Dialog } from "@material/web/dialog/internal/dialog.js";
 
 @customElement("yp-edit-dialog")
 export class YpEditDialog extends YpBaseElement {
@@ -361,9 +361,9 @@ export class YpEditDialog extends YpBaseElement {
                         @click="${this._submit}"
                         ?long-button-text="${this.hasLongSaveText}"
                         slot="footer"
-
                         class="smallButtonText"
-                      >${this.saveText ? this.saveText : ""}</md-text-button>
+                        >${this.saveText ? this.saveText : ""}</md-text-button
+                      >
                     `
                   : html`
                       <md-text-button
@@ -383,8 +383,8 @@ export class YpEditDialog extends YpBaseElement {
                   slot="footer"
                   ?long-button-text="${this.hasLongSaveText}"
                   class="smallButtonText"
-
-                >${this.nextActionText!}</md-text-button>
+                  >${this.nextActionText!}</md-text-button
+                >
               `}
         </div>
         <div id="scroller">
@@ -450,8 +450,8 @@ export class YpEditDialog extends YpBaseElement {
                     ?hidden="${!this.saveText}"
                     id="submit2"
                     @click="${this._submit}"
-
-                  >${this.saveText ? this.saveText : ""}</md-text-button>
+                    >${this.saveText ? this.saveText : ""}</md-text-button
+                  >
                 `
               : html`
                   <md-text-button
@@ -459,8 +459,8 @@ export class YpEditDialog extends YpBaseElement {
                     slot="footer"
                     class="actionButtons"
                     @click="${this._nextTab}"
-
-                  >${this.nextActionText!}</md-text-button>
+                    >${this.nextActionText!}</md-text-button
+                  >
                 `}
           `
         : html`
@@ -491,20 +491,19 @@ export class YpEditDialog extends YpBaseElement {
         with-backdrop="${!this.wide}"
       >
         <div slot="headline">${this.heading}</div>
-        ${
-          /*this.narrow*/ false
-            ? this.renderMobileView()
-            : this.renderDesktopView()
-        }
+        <div slot="content">
+          ${
+            /*this.narrow*/ false
+              ? this.renderMobileView()
+              : this.renderDesktopView()
+          }
+        </div>
       </md-dialog>
 
       <md-dialog id="formErrorDialog" modal>
-        <div id="errorText">${this.errorText}</div>
-        <div class="buttons">
-          <md-text-button
-            slot="footer"
-            autofocus
-            @click="${this._clearErrorText}"
+        <div slot="content" id="errorText">${this.errorText}</div>
+        <div class="buttons" slot="actions">
+          <md-text-button autofocus @click="${this._clearErrorText}"
             >${this.t("ok")}</md-text-button
           >
         </div>

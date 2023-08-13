@@ -153,7 +153,7 @@ export class YpCommentDialog extends YpBaseElementWithLogin {
       >
         ${this.point
           ? html`
-              <div id="content">
+              <div id="content" slot="content">
                 <div class="layout vertical newsContainer">
                   <yp-user-with-organization
                     .user="${this.loggedInUser}"
@@ -185,7 +185,7 @@ export class YpCommentDialog extends YpBaseElementWithLogin {
                   ></yp-point-comment-list>
                 </div>
               </div>
-              <div slot="footer">${this.renderFooter()}</div>
+              <div slot="actions">${this.renderFooter()}</div>
             `
           : nothing}
       </md-dialog>

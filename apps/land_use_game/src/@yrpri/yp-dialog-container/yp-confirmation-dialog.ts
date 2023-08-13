@@ -31,18 +31,18 @@ export class YpConfirmationDialog extends YpBaseElement {
   render() {
     return html`
       <md-dialog id="confirmationDialog" escapeKeyAction="" scrimClickAction="">
-        <div>${this.confirmationText}</div>
-        <md-text-button
-          ?hidden="${this.hideCancel}"
-          @click="${this._reset}"
-          dialogAction="close"
-          slot="footer"
-          >${this.t("cancel")}</md-text-button
-        >
-        <md-text-button @click="${this._confirm}" slot="footer"
-        dialogAction="save"
-        >${this.t("confirm")}</md-text-button
-        >
+        <div slot="content">${this.confirmationText}</div>
+        <div slot="actions">
+          <md-text-button
+            ?hidden="${this.hideCancel}"
+            @click="${this._reset}"
+            dialogAction="close"
+            >${this.t("cancel")}</md-text-button
+          >
+          <md-text-button @click="${this._confirm}" dialogAction="save"
+            >${this.t("confirm")}</md-text-button
+          >
+        </div>
       </md-dialog>
     `;
   }

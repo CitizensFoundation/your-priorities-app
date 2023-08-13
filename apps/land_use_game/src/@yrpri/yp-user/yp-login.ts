@@ -8,19 +8,19 @@ import { YpBaseElement } from "../common/yp-base-element.js";
 import { YpNavHelpers } from "../common/YpNavHelpers.js";
 import { YpRegistrationQuestions } from "./yp-registration-questions.js";
 
-import "@material/web/iconbutton/standard-icon-button.js";
+import "@material/web/iconbutton/icon-button.js";
 import "@material/web/textfield/filled-text-field.js";
 import "@material/web/radio/radio.js";
 import "@material/web/icon/icon.js";
-import "@material/web/button/tonal-button.js";
+import "@material/web/button/filled-tonal-button.js";
 import "@material/web/button/filled-button.js";
 import "@material/web/button/text-button.js";
 import "@material/web/button/outlined-button.js";
 import "@material/web/dialog/dialog.js";
-import "@material/web/circularprogress/circular-progress.js";
+import "@material/web/progress/circular-progress.js";
 import { Layouts } from "../../flexbox-literals/classes.js";
-import { Dialog } from "@material/web/dialog/lib/dialog.js";
-import { TextField } from "@material/web/textfield/lib/text-field.js";
+import { Dialog } from "@material/web/dialog/internal/dialog.js";
+import { TextField } from "@material/web/textfield/internal/text-field.js";
 import { YpForgotPassword } from "./yp-forgot-password.js";
 
 @customElement("yp-login")
@@ -123,11 +123,15 @@ export class YpLogin extends YpBaseElement {
       css`
         :host {
           --md-dialog-container-color: var(--md-sys-color-surface);
-          --md-filled-field-container-color: var(--md-sys-color-surface) !important;
+          --md-filled-field-container-color: var(
+            --md-sys-color-surface
+          ) !important;
         }
 
         md-filled-text-field {
-          --md-filled-field-container-color: var(--md-sys-color-surface) !important;
+          --md-filled-field-container-color: var(
+            --md-sys-color-surface
+          ) !important;
         }
 
         .createUser {
@@ -323,7 +327,6 @@ export class YpLogin extends YpBaseElement {
           padding-bottom: 16px;
         }
 
-
         .boldButton {
           font-weight: bold;
         }
@@ -345,7 +348,7 @@ export class YpLogin extends YpBaseElement {
         .headline {
           flex-direction: row-reverse;
           align-items: center;
-          text-align:center;
+          text-align: center;
         }
 
         .create-user-content,
@@ -389,7 +392,6 @@ export class YpLogin extends YpBaseElement {
           }
         }
 
-
         @media (max-width: 480px) {
           .buttons {
             margin-top: 12px;
@@ -398,8 +400,6 @@ export class YpLogin extends YpBaseElement {
         }
 
         @media (max-width: 320px) {
-
-
           :host {
             max-height: 100% !important;
             height: 100% !important;
@@ -508,7 +508,6 @@ export class YpLogin extends YpBaseElement {
           margin-bottom: 12px;
         }
 
-
         .largeSamlLogo {
           margin-top: 16px;
           padding: 12px;
@@ -589,21 +588,21 @@ export class YpLogin extends YpBaseElement {
       <div class="layout vertical center-center">
         ${this.hasAnonymousLogin
           ? html`
-              <md-tonal-button
+              <md-filled-tonal-button
                 raised
                 class="anonLoginButton"
                 @click="${this.anonymousLogin}"
-                >${this.t("participateAnonymously")}</md-tonal-button
+                >${this.t("participateAnonymously")}</md-filled-tonal-button
               >
             `
           : nothing}
         ${this.hasOneTimeLoginWithName
           ? html`
-              <md-tonal-button
+              <md-filled-tonal-button
                 raised
                 class="anonLoginButton"
                 @click="${this.oneTimeLogin}"
-                >${this.t("oneTimeLoginWithName")}</md-tonal-button
+                >${this.t("oneTimeLoginWithName")}</md-filled-tonal-button
               >
             `
           : nothing}
@@ -643,14 +642,18 @@ export class YpLogin extends YpBaseElement {
         @closed="${this.closeAndReset}"
         .fullscreen=${!this.wide}
       >
-        <span slot="header">
-          <md-standard-icon-button
+        <div slot="headline">
+          <span class="headline">${this.t("loginAndRegistration")}</span>
+        </div>
+        <div slot="icon">
+          <md-icon-button
             dialogAction="close"
             @click="${this._logingDialogClose}"
-          ><md-icon>close</md-icon></md-standard-icon-button>
-          <span class="headline">${this.t("loginAndRegistration")}</span>
-        </span>
-        <div class="create-user-content">
+            ><md-icon>close</md-icon></md-icon-button
+          >
+        </div>
+
+        <div class="create-user-content" slot="content">
           <div
             ?hidden="${!this.customUserRegistrationText}"
             class="customUserRegistrationText"
@@ -724,22 +727,23 @@ export class YpLogin extends YpBaseElement {
                 ></md-filled-button
               >
             </div>
-
-            <div class="loginInfoOptions layout horizontal center-center wrap">
-              <div class="loginInfoContainer layout vertical">
-                <div class="loginInfo">${this.t("dontHaveAccount")}</div>
-                <md-text-button @click="${this.openCreateUser}"
-                  >${this.t("user.create")}</md-text-button
-                >
-              </div>
-              <div class="loginInfoContainer layout vertical">
-                <div class="loginInfo">${this.t("cantRememberPassword")}</div>
-                <md-text-button @click="${this._forgotPassword}"
-                  ><span class="capitalize"
-                    >${this.t("user.newPassword")}</span
-                  ></md-text-button
-                >
-              </div>
+          </div>
+        </div>
+        <div slot="actions">
+          <div class="loginInfoOptions layout horizontal center-center wrap">
+            <div class="loginInfoContainer layout vertical">
+              <div class="loginInfo">${this.t("dontHaveAccount")}</div>
+              <md-text-button @click="${this.openCreateUser}"
+                >${this.t("user.create")}</md-text-button
+              >
+            </div>
+            <div class="loginInfoContainer layout vertical">
+              <div class="loginInfo">${this.t("cantRememberPassword")}</div>
+              <md-text-button @click="${this._forgotPassword}"
+                ><span class="capitalize"
+                  >${this.t("user.newPassword")}</span
+                ></md-text-button
+              >
             </div>
           </div>
         </div>
@@ -757,60 +761,66 @@ export class YpLogin extends YpBaseElement {
         transition="grow-left"
         .fullscreen=${!this.wide}
       >
-        <div slot="header" class="layout horizontal center-center">
-         ${this.t("user.create")}
+        <div slot="headline" class="layout horizontal center-center">
+          ${this.t("user.create")}
         </div>
-        <div class="create-user-content">
-          <md-filled-text-field
-            id="fullname"
-            type="text"
-            .label="${this.userNameText}"
-            maxLength="50"
-            minLength="2"
-            required
-            charCounter
-          ></md-filled-text-field>
-          <md-filled-text-field
-            id="regEmail"
-            type="email"
-            .label="${this.t("user.email")}"
-            name="username"
-            pattern=".+@.+"
-            min="5"
-            autocomplete="username"
-          ></md-filled-text-field>
-          <md-filled-text-field
-            id="regPassword"
-            type="password"
-            minLength="5"
-            .label="${this.t("user.password")}"
-            autocomplete="current-password"
-            @keyup="${this.onEnterRegistration}"
-          ></md-filled-text-field>
-          ${this.registrationQuestionsGroup
-            ? html`
-                <yp-registration-questions
-                  id="registrationQuestions"
-                  @questions-changed="${this._registrationQuestionsChanged}"
-                  @resize-scroller="${this._registrationQuestionsChanged}"
-                  .group="${this.registrationQuestionsGroup}"
-                >
-                </yp-registration-questions>
-              `
-            : nothing}
-          <div class="signupTerms" ?hidden="${!this.showSignupTerms}">
-            ${this.customTermsIntroText} -
-            <span @click="${this._openTerms}" class="openTerms"
-              >${this.t("signupTermsOpen")}</span
-            >
+        <div slot="content">
+          <div class="create-user-content">
+            <md-filled-text-field
+              id="fullname"
+              type="text"
+              .label="${this.userNameText}"
+              maxLength="50"
+              minLength="2"
+              required
+              charCounter
+            ></md-filled-text-field>
+            <md-filled-text-field
+              id="regEmail"
+              type="email"
+              .label="${this.t("user.email")}"
+              name="username"
+              pattern=".+@.+"
+              min="5"
+              autocomplete="username"
+            ></md-filled-text-field>
+            <md-filled-text-field
+              id="regPassword"
+              type="password"
+              minLength="5"
+              .label="${this.t("user.password")}"
+              autocomplete="current-password"
+              @keyup="${this.onEnterRegistration}"
+            ></md-filled-text-field>
+            ${this.registrationQuestionsGroup
+              ? html`
+                  <yp-registration-questions
+                    id="registrationQuestions"
+                    @questions-changed="${this._registrationQuestionsChanged}"
+                    @resize-scroller="${this._registrationQuestionsChanged}"
+                    .group="${this.registrationQuestionsGroup}"
+                  >
+                  </yp-registration-questions>
+                `
+              : nothing}
+            <div class="signupTerms" ?hidden="${!this.showSignupTerms}">
+              ${this.customTermsIntroText} -
+              <span @click="${this._openTerms}" class="openTerms"
+                >${this.t("signupTermsOpen")}</span
+              >
+            </div>
           </div>
         </div>
-        <md-text-button slot="footer" @click="${this.cancelRegistration}" dialogAction="cancel"
-          >${this.t("cancel")}</md-text-button
-        >
-        <md-text-button @click="${() => this._validateAndSend(true)}" slot="footer"
-          >${this.t("user.create")}</md-text-button
-        >
+        <div slot="actions">
+          <md-text-button
+            @click="${this.cancelRegistration}"
+            dialogAction="cancel"
+            >${this.t("cancel")}</md-text-button
+          >
+          <md-text-button @click="${() => this._validateAndSend(true)}"
+            >${this.t("user.create")}</md-text-button
+          >
+        </div>
       </md-dialog>
     `;
   }
@@ -855,35 +865,33 @@ export class YpLogin extends YpBaseElement {
   renderOneTimeDialog() {
     return html`
       <md-dialog id="dialogOneTimeWithName" modal>
-        <h3>[[t('oneTimeLoginWithName')]]</h3>
-        <md-filled-text-field
-          id="oneTimeLoginWithNameId"
-          type="text"
-          .label="${this.userNameText}"
-          maxlength="50"
-          @keyup="${this._updateOneTimeLoginName}"
-          autocomplete="off"
-        ></md-filled-text-field>
-        ${this.registrationQuestionsGroup
-          ? html`
-              <yp-registration-questions
-                id="registrationQuestionsOneTimeLogin"
-                @questions-changed="${this._registrationQuestionsChanged}"
-                @resize-scroller="${this._registrationQuestionsChanged}"
-                .group="${this.registrationQuestionsGroup}"
-              ></yp-registration-questions>
-            `
-          : nothing}
+        <div slot="headline">[[t('oneTimeLoginWithName')]]</div>
+        <div slot="content">
+          <md-filled-text-field
+            id="oneTimeLoginWithNameId"
+            type="text"
+            .label="${this.userNameText}"
+            maxlength="50"
+            @keyup="${this._updateOneTimeLoginName}"
+            autocomplete="off"
+          ></md-filled-text-field>
+          ${this.registrationQuestionsGroup
+            ? html`
+                <yp-registration-questions
+                  id="registrationQuestionsOneTimeLogin"
+                  @questions-changed="${this._registrationQuestionsChanged}"
+                  @resize-scroller="${this._registrationQuestionsChanged}"
+                  .group="${this.registrationQuestionsGroup}"
+                ></yp-registration-questions>
+              `
+            : nothing}
+        </div>
 
-        <div class="buttons">
-          <md-text-button
-            slot="footer"
-            dialogAction="cancel"
-            @click="${this._cancel}"
+        <div class="buttons" slot="actions">
+          <md-text-button dialogAction="cancel" @click="${this._cancel}"
             >${this.t("cancel")}</md-text-button
           >
           <md-text-button
-            slot="footer"
             ?disabled="${!this.oneTimeLoginName}"
             @click="${this.finishOneTimeLoginWithName}"
           >
@@ -938,7 +946,8 @@ export class YpLogin extends YpBaseElement {
 
   render() {
     return html`
-      ${this.renderLogin()} ${this.renderCreateUser()} ${this.renderForgotPassword()}
+      ${this.renderLogin()} ${this.renderCreateUser()}
+      ${this.renderForgotPassword()}
       ${this.hasOneTimeLoginWithName ? this.renderOneTimeDialog() : nothing}
     `;
   }
@@ -1381,7 +1390,9 @@ export class YpLogin extends YpBaseElement {
   }
 
   _forgotPassword() {
-    (this.$$("#forgotPasswordDialog") as YpForgotPassword).open({ email: this.emailValue(true) });
+    (this.$$("#forgotPasswordDialog") as YpForgotPassword).open({
+      email: this.emailValue(true),
+    });
   }
 
   connectedCallback() {
@@ -1398,7 +1409,10 @@ export class YpLogin extends YpBaseElement {
     super.connectedCallback();
     this.removeListener("yp-domain-changed", this._domainEvent.bind(this));
     this.removeListener("yp-network-error", this._networkError.bind(this));
-    this.removeGlobalListener("yp-logged-in-via-polling", this.close.bind(this));
+    this.removeGlobalListener(
+      "yp-logged-in-via-polling",
+      this.close.bind(this)
+    );
   }
 
   setup(onLoginFunction: Function, domain: YpDomainData) {
@@ -1419,9 +1433,9 @@ export class YpLogin extends YpBaseElement {
     const email = (this.$$("#email") as TextField).value.trim();
     const regEmail = (this.$$("#regEmail") as TextField).value.trim();
 
-    if (registerMode===undefined) {
+    if (registerMode === undefined) {
       return email || regEmail;
-    } else if (registerMode===true) {
+    } else if (registerMode === true) {
       return regEmail;
     } else {
       return email;
@@ -1432,9 +1446,9 @@ export class YpLogin extends YpBaseElement {
     const password = (this.$$("#password") as TextField).value.trim();
     const regPassword = (this.$$("#regPassword") as TextField).value.trim();
 
-    if (registerMode===undefined) {
+    if (registerMode === undefined) {
       return password || regPassword;
-    } else if (registerMode===true) {
+    } else if (registerMode === true) {
       return regPassword;
     } else {
       return password;
@@ -1532,9 +1546,11 @@ export class YpLogin extends YpBaseElement {
   }
 
   _loginCompleted(user: YpUserData) {
-    if (window.PasswordCredential &&
-        this.emailValue() &&
-        this.passwordValue()) {
+    if (
+      window.PasswordCredential &&
+      this.emailValue() &&
+      this.passwordValue()
+    ) {
       const c = new window.PasswordCredential({
         name: this.emailValue(),
         id: this.emailValue(),

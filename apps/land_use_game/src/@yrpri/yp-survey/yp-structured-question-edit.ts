@@ -19,10 +19,10 @@ import './yp-simple-html-editor.js';
 
 import { YpSimpleHtmlEditor } from './yp-simple-html-editor.js';
 import { YpBaseElement } from '../common/yp-base-element.js';
-import { TextField } from '@material/web/textfield/lib/text-field.js';
-import { Checkbox } from '@material/web/checkbox/lib/checkbox.js';
-import { Radio } from '@material/web/radio/lib/radio.js';
 import { Layouts } from '../../flexbox-literals/classes.js';
+import { TextField } from '@material/web/textfield/internal/text-field.js';
+import { Checkbox } from '@material/web/checkbox/internal/checkbox.js';
+import { Radio } from '@material/web/radio/internal/radio.js';
 
 @customElement('yp-structured-question-edit')
 export class YpStructuredQuestionEdit extends YpBaseElement {

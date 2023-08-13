@@ -2,7 +2,7 @@ import { html, css, nothing } from 'lit';
 import { property, customElement } from 'lit/decorators.js';
 
 import '@material/mwc-icon-button';
-import '@material/web/iconbutton/standard-icon-button.js';
+import '@material/web/iconbutton/icon-button.js';
 
 import '../yp-user/yp-user-image.js';
 import '../yp-user/yp-user-with-organization.js';
@@ -102,20 +102,20 @@ export class YpPointComment extends YpBaseElementWithLogin {
                 .point="${this.point}"
                 hideSharing></yp-point-actions>
               <div class="extraActions layout horizontal">
-              <md-standard-icon-button
+              <md-icon-button
                 ?hidden=""
                 ?hidden="${!this.loggedInUser}"
                 .label="${this.t('point.report')}"
                 id="reportPointIconButton"
-                @click="${this._reportPoint}"><md-icon>warning</md-icon></md-standard-icon-button>
+                @click="${this._reportPoint}"><md-icon>warning</md-icon></md-icon-button>
 
               ${this.hasPointAccess
                 ? html`
                     <div class="layout horizontal self-end">
-                      <md-standard-icon-button
+                      <md-icon-button
                         id="deleteButton"
                         .label="${this.t('delete')}"
-                        @click="${this._deletePoint}"><md-icon>clear</md-icon></md-standard-icon-button>
+                        @click="${this._deletePoint}"><md-icon>clear</md-icon></md-icon-button>
                     </div>
                   `
                 : html``}

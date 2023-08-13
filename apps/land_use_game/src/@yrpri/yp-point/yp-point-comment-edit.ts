@@ -10,7 +10,7 @@ import '../yp-user/yp-user-info.js';
 
 import { YpBaseElementWithLogin } from '../common/yp-base-element-with-login.js';
 import { TextArea } from '@material/mwc-textarea';
-import { Button } from '@material/web/button/lib/button.js';
+import { Button } from '@material/web/button/internal/button.js';
 
 @customElement('yp-point-comment-edit')
 export class YpPointCommentEdit extends YpBaseElementWithLogin {
