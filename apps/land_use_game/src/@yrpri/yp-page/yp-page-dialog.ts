@@ -60,16 +60,15 @@ export class YpPageDialog extends YpBaseElement {
           align-items: flex-start;
         }
 
+        md-dialog {
+          height: 100%;
+        }
         @media (max-width: 1100px) {
         }
 
         @media (max-width: 600px) {
           #content {
             padding: 0;
-          }
-
-          md-dialog {
-            height: 100%;
           }
 
           .headline {
