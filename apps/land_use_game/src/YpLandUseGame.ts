@@ -1101,6 +1101,8 @@ export class YpLandUseGame extends YpBaseElement {
       Cesium.ScreenSpaceEventType.LEFT_CLICK
     );
 
+    this.viewer.screenSpaceEventHandler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
+
     //this.viewer.scene.postProcessStages.bloom.enabled = true;
     setTimeout(async () => {
       await this.tileManager.readGeoData(this.group!.id);

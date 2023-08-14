@@ -766,8 +766,9 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
       } else if (this.question.type!.toLowerCase() === 'checkboxes') {
         let selectedCheckboxes = '';
         for (let i = 0; i < item.children.length; i++) {
-          if ((item.children[i] as Checkbox).checked) {
-            const checkboxSubId: string = item.children[i].id.split('_')[2];
+          const checkbox = (item.children[i].children[0] as Checkbox);
+          if (checkbox && checkbox.checked) {
+            const checkboxSubId: string = checkbox.id.split('_')[2];
             const selectedCheckbox = this.question.checkboxes![
               parseInt(checkboxSubId)
             ];
@@ -806,7 +807,7 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
       if (value!=undefined && this.question.uniqueId) {
         return { uniqueId: this.question.uniqueId, value: value };
       } else {
-        console.error("Can't find answer for question");
+        console.error(`Can't find answer for question: ${this.question.text}`)
         return undefined
       }
     } else if (!suppressNotFoundError) {
