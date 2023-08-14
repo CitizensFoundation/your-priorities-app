@@ -143,7 +143,7 @@ export class Tutorial extends YpCodeBase {
   }
 
   _openPage(page: TutorialPageData) {
-    if (false) {
+    if (true) {
       setTimeout(() => {
         window.appGlobals.activity("open", "pages", page.id);
         window.appDialogs.getDialogAsync("pageDialog", (dialog: YpPageDialog) => {
