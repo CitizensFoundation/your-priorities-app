@@ -24,6 +24,10 @@ export class YpRegistrationQuestionsDialog extends YpBaseElement {
           display: none !important;
         }
 
+        md-dialog {
+          height: 100%;
+        }
+
         yp-registration-questions {
           margin-top: 0;
           min-height: 15px;

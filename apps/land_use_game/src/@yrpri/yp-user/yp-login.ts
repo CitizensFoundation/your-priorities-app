@@ -134,6 +134,10 @@ export class YpLogin extends YpBaseElement {
           ) !important;
         }
 
+        md-dialog {
+          height: 100%;
+        }
+
         .createUser {
           padding: 16px;
           text-align: left;

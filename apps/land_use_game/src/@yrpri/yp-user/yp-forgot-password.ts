@@ -29,6 +29,10 @@ export class YpForgotPassword extends YpBaseElement {
       super.styles,
       Layouts,
       css`
+        md-dialog {
+          height: 100%;
+        }
+
         :host {
           --md-dialog-container-color: var(--md-sys-color-surface);
           --md-filled-field-container-color: var(

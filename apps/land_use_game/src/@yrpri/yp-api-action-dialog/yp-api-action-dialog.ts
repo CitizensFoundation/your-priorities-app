@@ -28,7 +28,11 @@ export class YpApiActionDialog extends YpBaseElement {
   finalDeleteWarning = false;
 
   static get styles() {
-    return [super.styles, css``];
+    return [super.styles, css`
+       md-dialog {
+         height: 100%;
+        }
+    `];
   }
 
   render() {

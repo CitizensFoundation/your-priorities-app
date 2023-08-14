@@ -33,7 +33,9 @@ export class YpNewCommentDialog extends YpBaseElementWithLogin {
         :host {
           padding-top: 16px;
         }
-
+        md-dialog {
+          height: 100%;
+        }
         mwc-textarea {
           width: 460px;
           margin-top: -8px;

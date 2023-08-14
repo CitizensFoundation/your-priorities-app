@@ -95,6 +95,10 @@ export class YpEditDialog extends YpBaseElement {
           font-family: var(--app-header-font-family, Roboto);
         }
 
+        md-dialog {
+          height: 100%;
+        }
+
         :host {
           --md-dialog-container-color: var(--md-sys-color-surface);
           --md-filled-field-container-color: var(

@@ -21,7 +21,11 @@ export class YpResetPassword extends YpBaseElement {
   passwordErrorMessage = "";
 
   static get styles() {
-    return [super.styles, css``];
+    return [super.styles, css`
+     md-dialog {
+       height: 100%;
+     }
+    `];
   }
 
   render() {

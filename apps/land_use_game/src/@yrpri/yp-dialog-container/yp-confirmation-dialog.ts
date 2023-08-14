@@ -25,7 +25,11 @@ export class YpConfirmationDialog extends YpBaseElement {
   hideCancel = false;
 
   static get styles() {
-    return [css``];
+    return [css`
+        md-dialog {
+          height: 100%;
+        }
+    `];
   }
 
   render() {

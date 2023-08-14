@@ -181,7 +181,12 @@ export class YpLandUseGame extends YpBaseElement {
       Layouts,
       ShadowStyles,
       css`
-        :host {
+       md-dialog {
+        height: 100%;
+       }
+
+
+      :host {
           --md-dialog-container-color: var(--md-sys-color-surface);
           --md-filled-field-container-color: var(
             --md-sys-color-surface
@@ -1101,7 +1106,9 @@ export class YpLandUseGame extends YpBaseElement {
       Cesium.ScreenSpaceEventType.LEFT_CLICK
     );
 
-    this.viewer.screenSpaceEventHandler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
+    this.viewer.screenSpaceEventHandler.removeInputAction(
+      Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK
+    );
 
     //this.viewer.scene.postProcessStages.bloom.enabled = true;
     setTimeout(async () => {
