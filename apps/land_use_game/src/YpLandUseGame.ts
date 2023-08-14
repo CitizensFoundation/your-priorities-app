@@ -172,7 +172,7 @@ export class YpLandUseGame extends YpBaseElement {
     }
 
     this.currentErrorText = error;
-    (this.$$("#errorDialog") as Dialog).open = true;
+    (this.$$("#errorDialog") as Dialog).show();
   }
 
   static get styles() {
@@ -1483,13 +1483,17 @@ export class YpLandUseGame extends YpBaseElement {
       `;
   }
 
+  closeErrorDialog() {
+    (this.$$("#errorDialog") as Dialog).close();
+  }
+
   renderErrorDialog() {
     return html`
       <md-dialog id="errorDialog" @closed="${this.errorDialogClosed}">
         <div slot="headliner">${this.t("Error")}</div>
         <div slot="content">${this.currentErrorText}</div>
         <div slot="actions">
-          <md-text-button slot="footer" dialogAction="ok"
+          <md-text-button @click="${this.closeErrorDialog}"
             >${this.t("ok")}</md-text-button
           >
         </div>

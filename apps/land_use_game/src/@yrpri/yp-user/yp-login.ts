@@ -141,6 +141,7 @@ export class YpLogin extends YpBaseElement {
 
         .loginInfo {
           padding-right: 4px;
+          font-size: 16px;
         }
 
         .capitalize {
@@ -903,12 +904,12 @@ export class YpLogin extends YpBaseElement {
   }
 
   openCreateUser() {
-    (this.$$("#createUserDialog") as Dialog).open = true;
-    (this.$$("#loginDialog") as Dialog).open = false;
+    (this.$$("#createUserDialog") as Dialog).show();
+    (this.$$("#loginDialog") as Dialog).close();
   }
 
   cancelRegistration() {
-    (this.$$("#loginDialog") as Dialog).open = true;
+    (this.$$("#loginDialog") as Dialog).show();
   }
 
   _setupJsonCredentials(registerMode: boolean) {
@@ -1089,14 +1090,14 @@ export class YpLogin extends YpBaseElement {
 
   oneTimeLogin() {
     this.oneTimeLoginName = undefined;
-    (this.$$("#dialogOneTimeWithName") as Dialog).open = true;
+    (this.$$("#dialogOneTimeWithName") as Dialog).show();
     setTimeout(() => {
       this.$$("#oneTimeLoginWithNameId")?.focus();
     }, 50);
   }
 
   finishOneTimeLoginWithName() {
-    (this.$$("#dialogOneTimeWithName") as Dialog).open = false;
+    (this.$$("#dialogOneTimeWithName") as Dialog).close();
     if (
       this.oneTimeLoginName &&
       (!this.registrationQuestionsGroup ||
@@ -1152,7 +1153,7 @@ export class YpLogin extends YpBaseElement {
         );
         this._loginCompleted(user);
         if (this.$$("#dialogOneTimeWithName") as Dialog) {
-          (this.$$("#dialogOneTimeWithName") as Dialog).open = false;
+          (this.$$("#dialogOneTimeWithName") as Dialog).close();
         }
       } else {
         console.error("No user in anonymousLogin");
@@ -1475,7 +1476,7 @@ export class YpLogin extends YpBaseElement {
       console.debug(
         "Got register response for: " + user ? user.email : "unknown"
       );
-      (this.$$("#createUserDialog") as Dialog).open = false;
+      (this.$$("#createUserDialog") as Dialog).close();
     } else {
       console.error("No user in registerUser");
     }
@@ -1570,7 +1571,7 @@ export class YpLogin extends YpBaseElement {
     }
   }
 
-  open(
+  async open(
     redirectToURL: string | undefined,
     email: string | undefined,
     collectionConfiguration: YpCollectionConfiguration | undefined
@@ -1593,6 +1594,10 @@ export class YpLogin extends YpBaseElement {
     }
 
     this.opened = true;
+
+    await this.updateComplete;
+
+    (this.$$("md-dialog") as Dialog).show();
 
     window.appGlobals.analytics.sendLoginAndSignup(
       -1,
@@ -1636,6 +1641,7 @@ export class YpLogin extends YpBaseElement {
   close() {
     this.opened = false;
     this.userSpinner = false;
+    (this.$$("md-dialog") as Dialog).close();
     console.log("Closed login dialog");
   }
 }

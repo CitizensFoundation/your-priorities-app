@@ -80,7 +80,7 @@ export class YpApiActionDialog extends YpBaseElement {
 
     await this.updateComplete;
 
-    (this.$$("#confirmationDialog") as Dialog).open = true;
+    (this.$$("#confirmationDialog") as Dialog).show();
   }
 
   async _delete() {
@@ -97,7 +97,7 @@ export class YpApiActionDialog extends YpBaseElement {
     } else {
       this.finalDeleteWarning = false;
       this.confirmationText = this.t("finalDeleteWarning");
-      (this.$$("#confirmationDialog") as Dialog).open = true;
+      (this.$$("#confirmationDialog") as Dialog).show();
     }
   }
 }

@@ -351,11 +351,11 @@ export class YpAppDialogs extends YpBaseElement {
   async openLoadingDialog() {
     this.loadingDialogOpen = true;
     await this.requestUpdate();
-    (this.$$("#loadingDialog") as Dialog).open = true;
+    (this.$$("#loadingDialog") as Dialog).show();
   }
 
   async closeLoadingDialog() {
-    (this.$$("#loadingDialog") as Dialog).open = false;
+    (this.$$("#loadingDialog") as Dialog).close();
     this.loadingDialogOpen = true;
   }
 

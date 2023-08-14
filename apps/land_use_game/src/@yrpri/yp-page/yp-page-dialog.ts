@@ -100,7 +100,6 @@ export class YpPageDialog extends YpBaseElement {
       <md-dialog
         escapeKeyAction=""
         scrimClickAction=""
-        @closed="${this._close}"
         id="dialog"
         ?rtl="${this.rtl}"
       >
@@ -184,11 +183,11 @@ export class YpPageDialog extends YpBaseElement {
     await this.updateComplete;
     const contentEl = this.$$("#content") as HTMLElement;
     contentEl.innerHTML = this.page.content[this.language];
-    (this.$$("#dialog") as Dialog).open = true;
+    (this.$$("#dialog") as Dialog).show();
   }
 
   _close() {
-    (this.$$("#dialog") as Dialog).open = false;
+    (this.$$("#dialog") as Dialog).close();
     (this.$$("#content") as HTMLElement).innerHTML = "";
     window.appGlobals.activity("close", "pages");
     if (this.closeFunction) {

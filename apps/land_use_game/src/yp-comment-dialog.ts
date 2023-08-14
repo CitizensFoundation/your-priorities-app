@@ -115,7 +115,7 @@ export class YpCommentDialog extends YpBaseElementWithLogin {
   }
 
   async openDialog(event: CustomEvent) {
-    (this.$$("#commentDialog") as Dialog).open = true;
+    (this.$$("#commentDialog") as Dialog).show();
     this.point = await window.serverApi.getParentPoint(
       this.group.id,
       event.detail.entity.pointIds[0]
@@ -123,7 +123,7 @@ export class YpCommentDialog extends YpBaseElementWithLogin {
   }
 
   closeDialog() {
-    (this.$$("#commentDialog") as Dialog).open = false;
+    (this.$$("#commentDialog") as Dialog).close();
     this.fire("close");
   }
 

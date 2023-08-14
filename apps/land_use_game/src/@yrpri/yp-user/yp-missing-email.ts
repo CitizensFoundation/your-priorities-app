@@ -169,7 +169,7 @@ export class YpMissingEmail extends YpBaseElement {
 
   _notNow() {
     window.appGlobals.activity('cancel', 'setEmail');
-    (this.$$('#dialog') as Dialog).open = false;
+    (this.$$('#dialog') as Dialog).close();
   }
 
   _logout() {
@@ -266,13 +266,13 @@ export class YpMissingEmail extends YpBaseElement {
       this.email = email;
       this.originalConfirmationEmail = email;
     }
-    (this.$$('#dialog') as Dialog).open = false;
+    (this.$$('#dialog') as Dialog).show();
     if (this.onlyConfirmingEmail) {
       window.serverApi.confirmEmailShown();
     }
   }
 
   close() {
-    (this.$$('#dialog') as Dialog).open = false;
+    (this.$$('#dialog') as Dialog).close();
   }
 }

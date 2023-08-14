@@ -115,11 +115,11 @@ export class YpNewCommentDialog extends YpBaseElementWithLogin {
 
   async openDialog() {
     this._reset();
-    (this.$$("#commentDialog") as Dialog).open = true;
+    (this.$$("#commentDialog") as Dialog).show();
   }
 
   closeDialog() {
-    (this.$$("#commentDialog") as Dialog).open = false;
+    (this.$$("#commentDialog") as Dialog).close();
   }
 
   renderFooter() {

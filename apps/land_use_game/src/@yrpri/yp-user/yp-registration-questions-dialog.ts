@@ -64,7 +64,7 @@ export class YpRegistrationQuestionsDialog extends YpBaseElement {
           <md-text-button @click="${this.logout}"
             ><span class="upper">${this.t("user.logout")}</span></md-text-button
           >
-          <md-text-button @click="${this._validateAndSend}"
+          <md-text-button @click="${this._validateAndSend}" autofocus
             ><span class="upper">${this.t("save")}</span></md-text-button
           >
         </div>
@@ -106,12 +106,14 @@ export class YpRegistrationQuestionsDialog extends YpBaseElement {
 
   async open(registrationQuestionsGroup: YpGroupData) {
     this.registrationQuestionsGroup = registrationQuestionsGroup;
-    await this.requestUpdate();
+    this.requestUpdate();
 
-    (this.$$("#dialog") as Dialog).open = true;
+    await this.updateComplete;
+
+    (this.$$("#dialog") as Dialog).show();
   }
 
   close() {
-    (this.$$("#dialog") as Dialog).open = false;
+    (this.$$("#dialog") as Dialog).close();
   }
 }

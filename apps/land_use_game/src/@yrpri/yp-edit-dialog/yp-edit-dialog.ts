@@ -750,11 +750,11 @@ export class YpEditDialog extends YpBaseElement {
 
   _showErrorDialog(errorText: string) {
     this.errorText = errorText;
-    (this.$$("#formErrorDialog") as Dialog).open = true;
+    (this.$$("#formErrorDialog") as Dialog).show();
   }
 
   _clearErrorText() {
-    (this.$$("#formErrorDialog") as Dialog).open = false;
+    (this.$$("#formErrorDialog") as Dialog).close();
     this.errorText = undefined;
   }
 }

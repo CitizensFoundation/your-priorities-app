@@ -94,10 +94,10 @@ export class YpResetPassword extends YpBaseElement {
 
   open(token: string) {
     if (token) this.token = token;
-    (this.$$("#dialog") as Dialog).open = true;
+    (this.$$("#dialog") as Dialog).show();
   }
 
   close() {
-    (this.$$("#dialog") as Dialog).open = false;
+    (this.$$("#dialog") as Dialog).close();
   }
 }

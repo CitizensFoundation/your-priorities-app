@@ -72,7 +72,7 @@ export class YpConfirmationDialog extends YpBaseElement {
       //(this.$$('#confirmationDialog') as Dialog).modal = false;
     }
     await this.updateComplete;
-    (this.$$("#confirmationDialog") as Dialog).open = true;
+    (this.$$("#confirmationDialog") as Dialog).show();
     if (useFinalWarning) {
       this.useFinalWarning = true;
     } else {
@@ -89,10 +89,10 @@ export class YpConfirmationDialog extends YpBaseElement {
   _confirm() {
     if (this.useFinalWarning && !this.haveIssuedFinalWarning) {
       this.haveIssuedFinalWarning = true;
-      (this.$$("#confirmationDialog") as Dialog).open = false;
+      (this.$$("#confirmationDialog") as Dialog).close();
       this.confirmationText = this.t("finalDeleteWarning");
       setTimeout(() => {
-        (this.$$("#confirmationDialog") as Dialog).open = true;
+        (this.$$("#confirmationDialog") as Dialog).show();
       });
     } else {
       if (this.onConfirmedFunction) {

@@ -160,10 +160,10 @@ export class YpForgotPassword extends YpBaseElement {
       this.email = detail.email;
     }
 
-    (this.$$("#dialog") as Dialog).open = true;
+    (this.$$("#dialog") as Dialog).show();
   }
 
   close() {
-    (this.$$("#dialog") as Dialog).open = false;
+    (this.$$("#dialog") as Dialog).close();
   }
 }

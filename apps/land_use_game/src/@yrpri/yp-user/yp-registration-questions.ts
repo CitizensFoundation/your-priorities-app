@@ -54,6 +54,11 @@ export class YpRegistrationQuestions extends YpBaseElement {
       "yp-auto-translate",
       this._autoTranslateEvent.bind(this)
     );
+
+    if (window.autoTranslate) {
+      this.autoTranslate = true;
+    }
+
     this._getTranslationsIfNeeded();
   }
 
@@ -169,7 +174,7 @@ export class YpRegistrationQuestions extends YpBaseElement {
     this._getTranslationsIfNeeded();
   }
 
-  _getTranslationsIfNeeded() {
+  async _getTranslationsIfNeeded() {
     this.translatedQuestions = undefined;
     if (
       this.autoTranslate &&
@@ -178,10 +183,11 @@ export class YpRegistrationQuestions extends YpBaseElement {
       this.language !== this.group.language
     ) {
       const translatedTexts =
-        window.serverApi.getTranslatedRegistrationQuestions(
+        await window.serverApi.getTranslatedRegistrationQuestions(
           this.group.id,
           this.language
         );
+
       if (this.autoTranslate && this.language !== this.group.language) {
         const currentQuestions = JSON.parse(
           JSON.stringify(this.group.configuration.registrationQuestionsJson)
@@ -252,6 +258,7 @@ export class YpRegistrationQuestions extends YpBaseElement {
           this.translatedQuestions = currentQuestions;
         } else {
           console.error("Questions and Translated texts length does not match");
+          console.error(`Questions: ${currentQuestions.length} Texts ${translatedTexts.length}`);
         }
       } else {
         this.translatedQuestions = undefined;
