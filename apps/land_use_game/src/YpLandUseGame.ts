@@ -1060,11 +1060,13 @@ export class YpLandUseGame extends YpBaseElement {
       "touchmove",
       (event) => {
         //@ts-ignore
-        if (this.disableBrowserTouchEvents) {
-          event.preventDefault();
-        } else {
+        if (event.scale !== 1) {
+          if (this.disableBrowserTouchEvents) {
+            event.preventDefault();
+          } else {
+          }
         }
-    },
+      },
       { passive: false }
     );
 
