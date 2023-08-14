@@ -66,7 +66,6 @@ export class YpPageDialog extends YpBaseElement {
         @media (max-width: 600px) {
           #content {
             padding: 0;
-            height: 100%;
           }
 
           md-dialog {
