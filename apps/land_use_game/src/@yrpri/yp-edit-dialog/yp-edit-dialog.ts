@@ -344,7 +344,6 @@ export class YpEditDialog extends YpBaseElement {
             id="dismissBtn"
             .label="${this.t("close")}"
             icon="close"
-            slot="secondaryAction"
             class="closeIconNarrow"
             dialog-dismiss
           ></mwc-icon-button>
@@ -409,6 +408,7 @@ export class YpEditDialog extends YpBaseElement {
     return html`
       <div
         id="scrollable"
+        slot="content"
         .smallHeight="${!this.wide}"
         .mediumHeight="${!this.wide}"
         .largeHeight="${this.wide}"
@@ -424,53 +424,58 @@ export class YpEditDialog extends YpBaseElement {
         </yp-form>
         <md-circular-progress id="spinner"></md-circular-progress>
       </div>
-      ${this.cancelText
-        ? html`
-            <md-text-button
-              id="dismissBtn"
-              dialogAction="cancel"
-              slot="footer"
-              .label=""
-              >${this.cancelText}</md-text-button
-            >
-          `
-        : html`
-            <md-text-button id="dismissBtn" dialogAction="cancel" slot="footer"
-              >${this.t("cancel")}</md-text-button
-            >
-          `}
-      ${!this.uploadingState
-        ? html`
-            ${!this.useNextTabAction
-              ? html`
-                  <md-text-button
-                    raised
-                    class="actionButtons"
-                    slot="footer"
-                    ?hidden="${!this.saveText}"
-                    id="submit2"
-                    @click="${this._submit}"
-                    >${this.saveText ? this.saveText : ""}</md-text-button
-                  >
-                `
-              : html`
-                  <md-text-button
-                    raised
-                    slot="footer"
-                    class="actionButtons"
-                    @click="${this._nextTab}"
-                    >${this.nextActionText!}</md-text-button
-                  >
-                `}
-          `
-        : html`
+      <div slot="actions">
+        ${this.cancelText
+          ? html`
+              <md-text-button
+                id="dismissBtn"
+                class="actionButtons"
+                @click="${this.close}"
+                dialogAction="cancel"
+                .label=""
+                >${this.cancelText}</md-text-button
+              >
+            `
+          : html`
+              <md-text-button
+                id="dismissBtn"
+                @click="${this.close}"
+                class="actionButtons"
+                dialogAction="cancel"
+                >${this.t("cancel")}</md-text-button
+              >
+            `}
+        ${!this.uploadingState
+          ? html`
+              ${!this.useNextTabAction
+                ? html`
+                    <md-text-button
+                      raised
+                      class="actionButtons"
+                      ?hidden="${!this.saveText}"
+                      id="submit2"
+                      @click="${this._submit}"
+                      >${this.saveText ? this.saveText : ""}</md-text-button
+                    >
+                  `
+                : html`
+                    <md-text-button
+                      raised
+                      class="actionButtons"
+                      @click="${this._nextTab}"
+                      >${this.nextActionText!}</md-text-button
+                    >
+                  `}
+            `
+          : html`
             <md-text-button
               disabled
               @click="${this._nextTab}"
-              slot="footer"
+
              >${this.t("uploading.inProgress")}</md-text-button>
           </div>
           `}
+      </div>
     `;
   }
 
@@ -491,13 +496,11 @@ export class YpEditDialog extends YpBaseElement {
         with-backdrop="${!this.wide}"
       >
         <div slot="headline">${this.heading}</div>
-        <div slot="content">
-          ${
-            /*this.narrow*/ false
-              ? this.renderMobileView()
-              : this.renderDesktopView()
-          }
-        </div>
+        ${
+          /*this.narrow*/ false
+            ? this.renderMobileView()
+            : this.renderDesktopView()
+        }
       </md-dialog>
 
       <md-dialog id="formErrorDialog" modal>
@@ -609,6 +612,7 @@ export class YpEditDialog extends YpBaseElement {
       } else {
         this.snackbarTextCombined = this.snackbarText;
       }
+      this.snackbarTextCombined = this.t('thankYouForSubmittingYourLandUses');
       (this.$$("#snackbar") as Snackbar).open = true;
     }
   }

@@ -622,6 +622,10 @@ export class YpLandUseGame extends YpBaseElement {
     this.group = await window.appGlobals.setupGroup();
     super.connectedCallback();
     this.themeChanged();
+    this.resetHelpPages();
+  }
+
+  async resetHelpPages() {
     const helpPages = (await window.serverApi.getHelpPages(
       "group",
       this.group!.id
@@ -897,6 +901,7 @@ export class YpLandUseGame extends YpBaseElement {
     document.addEventListener("yp-error", this.ypError.bind(this));
     document.addEventListener("yp-network-error", this.ypError.bind(this));
     document.addEventListener("keydown", this.handleKeyDown.bind(this));
+    document.addEventListener("yp-language-loaded", this.resetHelpPages.bind(this));
 
     document.addEventListener(
       "disableBrowserTouch",
@@ -989,14 +994,19 @@ export class YpLandUseGame extends YpBaseElement {
     //@ts-ignore
     Cesium.Ion.defaultAccessToken = window.appGlobals.domain!.ionToken;
 
-    let imageProvider: false | ImageryProvider | undefined;
-
+    let baseLayer;
     if (window.location.href.indexOf("localhost") > -1) {
-      imageProvider = new Cesium.IonImageryProvider({ assetId: 3954 });
+      baseLayer = Cesium.ImageryLayer.fromProviderAsync(
+        Cesium.IonImageryProvider.fromAssetId(3954,{}),
+        {} // Options object, can be customized as needed
+      );
     } else {
-      imageProvider = Cesium.createWorldImagery({
-        style: Cesium.IonWorldImageryStyle.AERIAL,
-      });
+      baseLayer = Cesium.ImageryLayer.fromProviderAsync(
+        Cesium.createWorldImageryAsync({
+          style: Cesium.IonWorldImageryStyle.AERIAL,
+        }),
+        {} // Options object, can be customized as needed
+      );
     }
 
     this.viewer = new Cesium.Viewer(container, {
@@ -1008,8 +1018,8 @@ export class YpLandUseGame extends YpBaseElement {
       baseLayerPicker: false,
       fullscreenButton: false,
       geocoder: false,
-
-      //      requestRenderMode: true,
+      baseLayer: baseLayer,
+         requestRenderMode: true,
       homeButton: false,
       //    infoBox: false,
       sceneModePicker: false,
@@ -1020,7 +1030,6 @@ export class YpLandUseGame extends YpBaseElement {
       vrButton: false,
       //ts-ignore
       terrainProvider: await Cesium.createWorldTerrainAsync(),
-      imageryProvider: imageProvider,
     });
 
     window.addEventListener(
@@ -1235,23 +1244,22 @@ export class YpLandUseGame extends YpBaseElement {
     this.viewer!.trackedEntity = this.planeManager.plane;
   }
 
-  chooseAerial() {
+  async chooseAerial() {
     this.viewer!.imageryLayers.removeAll();
-    this.viewer!.imageryLayers.addImageryProvider(
-      Cesium.createWorldImagery({
-        style: Cesium.IonWorldImageryStyle.AERIAL,
-      })
-    );
+    const imageryProvider = await Cesium.createWorldImageryAsync({
+      style: Cesium.IonWorldImageryStyle.AERIAL,
+    });
+    this.viewer!.imageryLayers.addImageryProvider(imageryProvider);
   }
 
-  chooseAerialWithLabels() {
+  async chooseAerialWithLabels() {
     this.viewer!.imageryLayers.removeAll();
-    this.viewer!.imageryLayers.addImageryProvider(
-      Cesium.createWorldImagery({
-        style: Cesium.IonWorldImageryStyle.AERIAL_WITH_LABELS,
-      })
-    );
+    const imageryProvider = await Cesium.createWorldImageryAsync({
+      style: Cesium.IonWorldImageryStyle.AERIAL_WITH_LABELS,
+    });
+    this.viewer!.imageryLayers.addImageryProvider(imageryProvider);
   }
+
 
   chooseOpenStreetMap() {
     this.viewer!.imageryLayers.removeAll();
@@ -1268,7 +1276,7 @@ export class YpLandUseGame extends YpBaseElement {
       return html`
         <div
           id="landUseSelection"
-          class="layout vertical center-center">
+          class="layout vertical center-center"
           ?hidden="${this.gameStage === GameStage.Intro}"
         >
           <md-chip-set
@@ -1286,7 +1294,7 @@ export class YpLandUseGame extends YpBaseElement {
             </md-filter-chip>
             <md-filter-chip
               id="landUse2"
-              .label="${this.t("Gracing")}"
+              .label="${this.t("Grazing")}"
               ?disabled=${this.landUseTypeDisabled}
               @click="${() => this.setLandUse("gracing")}"
               ?selected=${this.selectedLandUse === "gracing"}

@@ -157,14 +157,14 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
 
         .radioLabel {
           width: 100%;
-          margin: 8px;
+          margin: 16px;
         }
 
         .checkboxLabel {
           width: 100%;
           align-self: start;
-          margin-top: 14px;
-          margin-left: 4px;
+          margin-top: -1px;
+          margin-left: 12px;
         }
 
         md-radio {
@@ -272,8 +272,8 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
 
         .specifyInput {
           max-width: 220px;
-          margin-left: 24px;
-          margin-top: -16px;
+          margin-left: 48px;
+          margin-top: 0px;
           margin-bottom: 0;
         }
 

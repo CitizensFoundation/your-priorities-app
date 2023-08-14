@@ -5,8 +5,10 @@ import { YpBaseElement } from "../common/yp-base-element.js";
 import { Dialog } from "@material/mwc-dialog";
 import "@material/web/dialog/dialog.js";
 import "@material/web/button/text-button.js";
+import "@material/web/button/text-button.js";
 import "@material/web/button/outlined-button.js";
 import "@material/web/icon/icon.js";
+import { Layouts } from "../../flexbox-literals/classes.js";
 
 @customElement("yp-page-dialog")
 export class YpPageDialog extends YpBaseElement {
@@ -24,6 +26,7 @@ export class YpPageDialog extends YpBaseElement {
   static get styles() {
     return [
       super.styles,
+      Layouts,
       css`
         :host {
           --md-dialog-container-color: var(--md-sys-color-surface);
@@ -50,6 +53,11 @@ export class YpPageDialog extends YpBaseElement {
 
         #dialog {
           background-color: #ff0000;
+        }
+
+        .languageButton {
+          text-align: left;
+          align-items: flex-start;
         }
 
         @media (max-width: 1100px) {
@@ -98,24 +106,34 @@ export class YpPageDialog extends YpBaseElement {
       >
         <md-icon slot="icon">joystick</md-icon>
         <span slot="headline" class="headline">${this.pageTitle}</span>
-        <div id="content" slot="content" style="text-align: left"></div>
+        <div
+          id="content"
+          slot="content"
+          style="text-align: left"
+          class="layout vertical center-center"
+        ></div>
 
         <div slot="actions">
           ${this.textButtonText
             ? html`
-                <md-text-button
-                  class="startButton"
-                  dialogAction="${this._close}"
+                <md-text-button class="startButton" @click="${this._close}"
                   >${this.textButtonText}</md-text-button
                 >
               `
             : html`
-        <md-outlined-button
-          class="startButton"
-          dialogFocus
-          dialogAction="${this._close}"
-          >${this.t("Start Game")}</md-outlined-button
-        >
+          <md-text-button
+            class="languageButton"
+            @click="${this._switchLanguage}"
+            >${this.language == "en" ? "Íslenska" : "English"}</md-text-button
+          >
+          <div class="flex"></div>
+
+          <md-outlined-button
+            class="startButton"
+            autofocus
+            @click="${this._close}"
+            >${this.t("Start Game")}</md-outlined-button
+          >
 
         </div>
 
@@ -124,6 +142,17 @@ export class YpPageDialog extends YpBaseElement {
         </div>
       </md-dialog>
     `;
+  }
+
+  _switchLanguage() {
+    const locale = this.language == "en" ? "is" : "en";
+    window.appGlobals.changeLocaleIfNeeded(locale, true);
+    localStorage.setItem("yp-user-locale", locale);
+    console.info("Saving locale");
+    if (window.appUser && window.appUser.user) {
+      window.appUser.setLocale(locale);
+    }
+    window.appGlobals.activity("click", "changeLanguage", locale);
   }
 
   get pageTitle(): string {

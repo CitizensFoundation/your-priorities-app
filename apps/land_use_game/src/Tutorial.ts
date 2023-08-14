@@ -143,18 +143,20 @@ export class Tutorial extends YpCodeBase {
   }
 
   _openPage(page: TutorialPageData) {
-    window.appGlobals.activity("open", "pages", page.id);
-    window.appDialogs.getDialogAsync("pageDialog", (dialog: YpPageDialog) => {
-      const pageLocale = this._getPageLocale(page);
-      this.fire("enableBrowserTouch", {}, document);
+    setTimeout(() => {
+      window.appGlobals.activity("open", "pages", page.id);
+      window.appDialogs.getDialogAsync("pageDialog", (dialog: YpPageDialog) => {
+        const pageLocale = this._getPageLocale(page);
+        this.fire("enableBrowserTouch", {}, document);
 
-      dialog.open(
-        page,
-        pageLocale,
-        this._myCallbackFunction.bind(this),
-        this.t("continue")
-      );
-    });
+        dialog.open(
+          page,
+          pageLocale,
+          this._myCallbackFunction.bind(this),
+          this.t("continue")
+        );
+      });
+    }, 1200);
   }
 
   _myCallbackFunction() {
