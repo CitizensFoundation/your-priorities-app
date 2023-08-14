@@ -523,7 +523,7 @@ export class YpLandUseGame extends YpBaseElement {
           #commentButton {
             position: absolute;
             left: 12px;
-            bottom: 112px;
+            bottom: 146px;
           }
 
           #submitButton {
