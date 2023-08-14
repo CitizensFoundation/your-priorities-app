@@ -197,11 +197,6 @@ export class YpEditDialog extends YpBaseElement {
         }
 
         @media (max-width: 1024px) {
-          md-dialog > * {
-            padding: 0;
-            margin: 0;
-            background-color: #fff;
-          }
 
           :host {
             max-height: 100% !important;
@@ -549,7 +544,7 @@ export class YpEditDialog extends YpBaseElement {
   }
 
   get computeClass() {
-    if (this.narrow) return "fullScreenDialog";
+    if (false && this.narrow) return "fullScreenDialog";
     else if (this.doubleWidth) return "popUpDialogDouble";
     else return "popUpDialog";
   }

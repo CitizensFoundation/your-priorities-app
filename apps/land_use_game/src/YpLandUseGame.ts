@@ -626,19 +626,21 @@ export class YpLandUseGame extends YpBaseElement {
   }
 
   async resetHelpPages() {
-    const helpPages = (await window.serverApi.getHelpPages(
-      "group",
-      this.group!.id
-    )) as YpHelpPageData[];
+    if (this.group) {
+      const helpPages = (await window.serverApi.getHelpPages(
+        "group",
+        this.group!.id
+      )) as YpHelpPageData[];
 
-    let welcomePageId = this.group?.configuration?.welcomePageId;
-    let welcomePage;
+      let welcomePageId = this.group?.configuration?.welcomePageId;
+      let welcomePage;
 
-    if (welcomePageId) {
-      welcomePage = helpPages.find((page) => page.id === welcomePageId);
+      if (welcomePageId) {
+        welcomePage = helpPages.find((page) => page.id === welcomePageId);
+      }
+
+      this._openPage(welcomePage || helpPages[0]);
     }
-
-    this._openPage(welcomePage || helpPages[0]);
   }
 
   registrationQuestionDone() {
