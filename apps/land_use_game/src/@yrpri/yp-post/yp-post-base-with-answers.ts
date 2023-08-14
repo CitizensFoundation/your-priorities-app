@@ -44,6 +44,11 @@ export const YpPostBaseWithAnswers = <T extends Constructor<YpBaseElement>>(
         'yp-auto-translate',
         this._autoTranslateEvent.bind(this)
       );
+
+      setTimeout(()=>{
+        this._getSurveyTranslationsIfNeeded();
+        debugger;
+      }, 100)
     }
 
     disconnectedCallback() {

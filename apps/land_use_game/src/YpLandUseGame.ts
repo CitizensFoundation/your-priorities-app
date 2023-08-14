@@ -899,11 +899,28 @@ export class YpLandUseGame extends YpBaseElement {
     }
   }
 
+  languageLoaded(event: any) {
+    if (event.detail.language && event.detail.language == "en") {
+      this.fireGlobal("yp-auto-translate", true);
+      window.appGlobals.autoTranslate = true;
+      window.autoTranslate = true;
+    } else {
+      this.fireGlobal("yp-auto-translate", false);
+      window.appGlobals.autoTranslate = false;
+      window.autoTranslate = false;
+    }
+
+    this.resetHelpPages();
+  }
+
   setupEventListeners() {
     document.addEventListener("yp-error", this.ypError.bind(this));
     document.addEventListener("yp-network-error", this.ypError.bind(this));
     document.addEventListener("keydown", this.handleKeyDown.bind(this));
-    document.addEventListener("yp-language-loaded", this.resetHelpPages.bind(this));
+    document.addEventListener(
+      "yp-language-loaded",
+      this.languageLoaded.bind(this)
+    );
 
     document.addEventListener(
       "disableBrowserTouch",
@@ -999,7 +1016,7 @@ export class YpLandUseGame extends YpBaseElement {
     let baseLayer;
     if (window.location.href.indexOf("localhost") > -1) {
       baseLayer = Cesium.ImageryLayer.fromProviderAsync(
-        Cesium.IonImageryProvider.fromAssetId(3954,{}),
+        Cesium.IonImageryProvider.fromAssetId(3954, {}),
         {} // Options object, can be customized as needed
       );
     } else {
@@ -1021,7 +1038,7 @@ export class YpLandUseGame extends YpBaseElement {
       fullscreenButton: false,
       geocoder: false,
       baseLayer: baseLayer,
-         requestRenderMode: true,
+      requestRenderMode: true,
       homeButton: false,
       //    infoBox: false,
       sceneModePicker: false,
@@ -1262,7 +1279,6 @@ export class YpLandUseGame extends YpBaseElement {
     this.viewer!.imageryLayers.addImageryProvider(imageryProvider);
   }
 
-
   chooseOpenStreetMap() {
     this.viewer!.imageryLayers.removeAll();
     this.viewer!.imageryLayers.addImageryProvider(
@@ -1283,7 +1299,9 @@ export class YpLandUseGame extends YpBaseElement {
         >
           <md-chip-set
             type="filter"
-            class="layout horizontal center-center  ${!this.wide ? "wrap" : "start"}"
+            class="layout horizontal center-center  ${!this.wide
+              ? "wrap"
+              : "start"}"
           >
             <md-filter-chip
               id="landUse1"
@@ -1355,10 +1373,8 @@ export class YpLandUseGame extends YpBaseElement {
               <md-icon slot="selectedIcon">stylus</md-icon>
               <md-icon>edit</md-icon>
             </md-filled-icon-button>
-
           </md-chip-set>
         </div>
-
 
         <div
           id="navigationButtons"

@@ -313,6 +313,12 @@ export class YpServerApi extends YpServerApiBase {
     );
   }
 
+  public getSurveyQuestionsTranslations(group: YpGroupData, language: string) {
+    return this.fetchWrapper(
+      this.baseUrlPath + `/groups/${group.id}/translatedSurveyQuestions?targetLanguage=${language}`
+    );
+  }
+
   public getVideoFormatsAndImages(videoId: number) {
     return this.fetchWrapper(
       this.baseUrlPath + `/videos/${videoId}/formatsAndImages`

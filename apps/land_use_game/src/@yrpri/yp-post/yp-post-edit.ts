@@ -173,7 +173,24 @@ export class YpPostEdit extends YpEditBase {
     this._setupStructuredQuestions();
   }
 
-  _getTranslationsIfNeeded() {
+  _getQuestionLengthWithSubOptions(questions: string | any[]) {
+    let length = 0;
+    for (let i=0; i<questions.length;i++) {
+      length += 1;
+      var question = questions[i];
+      if (question.type==="radios" && question.radioButtons && question.radioButtons.length>0) {
+        length += question.radioButtons.length;
+      }  else if (question.type==="checkboxes" && question.checkboxes && question.checkboxes.length>0) {
+        length += question.checkboxes.length;
+      } else if(question.type==="dropdown" && question.dropdownOptions && question.dropdownOptions.length>0) {
+        length += question.dropdownOptions.length;
+      }
+    }
+
+    return length;
+  }
+
+  async _getTranslationsIfNeeded() {
     this.translatedQuestions = undefined;
     if (
       this.autoTranslate &&
@@ -181,85 +198,50 @@ export class YpPostEdit extends YpEditBase {
       this.group &&
       this.language !== this.group.language
     ) {
+
       const translatedTexts =
-        window.serverApi.getTranslatedRegistrationQuestions(
-          this.group.id,
+        await window.serverApi.getSurveyQuestionsTranslations(
+          this.group,
           this.language
         );
-      if (this.autoTranslate && this.language !== this.group.language) {
-        const currentQuestions = JSON.parse(
-          JSON.stringify(this.group.configuration.registrationQuestionsJson)
-        ) as Array<YpStructuredQuestionData>;
 
-        if (
-          translatedTexts.length ===
-          YpSurveyHelpers.getQuestionLengthWithSubOptions(currentQuestions)
-        ) {
-          let translatedItemCount = 0;
-          for (
-            let questionCount = 0;
-            questionCount < currentQuestions.length;
-            questionCount++
-          ) {
-            const question = currentQuestions[questionCount];
+      if (this.autoTranslate && this.language !== this.group.language) {
+        var currentQuestions = JSON.parse(JSON.stringify(this.group.configuration.structuredQuestionsJson));
+
+        if (translatedTexts.length===this._getQuestionLengthWithSubOptions(currentQuestions)) {
+          var translatedItemCount = 0;
+          for (var questionCount=0; questionCount<currentQuestions.length;questionCount++) {
+            var question = currentQuestions[questionCount];
             question.originalText = question.text;
             question.text = translatedTexts[translatedItemCount++];
 
-            if (
-              question.type === 'radios' &&
-              question.radioButtons &&
-              question.radioButtons.length > 0
-            ) {
-              for (
-                let subOptionCount = 0;
-                subOptionCount < question.radioButtons.length;
-                subOptionCount++
-              ) {
-                question.radioButtons[subOptionCount].originalText =
-                  question.radioButtons[subOptionCount].text;
-                question.radioButtons[subOptionCount].text =
-                  translatedTexts[translatedItemCount++];
+            if (question.type==="radios" && question.radioButtons && question.radioButtons.length>0) {
+              for (var subOptionCount=0;subOptionCount<question.radioButtons.length;subOptionCount++) {
+                question.radioButtons[subOptionCount].originalText =  question.radioButtons[subOptionCount].text;
+                question.radioButtons[subOptionCount].text = translatedTexts[translatedItemCount++];
               }
-            } else if (
-              question.type === 'checkboxes' &&
-              question.checkboxes &&
-              question.checkboxes.length > 0
-            ) {
-              for (
-                let subOptionCount = 0;
-                subOptionCount < question.checkboxes.length;
-                subOptionCount++
-              ) {
-                question.checkboxes[subOptionCount].originalText =
-                  question.checkboxes[subOptionCount].text;
-                question.checkboxes[subOptionCount].text =
-                  translatedTexts[translatedItemCount++];
+            }  else if (question.type==="checkboxes" && question.checkboxes && question.checkboxes.length>0) {
+              for (var subOptionCount=0;subOptionCount<question.checkboxes.length;subOptionCount++) {
+                question.checkboxes[subOptionCount].originalText =  question.checkboxes[subOptionCount].text;
+                question.checkboxes[subOptionCount].text = translatedTexts[translatedItemCount++];
               }
-            } else if (
-              question.type === 'dropdown' &&
-              question.dropdownOptions &&
-              question.dropdownOptions.length > 0
-            ) {
-              for (
-                let subOptionCount = 0;
-                subOptionCount < question.dropdownOptions.length;
-                subOptionCount++
-              ) {
-                question.dropdownOptions[subOptionCount].originalText =
-                  question.dropdownOptions[subOptionCount].text;
-                question.dropdownOptions[subOptionCount].text =
-                  translatedTexts[translatedItemCount++];
+            } else if(question.type==="dropdown" && question.dropdownOptions && question.dropdownOptions.length>0) {
+              for (var subOptionCount=0;subOptionCount<question.dropdownOptions.length;subOptionCount++) {
+                question.dropdownOptions[subOptionCount].originalText =  question.dropdownOptions[subOptionCount].text;
+                question.dropdownOptions[subOptionCount].text = translatedTexts[translatedItemCount++];
               }
             }
           }
 
           this.translatedQuestions = currentQuestions;
         } else {
-          console.error('Questions and Translated texts length does not match');
+          console.error("Questions and Translated texts length does not match");
+          console.error(`Questions: ${this._getQuestionLengthWithSubOptions(currentQuestions)} Translated: ${translatedTexts.length}`)
         }
       } else {
         this.translatedQuestions = undefined;
       }
+
     }
   }
 
