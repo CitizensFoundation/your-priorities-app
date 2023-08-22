@@ -1524,7 +1524,7 @@ export class YpLogin extends YpBaseElement {
         }
         this.userSpinner = false;
       } else {
-        this.fire("yp-error", this.t("user.completeForm"));
+        //this.fire("yp-error", this.t("user.completeForm"));
         window.appGlobals.analytics.sendLoginAndSignup(
           -1,
           registerMode ? "Signup Fail" : "Login Fail",

@@ -87,6 +87,7 @@ export class YpForgotPassword extends YpBaseElement {
         <div slot="actions">
           <md-text-button
             dialogAction="cancel"
+            @click="${this.close}"
             ?hidden="${this.emailHasBeenSent}"
             >${this.t("cancel")}</md-text-button
           >

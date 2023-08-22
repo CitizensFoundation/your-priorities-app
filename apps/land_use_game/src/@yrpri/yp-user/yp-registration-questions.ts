@@ -353,13 +353,21 @@ export class YpRegistrationQuestions extends YpBaseElement {
 
   validate() {
     let valid = true;
+    let hasFoundOne = false;
     this.liveQuestionIds.forEach((liveIndex) => {
       const questionElement = this.$$(
         "#structuredQuestionContainer_" + liveIndex
       ) as YpStructuredQuestionEdit;
+      questionElement.classList.remove("error");
       if (questionElement && !questionElement.checkValidity()) {
         valid = false;
+        if (!hasFoundOne) {
+          questionElement.scrollIntoView();
+          hasFoundOne = true;
+        }
+        questionElement.classList.add("error");
       }
+      questionElement.requestUpdate();
     });
 
     if (this.segments && !this.selectedSegment) {

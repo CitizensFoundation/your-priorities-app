@@ -21,6 +21,7 @@ import "@material/mwc-textarea/mwc-textarea.js";
 import { MdDialog } from "@material/web/dialog/dialog.js";
 import "@material/web/button/filled-button.js";
 import "@material/web/button/outlined-button.js";
+import "@material/web/iconbutton/icon-button.js";
 
 import { UIManager } from "./UIManager";
 
@@ -297,6 +298,10 @@ export class YpLandUseGame extends YpBaseElement {
         .navButton {
           margin: 6px;
           margin-right: 0;
+        }
+
+        .helpButton {
+          color: var(--md-sys-color-primary);
         }
 
         @media (min-width: 900px) {
@@ -682,6 +687,10 @@ export class YpLandUseGame extends YpBaseElement {
     });
   }
 
+  openHelp() {
+    this.tutorial.openAll();
+  }
+
   protected firstUpdated(
     _changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>
   ): void {
@@ -899,8 +908,8 @@ export class YpLandUseGame extends YpBaseElement {
     this.numberOfTilesWithComments = event.detail.numberOfTilesWithComments;
     this.numberOfTilesWithLandUse = event.detail.numberOfTilesWithLandUse;
 
-    if (this.numberOfTilesWithLandUse! / this.totalNumberOfTiles! > 0.02) {
-      this.disableSubmitButton = false;
+    if (this.numberOfTilesWithLandUse && this.numberOfTilesWithLandUse > 0) {
+       this.disableSubmitButton = false;
     }
   }
 
@@ -1430,6 +1439,14 @@ export class YpLandUseGame extends YpBaseElement {
               @click="${this.chooseOpenStreetMap}"
               .label="${this.t("Map")}"
               ><md-icon>map</md-icon></md-filled-tonal-icon-button
+            >
+
+            <md-icon-button
+              id="openHelpButton"
+              class="navButton helpButton"
+              @click="${this.openHelp}"
+              .label="${this.t("Help")}"
+              ><md-icon>help</md-icon></md-icon-button
             >
           </div>
         </div>

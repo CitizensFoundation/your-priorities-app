@@ -103,7 +103,7 @@ export class YpRegistrationQuestionsDialog extends YpBaseElement {
       this.fireGlobal("yp-registration-questions-done");
       this.close();
     } else {
-      this.fire("yp-error", this.t("user.completeForm"));
+      //this.fire("yp-error", this.t("user.completeForm"));
       return false;
     }
   }

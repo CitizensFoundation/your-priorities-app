@@ -5,6 +5,7 @@ interface FeatureProperties {
 }
 
 type TutorialStage =
+  | "allStages"
   | "navigation"
   | "chooseType"
   | "clickOnMap"

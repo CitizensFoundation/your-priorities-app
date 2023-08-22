@@ -115,6 +115,35 @@ export class Tutorial extends YpCodeBase {
 
   haveShown: Array<TutorialStage> = [];
 
+  openAll(callbackFunction: Function | undefined = undefined) {
+    this.callbackFunction = callbackFunction;
+
+    // Create a combined page for all stages
+    let combinedContent: { en: string; is: string } = { en: "", is: "" };
+    let combinedTitle: { en: string; is: string } = {
+      en: "Help",
+      is: "Hjálp",
+    }; // Default titles for the main dialog
+
+    // Combine the content and title for all stages
+    for (let stageKey in this.stages) {
+      //@ts-ignore
+      const stage = this.stages[stageKey];
+      combinedContent.en += `<h2>${stage.title.en}</h2>\n\n${stage.content.en}`;
+      combinedContent.is += `<h2>${stage.title.is}</h2>\n\n${stage.content.is}`;
+    }
+
+    // Create a new TutorialPageData with combined content and title
+    const combinedPage: TutorialPageData = {
+      stage: "allStages",
+      title: combinedTitle,
+      content: combinedContent,
+    };
+
+    // Open the combined page
+    this._openPage(combinedPage, 1);
+  }
+
   openStage(
     stage: TutorialStage,
     callbackFunction: Function | undefined = undefined
@@ -142,22 +171,25 @@ export class Tutorial extends YpCodeBase {
     return pageLocale;
   }
 
-  _openPage(page: TutorialPageData) {
+  _openPage(page: TutorialPageData, timeoutMs = 1200) {
     if (true) {
       setTimeout(() => {
         window.appGlobals.activity("open", "pages", page.id);
-        window.appDialogs.getDialogAsync("pageDialog", (dialog: YpPageDialog) => {
-          const pageLocale = this._getPageLocale(page);
-          this.fire("enableBrowserTouch", {}, document);
+        window.appDialogs.getDialogAsync(
+          "pageDialog",
+          (dialog: YpPageDialog) => {
+            const pageLocale = this._getPageLocale(page);
+            this.fire("enableBrowserTouch", {}, document);
 
-          dialog.open(
-            page,
-            pageLocale,
-            this._myCallbackFunction.bind(this),
-            this.t("continue")
-          );
-        });
-      }, 1200);
+            dialog.open(
+              page,
+              pageLocale,
+              this._myCallbackFunction.bind(this),
+              this.t("continue")
+            );
+          }
+        );
+      }, timeoutMs);
     }
   }
 
