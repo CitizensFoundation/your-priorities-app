@@ -313,7 +313,7 @@ export class TileManager extends YpCodeBase {
 
           console.error(`maxAdjacentEntityHeight: ${maxAdjacentEntityHeight}`);
 
-          const chatBubbleHeight = commentCount > 1 ? 550 : 275;
+          const chatBubbleHeight = commentCount > 1 ? 1100 : 550;
           const positionHeight = maxAdjacentEntityHeight + chatBubbleHeight;
 
           // Calculate position for the chat bubble
