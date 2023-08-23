@@ -135,7 +135,7 @@ export class YpLogin extends YpBaseElement {
         }
 
         md-dialog {
-          height: 100%;
+        //  height: 100%;
         }
 
         .createUser {

@@ -7,6 +7,7 @@ interface FeatureProperties {
 type TutorialStage =
   | "allStages"
   | "navigation"
+  | "functionality"
   | "chooseType"
   | "clickOnMap"
   | "afterFirstSelection"

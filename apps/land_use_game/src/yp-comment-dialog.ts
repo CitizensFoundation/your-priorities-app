@@ -53,7 +53,7 @@ export class YpCommentDialog extends YpBaseElementWithLogin {
         :host {
         }
         md-dialog {
-          height: 100%;
+          //height: 100%;
         }
         @media (max-width: 600px) {
           md-dialog {

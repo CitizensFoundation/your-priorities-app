@@ -183,7 +183,7 @@ export class YpLandUseGame extends YpBaseElement {
       ShadowStyles,
       css`
        md-dialog {
-        height: 100%;
+        //height: 100%;
        }
 
 
@@ -649,7 +649,7 @@ export class YpLandUseGame extends YpBaseElement {
         welcomePage = helpPages.find((page) => page.id === welcomePageId);
       }
 
-      this._openPage(welcomePage || helpPages[0]);
+      this._openPage(welcomePage || helpPages[0], true);
     }
   }
 
@@ -677,13 +677,14 @@ export class YpLandUseGame extends YpBaseElement {
     }
   }
 
+
   async finishStartingGame() {
     this.disableBrowserTouchEvents = true;
     this.tutorial.openStage("navigation", async () => {
       this.cancelFlyToPosition();
       this.setCameraFromView(this.tileManager.showAllView);
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      this.tutorial.openStage("chooseType");
+      await new Promise((resolve) => setTimeout(resolve, 100));
+      this.tutorial.openStage("functionality");
     });
   }
 
@@ -895,11 +896,17 @@ export class YpLandUseGame extends YpBaseElement {
     return pageLocale;
   }
 
-  _openPage(page: YpHelpPageData) {
+  _openPage(page: YpHelpPageData, modal = false) {
     window.appGlobals.activity("open", "pages", page.id);
     window.appDialogs.getDialogAsync("pageDialog", (dialog: YpPageDialog) => {
       const pageLocale = this._getPageLocale(page);
-      dialog.open(page, pageLocale, this.openUserLoginOrStart.bind(this));
+      dialog.open(
+        page,
+        pageLocale,
+        this.openUserLoginOrStart.bind(this),
+        undefined,
+        modal
+      );
     });
   }
 
@@ -909,7 +916,7 @@ export class YpLandUseGame extends YpBaseElement {
     this.numberOfTilesWithLandUse = event.detail.numberOfTilesWithLandUse;
 
     if (this.numberOfTilesWithLandUse && this.numberOfTilesWithLandUse > 0) {
-       this.disableSubmitButton = false;
+      this.disableSubmitButton = false;
     }
   }
 

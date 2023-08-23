@@ -13,75 +13,258 @@ export class Tutorial extends YpCodeBase {
       },
       content: {
         en: `
-             <p>
-               <b>Touch navigation</b><br/>
-               <em>Pan</em>: One finger drag<br/>
-               <em>Zoom</em>: Two finger pinch.<br/>
-               <em>Rotate</em>: Two finger drag, opposite direction.<br/>
-               <em>Tilt</em>: Two finger drag, same direction.
-             </p>
-             <p>
-               <b>Mouse navigation</b><br/>
-               <em>Pan</em>: Left click + drag<br/>
-               <em>Zoom</em>: Right click + drag, or Mouse wheel scroll.<br/>
-               <em>Rotate</em>: Middle click + drag, or CTRL + Left/Right click + drag<br/>
-               <em>Tilt</em>: Two finger drag, same direction.
-             </p>
-             `,
-        is: `<p>
-              <b>Stjórn með snertiskjá</b><br/>
-              <em>Færsla</em>: Dragðu með einum fingri<br/>
-              <em>Aðdráttur</em>: Færðu tvo fingur saman.<br/>
-              <em>Snúa</em>: Dragðu með tveimur fingrum, í mismunandi átt.<br/>
-              <em>Halla</em>: Dragðu með tveimur fingrum, í sömu átt.
-            </p>
-            <p>
-              <b>Stjórn með mús</b><br/>
-              <em>Færsla</em>: Vinstri smella + draga<br/>
-              <em>Aðdráttur</em>: Hægri smella + draga, eða skrolla með músarhjóli.<br/>
-              <em>Snúa</em>: Miðsmella + draga, eða CTRL + Vinstri/Hægri smella + draga<br/>
-              <em>Halla</em>: Dragðu með tveimur fingrum, í sömu átt.
-            </p>`,
+        <p>
+            Navigating through the game works differently depending on the type
+            of device you are using.
+        </p>
+        <div class="layout vertical" style="font-size: 16px;width:100%;padding:8px;background-color: var(--md-sys-color-primary);color: var(--md-sys-color-on-primary);">
+            <div class="layout horizontal" style="padding: 8px;font-size: 16px;">
+            <div style="width: 65px;" class="layout horizontal center-center">
+                    <img
+                        src="https://sandcastle.cesium.com/CesiumUnminified/Widgets/Images/NavigationHelp/TouchDrag.svg"
+                        alt="Touch Drag"
+                        style="max-height: 50px;padding: 8px;"
+                    />
+                </div>
+                <div><em>Pan</em>: One-finger drag<br /></div>
+            </div>
+            <div class="layout horizontal" style="padding: 8px;">
+            <div style="width: 65px;" class="layout horizontal center-center">
+                    <img
+                        src="https://sandcastle.cesium.com/CesiumUnminified/Widgets/Images/NavigationHelp/TouchZoom.svg"
+                        alt="Touch Zoom"
+                        style="max-height: 50px;background-color: var(--md-sys-color-primary);padding: 8px;"
+                    />
+                </div>
+                <em>Zoom</em>: Two-finger pinch<br />
+            </div>
+            <div class="layout horizontal" style="padding: 8px;">
+            <div style="width: 65px;" class="layout horizontal center-center">
+                    <img
+                        src="https://sandcastle.cesium.com/CesiumUnminified/Widgets/Images/NavigationHelp/TouchRotate.svg"
+                        alt="Touch Rotate"
+                        style="max-height: 50px;background-color: var(--md-sys-color-primary);padding: 8px;"
+                    />
+                </div>
+                <em>Rotate</em>: Two-finger drag, opposite direction<br />
+            </div>
+            <div class="layout horizontal" style="padding: 8px;">
+            <div style="width: 65px;" class="layout horizontal center-center">
+                    <img
+                        src="https://sandcastle.cesium.com/CesiumUnminified/Widgets/Images/NavigationHelp/TouchTilt.svg"
+                        alt="Touch Tilt"
+                        style="max-height: 50px;background-color: var(--md-sys-color-primary);padding: 8px;"
+                    />
+                </div>
+                <em>Tilt</em>: Two-finger drag, same direction
+            </div>
+        </div>
+        <div style="padding: 8px;" class="layout vertical">
+            <b>Mouse navigation:</b><br />
+            <div class="layout horizontal">
+              <div style="width: 75px; display: inline-block;padding: 8px;">
+                  <img
+                      src="https://sandcastle.cesium.com/CesiumUnminified/Widgets/Images/NavigationHelp/MouseLeft.svg"
+                      alt="Mouse Left"
+                      style="max-height: 75px;"
+                  />
+              </div>
+              <em>Pan</em>Left click + drag<br />
+            </div>
+            <div class="layout horizontal">
+              <div style="width: 75px; display: inline-block;padding: 8px;">
+                  <img
+                      src="https://sandcastle.cesium.com/CesiumUnminified/Widgets/Images/NavigationHelp/MouseRight.svg"
+                      alt="Mouse Right"
+                      style="max-height: 75px;"
+                  />
+              </div>
+              <em>Zoom</em>Right click + drag, or Mouse wheel scroll<br />
+            </div>
+            <div class="layout horizontal">
+              <div style="width: 75px; display: inline-block;padding: 8px;">
+                  <img
+                      src="https://sandcastle.cesium.com/CesiumUnminified/Widgets/Images/NavigationHelp/MouseMiddle.svg"
+                      alt="Mouse Middle"
+                      style="max-height: 75px;"
+                  />
+              </div>
+              <div class="layout vertical">
+                <em>Rotate</em>Middle click + drag, or CTRL +Left/Right click +
+                drag<br />
+                <em>Tilt</em>Two-finger drag, same direction
+              </div>
+            </div>
+        </div>
+    `,
+        is: `
+        <p>
+            Stjórn með snertiskjá og mús virkar mismunandi eftir því hvaða tæki þú notar.
+        </p>
+        <div class="layout vertical" style="font-size: 16px;width:100%;padding:8px;background-color: var(--md-sys-color-primary);color: var(--md-sys-color-on-primary);">
+            <div class="layout horizontal" style="padding: 8px;">
+                <div style="width: 65px;" class="layout horizontal center-center">
+                    <img
+                        src="https://sandcastle.cesium.com/CesiumUnminified/Widgets/Images/NavigationHelp/TouchDrag.svg"
+                        alt="Touch Drag"
+                        style="max-height: 50px;padding: 8px;"
+                    />
+                </div>
+                <div><em>Færsla</em>: Dragðu með einum fingri<br /></div>
+            </div>
+            <div class="layout horizontal" style="padding: 8px;">
+                <div style="width: 65px;" class="layout horizontal center-center">
+                    <img
+                        src="https://sandcastle.cesium.com/CesiumUnminified/Widgets/Images/NavigationHelp/TouchZoom.svg"
+                        alt="Touch Zoom"
+                        style="max-height: 50px;padding: 8px;"
+                    />
+                </div>
+                <em>Aðdráttur</em>: Færðu tvo fingur saman<br />
+            </div>
+            <div class="layout horizontal" style="padding: 8px;">
+                <div style="width: 65px;" class="layout horizontal center-center">
+                    <img
+                        src="https://sandcastle.cesium.com/CesiumUnminified/Widgets/Images/NavigationHelp/TouchRotate.svg"
+                        alt="Touch Rotate"
+                        style="max-height: 50px;padding: 8px;"
+                    />
+                </div>
+                <em>Snúa</em>: Dragðu með tveimur fingrum, í mismunandi átt<br />
+            </div>
+            <div class="layout horizontal" style="padding: 8px;">
+                <div style="width: 65px;" class="layout horizontal center-center">
+                    <img
+                        src="https://sandcastle.cesium.com/CesiumUnminified/Widgets/Images/NavigationHelp/TouchTilt.svg"
+                        alt="Touch Tilt"
+                        style="max-height: 50px;padding: 8px;"
+                    />
+                </div>
+                <em>Halla</em>: Dragðu með tveimur fingrum, í sömu átt
+            </div>
+        </div>
+        <div style="padding: 8px;" class="layout vertical">
+            <b>Stjórn með mús:</b><br />
+            <div class="layout horizontal">
+              <div style="width: 75px; display: inline-block;">
+                  <img
+                      src="https://sandcastle.cesium.com/CesiumUnminified/Widgets/Images/NavigationHelp/MouseLeft.svg"
+                      alt="Mouse Left"
+                      style="max-height: 75px;"
+                  />
+              </div>
+              <em>Færsla</em>Vinstri smella + draga<br />
+            </div>
+            <div class="layout horizontal">
+              <div style="width: 75px; display: inline-block;">
+                  <img
+                      src="https://sandcastle.cesium.com/CesiumUnminified/Widgets/Images/NavigationHelp/MouseRight.svg"
+                      alt="Mouse Right"
+                      style="max-height: 75px;"
+                  />
+              </div>
+              <em>Aðdráttur</em>Hægri smella + draga, eða skrolla með músarhjóli<br />
+            </div>
+            <div class="layout horizontal">
+              <div style="width: 75px; display: inline-block;">
+                  <img
+                      src="https://sandcastle.cesium.com/CesiumUnminified/Widgets/Images/NavigationHelp/MouseMiddle.svg"
+                      alt="Mouse Middle"
+                      style="max-height: 75px;"
+                  />
+              </div>
+              <div class="layout vertical">
+                <em>Snúa</em>Miðsmella + draga, eða CTRL + Vinstri/hægri smella + draga<br />
+                <em>Halla</em>Dragðu með tveimur fingrum, í sömu átt
+              </div>
+            </div>
+        </div>
+    `,
       },
     } as TutorialPageData,
-    chooseType: {
-      stage: "chooseType",
+    functionality: {
+      stage: "functionality",
       title: {
-        en: "Choose land use type or comment",
-        is: "Veldu landnýtingu eða bættu við athugasemd",
+        en: "Functionality",
+        is: "Virkni",
       },
       content: {
         en: `
-             <ul>
-              <li>
-                  Choose land use type or to make a comment at the bottom of the screen.
-              </li>
-              <li>
-                Then you can click on the map to mark that area as the chosen land use type.
-              </li>
-              <li>
-                If you zoom in and click you choose 1 km2, if you zoom and click out you choose 9 km2.
-              </li>
-              <li>
-                  You can also click on the map to make a comment about your choices.
-              </li>
-             </ul>
+              <h3>Functionality:</h3>
+              <p>Once in the game, you will see satellite imagery of the municipality in question and the land
+              area surrounding it with the municipality at the center. Various buttons on the screen have
+              the following functionality.</p>
 
-             `,
-        is: `<ul>
-            <li>
-              Veldu notkunartegund lands eða athugasemd neðst á skjánum.
-            </li>
-            <li>
-              Þá geturðu smellt á kortið til að merkja það svæði sem valda nýtingu lands.
-            </li>
-            <li>
-              Ef þú ert nær landinu og smellir velurðu 1 km², ef þú er langt í burtu og smellir velurðu 9 km².
-            </li>
-            <li>
-              Þú getur einnig smellt á kortið til að bæta athugasemd um þitt val.
-            </li>
-          </ul>`,
+              <h4>Bottom of the screen:</h4>
+              <p>Land use types: Each button represents a different land use suggestion. Click a button, then
+              the map to mark the area with the chosen land uses colour. Zoom for area sizes (1km2 or
+              9km2).
+              Comment: Right of land use buttons. Click to leave explanations for your suggestions by
+              clicking the comment button, then a land use you suggested.</p>
+
+              <h4>Right side of the screen:</h4>
+              <p>Home button – brings you back to starting point (centers you back to start view).
+              Airplane button – lets you view the land from the vantage point of a small plane.
+              Globe button – This is the default setting for the view of the land area. Click this to exit other
+              viewing settings.
+              Globe button with a search icon – This setting allows you to view place names within the
+              land area of the game.
+              Map button – This setting allows you to view the land area in map format.</p>
+
+              <h4>Top of the screen:</h4>
+              <p>Submit button – Selecting this submits your land use suggestions and comments and leads
+              you to the next survey.</p>
+
+              <h4>Second Survey:</h4>
+              <p>The second survey aims to gather information about participants' values and views on
+              nature and the environment.</p>
+
+              <h4>Results Page:</h4>
+              <p>On the results page, you can view all participants’ land use suggestions and comments. You
+              can also add to other people’s comments and participate in a conversation on their and your
+              suggestions.</p>
+
+              <h4>End of game:</h4>
+              <p>When you have finished the game, the exit page will provide you with a link to the game so
+              that you can share it on social media if you so wish.</p>
+          `,
+        is: `
+              <h3>Virkni:</h3>
+              <p>Þegar leikurinn byrjar sérðu gervihnattamyndir af (nafn sveitarfélags) og landsvæðinu í kring.
+              Hnapparnir á skjánum hafa eftirfarandi virkni.</p>
+
+              <h4>Neðst á skjánum:</h4>
+              <p>Velja landnotkun: Hver hnappur táknar mismunandi landnotkunarmöguleika. Smelltu á
+              hnapp og síðan á kortið til að merkja svæðið með völdum landnotkunarlit. Stærð svæðisins
+              sem er valinn er 1km 2 eða 9km 2 eftir því sem þú færist nær eða fjær.
+              Athugasemd: Hægra megin við landnotkunarhnappana er hnappur fyrir athugasemdir.
+              Smelltu á hnappinn og veldu síðan landnotkunarreitinn til að rökstyðja val þitt.</p>
+
+              <h4>Hægra megin á skjánum:</h4>
+              <p>Heimahnappur – færir þig aftur á upphafsstað.
+              Flugvélarhnappur – Skoða landið frá úr flugvél sem flýgur yfir.
+              Hnatthnappur – Þetta er sjálfgefin stilling fyrir útsýni yfir landsvæðið. Lokar öðrum
+              skoðunarstillingum.
+              Hnatthnappur með leitartákni – Skoða staðaheiti og örnefni innan landssvæðis leiksins.
+              Kortahnappur – Skoða landsvæðið á kortasniði.</p>
+
+              <h4>Efst á skjánum:</h4>
+              <p>Senda inn tillögur hnappur – Senda inn tillögur þínar um landnotkun með athugasemdum
+              þínum.</p>
+
+              <h4>Seinni könnun:</h4>
+              <p>Miðar að því að afla upplýsinga um gildi og sýn þátttakenda á náttúru og
+              umhverfi.</p>
+
+              <h4>Niðurstöður:</h4>
+              <p>Á niðurstöðusíðunni er hægt að skoða tillögur og athugasemdir allra
+              þátttakenda um landnotkun. Þú getur líka bætt við athugasemdir annarra og tekið þátt í
+              samtali um tillögur þeirra og þínar.</p>
+
+              <h4>Leikslok:</h4>
+              <p>Þegar þú hefur lokið leiknum muntu geta deilt hlekknum á leikinn sem gefinn er
+              upp á lokasíðunni.</p>
+          `,
       },
     } as TutorialPageData,
     openResults: {

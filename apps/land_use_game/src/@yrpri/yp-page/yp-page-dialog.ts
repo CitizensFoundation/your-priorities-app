@@ -21,6 +21,9 @@ export class YpPageDialog extends YpBaseElement {
   @property({ type: String })
   textButtonText: string | undefined;
 
+  @property({ type: Boolean })
+  modal = false
+
   closeFunction: Function | undefined;
 
   static get styles() {
@@ -61,8 +64,13 @@ export class YpPageDialog extends YpBaseElement {
         }
 
         md-dialog {
-          height: 100%;
+         // height: 100%;
         }
+
+        md-dialog[open][is-safari] {
+          display: block;
+        }
+
         @media (max-width: 1100px) {
         }
 
@@ -99,12 +107,19 @@ export class YpPageDialog extends YpBaseElement {
     ];
   }
 
+  scrimDisableAction(event: CustomEvent<any>): void {
+    if (this.modal) {
+      event.stopPropagation();
+      event.preventDefault();
+    }
+  }
+
   render() {
     return html`
       <md-dialog
-        escapeKeyAction=""
-        scrimClickAction=""
+        @cancel="${this.scrimDisableAction}"
         id="dialog"
+        ?is-safari="${this.isSafari}"
         ?rtl="${this.rtl}"
       >
         <md-icon slot="icon">joystick</md-icon>
@@ -170,8 +185,10 @@ export class YpPageDialog extends YpBaseElement {
     page: YpHelpPageData,
     language: string,
     closeFunction: Function | undefined = undefined,
-    textButtonText: string | undefined = undefined
+    textButtonText: string | undefined = undefined,
+    modal = false
   ) {
+    this.modal = modal;
     if (closeFunction) {
       this.closeFunction = closeFunction;
     } else {

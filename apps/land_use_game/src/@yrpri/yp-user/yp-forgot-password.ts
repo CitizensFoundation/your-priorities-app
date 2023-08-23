@@ -30,7 +30,7 @@ export class YpForgotPassword extends YpBaseElement {
       Layouts,
       css`
         md-dialog {
-          height: 100%;
+         // height: 100%;
         }
 
         :host {

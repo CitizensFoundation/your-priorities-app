@@ -30,7 +30,7 @@ export class YpApiActionDialog extends YpBaseElement {
   static get styles() {
     return [super.styles, css`
        md-dialog {
-         height: 100%;
+        // height: 100%;
         }
     `];
   }

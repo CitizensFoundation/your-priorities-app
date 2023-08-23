@@ -96,7 +96,7 @@ export class YpEditDialog extends YpBaseElement {
         }
 
         md-dialog {
-          height: 100%;
+         // height: 100%;
         }
 
         :host {
@@ -171,7 +171,7 @@ export class YpEditDialog extends YpBaseElement {
         }
 
         md-dialog {
-          background-color: #fff;
+        //  background-color: #fff;
         }
 
         mwc-header-panel {

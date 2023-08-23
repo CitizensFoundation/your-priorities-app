@@ -109,12 +109,29 @@ export class YpBaseElement extends LitElement {
     // Do nothing, override if needed
   }
 
+  get isSafari() {
+    const userAgent = navigator.userAgent;
+
+    // Safari detection, ensuring not Chrome or Edge
+    return (
+      userAgent.includes("Safari") &&
+      userAgent.includes("Version") &&
+      !userAgent.includes("Chrome") &&
+      !userAgent.includes("Edg")
+    );
+  }
+
   _setupRtl() {
     if (YpBaseElement.rtlLanguages.indexOf(this.language) > -1) {
       this.rtl = true;
     } else {
       this.rtl = false;
     }
+  }
+
+  scrimDisableAction(event: CustomEvent) {
+    event.preventDefault();
+    event.stopPropagation();
   }
 
   _largeFont(event: CustomEvent) {
