@@ -51,6 +51,7 @@ export class YpApiActionDialog extends YpBaseElement {
         <div slot="content">${this.confirmationText}</div>
         <div slot="actions">
           <md-text-button dialogAction="cancel"
+            @click="${()=>(this.$$("#confirmationDialog") as Dialog).close()}"
             >${this.t("cancel")}</md-text-button
           >
           <md-text-button dialogAction="accept" @click="${this._delete}"
@@ -113,5 +114,6 @@ export class YpApiActionDialog extends YpBaseElement {
       this.confirmationText = this.t("finalDeleteWarning");
       (this.$$("#confirmationDialog") as Dialog).show();
     }
+    (this.$$("#confirmationDialog") as Dialog).close()
   }
 }

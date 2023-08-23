@@ -63,6 +63,7 @@ export class YpConfirmationDialog extends YpBaseElement {
     this.haveIssuedFinalWarning = false;
     this.useFinalWarning = false;
     this.hideCancel = false;
+    (this.$$("#confirmationDialog") as Dialog).close();
   }
 
   async open(
@@ -110,5 +111,6 @@ export class YpConfirmationDialog extends YpBaseElement {
         this._reset();
       }
     }
+    (this.$$("#confirmationDialog") as Dialog).close();
   }
 }

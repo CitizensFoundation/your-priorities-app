@@ -60,6 +60,7 @@ export class YpPointComment extends YpBaseElementWithLogin {
           padding-bottom: 4px;
           margin-bottom: 8px;
           padding-top: 16px;
+          max-width: 300px;
         }
 
         .commentDash {
@@ -103,8 +104,9 @@ export class YpPointComment extends YpBaseElementWithLogin {
                 hideSharing></yp-point-actions>
               <div class="extraActions layout horizontal">
               <md-icon-button
-                ?hidden=""
-                ?hidden="${!this.loggedInUser}"
+                ?hisdden=""
+                ?hidsddden="${!this.loggedInUser}"
+                hidden
                 .label="${this.t('point.report')}"
                 id="reportPointIconButton"
                 @click="${this._reportPoint}"><md-icon>warning</md-icon></md-icon-button>

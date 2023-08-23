@@ -62,7 +62,7 @@ export class YpLandUseGame extends YpBaseElement {
   @property({ type: String }) title = "Land Use Game";
 
   @property({ type: Number })
-  gameStage = GameStage.Intro;
+  gameStage = GameStage.Results;
 
   @property({ type: String })
   selectedLandUse:
