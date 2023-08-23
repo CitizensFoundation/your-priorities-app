@@ -316,7 +316,7 @@ export class Tutorial extends YpCodeBase {
         en: `
              <ul>
               <li>
-                  You can choose a land use to filter by that type.
+                You can select the type of land use you are interested in viewing by selecting the appropriate button. If you do not select one land-use category, you will see all categories of all proposals.
               </li>
               <li>
                 You can click on the comment icons to take part in the discussion.
@@ -325,7 +325,7 @@ export class Tutorial extends YpCodeBase {
              `,
         is: `<ul>
             <li>
-                Þú getur valið tegund landnýtingar til að sía eftir. Ef ekkert er valið sérðu allar tegundir landnýtinga
+            Þú getur valið þá tegund landnýtingar sem þú hefur áhuga á að skoða með því að velja viðeigandi hnapp. Veljir þú engan einn flokk, sérðu alla flokka tillagna.
             </li>
             <li>
               Þú getur smellt á athugasemdartáknin til að taka þátt í umræðunni.
