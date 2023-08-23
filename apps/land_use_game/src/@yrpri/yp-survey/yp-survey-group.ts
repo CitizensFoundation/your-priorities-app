@@ -271,7 +271,7 @@ export class YpSurveyGroup extends YpBaseElement {
 
   //TODO: Get working on Safari
   _goToNextIndex(event: CustomEvent) {
-    if (!this.isSafari) {
+    if (false && !this.isSafari) {
       const currentPos = this.liveQuestionIds.indexOf(event.detail.currentIndex);
       if (currentPos < this.liveQuestionIds.length - 1) {
         const item = this.$$(
