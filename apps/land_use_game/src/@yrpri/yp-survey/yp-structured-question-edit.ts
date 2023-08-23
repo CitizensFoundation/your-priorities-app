@@ -724,12 +724,12 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
         return true; // DO something if required
       } else {
         if (
-          liveQuestion &&
-          typeof (liveQuestion as TextField).checkValidity == "function"
+          (liveQuestion as TextField).value  &&
+          (liveQuestion as TextField).value.length>0
         ) {
-          return (liveQuestion as TextField).checkValidity();
-        } else {
           return true;
+        } else {
+          return false;
         }
       }
     } else {

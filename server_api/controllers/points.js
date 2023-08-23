@@ -191,20 +191,15 @@ router.put('/:id/report', auth.can('vote on point'), function (req, res) {
           }
         ]
       }).then(function (post) {
-        if (post) {
-          point.report(req, 'user', post, function (error) {
-            if (error) {
-              log.error("Point Report Error", { context: 'report', post: toJson(post), user: toJson(req.user), err: error });
-              res.sendStatus(500);
-            } else {
-              log.info('Point Report Created', { postId: post ? post.id : -1, userId: req.user ? req.user.id : -1 });
-              res.sendStatus(200);
-            }
-          });
-        } else {
-          log.error("Point Report", { context: 'report', post: toJson(post), user: toJson(req.user), err: "Could not created post" });
-          res.sendStatus(500);
-        }
+        point.report(req, 'user', post, function (error) {
+          if (error) {
+            log.error("Point Report Error", { context: 'report', post: post ? toJson(post) : null, user: toJson(req.user), err: error });
+            res.sendStatus(500);
+          } else {
+            log.info('Point Report Created', { postId: post ? post.id : -1, userId: req.user ? req.user.id : -1 });
+            res.sendStatus(200);
+          }
+        });
       }).catch(function (error) {
         log.error("Point Report", { context: 'report', user: toJson(req.user), err: error });
         res.sendStatus(500);
