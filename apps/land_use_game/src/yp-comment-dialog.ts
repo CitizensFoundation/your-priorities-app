@@ -69,12 +69,13 @@ export class YpCommentDialog extends YpBaseElementWithLogin {
         }
 
         .story {
-          padding-bottom: 12px;
+          padding-bottom: 16px;
           margin-bottom: 8px;
-          padding-top: 8px;
+          padding-top: 16px;
           border-bottom: solid #ddd;
           border-bottom-width: 1px;
-          font-size: 19px;
+          font-size: 18px;
+          line-height: 1.3;
         }
 
         yp-point-actions {
@@ -82,6 +83,10 @@ export class YpCommentDialog extends YpBaseElementWithLogin {
         }
 
         .container {
+        }
+
+        .pointContent {
+
         }
 
         #commentCount {

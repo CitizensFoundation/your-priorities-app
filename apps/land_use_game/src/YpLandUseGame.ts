@@ -62,7 +62,7 @@ export class YpLandUseGame extends YpBaseElement {
   @property({ type: String }) title = "Land Use Game";
 
   @property({ type: Number })
-  gameStage = GameStage.Intro;
+  gameStage = GameStage.Results;
 
   @property({ type: String })
   selectedLandUse:
@@ -173,7 +173,9 @@ export class YpLandUseGame extends YpBaseElement {
     }
 
     this.currentErrorText = error;
-    (this.$$("#errorDialog") as Dialog).show();
+    if (event.detail.showUserError) {
+      (this.$$("#errorDialog") as Dialog).show();
+    }
   }
 
   static get styles() {
