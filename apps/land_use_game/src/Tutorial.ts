@@ -190,81 +190,120 @@ export class Tutorial extends YpCodeBase {
       },
       content: {
         en: `
-              <h3>Functionality:</h3>
-              <p>Once in the game, you will see satellite imagery of the municipality in question and the land
-              area surrounding it with the municipality at the center. Various buttons on the screen have
-              the following functionality.</p>
+          <div class="layout vertical">
+            <p>
+              Once in the game, you will see satellite imagery of the
+              municipality in question and the land area surrounding it with the
+              municipality at the center. Various buttons on the screen have the
+              following functionality.
+            </p>
 
-              <h4>Bottom of the screen:</h4>
-              <p>Land use types: Each button represents a different land use suggestion. Click a button, then
-              the map to mark the area with the chosen land uses colour. Zoom for area sizes (1km2 or
-              9km2).
-              Comment: Right of land use buttons. Click to leave explanations for your suggestions by
-              clicking the comment button, then a land use you suggested.</p>
+            <div style="font-weight:bold;">Bottom of the screen:</div>
+            <p>
+              Land use types: Each button represents a different land use
+              suggestion. Click a button, then the map to mark the area with the
+              chosen land uses colour. Zoom for area sizes (1km2 or 9km2).
+              Comment: Right of land use buttons. Click to leave explanations
+              for your suggestions by clicking the comment button, then a land
+              use you suggested.
+            </p>
 
-              <h4>Right side of the screen:</h4>
-              <p>Home button – brings you back to starting point (centers you back to start view).
-              Airplane button – lets you view the land from the vantage point of a small plane.
-              Globe button – This is the default setting for the view of the land area. Click this to exit other
-              viewing settings.
-              Globe button with a search icon – This setting allows you to view place names within the
-              land area of the game.
-              Map button – This setting allows you to view the land area in map format.</p>
+            <div style="font-weight:bold;">Right side of the screen:</div>
+            <p>
+              Home button – brings you back to starting point (centers you back
+              to start view). Airplane button – lets you view the land from the
+              vantage point of a small plane. Globe button – This is the default
+              setting for the view of the land area. Click this to exit other
+              viewing settings. Globe button with a search icon – This setting
+              allows you to view place names within the land area of the game.
+              Map button – This setting allows you to view the land area in map
+              format.
+            </p>
 
-              <h4>Top of the screen:</h4>
-              <p>Submit button – Selecting this submits your land use suggestions and comments and leads
-              you to the next survey.</p>
+            <div style="font-weight:bold;">Top of the screen:</div>
+            <p>
+              Submit button – Selecting this submits your land use suggestions
+              and comments and leads you to the next survey.
+            </p>
 
-              <h4>Second Survey:</h4>
-              <p>The second survey aims to gather information about participants' values and views on
-              nature and the environment.</p>
+            <div style="font-weight:bold;">Second Survey:</div>
+            <p>
+              The second survey aims to gather information about participants'
+              values and views on nature and the environment.
+            </p>
 
-              <h4>Results Page:</h4>
-              <p>On the results page, you can view all participants’ land use suggestions and comments. You
-              can also add to other people’s comments and participate in a conversation on their and your
-              suggestions.</p>
+            <div style="font-weight:bold;">Results Page:</div>
+            <p>
+              On the results page, you can view all participants’ land use
+              suggestions and comments. You can also add to other people’s
+              comments and participate in a conversation on their and your
+              suggestions.
+            </p>
 
-              <h4>End of game:</h4>
-              <p>When you have finished the game, the exit page will provide you with a link to the game so
-              that you can share it on social media if you so wish.</p>
-          `,
+            <div style="font-weight:bold;">End of game:</div>
+            <p>
+              When you have finished the game, the exit page will provide you
+              with a link to the game so that you can share it on social media
+              if you so wish.
+            </p>
+          </div>
+        `,
         is: `
-              <h3>Virkni:</h3>
-              <p>Þegar leikurinn byrjar sérðu gervihnattamyndir af (nafn sveitarfélags) og landsvæðinu í kring.
-              Hnapparnir á skjánum hafa eftirfarandi virkni.</p>
+          <div class="layout vertical">
+            <p>
+              Þegar leikurinn byrjar sérðu gervihnattamyndir af (nafn
+              sveitarfélags) og landsvæðinu í kring. Hnapparnir á skjánum hafa
+              eftirfarandi virkni.
+            </p>
 
-              <h4>Neðst á skjánum:</h4>
-              <p>Velja landnotkun: Hver hnappur táknar mismunandi landnotkunarmöguleika. Smelltu á
-              hnapp og síðan á kortið til að merkja svæðið með völdum landnotkunarlit. Stærð svæðisins
-              sem er valinn er 1km 2 eða 9km 2 eftir því sem þú færist nær eða fjær.
-              Athugasemd: Hægra megin við landnotkunarhnappana er hnappur fyrir athugasemdir.
-              Smelltu á hnappinn og veldu síðan landnotkunarreitinn til að rökstyðja val þitt.</p>
+            <div style="font-weight:bold;">Neðst á skjánum:</div>
+            <p>
+              Velja landnotkun: Hver hnappur táknar mismunandi
+              landnotkunarmöguleika. Smelltu á hnapp og síðan á kortið til að
+              merkja svæðið með völdum landnotkunarlit. Stærð svæðisins sem er
+              valinn er 1km 2 eða 9km 2 eftir því sem þú færist nær eða fjær.
+              Athugasemd: Hægra megin við landnotkunarhnappana er hnappur fyrir
+              athugasemdir. Smelltu á hnappinn og veldu síðan
+              landnotkunarreitinn til að rökstyðja val þitt.
+            </p>
 
-              <h4>Hægra megin á skjánum:</h4>
-              <p>Heimahnappur – færir þig aftur á upphafsstað.
-              Flugvélarhnappur – Skoða landið frá úr flugvél sem flýgur yfir.
-              Hnatthnappur – Þetta er sjálfgefin stilling fyrir útsýni yfir landsvæðið. Lokar öðrum
-              skoðunarstillingum.
-              Hnatthnappur með leitartákni – Skoða staðaheiti og örnefni innan landssvæðis leiksins.
-              Kortahnappur – Skoða landsvæðið á kortasniði.</p>
+            <div style="font-weight:bold;">Hægra megin á skjánum:</div>
+            <p>
+              Heimahnappur – færir þig aftur á upphafsstað. Flugvélarhnappur –
+              Skoða landið frá úr flugvél sem flýgur yfir. Hnatthnappur – Þetta
+              er sjálfgefin stilling fyrir útsýni yfir landsvæðið. Lokar öðrum
+              skoðunarstillingum. Hnatthnappur með leitartákni – Skoða
+              staðaheiti og örnefni innan landssvæðis leiksins. Kortahnappur –
+              Skoða landsvæðið á kortasniði.
+            </p>
 
-              <h4>Efst á skjánum:</h4>
-              <p>Senda inn tillögur hnappur – Senda inn tillögur þínar um landnotkun með athugasemdum
-              þínum.</p>
+            <div style="font-weight:bold;">Efst á skjánum:</div>
+            <p>
+              Senda inn tillögur hnappur – Senda inn tillögur þínar um
+              landnotkun með athugasemdum þínum.
+            </p>
 
-              <h4>Seinni könnun:</h4>
-              <p>Miðar að því að afla upplýsinga um gildi og sýn þátttakenda á náttúru og
-              umhverfi.</p>
+            <div style="font-weight:bold;">Seinni könnun:</div>
+            <p>
+              Miðar að því að afla upplýsinga um gildi og sýn þátttakenda á
+              náttúru og umhverfi.
+            </p>
 
-              <h4>Niðurstöður:</h4>
-              <p>Á niðurstöðusíðunni er hægt að skoða tillögur og athugasemdir allra
-              þátttakenda um landnotkun. Þú getur líka bætt við athugasemdir annarra og tekið þátt í
-              samtali um tillögur þeirra og þínar.</p>
+            <div style="font-weight:bold;">Niðurstöður:</div>
+            <p>
+              Á niðurstöðusíðunni er hægt að skoða tillögur og athugasemdir
+              allra þátttakenda um landnotkun. Þú getur líka bætt við
+              athugasemdir annarra og tekið þátt í samtali um tillögur þeirra og
+              þínar.
+            </p>
 
-              <h4>Leikslok:</h4>
-              <p>Þegar þú hefur lokið leiknum muntu geta deilt hlekknum á leikinn sem gefinn er
-              upp á lokasíðunni.</p>
-          `,
+            <div style="font-weight:bold;">Leikslok:</div>
+            <p>
+              Þegar þú hefur lokið leiknum muntu geta deilt hlekknum á leikinn
+              sem gefinn er upp á lokasíðunni.
+            </p>
+          </div>
+        `,
       },
     } as TutorialPageData,
     openResults: {

@@ -214,45 +214,32 @@ export class YpForm extends YpBaseElement {
   }
 
   /**
- * Validates all the required elements (custom and native) in the form.
- * @return {boolean} True if all the elements are valid.
- */
-validate() {
-  // If you've called this before distribution happened, bail out.
-  if (!this._form) {
-    return false;
-  }
+   * Validates all the required elements (custom and native) in the form.
+   * @return {boolean} True if all the elements are valid.
+   */
+  validate() {
+    // If you've called this before distribution happened, bail out.
+    if (!this._form) {
+      return false;
+    }
 
-  if (this._form.getAttribute('novalidate') === '') return true;
+    if (this._form.getAttribute('novalidate') === '') return true;
 
-  // Start by making the form check the native elements it knows about.
-  let valid = this._form.checkValidity();
-  const elements = this._getValidatableElements();
+    // Start by making the form check the native elements it knows about.
+    let valid = this._form.checkValidity();
+    const elements = this._getValidatableElements();
 
-  let firstInvalidElement: HTMLElement | null = null;  // Track the first invalid element
-
-  // Go through all the elements, and validate the custom ones.
-  for (let el, i = 0; (el = elements[i]), i < elements.length; i++) {
-    // This is weird to appease the compiler. We assume the custom element
-    // has a validate() method, otherwise we can't check it.
-    const validatable = el as YpHTMLInputElement;
-    if (validatable.reportValidity) {
-      const isValid = !!validatable.reportValidity();
-      valid = isValid && valid;
-      if (!isValid && !firstInvalidElement) {
-        firstInvalidElement = validatable;
+    // Go through all the elements, and validate the custom ones.
+    for (let el, i = 0; (el = elements[i]), i < elements.length; i++) {
+      // This is weird to appease the compiler. We assume the custom element
+      // has a validate() method, otherwise we can't check it.
+      const validatable = el as YpHTMLInputElement;
+      if (validatable.reportValidity) {
+        valid = !!validatable.reportValidity() && valid;
       }
     }
+    return valid;
   }
-
-  // If there's an invalid element, scroll to it
-  if (firstInvalidElement) {
-    firstInvalidElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  }
-
-  return valid;
-}
-
 
   /**
    * Submits the form.
@@ -272,7 +259,7 @@ validate() {
     }
 
     if (!this.validate()) {
-      //this.fire('yp-form-invalid');
+      this.fire('yp-form-invalid');
       return;
     }
 

@@ -190,6 +190,27 @@ export class YpPostEdit extends YpEditBase {
     return length;
   }
 
+  customValidation() {
+    let valid = true;
+    let hasFoundOne = false;
+    this.liveQuestionIds.forEach((liveIndex) => {
+      const questionElement = this.$$(
+        "#structuredQuestionContainer_" + liveIndex
+      ) as YpStructuredQuestionEdit;
+      questionElement.classList.remove("error");
+      if (questionElement && !questionElement.checkValidity()) {
+        valid = false;
+        if (!hasFoundOne) {
+          questionElement.scrollIntoView();
+          hasFoundOne = true;
+        }
+        questionElement.classList.add("error");
+      }
+      questionElement.requestUpdate();
+    });
+    return valid;
+  }
+
   async _getTranslationsIfNeeded() {
     this.translatedQuestions = undefined;
     if (
@@ -991,6 +1012,7 @@ export class YpPostEdit extends YpEditBase {
       <yp-edit-dialog
         name="postEdit"
         doubleWidth
+        .customValidationFunction="${this.customValidation.bind(this)}"
         id="editDialog"
         icon="lightbulb_outline"
         .action="${this.action}"

@@ -301,7 +301,9 @@ export class YpLandUseGame extends YpBaseElement {
         }
 
         .helpButton {
-          color: var(--md-sys-color-primary);
+          --md-icon-button-icon-color: var(--md-sys-color-surface);
+          --md-icon-button-hover-icon-color: var(--md-sys-color-surface);
+          background: transparent;
         }
 
         @media (min-width: 900px) {
@@ -1385,6 +1387,7 @@ export class YpLandUseGame extends YpBaseElement {
             <md-filled-icon-button
               id="commentButton"
               toggle
+              .title="${this.t('selectAndClickOnMapToComment')}"
               .label="${this.t("Comment")}"
               ?is-selected="${this.tileManager?.isCommenting}"
               .selected="${this.tileManager?.isCommenting}"

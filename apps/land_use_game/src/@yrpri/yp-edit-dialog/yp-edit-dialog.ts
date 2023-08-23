@@ -39,6 +39,9 @@ export class YpEditDialog extends YpBaseElement {
   @property({ type: String })
   method = "POST";
 
+  @property({ type: Object })
+  customValidationFunction: Function | undefined;
+
   @property({ type: String })
   errorText: string | undefined;
 
@@ -96,7 +99,11 @@ export class YpEditDialog extends YpBaseElement {
         }
 
         md-dialog {
-         // height: 100%;
+          // height: 100%;
+        }
+
+        md-dialog[open][is-safari]{
+          display: block;
         }
 
         :host {
@@ -171,7 +178,7 @@ export class YpEditDialog extends YpBaseElement {
         }
 
         md-dialog {
-        //  background-color: #fff;
+          //  background-color: #fff;
         }
 
         mwc-header-panel {
@@ -201,7 +208,6 @@ export class YpEditDialog extends YpBaseElement {
         }
 
         @media (max-width: 1024px) {
-
           :host {
             max-height: 100% !important;
             height: 100% !important;
@@ -483,6 +489,8 @@ export class YpEditDialog extends YpBaseElement {
       <md-dialog
         ?open="${this.opened}"
         ?rtl="${this.rtl}"
+        @cancel="${this.scrimDisableAction}"
+        ?is-safari="${this.isSafari}"
         @closed="${this.close}"
         .name="${this.name}"
         .heading="${this.heading}"
@@ -611,7 +619,7 @@ export class YpEditDialog extends YpBaseElement {
       } else {
         this.snackbarTextCombined = this.snackbarText;
       }
-      this.snackbarTextCombined = this.t('thankYouForSubmittingYourLandUses');
+      this.snackbarTextCombined = this.t("thankYouForSubmittingYourLandUses");
       (this.$$("#snackbar") as Snackbar).open = true;
     }
   }
@@ -723,13 +731,23 @@ export class YpEditDialog extends YpBaseElement {
 
     const form = this.$$("#form") as YpForm;
 
-    if (form.validate()) {
+    let validated = false;
+
+    if (this.customValidationFunction) {
+      validated = this.customValidationFunction();
+    } else {
+      validated = form.validate();
+    }
+
+    if (
+      validated
+    ) {
       form.submit();
       (this.$$("#spinner") as CircularProgressFourColorBase).hidden = false;
     } else {
       this.fire("yp-form-invalid");
-      const error = this.t("form.invalid");
-      this._showErrorDialog(error);
+      //const error = this.t("form.invalid");
+      //this._showErrorDialog(error);
     }
   }
 
