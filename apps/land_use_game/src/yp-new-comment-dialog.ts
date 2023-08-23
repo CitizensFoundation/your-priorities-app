@@ -33,8 +33,8 @@ export class YpNewCommentDialog extends YpBaseElementWithLogin {
         :host {
           padding-top: 16px;
         }
-        md-dialog {
-          //height: 100%;
+        md-dialog[open][is-safari] {
+          height: 100%;
         }
         mwc-textarea {
           width: 460px;
@@ -129,17 +129,23 @@ export class YpNewCommentDialog extends YpBaseElementWithLogin {
       <md-outlined-button
         class="cancelButton self-start"
         @click="${this.closeDialog}"
-      >${this.t("Close")}</md-outlined-button>
-      <md-filled-button
-        id="storySubmitButton"
-        @click="${this._sendComment}"
-      >${this.t("Submit")}</md-filled-button>
+        >${this.t("Close")}</md-outlined-button
+      >
+      <md-filled-button id="storySubmitButton" @click="${this._sendComment}"
+        >${this.t("Submit")}</md-filled-button
+      >
     </div>`;
   }
 
   render() {
     return html`
-      <md-dialog id="commentDialog" escapeKeyAction="" scrimClickAction="">
+      <md-dialog
+        id="commentDialog"
+        @cancel="${this.scrimDisableAction}"
+        ?is-safari="${this.isSafari}"
+        escapeKeyAction=""
+        scrimClickAction=""
+      >
         ${this.point
           ? html`
               <div class="layout vertical container" slot="content">
@@ -189,7 +195,7 @@ export class YpNewCommentDialog extends YpBaseElementWithLogin {
           url,
           body
         )) as YpPostNewsStoryReturn;
-        this.fire("save",pointInfo.point_id);
+        this.fire("save", pointInfo.point_id);
         this.fire("refresh");
         this._reset();
         this.closeDialog();

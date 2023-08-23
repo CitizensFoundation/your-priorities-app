@@ -22,15 +22,18 @@ export class YpResetPassword extends YpBaseElement {
 
   static get styles() {
     return [super.styles, css`
-     md-dialog {
-     //  height: 100%;
-     }
+      md-dialog[open][is-safari] {
+          height: 100%;
+        }
     `];
   }
 
   render() {
     return html`
-      <md-dialog id="dialog" escapeKeyAction="" scrimClickAction="">
+      <md-dialog id="dialog"
+        @cancel="${this.scrimDisableAction}"
+        ?is-safari="${this.isSafari}"
+      >
         <div slot="headline">${this.t("user.resetPassword")}</div>
 
         <div slot="content">

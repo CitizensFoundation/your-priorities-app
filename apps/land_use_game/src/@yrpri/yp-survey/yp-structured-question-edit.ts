@@ -159,6 +159,7 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
         .radioLabel {
           width: 100%;
           margin: 16px;
+          margin-bottom: 8px;
         }
 
         .checkboxLabel {
@@ -177,12 +178,12 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
         }
 
         .radiosLabel {
-          margin-bottom: 16px;
-          margin-top: 16px;
+          margin-bottom: 0px;
+          margin-top: 42px;
         }
 
         .radiosLabel[is-first-rating] {
-          margin-top: 24px;
+          margin-top: 42px;
         }
 
         mwc-textarea.textAreaLong {
@@ -688,9 +689,9 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
       this.question.subType === "rating" &&
       !this.isLastRating
     ) {
-      return "layout horizontal wrap lessBottomMargin";
+      return "layout vertical wrap lessBottomMargin";
     } else if (this.question.subType && this.question.subType === "rating") {
-      return "layout horizontal wrap";
+      return "layout vertical wrap";
     } else {
       return "layout vertical";
     }

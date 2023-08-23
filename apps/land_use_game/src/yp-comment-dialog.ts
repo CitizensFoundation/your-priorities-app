@@ -52,8 +52,8 @@ export class YpCommentDialog extends YpBaseElementWithLogin {
       css`
         :host {
         }
-        md-dialog {
-          //height: 100%;
+        md-dialog[open][is-safari] {
+          height: 100%;
         }
         @media (max-width: 600px) {
           md-dialog {
@@ -148,6 +148,8 @@ export class YpCommentDialog extends YpBaseElementWithLogin {
     return html`
       <md-dialog
         id="commentDialog"
+        @cancel="${this.scrimDisableAction}"
+        ?is-safari="${this.isSafari}"
         @closed="${this.closeDialog}"
         .fullscreen="${!this.wide}"
         escapeKeyAction=""

@@ -28,16 +28,26 @@ export class YpApiActionDialog extends YpBaseElement {
   finalDeleteWarning = false;
 
   static get styles() {
-    return [super.styles, css`
-       md-dialog {
-        // height: 100%;
+    return [
+      super.styles,
+      css`
+        md-dialog {
+          // height: 100%;
         }
-    `];
+        md-dialog[open][is-safari] {
+          height: 100%;
+        }
+      `,
+    ];
   }
 
   render() {
     return html`
-      <md-dialog id="confirmationDialog" @close="${this._onClose}">
+      <md-dialog
+        id="confirmationDialog"
+        ?is-safari="${this.isSafari}"
+        @close="${this._onClose}"
+      >
         <div slot="content">${this.confirmationText}</div>
         <div slot="actions">
           <md-text-button dialogAction="cancel"

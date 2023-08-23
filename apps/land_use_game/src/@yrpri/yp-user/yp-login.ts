@@ -134,8 +134,8 @@ export class YpLogin extends YpBaseElement {
           ) !important;
         }
 
-        md-dialog {
-        //  height: 100%;
+        md-dialog[open][is-safari] {
+          height: 100%;
         }
 
         .createUser {
@@ -639,8 +639,8 @@ export class YpLogin extends YpBaseElement {
       <md-dialog
         id="loginDialog"
         class="createUser"
-        escapeKeyAction=""
-        scrimClickAction=""
+        @cancel="${this.scrimDisableAction}"
+        ?is-safari="${this.isSafari}"
         transition="grow-right"
         ?open="${this.opened}"
         footerHidden

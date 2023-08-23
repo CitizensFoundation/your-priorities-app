@@ -25,16 +25,22 @@ export class YpConfirmationDialog extends YpBaseElement {
   hideCancel = false;
 
   static get styles() {
-    return [css`
-        md-dialog {
+    return [
+      css`
+        md-dialog[open][is-safari] {
           height: 100%;
         }
-    `];
+      `,
+    ];
   }
 
   render() {
     return html`
-      <md-dialog id="confirmationDialog" escapeKeyAction="" scrimClickAction="">
+      <md-dialog
+        id="confirmationDialog"
+        ?is-safari="${this.isSafari}"
+        @cancel="${this.scrimDisableAction}"
+      >
         <div slot="content">${this.confirmationText}</div>
         <div slot="actions">
           <md-text-button

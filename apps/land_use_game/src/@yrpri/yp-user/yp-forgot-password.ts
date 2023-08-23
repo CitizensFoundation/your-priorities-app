@@ -33,6 +33,10 @@ export class YpForgotPassword extends YpBaseElement {
          // height: 100%;
         }
 
+        md-dialog[open][is-safari] {
+          height: 100%;
+        }
+
         :host {
           --md-dialog-container-color: var(--md-sys-color-surface);
           --md-filled-field-container-color: var(
@@ -56,8 +60,8 @@ export class YpForgotPassword extends YpBaseElement {
     return html`
       <md-dialog
         id="dialog"
-        scrimClickAction=""
-        escapeKeyAction=""
+        ?is-safari="${this.isSafari}"
+        @cancel="${this.scrimDisableAction}"
         class="layout vertical center-center"
       >
         <div slot="headline">${this.t("user.forgotPassword")}</div>

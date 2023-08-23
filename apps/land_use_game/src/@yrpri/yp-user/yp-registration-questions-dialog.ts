@@ -24,8 +24,8 @@ export class YpRegistrationQuestionsDialog extends YpBaseElement {
           display: none !important;
         }
 
-        md-dialog {
-        //  height: 100%;
+        md-dialog[open][is-safari] {
+          height: 100%;
         }
 
         yp-registration-questions {
@@ -52,7 +52,11 @@ export class YpRegistrationQuestionsDialog extends YpBaseElement {
 
   render() {
     return html`
-      <md-dialog id="dialog" escapeKeyAction="" scrimClickAction="">
+      <md-dialog
+        id="dialog"
+        @cancel="${this.scrimDisableAction}"
+        ?is-safari="${this.isSafari}"
+      >
         <div slot="headline">${this.t("registrationQuestionsInfo")}</div>
         <div slot="content">
           <yp-registration-questions
@@ -69,7 +73,9 @@ export class YpRegistrationQuestionsDialog extends YpBaseElement {
             ><span class="upper">${this.t("user.logout")}</span></md-text-button
           >
           <md-text-button @click="${this._validateAndSend}" autofocus
-            ><span class="upper">${this.t("completeLogin")}</span></md-text-button
+            ><span class="upper"
+              >${this.t("completeLogin")}</span
+            ></md-text-button
           >
         </div>
       </md-dialog>
