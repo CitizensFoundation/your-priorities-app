@@ -363,6 +363,7 @@ export class Tutorial extends YpCodeBase {
 
     // Combine the content and title for all stages
     for (let stageKey in this.stages) {
+      if (stageKey==="noLandUseSelected") continue;
       //@ts-ignore
       const stage = this.stages[stageKey];
       combinedContent.en += `<h2>${stage.title.en}</h2>\n\n${stage.content.en}`;

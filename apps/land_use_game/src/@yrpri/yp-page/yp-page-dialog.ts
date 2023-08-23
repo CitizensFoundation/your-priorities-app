@@ -68,7 +68,7 @@ export class YpPageDialog extends YpBaseElement {
         }
 
         md-dialog[open][is-safari] {
-          display: block;
+          height: 100%;
         }
 
         @media (max-width: 1100px) {
