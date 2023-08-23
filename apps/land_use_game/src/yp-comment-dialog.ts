@@ -55,10 +55,6 @@ export class YpCommentDialog extends YpBaseElementWithLogin {
         md-dialog[open][is-safari] {
           height: 100%;
         }
-        @media (max-width: 600px) {
-          md-dialog {
-          }
-        }
 
         .userName {
           color: #777;
@@ -77,6 +73,17 @@ export class YpCommentDialog extends YpBaseElementWithLogin {
           font-size: 18px;
           line-height: 1.3;
         }
+
+
+        @media (max-width: 600px) {
+          md-dialog {
+          }
+
+          .story {
+            max-width:320px;
+          }
+        }
+
 
         yp-point-actions {
           padding-top: 8px;
