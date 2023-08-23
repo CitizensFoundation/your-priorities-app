@@ -107,32 +107,32 @@ export class YpPointActions extends YpBaseElement {
             class="all-actions layout horizontal center-center"
             ?hidden="${this.hideNotHelpful}">
             <div id="actionUp" class="actionUp layout horizontal">
-              <md-outlined-icon-button
+              <md-icon-button
                 .label="${this.t('point.helpful')}"
                 ?disabled="${this.allDisabled}"
                 icon="arrow_upward"
                 class="point-up-vote-icon myButton"
-                @click="${this.pointHelpful}"><md-icon>arrow_upward</md-icon></md-outlined-icon-button>
+                @click="${this.pointHelpful}"><md-icon>arrow_upward</md-icon></md-icon-button>
               <div class="action-text action-up layouthorizontal ">
                 ${this.point.counter_quality_up}
               </div>
             </div>
             <div id="actionDown" class="actionDown layout horizontal">
-              <md-outlined-icon-button
+              <md-icon-button
                 .label="${this.t('point.not_helpful')}"
                 ?disabled="${this.allDisabled}"
                 icon="arrow_downward"
                 class="point-down-vote-icon myButton"
-                @click="${this.pointNotHelpful}"><md-icon>arrow_downward</md-icon></md-outlined-icon-button>
+                @click="${this.pointNotHelpful}"><md-icon>arrow_downward</md-icon></md-icon-button>
               <div class="action-text">${this.point.counter_quality_down}</div>
             </div>
-            <md-outlined-icon-button
+            <md-icon-button
               icon="share"
               ?hidden="${true || this.masterHideSharing}"
               class="shareIcon"
               .label="${this.t('sharePoint')}"
               up-voted="${this.isUpVoted}"
-              @click="${this._shareTap}"></md-outlined-icon-button>
+              @click="${this._shareTap}"></md-icon-button>
           </div>
         `
       : nothing;

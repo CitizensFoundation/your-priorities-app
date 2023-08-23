@@ -495,20 +495,20 @@ export class YpPoint extends YpBaseElement {
                 <div
                   ?hidden="${!this.post.Group.configuration.collapsableTranscripts}"
                 >
-                  <md-outlined-icon-button
+                  <md-icon-button
                     .label="${this.t('openComments')}"
                     class="openCloseButton"
                     icon="keyboard_arrow_right"
                     @click="${this._setOpen}"
                     ?hidden="${this.openTranscript}"
-                  ></md-outlined-icon-button>
-                  <md-outlined-icon-button
+                  ></md-icon-button>
+                  <md-icon-button
                     .label="${this.t('closeComments')}"
                     class="openCloseButton"
                     icon="keyboard_arrow_down"
                     @click="${this._setClosed}"
                     ?hidden="${!this.openTranscript}"
-                  ></md-outlined-icon-button>
+                  ></md-icon-button>
                 </div>
               </div>
               <div
@@ -562,23 +562,23 @@ export class YpPoint extends YpBaseElement {
   renderEditMenu() {
     return html`
       <div class="layout horizontal self-end" hidden>
-        <md-outlined-icon-button
+        <md-icon-button
           .label="${this.t('editAdminComment')}"
           ?hidden="${!this.hasAdminCommentAccess}"
           icon="comment"
           @click="${this._editAdminComment}"
-        ></md-outlined-icon-button>
-        <md-outlined-icon-button
+        ></md-icon-button>
+        <md-icon-button
           .label="${this.t('edit')}"
           ?hidden="${!this.canEditPoint}"
           icon="create"
           @click="${this._editPoint}"
-        ></md-outlined-icon-button>
-        <md-outlined-icon-button
+        ></md-icon-button>
+        <md-icon-button
           .label="${this.t('delete')}"
           icon="clear"
           @click="${this._deletePoint}"
-        ></md-outlined-icon-button>
+        ></md-icon-button>
       </div>
     `;
   }
@@ -603,13 +603,13 @@ export class YpPoint extends YpBaseElement {
               .pointUrl="${this.pointUrl}"
               .configuration="${this.post?.Group?.configuration}"
             ></yp-point-actions>
-            <md-outlined-icon-button
+            <md-icon-button
               hidden
               .label="${this.t('point.report')}"
               id="reportPointIconButton"
               icon="warning"
               @click="${this._reportPoint}"
-            ></md-outlined-icon-button>
+            ></md-icon-button>
             <div class="flex"></div>
 
             ${this.hasPointAccess ? this.renderEditMenu() : nothing}
