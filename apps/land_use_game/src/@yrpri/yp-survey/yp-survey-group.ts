@@ -269,18 +269,23 @@ export class YpSurveyGroup extends YpBaseElement {
     }
   }
 
+  //TODO: Get working on Safari
   _goToNextIndex(event: CustomEvent) {
-    const currentPos = this.liveQuestionIds.indexOf(event.detail.currentIndex);
-    if (currentPos < this.liveQuestionIds.length - 1) {
-      const item = this.$$(
-        '#structuredQuestionContainer_' + this.liveQuestionIds[currentPos + 1]
-      ) as HTMLInputElement;
-      item.scrollIntoView({
-        block: 'center',
-        inline: 'center',
-        behavior: 'smooth',
-      });
-      item.focus();
+    if (!this.isSafari) {
+      const currentPos = this.liveQuestionIds.indexOf(event.detail.currentIndex);
+      if (currentPos < this.liveQuestionIds.length - 1) {
+        const item = this.$$(
+          '#structuredQuestionContainer_' + this.liveQuestionIds[currentPos + 1]
+        ) as HTMLInputElement;
+        item.scrollIntoView({
+          block: 'center',
+          inline: 'center',
+          behavior: 'smooth',
+        });
+        item.focus();
+      }
+    } else {
+      console.warn("_goToNextIndex not working on Safari")
     }
   }
 
