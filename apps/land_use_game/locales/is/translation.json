@@ -570,7 +570,7 @@
   "endorsementButtons": "Kosningahnappar",
   "bulkStatusUdateForInfo": "Smelltu á hugmyndir fyrir nánari upplýsingar.",
   "noCommentsAdded": "Engar athugasemdir",
-  "noCommentsInfoIcelandic": "Þú hefur ekki skrifað neinar athugasemdir um landnotkun þína. Smelltu hér að neðan til að virkja athugasemdir og smelltu svo á kortið til að skrifa athugasemd á þann stað.",
+  "noCommentsInfo": "Þú hefur ekki skrifað neinar athugasemdir um landnotkun þína. Smelltu hér að neðan til að virkja athugasemdir og smelltu svo á kortið til að skrifa athugasemd á þann stað.",
   "noThanks": "Nei takk",
   "addComment": "Bæta við athugasemd",
   "urlLink": "Hlekkur í hugmynd",
