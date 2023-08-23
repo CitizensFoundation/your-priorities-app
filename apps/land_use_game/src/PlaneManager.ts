@@ -6,7 +6,7 @@ export class PlaneManager extends YpCodeBase {
   viewer: Viewer | undefined;
   plane: Entity | undefined;
   geoJson: any;
-  MINIMUM_FLIGHT_HEIGHT = 1400;
+  MINIMUM_FLIGHT_HEIGHT = 1900;
   MINIMUM_DISTANCE = 15; // km
   ANIMATION_TIME_OFFSET = 45;
 
