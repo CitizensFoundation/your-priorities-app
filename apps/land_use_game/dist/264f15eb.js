@@ -2859,9 +2859,8 @@ class qv{static fromInt(e){const t=Pv.fromInt(e);return qv.fromHueAndChroma(t.hu
        }
 
        md-dialog[open][is-safari] {
-        display: block;
+         height: 100%;
        }
-
 
       :host {
           --md-dialog-container-color: var(--md-sys-color-surface);

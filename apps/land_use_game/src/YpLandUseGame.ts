@@ -187,9 +187,8 @@ export class YpLandUseGame extends YpBaseElement {
        }
 
        md-dialog[open][is-safari] {
-        display: block;
+         height: 100%;
        }
-
 
       :host {
           --md-dialog-container-color: var(--md-sys-color-surface);
