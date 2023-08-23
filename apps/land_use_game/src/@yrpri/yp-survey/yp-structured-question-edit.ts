@@ -712,6 +712,7 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
     const liveQuestion = this.$$("#structuredQuestion_" + this.index) as
       | HTMLInputElement
       | TextField;
+    console.log(`liveQuestion: ${liveQuestion}`)
     if (liveQuestion) {
       if (liveQuestion.dataset.type === "dropdown") {
         return true; // DO something if required
@@ -727,8 +728,10 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
           (liveQuestion as TextField).value  &&
           (liveQuestion as TextField).value.length>0
         ) {
+          console.log(`liveQuestion: textfield has length`)
           return true;
         } else {
+          console.log(`liveQuestion: textfield has no length`)
           return false;
         }
       }

@@ -869,7 +869,10 @@ export class YpLogin extends YpBaseElement {
 
   renderOneTimeDialog() {
     return html`
-      <md-dialog id="dialogOneTimeWithName" modal>
+      <md-dialog id="dialogOneTimeWithName"
+      @cancel="${this.scrimDisableAction}"
+      ?is-safari="${this.isSafari}"
+      >
         <div slot="headline">[[t('oneTimeLoginWithName')]]</div>
         <div slot="content">
           <md-filled-text-field
