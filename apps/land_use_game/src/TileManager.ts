@@ -1466,6 +1466,8 @@ export class TileManager extends YpCodeBase {
         }
 
         this.calculateTileCounts();
+      } else {
+        this.fire("no-land-use-selected", null, document);
       }
     }
   }

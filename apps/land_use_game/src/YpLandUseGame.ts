@@ -186,6 +186,10 @@ export class YpLandUseGame extends YpBaseElement {
         //height: 100%;
        }
 
+       md-dialog[open][is-safari] {
+        display: block;
+       }
+
 
       :host {
           --md-dialog-container-color: var(--md-sys-color-surface);
@@ -679,7 +683,6 @@ export class YpLandUseGame extends YpBaseElement {
     }
   }
 
-
   async finishStartingGame() {
     this.disableBrowserTouchEvents = true;
     this.tutorial.openStage("navigation", async () => {
@@ -912,6 +915,11 @@ export class YpLandUseGame extends YpBaseElement {
     });
   }
 
+  noLandUseSelected() {
+    window.appGlobals.activity("open", "noLandUseHelp");
+    this.tutorial.openStage("noLandUseSelected", undefined, 1);
+  }
+
   updateTileCount(event: any) {
     this.totalNumberOfTiles = event.detail.totalNumberOfTiles;
     this.numberOfTilesWithComments = event.detail.numberOfTilesWithComments;
@@ -963,6 +971,12 @@ export class YpLandUseGame extends YpBaseElement {
       "open-new-comment",
       this.openNewComment.bind(this)
     );
+
+    document.addEventListener(
+      "no-land-use-selected",
+      this.noLandUseSelected.bind(this)
+    );
+
     document.addEventListener("open-comment", this.openComment.bind(this));
 
     document.addEventListener(
@@ -983,6 +997,14 @@ export class YpLandUseGame extends YpBaseElement {
   }
 
   _newPost() {
+    if (this.tileManager.numberOfTilesWithComments === 0) {
+      (this.$$("#noCommentsAddedDialog") as Dialog).show();
+    } else {
+      this._reallyNewPost();
+    }
+  }
+
+  _reallyNewPost() {
     window.appGlobals.activity("open", "newPost");
     this.disableBrowserTouchEvents = false;
     //TODO: Fix ts type
@@ -1387,7 +1409,7 @@ export class YpLandUseGame extends YpBaseElement {
             <md-filled-icon-button
               id="commentButton"
               toggle
-              .title="${this.t('selectAndClickOnMapToComment')}"
+              .title="${this.t("selectAndClickOnMapToComment")}"
               .label="${this.t("Comment")}"
               ?is-selected="${this.tileManager?.isCommenting}"
               .selected="${this.tileManager?.isCommenting}"
@@ -1523,9 +1545,42 @@ export class YpLandUseGame extends YpBaseElement {
     (this.$$("#errorDialog") as Dialog).close();
   }
 
+  renderNoCommentsAddedDialog() {
+    return html`
+      <md-dialog
+        id="noCommentsAddedDialog"
+        ?is-safari="${this.isSafari}"
+        @cancel="${this.scrimDisableAction}"
+      >
+        <div slot="headline">${this.t("noCommentsAdded")}</div>
+        <div slot="content">${this.t("noCommentsInfo")}</div>
+        <div slot="actions">
+          <md-text-button
+            @click="${() => {
+              this._reallyNewPost();
+              (this.$$("#noCommentsAddedDialog") as Dialog).close();
+            }}"
+            >${this.t("noThanks")}</md-text-button
+          >
+          <md-text-button
+            @click="${() => {
+              this.setIsCommenting(true);
+              (this.$$("#noCommentsAddedDialog") as Dialog).close();
+            }}"
+            >${this.t("addComment")}</md-text-button
+          >
+        </div>
+      </md-dialog>
+    `;
+  }
+
   renderErrorDialog() {
     return html`
-      <md-dialog id="errorDialog" @closed="${this.errorDialogClosed}">
+      <md-dialog
+        id="errorDialog"
+        ?is-safari="${this.isSafari}"
+        @closed="${this.errorDialogClosed}"
+      >
         <div slot="headliner">${this.t("Error")}</div>
         <div slot="content">${this.currentErrorText}</div>
         <div slot="actions">
@@ -1539,7 +1594,7 @@ export class YpLandUseGame extends YpBaseElement {
 
   render() {
     return html`
-      ${this.renderErrorDialog()}
+      ${this.renderErrorDialog()} ${this.renderNoCommentsAddedDialog()}
       <yp-app-dialogs id="dialogContainer"></yp-app-dialogs>
       <div
         id="cesium-container"

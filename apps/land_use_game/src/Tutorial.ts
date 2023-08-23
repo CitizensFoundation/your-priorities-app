@@ -333,6 +333,20 @@ export class Tutorial extends YpCodeBase {
           </ul>`,
       },
     } as TutorialPageData,
+    noLandUseSelected: {
+      stage: "noLandUseSelected",
+      title: {
+        en: "No land use selected",
+        is: "Engin landnýting valin",
+      },
+      content: {
+        en: `
+             <p>Choose a land use at the bottom of the screen.</p>
+             `,
+        is: `<p>Veldu landnýtingu neðst á skjánum</p>`,
+      },
+    } as TutorialPageData,
+
   } as Record<TutorialStage, TutorialPageData>;
 
   haveShown: Array<TutorialStage> = [];
@@ -368,11 +382,12 @@ export class Tutorial extends YpCodeBase {
 
   openStage(
     stage: TutorialStage,
-    callbackFunction: Function | undefined = undefined
+    callbackFunction: Function | undefined = undefined,
+    timeoutMs = 1200
   ) {
     this.callbackFunction = callbackFunction;
     if (!this.haveShown.includes(stage)) {
-      this._openPage(this.stages[stage]);
+      this._openPage(this.stages[stage], timeoutMs);
       this.haveShown.push(stage);
     }
   }
