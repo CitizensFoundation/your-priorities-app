@@ -761,8 +761,8 @@ export class YpLogin extends YpBaseElement {
       <md-dialog
         id="createUserDialog"
         class="createUser"
-        escapeKeyAction=""
-        scrimClickAction=""
+        @cancel="${this.scrimDisableAction}"
+        ?is-safari="${this.isSafari}"
         transition="grow-left"
         .fullscreen=${!this.wide}
       >
