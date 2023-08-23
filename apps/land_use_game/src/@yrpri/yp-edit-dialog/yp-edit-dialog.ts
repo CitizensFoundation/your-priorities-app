@@ -103,7 +103,7 @@ export class YpEditDialog extends YpBaseElement {
         }
 
         md-dialog[open][is-safari]{
-          display: block;
+          height: 100%;
         }
 
         :host {

@@ -2111,7 +2111,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
 
         md-dialog[open][is-safari]{
-          display: block;
+          height: 100%;
         }
 
         :host {
