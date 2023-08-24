@@ -2394,7 +2394,7 @@ const Eb=c`:host{--_container-color:var(--md-filled-icon-button-container-color,
         }
 
         md-dialog[open][is-safari] {
-         // height: 100%;
+          height: 100%;
         }
 
         @media (max-width: 1100px) {
