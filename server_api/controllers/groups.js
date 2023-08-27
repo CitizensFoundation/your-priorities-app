@@ -3024,6 +3024,20 @@ router.get('/:groupId/:pointId/get_parent_point', auth.can('view group'), async 
       attributes: [
         'id',
         'content'
+      ],
+      include: [
+        {
+          model: models.User,
+          required: true,
+          attributes: models.User.defaultAttributesWithSocialMediaPublic,
+          include: [
+            {
+              model: models.Image, as: 'UserProfileImages',
+              attributes:['id',"formats",'updated_at'],
+              required: false
+            }
+          ]
+        }
       ]
     });
     res.send(point);

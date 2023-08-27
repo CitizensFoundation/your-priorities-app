@@ -44,9 +44,9 @@ import {
   argbFromHex,
   themeFromSourceColor,
 } from "@material/material-color-utilities";
-import { YpCommentDialog } from "./yp-comment-dialog";
+import { YpCommentsDialog } from "./yp-comments-dialog";
 
-import "./yp-comment-dialog.js";
+import "./yp-comments-dialog.js";
 
 import { Tutorial } from "./Tutorial";
 import { Layouts } from "./flexbox-literals/classes";
@@ -62,7 +62,7 @@ export class YpLandUseGame extends YpBaseElement {
   @property({ type: String }) title = "Land Use Game";
 
   @property({ type: Number })
-  gameStage = GameStage.Intro;
+  gameStage = GameStage.Results;
 
   @property({ type: String })
   selectedLandUse:
@@ -76,6 +76,9 @@ export class YpLandUseGame extends YpBaseElement {
 
   @property({ type: Number })
   totalNumberOfTiles: number | undefined;
+
+  @property({ type: Array })
+  allTopLevelPoints: YpPointData[] = [];
 
   @property({ type: Number })
   numberOfTilesWithLandUse: number | undefined;
@@ -262,6 +265,10 @@ export class YpLandUseGame extends YpBaseElement {
 
         #cesium-container[is-commenting] {
           cursor: text;
+        }
+
+        #cesium-container[is-results-mode] {
+          cursor: pointer
         }
 
         #landUseSelection {
@@ -623,8 +630,10 @@ export class YpLandUseGame extends YpBaseElement {
     this.loggedInUser = event.detail;
     this.hideUI = false;
     if (this.gameStage === GameStage.Results) {
+      this.landUseTypeDisabled = true;
       setTimeout(async () => {
         await this.setupTileResults();
+        await this.loadAllTopLevelPoints();
         await this.setLandUse(undefined);
         await this.tileManager.updateCommentResults();
       }, 3000);
@@ -876,13 +885,13 @@ export class YpLandUseGame extends YpBaseElement {
     this.disableBrowserTouchEvents = true;
   }
 
-  openComment(event: any) {
-    (this.$$("#commentDialog") as YpCommentDialog).openDialog(event);
+  openComments(event: any) {
+    (this.$$("#commentsDialog") as YpCommentsDialog).open(event);
     this.disableBrowserTouchEvents = false;
   }
 
   closeComment() {
-    (this.$$("#commentDialog") as YpCommentDialog).closeDialog();
+    (this.$$("#commentsDialog") as YpCommentsDialog).closeDialog();
     this.disableBrowserTouchEvents = true;
   }
 
@@ -978,7 +987,7 @@ export class YpLandUseGame extends YpBaseElement {
       this.noLandUseSelected.bind(this)
     );
 
-    document.addEventListener("open-comment", this.openComment.bind(this));
+    document.addEventListener("open-comments", this.openComments.bind(this));
 
     document.addEventListener(
       "update-tile-count",
@@ -986,15 +995,32 @@ export class YpLandUseGame extends YpBaseElement {
     );
   }
 
+  async loadAllTopLevelPoints() {
+    const allPointIds = this.tileManager.getAllTopLevelPoints();
+    const allTopLevelPoints = [];
+    for (let p = 0; p < allPointIds.length; p++) {
+      const point = await window.serverApi.getParentPoint(
+        this.group!.id,
+        allPointIds[p]
+      );
+      allTopLevelPoints.push(point);
+    }
+
+    this.allTopLevelPoints = allTopLevelPoints;
+  }
+
   async afterNewPost() {
     this.gameStage = GameStage.Results;
+    this.landUseTypeDisabled = true;
     this.tileManager.clearLandUsesAndComments();
     this.tutorial.openStage("openResults");
     await new Promise((resolve) => setTimeout(resolve, 200));
     await this.setupTileResults();
+    await this.loadAllTopLevelPoints();
     await this.setLandUse(undefined);
     await this.tileManager.updateCommentResults();
     this.disableBrowserTouchEvents = true;
+    this.landUseTypeDisabled = false;
   }
 
   _newPost() {
@@ -1424,6 +1450,18 @@ export class YpLandUseGame extends YpBaseElement {
               <md-icon slot="selectedIcon">stylus</md-icon>
               <md-icon>edit</md-icon>
             </md-filled-icon-button>
+            <md-filled-icon-button
+              id="commentButton"
+              .title="${this.t("openComments")}"
+              .label="${this.t("openComments")}"
+              @click="${() => this.openComments(null)}"
+              class="navButton"
+              ?disabled="${!this.allTopLevelPoints ||
+              this.allTopLevelPoints.length === 0}"
+              ?hidden="${this.gameStage !== GameStage.Results}"
+            >
+              <md-icon>forum</md-icon>
+            </md-filled-icon-button>
           </md-chip-set>
         </div>
 
@@ -1593,6 +1631,11 @@ export class YpLandUseGame extends YpBaseElement {
     `;
   }
 
+  commentsDialogClosed() {
+    this.disableBrowserTouchEvents = true;
+    this.tileManager.disableLookAtMode();
+  }
+
   render() {
     return html`
       ${this.renderErrorDialog()} ${this.renderNoCommentsAddedDialog()}
@@ -1601,6 +1644,7 @@ export class YpLandUseGame extends YpBaseElement {
         id="cesium-container"
         ?has-landuse-selected="${this.selectedLandUse}"
         ?is-commenting="${this.tileManager?.isCommenting}"
+        ?is-results-mode="${this.gameStage === GameStage.Results}"
       ></div>
       <div id="emptyCreditContainer"></div>
 
@@ -1611,11 +1655,13 @@ export class YpLandUseGame extends YpBaseElement {
         @save="${this.saveComment}"
       ></yp-new-comment-dialog>
 
-      <yp-comment-dialog
-        id="commentDialog"
-        @close="${() => (this.disableBrowserTouchEvents = true)}"
-        .group="${this.group}"
-      ></yp-comment-dialog>
+      <yp-comments-dialog
+        id="commentsDialog"
+        .topLevelPoints="${this.allTopLevelPoints}"
+        .tileManager="${this.tileManager}"
+        @closed="${this.commentsDialogClosed}"
+        .group="${this.group!}"
+      ></yp-comments-dialog>
       ${this.renderUI()}
     `;
   }

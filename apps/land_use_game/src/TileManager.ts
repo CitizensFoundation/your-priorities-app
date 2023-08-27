@@ -210,12 +210,23 @@ export class TileManager extends YpCodeBase {
       );
       const dx = Math.abs(currentRectangle.east - otherRectangle.east);
       const dy = Math.abs(currentRectangle.north - otherRectangle.north);
-      // Check if the rectangle is less than 4 rectangles away in either dimension
-      if (dx < 4 * currentRectangle.width || dy < 4 * currentRectangle.height) {
+      // Check if the rectangle is less than 2 rectangles away in either dimension
+      if (dx < 2 * currentRectangle.width || dy < 2 * currentRectangle.height) {
         return false;
       }
     }
     return true;
+  }
+
+  getAllTopLevelPoints() {
+    let pointIds: number[] = [];
+    for (const entity of this.tileEntities) {
+      if (entity.pointIds) {
+        pointIds = [...pointIds, ...entity.pointIds]
+      }
+    }
+
+    return pointIds;
   }
 
   getTopRectangles(): { entity: LandUseEntity; count: number }[] {
@@ -235,7 +246,7 @@ export class TileManager extends YpCodeBase {
       const entity = this.tileRectangleIndex.get(index);
       if (entity && this.isFarEnough(entity, topRectangles)) {
         topRectangles.push({ entity, count: maxCount });
-        if (topRectangles.length >= 10) {
+        if (topRectangles.length >= 25) {
           break;
         }
       }
@@ -311,10 +322,10 @@ export class TileManager extends YpCodeBase {
           const maxAdjacentEntityHeight =
             Math.max(...adjacentMaxHeights) || (maxEntityHeight + 5500);
 
-          console.error(`maxAdjacentEntityHeight: ${maxAdjacentEntityHeight}`);
+          //console.error(`maxAdjacentEntityHeight: ${maxAdjacentEntityHeight}`);
 
-          const chatBubbleHeight = commentCount > 1 ? 1100 : 550;
-          const positionHeight = maxAdjacentEntityHeight + chatBubbleHeight;
+          const chatBubbleHeight = commentCount > 1 ? 550 : 275;
+          const positionHeight = maxAdjacentEntityHeight + chatBubbleHeight + 2048;
 
           // Calculate position for the chat bubble
           const position = new Cesium.ConstantPositionProperty(
@@ -1097,6 +1108,32 @@ export class TileManager extends YpCodeBase {
     }
   }
 
+  disableLookAtMode(): void {
+    this.viewer!.camera.lookAtTransform(Cesium.Matrix4.IDENTITY);
+  }
+
+  showComment(pointId: number): void {
+    // Search for the tile entity with the given pointId
+    const targetEntity = this.tileEntities.find(entity =>
+      entity.pointId === pointId || (entity.pointIds && entity.pointIds.includes(pointId))
+    );
+
+    if (targetEntity && targetEntity.commentEntity) {
+      // Obtain the comment entity's position
+      const position = targetEntity.commentEntity.position!.getValue(Cesium.JulianDate.now());
+
+      // Create a HeadingPitchRange to set the camera's position relative to the comment entity
+      const heading = this.viewer!.camera.heading; // Keep the camera's current heading
+      const pitch = this.viewer!.camera.pitch;     // Keep the camera's current pitch
+      const range = 3500; // Fixed range for a close-up view
+      this.viewer!.camera.cancelFlight();
+      // Set the camera's position using lookAt
+      this.viewer!.camera.lookAt(position!, new Cesium.HeadingPitchRange(heading, pitch, range));
+    } else {
+      console.warn(`No entity or comment entity found for pointId: ${pointId}`);
+    }
+  }
+
   clearLandUsesAndComments(): void {
     // Loop over all tile entities
     for (const entity of this.tileEntities) {
@@ -1377,7 +1414,7 @@ export class TileManager extends YpCodeBase {
       const index =
         rectangleEntity.properties.getValue("rectangleIndex").rectangleIndex;
       const entity = this.tileRectangleIndex.get(index);
-      this.fire("open-comment", { entity }, document);
+      this.fire("open-comments", { entity }, document);
     }
   }
 

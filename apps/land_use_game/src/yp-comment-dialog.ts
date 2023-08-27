@@ -172,7 +172,7 @@ export class YpCommentDialog extends YpBaseElementWithLogin {
               <div id="content" slot="content">
                 <div class="layout vertical newsContainer">
                   <yp-user-with-organization
-                    .user="${this.loggedInUser}"
+                    .user="${this.point.User!}"
                   ></yp-user-with-organization>
                   <yp-magic-text
                     id="content"
