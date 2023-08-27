@@ -222,7 +222,7 @@ export class TileManager extends YpCodeBase {
     let pointIds: number[] = [];
     for (const entity of this.tileEntities) {
       if (entity.pointIds) {
-        pointIds = [...pointIds, ...entity.pointIds]
+        pointIds = [...pointIds, ...entity.pointIds];
       }
     }
 
@@ -286,190 +286,191 @@ export class TileManager extends YpCodeBase {
   }
 
   async updateCommentResults() {
-    const commentPromises = Array.from(this.rectangleCommentsUseCounts.entries()).map(
-      async ([rectangleIndex, commentCount]) => {
+    const commentPromises = Array.from(
+      this.rectangleCommentsUseCounts.entries()
+    ).map(async ([rectangleIndex, commentCount]) => {
+      const rectangleEntity = this.tileRectangleIndex.get(rectangleIndex);
+      const rectangle = rectangleEntity?.rectangle!.coordinates!.getValue(
+        Cesium.JulianDate.now()
+      );
+
+      if (rectangleEntity && rectangle) {
+        const centerPosition = Cesium.Rectangle.center(rectangle);
+        const terrainHeight = await this.getTerrainHeight(centerPosition);
+        // Calculate the highest point in the rectangle
+        const maxEntityHeight =
+          this.rectangleMaxHeights.get(rectangleIndex) || terrainHeight;
+
+        // Find the maximum entity height among the 8 adjacent rectangles
+        const adjacentMaxHeights = [];
+        for (let i = -4; i <= 4; i++) {
+          for (let j = -4; j <= 4; j++) {
+            // Exclude the center rectangle (0, 0)
+            if (!(i === 0 && j === 0)) {
+              const adjacentRectangleIndex = this.getRectangleIndexAtOffset(
+                rectangleIndex,
+                i,
+                j
+              );
+              if (adjacentRectangleIndex) {
+                const adjacentMaxHeight =
+                  this.rectangleMaxHeights.get(adjacentRectangleIndex) ||
+                  maxEntityHeight;
+                adjacentMaxHeights.push(adjacentMaxHeight);
+              }
+            }
+          }
+        }
+        const maxAdjacentEntityHeight =
+          Math.max(...adjacentMaxHeights) || maxEntityHeight + 5500;
+
+        //console.error(`maxAdjacentEntityHeight: ${maxAdjacentEntityHeight}`);
+
+        const chatBubbleHeight = commentCount > 1 ? 550 : 275;
+        const positionHeight =
+          maxAdjacentEntityHeight + chatBubbleHeight + 2048;
+
+        // Calculate position for the chat bubble
+        const position = new Cesium.ConstantPositionProperty(
+          Cesium.Ellipsoid.WGS84.cartographicToCartesian(
+            new Cesium.Cartographic(
+              centerPosition.longitude,
+              centerPosition.latitude,
+              positionHeight
+            )
+          )
+        );
+
+        const modelUrl =
+          commentCount > 1
+            ? "https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/landuse_game/chatBubble5.glb"
+            : "https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/landuse_game/chatBubble5.glb";
+
+        rectangleEntity.commentEntity = this.createModel(
+          modelUrl,
+          position,
+          chatBubbleHeight,
+          {
+            rectangleIndex: rectangleEntity.rectangleIndex!,
+          }
+        );
+      }
+    });
+
+    // Wait for all computations to finish
+    await Promise.all(commentPromises);
+  }
+
+  async updateTileResults() {
+    return new Promise<void>(async (resolve) => {
+      this.clearresultsModels();
+
+      const tilePromises = Array.from(
+        this.rectangleLandUseCounts.entries()
+      ).map(async ([rectangleIndex, landUseCounts]) => {
+        // Get the rectangle from the rectangleIndex
         const rectangleEntity = this.tileRectangleIndex.get(rectangleIndex);
+
         const rectangle = rectangleEntity?.rectangle!.coordinates!.getValue(
           Cesium.JulianDate.now()
         );
 
         if (rectangleEntity && rectangle) {
           const centerPosition = Cesium.Rectangle.center(rectangle);
+          const centerLatitude = Cesium.Math.toDegrees(centerPosition.latitude);
           const terrainHeight = await this.getTerrainHeight(centerPosition);
-          // Calculate the highest point in the rectangle
-          const maxEntityHeight =
-            this.rectangleMaxHeights.get(rectangleIndex) || terrainHeight;
+          const widthInRadians = rectangle.width;
+          const heightInRadians = rectangle.height;
 
-          // Find the maximum entity height among the 8 adjacent rectangles
-          const adjacentMaxHeights = [];
-          for (let i = -4; i <= 4; i++) {
-            for (let j = -4; j <= 4; j++) {
-              // Exclude the center rectangle (0, 0)
-              if (!(i === 0 && j === 0)) {
-                const adjacentRectangleIndex = this.getRectangleIndexAtOffset(
-                  rectangleIndex,
-                  i,
-                  j
-                );
-                if (adjacentRectangleIndex) {
-                  const adjacentMaxHeight =
-                    this.rectangleMaxHeights.get(adjacentRectangleIndex) || maxEntityHeight;
-                  adjacentMaxHeights.push(adjacentMaxHeight);
+          const width = Math.abs(
+            widthInRadians *
+              Math.cos(centerPosition.latitude) *
+              Cesium.Ellipsoid.WGS84.maximumRadius
+          );
+          const depth = Math.abs(
+            heightInRadians * Cesium.Ellipsoid.WGS84.maximumRadius
+          );
+
+          let maxCount = 1;
+          const upperCountNormalized = 5;
+
+          // Find the maxCount
+          this.landUseCount.forEach((count, landUseType) => {
+            if (count > maxCount) {
+              maxCount = count;
+            }
+          });
+
+          let highestCount = 1;
+
+          landUseCounts.forEach((count, landUseType) => {
+            if (count > highestCount) {
+              highestCount = count;
+            }
+          });
+
+          landUseCounts.forEach((count, landUseType) => {
+            if (
+              (!this.selectedLandUse || landUseType === this.selectedLandUse) &&
+              (this.showAllTileResults || count === highestCount)
+            ) {
+              //count = ((count - 1) / (maxCount - 1)) * (upperCountNormalized - 0.1) + 0.1;
+              //count = Math.sqrt(((count - 1) / (maxCount - 1)) * (upperCountNormalized - 0.1) + 0.1);
+
+              // Create box entity with size based on the count
+              //console.log("count", count);
+              const alpha = Math.min(0.4, 0.05 + count / 20);
+              //console.log("alpha", alpha)
+              let height = count * 3000;
+
+              //TODO: Get some caching working even if this will not work
+              const modelIndex = `${rectangleIndex}|${landUseType}|${
+                centerPosition.longitude
+              }|${centerPosition.latitude}|${
+                terrainHeight + height / 2
+              }|${width}|${depth}|${height}|${alpha}`;
+              if (this.resultsModelsUsed.get(modelIndex) !== true) {
+                const boxEntity = this.viewer!.entities.add({
+                  position: Cesium.Ellipsoid.WGS84.cartographicToCartesian(
+                    new Cesium.Cartographic(
+                      centerPosition.longitude,
+                      centerPosition.latitude,
+                      terrainHeight + height / 2
+                    )
+                  ),
+                  box: {
+                    dimensions: new Cesium.Cartesian3(width, depth, height),
+                    heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
+                    material: this.getColorForLandUse(
+                      landUseType,
+                      alpha
+                    ) as any,
+                  },
+                });
+
+                this.resultsModels.push(boxEntity);
+                this.resultsModelsUsed.set(modelIndex, true);
+
+                // Update the maximum height for the rectangle
+                const currentMaxHeight =
+                  this.rectangleMaxHeights.get(rectangleIndex) || 0;
+                if (terrainHeight + height > currentMaxHeight) {
+                  this.rectangleMaxHeights.set(
+                    rectangleIndex,
+                    terrainHeight + height
+                  );
                 }
+              } else {
+                console.info("Model already used: " + modelIndex);
               }
             }
-          }
-          const maxAdjacentEntityHeight =
-            Math.max(...adjacentMaxHeights) || (maxEntityHeight + 5500);
-
-          //console.error(`maxAdjacentEntityHeight: ${maxAdjacentEntityHeight}`);
-
-          const chatBubbleHeight = commentCount > 1 ? 550 : 275;
-          const positionHeight = maxAdjacentEntityHeight + chatBubbleHeight + 2048;
-
-          // Calculate position for the chat bubble
-          const position = new Cesium.ConstantPositionProperty(
-            Cesium.Ellipsoid.WGS84.cartographicToCartesian(
-              new Cesium.Cartographic(
-                centerPosition.longitude,
-                centerPosition.latitude,
-                positionHeight
-              )
-            )
-          );
-
-          const modelUrl =
-            commentCount > 1
-              ? "https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/landuse_game/chatBubble5.glb"
-              : "https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/landuse_game/chatBubble5.glb";
-
-          rectangleEntity.commentEntity = this.createModel(
-            modelUrl,
-            position,
-            chatBubbleHeight,
-            {
-              rectangleIndex: rectangleEntity.rectangleIndex!,
-            }
-          );
-        }
-      }
-    );
-
-    // Wait for all computations to finish
-    await Promise.all(commentPromises);
-  }
-
-
-  async updateTileResults() {
-    return new Promise<void>(async (resolve) => {
-      this.clearresultsModels();
-
-      const tilePromises = Array.from(this.rectangleLandUseCounts.entries()).map(
-        async ([rectangleIndex, landUseCounts]) => {
-          // Get the rectangle from the rectangleIndex
-          const rectangleEntity = this.tileRectangleIndex.get(rectangleIndex);
-
-          const rectangle = rectangleEntity?.rectangle!.coordinates!.getValue(
-            Cesium.JulianDate.now()
-          );
-
-          if (rectangleEntity && rectangle) {
-            const centerPosition = Cesium.Rectangle.center(rectangle);
-            const centerLatitude = Cesium.Math.toDegrees(centerPosition.latitude);
-            const terrainHeight = await this.getTerrainHeight(centerPosition);
-            const widthInRadians = rectangle.width;
-            const heightInRadians = rectangle.height;
-
-            const width = Math.abs(
-              widthInRadians *
-                Math.cos(centerPosition.latitude) *
-                Cesium.Ellipsoid.WGS84.maximumRadius
-            );
-            const depth = Math.abs(
-              heightInRadians * Cesium.Ellipsoid.WGS84.maximumRadius
-            );
-
-            let maxCount = 1;
-            const upperCountNormalized = 5;
-
-            // Find the maxCount
-            this.landUseCount.forEach((count, landUseType) => {
-              if (count > maxCount) {
-                maxCount = count;
-              }
-            });
-
-            let highestCount = 1;
-
-            landUseCounts.forEach((count, landUseType) => {
-              if (count > highestCount) {
-                highestCount = count;
-              }
-            });
-
-            landUseCounts.forEach((count, landUseType) => {
-              if (
-                (!this.selectedLandUse || landUseType === this.selectedLandUse) &&
-                (this.showAllTileResults || count === highestCount)
-              ) {
-                //count = ((count - 1) / (maxCount - 1)) * (upperCountNormalized - 0.1) + 0.1;
-                //count = Math.sqrt(((count - 1) / (maxCount - 1)) * (upperCountNormalized - 0.1) + 0.1);
-
-                // Create box entity with size based on the count
-                //console.log("count", count);
-                const alpha = Math.min(0.4, 0.05 + count / 20);
-                //console.log("alpha", alpha)
-                let height = count * 3000;
-
-                //TODO: Get some caching working even if this will not work
-                const modelIndex = `${rectangleIndex}|${landUseType}|${
-                  centerPosition.longitude
-                }|${centerPosition.latitude}|${
-                  terrainHeight + height / 2
-                }|${width}|${depth}|${height}|${alpha}`;
-                if (this.resultsModelsUsed.get(modelIndex) !== true) {
-                  const boxEntity = this.viewer!.entities.add({
-                    position: Cesium.Ellipsoid.WGS84.cartographicToCartesian(
-                      new Cesium.Cartographic(
-                        centerPosition.longitude,
-                        centerPosition.latitude,
-                        terrainHeight + height / 2
-                      )
-                    ),
-                    box: {
-                      dimensions: new Cesium.Cartesian3(width, depth, height),
-                      heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
-                      material: this.getColorForLandUse(
-                        landUseType,
-                        alpha
-                      ) as any,
-                    },
-                  });
-
-                  this.resultsModels.push(boxEntity);
-                  this.resultsModelsUsed.set(modelIndex, true);
-
-                  // Update the maximum height for the rectangle
-                  const currentMaxHeight =
-                    this.rectangleMaxHeights.get(rectangleIndex) || 0;
-                  if (terrainHeight + height > currentMaxHeight) {
-                    this.rectangleMaxHeights.set(
-                      rectangleIndex,
-                      terrainHeight + height
-                    );
-                  }
-                } else {
-                  console.info("Model already used: " + modelIndex);
-                }
-              }
-            });
-          } else {
-            if (window.location.href.indexOf("localhost") > -1) {
-              //console.error("No rectangle entity found for index: " + rectangleIndex);
-            }
+          });
+        } else {
+          if (window.location.href.indexOf("localhost") > -1) {
+            //console.error("No rectangle entity found for index: " + rectangleIndex);
           }
         }
-      );
+      });
 
       const topRectanglePromises = this.getTopRectangles().map(
         async ({ entity: rectangleEntity, count }) => {
@@ -523,7 +524,6 @@ export class TileManager extends YpCodeBase {
       resolve();
     });
   }
-
 
   countAssignedRectangles(landUse: string): number {
     return this.landUseCount.get(landUse) || 0;
@@ -992,8 +992,8 @@ export class TileManager extends YpCodeBase {
       } else if ([667, 28858].includes(groupId)) {
         this.geojsonData = this.thingEGeoData;
         this.showAllView = {
-          jsonData: `{"position":{"x":2626379.528061472,"y":-897562.5295321164,"z":5762602.5559962075},"heading":0.6922606145583803,"pitch":-0.4089817132726761,"roll":6.282533936902459}`
-        }
+          jsonData: `{"position":{"x":2626379.528061472,"y":-897562.5295321164,"z":5762602.5559962075},"heading":0.6922606145583803,"pitch":-0.4089817132726761,"roll":6.282533936902459}`,
+        };
       }
 
       this.geojsonData.features.forEach((feature: GeoJSONFeature) => {
@@ -1114,21 +1114,28 @@ export class TileManager extends YpCodeBase {
 
   showComment(pointId: number): void {
     // Search for the tile entity with the given pointId
-    const targetEntity = this.tileEntities.find(entity =>
-      entity.pointId === pointId || (entity.pointIds && entity.pointIds.includes(pointId))
+    const targetEntity = this.tileEntities.find(
+      (entity) =>
+        entity.pointId === pointId ||
+        (entity.pointIds && entity.pointIds.includes(pointId))
     );
 
     if (targetEntity && targetEntity.commentEntity) {
       // Obtain the comment entity's position
-      const position = targetEntity.commentEntity.position!.getValue(Cesium.JulianDate.now());
+      const position = targetEntity.commentEntity.position!.getValue(
+        Cesium.JulianDate.now()
+      );
 
       // Create a HeadingPitchRange to set the camera's position relative to the comment entity
       const heading = this.viewer!.camera.heading; // Keep the camera's current heading
-      const pitch = this.viewer!.camera.pitch;     // Keep the camera's current pitch
-      const range = 3500; // Fixed range for a close-up view
+      const pitch = Cesium.Math.toRadians(-20); // Keep the camera's current pitch
+      const range = 4200; // Fixed range for a close-up view
       this.viewer!.camera.cancelFlight();
       // Set the camera's position using lookAt
-      this.viewer!.camera.lookAt(position!, new Cesium.HeadingPitchRange(heading, pitch, range));
+      this.viewer!.camera.lookAt(
+        position!,
+        new Cesium.HeadingPitchRange(heading, pitch, range)
+      );
     } else {
       console.warn(`No entity or comment entity found for pointId: ${pointId}`);
     }
