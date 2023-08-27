@@ -62,7 +62,7 @@ export class YpLandUseGame extends YpBaseElement {
   @property({ type: String }) title = "Land Use Game";
 
   @property({ type: Number })
-  gameStage = GameStage.Results;
+  gameStage = GameStage.Intro;
 
   @property({ type: String })
   selectedLandUse:
@@ -1058,6 +1058,86 @@ export class YpLandUseGame extends YpBaseElement {
     }
   }
 
+  async setupCharacters() {
+    const longLatStart = [63.46578246639273, -18.86733120920245];
+    const longLatEnd = [64.74664895142547, -19.35433358999831];
+
+    // Convert lang/lat to cartesian
+    const giantStart = Cesium.Cartesian3.fromDegrees(
+      longLatStart[1],
+      longLatStart[0]
+    );
+
+    const giantEnd = Cesium.Cartesian3.fromDegrees(
+      longLatEnd[1],
+      longLatEnd[0]
+    );
+
+    /*this.characterManager = new CharacterManager(
+        this.viewer!,
+        giantStart,
+        giantEnd
+      );
+      this.characterManager.setupCharacter();*/
+
+    setTimeout(() => {
+      const dragonLongLatStart = [65.56472600995652, -14.117065946587537];
+      const dragonLongLatEnd = [64.80437929394297, -18.70322644445653];
+
+      // Convert lang/lat to cartesian
+      const dragonStart = Cesium.Cartesian3.fromDegrees(
+        dragonLongLatStart[1],
+        dragonLongLatStart[0]
+      );
+
+      const dragonEnd = Cesium.Cartesian3.fromDegrees(
+        dragonLongLatEnd[1],
+        dragonLongLatEnd[0]
+      );
+
+      this.dragonManager = new DragonManager(
+        this.viewer!,
+        dragonStart,
+        dragonEnd
+      );
+      this.dragonManager.setupCharacter();
+    }, 1000 * 60 * 60 * 60);
+
+    setTimeout(() => {
+      const eagleLongLatStart = [66.13323697690669, -18.916804650989715];
+      const eagleLongLatEnd = [64.67281083721116, -18.55963945209211];
+
+      const eagleStart = Cesium.Cartesian3.fromDegrees(
+        eagleLongLatStart[1],
+        eagleLongLatStart[0]
+      );
+
+      const eagleEnd = Cesium.Cartesian3.fromDegrees(
+        eagleLongLatEnd[1],
+        eagleLongLatEnd[0]
+      );
+
+      this.eagleManager = new EagleManager(this.viewer!, eagleStart, eagleEnd);
+      this.eagleManager.setupCharacter();
+    }, 1000 * 60 * 60 * 60);
+
+    const bullLongLatStart = [64.80294898622358, -23.77641212993773];
+    const bullLongLatEnd = [64.7634513702002, -19.572002677195176];
+
+    const bullStart = Cesium.Cartesian3.fromDegrees(
+      bullLongLatStart[1],
+      bullLongLatStart[0]
+    );
+
+    const bullEnd = Cesium.Cartesian3.fromDegrees(
+      bullLongLatEnd[1],
+      bullLongLatEnd[0]
+    );
+
+    //this.bullManager = new BullManager(this.viewer!, bullStart, bullEnd);
+    //this.bullManager.setupCharacter();
+  }
+
   async inputAction(event: any) {
     if (this.gameStage === GameStage.Play) {
       this.tileManager.setInputAction(event);
@@ -1187,88 +1267,6 @@ export class YpLandUseGame extends YpBaseElement {
       );
       await this.planeManager.setup();
       this.planeDisabled = false;
-
-      const longLatStart = [63.46578246639273, -18.86733120920245];
-      const longLatEnd = [64.74664895142547, -19.35433358999831];
-
-      // Convert lang/lat to cartesian
-      const giantStart = Cesium.Cartesian3.fromDegrees(
-        longLatStart[1],
-        longLatStart[0]
-      );
-
-      const giantEnd = Cesium.Cartesian3.fromDegrees(
-        longLatEnd[1],
-        longLatEnd[0]
-      );
-
-      /*this.characterManager = new CharacterManager(
-        this.viewer!,
-        giantStart,
-        giantEnd
-      );
-      this.characterManager.setupCharacter();*/
-
-      setTimeout(() => {
-        const dragonLongLatStart = [65.56472600995652, -14.117065946587537];
-        const dragonLongLatEnd = [64.80437929394297, -18.70322644445653];
-
-        // Convert lang/lat to cartesian
-        const dragonStart = Cesium.Cartesian3.fromDegrees(
-          dragonLongLatStart[1],
-          dragonLongLatStart[0]
-        );
-
-        const dragonEnd = Cesium.Cartesian3.fromDegrees(
-          dragonLongLatEnd[1],
-          dragonLongLatEnd[0]
-        );
-
-        this.dragonManager = new DragonManager(
-          this.viewer!,
-          dragonStart,
-          dragonEnd
-        );
-        this.dragonManager.setupCharacter();
-      }, 1000 * 60 * 60 * 60);
-
-      setTimeout(() => {
-        const eagleLongLatStart = [66.13323697690669, -18.916804650989715];
-        const eagleLongLatEnd = [64.67281083721116, -18.55963945209211];
-
-        const eagleStart = Cesium.Cartesian3.fromDegrees(
-          eagleLongLatStart[1],
-          eagleLongLatStart[0]
-        );
-
-        const eagleEnd = Cesium.Cartesian3.fromDegrees(
-          eagleLongLatEnd[1],
-          eagleLongLatEnd[0]
-        );
-
-        this.eagleManager = new EagleManager(
-          this.viewer!,
-          eagleStart,
-          eagleEnd
-        );
-        this.eagleManager.setupCharacter();
-      }, 1000 * 60 * 60 * 60);
-
-      const bullLongLatStart = [64.80294898622358, -23.77641212993773];
-      const bullLongLatEnd = [64.7634513702002, -19.572002677195176];
-
-      const bullStart = Cesium.Cartesian3.fromDegrees(
-        bullLongLatStart[1],
-        bullLongLatStart[0]
-      );
-
-      const bullEnd = Cesium.Cartesian3.fromDegrees(
-        bullLongLatEnd[1],
-        bullLongLatEnd[0]
-      );
-
-      //this.bullManager = new BullManager(this.viewer!, bullStart, bullEnd);
-      //this.bullManager.setupCharacter();
     });
 
     //Enable depth testing so things behind the terrain disappear.
@@ -1362,6 +1360,20 @@ export class YpLandUseGame extends YpBaseElement {
         url: "https://a.tile.openstreetmap.org/",
       })
     );
+  }
+
+  async logout() {
+    (this.$$("#logoutDialog") as MdDialog).show();
+  }
+
+  async reallyLogout() {
+    window.appUser.logout();
+    await new Promise((resolve) => setTimeout(resolve, 750));
+    location.reload();
+  }
+
+  cancelLogout() {
+    (this.$$("#logoutDialog") as MdDialog).close();
   }
 
   renderUI() {
@@ -1519,6 +1531,14 @@ export class YpLandUseGame extends YpBaseElement {
               .label="${this.t("Help")}"
               ><md-icon>help</md-icon></md-icon-button
             >
+            <md-icon-button
+              id="logoutButton"
+              ?hidden="${!window.appUser.user}"
+              class="navButton helpButton"
+              @click="${this.logout}"
+              .label="${this.t("Logout")}"
+              ><md-icon>logout</md-icon></md-icon-button
+            >
           </div>
         </div>
 
@@ -1631,6 +1651,27 @@ export class YpLandUseGame extends YpBaseElement {
     `;
   }
 
+  renderLogoutDialog() {
+    return html`
+      <md-dialog
+        id="logoutDialog"
+        ?is-safari="${this.isSafari}"
+        @cancel="${this.scrimDisableAction}"
+      >
+        <div slot="headliner">${this.t("user.logout")}</div>
+        <div slot="content">${this.t('areYouSureYouWantToLogout')}</div>
+        <div slot="actions">
+          <md-text-button @click="${this.cancelLogout}"
+            >${this.t("cancel")}</md-text-button
+          >
+          <md-text-button @click="${this.reallyLogout}"
+            >${this.t("user.logout")}</md-text-button
+          >
+        </div>
+      </md-dialog>
+    `;
+  }
+
   commentsDialogClosed() {
     this.disableBrowserTouchEvents = true;
     this.tileManager.disableLookAtMode();
@@ -1638,7 +1679,7 @@ export class YpLandUseGame extends YpBaseElement {
 
   render() {
     return html`
-      ${this.renderErrorDialog()} ${this.renderNoCommentsAddedDialog()}
+      ${this.renderLogoutDialog()}  ${this.renderErrorDialog()} ${this.renderNoCommentsAddedDialog()}
       <yp-app-dialogs id="dialogContainer"></yp-app-dialogs>
       <div
         id="cesium-container"

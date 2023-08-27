@@ -1,35 +1,36 @@
-import { html, css, nothing, TemplateResult } from 'lit';
-import { property, customElement } from 'lit/decorators.js';
+import { html, css, nothing, TemplateResult } from "lit";
+import { property, customElement } from "lit/decorators.js";
 
-import '@material/mwc-circular-progress-four-color';
-import '@material/mwc-dialog';
-import '@material/mwc-button';
-import '@material/mwc-icon-button';
-import '@material/mwc-snackbar';
-import '@material/mwc-tab-bar';
-import '@material/mwc-tab';
-import '@material/mwc-radio';
-import '@material/mwc-formfield';
-import '@material/mwc-select';
-import { TextArea } from '@material/mwc-textarea';
-import { DateTime } from 'luxon';
+import "@material/mwc-circular-progress-four-color";
+import "@material/mwc-dialog";
+import "@material/mwc-button";
+import "@material/mwc-icon-button";
+import "@material/mwc-snackbar";
+import "@material/mwc-tab-bar";
+import "@material/mwc-tab";
+import "@material/mwc-radio";
+import "@material/mwc-formfield";
+import "@material/mwc-select";
+import { TextArea } from "@material/mwc-textarea";
+import { DateTime } from "luxon";
 
-import { Radio } from '@material/mwc-radio';
-import { Snackbar } from '@material/mwc-snackbar';
-import { YpEditBase } from '../common/yp-edit-base.js';
-import { YpNavHelpers } from '../common/YpNavHelpers.js';
-import { YpMagicText } from '../yp-magic-text/yp-magic-text.js';
-import { YpFileUpload } from '../yp-file-upload/yp-file-upload.js';
-import { YpEditDialog } from '../yp-edit-dialog/yp-edit-dialog.js';
-import { YpEmojiSelector } from '../common/yp-emoji-selector.js';
-import { YpStructuredQuestionEdit } from '../yp-survey/yp-structured-question-edit.js';
+import { Radio } from "@material/mwc-radio";
+import { Snackbar } from "@material/mwc-snackbar";
+import { YpEditBase } from "../common/yp-edit-base.js";
+import { YpNavHelpers } from "../common/YpNavHelpers.js";
+import { YpMagicText } from "../yp-magic-text/yp-magic-text.js";
+import { YpFileUpload } from "../yp-file-upload/yp-file-upload.js";
+import { YpEditDialog } from "../yp-edit-dialog/yp-edit-dialog.js";
+import { YpEmojiSelector } from "../common/yp-emoji-selector.js";
+import { YpStructuredQuestionEdit } from "../yp-survey/yp-structured-question-edit.js";
 
-import '../yp-survey/yp-structured-question-edit.js';
-import { YpSurveyHelpers } from '../yp-survey/YpSurveyHelpers.js';
+import "../yp-survey/yp-structured-question-edit.js";
+import { YpSurveyHelpers } from "../yp-survey/YpSurveyHelpers.js";
 
-import  '../yp-edit-dialog/yp-edit-dialog.js';
+import "../yp-edit-dialog/yp-edit-dialog.js";
 
-import '@material/web/iconbutton/filled-icon-button.js';
+import "@material/web/iconbutton/filled-icon-button.js";
+import { YpForm } from "../common/yp-form.js";
 
 export const EditPostTabs: Record<string, number> = {
   Description: 0,
@@ -38,10 +39,10 @@ export const EditPostTabs: Record<string, number> = {
   Media: 3,
 };
 
-@customElement('yp-post-edit')
+@customElement("yp-post-edit")
 export class YpPostEdit extends YpEditBase {
   @property({ type: String })
-  action = '/posts';
+  action = "/posts";
 
   @property({ type: Boolean })
   newPost = false;
@@ -60,6 +61,12 @@ export class YpPostEdit extends YpEditBase {
 
   @property({ type: Object })
   group: YpGroupData | undefined;
+
+  @property({ type: Boolean })
+  saveSurveyAnswers = true;
+
+  @property({ type: Boolean })
+  skipIfSavedSurveyAnswers = true;
 
   @property({ type: Boolean })
   locationHidden = false;
@@ -104,10 +111,10 @@ export class YpPostEdit extends YpEditBase {
   sructuredAnswersString: string | undefined;
 
   @property({ type: String })
-  structuredAnswersJson = '';
+  structuredAnswersJson = "";
 
   @property({ type: String })
-  structuredAnswersString = '';
+  structuredAnswersString = "";
 
   @property({ type: Array })
   translatedQuestions: Array<YpStructuredQuestionData> | undefined;
@@ -122,7 +129,7 @@ export class YpPostEdit extends YpEditBase {
   uploadedDocumentFilename: string | undefined;
 
   @property({ type: String })
-  selectedCoverMediaType = 'none';
+  selectedCoverMediaType = "none";
 
   @property({ type: Number })
   uploadedHeaderImageId: number | undefined;
@@ -131,7 +138,7 @@ export class YpPostEdit extends YpEditBase {
   customTitleQuestionText: string | undefined;
 
   emailValidationPattern =
-    '^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$';
+    "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
 
   liveQuestionIds: Array<number> = [];
 
@@ -142,30 +149,30 @@ export class YpPostEdit extends YpEditBase {
   updated(changedProperties: Map<string | number | symbol, unknown>): void {
     super.updated(changedProperties);
 
-    if (changedProperties.has('post')) {
+    if (changedProperties.has("post")) {
       this._postChanged();
     }
 
-    if (changedProperties.has('locationHidden')) {
+    if (changedProperties.has("locationHidden")) {
       this._locationHiddenChanged();
     }
 
-    if (changedProperties.has('location')) {
+    if (changedProperties.has("location")) {
       this._locationChanged();
     }
 
-    if (changedProperties.has('selectedCategoryArrayId')) {
+    if (changedProperties.has("selectedCategoryArrayId")) {
       this._selectedCategoryChanged();
     }
 
-    if (changedProperties.has('selectedCoverMediaType')) {
+    if (changedProperties.has("selectedCoverMediaType")) {
       this._uploadedHeaderImageIdChanged();
     }
-    if (changedProperties.has('group')) {
+    if (changedProperties.has("group")) {
       this._groupChanged();
     }
 
-    if (changedProperties.has('selected')) {
+    if (changedProperties.has("selected")) {
       this._selectedChanged();
       const a = this.selected;
     }
@@ -175,14 +182,26 @@ export class YpPostEdit extends YpEditBase {
 
   _getQuestionLengthWithSubOptions(questions: string | any[]) {
     let length = 0;
-    for (let i=0; i<questions.length;i++) {
+    for (let i = 0; i < questions.length; i++) {
       length += 1;
       var question = questions[i];
-      if (question.type==="radios" && question.radioButtons && question.radioButtons.length>0) {
+      if (
+        question.type === "radios" &&
+        question.radioButtons &&
+        question.radioButtons.length > 0
+      ) {
         length += question.radioButtons.length;
-      }  else if (question.type==="checkboxes" && question.checkboxes && question.checkboxes.length>0) {
+      } else if (
+        question.type === "checkboxes" &&
+        question.checkboxes &&
+        question.checkboxes.length > 0
+      ) {
         length += question.checkboxes.length;
-      } else if(question.type==="dropdown" && question.dropdownOptions && question.dropdownOptions.length>0) {
+      } else if (
+        question.type === "dropdown" &&
+        question.dropdownOptions &&
+        question.dropdownOptions.length > 0
+      ) {
         length += question.dropdownOptions.length;
       }
     }
@@ -219,7 +238,6 @@ export class YpPostEdit extends YpEditBase {
       this.group &&
       this.language !== this.group.language
     ) {
-
       const translatedTexts =
         await window.serverApi.getSurveyQuestionsTranslations(
           this.group,
@@ -227,29 +245,68 @@ export class YpPostEdit extends YpEditBase {
         );
 
       if (this.autoTranslate && this.language !== this.group.language) {
-        var currentQuestions = JSON.parse(JSON.stringify(this.group.configuration.structuredQuestionsJson));
+        var currentQuestions = JSON.parse(
+          JSON.stringify(this.group.configuration.structuredQuestionsJson)
+        );
 
-        if (translatedTexts.length===this._getQuestionLengthWithSubOptions(currentQuestions)) {
+        if (
+          translatedTexts.length ===
+          this._getQuestionLengthWithSubOptions(currentQuestions)
+        ) {
           var translatedItemCount = 0;
-          for (var questionCount=0; questionCount<currentQuestions.length;questionCount++) {
+          for (
+            var questionCount = 0;
+            questionCount < currentQuestions.length;
+            questionCount++
+          ) {
             var question = currentQuestions[questionCount];
             question.originalText = question.text;
             question.text = translatedTexts[translatedItemCount++];
 
-            if (question.type==="radios" && question.radioButtons && question.radioButtons.length>0) {
-              for (var subOptionCount=0;subOptionCount<question.radioButtons.length;subOptionCount++) {
-                question.radioButtons[subOptionCount].originalText =  question.radioButtons[subOptionCount].text;
-                question.radioButtons[subOptionCount].text = translatedTexts[translatedItemCount++];
+            if (
+              question.type === "radios" &&
+              question.radioButtons &&
+              question.radioButtons.length > 0
+            ) {
+              for (
+                var subOptionCount = 0;
+                subOptionCount < question.radioButtons.length;
+                subOptionCount++
+              ) {
+                question.radioButtons[subOptionCount].originalText =
+                  question.radioButtons[subOptionCount].text;
+                question.radioButtons[subOptionCount].text =
+                  translatedTexts[translatedItemCount++];
               }
-            }  else if (question.type==="checkboxes" && question.checkboxes && question.checkboxes.length>0) {
-              for (var subOptionCount=0;subOptionCount<question.checkboxes.length;subOptionCount++) {
-                question.checkboxes[subOptionCount].originalText =  question.checkboxes[subOptionCount].text;
-                question.checkboxes[subOptionCount].text = translatedTexts[translatedItemCount++];
+            } else if (
+              question.type === "checkboxes" &&
+              question.checkboxes &&
+              question.checkboxes.length > 0
+            ) {
+              for (
+                var subOptionCount = 0;
+                subOptionCount < question.checkboxes.length;
+                subOptionCount++
+              ) {
+                question.checkboxes[subOptionCount].originalText =
+                  question.checkboxes[subOptionCount].text;
+                question.checkboxes[subOptionCount].text =
+                  translatedTexts[translatedItemCount++];
               }
-            } else if(question.type==="dropdown" && question.dropdownOptions && question.dropdownOptions.length>0) {
-              for (var subOptionCount=0;subOptionCount<question.dropdownOptions.length;subOptionCount++) {
-                question.dropdownOptions[subOptionCount].originalText =  question.dropdownOptions[subOptionCount].text;
-                question.dropdownOptions[subOptionCount].text = translatedTexts[translatedItemCount++];
+            } else if (
+              question.type === "dropdown" &&
+              question.dropdownOptions &&
+              question.dropdownOptions.length > 0
+            ) {
+              for (
+                var subOptionCount = 0;
+                subOptionCount < question.dropdownOptions.length;
+                subOptionCount++
+              ) {
+                question.dropdownOptions[subOptionCount].originalText =
+                  question.dropdownOptions[subOptionCount].text;
+                question.dropdownOptions[subOptionCount].text =
+                  translatedTexts[translatedItemCount++];
               }
             }
           }
@@ -257,33 +314,36 @@ export class YpPostEdit extends YpEditBase {
           this.translatedQuestions = currentQuestions;
         } else {
           console.error("Questions and Translated texts length does not match");
-          console.error(`Questions: ${this._getQuestionLengthWithSubOptions(currentQuestions)} Translated: ${translatedTexts.length}`)
+          console.error(
+            `Questions: ${this._getQuestionLengthWithSubOptions(
+              currentQuestions
+            )} Translated: ${translatedTexts.length}`
+          );
         }
       } else {
         this.translatedQuestions = undefined;
       }
-
     }
   }
 
-
   _groupChanged() {
-    if (this.group &&
-        this.group.configuration &&
-        this.group.configuration.structuredQuestionsJson &&
-        this.group.configuration.structuredQuestionsJson.length > 0) {
+    if (
+      this.group &&
+      this.group.configuration &&
+      this.group.configuration.structuredQuestionsJson &&
+      this.group.configuration.structuredQuestionsJson.length > 0
+    ) {
       if (window.autoTranslate) {
         this.autoTranslate = window.autoTranslate;
       }
       this._getTranslationsIfNeeded();
     }
-   }
+  }
 
   static get styles() {
     return [
       super.styles,
       css`
-
         :host {
           text-align: left;
         }
@@ -469,18 +529,21 @@ export class YpPostEdit extends YpEditBase {
         @MDCTabBar:activated="${this._setSelectedTab}"
         id="paperTabs"
         focused
-        ?hidden="${this.hasOnlyOneTab}">
+        ?hidden="${this.hasOnlyOneTab}"
+      >
         <mwc-tab
           stacked
-          .label="${this.t('post.yourPost')}"
-          icon="lightbulb_outline"></mwc-tab>
+          .label="${this.t("post.yourPost")}"
+          icon="lightbulb_outline"
+        ></mwc-tab>
 
         ${this.newPointShown
           ? html`
               <mwc-tab
                 stacked
                 icon="comment"
-                .label="${this.t('post.yourPoint')}">
+                .label="${this.t("post.yourPoint")}"
+              >
               </mwc-tab>
             `
           : nothing}
@@ -489,12 +552,13 @@ export class YpPostEdit extends YpEditBase {
               <mwc-tab
                 stacked
                 icon="location_on"
-                .label="${this.t('post.location')}"></mwc-tab>
+                .label="${this.t("post.location")}"
+              ></mwc-tab>
             `
           : nothing}
         ${!this.mediaHidden
           ? html`
-              <mwc-tab stacked icon="videocam" .label=" ${this.t('media')}">
+              <mwc-tab stacked icon="videocam" .label=" ${this.t("media")}">
               </mwc-tab>
             `
           : nothing}
@@ -504,39 +568,41 @@ export class YpPostEdit extends YpEditBase {
 
   renderMoreContactInfo() {
     return html`
-      <h2 class="contactInfo">
-        ${this.t('contactInformation')}
-      </h2>
+      <h2 class="contactInfo">${this.t("contactInformation")}</h2>
       <mwc-textfield
         id="contactName"
         name="contactName"
         type="text"
-        .label="${this.t('user.name')}"
-        charCounter>
+        .label="${this.t("user.name")}"
+        charCounter
+      >
       </mwc-textfield>
       <mwc-textfield
         id="contactEmail"
         name="contactEmail"
         type="text"
-        .label="${this.t('user.email')}"
-        charCounter>
+        .label="${this.t("user.email")}"
+        charCounter
+      >
       </mwc-textfield>
       <mwc-textfield
         id="contactTelephone"
         name="contacTelephone"
         type="text"
-        .label="${this.t('contactTelephone')}"
+        .label="${this.t("contactTelephone")}"
         maxlength="20"
-        charCounter>
+        charCounter
+      >
       </mwc-textfield>
       <mwc-textfield
         id="contactAddress"
         name="contactAddress"
         type="text"
         ?hidden="${!this.group!.configuration.moreContactInformationAddress}"
-        .label="${this.t('contactAddress')}"
+        .label="${this.t("contactAddress")}"
         maxlength="300"
-        charCounter>
+        charCounter
+      >
       </mwc-textfield>
     `;
   }
@@ -544,7 +610,8 @@ export class YpPostEdit extends YpEditBase {
   get titleQuestionText() {
     if (this.post && this.group && this.customTitleQuestionText) {
       return this.customTitleQuestionText;
-    } if (
+    }
+    if (
       this.post &&
       this.group &&
       this.group.configuration &&
@@ -552,7 +619,7 @@ export class YpPostEdit extends YpEditBase {
     ) {
       return this.group.configuration.customTitleQuestionText;
     } else {
-      return this.t('title');
+      return this.t("title");
     }
   }
 
@@ -566,7 +633,8 @@ export class YpPostEdit extends YpEditBase {
                     <input
                       type="hidden"
                       name="name"
-                      .value="${this.replacedName || ''}" />
+                      .value="${this.replacedName || ""}"
+                    />
                   `
                 : this.post
                 ? html`
@@ -579,7 +647,8 @@ export class YpPostEdit extends YpEditBase {
                       .label="${this.titleQuestionText}"
                       .value="${this.post.name}"
                       maxlength="60"
-                      charCounter>
+                      charCounter
+                    >
                     </mwc-textfield>
                   `
                 : nothing}
@@ -587,12 +656,13 @@ export class YpPostEdit extends YpEditBase {
                 ? html`
                     <mwc-select
                       class="categoryDropDown"
-                      .label="${this.t('category.select')}"
+                      .label="${this.t("category.select")}"
                       @selected="${this._selectedCategory}"
                       ?required="${this.group.configuration
-                        .makeCategoryRequiredOnNewPost}">
+                        .makeCategoryRequiredOnNewPost}"
+                    >
                       ${this.group.Categories.map(
-                        category => html`
+                        (category) => html`
                           <mwc-list-item .data-category-id="${category.id}"
                             >${category.name}</mwc-list-item
                           >
@@ -604,19 +674,21 @@ export class YpPostEdit extends YpEditBase {
                       name="categoryId"
                       .value="${this.selectedCategoryId
                         ? this.selectedCategoryId.toString()
-                        : ''}" />
+                        : ""}"
+                    />
                   `
                 : nothing}
-              ${this.group && this.group.configuration && this.group.configuration.usePostTags
-                ? html`
-                    <mwc-textfield
-                      id="name"
-                      name="tags"
-                      type="text"
-                      .label="${this.t('commaSeperatedTags')}"
-                      .value="${this.post!.public_data!.tags}"
-                      >
-                    </mwc-textfield>`
+              ${this.group &&
+              this.group.configuration &&
+              this.group.configuration.usePostTags
+                ? html` <mwc-textfield
+                    id="name"
+                    name="tags"
+                    type="text"
+                    .label="${this.t("commaSeperatedTags")}"
+                    .value="${this.post!.public_data!.tags}"
+                  >
+                  </mwc-textfield>`
                 : nothing}
               ${this.postDescriptionLimit
                 ? html`
@@ -627,22 +699,24 @@ export class YpPostEdit extends YpEditBase {
                       minlength="1"
                       name="description"
                       .value="${this.post!.description}"
-                      .label="${this.t('post.description')}"
+                      .label="${this.t("post.description")}"
                       @change="${this._resizeScrollerIfNeeded}"
                       char-counter
                       rows="2"
                       max-rows="5"
                       maxrows="5"
-                      maxlength="${this.postDescriptionLimit}">
+                      maxlength="${this.postDescriptionLimit}"
+                    >
                     </mwc-textarea>
 
                     <div
                       class="horizontal end-justified layout postEmoji"
-                      ?hidden="${this.group.configuration.hideEmoji}">
+                      ?hidden="${this.group.configuration.hideEmoji}"
+                    >
                       <emoji-selector
                         id="emojiSelectorDescription"
-                        ?hidden="${this.structuredQuestions !=
-                        undefined}"></emoji-selector>
+                        ?hidden="${this.structuredQuestions != undefined}"
+                      ></emoji-selector>
                     </div>
                   `
                 : nothing}
@@ -667,7 +741,8 @@ export class YpPostEdit extends YpEditBase {
                           ?isFirstRating="${this._isFirstRating(index)}"
                           ?hideQuestionIndex="${this.group!.configuration
                             .hideQuestionIndexOnNewPost}"
-                          .question="${question}">
+                          .question="${question}"
+                        >
                         </yp-structured-question-edit>
                       `
                     )}
@@ -681,18 +756,21 @@ export class YpPostEdit extends YpEditBase {
                       attachmentUpload
                       buttonIcon="attach_file"
                       .group="${this.group}"
-                      .buttonText="${this.t('uploadAttachment')}"
+                      .buttonText="${this.t("uploadAttachment")}"
                       accept="application/msword,application/vnd.ms-excel,application/vnd.ms-powerpoint,text/plain,application/pdf,image/*"
                       .target="/api/groups/${this.group.id}/upload_document"
                       method="POST"
-                      @success="${this._documentUploaded}">
+                      @success="${this._documentUploaded}"
+                    >
                     </yp-file-upload>
-                    <small class="attachmentInfo">${this.t('documentOnlyVisibleToAdmins')}</small>
+                    <small class="attachmentInfo"
+                      >${this.t("documentOnlyVisibleToAdmins")}</small
+                    >
 
                     ${this.post!.data?.attachment?.url
                       ? html`
                           <mwc-checkbox name="deleteAttachment"
-                            >${this.t('deleteAttachment')}:
+                            >${this.t("deleteAttachment")}:
                             ${this.post!.data.attachment.filename}</mwc-checkbox
                           >
                         `
@@ -717,16 +795,18 @@ export class YpPostEdit extends YpEditBase {
               ?required="${!this.group!.configuration.newPointOptional}"
               minlength="1"
               name="pointFor"
-              .value="${this.post!.pointFor || ''}"
-              .label="${this.t('point.for')}"
+              .value="${this.post!.pointFor || ""}"
+              .label="${this.t("point.for")}"
               charCounter
               rows="2"
               max-rows="5"
-              .maxlength="${this.pointMaxLength}">
+              .maxlength="${this.pointMaxLength}"
+            >
             </mwc-textarea>
             <div
               class="horizontal end-justified layout pointEmoji"
-              ?hidden="${this.group!.configuration.hideEmoji}">
+              ?hidden="${this.group!.configuration.hideEmoji}"
+            >
               <emoji-selector id="emojiSelectorPointFor"></emoji-selector>
             </div>
           </section>
@@ -744,7 +824,8 @@ export class YpPostEdit extends YpEditBase {
                     .encodedLocation="${this.encodedLocation}"
                     .location="${this.location}"
                     .group="${this.group}"
-                    .post="${this.post}"></yp-post-location>
+                    .post="${this.post}"
+                  ></yp-post-location>
                 `
               : nothing}
           </section>
@@ -754,77 +835,87 @@ export class YpPostEdit extends YpEditBase {
 
   renderCoverMediaSelection() {
     return html`
-      <h3 class="accessHeader">${this.t('post.cover.media')}</h3>
+      <h3 class="accessHeader">${this.t("post.cover.media")}</h3>
       <div
         id="coverMediaType"
         name="coverMediaType"
         class="coverMediaType layout horizontal wrap"
-        .selected="${this.selectedCoverMediaType}">
-        <mwc-formfield label="${this.t('post.cover.none')}">
+        .selected="${this.selectedCoverMediaType}"
+      >
+        <mwc-formfield label="${this.t("post.cover.none")}">
           <mwc-radio
             value="none"
             id="mediaNone"
-            ?checked="${this.selectedCoverMediaType === 'none'}"
+            ?checked="${this.selectedCoverMediaType === "none"}"
             @change="${this._setSelectedCoverMediaType}"
-            name="radioButtonsMedia">
+            name="radioButtonsMedia"
+          >
           </mwc-radio>
         </mwc-formfield>
 
         <mwc-formfield
-          label="${this.t('post.cover.image')}"
-          ?hidden="${!this.uploadedHeaderImageId}">
+          label="${this.t("post.cover.image")}"
+          ?hidden="${!this.uploadedHeaderImageId}"
+        >
           <mwc-radio
             value="image"
             id="mediaImage"
-            ?checked="${this.selectedCoverMediaType === 'image'}"
+            ?checked="${this.selectedCoverMediaType === "image"}"
             @change="${this._setSelectedCoverMediaType}"
-            name="radioButtonsMedia">
+            name="radioButtonsMedia"
+          >
           </mwc-radio>
         </mwc-formfield>
 
         <mwc-formfield
-          label="${this.t('postCoverVideo')}"
-          ?hidden="${!this.showVideoCover}">
+          label="${this.t("postCoverVideo")}"
+          ?hidden="${!this.showVideoCover}"
+        >
           <mwc-radio
             value="video"
             id="mediaVideo"
-            ?checked="${this.selectedCoverMediaType === 'video'}"
+            ?checked="${this.selectedCoverMediaType === "video"}"
             @change="${this._setSelectedCoverMediaType}"
-            name="radioButtonsMedia">
+            name="radioButtonsMedia"
+          >
           </mwc-radio>
         </mwc-formfield>
 
         <mwc-formfield
-          label="${this.t('postCoverAudio')}"
-          ?hidden="${!this.showAudioCover}">
+          label="${this.t("postCoverAudio")}"
+          ?hidden="${!this.showAudioCover}"
+        >
           <mwc-radio
             value="audio"
             id="mediaAudio"
-            ?checked="${this.selectedCoverMediaType === 'audio'}"
+            ?checked="${this.selectedCoverMediaType === "audio"}"
             @change="${this._setSelectedCoverMediaType}"
-            name="radioButtonsMedia">
+            name="radioButtonsMedia"
+          >
           </mwc-radio>
         </mwc-formfield>
 
         ${this.location
           ? html`
-              <mwc-formfield label="${this.t('post.cover.map')}">
+              <mwc-formfield label="${this.t("post.cover.map")}">
                 <mwc-radio
                   value="map"
-                  ?checked="${this.selectedCoverMediaType === 'map'}"
+                  ?checked="${this.selectedCoverMediaType === "map"}"
                   id="mediaMap"
                   @change="${this._setSelectedCoverMediaType}"
-                  name="radioButtonsMedia">
+                  name="radioButtonsMedia"
+                >
                 </mwc-radio>
               </mwc-formfield>
 
-              <mwc-formfield label="${this.t('post.cover.streetview')}">
+              <mwc-formfield label="${this.t("post.cover.streetview")}">
                 <mwc-radio
                   value="streetView"
                   id="mediaStreetview"
-                  ?checked="${this.selectedCoverMediaType === 'streetView'}"
+                  ?checked="${this.selectedCoverMediaType === "streetView"}"
                   @change="${this._setSelectedCoverMediaType}"
-                  name="radioButtonsMedia">
+                  name="radioButtonsMedia"
+                >
                 </mwc-radio>
               </mwc-formfield>
             `
@@ -840,26 +931,29 @@ export class YpPostEdit extends YpEditBase {
           <div class="layout horizontal center-center wrap">
             <div
               class="layout vertical center-center self-start uploadSection"
-              ?hidden="${this.group!.configuration.hidePostImageUploads}">
+              ?hidden="${this.group!.configuration.hidePostImageUploads}"
+            >
               <yp-file-upload
                 id="imageFileUpload"
                 raised
                 target="/api/images?itemType=post-header"
                 method="POST"
                 buttonIcon="photo_camera"
-                .buttonText="${this.t('image.upload')}"
-                @success="${this._imageUploaded}">
+                .buttonText="${this.t("image.upload")}"
+                @success="${this._imageUploaded}"
+              >
               </yp-file-upload>
               <div class="imageSizeInfo layout horizontal">
                 <div>864 x 486 (16/9 widescreen)</div>
               </div>
-              <div>${this.t('post.cover.imageInfo')}</div>
+              <div>${this.t("post.cover.imageInfo")}</div>
             </div>
 
             ${this.group!.configuration.allowPostVideoUploads
               ? html`
                   <div
-                    class="layout vertical center-center self-start uploadSection">
+                    class="layout vertical center-center self-start uploadSection"
+                  >
                     <yp-file-upload
                       id="videoFileUpload"
                       container-type="posts"
@@ -869,15 +963,17 @@ export class YpPostEdit extends YpEditBase {
                         .videoPostUploadLimitSec}"
                       videoUpload
                       buttonIcon="videocam"
-                      .buttonText="${this.t('uploadVideo')}"
+                      .buttonText="${this.t("uploadVideo")}"
                       method="POST"
-                      @success="${this._videoUploaded}">
+                      @success="${this._videoUploaded}"
+                    >
                     </yp-file-upload>
                     <div
                       class="videoUploadDisclamer"
                       ?hidden="${!this.group!.configuration
-                        .showVideoUploadDisclaimer || !this.uploadedVideoId}">
-                      ${this.t('videoUploadDisclaimer')}
+                        .showVideoUploadDisclaimer || !this.uploadedVideoId}"
+                    >
+                      ${this.t("videoUploadDisclaimer")}
                     </div>
                   </div>
                 `
@@ -885,7 +981,8 @@ export class YpPostEdit extends YpEditBase {
             ${this.group!.configuration.allowPostAudioUploads
               ? html`
                   <div
-                    class="layout vertical center-center self-start uploadSection">
+                    class="layout vertical center-center self-start uploadSection"
+                  >
                     <yp-file-upload
                       id="audioFileUpload"
                       containerType="posts"
@@ -897,8 +994,9 @@ export class YpPostEdit extends YpEditBase {
                       audioUpload
                       method="POST"
                       buttonIcon="keyboard_voice"
-                      .buttonText="${this.t('uploadAudio')}"
-                      @success="${this._audioUploaded}">
+                      .buttonText="${this.t("uploadAudio")}"
+                      @success="${this._audioUploaded}"
+                    >
                     </yp-file-upload>
                   </div>
                 `
@@ -922,7 +1020,8 @@ export class YpPostEdit extends YpEditBase {
   get _mediaPageHidden() {
     if (this.mediaHidden) {
       return true;
-    } if (
+    }
+    if (
       this.newPointShown &&
       !this.locationHidden &&
       this.selected !== EditPostTabs.Media
@@ -956,56 +1055,58 @@ export class YpPostEdit extends YpEditBase {
       <div ?hidden="${this.selected !== EditPostTabs.Description}">
         ${this.renderDescriptionTab()}
       </div>
-      <div ?hidden="${this._pointPageHidden}">
-        ${this.renderPointTab()}
-      </div>
-      <div ?hidden="${false}">
-        ${this.renderLocationTab()}
-      </div>
-      <div ?hidden="${this._mediaPageHidden}">
-        ${this.renderMediaTab()}
-      </div>
+      <div ?hidden="${this._pointPageHidden}">${this.renderPointTab()}</div>
+      <div ?hidden="${false}">${this.renderLocationTab()}</div>
+      <div ?hidden="${this._mediaPageHidden}">${this.renderMediaTab()}</div>
     `;
   }
 
   renderHiddenInputs() {
-    return html` <input
+    return html`
+      <input
         type="hidden"
         name="location"
-        .value="${this.encodedLocation || ''}" />
+        .value="${this.encodedLocation || ""}"
+      />
       <input
         type="hidden"
         name="coverMediaType"
-        .value="${this.selectedCoverMediaType}" />
+        .value="${this.selectedCoverMediaType}"
+      />
       <input
         type="hidden"
         name="uploadedHeaderImageId"
         .value="${this.uploadedHeaderImageId
           ? this.uploadedHeaderImageId.toString()
-          : ''}" />
+          : ""}"
+      />
       <input
         type="hidden"
         name="uploadedDocumentUrl"
-        .value="${this.uploadedDocumentUrl || ''}" />
+        .value="${this.uploadedDocumentUrl || ""}"
+      />
       <input
         type="hidden"
         name="uploadedDocumentFilename"
-        .value="${this.uploadedDocumentFilename || ''}" />
+        .value="${this.uploadedDocumentFilename || ""}"
+      />
       <input
         type="hidden"
         name="structuredAnswers"
-        .value="${this.structuredAnswersString}" />
+        .value="${this.structuredAnswersString}"
+      />
       <input
         type="hidden"
         name="structuredAnswersJson"
-        .value="${this.structuredAnswersJson}" />
-        <input
+        .value="${this.structuredAnswersJson}"
+      />
+      <input
         type="hidden"
         name="publicPrivateData"
-        .value="${this.tileDataJson}" />
-  `;
-
-}
+        .value="${this.tileDataJson}"
+      />
+    `;
+  }
 
   render() {
     return html`
@@ -1019,19 +1120,21 @@ export class YpPostEdit extends YpEditBase {
         .useNextTabAction="${this.newPost}"
         @next-tab-action="${this._nextTab}"
         .method="${this.method}"
-        .heading="${this.editHeaderText ? this.editHeaderText : ''}"
+        .heading="${this.editHeaderText ? this.editHeaderText : ""}"
         .saveText="${this.saveText}"
         class="container"
         customSubmit
-        .nextActionText="${this.t('next')}"
+        .nextActionText="${this.t("next")}"
         .snackbarText="${this.snackbarText}"
-        .params="${this.params}">
+        .params="${this.params}"
+      >
         ${this.group && this.post
           ? html`
               <div
                 class="layout vertical wrap topNewPostContainer"
                 ?no-title="${this.group.configuration
-                  .hideNameInputAndReplaceWith}">
+                  .hideNameInputAndReplaceWith}"
+              >
                 ${this.renderTabs()} ${this.renderCurrentTabPage()}
               </div>
               ${this.renderHiddenInputs()}
@@ -1052,7 +1155,8 @@ export class YpPostEdit extends YpEditBase {
               .contentLanguage="${this.group.language}"
               @new-translation="${this
                 ._alternativeTextForNewIdeaButtonHeaderTranslation}"
-              text-type="alternativeTextForNewIdeaButtonHeader"></yp-magic-text>
+              text-type="alternativeTextForNewIdeaButtonHeader"
+            ></yp-magic-text>
           `
         : nothing}
       ${this.group && this.group.configuration.customThankYouTextNewPosts
@@ -1064,7 +1168,8 @@ export class YpPostEdit extends YpEditBase {
               text-only
               .content="${this.group.configuration.customThankYouTextNewPosts}"
               .contentLanguage="${this.group.language}"
-              text-type="customThankYouTextNewPosts"></yp-magic-text>
+              text-type="customThankYouTextNewPosts"
+            ></yp-magic-text>
           `
         : nothing}
       ${this.group && this.group.configuration.customTitleQuestionText
@@ -1077,20 +1182,25 @@ export class YpPostEdit extends YpEditBase {
               .content="${this.group.configuration.customTitleQuestionText}"
               .contentLanguage="${this.group.language}"
               @new-translation="${this._updatePostTitle}"
-              text-type="customTitleQuestionText"></yp-magic-text>
+              text-type="customTitleQuestionText"
+            ></yp-magic-text>
           `
         : nothing}
-      ${this.group && this.group.configuration.alternativeTextForNewIdeaSaveButton
+      ${this.group &&
+      this.group.configuration.alternativeTextForNewIdeaSaveButton
         ? html`
             <yp-magic-text
               id="alternativeTextForNewIdeaSaveButtonId"
               hidden
               .contentId="${this.group.id}"
               text-only
-              .content="${this.group.configuration.alternativeTextForNewIdeaSaveButton}"
+              .content="${this.group.configuration
+                .alternativeTextForNewIdeaSaveButton}"
               .contentLanguage="${this.group.language}"
-              @new-translation="${this._alternativeTextForNewIdeaSaveButtonTranslation}"
-              text-type="alternativeTextForNewIdeaSaveButton"></yp-magic-text>
+              @new-translation="${this
+                ._alternativeTextForNewIdeaSaveButtonTranslation}"
+              text-type="alternativeTextForNewIdeaSaveButton"
+            ></yp-magic-text>
           `
         : nothing}
     `;
@@ -1098,7 +1208,9 @@ export class YpPostEdit extends YpEditBase {
 
   _alternativeTextForNewIdeaSaveButtonTranslation() {
     setTimeout(() => {
-      const label = this.$$("#alternativeTextForNewIdeaSaveButtonId") as YpMagicText;
+      const label = this.$$(
+        "#alternativeTextForNewIdeaSaveButtonId"
+      ) as YpMagicText;
       if (label && label.finalContent) {
         this.saveText = label.finalContent;
       }
@@ -1106,7 +1218,7 @@ export class YpPostEdit extends YpEditBase {
   }
 
   _updatePostTitle() {
-    setTimeout( ()=> {
+    setTimeout(() => {
       const label = this.$$("#customTitleQuestionTextId") as YpMagicText;
       if (label && label.finalContent) {
         this.customTitleQuestionText = label.finalContent;
@@ -1117,32 +1229,32 @@ export class YpPostEdit extends YpEditBase {
   //TODO: Investigate if any are missing .html version of listeners
   connectedCallback() {
     super.connectedCallback();
-    this.addListener('yp-form-invalid', this._formInvalid);
-    this.addListener('yp-custom-form-submit', this._customSubmit);
-    this.addListener('yp-skip-to-unique-id', this._skipToId);
-    this.addListener('yp-open-to-unique-id', this._openToId);
-    this.addListener('yp-goto-next-index', this._goToNextIndex);
+    this.addListener("yp-form-invalid", this._formInvalid);
+    this.addListener("yp-custom-form-submit", this._customSubmit);
+    this.addListener("yp-skip-to-unique-id", this._skipToId);
+    this.addListener("yp-open-to-unique-id", this._openToId);
+    this.addListener("yp-goto-next-index", this._goToNextIndex);
     this.addGlobalListener(
-      'yp-auto-translate',
+      "yp-auto-translate",
       this._autoTranslateEvent.bind(this)
     );
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
-    this.removeListener('yp-form-invalid', this._formInvalid);
-    this.removeListener('yp-custom-form-submit', this._customSubmit);
-    this.removeListener('yp-skip-to-unique-id', this._skipToId);
-    this.removeListener('yp-open-to-unique-id', this._openToId);
-    this.removeListener('yp-goto-next-index', this._goToNextIndex);
+    this.removeListener("yp-form-invalid", this._formInvalid);
+    this.removeListener("yp-custom-form-submit", this._customSubmit);
+    this.removeListener("yp-skip-to-unique-id", this._skipToId);
+    this.removeListener("yp-open-to-unique-id", this._openToId);
+    this.removeListener("yp-goto-next-index", this._goToNextIndex);
     this.removeGlobalListener(
-      'yp-auto-translate',
+      "yp-auto-translate",
       this._autoTranslateEvent.bind(this)
     );
   }
 
   hasLongSaveText() {
-    return (this.saveText && this.saveText.length>9);
+    return this.saveText && this.saveText.length > 9;
   }
 
   _autoTranslateEvent(event: CustomEvent) {
@@ -1153,18 +1265,18 @@ export class YpPostEdit extends YpEditBase {
   _isLastRating(index: number) {
     return (
       this.structuredQuestions &&
-      this.structuredQuestions[index].subType === 'rating' &&
+      this.structuredQuestions[index].subType === "rating" &&
       index + 2 < this.structuredQuestions.length &&
-      this.structuredQuestions[index + 1].subType !== 'rating'
+      this.structuredQuestions[index + 1].subType !== "rating"
     );
   }
 
   _isFirstRating(index: number) {
     return (
       this.structuredQuestions &&
-      this.structuredQuestions[index].subType === 'rating' &&
+      this.structuredQuestions[index].subType === "rating" &&
       this.structuredQuestions[index - 1] &&
-      this.structuredQuestions[index - 1].subType !== 'rating'
+      this.structuredQuestions[index - 1].subType !== "rating"
     );
   }
 
@@ -1176,12 +1288,12 @@ export class YpPostEdit extends YpEditBase {
     const currentPos = this.liveQuestionIds.indexOf(event.detail.currentIndex);
     if (currentPos < this.liveQuestionIds.length - 1) {
       const item = this.$$(
-        '#structuredQuestionContainer_' + this.liveQuestionIds[currentPos + 1]
+        "#structuredQuestionContainer_" + this.liveQuestionIds[currentPos + 1]
       ) as HTMLElement;
       item.scrollIntoView({
-        block: 'center',
-        inline: 'center',
-        behavior: 'smooth',
+        block: "center",
+        inline: "center",
+        behavior: "smooth",
       });
       item.focus();
     }
@@ -1189,19 +1301,19 @@ export class YpPostEdit extends YpEditBase {
 
   _skipToId(event: CustomEvent, showItems: boolean) {
     let foundFirst = false;
-    if (this.$$('#surveyContainer')) {
-      const children = (this.$$('#surveyContainer')!
-        .children as unknown) as Array<YpStructuredQuestionEdit>;
+    if (this.$$("#surveyContainer")) {
+      const children = this.$$("#surveyContainer")!
+        .children as unknown as Array<YpStructuredQuestionEdit>;
       for (let i = 0; i < children.length; i++) {
-        const toId = event.detail.toId.replace(/]/g, '');
-        const fromId = event.detail.fromId.replace(/]/g, '');
+        const toId = event.detail.toId.replace(/]/g, "");
+        const fromId = event.detail.fromId.replace(/]/g, "");
         if (
           children[i + 1] &&
           children[i + 1].question &&
           children[i + 1].question.uniqueId &&
           children[i + 1].question.uniqueId!.substring(
             children[i + 1].question.uniqueId!.length - 1
-          ) === 'a'
+          ) === "a"
         ) {
           children[i].question.uniqueId = children[
             i + 1
@@ -1220,7 +1332,7 @@ export class YpPostEdit extends YpEditBase {
           children[i].question &&
           event.detail.toId &&
           (children[i].question.uniqueId === toId ||
-            children[i].question.uniqueId === toId + 'a')
+            children[i].question.uniqueId === toId + "a")
         ) {
           break;
         } else {
@@ -1234,24 +1346,24 @@ export class YpPostEdit extends YpEditBase {
         }
       }
     } else {
-      console.error('No survey container found');
+      console.error("No survey container found");
     }
   }
 
   get replacedName() {
-    const {post} = this;
-    const {group} = this;
+    const { post } = this;
+    const { group } = this;
     if (post && group && group.configuration.hideNameInputAndReplaceWith) {
       let text = group.configuration.hideNameInputAndReplaceWith;
       text = text.replace(
-        '<DATESECONDS>',
-        DateTime.now().toFormat('DD/MM/YYYY hh:mm:ss')
+        "<DATESECONDS>",
+        DateTime.now().toFormat("DD/MM/YYYY hh:mm:ss")
       );
       text = text.replace(
-        '<DATEMINUTES>',
-        DateTime.now().toFormat('DD/MM/YYYY hh:mm')
+        "<DATEMINUTES>",
+        DateTime.now().toFormat("DD/MM/YYYY hh:mm")
       );
-      text = text.replace('<DATE>', DateTime.now().toFormat('DD/MM/YYYY'));
+      text = text.replace("<DATE>", DateTime.now().toFormat("DD/MM/YYYY"));
       return text;
     }
 
@@ -1259,12 +1371,11 @@ export class YpPostEdit extends YpEditBase {
   }
 
   get pointMaxLength() {
-    const {group} = this;
+    const { group } = this;
     if (group && group.configuration && group.configuration.pointCharLimit) {
       return group.configuration.pointCharLimit;
     }
-      return 500;
-
+    return 500;
   }
 
   _floatIfValueOrIE(value: boolean) {
@@ -1287,9 +1398,9 @@ export class YpPostEdit extends YpEditBase {
 
   _submitWithStructuredQuestionsJson() {
     const answers: Array<YpStructuredAnswer> = [];
-    this.liveQuestionIds.forEach(liveIndex => {
+    this.liveQuestionIds.forEach((liveIndex) => {
       const questionElement = this.$$(
-        '#structuredQuestionContainer_' + liveIndex
+        "#structuredQuestionContainer_" + liveIndex
       ) as YpStructuredQuestionEdit;
       if (questionElement) {
         const answer = questionElement.getAnswer();
@@ -1301,12 +1412,12 @@ export class YpPostEdit extends YpEditBase {
       }
     });
     this.structuredAnswersJson = JSON.stringify(answers);
-    (this.$$('#editDialog') as YpEditDialog)._reallySubmit();
+    (this.$$("#editDialog") as YpEditDialog)._reallySubmit();
   }
 
   _submitWithStructuredQuestionsString() {
-    let description = '';
-    let answers = '';
+    let description = "";
+    let answers = "";
 
     for (let i = 0; i < this.structuredQuestions!.length; i += 1) {
       description += this.structuredQuestions![i].text;
@@ -1314,20 +1425,20 @@ export class YpPostEdit extends YpEditBase {
         this.structuredQuestions![i].text &&
         this.structuredQuestions![i].text[
           this.structuredQuestions![i].text.length - 1
-        ] !== '?'
+        ] !== "?"
       )
-        description += ':';
-      description += '\n';
+        description += ":";
+      description += "\n";
       description += this.structuredQuestions![i].value;
       answers += this.structuredQuestions![i].value;
       if (i !== this.structuredQuestions!.length - 1) {
-        answers += '%!#x';
-        description += '\n\n';
+        answers += "%!#x";
+        description += "\n\n";
       }
     }
     if (this.post) this.post.description = description;
     this.structuredAnswersString = answers;
-    (this.$$('#editDialog') as YpEditDialog)._reallySubmit();
+    (this.$$("#editDialog") as YpEditDialog)._reallySubmit();
   }
 
   _customSubmit() {
@@ -1343,28 +1454,27 @@ export class YpPostEdit extends YpEditBase {
     ) {
       this._submitWithStructuredQuestionsString();
     } else {
-      (this.$$('#editDialog') as YpEditDialog)._reallySubmit();
+      (this.$$("#editDialog") as YpEditDialog)._reallySubmit();
     }
   }
 
   _resizeScrollerIfNeeded() {
-    if (this.$$('#editDialog'))
-      (this.$$('#editDialog') as YpEditDialog).scrollResize();
+    if (this.$$("#editDialog"))
+      (this.$$("#editDialog") as YpEditDialog).scrollResize();
   }
 
   _getStructuredQuestionsString() {
     const structuredQuestions: Array<YpStructuredQuestionData> = [];
 
-    const questionComponents = this.group!.configuration.structuredQuestions!.split(
-      ','
-    );
+    const questionComponents =
+      this.group!.configuration.structuredQuestions!.split(",");
     for (let i = 0; i < questionComponents.length; i += 2) {
       const question = questionComponents[i];
       const maxLength = questionComponents[i + 1];
       structuredQuestions.push({
         text: question,
         maxLength: parseInt(maxLength),
-        value: '',
+        value: "",
       });
     }
     if (
@@ -1372,9 +1482,9 @@ export class YpPostEdit extends YpEditBase {
       this.post &&
       this.post.public_data &&
       this.post.public_data.structuredAnswers &&
-      this.post.public_data.structuredAnswers !== ''
+      this.post.public_data.structuredAnswers !== ""
     ) {
-      const answers = this.post.public_data.structuredAnswers.split('%!#x');
+      const answers = this.post.public_data.structuredAnswers.split("%!#x");
       for (let i = 0; i < answers.length; i += 1) {
         if (structuredQuestions[i]) structuredQuestions[i].value = answers[i];
       }
@@ -1384,8 +1494,8 @@ export class YpPostEdit extends YpEditBase {
   }
 
   _setupStructuredQuestions() {
-    const {post} = this;
-    const {group} = this;
+    const { post } = this;
+    const { group } = this;
     if (this.translatedQuestions) {
       this.structuredQuestions = this.translatedQuestions;
     } else if (post && group && group.configuration.structuredQuestionsJson) {
@@ -1394,7 +1504,7 @@ export class YpPostEdit extends YpEditBase {
       post &&
       group &&
       group.configuration.structuredQuestions &&
-      group.configuration.structuredQuestions !== ''
+      group.configuration.structuredQuestions !== ""
     ) {
       this.structuredQuestions = this._getStructuredQuestionsString();
     } else {
@@ -1412,17 +1522,17 @@ export class YpPostEdit extends YpEditBase {
 
   _videoUploaded(event: CustomEvent) {
     this.uploadedVideoId = event.detail.videoId;
-    (this.$$('#mediaVideo') as Radio).checked = true;
+    (this.$$("#mediaVideo") as Radio).checked = true;
     setTimeout(() => {
-      this.fire('iron-resize');
+      this.fire("iron-resize");
     }, 50);
   }
 
   _audioUploaded(event: CustomEvent) {
     this.uploadedAudioId = event.detail.audioId;
-    this.selectedCoverMediaType = 'audio';
+    this.selectedCoverMediaType = "audio";
     setTimeout(() => {
-      this.fire('iron-resize');
+      this.fire("iron-resize");
     });
   }
 
@@ -1438,9 +1548,9 @@ export class YpPostEdit extends YpEditBase {
 
   _updateEmojiBindings() {
     setTimeout(() => {
-      const description = this.$$('#description') as HTMLInputElement;
+      const description = this.$$("#description") as HTMLInputElement;
       const emojiSelector = this.$$(
-        '#emojiSelectorDescription'
+        "#emojiSelectorDescription"
       ) as YpEmojiSelector;
       if (description && emojiSelector) {
         emojiSelector.inputTarget = description;
@@ -1448,9 +1558,9 @@ export class YpPostEdit extends YpEditBase {
         console.warn("Post edit: Can't bind emojis :(");
       }
       const emojiSelectorPointFor = this.$$(
-        '#emojiSelectorPointFor'
+        "#emojiSelectorPointFor"
       ) as YpEmojiSelector;
-      const pointFor = this.$$('#pointFor') as HTMLInputElement;
+      const pointFor = this.$$("#pointFor") as HTMLInputElement;
       if (emojiSelectorPointFor && pointFor) {
         emojiSelectorPointFor.inputTarget = pointFor;
       }
@@ -1476,17 +1586,17 @@ export class YpPostEdit extends YpEditBase {
   _formInvalid() {
     if (
       this.newPointShown &&
-      !(this.$$('#pointFor') as TextArea).checkValidity()
+      !(this.$$("#pointFor") as TextArea).checkValidity()
     ) {
       this.selected = 1;
     } else {
       this.selected = 0;
     }
-    if (this.$$('#name')) (this.$$('#name') as TextArea).autoValidate = true;
-    if (this.$$('#description'))
-      (this.$$('#description') as TextArea).autoValidate = true;
+    if (this.$$("#name")) (this.$$("#name") as TextArea).autoValidate = true;
+    if (this.$$("#description"))
+      (this.$$("#description") as TextArea).autoValidate = true;
     if (this.newPointShown) {
-      (this.$$('#pointFor') as TextArea).autoValidate = true;
+      (this.$$("#pointFor") as TextArea).autoValidate = true;
     }
   }
 
@@ -1494,16 +1604,16 @@ export class YpPostEdit extends YpEditBase {
     if (
       this.location &&
       (!this.selectedCoverMediaType ||
-        this.selectedCoverMediaType == '' ||
-        this.selectedCoverMediaType == 'none')
+        this.selectedCoverMediaType == "" ||
+        this.selectedCoverMediaType == "none")
     ) {
-      this.selectedCoverMediaType = 'map';
+      this.selectedCoverMediaType = "map";
     }
   }
 
   _uploadedHeaderImageIdChanged() {
     if (this.uploadedHeaderImageId) {
-      this.selectedCoverMediaType = 'image';
+      this.selectedCoverMediaType = "image";
     }
   }
 
@@ -1549,19 +1659,19 @@ export class YpPostEdit extends YpEditBase {
       }
 
       if (newValue == finalTabNumber) {
-        (this.$$('#editDialog') as YpEditDialog).useNextTabAction = false;
+        (this.$$("#editDialog") as YpEditDialog).useNextTabAction = false;
       } else {
-        (this.$$('#editDialog') as YpEditDialog).useNextTabAction = true;
+        (this.$$("#editDialog") as YpEditDialog).useNextTabAction = true;
       }
 
       if (newValue == 0) {
-        const nameElement = this.$$('#name');
+        const nameElement = this.$$("#name");
         if (nameElement) {
           nameElement.focus();
         }
       }
       if (newValue == 1 && this.newPointShown) {
-        const pointFor = this.$$('#pointFor');
+        const pointFor = this.$$("#pointFor");
         if (pointFor) {
           pointFor.focus();
         }
@@ -1578,17 +1688,15 @@ export class YpPostEdit extends YpEditBase {
 
   _selectedCategoryChanged() {
     if (this.selectedCategoryArrayId && this.group && this.group.Categories)
-      this.selectedCategoryId = this.group.Categories[
-        this.selectedCategoryArrayId
-      ].id;
+      this.selectedCategoryId =
+        this.group.Categories[this.selectedCategoryArrayId].id;
   }
 
   get showCategories() {
     if (this.group && this.group.Categories) {
       return this.group.Categories.length > 0;
     }
-      return false;
-
+    return false;
   }
 
   getPositionInArrayFromId(collection: Array<YpCategoryData>, id: number) {
@@ -1630,7 +1738,7 @@ export class YpPostEdit extends YpEditBase {
   async _redirectAfterVideo(post: YpPostData) {
     this.post = post;
 
-    await window.serverApi.completeMediaPost('videos', 'PUT', this.post.id, {
+    await window.serverApi.completeMediaPost("videos", "PUT", this.post.id, {
       videoId: this.uploadedVideoId,
       appLanguage: this.language,
     });
@@ -1645,7 +1753,7 @@ export class YpPostEdit extends YpEditBase {
   async _redirectAfterAudio(post: YpPostData) {
     this.post = post;
 
-    await window.serverApi.completeMediaPost('audios', 'PUT', this.post.id, {
+    await window.serverApi.completeMediaPost("audios", "PUT", this.post.id, {
       audioId: this.uploadedAudioId,
       appLanguage: this.language,
     });
@@ -1655,6 +1763,31 @@ export class YpPostEdit extends YpEditBase {
     setTimeout(() => {
       window.appGlobals.showSpeechToTextInfoIfNeeded();
     }, 20);
+  }
+
+  get surveyAnswerLocalstorageKey() {
+    return `yp-land-use-survey-response-v1-for-${this.group!.id}-${
+      window.appUser.user!.id
+    }`;
+  }
+
+  saveSurveyAnswersToLocalStorage() {
+    localStorage.setItem(
+      this.surveyAnswerLocalstorageKey,
+      JSON.stringify(this.structuredAnswersJson)
+    );
+  }
+
+  async checkSurveyAnswers() {
+    setTimeout(() => {
+      const answersText = localStorage.getItem(this.surveyAnswerLocalstorageKey);
+
+      if (answersText) {
+        const jsonAnswers = JSON.parse(answersText);
+        this.structuredAnswersJson = jsonAnswers;
+        (this.$$("#editDialog") as YpEditDialog)._reallySubmit(false);
+      }
+    }, 10);
   }
 
   customRedirect(post: YpPostData) {
@@ -1667,6 +1800,10 @@ export class YpPostEdit extends YpEditBase {
         window.appUser.endorsementPostsIndex[post.id] = post.newEndorsement;
       }
 
+      if (this.saveSurveyAnswers && this.structuredAnswersJson) {
+        this.saveSurveyAnswersToLocalStorage();
+      }
+
       if (this.uploadedVideoId) {
         this._redirectAfterVideo(post);
       } else if (this.uploadedAudioId && this.newPost) {
@@ -1675,17 +1812,17 @@ export class YpPostEdit extends YpEditBase {
         this._finishRedirect(post);
       }
     } else {
-      console.warn('No post found on custom redirect');
+      console.warn("No post found on custom redirect");
     }
   }
 
   _finishRedirect(post: YpPostData) {
-    this.fire('yp-reset-keep-open-for-page');
-    window.appGlobals.activity('completed', 'newPost');
+    this.fire("yp-reset-keep-open-for-page");
+    window.appGlobals.activity("completed", "newPost");
 
-    let text = this.t('thankYouForYourSubmission');
+    let text = this.t("thankYouForYourSubmission");
     const customThankYouTextNewPostsId = this.$$(
-      '#customThankYouTextNewPostsId'
+      "#customThankYouTextNewPostsId"
     ) as YpMagicText;
     if (
       this.group &&
@@ -1714,16 +1851,16 @@ export class YpPostEdit extends YpEditBase {
     ) {
       // Nothing?
     } else {
-      YpNavHelpers.redirectTo('/post/' + (post ? post.id : this.post?.id));
+      YpNavHelpers.redirectTo("/post/" + (post ? post.id : this.post?.id));
     }
   }
 
   clear() {
     if (this.newPost) {
       this.post = {
-        name: '',
-        description: 'Land use game',
-        pointFor: '',
+        name: "",
+        description: "Land use game",
+        pointFor: "",
         categoryId: undefined,
       } as YpPostData;
       this.location = undefined;
@@ -1735,9 +1872,9 @@ export class YpPostEdit extends YpEditBase {
       this.uploadedAudioId = undefined;
       this.currentVideoId = undefined;
       this.currentAudioId = undefined;
-      this.selectedCoverMediaType = 'none';
+      this.selectedCoverMediaType = "none";
       this.requestUpdate();
-      if (this.$$('#imageFileUpload')) {
+      if (this.$$("#imageFileUpload")) {
         //(this.$$('#imageFileUpload') as YpFileUpload).clear();
       }
     }
@@ -1759,7 +1896,7 @@ export class YpPostEdit extends YpEditBase {
       }
       if (params) this.params = params;
       this.tileDataJson = params.tileData;
-      if (typeof this.setupAfterOpen === 'function') {
+      if (typeof this.setupAfterOpen === "function") {
         this.setupAfterOpen(params);
       }
       await this.updateComplete;
@@ -1783,12 +1920,7 @@ export class YpPostEdit extends YpEditBase {
       this.setupTranslation();
       this.clear();
     } else {
-      window.appUser.loginForEdit(
-        this,
-        newItem,
-        params,
-        this.refreshFunction!
-      );
+      window.appUser.loginForEdit(this, newItem, params, this.refreshFunction!);
     }
   }
 
@@ -1820,14 +1952,14 @@ export class YpPostEdit extends YpEditBase {
             group.configuration.structuredQuestionsJson!.forEach(
               (question, index) => {
                 if (
-                  question.type.toLowerCase() === 'textfield' ||
-                  question.type.toLowerCase() === 'textfieldlong' ||
-                  question.type.toLowerCase() === 'textarea' ||
-                  question.type.toLowerCase() === 'textarealong' ||
-                  question.type.toLowerCase() === 'numberfield' ||
-                  question.type.toLowerCase() === 'checkboxes' ||
-                  question.type.toLowerCase() === 'radios' ||
-                  question.type.toLowerCase() === 'dropdown'
+                  question.type.toLowerCase() === "textfield" ||
+                  question.type.toLowerCase() === "textfieldlong" ||
+                  question.type.toLowerCase() === "textarea" ||
+                  question.type.toLowerCase() === "textarealong" ||
+                  question.type.toLowerCase() === "numberfield" ||
+                  question.type.toLowerCase() === "checkboxes" ||
+                  question.type.toLowerCase() === "radios" ||
+                  question.type.toLowerCase() === "dropdown"
                 ) {
                   this.liveQuestionIds.push(index);
                   this.uniqueIdsToElementIndexes[question.uniqueId] = index;
@@ -1857,14 +1989,13 @@ export class YpPostEdit extends YpEditBase {
     ) {
       return true;
     }
-      return false;
-
+    return false;
   }
 
   setupAfterOpen(params: YpEditFormParams) {
     this._setupGroup(params.group);
     setTimeout(() => {
-      const nameElement = this.$$('#name');
+      const nameElement = this.$$("#name");
       if (nameElement) {
         nameElement.focus();
       }
@@ -1876,14 +2007,17 @@ export class YpPostEdit extends YpEditBase {
       this.post.public_data &&
       this.post.public_data.structuredAnswersJson
     ) {
-      this.initialStructuredAnswersJson = this.post.public_data.structuredAnswersJson;
+      this.initialStructuredAnswersJson =
+        this.post.public_data.structuredAnswersJson;
     }
+
+    this.checkSurveyAnswers();
   }
 
   _alternativeTextForNewIdeaButtonHeaderTranslation() {
     setTimeout(() => {
       const label = this.$$(
-        '#alternativeTextForNewIdeaButtonHeaderId'
+        "#alternativeTextForNewIdeaButtonHeaderId"
       ) as YpMagicText;
       if (label && label.finalContent) {
         this.editHeaderText = label.finalContent;
@@ -1901,7 +2035,7 @@ export class YpPostEdit extends YpEditBase {
             this.group.configuration.alternativeTextForNewIdeaButtonHeader
           ) {
             const label = this.$$(
-              '#alternativeTextForNewIdeaButtonHeaderId'
+              "#alternativeTextForNewIdeaButtonHeaderId"
             ) as YpMagicText;
             this.editHeaderText =
               label && label.finalContent
@@ -1909,20 +2043,29 @@ export class YpPostEdit extends YpEditBase {
                 : this.group.configuration
                     .alternativeTextForNewIdeaButtonHeader;
           } else {
-            this.editHeaderText = this.t('Submit your land uses');
+            this.editHeaderText = this.t("Submit your land uses");
           }
 
-          if (this.group && this.group.configuration && this.group.configuration.alternativeTextForNewIdeaSaveButton) {
-            const label = this.$$("#alternativeTextForNewIdeaSaveButtonId") as YpMagicText;
-            this.saveText = (label && label.finalContent) ? label.finalContent : this.group.configuration.alternativeTextForNewIdeaSaveButton;
+          if (
+            this.group &&
+            this.group.configuration &&
+            this.group.configuration.alternativeTextForNewIdeaSaveButton
+          ) {
+            const label = this.$$(
+              "#alternativeTextForNewIdeaSaveButtonId"
+            ) as YpMagicText;
+            this.saveText =
+              label && label.finalContent
+                ? label.finalContent
+                : this.group.configuration.alternativeTextForNewIdeaSaveButton;
           } else {
-            this.saveText = this.t('create');
+            this.saveText = this.t("create");
           }
-          this.snackbarText = this.t('postCreated');
+          this.snackbarText = this.t("postCreated");
         } else {
-          this.saveText = this.t('save');
-          this.editHeaderText = this.t('post.edit');
-          this.snackbarText = this.t('postUpdated');
+          this.saveText = this.t("save");
+          this.editHeaderText = this.t("post.edit");
+          this.snackbarText = this.t("postUpdated");
         }
       }
     }, 20);

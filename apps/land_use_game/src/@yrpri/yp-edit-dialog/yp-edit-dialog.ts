@@ -687,7 +687,7 @@ export class YpEditDialog extends YpBaseElement {
     return this.title && this.title.length > 14;
   }
 
-  async _reallySubmit() {
+  async _reallySubmit(validate = true) {
     this._setSubmitDisabledStatus(true);
     if (this.params && this.params.communityId) {
       this.action = this.baseAction + "/" + this.params.communityId;
@@ -733,10 +733,14 @@ export class YpEditDialog extends YpBaseElement {
 
     let validated = false;
 
-    if (this.customValidationFunction) {
-      validated = this.customValidationFunction();
+    if (validate) {
+      if (this.customValidationFunction) {
+        validated = this.customValidationFunction();
+      } else {
+        validated = form.validate();
+      }
     } else {
-      validated = form.validate();
+      validated = true;
     }
 
     if (
