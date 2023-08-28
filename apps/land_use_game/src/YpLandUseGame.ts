@@ -51,7 +51,6 @@ import "./yp-edit-comment-dialog.js";
 
 import { Tutorial } from "./Tutorial";
 import { Layouts } from "./flexbox-literals/classes";
-import { set } from "@polymer/polymer/lib/utils/path";
 import { YpEditCommentDialog } from "./yp-edit-comment-dialog.js";
 
 const GameStage = {
@@ -1486,7 +1485,7 @@ export class YpLandUseGame extends YpBaseElement {
               @click="${() => this.setLandUse("tourism")}"
               ?selected=${this.selectedLandUse === "tourism"}
             >
-              <md-icon slot="icon" aria-hidden="true">hiking</md-icon>
+              <md-icon slot="icon" aria-hidden="true">concierge</md-icon>
             </md-filter-chip>
             <md-filter-chip
               id="landUse4"

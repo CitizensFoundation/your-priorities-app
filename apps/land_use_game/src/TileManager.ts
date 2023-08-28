@@ -17,26 +17,26 @@ import { LandUseEntity, LandUseEntityOptions } from "./LandUseEntity";
 
 const landUseModelPaths = {
   energy:
-    "https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/landuse_game/power2.glb",
+    "https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/landuse_game/power3.glb",
   gracing:
-    "https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/landuse_game/sheep.glb",
+    "https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/landuse_game/sheep3.glb",
   tourism:
-    "https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/landuse_game/cabin.glb",
+    "https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/landuse_game/turism.glb",
   recreation:
-    "https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/landuse_game/boots.glb",
+    "https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/landuse_game/iconSnowmobile3.glb",
   restoration:
     "https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/landuse_game/Restoration.glb",
   conservation:
-    "https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/landuse_game/nest.glb",
+    "https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/landuse_game/protection.glb",
 };
 
 const landUseModelScales = {
-  energy: 350,
+  energy: 220000,
   gracing: 190,
-  tourism: 30,
-  recreation: 3650,
+  tourism: 220000,
+  recreation: 220000,
   restoration: 250,
-  conservation: 3200,
+  conservation: 220000,
 };
 
 export class TileManager extends YpCodeBase {
@@ -211,7 +211,7 @@ export class TileManager extends YpCodeBase {
       const dx = Math.abs(currentRectangle.east - otherRectangle.east);
       const dy = Math.abs(currentRectangle.north - otherRectangle.north);
       // Check if the rectangle is less than 2 rectangles away in either dimension
-      if (dx < 2 * currentRectangle.width || dy < 2 * currentRectangle.height) {
+      if (dx < 1 * currentRectangle.width || dy < 1 * currentRectangle.height) {
         return false;
       }
     }
@@ -246,7 +246,7 @@ export class TileManager extends YpCodeBase {
       const entity = this.tileRectangleIndex.get(index);
       if (entity && this.isFarEnough(entity, topRectangles)) {
         topRectangles.push({ entity, count: maxCount });
-        if (topRectangles.length >= 25) {
+        if (topRectangles.length >= 42) {
           break;
         }
       }
