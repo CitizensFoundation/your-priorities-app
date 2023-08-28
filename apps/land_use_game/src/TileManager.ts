@@ -17,17 +17,17 @@ import { LandUseEntity, LandUseEntityOptions } from "./LandUseEntity";
 
 const landUseModelPaths = {
   energy:
-    "https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/landuse_game/power3.glb",
+    "https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/landuse_game/power2.glb",
   gracing:
     "https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/landuse_game/sheep3.glb",
   tourism:
-    "https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/landuse_game/turism.glb",
+    "https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/landuse_game/turism55.glb",
   recreation:
-    "https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/landuse_game/iconSnowmobile3.glb",
+    "https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/landuse_game/iconSnowmobile2.glb",
   restoration:
     "https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/landuse_game/Restoration.glb",
   conservation:
-    "https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/landuse_game/protection.glb",
+    "https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/landuse_game/protection2.glb",
 };
 
 const landUseModelScales = {
