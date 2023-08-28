@@ -66,11 +66,13 @@ export class YpCommentsDialog extends YpBaseElementWithLogin {
         }
 
         .indexNumber {
-          margin-top: 12px;
+          margin-top: 8px;
           font-size: 20px;
-          margin-left: 8px;
-          margin-right: 8px;
+          margin-left: 16px;
+          margin-right: 16px;
           color: var(--md-sys-color-on-surface);
+          opacity: 0.8;
+          letter-spacing: 2.7px;
         }
 
         .cancelButton {
@@ -286,7 +288,7 @@ export class YpCommentsDialog extends YpBaseElementWithLogin {
         ><md-icon>navigate_before</md-icon></md-outlined-icon-button
       >
       <div class="indexNumber">
-        ${this.currentIndex + 1}. / ${this.topLevelPoints.length}
+        ${this.currentIndex + 1}/${this.topLevelPoints.length}
       </div>
       <md-outlined-icon-button
         label="Loka"

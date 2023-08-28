@@ -210,19 +210,19 @@ export class Tutorial extends YpCodeBase {
 
             <div style="font-weight:bold;">Right side of the screen:</div>
             <p>
-              Home button – brings you back to starting point (centers you back
-              to start view). Airplane button – lets you view the land from the
-              vantage point of a small plane. Globe button – This is the default
+              Home button: brings you back to starting point (centers you back
+              to start view). Airplane button: lets you view the land from the
+              vantage point of a small plane. Globe button: This is the default
               setting for the view of the land area. Click this to exit other
-              viewing settings. Globe button with a search icon – This setting
+              viewing settings. Globe button with a search icon: This setting
               allows you to view place names within the land area of the game.
-              Map button – This setting allows you to view the land area in map
+              Map button: This setting allows you to view the land area in map
               format.
             </p>
 
             <div style="font-weight:bold;">Top of the screen:</div>
             <p>
-              Submit button – Selecting this submits your land use suggestions
+              Submit button: Selecting this submits your land use suggestions
               and comments and leads you to the next survey.
             </p>
 
@@ -234,17 +234,10 @@ export class Tutorial extends YpCodeBase {
 
             <div style="font-weight:bold;">Results Page:</div>
             <p>
-              On the results page, you can view all participants’ land use
-              suggestions and comments. You can also add to other people’s
+              On the results page, you can view all participants' land use
+              suggestions and comments. You can also add to other people's
               comments and participate in a conversation on their and your
               suggestions.
-            </p>
-
-            <div style="font-weight:bold;">End of game:</div>
-            <p>
-              When you have finished the game, the exit page will provide you
-              with a link to the game so that you can share it on social media
-              if you so wish.
             </p>
           </div>
         `,
@@ -269,17 +262,17 @@ export class Tutorial extends YpCodeBase {
 
             <div style="font-weight:bold;">Hægra megin á skjánum:</div>
             <p>
-              Heimahnappur – færir þig aftur á upphafsstað. Flugvélarhnappur –
-              Skoða landið frá úr flugvél sem flýgur yfir. Hnatthnappur – Þetta
+              Heimahnappur: færir þig aftur á upphafsstað. Flugvélarhnappur:
+              Skoða landið frá úr flugvél sem flýgur yfir. Hnatthnappur: Þetta
               er sjálfgefin stilling fyrir útsýni yfir landsvæðið. Lokar öðrum
-              skoðunarstillingum. Hnatthnappur með leitartákni – Skoða
-              staðaheiti og örnefni innan landssvæðis leiksins. Kortahnappur –
+              skoðunarstillingum. Hnatthnappur með leitartákni: Skoða
+              staðaheiti og örnefni innan landssvæðis leiksins. Kortahnappur:
               Skoða landsvæðið á kortasniði.
             </p>
 
             <div style="font-weight:bold;">Efst á skjánum:</div>
             <p>
-              Senda inn tillögur hnappur – Senda inn tillögur þínar um
+              Senda inn tillögur hnappur: Senda inn tillögur þínar um
               landnotkun með athugasemdum þínum.
             </p>
 
@@ -296,12 +289,6 @@ export class Tutorial extends YpCodeBase {
               athugasemdir annarra og tekið þátt í samtali um tillögur þeirra og
               þínar.
             </p>
-
-            <div style="font-weight:bold;">Leikslok:</div>
-            <p>
-              Þegar þú hefur lokið leiknum muntu geta deilt hlekknum á leikinn
-              sem gefinn er upp á lokasíðunni.
-            </p>
           </div>
         `,
       },
@@ -315,22 +302,26 @@ export class Tutorial extends YpCodeBase {
       content: {
         en: `
              <ul>
-              <li>
-                You can select the type of land use you are interested in viewing by selecting the appropriate button. If you do not select one land-use category, you will see all categories of all proposals.
-              </li>
-              <li>
-                You can click on the comment icons to take part in the discussion.
-              </li>
+              <li>You can select the type of land use you are interested in viewing by selecting the appropriate button. If you do not select one land-use category, you will see all categories of all proposals.</li>
+              <li>You can click on the comment icons to take part in the discussion.</li>
+              <li>Your land-use selection and comments have been submitted!</li>
+              <li>We encourage you to also familiarize yourself with what other participants have said in their comments and to participate in the discussion by clicking on the comment icons on the screen above the colors that identify land use.</li>
+              <li>You can also see the distribution and support for individual land-use paths by selecting the appropriate button at the bottom of the screen.</li>
+              <li>When you feel you have participated enough in the discussions, you can end the game by closing the browser page.</li>
+              <li>Thank you for your participation! We hope you will share the game with others who you think might be interested in participating.</li>
              </ul>
              `,
-        is: `<ul>
-            <li>
-            Þú getur valið þá tegund landnýtingar sem þú hefur áhuga á að skoða með því að velja viðeigandi hnapp. Veljir þú engan einn flokk, sérðu alla flokka tillagna.
-            </li>
-            <li>
-              Þú getur smellt á athugasemdartáknin til að taka þátt í umræðunni.
-            </li>
-          </ul>`,
+        is: `
+            <ul>
+              <li>Þú getur valið þá tegund landnýtingar sem þú hefur áhuga á að skoða með því að velja viðeigandi hnapp. Veljir þú engan einn flokk, sérðu alla flokka tillagna.</li>
+              <li>Þú getur smellt á athugasemdartáknin til að taka þátt í umræðunni.</li>
+              <li>Landnýtingarval þitt og athugasemdir þínar eru komnar til skila!</li>
+              <li>Við hvetjum þig til að kynna þér líka hvað aðrir þátttakendur hafa sagt í sínum athugasemdum og taka þátt í umræðunni með því að smella á athugasemdatáknin á skjánum fyrir ofan litina sem auðkenna landnýtingu.</li>
+              <li>Þú getur líka séð drefingu og stuðning við einstakar landnýtingarleiðir með því að velja viðeigandi hnapp neðst á skjánum.</li>
+              <li>Þegar þér finnst þú hafa tekið nægan þátt í umræðum lýkur þú leik með því að loka síðunni í vafranum.</li>
+              <li>Þakka þér fyrir þátttökuna! Við vonum að þú deilir leiknum með fleirum sem þú heldur að gætu haft áhuga á þátttöku.</li>
+            </ul>
+          `,
       },
     } as TutorialPageData,
     noLandUseSelected: {
@@ -346,7 +337,6 @@ export class Tutorial extends YpCodeBase {
         is: `<p>Veldu landnýtingu neðst á skjánum</p>`,
       },
     } as TutorialPageData,
-
   } as Record<TutorialStage, TutorialPageData>;
 
   haveShown: Array<TutorialStage> = [];
@@ -363,7 +353,7 @@ export class Tutorial extends YpCodeBase {
 
     // Combine the content and title for all stages
     for (let stageKey in this.stages) {
-      if (stageKey==="noLandUseSelected") continue;
+      if (stageKey === "noLandUseSelected") continue;
       //@ts-ignore
       const stage = this.stages[stageKey];
       combinedContent.en += `<h2>${stage.title.en}</h2>\n\n${stage.content.en}`;

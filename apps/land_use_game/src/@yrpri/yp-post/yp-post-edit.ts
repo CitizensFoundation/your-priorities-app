@@ -1291,8 +1291,8 @@ export class YpPostEdit extends YpEditBase {
         "#structuredQuestionContainer_" + this.liveQuestionIds[currentPos + 1]
       ) as HTMLElement;
       item.scrollIntoView({
-        block: "center",
-        inline: "center",
+        block: "end",
+        inline: "end",
         behavior: "smooth",
       });
       item.focus();
@@ -1766,7 +1766,7 @@ export class YpPostEdit extends YpEditBase {
   }
 
   get surveyAnswerLocalstorageKey() {
-    return `yp-land-use-survey-response-v1-for-${this.group!.id}-${
+    return `yp-land-use-survey-response-v2-for-${this.group!.id}-${
       window.appUser.user!.id
     }`;
   }
