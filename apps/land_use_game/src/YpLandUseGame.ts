@@ -550,6 +550,11 @@ export class YpLandUseGame extends YpBaseElement {
             bottom: 168px;
           }
 
+          #navigationButtons {
+          top: 40%;
+          transform: translateY(-40%);
+        }
+
           #submitButton {
             font-size: 12px;
           }

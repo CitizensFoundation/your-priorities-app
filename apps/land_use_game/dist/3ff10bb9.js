@@ -3217,6 +3217,11 @@ class Wv{static fromInt(e){const t=Dv.fromInt(e);return Wv.fromHueAndChroma(t.hu
             bottom: 168px;
           }
 
+          #navigationButtons {
+          top: 40%;
+          transform: translateY(-40%);
+        }
+
           #submitButton {
             font-size: 12px;
           }
