@@ -69,7 +69,7 @@ export class Tutorial extends YpCodeBase {
                       style="max-height: 75px;"
                   />
               </div>
-              <em>Pan</em>Left click + drag<br />
+              <em>Pan</em>: Left click + drag<br />
             </div>
             <div class="layout horizontal">
               <div style="width: 75px; display: inline-block;padding: 8px;">
@@ -79,7 +79,7 @@ export class Tutorial extends YpCodeBase {
                       style="max-height: 75px;"
                   />
               </div>
-              <em>Zoom</em>Right click + drag, or Mouse wheel scroll<br />
+              <em>Zoom</em>: Right click + drag, or Mouse wheel scroll<br />
             </div>
             <div class="layout horizontal">
               <div style="width: 75px; display: inline-block;padding: 8px;">
@@ -90,7 +90,7 @@ export class Tutorial extends YpCodeBase {
                   />
               </div>
               <div class="layout vertical">
-                <em>Rotate</em>Middle click + drag, or CTRL +Left/Right click +
+                <em>Rotate</em>: Middle click + drag, or CTRL +Left/Right click +
                 drag<br />
                 <em>Tilt</em>Two-finger drag, same direction
               </div>
@@ -153,7 +153,7 @@ export class Tutorial extends YpCodeBase {
                       style="max-height: 75px;"
                   />
               </div>
-              <em>Færsla</em>Vinstri smella + draga<br />
+              <em>Færsla</em>: Vinstri smella + draga<br />
             </div>
             <div class="layout horizontal">
               <div style="width: 75px; display: inline-block;">
@@ -163,7 +163,7 @@ export class Tutorial extends YpCodeBase {
                       style="max-height: 75px;"
                   />
               </div>
-              <em>Aðdráttur</em>Hægri smella + draga, eða skrolla með músarhjóli<br />
+              <em>Aðdráttur</em>: Hægri smella + draga, eða skrolla með músarhjóli<br />
             </div>
             <div class="layout horizontal">
               <div style="width: 75px; display: inline-block;">
@@ -174,7 +174,7 @@ export class Tutorial extends YpCodeBase {
                   />
               </div>
               <div class="layout vertical">
-                <em>Snúa</em>Miðsmella + draga, eða CTRL + Vinstri/hægri smella + draga<br />
+                <em>Snúa</em>: Miðsmella + draga, eða CTRL + Vinstri/hægri smella + draga<br />
                 <em>Halla</em>Dragðu með tveimur fingrum, í sömu átt
               </div>
             </div>
