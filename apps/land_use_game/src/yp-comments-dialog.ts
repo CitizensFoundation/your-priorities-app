@@ -3,6 +3,7 @@ import { property, customElement, query, queryAll } from "lit/decorators.js";
 
 import "@material/mwc-icon-button";
 import "@material/web/iconbutton/outlined-icon-button.js";
+import "@material/web/iconbutton/icon-button.js";
 import "./@yrpri/yp-point/yp-point-comment-list.js";
 import "./@yrpri/yp-point/yp-point-actions.js";
 import "./@yrpri/yp-magic-text/yp-magic-text.js";
@@ -14,6 +15,7 @@ import { Layouts } from "./flexbox-literals/classes.js";
 import { MdDialog } from "@material/web/dialog/dialog.js";
 import { LandUseEntity } from "./LandUseEntity.js";
 import { TileManager } from "./TileManager.js";
+import { Button } from "@material/web/button/internal/button.js";
 
 @customElement("yp-comments-dialog")
 export class YpCommentsDialog extends YpBaseElementWithLogin {
@@ -229,14 +231,39 @@ export class YpCommentsDialog extends YpBaseElementWithLogin {
     this.dialog.show();
   }
 
+  async _deleteComment() {
+    (this.$$("#deleteButton") as Button).disabled = true;
+    if (this.currentPoint) {
+      this.fire("delete", {
+        pointId: this.currentPoint.id,
+        rectangleId: this.tileManager.getRectangleId(this.currentPointId!),
+      });
+      this.fire("refresh");
+      this.closeDialog();
+    } else {
+      this.fire("yp-error", this.t("point.commentToShort"));
+    }
+    (this.$$("#deleteButton") as Button).disabled = false;
+  }
+
   renderCurrentPoint() {
     if (this.currentPoint) {
       return html`
         <div id="content" slot="content">
           <div class="layout vertical newsContainer">
-            <yp-user-with-organization
-              .user="${this.currentPoint!.User!}"
-            ></yp-user-with-organization>
+            <div class="layout horizontal">
+              <yp-user-with-organization
+                .user="${this.currentPoint!.User!}"
+              ></yp-user-with-organization>
+              <div class="flex"></div>
+              <md-icon-button
+                id="deleteButton"
+                ?hidden="${window.appUser.user!.id !==
+                this.currentPoint.User!.id}"
+                @click="${this._deleteComment}"
+                ><md-icon>delete</md-icon></md-icon-button
+              >
+            </div>
             <yp-magic-text
               id="content"
               class="story"

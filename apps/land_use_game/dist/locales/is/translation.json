@@ -1,4 +1,6 @@
 {
+  "deleteComment": "Eyða athugasemd",
+  "areYouSureYouWantToDeleteComment": "Ertu viss um að þú viljir eyða athugasemd?",
   "Aerial with labels": "Loftmynd með nöfnum",
   "restart": "Byrja upp á nýtt",
   "areYouSureYouWantToRestart": "Ertu viss um að þú viljir byrja upp á nýtt?",

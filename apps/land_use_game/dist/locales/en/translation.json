@@ -1,4 +1,6 @@
 {
+  "deleteComment": "Delete comment",
+  "areYouSureYouWantToDeleteComment": "Are you sure you want to delete this comment?",
   "restart": "Restart Game",
   "areYouSureYouWantToRestart": "Are you sure you want to restart?",
   "areYouSureYouWantToLogout": "Are you sure you want to logout?",

@@ -346,14 +346,16 @@ export class TileManager extends YpCodeBase {
             ? "https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/landuse_game/chatBubble5.glb"
             : "https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/landuse_game/chatBubble5.glb";
 
-        rectangleEntity.commentEntity = this.createModel(
-          modelUrl,
-          position,
-          chatBubbleHeight,
-          {
-            rectangleIndex: rectangleEntity.rectangleIndex!,
-          }
-        );
+        if (rectangleEntity.pointId || (rectangleEntity.pointIds && rectangleEntity.pointIds.length > 0)) {
+          rectangleEntity.commentEntity = this.createModel(
+            modelUrl,
+            position,
+            chatBubbleHeight,
+            {
+              rectangleIndex: rectangleEntity.rectangleIndex!,
+            }
+          );
+        }
       }
     });
 
@@ -1108,7 +1110,29 @@ export class TileManager extends YpCodeBase {
     }
   }
 
-  deleteCommentFromRectangle(rectangleId: string, pointId: number) {
+  deleteCommentFromPoint(pointId: number) {
+    // Find the rectangle entity
+    const targetEntity = this.tileEntities.find(
+      (entity) =>
+        entity.pointId === pointId ||
+        (entity.pointIds && entity.pointIds.includes(pointId))
+    );
+
+    if (targetEntity) {
+      // Remove the comment from the rectangle entity
+      targetEntity.pointId = undefined;
+
+      // Remove the 3D comment model
+      if (targetEntity.commentEntity) {
+        this.viewer!.entities.remove(targetEntity.commentEntity);
+        targetEntity.commentEntity = undefined;
+      }
+
+      this.calculateTileCounts();
+    }
+  }
+
+  deleteCommentFromRectangle(rectangleId: string) {
     // Find the rectangle entity
     const rectangleEntity = this.viewer!.entities.getById(
       rectangleId
@@ -1130,6 +1154,39 @@ export class TileManager extends YpCodeBase {
 
   disableLookAtMode(): void {
     this.viewer!.camera.lookAtTransform(Cesium.Matrix4.IDENTITY);
+  }
+
+  getRectangleId(pointId: number): string {
+    const targetEntity = this.tileEntities.find(
+      (entity) =>
+        entity.pointId === pointId ||
+        (entity.pointIds && entity.pointIds.includes(pointId))
+    );
+
+    return targetEntity?.id!;
+  }
+
+  deletePoint(pointId: number) {
+    this.deleteCommentFromPoint(pointId);
+
+    const targetEntity = this.tileEntities.find(
+      (entity) =>
+        entity.pointId === pointId ||
+        (entity.pointIds && entity.pointIds.includes(pointId))
+    );
+
+    if (targetEntity) {
+      if (targetEntity.pointIds) {
+        targetEntity.pointIds = targetEntity.pointIds.filter(
+          (id) => id !== pointId
+        );
+      }
+
+      if (targetEntity.pointId === pointId) {
+        targetEntity.pointId = undefined;
+      }
+
+    }
   }
 
   showComment(pointId: number): void {

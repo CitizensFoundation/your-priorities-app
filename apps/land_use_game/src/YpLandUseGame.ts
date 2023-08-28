@@ -88,6 +88,9 @@ export class YpLandUseGame extends YpBaseElement {
   @property({ type: Number })
   numberOfTilesWithComments: number | undefined;
 
+  @property({ type: Number })
+  currentPointIdToDelete: number | undefined;
+
   @property({ type: Boolean })
   hideUI = true;
 
@@ -1027,7 +1030,11 @@ export class YpLandUseGame extends YpBaseElement {
         this.group!.id,
         allPointIds[p]
       );
-      allTopLevelPoints.push(point);
+      if (point && point.id) {
+        allTopLevelPoints.push(point);
+      } else {
+        this.tileManager.deletePoint(allPointIds[p]);
+      }
     }
 
     this.allTopLevelPoints = allTopLevelPoints;
@@ -1290,6 +1297,7 @@ export class YpLandUseGame extends YpBaseElement {
         this.tileManager.geojsonData
       );
       await this.planeManager.setup();
+      await new Promise((resolve) => setTimeout(resolve, 2000));
       this.planeDisabled = false;
     });
 
@@ -1350,16 +1358,25 @@ export class YpLandUseGame extends YpBaseElement {
     }
   }
 
-  deleteComment(event: CustomEvent) {
-    const pointId = event.detail;
-    if (this.currentRectangleIdForComment) {
-      this.tileManager.deleteCommentFromRectangle(
-        this.currentRectangleIdForComment,
-        pointId
+  async reallyDeleteComment(event: CustomEvent) {
+    if (this.currentRectangleIdForComment  && this.currentPointIdToDelete) {
+      await window.serverApi.deletePoint(this.currentPointIdToDelete);
+      this.tileManager.deleteCommentFromPoint(
+        this.currentPointIdToDelete
       );
+      if (this.gameStage == GameStage.Results) {
+        await this.loadAllTopLevelPoints();
+      }
     } else {
       console.error("Can't find rectangle for comment");
     }
+    (this.$$("#deleteCommentDialog") as MdDialog).close();
+  }
+
+  async deleteComment(event: CustomEvent) {
+    this.currentPointIdToDelete = event.detail.pointId;
+    this.currentRectangleIdForComment = event.detail.rectangleId;
+    (this.$$("#deleteCommentDialog") as MdDialog).show();
   }
 
   showAll() {
@@ -1411,6 +1428,11 @@ export class YpLandUseGame extends YpBaseElement {
   cancelLogout() {
     (this.$$("#logoutDialog") as MdDialog).close();
   }
+
+  cancelDeleteComment() {
+    (this.$$("#deleteCommentDialog") as MdDialog).close();
+  }
+
 
   async restart() {
     (this.$$("#restartDialog") as MdDialog).show();
@@ -1713,6 +1735,7 @@ export class YpLandUseGame extends YpBaseElement {
     `;
   }
 
+  //TODO: Refactor those dialogs, they are all the same
   renderLogoutDialog() {
     return html`
       <md-dialog
@@ -1728,6 +1751,27 @@ export class YpLandUseGame extends YpBaseElement {
           >
           <md-text-button @click="${this.reallyLogout}"
             >${this.t("user.logout")}</md-text-button
+          >
+        </div>
+      </md-dialog>
+    `;
+  }
+
+  renderDeleteConfirmDialog() {
+    return html`
+      <md-dialog
+        id="deleteCommentDialog"
+        ?is-safari="${this.isSafari}"
+        @cancel="${this.scrimDisableAction}"
+      >
+        <div slot="headliner">${this.t("deleteComment")}</div>
+        <div slot="content">${this.t('areYouSureYouWantToDeleteComment')}</div>
+        <div slot="actions">
+          <md-text-button @click="${this.cancelDeleteComment}"
+            >${this.t("cancel")}</md-text-button
+          >
+          <md-text-button @click="${this.reallyDeleteComment}"
+            >${this.t("deleteComment")}</md-text-button
           >
         </div>
       </md-dialog>
@@ -1762,7 +1806,7 @@ export class YpLandUseGame extends YpBaseElement {
 
   render() {
     return html`
-      ${this.renderRestartDialog()} ${this.renderLogoutDialog()} ${this.renderErrorDialog()} ${this.renderNoCommentsAddedDialog()}
+      ${this.renderDeleteConfirmDialog()} ${this.renderRestartDialog()} ${this.renderLogoutDialog()} ${this.renderErrorDialog()} ${this.renderNoCommentsAddedDialog()}
       <yp-app-dialogs id="dialogContainer"></yp-app-dialogs>
       <div
         id="cesium-container"
@@ -1782,6 +1826,7 @@ export class YpLandUseGame extends YpBaseElement {
       <yp-edit-comment-dialog
         id="editCommentDialog"
         .group="${this.group!}"
+        .tileManager="${this.tileManager}"
         @close="${() => (this.disableBrowserTouchEvents = true)}"
         @save="${this.saveComment}"
         @delete="${this.deleteComment}"
@@ -1793,6 +1838,7 @@ export class YpLandUseGame extends YpBaseElement {
         .tileManager="${this.tileManager}"
         @closed="${this.commentsDialogClosed}"
         .group="${this.group!}"
+        @delete="${this.deleteComment}"
       ></yp-comments-dialog>
       ${this.renderUI()}
     `;

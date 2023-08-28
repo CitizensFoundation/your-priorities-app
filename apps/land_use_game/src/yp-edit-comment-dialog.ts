@@ -14,9 +14,13 @@ import { YpBaseElementWithLogin } from "./@yrpri/common/yp-base-element-with-log
 import "@material/web/dialog/dialog.js";
 import "@material/web/progress/circular-progress.js";
 import { Dialog } from "@material/web/dialog/internal/dialog.js";
+import { TileManager } from "./TileManager.js";
 
 @customElement("yp-edit-comment-dialog")
 export class YpEditCommentDialog extends YpBaseElementWithLogin {
+  @property({ type: Object })
+  tileManager!: TileManager;
+
   @property({ type: Object })
   point!: YpPointData;
 
@@ -206,8 +210,10 @@ export class YpEditCommentDialog extends YpBaseElementWithLogin {
   async _deleteComment() {
     (this.$$("#storySubmitButton") as Button).disabled = true;
     if (this.point) {
-      await window.serverApi.deletePoint(this.point.id);
-      this.fire("delete", this.point.id);
+      this.fire("delete", {
+        pointId: this.point.id,
+        rectangleId: this.tileManager.getRectangleId(this.point.id),
+      });
       this.fire("refresh");
       this.closeDialog();
     } else {

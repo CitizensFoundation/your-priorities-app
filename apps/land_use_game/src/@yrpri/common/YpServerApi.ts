@@ -1,4 +1,4 @@
-import { YpServerApiBase } from './YpServerApiBase.js';
+import { YpServerApiBase } from "./YpServerApiBase.js";
 
 export class YpServerApi extends YpServerApiBase {
   public getPublicPrivatePosts(groupId: number) {
@@ -8,70 +8,69 @@ export class YpServerApi extends YpServerApiBase {
   }
 
   public async getParentPoint(groupId: number, pointId: number) {
-    const point = await this.fetchWrapper(
+    const point = (await this.fetchWrapper(
       this.baseUrlPath + `/groups/${groupId}/${pointId}/get_parent_point`
-    ) as unknown as YpPointData;
+    )) as unknown as YpPointData;
 
-    if (point) {
-      point.latestContent = point.PointRevisions![
-        point.PointRevisions!.length - 1
-      ].content;
-      point.content =  point.latestContent;
+    if (point && point.PointRevisions && point.PointRevisions.length > 0) {
+      point.latestContent =
+        point.PointRevisions![point.PointRevisions!.length - 1].content;
+      point.content = point.latestContent;
     }
 
     return point;
   }
 
-  constructor(urlPath: string = '/api') {
+  constructor(urlPath: string = "/api") {
     super();
     this.baseUrlPath = urlPath;
   }
 
   public boot() {
-    return this.fetchWrapper(this.baseUrlPath + '/domains');
+    return this.fetchWrapper(this.baseUrlPath + "/domains");
   }
 
   public isloggedin() {
     return this.fetchWrapper(
-      this.baseUrlPath + '/users/loggedInUser/isloggedin'
+      this.baseUrlPath + "/users/loggedInUser/isloggedin"
     );
   }
 
   public getAdminRights() {
     return this.fetchWrapper(
-      this.baseUrlPath + '/users/loggedInUser/adminRights'
+      this.baseUrlPath + "/users/loggedInUser/adminRights"
     );
   }
 
   public getMemberships() {
     return this.fetchWrapper(
-      this.baseUrlPath + '/users/loggedInUser/memberships'
+      this.baseUrlPath + "/users/loggedInUser/memberships"
     );
   }
 
   public getAdminRightsWithNames() {
     return this.fetchWrapper(
-      this.baseUrlPath + '/users/loggedInUser/adminRightsWithNames'
+      this.baseUrlPath + "/users/loggedInUser/adminRightsWithNames"
     );
   }
 
   public getMembershipsWithNames() {
     return this.fetchWrapper(
-      this.baseUrlPath + '/users/loggedInUser/membershipsWithNames'
+      this.baseUrlPath + "/users/loggedInUser/membershipsWithNames"
     );
   }
 
   public logout() {
-    return this.fetchWrapper(this.baseUrlPath + '/users/logout', {
-      method: 'POST',
+    return this.fetchWrapper(this.baseUrlPath + "/users/logout", {
+      method: "POST",
     });
   }
 
   public setLocale(body: Record<string, unknown>) {
     return this.fetchWrapper(
-      this.baseUrlPath + '/users/loggedInUser/setLocale',
+      this.baseUrlPath + "/users/loggedInUser/setLocale",
       {
-        method: 'PUT',
+        method: "PUT",
         body: JSON.stringify(body),
       },
       false
@@ -83,7 +82,7 @@ export class YpServerApi extends YpServerApiBase {
       this.baseUrlPath +
         `/recommendations/groups/${groupId}/getPostRecommendations`,
       {
-        method: 'PUT',
+        method: "PUT",
         body: JSON.stringify({}),
       }
     );
@@ -91,21 +90,21 @@ export class YpServerApi extends YpServerApiBase {
 
   public hasVideoUploadSupport() {
     return this.fetchWrapper(
-      this.baseUrlPath + '/videos/hasVideoUploadSupport'
+      this.baseUrlPath + "/videos/hasVideoUploadSupport"
     );
   }
 
   public hasAudioUploadSupport() {
     return this.fetchWrapper(
-      this.baseUrlPath + '/audios/hasAudioUploadSupport'
+      this.baseUrlPath + "/audios/hasAudioUploadSupport"
     );
   }
 
   public sendVideoView(body: Record<string, unknown>) {
     return this.fetchWrapper(
-      this.baseUrlPath + '/videos/videoView',
+      this.baseUrlPath + "/videos/videoView",
       {
-        method: 'PUT',
+        method: "PUT",
         body: JSON.stringify(body),
       },
       false
@@ -114,9 +113,9 @@ export class YpServerApi extends YpServerApiBase {
 
   public sendAudioView(body: Record<string, unknown>) {
     return this.fetchWrapper(
-      this.baseUrlPath + '/audios/videoView',
+      this.baseUrlPath + "/audios/videoView",
       {
-        method: 'PUT',
+        method: "PUT",
         body: JSON.stringify(body),
       },
       false
@@ -125,9 +124,9 @@ export class YpServerApi extends YpServerApiBase {
 
   public createActivityFromApp(body: Record<string, unknown>) {
     return this.fetchWrapper(
-      this.baseUrlPath + '/users/createActivityFromApp',
+      this.baseUrlPath + "/users/createActivityFromApp",
       {
-        method: 'POST',
+        method: "POST",
         body: JSON.stringify(body),
       },
       false
@@ -138,7 +137,7 @@ export class YpServerApi extends YpServerApiBase {
     return this.fetchWrapper(
       this.baseUrlPath + `/groups/${groupId}/marketingTrackingOpen`,
       {
-        method: 'POST',
+        method: "POST",
         body: JSON.stringify(body),
       },
       false
@@ -149,7 +148,7 @@ export class YpServerApi extends YpServerApiBase {
     return this.fetchWrapper(
       this.baseUrlPath + `/users/createApiKey`,
       {
-        method: 'POST',
+        method: "POST",
         body: JSON.stringify({}),
       },
       false
@@ -160,7 +159,7 @@ export class YpServerApi extends YpServerApiBase {
     return this.fetchWrapper(
       this.baseUrlPath + `/groups/${groupId}/triggerTrackingGoal`,
       {
-        method: 'POST',
+        method: "POST",
         body: JSON.stringify(body),
       },
       false
@@ -194,7 +193,11 @@ export class YpServerApi extends YpServerApiBase {
     return this.fetchWrapper(this.baseUrlPath + `/groups/${groupId}`);
   }
 
-  public endorsePost(postId: number, method: string, body: Record<string, unknown>) {
+  public endorsePost(
+    postId: number,
+    method: string,
+    body: Record<string, unknown>
+  ) {
     return this.fetchWrapper(
       this.baseUrlPath + `/posts/${postId}/endorse`,
       {
@@ -224,19 +227,25 @@ export class YpServerApi extends YpServerApiBase {
     return this.fetchWrapper(translateUrl);
   }
 
-  public getTranslatedRegistrationQuestions(groupId: number, targetLanguage: string) {
+  public getTranslatedRegistrationQuestions(
+    groupId: number,
+    targetLanguage: string
+  ) {
     return this.fetchWrapper(
-      this.baseUrlPath + `/groups/${groupId}/translatedRegistrationQuestions?targetLanguage=${targetLanguage}`
+      this.baseUrlPath +
+        `/groups/${groupId}/translatedRegistrationQuestions?targetLanguage=${targetLanguage}`
     ) as unknown as Array<string>;
   }
 
-  public sendRegistrationQuestions(registrationAnswers: Array<Record<string,string>>) {
+  public sendRegistrationQuestions(
+    registrationAnswers: Array<Record<string, string>>
+  ) {
     return this.fetchWrapper(
       this.baseUrlPath + `/users/setRegistrationAnswers`,
       {
-        method: 'PUT',
+        method: "PUT",
         body: JSON.stringify({
-          registration_answers: registrationAnswers
+          registration_answers: registrationAnswers,
         }),
       },
       true
@@ -247,7 +256,7 @@ export class YpServerApi extends YpServerApiBase {
     return this.fetchWrapper(
       this.baseUrlPath + `/posts/${postId}/editTranscript`,
       {
-        method: 'PUT',
+        method: "PUT",
         body: JSON.stringify(body),
       },
       false
@@ -264,18 +273,22 @@ export class YpServerApi extends YpServerApiBase {
     return this.fetchWrapper(
       this.baseUrlPath + `/points/${groupId}`,
       {
-        method: 'POST',
+        method: "POST",
         body: JSON.stringify(body),
       },
       false
     );
   }
 
-  public completeMediaPoint(mediaType: string, pointId: number, body: Record<string, unknown>) {
+  public completeMediaPoint(
+    mediaType: string,
+    pointId: number,
+    body: Record<string, unknown>
+  ) {
     return this.fetchWrapper(
       this.baseUrlPath + `/${mediaType}/${pointId}/completeAndAddToPoint`,
       {
-        method: 'POST',
+        method: "POST",
         body: JSON.stringify(body),
       },
       false
@@ -318,13 +331,15 @@ export class YpServerApi extends YpServerApiBase {
 
   public getSurveyTranslations(post: YpPostData, language: string) {
     return this.fetchWrapper(
-      this.baseUrlPath + `/posts/${post.id}/translatedSurvey?targetLanguage=${language}&groupId=${post.Group.id}`
+      this.baseUrlPath +
+        `/posts/${post.id}/translatedSurvey?targetLanguage=${language}&groupId=${post.Group.id}`
     );
   }
 
   public getSurveyQuestionsTranslations(group: YpGroupData, language: string) {
     return this.fetchWrapper(
-      this.baseUrlPath + `/groups/${group.id}/translatedSurveyQuestions?targetLanguage=${language}`
+      this.baseUrlPath +
+        `/groups/${group.id}/translatedSurveyQuestions?targetLanguage=${language}`
     );
   }
 
@@ -340,25 +355,28 @@ export class YpServerApi extends YpServerApiBase {
     );
   }
 
-
   public setVideoCover(videoId: number, body: Record<string, unknown>) {
     return this.fetchWrapper(
       this.baseUrlPath + `/videos/${videoId}/setVideoCover`,
       {
-        method: 'PUT',
+        method: "PUT",
         body: JSON.stringify(body),
       },
       false
     );
   }
 
-  public getTranscodingJobStatus(mediaType: string, mediaId: number, jobId: string) {
+  public getTranscodingJobStatus(
+    mediaType: string,
+    mediaId: number,
+    jobId: string
+  ) {
     return this.fetchWrapper(
       this.baseUrlPath + `/${mediaType}/${mediaId}/getTranscodingJobStatus`,
       {
-        method: 'PUT',
-        body: JSON.stringify({jobId}),
-      },
+        method: "PUT",
+        body: JSON.stringify({ jobId }),
+      }
     );
   }
 
@@ -371,7 +389,7 @@ export class YpServerApi extends YpServerApiBase {
     return this.fetchWrapper(
       this.baseUrlPath + `/${mediaType}/${mediaId}/${startType}`,
       {
-        method: 'POST',
+        method: "POST",
         body: JSON.stringify(body),
       },
       false
@@ -382,7 +400,7 @@ export class YpServerApi extends YpServerApiBase {
     return this.fetchWrapper(
       mediaUrl,
       {
-        method: 'POST',
+        method: "POST",
         body: JSON.stringify(body),
       },
       false
@@ -393,18 +411,22 @@ export class YpServerApi extends YpServerApiBase {
     return this.fetchWrapper(
       this.baseUrlPath + `/points/${pointId}`,
       {
-        method: 'PUT',
+        method: "PUT",
         body: JSON.stringify(body),
       },
       false
     );
   }
 
-  public updatePointAdminComment(groupId: number, pointId: number, body: Record<string, unknown>) {
+  public updatePointAdminComment(
+    groupId: number,
+    pointId: number,
+    body: Record<string, unknown>
+  ) {
     return this.fetchWrapper(
       this.baseUrlPath + `/groups/${groupId}/${pointId}/adminComment`,
       {
-        method: 'PUT',
+        method: "PUT",
         body: JSON.stringify(body),
       },
       false
@@ -415,7 +437,7 @@ export class YpServerApi extends YpServerApiBase {
     return this.fetchWrapper(
       this.baseUrlPath + `/points/${pointId}`,
       {
-        method: 'DELETE',
+        method: "DELETE",
         body: JSON.stringify({}),
       },
       false
@@ -430,7 +452,7 @@ export class YpServerApi extends YpServerApiBase {
     return this.fetchWrapper(
       this.baseUrlPath + `/users/register`,
       {
-        method: 'POST',
+        method: "POST",
         body: JSON.stringify(body),
       },
       false
@@ -441,7 +463,7 @@ export class YpServerApi extends YpServerApiBase {
     return this.fetchWrapper(
       this.baseUrlPath + `/users/register_anonymously`,
       {
-        method: 'POST',
+        method: "POST",
         body: JSON.stringify(body),
       },
       false
@@ -452,7 +474,7 @@ export class YpServerApi extends YpServerApiBase {
     return this.fetchWrapper(
       this.baseUrlPath + `/users/login`,
       {
-        method: 'POST',
+        method: "POST",
         body: JSON.stringify(body),
       },
       false
@@ -487,7 +509,7 @@ export class YpServerApi extends YpServerApiBase {
     return this.fetchWrapper(
       this.baseUrlPath + `/groups/${surveyGroupId}/survey`,
       {
-        method: 'POST',
+        method: "POST",
         body: JSON.stringify(body),
       },
       false
@@ -503,7 +525,7 @@ export class YpServerApi extends YpServerApiBase {
       this.baseUrlPath +
         `/${type}/${collectionId}/${activityId}/delete_activity`,
       {
-        method: 'DELETE',
+        method: "DELETE",
         body: JSON.stringify({}),
       },
       false
@@ -524,7 +546,7 @@ export class YpServerApi extends YpServerApiBase {
     return this.fetchWrapper(
       this.baseUrlPath + `/notifications/setIdsViewed`,
       {
-        method: 'PUT',
+        method: "PUT",
         body: JSON.stringify(body),
       },
       false
@@ -535,7 +557,7 @@ export class YpServerApi extends YpServerApiBase {
     return this.fetchWrapper(
       this.baseUrlPath + `/notifications/markAllViewed`,
       {
-        method: 'PUT',
+        method: "PUT",
         body: JSON.stringify({}),
       },
       false
@@ -560,14 +582,18 @@ export class YpServerApi extends YpServerApiBase {
     return this.fetchWrapper(
       this.baseUrlPath + `/${type}/${id}/comment`,
       {
-        method: 'POST',
+        method: "POST",
         body: JSON.stringify(body),
       },
       false
     );
   }
 
-  public setPointQuality(pointId: number, method: string, body: Record<string, unknown>) {
+  public setPointQuality(
+    pointId: number,
+    method: string,
+    body: Record<string, unknown>
+  ) {
     return this.fetchWrapper(
       this.baseUrlPath + `/points/${pointId}/pointQuality`,
       {
@@ -582,7 +608,7 @@ export class YpServerApi extends YpServerApiBase {
     return this.fetchWrapper(
       url,
       {
-        method: 'POST',
+        method: "POST",
         body: JSON.stringify(body),
       },
       false
@@ -597,9 +623,9 @@ export class YpServerApi extends YpServerApiBase {
 
   public disconnectSamlLogin() {
     return this.fetchWrapper(
-      this.baseUrlPath + '/users/disconnectSamlLogin',
+      this.baseUrlPath + "/users/disconnectSamlLogin",
       {
-        method: 'DELETE',
+        method: "DELETE",
         body: JSON.stringify({}),
       },
       false
@@ -608,9 +634,9 @@ export class YpServerApi extends YpServerApiBase {
 
   public disconnectFacebookLogin() {
     return this.fetchWrapper(
-      this.baseUrlPath + '/users/disconnectFacebookLogin',
+      this.baseUrlPath + "/users/disconnectFacebookLogin",
       {
-        method: 'DELETE',
+        method: "DELETE",
         body: JSON.stringify({}),
       },
       false
@@ -619,9 +645,9 @@ export class YpServerApi extends YpServerApiBase {
 
   public deleteUser() {
     return this.fetchWrapper(
-      this.baseUrlPath + '/users/delete_current_user',
+      this.baseUrlPath + "/users/delete_current_user",
       {
-        method: 'DELETE',
+        method: "DELETE",
         body: JSON.stringify({}),
       },
       false
@@ -630,9 +656,9 @@ export class YpServerApi extends YpServerApiBase {
 
   public anonymizeUser() {
     return this.fetchWrapper(
-      this.baseUrlPath + '/users/anonymize_current_user',
+      this.baseUrlPath + "/users/anonymize_current_user",
       {
-        method: 'DELETE',
+        method: "DELETE",
         body: JSON.stringify({}),
       },
       false
@@ -643,7 +669,7 @@ export class YpServerApi extends YpServerApiBase {
     return this.fetchWrapper(
       this.baseUrlPath + `/users/reset/${token}`,
       {
-        method: 'POST',
+        method: "POST",
         body: JSON.stringify(body),
       },
       false
@@ -654,7 +680,7 @@ export class YpServerApi extends YpServerApiBase {
     return this.fetchWrapper(
       this.baseUrlPath + `/users/missingEmail/setEmail`,
       {
-        method: 'PUT',
+        method: "PUT",
         body: JSON.stringify(body),
       },
       false
@@ -665,7 +691,7 @@ export class YpServerApi extends YpServerApiBase {
     return this.fetchWrapper(
       this.baseUrlPath + `/users/missingEmail/linkAccounts`,
       {
-        method: 'PUT',
+        method: "PUT",
         body: JSON.stringify(body),
       },
       false
@@ -676,11 +702,11 @@ export class YpServerApi extends YpServerApiBase {
     return this.fetchWrapper(
       this.baseUrlPath + `/users/missingEmail/emailConfirmationShown`,
       {
-        method: 'PUT',
+        method: "PUT",
         body: JSON.stringify({}),
       },
       false,
-      'forgotPassword'
+      "forgotPassword"
     );
   }
 
@@ -688,7 +714,7 @@ export class YpServerApi extends YpServerApiBase {
     return this.fetchWrapper(
       this.baseUrlPath + `/users/forgot_password`,
       {
-        method: 'POST',
+        method: "POST",
         body: JSON.stringify(body),
       },
       false
@@ -699,20 +725,20 @@ export class YpServerApi extends YpServerApiBase {
     return this.fetchWrapper(
       this.baseUrlPath + `/users/accept_invite/${token}`,
       {
-        method: 'POST',
+        method: "POST",
         body: JSON.stringify({}),
       },
       false,
-      'acceptInvite'
+      "acceptInvite"
     );
   }
 
   public getInviteSender(token: string) {
     return this.fetchWrapper(
       this.baseUrlPath + `/users/get_invite_info/${token}`,
-      { method: 'GET' },
+      { method: "GET" },
       false,
-      'acceptInvite'
+      "acceptInvite"
     );
   }
 
@@ -723,9 +749,7 @@ export class YpServerApi extends YpServerApiBase {
   }
 
   public hasAutoTranslation() {
-    return this.fetchWrapper(
-      this.baseUrlPath + `/users/has/AutoTranslation`
-    );
+    return this.fetchWrapper(this.baseUrlPath + `/users/has/AutoTranslation`);
   }
 
   public apiAction(url: string, method: string, body: Record<string, unknown>) {
@@ -745,11 +769,15 @@ export class YpServerApi extends YpServerApiBase {
     );
   }
 
-  public postRating(postId: number, ratingIndex: number, body: Record<string, unknown>) {
+  public postRating(
+    postId: number,
+    ratingIndex: number,
+    body: Record<string, unknown>
+  ) {
     return this.fetchWrapper(
       this.baseUrlPath + `/ratings/${postId}/${ratingIndex}`,
       {
-        method: 'POST',
+        method: "POST",
         body: JSON.stringify(body),
       },
       false
@@ -760,7 +788,7 @@ export class YpServerApi extends YpServerApiBase {
     return this.fetchWrapper(
       this.baseUrlPath + `/ratings/${postId}/${ratingIndex}`,
       {
-        method: 'DELETE',
+        method: "DELETE",
         body: JSON.stringify({}),
       },
       false
