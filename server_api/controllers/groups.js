@@ -3021,11 +3021,19 @@ router.get('/:groupId/:pointId/get_parent_point', auth.can('view group'), async 
         group_id: req.params.groupId,
         id: req.params.pointId,
       },
+      order: [
+        [ models.PointRevision, 'created_at', 'asc' ],
+        [ models.User, { model: models.Image, as: 'UserProfileImages' }, 'created_at', 'asc' ],
+      ],
       attributes: [
         'id',
         'content'
       ],
       include: [
+        {
+          model: models.PointRevision,
+          required: false
+        },
         {
           model: models.User,
           required: true,

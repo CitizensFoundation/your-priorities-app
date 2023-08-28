@@ -7,10 +7,19 @@ export class YpServerApi extends YpServerApiBase {
     );
   }
 
-  public getParentPoint(groupId: number, pointId: number) {
-    return this.fetchWrapper(
+  public async getParentPoint(groupId: number, pointId: number) {
+    const point = await this.fetchWrapper(
       this.baseUrlPath + `/groups/${groupId}/${pointId}/get_parent_point`
-    );
+    ) as unknown as YpPointData;
+
+    if (point) {
+      point.latestContent = point.PointRevisions![
+        point.PointRevisions!.length - 1
+      ].content;
+      point.content =  point.latestContent;
+    }
+
+    return point;
   }
 
   constructor(urlPath: string = '/api') {

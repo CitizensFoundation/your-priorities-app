@@ -1108,6 +1108,26 @@ export class TileManager extends YpCodeBase {
     }
   }
 
+  deleteCommentFromRectangle(rectangleId: string, pointId: number) {
+    // Find the rectangle entity
+    const rectangleEntity = this.viewer!.entities.getById(
+      rectangleId
+    ) as LandUseEntity;
+
+    if (rectangleEntity) {
+      // Remove the comment from the rectangle entity
+      rectangleEntity.pointId = undefined;
+
+      // Remove the 3D comment model
+      if (rectangleEntity.commentEntity) {
+        this.viewer!.entities.remove(rectangleEntity.commentEntity);
+        rectangleEntity.commentEntity = undefined;
+      }
+
+      this.calculateTileCounts();
+    }
+  }
+
   disableLookAtMode(): void {
     this.viewer!.camera.lookAtTransform(Cesium.Matrix4.IDENTITY);
   }
@@ -1432,6 +1452,22 @@ export class TileManager extends YpCodeBase {
     const rectangleEntity = pickedFeatures.find(
       (pickedFeature) => pickedFeature.id && pickedFeature.id.rectangle
     );
+
+    const rectangleEntityCommentContainer = pickedFeatures.find(
+      (pickedFeature) =>
+        pickedFeature.id &&
+        pickedFeature.id._name &&
+        pickedFeature.id._name.indexOf("chat") > -1
+    );
+
+    if (rectangleEntityCommentContainer) {
+      const rectangleCommentEntity = rectangleEntityCommentContainer.id;
+      const index =
+      rectangleCommentEntity.properties.getValue("rectangleIndex").rectangleIndex;
+      const entity = this.tileRectangleIndex.get(index);
+      this.fire("edit-comment", { entity }, document);
+      return;
+    }
 
     console.log(`rectangleEntity: ${rectangleEntity}`);
 

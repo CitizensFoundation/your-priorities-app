@@ -47,10 +47,12 @@ import {
 import { YpCommentsDialog } from "./yp-comments-dialog";
 
 import "./yp-comments-dialog.js";
+import "./yp-edit-comment-dialog.js";
 
 import { Tutorial } from "./Tutorial";
 import { Layouts } from "./flexbox-literals/classes";
 import { set } from "@polymer/polymer/lib/utils/path";
+import { YpEditCommentDialog } from "./yp-edit-comment-dialog.js";
 
 const GameStage = {
   Intro: 1,
@@ -314,7 +316,11 @@ export class YpLandUseGame extends YpBaseElement {
 
         .helpButton {
           --md-icon-button-icon-color: var(--md-sys-color-surface);
+          --md-icon-button-focused-icon-color: var(--md-sys-color-surface);
+          --md-icon-button-blurred-icon-color: var(--md-sys-color-surface);
           --md-icon-button-hover-icon-color: var(--md-sys-color-surface);
+          --md-icon-button-selected-icon-color: var(--md-sys-color-surface);
+          color: var(--md-sys-color-surface);
           background: transparent;
         }
 
@@ -332,6 +338,7 @@ export class YpLandUseGame extends YpBaseElement {
 
         #submitButton {
           font-size: 24px;
+          margin-top: 6px;
         }
 
         .participantsStats {
@@ -373,6 +380,7 @@ export class YpLandUseGame extends YpBaseElement {
           background-color: rgba(255, 255, 255, 0.5);
           border-radius: 5px;
           opacity: 0;
+          height: 88px;
           transition: opacity 5s ease-in-out;
         }
 
@@ -551,8 +559,8 @@ export class YpLandUseGame extends YpBaseElement {
           }
 
           #navigationButtons {
-          top: 40%;
-          transform: translateY(-40%);
+          top: 33%;
+          transform: translateY(-33%);
         }
 
           #submitButton {
@@ -590,6 +598,7 @@ export class YpLandUseGame extends YpBaseElement {
             left: 50%;
             transform: translateX(-50%);
             text-align:center;
+            height: 75px;
           }
 
           #resultsStats {
@@ -884,6 +893,13 @@ export class YpLandUseGame extends YpBaseElement {
     this.disableBrowserTouchEvents = false;
   }
 
+  async openEditComment(event: any) {
+    const point = await window.serverApi.getParentPoint(this.group!.id, event.detail.entity.pointId);
+    (this.$$("#editCommentDialog") as YpEditCommentDialog).openDialog(point);
+    this.currentRectangleIdForComment = event.detail.entity.id;
+    this.disableBrowserTouchEvents = false;
+  }
+
   closeNewComment() {
     (this.$$("#newCommentDialog") as YpNewCommentDialog).openDialog();
     this.currentRectangleIdForComment = undefined;
@@ -994,6 +1010,8 @@ export class YpLandUseGame extends YpBaseElement {
     );
 
     document.addEventListener("open-comments", this.openComments.bind(this));
+
+    document.addEventListener("edit-comment", this.openEditComment.bind(this));
 
     document.addEventListener(
       "update-tile-count",
@@ -1332,6 +1350,18 @@ export class YpLandUseGame extends YpBaseElement {
     }
   }
 
+  deleteComment(event: CustomEvent) {
+    const pointId = event.detail;
+    if (this.currentRectangleIdForComment) {
+      this.tileManager.deleteCommentFromRectangle(
+        this.currentRectangleIdForComment,
+        pointId
+      );
+    } else {
+      console.error("Can't find rectangle for comment");
+    }
+  }
+
   showAll() {
     this.viewer!.trackedEntity = undefined;
     this.cancelFlyToPosition();
@@ -1380,6 +1410,18 @@ export class YpLandUseGame extends YpBaseElement {
 
   cancelLogout() {
     (this.$$("#logoutDialog") as MdDialog).close();
+  }
+
+  async restart() {
+    (this.$$("#restartDialog") as MdDialog).show();
+  }
+
+  async reallyRestart() {
+    location.reload();
+  }
+
+  cancelRestart() {
+    (this.$$("#restartDialog") as MdDialog).close();
   }
 
   renderUI() {
@@ -1492,6 +1534,7 @@ export class YpLandUseGame extends YpBaseElement {
               id="showAll"
               class="navButton"
               @click="${this.showAll}"
+              .title="${this.t("Show all")}"
               .label="${this.t("Show all")}"
               ><md-icon>home</md-icon></md-filled-icon-button
             >
@@ -1501,6 +1544,7 @@ export class YpLandUseGame extends YpBaseElement {
               class="navButton"
               @click="${this.trackPlane}"
               .label="${this.t("Plane")}"
+              .title="${this.t("Plane")}"
               ?disabled="${this.planeDisabled}"
               ><md-icon>travel</md-icon></md-filled-icon-button
             >
@@ -1511,6 +1555,7 @@ export class YpLandUseGame extends YpBaseElement {
               class="navButton"
               @click="${this.chooseAerial}"
               .label="${this.t("Aerial")}"
+              .title="${this.t("Aerial")}"
               ><md-icon>public</md-icon></md-filled-tonal-icon-button
             >
 
@@ -1519,6 +1564,7 @@ export class YpLandUseGame extends YpBaseElement {
               class="navButton"
               @click="${this.chooseAerialWithLabels}"
               .label="${this.t("Aerial with labels")}"
+              .title="${this.t("Aerial with labels")}"
               ><md-icon>travel_explore</md-icon></md-filled-tonal-icon-button
             >
 
@@ -1527,6 +1573,7 @@ export class YpLandUseGame extends YpBaseElement {
               class="navButton"
               @click="${this.chooseOpenStreetMap}"
               .label="${this.t("Map")}"
+              .title="${this.t("Map")}"
               ><md-icon>map</md-icon></md-filled-tonal-icon-button
             >
 
@@ -1538,10 +1585,19 @@ export class YpLandUseGame extends YpBaseElement {
               ><md-icon>help</md-icon></md-icon-button
             >
             <md-icon-button
+              id="restartButton"
+              class="navButton helpButton"
+              @click="${this.restart}"
+              .label="${this.t("restart")}"
+              .title="${this.t("restart")}"
+              ><md-icon>restart_alt</md-icon></md-icon-button
+            >
+            <md-icon-button
               id="logoutButton"
               ?hidden="${!window.appUser.user}"
               class="navButton helpButton"
               @click="${this.logout}"
+              .title="${this.t("user.logout")}"
               .label="${this.t("Logout")}"
               ><md-icon>logout</md-icon></md-icon-button
             >
@@ -1678,6 +1734,27 @@ export class YpLandUseGame extends YpBaseElement {
     `;
   }
 
+  renderRestartDialog() {
+    return html`
+      <md-dialog
+        id="restartDialog"
+        ?is-safari="${this.isSafari}"
+        @cancel="${this.scrimDisableAction}"
+      >
+        <div slot="headliner">${this.t("restart")}</div>
+        <div slot="content">${this.t('areYouSureYouWantToRestart')}</div>
+        <div slot="actions">
+          <md-text-button @click="${this.cancelRestart}"
+            >${this.t("cancel")}</md-text-button
+          >
+          <md-text-button @click="${this.reallyRestart}"
+            >${this.t("restart")}</md-text-button
+          >
+        </div>
+      </md-dialog>
+    `;
+  }
+
   commentsDialogClosed() {
     this.disableBrowserTouchEvents = true;
     this.tileManager.disableLookAtMode();
@@ -1685,7 +1762,7 @@ export class YpLandUseGame extends YpBaseElement {
 
   render() {
     return html`
-      ${this.renderLogoutDialog()}  ${this.renderErrorDialog()} ${this.renderNoCommentsAddedDialog()}
+      ${this.renderRestartDialog()} ${this.renderLogoutDialog()} ${this.renderErrorDialog()} ${this.renderNoCommentsAddedDialog()}
       <yp-app-dialogs id="dialogContainer"></yp-app-dialogs>
       <div
         id="cesium-container"
@@ -1701,6 +1778,14 @@ export class YpLandUseGame extends YpBaseElement {
         @close="${() => (this.disableBrowserTouchEvents = true)}"
         @save="${this.saveComment}"
       ></yp-new-comment-dialog>
+
+      <yp-edit-comment-dialog
+        id="editCommentDialog"
+        .group="${this.group!}"
+        @close="${() => (this.disableBrowserTouchEvents = true)}"
+        @save="${this.saveComment}"
+        @delete="${this.deleteComment}"
+      ></yp-edit-comment-dialog>
 
       <yp-comments-dialog
         id="commentsDialog"

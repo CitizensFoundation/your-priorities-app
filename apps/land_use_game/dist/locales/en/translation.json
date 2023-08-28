@@ -1,4 +1,6 @@
 {
+  "restart": "Restart Game",
+  "areYouSureYouWantToRestart": "Are you sure you want to restart?",
   "areYouSureYouWantToLogout": "Are you sure you want to logout?",
   "thankYouForSubmittingYourLandUses": "Thank you for submitting your land uses",
   "continue": "Continue",
