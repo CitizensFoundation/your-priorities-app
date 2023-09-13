@@ -341,7 +341,7 @@ export class Tutorial extends YpCodeBase {
 
   haveShown: Array<TutorialStage> = [];
 
-  openAll(callbackFunction: Function | undefined = undefined) {
+  openAll(helpPages: YpHelpPageData[], callbackFunction: Function | undefined = undefined) {
     this.callbackFunction = callbackFunction;
 
     // Create a combined page for all stages
@@ -350,6 +350,10 @@ export class Tutorial extends YpCodeBase {
       en: "Help",
       is: "Hjálp",
     }; // Default titles for the main dialog
+
+    const helpPage = helpPages[0];
+    combinedContent.en += `<h2>${helpPage.title.en}</h2>\n\n${helpPage.content.en}`;
+    combinedContent.is += `<h2>${helpPage.title.is}</h2>\n\n${helpPage.content.is}`;
 
     // Combine the content and title for all stages
     for (let stageKey in this.stages) {

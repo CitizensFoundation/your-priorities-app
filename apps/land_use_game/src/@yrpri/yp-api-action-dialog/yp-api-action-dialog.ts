@@ -35,7 +35,7 @@ export class YpApiActionDialog extends YpBaseElement {
           // height: 100%;
         }
         md-dialog[open][is-safari] {
-          height: 100%;
+         // height: 100%;
         }
       `,
     ];

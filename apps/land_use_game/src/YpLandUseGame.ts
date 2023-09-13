@@ -108,6 +108,9 @@ export class YpLandUseGame extends YpBaseElement {
   @property({ type: Object })
   group: YpGroupData | undefined;
 
+  @property({ type: Array })
+  helpPages: YpHelpPageData[]  | undefined;
+
   @property({ type: Boolean })
   disableSubmitButton = true;
 
@@ -196,7 +199,7 @@ export class YpLandUseGame extends YpBaseElement {
        }
 
        md-dialog[open][is-safari] {
-         height: 100%;
+
        }
 
       :host {
@@ -667,21 +670,27 @@ export class YpLandUseGame extends YpBaseElement {
     this.resetHelpPages();
   }
 
+  async getHelpPages() {
+    this.helpPages = (await window.serverApi.getHelpPages(
+      "group",
+      this.group!.id
+    )) as YpHelpPageData[];
+  }
+
   async resetHelpPages() {
     if (this.group) {
-      const helpPages = (await window.serverApi.getHelpPages(
-        "group",
-        this.group!.id
-      )) as YpHelpPageData[];
+      if (!this.helpPages) {
+        await this.getHelpPages();
+      }
 
       let welcomePageId = this.group?.configuration?.welcomePageId;
       let welcomePage;
 
       if (welcomePageId) {
-        welcomePage = helpPages.find((page) => page.id === welcomePageId);
+        welcomePage = this.helpPages!.find((page) => page.id === welcomePageId);
       }
 
-      this._openPage(welcomePage || helpPages[0], true);
+      this._openPage(welcomePage || this.helpPages![0], true);
     }
   }
 
@@ -719,8 +728,12 @@ export class YpLandUseGame extends YpBaseElement {
     });
   }
 
-  openHelp() {
-    this.tutorial.openAll();
+  async openHelp() {
+    window.appGlobals.activity('open', "help");
+    if (!this.helpPages) {
+      await this.getHelpPages();
+    }
+    this.tutorial.openAll(this.helpPages!);
   }
 
   protected firstUpdated(
@@ -835,10 +848,14 @@ export class YpLandUseGame extends YpBaseElement {
     setTimeout(() => {
       this.setIsCommenting(false);
     });
+
+    window.appGlobals.activity('setLandUse', landUse || "undefined");
   }
 
   //TODO: Fix and remove the selected land sue when commenting and also possible toggle commenting on and off
   setIsCommenting(isCommenting: boolean) {
+    window.appGlobals.activity('setLandUseCommenting', isCommenting ? "true" : "false");
+
     this.tileManager.isCommenting = isCommenting;
     if (isCommenting) {
       this.selectedLandUse = undefined;
@@ -890,12 +907,14 @@ export class YpLandUseGame extends YpBaseElement {
   }
 
   openNewComment(event: any) {
+    window.appGlobals.activity('landUseOpen', "newComment");
     (this.$$("#newCommentDialog") as YpNewCommentDialog).openDialog();
     this.currentRectangleIdForComment = event.detail.rectangleId;
     this.disableBrowserTouchEvents = false;
   }
 
   async openEditComment(event: any) {
+    window.appGlobals.activity('landUseOpen', "editComment");
     const point = await window.serverApi.getParentPoint(this.group!.id, event.detail.entity.pointId);
     (this.$$("#editCommentDialog") as YpEditCommentDialog).openDialog(point);
     this.currentRectangleIdForComment = event.detail.entity.id;
@@ -903,18 +922,21 @@ export class YpLandUseGame extends YpBaseElement {
   }
 
   closeNewComment() {
+    window.appGlobals.activity('landUseClose', "newComment");
     (this.$$("#newCommentDialog") as YpNewCommentDialog).openDialog();
     this.currentRectangleIdForComment = undefined;
     this.disableBrowserTouchEvents = true;
   }
 
   openComments(event: any) {
+    window.appGlobals.activity('landUseOpen', "comments");
     this.showAll();
     (this.$$("#commentsDialog") as YpCommentsDialog).open(event);
     this.disableBrowserTouchEvents = false;
   }
 
   closeComment() {
+    window.appGlobals.activity('landUseClose', "comments");
     (this.$$("#commentsDialog") as YpCommentsDialog).closeDialog();
     this.disableBrowserTouchEvents = true;
   }
@@ -1054,6 +1076,7 @@ export class YpLandUseGame extends YpBaseElement {
   }
 
   _newPost() {
+    window.appGlobals.activity('landUseOpen', "newPost");
     if (this.tileManager.numberOfTilesWithComments === 0) {
       (this.$$("#noCommentsAddedDialog") as Dialog).show();
     } else {
@@ -1062,7 +1085,7 @@ export class YpLandUseGame extends YpBaseElement {
   }
 
   _reallyNewPost() {
-    window.appGlobals.activity("open", "newPost");
+    window.appGlobals.activity("landUseOpen", "reallyNewPost");
     this.disableBrowserTouchEvents = false;
     //TODO: Fix ts type
     window.appDialogs.getDialogAsync("postEdit", (dialog: YpPostEdit) => {
@@ -1177,6 +1200,7 @@ export class YpLandUseGame extends YpBaseElement {
   }
 
   async toggleShowAllResults() {
+    window.appGlobals.activity('landUseToggle', "showAllResults");
     this.showAllTileResults = !this.showAllTileResults;
     this.landUseTypeDisabled = true;
     await this.tileManager.setShowAllTileResults(this.showAllTileResults);
@@ -1382,11 +1406,13 @@ export class YpLandUseGame extends YpBaseElement {
     this.viewer!.trackedEntity = undefined;
     this.cancelFlyToPosition();
     this.setCameraFromView(this.tileManager.showAllView);
+    window.appGlobals.activity('landUseClick', "showAll");
   }
 
   trackPlane() {
     this.cancelFlyToPosition();
     this.viewer!.trackedEntity = this.planeManager.plane;
+    window.appGlobals.activity('landUseClick', "trackPlane");
   }
 
   async chooseAerial() {
@@ -1395,6 +1421,7 @@ export class YpLandUseGame extends YpBaseElement {
       style: Cesium.IonWorldImageryStyle.AERIAL,
     });
     this.viewer!.imageryLayers.addImageryProvider(imageryProvider);
+    window.appGlobals.activity("landUseClick", "aerial");
   }
 
   async chooseAerialWithLabels() {
@@ -1403,6 +1430,7 @@ export class YpLandUseGame extends YpBaseElement {
       style: Cesium.IonWorldImageryStyle.AERIAL_WITH_LABELS,
     });
     this.viewer!.imageryLayers.addImageryProvider(imageryProvider);
+    window.appGlobals.activity("landUseClick", "aerialWithLabels");
   }
 
   chooseOpenStreetMap() {
@@ -1412,6 +1440,7 @@ export class YpLandUseGame extends YpBaseElement {
         url: "https://a.tile.openstreetmap.org/",
       })
     );
+    window.appGlobals.activity("landUseClick", "openStreetMap");
   }
 
   async logout() {
@@ -1435,14 +1464,17 @@ export class YpLandUseGame extends YpBaseElement {
 
   async restart() {
     (this.$$("#restartDialog") as MdDialog).show();
+    window.appGlobals.activity('landUseClick', "openRestart");
   }
 
   async reallyRestart() {
+    window.appGlobals.activity('landUseClick', "reallyRestart");
     location.reload();
   }
 
   cancelRestart() {
     (this.$$("#restartDialog") as MdDialog).close();
+    window.appGlobals.activity('landUseClick', "cancelRestart");
   }
 
   renderUI() {

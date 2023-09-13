@@ -25,7 +25,7 @@
     "@material/mwc-tab": "^0.27.0",
     "@material/mwc-tab-bar": "^0.27.0",
     "@material/mwc-textarea": "^0.27.0",
-    "@material/web": "^1.0.0-pre.16",
+    "@material/web": "^1.0.0-pre.17",
     "@picmo/popup-picker": "^5.8.2",
     "@picmo/renderer-twemoji": "^5.8.2",
     "@polymer/polymer": "^3.5.1",

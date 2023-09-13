@@ -34,7 +34,7 @@ export class YpForgotPassword extends YpBaseElement {
         }
 
         md-dialog[open][is-safari] {
-          height: 100%;
+          //height: 100%;
         }
 
         :host {

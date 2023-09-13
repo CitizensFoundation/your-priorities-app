@@ -1,0 +1,110 @@
+[
+  {
+    "type": "radios",
+    "uniqueId": "ID1",
+    "text": "Kyn - ég er:",
+    "required": true,
+    "radioButtons": [
+      { "text": "Kona", "subCode": "1" },
+      { "text": "Karl", "subCode": "2" },
+      { "text": "Kynsegin", "subCode": "3" },
+      { "text": "Vil ekki svara", "subCode": "4" }
+    ]
+  },
+  {
+    "type": "textFieldLong",
+    "text": "Aldur - ég er ___ ára.",
+    "maxLength": 3,
+    "subType": "number",
+    "required": true,
+    "uniqueId": "ID2"
+  },
+  {
+    "type": "radios",
+    "uniqueId": "ID3",
+    "text": "Hver af eftirfarandi flokkum lýsir best þínu starfi eða stöðu á vinnumarkaðnum?",
+    "required": true,
+    "radioButtons": [
+      {
+        "text": "Fagleg/tæknileg þekking: Störf á sviði heilbrigðisþjónustu, menntunar, fjármála, upplýsingatækni, lögfræðiþjónustu o.fl.",
+        "subCode": "1"
+      },
+      {
+        "text": "Verslun / byggingariðnaður / framleiðsla: Störf í byggingariðnaði og framleiðslu, á sviði vöruflutninga og vörugeymslu, auk almennra verslunarstarfa og við heildsölu.",
+        "subCode": "2"
+      },
+      {
+        "text": "Listir/afþreying/fjölmiðlar: Störf í listum, við framleiðslu á afþreyingarefni, ferðaþjónustu, og á sviði íþrótta og fjölmiðlunar.",
+        "subCode": "3"
+      },
+      {
+        "text": "Opinberi geirinn/stjórnsýsla: Störf hjá sveitarfélagi eða ríki, sem og hlutverk í opinberri stjórnsýslu.",
+        "subCode": "4"
+      },
+      {
+        "text": "Landbúnaður/umhverfismál: Störf í landbúnaði, skógrækt, á sviði fiskveiða eða veiða af öðru tagi og við umhverfistengd málefni.",
+        "subCode": "5"
+      },
+      {
+        "text": "Ekki í launaðri vinnu, EKKI í atvinnuleit (til dæmis námsmaður).",
+        "subCode": "6"
+      },
+      {
+        "text": "Ekki í launaðri vinnu, í atvinnuleit.",
+        "subCode": "7"
+      },
+      {
+        "text": "Á eftirlaunum.",
+        "subCode": "8"
+      },
+      {
+        "text": "Öryrki eða ekki vinnufær.",
+        "subCode": "9"
+      },
+      {
+        "text": "Annað:",
+        "subCode": "10",
+        "isSpecify": true
+      }
+    ]
+  },
+  {
+    "type": "textFieldLong",
+    "text": "Í hvaða póstnúmeri átt þú lögheimili ? Ef þú átt ekki lögheimili á íslandi skrifaðu þá ‘00’",
+    "maxLength": 3,
+    "subType": "number",
+    "required": true,
+    "uniqueId": "ID4"
+  },
+  {
+    "type": "radios",
+    "uniqueId": "ID4ac",
+    "text": "Ég er að taka þátt í Landsleiknum í gegnum skólann minn",
+    "required": true,
+    "radioButtons": [
+      {
+        "text": "Já",
+        "subCode": "1"
+      },
+      {
+        "text": "Nei",
+        "subCode": "2"
+      }
+    ]
+  },
+  {
+    "type": "checkboxes",
+    "text": "Hver eru tengsl þín við Rangárþing ytra? (hakaðu við allt sem við á)",
+    "required": true,
+    "uniqueId": "ID6",
+    "checkboxes": [
+      {"text": "Ég bý í sveitarfélaginu"},
+      {"text": "Ég á sumarhús í sveitarfélaginu"},
+      {"text": "Ég á ættir að rekja til sveitarfélagsins"},
+      {"text": "Ég á fyrirtæki sem starfar á svæðinu"},
+      {"text": "Ég starfa í sveitarfélaginu"},
+      {"text": "Engin tengsl"},
+      {"text": "Annað eða engin tengsl", "isSpecify": true}
+    ]
+  }
+]

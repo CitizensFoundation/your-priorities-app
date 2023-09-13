@@ -22,7 +22,7 @@ export default {
   plugins: [
     /** Enable using HTML as rollup entrypoint */
     html({
-      minify: true,
+      minify: false,
       publicPath: '/land_use',
       injectServiceWorker: false,
       serviceWorkerPath: 'dist/sw.js',

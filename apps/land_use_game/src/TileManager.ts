@@ -1279,7 +1279,9 @@ export class TileManager extends YpCodeBase {
         rectangleEntity.rectangle.material = new Cesium.ColorMaterialProperty(
           Cesium.Color.WHITE.withAlpha(0.0)
         );
+        window.appGlobals.activity('landUseClick', "removeLandUse");
       } else {
+        window.appGlobals.activity('landUseClick', "setLandUse");
         const newColor = this.getColorForLandUse(
           this.selectedLandUse
         ).withAlpha(0.32);
@@ -1498,6 +1500,7 @@ export class TileManager extends YpCodeBase {
       const index =
         rectangleEntity.properties.getValue("rectangleIndex").rectangleIndex;
       const entity = this.tileRectangleIndex.get(index);
+      window.appGlobals.activity('landUseClick', "openComment");
       this.fire("open-comments", { entity }, document);
     }
   }
