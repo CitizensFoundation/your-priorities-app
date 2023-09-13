@@ -192,10 +192,7 @@ export class Tutorial extends YpCodeBase {
         en: `
           <div class="layout vertical">
             <p>
-              Once in the game, you will see satellite imagery of the
-              municipality in question and the land area surrounding it with the
-              municipality at the center. Various buttons on the screen have the
-              following functionality.
+              Various buttons on the screen have the following functionality.
             </p>
 
             <div style="font-weight:bold;">Bottom of the screen:</div>
@@ -217,7 +214,8 @@ export class Tutorial extends YpCodeBase {
               viewing settings. Globe button with a search icon: This setting
               allows you to view place names within the land area of the game.
               Map button: This setting allows you to view the land area in map
-              format.
+              format. Question button: See instructions to control the 3D environment. Button with an arrow in a circle: Restart the game.
+              Stop button: When you are ready to leave the game, click the button to close.
             </p>
 
             <div style="font-weight:bold;">Top of the screen:</div>
@@ -244,9 +242,7 @@ export class Tutorial extends YpCodeBase {
         is: `
           <div class="layout vertical">
             <p>
-              Þegar leikurinn byrjar sérðu gervihnattamyndir af (nafn
-              sveitarfélags) og landsvæðinu í kring. Hnapparnir á skjánum hafa
-              eftirfarandi virkni.
+             Hnapparnir á skjánum hafa eftirfarandi virkni.
             </p>
 
             <div style="font-weight:bold;">Neðst á skjánum:</div>
@@ -267,7 +263,9 @@ export class Tutorial extends YpCodeBase {
               er sjálfgefin stilling fyrir útsýni yfir landsvæðið. Lokar öðrum
               skoðunarstillingum. Hnatthnappur með leitartákni: Skoða
               staðaheiti og örnefni innan landssvæðis leiksins. Kortahnappur:
-              Skoða landsvæðið á kortasniði.
+              Skoða landsvæðið á kortasniði. Spurningahnappur: Sjá leiðbeiningar til að stjórna 3D umhverfinu.
+              Hnappur með ör í hring: Endurræsa leikinn.
+              Hætta hnappur: Þegar þú ert tilbúin(n) til að yfirgefa leikinn smelltu á hnappinn til að loka.
             </p>
 
             <div style="font-weight:bold;">Efst á skjánum:</div>
@@ -302,24 +300,20 @@ export class Tutorial extends YpCodeBase {
       content: {
         en: `
              <ul>
-              <li>You can select the type of land use you are interested in viewing by selecting the appropriate button. If you do not select one land-use category, you will see all categories of all proposals.</li>
-              <li>You can click on the comment icons to take part in the discussion.</li>
-              <li>Your land-use selection and comments have been submitted!</li>
-              <li>We encourage you to also familiarize yourself with what other participants have said in their comments and to participate in the discussion by clicking on the comment icons on the screen above the colors that identify land use.</li>
-              <li>You can also see the distribution and support for individual land-use paths by selecting the appropriate button at the bottom of the screen.</li>
-              <li>When you feel you have participated enough in the discussions, you can end the game by closing the browser page.</li>
-              <li>Thank you for your participation! We hope you will share the game with others who you think might be interested in participating.</li>
+              <li>Your choices for land use have been received!</li>
+              <li>Now you can see what other participants have said in their comments and participate in the discussion by clicking one of the comment symbols floating above the land use identification colors or by choosing the comments box placed at the right side of the land use buttons.</li>
+              <li>You can also see the distribution and support for individual land use types by choosing one of them at the bottom of the screen.</li>
+              <li>When you feel you have sufficiently contributed to the debate you finish the game by logging-out with the button on the right side of your screen.</li>
+              <li>We hope you will recommend the game to people you know and share the link on social media.</li>
              </ul>
              `,
         is: `
             <ul>
-              <li>Þú getur valið þá tegund landnýtingar sem þú hefur áhuga á að skoða með því að velja viðeigandi hnapp. Veljir þú engan einn flokk, sérðu alla flokka tillagna.</li>
-              <li>Þú getur smellt á athugasemdartáknin til að taka þátt í umræðunni.</li>
               <li>Landnýtingarval þitt og athugasemdir þínar eru komnar til skila!</li>
-              <li>Við hvetjum þig til að kynna þér líka hvað aðrir þátttakendur hafa sagt í sínum athugasemdum og taka þátt í umræðunni með því að smella á athugasemdatáknin á skjánum fyrir ofan litina sem auðkenna landnýtingu.</li>
-              <li>Þú getur líka séð drefingu og stuðning við einstakar landnýtingarleiðir með því að velja viðeigandi hnapp neðst á skjánum.</li>
-              <li>Þegar þér finnst þú hafa tekið nægan þátt í umræðum lýkur þú leik með því að loka síðunni í vafranum.</li>
-              <li>Þakka þér fyrir þátttökuna! Við vonum að þú deilir leiknum með fleirum sem þú heldur að gætu haft áhuga á þátttöku.</li>
+              <li>Við hvetjum þig til að kynna þér líka hvað aðrir þátttakendur hafa sagt í sínum athugasemdum og taka þátt í umræðunni með því að smella á athugasemdatáknin á skjánum fyrir ofan litina sem auðkenna landnýtingu eða velja umræðutáknið hægra megin við landnýtingarhnappana.</li>
+              <li>Þú getur líka séð dreifingu og stuðning við einstakar landnýtingarleiðir með því að velja viðeigandi hnapp neðst á skjánum.</li>
+              <li>Þegar þér finnst þú hafa tekið nægan þátt í umræðum lýkur þú leik með því að velja útskráningartáknið neðst til hægri á skjánum.</li>
+              <li>Þakka þér fyrir þátttökuna! Við vonum að þú mælir með leiknum og deilir honum með þeim sem þú heldur að gætu haft áhuga á þátttöku.</li>
             </ul>
           `,
       },
@@ -341,7 +335,10 @@ export class Tutorial extends YpCodeBase {
 
   haveShown: Array<TutorialStage> = [];
 
-  openAll(helpPages: YpHelpPageData[], callbackFunction: Function | undefined = undefined) {
+  openAll(
+    helpPages: YpHelpPageData[],
+    callbackFunction: Function | undefined = undefined
+  ) {
     this.callbackFunction = callbackFunction;
 
     // Create a combined page for all stages
@@ -358,6 +355,7 @@ export class Tutorial extends YpCodeBase {
     // Combine the content and title for all stages
     for (let stageKey in this.stages) {
       if (stageKey === "noLandUseSelected") continue;
+      if (stageKey === "openResults") continue;
       //@ts-ignore
       const stage = this.stages[stageKey];
       combinedContent.en += `<h2>${stage.title.en}</h2>\n\n${stage.content.en}`;

@@ -981,17 +981,17 @@ export class TileManager extends YpCodeBase {
   async readGeoData(groupId: number) {
     try {
       //const response = await fetch("/testData/geodata.json");
-      if ([665, 232].includes(groupId)) {
+      if ([665, 232, 30172, 30173].includes(groupId)) {
         this.geojsonData = this.blaskoGeoData;
         this.showAllView = {
           jsonData: `{"position":{"x":2681153.3345786585,"y":-1020373.641531956,"z":5732000.507483105},"heading":0.2308371355878256,"pitch":-0.5229351907865474,"roll":0.0000034734011649106833}`,
         };
-      } else if ([666, 222, 29745].includes(groupId)) {
+      } else if ([666, 222, 29745, 30174].includes(groupId)) {
         this.geojsonData = this.rangarThGeoData;
         this.showAllView = {
           jsonData: `{"position":{"x":2730077.9397880966,"y":-1051424.2223537476,"z":5717253.418268907},"heading":0.5806750868435868,"pitch":-0.5553392139027684,"roll":0.000024663968019034144}`,
         };
-      } else if ([667, 28858].includes(groupId)) {
+      } else if ([667, 28858, 30175].includes(groupId)) {
         this.geojsonData = this.thingEGeoData;
         this.showAllView = {
           jsonData: `{"position":{"x":2626379.528061472,"y":-897562.5295321164,"z":5762602.5559962075},"heading":0.6922606145583803,"pitch":-0.4089817132726761,"roll":6.282533936902459}`,
