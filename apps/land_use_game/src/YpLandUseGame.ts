@@ -342,7 +342,7 @@ export class YpLandUseGame extends YpBaseElement {
         }
 
         #submitButton {
-          font-size: 24px;
+          font-size: 20px;
           margin-top: 6px;
         }
 

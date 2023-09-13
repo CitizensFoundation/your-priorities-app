@@ -54,6 +54,8 @@ export class YpRegistrationQuestions extends YpBaseElement {
       "yp-auto-translate",
       this._autoTranslateEvent.bind(this)
     );
+    this.addListener("yp-skip-to-unique-id", this._skipToId);
+    this.addListener("yp-goto-next-index", this._goToNextIndex);
 
     if (window.autoTranslate) {
       this.autoTranslate = true;
@@ -68,6 +70,8 @@ export class YpRegistrationQuestions extends YpBaseElement {
       "yp-auto-translate",
       this._autoTranslateEvent.bind(this)
     );
+    this.removeListener("yp-skip-to-unique-id", this._skipToId);
+    this.removeListener("yp-goto-next-index", this._goToNextIndex);
   }
 
   static get styles() {
@@ -75,7 +79,6 @@ export class YpRegistrationQuestions extends YpBaseElement {
       super.styles,
       css`
         :host {
-
         }
 
         @media (max-width: 800px) {
@@ -99,42 +102,129 @@ export class YpRegistrationQuestions extends YpBaseElement {
     ];
   }
 
+  _goToNextIndex(event: CustomEvent) {
+    const currentPos = this.liveQuestionIds.indexOf(event.detail.currentIndex);
+    if (currentPos < this.liveQuestionIds.length - 1) {
+      const item = this.$$(
+        "#structuredQuestionContainer_" + this.liveQuestionIds[currentPos + 1]
+      ) as HTMLElement;
+      item.scrollIntoView({
+        block: "end",
+        inline: "end",
+        behavior: "smooth",
+      });
+      item.focus();
+    }
+  }
+
+  _skipToId(event: CustomEvent, showItems: boolean) {
+    const toId = event.detail.toId.replace(/]/g, "");
+    const fromId = event.detail.fromId.replace(/]/g, "");
+    const toIndex = this.uniqueIdsToElementIndexes[toId];
+    const item = this.$$(
+      "#structuredQuestionContainer_" + toIndex
+    ) as HTMLElement;
+    item.scrollIntoView({
+      block: "end",
+      inline: "end",
+      behavior: "smooth",
+    });
+    item.focus();
+  }
+
+  _skipToWithHideId(event: CustomEvent, showItems: boolean) {
+    let foundFirst = false;
+    if (this.$$("#surveyContainer")) {
+      const children = this.$$("#surveyContainer")!
+        .children as unknown as Array<YpStructuredQuestionEdit>;
+      for (let i = 0; i < children.length; i++) {
+        const toId = event.detail.toId.replace(/]/g, "");
+        const fromId = event.detail.fromId.replace(/]/g, "");
+        if (
+          children[i + 1] &&
+          children[i + 1].question &&
+          children[i + 1].question.uniqueId &&
+          children[i + 1].question.uniqueId!.substring(
+            children[i + 1].question.uniqueId!.length - 1
+          ) === "a"
+        ) {
+          children[i].question.uniqueId = children[
+            i + 1
+          ].question.uniqueId!.substring(
+            0,
+            children[i + 1].question.uniqueId!.length - 1
+          );
+        }
+        if (
+          children[i].question &&
+          event.detail.fromId &&
+          children[i].question.uniqueId === fromId
+        ) {
+          foundFirst = true;
+        } else if (
+          children[i].question &&
+          event.detail.toId &&
+          (children[i].question.uniqueId === toId ||
+            children[i].question.uniqueId === toId + "a")
+        ) {
+          break;
+        } else {
+          if (foundFirst) {
+            if (showItems) {
+              (children[i] as HTMLElement).hidden = false;
+            } else {
+              (children[i] as HTMLElement).hidden = true;
+            }
+          }
+        }
+      }
+    } else {
+      console.error("No survey container found");
+    }
+  }
+
   render() {
     return this.group
-      ? html` ${this.segments
-          ? html`
-              <div class="segmentQuestionIntro">${this.t("choose")}</div>
+      ? html` ${
+          this.segments
+            ? html`
+                <div class="segmentQuestionIntro">${this.t("choose")}</div>
 
-              ${this.segments.map((radioButton, buttonIndex) => {
-                return html`
-                  <mwc-formfield .label="${radioButton.text}">
-                    <mwc-radio
-                      @change="${this._radioChanged}"
-                      .value="${radioButton.text}"
-                      id="segmentRadio_${buttonIndex}"
-                      .name="${radioButton.segmentName!}"
+                ${this.segments.map((radioButton, buttonIndex) => {
+                  return html`
+                    <mwc-formfield .label="${radioButton.text}">
+                      <mwc-radio
+                        @change="${this._radioChanged}"
+                        .value="${radioButton.text}"
+                        id="segmentRadio_${buttonIndex}"
+                        .name="${radioButton.segmentName!}"
+                      >
+                      </mwc-radio>
+                    </mwc-formfield>
+                  `;
+                })}
+              `
+            : nothing
+        }
+        ${
+          this.filteredQuestions
+            ? html`<div id="surveyContainer">
+                ${this.filteredQuestions.map((question, index) => {
+                  return html`
+                    <yp-structured-question-edit
+                      .index="${index}"
+                      use-small-font
+                      is-from-new-post
+                      id="structuredQuestionContainer_${index}"
+                      .structured-answers="${this.structuredAnswers}"
+                      .question="${question}"
                     >
-                    </mwc-radio>
-                  </mwc-formfield>
-                `;
-              })}
-            `
-          : nothing}
-        ${this.filteredQuestions
-          ? html` ${this.filteredQuestions.map((question, index) => {
-              return html`
-                <yp-structured-question-edit
-                  .index="${index}"
-                  use-small-font
-                  is-from-new-post
-                  id="structuredQuestionContainer_${index}"
-                  .structured-answers="${this.structuredAnswers}"
-                  .question="${question}"
-                >
-                </yp-structured-question-edit>
-              `;
-            })}`
-          : nothing}`
+                    </yp-structured-question-edit>
+                  `;
+                })}
+              </div>`
+            : nothing
+        }</div>`
       : nothing;
   }
 
@@ -258,7 +348,9 @@ export class YpRegistrationQuestions extends YpBaseElement {
           this.translatedQuestions = currentQuestions;
         } else {
           console.error("Questions and Translated texts length does not match");
-          console.error(`Questions: ${currentQuestions.length} Texts ${translatedTexts.length}`);
+          console.error(
+            `Questions: ${currentQuestions.length} Texts ${translatedTexts.length}`
+          );
         }
       } else {
         this.translatedQuestions = undefined;

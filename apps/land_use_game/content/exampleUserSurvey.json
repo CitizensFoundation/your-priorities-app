@@ -77,22 +77,6 @@
     "uniqueId": "ID4"
   },
   {
-    "type": "radios",
-    "uniqueId": "ID4ac",
-    "text": "Ég er að taka þátt í Landsleiknum í gegnum skólann minn",
-    "required": true,
-    "radioButtons": [
-      {
-        "text": "Já",
-        "subCode": "1"
-      },
-      {
-        "text": "Nei",
-        "subCode": "2"
-      }
-    ]
-  },
-  {
     "type": "checkboxes",
     "text": "Hver eru tengsl þín við Rangárþing ytra? (hakaðu við allt sem við á)",
     "required": true,

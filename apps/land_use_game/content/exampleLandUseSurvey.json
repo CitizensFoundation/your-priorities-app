@@ -1,761 +1,761 @@
 [
   {
-     "type":"textDescription",
-     "text":"Þakka þér fyrir að taka þátt í Landsleiknum. Næst koma nokkrar spurningar sem varða tengsl við hálendið og náttúru Íslands, upplifun náttúru og hvaða gildi þú gefur henni."
-  },
-{
-     "type":"textDescription",
-     "text":"Hér lýsum við stuttlega ólíkum hópum fólks. Vinsamlega lestu lýsingarnar og veltu fyrir þér hversu mikið hóparnir líkjast þér. Veldu þá lýsingu sem segir best til um hvernig umræddur hópur líkist þér"
+    "type": "textDescription",
+    "text": "Þakka þér fyrir að taka þátt í Landsleiknum. Næst koma nokkrar spurningar sem varða tengsl við hálendið og náttúru Íslands, upplifun náttúru og hvaða gildi þú gefur henni."
   },
   {
-     "type":"radios",
-     "subType":"rating",
-     "required":true,
-     "uniqueId":"ID6a",
-     "radioButtons":[
-        {
-           "text":"Líkist mér alls ekki"
-        },
-        {
-           "text":"Líkist mér ekki"
-        },
-        {
-           "text":"Líkist mér dálítið"
-        },
-        {
-           "text":"Líkist mér nokkuð"
-        },
-        {
-           "text":"Líkist mér mikið"
-        }
-     ],
-     "text":"Þau trúa því staðfastlega að fólk eigi að láta sér annt um náttúruna. Það er mikilvægt fyrir þau að fara vel með umhverfið."
+    "type": "textDescription",
+    "text": "Hér lýsum við stuttlega ólíkum hópum fólks. Vinsamlega lestu lýsingarnar og veltu fyrir þér hversu mikið hóparnir líkjast þér. Veldu þá lýsingu sem segir best til um hvernig umræddur hópur líkist þér."
   },
   {
-     "type":"radios",
-     "subType":"rating",
-     "required":true,
-     "uniqueId":"ID6b",
-     "radioButtons":[
-        {
-           "text":"Líkist mér alls ekki"
-        },
-        {
-           "text":"Líkist mér ekki"
-        },
-        {
-           "text":"Líkist mér dálítið"
-        },
-        {
-           "text":"Líkist mér nokkuð"
-        },
-        {
-           "text":"Líkist mér mikið"
-        }
-     ],
-     "text":"Það er þeim mjög mikilvægt að hjálpa fólki í kringum sig. Þau bera velferð þess fyrir brjósti."
+    "type": "radios",
+    "subType": "rating",
+    "required": true,
+    "uniqueId": "ID6a",
+    "radioButtons": [
+      {
+        "text": "Líkist mér alls ekki"
+      },
+      {
+        "text": "Líkist mér ekki"
+      },
+      {
+        "text": "Líkist mér dálítið"
+      },
+      {
+        "text": "Líkist mér nokkuð"
+      },
+      {
+        "text": "Líkist mér mikið"
+      }
+    ],
+    "text": "Þau trúa því staðfastlega að fólk eigi að láta sér annt um náttúruna. Það er mikilvægt fyrir þau að fara vel með umhverfið."
   },
   {
-     "type":"radios",
-     "subType":"rating",
-     "required":true,
-     "uniqueId":"ID6c",
-     "radioButtons":[
-        {
-           "text":"Líkist mér alls ekki"
-        },
-        {
-           "text":"Líkist mér ekki"
-        },
-        {
-           "text":"Líkist mér dálítið"
-        },
-        {
-           "text":"Líkist mér nokkuð"
-        },
-        {
-           "text":"Líkist mér mikið"
-        }
-     ],
-     "text":"Þeim er mikilvægt að sýna hvers þau ery megnug. Þau vilja að fólk dáist að því sem þau gera."
+    "type": "radios",
+    "subType": "rating",
+    "required": true,
+    "uniqueId": "ID6b",
+    "radioButtons": [
+      {
+        "text": "Líkist mér alls ekki"
+      },
+      {
+        "text": "Líkist mér ekki"
+      },
+      {
+        "text": "Líkist mér dálítið"
+      },
+      {
+        "text": "Líkist mér nokkuð"
+      },
+      {
+        "text": "Líkist mér mikið"
+      }
+    ],
+    "text": "Það er þeim mjög mikilvægt að hjálpa fólki í kringum sig. Þau bera velferð þess fyrir brjósti."
   },
   {
-     "type":"radios",
-     "subType":"rating",
-     "required":true,
-     "uniqueId":"ID6d",
-     "radioButtons":[
-        {
-           "text":"Líkist mér alls ekki"
-        },
-        {
-           "text":"Líkist mér ekki"
-        },
-        {
-           "text":"Líkist mér dálítið"
-        },
-        {
-           "text":"Líkist mér nokkuð"
-        },
-        {
-           "text":"Líkist mér mikið"
-        }
-     ],
-     "text":"Þau leggja mikið upp úr rúmum fjárhag. Þau vilja efnast og geta leyft sér það sem hugurinn girnist."
+    "type": "radios",
+    "subType": "rating",
+    "required": true,
+    "uniqueId": "ID6c",
+    "radioButtons": [
+      {
+        "text": "Líkist mér alls ekki"
+      },
+      {
+        "text": "Líkist mér ekki"
+      },
+      {
+        "text": "Líkist mér dálítið"
+      },
+      {
+        "text": "Líkist mér nokkuð"
+      },
+      {
+        "text": "Líkist mér mikið"
+      }
+    ],
+    "text": "Þeim er mikilvægt að sýna hvers þau eru megnug. Þau vilja að fólk dáist að því sem þau gera."
   },
   {
-     "type":"radios",
-     "subType":"rating",
-     "required":true,
-     "uniqueId":"ID6e",
-     "radioButtons":[
-        {
-           "text":"Líkist mér alls ekki"
-        },
-        {
-           "text":"Líkist mér ekki"
-        },
-        {
-           "text":"Líkist mér dálítið"
-        },
-        {
-           "text":"Líkist mér nokkuð"
-        },
-        {
-           "text":"Líkist mér mikið"
-        }
-     ],
-     "text":"Þau nota hvert tækifæri til að skemmta sér. Þau vilja gera það sem þau fá mest út úr hverju sinni."
+    "type": "radios",
+    "subType": "rating",
+    "required": true,
+    "uniqueId": "ID6d",
+    "radioButtons": [
+      {
+        "text": "Líkist mér alls ekki"
+      },
+      {
+        "text": "Líkist mér ekki"
+      },
+      {
+        "text": "Líkist mér dálítið"
+      },
+      {
+        "text": "Líkist mér nokkuð"
+      },
+      {
+        "text": "Líkist mér mikið"
+      }
+    ],
+    "text": "Þau leggja mikið upp úr rúmum fjárhag. Þau vilja efnast og geta leyft sér það sem hugurinn girnist."
   },
   {
-     "type":"radios",
-     "subType":"rating",
-     "required":true,
-     "uniqueId":"ID6f",
-     "radioButtons":[
-        {
-           "text":"Líkist mér alls ekki"
-        },
-        {
-           "text":"Líkist mér ekki"
-        },
-        {
-           "text":"Líkist mér dálítið"
-        },
-        {
-           "text":"Líkist mér nokkuð"
-        },
-        {
-           "text":"Líkist mér mikið"
-        }
-     ],
-     "text":"Þau telja að fólk eigi gera það sem því er sagt. Að þeirra mati á fólk alltaf að fara eftir reglum, jafnvel þótt enginn sé til frásagnar."
+    "type": "radios",
+    "subType": "rating",
+    "required": true,
+    "uniqueId": "ID6e",
+    "radioButtons": [
+      {
+        "text": "Líkist mér alls ekki"
+      },
+      {
+        "text": "Líkist mér ekki"
+      },
+      {
+        "text": "Líkist mér dálítið"
+      },
+      {
+        "text": "Líkist mér nokkuð"
+      },
+      {
+        "text": "Líkist mér mikið"
+      }
+    ],
+    "text": "Þau nota hvert tækifæri til að skemmta sér. Þau vilja gera það sem þau fá mest út úr hverju sinni."
   },
   {
-     "type":"radios",
-     "subType":"rating",
-     "required":true,
-     "uniqueId":"ID6g",
-     "radioButtons":[
-        {
-           "text":"Líkist mér alls ekki"
-        },
-        {
-           "text":"Líkist mér ekki"
-        },
-        {
-           "text":"Líkist mér dálítið"
-        },
-        {
-           "text":"Líkist mér nokkuð"
-        },
-        {
-           "text":"Líkist mér mikið"
-        }
-     ],
-     "text":"Hefðin skiptir þau miklu máli. Þau leggja sig fram um að fylgja trúarsiðum og fjölskylduvenjum."
+    "type": "radios",
+    "subType": "rating",
+    "required": true,
+    "uniqueId": "ID6f",
+    "radioButtons": [
+      {
+        "text": "Líkist mér alls ekki"
+      },
+      {
+        "text": "Líkist mér ekki"
+      },
+      {
+        "text": "Líkist mér dálítið"
+      },
+      {
+        "text": "Líkist mér nokkuð"
+      },
+      {
+        "text": "Líkist mér mikið"
+      }
+    ],
+    "text": "Þau telja að fólk eigi gera það sem því er sagt. Að þeirra mati á fólk alltaf að fara eftir reglum, jafnvel þótt enginn sé til frásagnar."
   },
   {
-     "type":"radios",
-     "subType":"rating",
-     "required":true,
-     "uniqueId":"ID6h",
-     "radioButtons":[
-        {
-           "text":"Líkist mér alls ekki"
-        },
-        {
-           "text":"Líkist mér ekki"
-        },
-        {
-           "text":"Líkist mér dálítið"
-        },
-        {
-           "text":"Líkist mér nokkuð"
-        },
-        {
-           "text":"Líkist mér mikið"
-        }
-     ],
-     "text":"Öryggi í daglegu lífi er þeim mikilvægt. Þau forðast allt sem gæti stefnt öryggi þeirra í hættu."
+    "type": "radios",
+    "subType": "rating",
+    "required": true,
+    "uniqueId": "ID6g",
+    "radioButtons": [
+      {
+        "text": "Líkist mér alls ekki"
+      },
+      {
+        "text": "Líkist mér ekki"
+      },
+      {
+        "text": "Líkist mér dálítið"
+      },
+      {
+        "text": "Líkist mér nokkuð"
+      },
+      {
+        "text": "Líkist mér mikið"
+      }
+    ],
+    "text": "Hefðin skiptir þau miklu máli. Þau leggja sig fram um að fylgja trúarsiðum og fjölskylduvenjum."
   },
   {
-     "type":"radios",
-     "subType":"rating",
-     "required":true,
-     "uniqueId":"ID6i",
-     "radioButtons":[
-        {
-           "text":"Líkist mér alls ekki"
-        },
-        {
-           "text":"Líkist mér ekki"
-        },
-        {
-           "text":"Líkist mér dálítið"
-        },
-        {
-           "text":"Líkist mér nokkuð"
-        },
-        {
-           "text":"Líkist mér mikið"
-        }
-     ],
-     "text":"Hugmyndauðgi og sköpunarkraftur skiptir þau miklu máli. Þau vilja gera hlutina á sinn frumlega hátt."
+    "type": "radios",
+    "subType": "rating",
+    "required": true,
+    "uniqueId": "ID6h",
+    "radioButtons": [
+      {
+        "text": "Líkist mér alls ekki"
+      },
+      {
+        "text": "Líkist mér ekki"
+      },
+      {
+        "text": "Líkist mér dálítið"
+      },
+      {
+        "text": "Líkist mér nokkuð"
+      },
+      {
+        "text": "Líkist mér mikið"
+      }
+    ],
+    "text": "Öryggi í daglegu lífi er þeim mikilvægt. Þau forðast allt sem gæti stefnt öryggi þeirra í hættu."
   },
   {
-     "type":"radios",
-     "subType":"rating",
-     "required":true,
-     "uniqueId":"ID6j",
-     "radioButtons":[
-        {
-           "text":"Líkist mér alls ekki"
-        },
-        {
-           "text":"Líkist mér ekki"
-        },
-        {
-           "text":"Líkist mér dálítið"
-        },
-        {
-           "text":"Líkist mér nokkuð"
-        },
-        {
-           "text":"Líkist mér mikið"
-        }
-     ],
-     "text":"Þeim finnst gaman að því sem kemur á óvart og eru alltaf að láta sér detta eitthvað nýtt í hug. Þau telja mikilvægt að fólk lifi fjölbreyttu lífi og geri margt á ævi sinni."
+    "type": "radios",
+    "subType": "rating",
+    "required": true,
+    "uniqueId": "ID6i",
+    "radioButtons": [
+      {
+        "text": "Líkist mér alls ekki"
+      },
+      {
+        "text": "Líkist mér ekki"
+      },
+      {
+        "text": "Líkist mér dálítið"
+      },
+      {
+        "text": "Líkist mér nokkuð"
+      },
+      {
+        "text": "Líkist mér mikið"
+      }
+    ],
+    "text": "Hugmyndauðgi og sköpunarkraftur skiptir þau miklu máli. Þau vilja gera hlutina á sinn frumlega hátt."
   },
   {
-     "type":"checkboxes",
-     "text":"Hvað af neðantöldu lýsir tengslum þínum við hálendið best? (hakið við það sem við á)",
-     "required":true,
-     "uniqueId":"ID7",
-     "checkboxes":[
-        {
-           "text":"Starf"
-        },
-        {
-           "text":"Tómstundir"
-        },
-        {
-           "text":"Saga og menning"
-        },
-        {
-           "text":"Engin tengsl"
-        },
-        {
-           "text":"Vil ekki svara"
-        },
-        {
-           "text":"Veit ekki"
-        },
-        {
-           "text":"Annað",
-           "isSpecify":true
-        }
-     ]
+    "type": "radios",
+    "subType": "rating",
+    "required": true,
+    "uniqueId": "ID6j",
+    "radioButtons": [
+      {
+        "text": "Líkist mér alls ekki"
+      },
+      {
+        "text": "Líkist mér ekki"
+      },
+      {
+        "text": "Líkist mér dálítið"
+      },
+      {
+        "text": "Líkist mér nokkuð"
+      },
+      {
+        "text": "Líkist mér mikið"
+      }
+    ],
+    "text": "Þeim finnst gaman að því sem kemur á óvart og eru alltaf að láta sér detta eitthvað nýtt í hug. Þau telja mikilvægt að fólk lifi fjölbreyttu lífi og geri margt á ævi sinni."
   },
   {
-     "type":"checkboxes",
-     "text":"Hvers konar starfstengsl? (hakið við það sem við á)",
-     "required":true,
-     "uniqueId":"ID8",
-     "checkboxes":[
-        {
-           "text":"Beitarnýting eða búfjárrækt"
-        },
-        {
-           "text":"Ræktun"
-        },
-        {
-           "text":"Skógrækt/jarðvegsvernd"
-        },
-        {
-           "text":"Ferðamennska/móttaka fólks"
-        },
-        {
-           "text":"Rannsóknir"
-        },
-        {
-           "text":"Stjórnsýsla/löggæsla"
-        },
-        {
-           "text":"Orkumál"
-        },
-        {
-           "text":"Annað",
-           "isSpecify":true
-        }
-     ]
+    "type": "radios",
+    "text": "Hvað af neðantöldu lýsir tengslum þínum við hálendið best? (hakið við það sem við á)",
+    "required": true,
+    "uniqueId": "ID7",
+    "radioButtons": [
+      {
+        "text": "Starf",
+        "skipTo": "ID8"
+      },
+      {
+        "text": "Tómstundir",
+         "skipTo": "ID9"
+      },
+      {
+        "text": "Saga og menning",
+        "skipTo": "ID10"
+      },
+      {
+        "text": "Engin tengsl",
+        "skipTo": "ID10"
+      },
+      {
+        "text": "Vil ekki svara",
+        "skipTo": "ID10"
+      },
+      {
+        "text": "Veit ekki",
+        "skipTo": "ID10"
+      },
+      {
+        "text": "Annað",
+        "isSpecify": true
+      }
+    ]
   },
   {
-     "type":"checkboxes",
-     "text":"Hvers konar tómstundatengsl? (hakið við það sem við á)",
-     "required":true,
-     "uniqueId":"ID9",
-     "checkboxes":[
-        {
-           "text":"Göngur og önnur útivist"
-        },
-        {
-           "text":"Hestamennska"
-        },
-        {
-           "text":"Fiskveiði"
-        },
-        {
-           "text":"Skotveiði"
-        },
-        {
-           "text":"Snjósleðaferðir"
-        },
-        {
-           "text":"Skíðaíþróttir"
-        },
-        {
-           "text":"Jeppaferðir"
-        },
-        {
-           "text":"Flug"
-        },
-        {
-           "text":"Annað",
-           "isSpecify":true
-        }
-     ]
+    "type": "checkboxes",
+    "text": "Hvers konar starfstengsl? (hakið við það sem við á)",
+    "required": false,
+    "uniqueId": "ID8",
+    "checkboxes": [
+      {
+        "text": "Beitarnýting eða búfjárrækt"
+      },
+      {
+        "text": "Ræktun"
+      },
+      {
+        "text": "Skógrækt/jarðvegsvernd"
+      },
+      {
+        "text": "Ferðamennska/móttaka fólks"
+      },
+      {
+        "text": "Rannsóknir"
+      },
+      {
+        "text": "Stjórnsýsla/löggæsla"
+      },
+      {
+        "text": "Orkumál"
+      },
+      {
+        "text": "Annað",
+        "isSpecify": true
+      }
+    ]
   },
   {
-     "type":"radios",
-     "uniqueId":"ID10",
-     "text":"Þegar á heildina er litið hve oft fæstu við eða heimsækir þú hálendið?",
-     "required":true,
-     "radioButtons":[
-        {
-           "text":"Daglega",
-           "subCode":"1"
-        },
-        {
-           "text":"Vikulega",
-           "subCode":"2"
-        },
-        {
-           "text":"Mánaðarlega",
-           "subCode":"3"
-        },
-        {
-           "text":"Árlega",
-           "subCode":"4"
-        },
-        {
-           "text":"Aldrei",
-           "subCode":"5"
-        },
-        {
-           "text":"Veit ekki",
-           "subCode":"6"
-        }
-     ]
+    "type": "checkboxes",
+    "text": "Hvers konar tómstundatengsl? (hakið við það sem við á)",
+    "required": false,
+    "uniqueId": "ID9",
+    "checkboxes": [
+      {
+        "text": "Göngur og önnur útivist"
+      },
+      {
+        "text": "Hestamennska"
+      },
+      {
+        "text": "Fiskveiði"
+      },
+      {
+        "text": "Skotveiði"
+      },
+      {
+        "text": "Snjósleðaferðir"
+      },
+      {
+        "text": "Skíðaíþróttir"
+      },
+      {
+        "text": "Jeppaferðir"
+      },
+      {
+        "text": "Flug"
+      },
+      {
+        "text": "Annað",
+        "isSpecify": true
+      }
+    ]
+  },
+  {
+    "type": "radios",
+    "uniqueId": "ID10",
+    "text": "Þegar á heildina er litið hve oft fæstu við eða heimsækir þú hálendið?",
+    "required": true,
+    "radioButtons": [
+      {
+        "text": "Daglega",
+        "subCode": "1"
+      },
+      {
+        "text": "Vikulega",
+        "subCode": "2"
+      },
+      {
+        "text": "Mánaðarlega",
+        "subCode": "3"
+      },
+      {
+        "text": "Árlega",
+        "subCode": "4"
+      },
+      {
+        "text": "Aldrei",
+        "subCode": "5"
+      },
+      {
+        "text": "Veit ekki",
+        "subCode": "6"
+      }
+    ]
+  },
+  {
+    "type": "textDescription",
+    "text": "Hversu sammála ertu eftirtöldum staðhæfingum?"
+  },
+  {
+    "type": "radios",
+    "subType": "rating",
+    "required": true,
+    "uniqueId": "ID11a",
+    "radioButtons": [
+      {
+        "text": "Mjög ósammála"
+      },
+      {
+        "text": "Ósammála"
+      },
+      {
+        "text": "Hlutlaus"
+      },
+      {
+        "text": "Sammála"
+      },
+      {
+        "text": "Mjög sammála"
+      },
+      {
+        "text": "Veit ekki/vil ekki svara"
+      }
+    ],
+    "text": "Vöxtur skóga á hálendinu ógnar íslensku landslagi."
+  },
+  {
+    "type": "radios",
+    "subType": "rating",
+    "required": true,
+    "uniqueId": "ID11b",
+    "radioButtons": [
+      {
+        "text": "Mjög ósammála"
+      },
+      {
+        "text": "Ósammála"
+      },
+      {
+        "text": "Hlutlaus"
+      },
+      {
+        "text": "Sammála"
+      },
+      {
+        "text": "Mjög sammála"
+      },
+      {
+        "text": "Veit ekki/vil ekki svara"
+      }
+    ],
+    "text": "Merki um mannaferðir á hálendinu spilla náttúruupplifun."
+  },
+  {
+    "type": "radios",
+    "subType": "rating",
+    "required": true,
+    "uniqueId": "ID11c",
+    "radioButtons": [
+      {
+        "text": "Mjög ósammála"
+      },
+      {
+        "text": "Ósammála"
+      },
+      {
+        "text": "Hlutlaus"
+      },
+      {
+        "text": "Sammála"
+      },
+      {
+        "text": "Mjög sammála"
+      },
+      {
+        "text": "Veit ekki/vil ekki svara"
+      }
+    ],
+    "text": "Vistkerfi hálendisins ber að vernda í núverandi ástandi."
+  },
+  {
+    "type": "radios",
+    "subType": "rating",
+    "required": true,
+    "uniqueId": "ID11d",
+    "radioButtons": [
+      {
+        "text": "Mjög ósammála"
+      },
+      {
+        "text": "Ósammála"
+      },
+      {
+        "text": "Hlutlaus"
+      },
+      {
+        "text": "Sammála"
+      },
+      {
+        "text": "Mjög sammála"
+      },
+      {
+        "text": "Veit ekki/vil ekki svara"
+      }
+    ],
+    "text": "Opin víðerni hálendisins á að standa vörð um og halda mannvirkjum í lágmarki."
+  },
+  {
+    "type": "radios",
+    "subType": "rating",
+    "required": true,
+    "uniqueId": "ID11e",
+    "radioButtons": [
+      {
+        "text": "Mjög ósammála"
+      },
+      {
+        "text": "Ósammála"
+      },
+      {
+        "text": "Hlutlaus"
+      },
+      {
+        "text": "Sammála"
+      },
+      {
+        "text": "Mjög sammála"
+      },
+      {
+        "text": "Veit ekki/vil ekki svara"
+      }
+    ],
+    "text": "Hófleg nýting hálendisins (s.s. veiði og útivist) er af hinu góða en hindra þarf of miklar mannaferðir á viðkvæmum svæðum."
+  },
+  {
+    "type": "radios",
+    "subType": "rating",
+    "required": true,
+    "uniqueId": "ID11f",
+    "radioButtons": [
+      {
+        "text": "Mjög ósammála"
+      },
+      {
+        "text": "Ósammála"
+      },
+      {
+        "text": "Hlutlaus"
+      },
+      {
+        "text": "Sammála"
+      },
+      {
+        "text": "Mjög sammála"
+      },
+      {
+        "text": "Veit ekki/vil ekki svara"
+      }
+    ],
+    "text": "Ég hef rétt á óheftum aðgangi að hálendinu til að sinna mínum helstu áhugamálum."
+  },
+  {
+    "type": "radios",
+    "uniqueId": "ID12",
+    "text": "Stærstum hluta hálendis Íslands er skipt í þjóðlendur þar sem íslenska ríkið er landeigandi og og hefur yfirráð yfir landinu með viðkomandi sveitarstjórn þannig að nýting lands til lengri tíma en eins árs krefst leyfis sveitarstjórnarinnar og forsætisráðuneytis. Hvernig ætti að þínu mati að haga yfirráðum yfir hálendinu?",
+    "required": true,
+    "radioButtons": [
+      {
+        "text": "Með sama hætti og nú",
+        "subCode": "1"
+      },
+      {
+        "text": "Hálendið ætti að skilgreina sem þjóðgarð",
+        "subCode": "2"
+      },
+      {
+        "text": "Best er að einkaeignarréttur gildi um hálendið.",
+        "subCode": "3"
+      },
+      {
+        "text": "Hálendið ætti alfarið að lúta stjórn sveitarfélaga",
+        "subCode": "4"
+      },
+      {
+        "text": "Veit ekki/vil ekki svara",
+        "subCode": "5"
+      },
+      {
+        "text": "Með öðrum hætti",
+        "subCode": "6",
+        "isSpecify": true
+      }
+    ]
+  },
+  {
+    "type": "radios",
+    "uniqueId": "ID13",
+    "text": "Telur þú að loftslagsbreytingar stafi af náttúrulegum ferlum, séu af mannavöldum eða hvort tveggja?",
+    "required": true,
+    "radioButtons": [
+      {
+        "text": "Alfarið af náttúrulegum ferlum",
+        "subCode": "1"
+      },
+      {
+        "text": "Aðallega af náttúrulegum ferlum",
+        "subCode": "2"
+      },
+      {
+        "text": "Um það bil jafnt mikið af náttúrulegum ferlum og af mannavöldum",
+        "subCode": "3"
+      },
+      {
+        "text": "Aðallega af mannavöldum",
+        "subCode": "4"
+      },
+      {
+        "text": "Alfarið af mannavöldum",
+        "subCode": "5"
+      },
+      {
+        "text": "Ég trúi því ekki að loftslagsbreytingar séu að eiga sér stað",
+        "subCode": "6"
+      },
+      {
+        "text": "Ég vil ekki svara",
+        "subCode": "7"
+      },
+      {
+        "text": "Ég veit það ekki",
+        "subCode": "8"
+      }
+    ]
+  },
+  {
+    "type": "radios",
+    "uniqueId": "ID14",
+    "text": "Að hve miklu leyti finnst þér þú bera persónulega ábyrgð á stefnumótun sem miðar að því að hægja á loftslagsbreytingum eða koma í veg fyrir þær?",
+    "required": true,
+    "radioButtons": [
+      {
+        "text": "Að engu leyti",
+        "subCode": "1"
+      },
+      {
+        "text": "Að litlu leyti",
+        "subCode": "2"
+      },
+      {
+        "text": "Að nokkru leyti",
+        "subCode": "3"
+      },
+      {
+        "text": "Að miklu leyti",
+        "subCode": "4"
+      },
+      {
+        "text": "Ég veit það ekki",
+        "subCode": "5"
+      },
+      {
+        "text": "Ég vil ekki svara",
+        "subCode": "6"
+      }
+    ]
+  },
+  {
+    "type": "textDescription",
+    "text": "Hver er afstaða þín til eftirfarandi kosta um stefnumótun hér á landi sem hefði þann tilgang að hægja á loftslagsbreytingum?"
   },
 
-
-{
-     "type":"textDescription",
-     "text":"Hversu sammála ertu eftirtöldum staðhæfingum?"
-  },
-
-
   {
-     "type":"radios",
-     "subType":"rating",
-     "required":true,
-     "uniqueId":"ID11a",
-     "radioButtons":[
-        {
-           "text":"Mjög ósammála"
-        },
-        {
-           "text":"Ósammála"
-        },
-        {
-           "text":"Hlutlaus"
-        },
-        {
-           "text":"Sammála"
-        },
-        {
-           "text":"Mjög sammála"
-        },
-        {
-           "text":"Veit ekki/vil ekki svara"
-        }
-     ],
-     "text":"Vöxtur skóga á hálendinu ógnar íslensku landslagi."
+    "type": "radios",
+    "subType": "rating",
+    "required": true,
+    "uniqueId": "ID15a",
+    "radioButtons": [
+      {
+        "text": "Mjög ósammála"
+      },
+      {
+        "text": "Ósammála"
+      },
+      {
+        "text": "Hlutlaus"
+      },
+      {
+        "text": "Sammála"
+      },
+      {
+        "text": "Mjög sammála"
+      },
+      {
+        "text": "Veit ekki/vil ekki svara"
+      }
+    ],
+    "text": "Hækka skatta á jarðefnaeldsneyti svo sem olíu, gas og kol."
   },
   {
-     "type":"radios",
-     "subType":"rating",
-     "required":true,
-     "uniqueId":"ID11b",
-     "radioButtons":[
-        {
-           "text":"Mjög ósammála"
-        },
-        {
-           "text":"Ósammála"
-        },
-        {
-           "text":"Hlutlaus"
-        },
-        {
-           "text":"Sammála"
-        },
-        {
-           "text":"Mjög sammála"
-        },
-        {
-           "text":"Veit ekki/vil ekki svara"
-        }
-     ],
-     "text":"Merki um mannaferðir á hálendinu spilla náttúruupplifun."
+    "type": "radios",
+    "subType": "rating",
+    "required": true,
+    "uniqueId": "ID15b",
+    "radioButtons": [
+      {
+        "text": "Mjög ósammála"
+      },
+      {
+        "text": "Ósammála"
+      },
+      {
+        "text": "Hlutlaus"
+      },
+      {
+        "text": "Sammála"
+      },
+      {
+        "text": "Mjög sammála"
+      },
+      {
+        "text": "Veit ekki/vil ekki svara"
+      }
+    ],
+    "text": "Nýta almannafé til að niðurgreiða endurnýjanlega orku á borð við vind- og sólarorku."
   },
   {
-     "type":"radios",
-     "subType":"rating",
-     "required":true,
-     "uniqueId":"ID11c",
-     "radioButtons":[
-        {
-           "text":"Mjög ósammála"
-        },
-        {
-           "text":"Ósammála"
-        },
-        {
-           "text":"Hlutlaus"
-        },
-        {
-           "text":"Sammála"
-        },
-        {
-           "text":"Mjög sammála"
-        },
-        {
-           "text":"Veit ekki/vil ekki svara"
-        }
-     ],
-     "text":"Vistkerfi hálendisins ber að vernda í núverandi ástandi."
+    "type": "radios",
+    "subType": "rating",
+    "required": true,
+    "uniqueId": "ID15c",
+    "radioButtons": [
+      {
+        "text": "Mjög ósammála"
+      },
+      {
+        "text": "Ósammála"
+      },
+      {
+        "text": "Hlutlaus"
+      },
+      {
+        "text": "Sammála"
+      },
+      {
+        "text": "Mjög sammála"
+      },
+      {
+        "text": "Veit ekki/vil ekki svara"
+      }
+    ],
+    "text": "Auka kolefnisbindingu með aukinni skógrækt og uppgræðslu lands."
   },
   {
-     "type":"radios",
-     "subType":"rating",
-     "required":true,
-     "uniqueId":"ID11d",
-     "radioButtons":[
-        {
-           "text":"Mjög ósammála"
-        },
-        {
-           "text":"Ósammála"
-        },
-        {
-           "text":"Hlutlaus"
-        },
-        {
-           "text":"Sammála"
-        },
-        {
-           "text":"Mjög sammála"
-        },
-        {
-           "text":"Veit ekki/vil ekki svara"
-        }
-     ],
-     "text":"Opin víðerni hálendisins á að standa vörð um og halda mannvirkjum í lágmarki.."
-  },
-  {
-     "type":"radios",
-     "subType":"rating",
-     "required":true,
-     "uniqueId":"ID11e",
-     "radioButtons":[
-        {
-           "text":"Mjög ósammála"
-        },
-        {
-           "text":"Ósammála"
-        },
-        {
-           "text":"Hlutlaus"
-        },
-        {
-           "text":"Sammála"
-        },
-        {
-           "text":"Mjög sammála"
-        },
-        {
-           "text":"Veit ekki/vil ekki svara"
-        }
-     ],
-     "text":"Hófleg nýting hálendisins (s.s. veiði og útivist) er af hinu góða en hindra þarf of miklar mannaferðir á viðkvæmum svæðum."
-  },
-  {
-     "type":"radios",
-     "subType":"rating",
-     "required":true,
-     "uniqueId":"ID11f",
-     "radioButtons":[
-        {
-           "text":"Mjög ósammála"
-        },
-        {
-           "text":"Ósammála"
-        },
-        {
-           "text":"Hlutlaus"
-        },
-        {
-           "text":"Sammála"
-        },
-        {
-           "text":"Mjög sammála"
-        },
-        {
-           "text":"Veit ekki/vil ekki svara"
-        }
-     ],
-     "text":"Ég hef rétt á óheftum aðgangi að hálendinu til að sinna mínum helstu áhugamálum."
-  },
-  {
-     "type":"radios",
-     "uniqueId":"ID12",
-     "text":"Stærstum hluta hálendis Íslands er skipt í þjóðlendur þar sem íslenska ríkið er landeigandi og og hefur yfirráð yfir landinu með viðkomandi sveitarstjórn þannig að nýting lands til lengri tíma en eins árs krefst leyfis sveitarstjórnarinnar og forsætisráðuneytis. Hvernig ætti að þínu mati að haga yfirráðum yfir hálendinu?",
-     "required":true,
-     "radioButtons":[
-        {
-           "text":"Með sama hætti og nú",
-           "subCode":"1"
-        },
-        {
-           "text":"Hálendið ætti að skilgreina sem þjóðgarð",
-           "subCode":"2"
-        },
-        {
-           "text":"Best er að einkaeignarréttur gildi um hálendið.",
-           "subCode":"3"
-        },
-        {
-           "text":"Hálendið ætti alfarið að lúta stjórn sveitarfélaga",
-           "subCode":"4"
-        },
-        {
-           "text":"Veit ekki/vil ekki svara",
-           "subCode":"5"
-        },
-        {
-           "text":"Með öðrum hætti",
-           "subCode":"6",
-           "isSpecify":true
-        }
-     ]
-  },
-  {
-     "type":"radios",
-     "uniqueId":"ID13",
-     "text":"Telur þú að loftslagsbreytingar stafi af náttúrulegum ferlum, séu af mannavöldum eða hvort tveggja?",
-     "required":true,
-     "radioButtons":[
-        {
-           "text":"Alfarið af náttúrulegum ferlum",
-           "subCode":"1"
-        },
-        {
-           "text":"Aðallega af náttúrulegum ferlum",
-           "subCode":"2"
-        },
-        {
-           "text":"Um það bil jafnt mikið af náttúrulegum ferlum og af mannavöldum",
-           "subCode":"3"
-        },
-        {
-           "text":"Aðallega af mannavöldum",
-           "subCode":"4"
-        },
-        {
-           "text":"Alfarið af mannavöldum",
-           "subCode":"5"
-        },
-        {
-           "text":"Ég trúi því ekki að loftslagsbreytingar séu að eiga sér stað",
-           "subCode":"6"
-        },
-        {
-           "text":"Ég vil ekki svara",
-           "subCode":"7"
-        },
-        {
-           "text":"Ég veit það ekki",
-           "subCode":"8"
-        }
-     ]
-  },
-  {
-     "type":"radios",
-     "uniqueId":"ID14",
-     "text":"Að hve miklu leyti finnst þér þú bera persónulega ábyrgð á stefnumótun sem miðar að því að hægja á loftslagsbreytingum eða koma í veg fyrir þær?",
-     "required":true,
-     "radioButtons":[
-        {
-           "text":"Að engu leyti",
-           "subCode":"1"
-        },
-        {
-           "text":"Að litlu leyti",
-           "subCode":"2"
-        },
-        {
-           "text":"Að nokkru leyti",
-           "subCode":"3"
-        },
-        {
-           "text":"Að miklu leyti",
-           "subCode":"4"
-        },
-        {
-           "text":"Ég veit það ekki",
-           "subCode":"5"
-        },
-        {
-           "text":"Ég vil ekki svara",
-           "subCode":"6"
-        }
-     ]
-  },
-
-{
-     "type":"textDescription",
-     "text":"Hver er afstaða þín til eftirfarandi kosta um stefnumótun hér á landi sem hefði þann tilgang að hægja á loftslagsbreytingum?"
-  },
-
-
-  {
-     "type":"radios",
-     "subType":"rating",
-     "required":true,
-     "uniqueId":"ID15a",
-     "radioButtons":[
-        {
-           "text":"Mjög ósammála"
-        },
-        {
-           "text":"Ósammála"
-        },
-        {
-           "text":"Hlutlaus"
-        },
-        {
-           "text":"Sammála"
-        },
-        {
-           "text":"Mjög sammála"
-        },
-        {
-           "text":"Veit ekki/vil ekki svara"
-        }
-     ],
-     "text":"Hækka skatta á jarðefnaeldsneyti svo sem olíu, gas og kol."
-  },
-  {
-     "type":"radios",
-     "subType":"rating",
-     "required":true,
-     "uniqueId":"ID15b",
-     "radioButtons":[
-        {
-           "text":"Mjög ósammála"
-        },
-        {
-           "text":"Ósammála"
-        },
-        {
-           "text":"Hlutlaus"
-        },
-        {
-           "text":"Sammála"
-        },
-        {
-           "text":"Mjög sammála"
-        },
-        {
-           "text":"Veit ekki/vil ekki svara"
-        }
-     ],
-     "text":"Nýta almannafé til að niðurgreiða endurnýjanlega orku á borð við vind- og sólarorku."
-  },
-  {
-     "type":"radios",
-     "subType":"rating",
-     "required":true,
-     "uniqueId":"ID15c",
-     "radioButtons":[
-        {
-           "text":"Mjög ósammála"
-        },
-        {
-           "text":"Ósammála"
-        },
-        {
-           "text":"Hlutlaus"
-        },
-        {
-           "text":"Sammála"
-        },
-        {
-           "text":"Mjög sammála"
-        },
-        {
-           "text":"Veit ekki/vil ekki svara"
-        }
-     ],
-     "text":"Auka kolefnisbindingu með aukinni skógrækt og uppgræðslu lands."
-  },
-  {
-     "type":"radios",
-     "uniqueId":"ID16",
-     "text":"Megum við hafa samband við þig aftur til að bjóða þér að taka þátt í frekari samræðum um landnotkun á hálendinu og tengd málefni sem varða það sveitarfélag sem áhugi þinn beinist að?",
-     "required":true,
-     "radioButtons":[
-        {
-           "text":"Nei takk.",
-           "subCode":"1"
-        },
-        {
-           "text":"Já, vinsamlega nota þetta netfang:",
-           "subCode":"2",
-           "isSpecify":true
-        }
-     ]
+    "type": "radios",
+    "uniqueId": "ID16",
+    "text": "Megum við hafa samband við þig aftur til að bjóða þér að taka þátt í frekari samræðum um landnotkun á hálendinu og tengd málefni sem varða það sveitarfélag sem áhugi þinn beinist að?",
+    "required": true,
+    "radioButtons": [
+      {
+        "text": "Nei takk.",
+        "subCode": "1"
+      },
+      {
+        "text": "Já, vinsamlega nota þetta netfang:",
+        "subCode": "2",
+        "isSpecify": true
+      }
+    ]
   }
 ]

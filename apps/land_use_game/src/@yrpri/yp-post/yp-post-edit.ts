@@ -721,7 +721,7 @@ export class YpPostEdit extends YpEditBase {
                   `
                 : nothing}
               ${this.structuredQuestions != undefined
-                ? html`
+                ? html`<div id="surveyContainer">
                     ${this.structuredQuestions.map(
                       (
                         question: YpStructuredQuestionData,
@@ -746,7 +746,7 @@ export class YpPostEdit extends YpEditBase {
                         </yp-structured-question-edit>
                       `
                     )}
-                  `
+                  </div>`
                 : nothing}
               ${this.group.configuration.attachmentsEnabled
                 ? html`
@@ -1231,8 +1231,8 @@ export class YpPostEdit extends YpEditBase {
     super.connectedCallback();
     this.addListener("yp-form-invalid", this._formInvalid);
     this.addListener("yp-custom-form-submit", this._customSubmit);
-    this.addListener("yp-skip-to-unique-id", this._skipToId);
     this.addListener("yp-open-to-unique-id", this._openToId);
+    this.addListener("yp-skip-to-unique-id", this._skipToId);
     this.addListener("yp-goto-next-index", this._goToNextIndex);
     this.addGlobalListener(
       "yp-auto-translate",
@@ -1300,10 +1300,26 @@ export class YpPostEdit extends YpEditBase {
   }
 
   _skipToId(event: CustomEvent, showItems: boolean) {
+    const toId = event.detail.toId.replace(/]/g, "");
+    const fromId = event.detail.fromId.replace(/]/g, "");
+    const toIndex = this.uniqueIdsToElementIndexes[toId];
+    const item = this.$$(
+      "#structuredQuestionContainer_" + toIndex
+    ) as HTMLElement;
+    item.scrollIntoView({
+      block: "end",
+      inline: "end",
+      behavior: "smooth",
+    });
+    item.focus();
+  }
+
+  _skipToWithHideId(event: CustomEvent, showItems: boolean) {
     let foundFirst = false;
     if (this.$$("#surveyContainer")) {
       const children = this.$$("#surveyContainer")!
         .children as unknown as Array<YpStructuredQuestionEdit>;
+      debugger;
       for (let i = 0; i < children.length; i++) {
         const toId = event.detail.toId.replace(/]/g, "");
         const fromId = event.detail.fromId.replace(/]/g, "");
