@@ -111,19 +111,19 @@ export class YpPointCommentList extends YpBaseElement {
 
         @media (max-width: 520px) {
           lit-virtualizer {
-            width: 420px;
+            width: 100%;
           }
         }
 
         @media (max-width: 450px) {
           lit-virtualizer {
-            width: 318px;
+            width: 100%;
           }
         }
 
-        @media (max-width: 359px) {
+        @media (max-width: 360px) {
           lit-virtualizer {
-            width: 307px;
+            width: 100%;
           }
         }
 
