@@ -74,7 +74,6 @@ export class YpCommentDialog extends YpBaseElementWithLogin {
           line-height: 1.3;
         }
 
-
         @media (max-width: 600px) {
           md-dialog {
           }
@@ -83,6 +82,16 @@ export class YpCommentDialog extends YpBaseElementWithLogin {
             max-width:320px;
           }
         }
+
+        @media (max-width: 340px) {
+          md-dialog {
+          }
+
+          .story {
+            max-width:100%;
+          }
+        }
+
 
 
         yp-point-actions {

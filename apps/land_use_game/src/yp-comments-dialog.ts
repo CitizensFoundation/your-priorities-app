@@ -104,6 +104,10 @@ export class YpCommentsDialog extends YpBaseElementWithLogin {
           height: 100%;
         }
 
+        .newsContainer {
+          width: 500px;
+        }
+
         .userName {
           color: #777;
         }
@@ -127,7 +131,20 @@ export class YpCommentsDialog extends YpBaseElementWithLogin {
           }
 
           .story {
-            max-width: 320px;
+            max-width: 100%;
+          }
+
+          .newsContainer {
+            width: 100%;
+          }
+        }
+
+        @media (max-width: 360px) {
+          md-dialog {
+          }
+
+          .story {
+
           }
         }
 
@@ -154,10 +171,6 @@ export class YpCommentsDialog extends YpBaseElementWithLogin {
 
         .withPointer {
           cursor: pointer;
-        }
-
-        .newsContainer {
-          width: 500px;
         }
 
         [hidden] {
