@@ -4,11 +4,11 @@
 
 ## The Top Rated Citizen Engagement Platform
 
-The top rating in PeoplePowered platform ratings - https://www.peoplepowered.org/platform-ratings
+The top rating: PeoplePowered platform ratings - https://www.peoplepowered.org/platform-ratings
 
-The top rating 2022 Digital Democracy Report -  https://www.solonian-institute.com/digitaldemocracyreport
+The top rating: 2022 Digital Democracy Report -  https://www.solonian-institute.com/digitaldemocracyreport
 
-The top listing in latest OECD Guidlines for citizen participation processes - https://www.oecd.org/publications/oecd-guidelines-for-citizen-participation-processes-f765caf6-en.htm
+The top listing: OECD Guidlines for citizen participation processes - https://www.oecd.org/publications/oecd-guidelines-for-citizen-participation-processes-f765caf6-en.htm
 
 ## Key Features
 
