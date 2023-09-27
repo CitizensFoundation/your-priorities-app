@@ -2,6 +2,12 @@
 
 ![alt text](https://citizens.is/wp-content/uploads/2018/08/Capture-2.png "Your Priorities screenshot")
 
+## The Top Rated Citizen Engagement Platform
+- Rated #1 on PeoplePowered: [Platform ratings](https://www.peoplepowered.org/platform-ratings)
+- Top ranking in the [2022 Digital Democracy Report](https://www.solonian-institute.com/digitaldemocracyreport)
+- Top listing in [OECD Guidelines for Citizen Participation Processes](https://www.oecd.org/publications/oecd-guidelines-for-citizen-participation-processes-f765caf6-en.htm)
+
+
 ## Key Features
 
 * Citizen participation social network for digital democracy and social innovation
