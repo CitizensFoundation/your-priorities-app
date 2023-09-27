@@ -543,6 +543,9 @@ router.get('/*', function botController(req, res, next) {
   }
 
   if(!isNaN(id)) {
+    if (splitUrl[splitPath]=='land_use') {
+      splitUrl[splitPath]='group'
+    }
     if (splitUrl[splitPath]=='domain') {
       sendDomain(id, communitiesOffset, req, res)
     } else if (splitUrl[splitPath]=='community') {
