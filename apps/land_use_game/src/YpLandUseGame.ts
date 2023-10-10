@@ -676,6 +676,10 @@ export class YpLandUseGame extends YpBaseElement {
     super.connectedCallback();
     this.themeChanged();
     this.resetHelpPages();
+    if (window.location.search.indexOf("skipToResults") > -1) {
+      this.cancelFlyToPosition();
+      this.setCameraFromView(this.tileManager.showAllView);
+    }
   }
 
   async getHelpPages() {
@@ -712,17 +716,25 @@ export class YpLandUseGame extends YpBaseElement {
     } else {
       if (this.gameStage !== GameStage.Results) {
         window.appUser.checkRegistrationAnswersCurrent();
+      } else {
+        this.cancelFlyToPosition();
+        this.setCameraFromView(this.tileManager.showAllView);
       }
     }
   }
 
   async startGame() {
-    this.gameStage = GameStage.Play;
-    if (this.tileManager) {
-      this.finishStartingGame();
+    if (window.location.search.indexOf("skipToResults") > -1) {
+      this.cancelFlyToPosition();
+      this.setCameraFromView(this.tileManager.showAllView);
     } else {
-      await new Promise((resolve) => setTimeout(resolve, 250));
-      this.finishStartingGame();
+      this.gameStage = GameStage.Play;
+      if (this.tileManager) {
+        this.finishStartingGame();
+      } else {
+        await new Promise((resolve) => setTimeout(resolve, 250));
+        this.finishStartingGame();
+      }
     }
   }
 
@@ -857,7 +869,7 @@ export class YpLandUseGame extends YpBaseElement {
       this.setIsCommenting(false);
     });
 
-    if (!this.haveShownLandUseActionHelp) {
+    if (!this.haveShownLandUseActionHelp && landUse && this.gameStage === GameStage.Play) {
       this.haveShownLandUseActionHelp = true;
       this.tutorial.openStage("landUseAction", undefined, 1);
     }
