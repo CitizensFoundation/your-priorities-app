@@ -62,7 +62,7 @@ export class Tutorial extends YpCodeBase {
         <div style="padding: 8px;" class="layout vertical">
             <b>Mouse navigation:</b><br />
             <div class="layout horizontal">
-              <div style="width: 75px; display: inline-block;padding: 8px;">
+              <div style="margin-top: 16px; width: 75px; display: inline-block;padding: 8px;">
                   <img
                       src="https://sandcastle.cesium.com/CesiumUnminified/Widgets/Images/NavigationHelp/MouseLeft.svg"
                       alt="Mouse Left"
@@ -72,7 +72,7 @@ export class Tutorial extends YpCodeBase {
               <em>Pan</em>: Left click + drag<br />
             </div>
             <div class="layout horizontal">
-              <div style="width: 75px; display: inline-block;padding: 8px;">
+              <div style="margin-top: 16px; width: 75px; display: inline-block;padding: 8px;">
                   <img
                       src="https://sandcastle.cesium.com/CesiumUnminified/Widgets/Images/NavigationHelp/MouseRight.svg"
                       alt="Mouse Right"
@@ -82,7 +82,7 @@ export class Tutorial extends YpCodeBase {
               <em>Zoom</em>: Right click + drag, or Mouse wheel scroll<br />
             </div>
             <div class="layout horizontal">
-              <div style="width: 75px; display: inline-block;padding: 8px;">
+              <div style="margin-top: 16px; width: 75px; display: inline-block;padding: 8px;">
                   <img
                       src="https://sandcastle.cesium.com/CesiumUnminified/Widgets/Images/NavigationHelp/MouseMiddle.svg"
                       alt="Mouse Middle"
@@ -146,7 +146,7 @@ export class Tutorial extends YpCodeBase {
         <div style="padding: 8px;" class="layout vertical">
             <b>Stjórn með mús:</b><br />
             <div class="layout horizontal">
-              <div style="width: 75px; display: inline-block;">
+              <div style="margin-top: 16px; width: 75px; display: inline-block;">
                   <img
                       src="https://sandcastle.cesium.com/CesiumUnminified/Widgets/Images/NavigationHelp/MouseLeft.svg"
                       alt="Mouse Left"
@@ -156,7 +156,7 @@ export class Tutorial extends YpCodeBase {
               <em>Færsla</em>: Vinstri smella + draga<br />
             </div>
             <div class="layout horizontal">
-              <div style="width: 75px; display: inline-block;">
+              <div style="margin-top: 16px; width: 75px; display: inline-block;">
                   <img
                       src="https://sandcastle.cesium.com/CesiumUnminified/Widgets/Images/NavigationHelp/MouseRight.svg"
                       alt="Mouse Right"
@@ -166,7 +166,7 @@ export class Tutorial extends YpCodeBase {
               <em>Aðdráttur</em>: Hægri smella + draga, eða skrolla með músarhjóli<br />
             </div>
             <div class="layout horizontal">
-              <div style="width: 75px; display: inline-block;">
+              <div style="margin-top: 16px; width: 75px; display: inline-block;">
                   <img
                       src="https://sandcastle.cesium.com/CesiumUnminified/Widgets/Images/NavigationHelp/MouseMiddle.svg"
                       alt="Mouse Middle"
