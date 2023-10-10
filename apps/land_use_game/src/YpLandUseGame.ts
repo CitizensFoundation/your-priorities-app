@@ -668,6 +668,10 @@ export class YpLandUseGame extends YpBaseElement {
     this.setupEventListeners();
     this.themeChanged();
     window.appGlobals.analytics.sendToAnalyticsTrackers('send', 'pageview', location.pathname);
+    // If query parameter called "skipToResults" then set mode to results
+    if (window.location.search.indexOf("skipToResults") > -1) {
+      this.gameStage = GameStage.Results;
+    }
     this.group = await window.appGlobals.setupGroup();
     super.connectedCallback();
     this.themeChanged();
