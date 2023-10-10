@@ -101,6 +101,10 @@ export class YpAnalytics extends YpCodeBase {
     if (a!='sendOnlyCommunity') {
       this.facebookPixelTracking(b as string, c as string);
     }
+
+    if (b==="pageview" && a!=="sendOnlyCommunity") {
+      window.appGlobals.activity('pageview', c);
+    }
   }
 
   sendLoginAndSignup(userId: number, eventType: string, authProvider: string, validationError: string|undefined=undefined) {

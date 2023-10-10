@@ -331,6 +331,32 @@ export class Tutorial extends YpCodeBase {
         is: `<p>Veldu landnýtingu neðst á skjánum</p>`,
       },
     } as TutorialPageData,
+    landUseAction: {
+      stage: "landUseAction",
+      title: {
+        en: "Click on map",
+        is: "Smeltu á kortið",
+      },
+      content: {
+        en: `
+             <p>Click on the map within the marked area to choose the land use</p>
+             `,
+        is: `<p>Smelltu á kortið innan merkts svæðis til þess að velja landnýtingu</p>`,
+      },
+    } as TutorialPageData,
+    commentAction: {
+      stage: "commentAction",
+      title: {
+        en: "Click on map",
+        is: "Smelltu á kortið",
+      },
+      content: {
+        en: `
+             <p>Click on the map within the marked area to add a comment</p>
+             `,
+        is: `<p>Smelltu á kortið innan merkts svæðis til þess að bæta við athugasemd</p>`,
+      },
+    } as TutorialPageData,
   } as Record<TutorialStage, TutorialPageData>;
 
   haveShown: Array<TutorialStage> = [];
@@ -356,6 +382,8 @@ export class Tutorial extends YpCodeBase {
     for (let stageKey in this.stages) {
       if (stageKey === "noLandUseSelected") continue;
       if (stageKey === "openResults") continue;
+      if (stageKey === "landUseAction") continue;
+      if (stageKey === "commentAction") continue;
       //@ts-ignore
       const stage = this.stages[stageKey];
       combinedContent.en += `<h2>${stage.title.en}</h2>\n\n${stage.content.en}`;

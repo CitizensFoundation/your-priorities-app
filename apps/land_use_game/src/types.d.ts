@@ -12,6 +12,8 @@ type TutorialStage =
   | "noCommentsAdded"
   | "chooseType"
   | "clickOnMap"
+  | "commentAction"
+  | "landUseAction"
   | "afterFirstSelection"
   | "openResults";
 

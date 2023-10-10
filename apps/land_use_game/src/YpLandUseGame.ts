@@ -144,6 +144,9 @@ export class YpLandUseGame extends YpBaseElement {
   posts: YpPostData[] | undefined;
   tutorial: Tutorial;
 
+  haveShownLandUseActionHelp = false
+  haveShownCommentActionHelp = false
+
   logFramerate() {
     this.frameCount++;
 
@@ -664,6 +667,7 @@ export class YpLandUseGame extends YpBaseElement {
     window.CESIUM_BASE_URL = "";
     this.setupEventListeners();
     this.themeChanged();
+    window.appGlobals.analytics.sendToAnalyticsTrackers('send', 'pageview', location.pathname);
     this.group = await window.appGlobals.setupGroup();
     super.connectedCallback();
     this.themeChanged();
@@ -849,12 +853,24 @@ export class YpLandUseGame extends YpBaseElement {
       this.setIsCommenting(false);
     });
 
+    if (!this.haveShownLandUseActionHelp) {
+      this.haveShownLandUseActionHelp = true;
+      this.tutorial.openStage("landUseAction", undefined, 1);
+    }
+
     window.appGlobals.activity('setLandUse', landUse || "undefined");
   }
 
   //TODO: Fix and remove the selected land sue when commenting and also possible toggle commenting on and off
   setIsCommenting(isCommenting: boolean) {
-    window.appGlobals.activity('setLandUseCommenting', isCommenting ? "true" : "false");
+    if (isCommenting) {
+      window.appGlobals.activity('setLandUseCommenting', isCommenting ? "true" : "false");
+
+      if (!this.haveShownCommentActionHelp) {
+        this.haveShownCommentActionHelp = true;
+        this.tutorial.openStage("commentAction", undefined, 1);
+      }
+    }
 
     this.tileManager.isCommenting = isCommenting;
     if (isCommenting) {
