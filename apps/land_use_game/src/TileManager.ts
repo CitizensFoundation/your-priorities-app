@@ -1027,32 +1027,10 @@ export class TileManager extends YpCodeBase {
               Cesium.Cartographic.fromDegrees(coord[0], coord[1])
             )
           );
-          const animationDuration = 40;
 
           this.createTiles(rectangle, coordinates);
 
-          let sharedMaterial: any;
-          if (window.location.search.indexOf("skipToResults") == -1) {
-            sharedMaterial = new Cesium.ColorMaterialProperty(
-              new Cesium.CallbackProperty((time, result) => {
-                const elapsedSeconds = Cesium.JulianDate.secondsDifference(
-                  time,
-                  this.viewer!.clock.startTime
-                );
-                const alpha = Math.max(
-                  0.35 - elapsedSeconds / animationDuration,
-                  0
-                );
-                return Cesium.Color.fromAlpha(color, alpha, result);
-              }, false)
-            );
-
-            setTimeout(() => {
-              sharedMaterial.color = new Cesium.ConstantProperty(color);
-            }, animationDuration * 1000);
-          } else {
-            sharedMaterial = new Cesium.ColorMaterialProperty(color);
-          }
+          const sharedMaterial = new Cesium.ColorMaterialProperty(color);
 
           // Add each tile as a rectangle entity to the EntityCollection
           this.allTiles.forEach((tile) => {
@@ -1076,6 +1054,7 @@ export class TileManager extends YpCodeBase {
       console.error("Error fetching GeoJSON data:", error);
     }
   }
+
 
   createModel(
     url: string,

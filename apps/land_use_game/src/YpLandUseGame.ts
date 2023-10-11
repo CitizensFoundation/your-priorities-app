@@ -1101,6 +1101,7 @@ export class YpLandUseGame extends YpBaseElement {
     await new Promise((resolve) => setTimeout(resolve, 200));
     await this.setupTileResults();
     await this.loadAllTopLevelPoints();
+    await new Promise((resolve) => setTimeout(resolve, 2000));
     await this.setLandUse(undefined);
     await this.tileManager.updateCommentResults();
     this.disableBrowserTouchEvents = true;
