@@ -656,6 +656,7 @@ export class YpLandUseGame extends YpBaseElement {
       setTimeout(async () => {
         await this.setupTileResults();
         await this.loadAllTopLevelPoints();
+        await new Promise((resolve) => setTimeout(resolve, 5000));
         await this.setLandUse(undefined);
         await this.tileManager.updateCommentResults();
       }, 3000);
@@ -1358,22 +1359,28 @@ export class YpLandUseGame extends YpBaseElement {
     //Enable depth testing so things behind the terrain disappear.
     this.viewer.scene.globe.depthTestAgainstTerrain = true;
 
-    await this.flyToPosition(
-      -20.62592534987823,
-      64.03985855384323,
-      35000,
-      30,
-      -Cesium.Math.PI_OVER_TWO / 1.3
-    );
+    if (this.gameStage !== GameStage.Results) {
+      await this.flyToPosition(
+        -20.62592534987823,
+        64.03985855384323,
+        35000,
+        30,
+        -Cesium.Math.PI_OVER_TWO / 1.3
+      );
 
-    // Second flyTo
-    await this.flyToPosition(
-      -20.62592534987823,
-      64.03985855384323,
-      20000,
-      2,
-      -Cesium.Math.PI_OVER_TWO / 3.2
-    );
+      // Second flyTo
+      await this.flyToPosition(
+        -20.62592534987823,
+        64.03985855384323,
+        20000,
+        2,
+        -Cesium.Math.PI_OVER_TWO / 3.2
+      );
+    } else {
+      // Wait for 1 seconds
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      this.setCameraFromView(this.tileManager.showAllView);
+    }
   }
 
   themeChanged(target: HTMLElement | undefined = undefined) {
