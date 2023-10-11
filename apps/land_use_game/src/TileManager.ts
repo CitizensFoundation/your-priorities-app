@@ -1020,19 +1020,28 @@ export class TileManager extends YpCodeBase {
 
           this.createTiles(rectangle, coordinates);
 
-          const sharedMaterial = new Cesium.ColorMaterialProperty(
-            new Cesium.CallbackProperty((time, result) => {
-              const elapsedSeconds = Cesium.JulianDate.secondsDifference(
-                time,
-                this.viewer!.clock.startTime
-              );
-              const alpha = Math.max(
-                0.35 - elapsedSeconds / animationDuration,
-                0
-              );
-              return Cesium.Color.fromAlpha(color, alpha, result);
-            }, false)
-          );
+          let sharedMaterial: any;
+          if (window.location.search.indexOf("skipToResults") == -1) {
+            sharedMaterial = new Cesium.ColorMaterialProperty(
+              new Cesium.CallbackProperty((time, result) => {
+                const elapsedSeconds = Cesium.JulianDate.secondsDifference(
+                  time,
+                  this.viewer!.clock.startTime
+                );
+                const alpha = Math.max(
+                  0.35 - elapsedSeconds / animationDuration,
+                  0
+                );
+                return Cesium.Color.fromAlpha(color, alpha, result);
+              }, false)
+            );
+
+            setTimeout(() => {
+              sharedMaterial.color = new Cesium.ConstantProperty(color);
+            }, animationDuration * 1000);
+          } else {
+            sharedMaterial = new Cesium.ColorMaterialProperty(color);
+          }
 
           // Add each tile as a rectangle entity to the EntityCollection
           this.allTiles.forEach((tile) => {
@@ -1049,10 +1058,6 @@ export class TileManager extends YpCodeBase {
             this.viewer!.entities.add(entity);
             this.tileEntities.push(entity);
           });
-
-          setTimeout(() => {
-            sharedMaterial.color = new Cesium.ConstantProperty(color);
-          }, animationDuration * 1000);
         });
       });
       this.calculateTileCounts();

@@ -678,7 +678,6 @@ export class YpLandUseGame extends YpBaseElement {
     this.resetHelpPages();
     if (window.location.search.indexOf("skipToResults") > -1) {
       this.cancelFlyToPosition();
-      this.setCameraFromView(this.tileManager.showAllView);
     }
   }
 
