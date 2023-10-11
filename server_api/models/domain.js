@@ -120,6 +120,8 @@ module.exports = (sequelize, DataTypes) => {
           callbackDomainName = 'mineideer.'+domain.domain_name;
         } else if (domain.domain_name==='parliament.scot') {
           callbackDomainName = 'engage.'+domain.domain_name;
+        } else if (domain.domain_name==='engage-southampton.ac.uk') {
+          callbackDomainName = 'scca-online.'+domain.domain_name;
         } else if (domain.domain_name==='multicitychallenge.org' && process.env.US_CLUSTER !=null) {
           callbackDomainName = 'ideas.'+domain.domain_name;
         } else if (domain.domain_name==='multicitychallenge.org') {

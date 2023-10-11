@@ -32,6 +32,8 @@ var generateSitemap = async function (req, res) {
 
   if (domainName === "parliament.scot") {
     siteHostname = "https://engage.parliament.scot";
+  } else if (domainName === "engage-southampton.ac.uk") {
+    siteHostname = "https://scca-online.engage-southampton.ac.uk"
   }
 
   const redisKey = `cache:sitemap:v3:${siteHostname}-${domainId}`;
