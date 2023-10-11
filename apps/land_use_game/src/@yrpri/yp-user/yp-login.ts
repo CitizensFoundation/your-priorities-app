@@ -703,7 +703,7 @@ export class YpLogin extends YpBaseElement {
                 type="email"
                 .label="${this.t("user.email")}"
                 name="username"
-                pattern=".+@.+"
+                pattern="^.+@.+$"
                 minLength="5"
                 required
                 class="loginField"
