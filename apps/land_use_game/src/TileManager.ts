@@ -367,6 +367,8 @@ export class TileManager extends YpCodeBase {
     return new Promise<void>(async (resolve) => {
       this.clearresultsModels();
 
+      const deferredEntities: any[] = [];
+
       const tilePromises = Array.from(
         this.rectangleLandUseCounts.entries()
       ).map(async ([rectangleIndex, landUseCounts]) => {
@@ -432,7 +434,8 @@ export class TileManager extends YpCodeBase {
                 terrainHeight + height / 2
               }|${width}|${depth}|${height}|${alpha}`;
               if (this.resultsModelsUsed.get(modelIndex) !== true) {
-                const boxEntity = this.viewer!.entities.add({
+
+                const newEntity = {
                   position: Cesium.Ellipsoid.WGS84.cartographicToCartesian(
                     new Cesium.Cartographic(
                       centerPosition.longitude,
@@ -443,14 +446,11 @@ export class TileManager extends YpCodeBase {
                   box: {
                     dimensions: new Cesium.Cartesian3(width, depth, height),
                     heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
-                    material: this.getColorForLandUse(
-                      landUseType,
-                      alpha
-                    ) as any,
+                    material: this.getColorForLandUse(landUseType, alpha) as any,
                   },
-                });
+                };
 
-                this.resultsModels.push(boxEntity);
+                deferredEntities.push(newEntity);
                 this.resultsModelsUsed.set(modelIndex, true);
 
                 // Update the maximum height for the rectangle
@@ -522,7 +522,10 @@ export class TileManager extends YpCodeBase {
 
       await Promise.all(tilePromises);
       await Promise.all(topRectanglePromises);
-
+      deferredEntities.forEach((newEntity) => {
+        const addedEntity = this.viewer!.entities.add(newEntity);
+        this.resultsModels.push(addedEntity);
+      });
       resolve();
     });
   }
