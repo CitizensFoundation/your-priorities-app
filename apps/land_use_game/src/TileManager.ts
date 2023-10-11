@@ -286,6 +286,8 @@ export class TileManager extends YpCodeBase {
   }
 
   async updateCommentResults() {
+    const deferredCommentEntities: { entity: Entity; rectangleEntity: any; }[] = [];
+
     const commentPromises = Array.from(
       this.rectangleCommentsUseCounts.entries()
     ).map(async ([rectangleIndex, commentCount]) => {
@@ -347,20 +349,29 @@ export class TileManager extends YpCodeBase {
             : "https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/landuse_game/chatBubble5.glb";
 
         if (rectangleEntity.pointId || (rectangleEntity.pointIds && rectangleEntity.pointIds.length > 0)) {
-          rectangleEntity.commentEntity = this.createModel(
+          const newCommentEntity = this.createModel(
             modelUrl,
             position,
             chatBubbleHeight,
             {
               rectangleIndex: rectangleEntity.rectangleIndex!,
-            }
+            },
+            true
           );
+
+          deferredCommentEntities.push({ entity: newCommentEntity, rectangleEntity: rectangleEntity });
         }
       }
     });
 
     // Wait for all computations to finish
     await Promise.all(commentPromises);
+
+    deferredCommentEntities.forEach(({ entity, rectangleEntity }) => {
+      const addedEntity = this.viewer!.entities.add(entity);
+      rectangleEntity.commentEntity = addedEntity;
+      this.resultsModels.push(addedEntity); // Assuming you want to keep track of these as well
+    });
   }
 
   async updateTileResults() {
@@ -1070,9 +1081,10 @@ export class TileManager extends YpCodeBase {
     url: string,
     position: PositionProperty,
     scale = 1.0,
-    properties: any = undefined
+    properties: any = undefined,
+    deferAddToViewer: boolean = false
   ) {
-    const entity = this.viewer!.entities.add({
+    const entity = new Cesium.Entity({
       name: url,
       position: position,
       properties: properties,
@@ -1081,8 +1093,14 @@ export class TileManager extends YpCodeBase {
         scale: scale,
       },
     });
+
+    if (!deferAddToViewer) {
+      this.viewer!.entities.add(entity);
+    }
+
     return entity;
   }
+
 
   addCommentToRectangle(rectangleId: string, pointId: number) {
     // Find the rectangle entity
