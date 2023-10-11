@@ -211,7 +211,7 @@ export class TileManager extends YpCodeBase {
       const dx = Math.abs(currentRectangle.east - otherRectangle.east);
       const dy = Math.abs(currentRectangle.north - otherRectangle.north);
       // Check if the rectangle is less than 2 rectangles away in either dimension
-      if (dx < 2 * currentRectangle.width || dy < 2 * currentRectangle.height) {
+      if (dx < 1 * currentRectangle.width || dy < 1 * currentRectangle.height) {
         return false;
       }
     }
