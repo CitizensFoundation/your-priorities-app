@@ -380,9 +380,7 @@ export class TileManager extends YpCodeBase {
 
       const deferredEntities: any[] = [];
 
-      const tilePromises = Array.from(
-        this.rectangleLandUseCounts.entries()
-      ).map(async ([rectangleIndex, landUseCounts]) => {
+      const processTile = async ([rectangleIndex, landUseCounts]: [string, Map<string, number>]) => {
         // Get the rectangle from the rectangleIndex
         const rectangleEntity = this.tileRectangleIndex.get(rectangleIndex);
 
@@ -483,10 +481,9 @@ export class TileManager extends YpCodeBase {
             //console.error("No rectangle entity found for index: " + rectangleIndex);
           }
         }
-      });
+      }
 
-      const topRectanglePromises = this.getTopRectangles().map(
-        async ({ entity: rectangleEntity, count }) => {
+      const processTopRectangle = async ({ entity: rectangleEntity, count }: { entity: any, count: number }) => {
           const rectangle = rectangleEntity.rectangle!.coordinates!.getValue(
             Cesium.JulianDate.now()
           );
@@ -495,7 +492,9 @@ export class TileManager extends YpCodeBase {
 
           const landUseType = rectangleEntity.landUseType;
           if (landUseType) {
+            //@ts-ignore
             const modelUrl = landUseModelPaths[landUseType];
+            //@ts-ignore
             const modelScale = landUseModelScales[landUseType];
 
             // Use count for calculating the height
@@ -530,16 +529,33 @@ export class TileManager extends YpCodeBase {
 
             deferredEntities.push(entity);
           }
-        }
-      );
+      }
 
-      await Promise.all(tilePromises);
-      await Promise.all(topRectanglePromises);
-      deferredEntities.forEach(async (newEntity) => {
-        const addedEntity = this.viewer!.entities.add(newEntity);
-        this.resultsModels.push(addedEntity);
-      });
-      resolve();
+      const tiles = Array.from(this.rectangleLandUseCounts.entries());
+      const topRectangles = this.getTopRectangles();
+      let index = 0;
+
+      const processNextBatch = () => {
+        if (index < tiles.length) {
+          processTile(tiles[index]);
+          index++;
+        } else if (index < tiles.length + topRectangles.length) {
+          processTopRectangle(topRectangles[index - tiles.length]);
+          index++;
+        } else {
+          // All tiles and rectangles have been processed
+          deferredEntities.forEach((newEntity) => {
+            const addedEntity = this.viewer!.entities.add(newEntity);
+            this.resultsModels.push(addedEntity);
+          });
+          resolve();
+          return;
+        }
+
+        setTimeout(processNextBatch, 0);
+      };
+
+      processNextBatch();
     });
   }
 

@@ -95,7 +95,7 @@ export class YpAnalytics extends YpCodeBase {
         ga(sendName, b, c, d, e, f);
       }
     } else {
-      console.warn("Google analytics message not sent for a:"+a+" b:"+b+" c:"+c+" d:"+d+" e:"+e+" f:"+f);
+      //console.warn("Google analytics message not sent for a:"+a+" b:"+b+" c:"+c+" d:"+d+" e:"+e+" f:"+f);
     }
 
     if (a!='sendOnlyCommunity') {
