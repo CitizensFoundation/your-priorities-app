@@ -508,21 +508,23 @@ export class TileManager extends YpCodeBase {
               );
             }
 
-            // Create model instance
-            const modelInstance = this.createModel(
-              modelUrl,
-              positionProperty,
-              modelScale
-            );
+            const entity = {
+              name: modelUrl,
+              position: positionProperty,
+              model: {
+                uri: modelUrl,
+                scale: modelScale,
+              },
+            }
 
-            this.resultsModels.push(modelInstance);
+            deferredEntities.push(entity);
           }
         }
       );
 
       await Promise.all(tilePromises);
       await Promise.all(topRectanglePromises);
-      deferredEntities.forEach((newEntity) => {
+      deferredEntities.forEach(async (newEntity) => {
         const addedEntity = this.viewer!.entities.add(newEntity);
         this.resultsModels.push(addedEntity);
       });
