@@ -1,10 +1,10 @@
 # License
 
+Copyright (c) 2008-2023 Robert Bjarnason & Citizens Foundation Iceland and. All rights reserved.
+
 Your Priorities - Citizens participation application
 
 Everything in this repo is under AGPL-3.0 license unless otherwise specified.
-
-Copyright (c) 2008-2023 Citizens Foundation Iceland and Robert Bjarnason. All rights reserved.
 
 Developed in 2008-2023 by
 Robert Bjarnason, robert@citizens.is
