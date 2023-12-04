@@ -286,7 +286,8 @@ export class TileManager extends YpCodeBase {
   }
 
   async updateCommentResults() {
-    const deferredCommentEntities: { entity: Entity; rectangleEntity: any; }[] = [];
+    const deferredCommentEntities: { entity: Entity; rectangleEntity: any }[] =
+      [];
 
     const commentPromises = Array.from(
       this.rectangleCommentsUseCounts.entries()
@@ -348,7 +349,10 @@ export class TileManager extends YpCodeBase {
             ? "https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/landuse_game/chatBubble5.glb"
             : "https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/landuse_game/chatBubble5.glb";
 
-        if (rectangleEntity.pointId || (rectangleEntity.pointIds && rectangleEntity.pointIds.length > 0)) {
+        if (
+          rectangleEntity.pointId ||
+          (rectangleEntity.pointIds && rectangleEntity.pointIds.length > 0)
+        ) {
           const newCommentEntity = this.createModel(
             modelUrl,
             position,
@@ -359,7 +363,10 @@ export class TileManager extends YpCodeBase {
             true
           );
 
-          deferredCommentEntities.push({ entity: newCommentEntity, rectangleEntity: rectangleEntity });
+          deferredCommentEntities.push({
+            entity: newCommentEntity,
+            rectangleEntity: rectangleEntity,
+          });
         }
       }
     });
@@ -380,7 +387,10 @@ export class TileManager extends YpCodeBase {
 
       const deferredEntities: any[] = [];
 
-      const processTile = async ([rectangleIndex, landUseCounts]: [string, Map<string, number>]) => {
+      const processTile = async ([rectangleIndex, landUseCounts]: [
+        string,
+        Map<string, number>
+      ]) => {
         // Get the rectangle from the rectangleIndex
         const rectangleEntity = this.tileRectangleIndex.get(rectangleIndex);
 
@@ -443,7 +453,6 @@ export class TileManager extends YpCodeBase {
                 terrainHeight + height / 2
               }|${width}|${depth}|${height}|${alpha}`;
               if (this.resultsModelsUsed.get(modelIndex) !== true) {
-
                 const newEntity = {
                   position: Cesium.Ellipsoid.WGS84.cartographicToCartesian(
                     new Cesium.Cartographic(
@@ -455,7 +464,10 @@ export class TileManager extends YpCodeBase {
                   box: {
                     dimensions: new Cesium.Cartesian3(width, depth, height),
                     heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
-                    material: this.getColorForLandUse(landUseType, alpha) as any,
+                    material: this.getColorForLandUse(
+                      landUseType,
+                      alpha
+                    ) as any,
                   },
                 };
 
@@ -481,55 +493,61 @@ export class TileManager extends YpCodeBase {
             //console.error("No rectangle entity found for index: " + rectangleIndex);
           }
         }
-      }
+      };
 
-      const processTopRectangle = async ({ entity: rectangleEntity, count }: { entity: any, count: number }) => {
-          const rectangle = rectangleEntity.rectangle!.coordinates!.getValue(
-            Cesium.JulianDate.now()
+      const processTopRectangle = async ({
+        entity: rectangleEntity,
+        count,
+      }: {
+        entity: any;
+        count: number;
+      }) => {
+        const rectangle = rectangleEntity.rectangle!.coordinates!.getValue(
+          Cesium.JulianDate.now()
+        );
+        const centerPosition = Cesium.Rectangle.center(rectangle);
+        const terrainHeight = await this.getTerrainHeight(centerPosition);
+
+        const landUseType = rectangleEntity.landUseType;
+        if (landUseType) {
+          //@ts-ignore
+          const modelUrl = landUseModelPaths[landUseType];
+          //@ts-ignore
+          const modelScale = landUseModelScales[landUseType];
+
+          // Use count for calculating the height
+          const modelHeight = 3000 * count; // Adjust the height value based on count
+          const positionProperty = new Cesium.ConstantPositionProperty(
+            Cesium.Cartesian3.fromDegrees(
+              Cesium.Math.toDegrees(centerPosition.longitude),
+              Cesium.Math.toDegrees(centerPosition.latitude),
+              terrainHeight + modelHeight
+            )
           );
-          const centerPosition = Cesium.Rectangle.center(rectangle);
-          const terrainHeight = await this.getTerrainHeight(centerPosition);
 
-          const landUseType = rectangleEntity.landUseType;
-          if (landUseType) {
-            //@ts-ignore
-            const modelUrl = landUseModelPaths[landUseType];
-            //@ts-ignore
-            const modelScale = landUseModelScales[landUseType];
-
-            // Use count for calculating the height
-            const modelHeight = 3000 * count; // Adjust the height value based on count
-            const positionProperty = new Cesium.ConstantPositionProperty(
-              Cesium.Cartesian3.fromDegrees(
-                Cesium.Math.toDegrees(centerPosition.longitude),
-                Cesium.Math.toDegrees(centerPosition.latitude),
-                terrainHeight + modelHeight
-              )
+          // Update the maximum height for the rectangle
+          const rectangleIndex = rectangleEntity.rectangleIndex!;
+          const currentMaxHeight =
+            this.rectangleMaxHeights.get(rectangleIndex) || 0;
+          if (terrainHeight + modelHeight > currentMaxHeight) {
+            this.rectangleMaxHeights.set(
+              rectangleIndex,
+              terrainHeight + modelHeight
             );
-
-            // Update the maximum height for the rectangle
-            const rectangleIndex = rectangleEntity.rectangleIndex!;
-            const currentMaxHeight =
-              this.rectangleMaxHeights.get(rectangleIndex) || 0;
-            if (terrainHeight + modelHeight > currentMaxHeight) {
-              this.rectangleMaxHeights.set(
-                rectangleIndex,
-                terrainHeight + modelHeight
-              );
-            }
-
-            const entity = {
-              name: modelUrl,
-              position: positionProperty,
-              model: {
-                uri: modelUrl,
-                scale: modelScale,
-              },
-            }
-
-            deferredEntities.push(entity);
           }
-      }
+
+          const entity = {
+            name: modelUrl,
+            position: positionProperty,
+            model: {
+              uri: modelUrl,
+              scale: modelScale,
+            },
+          };
+
+          deferredEntities.push(entity);
+        }
+      };
 
       const tiles = Array.from(this.rectangleLandUseCounts.entries());
       const topRectangles = this.getTopRectangles();
@@ -808,93 +826,176 @@ export class TileManager extends YpCodeBase {
           coordinates: [
             [
               [
-                [-17.8825, 66.1566],
-                [-17.8825, 66.1724],
-                [-17.8342, 66.1724],
-                [-17.8342, 66.1566],
-                [-17.8825, 66.1566],
+                [-17.666232616999931, 66.012455156000044],
+                [-17.665386166999948, 66.012455156000044],
+                [-17.665386166999948, 66.01279297800005],
+                [-17.666232616999931, 66.01279297800005],
+                [-17.666232616999931, 66.012455156000044],
               ],
             ],
             [
               [
-                [-18.0101, 66.1544],
-                [-17.9371, 66.1481],
-                [-17.8994, 66.1286],
-                [-17.8613, 66.106],
-                [-17.778, 66.0832],
-                [-17.7049, 66.0484],
-                [-17.7015, 66.0443],
-                [-17.6192, 65.9867],
-                [-17.5157, 65.9841],
-                [-17.4548, 65.9877],
-                [-17.4476, 65.957],
-                [-17.3803, 65.9425],
-                [-17.3563, 65.8891],
-                [-17.3015, 65.8679],
-                [-17.1269, 65.8754],
-                [-17.1024, 65.9375],
-                [-17.0265, 65.9598],
-                [-16.9721, 65.9557],
-                [-16.7623, 65.9661],
-                [-16.7804, 65.8677],
-                [-16.7951, 65.7979],
-                [-16.9496, 65.7934],
-                [-16.9996, 65.7906],
-                [-17.0805, 65.7858],
-                [-17.0675, 65.6512],
-                [-17.0873, 65.6491],
-                [-17.1437, 65.6364],
-                [-17.2234, 65.625],
-                [-17.2738, 65.5638],
-                [-17.3028, 65.561],
-                [-17.3139, 65.5698],
-                [-17.3397, 65.5693],
-                [-17.2405, 65.5235],
-                [-17.2278, 65.4857],
-                [-17.2082, 65.351],
-                [-17.2177, 65.2497],
-                [-17.2543, 64.8927],
-                [-17.2653, 64.7815],
-                [-17.2684, 64.7497],
-                [-17.277, 64.4093],
-                [-17.5274, 64.6408],
-                [-17.6036, 64.6482],
-                [-17.6334, 64.651],
-                [-17.8737, 64.6743],
-                [-17.9659, 64.6915],
-                [-18.029, 64.7141],
-                [-18.1022, 64.7488],
-                [-18.1238, 64.7694],
-                [-18.1822, 64.7871],
-                [-18.2639, 64.7774],
-                [-18.2617, 64.8056],
-                [-18.2147, 64.8494],
-                [-18.1809, 64.9094],
-                [-18.1108, 64.9996],
-                [-17.9996, 65.1551],
-                [-17.9318, 65.2497],
-                [-17.9249, 65.3632],
-                [-17.9141, 65.4178],
-                [-17.8443, 65.4421],
-                [-17.844, 65.4894],
-                [-17.9037, 65.5976],
-                [-17.9385, 65.6508],
-                [-17.9705, 65.6726],
-                [-17.9868, 65.7346],
-                [-17.9984, 65.8097],
-                [-17.9255, 65.8656],
-                [-17.9256, 65.8932],
-                [-17.943, 65.9315],
-                [-17.9739, 65.971],
-                [-17.9643, 66.0496],
-                [-18.022, 66.0848],
-                [-18.0208, 66.0868],
-                [-18.0223, 66.0934],
-                [-18.0213, 66.0938],
-                [-18.017, 66.1296],
-                [-18.0229, 66.13],
-                [-18.0211, 66.1544],
-                [-18.0101, 66.1544],
+                [-17.667046281999948, 66.030380575000024],
+                [-17.666194826999966, 66.030380575000024],
+                [-17.666194826999966, 66.030779086000052],
+                [-17.667046281999948, 66.030779086000052],
+                [-17.667046281999948, 66.030380575000024],
+              ],
+            ],
+            [
+              [
+                [-17.671410863999942, 66.032951541000045],
+                [-17.670497810999962, 66.032951541000045],
+                [-17.670497810999962, 66.03317190000007],
+                [-17.671410863999942, 66.03317190000007],
+                [-17.671410863999942, 66.032951541000045],
+              ],
+            ],
+            [
+              [
+                [-17.883615133999971, 66.156561702000019],
+                [-17.833577733999959, 66.156561702000019],
+                [-17.833577733999959, 66.17255351700004],
+                [-17.883615133999971, 66.17255351700004],
+                [-17.883615133999971, 66.156561702000019],
+              ],
+            ],
+            [
+              [
+                [-16.383690893244303, 65.79744374506906],
+                [-16.378858941637471, 65.7282018201509],
+                [-16.341713445241744, 65.684035943143883],
+                [-16.260004733617397, 65.659799950211138],
+                [-16.238195133304032, 65.647880768282789],
+                [-16.178749696856755, 65.601056060041685],
+                [-16.120077970383591, 65.566094476809155],
+                [-16.128840184041792, 65.48927485076922],
+                [-16.142534805759222, 65.408369623189401],
+                [-16.101351811580287, 65.392435058263729],
+                [-16.021488862206755, 65.343040305547788],
+                [-16.007755343710137, 65.328998600035504],
+                [-16.022023058783535, 65.315549198932089],
+                [-16.103083827097578, 65.260808398832353],
+                [-16.136522151438214, 65.249126006622305],
+                [-16.183569552036889, 65.213064023517902],
+                [-16.211699436559858, 65.169129861855424],
+                [-16.209783728583037, 65.088352275437614],
+                [-16.262066671346812, 65.013672078110289],
+                [-16.323207535694507, 65.009250751236948],
+                [-16.34404627337722, 65.003949459472594],
+                [-16.423217403285545, 64.945206178724789],
+                [-16.502295555859742, 64.93364155199157],
+                [-16.526936110620053, 64.929258048074416],
+                [-16.582251710505091, 64.920260586994573],
+                [-16.638405175754599, 64.848886415863205],
+                [-16.66216505143024, 64.834474922044805],
+                [-16.682655581027575, 64.767816539586363],
+                [-16.709342721409598, 64.688019825023375],
+                [-16.738038387396905, 64.601689186320186],
+                [-16.744674396725429, 64.581645544382511],
+                [-16.764965141364769, 64.520172538540237],
+                [-16.797100420179447, 64.42223776332952],
+                [-16.864854042412613, 64.420504045988991],
+                [-16.916256827693186, 64.41916764522982],
+                [-16.999517903320115, 64.416964375134626],
+                [-17.078850449878871, 64.414820639768138],
+                [-17.150463345818988, 64.412848264128783],
+                [-17.234179967722984, 64.410497692598824],
+                [-17.305788604534143, 64.436151257079345],
+                [-17.322241385109063, 64.451459520012733],
+                [-17.38327820096163, 64.508084547025305],
+                [-17.407117597920546, 64.53013013406256],
+                [-17.465822029065009, 64.584248972546789],
+                [-17.503151655275538, 64.618538692142465],
+                [-17.541911527895536, 64.642222105882809],
+                [-17.623405579085386, 64.650167088207112],
+                [-17.707637547014375, 64.658326837976688],
+                [-17.801377586908647, 64.667345414930196],
+                [-17.867073684277504, 64.673626896621201],
+                [-17.94400941933543, 64.68743505136905],
+                [-17.956019110835204, 64.689680463874197],
+                [-18.028623724193835, 64.713835769627664],
+                [-18.101868572457708, 64.747850343369848],
+                [-18.123854120015213, 64.769392097070849],
+                [-18.182169363366658, 64.787061719781093],
+                [-18.262825247111213, 64.777453221025539],
+                [-18.26167027011957, 64.805628459470086],
+                [-18.214738156712261, 64.849416732152406],
+                [-18.180928139949462, 64.909366481675406],
+                [-18.158694384942915, 64.932388618979459],
+                [-18.103268127368608, 65.010116396793407],
+                [-18.10178052505978, 65.012208478464899],
+                [-18.039330917198299, 65.099725456043913],
+                [-18.002968274570662, 65.150408150041855],
+                [-17.977876456704283, 65.185479437801689],
+                [-17.940943267675781, 65.236975349345528],
+                [-17.931756696364001, 65.249751684929493],
+                [-17.923337106807594, 65.343704896506608],
+                [-17.914088328413015, 65.417807239511816],
+                [-17.844351302810541, 65.442119016916351],
+                [-17.84405182514519, 65.489383122514937],
+                [-17.863583861231067, 65.561857188041969],
+                [-17.876023526931419, 65.572950395248483],
+                [-17.936233708988706, 65.649304103065091],
+                [-17.941996578219005, 65.65320434590808],
+                [-17.986793384116535, 65.734422947784552],
+                [-17.998271646881619, 65.809529964414594],
+                [-17.940748909505029, 65.860412940512049],
+                [-17.925650309621805, 65.893165892713682],
+                [-17.942305532831082, 65.931535164366551],
+                [-17.97584823036556, 65.969456643824955],
+                [-17.964330382725731, 66.049580971337363],
+                [-18.021901354723298, 66.084447524565235],
+                [-18.02143607525198, 66.085753991592412],
+                [-18.021836016830267, 66.092842410332423],
+                [-18.021268945887524, 66.093783259000531],
+                [-18.016653050545926, 66.129328341932293],
+                [-18.02290199402734, 66.130047739813335],
+                [-18.021749695999976, 66.154311298000039],
+                [-17.939393762999941, 66.147931043000028],
+                [-17.899403470999975, 66.129216794000044],
+                [-17.859835159999932, 66.106078632000049],
+                [-17.781578581999948, 66.084633436000033],
+                [-17.704609177999941, 66.048564882000051],
+                [-17.701451116999984, 66.044250897000026],
+                [-17.621199783999941, 65.986917658000039],
+                [-17.538812977999953, 65.984126704000047],
+                [-17.461307676999976, 65.987119163000045],
+                [-17.447594589141378, 65.957039666480512],
+                [-17.381646123906023, 65.945132926486906],
+                [-17.356350820747878, 65.889059413018174],
+                [-17.301828258018357, 65.867819856970357],
+                [-17.219305203843817, 65.871956449644983],
+                [-17.140938514393099, 65.874857578035503],
+                [-17.120894212663927, 65.890559317274267],
+                [-17.060919259493573, 65.949699049518088],
+                [-16.970502394999475, 65.958670947243093],
+                [-16.894099841591469, 65.960350929983576],
+                [-16.764889803730341, 65.964781783897749],
+                [-16.778575125155839, 65.872219414389178],
+                [-16.728726037455093, 65.812603363955361],
+                [-16.620112356120448, 65.802213332102667],
+                [-16.384484419269828, 65.814358359413973],
+                [-16.388871180835743, 65.809186982683968],
+                [-16.383690893244303, 65.79744374506906],
+              ],
+            ],
+            [
+              [
+                [-17.673890009999976, 66.035073165000028],
+                [-17.672813759999936, 66.035073165000028],
+                [-17.672813759999936, 66.035867280000033],
+                [-17.673890009999976, 66.035867280000033],
+                [-17.673890009999976, 66.035073165000028],
+              ],
+            ],
+            [
+              [
+                [-17.665958126999957, 66.040834365000066],
+                [-17.665072553999948, 66.040834365000066],
+                [-17.665072553999948, 66.041184696000059],
+                [-17.665958126999957, 66.041184696000059],
+                [-17.665958126999957, 66.040834365000066],
               ],
             ],
           ],
@@ -1071,7 +1172,6 @@ export class TileManager extends YpCodeBase {
     }
   }
 
-
   createModel(
     url: string,
     position: PositionProperty,
@@ -1095,7 +1195,6 @@ export class TileManager extends YpCodeBase {
 
     return entity;
   }
-
 
   addCommentToRectangle(rectangleId: string, pointId: number) {
     // Find the rectangle entity
@@ -1208,7 +1307,6 @@ export class TileManager extends YpCodeBase {
       if (targetEntity.pointId === pointId) {
         targetEntity.pointId = undefined;
       }
-
     }
   }
 
@@ -1302,9 +1400,9 @@ export class TileManager extends YpCodeBase {
         rectangleEntity.rectangle.material = new Cesium.ColorMaterialProperty(
           Cesium.Color.WHITE.withAlpha(0.0)
         );
-        window.appGlobals.activity('landUseClick', "removeLandUse");
+        window.appGlobals.activity("landUseClick", "removeLandUse");
       } else {
-        window.appGlobals.activity('landUseClick', "setLandUse");
+        window.appGlobals.activity("landUseClick", "setLandUse");
         const newColor = this.getColorForLandUse(
           this.selectedLandUse
         ).withAlpha(0.32);
@@ -1523,7 +1621,7 @@ export class TileManager extends YpCodeBase {
       const index =
         rectangleEntity.properties.getValue("rectangleIndex").rectangleIndex;
       const entity = this.tileRectangleIndex.get(index);
-      window.appGlobals.activity('landUseClick', "openComment");
+      window.appGlobals.activity("landUseClick", "openComment");
       this.fire("open-comments", { entity }, document);
     }
   }
@@ -1546,7 +1644,9 @@ export class TileManager extends YpCodeBase {
     if (rectangleEntityCommentContainer) {
       const rectangleCommentEntity = rectangleEntityCommentContainer.id;
       const index =
-      rectangleCommentEntity.properties.getValue("rectangleIndex").rectangleIndex;
+        rectangleCommentEntity.properties.getValue(
+          "rectangleIndex"
+        ).rectangleIndex;
       const entity = this.tileRectangleIndex.get(index);
       this.fire("edit-comment", { entity }, document);
       return;
