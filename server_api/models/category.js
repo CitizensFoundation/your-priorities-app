@@ -27,6 +27,9 @@ module.exports = (sequelize, DataTypes) => {
         fields: ['id', 'deleted']
       },
       {
+        fields: ['name', 'deleted']
+      },
+      {
         name: 'categories_idx_deleted_group_id',
         fields: ['deleted','group_id']
       },
@@ -35,10 +38,6 @@ module.exports = (sequelize, DataTypes) => {
         fields: ['deleted']
       }
     ],
-
-    // Add following indexes manually for high throughput sites
-    // CREATE INDEX categoryiconimage_idx_category_id ON "CategoryIconImage" (category_id);
-    // CREATE INDEX communityheaderimage_idx_community_id ON "CommunityHeaderImage" (community_id);
 
     timestamps: true,
   });

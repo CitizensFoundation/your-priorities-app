@@ -256,6 +256,8 @@ var updateGroupConfigParameters = function (req, group) {
   group.set('configuration.hideNewPointOnNewIdea', truthValueFromBody(req.body.hideNewPointOnNewIdea));
   group.set('configuration.maxDaysBackForRecommendations', (req.body.maxDaysBackForRecommendations && req.body.maxDaysBackForRecommendations!="") ? req.body.maxDaysBackForRecommendations : null);
 
+  group.set('configuration.groupType', (req.body.groupType && req.body.groupType!="") ? req.body.groupType : null);
+
   group.set('configuration.externalId', (req.body.externalId && req.body.externalId!="") ? req.body.externalId : null);
 
   group.set('configuration.usePostListFormatOnDesktop', truthValueFromBody(req.body.usePostListFormatOnDesktop));
@@ -264,6 +266,8 @@ var updateGroupConfigParameters = function (req, group) {
   group.set('configuration.usePostTags', truthValueFromBody(req.body.usePostTags));
   group.set('configuration.closeNewsfeedSubmissions', truthValueFromBody(req.body.closeNewsfeedSubmissions));
   group.set('configuration.hideNewsfeeds', truthValueFromBody(req.body.hideNewsfeeds));
+
+  group.set('configuration.allowGenerativeImages', truthValueFromBody(req.body.allowGenerativeImages));
 
   group.set('configuration.askUserIfNameShouldBeDisplayed', truthValueFromBody(req.body.askUserIfNameShouldBeDisplayed));
 
@@ -488,10 +492,8 @@ const getGroupFolder = function(req, done) {
     },
     function (seriesCallback) {
       const redisKey = "cache:groups_folder:"+groupFolder.id+":"+models.Group.ACCESS_SECRET;
-      req.redisClient.get(redisKey, (error, groups) => {
-        if (error) {
-          seriesCallback(error);
-        } else if (groups) {
+      req.redisClient.get(redisKey).then((groups) => {
+        if (groups) {
           groupFolder.dataValues.Groups = JSON.parse(groups);
           seriesCallback();
         } else {
@@ -516,12 +518,14 @@ const getGroupFolder = function(req, done) {
             include: models.Group.masterGroupIncludes(models)
           }).then(function (groups) {
             groupFolder.dataValues.Groups = groups;
-            req.redisClient.setex(redisKey, process.env.GROUPS_CACHE_TTL ? parseInt(process.env.GROUPS_CACHE_TTL) : 3, JSON.stringify(groups));
+            req.redisClient.setEx(redisKey, process.env.GROUPS_CACHE_TTL ? parseInt(process.env.GROUPS_CACHE_TTL) : 3, JSON.stringify(groups));
             seriesCallback();
           }).catch(error => {
             seriesCallback(error);
           });
         }
+      }).catch(error => {
+        seriesCallback(error);
       });
     },
     function (seriesCallback) {
@@ -965,15 +969,8 @@ router.post('/:groupId/:email/add_promoter', auth.can('edit group'), function(re
 
 router.get('/:groupId/pages', auth.can('view group'), function(req, res) {
   const redisKey = "cache:groupPages:"+req.params.groupId;
-  req.redisClient.get(redisKey, (error, pages) => {
-    if (error) {
-      log.error('Could not get pages for group from redis', {
-        err: error,
-        context: 'pages',
-        userId: req.user ? req.user.id : null
-      });
-      res.sendStatus(500);
-    } else if (pages) {
+  req.redisClient.get(redisKey).then(pages => {
+    if (pages) {
       res.send(JSON.parse(pages));
     } else {
       models.Group.findOne({
@@ -1006,7 +1003,7 @@ router.get('/:groupId/pages', auth.can('view group'), function(req, res) {
             res.sendStatus(500);
           } else {
             log.info('Got Pages', { userId: req.user ? req.user.id : null });
-            req.redisClient.setex(redisKey, process.env.PAGES_CACHE_TTL ? parseInt(process.env.PAGES_CACHE_TTL) : 3, JSON.stringify(pages));
+            req.redisClient.setEx(redisKey, process.env.PAGES_CACHE_TTL ? parseInt(process.env.PAGES_CACHE_TTL) : 3, JSON.stringify(pages));
             res.send(pages);
           }
         });
@@ -1020,6 +1017,13 @@ router.get('/:groupId/pages', auth.can('view group'), function(req, res) {
         res.sendStatus(500);
       });
     }
+  }).catch(error => {
+    log.error('Could not get pages for group from redis', {
+      err: error,
+      context: 'pages',
+      userId: req.user ? req.user.id : null
+    });
+    res.sendStatus(500);
   });
 });
 
@@ -1072,6 +1076,40 @@ router.get('/:groupId/:jobId/report_creation_progress', auth.can('edit group'), 
     res.send(job);
   }).catch( error => {
     log.error('Could not get backgroundJob', { err: error, context: 'start_report_creation', user: toJson(req.user.simple()) });
+    res.sendStatus(500);
+  });
+});
+
+router.post('/:groupId/:start_generating_ai_image', auth.can('edit group'), function(req, res) {
+  models.AcBackgroundJob.createJob({}, {}, (error, jobId) => {
+    if (error) {
+      log.error('Could not create backgroundJob', { err: error, context: 'start_generating_ai_image', user: toJson(req.user.simple()) });
+      res.sendStatus(500);
+    } else {
+      queue.add('process-generative-ai', {
+        type: "collection-image",
+        userId: req.user.id,
+        jobId: jobId,
+        collectionId: req.params.groupId,
+        collectionType: "group",
+        prompt: req.body.prompt
+      }, 'critical');
+
+      res.send({ jobId });
+    }
+  });
+});
+
+router.get('/:groupId/:jobId/poll_for_generating_ai_image', auth.can('edit group'), function(req, res) {
+  models.AcBackgroundJob.findOne({
+    where: {
+      id: req.params.jobId
+    },
+    attributes: ['id','progress','error','data']
+  }).then( job => {
+    res.send(job);
+  }).catch( error => {
+    log.error('Could not get backgroundJob', { err: error, context: 'poll_for_generating_ai_image', user: toJson(req.user.simple()) });
     res.sendStatus(500);
   });
 });
@@ -1384,6 +1422,8 @@ router.post('/:communityId', auth.can('create group'), function(req, res) {
   if (req.body.is_group_folder && req.body.is_group_folder==="true") {
     group.is_group_folder = true;
   }
+
+  group.access = models.Group.convertAccessFromRadioButtons(req.body);
 
   updateGroupConfigParameters(req, group);
 
@@ -1853,10 +1893,6 @@ var getPostsWithAllFromIds = function (postsWithIds, postOrder, done) {
           'counter_endorsements_down','group_id','language','counter_points','counter_flags','location','created_at','category_id'],
         order: [
           models.sequelize.literal(postOrder),
-          [ { model: models.Image, as: 'PostHeaderImages' } ,'updated_at', 'asc' ],
-          [ { model: models.Category }, { model: models.Image, as: 'CategoryIconImages' } ,'updated_at', 'asc' ],
-          [ { model: models.Group }, { model: models.Category }, 'name', 'asc' ],
-          [ { model: models.Audio, as: "PostAudios" }, 'updated_at', 'desc' ]
         ],
         include: [
           {
@@ -1914,6 +1950,21 @@ var getPostsWithAllFromIds = function (postsWithIds, postOrder, done) {
         ]
       }).then(function(postsIn) {
         posts = postsIn;
+        log.info("FINISHED POSTS A")
+        posts.forEach(post => {
+          if (post.PostHeaderImages) {
+            post.PostHeaderImages = _.orderBy(post.PostHeaderImages, ['updated_at'], ['asc']);
+          }
+          if (post.Category && post.Category.CategoryIconImages) {
+            post.Category.CategoryIconImages = _.orderBy(post.Category.CategoryIconImages, ['updated_at'], ['asc']);
+          }
+          if (post.PostAudios) {
+            post.PostAudios = _.orderBy(post.PostAudios, ['updated_at'], ['desc']);
+          }
+          if (post.Group && post.Group.Categories) {
+            post.Group.Categories = _.orderBy(post.Group.Categories, ['name'], ['asc']);
+          }
+        });
         parallelCallback();
       }).catch(function (error) {
         parallelCallback(error);
@@ -1921,6 +1972,7 @@ var getPostsWithAllFromIds = function (postsWithIds, postOrder, done) {
     },
     parallelCallback => {
       models.Post.getVideosForPosts(collectedIds, (error, videosIn) => {
+        log.info("GOT VIDEOS 1");
         if (error) {
           parallelCallback(error);
         } else {
@@ -1934,10 +1986,12 @@ var getPostsWithAllFromIds = function (postsWithIds, postOrder, done) {
       done(error);
     } else {
       if (videos && videos.length>0) {
+        log.info("GOT VIDEOS 2")
         models.Post.addVideosToAllPosts(posts, videos);
       } else if (!videos) {
         log.error("No videos for getVideosForPosts");
       }
+      log.info("FINISHED POSTS B")
       done(null, posts);
     }
   })
@@ -1945,10 +1999,8 @@ var getPostsWithAllFromIds = function (postsWithIds, postOrder, done) {
 
 router.get('/:id/posts/:filter/:categoryId/:status?', auth.can('view group'), function(req, res) {
   const redisKey = `cache:posts:${req.params.id}:${req.params.filter}:${req.params.categoryId}:${req.params.status}:${req.query.offset}:${req.query.randomSeed}`;
-  req.redisClient.get(redisKey, (error, postsInfo) => {
-    if (error) {
-      sendGroupOrError(res, null, 'getPostsFromGroup', req.user, error);
-    } else if (postsInfo) {
+  req.redisClient.get(redisKey).then((postsInfo) => {
+    if (postsInfo) {
       res.send(JSON.parse(postsInfo));
     } else {
       models.Group.findOne({
@@ -2048,6 +2100,7 @@ router.get('/:id/posts/:filter/:categoryId/:status?', auth.can('view group'), fu
             limit: limit,
             offset: offset
           }).then(function(postResults) {
+            log.info("Posts 2")
             const posts = postResults.rows;
             var totalPostsCount = postResults.count;
             var postRows = posts;
@@ -2086,8 +2139,10 @@ router.get('/:id/posts/:filter/:categoryId/:status?', auth.can('view group'), fu
 
               totalPostsCount = postResults.rows.length;
             }
+            log.info("Posts 3")
 
             getPostsWithAllFromIds(postRows, postOrder, function (error, finalRows) {
+              log.info("Posts 4")
               if (error) {
                 log.error("Error getting group", { err: error });
                 res.sendStatus(500);
@@ -2101,6 +2156,7 @@ router.get('/:id/posts/:filter/:categoryId/:status?', auth.can('view group'), fu
                 }
 
                 models.Post.setOrganizationUsersForPosts(finalRows, (error) => {
+                  log.info("Posts 2")
                   if (error) {
                     log.error("Error getting group", { err: error });
                     res.sendStatus(500);
@@ -2109,7 +2165,7 @@ router.get('/:id/posts/:filter/:categoryId/:status?', auth.can('view group'), fu
                       posts: finalRows,
                       totalPostsCount: totalPostsCount
                     };
-                    req.redisClient.setex(redisKey, process.env.POSTS_CACHE_TTL ? parseInt(process.env.POSTS_CACHE_TTL) : 3, JSON.stringify(postsOut));
+                    req.redisClient.setEx(redisKey, process.env.POSTS_CACHE_TTL ? parseInt(process.env.POSTS_CACHE_TTL) : 3, JSON.stringify(postsOut));
                     res.send(postsOut);
                   }
                 })
@@ -2127,6 +2183,8 @@ router.get('/:id/posts/:filter/:categoryId/:status?', auth.can('view group'), fu
         sendGroupOrError(res, null, 'getPostsFromGroup Group.find', req.user, errorGroup);
       })
     }
+  }).catch((error)=>{
+    sendGroupOrError(res, null, 'getPostsFromGroup', req.user, error);
   });
 });
 

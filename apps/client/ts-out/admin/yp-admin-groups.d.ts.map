@@ -1,0 +1,1 @@
+{"version":3,"file":"yp-admin-groups.d.ts","sourceRoot":"","sources":["../../src/admin/yp-admin-groups.ts"],"names":[],"mappings":"AAGA,OAAO,0BAA0B,CAAC;AAClC,OAAO,EAAE,sBAAsB,EAAE,MAAM,yCAAyC,CAAC;AAIjF,qBACa,aAAc,SAAQ,sBAAsB;IAEvD,SAAS,EAAG,eAAe,CAAC;IAE5B,QAAQ;IAIR,WAAoB,MAAM,UA8CzB;IAED,SAAS,CAAC,KAAK,EAAE,WAAW;IAI5B,WAAW,CAAC,KAAK,EAAE,WAAW;IAmBrB,MAAM;CAchB"}

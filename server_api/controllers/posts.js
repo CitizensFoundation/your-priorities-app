@@ -646,7 +646,7 @@ const sendPostPoints = (req, res, redisKey) => {
                 const pointsInfo = {points: points, count: upCount + downCount};
                 log.info('Points', { postId: req.params.id, userId: req.user ? req.user.id : -1});
                 if (redisKey) {
-                  req.redisClient.setex(redisKey, process.env.POINTS_CACHE_TTL ? parseInt(process.env.POINTS_CACHE_TTL) : 3, JSON.stringify(pointsInfo));
+                  req.redisClient.setEx(redisKey, process.env.POINTS_CACHE_TTL ? parseInt(process.env.POINTS_CACHE_TTL) : 3, JSON.stringify(pointsInfo));
                 }
                 res.send(pointsInfo);
               }
@@ -664,8 +664,10 @@ const sendPostPoints = (req, res, redisKey) => {
 const shouldDisablePointRedisCache = (req, done) => {
   if (req.user && req.user.id) {
     const newPointRedisKey = `newUserPoint_${req.user.id}`
-    req.redisClient.get(newPointRedisKey, (error, found) => {
-      done(error, found!=null)
+    req.redisClient.get(newPointRedisKey).then(found => {
+      done(null, found!=null)
+    }).catch(error => {
+      done(error);
     });
   } else {
     done(null, false);
@@ -679,14 +681,14 @@ router.get('/:id/points', auth.can('view post'), function(req, res) {
     if (disableRedisCache || process.env.DISABLE_POST_POINTS_CACHE) {
       sendPostPoints(req, res);
     } else {
-      req.redisClient.get(redisKey, (error, points) => {
-        if (error) {
-          sendPostOrError(res, null, 'viewPoints', req.user, error);
-        } else if (points) {
+      req.redisClient.get(redisKey).then(points => {
+        if (points) {
           res.send(JSON.parse(points));
         } else {
           sendPostPoints(req, res, redisKey);
         }
+      }).catch(error => {
+        sendPostOrError(res, null, 'viewPoints', req.user, error);
       })
     }
   })

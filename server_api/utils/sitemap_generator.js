@@ -38,8 +38,8 @@ var generateSitemap = async function (req, res) {
 
   const redisKey = `cache:sitemap:v3:${siteHostname}-${domainId}`;
 
-  req.redisClient.get(redisKey, (error, content) => {
-    if (!error && content) {
+  req.redisClient.get(redisKey).then((content) => {
+    if (content) {
       res.header("Content-Type", "application/xml");
       res.set({ "content-type": "application/xml" });
       res.send(content);
@@ -264,16 +264,18 @@ var generateSitemap = async function (req, res) {
               streamToPromise(Readable.from(links).pipe(sitemapStream)).then(
                 (xml) => {
                   xml = xml.toString();
-                  req.redisClient.setex(
+                  req.redisClient.setEx(
                     redisKey,
                     process.env.SITEMAP_CACHE_TTL
                       ? parseInt(process.env.SITEMAP_CACHE_TTL)
                       : 60 * 60,
                     xml
-                  );
-                  res.header("Content-Type", "application/xml");
-                  res.set({ "content-type": "application/xml" });
-                  res.send(xml);
+                  ).then(()=>{
+                    log.error("From streamToPromise have savd xml");
+                    res.header("Content-Type", "application/xml");
+                    res.set({ "content-type": "application/xml" });
+                    res.send(xml);
+                  });
                 }
               );
             } catch (error) {
@@ -284,6 +286,9 @@ var generateSitemap = async function (req, res) {
         }
       );
     }
+  }).catch((error) => {
+    log.error("Error from looking up sitemap data", { err: error });
+    res.status(500).end();
   });
 };
 

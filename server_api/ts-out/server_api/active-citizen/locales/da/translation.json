@@ -1,0 +1,53 @@
+{
+  "notification": {
+    "post": {
+      "statusChangeSubject": "Status for indlæg ændret"
+    },
+    "email": {
+      "newPointedAddedToThisIdea": "En ny reaktion er blevet tilføjet til denne ide",
+      "newPointedAddedToIdea": "En ny reaktion er blevet tilføjet til din ide",
+      "thisNewIdea": "Denne nye ide",
+      "hasBeenPosted": "Er blevet sendt",
+      "thePointToIdea": "Denne reaktion til denne ide",
+      "yourPointToIdea": "Din reaktion til denne ide",
+      "hasBeenMarkedUp": "er blevet markeret som nyttigt",
+      "hasBeenMarkedDown": "er blevet markeret som ikke nyttig",
+      "writtenByUser": "Skrevet af bruger med navnet",
+      "hasBeenReported": "er blevet rapporteret for at overtræde vilkårene",
+      "withKindRegards": "Med venlig hilsen",
+      "youCanViewItHere": "Du kan se det her",
+      "theIdea": "Ideen",
+      "yourIdea": "Din ide",
+      "hasBeenVotedUp": "er blevet stemt op",
+      "hasBeenVotedDown": "er blevet stemt ned",
+      "comment": "Kommentar",
+      "newsStory": "Ny nyhed",
+      "postReport": "Idé rapporteret for at overtræde vilkårene",
+      "pointReport": "Reaktionen rapporteret for at overtræde vilkårene",
+      "user_invite": "Invitation for deltagelse",
+      "user_invite_1": "Du er blevet inviteret til at deltage i..",
+      "user_invite_2": "Klik på linket eller indsæt det i browserens adresselinje for at acceptere invitationen",
+      "user_invite_3": "Du var inviteret af",
+      "postEndorsementNew": "Din ide har støtte",
+      "postNew": "Ny ide",
+      "postNewsSelf": "Din nye ide",
+      "postEndorsementSelf": "Tilslutning til din ide",
+      "postEndorsement": "Tilslutning til en ide",
+      "postOppositionSelf": "Modstand mod din ide",
+      "postOpposition": "Modstand mod en ide",
+      "pointNewSelf": "Ny reaktion til din ide",
+      "pointNew": "Ny reaktion",
+      "pointUnhelpfulSelf": "Reaktion markeret som unyttig til min ide",
+      "pointUnhelpful": "Reaktion markeret som unyttigt",
+      "pointHelpfulSelf": "Reaktion markeret som nyttig til min ide",
+      "pointHelpful": "Reaktion markeret som nyttig",
+      "newPointOnMyPoint": "Ny reaktion",
+      "password_recovery": "Opret ny adgangskode",
+      "password_changed": "Din adgangskode er blevet ændret",
+      "dear": "Hej",
+      "reset_password_1": "Her er en link til ændring af din adgangskode",
+      "reset_password_2": "Hvis du ikke har anmodet om dette, skal du ignorere denne email.",
+      "reset_password_3": "Dit kodeord ændres ikke, før du får adgang til linket ovenfor og opretter en ny."
+    }
+  }
+}

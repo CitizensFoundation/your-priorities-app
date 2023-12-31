@@ -92,9 +92,6 @@ module.exports = (sequelize, DataTypes) => {
         fields: ['id','deleted','status']
       }
     ],
-
-    // Add following indexes manually for high throughput sites
-    // CREATE INDEX userprofileimage_idx_user_id ON "UserProfileImage" (user_id);
   });
 
   User.associate = (models) => {

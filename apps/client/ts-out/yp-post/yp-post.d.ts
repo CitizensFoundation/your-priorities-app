@@ -1,0 +1,43 @@
+import { YpCollection } from "../yp-collection/yp-collection.js";
+import { nothing, TemplateResult } from "lit";
+import "@material/web/fab/fab.js";
+import "./yp-post-header.js";
+import "./yp-post-points.js";
+import "./yp-post-user-images.js";
+export declare const PostTabTypes: Record<string, number>;
+export declare class YpPost extends YpCollection {
+    isAdmin: boolean;
+    disableNewPosts: boolean;
+    currentPage: string | undefined;
+    post: YpPostData | undefined;
+    scrollToPointId: number | undefined;
+    debateCount: string | undefined;
+    photosCount: string | undefined;
+    constructor();
+    scrollToCollectionItemSubClass(): void;
+    static get styles(): import("lit").CSSResult[];
+    renderPostHeader(): TemplateResult<1>;
+    renderPostTabs(): TemplateResult<1> | typeof nothing;
+    renderCurrentPostTabPage(): TemplateResult | undefined;
+    render(): TemplateResult<1>;
+    get tabDebateCount(): string;
+    get tabPhotosCount(): string;
+    _selectedTabChanged(): void;
+    updated(changedProperties: Map<string | number | symbol, unknown>): void;
+    get isPostPage(): boolean;
+    _newPost(): void;
+    connectedCallback(): void;
+    disconnectedCallback(): void;
+    _updatePostImageCount(event: CustomEvent): void;
+    _updateDebateInfo(event: CustomEvent): void;
+    _mainContainerClasses(): "layout horizontal wrap" | "layout horizontal center-center";
+    _headerClasses(): "layout vertical postHeader wrap" | "layout horizontal postHeader";
+    get postName(): string;
+    get postDescription(): string;
+    _getPost(): Promise<void>;
+    collectionIdChanged(): void;
+    _processIncomingPost(fromCache?: boolean): void;
+    _processRecommendation(recommendedPost: YpPostData): void;
+    refresh(): void;
+}
+//# sourceMappingURL=yp-post.d.ts.map

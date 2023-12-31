@@ -1,0 +1,1 @@
+{"version":3,"file":"yp-group-header.d.ts","sourceRoot":"","sources":["../../src/yp-collection/yp-group-header.ts"],"names":[],"mappings":"AAGA,OAAO,EAAE,kBAAkB,EAAE,MAAM,wBAAwB,CAAC;AAE5D,qBACa,aAAc,SAAQ,kBAAkB;IAE1C,UAAU,EAAE,WAAW,GAAG,SAAS,CAAC;IAE7C,WAAoB,MAAM,wCAmBzB;IAEQ,YAAY;CA+BtB"}

@@ -1,0 +1,53 @@
+{
+  "notification": {
+    "post": {
+      "statusChangeSubject": "Gönderi durumu değişti"
+    },
+    "email": {
+      "newPointedAddedToThisIdea": "Bu fikre bir yeni açıklama eklendi. ",
+      "newPointedAddedToIdea": "Fikrinize bir yeni açıklama eklendi. ",
+      "thisNewIdea": "Yeni fikir",
+      "hasBeenPosted": "Gönderilmiştir. ",
+      "thePointToIdea": "Bu fikir için açıklama",
+      "yourPointToIdea": "Bu fikir için açıklamanız",
+      "hasBeenMarkedUp": "Faydalı olarak işaretlenmiştir. ",
+      "hasBeenMarkedDown": "Faydasız olarak işaretlenmiştir. ",
+      "writtenByUser": "Yazarın kullanıcı adı ",
+      "hasBeenReported": "Kural ihlali nedeniyle raporlanmıştır. ",
+      "withKindRegards": "Selamlarla",
+      "youCanViewItHere": "Burada görebilirsiniz. ",
+      "theIdea": "Fikir",
+      "yourIdea": "Fikriniz",
+      "hasBeenVotedUp": "Olumlu oy verilmiştir. ",
+      "hasBeenVotedDown": "Olumsuz oy verilmiştir. ",
+      "comment": "Yorum",
+      "newsStory": "Haber",
+      "postReport": "Fikir kural ihlali nedeniyle reporlandı",
+      "pointReport": "Açıklama kural ihlali nedeniyle raporlandı",
+      "user_invite": "Katılım daveti",
+      "user_invite_1": "Katılmaya davet edildiniz",
+      "user_invite_2": "Daveti kabul etmek için bağlantıya tıklayın ya da yapıştırın.",
+      "user_invite_3": "Davet eden:",
+      "postEndorsementNew": "Fikriniz destek gördü",
+      "postNew": "Yeni fikir",
+      "postNewsSelf": "Yeni fikriniz",
+      "postEndorsementSelf": "Fikriniz için destek",
+      "postEndorsement": "Bir fikir için destek",
+      "postOppositionSelf": "Fikrinize muhalefet",
+      "postOpposition": "Bir fikre muhalefet",
+      "pointNewSelf": "Fikriniz için yeni açıklama",
+      "pointNew": "Yeni açıklama",
+      "pointUnhelpfulSelf": "Fikrim için yararsız olarak işaretlenen açıklama",
+      "pointUnhelpful": "Yararsız olarak işaretlenen açıklama",
+      "pointHelpfulSelf": "Fikrim için yararlı olarak işaretlenen açıklama",
+      "pointHelpful": "Yararlı olarak işaretlenen açıklama",
+      "newPointOnMyPoint": "Yeni açıklama",
+      "password_recovery": "Yeni parola oluştur",
+      "password_changed": "Parolanız değişti",
+      "dear": "Merhaba ",
+      "reset_password_1": "Parolanızı değiştirme bağlantısı:",
+      "reset_password_2": "Bu e-posta isteğiniz dışında gönderildiyse lütfen dikkate almayınız.",
+      "reset_password_3": "Parolanız, yukarıdaki bağlantıya erişip yeni bir parola oluşturmadığınız sürece değişmez."
+    }
+  }
+}

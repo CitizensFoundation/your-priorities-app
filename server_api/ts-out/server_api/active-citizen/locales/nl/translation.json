@@ -1,0 +1,37 @@
+{
+  "notification": {
+    "post": {
+      "statusChangeSubject": "Status van bijdrage veranderd"
+    },
+    "email": {
+      "comment": "Commentaar",
+      "newsStory": "Nieuws item",
+      "postReport": "Het idee is gerapporteerd wegens schending van gebruiksvoorwaarden ",
+      "pointReport": "Het argument is gerapporteerd wegens schending van gebruiksvoorwaarden ",
+      "user_invite": "Uitnodiging deel te nemen",
+      "user_invite_1": "U bent uitgenodigd deel te nemen aan...",
+      "user_invite_2": "Klik op de link of kopieer in de browser om de uitnodiging te accepteren",
+      "user_invite_3": "U bent uitgenodigd door",
+      "postEndorsementNew": "Uw idee heeft steun",
+      "postNew": "Nieuw idee",
+      "postNewsSelf": "Uw nieuwe idee",
+      "postEndorsementSelf": "Steun voor uw idee",
+      "postEndorsement": "Steun voor een idee",
+      "postOppositionSelf": "Weerstand tegen uw idee",
+      "postOpposition": "Weerstand tegen idee",
+      "pointNewSelf": "Nieuw argument voor uw idee",
+      "pointNew": "Nieuw argument",
+      "pointUnhelpfulSelf": "Argument gemarkeerd tegen mijn idee",
+      "pointUnhelpful": "Argument gemarkeerd tegen",
+      "pointHelpfulSelf": "Argument gemarkeerd vóór mijn idee",
+      "pointHelpful": "Argument gemarkeerd vóór",
+      "newPointOnMyPoint": "Nieuw argument",
+      "password_recovery": "Maak nieuw wachtwoord",
+      "password_changed": "Uw wachtwoord is veranderd",
+      "dear": "Hallo",
+      "reset_password_1": "Hier is een link om uw wachtwoord te veranderen",
+      "reset_password_2": "Als dit niet op uw verzoek is, negeer dan deze mail.",
+      "reset_password_3": "Uw wachtwoord zal niet worden aangepast tot u de link hierboven heeft bezocht en een nieuw wachtwoord heeft gemaakt,"
+    }
+  }
+}

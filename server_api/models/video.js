@@ -80,10 +80,13 @@ module.exports = (sequelize, DataTypes) => {
         {
           fields: ["id", "deleted"],
         },
+        {
+          fields: ["updated_at", "deleted"],
+        },
+        {
+          fields: ["created_at", "deleted"],
+        }
       ],
-
-      // Add following index manually for high throughput sites
-      // CREATE INDEX videoimage_idx_video_id ON "VideoImage" (video_id);
     }
   );
 

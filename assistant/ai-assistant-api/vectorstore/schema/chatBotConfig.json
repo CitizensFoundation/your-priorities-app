@@ -1,0 +1,190 @@
+{
+  "class": "ChatBotConfig",
+  "vectorizer": "text2vec-openai",
+  "moduleConfig": {
+    "text2vec-openai": {
+      "model": "ada",
+      "modelVersion": "002",
+      "type": "text"
+    }
+  },
+  "invertedIndexConfig": {
+    "indexPropertyLength": true,
+    "indexNullState": true
+  },
+  "properties": [
+    {
+      "dataType": [
+        "string"
+      ],
+      "moduleConfig": {
+        "text2vec-openai": {
+          "skip": true,
+          "vectorizePropertyName": false
+        }
+      },
+      "name": "searchType"
+    },
+    {
+      "dataType": [
+        "text"
+      ],
+      "moduleConfig": {
+        "text2vec-openai": {
+          "skip": false,
+          "vectorizePropertyName": true
+        }
+      },
+      "name": "summary"
+    },
+    {
+      "dataType": [
+        "text"
+      ],
+      "moduleConfig": {
+        "text2vec-openai": {
+          "skip": false,
+          "vectorizePropertyName": true
+        }
+      },
+      "name": "relevanceToProblem"
+    },
+    {
+      "name": "solutionsIdentifiedInTextContext",
+      "dataType": [
+        "text[]"
+      ],
+      "moduleConfig": {
+        "text2vec-openai": {
+          "skip": false,
+          "vectorizePropertyName": true
+        }
+      },
+      "indexFilterable": true,
+      "indexSearchable": true,
+      "invertedIndexConfig": {
+        "indexPropertyLength": true
+      }
+    },
+    {
+      "dataType": [
+        "int"
+      ],
+      "moduleConfig": {
+        "text2vec-openai": {
+          "skip": true,
+          "vectorizePropertyName": false
+        }
+      },
+      "name": "subProblemIndex"
+    },
+    {
+      "dataType": [
+        "int"
+      ],
+      "moduleConfig": {
+        "text2vec-openai": {
+          "skip": true,
+          "vectorizePropertyName": false
+        }
+      },
+      "name": "entityIndex"
+    },
+    {
+      "dataType": [
+        "string"
+      ],
+      "moduleConfig": {
+        "text2vec-openai": {
+          "skip": true,
+          "vectorizePropertyName": false
+        }
+      },
+      "name": "url"
+    },
+    {
+      "dataType": [
+        "text[]"
+      ],
+      "moduleConfig": {
+        "text2vec-openai": {
+          "skip": false,
+          "vectorizePropertyName": true
+        }
+      },
+      "name": "mostRelevantParagraphs"
+    },
+    {
+      "dataType": [
+        "string[]"
+      ],
+      "moduleConfig": {
+        "text2vec-openai": {
+          "skip": false,
+          "vectorizePropertyName": true
+        }
+      },
+      "name": "tags"
+    },
+    {
+      "dataType": [
+        "string[]"
+      ],
+      "moduleConfig": {
+        "text2vec-openai": {
+          "skip": false,
+          "vectorizePropertyName": true
+        }
+      },
+      "name": "entities"
+    },
+    {
+      "dataType": [
+        "string[]"
+      ],
+      "moduleConfig": {
+        "text2vec-openai": {
+          "skip": true,
+          "vectorizePropertyName": false
+        }
+      },
+      "name": "contacts"
+    },
+    {
+      "dataType": [
+        "int"
+      ],
+      "moduleConfig": {
+        "text2vec-openai": {
+          "skip": true,
+          "vectorizePropertyName": false
+        }
+      },
+      "name": "domainId"
+    },
+    {
+      "dataType": [
+        "int"
+      ],
+      "moduleConfig": {
+        "text2vec-openai": {
+          "skip": true,
+          "vectorizePropertyName": false
+        }
+      },
+      "name": "communityId"
+    },
+    {
+      "dataType": [
+        "int"
+      ],
+      "moduleConfig": {
+        "text2vec-openai": {
+          "skip": true,
+          "vectorizePropertyName": false
+        }
+      },
+      "name": "groupId"
+    }
+  ]
+}

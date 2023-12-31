@@ -654,7 +654,7 @@ router.post('/:groupId', auth.can('create point'), function(req, res) {
             res.sendStatus(500);
           } else {
             const newPointRedisKey = `newUserPoint_${req.user.id}`
-            req.redisClient.setex(newPointRedisKey, 30, JSON.stringify({}));
+            req.redisClient.setEx(newPointRedisKey, 30, JSON.stringify({}));
             res.send(loadedPoint);
           }
         });

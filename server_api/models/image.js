@@ -45,6 +45,30 @@ module.exports = (sequelize, DataTypes) => {
         fields: ['id', 'deleted']
       },
       {
+        fields: ['id', 'updated_at']
+      },
+      {
+        fields: ['id', 'updated_at','deleted']
+      },
+      {
+        fields: ['id', 'created_at']
+      },
+      {
+        fields: ['id', 'created_at','deleted']
+      },
+      {
+        fields: ['updated_at']
+      },
+      {
+        fields: ['updated_at','deleted']
+      },
+      {
+        fields: ['created_at']
+      },
+      {
+        fields: ['created_at','deleted']
+      },
+      {
         name: 'images_idx_deleted',
         fields: ['deleted']
       }
@@ -76,7 +100,15 @@ module.exports = (sequelize, DataTypes) => {
     const formats = [];
     Object.keys(sharpFile).forEach((key) => {
       if (sharpFile[key].ACL && sharpFile[key].Location) {
-        formats.push(sharpFile[key].Location)
+        let urlToImage = sharpFile[key].Location;
+        if (process.env.CLOUDFLARE_IMAGE_PROXY_DOMAIN) {
+          urlToImage = urlToImage.replace(process.env.CLOUDFLARE_IMAGE_PROXY_DOMAIN+"/","");
+          const url = new URL(urlToImage);
+          url.hostname = process.env.CLOUDFLARE_IMAGE_PROXY_DOMAIN;
+          urlToImage = url.toString();
+        }
+        log.error("urlToImage", urlToImage);
+        formats.push(urlToImage);
       }
     })
 
@@ -107,6 +139,10 @@ module.exports = (sequelize, DataTypes) => {
         newUrl = "https://"
           + process.env.S3_ENDPOINT
           + "/" + process.env.S3_BUCKET
+          + path;
+      } else if (process.env.CLOUDFLARE_IMAGE_PROXY_DOMAIN) {
+        newUrl = "https://"
+          + process.env.CLOUDFLARE_IMAGE_PROXY_DOMAIN + "/"
           + path;
       } else {
         newUrl = "https://"

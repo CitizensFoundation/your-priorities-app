@@ -411,10 +411,8 @@ const getCommunity = function(req, done) {
     },
     function (seriesCallback) {
       const redisKey = "cache:community_groups:"+community.id+`:${req.user ? req.user.id : 0}`;
-      req.redisClient.get(redisKey, (error, groups) => {
-        if (error) {
-          seriesCallback(error);
-        } else if (groups) {
+      req.redisClient.get(redisKey).then(groups => {
+        if (groups) {
           community.dataValues.Groups = JSON.parse(groups);
           seriesCallback();
         } else {
@@ -435,22 +433,20 @@ const getCommunity = function(req, done) {
             required: false,
             order: [
               ['counter_users', 'desc'],
-              [{model: models.Image, as: 'GroupLogoImages'}, 'created_at', 'asc'],
-              [{model: models.Image, as: 'GroupHeaderImages'}, 'created_at', 'asc'],
-              [ { model: models.Category }, { model: models.Image, as: 'CategoryIconImages' } ,'updated_at', 'asc' ],
-              [{model: models.Category }, 'name', 'asc']
             ],
             include: models.Group.masterGroupIncludes(models)
           }).then(function (groups) {
             models.Group.addVideosAndCommunityLinksToGroups(groups, videoError => {
               community.dataValues.Groups = groups;
-              req.redisClient.setex(redisKey, process.env.GROUPS_CACHE_TTL ? parseInt(process.env.GROUPS_CACHE_TTL) : 3, JSON.stringify(groups));
+              req.redisClient.setEx(redisKey, process.env.GROUPS_CACHE_TTL ? parseInt(process.env.GROUPS_CACHE_TTL) : 3, JSON.stringify(groups));
               seriesCallback(videoError);
             })
           }).catch(error => {
             seriesCallback(error);
           });
         }
+      }).catch(error => {
+        seriesCallback(error);
       });
     },
     function (seriesCallback) {
@@ -470,10 +466,6 @@ const getCommunity = function(req, done) {
               attributes: models.Group.defaultAttributesPublic,
               order: [
                 [ 'counter_users', 'desc'],
-                [ { model: models.Image, as: 'GroupLogoImages' } , 'created_at', 'asc' ],
-                [ { model: models.Image, as: 'GroupHeaderImages' } , 'created_at', 'asc' ],
-                [ { model: models.Category }, { model: models.Image, as: 'CategoryIconImages' } ,'updated_at', 'asc' ],
-                [ { model: models.Category }, 'name', 'asc']
               ],
               include: [
                 {
@@ -505,10 +497,6 @@ const getCommunity = function(req, done) {
               attributes: models.Group.defaultAttributesPublic,
               order: [
                 [ 'counter_users', 'desc'],
-                [ { model: models.Image, as: 'GroupLogoImages' } , 'created_at', 'asc' ],
-                [ { model: models.Image, as: 'GroupHeaderImages' } , 'created_at', 'asc' ],
-                [ { model: models.Category }, { model: models.Image, as: 'CategoryIconImages' } ,'updated_at', 'asc' ],
-                [ {model: models.Category }, 'name', 'asc']
               ],
               include: [
                 {
@@ -544,6 +532,22 @@ const getCommunity = function(req, done) {
                 return group.id;
               }
             });
+
+            combinedGroups.forEach(group => {
+              if (group.GroupLogoImages) {
+                group.GroupLogoImages = _.orderBy(group.GroupLogoImages, ['created_at'], ['asc']);
+              }
+              if (group.GroupHeaderImages) {
+                group.GroupHeaderImages = _.orderBy(group.GroupHeaderImages, ['created_at'], ['asc']);
+              }
+              if (group.Category && group.Category.CategoryIconImages) {
+                group.Category.CategoryIconImages = _.orderBy(group.Category.CategoryIconImages, ['updated_at'], ['asc']);
+              }
+              if (group.Categories) {
+                group.Categories = _.orderBy(group.Categories, ['name'], ['asc']);
+              }
+
+            })
             models.Group.addVideosAndCommunityLinksToGroups(combinedGroups, videoError => {
               community.dataValues.Groups = combinedGroups;
               seriesCallback(videoError);
@@ -557,6 +561,7 @@ const getCommunity = function(req, done) {
       }
     }
   ], function (error) {
+    log.error("getCommunity", { error: error });
     done(error, community);
   });
 };
@@ -581,7 +586,7 @@ var updateCommunityConfigParameters = function (req, community) {
 
   community.set('configuration.welcomeHTML', (req.body.welcomeHTML && req.body.welcomeHTML!="") ? req.body.welcomeHTML : null);
   community.set('configuration.externalId', (req.body.externalId && req.body.externalId!="") ? req.body.externalId : null);
-  community.set('configuration.projectId', (req.body.projectId && req.body.projectId!="") ? req.body.projectId : null);
+  community.set('configuration.communityId', (req.body.communityId && req.body.communityId!="") ? req.body.communityId : null);
 
   community.set('configuration.customSamlDeniedMessage', (req.body.customSamlDeniedMessage && req.body.customSamlDeniedMessage!="") ? req.body.customSamlDeniedMessage : null);
   community.set('configuration.customSamlLoginMessage', (req.body.customSamlLoginMessage && req.body.customSamlLoginMessage!="") ? req.body.customSamlLoginMessage : null);
@@ -590,7 +595,7 @@ var updateCommunityConfigParameters = function (req, community) {
   community.set('configuration.hideRecommendationOnNewsFeed', truthValueFromBody(req.body.hideRecommendationOnNewsFeed));
   community.set('configuration.closeNewsfeedSubmissions', truthValueFromBody(req.body.closeNewsfeedSubmissions));
 
-  community.set('configuration.useProjectIdForAnalytics', truthValueFromBody(req.body.useProjectIdForAnalytics));
+  community.set('configuration.useCommunityIdForAnalytics', truthValueFromBody(req.body.useCommunityIdForAnalytics));
 
   community.set('configuration.disableGroupDynamicFontSizes', truthValueFromBody(req.body.disableGroupDynamicFontSizes));
   community.set('configuration.hideGroupListCardObjectives', truthValueFromBody(req.body.hideGroupListCardObjectives));
@@ -2086,9 +2091,9 @@ router.get('/:communityId/:type/getPlausibleSeries', auth.can('edit community ma
 router.put('/:communityId/plausibleStatsProxy', auth.can('edit community marketing'), async (req, res) => {
   const plausibleParams = {};
 
-  if (req.query.projectId) {
-    //TODO: check if user is allowed to see this project
-    plausibleParams.projectId = req.query.projectId;
+  if (req.query.communityId) {
+    //TODO: check if user is allowed to see this community
+    plausibleParams.communityId = req.query.communityId;
   } else {
     plausibleParams.communityId = req.params.communityId;
   }
@@ -2195,6 +2200,40 @@ router.get('/:communityId/group_folders_simple', auth.can('edit community'), asy
     log.error('Could not get group_folders_simple', { err: error, context: 'group_folders_simple', user: toJson(req.user.simple()) });
     res.sendStatus(500);
   }
+});
+
+router.post('/:communityId/:start_generating_ai_image', auth.can('edit community'), function(req, res) {
+  models.AcBackgroundJob.createJob({}, {}, (error, jobId) => {
+    if (error) {
+      log.error('Could not create backgroundJob', { err: error, context: 'start_generating_ai_image', user: toJson(req.user.simple()) });
+      res.sendStatus(500);
+    } else {
+      queue.add('process-generative-ai', {
+        type: "collection-image",
+        userId: req.user.id,
+        jobId: jobId,
+        collectionId: req.params.communityId,
+        collectionType: "community",
+        prompt: req.body.prompt
+      }, 'critical');
+
+      res.send({ jobId });
+    }
+  });
+});
+
+router.get('/:communityId/:jobId/poll_for_generating_ai_image', auth.can('edit community'), function(req, res) {
+  models.AcBackgroundJob.findOne({
+    where: {
+      id: req.params.jobId
+    },
+    attributes: ['id','progress','error','data']
+  }).then( job => {
+    res.send(job);
+  }).catch( error => {
+    log.error('Could not get backgroundJob', { err: error, context: 'poll_for_generating_ai_image', user: toJson(req.user.simple()) });
+    res.sendStatus(500);
+  });
 });
 
 module.exports = router;

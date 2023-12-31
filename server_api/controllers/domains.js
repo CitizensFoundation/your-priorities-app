@@ -1211,5 +1211,39 @@ router.delete('/:domainId/:campaignId/delete_campaign', auth.can('edit domain'),
   }
 });
 
+router.post('/:domainId/:start_generating_ai_image', auth.can('edit domain'), function(req, res) {
+  models.AcBackgroundJob.createJob({}, {}, (error, jobId) => {
+    if (error) {
+      log.error('Could not create backgroundJob', { err: error, context: 'start_generating_ai_image', user: toJson(req.user.simple()) });
+      res.sendStatus(500);
+    } else {
+      queue.add('process-generative-ai', {
+        type: "collection-image",
+        userId: req.user.id,
+        jobId: jobId,
+        collectionId: req.params.domainId,
+        collectionType: "domain",
+        prompt: req.body.prompt
+      }, 'critical');
+
+      res.send({ jobId });
+    }
+  });
+});
+
+router.get('/:domainId/:jobId/poll_for_generating_ai_image', auth.can('edit domain'), function(req, res) {
+  models.AcBackgroundJob.findOne({
+    where: {
+      id: req.params.jobId
+    },
+    attributes: ['id','progress','error','data']
+  }).then( job => {
+    res.send(job);
+  }).catch( error => {
+    log.error('Could not get backgroundJob', { err: error, context: 'poll_for_generating_ai_image', user: toJson(req.user.simple()) });
+    res.sendStatus(500);
+  });
+});
+
 
 module.exports = router;

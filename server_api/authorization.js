@@ -754,6 +754,8 @@ auth.entity('group', function(req, done) {
   var match = req.originalUrl.match(/groups\/(\w+)/);
   if (!match)
     match = req.originalUrl.match(/videos\/(\w+)/);
+  if (!match)
+    match = req.originalUrl.match(/ltp\/crt\/(\w+)/);
   if (!match) {
     done(new Error('Expected url like /groups/:groupId'));
   } else {
@@ -921,6 +923,8 @@ auth.entity('post', function(req, done) {
     match = req.originalUrl.match(/videos\/(\w+)/);
   if (!match)
     match = req.originalUrl.match(/ratings\/(\w+)/);
+  if (!match)
+    match = req.originalUrl.match(/ltp\/crt\/(\w+)/);
   if (!match)
     match = req.originalUrl.match(/audios\/(\w+)/);
   if (!match)
@@ -1378,6 +1382,8 @@ auth.entity('createGroupPost', function(req, done) {
     match = req.originalUrl.match(/videos\/(\w+)/);
   if (!match)
     match = req.originalUrl.match(/audios\/(\w+)/);
+  if (!match)
+    match = req.originalUrl.match(/ltp\/crt\/(\w+)/);
   if (!match) {
     done(new Error('Expected url like /posts/:groupId'));
   } else {

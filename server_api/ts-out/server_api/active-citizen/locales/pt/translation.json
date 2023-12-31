@@ -1,0 +1,53 @@
+{
+  "notification": {
+    "post": {
+      "statusChangeSubject": "O status da postagem mudou"
+    },
+    "email": {
+      "newPointedAddedToThisIdea": "Um novo ponto foi adicionado a essa ideia",
+      "newPointedAddedToIdea": "Um novo ponto foi adicionado à sua ideia",
+      "thisNewIdea": "Esta nova ideia",
+      "hasBeenPosted": "Foi postado",
+      "thePointToIdea": "Isto aponta para a ideia",
+      "yourPointToIdea": "Seu ponto para a ideia",
+      "hasBeenMarkedUp": "foi marcado como útil",
+      "hasBeenMarkedDown": "não foi marcado como útil",
+      "writtenByUser": "Escrito pelo utilizador chamado",
+      "hasBeenReported": "foi relatado por violar os termos",
+      "withKindRegards": "Com os melhores cumprimentos",
+      "youCanViewItHere": "Você pode ver aqui",
+      "theIdea": "A ideia",
+      "yourIdea": "Sua ideia",
+      "hasBeenVotedUp": "votado",
+      "hasBeenVotedDown": "rejeitado",
+      "comment": "Comente",
+      "newsStory": "Novo relato",
+      "postReport": "Ideia reportada por violar os termos",
+      "pointReport": "Ponto reportado por violar termos",
+      "user_invite": "Convite para participar",
+      "user_invite_1": "Você foi convidado para participar em...",
+      "user_invite_2": "Clique no link ou cole-o em uma barra de endereço do navegador para aceitar o convite",
+      "user_invite_3": "Você foi convidado por",
+      "postEndorsementNew": "Sua ideia tem apoio",
+      "postNew": "Nova ideia",
+      "postNewsSelf": "Sua nova ideia",
+      "postEndorsementSelf": "Aprovação para sua ideia",
+      "postEndorsement": "Aprovação para uma ideia",
+      "postOppositionSelf": "Oposição à sua ideia",
+      "postOpposition": "Oposição à ideia",
+      "pointNewSelf": "Novo ponto para sua ideia",
+      "pointNew": "Novo ponto",
+      "pointUnhelpfulSelf": "Ponto marcado como inútil para minha ideia",
+      "pointUnhelpful": "Ponto marcado como inútil",
+      "pointHelpfulSelf": "Ponto marcado útil para minha ideia",
+      "pointHelpful": "Ponto marcado como útil",
+      "newPointOnMyPoint": "Novo ponto",
+      "password_recovery": "Criar nova senha",
+      "password_changed": "Sua senha mudou",
+      "dear": "Olá",
+      "reset_password_1": "Aqui está o link para mudar sua senha.",
+      "reset_password_2": "Se você não solicitou isso, ignore este e-mail.",
+      "reset_password_3": "Sua senha não será alterada até você acessar o link acima e criar um novo."
+    }
+  }
+}

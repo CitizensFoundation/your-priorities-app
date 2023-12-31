@@ -1,0 +1,25 @@
+{
+  "development": {
+    "username": "postgres",
+    "password": "postgres",
+    "database": "yrpri_dev",
+    "host": "db",
+    "dialect": "postgres",
+    "protocol": "postgres"
+  },
+  "test": {
+    "username": "x",
+    "password": "x",
+    "database": "x",
+    "host": "127.0.0.1",
+    "dialect": "postgres"
+
+  },
+  "production": {
+    "username": "x",
+    "password": "x",
+    "database": "x",
+    "host": "127.0.0.1",
+    "dialect": "postgres"
+  }
+}

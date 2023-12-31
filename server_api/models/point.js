@@ -257,13 +257,8 @@ module.exports = (sequelize, DataTypes) => {
       {
         name: 'points_idx_deleted_status',
         fields: ['deleted','status']
-      },
+      }
     ],
-
-    // Add following indexes manually for high throughput sites
-    // CREATE INDEX pointaudio_idx_point_id ON "PointAudio" (point_id);
-    // CREATE INDEX pointvideo_idx_point_id ON "PointVideo" (point_id);
-    // CREATE INDEX points_idx_counter_sum_post_id_status_value_deleted ON points ((counter_quality_up-counter_quality_down),post_id,value,status,deleted);
 
     underscored: true,
 

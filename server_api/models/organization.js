@@ -42,10 +42,6 @@ module.exports = (sequelize, DataTypes) => {
       }
     ],
 
-    // Add following indexes manually for high throughput sites
-    // CREATE INDEX organizationlogoimag_idx_organization_id ON "OrganizationLogoImage" (organization_id);
-    // CREATE INDEX organizationuser_idx_user_id ON "OrganizationUser" (user_id);
-
     tableName: 'organizations',
   });
 

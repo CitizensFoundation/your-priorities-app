@@ -1,0 +1,24 @@
+{
+  "notification": {
+    "email": {
+      "postNew": "Nowy pomysł",
+      "postNewsSelf": "Twój nowy pomysł",
+      "postEndorsementSelf": "Poparcie dla twojego pomysłu",
+      "postEndorsement": "Poparcie dla pomysłu",
+      "postOppositionSelf": "Sprzeciw wobec twojego pomysłu",
+      "postOpposition": "Sprzeciw wobec pomysłu",
+      "notification.email.pointNewSelf": "Nowy głos za twoim pomysłem",
+      "notification.email.pointNew": "Nowy głos",
+      "pointUnhelpfulSelf": "Głos oznaczony jako mało pomocny dla mojego pomysłu",
+      "pointUnhelpful": "Głos oznaczony jako mało pomocny",
+      "pointHelpfulSelf": "Głos oznaczony jako pomocny dla mojego pomysłu",
+      "pointHelpful": "Głos oznaczony jako pomocny",
+      "newPointOnMyPoint": "Nowy głos dodany do pomysłu, o którym debatujesz",
+      "password_recovery": "Stwórz nowe hasło",
+      "dear": "Witaj",
+      "reset_password_1": "Oto link do zmiany hasła.",
+      "reset_password_2": "Jeśli nie zgłosiłeś/aś takiej potrzeby, zignoruj tego emaila.",
+      "reset_password_3": "Twoje hasło nie zostanie zmienione, dopóki nie klikniesz linku aktywacyjnego i nie utworzysz nowego hasła."
+    }
+  }
+}
