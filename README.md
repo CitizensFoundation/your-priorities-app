@@ -1,4 +1,4 @@
-# Your Priorities Version 8.15
+# Your Priorities Version 90
 
 ![alt text](https://citizens.is/wp-content/uploads/2018/08/Capture-2.png "Your Priorities screenshot")
 
@@ -40,7 +40,10 @@
 * Authentication is configurable offering eID, Facebook, email and/or anonymous login
 * The client app is a progressive web app that can be very easily installed as a native app on mobile phones while also being a website
 * Built with Web Components making the app fast on inexpensive mobile phones
-* Open source, non profit and built with passion over 14 years
+* Open source, non profit and built with passion over 16 years
+* AI generated images support (Dalle3) for admins and users (if admins allow it)
+* Land Use Game module
+* GPT4 based AI assistant that offers a hybrid UI for exploring communities and groups
 * Supported by mass amounts of volunteer work, the EU, city of Reykjavik, World Bank, city of Kopavogur, Scottish Government and the Norwegian Consumer Authority
 
 ## Getting Started Cloud Tutorial
