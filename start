@@ -1,1 +1,0 @@
-cd server_api;ENV=development DEBUG=your-priorities-app NODE_ENV=development node ./api_app.js
