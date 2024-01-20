@@ -33,6 +33,9 @@ export class YpPoint extends YpBaseElement {
   post!: YpPostData;
 
   @property({ type: Object })
+  group!: YpGroupData;
+
+  @property({ type: Object })
   user: YpUserData | undefined;
 
   @property({ type: Boolean })
@@ -338,19 +341,19 @@ export class YpPoint extends YpBaseElement {
   renderAdminComments() {
     html`
       <div class="commentFromAdmin" ?hidden="${this.isEditingSomething}">
-        ${this.post!.Group.configuration.customAdminCommentsTitle
+        ${this.group.configuration.customAdminCommentsTitle
           ? html`
               <yp-magic-text
                 textType="customAdminCommentsTitle"
-                .contentLanguage="${this.post!.Group.language}"
-                .content="${this.post!.Group.configuration
+                .contentLanguage="${this.group.language}"
+                .content="${this.group.configuration
                   .customAdminCommentsTitle}"
-                .contentId="${this.post!.Group.id}"
+                .contentId="${this.group.id}"
               >
               </yp-magic-text>
             `
           : ``}
-        ${!this.post!.Group.configuration.customAdminCommentsTitle
+        ${!this.group.configuration.customAdminCommentsTitle
           ? html` ${this.t('commentFromAdmin')} `
           : ``}
       </div>
@@ -383,7 +386,7 @@ export class YpPoint extends YpBaseElement {
         >
         <div
             class="layout horizontal"
-            ?hidden="${this.post!.Group.configuration.hidePointAuthor}"
+            ?hidden="${this.group.configuration.hidePointAuthor}"
           >
           <md-icon
             class="thumbsIcon thumbsIconUp"
@@ -492,7 +495,7 @@ export class YpPoint extends YpBaseElement {
                   ${this.t('automaticTranscript')}
                 </div>
                 <div
-                  ?hidden="${!this.post.Group.configuration.collapsableTranscripts}"
+                  ?hidden="${!this.group.configuration.collapsableTranscripts}"
                 >
                   <md-icon-button
                     .label="${this.t('openComments')}"
@@ -642,12 +645,12 @@ export class YpPoint extends YpBaseElement {
   get showAdminComments() {
     if (
       this.post &&
-      this.post.Group &&
+      this.group &&
       this.point.public_data &&
       this.point.public_data.admin_comment &&
       this.point.public_data.admin_comment.text &&
-      this.post.Group.configuration &&
-      this.post.Group.configuration.allowAdminAnswersToPoints
+      this.group.configuration &&
+      this.group.configuration.allowAdminAnswersToPoints
     ) {
       return true;
     } else {
@@ -658,10 +661,10 @@ export class YpPoint extends YpBaseElement {
   get hasAdminCommentAccess() {
     if (
       this.post &&
-      this.post.Group &&
+      this.group &&
       YpAccessHelpers.checkPostAdminOnlyAccess(this.post) &&
-      this.post.Group.configuration &&
-      this.post.Group.configuration.allowAdminAnswersToPoints
+      this.group.configuration &&
+      this.group.configuration.allowAdminAnswersToPoints
     ) {
       return true;
     } else {
@@ -762,7 +765,7 @@ export class YpPoint extends YpBaseElement {
 
   async _saveAdminCommentEdit() {
     const response = await window.serverApi.updatePointAdminComment(
-      this.post.Group.id,
+      this.group.id,
       this.point.id,
       {
         content: this.editAdminCommentText,
@@ -889,18 +892,18 @@ export class YpPoint extends YpBaseElement {
     if (this.point) {
       if (
         this.post &&
-        this.post.Group &&
-        this.post.Group.configuration &&
-        this.post.Group.configuration.collapsableTranscripts
+        this.group &&
+        this.group.configuration &&
+        this.group.configuration.collapsableTranscripts
       ) {
         this.openTranscript = false;
       }
       let disableMachineTranscripts = false;
       if (
         this.post &&
-        this.post.Group &&
-        this.post.Group.configuration &&
-        this.post.Group.configuration.disableMachineTranscripts
+        this.group &&
+        this.group.configuration &&
+        this.group.configuration.disableMachineTranscripts
       ) {
         disableMachineTranscripts = true;
       }

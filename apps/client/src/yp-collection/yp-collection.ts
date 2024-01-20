@@ -21,6 +21,7 @@ import "../yp-post/yp-post-map.js";
 import { AcActivities } from "../ac-activities/ac-activities.js";
 import { MdTabs } from "@material/web/tabs/tabs.js";
 import { YpNavHelpers } from "../common/YpNavHelpers.js";
+import { YpBaseElementWithLogin } from "../common/yp-base-element-with-login.js";
 
 export const CollectionTabTypes: Record<string, number> = {
   Collection: 0,
@@ -28,7 +29,7 @@ export const CollectionTabTypes: Record<string, number> = {
   Map: 2,
 };
 
-export abstract class YpCollection extends YpBaseElement {
+export abstract class YpCollection extends YpBaseElementWithLogin {
   @property({ type: Boolean })
   noHeader = false;
 
@@ -87,7 +88,7 @@ export abstract class YpCollection extends YpBaseElement {
 
     //TODO: Fix this as it causes loadMoreData to be called twice on post lists at least
     this.addGlobalListener("yp-logged-in", this.loggedInUserCustom.bind(this));
-    this.addGlobalListener("yp-got-admin-rights", this.refresh.bind(this));
+    this.addGlobalListener("yp-got-admin-rights", this.getCollection.bind(this));
   }
 
   async loggedInUserCustom() {
@@ -197,6 +198,7 @@ export abstract class YpCollection extends YpBaseElement {
           position: fixed;
           bottom: 32px;
           right: 32px;
+          z-index: 3000;
         }
 
         md-icon-button {

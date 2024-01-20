@@ -398,7 +398,7 @@ async.series([
                             });
                         }
                         else {
-                            callback('no communitity created');
+                            callback('no community created');
                         }
                     }).catch(function (error) {
                         console.log(error);
@@ -422,7 +422,7 @@ async.series([
                             });
                         }
                         else {
-                            callback('no communitity created');
+                            callback('no community created');
                         }
                     }).catch(function (error) {
                         console.log(error);
@@ -446,7 +446,7 @@ async.series([
                             });
                         }
                         else {
-                            callback('no communitity created');
+                            callback('no community created');
                         }
                     }).catch(function (error) {
                         console.log(error);
@@ -470,7 +470,7 @@ async.series([
                             });
                         }
                         else {
-                            callback('no communitity created');
+                            callback('no community created');
                         }
                     }).catch(function (error) {
                         console.log(error);
@@ -494,7 +494,7 @@ async.series([
                             });
                         }
                         else {
-                            callback('no communitity created');
+                            callback('no community created');
                         }
                     }).catch(function (error) {
                         console.log(error);
@@ -530,7 +530,7 @@ async.series([
                             });
                         }
                         else {
-                            callback('no communitity created');
+                            callback('no community created');
                         }
                     }).catch(function (error) {
                         console.log(error);
@@ -554,7 +554,7 @@ async.series([
                             });
                         }
                         else {
-                            callback('no communitity created');
+                            callback('no community created');
                         }
                     }).catch(function (error) {
                         console.log(error);
@@ -578,7 +578,7 @@ async.series([
                             });
                         }
                         else {
-                            callback('no communitity created');
+                            callback('no community created');
                         }
                     }).catch(function (error) {
                         console.log(error);
@@ -908,7 +908,7 @@ async.series([
                         });
                     }
                     else {
-                        callback('no communitity nor group created');
+                        callback('no community nor group created');
                     }
                 }).catch(function (error) {
                     console.error(error);

@@ -37,6 +37,10 @@ let YpUsersGrid = class YpUsersGrid extends YpBaseElement {
         if (changedProperties.has("domainId")) {
             this._domainIdChanged();
         }
+        if (changedProperties.has("adminUsers") && this.users) {
+            this.showReload = false;
+            this._reload();
+        }
         this._setupHeaderText();
     }
     static get styles() {
@@ -72,9 +76,9 @@ let YpUsersGrid = class YpUsersGrid extends YpBaseElement {
           --lumo-base-color: var(--md-sys-color-surface);
           --lumo-body-text-color: var(--md-sys-color-on-surface);
           --lumo-primary-color: var(--md-sys-color-primary);
-          --lumo-primary-color-10pct: var(--md-sys-color-primary);
+          --lumo-primary-color-10pct: var(--md-sys-color-surface-variant);
           --lumo-primary-color-50pct: var(--md-sys-color-primary);
-          --lumo-primary-contrast-color: var(--md-sys-color-tertiary);
+          --lumo-primary-contrast-color: var(--md-sys-color-on-tertiary);
           --lumo-tint: var(--md-sys-color-on-surface);
           --lumo-tint-10pct: var(--md-sys-color-on-surface);
           --lumo-tint-20pct: var(--md-sys-color-on-surface);
@@ -167,6 +171,11 @@ let YpUsersGrid = class YpUsersGrid extends YpBaseElement {
           max-width: 1024px;
         }
 
+        md-radio {
+          margin-right: 8px;
+          margin-bottom: 8px;
+        }
+
         @media (max-width: 600px) {
           .closeButton {
             width: 45px;
@@ -200,9 +209,11 @@ let YpUsersGrid = class YpUsersGrid extends YpBaseElement {
         }
 
         .inviteButton {
-          margin-top: 24px;
-          height: 48px;
-          margin-right: 8px;
+          margin: 16px;
+        }
+
+        #inviteUserEmail {
+          margin-right: 16px;
         }
 
         @media (max-width: 600px) {
@@ -231,9 +242,9 @@ let YpUsersGrid = class YpUsersGrid extends YpBaseElement {
         render(html `
         <div style="position: relative;">
           <md-icon-button
-          id="user-all-anchor"
-          .ariaLabel="${this.t("openSelectedItemsMenu")}"
-          @click="${this._openAllMenu.bind(this)}"
+            id="user-all-anchor"
+            .ariaLabel="${this.t("openSelectedItemsMenu")}"
+            @click="${this._openAllMenu.bind(this)}"
             ><md-icon>more_vert</md-icon></md-icon-button
           >
           <md-menu
@@ -249,14 +260,14 @@ let YpUsersGrid = class YpUsersGrid extends YpBaseElement {
             ? html `
                   <md-menu-item
                     ?hidden="${this.adminUsers}"
-                    @click="${this._removeAndDeleteContentSelectedUsers}"
+                    @click="${this._removeAndDeleteContentSelectedUsers.bind(this)}"
                   >
                     ${this.t("removeSelectedAndDeleteContent")}
                     ${this.selectedUsersCount}
                   </md-menu-item>
                   <md-menu-item
                     ?hidden="${this.adminUsers}"
-                    @click="${this._removeSelectedUsersFromCollection}"
+                    @click="${this._removeSelectedUsersFromCollection.bind(this)}"
                   >
                     <div ?hidden="${!this.groupId}">
                       ${this.t("removeSelectedFromGroup")}
@@ -273,7 +284,7 @@ let YpUsersGrid = class YpUsersGrid extends YpBaseElement {
                   </md-menu-item>
                   <md-menu-item
                     ?hidden="${!this.adminUsers}"
-                    @click="${this._removeSelectedAdmins}"
+                    @click="${this._removeSelectedAdmins.bind(this)}"
                   >
                     ${this.t("removeSelectedAdmins")} ${this.selectedUsersCount}
                   </md-menu-item>
@@ -352,6 +363,10 @@ let YpUsersGrid = class YpUsersGrid extends YpBaseElement {
         </md-menu>
       `, root);
     }
+    _reloadFromButton() {
+        this.showReload = false;
+        this._reload();
+    }
     render() {
         return html `
       <div class="layout horizontal topContainer">
@@ -375,7 +390,7 @@ let YpUsersGrid = class YpUsersGrid extends YpBaseElement {
           <md-icon-button
             aria-label="${this.t("reload")}"
             class="closeButton"
-            @click="${this._reload}"
+            @click="${this._reloadFromButton}"
             ><md-icon>autorenew</md-icon></md-icon-button
           >
         </div>
@@ -396,13 +411,22 @@ let YpUsersGrid = class YpUsersGrid extends YpBaseElement {
               class="typeOfInvite layout vertical"
               selected="${this.inviteType}"
             >
-              <label
-                >${this.t("sendInviteByEmail")}
-                <md-radio id="sendInviteByEmail"></md-radio></label
-              ><label
-                >${this.t("addUserDirectlyIfExist")}
-                <md-radio id="addUserDirectly"></md-radio
-              ></label>
+              <label>
+                <md-radio
+                  id="sendInviteByEmail"
+                  name="inviteSelection"
+                  @click="${() => (this.inviteType = "sendInviteByEmail")}"
+                  checked
+                ></md-radio>
+                ${this.t("sendInviteByEmail")}</label
+              ><label>
+                <md-radio
+                  id="addUserDirectly"
+                  name="inviteSelection"
+                  @click="${() => (this.inviteType = "addUserDirectly")}"
+                ></md-radio
+                >${this.t("addUserDirectlyIfExist")}</label
+              >
             </div>
             <md-filled-button class="inviteButton" @click="${this._inviteUser}"
               >${this.t("users.inviteUser")}</md-filled-button
@@ -417,7 +441,7 @@ let YpUsersGrid = class YpUsersGrid extends YpBaseElement {
           <md-outlined-text-field
             label="${this.t("email")}"
             class="emailClass"
-            .value="${this.addAdminEmail || ""}"
+            id="addAdminEmail"
           ></md-outlined-text-field>
           <md-filled-button class="inviteButton" @click="${this._addAdmin}"
             >${this.t("users.addAdmin")}</md-filled-button
@@ -430,12 +454,12 @@ let YpUsersGrid = class YpUsersGrid extends YpBaseElement {
         aria-label="${this.headerText}"
         .items="${this.users}"
         .selectedItems="${this.selectedUsers}"
+        @selected-items-changed="${this._selectedUsersChanged.bind(this)}"
         multi-sort
         multi-sort-priority="append"
       >
         <vaadin-grid-selection-column
           auto-select
-          frozen
         ></vaadin-grid-selection-column>
         <vaadin-grid-sort-column path="id"></vaadin-grid-sort-column>
         <vaadin-grid-filter-column
@@ -476,14 +500,15 @@ let YpUsersGrid = class YpUsersGrid extends YpBaseElement {
       </vaadin-grid>
 
       <md-dialog id="selectOrganizationDialog">
-        <h2>${this.t("users.selectOrganization")}</h2>
+        <div slot="headline">${this.t("users.selectOrganization")}</div>
         ${this.availableOrganizations
             ? html `
               <div slot="content">
                 <md-list>
                   ${this.availableOrganizations.map((item) => html `
                       <md-list-item
-                        @click="${this._selectOrganization}"
+                        interactive
+                        @click="${this._selectOrganization.bind(this)}"
                         id="${item.id}"
                         >${item.name}</md-list-item
                       >
@@ -493,25 +518,22 @@ let YpUsersGrid = class YpUsersGrid extends YpBaseElement {
             `
             : nothing}
         <div slot="actions">
-          <md-filled-button
-            dialogAction="close"
-            .label="${this.t("Close")}"
-          ></md-filled-button>
+          <md-filled-button @click="${this.closeOrganizationDialog}"
+            >${this.t("Close")}</md-filled-button
+          >
         </div>
       </md-dialog>
     `;
     }
-    /*
-    observers: [
-      '_selectedUsersChanged(selectedUsers.splices)'
-    ],
-  */
     get spinnerActive() {
         return !this.totalUserCount || this.forceSpinner;
     }
     async _generateRequest(id = undefined) {
         if (!id) {
             id = this.lastFethedId;
+        }
+        else {
+            this.lastFethedId = id;
         }
         const adminsOrUsers = this.adminUsers ? "admin_users" : "users";
         const response = await window.adminServerApi.adminMethod(`/api/${this.modelType}/${id}/${adminsOrUsers}`, "GET");
@@ -544,6 +566,9 @@ let YpUsersGrid = class YpUsersGrid extends YpBaseElement {
         catch (error) {
             this._ajaxError();
         }
+        finally {
+            this.forceSpinner = false;
+        }
     }
     _resizeThrottler() {
         if (!this.resizeTimeout) {
@@ -572,7 +597,10 @@ let YpUsersGrid = class YpUsersGrid extends YpBaseElement {
     get totalUserCount() {
         return this.users ? YpFormattingHelpers.number(this.users.length) : null;
     }
-    _selectedUsersChanged() {
+    _selectedUsersChanged(event) {
+        if (event.detail && event.detail.value) {
+            this.selectedUsers = event.detail.value;
+        }
         if (this.selectedUsers && this.selectedUsers.length > 0) {
             this.selectedUsersEmpty = false;
             this.selectedUsersCount = this.selectedUsers.length;
@@ -602,12 +630,16 @@ let YpUsersGrid = class YpUsersGrid extends YpBaseElement {
         this.availableOrganizations = this._availableOrganizations();
         this.shadowRoot.getElementById("selectOrganizationDialog").show();
     }
+    closeOrganizationDialog() {
+        this.shadowRoot.getElementById("selectOrganizationDialog").close();
+    }
     async _removeFromOrganization(event) {
         const target = event.target;
         const userId = target.getAttribute("data-args");
         const organizationId = target.getAttribute("data-args-org");
         try {
             await window.adminServerApi.removeUserFromOrganization(parseInt(organizationId), parseInt(userId));
+            this._reload();
         }
         catch (error) {
             this._ajaxError(error);
@@ -618,6 +650,7 @@ let YpUsersGrid = class YpUsersGrid extends YpBaseElement {
         try {
             await window.adminServerApi.addUserToOrganization(parseInt(organizationId), this.userIdForSelectingOrganization);
             this.shadowRoot.getElementById("selectOrganizationDialog").close();
+            this._reload();
         }
         catch (error) {
             this._ajaxError(error);
@@ -638,6 +671,7 @@ let YpUsersGrid = class YpUsersGrid extends YpBaseElement {
             else {
                 console.warn("Can't find model type or ids");
             }
+            this._reload();
         }
         catch (error) {
             this._ajaxError(error);
@@ -752,7 +786,9 @@ let YpUsersGrid = class YpUsersGrid extends YpBaseElement {
             if (user)
                 this.$$("#grid").selectItem(user);
         }
-        this.$$(`#userItemMenu${userId}`).open = true;
+        setTimeout(() => {
+            this.$$(`#userItemMenu${userId}`).open = true;
+        });
     }
     _findUserFromId(id) {
         let foundUser;
@@ -767,17 +803,19 @@ let YpUsersGrid = class YpUsersGrid extends YpBaseElement {
         try {
             let response;
             if (this.modelType === "groups" && this.groupId && this.addAdminEmail) {
-                response = await window.adminServerApi.addAdmin("groups", this.groupId, this.addAdminEmail);
+                response = await window.adminServerApi.addAdmin("groups", this.groupId, this.addAdminEmail.value);
             }
             else if (this.modelType === "communities" &&
                 this.communityId &&
-                this.addAdminEmail) {
-                response = await window.adminServerApi.addAdmin("communities", this.communityId, this.addAdminEmail);
+                this.addAdminEmail &&
+                this.addAdminEmail.value) {
+                response = await window.adminServerApi.addAdmin("communities", this.communityId, this.addAdminEmail.value);
             }
             else if (this.modelType === "domains" &&
                 this.domainId &&
-                this.addAdminEmail) {
-                response = await window.adminServerApi.addAdmin("domains", this.domainId, this.addAdminEmail);
+                this.addAdminEmail &&
+                this.addAdminEmail.value) {
+                response = await window.adminServerApi.addAdmin("domains", this.domainId, this.addAdminEmail.value);
             }
             else {
                 console.warn("Can't find model type or ids");
@@ -792,17 +830,16 @@ let YpUsersGrid = class YpUsersGrid extends YpBaseElement {
     async _inviteUser(event) {
         try {
             let response;
-            const inviteTypeQuery = this.inviteType === "addUserDirectly" ? "?addToGroupDirectly=1" : "";
-            if (this.modelType === "groups" && this.groupId && this.inviteUserEmail) {
-                response = await window.adminServerApi.inviteUser("groups", this.groupId, this.inviteUserEmail.value, inviteTypeQuery);
+            if (this.modelType === "groups" &&
+                this.groupId &&
+                this.inviteUserEmail &&
+                this.inviteUserEmail.value) {
+                response = await window.adminServerApi.inviteUser("groups", this.groupId, this.inviteUserEmail.value, this.inviteType);
             }
             else if (this.modelType === "communities" &&
                 this.communityId &&
                 this.inviteUserEmail.value) {
-                const inviteTypeQuery = this.inviteType === "addUserDirectly"
-                    ? "?addToCommunityDirectly=1"
-                    : "";
-                response = await window.adminServerApi.inviteUser("communities", this.communityId, this.inviteUserEmail.value, inviteTypeQuery);
+                response = await window.adminServerApi.inviteUser("communities", this.communityId, this.inviteUserEmail.value, this.inviteType);
             }
             else {
                 console.warn("Can't find model type or ids");
@@ -819,6 +856,9 @@ let YpUsersGrid = class YpUsersGrid extends YpBaseElement {
         this.showReload = true;
         if (showToast)
             window.appGlobals.notifyUserViaToast(this.t("operationInProgressTryReloading"));
+        setTimeout(() => {
+            this._reload();
+        }, 500);
     }
     _removeAdminResponse() {
         window.appGlobals.notifyUserViaToast(this.t("adminRemoved"));
@@ -840,7 +880,7 @@ let YpUsersGrid = class YpUsersGrid extends YpBaseElement {
         window.appDialogs.getDialogAsync("confirmationDialog", (dialog) => {
             dialog.open(this.t("removalAndDeletionInProgress"), undefined, true, false, true);
         });
-        this._manyItemsResponse();
+        this._removeUserResponse();
     }
     _removeAndDeleteManyCompleted() {
         window.appDialogs.getDialogAsync("confirmationDialog", (dialog) => {
@@ -853,8 +893,8 @@ let YpUsersGrid = class YpUsersGrid extends YpBaseElement {
         this._reload();
     }
     _addAdminResponse() {
-        window.appGlobals.notifyUserViaToast(this.t("adminAdded") + " " + this.addAdminEmail);
-        this.addAdminEmail = undefined;
+        window.appGlobals.notifyUserViaToast(this.t("adminAdded") + " " + this.addAdminEmail.value);
+        this.addAdminEmail.value = "";
         this._reload();
     }
     _addOrganizationResponse(event) {
@@ -866,7 +906,7 @@ let YpUsersGrid = class YpUsersGrid extends YpBaseElement {
         this._reload();
     }
     _inviteUserResponse() {
-        window.appGlobals.notifyUserViaToast(this.t("users.userInvited") + " " + this.inviteUserEmail);
+        window.appGlobals.notifyUserViaToast(this.t("users.userInvited") + " " + this.inviteUserEmail.value);
         this.$$("#inviteUserEmail").value = "";
         this._reload();
     }
@@ -954,7 +994,7 @@ let YpUsersGrid = class YpUsersGrid extends YpBaseElement {
     }
 };
 __decorate([
-    property({ type: String })
+    query("#addAdminEmail")
 ], YpUsersGrid.prototype, "addAdminEmail", void 0);
 __decorate([
     query("#inviteUserEmail")

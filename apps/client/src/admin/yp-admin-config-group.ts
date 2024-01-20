@@ -13,7 +13,7 @@ import "@trystan2k/fleshy-jsoneditor/fleshy-jsoneditor.js";
 
 import { Layouts } from "lit-flexbox-literals";
 import { YpAdminPage } from "./yp-admin-page.js";
-import { YpAdminConfigBase } from "./yp-admin-config-base.js";
+import { YpAdminConfigBase, defaultLtpConfiguration, defaultLtpPromptsConfiguration } from "./yp-admin-config-base.js";
 import { YpNavHelpers } from "../common/YpNavHelpers.js";
 import { YpFileUpload } from "../yp-file-upload/yp-file-upload.js";
 //import { YpEmojiSelector } from './@yrpri/common/yp-emoji-selector.js';
@@ -76,9 +76,7 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
   statusIndex: any;
   hasSamlLoginProvider: any;
 
-  groupTypeOptions = [
-    "ideaGeneration"
-  ]
+  groupTypeOptions = ["ideaGeneration"];
 
   constructor() {
     super();
@@ -107,6 +105,12 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
         md-radio {
           margin-right: 4px;
         }
+
+        fleshy-jsoneditor {
+          width: 960px;
+        }
+
+
       `,
     ];
   }
@@ -221,6 +225,14 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
         value="${this.collection?.description}"
       />
 
+      ${ (this.collection?.configuration as YpGroupConfiguration).ltp ? html`
+        <input
+          type="hidden"
+          name="ltp"
+          value="${JSON.stringify((this.collection?.configuration as YpGroupConfiguration).ltp)}"
+        />
+      ` : nothing}
+
       <input type="hidden" name="${this.getAccessTokenName()}" value="1" />
 
       <input type="hidden" name="groupType" value="${this.groupTypeIndex}" />
@@ -289,6 +301,14 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
         this.group.access
       ] as YpGroupAccessTypes;
 
+      if (!(this.collection.configuration as YpGroupConfiguration).ltp) {
+        (this.collection.configuration as YpGroupConfiguration).ltp =
+          defaultLtpConfiguration;
+      } else if (!(this.collection.configuration as YpGroupConfiguration).ltp!.crt!.prompts) {
+        (this.collection.configuration as YpGroupConfiguration).ltp!.crt!.prompts =
+          defaultLtpPromptsConfiguration();
+      }
+
       this.groupTypeIndex = this.group.configuration.groupType || 0;
 
       this.endorsementButtons = this.group.configuration.endorsementButtons;
@@ -332,7 +352,9 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
         counter_points: 0,
         counter_posts: 0,
         counter_users: 0,
-        configuration: {},
+        configuration: {
+          ltp: defaultLtpConfiguration,
+        },
         community_id: this.parentCollectionId,
         hostname: "",
         is_group_folder: this.collectionId == "newFolder" ? true : false,
@@ -1352,6 +1374,7 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
     } as YpConfigTabData;
   }
 
+
   private _getAdditionalConfigTab() {
     return {
       name: "additionalGroupConfig",
@@ -1641,6 +1664,8 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
     tabs.push(this._getVoteSettingsTab());
     tabs.push(this._getPointSettingsTab());
     tabs.push(this._getAdditionalConfigTab());
+
+    this.tabsPostSetup(tabs);
 
     return tabs;
   }

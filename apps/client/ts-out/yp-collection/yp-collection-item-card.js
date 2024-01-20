@@ -49,7 +49,7 @@ let YpCollectionItemCard = class YpCollectionItemCard extends YpBaseElement {
           width: 860px;
           background-color: var(--md-sys-color-surface-variant);
           color: var(--md-sys-color-on-surface-variant);
-          margin: 0;
+          margin: 8px;
           position: relative;
         }
 

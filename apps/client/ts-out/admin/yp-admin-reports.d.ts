@@ -1,3 +1,4 @@
+import { PropertyValueMap } from "lit";
 import "@material/web/textfield/outlined-text-field.js";
 import "@material/web/button/filled-button.js";
 import "@material/web/select/outlined-select.js";
@@ -9,7 +10,7 @@ import { YpAdminPage } from "./yp-admin-page.js";
 export declare class YpAdminReports extends YpAdminPage {
     action: string;
     type: "fraudAuditReport" | "docx" | "xls" | "usersxls" | undefined;
-    progress: number;
+    progress: number | undefined;
     selectedTab: number;
     error: string | undefined;
     jobId: number | undefined;
@@ -20,7 +21,7 @@ export declare class YpAdminReports extends YpAdminPage {
     autoTranslateActive: boolean;
     selectedFraudAuditId: number | undefined;
     fraudAuditSelectionActive: boolean;
-    fraudAuditsAvailable: YpFraudAuditData[];
+    fraudAuditsAvailable: YpFraudAuditData[] | undefined;
     waitingOnFraudAudits: boolean;
     reportCreationProgressUrl: string | undefined;
     fraudItemSelection(event: CustomEvent): void;
@@ -30,12 +31,13 @@ export declare class YpAdminReports extends YpAdminPage {
     reportCreationProgress(): void;
     formatAuditReportDates(data: YpFraudAuditData[]): YpFraudAuditData[];
     fraudAuditsAjaxResponse(event: CustomEvent): void;
-    reportCreationProgressResponse(event: CustomEvent): void;
+    reportCreationProgressResponse(response: YpReportData): void;
     updated(changedProperties: Map<string | number | symbol, unknown>): void;
     startGeneration(): void;
     startReportCreationAjax(url: string): void;
     getFraudAuditsAjax(url: string): void;
     static get styles(): any[];
+    protected firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void;
     _tabChanged(): void;
     renderStart(): import("lit-html").TemplateResult<1>;
     renderDownload(): import("lit-html").TemplateResult<1>;

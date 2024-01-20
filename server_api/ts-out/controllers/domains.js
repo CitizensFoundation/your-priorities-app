@@ -784,6 +784,7 @@ router.put('/:id', auth.can('edit domain'), function (req, res) {
             domain.set('secret_api_keys.twitter.client_secret', req.body.twitterClientSecret);
             domain.set('secret_api_keys.github.client_id', req.body.githubClientId);
             domain.set('secret_api_keys.github.client_secret', req.body.githubClientSecret);
+            domain.set('configuration.welcomeHTMLforNotLoggedInUsers', (req.body.welcomeHTMLforNotLoggedInUsers && req.body.welcomeHTMLforNotLoggedInUsers != "") ? req.body.welcomeHTMLforNotLoggedInUsers : null);
             if (req.body.samlEntryPoint) {
                 domain.set('secret_api_keys.saml.entryPoint', req.body.samlEntryPoint);
                 domain.set('secret_api_keys.saml.callbackUrl', req.body.samlCallbackUrl);
@@ -806,6 +807,21 @@ router.put('/:id', auth.can('edit domain'), function (req, res) {
             }
             else {
                 domain.google_analytics_code = null;
+            }
+            const ltpConfigText = (req.body.ltp && req.body.ltp != "") ? req.body.ltp : null;
+            if (ltpConfigText) {
+                try {
+                    const cleaned = ltpConfigText.trim().replace(/\n/g, '').replace(/\r/g, '');
+                    const parsedJson = JSON.parse(cleaned);
+                    domain.set('configuration.ltp', parsedJson);
+                }
+                catch (error) {
+                    domain.set('configuration.ltp', null);
+                    log.error("Error in parsing ltp", { error });
+                }
+            }
+            else {
+                domain.set('configuration.ltp', null);
             }
             domain.set('configuration.customUserRegistrationText', (req.body.customUserRegistrationText && req.body.customUserRegistrationText != "") ? req.body.customUserRegistrationText : null);
             domain.set('configuration.forceSecureSamlEmployeeLogin', (req.body.forceSecureSamlEmployeeLogin && req.body.forceSecureSamlEmployeeLogin != "") ? true : false);

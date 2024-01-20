@@ -134,8 +134,8 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
           margin-bottom: 16px;
         }
 
-        md-filled-text-field,
         md-filled-text-field {
+          width: 100%;
         }
 
         md-filled-text-field[use-small-font],
@@ -161,10 +161,13 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
           margin-bottom: 8px;
         }
 
+        md-checkbox {
+          margin-left: 8px;
+        }
+
         .checkboxLabel {
           width: 100%;
           align-self: start;
-          margin-top: -1px;
           margin-left: 12px;
         }
 
@@ -201,7 +204,6 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
 
         .longQuestion {
           font-size: 18px;
-          font-weight: 400;
           padding-bottom: 0;
           margin-bottom: 0;
         }

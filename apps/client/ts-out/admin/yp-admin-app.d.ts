@@ -17,8 +17,9 @@ import "./yp-content-moderation.js";
 import "./yp-pages-grid.js";
 import "./yp-admin-translations.js";
 import "./yp-admin-reports.js";
+import "./yp-organization-grid.js";
 import "../yp-collection/yp-domain.js";
-type AdminPageOptions = "login" | "user" | "configuration" | "translations" | "pages" | "reports" | "users" | "admins" | "moderation" | "aiAnalysis" | "groups" | "communities" | "back" | "posts" | "profile_images" | "badges" | "post";
+type AdminPageOptions = "login" | "user" | "configuration" | "translations" | "organizations" | "pages" | "reports" | "users" | "admins" | "moderation" | "aiAnalysis" | "groups" | "communities" | "back" | "posts" | "profile_images" | "badges" | "post";
 type CollectionTypes = "domain" | "community" | "group";
 interface RouteData {
     page: AdminPageOptions;
@@ -62,6 +63,8 @@ export declare class YpAdminApp extends YpBaseElement {
     updated(changedProperties: Map<string | number | symbol, unknown>): void;
     _needsUpdate(): void;
     renderGroupConfigPage(): import("lit-html").TemplateResult<1>;
+    renderCommunityConfigPage(): import("lit-html").TemplateResult<1>;
+    renderDomainConfigPage(): import("lit-html").TemplateResult<1>;
     _renderPage(): import("lit-html").TemplateResult<1> | typeof nothing;
     getCollection(): Promise<void>;
     _setAdminFromParent(): Promise<void>;
@@ -73,7 +76,7 @@ export declare class YpAdminApp extends YpBaseElement {
     _isPageSelectedClass(page: AdminPageOptions): "" | "selectedContainer";
     _getListHeadline(type: AdminPageOptions): string;
     _getListSupportingText(type: AdminPageOptions): string;
-    _getListIcon(type: AdminPageOptions): "" | "category" | "person" | "settings" | "reports" | "translate" | "supervised_user_circle" | "supervisor_account" | "checklist" | "document_scanner" | "description" | "rocket_launch" | "videogroup_asset" | "workspace_premium" | "arrow_back";
+    _getListIcon(type: AdminPageOptions): "" | "category" | "person" | "settings" | "description" | "reports" | "translate" | "add_business" | "supervised_user_circle" | "supervisor_account" | "checklist" | "document_scanner" | "rocket_launch" | "videogroup_asset" | "workspace_premium" | "arrow_back";
     setPage(type: AdminPageOptions): void;
     renderMenuListItem(type: AdminPageOptions): import("lit-html").TemplateResult<1>;
     renderNavigationBar(): import("lit-html").TemplateResult<1>;

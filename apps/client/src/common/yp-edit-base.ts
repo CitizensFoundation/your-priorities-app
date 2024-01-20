@@ -92,6 +92,7 @@ export abstract class YpEditBase extends YpBaseElement {
     if (typeof this.customRedirect == 'function') {
       this.customRedirect(event.detail);
     }
+
     if (typeof this.refreshFunction == 'function') {
       this.refreshFunction(event.detail);
     }

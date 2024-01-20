@@ -6,8 +6,6 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 import { html, css, nothing } from "lit";
 import { property } from "lit/decorators.js";
-//import { ifDefined } from 'lit/directives/if-defined.js';
-import { YpBaseElement } from "../common/yp-base-element.js";
 import "@material/web/tabs/tabs.js";
 import "@material/web/tabs/primary-tab.js";
 import "@material/web/fab/fab.js";
@@ -18,12 +16,13 @@ import { YpServerApi } from "../common/YpServerApi.js";
 import "../ac-activities/ac-activities.js";
 import "../yp-post/yp-post-map.js";
 import { YpNavHelpers } from "../common/YpNavHelpers.js";
+import { YpBaseElementWithLogin } from "../common/yp-base-element-with-login.js";
 export const CollectionTabTypes = {
     Collection: 0,
     Newsfeed: 1,
     Map: 2,
 };
-export class YpCollection extends YpBaseElement {
+export class YpCollection extends YpBaseElementWithLogin {
     constructor(collectionType, collectionItemType, collectionCreateFabIcon, collectionCreateFabLabel) {
         super();
         this.noHeader = false;
@@ -38,7 +37,7 @@ export class YpCollection extends YpBaseElement {
         this.collectionCreateFabLabel = collectionCreateFabLabel;
         //TODO: Fix this as it causes loadMoreData to be called twice on post lists at least
         this.addGlobalListener("yp-logged-in", this.loggedInUserCustom.bind(this));
-        this.addGlobalListener("yp-got-admin-rights", this.refresh.bind(this));
+        this.addGlobalListener("yp-got-admin-rights", this.getCollection.bind(this));
     }
     async loggedInUserCustom() {
         //TODO: Look into this, find a better solution than waiting
@@ -120,6 +119,7 @@ export class YpCollection extends YpBaseElement {
           position: fixed;
           bottom: 32px;
           right: 32px;
+          z-index: 3000;
         }
 
         md-icon-button {

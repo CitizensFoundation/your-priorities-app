@@ -17,7 +17,7 @@ import "@vaadin/grid/vaadin-grid-filter-column.js";
 import "@vaadin/grid/vaadin-grid-sort-column.js";
 import { GridColumn } from "@vaadin/vaadin-grid/src/vaadin-grid-column";
 export declare class YpUsersGrid extends YpBaseElement {
-    addAdminEmail: string | undefined;
+    addAdminEmail: HTMLInputElement | undefined;
     inviteUserEmail: HTMLInputElement | undefined;
     headerText: string | undefined;
     users: Array<YpUserData> | undefined;
@@ -46,6 +46,7 @@ export declare class YpUsersGrid extends YpBaseElement {
     static get styles(): any[];
     renderSelectionHeader(root: HTMLElement, column?: GridColumn | undefined): void;
     selectionRenderer(root: HTMLElement, column: any, rowData: any): void;
+    _reloadFromButton(): void;
     render(): TemplateResult<1>;
     get spinnerActive(): boolean;
     _generateRequest(id?: number | undefined): Promise<void>;
@@ -62,6 +63,7 @@ export declare class YpUsersGrid extends YpBaseElement {
     private _userOrganizationName;
     private _availableOrganizations;
     private _addToOrganization;
+    closeOrganizationDialog(): void;
     private _removeFromOrganization;
     private _selectOrganization;
     private _removeAdmin;

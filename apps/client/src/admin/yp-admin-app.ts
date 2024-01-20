@@ -27,6 +27,8 @@ import "./yp-pages-grid.js";
 import "./yp-admin-translations.js";
 import "./yp-admin-reports.js";
 
+import "./yp-organization-grid.js";
+
 const VERSION = "[VI]Version: {version} - built on {date}[/VI]";
 
 import "../yp-collection/yp-domain.js";
@@ -39,6 +41,7 @@ type AdminPageOptions =
   | "user"
   | "configuration"
   | "translations"
+  | "organizations"
   | "pages"
   | "reports"
   | "users"
@@ -511,6 +514,29 @@ export class YpAdminApp extends YpBaseElement {
     </yp-admin-config-group>`;
   }
 
+  renderCommunityConfigPage() {
+    return html`
+      <yp-admin-config-community
+        .collectionType="${this.collectionType}"
+        .collection="${this.collection}"
+        .collectionId="${this.collectionId}"
+        .parentCollectionId="${this.parentCollectionId}"
+      >
+      </yp-admin-config-community>
+    `;
+  }
+
+  renderDomainConfigPage() {
+    return html`
+      <yp-admin-config-domain
+        .collectionType="${this.collectionType}"
+        .collection="${this.collection}"
+        .collectionId="${this.collectionId}"
+      >
+      </yp-admin-config-domain>
+    `;
+  }
+
   _renderPage() {
     if (this.adminConfirmed) {
       switch (this.page) {
@@ -523,6 +549,16 @@ export class YpAdminApp extends YpBaseElement {
                   .collectionId="${this.collectionId}"
                 >
                 </yp-admin-translations>`
+              : nothing}
+          `;
+        case "organizations":
+          return html`
+            ${this.collection
+              ? html`<yp-organization-grid
+                  .domain="${this.collection}"
+                  .domainId="${this.collectionId}"
+                >
+                </yp-organizations-grid>`
               : nothing}
           `;
         case "reports":
@@ -564,24 +600,13 @@ export class YpAdminApp extends YpBaseElement {
             case "domain":
               return html`
                 ${this.collection
-                  ? html`<yp-admin-config-domain
-                      .collectionType="${this.collectionType}"
-                      .collection="${this.collection}"
-                      .collectionId="${this.collectionId}"
-                    >
-                    </yp-admin-config-domain>`
+                  ? this.renderDomainConfigPage()
                   : nothing}
               `;
             case "community":
               return html`
                 ${this.collection || this.collectionId === "new"
-                  ? html`<yp-admin-config-community
-                      .collectionType="${this.collectionType}"
-                      .collection="${this.collection}"
-                      .collectionId="${this.collectionId}"
-                      .parentCollectionId="${this.parentCollectionId}"
-                    >
-                    </yp-admin-config-community>`
+                  ? this.renderCommunityConfigPage()
                   : nothing}
               `;
             case "group":
@@ -850,6 +875,8 @@ export class YpAdminApp extends YpBaseElement {
       }
     } else if (type === "translations") {
       return this.t("Translations");
+    } else if (type === "organizations") {
+      return this.t("Organizations");
     } else if (type === "reports") {
       return this.t("reports");
     } else if (type === "users") {
@@ -903,6 +930,8 @@ export class YpAdminApp extends YpBaseElement {
       }
     } else if (type === "reports") {
       return this.t("reportsInfo");
+    } else if (type === "organizations") {
+      return this.t("organizationsAdmin");
     } else if (type === "translations") {
       if (this.collectionType === "domain") {
         return this.t("Translate your domain");
@@ -979,6 +1008,8 @@ export class YpAdminApp extends YpBaseElement {
       return "settings";
     } else if (type === "translations") {
       return "translate";
+    } else if (type === "organizations") {
+      return "add_business";
     } else if (type === "reports") {
       return "reports";
     } else if (type === "users") {
@@ -1105,7 +1136,7 @@ export class YpAdminApp extends YpBaseElement {
                               ${this.renderMenuListItem("reports")}
                               ${this.renderMenuListItem("translations")}
                             `
-                          : nothing}
+                          : html` ${this.renderMenuListItem("organizations")}`}
                         ${this.renderMenuListItem("aiAnalysis")}
                       `
                     : html``}

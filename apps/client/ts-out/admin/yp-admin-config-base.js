@@ -23,6 +23,15 @@ import { YpMediaHelpers } from "../common/YpMediaHelpers.js";
 import { unsafeHTML } from "lit/directives/unsafe-html.js";
 import { ifDefined } from "lit/directives/if-defined.js";
 import { YpCollectionHelpers } from "../common/YpCollectionHelpers.js";
+export const defaultLtpPromptsConfiguration = () => {
+    return Object.fromEntries(Array.from({ length: 10 }, (_, i) => [i + 1, ""]));
+};
+export const defaultLtpConfiguration = {
+    crt: {
+        prompts: defaultLtpPromptsConfiguration(),
+        promptsTests: defaultLtpPromptsConfiguration()
+    },
+};
 export class YpAdminConfigBase extends YpAdminPage {
     constructor() {
         super();
@@ -79,6 +88,18 @@ export class YpAdminConfigBase extends YpAdminPage {
         var image = JSON.parse(event.detail.xhr.response);
         this.uploadedHeaderImageId = image.id;
         this.configChanged = true;
+    }
+    _ltpConfigChanged(event) {
+        setTimeout(() => {
+            const jsonEditor = this.$$("#jsoneditor");
+            const currentJson = jsonEditor.json;
+            this.collection.configuration.ltp = currentJson;
+            this._configChanged();
+            this.requestUpdate();
+        }, 25);
+    }
+    tabsPostSetup(tabs) {
+        // To overide in child class
     }
     renderSaveButton() {
         return html `
@@ -339,7 +360,7 @@ export class YpAdminConfigBase extends YpAdminPage {
         }
 
         .adminItem {
-          margin: 8px;
+          margin: 0px;
           max-width: 420px;
           margin-bottom: 32px;
         }
@@ -350,7 +371,7 @@ export class YpAdminConfigBase extends YpAdminPage {
           border-radius: 16px;
           width: 100%;
           max-width: 1024px;
-          padding: 16px;
+          padding: 32px;
           margin-bottom: 128px;
         }
 

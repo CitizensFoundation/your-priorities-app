@@ -522,8 +522,7 @@ let YpEditDialog = class YpEditDialog extends YpBaseElement {
             else {
                 this.snackbarTextCombined = this.snackbarText;
             }
-            this.snackbarTextCombined = this.t("thankYouForSubmittingYourLandUses");
-            this.$$("#snackbar").open = true;
+            this.fire('yp-open-toast', { text: this.snackbarTextCombined });
         }
     }
     _formError(event) {

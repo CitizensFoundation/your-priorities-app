@@ -17,7 +17,7 @@ export declare class YpPagesGrid extends YpBaseElement {
     currentlyEditingTitle: string | undefined;
     currentlyEditingContent: string | undefined;
     updated(changedProperties: Map<string | number | symbol, unknown>): void;
-    static get styles(): import("lit").CSSResult[];
+    static get styles(): any[];
     titleChanged(): void;
     contentChanged(): void;
     render(): import("lit-html").TemplateResult<1> | typeof nothing;

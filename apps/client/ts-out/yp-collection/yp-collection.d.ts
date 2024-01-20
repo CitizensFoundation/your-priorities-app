@@ -1,5 +1,4 @@
 import { nothing, TemplateResult } from "lit";
-import { YpBaseElement } from "../common/yp-base-element.js";
 import "@material/web/tabs/tabs.js";
 import "@material/web/tabs/primary-tab.js";
 import "@material/web/fab/fab.js";
@@ -8,8 +7,9 @@ import "./yp-collection-header.js";
 import "./yp-collection-items-grid.js";
 import "../ac-activities/ac-activities.js";
 import "../yp-post/yp-post-map.js";
+import { YpBaseElementWithLogin } from "../common/yp-base-element-with-login.js";
 export declare const CollectionTabTypes: Record<string, number>;
-export declare abstract class YpCollection extends YpBaseElement {
+export declare abstract class YpCollection extends YpBaseElementWithLogin {
     noHeader: boolean;
     tabsHidden: boolean;
     collectionId: number | undefined;

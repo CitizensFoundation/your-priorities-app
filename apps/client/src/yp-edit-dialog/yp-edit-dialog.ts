@@ -600,8 +600,7 @@ export class YpEditDialog extends YpBaseElement {
       } else {
         this.snackbarTextCombined = this.snackbarText;
       }
-      this.snackbarTextCombined = this.t("thankYouForSubmittingYourLandUses");
-      (this.$$("#snackbar") as Snackbar).open = true;
+      this.fire('yp-open-toast', {text: this.snackbarTextCombined});
     }
   }
 

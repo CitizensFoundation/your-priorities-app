@@ -28,7 +28,7 @@ export class YpServerApiBase extends YpCodeBase {
         }
         return transformedApiType;
     }
-    async fetchWrapper(url, options = {}, showUserError = true, errorId = undefined) {
+    async fetchWrapper(url, options = {}, showUserError = true, errorId = undefined, throwError = false) {
         if (!options.headers) {
             options.headers = {
                 'Content-Type': 'application/json',
@@ -49,7 +49,7 @@ export class YpServerApiBase extends YpCodeBase {
         }
         else {
             const response = await fetch(url, options);
-            return this.handleResponse(response, showUserError, errorId);
+            return this.handleResponse(response, showUserError, errorId, throwError);
         }
     }
     //TODO: Handle 401
@@ -83,7 +83,7 @@ export class YpServerApiBase extends YpCodeBase {
         },
   
     */
-    async handleResponse(response, showUserError, errorId = undefined) {
+    async handleResponse(response, showUserError, errorId = undefined, throwError = false) {
         if (response.ok) {
             let responseJson = null;
             try {
@@ -100,6 +100,9 @@ export class YpServerApiBase extends YpCodeBase {
                         showUserError,
                         errorId,
                     });
+                    if (throwError) {
+                        throw error;
+                    }
                 }
             }
             if (responseJson !== null) {
@@ -115,6 +118,9 @@ export class YpServerApiBase extends YpCodeBase {
                 showUserError,
                 errorId,
             });
+            if (throwError) {
+                throw response.statusText;
+            }
             return null;
         }
     }

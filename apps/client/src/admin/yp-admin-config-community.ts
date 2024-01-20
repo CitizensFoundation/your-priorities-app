@@ -11,7 +11,7 @@ import "@material/web/select/select-option.js";
 
 import "../yp-survey/yp-structured-question-edit.js";
 
-import { YpAdminConfigBase } from "./yp-admin-config-base.js";
+import { YpAdminConfigBase, defaultLtpConfiguration, defaultLtpPromptsConfiguration } from "./yp-admin-config-base.js";
 import { YpNavHelpers } from "../common/YpNavHelpers.js";
 import { YpFileUpload } from "../yp-file-upload/yp-file-upload.js";
 
@@ -67,23 +67,26 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
   }
 
   static override get styles() {
-    return [super.styles, css`
-      .accessContainer {
-      }
+    return [
+      super.styles,
+      css`
+        .accessContainer {
+        }
 
-      .accessHeader {
-        font-weight: bold;
-        margin: 8px;
-      }
+        .accessHeader {
+          font-weight: bold;
+          margin: 8px;
+        }
 
-      label {
-        padding: 8px;
-      }
+        label {
+          padding: 8px;
+        }
 
-      md-radio {
-        margin-right: 4px;
-      }
-    `];
+        md-radio {
+          margin-right: 4px;
+        }
+      `,
+    ];
   }
 
   renderHeader() {
@@ -137,6 +140,18 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
         name="appHomeScreenIconImageId"
         value="${this.appHomeScreenIconImageId?.toString() || ""}"
       />
+
+      ${(this.collection?.configuration as YpCommunityConfiguration).ltp
+        ? html`
+            <input
+              type="hidden"
+              name="ltp"
+              value="${JSON.stringify(
+                (this.collection?.configuration as YpCommunityConfiguration).ltp
+              )}"
+            />
+          `
+        : nothing}
 
       <input
         type="hidden"
@@ -208,6 +223,14 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
         this.collection as YpCommunityData
       ).CommunityLogoImages;
       this._communityChanged();
+
+      if (!(this.collection.configuration as YpCommunityConfiguration).ltp) {
+        (this.collection.configuration as YpCommunityConfiguration).ltp =
+          defaultLtpConfiguration;
+      } else if (!(this.collection.configuration as YpCommunityConfiguration).ltp!.crt!.prompts) {
+        (this.collection.configuration as YpCommunityConfiguration).ltp!.crt!.prompts =
+          defaultLtpPromptsConfiguration();
+      }
     }
 
     if (changedProperties.has("collectionId") && this.collectionId) {
@@ -342,7 +365,9 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
         counter_points: 0,
         counter_posts: 0,
         counter_users: 0,
-        configuration: {},
+        configuration: {
+          ltp: defaultLtpConfiguration,
+        },
         hostname: "",
         is_community_folder: this.collectionId == "newFolder" ? true : false,
       } as YpCommunityData;
@@ -887,6 +912,8 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
     tabs.push(this._getLookAndFeelTab());
     tabs.push(this._getWebAppTab());
     tabs.push(this._getSamlTab());
+
+    this.tabsPostSetup(tabs);
 
     return tabs;
   }

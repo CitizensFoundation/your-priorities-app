@@ -618,6 +618,21 @@ var updateCommunityConfigParameters = function (req, community) {
     community.set('configuration.hideLogoBoxShadow', truthValueFromBody(req.body.hideLogoBoxShadow));
     community.set('configuration.muteNotificationsForEndorsements', truthValueFromBody(req.body.muteNotificationsForEndorsements));
     community.set('configuration.useTextOnlyInfoBox', truthValueFromBody(req.body.useTextOnlyInfoBox));
+    const ltpConfigText = (req.body.ltp && req.body.ltp != "") ? req.body.ltp : null;
+    if (ltpConfigText) {
+        try {
+            const cleaned = ltpConfigText.trim().replace(/\n/g, '').replace(/\r/g, '');
+            const parsedJson = JSON.parse(cleaned);
+            community.set('configuration.ltp', parsedJson);
+        }
+        catch (error) {
+            community.set('configuration.ltp', null);
+            log.error("Error in parsing ltp", { error });
+        }
+    }
+    else {
+        community.set('configuration.ltp', null);
+    }
     community.set('configuration.themeOverrideColorPrimary', (req.body.themeOverrideColorPrimary && req.body.themeOverrideColorPrimary != "") ? req.body.themeOverrideColorPrimary : null);
     community.set('configuration.themeOverrideColorAccent', (req.body.themeOverrideColorAccent && req.body.themeOverrideColorAccent != "") ? req.body.themeOverrideColorAccent : null);
     community.set('configuration.themeOverrideBackgroundColor', (req.body.themeOverrideBackgroundColor && req.body.themeOverrideBackgroundColor != "") ? req.body.themeOverrideBackgroundColor : null);

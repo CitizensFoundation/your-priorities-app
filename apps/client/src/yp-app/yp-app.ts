@@ -61,6 +61,7 @@ import { YpAppNavDrawer } from "./yp-app-nav-drawer.js";
 import { Dialog } from "@material/web/dialog/internal/dialog.js";
 import { Corner, Menu } from "@material/web/menu/menu.js";
 import { YpServerApiAdmin } from "../common/YpServerApiAdmin.js";
+import { MdDialog } from "@material/web/dialog/dialog.js";
 
 declare global {
   interface Window {
@@ -255,8 +256,9 @@ export class YpApp extends YpBaseElement {
       ? this.t("errorCantConnect")
       : "Can't connect to server, try again later";
     let statusCode = -1;
+
     if (detail.response && detail.response.status === 404)
-      errorText = this.t("errorNotAuthorized");
+      errorText = this.t("errorNotFound");
     else if (detail.response && detail.response.status === 401)
       errorText = this.t("errorNotAuthorized");
     else if (
@@ -772,6 +774,7 @@ export class YpApp extends YpBaseElement {
 
   _resetNotifyDialogText() {
     this.notifyDialogText = undefined;
+    (this.$$("#dialog") as MdDialog).close();
   }
 
   // Translated Pages

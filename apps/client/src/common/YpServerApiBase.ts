@@ -34,7 +34,8 @@ export class YpServerApiBase extends YpCodeBase {
     url: string,
     options: RequestInit = {},
     showUserError = true,
-    errorId: string | undefined = undefined
+    errorId: string | undefined = undefined,
+    throwError: boolean = false
   ) {
     if (!options.headers) {
       options.headers = {
@@ -54,7 +55,7 @@ export class YpServerApiBase extends YpCodeBase {
       throw new Error("offlineSendLater");
     } else {
       const response = await fetch(url, options);
-      return this.handleResponse(response, showUserError, errorId);
+      return this.handleResponse(response, showUserError, errorId, throwError);
       }
   }
 
@@ -92,7 +93,8 @@ export class YpServerApiBase extends YpCodeBase {
   protected async handleResponse(
     response: Response,
     showUserError: boolean,
-    errorId: string | undefined = undefined
+    errorId: string | undefined = undefined,
+    throwError = false
   ) {
     if (response.ok) {
       let responseJson = null;
@@ -108,7 +110,12 @@ export class YpServerApiBase extends YpCodeBase {
             showUserError,
             errorId,
           });
+
+          if (throwError) {
+            throw error;
+          }
         }
+
       }
       if (responseJson!==null) {
         return responseJson;
@@ -121,6 +128,9 @@ export class YpServerApiBase extends YpCodeBase {
         showUserError,
         errorId,
       });
+      if (throwError) {
+        throw response.statusText;
+      }
       return null;
     }
   }

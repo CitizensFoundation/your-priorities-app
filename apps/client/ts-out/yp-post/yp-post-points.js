@@ -458,7 +458,7 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
         class="pointMaterial"
         ?is-last-point="${point.isLastPointInList}"
       >
-        <yp-point .point="${point}" .post="${this.post}"></yp-point>
+        <yp-point .point="${point}" .group="${this.post.Group}" .post="${this.post}"></yp-point>
       </div>
     </div>`;
     }

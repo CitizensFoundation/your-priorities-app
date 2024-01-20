@@ -765,7 +765,16 @@ wsServer.on("connection", (ws) => {
         wsClients.set(clientId, ws);
         ws.send(JSON.stringify({ clientId }));
         ws.on("message", (message) => {
-            // Process incoming messages
+            try {
+                const data = JSON.parse(message);
+                if (data.type === 'heartbeat') {
+                    console.log(`Received heartbeat from client ${clientId}`);
+                    ws.send(JSON.stringify({ type: 'heartbeat_ack' }));
+                }
+            }
+            catch (e) {
+                console.log(`Received non-JSON message from client ${clientId}`);
+            }
         });
         ws.on("close", () => {
             wsClients.delete(clientId);
@@ -773,7 +782,7 @@ wsServer.on("connection", (ws) => {
         });
         ws.on("error", () => {
             wsClients.delete(clientId);
-            console.log(`Connection error for client ${clientId}`);
+            console.error(`Connection error for client ${clientId}`);
         });
     }
     catch (error) {

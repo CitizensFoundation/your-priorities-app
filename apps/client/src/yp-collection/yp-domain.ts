@@ -1,15 +1,17 @@
-import { YpAccessHelpers } from '../common/YpAccessHelpers.js';
-import { YpMediaHelpers } from '../common/YpMediaHelpers.js';
+import { YpAccessHelpers } from "../common/YpAccessHelpers.js";
+import { YpMediaHelpers } from "../common/YpMediaHelpers.js";
 
-import { YpCollection, CollectionTabTypes } from './yp-collection.js';
-import { YpCollectionItemsGrid } from './yp-collection-items-grid.js';
-import { customElement } from 'lit/decorators.js';
-import { AcActivities } from '../ac-activities/ac-activities.js';
+import { YpCollection, CollectionTabTypes } from "./yp-collection.js";
+import { YpCollectionItemsGrid } from "./yp-collection-items-grid.js";
+import { customElement } from "lit/decorators.js";
+import { AcActivities } from "../ac-activities/ac-activities.js";
+import { unsafeHTML } from "lit/directives/unsafe-html.js";
+import { html } from "lit";
 
-@customElement('yp-domain')
+@customElement("yp-domain")
 export class YpDomain extends YpCollection {
   constructor() {
-    super("domain","community","edit",'community.add');
+    super("domain", "community", "edit", "community.add");
   }
 
   override refresh() {
@@ -26,10 +28,7 @@ export class YpDomain extends YpCollection {
         YpAccessHelpers.checkDomainAccess(domain)
       );
 
-      if (
-        domain.DomainHeaderImages &&
-        domain.DomainHeaderImages.length > 0
-      ) {
+      if (domain.DomainHeaderImages && domain.DomainHeaderImages.length > 0) {
         YpMediaHelpers.setupTopHeaderImage(
           this,
           domain.DomainHeaderImages as Array<YpImageData>
@@ -52,7 +51,10 @@ export class YpDomain extends YpCollection {
   }
 
   scrollToCommunityItem() {
-    if (this.selectedTab===CollectionTabTypes.Newsfeed && window.appGlobals.cache.cachedActivityItem) {
+    if (
+      this.selectedTab === CollectionTabTypes.Newsfeed &&
+      window.appGlobals.cache.cachedActivityItem
+    ) {
       const list = this.$$("#collectionActivities") as AcActivities;
       if (list) {
         list.scrollToItem(window.appGlobals.cache.cachedActivityItem);
@@ -60,13 +62,19 @@ export class YpDomain extends YpCollection {
       } else {
         console.warn("No domain activities for scroll to item");
       }
-    } else if (this.selectedTab===CollectionTabTypes.Collection && this.collection) {
-      if (window.appGlobals.cache.backToDomainCommunityItems &&
-        window.appGlobals.cache.backToDomainCommunityItems[this.collection.id]) {
-          (this.$$('#collectionItems') as YpCollectionItemsGrid).scrollToItem(
-            window.appGlobals.cache.backToDomainCommunityItems[this.collection.id]
-          );
-        window.appGlobals.cache.backToDomainCommunityItems[this.collection.id] = undefined;
+    } else if (
+      this.selectedTab === CollectionTabTypes.Collection &&
+      this.collection
+    ) {
+      if (
+        window.appGlobals.cache.backToDomainCommunityItems &&
+        window.appGlobals.cache.backToDomainCommunityItems[this.collection.id]
+      ) {
+        (this.$$("#collectionItems") as YpCollectionItemsGrid).scrollToItem(
+          window.appGlobals.cache.backToDomainCommunityItems[this.collection.id]
+        );
+        window.appGlobals.cache.backToDomainCommunityItems[this.collection.id] =
+          undefined;
       }
     }
   }
@@ -77,12 +85,27 @@ export class YpDomain extends YpCollection {
       window.appGlobals.cache.backToDomainCommunityItems &&
       window.appGlobals.cache.backToDomainCommunityItems[this.collection.id]
     ) {
-      (this.$$('#collectionItems') as YpCollectionItemsGrid).scrollToItem(
+      (this.$$("#collectionItems") as YpCollectionItemsGrid).scrollToItem(
         window.appGlobals.cache.backToDomainCommunityItems[this.collection.id]
       );
-      window.appGlobals.cache.backToDomainCommunityItems[
-        this.collection.id
-      ] = undefined;
+      window.appGlobals.cache.backToDomainCommunityItems[this.collection.id] =
+        undefined;
+    }
+  }
+
+  override render() {
+    if (
+      !this.loggedInUser &&
+      this.collection &&
+      (this.collection.configuration as YpDomainConfiguration)
+        .welcomeHTMLforNotLoggedInUsers
+    ) {
+      return html`${unsafeHTML(
+        (this.collection.configuration as YpDomainConfiguration)
+          .welcomeHTMLforNotLoggedInUsers
+      )}`;
+    } else {
+      return super.render();
     }
   }
 }

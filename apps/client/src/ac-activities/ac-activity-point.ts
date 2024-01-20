@@ -106,6 +106,7 @@ export class AcActivityPoint extends YpBaseElementWithLogin {
           <yp-point
             hideUser
             .linkPoint="${!this.postId}"
+            .group="${this.activity.Group!}"
             class="card"
             .point="${this.activity.Point!}"></yp-point>
         </div>

@@ -11,6 +11,7 @@ import { YpBaseElement } from '../common/yp-base-element.js';
 export declare class YpPoint extends YpBaseElement {
     point: YpPointData;
     post: YpPostData;
+    group: YpGroupData;
     user: YpUserData | undefined;
     linkPoint: boolean;
     openTranscript: boolean;

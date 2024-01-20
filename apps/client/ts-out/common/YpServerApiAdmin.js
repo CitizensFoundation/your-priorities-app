@@ -27,7 +27,7 @@ export class YpServerApiAdmin extends YpServerApiBase {
     }
     addAdmin(collection, collectionId, adminEmail) {
         return this.fetchWrapper(this.baseUrlPath +
-            `/${collection}/${collectionId}/${collectionId}/${adminEmail}/add_admin`, {
+            `/${collection}/${collectionId}/${adminEmail}/add_admin`, {
             method: 'POST',
             body: JSON.stringify({}),
         }, false);
@@ -43,11 +43,14 @@ export class YpServerApiAdmin extends YpServerApiBase {
             }
         }
         return this.fetchWrapper(this.baseUrlPath +
-            `/${collection}/${collectionId}/${collectionId}/${inviteEmail}/invite_user${query}`, {
+            `/${collection}/${collectionId}/${inviteEmail}/invite_user${query}`, {
             method: 'POST',
             body: JSON.stringify({}),
-        }, false);
+        }, true, undefined, true);
     }
+    // add sibling
+    // add followup promt for additional causes
+    //
     addUserToOrganization(organizationId, userId) {
         return this.fetchWrapper(this.baseUrlPath +
             `/organizations/${organizationId}/${userId}/add_user`, {

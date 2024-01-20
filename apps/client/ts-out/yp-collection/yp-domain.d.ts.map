@@ -1,1 +1,1 @@
-{"version":3,"file":"yp-domain.d.ts","sourceRoot":"","sources":["../../src/yp-collection/yp-domain.ts"],"names":[],"mappings":"AAGA,OAAO,EAAE,YAAY,EAAsB,MAAM,oBAAoB,CAAC;AAKtE,qBACa,QAAS,SAAQ,YAAY;;IAK/B,OAAO;IAuChB,qBAAqB;IAoBrB,8BAA8B;CAc/B"}
+{"version":3,"file":"yp-domain.d.ts","sourceRoot":"","sources":["../../src/yp-collection/yp-domain.ts"],"names":[],"mappings":"AAGA,OAAO,EAAE,YAAY,EAAsB,MAAM,oBAAoB,CAAC;AAOtE,qBACa,QAAS,SAAQ,YAAY;;IAK/B,OAAO;IAoChB,qBAAqB;IA6BrB,8BAA8B;IAcrB,MAAM;CAehB"}

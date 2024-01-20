@@ -63,31 +63,15 @@ export class YpPagesGrid extends YpBaseElement {
 
   static override get styles() {
     return [
+      super.styles,
       css`
         #dialog {
           width: 90%;
           max-height: 90%;
         }
 
-        iron-list {
-          height: 500px;
-          width: 100%;
-        }
-
         .pageItem {
           padding-right: 16px;
-        }
-
-        .id {
-          width: 60px;
-        }
-
-        .title {
-          width: 200px;
-        }
-
-        .email {
-          width: 240px;
         }
 
         #editPageLocale {
@@ -104,12 +88,10 @@ export class YpPagesGrid extends YpBaseElement {
           cursor: pointer;
         }
 
-        paper-textarea {
-          height: 60%;
-        }
-
         .localeInput {
-          width: 52px;
+          width: 60px;
+          margin-right: 12px;
+          margin-left: 16px;
         }
 
         .pageItem {
@@ -129,117 +111,146 @@ export class YpPagesGrid extends YpBaseElement {
         .buttons {
           margin-right: 16px;
         }
+
+        .pageItem {
+          margin-right: 16px;
+        }
+
+        .addLocaleButton {
+          margin-right: 16px;
+        }
+
+        #addPageButton {
+          margin: 24px;
+        }
       `,
     ];
   }
 
   titleChanged() {
-    this.currentlyEditingTitle = (this.$$("#title") as MdOutlinedTextField).value;
+    this.currentlyEditingTitle = (
+      this.$$("#title") as MdOutlinedTextField
+    ).value;
   }
 
   contentChanged() {
-    this.currentlyEditingContent = (this.$$("#content") as MdOutlinedTextField).value;
+    this.currentlyEditingContent = (
+      this.$$("#content") as MdOutlinedTextField
+    ).value;
   }
 
   override render() {
     if (this.pages) {
       return html`
-      <h2>${this.headerText}</h2>
-      <div class="flex"></div>
-        <div class="layout horizontal">
-          <md-filled-button id="addPageButton" @click="${
-            this._addPage
-          }">${this.t("pages.addPage")}</md-filled-button>
-        </div>
-      </div>
-      <div id="scrollable">
-      ${this.pages?.map((page) => {
-        return html`
-          <div class="layout horizontal">
-            <div class="pageItem id">${page.id}</div>
-            <div class="pageItem title">${page.title.en}</div>
+        <h2>${this.headerText}</h2>
+        <div id="scrollable">
+          ${this.pages?.map((page) => {
+            return html`
+              <div class="layout horizontal">
+                <div class="pageItem id">${page.id}</div>
+                <div class="pageItem title">${page.title.en}</div>
 
-            ${this._toLocaleArray(page.title).map(
-              (item) => html`
-                <div class="layout vertical center-center">
-                  <md-text-button
-                    class="locale"
-                    data-args-page="${JSON.stringify(page)}"
-                    data-args-locale="${item.locale}"
-                    @click="${this._editPageLocale}"
-                    >${item.locale}</md-text-button
-                  >
-                </div>
-              `
-            )}
+                ${this._toLocaleArray(page.title).map(
+                  (item) => html`
+                    <div class="layout vertical center-center">
+                      <md-text-button
+                        class="locale"
+                        data-args-page="${JSON.stringify(page)}"
+                        data-args-locale="${item.locale}"
+                        @click="${this._editPageLocale}"
+                        >${item.locale}</md-text-button
+                      >
+                    </div>
+                  `
+                )}
+
+                <md-outlined-text-field
+                  class="localeInput"
+                  id="localeInput"
+                  length="2"
+                  maxlength="2"
+                ></md-outlined-text-field>
+
+                <md-text-button
+                  data-args="${page.id}"
+                  class="addLocaleButton"
+                  @click="${this._addLocale}"
+                  >${this.t("pages.addLocale")}</md-text-button
+                >
+                <md-text-button
+                  ?hidden="${page.published}"
+                  data-args="${page.id}"
+                  @click="${this._publishPage}"
+                  >${this.t("pages.publish")}</md-text-button
+                >
+
+                <md-text-button
+                  data-args="${page.id}"
+                  ?hidden="${!page.published}"
+                  @click="${this._unPublishPage}"
+                  >${this.t("pages.unPublish")}</md-text-button
+                >
+
+                <md-text-button
+                  data-args="${page.id}"
+                  @click="${this._deletePage}"
+                  >${this.t("pages.deletePage")}</md-text-button
+                >
+              </div>
+            `;
+          })}
+        </div>
+
+        <div class="layout horizontal">
+          <md-filled-button id="addPageButton" @click="${this._addPage}"
+            >${this.t("pages.addPage")}</md-filled-button
+          >
+        </div>
+
+        <md-dialog
+          id="editPageLocale"
+          modal
+          class="layout vertical"
+          ?rtl="${this.rtl}"
+        >
+          <h2 slot="headline">${this.t("pages.editPageLocale")}</h2>
+          <div slot="content" class="layout vertical">
+            <md-outlined-text-field
+              @change="${this.titleChanged}"
+              id="title"
+              name="title"
+              type="text"
+              .label="${this.t("pages.title")}"
+              .value="${this.currentlyEditingTitle || ""}"
+              maxlength="60"
+              charCounter
+              class="mainInput"
+            >
+            </md-outlined-text-field>
 
             <md-outlined-text-field
-              class="localeInput"
-              id="localeInput"
-              length="2"
-              maxlength="2"
-            ></md-outlined-text-field>
-
-            <md-text-button data-args="${page.id}" @click="${this._addLocale}"
-              >${this.t("pages.addLocale")}</md-text-button
+              @change="${this.contentChanged}"
+              id="content"
+              name="content"
+              type="textarea"
+              .value="${this.currentlyEditingContent || ""}"
+              .label="${this.t("pages.content")}"
+              rows="7"
+              maxRows="10"
             >
-            <div ?hidden="${page.published}">
-              <md-text-button
-                data-args="${page.id}"
-                @click="${this._publishPage}"
-                >${this.t("pages.publish")}</md-text-button
-              >
-            </div>
-            <div ?hidden="${!page.published}">
-              <md-text-button
-                data-args="${page.id}"
-                @click="${this._unPublishPage}"
-                >${this.t("pages.unPublish")}</md-text-button
-              >
-            </div>
-            <md-text-button data-args="${page.id}" @click="${this._deletePage}"
-              >${this.t("pages.deletePage")}</md-text-button
+            </md-outlined-text-field>
+          </div>
+
+          <div class="buttons" slot="actions">
+            <md-text-button @click="${this._closePageLocale}" dialogDismiss
+              >${this.t("close")}</md-text-button
+            >
+            <md-text-button @click="${this._updatePageLocale}" dialogDismiss
+              >${this.t("save")}</md-text-button
             >
           </div>
-        `;
-      })}
-      </div>
-
-      <div class="buttons">
-        <md-text-button dialogDismiss >${this.t(
-          "close"
-        )}</md-text-button>
-      </div>
-
-    <md-dialog id="editPageLocale" modal class="layout vertical" ?rtl="${
-      this.rtl
-    }">
-      <h2 slot="headline">${this.t("pages.editPageLocale")}</h2>
-      <div slot="content">
-      <md-outlined-text-field @change="${this.titleChanged}" id="title" name="title" type="text" .label="${this.t(
-        "pages.title"
-      )}" .value="${
-        this.currentlyEditingTitle || ""
-      }" maxlength="60" charCounter class="mainInput">
-      </md-outlined-text-field>
-
-      <md-outlined-text-field @change="${this.contentChanged}" id="content" name="content" type="textarea" .value="${
-        this.currentlyEditingContent || ""
-      }" .label="${this.t("pages.content")}" rows="7" maxRows="10">
-      </md-outlined-text-field>
-
-      </div>
-
-      <div class="buttons" slot="actions">d
-        <md-text-button @click="${
-          this._closePageLocale
-        }" dialogDismiss >${this.t("close")}</md-text-button>
-        <md-text-button @click="${
-          this._updatePageLocale
-        }" dialogDismiss >${this.t("save")}</md-text-button>
-      </div>
-    </md-dialog>
-    `;
+        </md-dialog>
+      `;
     } else {
       return nothing;
     }
@@ -257,7 +268,7 @@ export class YpPagesGrid extends YpBaseElement {
       value: obj[key],
     }));
 
-    return array.sort((a, b) => a.value.localeCompare(b.value)) as any;;
+    return array.sort((a, b) => a.value.localeCompare(b.value)) as any;
   }
 
   async _editPageLocale(event: Event) {
@@ -267,11 +278,9 @@ export class YpPagesGrid extends YpBaseElement {
     this.currentlyEditingLocale = target.getAttribute("data-args-locale")!;
 
     this.currentlyEditingContent =
-    this.currentlyEditingPage!["content"][this.currentlyEditingLocale];
+      this.currentlyEditingPage!["content"][this.currentlyEditingLocale];
     this.currentlyEditingTitle =
-    this.currentlyEditingPage!["title"][this.currentlyEditingLocale];
-
-    debugger;
+      this.currentlyEditingPage!["title"][this.currentlyEditingLocale];
 
     const dialog = this.shadowRoot!.querySelector<MdDialog>("#editPageLocale");
 
@@ -285,6 +294,7 @@ export class YpPagesGrid extends YpBaseElement {
     this.currentlyEditingLocale = undefined;
     this.currentlyEditingContent = undefined;
     this.currentlyEditingTitle = undefined;
+    (this.$$("#editPageLocale") as MdDialog).close();
   }
 
   async _dispatchAdminServerApiRequest(
@@ -324,6 +334,7 @@ export class YpPagesGrid extends YpBaseElement {
         title: this.currentlyEditingTitle,
       }
     );
+    this._updateCollection();
     this._closePageLocale();
   }
 
@@ -334,11 +345,12 @@ export class YpPagesGrid extends YpBaseElement {
       "publish_page",
       "PUT"
     );
+    this._publishPageResponse();
   }
 
   async _publishPageResponse() {
     window.appGlobals.notifyUserViaToast(this.t("pages.pagePublished"));
-    await this._refreshPages();
+    await this._unPublishPageResponse();
   }
 
   async _unPublishPage(event: Event) {
@@ -348,11 +360,12 @@ export class YpPagesGrid extends YpBaseElement {
       "un_publish_page",
       "PUT"
     );
+    this._unPublishPageResponse();
   }
 
   async _unPublishPageResponse() {
     window.appGlobals.notifyUserViaToast(this.t("pages.pageUnPublished"));
-    await this._refreshPages();
+    await this._updateCollection();
   }
 
   async _refreshPages() {
@@ -366,11 +379,12 @@ export class YpPagesGrid extends YpBaseElement {
       "delete_page",
       "DELETE"
     );
+    this._deletePageResponse();
   }
 
   async _deletePageResponse() {
     window.appGlobals.notifyUserViaToast(this.t("pages.pageDeleted"));
-    await this._refreshPages();
+    await this._updateCollection();
   }
 
   async _addLocale(event: Event) {
@@ -386,6 +400,8 @@ export class YpPagesGrid extends YpBaseElement {
           title: "",
         }
       );
+
+      this._updateCollection();
     }
   }
 

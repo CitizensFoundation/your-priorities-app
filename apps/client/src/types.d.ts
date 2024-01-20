@@ -128,6 +128,15 @@ interface YpStructuredAnswer {
   value: string | boolean;
 }
 
+interface YpLtpConfiguration {
+  crt?: {
+    id?: number;
+    nodes?: any; //LtpCurrentRealityTreeDataNode[];
+    prompts?: Record<number, string>;
+    undesirerableEffects?: string[];
+  }
+}
+
 interface YpGroupConfiguration extends YpCollectionConfiguration {
   usePostTagsForPostListItems?: boolean;
   allowAnonymousUsers?: boolean;
@@ -258,6 +267,7 @@ interface YpGroupConfiguration extends YpCollectionConfiguration {
   registrationQuestions?: string;
   allowGenerativeImages?: boolean;
   groupType?: number;
+  ltp?: YpLtpConfiguration;
 }
 
 interface YpFraudAuditData {
@@ -286,6 +296,11 @@ interface YpFraudAuditData {
 
 interface YpReportData {
   jobId: number;
+  error?: string;
+  progress?: number;
+  data?: {
+    reportUrl?: string;
+  }
 }
 
 interface YpGroupDataVizData {
@@ -320,6 +335,7 @@ interface YpCommunityConfiguration extends YpCollectionConfiguration {
   useCommunityIdForAnalytics?: boolean;
   communityId?: number;
   enableFraudDetection?: boolean;
+  ltp?: YpLtpConfiguration;
 }
 
 interface YpPromoterRights {
@@ -332,6 +348,8 @@ interface YpDomainConfiguration extends YpCollectionConfiguration {
   customUserRegistrationText?: string;
   customSamlLoginText?: string;
   samlLoginButtonUrl?: string;
+  welcomeHTMLforNotLoggedInUsers?: string;
+  ltp?: YpLtpConfiguration;
 }
 
 interface YpHelpPageData {
@@ -351,7 +369,9 @@ interface YpEndorsement {
 
 interface YpOrganizationData extends YpDatabaseItem {
   name: string;
-  OrganizationLogoImages: Array<YpImageData>;
+  description?: string;
+  website?: string;
+  OrganizationLogoImages?: Array<YpImageData>;
 }
 
 interface YpMemberships {

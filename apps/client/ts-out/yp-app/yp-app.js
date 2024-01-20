@@ -117,7 +117,7 @@ let YpApp = class YpApp extends YpBaseElement {
             : "Can't connect to server, try again later";
         let statusCode = -1;
         if (detail.response && detail.response.status === 404)
-            errorText = this.t("errorNotAuthorized");
+            errorText = this.t("errorNotFound");
         else if (detail.response && detail.response.status === 401)
             errorText = this.t("errorNotAuthorized");
         else if (detail.response &&
@@ -546,6 +546,7 @@ let YpApp = class YpApp extends YpBaseElement {
     }
     _resetNotifyDialogText() {
         this.notifyDialogText = undefined;
+        this.$$("#dialog").close();
     }
     // Translated Pages
     translatedPages(pages) {

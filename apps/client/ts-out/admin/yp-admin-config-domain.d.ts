@@ -1,15 +1,15 @@
-import { nothing } from 'lit';
-import '../yp-survey/yp-structured-question-edit.js';
-import { YpAdminConfigBase } from './yp-admin-config-base.js';
-import '../yp-file-upload/yp-file-upload.js';
-import '../yp-app/yp-language-selector.js';
-import './yp-admin-communities.js';
+import { nothing } from "lit";
+import "../yp-survey/yp-structured-question-edit.js";
+import { YpAdminConfigBase } from "./yp-admin-config-base.js";
+import "../yp-file-upload/yp-file-upload.js";
+import "../yp-app/yp-language-selector.js";
+import "./yp-admin-communities.js";
 export declare class YpAdminConfigDomain extends YpAdminConfigBase {
     appHomeScreenIconImageId: number | undefined;
     constructor();
     static get styles(): (any[] | import("lit").CSSResult)[];
     renderHeader(): import("lit-html").TemplateResult<1> | typeof nothing;
-    renderHiddenInputs(): symbol;
+    renderHiddenInputs(): import("lit-html").TemplateResult<1> | typeof nothing;
     _clear(): void;
     updated(changedProperties: Map<string | number | symbol, unknown>): void;
     _setupTranslations(): void;

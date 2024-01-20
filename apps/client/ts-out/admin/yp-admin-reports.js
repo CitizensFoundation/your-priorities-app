@@ -19,12 +19,10 @@ let YpAdminReports = class YpAdminReports extends YpAdminPage {
     constructor() {
         super(...arguments);
         this.action = "/api/communities";
-        this.progress = 0;
         this.selectedTab = 0;
         this.downloadDisabled = false;
         this.autoTranslateActive = false;
         this.fraudAuditSelectionActive = false;
-        this.fraudAuditsAvailable = [];
         this.waitingOnFraudAudits = false;
     }
     fraudItemSelection(event) {
@@ -36,8 +34,9 @@ let YpAdminReports = class YpAdminReports extends YpAdminPage {
         const body = {
             selectedFraudAuditId: this.selectedFraudAuditId,
         };
+        this.progress = 0;
         fetch(url, {
-            method: "POST",
+            method: "PUT",
             headers: {
                 "Content-Type": "application/json",
             },
@@ -45,10 +44,14 @@ let YpAdminReports = class YpAdminReports extends YpAdminPage {
         })
             .then((response) => response.json())
             .then((data) => this.startReportCreationResponse(data))
-            .catch((error) => console.error("Error:", error));
+            .catch((error) => {
+            console.error("Error:", error);
+            this.progress = undefined;
+        });
     }
     startReportCreationResponse(data) {
         this.jobId = data.jobId;
+        this.progress = undefined;
         const baseUrl = this.collectionType == "group"
             ? `/api/groups/${this.collectionId}`
             : `/api/communities/${this.collectionId}`;
@@ -61,7 +64,10 @@ let YpAdminReports = class YpAdminReports extends YpAdminPage {
         }, 1000);
     }
     reportCreationProgress() {
-        // Implement AJAX request using fetch API
+        fetch(this.reportCreationProgressUrl)
+            .then((response) => response.json())
+            .then((data) => this.reportCreationProgressResponse(data))
+            .catch((error) => console.error("Error:", error));
     }
     formatAuditReportDates(data) {
         return data.map((item) => {
@@ -77,10 +83,9 @@ let YpAdminReports = class YpAdminReports extends YpAdminPage {
         this.waitingOnFraudAudits = false;
         this.fraudAuditsAvailable = this.formatAuditReportDates(event.detail.response);
     }
-    reportCreationProgressResponse(event) {
-        const response = event.detail.response;
+    reportCreationProgressResponse(response) {
         if (!response.error &&
-            response.progress !== null &&
+            response.progress != null &&
             response.progress < 100) {
             this.pollLaterForProgress();
         }
@@ -106,14 +111,20 @@ let YpAdminReports = class YpAdminReports extends YpAdminPage {
     startGeneration() {
         if (this.type == "fraudAuditReport") {
             this.waitingOnFraudAudits = true;
+            this.progress = 0;
             const response = window.adminServerApi.adminMethod(this.reportGenerationUrl, "GET");
             this.waitingOnFraudAudits = false;
+            this.progress = undefined;
             this.fraudAuditsAvailable = this.formatAuditReportDates(response);
+        }
+        else {
+            this.startReportCreationAjax(this.reportGenerationUrl);
         }
     }
     startReportCreationAjax(url) {
+        this.progress = 0;
         fetch(url, {
-            method: "POST",
+            method: "PUT",
             headers: {
                 "Content-Type": "application/json",
             },
@@ -130,10 +141,36 @@ let YpAdminReports = class YpAdminReports extends YpAdminPage {
             .catch((error) => console.error("Error:", error));
     }
     static get styles() {
-        return [super.styles, css ``];
+        return [
+            super.styles,
+            css `
+        md-filled-button {
+          margin-top: 32px;
+          margin-bottom: 16px;
+        }
+
+        md-outlined-button {
+          margin-top: 32px;
+          margin-bottom: 16px;
+        }
+
+        md-linear-progress {
+          width: 320px;
+          margin-top: 8px;
+        }
+      `,
+        ];
+    }
+    firstUpdated(_changedProperties) {
+        setTimeout(() => {
+            this._tabChanged();
+        });
     }
     _tabChanged() {
         const tabs = this.$$("#tabs");
+        this.selectedTab = tabs.activeTabIndex;
+        this.reportGenerationUrl = undefined;
+        this.reportUrl = undefined;
         if (this.collectionType == "group") {
             if (tabs.activeTabIndex === 0) {
                 this.type = "xls";
@@ -164,9 +201,14 @@ let YpAdminReports = class YpAdminReports extends YpAdminPage {
     renderStart() {
         return html `
       <div class="layout vertical center-center startButton">
-        <md-filled-button @click="${this.startGeneration}">
+        <md-outlined-button @click="${this.startGeneration}">
           ${this.t("startReportCreation")}
-        </md-filled-button>
+        </md-outlined-button>
+        ${this.progress !== undefined
+            ? html `<md-linear-progress
+              .value="${this.progress / 100}"
+            ></md-linear-progress> `
+            : nothing}
       </div>
     `;
     }
@@ -178,7 +220,7 @@ let YpAdminReports = class YpAdminReports extends YpAdminPage {
                 ? html `<md-linear-progress indeterminate></md-linear-progress>`
                 : html `
                   <div class="auditContainer layout vertical center-center">
-                    ${this.fraudAuditsAvailable.map((fraudItem) => html `
+                    ${this.fraudAuditsAvailable?.map((fraudItem) => html `
                         <md-text-button
                           raised
                           class="layout horizontal fraudItemSelection"
@@ -192,9 +234,6 @@ let YpAdminReports = class YpAdminReports extends YpAdminPage {
                 `}
           `
             : html `
-            <md-linear-progress
-              .progress="${this.progress}"
-            ></md-linear-progress>
             <div class="error" ?hidden="${!this.error}">${this.error}</div>
             ${this.reportUrl
                 ? html `
@@ -203,13 +242,13 @@ let YpAdminReports = class YpAdminReports extends YpAdminPage {
                     target="_blank"
                     ?hidden="${this.downloadDisabled}"
                   >
-                    <md-text-button
+                    <md-filled-button
                       id="downloadReportButton"
                       ?disabled="${this.downloadDisabled}"
                       raised
                     >
                       ${this.t("downloadReport")}
-                    </md-text-button>
+                    </md-filled-button>
                   </a>
                   <div class="infoText reportText">
                     ${this.t("reportLinkInfo")}
@@ -255,7 +294,8 @@ let YpAdminReports = class YpAdminReports extends YpAdminPage {
                 ></md-secondary-tab
               >
               <md-secondary-tab
-                ?hidden="${!this.collection.configuration.enableFraudDetection}"
+                ?hidden="${!this.collection.configuration
+                .enableFraudDetection}"
                 >${this.t("downloadFraudAuditReport")}<md-icon
                   >lightbulb_outline</md-icon
                 ></md-secondary-tab

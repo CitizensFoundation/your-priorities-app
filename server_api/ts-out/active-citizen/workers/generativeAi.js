@@ -10,6 +10,7 @@ const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
 const uuid_1 = require("uuid");
 const index_js_1 = __importDefault(require("../../models/index.js"));
+const openai_2 = require("@azure/openai");
 const dbModels = index_js_1.default;
 const Image = dbModels.Image;
 const AcBackgroundJob = dbModels.AcBackgroundJob;
@@ -51,22 +52,34 @@ class GenerativeAiWorker {
         });
     }
     async getImageUrlFromPrompt(prompt) {
-        const configuration = {
-            apiKey: process.env.OPENAI_API_KEY,
-        };
-        const client = new openai_1.OpenAI(configuration);
+        const azureOpenaAiBase = process.env["AZURE_OPENAI_API_BASE"];
+        const azureOpenAiApiKey = process.env["AZURE_OPENAI_API_KEY"];
+        let client;
+        if (azureOpenAiApiKey && azureOpenaAiBase) {
+            client = new openai_2.OpenAIClient(azureOpenaAiBase, new openai_2.AzureKeyCredential(azureOpenAiApiKey));
+        }
+        else {
+            client = new openai_1.OpenAI({
+                apiKey: process.env["OPENAI_API_KEY"],
+            });
+        }
         let retryCount = 0;
         let retrying = true; // Initialize as true
         let result;
         while (retrying && retryCount < maxDalleRetryCount) {
             try {
-                result = await client.images.generate({
-                    model: "dall-e-3",
-                    prompt,
-                    n: 1,
-                    quality: "hd",
-                    size: "1792x1024",
-                });
+                if (azureOpenAiApiKey && azureOpenaAiBase) {
+                    result = await client.getImages(process.env.AZURE_OPENAI_API_DALLE_DEPLOYMENT_NAME, prompt, { n: 1, size: "1792x1024", quality: "hd" });
+                }
+                else {
+                    result = await client.images.generate({
+                        model: "dall-e-3",
+                        prompt,
+                        n: 1,
+                        quality: "hd",
+                        size: "1792x1024",
+                    });
+                }
                 if (result) {
                     retrying = false; // Only change retrying to false if there is a result.
                 }
@@ -145,7 +158,10 @@ class GenerativeAiWorker {
                     const { imageId, imageUrl } = await this.createCollectionImage(workPackage);
                     console.info(`Created imageId: ${imageId} imageUrl: ${imageUrl}`);
                     if (imageId) {
-                        await AcBackgroundJob.updateDataAsync(workPackage.jobId, { imageId, imageUrl });
+                        await AcBackgroundJob.updateDataAsync(workPackage.jobId, {
+                            imageId,
+                            imageUrl,
+                        });
                         console.debug(`Updated job ${workPackage.jobId} with imageId: ${imageId} imageUrl: ${imageUrl}`);
                     }
                     else {

@@ -74,6 +74,34 @@ var getOrganizationAndUser = function (organizationId, userId, callback) {
         }
     });
 };
+router.get('/:domainId/domainOrganizations', auth.can('create domainOrganization'), function (req, res) {
+    models.Organization.findAll({
+        where: { domain_id: req.params.domainId },
+        order: [
+            [{ model: models.Image, as: 'OrganizationLogoImages' }, 'created_at', 'asc'],
+        ],
+        include: [
+            {
+                model: models.Domain,
+                attributes: models.Domain.defaultAttributesPublic
+            },
+            {
+                model: models.Image, as: 'OrganizationLogoImages',
+                required: false
+            },
+        ]
+    }).then(function (organization) {
+        if (organization) {
+            log.info('Organization Viewed', { organization: toJson(organization), context: 'view', user: toJson(req.user) });
+            res.send(organization);
+        }
+        else {
+            sendOrganizationOrError(res, req.params.id, 'view', req.user, 'Not found', 404);
+        }
+    }).catch(function (error) {
+        sendOrganizationOrError(res, null, 'view', req.user, error);
+    });
+});
 router.get('/:id', auth.can('view organization'), function (req, res) {
     models.Organization.findOne({
         where: { id: req.params.id },

@@ -5,10 +5,13 @@
   "dependencies": {
     "@airbrake/node": "^2.1.4",
     "@aws-sdk/client-s3": "^3.357.0",
+    "@azure/openai": "^1.0.0-beta.10",
     "@google-cloud/speech": "^5.1.0",
     "@google-cloud/storage": "^6.7.0",
     "@google-cloud/translate": "^7.0.3",
     "@google-cloud/vision": "^3.0.1",
+    "@langchain/core": "^0.1.9",
+    "@langchain/openai": "^0.0.10",
     "async": "^3.2.0",
     "authorized": "^1.0.0",
     "aws-sdk": "^2.1248.0",
@@ -40,6 +43,7 @@
     "image-size": "^1.0.2",
     "ip": "^1.1.0",
     "isbot": "^3.6.3",
+    "jsonrepair": "^3.5.0",
     "knuth-shuffle-seeded": "^1.0.6",
     "lodash": "^4.17.15",
     "moment": "^2.24.0",
@@ -51,7 +55,7 @@
     "nodemailer": "^6.8.0",
     "nodemailer-sendgrid": "^1.0.3",
     "open-graph-scraper": "^4.5.0",
-    "openai": "^4.23.0",
+    "openai": "^4.24.1",
     "passport": "^0.6.0",
     "passport-facebook": "^3.0.0",
     "passport-github": "^1.0.0",
@@ -100,6 +104,7 @@
     "diacritics": "^1.2.3",
     "jshint": "^2.11.0",
     "jslint": "^0.12.1",
+    "ncp": "^2.0.0",
     "nodemon": "^3.0.1",
     "random-words": "^1.1.1",
     "redis": "^4.6.7",
@@ -117,10 +122,10 @@
   },
   "scripts": {
     "start": "nodemon -e ts ts-out/server_api/api_app.js",
-    "watch-start": "tsc --project ./ --outDir ./ts-out -w & nodemon -q ./ts-out/server_api/api_app.js",
+    "watch-start": "tsc --project ./ --outDir ./ts-out -w & nodemon -q ./ts-out/api_app.js",
     "dev": "nodemon --config nodemon.json ./ts-out/server_api/api_app.js",
     "dev:debug": "nodemon --config nodemon.json --inspect-brk api_app.ts",
-    "build": "tsc --project ./ --outDir ./ts-out"
+    "build": "tsc --project ./ --outDir ./ts-out && ncp views ts-out/views && ncp config ts-out/config && ncp active-citizen/email_templates ts-out/active-citizen/email_templates && ncp active-citizen/locales ts-out/active-citizen/locales"
   },
   "cacheDirectories": [
     "node_modules"

@@ -11,6 +11,19 @@ import "../yp-survey/yp-structured-question-edit.js";
 import "../yp-file-upload/yp-file-upload.js";
 import "../common/yp-generate-ai-image.js";
 import "../common/yp-form.js";
+export declare const defaultLtpPromptsConfiguration: () => {
+    [k: string]: string;
+};
+export declare const defaultLtpConfiguration: {
+    crt: {
+        prompts: {
+            [k: string]: string;
+        };
+        promptsTests: {
+            [k: string]: string;
+        };
+    };
+};
 export declare abstract class YpAdminConfigBase extends YpAdminPage {
     configTabs: Array<YpConfigTabData> | undefined;
     selectedTab: number;
@@ -48,6 +61,8 @@ export declare abstract class YpAdminConfigBase extends YpAdminPage {
     disconnectedCallback(): void;
     _logoImageUploaded(event: CustomEvent): void;
     _headerImageUploaded(event: CustomEvent): void;
+    _ltpConfigChanged(event: CustomEvent): void;
+    tabsPostSetup(tabs: Array<YpConfigTabData>): void;
     renderSaveButton(): TemplateResult;
     renderTabs(): TemplateResult | typeof nothing;
     renderTabPages(): TemplateResult<1> | typeof nothing;

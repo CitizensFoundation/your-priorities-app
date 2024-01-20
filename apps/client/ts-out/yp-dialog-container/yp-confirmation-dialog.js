@@ -89,7 +89,7 @@ let YpConfirmationDialog = class YpConfirmationDialog extends YpBaseElement {
             this.confirmationText = this.t("finalDeleteWarning");
             setTimeout(() => {
                 this.$$("#confirmationDialog").show();
-            });
+            }, 350);
         }
         else {
             if (this.onConfirmedFunction) {
