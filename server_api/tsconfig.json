@@ -12,6 +12,6 @@
 		"**/*.js",
 		"**/*.cjs",
 		"**/*.json",
-		"../apps/client/src/types.d.ts"
+		"../webApps/client/src/types.d.ts"
 	]
 }

@@ -8,7 +8,7 @@ x-ai-assistant-common: &ai-assistant-common
     dockerfile: api/docker/ai-assistant/Dockerfile
   image: ai-assistant:current
   volumes:
-    - client-app-dist:/usr/src/apps/ai-assistant/dist
+    - client-app-dist:/usr/src/webApps/ai-assistant/dist
   command: node ts-out/api/server.js
   healthcheck:
     test: ["CMD", "curl", "-f", "http://localhost:9080/api/project/healthcheck"]
@@ -44,7 +44,7 @@ services:
     #  - "443:443"
     volumes:
       - webserver:/home
-      - client-app-dist:/usr/src/apps/ai-assistant/dist
+      - client-app-dist:/usr/src/webApps/ai-assistant/dist
     healthcheck:
       test: ["CMD", "curl", "-f", "https://${FULL_HOSTNAME}/api/project/healthcheck"]
       interval: 30s

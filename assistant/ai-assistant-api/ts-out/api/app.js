@@ -45,11 +45,11 @@ export class App {
     }
     initializeMiddlewares() {
         this.app.use(bodyParser.json());
-        this.app.use(express.static(path.join(__dirname, "../../apps/policy-synth/dist")));
-        this.app.use("/projects*", express.static(path.join(__dirname, "../../apps/policy-synth/dist")));
-        this.app.use("/webResearch*", express.static(path.join(__dirname, "../../apps/policy-synth/dist")));
-        this.app.use("/policies*", express.static(path.join(__dirname, "../../apps/policy-synth/dist")));
-        this.app.use("/solutions*", express.static(path.join(__dirname, "../../apps/policy-synth/dist")));
+        this.app.use(express.static(path.join(__dirname, "../../webApps/policy-synth/dist")));
+        this.app.use("/projects*", express.static(path.join(__dirname, "../../webApps/policy-synth/dist")));
+        this.app.use("/webResearch*", express.static(path.join(__dirname, "../../webApps/policy-synth/dist")));
+        this.app.use("/policies*", express.static(path.join(__dirname, "../../webApps/policy-synth/dist")));
+        this.app.use("/solutions*", express.static(path.join(__dirname, "../../webApps/policy-synth/dist")));
         app.use(session({
             store: redisStore,
             secret: process.env.SESSION_SECRET

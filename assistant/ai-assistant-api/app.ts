@@ -58,14 +58,14 @@ export class App {
     this.app.use(bodyParser.json());
     this.app.use(
       express.static(
-        path.join(__dirname, "../../../apps/ai-assistant/dist")
+        path.join(__dirname, "../../../webApps/ai-assistant/dist")
       )
     );
 
     this.app.use(
       "/projects*",
       express.static(
-        path.join(__dirname, "../../../apps/ai-assistant/dist")
+        path.join(__dirname, "../../../webApps/ai-assistant/dist")
       )
     );
 

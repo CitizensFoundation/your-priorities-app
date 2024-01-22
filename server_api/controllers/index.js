@@ -280,16 +280,16 @@ let sendIndex = async (req, res) => {
 
   if (!process.env.RUN_NEXT_VERSION) {
     if (process.env.NODE_ENV === 'production' || process.env.FORCE_PRODUCTION === "true") {
-      indexFilePath = path.resolve(__dirname, '../../../../apps/client/dist/index.html');
+      indexFilePath = path.resolve(__dirname, '../../../../webApps/client/dist/index.html');
     } else {
-      indexFilePath = path.resolve(__dirname, '../../../../apps/client/dist/index.html');
+      indexFilePath = path.resolve(__dirname, '../../../../webApps/client/dist/index.html');
     }
   } else {
   }
   if (process.env.NODE_ENV === 'production' || process.env.FORCE_PRODUCTION === "true") {
-    indexFilePath = path.resolve(__dirname, '../../../../apps/client/dist/index.html');
+    indexFilePath = path.resolve(__dirname, '../../../../webApps/client/dist/index.html');
   } else {
-    indexFilePath = path.resolve(__dirname, '../../../../apps/client/dist/index.html');
+    indexFilePath = path.resolve(__dirname, '../../../../webApps/client/dist/index.html');
   }
 
   fs.readFile(indexFilePath, 'utf8', async (err, indexFileData) => {
