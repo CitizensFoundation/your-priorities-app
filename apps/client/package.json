@@ -1,12 +1,12 @@
 {
   "name": "@yrpri/webapp",
-  "typings": "./pso/all.d.ts",
-  "main": "./pso/all.js",
+  "version": "9.0.6",
+  "typings": "./cmp/all.d.ts",
+  "main": "./cmp/all.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/CitizensFoundation/your-priorities-app.git"
   },
-  "version": "9.0.5",
   "description": "Your Priorities Web App SDK",
   "author": "Robert Bjarnason, Citizens Foundation",
   "license": "AGPL",

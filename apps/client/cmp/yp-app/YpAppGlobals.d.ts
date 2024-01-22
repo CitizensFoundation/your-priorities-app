@@ -1,10 +1,10 @@
-import { YpServerApi } from '../common/YpServerApi.js';
-import { YpCodeBase } from '../common/YpCodeBaseclass.js';
-import { YpRecommendations } from './YpRecommendations.js';
-import { YpCache } from './YpCache.js';
-import { YpOffline } from './YpOffline.js';
-import { YpAnalytics } from './YpAnalytics.js';
-import { YpThemeManager } from './YpThemeManager.js';
+import { YpServerApi } from "../common/YpServerApi.js";
+import { YpCodeBase } from "../common/YpCodeBaseclass.js";
+import { YpRecommendations } from "./YpRecommendations.js";
+import { YpCache } from "./YpCache.js";
+import { YpOffline } from "./YpOffline.js";
+import { YpAnalytics } from "./YpAnalytics.js";
+import { YpThemeManager } from "./YpThemeManager.js";
 export declare class YpAppGlobals extends YpCodeBase {
     seenWelcome: boolean;
     resetSeenWelcome: boolean;
@@ -43,7 +43,7 @@ export declare class YpAppGlobals extends YpCodeBase {
     signupTermsPageId: number | undefined;
     retryMethodAfter401Login: Function | undefined;
     groupLoadNewPost: boolean;
-    constructor(serverApi: YpServerApi);
+    constructor(serverApi: YpServerApi, disableInit?: boolean);
     showRecommendationInfoIfNeeded(): void;
     showSpeechToTextInfoIfNeeded(): void;
     hasVideoUploadSupport(): Promise<void>;
