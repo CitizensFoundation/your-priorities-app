@@ -15,7 +15,7 @@
     "@kano/twemoji": "^1.0.0",
     "@lit-labs/virtualizer": "^2.0.11",
     "@material/material-color-utilities": "^0.2.7",
-    "@material/mwc-drawer": "^0.27.0",
+    "@material/mwc-drawer": "file:./custom_modules/@material/mwc-drawer",
     "@material/mwc-snackbar": "^0.27.0",
     "@material/mwc-top-app-bar": "^0.27.0",
     "@material/web": "^1.1.1",
@@ -36,7 +36,6 @@
     "i18next": "^23.7.11",
     "i18next-http-backend": "^2.4.2",
     "insert-text-at-cursor": "^0.3.0",
-    "jointjs": "^3.7.6",
     "jquery": "^3.7.1",
     "jsonrepair": "^3.5.0",
     "linkify-html": "^4.1.3",
@@ -53,7 +52,8 @@
     "sanitize-html": "^2.11.0",
     "topojson": "^1.6.19",
     "topojson-client": "^3.1.0",
-    "wavesurfer.js": "^6.6.4"
+    "wavesurfer.js": "^6.6.4",
+    "jointjs": "file:./custom_modules/jointjs"
   },
   "type": "module",
   "devDependencies": {
