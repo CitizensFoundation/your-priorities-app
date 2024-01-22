@@ -7,7 +7,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 /* eslint-disable @typescript-eslint/ban-ts-ignore */
 import { html, css, nothing } from 'lit';
 import { property, customElement } from 'lit/decorators.js';
-import '@material/md-outlined-button';
+import '@material/web/button/outlined-button.js';
 import '@material/web/progress/circular-progress.js';
 import 'lit-google-map';
 import { YpBaseElement } from '../common/yp-base-element.js';

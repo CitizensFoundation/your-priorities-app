@@ -1,6 +1,6 @@
 /// <reference path="../../src/types.d.ts" />
 import { nothing } from 'lit';
-import '@material/md-outlined-button';
+import '@material/web/button/outlined-button.js';
 import '@material/web/progress/circular-progress.js';
 import 'lit-google-map';
 import { YpBaseElement } from '../common/yp-base-element.js';

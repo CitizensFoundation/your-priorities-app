@@ -1,6 +1,6 @@
 {
   "name": "@yrpri/webapp",
-  "version": "9.0.6",
+  "version": "9.0.7",
   "typings": "./cmp/all.d.ts",
   "main": "./cmp/all.js",
   "repository": {
