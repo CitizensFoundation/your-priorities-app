@@ -1,0 +1,28 @@
+{
+  "name": "@material/top-app-bar",
+  "version": "14.0.0-canary.53b3cad2f.0",
+  "description": "The Material Components for the web top app bar component",
+  "license": "MIT",
+  "main": "dist/mdc.topAppBar.js",
+  "module": "index.js",
+  "sideEffects": false,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/material-components/material-components-web.git",
+    "directory": "packages/mdc-top-app-bar"
+  },
+  "keywords": [
+    "material components",
+    "material design",
+    "top app bar",
+    "top-app-bar",
+    "topappbar"
+  ],
+  "dependencies": {
+
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "gitHead": "ebeda2e23436103241b0e82afd57b60f74599133"
+}

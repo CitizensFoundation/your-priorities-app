@@ -1,0 +1,22 @@
+{
+  "name": "@material/mwc-base",
+  "version": "0.27.0",
+  "description": "",
+  "main": "base-element.js",
+  "module": "base-element.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/material-components/material-components-web-components.git",
+    "directory": "packages/base"
+  },
+  "license": "Apache-2.0",
+  "dependencies": {
+  },
+  "devDependencies": {
+
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "gitHead": "c1e876a15bc028034781984538ea803ba67dbed3"
+}

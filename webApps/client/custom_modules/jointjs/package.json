@@ -105,11 +105,7 @@
     "joint.mjs"
   ],
   "dependencies": {
-    "backbone": "~1.4.1",
-    "dagre": "~0.8.5",
-    "graphlib": "~2.1.8",
-    "jquery": "~3.7.1",
-    "lodash": "~4.17.21"
+
   },
   "devDependencies": {
     "@types/backbone": "~1.4.16",

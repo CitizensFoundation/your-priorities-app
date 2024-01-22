@@ -1,0 +1,23 @@
+{
+  "name": "@material/drawer",
+  "version": "14.0.0-canary.53b3cad2f.0",
+  "description": "The Material Components Web drawer component",
+  "license": "MIT",
+  "keywords": [
+    "material components",
+    "material design",
+    "navigation",
+    "drawer"
+  ],
+  "main": "dist/mdc.drawer.js",
+  "module": "index.js",
+  "sideEffects": false,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/material-components/material-components-web.git",
+    "directory": "packages/mdc-drawer"
+  },
+  "dependencies": {
+  },
+  "gitHead": "ebeda2e23436103241b0e82afd57b60f74599133"
+}

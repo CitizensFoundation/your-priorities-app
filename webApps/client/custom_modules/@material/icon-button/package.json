@@ -1,0 +1,27 @@
+{
+  "name": "@material/icon-button",
+  "description": "The Material Components for the web icon button component",
+  "version": "14.0.0-canary.53b3cad2f.0",
+  "license": "MIT",
+  "main": "dist/mdc.iconButton.js",
+  "module": "index.js",
+  "sideEffects": false,
+  "keywords": [
+    "material components",
+    "material design",
+    "button",
+    "icon button",
+    "icon toggle"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/material-components/material-components-web.git",
+    "directory": "packages/mdc-icon-button"
+  },
+  "dependencies": {
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "gitHead": "ebeda2e23436103241b0e82afd57b60f74599133"
+}

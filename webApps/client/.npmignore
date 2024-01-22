@@ -1,2 +1,4 @@
 node_modules/
 dist/
+custom_modules/jointjs/node_modules/
+custom_modules/@material/mwc-drawer/node_modules/

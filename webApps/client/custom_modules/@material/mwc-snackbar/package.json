@@ -1,0 +1,29 @@
+{
+  "name": "@material/mwc-snackbar",
+  "version": "0.27.0",
+  "description": "Material Design snackbar web component",
+  "keywords": [
+    "material design",
+    "web components",
+    "snackbar"
+  ],
+  "main": "mwc-snackbar.js",
+  "module": "mwc-snackbar.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/material-components/material-components-web-components.git",
+    "directory": "packages/snackbar"
+  },
+  "license": "Apache-2.0",
+  "dependencies": {
+  },
+  "devDependencies": {
+  },
+  "scripts": {
+    "build:style": "node ../../scripts/sass-to-lit-css/index.js mwc-snackbar.scss"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "gitHead": "c1e876a15bc028034781984538ea803ba67dbed3"
+}

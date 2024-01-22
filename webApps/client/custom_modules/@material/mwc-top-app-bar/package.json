@@ -1,0 +1,31 @@
+{
+  "name": "@material/mwc-top-app-bar",
+  "version": "0.27.0",
+  "description": "Material Design top app bar web component",
+  "keywords": [
+    "material design",
+    "web components",
+    "top app bar"
+  ],
+  "main": "mwc-top-app-bar.js",
+  "module": "mwc-top-app-bar.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/material-components/material-components-web-components.git",
+    "directory": "packages/top-app-bar"
+  },
+  "license": "Apache-2.0",
+  "dependencies": {
+
+  },
+  "devDependencies": {
+
+  },
+  "scripts": {
+    "build:style": "node ../../scripts/sass-to-lit-css/index.js mwc-top-app-bar.scss"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "gitHead": "c1e876a15bc028034781984538ea803ba67dbed3"
+}

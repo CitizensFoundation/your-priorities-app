@@ -1,0 +1,22 @@
+{
+  "name": "@material/animation",
+  "description": "Animation Variables and Mixins used by Material Components for the web",
+  "version": "14.0.0-canary.53b3cad2f.0",
+  "license": "MIT",
+  "keywords": [
+    "material components",
+    "material design",
+    "animation"
+  ],
+  "main": "dist/mdc.animation.js",
+  "module": "index.js",
+  "sideEffects": false,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/material-components/material-components-web.git",
+    "directory": "packages/mdc-animation"
+  },
+  "dependencies": {
+  },
+  "gitHead": "ebeda2e23436103241b0e82afd57b60f74599133"
+}
