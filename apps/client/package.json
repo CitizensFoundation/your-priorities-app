@@ -1,12 +1,15 @@
 {
-  "name": "@yrpri/app",
-  "private": true,
-  "version": "1.0.0",
-  "description": "Your Priorities App",
+  "name": "@yrpri/webapp",
+  "typings": "./pso/all.d.ts",
+  "main": "./pso/all.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/CitizensFoundation/your-priorities-app.git"
+  },
+  "version": "9.0.5",
+  "description": "Your Priorities Web App SDK",
   "author": "Robert Bjarnason, Citizens Foundation",
   "license": "AGPL",
-  "main": "your-priorities-app.js",
-  "module": "your-priorities-app.js",
   "dependencies": {
     "@fingerprintjs/fingerprintjs": "^3.4.1",
     "@kano/twemoji": "^1.0.0",

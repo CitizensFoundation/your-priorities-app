@@ -7,7 +7,7 @@
     "declarationMap": true,
     "sourceMap": true,
     "inlineSources": true,
-    "outDir": "./ts-out",
+    "outDir": "cmp",
     "rootDir": "./src",
     "strict": true,
     "noUnusedLocals": false,
