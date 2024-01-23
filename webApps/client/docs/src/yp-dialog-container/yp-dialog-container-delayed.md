@@ -1,0 +1,1 @@
+It seems you've provided import statements for TypeScript components, but to generate API documentation, I need the actual TypeScript class definitions, including properties, methods, and events. Please provide the TypeScript code for the classes you want to document, and I will create the Markdown API documentation for you.
