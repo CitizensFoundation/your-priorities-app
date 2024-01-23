@@ -27,7 +27,6 @@
         "strict": true
       }
     ],
-    "types": ["mocha"]
   },
   "include": [
 

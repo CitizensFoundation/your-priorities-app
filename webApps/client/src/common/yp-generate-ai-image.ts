@@ -94,6 +94,7 @@ export class YpGenerateAiImage extends YpBaseElement {
           window.appGlobals.activity(`Generate AI Image - error`);
         } else {
           // Continue polling
+          //@ts-ignore
           this.timeout = setTimeout(poll, pollInterval);
         }
       } catch (error) {

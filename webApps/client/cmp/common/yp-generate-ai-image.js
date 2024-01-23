@@ -59,6 +59,7 @@ let YpGenerateAiImage = class YpGenerateAiImage extends YpBaseElement {
                 }
                 else {
                     // Continue polling
+                    //@ts-ignore
                     this.timeout = setTimeout(poll, pollInterval);
                 }
             }
