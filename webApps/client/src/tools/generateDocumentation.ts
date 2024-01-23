@@ -65,6 +65,7 @@ function buildDirectoryTree(dir: string, basePath = '', isSrc = false) {
     if (
       entry.name === 'cks' ||
       entry.name.endsWith('all.ts') ||
+      entry.name.endsWith('test.ts') ||
       entry.name === 'README.md' ||
       entry.name.endsWith('.d.ts') ||
       entry.name.startsWith('.')
@@ -136,7 +137,7 @@ function findTSFiles(dir: string, fileList: string[] = []): string[] {
   const entries = fs.readdirSync(dir, { withFileTypes: true });
 
   for (const entry of entries) {
-    if (entry.name === 'node_modules' || entry.name.endsWith('.d.ts')) {
+    if (entry.name === 'custom_modules' || entry.name === 'node_modules' || entry.name.endsWith('.d.ts')) {
       continue;
     }
 
@@ -146,6 +147,7 @@ function findTSFiles(dir: string, fileList: string[] = []): string[] {
     } else if (
       entry.isFile() &&
       entry.name.endsWith('.ts') &&
+      !entry.name.endsWith('test.ts') &&
       entry.name !== 'all.ts' &&
       entry.name !== 'index.ts'
     ) {
