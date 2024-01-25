@@ -1,8 +1,6 @@
 {
   "name": "@yrpri/webapp",
-  "version": "9.0.11",
-  "typings": "./cmp/all.d.ts",
-  "main": "./cmp/all.js",
+  "version": "9.0.13",
   "repository": {
     "type": "git",
     "url": "https://github.com/CitizensFoundation/your-priorities-app.git"
@@ -76,7 +74,9 @@
     "topojson": "^1.6.19",
     "topojson-client": "^3.1.0",
     "wavesurfer.js": "^6.6.4",
-    "wicg-inert": "^3.0.0"
+    "wicg-inert": "^3.0.0",
+    "element-internals-polyfill": "^1.3.10",
+    "urlpattern-polyfill": "^9.0.0"
   },
   "type": "module",
   "devDependencies": {
