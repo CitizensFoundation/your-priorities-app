@@ -1,13 +1,20 @@
 {
   "name": "@yrpri/webapp",
-  "version": "9.0.13",
+  "version": "9.0.14",
   "repository": {
     "type": "git",
     "url": "https://github.com/CitizensFoundation/your-priorities-app.git"
   },
   "description": "Your Priorities Web App SDK",
   "author": "Robert Bjarnason, Citizens Foundation",
-  "license": "AGPL",
+  "license": "MIT",
+  "files": [
+    "ts-out/**/*",
+    "src/types.d.ts",
+    "custom_modules/**/*",
+    "!custom_modules/**/node_modules/**/*",
+    "locales/**/*"
+  ],
   "dependencies": {
     "@fingerprintjs/fingerprintjs": "^3.4.1",
     "@kano/twemoji": "^1.0.0",
@@ -114,6 +121,9 @@
     "typescript": "^5.3.3"
   },
   "scripts": {
+    "prepublishOnly": "npm pack && node repack",
+    "publish": "node publish.js https://registry.npmjs.org/",
+    "publish_local": "npm pack && node repack && node publish.js http://localhost:4873",
     "build": "rimraf dist && tsc && rollup -c rollup.config.js && npm run analyze -- --exclude dist",
     "start:build": "web-dev-server --root-dir dist --app-index index.html --open",
     "start": "tsc && concurrently -k -r \"tsc --watch --preserveWatchOutput\" \"wds\"",
