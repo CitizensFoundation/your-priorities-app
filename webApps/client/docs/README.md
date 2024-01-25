@@ -1,4 +1,4 @@
-# Policy Synth WebApp API Documentation
+# Your Priorities WebApp API Documentation
 
 - ac-activities
   - [ac-activities](src/ac-activities/ac-activities.md)
