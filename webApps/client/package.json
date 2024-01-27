@@ -122,7 +122,7 @@
   },
   "scripts": {
     "prepublishOnly": "npm pack && node repack",
-    "publish": "node publish.js https://registry.npmjs.org/",
+    "publish": "npm pack && node repack && node publish.js https://registry.npmjs.org/",
     "publish_local": "npm pack && node repack && node publish.js http://localhost:4873",
     "build": "rimraf dist && tsc && rollup -c rollup.config.js && npm run analyze -- --exclude dist",
     "start:build": "web-dev-server --root-dir dist --app-index index.html --open",
