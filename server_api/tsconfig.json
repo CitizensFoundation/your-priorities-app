@@ -5,13 +5,17 @@
     "moduleResolution": "Node",
 		"baseUrl": ".",
 		"outDir": "ts-out/",
-		"allowJs": true
+		"allowJs": true,
+		"types": [
+			"./server.d.ts",
+			"../webApps/client/src/types.d.ts"
+		]
 	},
 	"include": [
 		"**/*.ts",
 		"**/*.js",
 		"**/*.cjs",
 		"**/*.json",
-		"../webApps/client/src/types.d.ts"
+
 	]
 }

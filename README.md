@@ -270,11 +270,18 @@ to improve their communities.
 [http://www.citizens.is/](http://www.citizens.is/)
 
 ## The Team
-- Robert Bjarnason
-- Guðný Maren Valsdóttir
-- Gunnar Grímsson
-- Nathalie Stembert
-- Alexander Máni Gautason
+Your Priorities - Citizens participation application
+
+Developed in 2008-2024 by
+Robert Bjarnason, robert@citizens.is
+Gunnar Grimsson, gunnar@citizens.is
+Gudny Maren Valsdottir 
+Alexander Mani Gautason
+Joshua Lanthier-Welch
+Katherine Breadlove
+Nathalie Stembert
+and many others...
+ 
 
 ## With help from
 

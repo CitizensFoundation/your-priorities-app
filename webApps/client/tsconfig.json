@@ -29,9 +29,9 @@
     ],
   },
   "include": [
-
     "src/**/*.ts",
-
+    "./node_modules/@policysynth/agents/**/*.d.ts",
+    "./node_modules/@policysynth/webapp/**/*.d.ts"
 ],
   "exclude": [
     "node_modules",

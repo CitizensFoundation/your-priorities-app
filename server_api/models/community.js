@@ -216,6 +216,7 @@ module.exports = (sequelize, DataTypes) => {
       community.dataValues.CommunityLogoVideos = _.orderBy(videos, ['created_at'],['desc']);
       done();
     }).catch( error => {
+      console.log("addVideosToCommunity: "+error.stack);
       done(error);
     })
   }

@@ -10,6 +10,8 @@ interface Logger {
 interface Models {
   [key: string]: typeof DbData; // Assuming all models extend DbData
   Post?: typeof PostData;
+  Domain?: typeof DomainData;
+  User?: typeof UserData;
 }
 
 interface DbData extends Model {
@@ -22,6 +24,14 @@ interface DbData extends Model {
   static create(options: any): Promise<any>;
   static build(options: any): Promise<any>;
   save(): Promise<any>;
+}
+
+interface DomainClass extends DbData {
+  configuration: {
+    ltp?: {
+      crt?: LtpCurrentRealityTreeData
+    }
+  };
 }
 
 interface PostClass extends DbData {
