@@ -156,7 +156,7 @@ router.post('/login', function (req, res) {
     const startTime = new Date();
     log.info('User Login start', { elapsedTime: (new Date() - startTime), userId: req.user ? req.user.id : null });
     req.sso.authenticate('local-strategy', {}, req, res, function (err, user) {
-        log.info('User Login before get', { elapsedTime: (new Date() - startTime), userId: req.user ? req.user.id : null });
+        log.info(`User Login before get ${req.user ? "HASUSER" : "NOUSER"}`, { elapsedTime: (new Date() - startTime), userId: req.user ? req.user.id : null });
         getUserWithAll(req.user.id, true, function (error, user) {
             log.info('User Login completed', { elapsedTime: (new Date() - startTime), userId: req.user ? req.user.id : null });
             if (error || !user) {

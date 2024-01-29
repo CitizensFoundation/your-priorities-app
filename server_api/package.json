@@ -69,7 +69,7 @@
     "nodemailer-sendgrid": "^1.0.3",
     "open-graph-scraper": "^6.3.3",
     "openai": "^4.24.1",
-    "passport": "^0.7.0",
+    "passport": "^0.6.0",
     "passport-facebook": "^3.0.0",
     "passport-github": "^1.0.0",
     "passport-google-oauth": "^2.0.0",
@@ -130,8 +130,8 @@
     "yamljs": "^0.3.0"
   },
   "scripts": {
-    "publish": "npm pack && node repack && node publish.js https://registry.npmjs.org/",
-    "publish_local": "npm pack && node repack && node publish.js http://localhost:4873",
+    "publish": "npm run build;npm pack && node repack && node publish.js https://registry.npmjs.org/",
+    "publish_local": "npm run build;npm pack && node repack && node publish.js http://localhost:4873",
     "start": "nodemon -e ts ts-out/server_api/server.js",
     "watch-start": "tsc --project ./ --outDir ./ts-out -w & nodemon -q ./ts-out/server.js",
     "dev": "nodemon --config nodemon.json ./ts-out/server_api/server.js",

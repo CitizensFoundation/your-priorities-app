@@ -4,6 +4,7 @@
 		"module": "CommonJS",
     "moduleResolution": "Node",
 		"baseUrl": ".",
+		"skipLibCheck": true,
 		"outDir": "ts-out/",
 		"allowJs": true,
 		"types": [

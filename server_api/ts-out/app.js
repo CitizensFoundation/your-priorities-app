@@ -101,13 +101,13 @@ class YourPrioritiesApi {
         this.addRedisToRequest();
         this.forceHttps();
         this.initializeMiddlewares();
-        this.handleShortenedRedirects();
+        //this.handleShortenedRedirects();
         this.handleServiceWorkerRequests();
         this.setupStaticFileServing();
-        this.initializePassportStrategies();
-        this.initializeRateLimiting();
+        //this.initializeRateLimiting();
         this.setupDomainAndCommunity();
-        this.setupSitemapRoute();
+        //this.setupSitemapRoute();
+        this.initializePassportStrategies();
         this.checkAuthForSsoInit();
         this.initializeRoutes();
         this.initializeEsControllers();
@@ -117,7 +117,7 @@ class YourPrioritiesApi {
         this.app.use((req, res, next) => {
             if (this.redisClient && typeof this.redisClient.get === "function") {
                 req.redisClient = this.redisClient;
-                loggerTs_js_1.default.info("Have connected redis client");
+                loggerTs_js_1.default.info("Have connected redis client to request");
             }
             else {
                 loggerTs_js_1.default.error("Redis client get method not found or client not initialized");
@@ -239,15 +239,17 @@ class YourPrioritiesApi {
             }
         });
     }
+    bearerCallback = function () {
+        return console.log("The user has tried to authenticate with a bearer token");
+    };
     checkAuthForSsoInit() {
         this.app.use((req, res, next) => {
             if (req.url.indexOf("/auth") > -1 ||
                 req.url.indexOf("/login") > -1 ||
                 req.url.indexOf("saml_assertion") > -1) {
                 passport_sso_1.default.init(req.ypDomain?.loginHosts, req.ypDomain?.loginProviders, {
-                    //@ts-ignore
-                    authorize: bearerCallback, // Ensure bearerCallback is defined or imported
-                    login: models_1.default.User.localCallback, // Ensure localCallback is defined in your User model
+                    authorize: this.bearerCallback,
+                    login: models_1.default.User.localCallback,
                 });
                 req.sso = passport_sso_1.default;
             }
@@ -422,13 +424,10 @@ class YourPrioritiesApi {
         });
     }
     initializePassportStrategies() {
-        // Setup passport strategies and session handling
         this.app.use(passport_1.default.initialize());
         this.app.use(passport_1.default.session());
-        passport_1.default.serializeUser(
-        //@ts-ignore
-        (req, profile, done) => {
-            loggerTs_js_1.default.info("User Serialized", { loginProvider: profile.provider });
+        passport_1.default.serializeUser((req, profile, done) => {
+            loggerTs_js_1.default.info("----> User Serialized", { loginProvider: profile.provider });
             if (profile.provider === "facebook") {
                 models_1.default.User.serializeFacebookUser(profile, req.ypDomain, (error, user) => {
                     if (error) {
@@ -469,7 +468,7 @@ class YourPrioritiesApi {
             else {
                 loggerTs_js_1.default.info("User Serialized", {
                     context: "serializeUser",
-                    userEmail: profile.emails?.[0].value,
+                    userEmail: profile.email,
                     userId: profile.id,
                 });
                 this.registerUserLogin(null, parseInt(profile.id), "email", req, () => {
@@ -560,8 +559,10 @@ class YourPrioritiesApi {
             });
         });
     }
-    completeRegisterUserLogin = (user, loginType, req /*YpRequest*/, done) => {
-        user.last_login_at = new Date();
+    completeRegisterUserLogin = (user, // Replace 'any' with the actual user type
+    loginType, req, // Replace 'any' with 'YpRequest' if it's the correct type
+    done) => {
+        user.last_login_at = new Date().getTime(); // Assuming your database expects a timestamp
         user
             .save()
             .then(() => {
@@ -572,14 +573,18 @@ class YourPrioritiesApi {
                 communityId: req.ypCommunity ? req.ypCommunity.id : null,
                 object: {
                     loginType: loginType,
-                    userDepartment: user.private_profile_data?.saml_agency ?? null,
-                    samlProvider: user.private_profile_data?.saml_provider ?? null,
+                    userDepartment: user.private_profile_data
+                        ? user.private_profile_data.saml_agency
+                        : null,
+                    samlProvider: user.private_profile_data
+                        ? user.private_profile_data.saml_provider
+                        : null,
                 },
-                access: models_1.default.AcActivity.PRIVATE, // Assuming PRIVATE is a valid constant or enum
-            })
-                .then(() => done())
-                .catch((error) => {
-                loggerTs_js_1.default.error("Error in create activity", { error });
+                access: models_1.default.AcActivity.PRIVATE,
+            }, (error) => {
+                if (error) {
+                    loggerTs_js_1.default.error("Error creating activity for user login", { error });
+                }
                 done();
             });
         })

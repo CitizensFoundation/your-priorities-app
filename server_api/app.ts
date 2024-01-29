@@ -76,7 +76,6 @@ interface YpRequest extends express.Request {
   user?: any;
 }
 
-
 let redisClient: any;
 if (process.env.REDIS_URL) {
   let redisUrl = process.env.REDIS_URL;
@@ -123,13 +122,13 @@ export class YourPrioritiesApi {
     this.addRedisToRequest();
     this.forceHttps();
     this.initializeMiddlewares();
-    this.handleShortenedRedirects();
+    //this.handleShortenedRedirects();
     this.handleServiceWorkerRequests();
     this.setupStaticFileServing();
-    this.initializePassportStrategies();
-    this.initializeRateLimiting();
+    //this.initializeRateLimiting();
     this.setupDomainAndCommunity();
-    this.setupSitemapRoute();
+    //this.setupSitemapRoute();
+    this.initializePassportStrategies();
     this.checkAuthForSsoInit();
     this.initializeRoutes();
     this.initializeEsControllers();
@@ -141,7 +140,7 @@ export class YourPrioritiesApi {
       (req: YpRequest, res: express.Response, next: NextFunction) => {
         if (this.redisClient && typeof this.redisClient.get === "function") {
           req.redisClient = this.redisClient;
-          log.info("Have connected redis client");
+          log.info("Have connected redis client to request");
         } else {
           log.error(
             "Redis client get method not found or client not initialized"
@@ -301,6 +300,12 @@ export class YourPrioritiesApi {
     );
   }
 
+  bearerCallback = function () {
+    return console.log(
+      "The user has tried to authenticate with a bearer token"
+    );
+  };
+
   checkAuthForSsoInit(): void {
     this.app.use(
       (req: YpRequest, res: express.Response, next: NextFunction) => {
@@ -310,9 +315,8 @@ export class YourPrioritiesApi {
           req.url.indexOf("saml_assertion") > -1
         ) {
           sso.init(req.ypDomain?.loginHosts, req.ypDomain?.loginProviders, {
-            //@ts-ignore
-            authorize: bearerCallback, // Ensure bearerCallback is defined or imported
-            login: (models as any).User.localCallback, // Ensure localCallback is defined in your User model
+            authorize: this.bearerCallback,
+            login: (models as any).User.localCallback,
           });
           req.sso = sso;
         }
@@ -542,76 +546,66 @@ export class YourPrioritiesApi {
   }
 
   initializePassportStrategies() {
-    // Setup passport strategies and session handling
     this.app.use(passport.initialize());
     this.app.use(passport.session());
 
-    passport.serializeUser(
-      //@ts-ignore
-      (req: YpRequest, profile: any, done: any) => {
-        log.info("User Serialized", { loginProvider: profile.provider });
-        if (profile.provider === "facebook") {
-          (models as any).User.serializeFacebookUser(
-            profile,
-            req.ypDomain,
-            (error: any, user: any) => {
-              if (error) {
-                log.error("Error in User Serialized from Facebook", {
-                  err: error,
-                });
-                done(error);
-              } else {
-                log.info("User Serialized", {
-                  context: "loginFromFacebook",
-                  userId: user.id,
-                });
-                // Assuming registerUserLogin is defined elsewhere in your application
-                this.registerUserLogin(user, user.id, "facebook", req, () => {
-                  done(null, { userId: user.id, loginProvider: "facebook" });
-                });
-              }
-            }
-          );
-        } else if (profile.provider === "saml") {
-          (models as any).User.serializeSamlUser(
-            profile,
-            req,
-            (error: any, user: any) => {
-              if (error) {
-                log.error("Error in User Serialized from SAML", { err: error });
-                done(error);
-              } else {
-                log.info("User Serialized", {
-                  context: "loginFromSaml",
-                  userId: user.id,
-                });
-                this.registerUserLogin(user, user.id, "saml", req, () => {
-                  done(null, { userId: user.id, loginProvider: "saml" });
-                });
-              }
-            }
-          );
-        } else {
-          log.info("User Serialized", {
-            context: "serializeUser",
-            userEmail: profile.emails?.[0].value,
-            userId: profile.id,
-          });
-          this.registerUserLogin(
-            null,
-            parseInt(profile.id),
-            "email",
-            req,
-            () => {
-              done(null, {
-                userId: parseInt(profile.id),
-                loginProvider: "email",
+    passport.serializeUser((req: YpRequest, profile: any, done: any) => {
+      log.info("----> User Serialized", { loginProvider: profile.provider });
+      if (profile.provider === "facebook") {
+        (models as any).User.serializeFacebookUser(
+          profile,
+          req.ypDomain,
+          (error: any, user: any) => {
+            if (error) {
+              log.error("Error in User Serialized from Facebook", {
+                err: error,
+              });
+              done(error);
+            } else {
+              log.info("User Serialized", {
+                context: "loginFromFacebook",
+                userId: user.id,
+              });
+              // Assuming registerUserLogin is defined elsewhere in your application
+              this.registerUserLogin(user, user.id, "facebook", req, () => {
+                done(null, { userId: user.id, loginProvider: "facebook" });
               });
             }
-          );
-        }
+          }
+        );
+      } else if (profile.provider === "saml") {
+        (models as any).User.serializeSamlUser(
+          profile,
+          req,
+          (error: any, user: any) => {
+            if (error) {
+              log.error("Error in User Serialized from SAML", { err: error });
+              done(error);
+            } else {
+              log.info("User Serialized", {
+                context: "loginFromSaml",
+                userId: user.id,
+              });
+              this.registerUserLogin(user, user.id, "saml", req, () => {
+                done(null, { userId: user.id, loginProvider: "saml" });
+              });
+            }
+          }
+        );
+      } else {
+        log.info("User Serialized", {
+          context: "serializeUser",
+          userEmail: profile.email,
+          userId: profile.id,
+        });
+        this.registerUserLogin(null, parseInt(profile.id), "email", req, () => {
+          done(null, {
+            userId: parseInt(profile.id),
+            loginProvider: "email",
+          });
+        });
       }
-    );
+    });
 
     passport.deserializeUser(
       (sessionUser: any, done: (err: any, user?: any | false) => void) => {
@@ -698,12 +692,12 @@ export class YourPrioritiesApi {
   }
 
   completeRegisterUserLogin = (
-    user: any,
+    user: any, // Replace 'any' with the actual user type
     loginType: string,
-    req: any /*YpRequest*/,
+    req: YpRequest, // Replace 'any' with 'YpRequest' if it's the correct type
     done: () => void
   ): void => {
-    user.last_login_at = new Date();
+    user.last_login_at = new Date().getTime(); // Assuming your database expects a timestamp
     user
       .save()
       .then(() => {
@@ -714,22 +708,27 @@ export class YourPrioritiesApi {
           communityId: req.ypCommunity ? req.ypCommunity.id : null,
           object: {
             loginType: loginType,
-            userDepartment: user.private_profile_data?.saml_agency ?? null,
-            samlProvider: user.private_profile_data?.saml_provider ?? null,
+            userDepartment: user.private_profile_data
+              ? user.private_profile_data.saml_agency
+              : null,
+            samlProvider: user.private_profile_data
+              ? user.private_profile_data.saml_provider
+              : null,
           },
-          access: (models as any).AcActivity.PRIVATE, // Assuming PRIVATE is a valid constant or enum
-        })
-          .then(() => done())
-          .catch((error: any) => {
-            log.error("Error in create activity", { error });
-            done();
-          });
+          access: (models as any).AcActivity.PRIVATE,
+        }, (error: any) => {
+          if (error) {
+            log.error("Error creating activity for user login", { error });
+          }
+          done();
+        });
       })
       .catch((error: any) => {
         log.error("Error saving user for login registration", { error });
         done();
       });
   };
+
 
   registerUserLogin = (
     user: any | null,

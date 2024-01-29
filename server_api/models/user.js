@@ -514,6 +514,7 @@ module.exports = (sequelize, DataTypes) => {
   User.prototype.validatePassword = function (password, done) {
     let verified = this.encrypted_password ? bcrypt.compareSync(password, this.encrypted_password) : null;
     if (verified) {
+      console.log(`User ${this.id} has verified password`)
       done(null, this);
     } else {
       if (this.legacy_passwords_disabled) {
