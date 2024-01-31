@@ -1,4 +1,27 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -58,6 +81,38 @@ if (process.env.AIRBRAKE_PROJECT_ID && process.env.AIRBRAKE_API_KEY) {
         performanceStats: false,
     });
 }
+process.on('uncaughtException', (err) => {
+    console.error('There was an uncaught error', err);
+    loggerTs_js_1.default.error('There was an uncaught error', err);
+    if (airbrake) {
+        airbrake.notify(err).then((airbrakeErr) => {
+            if (airbrakeErr.error) {
+                loggerTs_js_1.default.error('AirBrake Error', { context: 'airbrake', err: airbrakeErr.error, errorStatus: 500 });
+            }
+        });
+    }
+    //TODO: What else do we want to do here? We need to exit but can we restart it right away?
+    process.exit(1);
+});
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+    loggerTs_js_1.default.error('Unhandled Rejection at:', promise, 'reason:', reason);
+    if (reason.stack) {
+        console.error(reason.stack);
+        loggerTs_js_1.default.error('Unhandled Rejection at:', promise, 'reason:', reason);
+    }
+    if (airbrake) {
+        airbrake.notify(reason).then((airbrakeErr) => {
+            if (airbrakeErr.error) {
+                loggerTs_js_1.default.error('AirBrake Error', { context: 'airbrake', err: airbrakeErr.error, errorStatus: 500 });
+            }
+        });
+    }
+    //TODO: Look if this is safe to do in production, should be
+    if (process.env.NODE_ENV !== 'production') {
+        process.exit(1);
+    }
+});
 const bot_control_1 = require("./bot_control");
 const ws_1 = require("ws");
 const uuid_1 = require("uuid");
@@ -101,12 +156,12 @@ class YourPrioritiesApi {
         this.addRedisToRequest();
         this.forceHttps();
         this.initializeMiddlewares();
-        //this.handleShortenedRedirects();
+        this.handleShortenedRedirects();
         this.handleServiceWorkerRequests();
         this.setupStaticFileServing();
-        //this.initializeRateLimiting();
+        this.initializeRateLimiting();
         this.setupDomainAndCommunity();
-        //this.setupSitemapRoute();
+        this.setupSitemapRoute();
         this.initializePassportStrategies();
         this.checkAuthForSsoInit();
         this.initializeRoutes();
@@ -318,23 +373,13 @@ class YourPrioritiesApi {
         //@ts-ignore
         this.app.use((0, express_session_1.default)(sessionConfig));
     }
-    initializeEsControllers() {
+    async initializeEsControllers() {
         console.log("Initializing ES controllers");
-        this.app.use((err, req, res, next) => {
-            if (err instanceof authorization_1.default.UnauthorizedError) {
-                loggerTs_js_1.default.info("Anon debug UnauthorizedError", { user: req.user });
-                loggerTs_js_1.default.error("User Unauthorized", {
-                    context: "unauthorizedError",
-                    user: (0, to_json_1.default)(req.user),
-                    err: "Unauthorized",
-                    errorStatus: 401,
-                });
-                res.sendStatus(401);
-            }
-            else {
-                next(err);
-            }
-        });
+        const { AllOurIdeasController } = await Promise.resolve().then(() => __importStar(require("./controllers/allOurIdeas.js")));
+        console.log("Initializing ES controllers 2");
+        const aoiController = new AllOurIdeasController(this.wsClients);
+        console.log(`AOI controller path: ${aoiController.path} ${aoiController.router}`);
+        this.app.use(aoiController.path, aoiController.router);
     }
     initializeRoutes() {
         this.app.use("/", index_1.default);
@@ -618,7 +663,21 @@ class YourPrioritiesApi {
         }
     };
     setupErrorHandler() {
-        // Catch-all handler for 404 Not Found
+        this.app.use((err, req, res, next) => {
+            if (err instanceof authorization_1.default.UnauthorizedError) {
+                loggerTs_js_1.default.info("Anon debug UnauthorizedError", { user: req.user });
+                loggerTs_js_1.default.error("User Unauthorized", {
+                    context: "unauthorizedError",
+                    user: (0, to_json_1.default)(req.user),
+                    err: "Unauthorized",
+                    errorStatus: 401,
+                });
+                res.sendStatus(401);
+            }
+            else {
+                next(err);
+            }
+        });
         this.app.use((req, res, next) => {
             const err = new Error("Not Found");
             err.status = 404;
@@ -630,7 +689,6 @@ class YourPrioritiesApi {
             });
             next(err);
         });
-        // General error handler
         this.app.use((err, req, res, next) => {
             let status = err.status || 500;
             if (err.message && err.message.includes("Expected url like")) {
@@ -692,19 +750,79 @@ class YourPrioritiesApi {
                     ` on ${process.env.NODE_ENV}`);
             });
         }
-        this.ws = new ws_1.WebSocketServer({ server });
+        const pub = this.redisClient.duplicate();
+        const sub = this.redisClient.duplicate();
+        sub.subscribe("websocketChannel");
+        sub.on("message", (channel, message) => {
+            try {
+                const { clientId, action, data } = JSON.parse(message);
+                console.log(`Received message from Redis: ${message} at ${channel}`);
+                switch (action) {
+                    case "broadcast":
+                        this.wsClients.forEach((ws, id) => {
+                            try {
+                                ws.send(data);
+                            }
+                            catch (err) {
+                                console.error(`Error sending broadcast message to client ${id}:`, err);
+                            }
+                        });
+                        break;
+                    case "directMessage":
+                        const ws = this.wsClients.get(clientId);
+                        if (ws) {
+                            try {
+                                ws.send(data);
+                            }
+                            catch (err) {
+                                console.error(`Error sending direct message to client ${clientId}:`, err);
+                            }
+                        }
+                        else {
+                            console.warn(`No WebSocket found for clientId ${clientId}`);
+                            this.wsClients.delete(clientId);
+                        }
+                        break;
+                    // Add other cases as necessary
+                }
+            }
+            catch (e) {
+                console.error("Error handling message from Redis:", e);
+            }
+        });
+        this.ws = new ws_1.WebSocketServer({ server: server });
         this.ws.on("connection", (ws) => {
             const clientId = (0, uuid_1.v4)();
             this.wsClients.set(clientId, ws);
-            ws.send(JSON.stringify({ clientId }));
+            console.log(`New WebSocket connection: clientId ${clientId}`);
             ws.on("message", (message) => {
-                // Handle incoming messages
+                let parsedMessage;
+                try {
+                    parsedMessage = JSON.parse(message);
+                }
+                catch (e) {
+                    console.log(`Received non-JSON message from client ${clientId}:`, message);
+                    parsedMessage = message;
+                }
+                finally {
+                    pub.publish("websocketChannel", JSON.stringify({
+                        clientId,
+                        action: "directMessage",
+                        message: parsedMessage,
+                    }));
+                    if (parsedMessage && parsedMessage.type === "heartbeat") {
+                        console.log(`Received heartbeat from client ${clientId}`);
+                        ws.send(JSON.stringify({ type: "heartbeat_ack" }));
+                    }
+                }
             });
             ws.on("close", () => {
                 this.wsClients.delete(clientId);
+                console.log(`WebSocket connection closed: clientId ${clientId}`);
             });
-            ws.on("error", () => {
+            ws.on("error", (err) => {
                 this.wsClients.delete(clientId);
+                console.error(`WebSocket error with clientId ${clientId}:`, err);
             });
         });
     }

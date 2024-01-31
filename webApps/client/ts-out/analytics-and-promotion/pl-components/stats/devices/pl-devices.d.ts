@@ -12,7 +12,7 @@ export declare class PlausableDevices extends PlausibleBaseElementWithState {
     renderOperatingSystems(): import("lit-html").TemplateResult<1>;
     renderOperatingSystemVersions(): import("lit-html").TemplateResult<1>;
     renderScreenSizes(): import("lit-html").TemplateResult<1>;
-    iconFor(screenSize: string): import("lit-html").TemplateResult<1> | typeof nothing;
+    iconFor(screenSize: string): typeof nothing | import("lit-html").TemplateResult<1>;
     renderContent(): import("lit-html").TemplateResult<1>;
     renderPill(name: string, mode: string): import("lit-html").TemplateResult<1>;
     render(): import("lit-html").TemplateResult<1>;

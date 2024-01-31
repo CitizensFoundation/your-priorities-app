@@ -35,9 +35,9 @@ export declare class YpStructuredQuestionEdit extends YpBaseElement {
     renderTextDescription(): TemplateResult<1>;
     renderSeperator(): TemplateResult<1>;
     renderRadioButton(radioButton: YpRadioButtonData, buttonIndex: number): TemplateResult<1>;
-    renderRadios(): TemplateResult<1> | typeof nothing;
+    renderRadios(): typeof nothing | TemplateResult<1>;
     renderCheckbox(text: string, buttonIndex: number, useTopLevelId?: boolean): TemplateResult<1>;
-    renderCheckboxes(): TemplateResult<1> | typeof nothing;
+    renderCheckboxes(): typeof nothing | TemplateResult<1>;
     renderDropdown(): TemplateResult<1>;
     _dropDownChanged(): void;
     render(): TemplateResult | undefined | {};

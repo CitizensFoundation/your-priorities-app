@@ -142,6 +142,6 @@
     "node_modules"
   ],
   "engines": {
-    "node": "18.16.1"
+    "node": "20.11.0"
   }
 }

@@ -2,7 +2,6 @@ import { LitElement, css } from 'lit';
 import { property } from 'lit/decorators.js';
 import { Layouts } from 'lit-flexbox-literals';
 import { PlausibleStyles } from './plausibleStyles';
-import { installMediaQueryWatcher } from 'pwa-helpers/media-query';
 
 export class PlausibleBaseElement extends LitElement {
   @property({ type: String })
@@ -29,10 +28,17 @@ export class PlausibleBaseElement extends LitElement {
       this.language = 'en';
     }
 
-    installMediaQueryWatcher(`(min-width: 900px)`, matches => {
+    this.installMediaQueryWatcher(`(min-width: 900px)`, matches => {
       this.wide = matches;
     });
   }
+
+
+  installMediaQueryWatcher = (mediaQuery: string, layoutChangedCallback: (mediaQueryMatches: boolean) => void) => {
+    let mql = window.matchMedia(mediaQuery);
+    mql.addListener((e) => layoutChangedCallback(e.matches));
+    layoutChangedCallback(mql.matches);
+  };
 
   override disconnectedCallback() {
     super.disconnectedCallback();

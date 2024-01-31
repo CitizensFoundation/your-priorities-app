@@ -22,6 +22,7 @@ export declare class YpCodeBase {
     language: string | undefined;
     wide: boolean;
     constructor();
+    installMediaQueryWatcher: (mediaQuery: string, layoutChangedCallback: (mediaQueryMatches: boolean) => void) => void;
     _languageEvent(event: CustomEvent): void;
     fire(eventName: string, data: string | number | boolean | object | null | undefined, target: LitElement | Document): void;
     fireGlobal(eventName: string, data?: object | string | boolean | number | null): void;

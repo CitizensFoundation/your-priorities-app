@@ -6,7 +6,6 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 import { LitElement, css } from 'lit';
 import { property } from 'lit/decorators.js';
-import { installMediaQueryWatcher } from 'pwa-helpers/media-query.js';
 import { Layouts } from '../flexbox-literals/classes.js';
 export class YpBaseElement extends LitElement {
     constructor() {
@@ -16,6 +15,11 @@ export class YpBaseElement extends LitElement {
         this.rtl = false;
         this.largeFont = false;
         this.themeColor = '#002255';
+        this.installMediaQueryWatcher = (mediaQuery, layoutChangedCallback) => {
+            let mql = window.matchMedia(mediaQuery);
+            mql.addListener((e) => layoutChangedCallback(e.matches));
+            layoutChangedCallback(mql.matches);
+        };
     }
     static get styles() {
         return [
@@ -46,7 +50,7 @@ export class YpBaseElement extends LitElement {
         else {
             this.language = 'en';
         }
-        installMediaQueryWatcher(`(min-width: 900px)`, matches => {
+        this.installMediaQueryWatcher(`(min-width: 900px)`, matches => {
             this.wide = matches;
         });
     }

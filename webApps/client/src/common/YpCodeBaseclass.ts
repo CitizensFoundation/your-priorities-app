@@ -6,7 +6,6 @@ import { YpAppGlobals } from '../yp-app/YpAppGlobals.js';
 import { YpAppUser } from '../yp-app/YpAppUser.js';
 import { YpAppDialogs } from '../yp-dialog-container/yp-app-dialogs.js';
 import { YpServerApi } from './YpServerApi.js';
-import { installMediaQueryWatcher } from 'pwa-helpers/media-query.js';
 
 declare global {
   interface Window {
@@ -28,7 +27,7 @@ export class YpCodeBase {
   wide = false;
 
   constructor() {
-    installMediaQueryWatcher(`(min-width: 900px)`, (matches) => {
+    this.installMediaQueryWatcher(`(min-width: 900px)`, (matches) => {
       this.wide = matches;
     });
 
@@ -46,6 +45,12 @@ export class YpCodeBase {
       this.language = 'en';
     }
   }
+
+  installMediaQueryWatcher = (mediaQuery: string, layoutChangedCallback: (mediaQueryMatches: boolean) => void) => {
+    let mql = window.matchMedia(mediaQuery);
+    mql.addListener((e) => layoutChangedCallback(e.matches));
+    layoutChangedCallback(mql.matches);
+  };
 
   _languageEvent(event: CustomEvent) {
     const detail = event.detail;

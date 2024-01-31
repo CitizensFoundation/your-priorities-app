@@ -1,6 +1,5 @@
 import { LitElement, css } from 'lit';
 import { property } from 'lit/decorators.js';
-import { installMediaQueryWatcher } from 'pwa-helpers/media-query.js';
 import { Layouts } from '../flexbox-literals/classes.js';
 
 export class YpBaseElement extends LitElement {
@@ -37,6 +36,12 @@ export class YpBaseElement extends LitElement {
     return /Macintosh|iPhone|iPad/.test(navigator.userAgent);
   }
 
+  installMediaQueryWatcher = (mediaQuery: string, layoutChangedCallback: (mediaQueryMatches: boolean) => void) => {
+    let mql = window.matchMedia(mediaQuery);
+    mql.addListener((e) => layoutChangedCallback(e.matches));
+    layoutChangedCallback(mql.matches);
+  };
+
   override connectedCallback() {
     super.connectedCallback();
 
@@ -66,7 +71,7 @@ export class YpBaseElement extends LitElement {
       this.language = 'en';
     }
 
-    installMediaQueryWatcher(`(min-width: 900px)`, matches => {
+    this.installMediaQueryWatcher(`(min-width: 900px)`, matches => {
       this.wide = matches;
     });
   }

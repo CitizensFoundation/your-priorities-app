@@ -8,8 +8,6 @@ import "@material/web/tabs/secondary-tab.js";
 import "@material/web/checkbox/checkbox.js";
 import "@material/web/textfield/outlined-text-field.js";
 
-import { installMediaQueryWatcher } from "pwa-helpers/media-query.js";
-import { Layouts } from "lit-flexbox-literals";
 //import { YpBaseWithLogin } from './@yrpri/common/yp-base-element-with-login.js';
 import { YpAdminPage } from "./yp-admin-page.js";
 

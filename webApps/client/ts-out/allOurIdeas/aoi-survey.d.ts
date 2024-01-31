@@ -1,0 +1,80 @@
+import "@material/web/navigationbar/navigation-bar.js";
+import "@material/web/navigationtab/navigation-tab.js";
+import "@material/web/navigationdrawer/navigation-drawer.js";
+import "@material/web/list/list-item.js";
+import "@material/web/list/list.js";
+import "@material/web/icon/icon.js";
+import "@material/web/iconbutton/standard-icon-button.js";
+import "@material/web/iconbutton/outlined-icon-button.js";
+import "@material/mwc-snackbar/mwc-snackbar.js";
+import "@material/web/menu/menu.js";
+import "../common/yp-image.js";
+import "./survey/aoi-survey-intro.js";
+import "./survey/aoi-survey-voting.js";
+import "./survey/aoi-survey-results.js";
+import "./survey/aoi-survey-analysis.js";
+import { AoiServerApi } from "./survey/AoiServerApi.js";
+import { AoiAppGlobals } from "./AoiAppGlobals.js";
+import { NavigationDrawer } from "@material/web/labs/navigationdrawer/internal/navigation-drawer.js";
+import { Scheme } from "../common/YpMaterialThemeHelper.js";
+import { YpGroup } from "../yp-collection/yp-group.js";
+declare global {
+    interface Window {
+        aoiAppGlobals: AoiAppGlobals;
+        aoiServerApi: AoiServerApi;
+        needsNewEarl: boolean;
+    }
+}
+export declare class AoiSurvey extends YpGroup {
+    pageIndex: number;
+    totalNumberOfVotes: number;
+    lastSnackbarText: string | undefined;
+    currentError: string | undefined;
+    themePrimaryColor: string;
+    themeSecondaryColor: string;
+    themeTertiaryColor: string;
+    themeNeutralColor: string;
+    themeScheme: Scheme;
+    themeHighContrast: boolean;
+    earl: AoiEarlData;
+    question: AoiQuestionData;
+    prompt: AoiPromptData;
+    isAdmin: boolean;
+    surveyClosed: boolean;
+    appearanceLookup: string;
+    currentLeftAnswer: string | undefined;
+    currentRightAnswer: string | undefined;
+    currentPromptId: number | undefined;
+    drawer: NavigationDrawer;
+    constructor();
+    connectedCallback(): void;
+    getEarl(): Promise<void>;
+    disconnectedCallback(): void;
+    getHexColor(color: string): string | undefined;
+    snackbarclosed(): void;
+    tabChanged(event: CustomEvent): void;
+    exitToMainApp(): void;
+    _displaySnackbar(event: CustomEvent): Promise<void>;
+    _setupEventListeners(): void;
+    _removeEventListeners(): void;
+    externalGoalTrigger(): void;
+    updated(changedProperties: Map<string | number | symbol, unknown>): void;
+    _appError(event: CustomEvent): void;
+    get adminConfirmed(): boolean;
+    _settingsColorChanged(event: CustomEvent): void;
+    static get styles(): any[];
+    changeTabTo(tabId: number): void;
+    updateThemeColor(event: CustomEvent): void;
+    sendVoteAnalytics(): void;
+    updateappearanceLookup(event: CustomEvent): void;
+    renderIntroduction(): import("lit-html").TemplateResult<1>;
+    renderShare(): import("lit-html").TemplateResult<1>;
+    startVoting(): void;
+    openResults(): void;
+    triggerExternalGoalUrl(): void;
+    _renderPage(): import("lit-html/directive.js").DirectiveResult<typeof import("lit-html/directives/cache.js").CacheDirective>;
+    renderScore(): import("lit-html").TemplateResult<1>;
+    renderNavigationBar(): import("lit-html").TemplateResult<1>;
+    render(): import("lit-html").TemplateResult<1>;
+}
+//# sourceMappingURL=aoi-survey.d.ts.map

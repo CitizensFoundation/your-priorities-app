@@ -9,7 +9,8 @@
 		"allowJs": true,
 		"types": [
 			"./server.d.ts",
-			"../webApps/client/src/types.d.ts"
+			"../webApps/client/src/types.d.ts",
+			"../webApps/client/src/typesAoi.d.ts"
 		]
 	},
 	"include": [

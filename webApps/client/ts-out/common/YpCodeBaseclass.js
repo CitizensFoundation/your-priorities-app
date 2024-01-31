@@ -1,8 +1,12 @@
-import { installMediaQueryWatcher } from 'pwa-helpers/media-query.js';
 export class YpCodeBase {
     constructor() {
         this.wide = false;
-        installMediaQueryWatcher(`(min-width: 900px)`, (matches) => {
+        this.installMediaQueryWatcher = (mediaQuery, layoutChangedCallback) => {
+            let mql = window.matchMedia(mediaQuery);
+            mql.addListener((e) => layoutChangedCallback(e.matches));
+            layoutChangedCallback(mql.matches);
+        };
+        this.installMediaQueryWatcher(`(min-width: 900px)`, (matches) => {
             this.wide = matches;
         });
         this.addGlobalListener('yp-language-loaded', this._languageEvent.bind(this));

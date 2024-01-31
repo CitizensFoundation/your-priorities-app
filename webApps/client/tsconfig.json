@@ -10,6 +10,7 @@
     "outDir": "ts-out",
     "rootDir": "./src",
     "strict": true,
+    "useDefineForClassFields": false,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "noImplicitReturns": true,

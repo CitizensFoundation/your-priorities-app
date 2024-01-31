@@ -1,8 +1,6 @@
 import { LitElement, css, html, nothing } from "lit";
 import { property, customElement } from "lit/decorators.js";
 
-import { installMediaQueryWatcher } from "pwa-helpers/media-query.js";
-import { Layouts } from "lit-flexbox-literals";
 //import { YpBaseWithLogin } from './@yrpri/common/yp-base-element-with-login.js';
 import { YpAdminPage } from "./yp-admin-page.js";
 import "@material/web/radio/radio.js";

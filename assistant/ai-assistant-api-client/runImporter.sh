@@ -1,1 +1,0 @@
-AC_AI_ASSISTANT_BASE_URL=http://localhost:9000/api/v1/ AC_AI_ASSISTANT_CLUSTER_ID=1 AC_AI_ASSISTANT_KEY=OS93lFi3GzyjHOTXT  NODE_OPTIONS="--max-old-space-size=8072" node testOnePost.js

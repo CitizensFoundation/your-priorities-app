@@ -59,6 +59,40 @@ if (process.env.AIRBRAKE_PROJECT_ID && process.env.AIRBRAKE_API_KEY) {
   });
 }
 
+process.on('uncaughtException', (err) => {
+  console.error('There was an uncaught error', err);
+  log.error('There was an uncaught error', err);
+  if (airbrake) {
+    airbrake.notify(err).then((airbrakeErr: any) => {
+      if (airbrakeErr.error) {
+        log.error('AirBrake Error', { context: 'airbrake', err: airbrakeErr.error, errorStatus: 500 });
+      }
+    });
+  }
+  //TODO: What else do we want to do here? We need to exit but can we restart it right away?
+  process.exit(1);
+});
+
+process.on('unhandledRejection', (reason: any, promise) => {
+  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+  log.error('Unhandled Rejection at:', promise, 'reason:', reason);
+  if (reason.stack) {
+    console.error(reason.stack);
+    log.error('Unhandled Rejection at:', promise, 'reason:', reason);
+  }
+  if (airbrake) {
+    airbrake.notify(reason).then((airbrakeErr: any) => {
+      if (airbrakeErr.error) {
+        log.error('AirBrake Error', { context: 'airbrake', err: airbrakeErr.error, errorStatus: 500 });
+      }
+    });
+  }
+  //TODO: Look if this is safe to do in production, should be
+  if (process.env.NODE_ENV !== 'production') {
+    process.exit(1);
+  }
+});
+
 import {
   robotsTxt,
   botsWithJavascript,
@@ -122,12 +156,12 @@ export class YourPrioritiesApi {
     this.addRedisToRequest();
     this.forceHttps();
     this.initializeMiddlewares();
-    //this.handleShortenedRedirects();
+    this.handleShortenedRedirects();
     this.handleServiceWorkerRequests();
     this.setupStaticFileServing();
-    //this.initializeRateLimiting();
+    this.initializeRateLimiting();
     this.setupDomainAndCommunity();
-    //this.setupSitemapRoute();
+    this.setupSitemapRoute();
     this.initializePassportStrategies();
     this.checkAuthForSsoInit();
     this.initializeRoutes();
@@ -418,25 +452,18 @@ export class YourPrioritiesApi {
     this.app.use(session(sessionConfig));
   }
 
-  initializeEsControllers() {
+  async initializeEsControllers() {
     console.log("Initializing ES controllers");
 
-    this.app.use(
-      (err: any, req: YpRequest, res: express.Response, next: NextFunction) => {
-        if (err instanceof auth.UnauthorizedError) {
-          log.info("Anon debug UnauthorizedError", { user: req.user });
-          log.error("User Unauthorized", {
-            context: "unauthorizedError",
-            user: toJson(req.user),
-            err: "Unauthorized",
-            errorStatus: 401,
-          });
-          res.sendStatus(401);
-        } else {
-          next(err);
-        }
-      }
+    const { AllOurIdeasController } = await import(
+      "./controllers/allOurIdeas.js"
     );
+    console.log("Initializing ES controllers 2");
+    const aoiController = new AllOurIdeasController(this.wsClients);
+    console.log(
+      `AOI controller path: ${aoiController.path} ${aoiController.router}`
+    );
+    this.app.use(aoiController.path, aoiController.router);
   }
 
   initializeRoutes() {
@@ -701,34 +728,36 @@ export class YourPrioritiesApi {
     user
       .save()
       .then(() => {
-        (models as any).AcActivity.createActivity({
-          type: "activity.user.login",
-          userId: user.id,
-          domainId: req.ypDomain.id,
-          communityId: req.ypCommunity ? req.ypCommunity.id : null,
-          object: {
-            loginType: loginType,
-            userDepartment: user.private_profile_data
-              ? user.private_profile_data.saml_agency
-              : null,
-            samlProvider: user.private_profile_data
-              ? user.private_profile_data.saml_provider
-              : null,
+        (models as any).AcActivity.createActivity(
+          {
+            type: "activity.user.login",
+            userId: user.id,
+            domainId: req.ypDomain.id,
+            communityId: req.ypCommunity ? req.ypCommunity.id : null,
+            object: {
+              loginType: loginType,
+              userDepartment: user.private_profile_data
+                ? user.private_profile_data.saml_agency
+                : null,
+              samlProvider: user.private_profile_data
+                ? user.private_profile_data.saml_provider
+                : null,
+            },
+            access: (models as any).AcActivity.PRIVATE,
           },
-          access: (models as any).AcActivity.PRIVATE,
-        }, (error: any) => {
-          if (error) {
-            log.error("Error creating activity for user login", { error });
+          (error: any) => {
+            if (error) {
+              log.error("Error creating activity for user login", { error });
+            }
+            done();
           }
-          done();
-        });
+        );
       })
       .catch((error: any) => {
         log.error("Error saving user for login registration", { error });
         done();
       });
   };
-
 
   registerUserLogin = (
     user: any | null,
@@ -760,7 +789,23 @@ export class YourPrioritiesApi {
   };
 
   setupErrorHandler(): void {
-    // Catch-all handler for 404 Not Found
+    this.app.use(
+      (err: any, req: YpRequest, res: express.Response, next: NextFunction) => {
+        if (err instanceof auth.UnauthorizedError) {
+          log.info("Anon debug UnauthorizedError", { user: req.user });
+          log.error("User Unauthorized", {
+            context: "unauthorizedError",
+            user: toJson(req.user),
+            err: "Unauthorized",
+            errorStatus: 401,
+          });
+          res.sendStatus(401);
+        } else {
+          next(err);
+        }
+      }
+    );
+
     this.app.use(
       (req: YpRequest, res: express.Response, next: NextFunction) => {
         const err: any = new Error("Not Found");
@@ -775,7 +820,6 @@ export class YourPrioritiesApi {
       }
     );
 
-    // General error handler
     this.app.use(
       (err: any, req: YpRequest, res: express.Response, next: NextFunction) => {
         let status = err.status || 500;
@@ -854,23 +898,94 @@ export class YourPrioritiesApi {
       });
     }
 
-    this.ws = new WebSocketServer({ server });
+    const pub = this.redisClient.duplicate();
+    const sub = this.redisClient.duplicate();
+
+    sub.subscribe("websocketChannel");
+    sub.on("message", (channel: any, message: any) => {
+      try {
+        const { clientId, action, data } = JSON.parse(message);
+
+        console.log(`Received message from Redis: ${message} at ${channel}`);
+
+        switch (action) {
+          case "broadcast":
+            this.wsClients.forEach((ws, id) => {
+              try {
+                ws.send(data);
+              } catch (err) {
+                console.error(
+                  `Error sending broadcast message to client ${id}:`,
+                  err
+                );
+              }
+            });
+            break;
+          case "directMessage":
+            const ws = this.wsClients.get(clientId);
+            if (ws) {
+              try {
+                ws.send(data);
+              } catch (err) {
+                console.error(
+                  `Error sending direct message to client ${clientId}:`,
+                  err
+                );
+              }
+            } else {
+              console.warn(`No WebSocket found for clientId ${clientId}`);
+              this.wsClients.delete(clientId);
+            }
+            break;
+          // Add other cases as necessary
+        }
+      } catch (e) {
+        console.error("Error handling message from Redis:", e);
+      }
+    });
+
+    this.ws = new WebSocketServer({ server: server });
 
     this.ws.on("connection", (ws) => {
       const clientId = uuidv4();
       this.wsClients.set(clientId, ws);
-      ws.send(JSON.stringify({ clientId }));
+      console.log(`New WebSocket connection: clientId ${clientId}`);
 
-      ws.on("message", (message) => {
-        // Handle incoming messages
+      ws.on("message", (message: string) => {
+        let parsedMessage;
+        try {
+          parsedMessage = JSON.parse(message);
+        } catch (e) {
+          console.log(
+            `Received non-JSON message from client ${clientId}:`,
+            message
+          );
+          parsedMessage = message;
+        } finally {
+          pub.publish(
+            "websocketChannel",
+            JSON.stringify({
+              clientId,
+              action: "directMessage",
+              message: parsedMessage,
+            })
+          );
+
+          if (parsedMessage && parsedMessage.type === "heartbeat") {
+            console.log(`Received heartbeat from client ${clientId}`);
+            ws.send(JSON.stringify({ type: "heartbeat_ack" }));
+          }
+        }
       });
 
       ws.on("close", () => {
         this.wsClients.delete(clientId);
+        console.log(`WebSocket connection closed: clientId ${clientId}`);
       });
 
-      ws.on("error", () => {
+      ws.on("error", (err) => {
         this.wsClients.delete(clientId);
+        console.error(`WebSocket error with clientId ${clientId}:`, err);
       });
     });
   }

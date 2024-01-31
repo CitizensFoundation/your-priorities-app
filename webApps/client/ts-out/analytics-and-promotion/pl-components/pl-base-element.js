@@ -7,13 +7,17 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 import { LitElement, css } from 'lit';
 import { property } from 'lit/decorators.js';
 import { PlausibleStyles } from './plausibleStyles';
-import { installMediaQueryWatcher } from 'pwa-helpers/media-query';
 export class PlausibleBaseElement extends LitElement {
     constructor() {
         super(...arguments);
         this.language = 'en';
         this.rtl = false;
         this.wide = false;
+        this.installMediaQueryWatcher = (mediaQuery, layoutChangedCallback) => {
+            let mql = window.matchMedia(mediaQuery);
+            mql.addListener((e) => layoutChangedCallback(e.matches));
+            layoutChangedCallback(mql.matches);
+        };
     }
     connectedCallback() {
         super.connectedCallback();
@@ -27,7 +31,7 @@ export class PlausibleBaseElement extends LitElement {
         else {
             this.language = 'en';
         }
-        installMediaQueryWatcher(`(min-width: 900px)`, matches => {
+        this.installMediaQueryWatcher(`(min-width: 900px)`, matches => {
             this.wide = matches;
         });
     }

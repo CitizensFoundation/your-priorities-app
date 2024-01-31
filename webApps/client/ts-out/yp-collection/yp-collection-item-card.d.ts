@@ -24,6 +24,6 @@ export declare class YpCollectionItemCard extends YpBaseElement {
     get contentId(): number;
     get contentLanguage(): string | undefined;
     get contentUrlBase(): string | undefined;
-    render(): import("lit-html").TemplateResult<1> | typeof nothing;
+    render(): typeof nothing | import("lit-html").TemplateResult<1>;
 }
 //# sourceMappingURL=yp-collection-item-card.d.ts.map

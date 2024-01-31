@@ -9,6 +9,7 @@ import "@trystan2k/fleshy-jsoneditor/fleshy-jsoneditor.js";
 import { YpAdminConfigBase } from "./yp-admin-config-base.js";
 import "../yp-file-upload/yp-file-upload.js";
 import "../yp-app/yp-language-selector.js";
+import "./allOurIdeas/aoi-earl-ideas-editor.js";
 export declare class YpAdminConfigGroup extends YpAdminConfigBase {
     appHomeScreenIconImageId: number | undefined;
     hostnameExample: string | undefined;
@@ -54,17 +55,17 @@ export declare class YpAdminConfigGroup extends YpAdminConfigBase {
     _setupTranslations(): void;
     _formResponse(event: CustomEvent): Promise<void>;
     _finishRedirect(group: YpGroupData): void;
-    private _getAccessTab;
+    _getAccessTab(): YpConfigTabData;
     _groupAccessChanged(event: CustomEvent): void;
     _statusSelected(event: CustomEvent): void;
-    private _getThemeTab;
+    _getThemeTab(): YpConfigTabData;
     _inheritThemeChanged(event: CustomEvent): void;
     _themeChanged(event: CustomEvent): void;
-    private _getPostSettingsTab;
+    _getPostSettingsTab(): YpConfigTabData | null;
     _defaultDataImageUploaded(event: CustomEvent): void;
     _defaultPostImageUploaded(event: CustomEvent): void;
-    private _haveUploadedDocxSurvey;
-    private _getVoteSettingsTab;
+    _haveUploadedDocxSurvey(event: CustomEvent): void;
+    _getVoteSettingsTab(): YpConfigTabData;
     get endorsementButtonsOptions(): {
         name: string;
         translatedName: string;
@@ -72,8 +73,11 @@ export declare class YpAdminConfigGroup extends YpAdminConfigBase {
     _endorsementButtonsSelected(event: CustomEvent): void;
     get endorsementButtonsIndex(): number;
     _customRatingsTextChanged(event: CustomEvent): void;
-    private _getPointSettingsTab;
-    private _getAdditionalConfigTab;
+    _getPointSettingsTab(): YpConfigTabData;
+    _getAdditionalConfigTab(): YpConfigTabData;
+    renderEditEarl(): import("lit-html").TemplateResult<1>;
+    renderCreateEarl(): import("lit-html").TemplateResult<1>;
+    _getAllOurIdeaTab(): YpConfigTabData;
     _categorySelected(event: CustomEvent): void;
     _categoryImageSrc(category: any): string;
     _welcomePageSelected(event: CustomEvent): void;

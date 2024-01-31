@@ -4,6 +4,7 @@ export declare class PlausibleBaseElement extends LitElement {
     rtl: boolean;
     wide: boolean;
     connectedCallback(): void;
+    installMediaQueryWatcher: (mediaQuery: string, layoutChangedCallback: (mediaQueryMatches: boolean) => void) => void;
     disconnectedCallback(): void;
     updated(changedProperties: Map<string | number | symbol, unknown>): void;
     static get rtlLanguages(): string[];

@@ -1,6 +1,3 @@
 [submodule "server_api/active-citizen"]
 	path = server_api/active-citizen
 	url = https://github.com/CitizensFoundation/active-citizen.git
-[submodule "policy-synth"]
-	path = policy-synth
-	url = git@github.com:CitizensFoundation/policy-synth.git

@@ -1,0 +1,43 @@
+import { YpStreamingLlmBase } from "../../yp-llms/yp-streaming-llm-base.js";
+import { MdFilledTextField } from "@material/web/textfield/filled-text-field.js";
+import { AoiAdminServerApi } from "./AoiAdminServerApi.js";
+import "@material/web/list/list.js";
+import "@material/web/list/list-item.js";
+import "@material/web/iconbutton/outlined-icon-button.js";
+import "@material/web/button/filled-button.js";
+import "@material/web/button/filled-tonal-button.js";
+import "@material/web/chips/filter-chip.js";
+import "@material/web/chips/chip-set.js";
+export declare class AoiEarlIdeasEditor extends YpStreamingLlmBase {
+    groupId: number;
+    configuration: AoiConfigurationData;
+    isCreatingIdeas: boolean;
+    choices: AoiChoiceData[] | undefined;
+    isGeneratingIdeas: boolean;
+    isSubmittingIdeas: boolean;
+    isTogglingIdeaActive: boolean;
+    isFetchingChoices: boolean;
+    currentIdeasFilter: "latest" | "highestScore" | "userSubmitted";
+    ideasElement: MdFilledTextField;
+    serverApi: AoiAdminServerApi;
+    constructor();
+    connectedCallback(): void;
+    socketClosed(): void;
+    socketError(): void;
+    getChoices(): Promise<void>;
+    addChatBotElement(wsMessage: YpAiChatWsMessage): Promise<void>;
+    get ideas(): string[];
+    hasMoreThanOneIdea(): void;
+    openMenuFor(idea: AoiChoiceData): void;
+    generateIdeas(): void;
+    submitIdeasForCreation(): Promise<void>;
+    toggleIdeaActivity(idea: AoiChoiceData): () => Promise<void>;
+    applyFilter(filterType: string): void;
+    get sortedChoices(): AoiChoiceData[] | undefined;
+    static get styles(): any[];
+    renderCreateIdeas(): import("lit-html").TemplateResult<1>;
+    renderIdeasSortingChips(): import("lit-html").TemplateResult<1>;
+    renderEditIdeas(): import("lit-html").TemplateResult<1>;
+    render(): import("lit-html").TemplateResult<1>;
+}
+//# sourceMappingURL=aoi-earl-ideas-editor.d.ts.map

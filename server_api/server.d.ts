@@ -24,6 +24,7 @@ interface DbData extends Model {
   static create(options: any): Promise<any>;
   static build(options: any): Promise<any>;
   save(): Promise<any>;
+  set(col: string, value: any): void;
 }
 
 interface DomainClass extends DbData {

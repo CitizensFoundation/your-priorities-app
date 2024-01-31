@@ -8,7 +8,7 @@ export declare class YpThemeSelector extends YpBaseElement {
     static get styles(): any[];
     connectedCallback(): void;
     _selectTheme(event: CustomEvent): void;
-    render(): import("lit-html").TemplateResult<1> | typeof nothing;
+    render(): typeof nothing | import("lit-html").TemplateResult<1>;
     _objectChanged(): void;
     _selectedThemeChanged(): void;
 }

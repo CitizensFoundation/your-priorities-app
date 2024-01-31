@@ -8,8 +8,8 @@ export declare class YpAdminConfigDomain extends YpAdminConfigBase {
     appHomeScreenIconImageId: number | undefined;
     constructor();
     static get styles(): (any[] | import("lit").CSSResult)[];
-    renderHeader(): import("lit-html").TemplateResult<1> | typeof nothing;
-    renderHiddenInputs(): import("lit-html").TemplateResult<1> | typeof nothing;
+    renderHeader(): typeof nothing | import("lit-html").TemplateResult<1>;
+    renderHiddenInputs(): typeof nothing | import("lit-html").TemplateResult<1>;
     _clear(): void;
     updated(changedProperties: Map<string | number | symbol, unknown>): void;
     _setupTranslations(): void;

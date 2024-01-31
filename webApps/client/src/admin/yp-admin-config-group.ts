@@ -6,14 +6,17 @@ import "@material/web/progress/linear-progress.js";
 import "@material/web/select/outlined-select.js";
 import "@material/web/select/select-option.js";
 
-import { installMediaQueryWatcher } from "pwa-helpers/media-query.js";
 import "../yp-survey/yp-structured-question-edit.js";
 
 import "@trystan2k/fleshy-jsoneditor/fleshy-jsoneditor.js";
 
 import { Layouts } from "lit-flexbox-literals";
 import { YpAdminPage } from "./yp-admin-page.js";
-import { YpAdminConfigBase, defaultLtpConfiguration, defaultLtpPromptsConfiguration } from "./yp-admin-config-base.js";
+import {
+  YpAdminConfigBase,
+  defaultLtpConfiguration,
+  defaultLtpPromptsConfiguration,
+} from "./yp-admin-config-base.js";
 import { YpNavHelpers } from "../common/YpNavHelpers.js";
 import { YpFileUpload } from "../yp-file-upload/yp-file-upload.js";
 //import { YpEmojiSelector } from './@yrpri/common/yp-emoji-selector.js';
@@ -27,6 +30,13 @@ import { YpImage } from "../common/yp-image.js";
 import { TextField } from "@material/web/textfield/internal/text-field.js";
 import { Checkbox } from "@material/web/checkbox/internal/checkbox.js";
 import { MdOutlinedSelect } from "@material/web/select/outlined-select.js";
+
+import "./allOurIdeas/aoi-earl-ideas-editor.js";
+
+enum GroupType {
+  ideaGeneration = 0,
+  allOurIdeas = 1,
+}
 
 @customElement("yp-admin-config-group")
 export class YpAdminConfigGroup extends YpAdminConfigBase {
@@ -76,7 +86,7 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
   statusIndex: any;
   hasSamlLoginProvider: any;
 
-  groupTypeOptions = ["ideaGeneration"];
+  groupTypeOptions = ["ideaGeneration", "allOurIdeas"];
 
   constructor() {
     super();
@@ -109,8 +119,6 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
         fleshy-jsoneditor {
           width: 960px;
         }
-
-
       `,
     ];
   }
@@ -145,6 +153,7 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
     this.groupTypeIndex = index;
     this.group.configuration.groupType = index;
     this._configChanged();
+    this.configTabs = this.setupConfigTabs();
   }
 
   renderGroupTypeSelection() {
@@ -225,13 +234,17 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
         value="${this.collection?.description}"
       />
 
-      ${ (this.collection?.configuration as YpGroupConfiguration).ltp ? html`
-        <input
-          type="hidden"
-          name="ltp"
-          value="${JSON.stringify((this.collection?.configuration as YpGroupConfiguration).ltp)}"
-        />
-      ` : nothing}
+      ${(this.collection?.configuration as YpGroupConfiguration).ltp
+        ? html`
+            <input
+              type="hidden"
+              name="ltp"
+              value="${JSON.stringify(
+                (this.collection?.configuration as YpGroupConfiguration).ltp
+              )}"
+            />
+          `
+        : nothing}
 
       <input type="hidden" name="${this.getAccessTokenName()}" value="1" />
 
@@ -304,9 +317,13 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
       if (!(this.collection.configuration as YpGroupConfiguration).ltp) {
         (this.collection.configuration as YpGroupConfiguration).ltp =
           defaultLtpConfiguration;
-      } else if (!(this.collection.configuration as YpGroupConfiguration).ltp!.crt!.prompts) {
-        (this.collection.configuration as YpGroupConfiguration).ltp!.crt!.prompts =
-          defaultLtpPromptsConfiguration();
+      } else if (
+        !(this.collection.configuration as YpGroupConfiguration).ltp!.crt!
+          .prompts
+      ) {
+        (
+          this.collection.configuration as YpGroupConfiguration
+        ).ltp!.crt!.prompts = defaultLtpPromptsConfiguration();
       }
 
       this.groupTypeIndex = this.group.configuration.groupType || 0;
@@ -403,7 +420,7 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
     window.appGlobals.activity("completed", "editGroup");
   }
 
-  private _getAccessTab() {
+  _getAccessTab() {
     return {
       name: "access",
       icon: "code",
@@ -562,7 +579,7 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
     this.status = this.collectionStatusOptions[index].name;
   }
 
-  private _getThemeTab() {
+  _getThemeTab() {
     return {
       name: "themeSettings",
       icon: "palette",
@@ -687,7 +704,7 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
     // Handle theme changes here
   }
 
-  private _getPostSettingsTab() {
+  _getPostSettingsTab() {
     if (this.isGroupFolder) {
       return null;
     }
@@ -1113,7 +1130,7 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
     this.configChanged = true;
   }
 
-  private _haveUploadedDocxSurvey(event: CustomEvent) {
+  _haveUploadedDocxSurvey(event: CustomEvent) {
     const detail = event.detail;
     if (detail.xhr && detail.xhr.response) {
       let responseDetail = JSON.parse(detail.xhr.response);
@@ -1124,7 +1141,7 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
     }
   }
 
-  private _getVoteSettingsTab() {
+  _getVoteSettingsTab() {
     return {
       name: "voteSettings",
       icon: "thumbs_up_down",
@@ -1249,7 +1266,7 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
     // Handle custom ratings text changes here
   }
 
-  private _getPointSettingsTab() {
+  _getPointSettingsTab() {
     return {
       name: "pointSettings",
       icon: "stars",
@@ -1374,8 +1391,7 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
     } as YpConfigTabData;
   }
 
-
-  private _getAdditionalConfigTab() {
+  _getAdditionalConfigTab() {
     return {
       name: "additionalGroupConfig",
       icon: "settings",
@@ -1580,7 +1596,7 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
           text: "moveGroupTo",
           type: "html",
           templateData: html`
-            <md-select
+            <md-outlined-select
               name="moveGroupTo"
               .label="${this.t("moveGroupTo")}"
               @selected="${this._moveGroupToSelected}"
@@ -1593,7 +1609,7 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
                   >
                 `
               )}
-            </md-select>
+            </md-outlined-select>
           `,
         },
         {
@@ -1613,11 +1629,52 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
                       src="${this._categoryImageSrc(category)}"
                     ></md-icon>
                     ${category.name}
-                  </md-outlined-select-option>
+                  </md-select-option>
                 `
               )}
-            </md-select>
+            </md-outlined-select>
           `,
+        },
+      ] as Array<YpStructuredConfigData>,
+    } as YpConfigTabData;
+  }
+
+  renderEditEarl() {
+    return html`
+      <aoi-earl-ideas-editor
+        .configuration="${(this.group.configuration as AoiGroupConfiguration)
+          .allOurIdeas}"
+      ></aoi-earl-ideas-editor>
+    `;
+  }
+
+  renderCreateEarl() {
+    return html` <aoi-earl-ideas-editor
+      .configuration="${(this.group.configuration as AoiGroupConfiguration)
+        .allOurIdeas}"
+    ></aoi-earl-ideas-editor>`;
+  }
+
+  _getAllOurIdeaTab() {
+    let configuration = (this.group.configuration as AoiGroupConfiguration)
+      .allOurIdeas;
+
+    if (!configuration) {
+      configuration = (
+        this.group.configuration as AoiGroupConfiguration
+      ).allOurIdeas = {};
+    }
+
+    return {
+      name: "allOurIdeas",
+      icon: "lightbulb",
+      items: [
+        {
+          text: "earlConfig",
+          type: "html",
+          templateData: configuration.earl
+            ? this.renderEditEarl()
+            : this.renderCreateEarl(),
         },
       ] as Array<YpStructuredConfigData>,
     } as YpConfigTabData;
@@ -1657,13 +1714,18 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
 
     tabs.push(this._getAccessTab());
     tabs.push(this._getThemeTab());
-    const postsTab = this._getPostSettingsTab();
-    if (!this.isGroupFolder) {
-      tabs.push(postsTab!);
+
+    if (this.groupTypeIndex == GroupType.ideaGeneration) {
+      const postsTab = this._getPostSettingsTab();
+      if (!this.isGroupFolder) {
+        tabs.push(postsTab!);
+      }
+      tabs.push(this._getVoteSettingsTab());
+      tabs.push(this._getPointSettingsTab());
+      tabs.push(this._getAdditionalConfigTab());
+    } else if (this.groupTypeIndex == GroupType.allOurIdeas) {
+      tabs.push(this._getAllOurIdeaTab());
     }
-    tabs.push(this._getVoteSettingsTab());
-    tabs.push(this._getPointSettingsTab());
-    tabs.push(this._getAdditionalConfigTab());
 
     this.tabsPostSetup(tabs);
 

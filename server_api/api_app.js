@@ -258,7 +258,7 @@ app.use(function setupStaticPath(req, res, next) {
     staticPath = path.join(__dirname, "../../../webApps/client/dist");
     staticIndex = "index.html";
   } else {
-    staticPath = path.join(__dirname, "../client_app/build/bundled");
+    staticPath = path.join(__dirname, "../webApps/old/clientApp/build/bundled");
     staticIndex = false;
   }
 
@@ -266,7 +266,7 @@ app.use(function setupStaticPath(req, res, next) {
     req.path.startsWith("/promotion/") ||
     (req.headers.referrer && req.headers.referrer.indexOf("/promotion/") > -1)
   ) {
-    staticPath = path.join(__dirname, "./webApps/promotion_app/dist");
+    staticPath = path.join(__dirname, "./webApps/old/promotion_app/dist");
     staticIndex = "index.html";
   } else if (
     req.path.startsWith("/land_use/") ||
@@ -278,20 +278,20 @@ app.use(function setupStaticPath(req, res, next) {
     req.path.startsWith("/analytics/") ||
     (req.headers.referrer && req.headers.referrer.indexOf("/analytics/")) > -1
   ) {
-    staticPath = path.join(__dirname, "./webApps/analytics_app/dist");
+    staticPath = path.join(__dirname, "./webApps/old/analytics_app/dist");
     staticIndex = "index.html";
   } else if (false &&
     req.path.startsWith("/admin/") ||
     (req.headers.referrer && req.headers.referrer.indexOf("/admin/")) > -1
   ) {
-    staticPath = path.join(__dirname, "./webApps/admin_app/dist");
+    staticPath = path.join(__dirname, "./webApps/old/translationApp/dist");
     staticIndex = "index.html";
   } else {
     if (
       process.env.FORCE_PRODUCTION !== "true" &&
       app.get("env") === "development" && !USE_NEXT_VERSION
     ) {
-      staticPath = path.join(__dirname, "../client_app");
+      staticPath = path.join(__dirname, "../webApps/old/clientApp");
     }
   }
 
@@ -617,31 +617,31 @@ app.use(function cacheControlHeaders(req, res, next) {
 
 app.use(
   "/promotion",
-  express.static(path.join(__dirname, "../webApps/promotion_app/dist"))
+  express.static(path.join(__dirname, "../webApps/old/promotion_app/dist"))
 );
 app.use(
   "/promotion/domain/*",
-  express.static(path.join(__dirname, "../webApps/promotion_app/dist"))
+  express.static(path.join(__dirname, "../webApps/old/promotion_app/dist"))
 );
 app.use(
   "/promotion/community/*",
-  express.static(path.join(__dirname, "../webApps/promotion_app/dist"))
+  express.static(path.join(__dirname, "../webApps/old/promotion_app/dist"))
 );
 app.use(
   "/promotion/group/*",
-  express.static(path.join(__dirname, "../webApps/promotion_app/dist"))
+  express.static(path.join(__dirname, "../webApps/old/promotion_app/dist"))
 );
 app.use(
   "/promotion/post/*",
-  express.static(path.join(__dirname, "../webApps/promotion_app/dist"))
+  express.static(path.join(__dirname, "../webApps/old/promotion_app/dist"))
 );
 app.use(
   "/promotion/locales/en/*",
-  express.static(path.join(__dirname, "../webApps/promotion_app/dist/locales/en"))
+  express.static(path.join(__dirname, "../webApps/old/promotion_app/dist/locales/en"))
 );
 app.use(
   "/promotion/locales/is/*",
-  express.static(path.join(__dirname, "../webApps/promotion_app/dist/locales/is"))
+  express.static(path.join(__dirname, "../webApps/old/promotion_app/dist/locales/is"))
 );
 
 app.use(
@@ -680,35 +680,35 @@ app.use(
 
 app.use(
   "/analytics/",
-  express.static(path.join(__dirname, "../webApps/analytics_app/dist"))
+  express.static(path.join(__dirname, "../webApps/old/analytics_app/dist"))
 );
 app.use(
   "/analytics/domain/*",
-  express.static(path.join(__dirname, "../webApps/analytics_app/dist"))
+  express.static(path.join(__dirname, "../webApps/old/analytics_app/dist"))
 );
 app.use(
   "/analytics/community/*",
-  express.static(path.join(__dirname, "../webApps/analytics_app/dist"))
+  express.static(path.join(__dirname, "../webApps/old/analytics_app/dist"))
 );
 app.use(
   "/analytics/group/*",
-  express.static(path.join(__dirname, "../webApps/analytics_app/dist"))
+  express.static(path.join(__dirname, "../webApps/old/analytics_app/dist"))
 );
 app.use(
   "/admin/",
-  express.static(path.join(__dirname, "../webApps/admin_app/dist"))
+  express.static(path.join(__dirname, "../webApps/old/translationApp/dist"))
 );
 app.use(
   "/admin/domain/*",
-  express.static(path.join(__dirname, "../webApps/admin_app/dist"))
+  express.static(path.join(__dirname, "../webApps/old/translationApp/dist"))
 );
 app.use(
   "/admin/community/*",
-  express.static(path.join(__dirname, "../webApps/admin_app/dist"))
+  express.static(path.join(__dirname, "../webApps/old/translationApp/dist"))
 );
 app.use(
   "/admin/group/*",
-  express.static(path.join(__dirname, "../webApps/admin_app/dist"))
+  express.static(path.join(__dirname, "../webApps/old/translationApp/dist"))
 );
 app.use("/domain", index);
 app.use("/community", index);

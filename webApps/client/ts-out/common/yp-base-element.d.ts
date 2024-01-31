@@ -8,6 +8,7 @@ export declare class YpBaseElement extends LitElement {
     themeDarkMode: boolean | undefined;
     static get styles(): any;
     get isAppleDevice(): boolean;
+    installMediaQueryWatcher: (mediaQuery: string, layoutChangedCallback: (mediaQueryMatches: boolean) => void) => void;
     connectedCallback(): void;
     disconnectedCallback(): void;
     _changeThemeColor(event: CustomEvent): void;
