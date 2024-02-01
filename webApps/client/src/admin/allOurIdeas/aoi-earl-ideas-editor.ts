@@ -213,11 +213,13 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmBase {
       super.styles,
       css`
         .ideasList {
-          padding: 10px;
+          padding: 16px;
+          max-width: 900px;
+          width: 900px;
         }
 
         .ideaContainer {
-          padding: 10px;
+          padding: 8px;
           margin: 5px 0;
           border-radius: 8px;
           background-color: var(--md-sys-color-surface-variant);
@@ -225,10 +227,12 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmBase {
         }
 
         .idea {
-          padding: 5px;
+          padding: 8px;
+          padding-top: 16px;
+          padding-bottom: 16px;
           border-radius: 16px;
-          background-color: var(--md-sys-color-primary-container);
-          color: var(--md-sys-color-on-primary-container);
+          background-color: var(--md-sys-color-surface);
+          color: var(--md-sys-color-on-surface);
           flex-grow: 1;
         }
 
@@ -313,27 +317,31 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmBase {
 
   renderIdeasSortingChips() {
     return html`
-      <md-chip-set
-        class="ideaFilters layout horizontal wrap"
-        type="filter"
-        single-select
-      >
-        <md-filter-chip
-          class="layout horizontal center-center"
-          label="User submitted"
-          @click="${() => this.applyFilter("userSubmitted")}"
-        ></md-filter-chip>
-        <md-filter-chip
-          class="layout horizontal center-center"
-          label="Latest"
-          @click="${() => this.applyFilter("latest")}"
-        ></md-filter-chip>
-        <md-filter-chip
-          class="layout horizontal center-center"
-          label="Highest Score"
-          @click="${() => this.applyFilter("highestScore")}"
-        ></md-filter-chip>
-      </md-chip-set>
+      <div class="layout horizontal center-center">
+        <md-chip-set
+          class="ideaFilters layout horizontal wrap"
+          type="filter"
+        >
+          <md-filter-chip
+            class="layout horizontal center-center"
+            label="Latest"
+            .selected="${this.currentIdeasFilter == "latest"}"
+            @click="${() => this.applyFilter("latest")}"
+          ></md-filter-chip>
+          <md-filter-chip
+            class="layout horizontal center-center"
+            label="User submitted"
+            .selected="${this.currentIdeasFilter == "userSubmitted"}"
+            @click="${() => this.applyFilter("userSubmitted")}"
+          ></md-filter-chip>
+          <md-filter-chip
+            class="layout horizontal center-center"
+            label="Highest Score"
+            .selected="${this.currentIdeasFilter == "highestScore"}"
+            @click="${() => this.applyFilter("highestScore")}"
+          ></md-filter-chip>
+        </md-chip-set>
+      </div>
     `;
   }
 

@@ -38,24 +38,16 @@ interface AoiEarlData {
   name?: string;
   question_id?: number;
   active: boolean;
-  welcome_message?: string;
-  default_lang?: string;
-  flag_enabled?: boolean;
-  accept_new_ideas?: boolean;
-  show_cant_decide?: boolean;
-  show_add_new_idea?: boolean;
   configuration?: AoiEarlConfigurationData;
   question?: AoiQuestionData;
 }
 
 
 interface AoiEarlConfigurationData {
+  welcome_message?: string;
+  accept_new_ideas?: boolean;
+  show_cant_decide?: boolean;
   external_goal_params_whitelist?: string;
-  theme_scheme: any;
-  theme_neutral_color: string;
-  theme_tertiary_color: string;
-  theme_secondary_color: string;
-  theme_primary_color: string;
   external_goal_trigger_url?: string;
   hide_results: string;
   welcome_html: string;
@@ -164,8 +156,4 @@ interface AoiChoiceData {
 
 interface AoiConfigurationData {
   earl?: AoiEarlData;
-}
-
-interface AoiGroupConfiguration extends YpGroupConfiguration {
-  allOurIdeas: AoiConfigurationData;
 }

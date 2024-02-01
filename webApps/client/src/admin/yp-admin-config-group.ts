@@ -40,6 +40,43 @@ enum GroupType {
   allOurIdeas = 1,
 }
 
+const defaultAiAnalysisJson = {
+  analyses: [
+    {
+      ideasLabel: "Three most popular ideas",
+      ideasIdsRange: 3,
+      analysisTypes: [
+        {
+          label: "Main points for",
+          contextPrompt:
+            "You will analyze and report main points in favor of the three most popular ideas to a given question and output bullet points in markdown. Please do not write out a summary of each answer, Only output points in favor of those ideas. Output in the format of a very short idea name then three sub bullets with the points in favor of. Never use bold markup code.",
+        },
+        {
+          label: "Main points against",
+          contextPrompt:
+            "You will analyze and report main points against the three most popular ideas to a given question and output bullet points in markdown. Please do not write out a summary of each answer, Only output points against those ideas. Output in the format of a very short idea name then three sub bullets with the points against. Never use bold markup code.",
+        },
+      ],
+    },
+    {
+      ideasLabel: "Three least popular ideas",
+      ideasIdsRange: -3,
+      analysisTypes: [
+        {
+          label: "Main points for",
+          contextPrompt:
+            "You will analyze and report main points in favor of the three least popular ideas to a given question and output bullet points in markdown. Please do not write out a summary of each answer, Only output points in favor of those ideas. Output in the format of a very short idea name then three sub bullets with the points in favor of. Never use bold markup code.",
+        },
+        {
+          label: "Main points against",
+          contextPrompt:
+            "You will analyze and report main points against the three least popular ideas to a given question and output bullet points in markdown. Please do not write out a summary of each answer, Only output points against those ideas. Output in the format of a very short idea name then three sub bullets with the points against. Never use bold markup code.",
+        },
+      ],
+    },
+  ],
+};
+
 @customElement("yp-admin-config-group")
 export class YpAdminConfigGroup extends YpAdminConfigBase {
   @property({ type: Number })
@@ -250,13 +287,13 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
             />
           `
         : nothing}
-      ${(this.collection?.configuration as AoiGroupConfiguration).allOurIdeas
+      ${(this.collection?.configuration as YpGroupConfiguration).allOurIdeas
         ? html`
             <input
               type="hidden"
               name="allOurIdeas"
               value="${JSON.stringify(
-                (this.collection?.configuration as AoiGroupConfiguration)
+                (this.collection?.configuration as YpGroupConfiguration)
                   .allOurIdeas
               )}"
             />
@@ -341,6 +378,18 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
         (
           this.collection.configuration as YpGroupConfiguration
         ).ltp!.crt!.prompts = defaultLtpPromptsConfiguration();
+      }
+
+      if (
+        (this.collection.configuration as YpGroupConfiguration).allOurIdeas &&
+        (this.collection.configuration as YpGroupConfiguration).allOurIdeas!
+          .earl &&
+        (this.collection.configuration as YpGroupConfiguration).allOurIdeas!
+          .earl!.question
+      ) {
+        this.aoiQuestionName = (
+          this.collection.configuration as YpGroupConfiguration
+        ).allOurIdeas!.earl!.question!.name;
       }
 
       this.groupTypeIndex = this.group.configuration.groupType || 0;
@@ -1656,19 +1705,8 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
     } as YpConfigTabData;
   }
 
-  renderEditEarl() {
-    return html`
-      <aoi-earl-ideas-editor
-        .groupId="${this.collectionId as number}"
-        @configuration-changed="${this.earlConfigChanged}"
-        .configuration="${(this.group.configuration as AoiGroupConfiguration)
-          .allOurIdeas}"
-      ></aoi-earl-ideas-editor>
-    `;
-  }
-
   earlConfigChanged(event: CustomEvent) {
-    (this.group.configuration as AoiGroupConfiguration).allOurIdeas = (
+    this.group.configuration.allOurIdeas = (
       this.$$("aoi-earl-ideas-editor") as AoiEarlIdeasEditor
     ).configuration;
     this.requestUpdate();
@@ -1679,16 +1717,14 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
       .communityId="${communityId}"
       @configuration-changed="${this.earlConfigChanged}"
       .questionName=${this.aoiQuestionName}
-      .configuration="${(this.group.configuration as AoiGroupConfiguration)
-        .allOurIdeas}"
+      .configuration="${this.group.configuration.allOurIdeas!}"
     ></aoi-earl-ideas-editor>`;
   }
 
   questionNameChanged(event: CustomEvent) {
     const target = (event as any).currentTarget! as MdFilledTextField;
     const value = target.value;
-    const configuration = (this.group.configuration as AoiGroupConfiguration)
-      .allOurIdeas;
+    const configuration = this.group.configuration.allOurIdeas!;
 
     if (!configuration.earl) {
       configuration.earl = {
@@ -1709,13 +1745,10 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
   }
 
   _getAllOurIdeaTab() {
-    let configuration = (this.group.configuration as AoiGroupConfiguration)
-      .allOurIdeas;
+    let configuration = this.group.configuration.allOurIdeas!;
 
     if (!configuration) {
-      configuration = (
-        this.group.configuration as AoiGroupConfiguration
-      ).allOurIdeas = {};
+      configuration = this.group.configuration.allOurIdeas = {};
     }
 
     let communityId;
@@ -1743,10 +1776,96 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
         {
           text: "earlConfig",
           type: "html",
-          templateData:
-            configuration.earl && configuration.earl.question_id
-              ? this.renderCreateEarl(communityId)
-              : this.renderCreateEarl(communityId),
+          templateData: this.renderCreateEarl(communityId),
+        },
+      ] as Array<YpStructuredConfigData>,
+    } as YpConfigTabData;
+  }
+
+  set(obj: any, path: string, value: any): void {
+    const keys = path.split(".");
+    let current = obj;
+
+    keys.forEach((key, index) => {
+      if (index === keys.length - 1) {
+        current[key] = value;
+      } else {
+        if (!current[key]) current[key] = {};
+        current = current[key];
+      }
+    });
+  }
+
+  _updateEarl(event: CustomEvent, earlUpdatePath: string) {
+    this.set(
+      this.group.configuration.allOurIdeas!.earl,
+      earlUpdatePath,
+      event.detail.value
+    );
+    this._configChanged();
+    this.requestUpdate();
+  }
+
+  _getAllOurIdeaOptionsTab() {
+    let earl = this.group.configuration.allOurIdeas?.earl;
+
+    return {
+      name: "allOurIdeasOptions",
+      icon: "settings",
+      items: [
+        {
+          text: "show_cant_decide",
+          type: "checkbox",
+          onChange: (e: CustomEvent) =>
+            this._updateEarl(e, "configuration.show_cant_decide"),
+          value: earl?.configuration!.show_cant_decide,
+          translationToken: "showCantDecide",
+        },
+        {
+          text: "accept_new_ideas",
+          type: "checkbox",
+          onChange: (e: CustomEvent) =>
+            this._updateEarl(e, "configuration.accept_new_ideas"),
+          value: earl?.configuration!.accept_new_ideas,
+          translationToken: "acceptNewIdeas",
+        },
+        {
+          text: "hide_results",
+          type: "checkbox",
+          onChange: (e: CustomEvent) =>
+            this._updateEarl(e, "configuration.hide_results"),
+          value: earl?.configuration!.hide_results,
+          translationToken: "hideAoiResults",
+        },
+        {
+          text: "welcome_message",
+          type: "textarea",
+          rows: 5,
+          maxLength: 300,
+          value: earl?.configuration!.welcome_message,
+          onChange: (e: CustomEvent) =>
+            this._updateEarl(e, "configuration.welcome_message"),
+          translationToken: "welcomeMessage",
+        },
+        {
+          text: "welcome_html",
+          type: "textarea",
+          rows: 5,
+          value: earl?.configuration!.welcome_html,
+          onChange: (e: CustomEvent) =>
+            this._updateEarl(e, "configuration.welcome_html"),
+          translationToken: "welcomeHtml",
+        },
+        {
+          text: "analysis_config",
+          type: "textarea",
+          rows: 7,
+          value:
+            earl?.configuration!.analysis_config ||
+            JSON.stringify(defaultAiAnalysisJson, null, 2),
+          onChange: (e: CustomEvent) =>
+            this._updateEarl(e, "configuration.analysis_config"),
+          translationToken: "aoiAiAnalysisConfig",
         },
       ] as Array<YpStructuredConfigData>,
     } as YpConfigTabData;
@@ -1794,6 +1913,7 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
       tabs.push(this._getAdditionalConfigTab());
     } else if (this.groupTypeIndex == GroupType.allOurIdeas) {
       tabs.push(this._getAllOurIdeaTab());
+      tabs.push(this._getAllOurIdeaOptionsTab());
     }
     tabs.push(this._getAccessTab());
     tabs.push(this._getThemeTab());

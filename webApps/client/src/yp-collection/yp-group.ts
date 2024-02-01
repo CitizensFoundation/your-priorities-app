@@ -235,7 +235,6 @@ export class YpGroup extends YpCollection {
   }
 
   override async getCollection() {
-    debugger;
     window.appGlobals.retryMethodAfter401Login = this.getCollection.bind(this);
     this.hasNonOpenPosts = false;
     this.tabCounters = {};
@@ -380,13 +379,13 @@ export class YpGroup extends YpCollection {
           <aoi-survey
             .collectionId="${this.collectionId as number}"
             .collection="${this.collection}"
-          ></aoi-survey><h1>c</h1>
+          ></aoi-survey>
         `;
       } else {
-        return html`<h1>F</h1>`;
+        return html``;
       }
     } else {
-      return html`<h1>v</h1>`;
+      return html``;
     }
   }
 

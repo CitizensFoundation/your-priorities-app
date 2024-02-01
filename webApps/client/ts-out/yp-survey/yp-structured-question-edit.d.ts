@@ -47,7 +47,7 @@ export declare class YpStructuredQuestionEdit extends YpBaseElement {
     _keyPressed(event: KeyboardEvent): void;
     setRadioEventType(): void;
     _sendDebouncedChange(event: CustomEvent): void;
-    _debounceChangeEvent(event: CustomEvent): void;
+    _debounceChangeEvent(event: any): void;
     get textWithIndex(): string;
     _getRadioClass(): "layout vertical wrap lessBottomMargin" | "layout vertical wrap" | "layout vertical";
     get textWithLinks(): string;

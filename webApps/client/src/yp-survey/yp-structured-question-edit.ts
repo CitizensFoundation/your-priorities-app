@@ -7,7 +7,6 @@ import linkifyHtml from "linkify-html";
 import "@material/web/select/outlined-select.js";
 import "@material/web/select/select-option.js";
 
-
 import "@material/web/checkbox/checkbox.js";
 import "@material/web/textfield/filled-text-field.js";
 import "@material/web/radio/radio.js";
@@ -69,7 +68,9 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
 
   debunceChangeEventTimer: ReturnType<typeof setTimeout> | undefined;
 
-  override updated(changedProperties: Map<string | number | symbol, unknown>): void {
+  override updated(
+    changedProperties: Map<string | number | symbol, unknown>
+  ): void {
     super.updated(changedProperties);
 
     if (changedProperties.has("structuredAnswers")) {
@@ -295,7 +296,6 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
             font-size: 24px;
           }
         }
-
       `,
     ];
   }
@@ -332,9 +332,12 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
         type="text"
         .allowedPattern="${this.isNumberSubType ? "[0-9]" : ""}"
         ?half-width-desktop="${this.question.halfWidthDesktop}"
-        @change="${this._debounceChangeEvent}"
+        @change="${(e: any) => {
+          e.detail = { value: e.currentTarget.value };
+          this._debounceChangeEvent(e);
+        }}"
         ?required="${this.question.required}"
-        .maxlength="${this.question.maxLength || 100000}"
+        maxlength="${ifDefined(this.question.maxLength || undefined)}"
       >
       </md-filled-text-field>
     `;
@@ -379,13 +382,16 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
           @focus="${this.setLongFocus}"
           @blur="${this.setLongUnFocus}"
           ?use-small-font="${this.useSmallFont}"
-          @change="${this._debounceChangeEvent}"
+          @change="${(e: any) => {
+            e.detail = { value: e.currentTarget.value };
+            this._debounceChangeEvent(e);
+          }}"
           name="${this.formName || ""}"
-          rows="3"
+          rows="${ifDefined(this.question.rows || 3)}"
           max-rows="5"
           maxrows="5"
           ?required="${this.question.required}"
-          .maxlength="${this.question.maxLength || 5000}"
+          maxlength="${ifDefined(this.question.maxLength || undefined)}"
         >
         </md-filled-text-field>
       `;
@@ -650,16 +656,17 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
   }
 
   _sendDebouncedChange(event: CustomEvent) {
+    this.fire("yp-answer-content-changed", event.detail);
     if (!this.debunceChangeEventTimer) {
       this.debunceChangeEventTimer = setTimeout(() => {
-        this.fire("yp-answer-content-changed", event.detail);
         this.debunceChangeEventTimer = undefined;
+        this.fire("yp-answer-content-changed-debounced", event.detail);
         this._resizeScrollerIfNeeded();
       }, this.debounceTimeMs);
     }
   }
 
-  _debounceChangeEvent(event: CustomEvent) {
+  _debounceChangeEvent(event: any) {
     event.stopPropagation();
     this._sendDebouncedChange(event);
   }
@@ -703,7 +710,7 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
     const liveQuestion = this.$$("#structuredQuestion_" + this.index) as
       | HTMLInputElement
       | TextField;
-    console.log(`liveQuestion: ${liveQuestion}`)
+    console.log(`liveQuestion: ${liveQuestion}`);
     if (liveQuestion) {
       if (liveQuestion.dataset.type === "dropdown") {
         return true; // DO something if required
@@ -716,13 +723,13 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
         return true; // DO something if required
       } else {
         if (
-          (liveQuestion as TextField).value  &&
-          (liveQuestion as TextField).value.length>0
+          (liveQuestion as TextField).value &&
+          (liveQuestion as TextField).value.length > 0
         ) {
-          console.log(`liveQuestion: textfield has length`)
+          console.log(`liveQuestion: textfield has length`);
           return true;
         } else {
-          console.log(`liveQuestion: textfield has no length`)
+          console.log(`liveQuestion: textfield has no length`);
           return false;
         }
       }
@@ -1039,7 +1046,7 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
       ) as HTMLInputElement;
       for (let i = 0; i < item.children.length; i++) {
         if (
-          item.children[i].tagName.toLowerCase() === "mwc-checkbox" &&
+          item.children[i].tagName.toLowerCase() === "md-checkbox" &&
           (item.children[i] as Checkbox).checked
         ) {
           checkedCount += 1;
@@ -1049,7 +1056,7 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
       if (checkedCount >= this.question.maxLength) {
         for (let x = 0; x < item.children.length; x++) {
           if (
-            item.children[x].tagName.toLowerCase() === "mwc-checkbox" &&
+            item.children[x].tagName.toLowerCase() === "md-checkbox" &&
             !(item.children[x] as Checkbox).checked
           ) {
             (item.children[x] as HTMLInputElement).disabled = true;
@@ -1058,7 +1065,7 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
       } else {
         for (let n = 0; n < item.children.length; n++) {
           if (
-            item.children[n].tagName.toLowerCase() === "mwc-checkbox" &&
+            item.children[n].tagName.toLowerCase() === "md-checkbox" &&
             (item.children[n] as HTMLInputElement).disabled
           ) {
             (item.children[n] as HTMLInputElement).disabled = false;
@@ -1068,19 +1075,22 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
     }
 
     event.stopPropagation();
-    this._sendDebouncedChange({ detail: { value: 1 } } as CustomEvent);
+    this._sendDebouncedChange({
+      detail: { value: (event.target as Checkbox).checked },
+    } as CustomEvent);
   }
 
   _radioChanged(event: CustomEvent) {
     event.stopPropagation();
     if (this.question.radioButtons) {
-      this._sendDebouncedChange({ detail: { value: 1 } } as CustomEvent);
-
       let selectedRadio;
 
       this.question.radioButtons.forEach((button, buttonIndex) => {
         if (button.text === (event.target as Radio).value) {
           selectedRadio = button;
+          this._sendDebouncedChange({
+            detail: { value: button.text },
+          } as CustomEvent);
           if (selectedRadio.skipTo) {
             this.fire("yp-skip-to-unique-id", {
               fromId: this.question.uniqueId,

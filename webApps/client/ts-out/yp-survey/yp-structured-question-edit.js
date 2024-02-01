@@ -12,6 +12,7 @@ import "@material/web/select/select-option.js";
 import "@material/web/checkbox/checkbox.js";
 import "@material/web/textfield/filled-text-field.js";
 import "@material/web/radio/radio.js";
+import { ifDefined } from "lit/directives/if-defined.js";
 import { unsafeHTML } from "lit/directives/unsafe-html.js";
 import "./yp-simple-html-editor.js";
 import { YpBaseElement } from "../common/yp-base-element.js";
@@ -253,7 +254,6 @@ let YpStructuredQuestionEdit = class YpStructuredQuestionEdit extends YpBaseElem
             font-size: 24px;
           }
         }
-
       `,
         ];
     }
@@ -287,9 +287,12 @@ let YpStructuredQuestionEdit = class YpStructuredQuestionEdit extends YpBaseElem
         type="text"
         .allowedPattern="${this.isNumberSubType ? "[0-9]" : ""}"
         ?half-width-desktop="${this.question.halfWidthDesktop}"
-        @change="${this._debounceChangeEvent}"
+        @change="${(e) => {
+            e.detail = { value: e.currentTarget.value };
+            this._debounceChangeEvent(e);
+        }}"
         ?required="${this.question.required}"
-        .maxlength="${this.question.maxLength || 100000}"
+        maxlength="${ifDefined(this.question.maxLength || undefined)}"
       >
       </md-filled-text-field>
     `;
@@ -333,13 +336,16 @@ let YpStructuredQuestionEdit = class YpStructuredQuestionEdit extends YpBaseElem
           @focus="${this.setLongFocus}"
           @blur="${this.setLongUnFocus}"
           ?use-small-font="${this.useSmallFont}"
-          @change="${this._debounceChangeEvent}"
+          @change="${(e) => {
+                e.detail = { value: e.currentTarget.value };
+                this._debounceChangeEvent(e);
+            }}"
           name="${this.formName || ""}"
-          rows="3"
+          rows="${ifDefined(this.question.rows || 3)}"
           max-rows="5"
           maxrows="5"
           ?required="${this.question.required}"
-          .maxlength="${this.question.maxLength || 5000}"
+          maxlength="${ifDefined(this.question.maxLength || undefined)}"
         >
         </md-filled-text-field>
       `;
@@ -578,10 +584,11 @@ let YpStructuredQuestionEdit = class YpStructuredQuestionEdit extends YpBaseElem
         this.radioKeypress = true;
     }
     _sendDebouncedChange(event) {
+        this.fire("yp-answer-content-changed", event.detail);
         if (!this.debunceChangeEventTimer) {
             this.debunceChangeEventTimer = setTimeout(() => {
-                this.fire("yp-answer-content-changed", event.detail);
                 this.debunceChangeEventTimer = undefined;
+                this.fire("yp-answer-content-changed-debounced", event.detail);
                 this._resizeScrollerIfNeeded();
             }, this.debounceTimeMs);
         }
@@ -928,14 +935,14 @@ let YpStructuredQuestionEdit = class YpStructuredQuestionEdit extends YpBaseElem
             let checkedCount = 0;
             const item = this.$$("#structuredQuestion_" + this.index);
             for (let i = 0; i < item.children.length; i++) {
-                if (item.children[i].tagName.toLowerCase() === "mwc-checkbox" &&
+                if (item.children[i].tagName.toLowerCase() === "md-checkbox" &&
                     item.children[i].checked) {
                     checkedCount += 1;
                 }
             }
             if (checkedCount >= this.question.maxLength) {
                 for (let x = 0; x < item.children.length; x++) {
-                    if (item.children[x].tagName.toLowerCase() === "mwc-checkbox" &&
+                    if (item.children[x].tagName.toLowerCase() === "md-checkbox" &&
                         !item.children[x].checked) {
                         item.children[x].disabled = true;
                     }
@@ -943,7 +950,7 @@ let YpStructuredQuestionEdit = class YpStructuredQuestionEdit extends YpBaseElem
             }
             else {
                 for (let n = 0; n < item.children.length; n++) {
-                    if (item.children[n].tagName.toLowerCase() === "mwc-checkbox" &&
+                    if (item.children[n].tagName.toLowerCase() === "md-checkbox" &&
                         item.children[n].disabled) {
                         item.children[n].disabled = false;
                     }
@@ -951,16 +958,20 @@ let YpStructuredQuestionEdit = class YpStructuredQuestionEdit extends YpBaseElem
             }
         }
         event.stopPropagation();
-        this._sendDebouncedChange({ detail: { value: 1 } });
+        this._sendDebouncedChange({
+            detail: { value: event.target.checked },
+        });
     }
     _radioChanged(event) {
         event.stopPropagation();
         if (this.question.radioButtons) {
-            this._sendDebouncedChange({ detail: { value: 1 } });
             let selectedRadio;
             this.question.radioButtons.forEach((button, buttonIndex) => {
                 if (button.text === event.target.value) {
                     selectedRadio = button;
+                    this._sendDebouncedChange({
+                        detail: { value: button.text },
+                    });
                     if (selectedRadio.skipTo) {
                         this.fire("yp-skip-to-unique-id", {
                             fromId: this.question.uniqueId,

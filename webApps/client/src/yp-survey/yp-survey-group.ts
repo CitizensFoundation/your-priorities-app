@@ -177,7 +177,7 @@ export class YpSurveyGroup extends YpBaseElement {
     this.addListener('yp-skip-to-unique-id', this._skipToId);
     this.addListener('yp-open-to-unique-id', this._openToId);
     this.addListener('yp-goto-next-index', this._goToNextIndex);
-    this.addListener('yp-answer-content-changed', this._saveState);
+    this.addListener('yp-answer-content-changed-debounced', this._saveState);
   }
 
   override disconnectedCallback() {
@@ -185,7 +185,7 @@ export class YpSurveyGroup extends YpBaseElement {
     this.removeListener('yp-skip-to-unique-id', this._skipToId);
     this.removeListener('yp-open-to-unique-id', this._openToId);
     this.removeListener('yp-goto-next-index', this._goToNextIndex);
-    this.removeListener('yp-answer-content-changed', this._saveState);
+    this.removeListener('yp-answer-content-changed-debounced', this._saveState);
   }
 
   _isLastRating(index: number) {

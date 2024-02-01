@@ -56,7 +56,6 @@ let AoiSurvey = class AoiSurvey extends YpBaseElement {
         super.connectedCallback();
         this._setupEventListeners();
         this.getEarl();
-        debugger;
     }
     async getEarl() {
         window.aoiAppGlobals.activity("Survey - fetch start");
@@ -83,7 +82,6 @@ let AoiSurvey = class AoiSurvey extends YpBaseElement {
     }
     disconnectedCallback() {
         super.disconnectedCallback();
-        debugger;
         this._removeEventListeners();
     }
     scrollToCollectionItemSubClass() {
@@ -180,6 +178,11 @@ let AoiSurvey = class AoiSurvey extends YpBaseElement {
         }
 
         :host {
+        }
+
+        md-tabs {
+          width: 100%;
+          max-width: 960px;
         }
 
         body {
@@ -409,20 +412,9 @@ let AoiSurvey = class AoiSurvey extends YpBaseElement {
         return html ` <div class="layout vertical center-center"></div> `;
     }
     renderNavigationBar() {
-        debugger;
         if (this.wide) {
             return html `
-        <div class="drawer">
-          <div class="layout horizontal headerContainer">
-            <div class="analyticsHeaderText layout horizontal center-center">
-              <yp-image
-                class="collectionLogoImage"
-                sizing="contain"
-                src="https://raw.githubusercontent.com/allourideas/allourideas.org/master/public/images/favicon.png"
-              ></yp-image>
-            </div>
-          </div>
-
+        <div class="layout vertical center-center">
           <md-tabs aria-label="Navigation Tabs">
             <md-primary-tab
               ?hidden="${this.surveyClosed}"
@@ -436,6 +428,7 @@ let AoiSurvey = class AoiSurvey extends YpBaseElement {
 
             <md-primary-tab
               class="${this.pageIndex == PagesTypes.Introduction && "selectedContainer"}"
+              selected
               @click="${() => this.changeTabTo(0)}"
               aria-label="${this.t("Why Participate")}"
             >
@@ -462,8 +455,6 @@ let AoiSurvey = class AoiSurvey extends YpBaseElement {
               <md-icon slot="icon">insights</md-icon>
               ${this.t("AI-generated analysis")}
             </md-primary-tab>
-
-            ${this.renderScore()}
           </md-tabs>
         </div>
       `;
@@ -507,7 +498,7 @@ let AoiSurvey = class AoiSurvey extends YpBaseElement {
         }
     }
     render() {
-        return html `<div class="layout horizontal">
+        return html `<div class="layout vertical">
       ${this.renderNavigationBar()}
       <div class="rightPanel">
         <main>

@@ -1,6 +1,6 @@
-import { YpBaseElement } from '../../common/yp-base-element.js';
-import '../../common/yp-image.js';
-import '@material/web/fab/fab.js';
+import { YpBaseElement } from "../../common/yp-base-element.js";
+import "../../common/yp-image.js";
+import "@material/web/fab/fab.js";
 export declare class AoiSurveyIntro extends YpBaseElement {
     earl: AoiEarlData;
     group: YpGroupData;

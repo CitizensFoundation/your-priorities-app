@@ -100,6 +100,7 @@ interface YpStructuredQuestionData {
   extraTopMargin?: boolean;
   lessBottomMargin?: boolean;
   html?: string;
+  rows?: number;
   pattern?: string;
   charCounter?: boolean;
   richTextAllowed?: boolean;
@@ -268,6 +269,7 @@ interface YpGroupConfiguration extends YpCollectionConfiguration {
   allowGenerativeImages?: boolean;
   groupType?: number;
   ltp?: YpLtpConfiguration;
+  allOurIdeas?: AoiConfigurationData;
 }
 
 interface YpFraudAuditData {

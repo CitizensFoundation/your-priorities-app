@@ -44,7 +44,7 @@ export declare class YpAdminConfigGroup extends YpAdminConfigBase {
     renderGroupTypeSelection(): import("lit-html").TemplateResult<1>;
     renderHeader(): import("lit-html").TemplateResult<1> | typeof nothing;
     renderImage(): import("lit-html").TemplateResult<1>;
-    getAccessTokenName(): "open_to_community" | "secret";
+    getAccessTokenName(): "secret" | "open_to_community";
     renderHiddenInputs(): import("lit-html").TemplateResult<1>;
     _descriptionChanged(event: CustomEvent): void;
     _logoImageUploaded(event: CustomEvent): void;
@@ -76,11 +76,13 @@ export declare class YpAdminConfigGroup extends YpAdminConfigBase {
     _customRatingsTextChanged(event: CustomEvent): void;
     _getPointSettingsTab(): YpConfigTabData;
     _getAdditionalConfigTab(): YpConfigTabData;
-    renderEditEarl(): import("lit-html").TemplateResult<1>;
     earlConfigChanged(event: CustomEvent): void;
     renderCreateEarl(communityId: number): import("lit-html").TemplateResult<1>;
     questionNameChanged(event: CustomEvent): void;
     _getAllOurIdeaTab(): YpConfigTabData;
+    set(obj: any, path: string, value: any): void;
+    _updateEarl(event: CustomEvent, earlUpdatePath: string): void;
+    _getAllOurIdeaOptionsTab(): YpConfigTabData;
     _categorySelected(event: CustomEvent): void;
     _categoryImageSrc(category: any): string;
     _welcomePageSelected(event: CustomEvent): void;
