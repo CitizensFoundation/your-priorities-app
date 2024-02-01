@@ -33,6 +33,7 @@ import { MdOutlinedSelect } from "@material/web/select/outlined-select.js";
 
 import "./allOurIdeas/aoi-earl-ideas-editor.js";
 import { MdFilledTextField } from "@material/web/textfield/filled-text-field.js";
+import { AoiEarlIdeasEditor } from "./allOurIdeas/aoi-earl-ideas-editor.js";
 
 enum GroupType {
   ideaGeneration = 0,
@@ -249,14 +250,14 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
             />
           `
         : nothing}
-
-       ${(this.collection?.configuration as AoiGroupConfiguration).allOurIdeas
+      ${(this.collection?.configuration as AoiGroupConfiguration).allOurIdeas
         ? html`
             <input
               type="hidden"
               name="allOurIdeas"
               value="${JSON.stringify(
-                (this.collection?.configuration as AoiGroupConfiguration).allOurIdeas
+                (this.collection?.configuration as AoiGroupConfiguration)
+                  .allOurIdeas
               )}"
             />
           `
@@ -1659,15 +1660,24 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
     return html`
       <aoi-earl-ideas-editor
         .groupId="${this.collectionId as number}"
+        @configuration-changed="${this.earlConfigChanged}"
         .configuration="${(this.group.configuration as AoiGroupConfiguration)
           .allOurIdeas}"
       ></aoi-earl-ideas-editor>
     `;
   }
 
+  earlConfigChanged(event: CustomEvent) {
+    (this.group.configuration as AoiGroupConfiguration).allOurIdeas = (
+      this.$$("aoi-earl-ideas-editor") as AoiEarlIdeasEditor
+    ).configuration;
+    this.requestUpdate();
+  }
+
   renderCreateEarl(communityId: number) {
     return html` <aoi-earl-ideas-editor
       .communityId="${communityId}"
+      @configuration-changed="${this.earlConfigChanged}"
       .questionName=${this.aoiQuestionName}
       .configuration="${(this.group.configuration as AoiGroupConfiguration)
         .allOurIdeas}"
@@ -1735,7 +1745,7 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
           type: "html",
           templateData:
             configuration.earl && configuration.earl.question_id
-              ? this.renderEditEarl()
+              ? this.renderCreateEarl(communityId)
               : this.renderCreateEarl(communityId),
         },
       ] as Array<YpStructuredConfigData>,
@@ -1787,7 +1797,6 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
     }
     tabs.push(this._getAccessTab());
     tabs.push(this._getThemeTab());
-
 
     this.tabsPostSetup(tabs);
 

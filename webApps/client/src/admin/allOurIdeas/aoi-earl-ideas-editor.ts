@@ -144,12 +144,18 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmBase {
   async submitIdeasForCreation() {
     this.isSubmittingIdeas = true;
     try {
-      const { question_id } = this.configuration.earl = await this.serverApi.submitIdeasForCreation(
-        this.communityId!,
-        this.ideas,
-        this.questionName!
-      );
+      const { question_id } = (this.configuration.earl =
+        await this.serverApi.submitIdeasForCreation(
+          this.communityId!,
+          this.ideas,
+          this.questionName!
+        ));
       this.configuration.earl.question_id = question_id;
+      this.configuration.earl.question = {
+        name: this.questionName!,
+        id: question_id!,
+      } as any;
+      this.fire("configuration-changed", this.configuration);
       this.requestUpdate();
       this.getChoices();
     } catch (e) {

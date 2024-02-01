@@ -181,13 +181,13 @@ let YpAdminConfigGroup = class YpAdminConfigGroup extends YpAdminConfigBase {
             />
           `
             : nothing}
-
-       ${(this.collection?.configuration).allOurIdeas
+      ${(this.collection?.configuration).allOurIdeas
             ? html `
             <input
               type="hidden"
               name="allOurIdeas"
-              value="${JSON.stringify((this.collection?.configuration).allOurIdeas)}"
+              value="${JSON.stringify((this.collection?.configuration)
+                .allOurIdeas)}"
             />
           `
             : nothing}
@@ -1521,14 +1521,20 @@ let YpAdminConfigGroup = class YpAdminConfigGroup extends YpAdminConfigBase {
         return html `
       <aoi-earl-ideas-editor
         .groupId="${this.collectionId}"
+        @configuration-changed="${this.earlConfigChanged}"
         .configuration="${this.group.configuration
             .allOurIdeas}"
       ></aoi-earl-ideas-editor>
     `;
     }
+    earlConfigChanged(event) {
+        this.group.configuration.allOurIdeas = this.$$("aoi-earl-ideas-editor").configuration;
+        this.requestUpdate();
+    }
     renderCreateEarl(communityId) {
         return html ` <aoi-earl-ideas-editor
       .communityId="${communityId}"
+      @configuration-changed="${this.earlConfigChanged}"
       .questionName=${this.aoiQuestionName}
       .configuration="${this.group.configuration
             .allOurIdeas}"
@@ -1583,7 +1589,7 @@ let YpAdminConfigGroup = class YpAdminConfigGroup extends YpAdminConfigBase {
                     text: "earlConfig",
                     type: "html",
                     templateData: configuration.earl && configuration.earl.question_id
-                        ? this.renderEditEarl()
+                        ? this.renderCreateEarl(communityId)
                         : this.renderCreateEarl(communityId),
                 },
             ],
