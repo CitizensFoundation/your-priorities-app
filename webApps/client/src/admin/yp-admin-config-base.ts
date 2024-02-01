@@ -265,7 +265,7 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
                   <yp-structured-question-edit
                     index="${index}"
                     id="configQuestion_${index}"
-                    @yp-answer-content-changed="${this._configChanged}"
+                    @yp-answer-content-changed="${question.onChange || this._configChanged}"
                     debounceTimeMs="10"
                     .name="${question.name || question.text || ""}"
                     ?disabled="${question.disabled ? true : false}"

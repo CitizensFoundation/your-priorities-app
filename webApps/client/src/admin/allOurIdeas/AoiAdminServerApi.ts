@@ -16,38 +16,40 @@ export class AoiAdminServerApi extends YpServerApi {
   }
 
   public async submitIdeasForCreation(
-    groupdId: number,
+    communityId: number,
     ideas: string[]
   ): Promise<AoiEarlData> {
     return this.fetchWrapper(
-      this.baseUrlPath + `/${groupdId}/questions`,
+      this.baseUrlPath + `/${communityId}/questions`,
       {
         method: "POST",
         body: JSON.stringify({
           ideas: ideas,
         }),
       },
-      false,
+      true,
       undefined,
       true
     );
   }
 
   public async startGenerateIdeas(
-    groupId: number,
-    wsClientId: string,
+    question: string,
+    communityId: number,
+    wsClientSocketId: string,
     currentIdeas: string[]
   ): Promise<void> {
     return this.fetchWrapper(
-      this.baseUrlPath + `/${groupId}/questions/generateIdeas`,
+      this.baseUrlPath + `/${communityId}/generateIdeas`,
       {
         method: "PUT",
         body: JSON.stringify({
-          ideas: currentIdeas,
-          wsClientId: wsClientId,
+          currentIdeas,
+          wsClientSocketId,
+          question
         }),
       },
-      false,
+      true,
       undefined,
       true
     );
@@ -63,7 +65,7 @@ export class AoiAdminServerApi extends YpServerApi {
         method: "PUT",
         body: JSON.stringify({}),
       },
-      false,
+      true,
       undefined,
       true
     );

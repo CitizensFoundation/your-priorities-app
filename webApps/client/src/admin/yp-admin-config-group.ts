@@ -32,6 +32,7 @@ import { Checkbox } from "@material/web/checkbox/internal/checkbox.js";
 import { MdOutlinedSelect } from "@material/web/select/outlined-select.js";
 
 import "./allOurIdeas/aoi-earl-ideas-editor.js";
+import { MdFilledTextField } from "@material/web/textfield/filled-text-field.js";
 
 enum GroupType {
   ideaGeneration = 0,
@@ -51,6 +52,9 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
 
   @property({ type: Number })
   welcomePageId: number | undefined;
+
+  @property({ type: String })
+  aoiQuestionName: string | undefined;
 
   @property({ type: String })
   status: string | undefined;
@@ -1642,17 +1646,43 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
   renderEditEarl() {
     return html`
       <aoi-earl-ideas-editor
+        .groupId="${this.collectionId as number}"
         .configuration="${(this.group.configuration as AoiGroupConfiguration)
           .allOurIdeas}"
       ></aoi-earl-ideas-editor>
     `;
   }
 
-  renderCreateEarl() {
+  renderCreateEarl(communityId: number) {
     return html` <aoi-earl-ideas-editor
+      .communityId="${communityId}"
+      .questionName=${this.aoiQuestionName}
       .configuration="${(this.group.configuration as AoiGroupConfiguration)
         .allOurIdeas}"
     ></aoi-earl-ideas-editor>`;
+  }
+
+  questionNameChanged(event: CustomEvent) {
+    const target = (event as any).currentTarget! as MdFilledTextField;
+    const value = target.value;
+    const configuration = (this.group.configuration as AoiGroupConfiguration)
+      .allOurIdeas;
+
+    if (!configuration.earl) {
+      configuration.earl = {
+        active: true,
+      };
+    }
+
+    if (!configuration.earl.question) {
+      configuration.earl.question = {} as any;
+    }
+
+    configuration.earl.question!.name = value;
+
+    this.aoiQuestionName = value;
+
+    this.configTabs = this.setupConfigTabs();
   }
 
   _getAllOurIdeaTab() {
@@ -1665,16 +1695,33 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
       ).allOurIdeas = {};
     }
 
+    let communityId;
+
+    if (this.collectionId === "new") {
+      communityId = this.parentCollectionId as number;
+    } else {
+      communityId = this.group.community_id;
+    }
+
     return {
       name: "allOurIdeas",
       icon: "lightbulb",
       items: [
         {
+          text: "questionName",
+          type: "textfield",
+          maxLength: 140,
+          value: this.aoiQuestionName,
+          translationToken: "questionName",
+          onChange: this.questionNameChanged,
+        },
+        {
           text: "earlConfig",
           type: "html",
-          templateData: configuration.earl
-            ? this.renderEditEarl()
-            : this.renderCreateEarl(),
+          templateData:
+            configuration.earl && configuration.earl.question_id
+              ? this.renderEditEarl()
+              : this.renderCreateEarl(communityId),
         },
       ] as Array<YpStructuredConfigData>,
     } as YpConfigTabData;

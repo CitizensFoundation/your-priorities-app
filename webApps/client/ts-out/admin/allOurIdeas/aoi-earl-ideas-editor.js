@@ -26,7 +26,7 @@ let AoiEarlIdeasEditor = class AoiEarlIdeasEditor extends YpStreamingLlmBase {
         this.serverApi = new AoiAdminServerApi();
     }
     connectedCallback() {
-        if (this.configuration.earl) {
+        if (this.configuration.earl && this.configuration.earl.question_id) {
             this.disableWebsockets = true;
             this.isCreatingIdeas = false;
             this.getChoices();
@@ -73,7 +73,9 @@ let AoiEarlIdeasEditor = class AoiEarlIdeasEditor extends YpStreamingLlmBase {
         }
     }
     get ideas() {
-        return this.$$("#ideas")?.value.split("\n");
+        return this.$$("#ideas")?.value
+            .split("\n")
+            .filter((idea) => idea.length > 0);
     }
     hasMoreThanOneIdea() {
         return;
@@ -83,12 +85,21 @@ let AoiEarlIdeasEditor = class AoiEarlIdeasEditor extends YpStreamingLlmBase {
     }
     generateIdeas() {
         this.isGeneratingIdeas = true;
-        this.serverApi.startGenerateIdeas(this.groupId, this.wsClientId, this.ideas);
+        debugger;
+        try {
+            this.serverApi.startGenerateIdeas(this.questionName, this.communityId, this.wsClientId, this.ideas);
+        }
+        catch (e) {
+            console.error(e);
+        }
+        finally {
+            this.isGeneratingIdeas = false;
+        }
     }
     async submitIdeasForCreation() {
         this.isSubmittingIdeas = true;
         try {
-            this.configuration.earl = await this.serverApi.submitIdeasForCreation(this.groupId, this.ideas);
+            this.configuration.earl = await this.serverApi.submitIdeasForCreation(this.communityId, this.ideas);
             this.getChoices();
             this.requestUpdate();
         }
@@ -183,23 +194,35 @@ let AoiEarlIdeasEditor = class AoiEarlIdeasEditor extends YpStreamingLlmBase {
           width: 100%;
           margin: 32px;
         }
+
+        .button {
+          margin-left: 16px;
+          margin-right: 16px;
+        }
       `,
         ];
     }
     renderCreateIdeas() {
         return html `
       <div class="layout vertical center-center">
-        <md-outlined-text-field type="textarea" id="ideas" rows="10">
+        <md-outlined-text-field
+          type="textarea"
+          id="ideas"
+          rows="7"
+          .label="${this.t("ideasForVotingOn")}"
+        >
         </md-outlined-text-field>
         <div class="layout horizontal">
           <md-filled-tonal-button
+            class="button"
             @click="${this.generateIdeas}"
             ?disabled="${this.isGeneratingIdeas}"
-            >${this.ideas && this.ideas.length > 1
-            ? this.t("generateIdeasWithAi")
-            : this.t("generateMoreIdeasWithAi")}</md-filled-tonal-button
+            >${this.ideas?.length > 1
+            ? this.t("generateMoreIdeasWithAi")
+            : this.t("generateIdeasWithAi")}</md-filled-tonal-button
           >
           <md-filled-button
+            class="button"
             @click="${this.submitIdeasForCreation}"
             ?disabled="${this.isSubmittingIdeas || this.ideas?.length < 1}"
             >${this.t("submitIdeasForCreation")}</md-filled-button
@@ -275,6 +298,12 @@ let AoiEarlIdeasEditor = class AoiEarlIdeasEditor extends YpStreamingLlmBase {
 __decorate([
     property({ type: Number })
 ], AoiEarlIdeasEditor.prototype, "groupId", void 0);
+__decorate([
+    property({ type: String })
+], AoiEarlIdeasEditor.prototype, "questionName", void 0);
+__decorate([
+    property({ type: Number })
+], AoiEarlIdeasEditor.prototype, "communityId", void 0);
 __decorate([
     property({ type: Object })
 ], AoiEarlIdeasEditor.prototype, "configuration", void 0);

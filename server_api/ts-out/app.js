@@ -147,7 +147,7 @@ class YourPrioritiesApi {
     httpServer;
     ws;
     redisClient;
-    wsClients = new Map();
+    wsClients;
     constructor(port = undefined) {
         this.app = (0, express_1.default)();
         this.port = port || (process.env.PORT ? parseInt(process.env.PORT) : 4242);
@@ -166,7 +166,6 @@ class YourPrioritiesApi {
         this.checkAuthForSsoInit();
         this.initializeRoutes();
         this.initializeEsControllers();
-        this.setupErrorHandler();
     }
     addRedisToRequest() {
         this.app.use((req, res, next) => {
@@ -376,10 +375,12 @@ class YourPrioritiesApi {
     async initializeEsControllers() {
         console.log("Initializing ES controllers");
         const { AllOurIdeasController } = await Promise.resolve().then(() => __importStar(require("./controllers/allOurIdeas.js")));
-        console.log("Initializing ES controllers 2");
+        console.log("Initializing ES controllers 2 " + this.wsClients);
         const aoiController = new AllOurIdeasController(this.wsClients);
         console.log(`AOI controller path: ${aoiController.path} ${aoiController.router}`);
         this.app.use(aoiController.path, aoiController.router);
+        // Setup those here so they wont override the ES controllers
+        this.setupErrorHandler();
     }
     initializeRoutes() {
         this.app.use("/", index_1.default);
@@ -736,7 +737,7 @@ class YourPrioritiesApi {
             res.sendStatus(status);
         });
     }
-    listen() {
+    async listen() {
         let server;
         if (process.env.YOUR_PRIORITIES_LISTEN_HOST) {
             server = this.app.listen(this.app.get("port"), process.env.YOUR_PRIORITIES_LISTEN_HOST, () => {
@@ -752,8 +753,21 @@ class YourPrioritiesApi {
         }
         const pub = this.redisClient.duplicate();
         const sub = this.redisClient.duplicate();
-        sub.subscribe("websocketChannel");
-        sub.on("message", (channel, message) => {
+        try {
+            await Promise.all([pub.connect(), sub.connect()]);
+        }
+        catch (err) {
+            console.error("Error connecting to Redis:", err);
+        }
+        sub.subscribe("ypWebsocketChannel", (err, count) => {
+            if (err) {
+                console.error("Error subscribing to Redis:", err);
+            }
+            else {
+                console.log(`Subscribed to ${count} channel(s)`);
+            }
+        });
+        sub.on("message", (channel, message, listen) => {
             try {
                 const { clientId, action, data } = JSON.parse(message);
                 console.log(`Received message from Redis: ${message} at ${channel}`);
@@ -794,7 +808,8 @@ class YourPrioritiesApi {
         this.ws.on("connection", (ws) => {
             const clientId = (0, uuid_1.v4)();
             this.wsClients.set(clientId, ws);
-            console.log(`New WebSocket connection: clientId ${clientId}`);
+            console.log(`------------------------ >  New WebSocket connection: clientId ${clientId}`);
+            console.log(JSON.stringify(this.wsClients, null, 2));
             ws.on("message", (message) => {
                 let parsedMessage;
                 try {
@@ -805,7 +820,7 @@ class YourPrioritiesApi {
                     parsedMessage = message;
                 }
                 finally {
-                    pub.publish("websocketChannel", JSON.stringify({
+                    pub.publish("ypWebsocketChannel", JSON.stringify({
                         clientId,
                         action: "directMessage",
                         message: parsedMessage,

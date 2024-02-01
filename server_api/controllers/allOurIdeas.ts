@@ -20,6 +20,7 @@ const defaultHeader = {
 };
 
 import auth from "../authorization.js";
+import { AiHelper } from "../active-citizen/engine/allOurIdeas/aiHelper.js";
 
 export class AllOurIdeasController {
   public path = "/api/allOurIdeas";
@@ -28,11 +29,30 @@ export class AllOurIdeasController {
 
   constructor(wsClients: Map<string, WebSocket>) {
     this.wsClients = wsClients;
+    console.log(JSON.stringify(this.wsClients, null, 2));
     this.initializeRoutes();
   }
 
   public async initializeRoutes() {
-    this.router.get("/:groupId", auth.can("view group"), this.showEarl);
+    this.router.get("/:groupId", auth.can("view group"), this.showEarl.bind(this));
+    this.router.post("/:communityId/questions", auth.can("create group"), this.createQuestion.bind(this));
+    this.router.put("/:communityId/generateIdeas", auth.can("create group"), this.generateIdeas.bind(this));
+
+    console.log("---- have initialized routes for allOurIdeasController");
+  }
+
+  public async generateIdeas(req: Request, res: Response): Promise<void> {
+    console.log("generateIdeas: "+JSON.stringify(this.wsClients, null, 2));
+    const { currentIdeas, wsClientSocketId, question } = req.params;
+    const swClientSocket = this.wsClients.get(wsClientSocketId);
+    if (swClientSocket) {
+      const aiHelper = new AiHelper(swClientSocket);
+      await aiHelper.getAnswerIdeas(question, currentIdeas, "");
+      res.sendStatus(200);
+    } else {
+      //TODO: Have it refresh the websocket on the client
+      res.status(404).send("Websocket not found");
+    }
   }
 
   public async showEarl(req: Request, res: Response): Promise<void> {
@@ -43,7 +63,7 @@ export class AllOurIdeasController {
       const group = (await Group.findOne(groupId)) as YpGroupData;
       const aoiConfig = (group.configuration as AoiGroupConfiguration)
         .allOurIdeas;
-      if (group) {
+      if (group && aoiConfig.earl) {
         const showParams = {
           with_prompt: true,
           with_appearance: true,
@@ -192,6 +212,7 @@ export class AllOurIdeasController {
       if (!aoiConfig.earl) {
         aoiConfig.earl = {
           question_id: question.id,
+          active: true
         };
       } else {
         aoiConfig.earl.question_id = question.id;

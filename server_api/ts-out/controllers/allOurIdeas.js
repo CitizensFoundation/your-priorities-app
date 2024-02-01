@@ -17,16 +17,35 @@ const defaultHeader = {
     Authorization: `Basic ${Buffer.from(`${PAIRWISE_USERNAME}:${PAIRWISE_PASSWORD}`).toString("base64")}`,
 };
 const authorization_js_1 = __importDefault(require("../authorization.js"));
+const aiHelper_js_1 = require("../active-citizen/engine/allOurIdeas/aiHelper.js");
 class AllOurIdeasController {
     path = "/api/allOurIdeas";
     router = express_1.default.Router();
     wsClients;
     constructor(wsClients) {
         this.wsClients = wsClients;
+        console.log(JSON.stringify(this.wsClients, null, 2));
         this.initializeRoutes();
     }
     async initializeRoutes() {
-        this.router.get("/:groupId", authorization_js_1.default.can("view group"), this.showEarl);
+        this.router.get("/:groupId", authorization_js_1.default.can("view group"), this.showEarl.bind(this));
+        this.router.post("/:communityId/questions", authorization_js_1.default.can("create group"), this.createQuestion.bind(this));
+        this.router.put("/:communityId/generateIdeas", authorization_js_1.default.can("create group"), this.generateIdeas.bind(this));
+        console.log("---- have initialized routes for allOurIdeasController");
+    }
+    async generateIdeas(req, res) {
+        console.log("generateIdeas: " + JSON.stringify(this.wsClients, null, 2));
+        const { currentIdeas, wsClientSocketId, question } = req.params;
+        const swClientSocket = this.wsClients.get(wsClientSocketId);
+        if (swClientSocket) {
+            const aiHelper = new aiHelper_js_1.AiHelper(swClientSocket);
+            await aiHelper.getAnswerIdeas(question, currentIdeas, "");
+            res.sendStatus(200);
+        }
+        else {
+            //TODO: Have it refresh the websocket on the client
+            res.status(404).send("Websocket not found");
+        }
     }
     async showEarl(req, res) {
         const { groupId } = req.params;
@@ -35,7 +54,7 @@ class AllOurIdeasController {
             const group = (await Group.findOne(groupId));
             const aoiConfig = group.configuration
                 .allOurIdeas;
-            if (group) {
+            if (group && aoiConfig.earl) {
                 const showParams = {
                     with_prompt: true,
                     with_appearance: true,
@@ -150,6 +169,7 @@ class AllOurIdeasController {
             if (!aoiConfig.earl) {
                 aoiConfig.earl = {
                     question_id: question.id,
+                    active: true
                 };
             }
             else {

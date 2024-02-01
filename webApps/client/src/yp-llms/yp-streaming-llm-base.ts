@@ -33,7 +33,7 @@ export abstract class YpStreamingLlmBase extends YpBaseElement {
   serverMemoryId: string | undefined;
 
   @property({ type: Number })
-  defaultDevWsPort = 8000;
+  defaultDevWsPort = 4242;
 
   heartbeatInterval: number | undefined;
 

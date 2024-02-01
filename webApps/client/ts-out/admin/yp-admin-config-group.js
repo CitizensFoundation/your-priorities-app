@@ -1510,16 +1510,36 @@ let YpAdminConfigGroup = class YpAdminConfigGroup extends YpAdminConfigBase {
     renderEditEarl() {
         return html `
       <aoi-earl-ideas-editor
+        .groupId="${this.collectionId}"
         .configuration="${this.group.configuration
             .allOurIdeas}"
       ></aoi-earl-ideas-editor>
     `;
     }
-    renderCreateEarl() {
+    renderCreateEarl(communityId) {
         return html ` <aoi-earl-ideas-editor
+      .communityId="${communityId}"
+      .questionName=${this.aoiQuestionName}
       .configuration="${this.group.configuration
             .allOurIdeas}"
     ></aoi-earl-ideas-editor>`;
+    }
+    questionNameChanged(event) {
+        const target = event.currentTarget;
+        const value = target.value;
+        const configuration = this.group.configuration
+            .allOurIdeas;
+        if (!configuration.earl) {
+            configuration.earl = {
+                active: true,
+            };
+        }
+        if (!configuration.earl.question) {
+            configuration.earl.question = {};
+        }
+        configuration.earl.question.name = value;
+        this.aoiQuestionName = value;
+        this.configTabs = this.setupConfigTabs();
     }
     _getAllOurIdeaTab() {
         let configuration = this.group.configuration
@@ -1527,16 +1547,31 @@ let YpAdminConfigGroup = class YpAdminConfigGroup extends YpAdminConfigBase {
         if (!configuration) {
             configuration = this.group.configuration.allOurIdeas = {};
         }
+        let communityId;
+        if (this.collectionId === "new") {
+            communityId = this.parentCollectionId;
+        }
+        else {
+            communityId = this.group.community_id;
+        }
         return {
             name: "allOurIdeas",
             icon: "lightbulb",
             items: [
                 {
+                    text: "questionName",
+                    type: "textfield",
+                    maxLength: 140,
+                    value: this.aoiQuestionName,
+                    translationToken: "questionName",
+                    onChange: this.questionNameChanged,
+                },
+                {
                     text: "earlConfig",
                     type: "html",
-                    templateData: configuration.earl
+                    templateData: configuration.earl && configuration.earl.question_id
                         ? this.renderEditEarl()
-                        : this.renderCreateEarl(),
+                        : this.renderCreateEarl(communityId),
                 },
             ],
         };
@@ -1601,6 +1636,9 @@ __decorate([
 __decorate([
     property({ type: Number })
 ], YpAdminConfigGroup.prototype, "welcomePageId", void 0);
+__decorate([
+    property({ type: String })
+], YpAdminConfigGroup.prototype, "aoiQuestionName", void 0);
 __decorate([
     property({ type: String })
 ], YpAdminConfigGroup.prototype, "status", void 0);

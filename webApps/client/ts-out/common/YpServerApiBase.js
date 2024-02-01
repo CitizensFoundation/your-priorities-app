@@ -1,29 +1,29 @@
-import { YpCodeBase } from './YpCodeBaseclass.js';
+import { YpCodeBase } from "./YpCodeBaseclass.js";
 export class YpServerApiBase extends YpCodeBase {
     constructor() {
         super(...arguments);
-        this.baseUrlPath = '/api';
+        this.baseUrlPath = "/api";
     }
     static transformCollectionTypeToApi(type) {
         let transformedApiType;
         switch (type) {
-            case 'domain':
-                transformedApiType = 'domains';
+            case "domain":
+                transformedApiType = "domains";
                 break;
-            case 'community':
-                transformedApiType = 'communities';
+            case "community":
+                transformedApiType = "communities";
                 break;
-            case 'group':
-                transformedApiType = 'groups';
+            case "group":
+                transformedApiType = "groups";
                 break;
-            case 'post':
-                transformedApiType = 'posts';
+            case "post":
+                transformedApiType = "posts";
                 break;
-            case 'user':
-                transformedApiType = 'users';
+            case "user":
+                transformedApiType = "users";
                 break;
             default:
-                transformedApiType = '';
+                transformedApiType = "";
                 console.error(`Cant find collection type transform for ${type}`);
         }
         return transformedApiType;
@@ -31,25 +31,28 @@ export class YpServerApiBase extends YpCodeBase {
     async fetchWrapper(url, options = {}, showUserError = true, errorId = undefined, throwError = false) {
         if (!options.headers) {
             options.headers = {
-                'Content-Type': 'application/json',
+                "Content-Type": "application/json",
             };
         }
-        if (!navigator.onLine && options.method === "POST" && window.fetch !== undefined) {
+        if (!navigator.onLine &&
+            options.method === "POST" &&
+            window.fetch !== undefined) {
             window.appGlobals.offline.sendWhenOnlineNext({
                 body: options.body,
                 method: options.method,
                 params: {},
-                url: url
+                url: url,
             });
             throw new Error("offlineSendLater");
         }
-        else if (!navigator.onLine && ["POST", "PUT", "DELETE"].indexOf(options.method) > -1) {
-            this.showToast(this.t('youAreOfflineCantSend'));
+        else if (!navigator.onLine &&
+            ["POST", "PUT", "DELETE"].indexOf(options.method) > -1) {
+            this.showToast(this.t("youAreOfflineCantSend"));
             throw new Error("offlineSendLater");
         }
         else {
             const response = await fetch(url, options);
-            return this.handleResponse(response, showUserError, errorId, throwError);
+            return await this.handleResponse(response, showUserError, errorId, throwError);
         }
     }
     //TODO: Handle 401
@@ -90,11 +93,11 @@ export class YpServerApiBase extends YpCodeBase {
                 responseJson = await response.json();
             }
             catch (error) {
-                if (response.status === 200 || response.statusText === 'OK') {
+                if (response.status === 200 || response.statusText === "OK") {
                     // Do nothing
                 }
                 else {
-                    this.fireGlobal('yp-network-error', {
+                    this.fireGlobal("yp-network-error", {
                         response: response,
                         jsonError: error,
                         showUserError,
@@ -113,7 +116,7 @@ export class YpServerApiBase extends YpCodeBase {
             }
         }
         else {
-            this.fireGlobal('yp-network-error', {
+            this.fireGlobal("yp-network-error", {
                 response: response,
                 showUserError,
                 errorId,

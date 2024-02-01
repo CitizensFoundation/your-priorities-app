@@ -10,6 +10,8 @@ import "@material/web/chips/filter-chip.js";
 import "@material/web/chips/chip-set.js";
 export declare class AoiEarlIdeasEditor extends YpStreamingLlmBase {
     groupId: number;
+    questionName: string | undefined;
+    communityId: number | undefined;
     configuration: AoiConfigurationData;
     isCreatingIdeas: boolean;
     choices: AoiChoiceData[] | undefined;

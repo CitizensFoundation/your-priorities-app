@@ -976,6 +976,7 @@ interface YpStructuredConfigData extends YpStructuredQuestionData {
   maxRows?: number;
   translationToken?: string;
   disabled?: boolean;
+  onChange?: Function;
   defaultValue?: string | number | boolean;
 }
 

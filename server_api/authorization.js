@@ -755,6 +755,8 @@ auth.entity('group', function(req, done) {
   if (!match)
     match = req.originalUrl.match(/videos\/(\w+)/);
   if (!match)
+    match = req.originalUrl.match(/allOurIdeas\/(\w+)/);
+  if (!match)
     match = req.originalUrl.match(/ltp\/crt\/(\w+)/);
   if (!match) {
     done(new Error('Expected url like /groups/:groupId'));
@@ -1431,6 +1433,8 @@ auth.role('createCommunityGroup.createGroup', function (community, req, done) {
 
 auth.entity('createCommunityGroup', function(req, done) {
   var match = req.originalUrl.match(/groups\/(\w+)/);
+  if (!match)
+    match = req.originalUrl.match(/allOurIdeas\/(\w+)/);
   if (!match) {
     done(new Error('Expected url like /groups/:communityId'));
   } else {

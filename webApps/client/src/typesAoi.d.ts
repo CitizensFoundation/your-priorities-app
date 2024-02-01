@@ -36,7 +36,7 @@ interface AoiQuestionData {
 
 interface AoiEarlData {
   name?: string;
-  question_id: number;
+  question_id?: number;
   active: boolean;
   welcome_message?: string;
   default_lang?: string;

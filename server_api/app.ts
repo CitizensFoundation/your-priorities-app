@@ -146,7 +146,7 @@ export class YourPrioritiesApi {
   public httpServer: any;
   public ws!: WebSocketServer;
   public redisClient: any;
-  public wsClients = new Map<string, WebSocket>();
+  public wsClients: Map<string, WebSocket>;
 
   constructor(port: number | undefined = undefined) {
     this.app = express();
@@ -166,7 +166,6 @@ export class YourPrioritiesApi {
     this.checkAuthForSsoInit();
     this.initializeRoutes();
     this.initializeEsControllers();
-    this.setupErrorHandler();
   }
 
   addRedisToRequest(): void {
@@ -458,12 +457,15 @@ export class YourPrioritiesApi {
     const { AllOurIdeasController } = await import(
       "./controllers/allOurIdeas.js"
     );
-    console.log("Initializing ES controllers 2");
+    console.log("Initializing ES controllers 2 "+this.wsClients);
     const aoiController = new AllOurIdeasController(this.wsClients);
     console.log(
       `AOI controller path: ${aoiController.path} ${aoiController.router}`
     );
     this.app.use(aoiController.path, aoiController.router);
+
+    // Setup those here so they wont override the ES controllers
+    this.setupErrorHandler();
   }
 
   initializeRoutes() {
@@ -873,7 +875,7 @@ export class YourPrioritiesApi {
     );
   }
 
-  listen() {
+  async listen() {
     let server: any;
 
     if (process.env.YOUR_PRIORITIES_LISTEN_HOST) {
@@ -901,8 +903,20 @@ export class YourPrioritiesApi {
     const pub = this.redisClient.duplicate();
     const sub = this.redisClient.duplicate();
 
-    sub.subscribe("websocketChannel");
-    sub.on("message", (channel: any, message: any) => {
+    try {
+      await Promise.all([pub.connect(), sub.connect()]);
+    } catch (err) {
+      console.error("Error connecting to Redis:", err);
+    }
+
+    sub.subscribe("ypWebsocketChannel", (err: any, count: any) => {
+      if (err) {
+        console.error("Error subscribing to Redis:", err);
+      } else {
+        console.log(`Subscribed to ${count} channel(s)`);
+      }
+    });
+    sub.on("message", (channel: any, message: any, listen: any) => {
       try {
         const { clientId, action, data } = JSON.parse(message);
 
@@ -949,7 +963,9 @@ export class YourPrioritiesApi {
     this.ws.on("connection", (ws) => {
       const clientId = uuidv4();
       this.wsClients.set(clientId, ws);
-      console.log(`New WebSocket connection: clientId ${clientId}`);
+
+      console.log(`------------------------ >  New WebSocket connection: clientId ${clientId}`);
+      console.log(JSON.stringify(this.wsClients, null, 2));
 
       ws.on("message", (message: string) => {
         let parsedMessage;
@@ -963,7 +979,7 @@ export class YourPrioritiesApi {
           parsedMessage = message;
         } finally {
           pub.publish(
-            "websocketChannel",
+            "ypWebsocketChannel",
             JSON.stringify({
               clientId,
               action: "directMessage",

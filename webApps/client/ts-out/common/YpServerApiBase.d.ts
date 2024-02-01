@@ -1,4 +1,4 @@
-import { YpCodeBase } from './YpCodeBaseclass.js';
+import { YpCodeBase } from "./YpCodeBaseclass.js";
 export declare class YpServerApiBase extends YpCodeBase {
     protected baseUrlPath: string;
     static transformCollectionTypeToApi(type: string): string;

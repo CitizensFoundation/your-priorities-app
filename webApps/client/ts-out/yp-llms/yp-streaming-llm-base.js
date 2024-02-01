@@ -15,7 +15,7 @@ export class YpStreamingLlmBase extends YpBaseElement {
         this.currentFollowUpQuestions = "";
         this.programmaticScroll = false;
         this.scrollStart = 0;
-        this.defaultDevWsPort = 8000;
+        this.defaultDevWsPort = 4242;
         this.disableWebsockets = false;
     }
     connectedCallback() {

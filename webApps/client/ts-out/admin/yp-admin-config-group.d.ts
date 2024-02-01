@@ -15,6 +15,7 @@ export declare class YpAdminConfigGroup extends YpAdminConfigBase {
     hostnameExample: string | undefined;
     signupTermsPageId: number | undefined;
     welcomePageId: number | undefined;
+    aoiQuestionName: string | undefined;
     status: string | undefined;
     groupAccess: YpGroupAccessTypes;
     gettingImageColor: boolean;
@@ -41,7 +42,7 @@ export declare class YpAdminConfigGroup extends YpAdminConfigBase {
     imageLoaded(event: CustomEvent): Promise<void>;
     _setGroupType(event: CustomEvent): void;
     renderGroupTypeSelection(): import("lit-html").TemplateResult<1>;
-    renderHeader(): import("lit-html").TemplateResult<1> | typeof nothing;
+    renderHeader(): typeof nothing | import("lit-html").TemplateResult<1>;
     renderImage(): import("lit-html").TemplateResult<1>;
     getAccessTokenName(): "open_to_community" | "secret";
     renderHiddenInputs(): import("lit-html").TemplateResult<1>;
@@ -76,7 +77,8 @@ export declare class YpAdminConfigGroup extends YpAdminConfigBase {
     _getPointSettingsTab(): YpConfigTabData;
     _getAdditionalConfigTab(): YpConfigTabData;
     renderEditEarl(): import("lit-html").TemplateResult<1>;
-    renderCreateEarl(): import("lit-html").TemplateResult<1>;
+    renderCreateEarl(communityId: number): import("lit-html").TemplateResult<1>;
+    questionNameChanged(event: CustomEvent): void;
     _getAllOurIdeaTab(): YpConfigTabData;
     _categorySelected(event: CustomEvent): void;
     _categoryImageSrc(category: any): string;

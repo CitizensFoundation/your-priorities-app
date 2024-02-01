@@ -7,28 +7,29 @@ export class AoiAdminServerApi extends YpServerApi {
     async getChoices(groupId, questionId) {
         return this.fetchWrapper(this.baseUrlPath + `/${groupId}/choices/${questionId}.json`);
     }
-    async submitIdeasForCreation(groupdId, ideas) {
-        return this.fetchWrapper(this.baseUrlPath + `/${groupdId}/questions`, {
+    async submitIdeasForCreation(communityId, ideas) {
+        return this.fetchWrapper(this.baseUrlPath + `/${communityId}/questions`, {
             method: "POST",
             body: JSON.stringify({
                 ideas: ideas,
             }),
-        }, false, undefined, true);
+        }, true, undefined, true);
     }
-    async startGenerateIdeas(groupId, wsClientId, currentIdeas) {
-        return this.fetchWrapper(this.baseUrlPath + `/${groupId}/questions/generateIdeas`, {
+    async startGenerateIdeas(question, communityId, wsClientSocketId, currentIdeas) {
+        return this.fetchWrapper(this.baseUrlPath + `/${communityId}/generateIdeas`, {
             method: "PUT",
             body: JSON.stringify({
-                ideas: currentIdeas,
-                wsClientId: wsClientId,
+                currentIdeas,
+                wsClientSocketId,
+                question
             }),
-        }, false, undefined, true);
+        }, true, undefined, true);
     }
     async toggleIdeaActive(groupId, choiceId) {
         return this.fetchWrapper(this.baseUrlPath + `/${groupId}/choices/${choiceId}/toggleActive`, {
             method: "PUT",
             body: JSON.stringify({}),
-        }, false, undefined, true);
+        }, true, undefined, true);
     }
 }
 //# sourceMappingURL=AoiAdminServerApi.js.map
