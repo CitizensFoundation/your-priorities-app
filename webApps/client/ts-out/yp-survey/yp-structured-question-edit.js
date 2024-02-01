@@ -283,9 +283,6 @@ let YpStructuredQuestionEdit = class YpStructuredQuestionEdit extends YpBaseElem
         ?use-small-font="${this.useSmallFont}"
         .title="${this.question.text}"
         @keypress="${this._keyPressed}"
-        ?charCounter="${this.question.charCounter != undefined
-            ? this.question.charCounter
-            : false}"
         .pattern="${this.question.pattern || ""}"
         type="text"
         .allowedPattern="${this.isNumberSubType ? "[0-9]" : ""}"

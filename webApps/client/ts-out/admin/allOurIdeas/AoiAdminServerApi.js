@@ -4,14 +4,15 @@ export class AoiAdminServerApi extends YpServerApi {
         super();
         this.baseUrlPath = urlPath;
     }
-    async getChoices(groupId, questionId) {
-        return this.fetchWrapper(this.baseUrlPath + `/${groupId}/choices/${questionId}.json`);
+    async getChoices(communityId, questionId) {
+        return this.fetchWrapper(this.baseUrlPath + `/${communityId}/choices/${questionId}?showAll=true`);
     }
-    async submitIdeasForCreation(communityId, ideas) {
+    async submitIdeasForCreation(communityId, ideas, questionName) {
         return this.fetchWrapper(this.baseUrlPath + `/${communityId}/questions`, {
             method: "POST",
             body: JSON.stringify({
                 ideas: ideas,
+                question: questionName
             }),
         }, true, undefined, true);
     }

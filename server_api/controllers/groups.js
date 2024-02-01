@@ -415,6 +415,21 @@ var updateGroupConfigParameters = function (req, group) {
     group.set('configuration.ltp', null);
   }
 
+  const allOurIdeas = (req.body.allOurIdeas && req.body.allOurIdeas!="") ? req.body.allOurIdeas : null;
+
+  if (allOurIdeas) {
+    try {
+      const cleaned = allOurIdeas.trim().replace(/\n/g, '').replace(/\r/g, '');
+      const parsedJson = JSON.parse(cleaned);
+      group.set('configuration.allOurIdeas', parsedJson);
+    } catch (error) {
+      group.set('configuration.allOurIdeas', null);
+      log.error("Error in parsing allOurIdeas", {error});
+    }
+  } else {
+    group.set('configuration.allOurIdeas', null);
+  }
+
   group.set('configuration.themeOverrideColorPrimary', (req.body.themeOverrideColorPrimary && req.body.themeOverrideColorPrimary!="") ? req.body.themeOverrideColorPrimary : null);
   group.set('configuration.themeOverrideColorAccent', (req.body.themeOverrideColorAccent && req.body.themeOverrideColorAccent!="") ? req.body.themeOverrideColorAccent : null);
   group.set('configuration.customUserNamePrompt', (req.body.customUserNamePrompt && req.body.customUserNamePrompt!="") ? req.body.customUserNamePrompt : null);

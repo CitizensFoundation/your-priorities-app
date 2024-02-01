@@ -468,7 +468,7 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
 
         .adminItem {
           margin: 0px;
-          max-width: 420px;
+          max-width: 600px;
           margin-bottom: 32px;
         }
 
@@ -489,7 +489,7 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
         }
 
         yp-structured-question-edit {
-          max-width: 420px;
+          max-width: 600px;
         }
 
         .additionalSettings {

@@ -1,4 +1,6 @@
 {
+  "questionName": "Question",
+  "stop": "Stop",
   "ideasForVotingOn": "Ideas for voting on",
   "submitIdeasForCreation": "Submit Ideas",
   "generateMoreIdeasWithAi": "Generate more ideas with AI",

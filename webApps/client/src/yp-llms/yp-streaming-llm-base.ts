@@ -17,6 +17,9 @@ export abstract class YpStreamingLlmBase extends YpBaseElement {
   @property({ type: Object })
   ws!: WebSocket;
 
+  @property({ type: String })
+  scrollElementSelector = "#chat-messages"
+
   @property({ type: Boolean })
   userScrolled = false;
 
@@ -128,11 +131,11 @@ export abstract class YpStreamingLlmBase extends YpBaseElement {
   }
 
   handleScroll() {
-    if (this.programmaticScroll || !this.$$("#chat-messages")) {
+    if (this.programmaticScroll || !this.$$(this.scrollElementSelector)) {
       return;
     }
 
-    const currentScrollTop = this.$$("#chat-messages")!.scrollTop;
+    const currentScrollTop = this.$$(this.scrollElementSelector)!.scrollTop;
     if (this.scrollStart === 0) {
       // Initial scroll
       this.scrollStart = currentScrollTop;
@@ -140,9 +143,9 @@ export abstract class YpStreamingLlmBase extends YpBaseElement {
 
     const threshold = 10;
     const atBottom =
-      this.$$("#chat-messages")!.scrollHeight -
+      this.$$(this.scrollElementSelector)!.scrollHeight -
         currentScrollTop -
-        this.$$("#chat-messages")!.clientHeight <=
+        this.$$(this.scrollElementSelector)!.clientHeight <=
       threshold;
 
     if (atBottom) {
@@ -186,13 +189,26 @@ export abstract class YpStreamingLlmBase extends YpBaseElement {
   }
 
   scrollDown() {
-    if (!this.userScrolled && this.$$("#chat-messages")) {
+    if (!this.userScrolled && this.$$(this.scrollElementSelector)) {
       this.programmaticScroll = true;
-      this.$$("#chat-messages")!.scrollTop =
-        this.$$("#chat-messages")!.scrollHeight;
+      const element = this.$$(this.scrollElementSelector)!;
+
+      if (element.tagName === 'INPUT' ||
+          element.tagName === 'TEXTAREA' ||
+          element.tagName === 'MD-OUTLINED-TEXT-FIELD') {
+        // Move the cursor to the end of the text
+        (element as HTMLInputElement).selectionStart = (element as HTMLInputElement).selectionEnd = (element as HTMLInputElement).value.length;
+        element.scrollTop = element.scrollHeight-100;
+      } else {
+        // For non-text field elements, use scrollTop and scrollHeight to scroll
+        element.scrollTop = element.scrollHeight;
+      }
+
       setTimeout(() => {
         this.programmaticScroll = false;
       }, 100);
+    } else {
+      console.error("User scrolled, not scrolling down");
     }
   }
 

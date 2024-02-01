@@ -31,7 +31,7 @@ let YpAdminConfigGroup = class YpAdminConfigGroup extends YpAdminConfigBase {
         super();
         this.groupAccess = "open_to_community";
         this.gettingImageColor = false;
-        this.groupTypeIndex = 0;
+        this.groupTypeIndex = 1;
         this.endorsementButtonsDisabled = false;
         this.groupTypeOptions = ["ideaGeneration", "allOurIdeas"];
         this.groupAccessOptions = {
@@ -178,6 +178,16 @@ let YpAdminConfigGroup = class YpAdminConfigGroup extends YpAdminConfigBase {
               type="hidden"
               name="ltp"
               value="${JSON.stringify((this.collection?.configuration).ltp)}"
+            />
+          `
+            : nothing}
+
+       ${(this.collection?.configuration).allOurIdeas
+            ? html `
+            <input
+              type="hidden"
+              name="allOurIdeas"
+              value="${JSON.stringify((this.collection?.configuration).allOurIdeas)}"
             />
           `
             : nothing}
@@ -1540,6 +1550,7 @@ let YpAdminConfigGroup = class YpAdminConfigGroup extends YpAdminConfigBase {
         configuration.earl.question.name = value;
         this.aoiQuestionName = value;
         this.configTabs = this.setupConfigTabs();
+        this._configChanged();
     }
     _getAllOurIdeaTab() {
         let configuration = this.group.configuration
@@ -1560,8 +1571,10 @@ let YpAdminConfigGroup = class YpAdminConfigGroup extends YpAdminConfigBase {
             items: [
                 {
                     text: "questionName",
-                    type: "textfield",
+                    type: "textarea",
                     maxLength: 140,
+                    rows: 2,
+                    charCounter: true,
                     value: this.aoiQuestionName,
                     translationToken: "questionName",
                     onChange: this.questionNameChanged,
@@ -1601,8 +1614,6 @@ let YpAdminConfigGroup = class YpAdminConfigGroup extends YpAdminConfigBase {
     }
     setupConfigTabs() {
         const tabs = [];
-        tabs.push(this._getAccessTab());
-        tabs.push(this._getThemeTab());
         if (this.groupTypeIndex == GroupType.ideaGeneration) {
             const postsTab = this._getPostSettingsTab();
             if (!this.isGroupFolder) {
@@ -1615,6 +1626,8 @@ let YpAdminConfigGroup = class YpAdminConfigGroup extends YpAdminConfigBase {
         else if (this.groupTypeIndex == GroupType.allOurIdeas) {
             tabs.push(this._getAllOurIdeaTab());
         }
+        tabs.push(this._getAccessTab());
+        tabs.push(this._getThemeTab());
         this.tabsPostSetup(tabs);
         return tabs;
     }

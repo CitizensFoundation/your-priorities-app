@@ -21,6 +21,7 @@ export declare class AoiEarlIdeasEditor extends YpStreamingLlmBase {
     isFetchingChoices: boolean;
     currentIdeasFilter: "latest" | "highestScore" | "userSubmitted";
     ideasElement: MdFilledTextField;
+    scrollElementSelector: string;
     serverApi: AoiAdminServerApi;
     constructor();
     connectedCallback(): void;

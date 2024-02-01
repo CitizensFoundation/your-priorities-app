@@ -23,6 +23,7 @@ let AoiEarlIdeasEditor = class AoiEarlIdeasEditor extends YpStreamingLlmBase {
         this.isTogglingIdeaActive = false;
         this.isFetchingChoices = false;
         this.currentIdeasFilter = "latest";
+        this.scrollElementSelector = "#ideas";
         this.serverApi = new AoiAdminServerApi();
     }
     connectedCallback() {
@@ -39,13 +40,13 @@ let AoiEarlIdeasEditor = class AoiEarlIdeasEditor extends YpStreamingLlmBase {
         this.addEventListener("yp-ws-error", this.socketError);
     }
     socketClosed() {
-        this.isCreatingIdeas = false;
+        this.isGeneratingIdeas = false;
     }
     socketError() {
-        this.isCreatingIdeas = false;
+        this.isGeneratingIdeas = false;
     }
     async getChoices() {
-        this.choices = await this.serverApi.getChoices(this.groupId, this.configuration.earl.question_id);
+        this.choices = await this.serverApi.getChoices(this.communityId, this.configuration.earl.question_id);
     }
     async addChatBotElement(wsMessage) {
         switch (wsMessage.type) {
@@ -71,6 +72,7 @@ let AoiEarlIdeasEditor = class AoiEarlIdeasEditor extends YpStreamingLlmBase {
                     break;
                 }
         }
+        this.scrollDown();
     }
     get ideas() {
         return this.$$("#ideas")?.value
@@ -85,23 +87,20 @@ let AoiEarlIdeasEditor = class AoiEarlIdeasEditor extends YpStreamingLlmBase {
     }
     generateIdeas() {
         this.isGeneratingIdeas = true;
-        debugger;
         try {
             this.serverApi.startGenerateIdeas(this.questionName, this.communityId, this.wsClientId, this.ideas);
         }
         catch (e) {
             console.error(e);
         }
-        finally {
-            this.isGeneratingIdeas = false;
-        }
     }
     async submitIdeasForCreation() {
         this.isSubmittingIdeas = true;
         try {
-            this.configuration.earl = await this.serverApi.submitIdeasForCreation(this.communityId, this.ideas);
-            this.getChoices();
+            const { question_id } = this.configuration.earl = await this.serverApi.submitIdeasForCreation(this.communityId, this.ideas, this.questionName);
+            this.configuration.earl.question_id = question_id;
             this.requestUpdate();
+            this.getChoices();
         }
         catch (e) {
             console.error(e);
@@ -192,12 +191,18 @@ let AoiEarlIdeasEditor = class AoiEarlIdeasEditor extends YpStreamingLlmBase {
 
         md-outlined-text-field {
           width: 100%;
-          margin: 32px;
+          margin-bottom: 32px;
         }
 
         .button {
           margin-left: 16px;
           margin-right: 16px;
+        }
+
+        .generationProgress {
+          width: 100%;
+          margin-bottom: 24px;
+          margin-top: -24px;
         }
       `,
         ];
@@ -208,19 +213,34 @@ let AoiEarlIdeasEditor = class AoiEarlIdeasEditor extends YpStreamingLlmBase {
         <md-outlined-text-field
           type="textarea"
           id="ideas"
-          rows="7"
+          rows="14"
           .label="${this.t("ideasForVotingOn")}"
         >
         </md-outlined-text-field>
+        <md-linear-progress
+          class="generationProgress"
+          ?hidden="${!this.isGeneratingIdeas}"
+          indeterminate
+        ></md-linear-progress>
         <div class="layout horizontal">
-          <md-filled-tonal-button
-            class="button"
-            @click="${this.generateIdeas}"
-            ?disabled="${this.isGeneratingIdeas}"
-            >${this.ideas?.length > 1
-            ? this.t("generateMoreIdeasWithAi")
-            : this.t("generateIdeasWithAi")}</md-filled-tonal-button
-          >
+          ${this.isGeneratingIdeas
+            ? html `
+                <div class="layout vertical center-center">
+                  <md-outlined-button class="button" @click="${this.reset}"
+                    >${this.t("stop")}</md-outlined-button
+                  >
+                </div>
+              `
+            : html `
+                <md-outlined-button
+                  class="button"
+                  @click="${this.generateIdeas}"
+                  ?disabled="${this.isGeneratingIdeas}"
+                  >${this.ideas?.length > 1
+                ? this.t("generateMoreIdeasWithAi")
+                : this.t("generateIdeasWithAi")}</md-outlined-button
+                >
+              `}
           <md-filled-button
             class="button"
             @click="${this.submitIdeasForCreation}"
@@ -287,7 +307,7 @@ let AoiEarlIdeasEditor = class AoiEarlIdeasEditor extends YpStreamingLlmBase {
     `;
     }
     render() {
-        if (this.isCreatingIdeas) {
+        if (!this.choices) {
             return this.renderCreateIdeas();
         }
         else {

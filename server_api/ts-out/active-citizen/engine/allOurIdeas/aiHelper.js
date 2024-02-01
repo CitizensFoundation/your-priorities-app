@@ -53,13 +53,7 @@ class AiHelper {
         });
     }
     async getAnswerIdeas(question, previousIdeas, firstMessage) {
-        if (!previousIdeas) {
-            previousIdeas = "";
-        }
-        // Replace previous_ideas text "aoirvb8735" with new lines
-        previousIdeas = previousIdeas.replace(/aoirvb8735/g, "\n");
         try {
-            // Moderation check
             const moderationResponse = await this.openaiClient.moderations.create({
                 input: question,
             });
@@ -72,8 +66,9 @@ class AiHelper {
             }
             else {
                 let firstMessageWithPreviousIdeasTemplate = "";
+                let previewIdeasText = "";
                 if (previousIdeas && previousIdeas.length > 0) {
-                    previousIdeas = `Previous answer ideas:\n${previousIdeas}\n\n`;
+                    previewIdeasText = `Previous answer ideas:\n${JSON.stringify(previousIdeas, null, 2)}\n\n`;
                     if (firstMessage) {
                         firstMessageWithPreviousIdeasTemplate =
                             "For your answers please follow the tone of voice, prose, style, and length of the Previous answer ideas\n";
@@ -83,11 +78,14 @@ class AiHelper {
                     {
                         role: "system",
                         content: `You are a highly competent AI that is able to generate short answer ideas for questions.
-                      Never output the answer number at the start of a sentence.\n${firstMessageWithPreviousIdeasTemplate}`,
+                      Genereate up to 10 high quality ideas.
+                      Ideas should always be unnumbered.
+                      Never output more than 30 words per idea.
+                      \n${firstMessageWithPreviousIdeasTemplate}`,
                     },
                     {
                         role: "user",
-                        content: `What are some possible answers to the question: ${question}\n\n${previousIdeas}Answers:\n`,
+                        content: `What are some possible answers to the question: ${question}\n\n${previewIdeasText}Answers:\n`,
                     },
                 ];
                 await this.streamChatCompletions(messages);

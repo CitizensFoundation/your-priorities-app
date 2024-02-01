@@ -11,6 +11,7 @@ export class YpStreamingLlmBase extends YpBaseElement {
         super();
         this.chatLog = [];
         this.webSocketsErrorCount = 0;
+        this.scrollElementSelector = "#chat-messages";
         this.userScrolled = false;
         this.currentFollowUpQuestions = "";
         this.programmaticScroll = false;
@@ -89,18 +90,18 @@ export class YpStreamingLlmBase extends YpBaseElement {
         };
     }
     handleScroll() {
-        if (this.programmaticScroll || !this.$$("#chat-messages")) {
+        if (this.programmaticScroll || !this.$$(this.scrollElementSelector)) {
             return;
         }
-        const currentScrollTop = this.$$("#chat-messages").scrollTop;
+        const currentScrollTop = this.$$(this.scrollElementSelector).scrollTop;
         if (this.scrollStart === 0) {
             // Initial scroll
             this.scrollStart = currentScrollTop;
         }
         const threshold = 10;
-        const atBottom = this.$$("#chat-messages").scrollHeight -
+        const atBottom = this.$$(this.scrollElementSelector).scrollHeight -
             currentScrollTop -
-            this.$$("#chat-messages").clientHeight <=
+            this.$$(this.scrollElementSelector).clientHeight <=
             threshold;
         if (atBottom) {
             this.userScrolled = false;
@@ -137,13 +138,26 @@ export class YpStreamingLlmBase extends YpBaseElement {
         }
     }
     scrollDown() {
-        if (!this.userScrolled && this.$$("#chat-messages")) {
+        if (!this.userScrolled && this.$$(this.scrollElementSelector)) {
             this.programmaticScroll = true;
-            this.$$("#chat-messages").scrollTop =
-                this.$$("#chat-messages").scrollHeight;
+            const element = this.$$(this.scrollElementSelector);
+            if (element.tagName === 'INPUT' ||
+                element.tagName === 'TEXTAREA' ||
+                element.tagName === 'MD-OUTLINED-TEXT-FIELD') {
+                // Move the cursor to the end of the text
+                element.selectionStart = element.selectionEnd = element.value.length;
+                element.scrollTop = element.scrollHeight - 100;
+            }
+            else {
+                // For non-text field elements, use scrollTop and scrollHeight to scroll
+                element.scrollTop = element.scrollHeight;
+            }
             setTimeout(() => {
                 this.programmaticScroll = false;
             }, 100);
+        }
+        else {
+            console.error("User scrolled, not scrolling down");
         }
     }
     addUserChatBotMessage(userMessage) {
@@ -201,6 +215,9 @@ __decorate([
 __decorate([
     property({ type: Object })
 ], YpStreamingLlmBase.prototype, "ws", void 0);
+__decorate([
+    property({ type: String })
+], YpStreamingLlmBase.prototype, "scrollElementSelector", void 0);
 __decorate([
     property({ type: Boolean })
 ], YpStreamingLlmBase.prototype, "userScrolled", void 0);

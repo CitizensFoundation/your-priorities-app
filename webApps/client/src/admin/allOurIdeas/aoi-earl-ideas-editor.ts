@@ -50,6 +50,8 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmBase {
   @query("#ideas")
   ideasElement!: MdFilledTextField;
 
+  override scrollElementSelector = "#ideas";
+
   serverApi: AoiAdminServerApi;
 
   constructor() {
@@ -71,16 +73,16 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmBase {
   }
 
   socketClosed() {
-    this.isCreatingIdeas = false;
+    this.isGeneratingIdeas = false;
   }
 
   socketError() {
-    this.isCreatingIdeas = false;
+    this.isGeneratingIdeas = false;
   }
 
   async getChoices() {
     this.choices = await this.serverApi.getChoices(
-      this.groupId,
+      this.communityId!,
       this.configuration.earl!.question_id!
     );
   }
@@ -108,6 +110,7 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmBase {
           break;
         }
     }
+    this.scrollDown();
   }
 
   get ideas() {
@@ -126,7 +129,6 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmBase {
 
   generateIdeas() {
     this.isGeneratingIdeas = true;
-    debugger;
     try {
       this.serverApi.startGenerateIdeas(
         this.questionName!,
@@ -136,20 +138,20 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmBase {
       );
     } catch (e) {
       console.error(e);
-    } finally {
-      this.isGeneratingIdeas = false;
     }
   }
 
   async submitIdeasForCreation() {
     this.isSubmittingIdeas = true;
     try {
-      this.configuration.earl = await this.serverApi.submitIdeasForCreation(
+      const { question_id } = this.configuration.earl = await this.serverApi.submitIdeasForCreation(
         this.communityId!,
-        this.ideas
+        this.ideas,
+        this.questionName!
       );
-      this.getChoices();
+      this.configuration.earl.question_id = question_id;
       this.requestUpdate();
+      this.getChoices();
     } catch (e) {
       console.error(e);
     } finally {
@@ -239,12 +241,18 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmBase {
 
         md-outlined-text-field {
           width: 100%;
-          margin: 32px;
+          margin-bottom: 32px;
         }
 
         .button {
           margin-left: 16px;
           margin-right: 16px;
+        }
+
+        .generationProgress {
+          width: 100%;
+          margin-bottom: 24px;
+          margin-top: -24px;
         }
       `,
     ];
@@ -256,19 +264,34 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmBase {
         <md-outlined-text-field
           type="textarea"
           id="ideas"
-          rows="7"
+          rows="14"
           .label="${this.t("ideasForVotingOn")}"
         >
         </md-outlined-text-field>
+        <md-linear-progress
+          class="generationProgress"
+          ?hidden="${!this.isGeneratingIdeas}"
+          indeterminate
+        ></md-linear-progress>
         <div class="layout horizontal">
-          <md-filled-tonal-button
-            class="button"
-            @click="${this.generateIdeas}"
-            ?disabled="${this.isGeneratingIdeas}"
-            >${this.ideas?.length > 1
-              ? this.t("generateMoreIdeasWithAi")
-              : this.t("generateIdeasWithAi")}</md-filled-tonal-button
-          >
+          ${this.isGeneratingIdeas
+            ? html`
+                <div class="layout vertical center-center">
+                  <md-outlined-button class="button" @click="${this.reset}"
+                    >${this.t("stop")}</md-outlined-button
+                  >
+                </div>
+              `
+            : html`
+                <md-outlined-button
+                  class="button"
+                  @click="${this.generateIdeas}"
+                  ?disabled="${this.isGeneratingIdeas}"
+                  >${this.ideas?.length > 1
+                    ? this.t("generateMoreIdeasWithAi")
+                    : this.t("generateIdeasWithAi")}</md-outlined-button
+                >
+              `}
           <md-filled-button
             class="button"
             @click="${this.submitIdeasForCreation}"
@@ -338,7 +361,7 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmBase {
   }
 
   override render() {
-    if (this.isCreatingIdeas) {
+    if (!this.choices) {
       return this.renderCreateIdeas();
     } else {
       return this.renderEditIdeas();

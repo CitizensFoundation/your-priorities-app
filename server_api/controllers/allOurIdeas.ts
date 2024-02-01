@@ -12,11 +12,16 @@ const PAIRWISE_API_HOST = process.env.PAIRWISE_API_HOST;
 const PAIRWISE_USERNAME = process.env.PAIRWISE_USERNAME;
 const PAIRWISE_PASSWORD = process.env.PAIRWISE_PASSWORD;
 
-const defaultHeader = {
+const defaultAuthHeader = {
   "Content-Type": "application/json",
   Authorization: `Basic ${Buffer.from(
     `${PAIRWISE_USERNAME}:${PAIRWISE_PASSWORD}`
   ).toString("base64")}`,
+};
+
+const defaultHeader = {
+  ...{ "Content-Type": "application/json" },
+  ...defaultAuthHeader,
 };
 
 import auth from "../authorization.js";
@@ -29,21 +34,37 @@ export class AllOurIdeasController {
 
   constructor(wsClients: Map<string, WebSocket>) {
     this.wsClients = wsClients;
-    console.log(JSON.stringify(this.wsClients, null, 2));
     this.initializeRoutes();
   }
 
   public async initializeRoutes() {
-    this.router.get("/:groupId", auth.can("view group"), this.showEarl.bind(this));
-    this.router.post("/:communityId/questions", auth.can("create group"), this.createQuestion.bind(this));
-    this.router.put("/:communityId/generateIdeas", auth.can("create group"), this.generateIdeas.bind(this));
+    this.router.get(
+      "/:groupId",
+      auth.can("view group"),
+      this.showEarl.bind(this)
+    );
+    this.router.post(
+      "/:communityId/questions",
+      auth.can("create group"),
+      this.createQuestion.bind(this)
+    );
+    this.router.put(
+      "/:communityId/generateIdeas",
+      auth.can("create group"),
+      this.generateIdeas.bind(this)
+    );
+    this.router.get(
+      "/:communityId/choices/:questionId",
+      auth.can("create group"),
+      this.getChoices.bind(this)
+    );
 
     console.log("---- have initialized routes for allOurIdeasController");
   }
 
   public async generateIdeas(req: Request, res: Response): Promise<void> {
-    console.log("generateIdeas: "+JSON.stringify(this.wsClients, null, 2));
-    const { currentIdeas, wsClientSocketId, question } = req.params;
+    const { currentIdeas, wsClientSocketId, question } = req.body;
+    console.log(`generateIdeas: ${wsClientSocketId}`);
     const swClientSocket = this.wsClients.get(wsClientSocketId);
     if (swClientSocket) {
       const aiHelper = new AiHelper(swClientSocket);
@@ -95,7 +116,7 @@ export class AllOurIdeasController {
         console.log(`question_id: ${question_id}`);
 
         const promptResponse = await fetch(
-          `${PAIRWISE_API_HOST}/questions/${question_id}/prompts/${picked_prompt_id}`,
+          `${PAIRWISE_API_HOST}/questions/${question_id}/prompts/${picked_prompt_id}.json`,
           {
             method: "GET",
             headers: defaultHeader,
@@ -180,20 +201,24 @@ export class AllOurIdeasController {
   async createQuestion(req: Request, res: Response) {
     const questionParams = req.body;
 
-    if (questionParams.ideas && questionParams.ideas.length > 0) {
+    console.log(`in createQuestion: ${JSON.stringify(questionParams.ideas)}`);
+
+    if (questionParams.ideas.length < 4) {
       return res.status(400).json({ error: "Invalid input" });
     }
 
     const requestBody = {
-      name: `earlForGroup-${req.params.groupId}`,
-      ideas: questionParams.ideas,
+      name: questionParams.question,
+      ideas: questionParams.ideas
+        .filter((i: string) => i.length > 3)
+        .join("\r\n"),
       url: "noUrl",
       information: "noInformation",
       userId: (req.user as YpUserData).id,
     };
 
     try {
-      const response = await fetch(`${PAIRWISE_API_HOST}/questions`, {
+      const response = await fetch(`${PAIRWISE_API_HOST}/questions.json`, {
         method: "POST",
         headers: defaultHeader,
         body: JSON.stringify(requestBody),
@@ -205,24 +230,7 @@ export class AllOurIdeasController {
 
       const question = (await response.json()) as AoiQuestionData;
 
-      const group = (await Group.findOne(req.params.groupId)) as GroupClass;
-      const aoiConfig = (group.configuration as AoiGroupConfiguration)
-        .allOurIdeas;
-
-      if (!aoiConfig.earl) {
-        aoiConfig.earl = {
-          question_id: question.id,
-          active: true
-        };
-      } else {
-        aoiConfig.earl.question_id = question.id;
-      }
-
-      group.set("configuration.allOurIdeas", aoiConfig);
-
-      await group.save();
-
-      res.sendStatus(200);
+      res.json({ question_id: question.id });
     } catch (error) {
       console.error(error);
       res
@@ -238,7 +246,7 @@ export class AllOurIdeasController {
 
     try {
       const response = await fetch(
-        `${PAIRWISE_API_HOST}/questions/${question_id}/prompts/${id}/skip`,
+        `${PAIRWISE_API_HOST}/questions/${question_id}/prompts/${id}/skip.json`,
         {
           method: "PUT",
           headers: defaultHeader,
@@ -284,10 +292,34 @@ export class AllOurIdeasController {
     }
   }
 
+  public async getChoices(req: Request, res: Response): Promise<void> {
+    try {
+      const questionId = req.params.questionId;
+      const showAll = req.query.showAll;
+
+      let url = `${PAIRWISE_API_HOST}/questions/${questionId}/choices.json${
+        showAll ? "?include_inactive=true&show_all=true" : ""
+      }`;
+
+      const response = await fetch(url, {
+        headers: defaultAuthHeader,
+      });
+      if (!response.ok) {
+        throw new Error(`Failed to fetch choices: ${response.statusText}`);
+      }
+
+      const choices = await response.json();
+      res.json(choices);
+    } catch (error) {
+      console.error(error);
+      res.status(500).send("An error occurred");
+    }
+  }
+
   // You need to implement these functions based on your application's logic
   getQuestionChoicePath(questionId: number, choiceId: number): string {
     // Implement logic to generate choice path
-    return `/questions/${questionId}/choices/${choiceId}`;
+    return `/questions/${questionId}/choices/${choiceId}.json`;
   }
 
   getNextPromptOptions(req: Request): any {

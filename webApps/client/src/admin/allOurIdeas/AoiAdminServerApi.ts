@@ -7,17 +7,18 @@ export class AoiAdminServerApi extends YpServerApi {
   }
 
   public async getChoices(
-    groupId: number,
+    communityId: number,
     questionId: number
   ): Promise<AoiChoiceData[]> {
     return this.fetchWrapper(
-      this.baseUrlPath + `/${groupId}/choices/${questionId}.json`
+      this.baseUrlPath + `/${communityId}/choices/${questionId}?showAll=true`,
     ) as unknown as AoiChoiceData[];
   }
 
   public async submitIdeasForCreation(
     communityId: number,
-    ideas: string[]
+    ideas: string[],
+    questionName: string
   ): Promise<AoiEarlData> {
     return this.fetchWrapper(
       this.baseUrlPath + `/${communityId}/questions`,
@@ -25,6 +26,7 @@ export class AoiAdminServerApi extends YpServerApi {
         method: "POST",
         body: JSON.stringify({
           ideas: ideas,
+          question: questionName
         }),
       },
       true,

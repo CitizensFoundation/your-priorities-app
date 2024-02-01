@@ -69,7 +69,7 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
   ypImageUrl: string | undefined;
 
   @property({ type: Number })
-  groupTypeIndex = 0;
+  groupTypeIndex = 1;
 
   @property({ type: Object })
   group: YpGroupData;
@@ -245,6 +245,18 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
               name="ltp"
               value="${JSON.stringify(
                 (this.collection?.configuration as YpGroupConfiguration).ltp
+              )}"
+            />
+          `
+        : nothing}
+
+       ${(this.collection?.configuration as AoiGroupConfiguration).allOurIdeas
+        ? html`
+            <input
+              type="hidden"
+              name="allOurIdeas"
+              value="${JSON.stringify(
+                (this.collection?.configuration as AoiGroupConfiguration).allOurIdeas
               )}"
             />
           `
@@ -1683,6 +1695,7 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
     this.aoiQuestionName = value;
 
     this.configTabs = this.setupConfigTabs();
+    this._configChanged();
   }
 
   _getAllOurIdeaTab() {
@@ -1709,8 +1722,10 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
       items: [
         {
           text: "questionName",
-          type: "textfield",
+          type: "textarea",
           maxLength: 140,
+          rows: 2,
+          charCounter: true,
           value: this.aoiQuestionName,
           translationToken: "questionName",
           onChange: this.questionNameChanged,
@@ -1759,9 +1774,6 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
   setupConfigTabs() {
     const tabs: Array<YpConfigTabData> = [];
 
-    tabs.push(this._getAccessTab());
-    tabs.push(this._getThemeTab());
-
     if (this.groupTypeIndex == GroupType.ideaGeneration) {
       const postsTab = this._getPostSettingsTab();
       if (!this.isGroupFolder) {
@@ -1773,6 +1785,9 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
     } else if (this.groupTypeIndex == GroupType.allOurIdeas) {
       tabs.push(this._getAllOurIdeaTab());
     }
+    tabs.push(this._getAccessTab());
+    tabs.push(this._getThemeTab());
+
 
     this.tabsPostSetup(tabs);
 
