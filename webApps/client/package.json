@@ -40,7 +40,7 @@
     "@material/top-app-bar": "file:./custom_modules/@material/top-app-bar",
     "@material/touch-target": "file:./custom_modules/@material/touch-target",
     "@material/typography": "file:./custom_modules/@material/typography",
-    "@material/web": "^1.1.1",
+    "@material/web": "^1.2.0",
     "@picmo/popup-picker": "^5.8.5",
     "@picmo/renderer-twemoji": "^5.8.5",
     "@policysynth/agents": "^1.1.0",

@@ -58,6 +58,12 @@ export class AllOurIdeasController {
       auth.can("create group"),
       this.getChoices.bind(this)
     );
+    this.router.post(
+      "/:groupId/questions/:questionId/prompts/:promptId/votes",
+      auth.can("view group"),
+      this.vote.bind(this)
+    );
+
 
     console.log("---- have initialized routes for allOurIdeasController");
   }
@@ -86,9 +92,8 @@ export class AllOurIdeasController {
           id: groupId
         }
       })) as YpGroupData;
-      const aoiConfig = (group.configuration as AoiGroupConfiguration)
-        .allOurIdeas;
-      if (group && aoiConfig.earl) {
+      const aoiConfig = group.configuration.allOurIdeas;
+      if (group && aoiConfig?.earl) {
         const showParams = {
           with_prompt: true,
           with_appearance: true,
@@ -146,13 +151,13 @@ export class AllOurIdeasController {
 
   async vote(req: Request, res: Response) {
     const { id, question_id, direction } = req.body;
-    const voteOptions = this.getVoteRequestOptions(req.body, "vote");
+    const voteOptions = this.getVoteRequestOptions(req, "vote");
     const nextPromptOptions = this.getNextPromptOptions(req);
 
     if (direction) {
       try {
         const response = await fetch(
-          `${PAIRWISE_API_HOST}/questions/${question_id}/prompts/${id}/vote`,
+          `${PAIRWISE_API_HOST}/questions/${req.params.questionId}/prompts/${req.params.promptId}/vote`,
           {
             method: "PUT",
             headers: defaultHeader,
@@ -244,12 +249,12 @@ export class AllOurIdeasController {
 
   public async skip(req: Request, res: Response) {
     const { id, question_id } = req.body;
-    const skipOptions = this.getVoteRequestOptions(req.body, "skip");
+    const skipOptions = this.getVoteRequestOptions(req, "skip");
     const nextPromptOptions = this.getNextPromptOptions(req);
 
     try {
       const response = await fetch(
-        `${PAIRWISE_API_HOST}/questions/${question_id}/prompts/${id}/skip.json`,
+        `${PAIRWISE_API_HOST}/questions/${req.params.questionId}/prompts/${req.params.promptId}/vote`,
         {
           method: "PUT",
           headers: defaultHeader,
@@ -342,6 +347,7 @@ export class AllOurIdeasController {
     const session = req.session; // Assuming express-session middleware is used
     const params = req.body; // Assuming body-parser middleware is used for JSON body parsing
 
+    console.log(`getVoteRequestOptions: ${JSON.stringify(params)} s: ${session}`)
     const options: any = {
       visitor_identifier: session.id,
       // Use a static value of 5 if in test environment, so we can mock resulting API queries

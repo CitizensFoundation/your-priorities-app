@@ -222,10 +222,9 @@ let AoiNewIdeaDialog = class AoiNewIdeaDialog extends YpBaseElement {
         return html `<md-dialog
       ?fullscreen="${!this.wide}"
       id="dialog"
-      scrimClickAction=""
     >
-      <div id="content">${this.renderContent()}</div>
-      <div slot="footer">${this.renderFooter()}</div>
+      <div slot="content">${this.renderContent()}</div>
+      <div slot="actions">${this.renderFooter()}</div>
     </md-dialog> `;
     }
 };
