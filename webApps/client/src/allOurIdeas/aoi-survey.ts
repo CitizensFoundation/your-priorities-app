@@ -31,6 +31,7 @@ import {
   Scheme,
 } from "../common/YpMaterialThemeHelper.js";
 import { YpCollection } from "../yp-collection/yp-collection.js";
+import { YpBaseElement } from "../common/yp-base-element.js";
 
 const PagesTypes = {
   Introduction: 1,
@@ -51,12 +52,18 @@ declare global {
 //TODO: Label the pages for aria https://github.com/material-components/material-web/blob/main/docs/components/tabs.md
 
 @customElement("aoi-survey")
-export class AoiSurvey extends YpCollection {
+export class AoiSurvey extends YpBaseElement  {
   @property({ type: Number })
   pageIndex = 1;
 
   @property({ type: Number })
   totalNumberOfVotes = 0;
+
+  @property({ type: Number })
+  collectionId!: number;
+
+  @property({ type: Object })
+  collection!: YpGroupData;
 
   @property({ type: String })
   lastSnackbarText: string | undefined;
@@ -112,8 +119,8 @@ export class AoiSurvey extends YpCollection {
   drawer!: NavigationDrawer;
 
   constructor() {
-    super("group", "posts", "lighbulb", "create");
-
+    //super("group", "posts", "lighbulb", "create");
+    super();
     window.aoiServerApi = new AoiServerApi();
     window.aoiAppGlobals = new AoiAppGlobals(window.aoiServerApi);
     window.aoiAppGlobals.activity("pageview");
@@ -520,6 +527,7 @@ export class AoiSurvey extends YpCollection {
   }
 
   renderNavigationBar() {
+    debugger;
     if (this.wide) {
       return html`
         <div class="drawer">
@@ -616,7 +624,8 @@ export class AoiSurvey extends YpCollection {
     }
   }
 
-  override render() {
+
+   override render() {
     return html`<div class="layout horizontal">
       ${this.renderNavigationBar()}
       <div class="rightPanel">

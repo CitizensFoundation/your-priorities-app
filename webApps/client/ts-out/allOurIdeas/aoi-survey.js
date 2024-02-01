@@ -25,7 +25,7 @@ import "./survey/aoi-survey-results.js";
 import "./survey/aoi-survey-analysis.js";
 import { AoiServerApi } from "./survey/AoiServerApi.js";
 import { AoiAppGlobals } from "./AoiAppGlobals.js";
-import { YpCollection } from "../yp-collection/yp-collection.js";
+import { YpBaseElement } from "../common/yp-base-element.js";
 const PagesTypes = {
     Introduction: 1,
     Voting: 2,
@@ -34,9 +34,10 @@ const PagesTypes = {
     Share: 5,
 };
 //TODO: Label the pages for aria https://github.com/material-components/material-web/blob/main/docs/components/tabs.md
-let AoiSurvey = class AoiSurvey extends YpCollection {
+let AoiSurvey = class AoiSurvey extends YpBaseElement {
     constructor() {
-        super("group", "posts", "lighbulb", "create");
+        //super("group", "posts", "lighbulb", "create");
+        super();
         this.pageIndex = 1;
         this.totalNumberOfVotes = 0;
         this.themePrimaryColor = "#000000";
@@ -408,6 +409,7 @@ let AoiSurvey = class AoiSurvey extends YpCollection {
         return html ` <div class="layout vertical center-center"></div> `;
     }
     renderNavigationBar() {
+        debugger;
         if (this.wide) {
             return html `
         <div class="drawer">
@@ -554,6 +556,12 @@ __decorate([
 __decorate([
     property({ type: Number })
 ], AoiSurvey.prototype, "totalNumberOfVotes", void 0);
+__decorate([
+    property({ type: Number })
+], AoiSurvey.prototype, "collectionId", void 0);
+__decorate([
+    property({ type: Object })
+], AoiSurvey.prototype, "collection", void 0);
 __decorate([
     property({ type: String })
 ], AoiSurvey.prototype, "lastSnackbarText", void 0);

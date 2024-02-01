@@ -378,7 +378,7 @@ export class YpGroup extends YpCollection {
       ) {
         return html`
           <aoi-survey
-            .collectionId="${this.collectionId}"
+            .collectionId="${this.collectionId as number}"
             .collection="${this.collection}"
           ></aoi-survey><h1>c</h1>
         `;

@@ -17,7 +17,7 @@ import { AoiServerApi } from "./survey/AoiServerApi.js";
 import { AoiAppGlobals } from "./AoiAppGlobals.js";
 import { NavigationDrawer } from "@material/web/labs/navigationdrawer/internal/navigation-drawer.js";
 import { Scheme } from "../common/YpMaterialThemeHelper.js";
-import { YpCollection } from "../yp-collection/yp-collection.js";
+import { YpBaseElement } from "../common/yp-base-element.js";
 declare global {
     interface Window {
         aoiAppGlobals: AoiAppGlobals;
@@ -25,9 +25,11 @@ declare global {
         needsNewEarl: boolean;
     }
 }
-export declare class AoiSurvey extends YpCollection {
+export declare class AoiSurvey extends YpBaseElement {
     pageIndex: number;
     totalNumberOfVotes: number;
+    collectionId: number;
+    collection: YpGroupData;
     lastSnackbarText: string | undefined;
     currentError: string | undefined;
     themePrimaryColor: string;
