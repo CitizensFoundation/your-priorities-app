@@ -809,7 +809,8 @@ class YourPrioritiesApi {
             const clientId = (0, uuid_1.v4)();
             this.wsClients.set(clientId, ws);
             console.log(`------------------------ >  New WebSocket connection: clientId ${clientId}`);
-            console.log(JSON.stringify(this.wsClients, null, 2));
+            console.log(this.wsClients.get(clientId) == null);
+            ws.send(JSON.stringify({ clientId: clientId }));
             ws.on("message", (message) => {
                 let parsedMessage;
                 try {
@@ -820,15 +821,15 @@ class YourPrioritiesApi {
                     parsedMessage = message;
                 }
                 finally {
+                    if (parsedMessage && parsedMessage.type === "heartbeat") {
+                        console.log(`Received heartbeat from client ${clientId}`);
+                        ws.send(JSON.stringify({ type: "heartbeat_ack" }));
+                    }
                     pub.publish("ypWebsocketChannel", JSON.stringify({
                         clientId,
                         action: "directMessage",
                         message: parsedMessage,
                     }));
-                    if (parsedMessage && parsedMessage.type === "heartbeat") {
-                        console.log(`Received heartbeat from client ${clientId}`);
-                        ws.send(JSON.stringify({ type: "heartbeat_ack" }));
-                    }
                 }
             });
             ws.on("close", () => {
