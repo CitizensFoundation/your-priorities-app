@@ -1,28 +1,20 @@
 import { html, css, nothing } from "lit";
 import { property, customElement, query } from "lit/decorators.js";
 
-import "@material/web/navigationbar/navigation-bar.js";
-import "@material/web/navigationtab/navigation-tab.js";
-//import '@material/web/navigationdrawer/lib/navigation-drawer-styles.css.js';
-import "@material/web/navigationdrawer/navigation-drawer.js";
+import "@material/web/labs/navigationbar/navigation-bar.js";
+import "@material/web/labs/navigationtab/navigation-tab.js";
+import "@material/web/labs/navigationdrawer/navigation-drawer.js";
 import "@material/web/list/list-item.js";
 import "@material/web/list/list.js";
 import "@material/web/icon/icon.js";
-import "@material/web/iconbutton/standard-icon-button.js";
+import "@material/web/iconbutton/icon-button.js";
 import "@material/web/iconbutton/outlined-icon-button.js";
 import "@material/mwc-snackbar/mwc-snackbar.js";
-
-import {
-  applyTheme,
-  argbFromHex,
-  themeFromSourceColor,
-} from "@material/material-color-utilities";
 
 import "@material/web/menu/menu.js";
 import { cache } from "lit/directives/cache.js";
 
 import "../common/yp-image.js";
-import { YpBaseElement } from "../common/yp-base-element.js";
 
 //import './chat/yp-chat-assistant.js';
 
@@ -34,16 +26,11 @@ import { AoiServerApi } from "./survey/AoiServerApi.js";
 import { AoiAppGlobals } from "./AoiAppGlobals.js";
 import { NavigationDrawer } from "@material/web/labs/navigationdrawer/internal/navigation-drawer.js";
 import { Snackbar } from "@material/mwc-snackbar/mwc-snackbar.js";
-import { NavigationTab } from "@material/web/labs/navigationtab/internal/navigation-tab.js";
 import { NavigationBar } from "@material/web/labs/navigationbar/internal/navigation-bar.js";
 import {
   Scheme,
-  applyThemeWithContrast,
-  themeFromSourceColorWithContrast,
 } from "../common/YpMaterialThemeHelper.js";
-import { AoiAppUser } from "./AoiAppUser.js";
-import { YpAppUser } from "../yp-app/YpAppUser.js";
-import { YpGroup } from "../yp-collection/yp-group.js";
+import { YpCollection } from "../yp-collection/yp-collection.js";
 
 const PagesTypes = {
   Introduction: 1,
@@ -64,7 +51,7 @@ declare global {
 //TODO: Label the pages for aria https://github.com/material-components/material-web/blob/main/docs/components/tabs.md
 
 @customElement("aoi-survey")
-export class AoiSurvey extends YpGroup {
+export class AoiSurvey extends YpCollection {
   @property({ type: Number })
   pageIndex = 1;
 
@@ -125,29 +112,18 @@ export class AoiSurvey extends YpGroup {
   drawer!: NavigationDrawer;
 
   constructor() {
-    super();
+    super("group", "posts", "lighbulb", "create");
 
     window.aoiServerApi = new AoiServerApi();
     window.aoiAppGlobals = new AoiAppGlobals(window.aoiServerApi);
-    if (window.location.href.indexOf("localhost") > -1) {
-      window.aoiAppGlobals.setupTranslationSystem();
-    } else {
-      window.aoiAppGlobals.setupTranslationSystem("/apps/aoi_survey/dist");
-    }
-
     window.aoiAppGlobals.activity("pageview");
   }
 
   override connectedCallback() {
     super.connectedCallback();
     this._setupEventListeners();
-
-    const savedColor = localStorage.getItem("md3-yrpri-promotion-color");
-    if (savedColor) {
-      this.fireGlobal("yp-theme-color", savedColor);
-    }
-
     this.getEarl();
+    debugger;
   }
 
   async getEarl() {
@@ -155,10 +131,9 @@ export class AoiSurvey extends YpGroup {
     this.earl = (
       this.collection!.configuration as AoiGroupConfiguration
     ).allOurIdeas.earl!;
-    this.question = (
-      this.collection!.configuration as AoiGroupConfiguration
-    ).allOurIdeas.earl!.question!;
-    this.prompt = await window.aoiServerApi.getPrompt(this.collectionId!, this.question.id);
+    const earlData = await window.aoiServerApi.getEarlData(this.collectionId!);
+    this.question = earlData.question;
+    this.prompt = earlData.prompt;
     this.appearanceLookup = this.question.appearance_id;
     this.currentLeftAnswer = this.prompt.left_choice_text;
     this.currentRightAnswer = this.prompt.right_choice_text;
@@ -182,7 +157,13 @@ export class AoiSurvey extends YpGroup {
 
   override disconnectedCallback() {
     super.disconnectedCallback();
+    debugger;
+
     this._removeEventListeners();
+  }
+
+  scrollToCollectionItemSubClass() {
+    //do nothing
   }
 
   getHexColor(color: string) {
@@ -406,7 +387,7 @@ export class AoiSurvey extends YpGroup {
           --md-text-button-label-text-color: #fefefe;
         }
 
-        md-standard-icon-button {
+        md-icon-button {
           --md-icon-button-unselected-icon-color: #f0f0f0;
         }
 
@@ -668,9 +649,9 @@ export class AoiSurvey extends YpGroup {
                 timeoutMs="-1"
                 .labelText="${this.t("Target votes reached!")}"
               >
-                <md-standard-icon-button slot="dismiss">
+                <md-icon-button slot="dismiss">
                   <md-icon>close</md-icon>
-                </md-standard-icon-button>
+                </md-icon-button>
                 <md-text-button
                   slot="action"
                   @click="${this.triggerExternalGoalUrl}"

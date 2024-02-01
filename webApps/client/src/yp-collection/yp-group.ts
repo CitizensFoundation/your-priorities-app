@@ -20,6 +20,8 @@ import { YpPostMap } from "../yp-post/yp-post-map.js";
 import { MdTabs } from "@material/web/tabs/tabs.js";
 import { cache } from "lit/directives/cache.js";
 
+import "../allOurIdeas/aoi-survey.js";
+
 // TODO: Remove
 interface AcActivity extends LitElement {
   scrollToItem(item: YpDatabaseItem): () => void;
@@ -233,6 +235,7 @@ export class YpGroup extends YpCollection {
   }
 
   override async getCollection() {
+    debugger;
     window.appGlobals.retryMethodAfter401Login = this.getCollection.bind(this);
     this.hasNonOpenPosts = false;
     this.tabCounters = {};
@@ -367,6 +370,27 @@ export class YpGroup extends YpCollection {
   }
 
   override render() {
+    if (this.collection && this.collection.configuration) {
+      if (!(this.collection as YpGroupData).configuration.groupType || (this.collection as YpGroupData).configuration.groupType == 0) {
+        return this.renderYpGroup();
+      } else if (
+        (this.collection as YpGroupData).configuration.groupType == 1
+      ) {
+        return html`
+          <aoi-survey
+            .collectionId="${this.collectionId}"
+            .collection="${this.collection}"
+          ></aoi-survey><h1>c</h1>
+        `;
+      } else {
+        return html`<h1>F</h1>`;
+      }
+    } else {
+      return html`<h1>v</h1>`;
+    }
+  }
+
+  renderYpGroup() {
     return html`
       ${this.renderHeader()}
       ${this.collection &&

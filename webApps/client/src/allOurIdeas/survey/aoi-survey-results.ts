@@ -9,7 +9,7 @@ import { SharedStyles } from './SharedStyles.js';
 import '@material/web/checkbox/checkbox.js';
 import { Checkbox } from '@material/web/checkbox/internal/checkbox.js';
 import '@material/web/button/outlined-button.js';
-import '@material/web/circularprogress/circular-progress.js';
+import '@material/web/progress/circular-progress.js';
 
 @customElement('aoi-survey-results')
 export class AoiSurveyResuls extends YpBaseElement {

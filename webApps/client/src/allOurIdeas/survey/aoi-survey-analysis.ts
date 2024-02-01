@@ -7,7 +7,7 @@ import { YpFormattingHelpers } from '../../common/YpFormattingHelpers.js';
 import { YpBaseElement } from '../../common/yp-base-element.js';
 import { SharedStyles } from './SharedStyles.js';
 
-import '@material/web/circularprogress/circular-progress.js';
+import '@material/web/progress/circular-progress.js';
 
 @customElement('aoi-survey-analysis')
 export class AoiSurveyAnalysis extends YpBaseElement {

@@ -5,6 +5,7 @@ import "@material/web/tabs/primary-tab.js";
 import "./yp-group-header.js";
 import "../yp-post/yp-posts-list.js";
 import "../yp-post/yp-post-card-add.js";
+import "../allOurIdeas/aoi-survey.js";
 export declare const GroupTabTypes: Record<string, number>;
 export declare class YpGroup extends YpCollection {
     collection: YpGroupData | undefined;
@@ -28,11 +29,12 @@ export declare class YpGroup extends YpCollection {
     tabLabelWithCount(type: string): string;
     getCurrentTabElement(): HTMLElement | undefined;
     getCollection(): Promise<void>;
-    renderGroupTabs(): typeof nothing | TemplateResult<1>;
+    renderGroupTabs(): TemplateResult<1> | typeof nothing;
     renderPostList(statusFilter: string): TemplateResult;
     renderCurrentGroupTabPage(): TemplateResult | undefined;
-    renderHeader(): typeof nothing | TemplateResult<1>;
+    renderHeader(): TemplateResult<1> | typeof nothing;
     render(): TemplateResult<1>;
+    renderYpGroup(): TemplateResult<1>;
     _selectGroupTab(event: CustomEvent): void;
     _openHelpPageIfNeededOnce(): void;
     _refreshAjax(): void;

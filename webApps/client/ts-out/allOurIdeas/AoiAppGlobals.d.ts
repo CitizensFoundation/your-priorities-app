@@ -6,12 +6,10 @@ export declare class AoiAppGlobals extends YpAppGlobals {
     questionId: number;
     earlId: number;
     promptId: number;
-    earlName: string | null;
     disableParentConstruction: boolean;
     exernalGoalParamsWhiteList: string | undefined;
     externalGoalTriggerUrl: string | undefined;
     constructor(serverApi: AoiServerApi);
-    getEarlName: () => string | null;
     setIds: (e: CustomEvent) => void;
     parseQueryString: () => void;
     getSessionFromCookie: () => string;

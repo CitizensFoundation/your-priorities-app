@@ -12,7 +12,7 @@ import { YpBaseElement } from '../../common/yp-base-element.js';
 import { SharedStyles } from './SharedStyles.js';
 import '@material/web/checkbox/checkbox.js';
 import '@material/web/button/outlined-button.js';
-import '@material/web/circularprogress/circular-progress.js';
+import '@material/web/progress/circular-progress.js';
 let AoiSurveyResuls = class AoiSurveyResuls extends YpBaseElement {
     constructor() {
         super(...arguments);

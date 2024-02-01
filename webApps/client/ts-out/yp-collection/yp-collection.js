@@ -43,7 +43,7 @@ export class YpCollection extends YpBaseElementWithLogin {
         //TODO: Look into this, find a better solution than waiting
         await new Promise((r) => setTimeout(r, 1500));
         if (!this.collection || !this.collection.id) {
-            this.getCollection();
+            // this.getCollection();
         }
     }
     // DATA PROCESSING
@@ -86,7 +86,7 @@ export class YpCollection extends YpBaseElementWithLogin {
     }
     async getCollection() {
         if (this.collectionId) {
-            this.collection = undefined;
+            //this.collection = undefined;
             this.collectionItems = undefined;
             this.collection = (await window.serverApi.getCollection(this.collectionType, this.collectionId));
             this.refresh();

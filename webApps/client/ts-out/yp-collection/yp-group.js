@@ -15,6 +15,7 @@ import "./yp-group-header.js";
 import "../yp-post/yp-posts-list.js";
 import "../yp-post/yp-post-card-add.js";
 import { cache } from "lit/directives/cache.js";
+import "../allOurIdeas/aoi-survey.js";
 export const GroupTabTypes = {
     Open: 0,
     InProgress: 1,
@@ -164,6 +165,7 @@ let YpGroup = class YpGroup extends YpCollection {
         return element;
     }
     async getCollection() {
+        debugger;
         window.appGlobals.retryMethodAfter401Login = this.getCollection.bind(this);
         this.hasNonOpenPosts = false;
         this.tabCounters = {};
@@ -287,6 +289,27 @@ let YpGroup = class YpGroup extends YpCollection {
             : nothing;
     }
     render() {
+        if (this.collection && this.collection.configuration) {
+            if (!this.collection.configuration.groupType || this.collection.configuration.groupType == 0) {
+                return this.renderYpGroup();
+            }
+            else if (this.collection.configuration.groupType == 1) {
+                return html `
+          <aoi-survey
+            .collectionId="${this.collectionId}"
+            .collection="${this.collection}"
+          ></aoi-survey><h1>c</h1>
+        `;
+            }
+            else {
+                return html `<h1>F</h1>`;
+            }
+        }
+        else {
+            return html `<h1>v</h1>`;
+        }
+    }
+    renderYpGroup() {
         return html `
       ${this.renderHeader()}
       ${this.collection &&

@@ -9,7 +9,7 @@ import "../../common/yp-image.js";
 
 import "@material/web/button/elevated-button.js";
 import "@material/web/button/outlined-button.js";
-import "@material/web/circularprogress/circular-progress.js";
+import "@material/web/progress/circular-progress.js";
 
 import "./aoi-new-idea-dialog.js";
 

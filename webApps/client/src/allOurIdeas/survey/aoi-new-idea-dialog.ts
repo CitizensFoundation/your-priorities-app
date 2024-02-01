@@ -8,9 +8,9 @@ import { MdDialog } from '@material/web/dialog/dialog.js';
 import '@material/web/button/elevated-button.js';
 import '@material/web/button/outlined-button.js';
 import '@material/web/button/text-button.js';
-import '@material/web/circularprogress/circular-progress.js';
+import '@material/web/progress/circular-progress.js';
 
-import '@material/mwc-textarea/mwc-textarea.js';
+import '@material/web/textfield/filled-text-field.js';
 import { SharedStyles } from './SharedStyles';
 
 @customElement('aoi-new-idea-dialog')
@@ -162,30 +162,10 @@ export class AoiNewIdeaDialog extends YpBaseElement {
           line-height: normal;
         }
 
-        mwc-textarea {
-          --mdc-theme-primary: var(--md-sys-color-primary);
-          background-color: var(--md-sys-color-primary-container);
-          --mdc-text-field-label-ink-color: var(
-            --md-sys-color-on-primary-container
-          );
-          --mdc-text-field-fill-color: var(--md-sys-color-primary-container);
-          --mdc-text-field-ink-color: var(--md-sys-color-on-primary-container);
-          --mdc-text-area-outlined-hover-border-color: var(
-            --md-sys-color-on-primary-container
-          );
-          --mdc-text-area-outlined-idle-border-color: var(
-            --md-sys-color-on-primary-container
-          );
-          --mdc-notched-outline-border-color: var(
-            --md-sys-color-on-primary-container
-          );
+        md-filled-field {
           padding: 8px;
           margin-bottom: 8px;
           border-radius: 12px;
-        }
-
-        mwc-textarea.rounded {
-          --mdc-shape-small: 4px;
         }
 
         .submitButton {
@@ -233,16 +213,15 @@ export class AoiNewIdeaDialog extends YpBaseElement {
     return html`
       <div class="questionTitle">${this.question.name}</div>
       <div class="layout vertical center-center">
-        <mwc-textarea
+        <md-filled-text-field
           id="ideaText"
-          type="text"
-          charCounter
+          type="textarea"
           @keydown="${this.textAreaKeyDown}"
           maxLength="140"
           .rows="${this.wide ? 3 : 5}"
           label="${this.t('Your idea')}"
         >
-        </mwc-textarea>
+        </md-filled-text-field>
         <div class="error" ?hidden="${!this.currentError}">
           ${this.currentError}
         </div>

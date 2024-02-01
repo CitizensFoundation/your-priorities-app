@@ -1,7 +1,7 @@
 import { YpServerApi } from "../../common/YpServerApi.js";
 export declare class AoiServerApi extends YpServerApi {
     constructor(urlPath?: string);
-    getEarl(groupId: number): AoiEarlResponse;
+    getEarlData(groupId: number): AoiEarlResponse;
     getPrompt(groupId: number, questionId: number): Promise<AoiPromptData>;
     getSurveyResults(groupId: number): Promise<AoiResultData[]>;
     getSurveyAnalysis(groupId: number, analysisIndex: number, analysisTypeIndex: number): AnalysisTypeData;

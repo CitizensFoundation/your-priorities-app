@@ -1,10 +1,10 @@
-import "@material/web/navigationbar/navigation-bar.js";
-import "@material/web/navigationtab/navigation-tab.js";
-import "@material/web/navigationdrawer/navigation-drawer.js";
+import "@material/web/labs/navigationbar/navigation-bar.js";
+import "@material/web/labs/navigationtab/navigation-tab.js";
+import "@material/web/labs/navigationdrawer/navigation-drawer.js";
 import "@material/web/list/list-item.js";
 import "@material/web/list/list.js";
 import "@material/web/icon/icon.js";
-import "@material/web/iconbutton/standard-icon-button.js";
+import "@material/web/iconbutton/icon-button.js";
 import "@material/web/iconbutton/outlined-icon-button.js";
 import "@material/mwc-snackbar/mwc-snackbar.js";
 import "@material/web/menu/menu.js";
@@ -17,7 +17,7 @@ import { AoiServerApi } from "./survey/AoiServerApi.js";
 import { AoiAppGlobals } from "./AoiAppGlobals.js";
 import { NavigationDrawer } from "@material/web/labs/navigationdrawer/internal/navigation-drawer.js";
 import { Scheme } from "../common/YpMaterialThemeHelper.js";
-import { YpGroup } from "../yp-collection/yp-group.js";
+import { YpCollection } from "../yp-collection/yp-collection.js";
 declare global {
     interface Window {
         aoiAppGlobals: AoiAppGlobals;
@@ -25,7 +25,7 @@ declare global {
         needsNewEarl: boolean;
     }
 }
-export declare class AoiSurvey extends YpGroup {
+export declare class AoiSurvey extends YpCollection {
     pageIndex: number;
     totalNumberOfVotes: number;
     lastSnackbarText: string | undefined;
@@ -50,6 +50,7 @@ export declare class AoiSurvey extends YpGroup {
     connectedCallback(): void;
     getEarl(): Promise<void>;
     disconnectedCallback(): void;
+    scrollToCollectionItemSubClass(): void;
     getHexColor(color: string): string | undefined;
     snackbarclosed(): void;
     tabChanged(event: CustomEvent): void;

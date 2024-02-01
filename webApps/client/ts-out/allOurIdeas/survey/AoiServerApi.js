@@ -4,7 +4,7 @@ export class AoiServerApi extends YpServerApi {
         super();
         this.baseUrlPath = urlPath;
     }
-    getEarl(groupId) {
+    getEarlData(groupId) {
         return this.fetchWrapper(this.baseUrlPath + `/${groupId}`);
     }
     async getPrompt(groupId, questionId) {

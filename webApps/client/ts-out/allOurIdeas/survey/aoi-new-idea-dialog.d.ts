@@ -4,8 +4,8 @@ import { MdDialog } from '@material/web/dialog/dialog.js';
 import '@material/web/button/elevated-button.js';
 import '@material/web/button/outlined-button.js';
 import '@material/web/button/text-button.js';
-import '@material/web/circularprogress/circular-progress.js';
-import '@material/mwc-textarea/mwc-textarea.js';
+import '@material/web/progress/circular-progress.js';
+import '@material/web/textfield/filled-text-field.js';
 export declare class AoiNewIdeaDialog extends YpBaseElement {
     earl: AoiEarlData;
     groupId: number;

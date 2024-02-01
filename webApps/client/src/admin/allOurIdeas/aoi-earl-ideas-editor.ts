@@ -151,6 +151,7 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmBase {
           this.questionName!
         ));
       this.configuration.earl.question_id = question_id;
+      this.configuration.earl.active = true;
       this.configuration.earl.question = {
         name: this.questionName!,
         id: question_id!,

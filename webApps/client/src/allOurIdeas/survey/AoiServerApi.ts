@@ -6,7 +6,7 @@ export class AoiServerApi extends YpServerApi {
     this.baseUrlPath = urlPath;
   }
 
-  public getEarl(groupId: number): AoiEarlResponse {
+  public getEarlData(groupId: number): AoiEarlResponse {
     return this.fetchWrapper(
       this.baseUrlPath + `/${groupId}`
     ) as unknown as AoiEarlResponse;

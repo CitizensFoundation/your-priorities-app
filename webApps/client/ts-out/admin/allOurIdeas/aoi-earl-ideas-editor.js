@@ -100,6 +100,7 @@ let AoiEarlIdeasEditor = class AoiEarlIdeasEditor extends YpStreamingLlmBase {
             const { question_id } = (this.configuration.earl =
                 await this.serverApi.submitIdeasForCreation(this.communityId, this.ideas, this.questionName));
             this.configuration.earl.question_id = question_id;
+            this.configuration.earl.active = true;
             this.configuration.earl.question = {
                 name: this.questionName,
                 id: question_id,

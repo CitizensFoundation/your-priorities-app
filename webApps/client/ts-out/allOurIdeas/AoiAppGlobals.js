@@ -3,20 +3,6 @@ export class AoiAppGlobals extends YpAppGlobals {
     constructor(serverApi) {
         super(serverApi, true);
         this.disableParentConstruction = true;
-        this.getEarlName = () => {
-            const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.has('name')) {
-                return urlParams.get('name');
-            }
-            else {
-                const pathSegments = window.location.pathname.split('/');
-                if (pathSegments.length >= 4 && pathSegments[3]) {
-                    return pathSegments[3];
-                }
-            }
-            console.error(`Earl name not found in URL or path: ${window.location.href}`);
-            return null;
-        };
         this.setIds = (e) => {
             this.questionId = e.detail.questionId;
             this.earlId = e.detail.earlId;
@@ -68,7 +54,6 @@ export class AoiAppGlobals extends YpAppGlobals {
                 questionId: this.questionId,
                 earlId: this.earlId,
                 promptId: this.promptId,
-                earlName: this.earlName,
                 userLocale: window.locale,
                 userAutoTranslate: window.autoTranslate,
                 user_agent: navigator.userAgent,
@@ -77,7 +62,7 @@ export class AoiAppGlobals extends YpAppGlobals {
                 screen_width: window.innerWidth,
             };
             try {
-                fetch('/api/analytics/createActivityFromApp', {
+                fetch('/api/users/createActivityFromApp', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -105,7 +90,6 @@ export class AoiAppGlobals extends YpAppGlobals {
             }
         };
         this.parseQueryString();
-        this.earlName = this.getEarlName();
         this.originalReferrer = document.referrer;
         document.addEventListener('set-ids', this.setIds.bind(this));
     }

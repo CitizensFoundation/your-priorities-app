@@ -81,7 +81,11 @@ export class AllOurIdeasController {
     const locale = req.query.locale;
 
     try {
-      const group = (await Group.findOne(groupId)) as YpGroupData;
+      const group = (await Group.findOne({
+        where: {
+          id: groupId
+        }
+      })) as YpGroupData;
       const aoiConfig = (group.configuration as AoiGroupConfiguration)
         .allOurIdeas;
       if (group && aoiConfig.earl) {
@@ -89,14 +93,13 @@ export class AllOurIdeasController {
           with_prompt: true,
           with_appearance: true,
           with_visitor_stats: true,
-          visitor_identifier: req.session.id,
-          ...{ future_prompts: { number: 1 }, with_average_votes: true },
+          visitor_identifier: req.session.id
         };
 
         const questionResponse = await fetch(
           `${PAIRWISE_API_HOST}/questions/${
             aoiConfig.earl.question_id
-          }?${new URLSearchParams(showParams as any).toString()}`,
+          }.json?${new URLSearchParams(showParams as any).toString()}`,
           {
             method: "GET",
             headers: defaultHeader,

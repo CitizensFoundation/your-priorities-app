@@ -10,7 +10,7 @@ import { resolveMarkdown } from '../../common/litMarkdown/litMarkdown.js';
 import '../../common/yp-image.js';
 import { YpBaseElement } from '../../common/yp-base-element.js';
 import { SharedStyles } from './SharedStyles.js';
-import '@material/web/circularprogress/circular-progress.js';
+import '@material/web/progress/circular-progress.js';
 let AoiSurveyAnalysis = class AoiSurveyAnalysis extends YpBaseElement {
     async connectedCallback() {
         super.connectedCallback();
