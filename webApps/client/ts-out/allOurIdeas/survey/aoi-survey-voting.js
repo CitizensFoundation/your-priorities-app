@@ -145,7 +145,10 @@ let AoiSurveyVoting = class AoiSurveyVoting extends YpBaseElement {
         .buttonContainer md-elevated-button {
           margin: 8px;
           width: 400px;
-          --md-elevated-button-container-height: 120px;
+          max-height: 120px;
+          height: 120px;
+          white-space: collapse balance;
+          --md-elevated-button-container-height: 120px !important;
           --md-elevated-button-hover-label-text-color: var(
             --md-sys-color-on-primary-container
           );

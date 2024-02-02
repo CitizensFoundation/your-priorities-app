@@ -62,6 +62,7 @@ let AoiEarlIdeasEditor = class AoiEarlIdeasEditor extends YpStreamingLlmBase {
                 break;
             case "end":
                 this.isGeneratingIdeas = false;
+                this.ideasElement.value += "\n";
                 break;
             case "stream":
                 if (wsMessage.message && wsMessage.message != "undefined") {
@@ -99,15 +100,16 @@ let AoiEarlIdeasEditor = class AoiEarlIdeasEditor extends YpStreamingLlmBase {
     async submitIdeasForCreation() {
         this.isSubmittingIdeas = true;
         try {
-            const { question_id } = (this.configuration.earl =
-                await this.serverApi.submitIdeasForCreation(this.communityId, this.ideas, this.configuration.earl.question.name));
+            const { question_id } = await this.serverApi.submitIdeasForCreation(this.communityId, this.ideas, this.configuration.earl.question.name);
             this.configuration.earl.question_id = question_id;
             this.configuration.earl.active = true;
-            this.configuration.earl.configuration = {};
-            this.configuration.earl.question = {
-                name: this.configuration.earl.question.name,
-                id: question_id,
-            };
+            if (!this.configuration.earl.configuration) {
+                this.configuration.earl.configuration = {};
+            }
+            if (!this.configuration.earl.question) {
+                this.configuration.earl.question = {};
+            }
+            this.configuration.earl.question.id = question_id;
             this.fire("configuration-changed", this.configuration);
             this.requestUpdate();
             this.getChoices();
@@ -179,7 +181,7 @@ let AoiEarlIdeasEditor = class AoiEarlIdeasEditor extends YpStreamingLlmBase {
         }
 
         .idea {
-          padding: 8px;
+          padding: 16px;
           padding-top: 16px;
           padding-bottom: 16px;
           border-radius: 16px;
@@ -221,7 +223,9 @@ let AoiEarlIdeasEditor = class AoiEarlIdeasEditor extends YpStreamingLlmBase {
         }
 
         md-filled-text-field {
-          --md-filled-field-container-color: var(--md-sys-color-surface) !important;
+          --md-filled-field-container-color: var(
+            --md-sys-color-surface
+          ) !important;
         }
       `,
         ];
@@ -233,7 +237,7 @@ let AoiEarlIdeasEditor = class AoiEarlIdeasEditor extends YpStreamingLlmBase {
           type="textarea"
           id="ideas"
           rows="14"
-          .label="${this.t("ideasForVotingOn")}"
+          .label="${this.t("answersToVoteOn")}"
         >
         </md-filled-text-field>
         <md-linear-progress
@@ -263,8 +267,10 @@ let AoiEarlIdeasEditor = class AoiEarlIdeasEditor extends YpStreamingLlmBase {
           <md-filled-button
             class="button"
             @click="${this.submitIdeasForCreation}"
-            ?disabled="${this.isSubmittingIdeas || this.ideas?.length < 1}"
-            >${this.t("submitIdeasForCreation")}</md-filled-button
+            ?disabled="${this.isSubmittingIdeas ||
+            this.ideas?.length < 3 ||
+            this.isGeneratingIdeas}"
+            >${this.t("submitAnswersForCreation")}</md-filled-button
           >
         </div>
       </div>
@@ -273,10 +279,7 @@ let AoiEarlIdeasEditor = class AoiEarlIdeasEditor extends YpStreamingLlmBase {
     renderIdeasSortingChips() {
         return html `
       <div class="layout horizontal center-center">
-        <md-chip-set
-          class="ideaFilters layout horizontal wrap"
-          type="filter"
-        >
+        <md-chip-set class="ideaFilters layout horizontal wrap" type="filter">
           <md-filter-chip
             class="layout horizontal center-center"
             label="Latest"
@@ -309,11 +312,11 @@ let AoiEarlIdeasEditor = class AoiEarlIdeasEditor extends YpStreamingLlmBase {
             ?hidden="${!this.isFetchingChoices}"
           ></md-linear-progress>
           <div class="layout horizontal ideaContainer">
-              <div class="flex"></div>
-              <div class="wins">${this.t("wins")}</div>
-              <div class="losses">${this.t("losses")}</div>
-              <div class="score">${this.t("score")}</div>
-              <div class="buttons">${this.t("actions")}</div>
+            <div class="flex"></div>
+            <div class="wins">${this.t("wins")}</div>
+            <div class="losses">${this.t("losses")}</div>
+            <div class="score">${this.t("score")}</div>
+            <div class="buttons">${this.t("actions")}</div>
           </div>
 
           ${this.sortedChoices?.map((idea) => {

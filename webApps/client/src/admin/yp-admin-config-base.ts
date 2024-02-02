@@ -28,15 +28,13 @@ import { YpCollectionHelpers } from "../common/YpCollectionHelpers.js";
 import { YpGenerateAiImage } from "../common/yp-generate-ai-image.js";
 
 export const defaultLtpPromptsConfiguration = () => {
-  return Object.fromEntries(
-    Array.from({ length: 10 }, (_, i) => [i + 1, ""])
-  )
+  return Object.fromEntries(Array.from({ length: 10 }, (_, i) => [i + 1, ""]));
 };
 
 export const defaultLtpConfiguration = {
   crt: {
     prompts: defaultLtpPromptsConfiguration(),
-    promptsTests: defaultLtpPromptsConfiguration()
+    promptsTests: defaultLtpPromptsConfiguration(),
   },
 };
 
@@ -181,7 +179,8 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
     setTimeout(() => {
       const jsonEditor = this.$$("#jsoneditor") as any;
       const currentJson = jsonEditor.json;
-      (this.collection!.configuration as YpGroupConfiguration).ltp = currentJson;
+      (this.collection!.configuration as YpGroupConfiguration).ltp =
+        currentJson;
       this._configChanged();
       this.requestUpdate();
     }, 25);
@@ -191,13 +190,29 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
     // To overide in child class
   }
 
+  get disableSaveButtonForCollection() {
+    if (this.collectionType == "group") {
+      // Check if All Our Ideas Group Tyep
+      if ((this.collection as YpGroupData).configuration.groupType === 1) {
+        const hasQuestionId = (this.collection as YpGroupData).configuration
+          ?.allOurIdeas?.earl?.question_id;
+        return hasQuestionId === undefined;
+      } else {
+        return false;
+      }
+    } else {
+      return false;
+    }
+  }
+
   renderSaveButton(): TemplateResult {
     return html`
       <div class="layout horizontal">
         <md-filled-button
           raised
           class="saveButton"
-          ?disabled="${!this.configChanged}"
+          ?disabled="${!this.configChanged ||
+          this.disableSaveButtonForCollection}"
           @click="${this._save}"
           >${this.saveText || ""}</md-filled-button
         >
@@ -265,7 +280,8 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
                   <yp-structured-question-edit
                     index="${index}"
                     id="configQuestion_${index}"
-                    @yp-answer-content-changed="${question.onChange || this._configChanged}"
+                    @yp-answer-content-changed="${question.onChange ||
+                    this._configChanged}"
                     debounceTimeMs="10"
                     .name="${question.name || question.text || ""}"
                     ?disabled="${question.disabled ? true : false}"

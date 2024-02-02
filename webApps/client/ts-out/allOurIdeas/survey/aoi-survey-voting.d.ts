@@ -29,7 +29,7 @@ export declare class AoiSurveyVoting extends YpBaseElement {
     removeAndInsertFromLeft(): void;
     openNewIdeaDialog(): void;
     static get styles(): any[];
-    renderProgressBar(): typeof nothing | import("lit-html").TemplateResult<1>;
+    renderProgressBar(): import("lit-html").TemplateResult<1> | typeof nothing;
     render(): import("lit-html").TemplateResult<1>;
 }
 //# sourceMappingURL=aoi-survey-voting.d.ts.map

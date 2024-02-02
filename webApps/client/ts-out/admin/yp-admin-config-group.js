@@ -134,7 +134,7 @@ let YpAdminConfigGroup = class YpAdminConfigGroup extends YpAdminConfigBase {
     renderGroupTypeSelection() {
         return html `
       <md-outlined-select
-        .label="${this.t("selectType")}"
+        .label="${this.t("selectGroupType")}"
         @change="${this._setGroupType}"
       >
         ${this.groupTypeOptions.map((typeOption, index) => html `

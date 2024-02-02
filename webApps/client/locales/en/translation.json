@@ -1,4 +1,5 @@
 {
+  "selectGroupType": "Select group type",
   "active": "Active",
   "deactivate": "Deactivate",
   "showCantDecide": "Show can't decide",
@@ -10,8 +11,8 @@
   "questionName": "Question",
   "allOurIdeasOptions": "Options",
   "stop": "Stop",
-  "ideasForVotingOn": "Ideas for voting on",
-  "submitIdeasForCreation": "Submit Ideas",
+  "answersToVoteOn": "Answers to vote on",
+  "submitAnswersForCreation": "Submit Answers",
   "generateMoreIdeasWithAi": "Generate more ideas with AI",
   "generateIdeasWithAi": "Generate ideas with AI",
   "startReportCreation": "Create Report",

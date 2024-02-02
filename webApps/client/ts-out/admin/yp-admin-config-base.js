@@ -29,7 +29,7 @@ export const defaultLtpPromptsConfiguration = () => {
 export const defaultLtpConfiguration = {
     crt: {
         prompts: defaultLtpPromptsConfiguration(),
-        promptsTests: defaultLtpPromptsConfiguration()
+        promptsTests: defaultLtpPromptsConfiguration(),
     },
 };
 export class YpAdminConfigBase extends YpAdminPage {
@@ -93,7 +93,8 @@ export class YpAdminConfigBase extends YpAdminPage {
         setTimeout(() => {
             const jsonEditor = this.$$("#jsoneditor");
             const currentJson = jsonEditor.json;
-            this.collection.configuration.ltp = currentJson;
+            this.collection.configuration.ltp =
+                currentJson;
             this._configChanged();
             this.requestUpdate();
         }, 25);
@@ -101,13 +102,30 @@ export class YpAdminConfigBase extends YpAdminPage {
     tabsPostSetup(tabs) {
         // To overide in child class
     }
+    get disableSaveButtonForCollection() {
+        if (this.collectionType == "group") {
+            // Check if All Our Ideas Group Tyep
+            if (this.collection.configuration.groupType === 1) {
+                const hasQuestionId = this.collection.configuration
+                    ?.allOurIdeas?.earl?.question_id;
+                return hasQuestionId === undefined;
+            }
+            else {
+                return false;
+            }
+        }
+        else {
+            return false;
+        }
+    }
     renderSaveButton() {
         return html `
       <div class="layout horizontal">
         <md-filled-button
           raised
           class="saveButton"
-          ?disabled="${!this.configChanged}"
+          ?disabled="${!this.configChanged ||
+            this.disableSaveButtonForCollection}"
           @click="${this._save}"
           >${this.saveText || ""}</md-filled-button
         >
@@ -166,7 +184,8 @@ export class YpAdminConfigBase extends YpAdminPage {
                   <yp-structured-question-edit
                     index="${index}"
                     id="configQuestion_${index}"
-                    @yp-answer-content-changed="${question.onChange || this._configChanged}"
+                    @yp-answer-content-changed="${question.onChange ||
+                this._configChanged}"
                     debounceTimeMs="10"
                     .name="${question.name || question.text || ""}"
                     ?disabled="${question.disabled ? true : false}"
