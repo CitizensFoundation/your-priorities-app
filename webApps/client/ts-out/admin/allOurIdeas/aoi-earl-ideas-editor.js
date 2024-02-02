@@ -15,6 +15,7 @@ import "@material/web/button/filled-button.js";
 import "@material/web/button/filled-tonal-button.js";
 import "@material/web/chips/filter-chip.js";
 import "@material/web/chips/chip-set.js";
+import "@material/web/textfield/filled-text-field.js";
 let AoiEarlIdeasEditor = class AoiEarlIdeasEditor extends YpStreamingLlmBase {
     constructor() {
         super();
@@ -87,8 +88,9 @@ let AoiEarlIdeasEditor = class AoiEarlIdeasEditor extends YpStreamingLlmBase {
     }
     generateIdeas() {
         this.isGeneratingIdeas = true;
+        debugger;
         try {
-            this.serverApi.startGenerateIdeas(this.questionName, this.communityId, this.wsClientId, this.ideas);
+            this.serverApi.startGenerateIdeas(this.configuration.earl.question.name, this.communityId, this.wsClientId, this.ideas);
         }
         catch (e) {
             console.error(e);
@@ -98,12 +100,12 @@ let AoiEarlIdeasEditor = class AoiEarlIdeasEditor extends YpStreamingLlmBase {
         this.isSubmittingIdeas = true;
         try {
             const { question_id } = (this.configuration.earl =
-                await this.serverApi.submitIdeasForCreation(this.communityId, this.ideas, this.questionName));
+                await this.serverApi.submitIdeasForCreation(this.communityId, this.ideas, this.configuration.earl.question.name));
             this.configuration.earl.question_id = question_id;
             this.configuration.earl.active = true;
             this.configuration.earl.configuration = {};
             this.configuration.earl.question = {
-                name: this.questionName,
+                name: this.configuration.earl.question.name,
                 id: question_id,
             };
             this.fire("configuration-changed", this.configuration);
@@ -199,9 +201,10 @@ let AoiEarlIdeasEditor = class AoiEarlIdeasEditor extends YpStreamingLlmBase {
           display: flex;
           align-items: center;
           justify-content: space-around;
+          width: 120px;
         }
 
-        md-outlined-text-field {
+        md-filled-text-field {
           width: 100%;
           margin-bottom: 32px;
         }
@@ -216,19 +219,23 @@ let AoiEarlIdeasEditor = class AoiEarlIdeasEditor extends YpStreamingLlmBase {
           margin-bottom: 24px;
           margin-top: -24px;
         }
+
+        md-filled-text-field {
+          --md-filled-field-container-color: var(--md-sys-color-surface) !important;
+        }
       `,
         ];
     }
     renderCreateIdeas() {
         return html `
       <div class="layout vertical center-center">
-        <md-outlined-text-field
+        <md-filled-text-field
           type="textarea"
           id="ideas"
           rows="14"
           .label="${this.t("ideasForVotingOn")}"
         >
-        </md-outlined-text-field>
+        </md-filled-text-field>
         <md-linear-progress
           class="generationProgress"
           ?hidden="${!this.isGeneratingIdeas}"
@@ -301,12 +308,20 @@ let AoiEarlIdeasEditor = class AoiEarlIdeasEditor extends YpStreamingLlmBase {
             indeterminate
             ?hidden="${!this.isFetchingChoices}"
           ></md-linear-progress>
+          <div class="layout horizontal ideaContainer">
+              <div class="flex"></div>
+              <div class="wins">${this.t("wins")}</div>
+              <div class="losses">${this.t("losses")}</div>
+              <div class="score">${this.t("score")}</div>
+              <div class="buttons">${this.t("actions")}</div>
+          </div>
+
           ${this.sortedChoices?.map((idea) => {
             return html `<div class="layout horizontal ideaContainer">
               <div class="idea">${idea.data}</div>
               <div class="wins">${idea.wins}</div>
               <div class="losses">${idea.losses}</div>
-              <div class="score">${idea.score}</div>
+              <div class="score">${Math.round(idea.score)}</div>
               <div class="buttons">
                 <md-outlined-button @click="${this.toggleIdeaActivity(idea)}">
                   ${idea.active ? this.t("deactivate") : this.t("activate")}
@@ -334,9 +349,6 @@ let AoiEarlIdeasEditor = class AoiEarlIdeasEditor extends YpStreamingLlmBase {
 __decorate([
     property({ type: Number })
 ], AoiEarlIdeasEditor.prototype, "groupId", void 0);
-__decorate([
-    property({ type: String })
-], AoiEarlIdeasEditor.prototype, "questionName", void 0);
 __decorate([
     property({ type: Number })
 ], AoiEarlIdeasEditor.prototype, "communityId", void 0);

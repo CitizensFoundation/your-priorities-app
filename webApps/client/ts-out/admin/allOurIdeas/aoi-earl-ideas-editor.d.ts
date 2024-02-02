@@ -8,9 +8,9 @@ import "@material/web/button/filled-button.js";
 import "@material/web/button/filled-tonal-button.js";
 import "@material/web/chips/filter-chip.js";
 import "@material/web/chips/chip-set.js";
+import "@material/web/textfield/filled-text-field.js";
 export declare class AoiEarlIdeasEditor extends YpStreamingLlmBase {
     groupId: number;
-    questionName: string | undefined;
     communityId: number | undefined;
     configuration: AoiConfigurationData;
     isCreatingIdeas: boolean;

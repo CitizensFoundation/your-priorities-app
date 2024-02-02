@@ -11,6 +11,6 @@ export declare class PlausibleDashboard extends PlausibleBaseElementWithState {
     connectedCallback(): void;
     static get styles(): import("lit").CSSResult[];
     updated(changedProperties: Map<string | number | symbol, unknown>): void;
-    render(): import("lit-html").TemplateResult<1> | typeof nothing;
+    render(): typeof nothing | import("lit-html").TemplateResult<1>;
 }
 //# sourceMappingURL=pl-dashboard.d.ts.map

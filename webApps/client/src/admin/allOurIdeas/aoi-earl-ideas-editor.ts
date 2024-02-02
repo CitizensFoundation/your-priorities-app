@@ -11,14 +11,12 @@ import "@material/web/button/filled-button.js";
 import "@material/web/button/filled-tonal-button.js";
 import "@material/web/chips/filter-chip.js";
 import "@material/web/chips/chip-set.js";
+import "@material/web/textfield/filled-text-field.js";
 
 @customElement("aoi-earl-ideas-editor")
 export class AoiEarlIdeasEditor extends YpStreamingLlmBase {
   @property({ type: Number })
   groupId!: number;
-
-  @property({ type: String })
-  questionName: string | undefined;
 
   @property({ type: Number })
   communityId: number | undefined;
@@ -129,9 +127,10 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmBase {
 
   generateIdeas() {
     this.isGeneratingIdeas = true;
+    debugger;
     try {
       this.serverApi.startGenerateIdeas(
-        this.questionName!,
+        this.configuration.earl!.question!.name,
         this.communityId!,
         this.wsClientId,
         this.ideas
@@ -148,13 +147,13 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmBase {
         await this.serverApi.submitIdeasForCreation(
           this.communityId!,
           this.ideas,
-          this.questionName!
+          this.configuration.earl!.question!.name,
         ));
       this.configuration.earl.question_id = question_id;
       this.configuration.earl.active = true;
       this.configuration.earl.configuration = {} as any;
       this.configuration.earl.question = {
-        name: this.questionName!,
+        name: this.configuration.earl.question!.name,
         id: question_id!,
       } as any;
       this.fire("configuration-changed", this.configuration);
@@ -249,9 +248,10 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmBase {
           display: flex;
           align-items: center;
           justify-content: space-around;
+          width: 120px;
         }
 
-        md-outlined-text-field {
+        md-filled-text-field {
           width: 100%;
           margin-bottom: 32px;
         }
@@ -266,6 +266,10 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmBase {
           margin-bottom: 24px;
           margin-top: -24px;
         }
+
+        md-filled-text-field {
+          --md-filled-field-container-color: var(--md-sys-color-surface) !important;
+        }
       `,
     ];
   }
@@ -273,13 +277,13 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmBase {
   renderCreateIdeas() {
     return html`
       <div class="layout vertical center-center">
-        <md-outlined-text-field
+        <md-filled-text-field
           type="textarea"
           id="ideas"
           rows="14"
           .label="${this.t("ideasForVotingOn")}"
         >
-        </md-outlined-text-field>
+        </md-filled-text-field>
         <md-linear-progress
           class="generationProgress"
           ?hidden="${!this.isGeneratingIdeas}"
@@ -354,12 +358,20 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmBase {
             indeterminate
             ?hidden="${!this.isFetchingChoices}"
           ></md-linear-progress>
+          <div class="layout horizontal ideaContainer">
+              <div class="flex"></div>
+              <div class="wins">${this.t("wins")}</div>
+              <div class="losses">${this.t("losses")}</div>
+              <div class="score">${this.t("score")}</div>
+              <div class="buttons">${this.t("actions")}</div>
+          </div>
+
           ${this.sortedChoices?.map((idea: AoiChoiceData) => {
             return html`<div class="layout horizontal ideaContainer">
               <div class="idea">${idea.data}</div>
               <div class="wins">${idea.wins}</div>
               <div class="losses">${idea.losses}</div>
-              <div class="score">${idea.score}</div>
+              <div class="score">${Math.round(idea.score)}</div>
               <div class="buttons">
                 <md-outlined-button @click="${this.toggleIdeaActivity(idea)}">
                   ${idea.active ? this.t("deactivate") : this.t("activate")}

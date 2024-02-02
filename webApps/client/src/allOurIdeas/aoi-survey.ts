@@ -360,6 +360,10 @@ export class AoiSurvey extends YpBaseElement  {
           margin: 16px;
         }
 
+        .mainPageContainer {
+          overflow: hidden;
+        }
+
         .topAppBar {
           border-radius: 48px;
           background-color: var(--md-sys-color-primary-container);

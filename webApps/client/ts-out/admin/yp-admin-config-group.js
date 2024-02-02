@@ -1564,7 +1564,7 @@ let YpAdminConfigGroup = class YpAdminConfigGroup extends YpAdminConfigBase {
         return html ` <aoi-earl-ideas-editor
       .communityId="${communityId}"
       @configuration-changed="${this.earlConfigChanged}"
-      .questionName=${this.aoiQuestionName}
+      .questionName="${this.aoiQuestionName}""
       .configuration="${this.group.configuration.allOurIdeas}"
     ></aoi-earl-ideas-editor>`;
     }
@@ -1582,8 +1582,11 @@ let YpAdminConfigGroup = class YpAdminConfigGroup extends YpAdminConfigBase {
         }
         configuration.earl.question.name = value;
         this.aoiQuestionName = value;
+        console.error("questionNameChanged", value);
+        this.set(this.group.configuration.allOurIdeas.earl, "question.name", value);
         this.configTabs = this.setupConfigTabs();
         this._configChanged();
+        this.requestUpdate();
     }
     _getAllOurIdeaTab() {
         let configuration = this.group.configuration.allOurIdeas;
