@@ -57,6 +57,26 @@ export class AoiAdminServerApi extends YpServerApi {
     );
   }
 
+  public async updateChoice(
+    communityId: number,
+    questionId: number,
+    choiceId: number,
+    choiceData: AoiAnswerToVoteOnData,
+ ): Promise<void> {
+    return this.fetchWrapper(
+      this.baseUrlPath + `/${communityId}/questions/${questionId}/choices/${choiceId}`,
+      {
+        method: "PUT",
+        body: JSON.stringify({
+          data: choiceData
+        }),
+      },
+      true,
+      undefined,
+      true
+    );
+  }
+
   public async toggleIdeaActive(
     groupId: number,
     choiceId: number,

@@ -42,6 +42,10 @@ interface AoiEarlData {
   question?: AoiQuestionData;
 }
 
+interface AoiAnswerToVoteOnData {
+  imageUrl?: string;
+  content: string;
+}
 
 interface AoiEarlConfigurationData {
   welcome_message?: string;
@@ -101,7 +105,7 @@ interface AoiResultData {
   score: number;
   wins: number;
   losses: number;
-  data: string;
+  data: AoiAnswerToVoteOnData;
   user_created: boolean;
 }
 
@@ -149,7 +153,7 @@ interface AoiChoiceData {
   wins: number;
   losses: number;
   prompts_count: number;
-  data: string;
+  data: AoiAnswerToVoteOnData;
   creator_id: number;
   version: number;
 }

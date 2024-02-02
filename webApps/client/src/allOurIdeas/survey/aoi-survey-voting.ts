@@ -38,14 +38,14 @@ export class AoiSurveyVoting extends YpBaseElement {
   @property({ type: Number })
   voteCount = 0;
 
-  @property({ type: String })
-  leftAnswer: string | undefined;
-
   @property({ type: Boolean })
   spinnersActive = false;
 
-  @property({ type: String })
-  rightAnswer: string | undefined;
+  @property({ type: Object })
+  leftAnswer: AoiAnswerToVoteOnData | undefined;
+
+  @property({ type: Object })
+  rightAnswer: AoiAnswerToVoteOnData | undefined;
 
   @property({ type: String })
   appearanceLookup!: string;
@@ -163,12 +163,24 @@ export class AoiSurveyVoting extends YpBaseElement {
       this.removeAndInsertFromLeft();
       return;
     } else {
-      this.leftAnswer = postVoteResponse.newleft
-        .replace(/&#39;/g, "'")
-        .replace(/&quot;/g, '"');
-      this.rightAnswer = postVoteResponse.newright
-        .replace(/&#39;/g, "'")
-        .replace(/&quot;/g, '"');
+      try {
+        this.leftAnswer = JSON.parse(
+          postVoteResponse.newleft
+        ) as AoiAnswerToVoteOnData;
+        this.rightAnswer = JSON.parse(
+          postVoteResponse.newright
+        ) as AoiAnswerToVoteOnData;
+        console.error(`Parsed JSON`, this.leftAnswer, this.rightAnswer);
+      } catch (error) {
+        console.error(
+          "Error parsing answers JSON",
+          error,
+          postVoteResponse.newleft,
+          postVoteResponse.newright
+        );
+        this.leftAnswer = postVoteResponse.newleft as any;
+        this.rightAnswer = postVoteResponse.newright as any;
+      }
 
       this.promptId = postVoteResponse.prompt_id;
       this.appearanceLookup = postVoteResponse.appearance_lookup;
@@ -241,6 +253,18 @@ export class AoiSurveyVoting extends YpBaseElement {
           );
         }
 
+        .iconImage, .iconImageRight {
+          width: 50px;
+          height: 50px;
+          margin-left: 16px;
+          border-radius: 24px;
+        }
+
+        .iconImageRight {
+          margin-left: 0;
+          margin-right: 16px;
+        }
+
         .buttonContainer md-elevated-button {
           margin: 8px;
           width: 400px;
@@ -299,7 +323,8 @@ export class AoiSurveyVoting extends YpBaseElement {
           margin-right: 32px;
         }
 
-        .newIdeaButton, .skipButton {
+        .newIdeaButton,
+        .skipButton {
           margin-top: 24px;
         }
 
@@ -482,7 +507,20 @@ export class AoiSurveyVoting extends YpBaseElement {
             ?hidden="${this.spinnersActive}"
             @click=${() => this.voteForAnswer("left")}
           >
-            ${YpFormattingHelpers.truncate(this.leftAnswer!, 140)}
+            ${this.leftAnswer?.imageUrl
+              ? html`
+                  <img
+                    slot="icon"
+                    src="${this.leftAnswer?.imageUrl}"
+                    alt="Left answer image"
+                    class="iconImage"
+                  />
+                `
+              : nothing}
+            ${YpFormattingHelpers.truncate(
+              this.leftAnswer?.content || (this.leftAnswer as any),
+              140
+            )}
           </md-elevated-button>
           <span class="or"> ${this.t("or")} </span>
           ${this.spinnersActive
@@ -498,10 +536,24 @@ export class AoiSurveyVoting extends YpBaseElement {
           <md-elevated-button
             id="rightAnswerButton"
             class="rightAnswer"
+            trailing-icon
             ?hidden="${this.spinnersActive}"
             @click=${() => this.voteForAnswer("right")}
           >
-            ${YpFormattingHelpers.truncate(this.rightAnswer!, 140)}
+            ${this.rightAnswer?.imageUrl
+              ? html`
+                  <img
+                    slot="icon"
+                    src="${this.rightAnswer?.imageUrl}"
+                    alt="Right answer image"
+                    class="iconImageRight"
+                  />
+                `
+              : nothing}
+            ${YpFormattingHelpers.truncate(
+              this.rightAnswer?.content || (this.rightAnswer as any),
+              140
+            )}
           </md-elevated-button>
         </div>
         <div class="layout horizontal">

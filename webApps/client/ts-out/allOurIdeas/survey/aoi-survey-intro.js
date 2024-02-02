@@ -12,10 +12,13 @@ import { YpMediaHelpers } from "../../common/YpMediaHelpers.js";
 import "../../common/yp-image.js";
 import "@material/web/fab/fab.js";
 import { SharedStyles } from "./SharedStyles.js";
+import { YpNavHelpers } from "../../common/YpNavHelpers.js";
+import { YpAccessHelpers } from "../../common/YpAccessHelpers.js";
 let AoiSurveyIntro = class AoiSurveyIntro extends YpBaseElement {
     constructor() {
         super(...arguments);
         this.themeHighContrast = false;
+        this.isAdmin = false;
         this.footer = null;
         this.footerEnd = null;
         this.footerTopObserver = null;
@@ -24,6 +27,7 @@ let AoiSurveyIntro = class AoiSurveyIntro extends YpBaseElement {
     async connectedCallback() {
         super.connectedCallback();
         window.appGlobals.activity("Intro - open");
+        this.isAdmin = YpAccessHelpers.checkGroupAccess(this.group);
     }
     disconnectedCallback() {
         super.disconnectedCallback();
@@ -39,6 +43,30 @@ let AoiSurveyIntro = class AoiSurveyIntro extends YpBaseElement {
     }
     firstUpdated() {
         this.setupFooterObserver();
+    }
+    _openAnalyticsAndPromption() {
+        YpNavHelpers.redirectTo(`/analytics/group/${this.group.id}`);
+    }
+    _openAdmin() {
+        YpNavHelpers.redirectTo(`/admin/group/${this.group.id}`);
+    }
+    renderAdminButtons() {
+        return html `
+      <div class="layout horizontal adminButtons">
+        <md-icon-button
+          id="menuButton"
+          @click="${this._openAnalyticsAndPromption}"
+          title="${this.t("Analytics")}"
+          ><md-icon>analytics</md-icon>
+        </md-icon-button>
+        <md-icon-button
+          id="menuButton"
+          @click="${this._openAdmin}"
+          title="${this.t("Admin")}"
+          ><md-icon>settings</md-icon>
+        </md-icon-button>
+      </div>
+    `;
     }
     setupFooterObserver() {
         this.footer = this.shadowRoot?.querySelector("#footerStart");
@@ -86,6 +114,10 @@ let AoiSurveyIntro = class AoiSurveyIntro extends YpBaseElement {
           color: var(--md-sys-color-on-background);
         }
 
+        .adminButtons {
+          margin-top: 16px;
+        }
+
         .footerHtml a {
           color: var(--md-sys-color-on-background);
         }
@@ -117,6 +149,10 @@ let AoiSurveyIntro = class AoiSurveyIntro extends YpBaseElement {
           width: 632px;
           height: 356px;
           margin-top: 32px;
+        }
+
+        .questionTitle {
+          max-width: 600px;
         }
 
         .questionTitle[dark-mode] {
@@ -157,8 +193,9 @@ let AoiSurveyIntro = class AoiSurveyIntro extends YpBaseElement {
           src="${YpMediaHelpers.getImageFormatUrl(this.group.GroupLogoImages)}"
         ></yp-image>
         <div class="questionTitle" ?dark-mode="${this.themeDarkMode}">
-          ${this.question.name}
+          ${this.question?.name}
         </div>
+        ${this.isAdmin ? this.renderAdminButtons() : nothing}
         ${this.earl.active
             ? html `
               <md-fab
@@ -243,6 +280,9 @@ __decorate([
 __decorate([
     property({ type: Boolean })
 ], AoiSurveyIntro.prototype, "themeHighContrast", void 0);
+__decorate([
+    property({ type: Boolean })
+], AoiSurveyIntro.prototype, "isAdmin", void 0);
 AoiSurveyIntro = __decorate([
     customElement("aoi-survey-intro")
 ], AoiSurveyIntro);

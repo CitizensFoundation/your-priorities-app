@@ -663,7 +663,10 @@ interface YpWorkPackageData {
 
 interface YpGenerativeAiWorkPackageData extends YpWorkPackageData {
   prompt: string;
+  imageType: YpAiGenerateImageTypes | undefined;
 }
+
+type YpAiGenerateImageTypes = "logo" | "icon";
 
 interface YpUserData {
   id: number;

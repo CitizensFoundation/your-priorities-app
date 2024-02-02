@@ -1075,7 +1075,8 @@ router.post('/:groupId/:start_generating_ai_image', auth.can('edit group'), func
                 jobId: jobId,
                 collectionId: req.params.groupId,
                 collectionType: "group",
-                prompt: req.body.prompt
+                prompt: req.body.prompt,
+                imageType: req.body.imageType
             }, 'critical');
             res.send({ jobId });
         }

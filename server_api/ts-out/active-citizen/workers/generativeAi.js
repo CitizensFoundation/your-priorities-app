@@ -51,7 +51,7 @@ class GenerativeAiWorker {
             });
         });
     }
-    async getImageUrlFromPrompt(prompt) {
+    async getImageUrlFromPrompt(prompt, type = "logo") {
         const azureOpenaAiBase = process.env["AZURE_OPENAI_API_BASE"];
         const azureOpenAiApiKey = process.env["AZURE_OPENAI_API_KEY"];
         let client;
@@ -66,18 +66,40 @@ class GenerativeAiWorker {
         let retryCount = 0;
         let retrying = true; // Initialize as true
         let result;
+        let imageOptions;
+        if (type === "logo") {
+            imageOptions = {
+                n: 1,
+                size: "1792x1024",
+                quality: "hd",
+            };
+        }
+        else if (type === "icon") {
+            imageOptions = {
+                n: 1,
+                size: "1024x1024",
+                quality: "standard",
+            };
+        }
+        else {
+            imageOptions = {
+                n: 1,
+                size: "1792x1024",
+                quality: "hd",
+            };
+        }
         while (retrying && retryCount < maxDalleRetryCount) {
             try {
                 if (azureOpenAiApiKey && azureOpenaAiBase) {
-                    result = await client.getImages(process.env.AZURE_OPENAI_API_DALLE_DEPLOYMENT_NAME, prompt, { n: 1, size: "1792x1024", quality: "hd" });
+                    result = await client.getImages(process.env.AZURE_OPENAI_API_DALLE_DEPLOYMENT_NAME, prompt, imageOptions);
                 }
                 else {
                     result = await client.images.generate({
                         model: "dall-e-3",
                         prompt,
-                        n: 1,
-                        quality: "hd",
-                        size: "1792x1024",
+                        n: imageOptions.n,
+                        quality: imageOptions.quality,
+                        size: imageOptions.size,
                     });
                 }
                 if (result) {
@@ -115,7 +137,7 @@ class GenerativeAiWorker {
             const imageFilePath = path_1.default.join("/tmp", `${(0, uuid_1.v4)()}.png`);
             const s3ImagePath = `ypGenAi/${workPackage.collectionType}/${workPackage.collectionId}/${(0, uuid_1.v4)()}.png`;
             try {
-                const imageUrl = await this.getImageUrlFromPrompt(workPackage.prompt);
+                const imageUrl = await this.getImageUrlFromPrompt(workPackage.prompt, workPackage.imageType);
                 if (imageUrl) {
                     await this.downloadImage(imageUrl, imageFilePath);
                     console.debug(fs_1.default.existsSync(imageFilePath)

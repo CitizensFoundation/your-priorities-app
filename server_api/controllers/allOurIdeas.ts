@@ -70,6 +70,12 @@ export class AllOurIdeasController {
       this.skip.bind(this)
     );
 
+    this.router.put(
+      "/:communityId/questions/:questionId/choices/:choiceId",
+      auth.can("create group"),
+      this.updateCoiceData.bind(this)
+    );
+
     console.log("---- have initialized routes for allOurIdeasController");
   }
 
@@ -179,14 +185,8 @@ export class AllOurIdeasController {
         const nextPrompt = (await response.json()) as AoiPromptData;
 
         const result = {
-          newleft: this.truncate(nextPrompt.left_choice_text, {
-            length: 140,
-            omission: "…",
-          }),
-          newright: this.truncate(nextPrompt.right_choice_text, {
-            length: 140,
-            omission: "…",
-          }),
+          newleft: nextPrompt.left_choice_text,
+          newright: nextPrompt.right_choice_text,
           left_choice_id: nextPrompt.left_choice_id,
           left_choice_url: this.getQuestionChoicePath(
             question_id,
@@ -252,6 +252,28 @@ export class AllOurIdeasController {
     }
   }
 
+  public async updateCoiceData(req: Request, res: Response) {
+    try {
+      const response = await fetch(
+        `${PAIRWISE_API_HOST}/questions/${req.params.questionId}/choices/${req.params.choiceId}.json`,
+        {
+          method: "PUT",
+          headers: defaultHeader,
+          body: JSON.stringify({
+            data: req.body.data
+        }),
+        }
+      );
+
+      if (!response.ok) throw new Error("Choice update failed.");
+
+      res.status(200).json({ message: "Choice data updated" });
+    } catch (error) {
+      console.error(error);
+      res.status(422).json({ error: "Choice update failed" });
+    }
+  }
+
   public async skip(req: Request, res: Response) {
     const { id, question_id } = req.body;
     const skipOptions = this.getVoteRequestOptions(req, "skip");
@@ -276,14 +298,8 @@ export class AllOurIdeasController {
       const nextPrompt = (await response.json()) as AoiPromptData;
 
       const result = {
-        newleft: this.truncate(nextPrompt.left_choice_text, {
-          length: 140,
-          omission: "…",
-        }),
-        newright: this.truncate(nextPrompt.right_choice_text, {
-          length: 140,
-          omission: "…",
-        }),
+        newleft: nextPrompt.left_choice_text,
+        newright: nextPrompt.right_choice_text,
         left_choice_id: nextPrompt.left_choice_id,
         left_choice_url: this.getQuestionChoicePath(
           question_id,
@@ -321,7 +337,16 @@ export class AllOurIdeasController {
         throw new Error(`Failed to fetch choices: ${response.statusText}`);
       }
 
-      const choices = await response.json();
+      const choices = await response.json() as AoiChoiceData[];
+
+      try {
+        for (let choice of choices) {
+          choice.data = JSON.parse(choice.data as any) as AoiAnswerToVoteOnData;
+        }
+      } catch (error) {
+        console.error(error);
+      }
+
       res.json(choices);
     } catch (error) {
       console.error(error);
@@ -394,21 +419,6 @@ export class AllOurIdeasController {
     }
 
     return options;
-  }
-
-  truncate(
-    text: string,
-    options: { length: number; omission?: string }
-  ): string {
-    const defaultOptions = { length: 30, omission: "…" };
-    const { length, omission } = { ...defaultOptions, ...options };
-
-    if (text.length <= length) {
-      return text;
-    }
-
-    const truncatedText = text.slice(0, length - omission.length);
-    return truncatedText + omission;
   }
 
   /*async analysis(req: Request, res: Response) {

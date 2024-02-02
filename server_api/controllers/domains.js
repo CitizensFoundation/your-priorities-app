@@ -1242,7 +1242,8 @@ router.post('/:domainId/:start_generating_ai_image', auth.can('edit domain'), fu
         jobId: jobId,
         collectionId: req.params.domainId,
         collectionType: "domain",
-        prompt: req.body.prompt
+        prompt: req.body.prompt,
+        imageType: req.body.imageType
       }, 'critical');
 
       res.send({ jobId });

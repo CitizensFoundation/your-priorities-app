@@ -78,11 +78,11 @@ export class YpServerApi extends YpServerApiBase {
             body: JSON.stringify(body),
         }, false);
     }
-    startGeneratingAiImage(collectionType, collectionId, prompt) {
+    startGeneratingAiImage(collectionType, collectionId, imageType, prompt) {
         return this.fetchWrapper(this.baseUrlPath +
             `/${YpServerApi.transformCollectionTypeToApi(collectionType)}/${collectionId}/start_generating_ai_image`, {
             method: 'POST',
-            body: JSON.stringify({ prompt }),
+            body: JSON.stringify({ prompt, imageType }),
         });
     }
     getPromoterRights() {

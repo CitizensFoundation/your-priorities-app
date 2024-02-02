@@ -17,6 +17,7 @@ let YpGenerateAiImage = class YpGenerateAiImage extends YpBaseElement {
     constructor() {
         super(...arguments);
         this.submitting = false;
+        this.imageType = "logo";
     }
     async connectedCallback() {
         super.connectedCallback();
@@ -43,12 +44,15 @@ let YpGenerateAiImage = class YpGenerateAiImage extends YpBaseElement {
                         imageId: pollingResponse.data.imageId,
                         imageUrl: pollingResponse.data.imageUrl,
                     });
-                    this.dialog.close();
+                    this.dialog?.close();
                     this.submitting = false;
                     window.appGlobals.activity(`Generate AI Image - completed`);
                 }
                 else if (pollingResponse.error) {
                     this.submitting = false;
+                    this.fire("image-generation-error", {
+                        error: pollingResponse.error
+                    });
                     // Handle any errors
                     this.currentError = this.t("An error occurred while generating the image.");
                     if (pollingResponse.flagged) {
@@ -78,7 +82,7 @@ let YpGenerateAiImage = class YpGenerateAiImage extends YpBaseElement {
         let generateAiImageStartResponse;
         try {
             generateAiImageStartResponse =
-                await window.serverApi.startGeneratingAiImage(this.collectionType, this.collectionId, this.finalPrompt);
+                await window.serverApi.startGeneratingAiImage(this.collectionType, this.collectionId, this.imageType, this.finalPrompt);
         }
         catch (error) {
             console.error(error);
@@ -117,7 +121,7 @@ let YpGenerateAiImage = class YpGenerateAiImage extends YpBaseElement {
         if (this.timeout) {
             clearTimeout(this.timeout);
         }
-        this.dialog.close();
+        this.dialog?.close();
         window.appGlobals.activity(`Generate AI Image - cancel`);
     }
     textAreaKeyDown(e) {
@@ -296,6 +300,9 @@ __decorate([
 __decorate([
     property({ type: String })
 ], YpGenerateAiImage.prototype, "collectionType", void 0);
+__decorate([
+    property({ type: String })
+], YpGenerateAiImage.prototype, "imageType", void 0);
 __decorate([
     property({ type: Number })
 ], YpGenerateAiImage.prototype, "jobId", void 0);

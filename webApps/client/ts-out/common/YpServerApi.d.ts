@@ -17,7 +17,7 @@ export declare class YpServerApi extends YpServerApiBase {
     marketingTrackingOpen(groupId: number, body: Record<string, unknown>): Promise<any>;
     createApiKey(): Promise<any>;
     triggerTrackingGoal(groupId: number, body: Record<string, unknown>): Promise<any>;
-    startGeneratingAiImage(collectionType: string, collectionId: number, prompt: string): Promise<any>;
+    startGeneratingAiImage(collectionType: string, collectionId: number, imageType: string, prompt: string): Promise<any>;
     getPromoterRights(): Promise<any>;
     pollForGeneratingAiImage(collectionType: string, collectionId: number, jobId: number): Promise<any>;
     getCollection(collectionType: string, collectionId: number): Promise<any>;

@@ -37,6 +37,7 @@ class AllOurIdeasController {
         this.router.get("/:communityId/choices/:questionId", authorization_js_1.default.can("create group"), this.getChoices.bind(this));
         this.router.post("/:groupId/questions/:questionId/prompts/:promptId/votes", authorization_js_1.default.can("view group"), this.vote.bind(this));
         this.router.post("/:groupId/questions/:questionId/prompts/:promptId/skips", authorization_js_1.default.can("view group"), this.skip.bind(this));
+        this.router.put("/:communityId/questions/:questionId/choices/:choiceId", authorization_js_1.default.can("create group"), this.updateCoiceData.bind(this));
         console.log("---- have initialized routes for allOurIdeasController");
     }
     async generateIdeas(req, res) {
@@ -123,14 +124,8 @@ class AllOurIdeasController {
                     throw new Error("Vote unsuccessful.");
                 const nextPrompt = (await response.json());
                 const result = {
-                    newleft: this.truncate(nextPrompt.left_choice_text, {
-                        length: 140,
-                        omission: "…",
-                    }),
-                    newright: this.truncate(nextPrompt.right_choice_text, {
-                        length: 140,
-                        omission: "…",
-                    }),
+                    newleft: nextPrompt.left_choice_text,
+                    newright: nextPrompt.right_choice_text,
                     left_choice_id: nextPrompt.left_choice_id,
                     left_choice_url: this.getQuestionChoicePath(question_id, nextPrompt.left_choice_id),
                     right_choice_id: nextPrompt.right_choice_id,
@@ -183,6 +178,24 @@ class AllOurIdeasController {
                 .json({ error: "An error occurred during question creation" });
         }
     }
+    async updateCoiceData(req, res) {
+        try {
+            const response = await fetch(`${PAIRWISE_API_HOST}/questions/${req.params.questionId}/choices/${req.params.choiceId}.json`, {
+                method: "PUT",
+                headers: defaultHeader,
+                body: JSON.stringify({
+                    data: req.body.data
+                }),
+            });
+            if (!response.ok)
+                throw new Error("Choice update failed.");
+            res.status(200).json({ message: "Choice data updated" });
+        }
+        catch (error) {
+            console.error(error);
+            res.status(422).json({ error: "Choice update failed" });
+        }
+    }
     async skip(req, res) {
         const { id, question_id } = req.body;
         const skipOptions = this.getVoteRequestOptions(req, "skip");
@@ -201,14 +214,8 @@ class AllOurIdeasController {
                 throw new Error("Skip failed.");
             const nextPrompt = (await response.json());
             const result = {
-                newleft: this.truncate(nextPrompt.left_choice_text, {
-                    length: 140,
-                    omission: "…",
-                }),
-                newright: this.truncate(nextPrompt.right_choice_text, {
-                    length: 140,
-                    omission: "…",
-                }),
+                newleft: nextPrompt.left_choice_text,
+                newright: nextPrompt.right_choice_text,
                 left_choice_id: nextPrompt.left_choice_id,
                 left_choice_url: this.getQuestionChoicePath(question_id, nextPrompt.left_choice_id),
                 right_choice_id: nextPrompt.right_choice_id,
@@ -235,6 +242,14 @@ class AllOurIdeasController {
                 throw new Error(`Failed to fetch choices: ${response.statusText}`);
             }
             const choices = await response.json();
+            try {
+                for (let choice of choices) {
+                    choice.data = JSON.parse(choice.data);
+                }
+            }
+            catch (error) {
+                console.error(error);
+            }
             res.json(choices);
         }
         catch (error) {
@@ -296,15 +311,6 @@ class AllOurIdeasController {
                 break;
         }
         return options;
-    }
-    truncate(text, options) {
-        const defaultOptions = { length: 30, omission: "…" };
-        const { length, omission } = { ...defaultOptions, ...options };
-        if (text.length <= length) {
-            return text;
-        }
-        const truncatedText = text.slice(0, length - omission.length);
-        return truncatedText + omission;
     }
 }
 exports.AllOurIdeasController = AllOurIdeasController;

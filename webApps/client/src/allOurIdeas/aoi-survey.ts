@@ -32,6 +32,7 @@ import {
 } from "../common/YpMaterialThemeHelper.js";
 import { YpCollection } from "../yp-collection/yp-collection.js";
 import { YpBaseElement } from "../common/yp-base-element.js";
+import { MdPrimaryTab } from "@material/web/tabs/primary-tab.js";
 
 const PagesTypes = {
   Introduction: 1,
@@ -107,11 +108,11 @@ export class AoiSurvey extends YpBaseElement  {
   @property({ type: String })
   appearanceLookup!: string;
 
-  @property({ type: String })
-  currentLeftAnswer: string | undefined;
+  @property({ type: Object })
+  currentLeftAnswer: AoiAnswerToVoteOnData | undefined;
 
-  @property({ type: String })
-  currentRightAnswer: string | undefined;
+  @property({ type: Object })
+  currentRightAnswer: AoiAnswerToVoteOnData | undefined;
 
   @property({ type: Number })
   currentPromptId: number | undefined;
@@ -141,8 +142,15 @@ export class AoiSurvey extends YpBaseElement  {
     this.question = earlData.question;
     this.prompt = earlData.prompt;
     this.appearanceLookup = this.question.appearance_id;
-    this.currentLeftAnswer = this.prompt.left_choice_text;
-    this.currentRightAnswer = this.prompt.right_choice_text;
+
+    try {
+      this.currentLeftAnswer = JSON.parse(this.prompt.left_choice_text);
+      this.currentRightAnswer = JSON.parse(this.prompt.right_choice_text);
+    } catch (error) {
+      console.warn("Error parsing prompt answers", error);
+      this.currentLeftAnswer = this.prompt.left_choice_text as any;
+      this.currentRightAnswer = this.prompt.right_choice_text as any;
+    }
     this.currentPromptId = this.prompt.id;
 
     document.title = this.question.name;
@@ -466,6 +474,14 @@ export class AoiSurvey extends YpBaseElement  {
     if (this.$$("#navBar") as NavigationBar) {
       (this.$$("#navBar") as NavigationBar).activeIndex = 1;
     }
+
+    if (this.$$("#votingTab") as MdPrimaryTab) {
+      (this.$$("#votingTab") as MdPrimaryTab).selected = true;
+    }
+
+    if (this.$$("#introTab") as MdPrimaryTab) {
+      (this.$$("#introTab") as MdPrimaryTab).selected = false;
+    }
   }
 
   openResults() {
@@ -539,6 +555,7 @@ export class AoiSurvey extends YpBaseElement  {
         <div class="layout vertical center-center">
           <md-tabs aria-label="Navigation Tabs">
             <md-primary-tab
+              id="votingTab"
               ?hidden="${this.surveyClosed}"
               class="${this.pageIndex == PagesTypes.Voting && "selectedContainer"}"
               @click="${() => this.changeTabTo(1)}"
@@ -549,6 +566,7 @@ export class AoiSurvey extends YpBaseElement  {
             </md-primary-tab>
 
             <md-primary-tab
+              id="introTab"
               class="${this.pageIndex == PagesTypes.Introduction && "selectedContainer"}"
               selected
               @click="${() => this.changeTabTo(0)}"

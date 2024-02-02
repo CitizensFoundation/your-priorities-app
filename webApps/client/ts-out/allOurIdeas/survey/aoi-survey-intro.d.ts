@@ -6,6 +6,7 @@ export declare class AoiSurveyIntro extends YpBaseElement {
     group: YpGroupData;
     question: AoiQuestionData;
     themeHighContrast: boolean;
+    isAdmin: boolean;
     private footer;
     private footerEnd;
     private footerTopObserver;
@@ -13,6 +14,9 @@ export declare class AoiSurveyIntro extends YpBaseElement {
     connectedCallback(): Promise<void>;
     disconnectedCallback(): void;
     firstUpdated(): void;
+    _openAnalyticsAndPromption(): void;
+    _openAdmin(): void;
+    renderAdminButtons(): import("lit-html").TemplateResult<1>;
     setupFooterObserver(): void;
     get formattedDescription(): string;
     clickStart(): void;

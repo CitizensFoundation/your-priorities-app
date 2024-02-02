@@ -32,6 +32,9 @@ export class YpGenerateAiImage extends YpBaseElement {
   @property({ type: String })
   collectionType!: string;
 
+  @property({ type: String })
+  imageType: YpAiGenerateImageTypes = "logo";
+
   @property({ type: Number })
   jobId: number | undefined;
 
@@ -74,12 +77,16 @@ export class YpGenerateAiImage extends YpBaseElement {
             imageId: pollingResponse.data.imageId,
             imageUrl: pollingResponse.data.imageUrl,
           });
-          this.dialog.close();
+          this.dialog?.close();
           this.submitting = false;
 
           window.appGlobals.activity(`Generate AI Image - completed`);
         } else if (pollingResponse.error) {
           this.submitting = false;
+
+          this.fire("image-generation-error", {
+            error: pollingResponse.error
+          });
 
           // Handle any errors
           this.currentError = this.t(
@@ -119,6 +126,7 @@ export class YpGenerateAiImage extends YpBaseElement {
         await window.serverApi.startGeneratingAiImage(
           this.collectionType,
           this.collectionId,
+          this.imageType,
           this.finalPrompt
         );
     } catch (error: any) {
@@ -167,7 +175,7 @@ export class YpGenerateAiImage extends YpBaseElement {
     if (this.timeout) {
       clearTimeout(this.timeout);
     }
-    this.dialog.close();
+    this.dialog?.close();
     window.appGlobals.activity(`Generate AI Image - cancel`);
   }
 

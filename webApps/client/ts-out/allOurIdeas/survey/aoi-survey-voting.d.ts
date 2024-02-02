@@ -12,9 +12,9 @@ export declare class AoiSurveyVoting extends YpBaseElement {
     firstPrompt: AoiPromptData;
     promptId: number;
     voteCount: number;
-    leftAnswer: string | undefined;
     spinnersActive: boolean;
-    rightAnswer: string | undefined;
+    leftAnswer: AoiAnswerToVoteOnData | undefined;
+    rightAnswer: AoiAnswerToVoteOnData | undefined;
     appearanceLookup: string;
     breakForVertical: boolean;
     levelTwoTargetVotes: number | undefined;

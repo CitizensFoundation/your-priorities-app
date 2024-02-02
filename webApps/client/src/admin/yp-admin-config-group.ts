@@ -1826,7 +1826,7 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
           type: "checkbox",
           onChange: (e: CustomEvent) =>
             this._updateEarl(e, "configuration.show_cant_decide"),
-          value: earl?.configuration!.show_cant_decide,
+          value: earl?.configuration?.show_cant_decide,
           translationToken: "showCantDecide",
         },
         {
@@ -1834,7 +1834,7 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
           type: "checkbox",
           onChange: (e: CustomEvent) =>
             this._updateEarl(e, "configuration.accept_new_ideas"),
-          value: earl?.configuration!.accept_new_ideas,
+          value: earl?.configuration?.accept_new_ideas,
           translationToken: "acceptNewIdeas",
         },
         {
@@ -1842,7 +1842,7 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
           type: "checkbox",
           onChange: (e: CustomEvent) =>
             this._updateEarl(e, "configuration.hide_results"),
-          value: earl?.configuration!.hide_results,
+          value: earl?.configuration?.hide_results,
           translationToken: "hideAoiResults",
         },
         {
@@ -1850,7 +1850,7 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
           type: "textarea",
           rows: 5,
           maxLength: 300,
-          value: earl?.configuration!.welcome_message,
+          value: earl?.configuration?.welcome_message,
           onChange: (e: CustomEvent) =>
             this._updateEarl(e, "configuration.welcome_message"),
           translationToken: "welcomeMessage",
@@ -1859,7 +1859,7 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
           text: "welcome_html",
           type: "textarea",
           rows: 5,
-          value: earl?.configuration!.welcome_html,
+          value: earl?.configuration?.welcome_html,
           onChange: (e: CustomEvent) =>
             this._updateEarl(e, "configuration.welcome_html"),
           translationToken: "welcomeHtml",
@@ -1869,7 +1869,7 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
           type: "textarea",
           rows: 7,
           value:
-            earl?.configuration!.analysis_config ||
+            earl?.configuration?.analysis_config ||
             JSON.stringify(defaultAiAnalysisJson, null, 2),
           onChange: (e: CustomEvent) =>
             this._updateEarl(e, "configuration.analysis_config"),

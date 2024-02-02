@@ -12,6 +12,9 @@ import "@material/web/button/filled-tonal-button.js";
 import "@material/web/chips/filter-chip.js";
 import "@material/web/chips/chip-set.js";
 import "@material/web/textfield/filled-text-field.js";
+import { AoiGenerateAiLogos } from "./aoiGenerateAiLogos.js";
+import { image } from "d3";
+import { ifDefined } from "lit/directives/if-defined.js";
 
 @customElement("aoi-earl-ideas-editor")
 export class AoiEarlIdeasEditor extends YpStreamingLlmBase {
@@ -31,7 +34,7 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmBase {
   choices: AoiChoiceData[] | undefined;
 
   @property({ type: Boolean })
-  isGeneratingIdeas = false;
+  isGeneratingWithAi = false;
 
   @property({ type: Boolean })
   isSubmittingIdeas = false;
@@ -45,10 +48,10 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmBase {
   @property({ type: String })
   currentIdeasFilter: "latest" | "highestScore" | "userSubmitted" = "latest";
 
-  @query("#ideas")
-  ideasElement!: MdFilledTextField;
+  @query("#answers")
+  answersElement!: MdFilledTextField;
 
-  override scrollElementSelector = "#ideas";
+  override scrollElementSelector = "#answers";
 
   serverApi: AoiAdminServerApi;
 
@@ -71,11 +74,11 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmBase {
   }
 
   socketClosed() {
-    this.isGeneratingIdeas = false;
+    this.isGeneratingWithAi = false;
   }
 
   socketError() {
-    this.isGeneratingIdeas = false;
+    this.isGeneratingWithAi = false;
   }
 
   async getChoices() {
@@ -94,15 +97,15 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmBase {
         break;
       case "error":
         //TODO
-        this.isGeneratingIdeas = false;
+        this.isGeneratingWithAi = false;
         break;
       case "end":
-        this.isGeneratingIdeas = false;
-        this.ideasElement.value += "\n";
+        this.isGeneratingWithAi = false;
+        this.answersElement.value += "\n";
         break;
       case "stream":
         if (wsMessage.message && wsMessage.message != "undefined") {
-          this.ideasElement.value += wsMessage.message;
+          this.answersElement.value += wsMessage.message;
           break;
         } else {
           console.warn("stream message is undefined");
@@ -112,29 +115,36 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmBase {
     this.scrollDown();
   }
 
-  get ideas() {
-    return (this.$$("#ideas") as MdFilledTextField)?.value
+  get answers() {
+    return (this.$$("#answers") as MdFilledTextField)?.value
       .split("\n")
-      .filter((idea: string) => idea.length > 0);
+      .map((answer: string) =>
+        answer
+          .replace(/\\/g, '\\\\')
+          .replace(/"/g, '\\"')
+          .replace(/\n/g, '\\n')
+          .replace(/\r/g, '\\r')
+          .replace(/\t/g, '\\t')
+      )
+      .filter((answer: string) => answer.length > 0); // Keep filtering out empty answers
   }
 
   hasMoreThanOneIdea() {
     return;
   }
 
-  openMenuFor(idea: AoiChoiceData) {
-    console.log("openMenuFor", idea);
+  openMenuFor(answer: AoiChoiceData) {
+    console.log("openMenuFor", answer);
   }
 
   generateIdeas() {
-    this.isGeneratingIdeas = true;
-    debugger;
+    this.isGeneratingWithAi = true;
     try {
       this.serverApi.startGenerateIdeas(
         this.configuration.earl!.question!.name,
         this.communityId!,
         this.wsClientId,
-        this.ideas
+        this.answers
       );
     } catch (e) {
       console.error(e);
@@ -146,7 +156,7 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmBase {
     try {
       const { question_id } = await this.serverApi.submitIdeasForCreation(
         this.communityId!,
-        this.ideas,
+        this.answers,
         this.configuration.earl!.question!.name
       );
 
@@ -173,12 +183,12 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmBase {
     }
   }
 
-  toggleIdeaActivity(idea: AoiChoiceData) {
+  toggleIdeaActivity(answer: AoiChoiceData) {
     return async () => {
       this.isTogglingIdeaActive = true;
       try {
-        await this.serverApi.toggleIdeaActive(this.groupId, idea.id);
-        idea.active = !idea.active;
+        await this.serverApi.toggleIdeaActive(this.groupId, answer.id);
+        answer.active = !answer.active;
       } catch (e) {
         console.error(e);
       } finally {
@@ -214,6 +224,47 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmBase {
     }
   }
 
+  async generateAiIcons() {
+    const imageGenerator = new AoiGenerateAiLogos();
+    imageGenerator.collectionType = "community";
+    imageGenerator.collectionId = this.communityId!;
+
+    this.isGeneratingWithAi = true;
+
+    for (let choice of this.choices!) {
+      try {
+        const { imageUrl, error } = (await imageGenerator.generateIcon(
+          choice.data.content,
+          this.themeColor
+        )) as unknown as { imageUrl: string; error: string };
+
+        if (error) {
+          console.error(error);
+          continue;
+        }
+
+        await this.serverApi.updateChoice(
+          this.communityId!,
+          this.configuration.earl!.question_id!,
+          choice.id,
+          {
+            content: choice.data.content,
+            imageUrl
+          }
+        );
+
+        choice.data.imageUrl = imageUrl;
+
+        console.error("imageUrl", imageUrl, "error", error);
+        this.requestUpdate();
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    this.isGeneratingWithAi = false;
+  }
+
   static override get styles() {
     return [
       super.styles,
@@ -222,6 +273,21 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmBase {
           padding: 16px;
           max-width: 900px;
           width: 900px;
+          padding-left: 0;
+        }
+
+        .logo,
+        .iconImage {
+          width: 50px;
+          max-width: 50px;
+        }
+
+        .logo {
+          margin-right: 8px;
+        }
+
+        .iconImage {
+          border-radius: 12px;
         }
 
         .ideaContainer {
@@ -232,7 +298,7 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmBase {
           color: var(--md-sys-color-on-surface-variant);
         }
 
-        .idea {
+        .answer {
           padding: 16px;
           padding-top: 16px;
           padding-bottom: 16px;
@@ -256,6 +322,10 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmBase {
           align-items: center;
           justify-content: space-around;
           width: 120px;
+        }
+
+        .generateIconsProgress {
+          margin-top: 8px;
         }
 
         md-filled-text-field {
@@ -288,41 +358,43 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmBase {
       <div class="layout vertical center-center">
         <md-filled-text-field
           type="textarea"
-          id="ideas"
+          id="answers"
           rows="14"
           .label="${this.t("answersToVoteOn")}"
         >
         </md-filled-text-field>
         <md-linear-progress
           class="generationProgress"
-          ?hidden="${!this.isGeneratingIdeas}"
+          ?hidden="${!this.isGeneratingWithAi}"
           indeterminate
         ></md-linear-progress>
         <div class="layout horizontal">
-          ${this.isGeneratingIdeas
+          ${this.isGeneratingWithAi
             ? html`
                 <div class="layout vertical center-center">
                   <md-outlined-button class="button" @click="${this.reset}"
-                    >${this.t("stop")}</md-outlined-button
-                  >
+                    >${this.t("stopGenerating")}
+                    <md-icon slot="icon">stop_circle</md-icon>
+                  </md-outlined-button>
                 </div>
               `
             : html`
                 <md-outlined-button
                   class="button"
                   @click="${this.generateIdeas}"
-                  ?disabled="${this.isGeneratingIdeas}"
-                  >${this.ideas?.length > 1
+                  ?disabled="${this.isGeneratingWithAi}"
+                  >${this.answers?.length > 1
                     ? this.t("generateMoreIdeasWithAi")
-                    : this.t("generateIdeasWithAi")}</md-outlined-button
-                >
+                    : this.t("generateIdeasWithAi")}
+                  <md-icon slot="icon">smart_toy</md-icon>
+                </md-outlined-button>
               `}
           <md-filled-button
             class="button"
             @click="${this.submitIdeasForCreation}"
             ?disabled="${this.isSubmittingIdeas ||
-            this.ideas?.length < 3 ||
-            this.isGeneratingIdeas}"
+            this.answers?.length < 6 ||
+            this.isGeneratingWithAi}"
             >${this.t("submitAnswersForCreation")}</md-filled-button
           >
         </div>
@@ -367,6 +439,7 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmBase {
             ?hidden="${!this.isFetchingChoices}"
           ></md-linear-progress>
           <div class="layout horizontal ideaContainer">
+            <div class="logo"></div>
             <div class="flex"></div>
             <div class="wins">${this.t("wins")}</div>
             <div class="losses">${this.t("losses")}</div>
@@ -374,15 +447,23 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmBase {
             <div class="buttons">${this.t("actions")}</div>
           </div>
 
-          ${this.sortedChoices?.map((idea: AoiChoiceData) => {
+          ${this.sortedChoices?.map((answer: AoiChoiceData, index: number) => {
             return html`<div class="layout horizontal ideaContainer">
-              <div class="idea">${idea.data}</div>
-              <div class="wins">${idea.wins}</div>
-              <div class="losses">${idea.losses}</div>
-              <div class="score">${Math.round(idea.score)}</div>
+              <div class="logo">
+                ${answer.data.imageUrl
+                  ? html`<img
+                      class="iconImage"
+                      src="${ifDefined(answer.data.imageUrl)}"
+                    />`
+                  : ""}
+              </div>
+              <div class="answer">${answer.data.content}</div>
+              <div class="wins">${answer.wins}</div>
+              <div class="losses">${answer.losses}</div>
+              <div class="score">${Math.round(answer.score)}</div>
               <div class="buttons">
-                <md-outlined-button @click="${this.toggleIdeaActivity(idea)}">
-                  ${idea.active ? this.t("deactivate") : this.t("activate")}
+                <md-outlined-button @click="${this.toggleIdeaActivity(answer)}">
+                  ${answer.active ? this.t("deactivate") : this.t("activate")}
                 </md-outlined-button>
                 <md-linear-progress
                   indeterminate
@@ -392,7 +473,20 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmBase {
             </div>`;
           })}
         </div>
-      </div>
+        <div class="layout vertical center-center"></div>
+          <md-outlined-button
+                class="button"
+                @click="${this.generateAiIcons}"
+                ?disabled="${this.isGeneratingWithAi}"
+                >${this.t("generateIconsWithAi")}</md-outlined-button
+         >
+         <md-linear-progress
+          class="generateIconsProgress"
+          ?hidden="${!this.isGeneratingWithAi}"
+          indeterminate
+        ></md-linear-progress>
+        </div>
+    </div>
     `;
   }
 

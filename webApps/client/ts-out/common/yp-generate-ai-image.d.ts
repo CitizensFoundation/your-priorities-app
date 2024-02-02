@@ -13,6 +13,7 @@ export declare class YpGenerateAiImage extends YpBaseElement {
     description: string;
     collectionId: number;
     collectionType: string;
+    imageType: YpAiGenerateImageTypes;
     jobId: number | undefined;
     styleText: HTMLInputElement;
     timeout: number | undefined;

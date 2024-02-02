@@ -1,4 +1,6 @@
 {
+  "stopGenerating": "Stop generating",
+  "generateIconsWithAi": "Generate icons with AI",
   "selectGroupType": "Select group type",
   "active": "Active",
   "deactivate": "Deactivate",

@@ -44,8 +44,8 @@ export declare class AoiSurvey extends YpBaseElement {
     isAdmin: boolean;
     surveyClosed: boolean;
     appearanceLookup: string;
-    currentLeftAnswer: string | undefined;
-    currentRightAnswer: string | undefined;
+    currentLeftAnswer: AoiAnswerToVoteOnData | undefined;
+    currentRightAnswer: AoiAnswerToVoteOnData | undefined;
     currentPromptId: number | undefined;
     drawer: NavigationDrawer;
     constructor();

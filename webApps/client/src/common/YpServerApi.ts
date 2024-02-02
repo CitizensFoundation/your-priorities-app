@@ -143,14 +143,14 @@ export class YpServerApi extends YpServerApiBase {
     );
   }
 
-  public startGeneratingAiImage(collectionType: string, collectionId: number, prompt: string) {
+  public startGeneratingAiImage(collectionType: string, collectionId: number, imageType: string, prompt: string) {
     return this.fetchWrapper(
       this.baseUrlPath +
         `/${YpServerApi.transformCollectionTypeToApi(
           collectionType
         )}/${collectionId}/start_generating_ai_image`,{
           method: 'POST',
-          body: JSON.stringify({prompt}),
+          body: JSON.stringify({prompt, imageType}),
         }
     );
   }

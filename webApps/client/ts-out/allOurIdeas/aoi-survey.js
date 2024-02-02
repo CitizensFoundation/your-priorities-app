@@ -64,8 +64,15 @@ let AoiSurvey = class AoiSurvey extends YpBaseElement {
         this.question = earlData.question;
         this.prompt = earlData.prompt;
         this.appearanceLookup = this.question.appearance_id;
-        this.currentLeftAnswer = this.prompt.left_choice_text;
-        this.currentRightAnswer = this.prompt.right_choice_text;
+        try {
+            this.currentLeftAnswer = JSON.parse(this.prompt.left_choice_text);
+            this.currentRightAnswer = JSON.parse(this.prompt.right_choice_text);
+        }
+        catch (error) {
+            console.warn("Error parsing prompt answers", error);
+            this.currentLeftAnswer = this.prompt.left_choice_text;
+            this.currentRightAnswer = this.prompt.right_choice_text;
+        }
         this.currentPromptId = this.prompt.id;
         document.title = this.question.name;
         if (this.earl.active) {
@@ -352,6 +359,12 @@ let AoiSurvey = class AoiSurvey extends YpBaseElement {
         if (this.$$("#navBar")) {
             this.$$("#navBar").activeIndex = 1;
         }
+        if (this.$$("#votingTab")) {
+            this.$$("#votingTab").selected = true;
+        }
+        if (this.$$("#introTab")) {
+            this.$$("#introTab").selected = false;
+        }
     }
     openResults() {
         this.pageIndex = 3;
@@ -421,6 +434,7 @@ let AoiSurvey = class AoiSurvey extends YpBaseElement {
         <div class="layout vertical center-center">
           <md-tabs aria-label="Navigation Tabs">
             <md-primary-tab
+              id="votingTab"
               ?hidden="${this.surveyClosed}"
               class="${this.pageIndex == PagesTypes.Voting && "selectedContainer"}"
               @click="${() => this.changeTabTo(1)}"
@@ -431,6 +445,7 @@ let AoiSurvey = class AoiSurvey extends YpBaseElement {
             </md-primary-tab>
 
             <md-primary-tab
+              id="introTab"
               class="${this.pageIndex == PagesTypes.Introduction && "selectedContainer"}"
               selected
               @click="${() => this.changeTabTo(0)}"
@@ -600,10 +615,10 @@ __decorate([
     property({ type: String })
 ], AoiSurvey.prototype, "appearanceLookup", void 0);
 __decorate([
-    property({ type: String })
+    property({ type: Object })
 ], AoiSurvey.prototype, "currentLeftAnswer", void 0);
 __decorate([
-    property({ type: String })
+    property({ type: Object })
 ], AoiSurvey.prototype, "currentRightAnswer", void 0);
 __decorate([
     property({ type: Number })

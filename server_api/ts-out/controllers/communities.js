@@ -2196,7 +2196,8 @@ router.post('/:communityId/:start_generating_ai_image', auth.can('edit community
                 jobId: jobId,
                 collectionId: req.params.communityId,
                 collectionType: "community",
-                prompt: req.body.prompt
+                prompt: req.body.prompt,
+                imageType: req.body.imageType
             }, 'critical');
             res.send({ jobId });
         }
