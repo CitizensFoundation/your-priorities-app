@@ -23,8 +23,8 @@ export class AoiServerApi extends YpServerApi {
             body: JSON.stringify({ new_idea: newIdea }),
         }, false);
     }
-    postVote(groupId, questionId, promptId, locale, body) {
-        const url = new URL(`${window.location.protocol}//${window.location.host}${this.baseUrlPath}/${groupId}/questions/${questionId}/prompts/${promptId}/votes?locale=${locale}`);
+    postVote(groupId, questionId, promptId, locale, body, direction) {
+        const url = new URL(`${window.location.protocol}//${window.location.host}${this.baseUrlPath}/${groupId}/questions/${questionId}/prompts/${promptId}/${direction == "skip" ? "skips" : "votes"}?locale=${locale}`);
         Object.keys(window.appGlobals.originalQueryParameters).forEach((key) => {
             if (key.startsWith("utm_")) {
                 url.searchParams.append(key, window.aoiAppGlobals.originalQueryParameters[key]);

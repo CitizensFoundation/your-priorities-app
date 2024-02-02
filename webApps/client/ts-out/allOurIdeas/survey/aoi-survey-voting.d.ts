@@ -23,9 +23,9 @@ export declare class AoiSurveyVoting extends YpBaseElement {
     connectedCallback(): Promise<void>;
     disconnectedCallback(): void;
     resetTimer(): void;
-    animateButtons(direction: "left" | "right"): Promise<void>;
+    animateButtons(direction: "left" | "right" | "skip"): Promise<void>;
     resetAnimation(event: any): void;
-    voteForAnswer(direction: "left" | "right"): Promise<void>;
+    voteForAnswer(direction: "left" | "right" | "skip"): Promise<void>;
     removeAndInsertFromLeft(): void;
     openNewIdeaDialog(): void;
     static get styles(): any[];

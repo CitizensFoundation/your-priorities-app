@@ -53,9 +53,13 @@ let AoiSurveyVoting = class AoiSurveyVoting extends YpBaseElement {
                 leftButton?.classList.add("animate-up", "fade-slow");
                 rightButton?.classList.add("animate-down", "fade-fast");
             }
-            else {
+            else if (direction === "right") {
                 rightButton?.classList.add("animate-up", "fade-slow");
                 leftButton?.classList.add("animate-down", "fade-fast");
+            }
+            else {
+                leftButton?.classList.add("fade-slow");
+                rightButton?.classList.add("fade-slow");
             }
             resolve();
         });
@@ -71,7 +75,7 @@ let AoiSurveyVoting = class AoiSurveyVoting extends YpBaseElement {
             direction,
             appearance_lookup: this.appearanceLookup,
         };
-        const postVotePromise = window.aoiServerApi.postVote(this.groupId, this.question.id, this.promptId, this.language, voteData);
+        const postVotePromise = window.aoiServerApi.postVote(this.groupId, this.question.id, this.promptId, this.language, voteData, direction);
         let animationPromise = this.animateButtons(direction);
         const spinnerTimeout = setTimeout(() => {
             this.spinnersActive = true;
@@ -112,7 +116,9 @@ let AoiSurveyVoting = class AoiSurveyVoting extends YpBaseElement {
                 //TODO: IMPORTANT GET THIS WORKING ON MOBILES
                 this.blur();
             });
-            this.question.visitor_votes += 1;
+            if (direction !== "skip") {
+                this.question.visitor_votes += 1;
+            }
             this.requestUpdate();
             this.resetTimer();
         }
@@ -200,8 +206,12 @@ let AoiSurveyVoting = class AoiSurveyVoting extends YpBaseElement {
           margin-right: 32px;
         }
 
-        .newIdeaButton {
+        .newIdeaButton, .skipButton {
           margin-top: 24px;
+        }
+
+        .skipButton {
+          margin-left: 8px;
         }
 
         .buttonContainer {
@@ -391,12 +401,20 @@ let AoiSurveyVoting = class AoiSurveyVoting extends YpBaseElement {
             ${YpFormattingHelpers.truncate(this.rightAnswer, 140)}
           </md-elevated-button>
         </div>
-        <md-outlined-button
-          class="newIdeaButton"
-          @click="${this.openNewIdeaDialog}"
-        >
-          ${this.t("Add your own idea")}
-        </md-outlined-button>
+        <div class="layout horizontal">
+          <md-outlined-button
+            class="newIdeaButton"
+            @click="${this.openNewIdeaDialog}"
+          >
+            ${this.t("Add your own idea")}
+          </md-outlined-button>
+          <md-text-button
+            class="skipButton"
+            @click=${() => this.voteForAnswer("skip")}
+          >
+            ${this.t("Skip")}
+          </md-text-button>
+        </div>
         ${this.renderProgressBar()}
         <div class="layout horizontal wrap center-center"></div>
       </div>

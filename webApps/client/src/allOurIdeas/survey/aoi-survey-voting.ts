@@ -90,7 +90,7 @@ export class AoiSurveyVoting extends YpBaseElement {
     this.timer = new Date().getTime();
   }
 
-  animateButtons(direction: "left" | "right"): Promise<void> {
+  animateButtons(direction: "left" | "right" | "skip"): Promise<void> {
     return new Promise((resolve) => {
       const leftButton = this.shadowRoot?.querySelector("#leftAnswerButton");
       const rightButton = this.shadowRoot?.querySelector("#rightAnswerButton");
@@ -101,9 +101,12 @@ export class AoiSurveyVoting extends YpBaseElement {
       if (direction === "left") {
         leftButton?.classList.add("animate-up", "fade-slow");
         rightButton?.classList.add("animate-down", "fade-fast");
-      } else {
+      } else if (direction === "right") {
         rightButton?.classList.add("animate-up", "fade-slow");
         leftButton?.classList.add("animate-down", "fade-fast");
+      } else {
+        leftButton?.classList.add("fade-slow");
+        rightButton?.classList.add("fade-slow");
       }
 
       resolve();
@@ -121,7 +124,7 @@ export class AoiSurveyVoting extends YpBaseElement {
     );
   }
 
-  async voteForAnswer(direction: "left" | "right") {
+  async voteForAnswer(direction: "left" | "right" | "skip") {
     window.appGlobals.activity(`Voting - ${direction}`);
 
     const voteData: AoiVoteData = {
@@ -136,7 +139,8 @@ export class AoiSurveyVoting extends YpBaseElement {
       this.question.id,
       this.promptId,
       this.language,
-      voteData
+      voteData,
+      direction
     );
 
     let animationPromise = this.animateButtons(direction);
@@ -189,7 +193,9 @@ export class AoiSurveyVoting extends YpBaseElement {
         this.blur();
       });
 
-      this.question.visitor_votes += 1;
+      if (direction !== "skip") {
+        this.question.visitor_votes += 1;
+      }
       this.requestUpdate();
 
       this.resetTimer();
@@ -293,8 +299,12 @@ export class AoiSurveyVoting extends YpBaseElement {
           margin-right: 32px;
         }
 
-        .newIdeaButton {
+        .newIdeaButton, .skipButton {
           margin-top: 24px;
+        }
+
+        .skipButton {
+          margin-left: 8px;
         }
 
         .buttonContainer {
@@ -494,12 +504,20 @@ export class AoiSurveyVoting extends YpBaseElement {
             ${YpFormattingHelpers.truncate(this.rightAnswer!, 140)}
           </md-elevated-button>
         </div>
-        <md-outlined-button
-          class="newIdeaButton"
-          @click="${this.openNewIdeaDialog}"
-        >
-          ${this.t("Add your own idea")}
-        </md-outlined-button>
+        <div class="layout horizontal">
+          <md-outlined-button
+            class="newIdeaButton"
+            @click="${this.openNewIdeaDialog}"
+          >
+            ${this.t("Add your own idea")}
+          </md-outlined-button>
+          <md-text-button
+            class="skipButton"
+            @click=${() => this.voteForAnswer("skip")}
+          >
+            ${this.t("Skip")}
+          </md-text-button>
+        </div>
         ${this.renderProgressBar()}
         <div class="layout horizontal wrap center-center"></div>
       </div>

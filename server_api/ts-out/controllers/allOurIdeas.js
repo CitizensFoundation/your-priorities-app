@@ -36,6 +36,7 @@ class AllOurIdeasController {
         this.router.put("/:communityId/generateIdeas", authorization_js_1.default.can("create group"), this.generateIdeas.bind(this));
         this.router.get("/:communityId/choices/:questionId", authorization_js_1.default.can("create group"), this.getChoices.bind(this));
         this.router.post("/:groupId/questions/:questionId/prompts/:promptId/votes", authorization_js_1.default.can("view group"), this.vote.bind(this));
+        this.router.post("/:groupId/questions/:questionId/prompts/:promptId/skips", authorization_js_1.default.can("view group"), this.skip.bind(this));
         console.log("---- have initialized routes for allOurIdeasController");
     }
     async generateIdeas(req, res) {
@@ -187,7 +188,7 @@ class AllOurIdeasController {
         const skipOptions = this.getVoteRequestOptions(req, "skip");
         const nextPromptOptions = this.getNextPromptOptions(req);
         try {
-            const response = await fetch(`${PAIRWISE_API_HOST}/questions/${req.params.questionId}/prompts/${req.params.promptId}/vote`, {
+            const response = await fetch(`${PAIRWISE_API_HOST}/questions/${req.params.questionId}/prompts/${req.params.promptId}/skip.json`, {
                 method: "PUT",
                 headers: defaultHeader,
                 body: JSON.stringify({

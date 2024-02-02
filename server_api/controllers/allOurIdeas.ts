@@ -64,6 +64,11 @@ export class AllOurIdeasController {
       this.vote.bind(this)
     );
 
+    this.router.post(
+      "/:groupId/questions/:questionId/prompts/:promptId/skips",
+      auth.can("view group"),
+      this.skip.bind(this)
+    );
 
     console.log("---- have initialized routes for allOurIdeasController");
   }
@@ -254,7 +259,7 @@ export class AllOurIdeasController {
 
     try {
       const response = await fetch(
-        `${PAIRWISE_API_HOST}/questions/${req.params.questionId}/prompts/${req.params.promptId}/vote`,
+        `${PAIRWISE_API_HOST}/questions/${req.params.questionId}/prompts/${req.params.promptId}/skip.json`,
         {
           method: "PUT",
           headers: defaultHeader,

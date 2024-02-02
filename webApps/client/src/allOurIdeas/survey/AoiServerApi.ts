@@ -55,10 +55,15 @@ export class AoiServerApi extends YpServerApi {
     questionId: number,
     promptId: number,
     locale: string,
-    body: AoiVoteData
+    body: AoiVoteData,
+    direction: "left" | "right" | "skip"
   ): AoiVoteResponse {
     const url = new URL(
-      `${window.location.protocol}//${window.location.host}${this.baseUrlPath}/${groupId}/questions/${questionId}/prompts/${promptId}/votes?locale=${locale}`
+      `${window.location.protocol}//${window.location.host}${
+        this.baseUrlPath
+      }/${groupId}/questions/${questionId}/prompts/${promptId}/${
+        direction == "skip" ? "skips" : "votes"
+      }?locale=${locale}`
     );
 
     Object.keys(window.appGlobals.originalQueryParameters).forEach((key) => {
