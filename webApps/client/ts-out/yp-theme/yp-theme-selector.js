@@ -13,6 +13,7 @@ import "@material/web/textfield/outlined-text-field.js";
 import { YpThemeManager } from "../yp-app/YpThemeManager.js";
 import { repeat } from "lit/directives/repeat.js";
 import "./yp-theme-color-input.js";
+//TODO: Figure out how to implement "Use exactly the provided colors as an option" https://material-foundation.github.io/material-theme-builder/
 let YpThemeSelector = class YpThemeSelector extends YpBaseElement {
     constructor() {
         super(...arguments);
@@ -66,8 +67,9 @@ let YpThemeSelector = class YpThemeSelector extends YpBaseElement {
         .dynamicColors, .customColors {
           padding: 32px;
           margin: 32px;
-          background-color: var(--md-sys-color-secondary-container);
-          color: var(--md-sys-color-on-secondary-container);
+          border-radius: 16px;
+          background-color: var(--md-sys-color-surface-variant);
+          color: var(--md-sys-color-on-surface-variant);
         }
       `,
         ];

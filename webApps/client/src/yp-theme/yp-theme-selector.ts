@@ -12,6 +12,8 @@ import { MdOutlinedTextField } from "@material/web/textfield/outlined-text-field
 
 import "./yp-theme-color-input.js";
 
+//TODO: Figure out how to implement "Use exactly the provided colors as an option" https://material-foundation.github.io/material-theme-builder/
+
 @customElement("yp-theme-selector")
 export class YpThemeSelector extends YpBaseElement {
   @property({ type: String })
@@ -94,8 +96,9 @@ export class YpThemeSelector extends YpBaseElement {
         .dynamicColors, .customColors {
           padding: 32px;
           margin: 32px;
-          background-color: var(--md-sys-color-secondary-container);
-          color: var(--md-sys-color-on-secondary-container);
+          border-radius: 16px;
+          background-color: var(--md-sys-color-surface-variant);
+          color: var(--md-sys-color-on-surface-variant);
         }
       `,
     ];
