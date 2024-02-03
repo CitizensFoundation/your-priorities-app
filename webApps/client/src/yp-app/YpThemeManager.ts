@@ -9,6 +9,7 @@ import {
   applyThemeWithContrast,
   themeFromSourceColorWithContrast,
 } from "../common/YpMaterialThemeHelper";
+import { YpBaseElement } from "../common/yp-base-element";
 
 //type MaterialColorScheme = 'tonal'|'vibrant'|'expressive'|'content'|'neutral'|'monochrome'|'fidelity'|'dynamic';
 //type MaterialDynamicVariants = "monochrome" | "neutral" | "tonalSpot" | "vibrant" | "expressive" | "fidelity" | "content" | "rainbow" | "fruitSalad";
@@ -54,7 +55,26 @@ export class YpThemeManager {
   themeScheme: MaterialColorScheme = "tonal";
 
   constructor() {
+    const savedDarkMode = localStorage.getItem(YpBaseElement.darkModeLocalStorageKey);
+    if (savedDarkMode) {
+      this.themeDarkMode = true;
+    } else {
+      this.themeDarkMode = false;
+    }
+
+    const savedHighContrastMode = localStorage.getItem(YpBaseElement.highContrastLocalStorageKey);
+
+    if (savedHighContrastMode) {
+      this.themeHighContrast = true;
+    } else {
+      this.themeHighContrast = false;
+    }
+
+    this.setupOldThemes();
     this.themeChanged();
+  }
+
+  setupOldThemes() {
     this.themes.push({
       name: "Reykjavík",
       "--mdc-theme-background": "#f7f7f7",
@@ -300,6 +320,7 @@ export class YpThemeManager {
         fontName: "Merriweather",
       },
     });
+
   }
 
   updateStyles(properties: Record<string, string>) {

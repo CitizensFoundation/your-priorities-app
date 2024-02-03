@@ -24,9 +24,6 @@ export class AoiSurveyIntro extends YpBaseElement {
   question!: AoiQuestionData;
 
   @property({ type: Boolean })
-  themeHighContrast = false;
-
-  @property({ type: Boolean })
   isAdmin = false;
 
   private footer: Element | null | undefined = null;

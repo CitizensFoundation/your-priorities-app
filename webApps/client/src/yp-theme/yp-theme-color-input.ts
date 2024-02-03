@@ -39,7 +39,7 @@ export class YpThemeColorInput extends YpBaseElement {
         .clearButton {
           position: absolute;
           left: -36px;
-          top: 12px;
+          top: 14px;
           opacity: 0.5;
         }
 

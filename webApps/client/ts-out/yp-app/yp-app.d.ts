@@ -140,9 +140,6 @@ export declare class YpApp extends YpBaseElement {
     _routePageChanged(oldRouteData: Record<string, string>): void;
     loadDataViz(): void;
     _pageChanged(): void;
-    setupTheme(): void;
-    toggleDarkMode(): void;
-    toggleHighContrastMode(): void;
     openResetPasswordDialog(resetPasswordToken: string): void;
     openUserNotificationsDialog(): void;
     openAcceptInvitationDialog(inviteToken: string): void;

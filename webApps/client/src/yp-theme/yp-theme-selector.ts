@@ -62,6 +62,14 @@ export class YpThemeSelector extends YpBaseElement {
           margin-top: 8px;
         }
 
+        .darkContrastInfo {
+          font-size: 11px;
+          font-style: italic;
+          margin-top: -8px;
+          margin-bottom: 16px;
+          text-align: center;
+        }
+
         .or {
           margin-top: 16px;
           margin-bottom: 32px;
@@ -77,9 +85,17 @@ export class YpThemeSelector extends YpBaseElement {
         .color {
           padding: 8px;
           margin-top: 8px;
-          margin-bottom: 8px;
-          margin-left: 16px;
+          margin-bottom: 16px;
+          margin-left: 32px;
           border-radius: 8px;
+          width: 300px;
+        }
+
+        .dynamicColors, .customColors {
+          padding: 32px;
+          margin: 32px;
+          background-color: var(--md-sys-color-secondary-container);
+          color: var(--md-sys-color-on-secondary-container);
         }
       `,
     ];
@@ -119,7 +135,7 @@ export class YpThemeSelector extends YpBaseElement {
       if (changedProperties.has(prop)) {
         shouldUpdateConfiguration = true;
         this.updateDisabledInputs();
-        console.error(`Updated: ${prop}`)
+        console.error(`Updated: ${prop}`);
       }
     });
 
@@ -207,107 +223,121 @@ export class YpThemeSelector extends YpBaseElement {
   override render() {
     return html`
       <div class="layout horizontal">
-        <div class="layout vertical">
-          <yp-theme-color-input
-            class="mainInput"
-            .label="${this.t("One Dynamic Color")}"
-            .color="${this.oneDynamicThemeColor}"
-            .disableSelection="${this.disableSelection || this.disableOneThemeColorInputs}"
-            @input="${(e: any) => {
-              this.oneDynamicThemeColor = e.detail.color;
-            }}"
-          >
-          </yp-theme-color-input>
+        <div class="layout vertical ">
+          <div class="dynamicColors">
+            <div class="">${this.t("Dynamic Colors")}</div>
+            <yp-theme-color-input
+              class="mainInput"
+              .label="${this.t("One Dynamic Color")}"
+              .color="${this.oneDynamicThemeColor}"
+              .disableSelection="${this.disableSelection ||
+              this.disableOneThemeColorInputs}"
+              @input="${(e: any) => {
+                this.oneDynamicThemeColor = e.detail.color;
+              }}"
+            >
+            </yp-theme-color-input>
 
-          <md-outlined-select
-            label="Theme Scheme"
-            .disabled="${this.disableSelection || this.disableOneThemeColorInputs}"
-            @change="${this.setThemeSchema}"
-            .selected="${this.selectedThemeScheme}"
-          >
-            ${YpThemeManager.themeScemesOptionsWithName.map(
-              (option) => html`
-                <md-select-option value="${option.value}">
-                  <div slot="headline">${option.name}</div>
-                </md-select-option>
-              `
-            )}
-          </md-outlined-select>
+            <md-outlined-select
+              label="Theme Scheme"
+              .disabled="${this.disableSelection ||
+              this.disableOneThemeColorInputs}"
+              @change="${this.setThemeSchema}"
+              .selected="${this.selectedThemeScheme}"
+            >
+              ${YpThemeManager.themeScemesOptionsWithName.map(
+                (option) => html`
+                  <md-select-option value="${option.value}">
+                    <div slot="headline">${option.name}</div>
+                  </md-select-option>
+                `
+              )}
+            </md-outlined-select>
+          </div>
 
           <div class="or">${this.t("or")}</div>
 
-          <yp-theme-color-input
-            class="mainInput"
-            .label="${this.t("Theme Primary Color")}"
-            .color="${this.themePrimaryColor}"
-            .disableSelection="${this.disableMultiInputs}"
-            @input="${(e: any) => {
-               this.themePrimaryColor = e.detail.color;
-            }}"
-          >
-          </yp-theme-color-input>
+          <div class="customColors">
+            <yp-theme-color-input
+              class="mainInput"
+              .label="${this.t("Theme Primary Color")}"
+              .color="${this.themePrimaryColor}"
+              .disableSelection="${this.disableMultiInputs}"
+              @input="${(e: any) => {
+                this.themePrimaryColor = e.detail.color;
+              }}"
+            >
+            </yp-theme-color-input>
 
-          <yp-theme-color-input
-            class="mainInput"
-            .label="${this.t("Theme Secondary Color")}"
-            .color="${this.themeSecondaryColor}"
-            .disableSelection="${this.disableMultiInputs}"
-            @input="${(e: any) => {
-               this.themeSecondaryColor = e.detail.color;
-            }}"
-          >
-          </yp-theme-color-input>
+            <yp-theme-color-input
+              class="mainInput"
+              .label="${this.t("Theme Secondary Color")}"
+              .color="${this.themeSecondaryColor}"
+              .disableSelection="${this.disableMultiInputs}"
+              @input="${(e: any) => {
+                this.themeSecondaryColor = e.detail.color;
+              }}"
+            >
+            </yp-theme-color-input>
 
-          <yp-theme-color-input
-             class="mainInput"
-            .label="${this.t("Theme Tertiary Color")}"
-            .color="${this.themeTertiaryColor}"
-            .disableSelection="${this.disableMultiInputs}"
-            @input="${(e: any) => {
-               this.themeTertiaryColor = e.detail.color;
-            }}"
-          >
-          </yp-theme-color-input>
+            <yp-theme-color-input
+              class="mainInput"
+              .label="${this.t("Theme Tertiary Color")}"
+              .color="${this.themeTertiaryColor}"
+              .disableSelection="${this.disableMultiInputs}"
+              @input="${(e: any) => {
+                this.themeTertiaryColor = e.detail.color;
+              }}"
+            >
+            </yp-theme-color-input>
 
-          <yp-theme-color-input
-             class="mainInput"
-            .label="${this.t("Theme Neutral Color")}"
-            .color="${this.themeNeutralColor}"
-            .disableSelection="${this.disableMultiInputs}"
-            @input="${(e: any) => {
-               this.themeNeutralColor = e.detail.color;
-            }}"
-          >
-          </yp-theme-color-input>
+            <yp-theme-color-input
+              class="mainInput"
+              .label="${this.t("Theme Neutral Color")}"
+              .color="${this.themeNeutralColor}"
+              .disableSelection="${this.disableMultiInputs}"
+              @input="${(e: any) => {
+                this.themeNeutralColor = e.detail.color;
+              }}"
+            >
+            </yp-theme-color-input>
 
+            <yp-theme-color-input
+              class="mainInput"
+              .label="${this.t("Theme Neutral Variant Color")}"
+              .color="${this.themeNeutralVariantColor}"
+              .disableSelection="${this.disableMultiInputs}"
+              @input="${(e: any) => {
+                this.themeNeutralVariantColor = e.detail.color;
+              }}"
+            >
+            </yp-theme-color-input>
 
-          <yp-theme-color-input
-             class="mainInput"
-            .label="${this.t("Theme Neutral Variant Color")}"
-            .color="${this.themeNeutralVariantColor}"
-            .disableSelection="${this.disableMultiInputs}"
-            @input="${(e: any) => {
-               this.themeNeutralVariantColor = e.detail.color;
-            }}"
-          >
-          </yp-theme-color-input>
-
-          <md-outlined-select
-            hidden
-            label="Theme Variant"
-            .disabled="${this.disableMultiInputs}"
-            @change="${this.setThemeVariant}"
-          >
-            ${YpThemeManager.themeVariantsOptionsWithName.map(
-              (option) => html`
-                <md-select-option value="${option.value}">
-                  <div slot="headline">${option.name}</div>
-                </md-select-option>
-              `
-            )}
-          </md-outlined-select>
+            <md-outlined-select
+              hidden
+              label="Theme Variant"
+              .disabled="${this.disableMultiInputs}"
+              @change="${this.setThemeVariant}"
+            >
+              ${YpThemeManager.themeVariantsOptionsWithName.map(
+                (option) => html`
+                  <md-select-option value="${option.value}">
+                    <div slot="headline">${option.name}</div>
+                  </md-select-option>
+                `
+              )}
+            </md-outlined-select>
+          </div>
         </div>
-        ${this.renderPallette()}
+        <div class="layout vertical">
+          <div class="layout horizontal center-center">
+            ${this.renderThemeToggle(true)}
+          </div>
+          <div class="darkContrastInfo">
+            ${this.t("userControlledSettings")}
+          </div>
+          ${this.renderPallette()}
+        </div>
       </div>
     `;
   }

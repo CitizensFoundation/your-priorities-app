@@ -17,7 +17,6 @@ import { YpAccessHelpers } from "../../common/YpAccessHelpers.js";
 let AoiSurveyIntro = class AoiSurveyIntro extends YpBaseElement {
     constructor() {
         super(...arguments);
-        this.themeHighContrast = false;
         this.isAdmin = false;
         this.footer = null;
         this.footerEnd = null;
@@ -277,9 +276,6 @@ __decorate([
 __decorate([
     property({ type: Object })
 ], AoiSurveyIntro.prototype, "question", void 0);
-__decorate([
-    property({ type: Boolean })
-], AoiSurveyIntro.prototype, "themeHighContrast", void 0);
 __decorate([
     property({ type: Boolean })
 ], AoiSurveyIntro.prototype, "isAdmin", void 0);

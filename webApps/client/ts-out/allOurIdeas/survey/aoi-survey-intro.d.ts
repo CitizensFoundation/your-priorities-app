@@ -5,7 +5,6 @@ export declare class AoiSurveyIntro extends YpBaseElement {
     earl: AoiEarlData;
     group: YpGroupData;
     question: AoiQuestionData;
-    themeHighContrast: boolean;
     isAdmin: boolean;
     private footer;
     private footerEnd;

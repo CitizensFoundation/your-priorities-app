@@ -1,4 +1,5 @@
-import { LitElement } from 'lit';
+import { LitElement } from "lit";
+import "@material/web/iconbutton/outlined-icon-button.js";
 export declare class YpBaseElement extends LitElement {
     language: string;
     wide: boolean;
@@ -6,10 +7,14 @@ export declare class YpBaseElement extends LitElement {
     largeFont: boolean;
     themeColor: string;
     themeDarkMode: boolean | undefined;
+    themeHighContrast: boolean | undefined;
+    static darkModeLocalStorageKey: string;
+    static highContrastLocalStorageKey: string;
     static get styles(): any;
     get isAppleDevice(): boolean;
     installMediaQueryWatcher: (mediaQuery: string, layoutChangedCallback: (mediaQueryMatches: boolean) => void) => void;
     connectedCallback(): void;
+    setupThemeSettings(): Promise<void>;
     disconnectedCallback(): void;
     _changeThemeColor(event: CustomEvent): void;
     _changeThemeDarkMode(event: CustomEvent): void;
@@ -29,5 +34,8 @@ export declare class YpBaseElement extends LitElement {
     removeGlobalListener(name: string, callback: Function): void;
     t(...args: Array<string>): string;
     $$(id: string): HTMLElement | null;
+    toggleHighContrast(): void;
+    toggleDarkMode(): void;
+    renderThemeToggle(hideText?: boolean): import("lit-html").TemplateResult<1>;
 }
 //# sourceMappingURL=yp-base-element.d.ts.map

@@ -28,9 +28,6 @@ export class YpAppNavDrawer extends YpBaseElement {
   @property({ type: Boolean })
   spinner = false;
 
-  @property({ type: Boolean })
-  themeHighContrast = false;
-
   @property({ type: String })
   route: string | undefined;
 
@@ -69,11 +66,6 @@ export class YpAppNavDrawer extends YpBaseElement {
 
   override connectedCallback(): void {
     super.connectedCallback();
-  }
-
-  updateFromTheme() {
-    this.themeHighContrast = window.appGlobals.theme.themeHighContrast;
-    this.themeDarkMode = window.appGlobals.theme.themeDarkMode;
   }
 
   async _openChanged() {
@@ -232,49 +224,6 @@ export class YpAppNavDrawer extends YpBaseElement {
         }
       `,
     ];
-  }
-
-  renderThemeToggle() {
-    return html`<div class="layout vertical center-center lightDarkContainer">
-        ${!this.themeDarkMode
-          ? html`
-              <md-outlined-icon-button
-                class="darkModeButton"
-                @click="${() => this.fire("yp-toggle-dark-mode")}"
-                ><md-icon>dark_mode</md-icon></md-outlined-icon-button
-              >
-            `
-          : html`
-              <md-outlined-icon-button
-                class="darkModeButton"
-                @click="${() => this.fire("yp-toggle-dark-mode")}"
-                ><md-icon>light_mode</md-icon></md-outlined-icon-button
-              >
-            `}
-        <div>${this.t("Light/Dark")}</div>
-      </div>
-
-      <div
-        class="layout vertical center-center lightDarkContainer"
-        ?hidden="${this.isAppleDevice}"
-      >
-        ${!this.themeHighContrast
-          ? html`
-            <md-outlined-icon-button
-              class="darkModeButton"
-              @click="${() => this.fire("yp-toggle-high-contrast-mode")}"
-              ><md-icon>contrast</md-icon></md-outlined-icon-button
-            >
-          </div> `
-          : html`
-              <md-outlined-icon-button
-                class="darkModeButton"
-                @click="${() => this.fire("yp-toggle-high-contrast-mode")}"
-                ><md-icon>contrast_rtl_off</md-icon></md-outlined-icon-button
-              >
-            `}
-        <div>${this.t("Contrast")}</div>
-      </div>`;
   }
 
   override render() {

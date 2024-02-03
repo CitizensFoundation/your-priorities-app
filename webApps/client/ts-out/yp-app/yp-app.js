@@ -78,7 +78,6 @@ let YpApp = class YpApp extends YpBaseElement {
         this._setupEventListeners();
         this._setupSamlCallback();
         this.updateLocation();
-        this.setupTheme();
     }
     disconnectedCallback() {
         super.disconnectedCallback();
@@ -453,8 +452,6 @@ let YpApp = class YpApp extends YpBaseElement {
         <div>
           <yp-app-nav-drawer
             id="ypNavDrawer"
-            @yp-toggle-dark-mode="${this.toggleDarkMode}"
-            @yp-toggle-high-contrast-mode="${this.toggleHighContrastMode}"
             .homeLink="${this.homeLink}"
             .opened="${this.navDrawOpenedDelayed}"
             @yp-toggle-nav-drawer="${this._toggleNavDrawer}"
@@ -942,53 +939,6 @@ let YpApp = class YpApp extends YpBaseElement {
         if (page) {
             window.appGlobals.analytics.sendToAnalyticsTrackers("send", "pageview", location.pathname);
         }
-    }
-    setupTheme() {
-        // Read dark mode and theme from localestore and set this.themeDarkMode and this.themeColor and change the theme
-        const savedDarkMode = localStorage.getItem("md3-ps-dark-mode");
-        if (savedDarkMode) {
-            window.appGlobals.theme.themeDarkMode = true;
-        }
-        else {
-            window.appGlobals.theme.themeDarkMode = false;
-        }
-        const savedHighContrastMode = localStorage.getItem("md3-ps-high-contrast-mode");
-        if (savedHighContrastMode) {
-            window.appGlobals.theme.themeHighContrast = true;
-        }
-        else {
-            window.appGlobals.theme.themeHighContrast = false;
-        }
-        this.fire("yp-theme-dark-mode", window.appGlobals.theme.themeDarkMode);
-        window.appGlobals.theme.themeChanged();
-    }
-    toggleDarkMode() {
-        window.appGlobals.theme.themeDarkMode =
-            !window.appGlobals.theme.themeDarkMode;
-        if (window.appGlobals.theme.themeDarkMode) {
-            window.appGlobals.activity("Settings - dark mode");
-            localStorage.setItem("md3-ps-dark-mode", "true");
-        }
-        else {
-            window.appGlobals.activity("Settings - light mode");
-            localStorage.removeItem("md3-ps-dark-mode");
-        }
-        window.appGlobals.theme.themeChanged();
-        this.$$("#ypNavDrawer").updateFromTheme();
-    }
-    toggleHighContrastMode() {
-        window.appGlobals.theme.themeHighContrast =
-            !window.appGlobals.theme.themeHighContrast;
-        if (window.appGlobals.theme.themeHighContrast) {
-            window.appGlobals.activity("Settings - high contrast mode");
-            localStorage.setItem("md3-ps-high-contrast-mode", "true");
-        }
-        else {
-            window.appGlobals.activity("Settings - non high contrast mode");
-            localStorage.removeItem("md3-ps-high-contrast-mode");
-        }
-        window.appGlobals.theme.themeChanged();
-        this.$$("#ypNavDrawer").updateFromTheme();
     }
     openResetPasswordDialog(resetPasswordToken) {
         // TODO: Remove any

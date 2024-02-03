@@ -9,7 +9,6 @@ export declare class YpAppNavDrawer extends YpBaseElement {
     user: YpUserData | undefined;
     opened: boolean;
     spinner: boolean;
-    themeHighContrast: boolean;
     route: string | undefined;
     myAdminGroups: YpGroupData[] | undefined;
     myAdminCommunities: YpCommunityData[] | undefined;
@@ -20,7 +19,6 @@ export declare class YpAppNavDrawer extends YpBaseElement {
     memberships: YpMemberships | undefined;
     updated(changedProperties: Map<string | number | symbol, unknown>): void;
     connectedCallback(): void;
-    updateFromTheme(): void;
     _openChanged(): Promise<void>;
     _selectedLocale(): string;
     _goBack(): void;
@@ -30,7 +28,6 @@ export declare class YpAppNavDrawer extends YpBaseElement {
     _userChanged(): void;
     _reset(): void;
     static get styles(): any[];
-    renderThemeToggle(): import("lit-html").TemplateResult<1>;
     render(): import("lit-html").TemplateResult<1>;
 }
 //# sourceMappingURL=yp-app-nav-drawer.d.ts.map

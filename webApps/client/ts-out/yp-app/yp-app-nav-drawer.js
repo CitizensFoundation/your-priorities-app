@@ -18,7 +18,6 @@ let YpAppNavDrawer = class YpAppNavDrawer extends YpBaseElement {
         super(...arguments);
         this.opened = false;
         this.spinner = false;
-        this.themeHighContrast = false;
     }
     updated(changedProperties) {
         super.updated(changedProperties);
@@ -31,10 +30,6 @@ let YpAppNavDrawer = class YpAppNavDrawer extends YpBaseElement {
     }
     connectedCallback() {
         super.connectedCallback();
-    }
-    updateFromTheme() {
-        this.themeHighContrast = window.appGlobals.theme.themeHighContrast;
-        this.themeDarkMode = window.appGlobals.theme.themeDarkMode;
     }
     async _openChanged() {
         if (this.opened === true) {
@@ -168,48 +163,6 @@ let YpAppNavDrawer = class YpAppNavDrawer extends YpBaseElement {
       `,
         ];
     }
-    renderThemeToggle() {
-        return html `<div class="layout vertical center-center lightDarkContainer">
-        ${!this.themeDarkMode
-            ? html `
-              <md-outlined-icon-button
-                class="darkModeButton"
-                @click="${() => this.fire("yp-toggle-dark-mode")}"
-                ><md-icon>dark_mode</md-icon></md-outlined-icon-button
-              >
-            `
-            : html `
-              <md-outlined-icon-button
-                class="darkModeButton"
-                @click="${() => this.fire("yp-toggle-dark-mode")}"
-                ><md-icon>light_mode</md-icon></md-outlined-icon-button
-              >
-            `}
-        <div>${this.t("Light/Dark")}</div>
-      </div>
-
-      <div
-        class="layout vertical center-center lightDarkContainer"
-        ?hidden="${this.isAppleDevice}"
-      >
-        ${!this.themeHighContrast
-            ? html `
-            <md-outlined-icon-button
-              class="darkModeButton"
-              @click="${() => this.fire("yp-toggle-high-contrast-mode")}"
-              ><md-icon>contrast</md-icon></md-outlined-icon-button
-            >
-          </div> `
-            : html `
-              <md-outlined-icon-button
-                class="darkModeButton"
-                @click="${() => this.fire("yp-toggle-high-contrast-mode")}"
-                ><md-icon>contrast_rtl_off</md-icon></md-outlined-icon-button
-              >
-            `}
-        <div>${this.t("Contrast")}</div>
-      </div>`;
-    }
     render() {
         return html `
       <div class="material">
@@ -328,9 +281,6 @@ __decorate([
 __decorate([
     property({ type: Boolean })
 ], YpAppNavDrawer.prototype, "spinner", void 0);
-__decorate([
-    property({ type: Boolean })
-], YpAppNavDrawer.prototype, "themeHighContrast", void 0);
 __decorate([
     property({ type: String })
 ], YpAppNavDrawer.prototype, "route", void 0);

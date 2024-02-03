@@ -22,6 +22,7 @@ export declare class YpThemeManager {
     isAppleDevice: boolean;
     themeScheme: MaterialColorScheme;
     constructor();
+    setupOldThemes(): void;
     updateStyles(properties: Record<string, string>): void;
     setThemeFromOldConfiguration(number: number | undefined, configuration?: YpCollectionConfiguration | undefined): void;
     setTheme(number: number | undefined, configuration?: YpCollectionConfiguration | undefined): void;
