@@ -741,6 +741,7 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
   }
 
   beforeSave() {}
+  afterSave() {}
 
   sendUpdateCollectionEvents() {
     if (this.collectionType == "domain") {
@@ -764,6 +765,7 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
       await form.submit();
       (this.$$("#spinner") as MdCircularProgress).hidden = true;
       this.sendUpdateCollectionEvents();
+      this.afterSave();
     } else {
       this.fire("yp-form-invalid");
       const error = this.t("form.invalid");

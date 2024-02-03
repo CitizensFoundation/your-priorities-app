@@ -97,6 +97,24 @@ export class AoiAdminServerApi extends YpServerApi {
     );
   }
 
+  public async updateName(
+    communityId: number,
+    questionId: number,
+    name: string,
+ ): Promise<void> {
+    return this.fetchWrapper(
+      this.baseUrlPath + `/${communityId}/questions/${questionId}/name`,
+      {
+        method: "PUT",
+        body: JSON.stringify({
+          name
+        }),
+      },
+      true,
+      undefined,
+      true
+    );
+  }
 
   public async toggleIdeaActive(
     groupId: number,

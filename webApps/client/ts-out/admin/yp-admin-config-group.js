@@ -21,6 +21,7 @@ import "../yp-file-upload/yp-file-upload.js";
 //import './@yrpri/yp-theme/yp-theme-selector.js';
 import "../yp-app/yp-language-selector.js";
 import "./allOurIdeas/aoi-earl-ideas-editor.js";
+import { AoiAdminServerApi } from "./allOurIdeas/AoiAdminServerApi.js";
 var GroupType;
 (function (GroupType) {
     GroupType[GroupType["ideaGeneration"] = 0] = "ideaGeneration";
@@ -65,6 +66,7 @@ let YpAdminConfigGroup = class YpAdminConfigGroup extends YpAdminConfigBase {
         this.gettingImageColor = false;
         this.groupTypeIndex = 1;
         this.endorsementButtonsDisabled = false;
+        this.questionNameHasChanged = false;
         this.groupTypeOptions = ["ideaGeneration", "allOurIdeas"];
         this.groupAccessOptions = {
             0: "public",
@@ -1564,7 +1566,6 @@ let YpAdminConfigGroup = class YpAdminConfigGroup extends YpAdminConfigBase {
         return html ` <aoi-earl-ideas-editor
       .communityId="${communityId}"
       @configuration-changed="${this.earlConfigChanged}"
-      .questionName="${this.aoiQuestionName}""
       .configuration="${this.group.configuration.allOurIdeas}"
     ></aoi-earl-ideas-editor>`;
     }
@@ -1584,9 +1585,24 @@ let YpAdminConfigGroup = class YpAdminConfigGroup extends YpAdminConfigBase {
         this.aoiQuestionName = value;
         console.error("questionNameChanged", value);
         this.set(this.group.configuration.allOurIdeas.earl, "question.name", value);
+        this.questionNameHasChanged = true;
         this.configTabs = this.setupConfigTabs();
         this._configChanged();
         this.requestUpdate();
+    }
+    afterSave() {
+        super.afterSave();
+        if (this.questionNameHasChanged) {
+            let communityId;
+            if (this.collectionId === "new") {
+                communityId = this.parentCollectionId;
+            }
+            else {
+                communityId = this.group.community_id;
+            }
+            const serverApi = new AoiAdminServerApi();
+            serverApi.updateName(communityId, this.group.configuration.allOurIdeas.earl.question.id, this.group.configuration.allOurIdeas.earl.question.name);
+        }
     }
     _getAllOurIdeaTab() {
         let configuration = this.group.configuration.allOurIdeas;

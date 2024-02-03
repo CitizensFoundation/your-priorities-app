@@ -42,6 +42,14 @@ export class AoiAdminServerApi extends YpServerApi {
             }),
         }, true, undefined, true);
     }
+    async updateName(communityId, questionId, name) {
+        return this.fetchWrapper(this.baseUrlPath + `/${communityId}/questions/${questionId}/name`, {
+            method: "PUT",
+            body: JSON.stringify({
+                name
+            }),
+        }, true, undefined, true);
+    }
     async toggleIdeaActive(groupId, choiceId) {
         return this.fetchWrapper(this.baseUrlPath + `/${groupId}/choices/${choiceId}/toggleActive`, {
             method: "PUT",

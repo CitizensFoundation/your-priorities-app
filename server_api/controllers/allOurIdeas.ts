@@ -82,7 +82,13 @@ export class AllOurIdeasController {
       this.updateActive.bind(this)
     );
 
-    console.log("---- have initialized routes for allOurIdeasController");
+    this.router.put(
+      "/:communityId/questions/:questionId/name",
+      auth.can("create group"),
+      this.updateQuestionName.bind(this)
+    );
+
+
   }
 
   public async generateIdeas(req: Request, res: Response): Promise<void> {
@@ -106,8 +112,8 @@ export class AllOurIdeasController {
     try {
       const group = (await Group.findOne({
         where: {
-          id: groupId
-        }
+          id: groupId,
+        },
       })) as YpGroupData;
       const aoiConfig = group.configuration.allOurIdeas;
       if (group && aoiConfig?.earl) {
@@ -115,7 +121,7 @@ export class AllOurIdeasController {
           with_prompt: true,
           with_appearance: true,
           with_visitor_stats: true,
-          visitor_identifier: req.session.id
+          visitor_identifier: req.session.id,
         };
 
         const questionResponse = await fetch(
@@ -266,8 +272,8 @@ export class AllOurIdeasController {
           method: "PUT",
           headers: defaultHeader,
           body: JSON.stringify({
-            data: req.body.data
-        }),
+            data: req.body.data,
+          }),
         }
       );
 
@@ -288,8 +294,8 @@ export class AllOurIdeasController {
           method: "PUT",
           headers: defaultHeader,
           body: JSON.stringify({
-            active: req.body.active
-        }),
+            active: req.body.active,
+          }),
         }
       );
 
@@ -302,6 +308,27 @@ export class AllOurIdeasController {
     }
   }
 
+  public async updateQuestionName(req: Request, res: Response) {
+    try {
+      const response = await fetch(
+        `${PAIRWISE_API_HOST}/questions/${req.params.questionId}.json`,
+        {
+          method: "PUT",
+          headers: defaultHeader,
+          body: JSON.stringify({
+            name: req.body.name,
+          }),
+        }
+      );
+
+      if (!response.ok) throw new Error("Question update name failed.");
+
+      res.status(200).json({ message: "Question name updated" });
+    } catch (error) {
+      console.error(error);
+      res.status(422).json({ error: "Question update name failed" });
+    }
+  }
 
   public async skip(req: Request, res: Response) {
     const { id, question_id } = req.body;
@@ -366,7 +393,7 @@ export class AllOurIdeasController {
         throw new Error(`Failed to fetch choices: ${response.statusText}`);
       }
 
-      const choices = await response.json() as AoiChoiceData[];
+      const choices = (await response.json()) as AoiChoiceData[];
 
       try {
         for (let choice of choices) {
@@ -406,7 +433,9 @@ export class AllOurIdeasController {
     const session = req.session; // Assuming express-session middleware is used
     const params = req.body; // Assuming body-parser middleware is used for JSON body parsing
 
-    console.log(`getVoteRequestOptions: ${JSON.stringify(params)} s: ${session}`)
+    console.log(
+      `getVoteRequestOptions: ${JSON.stringify(params)} s: ${session}`
+    );
     const options: any = {
       visitor_identifier: session.id,
       // Use a static value of 5 if in test environment, so we can mock resulting API queries

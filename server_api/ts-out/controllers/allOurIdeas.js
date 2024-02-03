@@ -39,7 +39,7 @@ class AllOurIdeasController {
         this.router.post("/:groupId/questions/:questionId/prompts/:promptId/skips", authorization_js_1.default.can("view group"), this.skip.bind(this));
         this.router.put("/:communityId/questions/:questionId/choices/:choiceId", authorization_js_1.default.can("create group"), this.updateCoiceData.bind(this));
         this.router.put("/:communityId/questions/:questionId/choices/:choiceId/active", authorization_js_1.default.can("create group"), this.updateActive.bind(this));
-        console.log("---- have initialized routes for allOurIdeasController");
+        this.router.put("/:communityId/questions/:questionId/name", authorization_js_1.default.can("create group"), this.updateQuestionName.bind(this));
     }
     async generateIdeas(req, res) {
         const { currentIdeas, wsClientSocketId, question } = req.body;
@@ -61,8 +61,8 @@ class AllOurIdeasController {
         try {
             const group = (await Group.findOne({
                 where: {
-                    id: groupId
-                }
+                    id: groupId,
+                },
             }));
             const aoiConfig = group.configuration.allOurIdeas;
             if (group && aoiConfig?.earl) {
@@ -70,7 +70,7 @@ class AllOurIdeasController {
                     with_prompt: true,
                     with_appearance: true,
                     with_visitor_stats: true,
-                    visitor_identifier: req.session.id
+                    visitor_identifier: req.session.id,
                 };
                 const questionResponse = await fetch(`${PAIRWISE_API_HOST}/questions/${aoiConfig.earl.question_id}.json?${new URLSearchParams(showParams).toString()}`, {
                     method: "GET",
@@ -185,7 +185,7 @@ class AllOurIdeasController {
                 method: "PUT",
                 headers: defaultHeader,
                 body: JSON.stringify({
-                    data: req.body.data
+                    data: req.body.data,
                 }),
             });
             if (!response.ok)
@@ -203,7 +203,7 @@ class AllOurIdeasController {
                 method: "PUT",
                 headers: defaultHeader,
                 body: JSON.stringify({
-                    active: req.body.active
+                    active: req.body.active,
                 }),
             });
             if (!response.ok)
@@ -213,6 +213,24 @@ class AllOurIdeasController {
         catch (error) {
             console.error(error);
             res.status(422).json({ error: "Choice active failed" });
+        }
+    }
+    async updateQuestionName(req, res) {
+        try {
+            const response = await fetch(`${PAIRWISE_API_HOST}/questions/${req.params.questionId}.json`, {
+                method: "PUT",
+                headers: defaultHeader,
+                body: JSON.stringify({
+                    name: req.body.name,
+                }),
+            });
+            if (!response.ok)
+                throw new Error("Question update name failed.");
+            res.status(200).json({ message: "Question name updated" });
+        }
+        catch (error) {
+            console.error(error);
+            res.status(422).json({ error: "Question update name failed" });
         }
     }
     async skip(req, res) {
@@ -260,7 +278,7 @@ class AllOurIdeasController {
             if (!response.ok) {
                 throw new Error(`Failed to fetch choices: ${response.statusText}`);
             }
-            const choices = await response.json();
+            const choices = (await response.json());
             try {
                 for (let choice of choices) {
                     choice.data = JSON.parse(choice.data);

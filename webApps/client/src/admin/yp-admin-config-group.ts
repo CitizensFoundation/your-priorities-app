@@ -34,6 +34,7 @@ import { MdOutlinedSelect } from "@material/web/select/outlined-select.js";
 import "./allOurIdeas/aoi-earl-ideas-editor.js";
 import { MdFilledTextField } from "@material/web/textfield/filled-text-field.js";
 import { AoiEarlIdeasEditor } from "./allOurIdeas/aoi-earl-ideas-editor.js";
+import { AoiAdminServerApi } from "./allOurIdeas/AoiAdminServerApi.js";
 
 enum GroupType {
   ideaGeneration = 0,
@@ -114,6 +115,7 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
 
   @property({ type: String })
   detectedThemeColor: string | undefined;
+
   isDataVisualizationGroup: any;
   dataForVisualizationJsonError: any;
   groupMoveToOptions: any;
@@ -127,6 +129,7 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
   collectionStatusOptions: any;
   statusIndex: any;
   hasSamlLoginProvider: any;
+  questionNameHasChanged = false;
 
   groupTypeOptions = ["ideaGeneration", "allOurIdeas"];
 
@@ -1716,7 +1719,6 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
     return html` <aoi-earl-ideas-editor
       .communityId="${communityId}"
       @configuration-changed="${this.earlConfigChanged}"
-      .questionName="${this.aoiQuestionName}""
       .configuration="${this.group.configuration.allOurIdeas!}"
     ></aoi-earl-ideas-editor>`;
   }
@@ -1747,9 +1749,30 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
       value
     );
 
+    this.questionNameHasChanged = true;
+
     this.configTabs = this.setupConfigTabs();
     this._configChanged();
     this.requestUpdate();
+  }
+
+  override afterSave() {
+    super.afterSave();
+    if (this.questionNameHasChanged) {
+      let communityId;
+
+      if (this.collectionId === "new") {
+        communityId = this.parentCollectionId as number;
+      } else {
+        communityId = this.group.community_id;
+      }
+      const serverApi = new AoiAdminServerApi();
+      serverApi.updateName(
+        communityId,
+        this.group.configuration.allOurIdeas!.earl!.question!.id,
+        this.group.configuration.allOurIdeas!.earl!.question!.name
+      );
+    }
   }
 
   _getAllOurIdeaTab() {

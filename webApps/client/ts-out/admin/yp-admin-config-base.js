@@ -618,6 +618,7 @@ export class YpAdminConfigBase extends YpAdminPage {
         return page.title[pageLocale];
     }
     beforeSave() { }
+    afterSave() { }
     sendUpdateCollectionEvents() {
         if (this.collectionType == "domain") {
             this.fireGlobal("yp-refresh-domain");
@@ -640,6 +641,7 @@ export class YpAdminConfigBase extends YpAdminPage {
             await form.submit();
             this.$$("#spinner").hidden = true;
             this.sendUpdateCollectionEvents();
+            this.afterSave();
         }
         else {
             this.fire("yp-form-invalid");

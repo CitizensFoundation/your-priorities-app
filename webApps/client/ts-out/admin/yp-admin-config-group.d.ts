@@ -36,13 +36,14 @@ export declare class YpAdminConfigGroup extends YpAdminConfigBase {
     collectionStatusOptions: any;
     statusIndex: any;
     hasSamlLoginProvider: any;
+    questionNameHasChanged: boolean;
     groupTypeOptions: string[];
     constructor();
     static get styles(): (any[] | import("lit").CSSResult)[];
     imageLoaded(event: CustomEvent): Promise<void>;
     _setGroupType(event: CustomEvent): void;
     renderGroupTypeSelection(): import("lit-html").TemplateResult<1>;
-    renderHeader(): import("lit-html").TemplateResult<1> | typeof nothing;
+    renderHeader(): typeof nothing | import("lit-html").TemplateResult<1>;
     renderImage(): import("lit-html").TemplateResult<1>;
     getAccessTokenName(): "open_to_community" | "secret";
     renderHiddenInputs(): import("lit-html").TemplateResult<1>;
@@ -79,6 +80,7 @@ export declare class YpAdminConfigGroup extends YpAdminConfigBase {
     earlConfigChanged(event: CustomEvent): void;
     renderCreateEarl(communityId: number): import("lit-html").TemplateResult<1>;
     questionNameChanged(event: CustomEvent): void;
+    afterSave(): void;
     _getAllOurIdeaTab(): YpConfigTabData;
     set(obj: any, path: string, value: any): void;
     _updateEarl(event: CustomEvent, earlUpdatePath: string): void;
