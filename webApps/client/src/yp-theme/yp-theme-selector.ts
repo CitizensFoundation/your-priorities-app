@@ -7,6 +7,10 @@ import "@material/web/select/select-option.js";
 import "@material/web/textfield/outlined-text-field.js";
 import { YpThemeManager } from "../yp-app/YpThemeManager.js";
 import { MdOutlinedSelect } from "@material/web/select/outlined-select.js";
+import { repeat } from "lit/directives/repeat.js";
+import { MdOutlinedTextField } from "@material/web/textfield/outlined-text-field.js";
+
+import "./yp-theme-color-input.js";
 
 @customElement("yp-theme-selector")
 export class YpThemeSelector extends YpBaseElement {
@@ -40,6 +44,12 @@ export class YpThemeSelector extends YpBaseElement {
   @property({ type: Boolean })
   disableSelection: boolean | undefined = false;
 
+  @property({ type: Boolean })
+  disableMultiInputs: boolean = false;
+
+  @property({ type: Boolean })
+  disableOneThemeColorInputs: boolean = false;
+
   static override get styles() {
     return [
       super.styles,
@@ -49,6 +59,7 @@ export class YpThemeSelector extends YpBaseElement {
           max-width: 250px;
           width: 250px;
           margin-bottom: 8px;
+          margin-top: 8px;
         }
 
         .or {
@@ -61,6 +72,14 @@ export class YpThemeSelector extends YpBaseElement {
           max-width: 250px;
           width: 250px;
           text-align: center;
+        }
+
+        .color {
+          padding: 8px;
+          margin-top: 8px;
+          margin-bottom: 8px;
+          margin-left: 16px;
+          border-radius: 8px;
         }
       `,
     ];
@@ -99,6 +118,8 @@ export class YpThemeSelector extends YpBaseElement {
     ].forEach((prop) => {
       if (changedProperties.has(prop)) {
         shouldUpdateConfiguration = true;
+        this.updateDisabledInputs();
+        console.error(`Updated: ${prop}`)
       }
     });
 
@@ -150,18 +171,29 @@ export class YpThemeSelector extends YpBaseElement {
 
   setThemeSchema(event: CustomEvent) {
     const index = (event.target as MdOutlinedSelect).selectedIndex;
-    this.selectedThemeScheme = YpThemeManager.themeScemesOptionsWithName[index].value;
+    this.selectedThemeScheme =
+      YpThemeManager.themeScemesOptionsWithName[index].value;
   }
 
   setThemeVariant(event: CustomEvent) {
     const index = (event.target as MdOutlinedSelect).selectedIndex;
-    this.selectedThemeVariant = YpThemeManager.themeVariantsOptionsWithName[index].value;
+    this.selectedThemeVariant =
+      YpThemeManager.themeVariantsOptionsWithName[index].value;
   }
 
-  override render() {
-    const disableMultiInputs = this.isValidHex(this.oneDynamicThemeColor);
+  handleColorInput(event: CustomEvent) {
+    const inputValue = (event.target as MdOutlinedTextField).value;
+    const isValidHex = /^[0-9A-Fa-f]{0,6}$/.test(inputValue);
+    if (isValidHex) {
+      this.oneDynamicThemeColor = inputValue;
+    } else {
+      (event.target as MdOutlinedTextField)!.value =
+        this.oneDynamicThemeColor || "";
+    }
+  }
 
-    const disableOneThemeColorInputs = [
+  updateDisabledInputs() {
+    this.disableOneThemeColorInputs = [
       this.themePrimaryColor,
       this.themeSecondaryColor,
       this.themeTertiaryColor,
@@ -169,98 +201,232 @@ export class YpThemeSelector extends YpBaseElement {
       this.themeNeutralVariantColor,
     ].some((color) => this.isValidHex(color));
 
+    this.disableMultiInputs = this.isValidHex(this.oneDynamicThemeColor);
+  }
+
+  override render() {
     return html`
-     <div class="layout vertical">
-     <md-outlined-text-field
-        label="Dynamic Theme Color"
-        .value="${this.oneDynamicThemeColor || ""}"
-        ?disabled="${this.disableSelection || disableOneThemeColorInputs}"
-        @input="${(e: any) => {
-          this.oneDynamicThemeColor = e.target.value;
-        }}"
-        class="mainInput"
-      ></md-outlined-text-field>
+      <div class="layout horizontal">
+        <div class="layout vertical">
+          <yp-theme-color-input
+            class="mainInput"
+            .label="${this.t("One Dynamic Color")}"
+            .color="${this.oneDynamicThemeColor}"
+            .disableSelection="${this.disableSelection || this.disableOneThemeColorInputs}"
+            @input="${(e: any) => {
+              this.oneDynamicThemeColor = e.detail.color;
+            }}"
+          >
+          </yp-theme-color-input>
 
-      <md-outlined-select
-        label="Theme Scheme"
-        .disabled="${this.disableSelection || disableOneThemeColorInputs}"
-        @change="${this.setThemeSchema}"
-      >
-        ${YpThemeManager.themeScemesOptionsWithName.map(
-          (option) => html`
-            <md-select-option value="${option.value}">
-              <div slot="headline">${option.name}</div>
-            </md-select-option>
-          `
-        )}
-      </md-outlined-select>
+          <md-outlined-select
+            label="Theme Scheme"
+            .disabled="${this.disableSelection || this.disableOneThemeColorInputs}"
+            @change="${this.setThemeSchema}"
+            .selected="${this.selectedThemeScheme}"
+          >
+            ${YpThemeManager.themeScemesOptionsWithName.map(
+              (option) => html`
+                <md-select-option value="${option.value}">
+                  <div slot="headline">${option.name}</div>
+                </md-select-option>
+              `
+            )}
+          </md-outlined-select>
 
-      <div class="or">${this.t('or')}</div>
+          <div class="or">${this.t("or")}</div>
 
-      <md-outlined-text-field
-        label="Theme Primary Color"
-        .value="${this.themePrimaryColor || ""}"
-        .disabled="${disableMultiInputs}"
-        @input="${(e: any) => {
-          this.themePrimaryColor = e.target.value;
-        }}"
-        class="mainInput"
-      ></md-outlined-text-field>
+          <yp-theme-color-input
+            class="mainInput"
+            .label="${this.t("Theme Primary Color")}"
+            .color="${this.themePrimaryColor}"
+            .disableSelection="${this.disableMultiInputs}"
+            @input="${(e: any) => {
+               this.themePrimaryColor = e.detail.color;
+            }}"
+          >
+          </yp-theme-color-input>
 
-      <md-outlined-text-field
-        label="Theme Secondary Color"
-        .value="${this.themeSecondaryColor || ""}"
-        .disabled="${disableMultiInputs}"
-        @input="${(e: any) => {
-          this.themeSecondaryColor = e.target.value;
-        }}"
-        class="mainInput"
-      ></md-outlined-text-field>
+          <yp-theme-color-input
+            class="mainInput"
+            .label="${this.t("Theme Secondary Color")}"
+            .color="${this.themeSecondaryColor}"
+            .disableSelection="${this.disableMultiInputs}"
+            @input="${(e: any) => {
+               this.themeSecondaryColor = e.detail.color;
+            }}"
+          >
+          </yp-theme-color-input>
 
-      <md-outlined-text-field
-        label="Theme Tertiary Color"
-        .value="${this.themeTertiaryColor || ""}"
-        .disabled="${disableMultiInputs}"
-        @input="${(e: any) => {
-          this.themeTertiaryColor = e.target.value;
-        }}"
-        class="mainInput"
-      ></md-outlined-text-field>
+          <yp-theme-color-input
+             class="mainInput"
+            .label="${this.t("Theme Tertiary Color")}"
+            .color="${this.themeTertiaryColor}"
+            .disableSelection="${this.disableMultiInputs}"
+            @input="${(e: any) => {
+               this.themeTertiaryColor = e.detail.color;
+            }}"
+          >
+          </yp-theme-color-input>
 
-      <md-outlined-text-field
-        label="Theme Neutral Color"
-        .value="${this.themeNeutralColor || ""}"
-        .disabled="${disableMultiInputs}"
-        @input="${(e: any) => {
-          this.themeNeutralColor = e.target.value;
-        }}"
-        class="mainInput"
-      ></md-outlined-text-field>
+          <yp-theme-color-input
+             class="mainInput"
+            .label="${this.t("Theme Neutral Color")}"
+            .color="${this.themeNeutralColor}"
+            .disableSelection="${this.disableMultiInputs}"
+            @input="${(e: any) => {
+               this.themeNeutralColor = e.detail.color;
+            }}"
+          >
+          </yp-theme-color-input>
 
-      <md-outlined-text-field
-        label="Theme Neutral Color"
-        .value="${this.themeNeutralVariantColor || ""}"
-        .disabled="${disableMultiInputs}"
-        @input="${(e: any) => {
-          this.themeNeutralVariantColor = e.target.value;
-        }}"
-        class="mainInput"
-      ></md-outlined-text-field>
 
-      <md-outlined-select
-        label="Theme Variant"
-        .disabled="${disableMultiInputs}"
-        @change="${this.setThemeVariant}"
-      >
-        ${YpThemeManager.themeVariantsOptionsWithName.map(
-          (option) => html`
-            <md-select-option value="${option.value}">
-              <div slot="headline">${option.name}</div>
-            </md-select-option>
-          `
-        )}
-      </md-outlined-select>
-     </div>
+          <yp-theme-color-input
+             class="mainInput"
+            .label="${this.t("Theme Neutral Variant Color")}"
+            .color="${this.themeNeutralVariantColor}"
+            .disableSelection="${this.disableMultiInputs}"
+            @input="${(e: any) => {
+               this.themeNeutralVariantColor = e.detail.color;
+            }}"
+          >
+          </yp-theme-color-input>
+
+          <md-outlined-select
+            hidden
+            label="Theme Variant"
+            .disabled="${this.disableMultiInputs}"
+            @change="${this.setThemeVariant}"
+          >
+            ${YpThemeManager.themeVariantsOptionsWithName.map(
+              (option) => html`
+                <md-select-option value="${option.value}">
+                  <div slot="headline">${option.name}</div>
+                </md-select-option>
+              `
+            )}
+          </md-outlined-select>
+        </div>
+        ${this.renderPallette()}
+      </div>
     `;
+  }
+
+  renderPallette() {
+    const palletteConfig = [
+      {
+        text: "Primary",
+        color: "--md-sys-color-primary",
+        contrast: "--md-sys-color-on-primary",
+      },
+      {
+        text: "Primary Container",
+        color: "--md-sys-color-primary-container",
+        contrast: "--md-sys-color-on-primary-container",
+      },
+      {
+        text: "Secondary",
+        color: "--md-sys-color-secondary",
+        contrast: "--md-sys-color-on-secondary",
+      },
+      {
+        text: "Secondary Container",
+        color: "--md-sys-color-secondary-container",
+        contrast: "--md-sys-color-on-secondary-container",
+      },
+      {
+        text: "Tertiary",
+        color: "--md-sys-color-tertiary",
+        contrast: "--md-sys-color-on-tertiary",
+      },
+      {
+        text: "Tertiary Container",
+        color: "--md-sys-color-tertiary-container",
+        contrast: "--md-sys-color-on-tertiary-container",
+      },
+      {
+        text: "Error",
+        color: "--md-sys-color-error",
+        contrast: "--md-sys-color-on-error",
+      },
+      {
+        text: "Error Container",
+        color: "--md-sys-color-error-container",
+        contrast: "--md-sys-color-on-error-container",
+      },
+      {
+        text: "Background",
+        color: "--md-sys-color-background",
+        contrast: "--md-sys-color-on-background",
+      },
+      {
+        text: "Surface Dim",
+        color: "--md-sys-color-surface-dim",
+        contrast: "--md-sys-color-on-surface",
+      },
+      {
+        text: "Surface",
+        color: "--md-sys-color-surface",
+        contrast: "--md-sys-color-on-surface",
+      },
+      {
+        text: "Surface Bright",
+        color: "--md-sys-color-surface-bright",
+        contrast: "--md-sys-color-on-surface",
+      },
+      {
+        text: "Surface Variant",
+        color: "--md-sys-color-surface-variant",
+        contrast: "--md-sys-color-on-surface-variant",
+      },
+      {
+        text: "Surface Container Lowest",
+        color: "--md-sys-color-surface-container-lowest",
+        contrast: "--md-sys-color-on-surface-container",
+      },
+      {
+        text: "Surface Container Low",
+        color: "--md-sys-color-surface-container-low",
+        contrast: "--md-sys-color-on-surface-container",
+      },
+      {
+        text: "Surface Container",
+        color: "--md-sys-color-surface-container",
+        contrast: "--md-sys-color-on-surface-container",
+      },
+      {
+        text: "Surface Container High",
+        color: "--md-sys-color-surface-container-high",
+        contrast: "--md-sys-color-on-surface-container",
+      },
+      {
+        text: "Surface Container Highest",
+        color: "--md-sys-color-surface-container-highest",
+        contrast: "--md-sys-color-on-surface-container",
+      },
+      {
+        text: "Inverse Primary",
+        color: "--md-sys-color-inverse-primary",
+        contrast: "--md-sys-color-inverse-on-primary",
+      },
+      {
+        text: "Inverse Surface",
+        color: "--md-sys-color-inverse-surface",
+        contrast: "--md-sys-color-inverse-on-surface",
+      },
+    ];
+
+    return html`<div class="wrapper">
+      ${repeat(
+        palletteConfig,
+        ({ text }) => text,
+        ({ text, color, contrast }) => html` <div
+          class="color"
+          style="color:var(${contrast});background-color:var(${color})"
+        >
+          ${text}
+        </div>`
+      )}
+    </div>`;
   }
 }

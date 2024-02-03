@@ -82,6 +82,7 @@
     "topojson": "^1.6.19",
     "topojson-client": "^3.1.0",
     "urlpattern-polyfill": "^9.0.0",
+    "vanilla-colorful": "^0.7.2",
     "wavesurfer.js": "^6.6.4",
     "wicg-inert": "^3.0.0"
   },

@@ -417,7 +417,7 @@ let YpImage = class YpImage extends LitElement {
         if (changedProperties.has("loaded") && this.loaded) {
             const event = new CustomEvent("loaded", {
                 detail: {
-                    ypImage: this,
+                    imageYp: this,
                 },
             });
             this.dispatchEvent(event);
