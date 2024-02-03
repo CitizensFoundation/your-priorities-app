@@ -78,7 +78,7 @@ class GenerativeAiWorker {
             imageOptions = {
                 n: 1,
                 size: "1024x1024",
-                quality: "standard",
+                quality: "hd",
             };
         }
         else {

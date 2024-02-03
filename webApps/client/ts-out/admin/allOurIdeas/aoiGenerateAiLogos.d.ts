@@ -2,6 +2,8 @@ import { YpGenerateAiImage } from "../../common/yp-generate-ai-image.js";
 export declare class AoiGenerateAiLogos extends YpGenerateAiImage {
     imageType: YpAiGenerateImageTypes;
     hexColor: string;
+    promptFromUser: string | undefined;
+    constructor(hexColor: string);
     hexToRgb(hex: string): {
         r: number;
         g: number;
@@ -15,8 +17,9 @@ export declare class AoiGenerateAiLogos extends YpGenerateAiImage {
     hslToHex(h: number, s: number, l: number): string;
     getComplementaryColor(hex: string): string;
     hexToColorDescription(hex: string): string;
-    get finalPrompt(): string;
+    get promptDraft(): string;
     generateImage(): Promise<object>;
-    generateIcon(answer: string, hexColor: string): Promise<object>;
+    get finalPrompt(): string;
+    generateIcon(answer: string, promptFromUser: string): Promise<object>;
 }
 //# sourceMappingURL=aoiGenerateAiLogos.d.ts.map

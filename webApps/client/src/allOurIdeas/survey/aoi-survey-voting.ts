@@ -271,6 +271,7 @@ export class AoiSurveyVoting extends YpBaseElement {
           max-height: 120px;
           height: 120px;
           white-space: collapse balance;
+          font-size: 16px;
           --md-elevated-button-container-height: 120px !important;
           --md-elevated-button-hover-label-text-color: var(
             --md-sys-color-on-primary-container
@@ -412,6 +413,7 @@ export class AoiSurveyVoting extends YpBaseElement {
             width: 100%;
             margin-right: 32px;
             margin-left: 32px;
+            font-size: 15px;
             --md-elevated-button-container-height: 100px;
           }
 

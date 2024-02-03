@@ -76,6 +76,12 @@ export class AllOurIdeasController {
       this.updateCoiceData.bind(this)
     );
 
+    this.router.put(
+      "/:communityId/questions/:questionId/choices/:choiceId/active",
+      auth.can("create group"),
+      this.updateActive.bind(this)
+    );
+
     console.log("---- have initialized routes for allOurIdeasController");
   }
 
@@ -273,6 +279,29 @@ export class AllOurIdeasController {
       res.status(422).json({ error: "Choice update failed" });
     }
   }
+
+  public async updateActive(req: Request, res: Response) {
+    try {
+      const response = await fetch(
+        `${PAIRWISE_API_HOST}/questions/${req.params.questionId}/choices/${req.params.choiceId}.json`,
+        {
+          method: "PUT",
+          headers: defaultHeader,
+          body: JSON.stringify({
+            active: req.body.active
+        }),
+        }
+      );
+
+      if (!response.ok) throw new Error("Choice active failed.");
+
+      res.status(200).json({ message: "Choice active updated" });
+    } catch (error) {
+      console.error(error);
+      res.status(422).json({ error: "Choice active failed" });
+    }
+  }
+
 
   public async skip(req: Request, res: Response) {
     const { id, question_id } = req.body;

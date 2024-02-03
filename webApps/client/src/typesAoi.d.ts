@@ -45,6 +45,7 @@ interface AoiEarlData {
 interface AoiAnswerToVoteOnData {
   imageUrl?: string;
   content: string;
+  isGeneratingImage?: boolean;
 }
 
 interface AoiEarlConfigurationData {
@@ -140,6 +141,7 @@ interface AoiChoiceData {
   question_id: number;
   position: number;
   ratings: number;
+  user_created?: boolean;
   created_at: Date;
   updated_at: Date;
   request_id: number;

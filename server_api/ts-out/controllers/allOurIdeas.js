@@ -38,6 +38,7 @@ class AllOurIdeasController {
         this.router.post("/:groupId/questions/:questionId/prompts/:promptId/votes", authorization_js_1.default.can("view group"), this.vote.bind(this));
         this.router.post("/:groupId/questions/:questionId/prompts/:promptId/skips", authorization_js_1.default.can("view group"), this.skip.bind(this));
         this.router.put("/:communityId/questions/:questionId/choices/:choiceId", authorization_js_1.default.can("create group"), this.updateCoiceData.bind(this));
+        this.router.put("/:communityId/questions/:questionId/choices/:choiceId/active", authorization_js_1.default.can("create group"), this.updateActive.bind(this));
         console.log("---- have initialized routes for allOurIdeasController");
     }
     async generateIdeas(req, res) {
@@ -194,6 +195,24 @@ class AllOurIdeasController {
         catch (error) {
             console.error(error);
             res.status(422).json({ error: "Choice update failed" });
+        }
+    }
+    async updateActive(req, res) {
+        try {
+            const response = await fetch(`${PAIRWISE_API_HOST}/questions/${req.params.questionId}/choices/${req.params.choiceId}.json`, {
+                method: "PUT",
+                headers: defaultHeader,
+                body: JSON.stringify({
+                    active: req.body.active
+                }),
+            });
+            if (!response.ok)
+                throw new Error("Choice active failed.");
+            res.status(200).json({ message: "Choice active updated" });
+        }
+        catch (error) {
+            console.error(error);
+            res.status(422).json({ error: "Choice active failed" });
         }
     }
     async skip(req, res) {

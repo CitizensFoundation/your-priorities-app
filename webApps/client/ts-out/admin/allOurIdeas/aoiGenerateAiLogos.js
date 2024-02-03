@@ -7,10 +7,10 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 import { customElement } from "lit/decorators.js";
 import { YpGenerateAiImage } from "../../common/yp-generate-ai-image.js";
 let AoiGenerateAiLogos = class AoiGenerateAiLogos extends YpGenerateAiImage {
-    constructor() {
-        super(...arguments);
+    constructor(hexColor) {
+        super();
         this.imageType = "icon";
-        this.hexColor = "#01049c";
+        this.hexColor = hexColor;
     }
     hexToRgb(hex) {
         if (hex.startsWith("#")) {
@@ -22,7 +22,7 @@ let AoiGenerateAiLogos = class AoiGenerateAiLogos extends YpGenerateAiImage {
         return { r, g, b };
     }
     rgbToHsl(r, g, b) {
-        r /= 255, g /= 255, b /= 255;
+        (r /= 255), (g /= 255), (b /= 255);
         const max = Math.max(r, g, b), min = Math.min(r, g, b);
         let h, s, l = (max + min) / 2;
         if (max === min) {
@@ -49,7 +49,7 @@ let AoiGenerateAiLogos = class AoiGenerateAiLogos extends YpGenerateAiImage {
     hslToHex(h, s, l) {
         s /= 100;
         l /= 100;
-        let c = (1 - Math.abs(2 * l - 1)) * s, x = c * (1 - Math.abs((h / 60) % 2 - 1)), m = l - c / 2, r = 0, g = 0, b = 0;
+        let c = (1 - Math.abs(2 * l - 1)) * s, x = c * (1 - Math.abs(((h / 60) % 2) - 1)), m = l - c / 2, r = 0, g = 0, b = 0;
         if (h >= 0 && h < 60) {
             r = c;
             g = x;
@@ -112,44 +112,43 @@ let AoiGenerateAiLogos = class AoiGenerateAiLogos extends YpGenerateAiImage {
         const isGreenDominant = g === maxVal;
         const isBlueDominant = b === maxVal;
         // Generate a description
-        let description = '';
+        let description = "";
         if (isRedDominant && isGreenDominant && isBlueDominant) {
-            description = 'gray';
+            description = "gray";
         }
         else if (isRedDominant && isGreenDominant) {
-            description = 'yello';
+            description = "yello";
         }
         else if (isRedDominant && isBlueDominant) {
-            description = 'purple';
+            description = "purple";
         }
         else if (isGreenDominant && isBlueDominant) {
-            description = 'cyan';
+            description = "cyan";
         }
         else if (isRedDominant) {
-            description = 'red';
+            description = "red";
         }
         else if (isGreenDominant) {
-            description = 'green';
+            description = "green";
         }
         else if (isBlueDominant) {
-            description = 'blue';
+            description = "blue";
         }
         // Adjust for lightness/darkness
         if (maxVal > 200) {
-            description = 'light ' + description;
+            description = "light " + description;
         }
         else if (maxVal < 55) {
-            description = 'dark ' + description;
+            description = "dark " + description;
         }
         return description;
     }
-    get finalPrompt() {
+    get promptDraft() {
         const highlightColorHex = this.getComplementaryColor(this.hexColor);
-        return `
-    Create very simple tiny icon to represent this text in very simplified terms, choose one element to illustrate: ${this.name}
+        return `Minimalist app icon design.
 
-    Use a color scheme based on ${this.hexToColorDescription(this.hexColor)} with highlights in ${this.hexToColorDescription(highlightColorHex)}
-  `;
+Use a simple color scheme based on ${this.hexToColorDescription(this.hexColor)} background and ${this.hexToColorDescription(highlightColorHex)} foreground. No text.
+`;
     }
     async generateImage() {
         return new Promise((resolve, reject) => {
@@ -166,16 +165,19 @@ let AoiGenerateAiLogos = class AoiGenerateAiLogos extends YpGenerateAiImage {
             };
             this.addEventListener("got-image", onGotImage);
             this.addEventListener("image-generation-error", onImageGenerationError);
-            this.submit().catch(error => {
+            this.submit().catch((error) => {
                 this.removeEventListener("got-image", onGotImage);
                 this.removeEventListener("image-generation-error", onImageGenerationError);
                 reject(error);
             });
         });
     }
-    async generateIcon(answer, hexColor) {
-        this.name = answer;
-        this.hexColor = hexColor;
+    get finalPrompt() {
+        return this.promptFromUser;
+    }
+    async generateIcon(answer, promptFromUser) {
+        promptFromUser = `Text to create tiny icon from: ${answer}\nIcon style: ${promptFromUser}`;
+        this.promptFromUser = promptFromUser;
         return await this.generateImage();
     }
 };
