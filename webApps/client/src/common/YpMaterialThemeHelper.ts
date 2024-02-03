@@ -17,8 +17,6 @@ import {
   TonalPalette,
 } from '@material/material-color-utilities';
 
-export type Scheme = 'tonal'|'vibrant'|'expressive'|'content'|'neutral'|'monochrome'|'fidelity'|'dynamic';
-
 function generateMaterialColors(scheme: DynamicScheme): {
   [key: string]: DynamicColor;
 } {
@@ -82,10 +80,50 @@ export function hexFromHct(hue: number, chroma: number, tone: number) {
   return hexFromArgb(value);
 }
 
+/*
+export declare enum Variant {
+    MONOCHROME = 0,
+    NEUTRAL = 1,
+    TONAL_SPOT = 2,
+    VIBRANT = 3,
+    EXPRESSIVE = 4,
+    FIDELITY = 5,
+    CONTENT = 6,
+    RAINBOW = 7,
+    FRUIT_SALAD = 8
+}
+
+interface DynamicSchemeOptions {
+    sourceColorArgb: number;
+    variant: Variant;
+    contrastLevel: number;
+    isDark: boolean;
+    primaryPalette: TonalPalette;
+    secondaryPalette: TonalPalette;
+    tertiaryPalette: TonalPalette;
+    neutralPalette: TonalPalette;
+    neutralVariantPalette: TonalPalette;
+}
+
+*/
+
+const variantIndexMap = {
+  "monochrome": 0,
+  "neutral": 1,
+  "tonalSpot": 2,
+  "vibrant": 3,
+  "expressive": 4,
+  "fidelity": 5,
+  "content": 6,
+  "rainbow": 7,
+  "fruitSalad": 8
+};
+
 export function themeFromSourceColorWithContrast(
-    color: string|{primary: string, secondary: string, tertiary: string, neutral: string},
+    color: string|{primary: string, secondary: string, tertiary: string, neutral: string, neutralVariant: string},
+    variant: MaterialDynamicVariants | undefined,
     isDark: boolean,
-    scheme: Scheme,
+    scheme: MaterialColorScheme,
     contrast: number
 ) {
   if (typeof color !== 'string' && scheme !== 'dynamic' || typeof color !== 'object' && scheme === 'dynamic') {
@@ -95,6 +133,10 @@ export function themeFromSourceColorWithContrast(
      https://github.com/material-foundation/material-color-utilities/tree/main/typescript/scheme
    */
   let colorScheme: MatScheme;
+  let variantIndex;
+  if (variant) {
+    variantIndex = variantIndexMap[variant!];
+  }
   if (scheme === 'tonal') {
     //@ts-ignore
     colorScheme = new SchemeTonalSpot(
@@ -158,11 +200,12 @@ export function themeFromSourceColorWithContrast(
     const secondary = Hct.fromInt(argbFromHex(color.secondary));
     const tertiary = Hct.fromInt(argbFromHex(color.tertiary));
     const neutral = Hct.fromInt(argbFromHex(color.neutral));
+    const neutralVariant = Hct.fromInt(argbFromHex(color.neutralVariant));
     console.log(color.primary);
     //@ts-ignore
     colorScheme = new DynamicScheme({
       sourceColorArgb: argbFromHex(color.primary),
-      variant: 5, // Variant.FIDELITY https://github.com/material-foundation/material-color-utilities/blob/main/typescript/scheme/variant.ts
+      variant: variantIndex || 5, // Variant.FIDELITY https://github.com/material-foundation/material-color-utilities/blob/main/typescript/scheme/variant.ts
       contrastLevel: contrast,
       isDark,
       primaryPalette: TonalPalette.fromHueAndChroma(
@@ -174,7 +217,7 @@ export function themeFromSourceColorWithContrast(
       neutralPalette: TonalPalette.fromHueAndChroma(
           neutral.hue, neutral.chroma),
       neutralVariantPalette: TonalPalette.fromHueAndChroma(
-          neutral.hue, neutral.chroma / 8.0 + 4.0),
+        neutralVariant.hue, neutralVariant.chroma),
     });
   }
 

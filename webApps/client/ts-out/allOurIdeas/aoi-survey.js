@@ -40,12 +40,6 @@ let AoiSurvey = class AoiSurvey extends YpBaseElement {
         super();
         this.pageIndex = 1;
         this.totalNumberOfVotes = 0;
-        this.themePrimaryColor = "#000000";
-        this.themeSecondaryColor = "#000000";
-        this.themeTertiaryColor = "#000000";
-        this.themeNeutralColor = "#000000";
-        this.themeScheme = "tonal";
-        this.themeHighContrast = false;
         this.isAdmin = false;
         this.surveyClosed = false;
         window.aoiServerApi = new AoiServerApi();
@@ -383,7 +377,6 @@ let AoiSurvey = class AoiSurvey extends YpBaseElement {
             .earl="${this.earl}"
             .group="${this.collection}"
             .question="${this.question}"
-            .themeHighContrast="${this.themeHighContrast}"
             @startVoting="${this.startVoting}"
             @openResults="${this.openResults}"
             .themeDarkMode="${this.themeDarkMode}"
@@ -578,24 +571,6 @@ __decorate([
 __decorate([
     property({ type: String })
 ], AoiSurvey.prototype, "currentError", void 0);
-__decorate([
-    property({ type: String })
-], AoiSurvey.prototype, "themePrimaryColor", void 0);
-__decorate([
-    property({ type: String })
-], AoiSurvey.prototype, "themeSecondaryColor", void 0);
-__decorate([
-    property({ type: String })
-], AoiSurvey.prototype, "themeTertiaryColor", void 0);
-__decorate([
-    property({ type: String })
-], AoiSurvey.prototype, "themeNeutralColor", void 0);
-__decorate([
-    property({ type: String })
-], AoiSurvey.prototype, "themeScheme", void 0);
-__decorate([
-    property({ type: Boolean })
-], AoiSurvey.prototype, "themeHighContrast", void 0);
 __decorate([
     property({ type: Object })
 ], AoiSurvey.prototype, "earl", void 0);

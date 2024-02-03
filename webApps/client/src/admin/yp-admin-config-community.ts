@@ -9,7 +9,11 @@ import "@material/web/select/select-option.js";
 
 import "../yp-survey/yp-structured-question-edit.js";
 
-import { YpAdminConfigBase, defaultLtpConfiguration, defaultLtpPromptsConfiguration } from "./yp-admin-config-base.js";
+import {
+  YpAdminConfigBase,
+  defaultLtpConfiguration,
+  defaultLtpPromptsConfiguration,
+} from "./yp-admin-config-base.js";
 import { YpNavHelpers } from "../common/YpNavHelpers.js";
 import { YpFileUpload } from "../yp-file-upload/yp-file-upload.js";
 
@@ -133,6 +137,15 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
 
   renderHiddenInputs() {
     return html`
+      ${this.collection?.configuration.theme
+        ? html`
+            <input
+              type="hidden"
+              name="theme"
+              value="${JSON.stringify(this.collection?.configuration.theme)}"
+            />
+          `
+        : nothing}
       <input
         type="hidden"
         name="appHomeScreenIconImageId"
@@ -225,9 +238,13 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
       if (!(this.collection.configuration as YpCommunityConfiguration).ltp) {
         (this.collection.configuration as YpCommunityConfiguration).ltp =
           defaultLtpConfiguration;
-      } else if (!(this.collection.configuration as YpCommunityConfiguration).ltp!.crt!.prompts) {
-        (this.collection.configuration as YpCommunityConfiguration).ltp!.crt!.prompts =
-          defaultLtpPromptsConfiguration();
+      } else if (
+        !(this.collection.configuration as YpCommunityConfiguration).ltp!.crt!
+          .prompts
+      ) {
+        (
+          this.collection.configuration as YpCommunityConfiguration
+        ).ltp!.crt!.prompts = defaultLtpPromptsConfiguration();
       }
     }
 
@@ -500,7 +517,8 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
   }
 
   _accessRadioChanged(event: CustomEvent) {
-    this.communityAccess = (event.target as Radio).value as YpCommunityAccessTypes;
+    this.communityAccess = (event.target as Radio)
+      .value as YpCommunityAccessTypes;
     this._configChanged();
   }
 
@@ -610,7 +628,8 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
               ${this.availableCommunityFolders?.map(
                 (communityFolder, index) => html`
                   <md-select-option
-                    ?selected="${this.inCommunityFolderId == communityFolder.id}"
+                    ?selected="${this.inCommunityFolderId ==
+                    communityFolder.id}"
                     >${communityFolder.name}</md-select-option
                   >
                 `

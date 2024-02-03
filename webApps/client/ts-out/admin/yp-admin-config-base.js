@@ -118,6 +118,10 @@ export class YpAdminConfigBase extends YpAdminPage {
             return false;
         }
     }
+    _themeChanged(event) {
+        this.collection.configuration.theme = event.detail;
+        this.requestUpdate();
+    }
     renderSaveButton() {
         return html `
       <div class="layout horizontal">
@@ -488,11 +492,10 @@ export class YpAdminConfigBase extends YpAdminPage {
                 type="textarea"
                 .value="${this.collection.description || ""}"
                 .label="${this.t("Description")}"
-                charCounter
                 @change="${this._configChanged}"
                 rows="3"
                 @keyup="${this._descriptionChanged}"
-                .maxlength="${this.descriptionMaxLength}"
+                maxlength="${this.descriptionMaxLength}"
                 class="mainInput"
               ></md-outlined-text-field>
             `

@@ -7,7 +7,11 @@ import { YpAdminPage } from "./yp-admin-page.js";
 
 import "../yp-survey/yp-structured-question-edit.js";
 
-import { YpAdminConfigBase, defaultLtpConfiguration, defaultLtpPromptsConfiguration } from "./yp-admin-config-base.js";
+import {
+  YpAdminConfigBase,
+  defaultLtpConfiguration,
+  defaultLtpPromptsConfiguration,
+} from "./yp-admin-config-base.js";
 import { YpNavHelpers } from "../common/YpNavHelpers.js";
 import { YpFileUpload } from "../yp-file-upload/yp-file-upload.js";
 //import { YpEmojiSelector } from './@yrpri/common/yp-emoji-selector.js';
@@ -65,7 +69,15 @@ export class YpAdminConfigDomain extends YpAdminConfigBase {
         />
       `;
     } else {
-      return nothing;
+      return html` ${this.collection?.configuration.theme
+        ? html`
+            <input
+              type="hidden"
+              name="theme"
+              value="${JSON.stringify(this.collection?.configuration.theme)}"
+            />
+          `
+        : nothing}`;
     }
   }
 
@@ -86,9 +98,13 @@ export class YpAdminConfigDomain extends YpAdminConfigBase {
       if (!(this.collection.configuration as YpDomainConfiguration).ltp) {
         (this.collection.configuration as YpDomainConfiguration).ltp =
           defaultLtpConfiguration;
-      } else if (!(this.collection.configuration as YpDomainConfiguration).ltp!.crt!.prompts) {
-        (this.collection.configuration as YpDomainConfiguration).ltp!.crt!.prompts =
-          defaultLtpPromptsConfiguration();
+      } else if (
+        !(this.collection.configuration as YpDomainConfiguration).ltp!.crt!
+          .prompts
+      ) {
+        (
+          this.collection.configuration as YpDomainConfiguration
+        ).ltp!.crt!.prompts = defaultLtpPromptsConfiguration();
       }
 
       if (

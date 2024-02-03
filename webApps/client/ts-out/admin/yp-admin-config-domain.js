@@ -7,7 +7,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 import { css, html, nothing } from "lit";
 import { property, customElement } from "lit/decorators.js";
 import "../yp-survey/yp-structured-question-edit.js";
-import { YpAdminConfigBase, defaultLtpConfiguration, defaultLtpPromptsConfiguration } from "./yp-admin-config-base.js";
+import { YpAdminConfigBase, defaultLtpConfiguration, defaultLtpPromptsConfiguration, } from "./yp-admin-config-base.js";
 import { YpNavHelpers } from "../common/YpNavHelpers.js";
 //import { YpEmojiSelector } from './@yrpri/common/yp-emoji-selector.js';
 //import './@yrpri/common/yp-emoji-selector.js';
@@ -53,7 +53,15 @@ let YpAdminConfigDomain = class YpAdminConfigDomain extends YpAdminConfigBase {
       `;
         }
         else {
-            return nothing;
+            return html ` ${this.collection?.configuration.theme
+                ? html `
+            <input
+              type="hidden"
+              name="theme"
+              value="${JSON.stringify(this.collection?.configuration.theme)}"
+            />
+          `
+                : nothing}`;
         }
     }
     _clear() {
@@ -69,9 +77,9 @@ let YpAdminConfigDomain = class YpAdminConfigDomain extends YpAdminConfigBase {
                 this.collection.configuration.ltp =
                     defaultLtpConfiguration;
             }
-            else if (!this.collection.configuration.ltp.crt.prompts) {
-                this.collection.configuration.ltp.crt.prompts =
-                    defaultLtpPromptsConfiguration();
+            else if (!this.collection.configuration.ltp.crt
+                .prompts) {
+                this.collection.configuration.ltp.crt.prompts = defaultLtpPromptsConfiguration();
             }
             if (this.collection.DomainLogoVideos &&
                 this.collection.DomainLogoVideos.length > 0) {

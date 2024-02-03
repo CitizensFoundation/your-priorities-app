@@ -7,23 +7,51 @@ import {
 } from "@material/material-color-utilities";
 import {
   applyThemeWithContrast,
-  Scheme,
   themeFromSourceColorWithContrast,
 } from "../common/YpMaterialThemeHelper";
+
+//type MaterialColorScheme = 'tonal'|'vibrant'|'expressive'|'content'|'neutral'|'monochrome'|'fidelity'|'dynamic';
+//type MaterialDynamicVariants = "monochrome" | "neutral" | "tonalSpot" | "vibrant" | "expressive" | "fidelity" | "content" | "rainbow" | "fruitSalad";
+
 
 export class YpThemeManager {
   themes: Array<Record<string, boolean | string | Record<string, string>>> = [];
   selectedTheme: number | undefined;
   selectedFont: string | undefined;
-  themeColor = "#0327f8";
+  themeColor: string | undefined = "#0327f8";
   themeDarkMode = false;
   themeHighContrast = false;
   themePrimaryColor: string | undefined;
   themeSecondaryColor: string | undefined;
   themeTertiaryColor: string | undefined;
   themeNeutralColor: string | undefined;
+  themeNeutralVariantColor: string | undefined;
+  themeVariant: MaterialDynamicVariants | undefined;
+
+  static themeScemesOptionsWithName = [
+    { name: "Tonal", value: "tonal" },
+    { name: "Vibrant", value: "vibrant" },
+    { name: "Expressive", value: "expressive" },
+    { name: "Content", value: "content" },
+    { name: "Neutral", value: "neutral" },
+    { name: "Monochrome", value: "monochrome" },
+    { name: "Fidelity", value: "fidelity" }
+  ]
+
+  static themeVariantsOptionsWithName = [
+    { name: "Monochrome", value: "monochrome" },
+    { name: "Neutral", value: "neutral" },
+    { name: "Tonal Spot", value: "tonalSpot" },
+    { name: "Vibrant", value: "vibrant" },
+    { name: "Expressive", value: "expressive" },
+    { name: "Fidelity", value: "fidelity" },
+    { name: "Content", value: "content" },
+    { name: "Rainbow", value: "rainbow" },
+    { name: "Fruit Salad", value: "fruitSalad" }
+  ]
+
   isAppleDevice = false;
-  themeScheme: Scheme = "tonal";
+  themeScheme: MaterialColorScheme = "tonal";
 
   constructor() {
     this.themeChanged();
@@ -266,7 +294,7 @@ export class YpThemeManager {
       name: "Frumbjörg",
       "--mdc-theme-background": "#fefefe",
       "--mdc-theme-primary": "#17263e",
-      "--mdc-theme-secondary": "#1f5d04c3ca5",
+      "--mdc-theme-secondary": "#1f5d04",
       fonts: {
         htmlImport: "/styles/fonts/frumbjorg-font.html",
         fontName: "Merriweather",
@@ -283,7 +311,7 @@ export class YpThemeManager {
     }
   }
 
-  setTheme(
+  setThemeFromOldConfiguration(
     number: number | undefined,
     configuration: YpCollectionConfiguration | undefined = undefined
   ) {
@@ -342,18 +370,62 @@ export class YpThemeManager {
     }
   }
 
+
+  setTheme(
+    number: number | undefined,
+    configuration: YpCollectionConfiguration | undefined = undefined
+  ) {
+    if (!configuration) {
+      console.warn("No configuration found");
+      return;
+    }
+
+    if (!configuration.theme) {
+      this.setThemeFromOldConfiguration(number, configuration);
+    } else {
+      if (configuration.theme.oneDynmicColor) {
+        this.themeColor = configuration.theme.oneDynmicColor;
+        this.themeScheme = configuration.theme.oneColorScheme!;
+      } else {
+        this.themeColor = undefined;
+        this.themePrimaryColor = configuration.theme.primaryColor;
+        this.themeSecondaryColor = configuration.theme.secondaryColor;
+        this.themeTertiaryColor = configuration.theme.tertiaryColor;
+        this.themeNeutralColor = configuration.theme.neutralColor;
+        this.themeNeutralVariantColor = configuration.theme.neutralVariantColor;
+        this.themeVariant = configuration.theme.variant;
+      }
+      this.themeChanged();
+    }
+  }
+
+  updateLiveFromConfiguration(theme: YpThemeConfiguration) {
+    if (theme) {
+      if (theme.oneDynmicColor) {
+        this.themeColor = theme.oneDynmicColor;
+        this.themeScheme = theme.oneColorScheme!;
+      } else {
+        this.themeColor = undefined;
+        this.themePrimaryColor = theme.primaryColor;
+        this.themeSecondaryColor = theme.secondaryColor;
+        this.themeTertiaryColor = theme.tertiaryColor;
+        this.themeNeutralColor = theme.neutralColor;
+        this.themeNeutralVariantColor = theme.neutralVariantColor;
+        this.themeVariant = theme.variant || "fidelity";
+      }
+      this.themeChanged();
+    }
+  }
+
   themeChanged(target: HTMLElement | undefined = undefined) {
     let themeCss = {} as any;
-
-    // Save this.themeColor to locale storage
-    localStorage.setItem("md3-ps-theme-color", this.themeColor);
 
     const isDark =
       this.themeDarkMode === undefined
         ? window.matchMedia("(prefers-color-scheme: dark)").matches
         : this.themeDarkMode;
 
-    if (this.isAppleDevice) {
+    if (false && this.isAppleDevice) {
       const theme = themeFromSourceColor(
         argbFromHex(this.themeColor || "#000000"),
         [
@@ -372,9 +444,10 @@ export class YpThemeManager {
 
       applyTheme(theme, { target: document.body, dark: isDark });
     } else {
-      if (this.getHexColor(this.themeColor)) {
+      if (this.themeColor) {
         themeCss = themeFromSourceColorWithContrast(
           this.getHexColor(this.themeColor),
+          this.themeVariant,
           isDark,
           this.themeScheme,
           this.themeHighContrast ? 2.0 : 0.0
@@ -386,9 +459,13 @@ export class YpThemeManager {
             secondary: this.getHexColor(this.themeSecondaryColor || "#000000"),
             tertiary: this.getHexColor(this.themeTertiaryColor || "#000000"),
             neutral: this.getHexColor(this.themeNeutralColor || "#000000"),
+            neutralVariant: this.getHexColor(
+              this.themeNeutralVariantColor || "#000000"
+            ),
           },
+          this.themeVariant,
           isDark,
-          "dynamic",
+          this.themeScheme,
           this.themeHighContrast ? 2.0 : 0.0
         );
       }

@@ -16,7 +16,6 @@ import "./survey/aoi-survey-analysis.js";
 import { AoiServerApi } from "./survey/AoiServerApi.js";
 import { AoiAppGlobals } from "./AoiAppGlobals.js";
 import { NavigationDrawer } from "@material/web/labs/navigationdrawer/internal/navigation-drawer.js";
-import { Scheme } from "../common/YpMaterialThemeHelper.js";
 import { YpBaseElement } from "../common/yp-base-element.js";
 declare global {
     interface Window {
@@ -32,12 +31,6 @@ export declare class AoiSurvey extends YpBaseElement {
     collection: YpGroupData;
     lastSnackbarText: string | undefined;
     currentError: string | undefined;
-    themePrimaryColor: string;
-    themeSecondaryColor: string;
-    themeTertiaryColor: string;
-    themeNeutralColor: string;
-    themeScheme: Scheme;
-    themeHighContrast: boolean;
     earl: AoiEarlData;
     question: AoiQuestionData;
     prompt: AoiPromptData;

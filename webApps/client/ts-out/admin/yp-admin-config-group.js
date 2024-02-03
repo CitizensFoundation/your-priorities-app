@@ -18,7 +18,7 @@ import { YpNavHelpers } from "../common/YpNavHelpers.js";
 //import { YpEmojiSelector } from './@yrpri/common/yp-emoji-selector.js';
 //import './@yrpri/common/yp-emoji-selector.js';
 import "../yp-file-upload/yp-file-upload.js";
-//import './@yrpri/yp-theme/yp-theme-selector.js';
+import "../yp-theme/yp-theme-selector.js";
 import "../yp-app/yp-language-selector.js";
 import "./allOurIdeas/aoi-earl-ideas-editor.js";
 import { AoiAdminServerApi } from "./allOurIdeas/AoiAdminServerApi.js";
@@ -200,6 +200,15 @@ let YpAdminConfigGroup = class YpAdminConfigGroup extends YpAdminConfigBase {
     }
     renderHiddenInputs() {
         return html `
+      ${this.collection?.configuration.theme
+            ? html `
+            <input
+              type="hidden"
+              name="theme"
+              value="${JSON.stringify(this.collection?.configuration.theme)}"
+            />
+          `
+            : nothing}
       <input
         type="hidden"
         name="objectives"
@@ -540,11 +549,10 @@ let YpAdminConfigGroup = class YpAdminConfigGroup extends YpAdminConfigBase {
                     type: "html",
                     templateData: html `
             <yp-theme-selector
-              .object="${this.group}"
               .disableSelection="${this.group.configuration
                         .inheritThemeFromCommunity}"
-              @yp-theme-changed="${this._themeChanged}"
-              .selectedTheme="${this.themeId}"
+              @yp-theme-configuration-changed="${this._themeChanged}"
+              .themeConfiguration="${this.group.configuration.theme}"
             ></yp-theme-selector>
           `,
                 },
@@ -638,10 +646,6 @@ let YpAdminConfigGroup = class YpAdminConfigGroup extends YpAdminConfigBase {
     }
     _inheritThemeChanged(event) {
         this.group.configuration.inheritThemeFromCommunity = event.target.checked;
-    }
-    _themeChanged(event) {
-        this.themeId = event.detail;
-        // Handle theme changes here
     }
     _getPostSettingsTab() {
         if (this.isGroupFolder) {

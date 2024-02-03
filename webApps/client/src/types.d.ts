@@ -7,7 +7,22 @@ declare module 'ga';
 declare module 'wavesurfer.js';
 declare module 'datamaps';
 
+type MaterialColorScheme = 'tonal'|'vibrant'|'expressive'|'content'|'neutral'|'monochrome'|'fidelity'|'dynamic';
+type MaterialDynamicVariants = "monochrome" | "neutral" | "tonalSpot" | "vibrant" | "expressive" | "fidelity" | "content" | "rainbow" | "fruitSalad";
+
+interface YpThemeConfiguration {
+  oneDynmicColor?: string;
+  oneColorScheme?: MaterialColorScheme;
+  variant?: MaterialDynamicVariants;
+  primaryColor?: string;
+  secondaryColor?: string;
+  tertiaryColor?: string;
+  neutralColor?: string;
+  neutralVariantColor?: string;
+}
+
 interface YpCollectionConfiguration {
+  theme?: YpThemeConfiguration;
   themeOverrideColorPrimary?: string;
   themeOverrideColorAccent?: string;
   themeOverrideBackgroundColor?: string;

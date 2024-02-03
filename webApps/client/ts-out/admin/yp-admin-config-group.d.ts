@@ -8,6 +8,7 @@ import "../yp-survey/yp-structured-question-edit.js";
 import "@trystan2k/fleshy-jsoneditor/fleshy-jsoneditor.js";
 import { YpAdminConfigBase } from "./yp-admin-config-base.js";
 import "../yp-file-upload/yp-file-upload.js";
+import "../yp-theme/yp-theme-selector.js";
 import "../yp-app/yp-language-selector.js";
 import "./allOurIdeas/aoi-earl-ideas-editor.js";
 export declare class YpAdminConfigGroup extends YpAdminConfigBase {
@@ -43,9 +44,9 @@ export declare class YpAdminConfigGroup extends YpAdminConfigBase {
     imageLoaded(event: CustomEvent): Promise<void>;
     _setGroupType(event: CustomEvent): void;
     renderGroupTypeSelection(): import("lit-html").TemplateResult<1>;
-    renderHeader(): typeof nothing | import("lit-html").TemplateResult<1>;
+    renderHeader(): import("lit-html").TemplateResult<1> | typeof nothing;
     renderImage(): import("lit-html").TemplateResult<1>;
-    getAccessTokenName(): "open_to_community" | "secret";
+    getAccessTokenName(): "secret" | "open_to_community";
     renderHiddenInputs(): import("lit-html").TemplateResult<1>;
     _descriptionChanged(event: CustomEvent): void;
     _logoImageUploaded(event: CustomEvent): void;
@@ -62,7 +63,6 @@ export declare class YpAdminConfigGroup extends YpAdminConfigBase {
     _statusSelected(event: CustomEvent): void;
     _getThemeTab(): YpConfigTabData;
     _inheritThemeChanged(event: CustomEvent): void;
-    _themeChanged(event: CustomEvent): void;
     _getPostSettingsTab(): YpConfigTabData | null;
     _defaultDataImageUploaded(event: CustomEvent): void;
     _defaultPostImageUploaded(event: CustomEvent): void;

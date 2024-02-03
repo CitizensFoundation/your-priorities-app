@@ -57,7 +57,44 @@ export function hexFromHct(hue, chroma, tone) {
     const value = hct.toInt();
     return hexFromArgb(value);
 }
-export function themeFromSourceColorWithContrast(color, isDark, scheme, contrast) {
+/*
+export declare enum Variant {
+    MONOCHROME = 0,
+    NEUTRAL = 1,
+    TONAL_SPOT = 2,
+    VIBRANT = 3,
+    EXPRESSIVE = 4,
+    FIDELITY = 5,
+    CONTENT = 6,
+    RAINBOW = 7,
+    FRUIT_SALAD = 8
+}
+
+interface DynamicSchemeOptions {
+    sourceColorArgb: number;
+    variant: Variant;
+    contrastLevel: number;
+    isDark: boolean;
+    primaryPalette: TonalPalette;
+    secondaryPalette: TonalPalette;
+    tertiaryPalette: TonalPalette;
+    neutralPalette: TonalPalette;
+    neutralVariantPalette: TonalPalette;
+}
+
+*/
+const variantIndexMap = {
+    "monochrome": 0,
+    "neutral": 1,
+    "tonalSpot": 2,
+    "vibrant": 3,
+    "expressive": 4,
+    "fidelity": 5,
+    "content": 6,
+    "rainbow": 7,
+    "fruitSalad": 8
+};
+export function themeFromSourceColorWithContrast(color, variant, isDark, scheme, contrast) {
     if (typeof color !== 'string' && scheme !== 'dynamic' || typeof color !== 'object' && scheme === 'dynamic') {
         throw new Error('color / scheme type mismatch');
     }
@@ -65,6 +102,10 @@ export function themeFromSourceColorWithContrast(color, isDark, scheme, contrast
        https://github.com/material-foundation/material-color-utilities/tree/main/typescript/scheme
      */
     let colorScheme;
+    let variantIndex;
+    if (variant) {
+        variantIndex = variantIndexMap[variant];
+    }
     if (scheme === 'tonal') {
         //@ts-ignore
         colorScheme = new SchemeTonalSpot(
@@ -113,18 +154,19 @@ export function themeFromSourceColorWithContrast(color, isDark, scheme, contrast
         const secondary = Hct.fromInt(argbFromHex(color.secondary));
         const tertiary = Hct.fromInt(argbFromHex(color.tertiary));
         const neutral = Hct.fromInt(argbFromHex(color.neutral));
+        const neutralVariant = Hct.fromInt(argbFromHex(color.neutralVariant));
         console.log(color.primary);
         //@ts-ignore
         colorScheme = new DynamicScheme({
             sourceColorArgb: argbFromHex(color.primary),
-            variant: 5, // Variant.FIDELITY https://github.com/material-foundation/material-color-utilities/blob/main/typescript/scheme/variant.ts
+            variant: variantIndex || 5, // Variant.FIDELITY https://github.com/material-foundation/material-color-utilities/blob/main/typescript/scheme/variant.ts
             contrastLevel: contrast,
             isDark,
             primaryPalette: TonalPalette.fromHueAndChroma(primary.hue, primary.chroma),
             secondaryPalette: TonalPalette.fromHueAndChroma(secondary.hue, secondary.chroma),
             tertiaryPalette: TonalPalette.fromHueAndChroma(tertiary.hue, tertiary.chroma),
             neutralPalette: TonalPalette.fromHueAndChroma(neutral.hue, neutral.chroma),
-            neutralVariantPalette: TonalPalette.fromHueAndChroma(neutral.hue, neutral.chroma / 8.0 + 4.0),
+            neutralVariantPalette: TonalPalette.fromHueAndChroma(neutralVariant.hue, neutralVariant.chroma),
         });
     }
     return themeFromScheme(colorScheme);

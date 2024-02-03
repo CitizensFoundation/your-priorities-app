@@ -10,7 +10,7 @@ import "@material/web/radio/radio.js";
 import "@material/web/select/outlined-select.js";
 import "@material/web/select/select-option.js";
 import "../yp-survey/yp-structured-question-edit.js";
-import { YpAdminConfigBase, defaultLtpConfiguration, defaultLtpPromptsConfiguration } from "./yp-admin-config-base.js";
+import { YpAdminConfigBase, defaultLtpConfiguration, defaultLtpPromptsConfiguration, } from "./yp-admin-config-base.js";
 import { YpNavHelpers } from "../common/YpNavHelpers.js";
 //import { YpEmojiSelector } from './@yrpri/common/yp-emoji-selector.js';
 //import './@yrpri/common/yp-emoji-selector.js';
@@ -91,6 +91,15 @@ let YpAdminConfigCommunity = class YpAdminConfigCommunity extends YpAdminConfigB
     }
     renderHiddenInputs() {
         return html `
+      ${this.collection?.configuration.theme
+            ? html `
+            <input
+              type="hidden"
+              name="theme"
+              value="${JSON.stringify(this.collection?.configuration.theme)}"
+            />
+          `
+            : nothing}
       <input
         type="hidden"
         name="appHomeScreenIconImageId"
@@ -173,9 +182,9 @@ let YpAdminConfigCommunity = class YpAdminConfigCommunity extends YpAdminConfigB
                 this.collection.configuration.ltp =
                     defaultLtpConfiguration;
             }
-            else if (!this.collection.configuration.ltp.crt.prompts) {
-                this.collection.configuration.ltp.crt.prompts =
-                    defaultLtpPromptsConfiguration();
+            else if (!this.collection.configuration.ltp.crt
+                .prompts) {
+                this.collection.configuration.ltp.crt.prompts = defaultLtpPromptsConfiguration();
             }
         }
         if (changedProperties.has("collectionId") && this.collectionId) {
@@ -401,7 +410,8 @@ let YpAdminConfigCommunity = class YpAdminConfigCommunity extends YpAdminConfigB
         }
     }
     _accessRadioChanged(event) {
-        this.communityAccess = event.target.value;
+        this.communityAccess = event.target
+            .value;
         this._configChanged();
     }
     _getAccessTab() {
@@ -506,7 +516,8 @@ let YpAdminConfigCommunity = class YpAdminConfigCommunity extends YpAdminConfigB
             >
               ${this.availableCommunityFolders?.map((communityFolder, index) => html `
                   <md-select-option
-                    ?selected="${this.inCommunityFolderId == communityFolder.id}"
+                    ?selected="${this.inCommunityFolderId ==
+                        communityFolder.id}"
                     >${communityFolder.name}</md-select-option
                   >
                 `)}

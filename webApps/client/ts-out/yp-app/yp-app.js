@@ -134,6 +134,7 @@ let YpApp = class YpApp extends YpBaseElement {
     }
     _setupEventListeners() {
         this.addGlobalListener("yp-auto-translate", this._autoTranslateEvent.bind(this));
+        this.addGlobalListener("yp-theme-configuration-updated", this._themeUpdated);
         this.addGlobalListener("yp-change-header", this._onChangeHeader.bind(this));
         this.addGlobalListener("yp-logged-in", this._onUserChanged.bind(this));
         this.addGlobalListener("yp-network-error", this._netWorkError.bind(this));
@@ -161,11 +162,15 @@ let YpApp = class YpApp extends YpBaseElement {
         this.addListener("yp-app-dialogs-ready", this._appDialogsReady.bind(this));
         this._setupTouchEvents();
     }
+    _themeUpdated(event) {
+        window.appGlobals.theme.updateLiveFromConfiguration(event.detail);
+    }
     _removeEventListeners() {
         this.removeGlobalListener("yp-auto-translate", this._autoTranslateEvent);
         this.removeGlobalListener("yp-change-header", this._onChangeHeader);
         this.removeGlobalListener("yp-logged-in", this._onUserChanged);
         this.removeGlobalListener("yp-network-error", this._netWorkError);
+        this.removeGlobalListener("yp-theme-configuration-updated", this._themeUpdated);
         this.removeListener("yp-add-back-community-override", this._addBackCommunityOverride, this);
         this.removeListener("yp-reset-keep-open-for-page", this._resetKeepOpenForPage, this);
         this.removeListener("yp-open-login", this._login, this);

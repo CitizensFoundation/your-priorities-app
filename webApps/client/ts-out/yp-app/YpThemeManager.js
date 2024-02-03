@@ -1,6 +1,8 @@
 //TODO: User facing automatic, dark mode or high contrast themes selection
 import { applyTheme, argbFromHex, themeFromSourceColor, } from "@material/material-color-utilities";
 import { applyThemeWithContrast, themeFromSourceColorWithContrast, } from "../common/YpMaterialThemeHelper";
+//type MaterialColorScheme = 'tonal'|'vibrant'|'expressive'|'content'|'neutral'|'monochrome'|'fidelity'|'dynamic';
+//type MaterialDynamicVariants = "monochrome" | "neutral" | "tonalSpot" | "vibrant" | "expressive" | "fidelity" | "content" | "rainbow" | "fruitSalad";
 export class YpThemeManager {
     constructor() {
         this.themes = [];
@@ -218,7 +220,7 @@ export class YpThemeManager {
             name: "Frumbjörg",
             "--mdc-theme-background": "#fefefe",
             "--mdc-theme-primary": "#17263e",
-            "--mdc-theme-secondary": "#1f5d04c3ca5",
+            "--mdc-theme-secondary": "#1f5d04",
             fonts: {
                 htmlImport: "/styles/fonts/frumbjorg-font.html",
                 fontName: "Merriweather",
@@ -233,7 +235,7 @@ export class YpThemeManager {
             }
         }
     }
-    setTheme(number, configuration = undefined) {
+    setThemeFromOldConfiguration(number, configuration = undefined) {
         if (configuration &&
             configuration.themeOverrideColorPrimary &&
             configuration.themeOverrideColorPrimary.length > 5 &&
@@ -282,14 +284,55 @@ export class YpThemeManager {
             document.dispatchEvent(event);
         }
     }
+    setTheme(number, configuration = undefined) {
+        if (!configuration) {
+            console.warn("No configuration found");
+            return;
+        }
+        if (!configuration.theme) {
+            this.setThemeFromOldConfiguration(number, configuration);
+        }
+        else {
+            if (configuration.theme.oneDynmicColor) {
+                this.themeColor = configuration.theme.oneDynmicColor;
+                this.themeScheme = configuration.theme.oneColorScheme;
+            }
+            else {
+                this.themeColor = undefined;
+                this.themePrimaryColor = configuration.theme.primaryColor;
+                this.themeSecondaryColor = configuration.theme.secondaryColor;
+                this.themeTertiaryColor = configuration.theme.tertiaryColor;
+                this.themeNeutralColor = configuration.theme.neutralColor;
+                this.themeNeutralVariantColor = configuration.theme.neutralVariantColor;
+                this.themeVariant = configuration.theme.variant;
+            }
+            this.themeChanged();
+        }
+    }
+    updateLiveFromConfiguration(theme) {
+        if (theme) {
+            if (theme.oneDynmicColor) {
+                this.themeColor = theme.oneDynmicColor;
+                this.themeScheme = theme.oneColorScheme;
+            }
+            else {
+                this.themeColor = undefined;
+                this.themePrimaryColor = theme.primaryColor;
+                this.themeSecondaryColor = theme.secondaryColor;
+                this.themeTertiaryColor = theme.tertiaryColor;
+                this.themeNeutralColor = theme.neutralColor;
+                this.themeNeutralVariantColor = theme.neutralVariantColor;
+                this.themeVariant = theme.variant || "fidelity";
+            }
+            this.themeChanged();
+        }
+    }
     themeChanged(target = undefined) {
         let themeCss = {};
-        // Save this.themeColor to locale storage
-        localStorage.setItem("md3-ps-theme-color", this.themeColor);
         const isDark = this.themeDarkMode === undefined
             ? window.matchMedia("(prefers-color-scheme: dark)").matches
             : this.themeDarkMode;
-        if (this.isAppleDevice) {
+        if (false && this.isAppleDevice) {
             const theme = themeFromSourceColor(argbFromHex(this.themeColor || "#000000"), [
                 {
                     name: "up-vote",
@@ -305,8 +348,8 @@ export class YpThemeManager {
             applyTheme(theme, { target: document.body, dark: isDark });
         }
         else {
-            if (this.getHexColor(this.themeColor)) {
-                themeCss = themeFromSourceColorWithContrast(this.getHexColor(this.themeColor), isDark, this.themeScheme, this.themeHighContrast ? 2.0 : 0.0);
+            if (this.themeColor) {
+                themeCss = themeFromSourceColorWithContrast(this.getHexColor(this.themeColor), this.themeVariant, isDark, this.themeScheme, this.themeHighContrast ? 2.0 : 0.0);
             }
             else {
                 themeCss = themeFromSourceColorWithContrast({
@@ -314,7 +357,8 @@ export class YpThemeManager {
                     secondary: this.getHexColor(this.themeSecondaryColor || "#000000"),
                     tertiary: this.getHexColor(this.themeTertiaryColor || "#000000"),
                     neutral: this.getHexColor(this.themeNeutralColor || "#000000"),
-                }, isDark, "dynamic", this.themeHighContrast ? 2.0 : 0.0);
+                    neutralVariant: this.getHexColor(this.themeNeutralVariantColor || "#000000"),
+                }, this.themeVariant, isDark, this.themeScheme, this.themeHighContrast ? 2.0 : 0.0);
             }
             applyThemeWithContrast(document, themeCss);
         }
@@ -335,4 +379,24 @@ export class YpThemeManager {
         }
     }
 }
+YpThemeManager.themeScemesOptionsWithName = [
+    { name: "Tonal", value: "tonal" },
+    { name: "Vibrant", value: "vibrant" },
+    { name: "Expressive", value: "expressive" },
+    { name: "Content", value: "content" },
+    { name: "Neutral", value: "neutral" },
+    { name: "Monochrome", value: "monochrome" },
+    { name: "Fidelity", value: "fidelity" }
+];
+YpThemeManager.themeVariantsOptionsWithName = [
+    { name: "Monochrome", value: "monochrome" },
+    { name: "Neutral", value: "neutral" },
+    { name: "Tonal Spot", value: "tonalSpot" },
+    { name: "Vibrant", value: "vibrant" },
+    { name: "Expressive", value: "expressive" },
+    { name: "Fidelity", value: "fidelity" },
+    { name: "Content", value: "content" },
+    { name: "Rainbow", value: "rainbow" },
+    { name: "Fruit Salad", value: "fruitSalad" }
+];
 //# sourceMappingURL=YpThemeManager.js.map

@@ -27,9 +27,6 @@ import { AoiAppGlobals } from "./AoiAppGlobals.js";
 import { NavigationDrawer } from "@material/web/labs/navigationdrawer/internal/navigation-drawer.js";
 import { Snackbar } from "@material/mwc-snackbar/mwc-snackbar.js";
 import { NavigationBar } from "@material/web/labs/navigationbar/internal/navigation-bar.js";
-import {
-  Scheme,
-} from "../common/YpMaterialThemeHelper.js";
 import { YpCollection } from "../yp-collection/yp-collection.js";
 import { YpBaseElement } from "../common/yp-base-element.js";
 import { MdPrimaryTab } from "@material/web/tabs/primary-tab.js";
@@ -71,24 +68,6 @@ export class AoiSurvey extends YpBaseElement  {
 
   @property({ type: String })
   currentError: string | undefined;
-
-  @property({ type: String })
-  themePrimaryColor = "#000000";
-
-  @property({ type: String })
-  themeSecondaryColor = "#000000";
-
-  @property({ type: String })
-  themeTertiaryColor = "#000000";
-
-  @property({ type: String })
-  themeNeutralColor = "#000000";
-
-  @property({ type: String })
-  themeScheme: Scheme = "tonal";
-
-  @property({ type: Boolean })
-  themeHighContrast = false;
 
   @property({ type: Object })
   earl!: AoiEarlData;
@@ -503,7 +482,6 @@ export class AoiSurvey extends YpBaseElement  {
             .earl="${this.earl}"
             .group="${this.collection as YpGroupData}"
             .question="${this.question}"
-            .themeHighContrast="${this.themeHighContrast}"
             @startVoting="${this.startVoting}"
             @openResults="${this.openResults}"
             .themeDarkMode="${this.themeDarkMode}"

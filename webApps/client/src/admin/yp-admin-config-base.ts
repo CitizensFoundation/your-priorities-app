@@ -205,6 +205,11 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
     }
   }
 
+  _themeChanged(event: CustomEvent) {
+    this.collection!.configuration.theme = event.detail as YpThemeConfiguration;
+    this.requestUpdate();
+  }
+
   renderSaveButton(): TemplateResult {
     return html`
       <div class="layout horizontal">
@@ -594,11 +599,10 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
                 type="textarea"
                 .value="${this.collection!.description! || ""}"
                 .label="${this.t("Description")}"
-                charCounter
                 @change="${this._configChanged}"
                 rows="3"
                 @keyup="${this._descriptionChanged}"
-                .maxlength="${this.descriptionMaxLength}"
+                maxlength="${this.descriptionMaxLength}"
                 class="mainInput"
               ></md-outlined-text-field>
             `
