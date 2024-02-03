@@ -106,6 +106,7 @@ export function themeFromSourceColorWithContrast(color, variant, isDark, scheme,
     if (variant) {
         variantIndex = variantIndexMap[variant];
     }
+    console.error(`theme variant index ${variantIndex}`);
     if (scheme === 'tonal') {
         //@ts-ignore
         colorScheme = new SchemeTonalSpot(
@@ -159,7 +160,7 @@ export function themeFromSourceColorWithContrast(color, variant, isDark, scheme,
         //@ts-ignore
         colorScheme = new DynamicScheme({
             sourceColorArgb: argbFromHex(color.primary),
-            variant: variantIndex || 5, // Variant.FIDELITY https://github.com/material-foundation/material-color-utilities/blob/main/typescript/scheme/variant.ts
+            variant: variantIndex === undefined ? 5 : variantIndex, // Variant.FIDELITY https://github.com/material-foundation/material-color-utilities/blob/main/typescript/scheme/variant.ts
             contrastLevel: contrast,
             isDark,
             primaryPalette: TonalPalette.fromHueAndChroma(primary.hue, primary.chroma),

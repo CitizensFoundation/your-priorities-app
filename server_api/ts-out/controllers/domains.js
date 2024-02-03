@@ -823,6 +823,21 @@ router.put('/:id', auth.can('edit domain'), function (req, res) {
             else {
                 domain.set('configuration.ltp', null);
             }
+            const theme = (req.body.theme && req.body.theme != "") ? req.body.theme : null;
+            if (theme) {
+                try {
+                    const cleaned = theme.trim().replace(/\n/g, '').replace(/\r/g, '');
+                    const parsedJson = JSON.parse(cleaned);
+                    domain.set('configuration.theme', parsedJson);
+                }
+                catch (error) {
+                    domain.set('configuration.theme', null);
+                    log.error("Error in parsing theme", { error });
+                }
+            }
+            else {
+                domain.set('configuration.theme', null);
+            }
             domain.set('configuration.customUserRegistrationText', (req.body.customUserRegistrationText && req.body.customUserRegistrationText != "") ? req.body.customUserRegistrationText : null);
             domain.set('configuration.forceSecureSamlEmployeeLogin', (req.body.forceSecureSamlEmployeeLogin && req.body.forceSecureSamlEmployeeLogin != "") ? true : false);
             domain.set('configuration.disableNameAutoTranslation', (req.body.disableNameAutoTranslation && req.body.disableNameAutoTranslation != "") ? true : false);

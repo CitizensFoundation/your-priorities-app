@@ -17,6 +17,8 @@ export declare class YpThemeSelector extends YpBaseElement {
     connectedCallback(): void;
     updated(changedProperties: Map<string | number | symbol, unknown>): void;
     isValidHex(color: string | undefined): boolean;
+    setThemeSchema(event: CustomEvent): void;
+    setThemeVariant(event: CustomEvent): void;
     render(): import("lit-html").TemplateResult<1>;
 }
 //# sourceMappingURL=yp-theme-selector.d.ts.map

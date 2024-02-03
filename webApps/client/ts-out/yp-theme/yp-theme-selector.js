@@ -26,6 +26,19 @@ let YpThemeSelector = class YpThemeSelector extends YpBaseElement {
         md-outlined-text-field {
           max-width: 250px;
           width: 250px;
+          margin-bottom: 8px;
+        }
+
+        .or {
+          margin-top: 16px;
+          margin-bottom: 32px;
+          align-items: center;
+          font-size: 16px;
+          font-weight: bold;
+          text-transform: uppercase;
+          max-width: 250px;
+          width: 250px;
+          text-align: center;
         }
       `,
         ];
@@ -100,6 +113,14 @@ let YpThemeSelector = class YpThemeSelector extends YpBaseElement {
             return false;
         }
     }
+    setThemeSchema(event) {
+        const index = event.target.selectedIndex;
+        this.selectedThemeScheme = YpThemeManager.themeScemesOptionsWithName[index].value;
+    }
+    setThemeVariant(event) {
+        const index = event.target.selectedIndex;
+        this.selectedThemeVariant = YpThemeManager.themeVariantsOptionsWithName[index].value;
+    }
     render() {
         const disableMultiInputs = this.isValidHex(this.oneDynamicThemeColor);
         const disableOneThemeColorInputs = [
@@ -110,7 +131,8 @@ let YpThemeSelector = class YpThemeSelector extends YpBaseElement {
             this.themeNeutralVariantColor,
         ].some((color) => this.isValidHex(color));
         return html `
-      <md-outlined-text-field
+     <div class="layout vertical">
+     <md-outlined-text-field
         label="Dynamic Theme Color"
         .value="${this.oneDynamicThemeColor || ""}"
         ?disabled="${this.disableSelection || disableOneThemeColorInputs}"
@@ -123,11 +145,8 @@ let YpThemeSelector = class YpThemeSelector extends YpBaseElement {
       <md-outlined-select
         label="Theme Scheme"
         .disabled="${this.disableSelection || disableOneThemeColorInputs}"
-        @selected="${(e) => {
-            this.selectedThemeScheme = e.detail.value;
-        }}"
+        @change="${this.setThemeSchema}"
       >
-        <md-select-option aria-label="blank"></md-select-option>
         ${YpThemeManager.themeScemesOptionsWithName.map((option) => html `
             <md-select-option value="${option.value}">
               <div slot="headline">${option.name}</div>
@@ -135,20 +154,7 @@ let YpThemeSelector = class YpThemeSelector extends YpBaseElement {
           `)}
       </md-outlined-select>
 
-      <md-outlined-select
-        label="Theme Variant"
-        .disabled="${disableMultiInputs}"
-        @selected="${(e) => {
-            this.selectedThemeVariant = e.detail.value;
-        }}"
-      >
-        <md-select-option aria-label="blank"></md-select-option>
-        ${YpThemeManager.themeVariantsOptionsWithName.map((option) => html `
-            <md-select-option value="${option.value}">
-              <div slot="headline">${option.name}</div>
-            </md-select-option>
-          `)}
-      </md-outlined-select>
+      <div class="or">${this.t('or')}</div>
 
       <md-outlined-text-field
         label="Theme Primary Color"
@@ -199,6 +205,19 @@ let YpThemeSelector = class YpThemeSelector extends YpBaseElement {
         }}"
         class="mainInput"
       ></md-outlined-text-field>
+
+      <md-outlined-select
+        label="Theme Variant"
+        .disabled="${disableMultiInputs}"
+        @change="${this.setThemeVariant}"
+      >
+        ${YpThemeManager.themeVariantsOptionsWithName.map((option) => html `
+            <md-select-option value="${option.value}">
+              <div slot="headline">${option.name}</div>
+            </md-select-option>
+          `)}
+      </md-outlined-select>
+     </div>
     `;
     }
 };

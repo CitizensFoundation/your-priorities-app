@@ -430,6 +430,21 @@ var updateGroupConfigParameters = function (req, group) {
     group.set('configuration.allOurIdeas', null);
   }
 
+  const theme = (req.body.theme && req.body.theme!="") ? req.body.theme : null;
+
+  if (theme) {
+    try {
+      const cleaned = theme.trim().replace(/\n/g, '').replace(/\r/g, '');
+      const parsedJson = JSON.parse(cleaned);
+      group.set('configuration.theme', parsedJson);
+    } catch (error) {
+      group.set('configuration.theme', null);
+      log.error("Error in parsing theme", {error});
+    }
+  } else {
+    group.set('configuration.theme', null);
+  }
+
   group.set('configuration.themeOverrideColorPrimary', (req.body.themeOverrideColorPrimary && req.body.themeOverrideColorPrimary!="") ? req.body.themeOverrideColorPrimary : null);
   group.set('configuration.themeOverrideColorAccent', (req.body.themeOverrideColorAccent && req.body.themeOverrideColorAccent!="") ? req.body.themeOverrideColorAccent : null);
   group.set('configuration.customUserNamePrompt', (req.body.customUserNamePrompt && req.body.customUserNamePrompt!="") ? req.body.customUserNamePrompt : null);

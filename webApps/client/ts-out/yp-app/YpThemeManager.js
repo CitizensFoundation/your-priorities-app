@@ -358,7 +358,7 @@ export class YpThemeManager {
                     tertiary: this.getHexColor(this.themeTertiaryColor || "#000000"),
                     neutral: this.getHexColor(this.themeNeutralColor || "#000000"),
                     neutralVariant: this.getHexColor(this.themeNeutralVariantColor || "#000000"),
-                }, this.themeVariant, isDark, this.themeScheme, this.themeHighContrast ? 2.0 : 0.0);
+                }, this.themeVariant, isDark, "dynamic", this.themeHighContrast ? 2.0 : 0.0);
             }
             applyThemeWithContrast(document, themeCss);
         }

@@ -414,6 +414,14 @@ let YpImage = class YpImage extends LitElement {
         if (changedProperties.has("placeHolder")) {
             this._placeholderChanged();
         }
+        if (changedProperties.has("loaded") && this.loaded) {
+            const event = new CustomEvent("loaded", {
+                detail: {
+                    ypImage: this,
+                },
+            });
+            this.dispatchEvent(event);
+        }
         if (changedProperties.has("width")) {
             this._widthChanged();
         }

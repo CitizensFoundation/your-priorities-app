@@ -465,7 +465,7 @@ export class YpThemeManager {
           },
           this.themeVariant,
           isDark,
-          this.themeScheme,
+          "dynamic",
           this.themeHighContrast ? 2.0 : 0.0
         );
       }

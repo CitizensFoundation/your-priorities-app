@@ -106,6 +106,7 @@ let YpAdminConfigGroup = class YpAdminConfigGroup extends YpAdminConfigBase {
         ];
     }
     async imageLoaded(event) {
+        debugger;
         try {
             this.gettingImageColor = true;
             let ypImageUrl = this.ypImageUrl;
@@ -116,6 +117,7 @@ let YpAdminConfigGroup = class YpAdminConfigGroup extends YpAdminConfigBase {
             await imgObj.decode();
             const newThemeColor = await imageYp.getThemeColorsFromImage(imgObj);
             this.gettingImageColor = false;
+            debugger;
             if (newThemeColor) {
                 this.fireGlobal("yp-theme-color", newThemeColor);
                 this.detectedThemeColor = newThemeColor;
@@ -170,7 +172,7 @@ let YpAdminConfigGroup = class YpAdminConfigGroup extends YpAdminConfigBase {
     }
     renderImage() {
         const ypImage = this.ypImageUrl;
-        return html `
+        return html `<h1>ijijij</h1>
       <div class="layout horizontal center center">
         <div class="layout vertical">
           <yp-image

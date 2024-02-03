@@ -624,6 +624,21 @@ var updateCommunityConfigParameters = function (req, community) {
     community.set('configuration.appHomeScreenIconImageId', req.body.appHomeScreenIconImageId);
   }
 
+  const theme = (req.body.theme && req.body.theme!="") ? req.body.theme : null;
+
+  if (theme) {
+    try {
+      const cleaned = theme.trim().replace(/\n/g, '').replace(/\r/g, '');
+      const parsedJson = JSON.parse(cleaned);
+      community.set('configuration.theme', parsedJson);
+    } catch (error) {
+      community.set('configuration.theme', null);
+      log.error("Error in parsing theme", {error});
+    }
+  } else {
+    community.set('configuration.theme', null);
+  }
+
   community.set('configuration.appHomeScreenShortName', (req.body.appHomeScreenShortName && req.body.appHomeScreenShortName!=null)? req.body.appHomeScreenShortName : null);
   community.set('configuration.signupTermsPageId', (req.body.signupTermsPageId && req.body.signupTermsPageId!="") ? req.body.signupTermsPageId : null);
   community.set('configuration.welcomePageId', (req.body.welcomePageId && req.body.welcomePageId!="") ? req.body.welcomePageId : null);
