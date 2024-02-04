@@ -12,11 +12,13 @@ import "@material/web/button/outlined-button.js";
 import "@material/web/progress/circular-progress.js";
 
 import "./aoi-new-idea-dialog.js";
+import "./aoi-llm-explain-dialog.js";
 
 import { SharedStyles } from "./SharedStyles.js";
 import { Dialog } from "@material/web/dialog/internal/dialog.js";
 import { AoiNewIdeaDialog } from "./aoi-new-idea-dialog.js";
 import { YpFormattingHelpers } from "../../common/YpFormattingHelpers.js";
+import { AoiLlmExplainDialog } from "./aoi-llm-explain-dialog.js";
 
 @customElement("aoi-survey-voting")
 export class AoiSurveyVoting extends YpBaseElement {
@@ -237,6 +239,10 @@ export class AoiSurveyVoting extends YpBaseElement {
 
   openNewIdeaDialog() {
     (this.$$("#newIdeaDialog") as AoiNewIdeaDialog).open();
+  }
+
+  openLlmExplainDialog() {
+    (this.$$("#llmExplainDialog") as AoiLlmExplainDialog).open();
   }
 
   static override get styles() {
@@ -570,7 +576,7 @@ export class AoiSurveyVoting extends YpBaseElement {
         <div class="layout horizontal">
           <md-text-button
             class="skipButton"
-            @click=${() => this.voteForAnswer("skip")}
+            @click=${this.openLlmExplainDialog}
           >
             ${this.t("Explain")}
           </md-text-button>
@@ -604,6 +610,14 @@ export class AoiSurveyVoting extends YpBaseElement {
         .question=${this.question}
         .earl=${this.earl}
       ></aoi-new-idea-dialog>
+      <aoi-llm-explain-dialog
+        id="llmExplainDialog"
+        .question=${this.question}
+        .earl=${this.earl}
+        .groupId=${this.groupId}
+        .leftAnswer=${this.leftAnswer?.content || ""}
+        .rightAnswer=${this.rightAnswer?.content || ""}
+      ></aoi-llm-explain-dialog>
     `;
   }
 }

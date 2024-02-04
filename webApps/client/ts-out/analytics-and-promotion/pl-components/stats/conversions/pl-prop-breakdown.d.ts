@@ -18,16 +18,16 @@ export declare class PlausiblePropBreakdown extends PlausibleBaseElementWithStat
     disconnectedCallback(): void;
     static get styles(): import("lit").CSSResult[];
     handleResize(): void;
-    getBarMaxWidth(): "16rem" | "10rem";
+    getBarMaxWidth(): "10rem" | "16rem";
     fetchPropBreakdown(): void;
     loadMore(): void;
-    renderUrl(value: PlausiblePropValueData): typeof nothing | import("lit-html").TemplateResult<1>;
+    renderUrl(value: PlausiblePropValueData): import("lit-html").TemplateResult<1> | typeof nothing;
     renderPropContent(value: PlausiblePropValueData, query: URLSearchParams): import("lit-html").TemplateResult<1>;
     renderPropValue(value: PlausiblePropValueData): import("lit-html").TemplateResult<1>;
     changePropKey(newKey: string): void;
-    renderLoading(): typeof nothing | import("lit-html").TemplateResult<1>;
+    renderLoading(): import("lit-html").TemplateResult<1> | typeof nothing;
     renderBody(): import("lit-html").TemplateResult<1>[];
     renderPill(key: string): import("lit-html").TemplateResult<1>;
-    render(): typeof nothing | import("lit-html").TemplateResult<1>;
+    render(): import("lit-html").TemplateResult<1> | typeof nothing;
 }
 //# sourceMappingURL=pl-prop-breakdown.d.ts.map

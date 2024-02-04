@@ -114,4 +114,33 @@ export class AoiServerApi extends YpServerApi {
       false
     ) as unknown as AoiVoteResponse;
   }
+
+  public startLlmAnswerExplain(
+    groupId: number,
+    chatLog: PsAiChatWsMessage[],
+    wsClientId: string,
+    requestForExplaination: string
+  ): Promise<void> {
+    const simplifiedChatLog = chatLog.map(chatMessage => {
+      return {
+        sender: chatMessage.sender == 'bot' ? 'assistant' : 'user',
+        message: chatMessage.rawMessage
+          ? chatMessage.rawMessage
+          : chatMessage.message,
+      };
+    });
+    return this.fetchWrapper(
+      this.baseUrlPath +
+      this.baseUrlPath + `/${groupId}/llmAnswerExplain`,
+      {
+        method: "PUT",
+        body: JSON.stringify({
+          wsClientId,
+          requestForExplaination,
+          chatLog: simplifiedChatLog
+        }),
+      },
+      false
+    ) ;
+  }
 }

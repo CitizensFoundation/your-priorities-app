@@ -11,7 +11,7 @@ interface YpCampaignConfigurationData {
   mediums: YpCampaignMediumData[];
 }
 
-interface YpAiChatWsMessage {
+interface PsAiChatWsMessage {
   sender: string;
   type: 'hello_message' | 'moderation_error' | 'start' | 'end' | 'stream' | 'error' | 'info' | 'thinking' | 'start_followup' | 'end_followup' | 'stream_followup';
   message: string;

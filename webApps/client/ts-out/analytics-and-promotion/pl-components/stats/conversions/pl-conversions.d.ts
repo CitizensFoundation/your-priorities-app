@@ -16,7 +16,7 @@ export declare class PlausibleConversions extends PlausibleBaseElementWithState 
     static get styles(): import("lit").CSSResult[];
     handleResize(): void;
     firstUpdated(): void;
-    getBarMaxWidth(): "16rem" | "10rem";
+    getBarMaxWidth(): "10rem" | "16rem";
     fetchConversions(): void;
     getPlBackground(goalName: string): "bg-red-60" | "bg-red-40" | "bg-red-50";
     renderGoal(goal: PlausibleGoalData): import("lit-html").TemplateResult<1>;

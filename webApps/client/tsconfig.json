@@ -27,15 +27,11 @@
         "name": "ts-lit-plugin",
         "strict": true
       }
-    ],
+    ]
   },
+  "exclude": ["**/*.spec.ts"],
   "include": [
-    "src/**/*.ts",
-    "./node_modules/@policysynth/agents/**/*.d.ts",
-    "./node_modules/@policysynth/webapp/**/*.d.ts"
-],
-  "exclude": [
-    "node_modules",
-    "**/*.spec.ts"
+    "./node_modules/@policysynth/agents/validation.d.ts",
+    "src/**/*.ts"
   ]
 }

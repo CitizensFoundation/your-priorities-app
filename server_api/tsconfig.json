@@ -10,7 +10,8 @@
 		"types": [
 			"./server.d.ts",
 			"../webApps/client/src/types.d.ts",
-			"../webApps/client/src/typesAoi.d.ts"
+			"../webApps/client/src/typesAoi.d.ts",
+			"../webApps/client/src/typesLlms.d.ts"
 		]
 	},
 	"include": [
@@ -18,6 +19,7 @@
 		"**/*.js",
 		"**/*.cjs",
 		"**/*.json",
-
+		"./node_modules/@policysynth/agents/validation.d.ts",
+		"./node_modules/@policysynth/agents/types.d.ts",
 	]
 }

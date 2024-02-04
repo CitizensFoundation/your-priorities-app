@@ -1,4 +1,5 @@
-interface YpAiChatWsMessage {
+//TODO: Get this from @policysynth/agents
+interface PsAiChatWsMessage {
   sender: string;
   type:
     | "hello_message"
@@ -12,6 +13,8 @@ interface YpAiChatWsMessage {
     | "info"
     | "agentStart"
     | "agentCompleted"
+    | "agentStart"
+    | "agentCompleted"
     | "agentUpdated"
     | "agentError"
     | "liveLlmCosts"
@@ -23,10 +26,11 @@ interface YpAiChatWsMessage {
   message: string;
   data?: string | number | object;
   rawMessage?: string;
+  refinedCausesSuggestions?: string[];
   hidden?: boolean;
 }
 
-interface YpSimpleLlmChatLog {
+interface PsSimpleChatLog {
   sender: string;
   message: string;
 }

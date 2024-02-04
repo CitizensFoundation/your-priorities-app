@@ -34,7 +34,7 @@ import './yp-ai-chat-element.js';
 @customElement('yp-chat-assistant')
 export class YpChatAssistant extends YpBaseElement {
   @property({ type: Array })
-  chatLog: YpAiChatWsMessage[] = [];
+  chatLog: PsAiChatWsMessage[] = [];
 
   @property({ type: String })
   infoMessage: string;
@@ -151,7 +151,7 @@ export class YpChatAssistant extends YpBaseElement {
   }
 
   async onMessage(event: MessageEvent) {
-    const data: YpAiChatWsMessage = JSON.parse(event.data);
+    const data: PsAiChatWsMessage = JSON.parse(event.data);
     //console.error(event.data);
 
     switch (data.sender) {
@@ -177,7 +177,7 @@ export class YpChatAssistant extends YpBaseElement {
   }
 
   addToChatLogWithMessage(
-    data: YpAiChatWsMessage,
+    data: PsAiChatWsMessage,
     message: string | undefined = undefined,
     changeButtonDisabledState: boolean | undefined = undefined,
     changeButtonLabelTo: string | undefined = undefined
@@ -197,7 +197,7 @@ export class YpChatAssistant extends YpBaseElement {
     }
   }
 
-  addChatBotElement(data: YpAiChatWsMessage) {
+  addChatBotElement(data: PsAiChatWsMessage) {
     const lastElement = this.chatElements[this.chatElements.length - 1];
     switch (data.type) {
       case 'hello_message':
@@ -248,7 +248,7 @@ export class YpChatAssistant extends YpBaseElement {
     }
   }
 
-  addChatUserElement(data: YpAiChatWsMessage) {
+  addChatUserElement(data: PsAiChatWsMessage) {
     this.chatLog = [...this.chatLog, data];
   }
 
@@ -266,7 +266,7 @@ export class YpChatAssistant extends YpBaseElement {
     });
   }
 
-  parsePosts(data: YpAiChatWsMessage) {
+  parsePosts(data: PsAiChatWsMessage) {
     data.message = data.message.replace(/\[([^\]]+)\]/g, (match, content) => {
       if (data.postIds.indexOf(content) == -1) data.postIds.push(content);
       data.postIds = JSON.parse(JSON.stringify(data.postIds));

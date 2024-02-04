@@ -57,3 +57,19 @@ interface AcBackgroundJobClass extends DbData {
 interface ImageClass extends DbData {
   formats: string[];
 }
+
+type YpChatBotMemoryStageTypes = PsMemoryStageTypes | "chatbot-conversation";
+
+interface PsChatBotMemoryData extends PsBaseMemoryData {
+  stages: Record<YpChatBotMemoryStageTypes, IEngineInnovationStagesData>;
+  chatLog?: PsSimpleChatLog[];
+  problemStatement?: PsProblemStatement;
+  currentStage: YpChatBotMemoryStageTypes;
+  groupId?: number;
+  communityId?: number;
+  domainId?: number;
+  totalCost?: number;
+  customInstructions?: object,
+  subProblems?: IEngineSubProblem[],
+  currentStageData?: undefined;
+}

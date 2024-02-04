@@ -1,6 +1,6 @@
 import { YpBaseElement } from "../common/yp-base-element.js";
 export declare abstract class YpStreamingLlmBase extends YpBaseElement {
-    chatLog: YpAiChatWsMessage[];
+    chatLog: PsAiChatWsMessage[];
     wsClientId: string;
     webSocketsErrorCount: number;
     wsEndpoint: string;
@@ -25,9 +25,9 @@ export declare abstract class YpStreamingLlmBase extends YpBaseElement {
     scrollDown(): void;
     addUserChatBotMessage(userMessage: string): void;
     addThinkingChatBotMessage(): void;
-    abstract addChatBotElement(wsMessage: YpAiChatWsMessage): Promise<void>;
-    addChatUserElement(data: YpAiChatWsMessage): void;
-    get simplifiedChatLog(): YpSimpleLlmChatLog[];
+    abstract addChatBotElement(wsMessage: PsAiChatWsMessage): Promise<void>;
+    addChatUserElement(data: PsAiChatWsMessage): void;
+    get simplifiedChatLog(): PsSimpleChatLog[];
     reset(): void;
 }
 //# sourceMappingURL=yp-streaming-llm-base.d.ts.map

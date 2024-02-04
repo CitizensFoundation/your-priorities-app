@@ -36,7 +36,7 @@ export declare class AcActivities extends YpBaseElementWithLogin {
     _openLogin(): void;
     _pointDeleted(event: CustomEvent): void;
     get wideListOffset(): "800" | "415";
-    get ironListResizeScrollThreshold(): 300 | 800;
+    get ironListResizeScrollThreshold(): 800 | 300;
     get ironListPaddingTop(): number;
     _activityDeletedResponse(event: CustomEvent): void;
     _removeActivityId(activityId: number): void;

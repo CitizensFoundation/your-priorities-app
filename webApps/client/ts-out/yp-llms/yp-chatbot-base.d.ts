@@ -1,0 +1,48 @@
+import { PropertyValueMap } from 'lit';
+import '@material/web/fab/fab.js';
+import '@material/web/radio/radio.js';
+import '@material/web/button/elevated-button.js';
+import '@material/web/button/text-button.js';
+import '@material/web/button/outlined-button.js';
+import '@material/web/button/filled-button.js';
+import '@material/web/textfield/outlined-text-field.js';
+import '@material/web/icon/icon.js';
+import '@material/web/iconbutton/outlined-icon-button.js';
+import '../common/yp-image.js';
+import { YpAiChatbotItemBase } from './yp-chatbot-item-base.js';
+import { MdFilledTonalButton } from '@material/web/button/filled-tonal-button.js';
+import { MdOutlinedTextField } from '@material/web/textfield/outlined-text-field.js';
+import { YpStreamingLlmBase } from './yp-streaming-llm-base.js';
+import './yp-chatbot-item-base.js';
+export declare abstract class YpChatbotBase extends YpStreamingLlmBase {
+    infoMessage: string;
+    defaultInfoMessage: string;
+    inputIsFocused: boolean;
+    onlyUseTextField: boolean;
+    clusterId: number;
+    communityId: number;
+    textInputLabel: string;
+    showCleanupButton: boolean;
+    sendButton?: MdFilledTonalButton;
+    chatElements?: YpAiChatbotItemBase[];
+    chatInputField?: MdOutlinedTextField;
+    chatWindow?: HTMLElement;
+    chatMessagesElement?: HTMLElement;
+    chatbotItemComponentName: import("lit-html/static.js").StaticValue;
+    constructor();
+    abstract setupServerApi(): void;
+    calcVH(): void;
+    connectedCallback(): void;
+    protected firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void;
+    updated(changedProperties: Map<string | number | symbol, unknown>): void;
+    disconnectedCallback(): void;
+    addToChatLogWithMessage(data: PsAiChatWsMessage, message?: string | undefined, changeButtonDisabledState?: boolean | undefined, changeButtonLabelTo?: string | undefined, refinedCausesSuggestions?: string[] | undefined, rawMessage?: string | undefined): void;
+    get lastChatUiElement(): YpAiChatbotItemBase;
+    addChatBotElement(wsMessage: PsAiChatWsMessage): Promise<void>;
+    abstract sendChatMessage(): Promise<void>;
+    static get styles(): any[];
+    followUpQuestion(event: CustomEvent): void;
+    renderChatInput(): import("lit-html").TemplateResult<1>;
+    render(): import("lit-html").TemplateResult;
+}
+//# sourceMappingURL=yp-chatbot-base.d.ts.map

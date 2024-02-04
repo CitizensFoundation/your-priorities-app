@@ -3,7 +3,7 @@ import { YpBaseElement } from "../common/yp-base-element.js";
 
 export abstract class YpStreamingLlmBase extends YpBaseElement {
   @property({ type: Array })
-  chatLog: YpAiChatWsMessage[] = [];
+  chatLog: PsAiChatWsMessage[] = [];
 
   @property({ type: String })
   wsClientId!: string;
@@ -171,7 +171,7 @@ export abstract class YpStreamingLlmBase extends YpBaseElement {
   }
 
   async onMessage(event: MessageEvent) {
-    const data: YpAiChatWsMessage = JSON.parse(event.data);
+    const data: PsAiChatWsMessage = JSON.parse(event.data);
     //console.error(event.data);
 
     switch (data.sender) {
@@ -228,9 +228,9 @@ export abstract class YpStreamingLlmBase extends YpBaseElement {
     });
   }
 
-  abstract addChatBotElement(wsMessage: YpAiChatWsMessage): Promise<void>;
+  abstract addChatBotElement(wsMessage: PsAiChatWsMessage): Promise<void>;
 
-  addChatUserElement(data: YpAiChatWsMessage) {
+  addChatUserElement(data: PsAiChatWsMessage) {
     this.chatLog = [...this.chatLog, data];
   }
 
@@ -248,7 +248,7 @@ export abstract class YpStreamingLlmBase extends YpBaseElement {
           ? chatMessage.rawMessage
           : chatMessage.message,
       };
-    }) as YpSimpleLlmChatLog[];
+    }) as PsSimpleChatLog[];
   }
 
   reset() {

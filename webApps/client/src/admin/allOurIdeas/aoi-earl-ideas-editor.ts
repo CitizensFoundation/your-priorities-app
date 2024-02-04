@@ -98,7 +98,7 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmBase {
     );
   }
 
-  async addChatBotElement(wsMessage: YpAiChatWsMessage): Promise<void> {
+  async addChatBotElement(wsMessage: PsAiChatWsMessage): Promise<void> {
     switch (wsMessage.type) {
       case "start":
         break;

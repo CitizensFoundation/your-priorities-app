@@ -26,6 +26,7 @@ const defaultHeader = {
 
 import auth from "../authorization.js";
 import { AiHelper } from "../active-citizen/engine/allOurIdeas/aiHelper.js";
+import { ExplainAnswersAssistant } from "../active-citizen/engine/allOurIdeas/explainAnswersAssistant.js";
 
 export class AllOurIdeasController {
   public path = "/api/allOurIdeas";
@@ -53,6 +54,13 @@ export class AllOurIdeasController {
       auth.can("create group"),
       this.generateIdeas.bind(this)
     );
+
+    this.router.put(
+      "/:communityId/explainConversation",
+      auth.can("create group"),
+      this.explainConversation.bind(this)
+    );
+
     this.router.get(
       "/:communityId/choices/:questionId",
       auth.can("create group"),
@@ -87,8 +95,6 @@ export class AllOurIdeasController {
       auth.can("create group"),
       this.updateQuestionName.bind(this)
     );
-
-
   }
 
   public async generateIdeas(req: Request, res: Response): Promise<void> {
@@ -103,6 +109,17 @@ export class AllOurIdeasController {
       //TODO: Have it refresh the websocket on the client
       res.status(404).send("Websocket not found");
     }
+  }
+
+  public async explainConversation(req: Request, res: Response): Promise<void> {
+    const { wsClientId, chatLog } = req.body;
+    console.log(`explainConversation: ${wsClientId}`);
+    const explainer = new ExplainAnswersAssistant(
+      wsClientId,
+      this.wsClients
+    );
+    await explainer.explainConversation(chatLog);
+    res.sendStatus(200);
   }
 
   public async showEarl(req: Request, res: Response): Promise<void> {

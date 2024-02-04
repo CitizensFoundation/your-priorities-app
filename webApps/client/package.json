@@ -43,7 +43,7 @@
     "@material/web": "^1.2.0",
     "@picmo/popup-picker": "^5.8.5",
     "@picmo/renderer-twemoji": "^5.8.5",
-    "@policysynth/agents": "^1.1.0",
+    "@policysynth/agents": "^1.2.0",
     "@polymer/polymer": "^3.5.1",
     "@trystan2k/fleshy-jsoneditor": "^3.0.0",
     "@types/backbone": "^1.4.18",
