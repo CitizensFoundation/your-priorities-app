@@ -762,7 +762,7 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
   }
 
   _gotAiImage(event: CustomEvent) {
-    this.imagePreviewUrl = event.detail.imageUrl;
+    this.ypImageUrl = this.imagePreviewUrl = event.detail.imageUrl;
     this.uploadedLogoImageId = event.detail.imageId;
     this.configChanged = true;
   }
