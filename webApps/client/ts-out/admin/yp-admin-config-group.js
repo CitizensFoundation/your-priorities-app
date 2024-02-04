@@ -1573,7 +1573,7 @@ let YpAdminConfigGroup = class YpAdminConfigGroup extends YpAdminConfigBase {
         this.requestUpdate();
     }
     renderCreateEarl(communityId) {
-        return html ` <aoi-earl-ideas-editor
+        return html `<aoi-earl-ideas-editor
       .communityId="${communityId}"
       @configuration-changed="${this.earlConfigChanged}"
       .configuration="${this.group.configuration.allOurIdeas}"

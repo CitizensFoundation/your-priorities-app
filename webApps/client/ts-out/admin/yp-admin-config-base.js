@@ -388,7 +388,8 @@ export class YpAdminConfigBase extends YpAdminPage {
 
         .adminItem {
           margin: 0px;
-          max-width: 600px;
+          width: 1024px;
+          max-width: 100%;
           margin-bottom: 32px;
         }
 

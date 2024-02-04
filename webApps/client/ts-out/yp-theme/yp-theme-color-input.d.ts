@@ -9,6 +9,7 @@ export declare class YpThemeColorInput extends YpBaseElement {
     static get styles(): any[];
     isValidHex(color: string | undefined): boolean;
     handleColorInput(event: CustomEvent): void;
+    _onPaste(event: ClipboardEvent): void;
     openPalette(): void;
     handleOutsideClick: (event: MouseEvent) => void;
     closePalette(): void;

@@ -66,11 +66,27 @@ export class YpThemeColorInput extends YpBaseElement {
     const isValidHex = /^[0-9A-Fa-f]{0,6}$/.test(inputValue);
     if (isValidHex && inputValue.length === 6) {
       this.color = inputValue.replace("#", "");
-      this.fire("input", { color: `${this.color }` });
+      this.fire("input", { color: `${this.color}` });
     } else {
       (event.target as MdOutlinedTextField)!.value = this.color || "";
     }
     console.error(`Invalid color: ${inputValue}`);
+  }
+
+  _onPaste(event: ClipboardEvent): void {
+    event.preventDefault();
+    let pastedText: string = "";
+    if (event.clipboardData && event.clipboardData.getData) {
+      pastedText = event.clipboardData.getData("text/plain");
+    }
+    // Removing any non-hexadecimal characters from the pasted text
+    const sanitizedText = pastedText.replace(/[^0-9A-Fa-f]/g, "");
+
+    // Checking if the sanitized text is a valid hex color code
+    if (this.isValidHex(`#${sanitizedText}`)) {
+      this.color = sanitizedText;
+      this.fire("input", { color: `#${this.color}` });
+    }
   }
 
   openPalette() {
@@ -173,6 +189,7 @@ export class YpThemeColorInput extends YpBaseElement {
           .label="${this.label}"
           maxlength="6"
           trailing-icon
+          @paste="${this._onPaste}"
           prefix-text="#"
           pattern="^[0-9A-Fa-f]{0,6}$"
           .value="${this.color || ""}"

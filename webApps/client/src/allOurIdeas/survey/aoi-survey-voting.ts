@@ -261,6 +261,11 @@ export class AoiSurveyVoting extends YpBaseElement {
           border-radius: 70px;
         }
 
+        .iconImage[rtl] {
+          margin-right: 0;
+          margin-left: -8px;
+        }
+
         .iconImageRight {
         }
 
@@ -293,7 +298,7 @@ export class AoiSurveyVoting extends YpBaseElement {
           border-radius: 5px;
           overflow: hidden;
           box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
-          margin-top: 32px;
+          margin-top: 40px;
         }
 
         .progressBar {
@@ -326,6 +331,8 @@ export class AoiSurveyVoting extends YpBaseElement {
         .newIdeaButton,
         .skipButton {
           margin-top: 24px;
+          margin-left: 12px;
+          margin-right: 12px;
         }
 
         .skipButton {
@@ -505,7 +512,7 @@ export class AoiSurveyVoting extends YpBaseElement {
           <md-elevated-button
             id="leftAnswerButton"
             class="leftAnswer"
-            trailing-icon
+            ?trailing-icon="${!this.rtl}"
             ?hidden="${this.spinnersActive}"
             @click=${() => this.voteForAnswer("left")}
           >
@@ -515,12 +522,13 @@ export class AoiSurveyVoting extends YpBaseElement {
                     slot="icon"
                     src="${this.leftAnswer?.imageUrl}"
                     alt="Left answer image"
+                    ?rtl="${this.rtl}"
                     class="iconImage"
                   />
                 `
               : nothing}
             ${YpFormattingHelpers.truncate(
-              this.leftAnswer?.content || (this.leftAnswer as any),
+              (this.leftAnswer!.content+" "+this.leftAnswer!.content) || (this.leftAnswer as any),
               140
             )}
           </md-elevated-button>
@@ -538,7 +546,7 @@ export class AoiSurveyVoting extends YpBaseElement {
           <md-elevated-button
             id="rightAnswerButton"
             class="rightAnswer"
-            trailing-icon
+            ?trailing-icon="${!this.rtl}"
             ?hidden="${this.spinnersActive}"
             @click=${() => this.voteForAnswer("right")}
           >
@@ -546,6 +554,7 @@ export class AoiSurveyVoting extends YpBaseElement {
               ? html`
                   <img
                     slot="icon"
+                    ?rtl="${this.rtl}"
                     src="${this.rightAnswer?.imageUrl}"
                     alt="Right answer image"
                     class="iconImageRight"
@@ -559,11 +568,17 @@ export class AoiSurveyVoting extends YpBaseElement {
           </md-elevated-button>
         </div>
         <div class="layout horizontal">
+          <md-text-button
+            class="skipButton"
+            @click=${() => this.voteForAnswer("skip")}
+          >
+            ${this.t("Explain")}
+          </md-text-button>
           <md-outlined-button
             class="newIdeaButton"
             @click="${this.openNewIdeaDialog}"
           >
-            ${this.t("Add your own idea")}
+            ${this.t("Add your own answer")}
           </md-outlined-button>
           <md-text-button
             class="skipButton"

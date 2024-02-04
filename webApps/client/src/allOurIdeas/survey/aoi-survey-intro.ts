@@ -161,10 +161,10 @@ export class AoiSurveyIntro extends YpBaseElement {
           letter-spacing: 0.04em;
           line-height: 1.5;
           border-radius: 8px;
-          max-width: 600px;
+          max-width: 560px;
           vertical-align: center;
-          margin-bottom: 32px;
-          margin-top: 8px;
+          margin-bottom: 16px;
+          margin-top: 16px;
           padding: 24px;
           color: var(--md-sys-color-primary);
           background-color: var(--md-sys-color-on-primary);
@@ -224,7 +224,7 @@ export class AoiSurveyIntro extends YpBaseElement {
         <div class="questionTitle" ?dark-mode="${this.themeDarkMode}">
           ${this.question?.name}
         </div>
-        ${this.isAdmin ? this.renderAdminButtons() : nothing}
+        <div class="description">${this.formattedDescription}</div>
         ${this.earl.active
           ? html`
               <md-fab
@@ -246,47 +246,7 @@ export class AoiSurveyIntro extends YpBaseElement {
                 ><md-icon slot="icon">grading</md-icon></md-fab
               >
             `}
-        <div class="description">${this.formattedDescription}</div>
-        ${!this.wide
-          ? html`
-              <div class="layout horizontal center-center">
-                ${!this.themeDarkMode
-                  ? html`
-                      <md-outlined-icon-button
-                        class="darkModeButton"
-                        @click="${() => this.fire("toggle-dark-mode")}"
-                        ><md-icon>dark_mode</md-icon></md-outlined-icon-button
-                      >
-                    `
-                  : html`
-                      <md-outlined-icon-button
-                        class="darkModeButton"
-                        @click="${() => this.fire("toggle-dark-mode")}"
-                        ><md-icon>light_mode</md-icon></md-outlined-icon-button
-                      >
-                    `}
-                ${!this.themeHighContrast
-                  ? html`
-                      <md-outlined-icon-button
-                        class="darkModeButton"
-                        ?hidden="${this.isAppleDevice}"
-                        @click="${() => this.fire("toggle-high-contrast-mode")}"
-                        ><md-icon>contrast</md-icon></md-outlined-icon-button
-                      >
-                    `
-                  : html`
-                      <md-outlined-icon-button
-                        class="darkModeButton"
-                        ?hidden="${this.isAppleDevice}"
-                        @click="${() => this.fire("toggle-high-contrast-mode")}"
-                        ><md-icon
-                          >contrast_rtl_off</md-icon
-                        ></md-outlined-icon-button
-                      >
-                    `}
-              </div>
-            `
-          : nothing}
+        ${this.isAdmin ? this.renderAdminButtons() : nothing}
         <div id="footerStart" class="footerHtml">
           ${this.earl.configuration && this.earl.configuration.welcome_html
             ? unsafeHTML(this.earl.configuration.welcome_html)

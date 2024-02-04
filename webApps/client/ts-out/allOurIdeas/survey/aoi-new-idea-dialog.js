@@ -187,7 +187,7 @@ let AoiNewIdeaDialog = class AoiNewIdeaDialog extends YpBaseElement {
           @keydown="${this.textAreaKeyDown}"
           maxLength="140"
           .rows="${this.wide ? 3 : 5}"
-          label="${this.t('Your idea')}"
+          label="${this.t('Your own answer')}"
         >
         </md-filled-text-field>
         <div class="error" ?hidden="${!this.currentError}">

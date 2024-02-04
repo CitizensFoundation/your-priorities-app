@@ -79,6 +79,20 @@ let YpThemeColorInput = class YpThemeColorInput extends YpBaseElement {
         }
         console.error(`Invalid color: ${inputValue}`);
     }
+    _onPaste(event) {
+        event.preventDefault();
+        let pastedText = "";
+        if (event.clipboardData && event.clipboardData.getData) {
+            pastedText = event.clipboardData.getData("text/plain");
+        }
+        // Removing any non-hexadecimal characters from the pasted text
+        const sanitizedText = pastedText.replace(/[^0-9A-Fa-f]/g, "");
+        // Checking if the sanitized text is a valid hex color code
+        if (this.isValidHex(`#${sanitizedText}`)) {
+            this.color = sanitizedText;
+            this.fire("input", { color: `#${this.color}` });
+        }
+    }
     openPalette() {
         const picker = this.shadowRoot.querySelector("hex-color-picker");
         picker.hidden = false;
@@ -139,6 +153,7 @@ let YpThemeColorInput = class YpThemeColorInput extends YpBaseElement {
           .label="${this.label}"
           maxlength="6"
           trailing-icon
+          @paste="${this._onPaste}"
           prefix-text="#"
           pattern="^[0-9A-Fa-f]{0,6}$"
           .value="${this.color || ""}"
