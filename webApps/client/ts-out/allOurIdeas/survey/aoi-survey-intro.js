@@ -184,7 +184,8 @@ let AoiSurveyIntro = class AoiSurveyIntro extends YpBaseElement {
         ];
     }
     render() {
-        return html `
+        if (this.question) {
+            return html `
       <div class="topContainer layout vertical wrap center-center">
         <yp-image
           class="column image"
@@ -195,7 +196,7 @@ let AoiSurveyIntro = class AoiSurveyIntro extends YpBaseElement {
           <yp-magic-text
             id="answerText"
             .contentId="${this.group.id}"
-            .extraId="${this.question?.id}"
+            .extraId="${this.question.id}"
             text-only
             truncate="300"
             .content="${this.question.name}"
@@ -205,7 +206,7 @@ let AoiSurveyIntro = class AoiSurveyIntro extends YpBaseElement {
         </div>
         <div class="description">${this.formattedDescription}</div>
         ${this.earl.active
-            ? html `
+                ? html `
               <md-fab
                 extended
                 variant="primary"
@@ -215,7 +216,7 @@ let AoiSurveyIntro = class AoiSurveyIntro extends YpBaseElement {
                 ><md-icon slot="icon">thumbs_up_down</md-icon></md-fab
               >
             `
-            : html `
+                : html `
               <md-fab
                 extended
                 variant="primary"
@@ -228,12 +229,16 @@ let AoiSurveyIntro = class AoiSurveyIntro extends YpBaseElement {
         ${this.isAdmin ? this.renderAdminButtons() : nothing}
         <div id="footerStart" class="footerHtml">
           ${this.earl.configuration && this.earl.configuration.welcome_html
-            ? unsafeHTML(this.earl.configuration.welcome_html)
-            : nothing}
+                ? unsafeHTML(this.earl.configuration.welcome_html)
+                : nothing}
         </div>
         <div id="footerEnd">&nbsp;</div>
       </div>
     `;
+        }
+        else {
+            return nothing;
+        }
     }
 };
 __decorate([

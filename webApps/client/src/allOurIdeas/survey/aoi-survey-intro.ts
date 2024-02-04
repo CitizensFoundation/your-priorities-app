@@ -214,7 +214,8 @@ export class AoiSurveyIntro extends YpBaseElement {
   }
 
   override render() {
-    return html`
+    if (this.question) {
+      return html`
       <div class="topContainer layout vertical wrap center-center">
         <yp-image
           class="column image"
@@ -225,7 +226,7 @@ export class AoiSurveyIntro extends YpBaseElement {
           <yp-magic-text
             id="answerText"
             .contentId="${this.group.id}"
-            .extraId="${this.question?.id}"
+            .extraId="${this.question.id}"
             text-only
             truncate="300"
             .content="${this.question.name}"
@@ -264,5 +265,8 @@ export class AoiSurveyIntro extends YpBaseElement {
         <div id="footerEnd">&nbsp;</div>
       </div>
     `;
+    } else {
+      return nothing;
+    }
   }
 }

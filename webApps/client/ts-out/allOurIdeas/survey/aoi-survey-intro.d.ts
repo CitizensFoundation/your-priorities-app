@@ -1,3 +1,4 @@
+import { nothing } from "lit";
 import { YpBaseElement } from "../../common/yp-base-element.js";
 import "../../common/yp-image.js";
 import "@material/web/fab/fab.js";
@@ -21,6 +22,6 @@ export declare class AoiSurveyIntro extends YpBaseElement {
     clickStart(): void;
     clickResults(): void;
     static get styles(): any[];
-    render(): import("lit-html").TemplateResult<1>;
+    render(): import("lit-html").TemplateResult<1> | typeof nothing;
 }
 //# sourceMappingURL=aoi-survey-intro.d.ts.map
