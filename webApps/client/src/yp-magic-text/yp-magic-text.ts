@@ -285,7 +285,6 @@ export class YpMagicText extends YpBaseElement {
   }
 
   async _startTranslationAndFinalize() {
-    debugger;
     if (window.appGlobals.cache.autoTranslateCache[this.indexKey]) {
       this.processedContent = window.appGlobals.cache.autoTranslateCache[
         this.indexKey

@@ -15,6 +15,9 @@ export class YpLocaleTranslation {
             apiKey: process.env.OPENAI_API_KEY,
         });
     }
+    getValueByPath(obj, path) {
+        return path.split('.').reduce((acc, part) => acc && acc[part], obj) || "";
+    }
     async loadAndCompareTranslations() {
         const localesDir = "./locales";
         const baseTranslationPath = path.join(localesDir, "en/translation.json");
@@ -35,8 +38,9 @@ export class YpLocaleTranslation {
             const chunks = this.chunkArray(missingTranslations, 15);
             console.log(`Missing translations for ${localeDir}:`, missingTranslations, chunks);
             for (const chunk of chunks) {
+                console.log(`Translating chunk: ${JSON.stringify(chunk)}`); // Log the chunk before translation
                 // Prepare the texts for translation
-                const textsToTranslate = chunk.map((key) => translation[key] || "");
+                const textsToTranslate = chunk.map((key) => this.getValueByPath(translation, key));
                 // Call your translateUITexts method
                 const translations = await this.translateUITexts(localeDir, textsToTranslate);
                 // Update the translation with the new texts
@@ -45,19 +49,21 @@ export class YpLocaleTranslation {
                         this.setValueAtPath(translation, key, translations[index]);
                     }
                 });
+                console.log(`Chunk after translation: ${JSON.stringify(chunk)}`); // Log the chunk after translation
                 console.log(`Updated translation for ${localeDir}:`);
                 await writeFilePromise(translationFilePath, JSON.stringify(translation, null, 2));
             }
         }
     }
-    // Utility method to safely set a value at a given path in a nested object
     setValueAtPath(obj, path, value) {
+        console.log(`Setting value at path: ${path} to '${value}'`); // Debugging log
         const keys = path.split(".");
         let current = obj;
         for (let i = 0; i < keys.length - 1; i++) {
             const key = keys[i];
-            if (current[key] === undefined)
+            if (!(key in current) || typeof current[key] !== 'object' || current[key] === null) {
                 current[key] = {};
+            }
             current = current[key];
         }
         current[keys[keys.length - 1]] = value;
@@ -67,45 +73,24 @@ export class YpLocaleTranslation {
         return JSON.parse(fileContent);
     }
     updateWithMissingKeys(baseTranslation, targetTranslation, path = []) {
-        const updatedTranslation = { ...targetTranslation };
+        const updatedTranslation = JSON.parse(JSON.stringify(targetTranslation)); // Deep copy to avoid mutating the original
         const updateRecursively = (base, target, currentPath) => {
             Object.keys(base).forEach((key) => {
-                if (!target.hasOwnProperty(key)) {
-                    // If the key is missing in the target, add it from the base
+                const newPath = currentPath.concat(key); // Prepare the new path for potential recursive update
+                if (typeof base[key] === "object" && base[key] !== null) {
+                    // If the base key is an object, ensure the target has a corresponding object
+                    if (!target.hasOwnProperty(key) || typeof target[key] !== "object" || target[key] === null) {
+                        console.log(`Creating missing object at path: ${newPath.join(".")}`);
+                        target[key] = {}; // Initialize missing object
+                    }
+                    updateRecursively(base[key], target[key], newPath); // Recurse into objects
+                }
+                else if (!target.hasOwnProperty(key) || target[key] === "" || target[key] === null) {
+                    // If the key is missing or empty in the target, update it from the base
+                    console.log(`Updating missing or empty key at path: ${newPath.join(".")}`);
                     target[key] = base[key];
                 }
-                else if (typeof base[key] === "object" &&
-                    base[key] !== null &&
-                    typeof target[key] === "object" &&
-                    target[key] !== null) {
-                    // If both the base and target values are objects, recurse
-                    updateRecursively(base[key], target[key], currentPath.concat(key));
-                }
-            });
-        };
-        updateRecursively(baseTranslation, updatedTranslation, path);
-        return updatedTranslation;
-    }
-    updateWithMissingKeysNew(baseTranslation, targetTranslation, path = []) {
-        // Create a deep copy of the targetTranslation to avoid mutating the original object
-        const updatedTranslation = JSON.parse(JSON.stringify(targetTranslation));
-        const updateRecursively = (base, target, currentPath) => {
-            Object.keys(base).forEach((key) => {
-                const fullPath = currentPath.concat(key).join(".");
-                if (!target.hasOwnProperty(key) ||
-                    target[key] === "" ||
-                    target[key] === null) {
-                    // If the key is missing in the target, or has an empty/null value, add it from the base
-                    console.log(`Updating missing or empty key at path: ${fullPath}`);
-                    target[key] = base[key];
-                }
-                else if (typeof base[key] === "object" &&
-                    base[key] !== null &&
-                    typeof target[key] === "object" &&
-                    target[key] !== null) {
-                    // If both the base and target values are objects (and not null), recurse
-                    updateRecursively(base[key], target[key], currentPath.concat(key));
-                } // No else condition required for primitive types as we only update missing or empty keys
+                // No action needed for non-empty, non-object fields; they're already present and not empty
             });
         };
         updateRecursively(baseTranslation, updatedTranslation, []);

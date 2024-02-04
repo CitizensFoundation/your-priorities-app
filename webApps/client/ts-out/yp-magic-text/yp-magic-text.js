@@ -170,7 +170,6 @@ let YpMagicText = YpMagicText_1 = class YpMagicText extends YpBaseElement {
         }
     }
     async _startTranslationAndFinalize() {
-        debugger;
         if (window.appGlobals.cache.autoTranslateCache[this.indexKey]) {
             this.processedContent = window.appGlobals.cache.autoTranslateCache[this.indexKey];
             this._finalize();

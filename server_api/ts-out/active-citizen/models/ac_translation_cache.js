@@ -453,12 +453,22 @@ module.exports = (sequelize, DataTypes) => {
         });
     };
     AcTranslationCache.getTranslationFromGoogle = (textType, indexKey, contentToTranslate, targetLanguage, modelInstance, callback) => {
-        const translateAPI = new Translate({
-            credentials: JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON),
-            projectId: process.env.GOOGLE_TRANSLATE_PROJECT_ID
-                ? process.env.GOOGLE_TRANSLATE_PROJECT_ID
-                : undefined,
-        });
+        let translateAPI;
+        try {
+            translateAPI = new Translate({
+                credentials: JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON),
+                projectId: process.env.GOOGLE_TRANSLATE_PROJECT_ID
+                    ? process.env.GOOGLE_TRANSLATE_PROJECT_ID
+                    : undefined,
+            });
+        }
+        catch (error) {
+            console.error("Failed to get translation from Google", error);
+        }
+        if (!translateAPI) {
+            callback("No translation API");
+            return;
+        }
         translateAPI
             .translate(contentToTranslate, targetLanguage)
             .then((results) => {
@@ -525,9 +535,7 @@ module.exports = (sequelize, DataTypes) => {
         const { YpLlmTranslation } = await Promise.resolve().then(() => __importStar(require("../llms/llmTranslation.js")));
         const translation = new YpLlmTranslation();
         if (textType === "aoiChoiceContent") {
-            console.log(`111111111111111111111111111 -> contentToTranslate ${JSON.stringify(contentToTranslate)}`);
             const translatedTextData = await translation.getChoiceTranslation(contentToTranslate, targetLanguage);
-            console.log(`000000000000000000000000000 -> translatedTextData ${JSON.stringify(translatedTextData)}`);
             sequelize.models.AcTranslationCache.create({
                 index_key: indexKey,
                 content: translatedTextData,

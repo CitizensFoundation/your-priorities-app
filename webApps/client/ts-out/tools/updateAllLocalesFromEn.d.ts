@@ -5,11 +5,11 @@ export declare class YpLocaleTranslation {
     maxTokens: number;
     temperature: number;
     constructor();
+    getValueByPath(obj: any, path: any): any;
     loadAndCompareTranslations(): Promise<void>;
-    setValueAtPath(obj: any, path: string, value: any): void;
+    setValueAtPath(obj: any, path: any, value: any): void;
     private loadJsonFile;
     private updateWithMissingKeys;
-    private updateWithMissingKeysNew;
     private extractMissingTranslations;
     private chunkArray;
     renderSystemPrompt(): string;
