@@ -54,6 +54,7 @@ export declare class AoiEarlIdeasEditor extends YpStreamingLlmBase {
     renderCreateIdeas(): import("lit-html").TemplateResult<1>;
     renderIdeasSortingChips(): import("lit-html").TemplateResult<1>;
     renderIcon(choice: AoiChoiceData): import("lit-html").TemplateResult<1> | typeof nothing;
+    renderAnswerData(answer: AoiChoiceData): import("lit-html").TemplateResult<1>;
     renderEditIdeas(): import("lit-html").TemplateResult<1>;
     render(): import("lit-html").TemplateResult<1>;
 }

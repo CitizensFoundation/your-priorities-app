@@ -245,6 +245,41 @@ let AoiEarlIdeasEditor = class AoiEarlIdeasEditor extends YpStreamingLlmBase {
         return [
             super.styles,
             css `
+        :host {
+          --md-elevated-button-container-color: var(
+            --md-sys-color-primary-container
+          );
+          --md-elevated-button-label-text-color: var(
+            --md-sys-color-on-primary-container
+          );
+        }
+
+        .iconImage,
+        .iconImageRight {
+          width: 100px;
+          height: 100px;
+          margin-left: 0;
+          margin-right: -8px;
+          border-radius: 70px;
+        }
+
+        .iconImageRight {
+        }
+
+        .iconContainer md-elevated-button {
+          margin: 8px;
+          width: 400px;
+          max-width: 400px;
+          max-height: 120px;
+          height: 120px;
+          white-space: collapse balance;
+          font-size: 16px;
+          --md-elevated-button-container-height: 120px !important;
+          --md-elevated-button-hover-label-text-color: var(
+            --md-sys-color-on-primary-container
+          );
+        }
+
         #aiStyleInput {
           margin-bottom: 16px;
         }
@@ -263,21 +298,6 @@ let AoiEarlIdeasEditor = class AoiEarlIdeasEditor extends YpStreamingLlmBase {
           max-width: 900px;
           width: 900px;
           padding-left: 0;
-        }
-
-        .logo,
-        .iconImage {
-          width: 50px;
-          max-width: 50px;
-          min-width: 50px;
-        }
-
-        .logo {
-          margin-right: 12px;
-        }
-
-        .iconImage {
-          border-radius: 24px;
         }
 
         .ideaContainer {
@@ -448,22 +468,35 @@ let AoiEarlIdeasEditor = class AoiEarlIdeasEditor extends YpStreamingLlmBase {
       `;
         }
         else if (choice.data.imageUrl) {
-            return html `<div class="iconContainer">
-        <img
-          class="iconImage"
-          src="${choice.data.imageUrl}"
-          alt="icon"
-          ?hidden="${!choice.data.imageUrl}"
-        /><md-icon-button
-          @click="${() => this.deleteImageUrl(choice)}"
-          class="deleteIcon"
-          ><md-icon>delete</md-icon></md-icon-button
-        >
-      </div>`;
+            return html ` <img
+        class="iconImage"
+        src="${choice.data.imageUrl}"
+        alt="icon"
+        slot="icon"
+        ?hidden="${!choice.data.imageUrl}"
+      />`;
         }
         else {
             return nothing;
         }
+    }
+    renderAnswerData(answer) {
+        return html `
+      <div class="iconContainer">
+        <md-elevated-button
+          id="leftAnswerButton"
+          class="leftAnswer"
+          trailing-icon
+        >
+          ${this.renderIcon(answer)} ${answer.data.content}
+        </md-elevated-button>
+        <md-icon-button
+          @click="${() => this.deleteImageUrl(answer)}"
+          class="deleteIcon"
+          ><md-icon>delete</md-icon></md-icon-button
+        >
+      </div>
+    `;
     }
     renderEditIdeas() {
         return html `
@@ -486,8 +519,7 @@ let AoiEarlIdeasEditor = class AoiEarlIdeasEditor extends YpStreamingLlmBase {
 
           ${this.sortedChoices?.map((answer, index) => {
             return html `<div class="layout horizontal ideaContainer">
-              <div class="logo">${this.renderIcon(answer)}</div>
-              <div class="answer">${answer.data.content}</div>
+              <div>${this.renderAnswerData(answer)}</div>
               <div class="origin">
                 ${answer.user_created ? this.t("User") : this.t("Seed")}
               </div>
@@ -495,15 +527,21 @@ let AoiEarlIdeasEditor = class AoiEarlIdeasEditor extends YpStreamingLlmBase {
               <div class="losses">${answer.losses}</div>
               <div class="score">${Math.round(answer.score)}</div>
               <div class="buttons layout vertical center-center">
-                ${answer.active ? html `
-                  <md-filled-button @click="${this.toggleIdeaActivity(answer)}">
-                    ${this.t("activated")}
-                  </md-filled-button>
-                ` : html `
-                  <md-outlined-button @click="${this.toggleIdeaActivity(answer)}">
-                    ${this.t("deactivated")}
-                  </md-outlined-button>
-                `}
+                ${answer.active
+                ? html `
+                      <md-filled-button
+                        @click="${this.toggleIdeaActivity(answer)}"
+                      >
+                        ${this.t("activated")}
+                      </md-filled-button>
+                    `
+                : html `
+                      <md-outlined-button
+                        @click="${this.toggleIdeaActivity(answer)}"
+                      >
+                        ${this.t("deactivated")}
+                      </md-outlined-button>
+                    `}
                 <md-linear-progress
                   class="toggleActiveProgress"
                   indeterminate

@@ -254,15 +254,14 @@ export class AoiSurveyVoting extends YpBaseElement {
         }
 
         .iconImage, .iconImageRight {
-          width: 50px;
-          height: 50px;
-          margin-left: 16px;
-          border-radius: 24px;
+          width: 100px;
+          height: 100px;
+          margin-left: 0;
+          margin-right: -8px;
+          border-radius: 70px;
         }
 
         .iconImageRight {
-          margin-left: 0;
-          margin-right: 16px;
         }
 
         .buttonContainer md-elevated-button {
@@ -506,6 +505,7 @@ export class AoiSurveyVoting extends YpBaseElement {
           <md-elevated-button
             id="leftAnswerButton"
             class="leftAnswer"
+            trailing-icon
             ?hidden="${this.spinnersActive}"
             @click=${() => this.voteForAnswer("left")}
           >

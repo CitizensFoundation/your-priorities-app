@@ -64,6 +64,14 @@ export class YpThemeSelector extends YpBaseElement {
           margin-top: 8px;
         }
 
+        .colorTypeTitle {
+          font-size: 16px;
+          font-weight: bold;
+          text-transform: uppercase;
+          margin-bottom: 16px;
+          color: var(--md-sys-color-primary);
+        }
+
         .darkContrastInfo {
           font-size: 11px;
           font-style: italic;
@@ -94,11 +102,13 @@ export class YpThemeSelector extends YpBaseElement {
         }
 
         .dynamicColors, .customColors {
-          padding: 32px;
+          padding: 40px;
           margin: 32px;
-          border-radius: 16px;
-          background-color: var(--md-sys-color-surface-variant);
-          color: var(--md-sys-color-on-surface-variant);
+          margin-bottom: 8px;
+          margin-top: 8px;
+          border-radius: 32px;
+          background-color: var(--md-sys-color-surface);
+          color: var(--md-sys-color-on-surface);
         }
       `,
     ];
@@ -228,7 +238,7 @@ export class YpThemeSelector extends YpBaseElement {
       <div class="layout horizontal">
         <div class="layout vertical ">
           <div class="dynamicColors">
-            <div class="">${this.t("Dynamic Colors")}</div>
+            <div class="colorTypeTitle">${this.t("Dynamic Colors")}</div>
             <yp-theme-color-input
               class="mainInput"
               .label="${this.t("One Dynamic Color")}"
@@ -261,6 +271,7 @@ export class YpThemeSelector extends YpBaseElement {
           <div class="or">${this.t("or")}</div>
 
           <div class="customColors">
+            <div class="colorTypeTitle">${this.t("Custom Colors")}</div>
             <yp-theme-color-input
               class="mainInput"
               .label="${this.t("Theme Primary Color")}"
