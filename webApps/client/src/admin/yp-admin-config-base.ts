@@ -119,9 +119,6 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
   gettingImageColor = false;
 
   @property({ type: String })
-  ypImageUrl: string | undefined;
-
-  @property({ type: String })
   detectedThemeColor: string | undefined;
 
   constructor() {
@@ -146,7 +143,7 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
     try {
       this.gettingImageColor = true;
 
-      let ypImageUrl = this.ypImageUrl;
+      let ypImageUrl = this.imagePreviewUrl;
 
       const imageYp = event.detail.imageYp as YpImage;
 
@@ -205,7 +202,6 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
     this.uploadedLogoImageId = image.id;
     this.imagePreviewUrl = JSON.parse(image.formats)[0];
     const formats = JSON.parse(image.formats);
-    this.ypImageUrl = `${formats[1]}`;
     this._configChanged();
   }
 
@@ -426,7 +422,7 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
           poster="${ifDefined(this.collectionVideoPosterURL)}"
         ></video>
       `;
-    } else if (this.ypImageUrl) {
+    } else if (this.imagePreviewUrl) {
       return html`
         <div style="position: relative;">
           <yp-image
@@ -434,7 +430,7 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
             @loaded="${this.imageLoaded}"
             sizing="contain"
             .skipCloudFlare="${true}"
-            src="${this.ypImageUrl}"
+            src="${this.imagePreviewUrl}"
           ></yp-image>
           ${this.gettingImageColor
             ? html` <md-linear-progress class="imagePicker" indeterminate></md-linear-progress> `
@@ -762,7 +758,7 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
   }
 
   _gotAiImage(event: CustomEvent) {
-    this.ypImageUrl = this.imagePreviewUrl = event.detail.imageUrl;
+    this.imagePreviewUrl = event.detail.imageUrl;
     this.uploadedLogoImageId = event.detail.imageId;
     this.configChanged = true;
   }

@@ -350,7 +350,7 @@
   "evaluatePost": "Evaluate idea",
   "evaluate": "Evaluate",
   "customRatings": "Custom ratings",
-  "customRatingsInfo": "Use comma to separate rating names, number of ratings (max 5) and emoji. Keep rating names to less than 20 characters for display on mobiles. Example: Innovation,5,\uD83D\uDCA1,Implementability,5,\uD83D\uDD28,Likeability,5,⭐",
+  "customRatingsInfo": "Use comma to separate rating names, number of ratings (max 5) and emoji. Keep rating names to less than 20 characters for display on mobiles. Example: Innovation,5,💡,Implementability,5,🔨,Likeability,5,⭐",
   "openRatings": "Open ratings panel",
   "useMainPhoto": "Use logo photo",
   "videoUploadDisclaimer": "By uploading video I confirm I have rights to the material and people in the video have given their consent",
@@ -764,7 +764,6 @@
     "allGroup": "All notifications from my groups",
     "invite_accepted_for": "Participating in"
   },
-
   "pages": {
     "editPageLocale": "Edit page locale",
     "title": "Page title",
@@ -780,9 +779,7 @@
     "pageDeleted": "Page Deleted",
     "newPageCreated": "Page Created"
   },
-
   "archived": "Archived",
-
   "status": {
     "select": "Select status",
     "active": "Active",
@@ -794,7 +791,6 @@
     "failed": "Failed",
     "inProgress": "In progress"
   },
-
   "pluralStatus": {
     "published": "Open ideas",
     "successful": "Successful ideas",
@@ -802,13 +798,12 @@
     "inProgress": "Ideas in progress",
     "inVoting": "Ideas in voting"
   },
-
   "activity": {
     "confirmDelete": "Confirm you want to delete this activity?",
     "post": {
       "new": "Idea",
       "status": {
-       "change": "Status update"
+        "change": "Status update"
       }
     },
     "point": {
@@ -824,7 +819,6 @@
     }
   },
   "name": "Name",
-
   "domain": {
     "pages": "Pages",
     "createOrganization": "Create organization",
@@ -834,17 +828,14 @@
     "settings": "Additional",
     "onlyAdminsCanCreateCommunities": "Only admins can create communities"
   },
-
   "domains": "Domains",
   "communities": "Communities",
   "groups": "Groups",
-
   "myDomains": "My Domains",
   "myCommunities": "My Communities",
   "myGroups": "My Groups",
   "myAdminCommunities": "Communities Admin",
   "myAdminGroups": "Groups Admin",
-
   "community": {
     "add": "Add community",
     "alternativeHeader": "Alternative Header",
@@ -861,7 +852,6 @@
     "onlyAdminsCanCreateGroups": "Only admins can create groups",
     "deleteConfirmation": "Delete Confirmation"
   },
-
   "posts": {
     "posts": "Ideas",
     "post": "Idea",
@@ -874,11 +864,9 @@
     "newUserImage": "Add Photo",
     "updated": "Posts Updated"
   },
-
   "form": {
     "invalid": "Complete filling out the form"
   },
-
   "post": {
     "most_debated": "Most debated",
     "deleteConfirmation": "Are you sure you want to delete this idea?",
@@ -943,21 +931,17 @@
     },
     "addNewIntroBoxText": "Use the lightbulb action button to add new ideas"
   },
-
   "short_word": {
     "in": "in"
   },
-
   "category": {
     "new": "New category",
     "select": "Select category"
   },
-
   "categories": {
     "all": "all categories",
     "the_all": "All categories"
   },
-
   "point": {
     "report": "Report",
     "againstAdded": "Added point against",
@@ -980,23 +964,18 @@
     "howToWrite": "Let's brainstorm the best points for and against and think in solutions...",
     "commentToShort": "The text is too short!"
   },
-
   "news": "News",
-
   "uploading": {
     "inProgress": "Uploading..."
   },
-
   "notice": {
     "ok": "Ok",
     "deleteConfirmation": "Do you want to delete this group?"
   },
-
   "maps": {
     "searchInput": "Address",
     "search": "Search"
   },
-
   "group": {
     "pages": "Help pages (?)",
     "showWhoPostedPosts": "Show who posted posts",
@@ -1020,20 +999,16 @@
     "config": "Config",
     "update": "Update group"
   },
-
   "membership": {
     "joined": "You have joined",
     "left": "You have left"
   },
-
   "menu": {
     "my_pages": "My profile",
     "about": "About",
     "help": "Help",
     "settings": "Settings"
-
   },
-
   "users": {
     "userInvited": "User Invited",
     "removeAdmin": "Remove admin rights",
@@ -1045,7 +1020,6 @@
     "addToOrganization": "Add organization",
     "selectOrganization": "Select organization"
   },
-
   "user": {
     "loginCompleteFor": "Login for",
     "acceptInvite": "Accept invite to participate",
@@ -1083,11 +1057,8 @@
     "loginNotAuthorized": "Email or password wrong",
     "setEmailConfirmationInfo": "This email address will be used to send you notifications, you can change it if you want to."
   },
-
   "other": "Other",
-
   "socialMedia": "Social Media",
-
   "location": {
     "set": "Set location"
   },
@@ -1119,7 +1090,7 @@
   "Analysis": "Analysis",
   "Target votes reached!": "Target votes reached!",
   "Finish and return": "Finish and return",
-  "Loading":  "Loading...",
+  "Loading": "Loading...",
   "Email Lists": "Email Lists",
   "Send promotional emails": "Send promotional emails",
   "Settings": "Settings",

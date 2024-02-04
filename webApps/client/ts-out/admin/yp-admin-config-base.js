@@ -53,7 +53,7 @@ export class YpAdminConfigBase extends YpAdminPage {
     async imageLoaded(event) {
         try {
             this.gettingImageColor = true;
-            let ypImageUrl = this.ypImageUrl;
+            let ypImageUrl = this.imagePreviewUrl;
             const imageYp = event.detail.imageYp;
             const imgObj = new Image();
             imgObj.src = ypImageUrl + "?" + new Date().getTime();
@@ -107,7 +107,6 @@ export class YpAdminConfigBase extends YpAdminPage {
         this.uploadedLogoImageId = image.id;
         this.imagePreviewUrl = JSON.parse(image.formats)[0];
         const formats = JSON.parse(image.formats);
-        this.ypImageUrl = `${formats[1]}`;
         this._configChanged();
     }
     _headerImageUploaded(event) {
@@ -308,7 +307,7 @@ export class YpAdminConfigBase extends YpAdminPage {
         ></video>
       `;
         }
-        else if (this.ypImageUrl) {
+        else if (this.imagePreviewUrl) {
             return html `
         <div style="position: relative;">
           <yp-image
@@ -316,7 +315,7 @@ export class YpAdminConfigBase extends YpAdminPage {
             @loaded="${this.imageLoaded}"
             sizing="contain"
             .skipCloudFlare="${true}"
-            src="${this.ypImageUrl}"
+            src="${this.imagePreviewUrl}"
           ></yp-image>
           ${this.gettingImageColor
                 ? html ` <md-linear-progress class="imagePicker" indeterminate></md-linear-progress> `
@@ -636,7 +635,7 @@ export class YpAdminConfigBase extends YpAdminPage {
             : nothing;
     }
     _gotAiImage(event) {
-        this.ypImageUrl = this.imagePreviewUrl = event.detail.imageUrl;
+        this.imagePreviewUrl = event.detail.imageUrl;
         this.uploadedLogoImageId = event.detail.imageId;
         this.configChanged = true;
     }
@@ -848,9 +847,6 @@ __decorate([
 __decorate([
     property({ type: Boolean })
 ], YpAdminConfigBase.prototype, "gettingImageColor", void 0);
-__decorate([
-    property({ type: String })
-], YpAdminConfigBase.prototype, "ypImageUrl", void 0);
 __decorate([
     property({ type: String })
 ], YpAdminConfigBase.prototype, "detectedThemeColor", void 0);

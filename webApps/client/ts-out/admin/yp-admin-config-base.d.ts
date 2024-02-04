@@ -51,7 +51,6 @@ export declare abstract class YpAdminConfigBase extends YpAdminPage {
     nameInput: HTMLInputElement;
     descriptionInput: HTMLInputElement;
     gettingImageColor: boolean;
-    ypImageUrl: string | undefined;
     detectedThemeColor: string | undefined;
     constructor();
     abstract setupConfigTabs(): Array<YpConfigTabData>;
