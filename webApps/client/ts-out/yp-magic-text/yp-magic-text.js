@@ -53,6 +53,11 @@ let YpMagicText = YpMagicText_1 = class YpMagicText extends YpBaseElement {
           margin-top: 8px;
         }
 
+        md-linear-progress {
+          margin-top: 12px;
+          width: 80%;
+        }
+
         @media (max-width: 600px) {
           .moreText {
             margin-bottom: 2px;
@@ -80,7 +85,7 @@ let YpMagicText = YpMagicText_1 = class YpMagicText extends YpBaseElement {
                 ></md-outlined-button>
               `
             : nothing}
-        <md-linear-progress indeterminate ?hidden="${this.isFetchingTranslation}></md-linear-progress>
+        <md-linear-progress indeterminate ?hidden="${!this.isFetchingTranslation}"></md-linear-progress>
       </div>
     `;
     }
@@ -116,6 +121,7 @@ let YpMagicText = YpMagicText_1 = class YpMagicText extends YpBaseElement {
         // For sub classes
     }
     updated(changedProperties) {
+        //console.error(`Map Contents: ${JSON.stringify(Array.from(changedProperties.entries()))}`);
         super.updated(changedProperties);
         if (changedProperties.has("content")) {
             if (this.content && this.content !== "") {
@@ -153,9 +159,18 @@ let YpMagicText = YpMagicText_1 = class YpMagicText extends YpBaseElement {
         this._update();
     }
     get indexKey() {
-        return `${this.textType}-${this.contentId}-${this.language}`;
+        if (this.extraId && this.additionalId) {
+            return `${this.textType}-${this.contentId}-${this.language}-${this.extraId}-${this.additionalId}`;
+        }
+        else if (this.extraId) {
+            return `${this.textType}-${this.contentId}-${this.language}-${this.extraId}`;
+        }
+        else {
+            return `${this.textType}-${this.contentId}-${this.language}`;
+        }
     }
     async _startTranslationAndFinalize() {
+        debugger;
         if (window.appGlobals.cache.autoTranslateCache[this.indexKey]) {
             this.processedContent = window.appGlobals.cache.autoTranslateCache[this.indexKey];
             this._finalize();

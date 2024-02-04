@@ -34,6 +34,6 @@ export declare class AoiSurveyVoting extends YpBaseElement {
     openLlmExplainDialog(): Promise<void>;
     static get styles(): any[];
     renderProgressBar(): import("lit-html").TemplateResult<1> | typeof nothing;
-    render(): import("lit-html").TemplateResult<1>;
+    render(): import("lit-html").TemplateResult<1> | typeof nothing;
 }
 //# sourceMappingURL=aoi-survey-voting.d.ts.map

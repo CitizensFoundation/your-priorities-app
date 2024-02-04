@@ -162,7 +162,6 @@ let AoiSurveyVoting = class AoiSurveyVoting extends YpBaseElement {
           min-width: 265px;
         }
 
-
         .iconImage,
         .iconImageRight {
           width: 100px;
@@ -238,6 +237,7 @@ let AoiSurveyVoting = class AoiSurveyVoting extends YpBaseElement {
           margin-top: 32px;
           margin-left: 32px;
           margin-right: 32px;
+          padding: 20px;
         }
 
         .newIdeaButton,
@@ -390,162 +390,166 @@ let AoiSurveyVoting = class AoiSurveyVoting extends YpBaseElement {
         }
     }
     render() {
-        console.error(`Rendering voting ${this.question?.id} ${this.question?.name}`);
-        return html `
-      <div
-        class="topContainer layout vertical wrap center-center"
-        tabindex="-1"
-      >
-        <div class="questionTitle">
-          <yp-magic-text
-            id="answerText"
-            .contentId="${this.groupId}"
-            .extraId="${this.question?.id}"
-            text-only
-            truncate="300"
-            .content="${this.question.name}"
-            .contentLanguage="${this.group.language}"
-            textType="aoiQuestionName"
-          ></yp-magic-text>
-        </div>
+        if (this.question) {
+            return html `
         <div
-          class="buttonContainer layout ${this.breakForVertical
-            ? "vertical"
-            : "horizontal"} wrap center-center"
+          class="topContainer layout vertical wrap center-center"
+          tabindex="-1"
         >
-          ${this.spinnersActive
-            ? html `
-                <div class="spinnerContainer">
-                  <md-circular-progress
-                    class="leftSpinner"
-                    indeterminate
-                  ></md-circular-progress>
-                </div>
-              `
-            : nothing}
-          <md-elevated-button
-            id="leftAnswerButton"
-            class="leftAnswer"
-            ?trailing-icon="${!this.rtl}"
-            ?hidden="${this.spinnersActive}"
-            @click=${() => this.voteForAnswer("left")}
+          <div class="questionTitle">
+            <yp-magic-text
+              id="answerText"
+              .contentId="${this.groupId}"
+              .extraId="${this.question.id}"
+              text-only
+              truncate="300"
+              .content="${this.question.name}"
+              .contentLanguage="${this.group.language}"
+              textType="aoiQuestionName"
+            ></yp-magic-text>
+          </div>
+          <div
+            class="buttonContainer layout ${this.breakForVertical
+                ? "vertical"
+                : "horizontal"} wrap center-center"
           >
-            ${this.leftAnswer?.imageUrl
-            ? html `
-                  <img
-                    slot="icon"
-                    src="${this.leftAnswer?.imageUrl}"
-                    alt="Left answer image"
-                    ?rtl="${this.rtl}"
-                    class="iconImage"
-                  />
+            ${this.spinnersActive
+                ? html `
+                  <div class="spinnerContainer">
+                    <md-circular-progress
+                      class="leftSpinner"
+                      indeterminate
+                    ></md-circular-progress>
+                  </div>
                 `
-            : nothing}
+                : nothing}
+            <md-elevated-button
+              id="leftAnswerButton"
+              class="leftAnswer"
+              ?trailing-icon="${!this.rtl}"
+              ?hidden="${this.spinnersActive}"
+              @click=${() => this.voteForAnswer("left")}
+            >
+              ${this.leftAnswer?.imageUrl
+                ? html `
+                    <img
+                      slot="icon"
+                      src="${this.leftAnswer?.imageUrl}"
+                      alt="Left answer image"
+                      ?rtl="${this.rtl}"
+                      class="iconImage"
+                    />
+                  `
+                : nothing}
               <yp-magic-text
                 id="leftAnswerText"
                 .contentId="${this.groupId}"
-                .extraId="${this.leftAnswer?.choiceId}"
+                .extraId="${this.leftAnswer.choiceId}"
                 .additionalId="${this.question.id}"
                 text-only
                 truncate="140"
-                .content="${this.leftAnswer?.content}"
+                .content="${this.leftAnswer.content}"
                 .contentLanguage="${this.group.language}"
                 textType="aoiChoiceContent"
               ></yp-magic-text>
-          </md-elevated-button>
-          <span class="or"> ${this.t("or")} </span>
-          ${this.spinnersActive
-            ? html `
-                <div class="spinnerContainer">
-                  <md-circular-progress
-                    class="leftSpinner"
-                    indeterminate
-                  ></md-circular-progress>
-                </div>
-              `
-            : nothing}
-          <md-elevated-button
-            id="rightAnswerButton"
-            class="rightAnswer"
-            ?trailing-icon="${!this.rtl}"
-            ?hidden="${this.spinnersActive}"
-            @click=${() => this.voteForAnswer("right")}
-          >
-            ${this.rightAnswer?.imageUrl
-            ? html `
-                  <img
-                    slot="icon"
-                    ?rtl="${this.rtl}"
-                    src="${this.rightAnswer?.imageUrl}"
-                    alt="Right answer image"
-                    class="iconImageRight"
-                  />
+            </md-elevated-button>
+            <span class="or"> ${this.t("or")} </span>
+            ${this.spinnersActive
+                ? html `
+                  <div class="spinnerContainer">
+                    <md-circular-progress
+                      class="leftSpinner"
+                      indeterminate
+                    ></md-circular-progress>
+                  </div>
                 `
-            : nothing}
-               <yp-magic-text
+                : nothing}
+            <md-elevated-button
+              id="rightAnswerButton"
+              class="rightAnswer"
+              ?trailing-icon="${!this.rtl}"
+              ?hidden="${this.spinnersActive}"
+              @click=${() => this.voteForAnswer("right")}
+            >
+              ${this.rightAnswer?.imageUrl
+                ? html `
+                    <img
+                      slot="icon"
+                      ?rtl="${this.rtl}"
+                      src="${this.rightAnswer?.imageUrl}"
+                      alt="Right answer image"
+                      class="iconImageRight"
+                    />
+                  `
+                : nothing}
+              <yp-magic-text
                 id="rightAnswerText"
                 .contentId="${this.groupId}"
-                .extraId="${this.rightAnswer?.choiceId}"
+                .extraId="${this.rightAnswer.choiceId}"
                 .additionalId="${this.question.id}"
                 text-only
                 truncate="140"
-                .content="${this.rightAnswer?.content}"
+                .content="${this.rightAnswer.content}"
                 .contentLanguage="${this.group.language}"
                 textType="aoiChoiceContent"
               ></yp-magic-text>
-          </md-elevated-button>
+            </md-elevated-button>
+          </div>
+          <div class="layout horizontal">
+            <md-text-button
+              class="skipButton"
+              @click=${this.openLlmExplainDialog}
+            >
+              ${this.t("Explain")}
+            </md-text-button>
+            <md-outlined-button
+              class="newIdeaButton"
+              @click="${this.openNewIdeaDialog}"
+            >
+              ${this.t("Add your own answer")}
+            </md-outlined-button>
+            <md-text-button
+              class="skipButton"
+              @click=${() => this.voteForAnswer("skip")}
+            >
+              ${this.t("Skip")}
+            </md-text-button>
+          </div>
+          ${this.renderProgressBar()}
+          <div class="layout horizontal wrap center-center"></div>
         </div>
-        <div class="layout horizontal">
-          <md-text-button
-            class="skipButton"
-            @click=${this.openLlmExplainDialog}
-          >
-            ${this.t("Explain")}
-          </md-text-button>
-          <md-outlined-button
-            class="newIdeaButton"
-            @click="${this.openNewIdeaDialog}"
-          >
-            ${this.t("Add your own answer")}
-          </md-outlined-button>
-          <md-text-button
-            class="skipButton"
-            @click=${() => this.voteForAnswer("skip")}
-          >
-            ${this.t("Skip")}
-          </md-text-button>
-        </div>
-        ${this.renderProgressBar()}
-        <div class="layout horizontal wrap center-center"></div>
-      </div>
-      ${!this.wide
-            ? html `
-            <input
-              type="text"
-              id="dummyInput"
-              style="position:absolute;opacity:0;"
-            />
-          `
-            : nothing}
-      <aoi-new-idea-dialog
-        id="newIdeaDialog"
-        .question=${this.question}
-        .earl=${this.earl}
-      ></aoi-new-idea-dialog>
-      ${this.llmExplainOpen
-            ? html `
-            <aoi-llm-explain-dialog
-              id="llmExplainDialog"
-              .question=${this.question}
-              @closed=${() => (this.llmExplainOpen = false)}
-              .earl=${this.earl}
-              .groupId=${this.groupId}
-              .leftAnswer=${this.leftAnswer}
-              .rightAnswer=${this.rightAnswer}
-            ></aoi-llm-explain-dialog>
-          `
-            : nothing}
-    `;
+        ${!this.wide
+                ? html `
+              <input
+                type="text"
+                id="dummyInput"
+                style="position:absolute;opacity:0;"
+              />
+            `
+                : nothing}
+        <aoi-new-idea-dialog
+          id="newIdeaDialog"
+          .question=${this.question}
+          .earl=${this.earl}
+        ></aoi-new-idea-dialog>
+        ${this.llmExplainOpen
+                ? html `
+              <aoi-llm-explain-dialog
+                id="llmExplainDialog"
+                .question=${this.question}
+                @closed=${() => (this.llmExplainOpen = false)}
+                .earl=${this.earl}
+                .groupId=${this.groupId}
+                .leftAnswer=${this.leftAnswer}
+                .rightAnswer=${this.rightAnswer}
+              ></aoi-llm-explain-dialog>
+            `
+                : nothing}
+      `;
+        }
+        else {
+            return nothing;
+        }
     }
 };
 __decorate([
