@@ -58,6 +58,8 @@ export class YpLocaleTranslation {
       // Chunk the missing translations
       const chunks = this.chunkArray(missingTranslations, 15);
 
+      console.log(`Missing translations for ${localeDir}:`, missingTranslations, chunks);
+
       for (const chunk of chunks) {
         // Prepare the texts for translation
         const textsToTranslate = chunk.map((key) => translation[key] || "");
@@ -75,7 +77,7 @@ export class YpLocaleTranslation {
           }
         });
 
-        console.log(`Updated translation for ${localeDir}:`, translation);
+        console.log(`Updated translation for ${localeDir}:`);
         await writeFilePromise(
           translationFilePath,
           JSON.stringify(translation, null, 2)
@@ -102,6 +104,38 @@ export class YpLocaleTranslation {
   }
 
   private updateWithMissingKeys(
+    baseTranslation: Translation,
+    targetTranslation: Translation,
+    path: string[] = []
+  ): any {
+    const updatedTranslation = { ...targetTranslation };
+
+    const updateRecursively = (
+      base: any,
+      target: any,
+      currentPath: string[]
+    ) => {
+      Object.keys(base).forEach((key) => {
+        if (!target.hasOwnProperty(key)) {
+          // If the key is missing in the target, add it from the base
+          target[key] = base[key];
+        } else if (
+          typeof base[key] === "object" &&
+          base[key] !== null &&
+          typeof target[key] === "object" &&
+          target[key] !== null
+        ) {
+          // If both the base and target values are objects, recurse
+          updateRecursively(base[key], target[key], currentPath.concat(key));
+        }
+      });
+    };
+
+    updateRecursively(baseTranslation, updatedTranslation, path);
+    return updatedTranslation;
+  }
+
+  private updateWithMissingKeysNew(
     baseTranslation: Translation,
     targetTranslation: Translation,
     path: string[] = []
@@ -147,43 +181,37 @@ export class YpLocaleTranslation {
   }
 
   private extractMissingTranslations(
-    baseTranslation: Translation,
-    targetTranslation: Translation
+    baseTranslation: any,
+    targetTranslation: any
   ): string[] {
     const missingTranslations: string[] = [];
 
-    const findMissing = (
-      base: Translation,
-      target: Translation,
-      path: string[] = []
-    ) => {
+    const findMissing = (base: any, target: any, path: string[] = []) => {
       Object.keys(base).forEach((key) => {
-        const newPath = path.concat(key); // Construct the new path for nested keys
+        const newPath = path.concat(key);
         if (
           typeof base[key] === "object" &&
           base[key] !== null &&
           typeof target[key] === "object" &&
           target[key] !== null
         ) {
-          // If both are objects, recurse into nested objects
-          findMissing(
-            base[key] as Translation,
-            target[key] as Translation,
-            newPath
-          );
+          // Recurse into nested objects
+          findMissing(base[key], target[key], newPath);
         } else if (
-          !target.hasOwnProperty(key) || // Key is missing in target
-          target[key] === "" // Target key's value is an empty string
+          !target.hasOwnProperty(key) ||
+          target[key] === base[key] ||
+          target[key] === ""
         ) {
-          missingTranslations.push(newPath.join(".")); // Add the path of the missing translation to the list
+          // If the key is missing, the value is the same as the base, or the value is an empty string
+          missingTranslations.push(newPath.join("."));
         }
-        // Removed the check for identical values to base[key] to avoid false positives
       });
     };
 
-    findMissing(baseTranslation, targetTranslation, []);
+    findMissing(baseTranslation, targetTranslation);
     return missingTranslations;
   }
+
 
   private chunkArray<T>(array: T[], size: number): T[][] {
     return array.reduce((acc, val, i) => {

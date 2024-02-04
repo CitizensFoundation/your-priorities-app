@@ -1361,5 +1361,15 @@
   "Access": "Access",
   "openOrganizationMenu": "Open organization menu",
   "Listasafn Reykjavíkur": "Listasafn Reykjavíkur",
-  "Override theme": "Override theme"
+  "Override theme": "Override theme",
+  "Analytics & Marketing": "Analytics & Marketing",
+  "Promote your survey": "Promote your survey",
+  "Survey Administration": "Survey Administration",
+  "Administer this survey": "Administer this survey",
+  "An error occurred. Please try again.": "An error occurred. Please try again.",
+  "Your idea has been flagged as inappropriate. Please try again.": "Your idea has been flagged as inappropriate. Please try again.",
+  "Your idea has been added, you can continue voting.": "Your idea has been added, you can continue voting.",
+  "Your idea is in a moderation queue.": "Your idea is in a moderation queue.",
+  "Your idea": "Your idea",
+  "chatInput": "Ask me a question"
 }

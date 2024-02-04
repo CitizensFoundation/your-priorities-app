@@ -33,6 +33,7 @@ export class YpLocaleTranslation {
             const missingTranslations = this.extractMissingTranslations(baseTranslation, translation);
             // Chunk the missing translations
             const chunks = this.chunkArray(missingTranslations, 15);
+            console.log(`Missing translations for ${localeDir}:`, missingTranslations, chunks);
             for (const chunk of chunks) {
                 // Prepare the texts for translation
                 const textsToTranslate = chunk.map((key) => translation[key] || "");
@@ -44,7 +45,7 @@ export class YpLocaleTranslation {
                         this.setValueAtPath(translation, key, translations[index]);
                     }
                 });
-                console.log(`Updated translation for ${localeDir}:`, translation);
+                console.log(`Updated translation for ${localeDir}:`);
                 await writeFilePromise(translationFilePath, JSON.stringify(translation, null, 2));
             }
         }
@@ -66,6 +67,26 @@ export class YpLocaleTranslation {
         return JSON.parse(fileContent);
     }
     updateWithMissingKeys(baseTranslation, targetTranslation, path = []) {
+        const updatedTranslation = { ...targetTranslation };
+        const updateRecursively = (base, target, currentPath) => {
+            Object.keys(base).forEach((key) => {
+                if (!target.hasOwnProperty(key)) {
+                    // If the key is missing in the target, add it from the base
+                    target[key] = base[key];
+                }
+                else if (typeof base[key] === "object" &&
+                    base[key] !== null &&
+                    typeof target[key] === "object" &&
+                    target[key] !== null) {
+                    // If both the base and target values are objects, recurse
+                    updateRecursively(base[key], target[key], currentPath.concat(key));
+                }
+            });
+        };
+        updateRecursively(baseTranslation, updatedTranslation, path);
+        return updatedTranslation;
+    }
+    updateWithMissingKeysNew(baseTranslation, targetTranslation, path = []) {
         // Create a deep copy of the targetTranslation to avoid mutating the original object
         const updatedTranslation = JSON.parse(JSON.stringify(targetTranslation));
         const updateRecursively = (base, target, currentPath) => {
@@ -94,23 +115,23 @@ export class YpLocaleTranslation {
         const missingTranslations = [];
         const findMissing = (base, target, path = []) => {
             Object.keys(base).forEach((key) => {
-                const newPath = path.concat(key); // Construct the new path for nested keys
+                const newPath = path.concat(key);
                 if (typeof base[key] === "object" &&
                     base[key] !== null &&
                     typeof target[key] === "object" &&
                     target[key] !== null) {
-                    // If both are objects, recurse into nested objects
+                    // Recurse into nested objects
                     findMissing(base[key], target[key], newPath);
                 }
-                else if (!target.hasOwnProperty(key) || // Key is missing in target
-                    target[key] === "" // Target key's value is an empty string
-                ) {
-                    missingTranslations.push(newPath.join(".")); // Add the path of the missing translation to the list
+                else if (!target.hasOwnProperty(key) ||
+                    target[key] === base[key] ||
+                    target[key] === "") {
+                    // If the key is missing, the value is the same as the base, or the value is an empty string
+                    missingTranslations.push(newPath.join("."));
                 }
-                // Removed the check for identical values to base[key] to avoid false positives
             });
         };
-        findMissing(baseTranslation, targetTranslation, []);
+        findMissing(baseTranslation, targetTranslation);
         return missingTranslations;
     }
     chunkArray(array, size) {
