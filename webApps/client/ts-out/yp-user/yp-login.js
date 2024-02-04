@@ -288,7 +288,6 @@ let YpLogin = class YpLogin extends YpBaseElement {
         .create-user-content,
         .login-user-row {
           display: flex;
-          gap: 8px;
         }
 
         .create-user-content {
@@ -308,6 +307,11 @@ let YpLogin = class YpLogin extends YpBaseElement {
           width: 340px;
         }
 
+        .loginField {
+            margin-bottom: 8px;
+          }
+
+
         @media (max-width: 900px) {
           md-filled-text-field {
             width: 280px;
@@ -316,10 +320,6 @@ let YpLogin = class YpLogin extends YpBaseElement {
             flex-direction: column;
           }
 
-          .loginField {
-            margin-bottom: 8px;
-            margin-top: 8px;
-          }
 
           .login-button-row {
             justify-content: center;

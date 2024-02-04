@@ -478,7 +478,7 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
         md-tabs {
           margin-top: 16px;
           margin-bottom: 24px;
-          width: 960px;
+          width: 1024px;
           max-width: 100%;
         }
 
@@ -501,7 +501,7 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
           background-color: var(--md-sys-color-surface-variant);
           color: var(--md-sys-color-on-surface-variant);
           border-radius: 16px;
-          width: 960px;
+          width: 900px;
           max-width: 100%;
           padding: 32px;
           margin-bottom: 128px;

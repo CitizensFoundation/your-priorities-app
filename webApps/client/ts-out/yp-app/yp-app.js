@@ -364,7 +364,7 @@ let YpApp = class YpApp extends YpBaseElement {
               class="topActionItem"
               @click="${this._login}"
               title="${this.t("user.login")}"
-              ><md-icon>login</md-icon>
+              ><md-icon>person</md-icon>
             </md-icon-button>
           `}
     `;
