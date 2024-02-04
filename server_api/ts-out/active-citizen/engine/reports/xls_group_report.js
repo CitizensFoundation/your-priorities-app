@@ -341,7 +341,7 @@ const getDescriptionHeadersOldStyle = (group) => {
         var question = questionComponents[i];
         var maxLength = questionComponents[i + 1];
         structuredQuestions.push({
-            translatedQuestion: question,
+            translatedContent: question,
             question: question,
             maxLength: maxLength,
             value: "",
@@ -350,8 +350,8 @@ const getDescriptionHeadersOldStyle = (group) => {
     let columnsStrings = [];
     structuredQuestions.forEach((question) => {
         columnsStrings.push({
-            header: question.translatedQuestion,
-            key: question.translatedQuestion.replace(/ /g, ""),
+            header: question.translatedContent,
+            key: question.translatedContent.replace(/ /g, ""),
             width: 45,
             style: { numFmt: "@" },
         });

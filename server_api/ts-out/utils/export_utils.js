@@ -197,7 +197,7 @@ const getDescriptionColumns = (group, post) => {
             var question = questionComponents[i];
             var maxLength = questionComponents[i + 1];
             structuredAnswers.push({
-                translatedQuestion: question,
+                translatedContent: question,
                 question: question,
                 maxLength: maxLength, value: ""
             });
@@ -235,14 +235,14 @@ const getDescriptionHeaders = (group) => {
             var question = questionComponents[i];
             var maxLength = questionComponents[i + 1];
             structuredQuestions.push({
-                translatedQuestion: question,
+                translatedContent: question,
                 question: question,
                 maxLength: maxLength, value: ""
             });
         }
         let columnsString = '';
         structuredQuestions.forEach((question) => {
-            columnsString += '"' + question.translatedQuestion + '",';
+            columnsString += '"' + question.translatedContent + '",';
         });
         return columnsString.substring(0, columnsString.length - 1);
     }

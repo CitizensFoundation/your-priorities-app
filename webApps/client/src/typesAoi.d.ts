@@ -171,7 +171,7 @@ interface AoiTranslationAnswerInData {
 }
 
 interface AoiTranslationAnswerOutData {
-  translatedAnswer: string;
+  translatedContent: string;
   choiceId: number;
 }
 
@@ -180,5 +180,5 @@ interface AoiTranslationQuestionInData {
 }
 
 interface AoiTranslationQuestionOutData {
-  translatedQuestion: string;
+  translatedContent: string;
 }

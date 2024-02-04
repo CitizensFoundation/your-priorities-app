@@ -191,7 +191,7 @@ const setDescriptions = (group, post, builtPost, children) => {
       var question = questionComponents[i];
       var maxLength = questionComponents[i+1];
       structuredAnswers.push({
-        translatedQuestion: question.trim(),
+        translatedContent: question.trim(),
         question: question,
         maxLength: maxLength, value: ""
       });
@@ -210,7 +210,7 @@ const setDescriptions = (group, post, builtPost, children) => {
     structuredAnswers.forEach((questionAnswer) => {
       children.push(
         new Paragraph({
-          text: questionAnswer.translatedQuestion,
+          text: questionAnswer.translatedContent,
           heading: HeadingLevel.HEADING_2,
         }),
         new Paragraph(questionAnswer.value),

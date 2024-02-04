@@ -57,6 +57,7 @@ Your ${language} JSON output:`;
     }
     async getChoiceTranslation(question, answer, languageIsoCode, maxCharactersInTranslation = 140) {
         try {
+            console.log(`getChoiceTranslation: ${answer.content}`);
             const languageName = iso_639_1_1.default.getName(languageIsoCode) || "en";
             const moderationResponse = await this.openaiClient.moderations.create({
                 input: answer.content,
@@ -74,7 +75,7 @@ Your ${language} JSON output:`;
                     choiceId: answer.choiceId,
                 };
                 const jsonInSchema = `{ originalAnswer: string, choiceId: number}`;
-                const jsonOutSchema = `{ translatedAnswer: string, choiceId: number}`;
+                const jsonOutSchema = `{ translatedContent: string, choiceId: number}`;
                 const lengthInfo = `26 words long or 140 characters`;
                 return await this.callLlm(jsonInSchema, jsonOutSchema, lengthInfo, languageName, question, inAnswer, maxCharactersInTranslation, this.renderAnswersUserMessage);
             }
@@ -86,6 +87,7 @@ Your ${language} JSON output:`;
     }
     async getQuestionTranslation(question, languageIsoCode, maxCharactersInTranslation = 300) {
         try {
+            console.log(`getQuestionTranslation: ${question} ${languageIsoCode}`);
             const languageName = iso_639_1_1.default.getName(languageIsoCode) || "en";
             const moderationResponse = await this.openaiClient.moderations.create({
                 input: question,
@@ -102,7 +104,7 @@ Your ${language} JSON output:`;
                     originalQuestion: question
                 };
                 const jsonInSchema = `{ originalAnswer: string, choiceId: number}`;
-                const jsonOutSchema = `{ translatedAnswer: string, choiceId: number}`;
+                const jsonOutSchema = `{ translatedContent: string, choiceId: number}`;
                 const lengthInfo = `26 words long or 140 characters`;
                 return await this.callLlm(jsonInSchema, jsonOutSchema, lengthInfo, languageName, question, inQuestion, maxCharactersInTranslation, this.renderQuestionUserMessage);
             }
@@ -128,22 +130,25 @@ Your ${language} JSON output:`;
         let running = true;
         while (running) {
             try {
+                console.log("Messages:", messages);
                 const results = await this.openaiClient.chat.completions.create({
                     model: this.modelName,
                     messages,
                     max_tokens: this.maxTokens,
                     temperature: this.temperature,
                 });
+                console.log("Results:", results);
                 const textJson = results.choices[0].message.content;
+                console.log("Text JSON:", textJson);
                 if (textJson) {
                     const translationData = JSON.parse((0, jsonrepair_1.jsonrepair)(textJson));
-                    if (translationData && translationData.translatedAnswer) {
-                        if (translationData.translatedAnswer.length >
+                    if (translationData && translationData.translatedContent) {
+                        if (translationData.translatedContent.length >
                             maxCharactersInTranslation) {
                             throw new Error("Translation too long");
                         }
                         running = false;
-                        return translationData.translatedAnswer;
+                        return translationData.translatedContent;
                     }
                 }
                 else {
