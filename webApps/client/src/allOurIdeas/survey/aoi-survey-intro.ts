@@ -182,6 +182,7 @@ export class AoiSurveyIntro extends YpBaseElement {
         .questionTitle {
           max-width: 600px;
           padding: 20px;
+          line-height: 1.5;
         }
 
         .questionTitle[dark-mode] {

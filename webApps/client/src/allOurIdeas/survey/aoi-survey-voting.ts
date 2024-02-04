@@ -348,6 +348,7 @@ export class AoiSurveyVoting extends YpBaseElement {
           margin-left: 32px;
           margin-right: 32px;
           padding: 20px;
+          line-height: 1.5;
         }
 
         .newIdeaButton,

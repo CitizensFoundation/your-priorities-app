@@ -159,7 +159,8 @@ export class AoiNewIdeaDialog extends YpBaseElement {
         .questionTitle {
           margin-top: 0;
           margin-bottom: 16px;
-          line-height: normal;
+          padding: 20px;
+          line-height: 1.5;
         }
 
         md-filled-field {

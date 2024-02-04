@@ -178,9 +178,10 @@ let YpGenerateAiImage = class YpGenerateAiImage extends YpBaseElement {
         .questionTitle {
           margin-top: 0;
           margin-bottom: 16px;
-          line-height: normal;
           margin-left: 12px;
           margin-right: 12px;
+          padding: 20px;
+          line-height: 1.5;
         }
 
         .description {
