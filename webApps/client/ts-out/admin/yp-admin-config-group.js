@@ -86,6 +86,10 @@ let YpAdminConfigGroup = class YpAdminConfigGroup extends YpAdminConfigBase {
           height: 243px;
         }
 
+        .saveButtonContainer {
+
+        }
+
         .accessHeader {
           font-weight: bold;
           margin: 8px;
@@ -158,7 +162,7 @@ let YpAdminConfigGroup = class YpAdminConfigGroup extends YpAdminConfigBase {
               ${this.renderNameAndDescription()}
               ${this.renderGroupTypeSelection()}
             </div>
-            <div>${this.renderSaveButton()}</div>
+            <div class="saveButtonContainer">${this.renderSaveButton()}</div>
           </div>
           ${this.uploadedLogoImageId ? this.renderImage() : nothing}
 

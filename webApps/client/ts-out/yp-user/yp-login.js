@@ -56,6 +56,10 @@ let YpLogin = class YpLogin extends YpBaseElement {
           ) !important;
         }
 
+        .closeLoginDialog {
+          margin-bottom: 6px;
+        }
+
         md-filled-text-field {
           --md-filled-field-container-color: var(
             --md-sys-color-surface
@@ -573,11 +577,7 @@ let YpLogin = class YpLogin extends YpBaseElement {
           <span class="headline">${this.t("loginAndRegistration")}</span>
         </div>
         <div slot="icon">
-          <md-icon-button
-            dialogAction="close"
-            @click="${this._logingDialogClose}"
-            ><md-icon>close</md-icon></md-icon-button
-          >
+          <md-icon>person</md-icon>
         </div>
 
         <div class="create-user-content" slot="content">
@@ -619,7 +619,7 @@ let YpLogin = class YpLogin extends YpBaseElement {
               </div>
             </div>
 
-            <div class="login-user-row">
+            <div class="login-user-row layout vertical center-center">
               <md-outlined-text-field
                 id="email"
                 type="email"
@@ -643,7 +643,7 @@ let YpLogin = class YpLogin extends YpBaseElement {
                 @keyup="${this.onEnterLogin}"
               ></md-outlined-text-field>
             </div>
-            <div class="login-button-row">
+            <div class="login-button-row layout vertical center-center">
               <md-filled-button
                 autofocus
                 raised
@@ -658,14 +658,16 @@ let YpLogin = class YpLogin extends YpBaseElement {
         </div>
         <div slot="actions">
           <div class="loginInfoOptions layout horizontal center-center wrap">
+            <md-icon-button class="closeLoginDialog" @click="${this._logingDialogClose}"
+                ><md-icon>close</md-icon></md-icon-button
+              >
+
             <div class="loginInfoContainer layout vertical">
-              <div class="loginInfo">${this.t("dontHaveAccount")}</div>
               <md-text-button @click="${this.openCreateUser}"
                 >${this.t("user.create")}</md-text-button
               >
             </div>
             <div class="loginInfoContainer layout vertical">
-              <div class="loginInfo">${this.t("cantRememberPassword")}</div>
               <md-text-button @click="${this._forgotPassword}"
                 ><span class="capitalize"
                   >${this.t("user.newPassword")}</span

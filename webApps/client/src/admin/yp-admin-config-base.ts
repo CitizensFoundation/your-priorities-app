@@ -236,17 +236,19 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
   renderTabs(): TemplateResult | typeof nothing {
     return !this.tabsHidden && this.configTabs
       ? html`
-          <md-tabs @change="${this._selectTab}">
-            ${this.configTabs.map(
-              (item) => html`
-                <md-secondary-tab
-                  >${this.t(item.name)}<md-icon
-                    >${item.icon}</md-icon
-                  ></md-secondary-tab
-                >
-              `
-            )}
-          </md-tabs>
+          <div class="layout vertical center-center">
+            <md-tabs @change="${this._selectTab}">
+              ${this.configTabs.map(
+                (item) => html`
+                  <md-secondary-tab
+                    >${this.t(item.name)}<md-icon
+                      >${item.icon}</md-icon
+                    ></md-secondary-tab
+                  >
+                `
+              )}
+            </md-tabs>
+          </div>
         `
       : nothing;
   }
@@ -282,7 +284,8 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
             ${question.type == "html"
               ? html`<div class="adminItem">${question.templateData}</div>`
               : html`
-                  <yp-structured-question-edit
+                  <div class="layout vertical center-center">
+                    <yp-structured-question-edit
                     index="${index}"
                     id="configQuestion_${index}"
                     @yp-answer-content-changed="${question.onChange ||
@@ -303,7 +306,7 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
                       uniqueId: `u${index}`,
                     }}"
                   >
-                  </yp-structured-question-edit>
+                  </yp-structured-question-edit></div>
                 `}
           `
         )}
@@ -475,7 +478,8 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
         md-tabs {
           margin-top: 16px;
           margin-bottom: 24px;
-          width: 100%;
+          width: 960px;
+          max-width: 100%;
         }
 
         .topInputContainer {
@@ -497,8 +501,8 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
           background-color: var(--md-sys-color-surface-variant);
           color: var(--md-sys-color-on-surface-variant);
           border-radius: 16px;
-          width: 100%;
-          max-width: 1024px;
+          width: 960px;
+          max-width: 100%;
           padding: 32px;
           margin-bottom: 128px;
         }
@@ -510,7 +514,8 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
         }
 
         yp-structured-question-edit {
-          max-width: 600px;
+          width: 600px;
+          max-width:100%;
         }
 
         .additionalSettings {

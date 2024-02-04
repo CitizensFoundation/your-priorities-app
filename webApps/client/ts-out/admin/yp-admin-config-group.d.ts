@@ -44,7 +44,7 @@ export declare class YpAdminConfigGroup extends YpAdminConfigBase {
     imageLoaded(event: CustomEvent): Promise<void>;
     _setGroupType(event: CustomEvent): void;
     renderGroupTypeSelection(): import("lit-html").TemplateResult<1>;
-    renderHeader(): import("lit-html").TemplateResult<1> | typeof nothing;
+    renderHeader(): typeof nothing | import("lit-html").TemplateResult<1>;
     renderImage(): import("lit-html").TemplateResult<1>;
     getAccessTokenName(): "open_to_community" | "secret";
     renderHiddenInputs(): import("lit-html").TemplateResult<1>;

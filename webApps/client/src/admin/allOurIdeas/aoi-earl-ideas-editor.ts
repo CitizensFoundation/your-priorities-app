@@ -370,6 +370,17 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmBase {
         .iconImageRight {
         }
 
+        .closeIcon {
+        }
+
+        .deleteIcon {
+          position: absolute;
+          right: 6px;
+          bottom: 16px;
+          height: 28px;
+          width: 28px;
+        }
+
         .iconContainer md-elevated-button {
           margin: 8px;
           width: 400px;
@@ -462,15 +473,9 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmBase {
 
         .iconContainer {
           position: relative;
-          margin-top: 6px;
         }
 
-        .deleteIcon {
-          position: absolute;
-          top: 4px;
-          left: -38px;
-          opacity: 0.7;
-        }
+
 
         .button {
           margin-left: 16px;
@@ -596,10 +601,11 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmBase {
         >
           ${this.renderIcon(answer)} ${answer.data.content}
         </md-elevated-button>
-        <md-icon-button
+        <md-filled-tonal-icon-button
+          ?hidden="${!answer.data.imageUrl}"
           @click="${() => this.deleteImageUrl(answer)}"
           class="deleteIcon"
-          ><md-icon>delete</md-icon></md-icon-button
+          ><md-icon class="closeIcon">close</md-icon></md-filled-tonal-icon-button
         >
       </div>
     `;
