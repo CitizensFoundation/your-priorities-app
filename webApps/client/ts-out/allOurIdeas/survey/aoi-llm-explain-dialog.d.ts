@@ -11,8 +11,8 @@ export declare class AoiLlmExplainDialog extends YpChatbotBase {
     earl: AoiEarlData;
     groupId: number;
     question: AoiQuestionData;
-    leftAnswer: string;
-    rightAnswer: string;
+    leftAnswer: AoiAnswerToVoteOnData;
+    rightAnswer: AoiAnswerToVoteOnData;
     currentError: string | undefined;
     defaultInfoMessage: string;
     serverApi: AoiServerApi;

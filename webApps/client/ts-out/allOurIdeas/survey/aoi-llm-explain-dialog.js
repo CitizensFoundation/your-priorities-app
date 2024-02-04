@@ -33,10 +33,17 @@ let AoiLlmExplainDialog = class AoiLlmExplainDialog extends YpChatbotBase {
         this.removeEventListener("yp-ws-opened", this.sendFirstQuestion);
     }
     async sendFirstQuestion() {
-        const firstMessage = `**Here is the question:**\n${this.question.name}\n\n**First Answer:** \n ${this.leftAnswer}\n\n**Second Answer:**\n ${this.rightAnswer}\n`;
+        const firstMessage = `**Here is the question:**
+${this.question.name}
+
+**First Answer:**
+${this.leftAnswer.content}
+
+**Second Answer:**
+${this.rightAnswer.content}`;
         this.addChatBotElement({
-            sender: 'you',
-            type: 'start',
+            sender: "you",
+            type: "start",
             message: firstMessage,
         });
         this.addThinkingChatBotMessage();
@@ -47,15 +54,15 @@ let AoiLlmExplainDialog = class AoiLlmExplainDialog extends YpChatbotBase {
         if (message.length === 0)
             return;
         //this.ws.send(message);
-        this.chatInputField.value = '';
+        this.chatInputField.value = "";
         this.sendButton.disabled = false;
         //this.sendButton!.innerHTML = this.t('Thinking...');
         setTimeout(() => {
             this.chatInputField.blur();
         });
         this.addChatBotElement({
-            sender: 'you',
-            type: 'start',
+            sender: "you",
+            type: "start",
             message: message,
         });
         this.addThinkingChatBotMessage();
@@ -151,10 +158,10 @@ __decorate([
     property({ type: Object })
 ], AoiLlmExplainDialog.prototype, "question", void 0);
 __decorate([
-    property({ type: String })
+    property({ type: Object })
 ], AoiLlmExplainDialog.prototype, "leftAnswer", void 0);
 __decorate([
-    property({ type: String })
+    property({ type: Object })
 ], AoiLlmExplainDialog.prototype, "rightAnswer", void 0);
 __decorate([
     property({ type: String })

@@ -625,8 +625,8 @@ export class AoiSurveyVoting extends YpBaseElement {
               @closed=${() => (this.llmExplainOpen = false)}
               .earl=${this.earl}
               .groupId=${this.groupId}
-              .leftAnswer=${this.leftAnswer?.content || ""}
-              .rightAnswer=${this.rightAnswer?.content || ""}
+              .leftAnswer=${this.leftAnswer!}
+              .rightAnswer=${this.rightAnswer!}
             ></aoi-llm-explain-dialog>
           `
         : nothing}

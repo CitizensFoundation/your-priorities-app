@@ -26,11 +26,11 @@ export class AoiLlmExplainDialog extends YpChatbotBase {
   @property({ type: Object })
   question!: AoiQuestionData;
 
-  @property({ type: String })
-  leftAnswer!: string;
+  @property({ type: Object })
+  leftAnswer!: AoiAnswerToVoteOnData;
 
-  @property({ type: String })
-  rightAnswer!: string;
+  @property({ type: Object })
+  rightAnswer!: AoiAnswerToVoteOnData;
 
   @property({ type: String })
   currentError: string | undefined;
@@ -58,11 +58,18 @@ export class AoiLlmExplainDialog extends YpChatbotBase {
   }
 
   async sendFirstQuestion() {
-    const firstMessage =`**Here is the question:**\n${this.question.name}\n\n**First Answer:** \n ${this.leftAnswer}\n\n**Second Answer:**\n ${this.rightAnswer}\n`;
+    const firstMessage = `**Here is the question:**
+${this.question.name}
+
+**First Answer:**
+${this.leftAnswer.content}
+
+**Second Answer:**
+${this.rightAnswer.content}`;
 
     this.addChatBotElement({
-      sender: 'you',
-      type: 'start',
+      sender: "you",
+      type: "start",
       message: firstMessage,
     });
 
@@ -71,9 +78,8 @@ export class AoiLlmExplainDialog extends YpChatbotBase {
     await this.serverApi.llmAnswerConverstation(
       this.groupId,
       this.wsClientId,
-      this.simplifiedChatLog,
+      this.simplifiedChatLog
     );
-
   }
 
   @query("#dialog")
@@ -85,17 +91,16 @@ export class AoiLlmExplainDialog extends YpChatbotBase {
     if (message.length === 0) return;
 
     //this.ws.send(message);
-    this.chatInputField!.value = '';
+    this.chatInputField!.value = "";
     this.sendButton!.disabled = false;
     //this.sendButton!.innerHTML = this.t('Thinking...');
     setTimeout(() => {
       this.chatInputField!.blur();
     });
 
-
     this.addChatBotElement({
-      sender: 'you',
-      type: 'start',
+      sender: "you",
+      type: "start",
       message: message,
     });
 
@@ -104,7 +109,7 @@ export class AoiLlmExplainDialog extends YpChatbotBase {
     await this.serverApi.llmAnswerConverstation(
       this.groupId,
       this.wsClientId,
-      this.simplifiedChatLog,
+      this.simplifiedChatLog
     );
   }
 
