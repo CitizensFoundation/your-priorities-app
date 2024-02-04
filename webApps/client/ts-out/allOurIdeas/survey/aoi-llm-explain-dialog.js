@@ -33,7 +33,7 @@ let AoiLlmExplainDialog = class AoiLlmExplainDialog extends YpChatbotBase {
         this.removeEventListener("yp-ws-opened", this.sendFirstQuestion);
     }
     async sendFirstQuestion() {
-        const firstMessage = `Here is the question:\n\n${this.question.name}\n\n**First Answer** \n\n${this.leftAnswer}\n\n**Second Answer**\n\n${this.rightAnswer}\n`;
+        const firstMessage = `**Here is the question:**\n${this.question.name}\n\n**First Answer:** \n ${this.leftAnswer}\n\n**Second Answer:**\n ${this.rightAnswer}\n`;
         this.addChatBotElement({
             sender: 'you',
             type: 'start',

@@ -81,7 +81,7 @@ let YpAiChatbotItemBase = class YpAiChatbotItemBase extends YpBaseElement {
           background-color: var(--md-sys-color-primary);
           padding: 8px;
           margin: 16px;
-          line-height: 1.35;
+          line-height: 1.5;
           margin-bottom: 0px;
           border-radius: 12px;
         }
@@ -119,7 +119,7 @@ let YpAiChatbotItemBase = class YpAiChatbotItemBase extends YpBaseElement {
           background-color: var(--md-sys-color-primary-container);
           padding: 8px;
           margin: 16px;
-          line-height: 1.35;
+          line-height: 1.5;
           margin-bottom: 0px;
           border-radius: 10px;
           max-width: 89%;

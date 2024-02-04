@@ -37,6 +37,6 @@ export declare class YpAiChatbotItemBase extends YpBaseElement {
     renderThinking(): import("lit-html").TemplateResult<1>;
     getThinkingText(): string;
     renderMessage(): any;
-    render(): any;
+    render(): import("lit-html").TemplateResult<1>;
 }
 //# sourceMappingURL=yp-chatbot-item-base.d.ts.map

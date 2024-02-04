@@ -129,7 +129,7 @@ export class YpAiChatbotItemBase extends YpBaseElement {
           background-color: var(--md-sys-color-primary);
           padding: 8px;
           margin: 16px;
-          line-height: 1.35;
+          line-height: 1.5;
           margin-bottom: 0px;
           border-radius: 12px;
         }
@@ -167,7 +167,7 @@ export class YpAiChatbotItemBase extends YpBaseElement {
           background-color: var(--md-sys-color-primary-container);
           padding: 8px;
           margin: 16px;
-          line-height: 1.35;
+          line-height: 1.5;
           margin-bottom: 0px;
           border-radius: 10px;
           max-width: 89%;
@@ -393,7 +393,7 @@ export class YpAiChatbotItemBase extends YpBaseElement {
     }
   }
 
-  renderUser() {
+  renderUser(): any {
     return html`
       <div class="userChatDialog layout horizontal user-message">
         <div class="layout vertical chatImage">${this.renderRoboImage()}</div>

@@ -15,11 +15,15 @@ class ExplainAnswersAssistant extends baseChatBot_js_1.YpBaseChatBot {
         });
     }
     renderSystemPrompt() {
-        return `The user is doing pairwise voting on two answers at the time, to a provided question, the user needs help decide what to vote on.
-Please output a short very simple explaination of each answer.
-Please help explain to the user the top pro and con of each answer, to help the user make up their mind on which one to vote on.
-Only output the top pro and con for each answer, and make sure to keep it short and to the point.
-In the end provide a very short summary of your assessment of which answer is better, and why.
+        return `The user is doing pairwise voting on two answers at the time, to a question, the user needs help decide what to vote on.
+
+Output:
+* Each answer
+-- One short paragraph, max three sentences, explaination in a very simple language
+-- The top pro and con
+-- If this is likely to be a root cause of the problem set out in the question
+* Short summary in the end of which answer is better and why
+
 Ask the user clarifying questions if needed.
 `;
     }

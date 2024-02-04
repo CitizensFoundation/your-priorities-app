@@ -58,7 +58,7 @@ export class AoiLlmExplainDialog extends YpChatbotBase {
   }
 
   async sendFirstQuestion() {
-    const firstMessage =`Here is the question:\n\n${this.question.name}\n\n**First Answer** \n\n${this.leftAnswer}\n\n**Second Answer**\n\n${this.rightAnswer}\n`;
+    const firstMessage =`**Here is the question:**\n${this.question.name}\n\n**First Answer:** \n ${this.leftAnswer}\n\n**Second Answer:**\n ${this.rightAnswer}\n`;
 
     this.addChatBotElement({
       sender: 'you',

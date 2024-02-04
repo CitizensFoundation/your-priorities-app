@@ -301,8 +301,8 @@ let YpChatbotBase = class YpChatbotBase extends YpStreamingLlmBase {
         }
 
         .chatElement[thinking] {
-          margin-top: 8px;
-          margin-bottom: 0px;
+          margin-top: 16px;
+          margin-bottom: 8px;
         }
 
         @media (max-width: 960px) {
