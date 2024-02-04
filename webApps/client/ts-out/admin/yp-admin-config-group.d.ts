@@ -40,11 +40,10 @@ export declare class YpAdminConfigGroup extends YpAdminConfigBase {
     static get styles(): (any[] | import("lit").CSSResult)[];
     _setGroupType(event: CustomEvent): void;
     renderGroupTypeSelection(): import("lit-html").TemplateResult<1>;
-    renderHeader(): import("lit-html").TemplateResult<1> | typeof nothing;
+    renderHeader(): typeof nothing | import("lit-html").TemplateResult<1>;
     getAccessTokenName(): "open_to_community" | "secret";
     renderHiddenInputs(): import("lit-html").TemplateResult<1>;
     _descriptionChanged(event: CustomEvent): void;
-    _logoImageUploaded(event: CustomEvent): void;
     connectedCallback(): void;
     _clear(): void;
     groupAccessOptions: Record<number, YpGroupAccessTypes>;

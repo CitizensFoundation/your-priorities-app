@@ -22,7 +22,7 @@ let YpLanguageSelector = YpLanguageSelector_1 = class YpLanguageSelector extends
         this.dropdownVisible = true;
         this.hasServerAutoTranslation = false;
         this.isOutsideChangeEvent = false;
-        this.noGoogleTranslateLanguages = ['kl'];
+        this.noGoogleTranslateLanguages = ['kl', 'cpv'];
     }
     updated(changedProperties) {
         super.updated(changedProperties);

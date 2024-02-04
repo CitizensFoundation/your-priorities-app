@@ -290,15 +290,6 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
     super._descriptionChanged(event);
   }
 
-  override _logoImageUploaded(event: CustomEvent) {
-    var image = JSON.parse(event.detail.xhr.response);
-    this.uploadedLogoImageId = image.id;
-    const formats = JSON.parse(image.formats);
-    this._configChanged();
-
-    this.ypImageUrl = formats[1];
-  }
-
   override connectedCallback() {
     super.connectedCallback();
     this.group = this.collection as YpGroupData;

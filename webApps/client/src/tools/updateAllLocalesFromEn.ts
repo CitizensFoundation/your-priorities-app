@@ -39,7 +39,7 @@ export class YpLocaleTranslation {
       .filter((file) => fs.statSync(path.join(localesDir, file)).isDirectory());
 
     for (const localeDir of localeDirs) {
-      if (localeDir !== "is") continue; // Skip English since it's the base
+      if (localeDir === "en") continue; // Skip English since it's the base
 
       console.log(`Processing locale: ${localeDir}`);
       const translationFilePath = path.join(
@@ -235,7 +235,7 @@ Your ${language} UI texts JSON output:`;
         ISO6391.getName(languageIsoCode.toLowerCase()) ||
         ISO6391.getName(languageIsoCode.substring(0, 2)) ||
         ISO6391.getName(languageIsoCode.substring(0, 2).toLowerCase()) ||
-        "en";
+        languageIsoCode;
 
       return await this.callLlm(languageName, textsToTranslate);
     } catch (error) {

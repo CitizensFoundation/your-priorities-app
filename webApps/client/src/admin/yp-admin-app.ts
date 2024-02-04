@@ -495,7 +495,7 @@ export class YpAdminApp extends YpBaseElement {
     }
 
     if (changedProperties.has("collection")) {
-      console.error("collection", this.collection);
+     //console.error("collection", this.collection);
     }
   }
 

@@ -224,13 +224,6 @@ let YpAdminConfigGroup = class YpAdminConfigGroup extends YpAdminConfigBase {
         this.group.objectives = description;
         super._descriptionChanged(event);
     }
-    _logoImageUploaded(event) {
-        var image = JSON.parse(event.detail.xhr.response);
-        this.uploadedLogoImageId = image.id;
-        const formats = JSON.parse(image.formats);
-        this._configChanged();
-        this.ypImageUrl = formats[1];
-    }
     connectedCallback() {
         super.connectedCallback();
         this.group = this.collection;

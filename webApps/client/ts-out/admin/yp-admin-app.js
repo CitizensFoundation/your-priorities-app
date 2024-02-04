@@ -368,7 +368,7 @@ let YpAdminApp = class YpAdminApp extends YpBaseElement {
             this._setAdminFromParent();
         }
         if (changedProperties.has("collection")) {
-            console.error("collection", this.collection);
+            //console.error("collection", this.collection);
         }
     }
     _needsUpdate() {

@@ -106,7 +106,6 @@ export function themeFromSourceColorWithContrast(color, variant, isDark, scheme,
     if (variant) {
         variantIndex = variantIndexMap[variant];
     }
-    console.error(`theme variant index ${variantIndex}`);
     if (scheme === 'tonal') {
         //@ts-ignore
         colorScheme = new SchemeTonalSpot(

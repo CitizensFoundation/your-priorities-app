@@ -89,7 +89,7 @@ export class YpLanguageSelector extends YpBaseElement {
     cpv: 'Cape Verdean Creole'
   };
 
-  noGoogleTranslateLanguages = ['kl'];
+  noGoogleTranslateLanguages = ['kl','cpv'];
 
   _refreshLanguage() {
     this.dropdownVisible = false;

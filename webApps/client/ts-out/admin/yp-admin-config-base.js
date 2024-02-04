@@ -105,7 +105,9 @@ export class YpAdminConfigBase extends YpAdminPage {
         var image = JSON.parse(event.detail.xhr.response);
         this.uploadedLogoImageId = image.id;
         this.imagePreviewUrl = JSON.parse(image.formats)[0];
-        this.configChanged = true;
+        const formats = JSON.parse(image.formats);
+        this.ypImageUrl = `${formats[1]}`;
+        this._configChanged();
     }
     _headerImageUploaded(event) {
         var image = JSON.parse(event.detail.xhr.response);
@@ -212,27 +214,28 @@ export class YpAdminConfigBase extends YpAdminPage {
             : html `
                   <div class="layout vertical center-center">
                     <yp-structured-question-edit
-                    index="${index}"
-                    id="configQuestion_${index}"
-                    @yp-answer-content-changed="${question.onChange ||
+                      index="${index}"
+                      id="configQuestion_${index}"
+                      @yp-answer-content-changed="${question.onChange ||
                 this._configChanged}"
-                    debounceTimeMs="10"
-                    .name="${question.name || question.text || ""}"
-                    ?disabled="${question.disabled ? true : false}"
-                    .value="${question.value !== undefined
+                      debounceTimeMs="10"
+                      .name="${question.name || question.text || ""}"
+                      ?disabled="${question.disabled ? true : false}"
+                      .value="${question.value !== undefined
                 ? question.value
                 : this._getCurrentValue(question) !== undefined
                     ? this._getCurrentValue(question)
                     : question.defaultValue || ""}"
-                    .question="${{
+                      .question="${{
                 ...question,
                 text: question.translationToken
                     ? this.t(question.translationToken)
                     : this.t(question.text),
                 uniqueId: `u${index}`,
             }}"
-                  >
-                  </yp-structured-question-edit></div>
+                    >
+                    </yp-structured-question-edit>
+                  </div>
                 `}
           `)}
       </div>
@@ -290,15 +293,6 @@ export class YpAdminConfigBase extends YpAdminPage {
         ${unsafeHTML(this.collection.configuration.welcomeHTML)}
       </div>`;
         }
-        else if (this.imagePreviewUrl) {
-            return html `
-        <yp-image
-          class="image"
-          sizing="contain"
-          .src="${this.imagePreviewUrl}"
-        ></yp-image>
-      `;
-        }
         else if (this.collectionVideoURL) {
             return html `
         <video
@@ -313,6 +307,22 @@ export class YpAdminConfigBase extends YpAdminPage {
         ></video>
       `;
         }
+        else if (this.ypImageUrl) {
+            const ypImageUrl = this.ypImageUrl;
+            debugger;
+            return html `
+        <yp-image
+          class="mainImage"
+          @loaded="${this.imageLoaded}"
+          sizing="contain"
+          .skipCloudFlare="${true}"
+          src="${ypImageUrl}"
+        ></yp-image>
+        ${this.gettingImageColor
+                ? html ` <md-linear-progress indeterminate></md-linear-progress> `
+                : nothing}
+      `;
+        }
         else if (this.currentLogoImages) {
             return html `
         <yp-image
@@ -320,22 +330,6 @@ export class YpAdminConfigBase extends YpAdminPage {
           sizing="contain"
           src="${YpMediaHelpers.getImageFormatUrl(this.currentLogoImages)}"
         ></yp-image>
-      `;
-        }
-        else if (this.ypImageUrl) {
-            return html `
-        <div class="layout vertical">
-          <yp-image
-            class="mainImage"
-            @loaded="${this.imageLoaded}"
-            sizing="contain"
-            .skipCloudFlare="${true}"
-            .src="${this.ypImageUrl}"
-          ></yp-image>
-          ${this.gettingImageColor
-                ? html ` <md-linear-progress indeterminate></md-linear-progress> `
-                : nothing}
-        </div>
       `;
         }
         else {
@@ -643,7 +637,7 @@ export class YpAdminConfigBase extends YpAdminPage {
         super.updated(changedProperties);
         if (changedProperties.has("collection") && this.collection) {
             this.configTabs = this.setupConfigTabs();
-            console.error("Collection", this.collection);
+            //console.error("Collection", this.collection);
         }
         if (changedProperties.has("collectionId") && this.collectionId) {
             if (this.collectionId == "new") {

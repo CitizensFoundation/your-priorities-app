@@ -99,11 +99,11 @@ let YpThemeSelector = class YpThemeSelector extends YpBaseElement {
             this.themeNeutralVariantColor =
                 this.themeConfiguration.neutralVariantColor;
         }
-        this.addGlobalListener("yp-theme-color-detected", this.themeColorDetected);
+        this.addGlobalListener("yp-theme-color-detected", this.themeColorDetected.bind(this));
     }
     disconnectedCallback() {
         super.disconnectedCallback();
-        this.removeGlobalListener("yp-theme-color-detected", this.themeColorDetected);
+        this.removeGlobalListener("yp-theme-color-detected", this.themeColorDetected.bind(this));
     }
     themeColorDetected(event) {
         this.oneDynamicThemeColor = event.detail;
@@ -125,7 +125,6 @@ let YpThemeSelector = class YpThemeSelector extends YpBaseElement {
             if (changedProperties.has(prop)) {
                 shouldUpdateConfiguration = true;
                 this.updateDisabledInputs();
-                console.error(`Updated: ${prop}`);
             }
         });
         if (shouldUpdateConfiguration) {
