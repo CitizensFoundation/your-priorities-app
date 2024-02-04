@@ -42,6 +42,25 @@ class AllOurIdeasController {
         this.router.put("/:communityId/questions/:questionId/choices/:choiceId", authorization_js_1.default.can("create group"), this.updateCoiceData.bind(this));
         this.router.put("/:communityId/questions/:questionId/choices/:choiceId/active", authorization_js_1.default.can("create group"), this.updateActive.bind(this));
         this.router.put("/:communityId/questions/:questionId/name", authorization_js_1.default.can("create group"), this.updateQuestionName.bind(this));
+        this.router.get("/:groupId/content/:extraId/translatedText", authorization_js_1.default.can("view group"), this.getTranslatedText.bind(this));
+    }
+    async getTranslatedText(req, res) {
+        try {
+            //@ts-ignore
+            index_js_1.default.AcTranslationCache.getTranslation(req, {}, function (error, translation) {
+                if (error) {
+                    console.error(error);
+                    res.status(500).send("A getTranslatedText error occurred");
+                }
+                else {
+                    res.send(translation);
+                }
+            });
+        }
+        catch (error) {
+            console.error(error);
+            res.status(500).send("A getTranslatedText error occurred");
+        }
     }
     async generateIdeas(req, res) {
         const { currentIdeas, wsClientSocketId, question } = req.body;

@@ -193,7 +193,7 @@ export class AcActivityPost extends YpPostBaseWithAnswers(
                 >
                   <yp-magic-text
                     id="description"
-                    text-type="postContent"
+                    textType="postContent"
                     .contentLanguage="${this.activity.Post.language}"
                     .content="${this.structuredAnswersFormatted}"
                     ?noUserInfo="${!this.activity.Post.Group.configuration

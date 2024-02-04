@@ -222,7 +222,16 @@ export class AoiSurveyIntro extends YpBaseElement {
           src="${YpMediaHelpers.getImageFormatUrl(this.group.GroupLogoImages)}"
         ></yp-image>
         <div class="questionTitle" ?dark-mode="${this.themeDarkMode}">
-          ${this.question?.name}
+          <yp-magic-text
+            id="answerText"
+            .contentId="${this.group.id}"
+            .extraId="${this.question?.id}"
+            text-only
+            truncate="300"
+            .content="${this.question.name}"
+            .contentLanguage="${this.group.language}"
+            textType="aoiQuestionName"
+          ></yp-magic-text>
         </div>
         <div class="description">${this.formattedDescription}</div>
         ${this.earl.active

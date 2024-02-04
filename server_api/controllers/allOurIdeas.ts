@@ -95,6 +95,29 @@ export class AllOurIdeasController {
       auth.can("create group"),
       this.updateQuestionName.bind(this)
     );
+
+    this.router.get(
+      "/:groupId/content/:extraId/translatedText",
+      auth.can("view group"),
+      this.getTranslatedText.bind(this)
+    );
+  }
+
+  public async getTranslatedText(req: Request, res: Response): Promise<void> {
+    try {
+      //@ts-ignore
+      models.AcTranslationCache.getTranslation(req, {}, function (error: string, translation: string) {
+        if (error) {
+          console.error(error);
+          res.status(500).send("A getTranslatedText error occurred");
+        } else {
+          res.send(translation);
+        }
+      });
+    } catch (error) {
+      console.error(error);
+      res.status(500).send("A getTranslatedText error occurred");
+    }
   }
 
   public async generateIdeas(req: Request, res: Response): Promise<void> {

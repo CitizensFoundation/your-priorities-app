@@ -307,7 +307,7 @@ let YpPostListItem = class YpPostListItem extends YpPostBaseWithAnswers(YpBaseEl
                   <div class="post-name" mini$="${this.mini}" id="postName">
                     <yp-magic-text
                       id="postNameMagicText"
-                      text-type="postName"
+                      textType="postName"
                       .contentLanguage="${this.post.language}"
                       @click="${this.goToPostIfNotHeader}"
                       textOnly
@@ -342,7 +342,7 @@ let YpPostListItem = class YpPostListItem extends YpPostBaseWithAnswers(YpBaseEl
                 ? html `
                             <yp-magic-text
                               id="description"
-                              text-type="postContent"
+                              textType="postContent"
                               .contentLanguage="${this.post.language}"
                               ?hidden="${this.hideDescription}"
                               content="${this.structuredAnswersFormatted}"

@@ -5,12 +5,13 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var YpMagicText_1;
-import { html, css, nothing } from 'lit';
-import { property, customElement } from 'lit/decorators.js';
-import { unsafeHTML } from 'lit/directives/unsafe-html.js';
-import linkifyHtml from 'linkify-html';
-import { YpBaseElement } from '../common/yp-base-element.js';
-import { twemoji } from '@kano/twemoji/index.es.js';
+import { html, css, nothing } from "lit";
+import { property, customElement } from "lit/decorators.js";
+import { unsafeHTML } from "lit/directives/unsafe-html.js";
+import linkifyHtml from "linkify-html";
+import { YpBaseElement } from "../common/yp-base-element.js";
+import { twemoji } from "@kano/twemoji/index.es.js";
+import '@material/web/progress/linear-progress.js';
 let YpMagicText = YpMagicText_1 = class YpMagicText extends YpBaseElement {
     constructor() {
         super(...arguments);
@@ -21,16 +22,17 @@ let YpMagicText = YpMagicText_1 = class YpMagicText extends YpBaseElement {
         this.simpleFormat = false;
         this.skipSanitize = false;
         this.removeUrls = false;
+        this.isFetchingTranslation = false;
         this.linkifyCutoff = 25;
         this.widetext = false;
     }
     connectedCallback() {
         super.connectedCallback();
-        this.addGlobalListener('yp-auto-translate', this._autoTranslateEvent.bind(this));
+        this.addGlobalListener("yp-auto-translate", this._autoTranslateEvent.bind(this));
     }
     disconnectedCallback() {
         super.disconnectedCallback();
-        this.removeGlobalListener('yp-auto-translate', this._autoTranslateEvent.bind(this));
+        this.removeGlobalListener("yp-auto-translate", this._autoTranslateEvent.bind(this));
     }
     static get styles() {
         return [
@@ -62,35 +64,34 @@ let YpMagicText = YpMagicText_1 = class YpMagicText extends YpBaseElement {
     render() {
         return html `
       <div
-        class="container layout-center-center layout-vertical"
+        class="container layout vertical center-center"
         ?rlt="${this.rtl}"
         ?more-text="${this.showMoreText}"
       >
-        <!-- add max-width for IE11 -->
-
         ${this.finalContent
             ? html ` <div>${unsafeHTML(this.finalContent)}</div> `
             : html ` <div>${this.truncatedContent}</div> `}
         ${this.showMoreText && this.moreText
             ? html `
-              <md-outlined-button
-                class="moreText"
-                @click="${this._openFullScreen}"
-                .label="${this.moreText}"
-              ></md-outlined-button>
-            `
+                <md-outlined-button
+                  class="moreText"
+                  @click="${this._openFullScreen}"
+                  .label="${this.moreText}"
+                ></md-outlined-button>
+              `
             : nothing}
+        <md-linear-progress indeterminate ?hidden="${this.isFetchingTranslation}></md-linear-progress>
       </div>
     `;
     }
     static get doubleWidthLanguages() {
-        return ['zh_TW', 'hy'];
+        return ["zh_TW", "hy"];
     }
     static get cyrillicLanguages() {
-        return ['ru', 'ky'];
+        return ["ru", "ky"];
     }
     static get widerLanguages() {
-        return ['uk', 'ky', 'uz', 'ru', 'sr', 'zh_TW', 'hy', 'bg'];
+        return ["uk", "ky", "uz", "ru", "sr", "zh_TW", "hy", "bg"];
     }
     get showMoreText() {
         //TODO: Find a more appropiate place for this logic below
@@ -107,7 +108,7 @@ let YpMagicText = YpMagicText_1 = class YpMagicText extends YpBaseElement {
     }
     _openFullScreen() {
         //TODO: Fix ts type
-        window.appDialogs.getDialogAsync('magicTextDialog', (dialog) => {
+        window.appDialogs.getDialogAsync("magicTextDialog", (dialog) => {
             dialog.open(this.content, this.contentId, this.extraId, this.textType, this.contentLanguage, this.closeDialogText, this.structuredQuestionsConfig, this.skipSanitize, this.disableTranslation);
         });
     }
@@ -116,8 +117,8 @@ let YpMagicText = YpMagicText_1 = class YpMagicText extends YpBaseElement {
     }
     updated(changedProperties) {
         super.updated(changedProperties);
-        if (changedProperties.has('content')) {
-            if (this.content && this.content !== '') {
+        if (changedProperties.has("content")) {
+            if (this.content && this.content !== "") {
                 this.finalContent = undefined;
                 if (window.appGlobals.autoTranslate) {
                     this.autoTranslate = window.appGlobals.autoTranslate;
@@ -163,78 +164,84 @@ let YpMagicText = YpMagicText_1 = class YpMagicText extends YpBaseElement {
             if (this.contentId) {
                 let url;
                 switch (this.textType) {
-                    case 'postName':
-                    case 'postContent':
-                    case 'postTags':
-                    case 'postTranscriptContent':
-                        url = '/api/posts/' + this.contentId + '/translatedText';
+                    case "postName":
+                    case "postContent":
+                    case "postTags":
+                    case "postTranscriptContent":
+                        url = "/api/posts/" + this.contentId + "/translatedText";
                         break;
-                    case 'pointContent':
-                    case 'pointAdminCommentContent':
-                        url = '/api/points/' + this.contentId + '/translatedText';
+                    case "pointContent":
+                    case "pointAdminCommentContent":
+                        url = "/api/points/" + this.contentId + "/translatedText";
                         break;
-                    case 'domainName':
-                    case 'domainContent':
-                        url = '/api/domains/' + this.contentId + '/translatedText';
+                    case "domainName":
+                    case "domainContent":
+                        url = "/api/domains/" + this.contentId + "/translatedText";
                         break;
-                    case 'customRatingName':
+                    case "customRatingName":
                         url =
-                            '/api/ratings/' +
+                            "/api/ratings/" +
                                 this.contentId +
-                                '/' +
+                                "/" +
                                 this.extraId +
-                                '/translatedText';
+                                "/translatedText";
                         break;
-                    case 'communityName':
-                    case 'communityContent':
-                        url = '/api/communities/' + this.contentId + '/translatedText';
+                    case "communityName":
+                    case "communityContent":
+                        url = "/api/communities/" + this.contentId + "/translatedText";
                         break;
-                    case 'alternativeTextForNewIdeaButton':
-                    case 'alternativeTextForNewIdeaButtonClosed':
-                    case 'alternativeTextForNewIdeaButtonHeader':
-                    case 'alternativeTextForNewIdeaSaveButton':
-                    case 'customThankYouTextNewPosts':
-                    case 'customTitleQuestionText':
-                    case 'alternativePointForHeader':
-                    case 'customAdminCommentsTitle':
-                    case 'alternativePointAgainstHeader':
-                    case 'urlToReviewActionText':
-                    case 'alternativePointForLabel':
-                    case 'alternativePointAgainstLabel':
-                    case 'groupName':
-                    case 'groupContent':
-                        url = '/api/groups/' + this.contentId + '/translatedText';
+                    case "aoiQuestionName":
+                    case "aoiChoiceContent":
+                        url = "/api/allOurIdeas/" + this.contentId + "/content/" + this.extraId + "/translatedText";
                         break;
-                    case 'categoryName':
-                        url = '/api/categories/' + this.contentId + '/translatedText';
+                    case "alternativeTextForNewIdeaButton":
+                    case "alternativeTextForNewIdeaButtonClosed":
+                    case "alternativeTextForNewIdeaButtonHeader":
+                    case "alternativeTextForNewIdeaSaveButton":
+                    case "customThankYouTextNewPosts":
+                    case "customTitleQuestionText":
+                    case "alternativePointForHeader":
+                    case "customAdminCommentsTitle":
+                    case "alternativePointAgainstHeader":
+                    case "urlToReviewActionText":
+                    case "alternativePointForLabel":
+                    case "alternativePointAgainstLabel":
+                    case "groupName":
+                    case "groupContent":
+                        url = "/api/groups/" + this.contentId + "/translatedText";
                         break;
-                    case 'statusChangeContent':
+                    case "categoryName":
+                        url = "/api/categories/" + this.contentId + "/translatedText";
+                        break;
+                    case "statusChangeContent":
                         url =
-                            '/api/posts/' +
+                            "/api/posts/" +
                                 this.extraId +
-                                '/' +
+                                "/" +
                                 this.contentId +
-                                '/translatedStatusText';
+                                "/translatedStatusText";
                         break;
                     default:
-                        console.error('No valid textType for magic text to translate: ' + this.textType);
+                        console.error("No valid textType for magic text to translate: " + this.textType);
                         return;
                 }
                 url = `${url}?textType=${this.textType}&contentId=${this.contentId}&targetLanguage=${this.language}`;
+                this.isFetchingTranslation = true;
                 const translation = (await window.serverApi.getTranslation(url));
+                this.isFetchingTranslation = false;
                 this.processedContent = translation?.content;
                 if (this.processedContent) {
                     window.appGlobals.cache.autoTranslateCache[this.indexKey] =
                         this.processedContent;
-                    this.fire('new-translation');
+                    this.fire("new-translation");
                 }
                 else {
-                    console.error('No content from translation');
+                    console.error("No content from translation");
                 }
                 this._finalize();
             }
             else {
-                console.error('No content id for: ' + this.textType);
+                console.error("No content id for: " + this.textType);
                 this._finalize();
             }
         }
@@ -245,7 +252,7 @@ let YpMagicText = YpMagicText_1 = class YpMagicText extends YpBaseElement {
             if (this.autoTranslate &&
                 this.language !== this.contentLanguage &&
                 !this.disableTranslation &&
-                this.contentLanguage !== '??') {
+                this.contentLanguage !== "??") {
                 this._startTranslationAndFinalize();
             }
             else {
@@ -267,16 +274,16 @@ let YpMagicText = YpMagicText_1 = class YpMagicText extends YpBaseElement {
             }
             else {
                 const structuredQuestions = [];
-                const questionComponents = this.structuredQuestionsConfig.split(',');
+                const questionComponents = this.structuredQuestionsConfig.split(",");
                 if (questionComponents && questionComponents.length > 1) {
                     for (let i = 0; i < questionComponents.length; i += 2) {
                         structuredQuestions.push(questionComponents[i]);
                     }
-                    const regEx = new RegExp('(' + structuredQuestions.join('|') + ')', 'ig');
-                    this.processedContent = this.processedContent?.replace(regEx, '<b>$1</b>');
+                    const regEx = new RegExp("(" + structuredQuestions.join("|") + ")", "ig");
+                    this.processedContent = this.processedContent?.replace(regEx, "<b>$1</b>");
                 }
                 else {
-                    console.warn('Not questions for structuredQuestionsConfig');
+                    console.warn("Not questions for structuredQuestionsConfig");
                 }
             }
         }
@@ -294,15 +301,15 @@ let YpMagicText = YpMagicText_1 = class YpMagicText extends YpBaseElement {
                 truncateBy = truncateBy / 2;
             }
             if (this.processedContent)
-                this.processedContent = YpMagicText_1.truncateText(YpMagicText_1.trim(this.processedContent), truncateBy, '...');
+                this.processedContent = YpMagicText_1.truncateText(YpMagicText_1.trim(this.processedContent), truncateBy, "...");
         }
         if (this.simpleFormat && this.processedContent) {
             this.processedContent = this.processedContent
                 .trim()
-                .replace(/(\n)/g, '<br>');
+                .replace(/(\n)/g, "<br>");
         }
         if (this.removeUrls && this.processedContent) {
-            this.processedContent = this.processedContent.replace(/(?:https?|ftp):\/\/[\n\S]+/g, '');
+            this.processedContent = this.processedContent.replace(/(?:https?|ftp):\/\/[\n\S]+/g, "");
         }
         this._setupStructuredQuestions();
         this.subClassProcessing();
@@ -316,7 +323,7 @@ let YpMagicText = YpMagicText_1 = class YpMagicText extends YpBaseElement {
             }
         }
         if (this.processedContent &&
-            this.processedContent !== 'undefined' &&
+            this.processedContent !== "undefined" &&
             this.content !== this.processedContent) {
             this.finalContent = this.processedContent;
         }
@@ -327,16 +334,16 @@ let YpMagicText = YpMagicText_1 = class YpMagicText extends YpBaseElement {
     _linksAndEmojis() {
         if (!this.skipSanitize && this.processedContent) {
             //this.processedContent = sanitizeHtml(this.processedContent, {allowedTags: ['b', 'i', 'em', 'strong']});
-            this.processedContent = this.processedContent.replace(/&amp;/g, '&');
+            this.processedContent = this.processedContent.replace(/&amp;/g, "&");
             this.processedContent = linkifyHtml(this.processedContent, {
                 format: (value, type) => {
-                    if (type === 'url' && value.length > this.linkifyCutoff - 1) {
-                        value = value.slice(0, this.linkifyCutoff) + '…';
+                    if (type === "url" && value.length > this.linkifyCutoff - 1) {
+                        value = value.slice(0, this.linkifyCutoff) + "…";
                     }
                     return value;
                 },
             });
-            this.processedContent = this.processedContent.replace(/&amp;/g, '&');
+            this.processedContent = this.processedContent.replace(/&amp;/g, "&");
             this.processedContent = twemoji
                 .parse(this.processedContent)
                 .replace(/&amp;quot;/g, '"')
@@ -345,13 +352,13 @@ let YpMagicText = YpMagicText_1 = class YpMagicText extends YpBaseElement {
         else if (this.processedContent) {
             this.processedContent = linkifyHtml(this.processedContent, {
                 format: (value, type) => {
-                    if (type === 'url' && value.length > this.linkifyCutoff - 1) {
-                        value = value.slice(0, this.linkifyCutoff) + '…';
+                    if (type === "url" && value.length > this.linkifyCutoff - 1) {
+                        value = value.slice(0, this.linkifyCutoff) + "…";
                     }
                     return value;
                 },
             });
-            this.processedContent = this.processedContent.replace(/&amp;/g, '&');
+            this.processedContent = this.processedContent.replace(/&amp;/g, "&");
         }
     }
     static truncateText(input, length, killwords = undefined, end = undefined) {
@@ -362,17 +369,17 @@ let YpMagicText = YpMagicText_1 = class YpMagicText extends YpBaseElement {
             input = input.substring(0, length);
         }
         else {
-            let idx = input.lastIndexOf(' ', length);
+            let idx = input.lastIndexOf(" ", length);
             if (idx === -1) {
                 idx = length;
             }
             input = input.substring(0, idx);
         }
-        input += end !== undefined && end !== null ? end : '...';
+        input += end !== undefined && end !== null ? end : "...";
         return input;
     }
     static trim(input) {
-        return input.replace(/^\s*|\s*$/g, '').trim();
+        return input.replace(/^\s*|\s*$/g, "").trim();
     }
 };
 __decorate([
@@ -430,6 +437,9 @@ __decorate([
     property({ type: Boolean })
 ], YpMagicText.prototype, "removeUrls", void 0);
 __decorate([
+    property({ type: Boolean })
+], YpMagicText.prototype, "isFetchingTranslation", void 0);
+__decorate([
     property({ type: String })
 ], YpMagicText.prototype, "structuredQuestionsConfig", void 0);
 __decorate([
@@ -439,7 +449,7 @@ __decorate([
     property({ type: Boolean, reflect: true })
 ], YpMagicText.prototype, "widetext", void 0);
 YpMagicText = YpMagicText_1 = __decorate([
-    customElement('yp-magic-text')
+    customElement("yp-magic-text")
 ], YpMagicText);
 export { YpMagicText };
 //# sourceMappingURL=yp-magic-text.js.map

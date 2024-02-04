@@ -259,7 +259,7 @@ export class YpDataVisualization extends YpBaseElement {
               id="groupName"
               class="groupName"
               ?small-screen="${!this.wide}"
-              text-type="groupName"
+              textType="groupName"
               .contentLanguage="${this.group.language}"
               .disableTanslation="${this.group.configuration
                 .disableNameAutoTranslation}"

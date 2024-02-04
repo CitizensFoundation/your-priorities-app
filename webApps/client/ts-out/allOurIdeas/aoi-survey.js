@@ -385,6 +385,7 @@ let AoiSurvey = class AoiSurvey extends YpBaseElement {
                     return cache(html `<aoi-survey-voting
             .earl="${this.earl}"
             .groupId="${this.collectionId}"
+            .group="${this.collection}"
             .question="${this.question}"
             .leftAnswer="${this.currentLeftAnswer}"
             .rightAnswer="${this.currentRightAnswer}"

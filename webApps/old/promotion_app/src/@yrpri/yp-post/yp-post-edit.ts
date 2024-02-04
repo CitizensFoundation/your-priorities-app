@@ -1035,7 +1035,7 @@ export class YpPostEdit extends YpEditBase {
               .contentLanguage="${this.group.language}"
               @new-translation="${this
                 ._alternativeTextForNewIdeaButtonHeaderTranslation}"
-              text-type="alternativeTextForNewIdeaButtonHeader"></yp-magic-text>
+              textType="alternativeTextForNewIdeaButtonHeader"></yp-magic-text>
           `
         : nothing}
       ${this.group && this.group.configuration.customThankYouTextNewPosts
@@ -1047,7 +1047,7 @@ export class YpPostEdit extends YpEditBase {
               text-only
               .content="${this.group.configuration.customThankYouTextNewPosts}"
               .contentLanguage="${this.group.language}"
-              text-type="customThankYouTextNewPosts"></yp-magic-text>
+              textType="customThankYouTextNewPosts"></yp-magic-text>
           `
         : nothing}
       ${this.group && this.group.configuration.customTitleQuestionText
@@ -1060,7 +1060,7 @@ export class YpPostEdit extends YpEditBase {
               .content="${this.group.configuration.customTitleQuestionText}"
               .contentLanguage="${this.group.language}"
               @new-translation="${this._updatePostTitle}"
-              text-type="customTitleQuestionText"></yp-magic-text>
+              textType="customTitleQuestionText"></yp-magic-text>
           `
         : nothing}
       ${this.group && this.group.configuration.alternativeTextForNewIdeaSaveButton
@@ -1073,7 +1073,7 @@ export class YpPostEdit extends YpEditBase {
               .content="${this.group.configuration.alternativeTextForNewIdeaSaveButton}"
               .contentLanguage="${this.group.language}"
               @new-translation="${this._alternativeTextForNewIdeaSaveButtonTranslation}"
-              text-type="alternativeTextForNewIdeaSaveButton"></yp-magic-text>
+              textType="alternativeTextForNewIdeaSaveButton"></yp-magic-text>
           `
         : nothing}
     `;

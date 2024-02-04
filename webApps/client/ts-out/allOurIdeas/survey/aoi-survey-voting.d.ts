@@ -12,6 +12,7 @@ export declare class AoiSurveyVoting extends YpBaseElement {
     question: AoiQuestionData;
     firstPrompt: AoiPromptData;
     promptId: number;
+    group: YpGroupData;
     voteCount: number;
     spinnersActive: boolean;
     leftAnswer: AoiAnswerToVoteOnData | undefined;

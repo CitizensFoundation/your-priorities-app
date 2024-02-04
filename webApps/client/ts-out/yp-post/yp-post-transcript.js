@@ -106,7 +106,7 @@ let YpPostTranscript = class YpPostTranscript extends YpBaseElement {
                 </div>
                 <div id="postContentTranscript" ?hidden="${this.isEditing}">
                   <yp-magic-text
-                    text-type="postTranscriptContent"
+                    textType="postTranscriptContent"
                     .contentLanguage="${this.post.public_data.transcript
                 .language}"
                     .content="${this.post.public_data.transcript.text}"

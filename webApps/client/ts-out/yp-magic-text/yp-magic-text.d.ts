@@ -1,4 +1,5 @@
-import { YpBaseElement } from '../common/yp-base-element.js';
+import { YpBaseElement } from "../common/yp-base-element.js";
+import '@material/web/progress/linear-progress.js';
 export declare class YpMagicText extends YpBaseElement {
     content: string | undefined;
     truncatedContent: string | undefined;
@@ -18,6 +19,7 @@ export declare class YpMagicText extends YpBaseElement {
     simpleFormat: boolean;
     skipSanitize: boolean;
     removeUrls: boolean;
+    isFetchingTranslation: boolean;
     structuredQuestionsConfig: string | undefined;
     linkifyCutoff: number;
     widetext: boolean;

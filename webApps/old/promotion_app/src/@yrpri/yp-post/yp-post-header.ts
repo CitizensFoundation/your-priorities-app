@@ -298,7 +298,7 @@ export class YpPostHeader extends YpPostBaseWithAnswers(YpBaseElementWithLogin) 
           : html`
               <yp-magic-text
                 id="description"
-                text-type="postContent"
+                textType="postContent"
                 .contentLanguage="${this.post.language}"
                 .content="${this.structuredAnswersFormatted}"
                 ?noUserInfo="${!this.post.Group.configuration

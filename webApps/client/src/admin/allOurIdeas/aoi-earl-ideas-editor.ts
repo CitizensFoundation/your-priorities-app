@@ -46,6 +46,9 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmBase {
   @property({ type: Boolean })
   isFetchingChoices = false;
 
+  @property({ type: Object })
+  group!: YpGroupData;
+
   @query("#aiStyleInput")
   aiStyleInputElement: MdOutlinedTextField | undefined;
 
@@ -73,8 +76,8 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmBase {
     if (this.configuration.earl && this.configuration.earl.question_id) {
       this.disableWebsockets = true;
       this.isCreatingIdeas = false;
-      this.getChoices();
       this.imageGenerator = new AoiGenerateAiLogos(this.themeColor);
+      this.getChoices();
     } else {
       this.isCreatingIdeas = true;
     }
@@ -300,6 +303,7 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmBase {
           {
             content: choice.data.content,
             imageUrl,
+            choiceId: choice.id,
           }
         );
 
@@ -340,6 +344,7 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmBase {
       {
         content: choice.data.content,
         imageUrl: undefined,
+        choiceId: choice.id,
       }
     );
     this.requestUpdate();
@@ -356,6 +361,21 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmBase {
           --md-elevated-button-label-text-color: var(
             --md-sys-color-on-primary-container
           );
+        }
+
+        yp-magic-text {
+          min-width: 262px;
+        }
+
+        .headerPadding {
+          width: 414px;
+        }
+
+        .genIconSpinner {
+          width: 100px;
+          height: 100px;
+          margin-left: 0;
+          margin-right: -8px;
         }
 
         .iconImage,
@@ -475,8 +495,6 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmBase {
           position: relative;
         }
 
-
-
         .button {
           margin-left: 16px;
           margin-right: 16px;
@@ -576,7 +594,7 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmBase {
   renderIcon(choice: AoiChoiceData) {
     if (choice.data.isGeneratingImage) {
       return html`
-        <md-circular-progress indeterminate></md-circular-progress>
+        <md-circular-progress class="genIconSpinner" slot="icon" indeterminate></md-circular-progress>
       `;
     } else if (choice.data.imageUrl) {
       return html` <img
@@ -599,13 +617,25 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmBase {
           class="leftAnswer"
           trailing-icon
         >
-          ${this.renderIcon(answer)} ${answer.data.content}
+          ${this.renderIcon(answer)}
+          <yp-magic-text
+            id="answerText"
+            .contentId="${this.groupId}"
+            .extraId="${answer.data.choiceId}"
+            text-only
+            truncate="140"
+            .content="${answer.data.content}"
+            .contentLanguage="${this.group.language}"
+            textType="aoiChoiceContent"
+          ></yp-magic-text>
         </md-elevated-button>
         <md-filled-tonal-icon-button
           ?hidden="${!answer.data.imageUrl}"
           @click="${() => this.deleteImageUrl(answer)}"
           class="deleteIcon"
-          ><md-icon class="closeIcon">close</md-icon></md-filled-tonal-icon-button
+          ><md-icon class="closeIcon"
+            >close</md-icon
+          ></md-filled-tonal-icon-button
         >
       </div>
     `;
@@ -621,9 +651,8 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmBase {
             ?hidden="${!this.isFetchingChoices}"
           ></md-linear-progress>
           <div class="layout horizontal ideaContainer">
-            <div class="logo"></div>
-            <div class="flex"></div>
-            <div class="wins">${this.t("origin")}</div>
+            <div class="headerPadding">&nbsp;</div>
+            <div class="origin">${this.t("origin")}</div>
             <div class="wins">${this.t("wins")}</div>
             <div class="losses">${this.t("losses")}</div>
             <div class="score">${this.t("score")}</div>

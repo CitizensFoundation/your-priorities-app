@@ -1728,6 +1728,7 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
     return html`<aoi-earl-ideas-editor
       .communityId="${communityId}"
       @configuration-changed="${this.earlConfigChanged}"
+      .group="${this.group}"
       .configuration="${this.group.configuration.allOurIdeas!}"
     ></aoi-earl-ideas-editor>`;
   }

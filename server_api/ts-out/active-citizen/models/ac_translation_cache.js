@@ -1,7 +1,41 @@
 "use strict";
-const { Translate } = require('@google-cloud/translate').v2;
-const farmhash = require('farmhash');
-const log = require('../utils/logger');
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+const { Translate } = require("@google-cloud/translate").v2;
+const farmhash = require("farmhash");
+const log = require("../utils/logger");
+const PAIRWISE_API_HOST = process.env.PAIRWISE_API_HOST;
+const PAIRWISE_USERNAME = process.env.PAIRWISE_USERNAME;
+const PAIRWISE_PASSWORD = process.env.PAIRWISE_PASSWORD;
+const defaultAuthHeader = {
+    "Content-Type": "application/json",
+    Authorization: `Basic ${Buffer.from(`${PAIRWISE_USERNAME}:${PAIRWISE_PASSWORD}`).toString("base64")}`,
+};
+const defaultHeader = {
+    ...{ "Content-Type": "application/json" },
+    ...defaultAuthHeader,
+};
 module.exports = (sequelize, DataTypes) => {
     let AcTranslationCache = sequelize.define("AcTranslationCache", {
         index_key: { type: DataTypes.STRING, allowNull: false },
@@ -9,16 +43,19 @@ module.exports = (sequelize, DataTypes) => {
     }, {
         indexes: [
             {
-                name: 'main_index',
-                fields: ['index_key']
-            }
+                name: "main_index",
+                fields: ["index_key"],
+            },
         ],
         underscored: true,
         timestamps: true,
-        createdAt: 'created_at',
-        updatedAt: 'updated_at',
-        tableName: 'translation_cache'
+        createdAt: "created_at",
+        updatedAt: "updated_at",
+        tableName: "translation_cache",
     });
+    AcTranslationCache.translationModelName = "gpt-4-0125-preview";
+    AcTranslationCache.translationMaxTokens = 2048;
+    AcTranslationCache.translationTemperature = 0.7;
     AcTranslationCache.allowedTextTypesForSettingLanguage = [
         "pointContent",
         "postName",
@@ -29,88 +66,131 @@ module.exports = (sequelize, DataTypes) => {
         "communityContent",
         "domainName",
         "domainContent",
-        "statusChangeContent"
+        "statusChangeContent",
+        "aoiChoiceContent",
+        "aoiQuestionName",
     ];
-    AcTranslationCache.getContentToTranslate = (req, modelInstance) => {
-        switch (req.query.textType) {
-            case 'postName':
-            case 'domainName':
-            case 'communityName':
-            case 'groupName':
-                return modelInstance.name;
-            case 'postContent':
-            case 'domainContent':
-            case 'communityContent':
-                return modelInstance.description;
-            case 'pointContent':
-                return modelInstance.PointRevisions[modelInstance.PointRevisions.length - 1].content;
-            case 'statusChangeContent':
-                return modelInstance.content;
-            case 'groupContent':
-                return modelInstance.objectives;
-            case 'pointAdminCommentContent':
-                if (modelInstance.public_data &&
-                    modelInstance.public_data.admin_comment &&
-                    modelInstance.public_data.admin_comment.text) {
-                    return modelInstance.public_data.admin_comment.text;
-                }
-                else {
-                    return "No translation";
-                }
-            case 'postTags':
-                if (modelInstance.public_data &&
-                    modelInstance.public_data.tags) {
-                    return modelInstance.public_data.tags;
-                }
-                else {
-                    return "No translation";
-                }
-            case 'customRatingName':
-                if (modelInstance.Group.configuration.customRatings &&
-                    modelInstance.Group.configuration.customRatings[modelInstance.custom_rating_index]) {
-                    return modelInstance.Group.configuration.customRatings[modelInstance.custom_rating_index].name;
-                }
-                else {
-                    return "No translation";
-                }
-            case 'alternativeTextForNewIdeaButton':
-                return modelInstance.configuration.alternativeTextForNewIdeaButton;
-            case 'alternativeTextForNewIdeaButtonClosed':
-                return modelInstance.configuration.alternativeTextForNewIdeaButtonClosed;
-            case 'alternativeTextForNewIdeaButtonHeader':
-                return modelInstance.configuration.alternativeTextForNewIdeaButtonHeader;
-            case 'alternativeTextForNewIdeaSaveButton':
-                return modelInstance.configuration.alternativeTextForNewIdeaSaveButton;
-            case 'customCategoryQuestionText':
-                return modelInstance.configuration.customCategoryQuestionText;
-            case 'urlToReviewActionText':
-                return modelInstance.configuration.urlToReviewActionText;
-            case 'customThankYouTextNewPosts':
-                return modelInstance.configuration.customThankYouTextNewPosts;
-            case 'customTitleQuestionText':
-                return modelInstance.configuration.customTitleQuestionText;
-            case 'customFilterText':
-                return modelInstance.configuration.customFilterText;
-            case 'customAdminCommentsTitle':
-                return modelInstance.configuration.customAdminCommentsTitle;
-            case 'alternativePointForHeader':
-                return modelInstance.configuration.alternativePointForHeader;
-            case 'customTabTitleNewLocation':
-                return modelInstance.configuration.customTabTitleNewLocation;
-            case 'alternativePointAgainstHeader':
-                return modelInstance.configuration.alternativePointAgainstHeader;
-            case 'alternativePointForLabel':
-                return modelInstance.configuration.alternativePointForLabel;
-            case 'alternativePointAgainstLabel':
-                return modelInstance.configuration.alternativePointAgainstLabel;
-            case 'categoryName':
-                return modelInstance.name;
-            case 'postTranscriptContent':
-                return (modelInstance.public_data && modelInstance.public_data.transcript) ?
-                    modelInstance.public_data.transcript.text : null;
-            default:
-                console.error("No valid textType for translation");
-                return null;
+    AcTranslationCache.getContentToTranslate = async (req, modelInstance) => {
+        console.log("req.query.textType", req.query.textType);
+        if (req.query.textType = "aoiChoiceContent") {
+            console.log(`CHOICES req.params.extraId ${req.query.textType}`, req.params.extraId);
+            const choiceResponse = await fetch(`${PAIRWISE_API_HOST}/choices/${req.params.extraId}?question_id=${req.query.questionId}`, {
+                method: "GET",
+                headers: defaultHeader,
+            });
+            if (!choiceResponse.ok) {
+                throw new Error("Failed to fetch answers");
+            }
+            const choice = await choiceResponse.json();
+            if (choice) {
+                return choice.data.content;
+            }
+            else {
+                return "No translation";
+            }
+        }
+        else if (req.query.textType == "aoiQuestionName") {
+            console.log(`QUESTIONS req.params.extraId ${req.query.textType}`, req.params.extraId);
+            const questionResponse = await fetch(`${PAIRWISE_API_HOST}/questions/${req.params.extraId}.json`, {
+                method: "GET",
+                headers: defaultHeader,
+            });
+            if (!questionResponse.ok) {
+                throw new Error("Failed to fetch question");
+            }
+            const question = await questionResponse.json();
+            if (question) {
+                return question.name;
+            }
+            else {
+                return "No translation";
+            }
+        }
+        else {
+            switch (req.query.textType) {
+                case "postName":
+                case "domainName":
+                case "communityName":
+                case "groupName":
+                    return modelInstance.name;
+                case "postContent":
+                case "domainContent":
+                case "communityContent":
+                    return modelInstance.description;
+                case "pointContent":
+                    return modelInstance.PointRevisions[modelInstance.PointRevisions.length - 1].content;
+                case "statusChangeContent":
+                    return modelInstance.content;
+                case "groupContent":
+                    return modelInstance.objectives;
+                case "pointAdminCommentContent":
+                    if (modelInstance.public_data &&
+                        modelInstance.public_data.admin_comment &&
+                        modelInstance.public_data.admin_comment.text) {
+                        return modelInstance.public_data.admin_comment.text;
+                    }
+                    else {
+                        return "No translation";
+                    }
+                case "postTags":
+                    if (modelInstance.public_data && modelInstance.public_data.tags) {
+                        return modelInstance.public_data.tags;
+                    }
+                    else {
+                        return "No translation";
+                    }
+                case "customRatingName":
+                    if (modelInstance.Group.configuration.customRatings &&
+                        modelInstance.Group.configuration.customRatings[modelInstance.custom_rating_index]) {
+                        return modelInstance.Group.configuration.customRatings[modelInstance.custom_rating_index].name;
+                    }
+                    else {
+                        return "No translation";
+                    }
+                case "alternativeTextForNewIdeaButton":
+                    return modelInstance.configuration.alternativeTextForNewIdeaButton;
+                case "alternativeTextForNewIdeaButtonClosed":
+                    return modelInstance.configuration
+                        .alternativeTextForNewIdeaButtonClosed;
+                case "alternativeTextForNewIdeaButtonHeader":
+                    return modelInstance.configuration
+                        .alternativeTextForNewIdeaButtonHeader;
+                case "alternativeTextForNewIdeaSaveButton":
+                    return modelInstance.configuration
+                        .alternativeTextForNewIdeaSaveButton;
+                case "customCategoryQuestionText":
+                    return modelInstance.configuration.customCategoryQuestionText;
+                case "urlToReviewActionText":
+                    return modelInstance.configuration.urlToReviewActionText;
+                case "customThankYouTextNewPosts":
+                    return modelInstance.configuration.customThankYouTextNewPosts;
+                case "customTitleQuestionText":
+                    return modelInstance.configuration.customTitleQuestionText;
+                case "customFilterText":
+                    return modelInstance.configuration.customFilterText;
+                case "customAdminCommentsTitle":
+                    return modelInstance.configuration.customAdminCommentsTitle;
+                case "alternativePointForHeader":
+                    return modelInstance.configuration.alternativePointForHeader;
+                case "customTabTitleNewLocation":
+                    return modelInstance.configuration.customTabTitleNewLocation;
+                case "alternativePointAgainstHeader":
+                    return modelInstance.configuration.alternativePointAgainstHeader;
+                case "alternativePointForLabel":
+                    return modelInstance.configuration.alternativePointForLabel;
+                case "alternativePointAgainstLabel":
+                    return modelInstance.configuration.alternativePointAgainstLabel;
+                case "categoryName":
+                    return modelInstance.name;
+                case "postTranscriptContent":
+                    return modelInstance.public_data &&
+                        modelInstance.public_data.transcript
+                        ? modelInstance.public_data.transcript.text
+                        : null;
+                default:
+                    console.error("No valid textType for translation");
+                    return null;
+            }
         }
     };
     // Post Edit
@@ -124,12 +204,14 @@ module.exports = (sequelize, DataTypes) => {
     // Same in XLS and DOCX exports
     AcTranslationCache.getSurveyAnswerTranslations = async (postId, targetLanguage, done) => {
         targetLanguage = AcTranslationCache.fixUpLanguage(targetLanguage);
-        sequelize.models.Post.unscoped().findOne({
+        sequelize.models.Post.unscoped()
+            .findOne({
             where: {
-                id: postId
+                id: postId,
             },
-            attributes: ['id', 'public_data', 'language']
-        }).then(async (post) => {
+            attributes: ["id", "public_data", "language"],
+        })
+            .then(async (post) => {
             if (post.public_data &&
                 post.public_data.structuredAnswersJson &&
                 post.public_data.structuredAnswersJson.length > 0) {
@@ -151,7 +233,8 @@ module.exports = (sequelize, DataTypes) => {
             else {
                 done(null, []);
             }
-        }).catch(error => {
+        })
+            .catch((error) => {
             done(error);
         });
     };
@@ -175,7 +258,8 @@ module.exports = (sequelize, DataTypes) => {
         else if (question.checkboxes && question.checkboxes.length > 0) {
             return AcTranslationCache.addSubOptionsElements(textStrings, combinedText, question.checkboxes);
         }
-        else if (question.dropdownOptions && question.dropdownOptions.length > 0) {
+        else if (question.dropdownOptions &&
+            question.dropdownOptions.length > 0) {
             return AcTranslationCache.addSubOptionsElements(textStrings, combinedText, question.dropdownOptions);
         }
     };
@@ -184,16 +268,18 @@ module.exports = (sequelize, DataTypes) => {
         targetLanguage = AcTranslationCache.fixUpLanguage(targetLanguage);
         sequelize.models.Group.findOne({
             where: {
-                id: groupId
+                id: groupId,
             },
-            attributes: ['id', 'configuration']
-        }).then(async (group) => {
+            attributes: ["id", "configuration"],
+        })
+            .then(async (group) => {
             if (group.configuration &&
                 group.configuration.registrationQuestionsJson &&
                 group.configuration.registrationQuestionsJson.length > 0) {
                 const textStrings = [];
                 let combinedText = "";
-                for (const question of group.configuration.registrationQuestionsJson) {
+                for (const question of group.configuration
+                    .registrationQuestionsJson) {
                     if (question.text) {
                         textStrings.push(question.text);
                         combinedText += question.text;
@@ -201,8 +287,11 @@ module.exports = (sequelize, DataTypes) => {
                     else {
                         textStrings.push("");
                     }
-                    if (question.type === "radios" || question.type === "checkboxes" || question.type === "dropdown") {
-                        combinedText = AcTranslationCache.addSubOptionsToTranslationStrings(textStrings, combinedText, question);
+                    if (question.type === "radios" ||
+                        question.type === "checkboxes" ||
+                        question.type === "dropdown") {
+                        combinedText =
+                            AcTranslationCache.addSubOptionsToTranslationStrings(textStrings, combinedText, question);
                     }
                 }
                 const contentHash = farmhash.hash32(combinedText).toString();
@@ -212,7 +301,8 @@ module.exports = (sequelize, DataTypes) => {
             else {
                 done(null, []);
             }
-        }).catch(error => {
+        })
+            .catch((error) => {
             done(error);
         });
     };
@@ -220,10 +310,11 @@ module.exports = (sequelize, DataTypes) => {
         targetLanguage = AcTranslationCache.fixUpLanguage(targetLanguage);
         sequelize.models.Group.findOne({
             where: {
-                id: groupId
+                id: groupId,
             },
-            attributes: ['id', 'configuration']
-        }).then(async (group) => {
+            attributes: ["id", "configuration"],
+        })
+            .then(async (group) => {
             if (group.configuration &&
                 group.configuration.structuredQuestionsJson &&
                 group.configuration.structuredQuestionsJson.length > 0) {
@@ -237,8 +328,11 @@ module.exports = (sequelize, DataTypes) => {
                     else {
                         textStrings.push("");
                     }
-                    if (question.type === "radios" || question.type === "checkboxes" || question.type === "dropdown") {
-                        combinedText = AcTranslationCache.addSubOptionsToTranslationStrings(textStrings, combinedText, question);
+                    if (question.type === "radios" ||
+                        question.type === "checkboxes" ||
+                        question.type === "dropdown") {
+                        combinedText =
+                            AcTranslationCache.addSubOptionsToTranslationStrings(textStrings, combinedText, question);
                     }
                 }
                 const contentHash = farmhash.hash32(combinedText).toString();
@@ -248,16 +342,18 @@ module.exports = (sequelize, DataTypes) => {
             else {
                 done(null, []);
             }
-        }).catch(error => {
+        })
+            .catch((error) => {
             done(error);
         });
     };
     AcTranslationCache.getSurveyTranslations = (indexKey, textStrings, targetLanguage, saveLanguageToModel, done) => {
         sequelize.models.AcTranslationCache.findOne({
             where: {
-                index_key: indexKey
-            }
-        }).then(async (translationModel) => {
+                index_key: indexKey,
+            },
+        })
+            .then(async (translationModel) => {
             if (translationModel) {
                 done(null, JSON.parse(translationModel.content));
             }
@@ -270,21 +366,30 @@ module.exports = (sequelize, DataTypes) => {
                         const content = JSON.stringify(translatedStrings);
                         sequelize.models.AcTranslationCache.create({
                             index_key: indexKey,
-                            content: content
-                        }).then((model) => {
-                            if (saveLanguageToModel && languageInfo.data && languageInfo.data.translations && languageInfo.data.translations.length > 0) {
-                                saveLanguageToModel.update({
-                                    language: languageInfo.data.translations[0].detectedSourceLanguage
-                                }).then(() => {
+                            content: content,
+                        })
+                            .then((model) => {
+                            if (saveLanguageToModel &&
+                                languageInfo.data &&
+                                languageInfo.data.translations &&
+                                languageInfo.data.translations.length > 0) {
+                                saveLanguageToModel
+                                    .update({
+                                    language: languageInfo.data.translations[0]
+                                        .detectedSourceLanguage,
+                                })
+                                    .then(() => {
                                     done(null, translatedStrings);
-                                }).catch(error => {
+                                })
+                                    .catch((error) => {
                                     done(error);
                                 });
                             }
                             else {
                                 done(null, translatedStrings);
                             }
-                        }).catch(error => {
+                        })
+                            .catch((error) => {
                             done(error);
                         });
                     }
@@ -296,7 +401,8 @@ module.exports = (sequelize, DataTypes) => {
                     done(error);
                 }
             }
-        }).catch(error => {
+        })
+            .catch((error) => {
             done(error);
         });
     };
@@ -308,7 +414,9 @@ module.exports = (sequelize, DataTypes) => {
             else {
                 const translateAPI = new Translate({
                     credentials: JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON),
-                    projectId: process.env.GOOGLE_TRANSLATE_PROJECT_ID ? process.env.GOOGLE_TRANSLATE_PROJECT_ID : undefined
+                    projectId: process.env.GOOGLE_TRANSLATE_PROJECT_ID
+                        ? process.env.GOOGLE_TRANSLATE_PROJECT_ID
+                        : undefined,
                 });
                 try {
                     // Split the texts into chunks of 128 or fewer
@@ -319,7 +427,8 @@ module.exports = (sequelize, DataTypes) => {
                         const chunk = textsToTranslate.slice(i, i + chunkSize);
                         const [translatedChunk, info] = await translateAPI.translate(chunk, targetLanguage);
                         translatedStrings.push(...translatedChunk);
-                        if (i === 0) { // Keep the language info from the first chunk
+                        if (i === 0) {
+                            // Keep the language info from the first chunk
                             languageInfo = info;
                         }
                     }
@@ -334,39 +443,51 @@ module.exports = (sequelize, DataTypes) => {
     AcTranslationCache.getTranslationFromGoogle = (textType, indexKey, contentToTranslate, targetLanguage, modelInstance, callback) => {
         const translateAPI = new Translate({
             credentials: JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON),
-            projectId: process.env.GOOGLE_TRANSLATE_PROJECT_ID ? process.env.GOOGLE_TRANSLATE_PROJECT_ID : undefined
+            projectId: process.env.GOOGLE_TRANSLATE_PROJECT_ID
+                ? process.env.GOOGLE_TRANSLATE_PROJECT_ID
+                : undefined,
         });
-        translateAPI.translate(contentToTranslate, targetLanguage)
+        translateAPI
+            .translate(contentToTranslate, targetLanguage)
             .then((results) => {
             const translationResults = results[1];
-            if (translationResults && translationResults.data
-                && translationResults.data.translations &&
+            if (translationResults &&
+                translationResults.data &&
+                translationResults.data.translations &&
                 translationResults.data.translations.length > 0) {
                 const translation = translationResults.data.translations[0];
                 sequelize.models.AcTranslationCache.create({
                     index_key: indexKey,
-                    content: translation.translatedText
-                }).then(() => {
-                    if (textType === 'postTranscriptContent' || textType === 'pointAdminCommentContent') {
-                        if (textType === 'postTranscriptContent') {
-                            modelInstance.set('public_data.transcript.language', translation.detectedSourceLanguage);
+                    content: translation.translatedText,
+                })
+                    .then(() => {
+                    if (textType === "postTranscriptContent" ||
+                        textType === "pointAdminCommentContent") {
+                        if (textType === "postTranscriptContent") {
+                            modelInstance.set("public_data.transcript.language", translation.detectedSourceLanguage);
                         }
                         else {
-                            modelInstance.set('public_data.admin_comment.language', translation.detectedSourceLanguage);
+                            modelInstance.set("public_data.admin_comment.language", translation.detectedSourceLanguage);
                         }
-                        modelInstance.save().then(() => {
+                        modelInstance
+                            .save()
+                            .then(() => {
                             callback(null, { content: translation.translatedText });
-                        }).catch(error => {
+                        })
+                            .catch((error) => {
                             callback(error);
                         });
                     }
                     else {
                         if (AcTranslationCache.allowedTextTypesForSettingLanguage.indexOf(textType) > -1) {
-                            modelInstance.update({
-                                language: translation.detectedSourceLanguage
-                            }).then(() => {
+                            modelInstance
+                                .update({
+                                language: translation.detectedSourceLanguage,
+                            })
+                                .then(() => {
                                 callback(null, { content: translation.translatedText });
-                            }).catch(error => {
+                            })
+                                .catch((error) => {
                                 callback(error);
                             });
                         }
@@ -374,31 +495,70 @@ module.exports = (sequelize, DataTypes) => {
                             callback(null, { content: translation.translatedText });
                         }
                     }
-                }).catch((error) => {
+                })
+                    .catch((error) => {
                     callback(error);
                 });
             }
             else {
                 callback("No translations");
             }
-        }).catch((error) => {
+        })
+            .catch((error) => {
             callback(error);
         });
     };
+    AcTranslationCache.getTranslationFromLlm = async (textType, indexKey, contentToTranslate, targetLanguage, modelInstance, callback) => {
+        const { YpLlmTranslation } = await Promise.resolve().then(() => __importStar(require("../llms/llmTranslation.js")));
+        const translation = new YpLlmTranslation();
+        if (textType === "aoiChoiceContent") {
+            const translatedTextData = translation.getChoiceTranslation(contentToTranslate.question, contentToTranslate.choice, targetLanguage);
+            sequelize.models.AcTranslationCache.create({
+                index_key: indexKey,
+                content: translatedTextData.translatedAnswer,
+            })
+                .then(() => {
+                callback(null, { content: translation.translatedAnswer });
+            })
+                .catch((error) => {
+                callback(error);
+            });
+        }
+        else if (textType === "aoiQuestionName") {
+            const translatedTextData = translation.getQuestionTranslation(question, targetLanguage);
+            sequelize.models.AcTranslationCache.create({
+                index_key: indexKey,
+                content: translatedTextData.translatedQuestion,
+            })
+                .then(() => {
+                callback(null, { content: translation.translatedQuestion });
+            })
+                .catch((error) => {
+                callback(error);
+            });
+        }
+        else {
+            callback("No translations");
+        }
+    };
     AcTranslationCache.fixUpLanguage = (targetLanguage) => {
-        targetLanguage = targetLanguage.replace('_', '-');
-        if (targetLanguage !== 'sr-latin' && targetLanguage !== 'zh-CN' && targetLanguage !== 'zh-TW') {
+        targetLanguage = targetLanguage.replace("_", "-");
+        if (targetLanguage !== "sr-latin" &&
+            targetLanguage !== "zh-CN" &&
+            targetLanguage !== "zh-TW") {
             targetLanguage = targetLanguage.split("-")[0];
         }
-        if (targetLanguage === 'sr-latin') {
-            targetLanguage = 'sr-Latn';
+        if (targetLanguage === "sr-latin") {
+            targetLanguage = "sr-Latn";
         }
         return targetLanguage;
     };
     AcTranslationCache.getTranslation = (req, modelInstance, callback) => {
         const contentToTranslate = sequelize.models.AcTranslationCache.getContentToTranslate(req, modelInstance);
-        if (contentToTranslate && contentToTranslate !== '' &&
-            contentToTranslate.length > 1 && isNaN(contentToTranslate)) {
+        if (contentToTranslate &&
+            contentToTranslate !== "" &&
+            contentToTranslate.length > 1 &&
+            isNaN(contentToTranslate)) {
             const contentHash = farmhash.hash32(contentToTranslate).toString();
             const textType = req.query.textType;
             let targetLanguage = req.query.targetLanguage;
@@ -406,30 +566,42 @@ module.exports = (sequelize, DataTypes) => {
             let indexKey = `${textType}-${modelInstance.id}-${targetLanguage}-${contentHash}`;
             sequelize.models.AcTranslationCache.findOne({
                 where: {
-                    index_key: indexKey
-                }
-            }).then((translationModel) => {
+                    index_key: indexKey,
+                },
+            })
+                .then((translationModel) => {
                 if (translationModel) {
                     callback(null, { content: translationModel.content });
                 }
                 else {
-                    sequelize.models.AcTranslationCache.getTranslationFromGoogle(textType, indexKey, contentToTranslate, targetLanguage, modelInstance, callback);
+                    if (["aoiChoiceContent", "aoiQuestionName"].includes(textType) &&
+                        modelInstance.language === targetLanguage) {
+                        sequelize.models.AcTranslationCache.getTranslationFromLlm(textType, indexKey, contentToTranslate, targetLanguage, modelInstance, callback);
+                    }
+                    else {
+                        sequelize.models.AcTranslationCache.getTranslationFromGoogle(textType, indexKey, contentToTranslate, targetLanguage, modelInstance, callback);
+                    }
                 }
-            }).catch((error) => {
+            })
+                .catch((error) => {
                 callback(error);
             });
         }
         else {
             log.warn("Empty or short string for translation", {
                 textType: req.query.textType,
-                targetLanguage: req.query.targetLanguage
+                targetLanguage: req.query.targetLanguage,
             });
-            if (!modelInstance.language) {
-                modelInstance.update({
-                    language: '??'
-                }).then(() => {
+            if (!modelInstance.language &&
+                !["aoiChoiceContent", "aoiQuestionName"].includes(req.query.textType)) {
+                modelInstance
+                    .update({
+                    language: "??",
+                })
+                    .then(() => {
                     callback(null, { content: contentToTranslate });
-                }).catch(error => {
+                })
+                    .catch((error) => {
                     callback(error);
                 });
             }

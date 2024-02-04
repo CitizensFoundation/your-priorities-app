@@ -45,6 +45,7 @@ interface AoiEarlData {
 interface AoiAnswerToVoteOnData {
   imageUrl?: string;
   content: string;
+  choiceId: number;
   isGeneratingImage?: boolean;
 }
 
@@ -162,4 +163,22 @@ interface AoiChoiceData {
 
 interface AoiConfigurationData {
   earl?: AoiEarlData;
+}
+
+interface AoiTranslationAnswerInData {
+  originalAnswer: string;
+  choiceId: number;
+}
+
+interface AoiTranslationAnswerOutData {
+  translatedAnswer: string;
+  choiceId: number;
+}
+
+interface AoiTranslationQuestionInData {
+  originalQuestion: string;
+}
+
+interface AoiTranslationQuestionOutData {
+  translatedQuestion: string;
 }

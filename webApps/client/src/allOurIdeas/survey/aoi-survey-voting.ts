@@ -19,6 +19,7 @@ import { Dialog } from "@material/web/dialog/internal/dialog.js";
 import { AoiNewIdeaDialog } from "./aoi-new-idea-dialog.js";
 import { YpFormattingHelpers } from "../../common/YpFormattingHelpers.js";
 import { AoiLlmExplainDialog } from "./aoi-llm-explain-dialog.js";
+import { YpGroup } from "../../yp-collection/yp-group.js";
 
 @customElement("aoi-survey-voting")
 export class AoiSurveyVoting extends YpBaseElement {
@@ -36,6 +37,9 @@ export class AoiSurveyVoting extends YpBaseElement {
 
   @property({ type: Number })
   promptId!: number;
+
+  @property({ type: Object })
+  group!: YpGroupData;
 
   @property({ type: Number })
   voteCount = 0;
@@ -264,6 +268,11 @@ export class AoiSurveyVoting extends YpBaseElement {
           );
         }
 
+        yp-magic-text {
+          min-width: 265px;
+        }
+
+
         .iconImage,
         .iconImageRight {
           width: 100px;
@@ -284,6 +293,7 @@ export class AoiSurveyVoting extends YpBaseElement {
         .buttonContainer md-elevated-button {
           margin: 8px;
           width: 400px;
+          max-width: 400px;
           max-height: 120px;
           height: 120px;
           white-space: collapse balance;
@@ -500,12 +510,24 @@ export class AoiSurveyVoting extends YpBaseElement {
   }
 
   override render() {
+    console.error(`Rendering voting $ {this.question?.id}`);
     return html`
       <div
         class="topContainer layout vertical wrap center-center"
         tabindex="-1"
       >
-        <div class="questionTitle">${this.question.name}</div>
+        <div class="questionTitle">
+          <yp-magic-text
+            id="answerText"
+            .contentId="${this.groupId}"
+            .extraId="${this.question?.id}"
+            text-only
+            truncate="140"
+            .content="${this.question.name}"
+            .contentLanguage="${this.group.language}"
+            textType="aoiQuestionName"
+          ></yp-magic-text>
+        </div>
         <div
           class="buttonContainer layout ${this.breakForVertical
             ? "vertical"
@@ -539,11 +561,16 @@ export class AoiSurveyVoting extends YpBaseElement {
                   />
                 `
               : nothing}
-            ${YpFormattingHelpers.truncate(
-              this.leftAnswer!.content ||
-                (this.leftAnswer as any),
-              140
-            )}
+              <yp-magic-text
+                id="leftAnswerText"
+                .contentId="${this.groupId}"
+                .extraId="${this.leftAnswer?.choiceId}"
+                text-only
+                truncate="140"
+                .content="${this.leftAnswer?.content}"
+                .contentLanguage="${this.group.language}"
+                textType="aoiChoiceContent"
+              ></yp-magic-text>
           </md-elevated-button>
           <span class="or"> ${this.t("or")} </span>
           ${this.spinnersActive
@@ -574,10 +601,16 @@ export class AoiSurveyVoting extends YpBaseElement {
                   />
                 `
               : nothing}
-            ${YpFormattingHelpers.truncate(
-              this.rightAnswer?.content || (this.rightAnswer as any),
-              140
-            )}
+               <yp-magic-text
+                id="rightAnswerText"
+                .contentId="${this.groupId}"
+                .extraId="${this.rightAnswer?.choiceId}"
+                text-only
+                truncate="140"
+                .content="${this.rightAnswer?.content}"
+                .contentLanguage="${this.group.language}"
+                textType="aoiChoiceContent"
+              ></yp-magic-text>
           </md-elevated-button>
         </div>
         <div class="layout horizontal">

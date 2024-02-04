@@ -1,17 +1,19 @@
-import { html, css, nothing } from 'lit';
-import { property, customElement } from 'lit/decorators.js';
+import { html, css, nothing } from "lit";
+import { property, customElement } from "lit/decorators.js";
 
-import { ifDefined } from 'lit/directives/if-defined.js';
-import { unsafeHTML } from 'lit/directives/unsafe-html.js';
+import { ifDefined } from "lit/directives/if-defined.js";
+import { unsafeHTML } from "lit/directives/unsafe-html.js";
 
-import * as linkify from 'linkifyjs';
-import linkifyHtml from 'linkify-html';
+import * as linkify from "linkifyjs";
+import linkifyHtml from "linkify-html";
 
-import { YpBaseElement } from '../common/yp-base-element.js';
+import { YpBaseElement } from "../common/yp-base-element.js";
 
-import { twemoji } from '@kano/twemoji/index.es.js';
+import { twemoji } from "@kano/twemoji/index.es.js";
 
-@customElement('yp-magic-text')
+import '@material/web/progress/linear-progress.js';
+
+@customElement("yp-magic-text")
 export class YpMagicText extends YpBaseElement {
   @property({ type: String })
   content: string | undefined;
@@ -67,6 +69,9 @@ export class YpMagicText extends YpBaseElement {
   @property({ type: Boolean })
   removeUrls = false;
 
+  @property({ type: Boolean })
+  isFetchingTranslation = false;
+
   @property({ type: String })
   structuredQuestionsConfig: string | undefined;
 
@@ -79,7 +84,7 @@ export class YpMagicText extends YpBaseElement {
   override connectedCallback() {
     super.connectedCallback();
     this.addGlobalListener(
-      'yp-auto-translate',
+      "yp-auto-translate",
       this._autoTranslateEvent.bind(this)
     );
   }
@@ -87,7 +92,7 @@ export class YpMagicText extends YpBaseElement {
   override disconnectedCallback() {
     super.disconnectedCallback();
     this.removeGlobalListener(
-      'yp-auto-translate',
+      "yp-auto-translate",
       this._autoTranslateEvent.bind(this)
     );
   }
@@ -123,38 +128,43 @@ export class YpMagicText extends YpBaseElement {
   override render() {
     return html`
       <div
-        class="container layout-center-center layout-vertical"
+        class="container layout vertical center-center"
         ?rlt="${this.rtl}"
         ?more-text="${this.showMoreText}"
       >
-        <!-- add max-width for IE11 -->
-
-        ${this.finalContent
-          ? html` <div>${unsafeHTML(this.finalContent)}</div> `
-          : html` <div>${this.truncatedContent}</div> `}
-        ${this.showMoreText && this.moreText
-          ? html`
-              <md-outlined-button
-                class="moreText"
-                @click="${this._openFullScreen}"
-                .label="${this.moreText}"
-              ></md-outlined-button>
-            `
-          : nothing}
+        ${
+          this.finalContent
+            ? html` <div>${unsafeHTML(this.finalContent)}</div> `
+            : html` <div>${this.truncatedContent}</div> `
+        }
+        ${
+          this.showMoreText && this.moreText
+            ? html`
+                <md-outlined-button
+                  class="moreText"
+                  @click="${this._openFullScreen}"
+                  .label="${this.moreText}"
+                ></md-outlined-button>
+              `
+            : nothing
+        }
+        <md-linear-progress indeterminate ?hidden="${
+          this.isFetchingTranslation
+        }></md-linear-progress>
       </div>
     `;
   }
 
   static get doubleWidthLanguages() {
-    return ['zh_TW', 'hy'];
+    return ["zh_TW", "hy"];
   }
 
   static get cyrillicLanguages() {
-    return ['ru', 'ky'];
+    return ["ru", "ky"];
   }
 
   static get widerLanguages() {
-    return ['uk', 'ky', 'uz', 'ru', 'sr', 'zh_TW', 'hy', 'bg'];
+    return ["uk", "ky", "uz", "ru", "sr", "zh_TW", "hy", "bg"];
   }
 
   get showMoreText(): boolean {
@@ -176,7 +186,7 @@ export class YpMagicText extends YpBaseElement {
   _openFullScreen() {
     //TODO: Fix ts type
     window.appDialogs.getDialogAsync(
-      'magicTextDialog',
+      "magicTextDialog",
       (dialog: {
         open: (
           arg0: string | undefined,
@@ -209,10 +219,12 @@ export class YpMagicText extends YpBaseElement {
     // For sub classes
   }
 
-  override updated(changedProperties: Map<string | number | symbol, unknown>): void {
+  override updated(
+    changedProperties: Map<string | number | symbol, unknown>
+  ): void {
     super.updated(changedProperties);
-    if (changedProperties.has('content')) {
-      if (this.content && this.content !== '') {
+    if (changedProperties.has("content")) {
+      if (this.content && this.content !== "") {
         this.finalContent = undefined;
         if (window.appGlobals.autoTranslate) {
           this.autoTranslate = window.appGlobals.autoTranslate;
@@ -268,84 +280,90 @@ export class YpMagicText extends YpBaseElement {
         let url;
 
         switch (this.textType) {
-          case 'postName':
-          case 'postContent':
-          case 'postTags':
-          case 'postTranscriptContent':
-            url = '/api/posts/' + this.contentId + '/translatedText';
+          case "postName":
+          case "postContent":
+          case "postTags":
+          case "postTranscriptContent":
+            url = "/api/posts/" + this.contentId + "/translatedText";
             break;
-          case 'pointContent':
-          case 'pointAdminCommentContent':
-            url = '/api/points/' + this.contentId + '/translatedText';
+          case "pointContent":
+          case "pointAdminCommentContent":
+            url = "/api/points/" + this.contentId + "/translatedText";
             break;
-          case 'domainName':
-          case 'domainContent':
-            url = '/api/domains/' + this.contentId + '/translatedText';
+          case "domainName":
+          case "domainContent":
+            url = "/api/domains/" + this.contentId + "/translatedText";
             break;
-          case 'customRatingName':
+          case "customRatingName":
             url =
-              '/api/ratings/' +
+              "/api/ratings/" +
               this.contentId +
-              '/' +
+              "/" +
               this.extraId +
-              '/translatedText';
+              "/translatedText";
             break;
-          case 'communityName':
-          case 'communityContent':
-            url = '/api/communities/' + this.contentId + '/translatedText';
+          case "communityName":
+          case "communityContent":
+            url = "/api/communities/" + this.contentId + "/translatedText";
             break;
-          case 'alternativeTextForNewIdeaButton':
-          case 'alternativeTextForNewIdeaButtonClosed':
-          case 'alternativeTextForNewIdeaButtonHeader':
-          case 'alternativeTextForNewIdeaSaveButton':
-          case 'customThankYouTextNewPosts':
-          case 'customTitleQuestionText':
-          case 'alternativePointForHeader':
-          case 'customAdminCommentsTitle':
-          case 'alternativePointAgainstHeader':
-          case 'urlToReviewActionText':
-          case 'alternativePointForLabel':
-          case 'alternativePointAgainstLabel':
-          case 'groupName':
-          case 'groupContent':
-            url = '/api/groups/' + this.contentId + '/translatedText';
+          case "aoiQuestionName":
+          case "aoiChoiceContent":
+              url = "/api/allOurIdeas/" + this.contentId + "/content/" + this.extraId + "/translatedText";
+              break;
+          case "alternativeTextForNewIdeaButton":
+          case "alternativeTextForNewIdeaButtonClosed":
+          case "alternativeTextForNewIdeaButtonHeader":
+          case "alternativeTextForNewIdeaSaveButton":
+          case "customThankYouTextNewPosts":
+          case "customTitleQuestionText":
+          case "alternativePointForHeader":
+          case "customAdminCommentsTitle":
+          case "alternativePointAgainstHeader":
+          case "urlToReviewActionText":
+          case "alternativePointForLabel":
+          case "alternativePointAgainstLabel":
+          case "groupName":
+          case "groupContent":
+            url = "/api/groups/" + this.contentId + "/translatedText";
             break;
-          case 'categoryName':
-            url = '/api/categories/' + this.contentId + '/translatedText';
+          case "categoryName":
+            url = "/api/categories/" + this.contentId + "/translatedText";
             break;
-          case 'statusChangeContent':
+          case "statusChangeContent":
             url =
-              '/api/posts/' +
+              "/api/posts/" +
               this.extraId +
-              '/' +
+              "/" +
               this.contentId +
-              '/translatedStatusText';
+              "/translatedStatusText";
             break;
           default:
             console.error(
-              'No valid textType for magic text to translate: ' + this.textType
+              "No valid textType for magic text to translate: " + this.textType
             );
             return;
         }
 
         url = `${url}?textType=${this.textType}&contentId=${this.contentId}&targetLanguage=${this.language}`;
-
+        this.isFetchingTranslation = true;
         const translation = (await window.serverApi.getTranslation(url)) as
           | YpTranslationTextData
           | undefined;
+
+        this.isFetchingTranslation = false;
 
         this.processedContent = translation?.content;
 
         if (this.processedContent) {
           window.appGlobals.cache.autoTranslateCache[this.indexKey] =
             this.processedContent;
-          this.fire('new-translation');
+          this.fire("new-translation");
         } else {
-          console.error('No content from translation');
+          console.error("No content from translation");
         }
         this._finalize();
       } else {
-        console.error('No content id for: ' + this.textType);
+        console.error("No content id for: " + this.textType);
         this._finalize();
       }
     }
@@ -358,7 +376,7 @@ export class YpMagicText extends YpBaseElement {
         this.autoTranslate &&
         this.language !== this.contentLanguage &&
         !this.disableTranslation &&
-        this.contentLanguage !== '??'
+        this.contentLanguage !== "??"
       ) {
         this._startTranslationAndFinalize();
       } else {
@@ -380,21 +398,21 @@ export class YpMagicText extends YpBaseElement {
         // TODO: setup json display
       } else {
         const structuredQuestions = [];
-        const questionComponents = this.structuredQuestionsConfig.split(',');
+        const questionComponents = this.structuredQuestionsConfig.split(",");
         if (questionComponents && questionComponents.length > 1) {
           for (let i = 0; i < questionComponents.length; i += 2) {
             structuredQuestions.push(questionComponents[i]);
           }
           const regEx = new RegExp(
-            '(' + structuredQuestions.join('|') + ')',
-            'ig'
+            "(" + structuredQuestions.join("|") + ")",
+            "ig"
           );
           this.processedContent = this.processedContent?.replace(
             regEx,
-            '<b>$1</b>'
+            "<b>$1</b>"
           );
         } else {
-          console.warn('Not questions for structuredQuestionsConfig');
+          console.warn("Not questions for structuredQuestionsConfig");
         }
       }
     }
@@ -421,20 +439,20 @@ export class YpMagicText extends YpBaseElement {
         this.processedContent = YpMagicText.truncateText(
           YpMagicText.trim(this.processedContent),
           truncateBy,
-          '...'
+          "..."
         );
     }
 
     if (this.simpleFormat && this.processedContent) {
       this.processedContent = this.processedContent
         .trim()
-        .replace(/(\n)/g, '<br>');
+        .replace(/(\n)/g, "<br>");
     }
 
     if (this.removeUrls && this.processedContent) {
       this.processedContent = this.processedContent.replace(
         /(?:https?|ftp):\/\/[\n\S]+/g,
-        ''
+        ""
       );
     }
 
@@ -457,7 +475,7 @@ export class YpMagicText extends YpBaseElement {
 
     if (
       this.processedContent &&
-      this.processedContent !== 'undefined' &&
+      this.processedContent !== "undefined" &&
       this.content !== this.processedContent
     ) {
       this.finalContent = this.processedContent;
@@ -469,16 +487,16 @@ export class YpMagicText extends YpBaseElement {
   _linksAndEmojis() {
     if (!this.skipSanitize && this.processedContent) {
       //this.processedContent = sanitizeHtml(this.processedContent, {allowedTags: ['b', 'i', 'em', 'strong']});
-      this.processedContent = this.processedContent.replace(/&amp;/g, '&');
+      this.processedContent = this.processedContent.replace(/&amp;/g, "&");
       this.processedContent = linkifyHtml(this.processedContent, {
         format: (value: string, type: string) => {
-          if (type === 'url' && value.length > this.linkifyCutoff - 1) {
-            value = value.slice(0, this.linkifyCutoff) + '…';
+          if (type === "url" && value.length > this.linkifyCutoff - 1) {
+            value = value.slice(0, this.linkifyCutoff) + "…";
           }
           return value;
         },
       }) as string;
-      this.processedContent = this.processedContent.replace(/&amp;/g, '&');
+      this.processedContent = this.processedContent.replace(/&amp;/g, "&");
       this.processedContent = twemoji
         .parse(this.processedContent)
         .replace(/&amp;quot;/g, '"')
@@ -489,13 +507,13 @@ export class YpMagicText extends YpBaseElement {
     } else if (this.processedContent) {
       this.processedContent = linkifyHtml(this.processedContent, {
         format: (value: string, type: string) => {
-          if (type === 'url' && value.length > this.linkifyCutoff - 1) {
-            value = value.slice(0, this.linkifyCutoff) + '…';
+          if (type === "url" && value.length > this.linkifyCutoff - 1) {
+            value = value.slice(0, this.linkifyCutoff) + "…";
           }
           return value;
         },
       }) as string;
-      this.processedContent = this.processedContent.replace(/&amp;/g, '&');
+      this.processedContent = this.processedContent.replace(/&amp;/g, "&");
     }
   }
 
@@ -512,7 +530,7 @@ export class YpMagicText extends YpBaseElement {
     if (killwords) {
       input = input.substring(0, length);
     } else {
-      let idx = input.lastIndexOf(' ', length);
+      let idx = input.lastIndexOf(" ", length);
       if (idx === -1) {
         idx = length;
       }
@@ -520,11 +538,11 @@ export class YpMagicText extends YpBaseElement {
       input = input.substring(0, idx);
     }
 
-    input += end !== undefined && end !== null ? end : '...';
+    input += end !== undefined && end !== null ? end : "...";
     return input;
   }
 
   static trim(input: string): string {
-    return input.replace(/^\s*|\s*$/g, '').trim();
+    return input.replace(/^\s*|\s*$/g, "").trim();
   }
 }

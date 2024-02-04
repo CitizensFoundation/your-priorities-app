@@ -490,6 +490,7 @@ export class AoiSurvey extends YpBaseElement  {
           return cache(html`<aoi-survey-voting
             .earl="${this.earl}"
             .groupId="${this.collectionId!}"
+            .group="${this.collection as YpGroupData}"
             .question="${this.question}"
             .leftAnswer="${this.currentLeftAnswer}"
             .rightAnswer="${this.currentRightAnswer}"

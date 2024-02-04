@@ -91,7 +91,7 @@ export class YpPostTags extends YpBaseElement {
         content="${ifDefined(this.post.public_data?.tags)}"
         content-language="${ifDefined(this.post.language)}"
         @new-translation="${this._newTranslation}"
-        text-type="postTags"
+        textType="postTags"
       >
       </yp-magic-text>
     `;

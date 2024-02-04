@@ -14,7 +14,6 @@ import "@material/web/progress/circular-progress.js";
 import "./aoi-new-idea-dialog.js";
 import "./aoi-llm-explain-dialog.js";
 import { SharedStyles } from "./SharedStyles.js";
-import { YpFormattingHelpers } from "../../common/YpFormattingHelpers.js";
 let AoiSurveyVoting = class AoiSurveyVoting extends YpBaseElement {
     constructor() {
         super();
@@ -159,6 +158,11 @@ let AoiSurveyVoting = class AoiSurveyVoting extends YpBaseElement {
           );
         }
 
+        yp-magic-text {
+          min-width: 265px;
+        }
+
+
         .iconImage,
         .iconImageRight {
           width: 100px;
@@ -179,6 +183,7 @@ let AoiSurveyVoting = class AoiSurveyVoting extends YpBaseElement {
         .buttonContainer md-elevated-button {
           margin: 8px;
           width: 400px;
+          max-width: 400px;
           max-height: 120px;
           height: 120px;
           white-space: collapse balance;
@@ -385,12 +390,24 @@ let AoiSurveyVoting = class AoiSurveyVoting extends YpBaseElement {
         }
     }
     render() {
+        console.error(`Rendering voting $ {this.question?.id}`);
         return html `
       <div
         class="topContainer layout vertical wrap center-center"
         tabindex="-1"
       >
-        <div class="questionTitle">${this.question.name}</div>
+        <div class="questionTitle">
+          <yp-magic-text
+            id="answerText"
+            .contentId="${this.groupId}"
+            .extraId="${this.question?.id}"
+            text-only
+            truncate="140"
+            .content="${this.question.name}"
+            .contentLanguage="${this.group.language}"
+            textType="aoiQuestionName"
+          ></yp-magic-text>
+        </div>
         <div
           class="buttonContainer layout ${this.breakForVertical
             ? "vertical"
@@ -424,8 +441,16 @@ let AoiSurveyVoting = class AoiSurveyVoting extends YpBaseElement {
                   />
                 `
             : nothing}
-            ${YpFormattingHelpers.truncate(this.leftAnswer.content ||
-            this.leftAnswer, 140)}
+              <yp-magic-text
+                id="leftAnswerText"
+                .contentId="${this.groupId}"
+                .extraId="${this.leftAnswer?.choiceId}"
+                text-only
+                truncate="140"
+                .content="${this.leftAnswer?.content}"
+                .contentLanguage="${this.group.language}"
+                textType="aoiChoiceContent"
+              ></yp-magic-text>
           </md-elevated-button>
           <span class="or"> ${this.t("or")} </span>
           ${this.spinnersActive
@@ -456,7 +481,16 @@ let AoiSurveyVoting = class AoiSurveyVoting extends YpBaseElement {
                   />
                 `
             : nothing}
-            ${YpFormattingHelpers.truncate(this.rightAnswer?.content || this.rightAnswer, 140)}
+               <yp-magic-text
+                id="rightAnswerText"
+                .contentId="${this.groupId}"
+                .extraId="${this.rightAnswer?.choiceId}"
+                text-only
+                truncate="140"
+                .content="${this.rightAnswer?.content}"
+                .contentLanguage="${this.group.language}"
+                textType="aoiChoiceContent"
+              ></yp-magic-text>
           </md-elevated-button>
         </div>
         <div class="layout horizontal">
@@ -527,6 +561,9 @@ __decorate([
 __decorate([
     property({ type: Number })
 ], AoiSurveyVoting.prototype, "promptId", void 0);
+__decorate([
+    property({ type: Object })
+], AoiSurveyVoting.prototype, "group", void 0);
 __decorate([
     property({ type: Number })
 ], AoiSurveyVoting.prototype, "voteCount", void 0);

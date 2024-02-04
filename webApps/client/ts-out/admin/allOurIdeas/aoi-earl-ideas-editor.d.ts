@@ -22,6 +22,7 @@ export declare class AoiEarlIdeasEditor extends YpStreamingLlmBase {
     isSubmittingIdeas: boolean;
     isTogglingIdeaActive: number | undefined;
     isFetchingChoices: boolean;
+    group: YpGroupData;
     aiStyleInputElement: MdOutlinedTextField | undefined;
     currentIdeasFilter: "latest" | "highestScore" | "activeDeactive";
     answersElement: MdFilledTextField;
