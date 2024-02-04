@@ -42,12 +42,35 @@ export class YpAdminConfigBase extends YpAdminPage {
         this.hasAudioUpload = false;
         this.descriptionMaxLength = 300;
         this.tabsHidden = false;
+        this.gettingImageColor = false;
     }
     async _formResponse(event) {
         this.configChanged = false;
     }
     _selectTab(event) {
         this.selectedTab = event.target.activeTabIndex;
+    }
+    async imageLoaded(event) {
+        try {
+            this.gettingImageColor = true;
+            let ypImageUrl = this.ypImageUrl;
+            const imageYp = event.detail.imageYp;
+            const imgObj = new Image();
+            imgObj.src = ypImageUrl + "?" + new Date().getTime();
+            imgObj.setAttribute("crossOrigin", "");
+            await imgObj.decode();
+            const newThemeColor = await imageYp.getThemeColorsFromImage(imgObj);
+            this.gettingImageColor = false;
+            console.error("New theme color", newThemeColor);
+            if (newThemeColor) {
+                this.fireGlobal("yp-theme-color-detected", newThemeColor);
+                this.detectedThemeColor = newThemeColor;
+                this._configChanged();
+            }
+        }
+        catch (error) {
+            console.log(error);
+        }
     }
     _updateCollection(event) {
         this.collection = event.detail;
@@ -297,6 +320,22 @@ export class YpAdminConfigBase extends YpAdminPage {
           sizing="contain"
           src="${YpMediaHelpers.getImageFormatUrl(this.currentLogoImages)}"
         ></yp-image>
+      `;
+        }
+        else if (this.ypImageUrl) {
+            return html `
+        <div class="layout vertical">
+          <yp-image
+            class="mainImage"
+            @loaded="${this.imageLoaded}"
+            sizing="contain"
+            .skipCloudFlare="${true}"
+            .src="${this.ypImageUrl}"
+          ></yp-image>
+          ${this.gettingImageColor
+                ? html ` <md-linear-progress indeterminate></md-linear-progress> `
+                : nothing}
+        </div>
       `;
         }
         else {
@@ -805,4 +844,13 @@ __decorate([
 __decorate([
     query("#description")
 ], YpAdminConfigBase.prototype, "descriptionInput", void 0);
+__decorate([
+    property({ type: Boolean })
+], YpAdminConfigBase.prototype, "gettingImageColor", void 0);
+__decorate([
+    property({ type: String })
+], YpAdminConfigBase.prototype, "ypImageUrl", void 0);
+__decorate([
+    property({ type: String })
+], YpAdminConfigBase.prototype, "detectedThemeColor", void 0);
 //# sourceMappingURL=yp-admin-config-base.js.map

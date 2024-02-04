@@ -16,6 +16,6 @@ export declare class PlausibleRealtime extends PlausibleBaseElementWithState {
     updated(changedProperties: Map<string | number | symbol, unknown>): void;
     static get styles(): import("lit").CSSResult[];
     render(): import("lit-html").TemplateResult<1>;
-    renderConversions(): import("lit-html").TemplateResult<1> | typeof nothing;
+    renderConversions(): typeof nothing | import("lit-html").TemplateResult<1>;
 }
 //# sourceMappingURL=pl-realtime.d.ts.map

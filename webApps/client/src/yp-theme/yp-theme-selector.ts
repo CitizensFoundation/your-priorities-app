@@ -129,6 +129,8 @@ export class YpThemeSelector extends YpBaseElement {
       this.themeNeutralVariantColor =
         this.themeConfiguration.neutralVariantColor;
     }
+
+    this.addGlobalListener("yp-theme-color-detected", this.themeColorDetected);
   }
 
   override updated(changedProperties: Map<string | number | symbol, unknown>) {

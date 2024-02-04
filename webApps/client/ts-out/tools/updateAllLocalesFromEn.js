@@ -44,7 +44,8 @@ export class YpLocaleTranslation {
                         this.setValueAtPath(translation, key, translations[index]);
                     }
                 });
-                //await writeFilePromise(translationFilePath, JSON.stringify(translation, null, 2));
+                console.log(`Updated translation for ${localeDir}:`, translation);
+                await writeFilePromise(translationFilePath, JSON.stringify(translation, null, 2));
             }
         }
     }

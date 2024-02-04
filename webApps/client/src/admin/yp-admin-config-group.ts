@@ -101,20 +101,11 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
   @property({ type: String })
   groupAccess: YpGroupAccessTypes = "open_to_community";
 
-  @property({ type: Boolean })
-  gettingImageColor = false;
-
-  @property({ type: String })
-  ypImageUrl: string | undefined;
-
   @property({ type: Number })
   groupTypeIndex = 1;
 
   @property({ type: Object })
   group: YpGroupData;
-
-  @property({ type: String })
-  detectedThemeColor: string | undefined;
 
   isDataVisualizationGroup: any;
   dataForVisualizationJsonError: any;
@@ -172,32 +163,6 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
     ];
   }
 
-  async imageLoaded(event: CustomEvent) {
-    debugger;
-    try {
-      this.gettingImageColor = true;
-
-      let ypImageUrl = this.ypImageUrl;
-
-      const imageYp = event.detail.imageYp as YpImage;
-
-      const imgObj = new Image();
-      imgObj.src = ypImageUrl + "?" + new Date().getTime();
-      imgObj.setAttribute("crossOrigin", "");
-      await imgObj.decode();
-
-      const newThemeColor = await imageYp.getThemeColorsFromImage(imgObj);
-      this.gettingImageColor = false;
-      debugger;
-      if (newThemeColor) {
-        this.fireGlobal("yp-theme-color", newThemeColor);
-        this.detectedThemeColor = newThemeColor;
-        this._configChanged();
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
 
   _setGroupType(event: CustomEvent) {
     const index = (event.target as MdOutlinedSelect).selectedIndex;
@@ -244,27 +209,6 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
           />
         `
       : nothing;
-  }
-
-  renderImage() {
-    const ypImage = this.ypImageUrl;
-
-    return html`
-      <div class="layout horizontal center center" hidden>
-        <div class="layout vertical">
-          <yp-image
-            class="mainImage"
-            @loaded="${this.imageLoaded}"
-            sizing="contain"
-            .skipCloudFlare="${true}"
-            .src="${ypImage}"
-          ></yp-image>
-          ${this.gettingImageColor
-            ? html` <md-linear-progress indeterminate></md-linear-progress> `
-            : nothing}
-        </div>
-      </div>
-    `;
   }
 
   getAccessTokenName() {

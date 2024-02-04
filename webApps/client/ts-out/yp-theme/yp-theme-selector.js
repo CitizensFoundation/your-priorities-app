@@ -99,6 +99,7 @@ let YpThemeSelector = class YpThemeSelector extends YpBaseElement {
             this.themeNeutralVariantColor =
                 this.themeConfiguration.neutralVariantColor;
         }
+        this.addGlobalListener("yp-theme-color-detected", this.themeColorDetected);
     }
     updated(changedProperties) {
         let shouldUpdateConfiguration = false;

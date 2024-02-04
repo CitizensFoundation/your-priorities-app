@@ -63,7 +63,6 @@ let YpAdminConfigGroup = class YpAdminConfigGroup extends YpAdminConfigBase {
     constructor() {
         super();
         this.groupAccess = "open_to_community";
-        this.gettingImageColor = false;
         this.groupTypeIndex = 1;
         this.endorsementButtonsDisabled = false;
         this.questionNameHasChanged = false;
@@ -109,29 +108,6 @@ let YpAdminConfigGroup = class YpAdminConfigGroup extends YpAdminConfigBase {
       `,
         ];
     }
-    async imageLoaded(event) {
-        debugger;
-        try {
-            this.gettingImageColor = true;
-            let ypImageUrl = this.ypImageUrl;
-            const imageYp = event.detail.imageYp;
-            const imgObj = new Image();
-            imgObj.src = ypImageUrl + "?" + new Date().getTime();
-            imgObj.setAttribute("crossOrigin", "");
-            await imgObj.decode();
-            const newThemeColor = await imageYp.getThemeColorsFromImage(imgObj);
-            this.gettingImageColor = false;
-            debugger;
-            if (newThemeColor) {
-                this.fireGlobal("yp-theme-color", newThemeColor);
-                this.detectedThemeColor = newThemeColor;
-                this._configChanged();
-            }
-        }
-        catch (error) {
-            console.log(error);
-        }
-    }
     _setGroupType(event) {
         const index = event.target.selectedIndex;
         this.groupTypeIndex = index;
@@ -173,25 +149,6 @@ let YpAdminConfigGroup = class YpAdminConfigGroup extends YpAdminConfigBase {
           />
         `
             : nothing;
-    }
-    renderImage() {
-        const ypImage = this.ypImageUrl;
-        return html `
-      <div class="layout horizontal center center" hidden>
-        <div class="layout vertical">
-          <yp-image
-            class="mainImage"
-            @loaded="${this.imageLoaded}"
-            sizing="contain"
-            .skipCloudFlare="${true}"
-            .src="${ypImage}"
-          ></yp-image>
-          ${this.gettingImageColor
-            ? html ` <md-linear-progress indeterminate></md-linear-progress> `
-            : nothing}
-        </div>
-      </div>
-    `;
     }
     getAccessTokenName() {
         if (this.groupAccess == "open_to_community") {
@@ -1795,20 +1752,11 @@ __decorate([
     property({ type: String })
 ], YpAdminConfigGroup.prototype, "groupAccess", void 0);
 __decorate([
-    property({ type: Boolean })
-], YpAdminConfigGroup.prototype, "gettingImageColor", void 0);
-__decorate([
-    property({ type: String })
-], YpAdminConfigGroup.prototype, "ypImageUrl", void 0);
-__decorate([
     property({ type: Number })
 ], YpAdminConfigGroup.prototype, "groupTypeIndex", void 0);
 __decorate([
     property({ type: Object })
 ], YpAdminConfigGroup.prototype, "group", void 0);
-__decorate([
-    property({ type: String })
-], YpAdminConfigGroup.prototype, "detectedThemeColor", void 0);
 YpAdminConfigGroup = __decorate([
     customElement("yp-admin-config-group")
 ], YpAdminConfigGroup);

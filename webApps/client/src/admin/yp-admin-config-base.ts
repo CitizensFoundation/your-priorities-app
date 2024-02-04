@@ -26,6 +26,7 @@ import { unsafeHTML } from "lit/directives/unsafe-html.js";
 import { ifDefined } from "lit/directives/if-defined.js";
 import { YpCollectionHelpers } from "../common/YpCollectionHelpers.js";
 import { YpGenerateAiImage } from "../common/yp-generate-ai-image.js";
+import { YpImage } from "../common/yp-image.js";
 
 export const defaultLtpPromptsConfiguration = () => {
   return Object.fromEntries(Array.from({ length: 10 }, (_, i) => [i + 1, ""]));
@@ -113,6 +114,15 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
 
   @query("#description")
   descriptionInput!: HTMLInputElement;
+  @property({ type: Boolean })
+
+  gettingImageColor = false;
+
+  @property({ type: String })
+  ypImageUrl: string | undefined;
+
+  @property({ type: String })
+  detectedThemeColor: string | undefined;
 
   constructor() {
     super();
@@ -130,6 +140,33 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
 
   _selectTab(event: CustomEvent) {
     this.selectedTab = (event.target as MdTabs).activeTabIndex;
+  }
+
+  async imageLoaded(event: CustomEvent) {
+    try {
+      this.gettingImageColor = true;
+
+      let ypImageUrl = this.ypImageUrl;
+
+      const imageYp = event.detail.imageYp as YpImage;
+
+      const imgObj = new Image();
+      imgObj.src = ypImageUrl + "?" + new Date().getTime();
+      imgObj.setAttribute("crossOrigin", "");
+      await imgObj.decode();
+
+      const newThemeColor = await imageYp.getThemeColorsFromImage(imgObj);
+      this.gettingImageColor = false;
+      console.error("New theme color", newThemeColor);
+
+      if (newThemeColor) {
+        this.fireGlobal("yp-theme-color-detected", newThemeColor);
+        this.detectedThemeColor = newThemeColor;
+        this._configChanged();
+      }
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   _updateCollection(event: CustomEvent) {
@@ -401,6 +438,21 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
           src="${YpMediaHelpers.getImageFormatUrl(this.currentLogoImages)}"
         ></yp-image>
       `;
+    } else if (this.ypImageUrl) {
+      return html`
+        <div class="layout vertical">
+          <yp-image
+            class="mainImage"
+            @loaded="${this.imageLoaded}"
+            sizing="contain"
+            .skipCloudFlare="${true}"
+            .src="${this.ypImageUrl}"
+          ></yp-image>
+          ${this.gettingImageColor
+            ? html` <md-linear-progress indeterminate></md-linear-progress> `
+            : nothing}
+        </div>
+      `;
     } else {
       return html`
         <yp-image
@@ -411,6 +463,8 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
       `;
     }
   }
+
+
 
   renderLogoMedia() {
     return html`
