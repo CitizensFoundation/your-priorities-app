@@ -719,10 +719,11 @@ let YpApp = class YpApp extends YpBaseElement {
     _refreshDomain() {
         this._refreshByName("#domainPage");
     }
-    _refreshByName(id) {
+    async _refreshByName(id) {
         const el = this.$$(id);
         if (el) {
-            el.getCollection();
+            await el.getCollection();
+            el.refresh();
         }
     }
     _closeRightDrawer() {

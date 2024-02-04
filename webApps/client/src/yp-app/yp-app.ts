@@ -976,10 +976,11 @@ export class YpApp extends YpBaseElement {
     this._refreshByName("#domainPage");
   }
 
-  _refreshByName(id: string) {
+  async _refreshByName(id: string) {
     const el = this.$$(id) as YpCollection;
     if (el) {
-      el.getCollection();
+      await el.getCollection();
+      el.refresh();
     }
   }
 

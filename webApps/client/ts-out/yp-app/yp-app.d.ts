@@ -132,7 +132,7 @@ export declare class YpApp extends YpBaseElement {
     _refreshGroup(): void;
     _refreshCommunity(): void;
     _refreshDomain(): void;
-    _refreshByName(id: string): void;
+    _refreshByName(id: string): Promise<void>;
     _closeRightDrawer(): void;
     _setNumberOfUnViewedNotifications(event: CustomEvent): void;
     _redirectTo(event: CustomEvent): void;

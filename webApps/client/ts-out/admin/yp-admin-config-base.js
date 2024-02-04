@@ -683,6 +683,7 @@ export class YpAdminConfigBase extends YpAdminPage {
         else if (this.collectionType == "group") {
             this.fireGlobal("yp-refresh-group");
         }
+        debugger;
     }
     async _save(event) {
         event.preventDefault();
