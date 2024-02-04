@@ -109,7 +109,7 @@ let YpMagicText = YpMagicText_1 = class YpMagicText extends YpBaseElement {
     _openFullScreen() {
         //TODO: Fix ts type
         window.appDialogs.getDialogAsync("magicTextDialog", (dialog) => {
-            dialog.open(this.content, this.contentId, this.extraId, this.textType, this.contentLanguage, this.closeDialogText, this.structuredQuestionsConfig, this.skipSanitize, this.disableTranslation);
+            dialog.open(this.content, this.contentId, this.extraId, this.additionalId, this.textType, this.contentLanguage, this.closeDialogText, this.structuredQuestionsConfig, this.skipSanitize, this.disableTranslation);
         });
     }
     subClassProcessing() {
@@ -191,8 +191,10 @@ let YpMagicText = YpMagicText_1 = class YpMagicText extends YpBaseElement {
                         url = "/api/communities/" + this.contentId + "/translatedText";
                         break;
                     case "aoiQuestionName":
-                    case "aoiChoiceContent":
                         url = "/api/allOurIdeas/" + this.contentId + "/content/" + this.extraId + "/translatedText";
+                        break;
+                    case "aoiChoiceContent":
+                        url = "/api/allOurIdeas/" + this.contentId + "/content/" + this.extraId + "/" + this.additionalId + "/translatedText";
                         break;
                     case "alternativeTextForNewIdeaButton":
                     case "alternativeTextForNewIdeaButtonClosed":
@@ -394,6 +396,9 @@ __decorate([
 __decorate([
     property({ type: Number })
 ], YpMagicText.prototype, "extraId", void 0);
+__decorate([
+    property({ type: Number })
+], YpMagicText.prototype, "additionalId", void 0);
 __decorate([
     property({ type: String })
 ], YpMagicText.prototype, "textType", void 0);

@@ -5,6 +5,7 @@ export declare class YpMagicText extends YpBaseElement {
     truncatedContent: string | undefined;
     contentId: number | undefined;
     extraId: number | undefined;
+    additionalId: number | undefined;
     textType: string | undefined;
     contentLanguage: string | undefined;
     processedContent: string | undefined;

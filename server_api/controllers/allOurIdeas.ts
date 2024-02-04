@@ -97,6 +97,12 @@ export class AllOurIdeasController {
     );
 
     this.router.get(
+      "/:groupId/content/:extraId/:questionId/translatedText",
+      auth.can("view group"),
+      this.getTranslatedText.bind(this)
+    );
+
+    this.router.get(
       "/:groupId/content/:extraId/translatedText",
       auth.can("view group"),
       this.getTranslatedText.bind(this)

@@ -445,6 +445,7 @@ let AoiSurveyVoting = class AoiSurveyVoting extends YpBaseElement {
                 id="leftAnswerText"
                 .contentId="${this.groupId}"
                 .extraId="${this.leftAnswer?.choiceId}"
+                .additionalId="${this.question.id}"
                 text-only
                 truncate="140"
                 .content="${this.leftAnswer?.content}"
@@ -485,6 +486,7 @@ let AoiSurveyVoting = class AoiSurveyVoting extends YpBaseElement {
                 id="rightAnswerText"
                 .contentId="${this.groupId}"
                 .extraId="${this.rightAnswer?.choiceId}"
+                .additionalId="${this.question.id}"
                 text-only
                 truncate="140"
                 .content="${this.rightAnswer?.content}"

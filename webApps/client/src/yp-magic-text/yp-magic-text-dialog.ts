@@ -68,6 +68,7 @@ export class YpMagicTextDialog extends YpMagicText {
     content: string,
     contentId: number,
     extraId: number,
+    additionalId: number,
     textType: string,
     contentLanguage: string,
     closeDialogText: string,
@@ -80,6 +81,7 @@ export class YpMagicTextDialog extends YpMagicText {
     this.content = content;
     this.contentId = contentId;
     this.extraId = extraId;
+    this.additionalId = additionalId;
     this.textType = textType;
     this.contentLanguage = contentLanguage;
     this.structuredQuestionsConfig = structuredQuestionsConfig;

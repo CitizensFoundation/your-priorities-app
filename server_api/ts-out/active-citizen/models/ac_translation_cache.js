@@ -72,8 +72,8 @@ module.exports = (sequelize, DataTypes) => {
     ];
     AcTranslationCache.getContentToTranslate = async (req, modelInstance) => {
         if (req.query.textType == "aoiChoiceContent") {
-            console.log(`CHOICES req.params.extraId ${req.query.textType}`, req.params.extraId);
-            const choiceResponse = await fetch(`${PAIRWISE_API_HOST}/choices/${req.params.extraId}?question_id=${req.query.questionId}`, {
+            console.log(`>>>>>>>>>>>>>>>>>>>> CHOICES req.params.extraId ${req.query.textType} ${req.params.questionId}`, req.params.extraId);
+            const choiceResponse = await fetch(`${PAIRWISE_API_HOST}/choices/${req.params.extraId}.json?question_id=${req.params.questionId}`, {
                 method: "GET",
                 headers: defaultHeader,
             });
@@ -82,8 +82,17 @@ module.exports = (sequelize, DataTypes) => {
                 return null;
             }
             const choice = await choiceResponse.json();
+            console.log(`>>>>>>>>>>>>>>>>>>>> CHOICES ${JSON.stringify(choice)}`);
             if (choice) {
-                return choice.data.content;
+                try {
+                    const data = JSON.parse(choice.data);
+                    console.log(`MMMMMMMM CHOICES ${JSON.stringify(data)}`);
+                    return data["content"];
+                }
+                catch (error) {
+                    console.error("Failed to parse choice data", error);
+                    return null;
+                }
             }
             else {
                 return "No translation";
@@ -516,7 +525,9 @@ module.exports = (sequelize, DataTypes) => {
         const { YpLlmTranslation } = await Promise.resolve().then(() => __importStar(require("../llms/llmTranslation.js")));
         const translation = new YpLlmTranslation();
         if (textType === "aoiChoiceContent") {
-            const translatedTextData = await translation.getChoiceTranslation(contentToTranslate.question, contentToTranslate.choice, targetLanguage);
+            console.log(`111111111111111111111111111 -> contentToTranslate ${JSON.stringify(contentToTranslate)}`);
+            const translatedTextData = await translation.getChoiceTranslation(contentToTranslate, targetLanguage);
+            console.log(`000000000000000000000000000 -> translatedTextData ${JSON.stringify(translatedTextData)}`);
             sequelize.models.AcTranslationCache.create({
                 index_key: indexKey,
                 content: translatedTextData,
@@ -530,7 +541,6 @@ module.exports = (sequelize, DataTypes) => {
         }
         else if (textType === "aoiQuestionName") {
             const translatedTextData = await translation.getQuestionTranslation(contentToTranslate, targetLanguage);
-            console.log(`000000000000000000000000000 -> translatedTextData ${JSON.stringify(translatedTextData)}`);
             sequelize.models.AcTranslationCache.create({
                 index_key: indexKey,
                 content: translatedTextData,

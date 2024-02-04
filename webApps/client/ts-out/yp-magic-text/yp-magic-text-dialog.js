@@ -61,12 +61,13 @@ let YpMagicTextDialog = class YpMagicTextDialog extends YpMagicText {
     subClassProcessing() {
         this.processedContent = this.processedContent?.replace(/\n/g, '<br />');
     }
-    open(content, contentId, extraId, textType, contentLanguage, closeDialogText, structuredQuestionsConfig, skipSanitize = false, disableTranslation = false) {
+    open(content, contentId, extraId, additionalId, textType, contentLanguage, closeDialogText, structuredQuestionsConfig, skipSanitize = false, disableTranslation = false) {
         this.skipSanitize = skipSanitize;
         this.isDialog = true;
         this.content = content;
         this.contentId = contentId;
         this.extraId = extraId;
+        this.additionalId = additionalId;
         this.textType = textType;
         this.contentLanguage = contentLanguage;
         this.structuredQuestionsConfig = structuredQuestionsConfig;

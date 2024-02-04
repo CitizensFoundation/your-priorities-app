@@ -167,7 +167,6 @@ interface AoiConfigurationData {
 
 interface AoiTranslationAnswerInData {
   originalAnswer: string;
-  choiceId: number;
 }
 
 interface AoiTranslationAnswerOutData {

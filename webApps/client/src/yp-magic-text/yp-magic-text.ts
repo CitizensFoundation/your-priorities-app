@@ -27,6 +27,9 @@ export class YpMagicText extends YpBaseElement {
   @property({ type: Number })
   extraId: number | undefined;
 
+  @property({ type: Number })
+  additionalId: number | undefined;
+
   @property({ type: String })
   textType: string | undefined;
 
@@ -192,18 +195,20 @@ export class YpMagicText extends YpBaseElement {
           arg0: string | undefined,
           arg1: number | undefined,
           arg2: number | undefined,
-          arg3: string | undefined,
+          arg3: number | undefined,
           arg4: string | undefined,
           arg5: string | undefined,
           arg6: string | undefined,
-          arg7: boolean,
-          arg8: boolean
+          arg7: string | undefined,
+          arg8: boolean,
+          arg9: boolean
         ) => void;
       }) => {
         dialog.open(
           this.content,
           this.contentId,
           this.extraId,
+          this.additionalId,
           this.textType,
           this.contentLanguage,
           this.closeDialogText,
@@ -307,8 +312,10 @@ export class YpMagicText extends YpBaseElement {
             url = "/api/communities/" + this.contentId + "/translatedText";
             break;
           case "aoiQuestionName":
+            url = "/api/allOurIdeas/" + this.contentId + "/content/" + this.extraId + "/translatedText";
+            break;
           case "aoiChoiceContent":
-              url = "/api/allOurIdeas/" + this.contentId + "/content/" + this.extraId + "/translatedText";
+              url = "/api/allOurIdeas/" + this.contentId + "/content/" + this.extraId + "/"+ this.additionalId +"/translatedText";
               break;
           case "alternativeTextForNewIdeaButton":
           case "alternativeTextForNewIdeaButtonClosed":
