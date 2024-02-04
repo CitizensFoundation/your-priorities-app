@@ -270,12 +270,17 @@ class YpBaseChatBot {
         };
     }
     sendToClient(sender, message, type = "stream") {
-        this.wsClientSocket.send(JSON.stringify({
-            sender,
-            type: type,
-            message,
-        }));
-        this.lastSentToUserAt = new Date();
+        try {
+            this.wsClientSocket.send(JSON.stringify({
+                sender,
+                type: type,
+                message,
+            }));
+            this.lastSentToUserAt = new Date();
+        }
+        catch (error) {
+            console.error("Can't send message to client", error);
+        }
     }
     async streamWebSocketResponses(
     //@ts-ignore

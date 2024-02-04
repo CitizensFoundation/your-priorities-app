@@ -48,22 +48,12 @@ export class AoiServerApi extends YpServerApi {
             body: JSON.stringify(body),
         }, false);
     }
-    startLlmAnswerExplain(groupId, chatLog, wsClientId, requestForExplaination) {
-        const simplifiedChatLog = chatLog.map(chatMessage => {
-            return {
-                sender: chatMessage.sender == 'bot' ? 'assistant' : 'user',
-                message: chatMessage.rawMessage
-                    ? chatMessage.rawMessage
-                    : chatMessage.message,
-            };
-        });
-        return this.fetchWrapper(this.baseUrlPath +
-            this.baseUrlPath + `/${groupId}/llmAnswerExplain`, {
+    startLlmAnswerExplain(groupId, wsClientId, chatLog) {
+        return this.fetchWrapper(this.baseUrlPath + `/${groupId}/llmAnswerExplain`, {
             method: "PUT",
             body: JSON.stringify({
                 wsClientId,
-                requestForExplaination,
-                chatLog: simplifiedChatLog
+                chatLog
             }),
         }, false);
     }

@@ -1,3 +1,4 @@
+import { StringUnitLength } from "luxon";
 import { YpServerApi } from "../../common/YpServerApi.js";
 
 export class AoiServerApi extends YpServerApi {
@@ -117,27 +118,17 @@ export class AoiServerApi extends YpServerApi {
 
   public startLlmAnswerExplain(
     groupId: number,
-    chatLog: PsAiChatWsMessage[],
     wsClientId: string,
-    requestForExplaination: string
+    chatLog: PsSimpleChatLog[],
   ): Promise<void> {
-    const simplifiedChatLog = chatLog.map(chatMessage => {
-      return {
-        sender: chatMessage.sender == 'bot' ? 'assistant' : 'user',
-        message: chatMessage.rawMessage
-          ? chatMessage.rawMessage
-          : chatMessage.message,
-      };
-    });
+
     return this.fetchWrapper(
-      this.baseUrlPath +
       this.baseUrlPath + `/${groupId}/llmAnswerExplain`,
       {
         method: "PUT",
         body: JSON.stringify({
           wsClientId,
-          requestForExplaination,
-          chatLog: simplifiedChatLog
+          chatLog
         }),
       },
       false

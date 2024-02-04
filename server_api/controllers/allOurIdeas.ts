@@ -56,9 +56,9 @@ export class AllOurIdeasController {
     );
 
     this.router.put(
-      "/:communityId/explainConversation",
-      auth.can("create group"),
-      this.explainConversation.bind(this)
+      "/:groupId/llmAnswerExplain",
+      auth.can("view group"),
+      this.llmAnswerExplain.bind(this)
     );
 
     this.router.get(
@@ -111,7 +111,7 @@ export class AllOurIdeasController {
     }
   }
 
-  public async explainConversation(req: Request, res: Response): Promise<void> {
+  public async llmAnswerExplain(req: Request, res: Response): Promise<void> {
     const { wsClientId, chatLog } = req.body;
     console.log(`explainConversation: ${wsClientId}`);
     const explainer = new ExplainAnswersAssistant(

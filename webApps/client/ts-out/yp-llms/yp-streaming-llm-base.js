@@ -83,6 +83,7 @@ export class YpStreamingLlmBase extends YpBaseElement {
                 this.wsClientId = data.clientId;
                 this.ws.onmessage = this.onMessage.bind(this);
                 console.error(`WebSocket clientId: ${this.wsClientId}`);
+                this.fire('yp-ws-opened', { clientId: this.wsClientId });
             }
             else {
                 console.error("Error: No clientId received from server!");

@@ -8,6 +8,6 @@ export declare class AoiServerApi extends YpServerApi {
     submitIdea(groupId: number, questionId: number, newIdea: string): AoiAddIdeaResponse;
     postVote(groupId: number, questionId: number, promptId: number, locale: string, body: AoiVoteData, direction: "left" | "right" | "skip"): AoiVoteResponse;
     postVoteSkip(groupId: number, questionId: number, promptId: number, locale: string, body: AoiVoteSkipData): AoiVoteResponse;
-    startLlmAnswerExplain(groupId: number, chatLog: PsAiChatWsMessage[], wsClientId: string, requestForExplaination: string): Promise<void>;
+    startLlmAnswerExplain(groupId: number, wsClientId: string, chatLog: PsSimpleChatLog[]): Promise<void>;
 }
 //# sourceMappingURL=AoiServerApi.d.ts.map

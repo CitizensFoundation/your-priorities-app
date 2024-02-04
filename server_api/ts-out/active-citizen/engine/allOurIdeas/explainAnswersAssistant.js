@@ -15,7 +15,7 @@ class ExplainAnswersAssistant extends baseChatBot_js_1.YpBaseChatBot {
         });
     }
     renderSystemPrompt() {
-        return `You are a helpful assistant helping the user to explain answers the user is rating to questions. Provide detailed answers and analysis in multimedia markdown format`;
+        return `The user is doing pairwise voting on two answers at the time, to a provided question. Please help explain to the user the pros and cons of each answer, to help the user make up their mind on which one to vote on.`;
     }
     explainConversation = async (chatLog) => {
         this.setChatLog(chatLog);

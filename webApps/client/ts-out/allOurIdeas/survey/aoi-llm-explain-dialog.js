@@ -19,25 +19,26 @@ let AoiLlmExplainDialog = class AoiLlmExplainDialog extends YpChatbotBase {
     constructor() {
         super(...arguments);
         this.defaultInfoMessage = "I'm your All Our Ideas AI assitant ready to explain anything connected to this project.";
+        this.haveSentFirstQuestion = false;
     }
     setupServerApi() {
         this.serverApi = new AoiServerApi();
     }
     async connectedCallback() {
         super.connectedCallback();
-        this.sendFirstQuestion();
     }
     disconnectedCallback() {
         super.disconnectedCallback();
     }
     async sendFirstQuestion() {
-        const firstMessage = `Question: ${this.question.name} \n\nLeft Answer: ${this.leftAnswer} \n\nRight Answer: ${this.rightAnswer} \n\n`;
+        const firstMessage = `# Question\n${this.question.name}\n\n## First Answer\n${this.leftAnswer}## Second Answer\n${this.rightAnswer} \n\n`;
         this.addChatBotElement({
             sender: 'you',
             type: 'start',
             message: firstMessage,
         });
-        await this.serverApi.startLlmAnswerExplain(this.groupId, firstMessage, this.chatLog, this.wsClientId);
+        this.addThinkingChatBotMessage();
+        await this.serverApi.startLlmAnswerExplain(this.groupId, this.wsClientId, this.simplifiedChatLog);
     }
     async sendChatMessage() {
         const message = this.chatInputField.value;
@@ -55,6 +56,7 @@ let AoiLlmExplainDialog = class AoiLlmExplainDialog extends YpChatbotBase {
         this.dialog.show();
         this.currentError = undefined;
         window.appGlobals.activity(`Llm explain - open`);
+        this.sendFirstQuestion();
     }
     cancel() {
         this.dialog.close();

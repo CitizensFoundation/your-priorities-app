@@ -18,7 +18,7 @@ export declare class PlausiblePropBreakdown extends PlausibleBaseElementWithStat
     disconnectedCallback(): void;
     static get styles(): import("lit").CSSResult[];
     handleResize(): void;
-    getBarMaxWidth(): "10rem" | "16rem";
+    getBarMaxWidth(): "16rem" | "10rem";
     fetchPropBreakdown(): void;
     loadMore(): void;
     renderUrl(value: PlausiblePropValueData): import("lit-html").TemplateResult<1> | typeof nothing;

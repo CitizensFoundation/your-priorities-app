@@ -420,17 +420,17 @@ let YpChatbotBase = class YpChatbotBase extends YpStreamingLlmBase {
         return staticHtml `
       <div class="chat-window" id="chat-window">
         <div class="chat-messages" id="chat-messages">
-          <${this.chatbotItemComponentName}
+          <yp-chatbot-item-base
             class="chatElement bot-chat-element"
             .detectedLanguage="${this.language}"
             .message="${this.defaultInfoMessage}"
             type="info"
             sender="bot"
-          ></${this.chatbotItemComponentName}>
+          ></yp-chatbot-item-base>
           ${this.chatLog
             .filter(chatElement => !chatElement.hidden)
             .map(chatElement => html `
-                <${this.chatbotItemComponentName}
+                <yp-chatbot-item-base
                   ?thinking="${chatElement.type === 'thinking' ||
             chatElement.type === 'noStreaming'}"
                   @followup-question="${this.followUpQuestion}"
@@ -441,7 +441,7 @@ let YpChatbotBase = class YpChatbotBase extends YpStreamingLlmBase {
                   @scroll-down-enabled="${() => (this.userScrolled = false)}"
                   .type="${chatElement.type}"
                   .sender="${chatElement.sender}"
-                ></${this.chatbotItemComponentName}>
+                ></yp-chatbot-item-base>
               `)}
         </div>
         <div class="layout horizontal center-center chat-input">

@@ -16,6 +16,7 @@ export declare class AoiLlmExplainDialog extends YpChatbotBase {
     currentError: string | undefined;
     defaultInfoMessage: string;
     serverApi: AoiServerApi;
+    haveSentFirstQuestion: boolean;
     setupServerApi(): void;
     connectedCallback(): Promise<void>;
     disconnectedCallback(): void;

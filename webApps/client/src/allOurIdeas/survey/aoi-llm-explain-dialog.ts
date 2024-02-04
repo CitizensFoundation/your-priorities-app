@@ -41,21 +41,23 @@ export class AoiLlmExplainDialog extends YpChatbotBase {
 
   serverApi!: AoiServerApi;
 
+  haveSentFirstQuestion = false;
+
   override setupServerApi(): void {
     this.serverApi = new AoiServerApi();
   }
 
   override async connectedCallback() {
     super.connectedCallback();
-    this.sendFirstQuestion();
   }
 
   override disconnectedCallback(): void {
     super.disconnectedCallback();
   }
 
+
   async sendFirstQuestion() {
-    const firstMessage =`Question: ${this.question.name} \n\nLeft Answer: ${this.leftAnswer} \n\nRight Answer: ${this.rightAnswer} \n\n`;
+    const firstMessage =`# Question\n${this.question.name}\n\n## First Answer\n${this.leftAnswer}## Second Answer\n${this.rightAnswer} \n\n`;
 
     this.addChatBotElement({
       sender: 'you',
@@ -63,11 +65,12 @@ export class AoiLlmExplainDialog extends YpChatbotBase {
       message: firstMessage,
     });
 
+    this.addThinkingChatBotMessage();
+
     await this.serverApi.startLlmAnswerExplain(
-      this.groupId
-      firstMessage,
-      this.chatLog,
-      this.wsClientId
+      this.groupId,
+      this.wsClientId,
+      this.simplifiedChatLog,
     );
 
   }
@@ -97,6 +100,7 @@ export class AoiLlmExplainDialog extends YpChatbotBase {
     this.dialog.show();
     this.currentError = undefined;
     window.appGlobals.activity(`Llm explain - open`);
+    this.sendFirstQuestion();
   }
 
   cancel() {

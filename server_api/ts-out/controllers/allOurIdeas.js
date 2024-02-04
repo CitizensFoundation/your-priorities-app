@@ -35,7 +35,7 @@ class AllOurIdeasController {
         this.router.get("/:groupId", authorization_js_1.default.can("view group"), this.showEarl.bind(this));
         this.router.post("/:communityId/questions", authorization_js_1.default.can("create group"), this.createQuestion.bind(this));
         this.router.put("/:communityId/generateIdeas", authorization_js_1.default.can("create group"), this.generateIdeas.bind(this));
-        this.router.put("/:communityId/explainConversation", authorization_js_1.default.can("create group"), this.explainConversation.bind(this));
+        this.router.put("/:groupId/llmAnswerExplain", authorization_js_1.default.can("view group"), this.llmAnswerExplain.bind(this));
         this.router.get("/:communityId/choices/:questionId", authorization_js_1.default.can("create group"), this.getChoices.bind(this));
         this.router.post("/:groupId/questions/:questionId/prompts/:promptId/votes", authorization_js_1.default.can("view group"), this.vote.bind(this));
         this.router.post("/:groupId/questions/:questionId/prompts/:promptId/skips", authorization_js_1.default.can("view group"), this.skip.bind(this));
@@ -57,7 +57,7 @@ class AllOurIdeasController {
             res.status(404).send("Websocket not found");
         }
     }
-    async explainConversation(req, res) {
+    async llmAnswerExplain(req, res) {
         const { wsClientId, chatLog } = req.body;
         console.log(`explainConversation: ${wsClientId}`);
         const explainer = new explainAnswersAssistant_js_1.ExplainAnswersAssistant(wsClientId, this.wsClients);
