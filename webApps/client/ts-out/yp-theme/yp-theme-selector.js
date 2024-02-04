@@ -125,6 +125,7 @@ let YpThemeSelector = class YpThemeSelector extends YpBaseElement {
             if (changedProperties.has(prop)) {
                 shouldUpdateConfiguration = true;
                 this.updateDisabledInputs();
+                this.fire('config-updated');
             }
         });
         if (shouldUpdateConfiguration) {
@@ -150,9 +151,7 @@ let YpThemeSelector = class YpThemeSelector extends YpBaseElement {
                 this.themeConfiguration.neutralVariantColor) {
                 this.fireGlobal("yp-theme-configuration-updated", this.themeConfiguration);
             }
-            this.fire("yp-theme-configuration-changed", {
-                themeConfiguration: this.themeConfiguration,
-            });
+            this.fire("yp-theme-configuration-changed", this.themeConfiguration);
         }
     }
     // Helper method to check if color is a valid hex

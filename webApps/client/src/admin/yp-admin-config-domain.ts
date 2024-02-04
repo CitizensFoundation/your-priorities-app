@@ -6,6 +6,7 @@ import { Layouts } from "lit-flexbox-literals";
 import { YpAdminPage } from "./yp-admin-page.js";
 
 import "../yp-survey/yp-structured-question-edit.js";
+import "../yp-file-upload/yp-file-upload.js";
 
 import {
   YpAdminConfigBase,
@@ -18,7 +19,7 @@ import { YpFileUpload } from "../yp-file-upload/yp-file-upload.js";
 //import './@yrpri/common/yp-emoji-selector.js';
 
 import "../yp-file-upload/yp-file-upload.js";
-//import './@yrpri/yp-theme/yp-theme-selector.js';
+import '../yp-theme/yp-theme-selector.js';
 import "../yp-app/yp-language-selector.js";
 
 import "./yp-admin-communities.js";
@@ -189,19 +190,15 @@ export class YpAdminConfigDomain extends YpAdminConfigBase {
           `,
         },
         {
-          text: "theme",
+          text: "themeSelector",
           type: "html",
-          templateData: html`<yp-theme-selector
-            .object="${this.collection}"
-            .themeObject="${this.collection as YpThemeContainerObject}"
-            .selectedTheme="${this.collection?.theme_id}"
-            @yp-theme-changed="${(event: CustomEvent) => {
-              this.themeId = event.detail;
-              if (this.themeId) {
-                this._configChanged();
-              }
-            }}"
-          ></yp-theme-selector>`,
+          templateData: html`
+            <yp-theme-selector
+              @config-updated="${this._configChanged}"
+              @yp-theme-configuration-changed="${this._themeChanged}"
+              .themeConfiguration="${this.collection!.configuration.theme!}"
+            ></yp-theme-selector>
+          `,
         },
         {
           text: "mediaUploads",

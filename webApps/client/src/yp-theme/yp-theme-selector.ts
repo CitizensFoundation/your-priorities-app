@@ -160,6 +160,7 @@ export class YpThemeSelector extends YpBaseElement {
       if (changedProperties.has(prop)) {
         shouldUpdateConfiguration = true;
         this.updateDisabledInputs();
+        this.fire('config-updated')
       }
     });
 
@@ -195,9 +196,7 @@ export class YpThemeSelector extends YpBaseElement {
         );
       }
 
-      this.fire("yp-theme-configuration-changed", {
-        themeConfiguration: this.themeConfiguration,
-      });
+      this.fire("yp-theme-configuration-changed", this.themeConfiguration);
     }
   }
   // Helper method to check if color is a valid hex

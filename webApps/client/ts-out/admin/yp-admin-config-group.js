@@ -503,43 +503,13 @@ let YpAdminConfigGroup = class YpAdminConfigGroup extends YpAdminConfigBase {
                     type: "html",
                     templateData: html `
             <yp-theme-selector
+              @config-updated="${this._configChanged}"
               .disableSelection="${this.group.configuration
                         .inheritThemeFromCommunity}"
               @yp-theme-configuration-changed="${this._themeChanged}"
               .themeConfiguration="${this.group.configuration.theme}"
             ></yp-theme-selector>
           `,
-                },
-                {
-                    text: "themeOverrideColorPrimary",
-                    type: "textfield",
-                    maxLength: 7,
-                    charCounter: true,
-                    pattern: "[#-#0-9A-Fa-f]",
-                    value: this.group.configuration.themeOverrideColorPrimary,
-                    translationToken: "themeOverrideColorPrimary",
-                },
-                {
-                    text: "themeOverrideColorAccent",
-                    type: "textfield",
-                    maxLength: 7,
-                    charCounter: true,
-                    pattern: "[#-#0-9A-Fa-f]",
-                    value: this.group.configuration.themeOverrideColorAccent,
-                    translationToken: "themeOverrideColorAccent",
-                },
-                {
-                    text: "themeOverrideBackgroundColor",
-                    type: "textfield",
-                    maxLength: 7,
-                    charCounter: true,
-                    pattern: "[#-#0-9A-Fa-f]",
-                    value: this.group.configuration.themeOverrideBackgroundColor,
-                    translationToken: "themeOverrideBackgroundColor",
-                },
-                {
-                    text: "themeOverrideColorInfo",
-                    type: "textdescription",
                 },
                 {
                     text: "hideInfoBoxExceptForAdmins",
