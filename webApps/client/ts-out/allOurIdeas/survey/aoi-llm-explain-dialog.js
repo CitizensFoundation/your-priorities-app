@@ -26,19 +26,21 @@ let AoiLlmExplainDialog = class AoiLlmExplainDialog extends YpChatbotBase {
     }
     async connectedCallback() {
         super.connectedCallback();
+        this.addEventListener("yp-ws-opened", this.sendFirstQuestion);
     }
     disconnectedCallback() {
         super.disconnectedCallback();
+        this.removeEventListener("yp-ws-opened", this.sendFirstQuestion);
     }
     async sendFirstQuestion() {
-        const firstMessage = `# Question\n${this.question.name}\n\n## First Answer\n${this.leftAnswer}## Second Answer\n${this.rightAnswer} \n\n`;
+        const firstMessage = `Here is the question:\n\n${this.question.name}\n\n**First Answer** \n\n${this.leftAnswer}\n\n**Second Answer**\n\n${this.rightAnswer}\n`;
         this.addChatBotElement({
             sender: 'you',
             type: 'start',
             message: firstMessage,
         });
         this.addThinkingChatBotMessage();
-        await this.serverApi.startLlmAnswerExplain(this.groupId, this.wsClientId, this.simplifiedChatLog);
+        await this.serverApi.llmAnswerConverstation(this.groupId, this.wsClientId, this.simplifiedChatLog);
     }
     async sendChatMessage() {
         const message = this.chatInputField.value;
@@ -51,16 +53,23 @@ let AoiLlmExplainDialog = class AoiLlmExplainDialog extends YpChatbotBase {
         setTimeout(() => {
             this.chatInputField.blur();
         });
+        this.addChatBotElement({
+            sender: 'you',
+            type: 'start',
+            message: message,
+        });
+        this.addThinkingChatBotMessage();
+        await this.serverApi.llmAnswerConverstation(this.groupId, this.wsClientId, this.simplifiedChatLog);
     }
     open() {
         this.dialog.show();
         this.currentError = undefined;
         window.appGlobals.activity(`Llm explain - open`);
-        this.sendFirstQuestion();
     }
     cancel() {
         this.dialog.close();
         window.appGlobals.activity(`Llm explain - cancel`);
+        this.fire("closed");
     }
     textAreaKeyDown(e) {
         if (e.keyCode === 13 && !e.shiftKey) {
@@ -123,6 +132,7 @@ let AoiLlmExplainDialog = class AoiLlmExplainDialog extends YpChatbotBase {
     }
     render() {
         return html `<md-dialog
+      @closed="${() => this.cancel()}"
       ?fullscreen="${!this.wide}"
       style="max-width: 800px;max-height: 90vh;"
       id="dialog"

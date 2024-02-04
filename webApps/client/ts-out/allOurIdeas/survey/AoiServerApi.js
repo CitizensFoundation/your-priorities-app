@@ -48,7 +48,7 @@ export class AoiServerApi extends YpServerApi {
             body: JSON.stringify(body),
         }, false);
     }
-    startLlmAnswerExplain(groupId, wsClientId, chatLog) {
+    llmAnswerConverstation(groupId, wsClientId, chatLog) {
         return this.fetchWrapper(this.baseUrlPath + `/${groupId}/llmAnswerExplain`, {
             method: "PUT",
             body: JSON.stringify({

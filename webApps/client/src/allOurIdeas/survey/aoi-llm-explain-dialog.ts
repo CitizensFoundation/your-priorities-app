@@ -49,15 +49,16 @@ export class AoiLlmExplainDialog extends YpChatbotBase {
 
   override async connectedCallback() {
     super.connectedCallback();
+    this.addEventListener("yp-ws-opened", this.sendFirstQuestion);
   }
 
   override disconnectedCallback(): void {
     super.disconnectedCallback();
+    this.removeEventListener("yp-ws-opened", this.sendFirstQuestion);
   }
 
-
   async sendFirstQuestion() {
-    const firstMessage =`# Question\n${this.question.name}\n\n## First Answer\n${this.leftAnswer}## Second Answer\n${this.rightAnswer} \n\n`;
+    const firstMessage =`Here is the question:\n\n${this.question.name}\n\n**First Answer** \n\n${this.leftAnswer}\n\n**Second Answer**\n\n${this.rightAnswer}\n`;
 
     this.addChatBotElement({
       sender: 'you',
@@ -67,7 +68,7 @@ export class AoiLlmExplainDialog extends YpChatbotBase {
 
     this.addThinkingChatBotMessage();
 
-    await this.serverApi.startLlmAnswerExplain(
+    await this.serverApi.llmAnswerConverstation(
       this.groupId,
       this.wsClientId,
       this.simplifiedChatLog,
@@ -92,20 +93,31 @@ export class AoiLlmExplainDialog extends YpChatbotBase {
     });
 
 
+    this.addChatBotElement({
+      sender: 'you',
+      type: 'start',
+      message: message,
+    });
 
+    this.addThinkingChatBotMessage();
 
+    await this.serverApi.llmAnswerConverstation(
+      this.groupId,
+      this.wsClientId,
+      this.simplifiedChatLog,
+    );
   }
 
   open() {
     this.dialog.show();
     this.currentError = undefined;
     window.appGlobals.activity(`Llm explain - open`);
-    this.sendFirstQuestion();
   }
 
   cancel() {
     this.dialog.close();
     window.appGlobals.activity(`Llm explain - cancel`);
+    this.fire("closed");
   }
 
   textAreaKeyDown(e: KeyboardEvent) {
@@ -171,6 +183,7 @@ export class AoiLlmExplainDialog extends YpChatbotBase {
 
   override render() {
     return html`<md-dialog
+      @closed="${() => this.cancel()}"
       ?fullscreen="${!this.wide}"
       style="max-width: 800px;max-height: 90vh;"
       id="dialog"

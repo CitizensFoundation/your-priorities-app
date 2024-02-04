@@ -18,6 +18,7 @@ export declare class AoiSurveyVoting extends YpBaseElement {
     rightAnswer: AoiAnswerToVoteOnData | undefined;
     appearanceLookup: string;
     breakForVertical: boolean;
+    llmExplainOpen: boolean;
     levelTwoTargetVotes: number | undefined;
     timer: number | undefined;
     constructor();
@@ -29,7 +30,7 @@ export declare class AoiSurveyVoting extends YpBaseElement {
     voteForAnswer(direction: "left" | "right" | "skip"): Promise<void>;
     removeAndInsertFromLeft(): void;
     openNewIdeaDialog(): void;
-    openLlmExplainDialog(): void;
+    openLlmExplainDialog(): Promise<void>;
     static get styles(): any[];
     renderProgressBar(): import("lit-html").TemplateResult<1> | typeof nothing;
     render(): import("lit-html").TemplateResult<1>;

@@ -339,9 +339,9 @@ export abstract class YpChatbotBase extends YpStreamingLlmBase {
         }
 
         .you-chat-element {
-          align-self: flex-end;
+          align-self: flex-start;
           max-width: 80%;
-          justify-content: flex-end;
+          justify-content: flex-start;
           margin-right: 32px;
         }
 

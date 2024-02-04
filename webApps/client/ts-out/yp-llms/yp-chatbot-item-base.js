@@ -4,46 +4,46 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { css, html, nothing } from 'lit';
-import { property, customElement } from 'lit/decorators.js';
-import { resolveMarkdown } from '../common/litMarkdown/litMarkdown.js';
-import '@material/web/icon/icon.js';
-import '@material/web/checkbox/checkbox.js';
-import '@material/web/button/outlined-button.js';
-import '@material/web/button/filled-button.js';
-import '@material/web/textfield/filled-text-field.js';
-import '@material/web/progress/circular-progress.js';
-import '../common/yp-image.js';
-import { YpBaseElement } from '../common/yp-base-element.js';
+import { css, html, nothing } from "lit";
+import { property, customElement } from "lit/decorators.js";
+import { resolveMarkdown } from "../common/litMarkdown/litMarkdown.js";
+import "@material/web/icon/icon.js";
+import "@material/web/checkbox/checkbox.js";
+import "@material/web/button/outlined-button.js";
+import "@material/web/button/filled-button.js";
+import "@material/web/textfield/filled-text-field.js";
+import "@material/web/progress/circular-progress.js";
+import "../common/yp-image.js";
+import { YpBaseElement } from "../common/yp-base-element.js";
 let YpAiChatbotItemBase = class YpAiChatbotItemBase extends YpBaseElement {
     constructor() {
         super();
         this.spinnerActive = false;
         this.fullReferencesOpen = false;
-        this.followUpQuestionsRaw = '';
+        this.followUpQuestionsRaw = "";
         this.followUpQuestions = [];
         this.jsonLoading = false;
         this.handleJsonLoadingStart = () => {
-            console.log('JSON loading start event triggered');
+            console.log("JSON loading start event triggered");
             this.jsonLoading = true;
             this.requestUpdate(); // If needed to trigger a re-render
         };
         this.handleJsonLoadingEnd = (event) => {
             const jsonContent = event.detail;
-            console.log('JSON loading end event triggered with JSON content:', jsonContent);
+            console.log("JSON loading end event triggered with JSON content:", jsonContent);
             this.jsonLoading = false;
         };
     }
     connectedCallback() {
         super.connectedCallback();
         // Subscribe to MarkdownDirective events
-        this.addEventListener('jsonLoadingStart', this.handleJsonLoadingStart);
-        this.addEventListener('jsonLoadingEnd', this.handleJsonLoadingEnd);
+        this.addEventListener("jsonLoadingStart", this.handleJsonLoadingStart);
+        this.addEventListener("jsonLoadingEnd", this.handleJsonLoadingEnd);
     }
     disconnectedCallback() {
         // Remove event listeners for MarkdownDirective
-        this.removeEventListener('jsonLoadingStart', this.handleJsonLoadingStart);
-        this.removeEventListener('jsonLoadingEnd', this.handleJsonLoadingEnd);
+        this.removeEventListener("jsonLoadingStart", this.handleJsonLoadingStart);
+        this.removeEventListener("jsonLoadingEnd", this.handleJsonLoadingEnd);
         super.disconnectedCallback();
     }
     stopJsonLoading() {
@@ -95,7 +95,6 @@ let YpAiChatbotItemBase = class YpAiChatbotItemBase extends YpBaseElement {
           color: var(--md-sys-color-on-secondary);
           cursor: pointer;
         }
-
 
         .postImage {
           height: 28px;
@@ -182,14 +181,11 @@ let YpAiChatbotItemBase = class YpAiChatbotItemBase extends YpBaseElement {
           padding: 0;
         }
 
-
-
         md-filled-button {
           max-width: 250px;
           margin-top: 16px;
           margin-bottom: 16px;
         }
-
 
         .followup-question {
           padding: 0;
@@ -262,12 +258,11 @@ let YpAiChatbotItemBase = class YpAiChatbotItemBase extends YpBaseElement {
             transform: rotate(0deg);
           }
         }
-
       `,
         ];
     }
     get isError() {
-        return this.type == 'error' || this.type == 'moderation_error';
+        return this.type == "error" || this.type == "moderation_error";
     }
     renderCGImage() {
         return html ` <md-icon class="robotIcon">smart_toy</md-icon> `;
@@ -307,11 +302,11 @@ let YpAiChatbotItemBase = class YpAiChatbotItemBase extends YpBaseElement {
             ? html `
               <div class="layout horizontal followup-question-container wrap">
                 <md-icon class="followUpQuestionMark">contact_support</md-icon
-                >${this.followUpQuestions.map(question => html `
+                >${this.followUpQuestions.map((question) => html `
                     <md-outlined-button
                       class="followup-question"
                       .label="${question}"
-                      @click="${() => this.fire('followup-question', question)}"
+                      @click="${() => this.fire("followup-question", question)}"
                     ></md-outlined-button>
                   `)}
               </div>
@@ -323,12 +318,12 @@ let YpAiChatbotItemBase = class YpAiChatbotItemBase extends YpBaseElement {
     parseFollowUpQuestions() {
         this.followUpQuestionsRaw = this.followUpQuestionsRaw.replace(/<<([^>>]+)>>/g, (match, content) => {
             this.followUpQuestions.push(content);
-            return '';
+            return "";
         });
     }
     updated(changedProperties) {
         super.updated(changedProperties);
-        if (changedProperties.has('followUpQuestionsRaw') &&
+        if (changedProperties.has("followUpQuestionsRaw") &&
             this.followUpQuestionsRaw) {
             this.parseFollowUpQuestions();
         }
@@ -337,7 +332,14 @@ let YpAiChatbotItemBase = class YpAiChatbotItemBase extends YpBaseElement {
         return html `
       <div class="userChatDialog layout horizontal user-message">
         <div class="layout vertical chatImage">${this.renderRoboImage()}</div>
-        <div class="layout vertical chatText chatTextUser">${this.message}</div>
+        <div class="layout vertical chatText chatTextUser">
+          ${resolveMarkdown(this.message, {
+            includeImages: true,
+            includeCodeBlockClassNames: true,
+            handleJsonBlocks: true,
+            targetElement: this,
+        })}
+        </div>
       </div>
     `;
     }
@@ -381,19 +383,19 @@ let YpAiChatbotItemBase = class YpAiChatbotItemBase extends YpBaseElement {
       </div> `;
     }
     getThinkingText() {
-        return `${this.t('thinking')}...`;
+        return `${this.t("thinking")}...`;
     }
     renderMessage() {
-        if (this.sender === 'you') {
+        if (this.sender === "you") {
             return this.renderUser();
         }
-        else if (this.sender === 'bot' && this.type === 'thinking') {
+        else if (this.sender === "bot" && this.type === "thinking") {
             return this.renderThinking();
         }
-        else if (this.sender === 'bot' && this.type === 'noStreaming') {
+        else if (this.sender === "bot" && this.type === "noStreaming") {
             return this.renderNoStreaming();
         }
-        else if (this.sender === 'bot') {
+        else if (this.sender === "bot") {
             return this.renderChatGPT();
         }
     }
@@ -435,7 +437,7 @@ __decorate([
     property({ type: Boolean })
 ], YpAiChatbotItemBase.prototype, "jsonLoading", void 0);
 YpAiChatbotItemBase = __decorate([
-    customElement('yp-chatbot-item-base')
+    customElement("yp-chatbot-item-base")
 ], YpAiChatbotItemBase);
 export { YpAiChatbotItemBase };
 //# sourceMappingURL=yp-chatbot-item-base.js.map

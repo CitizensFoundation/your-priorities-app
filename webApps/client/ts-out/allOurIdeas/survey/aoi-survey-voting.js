@@ -21,6 +21,7 @@ let AoiSurveyVoting = class AoiSurveyVoting extends YpBaseElement {
         this.voteCount = 0;
         this.spinnersActive = false;
         this.breakForVertical = false;
+        this.llmExplainOpen = false;
         this.resetAnimation = this.resetAnimation.bind(this);
     }
     async connectedCallback() {
@@ -139,7 +140,9 @@ let AoiSurveyVoting = class AoiSurveyVoting extends YpBaseElement {
     openNewIdeaDialog() {
         this.$$("#newIdeaDialog").open();
     }
-    openLlmExplainDialog() {
+    async openLlmExplainDialog() {
+        this.llmExplainOpen = true;
+        await this.updateComplete;
         this.$$("#llmExplainDialog").open();
     }
     static get styles() {
@@ -156,7 +159,8 @@ let AoiSurveyVoting = class AoiSurveyVoting extends YpBaseElement {
           );
         }
 
-        .iconImage, .iconImageRight {
+        .iconImage,
+        .iconImageRight {
           width: 100px;
           height: 100px;
           margin-left: 0;
@@ -420,7 +424,8 @@ let AoiSurveyVoting = class AoiSurveyVoting extends YpBaseElement {
                   />
                 `
             : nothing}
-            ${YpFormattingHelpers.truncate((this.leftAnswer.content + " " + this.leftAnswer.content) || this.leftAnswer, 140)}
+            ${YpFormattingHelpers.truncate(this.leftAnswer.content ||
+            this.leftAnswer, 140)}
           </md-elevated-button>
           <span class="or"> ${this.t("or")} </span>
           ${this.spinnersActive
@@ -491,14 +496,19 @@ let AoiSurveyVoting = class AoiSurveyVoting extends YpBaseElement {
         .question=${this.question}
         .earl=${this.earl}
       ></aoi-new-idea-dialog>
-      <aoi-llm-explain-dialog
-        id="llmExplainDialog"
-        .question=${this.question}
-        .earl=${this.earl}
-        .groupId=${this.groupId}
-        .leftAnswer=${this.leftAnswer?.content || ""}
-        .rightAnswer=${this.rightAnswer?.content || ""}
-      ></aoi-llm-explain-dialog>
+      ${this.llmExplainOpen
+            ? html `
+            <aoi-llm-explain-dialog
+              id="llmExplainDialog"
+              .question=${this.question}
+              @closed=${() => (this.llmExplainOpen = false)}
+              .earl=${this.earl}
+              .groupId=${this.groupId}
+              .leftAnswer=${this.leftAnswer?.content || ""}
+              .rightAnswer=${this.rightAnswer?.content || ""}
+            ></aoi-llm-explain-dialog>
+          `
+            : nothing}
     `;
     }
 };
@@ -535,6 +545,9 @@ __decorate([
 __decorate([
     property({ type: Boolean })
 ], AoiSurveyVoting.prototype, "breakForVertical", void 0);
+__decorate([
+    property({ type: Boolean })
+], AoiSurveyVoting.prototype, "llmExplainOpen", void 0);
 __decorate([
     property({ type: Number })
 ], AoiSurveyVoting.prototype, "levelTwoTargetVotes", void 0);

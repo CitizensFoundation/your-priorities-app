@@ -55,6 +55,9 @@ export class AoiSurveyVoting extends YpBaseElement {
   @property({ type: Boolean })
   breakForVertical = false;
 
+  @property({ type: Boolean })
+  llmExplainOpen = false;
+
   @property({ type: Number })
   levelTwoTargetVotes: number | undefined;
 
@@ -241,7 +244,9 @@ export class AoiSurveyVoting extends YpBaseElement {
     (this.$$("#newIdeaDialog") as AoiNewIdeaDialog).open();
   }
 
-  openLlmExplainDialog() {
+  async openLlmExplainDialog() {
+    this.llmExplainOpen = true;
+    await this.updateComplete;
     (this.$$("#llmExplainDialog") as AoiLlmExplainDialog).open();
   }
 
@@ -259,7 +264,8 @@ export class AoiSurveyVoting extends YpBaseElement {
           );
         }
 
-        .iconImage, .iconImageRight {
+        .iconImage,
+        .iconImageRight {
           width: 100px;
           height: 100px;
           margin-left: 0;
@@ -534,7 +540,8 @@ export class AoiSurveyVoting extends YpBaseElement {
                 `
               : nothing}
             ${YpFormattingHelpers.truncate(
-              (this.leftAnswer!.content+" "+this.leftAnswer!.content) || (this.leftAnswer as any),
+              this.leftAnswer!.content ||
+                (this.leftAnswer as any),
               140
             )}
           </md-elevated-button>
@@ -610,14 +617,19 @@ export class AoiSurveyVoting extends YpBaseElement {
         .question=${this.question}
         .earl=${this.earl}
       ></aoi-new-idea-dialog>
-      <aoi-llm-explain-dialog
-        id="llmExplainDialog"
-        .question=${this.question}
-        .earl=${this.earl}
-        .groupId=${this.groupId}
-        .leftAnswer=${this.leftAnswer?.content || ""}
-        .rightAnswer=${this.rightAnswer?.content || ""}
-      ></aoi-llm-explain-dialog>
+      ${this.llmExplainOpen
+        ? html`
+            <aoi-llm-explain-dialog
+              id="llmExplainDialog"
+              .question=${this.question}
+              @closed=${() => (this.llmExplainOpen = false)}
+              .earl=${this.earl}
+              .groupId=${this.groupId}
+              .leftAnswer=${this.leftAnswer?.content || ""}
+              .rightAnswer=${this.rightAnswer?.content || ""}
+            ></aoi-llm-explain-dialog>
+          `
+        : nothing}
     `;
   }
 }

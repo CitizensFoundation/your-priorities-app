@@ -116,7 +116,7 @@ export class AoiServerApi extends YpServerApi {
     ) as unknown as AoiVoteResponse;
   }
 
-  public startLlmAnswerExplain(
+  public llmAnswerConverstation(
     groupId: number,
     wsClientId: string,
     chatLog: PsSimpleChatLog[],

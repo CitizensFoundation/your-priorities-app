@@ -15,7 +15,13 @@ class ExplainAnswersAssistant extends baseChatBot_js_1.YpBaseChatBot {
         });
     }
     renderSystemPrompt() {
-        return `The user is doing pairwise voting on two answers at the time, to a provided question. Please help explain to the user the pros and cons of each answer, to help the user make up their mind on which one to vote on.`;
+        return `The user is doing pairwise voting on two answers at the time, to a provided question, the user needs help decide what to vote on.
+Please output a short very simple explaination of each answer.
+Please help explain to the user the top pro and con of each answer, to help the user make up their mind on which one to vote on.
+Only output the top pro and con for each answer, and make sure to keep it short and to the point.
+In the end provide a very short summary of your assessment of which answer is better, and why.
+Ask the user clarifying questions if needed.
+`;
     }
     explainConversation = async (chatLog) => {
         this.setChatLog(chatLog);

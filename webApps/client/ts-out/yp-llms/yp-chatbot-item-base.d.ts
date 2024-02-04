@@ -1,18 +1,18 @@
-import '@material/web/icon/icon.js';
-import '@material/web/checkbox/checkbox.js';
-import '@material/web/button/outlined-button.js';
-import '@material/web/button/filled-button.js';
-import '@material/web/textfield/filled-text-field.js';
-import '@material/web/progress/circular-progress.js';
-import '../common/yp-image.js';
-import { YpBaseElement } from '../common/yp-base-element.js';
+import "@material/web/icon/icon.js";
+import "@material/web/checkbox/checkbox.js";
+import "@material/web/button/outlined-button.js";
+import "@material/web/button/filled-button.js";
+import "@material/web/textfield/filled-text-field.js";
+import "@material/web/progress/circular-progress.js";
+import "../common/yp-image.js";
+import { YpBaseElement } from "../common/yp-base-element.js";
 export declare class YpAiChatbotItemBase extends YpBaseElement {
     message: string;
     updateMessage: string | undefined;
-    sender: 'you' | 'bot';
+    sender: "you" | "bot";
     detectedLanguage: string;
     clusterId: number;
-    type: 'start' | 'error' | 'moderation_error' | 'info' | 'message' | 'thinking' | 'noStreaming' | undefined;
+    type: "start" | "error" | "moderation_error" | "info" | "message" | "thinking" | "noStreaming" | undefined;
     spinnerActive: boolean;
     fullReferencesOpen: boolean;
     followUpQuestionsRaw: string;
@@ -32,11 +32,11 @@ export declare class YpAiChatbotItemBase extends YpBaseElement {
     renderChatGPT(): any;
     parseFollowUpQuestions(): void;
     updated(changedProperties: Map<string | number | symbol, unknown>): void;
-    renderUser(): import("lit-html").TemplateResult<1>;
+    renderUser(): any;
     renderNoStreaming(): import("lit-html").TemplateResult<1>;
     renderThinking(): import("lit-html").TemplateResult<1>;
     getThinkingText(): string;
     renderMessage(): any;
-    render(): import("lit-html").TemplateResult<1>;
+    render(): any;
 }
 //# sourceMappingURL=yp-chatbot-item-base.d.ts.map
