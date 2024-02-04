@@ -272,7 +272,10 @@ YpLanguageSelector.supportedLanguages = {
     sr_latin: 'Srpski (latin)',
     hr: 'Hrvatski',
     kl: 'Kalaallisut',
-    bg: 'български'
+    bg: 'български',
+    ht: 'Kreyòl ayisyen',
+    mnd: 'Mandarin',
+    cpv: 'Cape Verdean Creole'
 };
 __decorate([
     property({ type: Boolean })

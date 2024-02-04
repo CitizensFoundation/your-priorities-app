@@ -83,7 +83,10 @@ export class YpLanguageSelector extends YpBaseElement {
     sr_latin: 'Srpski (latin)',
     hr: 'Hrvatski',
     kl: 'Kalaallisut',
-    bg: 'български'
+    bg: 'български',
+    ht: 'Kreyòl ayisyen',
+    mnd: 'Mandarin',
+    cpv: 'Cape Verdean Creole'
   };
 
   noGoogleTranslateLanguages = ['kl'];
