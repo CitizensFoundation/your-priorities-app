@@ -574,7 +574,9 @@ export class AoiSurveyVoting extends YpBaseElement {
                 textType="aoiChoiceContent"
               ></yp-magic-text>
             </md-elevated-button>
-            <span class="or"> ${this.t("or")} </span>
+            <div class="layout horizontal center-center">
+             <span class="or"> ${this.t("or")} </span>
+            </div>
             ${this.spinnersActive
               ? html`
                   <div class="spinnerContainer">

@@ -29,8 +29,8 @@ let YpThemeSelector = class YpThemeSelector extends YpBaseElement {
             css `
         md-outlined-select,
         md-outlined-text-field {
-          max-width: 250px;
-          width: 250px;
+          max-width: 300px;
+          width: 300px;
           margin-bottom: 8px;
           margin-top: 8px;
         }
@@ -64,12 +64,17 @@ let YpThemeSelector = class YpThemeSelector extends YpBaseElement {
         }
 
         .color {
-          padding: 8px;
+          padding: 12px;
           margin-top: 8px;
           margin-bottom: 16px;
           margin-left: 32px;
           border-radius: 8px;
-          width: 300px;
+          width: 369px;
+        }
+
+        .leftContainer {
+          align-self: start;
+          margin-top: 32px;
         }
 
         .dynamicColors, .customColors {
@@ -197,7 +202,7 @@ let YpThemeSelector = class YpThemeSelector extends YpBaseElement {
     render() {
         return html `
       <div class="layout horizontal">
-        <div class="layout vertical ">
+        <div class="layout vertical center-center leftContainer">
           <div class="dynamicColors">
             <div class="colorTypeTitle">${this.t("Dynamic Colors")}</div>
             <yp-theme-color-input
