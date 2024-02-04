@@ -1,25 +1,40 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import glob from 'glob';
+import * as glob from 'glob';
 
 // Define paths
-const srcDirectory = 'src/';
-const translationFilePath = 'locales/en/translation.json';
+const srcDirectory = './src/';
+const translationFilePath = './locales/en/translation.json';
 const outputFilePath = '/tmp/translation.json';
 
-// Function to find all .js and .ts files in srcDirectory
-function getFiles(srcPath: string): Promise<string[]> {
+
+// Function to recursively find .js and .ts files
+function findFiles(directory: string, extensionRegex: RegExp, foundFiles: string[] = []): Promise<string[]> {
     return new Promise((resolve, reject) => {
-        //@ts-ignore
-        glob(`${srcPath}/**/*.{js,ts}`, (err: Error | null, files: string[]) => {
+        fs.readdir(directory, { withFileTypes: true }, (err, files) => {
             if (err) {
-                reject(err);
-            } else {
-                resolve(files);
+                return reject(err);
             }
+
+            // Process each file or directory
+            const promises = files.map(file => {
+                const filePath = path.join(directory, file.name);
+                if (file.isDirectory()) {
+                    // Recurse into subdirectories
+                    return findFiles(filePath, extensionRegex, foundFiles);
+                } else if (extensionRegex.test(file.name)) {
+                    // Add file if it matches .js or .ts
+                    foundFiles.push(filePath);
+                }
+                return Promise.resolve();
+            });
+
+            // Wait for all files and subdirectories to be processed
+            Promise.all(promises).then(() => resolve(foundFiles)).catch(reject);
         });
     });
 }
+
 // Function to read file content
 async function readFileContent(filePath: string): Promise<string> {
     return fs.promises.readFile(filePath, 'utf8');
@@ -69,7 +84,7 @@ function updateTranslations(usedKeys: string[], translations: any): { updatedTra
             if (!current[key]) {
                 newCount++;
                 // Assuming you want to add new keys with a placeholder value
-                currentResult[key] = `MISSING TRANSLATION for ${key}`;
+                currentResult[key] = `${key}`;
             }
         });
     };
@@ -82,7 +97,13 @@ function updateTranslations(usedKeys: string[], translations: any): { updatedTra
 // Main function to process translations
 async function processTranslations() {
     try {
-        const files = await getFiles(srcDirectory);
+        const srcDirectory = './src';
+        const extensionsRegex = /\.(js|ts)$/;
+        let files = await findFiles(srcDirectory, extensionsRegex);
+        console.log(`Found ${files.length} files.`);
+        let moreFile = await findFiles("../old/clientApp/src/",  /\.(html)$/);
+        console.log(`Found more ${moreFile.length} files.`)
+        files = files.concat(moreFile);
         const translationKeys = new Set<string>();
         const translations = await readTranslationFile(translationFilePath);
 
