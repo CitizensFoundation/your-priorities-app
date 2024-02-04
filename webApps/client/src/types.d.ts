@@ -7,6 +7,13 @@ declare module 'ga';
 declare module 'wavesurfer.js';
 declare module 'datamaps';
 
+declare module 'iso-639-1' {
+  export function getName(code: string): string;
+  export function getCode(name: string): string;
+  export function getAllNames(): Array<string>;
+  export function getAllCodes(): Array<string>;
+}
+
 type MaterialColorScheme = 'tonal'|'vibrant'|'expressive'|'content'|'neutral'|'monochrome'|'fidelity'|'dynamic';
 type MaterialDynamicVariants = "monochrome" | "neutral" | "tonalSpot" | "vibrant" | "expressive" | "fidelity" | "content" | "rainbow" | "fruitSalad";
 
@@ -1112,4 +1119,12 @@ interface YpHomeLinkData {
   type: string;
   id: number;
   name: string;
+}
+
+interface YpLocaleTranslationInData {
+  originalUIEnglishTexts: string[];
+}
+
+interface YpLocaleTranslationOutData {
+  translatedUIEnglishTexts: string[];
 }

@@ -5,6 +5,7 @@ const srcDirectory = "./src/";
 const translationFilePath = "./locales/en/translation.json";
 const outputFilePath = "/tmp/translation.json";
 // Function to recursively find .js and .ts files
+// Function to recursively find .js and .ts files, excluding paths with 'test'
 function findFiles(directory, extensionRegex, foundFiles = []) {
     return new Promise((resolve, reject) => {
         fs.readdir(directory, { withFileTypes: true }, (err, files) => {
@@ -12,22 +13,22 @@ function findFiles(directory, extensionRegex, foundFiles = []) {
                 return reject(err);
             }
             // Process each file or directory
-            const promises = files.map((file) => {
+            const promises = files.map(file => {
                 const filePath = path.join(directory, file.name);
                 if (file.isDirectory()) {
-                    // Recurse into subdirectories
-                    return findFiles(filePath, extensionRegex, foundFiles);
+                    // Recurse into subdirectories, unless the directory name includes 'test'
+                    if (!filePath.toLowerCase().includes('test')) {
+                        return findFiles(filePath, extensionRegex, foundFiles);
+                    }
                 }
-                else if (extensionRegex.test(file.name)) {
-                    // Add file if it matches .js or .ts
+                else if (extensionRegex.test(file.name) && !filePath.toLowerCase().includes('test')) {
+                    // Add file if it matches .js or .ts and does not include 'test'
                     foundFiles.push(filePath);
                 }
                 return Promise.resolve();
             });
             // Wait for all files and subdirectories to be processed
-            Promise.all(promises)
-                .then(() => resolve(foundFiles))
-                .catch(reject);
+            Promise.all(promises).then(() => resolve(foundFiles)).catch(reject);
         });
     });
 }
