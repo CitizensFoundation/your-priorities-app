@@ -58,9 +58,13 @@ Your ${language} JSON output:`;
     async getChoiceTranslation(answerContent, languageIsoCode, maxCharactersInTranslation = 140) {
         try {
             console.log(`getChoiceTranslation: ${answerContent}`);
-            const languageName = iso_639_1_1.default.getName(languageIsoCode) || "en";
+            const languageName = iso_639_1_1.default.getName(languageIsoCode) ||
+                iso_639_1_1.default.getName(languageIsoCode.toLowerCase()) ||
+                iso_639_1_1.default.getName(languageIsoCode.substring(0, 2)) ||
+                iso_639_1_1.default.getName(languageIsoCode.substring(0, 2).toLowerCase()) ||
+                "en";
             const moderationResponse = await this.openaiClient.moderations.create({
-                input: answerContent
+                input: answerContent,
             });
             console.log("Moderation response:", moderationResponse);
             const flagged = moderationResponse.results[0].flagged;
@@ -71,7 +75,7 @@ Your ${language} JSON output:`;
             }
             else {
                 const inAnswer = {
-                    originalAnswer: answerContent
+                    originalAnswer: answerContent,
                 };
                 const jsonInSchema = `{ originalAnswer: string}`;
                 const jsonOutSchema = `{ translatedContent: string}`;
@@ -100,7 +104,7 @@ Your ${language} JSON output:`;
             }
             else {
                 const inQuestion = {
-                    originalQuestion: question
+                    originalQuestion: question,
                 };
                 const jsonInSchema = `{ originalAnswer: string}`;
                 const jsonOutSchema = `{ translatedContent: string}`;

@@ -390,7 +390,7 @@ let AoiSurveyVoting = class AoiSurveyVoting extends YpBaseElement {
         }
     }
     render() {
-        console.error(`Rendering voting $ {this.question?.id}`);
+        console.error(`Rendering voting ${this.question?.id} ${this.question?.name}`);
         return html `
       <div
         class="topContainer layout vertical wrap center-center"
@@ -402,7 +402,7 @@ let AoiSurveyVoting = class AoiSurveyVoting extends YpBaseElement {
             .contentId="${this.groupId}"
             .extraId="${this.question?.id}"
             text-only
-            truncate="140"
+            truncate="300"
             .content="${this.question.name}"
             .contentLanguage="${this.group.language}"
             textType="aoiQuestionName"
