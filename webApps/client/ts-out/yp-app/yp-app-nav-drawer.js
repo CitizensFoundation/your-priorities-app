@@ -135,8 +135,8 @@ let YpAppNavDrawer = class YpAppNavDrawer extends YpBaseElement {
         }
 
         .material {
-          background-color: var(--md-sys-color-secondary-container);
-          color: var(--md-sys-color-on-secondary-container);
+          background-color: var(--md-sys-color-surface-variant);
+          color: var(--md-sys-color-on-surface-variant);
         }
 
         .item {

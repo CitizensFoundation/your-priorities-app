@@ -73,7 +73,7 @@ export declare abstract class YpAdminConfigBase extends YpAdminPage {
     get collectionVideoURL(): string | undefined;
     get collectionVideoPosterURL(): string | undefined;
     get collectionVideos(): Array<YpVideoData> | undefined;
-    renderCoverMediaContent(): TemplateResult<1> | typeof nothing;
+    renderCoverMediaContent(): TemplateResult<1>;
     renderLogoMedia(): TemplateResult<1>;
     renderHeaderImageUploads(): TemplateResult<1>;
     static get styles(): any[];

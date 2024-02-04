@@ -398,11 +398,17 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
         <yp-image
           class="image"
           sizing="contain"
-          .src="${YpMediaHelpers.getImageFormatUrl(this.currentLogoImages)}"
+          src="${YpMediaHelpers.getImageFormatUrl(this.currentLogoImages)}"
         ></yp-image>
       `;
     } else {
-      return nothing;
+      return html`
+        <yp-image
+          class="image"
+          sizing="contain"
+          src="https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/ypPlaceHolder2.jpg"
+        ></yp-image>
+      `;
     }
   }
 

@@ -66,8 +66,8 @@ export const YpAppStyles = css`
   }
 
   mwc-drawer {
-    --mdc-theme-surface: var(--md-sys-color-secondary-container);
-    color: var(--md-sys-color-on-secondary-container);
+    --mdc-theme-surface: var(--md-sys-color-surface-variant);
+    color: var(--md-sys-color-on-surface-variant);
   }
 
   .loadingAppSpinnerPage {

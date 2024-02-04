@@ -249,8 +249,8 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
   renderImage() {
     const ypImage = this.ypImageUrl;
 
-    return html`<h1>ijijij</h1>
-      <div class="layout horizontal center center">
+    return html`
+      <div class="layout horizontal center center" hidden>
         <div class="layout vertical">
           <yp-image
             class="mainImage"
