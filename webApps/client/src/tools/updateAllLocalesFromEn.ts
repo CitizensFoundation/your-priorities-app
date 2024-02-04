@@ -25,32 +25,48 @@ export class YpLocaleTranslation {
   }
 
   async loadAndCompareTranslations() {
-    const localesDir = './locales';
-    const baseTranslationPath = path.join(localesDir, 'en/translation.json');
-    const baseTranslation: Translation = await this.loadJsonFile<Translation>(baseTranslationPath);
+    const localesDir = "./locales";
+    const baseTranslationPath = path.join(localesDir, "en/translation.json");
+    const baseTranslation: Translation = await this.loadJsonFile<Translation>(
+      baseTranslationPath
+    );
 
-    const localeDirs = fs.readdirSync(localesDir)
-      .filter(file => fs.statSync(path.join(localesDir, file)).isDirectory());
+    const localeDirs = fs
+      .readdirSync(localesDir)
+      .filter((file) => fs.statSync(path.join(localesDir, file)).isDirectory());
 
     for (const localeDir of localeDirs) {
-      if (localeDir === 'en') continue; // Skip English since it's the base
+      if (localeDir !== "is") continue; // Skip English since it's the base
 
       console.log(`Processing locale: ${localeDir}`);
-      const translationFilePath = path.join(localesDir, localeDir, 'translation.json');
-      let translation: Translation = await this.loadJsonFile<Translation>(translationFilePath);
+      const translationFilePath = path.join(
+        localesDir,
+        localeDir,
+        "translation.json"
+      );
+      let translation: Translation = await this.loadJsonFile<Translation>(
+        translationFilePath
+      );
       translation = this.updateWithMissingKeys(baseTranslation, translation);
+      console.log(`Updated translation for ${localeDir}:`, translation);
 
-      const missingTranslations = this.extractMissingTranslations(baseTranslation, translation);
+      const missingTranslations = this.extractMissingTranslations(
+        baseTranslation,
+        translation
+      );
 
       // Chunk the missing translations
       const chunks = this.chunkArray(missingTranslations, 15);
 
       for (const chunk of chunks) {
         // Prepare the texts for translation
-        const textsToTranslate = chunk.map(key => translation[key] || "");
+        const textsToTranslate = chunk.map((key) => translation[key] || "");
 
         // Call your translateUITexts method
-        const translations = await this.translateUITexts(localeDir, textsToTranslate as string[]);
+        const translations = await this.translateUITexts(
+          localeDir,
+          textsToTranslate as string[]
+        );
 
         // Update the translation with the new texts
         chunk.forEach((key, index) => {
@@ -65,7 +81,7 @@ export class YpLocaleTranslation {
 
   // Utility method to safely set a value at a given path in a nested object
   setValueAtPath(obj: any, path: string, value: any) {
-    const keys = path.split('.');
+    const keys = path.split(".");
     let current = obj;
     for (let i = 0; i < keys.length - 1; i++) {
       const key = keys[i];
@@ -78,11 +94,6 @@ export class YpLocaleTranslation {
   private async loadJsonFile<T>(filePath: string): Promise<T> {
     const fileContent = await readFilePromise(filePath, "utf8");
     return JSON.parse(fileContent) as T;
-  }
-
-  private extractIsoCodeFromPath(filePath: string): string {
-    const matches = filePath.match(/locales\/(.+?)\//);
-    return matches ? matches[1] : "en"; // Default to 'en' if not found
   }
 
   private updateWithMissingKeys(
@@ -160,19 +171,17 @@ export class YpLocaleTranslation {
 INPUTS:
 The user will tell us the Language to translate to.
 
-You will get JSON input with an array of string translated:
+You will get JSON with an array of strings to translate:
 [
-  {
-    originalUIEnglishText: string
-  }
+  "string",
+  ...
 ]
 
 OUTPUT:
-You will output JSON format with the translation:
+You will output JSON string array in the same order as the input array.
 [
-  {
-    translatedUIEnglishText: string
-  }
+  "string",
+  ...
 ]
 
 
@@ -205,10 +214,7 @@ Your ${language} UI texts JSON output:`;
         ISO6391.getName(languageIsoCode.substring(0, 2).toLowerCase()) ||
         "en";
 
-      const inTexts = {
-        originalUIEnglishTexts: textsToTranslate,
-      } as YpLocaleTranslationInData;
-      return await this.callLlm(languageName, inTexts);
+      return await this.callLlm(languageName, textsToTranslate);
     } catch (error) {
       console.error("Error in getAnswerIdeas:", error);
       return undefined;
@@ -217,7 +223,7 @@ Your ${language} UI texts JSON output:`;
 
   async callLlm(
     languageName: string,
-    inObject: YpLocaleTranslationInData
+    inObject: string[]
   ): Promise<string[] | undefined> {
     const messages = [
       {
@@ -226,10 +232,7 @@ Your ${language} UI texts JSON output:`;
       },
       {
         role: "user",
-        content: this.renderUserMessage(
-          languageName,
-          inObject.originalUIEnglishTexts
-        ),
+        content: this.renderUserMessage(languageName, inObject),
       },
     ] as any;
 
@@ -253,12 +256,24 @@ Your ${language} UI texts JSON output:`;
         console.log("Text JSON:", textJson);
 
         if (textJson) {
-          const translationData = JSON.parse(
-            jsonrepair(textJson)
-          ) as YpLocaleTranslationOutData;
-          if (translationData && translationData.translatedUIEnglishTexts) {
+          let cleanText = textJson;
+
+          // Detect and remove markdown code block syntax if present
+          if (cleanText.startsWith("```json") && cleanText.endsWith("```")) {
+              cleanText = cleanText.substring(7, cleanText.length - 3).trim(); // Remove the surrounding markers
+          }
+
+          let translationData: string[] = [];
+          try {
+              translationData = JSON.parse(jsonrepair(cleanText));
+              console.log("Parsed Translation Data:", translationData);
+          } catch (error) {
+              console.error("Error parsing cleaned text as JSON:", error);
+          }
+
+          if (translationData) {
             running = false;
-            return translationData.translatedUIEnglishTexts;
+            return translationData;
           }
         } else {
           throw new Error("No content in response");
