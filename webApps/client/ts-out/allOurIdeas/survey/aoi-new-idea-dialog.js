@@ -159,7 +159,7 @@ let AoiNewIdeaDialog = class AoiNewIdeaDialog extends YpBaseElement {
 
           .questionTitle {
             margin-top: 16px;
-            margin-bottom: 12dkqwpo dkqwpo kqwpx;
+            margin-bottom: 12px;
           }
 
           .cancelButton {

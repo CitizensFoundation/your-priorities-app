@@ -58,9 +58,7 @@ export class YpCollection extends YpBaseElementWithLogin {
             if (this.collection.default_locale != null) {
                 window.appGlobals.changeLocaleIfNeeded(this.collection.default_locale);
             }
-            if (this.collection.theme_id !== undefined) {
-                window.appGlobals.theme.setTheme(this.collection.theme_id);
-            }
+            window.appGlobals.theme.setTheme(this.collection.theme_id);
             this.fire("yp-set-home-link", {
                 type: this.collectionType,
                 id: this.collection.id,

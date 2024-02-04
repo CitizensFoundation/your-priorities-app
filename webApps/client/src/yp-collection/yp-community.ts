@@ -1,16 +1,16 @@
-import { YpAccessHelpers } from '../common/YpAccessHelpers.js';
-import { YpMediaHelpers } from '../common/YpMediaHelpers.js';
+import { YpAccessHelpers } from "../common/YpAccessHelpers.js";
+import { YpMediaHelpers } from "../common/YpMediaHelpers.js";
 
-import { YpCollection, CollectionTabTypes } from './yp-collection.js';
-import { YpCollectionItemsGrid } from './yp-collection-items-grid.js';
-import { customElement } from 'lit/decorators.js';
-import { AcActivities } from '../ac-activities/ac-activities.js';
-import { YpNavHelpers } from '../common/YpNavHelpers.js';
+import { YpCollection, CollectionTabTypes } from "./yp-collection.js";
+import { YpCollectionItemsGrid } from "./yp-collection-items-grid.js";
+import { customElement } from "lit/decorators.js";
+import { AcActivities } from "../ac-activities/ac-activities.js";
+import { YpNavHelpers } from "../common/YpNavHelpers.js";
 
-@customElement('yp-community')
+@customElement("yp-community")
 export class YpCommunity extends YpCollection {
   constructor() {
-    super('community', 'group', 'edit', 'group.new');
+    super("community", "group", "edit", "group.new");
   }
 
   override refresh() {
@@ -29,7 +29,7 @@ export class YpCommunity extends YpCollection {
       !isAdmin
     ) {
       YpNavHelpers.redirectTo(
-        '/group/' +
+        "/group/" +
           (this.collection.configuration as YpCommunityConfiguration)
             .redirectToGroupId
       );
@@ -51,7 +51,10 @@ export class YpCommunity extends YpCollection {
         YpMediaHelpers.setupTopHeaderImage(this, null);
       }
 
-      if (!community.theme_id && community.Domain?.theme_id) {
+      if (
+        !community.configuration.theme &&
+        community.Domain?.configuration.theme
+      ) {
         window.appGlobals.theme.setTheme(community.Domain.theme_id);
       }
 
@@ -141,12 +144,12 @@ export class YpCommunity extends YpCollection {
       this.selectedTab === CollectionTabTypes.News &&
       window.appGlobals.cache.cachedActivityItem
     ) {
-      const list = this.$$('#collectionActivities') as AcActivities;
+      const list = this.$$("#collectionActivities") as AcActivities;
       if (list) {
         list.scrollToItem(window.appGlobals.cache.cachedActivityItem);
         window.appGlobals.cache.cachedActivityItem = undefined;
       } else {
-        console.warn('No community activities for scroll to item');
+        console.warn("No community activities for scroll to item");
       }
     } else if (
       this.selectedTab === CollectionTabTypes.Collection &&
@@ -156,7 +159,7 @@ export class YpCommunity extends YpCollection {
         window.appGlobals.cache.backToCommunityGroupItems &&
         window.appGlobals.cache.backToCommunityGroupItems[this.collection.id]
       ) {
-        (this.$$('#collectionItems') as YpCollectionItemsGrid).scrollToItem(
+        (this.$$("#collectionItems") as YpCollectionItemsGrid).scrollToItem(
           window.appGlobals.cache.backToCommunityGroupItems[this.collection.id]
         );
         window.appGlobals.cache.backToCommunityGroupItems[this.collection.id] =
@@ -166,26 +169,26 @@ export class YpCommunity extends YpCollection {
   }
 
   _setupCommunityBackPath(community: YpCommunityData) {
-    if (community && window.location.href.indexOf('/community') > -1) {
+    if (community && window.location.href.indexOf("/community") > -1) {
       let backPath, headerTitle, headerDescription;
       if (community.CommunityFolder) {
-        backPath = '/community_folder/' + community.CommunityFolder.id;
+        backPath = "/community_folder/" + community.CommunityFolder.id;
         headerTitle = community.CommunityFolder.name;
         headerDescription = community.CommunityFolder.description;
       } else {
-        backPath = '/domain/' + community.domain_id;
+        backPath = "/domain/" + community.domain_id;
         if (community.Domain) {
           headerTitle = community.Domain.name;
           headerDescription = community.Domain.description;
         }
       }
-      this.fire('yp-change-header', {
+      this.fire("yp-change-header", {
         headerTitle:
           community.configuration && community.configuration.customBackName
             ? community.configuration.customBackName
             : headerTitle,
         headerDescription: headerDescription,
-        headerIcon: 'group-work',
+        headerIcon: "group-work",
         useHardBack: this._useHardBack(community.configuration),
         disableDomainUpLink:
           community.configuration &&
@@ -205,7 +208,7 @@ export class YpCommunity extends YpCollection {
       window.appGlobals.cache.backToCommunityGroupItems &&
       window.appGlobals.cache.backToCommunityGroupItems[this.collection.id]
     ) {
-      (this.$$('#collectionItems') as YpCollectionItemsGrid).scrollToItem(
+      (this.$$("#collectionItems") as YpCollectionItemsGrid).scrollToItem(
         window.appGlobals.cache.backToCommunityGroupItems[this.collection.id]
       );
       window.appGlobals.cache.backToCommunityGroupItems[this.collection.id] =
@@ -216,7 +219,7 @@ export class YpCommunity extends YpCollection {
   _openHelpPageIfNeededOnce() {
     if (
       this.collection &&
-      !sessionStorage.getItem('yp-welcome-for-community-' + this.collection.id)
+      !sessionStorage.getItem("yp-welcome-for-community-" + this.collection.id)
     ) {
       setTimeout(() => {
         if (
@@ -224,12 +227,12 @@ export class YpCommunity extends YpCollection {
           this.collection.configuration &&
           this.collection.configuration.welcomePageId
         ) {
-          this.fire('yp-open-page', {
+          this.fire("yp-open-page", {
             pageId: this.collection.configuration.welcomePageId,
           });
           sessionStorage.setItem(
-            'yp-welcome-for-community-' + this.collection.id,
-            'true'
+            "yp-welcome-for-community-" + this.collection.id,
+            "true"
           );
         }
       }, 1200);
@@ -238,7 +241,7 @@ export class YpCommunity extends YpCollection {
 
   _hideMapIfNotUsedByGroups() {
     let locationHidden = true;
-    this.collectionItems?.forEach(group => {
+    this.collectionItems?.forEach((group) => {
       if (group.configuration && group.configuration.locationHidden) {
         if (group.configuration.locationHidden != true) {
           locationHidden = false;

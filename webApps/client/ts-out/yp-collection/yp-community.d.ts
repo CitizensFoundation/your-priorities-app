@@ -1,4 +1,4 @@
-import { YpCollection } from './yp-collection.js';
+import { YpCollection } from "./yp-collection.js";
 export declare class YpCommunity extends YpCollection {
     constructor();
     refresh(): void;

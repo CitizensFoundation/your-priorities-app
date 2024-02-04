@@ -1,17 +1,17 @@
-import { html, css, nothing } from 'lit';
-import { property, customElement } from 'lit/decorators.js';
+import { html, css, nothing } from "lit";
+import { property, customElement } from "lit/decorators.js";
 
-import { YpBaseElement } from '../common/yp-base-element.js';
-import * as linkify from 'linkifyjs';
+import { YpBaseElement } from "../common/yp-base-element.js";
+import * as linkify from "linkifyjs";
 
-import '@material/web/button/text-button.js';
-import '@material/mwc-snackbar';
+import "@material/web/button/text-button.js";
+import "@material/mwc-snackbar";
 
-import { YpCollection } from '../yp-collection/yp-collection.js';
-import { YpStructuredQuestionEdit } from './yp-structured-question-edit.js';
-import { YpAccessHelpers } from '../common/YpAccessHelpers.js';
+import { YpCollection } from "../yp-collection/yp-collection.js";
+import { YpStructuredQuestionEdit } from "./yp-structured-question-edit.js";
+import { YpAccessHelpers } from "../common/YpAccessHelpers.js";
 
-@customElement('yp-survey-group')
+@customElement("yp-survey-group")
 export class YpSurveyGroup extends YpBaseElement {
   @property({ type: Number })
   surveyGroupId: number | undefined;
@@ -45,10 +45,12 @@ export class YpSurveyGroup extends YpBaseElement {
 
   liveUniqueIdsAll: Array<{ uniqueId: string; atIndex: number }> = [];
 
-  override updated(changedProperties: Map<string | number | symbol, unknown>): void {
+  override updated(
+    changedProperties: Map<string | number | symbol, unknown>
+  ): void {
     super.updated(changedProperties);
 
-    if (changedProperties.has('surveyGroupId')) {
+    if (changedProperties.has("surveyGroupId")) {
       this._surveyGroupIdChanged();
     }
   }
@@ -130,21 +132,25 @@ export class YpSurveyGroup extends YpBaseElement {
                                   is-last-rating="${this._isLastRating(index)}"
                                   is-first-rating="${this._isFirstRating(
                                     index
-                                  )}">
+                                  )}"
+                                >
                                 </yp-structured-question-edit>
                               `
                             )}
                           </div>
                           <div
-                            class="layout horizontal center-center submitSpinnerContainer"></div>
+                            class="layout horizontal center-center submitSpinnerContainer"
+                          ></div>
                           <div
                             class="layout horizontal center-center"
-                            ?hidden="${this.submitHidden}">
+                            ?hidden="${this.submitHidden}"
+                          >
                             <md-text-button
                               id="submitButton"
                               raised
-                              .label="${this.t('submitSurvey')}"
-                              @click="${this._submit}"></md-text-button>
+                              .label="${this.t("submitSurvey")}"
+                              @click="${this._submit}"
+                            ></md-text-button>
                           </div>
                         </div>
                       </div>
@@ -163,9 +169,10 @@ export class YpSurveyGroup extends YpBaseElement {
                           content="${this.surveyGroup.configuration
                             .customThankYouTextNewPosts}"
                           .contentLanguage="${this.surveyGroup.language}"
-                          textType="customThankYouTextNewPosts"></yp-magic-text>
+                          textType="customThankYouTextNewPosts"
+                        ></yp-magic-text>
                       `
-                    : html` ${this.t('thankYouForCompletingTheSurvey')} `}
+                    : html` ${this.t("thankYouForCompletingTheSurvey")} `}
                 </div>
               `}
         `
@@ -174,33 +181,33 @@ export class YpSurveyGroup extends YpBaseElement {
 
   override connectedCallback() {
     super.connectedCallback();
-    this.addListener('yp-skip-to-unique-id', this._skipToId);
-    this.addListener('yp-open-to-unique-id', this._openToId);
-    this.addListener('yp-goto-next-index', this._goToNextIndex);
-    this.addListener('yp-answer-content-changed-debounced', this._saveState);
+    this.addListener("yp-skip-to-unique-id", this._skipToId);
+    this.addListener("yp-open-to-unique-id", this._openToId);
+    this.addListener("yp-goto-next-index", this._goToNextIndex);
+    this.addListener("yp-answer-content-changed-debounced", this._saveState);
   }
 
   override disconnectedCallback() {
     super.disconnectedCallback();
-    this.removeListener('yp-skip-to-unique-id', this._skipToId);
-    this.removeListener('yp-open-to-unique-id', this._openToId);
-    this.removeListener('yp-goto-next-index', this._goToNextIndex);
-    this.removeListener('yp-answer-content-changed-debounced', this._saveState);
+    this.removeListener("yp-skip-to-unique-id", this._skipToId);
+    this.removeListener("yp-open-to-unique-id", this._openToId);
+    this.removeListener("yp-goto-next-index", this._goToNextIndex);
+    this.removeListener("yp-answer-content-changed-debounced", this._saveState);
   }
 
   _isLastRating(index: number) {
     return (
-      this.structuredQuestions![index].subType === 'rating' &&
+      this.structuredQuestions![index].subType === "rating" &&
       index + 2 < this.structuredQuestions!.length &&
-      this.structuredQuestions![index + 1].subType !== 'rating'
+      this.structuredQuestions![index + 1].subType !== "rating"
     );
   }
 
   _isFirstRating(index: number) {
     return (
-      this.structuredQuestions![index].subType === 'rating' &&
+      this.structuredQuestions![index].subType === "rating" &&
       this.structuredQuestions![index - 1] &&
-      this.structuredQuestions![index - 1].subType !== 'rating'
+      this.structuredQuestions![index - 1].subType !== "rating"
     );
   }
 
@@ -210,18 +217,18 @@ export class YpSurveyGroup extends YpBaseElement {
 
   _skipToId(event: CustomEvent, showItems: boolean) {
     let foundFirst = false;
-    const children = (this.$$('#surveyContainer')!
-      .children as unknown) as Array<YpStructuredQuestionEdit>;
+    const children = this.$$("#surveyContainer")!
+      .children as unknown as Array<YpStructuredQuestionEdit>;
     for (let i = 0; i < children.length; i++) {
-      const toId = event.detail.toId.replace(/]/g, '');
-      const fromId = event.detail.fromId.replace(/]/g, '');
+      const toId = event.detail.toId.replace(/]/g, "");
+      const fromId = event.detail.fromId.replace(/]/g, "");
       if (
         children[i + 1] &&
         children[i + 1].question &&
         children[i + 1].question.uniqueId &&
         children[i + 1].question.uniqueId!.substring(
           children[i + 1].question.uniqueId!.length - 1
-        ) === 'a'
+        ) === "a"
       ) {
         children[i].question.uniqueId = children[
           i + 1
@@ -240,7 +247,7 @@ export class YpSurveyGroup extends YpBaseElement {
         children[i].question &&
         event.detail.toId &&
         (children[i].question.uniqueId === toId ||
-          children[i].question.uniqueId === toId + 'a')
+          children[i].question.uniqueId === toId + "a")
       ) {
         break;
       } else {
@@ -258,28 +265,30 @@ export class YpSurveyGroup extends YpBaseElement {
   //TODO: Get working on Safari
   _goToNextIndex(event: CustomEvent) {
     if (false && !this.isSafari) {
-      const currentPos = this.liveQuestionIds.indexOf(event.detail.currentIndex);
+      const currentPos = this.liveQuestionIds.indexOf(
+        event.detail.currentIndex
+      );
       if (currentPos < this.liveQuestionIds.length - 1) {
         const item = this.$$(
-          '#structuredQuestionContainer_' + this.liveQuestionIds[currentPos + 1]
+          "#structuredQuestionContainer_" + this.liveQuestionIds[currentPos + 1]
         ) as HTMLInputElement;
         item.scrollIntoView({
-          block: 'center',
-          inline: 'center',
-          behavior: 'smooth',
+          block: "center",
+          inline: "center",
+          behavior: "smooth",
         });
         item.focus();
       }
     } else {
-      console.warn("_goToNextIndex not working on Safari")
+      console.warn("_goToNextIndex not working on Safari");
     }
   }
 
   _serializeAnswers() {
     const answers: Array<YpStructuredAnswer> = [];
-    this.liveQuestionIds.forEach(liveIndex => {
+    this.liveQuestionIds.forEach((liveIndex) => {
       const questionElement = this.$$(
-        '#structuredQuestionContainer_' + liveIndex
+        "#structuredQuestionContainer_" + liveIndex
       ) as YpStructuredQuestionEdit;
       if (questionElement) {
         const answer = questionElement.getAnswer();
@@ -307,29 +316,29 @@ export class YpSurveyGroup extends YpBaseElement {
         }
       }
     } else {
-      console.error('No survey id to post to');
+      console.error("No survey id to post to");
     }
   }
 
   _saveState(event: CustomEvent) {
     const detail = event.detail;
-    if (detail && detail.value && (detail.value !== '' || detail.value > 1)) {
+    if (detail && detail.value && (detail.value !== "" || detail.value > 1)) {
       this.submitHidden = false;
       this._serializeAnswers();
       localStorage.setItem(
-        'yp-survey-response-for-' + this.surveyGroup!.id,
+        "yp-survey-response-for-" + this.surveyGroup!.id,
         JSON.stringify(this.structuredAnswers)
       );
     }
   }
 
   _clearState() {
-    localStorage.setItem('yp-survey-response-for-' + this.surveyGroup!.id, '');
+    localStorage.setItem("yp-survey-response-for-" + this.surveyGroup!.id, "");
   }
 
   _checkAndLoadState() {
     const answers = localStorage.getItem(
-      'yp-survey-response-for-' + this.surveyGroup!.id
+      "yp-survey-response-for-" + this.surveyGroup!.id
     );
     if (answers) {
       this.structuredAnswers = JSON.parse(answers);
@@ -354,11 +363,13 @@ export class YpSurveyGroup extends YpBaseElement {
     )) as YpGroupData | void;
     if (surveyGroup) {
       this.surveyGroup = surveyGroup;
-      this.structuredQuestions = this.surveyGroup.configuration.structuredQuestionsJson;
-      this.surveyGroup.configuration = window.appGlobals.overrideGroupConfigIfNeeded(
-        this.surveyGroup.id,
-        this.surveyGroup.configuration
-      );
+      this.structuredQuestions =
+        this.surveyGroup.configuration.structuredQuestionsJson;
+      this.surveyGroup.configuration =
+        window.appGlobals.overrideGroupConfigIfNeeded(
+          this.surveyGroup.id,
+          this.surveyGroup.configuration
+        );
 
       this.refresh();
       setTimeout(() => {
@@ -371,14 +382,14 @@ export class YpSurveyGroup extends YpBaseElement {
             if (
               question.type &&
               question.uniqueId &&
-              (question.type.toLowerCase() === 'textfield' ||
-                question.type.toLowerCase() === 'textfieldlong' ||
-                question.type.toLowerCase() === 'textarea' ||
-                question.type.toLowerCase() === 'textarealong' ||
-                question.type.toLowerCase() === 'numberfield' ||
-                question.type.toLowerCase() === 'checkboxes' ||
-                question.type.toLowerCase() === 'radios' ||
-                question.type.toLowerCase() === 'dropdown')
+              (question.type.toLowerCase() === "textfield" ||
+                question.type.toLowerCase() === "textfieldlong" ||
+                question.type.toLowerCase() === "textarea" ||
+                question.type.toLowerCase() === "textarealong" ||
+                question.type.toLowerCase() === "numberfield" ||
+                question.type.toLowerCase() === "checkboxes" ||
+                question.type.toLowerCase() === "radios" ||
+                question.type.toLowerCase() === "dropdown")
             ) {
               this.liveQuestionIds.push(index);
               this.uniqueIdsToElementIndexes[question.uniqueId!] = index;
@@ -408,7 +419,7 @@ export class YpSurveyGroup extends YpBaseElement {
       );
 
       if (
-        this.surveyGroup.theme_id != null ||
+        this.surveyGroup.configuration.theme != null ||
         (this.surveyGroup.configuration &&
           this.surveyGroup.configuration.themeOverrideColorPrimary != null)
       ) {
@@ -418,7 +429,7 @@ export class YpSurveyGroup extends YpBaseElement {
         );
       } else if (
         this.surveyGroup.Community &&
-        (this.surveyGroup.Community.theme_id != null ||
+        (this.surveyGroup.Community.configuration.theme != null ||
           (this.surveyGroup.Community.configuration &&
             this.surveyGroup.Community.configuration.themeOverrideColorPrimary))
       ) {
@@ -429,10 +440,11 @@ export class YpSurveyGroup extends YpBaseElement {
       } else if (
         this.surveyGroup.Community &&
         this.surveyGroup.Community.Domain &&
-        this.surveyGroup.Community.Domain.theme_id != null
+        this.surveyGroup.Community.Domain.configuration.theme != null
       ) {
         window.appGlobals.theme.setTheme(
-          this.surveyGroup.Community.Domain.theme_id
+          this.surveyGroup.Community.Domain.theme_id,
+          this.surveyGroup.Community.Domain.configuration
         );
       } else {
         window.appGlobals.theme.setTheme(1);
@@ -465,7 +477,8 @@ export class YpSurveyGroup extends YpBaseElement {
         this.surveyGroup.Community.configuration.signupTermsPageId &&
         this.surveyGroup.Community.configuration.signupTermsPageId != -1
       ) {
-        window.appGlobals.signupTermsPageId = this.surveyGroup.Community.configuration.signupTermsPageId;
+        window.appGlobals.signupTermsPageId =
+          this.surveyGroup.Community.configuration.signupTermsPageId;
       } else {
         window.appGlobals.signupTermsPageId = undefined;
       }
@@ -475,7 +488,8 @@ export class YpSurveyGroup extends YpBaseElement {
         this.surveyGroup.Community.configuration &&
         this.surveyGroup.Community.configuration.customSamlDeniedMessage
       ) {
-        window.appGlobals.currentSamlDeniedMessage = this.surveyGroup.Community.configuration.customSamlDeniedMessage;
+        window.appGlobals.currentSamlDeniedMessage =
+          this.surveyGroup.Community.configuration.customSamlDeniedMessage;
       } else {
         window.appGlobals.currentSamlDeniedMessage = undefined;
       }
@@ -485,7 +499,8 @@ export class YpSurveyGroup extends YpBaseElement {
         this.surveyGroup.Community.configuration &&
         this.surveyGroup.Community.configuration.customSamlLoginMessage
       ) {
-        window.appGlobals.currentSamlLoginMessage = this.surveyGroup.Community.configuration.customSamlLoginMessage;
+        window.appGlobals.currentSamlLoginMessage =
+          this.surveyGroup.Community.configuration.customSamlLoginMessage;
       } else {
         window.appGlobals.currentSamlLoginMessage = undefined;
       }

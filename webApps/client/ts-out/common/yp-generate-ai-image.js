@@ -180,8 +180,9 @@ let YpGenerateAiImage = class YpGenerateAiImage extends YpBaseElement {
           margin-bottom: 16px;
           margin-left: 12px;
           margin-right: 12px;
-          padding: 20px;
           line-height: 1.5;
+          font-size: 20px;
+          color: var(--md-sys-color-primary);
         }
 
         .description {

@@ -180,7 +180,8 @@ export class AoiSurveyIntro extends YpBaseElement {
         }
 
         .questionTitle {
-          max-width: 600px;
+          max-width: 588px;
+          width: 588px;
           padding: 20px;
           line-height: 1.5;
         }

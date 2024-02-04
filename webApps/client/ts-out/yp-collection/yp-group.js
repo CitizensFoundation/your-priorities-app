@@ -575,20 +575,20 @@ let YpGroup = class YpGroup extends YpCollection {
             if (group.Community?.configuration) {
                 window.appGlobals.analytics.setCommunityPixelTracker(group.Community.configuration.facebookPixelId);
             }
-            if (group.theme_id != null ||
+            if (group.configuration.theme != null ||
                 (group.configuration &&
                     group.configuration.themeOverrideColorPrimary != null)) {
                 window.appGlobals.theme.setTheme(group.theme_id, group.configuration);
             }
             else if (group.Community &&
-                (group.Community.theme_id != null ||
+                (group.Community.configuration.theme != null ||
                     (group.Community.configuration &&
                         group.Community.configuration.themeOverrideColorPrimary))) {
                 window.appGlobals.theme.setTheme(group.Community.theme_id, group.Community.configuration);
             }
             else if (group.Community &&
                 group.Community.Domain &&
-                group.Community.Domain.theme_id != null) {
+                group.Community.Domain.configuration.theme != null) {
                 window.appGlobals.theme.setTheme(group.Community.Domain.theme_id);
             }
             else {

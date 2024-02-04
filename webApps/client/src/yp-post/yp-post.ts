@@ -445,7 +445,7 @@ export class YpPost extends YpCollection {
       }
 
       if (
-        this.post.Group.theme_id != null ||
+        this.post.Group.configuration.theme != null ||
         (this.post.Group.configuration &&
           this.post.Group.configuration.themeOverrideColorPrimary != null)
       ) {
@@ -455,7 +455,7 @@ export class YpPost extends YpCollection {
         );
       } else if (
         this.post.Group.Community &&
-        (this.post.Group.Community.theme_id != null ||
+        (this.post.Group.Community.configuration.theme != null ||
           (this.post.Group.Community.configuration &&
             this.post.Group.Community.configuration.themeOverrideColorPrimary))
       ) {

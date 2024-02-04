@@ -11,6 +11,6 @@ export declare class YpPromotionDashboard extends PlausibleDashboard {
     useCommunityId: number | undefined;
     connectedCallback(): void;
     static get styles(): import("lit").CSSResult[];
-    render(): typeof nothing | import("lit-html").TemplateResult<1>;
+    render(): import("lit-html").TemplateResult<1> | typeof nothing;
 }
 //# sourceMappingURL=yp-promotion-dashboard.d.ts.map

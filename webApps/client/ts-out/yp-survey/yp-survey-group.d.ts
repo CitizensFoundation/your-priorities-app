@@ -1,7 +1,7 @@
-import { nothing } from 'lit';
-import { YpBaseElement } from '../common/yp-base-element.js';
-import '@material/web/button/text-button.js';
-import '@material/mwc-snackbar';
+import { nothing } from "lit";
+import { YpBaseElement } from "../common/yp-base-element.js";
+import "@material/web/button/text-button.js";
+import "@material/mwc-snackbar";
 export declare class YpSurveyGroup extends YpBaseElement {
     surveyGroupId: number | undefined;
     surveySubmitError: string | undefined;
@@ -20,7 +20,7 @@ export declare class YpSurveyGroup extends YpBaseElement {
     }>;
     updated(changedProperties: Map<string | number | symbol, unknown>): void;
     static get styles(): any[];
-    render(): typeof nothing | import("lit-html").TemplateResult<1>;
+    render(): import("lit-html").TemplateResult<1> | typeof nothing;
     connectedCallback(): void;
     disconnectedCallback(): void;
     _isLastRating(index: number): boolean;

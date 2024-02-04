@@ -372,13 +372,13 @@ let YpPost = class YpPost extends YpCollection {
             else {
                 this.disableNewPosts = false;
             }
-            if (this.post.Group.theme_id != null ||
+            if (this.post.Group.configuration.theme != null ||
                 (this.post.Group.configuration &&
                     this.post.Group.configuration.themeOverrideColorPrimary != null)) {
                 window.appGlobals.theme.setTheme(this.post.Group.theme_id, this.post.Group.configuration);
             }
             else if (this.post.Group.Community &&
-                (this.post.Group.Community.theme_id != null ||
+                (this.post.Group.Community.configuration.theme != null ||
                     (this.post.Group.Community.configuration &&
                         this.post.Group.Community.configuration.themeOverrideColorPrimary))) {
                 window.appGlobals.theme.setTheme(this.post.Group.Community.theme_id, this.post.Group.Community.configuration);
