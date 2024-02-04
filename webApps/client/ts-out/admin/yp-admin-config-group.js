@@ -140,8 +140,6 @@ let YpAdminConfigGroup = class YpAdminConfigGroup extends YpAdminConfigBase {
             </div>
             <div class="saveButtonContainer">${this.renderSaveButton()}</div>
           </div>
-          ${this.uploadedLogoImageId ? this.renderImage() : nothing}
-
           <input
             type="hidden"
             name="appHomeScreenIconImageId"

@@ -76,7 +76,10 @@ export class YpLocaleTranslation {
         });
 
         console.log(`Updated translation for ${localeDir}:`, translation);
-        await writeFilePromise(translationFilePath, JSON.stringify(translation, null, 2));
+        await writeFilePromise(
+          translationFilePath,
+          JSON.stringify(translation, null, 2)
+        );
       }
     }
   }
@@ -102,17 +105,26 @@ export class YpLocaleTranslation {
     baseTranslation: Translation,
     targetTranslation: Translation,
     path: string[] = []
-  ): any {
-    const updatedTranslation = { ...targetTranslation };
+  ): Translation {
+    // Create a deep copy of the targetTranslation to avoid mutating the original object
+    const updatedTranslation: Translation = JSON.parse(
+      JSON.stringify(targetTranslation)
+    );
 
     const updateRecursively = (
-      base: any,
-      target: any,
+      base: Translation,
+      target: Translation,
       currentPath: string[]
     ) => {
       Object.keys(base).forEach((key) => {
-        if (!target.hasOwnProperty(key)) {
-          // If the key is missing in the target, add it from the base
+        const fullPath = currentPath.concat(key).join(".");
+        if (
+          !target.hasOwnProperty(key) ||
+          target[key] === "" ||
+          target[key] === null
+        ) {
+          // If the key is missing in the target, or has an empty/null value, add it from the base
+          console.log(`Updating missing or empty key at path: ${fullPath}`);
           target[key] = base[key];
         } else if (
           typeof base[key] === "object" &&
@@ -120,41 +132,56 @@ export class YpLocaleTranslation {
           typeof target[key] === "object" &&
           target[key] !== null
         ) {
-          // If both the base and target values are objects, recurse
-          updateRecursively(base[key], target[key], currentPath.concat(key));
-        }
+          // If both the base and target values are objects (and not null), recurse
+          updateRecursively(
+            base[key] as Translation,
+            target[key] as Translation,
+            currentPath.concat(key)
+          );
+        } // No else condition required for primitive types as we only update missing or empty keys
       });
     };
 
-    updateRecursively(baseTranslation, updatedTranslation, path);
+    updateRecursively(baseTranslation, updatedTranslation, []);
     return updatedTranslation;
   }
 
   private extractMissingTranslations(
-    baseTranslation: any,
-    targetTranslation: any
+    baseTranslation: Translation,
+    targetTranslation: Translation
   ): string[] {
     const missingTranslations: string[] = [];
 
-    const findMissing = (base: any, target: any, path: string[] = []) => {
+    const findMissing = (
+      base: Translation,
+      target: Translation,
+      path: string[] = []
+    ) => {
       Object.keys(base).forEach((key) => {
-        const newPath = path.concat(key);
+        const newPath = path.concat(key); // Construct the new path for nested keys
         if (
           typeof base[key] === "object" &&
           base[key] !== null &&
           typeof target[key] === "object" &&
           target[key] !== null
         ) {
-          // Recurse into nested objects
-          findMissing(base[key], target[key], newPath);
-        } else if (!target.hasOwnProperty(key) || base[key] === target[key]) {
-          // If the key is missing or the value is the same as the base (indicating it might be untranslated)
-          missingTranslations.push(newPath.join("."));
+          // If both are objects, recurse into nested objects
+          findMissing(
+            base[key] as Translation,
+            target[key] as Translation,
+            newPath
+          );
+        } else if (
+          !target.hasOwnProperty(key) || // Key is missing in target
+          target[key] === "" // Target key's value is an empty string
+        ) {
+          missingTranslations.push(newPath.join(".")); // Add the path of the missing translation to the list
         }
+        // Removed the check for identical values to base[key] to avoid false positives
       });
     };
 
-    findMissing(baseTranslation, targetTranslation);
+    findMissing(baseTranslation, targetTranslation, []);
     return missingTranslations;
   }
 
@@ -262,15 +289,15 @@ Your ${language} UI texts JSON output:`;
 
           // Detect and remove markdown code block syntax if present
           if (cleanText.startsWith("```json") && cleanText.endsWith("```")) {
-              cleanText = cleanText.substring(7, cleanText.length - 3).trim(); // Remove the surrounding markers
+            cleanText = cleanText.substring(7, cleanText.length - 3).trim(); // Remove the surrounding markers
           }
 
           let translationData: string[] = [];
           try {
-              translationData = JSON.parse(jsonrepair(cleanText));
-              console.log("Parsed Translation Data:", translationData);
+            translationData = JSON.parse(jsonrepair(cleanText));
+            console.log("Parsed Translation Data:", translationData);
           } catch (error) {
-              console.error("Error parsing cleaned text as JSON:", error);
+            console.error("Error parsing cleaned text as JSON:", error);
           }
 
           if (translationData) {

@@ -101,6 +101,14 @@ let YpThemeSelector = class YpThemeSelector extends YpBaseElement {
         }
         this.addGlobalListener("yp-theme-color-detected", this.themeColorDetected);
     }
+    disconnectedCallback() {
+        super.disconnectedCallback();
+        this.removeGlobalListener("yp-theme-color-detected", this.themeColorDetected);
+    }
+    themeColorDetected(event) {
+        this.oneDynamicThemeColor = event.detail;
+        console.error("Theme Color Detected:", this.oneDynamicThemeColor);
+    }
     updated(changedProperties) {
         let shouldUpdateConfiguration = false;
         // Check if any of the relevant properties have changed

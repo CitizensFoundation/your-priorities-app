@@ -775,10 +775,10 @@
     "deletePage": "Delete",
     "addPage": "Add new page",
     "managePages": "Manage pages",
-    "pagePublished": "pages.pagePublished",
-    "pageUnPublished": "pages.pageUnPublished",
-    "pageDeleted": "pages.pageDeleted",
-    "newPageCreated": "pages.newPageCreated"
+    "pagePublished": "Page Published",
+    "pageUnPublished": "Page UnPublished",
+    "pageDeleted": "Page Deleted",
+    "newPageCreated": "Page Created",
   },
 
   "archived": "Archived",
@@ -937,8 +937,8 @@
     "haveMovedPost": "Have moved post",
     "photo": {
       "toast": {
-        "added": "post.photo.toast.added",
-        "updated": "post.photo.toast.updated"
+        "added": "Post Photo Added",
+        "updated": "Posts Photo Updated"
       }
     },
     "addNewIntroBoxText": "Use the lightbulb action button to add new ideas"
@@ -989,12 +989,6 @@
 
   "notice": {
     "ok": "Ok",
-    "feature_not_implemented_a": "This feature has not yet been implemented in this read-only preview of Your Priorities 6.0.",
-    "feature_not_implemented_b": "Let us know what you think :)",
-    "welcome_a": "This is a read-only preview of Your Priorities 6.0 so you can only view content, not add to it. Feedback is most appreciated.",
-    "welcome_b": "Currently it only works in Chrome but will support all major browsers by release date in Q1 2015.",
-    "welcome_heading": "Welcome to Your Priorities 6.0 technology preview",
-    "continue": "Continue to preview",
     "deleteConfirmation": "Do you want to delete this group?"
   },
 
@@ -1212,7 +1206,7 @@
   "showWhoPostedPosts": "Show who posted posts",
   "structuredQuestionsJsonErrorInfo": "JSON Error",
   "canVote": "Can Vote",
-  "customRatingsText": "customRatingsText",
+  "customRatingsText": "Custom Ratings Text",
   "hearts": "Hearts",
   "arrows": "Arrows",
   "thumbs": "Thumbs",
@@ -1233,16 +1227,16 @@
   "organizationTree": {
     "new": "Organization",
     "toast": {
-      "created": "organization.toast.created",
-      "updated": "organization.toast.updated"
+      "created": "Organization Created",
+      "updated": "Organization Updated"
     }
   },
   "Update organization info": "Update organization info",
   "Close": "Close",
-  "published": "published",
-  "successful": "successful",
-  "failed": "failed",
-  "in_progress": "in_progress",
+  "published": "Published",
+  "successful": "Successful",
+  "failed": "Failed",
+  "in_progress": "In Progress",
   "Light/Dark": "Light/Dark",
   "Contrast": "Contrast",
   "An error occurred": "An error occurred. Please try again.",

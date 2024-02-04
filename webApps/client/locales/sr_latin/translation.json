@@ -1,5 +1,5 @@
 {
-  "commentFromAdmin":"Komentar od administratora",
+  "commentFromAdmin": "Komentar od administratora",
   "uniqueStatusMessage": "Unique Status Message",
   "templateContent": "Template content",
   "bulkStatusUpdate": "Bulk Status Updates",
@@ -141,7 +141,7 @@
     "public": "Otvorena zajednica",
     "closed": "Zatvorena zajednica",
     "secret": "Tajna zajednica",
-    "pages":"Community Pages",
+    "pages": "Community Pages",
     "onlyAdminsCanCreateGroups": "Samo administratori mogu da kreiraju grupe"
   },
 
@@ -182,9 +182,9 @@
     "inProgress": "Ideas in progress",
     "groups": "Post groups",
     "search": "Pretražite predloge",
-    "add_new":"Dodajte novi predlog",
-    "up_vote":"Glasajte za predlog",
-    "down_vote":"Glasajte protiv predloga",
+    "add_new": "Dodajte novi predlog",
+    "up_vote": "Glasajte za predlog",
+    "down_vote": "Glasajte protiv predloga",
     "report": "Prijavite predlog",
     "notify": "Obavestite me o ovom predlogu",
     "share": "Podelite ovaj predlog",
@@ -334,7 +334,7 @@
     "loggedInWithSaml": "Prijavljeni ste putem SAML",
     "loggedInWithFacebook": "Prijavljeni ste putem Fejsbuka",
     "facebookLogin": "Prijavite se putem Fejsbuka",
-    "info":"Informacije",
+    "info": "Informacije",
     "notifications": "Obaveštenja",
     "name": "Ime i prezime",
     "email": "Elektronska pošta",

@@ -18,6 +18,8 @@ export declare class YpThemeSelector extends YpBaseElement {
     disableOneThemeColorInputs: boolean;
     static get styles(): any[];
     connectedCallback(): void;
+    disconnectedCallback(): void;
+    themeColorDetected(event: CustomEvent): void;
     updated(changedProperties: Map<string | number | symbol, unknown>): void;
     isValidHex(color: string | undefined): boolean;
     setThemeSchema(event: CustomEvent): void;

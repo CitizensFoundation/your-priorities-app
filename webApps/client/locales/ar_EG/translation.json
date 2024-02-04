@@ -1,5 +1,5 @@
 {
-  "contactAddress":"عنوان",
+  "contactAddress": "عنوان",
   "forcePostSortMethodAs" : "الترتيب البعدي الافتراضي (الأحدث أو الأعلى أو الأكثر_مناقشة أو العشوائية)",
   "editAdminComment" : "تحرير تعليق من المسؤول",
   "commentFromAdmin" : "تعليق من المسؤول",

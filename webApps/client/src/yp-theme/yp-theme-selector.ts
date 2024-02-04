@@ -133,6 +133,16 @@ export class YpThemeSelector extends YpBaseElement {
     this.addGlobalListener("yp-theme-color-detected", this.themeColorDetected);
   }
 
+  override disconnectedCallback(): void {
+    super.disconnectedCallback();
+    this.removeGlobalListener("yp-theme-color-detected", this.themeColorDetected);
+  }
+
+  themeColorDetected(event: CustomEvent) {
+    this.oneDynamicThemeColor = event.detail;
+    console.error("Theme Color Detected:", this.oneDynamicThemeColor);
+  }
+
   override updated(changedProperties: Map<string | number | symbol, unknown>) {
     let shouldUpdateConfiguration = false;
 
