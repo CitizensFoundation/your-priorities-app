@@ -155,11 +155,12 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
       imgObj.setAttribute("crossOrigin", "");
       await imgObj.decode();
 
-      const newThemeColor = await imageYp.getThemeColorsFromImage(imgObj);
+      let newThemeColor = await imageYp.getThemeColorsFromImage(imgObj);
       this.gettingImageColor = false;
       console.error("New theme color", newThemeColor);
 
       if (newThemeColor) {
+        newThemeColor = newThemeColor.replace("#", "");
         this.fireGlobal("yp-theme-color-detected", newThemeColor);
         this.detectedThemeColor = newThemeColor;
         this._configChanged();
@@ -426,19 +427,19 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
         ></video>
       `;
     } else if (this.ypImageUrl) {
-      const ypImageUrl = this.ypImageUrl;
-      debugger;
       return html`
-        <yp-image
-          class="mainImage"
-          @loaded="${this.imageLoaded}"
-          sizing="contain"
-          .skipCloudFlare="${true}"
-          src="${ypImageUrl}"
-        ></yp-image>
-        ${this.gettingImageColor
-          ? html` <md-linear-progress indeterminate></md-linear-progress> `
-          : nothing}
+        <div style="position: relative;">
+          <yp-image
+            class="mainImage"
+            @loaded="${this.imageLoaded}"
+            sizing="contain"
+            .skipCloudFlare="${true}"
+            src="${this.ypImageUrl}"
+          ></yp-image>
+          ${this.gettingImageColor
+            ? html` <md-linear-progress class="imagePicker" indeterminate></md-linear-progress> `
+            : nothing}
+        </div>
       `;
     } else if (this.currentLogoImages) {
       return html`
@@ -526,6 +527,12 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
 
         md-outlined-text-field {
           width: 400px;
+        }
+
+        .imagePicker {
+          width: 100%;
+          position: absolute;
+          bottom: 0;
         }
 
         md-tabs {
