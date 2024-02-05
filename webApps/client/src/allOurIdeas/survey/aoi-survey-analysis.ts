@@ -1,15 +1,15 @@
-import { css, html, nothing } from 'lit';
-import { property, customElement } from 'lit/decorators.js';
-import { resolveMarkdown } from '../../common/litMarkdown/litMarkdown.js';
+import { css, html, nothing } from "lit";
+import { property, customElement } from "lit/decorators.js";
+import { resolveMarkdown } from "../../common/litMarkdown/litMarkdown.js";
 
-import '../../common/yp-image.js';
-import { YpFormattingHelpers } from '../../common/YpFormattingHelpers.js';
-import { YpBaseElement } from '../../common/yp-base-element.js';
-import { SharedStyles } from './SharedStyles.js';
+import "../../common/yp-image.js";
+import { YpFormattingHelpers } from "../../common/YpFormattingHelpers.js";
+import { YpBaseElement } from "../../common/yp-base-element.js";
+import { SharedStyles } from "./SharedStyles.js";
 
-import '@material/web/progress/circular-progress.js';
+import "@material/web/progress/circular-progress.js";
 
-@customElement('aoi-survey-analysis')
+@customElement("aoi-survey-analysis")
 export class AoiSurveyAnalysis extends YpBaseElement {
   @property({ type: Number })
   groupId!: number;
@@ -33,43 +33,48 @@ export class AoiSurveyAnalysis extends YpBaseElement {
     window.appGlobals.activity(`Analysis - close`);
   }
 
-
   async fetchResults() {
-    const analysis_config = this.earl.configuration!.analysis_config;
+    try {
+      const analysis_config = JSON.parse(this.earl.configuration!.analysis_config as any) as any;
 
-    for (
-      let analysisIndex = 0;
-      analysisIndex < analysis_config.analyses.length;
-      analysisIndex++
-    ) {
-      const analysis = analysis_config.analyses[analysisIndex];
       for (
-        let typeIndex = 0;
-        typeIndex < analysis.analysisTypes.length;
-        typeIndex++
+        let analysisIndex = 0;
+        analysisIndex < analysis_config.analyses.length;
+        analysisIndex++
       ) {
-        const analysisData = await window.aoiServerApi.getSurveyAnalysis(
-          this.groupId,
-          analysisIndex,
-          typeIndex
-        );
+        const analysis = analysis_config.analyses[analysisIndex];
+        for (
+          let typeIndex = 0;
+          typeIndex < analysis.analysisTypes.length;
+          typeIndex++
+        ) {
+          const analysisData = await window.aoiServerApi.getSurveyAnalysis(
+            this.groupId,
+            analysisIndex,
+            typeIndex
+          );
 
-        if (!analysisData) {
-          analysis.analysisTypes[typeIndex].analysis = 'error';
-          analysis.ideaRows = [];
-        } else {
-          analysis.analysisTypes[typeIndex].analysis = analysisData.analysis;
-          analysis.ideaRows = analysisData.ideaRowsFromServer;
+          if (!analysisData) {
+            analysis.analysisTypes[typeIndex].analysis = "error";
+            analysis.ideaRows = [];
+          } else {
+            analysis.analysisTypes[typeIndex].analysis = analysisData.analysis;
+            analysis.ideaRows = analysisData.ideaRowsFromServer;
+          }
+          this.requestUpdate();
         }
-        this.requestUpdate();
       }
+    } catch (error) {
+      console.error(error);
     }
   }
 
-  override updated(changedProperties: Map<string | number | symbol, unknown>): void {
+  override updated(
+    changedProperties: Map<string | number | symbol, unknown>
+  ): void {
     super.updated(changedProperties);
 
-    if (changedProperties.has('earl') && this.earl) {
+    if (changedProperties.has("earl") && this.earl) {
       this.fetchResults();
     }
   }
@@ -253,7 +258,7 @@ export class AoiSurveyAnalysis extends YpBaseElement {
   analysisRow(analysisItem: AnalysisTypeData) {
     let analysisHtml;
 
-    if (analysisItem.analysis && analysisItem.analysis != 'error') {
+    if (analysisItem.analysis && analysisItem.analysis != "error") {
       analysisHtml = html`
         <div class="analysisResults">
           ${resolveMarkdown(analysisItem.analysis, {
@@ -261,19 +266,19 @@ export class AoiSurveyAnalysis extends YpBaseElement {
             includeCodeBlockClassNames: true,
           })}
           <div class="generatingInfo">
-            ${this.t('Written by GPT-4')}
+            ${this.t("Written by GPT-4")}
           </div>
         </div>
       </div>`;
-    } else if (analysisItem.analysis && analysisItem.analysis == 'error') {
+    } else if (analysisItem.analysis && analysisItem.analysis == "error") {
       analysisHtml = html`<div class=" layout horizontal center-center">
-        ${this.t('Error fetching analysis')}
+        ${this.t("Error fetching analysis")}
       </div>`;
     } else {
       analysisHtml = html`<div class=" layout vertical center-center">
         <md-circular-progress indeterminate></md-circular-progress>
         <div class="generatingInfo">
-          ${this.t('Generating analysis with GPT-4')}
+          ${this.t("Generating analysis with GPT-4")}
         </div>
       </div>`;
     }
@@ -287,23 +292,30 @@ export class AoiSurveyAnalysis extends YpBaseElement {
   renderAnalysis() {
     let outHtml = html``;
 
-    for (
-      let i = 0;
-      i < this.earl.configuration!.analysis_config.analyses.length;
-      i++
+    if (
+      this.earl.configuration &&
+      this.earl.configuration.analysis_config?.analyses?.length > 0
     ) {
-      const analysis = this.earl.configuration!.analysis_config.analyses[i];
-      outHtml = html`${outHtml}
-        <div class="ideasLabel">${analysis.ideasLabel}</div>
+      for (
+        let i = 0;
+        i < this.earl.configuration!.analysis_config.analyses.length;
+        i++
+      ) {
+        const analysis = this.earl.configuration!.analysis_config.analyses[i];
+        outHtml = html`${outHtml}
+          <div class="ideasLabel">${analysis.ideasLabel}</div>
 
-        ${analysis.ideaRows?.map((result, index) =>
-          this.renderIdeas(index, result)
-        )} `;
-      let innerHtml = html``;
-      for (let a = 0; a < analysis.analysisTypes.length; a++) {
-        innerHtml = html`${innerHtml} ${this.analysisRow(analysis.analysisTypes[a])} `;
+          ${analysis.ideaRows?.map((result, index) =>
+            this.renderIdeas(index, result)
+          )} `;
+        let innerHtml = html``;
+        for (let a = 0; a < analysis.analysisTypes.length; a++) {
+          innerHtml = html`${innerHtml}
+          ${this.analysisRow(analysis.analysisTypes[a])} `;
+        }
+        outHtml = html`${outHtml}
+          <div class="rowsContainer">${innerHtml}</div>`;
       }
-      outHtml = html`${outHtml}<div class="rowsContainer">${innerHtml}</div>`;
     }
 
     return outHtml;
@@ -312,7 +324,7 @@ export class AoiSurveyAnalysis extends YpBaseElement {
   override render() {
     return html`
       <div class="topContainer layout vertical wrap center-center">
-        <div class="title">${this.t('Vote Analysis')}</div>
+        <div class="title">${this.t("Vote Analysis")}</div>
         <div class="layout vertical self-start">
           <div class="questionTitle">${this.question.name}</div>
         </div>

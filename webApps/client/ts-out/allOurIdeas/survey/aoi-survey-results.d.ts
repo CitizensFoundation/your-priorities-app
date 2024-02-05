@@ -4,7 +4,7 @@ import '@material/web/checkbox/checkbox.js';
 import '@material/web/button/outlined-button.js';
 import '@material/web/progress/circular-progress.js';
 export declare class AoiSurveyResuls extends YpBaseElement {
-    results: AoiResultData[];
+    results: AoiChoiceData[];
     question: AoiQuestionData;
     earl: AoiEarlData;
     groupId: number;
@@ -16,7 +16,7 @@ export declare class AoiSurveyResuls extends YpBaseElement {
     toggleScores(): void;
     exportToCSV(): void;
     static get styles(): any[];
-    renderRow(index: number, result: AoiResultData): import("lit-html").TemplateResult<1>;
+    renderRow(index: number, result: AoiChoiceData): import("lit-html").TemplateResult<1>;
     render(): import("lit-html").TemplateResult<1>;
 }
 //# sourceMappingURL=aoi-survey-results.d.ts.map

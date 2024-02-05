@@ -110,7 +110,7 @@ class AiHelper {
         If the prompt asks for a table always output a markdown table.
     `;
         const answersText = answers
-            .map((answer) => `${answer.data} (Won: ${answer.wins}, Lost: ${answer.losses})`)
+            .map((answer) => `${answer.data.content} (Won: ${answer.wins}, Lost: ${answer.losses})`)
             .join("\n");
         try {
             const moderationResponse = await this.openaiClient.moderations.create({

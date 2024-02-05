@@ -23,7 +23,7 @@ let AoiSurveyResuls = class AoiSurveyResuls extends YpBaseElement {
         window.appGlobals.activity(`Results - open`);
     }
     async fetchResults() {
-        this.results = await window.aoiServerApi.getSurveyResults(this.groupId);
+        this.results = await window.aoiServerApi.getResults(this.groupId, this.question.id);
     }
     updated(changedProperties) {
         super.updated(changedProperties);

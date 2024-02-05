@@ -48,6 +48,9 @@ export class AoiServerApi extends YpServerApi {
             body: JSON.stringify(body),
         }, false);
     }
+    async getResults(groupId, questionId) {
+        return this.fetchWrapper(this.baseUrlPath + `/${groupId}/choices/${questionId}/throughGroup`);
+    }
     llmAnswerConverstation(groupId, wsClientId, chatLog) {
         return this.fetchWrapper(this.baseUrlPath + `/${groupId}/llmAnswerExplain`, {
             method: "PUT",

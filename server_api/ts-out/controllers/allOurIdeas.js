@@ -38,6 +38,7 @@ class AllOurIdeasController {
         this.router.put("/:communityId/generateIdeas", authorization_js_1.default.can("create group"), this.generateIdeas.bind(this));
         this.router.put("/:groupId/llmAnswerExplain", authorization_js_1.default.can("view group"), this.llmAnswerExplain.bind(this));
         this.router.get("/:communityId/choices/:questionId", authorization_js_1.default.can("create group"), this.getChoices.bind(this));
+        this.router.get("/:groupId/choices/:questionId/throughGroup", authorization_js_1.default.can("view group"), this.getChoices.bind(this));
         this.router.post("/:groupId/questions/:questionId/prompts/:promptId/votes", authorization_js_1.default.can("view group"), this.vote.bind(this));
         this.router.post("/:groupId/questions/:questionId/prompts/:promptId/skips", authorization_js_1.default.can("view group"), this.skip.bind(this));
         this.router.post("/:groupId/questions/:questionId/addIdea", authorization_js_1.default.can("view group"), this.addIdea.bind(this));
@@ -373,6 +374,74 @@ class AllOurIdeasController {
             console.error(error);
             res.status(422).json({ error: "Skip failed" });
         }
+    }
+    async analysis(req, res) {
+        const { groupId } = req.params;
+        const { analysisIndex, typeIndex, wsClientSocketId } = req.query;
+        try {
+            const group = await Group.findOne({ where: { id: groupId } });
+            if (!group) {
+                res.status(404).send("Group not found");
+                return;
+            }
+            const aoiConfig = group.configuration.allOurIdeas;
+            if (!aoiConfig?.earl) {
+                res.status(404).send("Configuration missing");
+                return;
+            }
+            const questionId = aoiConfig.earl.question_id;
+            const showParams = {
+                with_prompt: "true",
+                with_appearance: "true",
+                with_visitor_stats: "true",
+                visitor_identifier: req.session.id,
+            };
+            const questionResponse = await fetch(`${PAIRWISE_API_HOST}/questions/${questionId}.json?${new URLSearchParams(showParams).toString()}`, {
+                method: "GET",
+                headers: defaultHeader,
+            });
+            if (!questionResponse.ok) {
+                throw new Error("Failed to fetch question for analysis");
+            }
+            const question = await questionResponse.json();
+            // Additional logic adapted from Ruby for fetching and sorting choices
+            const analysisConfig = JSON.parse(group.configuration.analysisConfig);
+            const analysisIdeaConfig = analysisConfig.analyses[parseInt(analysisIndex)];
+            const ideasIdsRange = analysisIdeaConfig.ideasIdsRange;
+            const analysisType = analysisIdeaConfig.analysisTypes[parseInt(typeIndex)];
+            // Fetch choices similar to Ruby logic
+            // Placeholder: Implement fetching choices based on `ideasIdsRange` and other parameters
+            // Placeholder for actual fetching logic
+            const swClientSocket = this.wsClients.get(wsClientSocketId);
+            if (swClientSocket) {
+                const aiHelper = new aiHelper_js_1.AiHelper(swClientSocket);
+                const analysisData = await aiHelper.getAiAnalysis(question.id, analysisType.contextPrompt, await this.fetchChoices(questionId, false));
+                // Respond with the analysis data
+                res.json({
+                    question,
+                    analysisData, // Assuming `analysisData` includes both ideaRowsFromServer and the analysis results
+                });
+            }
+            else {
+                res.status(404).send("Websocket not found");
+            }
+        }
+        catch (error) {
+            console.error(error);
+            res.status(500).send("An error occurred while processing the analysis request");
+        }
+    }
+    async fetchChoices(questionId, showAll) {
+        let url = `${PAIRWISE_API_HOST}/questions/${questionId}/choices.json${showAll ? "?include_inactive=true&show_all=true" : ""}`;
+        const response = await fetch(url, {
+            headers: defaultAuthHeader,
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to fetch choices: ${response.statusText}`);
+        }
+        const choices = await response.json();
+        // Process choices as needed
+        return choices;
     }
     async getChoices(req, res) {
         try {

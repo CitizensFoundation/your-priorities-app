@@ -14,7 +14,7 @@ import '@material/web/progress/circular-progress.js';
 @customElement('aoi-survey-results')
 export class AoiSurveyResuls extends YpBaseElement {
   @property({ type: Array })
-  results!: AoiResultData[];
+  results!: AoiChoiceData[];
 
   @property({ type: Object })
   question!: AoiQuestionData;
@@ -34,7 +34,7 @@ export class AoiSurveyResuls extends YpBaseElement {
   }
 
   async fetchResults() {
-    this.results = await window.aoiServerApi.getSurveyResults(this.groupId);
+    this.results = await window.aoiServerApi.getResults(this.groupId, this.question.id);
   }
 
   override updated(changedProperties: Map<string | number | symbol, unknown>): void {
@@ -224,7 +224,7 @@ export class AoiSurveyResuls extends YpBaseElement {
     ];
   }
 
-  renderRow(index: number, result: AoiResultData) {
+  renderRow(index: number, result: AoiChoiceData) {
     return html`
       <div class="row layout horizontal">
         <div class="column index">${index + 1}.</div>

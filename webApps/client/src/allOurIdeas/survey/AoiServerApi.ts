@@ -116,6 +116,15 @@ export class AoiServerApi extends YpServerApi {
     ) as unknown as AoiVoteResponse;
   }
 
+  public async getResults(
+    groupId: number,
+    questionId: number
+  ): Promise<AoiChoiceData[]> {
+    return this.fetchWrapper(
+      this.baseUrlPath + `/${groupId}/choices/${questionId}/throughGroup`,
+    ) as unknown as AoiChoiceData[];
+  }
+
   public llmAnswerConverstation(
     groupId: number,
     wsClientId: string,
