@@ -93,6 +93,12 @@ export class AllOurIdeasController {
       this.addIdea.bind(this)
     );
 
+    this.router.get(
+      "/:groupId/questions/:analysisIndex/:analysisTypeIndex/analysis",
+      auth.can("view group"),
+      this.analysis.bind(this)
+    );
+
     this.router.put(
       "/:communityId/questions/:questionId/choices/:choiceId",
       auth.can("create group"),
@@ -535,8 +541,9 @@ export class AllOurIdeasController {
   }
 
   public async analysis(req: Request, res: Response): Promise<void> {
-    const { groupId } = req.params;
-    const { analysisIndex, typeIndex, wsClientSocketId } = req.query;
+    const { groupId, analysisIndex, analysisTypeIndex } = req.params;
+
+    console.log(`--------------------> ${groupId} ${analysisIndex} ${analysisTypeIndex}`)
 
     try {
       const group = await Group.findOne({ where: { id: groupId } });
@@ -572,30 +579,31 @@ export class AllOurIdeasController {
       const question = await questionResponse.json() as AoiQuestionData;
 
       // Additional logic adapted from Ruby for fetching and sorting choices
-      const analysisConfig = JSON.parse(group.configuration.analysisConfig);
+      console.log(`@question is ${question}. ${group.configuration.allOurIdeas.earl.configuration.analysis_config}`);
+      const analysisConfig = JSON.parse(group.configuration.allOurIdeas.earl.configuration.analysis_config);
+      console.log(`@analysisConfig is ${analysisConfig}.`)
       const analysisIdeaConfig = analysisConfig.analyses[parseInt(analysisIndex as any)];
+      console.log(`@analysisIdeaConfig is ${analysisIdeaConfig}.`)
       const ideasIdsRange = analysisIdeaConfig.ideasIdsRange;
-      const analysisType = analysisIdeaConfig.analysisTypes[parseInt(typeIndex as any)];
+      console.log(`@ideasIdsRange is ${ideasIdsRange}.`)
+      console.log(`@analysisIdeaConfig.analysisTypes is ${analysisIdeaConfig.analysisTypes}.`)
+      const analysisType = analysisIdeaConfig.analysisTypes[parseInt(analysisTypeIndex as any)];
 
       // Fetch choices similar to Ruby logic
       // Placeholder: Implement fetching choices based on `ideasIdsRange` and other parameters
 
       // Placeholder for actual fetching logic
 
-      const swClientSocket = this.wsClients.get(wsClientSocketId as string);
-      if (swClientSocket) {
-        const aiHelper = new AiHelper(swClientSocket);
-        const analysisData = await aiHelper.getAiAnalysis(question.id, analysisType.contextPrompt, await this.fetchChoices(questionId, false));
 
-        // Respond with the analysis data
-        res.json({
-          question,
-          analysisData, // Assuming `analysisData` includes both ideaRowsFromServer and the analysis results
-        });
-      } else {
-        res.status(404).send("Websocket not found");
-      }
-    } catch (error) {
+      const aiHelper = new AiHelper();
+      const analysisData = await aiHelper.getAiAnalysis(question.id, analysisType.contextPrompt!, await this.fetchChoices(questionId, false));
+
+      // Respond with the analysis data
+      res.json({
+        question,
+        analysisData,
+      });
+  } catch (error) {
       console.error(error);
       res.status(500).send("An error occurred while processing the analysis request");
     }

@@ -42,6 +42,7 @@ class AllOurIdeasController {
         this.router.post("/:groupId/questions/:questionId/prompts/:promptId/votes", authorization_js_1.default.can("view group"), this.vote.bind(this));
         this.router.post("/:groupId/questions/:questionId/prompts/:promptId/skips", authorization_js_1.default.can("view group"), this.skip.bind(this));
         this.router.post("/:groupId/questions/:questionId/addIdea", authorization_js_1.default.can("view group"), this.addIdea.bind(this));
+        this.router.get("/:groupId/questions/:analysisIndex/:analysisTypeIndex/analysis", authorization_js_1.default.can("view group"), this.analysis.bind(this));
         this.router.put("/:communityId/questions/:questionId/choices/:choiceId", authorization_js_1.default.can("create group"), this.updateCoiceData.bind(this));
         this.router.put("/:groupId/questions/:questionId/choices/:choiceId/throughGroup", authorization_js_1.default.can("view group"), this.updateCoiceData.bind(this));
         this.router.put("/:communityId/questions/:questionId/choices/:choiceId/active", authorization_js_1.default.can("create group"), this.updateActive.bind(this));
@@ -376,8 +377,8 @@ class AllOurIdeasController {
         }
     }
     async analysis(req, res) {
-        const { groupId } = req.params;
-        const { analysisIndex, typeIndex, wsClientSocketId } = req.query;
+        const { groupId, analysisIndex, analysisTypeIndex } = req.params;
+        console.log(`--------------------> ${groupId} ${analysisIndex} ${analysisTypeIndex}`);
         try {
             const group = await Group.findOne({ where: { id: groupId } });
             if (!group) {
@@ -405,26 +406,25 @@ class AllOurIdeasController {
             }
             const question = await questionResponse.json();
             // Additional logic adapted from Ruby for fetching and sorting choices
-            const analysisConfig = JSON.parse(group.configuration.analysisConfig);
+            console.log(`@question is ${question}. ${group.configuration.allOurIdeas.earl.configuration.analysis_config}`);
+            const analysisConfig = JSON.parse(group.configuration.allOurIdeas.earl.configuration.analysis_config);
+            console.log(`@analysisConfig is ${analysisConfig}.`);
             const analysisIdeaConfig = analysisConfig.analyses[parseInt(analysisIndex)];
+            console.log(`@analysisIdeaConfig is ${analysisIdeaConfig}.`);
             const ideasIdsRange = analysisIdeaConfig.ideasIdsRange;
-            const analysisType = analysisIdeaConfig.analysisTypes[parseInt(typeIndex)];
+            console.log(`@ideasIdsRange is ${ideasIdsRange}.`);
+            console.log(`@analysisIdeaConfig.analysisTypes is ${analysisIdeaConfig.analysisTypes}.`);
+            const analysisType = analysisIdeaConfig.analysisTypes[parseInt(analysisTypeIndex)];
             // Fetch choices similar to Ruby logic
             // Placeholder: Implement fetching choices based on `ideasIdsRange` and other parameters
             // Placeholder for actual fetching logic
-            const swClientSocket = this.wsClients.get(wsClientSocketId);
-            if (swClientSocket) {
-                const aiHelper = new aiHelper_js_1.AiHelper(swClientSocket);
-                const analysisData = await aiHelper.getAiAnalysis(question.id, analysisType.contextPrompt, await this.fetchChoices(questionId, false));
-                // Respond with the analysis data
-                res.json({
-                    question,
-                    analysisData, // Assuming `analysisData` includes both ideaRowsFromServer and the analysis results
-                });
-            }
-            else {
-                res.status(404).send("Websocket not found");
-            }
+            const aiHelper = new aiHelper_js_1.AiHelper();
+            const analysisData = await aiHelper.getAiAnalysis(question.id, analysisType.contextPrompt, await this.fetchChoices(questionId, false));
+            // Respond with the analysis data
+            res.json({
+                question,
+                analysisData,
+            });
         }
         catch (error) {
             console.error(error);

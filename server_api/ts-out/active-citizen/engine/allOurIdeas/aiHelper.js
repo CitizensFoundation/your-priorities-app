@@ -8,7 +8,7 @@ class AiHelper {
     modelName = "gpt-4-0125-preview";
     maxTokens = 2048;
     temperature = 0.7;
-    constructor(wsClientSocket) {
+    constructor(wsClientSocket = undefined) {
         this.openaiClient = new openai_1.OpenAI({
             apiKey: process.env.OPENAI_API_KEY,
         });
@@ -25,7 +25,7 @@ class AiHelper {
         await this.streamWebSocketResponses(stream);
     }
     sendToClient(sender, message, type = "stream") {
-        this.wsClientSocket.send(JSON.stringify({
+        this.wsClientSocket?.send(JSON.stringify({
             sender,
             type: type,
             message,
@@ -132,8 +132,15 @@ class AiHelper {
                         content: `The question: ${questionId}\n\nAnswers to analyse:\n${answersText}`,
                     },
                 ];
-                await this.streamChatCompletions(messages);
-                return;
+                //await this.streamChatCompletions(messages);
+                const response = await this.openaiClient.chat.completions.create({
+                    model: this.modelName,
+                    messages,
+                    max_tokens: this.maxTokens,
+                    temperature: this.temperature,
+                    stream: false,
+                });
+                return response.choices[0].message.content;
             }
         }
         catch (error) {

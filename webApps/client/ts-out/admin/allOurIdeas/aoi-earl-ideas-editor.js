@@ -249,10 +249,10 @@ let AoiEarlIdeasEditor = class AoiEarlIdeasEditor extends YpStreamingLlmBase {
             css `
         :host {
           --md-elevated-button-container-color: var(
-            --md-sys-color-primary-container
+            --md-sys-color-surface
           );
           --md-elevated-button-label-text-color: var(
-            --md-sys-color-on-primary-container
+            --md-sys-color-on-surface
           );
         }
 
