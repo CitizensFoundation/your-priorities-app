@@ -26,6 +26,7 @@ interface YpThemeConfiguration {
   tertiaryColor?: string;
   neutralColor?: string;
   neutralVariantColor?: string;
+  iconPrompt?: string;
 }
 
 interface YpCollectionConfiguration {

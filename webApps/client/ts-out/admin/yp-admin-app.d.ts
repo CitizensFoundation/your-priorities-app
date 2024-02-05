@@ -73,7 +73,7 @@ export declare class YpAdminApp extends YpBaseElement {
     getParentCollectionType(): "" | "domain" | "community";
     exitToMainApp(): void;
     render(): import("lit-html").TemplateResult<1>;
-    _isPageSelectedClass(page: AdminPageOptions): "selectedContainer" | "";
+    _isPageSelectedClass(page: AdminPageOptions): "" | "selectedContainer";
     _getListHeadline(type: AdminPageOptions): string;
     _getListSupportingText(type: AdminPageOptions): string;
     _getListIcon(type: AdminPageOptions): "" | "category" | "person" | "settings" | "description" | "reports" | "translate" | "add_business" | "supervised_user_circle" | "supervisor_account" | "checklist" | "document_scanner" | "rocket_launch" | "videogroup_asset" | "workspace_premium" | "arrow_back";

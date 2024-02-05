@@ -72,6 +72,7 @@ export declare class YpAdminConfigGroup extends YpAdminConfigBase {
     _getPointSettingsTab(): YpConfigTabData;
     _getAdditionalConfigTab(): YpConfigTabData;
     earlConfigChanged(event: CustomEvent): void;
+    themeConfigChanged(event: CustomEvent): void;
     renderCreateEarl(communityId: number): import("lit-html").TemplateResult<1>;
     questionNameChanged(event: CustomEvent): void;
     afterSave(): void;

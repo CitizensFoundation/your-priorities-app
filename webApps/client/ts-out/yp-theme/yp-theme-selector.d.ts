@@ -16,6 +16,7 @@ export declare class YpThemeSelector extends YpBaseElement {
     disableSelection: boolean | undefined;
     disableMultiInputs: boolean;
     disableOneThemeColorInputs: boolean;
+    channel: BroadcastChannel;
     static get styles(): any[];
     connectedCallback(): void;
     disconnectedCallback(): void;

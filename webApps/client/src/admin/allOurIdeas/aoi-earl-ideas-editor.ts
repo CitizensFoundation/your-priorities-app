@@ -1,4 +1,4 @@
-import { PropertyValueMap, css, html, nothing } from "lit";
+import { LitElement, PropertyValueMap, css, html, nothing } from "lit";
 import { customElement, property, query } from "lit/decorators.js";
 import { YpStreamingLlmBase } from "../../yp-llms/yp-streaming-llm-base.js";
 import { MdFilledTextField } from "@material/web/textfield/filled-text-field.js";
@@ -356,11 +356,9 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmBase {
       css`
         :host {
           --md-elevated-button-container-color: var(
-            --md-sys-color-surface
+            --md-sys-color-surface-container-higher
           );
-          --md-elevated-button-label-text-color: var(
-            --md-sys-color-on-surface
-          );
+          --md-elevated-button-label-text-color: var(--md-sys-color-on-surface);
         }
 
         yp-magic-text {
@@ -594,7 +592,11 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmBase {
   renderIcon(choice: AoiChoiceData) {
     if (choice.data.isGeneratingImage) {
       return html`
-        <md-circular-progress class="genIconSpinner" slot="icon" indeterminate></md-circular-progress>
+        <md-circular-progress
+          class="genIconSpinner"
+          slot="icon"
+          indeterminate
+        ></md-circular-progress>
       `;
     } else if (choice.data.imageUrl) {
       return html` <img
@@ -607,6 +609,15 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmBase {
     } else {
       return nothing;
     }
+  }
+
+  aiStyleChanged() {
+    if (!this.group.configuration.theme) {
+      this.group.configuration.theme = {};
+    }
+    this.fire("theme-config-changed", {
+      iconPrompt: this.aiStyleInputElement?.value,
+    });
   }
 
   renderAnswerData(answer: AoiChoiceData) {
@@ -698,6 +709,7 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmBase {
             id="aiStyleInput"
             .label="${this.t("styleForAiIconGeneration")}"
             type="textarea"
+            @change="${this.aiStyleChanged}"
             rows="5"
             ?hidden="${this.allChoicesHaveIcons}"
             ?disabled="${this.isGeneratingWithAi || this.allChoicesHaveIcons}"

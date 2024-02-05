@@ -323,7 +323,7 @@ export class AoiNewIdeaDialog extends YpGenerateAiImage {
         this.choice.data.isGeneratingImage = true;
         const { imageUrl, error } = (await this.imageGenerator.generateIcon(
           this.choice.data.content,
-          this.finalPrompt
+          this.group.configuration.theme?.iconPrompt || this.finalPrompt
         )) as unknown as { imageUrl: string; error: string };
 
         this.choice.data.isGeneratingImage = undefined;

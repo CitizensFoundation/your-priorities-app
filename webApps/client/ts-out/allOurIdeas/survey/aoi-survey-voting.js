@@ -151,10 +151,10 @@ let AoiSurveyVoting = class AoiSurveyVoting extends YpBaseElement {
             css `
         :host {
           --md-elevated-button-container-color: var(
-            --md-sys-color-primary-container
+            --md-sys-color-surface-container-higher
           );
           --md-elevated-button-label-text-color: var(
-            --md-sys-color-on-primary-container
+            --md-sys-color-on-surface
           );
         }
 
@@ -189,7 +189,7 @@ let AoiSurveyVoting = class AoiSurveyVoting extends YpBaseElement {
           font-size: 16px;
           --md-elevated-button-container-height: 120px !important;
           --md-elevated-button-hover-label-text-color: var(
-            --md-sys-color-on-primary-container
+            --md-sys-color-on-surface
           );
         }
 

@@ -23,6 +23,7 @@ let AoiSurveyAnalysis = class AoiSurveyAnalysis extends YpBaseElement {
     async fetchResults() {
         try {
             const analysis_config = JSON.parse(this.earl.configuration.analysis_config);
+            debugger;
             for (let analysisIndex = 0; analysisIndex < analysis_config.analyses.length; analysisIndex++) {
                 const analysis = analysis_config.analyses[analysisIndex];
                 for (let typeIndex = 0; typeIndex < analysis.analysisTypes.length; typeIndex++) {

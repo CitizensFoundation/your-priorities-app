@@ -1490,10 +1490,15 @@ let YpAdminConfigGroup = class YpAdminConfigGroup extends YpAdminConfigBase {
         this.group.configuration.allOurIdeas = this.$$("aoi-earl-ideas-editor").configuration;
         this.requestUpdate();
     }
+    themeConfigChanged(event) {
+        this.group.configuration.theme = { ...this.group.configuration.theme, ...event.detail };
+        this.requestUpdate();
+    }
     renderCreateEarl(communityId) {
         return html `<aoi-earl-ideas-editor
       .communityId="${communityId}"
       @configuration-changed="${this.earlConfigChanged}"
+      @theme-config-changed="${this.themeConfigChanged}"
       .group="${this.group}"
       .configuration="${this.group.configuration.allOurIdeas}"
     ></aoi-earl-ideas-editor>`;

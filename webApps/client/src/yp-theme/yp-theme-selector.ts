@@ -14,6 +14,8 @@ import "./yp-theme-color-input.js";
 
 //TODO: Figure out how to implement "Use exactly the provided colors as an option" https://material-foundation.github.io/material-theme-builder/
 
+
+
 @customElement("yp-theme-selector")
 export class YpThemeSelector extends YpBaseElement {
   @property({ type: String })
@@ -51,6 +53,8 @@ export class YpThemeSelector extends YpBaseElement {
 
   @property({ type: Boolean })
   disableOneThemeColorInputs: boolean = false;
+
+  channel = new BroadcastChannel('hex_color');
 
   static override get styles() {
     return [
@@ -168,6 +172,10 @@ export class YpThemeSelector extends YpBaseElement {
         this.fire('config-updated')
       }
     });
+
+    if (changedProperties.has("oneDynamicThemeColor")) {
+      this.channel.postMessage(this.oneDynamicThemeColor);
+    }
 
     if (shouldUpdateConfiguration) {
       // Update the themeConfiguration object

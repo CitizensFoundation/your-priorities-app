@@ -12,6 +12,7 @@ export class YpThemeManager {
         this.themeHighContrast = false;
         this.isAppleDevice = false;
         this.themeScheme = "tonal";
+        this.channel = new BroadcastChannel('hex_color');
         const savedDarkMode = localStorage.getItem(YpBaseElement.darkModeLocalStorageKey);
         if (savedDarkMode) {
             this.themeDarkMode = true;
@@ -28,6 +29,10 @@ export class YpThemeManager {
         }
         this.setupOldThemes();
         this.themeChanged();
+        this.channel.onmessage = (event) => {
+            this.themeColor = event.data;
+            this.themeChanged();
+        };
     }
     setupOldThemes() {
         this.themes.push({

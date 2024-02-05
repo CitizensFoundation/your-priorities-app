@@ -22,6 +22,7 @@ let YpThemeSelector = class YpThemeSelector extends YpBaseElement {
         this.disableSelection = false;
         this.disableMultiInputs = false;
         this.disableOneThemeColorInputs = false;
+        this.channel = new BroadcastChannel('hex_color');
     }
     static get styles() {
         return [
@@ -133,6 +134,9 @@ let YpThemeSelector = class YpThemeSelector extends YpBaseElement {
                 this.fire('config-updated');
             }
         });
+        if (changedProperties.has("oneDynamicThemeColor")) {
+            this.channel.postMessage(this.oneDynamicThemeColor);
+        }
         if (shouldUpdateConfiguration) {
             // Update the themeConfiguration object
             this.themeConfiguration = {

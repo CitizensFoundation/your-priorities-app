@@ -1627,10 +1627,16 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
     this.requestUpdate();
   }
 
+  themeConfigChanged(event: CustomEvent) {
+    this.group.configuration.theme = {...this.group.configuration.theme, ...event.detail}
+    this.requestUpdate();
+  }
+
   renderCreateEarl(communityId: number) {
     return html`<aoi-earl-ideas-editor
       .communityId="${communityId}"
       @configuration-changed="${this.earlConfigChanged}"
+      @theme-config-changed="${this.themeConfigChanged}"
       .group="${this.group}"
       .configuration="${this.group.configuration.allOurIdeas!}"
     ></aoi-earl-ideas-editor>`;

@@ -3,9 +3,9 @@ import { css } from 'lit';
 export const SharedStyles = css`
   .questionTitle {
     padding: 18px;
-    font-size: 22px;
-    background-color: var(--md-sys-color-primary);
-    color: var(--md-sys-color-on-primary);
+    font-size: 24px;
+    background-color: var(--md-sys-color-secondary-container);
+    color: var(--md-sys-color-on-secondary-container);
     padding: 16px;
     text-align: center;
     margin-top: 32px;

@@ -249,11 +249,9 @@ let AoiEarlIdeasEditor = class AoiEarlIdeasEditor extends YpStreamingLlmBase {
             css `
         :host {
           --md-elevated-button-container-color: var(
-            --md-sys-color-surface
+            --md-sys-color-surface-container-higher
           );
-          --md-elevated-button-label-text-color: var(
-            --md-sys-color-on-surface
-          );
+          --md-elevated-button-label-text-color: var(--md-sys-color-on-surface);
         }
 
         yp-magic-text {
@@ -484,7 +482,11 @@ let AoiEarlIdeasEditor = class AoiEarlIdeasEditor extends YpStreamingLlmBase {
     renderIcon(choice) {
         if (choice.data.isGeneratingImage) {
             return html `
-        <md-circular-progress class="genIconSpinner" slot="icon" indeterminate></md-circular-progress>
+        <md-circular-progress
+          class="genIconSpinner"
+          slot="icon"
+          indeterminate
+        ></md-circular-progress>
       `;
         }
         else if (choice.data.imageUrl) {
@@ -499,6 +501,14 @@ let AoiEarlIdeasEditor = class AoiEarlIdeasEditor extends YpStreamingLlmBase {
         else {
             return nothing;
         }
+    }
+    aiStyleChanged() {
+        if (!this.group.configuration.theme) {
+            this.group.configuration.theme = {};
+        }
+        this.fire("theme-config-changed", {
+            iconPrompt: this.aiStyleInputElement?.value,
+        });
     }
     renderAnswerData(answer) {
         return html `
@@ -588,6 +598,7 @@ let AoiEarlIdeasEditor = class AoiEarlIdeasEditor extends YpStreamingLlmBase {
             id="aiStyleInput"
             .label="${this.t("styleForAiIconGeneration")}"
             type="textarea"
+            @change="${this.aiStyleChanged}"
             rows="5"
             ?hidden="${this.allChoicesHaveIcons}"
             ?disabled="${this.isGeneratingWithAi || this.allChoicesHaveIcons}"

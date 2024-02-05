@@ -277,7 +277,7 @@ let AoiNewIdeaDialog = class AoiNewIdeaDialog extends YpGenerateAiImage {
                     this.choice.data = {};
                 }
                 this.choice.data.isGeneratingImage = true;
-                const { imageUrl, error } = (await this.imageGenerator.generateIcon(this.choice.data.content, this.finalPrompt));
+                const { imageUrl, error } = (await this.imageGenerator.generateIcon(this.choice.data.content, this.group.configuration.theme?.iconPrompt || this.finalPrompt));
                 this.choice.data.isGeneratingImage = undefined;
                 if (error) {
                     console.error(error);
