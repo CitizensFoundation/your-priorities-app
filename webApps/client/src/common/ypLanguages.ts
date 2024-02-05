@@ -3,27 +3,38 @@ import fs from "fs/promises";
 import path from "path";
 
 export class YpLanguages {
-  public allLanguages: YpLanguageData[];
-  public isoCodesNotInGoogleTranslate: string[] = [];
-
-  constructor() {
-    this.allLanguages = ISO6391.getLanguages(ISO6391.getAllCodes()).map(
+  static get allLanguages(): YpLanguageData[] {
+    const allLanguages = ISO6391.getLanguages(ISO6391.getAllCodes()).map(
       (language) => {
         return {
           englishName: language.name,
           nativeName: language.nativeName,
-          code: language.code,
+          code: language.code as string,
         };
       }
     );
 
-    this.googleTranslateLanguages.map((language) => {
-      if (!this.allLanguages.find((lang) => lang.code === language.code)) {
-        this.allLanguages.push(language);
+    YpLanguages.additionalLanguages.map((language) => {
+      if (!allLanguages.find((lang) => lang.code === language.code)) {
+        allLanguages.push(language as YpLanguageData);
+      } else {
+        console.log("additionaLanguage already exists:", language.code);
       }
     });
 
-    this.isoCodesNotInGoogleTranslate = this.allLanguages
+    YpLanguages.googleTranslateLanguages.map((language) => {
+      if (!allLanguages.find((lang) => lang.code === language.code)) {
+        allLanguages.push(language as YpLanguageData);
+      } else {
+        console.log("googleTranslateLanguages already exists:", language.code);
+      }
+    });
+
+    return allLanguages;
+  }
+
+  static get isoCodesNotInGoogleTranslate() {
+    return YpLanguages.allLanguages
       .map((languages) => languages.code)
       .filter(
         (code) =>
@@ -33,13 +44,15 @@ export class YpLanguages {
       );
   }
 
-  async ensureAllLocaleFoldersAreCreated() {
+  static async ensureAllLocaleFoldersAreCreated() {
     const localesPath = path.join(process.cwd(), "locales");
     try {
       await fs.mkdir(localesPath, { recursive: true });
-      for (const language of this.allLanguages) {
-        const localePath = path.join(localesPath, language.code);
-        // Check if path exists
+      for (const language of YpLanguages.allLanguages) {
+        const localePath = path.join(
+          localesPath,
+          language.code.replace("-", "_")
+        );
         const pathExists = await fs
           .access(localePath)
           .then(() => true)
@@ -58,19 +71,57 @@ export class YpLanguages {
     }
   }
 
-  getEnglishName(code: string): string | undefined {
-    return this.allLanguages.find(
+  static getEnglishName(code: string): string | undefined {
+    return YpLanguages.allLanguages.find(
       (language) => language.code.toLowerCase() === code.toLowerCase()
     )?.englishName;
   }
 
-  getNativeName(code: string): string | undefined {
-    return this.allLanguages.find(
+  static getNativeName(code: string): string | undefined {
+    return YpLanguages.allLanguages.find(
       (language) => language.code.toLowerCase() === code.toLowerCase()
     )?.nativeName;
   }
 
-  googleTranslateLanguages = [
+  static additionalLanguages = [
+    {
+      englishName: "Arabic - Egypt",
+      nativeName: "العربية",
+      code: "ar-eg",
+    },
+    {
+      englishName: "Portuguese - Brazil",
+      nativeName: "Português",
+      code: "pt-br",
+    },
+    {
+      englishName: "Canadian",
+      nativeName: "English",
+      code: "en-ca",
+    },
+    {
+      englishName: "British",
+      nativeName: "English",
+      code: "en-gb",
+    },
+    {
+      englishName: "Serbian - Latin",
+      nativeName: "Srpski",
+      code: "sr-latin",
+    },
+    {
+      englishName: "Mandarin",
+      nativeName: "官话",
+      code: "mnd",
+    },
+    {
+      englishName: "Moldovan",
+      nativeName: "Moldovenească",
+      code: "ro-md",
+    },
+  ];
+
+  static googleTranslateLanguages = [
     {
       englishName: "Afrikaans",
       nativeName: "Afrikaans",

@@ -11,7 +11,7 @@ export declare class YpAdminTranslations extends YpAdminPage {
     collection: YpCollectionData | undefined;
     targetLocale: string | undefined;
     baseMaxLength: number | undefined;
-    supportedLanguages: Record<string, string>;
+    supportedLanguages: YpLanguageData[];
     static get styles(): any[];
     getTranslationText(): Promise<void>;
     constructor();
@@ -26,7 +26,7 @@ export declare class YpAdminTranslations extends YpAdminPage {
     getUrlFromTextType(item: YpTranslationTextData): string | null;
     get languages(): {
         locale: string;
-        name: string;
+        name: YpLanguageData;
     }[];
     getMaxLength(item: YpTranslationTextData, baseLength: number): number;
     textChanged(event: CustomEvent): void;

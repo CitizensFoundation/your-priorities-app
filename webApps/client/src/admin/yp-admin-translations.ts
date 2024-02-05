@@ -11,6 +11,7 @@ import { ShadowStyles } from '../common/ShadowStyles.js';
 
 import { YpAdminPage } from './yp-admin-page.js';
 import { YpLanguageSelector } from '../yp-app/yp-language-selector.js';
+import { YpLanguages } from '../common/ypLanguages.js';
 
 @customElement('yp-admin-translations')
 export class YpAdminTranslations extends YpAdminPage {
@@ -32,7 +33,7 @@ export class YpAdminTranslations extends YpAdminPage {
   @property({ type: Number })
   baseMaxLength: number | undefined;
 
-  supportedLanguages: Record<string, string>;
+  supportedLanguages: YpLanguageData[];
 
   static override get styles() {
     return [
@@ -143,7 +144,7 @@ export class YpAdminTranslations extends YpAdminPage {
     this.waitingOnData = false;
     this.baseMaxLength = 300;
 
-    this.supportedLanguages = YpLanguageSelector.supportedLanguages;
+    this.supportedLanguages = YpLanguages.allLanguages;
   }
 
   override connectedCallback() {

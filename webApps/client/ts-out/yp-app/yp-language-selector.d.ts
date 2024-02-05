@@ -13,8 +13,6 @@ export declare class YpLanguageSelector extends YpBaseElement {
     hasServerAutoTranslation: boolean;
     isOutsideChangeEvent: boolean;
     updated(changedProperties: Map<string | number | symbol, unknown>): void;
-    static supportedLanguages: Record<string, string>;
-    noGoogleTranslateLanguages: string[];
     _refreshLanguage(): void;
     static get styles(): any[];
     renderAutoComplete(): import("lit-html").TemplateResult<1>;

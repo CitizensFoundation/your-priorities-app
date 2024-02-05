@@ -4,13 +4,13 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var YpLanguageSelector_1;
 import { html, css, nothing } from "lit";
 import { property, customElement } from "lit/decorators.js";
 import "@material/web/select/outlined-select.js";
 import "@material/web/select/select-option.js";
 import { YpBaseElement } from "../common/yp-base-element.js";
-let YpLanguageSelector = YpLanguageSelector_1 = class YpLanguageSelector extends YpBaseElement {
+import { YpLanguages } from "../common/ypLanguages.js";
+let YpLanguageSelector = class YpLanguageSelector extends YpBaseElement {
     constructor() {
         super(...arguments);
         this.refreshLanguages = false;
@@ -22,7 +22,6 @@ let YpLanguageSelector = YpLanguageSelector_1 = class YpLanguageSelector extends
         this.dropdownVisible = true;
         this.hasServerAutoTranslation = false;
         this.isOutsideChangeEvent = false;
-        this.noGoogleTranslateLanguages = ["kl", "cpv"];
     }
     updated(changedProperties) {
         super.updated(changedProperties);
@@ -173,7 +172,7 @@ let YpLanguageSelector = YpLanguageSelector_1 = class YpLanguageSelector extends
     _stopTranslation() {
         this.fireGlobal("yp-auto-translate", false);
         window.appGlobals.autoTranslate = false;
-        this.fire("yp-language-name", YpLanguageSelector_1.supportedLanguages[this.language]);
+        this.fire("yp-language-name", YpLanguages.getEnglishName(this.language));
         /*window.appDialogs
           .getDialogAsync(
             'masterToast',
@@ -189,7 +188,7 @@ let YpLanguageSelector = YpLanguageSelector_1 = class YpLanguageSelector extends
         if (this.canUseAutoTranslate) {
             this.fireGlobal("yp-auto-translate", true);
             window.appGlobals.autoTranslate = true;
-            this.fire("yp-language-name", YpLanguageSelector_1.supportedLanguages[this.language]);
+            this.fire("yp-language-name", YpLanguages.getEnglishName(this.language));
             /*window.appDialogs.getDialogAsync("masterToast",  (toast) => {
               toast.text = this.t('autoTranslationStarted');
               toast.show();
@@ -202,7 +201,7 @@ let YpLanguageSelector = YpLanguageSelector_1 = class YpLanguageSelector extends
             this.language &&
             this.hasServerAutoTranslation &&
             !this.noUserEvents) {
-            const found = this.noGoogleTranslateLanguages.indexOf(this.language) > -1;
+            const found = YpLanguages.isoCodesNotInGoogleTranslate.indexOf(this.language) > -1;
             return !found;
         }
         else {
@@ -210,28 +209,27 @@ let YpLanguageSelector = YpLanguageSelector_1 = class YpLanguageSelector extends
         }
     }
     get languages() {
-        if (YpLanguageSelector_1.supportedLanguages) {
+        if (YpLanguages.allLanguages) {
             let arr = [];
             const highlighted = [];
             let highlightedLocales = ["en", "en_GB", "is", "fr", "de", "es", "ar"];
             if (window.appGlobals.highlightedLanguages) {
                 highlightedLocales = window.appGlobals.highlightedLanguages.split(",");
             }
-            for (const key in YpLanguageSelector_1.supportedLanguages) {
-                // eslint-disable-next-line no-prototype-builtins
-                if (YpLanguageSelector_1.supportedLanguages.hasOwnProperty(key)) {
-                    if (highlightedLocales.indexOf(key) > -1) {
-                        highlighted.push({
-                            language: key,
-                            name: YpLanguageSelector_1.supportedLanguages[key],
-                        });
-                    }
-                    else {
-                        arr.push({
-                            language: key,
-                            name: YpLanguageSelector_1.supportedLanguages[key],
-                        });
-                    }
+            highlightedLocales = highlightedLocales.map((item) => item.replace("-", "_").toLowerCase());
+            for (let l = 0; l > YpLanguages.allLanguages.length; l++) {
+                const language = YpLanguages.allLanguages[l];
+                if (highlightedLocales.indexOf(language.code) > -1) {
+                    highlighted.push({
+                        language: language.code,
+                        name: `${language.nativeName} (${language.englishName})}`,
+                    });
+                }
+                else {
+                    arr.push({
+                        language: language.code,
+                        name: `${language.nativeName} (${language.englishName})}`,
+                    });
                 }
             }
             arr = arr.sort(function (a, b) {
@@ -259,7 +257,7 @@ let YpLanguageSelector = YpLanguageSelector_1 = class YpLanguageSelector extends
                 if (!this.canUseAutoTranslate && this.autoTranslate) {
                     this._stopTranslation();
                 }
-                this.fire("yp-language-name", YpLanguageSelector_1.supportedLanguages[this.selectedLocale]);
+                this.fire("yp-language-name", YpLanguages.getEnglishName(this.language));
                 window.appGlobals.changeLocaleIfNeeded(this.selectedLocale, true);
                 localStorage.setItem("yp-user-locale", this.selectedLocale);
                 console.info("Saving locale");
@@ -271,48 +269,6 @@ let YpLanguageSelector = YpLanguageSelector_1 = class YpLanguageSelector extends
         }
         this.isOutsideChangeEvent = false;
     }
-};
-YpLanguageSelector.supportedLanguages = {
-    en: "English (US)",
-    en_GB: "English (GB)",
-    fr: "Français",
-    is: "Íslenska",
-    es: "Español",
-    cs: "čeština",
-    it: "Italiano",
-    ar: "اَلْعَرَبِيَّةُ",
-    ar_EG: "اَلْعَرَبِيَّةُ (EG)",
-    ca: "Català",
-    ro_MD: "Moldovenească",
-    ro: "Românește",
-    de: "Deutsch",
-    da: "Dansk",
-    sv: "Svenska",
-    en_CA: "English (CA)",
-    nl: "Nederlands",
-    no: "Norsk",
-    uk: "українська",
-    sq: "Shqip",
-    ky: "Кыргызча",
-    uz: "Ўзбек",
-    tr: "Türkçe",
-    fa: "فارسی",
-    pl: "Polski",
-    pt: "Português",
-    pt_BR: "Português (Brazil)",
-    ru: "Русский",
-    hu: "Magyar",
-    zh_TW: "国语 (TW)",
-    sk: "Slovenčina",
-    sl: "Slovenščina",
-    sr: "Srpski",
-    sr_latin: "Srpski (latin)",
-    hr: "Hrvatski",
-    kl: "Kalaallisut",
-    bg: "български",
-    ht: "Kreyòl ayisyen",
-    mnd: "Mandarin",
-    cpv: "Cape Verdean Creole",
 };
 __decorate([
     property({ type: Boolean })
@@ -344,7 +300,7 @@ __decorate([
 __decorate([
     property({ type: Boolean })
 ], YpLanguageSelector.prototype, "isOutsideChangeEvent", void 0);
-YpLanguageSelector = YpLanguageSelector_1 = __decorate([
+YpLanguageSelector = __decorate([
     customElement("yp-language-selector")
 ], YpLanguageSelector);
 export { YpLanguageSelector };

@@ -1,11 +1,15 @@
 export declare class YpLanguages {
-    allLanguages: YpLanguageData[];
-    isoCodesNotInGoogleTranslate: string[];
-    constructor();
-    ensureAllLocaleFoldersAreCreated(): Promise<void>;
-    getEnglishName(code: string): string | undefined;
-    getNativeName(code: string): string | undefined;
-    googleTranslateLanguages: {
+    static get allLanguages(): YpLanguageData[];
+    static get isoCodesNotInGoogleTranslate(): string[];
+    static ensureAllLocaleFoldersAreCreated(): Promise<void>;
+    static getEnglishName(code: string): string | undefined;
+    static getNativeName(code: string): string | undefined;
+    static additionalLanguages: {
+        englishName: string;
+        nativeName: string;
+        code: string;
+    }[];
+    static googleTranslateLanguages: {
         englishName: string;
         nativeName: string;
         code: string;

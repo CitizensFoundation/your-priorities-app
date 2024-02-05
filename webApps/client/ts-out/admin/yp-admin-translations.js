@@ -14,7 +14,7 @@ import '@material/web/select/select-option.js';
 import '@material/web/progress/linear-progress.js';
 import { ShadowStyles } from '../common/ShadowStyles.js';
 import { YpAdminPage } from './yp-admin-page.js';
-import { YpLanguageSelector } from '../yp-app/yp-language-selector.js';
+import { YpLanguages } from '../common/ypLanguages.js';
 let YpAdminTranslations = class YpAdminTranslations extends YpAdminPage {
     static get styles() {
         return [
@@ -119,7 +119,7 @@ let YpAdminTranslations = class YpAdminTranslations extends YpAdminPage {
         this.editActive = {};
         this.waitingOnData = false;
         this.baseMaxLength = 300;
-        this.supportedLanguages = YpLanguageSelector.supportedLanguages;
+        this.supportedLanguages = YpLanguages.allLanguages;
     }
     connectedCallback() {
         super.connectedCallback();
