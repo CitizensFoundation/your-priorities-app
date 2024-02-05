@@ -210,7 +210,8 @@ You will output JSON string array in the same order as the input array.
 
 INSTRUCTIONS:
 You must keep the translated text short, if there is one word in English, it should be one word in the other language. This is UI text for a mobile web app.
-Always output only JSON.`;
+Do not translate a few brand names like: All Our Ideas, Your Priorities, Current Reality Tree, Goal Tree, Future Reality Tree except maybe in languages you would do that normally.
+Always output only a JSON string array.`;
   }
 
   renderUserMessage(language: string, textsToTranslate: Array<string>) {

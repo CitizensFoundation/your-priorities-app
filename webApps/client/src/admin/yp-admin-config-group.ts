@@ -122,7 +122,7 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
   hasSamlLoginProvider: any;
   questionNameHasChanged = false;
 
-  groupTypeOptions = ["ideaGeneration", "allOurIdeas"];
+  groupTypeOptions = ["ideaGenerationGroupType", "allOurIdeasGroupType"];
 
   constructor() {
     super();
@@ -251,7 +251,7 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
         ? html`
             <input
               type="hidden"
-              name="allOurIdeas"
+              name="allOurIdeasGroupType"
               value="${JSON.stringify(
                 (this.collection?.configuration as YpGroupConfiguration)
                   .allOurIdeas

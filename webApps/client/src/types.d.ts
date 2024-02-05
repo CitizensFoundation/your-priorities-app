@@ -17,6 +17,12 @@ declare module 'iso-639-1' {
 type MaterialColorScheme = 'tonal'|'vibrant'|'expressive'|'content'|'neutral'|'monochrome'|'fidelity'|'dynamic';
 type MaterialDynamicVariants = "monochrome" | "neutral" | "tonalSpot" | "vibrant" | "expressive" | "fidelity" | "content" | "rainbow" | "fruitSalad";
 
+interface YpLanguageData {
+  englishName: string;
+  nativeName: string;
+  code: string;
+}
+
 interface YpThemeConfiguration {
   oneDynmicColor?: string;
   oneColorScheme?: MaterialColorScheme;

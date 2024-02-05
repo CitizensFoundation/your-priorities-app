@@ -91,7 +91,11 @@ Your ${language} JSON output:`;
     async getQuestionTranslation(question, languageIsoCode, maxCharactersInTranslation = 300) {
         try {
             console.log(`getQuestionTranslation: ${question} ${languageIsoCode}`);
-            const languageName = iso_639_1_1.default.getName(languageIsoCode) || "en";
+            const languageName = iso_639_1_1.default.getName(languageIsoCode) ||
+                iso_639_1_1.default.getName(languageIsoCode.toLowerCase()) ||
+                iso_639_1_1.default.getName(languageIsoCode.substring(0, 2)) ||
+                iso_639_1_1.default.getName(languageIsoCode.substring(0, 2).toLowerCase()) ||
+                languageIsoCode;
             const moderationResponse = await this.openaiClient.moderations.create({
                 input: question,
             });

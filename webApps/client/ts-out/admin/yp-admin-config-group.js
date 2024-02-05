@@ -66,7 +66,7 @@ let YpAdminConfigGroup = class YpAdminConfigGroup extends YpAdminConfigBase {
         this.groupTypeIndex = 1;
         this.endorsementButtonsDisabled = false;
         this.questionNameHasChanged = false;
-        this.groupTypeOptions = ["ideaGeneration", "allOurIdeas"];
+        this.groupTypeOptions = ["ideaGenerationGroupType", "allOurIdeasGroupType"];
         this.groupAccessOptions = {
             0: "public",
             1: "closed",
@@ -189,7 +189,7 @@ let YpAdminConfigGroup = class YpAdminConfigGroup extends YpAdminConfigBase {
             ? html `
             <input
               type="hidden"
-              name="allOurIdeas"
+              name="allOurIdeasGroupType"
               value="${JSON.stringify((this.collection?.configuration)
                 .allOurIdeas)}"
             />
