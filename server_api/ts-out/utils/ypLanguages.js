@@ -19,7 +19,7 @@ class YpLanguages {
                 allLanguages.push(language);
             }
             else {
-                console.log("additionaLanguage already exists:", language.code);
+                //console.log("additionaLanguage already exists:", language.code);
             }
         });
         YpLanguages.googleTranslateLanguages.map((language) => {
@@ -27,7 +27,7 @@ class YpLanguages {
                 allLanguages.push(language);
             }
             else {
-                console.log("googleTranslateLanguages already exists:", language.code);
+                //console.log("googleTranslateLanguages already exists:", language.code);
             }
         });
         return allLanguages;

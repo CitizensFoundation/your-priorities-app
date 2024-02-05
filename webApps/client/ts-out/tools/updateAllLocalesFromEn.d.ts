@@ -10,6 +10,7 @@ export declare class YpLocaleTranslation {
     setValueAtPath(obj: any, path: any, value: any): void;
     private loadJsonFile;
     private updateWithMissingKeys;
+    excludeKeysFromTranslation: string[];
     private extractMissingTranslations;
     private chunkArray;
     renderSystemPrompt(): string;

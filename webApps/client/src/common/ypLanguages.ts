@@ -16,7 +16,7 @@ export class YpLanguages {
       if (!allLanguages.find((lang) => lang.code === language.code)) {
         allLanguages.push(language as YpLanguageData);
       } else {
-        console.log("additionaLanguage already exists:", language.code);
+        //console.log("additionaLanguage already exists:", language.code);
       }
     });
 
@@ -24,7 +24,7 @@ export class YpLanguages {
       if (!allLanguages.find((lang) => lang.code === language.code)) {
         allLanguages.push(language as YpLanguageData);
       } else {
-        console.log("googleTranslateLanguages already exists:", language.code);
+        //console.log("googleTranslateLanguages already exists:", language.code);
       }
     });
 

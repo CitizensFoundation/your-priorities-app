@@ -4,7 +4,7 @@ import { OpenAI } from "openai";
 import * as fs from "fs";
 import * as path from "path";
 import { promisify } from "util";
-import { YpLanguages } from "../common/ypLanguages";
+import { YpLanguages } from "../common/ypLanguages.js";
 
 const readFilePromise = promisify(fs.readFile);
 const writeFilePromise = promisify(fs.writeFile);
@@ -52,7 +52,7 @@ export class YpLocaleTranslation {
         translationFilePath
       );
       translation = this.updateWithMissingKeys(baseTranslation, translation);
-      console.log(`Updated translation for ${localeDir}:`, translation);
+      console.log(`Updated translation for ${localeDir}:`);
 
       const missingTranslations = this.extractMissingTranslations(
         baseTranslation,
@@ -69,7 +69,7 @@ export class YpLocaleTranslation {
       );
 
       for (const chunk of chunks) {
-        console.log(`Translating chunk: ${JSON.stringify(chunk)}`); // Log the chunk before translation
+        //console.log(`Translating chunk: ${JSON.stringify(chunk)}`); // Log the chunk before translation
 
         // Prepare the texts for translation
         const textsToTranslate = chunk.map((key) => this.getValueByPath(translation, key));
@@ -87,7 +87,7 @@ export class YpLocaleTranslation {
           }
         });
 
-        console.log(`Chunk after translation: ${JSON.stringify(chunk)}`); // Log the chunk after translation
+        //console.log(`Chunk after translation: ${JSON.stringify(chunk)}`); // Log the chunk after translation
 
         console.log(`Updated translation for ${localeDir}:`);
         await writeFilePromise(
@@ -99,7 +99,7 @@ export class YpLocaleTranslation {
   }
 
   setValueAtPath(obj: any, path: any, value: any) {
-      console.log(`Setting value at path: ${path} to '${value}'`); // Debugging log
+      //console.log(`Setting value at path: ${path} to '${value}'`); // Debugging log
       const keys = path.split(".");
       let current = obj;
       for (let i = 0; i < keys.length - 1; i++) {
@@ -148,6 +148,18 @@ export class YpLocaleTranslation {
 }
 
 
+  excludeKeysFromTranslation = [
+    "facebook",
+    "twitter",
+    "linkedin",
+    "adwords",
+    "snapchat",
+    "instagram",
+    "youtube",
+    "tiktok",
+    "allOurIdeas"
+  ]
+
   private extractMissingTranslations(
     baseTranslation: any,
     targetTranslation: any
@@ -171,7 +183,9 @@ export class YpLocaleTranslation {
           target[key] === ""
         ) {
           // If the key is missing, the value is the same as the base, or the value is an empty string
-          missingTranslations.push(newPath.join("."));
+          if (!this.excludeKeysFromTranslation.includes(key)) {
+            missingTranslations.push(newPath.join("."));
+          }
         }
       });
     };
