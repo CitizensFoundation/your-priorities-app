@@ -386,13 +386,17 @@ class AllOurIdeasController {
                 throw new Error(`Failed to fetch choices: ${response.statusText}`);
             }
             const choices = (await response.json());
-            try {
-                for (let choice of choices) {
+            for (let choice of choices) {
+                try {
                     choice.data = JSON.parse(choice.data);
                 }
-            }
-            catch (error) {
-                console.error(error);
+                catch (error) {
+                    choice.data = {
+                        content: choice.data,
+                        choiceId: choice.id
+                    };
+                    console.error(error);
+                }
             }
             res.json(choices);
         }

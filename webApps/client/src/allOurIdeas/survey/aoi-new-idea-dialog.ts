@@ -203,10 +203,11 @@ export class AoiNewIdeaDialog extends YpGenerateAiImage {
         }
 
         .aiIconInfo {
-          font-size: 11px;
+          font-size: 12px;
           padding: 8px;
           font-style: italic;
-          max-width: 400px;
+          max-width: 350px;
+          text-align: center;
         }
 
         .error {
@@ -245,8 +246,8 @@ export class AoiNewIdeaDialog extends YpGenerateAiImage {
           position: absolute;
           right: 6px;
           bottom: 16px;
-          height: 28px;
-          width: 28px;
+          height: 32px;
+          width: 32px;
         }
 
         .iconContainer md-elevated-button {
@@ -263,11 +264,9 @@ export class AoiNewIdeaDialog extends YpGenerateAiImage {
           );
         }
 
-
         .iconContainer {
           position: relative;
         }
-
 
         #aiStyleInput {
           margin-bottom: 16px;
@@ -313,7 +312,6 @@ export class AoiNewIdeaDialog extends YpGenerateAiImage {
     ];
   }
   async generateAiIcon() {
-    debugger;
     this.imageGenerator.collectionType = "group";
     this.imageGenerator.collectionId = this.groupId!;
 
@@ -369,6 +367,12 @@ export class AoiNewIdeaDialog extends YpGenerateAiImage {
     `;
   }
 
+  regenerateIcon() {
+    this.choice!.data!.imageUrl = undefined;
+    this.requestUpdate();
+    this.generateAiIcon();
+  }
+
   renderAnswer() {
     if (this.choice) {
       return html`
@@ -392,7 +396,7 @@ export class AoiNewIdeaDialog extends YpGenerateAiImage {
           </md-elevated-button>
           <md-filled-tonal-icon-button
             ?hidden="${!this.choice.data.imageUrl}"
-            @click="${() => this.generateAiIcon()}"
+            @click="${this.regenerateIcon}"
             class="deleteIcon"
             ><md-icon class="closeIcon"
               >cycle</md-icon

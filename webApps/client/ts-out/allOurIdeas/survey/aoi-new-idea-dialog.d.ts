@@ -34,6 +34,7 @@ export declare class AoiNewIdeaDialog extends YpGenerateAiImage {
     static get styles(): (any[] | import("lit").CSSResult)[];
     generateAiIcon(): Promise<void>;
     get tempPrompt(): string;
+    regenerateIcon(): void;
     renderAnswer(): import("lit-html").TemplateResult<1> | typeof nothing;
     renderIcon(): import("lit-html").TemplateResult<1> | typeof nothing;
     renderContent(): import("lit-html").TemplateResult<1>;

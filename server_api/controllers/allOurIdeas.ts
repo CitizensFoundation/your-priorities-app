@@ -543,14 +543,18 @@ export class AllOurIdeasController {
       }
 
       const choices = (await response.json()) as AoiChoiceData[];
-
-      try {
-        for (let choice of choices) {
+      for (let choice of choices) {
+        try {
           choice.data = JSON.parse(choice.data as any) as AoiAnswerToVoteOnData;
+        } catch (error) {
+          choice.data = {
+            content: choice.data as any,
+            choiceId: choice.id
+          }
+          console.error(error);
         }
-      } catch (error) {
-        console.error(error);
       }
+
 
       res.json(choices);
     } catch (error) {
