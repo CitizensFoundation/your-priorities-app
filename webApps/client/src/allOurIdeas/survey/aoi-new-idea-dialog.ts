@@ -313,6 +313,7 @@ export class AoiNewIdeaDialog extends YpGenerateAiImage {
     ];
   }
   async generateAiIcon() {
+    debugger;
     this.imageGenerator.collectionType = "group";
     this.imageGenerator.collectionId = this.groupId!;
 
