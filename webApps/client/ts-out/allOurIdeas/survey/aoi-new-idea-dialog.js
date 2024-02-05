@@ -4,28 +4,33 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { css, html } from 'lit';
-import { property, customElement, query } from 'lit/decorators.js';
-import { YpBaseElement } from '../../common/yp-base-element.js';
-import '@material/web/dialog/dialog.js';
-import '@material/web/button/elevated-button.js';
-import '@material/web/button/outlined-button.js';
-import '@material/web/button/text-button.js';
-import '@material/web/progress/circular-progress.js';
-import '@material/web/textfield/filled-text-field.js';
-import { SharedStyles } from './SharedStyles';
-let AoiNewIdeaDialog = class AoiNewIdeaDialog extends YpBaseElement {
+import { css, html, nothing } from "lit";
+import { property, customElement, query } from "lit/decorators.js";
+import "@material/web/dialog/dialog.js";
+import "@material/web/button/elevated-button.js";
+import "@material/web/button/outlined-button.js";
+import "@material/web/button/text-button.js";
+import "@material/web/progress/circular-progress.js";
+import "@material/web/textfield/filled-text-field.js";
+import { SharedStyles } from "./SharedStyles";
+import { YpGenerateAiImage } from "../../common/yp-generate-ai-image.js";
+import { AoiAdminServerApi } from "../../admin/allOurIdeas/AoiAdminServerApi.js";
+import { AoiGenerateAiLogos } from "../../admin/allOurIdeas/aoiGenerateAiLogos.js";
+import "../../yp-magic-text/yp-magic-text.js";
+let AoiNewIdeaDialog = class AoiNewIdeaDialog extends YpGenerateAiImage {
     constructor() {
-        super(...arguments);
-        this.submitting = false;
+        super();
+        this.haveAddedIdea = false;
+        this.serverApi = new AoiAdminServerApi();
     }
     async connectedCallback() {
         super.connectedCallback();
+        this.imageGenerator = new AoiGenerateAiLogos(this.themeColor);
     }
     disconnectedCallback() {
         super.disconnectedCallback();
     }
-    async submit() {
+    async submitIdea() {
         window.appGlobals.activity(`New Idea - submit`);
         this.currentError = undefined;
         this.submitting = true;
@@ -38,30 +43,33 @@ let AoiNewIdeaDialog = class AoiNewIdeaDialog extends YpBaseElement {
         }
         this.submitting = false;
         if (!addIdeaResponse || addIdeaResponse.error) {
-            this.currentError = this.t('An error occurred. Please try again.');
+            this.currentError = this.t("An error occurred. Please try again.");
             window.appGlobals.activity(`New Idea - general error`);
         }
         else if (addIdeaResponse.flagged) {
-            this.currentError = this.t('Your idea has been flagged as inappropriate. Please try again.');
+            this.currentError = this.t("Your idea has been flagged as inappropriate. Please try again.");
             window.appGlobals.activity(`New Idea - moderation flag`);
         }
         else {
-            this.ideaText.value = '';
+            this.ideaText.value = "";
             if (addIdeaResponse.active) {
-                this.fire('display-snackbar', this.t('Your idea has been added, you can continue voting.'));
+                this.choice = addIdeaResponse.choice;
+                this.haveAddedIdea = true;
+                this.fire("display-snackbar", this.t("yourIdeaHasBeenAdded"));
+                this.generateAiIcon();
             }
             else {
-                this.fire('display-snackbar', this.t('Your idea is in a moderation queue.'));
+                this.fire("display-snackbar", this.t("Your idea is in a moderation queue."));
+                this.dialog.close();
             }
             window.appGlobals.activity(`New Idea - added`);
-            this.dialog.close();
         }
     }
     scrollUp() {
         //await this.updateComplete;
         setTimeout(() => {
             //@ts-ignore
-            this.$$('#dialog').contentElement.scrollTop = 0;
+            this.$$("#dialog").contentElement.scrollTop = 0;
         }, 100);
     }
     open() {
@@ -73,7 +81,15 @@ let AoiNewIdeaDialog = class AoiNewIdeaDialog extends YpBaseElement {
         this.dialog.close();
         window.appGlobals.activity(`New Idea - cancel`);
     }
-    textAreaKeyDown(e) {
+    reset() {
+        this.haveAddedIdea = false;
+        this.choice = undefined;
+    }
+    close() {
+        this.dialog.close();
+        window.appGlobals.activity(`New Idea - close`);
+    }
+    textAreaKeyDownIdea(e) {
         if (e.keyCode === 13 && !e.shiftKey) {
             e.preventDefault();
             return false;
@@ -84,7 +100,7 @@ let AoiNewIdeaDialog = class AoiNewIdeaDialog extends YpBaseElement {
     }
     static get styles() {
         return [
-            ...super.styles,
+            super.styles,
             SharedStyles,
             css `
         :host {
@@ -128,8 +144,9 @@ let AoiNewIdeaDialog = class AoiNewIdeaDialog extends YpBaseElement {
         .questionTitle {
           margin-top: 0;
           margin-bottom: 16px;
-          padding: 20px;
-          line-height: 1.5;
+          padding: 16px;
+          font-size: 16px;
+          line-height: 1.4;
         }
 
         md-filled-field {
@@ -142,10 +159,84 @@ let AoiNewIdeaDialog = class AoiNewIdeaDialog extends YpBaseElement {
           margin-left: 8px;
         }
 
+        .aiIconInfo {
+          font-size: 11px;
+          padding: 8px;
+          font-style: italic;
+          max-width: 400px;
+        }
+
         .error {
           color: var(--md-sys-color-error);
           font-size: 16px;
           margin: 8px;
+        }
+
+        .genIconSpinner {
+          width: 100px;
+          height: 100px;
+          margin-left: 0;
+          margin-right: -8px;
+        }
+
+        yp-magic-text {
+          min-width: 262px;
+        }
+
+        .iconImage,
+        .iconImageRight {
+          width: 100px;
+          height: 100px;
+          margin-left: 0;
+          margin-right: -8px;
+          border-radius: 70px;
+        }
+
+        .iconImageRight {
+        }
+
+        .closeIcon {
+        }
+
+        .deleteIcon {
+          position: absolute;
+          right: 6px;
+          bottom: 16px;
+          height: 28px;
+          width: 28px;
+        }
+
+        .iconContainer md-elevated-button {
+          margin: 8px;
+          width: 400px;
+          max-width: 400px;
+          max-height: 120px;
+          height: 120px;
+          white-space: collapse balance;
+          font-size: 16px;
+          --md-elevated-button-container-height: 120px !important;
+          --md-elevated-button-hover-label-text-color: var(
+            --md-sys-color-on-primary-container
+          );
+        }
+
+
+        .iconContainer {
+          position: relative;
+        }
+
+
+        #aiStyleInput {
+          margin-bottom: 16px;
+        }
+
+        .generateIconButton {
+          max-width: 250px;
+        }
+
+        .iconGenerationBottomSpinner {
+          margin-top: 16px;
+          width: 200px;
         }
 
         @media (max-width: 960px) {
@@ -178,52 +269,171 @@ let AoiNewIdeaDialog = class AoiNewIdeaDialog extends YpBaseElement {
       `,
         ];
     }
+    async generateAiIcon() {
+        this.imageGenerator.collectionType = "group";
+        this.imageGenerator.collectionId = this.groupId;
+        if (this.choice) {
+            try {
+                if (!this.choice.data) {
+                    this.choice.data = {};
+                }
+                this.choice.data.isGeneratingImage = true;
+                const { imageUrl, error } = (await this.imageGenerator.generateIcon(this.choice.data.content, this.finalPrompt));
+                this.choice.data.isGeneratingImage = undefined;
+                if (error) {
+                    console.error(error);
+                }
+                else {
+                    await this.serverApi.updateGroupChoice(this.groupId, this.question.id, this.choice.id, {
+                        content: this.choice.data.content,
+                        imageUrl,
+                        choiceId: this.choice.id,
+                    });
+                    this.choice.data.imageUrl = imageUrl;
+                    console.error("imageUrl", imageUrl, "error", error);
+                    this.requestUpdate();
+                }
+            }
+            catch (e) {
+                this.choice.data.isGeneratingImage = false;
+                console.error(e);
+            }
+        }
+        else {
+            console.error("no choice");
+            return;
+        }
+    }
+    get tempPrompt() {
+        return `
+      Name: ${this.name}
+      Description: ${this.description}
+      Image style: ${this.styleText.value}
+
+      Do not include text or labels in the image except if the user asks for it in the image style.
+    `;
+    }
+    renderAnswer() {
+        if (this.choice) {
+            return html `
+        <div class="iconContainer">
+          <md-elevated-button
+            id="leftAnswerButton"
+            class="leftAnswer"
+            trailing-icon
+          >
+            ${this.renderIcon()}
+            <yp-magic-text
+              id="answerText"
+              .contentId="${this.groupId}"
+              .extraId="${this.choice.data.choiceId}"
+              text-only
+              truncate="140"
+              .content="${this.choice.data.content}"
+              .contentLanguage="${this.group.language}"
+              textType="aoiChoiceContent"
+            ></yp-magic-text>
+          </md-elevated-button>
+          <md-filled-tonal-icon-button
+            ?hidden="${!this.choice.data.imageUrl}"
+            @click="${() => this.generateAiIcon()}"
+            class="deleteIcon"
+            ><md-icon class="closeIcon"
+              >cycle</md-icon
+            ></md-filled-tonal-icon-button
+          >
+        </div>
+      `;
+        }
+        else {
+            return nothing;
+        }
+    }
+    renderIcon() {
+        if (this.choice.data.isGeneratingImage) {
+            return html `
+        <md-circular-progress
+          class="genIconSpinner"
+          slot="icon"
+          indeterminate
+        ></md-circular-progress>
+      `;
+        }
+        else if (this.choice.data.imageUrl) {
+            return html ` <img
+        class="iconImage"
+        src="${this.choice.data.imageUrl}"
+        alt="icon"
+        slot="icon"
+        ?hidden="${!this.choice.data.imageUrl}"
+      />`;
+        }
+        else {
+            return nothing;
+        }
+    }
     renderContent() {
         return html `
       <div class="questionTitle">${this.question.name}</div>
-      <div class="layout vertical center-center">
-        <md-filled-text-field
-          id="ideaText"
-          type="textarea"
-          @keydown="${this.textAreaKeyDown}"
-          maxLength="140"
-          .rows="${this.wide ? 3 : 5}"
-          label="${this.t('Your own answer')}"
-        >
-        </md-filled-text-field>
-        <div class="error" ?hidden="${!this.currentError}">
-          ${this.currentError}
-        </div>
-      </div>
+      ${this.haveAddedIdea && this.choice
+            ? html `
+            <div class="layout vertical center-center">
+              ${this.renderAnswer()}
+              <div class="aiIconInfo">${this.t("aiIconInfo")}</div>
+            </div>
+          `
+            : html `
+            <div class="layout vertical center-center">
+              <md-filled-text-field
+                id="ideaText"
+                type="textarea"
+                @keydown="${this.textAreaKeyDownIdea}"
+                maxLength="140"
+                .rows="${this.wide ? 3 : 5}"
+                label="${this.t("Your own answer")}"
+              >
+              </md-filled-text-field>
+              <div class="error" ?hidden="${!this.currentError}">
+                ${this.currentError}
+              </div>
+            </div>
+          `}
     `;
     }
     renderFooter() {
-        return html ` <div class="layout horizontal footer">
-      <md-circular-progress
-        ?hidden="${!this.submitting}"
-        indeterminate
-      ></md-circular-progress>
-      <md-text-button
-        class="cancelButton"
-        @click="${this.cancel}"
-        ?disabled="${this.submitting}"
-      >
-        ${this.t('Cancel')}
-      </md-text-button>
-      <md-outlined-button
-        class="submitButton"
-        @click="${this.submit}"
-        ?disabled="${this.submitting}"
-      >
-        ${this.t('Submit Idea')}
-      </md-outlined-button>
-    </div>`;
+        if (this.haveAddedIdea && this.choice) {
+            return html `<div class="layout horizontal footer">
+        <div class="flex"></div>
+        <md-text-button class="closeButton" @click="${this.close}">
+          ${this.t("close")}
+        </md-text-button>
+      </div> `;
+        }
+        else {
+            return html ` <div class="layout horizontal footer">
+        <md-circular-progress
+          ?hidden="${!this.submitting}"
+          indeterminate
+        ></md-circular-progress>
+        <md-text-button
+          class="cancelButton"
+          @click="${this.cancel}"
+          ?disabled="${this.submitting}"
+        >
+          ${this.t("Cancel")}
+        </md-text-button>
+        <md-outlined-button
+          class="submitButton"
+          @click="${this.submitIdea}"
+          ?disabled="${this.submitting}"
+        >
+          ${this.t("Submit Idea")}
+        </md-outlined-button>
+      </div>`;
+        }
     }
     render() {
-        return html `<md-dialog
-      ?fullscreen="${!this.wide}"
-      id="dialog"
-    >
+        return html `<md-dialog ?fullscreen="${!this.wide}" id="dialog">
       <div slot="content">${this.renderContent()}</div>
       <div slot="actions">${this.renderFooter()}</div>
     </md-dialog> `;
@@ -239,19 +449,22 @@ __decorate([
     property({ type: Object })
 ], AoiNewIdeaDialog.prototype, "question", void 0);
 __decorate([
+    property({ type: Object })
+], AoiNewIdeaDialog.prototype, "choice", void 0);
+__decorate([
+    property({ type: Object })
+], AoiNewIdeaDialog.prototype, "group", void 0);
+__decorate([
     property({ type: Boolean })
-], AoiNewIdeaDialog.prototype, "submitting", void 0);
+], AoiNewIdeaDialog.prototype, "haveAddedIdea", void 0);
 __decorate([
-    property({ type: String })
-], AoiNewIdeaDialog.prototype, "currentError", void 0);
-__decorate([
-    query('#ideaText')
+    query("#ideaText")
 ], AoiNewIdeaDialog.prototype, "ideaText", void 0);
 __decorate([
-    query('#dialog')
+    query("#dialog")
 ], AoiNewIdeaDialog.prototype, "dialog", void 0);
 AoiNewIdeaDialog = __decorate([
-    customElement('aoi-new-idea-dialog')
+    customElement("aoi-new-idea-dialog")
 ], AoiNewIdeaDialog);
 export { AoiNewIdeaDialog };
 //# sourceMappingURL=aoi-new-idea-dialog.js.map

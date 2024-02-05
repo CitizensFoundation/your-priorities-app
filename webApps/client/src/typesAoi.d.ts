@@ -134,6 +134,7 @@ interface AoiAddIdeaResponse {
   error?: string;
   flagged: boolean;
   active: boolean;
+  choice: AoiChoiceData;
 }
 
 interface AoiChoiceData {

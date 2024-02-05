@@ -18,9 +18,9 @@ export class AoiServerApi extends YpServerApi {
             `/${groupId}/questions/${analysisIndex}/${analysisTypeIndex}/analysis`);
     }
     submitIdea(groupId, questionId, newIdea) {
-        return this.fetchWrapper(this.baseUrlPath + `/${groupId}/questions/${questionId}/add_idea`, {
+        return this.fetchWrapper(this.baseUrlPath + `/${groupId}/questions/${questionId}/addIdea`, {
             method: "POST",
-            body: JSON.stringify({ new_idea: newIdea }),
+            body: JSON.stringify({ newIdea }),
         }, false);
     }
     postVote(groupId, questionId, promptId, locale, body, direction) {

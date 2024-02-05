@@ -27,6 +27,7 @@ const defaultHeader = {
 import auth from "../authorization.js";
 import { AiHelper } from "../active-citizen/engine/allOurIdeas/aiHelper.js";
 import { ExplainAnswersAssistant } from "../active-citizen/engine/allOurIdeas/explainAnswersAssistant.js";
+import OpenAI from "openai";
 
 export class AllOurIdeasController {
   public path = "/api/allOurIdeas";
@@ -78,9 +79,21 @@ export class AllOurIdeasController {
       this.skip.bind(this)
     );
 
+    this.router.post(
+      "/:groupId/questions/:questionId/addIdea",
+      auth.can("view group"),
+      this.addIdea.bind(this)
+    );
+
     this.router.put(
       "/:communityId/questions/:questionId/choices/:choiceId",
       auth.can("create group"),
+      this.updateCoiceData.bind(this)
+    );
+
+    this.router.put(
+      "/:groupId/questions/:questionId/choices/:choiceId/throughGroup",
+      auth.can("view group"),
       this.updateCoiceData.bind(this)
     );
 
@@ -108,6 +121,96 @@ export class AllOurIdeasController {
       this.getTranslatedText.bind(this)
     );
   }
+
+  async addIdea(req: Request, res: Response) {
+      const { newIdea, id } = req.body;
+      let choiceParams = {
+        visitor_identifier: req.session.id,
+        data: {
+          content: newIdea,
+          isGeneratingImage: undefined
+        },
+        question_id: req.params.questionId,
+      };
+
+      //@ts-ignore
+      choiceParams['local_identifier'] = req.user.id;
+
+      console.log(`choiceParams: ${JSON.stringify(choiceParams)}`);
+
+      try {
+        const choiceResponse = await fetch(`${PAIRWISE_API_HOST}/choices.json`, {
+          method: 'POST',
+          headers: defaultAuthHeader,
+          body: JSON.stringify(choiceParams),
+        });
+
+        if (!choiceResponse.ok) {
+          console.error(choiceResponse.statusText);
+          throw new Error('Choice creation failed.');
+        }
+
+        const choice = await choiceResponse.json() as AoiChoiceData;
+
+        choice.data = JSON.parse(choice.data as any) as AoiAnswerToVoteOnData;
+
+        let flagged = false;
+        if (process.env.OPENAI_API_KEY) {
+          flagged = await this.getModerationFlag(newIdea);
+          if (flagged) {
+            await this.deactivateChoice(req, choice.id);
+            console.log("----------------------------------");
+            console.log(`Flagged BY OPENAI: ${flagged}`);
+            console.log("----------------------------------");
+          } else {
+            console.log(`Not flagged BY OPENAI: ${flagged}`);
+          }
+        }
+
+        // Implement email notification logic based on choice's active status
+
+        res.json({
+          active: choice.active,
+          flagged: flagged,
+          choice: choice,
+          choice_status: choice.active ? 'active' : 'inactive',
+          message: `You just submitted: ${escape(newIdea)}`, // Use a proper escape function
+        });
+
+      } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Addition of new idea failed' });
+      }
+    }
+
+    async getModerationFlag(data: string) {
+      const openaiClient = new OpenAI({
+        apiKey: process.env.OPENAI_API_KEY,
+      });
+      const moderationResponse = await openaiClient.moderations.create({
+        input: data,
+      });
+
+      return moderationResponse.results[0].flagged;
+    }
+
+    async deactivateChoice(req: Request, choiceId: number) {
+      try {
+        const response = await fetch(
+          `${PAIRWISE_API_HOST}/questions/${req.params.questionId}/choices/${choiceId}.json`,
+          {
+            method: "PUT",
+            headers: defaultHeader,
+            body: JSON.stringify({
+              active: false,
+            }),
+          }
+        );
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
 
   public async getTranslatedText(req: Request, res: Response): Promise<void> {
     try {

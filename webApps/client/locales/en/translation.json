@@ -1370,5 +1370,7 @@
   "ideaAdded": "Your idea has been added, you can continue voting.",
   "ideaModerationQueue": "Your idea is in a moderation queue.",
   "yourIdea": "Your idea",
-  "chatInput": "Ask me a question"
+  "chatInput": "Ask me a question",
+  "yourIdeaHasBeenAdded": "Your idea has been added, generating icons image.",
+  "aiIconInfo": "An Icon for your answer is being generated, you can close the window or wait for the icon to be generated. You will also have the option to regenerate the icon."
 }

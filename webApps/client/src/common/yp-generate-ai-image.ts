@@ -40,6 +40,7 @@ export class YpGenerateAiImage extends YpBaseElement {
 
   @query("#styleText")
   styleText!: HTMLInputElement;
+
   timeout: number | undefined;
 
   override async connectedCallback() {
@@ -50,11 +51,12 @@ export class YpGenerateAiImage extends YpBaseElement {
     super.disconnectedCallback();
   }
 
+  //TODO: Fix that styleText
   get finalPrompt() {
     return `
       Name: ${this.name}
       Description: ${this.description}
-      Image style: ${this.styleText.value}
+      Image style: ${this.styleText?.value || 'Something cool'}
 
       Do not include text or labels in the image except if the user asks for it in the image style.
     `;

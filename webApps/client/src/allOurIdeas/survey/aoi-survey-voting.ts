@@ -653,6 +653,8 @@ export class AoiSurveyVoting extends YpBaseElement {
         <aoi-new-idea-dialog
           id="newIdeaDialog"
           .question=${this.question}
+          .groupId=${this.groupId}
+          .group=${this.group}
           .earl=${this.earl}
         ></aoi-new-idea-dialog>
         ${this.llmExplainOpen

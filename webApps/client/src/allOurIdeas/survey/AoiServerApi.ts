@@ -42,10 +42,10 @@ export class AoiServerApi extends YpServerApi {
     newIdea: string
   ): AoiAddIdeaResponse {
     return this.fetchWrapper(
-      this.baseUrlPath + `/${groupId}/questions/${questionId}/add_idea`,
+      this.baseUrlPath + `/${groupId}/questions/${questionId}/addIdea`,
       {
         method: "POST",
-        body: JSON.stringify({ new_idea: newIdea }),
+        body: JSON.stringify({ newIdea }),
       },
       false
     ) as unknown as AoiAddIdeaResponse;
