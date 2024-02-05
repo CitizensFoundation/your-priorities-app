@@ -1,6 +1,6 @@
-import '@material/web/select/outlined-select.js';
-import '@material/web/select/select-option.js';
-import { YpBaseElement } from '../common/yp-base-element.js';
+import "@material/web/select/outlined-select.js";
+import "@material/web/select/select-option.js";
+import { YpBaseElement } from "../common/yp-base-element.js";
 export declare class YpLanguageSelector extends YpBaseElement {
     refreshLanguages: boolean;
     noUserEvents: boolean;
@@ -17,6 +17,7 @@ export declare class YpLanguageSelector extends YpBaseElement {
     noGoogleTranslateLanguages: string[];
     _refreshLanguage(): void;
     static get styles(): any[];
+    renderAutoComplete(): import("lit-html").TemplateResult<1>;
     render(): import("lit-html").TemplateResult<1>;
     _selectLanguage(event: CustomEvent): void;
     connectedCallback(): Promise<void>;

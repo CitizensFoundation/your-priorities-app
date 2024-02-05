@@ -1,12 +1,12 @@
-import { html, css, nothing } from 'lit';
-import { property, customElement } from 'lit/decorators.js';
+import { html, css, nothing } from "lit";
+import { property, customElement } from "lit/decorators.js";
 
-import '@material/web/select/outlined-select.js';
-import '@material/web/select/select-option.js';
+import "@material/web/select/outlined-select.js";
+import "@material/web/select/select-option.js";
 
-import { YpBaseElement } from '../common/yp-base-element.js';
+import { YpBaseElement } from "../common/yp-base-element.js";
 
-@customElement('yp-language-selector')
+@customElement("yp-language-selector")
 export class YpLanguageSelector extends YpBaseElement {
   @property({ type: Boolean })
   refreshLanguages = false;
@@ -18,10 +18,10 @@ export class YpLanguageSelector extends YpBaseElement {
   selectedLocale: string | undefined;
 
   @property({ type: String })
-  value = '';
+  value = "";
 
   @property({ type: String })
-  name = '';
+  name = "";
 
   @property({ type: Boolean })
   autoTranslateOptionDisabled = false;
@@ -40,56 +40,58 @@ export class YpLanguageSelector extends YpBaseElement {
 
   override updated(changedProperties: Map<string | number | symbol, unknown>) {
     super.updated(changedProperties);
-    if (changedProperties.has('selectedLocale')) {
-      this._selectedLocaleChanged(changedProperties.get('selectedLocale') as string);
-      this.fire('yp-selected-locale-changed', this.selectedLocale);
+    if (changedProperties.has("selectedLocale")) {
+      this._selectedLocaleChanged(
+        changedProperties.get("selectedLocale") as string
+      );
+      this.fire("yp-selected-locale-changed", this.selectedLocale);
     }
   }
 
   static supportedLanguages: Record<string, string> = {
-    en: 'English (US)',
-    en_GB: 'English (GB)',
-    fr: 'Français',
-    is: 'Íslenska',
-    es: 'Español',
-    cs: 'čeština',
-    it: 'Italiano',
-    ar: 'اَلْعَرَبِيَّةُ',
-    ar_EG: 'اَلْعَرَبِيَّةُ (EG)',
-    ca: 'Català',
-    ro_MD: 'Moldovenească',
-    ro: 'Românește',
-    de: 'Deutsch',
-    da: 'Dansk',
-    sv: 'Svenska',
-    en_CA: 'English (CA)',
-    nl: 'Nederlands',
-    no: 'Norsk',
-    uk: 'українська',
-    sq: 'Shqip',
-    ky: 'Кыргызча',
-    uz: 'Ўзбек',
-    tr: 'Türkçe',
-    fa: 'فارسی',
-    pl: 'Polski',
-    pt: 'Português',
-    pt_BR: 'Português (Brazil)',
-    ru: 'Русский',
-    hu: 'Magyar',
-    zh_TW: '国语 (TW)',
-    sk: 'Slovenčina',
-    sl: 'Slovenščina',
-    sr: 'Srpski',
-    sr_latin: 'Srpski (latin)',
-    hr: 'Hrvatski',
-    kl: 'Kalaallisut',
-    bg: 'български',
-    ht: 'Kreyòl ayisyen',
-    mnd: 'Mandarin',
-    cpv: 'Cape Verdean Creole'
+    en: "English (US)",
+    en_GB: "English (GB)",
+    fr: "Français",
+    is: "Íslenska",
+    es: "Español",
+    cs: "čeština",
+    it: "Italiano",
+    ar: "اَلْعَرَبِيَّةُ",
+    ar_EG: "اَلْعَرَبِيَّةُ (EG)",
+    ca: "Català",
+    ro_MD: "Moldovenească",
+    ro: "Românește",
+    de: "Deutsch",
+    da: "Dansk",
+    sv: "Svenska",
+    en_CA: "English (CA)",
+    nl: "Nederlands",
+    no: "Norsk",
+    uk: "українська",
+    sq: "Shqip",
+    ky: "Кыргызча",
+    uz: "Ўзбек",
+    tr: "Türkçe",
+    fa: "فارسی",
+    pl: "Polski",
+    pt: "Português",
+    pt_BR: "Português (Brazil)",
+    ru: "Русский",
+    hu: "Magyar",
+    zh_TW: "国语 (TW)",
+    sk: "Slovenčina",
+    sl: "Slovenščina",
+    sr: "Srpski",
+    sr_latin: "Srpski (latin)",
+    hr: "Hrvatski",
+    kl: "Kalaallisut",
+    bg: "български",
+    ht: "Kreyòl ayisyen",
+    mnd: "Mandarin",
+    cpv: "Cape Verdean Creole",
   };
 
-  noGoogleTranslateLanguages = ['kl','cpv'];
+  noGoogleTranslateLanguages = ["kl", "cpv"];
 
   _refreshLanguage() {
     this.dropdownVisible = false;
@@ -128,14 +130,47 @@ export class YpLanguageSelector extends YpBaseElement {
     ];
   }
 
+  renderAutoComplete() {
+    return html`
+      <md-filled-text-field
+        id="textfield"
+        type="combobox"
+        aria-controls="menu"
+        aria-autocomplete="list"
+        aria-expanded="true"
+        aria-activedescendant="1"
+        value="Ala"
+      >
+      </md-filled-text-field>
+      <md-menu
+        id="menu"
+        anchor="textfield"
+        role="listbox"
+        aria-label="states"
+        open
+      >
+        <md-menu-item type="option" id="0">
+          <div slot="headline">Alabama</div>
+        </md-menu-item>
+        <md-divider role="separator" tabindex="-1"></md-divider>
+        <md-menu-item type="option" id="1" selected aria-selected="true">
+          <div slot="headline">Alabama</div>
+        </md-menu-item>
+      </md-menu>
+    `;
+  }
+
   override render() {
     return html`
       <div class="layout vertical">
         ${this.dropdownVisible
           ? html`
-              <md-outlined-select .value="${this.value}" label="Select language">
+              <md-outlined-select
+                .value="${this.value}"
+                label="Select language"
+              >
                 ${this.languages.map(
-                  item => html`
+                  (item) => html`
                     <md-select-option
                       @click="${this._selectLanguage}"
                       .value="${item.language}"
@@ -152,7 +187,8 @@ export class YpLanguageSelector extends YpBaseElement {
             raised
             class="layout horizontal translateButton"
             @click="${this.startTranslation}"
-            .label="${this.t('autoTranslate')}"><md-icon>translate</md-icon>
+            .label="${this.t("autoTranslate")}"
+            ><md-icon>translate</md-icon>
           </md-outlined-button>
           <md-outlined-button
             ?hidden="${!this.autoTranslate}"
@@ -160,7 +196,8 @@ export class YpLanguageSelector extends YpBaseElement {
             raised
             class="layout horizontal stopTranslateButton"
             @click="${this._stopTranslation}"
-            .title="${this.t('stopAutoTranslate')}">
+            .title="${this.t("stopAutoTranslate")}"
+          >
             <md-icon class="stopIcon">do_not_disturb</md-icon>
           </md-outlined-button>
         </div>
@@ -178,10 +215,11 @@ export class YpLanguageSelector extends YpBaseElement {
   ],
 */
 
-override async connectedCallback() {
+  override async connectedCallback() {
     super.connectedCallback();
     if (!this.noUserEvents) {
-      const response = (await window.serverApi.hasAutoTranslation()) as YpHasAutoTranslationResponse;
+      const response =
+        (await window.serverApi.hasAutoTranslation()) as YpHasAutoTranslationResponse;
       if (response && response.hasAutoTranslation === true) {
         this.hasServerAutoTranslation = true;
       } else {
@@ -195,7 +233,7 @@ override async connectedCallback() {
     }
 
     this.addGlobalListener(
-      'yp-refresh-language-selection',
+      "yp-refresh-language-selection",
       this._refreshLanguage.bind(this)
     );
   }
@@ -203,7 +241,7 @@ override async connectedCallback() {
   override disconnectedCallback() {
     super.disconnectedCallback();
     this.removeGlobalListener(
-      'yp-refresh-language-selection',
+      "yp-refresh-language-selection",
       this._refreshLanguage.bind(this)
     );
   }
@@ -213,9 +251,12 @@ override async connectedCallback() {
   }
 
   _stopTranslation() {
-    this.fireGlobal('yp-auto-translate', false);
+    this.fireGlobal("yp-auto-translate", false);
     window.appGlobals.autoTranslate = false;
-    this.fire('yp-language-name', YpLanguageSelector.supportedLanguages[this.language]);
+    this.fire(
+      "yp-language-name",
+      YpLanguageSelector.supportedLanguages[this.language]
+    );
     /*window.appDialogs
       .getDialogAsync(
         'masterToast',
@@ -224,21 +265,24 @@ override async connectedCallback() {
           toast.open = true
         }
       );*/
-    window.appGlobals.activity('click', 'stopTranslation', this.language);
-    sessionStorage.setItem('dontPromptForAutoTranslation', 'true');
+    window.appGlobals.activity("click", "stopTranslation", this.language);
+    sessionStorage.setItem("dontPromptForAutoTranslation", "true");
   }
 
   startTranslation() {
     if (this.canUseAutoTranslate) {
-      this.fireGlobal('yp-auto-translate', true);
+      this.fireGlobal("yp-auto-translate", true);
       window.appGlobals.autoTranslate = true;
-      this.fire('yp-language-name', YpLanguageSelector.supportedLanguages[this.language]);
+      this.fire(
+        "yp-language-name",
+        YpLanguageSelector.supportedLanguages[this.language]
+      );
       /*window.appDialogs.getDialogAsync("masterToast",  (toast) => {
         toast.text = this.t('autoTranslationStarted');
         toast.show();
       });*/
     }
-    window.appGlobals.activity('click', 'startTranslation', this.language);
+    window.appGlobals.activity("click", "startTranslation", this.language);
   }
 
   get canUseAutoTranslate() {
@@ -259,9 +303,9 @@ override async connectedCallback() {
     if (YpLanguageSelector.supportedLanguages) {
       let arr = [];
       const highlighted = [];
-      let highlightedLocales = ['en', 'en_GB', 'is', 'fr', 'de', 'es', 'ar'];
+      let highlightedLocales = ["en", "en_GB", "is", "fr", "de", "es", "ar"];
       if (window.appGlobals.highlightedLanguages) {
-        highlightedLocales = window.appGlobals.highlightedLanguages.split(',');
+        highlightedLocales = window.appGlobals.highlightedLanguages.split(",");
       }
       for (const key in YpLanguageSelector.supportedLanguages) {
         // eslint-disable-next-line no-prototype-builtins
@@ -272,7 +316,10 @@ override async connectedCallback() {
               name: YpLanguageSelector.supportedLanguages[key],
             });
           } else {
-            arr.push({ language: key, name: YpLanguageSelector.supportedLanguages[key] });
+            arr.push({
+              language: key,
+              name: YpLanguageSelector.supportedLanguages[key],
+            });
           }
         }
       }
@@ -296,25 +343,25 @@ override async connectedCallback() {
     if (this.selectedLocale) {
       this.value = this.selectedLocale;
       if (oldLocale) {
-        this.fire('changed', this.value);
+        this.fire("changed", this.value);
       }
       if (!this.noUserEvents && oldLocale) {
         if (!this.canUseAutoTranslate && this.autoTranslate) {
           this._stopTranslation();
         }
         this.fire(
-          'yp-language-name',
+          "yp-language-name",
           YpLanguageSelector.supportedLanguages[this.selectedLocale]
         );
         window.appGlobals.changeLocaleIfNeeded(this.selectedLocale, true);
-        localStorage.setItem('yp-user-locale', this.selectedLocale);
-        console.info('Saving locale');
+        localStorage.setItem("yp-user-locale", this.selectedLocale);
+        console.info("Saving locale");
         if (window.appUser && window.appUser.user) {
           window.appUser.setLocale(this.selectedLocale);
         }
         window.appGlobals.activity(
-          'click',
-          'changeLanguage',
+          "click",
+          "changeLanguage",
           this.selectedLocale
         );
       }

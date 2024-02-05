@@ -1,4 +1,4 @@
-import { YpLanguages } from "../common/ypLanguages";
+import { YpLanguages } from "../common/ypLanguages.js";
 
 async function main(): Promise<void> {
   const languages = new YpLanguages();

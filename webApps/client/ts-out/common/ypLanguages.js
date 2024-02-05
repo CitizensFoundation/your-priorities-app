@@ -93,12 +93,12 @@ export class YpLanguages {
             {
                 englishName: "Chinese (Simplified)",
                 nativeName: "简体中文",
-                code: "zh-CN",
+                code: "zh-cn",
             },
             {
                 englishName: "Chinese (Traditional)",
                 nativeName: "繁體中文",
-                code: "zh-TW",
+                code: "zh-tw",
             },
             {
                 englishName: "Corsican",
@@ -404,7 +404,7 @@ export class YpLanguages {
             {
                 englishName: "Meiteilon (Manipuri)",
                 nativeName: "মৈতৈলোন্",
-                code: "mni-Mtei",
+                code: "mni-mtei",
             },
             {
                 englishName: "Mizo",
@@ -692,8 +692,19 @@ export class YpLanguages {
             await fs.mkdir(localesPath, { recursive: true });
             for (const language of this.allLanguages) {
                 const localePath = path.join(localesPath, language.code);
-                await fs.mkdir(localePath, { recursive: true });
-                await fs.writeFile(path.join(localePath, "translation.json"), "{}");
+                // Check if path exists
+                const pathExists = await fs
+                    .access(localePath)
+                    .then(() => true)
+                    .catch(() => false);
+                if (!pathExists) {
+                    console.log("Creating ---->:", localePath);
+                    //await fs.mkdir(localePath, { recursive: true });
+                    //await fs.writeFile(path.join(localePath, "translation.json"), "{}");
+                }
+                else {
+                    console.log("Path exists:", localePath);
+                }
             }
             console.log("Locale folders and files have been created successfully.");
         }
@@ -702,12 +713,10 @@ export class YpLanguages {
         }
     }
     getEnglishName(code) {
-        return this.allLanguages.find((language) => language.code === code)
-            ?.englishName;
+        return this.allLanguages.find((language) => language.code.toLowerCase() === code.toLowerCase())?.englishName;
     }
     getNativeName(code) {
-        return this.allLanguages.find((language) => language.code === code)
-            ?.nativeName;
+        return this.allLanguages.find((language) => language.code.toLowerCase() === code.toLowerCase())?.nativeName;
     }
 }
 //# sourceMappingURL=ypLanguages.js.map
