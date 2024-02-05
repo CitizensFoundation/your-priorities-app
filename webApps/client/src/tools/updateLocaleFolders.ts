@@ -5,4 +5,6 @@ async function main(): Promise<void> {
   await languages.ensureAllLocaleFoldersAreCreated();
 }
 
-main().then(() => console.log('I have updated the locale folders.')).catch((error) => console.error('Error in main:', error));
+main()
+  .then(() => console.log("I have updated the locale folders."))
+  .catch((error) => console.error("Error in main:", error));

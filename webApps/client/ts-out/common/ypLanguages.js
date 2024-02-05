@@ -1,6 +1,6 @@
 import ISO6391 from "iso-639-1";
-import fs from 'fs/promises';
-import path from 'path';
+import fs from "fs/promises";
+import path from "path";
 export class YpLanguages {
     constructor() {
         this.isoCodesNotInGoogleTranslate = [];
@@ -687,19 +687,27 @@ export class YpLanguages {
             .includes(code));
     }
     async ensureAllLocaleFoldersAreCreated() {
-        const localesPath = path.join(process.cwd(), 'locales');
+        const localesPath = path.join(process.cwd(), "locales");
         try {
             await fs.mkdir(localesPath, { recursive: true });
             for (const language of this.allLanguages) {
                 const localePath = path.join(localesPath, language.code);
                 await fs.mkdir(localePath, { recursive: true });
-                await fs.writeFile(path.join(localePath, 'translation.json'), '{}');
+                await fs.writeFile(path.join(localePath, "translation.json"), "{}");
             }
-            console.log('Locale folders and files have been created successfully.');
+            console.log("Locale folders and files have been created successfully.");
         }
         catch (error) {
-            console.error('Error creating locale folders:', error);
+            console.error("Error creating locale folders:", error);
         }
+    }
+    getEnglishName(code) {
+        return this.allLanguages.find((language) => language.code === code)
+            ?.englishName;
+    }
+    getNativeName(code) {
+        return this.allLanguages.find((language) => language.code === code)
+            ?.nativeName;
     }
 }
 //# sourceMappingURL=ypLanguages.js.map
