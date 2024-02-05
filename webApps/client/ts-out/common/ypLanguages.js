@@ -1,6 +1,4 @@
 import ISO6391 from "iso-639-1";
-import fs from "fs/promises";
-import path from "path";
 export class YpLanguages {
     static get allLanguages() {
         const allLanguages = ISO6391.getLanguages(ISO6391.getAllCodes()).map((language) => {
@@ -35,33 +33,12 @@ export class YpLanguages {
             .map((languages) => languages.code)
             .includes(code));
     }
-    static async ensureAllLocaleFoldersAreCreated() {
-        const localesPath = path.join(process.cwd(), "locales");
-        try {
-            await fs.mkdir(localesPath, { recursive: true });
-            for (const language of YpLanguages.allLanguages) {
-                const localePath = path.join(localesPath, language.code.replace("-", "_"));
-                const pathExists = await fs
-                    .access(localePath)
-                    .then(() => true)
-                    .catch(() => false);
-                if (!pathExists) {
-                    console.log("Creating ---->:", localePath);
-                    await fs.mkdir(localePath, { recursive: true });
-                    await fs.writeFile(path.join(localePath, "translation.json"), "{}");
-                }
-                else {
-                    console.log("Path exists:", localePath);
-                }
-            }
-            console.log("Locale folders and files have been created successfully.");
-        }
-        catch (error) {
-            console.error("Error creating locale folders:", error);
-        }
-    }
     static getEnglishName(code) {
-        return YpLanguages.allLanguages.find((language) => language.code.toLowerCase() === code.toLowerCase())?.englishName;
+        let name = YpLanguages.allLanguages.find((language) => language.code.toLowerCase() === code.toLowerCase())?.englishName;
+        if (!name) {
+            name = YpLanguages.allLanguages.find((language) => language.code.toLowerCase() === code.toLowerCase().replace("_", "-"))?.englishName;
+        }
+        return name;
     }
     static getNativeName(code) {
         return YpLanguages.allLanguages.find((language) => language.code.toLowerCase() === code.toLowerCase())?.nativeName;

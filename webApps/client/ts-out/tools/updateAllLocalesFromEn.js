@@ -1,9 +1,9 @@
 import { jsonrepair } from "jsonrepair";
 import { OpenAI } from "openai";
-import ISO6391 from "iso-639-1";
 import * as fs from "fs";
 import * as path from "path";
 import { promisify } from "util";
+import { YpLanguages } from "../common/ypLanguages";
 const readFilePromise = promisify(fs.readFile);
 const writeFilePromise = promisify(fs.writeFile);
 export class YpLocaleTranslation {
@@ -149,7 +149,7 @@ You will output JSON string array in the same order as the input array.
 
 INSTRUCTIONS:
 You must keep the translated text short, if there is one word in English, it should be one word in the other language. This is UI text for a mobile web app.
-Do not translate a few brand names like: All Our Ideas, Your Priorities, Current Reality Tree, Goal Tree, Future Reality Tree except maybe in languages you would do that normally.
+Do not translate brand names including ours: All Our Ideas and Your Priorities.
 Always output only a JSON string array.`;
     }
     renderUserMessage(language, textsToTranslate) {
@@ -163,11 +163,9 @@ Your ${language} UI texts JSON output:`;
     async translateUITexts(languageIsoCode, textsToTranslate) {
         try {
             console.log(`translateTexts: ${JSON.stringify(textsToTranslate)} ${languageIsoCode}`);
-            const languageName = ISO6391.getName(languageIsoCode) ||
-                ISO6391.getName(languageIsoCode.toLowerCase()) ||
-                ISO6391.getName(languageIsoCode.substring(0, 2)) ||
-                ISO6391.getName(languageIsoCode.substring(0, 2).toLowerCase()) ||
+            const languageName = YpLanguages.getEnglishName(languageIsoCode) ||
                 languageIsoCode;
+            console.log("LANGUAGE NAME:", languageName);
             return await this.callLlm(languageName, textsToTranslate);
         }
         catch (error) {
@@ -225,9 +223,10 @@ Your ${language} UI texts JSON output:`;
                 }
             }
             catch (error) {
-                console.error("Error in getChoiceTranslation:", error);
+                console.error("Error:", error);
                 retries++;
                 if (retries > maxRetries) {
+                    console.error("Max retries reached");
                     running = false;
                     return undefined;
                 }

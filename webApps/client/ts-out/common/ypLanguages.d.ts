@@ -1,7 +1,6 @@
 export declare class YpLanguages {
     static get allLanguages(): YpLanguageData[];
     static get isoCodesNotInGoogleTranslate(): string[];
-    static ensureAllLocaleFoldersAreCreated(): Promise<void>;
     static getEnglishName(code: string): string | undefined;
     static getNativeName(code: string): string | undefined;
     static additionalLanguages: {

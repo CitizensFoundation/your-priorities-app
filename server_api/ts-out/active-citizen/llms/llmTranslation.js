@@ -7,6 +7,7 @@ exports.YpLlmTranslation = void 0;
 const jsonrepair_1 = require("jsonrepair");
 const openai_1 = require("openai");
 const iso_639_1_1 = __importDefault(require("iso-639-1"));
+const ypLanguages_1 = require("utils/ypLanguages");
 class YpLlmTranslation {
     openaiClient;
     modelName = "gpt-4-0125-preview";
@@ -58,10 +59,7 @@ Your ${language} JSON output:`;
     async getChoiceTranslation(answerContent, languageIsoCode, maxCharactersInTranslation = 140) {
         try {
             console.log(`getChoiceTranslation: ${answerContent}`);
-            const languageName = iso_639_1_1.default.getName(languageIsoCode) ||
-                iso_639_1_1.default.getName(languageIsoCode.toLowerCase()) ||
-                iso_639_1_1.default.getName(languageIsoCode.substring(0, 2)) ||
-                iso_639_1_1.default.getName(languageIsoCode.substring(0, 2).toLowerCase()) ||
+            const languageName = ypLanguages_1.YpLanguages.getEnglishName(languageIsoCode) ||
                 languageIsoCode;
             const moderationResponse = await this.openaiClient.moderations.create({
                 input: answerContent,
