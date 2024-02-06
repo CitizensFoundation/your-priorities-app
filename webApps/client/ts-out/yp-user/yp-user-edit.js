@@ -10,7 +10,7 @@ import "@material/web/button/text-button.js";
 import "@material/web/textfield/outlined-text-field.js";
 import "../ac-notifications/ac-notification-settings.js";
 import "../yp-file-upload/yp-file-upload.js";
-import "../yp-app/yp-language-selector.js";
+import "../common/languages/yp-language-selector.js";
 import { YpEditBase } from "../common/yp-edit-base.js";
 let YpUserEdit = class YpUserEdit extends YpEditBase {
     constructor() {

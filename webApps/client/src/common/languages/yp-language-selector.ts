@@ -4,8 +4,8 @@ import { property, customElement } from "lit/decorators.js";
 import "@material/web/select/outlined-select.js";
 import "@material/web/select/select-option.js";
 
-import { YpBaseElement } from "../common/yp-base-element.js";
-import { YpLanguages } from "../common/languages/ypLanguages.js";
+import { YpBaseElement } from "../../common/yp-base-element.js";
+import { YpLanguages } from "../../common/languages/ypLanguages.js";
 
 @customElement("yp-language-selector")
 export class YpLanguageSelector extends YpBaseElement {
@@ -254,7 +254,7 @@ export class YpLanguageSelector extends YpBaseElement {
     if (YpLanguages.allLanguages) {
       let arr = [];
       const highlighted = [];
-      let highlightedLocales = ["en", "en_GB", "is", "fr", "de", "es", "ar"];
+      let highlightedLocales = ["en", "en_gb", "is", "fr", "de", "es", "ar"];
       if (window.appGlobals.highlightedLanguages) {
         highlightedLocales = window.appGlobals.highlightedLanguages.split(",");
       }

@@ -6,7 +6,7 @@ import "../yp-survey/yp-structured-question-edit.js";
 import { YpAdminConfigBase } from "./yp-admin-config-base.js";
 import "../yp-theme/yp-theme-selector.js";
 import "../yp-file-upload/yp-file-upload.js";
-import "../yp-app/yp-language-selector.js";
+import "../common/languages/yp-language-selector.js";
 export declare class YpAdminConfigCommunity extends YpAdminConfigBase {
     appHomeScreenIconImageId: number | undefined;
     hostnameExample: string | undefined;

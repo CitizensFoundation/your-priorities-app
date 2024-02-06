@@ -6,6 +6,9 @@ import { promisify } from "util";
 import { YpLanguages } from "../common/languages/ypLanguages.js";
 const readFilePromise = promisify(fs.readFile);
 const writeFilePromise = promisify(fs.writeFile);
+//TODO: Copy the node_modules/iso-639-1/src/data.js file to the webApps/client/src/common/languages/ folder as languagesData.ts and replace the first line with the following:
+// export const LANGUAGES_LIST: Record<string, { name: string; nativeName: string }> = {
+// and remove the last line of the .js file (the module.exports line)
 export class YpLocaleTranslation {
     constructor() {
         this.modelName = "gpt-4-0125-preview";

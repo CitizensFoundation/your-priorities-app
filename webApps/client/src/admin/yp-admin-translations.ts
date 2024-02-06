@@ -10,7 +10,7 @@ import '@material/web/progress/linear-progress.js';
 import { ShadowStyles } from '../common/ShadowStyles.js';
 
 import { YpAdminPage } from './yp-admin-page.js';
-import { YpLanguageSelector } from '../yp-app/yp-language-selector.js';
+import { YpLanguageSelector } from '../common/languages/yp-language-selector.js';
 import { YpLanguages } from '../common/languages/ypLanguages.js';
 
 @customElement('yp-admin-translations')
@@ -265,7 +265,7 @@ export class YpAdminTranslations extends YpAdminPage {
   get languages() {
     let arr = [];
     const highlighted = [];
-    let highlightedLocales = ['en', 'en_GB', 'is', 'fr', 'de', 'es', 'ar'];
+    let highlightedLocales = ['en', 'en_gb', 'is', 'fr', 'de', 'es', 'ar'];
     if (
       this.collection &&
       this.collection.configuration &&

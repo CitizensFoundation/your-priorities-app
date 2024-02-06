@@ -216,7 +216,7 @@ let YpAdminTranslations = class YpAdminTranslations extends YpAdminPage {
     get languages() {
         let arr = [];
         const highlighted = [];
-        let highlightedLocales = ['en', 'en_GB', 'is', 'fr', 'de', 'es', 'ar'];
+        let highlightedLocales = ['en', 'en_gb', 'is', 'fr', 'de', 'es', 'ar'];
         if (this.collection &&
             this.collection.configuration &&
             this.collection.configuration.highlightedLanguages) {

@@ -14,7 +14,7 @@ import { YpNavHelpers } from "../common/YpNavHelpers.js";
 //import './@yrpri/common/yp-emoji-selector.js';
 import "../yp-file-upload/yp-file-upload.js";
 import '../yp-theme/yp-theme-selector.js';
-import "../yp-app/yp-language-selector.js";
+import "../common/languages/yp-language-selector.js";
 import "./yp-admin-communities.js";
 let YpAdminConfigDomain = class YpAdminConfigDomain extends YpAdminConfigBase {
     constructor() {

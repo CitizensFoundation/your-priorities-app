@@ -4,7 +4,7 @@ import "../yp-file-upload/yp-file-upload.js";
 import { YpAdminConfigBase } from "./yp-admin-config-base.js";
 import "../yp-file-upload/yp-file-upload.js";
 import '../yp-theme/yp-theme-selector.js';
-import "../yp-app/yp-language-selector.js";
+import "../common/languages/yp-language-selector.js";
 import "./yp-admin-communities.js";
 export declare class YpAdminConfigDomain extends YpAdminConfigBase {
     appHomeScreenIconImageId: number | undefined;

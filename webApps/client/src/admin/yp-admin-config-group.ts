@@ -24,7 +24,7 @@ import { YpFileUpload } from "../yp-file-upload/yp-file-upload.js";
 
 import "../yp-file-upload/yp-file-upload.js";
 import "../yp-theme/yp-theme-selector.js";
-import "../yp-app/yp-language-selector.js";
+import "../common/languages/yp-language-selector.js";
 import { YpMediaHelpers } from "../common/YpMediaHelpers.js";
 import { YpImage } from "../common/yp-image.js";
 import { TextField } from "@material/web/textfield/internal/text-field.js";

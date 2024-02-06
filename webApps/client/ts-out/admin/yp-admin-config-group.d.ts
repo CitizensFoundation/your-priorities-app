@@ -9,7 +9,7 @@ import "@trystan2k/fleshy-jsoneditor/fleshy-jsoneditor.js";
 import { YpAdminConfigBase } from "./yp-admin-config-base.js";
 import "../yp-file-upload/yp-file-upload.js";
 import "../yp-theme/yp-theme-selector.js";
-import "../yp-app/yp-language-selector.js";
+import "../common/languages/yp-language-selector.js";
 import "./allOurIdeas/aoi-earl-ideas-editor.js";
 export declare class YpAdminConfigGroup extends YpAdminConfigBase {
     appHomeScreenIconImageId: number | undefined;
@@ -41,7 +41,7 @@ export declare class YpAdminConfigGroup extends YpAdminConfigBase {
     _setGroupType(event: CustomEvent): void;
     renderGroupTypeSelection(): import("lit-html").TemplateResult<1>;
     renderHeader(): import("lit-html").TemplateResult<1> | typeof nothing;
-    getAccessTokenName(): "open_to_community" | "secret";
+    getAccessTokenName(): "secret" | "open_to_community";
     renderHiddenInputs(): import("lit-html").TemplateResult<1>;
     _descriptionChanged(event: CustomEvent): void;
     connectedCallback(): void;

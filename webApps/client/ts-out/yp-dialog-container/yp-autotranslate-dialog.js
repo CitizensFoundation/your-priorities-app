@@ -9,7 +9,7 @@ import { property, customElement } from 'lit/decorators.js';
 import { YpBaseElement } from '../common/yp-base-element.js';
 import '@material/web/dialog/dialog.js';
 import '@material/web/button/text-button.js';
-import '../yp-app/yp-language-selector.js';
+import '../common/languages/yp-language-selector.js';
 let YpAutoTranslateDialog = class YpAutoTranslateDialog extends YpBaseElement {
     static get styles() {
         return [

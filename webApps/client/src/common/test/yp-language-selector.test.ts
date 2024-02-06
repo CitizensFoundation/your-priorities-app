@@ -1,6 +1,6 @@
 import { html, fixture, expect, aTimeout } from '@open-wc/testing';
 
-import { YpLanguageSelector } from '../yp-language-selector.js';
+import { YpLanguageSelector } from '../languages/yp-language-selector.js';
 import '../yp-language-selector.js';
 import { YpTestHelpers } from '../../common/test/setup-app.js';
 

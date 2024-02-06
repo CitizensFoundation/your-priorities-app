@@ -17,7 +17,7 @@ import { YpNavHelpers } from "../common/YpNavHelpers.js";
 import "../yp-theme/yp-theme-selector.js";
 import "../yp-file-upload/yp-file-upload.js";
 //import './@yrpri/yp-theme/yp-theme-selector.js';
-import "../yp-app/yp-language-selector.js";
+import "../common/languages/yp-language-selector.js";
 import { ifDefined } from "lit/directives/if-defined.js";
 let YpAdminConfigCommunity = class YpAdminConfigCommunity extends YpAdminConfigBase {
     constructor() {

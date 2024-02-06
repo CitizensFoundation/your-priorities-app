@@ -13,6 +13,9 @@ interface Translation {
   [key: string]: string | Translation; // Allow nested translations
 }
 
+//TODO: Copy the node_modules/iso-639-1/src/data.js file to the webApps/client/src/common/languages/ folder as languagesData.ts and replace the first line with the following:
+// export const LANGUAGES_LIST: Record<string, { name: string; nativeName: string }> = {
+// and remove the last line of the .js file (the module.exports line)
 export class YpLocaleTranslation {
   openaiClient: OpenAI;
   modelName = "gpt-4-0125-preview";

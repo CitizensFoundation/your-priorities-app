@@ -7,8 +7,8 @@ import { YpBaseElement } from '../common/yp-base-element.js';
 import '@material/web/dialog/dialog.js';
 import '@material/web/button/text-button.js';
 
-import '../yp-app/yp-language-selector.js';
-import { YpLanguageSelector } from '../yp-app/yp-language-selector.js';
+import '../common/languages/yp-language-selector.js';
+import { YpLanguageSelector } from '../common/languages/yp-language-selector.js';
 import { Dialog } from '@material/web/dialog/internal/dialog.js';
 
 @customElement('yp-autotranslate-dialog')

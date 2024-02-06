@@ -23,7 +23,7 @@ import "../yp-theme/yp-theme-selector.js";
 
 import "../yp-file-upload/yp-file-upload.js";
 //import './@yrpri/yp-theme/yp-theme-selector.js';
-import "../yp-app/yp-language-selector.js";
+import "../common/languages/yp-language-selector.js";
 import { YpConfirmationDialog } from "../yp-dialog-container/yp-confirmation-dialog.js";
 import { ifDefined } from "lit/directives/if-defined.js";
 import { TextField } from "@material/web/textfield/internal/text-field.js";
