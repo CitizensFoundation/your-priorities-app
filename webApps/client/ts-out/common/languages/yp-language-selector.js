@@ -49,14 +49,10 @@ let YpLanguageSelector = class YpLanguageSelector extends YpBaseElement {
           max-width: 250px;
         }
 
-        .translateButton {
+        .translateButton,  .stopTranslateButton  {
           padding: 8px;
-          margin-top: 16px;
-        }
-
-        .stopTranslateButton {
-          padding: 8px;
-          margin-top: 16px;
+          margin-top: 24px;
+          margin-bottom: 16px;
         }
 
         .translateText {
@@ -110,6 +106,7 @@ let YpLanguageSelector = class YpLanguageSelector extends YpBaseElement {
           .label="${this.t("selectLanguage")}"
           @click="${this.openMenu}"
           @keyup=${this._autoCompleteChange}
+          .value="${YpLanguages.getEnglishName(this.language) || ""}"
         >
         </md-filled-text-field>
         <md-menu
@@ -167,11 +164,7 @@ let YpLanguageSelector = class YpLanguageSelector extends YpBaseElement {
             else {
                 this.hasServerAutoTranslation = false;
             }
-            //TODO: Check this below!
-            //(Update dropdown language after it has been loaded from defaults)
-            setTimeout(() => {
-                this.selectedLocale = this.language;
-            }, 1500);
+            this.selectedLocale = this.language;
         }
         this.addGlobalListener("yp-refresh-language-selection", this._refreshLanguage.bind(this));
     }
@@ -181,7 +174,10 @@ let YpLanguageSelector = class YpLanguageSelector extends YpBaseElement {
     }
     firstUpdated(_changedProperties) {
         super.firstUpdated(_changedProperties);
-        this.$$("md-menu").open = true;
+        if (_changedProperties.has("language") && this.language) {
+            const textfield = this.$$("md-filled-text-field");
+            textfield.value = YpLanguages.getEnglishName(this.language) || "";
+        }
     }
     _autoTranslateEvent(event) {
         this.autoTranslate = event.detail;

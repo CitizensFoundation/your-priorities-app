@@ -25,8 +25,6 @@ let AcActivity = class AcActivity extends YpBaseElementWithLogin {
         .activity {
           margin: 16px;
           height: 100%;
-          padding-left: 16px;
-          padding-right: 16px;
           margin-bottom: 0;
         }
 
@@ -34,7 +32,6 @@ let AcActivity = class AcActivity extends YpBaseElementWithLogin {
           .activity {
             width: 100%;
             height: 100%;
-
             margin: 0;
             padding-left: 16px;
             padding-right: 16px;
@@ -81,9 +78,6 @@ let AcActivity = class AcActivity extends YpBaseElementWithLogin {
         }
 
         md-icon {
-          width: 48px;
-          height: 48px;
-          padding-top: 14px;
         }
 
         .createdAt {
@@ -96,7 +90,7 @@ let AcActivity = class AcActivity extends YpBaseElementWithLogin {
 
         .deleteIcon {
           position: absolute;
-          right: 8px;
+          right: 0px;
           bottom: 8px;
         }
 
@@ -145,15 +139,14 @@ let AcActivity = class AcActivity extends YpBaseElementWithLogin {
             ? html `
           <div
             .loggedInUser="${this.isLoggedIn}"
-            class="layout vertical activity"
+            class="layout vertical activity" style="position: relative;"
             tabindex="${this.tabIndex}">
-            <md-outlined-icon-button
+            <md-icon-button
               .label="${this.t('deleteActivity')}"
               ?hidden="${!this.hasActivityAccess}"
-              icon="delete"
               data-args="${this.activity.id}"
               class="deleteIcon"
-              @click="${this._deleteActivity}"></md-outlined-icon-button>
+              @click="${this._deleteActivity}"><md-icon>delete</md-icon></md-icon-button>
             <div class="mainActivityContent">
               <div class="layout horizontal">
                 <yp-user-with-organization
@@ -203,7 +196,7 @@ let AcActivity = class AcActivity extends YpBaseElementWithLogin {
         }
     }
     _deleteActivity() {
-        this.fire('ak-delete-activity', { id: this.activity.id });
+        this.fire('yp-delete-activity', { id: this.activity.id });
     }
     _isNotActivityType(activity, type) {
         return activity.type != type;

@@ -100,6 +100,11 @@ let AcActivities = class AcActivities extends YpBaseElementWithLogin {
           width: 550px;
           margin: 0;
           padding: 0;
+          background-color: var(--md-sys-color-surface-container-high);
+          color: var(--md-sys-color-on-surface-container);
+          border-radius: 24px;
+          margin-bottom: 16px;
+          margin-top: 16px;
         }
 
         @media (max-width: 600px) {
@@ -133,9 +138,6 @@ let AcActivities = class AcActivities extends YpBaseElementWithLogin {
         }
 
         md-icon {
-          width: 48px;
-          height: 48px;
-          padding-top: 14px;
         }
 
         .createdAt {
@@ -148,7 +150,7 @@ let AcActivities = class AcActivities extends YpBaseElementWithLogin {
 
         .deleteIcon {
           position: absolute;
-          right: 8px;
+          right: 0px;
           bottom: 8px;
         }
 
@@ -198,15 +200,15 @@ let AcActivities = class AcActivities extends YpBaseElementWithLogin {
         return html `
     <div class="layout vertical center-center" style="width: 100%;">
     <ac-activity
-        tabindex="${index}"
-        .hasLoggedInUser="${this.isLoggedIn}"
-        class="activityContainer"
-        .activity="${activity}"
-        .postId="${this.postId}"
-        .groupId="${this.groupId}"
-        .communityId="${this.communityId}"
-        .domainId="${this.domainId}"
-        @ak-delete-activity="${this._deleteActivity}"></ac-activity>
+      tabindex="${index}"
+      .hasLoggedInUser="${this.isLoggedIn}"
+      class="activityContainer"
+      .activity="${activity}"
+      .postId="${this.postId}"
+      .groupId="${this.groupId}"
+      .communityId="${this.communityId}"
+      .domainId="${this.domainId}"
+    ></ac-activity>
     </div>
     `;
     }
@@ -286,6 +288,7 @@ let AcActivities = class AcActivities extends YpBaseElementWithLogin {
         super.connectedCallback();
         this.addListener('yp-point-deleted', this._pointDeleted);
         this.addListener('yp-refresh-activities-scroll-threshold', this._clearScrollThreshold);
+        this.addListener('yp-delete-activity', this._deleteActivity);
         switch (this.collectionType) {
             case 'domain':
                 this.domainId = this.collectionId;
@@ -308,6 +311,7 @@ let AcActivities = class AcActivities extends YpBaseElementWithLogin {
         super.disconnectedCallback();
         this.removeListener('yp-point-deleted', this._pointDeleted);
         this.removeListener('yp-refresh-activities-scroll-threshold', this._clearScrollThreshold);
+        this.removeListener('yp-delete-activity', this._deleteActivity);
     }
     _openLogin() {
         this.fire('yp-open-login');
@@ -370,21 +374,6 @@ let AcActivities = class AcActivities extends YpBaseElementWithLogin {
             return offset;
         }
     }
-    //TODO: See what this is and if its needed
-    /*get skipIronListWidth() {
-      if (this.wide) {
-        const list = this.$$("#activitiesList");
-        list.style.width = '600px';
-        list.updateViewportBoundaries();
-        setTimeout( () => {
-          list.notifyResize();
-        }, 50);
-      }
-      return this.wide;
-    }*/
-    _activityDeletedResponse(event) {
-        this._removeActivityId(event.detail.response.activityId);
-    }
     _removeActivityId(activityId) {
         if (this.activities) {
             for (let i = 0; i < this.activities.length; i++) {
@@ -426,7 +415,9 @@ let AcActivities = class AcActivities extends YpBaseElementWithLogin {
         }
         if (type && collectionId && this.activityIdToDelete) {
             await window.serverApi.deleteActivity(type, collectionId, this.activityIdToDelete);
+            this._removeActivityId(this.activityIdToDelete);
             this.activityIdToDelete = undefined;
+            this.requestUpdate();
         }
         else {
             console.error('No activity found to delete');

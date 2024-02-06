@@ -29,7 +29,7 @@ let AcActivityPoint = class AcActivityPoint extends YpBaseElementWithLogin {
         }
 
         yp-point {
-          margin-bottom: 36px;
+          margin-bottom: 0px;
         }
 
         @media (max-width: 480px) {
