@@ -75,10 +75,14 @@ let YpAdminApp = class YpAdminApp extends YpBaseElement {
         }
 
         .collectionLogoImage {
-          width: 95px;
-          height: 95px;
-          margin-right: 24px;
-          margin-left: 24px;
+          width: 140px;
+          height: 79px;
+        }
+
+        .collectionName {
+          padding: 8px;
+          text-align: center;
+          line-height: 1.5;
         }
 
         .splashImage {
@@ -154,7 +158,6 @@ let YpAdminApp = class YpAdminApp extends YpBaseElement {
         }
 
         md-list-item {
-
         }
 
         .selectedContainer {
@@ -459,9 +462,7 @@ let YpAdminApp = class YpAdminApp extends YpBaseElement {
                     switch (this.collectionType) {
                         case "domain":
                             return html `
-                ${this.collection
-                                ? this.renderDomainConfigPage()
-                                : nothing}
+                ${this.collection ? this.renderDomainConfigPage() : nothing}
               `;
                         case "community":
                             return html `
@@ -982,16 +983,14 @@ let YpAdminApp = class YpAdminApp extends YpBaseElement {
             class="layout horizontal headerContainer"
             ?hidden="${this.collectionId == "new"}"
           >
-            <div class="analyticsHeaderText layout horizontal center-center">
-              <div>
-                <yp-image
-                  class="collectionLogoImage"
-                  sizing="contain"
-                  .src="${this.collection
+            <div class="analyticsHeaderText layout vertical center-center">
+              <yp-image
+                class="collectionLogoImage"
+                sizing="contain"
+                .src="${this.collection
                 ? YpCollectionHelpers.logoImagePath(this.collectionType, this.collection)
                 : ""}"
-                ></yp-image>
-              </div>
+              ></yp-image>
               <div class="collectionName">
                 ${this.collection ? this.collection.name : ""}
               </div>

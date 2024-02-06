@@ -125,8 +125,8 @@ export class YpAiChatbotItemBase extends YpBaseElement {
         }
 
         .userChatDialog {
-          color: var(--md-sys-color-on-primary-container);
-          background-color: var(--md-sys-color-primary-container);
+          color: var(--md-sys-color-on-secondary-container);
+          background-color: var(--md-sys-color-secondary-container);
           padding: 8px;
           margin: 16px;
           line-height: 1.5;
@@ -163,8 +163,8 @@ export class YpAiChatbotItemBase extends YpBaseElement {
         }
 
         .chatGPTDialog {
-          color: var(--md-sys-color-on-primary-container);
-          background-color: var(--md-sys-color-primary-container);
+          color: var(--md-sys-color-on-surface);
+          background-color: var(--md-sys-color-surface-container);
           padding: 8px;
           margin: 16px;
           line-height: 1.5;

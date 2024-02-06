@@ -1,8 +1,8 @@
-import '../../common/yp-image.js';
-import { YpBaseElement } from '../../common/yp-base-element.js';
-import '@material/web/checkbox/checkbox.js';
-import '@material/web/button/outlined-button.js';
-import '@material/web/progress/circular-progress.js';
+import "../../common/yp-image.js";
+import { YpBaseElement } from "../../common/yp-base-element.js";
+import "@material/web/checkbox/checkbox.js";
+import "@material/web/button/outlined-button.js";
+import "@material/web/progress/circular-progress.js";
 export declare class AoiSurveyResuls extends YpBaseElement {
     results: AoiChoiceData[];
     question: AoiQuestionData;

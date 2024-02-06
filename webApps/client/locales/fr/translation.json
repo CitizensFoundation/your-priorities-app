@@ -1217,7 +1217,7 @@
   "Contrast": "Contraste",
   "An error occurred": "Une erreur s'est produite. Veuillez réessayer.",
   "Cancel": "Annuler",
-  "Tonal": "Tonal",
+  "Tonal": "Tonale",
   "Vibrant": "Vibrant",
   "Expressive": "Expressif",
   "Content": "Contenu",
@@ -1266,7 +1266,7 @@
   "debate": "Débat",
   "completeLogin": "Connexion complète",
   "password": "Mot de passe",
-  "Email": "Email",
+  "Email": "E-mail",
   "recreate": "Recréer",
   "Your idea has been added, you can continue voting": "Votre idée a été ajoutée, vous pouvez continuer à voter.",
   "Your idea is in a moderation queue": "Votre idée est en file d'attente de modération.",
@@ -1346,5 +1346,9 @@
   "ideaAdded": "Votre idée a été ajoutée, vous pouvez continuer à voter.",
   "ideaModerationQueue": "Votre idée est en file d'attente de modération.",
   "yourIdea": "Votre idée",
-  "chatInput": "Posez-moi une question"
+  "chatInput": "Posez-moi une question",
+  "ideaGenerationGroupType": "Génération d'idées",
+  "allOurIdeasGroupType": "All Our Ideas Pairwise Ranking",
+  "yourIdeaHasBeenAdded": "Votre idée a été ajoutée, création de l'icône.",
+  "aiIconInfo": "Une icône pour votre réponse est en cours de création, vous pouvez fermer la fenêtre ou attendre que l'icône soit générée. Vous aurez également l'option de régénérer l'icône."
 }

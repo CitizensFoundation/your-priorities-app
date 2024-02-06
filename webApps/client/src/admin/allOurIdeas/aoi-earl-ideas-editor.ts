@@ -435,10 +435,8 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmBase {
 
         .ideaContainer {
           padding: 8px;
-          margin: 5px 0;
+          margin: 0;
           border-radius: 8px;
-          background-color: var(--md-sys-color-surface-variant);
-          color: var(--md-sys-color-on-surface-variant);
           align-items: center;
         }
 

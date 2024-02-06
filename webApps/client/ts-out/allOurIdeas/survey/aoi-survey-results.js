@@ -4,15 +4,15 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { css, html } from 'lit';
-import { property, customElement } from 'lit/decorators.js';
-import '../../common/yp-image.js';
-import { YpFormattingHelpers } from '../../common/YpFormattingHelpers.js';
-import { YpBaseElement } from '../../common/yp-base-element.js';
-import { SharedStyles } from './SharedStyles.js';
-import '@material/web/checkbox/checkbox.js';
-import '@material/web/button/outlined-button.js';
-import '@material/web/progress/circular-progress.js';
+import { css, html } from "lit";
+import { property, customElement } from "lit/decorators.js";
+import "../../common/yp-image.js";
+import { YpFormattingHelpers } from "../../common/YpFormattingHelpers.js";
+import { YpBaseElement } from "../../common/yp-base-element.js";
+import { SharedStyles } from "./SharedStyles.js";
+import "@material/web/checkbox/checkbox.js";
+import "@material/web/button/outlined-button.js";
+import "@material/web/progress/circular-progress.js";
 let AoiSurveyResuls = class AoiSurveyResuls extends YpBaseElement {
     constructor() {
         super(...arguments);
@@ -27,7 +27,7 @@ let AoiSurveyResuls = class AoiSurveyResuls extends YpBaseElement {
     }
     updated(changedProperties) {
         super.updated(changedProperties);
-        if (changedProperties.has('earl') && this.earl) {
+        if (changedProperties.has("earl") && this.earl) {
             this.fetchResults();
         }
     }
@@ -36,24 +36,24 @@ let AoiSurveyResuls = class AoiSurveyResuls extends YpBaseElement {
         window.appGlobals.activity(`Results - close`);
     }
     toggleScores() {
-        const checkbox = this.$$('#showScores');
+        const checkbox = this.$$("#showScores");
         this.showScores = checkbox.checked;
-        window.appGlobals.activity(`Results - toggle scores ${this.showScores ? 'on' : 'off'}`);
+        window.appGlobals.activity(`Results - toggle scores ${this.showScores ? "on" : "off"}`);
     }
     exportToCSV() {
-        const replacer = (key, value) => (value === null ? '' : value); // specify types for key and value
+        const replacer = (key, value) => (value === null ? "" : value); // specify types for key and value
         const header = Object.keys(this.results[0]);
-        let csv = this.results.map(row => header
-            .map(fieldName => JSON.stringify(row[fieldName], replacer))
-            .join(',')); // specify type for row
-        csv.unshift(header.join(','));
-        const csvString = csv.join('\r\n');
+        let csv = this.results.map((row) => header
+            .map((fieldName) => JSON.stringify(row[fieldName], replacer))
+            .join(",")); // specify type for row
+        csv.unshift(header.join(","));
+        const csvString = csv.join("\r\n");
         // Create a downloadable link
-        const blob = new Blob([csvString], { type: 'text/csv' });
+        const blob = new Blob([csvString], { type: "text/csv" });
         const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
+        const link = document.createElement("a");
         link.href = url;
-        link.download = 'survey_results.csv';
+        link.download = "survey_results.csv";
         link.click();
         // Clean up
         URL.revokeObjectURL(url);
@@ -69,16 +69,21 @@ let AoiSurveyResuls = class AoiSurveyResuls extends YpBaseElement {
           font-size: 22px;
           letter-spacing: 0.22em;
           line-height: 1.7;
-          color: var(--md-sys-color-primary);
-          background-color: var(--md-sys-color-on-primary);
+          color: var(--md-sys-color-on-surface);
+          background-color: var(--md-sys-color-surface-container-high);
           padding: 16px;
           margin-top: 32px;
           border-radius: 16px;
           margin-bottom: 8px;
         }
 
-        .subTitle {
+        .answerImage {
+          width: 75px;
+          height: 75px;
+          border-radius: 32px;
+        }
 
+        .subTitle {
         }
 
         .profileImage {
@@ -93,8 +98,8 @@ let AoiSurveyResuls = class AoiSurveyResuls extends YpBaseElement {
           padding: 8px;
           margin: 8px;
           border-radius: 16px;
-          background-color: var(--md-sys-color-on-primary);
-          color: var(--md-sys-color-primary);
+          background-color: var(--md-sys-color-surface-container-lowest);
+          color: var(--md-sys-color-on-surface);
 
           min-width: 350px;
           width: 550px;
@@ -103,6 +108,7 @@ let AoiSurveyResuls = class AoiSurveyResuls extends YpBaseElement {
           vertical-align: center;
 
           padding-bottom: 16px;
+          margin-bottom: 16px;
         }
 
         .row[current-user] {
@@ -115,11 +121,12 @@ let AoiSurveyResuls = class AoiSurveyResuls extends YpBaseElement {
         }
 
         .index {
-          font-size: 16px;
+          font-size: 20px;
         }
 
         .ideaName {
           padding-bottom: 0;
+          font-size: 20px;
           width: 100%;
         }
 
@@ -134,16 +141,21 @@ let AoiSurveyResuls = class AoiSurveyResuls extends YpBaseElement {
           padding-bottom: 12px;
           margin-bottom: 0px;
           text-align: center;
-          background-color: var(--md-sys-color-surface-variant);
-          color: var(--md-sys-color-on-surface-variant);
+          background-color: var(--md-sys-color-surface-container);
+          color: var(--md-sys-color-on-surface);
           border-radius: 24px;
           font-size: 14px;
           line-height: 1.2;
         }
 
+        label {
+          margin-top: 16px;
+          margin-bottom: 8px;
+        }
+
         .checkboxText {
-          color: var(--md-sys-color-primary);
-          margin-top: 14px;
+          margin-left: 8px;
+          margin-bottom: 2px;
         }
 
         md-checkbox {
@@ -208,20 +220,24 @@ let AoiSurveyResuls = class AoiSurveyResuls extends YpBaseElement {
         <div class="column index">${index + 1}.</div>
         <div class="layout horizontal nameAndScore">
           <div class="layout vertical scoreAndNameContainer">
-            <div class="column ideaName ">${result.data}</div>
+            <div class="layout horizontal">
+              <div class="column ideaName">${result.data.content}</div>
+              <div class="flex"></div>
+              <img class="answerImage" src="${result.data.imageUrl}" />
+            </div>
             <div
               class="column layout vertical center-center scores"
               ?hidden="${!this.showScores}"
             >
               <div>
                 <b
-                  >${this.t('How likely to win')}:
+                  >${this.t("How likely to win")}:
                   ${Math.round(result.score)}%</b
                 >
               </div>
               <div class="winLosses">
-                ${this.t('Wins')}: ${YpFormattingHelpers.number(result.wins)}
-                ${this.t('Losses')}:
+                ${this.t("Wins")}: ${YpFormattingHelpers.number(result.wins)}
+                ${this.t("Losses")}:
                 ${YpFormattingHelpers.number(result.losses)}
               </div>
             </div>
@@ -234,19 +250,25 @@ let AoiSurveyResuls = class AoiSurveyResuls extends YpBaseElement {
         return this.results
             ? html `
           <div class="topContainer layout vertical wrap center-center">
-            <div class="title">${this.t('Voting Results')}</div>
+            <div class="title">${this.t("Voting Results")}</div>
             <div class="questionTitle">${this.question.name}</div>
+
             <div class="layout horizontal">
-              <md-checkbox
-                id="showScores"
-                @change="${this.toggleScores}"
-              ></md-checkbox>
-              <div class="checkboxText">${this.t('Show scores')}</div>
+              <label>
+                <md-checkbox
+                  id="showScores"
+                  @change="${this.toggleScores}"
+                ></md-checkbox>
+                <span class="checkboxText">${this.t("Show scores")}</span>
+              </label>
             </div>
             ${this.results.map((result, index) => this.renderRow(index, result))}
-            <div class="title subTitle">${YpFormattingHelpers.number(this.question.votes_count)} ${this.t('total votes')}</div>
+            <div class="title subTitle">
+              ${YpFormattingHelpers.number(this.question.votes_count)}
+              ${this.t("total votes")}
+            </div>
             <md-outlined-button @click=${this.exportToCSV} class="exportButton">
-              ${this.t('Download Results as CSV')}
+              ${this.t("Download Results as CSV")}
             </md-outlined-button>
           </div>
         `
@@ -271,7 +293,7 @@ __decorate([
     property({ type: Boolean })
 ], AoiSurveyResuls.prototype, "showScores", void 0);
 AoiSurveyResuls = __decorate([
-    customElement('aoi-survey-results')
+    customElement("aoi-survey-results")
 ], AoiSurveyResuls);
 export { AoiSurveyResuls };
 //# sourceMappingURL=aoi-survey-results.js.map
