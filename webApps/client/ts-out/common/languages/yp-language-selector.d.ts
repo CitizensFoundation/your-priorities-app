@@ -25,7 +25,7 @@ export declare class YpLanguageSelector extends YpBaseElement {
     _refreshLanguage(): void;
     static get styles(): any[];
     get foundAutoCompleteLanguages(): YpLanguageMenuItem[];
-    openMenu(): void;
+    openMenu(): Promise<void>;
     _autoCompleteChange(event: CustomEvent): void;
     _selectLanguage(event: CustomEvent): void;
     renderMenuItem(index: number, item: YpLanguageMenuItem): import("lit-html").TemplateResult<1>;

@@ -529,7 +529,7 @@ module.exports = (sequelize, DataTypes) => {
     };
     AcTranslationCache.getSurveyTranslationsFromLlmFallback = async (textsToTranslate, targetLanguage) => {
         return new Promise(async (resolve, reject) => {
-            if (AcTranslationCache.llmTranslation) {
+            if (!AcTranslationCache.llmTranslation) {
                 const { YpLlmTranslation } = await import("../llms/llmTranslation.js");
                 AcTranslationCache.llmTranslation = new YpLlmTranslation();
             }
@@ -552,7 +552,7 @@ module.exports = (sequelize, DataTypes) => {
         });
     };
     AcTranslationCache.llmGoogleTranslateFallback = async (textType, indexKey, contentToTranslate, targetLanguage, modelInstance, callback) => {
-        if (AcTranslationCache.llmTranslation) {
+        if (!AcTranslationCache.llmTranslation) {
             const { YpLlmTranslation } = await import("../llms/llmTranslation.js");
             AcTranslationCache.llmTranslation = new YpLlmTranslation();
         }
@@ -613,7 +613,7 @@ module.exports = (sequelize, DataTypes) => {
     };
     AcTranslationCache.getTranslationFromLlm = async (textType, indexKey, contentToTranslate, targetLanguage, modelInstance, callback) => {
         console.log(`contentToTranslate contentToTranslate contentToTranslate ${contentToTranslate}`);
-        if (AcTranslationCache.llmTranslation) {
+        if (!AcTranslationCache.llmTranslation) {
             const { YpLlmTranslation } = await import("../llms/llmTranslation.js");
             AcTranslationCache.llmTranslation = new YpLlmTranslation();
         }

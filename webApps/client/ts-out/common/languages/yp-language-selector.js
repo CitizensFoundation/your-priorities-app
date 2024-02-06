@@ -72,8 +72,9 @@ let YpLanguageSelector = class YpLanguageSelector extends YpBaseElement {
                 -1);
         });
     }
-    openMenu() {
+    async openMenu() {
         this.$$("md-menu").open = true;
+        this.$$("md-filled-text-field").value = "";
     }
     _autoCompleteChange(event) {
         this.autocompleteText = event.target.value;
@@ -157,6 +158,7 @@ let YpLanguageSelector = class YpLanguageSelector extends YpBaseElement {
     }
     async connectedCallback() {
         super.connectedCallback();
+        this.setupBootListener();
         if (!this.noUserEvents) {
             const response = (await window.serverApi.hasAutoTranslation());
             if (response && response.hasAutoTranslation === true) {
@@ -211,7 +213,7 @@ let YpLanguageSelector = class YpLanguageSelector extends YpBaseElement {
             this.language &&
             this.hasServerAutoTranslation &&
             !this.noUserEvents) {
-            const found = window.appGlobals.hasLlm ||
+            const found = this.hasLlm !== true ||
                 YpLanguages.isoCodesNotInGoogleTranslate.indexOf(this.language) > -1;
             return !found;
         }

@@ -106,8 +106,9 @@ export class YpLanguageSelector extends YpBaseElement {
     });
   }
 
-  openMenu() {
+  async openMenu() {
     (this.$$("md-menu") as MdMenu).open = true;
+    (this.$$("md-filled-text-field") as MdFilledTextField).value ="";
   }
 
   _autoCompleteChange(event: CustomEvent) {
@@ -199,6 +200,7 @@ export class YpLanguageSelector extends YpBaseElement {
 
   override async connectedCallback() {
     super.connectedCallback();
+    this.setupBootListener();
     if (!this.noUserEvents) {
       const response =
         (await window.serverApi.hasAutoTranslation()) as YpHasAutoTranslationResponse;
@@ -271,7 +273,7 @@ export class YpLanguageSelector extends YpBaseElement {
       !this.noUserEvents
     ) {
       const found =
-        window.appGlobals.hasLlm ||
+        this.hasLlm!==true ||
         YpLanguages.isoCodesNotInGoogleTranslate.indexOf(this.language) > -1;
       return !found;
     } else {
