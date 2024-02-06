@@ -324,7 +324,7 @@ export class YpAppGlobals extends YpCodeBase {
         '.nl': 'nl',
         '.no': 'no',
         '.pl': 'pl',
-        '.tw': 'zh_TW',
+        '.tw': 'zh_tw',
       };
       defaultLocale = localeByTld[tld] || 'en';
     }

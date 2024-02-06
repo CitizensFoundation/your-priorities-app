@@ -1,4 +1,4 @@
-import { YpLanguages } from "../common/ypLanguages.js";
+import { YpLanguages } from "../common/languages/ypLanguages.js";
 import fs from "fs/promises";
 import path from "path";
 const ensureAllLocaleFoldersAreCreated = async () => {

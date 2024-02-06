@@ -3,7 +3,7 @@ import { OpenAI } from "openai";
 import * as fs from "fs";
 import * as path from "path";
 import { promisify } from "util";
-import { YpLanguages } from "../common/ypLanguages.js";
+import { YpLanguages } from "../common/languages/ypLanguages.js";
 const readFilePromise = promisify(fs.readFile);
 const writeFilePromise = promisify(fs.writeFile);
 export class YpLocaleTranslation {

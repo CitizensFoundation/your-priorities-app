@@ -226,7 +226,7 @@ export class YpAppGlobals extends YpCodeBase {
                 ".nl": "nl",
                 ".no": "no",
                 ".pl": "pl",
-                ".tw": "zh_TW",
+                ".tw": "zh_tw",
             };
             defaultLocale = localeByTld[tld] || "en";
         }
@@ -249,6 +249,7 @@ export class YpAppGlobals extends YpCodeBase {
             defaultLocale = localeFromUrl;
             localStorage.setItem("yp-user-locale", localeFromUrl);
         }
+        defaultLocale = defaultLocale.replace("-", "_").toLowerCase();
         i18next.use(HttpApi).init({
             lng: defaultLocale,
             fallbackLng: "en",

@@ -9,7 +9,7 @@ import { property, customElement } from "lit/decorators.js";
 import "@material/web/select/outlined-select.js";
 import "@material/web/select/select-option.js";
 import { YpBaseElement } from "../common/yp-base-element.js";
-import { YpLanguages } from "../common/ypLanguages.js";
+import { YpLanguages } from "../common/languages/ypLanguages.js";
 let YpLanguageSelector = class YpLanguageSelector extends YpBaseElement {
     constructor() {
         super(...arguments);

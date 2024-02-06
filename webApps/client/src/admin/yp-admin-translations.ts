@@ -11,7 +11,7 @@ import { ShadowStyles } from '../common/ShadowStyles.js';
 
 import { YpAdminPage } from './yp-admin-page.js';
 import { YpLanguageSelector } from '../yp-app/yp-language-selector.js';
-import { YpLanguages } from '../common/ypLanguages.js';
+import { YpLanguages } from '../common/languages/ypLanguages.js';
 
 @customElement('yp-admin-translations')
 export class YpAdminTranslations extends YpAdminPage {

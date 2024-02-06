@@ -14,7 +14,7 @@ import '@material/web/select/select-option.js';
 import '@material/web/progress/linear-progress.js';
 import { ShadowStyles } from '../common/ShadowStyles.js';
 import { YpAdminPage } from './yp-admin-page.js';
-import { YpLanguages } from '../common/ypLanguages.js';
+import { YpLanguages } from '../common/languages/ypLanguages.js';
 let YpAdminTranslations = class YpAdminTranslations extends YpAdminPage {
     static get styles() {
         return [

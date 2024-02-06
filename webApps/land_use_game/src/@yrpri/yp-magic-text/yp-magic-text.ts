@@ -148,7 +148,7 @@ export class YpMagicText extends YpBaseElement {
   }
 
   static get doubleWidthLanguages() {
-    return ['zh_TW', 'hy'];
+    return ['zh_tw', 'hy'];
   }
 
   static get cyrillicLanguages() {
@@ -156,7 +156,7 @@ export class YpMagicText extends YpBaseElement {
   }
 
   static get widerLanguages() {
-    return ['uk', 'ky', 'uz', 'ru', 'sr', 'zh_TW', 'hy', 'bg'];
+    return ['uk', 'ky', 'uz', 'ru', 'sr', 'zh_tw', 'hy', 'bg'];
   }
 
   get showMoreText(): boolean {

@@ -6,7 +6,7 @@ declare module 'luxon';
 declare module 'ga';
 declare module 'wavesurfer.js';
 declare module 'datamaps';
-
+declare module 'iso-639-1/src/data.js';
 declare module 'iso-639-1' {
   export function getName(code: string): string;
   export function getCode(name: string): string;

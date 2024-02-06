@@ -1,4 +1,4 @@
-import ISO6391 from "iso-639-1";
+import { ISO6391 } from "./iso6391.js";
 
 export class YpLanguages {
   static get allLanguages(): YpLanguageData[] {
