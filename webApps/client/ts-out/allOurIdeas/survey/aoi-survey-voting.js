@@ -25,6 +25,7 @@ let AoiSurveyVoting = class AoiSurveyVoting extends YpBaseElement {
     }
     async connectedCallback() {
         super.connectedCallback();
+        this.setupBootListener();
         this.spinnersActive = false;
         this.fire("needs-new-earl");
         window.appGlobals.activity("Voting - open");
@@ -499,7 +500,7 @@ let AoiSurveyVoting = class AoiSurveyVoting extends YpBaseElement {
             </md-elevated-button>
           </div>
           <div class="layout horizontal">
-            <md-text-button
+            <md-text-button ?hidden="${!this.hasLlm}"
               class="skipButton"
               @click=${this.openLlmExplainDialog}
             >

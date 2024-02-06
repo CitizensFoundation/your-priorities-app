@@ -4,6 +4,7 @@ export declare class YpBaseElement extends LitElement {
     language: string;
     wide: boolean;
     rtl: boolean;
+    hasLlm: boolean;
     largeFont: boolean;
     themeColor: string;
     themeDarkMode: boolean | undefined;
@@ -14,6 +15,8 @@ export declare class YpBaseElement extends LitElement {
     get isAppleDevice(): boolean;
     installMediaQueryWatcher: (mediaQuery: string, layoutChangedCallback: (mediaQueryMatches: boolean) => void) => void;
     connectedCallback(): void;
+    hasBooted(): void;
+    setupBootListener(): void;
     setupThemeSettings(): Promise<void>;
     disconnectedCallback(): void;
     _changeThemeColor(event: CustomEvent): void;

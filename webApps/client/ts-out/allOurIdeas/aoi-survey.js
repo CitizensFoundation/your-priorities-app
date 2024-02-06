@@ -48,6 +48,7 @@ let AoiSurvey = class AoiSurvey extends YpBaseElement {
     }
     connectedCallback() {
         super.connectedCallback();
+        this.setupBootListener();
         this._setupEventListeners();
         if (this.collection.configuration.allOurIdeas) {
             this.getEarl();
@@ -429,7 +430,8 @@ let AoiSurvey = class AoiSurvey extends YpBaseElement {
             <md-primary-tab
               id="votingTab"
               ?hidden="${this.surveyClosed}"
-              class="${this.pageIndex == PagesTypes.Voting && "selectedContainer"}"
+              class="${this.pageIndex == PagesTypes.Voting &&
+                "selectedContainer"}"
               @click="${() => this.changeTabTo(1)}"
               aria-label="${this.t("Participate Now!")}"
             >
@@ -439,7 +441,8 @@ let AoiSurvey = class AoiSurvey extends YpBaseElement {
 
             <md-primary-tab
               id="introTab"
-              class="${this.pageIndex == PagesTypes.Introduction && "selectedContainer"}"
+              class="${this.pageIndex == PagesTypes.Introduction &&
+                "selectedContainer"}"
               selected
               @click="${() => this.changeTabTo(0)}"
               aria-label="${this.t("Why Participate")}"
@@ -450,7 +453,8 @@ let AoiSurvey = class AoiSurvey extends YpBaseElement {
 
             <md-primary-tab
               ?hidden="${this.earl.configuration.hide_results == "1"}"
-              class="${this.pageIndex == PagesTypes.Results && "selectedContainer"}"
+              class="${this.pageIndex == PagesTypes.Results &&
+                "selectedContainer"}"
               @click="${() => this.changeTabTo(2)}"
               aria-label="${this.t("Results")}"
             >
@@ -459,8 +463,10 @@ let AoiSurvey = class AoiSurvey extends YpBaseElement {
             </md-primary-tab>
 
             <md-primary-tab
-              ?hidden="${this.earl.configuration.hide_results == "1"}"
-              class="${this.pageIndex == PagesTypes.Analysis && "selectedContainer"}"
+              ?hidden="${!this.hasLlm ||
+                this.earl.configuration.hide_results == "1"}"
+              class="${this.pageIndex == PagesTypes.Analysis &&
+                "selectedContainer"}"
               @click="${() => this.changeTabTo(3)}"
               aria-label="${this.t("Analysis of Results")}"
             >

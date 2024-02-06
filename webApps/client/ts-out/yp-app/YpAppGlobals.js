@@ -286,8 +286,8 @@ export class YpAppGlobals extends YpCodeBase {
         const results = (await this.serverApi.boot());
         if (results) {
             this.domain = results.domain;
-            this.googleMapsApiKey = results.googleMapsApiKey;
-            this.hasLlm = results.hasLlm;
+            this.googleMapsApiKey = results.domain.googleMapsApiKey;
+            this.hasLlm = results.domain.hasLlm !== undefined ? results.domain.hasLlm : false;
             this._domainChanged(this.domain);
             //this.analytics.setupGoogleAnalytics(this.domain);
             if (window.location.pathname == "/") {
@@ -312,6 +312,7 @@ export class YpAppGlobals extends YpCodeBase {
                 }
             }
         }
+        this.fireGlobal("yp-boot-from-server");
     }
     setupGroupConfigOverride(groupId, configOverride) {
         const configOverrideHash = {};

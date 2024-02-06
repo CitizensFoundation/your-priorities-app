@@ -1,6 +1,5 @@
 import { css, html, nothing } from "lit";
 import { property, customElement } from "lit/decorators.js";
-import { unsafeHTML } from "lit/directives/unsafe-html.js";
 
 import { YpBaseElement } from "../../common/yp-base-element.js";
 import { YpMediaHelpers } from "../../common/YpMediaHelpers.js";
@@ -74,6 +73,7 @@ export class AoiSurveyVoting extends YpBaseElement {
 
   override async connectedCallback() {
     super.connectedCallback();
+    this.setupBootListener();
     this.spinnersActive = false;
     this.fire("needs-new-earl");
     window.appGlobals.activity("Voting - open");
@@ -619,7 +619,7 @@ export class AoiSurveyVoting extends YpBaseElement {
             </md-elevated-button>
           </div>
           <div class="layout horizontal">
-            <md-text-button
+            <md-text-button ?hidden="${!this.hasLlm}"
               class="skipButton"
               @click=${this.openLlmExplainDialog}
             >

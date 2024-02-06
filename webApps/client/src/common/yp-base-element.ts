@@ -15,6 +15,9 @@ export class YpBaseElement extends LitElement {
   rtl = false;
 
   @property({ type: Boolean })
+  hasLlm = false;
+
+  @property({ type: Boolean })
   largeFont = false;
 
   @property({ type: String })
@@ -63,6 +66,8 @@ export class YpBaseElement extends LitElement {
   override connectedCallback() {
     super.connectedCallback();
 
+    this.hasLlm = window.appGlobals.hasLlm;
+
     this.addGlobalListener(
       "yp-language-loaded",
       this._languageEvent.bind(this)
@@ -96,6 +101,15 @@ export class YpBaseElement extends LitElement {
     this.setupThemeSettings();
   }
 
+  hasBooted() {
+    debugger;
+    this.hasLlm = window.appGlobals.hasLlm;
+  }
+
+  setupBootListener() {
+    this.addGlobalListener("yp-boot-from-server", this.hasBooted.bind(this));
+  }
+
   //TODO: See if we can do this without this arbitrary delay
   async setupThemeSettings() {
     await new Promise((resolve) => setTimeout(resolve, 50));
@@ -121,6 +135,9 @@ export class YpBaseElement extends LitElement {
       "yp-theme-dark-mode",
       this._changeThemeDarkMode.bind(this)
     );
+
+    this.removeGlobalListener("yp-boot-from-server", this.hasBooted.bind(this));
+
   }
 
   _changeThemeColor(event: CustomEvent) {

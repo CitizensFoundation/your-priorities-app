@@ -14,6 +14,7 @@ export class YpBaseElement extends LitElement {
         this.language = "en";
         this.wide = false;
         this.rtl = false;
+        this.hasLlm = false;
         this.largeFont = false;
         this.themeColor = "#002255";
         this.installMediaQueryWatcher = (mediaQuery, layoutChangedCallback) => {
@@ -44,6 +45,7 @@ export class YpBaseElement extends LitElement {
     }
     connectedCallback() {
         super.connectedCallback();
+        this.hasLlm = window.appGlobals.hasLlm;
         this.addGlobalListener("yp-language-loaded", this._languageEvent.bind(this));
         //TODO: Do the large font thing with css custom properties
         this.addGlobalListener("yp-large-font", this._largeFont.bind(this));
@@ -63,6 +65,13 @@ export class YpBaseElement extends LitElement {
         });
         this.setupThemeSettings();
     }
+    hasBooted() {
+        debugger;
+        this.hasLlm = window.appGlobals.hasLlm;
+    }
+    setupBootListener() {
+        this.addGlobalListener("yp-boot-from-server", this.hasBooted.bind(this));
+    }
     //TODO: See if we can do this without this arbitrary delay
     async setupThemeSettings() {
         await new Promise((resolve) => setTimeout(resolve, 50));
@@ -75,6 +84,7 @@ export class YpBaseElement extends LitElement {
         this.removeGlobalListener("yp-large-font", this._largeFont.bind(this));
         this.removeGlobalListener("yp-theme-color", this._changeThemeColor.bind(this));
         this.removeGlobalListener("yp-theme-dark-mode", this._changeThemeDarkMode.bind(this));
+        this.removeGlobalListener("yp-boot-from-server", this.hasBooted.bind(this));
     }
     _changeThemeColor(event) {
         this.themeColor = event.detail;
@@ -246,6 +256,9 @@ __decorate([
 __decorate([
     property({ type: Boolean })
 ], YpBaseElement.prototype, "rtl", void 0);
+__decorate([
+    property({ type: Boolean })
+], YpBaseElement.prototype, "hasLlm", void 0);
 __decorate([
     property({ type: Boolean })
 ], YpBaseElement.prototype, "largeFont", void 0);

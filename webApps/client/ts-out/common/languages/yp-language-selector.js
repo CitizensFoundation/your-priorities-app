@@ -30,7 +30,7 @@ let YpLanguageSelector = class YpLanguageSelector extends YpBaseElement {
     updated(changedProperties) {
         super.updated(changedProperties);
         if (changedProperties.has("selectedLocale")) {
-            this._selectedLocaleChanged(changedProperties.get("selectedLocale"));
+            this._selectedLocaleChanged(this.selectedLocale ? this.selectedLocale : this.language);
             this.fire("yp-selected-locale-changed", this.selectedLocale);
         }
     }

@@ -30,6 +30,7 @@ let AoiEarlIdeasEditor = class AoiEarlIdeasEditor extends YpStreamingLlmBase {
         this.currentGeneratingIndex = undefined;
     }
     connectedCallback() {
+        this.setupBootListener();
         if (this.configuration.earl && this.configuration.earl.question_id) {
             this.disableWebsockets = true;
             this.isCreatingIdeas = false;
@@ -421,7 +422,10 @@ let AoiEarlIdeasEditor = class AoiEarlIdeasEditor extends YpStreamingLlmBase {
         <div class="layout horizontal">
           ${this.isGeneratingWithAi
             ? html `
-                <div class="layout vertical center-center">
+                <div
+                  class="layout vertical center-center"
+                  ?hidden="${!this.hasLlm}"
+                >
                   <md-outlined-button class="button" @click="${this.reset}"
                     >${this.t("stopGenerating")}
                     <md-icon slot="icon">stop_circle</md-icon>
@@ -432,6 +436,7 @@ let AoiEarlIdeasEditor = class AoiEarlIdeasEditor extends YpStreamingLlmBase {
                 <md-text-button
                   class="button"
                   @click="${this.generateIdeas}"
+                  ?hidden="${!this.hasLlm}"
                   ?disabled="${this.isGeneratingWithAi}"
                   >${this.answers?.length > 1
                 ? this.t("generateMoreIdeasWithAi")
@@ -599,10 +604,10 @@ let AoiEarlIdeasEditor = class AoiEarlIdeasEditor extends YpStreamingLlmBase {
             @change="${this.aiStyleChanged}"
             rows="5"
             .value="${this.group.configuration.theme?.iconPrompt || ""}"
-            ?hidden="${this.allChoicesHaveIcons}"
+            ?hidden="${this.allChoicesHaveIcons || !this.hasLlm}"
             ?disabled="${this.isGeneratingWithAi || this.allChoicesHaveIcons}"
           ></md-outlined-text-field>
-          <div class="layout vertical center-center">
+          <div class="layout vertical center-center" ?hidden="${!this.hasLlm}">
             <md-outlined-button
               class="generateIconButton"
               @click="${this.stopGenerating}"

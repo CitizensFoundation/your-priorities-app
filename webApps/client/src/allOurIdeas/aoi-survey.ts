@@ -30,6 +30,7 @@ import { NavigationBar } from "@material/web/labs/navigationbar/internal/navigat
 import { YpCollection } from "../yp-collection/yp-collection.js";
 import { YpBaseElement } from "../common/yp-base-element.js";
 import { MdPrimaryTab } from "@material/web/tabs/primary-tab.js";
+import { live } from "lit/directives/live.js";
 
 const PagesTypes = {
   Introduction: 1,
@@ -50,7 +51,7 @@ declare global {
 //TODO: Label the pages for aria https://github.com/material-components/material-web/blob/main/docs/components/tabs.md
 
 @customElement("aoi-survey")
-export class AoiSurvey extends YpBaseElement  {
+export class AoiSurvey extends YpBaseElement {
   @property({ type: Number })
   pageIndex = 1;
 
@@ -108,11 +109,12 @@ export class AoiSurvey extends YpBaseElement  {
 
   override connectedCallback() {
     super.connectedCallback();
+    this.setupBootListener();
     this._setupEventListeners();
     if (this.collection.configuration.allOurIdeas) {
       this.getEarl();
     } else {
-      this.fire("yp-network-error", {showUserError: true})
+      this.fire("yp-network-error", { showUserError: true });
     }
   }
 
@@ -534,7 +536,8 @@ export class AoiSurvey extends YpBaseElement  {
             <md-primary-tab
               id="votingTab"
               ?hidden="${this.surveyClosed}"
-              class="${this.pageIndex == PagesTypes.Voting && "selectedContainer"}"
+              class="${this.pageIndex == PagesTypes.Voting &&
+              "selectedContainer"}"
               @click="${() => this.changeTabTo(1)}"
               aria-label="${this.t("Participate Now!")}"
             >
@@ -544,7 +547,8 @@ export class AoiSurvey extends YpBaseElement  {
 
             <md-primary-tab
               id="introTab"
-              class="${this.pageIndex == PagesTypes.Introduction && "selectedContainer"}"
+              class="${this.pageIndex == PagesTypes.Introduction &&
+              "selectedContainer"}"
               selected
               @click="${() => this.changeTabTo(0)}"
               aria-label="${this.t("Why Participate")}"
@@ -555,7 +559,8 @@ export class AoiSurvey extends YpBaseElement  {
 
             <md-primary-tab
               ?hidden="${this.earl!.configuration!.hide_results == "1"}"
-              class="${this.pageIndex == PagesTypes.Results && "selectedContainer"}"
+              class="${this.pageIndex == PagesTypes.Results &&
+              "selectedContainer"}"
               @click="${() => this.changeTabTo(2)}"
               aria-label="${this.t("Results")}"
             >
@@ -564,8 +569,10 @@ export class AoiSurvey extends YpBaseElement  {
             </md-primary-tab>
 
             <md-primary-tab
-              ?hidden="${this.earl!.configuration!.hide_results == "1"}"
-              class="${this.pageIndex == PagesTypes.Analysis && "selectedContainer"}"
+              ?hidden="${!this.hasLlm ||
+              this.earl!.configuration!.hide_results == "1"}"
+              class="${this.pageIndex == PagesTypes.Analysis &&
+              "selectedContainer"}"
               @click="${() => this.changeTabTo(3)}"
               aria-label="${this.t("Analysis of Results")}"
             >
@@ -614,8 +621,7 @@ export class AoiSurvey extends YpBaseElement  {
     }
   }
 
-
-   override render() {
+  override render() {
     return html`<div class="layout vertical">
       ${this.renderNavigationBar()}
       <div class="rightPanel">
