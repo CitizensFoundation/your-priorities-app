@@ -841,7 +841,7 @@
   "multiSortEnabled": "Galluogi aml-ddidoli",
   "creator": "Crëwr",
   "severeToxicityScore": "S.Toxicity",
-  "toxicityScore": "Toxicity",
+  "toxicityScore": "Gwenwynigrwydd",
   "source": "Ffynhonnell",
   "domainContentModeration": "Moderu parth",
   "flags": "Baneri",
@@ -1225,7 +1225,7 @@
   "Thinking": "Yn meddwl...",
   "Send": "Anfon",
   "typing": "Teipio",
-  "record": "Tecord",
+  "record": "Cofnod",
   "send": "Anfon",
   "Dynamic Colors": "Lliwiau Dynamig",
   "One Dynamic Color": "Un Lliw Dynamig",
@@ -1339,5 +1339,9 @@
   "ideaAdded": "Mae'ch syniad wedi'i ychwanegu, gallwch barhau i bleidleisio.",
   "ideaModerationQueue": "Mae'ch syniad mewn ciw modereiddio.",
   "yourIdea": "Eich syniad",
-  "chatInput": "Gofynnwch gwestiwn i mi"
+  "chatInput": "Gofynnwch gwestiwn i mi",
+  "ideaGenerationGroupType": "Cynhyrchu syniadau",
+  "allOurIdeasGroupType": "All Our Ideas Pairwise Ranking",
+  "yourIdeaHasBeenAdded": "Mae eich syniad wedi'i ychwanegu, yn creu delwedd eicon.",
+  "aiIconInfo": "Mae eicon ar gyfer eich ateb yn cael ei greu, gallwch gau'r ffenestr neu aros am yr eicon i gael ei greu. Bydd gennych hefyd yr opsiwn i ailgynhyrchu'r eicon."
 }

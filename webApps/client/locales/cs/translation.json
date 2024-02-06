@@ -1345,5 +1345,9 @@
   "ideaAdded": "Váš nápad byl přidán, můžete pokračovat v hlasování.",
   "ideaModerationQueue": "Váš nápad je ve frontě moderace.",
   "yourIdea": "Váš nápad",
-  "chatInput": "Zeptejte se mě na otázku"
+  "chatInput": "Zeptejte se mě na otázku",
+  "ideaGenerationGroupType": "Generování nápadů",
+  "allOurIdeasGroupType": "All Our Ideas Pairwise Ranking",
+  "yourIdeaHasBeenAdded": "Váš nápad byl přidán, generuje se ikona.",
+  "aiIconInfo": "Ikona pro vaši odpověď se generuje, můžete zavřít okno nebo počkat, až bude ikona vygenerována. Budete mít také možnost ikonu znovu vygenerovat."
 }

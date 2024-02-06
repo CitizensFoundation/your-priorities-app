@@ -875,9 +875,9 @@
   "styleOfAiImage": "Stil des KI-Bildes",
   "generateAiImage": "Bild generieren",
   "generateWithAI": "Generieren",
-  "lookAndFeel": "Look and Feel",
+  "lookAndFeel": "Aussehen",
   "samlAuth": "SAML-Auth",
-  "basic": "Basic",
+  "basic": "Grundlegend",
   "webApp": "Web-App",
   "authApis": "Auth-APIs",
   "dontHaveAccount": "Kein Konto?",
@@ -1346,5 +1346,9 @@
   "ideaAdded": "Ihre Idee wurde hinzugefügt, Sie können weiter abstimmen.",
   "ideaModerationQueue": "Ihre Idee befindet sich in einer Moderationswarteschlange.",
   "yourIdea": "Ihre Idee",
-  "chatInput": "Fragen Sie mich"
+  "chatInput": "Fragen Sie mich",
+  "ideaGenerationGroupType": "Ideenfindung",
+  "allOurIdeasGroupType": "All Our Ideas Pairwise Ranking",
+  "yourIdeaHasBeenAdded": "Ihre Idee wurde hinzugefügt, Icon wird erstellt.",
+  "aiIconInfo": "Ein Icon für Ihre Antwort wird erstellt. Sie können das Fenster schließen oder auf die Erstellung des Icons warten. Sie haben auch die Möglichkeit, das Icon neu zu erstellen."
 }

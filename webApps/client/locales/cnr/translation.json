@@ -1339,5 +1339,9 @@
   "ideaAdded": "Vaša ideja je dodata, možete nastaviti sa glasanjem.",
   "ideaModerationQueue": "Vaša ideja je u redu čekanja za moderaciju.",
   "yourIdea": "Vaša ideja",
-  "chatInput": "Pitajte me"
+  "chatInput": "Pitajte me",
+  "ideaGenerationGroupType": "Generisanje ideja",
+  "allOurIdeasGroupType": "All Our Ideas Pairwise Ranking",
+  "yourIdeaHasBeenAdded": "Vaša ideja je dodata, generiše se ikona.",
+  "aiIconInfo": "Ikona za vaš odgovor se generiše, možete zatvoriti prozor ili čekati da se ikona generiše. Takođe ćete imati opciju da ponovo generišete ikonu."
 }
