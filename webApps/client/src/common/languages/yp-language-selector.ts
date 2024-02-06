@@ -1,4 +1,4 @@
-import { html, css, nothing } from "lit";
+import { html, css, nothing, PropertyValueMap } from "lit";
 import { property, customElement } from "lit/decorators.js";
 
 import "@material/web/select/outlined-select.js";
@@ -10,6 +10,8 @@ import "@material/web/menu/menu-item.js";
 import { YpBaseElement } from "../../common/yp-base-element.js";
 import { YpLanguages } from "../../common/languages/ypLanguages.js";
 import { MdFilledTextField } from "@material/web/textfield/filled-text-field.js";
+import { MdMenu } from "@material/web/menu/menu.js";
+import { MdMenuItem } from "@material/web/menu/menu-item.js";
 
 interface YpLanguageMenuItem {
   language: string;
@@ -79,12 +81,12 @@ export class YpLanguageSelector extends YpBaseElement {
 
         .translateButton {
           padding: 8px;
-          margin-top: 8px;
+          margin-top: 16px;
         }
 
         .stopTranslateButton {
           padding: 8px;
-          margin-top: 8px;
+          margin-top: 16px;
         }
 
         .translateText {
@@ -98,9 +100,7 @@ export class YpLanguageSelector extends YpBaseElement {
     ];
   }
 
-  _autoCompleteChange(event: CustomEvent) {
-    this.autocompleteText = (event.target as MdFilledTextField).value;
-  }
+
 
   get foundAutoCompleteLanguages() {
     return this.languages.filter((item) => {
@@ -111,11 +111,24 @@ export class YpLanguageSelector extends YpBaseElement {
     });
   }
 
+  openMenu() {
+    (this.$$("md-menu") as MdMenu).open = true;
+  }
+
+  _autoCompleteChange(event: CustomEvent) {
+    this.autocompleteText = (event.target as MdFilledTextField).value;
+  }
+
+  _selectLanguage(event: CustomEvent) {
+    this.selectedLocale = (event.currentTarget as MdMenuItem).getAttribute("data-language")!;
+  }
+
   renderMenuItem(index: number, item: YpLanguageMenuItem) {
     return html`
       <md-menu-item
         type="option"
         id="${index}"
+        data-language="${item.language}"
         @click="${this._selectLanguage}"
       >
         <div slot="headline">${item.name}</div>
@@ -126,35 +139,38 @@ export class YpLanguageSelector extends YpBaseElement {
   renderAutoComplete() {
     let idIndex = 0;
     return html`
-      <md-filled-text-field
-        id="textfield"
-        type="combobox"
-        aria-controls="menu"
-        aria-autocomplete="list"
-        aria-expanded="true"
-        aria-activedescendant="1"
-        @change=${this._autoCompleteChange}
-      >
-      </md-filled-text-field>
-      <md-menu
-        id="menu"
-        anchor="textfield"
-        role="listbox"
-        aria-label="states"
-        open
-      >
-        ${this.foundAutoCompleteLanguages.map((item) => {
-          return this.renderMenuItem(idIndex++, item);
-        })}
-        <md-divider
-          ?hidden="${this.foundAutoCompleteLanguages.length == 0}"
-          role="separator"
-          tabindex="-1"
-        ></md-divider>
-        ${this.languages.map((item) => {
-          return this.renderMenuItem(idIndex++, item);
-        })}
-      </md-menu>
+      <span style="position: relative">
+        <md-filled-text-field
+          id="textfield"
+          type="combobox"
+          aria-controls="menu"
+          aria-autocomplete="list"
+          aria-expanded="true"
+          aria-activedescendant="1"
+          .label="${this.t("selectLanguage")}"
+          @click="${this.openMenu}"
+          @keyup=${this._autoCompleteChange}
+        >
+        </md-filled-text-field>
+        <md-menu
+          id="menu"
+          anchor="textfield"
+          role="listbox"
+          aria-label="states"
+        >
+          ${this.foundAutoCompleteLanguages.map((item) => {
+            return this.renderMenuItem(idIndex++, item);
+          })}
+          <md-divider
+            ?hidden="${this.foundAutoCompleteLanguages.length == 0}"
+            role="separator"
+            tabindex="-1"
+          ></md-divider>
+          ${this.languages.map((item) => {
+            return this.renderMenuItem(idIndex++, item);
+          })}
+        </md-menu>
+      </span>
     `;
   }
 
@@ -167,25 +183,20 @@ export class YpLanguageSelector extends YpBaseElement {
             ?hidden="${this.autoTranslate}"
             class="layout horizontal translateButton"
             @click="${this.startTranslation}"
-            >${this.t("autoTranslate")}<md-icon>translate</md-icon>
+            >${this.t("autoTranslate")}<md-icon slot="icon">translate</md-icon>
           </md-filled-button>
           <md-filled-button
             ?hidden="${!this.autoTranslate}"
             class="layout horizontal stopTranslateButton"
             @click="${this._stopTranslation}"
           >
-            ${this.t("stopAutoTranslate")}<md-icon class="stopIcon"
+            ${this.t("stopAutoTranslate")}<md-icon slot="icon" class="stopIcon"
               >do_not_disturb</md-icon
             >
           </md-filled-button>
         </div>
       </div>
     `;
-  }
-
-  _selectLanguage(event: CustomEvent) {
-    this.selectedLocale = (event.target as HTMLInputElement).value;
-    debugger;
   }
 
   override async connectedCallback() {
@@ -219,13 +230,20 @@ export class YpLanguageSelector extends YpBaseElement {
     );
   }
 
+  protected override firstUpdated(
+    _changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>
+  ): void {
+    super.firstUpdated(_changedProperties);
+    (this.$$("md-menu") as MdMenu).open = true;
+  }
+
   _autoTranslateEvent(event: CustomEvent) {
     this.autoTranslate = event.detail;
   }
 
   _stopTranslation() {
-    this.fireGlobal("yp-auto-translate", false);
-    window.appGlobals.autoTranslate = false;
+    window.appGlobals.stopTranslation();
+    this.autoTranslate = false;
     this.fire("yp-language-name", YpLanguages.getEnglishName(this.language));
     window.appDialogs.getDialogAsync("masterToast", (toast: any) => {
       toast.text = this.t("autoTranslationStopped");
@@ -237,8 +255,8 @@ export class YpLanguageSelector extends YpBaseElement {
 
   startTranslation() {
     if (this.canUseAutoTranslate) {
-      this.fireGlobal("yp-auto-translate", true);
-      window.appGlobals.autoTranslate = true;
+      window.appGlobals.startTranslation();
+      this.autoTranslate = true;
       this.fire("yp-language-name", YpLanguages.getEnglishName(this.language));
       window.appDialogs.getDialogAsync("masterToast", (toast: any) => {
         toast.text = this.t("autoTranslationStarted");
@@ -267,7 +285,7 @@ export class YpLanguageSelector extends YpBaseElement {
     if (YpLanguages.allLanguages) {
       let arr = [];
       const highlighted = [];
-      let highlightedLocales = ["en", "en_gb", "is", "fr", "de", "es", "ar"];
+      let highlightedLocales = ["en", "is", "fr", "de", "es", "ar"];
       if (window.appGlobals.highlightedLanguages) {
         highlightedLocales = window.appGlobals.highlightedLanguages.split(",");
       }
@@ -282,12 +300,12 @@ export class YpLanguageSelector extends YpBaseElement {
         if (highlightedLocales.indexOf(language.code) > -1) {
           highlighted.push({
             language: language.code,
-            name: `${language.nativeName} (${language.englishName})}`,
+            name: `${language.nativeName} (${language.englishName})`,
           });
         } else {
           arr.push({
             language: language.code,
-            name: `${language.nativeName} (${language.englishName})}`,
+            name: `${language.nativeName} (${language.englishName})`,
           });
         }
       }

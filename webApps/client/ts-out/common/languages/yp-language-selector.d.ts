@@ -1,3 +1,4 @@
+import { PropertyValueMap } from "lit";
 import "@material/web/select/outlined-select.js";
 import "@material/web/select/select-option.js";
 import "@material/web/textfield/filled-text-field.js";
@@ -23,14 +24,16 @@ export declare class YpLanguageSelector extends YpBaseElement {
     updated(changedProperties: Map<string | number | symbol, unknown>): void;
     _refreshLanguage(): void;
     static get styles(): any[];
-    _autoCompleteChange(event: CustomEvent): void;
     get foundAutoCompleteLanguages(): YpLanguageMenuItem[];
+    openMenu(): void;
+    _autoCompleteChange(event: CustomEvent): void;
+    _selectLanguage(event: CustomEvent): void;
     renderMenuItem(index: number, item: YpLanguageMenuItem): import("lit-html").TemplateResult<1>;
     renderAutoComplete(): import("lit-html").TemplateResult<1>;
     render(): import("lit-html").TemplateResult<1>;
-    _selectLanguage(event: CustomEvent): void;
     connectedCallback(): Promise<void>;
     disconnectedCallback(): void;
+    protected firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void;
     _autoTranslateEvent(event: CustomEvent): void;
     _stopTranslation(): void;
     startTranslation(): void;

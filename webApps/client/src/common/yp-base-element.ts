@@ -142,7 +142,7 @@ export class YpBaseElement extends LitElement {
   }
 
   static get rtlLanguages() {
-    return ["fa", "ar", "ar_EG"];
+    return ["fa", "ar", "he", "ur", "ps", "ku", "sd", "dv", "ug", "yi"];
   }
 
   languageChanged() {
@@ -162,7 +162,8 @@ export class YpBaseElement extends LitElement {
   }
 
   _setupRtl() {
-    if (YpBaseElement.rtlLanguages.indexOf(this.language) > -1) {
+    const twoFirstCharsOfLanguage = this.language.substring(0, 2).toLowerCase();
+    if (YpBaseElement.rtlLanguages.indexOf(twoFirstCharsOfLanguage) > -1) {
       this.rtl = true;
     } else {
       this.rtl = false;
