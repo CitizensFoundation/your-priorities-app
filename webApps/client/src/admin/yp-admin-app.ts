@@ -138,8 +138,13 @@ export class YpAdminApp extends YpBaseElement {
         }
 
         .backContainer {
-          margin-top: 16px;
+          margin-top: 0px;
           margin-left: 16px;
+        }
+
+        .backIcon {
+          margin-bottom: 8px;
+          margin-top: 4px;
         }
 
         .navContainer {
@@ -158,6 +163,7 @@ export class YpAdminApp extends YpBaseElement {
           width: 100%;
           margin-bottom: 8px;
           vertical-align: middle;
+          margin-left: 16px;
         }
 
         .mainHeaderText {
@@ -1087,7 +1093,7 @@ export class YpAdminApp extends YpBaseElement {
       return html`
         <div class="drawer">
           <div class="layout horizontal backContainer">
-            <md-icon-button @click="${this.exitToMainApp}">
+            <md-icon-button class="backIcon" @click="${this.exitToMainApp}">
               <md-icon>close</md-icon>
             </md-icon-button>
           </div>

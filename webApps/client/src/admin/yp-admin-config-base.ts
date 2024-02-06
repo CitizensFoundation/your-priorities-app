@@ -173,6 +173,7 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
 
   override connectedCallback() {
     super.connectedCallback();
+    this.setupBootListener();
     this.addGlobalListener("yp-has-video-upload", () => {
       this.hasVideoUpload = true;
     });
@@ -473,7 +474,7 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
             @success="${this._logoImageUploaded}"
           >
           </yp-file-upload>
-          <md-filled-icon-button
+          <md-filled-icon-button ?hidden="${!this.hasLlm}"
             id="generateButton"
             @click="${this._generateLogo}"
             ><md-icon>smart_toy</md-icon></md-filled-icon-button
@@ -817,7 +818,6 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
     } else if (this.collectionType == "group") {
       this.fireGlobal("yp-refresh-group");
     }
-    debugger;
   }
 
   async _save(event: CustomEvent) {
