@@ -251,8 +251,8 @@ export class YpApp extends YpBaseElement {
 
   _netWorkError(event: CustomEvent) {
     const detail = event.detail;
-    let errorText = this.t("errorCantConnect")
-      ? this.t("errorCantConnect")
+    let errorText = this.t("generalError")
+      ? this.t("generalError")
       : "Can't connect to server, try again later";
     let statusCode = -1;
 
@@ -266,6 +266,7 @@ export class YpApp extends YpBaseElement {
       detail.response.message == "SequelizeUniqueConstraintError"
     )
       errorText = this.t("user.alreadyRegisterred");
+    else if (detail.errorText) errorText = detail.errorText;
 
     if (detail.response && detail.response.status)
       statusCode = detail.response.status;
@@ -283,7 +284,10 @@ export class YpApp extends YpBaseElement {
       "yp-auto-translate",
       this._autoTranslateEvent.bind(this)
     );
-    this.addGlobalListener("yp-theme-configuration-updated", this._themeUpdated)
+    this.addGlobalListener(
+      "yp-theme-configuration-updated",
+      this._themeUpdated
+    );
     this.addGlobalListener("yp-change-header", this._onChangeHeader.bind(this));
     this.addGlobalListener("yp-logged-in", this._onUserChanged.bind(this));
     this.addGlobalListener("yp-network-error", this._netWorkError.bind(this));
@@ -345,7 +349,10 @@ export class YpApp extends YpBaseElement {
     this.removeGlobalListener("yp-change-header", this._onChangeHeader);
     this.removeGlobalListener("yp-logged-in", this._onUserChanged);
     this.removeGlobalListener("yp-network-error", this._netWorkError);
-    this.removeGlobalListener("yp-theme-configuration-updated", this._themeUpdated)
+    this.removeGlobalListener(
+      "yp-theme-configuration-updated",
+      this._themeUpdated
+    );
 
     this.removeListener(
       "yp-add-back-community-override",
@@ -707,10 +714,17 @@ export class YpApp extends YpBaseElement {
       </yp-sw-update-toast>
 
       <md-dialog id="dialog">
-        <div slot="headline">${this.notifyDialogText}</div>
-        <md-text-button slot="actions" @click="${this._resetNotifyDialogText}">
-          ${this.t("ok")}
-        </md-text-button>
+        <div slot="content">
+          <div class="errorText">${this.notifyDialogText}</div>
+        </div>
+        <div slot="actions" class="layout vertical center-center">
+          <md-filled-button
+            id="errorCloseButton"
+            @click="${this._resetNotifyDialogText}"
+          >
+            ${this.t("close")}
+          </md-filled-button>
+        </div>
       </md-dialog>
 
       <mwc-snackbar id="toast">
@@ -1091,7 +1105,9 @@ export class YpApp extends YpBaseElement {
                 );
                 setTimeout(() => {
                   if (this.$$("#communityPage")) {
-                    (this.$$("#communityPage") as YpCommunity).scrollToGroupItem();
+                    (
+                      this.$$("#communityPage") as YpCommunity
+                    ).scrollToGroupItem();
                   } else {
                     console.error(
                       "Can't find scroll communityPage for goToPostOrNewsItem"
@@ -1117,7 +1133,9 @@ export class YpApp extends YpBaseElement {
                 );
                 setTimeout(() => {
                   if (this.$$("#domainPage")) {
-                    (this.$$("#domainPage") as YpDomain).scrollToCommunityItem();
+                    (
+                      this.$$("#domainPage") as YpDomain
+                    ).scrollToCommunityItem();
                   } else {
                     console.error(
                       "Can't find scroll domainPage for scrollToCommunityItem"

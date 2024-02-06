@@ -29,6 +29,27 @@ Please count the words and never go over the limit. Leave some things out off th
 Translate the tone of the original language also.
 Always output only JSON.`;
     }
+    renderGeneralSystemPrompt() {
+        return `You are a helpful answer translation assistant that knows all the world languages.
+
+INPUTS:
+The user will tell us the Language to translate to.
+The user will give you a string to be translated.
+
+OUTPUT:
+You will output only the translated string.
+
+INSTRUCTIONS:
+Keep it similar length as the original text.
+Translate the tone of the original language also.
+NEVER output anything else than the translated string.`;
+    }
+    renderGeneralUserPrompt(stringToTranslate, language) {
+        return `Language to translate to: {language}
+String to translate:
+${stringToTranslate}
+Your translated string:`;
+    }
     renderAnswersUserMessage(language, question, answer) {
         return `Language to translate to: ${language}
 
@@ -48,11 +69,36 @@ ${JSON.stringify(questionData, null, 2)}
 
 Your ${language} JSON output:`;
     }
+    async getGeneralTranslation(stringToTranslate, languageIsoCode) {
+        try {
+            console.log(`getGeneralTranslation: ${stringToTranslate}`);
+            const languageName = YpLanguages.getEnglishName(languageIsoCode) || languageIsoCode;
+            const moderationResponse = await this.openaiClient.moderations.create({
+                input: stringToTranslate,
+            });
+            console.log("Moderation response:", moderationResponse);
+            const flagged = moderationResponse.results[0].flagged;
+            console.log("Flagged:", flagged);
+            if (flagged) {
+                console.error("Flagged:", stringToTranslate);
+                return null;
+            }
+            else {
+                const inAnswer = {
+                    originalAnswer: stringToTranslate,
+                };
+                return await this.callLlm("", "", "", languageName, "", inAnswer, undefined, this.renderGeneralUserPrompt, this.renderGeneralSystemPrompt);
+            }
+        }
+        catch (error) {
+            console.error("Error in getAnswerIdeas:", error);
+            return undefined;
+        }
+    }
     async getChoiceTranslation(answerContent, languageIsoCode, maxCharactersInTranslation = 140) {
         try {
             console.log(`getChoiceTranslation: ${answerContent}`);
-            const languageName = YpLanguages.getEnglishName(languageIsoCode) ||
-                languageIsoCode;
+            const languageName = YpLanguages.getEnglishName(languageIsoCode) || languageIsoCode;
             const moderationResponse = await this.openaiClient.moderations.create({
                 input: answerContent,
             });
@@ -81,8 +127,7 @@ Your ${language} JSON output:`;
     async getQuestionTranslation(question, languageIsoCode, maxCharactersInTranslation = 300) {
         try {
             console.log(`getQuestionTranslation: ${question} ${languageIsoCode}`);
-            const languageName = YpLanguages.getEnglishName(languageIsoCode) ||
-                languageIsoCode;
+            const languageName = YpLanguages.getEnglishName(languageIsoCode) || languageIsoCode;
             const moderationResponse = await this.openaiClient.moderations.create({
                 input: question,
             });
@@ -108,11 +153,13 @@ Your ${language} JSON output:`;
             return undefined;
         }
     }
-    async callLlm(jsonInSchema, jsonOutSchema, lengthInfo, languageName, question, inObject, maxCharactersInTranslation, userRenderer) {
+    async callLlm(jsonInSchema, jsonOutSchema, lengthInfo, languageName, question, inObject, maxCharactersInTranslation, userRenderer, systemRenderer) {
         const messages = [
             {
                 role: "system",
-                content: this.renderSystemPrompt(jsonInSchema, jsonOutSchema, lengthInfo),
+                content: systemRenderer
+                    ? systemRenderer()
+                    : this.renderSystemPrompt(jsonInSchema, jsonOutSchema, lengthInfo),
             },
             {
                 role: "user",
@@ -137,8 +184,9 @@ Your ${language} JSON output:`;
                 if (textJson) {
                     const translationData = JSON.parse(jsonrepair(textJson));
                     if (translationData && translationData.translatedContent) {
-                        if (translationData.translatedContent.length >
-                            maxCharactersInTranslation) {
+                        if (maxCharactersInTranslation &&
+                            translationData.translatedContent.length >
+                                maxCharactersInTranslation) {
                             throw new Error("Translation too long");
                         }
                         running = false;

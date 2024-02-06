@@ -1232,7 +1232,7 @@
   "Thinking": "Pensando...",
   "Send": "Enviar",
   "typing": "Escribiendo",
-  "record": "Tecord",
+  "record": "Registro",
   "send": "Enviar",
   "Dynamic Colors": "Colores Dinámicos",
   "One Dynamic Color": "Un Color Dinámico",
@@ -1346,5 +1346,9 @@
   "ideaAdded": "Tu idea ha sido añadida, puedes continuar votando.",
   "ideaModerationQueue": "Tu idea está en cola de moderación.",
   "yourIdea": "Tu idea",
-  "chatInput": "Hazme una pregunta"
+  "chatInput": "Hazme una pregunta",
+  "ideaGenerationGroupType": "Generación de ideas",
+  "allOurIdeasGroupType": "All Our Ideas Clasificación por Pares",
+  "yourIdeaHasBeenAdded": "Tu idea ha sido añadida, generando imagen de icono.",
+  "aiIconInfo": "Se está generando un icono para tu respuesta, puedes cerrar la ventana o esperar a que el icono sea generado. También tendrás la opción de regenerar el icono."
 }

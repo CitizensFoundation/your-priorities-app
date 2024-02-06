@@ -49,7 +49,12 @@ let AoiSurvey = class AoiSurvey extends YpBaseElement {
     connectedCallback() {
         super.connectedCallback();
         this._setupEventListeners();
-        this.getEarl();
+        if (this.collection.configuration.allOurIdeas) {
+            this.getEarl();
+        }
+        else {
+            this.fire("yp-network-error", { showUserError: true });
+        }
     }
     async getEarl() {
         window.aoiAppGlobals.activity("Survey - fetch start");

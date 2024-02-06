@@ -1767,7 +1767,7 @@ router.get('/:id', auth.can('view group'), function(req, res) {
           include: [
             {
               model: models.Domain,
-              attributes: ['id','theme_id','name']
+              attributes: ['id','theme_id','name','configuration']
             },
             {
               model: models.Image,

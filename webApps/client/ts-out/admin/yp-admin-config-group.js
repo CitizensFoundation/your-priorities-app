@@ -189,7 +189,7 @@ let YpAdminConfigGroup = class YpAdminConfigGroup extends YpAdminConfigBase {
             ? html `
             <input
               type="hidden"
-              name="allOurIdeasGroupType"
+              name="allOurIdeas"
               value="${JSON.stringify((this.collection?.configuration)
                 .allOurIdeas)}"
             />

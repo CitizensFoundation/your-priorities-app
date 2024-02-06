@@ -125,8 +125,8 @@ export class YpAiChatbotItemBase extends YpBaseElement {
         }
 
         .userChatDialog {
-          color: var(--md-sys-color-on-primary);
-          background-color: var(--md-sys-color-primary);
+          color: var(--md-sys-color-on-primary-container);
+          background-color: var(--md-sys-color-primary-container);
           padding: 8px;
           margin: 16px;
           line-height: 1.5;

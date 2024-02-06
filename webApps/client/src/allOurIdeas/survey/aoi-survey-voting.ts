@@ -261,7 +261,7 @@ export class AoiSurveyVoting extends YpBaseElement {
       css`
         :host {
           --md-elevated-button-container-color: var(
-            --md-sys-color-surface-container-higher
+            --md-sys-color-surface-container-high
           );
           --md-elevated-button-label-text-color: var(
             --md-sys-color-on-surface

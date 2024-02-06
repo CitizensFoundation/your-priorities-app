@@ -109,7 +109,11 @@ export class AoiSurvey extends YpBaseElement  {
   override connectedCallback() {
     super.connectedCallback();
     this._setupEventListeners();
-    this.getEarl();
+    if (this.collection.configuration.allOurIdeas) {
+      this.getEarl();
+    } else {
+      this.fire("yp-network-error", {showUserError: true})
+    }
   }
 
   async getEarl() {

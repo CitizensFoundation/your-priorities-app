@@ -1345,5 +1345,9 @@
   "ideaAdded": "Teie idee on lisatud, võite jätkata hääletamist.",
   "ideaModerationQueue": "Teie idee on modereerimisjärjekorras.",
   "yourIdea": "Teie idee",
-  "chatInput": "Küsi minult küsimus"
+  "chatInput": "Küsi minult küsimus",
+  "ideaGenerationGroupType": "Ideede genereerimine",
+  "allOurIdeasGroupType": "All Our Ideas Paaride Edetabel",
+  "yourIdeaHasBeenAdded": "Teie idee on lisatud, ikoonipilti genereeritakse.",
+  "aiIconInfo": "Teie vastuse ikooni genereeritakse, võite akna sulgeda või oodata ikooni loomist. Teil on ka võimalus ikooni uuesti genereerida."
 }

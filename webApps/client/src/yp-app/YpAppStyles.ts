@@ -54,6 +54,25 @@ export const YpAppStyles = css`
     z-index: 5000;
   }
 
+  #dialog {
+    --md-dialog-container-color: var(--md-sys-color-error-container);
+    --md-dialog-headline-color: var(--md-sys-color-on-error-container);
+    --md-dialog-supporting-text-color: var(--md-sys-color-on-error-container);
+    color: var(--md-sys-color-on-error-container);
+  }
+
+  .errorText {
+    padding: 16px;
+    font-size: 24px;
+    line-height: 1.5;
+  }
+
+  #errorCloseButton {
+    --md-filled-button-label-text-color: var(--md-sys-color-on-error-container);
+    --md-sys-color-primary: var(--md-sys-color-on-error-container);
+    --md-sys-color-on-primary: var(--md-sys-color-error-container);
+  }
+
   .loadingAppSpinnerPage,
   yp-admin-app,
   yp-promotion-app {

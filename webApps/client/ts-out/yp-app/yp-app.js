@@ -111,8 +111,8 @@ let YpApp = class YpApp extends YpBaseElement {
     }
     _netWorkError(event) {
         const detail = event.detail;
-        let errorText = this.t("errorCantConnect")
-            ? this.t("errorCantConnect")
+        let errorText = this.t("generalError")
+            ? this.t("generalError")
             : "Can't connect to server, try again later";
         let statusCode = -1;
         if (detail.response && detail.response.status === 404)
@@ -123,6 +123,8 @@ let YpApp = class YpApp extends YpBaseElement {
             detail.response.status === 500 &&
             detail.response.message == "SequelizeUniqueConstraintError")
             errorText = this.t("user.alreadyRegisterred");
+        else if (detail.errorText)
+            errorText = detail.errorText;
         if (detail.response && detail.response.status)
             statusCode = detail.response.status;
         if (detail.showUserError) {
@@ -486,10 +488,17 @@ let YpApp = class YpApp extends YpBaseElement {
       </yp-sw-update-toast>
 
       <md-dialog id="dialog">
-        <div slot="headline">${this.notifyDialogText}</div>
-        <md-text-button slot="actions" @click="${this._resetNotifyDialogText}">
-          ${this.t("ok")}
-        </md-text-button>
+        <div slot="content">
+          <div class="errorText">${this.notifyDialogText}</div>
+        </div>
+        <div slot="actions" class="layout vertical center-center">
+          <md-filled-button
+            id="errorCloseButton"
+            @click="${this._resetNotifyDialogText}"
+          >
+            ${this.t("close")}
+          </md-filled-button>
+        </div>
       </md-dialog>
 
       <mwc-snackbar id="toast">

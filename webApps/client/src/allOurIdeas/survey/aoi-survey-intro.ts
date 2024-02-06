@@ -157,17 +157,17 @@ export class AoiSurveyIntro extends YpBaseElement {
         }
 
         .description {
-          font-size: 16px;
+          font-size: 18px;
           letter-spacing: 0.04em;
           line-height: 1.5;
           border-radius: 8px;
           max-width: 560px;
           vertical-align: center;
           margin-bottom: 16px;
-          margin-top: 16px;
-          padding: 24px;
-          color: var(--md-sys-color-primary);
-          background-color: var(--md-sys-color-on-primary);
+          margin-top: 8px;
+          padding: 16px;
+          padding-left: 0;
+          padding-right: 0;
         }
 
         :host {

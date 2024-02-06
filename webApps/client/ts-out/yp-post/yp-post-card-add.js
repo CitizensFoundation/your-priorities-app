@@ -31,8 +31,8 @@ let YpPostCardAdd = class YpPostCardAdd extends YpBaseElement {
           min-height: 75px;
           margin-top: 8px;
           padding: 16px;
-          background-color: var(--md-sys-color-tertiary-container);
-          color: var(--md-sys-color-on-tertiary-container);
+          background-color: var(--md-sys-color-primary);
+          color: var(--md-sys-color-on-primary);
           cursor: pointer;
           margin-bottom: 24px;
           text-align: center;

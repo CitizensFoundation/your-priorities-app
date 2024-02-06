@@ -112,6 +112,10 @@ let YpAppNavDrawer = class YpAppNavDrawer extends YpBaseElement {
           padding-left: 8px;
         }
 
+        .themeSelection {
+          margin-bottom: 8px;
+        }
+
         .thumbNail {
           width: 42px;
           height: 24px;
@@ -183,7 +187,7 @@ let YpAppNavDrawer = class YpAppNavDrawer extends YpBaseElement {
           ></yp-language-selector>
         </div>
 
-        <div class="layout horizontal center-center">
+        <div class="layout horizontal center-center themeSelection">
           ${this.renderThemeToggle()}
         </div>
 
