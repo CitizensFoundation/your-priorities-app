@@ -426,7 +426,7 @@ export class YpAdminConfigBase extends YpAdminPage {
           margin-top: 16px;
           max-width: 1024px;
           padding: 24px;
-          background-color: var(--md-sys-color-surface-container);
+          background-color: var(--md-sys-color-surface-container-high);
           color: var(--md-sys-color-on-surface);
           border-radius: 16px;
         }
@@ -439,7 +439,7 @@ export class YpAdminConfigBase extends YpAdminPage {
         }
 
         .innerTabContainer {
-          background-color: var(--md-sys-color-surface-container-low);
+          background-color: var(--md-sys-color-surface-container);
           color: var(--md-sys-color-on-surface);
           border-radius: 16px;
           width: 900px;
