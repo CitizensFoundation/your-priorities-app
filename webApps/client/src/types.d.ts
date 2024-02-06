@@ -516,6 +516,8 @@ interface YpCommunityData extends YpCollectionData {
 interface YpDomainGetResponse {
   domain: YpDomainData;
   community: YpCommunityData;
+  googleMapsApiKey: string;
+  hasLlm: boolean;
 }
 
 interface YpHasVideoResponse {

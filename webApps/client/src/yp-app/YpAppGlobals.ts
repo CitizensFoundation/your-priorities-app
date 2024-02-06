@@ -38,6 +38,10 @@ export class YpAppGlobals extends YpCodeBase {
 
   disableFacebookLoginForGroup = false;
 
+  googleMapsApiKey: string | undefined;
+
+  hasLlm = false;
+
   currentSamlDeniedMessage: string | undefined;
 
   currentSamlLoginMessage: string | undefined;
@@ -409,6 +413,8 @@ export class YpAppGlobals extends YpCodeBase {
     const results = (await this.serverApi.boot()) as YpDomainGetResponse | void;
     if (results) {
       this.domain = results.domain;
+      this.googleMapsApiKey = results.googleMapsApiKey;
+      this.hasLlm = results.hasLlm;
       this._domainChanged(this.domain);
       //this.analytics.setupGoogleAnalytics(this.domain);
 

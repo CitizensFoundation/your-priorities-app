@@ -18,6 +18,8 @@ export declare class YpAppGlobals extends YpCodeBase {
     currentAnonymousGroup: YpGroupData | undefined;
     currentForceSaml: boolean;
     disableFacebookLoginForGroup: boolean;
+    googleMapsApiKey: string | undefined;
+    hasLlm: boolean;
     currentSamlDeniedMessage: string | undefined;
     currentSamlLoginMessage: string | undefined;
     originalQueryParameters: Record<string, string | number | undefined>;

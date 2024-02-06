@@ -239,6 +239,10 @@ var getDomain = function (req, domainId, done) {
               domain.dataValues.ziggeoEnabled = process.env.ZIGGEO_ENABLED;
             }
 
+            if (req.ypDomain && process.env.OPENAI_API_KEY) {
+              domain.dataValues.hasLlm = true;
+            }
+
             domain.dataValues.Communities = communities;
 
             if (process.env.LOGIN_CALLBACK_CUSTOM_HOSTNAME) {
@@ -716,6 +720,10 @@ router.get('/', function(req, res) {
 
   if (process.env.ZIGGEO_ENABLED) {
     req.ypDomain.dataValues.ziggeoEnabled = process.env.ZIGGEO_ENABLED;
+  }
+
+  if (process.env.OPENAI_API_KEY) {
+    req.ypDomain.dataValues.hasLlm = true;
   }
 
   if (process.env.CESIUM_ACCESS_TOKEN) {

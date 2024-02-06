@@ -79,7 +79,8 @@ export class YpLanguageSelector extends YpBaseElement {
           max-width: 250px;
         }
 
-        .translateButton,  .stopTranslateButton  {
+        .translateButton,
+        .stopTranslateButton {
           padding: 8px;
           margin-top: 24px;
           margin-bottom: 16px;
@@ -95,8 +96,6 @@ export class YpLanguageSelector extends YpBaseElement {
       `,
     ];
   }
-
-
 
   get foundAutoCompleteLanguages() {
     return this.languages.filter((item) => {
@@ -116,7 +115,9 @@ export class YpLanguageSelector extends YpBaseElement {
   }
 
   _selectLanguage(event: CustomEvent) {
-    this.selectedLocale = (event.currentTarget as MdMenuItem).getAttribute("data-language")!;
+    this.selectedLocale = (event.currentTarget as MdMenuItem).getAttribute(
+      "data-language"
+    )!;
   }
 
   renderMenuItem(index: number, item: YpLanguageMenuItem) {
@@ -228,7 +229,7 @@ export class YpLanguageSelector extends YpBaseElement {
   ): void {
     super.firstUpdated(_changedProperties);
     if (_changedProperties.has("language") && this.language) {
-      const textfield = (this.$$("md-filled-text-field") as MdFilledTextField);
+      const textfield = this.$$("md-filled-text-field") as MdFilledTextField;
       textfield.value = YpLanguages.getEnglishName(this.language) || "";
     }
   }
@@ -270,6 +271,7 @@ export class YpLanguageSelector extends YpBaseElement {
       !this.noUserEvents
     ) {
       const found =
+        window.appGlobals.hasLlm ||
         YpLanguages.isoCodesNotInGoogleTranslate.indexOf(this.language) > -1;
       return !found;
     } else {

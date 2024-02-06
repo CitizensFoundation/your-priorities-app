@@ -19,6 +19,7 @@ export class YpAppGlobals extends YpCodeBase {
         this.groupConfigOverrides = {};
         this.currentForceSaml = false;
         this.disableFacebookLoginForGroup = false;
+        this.hasLlm = false;
         this.originalQueryParameters = {};
         this.externalGoalCounter = 0;
         this.autoTranslate = false;
@@ -285,6 +286,8 @@ export class YpAppGlobals extends YpCodeBase {
         const results = (await this.serverApi.boot());
         if (results) {
             this.domain = results.domain;
+            this.googleMapsApiKey = results.googleMapsApiKey;
+            this.hasLlm = results.hasLlm;
             this._domainChanged(this.domain);
             //this.analytics.setupGoogleAnalytics(this.domain);
             if (window.location.pathname == "/") {

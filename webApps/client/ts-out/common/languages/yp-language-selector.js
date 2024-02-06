@@ -49,7 +49,8 @@ let YpLanguageSelector = class YpLanguageSelector extends YpBaseElement {
           max-width: 250px;
         }
 
-        .translateButton,  .stopTranslateButton  {
+        .translateButton,
+        .stopTranslateButton {
           padding: 8px;
           margin-top: 24px;
           margin-bottom: 16px;
@@ -210,7 +211,8 @@ let YpLanguageSelector = class YpLanguageSelector extends YpBaseElement {
             this.language &&
             this.hasServerAutoTranslation &&
             !this.noUserEvents) {
-            const found = YpLanguages.isoCodesNotInGoogleTranslate.indexOf(this.language) > -1;
+            const found = window.appGlobals.hasLlm ||
+                YpLanguages.isoCodesNotInGoogleTranslate.indexOf(this.language) > -1;
             return !found;
         }
         else {
