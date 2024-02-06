@@ -45,7 +45,26 @@
       "dear": "Helo",
       "reset_password_1": "Dyma ddolen i newid eich cyfrinair.",
       "reset_password_2": "Os na wnaethoch chi ofyn am hyn, anwybyddwch yr e-bost hwn.",
-      "reset_password_3": "Ni fydd eich cyfrinair yn newid tan eich bod chi’n cyrchu’r ddolen uchod ac yn creu un newydd."
+      "reset_password_3": "Ni fydd eich cyfrinair yn newid tan eich bod chi’n cyrchu’r ddolen uchod ac yn creu un newydd.",
+      "possibleFraudFooter": "Cliciwch ar y ddolen gymuned isod, mewngofnodwch fel gweinyddwr a dewis Rheoli Twyll o'r ddewislen.",
+      "possibleFraudSubHeader": "Nifer o weithgareddau posibl twyllodrus gyda siawns amcangyfrifedig o 75% o dwyll",
+      "possibleFraudInformation": "Mae ein system awtomataidd wedi nodi gweithgaredd twyllodrus posibl. Gallwch edrych yn fanylach trwy ryngwyneb gweinyddwr y Gymuned. Efallai bod rhesymau nad ydynt yn dwyllodrus ar gyfer rhywfaint o'r gweithgaredd hwn felly byddwch yn ofalus i ymchwilio'n drylwyr cyn dileu cynnwys.",
+      "possibleFraudHeader": "Gweithgaredd twyllodrus posibl",
+      "automaticToxicityDetection": "Mae'r cynnwys hwn wedi cael ei farcio'n awtomatig fel gwenwynig gan ddefnyddio algorithmiaid AI sy'n amcangyfrif tocsigrwydd y cynnwys. Gallwch ddileu'r cynnwys os oes angen.",
+      "automaticToxicityDetectionVision": "Mae algorithm AI yn awtomatig wedi marcio delweddau gweledol sy'n gysylltiedig â'r cynnwys hwn. Mae'r algorithm hwn yn adolygu delweddau am ddelweddau posibl oedolion, trais, meddygol, a rhywiol. Gallwch ddileu'r cynnwys os oes angen.",
+      "automaticToxicityDetectionDisclaimer": "Weithiau mae'r algorithm AI yn cyfrifo sgôr anghywir, yn yr achos hwnnw peidiwch â phoeni, nid oes angen i chi gymryd unrhyw gamau pellach ac gallwch anwybyddu'r e-bost hwn.",
+      "automaticToxicityHowLikely": "Pa mor debygol (%) o fod yn wenwynig",
+      "automaticToxicityEnglishText": "Testun Saesneg a ddefnyddir ar gyfer sgôr"
+    },
+    "contentToBeAnonymized": "Bydd eich cynnwys yn cael ei ddienhysbysu mewn 7 diwrnod ar gyfer",
+    "communityContentToBeAnonymized": "Bydd eich holl gynnwys yn y gymuned hon yn cael ei ddienhysbysu ac yn cael ei archifo mewn 7 diwrnod, ar ôl hynny ni fyddwch yn gallu ei ddileu na'i newid. Gweler eich cynnwys isod.",
+    "groupContentToBeAnonymized": "Bydd eich holl gynnwys yn y grŵp hwn yn cael ei ddienhysbysu ac yn cael ei archifo mewn 7 diwrnod, ar ôl hynny ni fyddwch yn gallu ei ddileu na'i newid. Gweler eich cynnwys isod.",
+    "post": {
+      "statusChangeSubject": "Statws y swydd wedi newid"
     }
-  }
+  },
+  "yourPosts": "Eich swyddi",
+  "yourPoints": "Eich pwyntiau",
+  "yourGroupPoints": "Pwyntiau eich grŵp",
+  "yourCommunityPoints": "Pwyntiau eich cymuned"
 }

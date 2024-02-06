@@ -9,3 +9,4 @@ module.exports = {
     down: function (queryInterface, Sequelize) {
     }
 };
+export {};

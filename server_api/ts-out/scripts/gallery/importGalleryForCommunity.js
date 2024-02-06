@@ -1,5 +1,4 @@
-"use strict";
-const models = require("../../models");
+const models = require("../../models/index.cjs");
 const moment = require("moment");
 const fs = require("fs");
 const path = require("path");
@@ -166,3 +165,4 @@ async function downloadImages(obj) {
         }
     }
 }
+export {};

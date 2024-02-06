@@ -1,4 +1,3 @@
-"use strict";
 const moment = require("moment");
 const getMediaTranscripts = require("./common_utils").getMediaTranscripts;
 const getPointMediaUrls = require("./common_utils").getPointMediaUrls;
@@ -70,3 +69,4 @@ const addPostPointsToSheet = (worksheet, post, group) => {
 module.exports = {
     addPostPointsToSheet
 };
+export {};

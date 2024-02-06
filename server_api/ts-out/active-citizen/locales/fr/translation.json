@@ -58,7 +58,13 @@
       "dear": "Salut",
       "reset_password_1": "Voici le lien pour changer votre mot de passe.",
       "reset_password_2": "Si vous ne l'avez pas demandé, veuillez ignorer ce courriel.",
-      "reset_password_3": "Votre mot de passe ne sera pas modifié tant que vous n'aurez pas accédé au lien ci-dessous et créé un nouveau mot de passe."
+      "reset_password_3": "Votre mot de passe ne sera pas modifié tant que vous n'aurez pas accédé au lien ci-dessous et créé un nouveau mot de passe.",
+      "possibleFraudFooter": "Cliquez sur le lien de la communauté ci-dessous, connectez-vous en tant qu'administrateur et sélectionnez Gestion de la fraude dans le menu.",
+      "possibleFraudSubHeader": "Nombre d'activités potentiellement frauduleuses avec une chance estimée de fraude de 75%",
+      "possibleFraudInformation": "Notre système automatisé a identifié une activité potentiellement frauduleuse. Vous pouvez examiner de plus près via l'interface administrateur de la Communauté. Certaines de ces activités pourraient avoir des raisons non frauduleuses, alors soyez prudent à bien enquêter avant de supprimer du contenu.",
+      "possibleFraudHeader": "Activité potentiellement frauduleuse",
+      "settings": "Paramètres de messagerie",
+      "automaticToxicityDetectionVision": "Un algorithme d'IA a automatiquement signalé des imageries visuelles liées à ce contenu. Cet algorithme examine les images pour détecter d'éventuelles imageries pour adultes, violentes, médicales et osées. Vous pouvez supprimer le contenu si nécessaire."
     }
   }
 }

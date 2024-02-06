@@ -58,7 +58,13 @@
       "dear": "Liebe/r",
       "reset_password_1": "Hier ist ein Link um Ihr Passwort zu ändern",
       "reset_password_2": "Bitte ignorieren Sie diese Email, falls Sie kein neues Passwort angefragt haben",
-      "reset_password_3": "Passwort ä sich erst, wenn Sie auf den obigen Link zugreifen und ein neues erstellen"
+      "reset_password_3": "Passwort ä sich erst, wenn Sie auf den obigen Link zugreifen und ein neues erstellen",
+      "possibleFraudFooter": "Klicken Sie auf den unten stehenden Community-Link, melden Sie sich als Admin an und wählen Sie Betrugsmanagement aus dem Menü.",
+      "possibleFraudSubHeader": "Anzahl möglicher betrügerischer Aktivitäten mit geschätzter 75% Wahrscheinlichkeit für Betrug",
+      "possibleFraudInformation": "Unser automatisiertes System hat mögliche betrügerische Aktivitäten identifiziert. Sie können dies näher über die Community-Admin-Schnittstelle betrachten. Einige dieser Aktivitäten könnten aus nicht betrügerischen Gründen erfolgen, also seien Sie vorsichtig und untersuchen Sie gründlich, bevor Sie Inhalte löschen.",
+      "possibleFraudHeader": "Mögliche betrügerische Aktivität",
+      "settings": "E-Mail-Einstellungen",
+      "automaticToxicityDetectionVision": "Ein KI-Algorithmus hat automatisch visuelle Bilder, die mit diesem Inhalt verbunden sind, markiert. Dieser Algorithmus überprüft Bilder auf mögliche Erwachsenen-, Gewalt-, medizinische und anzügliche Bilder. Sie können den Inhalt bei Bedarf löschen."
     }
   }
 }

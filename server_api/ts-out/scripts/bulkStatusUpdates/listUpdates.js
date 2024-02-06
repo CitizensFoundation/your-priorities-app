@@ -1,5 +1,4 @@
-"use strict";
-var models = require('../../models');
+var models = require('../../models/index.cjs');
 var async = require('async');
 var ip = require('ip');
 var _ = require('lodash');
@@ -13,3 +12,4 @@ models.BulkStatusUpdate.findAll({}).then(function (bulkStatusUpdates) {
 }).catch(function (error) {
     console.error(error);
 });
+export {};

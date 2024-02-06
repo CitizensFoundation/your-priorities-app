@@ -1,5 +1,4 @@
-"use strict";
-const models = require('../../models');
+const models = require('../../models/index.cjs');
 models.sequelize.query('CREATE DATABASE yrpri_dev', (err, res) => {
     console.log(err, res);
     models.sequelize.sync({}).then(() => {
@@ -15,3 +14,4 @@ models.sequelize.query('CREATE DATABASE yrpri_dev', (err, res) => {
         process.exit();
     });
 });
+export {};

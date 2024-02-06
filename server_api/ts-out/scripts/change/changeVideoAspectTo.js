@@ -1,5 +1,4 @@
-"use strict";
-var models = require('../../models');
+var models = require('../../models/index.cjs');
 var async = require('async');
 var ip = require('ip');
 var _ = require('lodash');
@@ -33,3 +32,4 @@ models.Video.findOne({
     console.error(error);
     process.exit();
 });
+export {};

@@ -1,5 +1,4 @@
-"use strict";
-var models = require('../models');
+var models = require('../models/index.cjs');
 var async = require('async');
 var communityId = process.argv[2];
 models.Post.findAll({
@@ -51,3 +50,4 @@ models.Post.findAll({
     console.error(error);
     process.exit();
 });
+export {};

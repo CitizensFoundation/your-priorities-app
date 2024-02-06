@@ -1,5 +1,4 @@
-"use strict";
-const models = require('../models');
+const models = require('../models/index.cjs');
 const async = require('async');
 const moment = require('moment');
 const domainId = process.argv[2];
@@ -47,3 +46,4 @@ else {
         }
     });
 }
+export {};

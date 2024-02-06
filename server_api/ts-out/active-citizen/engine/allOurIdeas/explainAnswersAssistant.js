@@ -1,16 +1,34 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.ExplainAnswersAssistant = void 0;
-const openai_1 = require("openai");
-const baseChatBot_js_1 = require("../../llms/baseChatBot.js");
-class ExplainAnswersAssistant extends baseChatBot_js_1.YpBaseChatBot {
-    openaiClient;
-    modelName = "gpt-4-0125-preview";
-    maxTokens = 4000;
-    temperature = 0.8;
+import { OpenAI } from "openai";
+import { YpBaseChatBot } from "../../llms/baseChatBot.js";
+export class ExplainAnswersAssistant extends YpBaseChatBot {
     constructor(wsClientId, wsClients) {
         super(wsClientId, wsClients, undefined);
-        this.openaiClient = new openai_1.OpenAI({
+        this.modelName = "gpt-4-0125-preview";
+        this.maxTokens = 4000;
+        this.temperature = 0.8;
+        this.explainConversation = async (chatLog) => {
+            this.setChatLog(chatLog);
+            let messages = chatLog.map((message) => {
+                return {
+                    role: message.sender,
+                    content: message.message,
+                };
+            });
+            const systemMessage = {
+                role: "system",
+                content: this.renderSystemPrompt(),
+            };
+            messages.unshift(systemMessage);
+            const stream = await this.openaiClient.chat.completions.create({
+                model: this.llmModel,
+                messages,
+                max_tokens: this.maxTokens,
+                temperature: this.tempeture,
+                stream: true,
+            });
+            this.streamWebSocketResponses(stream);
+        };
+        this.openaiClient = new OpenAI({
             apiKey: process.env.OPENAI_API_KEY,
         });
     }
@@ -32,27 +50,4 @@ Output:
 * Short summary in the end of which answer is better and why
 `;
     }
-    explainConversation = async (chatLog) => {
-        this.setChatLog(chatLog);
-        let messages = chatLog.map((message) => {
-            return {
-                role: message.sender,
-                content: message.message,
-            };
-        });
-        const systemMessage = {
-            role: "system",
-            content: this.renderSystemPrompt(),
-        };
-        messages.unshift(systemMessage);
-        const stream = await this.openaiClient.chat.completions.create({
-            model: this.llmModel,
-            messages,
-            max_tokens: this.maxTokens,
-            temperature: this.tempeture,
-            stream: true,
-        });
-        this.streamWebSocketResponses(stream);
-    };
 }
-exports.ExplainAnswersAssistant = ExplainAnswersAssistant;

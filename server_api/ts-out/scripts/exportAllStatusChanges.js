@@ -1,5 +1,4 @@
-"use strict";
-var models = require('../models');
+var models = require('../models/index.cjs');
 var async = require('async');
 var ip = require('ip');
 var domainId = process.argv[2];
@@ -35,3 +34,4 @@ models.PostStatusChange.findAll({
         console.log("Done");
     });
 });
+export {};

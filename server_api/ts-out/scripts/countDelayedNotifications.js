@@ -1,5 +1,4 @@
-"use strict";
-var models = require('../models');
+var models = require('../models/index.cjs');
 var async = require('async');
 var ip = require('ip');
 models.AcDelayedNotification.findAll({
@@ -17,3 +16,4 @@ models.AcDelayedNotification.findAll({
         seriesCallback();
     });
 });
+export {};

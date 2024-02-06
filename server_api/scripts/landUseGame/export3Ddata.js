@@ -1,6 +1,6 @@
 const { post } = require("request");
-const queue = require("../../active-citizen/workers/queue");
-const models = require("../../models");
+const queue = require("../../active-citizen/workers/queue.cjs");
+const models = require("../../models/index.cjs");
 const fs = require("fs");
 const axios = require("axios");
 

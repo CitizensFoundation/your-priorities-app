@@ -1,11 +1,10 @@
-"use strict";
-const models = require("../../../models");
+const models = require("../../../models/index.cjs");
 const async = require('async');
-const log = require('../../utils/logger');
+const log = require('../../utils/logger.cjs');
 const TOXICITY_THRESHOLD = 0.50;
 const TOXICITY_EMAIL_THRESHOLD = 0.75;
 const Perspective = require('./perspective_api_client');
-const queue = require("../../workers/queue");
+const queue = require("../../workers/queue.cjs");
 let perspectiveApi;
 if (process.env.GOOGLE_PERSPECTIVE_API_KEY) {
     perspectiveApi = new Perspective({
@@ -670,3 +669,4 @@ module.exports = {
     estimateToxicityScoreForPost,
     estimateToxicityScoreForCollection
 };
+export {};

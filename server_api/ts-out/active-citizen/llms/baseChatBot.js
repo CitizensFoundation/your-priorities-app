@@ -1,37 +1,14 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.YpBaseChatBot = void 0;
-const openai_1 = require("openai");
-const uuid_1 = require("uuid");
-const ioredis_1 = __importDefault(require("ioredis"));
+import { OpenAI } from "openai";
+import { v4 as uuidv4 } from "uuid";
+import ioredis from "ioredis";
 //TODO: Fix those imports, sync API with @policysynth/agents
 //import { PolicySynthAgentBase } from "@policysynth/agents/baseAgent.js";
 //import { IEngineConstants } from "@policysynth/agents/constants.js";
 //TODO: Use tiktoken
 const WORDS_TO_TOKENS_MAGIC_CONSTANT = 1.3;
 //@ts-ignore
-const redis = new ioredis_1.default.default(process.env.REDIS_MEMORY_URL || "redis://localhost:6379");
-class YpBaseChatBot {
-    wsClientId;
-    wsClientSocket;
-    openaiClient;
-    memory;
-    broadcastingLiveCosts = false;
-    liveCostsBroadcastInterval = 1000;
-    liveCostsInactivityTimeout = 1000 * 60 * 10;
-    static redisMemoryKeyPrefix = "yp-chatbot-memory";
-    tempeture = 0.7;
-    maxTokens = 4000;
-    llmModel = "gpt-4-0125-preview";
-    persistMemory = false;
-    memoryId = undefined;
-    liveCostsBroadcastTimeout = undefined;
-    liveCostsBoadcastStartAt;
-    lastSentToUserAt;
-    lastBroacastedCosts;
+const redis = new ioredis.default(process.env.REDIS_MEMORY_URL || "redis://localhost:6379");
+export class YpBaseChatBot {
     get redisKey() {
         return `${YpBaseChatBot.redisMemoryKeyPrefix}-${this.memoryId}`;
     }
@@ -84,9 +61,40 @@ class YpBaseChatBot {
         });
     }
     constructor(wsClientId, wsClients, memoryId = undefined) {
+        this.broadcastingLiveCosts = false;
+        this.liveCostsBroadcastInterval = 1000;
+        this.liveCostsInactivityTimeout = 1000 * 60 * 10;
+        this.tempeture = 0.7;
+        this.maxTokens = 4000;
+        this.llmModel = "gpt-4-0125-preview";
+        this.persistMemory = false;
+        this.memoryId = undefined;
+        this.liveCostsBroadcastTimeout = undefined;
+        this.conversation = async (chatLog) => {
+            this.setChatLog(chatLog);
+            let messages = chatLog.map((message) => {
+                return {
+                    role: message.sender,
+                    content: message.message,
+                };
+            });
+            const systemMessage = {
+                role: "system",
+                content: this.renderSystemPrompt(),
+            };
+            messages.unshift(systemMessage);
+            const stream = await this.openaiClient.chat.completions.create({
+                model: this.llmModel,
+                messages,
+                max_tokens: this.maxTokens,
+                temperature: this.tempeture,
+                stream: true,
+            });
+            this.streamWebSocketResponses(stream);
+        };
         this.wsClientId = wsClientId;
         this.wsClientSocket = wsClients.get(this.wsClientId);
-        this.openaiClient = new openai_1.OpenAI({
+        this.openaiClient = new OpenAI({
             apiKey: process.env.OPENAI_API_KEY,
         });
         if (!this.wsClientSocket) {
@@ -100,7 +108,7 @@ class YpBaseChatBot {
             this.memory = await this.loadMemory();
         }
         else {
-            this.memoryId = (0, uuid_1.v4)();
+            this.memoryId = uuidv4();
             this.memory = this.getEmptyMemory();
             if (this.wsClientSocket) {
                 this.sendMemoryId();
@@ -373,27 +381,5 @@ class YpBaseChatBot {
         this.memory.chatLog = chatLog;
         await this.saveMemoryIfNeeded();
     }
-    conversation = async (chatLog) => {
-        this.setChatLog(chatLog);
-        let messages = chatLog.map((message) => {
-            return {
-                role: message.sender,
-                content: message.message,
-            };
-        });
-        const systemMessage = {
-            role: "system",
-            content: this.renderSystemPrompt(),
-        };
-        messages.unshift(systemMessage);
-        const stream = await this.openaiClient.chat.completions.create({
-            model: this.llmModel,
-            messages,
-            max_tokens: this.maxTokens,
-            temperature: this.tempeture,
-            stream: true,
-        });
-        this.streamWebSocketResponses(stream);
-    };
 }
-exports.YpBaseChatBot = YpBaseChatBot;
+YpBaseChatBot.redisMemoryKeyPrefix = "yp-chatbot-memory";

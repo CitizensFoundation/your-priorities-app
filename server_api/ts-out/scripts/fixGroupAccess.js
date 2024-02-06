@@ -1,5 +1,4 @@
-"use strict";
-var models = require('../models');
+var models = require('../models/index.cjs');
 var async = require('async');
 console.log("Fix group");
 models.Group.findAll({ where: { access: 1 } }).then(function (groups) {
@@ -14,3 +13,4 @@ models.Group.findAll({ where: { access: 1 } }).then(function (groups) {
         process.exit();
     });
 });
+export {};

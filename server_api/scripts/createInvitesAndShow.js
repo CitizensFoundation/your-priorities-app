@@ -1,7 +1,7 @@
-const models = require('../models');
+const models = require('../models/index.cjs');
 const ip = require('ip');
 const _ = require('lodash');
-const toJson = require('../utils/to_json');
+const toJson = require('../utils/to_json.cjs');
 var crypto = require("crypto");
 
 const communityId = process.argv[2];

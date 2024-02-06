@@ -1,5 +1,4 @@
-"use strict";
-var models = require('../models');
+var models = require('../models/index.cjs');
 var async = require('async');
 var ip = require('ip');
 var _ = require('lodash');
@@ -152,3 +151,4 @@ else {
     console.error("Invalid start state");
     process.exit();
 }
+export {};

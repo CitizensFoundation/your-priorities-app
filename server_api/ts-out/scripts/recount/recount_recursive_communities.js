@@ -1,5 +1,4 @@
-"use strict";
-const models = require('../../models');
+const models = require('../../models/index.cjs');
 let users = [];
 let postCount = 0;
 let pointCount = 0;
@@ -123,3 +122,4 @@ const recountCommunityRecursive = async (communityId, options) => {
     }
     process.exit();
 })();
+export {};

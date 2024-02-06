@@ -1,5 +1,4 @@
-"use strict";
-const models = require('../models');
+const models = require('../models/index.cjs');
 const async = require('async');
 const groupId = 2102; //process.argv[2];
 let points;
@@ -52,3 +51,4 @@ async.series([
     console.log("Done");
     process.exit();
 });
+export {};

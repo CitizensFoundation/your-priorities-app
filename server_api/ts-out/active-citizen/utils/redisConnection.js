@@ -1,4 +1,3 @@
-"use strict";
 const redis = require("redis");
 let redisClient;
 if (process.env.REDIS_URL) {
@@ -26,3 +25,4 @@ redisClient.on('reconnecting', () => console.log('Redis client is reconnecting')
 redisClient.on('ready', () => console.log('Redis client is ready'));
 redisClient.connect().catch(console.error);
 module.exports = redisClient;
+export {};

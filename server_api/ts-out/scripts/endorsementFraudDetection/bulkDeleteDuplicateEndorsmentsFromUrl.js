@@ -1,12 +1,11 @@
-"use strict";
-const models = require('../../models');
+const models = require('../../models/index.cjs');
 const async = require('async');
 const ip = require('ip');
 const _ = require('lodash');
 const fs = require('fs');
 const request = require('request');
-const recountCommunity = require('../../utils/recount_utils').recountCommunity;
-const recountPost = require('../../utils/recount_utils').recountPost;
+const recountCommunity = require('../../utils/recount_utils.cjs').recountCommunity;
+const recountPost = require('../../utils/recount_utils.cjs').recountPost;
 const communityId = process.argv[2];
 const urlToConfig = process.argv[3];
 const allowDeletingSingles = process.argv[4];
@@ -207,3 +206,4 @@ async.series([
         console.log(`Deleted ${deletedEndorsments} endorsements`);
     process.exit();
 });
+export {};

@@ -1,5 +1,4 @@
-"use strict";
-var models = require('../models');
+var models = require('../models/index.cjs');
 var async = require('async');
 var ip = require('ip');
 models.AcNewsFeedItem.destroy({ truncate: true }).then(function (results) {
@@ -9,3 +8,4 @@ models.AcNewsFeedItem.destroy({ truncate: true }).then(function (results) {
         process.exit();
     });
 });
+export {};

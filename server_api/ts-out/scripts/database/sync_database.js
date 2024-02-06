@@ -1,5 +1,4 @@
-"use strict";
-const models = require('../../models');
+const models = require('../../models/index.cjs');
 models.sequelize.sync({}).then(() => {
     setTimeout(() => {
         models.Post.addFullTextIndex();
@@ -12,3 +11,4 @@ models.sequelize.sync({}).then(() => {
     console.error(error);
     process.exit();
 });
+export {};

@@ -1,5 +1,4 @@
-"use strict";
-const models = require('../models');
+const models = require('../models/index.cjs');
 var categoryId = process.argv[2];
 models.Category.findOne({
     where: {
@@ -11,3 +10,4 @@ models.Category.findOne({
         console.log("Done");
     });
 });
+export {};

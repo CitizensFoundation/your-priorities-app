@@ -1,5 +1,4 @@
-"use strict";
-const models = require("../../../../models");
+const models = require("../../../../models/index.cjs");
 const moment = require("moment");
 const _ = require("lodash");
 const Excel = require("exceljs");
@@ -311,3 +310,4 @@ const createFraudAuditReport = async (workPackage, done) => {
 module.exports = {
     createFraudAuditReport
 };
+export {};

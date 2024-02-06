@@ -1,8 +1,7 @@
-"use strict";
-const models = require("../../../models");
+const models = require("../../../models/index.cjs");
 const async = require("async");
 const moment = require("moment");
-const log = require("../../utils/logger");
+const log = require("../../utils/logger.cjs");
 const _ = require("lodash");
 const Excel = require("exceljs");
 const getGroupPosts = require("./common_utils").getGroupPosts;
@@ -275,3 +274,4 @@ module.exports = {
     createXlsCommunityUsersReport,
     getAnswerFor
 };
+export {};

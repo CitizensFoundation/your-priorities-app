@@ -1,5 +1,4 @@
-"use strict";
-const models = require("../../models");
+const models = require("../../models/index.cjs");
 const ip = require("ip");
 const _ = require("lodash");
 const fs = require("fs").promises;
@@ -39,3 +38,4 @@ const main = async () => {
     }
 };
 main();
+export {};

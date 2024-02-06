@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-"use strict";
 const USE_NEXT_VERSION = true;
 process.env.FORCE_PRODUCTION = "false";
 if (process.env.NEW_RELIC_APP_NAME) {
@@ -9,7 +8,7 @@ if (!process.env.NODE_ENV) {
     process.env.NODE_ENV = "development";
 }
 process.env["SUPPRESS_WEB_QUEUE_MESSAGES"] = true;
-const log = require("./utils/logger");
+const log = require("./utils/logger.cjs");
 if (!process.env.S3_BUCKET) {
     process.env.S3_BUCKET = "no-bucket-implemented-please-set-S3_BUCKET";
     const errorText = "No S3_BUCKET is set, image uploads and report downloads will not work";
@@ -33,8 +32,8 @@ const redis = require("redis");
 const rateLimit = require("express-rate-limit");
 const RedisLimitStore = require("rate-limit-redis").RedisStore;
 const passport = require("passport"), LocalStrategy = require("passport-local").Strategy, FacebookStrategy = require("passport-facebook").Strategy, GitHubStrategy = require("passport-github").Strategy, TwitterStrategy = require("passport-twitter").Strategy, GoogleStrategy = require("passport-google-oauth").OAuth2Strategy;
-const models = require("./models");
-const auth = require("./authorization");
+const models = require("./models/index.cjs");
+const auth = require("./authorization.cjs");
 const index = require("./controllers/index");
 const news_feeds = require("./active-citizen/controllers/news_feeds");
 const activities = require("./active-citizen/controllers/activities");
@@ -60,7 +59,7 @@ const legacyPages = require("./controllers/legacyPages");
 const nonSPArouter = require("./controllers/nonSpa");
 const generateSitemap = require("./utils/sitemap_generator");
 const generateManifest = require("./utils/manifest_generator");
-const toJson = require("./utils/to_json");
+const toJson = require("./utils/to_json.cjs");
 const sso = require("passport-sso");
 const cors = require("cors");
 const Airbrake = require("@airbrake/node");
@@ -790,3 +789,4 @@ wsServer.on("connection", (ws) => {
     }
 });
 module.exports = app;
+export {};

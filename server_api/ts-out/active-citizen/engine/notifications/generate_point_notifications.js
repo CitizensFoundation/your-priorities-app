@@ -1,6 +1,5 @@
-"use strict";
-const models = require("../../../models");
-const log = require('../../utils/logger');
+const models = require("../../../models/index.cjs");
+const log = require('../../utils/logger.cjs');
 const async = require('async');
 const getModelAndUsersByType = require('./notifications_utils').getModelAndUsersByType;
 const addNotificationsForUsers = require('./notifications_utils').addNotificationsForUsers;
@@ -231,3 +230,4 @@ module.exports = (activity, user, callback) => {
         callback("Unexpected type for generatePointNotification");
     }
 };
+export {};

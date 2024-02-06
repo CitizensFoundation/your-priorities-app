@@ -1,5 +1,4 @@
-"use strict";
-const models = require('../models');
+const models = require('../models/index.cjs');
 const async = require('async');
 const ip = require('ip');
 const _ = require('lodash');
@@ -36,3 +35,4 @@ models.Community.findAll({
         console.log(done);
     process.exit();
 });
+export {};

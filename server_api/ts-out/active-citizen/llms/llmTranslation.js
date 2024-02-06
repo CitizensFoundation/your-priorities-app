@@ -1,20 +1,12 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.YpLlmTranslation = void 0;
-const jsonrepair_1 = require("jsonrepair");
-const openai_1 = require("openai");
-const iso_639_1_1 = __importDefault(require("iso-639-1"));
-const ypLanguages_1 = require("utils/ypLanguages");
-class YpLlmTranslation {
-    openaiClient;
-    modelName = "gpt-4-0125-preview";
-    maxTokens = 4000;
-    temperature = 0.0;
+import { jsonrepair } from "jsonrepair";
+import { OpenAI } from "openai";
+import { YpLanguages } from "../../utils/ypLanguages.js";
+export class YpLlmTranslation {
     constructor() {
-        this.openaiClient = new openai_1.OpenAI({
+        this.modelName = "gpt-4-0125-preview";
+        this.maxTokens = 4000;
+        this.temperature = 0.0;
+        this.openaiClient = new OpenAI({
             apiKey: process.env.OPENAI_API_KEY,
         });
     }
@@ -59,7 +51,7 @@ Your ${language} JSON output:`;
     async getChoiceTranslation(answerContent, languageIsoCode, maxCharactersInTranslation = 140) {
         try {
             console.log(`getChoiceTranslation: ${answerContent}`);
-            const languageName = ypLanguages_1.YpLanguages.getEnglishName(languageIsoCode) ||
+            const languageName = YpLanguages.getEnglishName(languageIsoCode) ||
                 languageIsoCode;
             const moderationResponse = await this.openaiClient.moderations.create({
                 input: answerContent,
@@ -89,10 +81,7 @@ Your ${language} JSON output:`;
     async getQuestionTranslation(question, languageIsoCode, maxCharactersInTranslation = 300) {
         try {
             console.log(`getQuestionTranslation: ${question} ${languageIsoCode}`);
-            const languageName = iso_639_1_1.default.getName(languageIsoCode) ||
-                iso_639_1_1.default.getName(languageIsoCode.toLowerCase()) ||
-                iso_639_1_1.default.getName(languageIsoCode.substring(0, 2)) ||
-                iso_639_1_1.default.getName(languageIsoCode.substring(0, 2).toLowerCase()) ||
+            const languageName = YpLanguages.getEnglishName(languageIsoCode) ||
                 languageIsoCode;
             const moderationResponse = await this.openaiClient.moderations.create({
                 input: question,
@@ -146,7 +135,7 @@ Your ${language} JSON output:`;
                 const textJson = results.choices[0].message.content;
                 console.log("Text JSON:", textJson);
                 if (textJson) {
-                    const translationData = JSON.parse((0, jsonrepair_1.jsonrepair)(textJson));
+                    const translationData = JSON.parse(jsonrepair(textJson));
                     if (translationData && translationData.translatedContent) {
                         if (translationData.translatedContent.length >
                             maxCharactersInTranslation) {
@@ -171,4 +160,3 @@ Your ${language} JSON output:`;
         }
     }
 }
-exports.YpLlmTranslation = YpLlmTranslation;

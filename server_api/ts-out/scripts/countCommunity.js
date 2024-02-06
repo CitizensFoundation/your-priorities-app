@@ -1,5 +1,4 @@
-"use strict";
-var models = require('../models');
+var models = require('../models/index.cjs');
 var async = require('async');
 var ip = require('ip');
 var _ = require('lodash');
@@ -290,3 +289,4 @@ async.parallel([
     }
     process.exit();
 });
+export {};

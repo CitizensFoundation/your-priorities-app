@@ -1,5 +1,4 @@
-"use strict";
-const models = require('../../models');
+const models = require('../../models/index.cjs');
 const moment = require('moment');
 const maxNumberFromPath = process.argv[2];
 const maxNumberOfGroupsToDelete = maxNumberFromPath ? maxNumberFromPath : 1000;
@@ -60,3 +59,4 @@ function sleep(ms) {
     console.log(allDeletions);
     process.exit();
 })();
+export {};

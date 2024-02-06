@@ -1,5 +1,4 @@
-"use strict";
-var models = require('../models');
+var models = require('../models/index.cjs');
 var async = require('async');
 models.Group.findOne({ where: { id: 752 } }).then(function (group) {
     group.counter_points = 0;
@@ -7,3 +6,4 @@ models.Group.findOne({ where: { id: 752 } }).then(function (group) {
         console.log("log");
     });
 });
+export {};

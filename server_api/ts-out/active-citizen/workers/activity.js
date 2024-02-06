@@ -1,8 +1,7 @@
-"use strict";
 // https://gist.github.com/mojodna/1251812
-const models = require("../../models");
-const log = require('../utils/logger');
-const toJson = require('../utils/to_json');
+const models = require("../../models/index.cjs");
+const log = require('../utils/logger.cjs');
+const toJson = require('../utils/to_json.cjs');
 const async = require('async');
 let airbrake = null;
 if (process.env.AIRBRAKE_PROJECT_ID) {
@@ -187,3 +186,4 @@ ActivityWorker.prototype.process = (activityJson, callback) => {
     });
 };
 module.exports = new ActivityWorker();
+export {};

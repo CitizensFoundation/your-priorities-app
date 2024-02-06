@@ -1,5 +1,4 @@
-"use strict";
-var models = require('../models');
+var models = require('../models/index.cjs');
 var async = require('async');
 var ip = require('ip');
 var userIdArg = process.argv[2];
@@ -70,3 +69,4 @@ getOrganizationAndUser(organizationIdArg, userIdArg, function (error, organizati
         process.exit();
     }
 });
+export {};

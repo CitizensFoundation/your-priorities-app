@@ -1,4 +1,4 @@
-const models = require('../models');
+const models = require('../models/index.cjs');
 
 const communityId = process.argv[2];
 const domainId = process.argv[3];

@@ -11,10 +11,10 @@
       "statusChangeSubject": "Lo stato del post è cambiato"
     },
     "email": {
-      "automaticToxicityDetection": "This content has been automatically flagged as toxic using AI algorithms that estimate the toxicity of the content. You can delete the content if needed.",
-      "automaticToxicityDetectionDisclaimer": "Sometimes the AI algorithm calculates a wrong score, in that case do not worry, you need to take no further action and can ignore this email.",
-      "automaticToxicityHowLikely": "How likely (%) to be toxic",
-      "automaticToxicityEnglishText": "English text used for score",
+      "automaticToxicityDetection": "Questo contenuto è stato automaticamente segnalato come tossico utilizzando algoritmi di intelligenza artificiale che stimano la tossicità del contenuto. Puoi eliminare il contenuto se necessario.",
+      "automaticToxicityDetectionDisclaimer": "A volte l'algoritmo di intelligenza artificiale calcola un punteggio errato, in tal caso non preoccuparti, non devi prendere ulteriori provvedimenti e puoi ignorare questa email.",
+      "automaticToxicityHowLikely": "Quanto è probabile (%) che sia tossico",
+      "automaticToxicityEnglishText": "Testo in inglese utilizzato per il punteggio",
       "newPointedAddedToThisIdea": "Una nuova posizione è stata aggiunta a questa proposta",
       "newPointedAddedToIdea": "Una nuova posizione è stata aggiunta alla tua proposta",
       "thisNewIdea": "Nuova proposta",
@@ -58,7 +58,13 @@
       "dear": "Ciao",
       "reset_password_1": "Questo è l'indirizzo per cambiare la tua password.",
       "reset_password_2": "Se non hai richiesto questo, per favore ignora questo messaggio.",
-      "reset_password_3": "La tua password non sarà cambiata finché non accederai all'indirizzo qui sopra e ne sceglierai una nuova."
+      "reset_password_3": "La tua password non sarà cambiata finché non accederai all'indirizzo qui sopra e ne sceglierai una nuova.",
+      "possibleFraudFooter": "Fai clic sul collegamento della comunità qui sotto, accedi come amministratore e seleziona Gestione delle frodi dal menu.",
+      "possibleFraudSubHeader": "Numero di possibili attività fraudolente con una stima del 75% di probabilità di frode",
+      "possibleFraudInformation": "Il nostro sistema automatizzato ha identificato una possibile attività fraudolenta. Puoi esaminarla più da vicino attraverso l'interfaccia dell'amministratore della comunità. Alcune di queste attività potrebbero avere motivi non fraudolenti, quindi fai attenzione ad indagare approfonditamente prima di eliminare i contenuti.",
+      "possibleFraudHeader": "Possibile attività fraudolenta",
+      "settings": "Impostazioni Email",
+      "automaticToxicityDetectionVision": "Un algoritmo di intelligenza artificiale ha automaticamente segnalato immagini visive connesse a questo contenuto. Questo algoritmo esamina le immagini per possibili immagini per adulti, violente, mediche e osé. Puoi eliminare il contenuto se necessario."
     }
   }
 }

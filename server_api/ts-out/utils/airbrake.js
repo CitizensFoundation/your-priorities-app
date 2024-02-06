@@ -1,4 +1,3 @@
-"use strict";
 if (process.env.AIRBRAKE_PROJECT_ID) {
     const Airbrake = require('@airbrake/node');
     let airBrake = null;
@@ -15,3 +14,4 @@ if (process.env.AIRBRAKE_PROJECT_ID) {
     }
     module.exports = airBrake;
 }
+export {};

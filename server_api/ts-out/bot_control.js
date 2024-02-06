@@ -1,4 +1,3 @@
-"use strict";
 const badBotsList = [
     /01h4x.com/,
     /360spider/,
@@ -1928,9 +1927,4 @@ const botsWithJavascript = (ua) => {
 const isCustomBot = (ua) => {
     return /^(facebookexternalhit)|(web\/snippet)|(Twitterbot)|(Slackbot)|(Embedly)|(LinkedInBot)|(Pinterest)|(XING-contenttabreceiver)/gi.test(ua);
 };
-module.exports = {
-    robotsTxt,
-    botsWithJavascript,
-    isCustomBot,
-    isBadBot,
-};
+export { robotsTxt, botsWithJavascript, isCustomBot, isBadBot, };

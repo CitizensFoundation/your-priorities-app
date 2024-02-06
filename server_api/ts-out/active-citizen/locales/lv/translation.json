@@ -45,7 +45,26 @@
       "dear": "Sveiki",
       "reset_password_1": "Šeit ir saite, lai nomainītu paroli.",
       "reset_password_2": "Ja neesi to pieprasījis, lūdzu, ignorē šo e-pastu.",
-      "reset_password_3": "Tava parole nemainīsies, kamēr neizmantosi iepriekš norādīto saiti un neizveidosi jaunu paroli."
+      "reset_password_3": "Tava parole nemainīsies, kamēr neizmantosi iepriekš norādīto saiti un neizveidosi jaunu paroli.",
+      "possibleFraudFooter": "Noklikšķiniet uz zemāk esošās kopienas saites, pieteicieties kā administrators un izvēlieties Krāpšanas pārvaldību no izvēlnes.",
+      "possibleFraudSubHeader": "Iespējamo krāpniecisko darbību skaits ar aptuveni 75% krāpšanas iespējamību",
+      "possibleFraudInformation": "Mūsu automatizētā sistēma ir identificējusi iespējamu krāpniecisku darbību. Jūs varat tuvāk aplūkot caur Kopienas admina interfeisu. Dažas no šīm darbībām var būt nekrāpnieciskas, tāpēc esiet uzmanīgi, pirms dzēšat saturu, rūpīgi izmeklējiet.",
+      "possibleFraudHeader": "Iespējama krāpnieciska darbība",
+      "automaticToxicityDetection": "Šis saturs ir automātiski atzīmēts kā toksisks, izmantojot mākslīgā intelekta algoritmus, kas novērtē satura toksicitāti. Ja nepieciešams, jūs varat dzēst saturu.",
+      "automaticToxicityDetectionVision": "Mākslīgā intelekta algoritms automātiski ir atzīmējis vizuālo attēlojumu, kas saistīts ar šo saturu. Šis algoritms pārbauda attēlus iespējamai pieaugušo, vardarbības, medicīniskai un erotiskai attēlojumam. Ja nepieciešams, jūs varat dzēst saturu.",
+      "automaticToxicityDetectionDisclaimer": "Dažreiz mākslīgā intelekta algoritms aprēķina nepareizu rezultātu, šādā gadījumā neuztraucieties, jums nav jāveic tālākas darbības un varat ignorēt šo e-pastu.",
+      "automaticToxicityHowLikely": "Cik liela varbūtība (%) būt toksiskam",
+      "automaticToxicityEnglishText": "Angļu teksts, kas izmantots vērtējumam"
+    },
+    "contentToBeAnonymized": "Jūsu saturs tiks anonimizēts 7 dienu laikā",
+    "communityContentToBeAnonymized": "Visi jūsu saturs šajā kopienā tiks anonimizēts un arhivēts 7 dienu laikā, pēc tam jūs nevarēsiet to dzēst vai mainīt. Skatiet savu saturu zemāk.",
+    "groupContentToBeAnonymized": "Visi jūsu saturs šajā grupā tiks anonimizēts un arhivēts 7 dienu laikā, pēc tam jūs nevarēsiet to dzēst vai mainīt. Skatiet savu saturu zemāk.",
+    "post": {
+      "statusChangeSubject": "Ieraksta statuss mainīts"
     }
-  }
+  },
+  "yourPosts": "Jūsu ieraksti",
+  "yourPoints": "Jūsu punkti",
+  "yourGroupPoints": "Jūsu grupas punkti",
+  "yourCommunityPoints": "Jūsu kopienas punkti"
 }

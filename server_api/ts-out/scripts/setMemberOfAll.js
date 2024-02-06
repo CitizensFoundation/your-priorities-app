@@ -1,5 +1,4 @@
-"use strict";
-var models = require('../models');
+var models = require('../models/index.cjs');
 var async = require('async');
 var ip = require('ip');
 var userEmail = process.argv[2];
@@ -100,3 +99,4 @@ async.series([
     console.log("Finished");
     process.exit();
 });
+export {};

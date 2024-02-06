@@ -1,5 +1,4 @@
-"use strict";
-const models = require('../models');
+const models = require('../models/index.cjs');
 const async = require('async');
 const ip = require('ip');
 const postId = process.argv[2];
@@ -133,4 +132,5 @@ async.series([
         console.log(`Done undeleting post ${postId}`);
     process.exit();
 });
+export {};
 //TODO: Seperate recount group from endorsements

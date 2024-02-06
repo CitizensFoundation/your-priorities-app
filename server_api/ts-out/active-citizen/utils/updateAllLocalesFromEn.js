@@ -1,44 +1,28 @@
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.YpLocaleTranslation = void 0;
-const jsonrepair_1 = require("jsonrepair");
-const openai_1 = require("openai");
-const fs = __importStar(require("fs"));
-const path = __importStar(require("path"));
-const util_1 = require("util");
-const ypLanguages_js_1 = require("../../utils/ypLanguages.js");
-const readFilePromise = (0, util_1.promisify)(fs.readFile);
-const writeFilePromise = (0, util_1.promisify)(fs.writeFile);
-class YpLocaleTranslation {
-    openaiClient;
-    modelName = "gpt-4-0125-preview";
-    maxTokens = 4000;
-    temperature = 0.0;
+import { jsonrepair } from "jsonrepair";
+import { OpenAI } from "openai";
+import * as fs from "fs";
+import * as path from "path";
+import { promisify } from "util";
+import { YpLanguages } from "../../utils/ypLanguages.js";
+const readFilePromise = promisify(fs.readFile);
+const writeFilePromise = promisify(fs.writeFile);
+export class YpLocaleTranslation {
     constructor() {
-        this.openaiClient = new openai_1.OpenAI({
+        this.modelName = "gpt-4-0125-preview";
+        this.maxTokens = 4000;
+        this.temperature = 0.0;
+        this.excludeKeysFromTranslation = [
+            "facebook",
+            "twitter",
+            "linkedin",
+            "adwords",
+            "snapchat",
+            "instagram",
+            "youtube",
+            "tiktok",
+            "allOurIdeas"
+        ];
+        this.openaiClient = new OpenAI({
             apiKey: process.env.OPENAI_API_KEY,
         });
     }
@@ -123,17 +107,6 @@ class YpLocaleTranslation {
         updateRecursively(baseTranslation, updatedTranslation, []);
         return updatedTranslation;
     }
-    excludeKeysFromTranslation = [
-        "facebook",
-        "twitter",
-        "linkedin",
-        "adwords",
-        "snapchat",
-        "instagram",
-        "youtube",
-        "tiktok",
-        "allOurIdeas"
-    ];
     extractMissingTranslations(baseTranslation, targetTranslation) {
         const missingTranslations = [];
         const findMissing = (base, target, path = []) => {
@@ -202,7 +175,7 @@ Your ${language} website backend texts JSON output:`;
     async translateUITexts(languageIsoCode, textsToTranslate) {
         try {
             console.log(`translateTexts: ${JSON.stringify(textsToTranslate)} ${languageIsoCode}`);
-            const languageName = ypLanguages_js_1.YpLanguages.getEnglishName(languageIsoCode) ||
+            const languageName = YpLanguages.getEnglishName(languageIsoCode) ||
                 languageIsoCode;
             console.log("LANGUAGE NAME:", languageName);
             return await this.callLlm(languageName, textsToTranslate);
@@ -246,7 +219,7 @@ Your ${language} website backend texts JSON output:`;
                     }
                     let translationData = [];
                     try {
-                        translationData = JSON.parse((0, jsonrepair_1.jsonrepair)(cleanText));
+                        translationData = JSON.parse(jsonrepair(cleanText));
                         console.log("Parsed Translation Data:", translationData);
                     }
                     catch (error) {
@@ -274,7 +247,6 @@ Your ${language} website backend texts JSON output:`;
         return undefined;
     }
 }
-exports.YpLocaleTranslation = YpLocaleTranslation;
 (async () => {
     const translator = new YpLocaleTranslation();
     await translator.loadAndCompareTranslations();

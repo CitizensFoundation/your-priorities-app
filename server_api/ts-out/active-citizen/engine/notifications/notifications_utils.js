@@ -1,5 +1,4 @@
-"use strict";
-const models = require("../../../models");
+const models = require("../../../models/index.cjs");
 const async = require('async');
 const _ = require('lodash');
 const getModelAndUsersByType = (model, userType, id, notification_setting_type, callback) => {
@@ -146,3 +145,4 @@ module.exports = {
     addNotificationsForUsers: addNotificationsForUsers,
     addOrPossiblyGroupNotification: addOrPossiblyGroupNotification
 };
+export {};

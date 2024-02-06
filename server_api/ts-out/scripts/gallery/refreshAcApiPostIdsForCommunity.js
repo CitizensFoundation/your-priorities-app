@@ -1,6 +1,5 @@
-"use strict";
-const queue = require('../../active-citizen/workers/queue');
-const models = require("../../models");
+const queue = require('../../active-citizen/workers/queue.cjs');
+const models = require("../../models/index.cjs");
 (async () => {
     console.log("Start");
     let offset = 0;
@@ -56,3 +55,4 @@ const models = require("../../models");
     }
     console.log(`Done. Processed ${count} posts.`);
 })();
+export {};

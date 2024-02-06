@@ -104,3 +104,4 @@ Perspective.TextEmptyError = TextEmptyError;
 Perspective.TextTooLongError = TextTooLongError;
 Perspective.ResponseError = ResponseError;
 module.exports = Perspective;
+export {};

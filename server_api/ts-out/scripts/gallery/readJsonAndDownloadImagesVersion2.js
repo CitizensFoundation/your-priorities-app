@@ -1,4 +1,3 @@
-"use strict";
 // Read path to json and image folder from the command line
 // Read json file and download images
 // Usage: node readJsonAndDownloadImages.js <path to json file> <path to image folder>
@@ -53,3 +52,4 @@ async function download(url, imageName) {
         });
     });
 }
+export {};

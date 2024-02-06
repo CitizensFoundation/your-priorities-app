@@ -1,5 +1,4 @@
-"use strict";
-const models = require('../../models');
+const models = require('../../models/index.cjs');
 const copyCommunityWithEverything = require('../../utils/copy_utils').copyCommunityWithEverything;
 const async = require('async');
 const ip = require('ip');
@@ -16,3 +15,4 @@ copyCommunityWithEverything(communityId, domainId, {}, (error) => {
     }
     process.exit();
 });
+export {};

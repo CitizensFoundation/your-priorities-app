@@ -1,11 +1,10 @@
-"use strict";
 var models = require('../../../models/index');
 var async = require('async');
 var _ = require('lodash');
 const moment = require('moment');
 const skipEmail = false;
 const aws = require('aws-sdk');
-const log = require('../../utils/logger');
+const log = require('../../utils/logger.cjs');
 const request = require('request');
 const fs = require('fs');
 const downloadImage = (uri, filename, callback) => {
@@ -737,3 +736,4 @@ module.exports = {
     getImageFromUrl,
     getPointMediaUrls
 };
+export {};

@@ -1,5 +1,4 @@
-"use strict";
-const models = require('../../models');
+const models = require('../../models/index.cjs');
 const async = require('async');
 const ip = require('ip');
 const _ = require('lodash');
@@ -204,3 +203,4 @@ async.series([
     console.log(finalOutput);
     process.exit();
 });
+export {};

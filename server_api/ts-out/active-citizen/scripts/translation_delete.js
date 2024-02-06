@@ -1,5 +1,4 @@
-"use strict";
-const models = require('../../models');
+const models = require('../../models/index.cjs');
 const _ = require('lodash');
 const indexKey = process.argv[2];
 const textToReplace = process.argv[3];
@@ -25,3 +24,4 @@ models.AcTranslationCache.findOne({
     console.error(error);
     process.exit();
 });
+export {};

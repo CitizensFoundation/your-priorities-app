@@ -1,15 +1,10 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.AiHelper = void 0;
-const openai_1 = require("openai");
-class AiHelper {
-    openaiClient;
-    wsClientSocket;
-    modelName = "gpt-4-0125-preview";
-    maxTokens = 2048;
-    temperature = 0.7;
+import { OpenAI } from "openai";
+export class AiHelper {
     constructor(wsClientSocket = undefined) {
-        this.openaiClient = new openai_1.OpenAI({
+        this.modelName = "gpt-4-0125-preview";
+        this.maxTokens = 2048;
+        this.temperature = 0.7;
+        this.openaiClient = new OpenAI({
             apiKey: process.env.OPENAI_API_KEY,
         });
         this.wsClientSocket = wsClientSocket;
@@ -149,4 +144,3 @@ class AiHelper {
         }
     }
 }
-exports.AiHelper = AiHelper;

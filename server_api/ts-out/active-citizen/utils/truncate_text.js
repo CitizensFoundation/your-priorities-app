@@ -1,4 +1,3 @@
-"use strict";
 module.exports = (input, length, killwords, end) => {
     var orig = input;
     length = length || 255;
@@ -17,3 +16,4 @@ module.exports = (input, length, killwords, end) => {
     input += (end !== undefined && end !== null) ? end : '...';
     return input;
 };
+export {};

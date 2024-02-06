@@ -1,6 +1,10 @@
 import { createClient } from "redis";
 import WebSocket, { WebSocketServer } from "ws";
-import models from "../models/index.js";
+//import models from "../models/index.js";
+import models from "../models/index.cjs";
+
+import auth from "../authorization.cjs";
+
 import { v4 as uuidv4 } from "uuid";
 import express, { Request, Response } from "express";
 import crypto from "crypto";
@@ -24,7 +28,7 @@ const defaultHeader = {
   ...defaultAuthHeader,
 };
 
-import auth from "../authorization.js";
+//import auth from "../authorization.js";
 import { AiHelper } from "../active-citizen/engine/allOurIdeas/aiHelper.js";
 import { ExplainAnswersAssistant } from "../active-citizen/engine/allOurIdeas/explainAnswersAssistant.js";
 import OpenAI from "openai";

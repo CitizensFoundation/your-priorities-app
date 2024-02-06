@@ -7,39 +7,39 @@ import connectRedis from "connect-redis";
 import useragent from "express-useragent";
 import requestIp from "request-ip";
 import compression from "compression";
-import isBot from "isbot";
+import * as isBot from "isbot";
 import redis from "redis";
 import rateLimit from "express-rate-limit";
 import { RedisStore as RedisLimitStore } from "rate-limit-redis";
 import passport from "passport";
-import models from "./models";
-import auth from "./authorization";
-import index from "./controllers/index";
-import news_feeds from "./active-citizen/controllers/news_feeds";
-import activities from "./active-citizen/controllers/activities";
-import notifications from "./active-citizen/controllers/notifications";
-import recommendations from "./active-citizen/controllers/recommendations";
-import posts from "./controllers/posts";
-import groups from "./controllers/groups";
-import communities from "./controllers/communities";
-import domains from "./controllers/domains";
-import organizations from "./controllers/organizations";
-import points from "./controllers/points";
-import users from "./controllers/users";
-import categories from "./controllers/categories";
-import images from "./controllers/images";
-import externalIds from "./controllers/externalIds";
-import ratings from "./controllers/ratings";
-import bulkStatusUpdates from "./controllers/bulkStatusUpdates";
-import videos from "./controllers/videos";
-import audios from "./controllers/audios";
-import legacyPosts from "./controllers/legacyPosts";
-import legacyUsers from "./controllers/legacyUsers";
-import legacyPages from "./controllers/legacyPages";
-import nonSPArouter from "./controllers/nonSpa";
-import generateSitemap from "./utils/sitemap_generator";
-import generateManifest from "./utils/manifest_generator";
-import toJson from "./utils/to_json";
+import models from "./models/index.cjs";
+import auth from "./authorization.cjs";
+import index from "./controllers/index.cjs";
+import news_feeds from "./active-citizen/controllers/news_feeds.cjs";
+import activities from "./active-citizen/controllers/activities.cjs";
+import notifications from "./active-citizen/controllers/notifications.cjs";
+import recommendations from "./active-citizen/controllers/recommendations.cjs";
+import posts from "./controllers/posts.cjs";
+import groups from "./controllers/groups.cjs";
+import communities from "./controllers/communities.cjs";
+import domains from "./controllers/domains.cjs";
+import organizations from "./controllers/organizations.cjs";
+import points from "./controllers/points.cjs";
+import users from "./controllers/users.cjs";
+import categories from "./controllers/categories.cjs";
+import images from "./controllers/images.cjs";
+import externalIds from "./controllers/externalIds.cjs";
+import ratings from "./controllers/ratings.cjs";
+import bulkStatusUpdates from "./controllers/bulkStatusUpdates.cjs";
+import videos from "./controllers/videos.cjs";
+import audios from "./controllers/audios.cjs";
+import legacyPosts from "./controllers/legacyPosts.cjs";
+import legacyUsers from "./controllers/legacyUsers.cjs";
+import legacyPages from "./controllers/legacyPages.cjs";
+import nonSPArouter from "./controllers/nonSpa.cjs";
+import generateSitemap from "./utils/sitemap_generator.cjs";
+import generateManifest from "./utils/manifest_generator.cjs";
+import toJson from "./utils/to_json.cjs";
 //@ts-ignore
 import sso from "passport-sso";
 import cors from "cors";
@@ -48,6 +48,9 @@ import log from "./utils/loggerTs.js";
 import { createClient } from "redis";
 
 import { Notifier } from "@airbrake/node";
+import { fileURLToPath } from 'url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 let airbrake: any;
 
@@ -98,7 +101,7 @@ import {
   botsWithJavascript,
   isBadBot,
   isCustomBot,
-} from "./bot_control";
+} from "./bot_control.js";
 import WebSocket, { WebSocketServer } from "ws";
 import { v4 as uuidv4 } from "uuid";
 

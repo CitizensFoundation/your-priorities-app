@@ -1,5 +1,4 @@
-"use strict";
-const models = require('../../models');
+const models = require('../../models/index.cjs');
 const moment = require('moment');
 const maxNumberFromPath = process.argv[2];
 const maxNumberOfNotificationsToDelete = maxNumberFromPath ? maxNumberFromPath : 1000;
@@ -89,3 +88,4 @@ const chunk = (arr, size) => Array.from({ length: Math.ceil(arr.length / size) }
     console.log(`Duration ${moment(moment() - startTime).format("HH:mm:ss.SSS")}`);
     process.exit();
 })();
+export {};

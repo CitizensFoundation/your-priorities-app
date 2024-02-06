@@ -58,7 +58,13 @@
       "dear": "Pozdrav,",
       "reset_password_1": "Evo poveznice za promjenu Vaše lozinke",
       "reset_password_2": "Ukoliko niste zatražili ovaj e-mail, molimo Vaš da ga zanemarite.",
-      "reset_password_3": "Vaša lozinka neće se promijeniti sve dok ne kliknete na poveznicu iznad te upišete novu lozinku."
+      "reset_password_3": "Vaša lozinka neće se promijeniti sve dok ne kliknete na poveznicu iznad te upišete novu lozinku.",
+      "possibleFraudFooter": "Kliknite na donji link zajednice, prijavite se kao admin i odaberite Upravljanje prijevarama iz izbornika.",
+      "possibleFraudSubHeader": "Broj mogućih prijevarnih aktivnosti s procijenjenom 75% šansom za prijevaru",
+      "possibleFraudInformation": "Naš automatizirani sustav je identificirao moguću prijevarnu aktivnost. Možete detaljnije pogledati kroz sučelje za administraciju zajednice. Neke od ovih aktivnosti mogu imati ne-prijevarne razloge pa budite oprezni i temeljito istražite prije brisanja sadržaja.",
+      "possibleFraudHeader": "Moguća prijevarna aktivnost",
+      "settings": "Postavke e-pošte",
+      "automaticToxicityDetectionVision": "Algoritam umjetne inteligencije automatski je označio vizualne slike povezane s ovim sadržajem. Ovaj algoritam pregledava slike za moguće sadržaje za odrasle, nasilne, medicinske i provokativne slike. Sadržaj možete izbrisati ako je potrebno."
     }
   }
 }

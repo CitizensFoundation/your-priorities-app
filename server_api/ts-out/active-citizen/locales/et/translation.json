@@ -1,15 +1,5 @@
 {
-  "yourPosts": "Your posts",
-  "yourPoints": "Your points",
-  "yourGroupPoints": "Your group points",
-  "yourCommunityPoints": "Your community points",
   "notification": {
-    "contentToBeAnonymized": "Your content will be anonymized in 7 days for",
-    "communityContentToBeAnonymized": "All your content in this community will be anonymized and archived in 7 days, after that you will not be able to delete it or change it. See your content below.",
-    "groupContentToBeAnonymized": "All your content in this group will be anonymized and archived in 7 days, after that you will not be able to delete it or change it. See your content below.",
-    "post": {
-      "statusChangeSubject": "Status of post changed"
-    },
     "email": {
       "settings": "Meiliseaded",
       "newPointedAddedToThisIdea": "Sellele ideele lisati uus punkt",
@@ -55,11 +45,26 @@
       "dear": "Tere!",
       "reset_password_1": "Siin on link salasõna muutmiseks.",
       "reset_password_2": "Kui te seda ei taotlenud, jätke meilisõnum tähelepanuta.",
-      "reset_password_3": "Your password won't change until you access the link above and create a new one.",
-      "automaticToxicityDetection": "This content has been automatically flagged as toxic using AI algorithms that estimate the toxicity of the content. You can delete the content if needed.",
-      "automaticToxicityDetectionDisclaimer": "Sometimes the AI algorithm calculates a wrong score, in that case do not worry, you need to take no further action and can ignore this email.",
-      "automaticToxicityHowLikely": "How likely (%) to be toxic",
-      "automaticToxicityEnglishText": "English text used for score"
+      "possibleFraudFooter": "Klõpsake allpool olevat kogukonna linki, logige sisse administraatorina ja valige menüüst Pettuse haldamine.",
+      "possibleFraudSubHeader": "Võimalike pettuste arv hinnangulise 75% tõenäosusega",
+      "possibleFraudInformation": "Meie automatiseeritud süsteem on tuvastanud võimaliku pettustegevuse. Võite seda lähemalt uurida kogukonna administraatori liideses. Mõnel juhul võib see tegevus olla mittepettuslik, seega uurige enne sisu kustutamist hoolikalt.",
+      "possibleFraudHeader": "Võimalik pettustegevus",
+      "automaticToxicityDetection": "See sisu on automaatselt märgistatud toksiliseks, kasutades AI algoritme, mis hindavad sisu toksilisust. Vajadusel võite sisu kustutada.",
+      "automaticToxicityDetectionVision": "AI algoritm on automaatselt märgistanud selle sisuga seotud visuaalseid pilte. See algoritm vaatab läbi pildid võimaliku täiskasvanutele mõeldud, vägivaldse, meditsiinilise ja rõveda kujutise osas. Vajadusel võite sisu kustutada.",
+      "automaticToxicityDetectionDisclaimer": "Mõnikord arvutab AI algoritm vale skoori, sel juhul ärge muretsege, te ei pea midagi ette võtma ja võite selle e-kirja ignoreerida.",
+      "automaticToxicityHowLikely": "Kui tõenäoline (%) on toksiline",
+      "automaticToxicityEnglishText": "Inglise teksti kasutatakse skoori jaoks",
+      "reset_password_3": "Teie parool ei muutu enne, kui pääsete ülaltoodud lingile juurde ja loote uue."
+    },
+    "contentToBeAnonymized": "Teie sisu anonüümistatakse 7 päeva pärast",
+    "communityContentToBeAnonymized": "Kogu teie sisu selles kogukonnas anonüümistatakse ja arhiveeritakse 7 päeva pärast, pärast seda ei saa te seda kustutada ega muuta. Vaadake oma sisu allpool.",
+    "groupContentToBeAnonymized": "Kogu teie sisu selles grupis anonüümistatakse ja arhiveeritakse 7 päeva pärast, pärast seda ei saa te seda kustutada ega muuta. Vaadake oma sisu allpool.",
+    "post": {
+      "statusChangeSubject": "Postituse staatus muudetud"
     }
-  }
+  },
+  "yourPosts": "Teie postitused",
+  "yourPoints": "Teie punktid",
+  "yourGroupPoints": "Teie grupi punktid",
+  "yourCommunityPoints": "Teie kogukonna punktid"
 }

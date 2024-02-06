@@ -1,4 +1,4 @@
-var models = require('../models');
+var models = require('../models/index.cjs');
 var async = require('async');
 
 let groupChangeCount = 0;

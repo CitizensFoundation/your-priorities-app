@@ -11,7 +11,7 @@ import "@material/web/button/outlined-button.js";
 import "@material/web/icon/icon.js";
 import "@material/web/iconbutton/outlined-icon-button.js";
 import "@material/web/progress/linear-progress.js";
-import "./yp-language-selector.js";
+import "../common/languages/yp-language-selector.js";
 import { YpNavHelpers } from "../common/YpNavHelpers.js";
 let YpAppNavDrawer = class YpAppNavDrawer extends YpBaseElement {
     constructor() {

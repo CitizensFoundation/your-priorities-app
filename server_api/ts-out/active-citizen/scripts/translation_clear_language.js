@@ -1,5 +1,4 @@
-"use strict";
-const models = require('../../models');
+const models = require('../../models/index.cjs');
 const _ = require('lodash');
 const objectType = process.argv[2];
 const objectId = process.argv[3];
@@ -115,3 +114,4 @@ else {
     console.log("No object type selected");
     process.exit();
 }
+export {};

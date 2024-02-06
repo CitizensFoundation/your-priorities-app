@@ -1,5 +1,4 @@
-"use strict";
-var models = require('../models');
+var models = require('../models/index.cjs');
 var async = require('async');
 var ip = require('ip');
 var communityId = process.argv[2];
@@ -23,3 +22,4 @@ models.Community.findOne({
         process.exit();
     });
 });
+export {};

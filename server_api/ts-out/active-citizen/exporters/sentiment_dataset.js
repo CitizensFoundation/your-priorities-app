@@ -1,5 +1,4 @@
-"use strict";
-var models = require('../../models');
+var models = require('../../models/index.cjs');
 var async = require('async');
 var ip = require('ip');
 var fs = require('fs');
@@ -156,3 +155,4 @@ async.series([
 ], function (error) {
     console.log("FINISHED :)");
 });
+export {};

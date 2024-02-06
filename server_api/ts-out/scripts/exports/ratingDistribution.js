@@ -1,5 +1,4 @@
-"use strict";
-var models = require('../../models');
+var models = require('../../models/index.cjs');
 var async = require('async');
 var ip = require('ip');
 var _ = require('lodash');
@@ -70,3 +69,4 @@ models.Rating.findAll({
     console.log(`"4+",${countRatings(4, 5, ratings)}`);
     process.exit();
 });
+export {};

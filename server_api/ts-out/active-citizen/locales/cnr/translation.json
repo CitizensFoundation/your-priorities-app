@@ -1,20 +1,6 @@
 {
-  "yourPosts": "Your posts",
-  "yourPoints": "Your points",
-  "yourGroupPoints": "Your group points",
-  "yourCommunityPoints": "Your community points",
   "notification": {
-    "contentToBeAnonymized": "Your content will be anonymized in 7 days for",
-    "communityContentToBeAnonymized": "All your content in this community will be anonymized and archived in 7 days, after that you will not be able to delete it or change it. See your content below.",
-    "groupContentToBeAnonymized": "All your content in this group will be anonymized and archived in 7 days, after that you will not be able to delete it or change it. See your content below.",
-    "post": {
-      "statusChangeSubject": "Status of post changed"
-    },
     "email": {
-      "automaticToxicityDetection": "This content has been automatically flagged as toxic using AI algorithms that estimate the toxicity of the content. You can delete the content if needed.",
-      "automaticToxicityDetectionDisclaimer": "Sometimes the AI algorithm calculates a wrong score, in that case do not worry, you need to take no further action and can ignore this email.",
-      "automaticToxicityHowLikely": "How likely (%) to be toxic",
-      "automaticToxicityEnglishText": "English text used for score",
       "newPointedAddedToThisIdea": "Novo mišljenje je dodato ovoj ideji",
       "newPointedAddedToIdea": "Novo mišljenje je dodato Vašoj ideji",
       "thisNewIdea": "Nova ideja",
@@ -58,7 +44,27 @@
       "dear": "Zdravo",
       "reset_password_1": "Ovo je link za promjenu Vaše lozinke.",
       "reset_password_2": "Ako niste tražili ovo, molim Vas ignorišite ovaj imajl.",
-      "reset_password_3": "Vaša lozinka neće biti promijenjena dok ne pristupite linku iznad i kreirate novu lozinku"
+      "reset_password_3": "Vaša lozinka neće biti promijenjena dok ne pristupite linku iznad i kreirate novu lozinku",
+      "possibleFraudFooter": "Kliknite na link zajednice ispod, prijavite se kao admin i izaberite Upravljanje prevarom iz menija.",
+      "possibleFraudSubHeader": "Broj mogućih prevarantskih aktivnosti sa procenjenom šansom od 75% za prevaru",
+      "possibleFraudInformation": "Naš automatizovani sistem je identifikovao moguću prevarantsku aktivnost. Možete detaljnije pogledati kroz interfejs admina zajednice. Neke od ovih aktivnosti mogu imati ne-prevarantske razloge pa budite oprezni da temeljno istražite pre brisanja sadržaja.",
+      "possibleFraudHeader": "Moguća prevarantska aktivnost",
+      "settings": "Podešavanja e-pošte",
+      "automaticToxicityDetection": "Ovaj sadržaj je automatski označen kao toksičan koristeći AI algoritme koji procenjuju toksičnost sadržaja. Možete obrisati sadržaj ako je potrebno.",
+      "automaticToxicityDetectionVision": "AI algoritam je automatski označio vizuelne slike povezane sa ovim sadržajem. Ovaj algoritam pregleda slike za moguće sadržaje za odrasle, nasilne, medicinske i provokativne slike. Možete obrisati sadržaj ako je potrebno.",
+      "automaticToxicityDetectionDisclaimer": "Ponekad AI algoritam izračuna pogrešan rezultat, u tom slučaju ne brinite, ne morate preduzimati dalje akcije i možete ignorisati ovaj email.",
+      "automaticToxicityHowLikely": "Koliko je vjerovatno (%) da bude toksično",
+      "automaticToxicityEnglishText": "Engleski tekst korišten za rezultat"
+    },
+    "contentToBeAnonymized": "Vaš sadržaj će biti anonimizovan za 7 dana za",
+    "communityContentToBeAnonymized": "Sav vaš sadržaj u ovoj zajednici će biti anonimizovan i arhiviran za 7 dana, nakon toga nećete moći da ga obrišete ili promenite. Pogledajte vaš sadržaj ispod.",
+    "groupContentToBeAnonymized": "Sav vaš sadržaj u ovoj grupi će biti anonimizovan i arhiviran za 7 dana, nakon toga nećete moći da ga obrišete ili promenite. Pogledajte vaš sadržaj ispod.",
+    "post": {
+      "statusChangeSubject": "Status posta promenjen"
     }
-  }
+  },
+  "yourPosts": "Vaši postovi",
+  "yourPoints": "Vaši poeni",
+  "yourGroupPoints": "Poena vaše grupe",
+  "yourCommunityPoints": "Poena vaše zajednice"
 }

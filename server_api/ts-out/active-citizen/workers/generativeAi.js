@@ -1,28 +1,24 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const openai_1 = require("openai");
-const axios_1 = __importDefault(require("axios"));
-const aws_sdk_1 = __importDefault(require("aws-sdk"));
-const fs_1 = __importDefault(require("fs"));
-const path_1 = __importDefault(require("path"));
-const uuid_1 = require("uuid");
-const index_js_1 = __importDefault(require("../../models/index.js"));
-const openai_2 = require("@azure/openai");
-const dbModels = index_js_1.default;
+import { OpenAI } from "openai";
+import axios from "axios";
+import AWS from "aws-sdk";
+import fs from "fs";
+import path from "path";
+import { v4 as uuidv4 } from "uuid";
+const models = require("../../models/index.js");
+import { OpenAIClient, AzureKeyCredential, } from "@azure/openai";
+const image = require("../../models/image.js");
+const dbModels = models;
 const Image = dbModels.Image;
 const AcBackgroundJob = dbModels.AcBackgroundJob;
 const maxDalleRetryCount = 3;
 class GenerativeAiWorker {
     async downloadImage(imageUrl, imageFilePath) {
-        const response = await (0, axios_1.default)({
+        const response = await axios({
             method: "GET",
             url: imageUrl,
             responseType: "stream",
         });
-        const writer = fs_1.default.createWriteStream(imageFilePath);
+        const writer = fs.createWriteStream(imageFilePath);
         response.data.pipe(writer);
         return new Promise((resolve, reject) => {
             writer.on("finish", resolve);
@@ -30,8 +26,8 @@ class GenerativeAiWorker {
         });
     }
     async uploadImageToS3(bucket, filePath, key) {
-        const s3 = new aws_sdk_1.default.S3();
-        const fileContent = fs_1.default.readFileSync(filePath);
+        const s3 = new AWS.S3();
+        const fileContent = fs.readFileSync(filePath);
         const params = {
             Bucket: bucket,
             Key: key,
@@ -45,7 +41,7 @@ class GenerativeAiWorker {
                 if (err) {
                     reject(err);
                 }
-                fs_1.default.unlinkSync(filePath); // Deleting file from local storage
+                fs.unlinkSync(filePath); // Deleting file from local storage
                 //console.log(`Upload response: ${JSON.stringify(data)}`);
                 resolve(data);
             });
@@ -56,10 +52,10 @@ class GenerativeAiWorker {
         const azureOpenAiApiKey = process.env["AZURE_OPENAI_API_KEY"];
         let client;
         if (azureOpenAiApiKey && azureOpenaAiBase) {
-            client = new openai_2.OpenAIClient(azureOpenaAiBase, new openai_2.AzureKeyCredential(azureOpenAiApiKey));
+            client = new OpenAIClient(azureOpenaAiBase, new AzureKeyCredential(azureOpenAiApiKey));
         }
         else {
-            client = new openai_1.OpenAI({
+            client = new OpenAI({
                 apiKey: process.env["OPENAI_API_KEY"],
             });
         }
@@ -134,13 +130,13 @@ class GenerativeAiWorker {
     async createCollectionImage(workPackage) {
         return new Promise(async (resolve, reject) => {
             let newImageUrl;
-            const imageFilePath = path_1.default.join("/tmp", `${(0, uuid_1.v4)()}.png`);
-            const s3ImagePath = `ypGenAi/${workPackage.collectionType}/${workPackage.collectionId}/${(0, uuid_1.v4)()}.png`;
+            const imageFilePath = path.join("/tmp", `${uuidv4()}.png`);
+            const s3ImagePath = `ypGenAi/${workPackage.collectionType}/${workPackage.collectionId}/${uuidv4()}.png`;
             try {
                 const imageUrl = await this.getImageUrlFromPrompt(workPackage.prompt, workPackage.imageType);
                 if (imageUrl) {
                     await this.downloadImage(imageUrl, imageFilePath);
-                    console.debug(fs_1.default.existsSync(imageFilePath)
+                    console.debug(fs.existsSync(imageFilePath)
                         ? "File downloaded successfully."
                         : "File download failed.");
                     await this.uploadImageToS3(process.env.S3_BUCKET, imageFilePath, s3ImagePath);

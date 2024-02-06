@@ -1,5 +1,4 @@
-"use strict";
-var models = require('../models');
+var models = require('../models/index.cjs');
 var async = require('async');
 var ip = require('ip');
 console.log("Fixing Notifications Settings");
@@ -38,3 +37,4 @@ async.whilst(function () { return loopyloop; }, function (whilstCallback) {
     });
 }, function (err, n) {
 });
+export {};

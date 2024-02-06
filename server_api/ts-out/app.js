@@ -1,81 +1,54 @@
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.YourPrioritiesApi = void 0;
-const express_1 = __importDefault(require("express"));
-const express_session_1 = __importDefault(require("express-session"));
-const path_1 = __importDefault(require("path"));
-const morgan_1 = __importDefault(require("morgan"));
-const body_parser_1 = __importDefault(require("body-parser"));
-const connect_redis_1 = __importDefault(require("connect-redis"));
-const express_useragent_1 = __importDefault(require("express-useragent"));
-const request_ip_1 = __importDefault(require("request-ip"));
-const compression_1 = __importDefault(require("compression"));
-const isbot_1 = __importDefault(require("isbot"));
-const express_rate_limit_1 = __importDefault(require("express-rate-limit"));
-const passport_1 = __importDefault(require("passport"));
-const models_1 = __importDefault(require("./models"));
-const authorization_1 = __importDefault(require("./authorization"));
-const index_1 = __importDefault(require("./controllers/index"));
-const news_feeds_1 = __importDefault(require("./active-citizen/controllers/news_feeds"));
-const activities_1 = __importDefault(require("./active-citizen/controllers/activities"));
-const notifications_1 = __importDefault(require("./active-citizen/controllers/notifications"));
-const recommendations_1 = __importDefault(require("./active-citizen/controllers/recommendations"));
-const posts_1 = __importDefault(require("./controllers/posts"));
-const groups_1 = __importDefault(require("./controllers/groups"));
-const communities_1 = __importDefault(require("./controllers/communities"));
-const domains_1 = __importDefault(require("./controllers/domains"));
-const organizations_1 = __importDefault(require("./controllers/organizations"));
-const points_1 = __importDefault(require("./controllers/points"));
-const users_1 = __importDefault(require("./controllers/users"));
-const categories_1 = __importDefault(require("./controllers/categories"));
-const images_1 = __importDefault(require("./controllers/images"));
-const externalIds_1 = __importDefault(require("./controllers/externalIds"));
-const ratings_1 = __importDefault(require("./controllers/ratings"));
-const bulkStatusUpdates_1 = __importDefault(require("./controllers/bulkStatusUpdates"));
-const videos_1 = __importDefault(require("./controllers/videos"));
-const audios_1 = __importDefault(require("./controllers/audios"));
-const legacyPosts_1 = __importDefault(require("./controllers/legacyPosts"));
-const legacyUsers_1 = __importDefault(require("./controllers/legacyUsers"));
-const legacyPages_1 = __importDefault(require("./controllers/legacyPages"));
-const nonSpa_1 = __importDefault(require("./controllers/nonSpa"));
-const sitemap_generator_1 = __importDefault(require("./utils/sitemap_generator"));
-const manifest_generator_1 = __importDefault(require("./utils/manifest_generator"));
-const to_json_1 = __importDefault(require("./utils/to_json"));
+import express from "express";
+import session from "express-session";
+import path from "path";
+import morgan from "morgan";
+import bodyParser from "body-parser";
+import connectRedis from "connect-redis";
+import useragent from "express-useragent";
+import requestIp from "request-ip";
+import compression from "compression";
+import * as isBot from "isbot";
+import rateLimit from "express-rate-limit";
+import passport from "passport";
+import models from "./models/index.cjs";
+import auth from "./authorization.cjs";
+import index from "./controllers/index.cjs";
+import news_feeds from "./active-citizen/controllers/news_feeds.cjs";
+import activities from "./active-citizen/controllers/activities.cjs";
+import notifications from "./active-citizen/controllers/notifications.cjs";
+import recommendations from "./active-citizen/controllers/recommendations.cjs";
+import posts from "./controllers/posts.cjs";
+import groups from "./controllers/groups.cjs";
+import communities from "./controllers/communities.cjs";
+import domains from "./controllers/domains.cjs";
+import organizations from "./controllers/organizations.cjs";
+import points from "./controllers/points.cjs";
+import users from "./controllers/users.cjs";
+import categories from "./controllers/categories.cjs";
+import images from "./controllers/images.cjs";
+import externalIds from "./controllers/externalIds.cjs";
+import ratings from "./controllers/ratings.cjs";
+import bulkStatusUpdates from "./controllers/bulkStatusUpdates.cjs";
+import videos from "./controllers/videos.cjs";
+import audios from "./controllers/audios.cjs";
+import legacyPosts from "./controllers/legacyPosts.cjs";
+import legacyUsers from "./controllers/legacyUsers.cjs";
+import legacyPages from "./controllers/legacyPages.cjs";
+import nonSPArouter from "./controllers/nonSpa.cjs";
+import generateSitemap from "./utils/sitemap_generator.cjs";
+import generateManifest from "./utils/manifest_generator.cjs";
+import toJson from "./utils/to_json.cjs";
 //@ts-ignore
-const passport_sso_1 = __importDefault(require("passport-sso"));
-const cors_1 = __importDefault(require("cors"));
-const loggerTs_js_1 = __importDefault(require("./utils/loggerTs.js"));
-const redis_1 = require("redis");
-const node_1 = require("@airbrake/node");
+import sso from "passport-sso";
+import cors from "cors";
+import log from "./utils/loggerTs.js";
+import { createClient } from "redis";
+import { Notifier } from "@airbrake/node";
+import { fileURLToPath } from 'url';
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 let airbrake;
 if (process.env.AIRBRAKE_PROJECT_ID && process.env.AIRBRAKE_API_KEY) {
-    airbrake = new node_1.Notifier({
+    airbrake = new Notifier({
         projectId: parseInt(process.env.AIRBRAKE_PROJECT_ID),
         projectKey: process.env.AIRBRAKE_API_KEY,
         performanceStats: false,
@@ -83,11 +56,11 @@ if (process.env.AIRBRAKE_PROJECT_ID && process.env.AIRBRAKE_API_KEY) {
 }
 process.on('uncaughtException', (err) => {
     console.error('There was an uncaught error', err);
-    loggerTs_js_1.default.error('There was an uncaught error', err);
+    log.error('There was an uncaught error', err);
     if (airbrake) {
         airbrake.notify(err).then((airbrakeErr) => {
             if (airbrakeErr.error) {
-                loggerTs_js_1.default.error('AirBrake Error', { context: 'airbrake', err: airbrakeErr.error, errorStatus: 500 });
+                log.error('AirBrake Error', { context: 'airbrake', err: airbrakeErr.error, errorStatus: 500 });
             }
         });
     }
@@ -96,15 +69,15 @@ process.on('uncaughtException', (err) => {
 });
 process.on('unhandledRejection', (reason, promise) => {
     console.error('Unhandled Rejection at:', promise, 'reason:', reason);
-    loggerTs_js_1.default.error('Unhandled Rejection at:', promise, 'reason:', reason);
+    log.error('Unhandled Rejection at:', promise, 'reason:', reason);
     if (reason.stack) {
         console.error(reason.stack);
-        loggerTs_js_1.default.error('Unhandled Rejection at:', promise, 'reason:', reason);
+        log.error('Unhandled Rejection at:', promise, 'reason:', reason);
     }
     if (airbrake) {
         airbrake.notify(reason).then((airbrakeErr) => {
             if (airbrakeErr.error) {
-                loggerTs_js_1.default.error('AirBrake Error', { context: 'airbrake', err: airbrakeErr.error, errorStatus: 500 });
+                log.error('AirBrake Error', { context: 'airbrake', err: airbrakeErr.error, errorStatus: 500 });
             }
         });
     }
@@ -113,9 +86,9 @@ process.on('unhandledRejection', (reason, promise) => {
         process.exit(1);
     }
 });
-const bot_control_1 = require("./bot_control");
-const ws_1 = require("ws");
-const uuid_1 = require("uuid");
+import { botsWithJavascript, isBadBot, } from "./bot_control.js";
+import { WebSocketServer } from "ws";
+import { v4 as uuidv4 } from "uuid";
 let redisClient;
 if (process.env.REDIS_URL) {
     let redisUrl = process.env.REDIS_URL;
@@ -123,33 +96,88 @@ if (process.env.REDIS_URL) {
         redisUrl = redisUrl.replace("redis://h:", "redis://:");
     }
     if (redisUrl.includes("rediss://")) {
-        redisClient = (0, redis_1.createClient)({
+        redisClient = createClient({
             legacyMode: true,
             url: redisUrl,
             socket: { tls: true, rejectUnauthorized: false },
         });
     }
     else {
-        redisClient = (0, redis_1.createClient)({ legacyMode: false, url: redisUrl });
+        redisClient = createClient({ legacyMode: false, url: redisUrl });
     }
 }
 else {
-    redisClient = (0, redis_1.createClient)({ legacyMode: false });
+    redisClient = createClient({ legacyMode: false });
 }
 redisClient.on("error", (err) => console.error("Redis client error", err));
 redisClient.on("connect", () => console.log("Redis client is connect"));
 redisClient.on("reconnecting", () => console.log("Redis client is reconnecting"));
 redisClient.on("ready", () => console.log("Redis client is ready"));
 redisClient.connect().catch(console.error);
-class YourPrioritiesApi {
-    app;
-    port;
-    httpServer;
-    ws;
-    redisClient;
-    wsClients;
+export class YourPrioritiesApi {
     constructor(port = undefined) {
-        this.app = (0, express_1.default)();
+        this.bearerCallback = function () {
+            return console.log("The user has tried to authenticate with a bearer token");
+        };
+        this.completeRegisterUserLogin = (user, // Replace 'any' with the actual user type
+        loginType, req, // Replace 'any' with 'YpRequest' if it's the correct type
+        done) => {
+            user.last_login_at = new Date().getTime(); // Assuming your database expects a timestamp
+            user
+                .save()
+                .then(() => {
+                models.AcActivity.createActivity({
+                    type: "activity.user.login",
+                    userId: user.id,
+                    domainId: req.ypDomain.id,
+                    communityId: req.ypCommunity ? req.ypCommunity.id : null,
+                    object: {
+                        loginType: loginType,
+                        userDepartment: user.private_profile_data
+                            ? user.private_profile_data.saml_agency
+                            : null,
+                        samlProvider: user.private_profile_data
+                            ? user.private_profile_data.saml_provider
+                            : null,
+                    },
+                    access: models.AcActivity.PRIVATE,
+                }, (error) => {
+                    if (error) {
+                        log.error("Error creating activity for user login", { error });
+                    }
+                    done();
+                });
+            })
+                .catch((error) => {
+                log.error("Error saving user for login registration", { error });
+                done();
+            });
+        };
+        this.registerUserLogin = (user, userId, loginProvider, req, done) => {
+            if (user && user.private_profile_data) {
+                this.completeRegisterUserLogin(user, loginProvider, req, done);
+            }
+            else {
+                models.User.findOne({
+                    where: { id: userId },
+                    attributes: ["id", "private_profile_data", "last_login_at"],
+                })
+                    .then((user) => {
+                    if (user) {
+                        this.completeRegisterUserLogin(user, loginProvider, req, done);
+                    }
+                    else {
+                        log.error("Did not find user for login registration", { userId });
+                        done();
+                    }
+                })
+                    .catch((error) => {
+                    log.error("Error saving user for login registration", { error });
+                    done();
+                });
+            }
+        };
+        this.app = express();
         this.port = port || (process.env.PORT ? parseInt(process.env.PORT) : 4242);
         this.wsClients = new Map();
         this.redisClient = redisClient;
@@ -171,10 +199,10 @@ class YourPrioritiesApi {
         this.app.use((req, res, next) => {
             if (this.redisClient && typeof this.redisClient.get === "function") {
                 req.redisClient = this.redisClient;
-                loggerTs_js_1.default.info("Have connected redis client to request");
+                log.info("Have connected redis client to request");
             }
             else {
-                loggerTs_js_1.default.error("Redis client get method not found or client not initialized");
+                log.error("Redis client get method not found or client not initialized");
             }
             next();
         });
@@ -219,13 +247,13 @@ class YourPrioritiesApi {
     }
     setupDomainAndCommunity() {
         this.app.use((req, res, next) => {
-            models_1.default.Domain.setYpDomain(req, res, () => {
-                loggerTs_js_1.default.info("Domain", {
+            models.Domain.setYpDomain(req, res, () => {
+                log.info("Domain", {
                     id: req.ypDomain ? req.ypDomain.id : "-1",
                     n: req.ypDomain ? req.ypDomain.domain_name : "?",
                 });
-                models_1.default.Community.setYpCommunity(req, res, () => {
-                    loggerTs_js_1.default.info("Community", {
+                models.Community.setYpCommunity(req, res, () => {
+                    log.info("Community", {
                         id: req.ypCommunity ? req.ypCommunity.id : null,
                         n: req.ypCommunity ? req.ypCommunity.hostname : null,
                     });
@@ -237,7 +265,7 @@ class YourPrioritiesApi {
     async initializeRateLimiting() {
         // Wait for one second
         await new Promise((resolve) => setTimeout(resolve, 1000));
-        const botRateLimiter = (0, express_rate_limit_1.default)({
+        const botRateLimiter = rateLimit({
             windowMs: process.env.RATE_LIMITER_WINDOW_MS
                 ? parseInt(process.env.RATE_LIMITER_WINDOW_MS, 10)
                 : 15 * 60 * 1000, // 15 minutes
@@ -250,17 +278,17 @@ class YourPrioritiesApi {
             if (req.headers["content-type"] !== "application/json" &&
                 req.originalUrl &&
                 !req.originalUrl.endsWith("/sitemap.xml")) {
-                const isBotBad = (0, bot_control_1.isBadBot)(ua.toLowerCase());
+                const isBotBad = isBadBot(ua.toLowerCase());
                 //TODO: CHECK THIS
                 //@ts-ignore
-                if (!(0, bot_control_1.botsWithJavascript)(ua) && ((0, isbot_1.default)(ua) || (0, bot_control_1.isBadBot)(ua))) {
+                if (!botsWithJavascript(ua) && (isBot(ua) || isBadBot(ua))) {
                     if (isBotBad) {
                         botRateLimiter(req, res, () => {
-                            (0, nonSpa_1.default)(req, res, next);
+                            nonSPArouter(req, res, next);
                         });
                     }
                     else {
-                        (0, nonSpa_1.default)(req, res, next);
+                        nonSPArouter(req, res, next);
                     }
                 }
                 else {
@@ -278,83 +306,80 @@ class YourPrioritiesApi {
                 const url = req.get("host") + req.originalUrl;
                 const redisKey = "cache:sitemapv14:" + url;
                 const sitemap = await req.redisClient.get(redisKey);
-                loggerTs_js_1.default.debug("GOT SITEMAPS!!!!" + sitemap);
+                log.debug("GOT SITEMAPS!!!!" + sitemap);
                 if (sitemap) {
                     res.header("Content-Type", "application/xml");
                     res.send(sitemap);
                 }
                 else {
-                    (0, sitemap_generator_1.default)(req, res);
+                    generateSitemap(req, res);
                 }
             }
             catch (error) {
-                loggerTs_js_1.default.error("Error getting sitemap from redis", { error });
-                (0, sitemap_generator_1.default)(req, res);
+                log.error("Error getting sitemap from redis", { error });
+                generateSitemap(req, res);
             }
         });
     }
-    bearerCallback = function () {
-        return console.log("The user has tried to authenticate with a bearer token");
-    };
     checkAuthForSsoInit() {
         this.app.use((req, res, next) => {
             if (req.url.indexOf("/auth") > -1 ||
                 req.url.indexOf("/login") > -1 ||
                 req.url.indexOf("saml_assertion") > -1) {
-                passport_sso_1.default.init(req.ypDomain?.loginHosts, req.ypDomain?.loginProviders, {
+                sso.init(req.ypDomain?.loginHosts, req.ypDomain?.loginProviders, {
                     authorize: this.bearerCallback,
-                    login: models_1.default.User.localCallback,
+                    login: models.User.localCallback,
                 });
-                req.sso = passport_sso_1.default;
+                req.sso = sso;
             }
             next();
         });
     }
     setupStaticFileServing() {
-        const baseDir = path_1.default.join(__dirname, "../webApps");
+        const baseDir = path.join(__dirname, "../webApps");
         // Promotion app
-        const promotionAppPath = path_1.default.join(baseDir, "promotion_app/dist");
-        this.app.use("/promotion", express_1.default.static(promotionAppPath));
-        this.app.use("/promotion/domain/*", express_1.default.static(promotionAppPath));
-        this.app.use("/promotion/community/*", express_1.default.static(promotionAppPath));
-        this.app.use("/promotion/group/*", express_1.default.static(promotionAppPath));
-        this.app.use("/promotion/post/*", express_1.default.static(promotionAppPath));
-        this.app.use("/promotion/locales/en/*", express_1.default.static(path_1.default.join(promotionAppPath, "locales/en")));
-        this.app.use("/promotion/locales/is/*", express_1.default.static(path_1.default.join(promotionAppPath, "locales/is")));
+        const promotionAppPath = path.join(baseDir, "promotion_app/dist");
+        this.app.use("/promotion", express.static(promotionAppPath));
+        this.app.use("/promotion/domain/*", express.static(promotionAppPath));
+        this.app.use("/promotion/community/*", express.static(promotionAppPath));
+        this.app.use("/promotion/group/*", express.static(promotionAppPath));
+        this.app.use("/promotion/post/*", express.static(promotionAppPath));
+        this.app.use("/promotion/locales/en/*", express.static(path.join(promotionAppPath, "locales/en")));
+        this.app.use("/promotion/locales/is/*", express.static(path.join(promotionAppPath, "locales/is")));
         // Land use game
-        const landUseGamePath = path_1.default.join(baseDir, "land_use_game/dist");
-        this.app.use("/land_use", express_1.default.static(landUseGamePath));
-        this.app.use("/land_use/*", express_1.default.static(landUseGamePath));
-        this.app.use("/land_use/locales/en/*", express_1.default.static(path_1.default.join(landUseGamePath, "locales/en")));
-        this.app.use("/land_use/locales/is/*", express_1.default.static(path_1.default.join(landUseGamePath, "locales/is")));
-        this.app.use("/Assets", express_1.default.static(path_1.default.join(landUseGamePath, "Assets")));
-        this.app.use("/ThirdParty", express_1.default.static(path_1.default.join(landUseGamePath, "ThirdParty")));
-        this.app.use("/Widgets", express_1.default.static(path_1.default.join(landUseGamePath, "Widgets")));
-        this.app.use("/Workers", express_1.default.static(path_1.default.join(landUseGamePath, "Workers")));
+        const landUseGamePath = path.join(baseDir, "land_use_game/dist");
+        this.app.use("/land_use", express.static(landUseGamePath));
+        this.app.use("/land_use/*", express.static(landUseGamePath));
+        this.app.use("/land_use/locales/en/*", express.static(path.join(landUseGamePath, "locales/en")));
+        this.app.use("/land_use/locales/is/*", express.static(path.join(landUseGamePath, "locales/is")));
+        this.app.use("/Assets", express.static(path.join(landUseGamePath, "Assets")));
+        this.app.use("/ThirdParty", express.static(path.join(landUseGamePath, "ThirdParty")));
+        this.app.use("/Widgets", express.static(path.join(landUseGamePath, "Widgets")));
+        this.app.use("/Workers", express.static(path.join(landUseGamePath, "Workers")));
         // Analytics app
-        const analyticsAppPath = path_1.default.join(baseDir, "analytics_app/dist");
-        this.app.use("/analytics/", express_1.default.static(analyticsAppPath));
-        this.app.use("/analytics/domain/*", express_1.default.static(analyticsAppPath));
-        this.app.use("/analytics/community/*", express_1.default.static(analyticsAppPath));
-        this.app.use("/analytics/group/*", express_1.default.static(analyticsAppPath));
+        const analyticsAppPath = path.join(baseDir, "analytics_app/dist");
+        this.app.use("/analytics/", express.static(analyticsAppPath));
+        this.app.use("/analytics/domain/*", express.static(analyticsAppPath));
+        this.app.use("/analytics/community/*", express.static(analyticsAppPath));
+        this.app.use("/analytics/group/*", express.static(analyticsAppPath));
         // Admin app
-        const adminAppPath = path_1.default.join(baseDir, "admin_app/dist");
-        this.app.use("/admin/", express_1.default.static(adminAppPath));
-        this.app.use("/admin/domain/*", express_1.default.static(adminAppPath));
-        this.app.use("/admin/community/*", express_1.default.static(adminAppPath));
-        this.app.use("/admin/group/*", express_1.default.static(adminAppPath));
+        const adminAppPath = path.join(baseDir, "admin_app/dist");
+        this.app.use("/admin/", express.static(adminAppPath));
+        this.app.use("/admin/domain/*", express.static(adminAppPath));
+        this.app.use("/admin/community/*", express.static(adminAppPath));
+        this.app.use("/admin/group/*", express.static(adminAppPath));
     }
     initializeMiddlewares() {
-        this.app.use((0, morgan_1.default)("combined"));
-        this.app.use(express_useragent_1.default.express());
-        this.app.use(request_ip_1.default.mw());
-        this.app.use(body_parser_1.default.json({ limit: "10mb", strict: false }));
-        this.app.use(body_parser_1.default.urlencoded({ limit: "10mb", extended: true }));
-        this.app.use((0, cors_1.default)());
-        this.app.use((0, compression_1.default)());
+        this.app.use(morgan("combined"));
+        this.app.use(useragent.express());
+        this.app.use(requestIp.mw());
+        this.app.use(bodyParser.json({ limit: "10mb", strict: false }));
+        this.app.use(bodyParser.urlencoded({ limit: "10mb", extended: true }));
+        this.app.use(cors());
+        this.app.use(compression());
         this.app.set("views", __dirname + "/views");
         this.app.set("view engine", "pug");
-        const store = new connect_redis_1.default({ client: this.redisClient, ttl: 86400 });
+        const store = new connectRedis({ client: this.redisClient, ttl: 86400 });
         const sessionConfig = {
             store: store,
             name: "yrpr.sid",
@@ -370,11 +395,11 @@ class YourPrioritiesApi {
             sessionConfig.cookie.secure = true; // serve secure cookies
         }
         //@ts-ignore
-        this.app.use((0, express_session_1.default)(sessionConfig));
+        this.app.use(session(sessionConfig));
     }
     async initializeEsControllers() {
         console.log("Initializing ES controllers");
-        const { AllOurIdeasController } = await Promise.resolve().then(() => __importStar(require("./controllers/allOurIdeas.js")));
+        const { AllOurIdeasController } = await import("./controllers/allOurIdeas.js");
         console.log("Initializing ES controllers 2 " + this.wsClients);
         const aoiController = new AllOurIdeasController(this.wsClients);
         console.log(`AOI controller path: ${aoiController.path} ${aoiController.router}`);
@@ -383,34 +408,34 @@ class YourPrioritiesApi {
         this.setupErrorHandler();
     }
     initializeRoutes() {
-        this.app.use("/", index_1.default);
-        this.app.use("/domain", index_1.default);
-        this.app.use("/community", index_1.default);
-        this.app.use("/group", index_1.default);
-        this.app.use("/post", index_1.default);
-        this.app.use("/user", index_1.default);
-        this.app.use("/survey*", index_1.default);
-        this.app.use("/api/domains", domains_1.default);
-        this.app.use("/api/organizations", organizations_1.default);
-        this.app.use("/api/communities", communities_1.default);
-        this.app.use("/api/groups", groups_1.default);
-        this.app.use("/api/posts", posts_1.default);
-        this.app.use("/api/points", points_1.default);
-        this.app.use("/api/images", images_1.default);
-        this.app.use("/api/videos", videos_1.default);
-        this.app.use("/api/audios", audios_1.default);
-        this.app.use("/api/categories", categories_1.default);
-        this.app.use("/api/externalIds", externalIds_1.default);
-        this.app.use("/api/users", users_1.default);
-        this.app.use("/api/news_feeds", news_feeds_1.default);
-        this.app.use("/api/activities", activities_1.default);
-        this.app.use("/api/notifications", notifications_1.default);
-        this.app.use("/api/bulk_status_updates", bulkStatusUpdates_1.default);
-        this.app.use("/api/recommendations", recommendations_1.default);
-        this.app.use("/api/ratings", ratings_1.default);
-        this.app.use("/ideas", legacyPosts_1.default);
-        this.app.use("/users", legacyUsers_1.default);
-        this.app.use("/pages", legacyPages_1.default);
+        this.app.use("/", index);
+        this.app.use("/domain", index);
+        this.app.use("/community", index);
+        this.app.use("/group", index);
+        this.app.use("/post", index);
+        this.app.use("/user", index);
+        this.app.use("/survey*", index);
+        this.app.use("/api/domains", domains);
+        this.app.use("/api/organizations", organizations);
+        this.app.use("/api/communities", communities);
+        this.app.use("/api/groups", groups);
+        this.app.use("/api/posts", posts);
+        this.app.use("/api/points", points);
+        this.app.use("/api/images", images);
+        this.app.use("/api/videos", videos);
+        this.app.use("/api/audios", audios);
+        this.app.use("/api/categories", categories);
+        this.app.use("/api/externalIds", externalIds);
+        this.app.use("/api/users", users);
+        this.app.use("/api/news_feeds", news_feeds);
+        this.app.use("/api/activities", activities);
+        this.app.use("/api/notifications", notifications);
+        this.app.use("/api/bulk_status_updates", bulkStatusUpdates);
+        this.app.use("/api/recommendations", recommendations);
+        this.app.use("/api/ratings", ratings);
+        this.app.use("/ideas", legacyPosts);
+        this.app.use("/users", legacyUsers);
+        this.app.use("/pages", legacyPages);
         // Additional routes for authentication and other functionalities
         this.app.post("/authenticate_from_island_is", (req, res) => {
             console.log("SAML SAML 1", { domainId: req.ypDomain.id });
@@ -466,24 +491,24 @@ class YourPrioritiesApi {
             });
         });
         this.app.get("/manifest.json", (req, res) => {
-            (0, manifest_generator_1.default)(req, res);
+            generateManifest(req, res);
         });
     }
     initializePassportStrategies() {
-        this.app.use(passport_1.default.initialize());
-        this.app.use(passport_1.default.session());
-        passport_1.default.serializeUser((req, profile, done) => {
-            loggerTs_js_1.default.info("----> User Serialized", { loginProvider: profile.provider });
+        this.app.use(passport.initialize());
+        this.app.use(passport.session());
+        passport.serializeUser((req, profile, done) => {
+            log.info("----> User Serialized", { loginProvider: profile.provider });
             if (profile.provider === "facebook") {
-                models_1.default.User.serializeFacebookUser(profile, req.ypDomain, (error, user) => {
+                models.User.serializeFacebookUser(profile, req.ypDomain, (error, user) => {
                     if (error) {
-                        loggerTs_js_1.default.error("Error in User Serialized from Facebook", {
+                        log.error("Error in User Serialized from Facebook", {
                             err: error,
                         });
                         done(error);
                     }
                     else {
-                        loggerTs_js_1.default.info("User Serialized", {
+                        log.info("User Serialized", {
                             context: "loginFromFacebook",
                             userId: user.id,
                         });
@@ -495,13 +520,13 @@ class YourPrioritiesApi {
                 });
             }
             else if (profile.provider === "saml") {
-                models_1.default.User.serializeSamlUser(profile, req, (error, user) => {
+                models.User.serializeSamlUser(profile, req, (error, user) => {
                     if (error) {
-                        loggerTs_js_1.default.error("Error in User Serialized from SAML", { err: error });
+                        log.error("Error in User Serialized from SAML", { err: error });
                         done(error);
                     }
                     else {
-                        loggerTs_js_1.default.info("User Serialized", {
+                        log.info("User Serialized", {
                             context: "loginFromSaml",
                             userId: user.id,
                         });
@@ -512,7 +537,7 @@ class YourPrioritiesApi {
                 });
             }
             else {
-                loggerTs_js_1.default.info("User Serialized", {
+                log.info("User Serialized", {
                     context: "serializeUser",
                     userEmail: profile.email,
                     userId: profile.id,
@@ -525,8 +550,8 @@ class YourPrioritiesApi {
                 });
             }
         });
-        passport_1.default.deserializeUser((sessionUser, done) => {
-            models_1.default.User.findOne({
+        passport.deserializeUser((sessionUser, done) => {
+            models.User.findOne({
                 where: { id: sessionUser.userId },
                 attributes: [
                     "id",
@@ -543,12 +568,12 @@ class YourPrioritiesApi {
                 ],
                 include: [
                     {
-                        model: models_1.default.Image,
+                        model: models.Image,
                         as: "UserProfileImages",
                         required: false,
                     },
                     {
-                        model: models_1.default.Image,
+                        model: models.Image,
                         as: "UserHeaderImages",
                         required: false,
                     },
@@ -560,12 +585,12 @@ class YourPrioritiesApi {
                     if (user.private_profile_data?.saml_agency &&
                         sessionUser.loginProvider === "saml") {
                         user.isSamlEmployee = true;
-                        loggerTs_js_1.default.info("SAML isSamlEmployee is true");
+                        log.info("SAML isSamlEmployee is true");
                     }
                     done(null, user);
                 }
                 else {
-                    loggerTs_js_1.default.error("User Deserialized Not found", {
+                    log.error("User Deserialized Not found", {
                         context: "deserializeUser",
                     });
                     if (airbrake) {
@@ -573,7 +598,7 @@ class YourPrioritiesApi {
                             .notify("User Deserialized Not found")
                             .then((airbrakeErr) => {
                             if (airbrakeErr.error) {
-                                loggerTs_js_1.default.error("AirBrake Error", {
+                                log.error("AirBrake Error", {
                                     context: "airbrake",
                                     err: airbrakeErr.error,
                                     errorStatus: 500,
@@ -585,7 +610,7 @@ class YourPrioritiesApi {
                 }
             })
                 .catch((error) => {
-                loggerTs_js_1.default.error("User Deserialize Error", {
+                log.error("User Deserialize Error", {
                     context: "deserializeUser",
                     err: error,
                     errorStatus: 500,
@@ -593,7 +618,7 @@ class YourPrioritiesApi {
                 if (airbrake) {
                     airbrake.notify(error).then((airbrakeErr) => {
                         if (airbrakeErr.error) {
-                            loggerTs_js_1.default.error("AirBrake Error", {
+                            log.error("AirBrake Error", {
                                 context: "airbrake",
                                 err: airbrakeErr.error,
                                 errorStatus: 500,
@@ -605,71 +630,13 @@ class YourPrioritiesApi {
             });
         });
     }
-    completeRegisterUserLogin = (user, // Replace 'any' with the actual user type
-    loginType, req, // Replace 'any' with 'YpRequest' if it's the correct type
-    done) => {
-        user.last_login_at = new Date().getTime(); // Assuming your database expects a timestamp
-        user
-            .save()
-            .then(() => {
-            models_1.default.AcActivity.createActivity({
-                type: "activity.user.login",
-                userId: user.id,
-                domainId: req.ypDomain.id,
-                communityId: req.ypCommunity ? req.ypCommunity.id : null,
-                object: {
-                    loginType: loginType,
-                    userDepartment: user.private_profile_data
-                        ? user.private_profile_data.saml_agency
-                        : null,
-                    samlProvider: user.private_profile_data
-                        ? user.private_profile_data.saml_provider
-                        : null,
-                },
-                access: models_1.default.AcActivity.PRIVATE,
-            }, (error) => {
-                if (error) {
-                    loggerTs_js_1.default.error("Error creating activity for user login", { error });
-                }
-                done();
-            });
-        })
-            .catch((error) => {
-            loggerTs_js_1.default.error("Error saving user for login registration", { error });
-            done();
-        });
-    };
-    registerUserLogin = (user, userId, loginProvider, req, done) => {
-        if (user && user.private_profile_data) {
-            this.completeRegisterUserLogin(user, loginProvider, req, done);
-        }
-        else {
-            models_1.default.User.findOne({
-                where: { id: userId },
-                attributes: ["id", "private_profile_data", "last_login_at"],
-            })
-                .then((user) => {
-                if (user) {
-                    this.completeRegisterUserLogin(user, loginProvider, req, done);
-                }
-                else {
-                    loggerTs_js_1.default.error("Did not find user for login registration", { userId });
-                    done();
-                }
-            })
-                .catch((error) => {
-                loggerTs_js_1.default.error("Error saving user for login registration", { error });
-                done();
-            });
-        }
-    };
     setupErrorHandler() {
         this.app.use((err, req, res, next) => {
-            if (err instanceof authorization_1.default.UnauthorizedError) {
-                loggerTs_js_1.default.info("Anon debug UnauthorizedError", { user: req.user });
-                loggerTs_js_1.default.error("User Unauthorized", {
+            if (err instanceof auth.UnauthorizedError) {
+                log.info("Anon debug UnauthorizedError", { user: req.user });
+                log.error("User Unauthorized", {
                     context: "unauthorizedError",
-                    user: (0, to_json_1.default)(req.user),
+                    user: toJson(req.user),
                     err: "Unauthorized",
                     errorStatus: 401,
                 });
@@ -682,9 +649,9 @@ class YourPrioritiesApi {
         this.app.use((req, res, next) => {
             const err = new Error("Not Found");
             err.status = 404;
-            loggerTs_js_1.default.warn("Not Found", {
+            log.warn("Not Found", {
                 context: "notFound",
-                user: (0, to_json_1.default)(req.user),
+                user: toJson(req.user),
                 err: "Not Found",
                 errorStatus: 404,
             });
@@ -702,13 +669,13 @@ class YourPrioritiesApi {
                 }
             }
             catch (bodyError) {
-                loggerTs_js_1.default.error("General Error: Body JSON parsing error", {
+                log.error("General Error: Body JSON parsing error", {
                     err: bodyError,
                 });
             }
-            loggerTs_js_1.default.error("General Error", {
+            log.error("General Error", {
                 context: "generalError",
-                user: req.user ? (0, to_json_1.default)(req.user) : null,
+                user: req.user ? toJson(req.user) : null,
                 err: err,
                 protocol: req.protocol,
                 host: req.get("host"),
@@ -724,9 +691,9 @@ class YourPrioritiesApi {
                 if (airbrake) {
                     airbrake.notify(err).then((airbrakeErr) => {
                         if (airbrakeErr.error) {
-                            loggerTs_js_1.default.error("AirBrake Error", {
+                            log.error("AirBrake Error", {
                                 context: "airbrake",
-                                user: (0, to_json_1.default)(req.user),
+                                user: toJson(req.user),
                                 err: airbrakeErr.error,
                                 errorStatus: 500,
                             });
@@ -741,12 +708,12 @@ class YourPrioritiesApi {
         let server;
         if (process.env.YOUR_PRIORITIES_LISTEN_HOST) {
             server = this.app.listen(this.app.get("port"), process.env.YOUR_PRIORITIES_LISTEN_HOST, () => {
-                loggerTs_js_1.default.info(`Your Priorities Platform API Server listening on port ${process.env.YOUR_PRIORITIES_LISTEN_HOST}:${this.app.get("port")} on ${process.env.NODE_ENV}`);
+                log.info(`Your Priorities Platform API Server listening on port ${process.env.YOUR_PRIORITIES_LISTEN_HOST}:${this.app.get("port")} on ${process.env.NODE_ENV}`);
             });
         }
         else {
             server = this.app.listen(4242, function () {
-                loggerTs_js_1.default.info("Your Priorities Platform API Server listening on port " +
+                log.info("Your Priorities Platform API Server listening on port " +
                     server.address().port +
                     ` on ${process.env.NODE_ENV}`);
             });
@@ -804,9 +771,9 @@ class YourPrioritiesApi {
                 console.error("Error handling message from Redis:", e);
             }
         });
-        this.ws = new ws_1.WebSocketServer({ server: server });
+        this.ws = new WebSocketServer({ server: server });
         this.ws.on("connection", (ws) => {
-            const clientId = (0, uuid_1.v4)();
+            const clientId = uuidv4();
             this.wsClients.set(clientId, ws);
             console.log(`------------------------ >  New WebSocket connection: clientId ${clientId}`);
             console.log(this.wsClients.get(clientId) == null);
@@ -843,4 +810,3 @@ class YourPrioritiesApi {
         });
     }
 }
-exports.YourPrioritiesApi = YourPrioritiesApi;

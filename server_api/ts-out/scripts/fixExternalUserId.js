@@ -1,5 +1,4 @@
-"use strict";
-var models = require('../models');
+var models = require('../models/index.cjs');
 var async = require('async');
 var ip = require('ip');
 models.User.findAll({
@@ -22,4 +21,5 @@ models.User.findAll({
         process.exit();
     });
 });
+export {};
 // profile_data.trackingParameters.externalUserId

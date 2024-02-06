@@ -1,4 +1,3 @@
-"use strict";
 var filterNotificationForDelivery = require('./emails_utils').filterNotificationForDelivery;
 module.exports = function (notification, user, callback) {
     var contentName = "";
@@ -31,3 +30,4 @@ module.exports = function (notification, user, callback) {
         callback("Unknown state for notification filtering: " + notification.type);
     }
 };
+export {};

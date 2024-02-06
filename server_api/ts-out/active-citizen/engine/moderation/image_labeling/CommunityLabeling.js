@@ -1,6 +1,5 @@
-"use strict";
 const ImageLabelingBase = require("./ImageLabelingBase");
-const models = require("../../../../models");
+const models = require("../../../../models/index.cjs");
 class CommunityLabeling extends ImageLabelingBase {
     async getCollection() {
         return await new Promise(async (resolve, reject) => {
@@ -47,3 +46,4 @@ class CommunityLabeling extends ImageLabelingBase {
     }
 }
 module.exports = CommunityLabeling;
+export {};

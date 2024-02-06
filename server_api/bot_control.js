@@ -1934,7 +1934,7 @@ const isCustomBot = (ua) => {
   );
 };
 
-module.exports = {
+export {
   robotsTxt,
   botsWithJavascript,
   isCustomBot,

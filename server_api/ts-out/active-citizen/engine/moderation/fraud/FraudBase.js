@@ -1,4 +1,3 @@
-"use strict";
 const _ = require("lodash");
 const moment = require("moment");
 class FraudBase {
@@ -237,3 +236,4 @@ class FraudBase {
     }
 }
 module.exports = FraudBase;
+export {};

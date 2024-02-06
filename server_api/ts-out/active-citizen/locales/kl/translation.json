@@ -47,7 +47,24 @@
       "dear": "Aluu",
       "reset_password_1": "Isissutissavit allanngortinnissaanut aajuna linki",
       "reset_password_2": "Una qinnutigisimanngikukku emaili imminiiginnaruk",
-      "reset_password_3": "Linki qulaaniittoq iserfigalugu isissutissamik nutaaliunngikkuit isissutissat allanngornavianngilaq"
-    }
-  }
+      "reset_password_3": "Linki qulaaniittoq iserfigalugu isissutissamik nutaaliunngikkuit isissutissat allanngornavianngilaq",
+      "possibleFraudFooter": "Ilaqutariinnut linki ataani tooruk, admin-itut iserfigit aammalu Fraud management toqqaruk menu-mi.",
+      "possibleFraudSubHeader": "Suliat pinerluttuliorsinnaasut amerlassusaat 75%-imik pinerluttuliorsinnaanermik naatsorsuutigineqartoq",
+      "possibleFraudInformation": "Automatiskiusumik systemip pinerluttuliorsinnaasumik suliaqartoqarsinnaanera paasineqarsimavoq. Ilaqutariinnermi admin interface aqqutigalugu qaninnerusumik misissuisinnaavutit. Suliat ilaat pinerluttuliorsinnaanngitsumik pissuteqarsinnaapput taamaattumik suliakkiissutit peerneqarnissaat sioqqullugu eqqumaffigalugu misissuigit.",
+      "possibleFraudHeader": "Pinerluttuliorsinnaasumik suliaqartoqarsinnaanera",
+      "settings": "Email-ikkut toqqorsivik",
+      "automaticToxicityDetection": "AI algoritmit atorlugit automatiskiusumik imminut toquttutut nalilerneqarsimavoq, taanna toqqaannartumik imminut toquttutut isikkoqartillugu. Isummersuut peerneqarsinnaavoq pisariaqartitsineq naapertorlugu.",
+      "automaticToxicityDetectionVision": "AI algoritme automatiskiusumik isummersuutimut attuumassuteqartumik assilisat nalunaarsorneqarsimapput. Algoritme taanna assilisat misissorpai inersimasut, annersaasarneq, peqqinnissakkut, aammalu assigiinngitsutigut assilisat misissuiffigalugit. Isummersuut peerneqarsinnaavoq pisariaqartitsineq naapertorlugu.",
+      "automaticToxicityDetectionDisclaimer": "Tarnikkut AI algoritme akornutaasumik naatsorsuutinik naatsorsuisoqartillugu, taava qasuersaarit, iliuuseqarfigisariaqanngilat aammalu email una isumakkeerfigisinnaavat.",
+      "automaticToxicityHowLikely": "Qanoq annertutigisumik (%) toqunartoq",
+      "automaticToxicityEnglishText": "Scoremik atorneqartartoq tuluttut allagaq"
+    },
+    "contentToBeAnonymized": "Isummersuutit ullut 7-ni isertuunneqassapput",
+    "communityContentToBeAnonymized": "Ilaqutariinni isummersuutit tamarmik ullut 7-ni isertuunneqassapput aammalu toqqortarineqassapput, tamatuma kingorna piiarneqarsinnaanngillat imaluunniit allanngortinneqarsinnaanngillat. Isummersuutit ataani takukkit.",
+    "groupContentToBeAnonymized": "Ilaasortaqarfinni isummersuutit tamarmik ullut 7-ni isertuunneqassapput aammalu toqqortarineqassapput, tamatuma kingorna piiarneqarsinnaanngillat imaluunniit allanngortinneqarsinnaanngillat. Isummersuutit ataani takukkit."
+  },
+  "yourPosts": "Isummersuutit",
+  "yourPoints": "Pinnagit",
+  "yourGroupPoints": "Ilaasortat pinnagit",
+  "yourCommunityPoints": "Ilaqutariit pinnagit"
 }

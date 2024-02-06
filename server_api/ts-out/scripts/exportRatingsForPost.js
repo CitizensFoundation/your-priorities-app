@@ -1,5 +1,4 @@
-"use strict";
-const models = require('../models');
+const models = require('../models/index.cjs');
 var postId = process.argv[2];
 console.log(`Id,PostId,TypeIndex,Value`);
 models.Rating.findAll({
@@ -13,3 +12,4 @@ models.Rating.findAll({
     });
     process.exit();
 });
+export {};

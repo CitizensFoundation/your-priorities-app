@@ -1,4 +1,3 @@
-"use strict";
 const { addAllPlausibleGoals } = require("../../engine/analytics/plausible/manager");
 (async function () {
     try {
@@ -11,3 +10,4 @@ const { addAllPlausibleGoals } = require("../../engine/analytics/plausible/manag
         process.exit();
     }
 })();
+export {};

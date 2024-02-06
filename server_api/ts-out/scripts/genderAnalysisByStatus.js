@@ -1,5 +1,4 @@
-"use strict";
-var models = require('../models');
+var models = require('../models/index.cjs');
 var async = require('async');
 var ip = require('ip');
 var femalePostCount = 0;
@@ -61,3 +60,4 @@ models.Domain.findOne({ where: { id: 1 } }).then(function (domain) {
         });
     });
 });
+export {};

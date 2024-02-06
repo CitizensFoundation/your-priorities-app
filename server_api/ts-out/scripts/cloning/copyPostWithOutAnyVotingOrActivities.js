@@ -1,5 +1,4 @@
-"use strict";
-const models = require('../../models');
+const models = require('../../models/index.cjs');
 const copyPost = require('../../utils/copy_utils').copyPost;
 const async = require('async');
 const ip = require('ip');
@@ -16,3 +15,4 @@ copyPost(postId, groupId, { copyPoints: true, skipEndorsementQualitiesAndRatings
     }
     process.exit();
 });
+export {};

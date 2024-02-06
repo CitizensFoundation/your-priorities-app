@@ -1,10 +1,9 @@
-"use strict";
-var models = require('../../models');
+var models = require('../../models/index.cjs');
 var async = require('async');
-var log = require('../utils/logger');
+var log = require('../utils/logger.cjs');
 var _ = require('lodash');
 var moment = require('moment');
-var i18n = require('../utils/i18n');
+var i18n = require('../utils/i18n.cjs');
 var Backend = require('i18next-node-fs-backend');
 var latestNotification;
 models.User.findAll({
@@ -61,3 +60,4 @@ models.User.findAll({
         });
     });
 });
+export {};

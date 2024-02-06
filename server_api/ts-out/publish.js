@@ -1,12 +1,7 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const child_process_1 = require("child_process");
-const util_1 = require("util");
-const readline_1 = __importDefault(require("readline"));
-const execPromise = (0, util_1.promisify)(child_process_1.exec);
+import { exec } from 'child_process';
+import { promisify } from 'util';
+import readline from 'readline';
+const execPromise = promisify(exec);
 async function main() {
     const registryUrl = process.argv[2]; // Get registry URL from command line argument
     try {
@@ -17,7 +12,7 @@ async function main() {
             const tarball = tarballMatch[1].trim();
             if (registryUrl !== 'http://localhost:4873') {
                 // Prompt for OTP if not localhost
-                const rl = readline_1.default.createInterface({
+                const rl = readline.createInterface({
                     input: process.stdin,
                     output: process.stdout
                 });

@@ -13,7 +13,7 @@ if (!process.env.NODE_ENV) {
 
 process.env["SUPPRESS_WEB_QUEUE_MESSAGES"] = true;
 
-const log = require("./utils/logger");
+const log = require("./utils/logger.cjs");
 
 if (!process.env.S3_BUCKET) {
   process.env.S3_BUCKET = "no-bucket-implemented-please-set-S3_BUCKET";
@@ -50,8 +50,8 @@ const passport = require("passport"),
   TwitterStrategy = require("passport-twitter").Strategy,
   GoogleStrategy = require("passport-google-oauth").OAuth2Strategy;
 
-const models = require("./models");
-const auth = require("./authorization");
+const models = require("./models/index.cjs");
+const auth = require("./authorization.cjs");
 
 const index = require("./controllers/index");
 const news_feeds = require("./active-citizen/controllers/news_feeds");
@@ -82,7 +82,7 @@ const nonSPArouter = require("./controllers/nonSpa");
 const generateSitemap = require("./utils/sitemap_generator");
 const generateManifest = require("./utils/manifest_generator");
 
-const toJson = require("./utils/to_json");
+const toJson = require("./utils/to_json.cjs");
 const sso = require("passport-sso");
 const cors = require("cors");
 

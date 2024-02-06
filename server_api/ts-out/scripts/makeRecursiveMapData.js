@@ -1,5 +1,4 @@
-"use strict";
-const models = require('../models');
+const models = require('../models/index.cjs');
 const util = require('util');
 const communityId = 1264; //process.argv[2];
 async function getTranslationForMap(textType, model, targetLanguage) {
@@ -101,3 +100,4 @@ const run = async () => {
     process.exit();
 };
 run();
+export {};

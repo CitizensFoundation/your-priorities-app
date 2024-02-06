@@ -1,7 +1,6 @@
-"use strict";
-var i18n = require('../utils/i18n');
+var i18n = require('../utils/i18n.cjs');
 var Backend = require('i18next-node-fs-backend');
-var log = require('../utils/logger');
+var log = require('../utils/logger.cjs');
 var path = require('path');
 var activity = require('./activity');
 var notification_delivery = require('./notification_delivery');
@@ -12,7 +11,7 @@ var delayedJobs = require('./delayed_jobs');
 var anonymizations = require('./anonymizations');
 var moderation = require('./moderation');
 var email = require('./email');
-var queue = require('./queue');
+var queue = require('./queue.cjs');
 var speechToText = require('./speech_to_text');
 const similarities = require('./similarities');
 const reports = require('./reports');
@@ -84,3 +83,4 @@ i18n
         generativeAi.process(job.data, done);
     });
 });
+export {};

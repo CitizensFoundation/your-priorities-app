@@ -1,12 +1,11 @@
-"use strict";
 const _ = require("lodash");
-const models = require("../../../../models");
-const i18n = require('../../../utils/i18n');
+const models = require("../../../../models/index.cjs");
+const i18n = require('../../../utils/i18n.cjs');
 const deepEqual = require('deep-equal');
 const FraudGetEndorsements = require("./FraudGetEndorsements");
 const FraudGetPointQualities = require("./FraudGetPointQualities");
 const FraudGetRatings = require("./FraudGetRatings");
-const queue = require("../../../workers/queue");
+const queue = require("../../../workers/queue.cjs");
 const Backend = require("i18next-node-fs-backend");
 const path = require("path");
 var localesPath = path.resolve(__dirname, '../../../locales');
@@ -254,3 +253,4 @@ i18n
         }
     })();
 });
+export {};

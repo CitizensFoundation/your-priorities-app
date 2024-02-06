@@ -1,5 +1,4 @@
-"use strict";
-var models = require('../models');
+var models = require('../models/index.cjs');
 var async = require('async');
 var ip = require('ip');
 var _ = require('lodash');
@@ -243,3 +242,4 @@ models.Post.unscoped().findAll({
         });
     });
 });
+export {};

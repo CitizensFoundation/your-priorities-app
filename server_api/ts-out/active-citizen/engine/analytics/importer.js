@@ -1,8 +1,7 @@
-"use strict";
-const models = require('../../../models');
+const models = require('../../../models/index.cjs');
 const _ = require('lodash');
 const async = require('async');
-const log = require('../../../utils/logger');
+const log = require('../../../utils/logger.cjs');
 const importDomain = require('./utils').importDomain;
 const importCommunity = require('./utils').importCommunity;
 const importGroup = require('./utils').importGroup;
@@ -306,3 +305,4 @@ else {
     console.error("NO AC_ANALYTICS_KEY");
     process.exit();
 }
+export {};

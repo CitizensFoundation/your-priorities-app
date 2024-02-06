@@ -1,5 +1,4 @@
-"use strict";
-var models = require("../../../models");
+var models = require("../../../models/index.cjs");
 var async = require('async');
 var addNotificationsForUsers = require('./notifications_utils').addNotificationsForUsers;
 var _ = require('lodash');
@@ -39,3 +38,4 @@ module.exports = function (activity, user, callback) {
     var uniqueUserIds = { users: [] };
     generateNotificationsForPostStatusChange(activity, uniqueUserIds, callback);
 };
+export {};

@@ -54,7 +54,17 @@
       "dear": "Hola",
       "reset_password_1": "Aquí está el enlace para cambiar tu contraseña.",
       "reset_password_2": "Si no ha solicitado esto, ignore este correo electrónico.",
-      "reset_password_3": "Su contraseña no cambiará hasta que acceda al enlace anterior y cree uno nuevo."
+      "reset_password_3": "Su contraseña no cambiará hasta que acceda al enlace anterior y cree uno nuevo.",
+      "possibleFraudFooter": "Haga clic en el enlace de la comunidad a continuación, inicie sesión como administrador y seleccione Gestión de fraude en el menú.",
+      "possibleFraudSubHeader": "Número de posibles actividades fraudulentas con una probabilidad estimada del 75% de fraude",
+      "possibleFraudInformation": "Nuestro sistema automatizado ha identificado una posible actividad fraudulenta. Puede examinarla más detenidamente a través de la interfaz de administración de la Comunidad. Alguna de esta actividad podría tener razones no fraudulentas, así que tenga cuidado de investigar a fondo antes de eliminar contenido.",
+      "possibleFraudHeader": "Posible actividad fraudulenta",
+      "settings": "Configuración de correo electrónico",
+      "automaticToxicityDetection": "Este contenido ha sido automáticamente marcado como tóxico utilizando algoritmos de IA que estiman la toxicidad del contenido. Puede eliminar el contenido si es necesario.",
+      "automaticToxicityDetectionVision": "Un algoritmo de IA ha marcado automáticamente la imaginería visual conectada a este contenido. Este algoritmo revisa imágenes en busca de posible imaginería para adultos, violenta, médica y sugestiva. Puede eliminar el contenido si es necesario.",
+      "automaticToxicityDetectionDisclaimer": "A veces el algoritmo de IA calcula una puntuación incorrecta, en ese caso no se preocupe, no necesita tomar ninguna acción adicional y puede ignorar este correo electrónico.",
+      "automaticToxicityHowLikely": "Probabilidad (%) de ser tóxico",
+      "automaticToxicityEnglishText": "Texto en inglés utilizado para la puntuación"
     }
   }
 }

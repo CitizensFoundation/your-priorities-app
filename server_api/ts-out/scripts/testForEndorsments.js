@@ -1,5 +1,4 @@
-"use strict";
-var models = require('../models');
+var models = require('../models/index.cjs');
 var async = require('async');
 var ip = require('ip');
 var _ = require('lodash');
@@ -20,3 +19,4 @@ models.User.findOne({
     console.log(_.map(user.Endorsements, function (e) { return e.post_id + " " + e.created_at; }));
     console.log(user.Endorsements);
 });
+export {};

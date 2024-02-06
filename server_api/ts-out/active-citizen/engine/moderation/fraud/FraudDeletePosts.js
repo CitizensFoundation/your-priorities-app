@@ -1,7 +1,6 @@
-"use strict";
 const _ = require("lodash");
 const FraudDeleteEndorsements = require('./FraudDeleteEndorsements.js');
-const models = require("../../../../models");
+const models = require("../../../../models/index.cjs");
 class FraudDeletePosts extends FraudDeleteEndorsements {
     async destroyChunkItems(items) {
         return await new Promise(async (resolve, reject) => {
@@ -82,3 +81,4 @@ class FraudDeletePosts extends FraudDeleteEndorsements {
     }
 }
 module.exports = FraudDeletePosts;
+export {};

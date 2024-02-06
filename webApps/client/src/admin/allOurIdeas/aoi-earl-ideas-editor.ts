@@ -711,6 +711,7 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmBase {
             type="textarea"
             @change="${this.aiStyleChanged}"
             rows="5"
+            .value="${this.group.configuration.theme?.iconPrompt || ""}"
             ?hidden="${this.allChoicesHaveIcons}"
             ?disabled="${this.isGeneratingWithAi || this.allChoicesHaveIcons}"
           ></md-outlined-text-field>

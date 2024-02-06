@@ -26,3 +26,4 @@ module.exports = {
         */
     }
 };
+export {};

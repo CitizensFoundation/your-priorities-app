@@ -1,11 +1,10 @@
-"use strict";
 // https://gist.github.com/mojodna/1251812
 var async = require("async");
-var models = require("../../models");
-var log = require('../utils/logger');
-var queue = require('./queue');
-var i18n = require('../utils/i18n');
-var toJson = require('../utils/to_json');
+var models = require("../../models/index.cjs");
+var log = require('../utils/logger.cjs');
+var queue = require('./queue.cjs');
+var i18n = require('../utils/i18n.cjs');
+var toJson = require('../utils/to_json.cjs');
 var deliverPostNotification = require('../engine/notifications/post_delivery.js');
 var deliverPointNotification = require('../engine/notifications/point_delivery.js');
 const processGeneralNotification = require('../engine/notifications/process_general_notifications');
@@ -362,3 +361,4 @@ NotificationDeliveryWorker.prototype.process = function (notificationJson, callb
     });
 };
 module.exports = new NotificationDeliveryWorker();
+export {};

@@ -1,13 +1,9 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.AllOurIdeasController = void 0;
-const index_js_1 = __importDefault(require("../models/index.js"));
-const express_1 = __importDefault(require("express"));
-const crypto_1 = __importDefault(require("crypto"));
-const dbModels = index_js_1.default;
+//import models from "../models/index.js";
+import models from "../models/index.cjs";
+import auth from "../authorization.cjs";
+import express from "express";
+import crypto from "crypto";
+const dbModels = models;
 const Group = dbModels.Group;
 const PAIRWISE_API_HOST = process.env.PAIRWISE_API_HOST;
 const PAIRWISE_USERNAME = process.env.PAIRWISE_USERNAME;
@@ -20,35 +16,34 @@ const defaultHeader = {
     ...{ "Content-Type": "application/json" },
     ...defaultAuthHeader,
 };
-const authorization_js_1 = __importDefault(require("../authorization.js"));
-const aiHelper_js_1 = require("../active-citizen/engine/allOurIdeas/aiHelper.js");
-const explainAnswersAssistant_js_1 = require("../active-citizen/engine/allOurIdeas/explainAnswersAssistant.js");
-const openai_1 = __importDefault(require("openai"));
-class AllOurIdeasController {
-    path = "/api/allOurIdeas";
-    router = express_1.default.Router();
-    wsClients;
+//import auth from "../authorization.js";
+import { AiHelper } from "../active-citizen/engine/allOurIdeas/aiHelper.js";
+import { ExplainAnswersAssistant } from "../active-citizen/engine/allOurIdeas/explainAnswersAssistant.js";
+import OpenAI from "openai";
+export class AllOurIdeasController {
     constructor(wsClients) {
+        this.path = "/api/allOurIdeas";
+        this.router = express.Router();
         this.wsClients = wsClients;
         this.initializeRoutes();
     }
     async initializeRoutes() {
-        this.router.get("/:groupId", authorization_js_1.default.can("view group"), this.showEarl.bind(this));
-        this.router.post("/:communityId/questions", authorization_js_1.default.can("create group"), this.createQuestion.bind(this));
-        this.router.put("/:communityId/generateIdeas", authorization_js_1.default.can("create group"), this.generateIdeas.bind(this));
-        this.router.put("/:groupId/llmAnswerExplain", authorization_js_1.default.can("view group"), this.llmAnswerExplain.bind(this));
-        this.router.get("/:communityId/choices/:questionId", authorization_js_1.default.can("create group"), this.getChoices.bind(this));
-        this.router.get("/:groupId/choices/:questionId/throughGroup", authorization_js_1.default.can("view group"), this.getChoices.bind(this));
-        this.router.post("/:groupId/questions/:questionId/prompts/:promptId/votes", authorization_js_1.default.can("view group"), this.vote.bind(this));
-        this.router.post("/:groupId/questions/:questionId/prompts/:promptId/skips", authorization_js_1.default.can("view group"), this.skip.bind(this));
-        this.router.post("/:groupId/questions/:questionId/addIdea", authorization_js_1.default.can("view group"), this.addIdea.bind(this));
-        this.router.get("/:groupId/questions/:analysisIndex/:analysisTypeIndex/analysis", authorization_js_1.default.can("view group"), this.analysis.bind(this));
-        this.router.put("/:communityId/questions/:questionId/choices/:choiceId", authorization_js_1.default.can("create group"), this.updateCoiceData.bind(this));
-        this.router.put("/:groupId/questions/:questionId/choices/:choiceId/throughGroup", authorization_js_1.default.can("view group"), this.updateCoiceData.bind(this));
-        this.router.put("/:communityId/questions/:questionId/choices/:choiceId/active", authorization_js_1.default.can("create group"), this.updateActive.bind(this));
-        this.router.put("/:communityId/questions/:questionId/name", authorization_js_1.default.can("create group"), this.updateQuestionName.bind(this));
-        this.router.get("/:groupId/content/:extraId/:questionId/translatedText", authorization_js_1.default.can("view group"), this.getTranslatedText.bind(this));
-        this.router.get("/:groupId/content/:extraId/translatedText", authorization_js_1.default.can("view group"), this.getTranslatedText.bind(this));
+        this.router.get("/:groupId", auth.can("view group"), this.showEarl.bind(this));
+        this.router.post("/:communityId/questions", auth.can("create group"), this.createQuestion.bind(this));
+        this.router.put("/:communityId/generateIdeas", auth.can("create group"), this.generateIdeas.bind(this));
+        this.router.put("/:groupId/llmAnswerExplain", auth.can("view group"), this.llmAnswerExplain.bind(this));
+        this.router.get("/:communityId/choices/:questionId", auth.can("create group"), this.getChoices.bind(this));
+        this.router.get("/:groupId/choices/:questionId/throughGroup", auth.can("view group"), this.getChoices.bind(this));
+        this.router.post("/:groupId/questions/:questionId/prompts/:promptId/votes", auth.can("view group"), this.vote.bind(this));
+        this.router.post("/:groupId/questions/:questionId/prompts/:promptId/skips", auth.can("view group"), this.skip.bind(this));
+        this.router.post("/:groupId/questions/:questionId/addIdea", auth.can("view group"), this.addIdea.bind(this));
+        this.router.get("/:groupId/questions/:analysisIndex/:analysisTypeIndex/analysis", auth.can("view group"), this.analysis.bind(this));
+        this.router.put("/:communityId/questions/:questionId/choices/:choiceId", auth.can("create group"), this.updateCoiceData.bind(this));
+        this.router.put("/:groupId/questions/:questionId/choices/:choiceId/throughGroup", auth.can("view group"), this.updateCoiceData.bind(this));
+        this.router.put("/:communityId/questions/:questionId/choices/:choiceId/active", auth.can("create group"), this.updateActive.bind(this));
+        this.router.put("/:communityId/questions/:questionId/name", auth.can("create group"), this.updateQuestionName.bind(this));
+        this.router.get("/:groupId/content/:extraId/:questionId/translatedText", auth.can("view group"), this.getTranslatedText.bind(this));
+        this.router.get("/:groupId/content/:extraId/translatedText", auth.can("view group"), this.getTranslatedText.bind(this));
     }
     async addIdea(req, res) {
         const { newIdea, id } = req.body;
@@ -103,7 +98,7 @@ class AllOurIdeasController {
         }
     }
     async getModerationFlag(data) {
-        const openaiClient = new openai_1.default({
+        const openaiClient = new OpenAI({
             apiKey: process.env.OPENAI_API_KEY,
         });
         const moderationResponse = await openaiClient.moderations.create({
@@ -128,7 +123,7 @@ class AllOurIdeasController {
     async getTranslatedText(req, res) {
         try {
             //@ts-ignore
-            index_js_1.default.AcTranslationCache.getTranslation(req, {}, function (error, translation) {
+            models.AcTranslationCache.getTranslation(req, {}, function (error, translation) {
                 if (error) {
                     console.error(error);
                     res.status(500).send("A getTranslatedText error occurred");
@@ -148,7 +143,7 @@ class AllOurIdeasController {
         console.log(`generateIdeas: ${wsClientSocketId}`);
         const swClientSocket = this.wsClients.get(wsClientSocketId);
         if (swClientSocket) {
-            const aiHelper = new aiHelper_js_1.AiHelper(swClientSocket);
+            const aiHelper = new AiHelper(swClientSocket);
             await aiHelper.getAnswerIdeas(question, currentIdeas, "");
             res.sendStatus(200);
         }
@@ -160,7 +155,7 @@ class AllOurIdeasController {
     async llmAnswerExplain(req, res) {
         const { wsClientId, chatLog } = req.body;
         console.log(`explainConversation: ${wsClientId}`);
-        const explainer = new explainAnswersAssistant_js_1.ExplainAnswersAssistant(wsClientId, this.wsClients);
+        const explainer = new ExplainAnswersAssistant(wsClientId, this.wsClients);
         await explainer.explainConversation(chatLog);
         res.sendStatus(200);
     }
@@ -418,7 +413,7 @@ class AllOurIdeasController {
             // Fetch choices similar to Ruby logic
             // Placeholder: Implement fetching choices based on `ideasIdsRange` and other parameters
             // Placeholder for actual fetching logic
-            const aiHelper = new aiHelper_js_1.AiHelper();
+            const aiHelper = new AiHelper();
             const analysisData = await aiHelper.getAiAnalysis(question.id, analysisType.contextPrompt, await this.fetchChoices(questionId, false));
             // Respond with the analysis data
             res.json({
@@ -498,7 +493,7 @@ class AllOurIdeasController {
             appearance_lookup: params.appearance_lookup,
         };
         const trackingData = {
-            user_agent_hash: crypto_1.default
+            user_agent_hash: crypto
                 .createHash("sha256")
                 .update(req.headers["user-agent"] || "")
                 .digest("hex"),
@@ -530,4 +525,3 @@ class AllOurIdeasController {
         return options;
     }
 }
-exports.AllOurIdeasController = AllOurIdeasController;

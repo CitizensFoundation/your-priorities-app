@@ -1,4 +1,4 @@
-var models = require('../models');
+var models = require('../models/index.cjs');
 var async = require('async');
 var ip = require('ip');
 const communityId = process.argv[2];

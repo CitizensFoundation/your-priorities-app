@@ -1,7 +1,6 @@
-"use strict";
 const _ = require("lodash");
 const FraudDeleteBase = require('./FraudDeleteBase.js');
-const models = require("../../../../models");
+const models = require("../../../../models/index.cjs");
 //TODO: Change to native JS instead of lodash
 class FraudDeletePointQualities extends FraudDeleteBase {
     async destroyChunkItems(items) {
@@ -112,3 +111,4 @@ class FraudDeletePointQualities extends FraudDeleteBase {
     }
 }
 module.exports = FraudDeletePointQualities;
+export {};

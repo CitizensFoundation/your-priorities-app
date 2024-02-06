@@ -1,5 +1,4 @@
-"use strict";
-const models = require('../../models');
+const models = require('../../models/index.cjs');
 const _ = require('lodash');
 const textToSearch = process.argv[2];
 models.AcTranslationCache.findAll({
@@ -25,3 +24,4 @@ models.AcTranslationCache.findAll({
     console.error(error);
     process.exit();
 });
+export {};

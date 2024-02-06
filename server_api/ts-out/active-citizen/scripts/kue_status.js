@@ -1,7 +1,6 @@
-"use strict";
 var kue = require('kue'), url = require('url');
-var log = require('../utils/logger');
-var toJson = require('../utils/to_json');
+var log = require('../utils/logger.cjs');
+var toJson = require('../utils/to_json.cjs');
 var airbrake = null;
 if (process.env.AIRBRAKE_PROJECT_ID) {
     airbrake = require('../utils/airbrake');
@@ -29,3 +28,4 @@ setTimeout(function () {
     process.exit();
 }, 5000);
 module.exports = queue;
+export {};

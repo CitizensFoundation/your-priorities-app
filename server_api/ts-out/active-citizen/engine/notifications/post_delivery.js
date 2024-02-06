@@ -1,4 +1,3 @@
-"use strict";
 var filterNotificationForDelivery = require('./emails_utils').filterNotificationForDelivery;
 module.exports = function (notification, user, callback) {
     var post = notification.AcActivities[0].Post;
@@ -17,3 +16,4 @@ module.exports = function (notification, user, callback) {
         callback();
     }
 };
+export {};

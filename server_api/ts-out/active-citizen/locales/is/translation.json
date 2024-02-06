@@ -60,7 +60,11 @@
       "dear": "Hæ",
       "reset_password_1": "Hér er hlekkur til að breyta lykilorðinu þínu.",
       "reset_password_2": "Ef að þú hefur ekki beðið um þessa breytingu þarft þú ekkert að gera.",
-      "reset_password_3": "Lykilorðið mun ekki breytast fyrr en þú hefur fylgt þessum hlekk eftir og breytt því."
+      "reset_password_3": "Lykilorðið mun ekki breytast fyrr en þú hefur fylgt þessum hlekk eftir og breytt því.",
+      "possibleFraudFooter": "Smelltu á samfélagstengilinn hér að neðan, skráðu þig inn sem stjórnandi og veldu Svikastjórnun úr valmyndinni.",
+      "possibleFraudSubHeader": "Fjöldi mögulegra sviksamlegra athafna með áætlaða 75% líkur á svikum",
+      "possibleFraudInformation": "Sjálfvirka kerfið okkar hefur greint mögulega sviksamlega starfsemi. Þú getur skoðað þetta nánar í gegnum stjórnandaumhverfi samfélagsins. Sumar af þessum athöfnum gætu haft ósviksamlegar ástæður svo vertu varkár við að rannsaka ítarlega áður en þú eyðir efni.",
+      "possibleFraudHeader": "Möguleg sviksamleg starfsemi"
     }
   }
 }

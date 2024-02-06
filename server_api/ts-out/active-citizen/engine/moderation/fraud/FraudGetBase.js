@@ -1,8 +1,7 @@
-"use strict";
 const _ = require("lodash");
 const moment = require("moment");
 const FraudBase = require('./FraudBase');
-const models = require("../../../../models");
+const models = require("../../../../models/index.cjs");
 const ColorHash = require('color-hash').default;
 class FraudGetBase extends FraudBase {
     constructor(workPackage) {
@@ -131,3 +130,4 @@ class FraudGetBase extends FraudBase {
     }
 }
 module.exports = FraudGetBase;
+export {};

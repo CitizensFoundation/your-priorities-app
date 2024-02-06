@@ -1,7 +1,6 @@
-"use strict";
 const _ = require("lodash");
 const FraudGetBase = require('./FraudGetBase.js');
-const models = require("../../../../models");
+const models = require("../../../../models/index.cjs");
 class FraudGetPoints extends FraudGetBase {
     async getAllItems() {
         return await new Promise(async (resolve, reject) => {
@@ -107,3 +106,4 @@ class FraudGetPoints extends FraudGetBase {
     }
 }
 module.exports = FraudGetPoints;
+export {};

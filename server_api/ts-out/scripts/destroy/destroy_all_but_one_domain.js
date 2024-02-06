@@ -1,5 +1,4 @@
-"use strict";
-const models = require('../../models');
+const models = require('../../models/index.cjs');
 const _ = require('lodash');
 const https = require("https");
 const fs = require("fs");
@@ -1024,3 +1023,4 @@ async function copyFileFromS3ToMinio(bucket, url) {
     console.log(`Destroying all except domain id ${domainIdToKeep} completed`);
     process.exit();
 })();
+export {};

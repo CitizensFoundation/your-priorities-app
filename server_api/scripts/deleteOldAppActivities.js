@@ -1,4 +1,4 @@
-const models = require('../models');
+const models = require('../models/index.cjs');
 const async = require('async');
 
 const fromId = parseInt(process.argv[2]);

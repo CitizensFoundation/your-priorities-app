@@ -43,3 +43,4 @@ module.exports = {
         */
     }
 };
+export {};

@@ -1,5 +1,4 @@
-"use strict";
-const models = require('../models');
+const models = require('../models/index.cjs');
 const communityId = process.argv[2];
 const domainId = process.argv[3];
 models.Community.findOne({
@@ -20,3 +19,4 @@ models.Community.findOne({
     console.error(error);
     process.exit();
 });
+export {};

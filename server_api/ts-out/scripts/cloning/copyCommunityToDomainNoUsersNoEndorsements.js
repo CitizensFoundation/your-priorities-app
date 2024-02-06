@@ -1,5 +1,4 @@
-"use strict";
-const models = require('../../models');
+const models = require('../../models/index.cjs');
 const copyCommunityNoUsersNoEndorsements = require('../../utils/copy_utils').copyCommunityNoUsersNoEndorsements;
 const async = require('async');
 const ip = require('ip');
@@ -16,3 +15,4 @@ copyCommunityNoUsersNoEndorsements(communityId, domainId, (error) => {
     }
     process.exit();
 });
+export {};

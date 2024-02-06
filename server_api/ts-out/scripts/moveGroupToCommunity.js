@@ -1,5 +1,4 @@
-"use strict";
-const models = require('../models');
+const models = require('../models/index.cjs');
 const async = require('async');
 const ip = require('ip');
 const groupId = process.argv[2];
@@ -22,3 +21,4 @@ models.Group.findOne({
     console.error(error);
     process.exit();
 });
+export {};

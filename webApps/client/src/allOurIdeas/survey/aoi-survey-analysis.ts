@@ -35,7 +35,9 @@ export class AoiSurveyAnalysis extends YpBaseElement {
 
   async fetchResults() {
     try {
-      const analysis_config = JSON.parse(this.earl.configuration!.analysis_config as any) as any;
+      const analysis_config = JSON.parse(
+        this.earl.configuration!.analysis_config as any
+      ) as any;
 
       debugger;
 

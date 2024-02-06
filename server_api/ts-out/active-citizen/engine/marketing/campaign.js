@@ -1,5 +1,4 @@
-"use strict";
-const models = require("../../../models");
+const models = require("../../../models/index.cjs");
 const async = require('async');
 const sendSmsToUser = (twilioClient, listUser, campaign, configuration, done) => {
     /*const body = campaign.message + " "+ campaign.data.baseUrl+"?yu="+listUser.id+"&yc="+campaign.id;
@@ -86,3 +85,4 @@ const sendCampaign = (workPackage, callback) => {
 module.exports = {
     sendCampaign
 };
+export {};

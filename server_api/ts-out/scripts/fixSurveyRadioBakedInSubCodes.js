@@ -1,5 +1,4 @@
-"use strict";
-var models = require("../models");
+var models = require("../models/index.cjs");
 var async = require("async");
 console.log("Fix group");
 const groupId = process.argv[2];
@@ -62,3 +61,4 @@ models.Group.findOne({ where: { id: groupId } }).then((group) => {
         });
     });
 });
+export {};

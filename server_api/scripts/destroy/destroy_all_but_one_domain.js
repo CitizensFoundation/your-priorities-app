@@ -1,4 +1,4 @@
-const models = require('../../models');
+const models = require('../../models/index.cjs');
 const _ = require('lodash');
 const https = require("https");
 const fs = require("fs");

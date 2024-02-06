@@ -1,10 +1,9 @@
-"use strict";
 const async = require("async");
-const models = require("../../models");
-const log = require('../utils/logger');
-const queue = require('./queue');
-const i18n = require('../utils/i18n');
-const toJson = require('../utils/to_json');
+const models = require("../../models/index.cjs");
+const log = require('../utils/logger.cjs');
+const queue = require('./queue.cjs');
+const i18n = require('../utils/i18n.cjs');
+const toJson = require('../utils/to_json.cjs');
 const _ = require('lodash');
 const fs = require('fs');
 const updateSimilaritiesCollection = require('../engine/analytics/manager').updateCollection;
@@ -19,3 +18,4 @@ SimilaritiesWorker.prototype.process = (workPackage, callback) => {
     }
 };
 module.exports = new SimilaritiesWorker();
+export {};

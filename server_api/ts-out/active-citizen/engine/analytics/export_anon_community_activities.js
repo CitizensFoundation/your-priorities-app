@@ -1,8 +1,7 @@
-"use strict";
-const models = require('../../../models');
+const models = require('../../../models/index.cjs');
 const _ = require('lodash');
 const async = require('async');
-const log = require('../../../utils/logger');
+const log = require('../../../utils/logger.cjs');
 const crypto = require('crypto');
 const fs = require('fs');
 //const request = require('request');
@@ -332,3 +331,4 @@ importCommunityUsersAndActivities(1017, "12345", () => {
 module.exports = {
     importCommunityUsersAndActivities
 };
+export {};

@@ -3,7 +3,7 @@ import "@material/web/button/outlined-button.js";
 import "@material/web/icon/icon.js";
 import "@material/web/iconbutton/outlined-icon-button.js";
 import "@material/web/progress/linear-progress.js";
-import "./yp-language-selector.js";
+import "../common/languages/yp-language-selector.js";
 export declare class YpAppNavDrawer extends YpBaseElement {
     homeLink: YpHomeLinkData | undefined;
     user: YpUserData | undefined;

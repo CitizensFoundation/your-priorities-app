@@ -1,10 +1,9 @@
-"use strict";
-var queue = require('../../workers/queue');
-var models = require("../../../models");
+var queue = require('../../workers/queue.cjs');
+var models = require("../../../models/index.cjs");
 var truncate = require('../../utils/truncate_text');
 const async = require('async');
 const _ = require('lodash');
-var i18n = require('../../utils/i18n');
+var i18n = require('../../utils/i18n.cjs');
 var linkTo = function (url) {
     return '<a href="' + url + '">' + url + '</a>';
 };
@@ -210,3 +209,4 @@ module.exports = (notification, domain, community, group, user, callback) => {
         callback();
     }
 };
+export {};

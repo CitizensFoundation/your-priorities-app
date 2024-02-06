@@ -1,4 +1,4 @@
-var models = require('../../models');
+var models = require('../../models/index.cjs');
 var {forEach} = require('async');
 var ip = require('ip');
 var _ = require('lodash');

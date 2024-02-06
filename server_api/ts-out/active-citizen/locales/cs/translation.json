@@ -63,7 +63,8 @@
       "dear": "dobrý den",
       "reset_password_1": "zde je odkaz pro změnu vašeho hesla",
       "reset_password_2": "Pokud jste si nevyžádali změnu hesla, tento e-mail prosím ignorujte.",
-      "reset_password_3": "Vaše heslo nebude změněno, dokud pomocí odkazu výše nenastavíte nové heslo."
+      "reset_password_3": "Vaše heslo nebude změněno, dokud pomocí odkazu výše nenastavíte nové heslo.",
+      "automaticToxicityDetectionVision": "Algoritmus umělé inteligence automaticky označil vizuální obrazy spojené s tímto obsahem. Tento algoritmus prochází obrázky kvůli možnému obsahu pro dospělé, násilí, lékařskému obsahu a odvážným snímkům. Obsah můžete v případě potřeby smazat."
     }
   }
 }

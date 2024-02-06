@@ -1,4 +1,3 @@
-"use strict";
 var removeDiacritics = require('diacritics').remove;
 var shuffleArray = function (array) {
     for (var i = array.length - 1; i > 0; i--) {
@@ -78,3 +77,4 @@ module.exports = {
     clean: clean,
     shuffleArray: shuffleArray
 };
+export {};

@@ -1,5 +1,4 @@
-"use strict";
-var models = require('../models');
+var models = require('../models/index.cjs');
 var async = require('async');
 let groupChangeCount = 0;
 let communityChangeCount = 0;
@@ -46,3 +45,4 @@ models.User.findAll({
 }).catch(error => {
     console.error(error);
 });
+export {};

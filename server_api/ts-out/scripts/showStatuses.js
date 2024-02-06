@@ -1,5 +1,4 @@
-"use strict";
-var models = require('../models');
+var models = require('../models/index.cjs');
 var async = require('async');
 var ip = require('ip');
 models.Post.findAll().then(function (posts) {
@@ -16,3 +15,4 @@ models.Post.findAll().then(function (posts) {
         console.log("DONE");
     });
 });
+export {};

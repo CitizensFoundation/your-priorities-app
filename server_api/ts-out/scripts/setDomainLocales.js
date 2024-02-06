@@ -1,5 +1,4 @@
-"use strict";
-var models = require('../models');
+var models = require('../models/index.cjs');
 var async = require('async');
 console.log("Setting up locales");
 async.series([
@@ -31,3 +30,4 @@ async.series([
     console.log("Finished");
     process.exit();
 });
+export {};

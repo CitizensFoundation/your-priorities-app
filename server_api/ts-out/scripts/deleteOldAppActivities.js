@@ -1,5 +1,4 @@
-"use strict";
-const models = require('../models');
+const models = require('../models/index.cjs');
 const async = require('async');
 const fromId = parseInt(process.argv[2]);
 const toId = parseInt(process.argv[3]);
@@ -38,3 +37,4 @@ async.whilst(() => { return currentId <= toId; }, (callback) => {
     }
     process.exit();
 });
+export {};

@@ -1,5 +1,4 @@
-"use strict";
-const models = require('../../models');
+const models = require('../../models/index.cjs');
 const _ = require('lodash');
 const communityId = process.argv[2];
 let groupsInCommunity = [];
@@ -143,3 +142,4 @@ const getMapForCommunity = async (communityId, options) => {
     });
     process.exit();
 })();
+export {};

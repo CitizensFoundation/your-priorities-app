@@ -1,8 +1,7 @@
-"use strict";
-const models = require("../../../models");
+const models = require("../../../models/index.cjs");
 const async = require("async");
 const moment = require("moment");
-const log = require("../../utils/logger");
+const log = require("../../utils/logger.cjs");
 const _ = require("lodash");
 const Excel = require("exceljs");
 const getPointsUp = require("./common_utils").getPointsUp;
@@ -716,3 +715,4 @@ const createXlsReport = (workPackage, callback) => {
 module.exports = {
     createXlsReport,
 };
+export {};

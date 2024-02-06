@@ -54,7 +54,17 @@
       "dear": "Hola",
       "reset_password_1": "Aquí està el link per canviar la teva contrasenya",
       "reset_password_2": "Si no has demanat això, si us plau, ignora aquest correu electrònic",
-      "reset_password_3": "La seva contrasenya no canviarà fins que accedeixi a l'enllaç anterior i crei un nou nou."
+      "reset_password_3": "La seva contrasenya no canviarà fins que accedeixi a l'enllaç anterior i crei un nou nou.",
+      "possibleFraudFooter": "Feu clic a l'enllaç de la comunitat a continuació, inicieu sessió com a administrador i seleccioneu Gestió de frau des del menú.",
+      "possibleFraudSubHeader": "Nombre d'activitats possiblement fraudulentes amb una estimació del 75% de probabilitat de frau",
+      "possibleFraudInformation": "El nostre sistema automatitzat ha identificat una possible activitat fraudulenta. Podeu examinar-ho més detingudament a través de la interfície d'administració de la Comunitat. Algunes d'aquestes activitats podrien tenir motius no fraudulents, així que sigui prudent a investigar a fons abans d'eliminar contingut.",
+      "possibleFraudHeader": "Possible activitat fraudulenta",
+      "settings": "Configuració del correu electrònic",
+      "automaticToxicityDetection": "Aquest contingut ha estat marcat automàticament com a tòxic utilitzant algoritmes d'IA que estimen la toxicitat del contingut. Podeu eliminar el contingut si cal.",
+      "automaticToxicityDetectionVision": "Un algoritme d'IA ha marcat automàticament imatgeria visual connectada amb aquest contingut. Aquest algoritme revisa imatges per possibles imatges d'adults, violència, mèdiques i provocatives. Podeu eliminar el contingut si cal.",
+      "automaticToxicityDetectionDisclaimer": "De vegades, l'algoritme d'IA calcula una puntuació incorrecta, en aquest cas no us preocupeu, no necessiteu prendre cap acció addicional i podeu ignorar aquest correu electrònic.",
+      "automaticToxicityHowLikely": "Probabilitat (%) de ser tòxic",
+      "automaticToxicityEnglishText": "Text en anglès utilitzat per a la puntuació"
     }
   }
 }

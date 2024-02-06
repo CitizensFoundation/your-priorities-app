@@ -1,4 +1,3 @@
-"use strict";
 var path = require('path');
 var fs = require('fs');
 var _ = require('lodash');
@@ -54,3 +53,4 @@ var dir = "/home/robert/Projects/production-your-priorities-app/client_app/src";
 _.forEach(walkSync(dir), function (filePath) {
     checkFile(filePath);
 });
+export {};

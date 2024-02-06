@@ -1,7 +1,6 @@
-"use strict";
 const _ = require("lodash");
 const FraudGetBase = require('./FraudGetBase.js');
-const models = require("../../../../models");
+const models = require("../../../../models/index.cjs");
 //TODO: Change to native JS instead of lodash
 class FraudGetEndorsements extends FraudGetBase {
     async getAllModelItems(model, getGroup) {
@@ -183,3 +182,4 @@ class FraudGetEndorsements extends FraudGetBase {
     }
 }
 module.exports = FraudGetEndorsements;
+export {};
