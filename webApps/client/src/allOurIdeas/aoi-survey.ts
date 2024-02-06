@@ -264,7 +264,7 @@ export class AoiSurvey extends YpBaseElement  {
       ...super.styles,
       css`
         :host {
-          background-color: var(--md-sys-color-background, #fefefe);
+          background-color: var(--md-sys-color-surface, #fefefe);
         }
 
         :host {
@@ -276,7 +276,7 @@ export class AoiSurvey extends YpBaseElement  {
         }
 
         body {
-          background-color: var(--md-sys-color-background, #fefefe);
+          background-color: var(--md-sys-color-on-surface, #fefefe);
         }
 
         .analyticsHeaderText {
@@ -298,12 +298,6 @@ export class AoiSurvey extends YpBaseElement  {
           padding-left: 8px;
           margin-right: 16px;
           padding-bottom: 560px;
-        }
-
-        md-list-item {
-          --md-list-list-item-container-color: var(--md-sys-color-surface);
-          color: var(--md-sys-color-on-surface);
-          --md-list-list-item-label-text-color: var(--md-sys-color-on-surface);
         }
 
         .selectedContainer {
@@ -339,7 +333,7 @@ export class AoiSurvey extends YpBaseElement  {
         .lightDarkContainer {
           padding-left: 8px;
           padding-right: 8px;
-          color: var(--md-sys-color-on-background);
+          color: var(--md-sys-color-on-surface);
           font-size: 14px;
         }
 

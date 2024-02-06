@@ -67,8 +67,8 @@ let AcNotificationList = class AcNotificationList extends YpBaseElementWithLogin
           padding: 8px;
           height: 100vh;
           overflow-x: scroll;
-          background-color: var(--md-sys-color-surface-variant);
-          color: var(--md-sys-color-on-surface-variant);
+          background-color: var(--md-sys-color-surface-container-high);
+          color: var(--md-sys-color-on-surface);
         }
 
         .notificationHeader {

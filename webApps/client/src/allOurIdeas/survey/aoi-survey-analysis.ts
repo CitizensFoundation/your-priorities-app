@@ -90,8 +90,8 @@ export class AoiSurveyAnalysis extends YpBaseElement {
           font-size: 22px;
           letter-spacing: 0.22em;
           line-height: 1.7;
-          color: var(--md-sys-color-primary);
-          background-color: var(--md-sys-color-on-primary);
+          color: var(--md-sys-color-on-primary-container);
+          background-color: var(--md-sys-color-primary-container);
           padding: 16px;
           margin-top: 32px;
           border-radius: 16px;
@@ -105,8 +105,8 @@ export class AoiSurveyAnalysis extends YpBaseElement {
           margin-top: 8px;
           border-radius: 16px;
           text-align: center;
-          color: var(--md-sys-color-on-secondary);
-          background-color: var(--md-sys-color-secondary);
+          color: var(--md-sys-color-secondary-container);
+          background-color: var(--md-sys-color-on-secondary-container);
         }
 
         .ideasLabel {
@@ -117,8 +117,8 @@ export class AoiSurveyAnalysis extends YpBaseElement {
           width: 80%;
           border-radius: 16px;
           text-align: center;
-          color: var(--md-sys-color-on-primary);
-          background-color: var(--md-sys-color-primary);
+          color: var(--md-sys-color-on-primary-container);
+          background-color: var(--md-sys-color-primary-container);
         }
 
         .generatingInfo {
@@ -142,8 +142,8 @@ export class AoiSurveyAnalysis extends YpBaseElement {
           margin-top: 8px;
           border-radius: 24px;
           margin-bottom: 16px;
-          color: var(--md-sys-color-primary);
-          background-color: var(--md-sys-color-on-primary);
+          color: var(--md-sys-color-on-primary-container);
+          background-color: var(--md-sys-color-primary-container);
         }
 
         .analysisContainer {

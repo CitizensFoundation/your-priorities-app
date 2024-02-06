@@ -154,13 +154,7 @@ let YpAdminApp = class YpAdminApp extends YpBaseElement {
         }
 
         md-list-item {
-          --md-list-list-item-container-color: var(--md-sys-color-surface);
-          color: var(--md-sys-color-primary);
-          --md-list-list-item-label-text-color: var(--md-sys-color-primary);
-          --md-list-list-item-leading-icon-color: var(--md-sys-color-primary);
-          --md-list-list-item-supporting-text-color: var(
-            --md-sys-color-on-primary-container
-          );
+
         }
 
         .selectedContainer {
