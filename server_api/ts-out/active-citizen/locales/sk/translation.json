@@ -58,7 +58,13 @@
       "dear": "Ahoj",
       "reset_password_1": "Tu je odkaz pre zmenu vášho hesla.",
       "reset_password_2": "Ak ste o to nepožiadali, ignorujte tento mail.",
-      "reset_password_3": "Vaše heslo nemožno zmeniť, kým nepoužijete odkaz vyššie a nevytvoríte si nové heslo."
+      "reset_password_3": "Vaše heslo nemožno zmeniť, kým nepoužijete odkaz vyššie a nevytvoríte si nové heslo.",
+      "possibleFraudFooter": "Kliknite na nižšie uvedený odkaz komunity, prihláste sa ako admin a vyberte z menu Správa podvodov.",
+      "possibleFraudSubHeader": "Počet možných podvodných aktivít s odhadovanou 75% pravdepodobnosťou podvodu",
+      "possibleFraudInformation": "Náš automatizovaný systém identifikoval možnú podvodnú aktivitu. Môžete si to podrobnejšie prezrieť prostredníctvom rozhrania správcu komunity. Niektoré z týchto aktivít môžu mať ne-podvodné dôvody, preto buďte opatrní a dôkladne skúmajte pred odstránením obsahu.",
+      "possibleFraudHeader": "Možná podvodná aktivita",
+      "settings": "Nastavenia e-mailu",
+      "automaticToxicityDetectionVision": "Algoritmus umelej inteligencie automaticky označil vizuálne obrázky spojené s týmto obsahom. Tento algoritmus preskúmava obrázky na možný obsah pre dospelých, násilie, medicínsky obsah a rizikové zobrazenia. Obsah môžete v prípade potreby odstrániť."
     }
   }
 }

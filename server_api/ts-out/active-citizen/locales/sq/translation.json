@@ -63,7 +63,8 @@
       "dear": "Përshëndetje",
       "reset_password_1": "Këtu është lidhja për të ndryshuar fjalëkalimin tuaj.",
       "reset_password_2": "Nëse nuk e keni kërkuar këtë, ju lutemi ta injoroni këtë email.",
-      "reset_password_3": "Fjalëkalimi juaj nuk do të ndryshojë derisa të hyni në lidhjen e mësipërme dhe të krijoni një të re."
+      "reset_password_3": "Fjalëkalimi juaj nuk do të ndryshojë derisa të hyni në lidhjen e mësipërme dhe të krijoni një të re.",
+      "automaticToxicityDetectionVision": "Një algoritëm AI ka shënuar automatikisht imazherinë vizuale të lidhur me këtë përmbajtje. Ky algoritëm rishikon imazhet për përmbajtje të mundshme për të rritur, dhunë, mjekësore dhe provokuese. Mund të fshini përmbajtjen nëse është e nevojshme."
     }
   }
 }

@@ -58,7 +58,13 @@
       "dear": "Салом",
       "reset_password_1": "Қуйида паролингизни ўзгартиришингиз учун линк",
       "reset_password_2": "Агарда сиз буни илтимос қилмаган бўлсангиз, у ҳолда бу электрон хатга эътибор берманг.",
-      "reset_password_3": "Сизнинг паролингиз юқоридаги линкка кириб янги парол киритмагунингизча ўзгармайди."
+      "reset_password_3": "Сизнинг паролингиз юқоридаги линкка кириб янги парол киритмагунингизча ўзгармайди.",
+      "possibleFraudFooter": "Quyidagi jamoa havolasini bosing, admin sifatida tizimga kiring va menyu dan Firibgarlikni boshqarish-ni tanlang.",
+      "possibleFraudSubHeader": "Taxminan 75% firibgarlik ehtimoli bilan mumkin bo'lgan firibgarlik faoliyatlari soni",
+      "possibleFraudInformation": "Bizning avtomatlashtirilgan tizimimiz mumkin bo'lgan firibgarlik faoliyatini aniqladi. Siz Jamoa admin interfeysi orqali yaqindan ko'rishingiz mumkin. Bu faoliyatning firibgarlikka aloqasi bo'lmagan sabablari bo'lishi mumkin, shuning uchun mazmunni o'chirishdan oldin diqqat bilan tekshirib chiqing.",
+      "possibleFraudHeader": "Mumkin bo'lgan firibgarlik faoliyati",
+      "settings": "Elektron pochta sozlamalari",
+      "automaticToxicityDetectionVision": "AI algoritmi bu mazmundagi vizual tasvirlarni avtomatik ravishda belgilab qo'ydi. Bu algoritm mumkin bo'lgan kattalar, zo'ravonlik, tibbiy va shubhali tasvirlarni ko'rib chiqadi. Kerak bo'lsa, mazmunni o'chirishingiz mumkin."
     }
   }
 }

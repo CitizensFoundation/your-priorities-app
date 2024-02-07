@@ -11,8 +11,8 @@
       "statusChangeSubject": "Status objave je spremenjen"
     },
     "email": {
-      "possibleFraudFooter": "Click on the community link below, login as admin and select Fraud management from the menu.",
-      "possibleFraudSubHeader": "Number of possible fraudulent activities with estimated 75% chance of fraud",
+      "possibleFraudFooter": "Kliknite na spodnjo povezavo skupnosti, se prijavite kot skrbnik in v meniju izberite Upravljanje goljufij.",
+      "possibleFraudSubHeader": "Število možnih goljufivih dejavnosti z ocenjeno 75% verjetnostjo goljufije",
       "possibleFraudInformation": "Naš avtomatiziran sistem je zaznal sumljivo aktivnost. Podrobno preglejte.",
       "possibleFraudHeader": "Sumljiva aktivnost",
       "settings": "Nastavitve e-pošte.",
@@ -63,7 +63,8 @@
       "dear": "Pozdravljeni",
       "reset_password_1": "Tukaj je povezava za spremembo gesla",
       "reset_password_2": "Če niste zahtevali tega sporočila ga prosim ignorirajte",
-      "reset_password_3": "Vaše geslo se ne bo spremenilo dokler ne uporabite zgornje povezave in ustvarite novo geslo."
+      "reset_password_3": "Vaše geslo se ne bo spremenilo dokler ne uporabite zgornje povezave in ustvarite novo geslo.",
+      "automaticToxicityDetectionVision": "Algoritem umetne inteligence je samodejno označil vizualne podobe, povezane s to vsebino. Ta algoritem pregleduje slike za možne odrasle, nasilne, medicinske in drzne podobe. Vsebino lahko po potrebi izbrišete."
     }
   }
 }

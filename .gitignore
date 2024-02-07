@@ -11,6 +11,7 @@ test/bower_components/
 webApps/old/clientApp/bower_components.safe/
 projectFilesBackup/
 .idea/*
+.vscode/
 .jshintrc
 .yo-rc.json
 .editorconfig

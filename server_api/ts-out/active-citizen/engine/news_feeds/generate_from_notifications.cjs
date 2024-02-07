@@ -7,10 +7,10 @@ var _ = require('lodash');
 var toJson = require('../../utils/to_json.cjs');
 var airbrake = null;
 if (process.env.AIRBRAKE_PROJECT_ID) {
-    airbrake = require('../../utils/airbrake');
+    airbrake = require('../../utils/airbrake.cjs');
 }
-var isItemRecommended = require('../recommendations/events_manager').isItemRecommended;
-var getNewsFeedDate = require('./news_feeds_utils').getNewsFeedDate;
+var isItemRecommended = require('../recommendations/events_manager.cjs').isItemRecommended;
+var getNewsFeedDate = require('./news_feeds_utils.cjs').getNewsFeedDate;
 var createItemFromNotification = function (notification, options, callback) {
     var detail = {};
     detail.ac_notification_id = notification.id;

@@ -10,7 +10,7 @@ var moment = require('moment');
 var getRecommendationFor = require('../engine/recommendations/events_manager.cjs').getRecommendationFor;
 var airbrake = null;
 if (process.env.AIRBRAKE_PROJECT_ID) {
-    airbrake = require('../utils/airbrake');
+    airbrake = require('../utils/airbrake.cjs');
 }
 var OVERALL_LIMIT = 7;
 var DATE_OPTIONS = { name: "date", after: moment().add(-1000, 'months').toISOString() };

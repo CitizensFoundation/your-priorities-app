@@ -4,14 +4,13 @@ import AWS from "aws-sdk";
 import fs from "fs";
 import path from "path";
 import { v4 as uuidv4 } from "uuid";
-const models = require("../../models/index.js");
+import models from "../../models/index.cjs";
 import { OpenAIClient, AzureKeyCredential, } from "@azure/openai";
-const image = require("../../models/image.js");
 const dbModels = models;
 const Image = dbModels.Image;
 const AcBackgroundJob = dbModels.AcBackgroundJob;
 const maxDalleRetryCount = 3;
-class GenerativeAiWorker {
+export class GenerativeAiWorker {
     async downloadImage(imageUrl, imageFilePath) {
         const response = await axios({
             method: "GET",
@@ -210,4 +209,3 @@ class GenerativeAiWorker {
         }
     }
 }
-module.exports = new GenerativeAiWorker();

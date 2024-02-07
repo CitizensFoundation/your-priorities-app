@@ -47,7 +47,24 @@
       "dear": "Merhaba ",
       "reset_password_1": "Parolanızı değiştirme bağlantısı:",
       "reset_password_2": "Bu e-posta isteğiniz dışında gönderildiyse lütfen dikkate almayınız.",
-      "reset_password_3": "Parolanız, yukarıdaki bağlantıya erişip yeni bir parola oluşturmadığınız sürece değişmez."
-    }
-  }
+      "reset_password_3": "Parolanız, yukarıdaki bağlantıya erişip yeni bir parola oluşturmadığınız sürece değişmez.",
+      "possibleFraudFooter": "Aşağıdaki topluluk bağlantısına tıklayın, yönetici olarak giriş yapın ve menüden Dolandırıcılık yönetimini seçin.",
+      "possibleFraudSubHeader": "Yaklaşık %75 dolandırıcılık şansı ile olası dolandırıcılık faaliyetlerinin sayısı",
+      "possibleFraudInformation": "Otomatik sistemimiz olası dolandırıcılık faaliyetini tespit etti. Topluluk yönetici arayüzü aracılığıyla daha yakından inceleyebilirsiniz. Bu faaliyetlerin dolandırıcılık dışı nedenleri olabileceğinden, içeriği silmeden önce dikkatlice araştırmanız önemlidir.",
+      "possibleFraudHeader": "Olası dolandırıcılık faaliyeti",
+      "settings": "E-posta Ayarları",
+      "automaticToxicityDetection": "Bu içerik, içeriğin zehirliliğini tahmin eden AI algoritmaları kullanılarak otomatik olarak toksik olarak işaretlendi. Gerekirse içeriği silebilirsiniz.",
+      "automaticToxicityDetectionVision": "Bu içeriğe bağlı görsel imajlar, bir AI algoritması tarafından otomatik olarak işaretlendi. Bu algoritma, olası yetişkin, şiddetli, tıbbi ve müstehcen imajları incelemek için görselleri gözden geçirir. Gerekirse içeriği silebilirsiniz.",
+      "automaticToxicityDetectionDisclaimer": "Bazen AI algoritması yanlış bir puan hesaplar, bu durumda endişelenmenize gerek yok, daha fazla işlem yapmanıza gerek yoktur ve bu e-postayı görmezden gelebilirsiniz.",
+      "automaticToxicityHowLikely": "Toksik olma olasılığı (%)",
+      "automaticToxicityEnglishText": "Puan için kullanılan İngilizce metin"
+    },
+    "contentToBeAnonymized": "İçeriğiniz 7 gün içinde anonimleştirilecek",
+    "communityContentToBeAnonymized": "Bu topluluktaki tüm içeriğiniz 7 gün içinde anonimleştirilip arşivlenecek, bundan sonra içeriği silme veya değiştirme şansınız olmayacak. Aşağıdaki içeriğinizi görün.",
+    "groupContentToBeAnonymized": "Bu gruptaki tüm içeriğiniz 7 gün içinde anonimleştirilip arşivlenecek, bundan sonra içeriği silme veya değiştirme şansınız olmayacak. Aşağıdaki içeriğinizi görün."
+  },
+  "yourPosts": "Gönderileriniz",
+  "yourPoints": "Puanlarınız",
+  "yourGroupPoints": "Grup puanlarınız",
+  "yourCommunityPoints": "Topluluk puanlarınız"
 }

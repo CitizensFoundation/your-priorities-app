@@ -4,7 +4,7 @@ const log = require('../utils/logger.cjs');
 const url = require('url');
 var airbrake = null;
 if (process.env.AIRBRAKE_PROJECT_ID) {
-    airbrake = require('../utils/airbrake');
+    airbrake = require('../utils/airbrake.cjs');
 }
 const BullQueue = require('bull');
 let redisUrl = process.env.REDIS_URL ? process.env.REDIS_URL : "redis://localhost:6379";

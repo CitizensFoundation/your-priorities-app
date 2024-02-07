@@ -23,6 +23,6 @@
 		"**/*.cjs",
 		"**/*.json",
 		"./node_modules/@policysynth/agents/validation.d.ts",
-		"./node_modules/@policysynth/agents/types.d.ts",
+		"./node_modules/@policysynth/agents/types.d.ts", "active-citizen/engine/moderation/fraud/FraudDeletePointQualities.cjs",
 	],
 }

@@ -58,7 +58,13 @@
       "dear": "Hej",
       "reset_password_1": "Här är länken för att ändra ditt lösenord",
       "reset_password_2": "Om du inte bad om detta, vänligen ignorera detta mejl.",
-      "reset_password_3": "Ditt lösenord kommer inte att ändras förrän du klickar länken ovan och skapar ett nytt."
+      "reset_password_3": "Ditt lösenord kommer inte att ändras förrän du klickar länken ovan och skapar ett nytt.",
+      "possibleFraudFooter": "Klicka på gemenskapslänken nedan, logga in som administratör och välj Bedrägerihantering från menyn.",
+      "possibleFraudSubHeader": "Antal möjliga bedrägliga aktiviteter med uppskattad 75% chans till bedrägeri",
+      "possibleFraudInformation": "Vårt automatiserade system har identifierat möjlig bedräglig aktivitet. Du kan ta en närmare titt genom Community admin-gränssnittet. En del av denna aktivitet kan ha icke bedrägliga skäl så var försiktig att undersöka noggrant innan du raderar innehåll.",
+      "possibleFraudHeader": "Möjlig bedräglig aktivitet",
+      "settings": "E-postinställningar",
+      "automaticToxicityDetectionVision": "En AI-algoritm har automatiskt flaggat visuellt bildmaterial kopplat till detta innehåll. Denna algoritm granskar bilder för möjlig vuxen-, vålds-, medicinsk- och utmanande bildinnehåll. Du kan radera innehållet om det behövs."
     }
   }
 }

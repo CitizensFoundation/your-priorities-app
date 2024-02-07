@@ -58,7 +58,13 @@
       "dear": "Hei",
       "reset_password_1": "Her er linken for å endre passordet ditt.",
       "reset_password_2": "Hvis du ikke har bedt om dette så kan du se bort fra denne e-posten.",
-      "reset_password_3": "Passordet ditt vil ikke endres før du åpner linken ovenfor og opprette et nytt."
+      "reset_password_3": "Passordet ditt vil ikke endres før du åpner linken ovenfor og opprette et nytt.",
+      "possibleFraudFooter": "Klikk på fellesskapslenken nedenfor, logg inn som admin og velg Svindelhåndtering fra menyen.",
+      "possibleFraudSubHeader": "Antall mulige svindelaktiviteter med anslått 75% sjanse for svindel",
+      "possibleFraudInformation": "Vårt automatiserte system har identifisert mulig svindelaktivitet. Du kan se nærmere på dette gjennom Community admin-grensesnittet. Noe av denne aktiviteten kan ha ikke-svindelrelaterte årsaker, så vær forsiktig med å undersøke grundig før du sletter innhold.",
+      "possibleFraudHeader": "Mulig svindelaktivitet",
+      "settings": "E-postinnstillinger",
+      "automaticToxicityDetectionVision": "En AI-algoritme har automatisk flagget visuelt innhold knyttet til dette innholdet. Denne algoritmen vurderer bilder for mulig voksen, voldelig, medisinsk og rasende innhold. Du kan slette innholdet hvis nødvendig."
     }
   }
 }

@@ -47,7 +47,24 @@
       "dear": "你好",
       "reset_password_1": "這是修改密碼的連結",
       "reset_password_2": "如果你沒有提出這樣的請求，請忽略這封信",
-      "reset_password_3": "如果沒有點選上面連結或是重新操作，你的密碼不會有任何異動"
-    }
-  }
+      "reset_password_3": "如果沒有點選上面連結或是重新操作，你的密碼不會有任何異動",
+      "possibleFraudFooter": "点击下面的社区链接，以管理员身份登录并从菜单中选择欺诈管理。",
+      "possibleFraudSubHeader": "可能存在欺诈活动的数量，估计有75%的欺诈几率",
+      "possibleFraudInformation": "我们的自动化系统已识别出可能的欺诈活动。您可以通过社区管理员界面仔细查看。这些活动中的一些可能有非欺诈性原因，因此在删除内容之前请仔细调查。",
+      "possibleFraudHeader": "可能的欺诈活动",
+      "settings": "电子邮件设置",
+      "automaticToxicityDetection": "这个内容已经被自动标记为有害，使用的是估算内容有害程度的AI算法。如果需要，您可以删除这个内容。",
+      "automaticToxicityDetectionVision": "一个AI算法自动标记了与此内容相关的视觉图像。该算法审查图像是否可能包含成人、暴力、医疗和敏感图像。如果需要，您可以删除这个内容。",
+      "automaticToxicityDetectionDisclaimer": "有时AI算法可能计算出错误的分数，在这种情况下不用担心，您不需要采取进一步的行动，可以忽略这封邮件。",
+      "automaticToxicityHowLikely": "有多大可能（%）是有毒的",
+      "automaticToxicityEnglishText": "用于评分的英文文本"
+    },
+    "contentToBeAnonymized": "你的内容将在7天后匿名化",
+    "communityContentToBeAnonymized": "你在这个社区的所有内容将在7天后被匿名化和归档，之后你将无法删除或更改它。请查看下面的内容。",
+    "groupContentToBeAnonymized": "你在这个小组的所有内容将在7天后被匿名化和归档，之后你将无法删除或更改它。请查看下面的内容。"
+  },
+  "yourPosts": "你的帖子",
+  "yourPoints": "你的积分",
+  "yourGroupPoints": "你的小组积分",
+  "yourCommunityPoints": "你的社区积分"
 }

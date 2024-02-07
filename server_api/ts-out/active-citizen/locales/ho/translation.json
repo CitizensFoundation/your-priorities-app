@@ -15,7 +15,7 @@
       "possibleFraudSubHeader": "Namba bilong ol posibol fraudulent activities wantaim estimet 75% sans bilong fraud",
       "possibleFraudInformation": "Sistem otomatik bilong mipela i bin painim posibol fraudulent activity. Yu ken lukluk klostu tru long Community admin interface. Sampela long dispela aktiviti inap gat non fraudulent as tasol so yu mas lukluk gut bipo yu rausim kandet.",
       "possibleFraudHeader": "Posibol fraudulent activity",
-      "settings": "Email Settings",
+      "settings": "Imeli Seting",
       "automaticToxicityDetection": "Dispela kandet i bin otomatikali makim olsem toxic iusim AI algorithms we i estimetim toxicity bilong kandet. Yu ken rausim kandet sapos yu nidim.",
       "automaticToxicityDetectionVision": "Wanpela AI algorithm otomatikali i bin makim visual imagery i konektim wantaim dispela kandet. Dispela algorithm i lukluk long ol piksa bilong painim posibol adult, violent, medical, na racy imagery. Yu ken rausim kandet sapos yu nidim.",
       "automaticToxicityDetectionDisclaimer": "AI algorithm i goheti hela gaba score, long dispela taim yu no ken wari, yu no ken mekim wanpela samting moa na yu ken lusim dispela email.",
@@ -61,7 +61,7 @@
       "newPointOnMyPoint": "Nupela point",
       "password_recovery": "Wokim nupela paswod",
       "password_changed": "Paswod bilong yu ibin senis",
-      "dear": "Hi",
+      "dear": "Hai",
       "reset_password_1": "Hia em link bilong senisim paswod bilong yu.",
       "reset_password_2": "Sapos yu no askim long dispela, plis lusim em i go.",
       "reset_password_3": "Paswod bilong yu bai no senis inap yu opim link antap na wokim nupela wan."
