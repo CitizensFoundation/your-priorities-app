@@ -1476,5 +1476,9 @@
   "ideaAdded": "Hugmyndin þín hefur verið bætt við, þú getur haldið áfram að kjósa.",
   "ideaModerationQueue": "Hugmyndin þín er í biðröð eftirlits.",
   "yourIdea": "Hugmyndin þín",
-  "chatInput": "Spurðu mig spurningu"
+  "chatInput": "Spurðu mig spurningu",
+  "ideaGenerationGroupType": "Hugmyndasköpun",
+  "allOurIdeasGroupType": "All Our Ideas Pöruð Röðun",
+  "yourIdeaHasBeenAdded": "Hugmyndin þín hefur verið bætt við, búið er að búa til táknmynd.",
+  "aiIconInfo": "Verið er að búa til táknmynd fyrir svarið þitt, þú getur lokað glugganum eða beðið eftir að táknmyndin verði búin. Þú munt einnig hafa kost á að endurgera táknmyndina."
 }

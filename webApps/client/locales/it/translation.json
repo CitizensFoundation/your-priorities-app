@@ -483,7 +483,7 @@
     "add": "Aggiungi comunità",
     "alternativeHeader": "Intestazione Alternativa",
     "edit": "Modifica comunità",
-    "hostname": "Hostname",
+    "hostname": "Nome host",
     "admins": "Amministratori della comunità",
     "users": "Utenti della comuintà",
     "delete": "Cancella comunità",
@@ -603,7 +603,7 @@
     "addNewsStory": "Aggiungi una storia o condividi un link",
     "postNewsStory": "Pubblica",
     "addComment": "Il tuo commento...",
-    "postComment": "Post",
+    "postComment": "Posta",
     "comments": "Commenti",
     "howToWrite": "Raccogliamo le migliori posizioni a favore e contrarie e pensiamo a delle soluzioni...",
     "commentToShort": "Il testo è troppo breve!"
@@ -1276,7 +1276,7 @@
   "Error fetching analysis": "Errore nell'analisi dei dati",
   "Generating analysis with GPT-4": "Generando analisi con GPT-4",
   "Vote Analysis": "Analisi Voti",
-  "Admin": "Admin",
+  "Admin": "Amministratore",
   "Start Voting": "Inizia a Votare",
   "Open Results": "Apri Risultati",
   "How likely to win": "Probabilità di vincita",
@@ -1346,5 +1346,9 @@
   "ideaAdded": "La tua idea è stata aggiunta, puoi continuare a votare.",
   "ideaModerationQueue": "La tua idea è in coda di moderazione.",
   "yourIdea": "La tua idea",
-  "chatInput": "Fammi una domanda"
+  "chatInput": "Fammi una domanda",
+  "ideaGenerationGroupType": "Generazione idee",
+  "allOurIdeasGroupType": "All Our Ideas Pairwise Ranking",
+  "yourIdeaHasBeenAdded": "La tua idea è stata aggiunta, generando icona.",
+  "aiIconInfo": "Un'icona per la tua risposta è in generazione, puoi chiudere la finestra o attendere la generazione dell'icona. Avrai anche l'opzione per rigenerare l'icona."
 }

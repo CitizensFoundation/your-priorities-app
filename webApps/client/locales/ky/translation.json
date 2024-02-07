@@ -1104,7 +1104,7 @@
   "Domain Configuration": "Домен конфигурациясы",
   "Community Configuration": "Коомдук конфигурация",
   "Group Configuration": "Top Configuration",
-  "Yp Configuration": "Yp Configuration",
+  "Yp Configuration": "Yp Конфигурациясы",
   "Profile Image Configuration": "Profil Sүrөt Configuration",
   "Translations": "Kотормолор",
   "Organizations": "Uюмдар",
@@ -1267,7 +1267,7 @@
   "debate": "Talash",
   "completeLogin": "Login'di Ayaqtat",
   "password": "Sыrsөz",
-  "Email": "Email",
+  "Email": "Электрондук почта",
   "recreate": "Kайрадан Tүзүү",
   "Your idea has been added, you can continue voting": "Sizin ideyaŋyz koşuldu, doborushuŋuzdu ulanuuŋuzga bolot.",
   "Your idea is in a moderation queue": "Sizin ideyaŋyz moderatsiyada turat.",
@@ -1347,5 +1347,9 @@
   "ideaAdded": "Сиздин идеяңыз кошулду, добуш берүүнү уланта аласыз.",
   "ideaModerationQueue": "Сиздин идея кароо кезегинде.",
   "yourIdea": "Сиздин идея",
-  "chatInput": "Мага суроо бер"
+  "chatInput": "Мага суроо бер",
+  "ideaGenerationGroupType": "Идея жаратуу",
+  "allOurIdeasGroupType": "All Our Ideas Жуптук Рейтинг",
+  "yourIdeaHasBeenAdded": "Сиздин идеяңыз кошулду, иконка түзүлүүдө.",
+  "aiIconInfo": "Сиздин жообуңуз үчүн иконка түзүлүп жатат, терезени жабууңуз же иконка түзүлгөнгө чейин күтүүңүз мүмкүн. Ошондой эле иконканы кайра түзүү опциясы болот."
 }

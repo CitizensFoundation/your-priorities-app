@@ -115,9 +115,9 @@
   "allowPostVideoUploads": "Video ikaarsaariarnerit akuersissutiguk",
   "useVideoCover": "Video assinga atoruk",
   "postCoverVideoInfo": "Video sammiveqatigiiffiusoq HD-mi ikaarsaaruk. Video piffissaa annerpaamik ",
-  "postCoverAudio": "Audio",
+  "postCoverAudio": "Nipilersuut",
   "postCoverAudioInfo": "Erinarsorit erinarsuut tutsuiginartoq. Audio piffissaa annerpaamik ",
-  "media": "Media",
+  "media": "Midiia",
   "removalAndDeletionInProgress": "Peerneq aamma piiarneqarpoq. Kingusinnerusukkut quppernerup nutarteruk.",
   "removalsAndDeletionsInProgress": "Peerneqarnerit piiarnerillu ingerlapput, kisianni sivisuumik ingerlasinnaapput atuisut amerlassusaannut tunngatillugu. Kingusinnerusukkut quppernerup nutarteruk.",
   "removalsInProgress": "Peerunnerit ingerlapput kisianni sivisuumik atuissapput, atuisut amerlassusaannut naapertuuttumik. Kingusinnerusukkut quppernerit nutarteruk.",
@@ -1346,5 +1346,9 @@
   "ideaAdded": "Isiginnittaaseq ilanngunneqarpoq, taasisinnaavutit.",
   "ideaModerationQueue": "Isiginnittaaseq nalilersuivimmiippoq.",
   "yourIdea": "Isiginnittaaseq",
-  "chatInput": "Aperiguk"
+  "chatInput": "Aperiguk",
+  "ideaGenerationGroupType": "Isiginninniarneq",
+  "allOurIdeasGroupType": "All Our Ideas Pairwise Ranking",
+  "yourIdeaHasBeenAdded": "Isigisassat ilanngunneqarpoq, ikonimik assiliartaarneq.",
+  "aiIconInfo": "Akissarsiassatut ikkussaq pilersinneqarpoq, matuersaammik matusinnaavutit imaluunniit ikkussap pilersinneqarneranik utaqqisinnaavutit. Ikkussap nutaamik pilersitsinissaa aamma periarfissaqarpoq."
 }

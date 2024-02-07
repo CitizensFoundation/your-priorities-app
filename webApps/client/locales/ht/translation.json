@@ -1354,5 +1354,9 @@
   "ideaAdded": "Ide ou a te ajoute, ou ka kontinye vote.",
   "ideaModerationQueue": "Lide ou nan yon ke modération.",
   "yourIdea": "Lide ou",
-  "chatInput": "Mande m yon kesyon"
+  "chatInput": "Mande m yon kesyon",
+  "ideaGenerationGroupType": "Jenerasyon lide",
+  "allOurIdeasGroupType": "All Our Ideas Pairwise Ranking",
+  "yourIdeaHasBeenAdded": "Idea ou a te ajoute, ap kreye imaj ikòn.",
+  "aiIconInfo": "Yon ikòn pou repons ou ap kreye, ou ka fèmen fenèt la oswa tann ikòn la fin kreye. Ou pral gen opsyon pou regenere ikòn la tou."
 }
