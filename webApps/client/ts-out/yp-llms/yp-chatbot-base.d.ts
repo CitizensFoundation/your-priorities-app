@@ -15,14 +15,15 @@ import { MdOutlinedTextField } from '@material/web/textfield/outlined-text-field
 import { YpStreamingLlmBase } from './yp-streaming-llm-base.js';
 import './yp-chatbot-item-base.js';
 export declare abstract class YpChatbotBase extends YpStreamingLlmBase {
-    infoMessage: string;
-    defaultInfoMessage: string;
+    infoMessage: string | undefined;
+    defaultInfoMessage: string | undefined;
     inputIsFocused: boolean;
     onlyUseTextField: boolean;
     clusterId: number;
     communityId: number;
     textInputLabel: string;
     showCleanupButton: boolean;
+    showCloseButton: boolean;
     sendButton?: MdFilledTonalButton;
     chatElements?: YpAiChatbotItemBase[];
     chatInputField?: MdOutlinedTextField;
@@ -43,6 +44,6 @@ export declare abstract class YpChatbotBase extends YpStreamingLlmBase {
     static get styles(): any[];
     followUpQuestion(event: CustomEvent): void;
     renderChatInput(): import("lit-html").TemplateResult<1>;
-    render(): import("lit-html").TemplateResult;
+    render(): import("lit-html").TemplateResult<1>;
 }
 //# sourceMappingURL=yp-chatbot-base.d.ts.map

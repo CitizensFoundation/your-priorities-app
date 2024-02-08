@@ -102,7 +102,6 @@ export class YpBaseElement extends LitElement {
   }
 
   hasBooted() {
-    debugger;
     this.hasLlm = window.appGlobals.hasLlm;
   }
 

@@ -14,7 +14,8 @@ export declare class AoiLlmExplainDialog extends YpChatbotBase {
     leftAnswer: AoiAnswerToVoteOnData;
     rightAnswer: AoiAnswerToVoteOnData;
     currentError: string | undefined;
-    defaultInfoMessage: string;
+    showCloseButton: boolean;
+    defaultInfoMessage: string | undefined;
     serverApi: AoiServerApi;
     haveSentFirstQuestion: boolean;
     setupServerApi(): void;
@@ -27,7 +28,6 @@ export declare class AoiLlmExplainDialog extends YpChatbotBase {
     cancel(): void;
     textAreaKeyDown(e: KeyboardEvent): boolean;
     static get styles(): any[];
-    renderFooter(): import("lit-html").TemplateResult<1>;
     render(): import("lit-html").TemplateResult<1>;
 }
 //# sourceMappingURL=aoi-llm-explain-dialog.d.ts.map

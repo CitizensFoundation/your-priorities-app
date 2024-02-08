@@ -67,6 +67,9 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
   @property({ type: Boolean })
   hasVideoUpload = false;
 
+  @property({ type: String })
+  status: string | undefined;
+
   @property({ type: Boolean })
   hasAudioUpload = false;
 
@@ -139,20 +142,20 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
     this.selectedTab = (event.target as MdTabs).activeTabIndex;
   }
 
-  async imageLoaded(event: CustomEvent) {
+  async getColorFromLogo() {
     try {
       this.gettingImageColor = true;
 
-      let ypImageUrl = this.imagePreviewUrl;
-
-      const imageYp = event.detail.imageYp as YpImage;
+      let ypImageUrl =
+        this.imagePreviewUrl ||
+        YpMediaHelpers.getImageFormatUrl(this.currentLogoImages);
 
       const imgObj = new Image();
       imgObj.src = ypImageUrl + "?" + new Date().getTime();
       imgObj.setAttribute("crossOrigin", "");
       await imgObj.decode();
 
-      let newThemeColor = await imageYp.getThemeColorsFromImage(imgObj);
+      let newThemeColor = await YpImage.getThemeColorsFromImage(imgObj);
       this.gettingImageColor = false;
       console.error("New theme color", newThemeColor);
 
@@ -212,6 +215,37 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
     this.configChanged = true;
   }
 
+  _statusSelected(event: CustomEvent) {
+    const index = event.detail.index as number;
+    this.status = this.collectionStatusOptions[index].name;
+    debugger;
+    this._configChanged();
+  }
+
+  get statusIndex() {
+    if (this.status) {
+      for (let i = 0; i < this.collectionStatusOptions.length; i++) {
+        if (this.collectionStatusOptions[i].name == this.status) return i;
+      }
+      return -1;
+    } else {
+      return -1;
+    }
+  }
+
+  get collectionStatusOptions() {
+    if (this.language) {
+      return [
+        { name: "active", translatedName: this.t("status.active") },
+        { name: "featured", translatedName: this.t("status.featured") },
+        { name: "archived", translatedName: this.t("status.archived") },
+        { name: "hidden", translatedName: this.t("status.hidden") },
+      ];
+    } else {
+      return [];
+    }
+  }
+
   _ltpConfigChanged(event: CustomEvent) {
     setTimeout(() => {
       const jsonEditor = this.$$("#jsoneditor") as any;
@@ -243,7 +277,10 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
   }
 
   _themeChanged(event: CustomEvent) {
-    this.collection!.configuration.theme = event.detail as YpThemeConfiguration;
+    this.collection!.configuration.theme = {
+      ...this.collection!.configuration.theme,
+      ...(event.detail as YpThemeConfiguration),
+    };
     this.requestUpdate();
   }
 
@@ -428,23 +465,38 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
         <div style="position: relative;">
           <yp-image
             class="mainImage"
-            @loaded="${this.imageLoaded}"
+            @loaded="${this.getColorFromLogo}"
             sizing="contain"
             .skipCloudFlare="${true}"
             src="${this.imagePreviewUrl}"
           ></yp-image>
           ${this.gettingImageColor
-            ? html` <md-linear-progress class="imagePicker" indeterminate></md-linear-progress> `
+            ? html`
+                <md-linear-progress
+                  class="imagePicker"
+                  indeterminate
+                ></md-linear-progress>
+              `
             : nothing}
         </div>
       `;
     } else if (this.currentLogoImages) {
       return html`
-        <yp-image
-          class="image"
-          sizing="contain"
-          src="${YpMediaHelpers.getImageFormatUrl(this.currentLogoImages)}"
-        ></yp-image>
+        <div style="position: relative;">
+          <yp-image
+            class="image"
+            sizing="contain"
+            src="${YpMediaHelpers.getImageFormatUrl(this.currentLogoImages)}"
+          ></yp-image>
+          ${this.gettingImageColor
+            ? html`
+                <md-linear-progress
+                  class="imagePicker"
+                  indeterminate
+                ></md-linear-progress>
+              `
+            : nothing}
+        </div>
       `;
     } else {
       return html`
@@ -474,7 +526,8 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
             @success="${this._logoImageUploaded}"
           >
           </yp-file-upload>
-          <md-filled-icon-button ?hidden="${!this.hasLlm}"
+          <md-filled-icon-button
+            ?hidden="${!this.hasLlm}"
             id="generateButton"
             @click="${this._generateLogo}"
             ><md-icon>smart_toy</md-icon></md-filled-icon-button

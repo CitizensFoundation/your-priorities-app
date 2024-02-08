@@ -17,7 +17,6 @@ export declare class YpAdminConfigCommunity extends YpAdminConfigBase {
     inCommunityFolderId: number | undefined;
     signupTermsPageId: number | undefined;
     welcomePageId: number | undefined;
-    status: string | undefined;
     communityAccess: YpCommunityAccessTypes;
     constructor();
     static get styles(): (any[] | import("lit").CSSResult)[];
@@ -38,12 +37,6 @@ export declare class YpAdminConfigCommunity extends YpAdminConfigBase {
     _setupTranslations(): void;
     _formResponse(event: CustomEvent): Promise<void>;
     _finishRedirect(community: YpCommunityData): void;
-    _statusSelected(event: CustomEvent): void;
-    get statusIndex(): number;
-    get collectionStatusOptions(): {
-        name: string;
-        translatedName: string;
-    }[];
     _accessRadioChanged(event: CustomEvent): void;
     private _getAccessTab;
     private _getBasicTab;

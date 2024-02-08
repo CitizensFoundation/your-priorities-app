@@ -7,6 +7,7 @@ export declare class AoiSurveyResuls extends YpBaseElement {
     results: AoiChoiceData[];
     question: AoiQuestionData;
     earl: AoiEarlData;
+    group: YpGroupData;
     groupId: number;
     showScores: boolean;
     connectedCallback(): Promise<void>;

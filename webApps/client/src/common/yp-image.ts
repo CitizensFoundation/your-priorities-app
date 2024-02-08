@@ -266,13 +266,13 @@ export class YpImage extends LitElement {
     this._resolvedSrc = "";
   }
 
-  async getThemeColorsFromImage(
-    img: HTMLImageElement | undefined
+  static async getThemeColorsFromImage(
+    img: HTMLImageElement
   ): Promise<string | undefined> {
     return await new Promise(async (resolve, reject) => {
       try {
         const color = await sourceColorFromImage(
-          img || (this.$$("img") as HTMLImageElement)
+          img
         );
         resolve(color);
       } catch (err) {

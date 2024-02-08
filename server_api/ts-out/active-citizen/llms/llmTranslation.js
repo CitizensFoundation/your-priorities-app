@@ -257,9 +257,11 @@ export class YpLlmTranslation {
                     temperature: this.temperature,
                 });
                 console.log("Results:", results);
-                const textJson = results.choices[0].message.content;
+                let textJson = results.choices[0].message.content;
                 console.log("Text JSON:", textJson);
                 if (textJson) {
+                    textJson = textJson.replace(/```json/g, "");
+                    textJson = textJson.replace(/```/g, "");
                     const translationData = JSON.parse(jsonrepair(textJson));
                     if (translationData && translationData.translatedContent) {
                         if (maxCharactersInTranslation &&

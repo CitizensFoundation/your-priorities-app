@@ -3,8 +3,8 @@ export declare class AoiServerApi extends YpServerApi {
     constructor(urlPath?: string);
     getEarlData(groupId: number): AoiEarlResponse;
     getPrompt(groupId: number, questionId: number): Promise<AoiPromptData>;
-    getSurveyResults(groupId: number): Promise<AoiResultData[]>;
-    getSurveyAnalysis(groupId: number, analysisIndex: number, analysisTypeIndex: number): AnalysisTypeData;
+    getSurveyResults(groupId: number): Promise<AoiChoiceData[]>;
+    getSurveyAnalysis(groupId: number, wsClientId: string, analysisIndex: number, analysisTypeIndex: number): AoiAnalysisResponse;
     submitIdea(groupId: number, questionId: number, newIdea: string): AoiAddIdeaResponse;
     postVote(groupId: number, questionId: number, promptId: number, locale: string, body: AoiVoteData, direction: "left" | "right" | "skip"): AoiVoteResponse;
     postVoteSkip(groupId: number, questionId: number, promptId: number, locale: string, body: AoiVoteSkipData): AoiVoteResponse;

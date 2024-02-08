@@ -1027,7 +1027,7 @@ let YpPostEdit = class YpPostEdit extends YpEditBase {
               id="customThankYouTextNewPostsId"
               hidden
               .contentId="${this.group.id}"
-              text-only
+              textOnly
               .content="${this.group.configuration.customThankYouTextNewPosts}"
               .contentLanguage="${this.group.language}"
               textType="customThankYouTextNewPosts"
@@ -1040,7 +1040,7 @@ let YpPostEdit = class YpPostEdit extends YpEditBase {
               id="customTitleQuestionTextId"
               hidden
               .contentId="${this.group.id}"
-              text-only
+              textOnly
               .content="${this.group.configuration.customTitleQuestionText}"
               .contentLanguage="${this.group.language}"
               @new-translation="${this._updatePostTitle}"
@@ -1055,7 +1055,7 @@ let YpPostEdit = class YpPostEdit extends YpEditBase {
               id="alternativeTextForNewIdeaSaveButtonId"
               hidden
               .contentId="${this.group.id}"
-              text-only
+              textOnly
               .content="${this.group.configuration
                 .alternativeTextForNewIdeaSaveButton}"
               .contentLanguage="${this.group.language}"

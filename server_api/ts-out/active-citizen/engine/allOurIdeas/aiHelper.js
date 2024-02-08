@@ -4,6 +4,7 @@ export class AiHelper {
         this.modelName = "gpt-4-0125-preview";
         this.maxTokens = 2048;
         this.temperature = 0.7;
+        this.cacheExpireTime = 60 * 60;
         this.openaiClient = new OpenAI({
             apiKey: process.env.OPENAI_API_KEY,
         });
@@ -34,6 +35,9 @@ export class AiHelper {
                 for await (const part of stream) {
                     this.sendToClient("bot", part.choices[0].delta.content);
                     botMessage += part.choices[0].delta.content;
+                }
+                if (this.redisClient && this.cacheKeyForFullResponse) {
+                    this.redisClient.set(this.cacheKeyForFullResponse, botMessage, "EX", this.cacheExpireTime);
                 }
             }
             catch (error) {
@@ -92,7 +96,9 @@ export class AiHelper {
             return null;
         }
     }
-    async getAiAnalysis(questionId, contextPrompt, answers) {
+    async getAiAnalysis(questionId, contextPrompt, answers, cacheKeyForFullResponse, redisClient) {
+        this.redisClient = redisClient;
+        this.cacheKeyForFullResponse = cacheKeyForFullResponse;
         const basePrePrompt = `
         You are a highly competent text and ideas analysis AI.
         If an answer sounds implausible as an answer to the question, then include a short observation about it in your analysis.
@@ -127,15 +133,7 @@ export class AiHelper {
                         content: `The question: ${questionId}\n\nAnswers to analyse:\n${answersText}`,
                     },
                 ];
-                //await this.streamChatCompletions(messages);
-                const response = await this.openaiClient.chat.completions.create({
-                    model: this.modelName,
-                    messages,
-                    max_tokens: this.maxTokens,
-                    temperature: this.temperature,
-                    stream: false,
-                });
-                return response.choices[0].message.content;
+                this.streamChatCompletions(messages);
             }
         }
         catch (error) {

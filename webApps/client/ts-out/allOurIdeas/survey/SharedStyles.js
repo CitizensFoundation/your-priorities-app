@@ -5,7 +5,7 @@ export const SharedStyles = css `
     font-size: 24px;
     padding: 8px;
     text-align: center;
-    margin-top: 32px;
+    margin-top: 16px;
     border-radius: 16px;
     margin-bottom: 0px;
     margin-top: 16px;

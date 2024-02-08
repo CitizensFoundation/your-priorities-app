@@ -4,6 +4,7 @@ import { customElement, property } from "lit/decorators.js";
 import { YpBaseElement } from "../common/yp-base-element.js";
 import "@material/web/select/outlined-select.js";
 import "@material/web/select/select-option.js";
+import "@material/web/button/text-button.js";
 import "@material/web/textfield/outlined-text-field.js";
 import { YpThemeManager } from "../yp-app/YpThemeManager.js";
 import { MdOutlinedSelect } from "@material/web/select/outlined-select.js";
@@ -13,8 +14,6 @@ import { MdOutlinedTextField } from "@material/web/textfield/outlined-text-field
 import "./yp-theme-color-input.js";
 
 //TODO: Figure out how to implement "Use exactly the provided colors as an option" https://material-foundation.github.io/material-theme-builder/
-
-
 
 @customElement("yp-theme-selector")
 export class YpThemeSelector extends YpBaseElement {
@@ -54,18 +53,24 @@ export class YpThemeSelector extends YpBaseElement {
   @property({ type: Boolean })
   disableOneThemeColorInputs: boolean = false;
 
-  channel = new BroadcastChannel('hex_color');
+  @property({ type: Boolean })
+  hasLogoImage = false;
+
+  channel = new BroadcastChannel("hex_color");
 
   static override get styles() {
     return [
       super.styles,
       css`
         md-outlined-select,
-        md-outlined-text-field {
+        md-outlined-text-field,
+        yp-theme-color-input {
           max-width: 300px;
           width: 300px;
-          margin-bottom: 8px;
-          margin-top: 8px;
+        }
+
+        md-text-button {
+          margin-top: 16px;
         }
 
         .colorTypeTitle {
@@ -110,7 +115,8 @@ export class YpThemeSelector extends YpBaseElement {
           margin-top: 32px;
         }
 
-        .dynamicColors, .customColors {
+        .dynamicColors,
+        .customColors {
           padding: 40px;
           margin: 32px;
           margin-bottom: 8px;
@@ -139,12 +145,18 @@ export class YpThemeSelector extends YpBaseElement {
         this.themeConfiguration.neutralVariantColor;
     }
 
-    this.addGlobalListener("yp-theme-color-detected", this.themeColorDetected.bind(this));
+    this.addGlobalListener(
+      "yp-theme-color-detected",
+      this.themeColorDetected.bind(this)
+    );
   }
 
   override disconnectedCallback(): void {
     super.disconnectedCallback();
-    this.removeGlobalListener("yp-theme-color-detected", this.themeColorDetected.bind(this));
+    this.removeGlobalListener(
+      "yp-theme-color-detected",
+      this.themeColorDetected.bind(this)
+    );
   }
 
   themeColorDetected(event: CustomEvent) {
@@ -169,7 +181,7 @@ export class YpThemeSelector extends YpBaseElement {
       if (changedProperties.has(prop)) {
         shouldUpdateConfiguration = true;
         this.updateDisabledInputs();
-        this.fire('config-updated')
+        this.fire("config-updated");
       }
     });
 
@@ -256,6 +268,14 @@ export class YpThemeSelector extends YpBaseElement {
     this.disableMultiInputs = this.isValidHex(this.oneDynamicThemeColor);
   }
 
+  get currentThemeSchemaIndex() {
+    const index = YpThemeManager.themeScemesOptionsWithName.findIndex(
+      (option) => option.value === this.selectedThemeScheme
+    );
+
+    return index || 0;
+  }
+
   override render() {
     return html`
       <div class="layout horizontal">
@@ -279,7 +299,7 @@ export class YpThemeSelector extends YpBaseElement {
               .disabled="${this.disableSelection ||
               this.disableOneThemeColorInputs}"
               @change="${this.setThemeSchema}"
-              .selected="${this.selectedThemeScheme}"
+              .selectedIndex="${this.currentThemeSchemaIndex}"
             >
               ${YpThemeManager.themeScemesOptionsWithName.map(
                 (option) => html`
@@ -289,6 +309,15 @@ export class YpThemeSelector extends YpBaseElement {
                 `
               )}
             </md-outlined-select>
+
+            <div class="layout vertical center-center">
+              <md-text-button
+                ?hidden="${!this.hasLogoImage}"
+                @click="${() => this.fire("get-color-from-logo")}"
+              >
+                ${this.t("getColorFromLogo")}
+              </md-text-button>
+            </div>
           </div>
 
           <div class="or">${this.t("or")}</div>

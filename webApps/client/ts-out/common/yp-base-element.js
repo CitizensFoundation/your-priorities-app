@@ -66,7 +66,6 @@ export class YpBaseElement extends LitElement {
         this.setupThemeSettings();
     }
     hasBooted() {
-        debugger;
         this.hasLlm = window.appGlobals.hasLlm;
     }
     setupBootListener() {

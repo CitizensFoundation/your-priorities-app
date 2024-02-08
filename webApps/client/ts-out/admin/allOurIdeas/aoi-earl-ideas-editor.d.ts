@@ -36,6 +36,8 @@ export declare class AoiEarlIdeasEditor extends YpStreamingLlmBase {
     socketClosed(): void;
     socketError(): void;
     getChoices(): Promise<void>;
+    createGroupObserver(): void;
+    handleGroupChange(): void;
     addChatBotElement(wsMessage: PsAiChatWsMessage): Promise<void>;
     get answers(): string[];
     hasMoreThanOneIdea(): void;
@@ -45,7 +47,6 @@ export declare class AoiEarlIdeasEditor extends YpStreamingLlmBase {
     toggleIdeaActivity(answer: AoiChoiceData): () => Promise<void>;
     applyFilter(filterType: string): void;
     get sortedChoices(): AoiChoiceData[] | undefined;
-    setPromptDraft(): Promise<void>;
     updated(changedProperties: Map<string | number | symbol, unknown>): void;
     generateAiIcons(): Promise<void>;
     stopGenerating(): void;

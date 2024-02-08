@@ -35,9 +35,11 @@ export class AoiLlmExplainDialog extends YpChatbotBase {
   @property({ type: String })
   currentError: string | undefined;
 
+  @property({ type: Boolean })
+  override showCloseButton = true;
+
   @property({ type: String })
-  override defaultInfoMessage =
-    "I'm your All Our Ideas AI assitant ready to explain anything connected to this project.";
+  override defaultInfoMessage: string | undefined = undefined;
 
   serverApi!: AoiServerApi;
 
@@ -50,11 +52,13 @@ export class AoiLlmExplainDialog extends YpChatbotBase {
   override async connectedCallback() {
     super.connectedCallback();
     this.addEventListener("yp-ws-opened", this.sendFirstQuestion);
+    this.addEventListener("chatbot-close", this.cancel);
   }
 
   override disconnectedCallback(): void {
     super.disconnectedCallback();
     this.removeEventListener("yp-ws-opened", this.sendFirstQuestion);
+    this.addEventListener("chatbot-close", this.cancel);
   }
 
   async sendFirstQuestion() {
@@ -178,21 +182,13 @@ ${this.rightAnswer.content}`;
     ];
   }
 
-  renderFooter() {
-    return html` <div class="layout horizontal footer">
-      <md-text-button class="cancelButton" @click="${this.cancel}">
-        ${this.t("Cancel")}
-      </md-text-button>
-    </div>`;
-  }
-
   override render() {
     return html`<md-dialog
       @closed="${() => this.cancel()}"
       ?fullscreen="${!this.wide}"
       style="max-width: 800px;max-height: 90vh;"
       id="dialog"
-    >
+    > <div slot="headline">${this.t("explainBothAnswers")}</div>
       <div slot="content">${super.render()}</div>
     </md-dialog> `;
   }

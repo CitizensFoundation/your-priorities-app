@@ -154,7 +154,7 @@ export class YpPostCardAdd extends YpBaseElement {
                             <yp-magic-text
                               .contentId="${this.group.id}"
                               .extraId="${this.index}"
-                              text-only
+                              textOnly
                               .content="${this.group.configuration
                                 .alternativeTextForNewIdeaButtonClosed}"
                               .contentLanguage="${this.group.language}"
@@ -172,7 +172,7 @@ export class YpPostCardAdd extends YpBaseElement {
                             <yp-magic-text
                               .contentId="${this.group.id}"
                               .extraId="${this.index}"
-                              text-only
+                              textOnly
                               .content="${this.group.configuration
                                 .alternativeTextForNewIdeaButton}"
                               .contentLanguage="${this.group.language}"

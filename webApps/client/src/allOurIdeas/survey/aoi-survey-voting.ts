@@ -62,7 +62,10 @@ export class AoiSurveyVoting extends YpBaseElement {
   llmExplainOpen = false;
 
   @property({ type: Number })
-  levelTwoTargetVotes: number | undefined;
+  level = 1;
+
+  @property({ type: Number })
+  currentLevelTargetVotes: number | undefined;
 
   timer: number | undefined;
 
@@ -210,8 +213,7 @@ export class AoiSurveyVoting extends YpBaseElement {
 
       const buttons = this.shadowRoot?.querySelectorAll("md-elevated-button");
       buttons?.forEach((button) => {
-        //TODO: IMPORTANT GET THIS WORKING ON MOBILES
-        this.blur();
+        button.blur();
       });
 
       if (direction !== "skip") {
@@ -315,7 +317,7 @@ export class AoiSurveyVoting extends YpBaseElement {
         .progressBarContainer {
           width: 450px;
           height: 10px;
-          background-color: var(--md-sys-color-on-primary);
+          background-color: var(--md-sys-color-on-secondary);
           border-radius: 5px;
           overflow: hidden;
           box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
@@ -324,7 +326,7 @@ export class AoiSurveyVoting extends YpBaseElement {
 
         .progressBar {
           height: 100%;
-          background-color: var(--md-sys-color-primary);
+          background-color: var(--md-sys-color-secondary);
           transition: width 0.4s ease-in-out;
         }
 
@@ -343,12 +345,7 @@ export class AoiSurveyVoting extends YpBaseElement {
         }
 
         .questionTitle {
-          margin-bottom: 0px;
           margin-top: 32px;
-          margin-left: 32px;
-          margin-right: 32px;
-          padding: 20px;
-          line-height: 1.5;
         }
 
         .newIdeaButton,
@@ -475,21 +472,28 @@ export class AoiSurveyVoting extends YpBaseElement {
 
   renderProgressBar() {
     if (this.earl.configuration) {
-      let targetVotes =
-        this.levelTwoTargetVotes ||
-        (window.appGlobals.originalQueryParameters.goalThreshold as number) ||
-        this.earl.configuration.target_votes ||
-        30;
+      let initialTargetVotes =
+        this.earl.configuration.target_votes || 30; // Use configuration target votes or default to 30
 
-      if (
-        !this.levelTwoTargetVotes &&
-        this.question.visitor_votes >= targetVotes
-      ) {
-        //this.levelTwoTargetVotes = Math.max(Math.round((this.question.choices_count * this.question.choices_count)/4), targetVotes);
-        this.levelTwoTargetVotes = targetVotes * 2;
-        targetVotes = this.levelTwoTargetVotes;
+      // If currentLevelTargetVotes is undefined or not enough for the current votes, find the correct level
+      if (!this.currentLevelTargetVotes || this.question.visitor_votes >= this.currentLevelTargetVotes) {
+        this.currentLevelTargetVotes = initialTargetVotes;
+        let levelMultiplier = 1;
+
+        // Keep doubling until the currentLevelTargetVotes is higher than the current votes
+        while (this.question.visitor_votes >= this.currentLevelTargetVotes) {
+          this.currentLevelTargetVotes *= 2;
+          levelMultiplier *= 2;
+        }
+
+        // Calculate the level based on the multiplier
+        let level = Math.log(levelMultiplier) / Math.log(2) + 1; // +1 because level starts at 1
+        this.level = level;
       }
 
+      let targetVotes = this.currentLevelTargetVotes;
+
+      // Calculate progress percentage
       const progressPercentage = Math.min(
         (this.question.visitor_votes / targetVotes) * 100,
         100
@@ -500,15 +504,15 @@ export class AoiSurveyVoting extends YpBaseElement {
           <div class="progressBar" style="width: ${progressPercentage}%;"></div>
         </div>
         <div class="progressBarText">
-          ${this.question.visitor_votes} ${this.t("votes of")} ${targetVotes}
-          ${this.t("target")}
-          ${this.levelTwoTargetVotes ? html`(${this.t("Level 2")})` : nothing}
+          ${this.question.visitor_votes} ${this.t("votes of")} ${targetVotes} ${this.t("target")}
+          (${this.t("Level")} ${this.level})
         </div>
       `;
     } else {
       return nothing;
     }
   }
+
 
   override render() {
     if (this.question) {
@@ -522,7 +526,7 @@ export class AoiSurveyVoting extends YpBaseElement {
               id="answerText"
               .contentId="${this.groupId}"
               .extraId="${this.question.id}"
-              text-only
+              textOnly
               truncate="300"
               .content="${this.question.name}"
               .contentLanguage="${this.group.language}"
@@ -553,13 +557,13 @@ export class AoiSurveyVoting extends YpBaseElement {
             >
               ${this.leftAnswer?.imageUrl
                 ? html`
-                    <img
+                    <yp-image
                       slot="icon"
-                      src="${this.leftAnswer?.imageUrl}"
+                      .src="${this.leftAnswer?.imageUrl}"
                       alt="Left answer image"
                       ?rtl="${this.rtl}"
                       class="iconImage"
-                    />
+                    ></yp-image>
                   `
                 : nothing}
               <yp-magic-text
@@ -567,7 +571,7 @@ export class AoiSurveyVoting extends YpBaseElement {
                 .contentId="${this.groupId}"
                 .extraId="${this.leftAnswer!.choiceId}"
                 .additionalId="${this.question.id}"
-                text-only
+                textOnly
                 truncate="140"
                 .content="${this.leftAnswer!.content}"
                 .contentLanguage="${this.group.language}"
@@ -596,13 +600,13 @@ export class AoiSurveyVoting extends YpBaseElement {
             >
               ${this.rightAnswer?.imageUrl
                 ? html`
-                    <img
+                    <yp-image
                       slot="icon"
                       ?rtl="${this.rtl}"
                       src="${this.rightAnswer?.imageUrl}"
                       alt="Right answer image"
                       class="iconImageRight"
-                    />
+                    ></yp-image>
                   `
                 : nothing}
               <yp-magic-text
@@ -610,7 +614,7 @@ export class AoiSurveyVoting extends YpBaseElement {
                 .contentId="${this.groupId}"
                 .extraId="${this.rightAnswer!.choiceId}"
                 .additionalId="${this.question.id}"
-                text-only
+                textOnly
                 truncate="140"
                 .content="${this.rightAnswer!.content}"
                 .contentLanguage="${this.group.language}"

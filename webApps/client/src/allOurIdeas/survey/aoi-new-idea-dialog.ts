@@ -387,7 +387,7 @@ export class AoiNewIdeaDialog extends YpGenerateAiImage {
               id="answerText"
               .contentId="${this.groupId}"
               .extraId="${this.choice.data.choiceId}"
-              text-only
+              textOnly
               truncate="140"
               .content="${this.choice.data.content}"
               .contentLanguage="${this.group.language}"

@@ -30,6 +30,7 @@ let AoiEarlIdeasEditor = class AoiEarlIdeasEditor extends YpStreamingLlmBase {
         this.currentGeneratingIndex = undefined;
     }
     connectedCallback() {
+        this.createGroupObserver();
         this.setupBootListener();
         if (this.configuration.earl && this.configuration.earl.question_id) {
             this.disableWebsockets = true;
@@ -52,6 +53,22 @@ let AoiEarlIdeasEditor = class AoiEarlIdeasEditor extends YpStreamingLlmBase {
     }
     async getChoices() {
         this.choices = await this.serverApi.getChoices(this.communityId, this.configuration.earl.question_id);
+    }
+    createGroupObserver() {
+        const handler = {
+            set: (target, property, value, receiver) => {
+                // Perform your logic here whenever a property is set
+                console.error(`Property ${String(property)} set to`, value);
+                // Trigger a custom event or call a method to handle the change
+                this.handleGroupChange();
+                return Reflect.set(target, property, value, receiver);
+            },
+        };
+        this.group = new Proxy(this.group, handler);
+    }
+    handleGroupChange() {
+        // Handle the change here
+        console.error("Group changed", this.group);
     }
     async addChatBotElement(wsMessage) {
         switch (wsMessage.type) {
@@ -172,15 +189,8 @@ let AoiEarlIdeasEditor = class AoiEarlIdeasEditor extends YpStreamingLlmBase {
             return undefined;
         }
     }
-    async setPromptDraft() {
-        await this.updateComplete;
-        this.aiStyleInputElement.value = this.imageGenerator.promptDraft;
-    }
     updated(changedProperties) {
         super.updated(changedProperties);
-        if (changedProperties.has("choices") && this.choices) {
-            this.setPromptDraft();
-        }
     }
     async generateAiIcons() {
         this.imageGenerator.collectionType = "community";
@@ -449,6 +459,7 @@ let AoiEarlIdeasEditor = class AoiEarlIdeasEditor extends YpStreamingLlmBase {
             @click="${this.submitIdeasForCreation}"
             ?disabled="${this.isSubmittingIdeas ||
             this.answers?.length < 6 ||
+            !this.configuration ||
             this.isGeneratingWithAi}"
             >${this.t("submitAnswersForCreation")}</md-filled-button
           >
@@ -526,7 +537,7 @@ let AoiEarlIdeasEditor = class AoiEarlIdeasEditor extends YpStreamingLlmBase {
             id="answerText"
             .contentId="${this.groupId}"
             .extraId="${answer.data.choiceId}"
-            text-only
+            textOnly
             truncate="140"
             .content="${answer.data.content}"
             .contentLanguage="${this.group.language}"
@@ -603,7 +614,7 @@ let AoiEarlIdeasEditor = class AoiEarlIdeasEditor extends YpStreamingLlmBase {
             type="textarea"
             @change="${this.aiStyleChanged}"
             rows="5"
-            .value="${this.group.configuration.theme?.iconPrompt || ""}"
+            .value="${this.group.configuration.theme?.iconPrompt || this.imageGenerator.promptDraft}"
             ?hidden="${this.allChoicesHaveIcons || !this.hasLlm}"
             ?disabled="${this.isGeneratingWithAi || this.allChoicesHaveIcons}"
           ></md-outlined-text-field>

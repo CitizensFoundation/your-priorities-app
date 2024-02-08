@@ -17,7 +17,6 @@ export declare class YpAdminConfigGroup extends YpAdminConfigBase {
     signupTermsPageId: number | undefined;
     welcomePageId: number | undefined;
     aoiQuestionName: string | undefined;
-    status: string | undefined;
     groupAccess: YpGroupAccessTypes;
     groupTypeIndex: number;
     group: YpGroupData;
@@ -31,8 +30,6 @@ export declare class YpAdminConfigGroup extends YpAdminConfigBase {
     apiEndpoint: unknown;
     isGroupFolder: any;
     structuredQuestionsJsonError: any;
-    collectionStatusOptions: any;
-    statusIndex: any;
     hasSamlLoginProvider: any;
     questionNameHasChanged: boolean;
     groupTypeOptions: string[];
@@ -41,7 +38,7 @@ export declare class YpAdminConfigGroup extends YpAdminConfigBase {
     _setGroupType(event: CustomEvent): void;
     renderGroupTypeSelection(): import("lit-html").TemplateResult<1>;
     renderHeader(): import("lit-html").TemplateResult<1> | typeof nothing;
-    getAccessTokenName(): "open_to_community" | "secret";
+    getAccessTokenName(): "secret" | "open_to_community";
     renderHiddenInputs(): import("lit-html").TemplateResult<1>;
     _descriptionChanged(event: CustomEvent): void;
     connectedCallback(): void;
@@ -54,7 +51,6 @@ export declare class YpAdminConfigGroup extends YpAdminConfigBase {
     _finishRedirect(group: YpGroupData): void;
     _getAccessTab(): YpConfigTabData;
     _groupAccessChanged(event: CustomEvent): void;
-    _statusSelected(event: CustomEvent): void;
     _getThemeTab(): YpConfigTabData;
     _inheritThemeChanged(event: CustomEvent): void;
     _getPostSettingsTab(): YpConfigTabData | null;
@@ -78,7 +74,7 @@ export declare class YpAdminConfigGroup extends YpAdminConfigBase {
     afterSave(): void;
     _getAllOurIdeaTab(): YpConfigTabData;
     set(obj: any, path: string, value: any): void;
-    _updateEarl(event: CustomEvent, earlUpdatePath: string): void;
+    _updateEarl(event: CustomEvent, earlUpdatePath: string, parseJson?: boolean): void;
     _getAllOurIdeaOptionsTab(): YpConfigTabData;
     _categorySelected(event: CustomEvent): void;
     _categoryImageSrc(category: any): string;

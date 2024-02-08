@@ -19,21 +19,22 @@ export class AoiServerApi extends YpServerApi {
     ) as unknown as AoiPromptData;
   }
 
-  public async getSurveyResults(groupId: number): Promise<AoiResultData[]> {
+  public async getSurveyResults(groupId: number): Promise<AoiChoiceData[]> {
     return this.fetchWrapper(
       this.baseUrlPath + `/${groupId}/questions/results`
-    ) as unknown as AoiResultData[];
+    ) as unknown as AoiChoiceData[];
   }
 
   getSurveyAnalysis(
     groupId: number,
+    wsClientId: string,
     analysisIndex: number,
     analysisTypeIndex: number
-  ): AnalysisTypeData {
+  ): AoiAnalysisResponse {
     return this.fetchWrapper(
       this.baseUrlPath +
-        `/${groupId}/questions/${analysisIndex}/${analysisTypeIndex}/analysis`
-    ) as unknown as AnalysisTypeData;
+        `/${groupId}/questions/${wsClientId}/${analysisIndex}/${analysisTypeIndex}/analysis`
+    ) as unknown as AoiAnalysisResponse;
   }
 
   public submitIdea(

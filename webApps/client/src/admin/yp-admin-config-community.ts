@@ -59,9 +59,6 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
   welcomePageId: number | undefined;
 
   @property({ type: String })
-  status: string | undefined;
-
-  @property({ type: String })
   communityAccess: YpCommunityAccessTypes = "public";
 
   constructor() {
@@ -485,36 +482,6 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
       YpNavHelpers.redirectTo("/community/" + community.id);
     }
     window.appGlobals.activity("completed", "editCommunity");
-  }
-
-  _statusSelected(event: CustomEvent) {
-    const index = event.detail.index as number;
-    this.status = this.collectionStatusOptions[index].name;
-    this._configChanged();
-  }
-
-  get statusIndex() {
-    if (this.status) {
-      for (let i = 0; i < this.collectionStatusOptions.length; i++) {
-        if (this.collectionStatusOptions[i].name == this.status) return i;
-      }
-      return -1;
-    } else {
-      return -1;
-    }
-  }
-
-  get collectionStatusOptions() {
-    if (this.language) {
-      return [
-        { name: "active", translatedName: this.t("status.active") },
-        { name: "featured", translatedName: this.t("status.featured") },
-        { name: "archived", translatedName: this.t("status.archived") },
-        { name: "hidden", translatedName: this.t("status.hidden") },
-      ];
-    } else {
-      return [];
-    }
   }
 
   _accessRadioChanged(event: CustomEvent) {

@@ -272,10 +272,7 @@ export class YpLanguageSelector extends YpBaseElement {
       this.hasServerAutoTranslation &&
       !this.noUserEvents
     ) {
-      const found =
-        this.hasLlm!==true ||
-        YpLanguages.isoCodesNotInGoogleTranslate.indexOf(this.language) > -1;
-      return !found;
+      return this.hasLlm===true || !(YpLanguages.isoCodesNotInGoogleTranslate.indexOf(this.language) > -1);
     } else {
       return false;
     }

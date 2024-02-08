@@ -28,6 +28,15 @@ const defaultHeader = {
   ...defaultAuthHeader,
 };
 
+//TODO: Do not duplicate from app.ts
+interface YpRequest extends express.Request {
+  ypDomain?: any;
+  ypCommunity?: any;
+  sso?: any;
+  redisClient?: any;
+  user?: any;
+}
+
 //import auth from "../authorization.js";
 import { AiHelper } from "../active-citizen/engine/allOurIdeas/aiHelper.js";
 import { ExplainAnswersAssistant } from "../active-citizen/engine/allOurIdeas/explainAnswersAssistant.js";
@@ -72,7 +81,6 @@ export class AllOurIdeasController {
       this.getChoices.bind(this)
     );
 
-
     this.router.get(
       "/:groupId/choices/:questionId/throughGroup",
       auth.can("view group"),
@@ -98,7 +106,7 @@ export class AllOurIdeasController {
     );
 
     this.router.get(
-      "/:groupId/questions/:analysisIndex/:analysisTypeIndex/analysis",
+      "/:groupId/questions/:wsClientSocketId/:analysisIndex/:analysisTypeIndex/analysis",
       auth.can("view group"),
       this.analysis.bind(this)
     );
@@ -141,106 +149,108 @@ export class AllOurIdeasController {
   }
 
   async addIdea(req: Request, res: Response) {
-      const { newIdea, id } = req.body;
-      let choiceParams = {
-        visitor_identifier: req.session.id,
-        data: {
-          content: newIdea,
-          isGeneratingImage: undefined
-        },
-        question_id: req.params.questionId,
-      };
+    const { newIdea, id } = req.body;
+    let choiceParams = {
+      visitor_identifier: req.session.id,
+      data: {
+        content: newIdea,
+        isGeneratingImage: undefined,
+      },
+      question_id: req.params.questionId,
+    };
 
-      //@ts-ignore
-      choiceParams['local_identifier'] = req.user.id;
+    //@ts-ignore
+    choiceParams["local_identifier"] = req.user.id;
 
-      console.log(`choiceParams: ${JSON.stringify(choiceParams)}`);
+    console.log(`choiceParams: ${JSON.stringify(choiceParams)}`);
 
-      try {
-        const choiceResponse = await fetch(`${PAIRWISE_API_HOST}/choices.json`, {
-          method: 'POST',
-          headers: defaultAuthHeader,
-          body: JSON.stringify(choiceParams),
-        });
-
-        if (!choiceResponse.ok) {
-          console.error(choiceResponse.statusText);
-          throw new Error('Choice creation failed.');
-        }
-
-        const choice = await choiceResponse.json() as AoiChoiceData;
-
-        choice.data = JSON.parse(choice.data as any) as AoiAnswerToVoteOnData;
-
-        let flagged = false;
-        if (process.env.OPENAI_API_KEY) {
-          flagged = await this.getModerationFlag(newIdea);
-          if (flagged) {
-            await this.deactivateChoice(req, choice.id);
-            console.log("----------------------------------");
-            console.log(`Flagged BY OPENAI: ${flagged}`);
-            console.log("----------------------------------");
-          } else {
-            console.log(`Not flagged BY OPENAI: ${flagged}`);
-          }
-        }
-
-        // Implement email notification logic based on choice's active status
-
-        res.json({
-          active: choice.active,
-          flagged: flagged,
-          choice: choice,
-          choice_status: choice.active ? 'active' : 'inactive',
-          message: `You just submitted: ${escape(newIdea)}`, // Use a proper escape function
-        });
-
-      } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Addition of new idea failed' });
-      }
-    }
-
-    async getModerationFlag(data: string) {
-      const openaiClient = new OpenAI({
-        apiKey: process.env.OPENAI_API_KEY,
-      });
-      const moderationResponse = await openaiClient.moderations.create({
-        input: data,
+    try {
+      const choiceResponse = await fetch(`${PAIRWISE_API_HOST}/choices.json`, {
+        method: "POST",
+        headers: defaultAuthHeader,
+        body: JSON.stringify(choiceParams),
       });
 
-      return moderationResponse.results[0].flagged;
-    }
-
-    async deactivateChoice(req: Request, choiceId: number) {
-      try {
-        const response = await fetch(
-          `${PAIRWISE_API_HOST}/questions/${req.params.questionId}/choices/${choiceId}.json`,
-          {
-            method: "PUT",
-            headers: defaultHeader,
-            body: JSON.stringify({
-              active: false,
-            }),
-          }
-        );
-      } catch (error) {
-        console.error(error);
+      if (!choiceResponse.ok) {
+        console.error(choiceResponse.statusText);
+        throw new Error("Choice creation failed.");
       }
-    }
 
+      const choice = (await choiceResponse.json()) as AoiChoiceData;
+
+      choice.data = JSON.parse(choice.data as any) as AoiAnswerToVoteOnData;
+
+      let flagged = false;
+      if (process.env.OPENAI_API_KEY) {
+        flagged = await this.getModerationFlag(newIdea);
+        if (flagged) {
+          await this.deactivateChoice(req, choice.id);
+          console.log("----------------------------------");
+          console.log(`Flagged BY OPENAI: ${flagged}`);
+          console.log("----------------------------------");
+        } else {
+          console.log(`Not flagged BY OPENAI: ${flagged}`);
+        }
+      }
+
+      // Implement email notification logic based on choice's active status
+
+      res.json({
+        active: choice.active,
+        flagged: flagged,
+        choice: choice,
+        choice_status: choice.active ? "active" : "inactive",
+        message: `You just submitted: ${escape(newIdea)}`, // Use a proper escape function
+      });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: "Addition of new idea failed" });
+    }
+  }
+
+  async getModerationFlag(data: string) {
+    const openaiClient = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    });
+    const moderationResponse = await openaiClient.moderations.create({
+      input: data,
+    });
+
+    return moderationResponse.results[0].flagged;
+  }
+
+  async deactivateChoice(req: Request, choiceId: number) {
+    try {
+      const response = await fetch(
+        `${PAIRWISE_API_HOST}/questions/${req.params.questionId}/choices/${choiceId}.json`,
+        {
+          method: "PUT",
+          headers: defaultHeader,
+          body: JSON.stringify({
+            active: false,
+          }),
+        }
+      );
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
   public async getTranslatedText(req: Request, res: Response): Promise<void> {
     try {
       //@ts-ignore
-      models.AcTranslationCache.getTranslation(req, {}, function (error: string, translation: string) {
-        if (error) {
-          console.error(error);
-          res.status(500).send("A getTranslatedText error occurred");
-        } else {
-          res.send(translation);
+      models.AcTranslationCache.getTranslation(
+        req,
+        {},
+        function (error: string, translation: string) {
+          if (error) {
+            console.error(error);
+            res.status(500).send("A getTranslatedText error occurred");
+          } else {
+            res.send(translation);
+          }
         }
-      });
+      );
     } catch (error) {
       console.error(error);
       res.status(500).send("A getTranslatedText error occurred");
@@ -264,10 +274,7 @@ export class AllOurIdeasController {
   public async llmAnswerExplain(req: Request, res: Response): Promise<void> {
     const { wsClientId, chatLog } = req.body;
     console.log(`explainConversation: ${wsClientId}`);
-    const explainer = new ExplainAnswersAssistant(
-      wsClientId,
-      this.wsClients
-    );
+    const explainer = new ExplainAnswersAssistant(wsClientId, this.wsClients);
     await explainer.explainConversation(chatLog);
     res.sendStatus(200);
   }
@@ -544,10 +551,13 @@ export class AllOurIdeasController {
     }
   }
 
-  public async analysis(req: Request, res: Response): Promise<void> {
-    const { groupId, analysisIndex, analysisTypeIndex } = req.params;
+  public async analysis(req: YpRequest, res: Response): Promise<void> {
+    const { groupId, wsClientSocketId, analysisIndex, analysisTypeIndex } =
+      req.params;
 
-    console.log(`--------------------> ${groupId} ${analysisIndex} ${analysisTypeIndex}`)
+    console.log(
+      `--------------------> ${groupId} ${analysisIndex} ${analysisTypeIndex}`
+    );
 
     try {
       const group = await Group.findOne({ where: { id: groupId } });
@@ -571,51 +581,113 @@ export class AllOurIdeasController {
         visitor_identifier: req.session.id,
       };
 
-      const questionResponse = await fetch(`${PAIRWISE_API_HOST}/questions/${questionId}.json?${new URLSearchParams(showParams).toString()}`, {
-        method: "GET",
-        headers: defaultHeader,
-      });
+      const questionResponse = await fetch(
+        `${PAIRWISE_API_HOST}/questions/${questionId}.json?${new URLSearchParams(
+          showParams
+        ).toString()}`,
+        {
+          method: "GET",
+          headers: defaultHeader,
+        }
+      );
 
       if (!questionResponse.ok) {
         throw new Error("Failed to fetch question for analysis");
       }
 
-      const question = await questionResponse.json() as AoiQuestionData;
+      const question = (await questionResponse.json()) as AoiQuestionData;
 
       // Additional logic adapted from Ruby for fetching and sorting choices
-      console.log(`@question is ${question}. ${group.configuration.allOurIdeas.earl.configuration.analysis_config}`);
-      const analysisConfig = JSON.parse(group.configuration.allOurIdeas.earl.configuration.analysis_config);
-      console.log(`@analysisConfig is ${analysisConfig}.`)
-      const analysisIdeaConfig = analysisConfig.analyses[parseInt(analysisIndex as any)];
-      console.log(`@analysisIdeaConfig is ${analysisIdeaConfig}.`)
+      console.log(
+        `@question is ${question}. ${group.configuration.allOurIdeas.earl.configuration.analysis_config}`
+      );
+      const analysisConfig = JSON.parse(
+        group.configuration.allOurIdeas.earl.configuration.analysis_config
+      );
+      console.log(`@analysisConfig is ${analysisConfig}.`);
+      const analysisIdeaConfig =
+        analysisConfig.analyses[parseInt(analysisIndex as any)];
+      console.log(`@analysisIdeaConfig is ${analysisIdeaConfig}.`);
       const ideasIdsRange = analysisIdeaConfig.ideasIdsRange;
-      console.log(`@ideasIdsRange is ${ideasIdsRange}.`)
-      console.log(`@analysisIdeaConfig.analysisTypes is ${analysisIdeaConfig.analysisTypes}.`)
-      const analysisType = analysisIdeaConfig.analysisTypes[parseInt(analysisTypeIndex as any)];
+      console.log(`@ideasIdsRange is ${ideasIdsRange}.`);
+      console.log(
+        `@analysisIdeaConfig.analysisTypes is ${analysisIdeaConfig.analysisTypes}.`
+      );
+      const analysisType =
+        analysisIdeaConfig.analysisTypes[parseInt(analysisTypeIndex as any)];
 
-      // Fetch choices similar to Ruby logic
-      // Placeholder: Implement fetching choices based on `ideasIdsRange` and other parameters
+      const perPage = Math.abs(ideasIdsRange);
+      console.log(`Per page: ${perPage}`);
 
-      // Placeholder for actual fetching logic
+      const choicesCount =
+        question.choices_count - question.inactive_choices_count;
 
+      const offset =
+        ideasIdsRange < 0 ? Math.max(choicesCount - perPage, 0) : 0;
 
-      const aiHelper = new AiHelper();
-      const analysisData = await aiHelper.getAiAnalysis(question.id, analysisType.contextPrompt!, await this.fetchChoices(questionId, false));
+      console.log(`Offset: ${offset}`);
 
-      // Respond with the analysis data
+      const choicesResponse = await fetch(
+        `${PAIRWISE_API_HOST}/questions/${questionId}/choices?limit=${perPage}&offset=${offset}`
+      );
+      const choices = (await choicesResponse.json()) as AoiChoiceData[];
+
+      console.log(`Number of choices fetched: ${choices.length}`);
+
+      const sortedChoices = choices.sort((a, b) => a.id - b.id);
+      console.log(
+        `Sorted choice IDs: ${sortedChoices.map((choice) => choice.id)}`
+      );
+
+      const choiceIds = sortedChoices.map((choice) => `${choice.id}`).join("-");
+      const promptHash = crypto
+        .createHash("sha256")
+        .update(analysisType.contextPrompt)
+        .digest("hex")
+        .substring(0, 8);
+
+      const analysisCacheKey = `${questionId}_${analysisTypeIndex}_${choiceIds}_${promptHash}_ai_analysis_v8`;
+      console.log(
+        `analysisCacheKey is ${analysisCacheKey} prompt ${analysisType.contextPrompt.substring(
+          0,
+          15
+        )}...`
+      );
+
+      // Implement caching logic here
+      let cachedAnalysis = await req.redisClient.get(analysisCacheKey);
+
+      if (!cachedAnalysis) {
+        const swClientSocket = this.wsClients.get(wsClientSocketId);
+        const aiHelper = new AiHelper(swClientSocket);
+        await aiHelper.getAiAnalysis(
+          questionId,
+          analysisType.contextPrompt,
+          choices,
+          analysisCacheKey,
+          req.redisClient
+        );
+      }
+
       res.json({
-        question,
-        analysisData,
+        selectedChoices: choices,
+        cachedAnalysis
       });
-  } catch (error) {
+    } catch (error) {
       console.error(error);
-      res.status(500).send("An error occurred while processing the analysis request");
+      res
+        .status(500)
+        .send("An error occurred while processing the analysis request");
     }
   }
 
-
-  private async fetchChoices(questionId: string, showAll: boolean): Promise<AoiChoiceData[]> {
-    let url = `${PAIRWISE_API_HOST}/questions/${questionId}/choices.json${showAll ? "?include_inactive=true&show_all=true" : ""}`;
+  private async fetchChoices(
+    questionId: string,
+    showAll: boolean
+  ): Promise<AoiChoiceData[]> {
+    let url = `${PAIRWISE_API_HOST}/questions/${questionId}/choices.json${
+      showAll ? "?include_inactive=true&show_all=true" : ""
+    }`;
 
     const response = await fetch(url, {
       headers: defaultAuthHeader,
@@ -625,7 +697,7 @@ export class AllOurIdeasController {
       throw new Error(`Failed to fetch choices: ${response.statusText}`);
     }
 
-    const choices = await response.json() as AoiChoiceData[];
+    const choices = (await response.json()) as AoiChoiceData[];
     // Process choices as needed
     return choices;
   }
@@ -653,12 +725,11 @@ export class AllOurIdeasController {
         } catch (error) {
           choice.data = {
             content: choice.data as any,
-            choiceId: choice.id
-          }
+            choiceId: choice.id,
+          };
           console.error(error);
         }
       }
-
 
       res.json(choices);
     } catch (error) {

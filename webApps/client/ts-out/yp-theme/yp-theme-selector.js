@@ -9,6 +9,7 @@ import { customElement, property } from "lit/decorators.js";
 import { YpBaseElement } from "../common/yp-base-element.js";
 import "@material/web/select/outlined-select.js";
 import "@material/web/select/select-option.js";
+import "@material/web/button/text-button.js";
 import "@material/web/textfield/outlined-text-field.js";
 import { YpThemeManager } from "../yp-app/YpThemeManager.js";
 import { repeat } from "lit/directives/repeat.js";
@@ -22,18 +23,22 @@ let YpThemeSelector = class YpThemeSelector extends YpBaseElement {
         this.disableSelection = false;
         this.disableMultiInputs = false;
         this.disableOneThemeColorInputs = false;
-        this.channel = new BroadcastChannel('hex_color');
+        this.hasLogoImage = false;
+        this.channel = new BroadcastChannel("hex_color");
     }
     static get styles() {
         return [
             super.styles,
             css `
         md-outlined-select,
-        md-outlined-text-field {
+        md-outlined-text-field,
+        yp-theme-color-input {
           max-width: 300px;
           width: 300px;
-          margin-bottom: 8px;
-          margin-top: 8px;
+        }
+
+        md-text-button {
+          margin-top: 16px;
         }
 
         .colorTypeTitle {
@@ -78,7 +83,8 @@ let YpThemeSelector = class YpThemeSelector extends YpBaseElement {
           margin-top: 32px;
         }
 
-        .dynamicColors, .customColors {
+        .dynamicColors,
+        .customColors {
           padding: 40px;
           margin: 32px;
           margin-bottom: 8px;
@@ -131,7 +137,7 @@ let YpThemeSelector = class YpThemeSelector extends YpBaseElement {
             if (changedProperties.has(prop)) {
                 shouldUpdateConfiguration = true;
                 this.updateDisabledInputs();
-                this.fire('config-updated');
+                this.fire("config-updated");
             }
         });
         if (changedProperties.has("oneDynamicThemeColor")) {
@@ -203,6 +209,10 @@ let YpThemeSelector = class YpThemeSelector extends YpBaseElement {
         ].some((color) => this.isValidHex(color));
         this.disableMultiInputs = this.isValidHex(this.oneDynamicThemeColor);
     }
+    get currentThemeSchemaIndex() {
+        const index = YpThemeManager.themeScemesOptionsWithName.findIndex((option) => option.value === this.selectedThemeScheme);
+        return index || 0;
+    }
     render() {
         return html `
       <div class="layout horizontal">
@@ -226,7 +236,7 @@ let YpThemeSelector = class YpThemeSelector extends YpBaseElement {
               .disabled="${this.disableSelection ||
             this.disableOneThemeColorInputs}"
               @change="${this.setThemeSchema}"
-              .selected="${this.selectedThemeScheme}"
+              .selectedIndex="${this.currentThemeSchemaIndex}"
             >
               ${YpThemeManager.themeScemesOptionsWithName.map((option) => html `
                   <md-select-option value="${option.value}">
@@ -234,6 +244,15 @@ let YpThemeSelector = class YpThemeSelector extends YpBaseElement {
                   </md-select-option>
                 `)}
             </md-outlined-select>
+
+            <div class="layout vertical center-center">
+              <md-text-button
+                ?hidden="${!this.hasLogoImage}"
+                @click="${() => this.fire("get-color-from-logo")}"
+              >
+                ${this.t("getColorFromLogo")}
+              </md-text-button>
+            </div>
           </div>
 
           <div class="or">${this.t("or")}</div>
@@ -470,6 +489,9 @@ __decorate([
 __decorate([
     property({ type: Boolean })
 ], YpThemeSelector.prototype, "disableOneThemeColorInputs", void 0);
+__decorate([
+    property({ type: Boolean })
+], YpThemeSelector.prototype, "hasLogoImage", void 0);
 YpThemeSelector = __decorate([
     customElement("yp-theme-selector")
 ], YpThemeSelector);

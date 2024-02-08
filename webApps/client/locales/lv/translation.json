@@ -1345,5 +1345,9 @@
   "ideaAdded": "Jūsu ideja ir pievienota, jūs varat turpināt balsot.",
   "ideaModerationQueue": "Jūsu ideja atrodas moderācijas rindā.",
   "yourIdea": "Jūsu ideja",
-  "chatInput": "Uzdod man jautājumu"
+  "chatInput": "Uzdod man jautājumu",
+  "ideaGenerationGroupType": "Ideju ģenerēšana",
+  "allOurIdeasGroupType": "All Our Ideas Pairwise Ranking",
+  "yourIdeaHasBeenAdded": "Jūsu ideja pievienota, tiek ģenerēta ikona.",
+  "aiIconInfo": "Jūsu atbildes ikona tiek ģenerēta, varat aizvērt logu vai gaidīt, līdz ikona tiks ģenerēta. Jums arī būs iespēja ikonu atkārtoti ģenerēt."
 }

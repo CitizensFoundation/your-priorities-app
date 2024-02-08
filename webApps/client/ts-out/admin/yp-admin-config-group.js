@@ -20,6 +20,7 @@ import { YpNavHelpers } from "../common/YpNavHelpers.js";
 import "../yp-file-upload/yp-file-upload.js";
 import "../yp-theme/yp-theme-selector.js";
 import "../common/languages/yp-language-selector.js";
+import { YpMediaHelpers } from "../common/YpMediaHelpers.js";
 import "./allOurIdeas/aoi-earl-ideas-editor.js";
 import { AoiAdminServerApi } from "./allOurIdeas/AoiAdminServerApi.js";
 var GroupType;
@@ -86,7 +87,6 @@ let YpAdminConfigGroup = class YpAdminConfigGroup extends YpAdminConfigBase {
         }
 
         .saveButtonContainer {
-
         }
 
         .accessHeader {
@@ -200,6 +200,8 @@ let YpAdminConfigGroup = class YpAdminConfigGroup extends YpAdminConfigBase {
 
       <input type="hidden" name="groupType" value="${this.groupTypeIndex}" />
 
+      <input type="hidden" name="status" value="${this.status || ""}" />
+
       ${this.endorsementButtons
             ? html `
             <input
@@ -256,6 +258,9 @@ let YpAdminConfigGroup = class YpAdminConfigGroup extends YpAdminConfigBase {
             }
             this.groupTypeIndex = this.group.configuration.groupType || 0;
             this.endorsementButtons = this.group.configuration.endorsementButtons;
+            if (this.collection.status) {
+                this.status = this.collection.status;
+            }
             this._setupTranslations();
             //this._updateEmojiBindings();
             if (this.collection.CommunityLogoVideos &&
@@ -333,7 +338,7 @@ let YpAdminConfigGroup = class YpAdminConfigGroup extends YpAdminConfigBase {
         window.appGlobals.activity("completed", "editGroup");
     }
     _getAccessTab() {
-        return {
+        const base = {
             name: "access",
             icon: "code",
             items: [
@@ -372,7 +377,8 @@ let YpAdminConfigGroup = class YpAdminConfigGroup extends YpAdminConfigBase {
                     templateData: html `
             <md-outlined-select
               .label="${this.t("status.select")}"
-              @selected="${this._statusSelected}"
+              @changed="${this._statusSelected}"
+              .selectedIndex="${this.statusIndex}"
             >
               ${this.collectionStatusOptions?.map((statusOption, index) => html `
                   <md-select-option ?selected="${this.statusIndex == index}"
@@ -382,6 +388,10 @@ let YpAdminConfigGroup = class YpAdminConfigGroup extends YpAdminConfigBase {
             </md-outlined-select>
           `,
                 },
+            ],
+        };
+        if (this.groupTypeIndex !== GroupType.allOurIdeas) {
+            base.items.concat([
                 {
                     text: "allowAnonymousUsers",
                     type: "checkbox",
@@ -435,56 +445,13 @@ let YpAdminConfigGroup = class YpAdminConfigGroup extends YpAdminConfigBase {
                     value: this.group.configuration.registrationQuestions,
                     translationToken: "registrationQuestions",
                 },
-                {
-                    text: "customBackURL",
-                    type: "textfield",
-                    maxLength: 256,
-                    value: this.group.configuration.customBackURL,
-                    translationToken: "customBackURL",
-                },
-                {
-                    text: "customBackName",
-                    type: "textfield",
-                    maxLength: 20,
-                    value: this.group.configuration.customBackName,
-                    translationToken: "customBackName",
-                },
-                {
-                    text: "optionalSortOrder",
-                    type: "textfield",
-                    maxLength: 4,
-                    value: this.group.configuration.optionalSortOrder,
-                    translationToken: "optionalSortOrder",
-                },
-                {
-                    text: "defaultLocale",
-                    type: "html",
-                    templateData: html `
-            <yp-language-selector
-              name="defaultLocale"
-              noUserEvents
-              @changed="${this._configChanged}"
-              .selectedLocale="${this.group.configuration.defaultLocale}"
-            >
-            </yp-language-selector>
-          `,
-                },
-                {
-                    text: "disableNameAutoTranslation",
-                    type: "checkbox",
-                    value: this.group.configuration.disableNameAutoTranslation,
-                    translationToken: "disableNameAutoTranslation",
-                },
-            ],
-        };
+            ]);
+        }
+        return base;
     }
     _groupAccessChanged(event) {
         this.groupAccess = event.target.value;
         this._configChanged();
-    }
-    _statusSelected(event) {
-        const index = event.detail.index;
-        this.status = this.collectionStatusOptions[index].name;
     }
     _getThemeTab() {
         return {
@@ -504,67 +471,15 @@ let YpAdminConfigGroup = class YpAdminConfigGroup extends YpAdminConfigBase {
                     templateData: html `
             <yp-theme-selector
               @config-updated="${this._configChanged}"
+              ?hasLogoImage="${this.imagePreviewUrl || YpMediaHelpers.getImageFormatUrl(this.currentLogoImages)}"
               .disableSelection="${this.group.configuration
                         .inheritThemeFromCommunity}"
+              @get-color-from-logo="${this.getColorFromLogo}"
               @yp-theme-configuration-changed="${this._themeChanged}"
               .themeConfiguration="${this.group.configuration.theme}"
             ></yp-theme-selector>
           `,
-                },
-                {
-                    text: "hideInfoBoxExceptForAdmins",
-                    type: "checkbox",
-                    value: this.group.configuration.hideInfoBoxExceptForAdmins,
-                    translationToken: "hideInfoBoxExceptForAdmins",
-                },
-                {
-                    text: "hideLogoBoxExceptOnMobile",
-                    type: "checkbox",
-                    value: this.group.configuration.hideLogoBoxExceptOnMobile,
-                    translationToken: "hideLogoBoxExceptOnMobile",
-                },
-                {
-                    text: "hideLogoBoxShadow",
-                    type: "checkbox",
-                    value: this.group.configuration.hideLogoBoxShadow,
-                    translationToken: "hideLogoBoxShadow",
-                },
-                {
-                    text: "galleryMode",
-                    type: "checkbox",
-                    value: this.group.configuration.galleryMode,
-                    translationToken: "galleryMode",
-                },
-                {
-                    text: "showNameUnderLogoImage",
-                    type: "checkbox",
-                    value: this.group.configuration.showNameUnderLogoImage,
-                    translationToken: "showNameUnderLogoImage",
-                },
-                {
-                    text: "alwaysHideLogoImage",
-                    type: "checkbox",
-                    value: this.group.configuration.alwaysHideLogoImage,
-                    translationToken: "alwaysHideLogoImage",
-                },
-                {
-                    text: "hideStatsAndMembership",
-                    type: "checkbox",
-                    value: this.group.configuration.hideStatsAndMembership,
-                    translationToken: "hideStatsAndMembership",
-                },
-                {
-                    text: "centerGroupName",
-                    type: "checkbox",
-                    value: this.group.configuration.centerGroupName,
-                    translationToken: "centerGroupName",
-                },
-                {
-                    text: "noGroupCardShadow",
-                    type: "checkbox",
-                    value: this.group.configuration.noGroupCardShadow,
-                    translationToken: "noGroupCardShadow",
-                },
+                }
             ],
         };
     }
@@ -1251,6 +1166,52 @@ let YpAdminConfigGroup = class YpAdminConfigGroup extends YpAdminConfigBase {
             icon: "settings",
             items: [
                 {
+                    text: "defaultLocale",
+                    type: "html",
+                    templateData: html `
+            <yp-language-selector
+              name="defaultLocale"
+              noUserEvents
+              @changed="${this._configChanged}"
+              .selectedLocale="${this.group.configuration.defaultLocale}"
+            >
+            </yp-language-selector>
+          `,
+                },
+                {
+                    text: "hideStatsAndMembership",
+                    type: "checkbox",
+                    value: this.group.configuration.hideStatsAndMembership,
+                    translationToken: "hideStatsAndMembership",
+                },
+                {
+                    text: "customBackURL",
+                    type: "textfield",
+                    maxLength: 256,
+                    value: this.group.configuration.customBackURL,
+                    translationToken: "customBackURL",
+                },
+                {
+                    text: "customBackName",
+                    type: "textfield",
+                    maxLength: 20,
+                    value: this.group.configuration.customBackName,
+                    translationToken: "customBackName",
+                },
+                {
+                    text: "optionalSortOrder",
+                    type: "textfield",
+                    maxLength: 4,
+                    value: this.group.configuration.optionalSortOrder,
+                    translationToken: "optionalSortOrder",
+                },
+                {
+                    text: "disableNameAutoTranslation",
+                    type: "checkbox",
+                    value: this.group.configuration.disableNameAutoTranslation,
+                    translationToken: "disableNameAutoTranslation",
+                },
+                {
                     text: "hideAllTabs",
                     type: "checkbox",
                     value: this.group.configuration.hideAllTabs,
@@ -1491,7 +1452,10 @@ let YpAdminConfigGroup = class YpAdminConfigGroup extends YpAdminConfigBase {
         this.requestUpdate();
     }
     themeConfigChanged(event) {
-        this.group.configuration.theme = { ...this.group.configuration.theme, ...event.detail };
+        this.group.configuration.theme = {
+            ...this.group.configuration.theme,
+            ...event.detail,
+        };
         this.requestUpdate();
     }
     renderCreateEarl(communityId) {
@@ -1586,8 +1550,17 @@ let YpAdminConfigGroup = class YpAdminConfigGroup extends YpAdminConfigBase {
             }
         });
     }
-    _updateEarl(event, earlUpdatePath) {
-        this.set(this.group.configuration.allOurIdeas.earl, earlUpdatePath, event.detail.value);
+    _updateEarl(event, earlUpdatePath, parseJson = false) {
+        let value = event.detail.value;
+        if (parseJson) {
+            try {
+                value = JSON.parse(value);
+            }
+            catch (e) {
+                console.error("Error parsing JSON", e);
+            }
+        }
+        this.set(this.group.configuration.allOurIdeas.earl, earlUpdatePath, value);
         this._configChanged();
         this.requestUpdate();
     }
@@ -1597,13 +1570,6 @@ let YpAdminConfigGroup = class YpAdminConfigGroup extends YpAdminConfigBase {
             name: "allOurIdeasOptions",
             icon: "settings",
             items: [
-                {
-                    text: "show_cant_decide",
-                    type: "checkbox",
-                    onChange: (e) => this._updateEarl(e, "configuration.show_cant_decide"),
-                    value: earl?.configuration?.show_cant_decide,
-                    translationToken: "showCantDecide",
-                },
                 {
                     text: "accept_new_ideas",
                     type: "checkbox",
@@ -1641,7 +1607,7 @@ let YpAdminConfigGroup = class YpAdminConfigGroup extends YpAdminConfigBase {
                     rows: 7,
                     value: earl?.configuration?.analysis_config ||
                         JSON.stringify(defaultAiAnalysisJson, null, 2),
-                    onChange: (e) => this._updateEarl(e, "configuration.analysis_config"),
+                    onChange: (e) => this._updateEarl(e, "configuration.analysis_config", true),
                     translationToken: "aoiAiAnalysisConfig",
                 },
             ],
@@ -1711,9 +1677,6 @@ __decorate([
 __decorate([
     property({ type: String })
 ], YpAdminConfigGroup.prototype, "aoiQuestionName", void 0);
-__decorate([
-    property({ type: String })
-], YpAdminConfigGroup.prototype, "status", void 0);
 __decorate([
     property({ type: String })
 ], YpAdminConfigGroup.prototype, "groupAccess", void 0);

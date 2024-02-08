@@ -380,36 +380,6 @@ let YpAdminConfigCommunity = class YpAdminConfigCommunity extends YpAdminConfigB
         }
         window.appGlobals.activity("completed", "editCommunity");
     }
-    _statusSelected(event) {
-        const index = event.detail.index;
-        this.status = this.collectionStatusOptions[index].name;
-        this._configChanged();
-    }
-    get statusIndex() {
-        if (this.status) {
-            for (let i = 0; i < this.collectionStatusOptions.length; i++) {
-                if (this.collectionStatusOptions[i].name == this.status)
-                    return i;
-            }
-            return -1;
-        }
-        else {
-            return -1;
-        }
-    }
-    get collectionStatusOptions() {
-        if (this.language) {
-            return [
-                { name: "active", translatedName: this.t("status.active") },
-                { name: "featured", translatedName: this.t("status.featured") },
-                { name: "archived", translatedName: this.t("status.archived") },
-                { name: "hidden", translatedName: this.t("status.hidden") },
-            ];
-        }
-        else {
-            return [];
-        }
-    }
     _accessRadioChanged(event) {
         this.communityAccess = event.target
             .value;
@@ -813,9 +783,6 @@ __decorate([
 __decorate([
     property({ type: Number })
 ], YpAdminConfigCommunity.prototype, "welcomePageId", void 0);
-__decorate([
-    property({ type: String })
-], YpAdminConfigCommunity.prototype, "status", void 0);
 __decorate([
     property({ type: String })
 ], YpAdminConfigCommunity.prototype, "communityAccess", void 0);

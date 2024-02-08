@@ -1,6 +1,7 @@
 import { YpBaseElement } from "../common/yp-base-element.js";
 import "@material/web/select/outlined-select.js";
 import "@material/web/select/select-option.js";
+import "@material/web/button/text-button.js";
 import "@material/web/textfield/outlined-text-field.js";
 import "./yp-theme-color-input.js";
 export declare class YpThemeSelector extends YpBaseElement {
@@ -16,6 +17,7 @@ export declare class YpThemeSelector extends YpBaseElement {
     disableSelection: boolean | undefined;
     disableMultiInputs: boolean;
     disableOneThemeColorInputs: boolean;
+    hasLogoImage: boolean;
     channel: BroadcastChannel;
     static get styles(): any[];
     connectedCallback(): void;
@@ -27,6 +29,7 @@ export declare class YpThemeSelector extends YpBaseElement {
     setThemeVariant(event: CustomEvent): void;
     handleColorInput(event: CustomEvent): void;
     updateDisabledInputs(): void;
+    get currentThemeSchemaIndex(): number;
     render(): import("lit-html").TemplateResult<1>;
     renderPallette(): import("lit-html").TemplateResult<1>;
 }

@@ -341,7 +341,7 @@
   "recentlyUsedEmoji": "Recentelijk gebruikt",
   "findAnEmoji": "Selecteer emoji",
   "cancel": "Annuleer",
-  "ok": "Ok",
+  "ok": "Oké",
   "next": "Volgende",
   "create": "Creëer",
   "confirm": "Bevestig",
@@ -587,7 +587,7 @@
     "inProgress": "Uploaden..."
   },
   "notice": {
-    "ok": "Ok",
+    "ok": "Oké",
     "feature_not_implemented_a": "Deze functionaliteit is nog niet geïmplementeerd in deze preview if Your Priorities 6.0.",
     "feature_not_implemented_b": "Laat ons weten wat je denkt!",
     "welcome_a": "Ga door naar preview",
@@ -736,7 +736,7 @@
   "startReportCreation": "Maak Rapport",
   "areYouSureYouWantToDeleteThisOrganization": "Weet je zeker dat je deze organisatie wilt verwijderen?",
   "createOrganization": "Maak organisatie",
-  "ltpConfig": "LTP Config",
+  "ltpConfig": "LTP Configuratie",
   "welcomeHTMLforNotLoggedInUsers": "Welkom HTML voor niet ingelogde gebruikers",
   "currentRealityTree": "Huidige Realiteit Boom",
   "goalTree": "Doel Boom",
@@ -1346,5 +1346,9 @@
   "ideaAdded": "Uw idee is toegevoegd, u kunt doorgaan met stemmen.",
   "ideaModerationQueue": "Uw idee staat in een moderatiewachtrij.",
   "yourIdea": "Uw idee",
-  "chatInput": "Stel me een vraag"
+  "chatInput": "Stel me een vraag",
+  "ideaGenerationGroupType": "Ideeëngeneratie",
+  "allOurIdeasGroupType": "All Our Ideas Pairwise Ranking",
+  "yourIdeaHasBeenAdded": "Uw idee is toegevoegd, pictogram wordt gegenereerd.",
+  "aiIconInfo": "Een pictogram voor uw antwoord wordt gegenereerd, u kunt het venster sluiten of wachten tot het pictogram is gegenereerd. U krijgt ook de optie om het pictogram opnieuw te genereren."
 }

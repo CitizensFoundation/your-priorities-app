@@ -79,7 +79,7 @@ let YpPostTags = class YpPostTags extends YpBaseElement {
         id="postTagsTranslations"
         hidden
         content-id="${this.post.id}"
-        text-only
+        textOnly
         content="${ifDefined(this.post.public_data?.tags)}"
         content-language="${ifDefined(this.post.language)}"
         @new-translation="${this._newTranslation}"

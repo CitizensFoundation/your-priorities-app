@@ -20,7 +20,8 @@ export declare class AoiSurveyVoting extends YpBaseElement {
     appearanceLookup: string;
     breakForVertical: boolean;
     llmExplainOpen: boolean;
-    levelTwoTargetVotes: number | undefined;
+    level: number;
+    currentLevelTargetVotes: number | undefined;
     timer: number | undefined;
     constructor();
     connectedCallback(): Promise<void>;

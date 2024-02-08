@@ -18,7 +18,8 @@ import { AoiServerApi } from "./AoiServerApi.js";
 let AoiLlmExplainDialog = class AoiLlmExplainDialog extends YpChatbotBase {
     constructor() {
         super(...arguments);
-        this.defaultInfoMessage = "I'm your All Our Ideas AI assitant ready to explain anything connected to this project.";
+        this.showCloseButton = true;
+        this.defaultInfoMessage = undefined;
         this.haveSentFirstQuestion = false;
     }
     setupServerApi() {
@@ -27,10 +28,12 @@ let AoiLlmExplainDialog = class AoiLlmExplainDialog extends YpChatbotBase {
     async connectedCallback() {
         super.connectedCallback();
         this.addEventListener("yp-ws-opened", this.sendFirstQuestion);
+        this.addEventListener("chatbot-close", this.cancel);
     }
     disconnectedCallback() {
         super.disconnectedCallback();
         this.removeEventListener("yp-ws-opened", this.sendFirstQuestion);
+        this.addEventListener("chatbot-close", this.cancel);
     }
     async sendFirstQuestion() {
         const firstMessage = `**Here is the question:**
@@ -130,20 +133,13 @@ ${this.rightAnswer.content}`;
       `,
         ];
     }
-    renderFooter() {
-        return html ` <div class="layout horizontal footer">
-      <md-text-button class="cancelButton" @click="${this.cancel}">
-        ${this.t("Cancel")}
-      </md-text-button>
-    </div>`;
-    }
     render() {
         return html `<md-dialog
       @closed="${() => this.cancel()}"
       ?fullscreen="${!this.wide}"
       style="max-width: 800px;max-height: 90vh;"
       id="dialog"
-    >
+    > <div slot="headline">${this.t("explainBothAnswers")}</div>
       <div slot="content">${super.render()}</div>
     </md-dialog> `;
     }
@@ -166,6 +162,9 @@ __decorate([
 __decorate([
     property({ type: String })
 ], AoiLlmExplainDialog.prototype, "currentError", void 0);
+__decorate([
+    property({ type: Boolean })
+], AoiLlmExplainDialog.prototype, "showCloseButton", void 0);
 __decorate([
     property({ type: String })
 ], AoiLlmExplainDialog.prototype, "defaultInfoMessage", void 0);

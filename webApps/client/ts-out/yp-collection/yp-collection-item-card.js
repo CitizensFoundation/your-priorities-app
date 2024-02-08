@@ -421,7 +421,7 @@ let YpCollectionItemCard = class YpCollectionItemCard extends YpBaseElement {
           .contentLanguage="${this.contentLanguage}"
           ?disableTranslation="${this.collection.configuration
             ?.disableNameAutoTranslation}"
-          text-only
+          textOnly
           .content="${this.contentName}"
           .contentId="${this.contentId}"
         ></yp-magic-text>

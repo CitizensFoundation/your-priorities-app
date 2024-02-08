@@ -26,10 +26,10 @@ import { literal, html as staticHtml } from 'lit/static-html.js';
 @customElement('yp-chatbot-base')
 export abstract class YpChatbotBase extends YpStreamingLlmBase {
   @property({ type: String })
-  infoMessage!: string;
+  infoMessage: string | undefined;
 
   @property({ type: String })
-  defaultInfoMessage: string = "I'm your friendly chat assistant";
+  defaultInfoMessage: string | undefined = "I'm your friendly chat assistant";
 
   @property({ type: Boolean })
   inputIsFocused = false;
@@ -48,6 +48,9 @@ export abstract class YpChatbotBase extends YpStreamingLlmBase {
 
   @property({ type: Boolean })
   showCleanupButton = false;
+
+  @property({ type: Boolean })
+  showCloseButton = false;
 
   @query('#sendButton')
   sendButton?: MdFilledTonalButton;
@@ -379,7 +382,7 @@ export abstract class YpChatbotBase extends YpStreamingLlmBase {
           cursor: pointer;
         }
 
-        .restartButton {
+        .restartButton, .closeButton {
           margin-left: 16px;
         }
 
@@ -408,6 +411,10 @@ export abstract class YpChatbotBase extends YpStreamingLlmBase {
           .restartButton {
             margin-left: 8px;
             display: none;
+          }
+
+          .closeButton  {
+            margin-left: 8px;
           }
 
           .darkModeButton {
@@ -469,6 +476,14 @@ export abstract class YpChatbotBase extends YpStreamingLlmBase {
         ><md-icon>refresh</md-icon></md-icon></md-outlined-icon-button>
       `
         : nothing}
+      ${this.showCloseButton
+        ? html`
+        <md-outlined-icon-button
+          class="closeButton"
+          @click="${()=>this.fire('chatbot-close')}"
+        ><md-icon>close</md-icon></md-icon></md-outlined-icon-button>
+      `
+        : nothing}
       ${this.onlyUseTextField || this.chatLog.length > 1
         ? html`
             <md-outlined-text-field
@@ -519,10 +534,11 @@ export abstract class YpChatbotBase extends YpStreamingLlmBase {
   }
 
   override render() {
-    return staticHtml`
+    return html`
       <div class="chat-window" id="chat-window">
         <div class="chat-messages" id="chat-messages">
           <yp-chatbot-item-base
+            ?hidden="${!this.defaultInfoMessage}"
             class="chatElement bot-chat-element"
             .detectedLanguage="${this.language}"
             .message="${this.defaultInfoMessage}"

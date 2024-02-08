@@ -145,7 +145,7 @@ let AoiSurveyResuls = class AoiSurveyResuls extends YpBaseElement {
           color: var(--md-sys-color-on-surface);
           border-radius: 24px;
           font-size: 14px;
-          line-height: 1.2;
+          line-height: 1.3;
         }
 
         label {
@@ -250,8 +250,18 @@ let AoiSurveyResuls = class AoiSurveyResuls extends YpBaseElement {
         return this.results
             ? html `
           <div class="topContainer layout vertical wrap center-center">
-            <div class="title">${this.t("Voting Results")}</div>
-            <div class="questionTitle">${this.question.name}</div>
+            <div class="questionTitle">
+              <yp-magic-text
+                id="answerText"
+                .contentId="${this.group.id}"
+                .extraId="${this.question.id}"
+                textOnly
+                truncate="300"
+                .content="${this.question.name}"
+                .contentLanguage="${this.group.language}"
+                textType="aoiQuestionName"
+              ></yp-magic-text>
+            </div>
 
             <div class="layout horizontal">
               <label>
@@ -286,6 +296,9 @@ __decorate([
 __decorate([
     property({ type: Object })
 ], AoiSurveyResuls.prototype, "earl", void 0);
+__decorate([
+    property({ type: Object })
+], AoiSurveyResuls.prototype, "group", void 0);
 __decorate([
     property({ type: Number })
 ], AoiSurveyResuls.prototype, "groupId", void 0);

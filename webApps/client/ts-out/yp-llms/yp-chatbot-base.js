@@ -18,7 +18,7 @@ import '@material/web/iconbutton/outlined-icon-button.js';
 import '../common/yp-image.js';
 import { YpStreamingLlmBase } from './yp-streaming-llm-base.js';
 import './yp-chatbot-item-base.js';
-import { literal, html as staticHtml } from 'lit/static-html.js';
+import { literal } from 'lit/static-html.js';
 let YpChatbotBase = class YpChatbotBase extends YpStreamingLlmBase {
     constructor() {
         super();
@@ -26,6 +26,7 @@ let YpChatbotBase = class YpChatbotBase extends YpStreamingLlmBase {
         this.inputIsFocused = false;
         this.onlyUseTextField = false;
         this.showCleanupButton = false;
+        this.showCloseButton = false;
         this.chatbotItemComponentName = literal `yp-chatbot-item-base`;
         this.setupServerApi();
     }
@@ -280,7 +281,7 @@ let YpChatbotBase = class YpChatbotBase extends YpStreamingLlmBase {
           cursor: pointer;
         }
 
-        .restartButton {
+        .restartButton, .closeButton {
           margin-left: 16px;
         }
 
@@ -309,6 +310,10 @@ let YpChatbotBase = class YpChatbotBase extends YpStreamingLlmBase {
           .restartButton {
             margin-left: 8px;
             display: none;
+          }
+
+          .closeButton  {
+            margin-left: 8px;
           }
 
           .darkModeButton {
@@ -368,6 +373,14 @@ let YpChatbotBase = class YpChatbotBase extends YpStreamingLlmBase {
         ><md-icon>refresh</md-icon></md-icon></md-outlined-icon-button>
       `
             : nothing}
+      ${this.showCloseButton
+            ? html `
+        <md-outlined-icon-button
+          class="closeButton"
+          @click="${() => this.fire('chatbot-close')}"
+        ><md-icon>close</md-icon></md-icon></md-outlined-icon-button>
+      `
+            : nothing}
       ${this.onlyUseTextField || this.chatLog.length > 1
             ? html `
             <md-outlined-text-field
@@ -417,10 +430,11 @@ let YpChatbotBase = class YpChatbotBase extends YpStreamingLlmBase {
     `;
     }
     render() {
-        return staticHtml `
+        return html `
       <div class="chat-window" id="chat-window">
         <div class="chat-messages" id="chat-messages">
           <yp-chatbot-item-base
+            ?hidden="${!this.defaultInfoMessage}"
             class="chatElement bot-chat-element"
             .detectedLanguage="${this.language}"
             .message="${this.defaultInfoMessage}"
@@ -475,6 +489,9 @@ __decorate([
 __decorate([
     property({ type: Boolean })
 ], YpChatbotBase.prototype, "showCleanupButton", void 0);
+__decorate([
+    property({ type: Boolean })
+], YpChatbotBase.prototype, "showCloseButton", void 0);
 __decorate([
     query('#sendButton')
 ], YpChatbotBase.prototype, "sendButton", void 0);

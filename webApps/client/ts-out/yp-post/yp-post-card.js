@@ -295,7 +295,7 @@ let YpPostCard = class YpPostCard extends YpBaseElement {
               ?hidden="${this.hideDescription}"
               textType="postContent"
               .contentLanguage="${this.post.language}"
-              text-only
+              textOnly
               .content="${this.post.description}"
               .contentId="${this.post.id}"
               truncate="220"
@@ -362,7 +362,7 @@ let YpPostCard = class YpPostCard extends YpBaseElement {
                         textType="postName"
                         ?largeFont="${this.largeFont}"
                         .contentLanguage="${this.post.language}"
-                        text-only
+                        textOnly
                         .content="${this.post.name}"
                         .contentId="${this.post.id}"
                       >

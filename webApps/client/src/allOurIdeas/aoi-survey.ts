@@ -501,12 +501,14 @@ export class AoiSurvey extends YpBaseElement {
         case PagesTypes.Results:
           return html`<aoi-survey-results
             .groupId="${this.collectionId!}"
+            .group="${this.collection as YpGroupData}"
             .earl="${this.earl}"
             .question="${this.question}"
           ></aoi-survey-results>`;
         case PagesTypes.Analysis:
           return html`<aoi-survey-analysis
             .groupId="${this.collectionId!}"
+            .group="${this.collection as YpGroupData}"
             .earl="${this.earl}"
             .question="${this.question}"
           ></aoi-survey-analysis>`;
@@ -558,7 +560,7 @@ export class AoiSurvey extends YpBaseElement {
             </md-primary-tab>
 
             <md-primary-tab
-              ?hidden="${this.earl!.configuration!.hide_results == "1"}"
+              ?hidden="${this.earl?.configuration!.hide_results == "1"}"
               class="${this.pageIndex == PagesTypes.Results &&
               "selectedContainer"}"
               @click="${() => this.changeTabTo(2)}"
@@ -570,7 +572,7 @@ export class AoiSurvey extends YpBaseElement {
 
             <md-primary-tab
               ?hidden="${!this.hasLlm ||
-              this.earl!.configuration!.hide_results == "1"}"
+              this.earl?.configuration!.hide_results == "1"}"
               class="${this.pageIndex == PagesTypes.Analysis &&
               "selectedContainer"}"
               @click="${() => this.changeTabTo(3)}"

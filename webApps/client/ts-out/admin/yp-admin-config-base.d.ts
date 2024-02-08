@@ -34,6 +34,7 @@ export declare abstract class YpAdminConfigBase extends YpAdminPage {
     action: string | undefined;
     subRoute: string | undefined;
     hasVideoUpload: boolean;
+    status: string | undefined;
     hasAudioUpload: boolean;
     uploadedLogoImageId: number | undefined;
     uploadedHeaderImageId: number | undefined;
@@ -58,12 +59,18 @@ export declare abstract class YpAdminConfigBase extends YpAdminPage {
     abstract renderHiddenInputs(): TemplateResult | {};
     _formResponse(event: CustomEvent): Promise<void>;
     _selectTab(event: CustomEvent): void;
-    imageLoaded(event: CustomEvent): Promise<void>;
+    getColorFromLogo(): Promise<void>;
     _updateCollection(event: CustomEvent): void;
     connectedCallback(): void;
     disconnectedCallback(): void;
     _logoImageUploaded(event: CustomEvent): void;
     _headerImageUploaded(event: CustomEvent): void;
+    _statusSelected(event: CustomEvent): void;
+    get statusIndex(): number;
+    get collectionStatusOptions(): {
+        name: string;
+        translatedName: string;
+    }[];
     _ltpConfigChanged(event: CustomEvent): void;
     tabsPostSetup(tabs: Array<YpConfigTabData>): void;
     get disableSaveButtonForCollection(): boolean;

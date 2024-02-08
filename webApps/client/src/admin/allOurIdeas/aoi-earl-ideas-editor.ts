@@ -73,6 +73,7 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmBase {
   }
 
   override connectedCallback(): void {
+    this.createGroupObserver();
     this.setupBootListener();
     if (this.configuration.earl && this.configuration.earl.question_id) {
       this.disableWebsockets = true;
@@ -100,6 +101,27 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmBase {
       this.communityId!,
       this.configuration.earl!.question_id!
     );
+  }
+
+  createGroupObserver() {
+    const handler = {
+      set: (target: any, property: any, value: any, receiver: any) => {
+        // Perform your logic here whenever a property is set
+        console.error(`Property ${String(property)} set to`, value);
+
+        // Trigger a custom event or call a method to handle the change
+        this.handleGroupChange();
+
+        return Reflect.set(target, property, value, receiver);
+      },
+    };
+
+    this.group = new Proxy(this.group, handler);
+  }
+
+  handleGroupChange() {
+    // Handle the change here
+    console.error("Group changed", this.group);
   }
 
   async addChatBotElement(wsMessage: PsAiChatWsMessage): Promise<void> {
@@ -244,19 +266,10 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmBase {
     }
   }
 
-  async setPromptDraft() {
-    await this.updateComplete;
-    this.aiStyleInputElement!.value = this.imageGenerator.promptDraft;
-  }
-
   override updated(
     changedProperties: Map<string | number | symbol, unknown>
   ): void {
     super.updated(changedProperties);
-
-    if (changedProperties.has("choices") && this.choices) {
-      this.setPromptDraft();
-    }
   }
 
   async generateAiIcons() {
@@ -557,6 +570,7 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmBase {
             @click="${this.submitIdeasForCreation}"
             ?disabled="${this.isSubmittingIdeas ||
             this.answers?.length < 6 ||
+            !this.configuration ||
             this.isGeneratingWithAi}"
             >${this.t("submitAnswersForCreation")}</md-filled-button
           >
@@ -636,7 +650,7 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmBase {
             id="answerText"
             .contentId="${this.groupId}"
             .extraId="${answer.data.choiceId}"
-            text-only
+            textOnly
             truncate="140"
             .content="${answer.data.content}"
             .contentLanguage="${this.group.language}"
@@ -714,7 +728,7 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmBase {
             type="textarea"
             @change="${this.aiStyleChanged}"
             rows="5"
-            .value="${this.group.configuration.theme?.iconPrompt || ""}"
+            .value="${this.group.configuration.theme?.iconPrompt || this.imageGenerator.promptDraft}"
             ?hidden="${this.allChoicesHaveIcons || !this.hasLlm}"
             ?disabled="${this.isGeneratingWithAi || this.allChoicesHaveIcons}"
           ></md-outlined-text-field>

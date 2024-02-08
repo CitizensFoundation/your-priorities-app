@@ -23,6 +23,7 @@ import { YpMediaHelpers } from "../common/YpMediaHelpers.js";
 import { unsafeHTML } from "lit/directives/unsafe-html.js";
 import { ifDefined } from "lit/directives/if-defined.js";
 import { YpCollectionHelpers } from "../common/YpCollectionHelpers.js";
+import { YpImage } from "../common/yp-image.js";
 export const defaultLtpPromptsConfiguration = () => {
     return Object.fromEntries(Array.from({ length: 10 }, (_, i) => [i + 1, ""]));
 };
@@ -50,16 +51,16 @@ export class YpAdminConfigBase extends YpAdminPage {
     _selectTab(event) {
         this.selectedTab = event.target.activeTabIndex;
     }
-    async imageLoaded(event) {
+    async getColorFromLogo() {
         try {
             this.gettingImageColor = true;
-            let ypImageUrl = this.imagePreviewUrl;
-            const imageYp = event.detail.imageYp;
+            let ypImageUrl = this.imagePreviewUrl ||
+                YpMediaHelpers.getImageFormatUrl(this.currentLogoImages);
             const imgObj = new Image();
             imgObj.src = ypImageUrl + "?" + new Date().getTime();
             imgObj.setAttribute("crossOrigin", "");
             await imgObj.decode();
-            let newThemeColor = await imageYp.getThemeColorsFromImage(imgObj);
+            let newThemeColor = await YpImage.getThemeColorsFromImage(imgObj);
             this.gettingImageColor = false;
             console.error("New theme color", newThemeColor);
             if (newThemeColor) {
@@ -115,6 +116,37 @@ export class YpAdminConfigBase extends YpAdminPage {
         this.uploadedHeaderImageId = image.id;
         this.configChanged = true;
     }
+    _statusSelected(event) {
+        const index = event.detail.index;
+        this.status = this.collectionStatusOptions[index].name;
+        debugger;
+        this._configChanged();
+    }
+    get statusIndex() {
+        if (this.status) {
+            for (let i = 0; i < this.collectionStatusOptions.length; i++) {
+                if (this.collectionStatusOptions[i].name == this.status)
+                    return i;
+            }
+            return -1;
+        }
+        else {
+            return -1;
+        }
+    }
+    get collectionStatusOptions() {
+        if (this.language) {
+            return [
+                { name: "active", translatedName: this.t("status.active") },
+                { name: "featured", translatedName: this.t("status.featured") },
+                { name: "archived", translatedName: this.t("status.archived") },
+                { name: "hidden", translatedName: this.t("status.hidden") },
+            ];
+        }
+        else {
+            return [];
+        }
+    }
     _ltpConfigChanged(event) {
         setTimeout(() => {
             const jsonEditor = this.$$("#jsoneditor");
@@ -145,7 +177,10 @@ export class YpAdminConfigBase extends YpAdminPage {
         }
     }
     _themeChanged(event) {
-        this.collection.configuration.theme = event.detail;
+        this.collection.configuration.theme = {
+            ...this.collection.configuration.theme,
+            ...event.detail,
+        };
         this.requestUpdate();
     }
     renderSaveButton() {
@@ -313,24 +348,39 @@ export class YpAdminConfigBase extends YpAdminPage {
         <div style="position: relative;">
           <yp-image
             class="mainImage"
-            @loaded="${this.imageLoaded}"
+            @loaded="${this.getColorFromLogo}"
             sizing="contain"
             .skipCloudFlare="${true}"
             src="${this.imagePreviewUrl}"
           ></yp-image>
           ${this.gettingImageColor
-                ? html ` <md-linear-progress class="imagePicker" indeterminate></md-linear-progress> `
+                ? html `
+                <md-linear-progress
+                  class="imagePicker"
+                  indeterminate
+                ></md-linear-progress>
+              `
                 : nothing}
         </div>
       `;
         }
         else if (this.currentLogoImages) {
             return html `
-        <yp-image
-          class="image"
-          sizing="contain"
-          src="${YpMediaHelpers.getImageFormatUrl(this.currentLogoImages)}"
-        ></yp-image>
+        <div style="position: relative;">
+          <yp-image
+            class="image"
+            sizing="contain"
+            src="${YpMediaHelpers.getImageFormatUrl(this.currentLogoImages)}"
+          ></yp-image>
+          ${this.gettingImageColor
+                ? html `
+                <md-linear-progress
+                  class="imagePicker"
+                  indeterminate
+                ></md-linear-progress>
+              `
+                : nothing}
+        </div>
       `;
         }
         else {
@@ -360,7 +410,8 @@ export class YpAdminConfigBase extends YpAdminPage {
             @success="${this._logoImageUploaded}"
           >
           </yp-file-upload>
-          <md-filled-icon-button ?hidden="${!this.hasLlm}"
+          <md-filled-icon-button
+            ?hidden="${!this.hasLlm}"
             id="generateButton"
             @click="${this._generateLogo}"
             ><md-icon>smart_toy</md-icon></md-filled-icon-button
@@ -797,6 +848,9 @@ __decorate([
 __decorate([
     property({ type: Boolean })
 ], YpAdminConfigBase.prototype, "hasVideoUpload", void 0);
+__decorate([
+    property({ type: String })
+], YpAdminConfigBase.prototype, "status", void 0);
 __decorate([
     property({ type: Boolean })
 ], YpAdminConfigBase.prototype, "hasAudioUpload", void 0);

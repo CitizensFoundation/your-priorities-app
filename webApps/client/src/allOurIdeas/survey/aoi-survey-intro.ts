@@ -230,7 +230,7 @@ export class AoiSurveyIntro extends YpBaseElement {
             id="answerText"
             .contentId="${this.group.id}"
             .extraId="${this.question.id}"
-            text-only
+            textOnly
             truncate="300"
             .content="${this.question.name}"
             .contentLanguage="${this.group.language}"

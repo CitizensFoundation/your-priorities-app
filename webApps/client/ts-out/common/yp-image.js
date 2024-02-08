@@ -238,10 +238,10 @@ let YpImage = class YpImage extends LitElement {
         super.connectedCallback();
         this._resolvedSrc = "";
     }
-    async getThemeColorsFromImage(img) {
+    static async getThemeColorsFromImage(img) {
         return await new Promise(async (resolve, reject) => {
             try {
-                const color = await sourceColorFromImage(img || this.$$("img"));
+                const color = await sourceColorFromImage(img);
                 resolve(color);
             }
             catch (err) {

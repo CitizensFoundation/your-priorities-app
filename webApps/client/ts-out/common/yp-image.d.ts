@@ -143,7 +143,7 @@ export declare class YpImage extends LitElement {
     render(): import("lit-html").TemplateResult<1>;
     $$(id: string): HTMLElement | null;
     connectedCallback(): void;
-    getThemeColorsFromImage(img: HTMLImageElement | undefined): Promise<string | undefined>;
+    static getThemeColorsFromImage(img: HTMLImageElement): Promise<string | undefined>;
     _imgOnLoad(): void;
     _imgOnError(): void;
     get computePlaceholderHidden(): boolean;

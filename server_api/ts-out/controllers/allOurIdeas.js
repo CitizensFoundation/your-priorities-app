@@ -37,7 +37,7 @@ export class AllOurIdeasController {
         this.router.post("/:groupId/questions/:questionId/prompts/:promptId/votes", auth.can("view group"), this.vote.bind(this));
         this.router.post("/:groupId/questions/:questionId/prompts/:promptId/skips", auth.can("view group"), this.skip.bind(this));
         this.router.post("/:groupId/questions/:questionId/addIdea", auth.can("view group"), this.addIdea.bind(this));
-        this.router.get("/:groupId/questions/:analysisIndex/:analysisTypeIndex/analysis", auth.can("view group"), this.analysis.bind(this));
+        this.router.get("/:groupId/questions/:wsClientSocketId/:analysisIndex/:analysisTypeIndex/analysis", auth.can("view group"), this.analysis.bind(this));
         this.router.put("/:communityId/questions/:questionId/choices/:choiceId", auth.can("create group"), this.updateCoiceData.bind(this));
         this.router.put("/:groupId/questions/:questionId/choices/:choiceId/throughGroup", auth.can("view group"), this.updateCoiceData.bind(this));
         this.router.put("/:communityId/questions/:questionId/choices/:choiceId/active", auth.can("create group"), this.updateActive.bind(this));
@@ -51,24 +51,24 @@ export class AllOurIdeasController {
             visitor_identifier: req.session.id,
             data: {
                 content: newIdea,
-                isGeneratingImage: undefined
+                isGeneratingImage: undefined,
             },
             question_id: req.params.questionId,
         };
         //@ts-ignore
-        choiceParams['local_identifier'] = req.user.id;
+        choiceParams["local_identifier"] = req.user.id;
         console.log(`choiceParams: ${JSON.stringify(choiceParams)}`);
         try {
             const choiceResponse = await fetch(`${PAIRWISE_API_HOST}/choices.json`, {
-                method: 'POST',
+                method: "POST",
                 headers: defaultAuthHeader,
                 body: JSON.stringify(choiceParams),
             });
             if (!choiceResponse.ok) {
                 console.error(choiceResponse.statusText);
-                throw new Error('Choice creation failed.');
+                throw new Error("Choice creation failed.");
             }
-            const choice = await choiceResponse.json();
+            const choice = (await choiceResponse.json());
             choice.data = JSON.parse(choice.data);
             let flagged = false;
             if (process.env.OPENAI_API_KEY) {
@@ -88,13 +88,13 @@ export class AllOurIdeasController {
                 active: choice.active,
                 flagged: flagged,
                 choice: choice,
-                choice_status: choice.active ? 'active' : 'inactive',
+                choice_status: choice.active ? "active" : "inactive",
                 message: `You just submitted: ${escape(newIdea)}`, // Use a proper escape function
             });
         }
         catch (error) {
             console.error(error);
-            res.status(500).json({ error: 'Addition of new idea failed' });
+            res.status(500).json({ error: "Addition of new idea failed" });
         }
     }
     async getModerationFlag(data) {
@@ -372,7 +372,7 @@ export class AllOurIdeasController {
         }
     }
     async analysis(req, res) {
-        const { groupId, analysisIndex, analysisTypeIndex } = req.params;
+        const { groupId, wsClientSocketId, analysisIndex, analysisTypeIndex } = req.params;
         console.log(`--------------------> ${groupId} ${analysisIndex} ${analysisTypeIndex}`);
         try {
             const group = await Group.findOne({ where: { id: groupId } });
@@ -399,7 +399,7 @@ export class AllOurIdeasController {
             if (!questionResponse.ok) {
                 throw new Error("Failed to fetch question for analysis");
             }
-            const question = await questionResponse.json();
+            const question = (await questionResponse.json());
             // Additional logic adapted from Ruby for fetching and sorting choices
             console.log(`@question is ${question}. ${group.configuration.allOurIdeas.earl.configuration.analysis_config}`);
             const analysisConfig = JSON.parse(group.configuration.allOurIdeas.earl.configuration.analysis_config);
@@ -410,20 +410,41 @@ export class AllOurIdeasController {
             console.log(`@ideasIdsRange is ${ideasIdsRange}.`);
             console.log(`@analysisIdeaConfig.analysisTypes is ${analysisIdeaConfig.analysisTypes}.`);
             const analysisType = analysisIdeaConfig.analysisTypes[parseInt(analysisTypeIndex)];
-            // Fetch choices similar to Ruby logic
-            // Placeholder: Implement fetching choices based on `ideasIdsRange` and other parameters
-            // Placeholder for actual fetching logic
-            const aiHelper = new AiHelper();
-            const analysisData = await aiHelper.getAiAnalysis(question.id, analysisType.contextPrompt, await this.fetchChoices(questionId, false));
-            // Respond with the analysis data
+            const perPage = Math.abs(ideasIdsRange);
+            console.log(`Per page: ${perPage}`);
+            const choicesCount = question.choices_count - question.inactive_choices_count;
+            const offset = ideasIdsRange < 0 ? Math.max(choicesCount - perPage, 0) : 0;
+            console.log(`Offset: ${offset}`);
+            const choicesResponse = await fetch(`${PAIRWISE_API_HOST}/questions/${questionId}/choices?limit=${perPage}&offset=${offset}`);
+            const choices = (await choicesResponse.json());
+            console.log(`Number of choices fetched: ${choices.length}`);
+            const sortedChoices = choices.sort((a, b) => a.id - b.id);
+            console.log(`Sorted choice IDs: ${sortedChoices.map((choice) => choice.id)}`);
+            const choiceIds = sortedChoices.map((choice) => `${choice.id}`).join("-");
+            const promptHash = crypto
+                .createHash("sha256")
+                .update(analysisType.contextPrompt)
+                .digest("hex")
+                .substring(0, 8);
+            const analysisCacheKey = `${questionId}_${analysisTypeIndex}_${choiceIds}_${promptHash}_ai_analysis_v8`;
+            console.log(`analysisCacheKey is ${analysisCacheKey} prompt ${analysisType.contextPrompt.substring(0, 15)}...`);
+            // Implement caching logic here
+            let cachedAnalysis = await req.redisClient.get(analysisCacheKey);
+            if (!cachedAnalysis) {
+                const swClientSocket = this.wsClients.get(wsClientSocketId);
+                const aiHelper = new AiHelper(swClientSocket);
+                await aiHelper.getAiAnalysis(questionId, analysisType.contextPrompt, choices, analysisCacheKey, req.redisClient);
+            }
             res.json({
-                question,
-                analysisData,
+                selectedChoices: choices,
+                cachedAnalysis
             });
         }
         catch (error) {
             console.error(error);
-            res.status(500).send("An error occurred while processing the analysis request");
+            res
+                .status(500)
+                .send("An error occurred while processing the analysis request");
         }
     }
     async fetchChoices(questionId, showAll) {
@@ -434,7 +455,7 @@ export class AllOurIdeasController {
         if (!response.ok) {
             throw new Error(`Failed to fetch choices: ${response.statusText}`);
         }
-        const choices = await response.json();
+        const choices = (await response.json());
         // Process choices as needed
         return choices;
     }
@@ -457,7 +478,7 @@ export class AllOurIdeasController {
                 catch (error) {
                     choice.data = {
                         content: choice.data,
-                        choiceId: choice.id
+                        choiceId: choice.id,
                     };
                     console.error(error);
                 }

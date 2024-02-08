@@ -100,34 +100,28 @@ interface AoiVoteSkipData {
   appearance_lookup: string;
 }
 
-interface AoiResultData {
-  id: number;
-  created_at: string;
-  active: boolean;
-  score: number;
-  wins: number;
-  losses: number;
-  data: AoiAnswerToVoteOnData;
-  user_created: boolean;
-}
-
 interface AoiEarlContainerData {
   earl: AoiEarlData;
 }
-
 
 interface AnalysisTypeData {
   label: string;
   contextPrompt?: string;
   analysis?: string;
-  ideaRowsFromServer?: AoiResultData[];
+  ideaRowsFromServer?: AoiChoiceData[];
+}
+
+
+interface AoiAnalysisResponse {
+  cachedAnalysis?: string;
+  selectedChoices: AoiChoiceData[];
 }
 
 interface AoiSurveyAnalysisData {
   ideasLabel: string;
   ideasIdsRange: number;
   analysisTypes: AnalysisTypeData[]
-  ideaRows?: AoiResultData[];
+  ideaRows?: AoiChoiceData[];
 }
 
 interface AoiAddIdeaResponse {

@@ -1,18 +1,18 @@
+import { nothing } from "lit";
 import "../../common/yp-image.js";
 import { YpBaseElement } from "../../common/yp-base-element.js";
 import "@material/web/progress/circular-progress.js";
+import './aoi-streaming-analysis.js';
 export declare class AoiSurveyAnalysis extends YpBaseElement {
     groupId: number;
-    results: AoiResultData[];
+    group: YpGroupData;
     question: AoiQuestionData;
     earl: AoiEarlData;
     connectedCallback(): Promise<void>;
     disconnectedCallback(): void;
-    fetchResults(): Promise<void>;
+    renderStreamingAnalysis(): import("lit-html").TemplateResult<1> | typeof nothing;
     updated(changedProperties: Map<string | number | symbol, unknown>): void;
     static get styles(): any[];
-    renderIdeas(index: number, result: AoiResultData): import("lit-html").TemplateResult<1>;
-    analysisRow(analysisItem: AnalysisTypeData): import("lit-html").TemplateResult<1>;
     renderAnalysis(): import("lit-html").TemplateResult<1>;
     render(): import("lit-html").TemplateResult<1>;
 }

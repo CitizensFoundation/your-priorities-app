@@ -1,4 +1,6 @@
 {
+  "getColorFromLogo": "Get color from logo image",
+  "explainBothAnswers": "Explanation of answers",
   "thinking": "Thinking",
   "userControlledSettings": "User controlled settings",
   "choiceStatus": "Status",

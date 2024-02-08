@@ -33,10 +33,9 @@ let YpThemeColorInput = class YpThemeColorInput extends YpBaseElement {
             css `
         md-outlined-select,
         md-outlined-text-field {
-          max-width: 250px;
-          width: 250px;
-          margin-bottom: 8px;
-          margin-top: 8px;
+          width: 100%;
+          margin-bottom: 16px;
+          margin-top: 16px;
         }
 
         .container {

@@ -9,13 +9,15 @@ import { SharedStyles } from "./SharedStyles.js";
 
 import "@material/web/progress/circular-progress.js";
 
+import './aoi-streaming-analysis.js';
+
 @customElement("aoi-survey-analysis")
 export class AoiSurveyAnalysis extends YpBaseElement {
   @property({ type: Number })
   groupId!: number;
 
-  @property({ type: Array })
-  results!: AoiResultData[];
+  @property({ type: Object })
+  group!: YpGroupData;
 
   @property({ type: Object })
   question!: AoiQuestionData;
@@ -33,43 +35,24 @@ export class AoiSurveyAnalysis extends YpBaseElement {
     window.appGlobals.activity(`Analysis - close`);
   }
 
-  async fetchResults() {
+  renderStreamingAnalysis() {
     try {
       const analysis_config = JSON.parse(
         this.earl.configuration!.analysis_config as any
       ) as any;
-
-      debugger;
-
-      for (
-        let analysisIndex = 0;
-        analysisIndex < analysis_config.analyses.length;
-        analysisIndex++
-      ) {
-        const analysis = analysis_config.analyses[analysisIndex];
-        for (
-          let typeIndex = 0;
-          typeIndex < analysis.analysisTypes.length;
-          typeIndex++
-        ) {
-          const analysisData = await window.aoiServerApi.getSurveyAnalysis(
-            this.groupId,
-            analysisIndex,
-            typeIndex
-          );
-
-          if (!analysisData) {
-            analysis.analysisTypes[typeIndex].analysis = "error";
-            analysis.ideaRows = [];
-          } else {
-            analysis.analysisTypes[typeIndex].analysis = analysisData.analysis;
-            analysis.ideaRows = analysisData.ideaRowsFromServer;
-          }
-          this.requestUpdate();
-        }
-      }
+      return html` ${analysis_config.analyses.map((analysis: any) => {
+        return analysis.map((analysisTypeIndex: any) => {
+          return html`<aoi-streaming-analysis
+            groupId=${this.groupId}
+            analysisIndex=${analysis.analysisIndex}
+            analysisTypeIndex=${analysisTypeIndex}
+          >
+          </aoi-streaming-analysis>`;
+        });
+      })}`;
     } catch (error) {
       console.error(error);
+      return nothing;
     }
   }
 
@@ -77,10 +60,6 @@ export class AoiSurveyAnalysis extends YpBaseElement {
     changedProperties: Map<string | number | symbol, unknown>
   ): void {
     super.updated(changedProperties);
-
-    if (changedProperties.has("earl") && this.earl) {
-      this.fetchResults();
-    }
   }
 
   static override get styles() {
@@ -248,51 +227,6 @@ export class AoiSurveyAnalysis extends YpBaseElement {
     ];
   }
 
-  renderIdeas(index: number, result: AoiResultData) {
-    return html`
-      <div class="answers layout horizontal">
-        <div class="column index ideaIndex">${index + 1}.</div>
-        <div class="column layout vertical ideaDescription">
-          <div class="">${result.data}</div>
-        </div>
-      </div>
-    `;
-  }
-
-  analysisRow(analysisItem: AnalysisTypeData) {
-    let analysisHtml;
-
-    if (analysisItem.analysis && analysisItem.analysis != "error") {
-      analysisHtml = html`
-        <div class="analysisResults">
-          ${resolveMarkdown(analysisItem.analysis, {
-            includeImages: true,
-            includeCodeBlockClassNames: true,
-          })}
-          <div class="generatingInfo">
-            ${this.t("Written by GPT-4")}
-          </div>
-        </div>
-      </div>`;
-    } else if (analysisItem.analysis && analysisItem.analysis == "error") {
-      analysisHtml = html`<div class=" layout horizontal center-center">
-        ${this.t("Error fetching analysis")}
-      </div>`;
-    } else {
-      analysisHtml = html`<div class=" layout vertical center-center">
-        <md-circular-progress indeterminate></md-circular-progress>
-        <div class="generatingInfo">
-          ${this.t("Generating analysis with GPT-4")}
-        </div>
-      </div>`;
-    }
-
-    return html`<div class="analysisRow">
-      <div class="analysisTitle">${analysisItem.label}</div>
-      ${analysisHtml}
-    </div>`;
-  }
-
   renderAnalysis() {
     let outHtml = html``;
 
@@ -309,13 +243,16 @@ export class AoiSurveyAnalysis extends YpBaseElement {
         outHtml = html`${outHtml}
           <div class="ideasLabel">${analysis.ideasLabel}</div>
 
-          ${analysis.ideaRows?.map((result, index) =>
-            this.renderIdeas(index, result)
-          )} `;
+         `;
         let innerHtml = html``;
         for (let a = 0; a < analysis.analysisTypes.length; a++) {
           innerHtml = html`${innerHtml}
-          ${this.analysisRow(analysis.analysisTypes[a])} `;
+          <aoi-streaming-analysis
+            .groupId=${this.group.id}
+            .analysisIndex=${i}
+            .analysisTypeIndex=${a}
+          >
+          </aoi-streaming-analysis>`;
         }
         outHtml = html`${outHtml}
           <div class="rowsContainer">${innerHtml}</div>`;

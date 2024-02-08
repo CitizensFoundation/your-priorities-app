@@ -13,9 +13,9 @@ export class AoiServerApi extends YpServerApi {
     async getSurveyResults(groupId) {
         return this.fetchWrapper(this.baseUrlPath + `/${groupId}/questions/results`);
     }
-    getSurveyAnalysis(groupId, analysisIndex, analysisTypeIndex) {
+    getSurveyAnalysis(groupId, wsClientId, analysisIndex, analysisTypeIndex) {
         return this.fetchWrapper(this.baseUrlPath +
-            `/${groupId}/questions/${analysisIndex}/${analysisTypeIndex}/analysis`);
+            `/${groupId}/questions/${wsClientId}/${analysisIndex}/${analysisTypeIndex}/analysis`);
     }
     submitIdea(groupId, questionId, newIdea) {
         return this.fetchWrapper(this.baseUrlPath + `/${groupId}/questions/${questionId}/addIdea`, {
