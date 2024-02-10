@@ -383,22 +383,18 @@ let AoiSurveyVoting = class AoiSurveyVoting extends YpBaseElement {
     }
     renderProgressBar() {
         if (this.earl.configuration) {
-            let initialTargetVotes = this.earl.configuration.target_votes || 30; // Use configuration target votes or default to 30
-            // If currentLevelTargetVotes is undefined or not enough for the current votes, find the correct level
+            let initialTargetVotes = this.earl.configuration.target_votes || 30;
             if (!this.currentLevelTargetVotes || this.question.visitor_votes >= this.currentLevelTargetVotes) {
                 this.currentLevelTargetVotes = initialTargetVotes;
                 let levelMultiplier = 1;
-                // Keep doubling until the currentLevelTargetVotes is higher than the current votes
                 while (this.question.visitor_votes >= this.currentLevelTargetVotes) {
                     this.currentLevelTargetVotes *= 2;
                     levelMultiplier *= 2;
                 }
-                // Calculate the level based on the multiplier
                 let level = Math.log(levelMultiplier) / Math.log(2) + 1; // +1 because level starts at 1
                 this.level = level;
             }
             let targetVotes = this.currentLevelTargetVotes;
-            // Calculate progress percentage
             const progressPercentage = Math.min((this.question.visitor_votes / targetVotes) * 100, 100);
             return html `
         <div class="progressBarContainer">

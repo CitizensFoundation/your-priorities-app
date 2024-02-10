@@ -201,14 +201,20 @@ export class AoiSurveyIntro extends YpBaseElement {
             width: 100%;
             padding: 16px;
             line-height: 1.5;
+            margin: 0;
+            padding-left: 0;
+            padding-right: 0;
           }
 
           .description {
             max-width: 100%;
+            margin: 0;
+            padding: 8px;
           }
 
           .footerHtml {
             max-width: 100%;
+            margin: 0;
           }
 
           .questionTitle[dark-mode] {

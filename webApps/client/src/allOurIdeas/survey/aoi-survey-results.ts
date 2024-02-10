@@ -67,13 +67,34 @@ export class AoiSurveyResuls extends YpBaseElement {
   }
 
   exportToCSV(): void {
-    const replacer = (key: string, value: any) => (value === null ? "" : value); // specify types for key and value
-    const header = Object.keys(this.results[0]);
-    let csv = this.results.map((row) =>
-      header
-        .map((fieldName) => JSON.stringify((row as any)[fieldName], replacer))
-        .join(",")
-    ); // specify type for row
+    // Adjust the replacer function if needed
+    const replacer = (key: string, value: any) => (value === null ? "" : value);
+
+    // Define initial headers, assuming 'data' needs to be expanded
+    const initialHeader = Object.keys(this.results[0]);
+    // Expand headers to include 'content' and 'imageUrl' explicitly if 'data' exists
+    let header = initialHeader.flatMap((fieldName) =>
+      fieldName === "data" ? ["content", "imageUrl"] : [fieldName]
+    );
+
+    let csv = this.results.map((row) => {
+      return header
+        .map((fieldName) => {
+          // Handle expanded fields
+          if (fieldName === "content" || fieldName === "imageUrl") {
+            // Assuming 'data' is a stringified JSON, parse it and extract the specific field
+            const dataObject = row["data"];
+            const fieldValue = dataObject[fieldName];
+            return JSON.stringify(fieldValue, replacer);
+          } else {
+            // Handle normal fields
+            return JSON.stringify((row as any)[fieldName], replacer);
+          }
+        })
+        .join(",");
+    });
+
+    // Add header row
     csv.unshift(header.join(","));
     const csvString = csv.join("\r\n");
 
@@ -237,6 +258,14 @@ export class AoiSurveyResuls extends YpBaseElement {
             margin-top: 16px;
           }
 
+          .index {
+            font-size: 16px;
+          }
+
+          .ideaName {
+            font-size: 16px;
+          }
+
           .row {
             min-width: 300px;
             width: 300px;
@@ -255,7 +284,11 @@ export class AoiSurveyResuls extends YpBaseElement {
             <div class="layout horizontal">
               <div class="column ideaName">${result.data.content}</div>
               <div class="flex"></div>
-              <img class="answerImage" ?hidden="${result.data.imageUrl==undefined}" src="${result.data.imageUrl!}" />
+              <img
+                class="answerImage"
+                ?hidden="${result.data.imageUrl == undefined}"
+                src="${result.data.imageUrl!}"
+              />
             </div>
             <div
               class="column layout vertical center-center scores"
