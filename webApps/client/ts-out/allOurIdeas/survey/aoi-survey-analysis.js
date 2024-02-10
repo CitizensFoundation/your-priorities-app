@@ -160,6 +160,10 @@ let AoiSurveyAnalysis = class AoiSurveyAnalysis extends YpBaseElement {
         .questionTitle {
         }
 
+        aoi-streaming-analysis {
+          padding: 16px;
+        }
+
         @media (min-width: 960px) {
           .questionTitle {
             margin-bottom: 16px;

@@ -32,6 +32,10 @@ let AoiStreamingAnalysis = class AoiStreamingAnalysis extends YpStreamingLlmBase
     }
     async streamAnalysis() {
         const { cachedAnalysis, selectedChoices } = await this.serverApi.getSurveyAnalysis(this.groupId, this.wsClientId, this.analysisIndex, this.analysisTypeIndex);
+        if (cachedAnalysis) {
+            this.analysis = cachedAnalysis;
+        }
+        this.selectedChoices = selectedChoices;
     }
     renderChoice(index, result) {
         return html `
@@ -68,10 +72,56 @@ let AoiStreamingAnalysis = class AoiStreamingAnalysis extends YpStreamingLlmBase
         this.scrollDown();
     }
     static get styles() {
-        return [super.styles, css ``];
+        return [
+            super.styles,
+            css `
+        .content {
+          margin: 16px;
+        }
+
+        .generatingInfo {
+          font-size: 16px;
+          margin-top: 8px;
+          margin-bottom: 16px;
+          font-style: italic;
+        }
+
+        .column {
+          padding: 8px;
+        }
+
+        .index {
+          font-size: 16px;
+        }
+
+        .nickname {
+          padding-bottom: 0;
+        }
+
+        .nameAndScore {
+          width: 100%;
+        }
+
+        .answers {
+          text-align: left;
+          align-items: left;
+          width: 100%;
+        }
+
+        @media (max-width: 960px) {
+          .ideaDescription {
+            padding-right: 24px;
+          }
+
+          .ideaIndex {
+            padding-left: 24px;
+          }
+        }
+      `,
+        ];
     }
     render() {
-        return html `<div id="content layout vertical">
+        return html `<div class="content layout vertical">
       ${this.selectedChoices.map((result, index) => this.renderChoice(index, result))}
       ${resolveMarkdown(this.analysis, {
             includeImages: true,
