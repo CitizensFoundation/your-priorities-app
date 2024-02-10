@@ -192,12 +192,19 @@ export class AoiSurveyIntro extends YpBaseElement {
 
         @media (max-width: 960px) {
           .image {
-            width: 332px;
-            height: 187px;
+            width: 300px;
+            height: 169px;
+          }
+
+          .questionTitle {
+            max-width: 100%;
+            width: 100%;
+            padding: 16px;
+            line-height: 1.5;
           }
 
           .description {
-            max-width: 300px;
+            max-width: 100%;
           }
 
           .footerHtml {

@@ -592,30 +592,30 @@ export class AoiSurvey extends YpBaseElement {
             @navigation-bar-activated="${this.tabChanged}"
           >
             <md-navigation-tab .label="${this.t("Intro")}"
-              ><md-icon slot="activeIcon">info</md-icon>
-              <md-icon slot="inactiveIcon">info</md-icon></md-navigation-tab
+              ><md-icon slot="active-icon">info</md-icon>
+              <md-icon slot="inactive-icon">info</md-icon></md-navigation-tab
             >
             <md-navigation-tab
               ?hidden="${this.surveyClosed}"
               id="votingTab"
               .label="${this.t("Voting")}"
             >
-              <md-icon slot="activeIcon">thumb_up</md-icon>
-              <md-icon slot="inactiveIcon">thumb_up</md-icon>
+              <md-icon slot="active-icon">thumb_up</md-icon>
+              <md-icon slot="inactive-icon">thumb_up</md-icon>
             </md-navigation-tab>
             <md-navigation-tab
               .label="${this.t("Results")}"
               ?hidden="${this.earl?.configuration!.hide_results == "1"}"
             >
-              <md-icon slot="activeIcon">grading</md-icon>
-              <md-icon slot="inactiveIcon">grading</md-icon>
+              <md-icon slot="active-icon">grading</md-icon>
+              <md-icon slot="inactive-icon">grading</md-icon>
             </md-navigation-tab>
             <md-navigation-tab
               .label="${this.t("Analysis")}"
               ?hidden="${this.earl?.configuration!.hide_results == "1"}"
             >
-              <md-icon slot="activeIcon">insights</md-icon>
-              <md-icon slot="inactiveIcon">insights</md-icon>
+              <md-icon slot="active-icon">insights</md-icon>
+              <md-icon slot="inactive-icon">insights</md-icon>
             </md-navigation-tab>
           </md-navigation-bar>
         </div>

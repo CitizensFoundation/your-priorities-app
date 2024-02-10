@@ -324,13 +324,25 @@ let AoiSurveyVoting = class AoiSurveyVoting extends YpBaseElement {
           }
 
           .buttonContainer md-elevated-button {
-            margin: 8px;
-            width: 100%;
-            margin-right: 32px;
-            margin-left: 32px;
+            width: 92vw;
+            max-width: 92vw;
             font-size: 15px;
-            --md-elevated-button-container-height: 100px;
+            margin-top: 8px;
+            margin-bottom: 16px;
           }
+
+          .questionTitle {
+            margin-top: 16px;
+            margin-bottom: 0px;
+            font-size: 22
+            px;
+          }
+
+
+          yp-magic-text {
+            min-width: 100%;
+          }
+
 
           .spinnerContainer {
             width: 100%;
@@ -353,6 +365,17 @@ let AoiSurveyVoting = class AoiSurveyVoting extends YpBaseElement {
             font-size: 18px;
             padding: 4px;
             color: var(--md-sys-color-secondary);
+          }
+        }
+
+        @media (max-width: 380px) {
+
+          .buttonContainer md-elevated-button {
+            width: 85vw;
+            max-width: 85vw;
+            font-size: 14px;
+            margin-top: 8px;
+            margin-bottom: 16px;
           }
         }
       `,

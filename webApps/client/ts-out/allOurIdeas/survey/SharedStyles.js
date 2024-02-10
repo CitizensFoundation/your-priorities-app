@@ -21,6 +21,7 @@ export const SharedStyles = css `
   @media (max-width: 960px) {
     .questionTitle {
       margin-bottom: 16px;
+      max-width: 100%;
     }
 
     .questionTitle[dark-mode] {
