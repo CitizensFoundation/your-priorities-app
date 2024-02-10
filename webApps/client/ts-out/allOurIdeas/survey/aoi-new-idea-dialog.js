@@ -289,7 +289,6 @@ let AoiNewIdeaDialog = class AoiNewIdeaDialog extends YpGenerateAiImage {
                         choiceId: this.choice.id,
                     });
                     this.choice.data.imageUrl = imageUrl;
-                    console.error("imageUrl", imageUrl, "error", error);
                     this.requestUpdate();
                 }
             }

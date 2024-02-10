@@ -344,7 +344,6 @@ export class AoiNewIdeaDialog extends YpGenerateAiImage {
 
           this.choice.data.imageUrl = imageUrl;
 
-          console.error("imageUrl", imageUrl, "error", error);
           this.requestUpdate();
         }
       } catch (e) {
