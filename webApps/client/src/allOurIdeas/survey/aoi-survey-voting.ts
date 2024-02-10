@@ -182,7 +182,6 @@ export class AoiSurveyVoting extends YpBaseElement {
         this.rightAnswer = JSON.parse(
           postVoteResponse.newright
         ) as AoiAnswerToVoteOnData;
-        console.error(`Parsed JSON`, this.leftAnswer, this.rightAnswer);
       } catch (error) {
         console.error(
           "Error parsing answers JSON",

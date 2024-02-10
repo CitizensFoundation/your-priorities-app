@@ -41,40 +41,31 @@ let AoiSurveyResuls = class AoiSurveyResuls extends YpBaseElement {
         window.appGlobals.activity(`Results - toggle scores ${this.showScores ? "on" : "off"}`);
     }
     exportToCSV() {
-        // Adjust the replacer function if needed
         const replacer = (key, value) => (value === null ? "" : value);
-        // Define initial headers, assuming 'data' needs to be expanded
         const initialHeader = Object.keys(this.results[0]);
-        // Expand headers to include 'content' and 'imageUrl' explicitly if 'data' exists
         let header = initialHeader.flatMap((fieldName) => fieldName === "data" ? ["content", "imageUrl"] : [fieldName]);
         let csv = this.results.map((row) => {
             return header
                 .map((fieldName) => {
-                // Handle expanded fields
                 if (fieldName === "content" || fieldName === "imageUrl") {
-                    // Assuming 'data' is a stringified JSON, parse it and extract the specific field
                     const dataObject = row["data"];
                     const fieldValue = dataObject[fieldName];
                     return JSON.stringify(fieldValue, replacer);
                 }
                 else {
-                    // Handle normal fields
                     return JSON.stringify(row[fieldName], replacer);
                 }
             })
                 .join(",");
         });
-        // Add header row
         csv.unshift(header.join(","));
         const csvString = csv.join("\r\n");
-        // Create a downloadable link
         const blob = new Blob([csvString], { type: "text/csv" });
         const url = URL.createObjectURL(blob);
         const link = document.createElement("a");
         link.href = url;
         link.download = "survey_results.csv";
         link.click();
-        // Clean up
         URL.revokeObjectURL(url);
         setTimeout(() => link.remove(), 0);
         window.appGlobals.activity(`Results - export to csv`);

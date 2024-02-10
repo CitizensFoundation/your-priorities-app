@@ -55,7 +55,9 @@ export class YpCommunity extends YpCollection {
         !community.configuration.theme &&
         community.Domain?.configuration.theme
       ) {
-        window.appGlobals.theme.setTheme(community.Domain.theme_id);
+        window.appGlobals.theme.setTheme(community.Domain.theme_id, community.Domain.configuration);
+      } else if (community.configuration.theme) {
+        window.appGlobals.theme.setTheme(community.theme_id, community.configuration);
       }
 
       window.appGlobals.analytics.setCommunityAnalyticsTracker(
