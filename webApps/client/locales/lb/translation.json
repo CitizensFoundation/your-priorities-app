@@ -9,7 +9,7 @@
   "origin": "Urspronk",
   "wins": "Gewënnt",
   "losses": "Verléiert",
-  "score": "Score",
+  "score": "Punktzuel",
   "actions": "Aktiounen",
   "allIconsHaveBeenGenerated": "All Ikonen generéiert",
   "styleForAiIconGeneration": "Stil fir AI Äntwert Ikon Generatioun",
@@ -834,7 +834,7 @@
   "myDomains": "Meng Domänen",
   "myCommunities": "Meng Gemeinschaften",
   "myGroups": "Meng Gruppen",
-  "myAdminCommunities": "Communities Admin",
+  "myAdminCommunities": "Communautéiten Admin",
   "myAdminGroups": "Gruppen Admin",
   "community": {
     "add": "Community bäifügen",
@@ -1343,5 +1343,8 @@
   "yourIdea": "Deng Iddi",
   "chatInput": "Fro mech eng Fro",
   "yourIdeaHasBeenAdded": "Deng Iddi gouf dobäigesat, generéiert Ikonbild.",
-  "aiIconInfo": "Ee Symbol fir är Äntwert gëtt generéiert, Dir kënnt d'Fënster zoumaachen oder waarden bis d'Symbol generéiert ass. Dir hutt och d'Méiglechkeet, d'Symbol nei ze generéieren."
+  "aiIconInfo": "Ee Symbol fir är Äntwert gëtt generéiert, Dir kënnt d'Fënster zoumaachen oder waarden bis d'Symbol generéiert ass. Dir hutt och d'Méiglechkeet, d'Symbol nei ze generéieren.",
+  "getColorFromLogo": "Faarf vum Logo Bild kréien",
+  "explainBothAnswers": "Erklärung vun Äntwerten",
+  "allOurIdeas": "All Our Ideas"
 }

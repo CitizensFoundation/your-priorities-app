@@ -132,8 +132,8 @@
   "lookAndFeel": "Ahua me te Āhua",
   "samlAuth": "SAML Auth",
   "basic": "Taketake",
-  "webApp": "Web App",
-  "authApis": "Auth APIs",
+  "webApp": "Tono Tukutuku",
+  "authApis": "API Auth",
   "dontHaveAccount": "Kāore he pūkete?",
   "cantRememberPassword": "Kāore e maumahara kupuhipa?",
   "loginAndRegistration": "Takiuru me te Rēhita",
@@ -1343,5 +1343,8 @@
   "yourIdea": "Tō whakaaro",
   "chatInput": "Pātai mai he pātai",
   "yourIdeaHasBeenAdded": "Kua tāpirihia tō whakaaro, e hanga ana i te tohu.",
-  "aiIconInfo": "Kei te hangaia tētahi ata mō tō whakautu, ka taea e koe te kati i te matapihi, te tatari rānei kia oti te hanga i te ata. Ka whai wāhi anō koe ki te hanga anō i te ata."
+  "aiIconInfo": "Kei te hangaia tētahi ata mō tō whakautu, ka taea e koe te kati i te matapihi, te tatari rānei kia oti te hanga i te ata. Ka whai wāhi anō koe ki te hanga anō i te ata.",
+  "getColorFromLogo": "Tangohia te tae mai i te ahua waitohu",
+  "explainBothAnswers": "Whakamārama o ngā whakautu",
+  "allOurIdeas": "All Our Ideas"
 }

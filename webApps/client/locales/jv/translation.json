@@ -133,7 +133,7 @@
   "samlAuth": "SAML Auth",
   "basic": "Dasar",
   "webApp": "Aplikasi Web",
-  "authApis": "Auth APIs",
+  "authApis": "API Auth",
   "dontHaveAccount": "Ora duwe akun?",
   "cantRememberPassword": "Ora iso ngelingi sandhi?",
   "loginAndRegistration": "Mlebu lan Registrasi",
@@ -1343,5 +1343,8 @@
   "yourIdea": "Ide sampeyan",
   "chatInput": "Takon aku pitakon",
   "yourIdeaHasBeenAdded": "Ide sampeyan wis ditambahake, nggawe gambar ikon.",
-  "aiIconInfo": "Ikon kanggo wangsulan sampeyan lagi digawe, sampeyan bisa nutup jendela utawa ngenteni ikon kasebut digawe. Sampeyan uga bakal duwe pilihan kanggo nggawe ulang ikon."
+  "aiIconInfo": "Ikon kanggo wangsulan sampeyan lagi digawe, sampeyan bisa nutup jendela utawa ngenteni ikon kasebut digawe. Sampeyan uga bakal duwe pilihan kanggo nggawe ulang ikon.",
+  "getColorFromLogo": "Entuk werna saka logo",
+  "explainBothAnswers": "Penjelasan jawaban",
+  "allOurIdeas": "All Our Ideas"
 }

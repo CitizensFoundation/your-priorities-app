@@ -1348,7 +1348,10 @@
   "yourIdea": "La teva idea",
   "chatInput": "Fes-me una pregunta",
   "ideaGenerationGroupType": "Generació d'idees",
-  "allOurIdeasGroupType": "All Our Ideas Pairwise Ranking",
+  "allOurIdeasGroupType": "All Our Ideas Classificació Pairwise",
   "yourIdeaHasBeenAdded": "La teva idea s'ha afegit, generant imatge d'icona.",
-  "aiIconInfo": "S'està generant una icona per a la teva resposta, pots tancar la finestra o esperar que l'icona es generi. També tindràs l'opció de regenerar la icona."
+  "aiIconInfo": "S'està generant una icona per a la teva resposta, pots tancar la finestra o esperar que l'icona es generi. També tindràs l'opció de regenerar la icona.",
+  "getColorFromLogo": "Obté color de la imatge del logotip",
+  "explainBothAnswers": "Explicació de les respostes",
+  "allOurIdeas": "All Our Ideas"
 }

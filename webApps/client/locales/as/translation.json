@@ -40,7 +40,7 @@
   "goalTree": "লক্ষ্য গছ",
   "futureRealityTree": "ভৱিষ্যত বাস্তবতা গছ",
   "ideaGenerationGroupType": "ধাৰণা সৃষ্টি",
-  "allOurIdeasGroupType": "All Our Ideas Pairwise Ranking",
+  "allOurIdeasGroupType": "All Our Ideas যুগ্ম ৰেংকিং",
   "allowGenerativeImages": "জেনেৰেটিভ ছবি অনুমতি দিয়ক",
   "reports": "ৰিপোৰ্টসমূহ",
   "reportsInfo": "ৰিপোৰ্ট সৃষ্টি কৰক",
@@ -1343,5 +1343,8 @@
   "yourIdea": "আপোনাৰ ধাৰণা",
   "chatInput": "মোক এটা প্ৰশ্ন সুধিব",
   "yourIdeaHasBeenAdded": "আপোনাৰ ধাৰণাটো যোগ কৰা হৈছে, আইকন ইমেজ সৃষ্টি কৰা হৈছে।",
-  "aiIconInfo": "আপোনাৰ উত্তৰৰ বাবে এটা আইকন তৈয়াৰ কৰা হৈছে, আপুনি খিৰিকীখন বন্ধ কৰিব পাৰে বা আইকনটো তৈয়াৰ হ'বলৈ অপেক্ষা কৰিব পাৰে। আপুনি আইকনটো পুনৰ তৈয়াৰ কৰাৰ বিকল্পো পাব।"
+  "aiIconInfo": "আপোনাৰ উত্তৰৰ বাবে এটা আইকন তৈয়াৰ কৰা হৈছে, আপুনি খিৰিকীখন বন্ধ কৰিব পাৰে বা আইকনটো তৈয়াৰ হ'বলৈ অপেক্ষা কৰিব পাৰে। আপুনি আইকনটো পুনৰ তৈয়াৰ কৰাৰ বিকল্পো পাব।",
+  "getColorFromLogo": "লোগো চিত্ৰৰ পৰা ৰং লাভ কৰক",
+  "explainBothAnswers": "উত্তৰৰ ব্যাখ্যা",
+  "allOurIdeas": "All Our Ideas"
 }

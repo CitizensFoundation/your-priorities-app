@@ -1358,5 +1358,8 @@
   "ideaGenerationGroupType": "Idea generation",
   "allOurIdeasGroupType": "All Our Ideas Pairwise Ranking",
   "yourIdeaHasBeenAdded": "Seu ideia foi adicionado, gerando imagem de ícone.",
-  "aiIconInfo": "Um ícone pa bo resposta ta ser gerado, bu podi fecha janela ou spera pa ícone ser gerado. Bu ta tê també opção de regenera ícone."
+  "aiIconInfo": "Um ícone pa bo resposta ta ser gerado, bu podi fecha janela ou spera pa ícone ser gerado. Bu ta tê també opção de regenera ícone.",
+  "getColorFromLogo": "Get color from logo image",
+  "explainBothAnswers": "Explanation of answers",
+  "allOurIdeas": "All Our Ideas"
 }

@@ -705,7 +705,7 @@
   "editBulkStatusUpdate": "Sinthani Kusintha Kwambiri",
   "bulkStatusUdateConfig": "Kusintha Kwa Zosintha Zambiri",
   "bulkStatusUpdatesTemplates": "Ma Template a Zosintha Zambiri",
-  "selectStatusTemplate": "Template",
+  "selectStatusTemplate": "Chinsinsi",
   "moveToGroup": "Suntha",
   "noIdeasHere": "Palibe maganizo pano.",
   "organizationsAdmin": "Oyang'anira Mabungwe",
@@ -1343,5 +1343,8 @@
   "yourIdea": "Lingaliro lanu",
   "chatInput": "Funsani ine funso",
   "yourIdeaHasBeenAdded": "Lingaliro lanu lawonjezedwa, likupanga chithunzi cha icon.",
-  "aiIconInfo": "Chizindikiro cha yankho lanu chikupangidwa, mutha kutseka zenera kapena kudikira kuti chizindikirocho chipangidwe. Mudzakhalanso ndi mwayi wopanga chizindikirocho kachiwiri."
+  "aiIconInfo": "Chizindikiro cha yankho lanu chikupangidwa, mutha kutseka zenera kapena kudikira kuti chizindikirocho chipangidwe. Mudzakhalanso ndi mwayi wopanga chizindikirocho kachiwiri.",
+  "getColorFromLogo": "Pezani mtundu kuchokera chizindikiro",
+  "explainBothAnswers": "Kufotokozera mayankho",
+  "allOurIdeas": "All Our Ideas"
 }

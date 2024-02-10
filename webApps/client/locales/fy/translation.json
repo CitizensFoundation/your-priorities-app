@@ -435,7 +435,7 @@
   "myContent": "Myn ynhâld",
   "always": "Altyd",
   "flaggedContent": "Flagge ynhâld",
-  "contentItemsFlagged": "items flagged",
+  "contentItemsFlagged": "items markearre",
   "firstReported": "Earst by",
   "lastReported": "Lêst by",
   "content": "Ynhâld",
@@ -477,8 +477,8 @@
   "uploadVideoPointAgainst": "Fideo",
   "postPoint": "Pleats punt",
   "uploadVideoPointFor": "Fideo",
-  "uploadAudioPointFor": "Audio",
-  "uploadAudioPointAgainst": "Audio",
+  "uploadAudioPointFor": "Lûd",
+  "uploadAudioPointAgainst": "Lûd",
   "pointVideoInfo": "Upload fideo yn lânskipsformaat. Maksimale fideolengte is ",
   "pointAudioInfo": "Spreek dúdlik. Maksimale audiolengte is ",
   "pointAudioInfoAndroid": "Op Android brûk fideo om op te nimmen, allinne audio sil brûkt wurde.",
@@ -498,7 +498,7 @@
   "allowPostVideoUploads": "Stean post fideo uploads ta",
   "useVideoCover": "Brûk fideokaft",
   "postCoverVideoInfo": "Upload fideo yn lânskip HD formaat. Maksimale fideolengte is ",
-  "postCoverAudio": "Audio",
+  "postCoverAudio": "Lûd",
   "postCoverAudioInfo": "Spreek mei in dúdlike stim. Maksimale audiolengte is ",
   "media": "Media",
   "removalAndDeletionInProgress": "Ferwidering en wiskjen is dwaande. Besykje de side letter op 'e nij te laden.",
@@ -803,7 +803,7 @@
     "post": {
       "new": "Idee",
       "status": {
-        "change": "Status update"
+        "change": "Statusupdate"
       }
     },
     "point": {
@@ -1343,5 +1343,8 @@
   "yourIdea": "Jo idee",
   "chatInput": "Stel my in fraach",
   "yourIdeaHasBeenAdded": "Jo idee is tafoege, generearret ikoan ôfbylding.",
-  "aiIconInfo": "In ikoan foar jo antwurd wurdt generearre, jo kinne it finster slute of wachtsje oant it ikoan generearre is. Jo sille ek de opsje hawwe om it ikoan opnij te generearjen."
+  "aiIconInfo": "In ikoan foar jo antwurd wurdt generearre, jo kinne it finster slute of wachtsje oant it ikoan generearre is. Jo sille ek de opsje hawwe om it ikoan opnij te generearjen.",
+  "getColorFromLogo": "Kleur krije út logo ôfbylding",
+  "explainBothAnswers": "Ferklearring fan antwurden",
+  "allOurIdeas": "All Our Ideas"
 }

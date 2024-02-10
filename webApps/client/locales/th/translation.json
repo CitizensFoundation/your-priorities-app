@@ -1339,5 +1339,12 @@
   "ideaAdded": "ไอเดียของคุณได้ถูกเพิ่ม คุณสามารถต่อเนื่องในการโหวต",
   "ideaModerationQueue": "ไอเดียของคุณอยู่ในคิวการตรวจสอบ",
   "yourIdea": "ไอเดียของคุณ",
-  "chatInput": "ถามฉันคำถาม"
+  "chatInput": "ถามฉันคำถาม",
+  "getColorFromLogo": "ดึงสีจากโลโก้",
+  "explainBothAnswers": "คำอธิบายของคำตอบ",
+  "allOurIdeas": "All Our Ideas",
+  "ideaGenerationGroupType": "การสร้างไอเดีย",
+  "allOurIdeasGroupType": "All Our Ideas การจัดอันดับคู่",
+  "yourIdeaHasBeenAdded": "ไอเดียของคุณถูกเพิ่มแล้ว, กำลังสร้างภาพไอคอน.",
+  "aiIconInfo": "กำลังสร้างไอคอนสำหรับคำตอบของคุณ, คุณสามารถปิดหน้าต่างหรือรอจนกว่าไอคอนจะถูกสร้าง. คุณจะมีตัวเลือกในการสร้างไอคอนใหม่ด้วย."
 }

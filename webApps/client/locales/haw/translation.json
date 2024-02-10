@@ -1184,7 +1184,7 @@
   "hats": "Pāpale",
   "dataForVisualizationJsonError": "Hewa JSON",
   "selectCategory": "Koho Māhele",
-  "earlConfig": "Earl COnfig",
+  "earlConfig": "Earl Config",
   "show_cant_decide": "Hōʻike ʻaʻole hiki ke hoʻoholo",
   "accept_new_ideas": "ʻAe i nā manaʻo hou",
   "hide_results": "hūnā_hopena",
@@ -1343,5 +1343,8 @@
   "yourIdea": "Kāu manaʻo",
   "chatInput": "Nīnau mai iaʻu",
   "yourIdeaHasBeenAdded": "Ua hoʻohui ʻia kāu manaʻo, ke hana nei i ka kiʻi hōʻailona.",
-  "aiIconInfo": "Ke hana nei i kahi kiʻi no kāu pane, hiki iā ʻoe ke pani i ka pukaaniani a kali no ka hana ʻia ʻana o ka kiʻi. E loaʻa nō hoʻi ka koho e hana hou i ka kiʻi."
+  "aiIconInfo": "Ke hana nei i kahi kiʻi no kāu pane, hiki iā ʻoe ke pani i ka pukaaniani a kali no ka hana ʻia ʻana o ka kiʻi. E loaʻa nō hoʻi ka koho e hana hou i ka kiʻi.",
+  "getColorFromLogo": "Loaʻa ka waihoʻoluʻu mai ka logo",
+  "explainBothAnswers": "Wehewehe i nā pane",
+  "allOurIdeas": "All Our Ideas"
 }

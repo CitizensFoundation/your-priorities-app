@@ -1343,5 +1343,8 @@
   "yourIdea": "Vaša ideja",
   "chatInput": "Postavite mi pitanje",
   "yourIdeaHasBeenAdded": "Vaša ideja je dodana, generiše se ikona slike.",
-  "aiIconInfo": "Ikona za vaš odgovor se generiše, možete zatvoriti prozor ili čekati da se ikona generiše. Također ćete imati opciju da ponovo generišete ikonu."
+  "aiIconInfo": "Ikona za vaš odgovor se generiše, možete zatvoriti prozor ili čekati da se ikona generiše. Također ćete imati opciju da ponovo generišete ikonu.",
+  "getColorFromLogo": "Dobij boju iz loga",
+  "explainBothAnswers": "Objašnjenje odgovora",
+  "allOurIdeas": "All Our Ideas"
 }

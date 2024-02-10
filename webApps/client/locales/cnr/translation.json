@@ -1341,7 +1341,10 @@
   "yourIdea": "Vaša ideja",
   "chatInput": "Pitajte me",
   "ideaGenerationGroupType": "Generisanje ideja",
-  "allOurIdeasGroupType": "All Our Ideas Pairwise Ranking",
+  "allOurIdeasGroupType": "All Our Ideas Parovi Rangiranje",
   "yourIdeaHasBeenAdded": "Vaša ideja je dodata, generiše se ikona.",
-  "aiIconInfo": "Ikona za vaš odgovor se generiše, možete zatvoriti prozor ili čekati da se ikona generiše. Takođe ćete imati opciju da ponovo generišete ikonu."
+  "aiIconInfo": "Ikona za vaš odgovor se generiše, možete zatvoriti prozor ili čekati da se ikona generiše. Takođe ćete imati opciju da ponovo generišete ikonu.",
+  "getColorFromLogo": "Uzmi boju iz loga",
+  "explainBothAnswers": "Objašnjenje odgovora",
+  "allOurIdeas": "All Our Ideas"
 }

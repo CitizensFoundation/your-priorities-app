@@ -1346,5 +1346,12 @@
   "ideaAdded": "Fikriniz eklendi, oylamaya devam edebilirsiniz.",
   "ideaModerationQueue": "Fikriniz bir moderasyon kuyruğunda.",
   "yourIdea": "Fikriniz",
-  "chatInput": "Bana bir soru sor"
+  "chatInput": "Bana bir soru sor",
+  "getColorFromLogo": "Logodan renk al",
+  "explainBothAnswers": "Cevapların açıklaması",
+  "allOurIdeas": "All Our Ideas",
+  "ideaGenerationGroupType": "Fikir üretimi",
+  "allOurIdeasGroupType": "All Our Ideas İkili Sıralama",
+  "yourIdeaHasBeenAdded": "Fikriniz eklendi, ikon resmi oluşturuluyor.",
+  "aiIconInfo": "Cevabınız için bir ikon oluşturuluyor, pencereyi kapatabilir veya ikon oluşturulana kadar bekleyebilirsiniz. İkonu yeniden oluşturma seçeneğiniz de olacak."
 }

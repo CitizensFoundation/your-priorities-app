@@ -1350,5 +1350,8 @@
   "ideaGenerationGroupType": "Ötletgenerálás",
   "allOurIdeasGroupType": "All Our Ideas Páros Rangsorolás",
   "yourIdeaHasBeenAdded": "Ötleted hozzáadva, ikonkép generálása folyamatban.",
-  "aiIconInfo": "Válaszod ikonja generálódik, bezárhatod az ablakot vagy várhatod az ikon létrejöttét. Lesz lehetőséged az ikon újragenerálására is."
+  "aiIconInfo": "Válaszod ikonja generálódik, bezárhatod az ablakot vagy várhatod az ikon létrejöttét. Lesz lehetőséged az ikon újragenerálására is.",
+  "getColorFromLogo": "Szín kivétele logóból",
+  "explainBothAnswers": "Válaszok magyarázata",
+  "allOurIdeas": "All Our Ideas"
 }

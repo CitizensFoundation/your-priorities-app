@@ -133,7 +133,7 @@
   "samlAuth": "SAML Auth",
   "basic": "Oinarrizkoa",
   "webApp": "Web App",
-  "authApis": "Auth APIs",
+  "authApis": "Auth APIak",
   "dontHaveAccount": "Konturik ez?",
   "cantRememberPassword": "Pasahitza ahaztu duzu?",
   "loginAndRegistration": "Saioa hasi eta Erregistroa",
@@ -801,7 +801,7 @@
   "activity": {
     "confirmDelete": "Ziur jarduera hau ezabatu nahi duzula?",
     "post": {
-      "new": "Idea",
+      "new": "Ideia",
       "status": {
         "change": "Egoera eguneraketa"
       }
@@ -1343,5 +1343,8 @@
   "yourIdea": "Zure ideia",
   "chatInput": "Egin iezadazu galdera",
   "yourIdeaHasBeenAdded": "Zure ideia gehitu da, ikono irudia sortzen.",
-  "aiIconInfo": "Zure erantzunarentzako ikonoa sortzen ari da, leihoa itxi edo ikonoa sortu arte itxaron dezakezu. Ikonoa berriz sortzeko aukera ere izango duzu."
+  "aiIconInfo": "Zure erantzunarentzako ikonoa sortzen ari da, leihoa itxi edo ikonoa sortu arte itxaron dezakezu. Ikonoa berriz sortzeko aukera ere izango duzu.",
+  "getColorFromLogo": "Logotipotik kolorea lortu",
+  "explainBothAnswers": "Erantzunen azalpena",
+  "allOurIdeas": "All Our Ideas"
 }

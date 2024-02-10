@@ -185,7 +185,7 @@
   "communityId": "Id na Al'umma",
   "upload": "Loda",
   "videoFormat": "Tsarin bidiyo",
-  "ziggeoApplicationToken": "Ziggeo Application Token",
+  "ziggeoApplicationToken": "Ziggeo Aikace-aikacen Token",
   "useZiggeo": "Yi amfani da Ziggeo Media",
   "anonymousAskRegistrationQuestions": "Tambayoyi masu rijista ba tare da suna ba",
   "customFilterText": "Rubutun tacewa na musamman",
@@ -1154,7 +1154,7 @@
   "sortBySortOrder": "Zaɓi Ta Hanyar Tsari",
   "mediaUploads": "Loda Kafofin Watsa Labarai",
   "onlyAdminsCanCreateCommunities": "Kawai Admins Zasu Iya Ƙirƙirar Al'ummomi",
-  "Facebook Client Id": "Facebook Client Id",
+  "Facebook Client Id": "Facebook Abokin Ciniki Id",
   "facebookClientId": "Facebook Abokin Ciniki Id",
   "Facebook Client Secret": "Facebook Abokin Ciniki Asiri",
   "facebookClientSecret": "Facebook Abokin Ciniki Asiri",
@@ -1343,5 +1343,8 @@
   "yourIdea": "Ra'ayinka",
   "chatInput": "Tambaye ni tambaya",
   "yourIdeaHasBeenAdded": "An ƙara ra'ayinka, ana samar da hoton gunki.",
-  "aiIconInfo": "Ana ƙirƙira tambarin amsarku, zaku iya rufewa ko jira a ƙirƙiro tambarin. Hakanan zaku samu zaɓin sake ƙirƙirar tambarin."
+  "aiIconInfo": "Ana ƙirƙira tambarin amsarku, zaku iya rufewa ko jira a ƙirƙiro tambarin. Hakanan zaku samu zaɓin sake ƙirƙirar tambarin.",
+  "getColorFromLogo": "Samu launi daga tambari",
+  "explainBothAnswers": "Bayanin amsoshi",
+  "allOurIdeas": "All Our Ideas"
 }

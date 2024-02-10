@@ -498,7 +498,7 @@
   "allowPostVideoUploads": "Permesar afixar video alshutaji",
   "useVideoCover": "Uzez video-kovrilo",
   "postCoverVideoInfo": "Adkargez video en peizajo HD formo. Maxima video-longo esas ",
-  "postCoverAudio": "Audio",
+  "postCoverAudio": "Audiala",
   "postCoverAudioInfo": "Parolez per klara voco. Maxima audio-longo esas ",
   "media": "Medii",
   "removalAndDeletionInProgress": "Efacado e deletiono esas en progreso. Probez reloadar la pagino pokte plu tarde.",
@@ -1033,7 +1033,7 @@
     "loggedInWithSaml": "Eniris kun SAML",
     "loggedInWithFacebook": "Eniris kun Facebook",
     "facebookLogin": "Facebook eniro",
-    "info": "Info",
+    "info": "Informo",
     "notifications": "Notifiki",
     "name": "Plena nomo",
     "email": "Emailo",
@@ -1343,5 +1343,8 @@
   "yourIdea": "Tua ideo",
   "chatInput": "Demandez me questiono",
   "yourIdeaHasBeenAdded": "Tua ideo esis adjuntita, generanta ikono imajo.",
-  "aiIconInfo": "Ikono por via respondo produktas, vu povas klozar la fenestro o atendar la ikono produktar. Vu anke havos la opciono rekrear la ikono."
+  "aiIconInfo": "Ikono por via respondo produktas, vu povas klozar la fenestro o atendar la ikono produktar. Vu anke havos la opciono rekrear la ikono.",
+  "getColorFromLogo": "Obtenez koloro ek logotipo-imajo",
+  "explainBothAnswers": "Expliko di respondo",
+  "allOurIdeas": "All Our Ideas"
 }

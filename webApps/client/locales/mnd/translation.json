@@ -1358,5 +1358,8 @@
   "ideaGenerationGroupType": "创意生成",
   "allOurIdeasGroupType": "All Our Ideas 成对排名",
   "yourIdeaHasBeenAdded": "您的想法已添加，正在生成图标。",
-  "aiIconInfo": "正在为您的答案生成图标，您可以关闭窗口或等待图标生成。您也可以选择重新生成图标。"
+  "aiIconInfo": "正在为您的答案生成图标，您可以关闭窗口或等待图标生成。您也可以选择重新生成图标。",
+  "getColorFromLogo": "从标志获取颜色",
+  "explainBothAnswers": "答案解释",
+  "allOurIdeas": "All Our Ideas"
 }

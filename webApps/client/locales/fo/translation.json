@@ -185,7 +185,7 @@
   "communityId": "Samfelags Id",
   "upload": "Legg inn",
   "videoFormat": "Video snið",
-  "ziggeoApplicationToken": "Ziggeo Application Token",
+  "ziggeoApplicationToken": "Ziggeo Forrits Lykil",
   "useZiggeo": "Nýt Ziggeo Miðlar",
   "anonymousAskRegistrationQuestions": "Bið um dulnevndar skrásetingarspurningar",
   "customFilterText": "Sérbýti tekst",
@@ -969,7 +969,7 @@
     "inProgress": "Uploader..."
   },
   "notice": {
-    "ok": "Ok",
+    "ok": "Í lagi",
     "deleteConfirmation": "Ynskir tú at strika hesa bólkin?"
   },
   "maps": {
@@ -1216,7 +1216,7 @@
   "Vibrant": "Livandi",
   "Expressive": "Úttrykkjandi",
   "Content": "Innihald",
-  "Neutral": "Neutral",
+  "Neutral": "Neutralur",
   "Monochrome": "Einfarva",
   "Fidelity": "Trúfesti",
   "Tonal Spot": "Tónalur Blettur",
@@ -1331,7 +1331,7 @@
   "domainFraudManagement": "Dømi Svikaumsiting",
   "Access": "Atgongd",
   "openOrganizationMenu": "Lat upp fyrisitingarvalmynd",
-  "Listasafn Reykjavíkur": "Listasafn Reykjavíkur",
+  "Listasafn Reykjavíkur": "Listasavnið í Reykjavík",
   "Override theme": "Yvirskriva tema",
   "Analytics & Marketing": "Greining & Marknaðarføring",
   "Promote your survey": "Lýs tína kanning",
@@ -1343,5 +1343,8 @@
   "yourIdea": "Tín hugskot",
   "chatInput": "Spur meg ein spurning",
   "yourIdeaHasBeenAdded": "Tín hugskot er lagt afturat, framleiðir ikon mynd.",
-  "aiIconInfo": "Ein myndatekin fyri títt svar verður gjørd, tú kanst lata gluggan aftur ella bíða eftir at myndateknið verður gjørt. Tú fært eisini møguleikan at endurgera myndateknið."
+  "aiIconInfo": "Ein myndatekin fyri títt svar verður gjørd, tú kanst lata gluggan aftur ella bíða eftir at myndateknið verður gjørt. Tú fært eisini møguleikan at endurgera myndateknið.",
+  "getColorFromLogo": "Fá lit úr búmerki mynd",
+  "explainBothAnswers": "Forkláring av svørjum",
+  "allOurIdeas": "All Our Ideas"
 }

@@ -325,7 +325,7 @@
   "editAdminComment": "Hindura igitekerezo cy'umuyobozi",
   "commentFromAdmin": "Igitekerezo cy'umuyobozi",
   "allowAdminAnswersToPoints": "Emeza ibitekerezo by'umuyobozi ku manota",
-  "exportGroupDocx": "Export DOCX file",
+  "exportGroupDocx": "Okoa faili ya DOCX",
   "makeCategoryRequiredOnNewPost": "Saba ko icyiciro gitegetswe ku butumwa bushya",
   "userImage": {
     "deleteConfirmation": "Urahisemo neza ushaka gusiba iyi foto?"
@@ -357,7 +357,7 @@
   "showVideoUploadDisclaimer": "Gũkũrũkia disclaimer ya uploading video",
   "useContainImageMode": "Kũrĩa 'contain' fomati ya picha ya post",
   "facebookTrackingToastInfo": "Gũkũrũkia kũrĩa website ĩrĩa cookies za Facebook kũhũthĩra marketing",
-  "disableFacebookTracking": "Disable Cookie Tracking",
+  "disableFacebookTracking": "Kwaga Kugurumikia Cookie",
   "iAgree": "Nĩkũrĩ",
   "customVoteDownHoverText": "Mabũkũ ma gũthĩ down hover",
   "customVoteUpHoverText": "Mabũkũ ma gũthĩ up hover",
@@ -442,7 +442,7 @@
   "multiSortEnabled": "Gatiganiria uguthaana uguthii",
   "creator": "Mugambi",
   "severeToxicityScore": "S.Toxicity",
-  "toxicityScore": "Toxicity",
+  "toxicityScore": "Ugovi",
   "source": "Kiharo",
   "domainContentModeration": "Kugoverana Domain",
   "flags": "Bendera",
@@ -488,8 +488,8 @@
   "videoPointUploadLimitSec": "Mupaka wa video ya pointi kwa sekunde (máx 600s)",
   "audioPostUploadLimitSec": "Mupaka wa audio ya posti kwa sekunde (máx 600s)",
   "audioPointUploadLimitSec": "Mupaka wa audio ya pointi kwa sekunde (máx 600s)",
-  "postCoverVideo": "Video",
-  "uploadVideo": "Video",
+  "postCoverVideo": "Vidio",
+  "uploadVideo": "Vidio",
   "uploadCompleted": "Upakiaji umekamilika",
   "uploadingVideo": "Inapakia video...",
   "uploadingImage": "Inapakia picha...",
@@ -535,7 +535,7 @@
   "deleteSelectedUsers": "Kũrequest kuhũkũra kwa kũhethwo:",
   "anonymizeSelectedUsers": "Kuhũika kũhethwo:",
   "anonymizeUser": "Kuhũika mũndũ",
-  "email": "Email",
+  "email": "Imeeri",
   "organization": "Ũrĩma",
   "emailAlreadyRegisterred": "Nĩwe wĩtaga kũhitha email yako na thayũ ĩyũ kĩrĩ mũko.",
   "userHaveSetEmail": "Email ĩhithiwe kũhota",
@@ -705,7 +705,7 @@
   "editBulkStatusUpdate": "Gatũra Mambo ma Gĩthĩnwa cia Bulk",
   "bulkStatusUdateConfig": "Huhithio wa Mambo ma Gĩthĩnwa cia Bulk",
   "bulkStatusUpdatesTemplates": "Templates cia Mambo ma Gĩthĩnwa cia Bulk",
-  "selectStatusTemplate": "Template",
+  "selectStatusTemplate": "Kioyo",
   "moveToGroup": "Hūrira",
   "noIdeasHere": "Nta mīkorio īno.",
   "organizationsAdmin": "Ūgīrīrī wa Mībango",
@@ -828,7 +828,7 @@
     "settings": "Nyongerera",
     "onlyAdminsCanCreateCommunities": "Ni maadmini matumire gūtangira mbari"
   },
-  "domains": "Domains",
+  "domains": "Domaini",
   "communities": "Mbari",
   "groups": "Makundi",
   "myDomains": "Makwa Domain",
@@ -1015,7 +1015,7 @@
     "addAdmin": "Ũngĩrĩka admin",
     "removeUser": "Gũkura mũthenya",
     "inviteUser": "Kwĩra mũthenya",
-    "email": "email",
+    "email": "imeeri",
     "removeFromOrganization": "Gũkura ũmwe",
     "addToOrganization": "Ũngĩrĩka ũmwe",
     "selectOrganization": "Hitho ũmwe"
@@ -1036,7 +1036,7 @@
     "info": "Ũrĩmũ",
     "notifications": "Njũgũma",
     "name": "Rĩrĩa rĩose",
-    "email": "Email",
+    "email": "Imeeri",
     "edit": "Hindura mūthūrī",
     "password": "Mũgocoro",
     "forgotPassword": "Wariũ mũgocoro",
@@ -1194,7 +1194,7 @@
   "New Group": "Kĩhũra kĩhũrũ",
   "haveCreatedXLsReport": "Ĩmĩkorwo XLs report",
   "description": "Njĩra",
-  "website": "website",
+  "website": "tovuti",
   "organizationTree": {
     "new": "Ũrĩma",
     "toast": {
@@ -1343,5 +1343,8 @@
   "yourIdea": "Wazo lako",
   "chatInput": "Niulize swali",
   "yourIdeaHasBeenAdded": "Wazo lako limeongezwa, linatengeneza picha ya ikoni.",
-  "aiIconInfo": "Ikoni ya jibu yako iri kuhinyitirwa, unyite gucoka dirisha kana kugotha ikoni ihinyitwe. Uzahitwo na thuba ya kuhinyitira ikoni tena."
+  "aiIconInfo": "Ikoni ya jibu yako iri kuhinyitirwa, unyite gucoka dirisha kana kugotha ikoni ihinyitwe. Uzahitwo na thuba ya kuhinyitira ikoni tena.",
+  "getColorFromLogo": "Twara irangi kuhuthira logo",
+  "explainBothAnswers": "Ihuthiririo ria njira",
+  "allOurIdeas": "All Our Ideas"
 }

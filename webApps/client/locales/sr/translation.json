@@ -246,7 +246,7 @@
   "disableDebate": "Onemogući debatu",
   "welcomeHTML": "Dobrodošli HTML (koristiti s oprezom)",
   "disableFacebookLoginForGroup": "Onemogući Facebook prijavu za grupu",
-  "facebookPixelId": "Facebook pixel id",
+  "facebookPixelId": "Facebook piksel id",
   "downloadFacebookImagesForUser": "Preuzmi Facebook slike za korisnike u našu bazu",
   "customUserRegistrationText": "Prilagođeni tekst registracije korisnika",
   "participateAnonymously": "Učestvuj anonimno",
@@ -1346,5 +1346,12 @@
   "ideaAdded": "Vaša ideja je dodata, možete nastaviti sa glasanjem.",
   "ideaModerationQueue": "Vaša ideja je u redu čekanja za moderaciju.",
   "yourIdea": "Vaša ideja",
-  "chatInput": "Postavite mi pitanje"
+  "chatInput": "Postavite mi pitanje",
+  "getColorFromLogo": "Uzmi boju iz loga",
+  "explainBothAnswers": "Objašnjenje odgovora",
+  "allOurIdeas": "All Our Ideas",
+  "ideaGenerationGroupType": "Generisanje ideja",
+  "allOurIdeasGroupType": "All Our Ideas Parovi Rangiranje",
+  "yourIdeaHasBeenAdded": "Vaša ideja je dodata, generiše se ikona.",
+  "aiIconInfo": "Generiše se ikona za vaš odgovor, možete zatvoriti prozor ili čekati da ikona bude generisana. Takođe ćete imati opciju da ponovo generišete ikonu."
 }

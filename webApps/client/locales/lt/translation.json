@@ -646,7 +646,7 @@
   "hidePostAuthor": "Slėpti įrašo autorių",
   "defaultLocationLongLat": "Numatytoji vietos ilguma,platuma",
   "disableCommunityDomainUpLink": "Išjungti domeno aukštyn nuorodą",
-  "analyticsTrackerCode": "Google Analytics Id",
+  "analyticsTrackerCode": "Google Analytics ID",
   "filterIdeas": "Filtruoti idėjas",
   "edit": "Redaguoti",
   "delete": "Ištrinti",
@@ -1343,5 +1343,8 @@
   "yourIdea": "Jūsų idėja",
   "chatInput": "Užduokite man klausimą",
   "yourIdeaHasBeenAdded": "Jūsų idėja pridėta, generuojamas piktogramos vaizdas.",
-  "aiIconInfo": "Jūsų atsakymo piktograma kuriamasi, galite uždaryti langą arba palaukti, kol piktograma bus sukurta. Taip pat turėsite galimybę piktogramą atkurti."
+  "aiIconInfo": "Jūsų atsakymo piktograma kuriamasi, galite uždaryti langą arba palaukti, kol piktograma bus sukurta. Taip pat turėsite galimybę piktogramą atkurti.",
+  "getColorFromLogo": "Gauti spalvą iš logotipo",
+  "explainBothAnswers": "Atsakymų paaiškinimas",
+  "allOurIdeas": "All Our Ideas"
 }

@@ -646,7 +646,7 @@
   "hidePostAuthor": "Скрити авторъ записа",
   "defaultLocationLongLat": "Основное местоположение долгота,широта",
   "disableCommunityDomainUpLink": "Отключити Доменъ Верхъ Связь",
-  "analyticsTrackerCode": "Google Analytics Id",
+  "analyticsTrackerCode": "Идентификаторъ Google Analytics",
   "filterIdeas": "Прѣсѣяти идеи",
   "edit": "Правити",
   "delete": "Избръсти",
@@ -1154,7 +1154,7 @@
   "sortBySortOrder": "Упорѧдити По Порѧдку Сортировки",
   "mediaUploads": "Медиа Загрузки",
   "onlyAdminsCanCreateCommunities": "Токмо Админи Могутъ Творити Съборы",
-  "Facebook Client Id": "Facebook Client Id",
+  "Facebook Client Id": "Идентификаторъ клиента Facebook",
   "facebookClientId": "Facebookъ Клиентъ Идентификаторъ",
   "Facebook Client Secret": "Facebookъ Клиентъ Таинство",
   "facebookClientSecret": "Facebookъ Клиентъ Таинство",
@@ -1343,5 +1343,8 @@
   "yourIdea": "Твоя Мысль",
   "chatInput": "Вопроси Мене",
   "yourIdeaHasBeenAdded": "Твоя Мысль Добавлена, Создавающа Икону Образ.",
-  "aiIconInfo": "Образъ за отвѣтъ творится, можеши окно затворити или ждати созданія образа. Имѣти же возможность образъ поновити."
+  "aiIconInfo": "Образъ за отвѣтъ творится, можеши окно затворити или ждати созданія образа. Имѣти же возможность образъ поновити.",
+  "getColorFromLogo": "Взѧти боꙗ отъ обраꙁъ логотипа",
+  "explainBothAnswers": "Толкованиѥ отвѣтъ",
+  "allOurIdeas": "All Our Ideas"
 }

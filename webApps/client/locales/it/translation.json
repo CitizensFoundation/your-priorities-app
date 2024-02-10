@@ -1348,7 +1348,10 @@
   "yourIdea": "La tua idea",
   "chatInput": "Fammi una domanda",
   "ideaGenerationGroupType": "Generazione idee",
-  "allOurIdeasGroupType": "All Our Ideas Pairwise Ranking",
+  "allOurIdeasGroupType": "All Our Ideas Classifica Pairwise",
   "yourIdeaHasBeenAdded": "La tua idea è stata aggiunta, generando icona.",
-  "aiIconInfo": "Un'icona per la tua risposta è in generazione, puoi chiudere la finestra o attendere la generazione dell'icona. Avrai anche l'opzione per rigenerare l'icona."
+  "aiIconInfo": "Un'icona per la tua risposta è in generazione, puoi chiudere la finestra o attendere la generazione dell'icona. Avrai anche l'opzione per rigenerare l'icona.",
+  "getColorFromLogo": "Ottieni colore da logo",
+  "explainBothAnswers": "Spiegazione risposte",
+  "allOurIdeas": "All Our Ideas"
 }

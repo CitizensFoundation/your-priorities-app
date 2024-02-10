@@ -133,7 +133,7 @@
   "samlAuth": "SAML Auth",
   "basic": "Bunasach",
   "webApp": "App-lìn",
-  "authApis": "Auth APIs",
+  "authApis": "APIan Auth",
   "dontHaveAccount": "Nach eil cunntas agad?",
   "cantRememberPassword": "Chan urrainn dhut facal-faire a chuimhneachadh?",
   "loginAndRegistration": "Logadh a-steach agus Clàradh",
@@ -442,7 +442,7 @@
   "multiSortEnabled": "Cuir an comas ioma-shortadh",
   "creator": "Cruthaiche",
   "severeToxicityScore": "S.Toxicity",
-  "toxicityScore": "Toxicity",
+  "toxicityScore": "Puinnseanta",
   "source": "Stòr",
   "domainContentModeration": "Riaghladh fearainn",
   "flags": "Brataichean",
@@ -1343,5 +1343,8 @@
   "yourIdea": "Do bheachd",
   "chatInput": "Cuir ceist orm",
   "yourIdeaHasBeenAdded": "Chaidh do bheachd a chur ris, a’ gineadh ìomhaigh ìomhaigh.",
-  "aiIconInfo": "Tha ìomhaigh airson do fhreagairt ga chruthachadh, faodaidh tu an uinneag a dhùnadh no feitheamh gus an tèid an ìomhaigh a chruthachadh. Bidh roghainn agad cuideachd an ìomhaigh ath-chruthachadh."
+  "aiIconInfo": "Tha ìomhaigh airson do fhreagairt ga chruthachadh, faodaidh tu an uinneag a dhùnadh no feitheamh gus an tèid an ìomhaigh a chruthachadh. Bidh roghainn agad cuideachd an ìomhaigh ath-chruthachadh.",
+  "getColorFromLogo": "Faigh dath bho ìomhaigh suaicheantas",
+  "explainBothAnswers": "Mìneachadh air freagairtean",
+  "allOurIdeas": "All Our Ideas"
 }

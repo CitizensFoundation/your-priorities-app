@@ -1343,5 +1343,8 @@
   "yourIdea": "Do smaoineamh",
   "chatInput": "Cuir ceist orm",
   "yourIdeaHasBeenAdded": "Cuireadh do smaoineamh leis, ag giniúint íomhá deilbhín.",
-  "aiIconInfo": "Tá deilbhín do do fhreagra á chruthú, is féidir leat an fhuinneog a dhúnadh nó fanacht go gcruthófar an deilbhín. Beidh rogha agat an deilbhín a athchruthú freisin."
+  "aiIconInfo": "Tá deilbhín do do fhreagra á chruthú, is féidir leat an fhuinneog a dhúnadh nó fanacht go gcruthófar an deilbhín. Beidh rogha agat an deilbhín a athchruthú freisin.",
+  "getColorFromLogo": "Faigh dath ó lógó",
+  "explainBothAnswers": "Míniú ar fhreagraí",
+  "allOurIdeas": "All Our Ideas"
 }

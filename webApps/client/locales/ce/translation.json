@@ -628,7 +628,7 @@
   "disableDebate": "Дебат дӀаккха",
   "welcomeHTML": "welcome HTML (гӀулакхачу болу)",
   "disableFacebookLoginForGroup": "Facebook Login гӀирсина гӀоьнца гӀулакха",
-  "facebookPixelId": "Facebook pixel id",
+  "facebookPixelId": "Facebook пиксель идентификатор",
   "downloadFacebookImagesForUser": "Facebook суртанаш базан маьллахь агӀонаш кхаччахь",
   "customUserRegistrationText": "Декъашхо тергаме текст",
   "participateAnonymously": "БезгӀа шен декъашхо",
@@ -646,7 +646,7 @@
   "hidePostAuthor": "Пост автор хьажар",
   "defaultLocationLongLat": "Дефолт меттиг долгота,латитуда",
   "disableCommunityDomainUpLink": "Домен Up Link хьаккхар",
-  "analyticsTrackerCode": "Google Analytics Id",
+  "analyticsTrackerCode": "Google Analytics Идентификатор",
   "filterIdeas": "ГӀирс дӀаязар",
   "edit": "Нисъе",
   "delete": "ДӀаяккха",
@@ -1154,7 +1154,7 @@
   "sortBySortOrder": "Сорт Хилара Йолчу",
   "mediaUploads": "Медиа Йукъар",
   "onlyAdminsCanCreateCommunities": "ГӀоьнца админнаш йиш йоцу жамаъатх",
-  "Facebook Client Id": "Facebook Client Id",
+  "Facebook Client Id": "Facebook Клиентан Идентификатор",
   "facebookClientId": "Facebook Клиентан ID",
   "Facebook Client Secret": "Facebook Клиентан сир",
   "facebookClientSecret": "Facebook Клиентан сир",
@@ -1343,5 +1343,8 @@
   "yourIdea": "Хьаекъаш",
   "chatInput": "Со цӀе хьаьжна",
   "yourIdeaHasBeenAdded": "Хьаекъаш йолуш ю, суртан изображение цӀе хийцина.",
-  "aiIconInfo": "Хьоьжу хаамаш лело яра йолуш, хьалха дӀаяккхар а, хааман лелор а гӀулакх дӀасахьа а. Хьоьжу хааман дӀаяккхар а лело тӀе хилара дӀахьалйина."
+  "aiIconInfo": "Хьоьжу хаамаш лело яра йолуш, хьалха дӀаяккхар а, хааман лелор а гӀулакх дӀасахьа а. Хьоьжу хааман дӀаяккхар а лело тӀе хилара дӀахьалйина.",
+  "getColorFromLogo": "Логотипан ранг хьажар",
+  "explainBothAnswers": "Хилам бахьана шарахъ",
+  "allOurIdeas": "All Our Ideas"
 }

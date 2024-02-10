@@ -183,10 +183,10 @@
   "generateAiImage": "Jenere Imaj",
   "generateWithAI": "Jenere",
   "lookAndFeel": "Gade ak Santi",
-  "samlAuth": "SAML Auth",
+  "samlAuth": "Otantifikasyon SAML",
   "basic": "Debaz",
-  "webApp": "Web App",
-  "authApis": "Auth APIs",
+  "webApp": "App Web",
+  "authApis": "API Otantifikasyon",
   "dontHaveAccount": "Pa gen kont?",
   "cantRememberPassword": "Pa sonje modpas?",
   "loginAndRegistration": "Login ak Enskripsyon",
@@ -963,7 +963,7 @@
       "media": "Chwazi medya kouvèti",
       "imageInfo": "Si ou ajoute yon foto, moun ap plis chwazi pataje ide ou. Epi pataje li sou rezo sosyal!",
       "map": "Kat",
-      "streetview": "Street View",
+      "streetview": "View Lari",
       "image": "Imaj",
       "none": "Okenn"
     },
@@ -1356,7 +1356,10 @@
   "yourIdea": "Lide ou",
   "chatInput": "Mande m yon kesyon",
   "ideaGenerationGroupType": "Jenerasyon lide",
-  "allOurIdeasGroupType": "All Our Ideas Pairwise Ranking",
+  "allOurIdeasGroupType": "All Our Ideas Klasman Pè",
   "yourIdeaHasBeenAdded": "Idea ou a te ajoute, ap kreye imaj ikòn.",
-  "aiIconInfo": "Yon ikòn pou repons ou ap kreye, ou ka fèmen fenèt la oswa tann ikòn la fin kreye. Ou pral gen opsyon pou regenere ikòn la tou."
+  "aiIconInfo": "Yon ikòn pou repons ou ap kreye, ou ka fèmen fenèt la oswa tann ikòn la fin kreye. Ou pral gen opsyon pou regenere ikòn la tou.",
+  "getColorFromLogo": "Jwenn koulè nan logo",
+  "explainBothAnswers": "Eksplikasyon repons yo",
+  "allOurIdeas": "All Our Ideas"
 }

@@ -1058,7 +1058,7 @@
     "setEmailConfirmationInfo": "Yi email pata tsaend karun notifications bhejith, aap badal sakte chhu yadi chaho to."
   },
   "other": "Ane",
-  "socialMedia": "Social Media",
+  "socialMedia": "سوشل میڈیا",
   "location": {
     "set": "Thajawaz set karo"
   },
@@ -1343,5 +1343,8 @@
   "yourIdea": "تمہارا خیال",
   "chatInput": "مجھ سے ایک سوال پوچھو",
   "yourIdeaHasBeenAdded": "تمہارا خیال شامل کیا گیا ہے، آئیکن تصویر تیار کر رہا ہے۔",
-  "aiIconInfo": "تُهند جواب لپٹ آئیکن تیار کرنہ آمچھ، تُه کھڑکی بند کرن یا آئیکن تیار ہونس منتظر روزن چھہ۔ تُهندس پیٹھ آئیکن دوبارہ تیار کرنک بھی آپشن چھہ۔"
+  "aiIconInfo": "تُهند جواب لپٹ آئیکن تیار کرنہ آمچھ، تُه کھڑکی بند کرن یا آئیکن تیار ہونس منتظر روزن چھہ۔ تُهندس پیٹھ آئیکن دوبارہ تیار کرنک بھی آپشن چھہ۔",
+  "getColorFromLogo": "لوگو تصویرہند رنگ حاصل کر",
+  "explainBothAnswers": "جوابن ہند وضاحت",
+  "allOurIdeas": "All Our Ideas"
 }

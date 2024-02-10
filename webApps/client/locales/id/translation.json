@@ -1212,7 +1212,7 @@
   "Contrast": "Kontras",
   "An error occurred": "Terjadi kesalahan. Silakan coba lagi.",
   "Cancel": "Batal",
-  "Tonal": "Tonal",
+  "Tonal": "Nada",
   "Vibrant": "Cerah",
   "Expressive": "Ekspresif",
   "Content": "Konten",
@@ -1343,5 +1343,8 @@
   "yourIdea": "Ide Anda",
   "chatInput": "Ajukan pertanyaan",
   "yourIdeaHasBeenAdded": "Ide Anda telah ditambahkan, menghasilkan gambar ikon.",
-  "aiIconInfo": "Ikon untuk jawaban Anda sedang dibuat, Anda dapat menutup jendela atau menunggu ikon selesai dibuat. Anda juga memiliki opsi untuk membuat ulang ikon."
+  "aiIconInfo": "Ikon untuk jawaban Anda sedang dibuat, Anda dapat menutup jendela atau menunggu ikon selesai dibuat. Anda juga memiliki opsi untuk membuat ulang ikon.",
+  "getColorFromLogo": "Dapatkan warna dari logo",
+  "explainBothAnswers": "Penjelasan jawaban",
+  "allOurIdeas": "All Our Ideas"
 }

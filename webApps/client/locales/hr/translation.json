@@ -1350,5 +1350,8 @@
   "ideaGenerationGroupType": "Generiranje ideja",
   "allOurIdeasGroupType": "All Our Ideas Parovi Rangiranje",
   "yourIdeaHasBeenAdded": "Vaša ideja je dodana, generira se ikona.",
-  "aiIconInfo": "Generira se ikona za vaš odgovor, možete zatvoriti prozor ili pričekati da se ikona generira. Također ćete imati opciju ponovnog generiranja ikone."
+  "aiIconInfo": "Generira se ikona za vaš odgovor, možete zatvoriti prozor ili pričekati da se ikona generira. Također ćete imati opciju ponovnog generiranja ikone.",
+  "getColorFromLogo": "Dobavi boju iz logotipa",
+  "explainBothAnswers": "Objašnjenje odgovora",
+  "allOurIdeas": "All Our Ideas"
 }

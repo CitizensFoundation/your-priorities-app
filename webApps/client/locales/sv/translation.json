@@ -1227,7 +1227,7 @@
   "Tonal Spot": "Tonfläck",
   "Rainbow": "Regnbåge",
   "Fruit Salad": "Fruktssallad",
-  "filter": "Filter",
+  "filter": "Filtrera",
   "attachmentUpload": "Bifoga fil",
   "Thinking": "Tänker...",
   "Send": "Skicka",
@@ -1346,5 +1346,12 @@
   "ideaAdded": "Din idé har lagts till, du kan fortsätta rösta.",
   "ideaModerationQueue": "Din idé är i en modereringskö.",
   "yourIdea": "Din idé",
-  "chatInput": "Ställ mig en fråga"
+  "chatInput": "Ställ mig en fråga",
+  "getColorFromLogo": "Hämta färg från logotypbild",
+  "explainBothAnswers": "Förklaring av svar",
+  "allOurIdeas": "All Our Ideas",
+  "ideaGenerationGroupType": "Idégenerering",
+  "allOurIdeasGroupType": "All Our Ideas Pairwise Ranking",
+  "yourIdeaHasBeenAdded": "Din idé har lagts till, genererar ikonbild.",
+  "aiIconInfo": "En ikon för ditt svar genereras, du kan stänga fönstret eller vänta på att ikonen ska genereras. Du kommer också att ha möjlighet att generera om ikonen."
 }

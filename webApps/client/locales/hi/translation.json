@@ -40,7 +40,7 @@
   "goalTree": "लक्ष्य वृक्ष",
   "futureRealityTree": "भविष्य की वास्तविकता वृक्ष",
   "ideaGenerationGroupType": "विचार सृजन",
-  "allOurIdeasGroupType": "All Our Ideas Pairwise Ranking",
+  "allOurIdeasGroupType": "All Our Ideas युग्म रैंकिंग",
   "allowGenerativeImages": "जेनरेटिव इमेजेज की अनुमति दें",
   "reports": "रिपोर्ट्स",
   "reportsInfo": "रिपोर्ट्स उत्पन्न करें",
@@ -1343,5 +1343,8 @@
   "yourIdea": "आपका विचार",
   "chatInput": "मुझसे एक प्रश्न पूछें",
   "yourIdeaHasBeenAdded": "आपका विचार जोड़ा गया है, आइकन छवि उत्पन्न कर रहा है।",
-  "aiIconInfo": "आपके उत्तर के लिए एक आइकन बनाया जा रहा है, आप खिड़की बंद कर सकते हैं या आइकन बनने की प्रतीक्षा कर सकते हैं। आपके पास आइकन को फिर से बनाने का विकल्प भी होगा।"
+  "aiIconInfo": "आपके उत्तर के लिए एक आइकन बनाया जा रहा है, आप खिड़की बंद कर सकते हैं या आइकन बनने की प्रतीक्षा कर सकते हैं। आपके पास आइकन को फिर से बनाने का विकल्प भी होगा।",
+  "getColorFromLogo": "लोगो छवि से रंग प्राप्त करें",
+  "explainBothAnswers": "उत्तरों की व्याख्या",
+  "allOurIdeas": "All Our Ideas"
 }

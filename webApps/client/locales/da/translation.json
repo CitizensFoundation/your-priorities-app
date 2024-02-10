@@ -1113,7 +1113,7 @@
   "Pages": "Sider",
   "Groups": "Grupper",
   "Communities": "Fællesskaber",
-  "Badges": "Badges",
+  "Badges": "Mærker",
   "Profile Images": "Profilbilleder",
   "Back to domain": "Tilbage til domæne",
   "Back to community": "Tilbage til fællesskab",
@@ -1350,5 +1350,8 @@
   "ideaGenerationGroupType": "Idégenerering",
   "allOurIdeasGroupType": "All Our Ideas Parvis Rangordning",
   "yourIdeaHasBeenAdded": "Din idé er tilføjet, genererer ikonbillede.",
-  "aiIconInfo": "Et ikon til dit svar genereres, du kan lukke vinduet eller vente på, at ikonet bliver genereret. Du vil også have mulighed for at generere ikonet igen."
+  "aiIconInfo": "Et ikon til dit svar genereres, du kan lukke vinduet eller vente på, at ikonet bliver genereret. Du vil også have mulighed for at generere ikonet igen.",
+  "getColorFromLogo": "Få farve fra logo",
+  "explainBothAnswers": "Forklaring af svar",
+  "allOurIdeas": "All Our Ideas"
 }

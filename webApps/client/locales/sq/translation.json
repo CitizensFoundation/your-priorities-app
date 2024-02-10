@@ -1037,7 +1037,7 @@
   "samlAuth": "Auth SAML",
   "basic": "Bazik",
   "webApp": "Aplikacioni Web",
-  "authApis": "Auth APIs",
+  "authApis": "API-t e Auth",
   "dontHaveAccount": "S'keni llogari?",
   "cantRememberPassword": "S'mund të kujtoni fjalëkalimin?",
   "loginAndRegistration": "Hyrje dhe Regjistrim",
@@ -1345,5 +1345,12 @@
   "ideaAdded": "Ideja juaj është shtuar, mund të vazhdoni të votoni.",
   "ideaModerationQueue": "Ideja juaj është në radhën e moderimit.",
   "yourIdea": "Ideja juaj",
-  "chatInput": "Bëj mua një pyetje"
+  "chatInput": "Bëj mua një pyetje",
+  "getColorFromLogo": "Merr ngjyrën nga logoja",
+  "explainBothAnswers": "Shpjegimi i përgjigjeve",
+  "allOurIdeas": "All Our Ideas",
+  "ideaGenerationGroupType": "Gjenerimi i ideve",
+  "allOurIdeasGroupType": "Renditja Dysh për Dy e All Our Ideas",
+  "yourIdeaHasBeenAdded": "Ideja juaj është shtuar, duke gjeneruar ikonën e imazhit.",
+  "aiIconInfo": "Po krijohet një ikonë për përgjigjen tuaj, mund të mbyllni dritaren ose të prisni derisa të krijohet ikona. Do të keni gjithashtu mundësinë të rikrijoni ikonën."
 }

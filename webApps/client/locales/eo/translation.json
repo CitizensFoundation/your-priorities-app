@@ -1343,5 +1343,8 @@
   "yourIdea": "Via ideo",
   "chatInput": "Demandu min demandon",
   "yourIdeaHasBeenAdded": "Via ideo estis aldonita, generante ikonan bildon.",
-  "aiIconInfo": "Ikono por via respondo generiĝas, vi povas fermi la fenestron aŭ atendi ĝis la ikono estu generita. Vi ankaŭ havos la eblecon regeneri la ikonon."
+  "aiIconInfo": "Ikono por via respondo generiĝas, vi povas fermi la fenestron aŭ atendi ĝis la ikono estu generita. Vi ankaŭ havos la eblecon regeneri la ikonon.",
+  "getColorFromLogo": "Akiri koloron el emblemo",
+  "explainBothAnswers": "Klarigo de respondoj",
+  "allOurIdeas": "All Our Ideas"
 }

@@ -488,8 +488,8 @@
   "videoPointUploadLimitSec": "Video ñembohasa guarã aravo'i (pukukue 600s)",
   "audioPostUploadLimitSec": "Audio ñe'ẽme guarã aravo'i (pukukue 600s)",
   "audioPointUploadLimitSec": "Audio ñembohasa guarã aravo'i (pukukue 600s)",
-  "postCoverVideo": "Video",
-  "uploadVideo": "Video",
+  "postCoverVideo": "Aty",
+  "uploadVideo": "Aty",
   "uploadCompleted": "Ñembohasa oñemohu'ã",
   "uploadingVideo": "Oñemboguapy video...",
   "uploadingImage": "Oñemboguapy ta'ãnga...",
@@ -1343,5 +1343,8 @@
   "yourIdea": "Nde ñe'ẽ",
   "chatInput": "Eporandu chéve peteĩ mba'e",
   "yourIdeaHasBeenAdded": "Nde ñe'ẽ oñemoinge, ojejapóma ñemongu'e.",
-  "aiIconInfo": "Nde resã rupive ojejapóta peteĩ ta'ãnga nde respostápe, ikatu rejei térã reha'arõ ta'ãnga ojejapo. Avei ikatu reikuaa jeývo ta'ãnga."
+  "aiIconInfo": "Nde resã rupive ojejapóta peteĩ ta'ãnga nde respostápe, ikatu rejei térã reha'arõ ta'ãnga ojejapo. Avei ikatu reikuaa jeývo ta'ãnga.",
+  "getColorFromLogo": "Og̃uahẽ mba'e guasu logo pegua",
+  "explainBothAnswers": "Mba'ekuaarã ñemombe'u",
+  "allOurIdeas": "All Our Ideas"
 }

@@ -1343,5 +1343,8 @@
   "yourIdea": "A túa idea",
   "chatInput": "Fáigame unha pregunta",
   "yourIdeaHasBeenAdded": "A túa idea foi engadida, xerando imaxe de icona.",
-  "aiIconInfo": "Estase xerando unha icona para a túa resposta, podes pechar a xanela ou agardar a que se xere a icona. Tamén terás a opción de rexenerar a icona."
+  "aiIconInfo": "Estase xerando unha icona para a túa resposta, podes pechar a xanela ou agardar a que se xere a icona. Tamén terás a opción de rexenerar a icona.",
+  "getColorFromLogo": "Obter cor da imaxe do logo",
+  "explainBothAnswers": "Explicación das respostas",
+  "allOurIdeas": "All Our Ideas"
 }

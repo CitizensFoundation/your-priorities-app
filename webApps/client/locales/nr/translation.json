@@ -1248,7 +1248,7 @@
   "Background": "Ingemuva",
   "Surface Dim": "Surface Dim",
   "Surface": "Surface",
-  "Surface Bright": "Surface Bright",
+  "Surface Bright": "Ubuso Bakhanyayo",
   "Surface Variant": "Umphezulu Uhlobo",
   "Surface Container Lowest": "Umphezulu Isitsha Esiphansi Kakhulu",
   "Surface Container Low": "Umphezulu Isitsha Esiphansi",
@@ -1343,5 +1343,8 @@
   "yourIdea": "Umbono wakho",
   "chatInput": "Buza umbuzo",
   "yourIdeaHasBeenAdded": "Umbono wakho ungeziwe, kudalwa isithonjana sesithombe.",
-  "aiIconInfo": "Isithonjana sempendulo yakho siyakhiwa, ungavala iwindi noma ulinde ukuthi isithonjana sakhiwe. Uzoba nethuba lokuphinda ukhiqize isithonjana."
+  "aiIconInfo": "Isithonjana sempendulo yakho siyakhiwa, ungavala iwindi noma ulinde ukuthi isithonjana sakhiwe. Uzoba nethuba lokuphinda ukhiqize isithonjana.",
+  "getColorFromLogo": "Thola umbala esithombeni selogo",
+  "explainBothAnswers": "Incazelo yezimpendulo",
+  "allOurIdeas": "All Our Ideas"
 }

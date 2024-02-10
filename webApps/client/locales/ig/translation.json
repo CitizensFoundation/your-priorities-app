@@ -40,7 +40,7 @@
   "goalTree": "Osisi Ebumnuche",
   "futureRealityTree": "Osisi Eziokwu n'Ọdịnihu",
   "ideaGenerationGroupType": "Ịmepụta echiche",
-  "allOurIdeasGroupType": "All Our Ideas Pairwise Ranking",
+  "allOurIdeasGroupType": "All Our Ideas Ntụle Abụọ",
   "allowGenerativeImages": "Kwe ka eserese na-emepụta onwe",
   "reports": "Akụkọ",
   "reportsInfo": "Mepụta akụkọ",
@@ -1154,7 +1154,7 @@
   "sortBySortOrder": "Hazie Dịka Usoro",
   "mediaUploads": "Bulite Mgbasa Ozi",
   "onlyAdminsCanCreateCommunities": "Naanị Ndị Nchịkwa Nwere Ike Imepụta Obodo",
-  "Facebook Client Id": "Facebook Client Id",
+  "Facebook Client Id": "Facebook Njirimara Id",
   "facebookClientId": "Facebook Onye Ahịa Id",
   "Facebook Client Secret": "Facebook Onye Ahịa Nzuzo",
   "facebookClientSecret": "Facebook Onye Ahịa Nzuzo",
@@ -1343,5 +1343,8 @@
   "yourIdea": "Echiche gị",
   "chatInput": "Jụọ m ajụjụ",
   "yourIdeaHasBeenAdded": "Agbakwunyela echiche gị, na-emepụta akara ngosi.",
-  "aiIconInfo": "A na-emepụta akara ngosi maka azịza gị, ị nwere ike imechi windo ma ọ bụ chere ka akara ngosi ahụ mepụta. Ị ga-enwekwa nhọrọ imegharị akara ngosi ahụ."
+  "aiIconInfo": "A na-emepụta akara ngosi maka azịza gị, ị nwere ike imechi windo ma ọ bụ chere ka akara ngosi ahụ mepụta. Ị ga-enwekwa nhọrọ imegharị akara ngosi ahụ.",
+  "getColorFromLogo": "Nweta agba site na akara ngosi",
+  "explainBothAnswers": "Nkọwa azịza",
+  "allOurIdeas": "All Our Ideas"
 }

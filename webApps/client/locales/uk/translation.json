@@ -1346,5 +1346,12 @@
   "ideaAdded": "Вашу ідею додано, ви можете продовжити голосування.",
   "ideaModerationQueue": "Ваша ідея в черзі на модерацію.",
   "yourIdea": "Ваша ідея",
-  "chatInput": "Запитайте мене"
+  "chatInput": "Запитайте мене",
+  "getColorFromLogo": "Отримати колір з логотипу",
+  "explainBothAnswers": "Пояснення відповідей",
+  "allOurIdeas": "All Our Ideas",
+  "ideaGenerationGroupType": "Генерація ідей",
+  "allOurIdeasGroupType": "All Our Ideas Попарне ранжування",
+  "yourIdeaHasBeenAdded": "Вашу ідею додано, генерується зображення іконки.",
+  "aiIconInfo": "Генерується іконка для вашої відповіді, ви можете закрити вікно або зачекати, поки іконка буде створена. Також буде можливість згенерувати іконку знову."
 }

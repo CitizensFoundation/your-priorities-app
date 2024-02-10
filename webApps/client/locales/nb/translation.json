@@ -1227,7 +1227,7 @@
   "Thinking": "Tenker...",
   "Send": "Send",
   "typing": "Skriver",
-  "record": "Tecord",
+  "record": "Opptak",
   "send": "Send",
   "Dynamic Colors": "Dynamiske Farger",
   "One Dynamic Color": "En Dynamisk Farge",
@@ -1343,5 +1343,8 @@
   "yourIdea": "Din idé",
   "chatInput": "Spør meg et spørsmål",
   "yourIdeaHasBeenAdded": "Din idé er lagt til, genererer ikonbilde.",
-  "aiIconInfo": "Et ikon for svaret ditt genereres, du kan lukke vinduet eller vente på at ikonet blir generert. Du vil også ha muligheten til å generere ikonet på nytt."
+  "aiIconInfo": "Et ikon for svaret ditt genereres, du kan lukke vinduet eller vente på at ikonet blir generert. Du vil også ha muligheten til å generere ikonet på nytt.",
+  "getColorFromLogo": "Få farge fra logo",
+  "explainBothAnswers": "Forklaring av svar",
+  "allOurIdeas": "All Our Ideas"
 }

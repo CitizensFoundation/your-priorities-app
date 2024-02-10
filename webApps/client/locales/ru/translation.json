@@ -627,7 +627,7 @@
     "info": "Информация",
     "notifications": "Уведомления",
     "name": "Полное имя",
-    "email": "Email",
+    "email": "Электронная почта",
     "edit": "Редактировать пользователя",
     "password": "Пароль",
     "forgotPassword": "Создать новый пароль",
@@ -1346,5 +1346,12 @@
   "ideaAdded": "Ваша идея добавлена, вы можете продолжать голосование.",
   "ideaModerationQueue": "Ваша идея находится в очереди на модерацию.",
   "yourIdea": "Ваша идея",
-  "chatInput": "Задайте мне вопрос"
+  "chatInput": "Задайте мне вопрос",
+  "getColorFromLogo": "Получить цвет из логотипа",
+  "explainBothAnswers": "Объяснение ответов",
+  "allOurIdeas": "All Our Ideas",
+  "ideaGenerationGroupType": "Генерация идей",
+  "allOurIdeasGroupType": "All Our Ideas Попарный Рейтинг",
+  "yourIdeaHasBeenAdded": "Ваша идея добавлена, создается иконка.",
+  "aiIconInfo": "Иконка для вашего ответа создается, вы можете закрыть окно или подождать. Также будет возможность создать иконку заново."
 }

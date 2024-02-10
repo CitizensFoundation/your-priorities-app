@@ -786,7 +786,7 @@
     "featured": "Framheva",
     "archived": "Arkivert",
     "hidden": "Gøymd",
-    "published": "Open",
+    "published": "Opne",
     "successful": "Vellukka",
     "failed": "Mislykka",
     "inProgress": "Pågår"
@@ -855,7 +855,7 @@
   "posts": {
     "posts": "Idear",
     "post": "Ide",
-    "open": "Open",
+    "open": "Opne",
     "inProgress": "Pågåande",
     "successful": "Vellukka",
     "failed": "Mislykka",
@@ -1343,5 +1343,8 @@
   "yourIdea": "Din ide",
   "chatInput": "Spør meg eit spørsmål",
   "yourIdeaHasBeenAdded": "Ideen din har blitt lagt til, genererer ikonbilete.",
-  "aiIconInfo": "Eit ikon for svaret ditt blir generert, du kan lukke vindauget eller vente på at ikonet skal genererast. Du vil også ha moglegheita til å generere ikonet på nytt."
+  "aiIconInfo": "Eit ikon for svaret ditt blir generert, du kan lukke vindauget eller vente på at ikonet skal genererast. Du vil også ha moglegheita til å generere ikonet på nytt.",
+  "getColorFromLogo": "Få farge frå logo",
+  "explainBothAnswers": "Forklaring av svar",
+  "allOurIdeas": "All Our Ideas"
 }

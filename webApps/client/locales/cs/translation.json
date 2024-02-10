@@ -1349,5 +1349,8 @@
   "ideaGenerationGroupType": "Generování nápadů",
   "allOurIdeasGroupType": "All Our Ideas Pairwise Ranking",
   "yourIdeaHasBeenAdded": "Váš nápad byl přidán, generuje se ikona.",
-  "aiIconInfo": "Ikona pro vaši odpověď se generuje, můžete zavřít okno nebo počkat, až bude ikona vygenerována. Budete mít také možnost ikonu znovu vygenerovat."
+  "aiIconInfo": "Ikona pro vaši odpověď se generuje, můžete zavřít okno nebo počkat, až bude ikona vygenerována. Budete mít také možnost ikonu znovu vygenerovat.",
+  "getColorFromLogo": "Získat barvu z loga",
+  "explainBothAnswers": "Vysvětlení odpovědí",
+  "allOurIdeas": "All Our Ideas"
 }

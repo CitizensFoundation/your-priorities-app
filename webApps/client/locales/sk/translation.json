@@ -822,7 +822,7 @@
     "loggedInWithSaml": "Prihlásená/ý so SAML",
     "loggedInWithFacebook": "Prihlásený/á s Facebookom",
     "facebookLogin": "Facebookové prihlásenie",
-    "info": "Info",
+    "info": "Informácie",
     "notifications": "Oznámenia",
     "name": "Celé meno",
     "email": "Email",
@@ -1345,5 +1345,12 @@
   "ideaAdded": "Váš nápad bol pridaný, môžete pokračovať v hlasovaní.",
   "ideaModerationQueue": "Váš nápad je vo fronte moderovania.",
   "yourIdea": "Váš nápad",
-  "chatInput": "Opýtajte sa ma na otázku"
+  "chatInput": "Opýtajte sa ma na otázku",
+  "getColorFromLogo": "Získať farbu z loga",
+  "explainBothAnswers": "Vysvetlenie odpovedí",
+  "allOurIdeas": "All Our Ideas",
+  "ideaGenerationGroupType": "Generovanie nápadov",
+  "allOurIdeasGroupType": "All Our Ideas Porovnávanie dvojíc",
+  "yourIdeaHasBeenAdded": "Váš nápad bol pridaný, generuje sa ikona.",
+  "aiIconInfo": "Pre vašu odpoveď sa generuje ikona, môžete zatvoriť okno alebo počkať na vygenerovanie ikony. Budete mať tiež možnosť ikonu znovu vygenerovať."
 }

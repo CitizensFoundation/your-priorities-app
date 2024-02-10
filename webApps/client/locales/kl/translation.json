@@ -1337,7 +1337,7 @@
   "Access": "Isersinnaatitaaneq",
   "openOrganizationMenu": "Ammaasoq kattuffik menu",
   "Listasafn Reykjavíkur": "Listasafn Reykjavíkur",
-  "Override theme": "Override theme",
+  "Override theme": "Override tema",
   "Analytics & Marketing": "Analysi & Marketingi",
   "Promote your survey": "Misissuutit pitsanngorsaavigiuk",
   "Survey Administration": "Misissuutinik Aqutsineq",
@@ -1350,5 +1350,8 @@
   "ideaGenerationGroupType": "Isiginninniarneq",
   "allOurIdeasGroupType": "All Our Ideas Pairwise Ranking",
   "yourIdeaHasBeenAdded": "Isigisassat ilanngunneqarpoq, ikonimik assiliartaarneq.",
-  "aiIconInfo": "Akissarsiassatut ikkussaq pilersinneqarpoq, matuersaammik matusinnaavutit imaluunniit ikkussap pilersinneqarneranik utaqqisinnaavutit. Ikkussap nutaamik pilersitsinissaa aamma periarfissaqarpoq."
+  "aiIconInfo": "Akissarsiassatut ikkussaq pilersinneqarpoq, matuersaammik matusinnaavutit imaluunniit ikkussap pilersinneqarneranik utaqqisinnaavutit. Ikkussap nutaamik pilersitsinissaa aamma periarfissaqarpoq.",
+  "getColorFromLogo": "Logo-miit qalipaataa aalleruk",
+  "explainBothAnswers": "Akissutit nassuiaatai",
+  "allOurIdeas": "All Our Ideas"
 }

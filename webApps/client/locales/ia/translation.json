@@ -616,7 +616,7 @@
   "autoTranslationStarted": "Traduction automatic initiate",
   "autoTranslationStopped": "Traduction automatic cessate",
   "autoTranslate": "Traducer automaticamente",
-  "stopAutoTranslate": "Stop translation",
+  "stopAutoTranslate": "Stoppar traduction",
   "inputError": "Non valide",
   "postCreated": "Idea create",
   "postUpdated": "Idea actualisate",
@@ -1343,5 +1343,8 @@
   "yourIdea": "Tu idea",
   "chatInput": "Demande me un question",
   "yourIdeaHasBeenAdded": "Tu idea ha essite addite, generante imagine de icona.",
-  "aiIconInfo": "Un icono pro tu responsa es generate, tu pote clauder le fenestra o attender pro le icono esser generate. Tu habera etiam le option de regenerar le icono."
+  "aiIconInfo": "Un icono pro tu responsa es generate, tu pote clauder le fenestra o attender pro le icono esser generate. Tu habera etiam le option de regenerar le icono.",
+  "getColorFromLogo": "Obtene color del logo",
+  "explainBothAnswers": "Explication de responsas",
+  "allOurIdeas": "All Our Ideas"
 }

@@ -122,7 +122,7 @@
   "groupContent": "Discrefyans Grŵp",
   "postName": "Enw Post",
   "postContent": "Discrefyans Post",
-  "noTranslation": "No Translation!",
+  "noTranslation": "Nag eus Treuslytheren!",
   "goalConversionsLast30Min": "Trosi Golyow (diwettha 30 mun)",
   "error": "Gwall a dheuth",
   "generateImageWithAi": "Generys delwenn gans AI",
@@ -488,8 +488,8 @@
   "videoPointUploadLimitSec": "Termin video poynt yn eiliadow (myns 600e)",
   "audioPostUploadLimitSec": "Termin audyo post yn eiliadow (myns 600e)",
   "audioPointUploadLimitSec": "Termin audyo poynt yn eiliadow (myns 600e)",
-  "postCoverVideo": "Video",
-  "uploadVideo": "Video",
+  "postCoverVideo": "Gweles",
+  "uploadVideo": "Gweles",
   "uploadCompleted": "Ughladow kowlwrys",
   "uploadingVideo": "Ughladow video...",
   "uploadingImage": "Ughladow imaj...",
@@ -840,7 +840,7 @@
     "add": "Keworra Communitas",
     "alternativeHeader": "Penn Alternatyf",
     "edit": "Chanjya Communitas",
-    "hostname": "Hostname",
+    "hostname": "Anvlec'h",
     "admins": "Gorhemmynadow Communitas",
     "users": "Defnyddwyr Communitas",
     "delete": "Dilea Communitas",
@@ -1343,5 +1343,8 @@
   "yourIdea": "Agas menowgh",
   "chatInput": "Gowl genef fatel",
   "yourIdeaHasBeenAdded": "Agas menowgh yw keworrys, generys icon delw.",
-  "aiIconInfo": "An Icon ragh dha ateb a veu genys, hwi a yll kavos an fenester po gortos rag an Icon dhe veu genys. Hwi a vydh gans an dewis dhe adgenys an Icon."
+  "aiIconInfo": "An Icon ragh dha ateb a veu genys, hwi a yll kavos an fenester po gortos rag an Icon dhe veu genys. Hwi a vydh gans an dewis dhe adgenys an Icon.",
+  "getColorFromLogo": "Kav liw a delynnen logo",
+  "explainBothAnswers": "Esboniad a atebow",
+  "allOurIdeas": "All Our Ideas"
 }

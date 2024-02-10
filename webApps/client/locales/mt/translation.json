@@ -488,8 +488,8 @@
   "videoPointUploadLimitSec": "Limitu tal-video tal-punt f'sekondi (mass 600s)",
   "audioPostUploadLimitSec": "Limitu tal-audio tal-post f'sekondi (mass 600s)",
   "audioPointUploadLimitSec": "Limitu tal-audio tal-punt f'sekondi (mass 600s)",
-  "postCoverVideo": "Video",
-  "uploadVideo": "Video",
+  "postCoverVideo": "Vidjo",
+  "uploadVideo": "Vidjo",
   "uploadCompleted": "Tlugħ komplut",
   "uploadingVideo": "Qed itella' video...",
   "uploadingImage": "Qed itella' immaġni...",
@@ -770,7 +770,7 @@
     "content": "Kontenut tal-paġna",
     "publish": "Ippubblika",
     "addLocale": "Żid lokali",
-    "unPublish": "UnPublish",
+    "unPublish": "Nieqaf Ippubblika",
     "deletePage": "Ħassar",
     "addPage": "Żid paġna ġdida",
     "managePages": "Immaniġġja paġni",
@@ -1169,7 +1169,7 @@
   "Twitter Client Id": "Twitter Client Id",
   "twitterClientId": "Twitter Client Id",
   "Twitter Client Secret": "Twitter Client Secret",
-  "twitterClientSecret": "Twitter Client Secret",
+  "twitterClientSecret": "Sigriet tal-Klijent Twitter",
   "groupAccess": "Aċċess tal-Grupp",
   "themeSelector": "Selettur tat-Tema",
   "canAddNewPosts": "Jista' jżid postijiet ġodda",
@@ -1343,5 +1343,8 @@
   "yourIdea": "L-idea tiegħek",
   "chatInput": "Staqsi lili mistoqsija",
   "yourIdeaHasBeenAdded": "L-idea tiegħek ġiet miżjuda, qed tiġi ġġenerata l-immaġni tal-ikona.",
-  "aiIconInfo": "Ikona għat-tweġiba tiegħek qed tiġi ġġenerata, tista' tagħlaq it-tieqa jew tistenna sakemm tiġi ġġenerata l-ikona. Ikollok ukoll l-għażla li terġa' tiġġenera l-ikona."
+  "aiIconInfo": "Ikona għat-tweġiba tiegħek qed tiġi ġġenerata, tista' tagħlaq it-tieqa jew tistenna sakemm tiġi ġġenerata l-ikona. Ikollok ukoll l-għażla li terġa' tiġġenera l-ikona.",
+  "getColorFromLogo": "Ġib kulur mill-logo",
+  "explainBothAnswers": "Spjegazzjoni tar-risposti",
+  "allOurIdeas": "All Our Ideas"
 }

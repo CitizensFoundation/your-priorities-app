@@ -1346,5 +1346,12 @@
   "ideaAdded": "Twój pomysł został dodany, możesz kontynuować głosowanie.",
   "ideaModerationQueue": "Twój pomysł jest w kolejce moderacji.",
   "yourIdea": "Twój pomysł",
-  "chatInput": "Zadaj mi pytanie"
+  "chatInput": "Zadaj mi pytanie",
+  "getColorFromLogo": "Pobierz kolor z logo",
+  "explainBothAnswers": "Wyjaśnienie odpowiedzi",
+  "allOurIdeas": "All Our Ideas",
+  "ideaGenerationGroupType": "Generowanie pomysłów",
+  "allOurIdeasGroupType": "All Our Ideas Pairwise Ranking",
+  "yourIdeaHasBeenAdded": "Twój pomysł został dodany, generowanie ikony.",
+  "aiIconInfo": "Ikona dla twojej odpowiedzi jest generowana, możesz zamknąć okno lub poczekać na wygenerowanie ikony. Będziesz miał również opcję wygenerowania ikony ponownie."
 }

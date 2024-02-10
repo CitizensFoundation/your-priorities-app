@@ -1351,5 +1351,8 @@
   "ideaGenerationGroupType": "Идея жаратуу",
   "allOurIdeasGroupType": "All Our Ideas Жуптук Рейтинг",
   "yourIdeaHasBeenAdded": "Сиздин идеяңыз кошулду, иконка түзүлүүдө.",
-  "aiIconInfo": "Сиздин жообуңуз үчүн иконка түзүлүп жатат, терезени жабууңуз же иконка түзүлгөнгө чейин күтүүңүз мүмкүн. Ошондой эле иконканы кайра түзүү опциясы болот."
+  "aiIconInfo": "Сиздин жообуңуз үчүн иконка түзүлүп жатат, терезени жабууңуз же иконка түзүлгөнгө чейин күтүүңүз мүмкүн. Ошондой эле иконканы кайра түзүү опциясы болот.",
+  "getColorFromLogo": "Logodogu tus al",
+  "explainBothAnswers": "Jooptorun tushundurmesi",
+  "allOurIdeas": "All Our Ideas"
 }

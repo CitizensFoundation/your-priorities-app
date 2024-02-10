@@ -1212,7 +1212,7 @@
   "Contrast": "Kontras",
   "An error occurred": "Ralat berlaku. Sila cuba lagi.",
   "Cancel": "Batal",
-  "Tonal": "Tonal",
+  "Tonal": "Nada",
   "Vibrant": "Ceria",
   "Expressive": "Ekspresif",
   "Content": "Kandungan",
@@ -1331,7 +1331,7 @@
   "domainFraudManagement": "Pengurusan Penipuan Domain",
   "Access": "Akses",
   "openOrganizationMenu": "Buka menu organisasi",
-  "Listasafn Reykjavíkur": "Listasafn Reykjavíkur",
+  "Listasafn Reykjavíkur": "Muzium Seni Reykjavik",
   "Override theme": "Ganti tema",
   "Analytics & Marketing": "Analitik & Pemasaran",
   "Promote your survey": "Promosikan tinjauan anda",
@@ -1343,5 +1343,8 @@
   "yourIdea": "Idea anda",
   "chatInput": "Tanya saya soalan",
   "yourIdeaHasBeenAdded": "Idea anda telah ditambah, menjana imej ikon.",
-  "aiIconInfo": "Ikon untuk jawapan anda sedang dihasilkan, anda boleh tutup jendela atau tunggu ikon dihasilkan. Anda juga akan ada pilihan untuk menjana semula ikon."
+  "aiIconInfo": "Ikon untuk jawapan anda sedang dihasilkan, anda boleh tutup jendela atau tunggu ikon dihasilkan. Anda juga akan ada pilihan untuk menjana semula ikon.",
+  "getColorFromLogo": "Dapatkan warna dari logo",
+  "explainBothAnswers": "Penjelasan jawapan",
+  "allOurIdeas": "All Our Ideas"
 }

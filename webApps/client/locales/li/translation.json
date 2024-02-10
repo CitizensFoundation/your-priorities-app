@@ -686,7 +686,7 @@
   "endorsementHats": "Huujde",
   "endorsementButtons": "Ongersteuningsknöpkes",
   "bulkStatusUdateForInfo": "Klik op de ideeën veur mieër informatie",
-  "urlLink": "Link",
+  "urlLink": "Sjakele",
   "bulkStatusUdateFor": "Statusupdates veur ideeën op",
   "inviteNotFoundOrAlreadyUsed": "Oetneudiging neet gevónje of al gebroek",
   "reportConfirmation": "Bis se zeker dat se deze inhoud wils rapportere veur 't breke van de regels van deze website?",
@@ -732,7 +732,7 @@
   "searchFor": "Zeuk veur...",
   "title": "Titel",
   "selectLanguage": "Selekteer taal",
-  "update": "Update",
+  "update": "Biewèrke",
   "errorCantConnect": "Kan neet verbinje met de server. Probeer 't later nog 'ns. Dit kan door hoge verkeer of 'n software upgrade kómme.",
   "errorNotFound": "Neet gevónje...",
   "errorNotAuthorized": "Geer höbt gein toegank!",
@@ -803,7 +803,7 @@
     "post": {
       "new": "Idee",
       "status": {
-        "change": "Status update"
+        "change": "Status biewèrking"
       }
     },
     "point": {
@@ -1103,7 +1103,7 @@
   "Translations": "Vertalinge",
   "Organizations": "Organisaties",
   "Users": "Gebroekers",
-  "Admins": "Admins",
+  "Admins": "Beheerders",
   "Moderation": "Moderatie",
   "Pages": "Pagina's",
   "Groups": "Groepen",
@@ -1194,7 +1194,7 @@
   "New Group": "Nuuj Groep",
   "haveCreatedXLsReport": "Hebbe XLs rapport gemaak",
   "description": "Beschrieving",
-  "website": "website",
+  "website": "websait",
   "organizationTree": {
     "new": "Organisatie",
     "toast": {
@@ -1209,7 +1209,7 @@
   "failed": "Mislukt",
   "in_progress": "Bezig",
   "Light/Dark": "Lich/Duuster",
-  "Contrast": "Contrast",
+  "Contrast": "Kontras",
   "An error occurred": "D'r is 'ne fout opgetreeje. Perbeer 't opnuuj.",
   "Cancel": "Aafbreke",
   "Tonal": "Tonaal",
@@ -1343,5 +1343,8 @@
   "yourIdea": "Dien idee",
   "chatInput": "Stel mich 'ne vraog",
   "yourIdeaHasBeenAdded": "Dien idee is toegevoegd, genereert icoon afbeelding.",
-  "aiIconInfo": "Ene icoon veur dien antwoord weurt gemaak, de kins 't venster sluite of wachte totdat de icoon gemaak is. De höbs ouch de optie um de icoon opnuuj te make."
+  "aiIconInfo": "Ene icoon veur dien antwoord weurt gemaak, de kins 't venster sluite of wachte totdat de icoon gemaak is. De höbs ouch de optie um de icoon opnuuj te make.",
+  "getColorFromLogo": "Kleur oethaole van logo",
+  "explainBothAnswers": "Oetleg van antwoorde",
+  "allOurIdeas": "All Our Ideas"
 }

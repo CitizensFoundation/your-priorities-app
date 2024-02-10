@@ -22,7 +22,7 @@
   "acceptNewIdeas": "Taura na vakasama vou",
   "hideAoiResults": "Vunitaka na iSau",
   "welcomeMessage": "iTukutuku ni Nodrau Mai",
-  "welcomeHtml": "Welcome HTML",
+  "welcomeHtml": "Bula HTML",
   "aoiAiAnalysisConfig": "Vakarautaki ni Vakatulewa Vakaiyaya ni AI",
   "questionName": "Taro",
   "allOurIdeasOptions": "Sarava",
@@ -34,7 +34,7 @@
   "startReportCreation": "Vakarautaka na Ripote",
   "areYouSureYouWantToDeleteThisOrganization": "O vakadeitaka ni o via bokoca na mataqali oqo?",
   "createOrganization": "Vakaduria na mataqali",
-  "ltpConfig": "LTP Config",
+  "ltpConfig": "LTP Tovolea",
   "welcomeHTMLforNotLoggedInUsers": "Nabula HTML ni sega ni curu na kena dauvakayagataki",
   "currentRealityTree": "Vunikau ni Dina Tiko",
   "goalTree": "Vunikau ni Inaki",
@@ -376,7 +376,7 @@
   "postSettings": "Vakatulewa ni Post",
   "voteSettings": "Vakatulewa ni Votu",
   "pointSettings": "Vakatulewa ni Mataqali",
-  "samlLoginButtonUrl": "SAML login button URL",
+  "samlLoginButtonUrl": "SAML curu bateni URL",
   "setEmailConfirmationInfo": "Na imeli qo ena vakayagataki me vakauta vei iko na itukutuku me baleta na lewena o biuta.",
   "themeOverrideColorInfo": "Digitaka na lanilani ni theme ena hex. Kena ivakaraitaki: #A1A1A1",
   "themeOverrideColorPrimary": "Lanilani levu ni theme",
@@ -1184,7 +1184,7 @@
   "hats": "Ulo",
   "dataForVisualizationJsonError": "Kalavo ni JSON",
   "selectCategory": "Digitaka na iWasewase",
-  "earlConfig": "Earl COnfig",
+  "earlConfig": "Earl Tovolea",
   "show_cant_decide": "Vakaraitaka e sega ni rawa ni lewa",
   "accept_new_ideas": "Taura na vou ni nanuma",
   "hide_results": "vunitaka na kena isau",
@@ -1194,7 +1194,7 @@
   "New Group": "Vou ni Mataqali",
   "haveCreatedXLsReport": "Sa bulia na ripote ni XL",
   "description": "Vakamacala",
-  "website": "website",
+  "website": "veiwekani",
   "organizationTree": {
     "new": "Tabacakacaka",
     "toast": {
@@ -1343,5 +1343,8 @@
   "yourIdea": "Na nomu nanuma",
   "chatInput": "Tarogi au e dua na taro",
   "yourIdeaHasBeenAdded": "Sa vuravura na nomu nanuma, e buli tiko na ikonaki ni imatai.",
-  "aiIconInfo": "E buli tiko na ikona ni nomu isau, o rawa ni sogota na katuba se waraka me buli oti na ikona. Ena tu tale ga na digidigi mo vakavoutaka kina na ikona."
+  "aiIconInfo": "E buli tiko na ikona ni nomu isau, o rawa ni sogota na katuba se waraka me buli oti na ikona. Ena tu tale ga na digidigi mo vakavoutaka kina na ikona.",
+  "getColorFromLogo": "Taura na roka mai na ivakatakilakila",
+  "explainBothAnswers": "Vakamacala ni isau",
+  "allOurIdeas": "All Our Ideas"
 }

@@ -1265,7 +1265,7 @@
   "debate": "Razprava",
   "completeLogin": "Dokončaj prijavo",
   "password": "Geslo",
-  "Email": "Email",
+  "Email": "E-pošta",
   "recreate": "Ponovno ustvari",
   "Your idea has been added, you can continue voting": "Vaša ideja je bila dodana, lahko nadaljujete z glasovanjem.",
   "Your idea is in a moderation queue": "Vaša ideja je v čakalni vrsti za moderiranje.",
@@ -1275,7 +1275,7 @@
   "Error fetching analysis": "Napaka pri pridobivanju analize",
   "Generating analysis with GPT-4": "Generiranje analize z GPT-4",
   "Vote Analysis": "Analiza glasovanja",
-  "Admin": "Admin",
+  "Admin": "Skrbnik",
   "Start Voting": "Začni z glasovanjem",
   "Open Results": "Odpri rezultate",
   "How likely to win": "Verjetnost za zmago",
@@ -1345,5 +1345,12 @@
   "ideaAdded": "Vaša ideja je bila dodana, lahko nadaljujete z glasovanjem.",
   "ideaModerationQueue": "Vaša ideja je v čakalni vrsti za moderiranje.",
   "yourIdea": "Vaša ideja",
-  "chatInput": "Vprašaj me"
+  "chatInput": "Vprašaj me",
+  "getColorFromLogo": "Pridobi barvo iz logotipa",
+  "explainBothAnswers": "Razlaga odgovorov",
+  "allOurIdeas": "All Our Ideas",
+  "ideaGenerationGroupType": "Generiranje idej",
+  "allOurIdeasGroupType": "All Our Ideas Paritveno razvrščanje",
+  "yourIdeaHasBeenAdded": "Vaša ideja je bila dodana, ustvarja se ikona.",
+  "aiIconInfo": "Ikona za vaš odgovor se ustvarja, lahko zaprete okno ali počakate, da se ikona ustvari. Imeli boste tudi možnost, da ikono ponovno ustvarite."
 }

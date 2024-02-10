@@ -976,7 +976,7 @@
   "highlightedLanguages": "Uitgelichte locales (en,is,fr)",
   "optionalSortOrder": "Optionele sorteervolgorde",
   "sortGroupsBySortOrder": "Sorteer groepen op sorteervolgorde",
-  "openAnalyticsApp": "Open Analytics App",
+  "openAnalyticsApp": "Open Analyse App",
   "sendInviteByEmail": "Stuur uitnodiging per e-mail",
   "addUserDirectlyIfExist": "Voeg gebruiker toe indien bestaat",
   "allowWhatsAppSharing": "Sta WhatsApp delen toe",
@@ -1350,5 +1350,8 @@
   "ideaGenerationGroupType": "Ideeëngeneratie",
   "allOurIdeasGroupType": "All Our Ideas Pairwise Ranking",
   "yourIdeaHasBeenAdded": "Uw idee is toegevoegd, pictogram wordt gegenereerd.",
-  "aiIconInfo": "Een pictogram voor uw antwoord wordt gegenereerd, u kunt het venster sluiten of wachten tot het pictogram is gegenereerd. U krijgt ook de optie om het pictogram opnieuw te genereren."
+  "aiIconInfo": "Een pictogram voor uw antwoord wordt gegenereerd, u kunt het venster sluiten of wachten tot het pictogram is gegenereerd. U krijgt ook de optie om het pictogram opnieuw te genereren.",
+  "getColorFromLogo": "Kleur uit logo halen",
+  "explainBothAnswers": "Uitleg van antwoorden",
+  "allOurIdeas": "All Our Ideas"
 }

@@ -1343,5 +1343,8 @@
   "yourIdea": "Jou idee",
   "chatInput": "Vra my 'n vraag",
   "yourIdeaHasBeenAdded": "Jou idee is bygevoeg, genereer ikoon beeld.",
-  "aiIconInfo": "'n Piktogram vir jou antwoord word gegenereer, jy kan die venster toemaak of wag vir die piktogram om gegenereer te word. Jy sal ook die opsie hê om die piktogram te hergenereer."
+  "aiIconInfo": "'n Piktogram vir jou antwoord word gegenereer, jy kan die venster toemaak of wag vir die piktogram om gegenereer te word. Jy sal ook die opsie hê om die piktogram te hergenereer.",
+  "getColorFromLogo": "Kry kleur van logo beeld",
+  "explainBothAnswers": "Verduideliking van antwoorde",
+  "allOurIdeas": "All Our Ideas"
 }

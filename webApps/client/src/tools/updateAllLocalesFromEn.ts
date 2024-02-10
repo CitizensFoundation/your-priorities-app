@@ -44,6 +44,8 @@ export class YpLocaleTranslation {
 
     for (const localeDir of localeDirs) {
       if (localeDir === "en") continue; // Skip English since it's the base
+      if (localeDir === "en_gb") continue;
+      if (localeDir === "en_ca") continue;
 
       console.log(`Processing locale: ${localeDir}`);
       const translationFilePath = path.join(

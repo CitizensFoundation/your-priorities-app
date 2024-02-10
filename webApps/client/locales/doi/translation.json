@@ -1343,5 +1343,8 @@
   "yourIdea": "तुहाड़ा विचार",
   "chatInput": "मुझसे एक प्रश्न पूछो",
   "yourIdeaHasBeenAdded": "तुहाड़ा विचार जोड़ा गया है, आइकन इमेज बनाना।",
-  "aiIconInfo": "An Icon for your answer is being generated, you can close the window or wait for the icon to be generated. You will also have the option to regenerate the icon."
+  "aiIconInfo": "तुहाडे जवाब लई इक आइकन बनाया जा रहा है, तुसीं खिड़की नूं बंद कर सकदे हो जां आइकन बनन तक उडीक सकदे हो। तुहानूं आइकन नूं मुड़ बनान दा विकल्प वी मिलेगा।",
+  "getColorFromLogo": "लोगो चित्र तों रंग लओ",
+  "explainBothAnswers": "जवाबां दी व्याख्या",
+  "allOurIdeas": "All Our Ideas"
 }

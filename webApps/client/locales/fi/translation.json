@@ -1331,7 +1331,7 @@
   "domainFraudManagement": "Verkkotunnuksen petosten hallinta",
   "Access": "Pääsy",
   "openOrganizationMenu": "Avaa organisaation valikko",
-  "Listasafn Reykjavíkur": "Listasafn Reykjavíkur",
+  "Listasafn Reykjavíkur": "Reykjavíkin taidemuseo",
   "Override theme": "Ohita teema",
   "Analytics & Marketing": "Analytiikka & Markkinointi",
   "Promote your survey": "Mainosta kyselyäsi",
@@ -1343,5 +1343,8 @@
   "yourIdea": "Ideasi",
   "chatInput": "Kysy minulta kysymys",
   "yourIdeaHasBeenAdded": "Ideasi on lisätty, luodaan kuvaketta.",
-  "aiIconInfo": "Vastaustasi varten luodaan kuvaketta, voit sulkea ikkunan tai odottaa kuvakkeen valmistumista. Sinulla on myös mahdollisuus luoda kuvake uudelleen."
+  "aiIconInfo": "Vastaustasi varten luodaan kuvaketta, voit sulkea ikkunan tai odottaa kuvakkeen valmistumista. Sinulla on myös mahdollisuus luoda kuvake uudelleen.",
+  "getColorFromLogo": "Hae väri logokuvasta",
+  "explainBothAnswers": "Vastausten selitys",
+  "allOurIdeas": "All Our Ideas"
 }

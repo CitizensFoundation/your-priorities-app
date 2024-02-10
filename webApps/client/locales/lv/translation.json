@@ -1349,5 +1349,8 @@
   "ideaGenerationGroupType": "Ideju ģenerēšana",
   "allOurIdeasGroupType": "All Our Ideas Pairwise Ranking",
   "yourIdeaHasBeenAdded": "Jūsu ideja pievienota, tiek ģenerēta ikona.",
-  "aiIconInfo": "Jūsu atbildes ikona tiek ģenerēta, varat aizvērt logu vai gaidīt, līdz ikona tiks ģenerēta. Jums arī būs iespēja ikonu atkārtoti ģenerēt."
+  "aiIconInfo": "Jūsu atbildes ikona tiek ģenerēta, varat aizvērt logu vai gaidīt, līdz ikona tiks ģenerēta. Jums arī būs iespēja ikonu atkārtoti ģenerēt.",
+  "getColorFromLogo": "Iegūt krāsu no logotipa",
+  "explainBothAnswers": "Atbilžu skaidrojums",
+  "allOurIdeas": "All Our Ideas"
 }

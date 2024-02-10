@@ -1346,5 +1346,12 @@
   "ideaAdded": "您的想法已添加，您可以继续投票。",
   "ideaModerationQueue": "您的想法正在审核队列中。",
   "yourIdea": "您的想法",
-  "chatInput": "问我一个问题"
+  "chatInput": "问我一个问题",
+  "getColorFromLogo": "從標誌圖像獲取顏色",
+  "explainBothAnswers": "答案解釋",
+  "allOurIdeas": "All Our Ideas",
+  "ideaGenerationGroupType": "創意生成",
+  "allOurIdeasGroupType": "All Our Ideas 配對排名",
+  "yourIdeaHasBeenAdded": "您的想法已添加，正在生成圖標圖像。",
+  "aiIconInfo": "正在為您的答案生成圖標，您可以關閉窗口或等待圖標生成。您還將有機會重新生成圖標。"
 }

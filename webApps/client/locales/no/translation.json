@@ -1090,7 +1090,7 @@
   "Rank-ordered list": "Rangert liste",
   "Analysis of Results": "Analyse av resultater",
   "AI-generated analysis": "AI-generert analyse",
-  "Intro": "Intro",
+  "Intro": "Introduksjon",
   "Voting": "Avstemning",
   "Analysis": "Analyse",
   "Target votes reached!": "Mål for stemmer nådd!",
@@ -1350,5 +1350,8 @@
   "ideaGenerationGroupType": "Idégenerering",
   "allOurIdeasGroupType": "All Our Ideas Parvis Rangering",
   "yourIdeaHasBeenAdded": "Ideen din er lagt til, genererer ikonbilde.",
-  "aiIconInfo": "Et ikon for svaret ditt genereres, du kan lukke vinduet eller vente på at ikonet blir generert. Du vil også ha muligheten til å generere ikonet på nytt."
+  "aiIconInfo": "Et ikon for svaret ditt genereres, du kan lukke vinduet eller vente på at ikonet blir generert. Du vil også ha muligheten til å generere ikonet på nytt.",
+  "getColorFromLogo": "Få farge fra logo",
+  "explainBothAnswers": "Forklaring av svar",
+  "allOurIdeas": "All Our Ideas"
 }

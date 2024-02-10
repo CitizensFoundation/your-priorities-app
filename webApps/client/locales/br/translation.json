@@ -40,7 +40,7 @@
   "goalTree": "Gwezenn Pal",
   "futureRealityTree": "Gwezenn Realder Da-zont",
   "ideaGenerationGroupType": "Krouiñ soñjoù",
-  "allOurIdeasGroupType": "All Our Ideas Pairwise Ranking",
+  "allOurIdeasGroupType": "Renkadur a-gevret All Our Ideas",
   "allowGenerativeImages": "Aotren skeudennoù krouiñ",
   "reports": "Danevelloù",
   "reportsInfo": "Krouiñ danevelloù",
@@ -130,10 +130,10 @@
   "generateAiImage": "Krouiñ Skeudenn",
   "generateWithAI": "Krouiñ",
   "lookAndFeel": "Neuz ha Santad",
-  "samlAuth": "SAML Auth",
+  "samlAuth": "Auth SAML",
   "basic": "Diazez",
-  "webApp": "Web App",
-  "authApis": "Auth APIs",
+  "webApp": "App Web",
+  "authApis": "APIoù Auth",
   "dontHaveAccount": "N'ho peus kont ebet?",
   "cantRememberPassword": "Dit ket soñj eus ho ker-tremen?",
   "loginAndRegistration": "Kevreañ ha Krouiñ kont",
@@ -1343,5 +1343,8 @@
   "yourIdea": "Ho mennozh",
   "chatInput": "Goulennit ouzhin ur goulenn",
   "yourIdeaHasBeenAdded": "Ho mennozh zo bet ouzhpennet, o krouiñ ar skeudenn arouez.",
-  "aiIconInfo": "Ur skeudenn evit ho respont a zo o vezañ krouet, gallout a rit serriñ ar prenestr pe gortoz ma vo krouet ar skeudenn. Ho po ivez an dibab adkrouiñ ar skeudenn."
+  "aiIconInfo": "Ur skeudenn evit ho respont a zo o vezañ krouet, gallout a rit serriñ ar prenestr pe gortoz ma vo krouet ar skeudenn. Ho po ivez an dibab adkrouiñ ar skeudenn.",
+  "getColorFromLogo": "Kaout liv eus logo skeudenn",
+  "explainBothAnswers": "Displegadenn respontoù",
+  "allOurIdeas": "All Our Ideas"
 }

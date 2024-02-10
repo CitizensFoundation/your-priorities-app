@@ -1343,5 +1343,8 @@
   "ideaGenerationGroupType": "Cynhyrchu syniadau",
   "allOurIdeasGroupType": "All Our Ideas Pairwise Ranking",
   "yourIdeaHasBeenAdded": "Mae eich syniad wedi'i ychwanegu, yn creu delwedd eicon.",
-  "aiIconInfo": "Mae eicon ar gyfer eich ateb yn cael ei greu, gallwch gau'r ffenestr neu aros am yr eicon i gael ei greu. Bydd gennych hefyd yr opsiwn i ailgynhyrchu'r eicon."
+  "aiIconInfo": "Mae eicon ar gyfer eich ateb yn cael ei greu, gallwch gau'r ffenestr neu aros am yr eicon i gael ei greu. Bydd gennych hefyd yr opsiwn i ailgynhyrchu'r eicon.",
+  "getColorFromLogo": "Cael lliw o lun logo",
+  "explainBothAnswers": "Esboniad o atebion",
+  "allOurIdeas": "All Our Ideas"
 }

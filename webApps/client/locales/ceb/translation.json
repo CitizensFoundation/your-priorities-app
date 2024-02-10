@@ -770,7 +770,7 @@
     "content": "Sulod sa panid",
     "publish": "I-publish",
     "addLocale": "Dugang lokal",
-    "unPublish": "UnPublish",
+    "unPublish": "I-unpublish",
     "deletePage": "Papas",
     "addPage": "Dugang bag-ong pahina",
     "managePages": "Dumala sa mga pahina",
@@ -1047,7 +1047,7 @@
     "login": "Login",
     "create": "Paghimo og Gumagamit",
     "cancel": "Kanselahon",
-    "logout": "Logout",
+    "logout": "Gawas",
     "newPassword": "bag-ong password",
     "register": "Bag-ong gumagamit",
     "alreadyRegisterred": "Kining email narehistro na. Mahimo kang maghimo og Bag-ong Password kung kinahanglan.",
@@ -1058,7 +1058,7 @@
     "setEmailConfirmationInfo": "Kining email address gamiton sa pagpadala nimo og mga pahibalo, mahimo nimo kini usbon kung gusto mo."
   },
   "other": "Lain",
-  "socialMedia": "Social Media",
+  "socialMedia": "Sosyal Medya",
   "location": {
     "set": "Itakda ang lokasyon"
   },
@@ -1140,7 +1140,7 @@
   "Theme, language, etc": "Tema, pinulongan, ug uban pa",
   "Manage badges": "Dumala sa mga badge",
   "Manage profile images": "Dumala sa profile nga mga hulagway",
-  "Config": "Config",
+  "Config": "Kumpig",
   "New Community": "Bag-ong Komunidad",
   "Name": "Ngalan",
   "Description": "Deskripsyon",
@@ -1184,7 +1184,7 @@
   "hats": "Mga Kalo",
   "dataForVisualizationJsonError": "JSON Sayop",
   "selectCategory": "Pilia ang Kategorya",
-  "earlConfig": "Earl COnfig",
+  "earlConfig": "Earl Kumpig",
   "show_cant_decide": "Ipakita dili makahukom",
   "accept_new_ideas": "Dawata bag-ong ideya",
   "hide_results": "tago_resulta",
@@ -1343,5 +1343,8 @@
   "yourIdea": "Ang imong ideya",
   "chatInput": "Pangutanaa ako",
   "yourIdeaHasBeenAdded": "Ang imong ideya nadugang na, naghimo og icon nga hulagway.",
-  "aiIconInfo": "Usa ka Icon alang sa imong tubag ang gihimo, mahimo nimong sirhan ang bintana o maghulat hangtud nga mahimo ang icon. Aduna ka usab kapilian nga mubalik paghimo sa icon."
+  "aiIconInfo": "Usa ka Icon alang sa imong tubag ang gihimo, mahimo nimong sirhan ang bintana o maghulat hangtud nga mahimo ang icon. Aduna ka usab kapilian nga mubalik paghimo sa icon.",
+  "getColorFromLogo": "Kuhaa ang kolor gikan sa logo",
+  "explainBothAnswers": "Paliwanag sa mga tubag",
+  "allOurIdeas": "All Our Ideas"
 }

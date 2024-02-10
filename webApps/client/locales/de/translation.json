@@ -1350,5 +1350,8 @@
   "ideaGenerationGroupType": "Ideenfindung",
   "allOurIdeasGroupType": "All Our Ideas Pairwise Ranking",
   "yourIdeaHasBeenAdded": "Ihre Idee wurde hinzugefügt, Icon wird erstellt.",
-  "aiIconInfo": "Ein Icon für Ihre Antwort wird erstellt. Sie können das Fenster schließen oder auf die Erstellung des Icons warten. Sie haben auch die Möglichkeit, das Icon neu zu erstellen."
+  "aiIconInfo": "Ein Icon für Ihre Antwort wird erstellt. Sie können das Fenster schließen oder auf die Erstellung des Icons warten. Sie haben auch die Möglichkeit, das Icon neu zu erstellen.",
+  "getColorFromLogo": "Farbe aus Logo holen",
+  "explainBothAnswers": "Erklärung der Antworten",
+  "allOurIdeas": "All Our Ideas"
 }

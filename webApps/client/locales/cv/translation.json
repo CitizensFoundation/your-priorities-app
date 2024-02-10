@@ -40,7 +40,7 @@
   "goalTree": "Максат Пулăмĕ",
   "futureRealityTree": "Килĕш Пулăмĕ",
   "ideaGenerationGroupType": "Кĕтеслĕх пулăшу",
-  "allOurIdeasGroupType": "All Our Ideas Pairwise Ranking",
+  "allOurIdeasGroupType": "All Our Ideas Парлă Хутшăнакан",
   "allowGenerativeImages": "Генератив сурăтсем пур",
   "reports": "Отчетсем",
   "reportsInfo": "Отчетсем пулăшать",
@@ -1184,7 +1184,7 @@
   "hats": "Шăпкасем",
   "dataForVisualizationJsonError": "JSON Хата",
   "selectCategory": "Категорине сăлтар",
-  "earlConfig": "Earl COnfig",
+  "earlConfig": "Earl Конфиг",
   "show_cant_decide": "Кӗнеке тӗрлӗшӗнчи палӑртма",
   "accept_new_ideas": "Ҫӗнӗ яҫӑсем пӗрлешӗр",
   "hide_results": "результатсен чӑнма",
@@ -1343,5 +1343,8 @@
   "yourIdea": "Ыран",
   "chatInput": "Манăн пăнчă курăк",
   "yourIdeaHasBeenAdded": "Ыран пур, иконăн сурăтне тăрать.",
-  "aiIconInfo": "Сăмахраннең пăнчăн вăйăн пулать, тĕрĕслене уйрăм пăрать я пулсан пăнчăн вăйăн кутсан. Пăнчăнне ялтартма пултарма пултарать тан."
+  "aiIconInfo": "Сăмахраннең пăнчăн вăйăн пулать, тĕрĕслене уйрăм пăрать я пулсан пăнчăн вăйăн кутсан. Пăнчăнне ялтартма пултарма пултарать тан.",
+  "getColorFromLogo": "Логотипран тӳр килтер",
+  "explainBothAnswers": "Паллăшулăхсен тăлкăшĕ",
+  "allOurIdeas": "All Our Ideas"
 }

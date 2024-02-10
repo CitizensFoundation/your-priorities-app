@@ -1140,7 +1140,7 @@
   "Theme, language, etc": "Tèma, lenga, etc.",
   "Manage badges": "Gerir insígnias",
   "Manage profile images": "Gerir imatges de perfil",
-  "Config": "Config",
+  "Config": "Configuracion",
   "New Community": "Comunautat Nòva",
   "Name": "Nom",
   "Description": "Descripcion",
@@ -1343,5 +1343,8 @@
   "yourIdea": "Vòstra idèa",
   "chatInput": "Demandatz-me una question",
   "yourIdeaHasBeenAdded": "Vòstra idèa es estada aponduda, generant imatge d'icona.",
-  "aiIconInfo": "Un icòna per la vòstra responsa es a èsser generada, podètz barrar la fenèstra o esperar que l'icòna siá generada. Auretz tanben l'opcion de regenerar l'icòna."
+  "aiIconInfo": "Un icòna per la vòstra responsa es a èsser generada, podètz barrar la fenèstra o esperar que l'icòna siá generada. Auretz tanben l'opcion de regenerar l'icòna.",
+  "getColorFromLogo": "Obténer color de l'imatge de logotip",
+  "explainBothAnswers": "Explicacion de las responsas",
+  "allOurIdeas": "All Our Ideas"
 }

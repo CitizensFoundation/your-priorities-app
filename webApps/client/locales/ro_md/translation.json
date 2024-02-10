@@ -352,7 +352,7 @@
   "endorsementHats": "Pălării",
   "endorsementButtons": "Butoane de susținere",
   "bulkStatusUdateForInfo": "Clic pe idei pentru mai multă informație",
-  "urlLink": "Link",
+  "urlLink": "Legătură",
   "bulkStatusUdateFor": "Actualizări de stare pentru idei",
   "inviteNotFoundOrAlreadyUsed": "Invitatul nu a fost găsit sau este deja utilizat",
   "reportConfirmation": "Sunteți sigur/ă că doriți să raportați acest conținut pentru încălcarea regulilor acestui site web?",
@@ -416,7 +416,7 @@
     "frequency": "Frecvența",
     "myPosts": "Ideile mele",
     "muted": "Dezactivat",
-    "browser": "Browser",
+    "browser": "Navigator",
     "email": "E-mail",
     "asItHappens": "Frecvența producerii",
     "daily": "Zilnic",
@@ -1347,5 +1347,12 @@
   "ideaAdded": "Ideea ta a fost adăugată, poți continua să votezi.",
   "ideaModerationQueue": "Ideea ta este într-o coadă de moderare.",
   "yourIdea": "Ideea ta",
-  "chatInput": "Întreabă-mă ceva"
+  "chatInput": "Întreabă-mă ceva",
+  "getColorFromLogo": "Obține culoarea din logo",
+  "explainBothAnswers": "Explicația răspunsurilor",
+  "allOurIdeas": "All Our Ideas",
+  "ideaGenerationGroupType": "Generarea ideilor",
+  "allOurIdeasGroupType": "All Our Ideas Clasamentul Perechi",
+  "yourIdeaHasBeenAdded": "Ideea ta a fost adăugată, se generează imaginea iconiței.",
+  "aiIconInfo": "O iconiță pentru răspunsul tău este în curs de generare, poți închide fereastra sau aștepta generarea iconiței. Vei avea de asemenea opțiunea de a regenera iconița."
 }

@@ -863,7 +863,7 @@
   "samlAuth": "SAML Auth",
   "basic": "Asosiy",
   "webApp": "Veb ilova",
-  "authApis": "Auth APIs",
+  "authApis": "Auth APIlari",
   "dontHaveAccount": "Hisobingiz yo'qmi?",
   "cantRememberPassword": "Parolni eslay olmaysizmi?",
   "loginAndRegistration": "Kirish va Ro'yxatdan o'tish",
@@ -1348,5 +1348,12 @@
   "ideaAdded": "Fikringiz qo'shildi, ovoz berishda davom etishingiz mumkin.",
   "ideaModerationQueue": "Fikringiz moderatsiya navbatida.",
   "yourIdea": "Fikringiz",
-  "chatInput": "Menga savol bering"
+  "chatInput": "Menga savol bering",
+  "getColorFromLogo": "Logotipdan rang olish",
+  "explainBothAnswers": "Javoblarning tushuntirishi",
+  "allOurIdeas": "All Our Ideas",
+  "ideaGenerationGroupType": "G'oya yaratish",
+  "allOurIdeasGroupType": "All Our Ideas Juftlik Reytingi",
+  "yourIdeaHasBeenAdded": "Sizning g'oyangiz qo'shildi, belgi rasmi yaratilmoqda.",
+  "aiIconInfo": "Sizning javobingiz uchun belgi yaratilmoqda, oynani yopishingiz yoki belgi yaratilishini kutishingiz mumkin. Belgi qayta yaratilishini tanlash imkoniyati ham bo'ladi."
 }
