@@ -526,18 +526,23 @@ let YpApp = class YpApp extends YpBaseElement {
         }
     }
     renderPromotionApp() {
-        const isActive = this.appMode === "analytics" || this.appMode === "promotion";
-        const showSpinner = this.loadingAppSpinner; // Example loading state variable
-        return html `
-      <div class="loadingAppSpinnerPage ${showSpinner ? "" : "hidden"}">
-        <md-circular-progress indeterminate></md-circular-progress>
-      </div>
-      <yp-promotion-app
-        ?active="${isActive}"
-        class="${isActive ? "active" : ""}"
-        ?hidden="${showSpinner}"
-      ></yp-promotion-app>
-    `;
+        if (this.appMode == "main") {
+            return nothing;
+        }
+        else {
+            const isActive = this.appMode === "analytics" || this.appMode === "promotion";
+            const showSpinner = this.loadingAppSpinner; // Example loading state variable
+            return html `
+        <div class="loadingAppSpinnerPage ${showSpinner ? "" : "hidden"}">
+          <md-circular-progress indeterminate></md-circular-progress>
+        </div>
+        <yp-promotion-app
+          ?active="${isActive}"
+          class="${isActive ? "active" : ""}"
+          ?hidden="${showSpinner}"
+        ></yp-promotion-app>
+      `;
+        }
     }
     render() {
         return html `

@@ -107,7 +107,7 @@ export declare class YpApp extends YpBaseElement {
     renderTopBar(): import("lit-html").TemplateResult<1>;
     renderFooter(): import("lit-html").TemplateResult<1>;
     renderAdminApp(): import("lit-html").TemplateResult<1> | typeof nothing;
-    renderPromotionApp(): import("lit-html").TemplateResult<1>;
+    renderPromotionApp(): import("lit-html").TemplateResult<1> | typeof nothing;
     render(): import("lit-html").TemplateResult<1>;
     _openNotifyDialog(event: CustomEvent): void;
     _openToast(event: CustomEvent): void;

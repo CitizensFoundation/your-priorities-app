@@ -111,7 +111,7 @@ export class AoiSurveyResuls extends YpBaseElement {
         .answerImage {
           width: 75px;
           height: 75px;
-          border-radius: 32px;
+          border-radius: 45px;
         }
 
         .subTitle {
@@ -255,7 +255,7 @@ export class AoiSurveyResuls extends YpBaseElement {
             <div class="layout horizontal">
               <div class="column ideaName">${result.data.content}</div>
               <div class="flex"></div>
-              <img class="answerImage" src="${result.data.imageUrl!}" />
+              <img class="answerImage" ?hidden="${result.data.imageUrl==undefined}" src="${result.data.imageUrl!}" />
             </div>
             <div
               class="column layout vertical center-center scores"

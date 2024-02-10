@@ -123,5 +123,10 @@ export const YpAppStyles = css `
     --mdc-theme-on-primary: var(--md-sys-color-on-surface, #0f0);
     color: var(--md-sys-color-on-surface);
   }
+
+  @media (max-width: 800px) {
+    mwc-top-app-bar {
+      --mdc-top-app-bar-width: 100vw;
+  }
 `;
 //# sourceMappingURL=YpAppStyles.js.map
