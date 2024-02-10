@@ -601,36 +601,41 @@ export class AllOurIdeasController {
       console.log(
         `@question is ${question}. ${group.configuration.allOurIdeas.earl.configuration.analysis_config}`
       );
-      const analysisConfig = JSON.parse(
-        group.configuration.allOurIdeas.earl.configuration.analysis_config
-      );
+      const analysisConfig =
+        group.configuration.allOurIdeas.earl.configuration.analysis_config;
       console.log(`@analysisConfig is ${analysisConfig}.`);
       const analysisIdeaConfig =
         analysisConfig.analyses[parseInt(analysisIndex as any)];
       console.log(`@analysisIdeaConfig is ${analysisIdeaConfig}.`);
+
       const ideasIdsRange = analysisIdeaConfig.ideasIdsRange;
       console.log(`@ideasIdsRange is ${ideasIdsRange}.`);
-      console.log(
-        `@analysisIdeaConfig.analysisTypes is ${analysisIdeaConfig.analysisTypes}.`
-      );
-      const analysisType =
-        analysisIdeaConfig.analysisTypes[parseInt(analysisTypeIndex as any)];
 
+      const analysisType =
+        analysisIdeaConfig.analysisTypes[parseInt(analysisTypeIndex, 10)];
+      console.log(`Analysis Type: ${analysisType}`);
       const perPage = Math.abs(ideasIdsRange);
       console.log(`Per page: ${perPage}`);
 
-      const choicesCount =
+      const totalActiveChoices =
         question.choices_count - question.inactive_choices_count;
 
-      const offset =
-        ideasIdsRange < 0 ? Math.max(choicesCount - perPage, 0) : 0;
 
+      const offset =
+        ideasIdsRange < 0 ? Math.max(totalActiveChoices - perPage, 0) : 0;
       console.log(`Offset: ${offset}`);
 
       const choicesResponse = await fetch(
-        `${PAIRWISE_API_HOST}/questions/${questionId}/choices?limit=${perPage}&offset=${offset}`
+        `${PAIRWISE_API_HOST}/questions/${questionId}/choices.json?all=1&show_all=true&limit=${perPage}&offset=${offset}`,
+        {
+          headers: defaultAuthHeader,
+        }
       );
-      const choices = (await choicesResponse.json()) as AoiChoiceData[];
+      const choices = await choicesResponse.json() as AoiChoiceData[];
+
+      for (const choice of choices) {
+        choice.data = JSON.parse(choice.data as any) as AoiAnswerToVoteOnData;
+      }
 
       console.log(`Number of choices fetched: ${choices.length}`);
 
@@ -640,13 +645,14 @@ export class AllOurIdeasController {
       );
 
       const choiceIds = sortedChoices.map((choice) => `${choice.id}`).join("-");
+
       const promptHash = crypto
         .createHash("sha256")
         .update(analysisType.contextPrompt)
         .digest("hex")
         .substring(0, 8);
 
-      const analysisCacheKey = `${questionId}_${analysisTypeIndex}_${choiceIds}_${promptHash}_ai_analysis_v8`;
+      const analysisCacheKey = `${questionId}_${analysisTypeIndex}_${choiceIds}_${promptHash}_ai_analysis_v10`;
       console.log(
         `analysisCacheKey is ${analysisCacheKey} prompt ${analysisType.contextPrompt.substring(
           0,
@@ -671,7 +677,7 @@ export class AllOurIdeasController {
 
       res.json({
         selectedChoices: choices,
-        cachedAnalysis
+        cachedAnalysis,
       });
     } catch (error) {
       console.error(error);

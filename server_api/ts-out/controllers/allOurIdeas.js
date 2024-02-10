@@ -402,21 +402,26 @@ export class AllOurIdeasController {
             const question = (await questionResponse.json());
             // Additional logic adapted from Ruby for fetching and sorting choices
             console.log(`@question is ${question}. ${group.configuration.allOurIdeas.earl.configuration.analysis_config}`);
-            const analysisConfig = JSON.parse(group.configuration.allOurIdeas.earl.configuration.analysis_config);
+            const analysisConfig = group.configuration.allOurIdeas.earl.configuration.analysis_config;
             console.log(`@analysisConfig is ${analysisConfig}.`);
             const analysisIdeaConfig = analysisConfig.analyses[parseInt(analysisIndex)];
             console.log(`@analysisIdeaConfig is ${analysisIdeaConfig}.`);
             const ideasIdsRange = analysisIdeaConfig.ideasIdsRange;
             console.log(`@ideasIdsRange is ${ideasIdsRange}.`);
-            console.log(`@analysisIdeaConfig.analysisTypes is ${analysisIdeaConfig.analysisTypes}.`);
-            const analysisType = analysisIdeaConfig.analysisTypes[parseInt(analysisTypeIndex)];
+            const analysisType = analysisIdeaConfig.analysisTypes[parseInt(analysisTypeIndex, 10)];
+            console.log(`Analysis Type: ${analysisType}`);
             const perPage = Math.abs(ideasIdsRange);
             console.log(`Per page: ${perPage}`);
-            const choicesCount = question.choices_count - question.inactive_choices_count;
-            const offset = ideasIdsRange < 0 ? Math.max(choicesCount - perPage, 0) : 0;
+            const totalActiveChoices = question.choices_count - question.inactive_choices_count;
+            const offset = ideasIdsRange < 0 ? Math.max(totalActiveChoices - perPage, 0) : 0;
             console.log(`Offset: ${offset}`);
-            const choicesResponse = await fetch(`${PAIRWISE_API_HOST}/questions/${questionId}/choices?limit=${perPage}&offset=${offset}`);
-            const choices = (await choicesResponse.json());
+            const choicesResponse = await fetch(`${PAIRWISE_API_HOST}/questions/${questionId}/choices.json?all=1&show_all=true&limit=${perPage}&offset=${offset}`, {
+                headers: defaultAuthHeader,
+            });
+            const choices = await choicesResponse.json();
+            for (const choice of choices) {
+                choice.data = JSON.parse(choice.data);
+            }
             console.log(`Number of choices fetched: ${choices.length}`);
             const sortedChoices = choices.sort((a, b) => a.id - b.id);
             console.log(`Sorted choice IDs: ${sortedChoices.map((choice) => choice.id)}`);
@@ -426,7 +431,7 @@ export class AllOurIdeasController {
                 .update(analysisType.contextPrompt)
                 .digest("hex")
                 .substring(0, 8);
-            const analysisCacheKey = `${questionId}_${analysisTypeIndex}_${choiceIds}_${promptHash}_ai_analysis_v8`;
+            const analysisCacheKey = `${questionId}_${analysisTypeIndex}_${choiceIds}_${promptHash}_ai_analysis_v10`;
             console.log(`analysisCacheKey is ${analysisCacheKey} prompt ${analysisType.contextPrompt.substring(0, 15)}...`);
             // Implement caching logic here
             let cachedAnalysis = await req.redisClient.get(analysisCacheKey);
@@ -437,7 +442,7 @@ export class AllOurIdeasController {
             }
             res.json({
                 selectedChoices: choices,
-                cachedAnalysis
+                cachedAnalysis,
             });
         }
         catch (error) {

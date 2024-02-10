@@ -108,6 +108,7 @@ export class AiHelper {
         If there are very few wins or losses, under 10 for most of the ideas, then always output a disclaimer to that end, in a separate second paragraph.
         Don't output Idea 1, Idea 2 in your answer.
         Be creative and think step by step.
+        Always output in a clear markdown format.
         If the prompt asks for a table always output a markdown table.
     `;
         const answersText = answers
