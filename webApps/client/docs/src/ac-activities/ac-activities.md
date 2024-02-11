@@ -1,30 +1,30 @@
 # AcActivities
 
-The `AcActivities` class is a web component that displays a list of activities, such as posts or news stories, within a domain, community, group, post, or user context. It supports infinite scrolling, loading more data as the user scrolls down, and can display recommended posts. It also allows users to submit new posts if they are logged in.
+AcActivities is a custom web component that extends YpBaseElementWithLogin. It is responsible for displaying a list of activities, such as posts or news stories, within a domain, community, group, post, or user collection. It supports infinite scrolling, loading more data as the user scrolls down, and can display recommended posts alongside the main list of activities.
 
 ## Properties
 
-| Name                        | Type                                  | Description                                                                                   |
-|-----------------------------|---------------------------------------|-----------------------------------------------------------------------------------------------|
-| disableNewPosts             | Boolean                               | If true, disables the ability to submit new posts.                                            |
-| noRecommendedPosts          | Boolean                               | If true, no recommended posts are shown.                                                      |
-| gotInitialData              | Boolean                               | If true, indicates that the initial data has been loaded.                                     |
-| activities                  | Array<AcActivityData> \| undefined    | An array of activity data objects.                                                            |
-| domainId                    | number \| undefined                   | The ID of the domain context for the activities.                                              |
-| collectionId                | number                                | The ID of the collection context for the activities.                                          |
-| collectionType              | string                                | The type of collection context for the activities (e.g., 'domain', 'community').              |
-| communityId                 | number \| undefined                   | The ID of the community context for the activities.                                           |
-| groupId                     | number \| undefined                   | The ID of the group context for the activities.                                               |
-| postId                      | number \| undefined                   | The ID of the post context for the activities.                                                |
-| postGroupId                 | number \| undefined                   | The ID of the post group context for the activities.                                          |
-| userId                      | number \| undefined                   | The ID of the user context for the activities.                                                |
-| mode                        | 'activities' \| 'news_feeds'          | The mode of the component, which determines the type of data to display.                      |
-| url                         | string \| undefined                   | The URL used to fetch activities data.                                                        |
-| latestProcessedActivityAt   | string \| undefined                   | The timestamp of the latest processed activity.                                               |
-| oldestProcessedActivityAt   | string \| undefined                   | The timestamp of the oldest processed activity.                                               |
-| activityIdToDelete          | number \| undefined                   | The ID of the activity to delete.                                                             |
-| recommendedPosts            | Array<YpPostData> \| undefined        | An array of recommended post data objects.                                                    |
-| closeNewsfeedSubmissions    | Boolean                               | If true, closes the ability to submit new posts to the newsfeed.                              |
+| Name                        | Type                              | Description                                                                                   |
+|-----------------------------|-----------------------------------|-----------------------------------------------------------------------------------------------|
+| disableNewPosts             | Boolean                           | If true, new posts are disabled.                                                              |
+| noRecommendedPosts          | Boolean                           | If true, no recommended posts are shown.                                                      |
+| gotInitialData              | Boolean                           | If true, initial data has been loaded.                                                        |
+| activities                  | Array<AcActivityData> \| undefined | The list of activities to display.                                                            |
+| domainId                    | number \| undefined               | The ID of the domain to fetch activities from.                                                |
+| collectionId                | number                            | The ID of the collection to fetch activities from.                                            |
+| collectionType              | string                            | The type of collection to fetch activities from (e.g., 'domain', 'community', 'group').       |
+| communityId                 | number \| undefined               | The ID of the community to fetch activities from.                                             |
+| groupId                     | number \| undefined               | The ID of the group to fetch activities from.                                                 |
+| postId                      | number \| undefined               | The ID of the post to fetch activities from.                                                  |
+| postGroupId                 | number \| undefined               | The ID of the post group to fetch activities from.                                            |
+| userId                      | number \| undefined               | The ID of the user to fetch activities from.                                                  |
+| mode                        | 'activities' \| 'news_feeds'      | The mode of the component, determining the type of data to fetch.                             |
+| url                         | string \| undefined               | The URL to fetch activities from.                                                             |
+| latestProcessedActivityAt   | string \| undefined               | The timestamp of the latest processed activity.                                               |
+| oldestProcessedActivityAt   | string \| undefined               | The timestamp of the oldest processed activity.                                               |
+| activityIdToDelete          | number \| undefined               | The ID of the activity to delete.                                                             |
+| recommendedPosts            | Array<YpPostData> \| undefined     | The list of recommended posts to display.                                                     |
+| closeNewsfeedSubmissions    | Boolean                           | If true, newsfeed submissions are closed.                                                     |
 
 ## Methods
 
@@ -32,37 +32,33 @@ The `AcActivities` class is a web component that displays a list of activities, 
 |---------------------|-----------------------------|-------------|-----------------------------------------------------------------------------|
 | renderItem          | activity: AcActivityData, index: number | TemplateResult | Renders an individual activity item.                                        |
 | render              |                             | TemplateResult | Renders the component content.                                              |
-| scrollEvent         | event: { last: number; }    | void        | Handles the scroll event to load more data when reaching the end of the list.|
-| connectedCallback   |                             | void        | Lifecycle callback that runs when the component is added to the DOM.        |
-| disconnectedCallback|                             | void        | Lifecycle callback that runs when the component is removed from the DOM.    |
+| scrollEvent         | event: { last: number; }   | void        | Handles the scroll event to load more data.                                 |
+| connectedCallback   |                             | void        | Lifecycle method called when the component is added to the DOM.             |
+| disconnectedCallback|                             | void        | Lifecycle method called when the component is removed from the DOM.         |
 | _openLogin          |                             | void        | Opens the login dialog.                                                     |
-| _pointDeleted       | event: CustomEvent          | void        | Removes an activity from the list when a point is deleted.                  |
-| _activityDeletedResponse | event: CustomEvent     | void        | Removes an activity from the list based on a server response.               |
-| _removeActivityId   | activityId: number          | void        | Removes an activity from the list by its ID.                                |
-| _deleteActivity     | event: CustomEvent          | void        | Initiates the deletion of an activity.                                      |
-| _reallyDelete       |                             | Promise<void> | Confirms and carries out the deletion of an activity.                      |
-| _generateRequest    | typeId: number, typeName: string | void | Generates a request to load activities data.                               |
-| _loadMoreData       |                             | Promise<void> | Loads more activities data when needed.                                    |
-| loadNewData         |                             | Promise<void> | Loads new activities data.                                                 |
-| _domainIdChanged    |                             | void        | Handles changes to the domain ID property.                                  |
-| _communityIdChanged |                             | void        | Handles changes to the community ID property.                               |
-| _groupIdChanged     |                             | void        | Handles changes to the group ID property.                                   |
-| _postIdChanged      |                             | void        | Handles changes to the post ID property.                                    |
-| _userIdChanged      |                             | void        | Handles changes to the user ID property.                                    |
+| _pointDeleted       | event: CustomEvent          | void        | Handles the deletion of a point.                                            |
+| _deleteActivity     | event: CustomEvent          | void        | Requests confirmation for deleting an activity.                             |
+| _reallyDelete       |                             | Promise<void> | Actually deletes the activity after confirmation.                           |
+| _generateRequest    | typeId: number, typeName: string | void        | Generates the request URL and initiates data loading.                       |
+| _loadMoreData       |                             | Promise<void> | Loads more activities when the user scrolls down.                           |
+| loadNewData         |                             | Promise<void> | Loads new data for the activities list.                                     |
+| _domainIdChanged    |                             | void        | Called when the domainId property changes.                                  |
+| _communityIdChanged |                             | void        | Called when the communityId property changes.                               |
+| _groupIdChanged     |                             | void        | Called when the groupId property changes.                                   |
+| _postIdChanged      |                             | void        | Called when the postId property changes.                                    |
+| _userIdChanged      |                             | void        | Called when the userId property changes.                                    |
 | _clearScrollThreshold|                            | void        | Clears the scroll threshold.                                                |
-| _getRecommendations | typeName: string, typeId: number | Promise<void> | Fetches recommended posts.                                                |
-| _preProcessActivities| activities: Array<AcActivityData> | Array<AcActivityData> | Pre-processes activities data before rendering. |
-| _processResponse    | activitiesResponse: AcActivitiesResponse | void | Processes the response from the server after loading activities data.      |
+| _getRecommendations | typeName: string, typeId: number | Promise<void> | Fetches recommended posts for the given type and ID.                        |
+| _preProcessActivities| activities: Array<AcActivityData> | Array<AcActivityData> | Pre-processes activities before rendering.                                  |
+| _processResponse    | activitiesResponse: AcActivitiesResponse | void        | Processes the response from the server and updates the activities list.     |
 | scrollToItem        | item: AcActivityData        | void        | Scrolls to a specific activity item in the list.                            |
-| fireResize          |                             | void        | Triggers a resize event for the list.                                       |
+| fireResize          |                             | void        | Fires a resize event for the activities list.                               |
 
 ## Events (if any)
 
-- **yp-open-login**: Emitted when the login dialog needs to be opened.
-- **yp-refresh-activities-scroll-threshold**: Emitted to refresh the activities scroll threshold.
-- **ak-delete-activity**: Emitted when an activity is requested to be deleted.
 - **yp-point-deleted**: Emitted when a point is deleted.
-- **yp-refresh-activities-scroll-threshold**: Emitted to clear the scroll threshold.
+- **yp-refresh-activities-scroll-threshold**: Emitted to refresh the scroll threshold.
+- **yp-delete-activity**: Emitted when an activity is requested to be deleted.
 
 ## Examples
 
@@ -74,15 +70,9 @@ The `AcActivities` class is a web component that displays a list of activities, 
   .groupId=${789}
   .postId=${101}
   .userId=${102}
-  .collectionId=${103}
   .collectionType=${'community'}
-  .mode=${'activities'}
-  .disableNewPosts=${false}
-  .noRecommendedPosts=${true}
-  .gotInitialData=${false}
-  .activities=${[/* array of AcActivityData */]}
-  .recommendedPosts=${[/* array of YpPostData */]}
+  .collectionId=${456}
 ></ac-activities>
 ```
 
-Note: The above example is a hypothetical usage scenario of the `AcActivities` component within an HTML template. The actual implementation may vary depending on the context in which it is used.
+Please note that the above example is a hypothetical usage within an HTML template and assumes the necessary properties are set and the component is properly integrated within a web application.

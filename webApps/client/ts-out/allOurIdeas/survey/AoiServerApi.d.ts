@@ -4,7 +4,7 @@ export declare class AoiServerApi extends YpServerApi {
     getEarlData(groupId: number): AoiEarlResponse;
     getPrompt(groupId: number, questionId: number): Promise<AoiPromptData>;
     getSurveyResults(groupId: number): Promise<AoiChoiceData[]>;
-    getSurveyAnalysis(groupId: number, wsClientId: string, analysisIndex: number, analysisTypeIndex: number): AoiAnalysisResponse;
+    getSurveyAnalysis(groupId: number, wsClientId: string, analysisIndex: number, analysisTypeIndex: number, languageName: string): AoiAnalysisResponse;
     submitIdea(groupId: number, questionId: number, newIdea: string): AoiAddIdeaResponse;
     postVote(groupId: number, questionId: number, promptId: number, locale: string, body: AoiVoteData, direction: "left" | "right" | "skip"): AoiVoteResponse;
     postVoteSkip(groupId: number, questionId: number, promptId: number, locale: string, body: AoiVoteSkipData): AoiVoteResponse;

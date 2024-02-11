@@ -12,16 +12,13 @@ A custom element that represents a card for a collection item, which can be a gr
 
 ## Methods
 
-| Name                  | Parameters            | Return Type | Description                                                                 |
-|-----------------------|-----------------------|-------------|-----------------------------------------------------------------------------|
-| connectedCallback     | none                  | void        | Lifecycle method that runs when the element is added to the DOM.            |
-| goToItem              | event: CustomEvent    | void        | Navigates to the item's detail page when the card is clicked.               |
-| _setupFontNameFontSize| none                  | void        | Sets up the font size for the collection name based on the screen width.    |
-| updated               | changedProperties: Map| void        | Lifecycle method that runs when the element's properties have been updated. |
-| renderLogoImage       | none                  | TemplateResult | Renders the logo image of the collection item.                            |
-| renderDataViz         | none                  | TemplateResult | Renders the data visualization for the collection item if available.       |
-| renderCardInfo        | none                  | TemplateResult | Renders the information section of the card.                               |
-| render                | none                  | TemplateResult | Renders the entire card element.                                           |
+| Name            | Parameters           | Return Type | Description                                                                 |
+|-----------------|----------------------|-------------|-----------------------------------------------------------------------------|
+| goToItem        | event: CustomEvent   | void        | Navigates to the collection item when clicked.                              |
+| _setupFontNameFontSize | none             | void        | Sets up the font size for the collection name based on the screen width.    |
+| renderLogoImage | none                 | TemplateResult | Renders the logo image of the collection item.                             |
+| renderDataViz   | none                 | TemplateResult | Renders the data visualization for the collection item if available.       |
+| renderCardInfo  | none                 | TemplateResult | Renders the information section of the card including name and description.|
 
 ## Events (if any)
 
@@ -30,12 +27,12 @@ A custom element that represents a card for a collection item, which can be a gr
 ## Examples
 
 ```typescript
-// Example usage of the YpCollectionItemCard
+// Example usage of the YpCollectionItemCard custom element
 <yp-collection-item-card
-  .item=${myCollectionItem}
+  .item=${collectionItemData}
   .itemType=${'group'}
-  .collection=${myParentCollection}
+  .collection=${parentCollectionData}
 ></yp-collection-item-card>
 ```
 
-Please note that the actual usage may require additional setup for properties and handling of events, which is not shown in this simple example.
+Please note that the actual usage may vary depending on the context in which the `YpCollectionItemCard` element is used, and the properties may need to be bound differently in a real-world application.

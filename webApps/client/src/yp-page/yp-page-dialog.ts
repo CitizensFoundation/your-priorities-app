@@ -156,6 +156,7 @@ export class YpPageDialog extends YpBaseElement {
   _switchLanguage() {
     const locale = this.language == "en" ? "is" : "en";
     window.appGlobals.changeLocaleIfNeeded(locale, true);
+    debugger;
     localStorage.setItem("yp-user-locale", locale);
     console.info("Saving locale");
     if (window.appUser && window.appUser.user) {

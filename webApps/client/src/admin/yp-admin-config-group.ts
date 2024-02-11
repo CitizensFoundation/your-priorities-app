@@ -493,7 +493,7 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
       ] as Array<YpStructuredConfigData>,
     } as YpConfigTabData;
 
-    if (this.groupTypeIndex!==GroupType.allOurIdeas) {
+    if (this.groupTypeIndex !== GroupType.allOurIdeas) {
       base.items.concat([
         {
           text: "allowAnonymousUsers",
@@ -548,7 +548,7 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
           value: this.group.configuration.registrationQuestions,
           translationToken: "registrationQuestions",
         },
-      ])
+      ]);
     }
 
     return base;
@@ -577,7 +577,8 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
           templateData: html`
             <yp-theme-selector
               @config-updated="${this._configChanged}"
-              ?hasLogoImage="${this.imagePreviewUrl || YpMediaHelpers.getImageFormatUrl(this.currentLogoImages)}"
+              ?hasLogoImage="${this.imagePreviewUrl ||
+              YpMediaHelpers.getImageFormatUrl(this.currentLogoImages)}"
               .disableSelection="${this.group.configuration
                 .inheritThemeFromCommunity}"
               @get-color-from-logo="${this.getColorFromLogo}"
@@ -585,7 +586,7 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
               .themeConfiguration="${this.group.configuration.theme!}"
             ></yp-theme-selector>
           `,
-        }
+        },
       ] as Array<YpStructuredConfigData>,
     } as YpConfigTabData;
   }
@@ -1715,11 +1716,7 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
         console.error("Error parsing JSON", e);
       }
     }
-    this.set(
-      this.group.configuration.allOurIdeas!.earl,
-      earlUpdatePath,
-      value
-    );
+    this.set(this.group.configuration.allOurIdeas!.earl, earlUpdatePath, value);
     this._configChanged();
     this.requestUpdate();
   }
@@ -1770,9 +1767,9 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
           text: "analysis_config",
           type: "textarea",
           rows: 7,
-          value:
-            earl?.configuration?.analysis_config ||
-            JSON.stringify(defaultAiAnalysisJson, null, 2),
+          value: earl?.configuration?.analysis_config
+            ? JSON.stringify(earl?.configuration?.analysis_config, null, 2)
+            : JSON.stringify(defaultAiAnalysisJson, null, 2),
           onChange: (e: CustomEvent) =>
             this._updateEarl(e, "configuration.analysis_config", true),
           translationToken: "aoiAiAnalysisConfig",

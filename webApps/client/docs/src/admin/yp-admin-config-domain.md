@@ -1,6 +1,6 @@
 # YpAdminConfigDomain
 
-The `YpAdminConfigDomain` class extends `YpAdminConfigBase` and is responsible for rendering and managing the configuration of a domain within an admin panel. It allows administrators to set various domain-related settings such as default locale, theme, media uploads, and API keys for social authentication.
+YpAdminConfigDomain is a custom element that extends YpAdminConfigBase, providing administrative configuration functionalities for a domain within a web application. It allows administrators to manage domain settings such as logo images, default locale, theme, community creation permissions, and API keys for third-party authentication services.
 
 ## Properties
 
@@ -10,36 +10,30 @@ The `YpAdminConfigDomain` class extends `YpAdminConfigBase` and is responsible f
 
 ## Methods
 
-| Name                           | Parameters                                  | Return Type | Description                                                                                   |
-|--------------------------------|---------------------------------------------|-------------|-----------------------------------------------------------------------------------------------|
-| renderHeader                   | none                                        | TemplateResult \| typeof nothing | Renders the header section of the domain configuration page.                                  |
-| renderHiddenInputs             | none                                        | TemplateResult \| typeof nothing | Renders hidden input elements for the domain configuration form.                              |
-| _clear                         | none                                        | void        | Clears the configuration settings.                                                            |
-| updated                        | changedProperties: Map<string \| number \| symbol, unknown> | void        | Lifecycle method that runs when properties of the component change.                           |
-| _setupTranslations             | none                                        | void        | Sets up the translations for the admin configuration page based on the domain's status.       |
-| _formResponse                  | event: CustomEvent                          | Promise<void> | Handles the form response after submitting the domain configuration.                          |
-| _finishRedirect                | domain: YpDomainData                        | void        | Redirects to the domain page after completing the configuration update.                       |
-| setupConfigTabs                | none                                        | Array<YpConfigTabData> | Sets up the configuration tabs for the domain configuration page.                             |
-| _appHomeScreenIconImageUploaded| event: CustomEvent                          | void        | Handles the event when an app home screen icon image is successfully uploaded.                 |
+| Name                             | Parameters                                      | Return Type | Description                                                                                   |
+|----------------------------------|-------------------------------------------------|-------------|-----------------------------------------------------------------------------------------------|
+| renderHeader                     | -                                               | nothing     | Renders the header section of the domain configuration page.                                  |
+| renderHiddenInputs               | -                                               | nothing     | Renders hidden input elements for the domain configuration form.                              |
+| _clear                           | -                                               | void        | Clears the configuration form and resets properties to their default state.                   |
+| updated                          | changedProperties: Map<string \| number \| symbol, unknown> | void        | Updates the element's properties and state when a property changes.                           |
+| _setupTranslations               | -                                               | void        | Sets up the translations for the domain configuration page based on the current collection ID.|
+| _formResponse                    | event: CustomEvent                              | Promise<void> | Handles the form response event after submitting the domain configuration form.               |
+| _finishRedirect                  | domain: YpDomainData                            | void        | Redirects the user after successfully updating the domain configuration.                      |
+| setupConfigTabs                  | -                                               | Array<YpConfigTabData> | Sets up the configuration tabs for the domain configuration page.                             |
+| _appHomeScreenIconImageUploaded  | event: CustomEvent                              | void        | Handles the event when an app home screen icon image is successfully uploaded.                |
 
 ## Events (if any)
 
-- **changed**: Emitted when a configuration setting is changed.
-- **success**: Emitted when an image upload is successful.
+- **changed**: Emitted when a configuration change occurs.
+- **config-updated**: Emitted when the theme configuration is updated.
+- **yp-theme-configuration-changed**: Emitted when the theme configuration changes.
+- **success**: Emitted when a file upload is successful.
 
 ## Examples
 
 ```typescript
-// Example usage of YpAdminConfigDomain to set an app home screen icon image ID
-const ypAdminConfigDomain = new YpAdminConfigDomain();
-ypAdminConfigDomain.appHomeScreenIconImageId = 12345;
+// Example usage of YpAdminConfigDomain in an HTML template
+<yp-admin-config-domain></yp-admin-config-domain>
 ```
 
-```typescript
-// Example usage of YpAdminConfigDomain to handle a successful image upload
-document.addEventListener('success', (event) => {
-  ypAdminConfigDomain._appHomeScreenIconImageUploaded(event);
-});
-```
-
-Please note that the above examples are for illustrative purposes and may require additional context to work within a full application.
+Please note that this documentation is a high-level overview and does not include all properties, methods, events, or internal logic details. For a complete understanding, refer to the source code of the `YpAdminConfigDomain` class.

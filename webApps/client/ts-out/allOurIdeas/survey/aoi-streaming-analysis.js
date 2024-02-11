@@ -15,6 +15,7 @@ import "@material/web/textfield/filled-text-field.js";
 import { AoiServerApi } from "./AoiServerApi.js";
 import { YpStreamingLlmBase } from "../../yp-llms/yp-streaming-llm-base.js";
 import { resolveMarkdown } from "../../common/litMarkdown/litMarkdown.js";
+import { YpLanguages } from "../../common/languages/ypLanguages.js";
 let AoiStreamingAnalysis = class AoiStreamingAnalysis extends YpStreamingLlmBase {
     constructor() {
         super();
@@ -31,7 +32,7 @@ let AoiStreamingAnalysis = class AoiStreamingAnalysis extends YpStreamingLlmBase
         this.addEventListener("yp-ws-opened", this.streamAnalysis);
     }
     async streamAnalysis() {
-        const { cachedAnalysis, selectedChoices } = await this.serverApi.getSurveyAnalysis(this.groupId, this.wsClientId, this.analysisIndex, this.analysisTypeIndex);
+        const { cachedAnalysis, selectedChoices } = await this.serverApi.getSurveyAnalysis(this.groupId, this.wsClientId, this.analysisIndex, this.analysisTypeIndex, YpLanguages.getEnglishName(this.language) || "");
         if (cachedAnalysis) {
             this.analysis = cachedAnalysis;
         }

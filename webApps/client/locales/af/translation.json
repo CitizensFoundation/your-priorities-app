@@ -509,7 +509,7 @@
   "areYouSureRemoveSelectedUsers": "Is jy seker jy wil daardie gebruikers verwyder? Hierdie operasie kan nie ongedaan gemaak word nie.",
   "areYouSureRemoveAndDeleteSelectedUserContent": "Is jy seker jy wil verwyder en alle daardie gebruikers se inhoud uitwis? Hierdie operasie kan nie ongedaan gemaak word nie.",
   "areYouSureYouWantToRemoveAdmins": "Is jy seker jy wil admins verwyder?",
-  "adminsCount": "admins",
+  "adminsCount": "administrateurs",
   "usersCount": "gebruikers",
   "organizationUserRemoved": "Organisasiegebruiker verwyder",
   "adminRemoved": "Admin verwyder",
@@ -1103,7 +1103,7 @@
   "Translations": "Vertalings",
   "Organizations": "Organisasies",
   "Users": "Gebruikers",
-  "Admins": "Admins",
+  "Admins": "Administrateurs",
   "Moderation": "Moderering",
   "Pages": "Bladsye",
   "Groups": "Groepe",
@@ -1346,5 +1346,9 @@
   "aiIconInfo": "'n Piktogram vir jou antwoord word gegenereer, jy kan die venster toemaak of wag vir die piktogram om gegenereer te word. Jy sal ook die opsie hê om die piktogram te hergenereer.",
   "getColorFromLogo": "Kry kleur van logo beeld",
   "explainBothAnswers": "Verduideliking van antwoorde",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "Eerste antwoord",
+  "secondAnswer": "Tweede antwoord",
+  "hereIsTheQuestion": "Hier is die vraag",
+  "pleaseAnswerInThisLanguage": "Antwoord asseblief in hierdie taal"
 }

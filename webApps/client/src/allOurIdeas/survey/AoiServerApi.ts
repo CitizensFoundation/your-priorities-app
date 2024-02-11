@@ -29,11 +29,12 @@ export class AoiServerApi extends YpServerApi {
     groupId: number,
     wsClientId: string,
     analysisIndex: number,
-    analysisTypeIndex: number
+    analysisTypeIndex: number,
+    languageName: string
   ): AoiAnalysisResponse {
     return this.fetchWrapper(
       this.baseUrlPath +
-        `/${groupId}/questions/${wsClientId}/${analysisIndex}/${analysisTypeIndex}/analysis`
+        `/${groupId}/questions/${wsClientId}/${analysisIndex}/${analysisTypeIndex}/analysis?languageName=${languageName}`
     ) as unknown as AoiAnalysisResponse;
   }
 

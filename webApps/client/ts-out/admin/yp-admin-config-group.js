@@ -471,7 +471,8 @@ let YpAdminConfigGroup = class YpAdminConfigGroup extends YpAdminConfigBase {
                     templateData: html `
             <yp-theme-selector
               @config-updated="${this._configChanged}"
-              ?hasLogoImage="${this.imagePreviewUrl || YpMediaHelpers.getImageFormatUrl(this.currentLogoImages)}"
+              ?hasLogoImage="${this.imagePreviewUrl ||
+                        YpMediaHelpers.getImageFormatUrl(this.currentLogoImages)}"
               .disableSelection="${this.group.configuration
                         .inheritThemeFromCommunity}"
               @get-color-from-logo="${this.getColorFromLogo}"
@@ -479,7 +480,7 @@ let YpAdminConfigGroup = class YpAdminConfigGroup extends YpAdminConfigBase {
               .themeConfiguration="${this.group.configuration.theme}"
             ></yp-theme-selector>
           `,
-                }
+                },
             ],
         };
     }
@@ -1605,8 +1606,9 @@ let YpAdminConfigGroup = class YpAdminConfigGroup extends YpAdminConfigBase {
                     text: "analysis_config",
                     type: "textarea",
                     rows: 7,
-                    value: earl?.configuration?.analysis_config ||
-                        JSON.stringify(defaultAiAnalysisJson, null, 2),
+                    value: earl?.configuration?.analysis_config
+                        ? JSON.stringify(earl?.configuration?.analysis_config, null, 2)
+                        : JSON.stringify(defaultAiAnalysisJson, null, 2),
                     onChange: (e) => this._updateEarl(e, "configuration.analysis_config", true),
                     translationToken: "aoiAiAnalysisConfig",
                 },

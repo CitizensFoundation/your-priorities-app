@@ -1,22 +1,22 @@
 # YpAdminPage
 
-Abstract class that extends `YpBaseElementWithLogin` and is used for admin pages.
+`YpAdminPage` is an abstract class that extends `YpBaseElementWithLogin` and is used for admin pages that require a collection type and ID.
 
 ## Properties
 
 | Name           | Type                  | Description                                      |
 |----------------|-----------------------|--------------------------------------------------|
-| collectionType | string                | The type of the collection.                      |
-| collectionId   | number \| string      | The identifier for the collection, can be number or string. |
-| collection     | YpCollectionData \| undefined | An object representing the collection data, or undefined if not set. |
+| collectionType | `string`              | The type of collection this admin page is for.   |
+| collectionId   | `number` \| `string`  | The identifier for the collection.               |
+| collection     | `YpCollectionData` \| `undefined` | The collection data associated with this admin page. |
 
 ## Methods
 
-This class does not define any methods of its own.
+This class does not define any methods.
 
 ## Events
 
-This class does not define any events of its own.
+This class does not define any events.
 
 ## Examples
 
@@ -25,8 +25,8 @@ This class does not define any events of its own.
 // You would typically extend this class to create a specific admin page component.
 @customElement('my-admin-page')
 class MyAdminPage extends YpAdminPage {
-  // Custom implementation for a specific admin page
+  // Implementation of your admin page component
 }
 ```
 
-Please note that the `YpCollectionData` type is referenced in the properties but not defined in the provided code snippet. You would need to define this type elsewhere in your codebase.
+Note: The `YpCollectionData` type is referenced in the `collection` property but is not defined in the provided code snippet. You should ensure that `YpCollectionData` is defined elsewhere in your codebase.

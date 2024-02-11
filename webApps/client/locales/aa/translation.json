@@ -1346,5 +1346,9 @@
   "aiIconInfo": "Kutaan gaabat tan iyyaakaak geytimtam le, daaqik daddar siqixxigaa ama kutaan geytimta daddar siqixxigaa. Kutaan geytimta mara kaxxaamur siqixxigalih doolal.",
   "getColorFromLogo": "Logo irra midab fayyadam",
   "explainBothAnswers": "Deebii ibsa",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "Qafar tokko",
+  "secondAnswer": "Qafar lamma",
+  "hereIsTheQuestion": "Gaaf tokko halkan",
+  "pleaseAnswerInThisLanguage": "Qafar tani kaxxaamay"
 }

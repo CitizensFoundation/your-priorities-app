@@ -246,7 +246,6 @@ export class YpAppNavDrawer extends YpBaseElement {
         <div class="languageSelector layout vertical self-start">
           <yp-language-selector
             class="languageSelector"
-            selected-locale="{{selectedLocale}}"
           ></yp-language-selector>
         </div>
 

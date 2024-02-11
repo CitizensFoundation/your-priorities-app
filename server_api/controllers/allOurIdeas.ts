@@ -553,7 +553,7 @@ export class AllOurIdeasController {
   }
 
   public async analysis(req: YpRequest, res: Response): Promise<void> {
-    const { groupId, wsClientSocketId, analysisIndex, analysisTypeIndex, languageName } =
+    const { groupId, wsClientSocketId, analysisIndex, analysisTypeIndex } =
       req.params;
 
     console.log(
@@ -654,7 +654,7 @@ export class AllOurIdeasController {
         .digest("hex")
         .substring(0, 8);
 
-      const usedLanguageName = languageName || "English";
+      const usedLanguageName = req.query.languageName as string || "English";
 
       const analysisCacheKey = `${questionId}_${analysisTypeIndex}_${choiceIds}_${usedLanguageName}_${promptHash}_ai_analysis_v13`;
       console.log(

@@ -119,6 +119,9 @@ export class YpLanguageSelector extends YpBaseElement {
     this.selectedLocale = (event.currentTarget as MdMenuItem).getAttribute(
       "data-language"
     )!;
+
+    localStorage.setItem("yp-user-locale", this.selectedLocale);
+    console.info("Saving locale");
   }
 
   renderMenuItem(index: number, item: YpLanguageMenuItem) {
@@ -209,7 +212,6 @@ export class YpLanguageSelector extends YpBaseElement {
       } else {
         this.hasServerAutoTranslation = false;
       }
-      this.selectedLocale = this.language;
     }
 
     this.addGlobalListener(
@@ -337,8 +339,7 @@ export class YpLanguageSelector extends YpBaseElement {
           YpLanguages.getEnglishName(this.language)
         );
         window.appGlobals.changeLocaleIfNeeded(this.selectedLocale, true);
-        localStorage.setItem("yp-user-locale", this.selectedLocale);
-        console.info("Saving locale");
+
         if (window.appUser && window.appUser.user) {
           window.appUser.setLocale(this.selectedLocale);
         }

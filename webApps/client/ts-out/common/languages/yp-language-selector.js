@@ -81,6 +81,8 @@ let YpLanguageSelector = class YpLanguageSelector extends YpBaseElement {
     }
     _selectLanguage(event) {
         this.selectedLocale = event.currentTarget.getAttribute("data-language");
+        localStorage.setItem("yp-user-locale", this.selectedLocale);
+        console.info("Saving locale");
     }
     renderMenuItem(index, item) {
         return html `
@@ -167,7 +169,6 @@ let YpLanguageSelector = class YpLanguageSelector extends YpBaseElement {
             else {
                 this.hasServerAutoTranslation = false;
             }
-            this.selectedLocale = this.language;
         }
         this.addGlobalListener("yp-refresh-language-selection", this._refreshLanguage.bind(this));
     }
@@ -270,8 +271,6 @@ let YpLanguageSelector = class YpLanguageSelector extends YpBaseElement {
                 }
                 this.fire("yp-language-name", YpLanguages.getEnglishName(this.language));
                 window.appGlobals.changeLocaleIfNeeded(this.selectedLocale, true);
-                localStorage.setItem("yp-user-locale", this.selectedLocale);
-                console.info("Saving locale");
                 if (window.appUser && window.appUser.user) {
                     window.appUser.setLocale(this.selectedLocale);
                 }

@@ -1346,5 +1346,9 @@
   "aiIconInfo": "Аҭак ҟаҵоуп шәҭак азы, абжьаҵара алшоит ма аҭак аҟаҵара адҳәалоуп. Аҭак аҽаҟаҵара алшара шәымоуп.",
   "getColorFromLogo": "Лого аҟынтәи аԥштәы агаразы",
   "explainBothAnswers": "Аҭакқәа раҵаҩра",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "Актәи аҭак",
+  "secondAnswer": "Аҩбатәи аҭак",
+  "hereIsTheQuestion": "Абра аҳәара",
+  "pleaseAnswerInThisLanguage": "Ари абызшәаҿы аҭак ҟаҵа"
 }

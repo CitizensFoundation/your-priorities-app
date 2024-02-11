@@ -14,6 +14,7 @@ import "@material/web/textfield/filled-text-field.js";
 import { AoiServerApi } from "./AoiServerApi.js";
 import { YpStreamingLlmBase } from "../../yp-llms/yp-streaming-llm-base.js";
 import { resolveMarkdown } from "../../common/litMarkdown/litMarkdown.js";
+import { YpLanguages } from "../../common/languages/ypLanguages.js";
 
 @customElement("aoi-streaming-analysis")
 export class AoiStreamingAnalysis extends YpStreamingLlmBase {
@@ -61,7 +62,8 @@ export class AoiStreamingAnalysis extends YpStreamingLlmBase {
         this.groupId,
         this.wsClientId,
         this.analysisIndex,
-        this.analysisTypeIndex
+        this.analysisTypeIndex,
+        YpLanguages.getEnglishName(this.language) || ""
       );
 
     if (cachedAnalysis) {

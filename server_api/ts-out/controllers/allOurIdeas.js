@@ -372,7 +372,7 @@ export class AllOurIdeasController {
         }
     }
     async analysis(req, res) {
-        const { groupId, wsClientSocketId, analysisIndex, analysisTypeIndex, languageName } = req.params;
+        const { groupId, wsClientSocketId, analysisIndex, analysisTypeIndex } = req.params;
         console.log(`--------------------> ${groupId} ${analysisIndex} ${analysisTypeIndex}`);
         try {
             const group = await Group.findOne({ where: { id: groupId } });
@@ -431,7 +431,7 @@ export class AllOurIdeasController {
                 .update(analysisType.contextPrompt)
                 .digest("hex")
                 .substring(0, 8);
-            const usedLanguageName = languageName || "English";
+            const usedLanguageName = req.query.languageName || "English";
             const analysisCacheKey = `${questionId}_${analysisTypeIndex}_${choiceIds}_${usedLanguageName}_${promptHash}_ai_analysis_v13`;
             console.log(`analysisCacheKey is ${analysisCacheKey} prompt ${analysisType.contextPrompt.substring(0, 15)}...`);
             // Implement caching logic here

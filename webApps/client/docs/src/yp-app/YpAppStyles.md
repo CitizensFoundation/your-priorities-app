@@ -1,34 +1,39 @@
 # YpAppStyles
 
-The `YpAppStyles` is a CSS template literal containing styles for a web component using the `lit` library.
+The `YpAppStyles` is a CSS template literal containing styles for a web component. It is used with the `lit` library to define the styles that can be applied to the host element and its children.
 
 ## Properties
 
-This class does not have properties in the traditional sense, as it is a CSS template literal and not a TypeScript class.
+There are no properties for CSS template literals as they are not JavaScript classes or objects.
 
 ## Methods
 
-This class does not have methods, as it is a CSS template literal.
+There are no methods for CSS template literals as they are not JavaScript classes or objects.
 
 ## Events
 
-This class does not emit events, as it is a CSS template literal.
+There are no events for CSS template literals as they are not JavaScript classes or objects.
 
 ## Examples
 
 ```typescript
+// Example usage of the YpAppStyles in a LitElement
+import { LitElement, html } from 'lit';
 import { YpAppStyles } from './path-to-yp-app-styles';
 
-// Example usage in a lit-element
 class MyElement extends LitElement {
-  static styles = [YpAppStyles];
+  static styles = YpAppStyles;
 
   render() {
     return html`
-      <!-- Your HTML template here -->
+      <div>
+        <!-- Content of your web component -->
+      </div>
     `;
   }
 }
+
+customElements.define('my-element', MyElement);
 ```
 
-Please note that the `YpAppStyles` is not a TypeScript class but a CSS template literal provided by the `lit` library for styling web components. The example provided shows how you might include these styles in a custom element that uses `lit`.
+Note: The `YpAppStyles` is a constant that holds the CSS styles, and it is imported and used in a LitElement-based web component. The styles are applied to the web component using the `static styles` property of the LitElement.
