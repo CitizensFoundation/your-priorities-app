@@ -1,6 +1,6 @@
 {
   "name": "@yrpri/api",
-  "version": "9.0.1",
+  "version": "9.0.0",
   "license": "MIT",
   "author": "Robert Bjarnason & Citizens Foundation",
   "repository": {
@@ -9,6 +9,9 @@
   },
   "files": [
     "ts-out/**/*",
+    "!ts-out/config/**/*",
+    "!ts-out/migrations/oldMigrations/**/*",
+    "!ts-out/oldMigrations/**/*",
     "server.d.ts"
   ],
   "type": "module",

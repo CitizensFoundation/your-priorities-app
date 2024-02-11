@@ -1353,5 +1353,9 @@
   "aiIconInfo": "S'està generant una icona per a la teva resposta, pots tancar la finestra o esperar que l'icona es generi. També tindràs l'opció de regenerar la icona.",
   "getColorFromLogo": "Obté color de la imatge del logotip",
   "explainBothAnswers": "Explicació de les respostes",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "Primera resposta",
+  "secondAnswer": "Segona resposta",
+  "hereIsTheQuestion": "Aquí és la pregunta",
+  "pleaseAnswerInThisLanguage": "Si us plau, respon en aquest idioma"
 }

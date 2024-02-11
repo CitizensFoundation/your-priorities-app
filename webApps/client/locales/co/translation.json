@@ -1346,5 +1346,9 @@
   "aiIconInfo": "Un'icona per a vostra risposta hè in creazione, pudete chjude a finestra o aspettà chì l'icona sia generata. Avarete ancu l'opzione di rigenerà l'icona.",
   "getColorFromLogo": "Ottene culore da logo",
   "explainBothAnswers": "Spiegazione di risposte",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "Prima risposta",
+  "secondAnswer": "Seconda risposta",
+  "hereIsTheQuestion": "Quì hè a dumanda",
+  "pleaseAnswerInThisLanguage": "Per piacè risponde in sta lingua"
 }

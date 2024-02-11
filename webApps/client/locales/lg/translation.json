@@ -1346,5 +1346,9 @@
   "aiIconInfo": "Akabonero k'okuddamu ko kategekebwa, osobola okuggala eddirisa oba okulindirira akabonero okutegekebwa. Ojja kuba n'eky'okulonda okuddamu okukola akabonero.",
   "getColorFromLogo": "Funa langi okuva mu kifaananyi kya logo",
   "explainBothAnswers": "Nnyonnyola y'ebibuuzo",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "Okusooka okuddamu",
+  "secondAnswer": "Okwokubiri okuddamu",
+  "hereIsTheQuestion": "Wano we kibuuzo",
+  "pleaseAnswerInThisLanguage": "Mwogere mu lulimi luno"
 }

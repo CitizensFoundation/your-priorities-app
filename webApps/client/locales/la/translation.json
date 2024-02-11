@@ -1331,7 +1331,7 @@
   "domainFraudManagement": "Dominium Fraudis Administratio",
   "Access": "Accessus",
   "openOrganizationMenu": "Aperi organizationis menu",
-  "Listasafn Reykjavíkur": "Listasafn Reykjavíkur",
+  "Listasafn Reykjavíkur": "Museum Reykjavíkur",
   "Override theme": "Superare thema",
   "Analytics & Marketing": "Analytica & Venalicium",
   "Promote your survey": "Promove tuum inquisitionem",
@@ -1346,5 +1346,9 @@
   "aiIconInfo": "Icon tuum responsi generatur, fenestram claudere potes aut exspectare icon generari. Optionem etiam habebis iconem regenerandi.",
   "getColorFromLogo": "Ex logo colorem capere",
   "explainBothAnswers": "Responsionum explanatio",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "Prima responsio",
+  "secondAnswer": "Secunda responsio",
+  "hereIsTheQuestion": "Hic est quaestio",
+  "pleaseAnswerInThisLanguage": "Quaeso responde in hac lingua"
 }

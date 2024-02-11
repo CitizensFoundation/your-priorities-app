@@ -1346,5 +1346,9 @@
   "aiIconInfo": "Хьоьжу хаамаш лело яра йолуш, хьалха дӀаяккхар а, хааман лелор а гӀулакх дӀасахьа а. Хьоьжу хааман дӀаяккхар а лело тӀе хилара дӀахьалйина.",
   "getColorFromLogo": "Логотипан ранг хьажар",
   "explainBothAnswers": "Хилам бахьана шарахъ",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "ТIаьхьа жаваб",
+  "secondAnswer": "Ши жаваб",
+  "hereIsTheQuestion": "Хьан лоьхуш йоьху",
+  "pleaseAnswerInThisLanguage": "Марша хIара мотт хьажор"
 }

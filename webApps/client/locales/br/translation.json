@@ -1346,5 +1346,9 @@
   "aiIconInfo": "Ur skeudenn evit ho respont a zo o vezañ krouet, gallout a rit serriñ ar prenestr pe gortoz ma vo krouet ar skeudenn. Ho po ivez an dibab adkrouiñ ar skeudenn.",
   "getColorFromLogo": "Kaout liv eus logo skeudenn",
   "explainBothAnswers": "Displegadenn respontoù",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "Respont kentañ",
+  "secondAnswer": "Eil respont",
+  "hereIsTheQuestion": "Setu ar goulenn",
+  "pleaseAnswerInThisLanguage": "Mar plij respontit er yezh-mañ"
 }

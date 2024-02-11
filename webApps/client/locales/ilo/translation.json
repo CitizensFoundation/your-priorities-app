@@ -476,7 +476,7 @@
   "postPointAgainst": "I-post ti punto kontra",
   "uploadVideoPointAgainst": "Video",
   "postPoint": "I-post ti punto",
-  "uploadVideoPointFor": "Video",
+  "uploadVideoPointFor": "Bidyo",
   "uploadAudioPointFor": "Audio",
   "uploadAudioPointAgainst": "Audio",
   "pointVideoInfo": "I-upload ti video iti landscape a porma. Ti maksimo a kadakkel ti video ket ",
@@ -488,8 +488,8 @@
   "videoPointUploadLimitSec": "Limit ti punto video iti segundos (max 600s)",
   "audioPostUploadLimitSec": "Limit ti audio a post iti segundos (max 600s)",
   "audioPointUploadLimitSec": "Limit ti punto audio iti segundos (max 600s)",
-  "postCoverVideo": "Video",
-  "uploadVideo": "Video",
+  "postCoverVideo": "Bidyo",
+  "uploadVideo": "Bidyo",
   "uploadCompleted": "Naikarga ti pannakakarga",
   "uploadingVideo": "Agkakarga ti video...",
   "uploadingImage": "Agkakarga ti imahen...",
@@ -1346,5 +1346,9 @@
   "aiIconInfo": "Ti icon para iti pannakaisagutmo ket agaramid, mabalinmo a sirke ti taltalon wenno maguray para iti panagaramid ti icon. Adda met ti pagpilianmo nga agsubli ti panagaramid ti icon.",
   "getColorFromLogo": "Agala ti kolor manipud logo nga imahen",
   "explainBothAnswers": "Paliwanag ti dagiti sagot",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "Umuna nga simmubok",
+  "secondAnswer": "Maikadua nga simmubok",
+  "hereIsTheQuestion": "Daytoy ti panagkukua",
+  "pleaseAnswerInThisLanguage": "Pangngaasi nga isubli iti daytoy nga pagsasao"
 }

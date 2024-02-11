@@ -1346,5 +1346,9 @@
   "aiIconInfo": "נוצרת סמליל לתשובתך, ניתן לסגור את החלון או להמתין ליצירת הסמליל. תהיה גם אפשרות ליצור מחדש.",
   "getColorFromLogo": "קבל צבע מלוגו",
   "explainBothAnswers": "הסבר תשובות",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "תשובה ראשונה",
+  "secondAnswer": "תשובה שנייה",
+  "hereIsTheQuestion": "הנה השאלה",
+  "pleaseAnswerInThisLanguage": "נא לענות בשפה זו"
 }

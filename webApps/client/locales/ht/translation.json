@@ -1361,5 +1361,9 @@
   "aiIconInfo": "Yon ikòn pou repons ou ap kreye, ou ka fèmen fenèt la oswa tann ikòn la fin kreye. Ou pral gen opsyon pou regenere ikòn la tou.",
   "getColorFromLogo": "Jwenn koulè nan logo",
   "explainBothAnswers": "Eksplikasyon repons yo",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "Premye repons",
+  "secondAnswer": "Dezyèm repons",
+  "hereIsTheQuestion": "Men kesyon an",
+  "pleaseAnswerInThisLanguage": "Tanpri reponn nan lang sa a"
 }

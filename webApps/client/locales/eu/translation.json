@@ -132,7 +132,7 @@
   "lookAndFeel": "Itxura eta Sentsazioa",
   "samlAuth": "SAML Auth",
   "basic": "Oinarrizkoa",
-  "webApp": "Web App",
+  "webApp": "Web Aplikazioa",
   "authApis": "Auth APIak",
   "dontHaveAccount": "Konturik ez?",
   "cantRememberPassword": "Pasahitza ahaztu duzu?",
@@ -1346,5 +1346,9 @@
   "aiIconInfo": "Zure erantzunarentzako ikonoa sortzen ari da, leihoa itxi edo ikonoa sortu arte itxaron dezakezu. Ikonoa berriz sortzeko aukera ere izango duzu.",
   "getColorFromLogo": "Logotipotik kolorea lortu",
   "explainBothAnswers": "Erantzunen azalpena",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "Lehen erantzuna",
+  "secondAnswer": "Bigarren erantzuna",
+  "hereIsTheQuestion": "Hemen da galdera",
+  "pleaseAnswerInThisLanguage": "Mesedez, erantzun hizkuntza honetan"
 }

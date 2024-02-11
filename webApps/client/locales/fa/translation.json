@@ -1353,5 +1353,9 @@
   "aiIconInfo": "نماد پاسخ شما در حال تولید است، می‌توانید پنجره را ببندید یا منتظر تولید نماد بمانید. همچنین گزینه‌ای برای بازتولید نماد خواهید داشت.",
   "getColorFromLogo": "رنگ را از لوگو بگیرید",
   "explainBothAnswers": "توضیح پاسخ‌ها",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "اولین پاسخ",
+  "secondAnswer": "دومین پاسخ",
+  "hereIsTheQuestion": "اینجا سوال است",
+  "pleaseAnswerInThisLanguage": "لطفا به این زبان پاسخ دهید"
 }

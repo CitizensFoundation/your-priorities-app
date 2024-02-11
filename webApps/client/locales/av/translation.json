@@ -1346,5 +1346,9 @@
   "aiIconInfo": "Хьун хьаракъулара хьунул цӀе хьалхарина, тӀаккха даккхар хӀун а цӀе хьалхар бакъона. Хьун хьаракъулара бакъонал цӀе хьалхарарун лъугъо.",
   "getColorFromLogo": "Логосан рӀе цӀе хьалхар",
   "explainBothAnswers": "Жавабарин тӀалъебар",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "Хьалхъа жаваб",
+  "secondAnswer": "Хьуьлу жаваб",
+  "hereIsTheQuestion": "Хьунин хьалхъа",
+  "pleaseAnswerInThisLanguage": "Маьрша хьун хьалхъа хьунна"
 }

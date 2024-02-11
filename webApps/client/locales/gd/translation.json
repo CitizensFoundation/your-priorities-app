@@ -1346,5 +1346,9 @@
   "aiIconInfo": "Tha ìomhaigh airson do fhreagairt ga chruthachadh, faodaidh tu an uinneag a dhùnadh no feitheamh gus an tèid an ìomhaigh a chruthachadh. Bidh roghainn agad cuideachd an ìomhaigh ath-chruthachadh.",
   "getColorFromLogo": "Faigh dath bho ìomhaigh suaicheantas",
   "explainBothAnswers": "Mìneachadh air freagairtean",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "A' chiad fhreagairt",
+  "secondAnswer": "An dàrna freagairt",
+  "hereIsTheQuestion": "Seo an ceist",
+  "pleaseAnswerInThisLanguage": "Freagair sa chànan seo, mas e do thoil e"
 }

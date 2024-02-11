@@ -1346,5 +1346,9 @@
   "aiIconInfo": "আপনার উত্তরের জন্য একটি আইকন তৈরি করা হচ্ছে, আপনি জানালা বন্ধ করতে পারেন অথবা আইকন তৈরি হওয়ার অপেক্ষা করতে পারেন। আপনি আইকনটি পুনরায় তৈরির অপশনও পাবেন।",
   "getColorFromLogo": "লোগো থেকে রঙ নিন",
   "explainBothAnswers": "উত্তরের ব্যাখ্যা",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "প্রথম উত্তর",
+  "secondAnswer": "দ্বিতীয় উত্তর",
+  "hereIsTheQuestion": "এখানে প্রশ্নটি",
+  "pleaseAnswerInThisLanguage": "এই ভাষায় উত্তর দিন"
 }

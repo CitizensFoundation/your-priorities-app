@@ -1346,5 +1346,9 @@
   "aiIconInfo": "रउआ के जवाब खातिर एगो आइकन बनावल जा रहल बा, रउआ खिड़की बंद कर सकेला भा आइकन बने खातिर इंतजार कर सकेला। आइकन के फिर से बनावे के विकल्प भी मिली।",
   "getColorFromLogo": "लोगो इमेज से रंग लीं",
   "explainBothAnswers": "जवाब के समझावल",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "पहिल जवाब",
+  "secondAnswer": "दुसरका जवाब",
+  "hereIsTheQuestion": "इहाँ प्रश्न बा",
+  "pleaseAnswerInThisLanguage": "कृपया एह भाषा में जवाब दीं"
 }

@@ -1346,5 +1346,9 @@
   "aiIconInfo": "ཁྱེད་ཀྱི་ལན་གྱི་རྟགས་བཟོ་བཏོན་བའི་ཡོད་པ་དང་། ཝིན་ཌོ་ཁ་པར་འཇོག་བཏང་ཡང་ན་རྟགས་བཟོ་བཏོན་བའི་སྒུག་པར་བསྒང་། རྟགས་ལོག་བཟོ་བའི་གདམ་ཁ་ཡང་འདུག",
   "getColorFromLogo": "ལོ་གོས་པར་ནས་ཚོར་བའི་ཚད་བཏང་ནི",
   "explainBothAnswers": "ལན་གྱི་ཤེས་བྱ",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "དང་པོའི་ལན",
+  "secondAnswer": "གཉིས་པའི་ལན",
+  "hereIsTheQuestion": "འདི་འབྲི་བའི་དྲིས་ཡིག་ཡིན",
+  "pleaseAnswerInThisLanguage": "འདི་གི་སྐད་ཡིག་ན་ལན་བཤེར་རོགས"
 }

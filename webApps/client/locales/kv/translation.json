@@ -1346,5 +1346,9 @@
   "aiIconInfo": "Ваш ответын иконка озыськомын, тӧр вӧлӧм сылгыны лыджыны ёла ас сылгыны озыськомын кутсаны. Иконканы уджыны вариантас ас.",
   "getColorFromLogo": "Логотипнын цветын алны",
   "explainBothAnswers": "Ответын тлын",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "Вӧралӧн ответ",
+  "secondAnswer": "Вижӧлӧн ответ",
+  "hereIsTheQuestion": "Мында сӧрник",
+  "pleaseAnswerInThisLanguage": "Коми кыв вӧлӧн ответны"
 }

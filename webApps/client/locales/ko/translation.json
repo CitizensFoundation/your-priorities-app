@@ -1331,7 +1331,7 @@
   "domainFraudManagement": "도메인 사기 관리",
   "Access": "접근",
   "openOrganizationMenu": "조직 메뉴 열기",
-  "Listasafn Reykjavíkur": "Listasafn Reykjavíkur",
+  "Listasafn Reykjavíkur": "레이캬비크 미술관",
   "Override theme": "테마 오버라이드",
   "Analytics & Marketing": "분석 및 마케팅",
   "Promote your survey": "설문조사 홍보",
@@ -1346,5 +1346,9 @@
   "aiIconInfo": "답변을 위한 아이콘이 생성되고 있습니다. 창을 닫거나 아이콘 생성을 기다릴 수 있습니다. 아이콘을 다시 생성할 수 있는 옵션도 있습니다.",
   "getColorFromLogo": "로고 이미지에서 색상 가져오기",
   "explainBothAnswers": "답변 설명",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "첫 번째 답변",
+  "secondAnswer": "두 번째 답변",
+  "hereIsTheQuestion": "여기 질문이 있습니다",
+  "pleaseAnswerInThisLanguage": "이 언어로 답해주세요"
 }

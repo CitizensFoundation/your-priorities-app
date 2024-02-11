@@ -476,7 +476,7 @@
   "postPointAgainst": "Yamir ɗemngal ɗoo",
   "uploadVideoPointAgainst": "Video",
   "postPoint": "Yamir ɗemngal",
-  "uploadVideoPointFor": "Video",
+  "uploadVideoPointFor": "Vidiyo",
   "uploadAudioPointFor": "Ɗoo",
   "uploadAudioPointAgainst": "Ɗoo",
   "pointVideoInfo": "Neldu video e ɗemngal nguurndam. Video ɗo waawaa e ",
@@ -488,7 +488,7 @@
   "videoPointUploadLimitSec": "Point video ɗin iyaka a daƙiƙai (max 600s)",
   "audioPostUploadLimitSec": "Post audio ɗin iyaka a daƙiƙai (max 600s)",
   "audioPointUploadLimitSec": "Point audio ɗin iyaka a daƙiƙai (max 600s)",
-  "postCoverVideo": "Video",
+  "postCoverVideo": "Vidiyo",
   "uploadVideo": "Noddiwol",
   "uploadCompleted": "Yalwar gama",
   "uploadingVideo": "Yalwodo video...",
@@ -1346,5 +1346,9 @@
   "aiIconInfo": "Alama eɓɓonde mum ena woodi, aɗa yiyi tawo ko aɗa waawi mowlude. Aɗa waawi ɗooɗaade alama.",
   "getColorFromLogo": "Logo neldude laabi",
   "explainBothAnswers": "Jawdi pinal",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "Ñaawoore ɗoo",
+  "secondAnswer": "Ñaawoore njiɗi",
+  "hereIsTheQuestion": "Nan no ɗum ko",
+  "pleaseAnswerInThisLanguage": "Miɗo waawi aɗaama e ɗemngal ɗee"
 }

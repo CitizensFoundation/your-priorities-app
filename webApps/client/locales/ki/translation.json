@@ -1346,5 +1346,9 @@
   "aiIconInfo": "Ikoni ya jibu yako iri kuhinyitirwa, unyite gucoka dirisha kana kugotha ikoni ihinyitwe. Uzahitwo na thuba ya kuhinyitira ikoni tena.",
   "getColorFromLogo": "Twara irangi kuhuthira logo",
   "explainBothAnswers": "Ihuthiririo ria njira",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "Kwambĩra mbere",
+  "secondAnswer": "Kwambĩra kĩgĩrĩ",
+  "hereIsTheQuestion": "Hano ni kĩeha",
+  "pleaseAnswerInThisLanguage": "Thabuka mũrĩo ũyũ"
 }

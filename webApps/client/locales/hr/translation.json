@@ -1353,5 +1353,9 @@
   "aiIconInfo": "Generira se ikona za vaš odgovor, možete zatvoriti prozor ili pričekati da se ikona generira. Također ćete imati opciju ponovnog generiranja ikone.",
   "getColorFromLogo": "Dobavi boju iz logotipa",
   "explainBothAnswers": "Objašnjenje odgovora",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "Prvi odgovor",
+  "secondAnswer": "Drugi odgovor",
+  "hereIsTheQuestion": "Evo pitanja",
+  "pleaseAnswerInThisLanguage": "Molimo odgovorite na ovom jeziku"
 }

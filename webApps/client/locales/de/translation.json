@@ -1353,5 +1353,9 @@
   "aiIconInfo": "Ein Icon für Ihre Antwort wird erstellt. Sie können das Fenster schließen oder auf die Erstellung des Icons warten. Sie haben auch die Möglichkeit, das Icon neu zu erstellen.",
   "getColorFromLogo": "Farbe aus Logo holen",
   "explainBothAnswers": "Erklärung der Antworten",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "Erste Antwort",
+  "secondAnswer": "Zweite Antwort",
+  "hereIsTheQuestion": "Hier ist die Frage",
+  "pleaseAnswerInThisLanguage": "Bitte in dieser Sprache antworten"
 }

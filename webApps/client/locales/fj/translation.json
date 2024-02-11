@@ -1346,5 +1346,9 @@
   "aiIconInfo": "E buli tiko na ikona ni nomu isau, o rawa ni sogota na katuba se waraka me buli oti na ikona. Ena tu tale ga na digidigi mo vakavoutaka kina na ikona.",
   "getColorFromLogo": "Taura na roka mai na ivakatakilakila",
   "explainBothAnswers": "Vakamacala ni isau",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "Imatai ni saumi",
+  "secondAnswer": "Ikari ni saumi",
+  "hereIsTheQuestion": "Qo na taro",
+  "pleaseAnswerInThisLanguage": "Yalovinaka, sauma ena vosa qo"
 }

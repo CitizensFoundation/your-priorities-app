@@ -1261,7 +1261,7 @@
   "debate": "Pіkіr-Talas",
   "completeLogin": "Kіruді Aяқtaңыz",
   "password": "Qұпія Sөz",
-  "Email": "Email",
+  "Email": "Электрондық пошта",
   "recreate": "Qайta Jaңartu",
   "Your idea has been added, you can continue voting": "Sіzдің іdeяңыz қosыldы, daуыs berudі jalgastaуғa boladы.",
   "Your idea is in a moderation queue": "Сіздің идеяңыз модерация кезегінде.",
@@ -1346,5 +1346,9 @@
   "aiIconInfo": "Жауап үшін белгішенің жасалу үстінде, терезені жабуға немесе белгіше жасалғанша күтуге болады. Сондай-ақ, белгішені қайта жасау мүмкіндігі болады.",
   "getColorFromLogo": "Logodan tüs alu",
   "explainBothAnswers": "Jauaptar tüsindirme",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "Бірінші жауап",
+  "secondAnswer": "Екінші жауап",
+  "hereIsTheQuestion": "Міне, сұрақ",
+  "pleaseAnswerInThisLanguage": "Осы тілде жауап беріңіз"
 }

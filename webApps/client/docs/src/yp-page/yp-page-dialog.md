@@ -1,48 +1,39 @@
 # YpPageDialog
 
-The `YpPageDialog` class is a custom element that extends `YpBaseElement` to create a dialog component. It uses Material Web components to render a dialog with a title, content, and actions. The dialog can be modal and can have custom text for the close button.
+The `YpPageDialog` class is a custom element that extends `YpBaseElement` to create a dialog component. It uses Material Web components to render a dialog with a title, content, and actions. The dialog can be modal and its content is dynamically set based on the provided page data.
 
 ## Properties
 
-| Name            | Type                     | Description                                                                 |
-|-----------------|--------------------------|-----------------------------------------------------------------------------|
-| dialogTitle     | string \| undefined      | The title of the dialog.                                                    |
-| page            | YpHelpPageData \| undefined | Data for the help page to be displayed in the dialog.                      |
-| textButtonText  | string \| undefined      | Custom text for the text button in the dialog actions.                      |
-| modal           | boolean                  | Determines if the dialog should behave as a modal, preventing interaction with the background. |
+| Name            | Type                      | Description                                           |
+|-----------------|---------------------------|-------------------------------------------------------|
+| dialogTitle     | string \| undefined       | The title of the dialog.                              |
+| page            | YpHelpPageData \| undefined | The data object containing the content for the dialog.|
+| textButtonText  | string \| undefined       | The text to display on the button in the dialog.      |
+| modal           | boolean                   | Whether the dialog is modal or not.                   |
+| closeFunction   | Function \| undefined     | A function to call when the dialog is closed.         |
 
 ## Methods
 
-| Name                | Parameters                        | Return Type | Description                                                                 |
-|---------------------|-----------------------------------|-------------|-----------------------------------------------------------------------------|
-| scrimDisableAction  | event: CustomEvent<any>           | void        | Prevents closing the dialog when clicking on the scrim if the dialog is modal. |
-| render              | -                                 | TemplateResult | Renders the dialog with its content and actions.                           |
-| _switchLanguage     | -                                 | void        | Switches the language of the dialog content.                                |
-| pageTitle           | -                                 | string      | Returns the title of the page based on the current language.                |
-| open                | page: YpHelpPageData, language: string, closeFunction: Function \| undefined, textButtonText: string \| undefined, modal: boolean | Promise<void> | Opens the dialog with the specified content and settings.                  |
-| _close              | -                                 | void        | Closes the dialog and clears its content.                                   |
+| Name                | Parameters                                  | Return Type | Description                                                                 |
+|---------------------|---------------------------------------------|-------------|-----------------------------------------------------------------------------|
+| scrimDisableAction  | event: CustomEvent<any>                     | void        | Prevents closing the dialog if it is modal by stopping event propagation.   |
+| render              | -                                           | TemplateResult | Renders the dialog with its content, actions, and optional title and icon. |
+| _switchLanguage     | -                                           | void        | Switches the language of the dialog content.                                |
+| pageTitle           | -                                           | string      | Returns the title of the page based on the current language.                |
+| open                | page: YpHelpPageData, language: string, closeFunction: Function \| undefined, textButtonText: string \| undefined, modal: boolean | Promise<void> | Opens the dialog with the specified content and settings.                   |
+| _close              | -                                           | void        | Closes the dialog and clears its content.                                   |
 
-## Events (if any)
+## Events
 
-- **cancel**: Emitted when the user attempts to close the dialog by clicking on the scrim. If the dialog is modal, this event is stopped and prevented from closing the dialog.
+- **cancel**: Emitted when an attempt is made to close the dialog. If the dialog is modal, this event is intercepted to prevent closing.
 
 ## Examples
 
 ```typescript
 // Example usage of the YpPageDialog
-const dialog = document.createElement('yp-page-dialog') as YpPageDialog;
+const dialog = document.createElement('yp-page-dialog');
+dialog.open(pageData, 'en', () => console.log('Dialog closed'), 'OK', true);
 document.body.appendChild(dialog);
-
-const helpPageData: YpHelpPageData = {
-  title: {
-    en: 'Help Page Title',
-    es: 'Título de la página de ayuda'
-  },
-  content: {
-    en: 'Help page content in English',
-    es: 'Contenido de la página de ayuda en español'
-  }
-};
-
-dialog.open(helpPageData, 'en', () => console.log('Dialog closed'), 'Close', true);
 ```
+
+Please note that the `YpHelpPageData` type is referenced in the properties but not defined in the provided code. You should ensure that this type is defined elsewhere in your codebase for the documentation to be accurate.

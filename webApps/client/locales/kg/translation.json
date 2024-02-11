@@ -122,7 +122,7 @@
   "groupContent": "Nkotisa ya kilumbu",
   "postName": "Nkoma ya posita",
   "postContent": "Nkotisa ya posita",
-  "noTranslation": "No Translation!",
+  "noTranslation": "Ve Sosa!",
   "goalConversionsLast30Min": "Bikotisa ya mambu (ntangu ya nsuka 30 min)",
   "error": "Mbeba mosi me salama",
   "generateImageWithAi": "Kela mufananiso na AI",
@@ -476,7 +476,7 @@
   "postPointAgainst": "Tinda ntembe k against",
   "uploadVideoPointAgainst": "Video",
   "postPoint": "Tinda ntembe",
-  "uploadVideoPointFor": "Video",
+  "uploadVideoPointFor": "Vidiyo",
   "uploadAudioPointFor": "Ntangu",
   "uploadAudioPointAgainst": "Ndundo",
   "pointVideoInfo": "Tinda video na kikalulu ya landscape. Bokasi ya video ezali ",
@@ -1227,7 +1227,7 @@
   "Thinking": "Kiyambi...",
   "Send": "Tindika",
   "typing": "Kokoma",
-  "record": "Tecord",
+  "record": "Tecordi",
   "send": "Tindika",
   "Dynamic Colors": "Mibalé ya Kinama",
   "One Dynamic Color": "Mbalé ya Kinama Kimɔkɔ",
@@ -1346,5 +1346,9 @@
   "aiIconInfo": "Kisalu kia nge nzo yina ya mvutu ke salama, nge lenda fua zulu to tunga ntangu kisalu kia nge ke salama. Nge ta vanda ti mukanda ya kusala kisalu kia nge zole.",
   "getColorFromLogo": "Zwa mbala na logo mazita",
   "explainBothAnswers": "Nsangu ya bansangu",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "Nkunga ya yambo",
+  "secondAnswer": "Nkunga ya zole",
+  "hereIsTheQuestion": "Ntangu yina kele mbote",
+  "pleaseAnswerInThisLanguage": "Nkunga na kikongo"
 }

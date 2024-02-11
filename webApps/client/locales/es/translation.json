@@ -1353,5 +1353,9 @@
   "aiIconInfo": "Se está generando un icono para tu respuesta, puedes cerrar la ventana o esperar a que el icono sea generado. También tendrás la opción de regenerar el icono.",
   "getColorFromLogo": "Obtener color de logo",
   "explainBothAnswers": "Explicación de respuestas",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "Primera respuesta",
+  "secondAnswer": "Segunda respuesta",
+  "hereIsTheQuestion": "Aquí la pregunta",
+  "pleaseAnswerInThisLanguage": "Por favor responde en este idioma"
 }

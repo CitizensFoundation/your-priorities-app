@@ -1346,5 +1346,9 @@
   "aiIconInfo": "আপোনাৰ উত্তৰৰ বাবে এটা আইকন তৈয়াৰ কৰা হৈছে, আপুনি খিৰিকীখন বন্ধ কৰিব পাৰে বা আইকনটো তৈয়াৰ হ'বলৈ অপেক্ষা কৰিব পাৰে। আপুনি আইকনটো পুনৰ তৈয়াৰ কৰাৰ বিকল্পো পাব।",
   "getColorFromLogo": "লোগো চিত্ৰৰ পৰা ৰং লাভ কৰক",
   "explainBothAnswers": "উত্তৰৰ ব্যাখ্যা",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "প্ৰথম উত্তৰ",
+  "secondAnswer": "দ্বিতীয় উত্তৰ",
+  "hereIsTheQuestion": "প্ৰশ্নটো ইয়াত আছে",
+  "pleaseAnswerInThisLanguage": "অনুগ্ৰহ কৰি এই ভাষাত উত্তৰ দিয়ক"
 }

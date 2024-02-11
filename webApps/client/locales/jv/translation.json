@@ -1346,5 +1346,9 @@
   "aiIconInfo": "Ikon kanggo wangsulan sampeyan lagi digawe, sampeyan bisa nutup jendela utawa ngenteni ikon kasebut digawe. Sampeyan uga bakal duwe pilihan kanggo nggawe ulang ikon.",
   "getColorFromLogo": "Entuk werna saka logo",
   "explainBothAnswers": "Penjelasan jawaban",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "Wangsulan kapisan",
+  "secondAnswer": "Wangsulan kapindho",
+  "hereIsTheQuestion": "Pitakonan ing kene",
+  "pleaseAnswerInThisLanguage": "Mangga wangsulan nganggo basa iki"
 }

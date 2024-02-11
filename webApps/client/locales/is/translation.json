@@ -1483,5 +1483,9 @@
   "aiIconInfo": "Verið er að búa til táknmynd fyrir svarið þitt, þú getur lokað glugganum eða beðið eftir að táknmyndin verði búin. Þú munt einnig hafa kost á að endurgera táknmyndina.",
   "getColorFromLogo": "Fáðu lit úr merkisímynd",
   "explainBothAnswers": "Útskýring á svörum",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "Fyrsta svar",
+  "secondAnswer": "Annað svar",
+  "hereIsTheQuestion": "Hér er spurningin",
+  "pleaseAnswerInThisLanguage": "Vinsamlegast svaraðu á þessu tungumáli"
 }

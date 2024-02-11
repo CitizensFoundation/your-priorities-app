@@ -1346,5 +1346,9 @@
   "aiIconInfo": "Akiksaatit takujakhat piyauyut, ammaqa tukisinarialik amiranaikpat. Akiksaat qanuriliurutikhaq tukisinaqtuq.",
   "getColorFromLogo": "ᓯᓚᓗᓯᒍᑎᒃᓴᖅ ᓇᓗᓇᖅᑕᐃᑦ ᓯᓚᕈᖅᑐᖅ",
   "explainBothAnswers": "ᐅᑎᖅᑭᔭᐅᓯᒪᔪᖅ ᐊᑐᖅᑕᐅᓯᒪᓂᖏᑦ",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "Siullermik akissut",
+  "secondAnswer": "Aappassaa akissut",
+  "hereIsTheQuestion": "Una takuuk apeqqut",
+  "pleaseAnswerInThisLanguage": "Uumani oqaatsini akineq kajumissaarutigaarput"
 }

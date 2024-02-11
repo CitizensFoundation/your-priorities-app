@@ -1,31 +1,35 @@
 # YpPostCardAdd
 
-`YpPostCardAdd` is a custom web component that extends `YpBaseElement` to provide a user interface for adding new posts. It displays a card that users can interact with to create a new post. The card can be disabled to prevent new posts from being added.
+The `YpPostCardAdd` class is a web component that provides a user interface element for adding new posts. It extends from `YpBaseElement` and includes a button-like card that users can interact with to create a new post. The card can be disabled to prevent new posts from being created.
 
 ## Properties
 
-| Name            | Type              | Description                                                                 |
-|-----------------|-------------------|-----------------------------------------------------------------------------|
-| disableNewPosts | Boolean           | If true, disables the ability to add new posts.                             |
-| group           | YpGroupData       | The group data object containing configuration for the new post card.       |
-| index           | number            | An optional index value that may be used for tracking the card's position.  |
+| Name            | Type                | Description                                                                 |
+|-----------------|---------------------|-----------------------------------------------------------------------------|
+| disableNewPosts | Boolean             | Indicates whether the creation of new posts is disabled.                    |
+| group           | YpGroupData\|undefined | An object containing group data, which may affect the display of the card. |
+| index           | number\|undefined     | An optional index value that may be used for tracking or identification.    |
 
 ## Methods
 
-| Name       | Parameters            | Return Type | Description                                                                 |
-|------------|-----------------------|-------------|-----------------------------------------------------------------------------|
-| _keyDown   | event: KeyboardEvent  | void        | Handles keydown events, specifically to create a new post when Enter is pressed. |
-| _newPost   | none                  | void        | Emits a 'new-post' event to signal the creation of a new post, unless disabled. |
+| Name       | Parameters           | Return Type | Description                                                                                   |
+|------------|----------------------|-------------|-----------------------------------------------------------------------------------------------|
+| _keyDown   | event: KeyboardEvent | void        | Handles keydown events, specifically to create a new post when the Enter key is pressed.      |
+| _newPost   | -                    | void        | Emits a 'new-post' event to signal the creation of a new post, unless new posts are disabled. |
 
 ## Events
 
-- **new-post**: Emitted when the user interacts with the card to create a new post, provided that `disableNewPosts` is false.
+- **new-post**: Emitted when the user interacts with the component to create a new post, provided that the `disableNewPosts` property is not set to `true`.
 
 ## Examples
 
 ```typescript
-// Example usage of the YpPostCardAdd component
-<yp-post-card-add .group="{...}" .disableNewPosts="{...}" .index="{...}"></yp-post-card-add>
+// Example usage of the YpPostCardAdd web component
+<yp-post-card-add
+  .disableNewPosts="${this.disableNewPosts}"
+  .group="${this.group}"
+  .index="${this.index}"
+></yp-post-card-add>
 ```
 
-Note: Replace `{...}` with actual property values.
+When using this component in a web page, you can listen for the `new-post` event to handle the creation of a new post. The `disableNewPosts` property can be used to control whether the user is allowed to create new posts. The `group` property provides context that may change how the component is displayed or behaves. The `index` property can be used for additional identification or ordering if needed.

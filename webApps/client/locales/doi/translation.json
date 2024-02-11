@@ -1346,5 +1346,9 @@
   "aiIconInfo": "तुहाडे जवाब लई इक आइकन बनाया जा रहा है, तुसीं खिड़की नूं बंद कर सकदे हो जां आइकन बनन तक उडीक सकदे हो। तुहानूं आइकन नूं मुड़ बनान दा विकल्प वी मिलेगा।",
   "getColorFromLogo": "लोगो चित्र तों रंग लओ",
   "explainBothAnswers": "जवाबां दी व्याख्या",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "ਪਹਿਲਾ ਜਵਾਬ",
+  "secondAnswer": "ਦੂਜਾ ਜਵਾਬ",
+  "hereIsTheQuestion": "ਇੱਥੇ ਸਵਾਲ ਹੈ",
+  "pleaseAnswerInThisLanguage": "ਕਿਰਪਾ ਕਰਕੇ ਇਸ ਭਾਸ਼ਾ ਵਿੱਚ ਜਵਾਬ ਦਿਓ"
 }

@@ -1346,5 +1346,9 @@
   "aiIconInfo": "તમારા જવાબ માટેનું આઇકન બનાવવામાં આવી રહ્યું છે, તમે વિન્ડો બંધ કરી શકો છો અથવા આઇકન બનાવવાની રાહ જોઈ શકો છો. તમારી પાસે આઇકન ફરીથી બનાવવાનું વિકલ્પ પણ હશે.",
   "getColorFromLogo": "લોગો છબીમાંથી રંગ મેળવો",
   "explainBothAnswers": "જવાબોનું સ્પષ્ટીકરણ",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "પ્રથમ જવાબ",
+  "secondAnswer": "બીજો જવાબ",
+  "hereIsTheQuestion": "અહીં પ્રશ્ન છે",
+  "pleaseAnswerInThisLanguage": "કૃપા કરી આ ભાષામાં જવાબ આપો"
 }

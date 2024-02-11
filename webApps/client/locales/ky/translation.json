@@ -1354,5 +1354,9 @@
   "aiIconInfo": "Сиздин жообуңуз үчүн иконка түзүлүп жатат, терезени жабууңуз же иконка түзүлгөнгө чейин күтүүңүз мүмкүн. Ошондой эле иконканы кайра түзүү опциясы болот.",
   "getColorFromLogo": "Logodogu tus al",
   "explainBothAnswers": "Jooptorun tushundurmesi",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "Биринчи жооп",
+  "secondAnswer": "Экинчи жооп",
+  "hereIsTheQuestion": "Мында суроо турат",
+  "pleaseAnswerInThisLanguage": "Бул тилде жооп бериңиз"
 }

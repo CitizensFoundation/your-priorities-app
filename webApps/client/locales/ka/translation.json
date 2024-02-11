@@ -1346,5 +1346,9 @@
   "aiIconInfo": "თქვენი პასუხის ხატულა იქმნება, ფანჯარას დახურვა შეგიძლიათ ან დაელოდოთ ხატულის შექმნას. ასევე, გაქვთ ხატულის ხელახლა შექმნის ვარიანტი.",
   "getColorFromLogo": "ლოგოს ფერის აღება",
   "explainBothAnswers": "პასუხების ახსნა",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "პირველი პასუხი",
+  "secondAnswer": "მეორე პასუხი",
+  "hereIsTheQuestion": "აქ არის კითხვა",
+  "pleaseAnswerInThisLanguage": "გთხოვთ, პასუხი გაეცით ამ ენაზე"
 }

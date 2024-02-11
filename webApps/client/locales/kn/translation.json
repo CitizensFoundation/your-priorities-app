@@ -1346,5 +1346,9 @@
   "aiIconInfo": "ನಿಮ್ಮ ಉತ್ತರಕ್ಕಾಗಿ ಒಂದು ಐಕಾನ್ ರಚಿಸಲಾಗುತ್ತಿದೆ, ನೀವು ಕಿಟಕಿಯನ್ನು ಮುಚ್ಚಬಹುದು ಅಥವಾ ಐಕಾನ್ ರಚಿಸಲು ಕಾಯಬಹುದು. ನೀವು ಐಕಾನ್ ಅನ್ನು ಮರುರಚಿಸುವ ಆಯ್ಕೆಯನ್ನು ಕೂಡ ಹೊಂದಿರುತ್ತೀರಿ.",
   "getColorFromLogo": "ಲೋಗೋ ಚಿತ್ರದಿಂದ ಬಣ್ಣ ಪಡೆಯಿರಿ",
   "explainBothAnswers": "ಉತ್ತರಗಳ ವಿವರಣೆ",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "ಮೊದಲ ಉತ್ತರ",
+  "secondAnswer": "ಎರಡನೇ ಉತ್ತರ",
+  "hereIsTheQuestion": "ಇಲ್ಲಿ ಪ್ರಶ್ನೆ ಇದೆ",
+  "pleaseAnswerInThisLanguage": "ಈ ಭಾಷೆಯಲ್ಲಿ ಉತ್ತರಿಸಿ"
 }

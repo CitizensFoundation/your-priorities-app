@@ -442,7 +442,7 @@
   "multiSortEnabled": "Kwado nhazi ọtụtụ",
   "creator": "Onye kere",
   "severeToxicityScore": "S.Toxicity",
-  "toxicityScore": "Toxicity",
+  "toxicityScore": "Nsogbu",
   "source": "Isi mmalite",
   "domainContentModeration": "Njikwa mpaghara",
   "flags": "Ọkọlọtọ",
@@ -705,7 +705,7 @@
   "editBulkStatusUpdate": "Dezie Mmelite Ọnọdụ Nnukwu",
   "bulkStatusUdateConfig": "Nhazi Mmelite Ọnọdụ Nnukwu",
   "bulkStatusUpdatesTemplates": "Templates Mmelite Ọnọdụ Nnukwu",
-  "selectStatusTemplate": "Template",
+  "selectStatusTemplate": "Ụkpụrụ",
   "moveToGroup": "Kwaga",
   "noIdeasHere": "Enweghị echiche ebe a.",
   "organizationsAdmin": "Njikwa Ọrụ",
@@ -1036,7 +1036,7 @@
     "info": "Ozi",
     "notifications": "Ọkwa",
     "name": "Aha zuru ezu",
-    "email": "Email",
+    "email": "Ozi-e",
     "edit": "Dezie onye ọrụ",
     "password": "Okwuntughe",
     "forgotPassword": "Echefuola Okwuntughe",
@@ -1346,5 +1346,9 @@
   "aiIconInfo": "A na-emepụta akara ngosi maka azịza gị, ị nwere ike imechi windo ma ọ bụ chere ka akara ngosi ahụ mepụta. Ị ga-enwekwa nhọrọ imegharị akara ngosi ahụ.",
   "getColorFromLogo": "Nweta agba site na akara ngosi",
   "explainBothAnswers": "Nkọwa azịza",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "Azịza mbụ",
+  "secondAnswer": "Azịza nke abụọ",
+  "hereIsTheQuestion": "Lee ajụjụ",
+  "pleaseAnswerInThisLanguage": "Biko zaa na asụsụ a"
 }

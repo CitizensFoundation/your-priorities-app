@@ -1346,5 +1346,9 @@
   "aiIconInfo": "Ձեր պատասխանի պատկերակը ստեղծվում է, կարող եք փակել պատուհանը կամ սպասել պատկերակի ստեղծմանը։ Կունենաք նաև պատկերակը վերաստեղծելու տարբերակ։",
   "getColorFromLogo": "Լոգոյից գույն վերցնել",
   "explainBothAnswers": "Պատասխանների բացատրություն",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "Առաջին պատասխան",
+  "secondAnswer": "Երկրորդ պատասխան",
+  "hereIsTheQuestion": "Ահա հարցը",
+  "pleaseAnswerInThisLanguage": "Պատասխանեք այս լեզվով"
 }

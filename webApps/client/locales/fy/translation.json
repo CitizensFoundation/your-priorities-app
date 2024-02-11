@@ -1184,7 +1184,7 @@
   "hats": "Hoeden",
   "dataForVisualizationJsonError": "JSON Flater",
   "selectCategory": "Selektearje Kategory",
-  "earlConfig": "Earl COnfig",
+  "earlConfig": "Earl Config",
   "show_cant_decide": "Lit net beslute sjen",
   "accept_new_ideas": "Akseptearje nije ideeën",
   "hide_results": "ferbergje_resultaten",
@@ -1227,7 +1227,7 @@
   "Thinking": "Tinken...",
   "Send": "Stjoer",
   "typing": "Typen",
-  "record": "Tecord",
+  "record": "Record",
   "send": "Stjoer",
   "Dynamic Colors": "Dynamyske Kleuren",
   "One Dynamic Color": "Ien Dynamyske Kleur",
@@ -1346,5 +1346,9 @@
   "aiIconInfo": "In ikoan foar jo antwurd wurdt generearre, jo kinne it finster slute of wachtsje oant it ikoan generearre is. Jo sille ek de opsje hawwe om it ikoan opnij te generearjen.",
   "getColorFromLogo": "Kleur krije út logo ôfbylding",
   "explainBothAnswers": "Ferklearring fan antwurden",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "Earste antwurd",
+  "secondAnswer": "Twadde antwurd",
+  "hereIsTheQuestion": "Hjir is de fraach",
+  "pleaseAnswerInThisLanguage": "Beäntwurdzje asjebleaft yn dizze taal"
 }

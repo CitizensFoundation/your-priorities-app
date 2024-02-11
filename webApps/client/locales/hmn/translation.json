@@ -1032,7 +1032,7 @@
     "logoutCompleteFor": "Tawm rau",
     "loggedInWithSaml": "Logged in nrog SAML",
     "loggedInWithFacebook": "Logged in nrog Facebook",
-    "facebookLogin": "Facebook login",
+    "facebookLogin": "Facebook nkag mus",
     "info": "Ntaub ntawv",
     "notifications": "Ceeb toom",
     "name": "Lub npe tag nrho",
@@ -1256,7 +1256,7 @@
   "Surface Container High": "Nto Container Siab",
   "Surface Container Highest": "Nto Container Siab Tshaj",
   "Inverse Primary": "Inverse Primary",
-  "Inverse Surface": "Inverse Surface",
+  "Inverse Surface": "Pov Tseg Nto",
   "to": "mus",
   "debate": "Sib Cav",
   "completeLogin": "Tiav nkag mus",
@@ -1346,5 +1346,9 @@
   "aiIconInfo": "Peb tab tom tsim ib tug cim rau koj cov lus teb, koj tuaj yeem kaw qhov rais lossis tos kom cim tsim tawm. Koj kuj yuav muaj xaiv los tsim dua.",
   "getColorFromLogo": "Tau xim ntawm logo duab",
   "explainBothAnswers": "Piav qhia ntawm cov lus teb",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "Lus teb thawj",
+  "secondAnswer": "Lus teb ob",
+  "hereIsTheQuestion": "Nov yog lo lus nug",
+  "pleaseAnswerInThisLanguage": "Thov teb hauv hom lus no"
 }

@@ -1346,5 +1346,9 @@
   "aiIconInfo": "Ana ƙirƙira tambarin amsarku, zaku iya rufewa ko jira a ƙirƙiro tambarin. Hakanan zaku samu zaɓin sake ƙirƙirar tambarin.",
   "getColorFromLogo": "Samu launi daga tambari",
   "explainBothAnswers": "Bayanin amsoshi",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "Amsa ta farko",
+  "secondAnswer": "Amsa ta biyu",
+  "hereIsTheQuestion": "Ga tambayar",
+  "pleaseAnswerInThisLanguage": "Da fatan za a amsa cikin wannan yaren"
 }

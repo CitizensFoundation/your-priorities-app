@@ -1164,7 +1164,7 @@
   "googleClientSecret": "Google Client Secret",
   "Discord Client Id": "Discord Client Id",
   "discordClientId": "Discord Client Id",
-  "Discord Client Secret": "Discord Client Secret",
+  "Discord Client Secret": "Secreto Cliente Discord",
   "discordClientSecret": "Secreto Cliente Discord",
   "Twitter Client Id": "Id Cliente Twitter",
   "twitterClientId": "Id Cliente Twitter",
@@ -1346,5 +1346,9 @@
   "aiIconInfo": "Se ye chenerando una icona ta la tuya respuesta, puedes zarra la finestra u aguardar a que se chenere la icona. Tamién tendrás la opción de tornar a chenerar la icona.",
   "getColorFromLogo": "Alquirir color dende logo",
   "explainBothAnswers": "Esclarcimiento de respostas",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "Primera respuesta",
+  "secondAnswer": "Segunda respuesta",
+  "hereIsTheQuestion": "Aquí ye a pregunta",
+  "pleaseAnswerInThisLanguage": "Responde por favor en ista luenga"
 }

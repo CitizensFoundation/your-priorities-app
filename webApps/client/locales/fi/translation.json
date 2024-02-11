@@ -253,7 +253,7 @@
   "offlineContentSentWhenOnline": "Offline, data lähetetään kun olet online",
   "youHaveUsed": "Olet käyttänyt",
   "votesForGroup": "ääntä",
-  "ofNumber": "of",
+  "ofNumber": " ",
   "maxNumberOfGroupVotes": "Äänien enimmäismäärä käyttäjää kohden",
   "hideSharing": "Piilota jakopainikkeet",
   "documentOnlyVisibleToAdmins": "Liite näkyy vain ylläpitäjille",
@@ -1346,5 +1346,9 @@
   "aiIconInfo": "Vastaustasi varten luodaan kuvaketta, voit sulkea ikkunan tai odottaa kuvakkeen valmistumista. Sinulla on myös mahdollisuus luoda kuvake uudelleen.",
   "getColorFromLogo": "Hae väri logokuvasta",
   "explainBothAnswers": "Vastausten selitys",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "Ensimmäinen vastaus",
+  "secondAnswer": "Toinen vastaus",
+  "hereIsTheQuestion": "Tässä on kysymys",
+  "pleaseAnswerInThisLanguage": "Vastaa tällä kielellä"
 }

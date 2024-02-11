@@ -1346,5 +1346,9 @@
   "aiIconInfo": "ئایکۆنێک بۆ وەڵامەکەت دروست دەکرێت، دەتوانی پەنجەرەکە دابخەی یان چاوەڕێی دروستبوونی ئایکۆنەکە بکەی. هەروەها دەتوانی دووبارە ئایکۆنەکە دروست بکەیتەوە.",
   "getColorFromLogo": "Rengê ji logo wêne bistînin",
   "explainBothAnswers": "Şîroveya bersivên",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "Yekemîn bersiv",
+  "secondAnswer": "Duyemîn bersiv",
+  "hereIsTheQuestion": "Li vir pirsa ye",
+  "pleaseAnswerInThisLanguage": "Ji kerema xwe bi vî zimanê bersiv bide"
 }

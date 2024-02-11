@@ -1346,5 +1346,9 @@
   "aiIconInfo": "Ikono por via respondo generiĝas, vi povas fermi la fenestron aŭ atendi ĝis la ikono estu generita. Vi ankaŭ havos la eblecon regeneri la ikonon.",
   "getColorFromLogo": "Akiri koloron el emblemo",
   "explainBothAnswers": "Klarigo de respondoj",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "Unua respondo",
+  "secondAnswer": "Dua respondo",
+  "hereIsTheQuestion": "Jen la demando",
+  "pleaseAnswerInThisLanguage": "Bonvolu respondi en ĉi tiu lingvo"
 }

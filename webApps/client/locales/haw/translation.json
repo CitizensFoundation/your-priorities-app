@@ -1047,7 +1047,7 @@
     "login": "Komo",
     "create": "Hana Mea Hoʻohana",
     "cancel": "Hoʻopau",
-    "logout": "Logout",
+    "logout": "Haʻalele",
     "newPassword": "ʻōlelo huna hou",
     "register": "Mea hoʻohana hou",
     "alreadyRegisterred": "Ua kākau inoa ʻē ʻia kēia leka uila. Hiki iā ʻoe ke hana i ʻŌlelo Huna Hou inā pono.",
@@ -1346,5 +1346,9 @@
   "aiIconInfo": "Ke hana nei i kahi kiʻi no kāu pane, hiki iā ʻoe ke pani i ka pukaaniani a kali no ka hana ʻia ʻana o ka kiʻi. E loaʻa nō hoʻi ka koho e hana hou i ka kiʻi.",
   "getColorFromLogo": "Loaʻa ka waihoʻoluʻu mai ka logo",
   "explainBothAnswers": "Wehewehe i nā pane",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "Pane mua",
+  "secondAnswer": "Pane lua",
+  "hereIsTheQuestion": "Eia ka nīnau",
+  "pleaseAnswerInThisLanguage": "E ʻoluʻolu, pane ma kēia ʻōlelo"
 }

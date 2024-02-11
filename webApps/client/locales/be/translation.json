@@ -1346,5 +1346,9 @@
   "aiIconInfo": "Значок для вашага адказу ствараецца, вы можаце зачыніць акно ці пачакаць, пакуль будзе створаны значок. У вас таксама будзе магчымасць перастварыць значок.",
   "getColorFromLogo": "Атрымаць колер з лагатыпа",
   "explainBothAnswers": "Тлумачэнне адказаў",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "Першая адказ",
+  "secondAnswer": "Другі адказ",
+  "hereIsTheQuestion": "Вось пытанне",
+  "pleaseAnswerInThisLanguage": "Калі ласка, адкажыце на гэтай мове"
 }

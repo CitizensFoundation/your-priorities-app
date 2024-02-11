@@ -132,7 +132,7 @@
   "lookAndFeel": "Reko ha Teko",
   "samlAuth": "SAML Auth",
   "basic": "Mba'etĩ",
-  "webApp": "Web App",
+  "webApp": "Web Ñanduti",
   "authApis": "Auth APIs",
   "dontHaveAccount": "Nde ndaipóri cuenta?",
   "cantRememberPassword": "Nemandu'ái nde jehai?",
@@ -1346,5 +1346,9 @@
   "aiIconInfo": "Nde resã rupive ojejapóta peteĩ ta'ãnga nde respostápe, ikatu rejei térã reha'arõ ta'ãnga ojejapo. Avei ikatu reikuaa jeývo ta'ãnga.",
   "getColorFromLogo": "Og̃uahẽ mba'e guasu logo pegua",
   "explainBothAnswers": "Mba'ekuaarã ñemombe'u",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "Ñepyrũrã",
+  "secondAnswer": "Mokõirã",
+  "hereIsTheQuestion": "Ko’ápe la pregunta",
+  "pleaseAnswerInThisLanguage": "Ko ñe’ẽme ñe’ẽ"
 }

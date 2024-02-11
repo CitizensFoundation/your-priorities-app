@@ -1346,5 +1346,9 @@
   "aiIconInfo": "回答のアイコンが生成されています。ウィンドウを閉じるか、アイコンの生成を待つことができます。アイコンを再生成するオプションもあります。",
   "getColorFromLogo": "ロゴから色を取得",
   "explainBothAnswers": "回答の説明",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "最初の回答",
+  "secondAnswer": "二番目の回答",
+  "hereIsTheQuestion": "ここに質問があります",
+  "pleaseAnswerInThisLanguage": "この言語で回答してください"
 }

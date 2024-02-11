@@ -1346,5 +1346,9 @@
   "aiIconInfo": "Ikon untuk jawaban Anda sedang dibuat, Anda dapat menutup jendela atau menunggu ikon selesai dibuat. Anda juga memiliki opsi untuk membuat ulang ikon.",
   "getColorFromLogo": "Dapatkan warna dari logo",
   "explainBothAnswers": "Penjelasan jawaban",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "Jawaban pertama",
+  "secondAnswer": "Jawaban kedua",
+  "hereIsTheQuestion": "Ini pertanyaannya",
+  "pleaseAnswerInThisLanguage": "Mohon jawab dalam bahasa ini"
 }

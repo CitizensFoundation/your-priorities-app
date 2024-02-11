@@ -1346,5 +1346,9 @@
   "aiIconInfo": "Tumchem uttarak vishayi chinha nirmit zata, tumi kitlem fenster band korta kiva chinha nirmit zata tevchem vhorta. Tumkam punha chinha nirmitche parvane asatil.",
   "getColorFromLogo": "लोगो चित्रांतून रंग मेळवा",
   "explainBothAnswers": "उत्तरांची स्पष्टीकरण",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "Pailo uttar",
+  "secondAnswer": "Dusro uttar",
+  "hereIsTheQuestion": "Hanga asa prashn",
+  "pleaseAnswerInThisLanguage": "Krupalu ha bhashein uttar di"
 }

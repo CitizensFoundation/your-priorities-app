@@ -1346,5 +1346,9 @@
   "aiIconInfo": "Un icono pro tu responsa es generate, tu pote clauder le fenestra o attender pro le icono esser generate. Tu habera etiam le option de regenerar le icono.",
   "getColorFromLogo": "Obtene color del logo",
   "explainBothAnswers": "Explication de responsas",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "Prime responsa",
+  "secondAnswer": "Secunde responsa",
+  "hereIsTheQuestion": "Ecce le question",
+  "pleaseAnswerInThisLanguage": "Per favor responde in iste lingua"
 }

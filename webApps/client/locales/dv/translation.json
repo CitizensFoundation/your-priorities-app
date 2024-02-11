@@ -746,13 +746,13 @@
   },
   "notification": {
     "passwordResetAndLoggedIn": "ކަލޭގެ ޕާސްވޯޑް ބަދަލުވެއްޖެ އަދި ތިބާ ލޮގިން ކުރެވިފައިވާނެ.",
-    "method": "Method",
-    "frequency": "Frequency",
-    "myPosts": "My ideas",
-    "muted": "Turn off",
-    "browser": "Browser",
-    "email": "Email",
-    "asItHappens": "As it happens",
+    "method": "ގޮތް",
+    "frequency": "ތަނުގަނޑު",
+    "myPosts": "މަގޭ އަވަސް",
+    "muted": "ދަނޑުމަށްޓަކައި",
+    "browser": "ބްރޯސަރ",
+    "email": "އީމެއިލް",
+    "asItHappens": "ކަމަށްވެސް",
     "daily": "Daily",
     "hourly": "ގަޑިއިރު",
     "weekly": "ހަފްތާ",
@@ -1346,5 +1346,9 @@
   "aiIconInfo": "ޖަވާބުގެ އައިކޮން ހަދާނެއެވެ. ވިންޑޯ ބަންދުކުރުމަށް ނުވަތަ އައިކޮން ހަދަން މިންވަރު ކުރުމަށް ކަނޑައެޅިދާނެ. އައިކޮން އަލުން ހަދާނެ އިޚުތިޔާރުވެސް އެބަހުރިއެވެ.",
   "getColorFromLogo": "ލޯގޯގެ ރަނގަކުން ރަނގައި ނެގޭ",
   "explainBothAnswers": "ޖަވާބުންގެ ތަފްޞީލު",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "ފުރަތަމަ ޖަވާބު",
+  "secondAnswer": "ދެވަނަ ޖަވާބު",
+  "hereIsTheQuestion": "މިއީ ސުވާލު",
+  "pleaseAnswerInThisLanguage": "މި ބަސްގައި ޖަވާބު ދީ"
 }

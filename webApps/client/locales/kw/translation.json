@@ -1346,5 +1346,9 @@
   "aiIconInfo": "An Icon ragh dha ateb a veu genys, hwi a yll kavos an fenester po gortos rag an Icon dhe veu genys. Hwi a vydh gans an dewis dhe adgenys an Icon.",
   "getColorFromLogo": "Kav liw a delynnen logo",
   "explainBothAnswers": "Esboniad a atebow",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "Kynsa ateb",
+  "secondAnswer": "Eil ateb",
+  "hereIsTheQuestion": "Omma an gwestyon",
+  "pleaseAnswerInThisLanguage": "Mar pleg, ateb yn y taves-ma"
 }

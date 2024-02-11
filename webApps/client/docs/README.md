@@ -19,6 +19,10 @@
   - [ac-notification-settings](src/ac-notifications/ac-notification-settings.md)
   - [ac-notification-toast](src/ac-notifications/ac-notification-toast.md)
 - admin
+  - allOurIdeas
+    - [AoiAdminServerApi](src/admin/allOurIdeas/AoiAdminServerApi.md)
+    - [aoi-earl-ideas-editor](src/admin/allOurIdeas/aoi-earl-ideas-editor.md)
+    - [aoiGenerateAiLogos](src/admin/allOurIdeas/aoiGenerateAiLogos.md)
   - [yp-admin-app](src/admin/yp-admin-app.md)
   - [yp-admin-communities](src/admin/yp-admin-communities.md)
   - [yp-admin-config-base](src/admin/yp-admin-config-base.md)
@@ -34,6 +38,20 @@
   - [yp-organization-grid](src/admin/yp-organization-grid.md)
   - [yp-pages-grid](src/admin/yp-pages-grid.md)
   - [yp-users-grid](src/admin/yp-users-grid.md)
+- allOurIdeas
+  - [AoiAppGlobals](src/allOurIdeas/AoiAppGlobals.md)
+  - [AoiAppUser](src/allOurIdeas/AoiAppUser.md)
+  - [aoi-survey](src/allOurIdeas/aoi-survey.md)
+  - survey
+    - [AoiServerApi](src/allOurIdeas/survey/AoiServerApi.md)
+    - [SharedStyles](src/allOurIdeas/survey/SharedStyles.md)
+    - [aoi-llm-explain-dialog](src/allOurIdeas/survey/aoi-llm-explain-dialog.md)
+    - [aoi-new-idea-dialog](src/allOurIdeas/survey/aoi-new-idea-dialog.md)
+    - [aoi-streaming-analysis](src/allOurIdeas/survey/aoi-streaming-analysis.md)
+    - [aoi-survey-analysis](src/allOurIdeas/survey/aoi-survey-analysis.md)
+    - [aoi-survey-intro](src/allOurIdeas/survey/aoi-survey-intro.md)
+    - [aoi-survey-results](src/allOurIdeas/survey/aoi-survey-results.md)
+    - [aoi-survey-voting](src/allOurIdeas/survey/aoi-survey-voting.md)
 - analytics-and-promotion
   - pl-components
     - [api](src/analytics-and-promotion/pl-components/api.md)
@@ -120,6 +138,13 @@
   - [YpServerApiAdmin](src/common/YpServerApiAdmin.md)
   - [YpServerApiBase](src/common/YpServerApiBase.md)
   - [getThemeFromImage](src/common/getThemeFromImage.md)
+  - languages
+    - [iso6391](src/common/languages/iso6391.md)
+    - [languageData](src/common/languages/languageData.md)
+    - [yp-language-selector](src/common/languages/yp-language-selector.md)
+    - [ypLanguages](src/common/languages/ypLanguages.md)
+  - litMarkdown
+    - [litMarkdown](src/common/litMarkdown/litMarkdown.md)
   - test
     - [setup-app](src/common/test/setup-app.md)
   - [yp-base-element-with-login](src/common/yp-base-element-with-login.md)
@@ -136,6 +161,9 @@
   - [literals](src/flexbox-literals/literals.md)
 - tools
   - [generateDocumentation](src/tools/generateDocumentation.md)
+  - [syncEnLocale](src/tools/syncEnLocale.md)
+  - [updateAllLocalesFromEn](src/tools/updateAllLocalesFromEn.md)
+  - [updateLocaleFolders](src/tools/updateLocaleFolders.md)
 - yp-api-action-dialog
   - [yp-api-action-dialog](src/yp-api-action-dialog/yp-api-action-dialog.md)
 - yp-app
@@ -176,6 +204,10 @@
   - [yp-file-upload-icon](src/yp-file-upload/yp-file-upload-icon.md)
   - [yp-file-upload](src/yp-file-upload/yp-file-upload.md)
   - [yp-set-video-cover](src/yp-file-upload/yp-set-video-cover.md)
+- yp-llms
+  - [yp-chatbot-base](src/yp-llms/yp-chatbot-base.md)
+  - [yp-chatbot-item-base](src/yp-llms/yp-chatbot-item-base.md)
+  - [yp-streaming-llm-base](src/yp-llms/yp-streaming-llm-base.md)
 - yp-magic-text
   - [yp-magic-text-dialog](src/yp-magic-text/yp-magic-text-dialog.md)
   - [yp-magic-text](src/yp-magic-text/yp-magic-text.md)
@@ -223,6 +255,7 @@
   - [yp-structured-question-edit](src/yp-survey/yp-structured-question-edit.md)
   - [yp-survey-group](src/yp-survey/yp-survey-group.md)
 - yp-theme
+  - [yp-theme-color-input](src/yp-theme/yp-theme-color-input.md)
   - [yp-theme-selector](src/yp-theme/yp-theme-selector.md)
 - yp-user
   - [yp-accept-invite](src/yp-user/yp-accept-invite.md)

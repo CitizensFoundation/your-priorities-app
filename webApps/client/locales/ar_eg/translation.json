@@ -1359,5 +1359,9 @@
   "aiIconInfo": "يتم الآن إنشاء أيقونة لإجابتك، يمكنك إغلاق النافذة أو الانتظار حتى يتم إنشاء الأيقونة. ستتاح لك أيضًا خيار إعادة توليد الأيقونة.",
   "getColorFromLogo": "احصل على اللون من الشعار",
   "explainBothAnswers": "شرح الإجابات",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "الإجابة الأولى",
+  "secondAnswer": "الإجابة الثانية",
+  "hereIsTheQuestion": "ها هي السؤال",
+  "pleaseAnswerInThisLanguage": "يرجى الإجابة بهذه اللغة"
 }

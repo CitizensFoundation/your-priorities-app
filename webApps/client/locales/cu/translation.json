@@ -1346,5 +1346,9 @@
   "aiIconInfo": "Образъ за отвѣтъ творится, можеши окно затворити или ждати созданія образа. Имѣти же возможность образъ поновити.",
   "getColorFromLogo": "Взѧти боꙗ отъ обраꙁъ логотипа",
   "explainBothAnswers": "Толкованиѥ отвѣтъ",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "Пръвъ отвѣтъ",
+  "secondAnswer": "Вторъ отвѣтъ",
+  "hereIsTheQuestion": "Сѥ есть въпросъ",
+  "pleaseAnswerInThisLanguage": "Отвѣщати сѧ ѩзыкомъ симъ"
 }

@@ -1346,5 +1346,9 @@
   "aiIconInfo": "Ikono por via respondo produktas, vu povas klozar la fenestro o atendar la ikono produktar. Vu anke havos la opciono rekrear la ikono.",
   "getColorFromLogo": "Obtenez koloro ek logotipo-imajo",
   "explainBothAnswers": "Expliko di respondo",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "Unesma respondo",
+  "secondAnswer": "Duesma respondo",
+  "hereIsTheQuestion": "Hike esas la demando",
+  "pleaseAnswerInThisLanguage": "Pleze respondez en ca linguo"
 }

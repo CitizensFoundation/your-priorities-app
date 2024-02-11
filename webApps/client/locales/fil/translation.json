@@ -281,7 +281,7 @@
   "addUserDirectlyIfExist": "Idagdag ang user kung umiiral",
   "allowWhatsAppSharing": "Pahintulutan ang pagbabahagi sa WhatsApp",
   "moreContactInformationAddress": "Humingi rin ng address",
-  "contactAddress": "Address",
+  "contactAddress": "Adres",
   "hideQuestionIndexOnNewPost": "Itago ang index ng tanong sa bagong post",
   "thankYouForCompletingTheSurvey": "Salamat sa iyong pakikilahok sa survey",
   "submitSurvey": "Isumite",
@@ -1184,7 +1184,7 @@
   "hats": "Sombrero",
   "dataForVisualizationJsonError": "Error sa JSON",
   "selectCategory": "Pumili ng Kategorya",
-  "earlConfig": "Earl COnfig",
+  "earlConfig": "Earl Config",
   "show_cant_decide": "Ipakita hindi makapagpasya",
   "accept_new_ideas": "Tanggapin bagong ideya",
   "hide_results": "itago_resulta",
@@ -1304,7 +1304,7 @@
   "Total": "Kabuuan",
   "Locations": "Lokasyon",
   "version": "bersyon",
-  "Operating system": "Operating system",
+  "Operating system": "Operating System",
   "Screen size": "Laki ng Screen",
   "Devices": "Mga Aparato",
   "Entry page": "Pahinang Pasukan",
@@ -1346,5 +1346,9 @@
   "aiIconInfo": "Ginagawa ang icon para sa iyong sagot, maaari mong isara ang bintana o maghintay hanggang sa magawa ang icon. Magkakaroon ka rin ng opsyon na muling likhain ang icon.",
   "getColorFromLogo": "Kunin ang kulay mula sa logo",
   "explainBothAnswers": "Paliwanag ng mga sagot",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "Unang sagot",
+  "secondAnswer": "Ikalawang sagot",
+  "hereIsTheQuestion": "Narito ang tanong",
+  "pleaseAnswerInThisLanguage": "Pakisagot sa wikang ito"
 }

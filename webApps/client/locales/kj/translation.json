@@ -915,7 +915,7 @@
       "media": "Holela cover media",
       "imageInfo": "Oka ota ekela oshifoto, aantu ota share idea yo. Pe share oku social media!",
       "map": "Mepu",
-      "streetview": "Street View",
+      "streetview": "Omuono Ogendje",
       "image": "Oshifoto",
       "none": "Oshike"
     },
@@ -1346,5 +1346,9 @@
   "aiIconInfo": "Ehangano lyoye lyopendulo lyokuumbwa, oshinima shoka oshikelele okuvala ihonga kana oye oshilindile ehangano lyokuumbwa. Ota na popya okuza okuumbika ehangano.",
   "getColorFromLogo": "Pangula ombala koshilongo",
   "explainBothAnswers": "Omulongelo gwoshitopolwa",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "Eyamvula yoye",
+  "secondAnswer": "Eyamvula yovili",
+  "hereIsTheQuestion": "Ongaapi omushangelo",
+  "pleaseAnswerInThisLanguage": "Kombulula mOshiwambo"
 }

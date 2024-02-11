@@ -1346,5 +1346,9 @@
   "aiIconInfo": "Un íkonu para i respuestamu ta'lo'na, siña un tatte i bentåna o hånao para u ma'genera i íkonu. Siña ma na'lå'la' i íkonu tåya.",
   "getColorFromLogo": "Konsigi kolor gikan i logo",
   "explainBothAnswers": "Esplikasion ni' manhasso-ña",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "Primeru na tuge",
+  "secondAnswer": "Segundu na tuge",
+  "hereIsTheQuestion": "Aqui i lekna",
+  "pleaseAnswerInThisLanguage": "Fan umatuna gi este na le'nge'"
 }

@@ -276,7 +276,7 @@
   "highlightedLanguages": "Oetgelichde locales (en,is,fr)",
   "optionalSortOrder": "Optioneel sorteervolgorde",
   "sortGroupsBySortOrder": "Sorteer groepe op sorteervolgorde",
-  "openAnalyticsApp": "Open Analytics App",
+  "openAnalyticsApp": "Aope Analytics App",
   "sendInviteByEmail": "Stuur oetneudiging per e-mail",
   "addUserDirectlyIfExist": "Voog gebruiker toe es bestaond",
   "allowWhatsAppSharing": "Sta WhatsApp deling toe",
@@ -1346,5 +1346,9 @@
   "aiIconInfo": "Ene icoon veur dien antwoord weurt gemaak, de kins 't venster sluite of wachte totdat de icoon gemaak is. De höbs ouch de optie um de icoon opnuuj te make.",
   "getColorFromLogo": "Kleur oethaole van logo",
   "explainBothAnswers": "Oetleg van antwoorde",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "Ierste antwoord",
+  "secondAnswer": "Twiede antwoord",
+  "hereIsTheQuestion": "Hie is de vraog",
+  "pleaseAnswerInThisLanguage": "Antwoord in deze taal"
 }

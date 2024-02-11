@@ -1346,5 +1346,9 @@
   "aiIconInfo": "Ee Symbol fir är Äntwert gëtt generéiert, Dir kënnt d'Fënster zoumaachen oder waarden bis d'Symbol generéiert ass. Dir hutt och d'Méiglechkeet, d'Symbol nei ze generéieren.",
   "getColorFromLogo": "Faarf vum Logo Bild kréien",
   "explainBothAnswers": "Erklärung vun Äntwerten",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "Éischt Äntwert",
+  "secondAnswer": "Zweet Äntwert",
+  "hereIsTheQuestion": "Hei ass d'Fro",
+  "pleaseAnswerInThisLanguage": "Äntwert w.e.g. an dëser Sprooch"
 }

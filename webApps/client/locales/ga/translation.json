@@ -1346,5 +1346,9 @@
   "aiIconInfo": "Tá deilbhín do do fhreagra á chruthú, is féidir leat an fhuinneog a dhúnadh nó fanacht go gcruthófar an deilbhín. Beidh rogha agat an deilbhín a athchruthú freisin.",
   "getColorFromLogo": "Faigh dath ó lógó",
   "explainBothAnswers": "Míniú ar fhreagraí",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "Céad freagra",
+  "secondAnswer": "Dara freagra",
+  "hereIsTheQuestion": "Seo í an cheist",
+  "pleaseAnswerInThisLanguage": "Freagair sa teanga seo, le do thoil"
 }

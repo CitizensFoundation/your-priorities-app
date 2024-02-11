@@ -1352,5 +1352,9 @@
   "aiIconInfo": "Teie vastuse ikooni genereeritakse, võite akna sulgeda või oodata ikooni loomist. Teil on ka võimalus ikooni uuesti genereerida.",
   "getColorFromLogo": "Värvi saamine logost",
   "explainBothAnswers": "Vastuste selgitus",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "Esimene vastus",
+  "secondAnswer": "Teine vastus",
+  "hereIsTheQuestion": "Siin on küsimus",
+  "pleaseAnswerInThisLanguage": "Palun vastake selles keeles"
 }

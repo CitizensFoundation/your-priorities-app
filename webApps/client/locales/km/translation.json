@@ -1346,5 +1346,9 @@
   "aiIconInfo": "រូបតំណាងសម្រាប់ចម្លើយរបស់អ្នកកំពុងត្រូវបានបង្កើត។ អ្នកអាចបិទបង្អួចឬរង់ចាំរូបតំណាងត្រូវបានបង្កើត។ អ្នកក៏នឹងមានជម្រើសក្នុងការបង្កើតរូបតំណាងឡើងវិញ។",
   "getColorFromLogo": "យកពណ៌ពីរូបសញ្ញា",
   "explainBothAnswers": "ការពន្យល់ចម្លើយ",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "ចម្លើយដំបូង",
+  "secondAnswer": "ចម្លើយទីពីរ",
+  "hereIsTheQuestion": "នេះជាសំណួរ",
+  "pleaseAnswerInThisLanguage": "សូមឆ្លើយតបជាភាសានេះ"
 }

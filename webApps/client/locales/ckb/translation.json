@@ -1346,5 +1346,9 @@
   "aiIconInfo": "ئایکۆنێک بۆ وەڵامەکەت دروست دەکرێت، دەتوانی پەنجەرەکە دابخەی یان چاوەڕێی دروستبوونی ئایکۆنەکە بکەی. هەروەها هەڵبژاردنەکەت دەبێت ئایکۆنەکە دووبارە بکەیتەوە.",
   "getColorFromLogo": "ڕەنگ وەربگرە لە لۆگۆ",
   "explainBothAnswers": "ڕوونکردنەوەی وەڵامەکان",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "وەڵامی یەکەم",
+  "secondAnswer": "وەڵامی دووەم",
+  "hereIsTheQuestion": "ئەمە پرسیارە",
+  "pleaseAnswerInThisLanguage": "تکایە بەم زمانە وەڵام بدە"
 }

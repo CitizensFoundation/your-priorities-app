@@ -1346,5 +1346,9 @@
   "aiIconInfo": "Ein myndatekin fyri títt svar verður gjørd, tú kanst lata gluggan aftur ella bíða eftir at myndateknið verður gjørt. Tú fært eisini møguleikan at endurgera myndateknið.",
   "getColorFromLogo": "Fá lit úr búmerki mynd",
   "explainBothAnswers": "Forkláring av svørjum",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "Fyrsta svar",
+  "secondAnswer": "Annað svar",
+  "hereIsTheQuestion": "Her er spurningin",
+  "pleaseAnswerInThisLanguage": "Vinarliga svara á hesum máli"
 }

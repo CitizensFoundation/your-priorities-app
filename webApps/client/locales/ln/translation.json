@@ -442,7 +442,7 @@
   "multiSortEnabled": "Kobandisa bozindo mingi",
   "creator": "Mobongisi",
   "severeToxicityScore": "S.Toxicity",
-  "toxicityScore": "Toxicity",
+  "toxicityScore": "Likama",
   "source": "Molɔngɔ́",
   "domainContentModeration": "Bokambi ya domaine",
   "flags": "Bilembo",
@@ -478,7 +478,7 @@
   "postPoint": "Tínda point",
   "uploadVideoPointFor": "Vidéo",
   "uploadAudioPointFor": "Audio",
-  "uploadAudioPointAgainst": "Audio",
+  "uploadAudioPointAgainst": "Lisolo",
   "pointVideoInfo": "Tínda vidéo na format ya landscape. Bokɛlɛ ya vidéo ezalí ",
   "pointAudioInfo": "Lobá polele. Bokɛlɛ ya audio ezalí ",
   "pointAudioInfoAndroid": "Na Android, salelá video mpo na kokanga, kaka audio nde ekosalema.",
@@ -488,8 +488,8 @@
   "videoPointUploadLimitSec": "Limiti ya video ya point na masegɔnde (max 600s)",
   "audioPostUploadLimitSec": "Limiti ya post audio na masegɔnde (max 600s)",
   "audioPointUploadLimitSec": "Limiti ya audio ya point na masegɔnde (max 600s)",
-  "postCoverVideo": "Video",
-  "uploadVideo": "Video",
+  "postCoverVideo": "Bilili",
+  "uploadVideo": "Bilili",
   "uploadCompleted": "Téléchargement esili",
   "uploadingVideo": "Kotélécharger video...",
   "uploadingImage": "Kotélécharger image...",
@@ -498,7 +498,7 @@
   "allowPostVideoUploads": "Permettre téléchargement ya video ya post",
   "useVideoCover": "Salelá video lokómu",
   "postCoverVideoInfo": "Tindá video na format HD ya mokili. Bolai ya video ezali ",
-  "postCoverAudio": "Audio",
+  "postCoverAudio": "Lisolo",
   "postCoverAudioInfo": "Lobá na mongongo moko ya pɛtɛɛ. Bolai ya audio ezali ",
   "media": "Média",
   "removalAndDeletionInProgress": "Kolongola mpe kolimwisa ezali kokoba. Talelá lisusu lokasa sima ya mwa ntango.",
@@ -535,7 +535,7 @@
   "deleteSelectedUsers": "Sɛnga bolɔkɔ ya eponi:",
   "anonymizeSelectedUsers": "Kobomba nkombo ya eponi:",
   "anonymizeUser": "Kobomba nkombo ya mosali",
-  "email": "Email",
+  "email": "Mokanda",
   "organization": "Mabongisi",
   "emailAlreadyRegisterred": "Okoki kotya email na yo na adresse oyo te pamba te ezali kosalema.",
   "userHaveSetEmail": "Email etiyami po na",
@@ -969,7 +969,7 @@
     "inProgress": "Ezali kotindika..."
   },
   "notice": {
-    "ok": "Ok",
+    "ok": "Esengo",
     "deleteConfirmation": "Olingi kolongola lisanga oyo?"
   },
   "maps": {
@@ -1015,7 +1015,7 @@
     "addAdmin": "Tia mokonzi",
     "removeUser": "Longola moto",
     "inviteUser": "Benga moto",
-    "email": "email",
+    "email": "mokanda",
     "removeFromOrganization": "Longola lisanga",
     "addToOrganization": "Tia lisanga",
     "selectOrganization": "Pona lisanga"
@@ -1036,7 +1036,7 @@
     "info": "Nkasa",
     "notifications": "Mituna",
     "name": "Nkombo ya mobimba",
-    "email": "Email",
+    "email": "Mokanda",
     "edit": "Kokoma mosali",
     "password": "Bwanya",
     "forgotPassword": "Bosili Bwanya",
@@ -1346,5 +1346,9 @@
   "aiIconInfo": "Ezali kosalema mpo na kozwa elilingi ya eyano na yo, okoki kokanga fenetre to kozela elilingi esalema. Okozala na libaku ya kosala yango lisusu.",
   "getColorFromLogo": "Zwa loketo na logo",
   "explainBothAnswers": "Nsango ya biyano",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "Eyano ya liboso",
+  "secondAnswer": "Eyano ya mibale",
+  "hereIsTheQuestion": "Tala motuna oyo",
+  "pleaseAnswerInThisLanguage": "Yanola na monɔkɔ oyo"
 }

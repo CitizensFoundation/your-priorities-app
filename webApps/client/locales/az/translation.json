@@ -1346,5 +1346,9 @@
   "aiIconInfo": "Cavabınız üçün ikona yaradılır, pəncərəni bağlaya və ya ikon yaradılana qədər gözləyə bilərsiniz. Həmçinin, ikonu yenidən yaratmaq seçiminiz olacaq.",
   "getColorFromLogo": "Loqodan rəng al",
   "explainBothAnswers": "Cavabların izahı",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "Birinci cavab",
+  "secondAnswer": "İkinci cavab",
+  "hereIsTheQuestion": "Burada sual var",
+  "pleaseAnswerInThisLanguage": "Zəhmət olmasa bu dildə cavab verin"
 }
