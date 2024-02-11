@@ -15,6 +15,7 @@ import "@material/web/textfield/filled-text-field.js";
 import { SharedStyles } from "./SharedStyles.js";
 import { YpChatbotBase } from "../../yp-llms/yp-chatbot-base.js";
 import { AoiServerApi } from "./AoiServerApi.js";
+import { YpLanguages } from "../../common/languages/ypLanguages.js";
 let AoiLlmExplainDialog = class AoiLlmExplainDialog extends YpChatbotBase {
     constructor() {
         super(...arguments);
@@ -36,14 +37,16 @@ let AoiLlmExplainDialog = class AoiLlmExplainDialog extends YpChatbotBase {
         this.addEventListener("chatbot-close", this.cancel);
     }
     async sendFirstQuestion() {
-        const firstMessage = `**Here is the question:**
-${this.question.name}
+        const firstMessage = `**${this.t('hereIsTheQuestion')}:**
+${this.questionText}
 
-**First Answer:**
-${this.leftAnswer.content}
+**${this.t('firstAnswer')}:**
+${this.leftAnswerText}
 
-**Second Answer:**
-${this.rightAnswer.content}`;
+**${this.t('secondAnswer')}**
+${this.rightAnswerText}
+
+${this.t('pleaseAnswerInThisLanguage')}: ${YpLanguages.getEnglishName(this.language)}`;
         this.addChatBotElement({
             sender: "you",
             type: "start",
@@ -137,7 +140,7 @@ ${this.rightAnswer.content}`;
         return html `<md-dialog
       @closed="${() => this.cancel()}"
       ?fullscreen="${!this.wide}"
-      style="max-width: 800px;max-height: 90vh;"
+      style="max-width: 800px;max-height: 100vh;"
       id="dialog"
     > <div slot="headline">${this.t("explainBothAnswers")}</div>
       <div slot="content">${super.render()}</div>
@@ -153,6 +156,15 @@ __decorate([
 __decorate([
     property({ type: Object })
 ], AoiLlmExplainDialog.prototype, "question", void 0);
+__decorate([
+    property({ type: String })
+], AoiLlmExplainDialog.prototype, "questionText", void 0);
+__decorate([
+    property({ type: String })
+], AoiLlmExplainDialog.prototype, "leftAnswerText", void 0);
+__decorate([
+    property({ type: String })
+], AoiLlmExplainDialog.prototype, "rightAnswerText", void 0);
 __decorate([
     property({ type: Object })
 ], AoiLlmExplainDialog.prototype, "leftAnswer", void 0);

@@ -372,7 +372,7 @@ export class AllOurIdeasController {
         }
     }
     async analysis(req, res) {
-        const { groupId, wsClientSocketId, analysisIndex, analysisTypeIndex } = req.params;
+        const { groupId, wsClientSocketId, analysisIndex, analysisTypeIndex, languageName } = req.params;
         console.log(`--------------------> ${groupId} ${analysisIndex} ${analysisTypeIndex}`);
         try {
             const group = await Group.findOne({ where: { id: groupId } });
@@ -431,14 +431,16 @@ export class AllOurIdeasController {
                 .update(analysisType.contextPrompt)
                 .digest("hex")
                 .substring(0, 8);
-            const analysisCacheKey = `${questionId}_${analysisTypeIndex}_${choiceIds}_${promptHash}_ai_analysis_v10`;
+            const usedLanguageName = languageName || "English";
+            const analysisCacheKey = `${questionId}_${analysisTypeIndex}_${choiceIds}_${usedLanguageName}_${promptHash}_ai_analysis_v13`;
             console.log(`analysisCacheKey is ${analysisCacheKey} prompt ${analysisType.contextPrompt.substring(0, 15)}...`);
             // Implement caching logic here
             let cachedAnalysis = await req.redisClient.get(analysisCacheKey);
             if (!cachedAnalysis) {
+                const topOrBottomText = ideasIdsRange < 0 ? `Bottom ${perPage} answers` : `Top ${perPage} answers`;
                 const swClientSocket = this.wsClients.get(wsClientSocketId);
                 const aiHelper = new AiHelper(swClientSocket);
-                await aiHelper.getAiAnalysis(questionId, analysisType.contextPrompt, choices, analysisCacheKey, req.redisClient);
+                await aiHelper.getAiAnalysis(questionId, analysisType.contextPrompt, choices, analysisCacheKey, req.redisClient, usedLanguageName, topOrBottomText, analysisType.label);
             }
             res.json({
                 selectedChoices: choices,

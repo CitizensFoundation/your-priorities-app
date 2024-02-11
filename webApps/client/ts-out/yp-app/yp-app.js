@@ -512,7 +512,7 @@ let YpApp = class YpApp extends YpBaseElement {
         }
         else {
             const isActive = this.appMode === "admin";
-            const showSpinner = this.loadingAppSpinner; // Example loading state variable
+            const showSpinner = this.loadingAppSpinner;
             return html `
         <div class="loadingAppSpinnerPage ${showSpinner ? "" : "hidden"}">
           <md-circular-progress indeterminate></md-circular-progress>
@@ -531,7 +531,7 @@ let YpApp = class YpApp extends YpBaseElement {
         }
         else {
             const isActive = this.appMode === "analytics" || this.appMode === "promotion";
-            const showSpinner = this.loadingAppSpinner; // Example loading state variable
+            const showSpinner = this.loadingAppSpinner;
             return html `
         <div class="loadingAppSpinnerPage ${showSpinner ? "" : "hidden"}">
           <md-circular-progress indeterminate></md-circular-progress>

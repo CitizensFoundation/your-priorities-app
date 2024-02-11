@@ -41,6 +41,7 @@ interface YpRequest extends express.Request {
 import { AiHelper } from "../active-citizen/engine/allOurIdeas/aiHelper.js";
 import { ExplainAnswersAssistant } from "../active-citizen/engine/allOurIdeas/explainAnswersAssistant.js";
 import OpenAI from "openai";
+import { lang } from "moment";
 
 export class AllOurIdeasController {
   public path = "/api/allOurIdeas";
@@ -552,7 +553,7 @@ export class AllOurIdeasController {
   }
 
   public async analysis(req: YpRequest, res: Response): Promise<void> {
-    const { groupId, wsClientSocketId, analysisIndex, analysisTypeIndex } =
+    const { groupId, wsClientSocketId, analysisIndex, analysisTypeIndex, languageName } =
       req.params;
 
     console.log(
@@ -612,7 +613,8 @@ export class AllOurIdeasController {
       console.log(`@ideasIdsRange is ${ideasIdsRange}.`);
 
       const analysisType =
-        analysisIdeaConfig.analysisTypes[parseInt(analysisTypeIndex, 10)];
+        analysisIdeaConfig.analysisTypes[parseInt(analysisTypeIndex, 10)] as AnalysisTypeData;
+
       console.log(`Analysis Type: ${analysisType}`);
       const perPage = Math.abs(ideasIdsRange);
       console.log(`Per page: ${perPage}`);
@@ -648,13 +650,15 @@ export class AllOurIdeasController {
 
       const promptHash = crypto
         .createHash("sha256")
-        .update(analysisType.contextPrompt)
+        .update(analysisType.contextPrompt!)
         .digest("hex")
         .substring(0, 8);
 
-      const analysisCacheKey = `${questionId}_${analysisTypeIndex}_${choiceIds}_${promptHash}_ai_analysis_v10`;
+      const usedLanguageName = languageName || "English";
+
+      const analysisCacheKey = `${questionId}_${analysisTypeIndex}_${choiceIds}_${usedLanguageName}_${promptHash}_ai_analysis_v13`;
       console.log(
-        `analysisCacheKey is ${analysisCacheKey} prompt ${analysisType.contextPrompt.substring(
+        `analysisCacheKey is ${analysisCacheKey} prompt ${analysisType.contextPrompt!.substring(
           0,
           15
         )}...`
@@ -664,14 +668,19 @@ export class AllOurIdeasController {
       let cachedAnalysis = await req.redisClient.get(analysisCacheKey);
 
       if (!cachedAnalysis) {
+
+        const topOrBottomText = ideasIdsRange < 0 ? `Bottom ${perPage} answers` : `Top ${perPage} answers`;
         const swClientSocket = this.wsClients.get(wsClientSocketId);
         const aiHelper = new AiHelper(swClientSocket);
         await aiHelper.getAiAnalysis(
           questionId,
-          analysisType.contextPrompt,
+          analysisType.contextPrompt!,
           choices,
           analysisCacheKey,
-          req.redisClient
+          req.redisClient,
+          usedLanguageName,
+          topOrBottomText,
+          analysisType.label
         );
       }
 

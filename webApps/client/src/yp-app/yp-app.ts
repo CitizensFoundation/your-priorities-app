@@ -738,7 +738,7 @@ export class YpApp extends YpBaseElement {
       return nothing;
     } else {
       const isActive = this.appMode === "admin";
-      const showSpinner = this.loadingAppSpinner; // Example loading state variable
+      const showSpinner = this.loadingAppSpinner;
 
       return html`
         <div class="loadingAppSpinnerPage ${showSpinner ? "" : "hidden"}">
@@ -759,7 +759,7 @@ export class YpApp extends YpBaseElement {
     } else {
       const isActive =
         this.appMode === "analytics" || this.appMode === "promotion";
-      const showSpinner = this.loadingAppSpinner; // Example loading state variable
+      const showSpinner = this.loadingAppSpinner;
 
       return html`
         <div class="loadingAppSpinnerPage ${showSpinner ? "" : "hidden"}">

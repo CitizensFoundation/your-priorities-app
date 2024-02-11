@@ -11,7 +11,7 @@ import { unsafeHTML } from "lit/directives/unsafe-html.js";
 import linkifyHtml from "linkify-html";
 import { YpBaseElement } from "../common/yp-base-element.js";
 import { twemoji } from "@kano/twemoji/index.es.js";
-import '@material/web/progress/linear-progress.js';
+import "@material/web/progress/linear-progress.js";
 let YpMagicText = YpMagicText_1 = class YpMagicText extends YpBaseElement {
     constructor() {
         super(...arguments);
@@ -78,14 +78,17 @@ let YpMagicText = YpMagicText_1 = class YpMagicText extends YpBaseElement {
             : html ` <div>${this.truncatedContent}</div> `}
         ${this.showMoreText && this.moreText
             ? html `
-                <md-outlined-button
-                  class="moreText"
-                  @click="${this._openFullScreen}"
-                  .label="${this.moreText}"
-                ></md-outlined-button>
-              `
+              <md-outlined-button
+                class="moreText"
+                @click="${this._openFullScreen}"
+                .label="${this.moreText}"
+              ></md-outlined-button>
+            `
             : nothing}
-        <md-linear-progress indeterminate ?hidden="${!this.isFetchingTranslation}"></md-linear-progress>
+        <md-linear-progress
+          indeterminate
+          ?hidden="${!this.isFetchingTranslation}"
+        ></md-linear-progress>
       </div>
     `;
     }
@@ -119,6 +122,9 @@ let YpMagicText = YpMagicText_1 = class YpMagicText extends YpBaseElement {
     }
     subClassProcessing() {
         // For sub classes
+    }
+    get translatedContent() {
+        return this.finalContent || this.content;
     }
     updated(changedProperties) {
         //console.error(`Map Contents: ${JSON.stringify(Array.from(changedProperties.entries()))}`);
@@ -205,10 +211,22 @@ let YpMagicText = YpMagicText_1 = class YpMagicText extends YpBaseElement {
                         url = "/api/communities/" + this.contentId + "/translatedText";
                         break;
                     case "aoiQuestionName":
-                        url = "/api/allOurIdeas/" + this.contentId + "/content/" + this.extraId + "/translatedText";
+                        url =
+                            "/api/allOurIdeas/" +
+                                this.contentId +
+                                "/content/" +
+                                this.extraId +
+                                "/translatedText";
                         break;
                     case "aoiChoiceContent":
-                        url = "/api/allOurIdeas/" + this.contentId + "/content/" + this.extraId + "/" + this.additionalId + "/translatedText";
+                        url =
+                            "/api/allOurIdeas/" +
+                                this.contentId +
+                                "/content/" +
+                                this.extraId +
+                                "/" +
+                                this.additionalId +
+                                "/translatedText";
                         break;
                     case "alternativeTextForNewIdeaButton":
                     case "alternativeTextForNewIdeaButtonClosed":

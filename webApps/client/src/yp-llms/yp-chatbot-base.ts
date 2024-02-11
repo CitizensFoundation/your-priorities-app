@@ -300,21 +300,6 @@ export abstract class YpChatbotBase extends YpStreamingLlmBase {
     return [
       super.styles,
       css`
-        md-textfield {
-          width: 600px;
-          --mdc-theme-primary: var(--md-sys-color-primary);
-          --mdc-text-field-ink-color: var(--md-sys-color-on-surface);
-          --mdc-text-area-outlined-hover-border-color: var(
-            --md-sys-color-on-surface
-          );
-          --mdc-text-area-outlined-idle-border-color: var(
-            --md-sys-color-on-surface
-          );
-          --mdc-notched-outline-border-color: var(
-            --md-sys-color-on-surface-variant
-          );
-        }
-
         md-outlined-text-field {
           width: 350px;
         }
@@ -424,7 +409,21 @@ export abstract class YpChatbotBase extends YpStreamingLlmBase {
 
           md-outlined-text-field {
             transition: transform 0.5s;
-            width: 400px;
+            width: 300px;
+          }
+
+          .chat-messages {
+            padding: 0px;
+          }
+
+          .you-chat-element {
+            max-width: 100%;
+            margin-right: 8px;
+          }
+
+          .chat-input {
+            padding-left: 0px;
+            padding-right: 0px;
           }
 
           .restartButton[input-is-focused] {

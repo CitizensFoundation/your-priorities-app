@@ -41,8 +41,26 @@ let AoiStreamingAnalysis = class AoiStreamingAnalysis extends YpStreamingLlmBase
         return html `
       <div class="answers layout horizontal">
         <div class="column index ideaIndex">${index + 1}.</div>
-        <div class="column layout vertical ideaDescription">
-          <div class="">${result.data.content}</div>
+        <div class="layout horizontal">
+          <div class="column ideaName">
+            <yp-magic-text
+              id="answerText"
+              .contentId="${this.groupId}"
+              .extraId="${result.data.choiceId}"
+              .additionalId="${this.earl.question_id}"
+              textOnly
+              truncate="140"
+              .content="${result.data.content}"
+              .contentLanguage="${this.group.language}"
+              textType="aoiChoiceContent"
+            ></yp-magic-text>
+          </div>
+          <div class="flex"></div>
+          <img
+            class="answerImage"
+            ?hidden="${result.data.imageUrl == undefined}"
+            src="${result.data.imageUrl}"
+          />
         </div>
       </div>
     `;
@@ -77,6 +95,7 @@ let AoiStreamingAnalysis = class AoiStreamingAnalysis extends YpStreamingLlmBase
             css `
         .content {
           margin: 16px;
+          margin-bottom: 0;
         }
 
         .generatingInfo {
@@ -106,6 +125,13 @@ let AoiStreamingAnalysis = class AoiStreamingAnalysis extends YpStreamingLlmBase
           text-align: left;
           align-items: left;
           width: 100%;
+          margin-bottom: 8px;
+        }
+
+        .answerImage {
+          width: 60px;
+          height: 60px;
+          border-radius: 45px;
         }
 
         @media (max-width: 960px) {
@@ -127,7 +153,7 @@ let AoiStreamingAnalysis = class AoiStreamingAnalysis extends YpStreamingLlmBase
             includeImages: true,
             includeCodeBlockClassNames: true,
         })}
-      <div class="generatingInfo">${this.t("Written by GPT-4")}</div>
+      <div ?hidden="${!this.analysis}" class="generatingInfo">${this.t("Written by GPT-4")}</div>
     </div>`;
     }
 };
@@ -137,6 +163,9 @@ __decorate([
 __decorate([
     property({ type: Number })
 ], AoiStreamingAnalysis.prototype, "groupId", void 0);
+__decorate([
+    property({ type: Object })
+], AoiStreamingAnalysis.prototype, "group", void 0);
 __decorate([
     property({ type: Number })
 ], AoiStreamingAnalysis.prototype, "analysisIndex", void 0);

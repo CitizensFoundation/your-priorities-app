@@ -239,7 +239,19 @@ let AoiSurveyResuls = class AoiSurveyResuls extends YpBaseElement {
         <div class="layout horizontal nameAndScore">
           <div class="layout vertical scoreAndNameContainer">
             <div class="layout horizontal">
-              <div class="column ideaName">${result.data.content}</div>
+              <div class="column ideaName">
+                <yp-magic-text
+                  id="answerText"
+                  .contentId="${this.groupId}"
+                  .extraId="${result.data.choiceId}"
+                  .additionalId="${this.question.id}"
+                  textOnly
+                  truncate="140"
+                  .content="${result.data.content}"
+                  .contentLanguage="${this.group.language}"
+                  textType="aoiChoiceContent"
+                ></yp-magic-text>
+              </div>
               <div class="flex"></div>
               <img
                 class="answerImage"

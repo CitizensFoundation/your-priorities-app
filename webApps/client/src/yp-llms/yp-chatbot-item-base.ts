@@ -333,7 +333,7 @@ export class YpAiChatbotItemBase extends YpBaseElement {
           class="chatGPTDialog layout vertical bot-message"
           ?error="${this.isError}"
         >
-          <div class="layout horizontal">
+          <div class="layout ${this.wide ? 'horizontal' : 'vertical'}">
             <div class="layout vertical chatImage">${this.renderCGImage()}</div>
             <div class="layout vertical chatText">
               ${resolveMarkdown(this.message, {

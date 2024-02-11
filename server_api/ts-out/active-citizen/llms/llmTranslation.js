@@ -144,7 +144,7 @@ export class YpLlmTranslation {
     }
     async getChoiceTranslation(languageIsoCode, answerContent, maxCharactersInTranslation = 140) {
         try {
-            console.log(`getChoiceTranslation: ${answerContent}`);
+            console.log(`async getChoiceTranslation: ${answerContent}`);
             const languageName = YpLanguages.getEnglishName(languageIsoCode) || languageIsoCode;
             if (await this.getModerationFlag(answerContent)) {
                 console.error("Flagged:", answerContent);
@@ -232,12 +232,11 @@ export class YpLlmTranslation {
         }
     }
     async callSchemaLlm(jsonInSchema, jsonOutSchema, lengthInfo, languageName, question, toTranslate, maxCharactersInTranslation, systemRenderer, userRenderer) {
+        console.log("Call schema LLM:", jsonInSchema, jsonOutSchema, lengthInfo, languageName, question, toTranslate, maxCharactersInTranslation);
         const messages = [
             {
                 role: "system",
-                content: systemRenderer
-                    ? systemRenderer()
-                    : this.renderSchemaSystemMessage(jsonInSchema, jsonOutSchema, lengthInfo),
+                content: this.renderSchemaSystemMessage(jsonInSchema, jsonOutSchema, lengthInfo),
             },
             {
                 role: "user",
@@ -270,6 +269,7 @@ export class YpLlmTranslation {
                             throw new Error("Translation too long");
                         }
                         running = false;
+                        console.log("Return text " + translationData.translatedContent);
                         return translationData.translatedContent;
                     }
                 }

@@ -1,4 +1,8 @@
 {
+  "firstAnswer": "First answer",
+  "secondAnswer": "Second answer",
+  "hereIsTheQuestion": "Here is the question",
+  "pleaseAnswerInThisLanguage": "Please answer in this language",
   "getColorFromLogo": "Get color from logo image",
   "explainBothAnswers": "Explanation of answers",
   "thinking": "Thinking",

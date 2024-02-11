@@ -247,6 +247,34 @@ let AoiNewIdeaDialog = class AoiNewIdeaDialog extends YpGenerateAiImage {
             margin-bottom: 8px;
           }
 
+          .aiIconInfo {
+            max-width: 100%;
+          }
+
+          .genIconSpinner {
+            width: 75px;
+            height: 75px;
+            margin-left: 0;
+            margin-right: -8px;
+          }
+
+          .iconContainer md-elevated-button {
+            width: 90vh;
+            max-width: 90vh;
+            font-size: 15px;
+          }
+
+          .generateIconButton {
+            max-width: 220px;
+          }
+
+          .iconImage,
+          .iconImageRight {
+            width: 75px;
+            height: 75px;
+            border-radius: 45px;
+          }
+
           .questionTitle {
             margin-top: 16px;
             margin-bottom: 12px;

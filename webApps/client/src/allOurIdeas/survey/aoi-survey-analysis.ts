@@ -9,7 +9,7 @@ import { SharedStyles } from "./SharedStyles.js";
 
 import "@material/web/progress/circular-progress.js";
 
-import './aoi-streaming-analysis.js';
+import "./aoi-streaming-analysis.js";
 
 @customElement("aoi-survey-analysis")
 export class AoiSurveyAnalysis extends YpBaseElement {
@@ -86,8 +86,6 @@ export class AoiSurveyAnalysis extends YpBaseElement {
           margin-top: 8px;
           border-radius: 16px;
           text-align: center;
-          color: var(--md-sys-color-secondary-container);
-          background-color: var(--md-sys-color-on-secondary-container);
         }
 
         .ideasLabel {
@@ -116,15 +114,15 @@ export class AoiSurveyAnalysis extends YpBaseElement {
 
         .rowsContainer {
           padding: 0;
-          padding-top: 16px;
-          padding-bottom: 16px;
+          padding-top: 0px;
+          padding-bottom: 8px;
           margin: 16px;
           width: 100%;
           margin-top: 8px;
           border-radius: 24px;
           margin-bottom: 16px;
-          color: var(--md-sys-color-on-primary-container);
-          background-color: var(--md-sys-color-primary-container);
+          color: var(--md-sys-color-on-surface);
+          background-color: var(--md-sys-color-surface-container);
         }
 
         .analysisContainer {
@@ -137,8 +135,15 @@ export class AoiSurveyAnalysis extends YpBaseElement {
 
           font-size: 16px;
           vertical-align: center;
+          margin-top: 0;
+          padding-top: 0;
 
           padding-bottom: 16px;
+        }
+
+        aoi-streaming-analysis {
+          margin-bottom: 16px;
+          border-radius: 16px;
         }
 
         .analysisRow {
@@ -183,6 +188,7 @@ export class AoiSurveyAnalysis extends YpBaseElement {
         aoi-streaming-analysis {
           padding: 16px;
         }
+
 
         @media (min-width: 960px) {
           .questionTitle {
@@ -244,19 +250,18 @@ export class AoiSurveyAnalysis extends YpBaseElement {
         i++
       ) {
         const analysis = this.earl.configuration!.analysis_config.analyses[i];
-        outHtml = html`${outHtml}
-          <div class="ideasLabel">${analysis.ideasLabel}</div>
-
-         `;
+        outHtml = html`${outHtml}`;
         let innerHtml = html``;
         for (let a = 0; a < analysis.analysisTypes.length; a++) {
           innerHtml = html`${innerHtml}
-          <aoi-streaming-analysis
-            .groupId=${this.group.id}
-            .analysisIndex=${i}
-            .analysisTypeIndex=${a}
-          >
-          </aoi-streaming-analysis>`;
+            <aoi-streaming-analysis
+              .groupId=${this.group.id}
+              .group=${this.group}
+              .earl=${this.earl}
+              .analysisIndex=${i}
+              .analysisTypeIndex=${a}
+            >
+            </aoi-streaming-analysis>`;
         }
         outHtml = html`${outHtml}
           <div class="rowsContainer">${innerHtml}</div>`;
@@ -269,9 +274,19 @@ export class AoiSurveyAnalysis extends YpBaseElement {
   override render() {
     return html`
       <div class="topContainer layout vertical wrap center-center">
-        <div class="title">${this.t("Vote Analysis")}</div>
         <div class="layout vertical self-start">
-          <div class="questionTitle">${this.question.name}</div>
+          <div class="questionTitle">
+            <yp-magic-text
+              id="answerText"
+              .contentId="${this.group.id}"
+              .extraId="${this.question.id}"
+              textOnly
+              truncate="300"
+              .content="${this.question.name}"
+              .contentLanguage="${this.group.language}"
+              textType="aoiQuestionName"
+            ></yp-magic-text>
+          </div>
         </div>
         <div class="layout vertical center-center analysisContainer">
           ${this.renderAnalysis()}

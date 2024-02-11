@@ -627,6 +627,7 @@ module.exports = (sequelize, DataTypes) => {
                 AcTranslationCache.llmTranslation = new YpLlmTranslation();
             }
             if (textType === "aoiChoiceContent") {
+                console.log(`contentToTranslate ${contentToTranslate}`);
                 const translatedTextData = await AcTranslationCache.llmTranslation.getChoiceTranslation(targetLanguage, contentToTranslate);
                 if (!translatedTextData) {
                     callback("No translations");

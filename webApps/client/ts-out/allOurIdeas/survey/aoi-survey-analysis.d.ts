@@ -2,7 +2,7 @@ import { nothing } from "lit";
 import "../../common/yp-image.js";
 import { YpBaseElement } from "../../common/yp-base-element.js";
 import "@material/web/progress/circular-progress.js";
-import './aoi-streaming-analysis.js';
+import "./aoi-streaming-analysis.js";
 export declare class AoiSurveyAnalysis extends YpBaseElement {
     groupId: number;
     group: YpGroupData;

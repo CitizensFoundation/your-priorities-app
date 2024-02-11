@@ -72,6 +72,8 @@ let AoiSurveyVoting = class AoiSurveyVoting extends YpBaseElement {
     }
     async voteForAnswer(direction) {
         window.appGlobals.activity(`Voting - ${direction}`);
+        //this.resetAnimation({target: this.$$("#leftAnswerButton")});
+        //this.resetAnimation({target: this.$$("#rightAnswerButton")});
         const voteData = {
             time_viewed: new Date().getTime() - (this.timer || 0),
             prompt_id: this.promptId,
@@ -153,9 +155,7 @@ let AoiSurveyVoting = class AoiSurveyVoting extends YpBaseElement {
           --md-elevated-button-container-color: var(
             --md-sys-color-surface-container-high
           );
-          --md-elevated-button-label-text-color: var(
-            --md-sys-color-on-surface
-          );
+          --md-elevated-button-label-text-color: var(--md-sys-color-on-surface);
         }
 
         yp-magic-text {
@@ -333,15 +333,12 @@ let AoiSurveyVoting = class AoiSurveyVoting extends YpBaseElement {
           .questionTitle {
             margin-top: 16px;
             margin-bottom: 0px;
-            font-size: 22
-            px;
+            font-size: 22 px;
           }
-
 
           yp-magic-text {
             min-width: 100%;
           }
-
 
           .spinnerContainer {
             width: 100%;
@@ -368,7 +365,6 @@ let AoiSurveyVoting = class AoiSurveyVoting extends YpBaseElement {
         }
 
         @media (max-width: 380px) {
-
           .buttonContainer md-elevated-button {
             width: 85vw;
             max-width: 85vw;
@@ -383,7 +379,8 @@ let AoiSurveyVoting = class AoiSurveyVoting extends YpBaseElement {
     renderProgressBar() {
         if (this.earl.configuration) {
             let initialTargetVotes = this.earl.configuration.target_votes || 30;
-            if (!this.currentLevelTargetVotes || this.question.visitor_votes >= this.currentLevelTargetVotes) {
+            if (!this.currentLevelTargetVotes ||
+                this.question.visitor_votes >= this.currentLevelTargetVotes) {
                 this.currentLevelTargetVotes = initialTargetVotes;
                 let levelMultiplier = 1;
                 while (this.question.visitor_votes >= this.currentLevelTargetVotes) {
@@ -400,8 +397,8 @@ let AoiSurveyVoting = class AoiSurveyVoting extends YpBaseElement {
           <div class="progressBar" style="width: ${progressPercentage}%;"></div>
         </div>
         <div class="progressBarText">
-          ${this.question.visitor_votes} ${this.t("votes of")} ${targetVotes} ${this.t("target")}
-          (${this.t("Level")} ${this.level})
+          ${this.question.visitor_votes} ${this.t("votes of")} ${targetVotes}
+          ${this.t("target")} (${this.t("Level")} ${this.level})
         </div>
       `;
         }
@@ -418,7 +415,7 @@ let AoiSurveyVoting = class AoiSurveyVoting extends YpBaseElement {
         >
           <div class="questionTitle">
             <yp-magic-text
-              id="answerText"
+              id="questionText"
               .contentId="${this.groupId}"
               .extraId="${this.question.id}"
               textOnly
@@ -474,7 +471,7 @@ let AoiSurveyVoting = class AoiSurveyVoting extends YpBaseElement {
               ></yp-magic-text>
             </md-elevated-button>
             <div class="layout horizontal center-center">
-             <span class="or"> ${this.t("or")} </span>
+              <span class="or"> ${this.t("or")} </span>
             </div>
             ${this.spinnersActive
                 ? html `
@@ -518,7 +515,8 @@ let AoiSurveyVoting = class AoiSurveyVoting extends YpBaseElement {
             </md-elevated-button>
           </div>
           <div class="layout horizontal">
-            <md-text-button ?hidden="${!this.hasLlm}"
+            <md-text-button
+              ?hidden="${!this.hasLlm}"
               class="skipButton"
               @click=${this.openLlmExplainDialog}
             >
@@ -561,6 +559,12 @@ let AoiSurveyVoting = class AoiSurveyVoting extends YpBaseElement {
               <aoi-llm-explain-dialog
                 id="llmExplainDialog"
                 .question=${this.question}
+                .questionText=${this.$$("#questionText")
+                    .translatedContent}
+                .leftAnswerText=${this.$$("#leftAnswerText")
+                    .translatedContent}
+                .rightAnswerText=${this.$$("#rightAnswerText")
+                    .translatedContent}
                 @closed=${() => (this.llmExplainOpen = false)}
                 .earl=${this.earl}
                 .groupId=${this.groupId}

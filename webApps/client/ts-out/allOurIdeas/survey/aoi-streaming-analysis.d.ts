@@ -9,6 +9,7 @@ import { YpStreamingLlmBase } from "../../yp-llms/yp-streaming-llm-base.js";
 export declare class AoiStreamingAnalysis extends YpStreamingLlmBase {
     earl: AoiEarlData;
     groupId: number;
+    group: YpGroupData;
     analysisIndex: number;
     analysisTypeIndex: number;
     analysis: string;

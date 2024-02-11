@@ -1,5 +1,5 @@
 import { YpBaseElement } from "../common/yp-base-element.js";
-import '@material/web/progress/linear-progress.js';
+import "@material/web/progress/linear-progress.js";
 export declare class YpMagicText extends YpBaseElement {
     content: string | undefined;
     truncatedContent: string | undefined;
@@ -34,6 +34,7 @@ export declare class YpMagicText extends YpBaseElement {
     get showMoreText(): boolean;
     _openFullScreen(): void;
     subClassProcessing(): void;
+    get translatedContent(): string;
     updated(changedProperties: Map<string | number | symbol, unknown>): void;
     _autoTranslateEvent(event: CustomEvent): void;
     _languageEvent(event: CustomEvent): void;

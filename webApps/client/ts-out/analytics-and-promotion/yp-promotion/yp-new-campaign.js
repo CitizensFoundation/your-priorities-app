@@ -64,8 +64,6 @@ let YpNewCampaign = class YpNewCampaign extends YpBaseElementWithLogin {
           margin-bottom: 8px;
         }
 
-
-
         md-outlined-text-field {
           width: 350px;
         }
@@ -363,7 +361,9 @@ let YpNewCampaign = class YpNewCampaign extends YpBaseElementWithLogin {
         return html `
       <md-dialog id="confirmationDialog" crimClickAction="" escapeKeyAction="">
         <div class="layout horizontal center-center">
-          <div class="headerText" slot="headline">${this.t("discardDraft")}</div>
+          <div class="headerText" slot="headline">
+            ${this.t("discardDraft")}
+          </div>
         </div>
         <md-text-button
           .label="${this.t("cancel")}"
@@ -392,7 +392,10 @@ let YpNewCampaign = class YpNewCampaign extends YpBaseElementWithLogin {
         modal
       >
         <div slot="heading">${this.t("newTrackingPromotion")}</div>
-        <div class="layout ${this.wide ? "horizontal" : "vertical"}" slot="content">
+        <div
+          class="layout ${this.wide ? "horizontal" : "vertical"}"
+          slot="content"
+        >
           <div class="layout vertical">
             ${this.renderTextInputs()}
             ${!this.wide ? this.renderAdMediums() : nothing}
