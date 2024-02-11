@@ -4,15 +4,15 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { html, css, nothing } from 'lit';
-import { property, customElement } from 'lit/decorators.js';
-import { YpBaseElement } from '../common/yp-base-element.js';
-import { ShadowStyles } from '../common/ShadowStyles.js';
-import { YpCollectionHelpers } from '../common/YpCollectionHelpers.js';
-import '../common/yp-image.js';
-import '../yp-magic-text/yp-magic-text.js';
-import './yp-collection-stats.js';
-import { YpNavHelpers } from '../common/YpNavHelpers.js';
+import { html, css, nothing } from "lit";
+import { property, customElement } from "lit/decorators.js";
+import { YpBaseElement } from "../common/yp-base-element.js";
+import { ShadowStyles } from "../common/ShadowStyles.js";
+import { YpCollectionHelpers } from "../common/YpCollectionHelpers.js";
+import "../common/yp-image.js";
+import "../yp-magic-text/yp-magic-text.js";
+import "./yp-collection-stats.js";
+import { YpNavHelpers } from "../common/YpNavHelpers.js";
 let YpCollectionItemCard = class YpCollectionItemCard extends YpBaseElement {
     static get styles() {
         return [
@@ -41,24 +41,22 @@ let YpCollectionItemCard = class YpCollectionItemCard extends YpBaseElement {
           right: 38px;
         }
 
-        .post-image {
-          width: 100%;
-        }
-
         .collectionCard {
           width: 860px;
-          background-color: var(--md-sys-color-surface-variant);
-          color: var(--md-sys-color-on-surface-variant);
+          background-color: var(--md-sys-color-surface-container-high);
+          color: var(--md-sys-color-on-surface);
           margin: 8px;
           position: relative;
+          border-radius: 16px;
         }
 
         .collectionCard[featured] {
         }
 
         yp-image {
-          width: 320px !important;
-          height: 180px !important;
+          width: 320px;
+          height: 180px;
+          border-radius: 16px 0 0 16px;
         }
 
         yp-image[featured] {
@@ -144,73 +142,9 @@ let YpCollectionItemCard = class YpCollectionItemCard extends YpBaseElement {
           display: none;
         }
 
-        .collectionNameFontSize4Wide {
-          font-size: 30px;
-        }
-
-        .collectionNameFontSize3Wide {
-          font-size: 26px;
-        }
-
-        .collectionNameFontSize2Wide {
-          font-size: 24px;
-        }
-
-        .collectionNameFontSize1Wide {
-          font-size: 22px;
-        }
-
-        .collectionNameFontSize4Mobile {
-          font-size: 28px;
-        }
-
-        .collectionNameFontSize3Mobile {
-          font-size: 24px;
-        }
-
-        .collectionNameFontSize2Mobile {
-          font-size: 22px;
-        }
-
-        .collectionNameFontSize1Mobile {
-          font-size: 19px;
-        }
-
-        .collectionNameFontSize4Wide[widetext] {
-          font-size: 26px;
-        }
-
-        .collectionNameFontSize3Wide[widetext] {
-          font-size: 22px;
-        }
-
-        .collectionNameFontSize2Wide[widetext] {
-          font-size: 20px;
-        }
-
-        .collectionNameFontSize1Wide[widetext] {
-          font-size: 18px;
-        }
-
-        .collectionNameFontSize4Mobile[widetext] {
-          font-size: 26px;
-        }
-
-        .collectionNameFontSize3Mobile[widetext] {
-          font-size: 22px;
-        }
-
-        .collectionNameFontSize2Mobile[widetext] {
-          font-size: 20px;
-        }
-
-        .collectionNameFontSize1Mobile[widetext] {
-          font-size: 18px;
-        }
-
         @media (max-width: 960px) {
           :host {
-            max-width: 423px;
+            max-width: 100%;
             width: 100%;
             padding-top: 0 !important;
           }
@@ -230,8 +164,10 @@ let YpCollectionItemCard = class YpCollectionItemCard extends YpBaseElement {
           }
 
           yp-image {
-            width: 100%;
-            height: 230px;
+            width: 96vw;
+            height: calc(96vw * 9 / 16);
+            border-radius: 16px 16px 0px 0px;
+            object-fit: cover;
           }
 
           yp-image[featured] {
@@ -243,9 +179,7 @@ let YpCollectionItemCard = class YpCollectionItemCard extends YpBaseElement {
         }
 
         @media (max-width: 420px) {
-          yp-image {
-            height: 225px;
-          }
+
 
           yp-membership-button {
             top: 205px;
@@ -253,9 +187,6 @@ let YpCollectionItemCard = class YpCollectionItemCard extends YpBaseElement {
         }
 
         @media (max-width: 375px) {
-          yp-image {
-            height: 207px;
-          }
 
           yp-membership-button {
             top: 185px;
@@ -263,15 +194,11 @@ let YpCollectionItemCard = class YpCollectionItemCard extends YpBaseElement {
         }
 
         @media (max-width: 360px) {
-          yp-image {
-            height: 200px;
-          }
+
         }
 
         @media (max-width: 320px) {
-          yp-image {
-            height: 180px;
-          }
+
 
           yp-membership-button {
             top: 155px;
@@ -293,10 +220,10 @@ let YpCollectionItemCard = class YpCollectionItemCard extends YpBaseElement {
         ];
     }
     get archived() {
-        return this.item?.status === 'archived';
+        return this.item?.status === "archived";
     }
     get featured() {
-        return this.item?.status === 'featured';
+        return this.item?.status === "featured";
     }
     connectedCallback() {
         super.connectedCallback();
@@ -304,59 +231,59 @@ let YpCollectionItemCard = class YpCollectionItemCard extends YpBaseElement {
             this.collection = this.item.Community;
             const group = this.collection;
             if (group.CommunityLink) {
-                this.itemType = 'groupCommunityLink';
+                this.itemType = "groupCommunityLink";
             }
             else if (group.configuration.dataForVisualizationJson) {
-                this.itemType = 'groupDataViz';
+                this.itemType = "groupDataViz";
             }
             else {
-                this.itemType = 'group';
+                this.itemType = "group";
             }
         }
         else if (this.item && this.item.Domain) {
             this.collection = this.item.Domain;
-            this.itemType = 'community';
+            this.itemType = "community";
         }
     }
     goToItem(event) {
         event.preventDefault();
         if (event.currentTarget && event.currentTarget) {
-            const href = event.currentTarget.getAttribute('href');
+            const href = event.currentTarget.getAttribute("href");
             if (href) {
                 YpNavHelpers.redirectTo(href);
             }
         }
     }
     _setupFontNameFontSize() {
-        const collectionName = this.$$('#collectionName');
+        const collectionName = this.$$("#collectionName");
         if (collectionName && this.collection) {
-            let classNames = 'collection-name ';
+            let classNames = "collection-name ";
             if (this.wide) {
                 if (this.collection.name.length <= 18) {
-                    classNames += 'collectionNameFontSize4Wide';
+                    classNames += "collectionNameFontSize4Wide";
                 }
                 else if (this.collection.name.length > 40) {
-                    classNames += 'collectionNameFontSize1Wide';
+                    classNames += "collectionNameFontSize1Wide";
                 }
                 else if (this.collection.name.length > 30) {
-                    classNames += 'collectionNameFontSize2Wide';
+                    classNames += "collectionNameFontSize2Wide";
                 }
                 else if (this.collection.name.length > 18) {
-                    classNames += 'collectionNameFontSize3Wide';
+                    classNames += "collectionNameFontSize3Wide";
                 }
             }
             else {
                 if (this.collection.name.length <= 18) {
-                    classNames += 'collectionNameFontSize4Mobile';
+                    classNames += "collectionNameFontSize4Mobile";
                 }
                 else if (this.collection.name.length > 40) {
-                    classNames += 'collectionNameFontSize1Mobile';
+                    classNames += "collectionNameFontSize1Mobile";
                 }
                 else if (this.collection.name.length > 30) {
-                    classNames += 'collectionNameFontSize2Mobile';
+                    classNames += "collectionNameFontSize2Mobile";
                 }
                 else if (this.collection.name.length > 18) {
-                    classNames += 'collectionNameFontSize3Mobile';
+                    classNames += "collectionNameFontSize3Mobile";
                 }
             }
             collectionName.className = classNames;
@@ -364,7 +291,7 @@ let YpCollectionItemCard = class YpCollectionItemCard extends YpBaseElement {
     }
     updated(changedProperties) {
         super.updated(changedProperties);
-        if (changedProperties.has('collection') && this.collection) {
+        if (changedProperties.has("collection") && this.collection) {
             //TODO: Check if we need to setTimeout here
             this._setupFontNameFontSize();
         }
@@ -404,64 +331,64 @@ let YpCollectionItemCard = class YpCollectionItemCard extends YpBaseElement {
     }
     renderCardInfo() {
         return html `
-      <div class="layout horizontal">
-        ${this.itemType === 'groupDataViz'
+      <div class="layout horizontal wrap">
+        ${this.itemType === "groupDataViz"
             ? html ` ${this.renderDataViz()} `
             : html ` ${this.renderLogoImage()} `}
-      </div>
-      <div class="informationText">
-        <yp-magic-text
-          id="collectionName"
-          class="collection-name"
-          ?archived="${this.archived}"
-          ?featured="${this.featured}"
-          ?largefont="${this.largeFont}"
-          @click="${this.goToItem}"
-          .textType="${YpCollectionHelpers.nameTextType(this.itemType)}"
-          .contentLanguage="${this.contentLanguage}"
-          ?disableTranslation="${this.collection.configuration
+        <div class="informationText layout vertical flex">
+          <yp-magic-text
+            id="collectionName"
+            class="collection-name"
+            ?archived="${this.archived}"
+            ?featured="${this.featured}"
+            ?largefont="${this.largeFont}"
+            @click="${this.goToItem}"
+            .textType="${YpCollectionHelpers.nameTextType(this.itemType)}"
+            .contentLanguage="${this.contentLanguage}"
+            ?disableTranslation="${this.collection.configuration
             ?.disableNameAutoTranslation}"
-          textOnly
-          .content="${this.contentName}"
-          .contentId="${this.contentId}"
-        ></yp-magic-text>
-        <yp-magic-text
-          id="description"
-          class="description layout vertical withPointer"
-          ?featured="${this.featured}"
-          ?largefont="${this.largeFont}"
-          textType="collectionContent"
-          .textType="${YpCollectionHelpers.descriptionTextType(this.itemType)}"
-          .contentLanguage="${this.contentLanguage}"
-          textOnly
-          removeUrls
-          .content="${this.contentDescription}"
-          .contentId="${this.contentId}"
-          truncate="300"
-        >
-        </yp-magic-text>
-      </div>
+            textOnly
+            .content="${this.contentName}"
+            .contentId="${this.contentId}"
+          ></yp-magic-text>
+          <yp-magic-text
+            id="description"
+            class="description layout vertical withPointer"
+            ?featured="${this.featured}"
+            ?largefont="${this.largeFont}"
+            textType="collectionContent"
+            .textType="${YpCollectionHelpers.descriptionTextType(this.itemType)}"
+            .contentLanguage="${this.contentLanguage}"
+            textOnly
+            removeUrls
+            .content="${this.contentDescription}"
+            .contentId="${this.contentId}"
+            truncate="300"
+          >
+          </yp-magic-text>
+        </div>
 
-      <div class="stats layout horizontal">
-        <yp-collection-stats
-          .collectionType="${this.statsCollectionType}"
-          .collection="${this.statsCollection}"
-        ></yp-collection-stats>
-      </div>
+        <div class="stats layout horizontal">
+          <yp-collection-stats
+            .collectionType="${this.statsCollectionType}"
+            .collection="${this.statsCollection}"
+          ></yp-collection-stats>
+        </div>
 
-      ${!this.collection
+        ${!this.collection
             ? html `
-            <yp-membership-button
-              .archived="${this.archived}"
-              .featured="${this.featured}"
-              .collection="${this.collection}"
-            ></yp-membership-button>
-          `
+              <yp-membership-button
+                .archived="${this.archived}"
+                .featured="${this.featured}"
+                .collection="${this.collection}"
+              ></yp-membership-button>
+            `
             : html ``}
+      </div>
     `;
     }
     get statsCollection() {
-        if (this.itemType === 'groupCommunityLink') {
+        if (this.itemType === "groupCommunityLink") {
             return this.item.CommunityLink;
         }
         else {
@@ -469,18 +396,18 @@ let YpCollectionItemCard = class YpCollectionItemCard extends YpBaseElement {
         }
     }
     get statsCollectionType() {
-        if (this.itemType === 'groupCommunityLink') {
-            return 'communtiy';
+        if (this.itemType === "groupCommunityLink") {
+            return "communtiy";
         }
-        else if (this.itemType === 'groupDataViz') {
-            return 'group';
+        else if (this.itemType === "groupDataViz") {
+            return "group";
         }
         else {
             return this.itemType;
         }
     }
     get contentDescription() {
-        if (this.itemType === 'groupCommunityLink') {
+        if (this.itemType === "groupCommunityLink") {
             return this.item.CommunityLink.description;
         }
         else {
@@ -488,7 +415,7 @@ let YpCollectionItemCard = class YpCollectionItemCard extends YpBaseElement {
         }
     }
     get contentName() {
-        if (this.itemType === 'groupCommunityLink') {
+        if (this.itemType === "groupCommunityLink") {
             return this.item.CommunityLink.name;
         }
         else {
@@ -496,7 +423,7 @@ let YpCollectionItemCard = class YpCollectionItemCard extends YpBaseElement {
         }
     }
     get contentId() {
-        if (this.itemType === 'groupCommunityLink') {
+        if (this.itemType === "groupCommunityLink") {
             return this.item.CommunityLink.id;
         }
         else {
@@ -504,7 +431,7 @@ let YpCollectionItemCard = class YpCollectionItemCard extends YpBaseElement {
         }
     }
     get contentLanguage() {
-        if (this.itemType === 'groupCommunityLink') {
+        if (this.itemType === "groupCommunityLink") {
             return this.item.CommunityLink.language;
         }
         else {
@@ -512,11 +439,11 @@ let YpCollectionItemCard = class YpCollectionItemCard extends YpBaseElement {
         }
     }
     get contentUrlBase() {
-        if (this.itemType === 'groupCommunityLink') {
-            return 'community';
+        if (this.itemType === "groupCommunityLink") {
+            return "community";
         }
-        else if (this.itemType === 'groupDataViz') {
-            return 'group_data_viz';
+        else if (this.itemType === "groupDataViz") {
+            return "group_data_viz";
         }
         else {
             return this.itemType;
@@ -532,7 +459,7 @@ let YpCollectionItemCard = class YpCollectionItemCard extends YpBaseElement {
           >
             <div
               ?featured="${this.featured}"
-              class="collectionCard shadow-elevation-4dp shadow-transaction layout horizontal"
+              class="collectionCard layout horizontal"
             >
               ${this.renderCardInfo()}
             </div>
@@ -551,7 +478,7 @@ __decorate([
     property({ type: Object })
 ], YpCollectionItemCard.prototype, "collection", void 0);
 YpCollectionItemCard = __decorate([
-    customElement('yp-collection-item-card')
+    customElement("yp-collection-item-card")
 ], YpCollectionItemCard);
 export { YpCollectionItemCard };
 //# sourceMappingURL=yp-collection-item-card.js.map

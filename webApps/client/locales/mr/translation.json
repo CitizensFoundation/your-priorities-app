@@ -40,7 +40,7 @@
   "goalTree": "ध्येय झाड",
   "futureRealityTree": "भविष्य वास्तविकता झाड",
   "ideaGenerationGroupType": "कल्पना निर्मिती",
-  "allOurIdeasGroupType": "All Our Ideas Pairwise Ranking",
+  "allOurIdeasGroupType": "All Our Ideas जोडी रँकिंग",
   "allowGenerativeImages": "जनरेटिव इमेजेसला परवानगी द्या",
   "reports": "अहवाल",
   "reportsInfo": "अहवाल निर्माण करा",
@@ -1184,7 +1184,7 @@
   "hats": "टोप्या",
   "dataForVisualizationJsonError": "JSON त्रुटी",
   "selectCategory": "श्रेणी निवडा",
-  "earlConfig": "Earl COnfig",
+  "earlConfig": "इयर कॉन्फिग",
   "show_cant_decide": "निर्णय घेऊ शकत नाही दाखवा",
   "accept_new_ideas": "नवीन कल्पना स्वीकारा",
   "hide_results": "परिणाम लपवा",
@@ -1346,5 +1346,9 @@
   "aiIconInfo": "तुमच्या उत्तरासाठी एक आयकॉन तयार केला जात आहे, तुम्ही खिडकी बंद करू शकता किंवा आयकॉन तयार होण्याची वाट पाहू शकता. तुम्हाला आयकॉन पुन्हा तयार करण्याचा पर्याय देखील मिळेल.",
   "getColorFromLogo": "लोगोतून रंग मिळवा",
   "explainBothAnswers": "उत्तरांचे स्पष्टीकरण",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "पहिले उत्तर",
+  "secondAnswer": "दुसरे उत्तर",
+  "hereIsTheQuestion": "प्रश्न येथे आहे",
+  "pleaseAnswerInThisLanguage": "कृपया या भाषेत उत्तर द्या"
 }

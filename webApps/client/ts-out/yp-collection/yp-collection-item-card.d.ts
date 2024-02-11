@@ -1,8 +1,8 @@
-import { nothing } from 'lit';
-import { YpBaseElement } from '../common/yp-base-element.js';
-import '../common/yp-image.js';
-import '../yp-magic-text/yp-magic-text.js';
-import './yp-collection-stats.js';
+import { nothing } from "lit";
+import { YpBaseElement } from "../common/yp-base-element.js";
+import "../common/yp-image.js";
+import "../yp-magic-text/yp-magic-text.js";
+import "./yp-collection-stats.js";
 export declare class YpCollectionItemCard extends YpBaseElement {
     item: YpCollectionData | undefined;
     itemType: string | undefined;
@@ -24,6 +24,6 @@ export declare class YpCollectionItemCard extends YpBaseElement {
     get contentId(): number;
     get contentLanguage(): string | undefined;
     get contentUrlBase(): string | undefined;
-    render(): typeof nothing | import("lit-html").TemplateResult<1>;
+    render(): import("lit-html").TemplateResult<1> | typeof nothing;
 }
 //# sourceMappingURL=yp-collection-item-card.d.ts.map

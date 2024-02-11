@@ -1346,5 +1346,9 @@
   "aiIconInfo": "Kei te hangaia tētahi ata mō tō whakautu, ka taea e koe te kati i te matapihi, te tatari rānei kia oti te hanga i te ata. Ka whai wāhi anō koe ki te hanga anō i te ata.",
   "getColorFromLogo": "Tangohia te tae mai i te ahua waitohu",
   "explainBothAnswers": "Whakamārama o ngā whakautu",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "Whakautu tuatahi",
+  "secondAnswer": "Whakautu tuarua",
+  "hereIsTheQuestion": "Anei te pātai",
+  "pleaseAnswerInThisLanguage": "Tēnā, whakautua ki tēnei reo"
 }

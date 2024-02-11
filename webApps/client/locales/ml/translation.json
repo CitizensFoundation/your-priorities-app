@@ -1346,5 +1346,9 @@
   "aiIconInfo": "നിങ്ങളുടെ ഉത്തരത്തിനുള്ള ഐക്കൺ സൃഷ്ടിക്കുന്നു, നിങ്ങൾക്ക് ജാലകം അടയ്ക്കാനോ ഐക്കൺ സൃഷ്ടിക്കപ്പെടുന്നത് കാത്തിരിക്കാനോ കഴിയും. ഐക്കണിനെ വീണ്ടും സൃഷ്ടിക്കാനുള്ള ഓപ്ഷനും നിങ്ങൾക്ക് ലഭിക്കും.",
   "getColorFromLogo": "ലോഗോ ചിത്രത്തിൽ നിന്ന് നിറം നേടുക",
   "explainBothAnswers": "ഉത്തരങ്ങളുടെ വിവരണം",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "ആദ്യ ഉത്തരം",
+  "secondAnswer": "രണ്ടാം ഉത്തരം",
+  "hereIsTheQuestion": "ചോദ്യം ഇവിടെയാണ്",
+  "pleaseAnswerInThisLanguage": "ഈ ഭാഷയിൽ ഉത്തരം നൽകുക"
 }

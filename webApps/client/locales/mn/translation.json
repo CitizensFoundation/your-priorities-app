@@ -1346,5 +1346,9 @@
   "aiIconInfo": "Таны хариултын дүрс үүсгэгдэж байна, цонхыг хааж болно эсвэл дүрс үүсгэгдэхийг хүлээж болно. Мөн дүрсийг дахин үүсгэх сонголттой болно.",
   "getColorFromLogo": "Лого зургаас өнгө авах",
   "explainBothAnswers": "Хариултын тайлбар",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "Анхны хариулт",
+  "secondAnswer": "Хоёр дахь хариулт",
+  "hereIsTheQuestion": "Асуулт энд байна",
+  "pleaseAnswerInThisLanguage": "Энэ хэл дээр хариулна уу"
 }

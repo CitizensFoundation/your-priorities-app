@@ -1352,5 +1352,9 @@
   "aiIconInfo": "Се генерира икона за вашиот одговор, можете да го затворите прозорецот или да почекате иконата да се генерира. Исто така ќе имате опција повторно да ја генерирате иконата.",
   "getColorFromLogo": "Земи боја од лого",
   "explainBothAnswers": "Објаснување на одговори",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "Прва одговор",
+  "secondAnswer": "Втор одговор",
+  "hereIsTheQuestion": "Еве прашање",
+  "pleaseAnswerInThisLanguage": "Ве молиме одговорете на овој јазик"
 }

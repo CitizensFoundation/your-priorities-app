@@ -969,21 +969,21 @@
     "inProgress": "Uploading..."
   },
   "notice": {
-    "ok": "Ok",
-    "deleteConfirmation": "Do you want to delete this group?"
+    "ok": "ຕົກລົງ",
+    "deleteConfirmation": "ທ່ານຕ້ອງການລຶບກຸ່ມນີ້ບໍ?"
   },
   "maps": {
-    "searchInput": "Address",
-    "search": "Search"
+    "searchInput": "ທີ່ຢູ່",
+    "search": "ຄົ້ນຫາ"
   },
   "group": {
-    "pages": "Help pages (?)",
-    "showWhoPostedPosts": "Show who posted posts",
-    "locationHidden": "Disable location",
-    "group": "Group",
-    "admins": "Group admins",
-    "users": "Group users",
-    "new": "Add new group",
+    "pages": "ໜ້າຊ່ວຍເຫຼືອ (?)",
+    "showWhoPostedPosts": "ສະແດງຜູ້ທີ່ພົບການພົບ",
+    "locationHidden": "ປິດທີ່ຕັ້ງ",
+    "group": "ກຸ່ມ",
+    "admins": "ຜູ້ບໍລິຫານກຸ່ມ",
+    "users": "ສະມາຊິກກຸ່ມ",
+    "new": "ເພີ່ມກຸ່ມໃໝ່",
     "edit": "ແກ້ໄຂກຸ່ມ",
     "invite": "ຊວນໝູ່",
     "invite_to_group": "ຊວນໝູ່ໃຫ້ເຂົ້າກຸ່ມນີ້",
@@ -1080,10 +1080,10 @@
   "Participate Now!": "ເຂົ້າຮ່ວມດຽວນີ້!",
   "Select answers": "ເລືອກຄຳຕອບ",
   "Why Participate": "ຫຼີ້ນປະກອບດ້ວຍເຫດຜົນ",
-  "About this project": "About this project",
-  "Results": "Results",
-  "Rank-ordered list": "Rank-ordered list",
-  "Analysis of Results": "Analysis of Results",
+  "About this project": "ກ່ຽວກັບໂຄງການນີ້",
+  "Results": "ຜົນລັບ",
+  "Rank-ordered list": "ລາຍການລຳດັບ",
+  "Analysis of Results": "ການວິເຄາະຜົນລັບ",
   "AI-generated analysis": "AI-generated analysis",
   "Intro": "Intro",
   "Voting": "Voting",

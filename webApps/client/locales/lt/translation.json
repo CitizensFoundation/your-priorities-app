@@ -1346,5 +1346,9 @@
   "aiIconInfo": "Jūsų atsakymo piktograma kuriamasi, galite uždaryti langą arba palaukti, kol piktograma bus sukurta. Taip pat turėsite galimybę piktogramą atkurti.",
   "getColorFromLogo": "Gauti spalvą iš logotipo",
   "explainBothAnswers": "Atsakymų paaiškinimas",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "Pirmas atsakymas",
+  "secondAnswer": "Antras atsakymas",
+  "hereIsTheQuestion": "Čia yra klausimas",
+  "pleaseAnswerInThisLanguage": "Atsakykite šia kalba"
 }

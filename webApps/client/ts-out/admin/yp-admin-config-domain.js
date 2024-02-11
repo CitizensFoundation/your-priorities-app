@@ -13,7 +13,7 @@ import { YpNavHelpers } from "../common/YpNavHelpers.js";
 //import { YpEmojiSelector } from './@yrpri/common/yp-emoji-selector.js';
 //import './@yrpri/common/yp-emoji-selector.js';
 import "../yp-file-upload/yp-file-upload.js";
-import '../yp-theme/yp-theme-selector.js';
+import "../yp-theme/yp-theme-selector.js";
 import "../common/languages/yp-language-selector.js";
 import "./yp-admin-communities.js";
 let YpAdminConfigDomain = class YpAdminConfigDomain extends YpAdminConfigBase {
@@ -44,26 +44,26 @@ let YpAdminConfigDomain = class YpAdminConfigDomain extends YpAdminConfigBase {
             : nothing;
     }
     renderHiddenInputs() {
-        if ((this.collection?.configuration).ltp) {
-            return html `
-        <input
-          type="hidden"
-          name="ltp"
-          value="${JSON.stringify((this.collection?.configuration).ltp)}"
-        />
-      `;
-        }
-        else {
-            return html ` ${this.collection?.configuration.theme
-                ? html `
+        return html `
+      ${(this.collection?.configuration).ltp
+            ? html `
+            <input
+              type="hidden"
+              name="ltp"
+              value="${JSON.stringify((this.collection?.configuration).ltp)}"
+            />
+          `
+            : nothing}
+      ${this.collection?.configuration.theme
+            ? html `
             <input
               type="hidden"
               name="theme"
               value="${JSON.stringify(this.collection?.configuration.theme)}"
             />
           `
-                : nothing}`;
-        }
+            : nothing}
+    `;
     }
     _clear() {
         super._clear();

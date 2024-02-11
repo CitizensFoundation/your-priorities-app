@@ -5,10 +5,6 @@ import "@material/web/textfield/filled-text-field.js";
 import "@material/web/menu/menu.js";
 import "@material/web/menu/menu-item.js";
 import { YpBaseElement } from "../../common/yp-base-element.js";
-interface YpLanguageMenuItem {
-    language: string;
-    name: string;
-}
 export declare class YpLanguageSelector extends YpBaseElement {
     refreshLanguages: boolean;
     noUserEvents: boolean;
@@ -41,5 +37,4 @@ export declare class YpLanguageSelector extends YpBaseElement {
     get languages(): YpLanguageMenuItem[];
     _selectedLocaleChanged(oldLocale: string): void;
 }
-export {};
 //# sourceMappingURL=yp-language-selector.d.ts.map

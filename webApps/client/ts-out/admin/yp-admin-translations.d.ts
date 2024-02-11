@@ -24,10 +24,7 @@ export declare class YpAdminTranslations extends YpAdminPage {
     } | undefined): void;
     autoTranslate(item: YpTranslationTextData): Promise<void>;
     getUrlFromTextType(item: YpTranslationTextData): string | null;
-    get languages(): {
-        locale: string;
-        name: YpLanguageData;
-    }[];
+    get languages(): YpLanguageMenuItem[];
     getMaxLength(item: YpTranslationTextData, baseLength: number): number;
     textChanged(event: CustomEvent): void;
     renderItem(item: YpTranslationTextData): import("lit-html").TemplateResult<1>;

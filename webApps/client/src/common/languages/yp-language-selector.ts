@@ -13,11 +13,6 @@ import { MdFilledTextField } from "@material/web/textfield/filled-text-field.js"
 import { MdMenu } from "@material/web/menu/menu.js";
 import { MdMenuItem } from "@material/web/menu/menu-item.js";
 
-interface YpLanguageMenuItem {
-  language: string;
-  name: string;
-}
-
 @customElement("yp-language-selector")
 export class YpLanguageSelector extends YpBaseElement {
   @property({ type: Boolean })

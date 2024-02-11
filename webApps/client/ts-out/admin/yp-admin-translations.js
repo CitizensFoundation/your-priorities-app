@@ -214,34 +214,43 @@ let YpAdminTranslations = class YpAdminTranslations extends YpAdminPage {
         return url;
     }
     get languages() {
-        let arr = [];
-        const highlighted = [];
-        let highlightedLocales = ['en', 'en_gb', 'is', 'fr', 'de', 'es', 'ar'];
-        if (this.collection &&
-            this.collection.configuration &&
-            this.collection.configuration.highlightedLanguages) {
-            highlightedLocales = this.collection.configuration.highlightedLanguages.split(',');
-        }
-        for (const key in this.supportedLanguages) {
-            if (this.supportedLanguages.hasOwnProperty(key)) {
-                if (highlightedLocales.indexOf(key) > -1) {
-                    highlighted.push({ locale: key, name: this.supportedLanguages[key] });
+        if (YpLanguages.allLanguages) {
+            let arr = [];
+            const highlighted = [];
+            let highlightedLocales = ["en", "is", "fr", "de", "es", "ar"];
+            if (window.appGlobals.highlightedLanguages) {
+                highlightedLocales = window.appGlobals.highlightedLanguages.split(",");
+            }
+            highlightedLocales = highlightedLocales.map((item) => item.replace("-", "_").toLowerCase());
+            for (let l = 0; l < YpLanguages.allLanguages.length; l++) {
+                const language = YpLanguages.allLanguages[l];
+                if (highlightedLocales.indexOf(language.code) > -1) {
+                    highlighted.push({
+                        language: language.code,
+                        name: `${language.nativeName} (${language.englishName})`,
+                    });
                 }
                 else {
-                    arr.push({ locale: key, name: this.supportedLanguages[key] });
+                    arr.push({
+                        language: language.code,
+                        name: `${language.nativeName} (${language.englishName})`,
+                    });
                 }
             }
+            arr = arr.sort(function (a, b) {
+                if (a.name < b.name) {
+                    return -1;
+                }
+                if (a.name > b.name) {
+                    return 1;
+                }
+                return 0;
+            });
+            return highlighted.concat(arr);
         }
-        arr = arr.sort(function (a, b) {
-            if (a.name < b.name) {
-                return -1;
-            }
-            if (a.name > b.name) {
-                return 1;
-            }
-            return 0;
-        });
-        return highlighted.concat(arr);
+        else {
+            return [];
+        }
     }
     getMaxLength(item, baseLength) {
         if (item.textType === 'groupName' ||
@@ -350,7 +359,7 @@ let YpAdminTranslations = class YpAdminTranslations extends YpAdminPage {
               @change="${this.selectLanguage}"
             >
               ${this.languages.map(language => html `
-                  <md-select-option .value="${language.locale}"
+                  <md-select-option .value="${language.language}"
                     >${language.name}</md-select-option
                   >
                 `)}

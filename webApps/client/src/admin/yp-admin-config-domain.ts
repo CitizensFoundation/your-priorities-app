@@ -19,7 +19,7 @@ import { YpFileUpload } from "../yp-file-upload/yp-file-upload.js";
 //import './@yrpri/common/yp-emoji-selector.js';
 
 import "../yp-file-upload/yp-file-upload.js";
-import '../yp-theme/yp-theme-selector.js';
+import "../yp-theme/yp-theme-selector.js";
 import "../common/languages/yp-language-selector.js";
 
 import "./yp-admin-communities.js";
@@ -59,18 +59,19 @@ export class YpAdminConfigDomain extends YpAdminConfigBase {
   }
 
   renderHiddenInputs() {
-    if ((this.collection?.configuration as YpDomainConfiguration).ltp) {
-      return html`
-        <input
-          type="hidden"
-          name="ltp"
-          value="${JSON.stringify(
-            (this.collection?.configuration as YpDomainConfiguration).ltp
-          )}"
-        />
-      `;
-    } else {
-      return html` ${this.collection?.configuration.theme
+    return html`
+      ${(this.collection?.configuration as YpDomainConfiguration).ltp
+        ? html`
+            <input
+              type="hidden"
+              name="ltp"
+              value="${JSON.stringify(
+                (this.collection?.configuration as YpDomainConfiguration).ltp
+              )}"
+            />
+          `
+        : nothing}
+      ${this.collection?.configuration.theme
         ? html`
             <input
               type="hidden"
@@ -78,8 +79,8 @@ export class YpAdminConfigDomain extends YpAdminConfigBase {
               value="${JSON.stringify(this.collection?.configuration.theme)}"
             />
           `
-        : nothing}`;
-    }
+        : nothing}
+    `;
   }
 
   override _clear() {

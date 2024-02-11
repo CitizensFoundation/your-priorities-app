@@ -58,7 +58,6 @@ export class YpCollection extends YpBaseElementWithLogin {
             if (this.collection.default_locale != null) {
                 window.appGlobals.changeLocaleIfNeeded(this.collection.default_locale);
             }
-            window.appGlobals.theme.setTheme(this.collection.theme_id);
             this.fire("yp-set-home-link", {
                 type: this.collectionType,
                 id: this.collection.id,
@@ -152,6 +151,18 @@ export class YpCollection extends YpBaseElementWithLogin {
         .createFab[is-map] {
           right: inherit;
           left: 28px;
+        }
+
+        @media (max-width: 960px) {
+          .header {
+            height: 100%;
+            background-image: none;
+          }
+
+          .currentPage {
+            margin-bottom: 256px;
+            margin-top: 16px;
+          }
         }
       `,
         ];
@@ -280,7 +291,9 @@ export class YpCollection extends YpBaseElementWithLogin {
             </div>
           `
             : nothing}
-      ${this.renderCurrentTabPage()}
+      <div class="currentPage">
+        ${this.renderCurrentTabPage()}
+      </div>
     `;
     }
     // EVENTS

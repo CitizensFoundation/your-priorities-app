@@ -23,6 +23,11 @@ interface YpLanguageData {
   code: string;
 }
 
+interface YpLanguageMenuItem {
+  language: string;
+  name: string;
+}
+
 interface YpThemeConfiguration {
   oneDynmicColor?: string;
   oneColorScheme?: MaterialColorScheme;

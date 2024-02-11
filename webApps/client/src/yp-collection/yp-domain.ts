@@ -36,6 +36,8 @@ export class YpDomain extends YpCollection {
       } else {
         YpMediaHelpers.setupTopHeaderImage(this, null);
       }
+
+      window.appGlobals.theme.setTheme(domain.theme_id, domain.configuration);
     }
 
     window.appGlobals.setAnonymousGroupStatus(undefined);

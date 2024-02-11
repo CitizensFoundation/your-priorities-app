@@ -1361,5 +1361,9 @@
   "aiIconInfo": "正在为您的答案生成图标，您可以关闭窗口或等待图标生成。您也可以选择重新生成图标。",
   "getColorFromLogo": "从标志获取颜色",
   "explainBothAnswers": "答案解释",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "第一答案",
+  "secondAnswer": "第二答案",
+  "hereIsTheQuestion": "这是问题",
+  "pleaseAnswerInThisLanguage": "请用这种语言回答"
 }

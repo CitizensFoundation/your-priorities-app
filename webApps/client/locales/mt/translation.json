@@ -823,7 +823,7 @@
     "pages": "Paġni",
     "createOrganization": "Oħloq organizzazzjoni",
     "edit": "Editja dominju",
-    "info": "Settings",
+    "info": "Konfigurazzjonijiet",
     "apis": "APIs",
     "settings": "Addizzjonali",
     "onlyAdminsCanCreateCommunities": "Biss amministraturi jistgħu joħolqu komunitajiet"
@@ -1007,7 +1007,7 @@
     "my_pages": "Profil tiegħi",
     "about": "Dwar",
     "help": "Għajnuna",
-    "settings": "Settings"
+    "settings": "Konfigurazzjonijiet"
   },
   "users": {
     "userInvited": "Utent Mistieden",
@@ -1033,7 +1033,7 @@
     "loggedInWithSaml": "Dħalt b'SAML",
     "loggedInWithFacebook": "Dħalt b'Facebook",
     "facebookLogin": "Login Facebook",
-    "info": "Info",
+    "info": "Informazzjoni",
     "notifications": "Notifiki",
     "name": "Isem sħiħ",
     "email": "Email",
@@ -1044,10 +1044,10 @@
     "forgotPasswordEmailHasBeenSent": "Email b'istruzzjonijiet għar-reset tal-password intbagħat.",
     "resetPassword": "Irrisettja l-password tiegħek",
     "resetPasswordInstructions": "Oħloq password ġdida li mhix faċli biex tinħadem",
-    "login": "Login",
+    "login": "Idħol",
     "create": "Oħloq Utent",
     "cancel": "Ikkanċella",
-    "logout": "Logout",
+    "logout": "Oħroġ",
     "newPassword": "password ġdida",
     "register": "Utent ġdid",
     "alreadyRegisterred": "Dan l-email diġà rreġistrat. Tista' toħloq Password Ġdida jekk meħtieġ.",
@@ -1093,7 +1093,7 @@
   "Loading": "Tagħbija...",
   "Email Lists": "Listi tal-Email",
   "Send promotional emails": "Ibgħat emails promozzjonali",
-  "Settings": "Settings",
+  "Settings": "Konfigurazzjonijiet",
   "Unauthorized": "Mhux awtorizzat",
   "Domain Configuration": "Konfigurazzjoni tad-Dominju",
   "Community Configuration": "Konfigurazzjoni tal-Komunità",
@@ -1346,5 +1346,9 @@
   "aiIconInfo": "Ikona għat-tweġiba tiegħek qed tiġi ġġenerata, tista' tagħlaq it-tieqa jew tistenna sakemm tiġi ġġenerata l-ikona. Ikollok ukoll l-għażla li terġa' tiġġenera l-ikona.",
   "getColorFromLogo": "Ġib kulur mill-logo",
   "explainBothAnswers": "Spjegazzjoni tar-risposti",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "Ewwel tweġiba",
+  "secondAnswer": "It-tieni tweġiba",
+  "hereIsTheQuestion": "Hawnhekk il-mistoqsija",
+  "pleaseAnswerInThisLanguage": "Jekk jogħġbok tweġib f'din il-lingwa"
 }

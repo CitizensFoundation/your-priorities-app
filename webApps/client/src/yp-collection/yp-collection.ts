@@ -88,14 +88,17 @@ export abstract class YpCollection extends YpBaseElementWithLogin {
 
     //TODO: Fix this as it causes loadMoreData to be called twice on post lists at least
     this.addGlobalListener("yp-logged-in", this.loggedInUserCustom.bind(this));
-    this.addGlobalListener("yp-got-admin-rights", this.getCollection.bind(this));
+    this.addGlobalListener(
+      "yp-got-admin-rights",
+      this.getCollection.bind(this)
+    );
   }
 
   async loggedInUserCustom() {
     //TODO: Look into this, find a better solution than waiting
     await new Promise((r) => setTimeout(r, 1500));
     if (!this.collection || !this.collection.id) {
-     // this.getCollection();
+      // this.getCollection();
     }
   }
 
@@ -114,8 +117,6 @@ export abstract class YpCollection extends YpBaseElementWithLogin {
       if (this.collection.default_locale != null) {
         window.appGlobals.changeLocaleIfNeeded(this.collection.default_locale);
       }
-
-      window.appGlobals.theme.setTheme(this.collection.theme_id);
 
       this.fire("yp-set-home-link", {
         type: this.collectionType,
@@ -231,6 +232,18 @@ export abstract class YpCollection extends YpBaseElementWithLogin {
         .createFab[is-map] {
           right: inherit;
           left: 28px;
+        }
+
+        @media (max-width: 960px) {
+          .header {
+            height: 100%;
+            background-image: none;
+          }
+
+          .currentPage {
+            margin-bottom: 256px;
+            margin-top: 16px;
+          }
         }
       `,
     ];
@@ -366,7 +379,9 @@ export abstract class YpCollection extends YpBaseElementWithLogin {
             </div>
           `
         : nothing}
-      ${this.renderCurrentTabPage()}
+      <div class="currentPage">
+        ${this.renderCurrentTabPage()}
+      </div>
     `;
   }
 

@@ -145,6 +145,7 @@ let YpCollectionHeader = class YpCollectionHeader extends YpBaseElement {
         .nameText {
           background-color: var(--md-sys-color-primary-container);
           color: var(--md-sys-color-on-primary-container);
+          border-radius: 16px;
         }
 
         .descriptionContainer {
@@ -152,10 +153,11 @@ let YpCollectionHeader = class YpCollectionHeader extends YpBaseElement {
         }
 
         .large-card {
-          background-color: var(--md-sys-color-secondary-container);
-          color: var(--md-sys-color-on-secondary-container);
+          background-color: var(--md-sys-color-surface-container-low);
+          color: var(--md-sys-color-on-surface);
           height: 243px;
           width: 432px;
+          border-radius: 16px;
           padding: 0 !important;
           margin-top: 0 !important;
         }
@@ -180,7 +182,8 @@ let YpCollectionHeader = class YpCollectionHeader extends YpBaseElement {
         .description {
           padding: 16px;
           vertical-align: middle;
-          font-size: 15px;
+          font-size: 16px;
+          line-height: 1.35;
         }
 
         .description[widetext] {
@@ -204,6 +207,10 @@ let YpCollectionHeader = class YpCollectionHeader extends YpBaseElement {
             padding: 0 !important;
             padding-top: 8px !important;
             width: 100%;
+            margin-top: 8px;
+          }
+
+          .cardImage {
           }
 
           #welcomeHTML {
@@ -432,7 +439,7 @@ let YpCollectionHeader = class YpCollectionHeader extends YpBaseElement {
                     .textType="${YpCollectionHelpers.descriptionTextType(this.collectionType)}"
                     ?largeFont="${this.largeFont}"
                     .contentLanguage="${this.collection.language}"
-                    truncate="150"
+                    truncate="300"
                     .content="${this.collection.description ||
                 this.collection.objectives}"
                     .contentId="${this.collection.id}"

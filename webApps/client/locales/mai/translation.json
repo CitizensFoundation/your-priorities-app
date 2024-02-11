@@ -1346,5 +1346,9 @@
   "aiIconInfo": "अहाँक उत्तर लेल एकटा आइकन तैयार कएल जा रहल अछि, अहाँ खिड़की बन्द कऽ सकैत छी वा आइकन तैयार भेलाक प्रतीक्षा कऽ सकैत छी। आइकन के पुनः तैयार करबाक विकल्प सेहो रहत।",
   "getColorFromLogo": "लोगो छवि सँ रंग प्राप्त करू",
   "explainBothAnswers": "उत्तर केर व्याख्या",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "पहिल उत्तर",
+  "secondAnswer": "दोसर उत्तर",
+  "hereIsTheQuestion": "ई प्रश्न अछि",
+  "pleaseAnswerInThisLanguage": "कृपया एहि भाषा मे उत्तर दिअ"
 }
