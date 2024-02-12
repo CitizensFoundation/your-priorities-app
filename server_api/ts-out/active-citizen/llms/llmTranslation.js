@@ -267,7 +267,7 @@ export class YpLlmTranslation {
                 content: userRenderer(languageName, question, toTranslate),
             },
         ];
-        const maxRetries = 3;
+        const maxRetries = 5;
         let retries = 0;
         let running = true;
         while (running) {

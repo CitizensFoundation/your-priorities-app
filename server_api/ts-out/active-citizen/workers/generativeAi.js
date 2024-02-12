@@ -1,5 +1,6 @@
 import { AoiIconGenerator } from "../engine/allOurIdeas/iconGenerator.js";
 import models from "../../models/index.cjs";
+import { CollectionImageGenerator } from "../llms/collectionImageGenerator.js";
 const dbModels = models;
 const Image = dbModels.Image;
 const AcBackgroundJob = dbModels.AcBackgroundJob;
@@ -9,7 +10,13 @@ export class GenerativeAiWorker {
         switch (workPackage.type) {
             case "collection-image":
                 try {
-                    const generator = new AoiIconGenerator();
+                    let generator;
+                    if (workPackage.imageType == "icon") {
+                        generator = new AoiIconGenerator();
+                    }
+                    else {
+                        generator = new CollectionImageGenerator();
+                    }
                     const { imageId, imageUrl } = await generator.createCollectionImage(workPackage);
                     console.info(`Created imageId: ${imageId} imageUrl: ${imageUrl}`);
                     if (imageId) {
