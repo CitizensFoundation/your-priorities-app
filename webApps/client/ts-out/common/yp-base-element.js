@@ -11,7 +11,7 @@ import "@material/web/iconbutton/outlined-icon-button.js";
 export class YpBaseElement extends LitElement {
     constructor() {
         super(...arguments);
-        this.language = "en";
+        this.language = "is";
         this.wide = false;
         this.rtl = false;
         this.hasLlm = false;
@@ -58,7 +58,7 @@ export class YpBaseElement extends LitElement {
             this._setupRtl();
         }
         else {
-            this.language = "en";
+            this.language = "";
         }
         this.installMediaQueryWatcher(`(min-width: 900px)`, (matches) => {
             this.wide = matches;

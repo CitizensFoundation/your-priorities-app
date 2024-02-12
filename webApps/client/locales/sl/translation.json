@@ -1352,5 +1352,9 @@
   "ideaGenerationGroupType": "Generiranje idej",
   "allOurIdeasGroupType": "All Our Ideas Paritveno razvrščanje",
   "yourIdeaHasBeenAdded": "Vaša ideja je bila dodana, ustvarja se ikona.",
-  "aiIconInfo": "Ikona za vaš odgovor se ustvarja, lahko zaprete okno ali počakate, da se ikona ustvari. Imeli boste tudi možnost, da ikono ponovno ustvarite."
+  "aiIconInfo": "Ikona za vaš odgovor se ustvarja, lahko zaprete okno ali počakate, da se ikona ustvari. Imeli boste tudi možnost, da ikono ponovno ustvarite.",
+  "firstAnswer": "Prvi odgovor",
+  "secondAnswer": "Drugi odgovor",
+  "hereIsTheQuestion": "Tu je vprašanje",
+  "pleaseAnswerInThisLanguage": "Prosimo, odgovorite v tem jeziku"
 }

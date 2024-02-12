@@ -1335,7 +1335,7 @@
   "domainFraudManagement": "Gestão de Fraude de Domínio",
   "Access": "Acesso",
   "openOrganizationMenu": "Abrir menu da organização",
-  "Listasafn Reykjavíkur": "Listasafn Reykjavíkur",
+  "Listasafn Reykjavíkur": "Museu de Reykjavik",
   "Override theme": "Sobrescrever tema",
   "Analytics & Marketing": "Análise & Marketing",
   "Promote your survey": "Promova sua pesquisa",
@@ -1352,5 +1352,9 @@
   "ideaGenerationGroupType": "Geração de ideias",
   "allOurIdeasGroupType": "All Our Ideas Classificação Pareada",
   "yourIdeaHasBeenAdded": "Sua ideia foi adicionada, gerando ícone.",
-  "aiIconInfo": "Um ícone para sua resposta está sendo gerado, você pode fechar a janela ou esperar pelo ícone. Você também terá a opção de regerar o ícone."
+  "aiIconInfo": "Um ícone para sua resposta está sendo gerado, você pode fechar a janela ou esperar pelo ícone. Você também terá a opção de regerar o ícone.",
+  "firstAnswer": "Primeira resposta",
+  "secondAnswer": "Segunda resposta",
+  "hereIsTheQuestion": "Aqui está a pergunta",
+  "pleaseAnswerInThisLanguage": "Por favor, responda neste idioma"
 }

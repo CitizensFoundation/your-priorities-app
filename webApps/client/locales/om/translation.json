@@ -1346,5 +1346,9 @@
   "yourIdea": "Yaada kee",
   "chatInput": "Gaaffii naa gaafadhu",
   "yourIdeaHasBeenAdded": "Yaada kee dabalameera, suuraa calaqqisiisaa jira.",
-  "aiIconInfo": "Deebii keef suuraa calaqqisiisaa jira, dirqama kana cufuu ykn suuraan calaqqisiisamu eeguu dandeessa. Suuraa sana haaromsuufis carraa qabaata."
+  "aiIconInfo": "Deebii keef suuraa calaqqisiisaa jira, dirqama kana cufuu ykn suuraan calaqqisiisamu eeguu dandeessa. Suuraa sana haaromsuufis carraa qabaata.",
+  "firstAnswer": "Deebii duraa",
+  "secondAnswer": "Deebii lammaffaa",
+  "hereIsTheQuestion": "Gaaffiin kunooti",
+  "pleaseAnswerInThisLanguage": "Afaan kanaan deebisaa"
 }

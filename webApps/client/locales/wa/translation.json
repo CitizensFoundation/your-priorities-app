@@ -64,7 +64,7 @@
   "Visit duration": "Dureye di vijhite",
   "Total pageviews": "Vues totåles des pådjes",
   "Unique conversions": "Conversions unikes",
-  "Conversions": "Conversions",
+  "Conversions": "Convèrsions",
   "Visitors": "Vijhîs",
   "Current visitors": "Vijhîs actuels",
   "Analytics": "Analitikes",
@@ -501,7 +501,7 @@
   "allowPostVideoUploads": "Permet les téléversements d'vidéo di post",
   "useVideoCover": "Eployî couvèrture vidéo",
   "postCoverVideoInfo": "Téléverse vidéo en format HD paysage. Longueur maximale d'vidéo c'est ",
-  "postCoverAudio": "Audio",
+  "postCoverAudio": "Ôdio",
   "postCoverAudioInfo": "Pårler avou ene voix claire. Longueur maximale d'audio c'est ",
   "media": "Média",
   "removalAndDeletionInProgress": "L'effacement et l'suppression sont en cours. Essayez d'rafréchî l'pådje on ptit cop plu tard.",
@@ -1346,5 +1346,9 @@
   "yourIdea": "Voste idêye",
   "chatInput": "Dmandez-mwè ene question",
   "yourIdeaHasBeenAdded": "Voste idêye a stî radjoutêye, on-st aveû l'icône.",
-  "aiIconInfo": "On icône po voste ripoûse est d'asteur fwait, vs savez clôre l'fiesse ou espier po l'icône. Vs åroz ossu l'opsion d'rafraitchî l'icône."
+  "aiIconInfo": "On icône po voste ripoûse est d'asteur fwait, vs savez clôre l'fiesse ou espier po l'icône. Vs åroz ossu l'opsion d'rafraitchî l'icône.",
+  "firstAnswer": "Prumî ripoûse",
+  "secondAnswer": "Deujhinme ripoûse",
+  "hereIsTheQuestion": "Vey ci l' kwestion",
+  "pleaseAnswerInThisLanguage": "Ripoûzîz e cisse lingaedje"
 }

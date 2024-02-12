@@ -959,7 +959,7 @@
     "addNewsStory": "Legg til en nyhetssak eller del en lenke",
     "postNewsStory": "Legg til nyhetssak",
     "addComment": "Din kommentar...",
-    "postComment": "Post",
+    "postComment": "Innlegg",
     "comments": "Kommentarer",
     "howToWrite": "La oss brainstorme de beste argumentene for og imot og tenke i løsninger...",
     "commentToShort": "Teksten er for kort!"
@@ -1346,5 +1346,9 @@
   "aiIconInfo": "Et ikon for svaret ditt genereres, du kan lukke vinduet eller vente på at ikonet blir generert. Du vil også ha muligheten til å generere ikonet på nytt.",
   "getColorFromLogo": "Få farge fra logo",
   "explainBothAnswers": "Forklaring av svar",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "Første svar",
+  "secondAnswer": "Andre svar",
+  "hereIsTheQuestion": "Her er spørsmålet",
+  "pleaseAnswerInThisLanguage": "Vennligst svar på dette språket"
 }

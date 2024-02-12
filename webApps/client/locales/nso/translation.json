@@ -705,7 +705,7 @@
   "editBulkStatusUpdate": "Fetola Phetogo ya Boemo ka Bongata",
   "bulkStatusUdateConfig": "Phetolo ya Phetogo ya Boemo ka Bongata",
   "bulkStatusUpdatesTemplates": "Ditemplate tša Diphetogo tša Boemo ka Bongata",
-  "selectStatusTemplate": "Template",
+  "selectStatusTemplate": "Sekao",
   "moveToGroup": "Fetola",
   "noIdeasHere": "Ga go na mehopolo mona.",
   "organizationsAdmin": "Molaodi wa Mekgatlo",
@@ -828,7 +828,7 @@
     "settings": "Tše dingwe",
     "onlyAdminsCanCreateCommunities": "Balaodi fela ba ka thehang diphuthego"
   },
-  "domains": "Domains",
+  "domains": "Domeine",
   "communities": "Diphuthego",
   "groups": "Dihlopha",
   "myDomains": "Domains tša ka",
@@ -1346,5 +1346,9 @@
   "aiIconInfo": "Letšoao la karabo ya gago le a bōptjwa, o ka kwala fensetere kapa o eme go fihlela letšoao le bōptjwa. O tla boela o na le khetho ya go hlahisa letšoao hape.",
   "getColorFromLogo": "Nka mmala go tšwa setšoantšong sa logo",
   "explainBothAnswers": "Tlhaloso ya dikarabo",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "Karabo ya pele",
+  "secondAnswer": "Karabo ya bobedi",
+  "hereIsTheQuestion": "Mona ke potšišo",
+  "pleaseAnswerInThisLanguage": "Ka kopo araba ka puo ye"
 }

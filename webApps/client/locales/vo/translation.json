@@ -28,7 +28,7 @@
   "aoiAiAnalysisConfig": "Konfig Analüs AI Automatik",
   "questionName": "Frage",
   "allOurIdeasOptions": "Väls",
-  "stop": "Stop",
+  "stop": "Stöp",
   "answersToVoteOn": "Gevobods ad votön su",
   "submitAnswersForCreation": "Sedön Gevobods",
   "generateMoreIdeasWithAi": "Jafön plu ideods ko AI",
@@ -199,7 +199,7 @@
   "cloneGroup": "Klonön grupi",
   "areYouSureCloneGroup": "Säkik, vilol-li klonön ati grupi?",
   "errorFraudAuditReportGeneration": "Pöl jafön Fraud Audit lipöp",
-  "downloadFraudAuditReports": "Fraud delete audits",
+  "downloadFraudAuditReports": "Födöfamods fösüdik",
   "haveCreatedFraudAuditReport": "Ejafon lipöpi fraud delete audit",
   "downloadFraudAuditReport": "Fraud Delete Audit Lipöp",
   "deleteAllButOne": "Moükön valikosi plö grup bal",
@@ -1346,5 +1346,9 @@
   "yourIdea": "Köd olik",
   "chatInput": "Säkolös obe frägi",
   "yourIdeaHasBeenAdded": "Köd olik päläükon, jafön magodi lüodüla.",
-  "aiIconInfo": "Magod pro gesag olik pajafon, kanol klösön feni u vätälön pro magod pajafön. Labol i mögodi ad rejafön magodi."
+  "aiIconInfo": "Magod pro gesag olik pajafon, kanol klösön feni u vätälön pro magod pajafön. Labol i mögodi ad rejafön magodi.",
+  "firstAnswer": "Balid geb",
+  "secondAnswer": "Telid geb",
+  "hereIsTheQuestion": "Atos binon säk",
+  "pleaseAnswerInThisLanguage": "Begob ad gespikön in pük at"
 }

@@ -43,7 +43,7 @@
   "allOurIdeas": "All Our Ideas",
   "futureRealityTree": "مستقبل کی حقیقت درخت",
   "ideaGenerationGroupType": "خیال پیدا کرنا",
-  "allOurIdeasGroupType": "All Our Ideas Pairwise Ranking",
+  "allOurIdeasGroupType": "All Our Ideas جوڑی درجہ بندی",
   "allowGenerativeImages": "تخلیقی تصاویر کی اجازت دیں",
   "reports": "رپورٹس",
   "reportsInfo": "رپورٹس تیار کریں",
@@ -1346,5 +1346,9 @@
   "yourIdea": "آپ کا خیال",
   "chatInput": "مجھ سے ایک سوال پوچھیں",
   "yourIdeaHasBeenAdded": "آپ کا خیال شامل کر دیا گیا ہے، آئیکن تصویر بنائی جا رہی ہے۔",
-  "aiIconInfo": "آپ کے جواب کے لیے ایک آئیکن بنایا جا رہا ہے، آپ خدمت کو بند کر سکتے ہیں یا آئیکن بننے کا انتظار کر سکتے ہیں۔ آپ کے پاس آئیکن کو دوبارہ بنانے کا اختیار بھی ہوگا۔"
+  "aiIconInfo": "آپ کے جواب کے لیے ایک آئیکن بنایا جا رہا ہے، آپ خدمت کو بند کر سکتے ہیں یا آئیکن بننے کا انتظار کر سکتے ہیں۔ آپ کے پاس آئیکن کو دوبارہ بنانے کا اختیار بھی ہوگا۔",
+  "firstAnswer": "پہلا جواب",
+  "secondAnswer": "دوسرا جواب",
+  "hereIsTheQuestion": "یہاں سوال ہے",
+  "pleaseAnswerInThisLanguage": "براہ کرم اس زبان میں جواب دیں"
 }

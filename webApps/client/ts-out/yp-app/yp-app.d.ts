@@ -65,6 +65,7 @@ export declare class YpApp extends YpBaseElement {
     subRoute: string | undefined;
     routeData: Record<string, string>;
     userDrawerOpened: boolean;
+    languageLoaded: boolean;
     anchor: HTMLElement | null;
     previousSearches: Array<string>;
     storedBackPath: string | undefined;
@@ -90,6 +91,7 @@ export declare class YpApp extends YpBaseElement {
     disconnectedCallback(): void;
     updated(changedProperties: Map<string | number | symbol, unknown>): Promise<void>;
     _navDrawOpened(event: CustomEvent): void;
+    _languageLoaded(): void;
     _netWorkError(event: CustomEvent): void;
     _setupEventListeners(): void;
     _themeUpdated(event: CustomEvent): void;

@@ -187,7 +187,7 @@
   "hideGroupListCardObjectives": "Group list card objectives lopeti",
   "communityId": "Sāmājika Id",
   "upload": "Uploda",
-  "videoFormat": "Video format",
+  "videoFormat": "Vīdeo format",
   "ziggeoApplicationToken": "Ziggeo Anuprayoga Ṭokena",
   "useZiggeo": "Ziggeo Madhyama Upayogaṃ",
   "anonymousAskRegistrationQuestions": "Nāmapucchā Anāmikaṃ",
@@ -924,7 +924,7 @@
     },
     "edit": "Paṭṭhānaṃ pariṇāmeti",
     "delete": "Paṭṭhānaṃ hāpeti",
-    "statusChangeNoEmails": "No emails",
+    "statusChangeNoEmails": "Asiṃ",
     "haveMovedPost": "Postaṃ cālitaṃ",
     "photo": {
       "toast": {
@@ -1303,7 +1303,7 @@
   "User": "Puggala",
   "Seed": "Bīja",
   "Goal": "Gavesi",
-  "Uniques": "Uniques",
+  "Uniques": "Aveccaya",
   "Total": "Sabbam",
   "Locations": "Sthānāni",
   "version": "Samskaraṇaṃ",
@@ -1346,5 +1346,9 @@
   "yourIdea": "Tava paññatti",
   "chatInput": "Maṃ pañhaṃ puccha",
   "yourIdeaHasBeenAdded": "Tava paññatti yojitā, pratimā chinnam utpādeti.",
-  "aiIconInfo": "Tava uttaraṃ hetu pratimā chinnam utpādeti, tumhe vaṭṭaṃ vā parikkhīṇaṃ vā karotha athavā pratimā chinnam utpāditaṃ yāva dhāraṇaṃ pratīkṣa. Tumhākaṃ pratimā chinnam punarutpādetuṃ pi vikalpaṃ bhavissati."
+  "aiIconInfo": "Tava uttaraṃ hetu pratimā chinnam utpādeti, tumhe vaṭṭaṃ vā parikkhīṇaṃ vā karotha athavā pratimā chinnam utpāditaṃ yāva dhāraṇaṃ pratīkṣa. Tumhākaṃ pratimā chinnam punarutpādetuṃ pi vikalpaṃ bhavissati.",
+  "firstAnswer": "Paṭhamaṃ uttaraṃ",
+  "secondAnswer": "Dutiyaṃ uttaraṃ",
+  "hereIsTheQuestion": "Idhaṃ pañhaṃ",
+  "pleaseAnswerInThisLanguage": "Imasmiṃ bhāsāya uttaraṃ detha"
 }

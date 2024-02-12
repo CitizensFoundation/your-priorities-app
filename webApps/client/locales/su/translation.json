@@ -538,7 +538,7 @@
   "deleteSelectedUsers": "Ménta hapusan nu dipilih:",
   "anonymizeSelectedUsers": "Nganonimkeun nu dipilih:",
   "anonymizeUser": "Nganonimkeun pamaké",
-  "email": "Email",
+  "email": "Surélék",
   "organization": "Organisasi",
   "emailAlreadyRegisterred": "Anjeun teu bisa nyetél email anjeun ka alamat ieu sabab geus dipaké.",
   "userHaveSetEmail": "Email disetél kanggo",
@@ -843,7 +843,7 @@
     "add": "Tambah komunitas",
     "alternativeHeader": "Header Alternatif",
     "edit": "Édit komunitas",
-    "hostname": "Hostname",
+    "hostname": "Ngaran host",
     "admins": "Admin komunitas",
     "users": "Pamaké komunitas",
     "delete": "Hapus komunitas",
@@ -962,7 +962,7 @@
     "addNewsStory": "Tambahkeun carita berita atanapi bagikeun tautan",
     "postNewsStory": "Tambahkeun carita berita",
     "addComment": "Komentar anjeun...",
-    "postComment": "Post",
+    "postComment": "Pos",
     "comments": "Komentar",
     "howToWrite": "Hayu urang mikirkeun titik pangsaéna pikeun jeung ngalawan sarta mikir dina solusi...",
     "commentToShort": "Téksna teuing pondok!"
@@ -972,7 +972,7 @@
     "inProgress": "Ngunggah..."
   },
   "notice": {
-    "ok": "Ok",
+    "ok": "Oké",
     "deleteConfirmation": "Naha anjeun hoyong mupus grup ieu?"
   },
   "maps": {
@@ -1039,7 +1039,7 @@
     "info": "Info",
     "notifications": "Bewara",
     "name": "Ngaran lengkep",
-    "email": "Email",
+    "email": "Surélék",
     "edit": "Édit pamaké",
     "password": "Sandi",
     "forgotPassword": "Poho Sandi",
@@ -1157,13 +1157,13 @@
   "sortBySortOrder": "Urutkeun Miturut Urutan",
   "mediaUploads": "Unggahan Média",
   "onlyAdminsCanCreateCommunities": "Ngan Admin Nu Bisa Nyieun Komunitas",
-  "Facebook Client Id": "Facebook Client Id",
-  "facebookClientId": "Facebook Client Id",
-  "Facebook Client Secret": "Facebook Client Secret",
-  "facebookClientSecret": "Facebook Client Secret",
-  "Google Client Id": "Google Client Id",
-  "googleClientId": "Google Client Id",
-  "Google Client Secret": "Google Client Secret",
+  "Facebook Client Id": "Id Klién Facebook",
+  "facebookClientId": "Id Klién Facebook",
+  "Facebook Client Secret": "Rusiah Klién Facebook",
+  "facebookClientSecret": "Rusiah Klién Facebook",
+  "Google Client Id": "Id Klién Google",
+  "googleClientId": "Id Klién Google",
+  "Google Client Secret": "Rusiah Klién Google",
   "googleClientSecret": "Rasia Klién Google",
   "Discord Client Id": "Id Klién Discord",
   "discordClientId": "Id Klién Discord",
@@ -1197,7 +1197,7 @@
   "New Group": "Grup Anyar",
   "haveCreatedXLsReport": "Geus nyieun laporan XL",
   "description": "Katerangan",
-  "website": "website",
+  "website": "situs",
   "organizationTree": {
     "new": "Organisasi",
     "toast": {
@@ -1222,7 +1222,7 @@
   "Neutral": "Netral",
   "Monochrome": "Monokrom",
   "Fidelity": "Kasatiaan",
-  "Tonal Spot": "Tonal Spot",
+  "Tonal Spot": "Titik Tonal",
   "Rainbow": "Katumbiri",
   "Fruit Salad": "Salad Buah",
   "filter": "Saring",
@@ -1264,7 +1264,7 @@
   "debate": "Debat",
   "completeLogin": "Rengse login",
   "password": "Sandi",
-  "Email": "Email",
+  "Email": "Surélék",
   "recreate": "Jieun deui",
   "Your idea has been added, you can continue voting": "Ide anjeun geus ditambahkeun, anjeun bisa neruskeun milih.",
   "Your idea is in a moderation queue": "Ide anjeun aya dina antrean moderasi.",
@@ -1346,5 +1346,9 @@
   "yourIdea": "Ide anjeun",
   "chatInput": "Tanya kuring pertanyaan",
   "yourIdeaHasBeenAdded": "Ide anjeun geus ditambahkeun, ngahasilkeun ikon gambar.",
-  "aiIconInfo": "Ikon pikeun jawaban anjeun keur dihasilkeun, anjeun bisa nutup jandela atanapi ngadagoan ikon dihasilkeun. Anjeun ogé bakal boga pilihan pikeun ngahasilkeun deui ikon."
+  "aiIconInfo": "Ikon pikeun jawaban anjeun keur dihasilkeun, anjeun bisa nutup jandela atanapi ngadagoan ikon dihasilkeun. Anjeun ogé bakal boga pilihan pikeun ngahasilkeun deui ikon.",
+  "firstAnswer": "Waleran kahiji",
+  "secondAnswer": "Waleran kadua",
+  "hereIsTheQuestion": "Ieu patarosanna",
+  "pleaseAnswerInThisLanguage": "Mangga waler dina basa ieu"
 }

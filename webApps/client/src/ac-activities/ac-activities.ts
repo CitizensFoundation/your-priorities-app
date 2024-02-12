@@ -298,11 +298,9 @@ export class AcActivities extends YpBaseElementWithLogin {
             : html`
                 <div class="layout vertical center-center">
                   <md-outlined-button
-                    raised
                     class="layout horizontal notLoggedInButton"
-                    .label="${this.t('loginToShareALink')}"
                     @click="${this._openLogin}">
-                  </md-outlined-button>
+                    ${this.t('loginToShareALink')}</md-outlined-button>
                 </div>
               `}
           ${this.activities

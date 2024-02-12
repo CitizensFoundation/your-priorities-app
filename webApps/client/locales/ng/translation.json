@@ -1036,7 +1036,7 @@
     "info": "Omulonga",
     "notifications": "Omundjalo",
     "name": "Ozongombe",
-    "email": "Email",
+    "email": "Imeyile",
     "edit": "Hindulula momonashike",
     "password": "Oshihombe",
     "forgotPassword": "Ukala Oshihombe",
@@ -1346,5 +1346,9 @@
   "aiIconInfo": "Oshili lyoye lyokupendeka olya pombanda lyoye lyokuza, oshinima sha li vulu okuvala ihonga kana oye oshili lyoye lyokuza. Oove na okwa li na omalunga okupitika oshili lyoye.",
   "getColorFromLogo": "Pangela ombala okutoka oshilongo",
   "explainBothAnswers": "Oshilongo sha iimpendulo",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "Ombepo yopaleka",
+  "secondAnswer": "Ombepo yovili",
+  "hereIsTheQuestion": "Opo oshiti sha popiwa",
+  "pleaseAnswerInThisLanguage": "Kokuleka oshilongo shoka"
 }

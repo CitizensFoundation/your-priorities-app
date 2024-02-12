@@ -1353,5 +1353,9 @@
   "ideaGenerationGroupType": "創意生成",
   "allOurIdeasGroupType": "All Our Ideas 配對排名",
   "yourIdeaHasBeenAdded": "您的想法已添加，正在生成圖標圖像。",
-  "aiIconInfo": "正在為您的答案生成圖標，您可以關閉窗口或等待圖標生成。您還將有機會重新生成圖標。"
+  "aiIconInfo": "正在為您的答案生成圖標，您可以關閉窗口或等待圖標生成。您還將有機會重新生成圖標。",
+  "firstAnswer": "第一答案",
+  "secondAnswer": "第二答案",
+  "hereIsTheQuestion": "這是問題",
+  "pleaseAnswerInThisLanguage": "請用這種語言回答"
 }

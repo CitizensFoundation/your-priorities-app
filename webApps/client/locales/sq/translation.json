@@ -1352,5 +1352,9 @@
   "ideaGenerationGroupType": "Gjenerimi i ideve",
   "allOurIdeasGroupType": "Renditja Dysh për Dy e All Our Ideas",
   "yourIdeaHasBeenAdded": "Ideja juaj është shtuar, duke gjeneruar ikonën e imazhit.",
-  "aiIconInfo": "Po krijohet një ikonë për përgjigjen tuaj, mund të mbyllni dritaren ose të prisni derisa të krijohet ikona. Do të keni gjithashtu mundësinë të rikrijoni ikonën."
+  "aiIconInfo": "Po krijohet një ikonë për përgjigjen tuaj, mund të mbyllni dritaren ose të prisni derisa të krijohet ikona. Do të keni gjithashtu mundësinë të rikrijoni ikonën.",
+  "firstAnswer": "Përgjigja e parë",
+  "secondAnswer": "Përgjigja e dytë",
+  "hereIsTheQuestion": "Ja pyetja",
+  "pleaseAnswerInThisLanguage": "Ju lutemi përgjigjuni në këtë gjuhë"
 }

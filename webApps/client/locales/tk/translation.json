@@ -1018,7 +1018,7 @@
     "addAdmin": "Admin goş",
     "removeUser": "Ulanyjy aýyr",
     "inviteUser": "Ulanyjy çagyryň",
-    "email": "email",
+    "email": "e-poçta",
     "removeFromOrganization": "Gurama aýyr",
     "addToOrganization": "Gurama goş",
     "selectOrganization": "Guramany saýlaň"
@@ -1039,7 +1039,7 @@
     "info": "Maglumat",
     "notifications": "Bildirişler",
     "name": "Doly ady",
-    "email": "Email",
+    "email": "E-poçta",
     "edit": "Ulanyjyny redaktirle",
     "password": "Açarsöz",
     "forgotPassword": "Açarsözi unutdyňyzmy",
@@ -1334,7 +1334,7 @@
   "domainFraudManagement": "Domen Aldawyny Dolandyrmak",
   "Access": "Giriş",
   "openOrganizationMenu": "Gurama menýusyny aç",
-  "Listasafn Reykjavíkur": "Listasafn Reykjavíkur",
+  "Listasafn Reykjavíkur": "Reýkjavik Listasafny",
   "Override theme": "Temany üýtget",
   "Analytics & Marketing": "Analitika & Marketing",
   "Promote your survey": "Barlagyňyzy öňe sürüň",
@@ -1346,5 +1346,9 @@
   "yourIdea": "Siziň pikiriňiz",
   "chatInput": "Maňa sorag beriň",
   "yourIdeaHasBeenAdded": "Siziň pikiriňiz goşuldy, nyşan şekili döredilýär.",
-  "aiIconInfo": "Jogabyňyz üçin nyşan şekili döredilýär, penjireni ýapyp bilersiňiz ýa-da nyşan şekili döredilýänçä garaşyp bilersiňiz. Şeýle hem nyşany gaýtadan döretmek mümkinçiligiňiz bolar."
+  "aiIconInfo": "Jogabyňyz üçin nyşan şekili döredilýär, penjireni ýapyp bilersiňiz ýa-da nyşan şekili döredilýänçä garaşyp bilersiňiz. Şeýle hem nyşany gaýtadan döretmek mümkinçiligiňiz bolar.",
+  "firstAnswer": "Birinji jogap",
+  "secondAnswer": "Ikinji jogap",
+  "hereIsTheQuestion": "Sorag şu ýerde",
+  "pleaseAnswerInThisLanguage": "Bu diliňizde jogap beriň"
 }

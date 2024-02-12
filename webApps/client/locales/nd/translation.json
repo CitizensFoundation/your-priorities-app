@@ -1346,5 +1346,9 @@
   "aiIconInfo": "Isithonjana sempendulo yakho siyakhiwa, ungavala iwindi kumbe ulinde ukuthi isithonjana sikhiqizwe. Uzakwazi lokuphinda ukhiqize isithonjana.",
   "getColorFromLogo": "Thola umbala kusukela kumfanekiso welogo",
   "explainBothAnswers": "Incazelo yezimpendulo",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "Impendulo yokuqala",
+  "secondAnswer": "Impendulo yesibili",
+  "hereIsTheQuestion": "Nansi umbuzo",
+  "pleaseAnswerInThisLanguage": "Phendula kulolulimi"
 }

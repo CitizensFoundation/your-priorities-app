@@ -1346,5 +1346,9 @@
   "aiIconInfo": "तपाईंको उत्तरको लागि एक आइकन उत्पन्न गरिँदैछ, तपाईं झ्याल बन्द गर्न सक्नुहुन्छ वा आइकन उत्पन्न हुनको लागि पर्खन सक्नुहुन्छ। तपाईंसँग आइकन पुनः उत्पन्न गर्ने विकल्प पनि हुनेछ।",
   "getColorFromLogo": "लोगो छविबाट रंग प्राप्त गर्नुहोस्",
   "explainBothAnswers": "उत्तरहरूको व्याख्या",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "पहिलो उत्तर",
+  "secondAnswer": "दोस्रो उत्तर",
+  "hereIsTheQuestion": "यहाँ प्रश्न छ",
+  "pleaseAnswerInThisLanguage": "कृपया यस भाषामा उत्तर दिनुहोस्"
 }

@@ -3,7 +3,7 @@
   "explainBothAnswers": "Cavaplar aңlatması",
   "thinking": "Uylau",
   "userControlledSettings": "Kullanuçı kontrolendәgi kөylәүlәr",
-  "choiceStatus": "Status",
+  "choiceStatus": "Xälgä",
   "activated": "Aktivlaштырылган",
   "deactivated": "Sүndүrелгән",
   "latest": "Soңгы",
@@ -1346,5 +1346,9 @@
   "yourIdea": "Söyägeñ",
   "chatInput": "Mäne ber soraw bir",
   "yourIdeaHasBeenAdded": "Söyägeñ östälde, belge räseme törletelä.",
-  "aiIconInfo": "Cawabıgız öçen belge räseme törletelä, täzälegen yabu yäki belge törletelgänçe kötü mömkin. Şulay uq belgenı qabat törletü mömkinlege bulır."
+  "aiIconInfo": "Cawabıgız öçen belge räseme törletelä, täzälegen yabu yäki belge törletelgänçe kötü mömkin. Şulay uq belgenı qabat törletü mömkinlege bulır.",
+  "firstAnswer": "Berençe cavap",
+  "secondAnswer": "İkençe cavap",
+  "hereIsTheQuestion": "Monda sorau",
+  "pleaseAnswerInThisLanguage": "Zinhar, bu teldä cavap biräseze"
 }

@@ -1354,5 +1354,9 @@
   "ideaGenerationGroupType": "Generare idei",
   "allOurIdeasGroupType": "All Our Ideas Clasament Pereche",
   "yourIdeaHasBeenAdded": "Ideea ta a fost adăugată, se generează imaginea iconiței.",
-  "aiIconInfo": "Se generează o iconiță pentru răspunsul tău, poți închide fereastra sau aștepta generarea iconiței. Vei avea și opțiunea de a regenera iconița."
+  "aiIconInfo": "Se generează o iconiță pentru răspunsul tău, poți închide fereastra sau aștepta generarea iconiței. Vei avea și opțiunea de a regenera iconița.",
+  "firstAnswer": "Primul răspuns",
+  "secondAnswer": "Al doilea răspuns",
+  "hereIsTheQuestion": "Iată întrebarea",
+  "pleaseAnswerInThisLanguage": "Vă rugăm să răspundeți în această limbă"
 }

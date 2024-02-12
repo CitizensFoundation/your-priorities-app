@@ -1346,5 +1346,9 @@
   "aiIconInfo": "Chizindikiro cha yankho lanu chikupangidwa, mutha kutseka zenera kapena kudikira kuti chizindikirocho chipangidwe. Mudzakhalanso ndi mwayi wopanga chizindikirocho kachiwiri.",
   "getColorFromLogo": "Pezani mtundu kuchokera chizindikiro",
   "explainBothAnswers": "Kufotokozera mayankho",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "Yoyamba",
+  "secondAnswer": "Yachiwiri",
+  "hereIsTheQuestion": "Nawo funso",
+  "pleaseAnswerInThisLanguage": "Chonde yankhani m'chinenerochi"
 }

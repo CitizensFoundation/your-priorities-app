@@ -93,6 +93,7 @@ let YpCollectionItemCard = class YpCollectionItemCard extends YpBaseElement {
           padding-bottom: 0;
           vertical-align: middle;
           width: auto;
+          font-size: 22px;
           font-family: var(--app-header-font-family, Roboto);
         }
 
@@ -125,13 +126,9 @@ let YpCollectionItemCard = class YpCollectionItemCard extends YpBaseElement {
         }
 
         .collection-name[featured] {
-          background-color: var(--md-sys-color-primary);
-          color: var(--md-sys-color-on-primary);
         }
 
         .collection-name[archived] {
-          background-color: var(--md-sys-color-secondary);
-          color: var(--md-sys-color-on-secondary);
         }
 
         .collection-name[has-data-viz] {

@@ -1159,11 +1159,11 @@
   "onlyAdminsCanCreateCommunities": "Na'o Pule e Mafai ona Fai Nu'u",
   "Facebook Client Id": "Facebook Client Id",
   "facebookClientId": "Facebook Client Id",
-  "Facebook Client Secret": "Facebook Client Secret",
-  "facebookClientSecret": "Facebook Client Secret",
-  "Google Client Id": "Google Client Id",
-  "googleClientId": "Google Client Id",
-  "Google Client Secret": "Google Client Secret",
+  "Facebook Client Secret": "Facebook Fa'amau Lilo",
+  "facebookClientSecret": "Facebook Fa'amau Lilo",
+  "Google Client Id": "Google Id Fa'akilieniti",
+  "googleClientId": "Google Id Fa'akilieniti",
+  "Google Client Secret": "Google Fa'amau Lilo",
   "googleClientSecret": "Google Fa'alilolilo Kilieni",
   "Discord Client Id": "Discord Id Kilieni",
   "discordClientId": "Discord Id Kilieni",
@@ -1346,5 +1346,9 @@
   "yourIdea": "Lau manatu",
   "chatInput": "Fesili mai ia te a'u",
   "yourIdeaHasBeenAdded": "Ua fa'aopoopo lau manatu, o lo'o faia le ata.",
-  "aiIconInfo": "O lo'o faia se ata mo lau tali, e mafai ona e tapuni le fa'amalama pe fa'atali mo le ata e faia. E iai fo'i le filifiliga e toe faia le ata."
+  "aiIconInfo": "O lo'o faia se ata mo lau tali, e mafai ona e tapuni le fa'amalama pe fa'atali mo le ata e faia. E iai fo'i le filifiliga e toe faia le ata.",
+  "firstAnswer": "Tali muamua",
+  "secondAnswer": "Tali lona lua",
+  "hereIsTheQuestion": "O le fesili lea",
+  "pleaseAnswerInThisLanguage": "Tali i lenei gagana"
 }

@@ -649,7 +649,7 @@
   "hidePostAuthor": "د پوسټ لیکوال پټول",
   "defaultLocationLongLat": "ډیفالټ موقعیت طول،عرض",
   "disableCommunityDomainUpLink": "ډومین اپ لینک غیر فعالول",
-  "analyticsTrackerCode": "Google Analytics Id",
+  "analyticsTrackerCode": "د Google Analytics ای ډي",
   "filterIdeas": "فکرونه فلټر کول",
   "edit": "سمول",
   "delete": "ړنګول",
@@ -1346,5 +1346,9 @@
   "yourIdea": "ستاسو نظر",
   "chatInput": "زما سره یوه پوښتنه وکړئ",
   "yourIdeaHasBeenAdded": "ستاسو نظر اضافه شو، د ایکون انځور جوړول.",
-  "aiIconInfo": "ستاسو ځواب لپاره یو ایکون جوړیږي، تاسو کولی شئ کړکۍ وتړئ یا د ایکون د جوړیدو په انتظار ووسئ. تاسو به هم د ایکون د بیا جوړولو اختیار ولرئ."
+  "aiIconInfo": "ستاسو ځواب لپاره یو ایکون جوړیږي، تاسو کولی شئ کړکۍ وتړئ یا د ایکون د جوړیدو په انتظار ووسئ. تاسو به هم د ایکون د بیا جوړولو اختیار ولرئ.",
+  "firstAnswer": "لومړی ځواب",
+  "secondAnswer": "دوهم ځواب",
+  "hereIsTheQuestion": "دلته پوښتنه ده",
+  "pleaseAnswerInThisLanguage": "مهرباني وکړئ په دې ژبه کې ځواب ووایاست"
 }

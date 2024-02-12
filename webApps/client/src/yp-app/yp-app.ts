@@ -158,6 +158,9 @@ export class YpApp extends YpBaseElement {
   @property({ type: Boolean })
   userDrawerOpened = false;
 
+  @property({ type: Boolean })
+  languageLoaded = false;
+
   anchor: HTMLElement | null = null;
 
   previousSearches: Array<string> = [];
@@ -249,6 +252,10 @@ export class YpApp extends YpBaseElement {
     }, 500);
   }
 
+  _languageLoaded() {
+    this.languageLoaded = true;
+  }
+
   _netWorkError(event: CustomEvent) {
     const detail = event.detail;
     let errorText = this.t("generalError")
@@ -309,6 +316,11 @@ export class YpApp extends YpBaseElement {
     this.addListener("yp-dialog-closed", this._dialogClosed, this);
     this.addListener("yp-language-name", this._setLanguageName, this);
 
+    this.addGlobalListener(
+      "yp-language-loaded",
+      this._languageLoaded.bind(this)
+    );
+
     this.addGlobalListener("yp-refresh-domain", this._refreshDomain.bind(this));
     this.addGlobalListener(
       "yp-refresh-community",
@@ -352,6 +364,10 @@ export class YpApp extends YpBaseElement {
     this.removeGlobalListener(
       "yp-theme-configuration-updated",
       this._themeUpdated
+    );
+    this.removeGlobalListener(
+      "yp-language-loaded",
+      this._languageLoaded.bind(this)
     );
 
     this.removeListener(
@@ -584,7 +600,7 @@ export class YpApp extends YpBaseElement {
         : html`
             <md-icon-button
               slot="actionItems"
-              class="topActionItem"
+              class="topActionItem userImageNotificationContainer"
               @click="${this._login}"
               title="${this.t("user.login")}"
               ><md-icon>person</md-icon>
@@ -606,7 +622,9 @@ export class YpApp extends YpBaseElement {
           ${this.goForwardToPostId ? this.goForwardPostName : this.headerTitle}
         </div>
         ${this.renderActionItems()}
-        <div>${this.renderPage()}</div>
+        <div>
+        ${this.renderPage()}
+        </div>
       </mwc-top-app-bar>
     `;
   }

@@ -1353,5 +1353,9 @@
   "ideaGenerationGroupType": "Fikir üretimi",
   "allOurIdeasGroupType": "All Our Ideas İkili Sıralama",
   "yourIdeaHasBeenAdded": "Fikriniz eklendi, ikon resmi oluşturuluyor.",
-  "aiIconInfo": "Cevabınız için bir ikon oluşturuluyor, pencereyi kapatabilir veya ikon oluşturulana kadar bekleyebilirsiniz. İkonu yeniden oluşturma seçeneğiniz de olacak."
+  "aiIconInfo": "Cevabınız için bir ikon oluşturuluyor, pencereyi kapatabilir veya ikon oluşturulana kadar bekleyebilirsiniz. İkonu yeniden oluşturma seçeneğiniz de olacak.",
+  "firstAnswer": "İlk cevap",
+  "secondAnswer": "İkinci cevap",
+  "hereIsTheQuestion": "İşte soru",
+  "pleaseAnswerInThisLanguage": "Lütfen bu dilde cevaplayın"
 }

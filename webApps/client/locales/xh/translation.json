@@ -368,7 +368,7 @@
   "customSAMLErrorHTML": "Custom SAML Error HTML",
   "redirectToGroupId": "Redirect (xa kungekho URL path) kwi-Group Id",
   "customBackURL": "Custom back URL",
-  "customBackName": "Custom back name",
+  "customBackName": "Igama lokubuyela ngasemva",
   "changeEmail": "Tshintsha i-imeyile",
   "exportLogins": "Thumela zonke iilogins",
   "customSamlLoginText": "Umbhalo we-SAML ngokwezifiso",
@@ -1346,5 +1346,9 @@
   "yourIdea": "Ingcamango yakho",
   "chatInput": "Buza umbuzo",
   "yourIdeaHasBeenAdded": "Ingcamango yakho yongezwe, kusenziwa umfanekiso we icon.",
-  "aiIconInfo": "I-icon yempendulo yakho iyenziwa, ungavala iwindow okanye ulinde ukuba i-icon yenziwe. Uya kuba nokhetho lokuphinda wenze i-icon."
+  "aiIconInfo": "I-icon yempendulo yakho iyenziwa, ungavala iwindow okanye ulinde ukuba i-icon yenziwe. Uya kuba nokhetho lokuphinda wenze i-icon.",
+  "firstAnswer": "Impendulo yokuqala",
+  "secondAnswer": "Impendulo yesibini",
+  "hereIsTheQuestion": "Nantsi imibuzo",
+  "pleaseAnswerInThisLanguage": "Nceda uphendule ngolwimi"
 }

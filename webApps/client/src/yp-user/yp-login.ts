@@ -379,7 +379,8 @@ export class YpLogin extends YpBaseElement {
         }
 
         .loginField {
-            margin-bottom: 8px;
+            margin-bottom: 16px;
+            margin-top: 16px;
           }
 
 

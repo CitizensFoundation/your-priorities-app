@@ -1353,5 +1353,9 @@
   "aiIconInfo": "Et ikon for svaret ditt genereres, du kan lukke vinduet eller vente på at ikonet blir generert. Du vil også ha muligheten til å generere ikonet på nytt.",
   "getColorFromLogo": "Få farge fra logo",
   "explainBothAnswers": "Forklaring av svar",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "Første svar",
+  "secondAnswer": "Andre svar",
+  "hereIsTheQuestion": "Her er spørsmålet",
+  "pleaseAnswerInThisLanguage": "Vennligst svar på dette språket"
 }

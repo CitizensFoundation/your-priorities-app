@@ -241,8 +241,8 @@ export abstract class YpCollection extends YpBaseElementWithLogin {
           }
 
           .currentPage {
-            margin-bottom: 256px;
-            margin-top: 16px;
+            margin-bottom: 220px;
+            margin-top: 16px
           }
         }
       `,

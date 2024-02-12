@@ -1334,7 +1334,7 @@
   "domainFraudManagement": "域名欺诈管理",
   "Access": "访问",
   "openOrganizationMenu": "打开组织菜单",
-  "Listasafn Reykjavíkur": "Listasafn Reykjavíkur",
+  "Listasafn Reykjavíkur": "雷克雅未克美术馆",
   "Override theme": "覆盖主题",
   "Analytics & Marketing": "分析与市场",
   "Promote your survey": "推广您的调查",
@@ -1346,5 +1346,9 @@
   "yourIdea": "您的想法",
   "chatInput": "问我一个问题",
   "yourIdeaHasBeenAdded": "您的想法已添加，正在生成图标图片。",
-  "aiIconInfo": "正在为您的答案生成图标，您可以关闭窗口或等待图标生成。您也将有选项重新生成图标。"
+  "aiIconInfo": "正在为您的答案生成图标，您可以关闭窗口或等待图标生成。您也将有选项重新生成图标。",
+  "firstAnswer": "第一个答案",
+  "secondAnswer": "第二个答案",
+  "hereIsTheQuestion": "这是问题",
+  "pleaseAnswerInThisLanguage": "请用这种语言回答"
 }

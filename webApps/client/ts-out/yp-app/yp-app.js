@@ -55,6 +55,7 @@ let YpApp = class YpApp extends YpBaseElement {
         this.route = "";
         this.routeData = {};
         this.userDrawerOpened = false;
+        this.languageLoaded = false;
         this.anchor = null;
         this.previousSearches = [];
         this.useHardBack = false;
@@ -109,6 +110,9 @@ let YpApp = class YpApp extends YpBaseElement {
             this.navDrawOpenedDelayed = event.detail;
         }, 500);
     }
+    _languageLoaded() {
+        this.languageLoaded = true;
+    }
     _netWorkError(event) {
         const detail = event.detail;
         let errorText = this.t("generalError")
@@ -147,6 +151,7 @@ let YpApp = class YpApp extends YpBaseElement {
         this.addListener("yp-open-notify-dialog", this._openNotifyDialog, this);
         this.addListener("yp-dialog-closed", this._dialogClosed, this);
         this.addListener("yp-language-name", this._setLanguageName, this);
+        this.addGlobalListener("yp-language-loaded", this._languageLoaded.bind(this));
         this.addGlobalListener("yp-refresh-domain", this._refreshDomain.bind(this));
         this.addGlobalListener("yp-refresh-community", this._refreshCommunity.bind(this));
         this.addGlobalListener("yp-refresh-group", this._refreshGroup.bind(this));
@@ -172,6 +177,7 @@ let YpApp = class YpApp extends YpBaseElement {
         this.removeGlobalListener("yp-logged-in", this._onUserChanged);
         this.removeGlobalListener("yp-network-error", this._netWorkError);
         this.removeGlobalListener("yp-theme-configuration-updated", this._themeUpdated);
+        this.removeGlobalListener("yp-language-loaded", this._languageLoaded.bind(this));
         this.removeListener("yp-add-back-community-override", this._addBackCommunityOverride, this);
         this.removeListener("yp-reset-keep-open-for-page", this._resetKeepOpenForPage, this);
         this.removeListener("yp-open-login", this._login, this);
@@ -363,7 +369,7 @@ let YpApp = class YpApp extends YpBaseElement {
             : html `
             <md-icon-button
               slot="actionItems"
-              class="topActionItem"
+              class="topActionItem userImageNotificationContainer"
               @click="${this._login}"
               title="${this.t("user.login")}"
               ><md-icon>person</md-icon>
@@ -384,7 +390,9 @@ let YpApp = class YpApp extends YpBaseElement {
           ${this.goForwardToPostId ? this.goForwardPostName : this.headerTitle}
         </div>
         ${this.renderActionItems()}
-        <div>${this.renderPage()}</div>
+        <div>
+        ${this.renderPage()}
+        </div>
       </mwc-top-app-bar>
     `;
     }
@@ -1320,6 +1328,9 @@ __decorate([
 __decorate([
     property({ type: Boolean })
 ], YpApp.prototype, "userDrawerOpened", void 0);
+__decorate([
+    property({ type: Boolean })
+], YpApp.prototype, "languageLoaded", void 0);
 YpApp = __decorate([
     customElement("yp-app")
 ], YpApp);

@@ -1352,5 +1352,9 @@
   "ideaGenerationGroupType": "Generovanie nápadov",
   "allOurIdeasGroupType": "All Our Ideas Porovnávanie dvojíc",
   "yourIdeaHasBeenAdded": "Váš nápad bol pridaný, generuje sa ikona.",
-  "aiIconInfo": "Pre vašu odpoveď sa generuje ikona, môžete zatvoriť okno alebo počkať na vygenerovanie ikony. Budete mať tiež možnosť ikonu znovu vygenerovať."
+  "aiIconInfo": "Pre vašu odpoveď sa generuje ikona, môžete zatvoriť okno alebo počkať na vygenerovanie ikony. Budete mať tiež možnosť ikonu znovu vygenerovať.",
+  "firstAnswer": "Prvá odpoveď",
+  "secondAnswer": "Druhá odpoveď",
+  "hereIsTheQuestion": "Tu je otázka",
+  "pleaseAnswerInThisLanguage": "Prosím odpovedajte v tomto jazyku"
 }

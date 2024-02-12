@@ -1346,5 +1346,9 @@
   "yourIdea": "您的想法",
   "chatInput": "问我一个问题",
   "yourIdeaHasBeenAdded": "您的想法已添加，正在生成图标。",
-  "aiIconInfo": "正在为您的答案生成图标，您可以关闭窗口或等待图标生成。您也将有选项重新生成图标。"
+  "aiIconInfo": "正在为您的答案生成图标，您可以关闭窗口或等待图标生成。您也将有选项重新生成图标。",
+  "firstAnswer": "第一个答案",
+  "secondAnswer": "第二个答案",
+  "hereIsTheQuestion": "这是问题",
+  "pleaseAnswerInThisLanguage": "请用这种语言回答"
 }

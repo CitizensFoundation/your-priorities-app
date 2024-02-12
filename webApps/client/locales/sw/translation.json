@@ -1346,5 +1346,9 @@
   "yourIdea": "Wazo lako",
   "chatInput": "Niulize swali",
   "yourIdeaHasBeenAdded": "Wazo lako limeongezwa, inaunda ikoni.",
-  "aiIconInfo": "Ikoni ya jibu lako inaundwa, unaweza kufunga dirisha au kusubiri ikoni iundwe. Pia utakuwa na chaguo la kuunda upya ikoni."
+  "aiIconInfo": "Ikoni ya jibu lako inaundwa, unaweza kufunga dirisha au kusubiri ikoni iundwe. Pia utakuwa na chaguo la kuunda upya ikoni.",
+  "firstAnswer": "Jibu la kwanza",
+  "secondAnswer": "Jibu la pili",
+  "hereIsTheQuestion": "Hapa ni swali",
+  "pleaseAnswerInThisLanguage": "Tafadhali jibu kwa lugha hii"
 }

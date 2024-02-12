@@ -1146,7 +1146,7 @@
   "Theme, language, etc": "Temă, limbă, etc.",
   "Manage badges": "Gestionează ecusoanele",
   "Manage profile images": "Gestionează imaginile de profil",
-  "Config": "Config",
+  "Config": "Configurație",
   "New Community": "Comunitate Nouă",
   "Name": "Nume",
   "Description": "Descriere",
@@ -1354,5 +1354,9 @@
   "ideaGenerationGroupType": "Generarea ideilor",
   "allOurIdeasGroupType": "All Our Ideas Clasamentul Perechi",
   "yourIdeaHasBeenAdded": "Ideea ta a fost adăugată, se generează imaginea iconiței.",
-  "aiIconInfo": "O iconiță pentru răspunsul tău este în curs de generare, poți închide fereastra sau aștepta generarea iconiței. Vei avea de asemenea opțiunea de a regenera iconița."
+  "aiIconInfo": "O iconiță pentru răspunsul tău este în curs de generare, poți închide fereastra sau aștepta generarea iconiței. Vei avea de asemenea opțiunea de a regenera iconița.",
+  "firstAnswer": "Prima răspuns",
+  "secondAnswer": "A doua răspuns",
+  "hereIsTheQuestion": "Iată întrebarea",
+  "pleaseAnswerInThisLanguage": "Vă rog să răspundeți în această limbă"
 }

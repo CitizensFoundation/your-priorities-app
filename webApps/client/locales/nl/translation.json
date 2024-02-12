@@ -1157,7 +1157,7 @@
   "welcomePageSelect": "Welkom Pagina Selectie",
   "disableDomainUpLink": "Domein Up Link Uitschakelen",
   "sortBySortOrder": "Sorteren Op Volgorde",
-  "mediaUploads": "Media Uploads",
+  "mediaUploads": "Media-uploads",
   "onlyAdminsCanCreateCommunities": "Alleen Beheerders Kunnen Gemeenschappen Maken",
   "Facebook Client Id": "Facebook Cliënt-ID",
   "facebookClientId": "Facebook Cliënt-ID",
@@ -1353,5 +1353,9 @@
   "aiIconInfo": "Een pictogram voor uw antwoord wordt gegenereerd, u kunt het venster sluiten of wachten tot het pictogram is gegenereerd. U krijgt ook de optie om het pictogram opnieuw te genereren.",
   "getColorFromLogo": "Kleur uit logo halen",
   "explainBothAnswers": "Uitleg van antwoorden",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "Eerste antwoord",
+  "secondAnswer": "Tweede antwoord",
+  "hereIsTheQuestion": "Hier is de vraag",
+  "pleaseAnswerInThisLanguage": "Antwoord alstublieft in deze taal"
 }

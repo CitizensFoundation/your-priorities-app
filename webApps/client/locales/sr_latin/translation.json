@@ -1351,7 +1351,11 @@
   "explainBothAnswers": "Objašnjenje odgovora",
   "allOurIdeas": "All Our Ideas",
   "ideaGenerationGroupType": "Generisanje ideja",
-  "allOurIdeasGroupType": "All Our Ideas Pairwise Ranking",
+  "allOurIdeasGroupType": "All Our Ideas Parovi Rangiranje",
   "yourIdeaHasBeenAdded": "Vaša ideja je dodata, generiše se ikona.",
-  "aiIconInfo": "Ikona za vaš odgovor se generiše, možete zatvoriti prozor ili čekati da ikona bude generisana. Takođe ćete imati opciju da ponovo generišete ikonu."
+  "aiIconInfo": "Ikona za vaš odgovor se generiše, možete zatvoriti prozor ili čekati da ikona bude generisana. Takođe ćete imati opciju da ponovo generišete ikonu.",
+  "firstAnswer": "Prvi odgovor",
+  "secondAnswer": "Drugi odgovor",
+  "hereIsTheQuestion": "Evo pitanja",
+  "pleaseAnswerInThisLanguage": "Molimo odgovorite na ovom jeziku"
 }

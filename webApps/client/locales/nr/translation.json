@@ -1246,8 +1246,8 @@
   "Error": "Iphutha",
   "Error Container": "Isitsha Sephutha",
   "Background": "Ingemuva",
-  "Surface Dim": "Surface Dim",
-  "Surface": "Surface",
+  "Surface Dim": "Umphezulu Dim",
+  "Surface": "Umphezulu",
   "Surface Bright": "Ubuso Bakhanyayo",
   "Surface Variant": "Umphezulu Uhlobo",
   "Surface Container Lowest": "Umphezulu Isitsha Esiphansi Kakhulu",
@@ -1346,5 +1346,9 @@
   "aiIconInfo": "Isithonjana sempendulo yakho siyakhiwa, ungavala iwindi noma ulinde ukuthi isithonjana sakhiwe. Uzoba nethuba lokuphinda ukhiqize isithonjana.",
   "getColorFromLogo": "Thola umbala esithombeni selogo",
   "explainBothAnswers": "Incazelo yezimpendulo",
-  "allOurIdeas": "All Our Ideas"
+  "allOurIdeas": "All Our Ideas",
+  "firstAnswer": "Impendulo yokuqala",
+  "secondAnswer": "Impendulo yesibili",
+  "hereIsTheQuestion": "Nansi imibuzo",
+  "pleaseAnswerInThisLanguage": "Phendula ngolimi lolu"
 }

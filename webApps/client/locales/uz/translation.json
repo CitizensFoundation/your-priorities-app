@@ -1355,5 +1355,9 @@
   "ideaGenerationGroupType": "G'oya yaratish",
   "allOurIdeasGroupType": "All Our Ideas Juftlik Reytingi",
   "yourIdeaHasBeenAdded": "Sizning g'oyangiz qo'shildi, belgi rasmi yaratilmoqda.",
-  "aiIconInfo": "Sizning javobingiz uchun belgi yaratilmoqda, oynani yopishingiz yoki belgi yaratilishini kutishingiz mumkin. Belgi qayta yaratilishini tanlash imkoniyati ham bo'ladi."
+  "aiIconInfo": "Sizning javobingiz uchun belgi yaratilmoqda, oynani yopishingiz yoki belgi yaratilishini kutishingiz mumkin. Belgi qayta yaratilishini tanlash imkoniyati ham bo'ladi.",
+  "firstAnswer": "Birinchi javob",
+  "secondAnswer": "Ikkinchi javob",
+  "hereIsTheQuestion": "Mana savol",
+  "pleaseAnswerInThisLanguage": "Iltimos, bu tilda javob bering"
 }

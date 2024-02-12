@@ -1334,7 +1334,7 @@
   "domainFraudManagement": "Доменон фроды менеджмент",
   "Access": "Доступ",
   "openOrganizationMenu": "Организацийы меню архайæн",
-  "Listasafn Reykjavíkur": "Listasafn Reykjavíkur",
+  "Listasafn Reykjavíkur": "Рейкьявикы галерей",
   "Override theme": "Темæйы баххуыс",
   "Analytics & Marketing": "Аналитикæ & Маркетинг",
   "Promote your survey": "Сæрвиты фарс",
@@ -1346,5 +1346,9 @@
   "yourIdea": "Дæ иде",
   "chatInput": "Фæстæгон мæ бафæг",
   "yourIdeaHasBeenAdded": "Дæ иде ныуадзынст, иконæй анцызгæн.",
-  "aiIconInfo": "Дæ харзæй иконæй анцызгæн, фенстеры дæр кæнын æмæ хъæдын, иконæй анцызгæнæн. Дæ хъуамæ гæнæн кæн иконæй бафсгæнæн."
+  "aiIconInfo": "Дæ харзæй иконæй анцызгæн, фенстеры дæр кæнын æмæ хъæдын, иконæй анцызгæнæн. Дæ хъуамæ гæнæн кæн иконæй бафсгæнæн.",
+  "firstAnswer": "Рæзы æмæ",
+  "secondAnswer": "Æмбарджы æмæ",
+  "hereIsTheQuestion": "Мæнæ ацы фæстæ",
+  "pleaseAnswerInThisLanguage": "Бахъедин кæны æвзаг этом мотт"
 }

@@ -384,6 +384,7 @@ export class YpAppGlobals extends YpCodeBase {
         window.appGlobals.haveLoadedLanguages = true;
         //TODO: Fix moment
         //moment.locale([defaultLocale, 'en']);
+        // wait for 2 seconds
         this.fireGlobal("yp-language-loaded", { language: defaultLocale });
         this.fireGlobal("language-loaded", { language: defaultLocale });
       }

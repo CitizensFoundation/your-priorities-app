@@ -1160,10 +1160,10 @@
   "Facebook Client Id": "Facebook Client Id",
   "facebookClientId": "Facebook Client Id",
   "Facebook Client Secret": "Facebook Client Secret",
-  "facebookClientSecret": "Facebook Client Secret",
-  "Google Client Id": "Google Client Id",
-  "googleClientId": "Google Client Id",
-  "Google Client Secret": "Google Client Secret",
+  "facebookClientSecret": "Ikhodi Yimfihlo ye-Facebook",
+  "Google Client Id": "Ikhodi ye-Google",
+  "googleClientId": "Ikhodi ye-Google",
+  "Google Client Secret": "Ikhodi Yimfihlo ye-Google",
   "googleClientSecret": "I-Google Imfihlo Yeklayenti",
   "Discord Client Id": "I-Discord Id Yeklayenti",
   "discordClientId": "I-Discord Id Yeklayenti",
@@ -1346,5 +1346,9 @@
   "yourIdea": "Umbono wakho",
   "chatInput": "Buza umbuzo",
   "yourIdeaHasBeenAdded": "Umbono wakho ungeziwe, kudalwa isithonjana.",
-  "aiIconInfo": "Isithonjana sempendulo yakho siyadalwa, ungavala iwindi noma ulinde isithonjana ukuthi sidalwe. Uzoba nokukhetha futhi ukudala kabusha isithonjana."
+  "aiIconInfo": "Isithonjana sempendulo yakho siyadalwa, ungavala iwindi noma ulinde isithonjana ukuthi sidalwe. Uzoba nokukhetha futhi ukudala kabusha isithonjana.",
+  "firstAnswer": "Impendulo yokuqala",
+  "secondAnswer": "Impendulo yesibili",
+  "hereIsTheQuestion": "Nansi imibuzo",
+  "pleaseAnswerInThisLanguage": "Phendula ngalolu limi"
 }

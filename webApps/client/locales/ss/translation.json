@@ -1159,11 +1159,11 @@
   "onlyAdminsCanCreateCommunities": "Baphatsi kuphela labangenta Imiphakatsi",
   "Facebook Client Id": "Facebook Client Id",
   "facebookClientId": "Facebook Client Id",
-  "Facebook Client Secret": "Facebook Client Secret",
-  "facebookClientSecret": "Facebook Client Secret",
+  "Facebook Client Secret": "Facebook Client Imfihlo",
+  "facebookClientSecret": "Facebook Client Imfihlo",
   "Google Client Id": "Google Client Id",
   "googleClientId": "Google Client Id",
-  "Google Client Secret": "Google Client Secret",
+  "Google Client Secret": "Google Client Imfihlo",
   "googleClientSecret": "Google Kufihla Iklayenti",
   "Discord Client Id": "Discord Id Yeklayenti",
   "discordClientId": "Discord Id Yeklayenti",
@@ -1346,5 +1346,9 @@
   "yourIdea": "Umbono wakho",
   "chatInput": "Buza umbuzo",
   "yourIdeaHasBeenAdded": "Umbono wakho ungeziwe, kudalwa sithonjana.",
-  "aiIconInfo": "Sithonjana sempendulo yakho siyadalwa, ungavala lifasitela noma ulinde sithonjana sibe sedalwa. Uzoba nesikhetho futsi sokusidala kabusha."
+  "aiIconInfo": "Sithonjana sempendulo yakho siyadalwa, ungavala lifasitela noma ulinde sithonjana sibe sedalwa. Uzoba nesikhetho futsi sokusidala kabusha.",
+  "firstAnswer": "Impendulo yokuqala",
+  "secondAnswer": "Impendulo yesibili",
+  "hereIsTheQuestion": "Nansi imibuto",
+  "pleaseAnswerInThisLanguage": "Ngicela uphendvule ngalolulimi"
 }
