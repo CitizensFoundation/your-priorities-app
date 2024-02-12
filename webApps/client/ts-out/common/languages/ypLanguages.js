@@ -38,7 +38,7 @@ export class YpLanguages {
         if (!name) {
             name = YpLanguages.allLanguages.find((language) => language.code.toLowerCase() === code.toLowerCase().replace("_", "-"))?.englishName;
         }
-        return name;
+        return name || code;
     }
     static getNativeName(code) {
         return YpLanguages.allLanguages.find((language) => language.code.toLowerCase() === code.toLowerCase())?.nativeName;

@@ -42,7 +42,7 @@ export class YpLanguages {
       );
   }
 
-  static getEnglishName(code: string): string | undefined {
+  static getEnglishName(code: string): string {
     let name = YpLanguages.allLanguages.find(
       (language) => language.code.toLowerCase() === code.toLowerCase()
     )?.englishName;
@@ -53,7 +53,7 @@ export class YpLanguages {
       )?.englishName;
     }
 
-    return name;
+    return name || code;
   }
 
   static getNativeName(code: string): string | undefined {

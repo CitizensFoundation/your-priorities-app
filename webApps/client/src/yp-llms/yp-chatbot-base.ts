@@ -347,9 +347,59 @@ export abstract class YpChatbotBase extends YpStreamingLlmBase {
           padding: 8px;
         }
 
+        @media (max-width: 960px) {
+          .restartButton {
+            margin-left: 8px;
+            display: none;
+          }
+
+          .chat-window {
+            max-height: 90vh;
+            height: 90vh;
+          }
+
+          .closeButton  {
+            margin-left: 8px;
+          }
+
+          .darkModeButton {
+            margin-right: 8px;
+            display: none;
+          }
+
+          md-outlined-text-field {
+            transition: transform 0.5s;
+            width: 300px;
+          }
+
+          .chat-messages {
+            padding: 0px;
+          }
+
+          .you-chat-element {
+            max-width: 100%;
+            margin-right: 8px;
+          }
+
+          .chat-input {
+            padding-left: 0px;
+            padding-right: 0px;
+          }
+
+          .restartButton[input-is-focused] {
+          }
+
+          .darkModeButton[input-is-focused] {
+          }
+
+          md-outlined-text-field[focused] {
+            width: 100%;
+          }
+        }
+
         @media (max-width: 600px) {
           .chat-window {
-            height: 100%;
+
           }
 
           .you-chat-element {
@@ -390,51 +440,6 @@ export abstract class YpChatbotBase extends YpStreamingLlmBase {
         .chatElement[thinking] {
           margin-top: 16px;
           margin-bottom: 8px;
-        }
-
-        @media (max-width: 960px) {
-          .restartButton {
-            margin-left: 8px;
-            display: none;
-          }
-
-          .closeButton  {
-            margin-left: 8px;
-          }
-
-          .darkModeButton {
-            margin-right: 8px;
-            display: none;
-          }
-
-          md-outlined-text-field {
-            transition: transform 0.5s;
-            width: 300px;
-          }
-
-          .chat-messages {
-            padding: 0px;
-          }
-
-          .you-chat-element {
-            max-width: 100%;
-            margin-right: 8px;
-          }
-
-          .chat-input {
-            padding-left: 0px;
-            padding-right: 0px;
-          }
-
-          .restartButton[input-is-focused] {
-          }
-
-          .darkModeButton[input-is-focused] {
-          }
-
-          md-outlined-text-field[focused] {
-            width: 100%;
-          }
         }
 
         @media (max-width: 450px) {

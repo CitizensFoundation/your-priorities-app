@@ -51,12 +51,13 @@ export class AoiServerApi extends YpServerApi {
     async getResults(groupId, questionId) {
         return this.fetchWrapper(this.baseUrlPath + `/${groupId}/choices/${questionId}/throughGroup`);
     }
-    llmAnswerConverstation(groupId, wsClientId, chatLog) {
+    llmAnswerConverstation(groupId, wsClientId, chatLog, languageName) {
         return this.fetchWrapper(this.baseUrlPath + `/${groupId}/llmAnswerExplain`, {
             method: "PUT",
             body: JSON.stringify({
                 wsClientId,
-                chatLog
+                chatLog,
+                languageName
             }),
         }, false);
     }

@@ -83,9 +83,9 @@ export class AoiSurveyVoting extends YpBaseElement {
     window.appGlobals.activity("Voting - open");
     this.resetTimer();
     this.installMediaQueryWatcher(
-      `(max-width: 1200px) and (min-width: 960px)`,
+      `(max-width: 800px)`,
       (matches) => {
-        this.breakForVertical = matches;
+       this.breakForVertical = matches;
       }
     );
   }
@@ -426,7 +426,7 @@ export class AoiSurveyVoting extends YpBaseElement {
           }
         }
 
-        @media (max-width: 960px) {
+        @media (max-width: 450px) {
           .animate-up {
             transform: translateY(-550px);
           }

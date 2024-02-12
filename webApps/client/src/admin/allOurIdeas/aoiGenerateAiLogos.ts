@@ -161,7 +161,7 @@ export class AoiGenerateAiLogos extends YpGenerateAiImage {
 
   get promptDraft() {
     const highlightColorHex = this.getComplementaryColor(this.hexColor);
-    return `Simple icon with simple abstract geometric shapes.
+    return `Very simple cartoon icon.
 
 Use a simple color scheme based on ${this.hexToColorDescription(this.hexColor)} background and ${this.hexToColorDescription(highlightColorHex)} foreground. No text.
 `;

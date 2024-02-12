@@ -28,13 +28,13 @@ export class AoiLlmExplainDialog extends YpChatbotBase {
   question!: AoiQuestionData;
 
   @property({ type: String })
-  questionText!: string
+  questionText!: string;
 
   @property({ type: String })
-  leftAnswerText!: string
+  leftAnswerText!: string;
 
   @property({ type: String })
-  rightAnswerText!: string
+  rightAnswerText!: string;
 
   @property({ type: Object })
   leftAnswer!: AoiAnswerToVoteOnData;
@@ -72,16 +72,15 @@ export class AoiLlmExplainDialog extends YpChatbotBase {
   }
 
   async sendFirstQuestion() {
-    const firstMessage = `**${this.t('hereIsTheQuestion')}:**
+    const firstMessage = `**${this.t("hereIsTheQuestion")}:**
 ${this.questionText}
 
-**${this.t('firstAnswer')}:**
+**${this.t("firstAnswer")}:**
 ${this.leftAnswerText}
 
-**${this.t('secondAnswer')}**
+**${this.t("secondAnswer")}**
 ${this.rightAnswerText}
-
-${this.t('pleaseAnswerInThisLanguage')}: ${YpLanguages.getEnglishName(this.language)}`;
+`;
 
     this.addChatBotElement({
       sender: "you",
@@ -94,7 +93,8 @@ ${this.t('pleaseAnswerInThisLanguage')}: ${YpLanguages.getEnglishName(this.langu
     await this.serverApi.llmAnswerConverstation(
       this.groupId,
       this.wsClientId,
-      this.simplifiedChatLog
+      this.simplifiedChatLog,
+      YpLanguages.getEnglishName(this.language)
     );
   }
 
@@ -125,7 +125,8 @@ ${this.t('pleaseAnswerInThisLanguage')}: ${YpLanguages.getEnglishName(this.langu
     await this.serverApi.llmAnswerConverstation(
       this.groupId,
       this.wsClientId,
-      this.simplifiedChatLog
+      this.simplifiedChatLog,
+      YpLanguages.getEnglishName(this.language)
     );
   }
 
@@ -169,8 +170,6 @@ ${this.t('pleaseAnswerInThisLanguage')}: ${YpLanguages.getEnglishName(this.langu
           --md-circular-progress-size: 40px;
         }
 
-
-
         #dialog {
           width: 100%;
         }
@@ -180,14 +179,13 @@ ${this.t('pleaseAnswerInThisLanguage')}: ${YpLanguages.getEnglishName(this.langu
           width: 500px;
         }
 
-
-
-
         @media (max-width: 960px) {
           #dialog {
             --_fullscreen-header-block-size: 74px;
           }
 
+          #content, slot[name="content"]::slotted(*) {
+            padding: 8px;
           }
         }
       `,
@@ -200,8 +198,9 @@ ${this.t('pleaseAnswerInThisLanguage')}: ${YpLanguages.getEnglishName(this.langu
       ?fullscreen="${!this.wide}"
       style="max-width: 800px;max-height: 100vh;"
       id="dialog"
-    > <div slot="headline">${this.t("explainBothAnswers")}</div>
-      <div slot="content">${super.render()}</div>
+    >
+      <div slot="headline">${this.t("explainBothAnswers")}</div>
+      <div slot="content" id="content">${super.render()}</div>
     </md-dialog> `;
   }
 }

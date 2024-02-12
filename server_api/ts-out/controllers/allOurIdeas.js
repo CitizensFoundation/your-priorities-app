@@ -153,9 +153,9 @@ export class AllOurIdeasController {
         }
     }
     async llmAnswerExplain(req, res) {
-        const { wsClientId, chatLog } = req.body;
+        const { wsClientId, chatLog, languageName } = req.body;
         console.log(`explainConversation: ${wsClientId}`);
-        const explainer = new ExplainAnswersAssistant(wsClientId, this.wsClients);
+        const explainer = new ExplainAnswersAssistant(wsClientId, this.wsClients, languageName);
         await explainer.explainConversation(chatLog);
         res.sendStatus(200);
     }

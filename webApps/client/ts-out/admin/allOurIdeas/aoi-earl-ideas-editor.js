@@ -32,10 +32,10 @@ let AoiEarlIdeasEditor = class AoiEarlIdeasEditor extends YpStreamingLlmBase {
     connectedCallback() {
         this.createGroupObserver();
         this.setupBootListener();
+        this.imageGenerator = new AoiGenerateAiLogos(this.themeColor);
         if (this.configuration.earl && this.configuration.earl.question_id) {
             this.disableWebsockets = true;
             this.isCreatingIdeas = false;
-            this.imageGenerator = new AoiGenerateAiLogos(this.themeColor);
             this.getChoices();
         }
         else {

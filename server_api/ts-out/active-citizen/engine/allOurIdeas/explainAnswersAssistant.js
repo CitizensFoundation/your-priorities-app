@@ -1,7 +1,7 @@
 import { OpenAI } from "openai";
 import { YpBaseChatBot } from "../../llms/baseChatBot.js";
 export class ExplainAnswersAssistant extends YpBaseChatBot {
-    constructor(wsClientId, wsClients) {
+    constructor(wsClientId, wsClients, languageName) {
         super(wsClientId, wsClients, undefined);
         this.modelName = "gpt-4-0125-preview";
         this.maxTokens = 4000;
@@ -28,6 +28,7 @@ export class ExplainAnswersAssistant extends YpBaseChatBot {
             });
             this.streamWebSocketResponses(stream);
         };
+        this.languageName = languageName;
         this.openaiClient = new OpenAI({
             apiKey: process.env.OPENAI_API_KEY,
         });
@@ -49,6 +50,7 @@ Output:
 -- The top pro and con
 -- If this is likely to be a root cause of the problem set out in the question
 * Short summary in the end of which answer is better and why
+* Always output in this language: ${this.languageName}
 `;
     }
 }

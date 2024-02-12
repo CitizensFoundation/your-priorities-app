@@ -31,7 +31,7 @@ let AoiSurveyVoting = class AoiSurveyVoting extends YpBaseElement {
         this.fire("needs-new-earl");
         window.appGlobals.activity("Voting - open");
         this.resetTimer();
-        this.installMediaQueryWatcher(`(max-width: 1200px) and (min-width: 960px)`, (matches) => {
+        this.installMediaQueryWatcher(`(max-width: 800px)`, (matches) => {
             this.breakForVertical = matches;
         });
     }
@@ -313,7 +313,7 @@ let AoiSurveyVoting = class AoiSurveyVoting extends YpBaseElement {
           }
         }
 
-        @media (max-width: 960px) {
+        @media (max-width: 450px) {
           .animate-up {
             transform: translateY(-550px);
           }

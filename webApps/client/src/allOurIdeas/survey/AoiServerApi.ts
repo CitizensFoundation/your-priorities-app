@@ -131,6 +131,7 @@ export class AoiServerApi extends YpServerApi {
     groupId: number,
     wsClientId: string,
     chatLog: PsSimpleChatLog[],
+    languageName: string
   ): Promise<void> {
 
     return this.fetchWrapper(
@@ -139,7 +140,8 @@ export class AoiServerApi extends YpServerApi {
         method: "PUT",
         body: JSON.stringify({
           wsClientId,
-          chatLog
+          chatLog,
+          languageName
         }),
       },
       false
