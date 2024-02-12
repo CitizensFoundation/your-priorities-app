@@ -141,7 +141,7 @@
     "yamljs": "^0.3.0"
   },
   "scripts": {
-    "publish": "npm run build;npm pack && node repack && node publish.js https://registry.npmjs.org/",
+    "publish_live": "npm run build;npm pack && node repack && node publish.js https://registry.npmjs.org/",
     "publish_local": "npm run build;npm pack && node repack && node publish.js http://localhost:4873",
     "start": "nodemon -e ts ts-out/server_api/server.js",
     "watch-start": "tsc --project ./ --outDir ./ts-out -w & nodemon -q ./ts-out/server.js",

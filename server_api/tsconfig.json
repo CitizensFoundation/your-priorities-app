@@ -1,31 +1,32 @@
 {
-	"extends": "@tsconfig/node18/tsconfig.json",
-	"compilerOptions": {
-		"target": "es2020",
+  "extends": "@tsconfig/node18/tsconfig.json",
+  "compilerOptions": {
+    "target": "es2020",
     "moduleResolution": "NodeNext",
     "module": "NodeNext",
-		"esModuleInterop": true,
-		"allowSyntheticDefaultImports": true,
-		"baseUrl": ".",
-		"skipLibCheck": true,
-		"outDir": "ts-out/",
-		"allowJs": true,
-		//"declaration": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": ".",
+    "skipLibCheck": true,
+    "outDir": "ts-out/",
+    "allowJs": true,
+    //"declaration": true,
     //"declarationMap": true,
     //"sourceMap": true,
-		"types": [
-			"./server.d.ts",
-			"../webApps/client/src/types.d.ts",
-			"../webApps/client/src/typesAoi.d.ts",
-			"../webApps/client/src/typesLlms.d.ts"
-		]
-	},
-	"include": [
-		"**/*.ts",
-		"**/*.js",
-		"**/*.cjs",
-		"**/*.json",
-		"./node_modules/@policysynth/agents/validation.d.ts",
-		"./node_modules/@policysynth/agents/types.d.ts", "active-citizen/engine/moderation/fraud/FraudDeletePointQualities.cjs",
-	],
+    "types": [
+      "./server.d.ts",
+      "../webApps/client/src/types.d.ts",
+      "../webApps/client/src/typesAoi.d.ts",
+      "../webApps/client/src/typesLlms.d.ts"
+    ]
+  },
+  "include": [
+    "**/*.ts",
+    "**/*.js",
+    "**/*.cjs",
+    "**/*.json",
+    "./node_modules/@policysynth/agents/validation.d.ts",
+    "./node_modules/@policysynth/agents/types.d.ts",
+    "active-citizen/engine/moderation/fraud/FraudDeletePointQualities.cjs"
+  ]
 }

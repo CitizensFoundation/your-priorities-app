@@ -24,7 +24,7 @@ async function main() {
 
                 rl.question('Enter OTP: ', async (otp) => {
                     // Publish the new tarball to the specified registry
-                    await execPromise(`npm publish ${tarball} --registry ${registryUrl} --otp=${otp}`, { maxBuffer: 1024 * 1024 * 10 }); // 1MB buffer
+                    await execPromise(`npm publish ${tarball} --registry ${registryUrl} --access public --otp=${otp}`, { maxBuffer: 1024 * 1024 * 10 }); // 1MB buffer
                     console.log(`Published to ${registryUrl}`);
                     rl.close();
                 });
