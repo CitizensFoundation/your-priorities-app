@@ -176,9 +176,9 @@ export class YpLlmTranslation {
             }
             else {
                 const inAnswer = {
-                    originalAnswer: answerContent,
+                    answerToTranslate: answerContent,
                 };
-                const jsonInSchema = `{ originalAnswer: string}`;
+                const jsonInSchema = `{ answerToTranslate: string}`;
                 const jsonOutSchema = `{ translatedContent: string}`;
                 const lengthInfo = `26 words long or 140 characters`;
                 return await this.callSchemaLlm(jsonInSchema, jsonOutSchema, lengthInfo, languageName, "", inAnswer, maxCharactersInTranslation, this.renderSchemaSystemMessage, this.renderAnswersUserMessage);
@@ -199,9 +199,9 @@ export class YpLlmTranslation {
             }
             else {
                 const inQuestion = {
-                    originalQuestion: question,
+                    questionToTranslate: question,
                 };
-                const jsonInSchema = `{ originalAnswer: string}`;
+                const jsonInSchema = `{ questionToTranslate: string}`;
                 const jsonOutSchema = `{ translatedContent: string}`;
                 const lengthInfo = `40 words long or 250 characters`;
                 return await this.callSchemaLlm(jsonInSchema, jsonOutSchema, lengthInfo, languageName, question, inQuestion, maxCharactersInTranslation, this.renderSchemaSystemMessage, this.renderQuestionUserMessage);
@@ -290,6 +290,7 @@ export class YpLlmTranslation {
                         if (maxCharactersInTranslation &&
                             translationData.translatedContent.length >
                                 maxCharactersInTranslation) {
+                            console.log("Translation too long retrying:", translationData.translatedContent);
                             messages[0].content = this.renderSchemaTryAgainSystemMessage(jsonInSchema, jsonOutSchema, lengthInfo, translationData.translatedContent);
                             throw new Error("Translation too long");
                         }
@@ -297,13 +298,21 @@ export class YpLlmTranslation {
                         console.log("Return text " + translationData.translatedContent);
                         return translationData.translatedContent;
                     }
+                    else {
+                        this.temperature = Math.random() * 0.99;
+                        console.log("No content in response. Temperature set to: " + this.temperature);
+                        throw new Error("No content in response");
+                    }
                 }
                 else {
+                    this.temperature = Math.random() * 0.99;
+                    ;
+                    console.log("No content in response. Temperature set to:" + this.temperature);
                     throw new Error("No content in response");
                 }
             }
             catch (error) {
-                console.error("Error in getChoiceTranslation:", error);
+                console.error("Error in callSchemaLlm:", error);
                 retries++;
                 if (retries > maxRetries) {
                     running = false;

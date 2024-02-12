@@ -161,7 +161,7 @@ interface AoiConfigurationData {
 }
 
 interface AoiTranslationAnswerInData {
-  originalAnswer: string;
+  answerToTranslate: string;
 }
 
 interface AoiTranslationAnswerOutData {
@@ -170,7 +170,7 @@ interface AoiTranslationAnswerOutData {
 }
 
 interface AoiTranslationQuestionInData {
-  originalQuestion: string;
+  questionToTranslate: string;
 }
 
 interface AoiTranslationQuestionOutData {
