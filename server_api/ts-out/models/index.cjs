@@ -39,7 +39,8 @@ if (process.env.NODE_ENV === 'production') {
     });
 }
 else {
-    const config = require(__dirname + '/../config/config.json')[env];
+    const configPath = path.join(process.cwd(), 'ts-out', 'config', 'config.json');
+    const config = require(configPath)[env];
     sequelize = new Sequelize(config.database, config.username, config.password, _.merge(config, {
         dialect: 'postgres',
         minifyAliases: true,

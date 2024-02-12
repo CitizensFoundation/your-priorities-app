@@ -1,6 +1,6 @@
 {
   "name": "@yrpri/webapp",
-  "version": "9.0.15",
+  "version": "9.0.16",
   "repository": {
     "type": "git",
     "url": "https://github.com/CitizensFoundation/your-priorities-app.git"
@@ -11,6 +11,8 @@
   "files": [
     "ts-out/**/*",
     "src/types.d.ts",
+    "src/typesAoi.d.ts",
+    "src/typesLlms.d.ts",
     "custom_modules/**/*",
     "!custom_modules/**/node_modules/**/*",
     "locales/**/*"

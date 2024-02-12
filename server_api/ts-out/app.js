@@ -706,13 +706,14 @@ export class YourPrioritiesApi {
     }
     async listen() {
         let server;
+        const portNumber = process.env.PORT ? parseInt(process.env.PORT) : 4242;
         if (process.env.YOUR_PRIORITIES_LISTEN_HOST) {
-            server = this.app.listen(this.app.get("port"), process.env.YOUR_PRIORITIES_LISTEN_HOST, () => {
+            server = this.app.listen(portNumber, process.env.YOUR_PRIORITIES_LISTEN_HOST, () => {
                 log.info(`Your Priorities Platform API Server listening on port ${process.env.YOUR_PRIORITIES_LISTEN_HOST}:${this.app.get("port")} on ${process.env.NODE_ENV}`);
             });
         }
         else {
-            server = this.app.listen(4242, function () {
+            server = this.app.listen(portNumber, function () {
                 log.info("Your Priorities Platform API Server listening on port " +
                     server.address().port +
                     ` on ${process.env.NODE_ENV}`);

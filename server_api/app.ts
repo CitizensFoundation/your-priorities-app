@@ -881,9 +881,11 @@ export class YourPrioritiesApi {
   async listen() {
     let server: any;
 
+    const portNumber = process.env.PORT ? parseInt(process.env.PORT) : 4242;
+
     if (process.env.YOUR_PRIORITIES_LISTEN_HOST) {
       server = this.app.listen(
-        this.app.get("port"),
+        portNumber,
         process.env.YOUR_PRIORITIES_LISTEN_HOST,
         () => {
           log.info(
@@ -894,7 +896,7 @@ export class YourPrioritiesApi {
         }
       );
     } else {
-      server = this.app.listen(4242, function () {
+      server = this.app.listen(portNumber, function () {
         log.info(
           "Your Priorities Platform API Server listening on port " +
             server.address().port +

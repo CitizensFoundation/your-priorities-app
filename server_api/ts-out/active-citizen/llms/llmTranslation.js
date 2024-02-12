@@ -29,6 +29,30 @@ export class YpLlmTranslation {
       Translate the tone of the original language also.
       Always output only JSON.`;
     }
+    renderSchemaTryAgainSystemMessage(jsonInSchema, jsonOutSchema, lengthInfo, currentToLong) {
+        return `You are a helpful answer translation assistant that knows all the world languages.
+      INPUTS:
+      The user will tell us the Language to translate to.
+
+      The user will let you know what the question is but you do not need to translate that one.
+
+      You will get JSON input with the string to be translated: ${jsonInSchema}
+
+      OUTPUT:
+      You will output JSON format with the translation. ${jsonOutSchema}
+
+      INSTRUCTIONS:
+      The translated text MUST NEVER be more than ${lengthInfo}, otherwise it wont fit the UI.
+      Please count the words and never go over the limit. Leave some things out off the translation it's going to be too long.
+      Translate the tone of the original language also.
+      Always output only JSON.
+
+      IMPORTANT INSTRUCTIONS:
+      You have already attempted to translate the string user is submitting and it is too long, see here:
+      ${currentToLong}
+      It MUST be shorter than this. Please try again and make it shorter.
+      `;
+    }
     renderOneTranslationSystemMessage() {
         return `You are a helpful answer translation assistant that knows all the world languages.
       INPUTS:
@@ -266,6 +290,7 @@ export class YpLlmTranslation {
                         if (maxCharactersInTranslation &&
                             translationData.translatedContent.length >
                                 maxCharactersInTranslation) {
+                            messages[0].content = this.renderSchemaTryAgainSystemMessage(jsonInSchema, jsonOutSchema, lengthInfo, translationData.translatedContent);
                             throw new Error("Translation too long");
                         }
                         running = false;
