@@ -11,6 +11,17 @@ export class YpLlmTranslation {
         });
     }
     // System messages
+    renderHtmlSystemMessage() {
+        return `You are a helpful HTML translation assistant that knows all the world languages.
+      INPUTS:
+      The user will tell us the Language to translate to.
+      The user will provide you with a simple HTML document
+
+      OUTPUT:
+      You will output the full translated HTML document, do no leave anything out, this text will be displayed directly on a website after your translation.
+      Only output the fully translated HTML with no explainations.
+      `;
+    }
     renderSchemaSystemMessage(jsonInSchema, jsonOutSchema, lengthInfo) {
         return `You are a helpful answer translation assistant that knows all the world languages.
       INPUTS:
@@ -92,6 +103,12 @@ export class YpLlmTranslation {
       Always output only a JSON string array.`;
     }
     // User messages
+    renderHtmlTranslationUserMessage(language, htmlToTranslate) {
+        return `Language to translate to: ${language}
+      HTML to translate:
+      ${htmlToTranslate}
+      Your translated HTML in full:`;
+    }
     renderOneTranslationUserMessage(language, stringToTranslate) {
         return `Language to translate to: ${language}
       String to translate:
@@ -131,6 +148,23 @@ export class YpLlmTranslation {
         console.log("Moderation response:", moderationResponse);
         const flagged = moderationResponse.results[0].flagged;
         return flagged;
+    }
+    async getHtmlTranslation(languageIsoCode, htmlToTranslate) {
+        try {
+            console.log(`getHtmlTranslation: ${htmlToTranslate}`);
+            const languageName = YpLanguages.getEnglishName(languageIsoCode) || languageIsoCode;
+            if (await this.getModerationFlag(htmlToTranslate)) {
+                console.error("Flagged:", htmlToTranslate);
+                return null;
+            }
+            else {
+                return await this.callSimpleLlm(languageName, htmlToTranslate, false, this.renderHtmlSystemMessage, this.renderHtmlTranslationUserMessage);
+            }
+        }
+        catch (error) {
+            console.error("Error in getAnswerIdeas:", error);
+            return undefined;
+        }
     }
     async getOneTranslation(languageIsoCode, stringToTranslate) {
         try {

@@ -6,7 +6,6 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 import { css, html, nothing } from "lit";
 import { property, customElement } from "lit/decorators.js";
-import { unsafeHTML } from "lit/directives/unsafe-html.js";
 import { YpBaseElement } from "../../common/yp-base-element.js";
 import { YpMediaHelpers } from "../../common/YpMediaHelpers.js";
 import "../../common/yp-image.js";
@@ -202,55 +201,74 @@ let AoiSurveyIntro = class AoiSurveyIntro extends YpBaseElement {
     render() {
         if (this.question) {
             return html `
-      <div class="topContainer layout vertical wrap center-center">
-        <yp-image
-          class="column image"
-          sizing="contain"
-          src="${YpMediaHelpers.getImageFormatUrl(this.group.GroupLogoImages)}"
-        ></yp-image>
-        <div class="questionTitle" ?dark-mode="${this.themeDarkMode}">
-          <yp-magic-text
-            id="answerText"
-            .contentId="${this.group.id}"
-            .extraId="${this.question.id}"
-            textOnly
-            truncate="300"
-            .content="${this.question.name}"
-            .contentLanguage="${this.group.language}"
-            textType="aoiQuestionName"
-          ></yp-magic-text>
-        </div>
-        <div class="description">${this.formattedDescription}</div>
-        ${this.earl.active
+        <div class="topContainer layout vertical wrap center-center">
+          <yp-image
+            class="column image"
+            sizing="contain"
+            src="${YpMediaHelpers.getImageFormatUrl(this.group.GroupLogoImages)}"
+          ></yp-image>
+          <div class="questionTitle" ?dark-mode="${this.themeDarkMode}">
+            <yp-magic-text
+              id="answerText"
+              .contentId="${this.group.id}"
+              .extraId="${this.question.id}"
+              textOnly
+              truncate="300"
+              .content="${this.question.name}"
+              .contentLanguage="${this.group.language}"
+              textType="aoiQuestionName"
+            ></yp-magic-text>
+          </div>
+          <div class="description">
+            <yp-magic-text
+              id="aoiWelcomeText"
+              .contentId="${this.group.id}"
+              textOnly
+              truncate="300"
+              .content="${this.earl.configuration.welcome_message}"
+              .contentLanguage="${this.group.language}"
+              textType="aoiWelcomeText"
+            ></yp-magic-text>
+          </div>
+          ${this.earl.active
                 ? html `
-              <md-fab
-                extended
-                variant="primary"
-                class="fab"
-                @click="${this.clickStart}"
-                .label="${this.t("Start Voting")}"
-                ><md-icon slot="icon">thumbs_up_down</md-icon></md-fab
-              >
-            `
+                <md-fab
+                  extended
+                  variant="primary"
+                  class="fab"
+                  @click="${this.clickStart}"
+                  .label="${this.t("Start Voting")}"
+                  ><md-icon slot="icon">thumbs_up_down</md-icon></md-fab
+                >
+              `
                 : html `
-              <md-fab
-                extended
-                variant="primary"
-                class="fab"
-                @click="${this.clickResults}"
-                .label="${this.t("Open Results")}"
-                ><md-icon slot="icon">grading</md-icon></md-fab
-              >
-            `}
-        ${this.isAdmin ? this.renderAdminButtons() : nothing}
-        <div id="footerStart" class="footerHtml">
-          ${this.earl.configuration && this.earl.configuration.welcome_html
-                ? unsafeHTML(this.earl.configuration.welcome_html)
+                <md-fab
+                  extended
+                  variant="primary"
+                  class="fab"
+                  @click="${this.clickResults}"
+                  .label="${this.t("Open Results")}"
+                  ><md-icon slot="icon">grading</md-icon></md-fab
+                >
+              `}
+          ${this.isAdmin ? this.renderAdminButtons() : nothing}
+          <div id="footerStart" class="footerHtml">
+            ${this.earl.configuration && this.earl.configuration.welcome_html
+                ? html `
+                <yp-magic-text
+                  id="aoiWelcomeHtml"
+                  .contentId="${this.group.id}"
+                  textOnly
+                  .content="${this.earl.configuration.welcome_html}"
+                  .contentLanguage="${this.group.language}"
+                  textType="aoiWelcomeHtml"
+                ></yp-magic-text>
+                `
                 : nothing}
+          </div>
+          <div id="footerEnd">&nbsp;</div>
         </div>
-        <div id="footerEnd">&nbsp;</div>
-      </div>
-    `;
+      `;
         }
         else {
             return nothing;
