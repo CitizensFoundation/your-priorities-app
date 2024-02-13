@@ -1,6 +1,7 @@
 import { jsonrepair } from "jsonrepair";
 import { OpenAI } from "openai";
 import { YpLanguages } from "../../utils/ypLanguages.js";
+import * as cheerio from "cheerio";
 export class YpLlmTranslation {
     constructor() {
         this.modelName = "gpt-4-0125-preview";
@@ -10,18 +11,79 @@ export class YpLlmTranslation {
             apiKey: process.env.OPENAI_API_KEY,
         });
     }
-    // System messages
-    renderHtmlSystemMessage() {
-        return `You are a helpful HTML translation assistant that knows all the world languages.
-      INPUTS:
-      The user will tell us the Language to translate to.
-      The user will provide you with a simple HTML document to translate.
-
-      OUTPUT:
-      You will outpt the full HTML document with user facing text translated, do no leave anything out, this text will be displayed directly on a website after your translation.
-      Only output the fully translated HTML with no explainations.
-      `;
+    extractHtmlStrings(html) {
+        const $ = cheerio.load(html);
+        const strings = [];
+        // Function to recursively extract text from all elements
+        function recursivelyExtractText(elements) {
+            elements.each((index, element) => {
+                if (element.tagName === 'script') {
+                    return;
+                }
+                // Check if the element itself contains a direct text node
+                $(element)
+                    .contents()
+                    .filter((idx, content) => {
+                    // Ensure that content is a text node and not empty
+                    return (content.type === "text" && $(content).text().trim().length > 0);
+                })
+                    .each((idx, content) => {
+                    const text = $(content).text().trim();
+                    if (text) {
+                        strings.push(text);
+                    }
+                });
+                // Recursively extract text from child elements
+                recursivelyExtractText($(element).children());
+            });
+        }
+        // Start the recursive text extraction from the body or root of the document
+        recursivelyExtractText($("body").length ? $("body") : $.root());
+        // Attributes with user-facing text
+        $("input[placeholder], input[value]").each((index, element) => {
+            const placeholder = $(element).attr("placeholder");
+            if (placeholder && placeholder.trim().length > 0) {
+                strings.push(placeholder.trim());
+            }
+            const value = $(element).attr("value");
+            if (value &&
+                $(element).attr("type") !== "text" &&
+                value.trim().length > 0) {
+                strings.push(value.trim());
+            }
+        });
+        // Return unique non-empty strings
+        return [...new Set(strings)];
     }
+    replaceHtmlStrings(html, originalStrings, translatedStrings) {
+        const $ = cheerio.load(html);
+        // Function to safely replace text without disrupting child elements
+        function safelyReplaceText(container) {
+            $(container)
+                .contents()
+                .each(function () {
+                // If the node is a text node
+                if (this.type === "text") {
+                    let text = $(this).text();
+                    originalStrings.forEach((str, index) => {
+                        // Replace text if it exactly matches the original string (considering whitespace)
+                        if (text.trim() === str.trim() && translatedStrings[index]) {
+                            text = text.replace(str, translatedStrings[index]);
+                            $(this).replaceWith(text);
+                        }
+                    });
+                }
+                else if (this.type === "tag") {
+                    // Recursively handle nested elements
+                    safelyReplaceText(this);
+                }
+            });
+        }
+        // Initiate replacement from the root element
+        safelyReplaceText($.root());
+        return $.html();
+    }
+    // System messages
     renderSchemaSystemMessage(jsonInSchema, jsonOutSchema, lengthInfo) {
         return `You are a helpful answer translation assistant that knows all the world languages.
       INPUTS:
@@ -103,12 +165,6 @@ export class YpLlmTranslation {
       Always output only a JSON string array.`;
     }
     // User messages
-    renderHtmlTranslationUserMessage(language, htmlToTranslate) {
-        return `Language to translate to: ${language}
-      HTML to translate:
-      ${htmlToTranslate}
-      Your translated HTML in full:`;
-    }
     renderOneTranslationUserMessage(language, stringToTranslate) {
         return `Language to translate to: ${language}
       String to translate:
@@ -151,26 +207,30 @@ export class YpLlmTranslation {
     }
     async getHtmlTranslation(languageIsoCode, htmlToTranslate) {
         try {
-            console.log(`getHtmlTranslation: ${htmlToTranslate}`);
-            const languageName = YpLanguages.getEnglishName(languageIsoCode) || languageIsoCode;
-            if (await this.getModerationFlag(htmlToTranslate)) {
-                console.error("Flagged:", htmlToTranslate);
-                return null;
+            const originalStrings = this.extractHtmlStrings(htmlToTranslate);
+            if (originalStrings.length === 0) {
+                console.warn("No HTML strings to translate");
+                return htmlToTranslate;
             }
-            else {
-                let translation = await this.callSimpleLlm(languageName, htmlToTranslate, false, this.renderHtmlSystemMessage, this.renderHtmlTranslationUserMessage);
-                if (translation) {
-                    translation = translation.replace(/```html/g, "");
-                    translation = translation.replace(/```/g, "");
+            const batchSize = 10;
+            const translatedStrings = [];
+            for (let i = 0; i < originalStrings.length; i += batchSize) {
+                const batch = originalStrings.slice(i, i + batchSize);
+                const translatedBatch = await this.getListTranslation(languageIsoCode, batch);
+                if (translatedBatch) {
+                    translatedStrings.push(...translatedBatch);
                 }
                 else {
-                    console.error("No translation:", htmlToTranslate);
-                    return null;
+                    console.error("Failed to translate batch:", batch);
+                    return undefined;
                 }
             }
+            // Replace original strings in HTML with their translations
+            const translatedHtml = this.replaceHtmlStrings(htmlToTranslate, originalStrings, translatedStrings);
+            return translatedHtml;
         }
         catch (error) {
-            console.error("Error in getAnswerIdeas:", error);
+            console.error("Error in getHtmlTranslation:", error);
             return undefined;
         }
     }
@@ -178,7 +238,7 @@ export class YpLlmTranslation {
         try {
             console.log(`getOneTranslation: ${stringToTranslate} ${languageIsoCode}`);
             const languageName = YpLanguages.getEnglishName(languageIsoCode) || languageIsoCode;
-            return await this.callSimpleLlm(languageName, stringToTranslate, false, this.renderOneTranslationSystemMessage, this.renderOneTranslationUserMessage);
+            return (await this.callSimpleLlm(languageName, stringToTranslate, false, this.renderOneTranslationSystemMessage, this.renderOneTranslationUserMessage));
         }
         catch (error) {
             console.error("Error in getAnswerIdeas:", error);
@@ -194,7 +254,7 @@ export class YpLlmTranslation {
                 return null;
             }
             else {
-                return await this.callSimpleLlm(languageName, stringsToTranslate, true, this.renderListTranslationSystemMessage, this.renderListTranslationUserMessage);
+                return (await this.callSimpleLlm(languageName, stringsToTranslate, true, this.renderListTranslationSystemMessage, this.renderListTranslationUserMessage));
             }
         }
         catch (error) {
@@ -252,7 +312,7 @@ export class YpLlmTranslation {
         const messages = [
             {
                 role: "system",
-                content: systemRenderer()
+                content: systemRenderer(),
             },
             {
                 role: "user",
@@ -272,10 +332,18 @@ export class YpLlmTranslation {
                     temperature: this.temperature,
                 });
                 console.log("Results:", results);
-                const llmOutput = results.choices[0].message.content;
+                let llmOutput = results.choices[0].message.content;
                 console.log("Return text:", llmOutput);
                 if (parseJson) {
-                    return JSON.parse(jsonrepair(llmOutput));
+                    if (llmOutput) {
+                        llmOutput = llmOutput.replace(/```json/g, "");
+                        llmOutput = llmOutput.replace(/```/g, "");
+                        return JSON.parse(jsonrepair(llmOutput));
+                    }
+                    {
+                        console.error("No content in response");
+                        return undefined;
+                    }
                 }
                 else {
                     return llmOutput;
@@ -342,7 +410,6 @@ export class YpLlmTranslation {
                 }
                 else {
                     this.temperature = Math.random() * 0.99;
-                    ;
                     console.log("No content in response. Temperature set to:" + this.temperature);
                     throw new Error("No content in response");
                 }
