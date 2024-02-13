@@ -30,6 +30,9 @@ export class YpMagicText extends YpBaseElement {
   @property({ type: Number })
   additionalId: number | undefined;
 
+  @property({ type: Boolean })
+  unsafeHtml = false;
+
   @property({ type: String })
   textType: string | undefined;
 
@@ -142,6 +145,8 @@ export class YpMagicText extends YpBaseElement {
       >
         ${this.finalContent
           ? html` <div>${unsafeHTML(this.finalContent)}</div> `
+          : this.unsafeHtml
+          ? html` <div>${unsafeHTML(this.truncatedContent)}</div> `
           : html` <div>${this.truncatedContent}</div> `}
         ${this.showMoreText && this.moreText
           ? html`
@@ -175,7 +180,7 @@ export class YpMagicText extends YpBaseElement {
   get showMoreText(): boolean {
     //TODO: Find a more appropiate place for this logic below
     if (!this.isDialog && !this.truncate) {
-      this.truncate = 500;
+      //  this.truncate = 500;
     } else if (this.isDialog) {
       this.truncate = undefined;
     }
@@ -342,6 +347,8 @@ export class YpMagicText extends YpBaseElement {
               this.additionalId +
               "/translatedText";
             break;
+          case "aoiWelcomeMessage":
+          case "aoiWelcomeHtml":
           case "alternativeTextForNewIdeaButton":
           case "alternativeTextForNewIdeaButtonClosed":
           case "alternativeTextForNewIdeaButtonHeader":
@@ -407,8 +414,7 @@ export class YpMagicText extends YpBaseElement {
       if (
         this.autoTranslate &&
         this.language !== this.contentLanguage &&
-        !this.disableTranslation &&
-        this.contentLanguage !== "??"
+        !this.disableTranslation
       ) {
         this._startTranslationAndFinalize();
       } else {
@@ -514,6 +520,7 @@ export class YpMagicText extends YpBaseElement {
     } else {
       this.finalContent = undefined;
     }
+
   }
 
   _linksAndEmojis() {

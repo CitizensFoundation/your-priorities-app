@@ -15,10 +15,10 @@ export class YpLlmTranslation {
         return `You are a helpful HTML translation assistant that knows all the world languages.
       INPUTS:
       The user will tell us the Language to translate to.
-      The user will provide you with a simple HTML document
+      The user will provide you with a simple HTML document to translate.
 
       OUTPUT:
-      You will output the full translated HTML document, do no leave anything out, this text will be displayed directly on a website after your translation.
+      You will outpt the full HTML document with user facing text translated, do no leave anything out, this text will be displayed directly on a website after your translation.
       Only output the fully translated HTML with no explainations.
       `;
     }
@@ -158,7 +158,15 @@ export class YpLlmTranslation {
                 return null;
             }
             else {
-                return await this.callSimpleLlm(languageName, htmlToTranslate, false, this.renderHtmlSystemMessage, this.renderHtmlTranslationUserMessage);
+                let translation = await this.callSimpleLlm(languageName, htmlToTranslate, false, this.renderHtmlSystemMessage, this.renderHtmlTranslationUserMessage);
+                if (translation) {
+                    translation = translation.replace(/```html/g, "");
+                    translation = translation.replace(/```/g, "");
+                }
+                else {
+                    console.error("No translation:", htmlToTranslate);
+                    return null;
+                }
             }
         }
         catch (error) {
@@ -168,15 +176,9 @@ export class YpLlmTranslation {
     }
     async getOneTranslation(languageIsoCode, stringToTranslate) {
         try {
-            console.log(`getOneTranslation: ${stringToTranslate}`);
+            console.log(`getOneTranslation: ${stringToTranslate} ${languageIsoCode}`);
             const languageName = YpLanguages.getEnglishName(languageIsoCode) || languageIsoCode;
-            if (await this.getModerationFlag(stringToTranslate)) {
-                console.error("Flagged:", stringToTranslate);
-                return null;
-            }
-            else {
-                return await this.callSimpleLlm(languageName, stringToTranslate, false, this.renderOneTranslationSystemMessage, this.renderOneTranslationUserMessage);
-            }
+            return await this.callSimpleLlm(languageName, stringToTranslate, false, this.renderOneTranslationSystemMessage, this.renderOneTranslationUserMessage);
         }
         catch (error) {
             console.error("Error in getAnswerIdeas:", error);

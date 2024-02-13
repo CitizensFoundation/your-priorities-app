@@ -254,13 +254,13 @@ export class AoiSurveyIntro extends YpBaseElement {
           </div>
           <div class="description">
             <yp-magic-text
-              id="aoiWelcomeText"
+              id="aoiWelcomeMessage"
               .contentId="${this.group.id}"
               textOnly
               truncate="300"
               .content="${this.earl.configuration!.welcome_message}"
               .contentLanguage="${this.group.language}"
-              textType="aoiWelcomeText"
+              textType="aoiWelcomeMessage"
             ></yp-magic-text>
           </div>
           ${this.earl.active
@@ -291,7 +291,7 @@ export class AoiSurveyIntro extends YpBaseElement {
                 <yp-magic-text
                   id="aoiWelcomeHtml"
                   .contentId="${this.group.id}"
-                  textOnly
+                  unsafeHtml
                   .content="${this.earl.configuration!.welcome_html}"
                   .contentLanguage="${this.group.language}"
                   textType="aoiWelcomeHtml"

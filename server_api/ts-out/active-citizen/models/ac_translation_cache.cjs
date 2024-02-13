@@ -50,136 +50,142 @@ module.exports = (sequelize, DataTypes) => {
         "aoiQuestionName",
     ];
     AcTranslationCache.getContentToTranslate = async (req, modelInstance) => {
-        if (req.query.textType == "aoiChoiceContent") {
-            const choiceResponse = await fetch(`${PAIRWISE_API_HOST}/choices/${req.params.extraId}.json?question_id=${req.params.questionId}`, {
-                method: "GET",
-                headers: defaultHeader,
-            });
-            if (!choiceResponse.ok) {
-                console.error("Failed to fetch answers");
-                return null;
-            }
-            const choice = await choiceResponse.json();
-            if (choice) {
-                try {
-                    const data = JSON.parse(choice.data);
-                    return data["content"];
+        try {
+            if (req.query.textType == "aoiChoiceContent") {
+                const choiceResponse = await fetch(`${PAIRWISE_API_HOST}/choices/${req.params.extraId}.json?question_id=${req.params.questionId}`, {
+                    method: "GET",
+                    headers: defaultHeader,
+                });
+                if (!choiceResponse.ok) {
+                    console.error("Failed to fetch answers");
+                    return null;
                 }
-                catch (error) {
-                    console.error("Failed to parse choice data", error);
+                const choice = await choiceResponse.json();
+                if (choice) {
+                    try {
+                        const data = JSON.parse(choice.data);
+                        return data["content"];
+                    }
+                    catch (error) {
+                        console.error("Failed to parse choice data", error);
+                        return null;
+                    }
+                }
+                else {
+                    return "No translation";
+                }
+            }
+            else if (req.query.textType == "aoiQuestionName") {
+                const questionResponse = await fetch(`${PAIRWISE_API_HOST}/questions/${req.params.extraId}.json`, {
+                    method: "GET",
+                    headers: defaultHeader,
+                });
+                if (!questionResponse.ok) {
+                    console.error("Failed to fetch question");
+                    return null;
+                }
+                const question = await questionResponse.json();
+                if (question) {
+                    return question.name;
+                }
+                else {
                     return null;
                 }
             }
             else {
-                return "No translation";
+                switch (req.query.textType) {
+                    case "postName":
+                    case "domainName":
+                    case "communityName":
+                    case "groupName":
+                        return modelInstance.name;
+                    case "postContent":
+                    case "domainContent":
+                    case "communityContent":
+                        return modelInstance.description;
+                    case "pointContent":
+                        return modelInstance.PointRevisions[modelInstance.PointRevisions.length - 1].content;
+                    case "statusChangeContent":
+                        return modelInstance.content;
+                    case "groupContent":
+                        return modelInstance.objectives;
+                    case "pointAdminCommentContent":
+                        if (modelInstance.public_data &&
+                            modelInstance.public_data.admin_comment &&
+                            modelInstance.public_data.admin_comment.text) {
+                            return modelInstance.public_data.admin_comment.text;
+                        }
+                        else {
+                            return "No translation";
+                        }
+                    case "postTags":
+                        if (modelInstance.public_data && modelInstance.public_data.tags) {
+                            return modelInstance.public_data.tags;
+                        }
+                        else {
+                            return "No translation";
+                        }
+                    case "customRatingName":
+                        if (modelInstance.Group.configuration.customRatings &&
+                            modelInstance.Group.configuration.customRatings[modelInstance.custom_rating_index]) {
+                            return modelInstance.Group.configuration.customRatings[modelInstance.custom_rating_index].name;
+                        }
+                        else {
+                            return "No translation";
+                        }
+                    case "aoiWelcomeMessage":
+                        return modelInstance.configuration.allOurIdeas.earl.configuration.welcome_message;
+                    case "aoiWelcomeHtml":
+                        return modelInstance.configuration.allOurIdeas.earl.configuration.welcome_html;
+                    case "alternativeTextForNewIdeaButton":
+                        return modelInstance.configuration.alternativeTextForNewIdeaButton;
+                    case "alternativeTextForNewIdeaButtonClosed":
+                        return modelInstance.configuration
+                            .alternativeTextForNewIdeaButtonClosed;
+                    case "alternativeTextForNewIdeaButtonHeader":
+                        return modelInstance.configuration
+                            .alternativeTextForNewIdeaButtonHeader;
+                    case "alternativeTextForNewIdeaSaveButton":
+                        return modelInstance.configuration
+                            .alternativeTextForNewIdeaSaveButton;
+                    case "customCategoryQuestionText":
+                        return modelInstance.configuration.customCategoryQuestionText;
+                    case "urlToReviewActionText":
+                        return modelInstance.configuration.urlToReviewActionText;
+                    case "customThankYouTextNewPosts":
+                        return modelInstance.configuration.customThankYouTextNewPosts;
+                    case "customTitleQuestionText":
+                        return modelInstance.configuration.customTitleQuestionText;
+                    case "customFilterText":
+                        return modelInstance.configuration.customFilterText;
+                    case "customAdminCommentsTitle":
+                        return modelInstance.configuration.customAdminCommentsTitle;
+                    case "alternativePointForHeader":
+                        return modelInstance.configuration.alternativePointForHeader;
+                    case "customTabTitleNewLocation":
+                        return modelInstance.configuration.customTabTitleNewLocation;
+                    case "alternativePointAgainstHeader":
+                        return modelInstance.configuration.alternativePointAgainstHeader;
+                    case "alternativePointForLabel":
+                        return modelInstance.configuration.alternativePointForLabel;
+                    case "alternativePointAgainstLabel":
+                        return modelInstance.configuration.alternativePointAgainstLabel;
+                    case "categoryName":
+                        return modelInstance.name;
+                    case "postTranscriptContent":
+                        return modelInstance.public_data &&
+                            modelInstance.public_data.transcript
+                            ? modelInstance.public_data.transcript.text
+                            : null;
+                    default:
+                        console.error("No valid textType for translation");
+                        return null;
+                }
             }
         }
-        else if (req.query.textType == "aoiQuestionName") {
-            const questionResponse = await fetch(`${PAIRWISE_API_HOST}/questions/${req.params.extraId}.json`, {
-                method: "GET",
-                headers: defaultHeader,
-            });
-            if (!questionResponse.ok) {
-                console.error("Failed to fetch question");
-                return null;
-            }
-            const question = await questionResponse.json();
-            if (question) {
-                return question.name;
-            }
-            else {
-                return null;
-            }
-        }
-        else {
-            switch (req.query.textType) {
-                case "postName":
-                case "domainName":
-                case "communityName":
-                case "groupName":
-                    return modelInstance.name;
-                case "postContent":
-                case "domainContent":
-                case "communityContent":
-                    return modelInstance.description;
-                case "pointContent":
-                    return modelInstance.PointRevisions[modelInstance.PointRevisions.length - 1].content;
-                case "statusChangeContent":
-                    return modelInstance.content;
-                case "groupContent":
-                    return modelInstance.objectives;
-                case "pointAdminCommentContent":
-                    if (modelInstance.public_data &&
-                        modelInstance.public_data.admin_comment &&
-                        modelInstance.public_data.admin_comment.text) {
-                        return modelInstance.public_data.admin_comment.text;
-                    }
-                    else {
-                        return "No translation";
-                    }
-                case "postTags":
-                    if (modelInstance.public_data && modelInstance.public_data.tags) {
-                        return modelInstance.public_data.tags;
-                    }
-                    else {
-                        return "No translation";
-                    }
-                case "customRatingName":
-                    if (modelInstance.Group.configuration.customRatings &&
-                        modelInstance.Group.configuration.customRatings[modelInstance.custom_rating_index]) {
-                        return modelInstance.Group.configuration.customRatings[modelInstance.custom_rating_index].name;
-                    }
-                    else {
-                        return "No translation";
-                    }
-                case "aoiWelcomeText":
-                    return modelInstance.configuration.earl.configuration.welcome_text;
-                case "aoiWelcomeHtml":
-                    return modelInstance.configuration.earl.configuration.welcome_html;
-                case "alternativeTextForNewIdeaButton":
-                    return modelInstance.configuration.alternativeTextForNewIdeaButton;
-                case "alternativeTextForNewIdeaButtonClosed":
-                    return modelInstance.configuration
-                        .alternativeTextForNewIdeaButtonClosed;
-                case "alternativeTextForNewIdeaButtonHeader":
-                    return modelInstance.configuration
-                        .alternativeTextForNewIdeaButtonHeader;
-                case "alternativeTextForNewIdeaSaveButton":
-                    return modelInstance.configuration
-                        .alternativeTextForNewIdeaSaveButton;
-                case "customCategoryQuestionText":
-                    return modelInstance.configuration.customCategoryQuestionText;
-                case "urlToReviewActionText":
-                    return modelInstance.configuration.urlToReviewActionText;
-                case "customThankYouTextNewPosts":
-                    return modelInstance.configuration.customThankYouTextNewPosts;
-                case "customTitleQuestionText":
-                    return modelInstance.configuration.customTitleQuestionText;
-                case "customFilterText":
-                    return modelInstance.configuration.customFilterText;
-                case "customAdminCommentsTitle":
-                    return modelInstance.configuration.customAdminCommentsTitle;
-                case "alternativePointForHeader":
-                    return modelInstance.configuration.alternativePointForHeader;
-                case "customTabTitleNewLocation":
-                    return modelInstance.configuration.customTabTitleNewLocation;
-                case "alternativePointAgainstHeader":
-                    return modelInstance.configuration.alternativePointAgainstHeader;
-                case "alternativePointForLabel":
-                    return modelInstance.configuration.alternativePointForLabel;
-                case "alternativePointAgainstLabel":
-                    return modelInstance.configuration.alternativePointAgainstLabel;
-                case "categoryName":
-                    return modelInstance.name;
-                case "postTranscriptContent":
-                    return modelInstance.public_data &&
-                        modelInstance.public_data.transcript
-                        ? modelInstance.public_data.transcript.text
-                        : null;
-                default:
-                    console.error("No valid textType for translation");
-                    return null;
-            }
+        catch (error) {
+            console.error("Failed to get content to translate", error);
+            return null;
         }
     };
     // Post Edit
@@ -632,7 +638,7 @@ module.exports = (sequelize, DataTypes) => {
                     return await AcTranslationCache.llmTranslation.getQuestionTranslation(targetLanguage, contentToTranslate);
                 case "aoiWelcomeHtml":
                     return await AcTranslationCache.llmTranslation.getHtmlTranslation(targetLanguage, contentToTranslate);
-                case "aoiWelcomeText":
+                case "aoiWelcomeMessage":
                     return await AcTranslationCache.llmTranslation.getOneTranslation(targetLanguage, contentToTranslate);
                 default:
                     return null;
@@ -691,7 +697,7 @@ module.exports = (sequelize, DataTypes) => {
                         "aoiChoiceContent",
                         "aoiQuestionName",
                         "aoiWelcomeHtml",
-                        "aoiWelcomeText",
+                        "aoiWelcomeMessage",
                     ].includes(textType)) {
                         sequelize.models.AcTranslationCache.getAoiTranslationFromLlm(textType, indexKey, contentToTranslate, targetLanguage, modelInstance, callback);
                     }
@@ -710,7 +716,12 @@ module.exports = (sequelize, DataTypes) => {
                 targetLanguage: req.query.targetLanguage,
             });
             if (!modelInstance.language &&
-                !["aoiChoiceContent", "aoiQuestionName"].includes(req.query.textType)) {
+                ![
+                    "aoiChoiceContent",
+                    "aoiQuestionName",
+                    "aoiWelcomeHtml",
+                    "aoiWelcomeMessage",
+                ].includes(req.query.textType)) {
                 modelInstance
                     .update({
                     language: "??",

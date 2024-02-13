@@ -15,6 +15,7 @@ import "@material/web/progress/linear-progress.js";
 let YpMagicText = YpMagicText_1 = class YpMagicText extends YpBaseElement {
     constructor() {
         super(...arguments);
+        this.unsafeHtml = false;
         this.autoTranslate = false;
         this.textOnly = false;
         this.isDialog = false;
@@ -75,7 +76,9 @@ let YpMagicText = YpMagicText_1 = class YpMagicText extends YpBaseElement {
       >
         ${this.finalContent
             ? html ` <div>${unsafeHTML(this.finalContent)}</div> `
-            : html ` <div>${this.truncatedContent}</div> `}
+            : this.unsafeHtml
+                ? html ` <div>${unsafeHTML(this.truncatedContent)}</div> `
+                : html ` <div>${this.truncatedContent}</div> `}
         ${this.showMoreText && this.moreText
             ? html `
               <md-outlined-button
@@ -104,7 +107,7 @@ let YpMagicText = YpMagicText_1 = class YpMagicText extends YpBaseElement {
     get showMoreText() {
         //TODO: Find a more appropiate place for this logic below
         if (!this.isDialog && !this.truncate) {
-            this.truncate = 500;
+            //  this.truncate = 500;
         }
         else if (this.isDialog) {
             this.truncate = undefined;
@@ -228,6 +231,8 @@ let YpMagicText = YpMagicText_1 = class YpMagicText extends YpBaseElement {
                                 this.additionalId +
                                 "/translatedText";
                         break;
+                    case "aoiWelcomeMessage":
+                    case "aoiWelcomeHtml":
                     case "alternativeTextForNewIdeaButton":
                     case "alternativeTextForNewIdeaButtonClosed":
                     case "alternativeTextForNewIdeaButtonHeader":
@@ -285,8 +290,7 @@ let YpMagicText = YpMagicText_1 = class YpMagicText extends YpBaseElement {
         if (this.processedContent) {
             if (this.autoTranslate &&
                 this.language !== this.contentLanguage &&
-                !this.disableTranslation &&
-                this.contentLanguage !== "??") {
+                !this.disableTranslation) {
                 this._startTranslationAndFinalize();
             }
             else {
@@ -431,6 +435,9 @@ __decorate([
 __decorate([
     property({ type: Number })
 ], YpMagicText.prototype, "additionalId", void 0);
+__decorate([
+    property({ type: Boolean })
+], YpMagicText.prototype, "unsafeHtml", void 0);
 __decorate([
     property({ type: String })
 ], YpMagicText.prototype, "textType", void 0);

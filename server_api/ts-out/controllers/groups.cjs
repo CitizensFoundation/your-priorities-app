@@ -1804,7 +1804,11 @@ const allowedTextTypesForGroup = [
     "alternativePointForLabel",
     "alternativePointAgainstLabel",
     "customAdminCommentsTitle",
-    "urlToReviewActionText"
+    "urlToReviewActionText",
+    "aoiWelcomeMessage",
+    "aoiWelcomeHtml",
+    "aoiQuestionText",
+    "aoiAnswerText"
 ];
 router.get('/:id/translatedText', auth.can('view group'), function (req, res) {
     if (req.query.textType.indexOf("group") > -1 || allowedTextTypesForGroup.indexOf(req.query.textType) > -1) {

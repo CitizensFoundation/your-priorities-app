@@ -6,6 +6,7 @@ export declare class YpMagicText extends YpBaseElement {
     contentId: number | undefined;
     extraId: number | undefined;
     additionalId: number | undefined;
+    unsafeHtml: boolean;
     textType: string | undefined;
     contentLanguage: string | undefined;
     processedContent: string | undefined;
