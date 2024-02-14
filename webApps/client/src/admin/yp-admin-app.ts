@@ -35,6 +35,7 @@ import "../yp-collection/yp-domain.js";
 import { YpAccessHelpers } from "../common/YpAccessHelpers.js";
 import { YpNavHelpers } from "../common/YpNavHelpers.js";
 import { YpCollectionHelpers } from "../common/YpCollectionHelpers.js";
+import { YpAdminConfigGroup } from "./yp-admin-config-group.js";
 
 type AdminPageOptions =
   | "login"
@@ -506,12 +507,17 @@ export class YpAdminApp extends YpBaseElement {
     this.requestUpdate();
   }
 
+  updateFromCollection(){
+    this.collection = {...this.collection!};
+  }
+
   renderGroupConfigPage() {
     return html`<yp-admin-config-group
       .collectionType="${this.collectionType}"
       .collection="${this.collection}"
       .collectionId="${this.collectionId}"
       .subRoute="${this.subRoute}"
+      @yp-request-update-on-parent="${this.updateFromCollection}"
       .parentCollectionId="${this.parentCollectionId}"
     >
     </yp-admin-config-group>`;
@@ -1088,6 +1094,19 @@ export class YpAdminApp extends YpBaseElement {
     `;
   }
 
+  get isAllOurIdeasGroupType() {
+    if (this.collection) {
+      return (
+        this.collectionType === "group" &&
+        (this.collection as YpGroupData).configuration.groupType ==
+          YpAdminConfigGroup.GroupType.allOurIdeas
+      );
+      console.error("TURE")
+    } else {
+      return false;
+    }
+  }
+
   renderNavigationBar() {
     if (this.wide) {
       return html`
@@ -1128,7 +1147,9 @@ export class YpAdminApp extends YpBaseElement {
 
                         ${this.renderMenuListItem("users")}
                         ${this.renderMenuListItem("admins")}
-                        ${this.renderMenuListItem("moderation")}
+                        ${!this.isAllOurIdeasGroupType
+                          ? this.renderMenuListItem("moderation")
+                          : nothing}
                         ${this.renderMenuListItem("pages")}
                         ${this.collectionType != "domain"
                           ? html`
@@ -1136,7 +1157,9 @@ export class YpAdminApp extends YpBaseElement {
                               ${this.renderMenuListItem("translations")}
                             `
                           : html` ${this.renderMenuListItem("organizations")}`}
-                        ${this.renderMenuListItem("aiAnalysis")}
+                        ${!this.isAllOurIdeasGroupType
+                          ? this.renderMenuListItem("aiAnalysis")
+                          : nothing}
                       `
                     : html``}
                 `

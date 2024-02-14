@@ -35,6 +35,7 @@ import "./allOurIdeas/aoi-earl-ideas-editor.js";
 import { MdFilledTextField } from "@material/web/textfield/filled-text-field.js";
 import { AoiEarlIdeasEditor } from "./allOurIdeas/aoi-earl-ideas-editor.js";
 import { AoiAdminServerApi } from "./allOurIdeas/AoiAdminServerApi.js";
+import { YpAdminApp } from "./yp-admin-app.js";
 
 const defaultAiAnalysisJson = {
   analyses: [
@@ -163,7 +164,9 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
     this.group.configuration.groupType = index;
     this._configChanged();
     this.configTabs = this.setupConfigTabs();
-  }
+    this.requestUpdate();
+    this.fire('yp-request-update-on-parent');
+   }
 
   renderGroupTypeSelection() {
     return html`

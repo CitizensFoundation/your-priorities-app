@@ -30,6 +30,7 @@ import "../yp-collection/yp-domain.js";
 import { YpAccessHelpers } from "../common/YpAccessHelpers.js";
 import { YpNavHelpers } from "../common/YpNavHelpers.js";
 import { YpCollectionHelpers } from "../common/YpCollectionHelpers.js";
+import { YpAdminConfigGroup } from "./yp-admin-config-group.js";
 let YpAdminApp = class YpAdminApp extends YpBaseElement {
     static get styles() {
         return [
@@ -377,12 +378,16 @@ let YpAdminApp = class YpAdminApp extends YpBaseElement {
     _needsUpdate() {
         this.requestUpdate();
     }
+    updateFromCollection() {
+        this.collection = { ...this.collection };
+    }
     renderGroupConfigPage() {
         return html `<yp-admin-config-group
       .collectionType="${this.collectionType}"
       .collection="${this.collection}"
       .collectionId="${this.collectionId}"
       .subRoute="${this.subRoute}"
+      @yp-request-update-on-parent="${this.updateFromCollection}"
       .parentCollectionId="${this.parentCollectionId}"
     >
     </yp-admin-config-group>`;
@@ -976,6 +981,17 @@ let YpAdminApp = class YpAdminApp extends YpBaseElement {
       </md-list-item>
     `;
     }
+    get isAllOurIdeasGroupType() {
+        if (this.collection) {
+            return (this.collectionType === "group" &&
+                this.collection.configuration.groupType ==
+                    YpAdminConfigGroup.GroupType.allOurIdeas);
+            console.error("TURE");
+        }
+        else {
+            return false;
+        }
+    }
     renderNavigationBar() {
         if (this.wide) {
             return html `
@@ -1013,7 +1029,9 @@ let YpAdminApp = class YpAdminApp extends YpBaseElement {
 
                         ${this.renderMenuListItem("users")}
                         ${this.renderMenuListItem("admins")}
-                        ${this.renderMenuListItem("moderation")}
+                        ${!this.isAllOurIdeasGroupType
+                        ? this.renderMenuListItem("moderation")
+                        : nothing}
                         ${this.renderMenuListItem("pages")}
                         ${this.collectionType != "domain"
                         ? html `
@@ -1021,7 +1039,9 @@ let YpAdminApp = class YpAdminApp extends YpBaseElement {
                               ${this.renderMenuListItem("translations")}
                             `
                         : html ` ${this.renderMenuListItem("organizations")}`}
-                        ${this.renderMenuListItem("aiAnalysis")}
+                        ${!this.isAllOurIdeasGroupType
+                        ? this.renderMenuListItem("aiAnalysis")
+                        : nothing}
                       `
                     : html ``}
                 `

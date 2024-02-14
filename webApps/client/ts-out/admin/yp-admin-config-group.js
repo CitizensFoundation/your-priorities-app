@@ -110,6 +110,8 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
         this.group.configuration.groupType = index;
         this._configChanged();
         this.configTabs = this.setupConfigTabs();
+        this.requestUpdate();
+        this.fire('yp-request-update-on-parent');
     }
     renderGroupTypeSelection() {
         return html `
@@ -1662,7 +1664,7 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
 };
 YpAdminConfigGroup.GroupType = {
     ideaGeneration: 0,
-    allOurIdeas: 1
+    allOurIdeas: 1,
 };
 __decorate([
     property({ type: Number })
