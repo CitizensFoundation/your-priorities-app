@@ -519,7 +519,9 @@ export class AllOurIdeasController {
         const params = req.body; // Assuming body-parser middleware is used for JSON body parsing
         console.log(`getVoteRequestOptions: ${JSON.stringify(params)} s: ${session}`);
         const options = {
-            visitor_identifier: session.id,
+            visitor_identifier: req.user
+                ? req.user.id
+                : req.session.id,
             // Use a static value of 5 if in test environment, so we can mock resulting API queries
             time_viewed: process.env.NODE_ENV === "test" ? 5 : params.time_viewed,
             appearance_lookup: params.appearance_lookup,

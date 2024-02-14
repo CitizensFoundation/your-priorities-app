@@ -788,7 +788,9 @@ export class AllOurIdeasController {
       `getVoteRequestOptions: ${JSON.stringify(params)} s: ${session}`
     );
     const options: any = {
-      visitor_identifier: session.id,
+      visitor_identifier: req.user
+      ? (req.user as YpUserData).id
+      : req.session.id,
       // Use a static value of 5 if in test environment, so we can mock resulting API queries
       time_viewed: process.env.NODE_ENV === "test" ? 5 : params.time_viewed,
       appearance_lookup: params.appearance_lookup,
