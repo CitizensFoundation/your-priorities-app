@@ -60,8 +60,8 @@ export class YpAdminTranslations extends YpAdminPage {
         }
 
         .item {
-          max-width: 1008px;
-          width: 1008px;
+          max-width: 960px;
+          width: 960px;
           margin-bottom: 16px;
           padding: 8px;
         }

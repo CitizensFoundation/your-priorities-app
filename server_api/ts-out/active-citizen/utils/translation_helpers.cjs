@@ -1,19 +1,21 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const models = require('../../models/index.cjs');
-const async = require('async');
-const ip = require('ip');
-const _ = require('lodash');
-const fs = require('fs');
-const request = require('request');
-const farmhash = require('farmhash');
+const models = require("../../models/index.cjs");
+const async = require("async");
+const ip = require("ip");
+const _ = require("lodash");
+const fs = require("fs");
+const request = require("request");
+const farmhash = require("farmhash");
 const fixTargetLocale = (itemTargetLocale) => {
-    let targetLocale = itemTargetLocale.replace('_', '-');
-    if (targetLocale !== 'sr-latin' && targetLocale !== 'zh-CN' && targetLocale !== 'zh-TW') {
+    let targetLocale = itemTargetLocale.replace("_", "-");
+    if (targetLocale !== "sr-latin" &&
+        targetLocale !== "zh-CN" &&
+        targetLocale !== "zh-TW") {
         targetLocale = targetLocale.split("-")[0];
     }
-    if (targetLocale === 'sr-latin') {
-        targetLocale = 'sr-Latn';
+    if (targetLocale === "sr-latin") {
+        targetLocale = "sr-Latn";
     }
     return targetLocale;
 };
@@ -25,9 +27,10 @@ const addItem = (targetLocale, items, textType, id, content, done) => {
         const indexKey = `${textType}-${id}-${fixTargetLocale(targetLocale)}-${farmhash.hash32(content).toString()}`;
         models.AcTranslationCache.findOne({
             where: {
-                index_key: indexKey
-            }
-        }).then((result) => {
+                index_key: indexKey,
+            },
+        })
+            .then((result) => {
             const item = {};
             item.textType = textType;
             item.contentId = id;
@@ -38,7 +41,8 @@ const addItem = (targetLocale, items, textType, id, content, done) => {
             }
             items.push(item);
             done();
-        }).catch((error) => {
+        })
+            .catch((error) => {
             done(error);
         });
     }
@@ -46,20 +50,20 @@ const addItem = (targetLocale, items, textType, id, content, done) => {
 const addTranslationsForPosts = (targetLocale, items, posts, done) => {
     async.forEachSeries(posts, (post, forEachCallback) => {
         async.series([
-            innerSeriesCallback => {
-                addItem(targetLocale, items, 'postName', post.id, post.name, innerSeriesCallback);
+            (innerSeriesCallback) => {
+                addItem(targetLocale, items, "postName", post.id, post.name, innerSeriesCallback);
             },
-            innerSeriesCallback => {
-                addItem(targetLocale, items, 'postContent', post.id, post.description, innerSeriesCallback);
+            (innerSeriesCallback) => {
+                addItem(targetLocale, items, "postContent", post.id, post.description, innerSeriesCallback);
             },
-            innerSeriesCallback => {
+            (innerSeriesCallback) => {
                 let tagsContent = null;
                 if (post.public_data && post.public_data.tags) {
                     tagsContent = post.public_data.tags;
                 }
-                addItem(targetLocale, items, 'postTags', post.id, tagsContent, innerSeriesCallback);
+                addItem(targetLocale, items, "postTags", post.id, tagsContent, innerSeriesCallback);
             },
-            innerSeriesCallback => {
+            (innerSeriesCallback) => {
                 let answerContent = "";
                 if (post.public_data && post.public_data.structuredAnswersJson) {
                     for (const answer of post.public_data.structuredAnswersJson) {
@@ -68,80 +72,86 @@ const addTranslationsForPosts = (targetLocale, items, posts, done) => {
                         }
                     }
                 }
-                addItem(targetLocale, items, 'PostAnswer', post.id, answerContent ? answerContent : null, innerSeriesCallback);
-            }
-        ], error => {
+                addItem(targetLocale, items, "PostAnswer", post.id, answerContent ? answerContent : null, innerSeriesCallback);
+            },
+        ], (error) => {
             forEachCallback(error);
         });
-    }, error => {
+    }, (error) => {
         done(error);
     });
 };
 const addTranslationsForGroups = (targetLocale, items, groups, done) => {
     async.forEachSeries(groups, (group, forEachCallback) => {
         async.series([
-            innerSeriesCallback => {
-                addItem(targetLocale, items, 'groupName', group.id, group.name, innerSeriesCallback);
+            (innerSeriesCallback) => {
+                addItem(targetLocale, items, "groupName", group.id, group.name, innerSeriesCallback);
             },
-            innerSeriesCallback => {
-                addItem(targetLocale, items, 'groupContent', group.id, group.objectives, innerSeriesCallback);
+            (innerSeriesCallback) => {
+                addItem(targetLocale, items, "groupContent", group.id, group.objectives, innerSeriesCallback);
             },
-            innerSeriesCallback => {
-                addItem(targetLocale, items, 'alternativeTextForNewIdeaButton', group.id, group.configuration.alternativeTextForNewIdeaButton, innerSeriesCallback);
+            (innerSeriesCallback) => {
+                addItem(targetLocale, items, "alternativeTextForNewIdeaButton", group.id, group.configuration.alternativeTextForNewIdeaButton, innerSeriesCallback);
             },
-            innerSeriesCallback => {
-                addItem(targetLocale, items, 'alternativeTextForNewIdeaButtonClosed', group.id, group.configuration.alternativeTextForNewIdeaButtonClosed, innerSeriesCallback);
+            (innerSeriesCallback) => {
+                addItem(targetLocale, items, "alternativeTextForNewIdeaButtonClosed", group.id, group.configuration.alternativeTextForNewIdeaButtonClosed, innerSeriesCallback);
             },
-            innerSeriesCallback => {
-                addItem(targetLocale, items, 'alternativeTextForNewIdeaButtonHeader', group.id, group.configuration.alternativeTextForNewIdeaButtonHeader, innerSeriesCallback);
+            (innerSeriesCallback) => {
+                addItem(targetLocale, items, "alternativeTextForNewIdeaButtonHeader", group.id, group.configuration.alternativeTextForNewIdeaButtonHeader, innerSeriesCallback);
             },
-            innerSeriesCallback => {
-                addItem(targetLocale, items, 'alternativeTextForNewIdeaSaveButton', group.id, group.configuration.alternativeTextForNewIdeaSaveButton, innerSeriesCallback);
+            (innerSeriesCallback) => {
+                addItem(targetLocale, items, "aoiWelcomeMessage", group.id, group.configuration.allOurIdeas.earl.configuration.welcome_message, innerSeriesCallback);
             },
-            innerSeriesCallback => {
-                addItem(targetLocale, items, 'customCategoryQuestionText', group.id, group.configuration.customCategoryQuestionText, innerSeriesCallback);
+            (innerSeriesCallback) => {
+                addItem(targetLocale, items, "aoiWelcomeHtml", group.id, group.configuration.allOurIdeas.earl.configuration.welcome_html, innerSeriesCallback);
             },
-            innerSeriesCallback => {
-                addItem(targetLocale, items, 'customThankYouTextNewPosts', group.id, group.configuration.customThankYouTextNewPosts, innerSeriesCallback);
+            (innerSeriesCallback) => {
+                addItem(targetLocale, items, "alternativeTextForNewIdeaSaveButton", group.id, group.configuration.alternativeTextForNewIdeaSaveButton, innerSeriesCallback);
             },
-            innerSeriesCallback => {
-                addItem(targetLocale, items, 'customTitleQuestionText', group.id, group.configuration.customTitleQuestionText, innerSeriesCallback);
+            (innerSeriesCallback) => {
+                addItem(targetLocale, items, "customCategoryQuestionText", group.id, group.configuration.customCategoryQuestionText, innerSeriesCallback);
             },
-            innerSeriesCallback => {
-                addItem(targetLocale, items, 'customFilterText', group.id, group.configuration.customFilterText, innerSeriesCallback);
+            (innerSeriesCallback) => {
+                addItem(targetLocale, items, "customThankYouTextNewPosts", group.id, group.configuration.customThankYouTextNewPosts, innerSeriesCallback);
             },
-            innerSeriesCallback => {
-                addItem(targetLocale, items, 'customAdminCommentsTitle', group.id, group.configuration.customAdminCommentsTitle, innerSeriesCallback);
+            (innerSeriesCallback) => {
+                addItem(targetLocale, items, "customTitleQuestionText", group.id, group.configuration.customTitleQuestionText, innerSeriesCallback);
             },
-            innerSeriesCallback => {
-                addItem(targetLocale, items, 'alternativePointForHeader', group.id, group.configuration.alternativePointForHeader, innerSeriesCallback);
+            (innerSeriesCallback) => {
+                addItem(targetLocale, items, "customFilterText", group.id, group.configuration.customFilterText, innerSeriesCallback);
             },
-            innerSeriesCallback => {
-                addItem(targetLocale, items, 'alternativePointAgainstHeader', group.id, group.configuration.alternativePointAgainstHeader, innerSeriesCallback);
+            (innerSeriesCallback) => {
+                addItem(targetLocale, items, "customAdminCommentsTitle", group.id, group.configuration.customAdminCommentsTitle, innerSeriesCallback);
             },
-            innerSeriesCallback => {
-                addItem(targetLocale, items, 'customTabTitleNewLocation', group.id, group.configuration.customTabTitleNewLocation, innerSeriesCallback);
+            (innerSeriesCallback) => {
+                addItem(targetLocale, items, "alternativePointForHeader", group.id, group.configuration.alternativePointForHeader, innerSeriesCallback);
             },
-            innerSeriesCallback => {
-                addItem(targetLocale, items, 'alternativePointForLabel', group.id, group.configuration.alternativePointForLabel, innerSeriesCallback);
+            (innerSeriesCallback) => {
+                addItem(targetLocale, items, "alternativePointAgainstHeader", group.id, group.configuration.alternativePointAgainstHeader, innerSeriesCallback);
             },
-            innerSeriesCallback => {
-                addItem(targetLocale, items, 'alternativePointAgainstLabel', group.id, group.configuration.alternativePointAgainstLabel, innerSeriesCallback);
-            }
-        ], error => {
+            (innerSeriesCallback) => {
+                addItem(targetLocale, items, "customTabTitleNewLocation", group.id, group.configuration.customTabTitleNewLocation, innerSeriesCallback);
+            },
+            (innerSeriesCallback) => {
+                addItem(targetLocale, items, "alternativePointForLabel", group.id, group.configuration.alternativePointForLabel, innerSeriesCallback);
+            },
+            (innerSeriesCallback) => {
+                addItem(targetLocale, items, "alternativePointAgainstLabel", group.id, group.configuration.alternativePointAgainstLabel, innerSeriesCallback);
+            },
+        ], (error) => {
             done(error);
         });
-    }, error => {
+    }, (error) => {
         done(error);
     });
 };
 const addTranslationsForCommunity = (targetLocale, items, community, done) => {
-    addItem(targetLocale, items, 'communityName', community.id, community.name, (error) => {
+    addItem(targetLocale, items, "communityName", community.id, community.name, (error) => {
         if (error) {
             done(error);
         }
         else {
-            addItem(targetLocale, items, 'communityContent', community.id, community.description, (error) => {
+            addItem(targetLocale, items, "communityContent", community.id, community.description, (error) => {
                 done(error);
             });
         }
@@ -156,57 +166,63 @@ const getTranslatedTextsForCommunity = (targetLocale, communityId, done) => {
             async.series([
                 (innerSeriesCallback) => {
                     models.Post.findAll({
-                        attributes: ['id', 'name', 'description', 'public_data'],
+                        attributes: ["id", "name", "description", "public_data"],
                         include: [
                             {
                                 model: models.Group,
-                                attributes: ['id', 'configuration'],
+                                attributes: ["id", "configuration"],
                                 include: [
                                     {
                                         model: models.Community,
-                                        attributes: ['id'],
+                                        attributes: ["id"],
                                         where: {
-                                            id: communityId
-                                        }
-                                    }
-                                ]
-                            }
-                        ]
-                    }).then(posts => {
+                                            id: communityId,
+                                        },
+                                    },
+                                ],
+                            },
+                        ],
+                    })
+                        .then((posts) => {
                         addTranslationsForPosts(targetLocale, postItems, posts, innerSeriesCallback);
-                    }).catch(error => {
+                    })
+                        .catch((error) => {
                         innerSeriesCallback(error);
                     });
                 },
                 (innerSeriesCallback) => {
                     models.Group.findAll({
-                        attributes: ['id', 'name', 'objectives', 'configuration'],
+                        attributes: ["id", "name", "objectives", "configuration"],
                         where: {
-                            community_id: communityId
-                        }
-                    }).then(groups => {
+                            community_id: communityId,
+                        },
+                    })
+                        .then((groups) => {
                         addTranslationsForGroups(targetLocale, groupItems, groups, innerSeriesCallback);
-                    }).catch(error => {
+                    })
+                        .catch((error) => {
                         innerSeriesCallback(error);
                     });
                 },
                 (innerSeriesCallback) => {
                     models.Community.findOne({
-                        attributes: ['id', 'name', 'description'],
+                        attributes: ["id", "name", "description"],
                         where: {
-                            id: communityId
-                        }
-                    }).then(community => {
+                            id: communityId,
+                        },
+                    })
+                        .then((community) => {
                         addTranslationsForCommunity(targetLocale, communityItems, community, innerSeriesCallback);
-                    }).catch(error => {
+                    })
+                        .catch((error) => {
                         innerSeriesCallback(error);
                     });
-                }
+                },
             ], (error) => {
                 seriesCallback(error);
             });
         },
-    ], error => {
+    ], (error) => {
         if (error) {
             done(null, error);
         }
@@ -224,32 +240,36 @@ const getTranslatedTextsForGroup = (targetLocale, groupId, done) => {
             async.series([
                 (innerSeriesCallback) => {
                     models.Post.findAll({
-                        attributes: ['id', 'name', 'description', 'public_data'],
+                        attributes: ["id", "name", "description", "public_data"],
                         include: [
                             {
                                 model: models.Group,
-                                attributes: ['id', 'configuration'],
+                                attributes: ["id", "configuration"],
                                 where: {
-                                    id: groupId
-                                }
-                            }
-                        ]
-                    }).then(posts => {
+                                    id: groupId,
+                                },
+                            },
+                        ],
+                    })
+                        .then((posts) => {
                         addTranslationsForPosts(targetLocale, postItems, posts, innerSeriesCallback);
-                    }).catch(error => {
+                    })
+                        .catch((error) => {
                         innerSeriesCallback(error);
                     });
                 },
                 (innerSeriesCallback) => {
                     models.Group.findAll({
-                        attributes: ['id', 'name', 'objectives', 'configuration'],
+                        attributes: ["id", "name", "objectives", "configuration"],
                         where: {
-                            id: groupId
-                        }
-                    }).then(groups => {
+                            id: groupId,
+                        },
+                    })
+                        .then((groups) => {
                         group = groups[0];
                         addTranslationsForGroups(targetLocale, groupItems, groups, innerSeriesCallback);
-                    }).catch(error => {
+                    })
+                        .catch((error) => {
                         innerSeriesCallback(error);
                     });
                 },
@@ -288,17 +308,21 @@ const getTranslatedTextsForGroup = (targetLocale, groupId, done) => {
                     else {
                         innerSeriesCallback();
                     }
-                }
+                },
             ], (error) => {
                 seriesCallback(error);
             });
         },
-    ], error => {
+    ], (error) => {
         if (error) {
             done(null, error);
         }
         else {
-            done({ items: groupItems.concat(postItems), surveyQuestionTranslations, registrationQuestionTranslations });
+            done({
+                items: groupItems.concat(postItems),
+                surveyQuestionTranslations,
+                registrationQuestionTranslations,
+            });
         }
     });
 };
@@ -307,23 +331,28 @@ const updateTranslation = (item, done) => {
     const indexKey = `${item.textType}-${item.contentId}-${targetLocale}-${farmhash.hash32(item.content).toString()}`;
     models.AcTranslationCache.findOrCreate({
         where: {
-            index_key: indexKey
+            index_key: indexKey,
         },
         defaults: {
             index_key: indexKey,
-            content: item.translatedText
-        }
-    }).then((result) => {
+            content: item.translatedText,
+        },
+    })
+        .then((result) => {
         if (result && result.length > 0) {
             result[0].content = item.translatedText;
-            result[0].save().then(() => {
+            result[0]
+                .save()
+                .then(() => {
                 done();
-            }).catch(error => seriesCallback(error));
+            })
+                .catch((error) => seriesCallback(error));
         }
         else {
             seriesCallback("Cant find or create translation");
         }
-    }).catch(error => done(error));
+    })
+        .catch((error) => done(error));
 };
 const updateSurveyTranslation = (groupId, textType, targetLocale, translations, questions, done) => {
     const combinedText = questions.join("");
@@ -332,7 +361,7 @@ const updateSurveyTranslation = (groupId, textType, targetLocale, translations, 
         contentId: groupId,
         targetLocale,
         content: combinedText,
-        translatedText: JSON.stringify(translations)
+        translatedText: JSON.stringify(translations),
     };
     updateTranslation(item, done);
 };
@@ -341,35 +370,40 @@ const updateAnswerTranslation = (postId, textType, targetLocale, translations, c
         textType,
         contentId: postId,
         targetLocale,
-        translatedText: JSON.stringify(translations)
+        translatedText: JSON.stringify(translations),
     };
     targetLocale = fixTargetLocale(item.targetLocale);
     const indexKey = `${item.textType}-${item.contentId}-${targetLocale}-${contentHash}`;
     models.AcTranslationCache.findOrCreate({
         where: {
-            index_key: indexKey
+            index_key: indexKey,
         },
         defaults: {
             index_key: indexKey,
-            content: item.translatedText
-        }
-    }).then((result) => {
+            content: item.translatedText,
+        },
+    })
+        .then((result) => {
         if (result && result.length > 0) {
             result[0].content = item.translatedText;
-            result[0].save().then(() => {
+            result[0]
+                .save()
+                .then(() => {
                 done();
-            }).catch(error => seriesCallback(error));
+            })
+                .catch((error) => seriesCallback(error));
         }
         else {
             seriesCallback("Cant find or create translation");
         }
-    }).catch(error => done(error));
+    })
+        .catch((error) => done(error));
 };
 const updateTranslationForGroup = (groupId, item, done) => {
     async.series([
         (seriesCallback) => {
             if (["groupName", "groupContent"].indexOf(item.textType) > -1) {
-                seriesCallback(groupId == item.contentId ? null : 'Access denied');
+                seriesCallback(groupId == item.contentId ? null : "Access denied");
             }
             else {
                 seriesCallback();
@@ -379,19 +413,21 @@ const updateTranslationForGroup = (groupId, item, done) => {
             if (["postName", "postContent"].indexOf(item.textType) > -1) {
                 models.Post.findOne({
                     where: {
-                        id: item.contentId
+                        id: item.contentId,
                     },
                     attributes: ["id", "public_data"],
                     include: [
                         {
                             model: models.Group,
                             required: true,
-                            where: { id: groupId }
-                        }
-                    ]
-                }).then(post => {
-                    seriesCallback(post ? null : 'Access denied');
-                }).catch(error => seriesCallback(error));
+                            where: { id: groupId },
+                        },
+                    ],
+                })
+                    .then((post) => {
+                    seriesCallback(post ? null : "Access denied");
+                })
+                    .catch((error) => seriesCallback(error));
             }
             else {
                 seriesCallback();
@@ -400,7 +436,7 @@ const updateTranslationForGroup = (groupId, item, done) => {
         (seriesCallback) => {
             updateTranslation(item, seriesCallback);
         },
-    ], error => {
+    ], (error) => {
         done(error);
     });
 };
@@ -408,7 +444,7 @@ const updateTranslationForCommunity = (communityId, item, done) => {
     async.series([
         (seriesCallback) => {
             if (["communityName", "communityContent"].indexOf(item.textType) > -1) {
-                seriesCallback(communityId == item.contentId ? null : 'Access denied');
+                seriesCallback(communityId == item.contentId ? null : "Access denied");
             }
             else {
                 seriesCallback();
@@ -418,19 +454,21 @@ const updateTranslationForCommunity = (communityId, item, done) => {
             if (["groupName", "groupContent"].indexOf(item.textType) > -1) {
                 models.Group.findOne({
                     where: {
-                        id: item.contentId
+                        id: item.contentId,
                     },
-                    attributes: ["id", 'configuration'],
+                    attributes: ["id", "configuration"],
                     include: [
                         {
                             model: models.Community,
                             where: { id: communityId },
-                            required: true
-                        }
-                    ]
-                }).then(group => {
-                    seriesCallback(group ? null : 'Access denied');
-                }).catch(error => seriesCallback(error));
+                            required: true,
+                        },
+                    ],
+                })
+                    .then((group) => {
+                    seriesCallback(group ? null : "Access denied");
+                })
+                    .catch((error) => seriesCallback(error));
             }
             else {
                 seriesCallback();
@@ -440,7 +478,7 @@ const updateTranslationForCommunity = (communityId, item, done) => {
             if (["postName", "postContent"].indexOf(item.textType) > -1) {
                 models.Post.findOne({
                     where: {
-                        id: item.contentId
+                        id: item.contentId,
                     },
                     attributes: ["id", "public_data"],
                     include: [
@@ -451,14 +489,16 @@ const updateTranslationForCommunity = (communityId, item, done) => {
                                 {
                                     model: models.Community,
                                     where: { id: communityId },
-                                    required: true
-                                }
-                            ]
-                        }
-                    ]
-                }).then(post => {
-                    seriesCallback(post ? null : 'Access denied');
-                }).catch(error => seriesCallback(error));
+                                    required: true,
+                                },
+                            ],
+                        },
+                    ],
+                })
+                    .then((post) => {
+                    seriesCallback(post ? null : "Access denied");
+                })
+                    .catch((error) => seriesCallback(error));
             }
             else {
                 seriesCallback();
@@ -467,7 +507,7 @@ const updateTranslationForCommunity = (communityId, item, done) => {
         (seriesCallback) => {
             updateTranslation(item, seriesCallback);
         },
-    ], error => {
+    ], (error) => {
         done(error);
     });
 };
@@ -479,5 +519,5 @@ module.exports = {
     updateAnswerTranslation,
     fixTargetLocale,
     updateTranslation,
-    updateSurveyTranslation
+    updateSurveyTranslation,
 };
