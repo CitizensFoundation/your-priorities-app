@@ -278,7 +278,7 @@ export class YpAppUser extends YpCodeBase {
   ) {
     window.appDialogs.getDialogAsync("userLogin", (dialog: YpLogin) => {
       dialog.setup(this._handleLogin.bind(this), window.appGlobals.domain!);
-      dialog.open(undefined, email, collectionConfiguration);
+      dialog.openDialog(undefined, email, collectionConfiguration);
     });
   }
 

@@ -164,7 +164,7 @@ export class YpAppUser extends YpCodeBase {
     openUserlogin(email = undefined, collectionConfiguration = undefined) {
         window.appDialogs.getDialogAsync("userLogin", (dialog) => {
             dialog.setup(this._handleLogin.bind(this), window.appGlobals.domain);
-            dialog.open(undefined, email, collectionConfiguration);
+            dialog.openDialog(undefined, email, collectionConfiguration);
         });
     }
     autoAnonymousLogin() {

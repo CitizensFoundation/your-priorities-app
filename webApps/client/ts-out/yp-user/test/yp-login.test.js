@@ -14,7 +14,7 @@ describe('YpLogin', () => {
       <yp-login></yp-login>
       `);
         await aTimeout(100);
-        element.open(undefined, undefined, undefined);
+        element.openDialog(undefined, undefined, undefined);
     });
     it('passes the a11y audit', async () => {
         debugger;

@@ -56,7 +56,7 @@ export class AllOurIdeasController {
             question_id: req.params.questionId,
         };
         //@ts-ignore
-        choiceParams["local_identifier"] = req.user.id;
+        choiceParams["local_identifier"] = req.user ? req.user.id : req.session.id;
         console.log(`choiceParams: ${JSON.stringify(choiceParams)}`);
         try {
             const choiceResponse = await fetch(`${PAIRWISE_API_HOST}/choices.json`, {
@@ -418,7 +418,7 @@ export class AllOurIdeasController {
             const choicesResponse = await fetch(`${PAIRWISE_API_HOST}/questions/${questionId}/choices.json?all=1&show_all=true&limit=${perPage}&offset=${offset}`, {
                 headers: defaultAuthHeader,
             });
-            const choices = await choicesResponse.json();
+            const choices = (await choicesResponse.json());
             for (const choice of choices) {
                 choice.data = JSON.parse(choice.data);
             }
@@ -437,7 +437,9 @@ export class AllOurIdeasController {
             // Implement caching logic here
             let cachedAnalysis = await req.redisClient.get(analysisCacheKey);
             if (!cachedAnalysis) {
-                const topOrBottomText = ideasIdsRange < 0 ? `Bottom ${perPage} answers` : `Top ${perPage} answers`;
+                const topOrBottomText = ideasIdsRange < 0
+                    ? `Bottom ${perPage} answers`
+                    : `Top ${perPage} answers`;
                 const swClientSocket = this.wsClients.get(wsClientSocketId);
                 const aiHelper = new AiHelper(swClientSocket);
                 await aiHelper.getAiAnalysis(questionId, analysisType.contextPrompt, choices, analysisCacheKey, req.redisClient, usedLanguageName, topOrBottomText, analysisType.label);
@@ -506,7 +508,9 @@ export class AllOurIdeasController {
         const nextPromptParams = {
             with_appearance: true,
             with_visitor_stats: true,
-            visitor_identifier: req.session.id,
+            visitor_identifier: req.user
+                ? req.user.id
+                : req.session.id,
         };
         return nextPromptParams;
     }
@@ -541,7 +545,6 @@ export class AllOurIdeasController {
         switch (requestType) {
             case "vote":
                 options.direction = params.direction;
-                options.skip_fraud_protection = true;
                 break;
             case "skip":
                 options.skip_reason = params.cant_decide_reason;

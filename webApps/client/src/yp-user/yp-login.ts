@@ -1579,7 +1579,7 @@ export class YpLogin extends YpBaseElement {
     }
   }
 
-  async open(
+  async openDialog(
     redirectToURL: string | undefined,
     email: string | undefined,
     collectionConfiguration: YpCollectionConfiguration | undefined

@@ -161,7 +161,7 @@ export class AllOurIdeasController {
     };
 
     //@ts-ignore
-    choiceParams["local_identifier"] = req.user.id;
+    choiceParams["local_identifier"] = req.user ? req.user.id : req.session.id;
 
     console.log(`choiceParams: ${JSON.stringify(choiceParams)}`);
 
@@ -275,7 +275,11 @@ export class AllOurIdeasController {
   public async llmAnswerExplain(req: Request, res: Response): Promise<void> {
     const { wsClientId, chatLog, languageName } = req.body;
     console.log(`explainConversation: ${wsClientId}`);
-    const explainer = new ExplainAnswersAssistant(wsClientId, this.wsClients, languageName);
+    const explainer = new ExplainAnswersAssistant(
+      wsClientId,
+      this.wsClients,
+      languageName
+    );
     await explainer.explainConversation(chatLog);
     res.sendStatus(200);
   }
@@ -612,8 +616,9 @@ export class AllOurIdeasController {
       const ideasIdsRange = analysisIdeaConfig.ideasIdsRange;
       console.log(`@ideasIdsRange is ${ideasIdsRange}.`);
 
-      const analysisType =
-        analysisIdeaConfig.analysisTypes[parseInt(analysisTypeIndex, 10)] as AnalysisTypeData;
+      const analysisType = analysisIdeaConfig.analysisTypes[
+        parseInt(analysisTypeIndex, 10)
+      ] as AnalysisTypeData;
 
       console.log(`Analysis Type: ${analysisType}`);
       const perPage = Math.abs(ideasIdsRange);
@@ -621,7 +626,6 @@ export class AllOurIdeasController {
 
       const totalActiveChoices =
         question.choices_count - question.inactive_choices_count;
-
 
       const offset =
         ideasIdsRange < 0 ? Math.max(totalActiveChoices - perPage, 0) : 0;
@@ -633,7 +637,7 @@ export class AllOurIdeasController {
           headers: defaultAuthHeader,
         }
       );
-      const choices = await choicesResponse.json() as AoiChoiceData[];
+      const choices = (await choicesResponse.json()) as AoiChoiceData[];
 
       for (const choice of choices) {
         choice.data = JSON.parse(choice.data as any) as AoiAnswerToVoteOnData;
@@ -654,7 +658,7 @@ export class AllOurIdeasController {
         .digest("hex")
         .substring(0, 8);
 
-      const usedLanguageName = req.query.languageName as string || "English";
+      const usedLanguageName = (req.query.languageName as string) || "English";
 
       const analysisCacheKey = `${questionId}_${analysisTypeIndex}_${choiceIds}_${usedLanguageName}_${promptHash}_ai_analysis_v13`;
       console.log(
@@ -668,8 +672,10 @@ export class AllOurIdeasController {
       let cachedAnalysis = await req.redisClient.get(analysisCacheKey);
 
       if (!cachedAnalysis) {
-
-        const topOrBottomText = ideasIdsRange < 0 ? `Bottom ${perPage} answers` : `Top ${perPage} answers`;
+        const topOrBottomText =
+          ideasIdsRange < 0
+            ? `Bottom ${perPage} answers`
+            : `Top ${perPage} answers`;
         const swClientSocket = this.wsClients.get(wsClientSocketId);
         const aiHelper = new AiHelper(swClientSocket);
         await aiHelper.getAiAnalysis(
@@ -763,7 +769,9 @@ export class AllOurIdeasController {
     const nextPromptParams: any = {
       with_appearance: true,
       with_visitor_stats: true,
-      visitor_identifier: req.session.id,
+      visitor_identifier: req.user
+        ? (req.user as YpUserData).id
+        : req.session.id,
     };
 
     return nextPromptParams;
@@ -809,7 +817,6 @@ export class AllOurIdeasController {
     switch (requestType) {
       case "vote":
         options.direction = params.direction;
-        options.skip_fraud_protection = true;
         break;
       case "skip":
         options.skip_reason = params.cant_decide_reason;
@@ -821,68 +828,4 @@ export class AllOurIdeasController {
 
     return options;
   }
-
-  /*async analysis(req: Request, res: Response) {
-    const { id } = req.params;
-    const { analysisIndex, typeIndex } = req.query;
-
-    // Fetch Earl by name (id in this context)
-    const earlResponse = await fetch(`{API_HOST}/earls/${id}`);
-    const earl = await earlResponse.json();
-    const question = earl.question;
-    const questionId = question.id;
-
-    const choicesCount = question.activeChoices;
-
-    // Authorization check (You need to implement `currentUserCanViewResults`)
-    if (!currentUserCanViewResults(req.user, earl)) {
-      console.log(`Current user is: ${req.user}`);
-      return res.status(403).json({ message: 'Not authorized to view results' });
-    }
-
-    console.log(`@question is ${question}.`);
-
-    const analysisConfig = JSON.parse(earl.configuration.analysisConfig);
-    const analysisIdeaConfig = analysisConfig.analyses[parseInt(analysisIndex)];
-    const ideasIdsRange = analysisIdeaConfig.ideasIdsRange;
-    const analysis = analysisIdeaConfig.analysisTypes[parseInt(typeIndex)];
-
-    const perPage = Math.abs(ideasIdsRange);
-    console.log(`Per page: ${perPage}`);
-
-    const offset = ideasIdsRange < 0 ? Math.max(choicesCount - perPage, 0) : 0;
-    console.log(`Offset: ${offset}`);
-
-    // Fetch choices (You need to implement this API call)
-    const choicesResponse = await fetch(`{API_HOST}/questions/${questionId}/choices?limit=${perPage}&offset=${offset}`);
-    const choices = await choicesResponse.json();
-
-    console.log(`Number of choices fetched: ${choices.length}`);
-
-    const sortedChoices = choices.sort((a, b) => a.id - b.id);
-    console.log(`Sorted choice IDs: ${sortedChoices.map(choice => choice.id)}`);
-
-    const choiceIds = sortedChoices.map(choice => `${choice.id}`).join("-");
-    const promptHash = crypto.createHash('sha256').update(analysis.contextPrompt).digest('hex').substring(0, 8);
-
-    const analysisCacheKey = `${questionId}_${typeIndex}_${choiceIds}_${promptHash}_ai_analysis_v8`;
-    console.log(`analysisCacheKey is ${analysisCacheKey} prompt ${analysis.contextPrompt.substring(0, 15)}...`);
-
-    // Implement caching logic here
-    let outAnalysis = await getAnalysisFromCache(analysisCacheKey);
-
-    if (!outAnalysis) {
-      const tempAnalysis = await getAiAnalysis(questionId, analysis.contextPrompt, choices);
-      if (tempAnalysis && tempAnalysis.length > 7) {
-        // Implement caching logic here
-        await cacheAnalysis(analysisCacheKey, tempAnalysis, 18 * 60 * 60); // 18 hours
-        outAnalysis = tempAnalysis;
-      }
-    }
-
-    res.json({
-      ideaRowsFromServer: choices,
-      analysis: outAnalysis
-    });
-  }*/
 }

@@ -1359,7 +1359,7 @@ let YpLogin = class YpLogin extends YpBaseElement {
             this._loginAfterSavePassword(user);
         }
     }
-    async open(redirectToURL, email, collectionConfiguration) {
+    async openDialog(redirectToURL, email, collectionConfiguration) {
         this.redirectToURL = redirectToURL;
         this.userSpinner = false;
         if (email) {

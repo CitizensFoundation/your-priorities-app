@@ -96,7 +96,7 @@ export declare class YpLogin extends YpBaseElement {
     _validateAndSend(registerMode: boolean): boolean;
     _loginAfterSavePassword(user: YpUserData): void;
     _loginCompleted(user: YpUserData): void;
-    open(redirectToURL: string | undefined, email: string | undefined, collectionConfiguration: YpCollectionConfiguration | undefined): Promise<void>;
+    openDialog(redirectToURL: string | undefined, email: string | undefined, collectionConfiguration: YpCollectionConfiguration | undefined): Promise<void>;
     close(): void;
 }
 //# sourceMappingURL=yp-login.d.ts.map

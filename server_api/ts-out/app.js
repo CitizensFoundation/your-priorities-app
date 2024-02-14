@@ -387,7 +387,7 @@ export class YourPrioritiesApi {
             resave: false,
             proxy: process.env.USING_NGINX_PROXY ? true : undefined,
             cookie: { autoSubDomain: true },
-            saveUninitialized: false,
+            saveUninitialized: true,
         };
         if (this.app.get("env") === "production") {
             this.app.set("trust proxy", 1); // trust first proxy
