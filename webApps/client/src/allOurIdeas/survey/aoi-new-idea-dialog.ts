@@ -460,7 +460,18 @@ export class AoiNewIdeaDialog extends YpGenerateAiImage {
 
   override renderContent() {
     return html`
-      <div class="questionTitle">${this.question.name}</div>
+      <div class="questionTitle">
+        <yp-magic-text
+          id="answerText"
+          .contentId="${this.group.id}"
+          .extraId="${this.question.id}"
+          textOnly
+          truncate="400"
+          .content="${this.question.name}"
+          .contentLanguage="${this.group.language}"
+          textType="aoiQuestionName"
+        ></yp-magic-text>
+      </div>
       ${this.haveAddedIdea && this.choice
         ? html`
             <div class="layout vertical center-center">

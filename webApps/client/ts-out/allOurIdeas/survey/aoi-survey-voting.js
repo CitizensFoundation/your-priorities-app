@@ -419,7 +419,7 @@ let AoiSurveyVoting = class AoiSurveyVoting extends YpBaseElement {
               .contentId="${this.groupId}"
               .extraId="${this.question.id}"
               textOnly
-              truncate="300"
+              truncate="400"
               .content="${this.question.name}"
               .contentLanguage="${this.group.language}"
               textType="aoiQuestionName"

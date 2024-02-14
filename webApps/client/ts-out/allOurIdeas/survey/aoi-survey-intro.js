@@ -213,7 +213,7 @@ let AoiSurveyIntro = class AoiSurveyIntro extends YpBaseElement {
               .contentId="${this.group.id}"
               .extraId="${this.question.id}"
               textOnly
-              truncate="300"
+              truncate="400"
               .content="${this.question.name}"
               .contentLanguage="${this.group.language}"
               textType="aoiQuestionName"
@@ -224,7 +224,7 @@ let AoiSurveyIntro = class AoiSurveyIntro extends YpBaseElement {
               id="aoiWelcomeMessage"
               .contentId="${this.group.id}"
               textOnly
-              truncate="300"
+              truncate="500"
               .content="${this.earl.configuration.welcome_message}"
               .contentLanguage="${this.group.language}"
               textType="aoiWelcomeMessage"
