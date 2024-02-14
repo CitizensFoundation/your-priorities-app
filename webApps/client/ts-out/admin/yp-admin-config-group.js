@@ -4,6 +4,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var YpAdminConfigGroup_1;
 import { css, html, nothing } from "lit";
 import { property, customElement } from "lit/decorators.js";
 import "@material/web/textfield/outlined-text-field.js";
@@ -23,11 +24,6 @@ import "../common/languages/yp-language-selector.js";
 import { YpMediaHelpers } from "../common/YpMediaHelpers.js";
 import "./allOurIdeas/aoi-earl-ideas-editor.js";
 import { AoiAdminServerApi } from "./allOurIdeas/AoiAdminServerApi.js";
-var GroupType;
-(function (GroupType) {
-    GroupType[GroupType["ideaGeneration"] = 0] = "ideaGeneration";
-    GroupType[GroupType["allOurIdeas"] = 1] = "allOurIdeas";
-})(GroupType || (GroupType = {}));
 const defaultAiAnalysisJson = {
     analyses: [
         {
@@ -60,7 +56,7 @@ const defaultAiAnalysisJson = {
         },
     ],
 };
-let YpAdminConfigGroup = class YpAdminConfigGroup extends YpAdminConfigBase {
+let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends YpAdminConfigBase {
     constructor() {
         super();
         this.groupAccess = "open_to_community";
@@ -390,7 +386,7 @@ let YpAdminConfigGroup = class YpAdminConfigGroup extends YpAdminConfigBase {
                 },
             ],
         };
-        if (this.groupTypeIndex !== GroupType.allOurIdeas) {
+        if (this.groupTypeIndex !== YpAdminConfigGroup_1.GroupType.allOurIdeas) {
             base.items.concat([
                 {
                     text: "allowAnonymousUsers",
@@ -1640,7 +1636,7 @@ let YpAdminConfigGroup = class YpAdminConfigGroup extends YpAdminConfigBase {
     }
     setupConfigTabs() {
         const tabs = [];
-        if (this.groupTypeIndex == GroupType.ideaGeneration) {
+        if (this.groupTypeIndex == YpAdminConfigGroup_1.GroupType.ideaGeneration) {
             const postsTab = this._getPostSettingsTab();
             if (!this.isGroupFolder) {
                 tabs.push(postsTab);
@@ -1649,7 +1645,7 @@ let YpAdminConfigGroup = class YpAdminConfigGroup extends YpAdminConfigBase {
             tabs.push(this._getPointSettingsTab());
             tabs.push(this._getAdditionalConfigTab());
         }
-        else if (this.groupTypeIndex == GroupType.allOurIdeas) {
+        else if (this.groupTypeIndex == YpAdminConfigGroup_1.GroupType.allOurIdeas) {
             tabs.push(this._getAllOurIdeaTab());
             tabs.push(this._getAllOurIdeaOptionsTab());
         }
@@ -1663,6 +1659,10 @@ let YpAdminConfigGroup = class YpAdminConfigGroup extends YpAdminConfigBase {
         this.appHomeScreenIconImageId = image.id;
         this._configChanged();
     }
+};
+YpAdminConfigGroup.GroupType = {
+    ideaGeneration: 0,
+    allOurIdeas: 1
 };
 __decorate([
     property({ type: Number })
@@ -1688,7 +1688,7 @@ __decorate([
 __decorate([
     property({ type: Object })
 ], YpAdminConfigGroup.prototype, "group", void 0);
-YpAdminConfigGroup = __decorate([
+YpAdminConfigGroup = YpAdminConfigGroup_1 = __decorate([
     customElement("yp-admin-config-group")
 ], YpAdminConfigGroup);
 export { YpAdminConfigGroup };

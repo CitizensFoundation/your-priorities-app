@@ -36,11 +36,6 @@ import { MdFilledTextField } from "@material/web/textfield/filled-text-field.js"
 import { AoiEarlIdeasEditor } from "./allOurIdeas/aoi-earl-ideas-editor.js";
 import { AoiAdminServerApi } from "./allOurIdeas/AoiAdminServerApi.js";
 
-enum GroupType {
-  ideaGeneration = 0,
-  allOurIdeas = 1,
-}
-
 const defaultAiAnalysisJson = {
   analyses: [
     {
@@ -118,6 +113,11 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
   questionNameHasChanged = false;
 
   groupTypeOptions = ["ideaGenerationGroupType", "allOurIdeasGroupType"];
+
+  static GroupType = {
+    ideaGeneration: 0,
+    allOurIdeas: 1,
+  };
 
   constructor() {
     super();
@@ -493,7 +493,7 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
       ] as Array<YpStructuredConfigData>,
     } as YpConfigTabData;
 
-    if (this.groupTypeIndex !== GroupType.allOurIdeas) {
+    if (this.groupTypeIndex !== YpAdminConfigGroup.GroupType.allOurIdeas) {
       base.items.concat([
         {
           text: "allowAnonymousUsers",
@@ -1810,7 +1810,7 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
   setupConfigTabs() {
     const tabs: Array<YpConfigTabData> = [];
 
-    if (this.groupTypeIndex == GroupType.ideaGeneration) {
+    if (this.groupTypeIndex == YpAdminConfigGroup.GroupType.ideaGeneration) {
       const postsTab = this._getPostSettingsTab();
       if (!this.isGroupFolder) {
         tabs.push(postsTab!);
@@ -1818,7 +1818,9 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
       tabs.push(this._getVoteSettingsTab());
       tabs.push(this._getPointSettingsTab());
       tabs.push(this._getAdditionalConfigTab());
-    } else if (this.groupTypeIndex == GroupType.allOurIdeas) {
+    } else if (
+      this.groupTypeIndex == YpAdminConfigGroup.GroupType.allOurIdeas
+    ) {
       tabs.push(this._getAllOurIdeaTab());
       tabs.push(this._getAllOurIdeaOptionsTab());
     }

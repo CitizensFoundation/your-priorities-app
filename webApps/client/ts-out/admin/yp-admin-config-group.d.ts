@@ -33,6 +33,10 @@ export declare class YpAdminConfigGroup extends YpAdminConfigBase {
     hasSamlLoginProvider: any;
     questionNameHasChanged: boolean;
     groupTypeOptions: string[];
+    static GroupType: {
+        ideaGeneration: number;
+        allOurIdeas: number;
+    };
     constructor();
     static get styles(): (any[] | import("lit").CSSResult)[];
     _setGroupType(event: CustomEvent): void;
