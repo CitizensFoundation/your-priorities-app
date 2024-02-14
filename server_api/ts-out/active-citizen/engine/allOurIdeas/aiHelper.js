@@ -77,8 +77,9 @@ export class AiHelper {
                     {
                         role: "system",
                         content: `You are a highly competent AI that is able to generate short answer ideas for questions.
-                      Genereate up to 10 high quality ideas.
-                      Ideas should always be unnumbered.
+                      Genereate up to 10 high quality answer ideas.
+                      Never use numbers at the start of each line.
+                      Never use a dash or anything similar at the start of each line, just start with the text.
                       Never output more than 30 words per idea.
                       \n${firstMessageWithPreviousIdeasTemplate}`,
                     },

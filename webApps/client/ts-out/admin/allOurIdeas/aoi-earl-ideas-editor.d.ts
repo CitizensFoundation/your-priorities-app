@@ -33,6 +33,8 @@ export declare class AoiEarlIdeasEditor extends YpStreamingLlmBase {
     currentGeneratingIndex: number | undefined;
     constructor();
     connectedCallback(): void;
+    disconnectedCallback(): void;
+    themeUpdated(event: CustomEvent): void;
     socketClosed(): void;
     socketError(): void;
     getChoices(): Promise<void>;
@@ -55,7 +57,7 @@ export declare class AoiEarlIdeasEditor extends YpStreamingLlmBase {
     static get styles(): any[];
     renderCreateIdeas(): import("lit-html").TemplateResult<1>;
     renderIdeasSortingChips(): import("lit-html").TemplateResult<1>;
-    renderIcon(choice: AoiChoiceData): typeof nothing | import("lit-html").TemplateResult<1>;
+    renderIcon(choice: AoiChoiceData): import("lit-html").TemplateResult<1> | typeof nothing;
     aiStyleChanged(): void;
     renderAnswerData(answer: AoiChoiceData): import("lit-html").TemplateResult<1>;
     renderEditIdeas(): import("lit-html").TemplateResult<1>;

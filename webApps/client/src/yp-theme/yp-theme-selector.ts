@@ -132,7 +132,7 @@ export class YpThemeSelector extends YpBaseElement {
     super.connectedCallback();
 
     if (this.themeConfiguration) {
-      this.oneDynamicThemeColor = this.themeConfiguration.oneDynmicColor;
+      this.oneDynamicThemeColor = this.themeConfiguration.oneDynamicColor;
       this.selectedThemeScheme =
         this.themeConfiguration.oneColorScheme || this.selectedThemeScheme;
       this.selectedThemeVariant =
@@ -192,7 +192,7 @@ export class YpThemeSelector extends YpBaseElement {
     if (shouldUpdateConfiguration) {
       // Update the themeConfiguration object
       this.themeConfiguration = {
-        oneDynmicColor: this.oneDynamicThemeColor,
+        oneDynamicColor: this.oneDynamicThemeColor,
         oneColorScheme: this.selectedThemeScheme as MaterialColorScheme,
         variant: this.selectedThemeVariant as MaterialDynamicVariants,
         primaryColor: this.themePrimaryColor,
@@ -202,13 +202,13 @@ export class YpThemeSelector extends YpBaseElement {
         neutralVariantColor: this.themeNeutralVariantColor,
       };
 
-      if (this.themeConfiguration.oneDynmicColor) {
+      if (this.themeConfiguration.oneDynamicColor) {
         this.fireGlobal(
           "yp-theme-configuration-updated",
           this.themeConfiguration
         );
       } else if (
-        !this.themeConfiguration.oneDynmicColor &&
+        !this.themeConfiguration.oneDynamicColor &&
         this.themeConfiguration.primaryColor &&
         this.themeConfiguration.secondaryColor &&
         this.themeConfiguration.tertiaryColor &&

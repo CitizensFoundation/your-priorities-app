@@ -508,7 +508,9 @@ export class YpAdminApp extends YpBaseElement {
   }
 
   updateFromCollection(){
-    this.collection = {...this.collection!};
+    if (this.collection) {
+      this.collection = {...this.collection};
+    }
   }
 
   renderGroupConfigPage() {

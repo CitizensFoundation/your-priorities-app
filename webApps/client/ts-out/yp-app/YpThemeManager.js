@@ -316,8 +316,8 @@ export class YpThemeManager {
             this.setThemeFromOldConfiguration(number, configuration);
         }
         else {
-            if (configuration.theme.oneDynmicColor) {
-                this.themeColor = configuration.theme.oneDynmicColor;
+            if (configuration.theme.oneDynamicColor) {
+                this.themeColor = configuration.theme.oneDynamicColor;
                 this.themeScheme = configuration.theme.oneColorScheme;
             }
             else {
@@ -334,8 +334,8 @@ export class YpThemeManager {
     }
     updateLiveFromConfiguration(theme) {
         if (theme) {
-            if (theme.oneDynmicColor) {
-                this.themeColor = theme.oneDynmicColor;
+            if (theme.oneDynamicColor) {
+                this.themeColor = theme.oneDynamicColor;
                 this.themeScheme = theme.oneColorScheme;
             }
             else {

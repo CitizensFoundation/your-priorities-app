@@ -379,7 +379,9 @@ let YpAdminApp = class YpAdminApp extends YpBaseElement {
         this.requestUpdate();
     }
     updateFromCollection() {
-        this.collection = { ...this.collection };
+        if (this.collection) {
+            this.collection = { ...this.collection };
+        }
     }
     renderGroupConfigPage() {
         return html `<yp-admin-config-group

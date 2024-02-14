@@ -29,7 +29,7 @@ interface YpLanguageMenuItem {
 }
 
 interface YpThemeConfiguration {
-  oneDynmicColor?: string;
+  oneDynamicColor?: string;
   oneColorScheme?: MaterialColorScheme;
   variant?: MaterialDynamicVariants;
   primaryColor?: string;

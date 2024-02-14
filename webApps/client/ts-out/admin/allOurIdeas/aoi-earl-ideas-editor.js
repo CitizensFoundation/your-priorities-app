@@ -44,6 +44,20 @@ let AoiEarlIdeasEditor = class AoiEarlIdeasEditor extends YpStreamingLlmBase {
         super.connectedCallback();
         this.addEventListener("yp-ws-closed", this.socketClosed);
         this.addEventListener("yp-ws-error", this.socketError);
+        this.addGlobalListener("yp-theme-configuration-updated", this.themeUpdated.bind(this));
+    }
+    disconnectedCallback() {
+        this.removeEventListener("yp-ws-closed", this.socketClosed);
+        this.removeEventListener("yp-ws-error", this.socketError);
+        this.removeGlobalListener("yp-theme-configuration-updated", this.themeUpdated.bind(this));
+        super.disconnectedCallback();
+    }
+    themeUpdated(event) {
+        debugger;
+        this.imageGenerator = new AoiGenerateAiLogos(event.detail.oneDynamicColor ||
+            event.detail.primaryColor ||
+            this.themeColor);
+        this.requestUpdate();
     }
     socketClosed() {
         this.isGeneratingWithAi = false;
@@ -614,7 +628,8 @@ let AoiEarlIdeasEditor = class AoiEarlIdeasEditor extends YpStreamingLlmBase {
             type="textarea"
             @change="${this.aiStyleChanged}"
             rows="5"
-            .value="${this.group.configuration.theme?.iconPrompt || this.imageGenerator.promptDraft}"
+            .value="${this.group.configuration.theme?.iconPrompt ||
+            this.imageGenerator.promptDraft}"
             ?hidden="${this.allChoicesHaveIcons || !this.hasLlm}"
             ?disabled="${this.isGeneratingWithAi || this.allChoicesHaveIcons}"
           ></md-outlined-text-field>

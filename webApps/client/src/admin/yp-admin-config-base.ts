@@ -27,6 +27,7 @@ import { ifDefined } from "lit/directives/if-defined.js";
 import { YpCollectionHelpers } from "../common/YpCollectionHelpers.js";
 import { YpGenerateAiImage } from "../common/yp-generate-ai-image.js";
 import { YpImage } from "../common/yp-image.js";
+import { YpAdminConfigGroup } from "./yp-admin-config-group.js";
 
 export const defaultLtpPromptsConfiguration = () => {
   return Object.fromEntries(Array.from({ length: 10 }, (_, i) => [i + 1, ""]));
@@ -262,9 +263,16 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
   }
 
   get disableSaveButtonForCollection() {
-    if (this.collectionType == "group") {
+    if (
+      this.collectionType == "group" &&
+      this.collection &&
+      this.collection.configuration
+    ) {
       // Check if All Our Ideas Group Tyep
-      if ((this.collection as YpGroupData).configuration.groupType === 1) {
+      if (
+        (this.collection as YpGroupData).configuration.groupType ===
+       1
+      ) {
         const hasQuestionId = (this.collection as YpGroupData).configuration
           ?.allOurIdeas?.earl?.question_id;
         return hasQuestionId === undefined;

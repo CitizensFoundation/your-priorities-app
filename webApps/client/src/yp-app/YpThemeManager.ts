@@ -411,8 +411,8 @@ export class YpThemeManager {
     if (!configuration.theme) {
       this.setThemeFromOldConfiguration(number, configuration);
     } else {
-      if (configuration.theme.oneDynmicColor) {
-        this.themeColor = configuration.theme.oneDynmicColor;
+      if (configuration.theme.oneDynamicColor) {
+        this.themeColor = configuration.theme.oneDynamicColor;
         this.themeScheme = configuration.theme.oneColorScheme!;
       } else {
         this.themeColor = undefined;
@@ -429,8 +429,8 @@ export class YpThemeManager {
 
   updateLiveFromConfiguration(theme: YpThemeConfiguration) {
     if (theme) {
-      if (theme.oneDynmicColor) {
-        this.themeColor = theme.oneDynmicColor;
+      if (theme.oneDynamicColor) {
+        this.themeColor = theme.oneDynamicColor;
         this.themeScheme = theme.oneColorScheme!;
       } else {
         this.themeColor = undefined;

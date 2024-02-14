@@ -161,9 +161,12 @@ export class YpAdminConfigBase extends YpAdminPage {
         // To overide in child class
     }
     get disableSaveButtonForCollection() {
-        if (this.collectionType == "group") {
+        if (this.collectionType == "group" &&
+            this.collection &&
+            this.collection.configuration) {
             // Check if All Our Ideas Group Tyep
-            if (this.collection.configuration.groupType === 1) {
+            if (this.collection.configuration.groupType ===
+                1) {
                 const hasQuestionId = this.collection.configuration
                     ?.allOurIdeas?.earl?.question_id;
                 return hasQuestionId === undefined;
