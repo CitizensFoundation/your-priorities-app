@@ -1351,11 +1351,12 @@
   "explainBothAnswers": "Förklaring av svar",
   "allOurIdeas": "All Our Ideas",
   "ideaGenerationGroupType": "Idégenerering",
-  "allOurIdeasGroupType": "All Our Ideas Pairwise Ranking",
+  "allOurIdeasGroupType": "All Our Ideas Parvis Rankning",
   "yourIdeaHasBeenAdded": "Din idé har lagts till, genererar ikonbild.",
   "aiIconInfo": "En ikon för ditt svar genereras, du kan stänga fönstret eller vänta på att ikonen ska genereras. Du kommer också att ha möjlighet att generera om ikonen.",
   "firstAnswer": "Första svar",
   "secondAnswer": "Andra svar",
   "hereIsTheQuestion": "Här är frågan",
-  "pleaseAnswerInThisLanguage": "Svara på detta språk"
+  "pleaseAnswerInThisLanguage": "Svara på detta språk",
+  "backgroundFinish": "Bakgrund"
 }

@@ -28,6 +28,7 @@ import { YpConfirmationDialog } from "../yp-dialog-container/yp-confirmation-dia
 import { ifDefined } from "lit/directives/if-defined.js";
 import { TextField } from "@material/web/textfield/internal/text-field.js";
 import { Radio } from "@material/web/radio/internal/radio.js";
+import { YpMediaHelpers } from "../common/YpMediaHelpers.js";
 
 @customElement("yp-admin-config-community")
 export class YpAdminConfigCommunity extends YpAdminConfigBase {
@@ -709,6 +710,9 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
           templateData: html`
             <yp-theme-selector
               @config-updated="${this._configChanged}"
+              ?hasLogoImage="${this.imagePreviewUrl ||
+                YpMediaHelpers.getImageFormatUrl(this.currentLogoImages)}"
+              @get-color-from-logo="${this.getColorFromLogo}"
               @yp-theme-configuration-changed="${this._themeChanged}"
               .themeConfiguration="${this.collection!.configuration.theme!}"
             ></yp-theme-selector>

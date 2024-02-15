@@ -1350,5 +1350,6 @@
   "firstAnswer": "คำตอบแรก",
   "secondAnswer": "คำตอบที่สอง",
   "hereIsTheQuestion": "นี่คือคำถาม",
-  "pleaseAnswerInThisLanguage": "โปรดตอบเป็นภาษานี้"
+  "pleaseAnswerInThisLanguage": "โปรดตอบเป็นภาษานี้",
+  "backgroundFinish": "พื้นหลัง"
 }

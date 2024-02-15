@@ -181,6 +181,11 @@ export class YpGenerateAiImage extends YpBaseElement {
     window.appGlobals.activity(`Generate AI Image - cancel`);
   }
 
+  moveToBackground() {
+    this.dialog?.close();
+    window.appGlobals.activity(`Generate AI Image - move to background`);
+  }
+
   textAreaKeyDown(e: KeyboardEvent) {
     if (e.keyCode === 13 && !e.shiftKey) {
       e.preventDefault();
@@ -321,6 +326,9 @@ export class YpGenerateAiImage extends YpBaseElement {
       ></md-circular-progress>
       <md-text-button class="cancelButton" @click="${this.cancel}">
         ${this.t("Cancel")}
+      </md-text-button>
+      <md-text-button ?hidden="${!this.submitting}" class="cancelButton" @click="${this.moveToBackground}">
+        ${this.t("backgroundFinish")}
       </md-text-button>
       <md-outlined-button
         class="submitButton"

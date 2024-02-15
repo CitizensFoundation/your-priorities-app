@@ -1350,5 +1350,6 @@
   "firstAnswer": "Ateb Cyntaf",
   "secondAnswer": "Ail Ateb",
   "hereIsTheQuestion": "Dyma'r cwestiwn",
-  "pleaseAnswerInThisLanguage": "Atebwch yn yr iaith hon"
+  "pleaseAnswerInThisLanguage": "Atebwch yn yr iaith hon",
+  "backgroundFinish": "Gorffeniad Cefndir"
 }

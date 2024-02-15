@@ -1034,7 +1034,7 @@
   "generateAiImage": "Generovat obrázek",
   "generateWithAI": "Generovat",
   "lookAndFeel": "Vzhled",
-  "samlAuth": "SAML Auth",
+  "samlAuth": "SAML Ověření",
   "basic": "Základní",
   "webApp": "Webová aplikace",
   "authApis": "Auth API",
@@ -1347,7 +1347,7 @@
   "yourIdea": "Váš nápad",
   "chatInput": "Zeptejte se mě na otázku",
   "ideaGenerationGroupType": "Generování nápadů",
-  "allOurIdeasGroupType": "All Our Ideas Pairwise Ranking",
+  "allOurIdeasGroupType": "All Our Ideas Dvojice Hodnocení",
   "yourIdeaHasBeenAdded": "Váš nápad byl přidán, generuje se ikona.",
   "aiIconInfo": "Ikona pro vaši odpověď se generuje, můžete zavřít okno nebo počkat, až bude ikona vygenerována. Budete mít také možnost ikonu znovu vygenerovat.",
   "getColorFromLogo": "Získat barvu z loga",
@@ -1356,5 +1356,6 @@
   "firstAnswer": "První odpověď",
   "secondAnswer": "Druhá odpověď",
   "hereIsTheQuestion": "Zde je otázka",
-  "pleaseAnswerInThisLanguage": "Odpovězte prosím v tomto jazyce"
+  "pleaseAnswerInThisLanguage": "Odpovězte prosím v tomto jazyce",
+  "backgroundFinish": "Pozadí"
 }

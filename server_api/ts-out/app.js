@@ -336,9 +336,9 @@ export class YourPrioritiesApi {
         });
     }
     setupStaticFileServing() {
-        const baseDir = path.join(__dirname, "../webApps");
+        const baseDir = path.join(__dirname, "../../webApps");
         // Promotion app
-        const promotionAppPath = path.join(baseDir, "promotion_app/dist");
+        const promotionAppPath = path.join(baseDir, "old/promotion_app/dist");
         this.app.use("/promotion", express.static(promotionAppPath));
         this.app.use("/promotion/domain/*", express.static(promotionAppPath));
         this.app.use("/promotion/community/*", express.static(promotionAppPath));
@@ -357,13 +357,19 @@ export class YourPrioritiesApi {
         this.app.use("/Widgets", express.static(path.join(landUseGamePath, "Widgets")));
         this.app.use("/Workers", express.static(path.join(landUseGamePath, "Workers")));
         // Analytics app
-        const analyticsAppPath = path.join(baseDir, "analytics_app/dist");
+        const analyticsAppPath = path.join(baseDir, "old/analytics_app/dist");
         this.app.use("/analytics/", express.static(analyticsAppPath));
         this.app.use("/analytics/domain/*", express.static(analyticsAppPath));
         this.app.use("/analytics/community/*", express.static(analyticsAppPath));
         this.app.use("/analytics/group/*", express.static(analyticsAppPath));
         // Admin app
-        const adminAppPath = path.join(baseDir, "admin_app/dist");
+        let adminAppPath;
+        if (process.env.RUN_OLD_VERSION) {
+            adminAppPath = path.join(baseDir, "old/admin_app/dist");
+        }
+        else {
+            adminAppPath = path.join(baseDir, "client/dist");
+        }
         this.app.use("/admin/", express.static(adminAppPath));
         this.app.use("/admin/domain/*", express.static(adminAppPath));
         this.app.use("/admin/community/*", express.static(adminAppPath));

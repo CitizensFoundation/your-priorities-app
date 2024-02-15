@@ -1357,5 +1357,6 @@
   "firstAnswer": "Első válasz",
   "secondAnswer": "Második válasz",
   "hereIsTheQuestion": "Itt a kérdés",
-  "pleaseAnswerInThisLanguage": "Kérjük, ezen a nyelven válaszoljon"
+  "pleaseAnswerInThisLanguage": "Kérjük, ezen a nyelven válaszoljon",
+  "backgroundFinish": "Háttérbefejezés"
 }

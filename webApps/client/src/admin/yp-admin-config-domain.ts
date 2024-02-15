@@ -23,6 +23,7 @@ import "../yp-theme/yp-theme-selector.js";
 import "../common/languages/yp-language-selector.js";
 
 import "./yp-admin-communities.js";
+import { YpMediaHelpers } from "../common/YpMediaHelpers.js";
 
 @customElement("yp-admin-config-domain")
 export class YpAdminConfigDomain extends YpAdminConfigBase {
@@ -91,9 +92,11 @@ export class YpAdminConfigDomain extends YpAdminConfigBase {
   override updated(
     changedProperties: Map<string | number | symbol, unknown>
   ): void {
-    super.updated(changedProperties);
-
     if (changedProperties.has("collection") && this.collection) {
+      this.currentLogoImages = (
+        this.collection as YpDomainData
+      ).DomainLogoImages;
+
       this._setupTranslations();
       //this._updateEmojiBindings();
 
@@ -117,10 +120,6 @@ export class YpAdminConfigDomain extends YpAdminConfigBase {
           this.collection as YpDomainData
         ).DomainLogoVideos![0].id;
       }
-
-      this.currentLogoImages = (
-        this.collection as YpDomainData
-      ).DomainLogoImages;
     }
 
     if (changedProperties.has("collectionId") && this.collectionId) {
@@ -130,6 +129,7 @@ export class YpAdminConfigDomain extends YpAdminConfigBase {
         this.action = `/domains/${this.collectionId}`;
       }
     }
+    super.updated(changedProperties);
   }
 
   _setupTranslations() {
@@ -196,6 +196,9 @@ export class YpAdminConfigDomain extends YpAdminConfigBase {
           templateData: html`
             <yp-theme-selector
               @config-updated="${this._configChanged}"
+              ?hasLogoImage="${this.imagePreviewUrl ||
+                YpMediaHelpers.getImageFormatUrl(this.currentLogoImages)}"
+              @get-color-from-logo="${this.getColorFromLogo}"
               @yp-theme-configuration-changed="${this._themeChanged}"
               .themeConfiguration="${this.collection!.configuration.theme!}"
             ></yp-theme-selector>

@@ -1357,5 +1357,6 @@
   "firstAnswer": "Første svar",
   "secondAnswer": "Andet svar",
   "hereIsTheQuestion": "Her er spørgsmålet",
-  "pleaseAnswerInThisLanguage": "Svar venligst på dette sprog"
+  "pleaseAnswerInThisLanguage": "Svar venligst på dette sprog",
+  "backgroundFinish": "Baggrund"
 }

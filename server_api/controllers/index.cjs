@@ -278,11 +278,11 @@ let sendIndex = async (req, res) => {
   let indexFilePath;
   log.info('Index Viewed', { userId: req.user ? req.user.id : null });
 
-  if (!process.env.RUN_NEXT_VERSION) {
+  if (process.env.RUN_OLD_VERSION) {
     if (process.env.NODE_ENV === 'production' || process.env.FORCE_PRODUCTION === "true") {
-      indexFilePath = path.resolve(__dirname, '../../../../webApps/client/dist/index.html');
+      indexFilePath = path.resolve(__dirname, '../../../../webApps/old/client/dist/index.html');
     } else {
-      indexFilePath = path.resolve(__dirname, '../../../../webApps/client/dist/index.html');
+      indexFilePath = path.resolve(__dirname, '../../../../webApps/old/client/dist/index.html');
     }
   } else {
   }

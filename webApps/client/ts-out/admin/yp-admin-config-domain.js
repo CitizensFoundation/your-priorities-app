@@ -16,6 +16,7 @@ import "../yp-file-upload/yp-file-upload.js";
 import "../yp-theme/yp-theme-selector.js";
 import "../common/languages/yp-language-selector.js";
 import "./yp-admin-communities.js";
+import { YpMediaHelpers } from "../common/YpMediaHelpers.js";
 let YpAdminConfigDomain = class YpAdminConfigDomain extends YpAdminConfigBase {
     constructor() {
         super();
@@ -70,8 +71,8 @@ let YpAdminConfigDomain = class YpAdminConfigDomain extends YpAdminConfigBase {
         this.appHomeScreenIconImageId = undefined;
     }
     updated(changedProperties) {
-        super.updated(changedProperties);
         if (changedProperties.has("collection") && this.collection) {
+            this.currentLogoImages = this.collection.DomainLogoImages;
             this._setupTranslations();
             //this._updateEmojiBindings();
             if (!this.collection.configuration.ltp) {
@@ -86,7 +87,6 @@ let YpAdminConfigDomain = class YpAdminConfigDomain extends YpAdminConfigBase {
                 this.collection.DomainLogoVideos.length > 0) {
                 this.uploadedVideoId = this.collection.DomainLogoVideos[0].id;
             }
-            this.currentLogoImages = this.collection.DomainLogoImages;
         }
         if (changedProperties.has("collectionId") && this.collectionId) {
             if (this.collectionId == "new") {
@@ -96,6 +96,7 @@ let YpAdminConfigDomain = class YpAdminConfigDomain extends YpAdminConfigBase {
                 this.action = `/domains/${this.collectionId}`;
             }
         }
+        super.updated(changedProperties);
     }
     _setupTranslations() {
         if (this.collectionId == "new") {
@@ -156,6 +157,9 @@ let YpAdminConfigDomain = class YpAdminConfigDomain extends YpAdminConfigBase {
                     templateData: html `
             <yp-theme-selector
               @config-updated="${this._configChanged}"
+              ?hasLogoImage="${this.imagePreviewUrl ||
+                        YpMediaHelpers.getImageFormatUrl(this.currentLogoImages)}"
+              @get-color-from-logo="${this.getColorFromLogo}"
               @yp-theme-configuration-changed="${this._themeChanged}"
               .themeConfiguration="${this.collection.configuration.theme}"
             ></yp-theme-selector>

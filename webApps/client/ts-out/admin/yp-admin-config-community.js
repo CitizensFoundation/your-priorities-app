@@ -19,6 +19,7 @@ import "../yp-file-upload/yp-file-upload.js";
 //import './@yrpri/yp-theme/yp-theme-selector.js';
 import "../common/languages/yp-language-selector.js";
 import { ifDefined } from "lit/directives/if-defined.js";
+import { YpMediaHelpers } from "../common/YpMediaHelpers.js";
 let YpAdminConfigCommunity = class YpAdminConfigCommunity extends YpAdminConfigBase {
     constructor() {
         super();
@@ -593,6 +594,9 @@ let YpAdminConfigCommunity = class YpAdminConfigCommunity extends YpAdminConfigB
                     templateData: html `
             <yp-theme-selector
               @config-updated="${this._configChanged}"
+              ?hasLogoImage="${this.imagePreviewUrl ||
+                        YpMediaHelpers.getImageFormatUrl(this.currentLogoImages)}"
+              @get-color-from-logo="${this.getColorFromLogo}"
               @yp-theme-configuration-changed="${this._themeChanged}"
               .themeConfiguration="${this.collection.configuration.theme}"
             ></yp-theme-selector>

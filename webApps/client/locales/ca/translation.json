@@ -1276,7 +1276,7 @@
   "Error fetching analysis": "Error en obtenir l'anàlisi",
   "Generating analysis with GPT-4": "Generant anàlisi amb GPT-4",
   "Vote Analysis": "Anàlisi de Vots",
-  "Admin": "Admin",
+  "Admin": "Administrador",
   "Start Voting": "Comença a Votar",
   "Open Results": "Obre Resultats",
   "How likely to win": "Probabilitat de guanyar",
@@ -1357,5 +1357,6 @@
   "firstAnswer": "Primera resposta",
   "secondAnswer": "Segona resposta",
   "hereIsTheQuestion": "Aquí és la pregunta",
-  "pleaseAnswerInThisLanguage": "Si us plau, respon en aquest idioma"
+  "pleaseAnswerInThisLanguage": "Si us plau, respon en aquest idioma",
+  "backgroundFinish": "Acabat de Fons"
 }

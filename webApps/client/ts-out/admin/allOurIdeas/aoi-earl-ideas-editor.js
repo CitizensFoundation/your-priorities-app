@@ -53,7 +53,6 @@ let AoiEarlIdeasEditor = class AoiEarlIdeasEditor extends YpStreamingLlmBase {
         super.disconnectedCallback();
     }
     themeUpdated(event) {
-        debugger;
         this.imageGenerator = new AoiGenerateAiLogos(event.detail.oneDynamicColor ||
             event.detail.primaryColor ||
             this.themeColor);

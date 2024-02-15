@@ -26,6 +26,7 @@ export declare class YpGenerateAiImage extends YpBaseElement {
     scrollUp(): void;
     open(name?: string | undefined, description?: string | undefined): void;
     cancel(): void;
+    moveToBackground(): void;
     textAreaKeyDown(e: KeyboardEvent): false | undefined;
     static get styles(): any[];
     renderContent(): import("lit-html").TemplateResult<1>;

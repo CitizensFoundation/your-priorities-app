@@ -231,7 +231,7 @@
   "clearSearchInput": "Počisti iskalno polje",
   "goBack": "Nazaj",
   "openMainMenu": "Odpri glavni meni",
-  "publishStatus": "Status",
+  "publishStatus": "Stanje",
   "groupName": "Skupina",
   "areYouSureAnonymizeSelectedContent": "Ste prepričani da želite anonimizirati izbrane vsebine?",
   "areYouSureAnonymizeContent": "Ste prepričani da želite anonimizirati to vsebino?",
@@ -1356,5 +1356,6 @@
   "firstAnswer": "Prvi odgovor",
   "secondAnswer": "Drugi odgovor",
   "hereIsTheQuestion": "Tu je vprašanje",
-  "pleaseAnswerInThisLanguage": "Prosimo, odgovorite v tem jeziku"
+  "pleaseAnswerInThisLanguage": "Prosimo, odgovorite v tem jeziku",
+  "backgroundFinish": "Ozadje"
 }

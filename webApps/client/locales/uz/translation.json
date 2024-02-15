@@ -1359,5 +1359,6 @@
   "firstAnswer": "Birinchi javob",
   "secondAnswer": "Ikkinchi javob",
   "hereIsTheQuestion": "Mana savol",
-  "pleaseAnswerInThisLanguage": "Iltimos, bu tilda javob bering"
+  "pleaseAnswerInThisLanguage": "Iltimos, bu tilda javob bering",
+  "backgroundFinish": "Orqa fon"
 }

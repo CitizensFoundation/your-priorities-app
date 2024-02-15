@@ -1356,5 +1356,6 @@
   "firstAnswer": "Πρώτη απάντηση",
   "secondAnswer": "Δεύτερη απάντηση",
   "hereIsTheQuestion": "Εδώ είναι η ερώτηση",
-  "pleaseAnswerInThisLanguage": "Απαντήστε σε αυτήν τη γλώσσα"
+  "pleaseAnswerInThisLanguage": "Απαντήστε σε αυτήν τη γλώσσα",
+  "backgroundFinish": "Φόντο"
 }

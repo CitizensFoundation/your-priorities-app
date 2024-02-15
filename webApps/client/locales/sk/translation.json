@@ -1356,5 +1356,6 @@
   "firstAnswer": "Prvá odpoveď",
   "secondAnswer": "Druhá odpoveď",
   "hereIsTheQuestion": "Tu je otázka",
-  "pleaseAnswerInThisLanguage": "Prosím odpovedajte v tomto jazyku"
+  "pleaseAnswerInThisLanguage": "Prosím odpovedajte v tomto jazyku",
+  "backgroundFinish": "Pozadie"
 }

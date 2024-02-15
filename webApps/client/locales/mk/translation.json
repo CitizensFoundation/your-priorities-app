@@ -1356,5 +1356,6 @@
   "firstAnswer": "Прва одговор",
   "secondAnswer": "Втор одговор",
   "hereIsTheQuestion": "Еве прашање",
-  "pleaseAnswerInThisLanguage": "Ве молиме одговорете на овој јазик"
+  "pleaseAnswerInThisLanguage": "Ве молиме одговорете на овој јазик",
+  "backgroundFinish": "Позадина"
 }

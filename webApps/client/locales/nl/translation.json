@@ -1357,5 +1357,6 @@
   "firstAnswer": "Eerste antwoord",
   "secondAnswer": "Tweede antwoord",
   "hereIsTheQuestion": "Hier is de vraag",
-  "pleaseAnswerInThisLanguage": "Antwoord alstublieft in deze taal"
+  "pleaseAnswerInThisLanguage": "Antwoord alstublieft in deze taal",
+  "backgroundFinish": "Achtergrond"
 }

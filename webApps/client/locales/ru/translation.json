@@ -1357,5 +1357,6 @@
   "firstAnswer": "Первый ответ",
   "secondAnswer": "Второй ответ",
   "hereIsTheQuestion": "Вот вопрос",
-  "pleaseAnswerInThisLanguage": "Ответьте на этом языке"
+  "pleaseAnswerInThisLanguage": "Ответьте на этом языке",
+  "backgroundFinish": "Фон"
 }

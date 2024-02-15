@@ -1227,7 +1227,7 @@
   "Tonal Spot": "Tonepunkt",
   "Rainbow": "Regnbue",
   "Fruit Salad": "Fruktsalat",
-  "filter": "Filter",
+  "filter": "Filtrer",
   "attachmentUpload": "Last opp vedlegg",
   "Thinking": "Tenker...",
   "Send": "Send",
@@ -1357,5 +1357,6 @@
   "firstAnswer": "Første svar",
   "secondAnswer": "Andre svar",
   "hereIsTheQuestion": "Her er spørsmålet",
-  "pleaseAnswerInThisLanguage": "Vennligst svar på dette språket"
+  "pleaseAnswerInThisLanguage": "Vennligst svar på dette språket",
+  "backgroundFinish": "Bakgrunnsfinish"
 }

@@ -414,14 +414,14 @@ export class YpThemeManager {
       if (configuration.theme.oneDynamicColor) {
         this.themeColor = configuration.theme.oneDynamicColor;
         this.themeScheme = configuration.theme.oneColorScheme!;
-      } else {
+      } else if (configuration.theme.primaryColor) {
         this.themeColor = undefined;
         this.themePrimaryColor = configuration.theme.primaryColor;
         this.themeSecondaryColor = configuration.theme.secondaryColor;
         this.themeTertiaryColor = configuration.theme.tertiaryColor;
         this.themeNeutralColor = configuration.theme.neutralColor;
         this.themeNeutralVariantColor = configuration.theme.neutralVariantColor;
-        this.themeVariant = configuration.theme.variant;
+        //this.themeVariant = configuration.theme.variant;
       }
       this.themeChanged();
     }

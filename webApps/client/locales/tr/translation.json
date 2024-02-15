@@ -1357,5 +1357,6 @@
   "firstAnswer": "İlk cevap",
   "secondAnswer": "İkinci cevap",
   "hereIsTheQuestion": "İşte soru",
-  "pleaseAnswerInThisLanguage": "Lütfen bu dilde cevaplayın"
+  "pleaseAnswerInThisLanguage": "Lütfen bu dilde cevaplayın",
+  "backgroundFinish": "Arka Plan"
 }

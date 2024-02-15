@@ -1336,7 +1336,7 @@
   "domainFraudManagement": "Upravljanje Prijevarama Domena",
   "Access": "Pristup",
   "openOrganizationMenu": "Otvori izbornik organizacije",
-  "Listasafn Reykjavíkur": "Listasafn Reykjavíkur",
+  "Listasafn Reykjavíkur": "Reykjavikova galerija",
   "Override theme": "Nadvladaj temu",
   "Analytics & Marketing": "Analitika i marketing",
   "Promote your survey": "Promoviraj svoju anketu",
@@ -1357,5 +1357,6 @@
   "firstAnswer": "Prvi odgovor",
   "secondAnswer": "Drugi odgovor",
   "hereIsTheQuestion": "Evo pitanja",
-  "pleaseAnswerInThisLanguage": "Molimo odgovorite na ovom jeziku"
+  "pleaseAnswerInThisLanguage": "Molimo odgovorite na ovom jeziku",
+  "backgroundFinish": "Pozadina"
 }

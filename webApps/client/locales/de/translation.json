@@ -1357,5 +1357,6 @@
   "firstAnswer": "Erste Antwort",
   "secondAnswer": "Zweite Antwort",
   "hereIsTheQuestion": "Hier ist die Frage",
-  "pleaseAnswerInThisLanguage": "Bitte in dieser Sprache antworten"
+  "pleaseAnswerInThisLanguage": "Bitte in dieser Sprache antworten",
+  "backgroundFinish": "Hintergrund"
 }

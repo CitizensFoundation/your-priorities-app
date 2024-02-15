@@ -1356,5 +1356,6 @@
   "firstAnswer": "Първи отговор",
   "secondAnswer": "Втори отговор",
   "hereIsTheQuestion": "Ето въпроса",
-  "pleaseAnswerInThisLanguage": "Моля, отговорете на този език"
+  "pleaseAnswerInThisLanguage": "Моля, отговорете на този език",
+  "backgroundFinish": "Фонов завършек"
 }

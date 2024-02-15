@@ -1356,5 +1356,6 @@
   "firstAnswer": "Esimene vastus",
   "secondAnswer": "Teine vastus",
   "hereIsTheQuestion": "Siin on küsimus",
-  "pleaseAnswerInThisLanguage": "Palun vastake selles keeles"
+  "pleaseAnswerInThisLanguage": "Palun vastake selles keeles",
+  "backgroundFinish": "Taustaviimistlus"
 }

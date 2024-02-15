@@ -1357,5 +1357,6 @@
   "firstAnswer": "Перша відповідь",
   "secondAnswer": "Друга відповідь",
   "hereIsTheQuestion": "Ось питання",
-  "pleaseAnswerInThisLanguage": "Будь ласка, відповідайте цією мовою"
+  "pleaseAnswerInThisLanguage": "Будь ласка, відповідайте цією мовою",
+  "backgroundFinish": "Фініш фону"
 }

@@ -1319,7 +1319,7 @@
   "Page Visits": "بازدیدهای صفحه",
   "Page": "صفحه",
   "Top Sources": "منابع اصلی",
-  "UTM": "UTM",
+  "UTM": "یو تی ام",
   "All": "همه",
   "duplicate": "تکراری",
   "New category": "دسته‌بندی جدید",
@@ -1357,5 +1357,6 @@
   "firstAnswer": "اولین پاسخ",
   "secondAnswer": "دومین پاسخ",
   "hereIsTheQuestion": "اینجا سوال است",
-  "pleaseAnswerInThisLanguage": "لطفا به این زبان پاسخ دهید"
+  "pleaseAnswerInThisLanguage": "لطفا به این زبان پاسخ دهید",
+  "backgroundFinish": "پایان زمینه"
 }

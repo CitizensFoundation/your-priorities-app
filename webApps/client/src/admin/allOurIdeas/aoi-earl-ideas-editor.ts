@@ -103,7 +103,6 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmBase {
   }
 
   themeUpdated(event: CustomEvent) {
-    debugger;
     this.imageGenerator = new AoiGenerateAiLogos(
       event.detail.oneDynamicColor ||
         event.detail.primaryColor ||
