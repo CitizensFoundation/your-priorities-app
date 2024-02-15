@@ -88,7 +88,7 @@ let YpUserImage = class YpUserImage extends YpBaseElement {
     }
     render() {
         return html `
-      ${this.user && !this.noProfileImage
+      ${this.user
             ? html `
             ${this.profileImageUrl
                 ? html `
