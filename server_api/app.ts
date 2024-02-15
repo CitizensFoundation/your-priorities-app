@@ -429,6 +429,18 @@ export class YourPrioritiesApi {
     this.app.use("/admin/community/*", express.static(adminAppPath));
     this.app.use("/admin/group/*", express.static(adminAppPath));
 
+    let clientAppPath;
+    if (process.env.RUN_OLD_VERSION) {
+      clientAppPath = path.join(baseDir, "old/client/dist");
+    } else {
+      clientAppPath = path.join(baseDir, "client/dist");
+    }
+    this.app.use("/", express.static(clientAppPath));
+    this.app.use("/domain/*", express.static(clientAppPath));
+    this.app.use("/community/*", express.static(clientAppPath));
+    this.app.use("/group/*", express.static(clientAppPath));
+    this.app.use("/post/*", express.static(clientAppPath));
+    this.app.use("/favicon.ico", express.static(clientAppPath));
   }
 
   initializeMiddlewares() {
