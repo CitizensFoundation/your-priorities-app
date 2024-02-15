@@ -157,6 +157,7 @@ export class YpCollectionItemCard extends YpBaseElement {
             max-width: 100%;
             width: 100%;
             padding-top: 0 !important;
+            max-width: 430px;
           }
 
           yp-membership-button {
@@ -171,6 +172,7 @@ export class YpCollectionItemCard extends YpBaseElement {
             width: 100%;
             height: 100%;
             padding-bottom: 8px;
+            max-width: 430px;
           }
 
           yp-image {
@@ -178,6 +180,8 @@ export class YpCollectionItemCard extends YpBaseElement {
             height: calc(96vw * 9 / 16);
             border-radius: 16px 16px 0px 0px;
             object-fit: cover;
+            max-width: 430px;
+            max-height: 242px;
           }
 
           yp-image[featured] {

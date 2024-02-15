@@ -221,6 +221,10 @@ export class YpAdminConfigDomain extends YpAdminConfigBase {
           translationToken: "domain.onlyAdminsCanCreateCommunities",
         },
         {
+          text: "hideAllTabs",
+          type: "checkbox",
+        },
+        {
           text: "hideDomainNews",
           type: "checkbox",
         },

@@ -477,6 +477,9 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
   }
 
   _finishRedirect(community: YpCommunityData) {
+    if (this.collectionId == "new") {
+      window.appUser.recheckAdminRights();
+    }
     if (community.is_community_folder) {
       YpNavHelpers.redirectTo("/community_folder/" + community.id);
     } else {

@@ -40,6 +40,10 @@ export class YpDomain extends YpCollection {
       window.appGlobals.theme.setTheme(domain.theme_id, domain.configuration);
     }
 
+    if (domain.configuration && domain.configuration.hideAllTabs) {
+
+    }
+
     window.appGlobals.setAnonymousGroupStatus(undefined);
     window.appGlobals.setRegistrationQuestionGroup(undefined);
     window.appGlobals.disableFacebookLoginForGroup = false;

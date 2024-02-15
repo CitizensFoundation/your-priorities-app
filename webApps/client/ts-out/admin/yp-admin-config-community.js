@@ -373,6 +373,9 @@ let YpAdminConfigCommunity = class YpAdminConfigCommunity extends YpAdminConfigB
         }
     }
     _finishRedirect(community) {
+        if (this.collectionId == "new") {
+            window.appUser.recheckAdminRights();
+        }
         if (community.is_community_folder) {
             YpNavHelpers.redirectTo("/community_folder/" + community.id);
         }

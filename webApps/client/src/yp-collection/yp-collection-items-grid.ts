@@ -1,30 +1,22 @@
-import {
-  html,
-  css,
-  nothing,
-  TemplateResult
-} from 'lit';
+import { html, css, nothing, TemplateResult } from "lit";
 
-import {
-  property,
-  customElement
-} from 'lit/decorators.js';
+import { property, customElement } from "lit/decorators.js";
 
-import { YpBaseElement } from '../common/yp-base-element.js';
-import { ShadowStyles } from '../common/ShadowStyles.js';
-import { YpIronListHelpers } from '../common/YpIronListHelpers.js';
-import { YpCollectionHelpers } from '../common/YpCollectionHelpers.js';
-import { LitVirtualizer } from '@lit-labs/virtualizer';
-import { FlowLayout } from '@lit-labs/virtualizer/layouts/flow.js';
-import { GridLayout } from '@lit-labs/virtualizer/layouts/grid.js';
+import { YpBaseElement } from "../common/yp-base-element.js";
+import { ShadowStyles } from "../common/ShadowStyles.js";
+import { YpIronListHelpers } from "../common/YpIronListHelpers.js";
+import { YpCollectionHelpers } from "../common/YpCollectionHelpers.js";
+import { LitVirtualizer } from "@lit-labs/virtualizer";
+import { FlowLayout } from "@lit-labs/virtualizer/layouts/flow.js";
+import { GridLayout } from "@lit-labs/virtualizer/layouts/grid.js";
 
-import { YpCollectionItemCard } from './yp-collection-item-card.js';
-import { YpServerApi } from '../common/YpServerApi.js';
-import { ifDefined } from 'lit/directives/if-defined.js';
+import { YpCollectionItemCard } from "./yp-collection-item-card.js";
+import { YpServerApi } from "../common/YpServerApi.js";
+import { ifDefined } from "lit/directives/if-defined.js";
 
-import './yp-collection-item-card.js';
+import "./yp-collection-item-card.js";
 
-@customElement('yp-collection-items-grid')
+@customElement("yp-collection-items-grid")
 export class YpCollectionItemsGrid extends YpBaseElement {
   @property({ type: Object })
   collection: YpCollectionData | undefined;
@@ -52,7 +44,6 @@ export class YpCollectionItemsGrid extends YpBaseElement {
         .card {
           padding: 0;
           padding-top: 24px;
-          width: 100%;
         }
 
         .card[wide-padding] {
@@ -62,6 +53,12 @@ export class YpCollectionItemsGrid extends YpBaseElement {
         a {
           text-decoration: none;
           width: 100%;
+        }
+
+        @media (max-width: 600px) {
+          .card {
+            margin-bottom: 16px;
+          }
         }
       `,
     ];
@@ -78,44 +75,50 @@ export class YpCollectionItemsGrid extends YpBaseElement {
             .items="${this.sortedCollectionItems}"
             .scrollTarget="${window}"
             .keyFunction="${(item: YpCollectionData) => item.id}"
-            .renderItem="${this.renderItem.bind(this)}"></lit-virtualizer>
+            .renderItem="${this.renderItem.bind(this)}"
+          ></lit-virtualizer>
         `
       : nothing;
   }
 
   renderItem(item: YpCollectionData, index: number): TemplateResult {
-    return html` <yp-collection-item-card
-      class="card"
-      aria-label="${item.name}"
-      ariarole="listitem"
-      .item="${item}"
-      @keypress="${this._keypress.bind(this)}"
-      @click="${this._selectedItemChanged.bind(
-        this
-      )}"></yp-collection-item-card>`;
+    return html`<div style="width:100%">
+      <div class="layout vertical center-center">
+        <yp-collection-item-card
+          class="card"
+          aria-label="${item.name}"
+          ariarole="listitem"
+          .item="${item}"
+          @keypress="${this._keypress.bind(this)}"
+          @click="${this._selectedItemChanged.bind(this)}"
+        ></yp-collection-item-card>
+      </div>
+    </div> `;
   }
 
   get pluralItemType() {
-    if (this.collectionItemType=='community') {
-      return 'communities';
-    } else if (this.collectionItemType=='group') {
-      return 'groups';
-    } else if (this.collectionItemType=='post') {
-      return 'posts';
+    if (this.collectionItemType == "community") {
+      return "communities";
+    } else if (this.collectionItemType == "group") {
+      return "groups";
+    } else if (this.collectionItemType == "post") {
+      return "posts";
     } else {
-      return 'unknownItemType';
+      return "unknownItemType";
     }
   }
 
   _keypress(event: KeyboardEvent) {
-    if (event.keyCode==13) {
+    if (event.keyCode == 13) {
       this._selectedItemChanged(event as unknown as CustomEvent);
     }
   }
 
   async refresh() {}
 
-  override firstUpdated(changedProperties: Map<string | number | symbol, unknown>) {
+  override firstUpdated(
+    changedProperties: Map<string | number | symbol, unknown>
+  ) {
     super.firstUpdated(changedProperties);
     YpIronListHelpers.attachListeners(this as YpElementWithIronList);
   }
@@ -145,24 +148,23 @@ export class YpCollectionItemsGrid extends YpBaseElement {
 
     if (this.collectionItemType && item) {
       window.appGlobals.activity(
-        'open',
+        "open",
         this.collectionItemType,
         `/${this.collectionItemType}/${item.id}`,
         { id: item.id }
       );
 
-      if (this.collectionItemType === 'community') {
+      if (this.collectionItemType === "community") {
         const community = item as YpCommunityData;
-        if (community!=undefined) {
+        if (community != undefined) {
           window.appGlobals.cache.backToDomainCommunityItems[
             community.domain_id!
           ] = community;
         }
-      } else if (this.collectionItemType === 'group' && item) {
+      } else if (this.collectionItemType === "group" && item) {
         const group = item as YpGroupData;
-        window.appGlobals.cache.backToCommunityGroupItems[
-          group.community_id
-        ] = group;
+        window.appGlobals.cache.backToCommunityGroupItems[group.community_id] =
+          group;
         window.appGlobals.cache.groupItemsCache[group.id] = group;
       }
     }
@@ -172,13 +174,13 @@ export class YpCollectionItemsGrid extends YpBaseElement {
     if (item && this.sortedCollectionItems) {
       for (let i = 0; i < this.sortedCollectionItems.length; i++) {
         if (this.sortedCollectionItems[i] == item) {
-          (this.$$('#list') as LitVirtualizer).scrollToIndex(i);
+          (this.$$("#list") as LitVirtualizer).scrollToIndex(i);
           break;
         }
       }
-      this.fireGlobal('yp-refresh-activities-scroll-threshold');
+      this.fireGlobal("yp-refresh-activities-scroll-threshold");
     } else {
-      console.error('No item to scroll too');
+      console.error("No item to scroll too");
     }
   }
 }

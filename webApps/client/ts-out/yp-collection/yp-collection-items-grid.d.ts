@@ -1,6 +1,6 @@
-import { nothing, TemplateResult } from 'lit';
-import { YpBaseElement } from '../common/yp-base-element.js';
-import './yp-collection-item-card.js';
+import { nothing, TemplateResult } from "lit";
+import { YpBaseElement } from "../common/yp-base-element.js";
+import "./yp-collection-item-card.js";
 export declare class YpCollectionItemsGrid extends YpBaseElement {
     collection: YpCollectionData | undefined;
     collectionItems: Array<YpCollectionData> | undefined;
@@ -10,9 +10,9 @@ export declare class YpCollectionItemsGrid extends YpBaseElement {
     resetListSize: Function | undefined;
     skipIronListWidth: boolean;
     static get styles(): any[];
-    render(): TemplateResult<1> | typeof nothing;
+    render(): typeof nothing | TemplateResult<1>;
     renderItem(item: YpCollectionData, index: number): TemplateResult;
-    get pluralItemType(): "groups" | "posts" | "communities" | "unknownItemType";
+    get pluralItemType(): "groups" | "communities" | "posts" | "unknownItemType";
     _keypress(event: KeyboardEvent): void;
     refresh(): Promise<void>;
     firstUpdated(changedProperties: Map<string | number | symbol, unknown>): void;

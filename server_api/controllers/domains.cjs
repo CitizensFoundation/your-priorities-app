@@ -879,6 +879,7 @@ router.put('/:id', auth.can('edit domain'), function(req, res) {
       domain.set('configuration.useVideoCover', truthValueFromBody(req.body.useVideoCover));
       domain.set('configuration.hideDomainNews', truthValueFromBody(req.body.hideDomainNews));
       domain.set('configuration.hideDomainTabs', truthValueFromBody(req.body.hideDomainTabs));
+      domain.set('configuration.hideAllTabs', truthValueFromBody(req.body.hideAllTabs));
 
       domain.name = req.body.name;
       domain.description = req.body.description;

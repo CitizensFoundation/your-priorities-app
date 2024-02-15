@@ -20,7 +20,7 @@ export declare class YpPagesGrid extends YpBaseElement {
     static get styles(): any[];
     titleChanged(): void;
     contentChanged(): void;
-    render(): import("lit-html").TemplateResult<1> | typeof nothing;
+    render(): typeof nothing | import("lit-html").TemplateResult<1>;
     _toLocaleArray(obj: Record<string, string>): Array<YpHelpPageData>;
     _editPageLocale(event: Event): Promise<void>;
     _closePageLocale(): void;

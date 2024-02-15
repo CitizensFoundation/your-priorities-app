@@ -4,15 +4,15 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { html, css, nothing } from 'lit';
-import { property, customElement } from 'lit/decorators.js';
-import { YpBaseElement } from '../common/yp-base-element.js';
-import { ShadowStyles } from '../common/ShadowStyles.js';
-import { YpIronListHelpers } from '../common/YpIronListHelpers.js';
-import { YpCollectionHelpers } from '../common/YpCollectionHelpers.js';
-import { FlowLayout } from '@lit-labs/virtualizer/layouts/flow.js';
-import { GridLayout } from '@lit-labs/virtualizer/layouts/grid.js';
-import './yp-collection-item-card.js';
+import { html, css, nothing } from "lit";
+import { property, customElement } from "lit/decorators.js";
+import { YpBaseElement } from "../common/yp-base-element.js";
+import { ShadowStyles } from "../common/ShadowStyles.js";
+import { YpIronListHelpers } from "../common/YpIronListHelpers.js";
+import { YpCollectionHelpers } from "../common/YpCollectionHelpers.js";
+import { FlowLayout } from "@lit-labs/virtualizer/layouts/flow.js";
+import { GridLayout } from "@lit-labs/virtualizer/layouts/grid.js";
+import "./yp-collection-item-card.js";
 let YpCollectionItemsGrid = class YpCollectionItemsGrid extends YpBaseElement {
     constructor() {
         super(...arguments);
@@ -27,7 +27,6 @@ let YpCollectionItemsGrid = class YpCollectionItemsGrid extends YpBaseElement {
         .card {
           padding: 0;
           padding-top: 24px;
-          width: 100%;
         }
 
         .card[wide-padding] {
@@ -37,6 +36,12 @@ let YpCollectionItemsGrid = class YpCollectionItemsGrid extends YpBaseElement {
         a {
           text-decoration: none;
           width: 100%;
+        }
+
+        @media (max-width: 600px) {
+          .card {
+            margin-bottom: 16px;
+          }
         }
       `,
         ];
@@ -52,31 +57,37 @@ let YpCollectionItemsGrid = class YpCollectionItemsGrid extends YpBaseElement {
             .items="${this.sortedCollectionItems}"
             .scrollTarget="${window}"
             .keyFunction="${(item) => item.id}"
-            .renderItem="${this.renderItem.bind(this)}"></lit-virtualizer>
+            .renderItem="${this.renderItem.bind(this)}"
+          ></lit-virtualizer>
         `
             : nothing;
     }
     renderItem(item, index) {
-        return html ` <yp-collection-item-card
-      class="card"
-      aria-label="${item.name}"
-      ariarole="listitem"
-      .item="${item}"
-      @keypress="${this._keypress.bind(this)}"
-      @click="${this._selectedItemChanged.bind(this)}"></yp-collection-item-card>`;
+        return html `<div style="width:100%">
+      <div class="layout vertical center-center">
+        <yp-collection-item-card
+          class="card"
+          aria-label="${item.name}"
+          ariarole="listitem"
+          .item="${item}"
+          @keypress="${this._keypress.bind(this)}"
+          @click="${this._selectedItemChanged.bind(this)}"
+        ></yp-collection-item-card>
+      </div>
+    </div> `;
     }
     get pluralItemType() {
-        if (this.collectionItemType == 'community') {
-            return 'communities';
+        if (this.collectionItemType == "community") {
+            return "communities";
         }
-        else if (this.collectionItemType == 'group') {
-            return 'groups';
+        else if (this.collectionItemType == "group") {
+            return "groups";
         }
-        else if (this.collectionItemType == 'post') {
-            return 'posts';
+        else if (this.collectionItemType == "post") {
+            return "posts";
         }
         else {
-            return 'unknownItemType';
+            return "unknownItemType";
         }
     }
     _keypress(event) {
@@ -104,16 +115,17 @@ let YpCollectionItemsGrid = class YpCollectionItemsGrid extends YpBaseElement {
     _selectedItemChanged(event) {
         const item = event.target.item;
         if (this.collectionItemType && item) {
-            window.appGlobals.activity('open', this.collectionItemType, `/${this.collectionItemType}/${item.id}`, { id: item.id });
-            if (this.collectionItemType === 'community') {
+            window.appGlobals.activity("open", this.collectionItemType, `/${this.collectionItemType}/${item.id}`, { id: item.id });
+            if (this.collectionItemType === "community") {
                 const community = item;
                 if (community != undefined) {
                     window.appGlobals.cache.backToDomainCommunityItems[community.domain_id] = community;
                 }
             }
-            else if (this.collectionItemType === 'group' && item) {
+            else if (this.collectionItemType === "group" && item) {
                 const group = item;
-                window.appGlobals.cache.backToCommunityGroupItems[group.community_id] = group;
+                window.appGlobals.cache.backToCommunityGroupItems[group.community_id] =
+                    group;
                 window.appGlobals.cache.groupItemsCache[group.id] = group;
             }
         }
@@ -122,14 +134,14 @@ let YpCollectionItemsGrid = class YpCollectionItemsGrid extends YpBaseElement {
         if (item && this.sortedCollectionItems) {
             for (let i = 0; i < this.sortedCollectionItems.length; i++) {
                 if (this.sortedCollectionItems[i] == item) {
-                    this.$$('#list').scrollToIndex(i);
+                    this.$$("#list").scrollToIndex(i);
                     break;
                 }
             }
-            this.fireGlobal('yp-refresh-activities-scroll-threshold');
+            this.fireGlobal("yp-refresh-activities-scroll-threshold");
         }
         else {
-            console.error('No item to scroll too');
+            console.error("No item to scroll too");
         }
     }
 };
@@ -149,7 +161,7 @@ __decorate([
     property({ type: Boolean, reflect: true })
 ], YpCollectionItemsGrid.prototype, "grid", void 0);
 YpCollectionItemsGrid = __decorate([
-    customElement('yp-collection-items-grid')
+    customElement("yp-collection-items-grid")
 ], YpCollectionItemsGrid);
 export { YpCollectionItemsGrid };
 //# sourceMappingURL=yp-collection-items-grid.js.map
