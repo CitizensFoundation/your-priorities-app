@@ -532,7 +532,7 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
           templateData: html`
             <md-outlined-select
               .label="${this.t("status.select")}"
-              @changed="${this._statusSelected}"
+              @change="${this._statusSelected}"
             >
               ${this.collectionStatusOptions?.map(
                 (statusOption, index) => html`
@@ -550,6 +550,13 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
           value: (this.collection as YpCommunityData)
             .only_admins_can_create_groups,
           translationToken: "community.onlyAdminsCanCreateGroups",
+        },
+        {
+          text: "alwaysShowOnDomainPage",
+          type: "checkbox",
+          value: (this.collection as YpCommunityData)
+            .configuration.alwaysShowOnDomainPage,
+          translationToken: "alwaysShowOnDomainPage",
         },
       ] as Array<YpStructuredConfigData>,
     } as YpConfigTabData;

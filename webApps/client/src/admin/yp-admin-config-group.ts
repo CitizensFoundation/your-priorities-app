@@ -480,7 +480,7 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
           templateData: html`
             <md-outlined-select
               .label="${this.t("status.select")}"
-              @changed="${this._statusSelected}"
+              @change="${this._statusSelected}"
               .selectedIndex="${this.statusIndex}"
             >
               ${this.collectionStatusOptions?.map(

@@ -17,7 +17,7 @@ export declare class YpPost extends YpCollection {
     scrollToCollectionItemSubClass(): void;
     static get styles(): import("lit").CSSResult[];
     renderPostHeader(): TemplateResult<1>;
-    renderPostTabs(): TemplateResult<1> | typeof nothing;
+    renderPostTabs(): typeof nothing | TemplateResult<1>;
     renderCurrentPostTabPage(): TemplateResult | undefined;
     render(): TemplateResult<1>;
     get tabDebateCount(): string;

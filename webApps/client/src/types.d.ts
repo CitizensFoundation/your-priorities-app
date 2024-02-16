@@ -373,6 +373,7 @@ interface YpCommunityConfiguration extends YpCollectionConfiguration {
   enableFraudDetection?: boolean;
   ltp?: YpLtpConfiguration;
   onlyAdminsCanCreateGroups?: boolean;
+  alwaysShowOnDomainPage?: boolean;
 }
 
 interface YpPromoterRights {

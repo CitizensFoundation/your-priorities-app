@@ -117,9 +117,8 @@ export class YpAdminConfigBase extends YpAdminPage {
         this.configChanged = true;
     }
     _statusSelected(event) {
-        const index = event.detail.index;
+        const index = event.target.selectedIndex;
         this.status = this.collectionStatusOptions[index].name;
-        debugger;
         this._configChanged();
     }
     get statusIndex() {

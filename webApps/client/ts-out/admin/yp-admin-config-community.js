@@ -427,7 +427,7 @@ let YpAdminConfigCommunity = class YpAdminConfigCommunity extends YpAdminConfigB
                     templateData: html `
             <md-outlined-select
               .label="${this.t("status.select")}"
-              @changed="${this._statusSelected}"
+              @change="${this._statusSelected}"
             >
               ${this.collectionStatusOptions?.map((statusOption, index) => html `
                   <md-select-option ?selected="${this.statusIndex == index}"
@@ -443,6 +443,13 @@ let YpAdminConfigCommunity = class YpAdminConfigCommunity extends YpAdminConfigB
                     value: this.collection
                         .only_admins_can_create_groups,
                     translationToken: "community.onlyAdminsCanCreateGroups",
+                },
+                {
+                    text: "alwaysShowOnDomainPage",
+                    type: "checkbox",
+                    value: this.collection
+                        .configuration.alwaysShowOnDomainPage,
+                    translationToken: "alwaysShowOnDomainPage",
                 },
             ],
         };

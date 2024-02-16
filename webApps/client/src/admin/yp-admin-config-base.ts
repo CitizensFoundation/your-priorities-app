@@ -28,6 +28,7 @@ import { YpCollectionHelpers } from "../common/YpCollectionHelpers.js";
 import { YpGenerateAiImage } from "../common/yp-generate-ai-image.js";
 import { YpImage } from "../common/yp-image.js";
 import { YpAdminConfigGroup } from "./yp-admin-config-group.js";
+import { MdOutlinedSelect } from "@material/web/select/outlined-select.js";
 
 export const defaultLtpPromptsConfiguration = () => {
   return Object.fromEntries(Array.from({ length: 10 }, (_, i) => [i + 1, ""]));
@@ -217,9 +218,8 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
   }
 
   _statusSelected(event: CustomEvent) {
-    const index = event.detail.index as number;
+    const index = (event.target as MdOutlinedSelect).selectedIndex;
     this.status = this.collectionStatusOptions[index].name;
-    debugger;
     this._configChanged();
   }
 

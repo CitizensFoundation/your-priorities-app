@@ -108,8 +108,8 @@ export declare class YpApp extends YpBaseElement {
     renderPage(): import("lit-html/directive.js").DirectiveResult<typeof import("lit-html/directives/cache.js").CacheDirective>;
     renderTopBar(): import("lit-html").TemplateResult<1>;
     renderFooter(): import("lit-html").TemplateResult<1>;
-    renderAdminApp(): import("lit-html").TemplateResult<1> | typeof nothing;
-    renderPromotionApp(): import("lit-html").TemplateResult<1> | typeof nothing;
+    renderAdminApp(): typeof nothing | import("lit-html").TemplateResult<1>;
+    renderPromotionApp(): typeof nothing | import("lit-html").TemplateResult<1>;
     render(): import("lit-html").TemplateResult<1>;
     _openNotifyDialog(event: CustomEvent): void;
     _openToast(event: CustomEvent): void;

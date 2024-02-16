@@ -30,7 +30,8 @@ let YpDomain = class YpDomain extends YpCollection {
             }
             window.appGlobals.theme.setTheme(domain.theme_id, domain.configuration);
         }
-        if (domain.configuration && domain.configuration.hideAllTabs) {
+        if (domain && domain.configuration && domain.configuration.hideAllTabs) {
+            this.tabsHidden = true;
         }
         window.appGlobals.setAnonymousGroupStatus(undefined);
         window.appGlobals.setRegistrationQuestionGroup(undefined);
