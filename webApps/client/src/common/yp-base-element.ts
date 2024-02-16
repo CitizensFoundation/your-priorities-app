@@ -6,7 +6,7 @@ import "@material/web/iconbutton/outlined-icon-button.js";
 
 export class YpBaseElement extends LitElement {
   @property({ type: String })
-  language = "is";
+  language = "en";
 
   @property({ type: Boolean })
   wide = false;

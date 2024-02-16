@@ -11,7 +11,7 @@ import "@material/web/iconbutton/outlined-icon-button.js";
 export class YpBaseElement extends LitElement {
     constructor() {
         super(...arguments);
-        this.language = "is";
+        this.language = "en";
         this.wide = false;
         this.rtl = false;
         this.hasLlm = false;
