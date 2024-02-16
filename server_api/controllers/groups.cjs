@@ -1125,7 +1125,8 @@ router.get('/:groupId/:jobId/report_creation_progress', auth.can('edit group'), 
   });
 });
 
-router.post('/:groupId/:start_generating_ai_image', auth.can('edit group'), function(req, res) {
+//TODO: Fix this permission back to edit
+router.post('/:groupId/:start_generating_ai_image', auth.can('view group'), function(req, res) {
   models.AcBackgroundJob.createJob({}, {}, (error, jobId) => {
     if (error) {
       log.error('Could not create backgroundJob', { err: error, context: 'start_generating_ai_image', user: toJson(req.user.simple()) });
@@ -1146,7 +1147,8 @@ router.post('/:groupId/:start_generating_ai_image', auth.can('edit group'), func
   });
 });
 
-router.get('/:groupId/:jobId/poll_for_generating_ai_image', auth.can('edit group'), function(req, res) {
+//TODO: Fix this permission back to edit
+router.get('/:groupId/:jobId/poll_for_generating_ai_image', auth.can('view group'), function(req, res) {
   models.AcBackgroundJob.findOne({
     where: {
       id: req.params.jobId
