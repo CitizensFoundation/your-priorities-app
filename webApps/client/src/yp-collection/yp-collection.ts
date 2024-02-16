@@ -95,6 +95,7 @@ export abstract class YpCollection extends YpBaseElementWithLogin {
   }
 
   async loggedInUserCustom() {
+    this.refresh();
     //TODO: Look into this, find a better solution than waiting
     await new Promise((r) => setTimeout(r, 1500));
     if (!this.collection || !this.collection.id) {
@@ -476,7 +477,7 @@ export abstract class YpCollection extends YpBaseElementWithLogin {
     onlyAdminCanCreate: boolean,
     hasCollectionAccess: boolean
   ) {
-    if (onlyAdminCanCreate || hasCollectionAccess) {
+    if (this.loggedInUser && (!onlyAdminCanCreate || hasCollectionAccess)) {
       this.createFabIcon = this.collectionCreateFabIcon;
       this.createFabLabel = this.collectionCreateFabLabel;
     } else {

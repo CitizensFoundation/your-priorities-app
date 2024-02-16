@@ -372,6 +372,7 @@ interface YpCommunityConfiguration extends YpCollectionConfiguration {
   communityId?: number;
   enableFraudDetection?: boolean;
   ltp?: YpLtpConfiguration;
+  onlyAdminsCanCreateGroups?: boolean;
 }
 
 interface YpPromoterRights {
@@ -386,6 +387,7 @@ interface YpDomainConfiguration extends YpCollectionConfiguration {
   samlLoginButtonUrl?: string;
   welcomeHTMLforNotLoggedInUsers?: string;
   ltp?: YpLtpConfiguration;
+  onlyAdminsCanCreateCommunities?: boolean;
 }
 
 interface YpHelpPageData {

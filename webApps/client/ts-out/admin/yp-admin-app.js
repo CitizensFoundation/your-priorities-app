@@ -620,17 +620,38 @@ let YpAdminApp = class YpAdminApp extends YpBaseElement {
                 const groupParentCollection = await window.serverApi.getCollection("community", this.parentCollectionId);
                 this._setAdminConfirmedFromParent(groupParentCollection);
                 break;
+            default:
+                this.fire("yp-network-error", { message: this.t("unauthorized") });
         }
     }
     _setAdminConfirmedFromParent(collection) {
+        let adminConfirmed = false;
         if (collection) {
             switch (this.collectionType) {
                 case "community":
-                    this.adminConfirmed = YpAccessHelpers.checkDomainAccess(collection);
+                    adminConfirmed = YpAccessHelpers.checkDomainAccess(collection);
+                    if (!adminConfirmed) {
+                        if (!collection.configuration
+                            .onlyAdminsCanCreateCommunities &&
+                            window.appUser.user) {
+                            adminConfirmed = true;
+                        }
+                    }
                     break;
                 case "group":
-                    this.adminConfirmed = YpAccessHelpers.checkCommunityAccess(collection);
+                    adminConfirmed = YpAccessHelpers.checkCommunityAccess(collection);
+                    if (!adminConfirmed) {
+                        if (!collection.configuration
+                            .onlyAdminsCanCreateGroups &&
+                            window.appUser.user) {
+                            adminConfirmed = true;
+                        }
+                    }
                     break;
+            }
+            this.adminConfirmed = adminConfirmed;
+            if (!adminConfirmed) {
+                this.fire("yp-network-error", { message: this.t("unauthorized") });
             }
         }
     }

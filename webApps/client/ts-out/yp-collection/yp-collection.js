@@ -40,6 +40,7 @@ export class YpCollection extends YpBaseElementWithLogin {
         this.addGlobalListener("yp-got-admin-rights", this.getCollection.bind(this));
     }
     async loggedInUserCustom() {
+        this.refresh();
         //TODO: Look into this, find a better solution than waiting
         await new Promise((r) => setTimeout(r, 1500));
         if (!this.collection || !this.collection.id) {
@@ -367,7 +368,7 @@ export class YpCollection extends YpBaseElementWithLogin {
         }
     }
     setFabIconIfAccess(onlyAdminCanCreate, hasCollectionAccess) {
-        if (onlyAdminCanCreate || hasCollectionAccess) {
+        if (this.loggedInUser && (!onlyAdminCanCreate || hasCollectionAccess)) {
             this.createFabIcon = this.collectionCreateFabIcon;
             this.createFabLabel = this.collectionCreateFabLabel;
         }

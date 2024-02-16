@@ -507,9 +507,9 @@ export class YpAdminApp extends YpBaseElement {
     this.requestUpdate();
   }
 
-  updateFromCollection(){
+  updateFromCollection() {
     if (this.collection) {
-      this.collection = {...this.collection};
+      this.collection = { ...this.collection };
     }
   }
 
@@ -767,22 +767,50 @@ export class YpAdminApp extends YpBaseElement {
         );
         this._setAdminConfirmedFromParent(groupParentCollection);
         break;
+      default:
+        this.fire("yp-network-error", { message: this.t("unauthorized") });
     }
   }
 
   _setAdminConfirmedFromParent(collection: YpCollectionData) {
+    let adminConfirmed = false;
+
     if (collection) {
       switch (this.collectionType) {
         case "community":
-          this.adminConfirmed = YpAccessHelpers.checkDomainAccess(
+          adminConfirmed = YpAccessHelpers.checkDomainAccess(
             collection as YpDomainData
           );
+
+          if (!adminConfirmed) {
+            if (
+              !(collection as YpDomainData).configuration
+                .onlyAdminsCanCreateCommunities &&
+              window.appUser.user
+            ) {
+              adminConfirmed = true;
+            }
+          }
           break;
         case "group":
-          this.adminConfirmed = YpAccessHelpers.checkCommunityAccess(
+          adminConfirmed = YpAccessHelpers.checkCommunityAccess(
             collection as YpCommunityData
           );
+
+          if (!adminConfirmed) {
+            if (
+              !(collection as YpCommunityData).configuration
+                .onlyAdminsCanCreateGroups &&
+                window.appUser.user
+            ) {
+              adminConfirmed = true;
+            }
+          }
           break;
+      }
+      this.adminConfirmed = adminConfirmed;
+      if (!adminConfirmed) {
+        this.fire("yp-network-error", { message: this.t("unauthorized") });
       }
     }
   }
@@ -1103,7 +1131,7 @@ export class YpAdminApp extends YpBaseElement {
         (this.collection as YpGroupData).configuration.groupType ==
           YpAdminConfigGroup.GroupType.allOurIdeas
       );
-      console.error("TURE")
+      console.error("TURE");
     } else {
       return false;
     }
