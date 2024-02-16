@@ -47,7 +47,7 @@ export declare class YpPromotionApp extends YpBaseElementWithLogin {
     _setAdminConfirmed(): void;
     updated(changedProperties: Map<string | number | symbol, unknown>): void;
     _appError(event: CustomEvent): void;
-    _renderPage(): typeof nothing | import("lit-html").TemplateResult<1>;
+    _renderPage(): import("lit-html").TemplateResult<1> | typeof nothing;
     _settingsColorChanged(event: CustomEvent): void;
 }
 //# sourceMappingURL=yp-promotion-app.d.ts.map
