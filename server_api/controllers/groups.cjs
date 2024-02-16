@@ -1129,12 +1129,13 @@ router.get('/:groupId/:jobId/report_creation_progress', auth.can('edit group'), 
 router.post('/:groupId/:start_generating_ai_image', auth.can('view group'), function(req, res) {
   models.AcBackgroundJob.createJob({}, {}, (error, jobId) => {
     if (error) {
-      log.error('Could not create backgroundJob', { err: error, context: 'start_generating_ai_image', user: toJson(req.user.simple()) });
+      log.error('Could not create backgroundJob', { err: error, context: 'start_generating_ai_image', user: req.user ? toJson(req.user.simple()) : null });
       res.sendStatus(500);
     } else {
       queue.add('process-generative-ai', {
         type: "collection-image",
-        userId: req.user.id,
+        //TODO: Look into this
+        userId: req.user ? req.user.id : 1,
         jobId: jobId,
         collectionId: req.params.groupId,
         collectionType: "group",
@@ -1157,7 +1158,7 @@ router.get('/:groupId/:jobId/poll_for_generating_ai_image', auth.can('view group
   }).then( job => {
     res.send(job);
   }).catch( error => {
-    log.error('Could not get backgroundJob', { err: error, context: 'poll_for_generating_ai_image', user: toJson(req.user.simple()) });
+    log.error('Could not get backgroundJob', { err: error, context: 'poll_for_generating_ai_image', user: req.user ? toJson(req.user.simple()) : null });
     res.sendStatus(500);
   });
 });
