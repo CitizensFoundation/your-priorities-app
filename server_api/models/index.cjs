@@ -29,17 +29,26 @@ const operatorsAliases = {
 };
 
 if (process.env.NODE_ENV === 'production') {
-  sequelize = new Sequelize(process.env.DATABASE_URL, {
-    dialect: 'postgres',
-    dialectOptions: {
-      ssl: {
-        rejectUnauthorized: false
-      }
-    },
-    minifyAliases: true,
-    logging: false,
-    operatorsAliases: operatorsAliases
-  });
+  if (process.env.DISABLE_PG_SSL) {
+    sequelize = new Sequelize(process.env.DATABASE_URL, {
+      dialect: 'postgres',
+      minifyAliases: true,
+      logging: false,
+      operatorsAliases: operatorsAliases
+    });
+  } else {
+    sequelize = new Sequelize(process.env.DATABASE_URL, {
+      dialect: 'postgres',
+      dialectOptions: {
+        ssl: {
+          rejectUnauthorized: false
+        }
+      },
+      minifyAliases: true,
+      logging: false,
+      operatorsAliases: operatorsAliases
+    });
+  }
 } else {
   const configPath = path.join(process.cwd(), 'ts-out', 'config', 'config.json');
   const config = require(configPath)[env];

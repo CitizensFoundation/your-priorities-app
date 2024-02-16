@@ -111,6 +111,7 @@ interface YpRequest extends express.Request {
   sso?: any;
   redisClient?: any;
   user?: any;
+  dirName?: string;
 }
 
 let redisClient: any;
@@ -157,6 +158,7 @@ export class YourPrioritiesApi {
     this.wsClients = new Map();
     this.redisClient = redisClient;
     this.addRedisToRequest();
+    this.addDirnameToRequest();
     this.forceHttps();
     this.initializeMiddlewares();
     this.handleShortenedRedirects();
@@ -169,6 +171,15 @@ export class YourPrioritiesApi {
     this.checkAuthForSsoInit();
     this.initializeRoutes();
     this.initializeEsControllers();
+  }
+
+  addDirnameToRequest(): void {
+    this.app.use(
+      (req: YpRequest, res: express.Response, next: NextFunction) => {
+        req.dirName = __dirname;
+        next();
+      }
+    );
   }
 
   addRedisToRequest(): void {

@@ -6,6 +6,7 @@ interface YpRequest extends express.Request {
     sso?: any;
     redisClient?: any;
     user?: any;
+    dirName?: string;
 }
 export declare class YourPrioritiesApi {
     app: express.Application;
@@ -16,6 +17,7 @@ export declare class YourPrioritiesApi {
     wsClients: Map<string, WebSocket>;
     constructor(port?: number | undefined);
     addRedisToRequest(): void;
+    addDirnameToRequest(): void;
     forceHttps(): void;
     handleShortenedRedirects(): void;
     handleServiceWorkerRequests(): void;
