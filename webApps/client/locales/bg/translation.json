@@ -1359,5 +1359,6 @@
   "pleaseAnswerInThisLanguage": "Моля, отговорете на този език",
   "backgroundFinish": "Фонов завършек",
   "fontImports": "Внос на шрифтове",
-  "fontStyles": "Стилове на шрифтове"
+  "fontStyles": "Стилове на шрифтове",
+  "exampleFontStyles": "Примерни шрифтове"
 }

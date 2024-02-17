@@ -1359,5 +1359,6 @@
   "pleaseAnswerInThisLanguage": "Odpovězte prosím v tomto jazyce",
   "backgroundFinish": "Pozadí",
   "fontImports": "Import písem",
-  "fontStyles": "Styly písma"
+  "fontStyles": "Styly písma",
+  "exampleFontStyles": "Příklad stylů písma"
 }

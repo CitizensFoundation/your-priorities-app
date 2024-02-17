@@ -1360,5 +1360,6 @@
   "pleaseAnswerInThisLanguage": "Svar venligst på dette sprog",
   "backgroundFinish": "Baggrund",
   "fontImports": "Fontimporter",
-  "fontStyles": "Fontstile"
+  "fontStyles": "Fontstile",
+  "exampleFontStyles": "Eksempel skrifttyper"
 }

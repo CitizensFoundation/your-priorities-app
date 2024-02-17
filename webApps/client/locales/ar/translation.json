@@ -1366,5 +1366,6 @@
   "pleaseAnswerInThisLanguage": "يرجى الإجابة بهذه اللغة",
   "backgroundFinish": "الخلفية",
   "fontImports": "استيراد الخطوط",
-  "fontStyles": "أنماط الخط"
+  "fontStyles": "أنماط الخط",
+  "exampleFontStyles": "أمثلة على أنماط الخط"
 }

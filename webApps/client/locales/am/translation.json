@@ -1353,5 +1353,6 @@
   "pleaseAnswerInThisLanguage": "በዚህ ቋንቋ እባክዎ መልስ ይስጡ",
   "backgroundFinish": "የጀርባ ጨረታ",
   "fontImports": "Font imports",
-  "fontStyles": "Font styles"
+  "fontStyles": "Font styles",
+  "exampleFontStyles": "Example font styles"
 }

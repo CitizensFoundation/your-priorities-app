@@ -61,9 +61,9 @@
   "activated": "Activated",
   "deactivated": "Deactivated",
   "latest": "Latest",
-  "higestScore": "Highest score",
-  "origin": "Origin",
-  "wins": "Wins",
+  "higestScore": "Pontu máximu",
+  "origin": "Orijim",
+  "wins": "Vitória",
   "losses": "Perdas",
   "score": "Pontuason",
   "actions": "Asons",
@@ -754,7 +754,7 @@
   "bulkStatusUdateConfig": "Config di Atualizaçon di Status em Massa",
   "bulkStatusUpdatesTemplates": "Templates di Atualizaçons di Status em Massa",
   "selectStatusTemplate": "Template",
-  "moveToGroup": "Move",
+  "moveToGroup": "Muda",
   "noIdeasHere": "Nunca tem ideias aqui.",
   "organizationsAdmin": "Admin di Organizaçons",
   "unviewed": "nunca visto",
@@ -1368,5 +1368,6 @@
   "pleaseAnswerInThisLanguage": "Please answer in this language",
   "backgroundFinish": "Background Finish",
   "fontImports": "Font imports",
-  "fontStyles": "Font styles"
+  "fontStyles": "Font styles",
+  "exampleFontStyles": "Example font styles"
 }

@@ -28,8 +28,8 @@ export declare class YpThemeManager {
     setThemeFromOldConfiguration(number: number | undefined, configuration?: YpCollectionConfiguration | undefined): void;
     sanitizeFontStyles(fontStyles: string): string;
     sanitizeFontImports(fontImports: string[]): string[];
-    applyFontStyles(fontStyles: string): void;
-    importFonts(fontImportsString: string): void;
+    applyFontStyles(fontStyles: string | null): void;
+    importFonts(fontImportsString: string | null): void;
     setTheme(number: number | undefined, configuration?: YpCollectionConfiguration | undefined): void;
     updateLiveFromConfiguration(theme: YpThemeConfiguration): void;
     themeChanged(target?: HTMLElement | undefined): void;

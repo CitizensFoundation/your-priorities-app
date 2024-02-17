@@ -451,32 +451,36 @@ export class YpThemeManager {
     });
   }
 
-  applyFontStyles(fontStyles: string) {
+  applyFontStyles(fontStyles: string | null) {
     let styleElement = document.getElementById("custom-font-styles");
-    if (!styleElement) {
-      styleElement = document.createElement("style");
-      styleElement.id = "custom-font-styles";
-      document.head.appendChild(styleElement);
+    if (fontStyles) {
+      if (!styleElement) {
+        styleElement = document.createElement("style");
+        styleElement.id = "custom-font-styles";
+        document.head.appendChild(styleElement);
+      }
+      styleElement.textContent = fontStyles;
+    } else if (styleElement) {
+      // If there are no font styles to apply, clear the existing styles
+      styleElement.textContent = '';
     }
-    //TODO: Get sanitized working, currently strips out body tag
-    styleElement.textContent = fontStyles;//this.sanitizeFontStyles(fontStyles);
   }
 
-  importFonts(fontImportsString: string) {
+  importFonts(fontImportsString: string | null) {
     // Remove existing font import links
     document.querySelectorAll('link[data-font-import]').forEach(element => element.remove());
 
-    // Split the string by new lines and sanitize
-    const fontImports = this.sanitizeFontImports(fontImportsString.split("\n"));
-
-    fontImports.forEach((url) => {
-      const linkElement = document.createElement("link");
-      linkElement.rel = "stylesheet";
-      linkElement.href = url;
-      // Use a data attribute to mark links for easy removal
-      linkElement.setAttribute('data-font-import', 'true');
-      document.head.appendChild(linkElement);
-    });
+    if (fontImportsString) {
+      const fontImports = this.sanitizeFontImports(fontImportsString.split("\n"));
+      fontImports.forEach((url) => {
+        const linkElement = document.createElement("link");
+        linkElement.rel = "stylesheet";
+        linkElement.href = url;
+        linkElement.setAttribute('data-font-import', 'true');
+        document.head.appendChild(linkElement);
+      });
+    }
+    // If there are no font imports to add, the removal step above has already reset the state
   }
 
   setTheme(
@@ -507,12 +511,12 @@ export class YpThemeManager {
       if (configuration.theme.fontStyles) {
         this.applyFontStyles(configuration.theme.fontStyles);
       } else {
-        // have no font styles
+        this.applyFontStyles(null);
       }
       if (configuration.theme.fontImports) {
         this.importFonts(configuration.theme.fontImports);
       } else {
-        // have no font imports
+        this.importFonts(null);
       }
 
       this.themeChanged();
