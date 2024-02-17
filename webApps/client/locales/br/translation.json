@@ -1351,5 +1351,7 @@
   "secondAnswer": "Eil respont",
   "hereIsTheQuestion": "Setu ar goulenn",
   "pleaseAnswerInThisLanguage": "Mar plij respontit er yezh-mañ",
-  "backgroundFinish": "Achuiñ A-dreñv"
+  "backgroundFinish": "Achuiñ A-dreñv",
+  "fontImports": "Enporzhiañ fontoù",
+  "fontStyles": "Stilennoù font"
 }

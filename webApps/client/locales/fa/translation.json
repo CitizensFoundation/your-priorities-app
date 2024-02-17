@@ -1358,5 +1358,7 @@
   "secondAnswer": "دومین پاسخ",
   "hereIsTheQuestion": "اینجا سوال است",
   "pleaseAnswerInThisLanguage": "لطفا به این زبان پاسخ دهید",
-  "backgroundFinish": "پایان زمینه"
+  "backgroundFinish": "پایان زمینه",
+  "fontImports": "واردات فونت",
+  "fontStyles": "سبک‌های فونت"
 }

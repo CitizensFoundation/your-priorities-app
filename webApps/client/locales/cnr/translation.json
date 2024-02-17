@@ -959,7 +959,7 @@
   "disableDebate": "Onemogući raspravu",
   "welcomeHTML": "Dobrodošlica HTML (oprezno koristiti)",
   "disableFacebookLoginForGroup": "Onemogući prijavu preko Facebooka za grupu",
-  "facebookPixelId": "Facebook pixel id",
+  "facebookPixelId": "Facebook piksel id",
   "downloadFacebookImagesForUser": "Preuzmi Facebook slike za korisnike u našu bazu",
   "customUserRegistrationText": "Prilagođeni tekst registracije korisnika",
   "participateAnonymously": "Učestvuj anonimno",
@@ -1351,5 +1351,7 @@
   "secondAnswer": "Drugi odgovor",
   "hereIsTheQuestion": "Evo pitanja",
   "pleaseAnswerInThisLanguage": "Molimo odgovorite na ovom jeziku",
-  "backgroundFinish": "Pozadina Završetak"
+  "backgroundFinish": "Pozadina Završetak",
+  "fontImports": "Uvoz fontova",
+  "fontStyles": "Stilovi fonta"
 }

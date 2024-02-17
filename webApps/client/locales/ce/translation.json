@@ -1351,5 +1351,7 @@
   "secondAnswer": "Ши жаваб",
   "hereIsTheQuestion": "Хьан лоьхуш йоьху",
   "pleaseAnswerInThisLanguage": "Марша хIара мотт хьажор",
-  "backgroundFinish": "Фонан дакъа"
+  "backgroundFinish": "Фонан дакъа",
+  "fontImports": "Шрифтан импорт",
+  "fontStyles": "Шрифтан стиль"
 }

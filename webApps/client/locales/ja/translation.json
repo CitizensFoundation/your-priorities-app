@@ -1351,5 +1351,7 @@
   "secondAnswer": "二番目の回答",
   "hereIsTheQuestion": "ここに質問があります",
   "pleaseAnswerInThisLanguage": "この言語で回答してください",
-  "backgroundFinish": "背景仕上げ"
+  "backgroundFinish": "背景仕上げ",
+  "fontImports": "フォントのインポート",
+  "fontStyles": "フォントスタイル"
 }

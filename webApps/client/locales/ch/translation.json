@@ -1351,5 +1351,7 @@
   "secondAnswer": "Segundu na tuge",
   "hereIsTheQuestion": "Aqui i lekna",
   "pleaseAnswerInThisLanguage": "Fan umatuna gi este na le'nge'",
-  "backgroundFinish": "Trasfondo"
+  "backgroundFinish": "Trasfondo",
+  "fontImports": "Importasion ni' font",
+  "fontStyles": "Estilo ni' font"
 }

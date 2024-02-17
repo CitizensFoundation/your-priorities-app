@@ -682,7 +682,7 @@
   "hideEmoji": "Haitim emojis",
   "endorsementButtonsHeart": "Hat",
   "endorsementArrows": "Aro",
-  "endorsementThumbs": "Thumbs",
+  "endorsementThumbs": "Daumeni",
   "endorsementHats": "Het",
   "endorsementButtons": "Endorsement batani",
   "bulkStatusUdateForInfo": "Kiliki long ol idea bilong moa infomesen",
@@ -1351,5 +1351,7 @@
   "secondAnswer": "Namba tu ansa",
   "hereIsTheQuestion": "Hia emi kesen",
   "pleaseAnswerInThisLanguage": "Plis ansa long dispela tokples",
-  "backgroundFinish": "Latar Belakang Pinis"
+  "backgroundFinish": "Latar Belakang Pinis",
+  "fontImports": "Font imports",
+  "fontStyles": "Font styles"
 }

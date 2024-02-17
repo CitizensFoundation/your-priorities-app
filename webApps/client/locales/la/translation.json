@@ -93,7 +93,7 @@
   "instagram": "Instagram",
   "youtube": "YouTube",
   "tiktok": "TikTok",
-  "activate": "Activate",
+  "activate": "Activa",
   "reallyDeletePromotion": "Promotionem Delere?",
   "promotionName": "Nomen",
   "discardDraft": "Spatium Reicere?",
@@ -1351,5 +1351,7 @@
   "secondAnswer": "Secunda responsio",
   "hereIsTheQuestion": "Hic est quaestio",
   "pleaseAnswerInThisLanguage": "Quaeso responde in hac lingua",
-  "backgroundFinish": "Fundus Finis"
+  "backgroundFinish": "Fundus Finis",
+  "fontImports": "Fontes importat",
+  "fontStyles": "Stili fontium"
 }

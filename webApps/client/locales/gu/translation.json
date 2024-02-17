@@ -1351,5 +1351,7 @@
   "secondAnswer": "બીજો જવાબ",
   "hereIsTheQuestion": "અહીં પ્રશ્ન છે",
   "pleaseAnswerInThisLanguage": "કૃપા કરી આ ભાષામાં જવાબ આપો",
-  "backgroundFinish": "પૃષ્ઠભૂમિ સમાપ્તિ"
+  "backgroundFinish": "પૃષ્ઠભૂમિ સમાપ્તિ",
+  "fontImports": "ફોન્ટ આયાતો",
+  "fontStyles": "ફોન્ટ શૈલીઓ"
 }

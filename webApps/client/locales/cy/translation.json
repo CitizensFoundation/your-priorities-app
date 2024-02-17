@@ -1351,5 +1351,7 @@
   "secondAnswer": "Ail Ateb",
   "hereIsTheQuestion": "Dyma'r cwestiwn",
   "pleaseAnswerInThisLanguage": "Atebwch yn yr iaith hon",
-  "backgroundFinish": "Gorffeniad Cefndir"
+  "backgroundFinish": "Gorffeniad Cefndir",
+  "fontImports": "Mewnforion Ffont",
+  "fontStyles": "Arddulliau Ffont"
 }

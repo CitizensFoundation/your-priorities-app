@@ -1358,5 +1358,7 @@
   "secondAnswer": "Zweite Antwort",
   "hereIsTheQuestion": "Hier ist die Frage",
   "pleaseAnswerInThisLanguage": "Bitte in dieser Sprache antworten",
-  "backgroundFinish": "Hintergrund"
+  "backgroundFinish": "Hintergrund",
+  "fontImports": "Schriftimporte",
+  "fontStyles": "Schriftstile"
 }

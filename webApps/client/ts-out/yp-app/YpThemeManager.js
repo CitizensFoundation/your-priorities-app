@@ -308,7 +308,7 @@ export class YpThemeManager {
         }
     }
     sanitizeFontStyles(fontStyles) {
-        const allowedProps = ["font-family", "font-weight", "font-size"];
+        const allowedProps = ["body", "font-family", "font-weight", "font-size"];
         // Simple regex to match allowed properties and values (very basic for demonstration)
         const propValueRegex = /([a-zA-Z\-]+)\s*:\s*([^;]+);?/g;
         let sanitizedStyles = "";
@@ -351,17 +351,26 @@ export class YpThemeManager {
         });
     }
     applyFontStyles(fontStyles) {
-        // Assuming fontStyles is a sanitized string of CSS rules
-        const styleElement = document.createElement("style");
-        styleElement.textContent = this.sanitizeFontStyles(fontStyles);
-        document.head.appendChild(styleElement);
+        let styleElement = document.getElementById("custom-font-styles");
+        if (!styleElement) {
+            styleElement = document.createElement("style");
+            styleElement.id = "custom-font-styles";
+            document.head.appendChild(styleElement);
+        }
+        //TODO: Get sanitized working, currently strips out body tag
+        styleElement.textContent = fontStyles; //this.sanitizeFontStyles(fontStyles);
     }
     importFonts(fontImportsString) {
+        // Remove existing font import links
+        document.querySelectorAll('link[data-font-import]').forEach(element => element.remove());
+        // Split the string by new lines and sanitize
         const fontImports = this.sanitizeFontImports(fontImportsString.split("\n"));
         fontImports.forEach((url) => {
             const linkElement = document.createElement("link");
             linkElement.rel = "stylesheet";
             linkElement.href = url;
+            // Use a data attribute to mark links for easy removal
+            linkElement.setAttribute('data-font-import', 'true');
             document.head.appendChild(linkElement);
         });
     }
@@ -388,13 +397,13 @@ export class YpThemeManager {
                 //this.themeVariant = configuration.theme.variant;
             }
             if (configuration.theme.fontStyles) {
-                // Set font for whole Web Components based app
+                this.applyFontStyles(configuration.theme.fontStyles);
             }
             else {
-                // Set default font style
+                // have no font styles
             }
             if (configuration.theme.fontImports) {
-                // Set font for whole Web Components based app
+                this.importFonts(configuration.theme.fontImports);
             }
             else {
                 // have no font imports

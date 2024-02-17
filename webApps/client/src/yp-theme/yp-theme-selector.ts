@@ -77,6 +77,18 @@ export class YpThemeSelector extends YpBaseElement {
 
         md-text-button {
           margin-top: 16px;
+          margin-bottom: 16px;
+        }
+
+        .fontField {
+          margin-bottom: 16px;
+          max-width: 300px;
+          width: 300px;
+        }
+
+        pre {
+          max-width: 300px;
+          font-size: 11px;
         }
 
         .colorTypeTitle {
@@ -149,6 +161,9 @@ export class YpThemeSelector extends YpBaseElement {
       this.themeNeutralColor = this.themeConfiguration.neutralColor;
       this.themeNeutralVariantColor =
         this.themeConfiguration.neutralVariantColor;
+
+      this.fontStyles = this.themeConfiguration.fontStyles;
+      this.fontImports = this.themeConfiguration.fontImports;
     }
 
     this.addGlobalListener(
@@ -184,7 +199,7 @@ export class YpThemeSelector extends YpBaseElement {
       "themeNeutralColor",
       "themeNeutralVariantColor",
       "fontStyles",
-      "fontImports"
+      "fontImports",
     ].forEach((prop) => {
       if (changedProperties.has(prop)) {
         shouldUpdateConfiguration = true;
@@ -209,7 +224,7 @@ export class YpThemeSelector extends YpBaseElement {
         neutralColor: this.themeNeutralColor,
         neutralVariantColor: this.themeNeutralVariantColor,
         fontStyles: this.fontStyles,
-        fontImports: this.fontImports
+        fontImports: this.fontImports,
       };
 
       if (this.themeConfiguration.oneDynamicColor) {
@@ -284,6 +299,25 @@ export class YpThemeSelector extends YpBaseElement {
     );
 
     return index || 0;
+  }
+
+  updateFontStyles(event: CustomEvent) {
+    this.fontStyles = (event.target as MdOutlinedTextField).value || "";
+    this.fontStyles = this.fontStyles
+      .replace("<style>", "")
+      .replace("</style>", "")
+      .trim();
+  }
+
+  updateFontImports(event: CustomEvent) {
+    this.fontImports = (event.target as MdOutlinedTextField).value || "";
+    this.fontImports = this.fontImports
+      .replace("<style>", "")
+      .replace("</style>", "");
+    this.fontImports = this.fontImports
+      .replace("<a href", "")
+      .replace("</a>", "")
+      .trim();
   }
 
   override render() {
@@ -404,29 +438,49 @@ export class YpThemeSelector extends YpBaseElement {
               )}
             </md-outlined-select>
           </div>
+          <div class="layout vertical center-center customColors">
+            <md-outlined-text-field
+              class="fontField"
+              type="textarea"
+              rows="3"
+              .label="${this.t("fontImports")}"
+              .value="${this.fontImports || ""}"
+              @change="${this.updateFontImports}"
+              ?disabled="${this.disableSelection}"
+            ></md-outlined-text-field>
+            <md-outlined-text-field
+              class="fontField"
+              type="textarea"
+              rows="6"
+              .value="${this.fontStyles || ""}"
+              .label="${this.t("fontStyles")}"
+              @change="${this.updateFontStyles}"
+              ?disabled="${this.disableSelection}"
+            ></md-outlined-text-field>
+
+            <pre>
+<code>
+  body {
+      font-family: Roboto, serif;
+  }
+
+  :root {
+    --md-ref-typeface-brand: Roboto, serif;
+    --md-ref-typeface-plain: Roboto, serif;
+  }
+</code>
+${this.t("exampleFontStyles")}:
+            </pre>
+          </div>
         </div>
         <div class="layout vertical">
           <div class="layout horizontal center-center">
             ${this.renderThemeToggle(true)}
           </div>
-
-          <md-outlined-text-field
-            .label="${this.t('fontImports')}"
-            ?disabled="${this.disableSelection}"
-            @input="${(e: any) => {
-                this.fontStyles = e.detail.value;
-              }}"
-          ></md-outlined-text-field>
-          <md-outlined-text-field
-            .label="${this.t('fontStyles')}"
-            ?disabled="${this.disableSelection}"
-            @input="${(e: any) => {
-                this.fontStyles = e.detail.value;
-              }}"
-          ></md-outlined-text-field>
           <div class="darkContrastInfo">
             ${this.t("userControlledSettings")}
           </div>
+
           ${this.renderPallette()}
         </div>
       </div>

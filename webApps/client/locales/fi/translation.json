@@ -1351,5 +1351,7 @@
   "secondAnswer": "Toinen vastaus",
   "hereIsTheQuestion": "Tässä on kysymys",
   "pleaseAnswerInThisLanguage": "Vastaa tällä kielellä",
-  "backgroundFinish": "Taustaväri"
+  "backgroundFinish": "Taustaväri",
+  "fontImports": "Fonttituonnit",
+  "fontStyles": "Fonttityylit"
 }

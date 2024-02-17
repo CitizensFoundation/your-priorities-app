@@ -1351,5 +1351,7 @@
   "secondAnswer": "Na biyu amsa",
   "hereIsTheQuestion": "Nan gana tambaya",
   "pleaseAnswerInThisLanguage": "Don Allah amsa cikin wannan yare",
-  "backgroundFinish": "Bayan Fage"
+  "backgroundFinish": "Bayan Fage",
+  "fontImports": "Font imports",
+  "fontStyles": "Font styles"
 }

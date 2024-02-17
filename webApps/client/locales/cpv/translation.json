@@ -1366,5 +1366,7 @@
   "secondAnswer": "Second answer",
   "hereIsTheQuestion": "Here is the question",
   "pleaseAnswerInThisLanguage": "Please answer in this language",
-  "backgroundFinish": "Background Finish"
+  "backgroundFinish": "Background Finish",
+  "fontImports": "Font imports",
+  "fontStyles": "Font styles"
 }

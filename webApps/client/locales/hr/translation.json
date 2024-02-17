@@ -1358,5 +1358,7 @@
   "secondAnswer": "Drugi odgovor",
   "hereIsTheQuestion": "Evo pitanja",
   "pleaseAnswerInThisLanguage": "Molimo odgovorite na ovom jeziku",
-  "backgroundFinish": "Pozadina"
+  "backgroundFinish": "Pozadina",
+  "fontImports": "Uvoz fontova",
+  "fontStyles": "Stilovi fonta"
 }

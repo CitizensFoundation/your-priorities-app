@@ -1351,5 +1351,7 @@
   "secondAnswer": "ᓂᐢᑲᐧᐃᐧᐣ ᑕᑯᑲᐧᐃᐧᐣ",
   "hereIsTheQuestion": "ᑲᐧ ᑭᑎᐯᐧᐃᐧᐣ",
   "pleaseAnswerInThisLanguage": "ᑲᐧ ᐅᑎᒥᐧᐃᐧᐣ ᑲᐧ ᐅᑎᒥᐧᐃᐧᐣ",
-  "backgroundFinish": "ᑲᓇᓇᐠ ᑲᑎᓯᑲᐠ"
+  "backgroundFinish": "ᑲᓇᓇᐠ ᑲᑎᓯᑲᐠ",
+  "fontImports": "ᐅᑎᓂᒃ ᑲᑎᓯᓇᐠ",
+  "fontStyles": "ᐅᑎᓂᒃ ᐊᔭᒥᓇᐠ"
 }

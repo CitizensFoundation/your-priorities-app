@@ -1351,5 +1351,7 @@
   "secondAnswer": "Другі адказ",
   "hereIsTheQuestion": "Вось пытанне",
   "pleaseAnswerInThisLanguage": "Калі ласка, адкажыце на гэтай мове",
-  "backgroundFinish": "Фон"
+  "backgroundFinish": "Фон",
+  "fontImports": "Імпарт шрыфтаў",
+  "fontStyles": "Стылі шрыфтаў"
 }

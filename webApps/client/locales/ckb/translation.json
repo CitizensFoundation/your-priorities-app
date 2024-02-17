@@ -1351,5 +1351,7 @@
   "secondAnswer": "وەڵامی دووەم",
   "hereIsTheQuestion": "ئەمە پرسیارە",
   "pleaseAnswerInThisLanguage": "تکایە بەم زمانە وەڵام بدە",
-  "backgroundFinish": "پاشبنه‌م"
+  "backgroundFinish": "پاشبنه‌م",
+  "fontImports": "هێنانی فۆنت",
+  "fontStyles": "شێوازەکانی فۆنت"
 }

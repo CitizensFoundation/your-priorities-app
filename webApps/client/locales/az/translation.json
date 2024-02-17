@@ -1351,5 +1351,7 @@
   "secondAnswer": "İkinci cavab",
   "hereIsTheQuestion": "Burada sual var",
   "pleaseAnswerInThisLanguage": "Zəhmət olmasa bu dildə cavab verin",
-  "backgroundFinish": "Fon Bitmə"
+  "backgroundFinish": "Fon Bitmə",
+  "fontImports": "Şrift idxalları",
+  "fontStyles": "Şrift stilləri"
 }

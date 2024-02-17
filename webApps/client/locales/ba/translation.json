@@ -1351,5 +1351,7 @@
   "secondAnswer": "Икенсе яуап",
   "hereIsTheQuestion": "Был һорау",
   "pleaseAnswerInThisLanguage": "Зинһар, был телдә яуап бирегеҙ",
-  "backgroundFinish": "Фон тамамлау"
+  "backgroundFinish": "Фон тамамлау",
+  "fontImports": "Шрифттар индереү",
+  "fontStyles": "Шрифт стилдәре"
 }

@@ -1331,7 +1331,7 @@
   "domainFraudManagement": "ޑޮމޭން ފުރާއްދު އިންޓިހާތުން",
   "Access": "އެކްސެސް",
   "openOrganizationMenu": "އޮޕަން އޯގަނައިޒޭޝަން މެނޫ",
-  "Listasafn Reykjavíkur": "Listasafn Reykjavíkur",
+  "Listasafn Reykjavíkur": "ރޭކްތަވިކް ލިސްޓާސަފްން",
   "Override theme": "ތީމު އޮވަރރައިޑް",
   "Analytics & Marketing": "އެނަލިޓިކްސް & މާރކެޓިން",
   "Promote your survey": "ތިބާގެ ސަރވެއްގައި ޕްރޮމޯޓް ކުރޭ",
@@ -1351,5 +1351,7 @@
   "secondAnswer": "ދެވަނަ ޖަވާބު",
   "hereIsTheQuestion": "މިއީ ސުވާލު",
   "pleaseAnswerInThisLanguage": "މި ބަސްގައި ޖަވާބު ދީ",
-  "backgroundFinish": "Background Finish"
+  "backgroundFinish": "Background Finish",
+  "fontImports": "Font imports",
+  "fontStyles": "Font styles"
 }

@@ -1357,5 +1357,7 @@
   "secondAnswer": "Druhá odpověď",
   "hereIsTheQuestion": "Zde je otázka",
   "pleaseAnswerInThisLanguage": "Odpovězte prosím v tomto jazyce",
-  "backgroundFinish": "Pozadí"
+  "backgroundFinish": "Pozadí",
+  "fontImports": "Import písem",
+  "fontStyles": "Styly písma"
 }

@@ -1351,5 +1351,7 @@
   "secondAnswer": "Bigarren erantzuna",
   "hereIsTheQuestion": "Hemen da galdera",
   "pleaseAnswerInThisLanguage": "Mesedez, erantzun hizkuntza honetan",
-  "backgroundFinish": "Atzeko Planoaren Akabera"
+  "backgroundFinish": "Atzeko Planoaren Akabera",
+  "fontImports": "Letra-importak",
+  "fontStyles": "Letra-estiloak"
 }

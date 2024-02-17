@@ -1351,5 +1351,7 @@
   "secondAnswer": "दुसरका जवाब",
   "hereIsTheQuestion": "इहाँ प्रश्न बा",
   "pleaseAnswerInThisLanguage": "कृपया एह भाषा में जवाब दीं",
-  "backgroundFinish": "पृष्ठभूमि समाप्त"
+  "backgroundFinish": "पृष्ठभूमि समाप्त",
+  "fontImports": "फॉन्ट आयात",
+  "fontStyles": "फॉन्ट शैली"
 }

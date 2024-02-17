@@ -1364,5 +1364,7 @@
   "secondAnswer": "الإجابة الثانية",
   "hereIsTheQuestion": "ها هي السؤال",
   "pleaseAnswerInThisLanguage": "يرجى الإجابة بهذه اللغة",
-  "backgroundFinish": "الخلفية"
+  "backgroundFinish": "الخلفية",
+  "fontImports": "استيراد الخطوط",
+  "fontStyles": "أنماط الخط"
 }

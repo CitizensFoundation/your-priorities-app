@@ -1351,5 +1351,7 @@
   "secondAnswer": "Doium jawab",
   "hereIsTheQuestion": "Yus sawal aasi",
   "pleaseAnswerInThisLanguage": "Krupaya yiman bhasha manz jawab dyun",
-  "backgroundFinish": "پس منظر ختم"
+  "backgroundFinish": "پس منظر ختم",
+  "fontImports": "فونٹ درآمدات",
+  "fontStyles": "فونٹ انداز"
 }

@@ -1351,5 +1351,7 @@
   "secondAnswer": "Вторъ отвѣтъ",
   "hereIsTheQuestion": "Сѥ есть въпросъ",
   "pleaseAnswerInThisLanguage": "Отвѣщати сѧ ѩзыкомъ симъ",
-  "backgroundFinish": "Задъний Покровъ"
+  "backgroundFinish": "Задъний Покровъ",
+  "fontImports": "Шрифтъ ввозъ",
+  "fontStyles": "Стили шрифта"
 }

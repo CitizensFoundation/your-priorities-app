@@ -1357,5 +1357,7 @@
   "secondAnswer": "Teine vastus",
   "hereIsTheQuestion": "Siin on küsimus",
   "pleaseAnswerInThisLanguage": "Palun vastake selles keeles",
-  "backgroundFinish": "Taustaviimistlus"
+  "backgroundFinish": "Taustaviimistlus",
+  "fontImports": "Fondi import",
+  "fontStyles": "Fondi stiilid"
 }

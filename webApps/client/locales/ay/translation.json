@@ -1351,5 +1351,7 @@
   "secondAnswer": "Payan utjawi",
   "hereIsTheQuestion": "Aka jutaskiwa",
   "pleaseAnswerInThisLanguage": "Aka arunakas amuyt'asi",
-  "backgroundFinish": "Qhiparux Jaqinaka"
+  "backgroundFinish": "Qhiparux Jaqinaka",
+  "fontImports": "Qillqatana apthapiña",
+  "fontStyles": "Qillqatana laykuna"
 }

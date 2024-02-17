@@ -1217,7 +1217,7 @@
   "Expressive": "Bayyana",
   "Content": "Abun ciki",
   "Neutral": "M",
-  "Monochrome": "Monochrome",
+  "Monochrome": "Launi ɗaya",
   "Fidelity": "Aminci",
   "Tonal Spot": "Wuri Mai Launi",
   "Rainbow": "Bakan Gizo",
@@ -1351,5 +1351,7 @@
   "secondAnswer": "Amsa ta biyu",
   "hereIsTheQuestion": "Ga tambayar",
   "pleaseAnswerInThisLanguage": "Da fatan za a amsa cikin wannan yaren",
-  "backgroundFinish": "Bayanin Baya"
+  "backgroundFinish": "Bayanin Baya",
+  "fontImports": "Shigo da Rubutu",
+  "fontStyles": "Salon Rubutu"
 }

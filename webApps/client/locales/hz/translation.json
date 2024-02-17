@@ -1351,5 +1351,7 @@
   "secondAnswer": "Ombanda yoviri",
   "hereIsTheQuestion": "Ongai o pombanda",
   "pleaseAnswerInThisLanguage": "Ndapandula o shiye po oshilongo shino",
-  "backgroundFinish": "Ozongombe Zokumumanya"
+  "backgroundFinish": "Ozongombe Zokumumanya",
+  "fontImports": "Font imports",
+  "fontStyles": "Font styles"
 }

@@ -1351,5 +1351,7 @@
   "secondAnswer": "Dua respondo",
   "hereIsTheQuestion": "Jen la demando",
   "pleaseAnswerInThisLanguage": "Bonvolu respondi en ĉi tiu lingvo",
-  "backgroundFinish": "Fona Fino"
+  "backgroundFinish": "Fona Fino",
+  "fontImports": "Tiparaj Importoj",
+  "fontStyles": "Tiparaj Stiloj"
 }

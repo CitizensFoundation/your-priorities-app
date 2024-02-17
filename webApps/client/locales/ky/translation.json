@@ -1359,5 +1359,7 @@
   "secondAnswer": "Экинчи жооп",
   "hereIsTheQuestion": "Мында суроо турат",
   "pleaseAnswerInThisLanguage": "Бул тилде жооп бериңиз",
-  "backgroundFinish": "Фондук аяктоо"
+  "backgroundFinish": "Фондук аяктоо",
+  "fontImports": "Шрифт импорттору",
+  "fontStyles": "Шрифт стилдери"
 }

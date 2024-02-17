@@ -1358,5 +1358,7 @@
   "secondAnswer": "Második válasz",
   "hereIsTheQuestion": "Itt a kérdés",
   "pleaseAnswerInThisLanguage": "Kérjük, ezen a nyelven válaszoljon",
-  "backgroundFinish": "Háttérbefejezés"
+  "backgroundFinish": "Háttérbefejezés",
+  "fontImports": "Betűtípus importálás",
+  "fontStyles": "Betűstílusok"
 }

@@ -1351,5 +1351,7 @@
   "secondAnswer": "Secunde responsa",
   "hereIsTheQuestion": "Ecce le question",
   "pleaseAnswerInThisLanguage": "Per favor responde in iste lingua",
-  "backgroundFinish": "Fundo"
+  "backgroundFinish": "Fundo",
+  "fontImports": "Importationes de fontes",
+  "fontStyles": "Stylos de fontes"
 }

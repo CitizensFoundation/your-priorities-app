@@ -1351,5 +1351,7 @@
   "secondAnswer": "দ্বিতীয় উত্তর",
   "hereIsTheQuestion": "এখানে প্রশ্নটি",
   "pleaseAnswerInThisLanguage": "এই ভাষায় উত্তর দিন",
-  "backgroundFinish": "পটভূমি সমাপ্তি"
+  "backgroundFinish": "পটভূমি সমাপ্তি",
+  "fontImports": "ফন্ট আমদানি",
+  "fontStyles": "ফন্ট শৈলী"
 }

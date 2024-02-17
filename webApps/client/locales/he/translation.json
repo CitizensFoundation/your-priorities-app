@@ -1351,5 +1351,7 @@
   "secondAnswer": "תשובה שנייה",
   "hereIsTheQuestion": "הנה השאלה",
   "pleaseAnswerInThisLanguage": "נא לענות בשפה זו",
-  "backgroundFinish": "רקע"
+  "backgroundFinish": "רקע",
+  "fontImports": "ייבוא גופנים",
+  "fontStyles": "סגנונות גופן"
 }

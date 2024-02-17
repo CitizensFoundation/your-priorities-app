@@ -700,7 +700,7 @@
   "addTemplate": "Template add kor",
   "save": "Japun",
   "saved": "Japlele",
-  "config": "Config",
+  "config": "Konfig",
   "newBulkStatusUpdate": "Nave Bulk Status Update",
   "editBulkStatusUpdate": "Bulk Status Update badlo",
   "bulkStatusUdateConfig": "Sāmagrī Stithi Update Config",
@@ -1351,5 +1351,7 @@
   "secondAnswer": "Dusro uttar",
   "hereIsTheQuestion": "Hanga asa prashn",
   "pleaseAnswerInThisLanguage": "Krupalu ha bhashein uttar di",
-  "backgroundFinish": "Pāṭhabhūmi Samaāpta"
+  "backgroundFinish": "Pāṭhabhūmi Samaāpta",
+  "fontImports": "Font aayat",
+  "fontStyles": "Font shaili"
 }

@@ -1351,5 +1351,8 @@
   "secondAnswer": "Tweede antwoord",
   "hereIsTheQuestion": "Hier is die vraag",
   "pleaseAnswerInThisLanguage": "Antwoord asseblief in hierdie taal",
-  "backgroundFinish": "Agtergrondafwerking"
+  "backgroundFinish": "Agtergrondafwerking",
+  "fontImports": "Fontinvoere",
+  "fontStyles": "Fontstyle",
+  "exampleFontStyles": "Voorbeeld fontstyle"
 }

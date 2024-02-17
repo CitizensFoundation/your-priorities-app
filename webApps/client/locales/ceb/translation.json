@@ -1351,5 +1351,7 @@
   "secondAnswer": "Ikaduhang tubag",
   "hereIsTheQuestion": "Ania ang pangutana",
   "pleaseAnswerInThisLanguage": "Palihug tubag niini nga pinulongan",
-  "backgroundFinish": "Latar nga Human"
+  "backgroundFinish": "Latar nga Human",
+  "fontImports": "Pag-import sa Font",
+  "fontStyles": "Estilo sa Font"
 }

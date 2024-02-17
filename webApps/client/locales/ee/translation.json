@@ -241,7 +241,7 @@
   "usePostTagsForPostCards": "Ɖe post tags ɖe sia xoxo le card ɖe ɖeɖe",
   "usePostListFormatOnDesktop": "Dzigbe post lista xexlẽme na desktops",
   "usePostTagsForPostListItems": "Xexlẽ post tags kaka na lista xexlẽme",
-  "externalId": "External Id",
+  "externalId": "Id Kplegbe",
   "registrationQuestions": "Registration questions in JSON xexlẽme",
   "errorSendingContentWhenOnline": "Nume la fifia tso ɖe sia me",
   "storedDataSent": "Data ɖe wòeɖeɖe",
@@ -1275,8 +1275,8 @@
   "Start Voting": "Bɔ Trɔ",
   "Open Results": "Deka Eƒe",
   "How likely to win": "Eƒe siwo godo win",
-  "Wins": "Wins",
-  "Losses": "Losses",
+  "Wins": "Aɖewo",
+  "Losses": "Ɖeto",
   "Voting Results": "Trɔ Ɖeka",
   "Show scores": "Deka Xexlẽme",
   "total votes": "wɔeƒe siwo",
@@ -1351,5 +1351,7 @@
   "secondAnswer": "Eda evelia",
   "hereIsTheQuestion": "Eyi nye amesiwo",
   "pleaseAnswerInThisLanguage": "Kɔ na miɖodoe le gbe ɖe sia",
-  "backgroundFinish": "Lɛlɛwo Ɖeasɔ"
+  "backgroundFinish": "Lɛlɛwo Ɖeasɔ",
+  "fontImports": "Font imports",
+  "fontStyles": "Font styles"
 }

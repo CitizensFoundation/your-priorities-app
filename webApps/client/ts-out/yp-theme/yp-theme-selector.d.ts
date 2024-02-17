@@ -32,6 +32,8 @@ export declare class YpThemeSelector extends YpBaseElement {
     handleColorInput(event: CustomEvent): void;
     updateDisabledInputs(): void;
     get currentThemeSchemaIndex(): number;
+    updateFontStyles(event: CustomEvent): void;
+    updateFontImports(event: CustomEvent): void;
     render(): import("lit-html").TemplateResult<1>;
     renderPallette(): import("lit-html").TemplateResult<1>;
 }

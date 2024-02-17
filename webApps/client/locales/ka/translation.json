@@ -1351,5 +1351,7 @@
   "secondAnswer": "მეორე პასუხი",
   "hereIsTheQuestion": "აქ არის კითხვა",
   "pleaseAnswerInThisLanguage": "გთხოვთ, პასუხი გაეცით ამ ენაზე",
-  "backgroundFinish": "ფონის დასრულება"
+  "backgroundFinish": "ფონის დასრულება",
+  "fontImports": "შრიფტის იმპორტი",
+  "fontStyles": "შრიფტის სტილები"
 }

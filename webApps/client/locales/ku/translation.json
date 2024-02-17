@@ -1351,5 +1351,7 @@
   "secondAnswer": "Duyemîn bersiv",
   "hereIsTheQuestion": "Li vir pirsa ye",
   "pleaseAnswerInThisLanguage": "Ji kerema xwe bi vî zimanê bersiv bide",
-  "backgroundFinish": "Rûpelê Pêşkêş"
+  "backgroundFinish": "Rûpelê Pêşkêş",
+  "fontImports": "Hêmanên fontê",
+  "fontStyles": "Stîlên fontê"
 }

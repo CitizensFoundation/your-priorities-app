@@ -1351,5 +1351,7 @@
   "secondAnswer": "Segunda resposta",
   "hereIsTheQuestion": "Aquí está a pregunta",
   "pleaseAnswerInThisLanguage": "Por favor, responde nesta lingua",
-  "backgroundFinish": "Acabado de Fondo"
+  "backgroundFinish": "Acabado de Fondo",
+  "fontImports": "Importacións de fontes",
+  "fontStyles": "Estilos de fonte"
 }

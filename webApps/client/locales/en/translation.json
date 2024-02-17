@@ -1,5 +1,6 @@
 {
-  "fontImports": "Font imports",
+  "exampleFontStyles": "Example font styles",
+  "fontImports": "Font imports (one URL per line)",
   "fontStyles": "Font styles",
   "backgroundFinish": "Background Finish",
   "firstAnswer": "First answer",

@@ -184,7 +184,7 @@
   "hideGroupListCardObjectives": "Takuyaktukun malġuk qanuqtut piqatigiit",
   "communityId": "Iḷisaġvikmiñun Id",
   "upload": "Ikayuqtiq",
-  "videoFormat": "Video format",
+  "videoFormat": "Video aaniksiich",
   "ziggeoApplicationToken": "Ziggeo Application Token",
   "useZiggeo": "Ziggeo Media atuq",
   "anonymousAskRegistrationQuestions": "Takuluku anonimusiŋaqtut apqutit",
@@ -1351,5 +1351,7 @@
   "secondAnswer": "Aappaan akimiaq",
   "hereIsTheQuestion": "Maaniq sualuk",
   "pleaseAnswerInThisLanguage": "Una qanuq tiguniaqtuq",
-  "backgroundFinish": "Aasriq Kiput"
+  "backgroundFinish": "Aasriq Kiput",
+  "fontImports": "Qaliqsiich",
+  "fontStyles": "Qaliqsrit"
 }

@@ -1351,5 +1351,7 @@
   "secondAnswer": "Aappassaa akissut",
   "hereIsTheQuestion": "Una takuuk apeqqut",
   "pleaseAnswerInThisLanguage": "Uumani oqaatsini akineq kajumissaarutigaarput",
-  "backgroundFinish": "ᖃᓄᐃᑦ ᓯᕗᓪᓕᐊᖅ"
+  "backgroundFinish": "ᖃᓄᐃᑦ ᓯᕗᓪᓕᐊᖅ",
+  "fontImports": "ᖃᓪᓗᓈᖅᑕᐃᑦ",
+  "fontStyles": "ᖃᓪᓗᓈᖅ ᐊᑎᖅᑕᐅᓯᖅ"
 }

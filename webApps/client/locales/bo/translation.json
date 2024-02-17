@@ -1351,5 +1351,7 @@
   "secondAnswer": "གཉིས་པའི་ལན",
   "hereIsTheQuestion": "དྲི་བ་འདི་ནི",
   "pleaseAnswerInThisLanguage": "འདི་གི་སྐད་དུ་ལན་བསྒྲིགས།",
-  "backgroundFinish": "རྒྱབ་སྐྱེས་བཟོ་བཅོས།"
+  "backgroundFinish": "རྒྱབ་སྐྱེས་བཟོ་བཅོས།",
+  "fontImports": "ཡིག་གཟུགས་ནང་འདྲེན།",
+  "fontStyles": "ཡིག་གཟུགས་སྒྱུར་བཀོལ།"
 }
