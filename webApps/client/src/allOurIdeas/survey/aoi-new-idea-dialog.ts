@@ -224,7 +224,6 @@ export class AoiNewIdeaDialog extends YpGenerateAiImage {
         }
 
         yp-magic-text {
-          min-width: 262px;
         }
 
         .iconImage,

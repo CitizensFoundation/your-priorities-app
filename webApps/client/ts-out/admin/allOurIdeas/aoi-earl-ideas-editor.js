@@ -101,6 +101,7 @@ let AoiEarlIdeasEditor = class AoiEarlIdeasEditor extends YpStreamingLlmBase {
             case "stream":
                 if (wsMessage.message && wsMessage.message != "undefined") {
                     this.answersElement.value += wsMessage.message;
+                    this.answersElement.value = this.answersElement.value.replace(/\n\n/g, "\n");
                     break;
                 }
                 else {

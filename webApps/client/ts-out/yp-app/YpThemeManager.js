@@ -12,7 +12,7 @@ export class YpThemeManager {
         this.themeHighContrast = false;
         this.isAppleDevice = false;
         this.themeScheme = "tonal";
-        this.channel = new BroadcastChannel('hex_color');
+        this.channel = new BroadcastChannel("hex_color");
         const savedDarkMode = localStorage.getItem(YpBaseElement.darkModeLocalStorageKey);
         if (savedDarkMode) {
             this.themeDarkMode = true;
@@ -307,6 +307,64 @@ export class YpThemeManager {
             document.dispatchEvent(event);
         }
     }
+    sanitizeFontStyles(fontStyles) {
+        const allowedProps = ["font-family", "font-weight", "font-size"];
+        // Simple regex to match allowed properties and values (very basic for demonstration)
+        const propValueRegex = /([a-zA-Z\-]+)\s*:\s*([^;]+);?/g;
+        let sanitizedStyles = "";
+        let match;
+        while ((match = propValueRegex.exec(fontStyles)) !== null) {
+            if (allowedProps.includes(match[1])) {
+                sanitizedStyles += `${match[1]}: ${match[2]}; `;
+            }
+        }
+        return sanitizedStyles;
+    }
+    // Expanded domain allowlist for fontImports
+    sanitizeFontImports(fontImports) {
+        const allowedDomains = [
+            "fonts.googleapis.com",
+            "use.typekit.net", // Adobe Fonts
+            "fonts.fontsquirrel.com", // Font Squirrel
+            "fast.fonts.net", // Fonts.com
+            "myfonts.com", // MyFonts
+            "foundry.typenetwork.com", // Type Network
+            "fonts.fontspring.com", // Fontspring
+            "creativemarket.com", // Creative Market
+            "fonts.linotype.com", // Linotype
+            "fonts.monotype.com", // Monotype
+            "fontshop.com", // FontShop
+            "typography.com", // Hoefler&Co.
+            // Add other trusted font providers as needed
+        ];
+        return fontImports.filter((url) => {
+            try {
+                const parsedUrl = new URL(url);
+                // Ensure the URL protocol is HTTPS and the domain is in the allowed list
+                return (parsedUrl.protocol === "https:" &&
+                    allowedDomains.some((domain) => parsedUrl.hostname.endsWith(domain) ||
+                        parsedUrl.hostname.includes(domain)));
+            }
+            catch (e) {
+                return false; // Invalid URL
+            }
+        });
+    }
+    applyFontStyles(fontStyles) {
+        // Assuming fontStyles is a sanitized string of CSS rules
+        const styleElement = document.createElement("style");
+        styleElement.textContent = this.sanitizeFontStyles(fontStyles);
+        document.head.appendChild(styleElement);
+    }
+    importFonts(fontImportsString) {
+        const fontImports = this.sanitizeFontImports(fontImportsString.split("\n"));
+        fontImports.forEach((url) => {
+            const linkElement = document.createElement("link");
+            linkElement.rel = "stylesheet";
+            linkElement.href = url;
+            document.head.appendChild(linkElement);
+        });
+    }
     setTheme(number, configuration = undefined) {
         if (!configuration) {
             console.warn("No configuration found");
@@ -328,6 +386,18 @@ export class YpThemeManager {
                 this.themeNeutralColor = configuration.theme.neutralColor;
                 this.themeNeutralVariantColor = configuration.theme.neutralVariantColor;
                 //this.themeVariant = configuration.theme.variant;
+            }
+            if (configuration.theme.fontStyles) {
+                // Set font for whole Web Components based app
+            }
+            else {
+                // Set default font style
+            }
+            if (configuration.theme.fontImports) {
+                // Set font for whole Web Components based app
+            }
+            else {
+                // have no font imports
             }
             this.themeChanged();
         }
@@ -409,7 +479,7 @@ YpThemeManager.themeScemesOptionsWithName = [
     { name: "Content", value: "content" },
     { name: "Neutral", value: "neutral" },
     { name: "Monochrome", value: "monochrome" },
-    { name: "Fidelity", value: "fidelity" }
+    { name: "Fidelity", value: "fidelity" },
 ];
 YpThemeManager.themeVariantsOptionsWithName = [
     { name: "Monochrome", value: "monochrome" },
@@ -420,6 +490,6 @@ YpThemeManager.themeVariantsOptionsWithName = [
     { name: "Fidelity", value: "fidelity" },
     { name: "Content", value: "content" },
     { name: "Rainbow", value: "rainbow" },
-    { name: "Fruit Salad", value: "fruitSalad" }
+    { name: "Fruit Salad", value: "fruitSalad" },
 ];
 //# sourceMappingURL=YpThemeManager.js.map

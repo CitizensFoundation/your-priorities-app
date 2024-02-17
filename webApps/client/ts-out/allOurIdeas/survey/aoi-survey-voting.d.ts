@@ -1,4 +1,4 @@
-import { nothing } from "lit";
+import { nothing, PropertyValueMap } from "lit";
 import { YpBaseElement } from "../../common/yp-base-element.js";
 import "../../common/yp-image.js";
 import "@material/web/button/elevated-button.js";
@@ -19,6 +19,7 @@ export declare class AoiSurveyVoting extends YpBaseElement {
     rightAnswer: AoiAnswerToVoteOnData | undefined;
     appearanceLookup: string;
     breakForVertical: boolean;
+    breakButtonsForVertical: boolean;
     llmExplainOpen: boolean;
     level: number;
     currentLevelTargetVotes: number | undefined;
@@ -30,6 +31,8 @@ export declare class AoiSurveyVoting extends YpBaseElement {
     animateButtons(direction: "left" | "right" | "skip"): Promise<void>;
     resetAnimation(event: any): void;
     voteForAnswer(direction: "left" | "right" | "skip"): Promise<void>;
+    setLabelOnMdButton(): Promise<void>;
+    protected firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void;
     removeAndInsertFromLeft(): void;
     openNewIdeaDialog(): void;
     openLlmExplainDialog(): Promise<void>;

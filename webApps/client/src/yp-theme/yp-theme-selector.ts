@@ -36,6 +36,12 @@ export class YpThemeSelector extends YpBaseElement {
   themeNeutralVariantColor: string | undefined;
 
   @property({ type: String })
+  fontStyles: string | undefined;
+
+  @property({ type: String })
+  fontImports: string | undefined;
+
+  @property({ type: String })
   selectedThemeScheme: string = "tonal";
 
   @property({ type: String })
@@ -177,6 +183,8 @@ export class YpThemeSelector extends YpBaseElement {
       "themeTertiaryColor",
       "themeNeutralColor",
       "themeNeutralVariantColor",
+      "fontStyles",
+      "fontImports"
     ].forEach((prop) => {
       if (changedProperties.has(prop)) {
         shouldUpdateConfiguration = true;
@@ -200,6 +208,8 @@ export class YpThemeSelector extends YpBaseElement {
         tertiaryColor: this.themeTertiaryColor,
         neutralColor: this.themeNeutralColor,
         neutralVariantColor: this.themeNeutralVariantColor,
+        fontStyles: this.fontStyles,
+        fontImports: this.fontImports
       };
 
       if (this.themeConfiguration.oneDynamicColor) {
@@ -399,6 +409,21 @@ export class YpThemeSelector extends YpBaseElement {
           <div class="layout horizontal center-center">
             ${this.renderThemeToggle(true)}
           </div>
+
+          <md-outlined-text-field
+            .label="${this.t('fontImports')}"
+            ?disabled="${this.disableSelection}"
+            @input="${(e: any) => {
+                this.fontStyles = e.detail.value;
+              }}"
+          ></md-outlined-text-field>
+          <md-outlined-text-field
+            .label="${this.t('fontStyles')}"
+            ?disabled="${this.disableSelection}"
+            @input="${(e: any) => {
+                this.fontStyles = e.detail.value;
+              }}"
+          ></md-outlined-text-field>
           <div class="darkContrastInfo">
             ${this.t("userControlledSettings")}
           </div>

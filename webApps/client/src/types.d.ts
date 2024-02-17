@@ -38,6 +38,8 @@ interface YpThemeConfiguration {
   neutralColor?: string;
   neutralVariantColor?: string;
   iconPrompt?: string;
+  fontStyles?: string;
+  fontImports?: string;
 }
 
 interface YpCollectionConfiguration {

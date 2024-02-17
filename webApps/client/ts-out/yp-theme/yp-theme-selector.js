@@ -133,6 +133,8 @@ let YpThemeSelector = class YpThemeSelector extends YpBaseElement {
             "themeTertiaryColor",
             "themeNeutralColor",
             "themeNeutralVariantColor",
+            "fontStyles",
+            "fontImports"
         ].forEach((prop) => {
             if (changedProperties.has(prop)) {
                 shouldUpdateConfiguration = true;
@@ -154,6 +156,8 @@ let YpThemeSelector = class YpThemeSelector extends YpBaseElement {
                 tertiaryColor: this.themeTertiaryColor,
                 neutralColor: this.themeNeutralColor,
                 neutralVariantColor: this.themeNeutralVariantColor,
+                fontStyles: this.fontStyles,
+                fontImports: this.fontImports
             };
             if (this.themeConfiguration.oneDynamicColor) {
                 this.fireGlobal("yp-theme-configuration-updated", this.themeConfiguration);
@@ -332,6 +336,21 @@ let YpThemeSelector = class YpThemeSelector extends YpBaseElement {
           <div class="layout horizontal center-center">
             ${this.renderThemeToggle(true)}
           </div>
+
+          <md-outlined-text-field
+            .label="${this.t('fontImports')}"
+            ?disabled="${this.disableSelection}"
+            @input="${(e) => {
+            this.fontStyles = e.detail.value;
+        }}"
+          ></md-outlined-text-field>
+          <md-outlined-text-field
+            .label="${this.t('fontStyles')}"
+            ?disabled="${this.disableSelection}"
+            @input="${(e) => {
+            this.fontStyles = e.detail.value;
+        }}"
+          ></md-outlined-text-field>
           <div class="darkContrastInfo">
             ${this.t("userControlledSettings")}
           </div>
@@ -471,6 +490,12 @@ __decorate([
 __decorate([
     property({ type: String })
 ], YpThemeSelector.prototype, "themeNeutralVariantColor", void 0);
+__decorate([
+    property({ type: String })
+], YpThemeSelector.prototype, "fontStyles", void 0);
+__decorate([
+    property({ type: String })
+], YpThemeSelector.prototype, "fontImports", void 0);
 __decorate([
     property({ type: String })
 ], YpThemeSelector.prototype, "selectedThemeScheme", void 0);

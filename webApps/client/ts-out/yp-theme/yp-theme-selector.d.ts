@@ -11,6 +11,8 @@ export declare class YpThemeSelector extends YpBaseElement {
     themeTertiaryColor: string | undefined;
     themeNeutralColor: string | undefined;
     themeNeutralVariantColor: string | undefined;
+    fontStyles: string | undefined;
+    fontImports: string | undefined;
     selectedThemeScheme: string;
     selectedThemeVariant: string;
     themeConfiguration: YpThemeConfiguration;

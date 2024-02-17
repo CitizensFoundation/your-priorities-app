@@ -14,7 +14,6 @@ import { YpBaseElement } from "../common/yp-base-element";
 //type MaterialColorScheme = 'tonal'|'vibrant'|'expressive'|'content'|'neutral'|'monochrome'|'fidelity'|'dynamic';
 //type MaterialDynamicVariants = "monochrome" | "neutral" | "tonalSpot" | "vibrant" | "expressive" | "fidelity" | "content" | "rainbow" | "fruitSalad";
 
-
 export class YpThemeManager {
   themes: Array<Record<string, boolean | string | Record<string, string>>> = [];
   selectedTheme: number | undefined;
@@ -36,8 +35,8 @@ export class YpThemeManager {
     { name: "Content", value: "content" },
     { name: "Neutral", value: "neutral" },
     { name: "Monochrome", value: "monochrome" },
-    { name: "Fidelity", value: "fidelity" }
-  ]
+    { name: "Fidelity", value: "fidelity" },
+  ];
 
   static themeVariantsOptionsWithName = [
     { name: "Monochrome", value: "monochrome" },
@@ -48,22 +47,26 @@ export class YpThemeManager {
     { name: "Fidelity", value: "fidelity" },
     { name: "Content", value: "content" },
     { name: "Rainbow", value: "rainbow" },
-    { name: "Fruit Salad", value: "fruitSalad" }
-  ]
+    { name: "Fruit Salad", value: "fruitSalad" },
+  ];
 
   isAppleDevice = false;
   themeScheme: MaterialColorScheme = "tonal";
-  channel = new BroadcastChannel('hex_color');
+  channel = new BroadcastChannel("hex_color");
 
   constructor() {
-    const savedDarkMode = localStorage.getItem(YpBaseElement.darkModeLocalStorageKey);
+    const savedDarkMode = localStorage.getItem(
+      YpBaseElement.darkModeLocalStorageKey
+    );
     if (savedDarkMode) {
       this.themeDarkMode = true;
     } else {
       this.themeDarkMode = false;
     }
 
-    const savedHighContrastMode = localStorage.getItem(YpBaseElement.highContrastLocalStorageKey);
+    const savedHighContrastMode = localStorage.getItem(
+      YpBaseElement.highContrastLocalStorageKey
+    );
 
     if (savedHighContrastMode) {
       this.themeHighContrast = true;
@@ -78,7 +81,6 @@ export class YpThemeManager {
       this.themeColor = event.data;
       this.themeChanged();
     };
-
   }
 
   setupOldThemes() {
@@ -327,7 +329,6 @@ export class YpThemeManager {
         fontName: "Merriweather",
       },
     });
-
   }
 
   updateStyles(properties: Record<string, string>) {
@@ -398,6 +399,74 @@ export class YpThemeManager {
     }
   }
 
+  sanitizeFontStyles(fontStyles: string) {
+    const allowedProps = ["font-family", "font-weight", "font-size"];
+    // Simple regex to match allowed properties and values (very basic for demonstration)
+    const propValueRegex = /([a-zA-Z\-]+)\s*:\s*([^;]+);?/g;
+
+    let sanitizedStyles = "";
+    let match;
+
+    while ((match = propValueRegex.exec(fontStyles)) !== null) {
+      if (allowedProps.includes(match[1])) {
+        sanitizedStyles += `${match[1]}: ${match[2]}; `;
+      }
+    }
+
+    return sanitizedStyles;
+  }
+
+  // Expanded domain allowlist for fontImports
+  sanitizeFontImports(fontImports: string[]) {
+    const allowedDomains = [
+      "fonts.googleapis.com",
+      "use.typekit.net", // Adobe Fonts
+      "fonts.fontsquirrel.com", // Font Squirrel
+      "fast.fonts.net", // Fonts.com
+      "myfonts.com", // MyFonts
+      "foundry.typenetwork.com", // Type Network
+      "fonts.fontspring.com", // Fontspring
+      "creativemarket.com", // Creative Market
+      "fonts.linotype.com", // Linotype
+      "fonts.monotype.com", // Monotype
+      "fontshop.com", // FontShop
+      "typography.com", // Hoefler&Co.
+      // Add other trusted font providers as needed
+    ];
+    return fontImports.filter((url) => {
+      try {
+        const parsedUrl = new URL(url);
+        // Ensure the URL protocol is HTTPS and the domain is in the allowed list
+        return (
+          parsedUrl.protocol === "https:" &&
+          allowedDomains.some(
+            (domain) =>
+              parsedUrl.hostname.endsWith(domain) ||
+              parsedUrl.hostname.includes(domain)
+          )
+        );
+      } catch (e) {
+        return false; // Invalid URL
+      }
+    });
+  }
+
+  applyFontStyles(fontStyles: string) {
+    // Assuming fontStyles is a sanitized string of CSS rules
+    const styleElement = document.createElement("style");
+    styleElement.textContent = this.sanitizeFontStyles(fontStyles);
+    document.head.appendChild(styleElement);
+  }
+
+  importFonts(fontImportsString: string) {
+    const fontImports = this.sanitizeFontImports(fontImportsString.split("\n"));
+    fontImports.forEach((url) => {
+      const linkElement = document.createElement("link");
+      linkElement.rel = "stylesheet";
+      linkElement.href = url;
+      document.head.appendChild(linkElement);
+    });
+  }
 
   setTheme(
     number: number | undefined,
@@ -423,6 +492,18 @@ export class YpThemeManager {
         this.themeNeutralVariantColor = configuration.theme.neutralVariantColor;
         //this.themeVariant = configuration.theme.variant;
       }
+
+      if (configuration.theme.fontStyles) {
+        // Set font for whole Web Components based app
+      } else {
+        // Set default font style
+      }
+      if (configuration.theme.fontImports) {
+        // Set font for whole Web Components based app
+      } else {
+        // have no font imports
+      }
+
       this.themeChanged();
     }
   }

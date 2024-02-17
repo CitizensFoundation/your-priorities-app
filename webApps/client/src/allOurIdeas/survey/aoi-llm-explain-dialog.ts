@@ -172,6 +172,8 @@ ${this.rightAnswerText}
 
         #dialog {
           width: 100%;
+          max-width: 800px;
+          max-height: 100vh;
         }
 
         #ideaText {
@@ -179,9 +181,14 @@ ${this.rightAnswerText}
           width: 500px;
         }
 
+
         @media (max-width: 960px) {
           #dialog {
             --_fullscreen-header-block-size: 74px;
+          }
+
+          #dialog {
+            border-radius: 0;
           }
 
           #content, slot[name="content"]::slotted(*) {
@@ -196,7 +203,7 @@ ${this.rightAnswerText}
     return html`<md-dialog
       @closed="${() => this.cancel()}"
       ?fullscreen="${!this.wide}"
-      style="max-width: 800px;max-height: 100vh;"
+      class="dialog"
       id="dialog"
     >
       <div slot="headline">${this.t("explainBothAnswers")}</div>

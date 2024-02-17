@@ -1,4 +1,4 @@
-import { css, html, nothing } from "lit";
+import { css, html, nothing, PropertyValueMap } from "lit";
 import { property, customElement } from "lit/decorators.js";
 
 import { YpBaseElement } from "../../common/yp-base-element.js";
@@ -20,6 +20,7 @@ import { YpFormattingHelpers } from "../../common/YpFormattingHelpers.js";
 import { AoiLlmExplainDialog } from "./aoi-llm-explain-dialog.js";
 import { YpGroup } from "../../yp-collection/yp-group.js";
 import { YpMagicText } from "../../yp-magic-text/yp-magic-text.js";
+import { MdOutlinedButton } from "@material/web/button/outlined-button.js";
 
 @customElement("aoi-survey-voting")
 export class AoiSurveyVoting extends YpBaseElement {
@@ -60,6 +61,9 @@ export class AoiSurveyVoting extends YpBaseElement {
   breakForVertical = false;
 
   @property({ type: Boolean })
+  breakButtonsForVertical = false;
+
+  @property({ type: Boolean })
   llmExplainOpen = false;
 
   @property({ type: Number })
@@ -86,6 +90,13 @@ export class AoiSurveyVoting extends YpBaseElement {
       `(max-width: 800px)`,
       (matches) => {
        this.breakForVertical = matches;
+      }
+    );
+
+    this.installMediaQueryWatcher(
+      `(max-width: 450px)`,
+      (matches) => {
+       this.breakButtonsForVertical = matches;
       }
     );
   }
@@ -228,6 +239,43 @@ export class AoiSurveyVoting extends YpBaseElement {
     }
   }
 
+  async setLabelOnMdButton() {
+    // Query all custom buttons
+    const customButtons = this.shadowRoot?.querySelectorAll('md-elevated-button');
+
+    // Check if buttons are found
+    if (!customButtons) {
+      console.error('No custom buttons found');
+      return;
+    }
+
+    await this.updateComplete;
+
+    // Iterate over each button
+    customButtons.forEach((customButton) => {
+      // Access the shadow DOM of each button
+      const shadow = customButton.shadowRoot;
+
+      if (shadow) {
+        const labelSpan = shadow.querySelector('button .label') as HTMLElement;
+
+        if (labelSpan) {
+          // Change the overflow property
+          labelSpan.style.overflow = 'visible';
+        } else {
+          console.error('Label span not found within the shadow DOM of the button');
+        }
+      } else {
+        console.error('Shadow DOM not found for the button');
+      }
+    });
+  }
+
+  protected override firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
+    super.firstUpdated(_changedProperties);
+    this.setLabelOnMdButton();
+  }
+
   removeAndInsertFromLeft() {
     const leftButton = this.shadowRoot?.querySelector("#leftAnswerButton");
     const rightButton = this.shadowRoot?.querySelector("#rightAnswerButton");
@@ -279,14 +327,15 @@ export class AoiSurveyVoting extends YpBaseElement {
         .iconImageRight {
           width: 100px;
           height: 100px;
-          margin-left: 0;
-          margin-right: -8px;
+          margin-left: 0;;
+          margin-right: 0;
           border-radius: 70px;
+          background-color: transparent;
         }
 
         .iconImage[rtl] {
           margin-right: 0;
-          margin-left: -8px;
+          margin-left: 0px;
         }
 
         .iconImageRight {
@@ -477,10 +526,10 @@ export class AoiSurveyVoting extends YpBaseElement {
           }
         }
 
-        @media (max-width: 380px) {
+        @media (max-width: 360px) {
           .buttonContainer md-elevated-button {
-            width: 85vw;
-            max-width: 85vw;
+            width: 92vw;
+            max-width: 92vw;
             font-size: 14px;
             margin-top: 8px;
             margin-bottom: 16px;
@@ -567,7 +616,7 @@ export class AoiSurveyVoting extends YpBaseElement {
               : nothing}
             <md-elevated-button
               id="leftAnswerButton"
-              class="leftAnswer"
+              class="leftAnswer answerButton"
               ?trailing-icon="${!this.rtl}"
               ?hidden="${this.spinnersActive}"
               @click=${() => this.voteForAnswer("left")}
@@ -585,6 +634,7 @@ export class AoiSurveyVoting extends YpBaseElement {
                 : nothing}
               <yp-magic-text
                 id="leftAnswerText"
+                class="magicAnswerText"
                 .contentId="${this.groupId}"
                 .extraId="${this.leftAnswer!.choiceId}"
                 .additionalId="${this.question.id}"
@@ -610,7 +660,7 @@ export class AoiSurveyVoting extends YpBaseElement {
               : nothing}
             <md-elevated-button
               id="rightAnswerButton"
-              class="rightAnswer"
+              class="rightAnswer answerButton"
               ?trailing-icon="${!this.rtl}"
               ?hidden="${this.spinnersActive}"
               @click=${() => this.voteForAnswer("right")}
@@ -628,6 +678,7 @@ export class AoiSurveyVoting extends YpBaseElement {
                 : nothing}
               <yp-magic-text
                 id="rightAnswerText"
+                class="magicAnswerText"
                 .contentId="${this.groupId}"
                 .extraId="${this.rightAnswer!.choiceId}"
                 .additionalId="${this.question.id}"
@@ -639,7 +690,7 @@ export class AoiSurveyVoting extends YpBaseElement {
               ></yp-magic-text>
             </md-elevated-button>
           </div>
-          <div class="layout horizontal">
+          <div class="layout ${this.breakButtonsForVertical ? 'vertical': 'horizontal'} center-center wrap">
             <md-text-button
               ?hidden="${!this.hasLlm}"
               class="skipButton"

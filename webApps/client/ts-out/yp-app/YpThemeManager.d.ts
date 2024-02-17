@@ -26,6 +26,10 @@ export declare class YpThemeManager {
     setupOldThemes(): void;
     updateStyles(properties: Record<string, string>): void;
     setThemeFromOldConfiguration(number: number | undefined, configuration?: YpCollectionConfiguration | undefined): void;
+    sanitizeFontStyles(fontStyles: string): string;
+    sanitizeFontImports(fontImports: string[]): string[];
+    applyFontStyles(fontStyles: string): void;
+    importFonts(fontImportsString: string): void;
     setTheme(number: number | undefined, configuration?: YpCollectionConfiguration | undefined): void;
     updateLiveFromConfiguration(theme: YpThemeConfiguration): void;
     themeChanged(target?: HTMLElement | undefined): void;
