@@ -14,7 +14,7 @@ import "@material/web/list/list.js";
 import "@material/web/icon/icon.js";
 import "@material/web/iconbutton/icon-button.js";
 import "@material/web/iconbutton/outlined-icon-button.js";
-import "@material/mwc-snackbar/mwc-snackbar.js";
+import "../yp-app/yp-snackbar.js";
 import "@material/web/menu/menu.js";
 import { cache } from "lit/directives/cache.js";
 import "../common/yp-image.js";
@@ -132,7 +132,7 @@ let AoiSurvey = class AoiSurvey extends YpBaseElement {
     async _displaySnackbar(event) {
         this.lastSnackbarText = event.detail;
         await this.updateComplete;
-        this.$$("#snackbar").show();
+        this.$$("#snackbar").open = true;
     }
     _setupEventListeners() {
         this.addListener("display-snackbar", this._displaySnackbar);
@@ -542,18 +542,18 @@ let AoiSurvey = class AoiSurvey extends YpBaseElement {
     </div>
       ${this.lastSnackbarText
             ? html `
-              <mwc-snackbar
+              <yp-snackbar
                 id="snackbar"
-                @MDCSnackbar:closed="${this.snackbarclosed}"
+                @closed="${this.snackbarclosed}"
                 style="text-align: center;"
                 .labelText="${this.lastSnackbarText}"
-              ></mwc-snackbar>
+              ></yp-snackbar>
             `
             : nothing}
 
       ${window.aoiAppGlobals.externalGoalTriggerUrl
             ? html `
-              <mwc-snackbar
+              <yp-snackbar
                 id="goalTriggerSnackbar"
                 style="text-align: center;"
                 timeoutMs="-1"
@@ -567,7 +567,7 @@ let AoiSurvey = class AoiSurvey extends YpBaseElement {
                   @click="${this.triggerExternalGoalUrl}"
                   >${this.t("Finish and return")}</md-text-button
                 >
-              </mwc-snackbar>
+              </yp-snackbar>
             `
             : nothing}
       `;

@@ -6,7 +6,6 @@ import * as linkify from "linkifyjs";
 
 import "@material/web/progress/circular-progress.js";
 import "@material/web/iconbutton/icon-button.js";
-import "@material/mwc-snackbar";
 
 import "@material/web/radio/radio.js";
 

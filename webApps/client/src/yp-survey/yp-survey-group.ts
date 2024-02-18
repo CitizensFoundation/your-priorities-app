@@ -5,7 +5,6 @@ import { YpBaseElement } from "../common/yp-base-element.js";
 import * as linkify from "linkifyjs";
 
 import "@material/web/button/text-button.js";
-import "@material/mwc-snackbar";
 
 import { YpCollection } from "../yp-collection/yp-collection.js";
 import { YpStructuredQuestionEdit } from "./yp-structured-question-edit.js";

@@ -1,18 +1,13 @@
-import { css, html, LitElement, nothing, TemplateResult } from 'lit';
-import { property, customElement } from 'lit/decorators.js';
-
+import { css, html, nothing } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
-import { accessibleSnackbarLabel } from '@material/mwc-snackbar/accessible-snackbar-label-directive.js';
 
 import '../yp-user/yp-user-with-organization.js';
-import { Snackbar } from '@material/mwc-snackbar';
+import { YpSnackbar } from '../yp-app/yp-snackbar.js';
 import { YpBaseElement } from '../common/yp-base-element.js';
 
 @customElement('ac-notification-toast')
-export class AcNotificationToast extends Snackbar {
-  @property({ type: String })
-  notificationText = '';
-
+export class AcNotificationToast extends YpSnackbar {
   @property({ type: Object })
   user: YpUserData | undefined;
 
@@ -20,11 +15,11 @@ export class AcNotificationToast extends Snackbar {
   icon: string | undefined;
 
   @property({ type: Boolean })
-  largerFont = false
+  largerFont = false;
 
   static override get styles() {
     return [
-      super.styles as any,
+      super.styles,
       css`
         .icon {
           height: 32px;
@@ -44,39 +39,32 @@ export class AcNotificationToast extends Snackbar {
 
   override render() {
     const classes = {
-      'mdc-snackbar--stacked': this.stacked,
-      'mdc-snackbar--leading': this.leading,
+      'larger-font': this.largerFont, // Adjust class to control font size
     };
-    return html` <div
-      class="mdc-snackbar ${classMap(classes)}"
-      @keydown="${this._handleKeydown}"
-    >
-      <div class="mdc-snackbar__surface">
+
+    return html`
+      <div class="${classMap(classes)}">
         ${this.user
           ? html`
               <yp-user-with-organization
-                class="layout horizontal self-end"
+                class="user-info"
                 .user="${this.user}"
               ></yp-user-with-organization>
             `
           : nothing}
-        <div class="layout horizontal">
-          <md-icon
-            class="icon"
-            ?hidden="${!this.icon}"
-            .icon="${this.icon}"
-          ></md-icon>
-          <!-- add larger-font -->
-          ${accessibleSnackbarLabel(this.notificationText, this.open)}
+        <div class="message-content">
+          ${this.icon ? html`<md-icon class="icon" .icon="${this.icon}"></md-icon>` : nothing}
+          <span class="message">${this.labelText}</span>
         </div>
-        <div class="mdc-snackbar__actions">
-          <slot name="action" @click="${this._handleActionClick}"></slot>
-          <slot name="dismiss" @click="${this._handleDismissClick}"></slot>
+        <div class="actions">
+          <slot name="action"></slot>
+          <slot name="dismiss"></slot>
         </div>
       </div>
-    </div>`;
+    `;
   }
 
+  // You might need to adjust this method depending on how you want to handle the user data and icon logic
   openDialog(
     user: YpUserData | undefined,
     notificationText: string,
@@ -85,26 +73,14 @@ export class AcNotificationToast extends Snackbar {
     timeoutMs: number | undefined = undefined,
     largerFont: boolean | undefined = undefined
   ) {
-    this.notificationText = notificationText;
+    this.labelText = notificationText; // Use labelText instead of notificationText
     if (!systemNotification) {
       this.user = user;
     }
 
-    if (icon) {
-      this.icon = icon;
-    } else {
-      this.icon = undefined;
-    }
-
-    if (largerFont) {
-      this.largerFont = true;
-    } else {
-      this.largerFont = false;
-    }
-
-    if (timeoutMs) {
-      this.timeoutMs = timeoutMs;
-    }
+    this.icon = icon;
+    this.largerFont = !!largerFont; // Use boolean coercion for simplicity
+    this.timeoutMs = timeoutMs || 5000; // Use the provided timeoutMs or default to 5000
     this.open = true;
   }
 }

@@ -2,7 +2,6 @@ import { nothing } from "lit";
 import { YpBaseElement } from "../common/yp-base-element.js";
 import "@material/web/progress/circular-progress.js";
 import "@material/web/iconbutton/icon-button.js";
-import "@material/mwc-snackbar";
 import "@material/web/radio/radio.js";
 import "../yp-survey/yp-structured-question-edit.js";
 export declare class YpRegistrationQuestions extends YpBaseElement {

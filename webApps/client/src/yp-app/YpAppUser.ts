@@ -2,10 +2,10 @@ import { YpServerApi } from "../common/YpServerApi.js";
 import { YpCodeBase } from "../common/YpCodeBaseclass.js";
 import { YpAccessHelpers } from "../common/YpAccessHelpers.js";
 import { YpLogin } from "../yp-user/yp-login.js";
-import { Snackbar } from "@material/mwc-snackbar";
 import { YpRegistrationQuestionsDialog } from "../yp-user/yp-registration-questions-dialog.js";
 
 import FingerprintJS from "@fingerprintjs/fingerprintjs";
+import { YpSnackbar } from "./yp-snackbar.js";
 
 export class YpAppUser extends YpCodeBase {
   serverApi: YpServerApi;
@@ -637,7 +637,7 @@ export class YpAppUser extends YpCodeBase {
           } ${this.t("ofNumber")} ${
             group.configuration.maxNumberOfGroupVotes
           } ${this.t("votesForGroup")}`;
-          window.appDialogs.getDialogAsync("masterToast", (toast: Snackbar) => {
+          window.appDialogs.getDialogAsync("masterToast", (toast: YpSnackbar) => {
             toast.labelText = text;
             toast.open = true;
             toast.timeoutMs = 4000;

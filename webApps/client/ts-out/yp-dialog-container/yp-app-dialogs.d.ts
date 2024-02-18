@@ -1,7 +1,7 @@
 import { TemplateResult } from 'lit';
 import { YpBaseElement } from '../common/yp-base-element.js';
 import '@material/web/dialog/dialog.js';
-import '@material/mwc-snackbar';
+import '../yp-app/yp-snackbar.js';
 import '../yp-magic-text/yp-magic-text-dialog.js';
 import '../yp-user/yp-login.js';
 import '../yp-user/yp-user-edit.js';

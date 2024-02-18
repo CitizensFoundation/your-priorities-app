@@ -15,12 +15,12 @@ import "../yp-post/yp-posts-list.js";
 import "../yp-post/yp-post-card-add.js";
 import { YpPostsList } from "../yp-post/yp-posts-list.js";
 import { YpPostEdit } from "../yp-post/yp-post-edit.js";
-import { Snackbar } from "@material/mwc-snackbar";
 import { YpPostMap } from "../yp-post/yp-post-map.js";
 import { MdTabs } from "@material/web/tabs/tabs.js";
 import { cache } from "lit/directives/cache.js";
 
 import "../allOurIdeas/aoi-survey.js";
+import { YpSnackbar } from "../yp-app/yp-snackbar.js";
 
 // TODO: Remove
 interface AcActivity extends LitElement {
@@ -114,7 +114,7 @@ export class YpGroup extends YpCollection {
             groupConfiguration
           )
         ) {
-          window.appDialogs.getDialogAsync("masterToast", (toast: Snackbar) => {
+          window.appDialogs.getDialogAsync("masterToast", (toast: YpSnackbar) => {
             toast.textContent = this.t("groupConfigurationHasBeenUpdated");
             toast.timeoutMs = 7500;
           });

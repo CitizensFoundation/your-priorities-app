@@ -9,12 +9,10 @@ import "@material/web/dialog/dialog.js";
 
 import "@material/web/icon/icon.js";
 import "@material/web/iconbutton/icon-button.js";
-import "@material/mwc-snackbar";
 
 import "../common/yp-form.js";
 
 import { YpForm } from "../common/yp-form.js";
-import { Snackbar } from "@material/mwc-snackbar";
 import { YpConfirmationDialog } from "../yp-dialog-container/yp-confirmation-dialog.js";
 import { Dialog } from "@material/web/dialog/internal/dialog.js";
 import { Progress } from "@material/web/progress/internal/progress.js";
@@ -155,10 +153,6 @@ export class YpEditDialog extends YpBaseElement {
 
         .title ::slotted(h2) {
           padding-top: 2px;
-        }
-
-        mwc-snackbar {
-          z-index: 9999;
         }
 
         #form > * {

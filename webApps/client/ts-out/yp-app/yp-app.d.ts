@@ -1,6 +1,6 @@
 import "../ac-notifications/ac-notification-list.js";
 import { nothing } from "lit";
-import "@material/mwc-snackbar";
+import "./yp-snackbar.js";
 import "./yp-drawer.js";
 import "@material/web/button/text-button.js";
 import "@material/web/labs/badge/badge.js";

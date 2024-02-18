@@ -8,7 +8,7 @@ import { html, css, nothing } from 'lit';
 import { property, customElement } from 'lit/decorators.js';
 import { YpBaseElement } from '../common/yp-base-element.js';
 import '@material/web/dialog/dialog.js';
-import '@material/mwc-snackbar';
+import '../yp-app/yp-snackbar.js';
 import '../yp-magic-text/yp-magic-text-dialog.js';
 import '../yp-user/yp-login.js';
 import '../yp-user/yp-user-edit.js';
@@ -126,7 +126,7 @@ let YpAppDialogs = class YpAppDialogs extends YpBaseElement {
             : nothing}
       ${this.needsPixelCookieConfirm
             ? html `
-            <mwc-snackbar
+            <yp-snackbar
               id="pixelTrackingCookieConfirm"
               .labelText="${this.t('facebookTrackingToastInfo')}"
               timeoutMs="-1">
@@ -140,7 +140,7 @@ let YpAppDialogs = class YpAppDialogs extends YpBaseElement {
                 slot="action"
                 @click="${this._agreeToFacebookPixelTracking}"
                 .label="${this.t('iAgree')}"></md-text-button>
-            </mwc-snackbar>
+            </yp-snackbar>
           `
             : nothing}
 
@@ -166,7 +166,7 @@ let YpAppDialogs = class YpAppDialogs extends YpBaseElement {
           `
             : nothing}
 
-      <mwc-snackbar id="masterToast"></mwc-snackbar>
+      <yp-snackbar id="masterToast"></yp-snackbar>
 
       ${this.renderSelectedDialog()}
 

@@ -1,4 +1,3 @@
-import { Snackbar } from '@material/mwc-snackbar';
 import { YpCodeBase } from '../common/YpCodeBaseclass.js'
 
 export class YpOffline extends YpCodeBase {

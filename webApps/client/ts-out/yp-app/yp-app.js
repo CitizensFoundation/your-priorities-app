@@ -14,7 +14,9 @@ import "../ac-notifications/ac-notification-list.js";
 import { html, nothing } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { cache } from "lit/directives/cache.js";
-import "@material/mwc-snackbar";
+//TODO: Fix moment
+//import moment from 'moment';
+import "./yp-snackbar.js";
 import "./yp-drawer.js";
 //import { Drawer } from '@material/yp-drawer';
 //import '@material/yp-drawer';
@@ -458,18 +460,14 @@ let YpApp = class YpApp extends YpBaseElement {
     renderTopBar() {
         return html `
       <yp-drawer id="leftDrawer" @closed="${this._closeNavDrawer}">
-        ${this.navDrawerOpened
-            ? html `
-              <yp-app-nav-drawer
-                id="ypNavDrawer"
-                .homeLink="${this.homeLink}"
-                .opened="${this.navDrawOpenedDelayed}"
-                @yp-toggle-nav-drawer="${this._openNavDrawer}"
-                .user="${this.user}"
-                .route="${this.route}"
-              ></yp-app-nav-drawer>
-            `
-            : nothing}
+        <yp-app-nav-drawer
+          id="ypNavDrawer"
+          .homeLink="${this.homeLink}"
+          .opened="${this.navDrawOpenedDelayed}"
+          @yp-toggle-nav-drawer="${this._openNavDrawer}"
+          .user="${this.user}"
+          .route="${this.route}"
+        ></yp-app-nav-drawer>
       </yp-drawer>
 
       <yp-drawer
@@ -513,9 +511,9 @@ let YpApp = class YpApp extends YpBaseElement {
         </div>
       </md-dialog>
 
-      <mwc-snackbar id="toast">
+      <yp-snackbar id="toast">
         <md-icon-button icon="close" slot="dismiss"></md-icon-button>
-      </mwc-snackbar>
+      </yp-snackbar>
     `;
     }
     renderAdminApp() {

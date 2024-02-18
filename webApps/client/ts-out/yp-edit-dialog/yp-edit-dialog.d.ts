@@ -4,7 +4,6 @@ import "@material/web/button/text-button.js";
 import "@material/web/dialog/dialog.js";
 import "@material/web/icon/icon.js";
 import "@material/web/iconbutton/icon-button.js";
-import "@material/mwc-snackbar";
 import "../common/yp-form.js";
 export declare class YpEditDialog extends YpBaseElement {
     action: string | undefined;

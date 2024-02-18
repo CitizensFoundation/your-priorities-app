@@ -7,7 +7,6 @@ import "@material/web/list/list-item.js";
 import "@material/web/list/list.js";
 import "@material/web/iconbutton/outlined-icon-button.js";
 import "@material/web/iconbutton/icon-button.js";
-import "@material/mwc-snackbar";
 import "@material/web/menu/menu.js";
 import "./yp-analytics/yp-promotion-dashboard.js";
 import "./yp-promotion/yp-campaign-manager.js";

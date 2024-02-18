@@ -1,7 +1,6 @@
 import { nothing } from "lit";
 import { YpBaseElement } from "../common/yp-base-element.js";
 import "@material/web/button/text-button.js";
-import "@material/mwc-snackbar";
 export declare class YpSurveyGroup extends YpBaseElement {
     surveyGroupId: number | undefined;
     surveySubmitError: string | undefined;

@@ -2,10 +2,9 @@ import { html, css, LitElement, nothing, TemplateResult } from 'lit';
 import { property, customElement } from 'lit/decorators.js';
 
 import { YpBaseElement } from '../common/yp-base-element.js';
-import { Snackbar } from '@material/mwc-snackbar';
 
 import '@material/web/dialog/dialog.js';
-import '@material/mwc-snackbar';
+import '../yp-app/yp-snackbar.js';
 
 import '../yp-magic-text/yp-magic-text-dialog.js';
 import '../yp-user/yp-login.js';
@@ -23,6 +22,7 @@ import "../yp-user/yp-reset-password.js";
 import "../yp-post/yp-post-edit.js";
 import "../yp-page/yp-page-dialog.js";
 import { Dialog } from "@material/web/dialog/internal/dialog.js";
+import { YpSnackbar } from '../yp-app/yp-snackbar.js';
 
 @customElement('yp-app-dialogs')
 export class YpAppDialogs extends YpBaseElement {
@@ -176,7 +176,7 @@ export class YpAppDialogs extends YpBaseElement {
         : nothing}
       ${this.needsPixelCookieConfirm
         ? html`
-            <mwc-snackbar
+            <yp-snackbar
               id="pixelTrackingCookieConfirm"
               .labelText="${this.t('facebookTrackingToastInfo')}"
               timeoutMs="-1">
@@ -190,7 +190,7 @@ export class YpAppDialogs extends YpBaseElement {
                 slot="action"
                 @click="${this._agreeToFacebookPixelTracking}"
                 .label="${this.t('iAgree')}"></md-text-button>
-            </mwc-snackbar>
+            </yp-snackbar>
           `
         : nothing}
 
@@ -216,7 +216,7 @@ export class YpAppDialogs extends YpBaseElement {
           `
         : nothing}
 
-      <mwc-snackbar id="masterToast"></mwc-snackbar>
+      <yp-snackbar id="masterToast"></yp-snackbar>
 
       ${this.renderSelectedDialog()}
 
@@ -275,12 +275,12 @@ export class YpAppDialogs extends YpBaseElement {
     this.facebookPixelTrackingId = facebookPixelTrackingId;
     this.needsPixelCookieConfirm = true;
     await this.requestUpdate();
-    (this.$$('#pixelTrackingCookieConfirm') as Snackbar).open = true;
+    (this.$$('#pixelTrackingCookieConfirm') as YpSnackbar).open = true;
   }
 
   _disableFaceookPixelTracking() {
     localStorage.setItem('disableFacebookPixelTracking', 'true');
-    (this.$$('#pixelTrackingCookieConfirm') as Snackbar).open = false;
+    (this.$$('#pixelTrackingCookieConfirm') as YpSnackbar).open = false;
   }
 
   _agreeToFacebookPixelTracking() {
@@ -289,7 +289,7 @@ export class YpAppDialogs extends YpBaseElement {
       window.appGlobals.analytics.setCommunityPixelTracker(
         this.facebookPixelTrackingId
       );
-    (this.$$('#pixelTrackingCookieConfirm') as Snackbar).open = false;
+    (this.$$('#pixelTrackingCookieConfirm') as YpSnackbar).open = false;
   }
 
   _loggedInUser(event: CustomEvent) {

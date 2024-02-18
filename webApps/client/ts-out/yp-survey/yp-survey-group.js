@@ -8,7 +8,6 @@ import { html, css, nothing } from "lit";
 import { property, customElement } from "lit/decorators.js";
 import { YpBaseElement } from "../common/yp-base-element.js";
 import "@material/web/button/text-button.js";
-import "@material/mwc-snackbar";
 import { YpAccessHelpers } from "../common/YpAccessHelpers.js";
 let YpSurveyGroup = class YpSurveyGroup extends YpBaseElement {
     constructor() {

@@ -9,7 +9,7 @@ import "@material/web/list/list.js";
 import "@material/web/icon/icon.js";
 import "@material/web/iconbutton/icon-button.js";
 import "@material/web/iconbutton/outlined-icon-button.js";
-import "@material/mwc-snackbar/mwc-snackbar.js";
+import "../yp-app/yp-snackbar.js";
 
 import "@material/web/menu/menu.js";
 import { cache } from "lit/directives/cache.js";
@@ -25,12 +25,13 @@ import "./survey/aoi-survey-analysis.js";
 import { AoiServerApi } from "./survey/AoiServerApi.js";
 import { AoiAppGlobals } from "./AoiAppGlobals.js";
 import { NavigationDrawer } from "@material/web/labs/navigationdrawer/internal/navigation-drawer.js";
-import { Snackbar } from "@material/mwc-snackbar/mwc-snackbar.js";
+
 import { NavigationBar } from "@material/web/labs/navigationbar/internal/navigation-bar.js";
 import { YpCollection } from "../yp-collection/yp-collection.js";
 import { YpBaseElement } from "../common/yp-base-element.js";
 import { MdPrimaryTab } from "@material/web/tabs/primary-tab.js";
 import { live } from "lit/directives/live.js";
+import { YpSnackbar } from "../yp-app/yp-snackbar.js";
 
 const PagesTypes = {
   Introduction: 1,
@@ -201,7 +202,7 @@ export class AoiSurvey extends YpBaseElement {
   async _displaySnackbar(event: CustomEvent) {
     this.lastSnackbarText = event.detail;
     await this.updateComplete;
-    (this.$$("#snackbar") as Snackbar).show();
+    (this.$$("#snackbar") as YpSnackbar).open = true;
   }
 
   _setupEventListeners() {
@@ -651,12 +652,12 @@ export class AoiSurvey extends YpBaseElement {
       ${
         this.lastSnackbarText
           ? html`
-              <mwc-snackbar
+              <yp-snackbar
                 id="snackbar"
-                @MDCSnackbar:closed="${this.snackbarclosed}"
+                @closed="${this.snackbarclosed}"
                 style="text-align: center;"
                 .labelText="${this.lastSnackbarText}"
-              ></mwc-snackbar>
+              ></yp-snackbar>
             `
           : nothing
       }
@@ -664,7 +665,7 @@ export class AoiSurvey extends YpBaseElement {
       ${
         window.aoiAppGlobals.externalGoalTriggerUrl
           ? html`
-              <mwc-snackbar
+              <yp-snackbar
                 id="goalTriggerSnackbar"
                 style="text-align: center;"
                 timeoutMs="-1"
@@ -678,7 +679,7 @@ export class AoiSurvey extends YpBaseElement {
                   @click="${this.triggerExternalGoalUrl}"
                   >${this.t("Finish and return")}</md-text-button
                 >
-              </mwc-snackbar>
+              </yp-snackbar>
             `
           : nothing
       }

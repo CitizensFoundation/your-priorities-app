@@ -12,7 +12,6 @@ import "@material/web/button/text-button.js";
 import "@material/web/dialog/dialog.js";
 import "@material/web/icon/icon.js";
 import "@material/web/iconbutton/icon-button.js";
-import "@material/mwc-snackbar";
 import "../common/yp-form.js";
 let YpEditDialog = class YpEditDialog extends YpBaseElement {
     constructor() {
@@ -90,10 +89,6 @@ let YpEditDialog = class YpEditDialog extends YpBaseElement {
 
         .title ::slotted(h2) {
           padding-top: 2px;
-        }
-
-        mwc-snackbar {
-          z-index: 9999;
         }
 
         #form > * {

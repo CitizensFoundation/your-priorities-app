@@ -130,6 +130,10 @@ export const YpAppStyles = css `
     margin-top: 48px;
   }
 
+  #helpIconButton {
+    margin-right: 4px;
+  }
+
   @media (max-width: 800px) {
     mwc-top-app-bar {
       --mdc-top-app-bar-width: 100vw;

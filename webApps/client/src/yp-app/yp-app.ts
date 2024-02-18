@@ -15,8 +15,7 @@ import { cache } from "lit/directives/cache.js";
 //TODO: Fix moment
 //import moment from 'moment';
 
-import { Snackbar } from "@material/mwc-snackbar";
-import "@material/mwc-snackbar";
+import "./yp-snackbar.js";
 import "./yp-drawer.js";
 
 //import { Drawer } from '@material/yp-drawer';
@@ -63,6 +62,7 @@ import { Corner, Menu } from "@material/web/menu/menu.js";
 import { YpServerApiAdmin } from "../common/YpServerApiAdmin.js";
 import { MdDialog } from "@material/web/dialog/dialog.js";
 import { YpDrawer } from "./yp-drawer.js";
+import { YpSnackbar } from "./yp-snackbar.js";
 
 declare global {
   interface Window {
@@ -696,18 +696,14 @@ export class YpApp extends YpBaseElement {
   renderTopBar() {
     return html`
       <yp-drawer id="leftDrawer" @closed="${this._closeNavDrawer}">
-        ${this.navDrawerOpened
-          ? html`
-              <yp-app-nav-drawer
-                id="ypNavDrawer"
-                .homeLink="${this.homeLink}"
-                .opened="${this.navDrawOpenedDelayed}"
-                @yp-toggle-nav-drawer="${this._openNavDrawer}"
-                .user="${this.user}"
-                .route="${this.route}"
-              ></yp-app-nav-drawer>
-            `
-          : nothing}
+        <yp-app-nav-drawer
+          id="ypNavDrawer"
+          .homeLink="${this.homeLink}"
+          .opened="${this.navDrawOpenedDelayed}"
+          @yp-toggle-nav-drawer="${this._openNavDrawer}"
+          .user="${this.user}"
+          .route="${this.route}"
+        ></yp-app-nav-drawer>
       </yp-drawer>
 
       <yp-drawer
@@ -752,9 +748,9 @@ export class YpApp extends YpBaseElement {
         </div>
       </md-dialog>
 
-      <mwc-snackbar id="toast">
+      <yp-snackbar id="toast">
         <md-icon-button icon="close" slot="dismiss"></md-icon-button>
-      </mwc-snackbar>
+      </yp-snackbar>
     `;
   }
 
@@ -814,8 +810,8 @@ export class YpApp extends YpBaseElement {
   }
 
   _openToast(event: CustomEvent) {
-    (this.$$("#toast") as Snackbar).labelText = event.detail.text;
-    (this.$$("#toast") as Snackbar).open = true;
+    (this.$$("#toast") as YpSnackbar).labelText = event.detail.text;
+    (this.$$("#toast") as YpSnackbar).open = true;
   }
 
   _resetNotifyDialogText() {

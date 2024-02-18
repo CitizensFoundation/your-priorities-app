@@ -11,7 +11,7 @@ import { YpCache } from "./YpCache.js";
 import { YpOffline } from "./YpOffline.js";
 import { YpAnalytics } from "./YpAnalytics.js";
 import { YpThemeManager } from "./YpThemeManager.js";
-import { Snackbar } from "@material/mwc-snackbar";
+import { YpSnackbar } from "./yp-snackbar.js";
 
 export class YpAppGlobals extends YpCodeBase {
   seenWelcome = false;
@@ -394,7 +394,7 @@ export class YpAppGlobals extends YpCodeBase {
   startTranslation() {
     window.appGlobals.autoTranslate = true;
     this.fireGlobal("yp-auto-translate", true);
-    window.appDialogs.getDialogAsync("masterToast", (toast: Snackbar) => {
+    window.appDialogs.getDialogAsync("masterToast", (toast: YpSnackbar) => {
       toast.labelText = this.t("autoTranslationStarted");
       toast.open = true;
     });
@@ -403,7 +403,7 @@ export class YpAppGlobals extends YpCodeBase {
   stopTranslation() {
     window.appGlobals.autoTranslate = false;
     this.fireGlobal("yp-auto-translate", false);
-    window.appDialogs.getDialogAsync("masterToast", (toast: Snackbar) => {
+    window.appDialogs.getDialogAsync("masterToast", (toast: YpSnackbar) => {
       toast.labelText = this.t("autoTranslationStopped");
       toast.open = true;
     });

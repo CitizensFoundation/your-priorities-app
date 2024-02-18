@@ -1,4 +1,3 @@
-import { Snackbar } from '@material/mwc-snackbar';
 import { LitElement } from 'lit';
 
 import { YpApp } from '../yp-app/yp-app.js';
