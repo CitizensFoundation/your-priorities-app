@@ -1358,5 +1358,11 @@
   "secondAnswer": "İkinci cevap",
   "hereIsTheQuestion": "İşte soru",
   "pleaseAnswerInThisLanguage": "Lütfen bu dilde cevaplayın",
-  "backgroundFinish": "Arka Plan"
+  "backgroundFinish": "Arka Plan",
+  "exampleFontStyles": "Örnek yazı tipleri",
+  "fontImports": "Yazı tipi içe aktarmaları (satır başına bir URL)",
+  "fontStyles": "Yazı tipleri",
+  "hideAoiAnalysis": "Analizi Gizle",
+  "hideAoiExplainButton": "Açıklama Düğmesini Gizle",
+  "hideSkipButton": "Atla Düğmesini Gizle"
 }

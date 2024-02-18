@@ -1358,5 +1358,11 @@
   "secondAnswer": "Druga odpowiedź",
   "hereIsTheQuestion": "Oto pytanie",
   "pleaseAnswerInThisLanguage": "Proszę odpowiedzieć w tym języku",
-  "backgroundFinish": "Tło"
+  "backgroundFinish": "Tło",
+  "exampleFontStyles": "Przykładowe style czcionek",
+  "fontImports": "Import czcionek (jeden URL na linię)",
+  "fontStyles": "Style czcionek",
+  "hideAoiAnalysis": "Ukryj analizę",
+  "hideAoiExplainButton": "Ukryj przycisk wyjaśnienia",
+  "hideSkipButton": "Ukryj przycisk pominięcia"
 }

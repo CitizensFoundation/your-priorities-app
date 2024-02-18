@@ -1159,8 +1159,8 @@
   "onlyAdminsCanCreateCommunities": "Kaliya Maamulayaasha Ayaa Abuuri Kara Bulshooyinka",
   "Facebook Client Id": "Facebook Client Id",
   "facebookClientId": "Facebook Client Id",
-  "Facebook Client Secret": "Facebook Client Secret",
-  "facebookClientSecret": "Facebook Client Secret",
+  "Facebook Client Secret": "Sirta Macmiilka Facebook",
+  "facebookClientSecret": "Sirta Macmiilka Facebook",
   "Google Client Id": "Aqoonsiga Macmiilka Google",
   "googleClientId": "Aqoonsiga Macmiilka Google",
   "Google Client Secret": "Sirta Macmiilka Google",
@@ -1197,7 +1197,7 @@
   "New Group": "Koox Cusub",
   "haveCreatedXLsReport": "Warbixinta XLs la abuuray",
   "description": "Sharaxaad",
-  "website": "website",
+  "website": "website-ka",
   "organizationTree": {
     "new": "Urur",
     "toast": {
@@ -1351,5 +1351,11 @@
   "secondAnswer": "Jawaabta labaad",
   "hereIsTheQuestion": "Halkan su'aashu tahay",
   "pleaseAnswerInThisLanguage": "Fadlan ku jawaab luqaddan",
-  "backgroundFinish": "Dhammaystirka Asalka"
+  "backgroundFinish": "Dhammaystirka Asalka",
+  "exampleFontStyles": "Tusaalooyinka qaabka farta",
+  "fontImports": "Soo dejinta farta (hal URL saf kasta)",
+  "fontStyles": "Qaababka farta",
+  "hideAoiAnalysis": "Qari Falanqaynta",
+  "hideAoiExplainButton": "Qari Badhanka Sharaxa",
+  "hideSkipButton": "Qari Badhanka Boodka"
 }

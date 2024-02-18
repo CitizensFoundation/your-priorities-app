@@ -1359,5 +1359,11 @@
   "secondAnswer": "Al doilea răspuns",
   "hereIsTheQuestion": "Iată întrebarea",
   "pleaseAnswerInThisLanguage": "Vă rugăm să răspundeți în această limbă",
-  "backgroundFinish": "Fundal"
+  "backgroundFinish": "Fundal",
+  "exampleFontStyles": "Exemple stiluri font",
+  "fontImports": "Importuri font (un URL pe linie)",
+  "fontStyles": "Stiluri font",
+  "hideAoiAnalysis": "Ascunde Analiza",
+  "hideAoiExplainButton": "Ascunde Butonul Explică",
+  "hideSkipButton": "Ascunde Butonul Omitere"
 }

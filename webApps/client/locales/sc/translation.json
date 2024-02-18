@@ -1163,7 +1163,7 @@
   "facebookClientSecret": "Facebook Client Secret",
   "Google Client Id": "Google Client Id",
   "googleClientId": "Google Client Id",
-  "Google Client Secret": "Google Client Secret",
+  "Google Client Secret": "Secretu Cliente Google",
   "googleClientSecret": "Secretu Clienti Google",
   "Discord Client Id": "Id Clienti Discord",
   "discordClientId": "Id Clienti Discord",
@@ -1351,5 +1351,11 @@
   "secondAnswer": "Segunda risposta",
   "hereIsTheQuestion": "Eccu sa pregunta",
   "pleaseAnswerInThisLanguage": "Responde in custa limba",
-  "backgroundFinish": "Finitura de Fundu"
+  "backgroundFinish": "Finitura de Fundu",
+  "exampleFontStyles": "Estilos de esèmpiu",
+  "fontImports": "Importatzione de caràtteres (una URL per lìnia)",
+  "fontStyles": "Estilos de caràtteres",
+  "hideAoiAnalysis": "Annuja Anàlisi",
+  "hideAoiExplainButton": "Annuja Butone Spiegare",
+  "hideSkipButton": "Annuja Butone Saltare"
 }

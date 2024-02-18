@@ -1357,5 +1357,11 @@
   "secondAnswer": "Segunda resposta",
   "hereIsTheQuestion": "Aqui está a pergunta",
   "pleaseAnswerInThisLanguage": "Por favor, responda neste idioma",
-  "backgroundFinish": "Acabamento"
+  "backgroundFinish": "Acabamento",
+  "exampleFontStyles": "Estilos de fonte exemplo",
+  "fontImports": "Importação de fontes (uma URL por linha)",
+  "fontStyles": "Estilos de fonte",
+  "hideAoiAnalysis": "Ocultar Análise",
+  "hideAoiExplainButton": "Ocultar Botão Explicar",
+  "hideSkipButton": "Ocultar Botão Pular"
 }

@@ -1351,5 +1351,11 @@
   "secondAnswer": "Idahun keji",
   "hereIsTheQuestion": "Eyi ni ibeere",
   "pleaseAnswerInThisLanguage": "Jọwọ dahun ni ede yii",
-  "backgroundFinish": "Abẹlẹ Pari"
+  "backgroundFinish": "Abẹlẹ Pari",
+  "exampleFontStyles": "Apẹẹrẹ irufẹ fonti",
+  "fontImports": "Awọn fonti wọle (URL kan fun laini)",
+  "fontStyles": "Awọn irufẹ fonti",
+  "hideAoiAnalysis": "Tọju Onínọmbà",
+  "hideAoiExplainButton": "Tọju Bọtini Alaye",
+  "hideSkipButton": "Tọju Bọtini Foju"
 }

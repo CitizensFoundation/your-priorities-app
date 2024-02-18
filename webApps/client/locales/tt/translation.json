@@ -503,7 +503,7 @@
   "postCoverVideoInfo": "Videoñı yatqı HD formatında yükle. Video ozınlığı iñ köpe ",
   "postCoverAudio": "Audio",
   "postCoverAudioInfo": "Açıq tawış belän söyläş. Audio ozınlığı iñ köpe ",
-  "media": "Media",
+  "media": "Медиа",
   "removalAndDeletionInProgress": "Beterü häm yuq itü barışta. Azdan soñ betne yañadan yüklärgä tırış.",
   "removalsAndDeletionsInProgress": "Betasu häm üzgärtülär barğan, läkin bu qullanuçılar sanına bäyle bulaçaq. Azraq soňraq betne yañadan yökli älegez.",
   "removalsInProgress": "Betasular barğan, läkin bu qullanuçılar sanına bäyle tamamlanırğa mömkin. Azraq soňraq betne yañadan yökli älegez.",
@@ -888,7 +888,7 @@
     "status": "Bu fikerniñ statusı",
     "new": "Yaňa fiker",
     "searchingFor": "Ezläw ",
-    "top": "Popular",
+    "top": "Популяр",
     "newest": "Soňğı",
     "random": "Oçraqlı säyäsät",
     "inProgress": "Barışta",
@@ -1018,7 +1018,7 @@
     "addAdmin": "Admin qoşu",
     "removeUser": "Kullanuçını beterü",
     "inviteUser": "Kullanuçını çaqıru",
-    "email": "email",
+    "email": "электрон почта",
     "removeFromOrganization": "Organizatsiäne beterü",
     "addToOrganization": "Organizatsiä qoşu",
     "selectOrganization": "Organizatsiä sayla"
@@ -1039,7 +1039,7 @@
     "info": "Mäğlümat",
     "notifications": "Belderülar",
     "name": "Tulı isem",
-    "email": "Email",
+    "email": "Электрон почта",
     "edit": "Kullanuçını üzgärtü",
     "password": "Şifrä",
     "forgotPassword": "Şifräne onıttım",
@@ -1351,5 +1351,11 @@
   "secondAnswer": "İkençe cavap",
   "hereIsTheQuestion": "Monda sorau",
   "pleaseAnswerInThisLanguage": "Zinhar, bu teldä cavap biräseze",
-  "backgroundFinish": "Fon Tәmamı"
+  "backgroundFinish": "Fon Tәmamı",
+  "exampleFontStyles": "Misal xärf stil'ları",
+  "fontImports": "Xärf importları (sıra başına ber URL)",
+  "fontStyles": "Xärf stil'ları",
+  "hideAoiAnalysis": "Analizne yäşer",
+  "hideAoiExplainButton": "Açıklama Tuşın yäşer",
+  "hideSkipButton": "Ütäw Tuşın yäşer"
 }

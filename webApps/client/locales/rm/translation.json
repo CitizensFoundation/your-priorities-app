@@ -1334,7 +1334,7 @@
   "domainFraudManagement": "Administraziun fraud domena",
   "Access": "Access",
   "openOrganizationMenu": "Avertir menu organisaziun",
-  "Listasafn Reykjavíkur": "Listasafn Reykjavíkur",
+  "Listasafn Reykjavíkur": "Museum d'art Reykjavík",
   "Override theme": "Surscriver tema",
   "Analytics & Marketing": "Analitica & Marketing",
   "Promote your survey": "Promova vossa enquesta",
@@ -1351,5 +1351,11 @@
   "secondAnswer": "Secunda resposta",
   "hereIsTheQuestion": "Qua è la dumonda",
   "pleaseAnswerInThisLanguage": "Responda per plaschair en questa lingua",
-  "backgroundFinish": "Fundal"
+  "backgroundFinish": "Fundal",
+  "exampleFontStyles": "Exempel stil da scrittira",
+  "fontImports": "Importaziun da scrittiras (ina URL per lingia)",
+  "fontStyles": "Stils da scrittira",
+  "hideAoiAnalysis": "Zuppar analisa",
+  "hideAoiExplainButton": "Zuppar buttun d'explicaziun",
+  "hideSkipButton": "Zuppar buttun da passar"
 }

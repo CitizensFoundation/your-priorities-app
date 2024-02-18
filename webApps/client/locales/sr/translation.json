@@ -1358,5 +1358,11 @@
   "secondAnswer": "Drugi odgovor",
   "hereIsTheQuestion": "Evo pitanja",
   "pleaseAnswerInThisLanguage": "Molimo odgovorite na ovom jeziku",
-  "backgroundFinish": "Pozadina"
+  "backgroundFinish": "Pozadina",
+  "exampleFontStyles": "Primeri fontova",
+  "fontImports": "Uvoz fontova (jedan URL po liniji)",
+  "fontStyles": "Stilovi fontova",
+  "hideAoiAnalysis": "Sakrij analizu",
+  "hideAoiExplainButton": "Sakrij dugme za objašnjenje",
+  "hideSkipButton": "Sakrij dugme za preskakanje"
 }

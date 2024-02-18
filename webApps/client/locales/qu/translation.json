@@ -1039,7 +1039,7 @@
     "info": "Willakuy",
     "notifications": "Willaykuna",
     "name": "Suti t'iqi",
-    "email": "Email",
+    "email": "email",
     "edit": "Llamk'apuy runa",
     "password": "Yaykuy simi",
     "forgotPassword": "Yaykuy simita qonqarqankichu",
@@ -1351,5 +1351,11 @@
   "secondAnswer": "Iskay kutichiy",
   "hereIsTheQuestion": "Kaypi tapukuy",
   "pleaseAnswerInThisLanguage": "Kay simipi kutichiy",
-  "backgroundFinish": "Q'ipa Tukuy"
+  "backgroundFinish": "Q'ipa Tukuy",
+  "exampleFontStyles": "Ejemplo qillqana estilos",
+  "fontImports": "Qillqana apamusqakuna (sapa URL huk layapi)",
+  "fontStyles": "Qillqana estilos",
+  "hideAoiAnalysis": "Pakay T'ikrana",
+  "hideAoiExplainButton": "Pakay Willakuy Ñit'ina",
+  "hideSkipButton": "Pakay Laqhay Ñit'ina"
 }

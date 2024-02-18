@@ -1351,5 +1351,11 @@
   "secondAnswer": "రెండవ జవాబు",
   "hereIsTheQuestion": "ఇక్కడ ప్రశ్న ఉంది",
   "pleaseAnswerInThisLanguage": "ఈ భాషలో జవాబు ఇవ్వండి",
-  "backgroundFinish": "నేపథ్య ముగింపు"
+  "backgroundFinish": "నేపథ్య ముగింపు",
+  "exampleFontStyles": "ఉదాహరణ ఫాంట్ శైలులు",
+  "fontImports": "ఫాంట్ దిగుమతులు (ప్రతి లైన్ ఒక URL)",
+  "fontStyles": "ఫాంట్ శైలులు",
+  "hideAoiAnalysis": "విశ్లేషణను దాచు",
+  "hideAoiExplainButton": "వివరణ బటన్‌ను దాచు",
+  "hideSkipButton": "దాటవేయి బటన్‌ను దాచు"
 }

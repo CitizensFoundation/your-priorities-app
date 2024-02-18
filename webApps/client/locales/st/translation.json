@@ -1351,5 +1351,11 @@
   "secondAnswer": "Karabo ea bobeli",
   "hereIsTheQuestion": "Mona potso",
   "pleaseAnswerInThisLanguage": "Ka kopo araba ka puo ena",
-  "backgroundFinish": "Semelo sa Morao"
+  "backgroundFinish": "Semelo sa Morao",
+  "exampleFontStyles": "Mehlala ya mokhoa oa mongolo",
+  "fontImports": "Ho kenya mefuta ea mongolo (URL e le 'ngoe moleng o mong le o mong)",
+  "fontStyles": "Mefuta ea mongolo",
+  "hideAoiAnalysis": "Pata Tlhaloso",
+  "hideAoiExplainButton": "Pata Konopo ea Tlhaloso",
+  "hideSkipButton": "Pata Konopo ea ho Feta"
 }

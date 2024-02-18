@@ -467,7 +467,7 @@
   "speechToTextInfo": "Yɛbɛbɔ atɛntɛn sɛ yɛbɛfa wo nsɛm a woka no ho kwan sɛ yɛntumi ama wo nsɛm bɛyɛ ntɛm ntɛm. Sɛnea ɛbɛyɛ a ɛho hia sɛ, wo behyɛ wo frɛfa kasa kyerɛw (menu no mu) sɛnea wobɛka no a, na woka wo nsɛm a ɛyɛ pɛ.",
   "edited": "sesa ase",
   "playVoiceRecording": "Bɔ audio rekɔding",
-  "uploadAudio": "Audio",
+  "uploadAudio": "Adwene",
   "allowPostAudioUploads": "Ma post audio atumfo",
   "allowPointAudioUploads": "Ma point audio atumfo",
   "transcodingAudio": "Rekɔdede audio...",
@@ -1285,7 +1285,7 @@
   "total votes": "nson nson",
   "Download Results as CSV": "Sɛe Nson sɛ CSV",
   "Network error, please try again": "Nkitahodie, san kɔ hwɛ",
-  "Level 2": "Level 2",
+  "Level 2": "Ɔkwa 2",
   "Explain": "Hyɛase",
   "Add your own answer": "Fa wo nkyerɛase ka ho",
   "Skip": "Dane",
@@ -1351,5 +1351,11 @@
   "secondAnswer": "Bɛsɛɛ a ɛto so",
   "hereIsTheQuestion": "Eyi ne aseɛ",
   "pleaseAnswerInThisLanguage": "Mepa wo kyɛ fa kasa yi ka",
-  "backgroundFinish": "Akonim so"
+  "backgroundFinish": "Akonim so",
+  "exampleFontStyles": "Nkyerɛase font nneyɛe",
+  "fontImports": "Font ntɔntrɔm (URL biako mu lain)",
+  "fontStyles": "Font nneyɛe",
+  "hideAoiAnalysis": "Sumina Nkɔso",
+  "hideAoiExplainButton": "Sumina Kasa Bɔtɔm",
+  "hideSkipButton": "Sumina Dɛn Bɔtɔm"
 }

@@ -1351,5 +1351,11 @@
   "secondAnswer": "Impendulo yesibini",
   "hereIsTheQuestion": "Nantsi imibuzo",
   "pleaseAnswerInThisLanguage": "Nceda uphendule ngolwimi",
-  "backgroundFinish": "Umgangatho Ongasemva"
+  "backgroundFinish": "Umgangatho Ongasemva",
+  "exampleFontStyles": "Imizekelo yohlobo lweFonti",
+  "fontImports": "Ukungenisa iFonti (umgca ngamnye nge-URL)",
+  "fontStyles": "Izitayile zeFonti",
+  "hideAoiAnalysis": "Fihla Uhlalutyo",
+  "hideAoiExplainButton": "Fihla Iqhosha Lokuchaza",
+  "hideSkipButton": "Fihla Iqhosha Lokutsiba"
 }
