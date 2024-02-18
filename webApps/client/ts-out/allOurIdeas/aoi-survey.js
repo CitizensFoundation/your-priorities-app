@@ -51,6 +51,7 @@ let AoiSurvey = class AoiSurvey extends YpBaseElement {
         this.setupBootListener();
         this._setupEventListeners();
         if (this.collection.configuration.allOurIdeas) {
+            console.error("Connecting to old configuration");
             this.getEarl();
         }
         else {

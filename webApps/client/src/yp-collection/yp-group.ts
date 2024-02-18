@@ -21,6 +21,7 @@ import { cache } from "lit/directives/cache.js";
 
 import "../allOurIdeas/aoi-survey.js";
 import { YpSnackbar } from "../yp-app/yp-snackbar.js";
+import { AoiSurvey } from "../allOurIdeas/aoi-survey.js";
 
 // TODO: Remove
 interface AcActivity extends LitElement {
@@ -377,6 +378,7 @@ export class YpGroup extends YpCollection {
       ) {
         return html`
           <aoi-survey
+            id="aoiSurvey"
             .collectionId="${this.collectionId as number}"
             .collection="${this.collection}"
           ></aoi-survey>
@@ -657,7 +659,7 @@ export class YpGroup extends YpCollection {
         }
       },*/
 
-  override refresh(fromMainApp = false) {
+  override async refresh(fromMainApp = false) {
     super.refresh();
     const group = this.collection as YpGroupData;
 
@@ -882,6 +884,17 @@ export class YpGroup extends YpCollection {
     window.appGlobals.postLoadGroupProcessing(group);
 
     this._startConfigCheckTimer();
+
+    //TODO: Get this working, when you go back and fourth between survey group you get the wrong one until reload
+    /*if (fromMainApp &&
+      (this.collection as YpGroupData).configuration.groupType == 1
+    ) {
+      await this.updateComplete;
+      const survey = this.$$("#aoiSurvey") as AoiSurvey;
+      await survey.getEarl();
+      this.requestUpdate();
+    }*/
+
   }
 
   _setupGroupSaml(group: YpGroupData) {
@@ -906,6 +919,7 @@ export class YpGroup extends YpCollection {
     } else {
       window.appGlobals.currentSamlLoginMessage = undefined;
     }
+
   }
 
   scrollToCollectionItemSubClass() {

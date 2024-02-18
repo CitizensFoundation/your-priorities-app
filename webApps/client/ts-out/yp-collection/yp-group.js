@@ -295,6 +295,7 @@ let YpGroup = class YpGroup extends YpCollection {
             else if (this.collection.configuration.groupType == 1) {
                 return html `
           <aoi-survey
+            id="aoiSurvey"
             .collectionId="${this.collectionId}"
             .collection="${this.collection}"
           ></aoi-survey>
@@ -548,7 +549,7 @@ let YpGroup = class YpGroup extends YpCollection {
             }
           }
         },*/
-    refresh(fromMainApp = false) {
+    async refresh(fromMainApp = false) {
         super.refresh();
         const group = this.collection;
         if (group) {
@@ -717,6 +718,15 @@ let YpGroup = class YpGroup extends YpCollection {
         this.newGroupRefresh = false;
         window.appGlobals.postLoadGroupProcessing(group);
         this._startConfigCheckTimer();
+        //TODO: Get this working, when you go back and fourth between survey group you get the wrong one until reload
+        /*if (fromMainApp &&
+          (this.collection as YpGroupData).configuration.groupType == 1
+        ) {
+          await this.updateComplete;
+          const survey = this.$$("#aoiSurvey") as AoiSurvey;
+          await survey.getEarl();
+          this.requestUpdate();
+        }*/
     }
     _setupGroupSaml(group) {
         if (group.Community &&
