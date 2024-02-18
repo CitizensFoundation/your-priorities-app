@@ -394,7 +394,7 @@ let YpApp = class YpApp extends YpBaseElement {
         <div slot="title"></div>
         <div slot="action">${this.renderActionItems()}</div>
       </yp-top-app-bar>
-      <div class="mainPage">${this.renderPage()}</div>
+      <div class="mainPage" ?hidden="${this.appMode !== "main"}">${this.renderPage()}</div>
     `;
     }
     renderGroupPage() {
