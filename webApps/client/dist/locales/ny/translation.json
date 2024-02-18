@@ -1351,5 +1351,11 @@
   "secondAnswer": "Yachiwiri",
   "hereIsTheQuestion": "Nawo funso",
   "pleaseAnswerInThisLanguage": "Chonde yankhani m'chinenerochi",
-  "backgroundFinish": "Kumaliza kwa Mbiri"
+  "backgroundFinish": "Kumaliza kwa Mbiri",
+  "exampleFontStyles": "Zitsanzo za mafonti",
+  "fontImports": "Kutumiza mafonti (URL imodzi pa mzere)",
+  "fontStyles": "Mafonti",
+  "hideAoiAnalysis": "Bisani Kuwunika",
+  "hideAoiExplainButton": "Bisani Batani Lofotokozera",
+  "hideSkipButton": "Bisani Batani Lopanda"
 }

@@ -1351,5 +1351,11 @@
   "secondAnswer": "ଦ୍ଵିତୀୟ ଉତ୍ତର",
   "hereIsTheQuestion": "ଏଠାରେ ପ୍ରଶ୍ନ",
   "pleaseAnswerInThisLanguage": "ଏହି ଭାଷାରେ ଉତ୍ତର ଦିଅ",
-  "backgroundFinish": "ପୃଷ୍ଠଭୂମି ସମାପ୍ତି"
+  "backgroundFinish": "ପୃଷ୍ଠଭୂମି ସମାପ୍ତି",
+  "exampleFontStyles": "ଉଦାହରଣ ଫଣ୍ଟ ଶୈଳୀ",
+  "fontImports": "ଫଣ୍ଟ ଆମଦାନି (ପ୍ରତି ଲାଇନ୍ ଏକ URL)",
+  "fontStyles": "ଫଣ୍ଟ ଶୈଳୀ",
+  "hideAoiAnalysis": "ବିଶ୍ଲେଷଣ ଲୁଚାଇବେ",
+  "hideAoiExplainButton": "ବ୍ୟାଖ୍ୟା ବଟନ୍ ଲୁଚାଇବେ",
+  "hideSkipButton": "ସ୍କିପ୍ ବଟନ୍ ଲୁଚାଇବେ"
 }

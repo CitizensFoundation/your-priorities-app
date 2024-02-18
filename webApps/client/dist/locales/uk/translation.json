@@ -1358,5 +1358,11 @@
   "secondAnswer": "Друга відповідь",
   "hereIsTheQuestion": "Ось питання",
   "pleaseAnswerInThisLanguage": "Будь ласка, відповідайте цією мовою",
-  "backgroundFinish": "Фініш фону"
+  "backgroundFinish": "Фініш фону",
+  "exampleFontStyles": "Приклад стилів шрифту",
+  "fontImports": "Імпорт шрифтів (одна URL за рядком)",
+  "fontStyles": "Стилі шрифтів",
+  "hideAoiAnalysis": "Сховати аналіз",
+  "hideAoiExplainButton": "Сховати кнопку пояснення",
+  "hideSkipButton": "Сховати кнопку пропуску"
 }

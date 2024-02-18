@@ -1351,5 +1351,11 @@
   "secondAnswer": "Երկրորդ պատասխան",
   "hereIsTheQuestion": "Ահա հարցը",
   "pleaseAnswerInThisLanguage": "Պատասխանեք այս լեզվով",
-  "backgroundFinish": "Ֆոնի Ավարտ"
+  "backgroundFinish": "Ֆոնի Ավարտ",
+  "fontImports": "Տառատեսակների ներմուծում",
+  "fontStyles": "Տառատեսակների ոճեր",
+  "exampleFontStyles": "Օրինակ տառատեսակներ",
+  "hideAoiAnalysis": "Hide Analysis",
+  "hideAoiExplainButton": "Hide Explain Button",
+  "hideSkipButton": "Hide Skip Button"
 }

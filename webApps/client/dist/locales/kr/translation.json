@@ -1351,5 +1351,11 @@
   "secondAnswer": "Na biyu amsa",
   "hereIsTheQuestion": "Nan gana tambaya",
   "pleaseAnswerInThisLanguage": "Don Allah amsa cikin wannan yare",
-  "backgroundFinish": "Bayan Fage"
+  "backgroundFinish": "Bayan Fage",
+  "fontImports": "Font imports",
+  "fontStyles": "Haruffa",
+  "exampleFontStyles": "Misali haruffa",
+  "hideAoiAnalysis": "Boye Nazari",
+  "hideAoiExplainButton": "Boye Bayani Maɓalli",
+  "hideSkipButton": "Boye Tsallake Maɓalli"
 }

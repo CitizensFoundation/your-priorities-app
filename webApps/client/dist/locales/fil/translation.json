@@ -973,7 +973,7 @@
     "deleteConfirmation": "Nais mo bang tanggalin ang grupong ito?"
   },
   "maps": {
-    "searchInput": "Address",
+    "searchInput": "Adres",
     "search": "Hanapin"
   },
   "group": {
@@ -1351,5 +1351,11 @@
   "secondAnswer": "Ikalawang sagot",
   "hereIsTheQuestion": "Narito ang tanong",
   "pleaseAnswerInThisLanguage": "Pakisagot sa wikang ito",
-  "backgroundFinish": "Tapos ng Background"
+  "backgroundFinish": "Tapos ng Background",
+  "fontImports": "Pag-import ng Font",
+  "fontStyles": "Estilo ng Font",
+  "exampleFontStyles": "Halimbawa ng estilo ng font",
+  "hideAoiAnalysis": "Itago ang Pagsusuri",
+  "hideAoiExplainButton": "Itago ang Pindutan ng Paliwanag",
+  "hideSkipButton": "Itago ang Pindutan ng Laktaw"
 }

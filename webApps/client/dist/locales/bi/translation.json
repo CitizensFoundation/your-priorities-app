@@ -122,7 +122,7 @@
   "groupContent": "Grup deskripsen",
   "postName": "Pos nem",
   "postContent": "Pos deskripsen",
-  "noTranslation": "No Translation!",
+  "noTranslation": "No Translesen!",
   "goalConversionsLast30Min": "Gol Konvesen (las 30 minit)",
   "error": "I gat wan eria",
   "generateImageWithAi": "Mekem piksa wetem AI",
@@ -855,7 +855,7 @@
   "posts": {
     "posts": "Ol Aedia",
     "post": "Aedia",
-    "open": "Open",
+    "open": "Openem",
     "inProgress": "Long proses",
     "successful": "I win",
     "failed": "I no win",
@@ -1351,5 +1351,11 @@
   "secondAnswer": "Seken Ansa",
   "hereIsTheQuestion": "Kwestin i stap long hia",
   "pleaseAnswerInThisLanguage": "Plis ansa long lanwis ya",
-  "backgroundFinish": "Bakgraon Finis"
+  "backgroundFinish": "Bakgraon Finis",
+  "fontImports": "Font impot",
+  "fontStyles": "Font stael",
+  "exampleFontStyles": "Eksempol font stael",
+  "hideAoiAnalysis": "Haedem Analisis",
+  "hideAoiExplainButton": "Haedem Expelen Batan",
+  "hideSkipButton": "Haedem Skip Batan"
 }

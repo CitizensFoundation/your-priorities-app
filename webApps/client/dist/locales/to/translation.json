@@ -1351,5 +1351,11 @@
   "secondAnswer": "Tali hono ua",
   "hereIsTheQuestion": "'Oku 'i heni e fehu'i",
   "pleaseAnswerInThisLanguage": "Kataki 'o tali 'i lea faka-Tonga",
-  "backgroundFinish": "Kumaloto"
+  "backgroundFinish": "Kumaloto",
+  "exampleFontStyles": "Mifano ya maandishi",
+  "fontImports": "Uingizaji wa fonti (URL moja kwa mstari)",
+  "fontStyles": "Mitindo ya fonti",
+  "hideAoiAnalysis": "Ficha Uchambuzi",
+  "hideAoiExplainButton": "Ficha Kitufe cha Maelezo",
+  "hideSkipButton": "Ficha Kitufe cha Ruka"
 }

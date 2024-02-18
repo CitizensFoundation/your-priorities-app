@@ -1148,7 +1148,7 @@
   "featured": "chhawmdawlna",
   "hidden": "fiah tawh",
   "onlyAdminsCanCreateGroups": "Admins chauh Group siam thei",
-  "defaultLocale": "Default Locale",
+  "defaultLocale": "Awmzia Hmangaihna",
   "welcomePageSelect": "Welcome Page Thlang",
   "disableDomainUpLink": "Domain Up Link Disable",
   "sortBySortOrder": "Sort Order hmangin Sort",
@@ -1351,5 +1351,11 @@
   "secondAnswer": "Thlalak hnihna",
   "hereIsTheQuestion": "Hei hi hmaisabertu ni",
   "pleaseAnswerInThisLanguage": "Hei hi chhanna tawngin chhang tur",
-  "backgroundFinish": "Chheih dan"
+  "backgroundFinish": "Chheih dan",
+  "exampleFontStyles": "Zirna font thlalâk",
+  "fontImports": "Font import (line pakhatah URL pakhat)",
+  "fontStyles": "Font thlalâk",
+  "hideAoiAnalysis": "Tihlân Tihdan",
+  "hideAoiExplainButton": "Tihdan Hmangaih Button Tihlân",
+  "hideSkipButton": "Tihlân Tawp Button"
 }

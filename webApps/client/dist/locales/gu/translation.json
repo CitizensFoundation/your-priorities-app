@@ -40,7 +40,7 @@
   "goalTree": "લક્ષ્ય વૃક્ષ",
   "futureRealityTree": "ભવિષ્ય વાસ્તવિકતા વૃક્ષ",
   "ideaGenerationGroupType": "વિચાર સર્જન",
-  "allOurIdeasGroupType": "All Our Ideas Pairwise Ranking",
+  "allOurIdeasGroupType": "All Our Ideas યુગ્મ ક્રમાંકન",
   "allowGenerativeImages": "જનરેટિવ ઇમેજીસ મંજૂર કરો",
   "reports": "અહેવાલો",
   "reportsInfo": "અહેવાલો ઉત્પન્ન કરો",
@@ -1351,5 +1351,11 @@
   "secondAnswer": "બીજો જવાબ",
   "hereIsTheQuestion": "અહીં પ્રશ્ન છે",
   "pleaseAnswerInThisLanguage": "કૃપા કરી આ ભાષામાં જવાબ આપો",
-  "backgroundFinish": "પૃષ્ઠભૂમિ સમાપ્તિ"
+  "backgroundFinish": "પૃષ્ઠભૂમિ સમાપ્તિ",
+  "fontImports": "ફોન્ટ આયાતો",
+  "fontStyles": "ફોન્ટ શૈલીઓ",
+  "exampleFontStyles": "ઉદાહરણ ફોન્ટ શૈલીઓ",
+  "hideAoiAnalysis": "વિશ્લેષણ છુપાવો",
+  "hideAoiExplainButton": "સમજાવવા બટન છુપાવો",
+  "hideSkipButton": "છોડી દો બટન છુપાવો"
 }

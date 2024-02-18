@@ -1351,5 +1351,11 @@
   "secondAnswer": "Secunde response",
   "hereIsTheQuestion": "Ci es li question",
   "pleaseAnswerInThisLanguage": "Ples responder in ti lingue",
-  "backgroundFinish": "Funde Fini"
+  "backgroundFinish": "Funde Fini",
+  "fontImports": "Importationes de fontes",
+  "fontStyles": "Stiles de fontes",
+  "exampleFontStyles": "Exemplar font stil",
+  "hideAoiAnalysis": "Celar Analise",
+  "hideAoiExplainButton": "Celar Explica Button",
+  "hideSkipButton": "Celar Salta Button"
 }

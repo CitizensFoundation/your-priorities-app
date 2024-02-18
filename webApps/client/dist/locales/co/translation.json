@@ -700,7 +700,7 @@
   "addTemplate": "Aghjunghje Mudellu",
   "save": "Salvà",
   "saved": "Salvatu",
-  "config": "Config",
+  "config": "Configurazione",
   "newBulkStatusUpdate": "Novu Aghjurnamentu di Statu in Massa",
   "editBulkStatusUpdate": "Mudificà Aghjurnamentu di Statu in Massa",
   "bulkStatusUdateConfig": "Config di Aghjurnamentu di Statu in Massa",
@@ -1351,5 +1351,11 @@
   "secondAnswer": "Seconda risposta",
   "hereIsTheQuestion": "Quì hè a dumanda",
   "pleaseAnswerInThisLanguage": "Per piacè risponde in sta lingua",
-  "backgroundFinish": "Finitura di Fondo"
+  "backgroundFinish": "Finitura di Fondo",
+  "fontImports": "Importazioni di caratteri",
+  "fontStyles": "Stili di caratteri",
+  "exampleFontStyles": "Esempii di stili di caratteri",
+  "hideAoiAnalysis": "Nasconde Analisi",
+  "hideAoiExplainButton": "Nasconde Spiegà Buttone",
+  "hideSkipButton": "Nasconde Saltà Buttone"
 }

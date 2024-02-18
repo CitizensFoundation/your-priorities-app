@@ -1348,7 +1348,7 @@
   "yourIdea": "Ihre Idee",
   "chatInput": "Fragen Sie mich",
   "ideaGenerationGroupType": "Ideenfindung",
-  "allOurIdeasGroupType": "All Our Ideas Pairwise Ranking",
+  "allOurIdeasGroupType": "All Our Ideas Paarvergleich",
   "yourIdeaHasBeenAdded": "Ihre Idee wurde hinzugefügt, Icon wird erstellt.",
   "aiIconInfo": "Ein Icon für Ihre Antwort wird erstellt. Sie können das Fenster schließen oder auf die Erstellung des Icons warten. Sie haben auch die Möglichkeit, das Icon neu zu erstellen.",
   "getColorFromLogo": "Farbe aus Logo holen",
@@ -1358,5 +1358,11 @@
   "secondAnswer": "Zweite Antwort",
   "hereIsTheQuestion": "Hier ist die Frage",
   "pleaseAnswerInThisLanguage": "Bitte in dieser Sprache antworten",
-  "backgroundFinish": "Hintergrund"
+  "backgroundFinish": "Hintergrund",
+  "fontImports": "Schriftimporte",
+  "fontStyles": "Schriftstile",
+  "exampleFontStyles": "Beispielschriftarten",
+  "hideAoiAnalysis": "Analyse verbergen",
+  "hideAoiExplainButton": "Erklärung verbergen",
+  "hideSkipButton": "Überspringen verbergen"
 }

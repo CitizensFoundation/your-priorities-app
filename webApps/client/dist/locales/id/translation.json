@@ -1331,7 +1331,7 @@
   "domainFraudManagement": "Manajemen Penipuan Domain",
   "Access": "Akses",
   "openOrganizationMenu": "Buka menu organisasi",
-  "Listasafn Reykjavíkur": "Listasafn Reykjavíkur",
+  "Listasafn Reykjavíkur": "Museum Reykjavik",
   "Override theme": "Tema Pengganti",
   "Analytics & Marketing": "Analitik & Pemasaran",
   "Promote your survey": "Promosikan survei Anda",
@@ -1351,5 +1351,11 @@
   "secondAnswer": "Jawaban kedua",
   "hereIsTheQuestion": "Ini pertanyaannya",
   "pleaseAnswerInThisLanguage": "Mohon jawab dalam bahasa ini",
-  "backgroundFinish": "Latar Belakang"
+  "backgroundFinish": "Latar Belakang",
+  "fontImports": "Impor Font",
+  "fontStyles": "Gaya Font",
+  "exampleFontStyles": "Contoh gaya font",
+  "hideAoiAnalysis": "Sembunyikan Analisis",
+  "hideAoiExplainButton": "Sembunyikan Tombol Jelaskan",
+  "hideSkipButton": "Sembunyikan Tombol Lewati"
 }

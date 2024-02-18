@@ -1,4 +1,7 @@
 {
+  "exampleFontStyles": "Example font styles",
+  "fontImports": "Font imports (one URL per line)",
+  "fontStyles": "Font styles",
   "backgroundFinish": "Background Finish",
   "firstAnswer": "First answer",
   "secondAnswer": "Second answer",
@@ -28,6 +31,9 @@
   "showCantDecide": "Show can't decide",
   "acceptNewIdeas": "Accept new ideas",
   "hideAoiResults": "Hide Results",
+  "hideAoiAnalysis": "Hide Analysis",
+  "hideAoiExplainButton": "Hide Explain Button",
+  "hideSkipButton": "Hide Skip Button",
   "welcomeMessage": "Welcome message",
   "welcomeHtml": "Welcome HTML",
   "aoiAiAnalysisConfig": "Automated AI Analysis Config",

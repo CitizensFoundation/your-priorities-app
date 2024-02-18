@@ -1358,5 +1358,11 @@
   "secondAnswer": "Segona resposta",
   "hereIsTheQuestion": "Aquí és la pregunta",
   "pleaseAnswerInThisLanguage": "Si us plau, respon en aquest idioma",
-  "backgroundFinish": "Acabat de Fons"
+  "backgroundFinish": "Acabat de Fons",
+  "fontImports": "Importacions de fonts",
+  "fontStyles": "Estils de font",
+  "exampleFontStyles": "Exemples d'estils de lletra",
+  "hideAoiAnalysis": "Amaga Anàlisi",
+  "hideAoiExplainButton": "Amaga Botó Explica",
+  "hideSkipButton": "Amaga Botó Salta"
 }

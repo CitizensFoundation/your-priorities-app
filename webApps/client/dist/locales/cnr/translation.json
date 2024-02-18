@@ -959,7 +959,7 @@
   "disableDebate": "Onemogući raspravu",
   "welcomeHTML": "Dobrodošlica HTML (oprezno koristiti)",
   "disableFacebookLoginForGroup": "Onemogući prijavu preko Facebooka za grupu",
-  "facebookPixelId": "Facebook pixel id",
+  "facebookPixelId": "Facebook piksel id",
   "downloadFacebookImagesForUser": "Preuzmi Facebook slike za korisnike u našu bazu",
   "customUserRegistrationText": "Prilagođeni tekst registracije korisnika",
   "participateAnonymously": "Učestvuj anonimno",
@@ -1291,7 +1291,7 @@
   "Completed goal": "Završeni cilj",
   "Browser": "Pretraživač",
   "Country": "Država",
-  "Region": "Region",
+  "Region": "Regija",
   "City": "Grad",
   "Clear All Filters": "Očisti sve filtere",
   "details": "detalji",
@@ -1351,5 +1351,11 @@
   "secondAnswer": "Drugi odgovor",
   "hereIsTheQuestion": "Evo pitanja",
   "pleaseAnswerInThisLanguage": "Molimo odgovorite na ovom jeziku",
-  "backgroundFinish": "Pozadina Završetak"
+  "backgroundFinish": "Pozadina Završetak",
+  "fontImports": "Uvoz fontova",
+  "fontStyles": "Stilovi fonta",
+  "exampleFontStyles": "Primjeri stilova slova",
+  "hideAoiAnalysis": "Sakrij Analizu",
+  "hideAoiExplainButton": "Sakrij Dugme za Objasnjenje",
+  "hideSkipButton": "Sakrij Dugme za Preskakanje"
 }

@@ -1351,5 +1351,11 @@
   "secondAnswer": "ئىككىنچى جاۋاب",
   "hereIsTheQuestion": "مۇنداق سوئال بار",
   "pleaseAnswerInThisLanguage": "بۇ تىلدا جاۋاب بەرگەيسىز",
-  "backgroundFinish": "فون رەڭگى"
+  "backgroundFinish": "فون رەڭگى",
+  "exampleFontStyles": "مىسال خەت شەكلى",
+  "fontImports": "خەت ئەكىرىش (ھەر قۇردا بىر URL)",
+  "fontStyles": "خەت شەكلى",
+  "hideAoiAnalysis": "تەھلىلنى يوشۇر",
+  "hideAoiExplainButton": "تۈشۈندۈرۈش كۇنۇپكىسىنى يوشۇر",
+  "hideSkipButton": "ئۆتكۈزۈپ يۈرۈش كۇنۇپكىسىنى يوشۇر"
 }

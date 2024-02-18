@@ -1351,5 +1351,11 @@
   "secondAnswer": "وەڵامی دووەم",
   "hereIsTheQuestion": "ئەمە پرسیارە",
   "pleaseAnswerInThisLanguage": "تکایە بەم زمانە وەڵام بدە",
-  "backgroundFinish": "پاشبنه‌م"
+  "backgroundFinish": "پاشبنه‌م",
+  "fontImports": "هێنانی فۆنت",
+  "fontStyles": "شێوازەکانی فۆنت",
+  "exampleFontStyles": "نموونەی شێوازی فۆنت",
+  "hideAoiAnalysis": "شاردنەوەی تاوتوێ",
+  "hideAoiExplainButton": "دوگمەی ڕوونکردنەوە بشارەوە",
+  "hideSkipButton": "دوگمەی ئەوەپەڕاندن بشارەوە"
 }

@@ -464,7 +464,7 @@
   "speechToTextInfo": "Yɛbɛbɔ atɛm mu sɛ yɛbɛfa wo nsɛm a wɔka no so kyinkyinii kɔ tɛkst. Sɛɛ no bɛyɛ a, ɛsɛ sɛ wo de wo kasa kyerɛwsɛm (menu a ɛwɔ soro no benkum) bɛyɛ sɛ kasa a wobɔ na wokasa pɛpɛɛpɛ.",
   "edited": "sesa",
   "playVoiceRecording": "Bɔ nkɔsoɔ recording no",
-  "uploadAudio": "Audio",
+  "uploadAudio": "Adwene",
   "allowPostAudioUploads": "Ma post audio uploads",
   "allowPointAudioUploads": "Ma point audio ntumi nnwuma",
   "transcodingAudio": "Rekɔkɔ audio...",
@@ -645,7 +645,7 @@
   "hidePointAuthor": "Suma kwan kɔbɔfo",
   "hidePostAuthor": "Suma post kɔbɔfo",
   "defaultLocationLongLat": "Difɔlt location longitude,latitude",
-  "disableCommunityDomainUpLink": "Disable Domain Up Link",
+  "disableCommunityDomainUpLink": "Dum Domain So Link",
   "analyticsTrackerCode": "Google Analytics Id",
   "filterIdeas": "Sɛfa nkɔmmɔ",
   "edit": "Sesa",
@@ -1351,5 +1351,11 @@
   "secondAnswer": "Bɛsɛɛ a ɛto so",
   "hereIsTheQuestion": "Eyi ne bere no",
   "pleaseAnswerInThisLanguage": "Mesrɛ wo, ka bio wɔ saa kasa yi mu",
-  "backgroundFinish": "Abakɔsɛm Mu"
+  "backgroundFinish": "Abakɔsɛm Mu",
+  "fontImports": "Font mbra",
+  "fontStyles": "Font nkɔmfɛ",
+  "exampleFontStyles": "Nkyerɛase font styles",
+  "hideAoiAnalysis": "Sumina Nkɔkyɛre",
+  "hideAoiExplainButton": "Suma Kwan Bɔ Mu Botae",
+  "hideSkipButton": "Suma Kwan Bɔ Mu Twa"
 }

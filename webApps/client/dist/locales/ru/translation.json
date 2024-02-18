@@ -606,7 +606,7 @@
     "addAdmin": "Добавить администратора",
     "removeUser": "Удалить пользователя",
     "inviteUser": "Пригласить пользователя",
-    "email": "email",
+    "email": "электронная почта",
     "removeFromOrganization": "Удалить организацию",
     "addToOrganization": "Добавить организацию",
     "selectOrganization": "Выберите организацию"
@@ -1358,5 +1358,11 @@
   "secondAnswer": "Второй ответ",
   "hereIsTheQuestion": "Вот вопрос",
   "pleaseAnswerInThisLanguage": "Ответьте на этом языке",
-  "backgroundFinish": "Фон"
+  "backgroundFinish": "Фон",
+  "exampleFontStyles": "Примеры шрифтов",
+  "fontImports": "Импорт шрифтов (один URL в строке)",
+  "fontStyles": "Стили шрифтов",
+  "hideAoiAnalysis": "Скрыть анализ",
+  "hideAoiExplainButton": "Скрыть кнопку объяснения",
+  "hideSkipButton": "Скрыть кнопку пропуска"
 }

@@ -649,7 +649,7 @@
   "analyticsTrackerCode": "Id Google Analytics",
   "filterIdeas": "Saina ideas",
   "edit": "Edita",
-  "delete": "Delete",
+  "delete": "Deleti",
   "addEmoji": "Gai Emoji",
   "closeComments": "Tåya' kumetarios",
   "openComments": "Abre kumetarios",
@@ -771,7 +771,7 @@
     "publish": "Puplish",
     "addLocale": "Añade lek-na'",
     "unPublish": "UnPuplish",
-    "deletePage": "Delete",
+    "deletePage": "Deleti",
     "addPage": "Añadi nuebu na trangka",
     "managePages": "Atministra trangka",
     "pagePublished": "Trangka Publikådo",
@@ -1015,7 +1015,7 @@
     "addAdmin": "Añadi admin",
     "removeUser": "Bai bula taotao",
     "inviteUser": "Maimbita taotao",
-    "email": "email",
+    "email": "Email",
     "removeFromOrganization": "Bai bula organisasion",
     "addToOrganization": "Añadi organisasion",
     "selectOrganization": "Elihi organisasion"
@@ -1351,5 +1351,11 @@
   "secondAnswer": "Segundu na tuge",
   "hereIsTheQuestion": "Aqui i lekna",
   "pleaseAnswerInThisLanguage": "Fan umatuna gi este na le'nge'",
-  "backgroundFinish": "Trasfondo"
+  "backgroundFinish": "Trasfondo",
+  "fontImports": "Importasion ni' font",
+  "fontStyles": "Estilo ni' font",
+  "exampleFontStyles": "Ehemplo estilon letra",
+  "hideAoiAnalysis": "Sotta Análisis",
+  "hideAoiExplainButton": "Sotta Boton Siña",
+  "hideSkipButton": "Sotta Boton Laktas"
 }

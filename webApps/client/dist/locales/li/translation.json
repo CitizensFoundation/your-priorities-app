@@ -1015,7 +1015,7 @@
     "addAdmin": "Admin toevoege",
     "removeUser": "Gebroeker verwijdere",
     "inviteUser": "Gebroeker oetnuëdige",
-    "email": "email",
+    "email": "e-mail",
     "removeFromOrganization": "Organisatie verwijdere",
     "addToOrganization": "Organisatie toevoege",
     "selectOrganization": "Selecteer organisatie"
@@ -1032,7 +1032,7 @@
     "logoutCompleteFor": "Oetlogge veur",
     "loggedInWithSaml": "Ingelogd met SAML",
     "loggedInWithFacebook": "Ingelogd met Facebook",
-    "facebookLogin": "Facebook login",
+    "facebookLogin": "Facebook aanmelding",
     "info": "Info",
     "notifications": "Meldinge",
     "name": "Volledige naam",
@@ -1351,5 +1351,11 @@
   "secondAnswer": "Twiede antwoord",
   "hereIsTheQuestion": "Hie is de vraog",
   "pleaseAnswerInThisLanguage": "Antwoord in deze taal",
-  "backgroundFinish": "Achtergrónd Aafwerking"
+  "backgroundFinish": "Achtergrónd Aafwerking",
+  "fontImports": "Lettertype importe",
+  "fontStyles": "Lettertype stieles",
+  "exampleFontStyles": "Veurbeeld lettertypes",
+  "hideAoiAnalysis": "Verberg Analyse",
+  "hideAoiExplainButton": "Verberg Oetlègk Knop",
+  "hideSkipButton": "Verberg Euverslaon Knop"
 }

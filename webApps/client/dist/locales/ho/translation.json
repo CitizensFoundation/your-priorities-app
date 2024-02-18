@@ -625,7 +625,7 @@
   "appHomeScreenIconImageUpload": "Loda phone homescreen aikoni",
   "allowAnonymousAutoLogin": "Larim anonim auto login",
   "later": "Esi nau",
-  "disableDebate": "Disable debate",
+  "disableDebate": "Nanaia dedebate",
   "welcomeHTML": "welcome HTML (use with care)",
   "disableFacebookLoginForGroup": "Disable Facebook Login long grup",
   "facebookPixelId": "Facebook pixel id",
@@ -682,7 +682,7 @@
   "hideEmoji": "Haitim emojis",
   "endorsementButtonsHeart": "Hat",
   "endorsementArrows": "Aro",
-  "endorsementThumbs": "Thumbs",
+  "endorsementThumbs": "Daumeni",
   "endorsementHats": "Het",
   "endorsementButtons": "Endorsement batani",
   "bulkStatusUdateForInfo": "Kiliki long ol idea bilong moa infomesen",
@@ -1351,5 +1351,11 @@
   "secondAnswer": "Namba tu ansa",
   "hereIsTheQuestion": "Hia emi kesen",
   "pleaseAnswerInThisLanguage": "Plis ansa long dispela tokples",
-  "backgroundFinish": "Latar Belakang Pinis"
+  "backgroundFinish": "Latar Belakang Pinis",
+  "fontImports": "Font imports",
+  "fontStyles": "Leta sitaila",
+  "exampleFontStyles": "Ekesemapo leta sitaila",
+  "hideAoiAnalysis": "Nanaia Analisisi",
+  "hideAoiExplainButton": "Nanaia Idia Butuna",
+  "hideSkipButton": "Nanaia Lari Butuna"
 }

@@ -480,7 +480,7 @@
   "uploadVideoPointAgainst": "Video",
   "postPoint": "Tanga hejuru",
   "uploadVideoPointFor": "Video",
-  "uploadAudioPointFor": "Audio",
+  "uploadAudioPointFor": "Amajwi",
   "uploadAudioPointAgainst": "Amajwi",
   "pointVideoInfo": "Shira video mu buryo bwa landscape. Uburebure bwa video ntiburenga ",
   "pointAudioInfo": "Vuga neza. Uburebure bwa audio ntiburenga ",
@@ -1351,5 +1351,11 @@
   "secondAnswer": "Inyishu ya kabiri",
   "hereIsTheQuestion": "Ngaha ikibazo",
   "pleaseAnswerInThisLanguage": "Ndapfa kuyishura muri uru rurimi",
-  "backgroundFinish": "Ibikorwa vy'Inyuma"
+  "backgroundFinish": "Ibikorwa vy'Inyuma",
+  "exampleFontStyles": "Ingene inyandiko iteye",
+  "fontImports": "Kwinjiza inyandiko (umurongo umwe kuri URL imwe)",
+  "fontStyles": "Ingene inyandiko ziteye",
+  "hideAoiAnalysis": "Hisha Isesengura",
+  "hideAoiExplainButton": "Hisha Butone yo Gusigura",
+  "hideSkipButton": "Hisha Butone yo Guca"
 }

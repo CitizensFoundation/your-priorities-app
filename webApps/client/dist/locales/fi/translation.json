@@ -1351,5 +1351,11 @@
   "secondAnswer": "Toinen vastaus",
   "hereIsTheQuestion": "Tässä on kysymys",
   "pleaseAnswerInThisLanguage": "Vastaa tällä kielellä",
-  "backgroundFinish": "Taustaväri"
+  "backgroundFinish": "Taustaväri",
+  "fontImports": "Fonttituonnit",
+  "fontStyles": "Fonttityylit",
+  "exampleFontStyles": "Esimerkki fonttityylit",
+  "hideAoiAnalysis": "Piilota Analyysi",
+  "hideAoiExplainButton": "Piilota Selitysnappi",
+  "hideSkipButton": "Piilota Ohita-nappi"
 }

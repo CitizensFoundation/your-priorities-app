@@ -1351,5 +1351,11 @@
   "secondAnswer": "Deujhinme ripoûse",
   "hereIsTheQuestion": "Vey ci l' kwestion",
   "pleaseAnswerInThisLanguage": "Ripoûzîz e cisse lingaedje",
-  "backgroundFinish": "Finicion d' fond"
+  "backgroundFinish": "Finicion d' fond",
+  "exampleFontStyles": "Egzimpe di polices",
+  "fontImports": "Importåcions di polices (ene URL pa ligne)",
+  "fontStyles": "Stiles di polices",
+  "hideAoiAnalysis": "Muchey Analize",
+  "hideAoiExplainButton": "Muchey bouton d'esplikåcion",
+  "hideSkipButton": "Muchey bouton d'passer"
 }

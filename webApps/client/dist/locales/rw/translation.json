@@ -1351,5 +1351,11 @@
   "secondAnswer": "Igisubizo cya kabiri",
   "hereIsTheQuestion": "Dore ikibazo",
   "pleaseAnswerInThisLanguage": "Subiza muri uru rurimi",
-  "backgroundFinish": "Isura y'Inyuma"
+  "backgroundFinish": "Isura y'Inyuma",
+  "exampleFontStyles": "Urugero rw'imiterere y'inyuguti",
+  "fontImports": "Inyuguti zinjizwa (umurongo umwe kuri buri URL)",
+  "fontStyles": "Imiterere y'inyuguti",
+  "hideAoiAnalysis": "Hisha Isesengura",
+  "hideAoiExplainButton": "Hisha Butone yo Gusobanura",
+  "hideSkipButton": "Hisha Butone yo Kwihunza"
 }

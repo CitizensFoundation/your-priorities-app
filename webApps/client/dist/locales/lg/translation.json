@@ -1351,5 +1351,11 @@
   "secondAnswer": "Okwokubiri okuddamu",
   "hereIsTheQuestion": "Wano we kibuuzo",
   "pleaseAnswerInThisLanguage": "Mwogere mu lulimi luno",
-  "backgroundFinish": "Kabakole"
+  "backgroundFinish": "Kabakole",
+  "fontImports": "Okusika endagiriro",
+  "fontStyles": "Endabika y'endagiriro",
+  "exampleFontStyles": "Ebyokulabirako by'endabika y'ennukuta",
+  "hideAoiAnalysis": "Kisa Okusesa",
+  "hideAoiExplainButton": "Kisa Ekinnyonnyola Buton",
+  "hideSkipButton": "Kisa Ekippe Buton"
 }

@@ -1364,5 +1364,11 @@
   "secondAnswer": "الإجابة الثانية",
   "hereIsTheQuestion": "ها هي السؤال",
   "pleaseAnswerInThisLanguage": "يرجى الإجابة بهذه اللغة",
-  "backgroundFinish": "الخلفية"
+  "backgroundFinish": "الخلفية",
+  "fontImports": "استيراد الخطوط",
+  "fontStyles": "أنماط الخط",
+  "exampleFontStyles": "أمثلة على أنماط الخط",
+  "hideAoiAnalysis": "إخفاء التحليل",
+  "hideAoiExplainButton": "إخفاء زر الشرح",
+  "hideSkipButton": "إخفاء زر التخطي"
 }

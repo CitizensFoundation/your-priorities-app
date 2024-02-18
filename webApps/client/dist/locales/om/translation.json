@@ -1351,5 +1351,11 @@
   "secondAnswer": "Deebii lammaffaa",
   "hereIsTheQuestion": "Gaaffiin kunooti",
   "pleaseAnswerInThisLanguage": "Afaan kanaan deebisaa",
-  "backgroundFinish": "Dabaree Furtuu"
+  "backgroundFinish": "Dabaree Furtuu",
+  "exampleFontStyles": "Fakkeenya barreeffama",
+  "fontImports": "Galmeewwan furtuu (tokko tokkoon lakkofsa)",
+  "fontStyles": "Barreeffama furtuu",
+  "hideAoiAnalysis": "Qorannoo Dhoksi",
+  "hideAoiExplainButton": "Baatii Ibsi Dhoksi",
+  "hideSkipButton": "Baatii Dabri Dhoksi"
 }

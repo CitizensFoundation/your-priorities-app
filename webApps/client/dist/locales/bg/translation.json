@@ -1357,5 +1357,11 @@
   "secondAnswer": "Втори отговор",
   "hereIsTheQuestion": "Ето въпроса",
   "pleaseAnswerInThisLanguage": "Моля, отговорете на този език",
-  "backgroundFinish": "Фонов завършек"
+  "backgroundFinish": "Фонов завършек",
+  "fontImports": "Внос на шрифтове",
+  "fontStyles": "Стилове на шрифтове",
+  "exampleFontStyles": "Примерни шрифтове",
+  "hideAoiAnalysis": "Скрий Анализ",
+  "hideAoiExplainButton": "Скрий Бутона за Обяснение",
+  "hideSkipButton": "Скрий Бутона за Пропускане"
 }

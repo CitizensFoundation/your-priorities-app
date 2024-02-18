@@ -700,12 +700,12 @@
   "addTemplate": "Template add kor",
   "save": "Japun",
   "saved": "Japlele",
-  "config": "Config",
+  "config": "Konfig",
   "newBulkStatusUpdate": "Nave Bulk Status Update",
   "editBulkStatusUpdate": "Bulk Status Update badlo",
   "bulkStatusUdateConfig": "Sāmagrī Stithi Update Config",
   "bulkStatusUpdatesTemplates": "Sāmagrī Stithi Updates Templates",
-  "selectStatusTemplate": "Template",
+  "selectStatusTemplate": "Namuna",
   "moveToGroup": "Sarko",
   "noIdeasHere": "Hanga kalpana naka.",
   "organizationsAdmin": "Sanghatananchi Admin",
@@ -1351,5 +1351,11 @@
   "secondAnswer": "Dusro uttar",
   "hereIsTheQuestion": "Hanga asa prashn",
   "pleaseAnswerInThisLanguage": "Krupalu ha bhashein uttar di",
-  "backgroundFinish": "Pāṭhabhūmi Samaāpta"
+  "backgroundFinish": "Pāṭhabhūmi Samaāpta",
+  "fontImports": "Font aayat",
+  "fontStyles": "Font shaili",
+  "exampleFontStyles": "Udaharan font shaili",
+  "hideAoiAnalysis": "Vishleshan Chup",
+  "hideAoiExplainButton": "Uttar Button Chup",
+  "hideSkipButton": "Chodp Button Chup"
 }

@@ -1351,5 +1351,11 @@
   "secondAnswer": "Mokõirã",
   "hereIsTheQuestion": "Ko’ápe la pregunta",
   "pleaseAnswerInThisLanguage": "Ko ñe’ẽme ñe’ẽ",
-  "backgroundFinish": "Mba'epota Paha"
+  "backgroundFinish": "Mba'epota Paha",
+  "fontImports": "Joaju ñemyatyrõ",
+  "fontStyles": "Joaju ñemoñe'ẽ",
+  "exampleFontStyles": "Mba'erepy ñe'ẽteguy",
+  "hideAoiAnalysis": "Mombe'u Ñemombe'u",
+  "hideAoiExplainButton": "Mombe'u Ñemyesakã Mboty",
+  "hideSkipButton": "Mombe'u Ñesẽ Mboty"
 }

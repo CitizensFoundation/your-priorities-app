@@ -1351,5 +1351,11 @@
   "secondAnswer": "Aappassaa akissut",
   "hereIsTheQuestion": "Una takuuk apeqqut",
   "pleaseAnswerInThisLanguage": "Uumani oqaatsini akineq kajumissaarutigaarput",
-  "backgroundFinish": "ᖃᓄᐃᑦ ᓯᕗᓪᓕᐊᖅ"
+  "backgroundFinish": "ᖃᓄᐃᑦ ᓯᕗᓪᓕᐊᖅ",
+  "fontImports": "ᖃᓪᓗᓈᖅᑕᐃᑦ",
+  "fontStyles": "ᖃᓪᓗᓈᖅ ᐊᑎᖅᑕᐅᓯᖅ",
+  "exampleFontStyles": "ᐃᓕᖅᑯᑦ ᐊᑎᖅᑕᐅᓯᒪᔪᖅ",
+  "hideAoiAnalysis": "ᑕᕝᕙᓂᖅ ᓇᓗᓇᐃᖅᑕᐅᓯᒪᔪᖅ",
+  "hideAoiExplainButton": "ᑕᕝᕙᓂᖅ ᐅᓂᒃᑳᖅ ᑲᑎᖅᑕᐅᓯᒪᔪᖅ",
+  "hideSkipButton": "ᑕᕝᕙᓂᖅ ᐱᕈᕆᔭᖅ ᑲᑎᖅᑕᐅᓯᒪᔪᖅ"
 }

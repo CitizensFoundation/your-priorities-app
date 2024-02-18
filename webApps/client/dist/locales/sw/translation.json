@@ -1351,5 +1351,11 @@
   "secondAnswer": "Jibu la pili",
   "hereIsTheQuestion": "Hapa ni swali",
   "pleaseAnswerInThisLanguage": "Tafadhali jibu kwa lugha hii",
-  "backgroundFinish": "Maliza ya Nyuma"
+  "backgroundFinish": "Maliza ya Nyuma",
+  "exampleFontStyles": "Mifano ya mitindo ya herufi",
+  "fontImports": "Uagizaji wa herufi (URL moja kwa kila mstari)",
+  "fontStyles": "Mitindo ya herufi",
+  "hideAoiAnalysis": "Ficha Uchambuzi",
+  "hideAoiExplainButton": "Ficha Kitufe cha Maelezo",
+  "hideSkipButton": "Ficha Kitufe cha Ruka"
 }

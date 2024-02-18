@@ -510,7 +510,7 @@
   "areYouSureRemoveAndDeleteSelectedUserContent": "ທ່ານແນ່ໃຈບໍ່ວ່າຈະລຶບ ແລະ ລຶບຂໍ້ມູນທັງໝົດຂອງຜູ້ໃຊ້ເຫຼົ່ານັ້ນ? ການດຳເນີນການນີ້ບໍ່ສາມາດຍົກເລີກໄດ້.",
   "areYouSureYouWantToRemoveAdmins": "ທ່ານແນ່ໃຈບໍ່ວ່າຈະລຶບຜູ້ບໍລິຫານ?",
   "adminsCount": "ຜູ້ບໍລິຫານ",
-  "usersCount": "users",
+  "usersCount": "ຜູ້ໃຊ້",
   "organizationUserRemoved": "ຜູ້ໃຊ້ອົງການຖືກລຶບ",
   "adminRemoved": "ຜູ້ບໍລິຫານຖືກລຶບ",
   "adminAdded": "ຜູ້ບໍລິຫານຖືກເພີ່ມ",
@@ -631,15 +631,15 @@
   "facebookPixelId": "ລະຫັດ pixel Facebook",
   "downloadFacebookImagesForUser": "ດາວໂຫຼດຮູບ Facebook ສຳລັບຜູ້ໃຊ້ໄປທີ່ db ຂອງພວກເຮົາ",
   "customUserRegistrationText": "ຂໍ້ຄວາມການລົງທະບຽນຜູ້ໃຊ້ທີ່ກຳນົດເອງ",
-  "participateAnonymously": "Participate Anonymously",
-  "allowAnonymousUsers": "Allow anonymous users",
-  "deleteUser": "Delete user account",
-  "areYouSureYouWantToDeleteUser": "Are you sure you want to delete your account?",
-  "areYouReallySureYouWantToDeleteUser": "Are you 100% sure you want to delete your account? All your posts, points, comments and endorsements will be deleted!",
-  "alternativePointForLabel": "Alternative point for label",
-  "alternativePointAgainstLabel": "Alternative point against label",
+  "participateAnonymously": "ຮ່ວມມືບໍ່ເຈົ້າຂໍ",
+  "allowAnonymousUsers": "ອະນຸຍາດຜູ້ໃຊ້ທີ່ບໍ່ລະບຸຊື່",
+  "deleteUser": "ລຶບບັນຊີຜູ້ໃຊ້",
+  "areYouSureYouWantToDeleteUser": "ທ່ານແນ່ໃຈຫຼືບໍ່ທີ່ຈະລຶບບັນຊີຂອງທ່ານ?",
+  "areYouReallySureYouWantToDeleteUser": "ທ່ານແນ່ໃຈ 100% ຫຼືບໍ່ທີ່ຈະລຶບບັນຊີຂອງທ່ານ? ທຸກການພົວພັນ, ຄະແນນ, ຄວາມເຫັນ ແລະການຮັບຮອງຈະຖືກລຶບ!",
+  "alternativePointForLabel": "ຈຸດປະສົງຕ່າງປະເພດສໍາລັບປ້າຍ",
+  "alternativePointAgainstLabel": "ຈຸດປະສົງຕ່າງປະເພດກັບປ້າຍ",
   "sharePoint": "Share point",
-  "alternativePointForHeader": "Alternative point for header",
+  "alternativePointForHeader": "ຈຸດທາງເລືອກສໍາລັບສ່ວນຫົວ",
   "alternativePointAgainstHeader": "ຈຸດທາງເລືອກຕໍ່ຫົວ",
   "or": "ຫຼື",
   "hidePointAuthor": "ເຊື່ອງຜູ້ຂຽນຈຸດ",
@@ -803,14 +803,14 @@
     "post": {
       "new": "ຄວາມຄິດ",
       "status": {
-        "change": "Status update"
+        "change": "ການປັບປຸງສະຖານະ"
       }
     },
     "point": {
-      "forAdded": "Added point for",
-      "againstAdded": "Added point against",
-      "new": "Point",
-      "newFor": "Point for",
+      "forAdded": "ເພີ່ມຈຸດເພື່ອ",
+      "againstAdded": "ເພີ່ມຈຸດກັບ",
+      "new": "ຈຸດ",
+      "newFor": "ຄະແນນສໍາລັບ",
       "newAgainst": "ຈົດກັບ",
       "newComment": "ຄຳເຫັນ",
       "newsStory": {
@@ -1154,7 +1154,7 @@
   "sortBySortOrder": "ລຽງຕາມລຳດັບ",
   "mediaUploads": "ການອັບໂຫຼດສື່",
   "onlyAdminsCanCreateCommunities": "ສະເພາະຜູ້ຄຸ້ມຄອງສາມາດສ້າງຄົນອ່ານ",
-  "Facebook Client Id": "Facebook Client Id",
+  "Facebook Client Id": "ລະຫັດລູກຄ້າ Facebook",
   "facebookClientId": "ລະຫັດລູກຄ້າ Facebook",
   "Facebook Client Secret": "ລະຫັດລັບລູກຄ້າ Facebook",
   "facebookClientSecret": "ລະຫັດລັບລູກຄ້າ Facebook",
@@ -1184,7 +1184,7 @@
   "hats": "ໝວກ",
   "dataForVisualizationJsonError": "ຂໍ້ຜິດພາດ JSON",
   "selectCategory": "ເລືອກໝວດໝູ່",
-  "earlConfig": "Earl COnfig",
+  "earlConfig": "ການຕັ້ງຄ່າ Earl",
   "show_cant_decide": "ສະແດງບໍ່ສາມາດລະບຸ",
   "accept_new_ideas": "ຍອມຮັບຄຳສັ່ງໃໝ່",
   "hide_results": "ເຊື່ອງຜົນລັບ",
@@ -1351,5 +1351,11 @@
   "secondAnswer": "ຄຳຕອບທີ່ສອງ",
   "hereIsTheQuestion": "ນี่້ແມ່ນຄຳຖາມ",
   "pleaseAnswerInThisLanguage": "ກະລຸນາຕອບໃນພາສານີ້",
-  "backgroundFinish": "ພື້ນຫຼັງສີ"
+  "backgroundFinish": "ພື້ນຫຼັງສີ",
+  "fontImports": "ການນໍາເຂົ້າຟອນ",
+  "fontStyles": "ຮູບແບບຟອນ",
+  "exampleFontStyles": "ຮູບແບບຕົວອັກສອນຕົວຢ່າງ",
+  "hideAoiAnalysis": "ເຊື່ອງການວິເຄາະ",
+  "hideAoiExplainButton": "ເຊື່ອງປຸ່ມອະທິບາຍ",
+  "hideSkipButton": "ເຊື່ອງປຸ່ມຂ້າມ"
 }

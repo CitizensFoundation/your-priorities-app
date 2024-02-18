@@ -26,7 +26,7 @@ import "@material/web/progress/circular-progress.js";
 import "@material/web/menu/menu.js";
 import "@material/web/menu/menu-item.js";
 import "@material/web/button/text-button.js";
-import "@material/mwc-top-app-bar";
+import "./yp-top-app-bar.js";
 import { YpBaseElement } from "../common/yp-base-element.js";
 import { YpAppStyles } from "./YpAppStyles.js";
 import { YpAppGlobals } from "./YpAppGlobals.js";
@@ -264,24 +264,8 @@ let YpApp = class YpApp extends YpBaseElement {
         this.routeData = namedMatches;
         this._routeChanged();
         this._routePageChanged(oldRouteData);
-        //TODO: Remove workaround for display buig when we have md3 top app bar
-        setTimeout(() => {
-            const topAppBar = this.$$("mwc-top-app-bar");
-            if (topAppBar) {
-                const header = topAppBar.shadowRoot.querySelector("header");
-                if (header && header.style.top == "-128px") {
-                    header.style.top = "0";
-                }
-                else if (header) {
-                }
-                else {
-                }
-            }
-            else {
-            }
-        }, 0);
     }
-    //TODO: Use https://boguz.github.io/burgton-button-docs/
+    //TODO: Use someth8ing like https://boguz.github.io/burgton-button-docs/
     renderNavigationIcon() {
         let icons;
         if (this.closePostHeader)
@@ -395,8 +379,7 @@ let YpApp = class YpApp extends YpBaseElement {
     }
     renderMainApp() {
         return html `
-      <mwc-top-app-bar
-        dense
+      <yp-top-app-bar
         role="navigation"
         aria-label="top navigation"
         ?hidden="${this.appMode !== "main"}"
@@ -406,8 +389,8 @@ let YpApp = class YpApp extends YpBaseElement {
           ${this.goForwardToPostId ? this.goForwardPostName : this.headerTitle}
         </div>
         ${this.renderActionItems()}
-        <div>${this.renderPage()}</div>
-      </mwc-top-app-bar>
+      </yp-top-app-bar>
+      <div>${this.renderPage()}</div>
     `;
     }
     renderGroupPage() {

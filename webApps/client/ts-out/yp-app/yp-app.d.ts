@@ -10,7 +10,7 @@ import "@material/web/progress/circular-progress.js";
 import "@material/web/menu/menu.js";
 import "@material/web/menu/menu-item.js";
 import "@material/web/button/text-button.js";
-import "@material/mwc-top-app-bar";
+import "./yp-top-app-bar.js";
 import { YpBaseElement } from "../common/yp-base-element.js";
 import { YpAppGlobals } from "./YpAppGlobals.js";
 import { YpAppUser } from "./YpAppUser.js";

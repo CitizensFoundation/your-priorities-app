@@ -1351,5 +1351,11 @@
   "secondAnswer": "Eyamvula yovili",
   "hereIsTheQuestion": "Ongaapi omushangelo",
   "pleaseAnswerInThisLanguage": "Kombulula mOshiwambo",
-  "backgroundFinish": "Kumukundaneko"
+  "backgroundFinish": "Kumukundaneko",
+  "fontImports": "Ondjila yomukanda",
+  "fontStyles": "Ondjila yomukanda",
+  "exampleFontStyles": "Ehala ya mifano ya fonte",
+  "hideAoiAnalysis": "Ficheni Analiisi",
+  "hideAoiExplainButton": "Ficheni Konopo ya Kueleza",
+  "hideSkipButton": "Ficheni Konopo ya Kuruka"
 }

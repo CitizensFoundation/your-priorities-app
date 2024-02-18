@@ -1351,5 +1351,11 @@
   "secondAnswer": "คำตอบที่สอง",
   "hereIsTheQuestion": "นี่คือคำถาม",
   "pleaseAnswerInThisLanguage": "โปรดตอบเป็นภาษานี้",
-  "backgroundFinish": "พื้นหลัง"
+  "backgroundFinish": "พื้นหลัง",
+  "exampleFontStyles": "ตัวอย่างรูปแบบตัวอักษร",
+  "fontImports": "นำเข้าฟอนต์ (หนึ่ง URL ต่อบรรทัด)",
+  "fontStyles": "รูปแบบตัวอักษร",
+  "hideAoiAnalysis": "ซ่อนการวิเคราะห์",
+  "hideAoiExplainButton": "ซ่อนปุ่มอธิบาย",
+  "hideSkipButton": "ซ่อนปุ่มข้าม"
 }

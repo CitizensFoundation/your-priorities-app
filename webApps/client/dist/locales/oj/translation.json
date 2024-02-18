@@ -1351,5 +1351,11 @@
   "secondAnswer": "Niijii Anishinaabe",
   "hereIsTheQuestion": "Aaniin gaa-vagwe'aamigak",
   "pleaseAnswerInThisLanguage": "Dibishkoo gaa-izhinikaazowin",
-  "backgroundFinish": "Asemaa Biskaabiiyang"
+  "backgroundFinish": "Asemaa Biskaabiiyang",
+  "exampleFontStyles": "Ozhibii'ige Biiwaabikoons",
+  "fontImports": "Biiwaabikoons Agindaasowin (mii sa URL ogiiw line)",
+  "fontStyles": "Biiwaabikoons Nindanisowin",
+  "hideAoiAnalysis": "Nisawenimaasi Ani-Anaamadendamowin",
+  "hideAoiExplainButton": "Nisawenimaasi Anaamadendamowin Bizaan",
+  "hideSkipButton": "Nisawenimaasi Aya'aag Bizaan"
 }

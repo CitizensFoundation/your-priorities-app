@@ -1351,5 +1351,11 @@
   "secondAnswer": "Dara freagra",
   "hereIsTheQuestion": "Seo í an cheist",
   "pleaseAnswerInThisLanguage": "Freagair sa teanga seo, le do thoil",
-  "backgroundFinish": "Cúlra"
+  "backgroundFinish": "Cúlra",
+  "fontImports": "Allmhairí Cló",
+  "fontStyles": "Stíleanna Cló",
+  "exampleFontStyles": "Samplaí cló",
+  "hideAoiAnalysis": "Folaigh Anailís",
+  "hideAoiExplainButton": "Folaigh Cnaipe Míniú",
+  "hideSkipButton": "Folaigh Cnaipe Scipeáil"
 }

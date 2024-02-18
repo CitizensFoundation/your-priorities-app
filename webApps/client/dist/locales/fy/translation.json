@@ -371,7 +371,7 @@
   "customSamlLoginText": "Oanpaste SAML login tekst",
   "forceSecureSamlEmployeeLogin": "Twinge feilige SAML meiwurker login",
   "languageSettings": "Taal Ynstellings",
-  "headerMedia": "Header Media",
+  "headerMedia": "Koptekst Media",
   "themeSettings": "Tema Ynstellings",
   "postSettings": "Post Ynstellings",
   "voteSettings": "Stim Ynstellings",
@@ -1351,5 +1351,11 @@
   "secondAnswer": "Twadde antwurd",
   "hereIsTheQuestion": "Hjir is de fraach",
   "pleaseAnswerInThisLanguage": "Beäntwurdzje asjebleaft yn dizze taal",
-  "backgroundFinish": "Eftergrûn Finish"
+  "backgroundFinish": "Eftergrûn Finish",
+  "fontImports": "Lettertype ymporten",
+  "fontStyles": "Lettertype stilen",
+  "exampleFontStyles": "Foarbyld lettertypen",
+  "hideAoiAnalysis": "Ferbergje Analyse",
+  "hideAoiExplainButton": "Ferbergje Utlis Knop",
+  "hideSkipButton": "Ferbergje Oerslaan Knop"
 }

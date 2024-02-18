@@ -1360,5 +1360,11 @@
   "secondAnswer": "Ikkinchi javob",
   "hereIsTheQuestion": "Mana savol",
   "pleaseAnswerInThisLanguage": "Iltimos, bu tilda javob bering",
-  "backgroundFinish": "Orqa fon"
+  "backgroundFinish": "Orqa fon",
+  "exampleFontStyles": "Namuna shrift uslublari",
+  "fontImports": "Shrift importlari (har bir qator uchun bitta URL)",
+  "fontStyles": "Shrift uslublari",
+  "hideAoiAnalysis": "Tahlilni yashirish",
+  "hideAoiExplainButton": "Tushuntirish tugmasini yashirish",
+  "hideSkipButton": "O'tkazib yuborish tugmasini yashirish"
 }

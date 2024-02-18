@@ -1244,7 +1244,7 @@
   "failed": "Echwe",
   "in_progress": "An Pwogrè",
   "An error occurred": "Yon erè rive. Tanpri eseye ankò.",
-  "Tonal": "Tonal",
+  "Tonal": "Ton",
   "Vibrant": "Vibran",
   "Expressive": "Ekspresif",
   "Content": "Kontni",
@@ -1366,5 +1366,11 @@
   "secondAnswer": "Dezyèm repons",
   "hereIsTheQuestion": "Men kesyon an",
   "pleaseAnswerInThisLanguage": "Tanpri reponn nan lang sa a",
-  "backgroundFinish": "Fini Dèyè"
+  "backgroundFinish": "Fini Dèyè",
+  "fontImports": "Enpòte font",
+  "fontStyles": "Stil font",
+  "exampleFontStyles": "Egzanp stil font",
+  "hideAoiAnalysis": "Kache Analiz",
+  "hideAoiExplainButton": "Kache Bouton Eksplike",
+  "hideSkipButton": "Kache Bouton Sote"
 }

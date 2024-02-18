@@ -840,7 +840,7 @@
     "add": "Community bäifügen",
     "alternativeHeader": "Alternativen Header",
     "edit": "Community änneren",
-    "hostname": "Hostname",
+    "hostname": "Hostnumm",
     "admins": "Community Admins",
     "users": "Community Benotzer",
     "delete": "Community läschen",
@@ -1351,5 +1351,11 @@
   "secondAnswer": "Zweet Äntwert",
   "hereIsTheQuestion": "Hei ass d'Fro",
   "pleaseAnswerInThisLanguage": "Äntwert w.e.g. an dëser Sprooch",
-  "backgroundFinish": "Hannergrond Finish"
+  "backgroundFinish": "Hannergrond Finish",
+  "fontImports": "Schrëftimporter",
+  "fontStyles": "Schrëftstiler",
+  "exampleFontStyles": "Beispill Schrëftaarten",
+  "hideAoiAnalysis": "Analyse verstoppen",
+  "hideAoiExplainButton": "Erklär Knäppchen verstoppen",
+  "hideSkipButton": "Iwwersprangen Knäppchen verstoppen"
 }

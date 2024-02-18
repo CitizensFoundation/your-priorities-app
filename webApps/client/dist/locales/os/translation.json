@@ -1162,8 +1162,8 @@
   "Facebook Client Secret": "Facebook Client Secret",
   "facebookClientSecret": "Facebook Client Secret",
   "Google Client Id": "Google Client Id",
-  "googleClientId": "Google Client Id",
-  "Google Client Secret": "Google Client Secret",
+  "googleClientId": "Google-ы Клиенты Id",
+  "Google Client Secret": "Google-ы Клиенты Раздæл",
   "googleClientSecret": "Google Клиенты Раздзинад",
   "Discord Client Id": "Discord Клиенты Айди",
   "discordClientId": "Discord Клиенты Айди",
@@ -1351,5 +1351,11 @@
   "secondAnswer": "Æмбарджы æмæ",
   "hereIsTheQuestion": "Мæнæ ацы фæстæ",
   "pleaseAnswerInThisLanguage": "Бахъедин кæны æвзаг этом мотт",
-  "backgroundFinish": "Фон хъæлæ"
+  "backgroundFinish": "Фон хъæлæ",
+  "exampleFontStyles": "Нмыццаг фонты стильтæ",
+  "fontImports": "Фонты импорттæ (æндæр URL ацы строкæй)",
+  "fontStyles": "Фонты стильтæ",
+  "hideAoiAnalysis": "Анализы баивæрс",
+  "hideAoiExplainButton": "Тласæххуысы къуыд",
+  "hideSkipButton": "Афтæ уæддæр къуыд"
 }

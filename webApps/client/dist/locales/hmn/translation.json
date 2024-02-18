@@ -1184,7 +1184,7 @@
   "hats": "Kaus mom",
   "dataForVisualizationJsonError": "JSON yuam kev",
   "selectCategory": "Xaiv Pawg",
-  "earlConfig": "Earl COnfig",
+  "earlConfig": "Earl Config",
   "show_cant_decide": "Qhia tsis txiav txim siab",
   "accept_new_ideas": "Txais tswv yim tshiab",
   "hide_results": "nkaum qhov tshwm sim",
@@ -1351,5 +1351,11 @@
   "secondAnswer": "Lus teb ob",
   "hereIsTheQuestion": "Nov yog lo lus nug",
   "pleaseAnswerInThisLanguage": "Thov teb hauv hom lus no",
-  "backgroundFinish": "Kev Kawm Ntxov"
+  "backgroundFinish": "Kev Kawm Ntxov",
+  "fontImports": "Ntawv qhia nkhaus",
+  "fontStyles": "Ntawv qauv",
+  "exampleFontStyles": "Piv txwv ntawm font",
+  "hideAoiAnalysis": "Nkaum Kev Tshuaj Ntsuam",
+  "hideAoiExplainButton": "Nkaum Piav Qhia Khawm",
+  "hideSkipButton": "Nkaum Dhia Khawm"
 }

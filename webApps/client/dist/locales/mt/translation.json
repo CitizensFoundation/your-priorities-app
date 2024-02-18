@@ -1351,5 +1351,11 @@
   "secondAnswer": "It-tieni tweġiba",
   "hereIsTheQuestion": "Hawnhekk il-mistoqsija",
   "pleaseAnswerInThisLanguage": "Jekk jogħġbok tweġib f'din il-lingwa",
-  "backgroundFinish": "Sfond"
+  "backgroundFinish": "Sfond",
+  "exampleFontStyles": "Eżempji ta' stili tal-font",
+  "fontImports": "Importazzjonijiet tal-font (URL waħda kull linja)",
+  "fontStyles": "Stili tal-font",
+  "hideAoiAnalysis": "Aħbi Analiżi",
+  "hideAoiExplainButton": "Aħbi Buttuna Jispjega",
+  "hideSkipButton": "Aħbi Buttuna Aqbeż"
 }

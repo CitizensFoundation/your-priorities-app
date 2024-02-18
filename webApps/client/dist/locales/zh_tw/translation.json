@@ -1358,5 +1358,11 @@
   "secondAnswer": "第二答案",
   "hereIsTheQuestion": "這是問題",
   "pleaseAnswerInThisLanguage": "請用這種語言回答",
-  "backgroundFinish": "背景完成"
+  "backgroundFinish": "背景完成",
+  "exampleFontStyles": "示例字體樣式",
+  "fontImports": "字體導入（每行一個URL）",
+  "fontStyles": "字體樣式",
+  "hideAoiAnalysis": "隱藏分析",
+  "hideAoiExplainButton": "隱藏解釋按鈕",
+  "hideSkipButton": "隱藏跳過按鈕"
 }

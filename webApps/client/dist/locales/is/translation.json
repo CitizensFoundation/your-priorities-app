@@ -1488,5 +1488,11 @@
   "secondAnswer": "Annað svar",
   "hereIsTheQuestion": "Hér er spurningin",
   "pleaseAnswerInThisLanguage": "Vinsamlegast svaraðu á þessu tungumáli",
-  "backgroundFinish": "Bakgrunnur"
+  "backgroundFinish": "Bakgrunnur",
+  "fontImports": "Leturflutningar",
+  "fontStyles": "Leturstílar",
+  "exampleFontStyles": "Dæmisleturstílar",
+  "hideAoiAnalysis": "Fela greiningu",
+  "hideAoiExplainButton": "Fela útskýringahnapp",
+  "hideSkipButton": "Fela sleppihnapp"
 }

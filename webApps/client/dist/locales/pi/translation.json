@@ -815,7 +815,7 @@
       "new": "Bindu",
       "newFor": "Pakkhikāya bindu",
       "newAgainst": "Vipakkhikāya bindu",
-      "newComment": "Comment",
+      "newComment": "Tippani",
       "newsStory": {
         "new": "Puggala vārtā"
       }
@@ -1351,5 +1351,11 @@
   "secondAnswer": "Dutiyaṃ uttaraṃ",
   "hereIsTheQuestion": "Idhaṃ pañhaṃ",
   "pleaseAnswerInThisLanguage": "Imasmiṃ bhāsāya uttaraṃ detha",
-  "backgroundFinish": "Pabhākaraṇaṃ"
+  "backgroundFinish": "Pabhākaraṇaṃ",
+  "exampleFontStyles": "Udāharaṇa lipi rūpāṇi",
+  "fontImports": "Lipi āyāta (eka URL prati sīmā)",
+  "fontStyles": "Lipi rūpāṇi",
+  "hideAoiAnalysis": "Viślēṣaṇaṁ Guhāti",
+  "hideAoiExplainButton": "Vyākhyānaṁ Guhāti Buttaṁ",
+  "hideSkipButton": "Langhanaṁ Guhāti Buttaṁ"
 }

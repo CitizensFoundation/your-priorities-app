@@ -1351,5 +1351,11 @@
   "secondAnswer": "Antras atsakymas",
   "hereIsTheQuestion": "Čia yra klausimas",
   "pleaseAnswerInThisLanguage": "Atsakykite šia kalba",
-  "backgroundFinish": "Fono Apdaila"
+  "backgroundFinish": "Fono Apdaila",
+  "exampleFontStyles": "Pavyzdiniai šrifto stiliai",
+  "fontImports": "Šriftų importavimas (viena URL eilutėje)",
+  "fontStyles": "Šrifto stiliai",
+  "hideAoiAnalysis": "Slėpti analizę",
+  "hideAoiExplainButton": "Slėpti paaiškinimo mygtuką",
+  "hideSkipButton": "Slėpti praleidimo mygtuką"
 }

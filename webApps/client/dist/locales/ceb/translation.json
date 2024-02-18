@@ -476,7 +476,7 @@
   "postPointAgainst": "I-post ang punto batok",
   "uploadVideoPointAgainst": "Video",
   "postPoint": "I-post ang punto",
-  "uploadVideoPointFor": "Video",
+  "uploadVideoPointFor": "Bideo",
   "uploadAudioPointFor": "Audio",
   "uploadAudioPointAgainst": "Audio",
   "pointVideoInfo": "I-upload ang video sa landscape format. Ang maximum nga gitas-on sa video kay ",
@@ -488,8 +488,8 @@
   "videoPointUploadLimitSec": "Limit sa video sa punto sa segundo (max 600s)",
   "audioPostUploadLimitSec": "Limit sa pag-post sa audio sa segundo (max 600s)",
   "audioPointUploadLimitSec": "Limit sa audio sa punto sa segundo (max 600s)",
-  "postCoverVideo": "Video",
-  "uploadVideo": "Video",
+  "postCoverVideo": "Bideo",
+  "uploadVideo": "Bideo",
   "uploadCompleted": "Kompleto na ang pag-upload",
   "uploadingVideo": "Nag-upload sa video...",
   "uploadingImage": "Nag-upload sa hulagway...",
@@ -1351,5 +1351,11 @@
   "secondAnswer": "Ikaduhang tubag",
   "hereIsTheQuestion": "Ania ang pangutana",
   "pleaseAnswerInThisLanguage": "Palihug tubag niini nga pinulongan",
-  "backgroundFinish": "Latar nga Human"
+  "backgroundFinish": "Latar nga Human",
+  "fontImports": "Pag-import sa Font",
+  "fontStyles": "Estilo sa Font",
+  "exampleFontStyles": "Pananglitan sa estilo sa font",
+  "hideAoiAnalysis": "Tago Analisis",
+  "hideAoiExplainButton": "Tago Ipasabot Buton",
+  "hideSkipButton": "Tago Laktaw Buton"
 }

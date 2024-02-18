@@ -1351,5 +1351,11 @@
   "secondAnswer": "Jawapan kedua",
   "hereIsTheQuestion": "Ini adalah soalan",
   "pleaseAnswerInThisLanguage": "Sila jawab dalam bahasa ini",
-  "backgroundFinish": "Latar Belakang"
+  "backgroundFinish": "Latar Belakang",
+  "exampleFontStyles": "Contoh gaya fon",
+  "fontImports": "Import fon (satu URL setiap baris)",
+  "fontStyles": "Gaya fon",
+  "hideAoiAnalysis": "Sembunyi Analisis",
+  "hideAoiExplainButton": "Sembunyi Butang Terangkan",
+  "hideSkipButton": "Sembunyi Butang Langkau"
 }

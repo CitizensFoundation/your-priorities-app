@@ -1351,5 +1351,11 @@
   "secondAnswer": "Annað svar",
   "hereIsTheQuestion": "Her er spurningin",
   "pleaseAnswerInThisLanguage": "Vinarliga svara á hesum máli",
-  "backgroundFinish": "Bakgrund Enda"
+  "backgroundFinish": "Bakgrund Enda",
+  "fontImports": "Skrift innflutningar",
+  "fontStyles": "Skrift stílar",
+  "exampleFontStyles": "Dømi um skriftstílar",
+  "hideAoiAnalysis": "Fjal Greining",
+  "hideAoiExplainButton": "Fjal Forklára Knøtt",
+  "hideSkipButton": "Fjal Forða Knøtt"
 }

@@ -1351,5 +1351,11 @@
   "secondAnswer": "İккĕмĕш тăвăк",
   "hereIsTheQuestion": "Манăн пăнчă",
   "pleaseAnswerInThisLanguage": "Çак пĕлтереççе паллă тăвак",
-  "backgroundFinish": "Фонăн аяклăхĕ"
+  "backgroundFinish": "Фонăн аяклăхĕ",
+  "fontImports": "Шрифт импортсем",
+  "fontStyles": "Шрифт стилĕсем",
+  "exampleFontStyles": "Пример шрифт стилĕсем",
+  "hideAoiAnalysis": "Анализне Ячлар",
+  "hideAoiExplainButton": "Тӳрлӗтӗр Ячлар Тӗрĕ",
+  "hideSkipButton": "Куçар Ячлар Тӗрĕ"
 }

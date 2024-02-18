@@ -1266,7 +1266,7 @@
   "debate": "Rasprava",
   "completeLogin": "Završi prijavu",
   "password": "Lozinka",
-  "Email": "Email",
+  "Email": "E-pošta",
   "recreate": "Rekreiraj",
   "Your idea has been added, you can continue voting": "Vaša ideja je dodana, možete nastaviti s glasanjem.",
   "Your idea is in a moderation queue": "Vaša ideja je u redu čekanja za moderaciju.",
@@ -1358,5 +1358,11 @@
   "secondAnswer": "Drugi odgovor",
   "hereIsTheQuestion": "Evo pitanja",
   "pleaseAnswerInThisLanguage": "Molimo odgovorite na ovom jeziku",
-  "backgroundFinish": "Pozadina"
+  "backgroundFinish": "Pozadina",
+  "fontImports": "Uvoz fontova",
+  "fontStyles": "Stilovi fonta",
+  "exampleFontStyles": "Primjeri fontova",
+  "hideAoiAnalysis": "Sakrij Analizu",
+  "hideAoiExplainButton": "Sakrij Objasni Gumb",
+  "hideSkipButton": "Sakrij Preskoči Gumb"
 }

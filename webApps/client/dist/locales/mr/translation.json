@@ -1351,5 +1351,11 @@
   "secondAnswer": "दुसरे उत्तर",
   "hereIsTheQuestion": "प्रश्न येथे आहे",
   "pleaseAnswerInThisLanguage": "कृपया या भाषेत उत्तर द्या",
-  "backgroundFinish": "पार्श्वभूमी समाप्ति"
+  "backgroundFinish": "पार्श्वभूमी समाप्ति",
+  "exampleFontStyles": "उदाहरण फॉन्ट शैली",
+  "fontImports": "फॉन्ट आयात (प्रत्येक ओळीवर एक URL)",
+  "fontStyles": "फॉन्ट शैली",
+  "hideAoiAnalysis": "विश्लेषण लपवा",
+  "hideAoiExplainButton": "स्पष्टीकरण बटण लपवा",
+  "hideSkipButton": "विपुल बटण लपवा"
 }

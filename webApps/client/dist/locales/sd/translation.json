@@ -1351,5 +1351,11 @@
   "secondAnswer": "ٻيون جواب",
   "hereIsTheQuestion": "هتي سوال آهي",
   "pleaseAnswerInThisLanguage": "مهرباني ڪري اهي ٻولي ۾ جواب ڏيو",
-  "backgroundFinish": "پس منظر ختم"
+  "backgroundFinish": "پس منظر ختم",
+  "exampleFontStyles": "مثال فونٽ اسٽائيل",
+  "fontImports": "فونٽ درآمد (هر لائن تي هڪ URL)",
+  "fontStyles": "فونٽ اسٽائيل",
+  "hideAoiAnalysis": "تجزيو چھپائيو",
+  "hideAoiExplainButton": "وضاحت ڪندڙ بٽڻ چھپائيو",
+  "hideSkipButton": "چھپائيو چھوڙ بٽڻ"
 }

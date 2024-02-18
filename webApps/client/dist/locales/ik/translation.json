@@ -184,7 +184,7 @@
   "hideGroupListCardObjectives": "Takuyaktukun malġuk qanuqtut piqatigiit",
   "communityId": "Iḷisaġvikmiñun Id",
   "upload": "Ikayuqtiq",
-  "videoFormat": "Video format",
+  "videoFormat": "Video aaniksiich",
   "ziggeoApplicationToken": "Ziggeo Application Token",
   "useZiggeo": "Ziggeo Media atuq",
   "anonymousAskRegistrationQuestions": "Takuluku anonimusiŋaqtut apqutit",
@@ -1015,7 +1015,7 @@
     "addAdmin": "Admin-ikun Ikayuqtiq",
     "removeUser": "User-aq Takuq",
     "inviteUser": "User-aq Aullaqtirvik",
-    "email": "email",
+    "email": "Email",
     "removeFromOrganization": "Organization Takuq",
     "addToOrganization": "Organization Ikayuqtiq",
     "selectOrganization": "Organization Tilihan"
@@ -1351,5 +1351,11 @@
   "secondAnswer": "Aappaan akimiaq",
   "hereIsTheQuestion": "Maaniq sualuk",
   "pleaseAnswerInThisLanguage": "Una qanuq tiguniaqtuq",
-  "backgroundFinish": "Aasriq Kiput"
+  "backgroundFinish": "Aasriq Kiput",
+  "fontImports": "Qaliqsiich",
+  "fontStyles": "Qaliqsrit",
+  "exampleFontStyles": "Makpiġaaq atuqtauyut stailat",
+  "hideAoiAnalysis": "Iñuich Keviksaun",
+  "hideAoiExplainButton": "Iñuich Tuŋŋun Tautuktuŋa",
+  "hideSkipButton": "Iñuich Aŋqat Tautuktuŋa"
 }

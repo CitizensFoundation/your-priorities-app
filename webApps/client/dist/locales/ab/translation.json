@@ -1351,5 +1351,11 @@
   "secondAnswer": "Аҩбатәи аҭак",
   "hereIsTheQuestion": "Абра аҳәара",
   "pleaseAnswerInThisLanguage": "Ари абызшәаҿы аҭак ҟаҵа",
-  "backgroundFinish": "Афон Ҿыц"
+  "backgroundFinish": "Афон Ҿыц",
+  "fontImports": "Ашрифт алагаларазы",
+  "fontStyles": "Ашрифт астильқәа",
+  "exampleFontStyles": "Аҧшьгаратә шрифтқәа",
+  "hideAoiAnalysis": "Акәымкәа анализ",
+  "hideAoiExplainButton": "Аҽыхьчара Аҳәара Акәымпыл",
+  "hideSkipButton": "Аҽыхьчара Аиасра Акәымпыл"
 }

@@ -686,7 +686,7 @@
   "endorsementHats": "Papaqlar",
   "endorsementButtons": "Dəstək Düymələri",
   "bulkStatusUdateForInfo": "Daha çox məlumat üçün fikirlərə vurun",
-  "urlLink": "Link",
+  "urlLink": "Bağlantı",
   "bulkStatusUdateFor": "Fikirlər üzrə status yeniləmələri",
   "inviteNotFoundOrAlreadyUsed": "Dəvət tapılmadı və ya artıq istifadə edilib",
   "reportConfirmation": "Bu məzmunun saytın qaydalarını pozduğu üçün şikayət etmək istədiyinizə əminsinizmi?",
@@ -1351,5 +1351,11 @@
   "secondAnswer": "İkinci cavab",
   "hereIsTheQuestion": "Burada sual var",
   "pleaseAnswerInThisLanguage": "Zəhmət olmasa bu dildə cavab verin",
-  "backgroundFinish": "Fon Bitmə"
+  "backgroundFinish": "Fon Bitmə",
+  "fontImports": "Şrift idxalları",
+  "fontStyles": "Şrift stilləri",
+  "exampleFontStyles": "Nümunə font stilləri",
+  "hideAoiAnalysis": "Analizi Gizlət",
+  "hideAoiExplainButton": "İzah Düyməsini Gizlət",
+  "hideSkipButton": "Keçid Düyməsini Gizlət"
 }

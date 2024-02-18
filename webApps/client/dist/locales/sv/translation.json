@@ -1358,5 +1358,11 @@
   "secondAnswer": "Andra svar",
   "hereIsTheQuestion": "Här är frågan",
   "pleaseAnswerInThisLanguage": "Svara på detta språk",
-  "backgroundFinish": "Bakgrund"
+  "backgroundFinish": "Bakgrund",
+  "exampleFontStyles": "Exempel typsnitt",
+  "fontImports": "Typsnittsimporter (en URL per rad)",
+  "fontStyles": "Typsnittsstilar",
+  "hideAoiAnalysis": "Dölj analys",
+  "hideAoiExplainButton": "Dölj förklara-knappen",
+  "hideSkipButton": "Dölj hoppa över-knappen"
 }

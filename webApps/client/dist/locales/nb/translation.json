@@ -1351,5 +1351,11 @@
   "secondAnswer": "Andre svar",
   "hereIsTheQuestion": "Her er spørsmålet",
   "pleaseAnswerInThisLanguage": "Vennligst svar på dette språket",
-  "backgroundFinish": "Bakgrunnsfinish"
+  "backgroundFinish": "Bakgrunnsfinish",
+  "exampleFontStyles": "Eksempel skriftstiler",
+  "fontImports": "Skriftimporter (én URL per linje)",
+  "fontStyles": "Skriftstiler",
+  "hideAoiAnalysis": "Skjul analyse",
+  "hideAoiExplainButton": "Skjul forklar-knapp",
+  "hideSkipButton": "Skjul hopp over-knapp"
 }

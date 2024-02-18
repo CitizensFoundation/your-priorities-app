@@ -646,7 +646,7 @@
   "hidePostAuthor": "Vunitaka na dau ni iyaloyalo",
   "defaultLocationLongLat": "Vanua taumada longitude,latitude",
   "disableCommunityDomainUpLink": "Tawasea na Domain Up Link",
-  "analyticsTrackerCode": "Google Analytics Id",
+  "analyticsTrackerCode": "Id ni Google Analytics",
   "filterIdeas": "Vakatovolei na vakasama",
   "edit": "Veisautaka",
   "delete": "Bokoca",
@@ -708,7 +708,7 @@
   "selectStatusTemplate": "Tepalete",
   "moveToGroup": "Toso",
   "noIdeasHere": "E sega na vakasama eke.",
-  "organizationsAdmin": "Organizations Admin",
+  "organizationsAdmin": "Lewenilotu ni Matabose",
   "unviewed": "sega ni raica",
   "notificationMarkAllViewed": "Maroroya kece me raici",
   "notificationConfirmMarkAllViewed": "Vakadeitaka ni o vinakata me maroroya kece na nomu itukutuku me raici",
@@ -1351,5 +1351,11 @@
   "secondAnswer": "Ikari ni saumi",
   "hereIsTheQuestion": "Qo na taro",
   "pleaseAnswerInThisLanguage": "Yalovinaka, sauma ena vosa qo",
-  "backgroundFinish": "Muri Vakacavari"
+  "backgroundFinish": "Muri Vakacavari",
+  "fontImports": "Vakayagataki ni matanivola",
+  "fontStyles": "Kena ivakarau ni matanivola",
+  "exampleFontStyles": "Ivakaraitaki ni matailalai ni vola",
+  "hideAoiAnalysis": "Vunitaka na Veivakadikevi",
+  "hideAoiExplainButton": "Vunitaka na Bateni ni Vakamacala",
+  "hideSkipButton": "Vunitaka na Bateni ni Sivia"
 }

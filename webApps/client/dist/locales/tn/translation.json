@@ -1351,5 +1351,11 @@
   "secondAnswer": "Karabo ya bobedi",
   "hereIsTheQuestion": "Fano ke potso",
   "pleaseAnswerInThisLanguage": "Ka kopo araba ka puo eno",
-  "backgroundFinish": "Semelo sa Morago"
+  "backgroundFinish": "Semelo sa Morago",
+  "exampleFontStyles": "Mebele ya sekao",
+  "fontImports": "Tseno ya mebele (URL e le nngwe mo moleng)",
+  "fontStyles": "Mebele ya fonte",
+  "hideAoiAnalysis": "Patelela Tlhatlhobo",
+  "hideAoiExplainButton": "Patelela Konopo ya Tlhaloso",
+  "hideSkipButton": "Patelela Konopo ya Tshaba"
 }

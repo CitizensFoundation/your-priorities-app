@@ -40,7 +40,7 @@
   "goalTree": "Arbre d'Objectiu",
   "futureRealityTree": "Arbre de Realitat Futura",
   "ideaGenerationGroupType": "Generacion d'ideias",
-  "allOurIdeasGroupType": "All Our Ideas Pairwise Ranking",
+  "allOurIdeasGroupType": "All Our Ideas Classament Per Pares",
   "allowGenerativeImages": "Permetre imatges generativas",
   "reports": "Rapòrts",
   "reportsInfo": "Generar rapòrts",
@@ -1033,7 +1033,7 @@
     "loggedInWithSaml": "Connectat amb SAML",
     "loggedInWithFacebook": "Connectat amb Facebook",
     "facebookLogin": "Connexion Facebook",
-    "info": "Info",
+    "info": "Informacion",
     "notifications": "Notificacions",
     "name": "Nom complet",
     "email": "Corrièl",
@@ -1351,5 +1351,11 @@
   "secondAnswer": "Segonda responsa",
   "hereIsTheQuestion": "Aquí la question",
   "pleaseAnswerInThisLanguage": "Respondètz dins aquesta lenga",
-  "backgroundFinish": "Acabament de Fons"
+  "backgroundFinish": "Acabament de Fons",
+  "exampleFontStyles": "Estils d'exemple de font",
+  "fontImports": "Importacions de font (una URL per linha)",
+  "fontStyles": "Estils de font",
+  "hideAoiAnalysis": "Amagar Analisi",
+  "hideAoiExplainButton": "Amagar Boton d'Explicacion",
+  "hideSkipButton": "Amagar Boton de Sautar"
 }

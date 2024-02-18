@@ -1351,5 +1351,11 @@
   "secondAnswer": "Kied nah",
   "hereIsTheQuestion": "Shoh y feysht",
   "pleaseAnswerInThisLanguage": "Freill dty aigney 'sy çhengey shoh",
-  "backgroundFinish": "Cullee Críochnaghey"
+  "backgroundFinish": "Cullee Críochnaghey",
+  "fontImports": "Importyssyn clou",
+  "fontStyles": "Stylyn clou",
+  "exampleFontStyles": "Ennymyn clou screeu",
+  "hideAoiAnalysis": "Follaghey Mynlught",
+  "hideAoiExplainButton": "Follaghey Puttan Mynskyl",
+  "hideSkipButton": "Follaghey Puttan Scughey"
 }

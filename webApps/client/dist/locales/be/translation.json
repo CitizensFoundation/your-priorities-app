@@ -1351,5 +1351,11 @@
   "secondAnswer": "Другі адказ",
   "hereIsTheQuestion": "Вось пытанне",
   "pleaseAnswerInThisLanguage": "Калі ласка, адкажыце на гэтай мове",
-  "backgroundFinish": "Фон"
+  "backgroundFinish": "Фон",
+  "fontImports": "Імпарт шрыфтаў",
+  "fontStyles": "Стылі шрыфтаў",
+  "exampleFontStyles": "Прыклады шрыфтаў",
+  "hideAoiAnalysis": "Схаваць аналіз",
+  "hideAoiExplainButton": "Схаваць кнопку тлумачэння",
+  "hideSkipButton": "Схаваць кнопку прапусціць"
 }

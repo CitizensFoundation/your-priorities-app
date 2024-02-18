@@ -1351,5 +1351,11 @@
   "secondAnswer": "ಎರಡನೇ ಉತ್ತರ",
   "hereIsTheQuestion": "ಇಲ್ಲಿ ಪ್ರಶ್ನೆ ಇದೆ",
   "pleaseAnswerInThisLanguage": "ಈ ಭಾಷೆಯಲ್ಲಿ ಉತ್ತರಿಸಿ",
-  "backgroundFinish": "ಹಿನ್ನೆಲೆ ಮುಗಿತು"
+  "backgroundFinish": "ಹಿನ್ನೆಲೆ ಮುಗಿತು",
+  "fontImports": "ಫಾಂಟ್ ಆಮದು",
+  "fontStyles": "ಫಾಂಟ್ ಶೈಲಿಗಳು",
+  "exampleFontStyles": "ಉದಾಹರಣೆ ಫಾಂಟ್ ಶೈಲಿಗಳು",
+  "hideAoiAnalysis": "ವಿಶ್ಲೇಷಣೆ ಮರೆಮಾಡಿ",
+  "hideAoiExplainButton": "ವಿವರಣೆ ಬಟನ್ ಮರೆಮಾಡಿ",
+  "hideSkipButton": "ಸ್ಕಿಪ್ ಬಟನ್ ಮರೆಮಾಡಿ"
 }

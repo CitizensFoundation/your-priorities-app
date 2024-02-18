@@ -1331,7 +1331,7 @@
   "domainFraudManagement": "ការគ្រប់គ្រងការក្លែងបន្លំដែន",
   "Access": "ចូល",
   "openOrganizationMenu": "បើកម៉ឺនុយអង្គភាព",
-  "Listasafn Reykjavíkur": "Listasafn Reykjavíkur",
+  "Listasafn Reykjavíkur": "សារមន្ទីរបញ្ជីរូបភាពរេយ្យាវិក",
   "Override theme": "បដិសេធស្បែក",
   "Analytics & Marketing": "វិភាគ & ទីផ្សារ",
   "Promote your survey": "ផ្សព្វផ្សាយការស្ទង់មតិរបស់អ្នក",
@@ -1351,5 +1351,11 @@
   "secondAnswer": "ចម្លើយទីពីរ",
   "hereIsTheQuestion": "នេះជាសំណួរ",
   "pleaseAnswerInThisLanguage": "សូមឆ្លើយតបជាភាសានេះ",
-  "backgroundFinish": "ផ្ទៃខាងក្រោយ"
+  "backgroundFinish": "ផ្ទៃខាងក្រោយ",
+  "fontImports": "នាំចូលពុម្ពអក្សរ",
+  "fontStyles": "រចនាប័ទ្មពុម្ពអក្សរ",
+  "exampleFontStyles": "ឧទាហរណ៍ពុម្ពអក្សរ",
+  "hideAoiAnalysis": "លាក់ការវិភាគ",
+  "hideAoiExplainButton": "លាក់ប៊ូតុងពន្យល់",
+  "hideSkipButton": "លាក់ប៊ូតុងរំលង"
 }

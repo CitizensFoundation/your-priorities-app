@@ -1358,5 +1358,11 @@
   "secondAnswer": "Andet svar",
   "hereIsTheQuestion": "Her er spørgsmålet",
   "pleaseAnswerInThisLanguage": "Svar venligst på dette sprog",
-  "backgroundFinish": "Baggrund"
+  "backgroundFinish": "Baggrund",
+  "fontImports": "Fontimporter",
+  "fontStyles": "Fontstile",
+  "exampleFontStyles": "Eksempel skrifttyper",
+  "hideAoiAnalysis": "Skjul Analyse",
+  "hideAoiExplainButton": "Skjul Forklar-knap",
+  "hideSkipButton": "Skjul Spring Over-knap"
 }

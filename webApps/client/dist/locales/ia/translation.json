@@ -26,7 +26,7 @@
   "aoiAiAnalysisConfig": "Config de Analysi Automatisate per AI",
   "questionName": "Question",
   "allOurIdeasOptions": "Optiones",
-  "stop": "Stop",
+  "stop": "Stoppar",
   "answersToVoteOn": "Responsas a votar super",
   "submitAnswersForCreation": "Submitte Responsas",
   "generateMoreIdeasWithAi": "Genera plus ideas con AI",
@@ -1351,5 +1351,11 @@
   "secondAnswer": "Secunde responsa",
   "hereIsTheQuestion": "Ecce le question",
   "pleaseAnswerInThisLanguage": "Per favor responde in iste lingua",
-  "backgroundFinish": "Fundo"
+  "backgroundFinish": "Fundo",
+  "fontImports": "Importationes de fontes",
+  "fontStyles": "Stylos de fontes",
+  "exampleFontStyles": "Exemplos de stilos de fonte",
+  "hideAoiAnalysis": "Celar Analyse",
+  "hideAoiExplainButton": "Celar Button de Explication",
+  "hideSkipButton": "Celar Button de Saltar"
 }

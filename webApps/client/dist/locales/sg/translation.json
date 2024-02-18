@@ -199,7 +199,7 @@
   "cloneGroup": "Köndö ti clone",
   "areYouSureCloneGroup": "Mbi na kodro ti clone ti kömbe na?",
   "errorFraudAuditReportGeneration": "Ködörö ti mbi ti Fraud Audit",
-  "downloadFraudAuditReports": "Fraud delete audits",
+  "downloadFraudAuditReports": "Kwoli ti banga",
   "haveCreatedFraudAuditReport": "Na kodro ti mbi ti fraud delete audit",
   "downloadFraudAuditReport": "Kwoli Kwe Sɔ Sɔti-audit",
   "deleteAllButOne": "Ködö ti gbï ti gbï na ti kömbe",
@@ -1351,5 +1351,11 @@
   "secondAnswer": "Bângbi â mbi",
   "hereIsTheQuestion": "Azî na nzoni sô",
   "pleaseAnswerInThisLanguage": "Kôdörö sêse na â yângâ tî",
-  "backgroundFinish": "Ködörö Sängö"
+  "backgroundFinish": "Ködörö Sängö",
+  "exampleFontStyles": "Sɛtɛlɛ na mbɛlɛgi sɔŋɔ",
+  "fontImports": "Mbɛlɛgi aman (URL mokomoko na linyɛ)",
+  "fontStyles": "Sɛtɛlɛ na mbɛlɛgi",
+  "hideAoiAnalysis": "Batali Tî Bêafrîka",
+  "hideAoiExplainButton": "Batali Kɔtɔ na Bêafrîka",
+  "hideSkipButton": "Batali Kɔtɔ na Sô"
 }

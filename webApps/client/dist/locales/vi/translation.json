@@ -1351,5 +1351,11 @@
   "secondAnswer": "Câu trả lời thứ hai",
   "hereIsTheQuestion": "Đây là câu hỏi",
   "pleaseAnswerInThisLanguage": "Vui lòng trả lời bằng ngôn ngữ này",
-  "backgroundFinish": "Nền"
+  "backgroundFinish": "Nền",
+  "exampleFontStyles": "Kiểu chữ mẫu",
+  "fontImports": "Nhập font (mỗi URL một dòng)",
+  "fontStyles": "Kiểu chữ",
+  "hideAoiAnalysis": "Ẩn Phân tích",
+  "hideAoiExplainButton": "Ẩn Nút Giải thích",
+  "hideSkipButton": "Ẩn Nút Bỏ qua"
 }

@@ -40,7 +40,7 @@
   "goalTree": "Gwehen Bal",
   "futureRealityTree": "Gwehen a'n Dhyfodhow",
   "ideaGenerationGroupType": "Generys synsys",
-  "allOurIdeasGroupType": "All Our Ideas Pairwise Ranking",
+  "allOurIdeasGroupType": "All Our Ideas Rankya Parys",
   "allowGenerativeImages": "Caniat generys delinyow",
   "reports": "Anreporthis",
   "reportsInfo": "Generys anreporthis",
@@ -1351,5 +1351,11 @@
   "secondAnswer": "Eil ateb",
   "hereIsTheQuestion": "Omma an gwestyon",
   "pleaseAnswerInThisLanguage": "Mar pleg, ateb yn y taves-ma",
-  "backgroundFinish": "Cefndir Gorffen"
+  "backgroundFinish": "Cefndir Gorffen",
+  "fontImports": "Enporthis Font",
+  "fontStyles": "Stylys Font",
+  "exampleFontStyles": "Ensampl skrifstilow",
+  "hideAoiAnalysis": "Kudha Dadans",
+  "hideAoiExplainButton": "Kudha Boton Esplegya",
+  "hideSkipButton": "Kudha Boton Lewya"
 }

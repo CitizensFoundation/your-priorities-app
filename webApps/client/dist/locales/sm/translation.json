@@ -1157,8 +1157,8 @@
   "sortBySortOrder": "Fa'asologa I le Fa'asologa",
   "mediaUploads": "Tuuina Atu o Fa'asalalauga",
   "onlyAdminsCanCreateCommunities": "Na'o Pule e Mafai ona Fai Nu'u",
-  "Facebook Client Id": "Facebook Client Id",
-  "facebookClientId": "Facebook Client Id",
+  "Facebook Client Id": "Id Fa'aoga Facebook",
+  "facebookClientId": "Id Fa'aoga Facebook",
   "Facebook Client Secret": "Facebook Fa'amau Lilo",
   "facebookClientSecret": "Facebook Fa'amau Lilo",
   "Google Client Id": "Google Id Fa'akilieniti",
@@ -1351,5 +1351,11 @@
   "secondAnswer": "Tali lona lua",
   "hereIsTheQuestion": "O le fesili lea",
   "pleaseAnswerInThisLanguage": "Tali i lenei gagana",
-  "backgroundFinish": "Fa'ai'uga Tua"
+  "backgroundFinish": "Fa'ai'uga Tua",
+  "exampleFontStyles": "Fa'ata'ita'iga o sitaili tusi",
+  "fontImports": "Aumai tusi (tasi URL i le laina)",
+  "fontStyles": "Sitaili tusi",
+  "hideAoiAnalysis": "Nana Su'esu'ega",
+  "hideAoiExplainButton": "Nana Fa'amatala Fa'amau",
+  "hideSkipButton": "Nana Alo ese Fa'amau"
 }

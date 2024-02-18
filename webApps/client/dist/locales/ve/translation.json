@@ -538,7 +538,7 @@
   "deleteSelectedUsers": "Kumbela u fhofa zwikhethiwa:",
   "anonymizeSelectedUsers": "Fihla zwikhethiwa:",
   "anonymizeUser": "Fihla mushumisi",
-  "email": "Email",
+  "email": "Imeyili",
   "organization": "Mulongwa",
   "emailAlreadyRegisterred": "U nga dzheni email ya wena nga adiresi iyi nga u ita shumiswa.",
   "userHaveSetEmail": "Email i shumisiwa nga",
@@ -1351,5 +1351,11 @@
   "secondAnswer": "U fhira vhuṱhi",
   "hereIsTheQuestion": "Ndi khou ita mbudziso",
   "pleaseAnswerInThisLanguage": "Ndi khou humbela u fhira nga luambo luno",
-  "backgroundFinish": "Mvelaphanda"
+  "backgroundFinish": "Mvelaphanda",
+  "exampleFontStyles": "Mienzaniso ya mafonti",
+  "fontImports": "Kutisa mafonti (URL imwe ngauri)",
+  "fontStyles": "Mafonti",
+  "hideAoiAnalysis": "Fihla Tshianalyze",
+  "hideAoiExplainButton": "Fihla Konopo ya U fhululedza",
+  "hideSkipButton": "Fihla Konopo ya U dzula"
 }

@@ -464,7 +464,7 @@
   "speechToTextInfo": "Tokoluka kokokisa maloba na yo na mokanda. Mpo na yango esengeli kokanisa monɔkɔ ya interface ya mosaleli (menu ya likoló na lobɔkɔ ya mwasi) na monɔkɔ olobaka mpe koloba polele.",
   "edited": "ebongolami",
   "playVoiceRecording": "Bɛtá enregistrement ya mongongo",
-  "uploadAudio": "Audio",
+  "uploadAudio": "Lisolo",
   "allowPostAudioUploads": "Pemisa post ya audio uploads",
   "allowPointAudioUploads": "Tiká bákɔtisa audio na point",
   "transcodingAudio": "Kolɛngɛla audio...",
@@ -477,7 +477,7 @@
   "uploadVideoPointAgainst": "Vidéo",
   "postPoint": "Tínda point",
   "uploadVideoPointFor": "Vidéo",
-  "uploadAudioPointFor": "Audio",
+  "uploadAudioPointFor": "Lisolo",
   "uploadAudioPointAgainst": "Lisolo",
   "pointVideoInfo": "Tínda vidéo na format ya landscape. Bokɛlɛ ya vidéo ezalí ",
   "pointAudioInfo": "Lobá polele. Bokɛlɛ ya audio ezalí ",
@@ -1351,5 +1351,11 @@
   "secondAnswer": "Eyano ya mibale",
   "hereIsTheQuestion": "Tala motuna oyo",
   "pleaseAnswerInThisLanguage": "Yanola na monɔkɔ oyo",
-  "backgroundFinish": "Mokɔlɔ ya Nsima"
+  "backgroundFinish": "Mokɔlɔ ya Nsima",
+  "fontImports": "Makomi ya mbeba",
+  "fontStyles": "Mitindo ya mbeba",
+  "exampleFontStyles": "Mibeko ya mbeba",
+  "hideAoiAnalysis": "Bomba Analyse",
+  "hideAoiExplainButton": "Bomba Bokangi",
+  "hideSkipButton": "Bomba Kokima"
 }

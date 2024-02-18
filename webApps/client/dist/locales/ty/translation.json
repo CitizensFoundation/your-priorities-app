@@ -1351,5 +1351,11 @@
   "secondAnswer": "Pahonoraa piti",
   "hereIsTheQuestion": "Teie te uiraa",
   "pleaseAnswerInThisLanguage": "A pahono i roto i teie reo",
-  "backgroundFinish": "Papûraa Hopea"
+  "backgroundFinish": "Papûraa Hopea",
+  "exampleFontStyles": "Tauira huru mata‘i",
+  "fontImports": "Te mau huru mata‘i (hoê URL no te hoê raini)",
+  "fontStyles": "Huru mata‘i",
+  "hideAoiAnalysis": "Huna i te Tātāra‘a",
+  "hideAoiExplainButton": "Huna i te Pātene Fā‘otiraa",
+  "hideSkipButton": "Huna i te Pātene Tāpae"
 }

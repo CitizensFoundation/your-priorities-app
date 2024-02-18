@@ -185,7 +185,7 @@
   "communityId": "Nọmba obodo",
   "upload": "Bulite",
   "videoFormat": "Ụdị vidiyo",
-  "ziggeoApplicationToken": "Ziggeo Application Token",
+  "ziggeoApplicationToken": "Ziggeo Ngwa Token",
   "useZiggeo": "Jiri Ziggeo Media",
   "anonymousAskRegistrationQuestions": "Jụọ ajụjụ ndebanye aha na-amaghị aha",
   "customFilterText": "Omenala nzacha ederede",
@@ -1351,5 +1351,11 @@
   "secondAnswer": "Azịza nke abụọ",
   "hereIsTheQuestion": "Lee ajụjụ",
   "pleaseAnswerInThisLanguage": "Biko zaa na asụsụ a",
-  "backgroundFinish": "Nzube Azụ"
+  "backgroundFinish": "Nzube Azụ",
+  "fontImports": "Mbubata mkpụrụedemede",
+  "fontStyles": "Ụdị mkpụrụedemede",
+  "exampleFontStyles": "Ọmụmaatụ ụdị edemede",
+  "hideAoiAnalysis": "Zoo Nyocha",
+  "hideAoiExplainButton": "Zoo Bọtịnụ Nkọwa",
+  "hideSkipButton": "Zoo Bọtịnụ Agafe"
 }
