@@ -17,10 +17,10 @@ import { cache } from "lit/directives/cache.js";
 
 import { Snackbar } from "@material/mwc-snackbar";
 import "@material/mwc-snackbar";
-import "@material/mwc-drawer";
+import "./yp-drawer.js";
 
-//import { Drawer } from '@material/mwc-drawer';
-//import '@material/mwc-drawer';
+//import { Drawer } from '@material/yp-drawer';
+//import '@material/yp-drawer';
 
 import "@material/web/button/text-button.js";
 import "@material/web/labs/badge/badge.js";
@@ -691,7 +691,7 @@ export class YpApp extends YpBaseElement {
 
   renderTopBar() {
     return html`
-      <mwc-drawer type="modal">
+      <yp-drawer type="modal">
         <div>
           <yp-app-nav-drawer
             id="ypNavDrawer"
@@ -702,8 +702,7 @@ export class YpApp extends YpBaseElement {
             .route="${this.route}"
           ></yp-app-nav-drawer>
         </div>
-        <div slot="appContent">${this.renderMainApp()}</div>
-      </mwc-drawer>
+      </yp-drawer>
 
       ${this.userDrawerOpened
         ? html`
@@ -793,6 +792,7 @@ export class YpApp extends YpBaseElement {
   override render() {
     return html`
       ${this.renderTopBar()}
+      ${this.renderMainApp()}
       <yp-app-dialogs id="dialogContainer"></yp-app-dialogs>
       ${this.renderAdminApp()} ${this.renderPromotionApp()}
       ${this.renderFooter()}
@@ -1381,7 +1381,7 @@ export class YpApp extends YpBaseElement {
   }
 
   _toggleNavDrawer() {
-    (this.$$("mwc-drawer") as any).open = true;
+    (this.$$("yp-drawer") as any).open = true;
     (this.$$("#ypNavDrawer") as YpAppNavDrawer).opened = true;
   }
 

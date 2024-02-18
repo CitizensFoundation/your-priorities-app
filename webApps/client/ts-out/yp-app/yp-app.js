@@ -15,9 +15,9 @@ import { html, nothing } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { cache } from "lit/directives/cache.js";
 import "@material/mwc-snackbar";
-import "@material/mwc-drawer";
-//import { Drawer } from '@material/mwc-drawer';
-//import '@material/mwc-drawer';
+import "./yp-drawer.js";
+//import { Drawer } from '@material/yp-drawer';
+//import '@material/yp-drawer';
 import "@material/web/button/text-button.js";
 import "@material/web/labs/badge/badge.js";
 import "@material/web/iconbutton/icon-button.js";
@@ -456,7 +456,7 @@ let YpApp = class YpApp extends YpBaseElement {
     }
     renderTopBar() {
         return html `
-      <mwc-drawer type="modal">
+      <yp-drawer type="modal">
         <div>
           <yp-app-nav-drawer
             id="ypNavDrawer"
@@ -467,8 +467,7 @@ let YpApp = class YpApp extends YpBaseElement {
             .route="${this.route}"
           ></yp-app-nav-drawer>
         </div>
-        <div slot="appContent">${this.renderMainApp()}</div>
-      </mwc-drawer>
+      </yp-drawer>
 
       ${this.userDrawerOpened
             ? html `
@@ -553,6 +552,7 @@ let YpApp = class YpApp extends YpBaseElement {
     render() {
         return html `
       ${this.renderTopBar()}
+      ${this.renderMainApp()}
       <yp-app-dialogs id="dialogContainer"></yp-app-dialogs>
       ${this.renderAdminApp()} ${this.renderPromotionApp()}
       ${this.renderFooter()}
@@ -1040,7 +1040,7 @@ let YpApp = class YpApp extends YpBaseElement {
             return false;
     }
     _toggleNavDrawer() {
-        this.$$("mwc-drawer").open = true;
+        this.$$("yp-drawer").open = true;
         this.$$("#ypNavDrawer").opened = true;
     }
     getDialogAsync(idName, callback) {

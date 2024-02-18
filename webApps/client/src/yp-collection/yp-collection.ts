@@ -198,7 +198,7 @@ export abstract class YpCollection extends YpBaseElementWithLogin {
           position: fixed;
           bottom: 32px;
           right: 32px;
-          z-index: 3000;
+          z-index: 1;
         }
 
         md-tabs {

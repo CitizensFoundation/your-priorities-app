@@ -1,10 +1,10 @@
-import { LitElement, CSSResult, TemplateResult } from 'lit';
-export declare class YpDrawer extends LitElement {
+import { TemplateResult } from "lit";
+import { YpBaseElement } from "../common/yp-base-element";
+export declare class YpDrawer extends YpBaseElement {
     open: boolean;
-    position: 'left' | 'right';
+    position: "left" | "right";
     transparentScrim: boolean;
-    static styles: CSSResult;
-    constructor();
+    static get styles(): any[];
     connectedCallback(): void;
     disconnectedCallback(): void;
     private _handleScrimClick;

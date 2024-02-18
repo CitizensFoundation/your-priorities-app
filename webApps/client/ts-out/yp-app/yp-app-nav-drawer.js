@@ -83,7 +83,8 @@ let YpAppNavDrawer = class YpAppNavDrawer extends YpBaseElement {
         if (this.adminRights &&
             this.adminRights.CommunityAdmins &&
             this.adminRights.CommunityAdmins.length > 0) {
-            this.myAdminCommunities = this.adminRights.CommunityAdmins;
+            this.myAdminCommunities = this.adminRights
+                .CommunityAdmins;
         }
         else {
             this.myAdminCommunities = undefined;
@@ -110,6 +111,11 @@ let YpAppNavDrawer = class YpAppNavDrawer extends YpBaseElement {
           padding-bottom: 8px;
           font-size: 18px;
           padding-left: 8px;
+        }
+
+        md-linear-progress {
+          max-width: 200px;
+          width: 100%;
         }
 
         .themeSelection {
@@ -181,9 +187,7 @@ let YpAppNavDrawer = class YpAppNavDrawer extends YpBaseElement {
             `
             : nothing}
         <div class="languageSelector layout vertical self-start">
-          <yp-language-selector
-            class="languageSelector"
-          ></yp-language-selector>
+          <yp-language-selector class="languageSelector"></yp-language-selector>
         </div>
 
         <div class="layout horizontal center-center themeSelection">
@@ -191,7 +195,9 @@ let YpAppNavDrawer = class YpAppNavDrawer extends YpBaseElement {
         </div>
 
         ${this.spinner
-            ? html `<md-linear-progress indeterminate></md-linear-progress>`
+            ? html `<div class="layout horizontal center-center">
+              <md-linear-progress indeterminate></md-linear-progress>
+            </div>`
             : nothing}
 
         <div
