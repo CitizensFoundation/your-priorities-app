@@ -55,6 +55,7 @@ let YpApp = class YpApp extends YpBaseElement {
         this.route = "";
         this.routeData = {};
         this.userDrawerOpened = false;
+        this.navDrawerOpened = false;
         this.languageLoaded = false;
         this.anchor = null;
         this.previousSearches = [];
@@ -456,28 +457,38 @@ let YpApp = class YpApp extends YpBaseElement {
     }
     renderTopBar() {
         return html `
-      <yp-drawer id="leftDrawer" type="modal">
-        <yp-app-nav-drawer
-          id="ypNavDrawer"
-          .homeLink="${this.homeLink}"
-          .opened="${this.navDrawOpenedDelayed}"
-          @yp-toggle-nav-drawer="${this._openNavDrawer}"
-          .user="${this.user}"
-          .route="${this.route}"
-        ></yp-app-nav-drawer>
+      <yp-drawer id="leftDrawer" @closed="${this._closeNavDrawer}">
+        ${this.navDrawerOpened
+            ? html `
+              <yp-app-nav-drawer
+                id="ypNavDrawer"
+                .homeLink="${this.homeLink}"
+                .opened="${this.navDrawOpenedDelayed}"
+                @yp-toggle-nav-drawer="${this._openNavDrawer}"
+                .user="${this.user}"
+                .route="${this.route}"
+              ></yp-app-nav-drawer>
+            `
+            : nothing}
       </yp-drawer>
 
-      <yp-drawer id="rightDrawer" position="right" type="modal">
-        <ac-notification-list
-          @yp-close-notification-list="${this._closeUserDrawer}"
-          id="acNotificationsList"
-          .user="${this.user}"
-          opened="${this.userDrawerOpened}"
-          .route="${this.route}"
-        ></ac-notification-list>
+      <yp-drawer
+        id="rightDrawer"
+        position="right"
+        @closed="${this._closeUserDrawer}"
+      >
+        ${this.userDrawerOpened
+            ? html `
+              <ac-notification-list
+                @yp-close-notification-list="${this._closeUserDrawer}"
+                id="acNotificationsList"
+                .user="${this.user}"
+                opened="${this.userDrawerOpened}"
+                .route="${this.route}"
+              ></ac-notification-list>
+            `
+            : nothing}
       </yp-drawer>
-
-      ${this.userDrawerOpened ? html ` <div id="userDrawer"></div> ` : nothing}
     `;
     }
     renderFooter() {
@@ -1034,16 +1045,17 @@ let YpApp = class YpApp extends YpBaseElement {
         else
             return false;
     }
-    _openNavDrawer() {
-        this.$$("yp-drawer").open = true;
+    async _openNavDrawer() {
+        this.navDrawerOpened = true;
+        this.$$("#leftDrawer").open = true;
+        await this.updateComplete;
         this.$$("#ypNavDrawer").opened = true;
-        if (window.innerWidth < 960) {
-            this._closeUserDrawer();
-        }
     }
-    _closeNavDrawer() {
-        this.$$("yp-drawer").open = false;
+    async _closeNavDrawer() {
+        this.$$("#leftDrawer").open = false;
         this.$$("#ypNavDrawer").opened = false;
+        await new Promise((resolve) => setTimeout(resolve, 300));
+        this.navDrawerOpened = false;
     }
     getDialogAsync(idName, callback) {
         // Todo: Get Working
@@ -1062,14 +1074,14 @@ let YpApp = class YpApp extends YpBaseElement {
             mainArea.scrollTop = 0;
         }
     }
-    _openUserDrawer() {
+    async _openUserDrawer() {
+        this.userDrawerOpened = true;
         this.$$("#rightDrawer").open = true;
-        if (window.innerWidth < 960) {
-            this._closeNavDrawer();
-        }
     }
-    _closeUserDrawer() {
+    async _closeUserDrawer() {
         this.$$("#rightDrawer").open = false;
+        await new Promise((resolve) => setTimeout(resolve, 300));
+        this.userDrawerOpened = false;
     }
     _login() {
         if (window.appUser) {
@@ -1334,6 +1346,9 @@ __decorate([
 __decorate([
     property({ type: Boolean })
 ], YpApp.prototype, "userDrawerOpened", void 0);
+__decorate([
+    property({ type: Boolean })
+], YpApp.prototype, "navDrawerOpened", void 0);
 __decorate([
     property({ type: Boolean })
 ], YpApp.prototype, "languageLoaded", void 0);

@@ -62,6 +62,7 @@ import { Dialog } from "@material/web/dialog/internal/dialog.js";
 import { Corner, Menu } from "@material/web/menu/menu.js";
 import { YpServerApiAdmin } from "../common/YpServerApiAdmin.js";
 import { MdDialog } from "@material/web/dialog/dialog.js";
+import { YpDrawer } from "./yp-drawer.js";
 
 declare global {
   interface Window {
@@ -157,6 +158,9 @@ export class YpApp extends YpBaseElement {
 
   @property({ type: Boolean })
   userDrawerOpened = false;
+
+  @property({ type: Boolean })
+  navDrawerOpened = false;
 
   @property({ type: Boolean })
   languageLoaded = false;
@@ -691,28 +695,38 @@ export class YpApp extends YpBaseElement {
 
   renderTopBar() {
     return html`
-      <yp-drawer id="leftDrawer" type="modal">
-        <yp-app-nav-drawer
-          id="ypNavDrawer"
-          .homeLink="${this.homeLink}"
-          .opened="${this.navDrawOpenedDelayed}"
-          @yp-toggle-nav-drawer="${this._openNavDrawer}"
-          .user="${this.user}"
-          .route="${this.route}"
-        ></yp-app-nav-drawer>
+      <yp-drawer id="leftDrawer" @closed="${this._closeNavDrawer}">
+        ${this.navDrawerOpened
+          ? html`
+              <yp-app-nav-drawer
+                id="ypNavDrawer"
+                .homeLink="${this.homeLink}"
+                .opened="${this.navDrawOpenedDelayed}"
+                @yp-toggle-nav-drawer="${this._openNavDrawer}"
+                .user="${this.user}"
+                .route="${this.route}"
+              ></yp-app-nav-drawer>
+            `
+          : nothing}
       </yp-drawer>
 
-      <yp-drawer id="rightDrawer" position="right" type="modal">
-        <ac-notification-list
-          @yp-close-notification-list="${this._closeUserDrawer}"
-          id="acNotificationsList"
-          .user="${this.user}"
-          opened="${this.userDrawerOpened}"
-          .route="${this.route}"
-        ></ac-notification-list>
+      <yp-drawer
+        id="rightDrawer"
+        position="right"
+        @closed="${this._closeUserDrawer}"
+      >
+        ${this.userDrawerOpened
+          ? html`
+              <ac-notification-list
+                @yp-close-notification-list="${this._closeUserDrawer}"
+                id="acNotificationsList"
+                .user="${this.user}"
+                opened="${this.userDrawerOpened}"
+                .route="${this.route}"
+              ></ac-notification-list>
+            `
+          : nothing}
       </yp-drawer>
-
-      ${this.userDrawerOpened ? html` <div id="userDrawer"></div> ` : nothing}
     `;
   }
 
@@ -1375,17 +1389,18 @@ export class YpApp extends YpBaseElement {
     else return false;
   }
 
-  _openNavDrawer() {
-    (this.$$("yp-drawer") as any).open = true;
+  async _openNavDrawer() {
+    this.navDrawerOpened = true;
+    (this.$$("#leftDrawer") as any).open = true;
+    await this.updateComplete;
     (this.$$("#ypNavDrawer") as YpAppNavDrawer).opened = true;
-    if (window.innerWidth < 960) {
-      this._closeUserDrawer();
-    }
   }
 
-  _closeNavDrawer() {
-    (this.$$("yp-drawer") as any).open = false;
+  async _closeNavDrawer() {
+    (this.$$("#leftDrawer") as any).open = false;
     (this.$$("#ypNavDrawer") as YpAppNavDrawer).opened = false;
+    await new Promise((resolve) => setTimeout(resolve, 300));
+    this.navDrawerOpened = false;
   }
 
   getDialogAsync(idName: string, callback: Function) {
@@ -1409,15 +1424,15 @@ export class YpApp extends YpBaseElement {
     }
   }
 
-  _openUserDrawer() {
+  async _openUserDrawer() {
+    this.userDrawerOpened = true;
     (this.$$("#rightDrawer") as YpDrawer).open = true;
-    if (window.innerWidth < 960) {
-      this._closeNavDrawer();
-    }
   }
 
-  _closeUserDrawer() {
+  async _closeUserDrawer() {
     (this.$$("#rightDrawer") as YpDrawer).open = false;
+    await new Promise((resolve) => setTimeout(resolve, 300));
+    this.userDrawerOpened = false;
   }
 
   _login() {

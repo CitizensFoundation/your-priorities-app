@@ -198,12 +198,6 @@ export class AcNotificationList extends YpBaseElementWithLogin {
   override render() {
     return html`
       <div id="material" class="oversflowSettings">
-        <div class="layout horizontal center-center">
-          <md-icon-button
-            @click="${() => this.fire("yp-close-notification-list")}"
-            ><md-icon>close</md-icon>
-          </md-icon-button>
-        </div>
         ${this.loggedInUser
           ? html`
               <yp-user-info

@@ -10,7 +10,6 @@ import { YpBaseElement } from "../common/yp-base-element";
 let YpDrawer = class YpDrawer extends YpBaseElement {
     constructor() {
         super(...arguments);
-        this.open = false;
         this.position = "left";
         this.transparentScrim = true;
     }
@@ -29,26 +28,34 @@ let YpDrawer = class YpDrawer extends YpBaseElement {
         }
         .drawer-content {
           width: var(--drawer-width);
-          height: 100vh;
+          height: 100%;
           position: fixed;
           opacity: 0;
           top: 0;
           bottom: 0;
           overflow-y: auto;
+          transform: translateX(-100%);
           background-color: var(--md-sys-color-surface-container);
           z-index: 2;
-          transform: translateX(-100%);
           transition: opacity 0.3s ease, transform 0.3s ease;
         }
+
+        :host([position="left"]) .drawer-content {
+          left: 0;
+          right: auto;
+          transform: translateX(-100%); /* Start off-screen to the left */
+        }
+
         :host([position="right"]) .drawer-content {
           right: 0;
-          left: 0; /* Ensure it does not stretch across the screen */
-          transform: translateX(100%);
+          transform: translateX(100%); /* Start off-screen to the right */
+          overflow-y: initial;
         }
+
         :host([open]) .drawer-content {
-          transform: translateX(0);
-          opacity: 1;
-          transition: opacity 0.3s ease, transform 0.3s ease;
+          transform: translateX(0); /* Slide in */
+          opacity: 1; /* Fade in */
+          transition: opacity 0.3s ease, transform 0.3s ease; /* Apply transitions */
         }
         .scrim {
           position: fixed;
@@ -60,11 +67,18 @@ let YpDrawer = class YpDrawer extends YpBaseElement {
           z-index: 2;
           opacity: 0;
           pointer-events: none;
-          transition: opacity 0.3s ease;
+          visibility: hidden;
         }
+
+        :host([open]) .scrim {
+          background-color: var(--scrim-transparent);
+          visibility: visible;
+        }
+
         :host([open][transparentScrim]) .scrim {
           background-color: var(--scrim-transparent);
         }
+
         :host([open]) .scrim {
           opacity: 1;
           pointer-events: auto;
@@ -81,6 +95,18 @@ let YpDrawer = class YpDrawer extends YpBaseElement {
         super.disconnectedCallback();
         document.removeEventListener("keydown", this._handleEscKey.bind(this));
         this.removeEventListener("click", this._handleScrimClick);
+    }
+    updated(changedProperties) {
+        if (changedProperties.has("open")) {
+            if (this.open === true) {
+                this.fire("opened");
+                console.error("opened");
+            }
+            else if (this.open === false) {
+                this.fire("closed");
+                console.error("closed");
+            }
+        }
     }
     _handleScrimClick(event) {
         const scrim = this.shadowRoot.querySelector(".scrim");

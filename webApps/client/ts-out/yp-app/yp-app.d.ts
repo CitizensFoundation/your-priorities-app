@@ -65,6 +65,7 @@ export declare class YpApp extends YpBaseElement {
     subRoute: string | undefined;
     routeData: Record<string, string>;
     userDrawerOpened: boolean;
+    navDrawerOpened: boolean;
     languageLoaded: boolean;
     anchor: HTMLElement | null;
     previousSearches: Array<string>;
@@ -163,14 +164,14 @@ export declare class YpApp extends YpBaseElement {
         domainId?: number;
         postId?: number;
     }, keepOpenForPost?: boolean): boolean;
-    _openNavDrawer(): void;
-    _closeNavDrawer(): void;
+    _openNavDrawer(): Promise<void>;
+    _closeNavDrawer(): Promise<void>;
     getDialogAsync(idName: string, callback: Function): void;
     closeDialog(idName: string): void;
     _dialogClosed(event: CustomEvent): void;
     scrollPageToTop(): void;
-    _openUserDrawer(): void;
-    _closeUserDrawer(): void;
+    _openUserDrawer(): Promise<void>;
+    _closeUserDrawer(): Promise<void>;
     _login(): void;
     _onChangeHeader(event: CustomEvent): void;
     goBack(): void;
