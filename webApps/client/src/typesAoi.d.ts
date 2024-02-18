@@ -60,8 +60,6 @@ interface AoiEarlConfigurationData {
   hide_skip: boolean;
   welcome_html: string;
   target_votes: number;
-  lock_results_until_target_votes: boolean;
-  theme_color: string;
   analysis_config: {
     analyses: AoiSurveyAnalysisData[];
   };

@@ -1,4 +1,6 @@
 {
+  "externalGoalParamsWhitelist": "External goal params whitelist",
+  "targetVotes": "Target votes",
   "exampleFontStyles": "Example font styles",
   "fontImports": "Font imports (one URL per line)",
   "fontStyles": "Font styles",

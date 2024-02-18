@@ -552,6 +552,10 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmBase {
     ];
   }
 
+  answersChanged() {
+    this.requestUpdate();
+  }
+
   renderCreateIdeas() {
     return html`
       <div class="layout vertical center-center">
@@ -559,6 +563,7 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmBase {
           type="textarea"
           id="answers"
           rows="14"
+          @input="${this.answersChanged}"
           .label="${this.t("answersToVoteOn")}"
         >
         </md-filled-text-field>

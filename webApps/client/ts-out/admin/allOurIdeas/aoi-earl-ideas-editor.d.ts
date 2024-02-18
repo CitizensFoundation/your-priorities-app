@@ -55,9 +55,10 @@ export declare class AoiEarlIdeasEditor extends YpStreamingLlmBase {
     get allChoicesHaveIcons(): boolean | undefined;
     deleteImageUrl(choice: AoiChoiceData): Promise<void>;
     static get styles(): any[];
+    answersChanged(): void;
     renderCreateIdeas(): import("lit-html").TemplateResult<1>;
     renderIdeasSortingChips(): import("lit-html").TemplateResult<1>;
-    renderIcon(choice: AoiChoiceData): import("lit-html").TemplateResult<1> | typeof nothing;
+    renderIcon(choice: AoiChoiceData): typeof nothing | import("lit-html").TemplateResult<1>;
     aiStyleChanged(): void;
     renderAnswerData(answer: AoiChoiceData): import("lit-html").TemplateResult<1>;
     renderEditIdeas(): import("lit-html").TemplateResult<1>;

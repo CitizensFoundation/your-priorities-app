@@ -1473,7 +1473,22 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
         if (!configuration.earl) {
             configuration.earl = {
                 active: true,
+                configuration: {
+                    accept_new_ideas: true,
+                    hide_results: false,
+                    hide_analysis: false,
+                    hide_skip: false,
+                    hide_explain: false,
+                    target_votes: 30,
+                    analysis_config: defaultAiAnalysisJson,
+                    welcome_html: "",
+                    welcome_message: "",
+                    external_goal_params_whitelist: "",
+                    external_goal_trigger_url: ""
+                }
             };
+            this.configTabs = this.setupConfigTabs();
+            this.requestUpdate();
         }
         if (!configuration.earl.question) {
             configuration.earl.question = {};
@@ -1646,6 +1661,31 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
                     onChange: (e) => this._updateEarl(e, "configuration.analysis_config", true),
                     translationToken: "aoiAiAnalysisConfig",
                 },
+                {
+                    text: "targetVotes",
+                    type: "textfield",
+                    maxLength: 3,
+                    pattern: "[0-9]",
+                    value: earl?.configuration?.target_votes,
+                    translationToken: "targetVotes",
+                    onChange: (e) => this._updateEarl(e, "configuration.target_votes", true),
+                    charCounter: true,
+                },
+                {
+                    text: "externalGoalParamsWhitelist",
+                    type: "textfield",
+                    pattern: "[0-9]",
+                    value: earl?.configuration?.external_goal_params_whitelist,
+                    onChange: (e) => this._updateEarl(e, "configuration.external_goal_params_whitelist", true),
+                    translationToken: "externalGoalParamsWhitelist",
+                },
+                {
+                    text: "externalGoalTriggerUrl",
+                    type: "textfield",
+                    value: earl?.configuration?.external_goal_trigger_url,
+                    onChange: (e) => this._updateEarl(e, "configuration.external_goal_trigger_url", true),
+                    translationToken: "externalGoalTriggerUrl",
+                }
             ],
         };
     }
