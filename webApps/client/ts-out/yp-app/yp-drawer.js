@@ -39,7 +39,7 @@ let YpDrawer = class YpDrawer extends YpBaseElement {
           background-color: var(--md-sys-color-surface-container);
           z-index: 2;
           transform: translateX(-100%);
-          transition: transform 0.3s ease;
+          transition: opacity 0.3s ease, transform 0.3s ease;
         }
         :host([position="right"]) .drawer-content {
           right: 0;
@@ -49,7 +49,7 @@ let YpDrawer = class YpDrawer extends YpBaseElement {
         :host([open]) .drawer-content {
           transform: translateX(0);
           opacity: 1;
-          transition: opacity 0.15s ease;
+          transition: opacity 0.3s ease, transform 0.3s ease;
         }
         .scrim {
           position: fixed;
