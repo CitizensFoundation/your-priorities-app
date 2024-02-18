@@ -19,7 +19,6 @@ let YpDrawer = class YpDrawer extends YpBaseElement {
             super.styles,
             css `
         :host {
-          margin-left: -8px;
           --drawer-width: 256px;
           --drawer-background-color: var(
             --md-sys-color-surface-container-lowest

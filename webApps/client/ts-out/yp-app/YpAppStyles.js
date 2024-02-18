@@ -29,6 +29,10 @@ export const YpAppStyles = css `
     height: 32px;
   }
 
+  #leftDrawer {
+    margin-left: -8px;
+  }
+
   .loadingAppSpinnerPage {
     position: absolute;
     top: 0;

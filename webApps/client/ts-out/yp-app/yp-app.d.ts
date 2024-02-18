@@ -163,12 +163,14 @@ export declare class YpApp extends YpBaseElement {
         domainId?: number;
         postId?: number;
     }, keepOpenForPost?: boolean): boolean;
-    _toggleNavDrawer(): void;
+    _openNavDrawer(): void;
+    _closeNavDrawer(): void;
     getDialogAsync(idName: string, callback: Function): void;
     closeDialog(idName: string): void;
     _dialogClosed(event: CustomEvent): void;
     scrollPageToTop(): void;
-    _toggleUserDrawer(): void;
+    _openUserDrawer(): void;
+    _closeUserDrawer(): void;
     _login(): void;
     _onChangeHeader(event: CustomEvent): void;
     goBack(): void;

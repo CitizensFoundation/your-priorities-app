@@ -541,7 +541,7 @@ export class YpApp extends YpBaseElement {
         id="helpIconButton"
         slot="actionItems"
         class="topActionItem"
-        @click="${this._toggleNavDrawer}"
+        @click="${this._openNavDrawer}"
         title="${this.t("menu.help")}"
         ><md-icon>menu</md-icon></md-icon-button
       >
@@ -583,7 +583,7 @@ export class YpApp extends YpBaseElement {
         ? html`
             <md-icon-button
               class="userImageNotificationContainer layout horizontal"
-              @click="${this._toggleUserDrawer}"
+              @click="${this._openUserDrawer}"
               slot="actionItems"
             >
               <yp-user-image id="userImage" small .user="${this.user}">
@@ -691,32 +691,28 @@ export class YpApp extends YpBaseElement {
 
   renderTopBar() {
     return html`
-      <yp-drawer type="modal">
-        <div>
-          <yp-app-nav-drawer
-            id="ypNavDrawer"
-            .homeLink="${this.homeLink}"
-            .opened="${this.navDrawOpenedDelayed}"
-            @yp-toggle-nav-drawer="${this._toggleNavDrawer}"
-            .user="${this.user}"
-            .route="${this.route}"
-          ></yp-app-nav-drawer>
-        </div>
+      <yp-drawer id="leftDrawer" type="modal">
+        <yp-app-nav-drawer
+          id="ypNavDrawer"
+          .homeLink="${this.homeLink}"
+          .opened="${this.navDrawOpenedDelayed}"
+          @yp-toggle-nav-drawer="${this._openNavDrawer}"
+          .user="${this.user}"
+          .route="${this.route}"
+        ></yp-app-nav-drawer>
       </yp-drawer>
 
-      ${this.userDrawerOpened
-        ? html`
-            <div id="userDrawer">
-              <ac-notification-list
-                @yp-close-notification-list="${this._toggleUserDrawer}"
-                id="acNotificationsList"
-                .user="${this.user}"
-                opened="${this.userDrawerOpened}"
-                .route="${this.route}"
-              ></ac-notification-list>
-            </div>
-          `
-        : nothing}
+      <yp-drawer id="rightDrawer" position="right" type="modal">
+        <ac-notification-list
+          @yp-close-notification-list="${this._closeUserDrawer}"
+          id="acNotificationsList"
+          .user="${this.user}"
+          opened="${this.userDrawerOpened}"
+          .route="${this.route}"
+        ></ac-notification-list>
+      </yp-drawer>
+
+      ${this.userDrawerOpened ? html` <div id="userDrawer"></div> ` : nothing}
     `;
   }
 
@@ -791,8 +787,7 @@ export class YpApp extends YpBaseElement {
 
   override render() {
     return html`
-      ${this.renderTopBar()}
-      ${this.renderMainApp()}
+      ${this.renderTopBar()} ${this.renderMainApp()}
       <yp-app-dialogs id="dialogContainer"></yp-app-dialogs>
       ${this.renderAdminApp()} ${this.renderPromotionApp()}
       ${this.renderFooter()}
@@ -1380,9 +1375,17 @@ export class YpApp extends YpBaseElement {
     else return false;
   }
 
-  _toggleNavDrawer() {
+  _openNavDrawer() {
     (this.$$("yp-drawer") as any).open = true;
     (this.$$("#ypNavDrawer") as YpAppNavDrawer).opened = true;
+    if (window.innerWidth < 960) {
+      this._closeUserDrawer();
+    }
+  }
+
+  _closeNavDrawer() {
+    (this.$$("yp-drawer") as any).open = false;
+    (this.$$("#ypNavDrawer") as YpAppNavDrawer).opened = false;
   }
 
   getDialogAsync(idName: string, callback: Function) {
@@ -1406,8 +1409,15 @@ export class YpApp extends YpBaseElement {
     }
   }
 
-  _toggleUserDrawer() {
-    this.userDrawerOpened = !this.userDrawerOpened;
+  _openUserDrawer() {
+    (this.$$("#rightDrawer") as YpDrawer).open = true;
+    if (window.innerWidth < 960) {
+      this._closeNavDrawer();
+    }
+  }
+
+  _closeUserDrawer() {
+    (this.$$("#rightDrawer") as YpDrawer).open = false;
   }
 
   _login() {
