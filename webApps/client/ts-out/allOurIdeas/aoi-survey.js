@@ -184,6 +184,10 @@ let AoiSurvey = class AoiSurvey extends YpBaseElement {
           background-color: var(--md-sys-color-surface, #fefefe);
         }
 
+        md-tabs {
+          z-index: 0;
+        }
+
         :host {
         }
 

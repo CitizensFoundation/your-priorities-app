@@ -101,7 +101,7 @@ export class AcNotificationList extends YpBaseElementWithLogin {
         }
 
         #material {
-          z-index: 12000;
+          z-index: 300;
           margin: 0 !important;
           padding: 8px;
           height: 100vh;

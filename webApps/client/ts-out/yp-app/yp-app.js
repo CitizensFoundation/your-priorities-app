@@ -381,16 +381,17 @@ let YpApp = class YpApp extends YpBaseElement {
         return html `
       <yp-top-app-bar
         role="navigation"
+        .titleString="${this.goForwardToPostId && this.goForwardPostName
+            ? this.goForwardPostName
+            : this.headerTitle || ""}"
         aria-label="top navigation"
         ?hidden="${this.appMode !== "main"}"
       >
-        <div slot="navigationIcon">${this.renderNavigationIcon()}</div>
-        <div slot="title">
-          ${this.goForwardToPostId ? this.goForwardPostName : this.headerTitle}
-        </div>
-        ${this.renderActionItems()}
+        <div slot="navigation">${this.renderNavigationIcon()}</div>
+        <div slot="title"></div>
+        <div slot="action">${this.renderActionItems()}</div>
       </yp-top-app-bar>
-      <div>${this.renderPage()}</div>
+      <div class="mainPage">${this.renderPage()}</div>
     `;
     }
     renderGroupPage() {

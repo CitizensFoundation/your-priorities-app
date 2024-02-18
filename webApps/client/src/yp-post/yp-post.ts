@@ -80,6 +80,10 @@ export class YpPost extends YpCollection {
           width: 940px;
         }
 
+        md-tabs {
+          z-index: 0;
+        }
+
         ac-activities {
           padding-top: 8px;
         }

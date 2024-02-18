@@ -1,0 +1,1 @@
+{"version":3,"file":"yp-app-top-bar.d.ts","sourceRoot":"","sources":["../../src/yp-app/yp-app-top-bar.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,UAAU,EAAa,SAAS,EAAE,cAAc,EAAE,MAAM,KAAK,CAAC;AAGvE,qBACa,WAAY,SAAQ,UAAU;IACzC,OAAgB,MAAM,EAAE,SAAS,CAmB/B;IAEF,OAAO,CAAC,WAAW,CAAa;;IAMvB,iBAAiB,IAAI,IAAI;IAKzB,oBAAoB,IAAI,IAAI;IAKrC,OAAO,CAAC,YAAY;IAoBX,MAAM,IAAI,cAAc;CASlC"}

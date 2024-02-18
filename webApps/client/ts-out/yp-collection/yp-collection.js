@@ -120,6 +120,10 @@ export class YpCollection extends YpBaseElementWithLogin {
           z-index: 3000;
         }
 
+        md-tabs {
+          z-index: 0;
+        }
+
         md-icon-button {
           margin-top: 16px;
           margin-bottom: 16px;

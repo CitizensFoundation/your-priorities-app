@@ -37,7 +37,6 @@ export const YpAppStyles = css`
     left: 0;
     height: 100vh;
     width: 100vw;
-    z-index: 0;
     background-color:var(--md-sys-color-surface);
     color: var(--md-sys-color-on-surface);
     display: flex;
@@ -51,7 +50,7 @@ export const YpAppStyles = css`
     right: 0;
     height: 100vh;
     width: 230px;
-    z-index: 5000;
+    z-index: 200;
   }
 
   #dialog {
@@ -81,7 +80,6 @@ export const YpAppStyles = css`
     left: 0;
     height: 100vh;
     width: 100vw;
-    z-index: 100;
   }
 
   mwc-drawer {
@@ -95,7 +93,7 @@ export const YpAppStyles = css`
     opacity: 1;
     transform: translateX(0);
     transition: transform 1.5s;
-    z-index: 200; /* Ensure it's above the admin app */
+    z-index: 10; /* Ensure it's above the admin app */
   }
 
   .loadingAppSpinnerPage.hidden {
@@ -124,6 +122,10 @@ export const YpAppStyles = css`
     --mdc-theme-primary: var(--md-sys-color-surface, #f00);
     --mdc-theme-on-primary: var(--md-sys-color-on-surface, #0f0);
     color: var(--md-sys-color-on-surface);
+  }
+
+  .mainPage {
+    margin-top: 48px;
   }
 
   @media (max-width: 800px) {
