@@ -356,7 +356,8 @@ export abstract class YpCollection extends YpBaseElementWithLogin {
   }
 
   override render() {
-    return html`
+    if (this.collection) {
+      return html`
       ${this.renderHeader()} ${this.renderTabs()}
       ${this.createFabIcon && this.createFabLabel
         ? html`
@@ -384,6 +385,11 @@ export abstract class YpCollection extends YpBaseElementWithLogin {
         ${this.renderCurrentTabPage()}
       </div>
     `;
+    } else {
+      return html`
+        <md-linear-progress indeterminate></md-linear-progress>
+      `
+    }
   }
 
   // EVENTS

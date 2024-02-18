@@ -7,6 +7,7 @@ import "@material/web/icon/icon.js";
 import "@material/web/iconbutton/icon-button.js";
 import "@material/web/iconbutton/outlined-icon-button.js";
 import "../yp-app/yp-snackbar.js";
+import "@material/web/progress/linear-progress.js";
 import "@material/web/menu/menu.js";
 import "../common/yp-image.js";
 import "./survey/aoi-survey-intro.js";

@@ -15,6 +15,7 @@ import "@material/web/icon/icon.js";
 import "@material/web/iconbutton/icon-button.js";
 import "@material/web/iconbutton/outlined-icon-button.js";
 import "../yp-app/yp-snackbar.js";
+import "@material/web/progress/linear-progress.js";
 import "@material/web/menu/menu.js";
 import { cache } from "lit/directives/cache.js";
 import "../common/yp-image.js";
@@ -60,8 +61,8 @@ let AoiSurvey = class AoiSurvey extends YpBaseElement {
     }
     async getEarl() {
         window.aoiAppGlobals.activity("Survey - fetch start");
-        this.earl = this.collection.configuration.allOurIdeas.earl;
         const earlData = await window.aoiServerApi.getEarlData(this.collectionId);
+        this.earl = this.collection.configuration.allOurIdeas.earl;
         this.question = earlData.question;
         this.prompt = earlData.prompt;
         this.appearanceLookup = this.question.appearance_id;
@@ -247,9 +248,9 @@ let AoiSurvey = class AoiSurvey extends YpBaseElement {
         .loading {
           display: flex;
           justify-content: center;
-          align-items: center;
           width: 100%;
           height: 100vh;
+          margin-top: 64px;
         }
 
         .lightDarkContainer {

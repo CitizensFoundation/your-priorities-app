@@ -268,10 +268,11 @@ export class YpCollection extends YpBaseElementWithLogin {
         YpNavHelpers.redirectTo(`/admin/${childCollectionType}/new/${this.collectionId}`);
     }
     render() {
-        return html `
+        if (this.collection) {
+            return html `
       ${this.renderHeader()} ${this.renderTabs()}
       ${this.createFabIcon && this.createFabLabel
-            ? html `
+                ? html `
             <div class="layout horizontal center-center wrap">
               <md-fab
                 ?extended="${this.wide}"
@@ -291,11 +292,17 @@ export class YpCollection extends YpBaseElementWithLogin {
               >
             </div>
           `
-            : nothing}
+                : nothing}
       <div class="currentPage">
         ${this.renderCurrentTabPage()}
       </div>
     `;
+        }
+        else {
+            return html `
+        <md-linear-progress indeterminate></md-linear-progress>
+      `;
+        }
     }
     // EVENTS
     collectionIdChanged() {
