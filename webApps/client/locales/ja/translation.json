@@ -1353,5 +1353,9 @@
   "pleaseAnswerInThisLanguage": "この言語で回答してください",
   "backgroundFinish": "背景仕上げ",
   "fontImports": "フォントのインポート",
-  "fontStyles": "フォントスタイル"
+  "fontStyles": "フォントスタイル",
+  "exampleFontStyles": "例のフォントスタイル",
+  "hideAoiAnalysis": "分析を隠す",
+  "hideAoiExplainButton": "説明ボタンを隠す",
+  "hideSkipButton": "スキップボタンを隠す"
 }

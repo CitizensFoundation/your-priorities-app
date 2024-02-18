@@ -1353,5 +1353,9 @@
   "pleaseAnswerInThisLanguage": "Mohon jawab dalam bahasa ini",
   "backgroundFinish": "Latar Belakang",
   "fontImports": "Impor Font",
-  "fontStyles": "Gaya Font"
+  "fontStyles": "Gaya Font",
+  "exampleFontStyles": "Contoh gaya font",
+  "hideAoiAnalysis": "Sembunyikan Analisis",
+  "hideAoiExplainButton": "Sembunyikan Tombol Jelaskan",
+  "hideSkipButton": "Sembunyikan Tombol Lewati"
 }

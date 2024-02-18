@@ -1353,5 +1353,9 @@
   "pleaseAnswerInThisLanguage": "Kombulula mOshiwambo",
   "backgroundFinish": "Kumukundaneko",
   "fontImports": "Ondjila yomukanda",
-  "fontStyles": "Ondjila yomukanda"
+  "fontStyles": "Ondjila yomukanda",
+  "exampleFontStyles": "Ehala ya mifano ya fonte",
+  "hideAoiAnalysis": "Ficheni Analiisi",
+  "hideAoiExplainButton": "Ficheni Konopo ya Kueleza",
+  "hideSkipButton": "Ficheni Konopo ya Kuruka"
 }

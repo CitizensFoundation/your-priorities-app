@@ -1360,5 +1360,9 @@
   "pleaseAnswerInThisLanguage": "Una oqaatsit atorlugit akissuteqarit",
   "backgroundFinish": "Aningaasaqarnermut Naammassineq",
   "fontImports": "Fontinik eqqussuineq",
-  "fontStyles": "Fontit isikkui"
+  "fontStyles": "Fontit isikkui",
+  "exampleFontStyles": "Assersuutit allattorsimaffii",
+  "hideAoiAnalysis": "Analysiisip qulinngilaa",
+  "hideAoiExplainButton": "Nassuiaatit Takkutinngilaa",
+  "hideSkipButton": "Takunnikkunnaarit Takkutinngilaa"
 }

@@ -1490,5 +1490,9 @@
   "pleaseAnswerInThisLanguage": "Vinsamlegast svaraðu á þessu tungumáli",
   "backgroundFinish": "Bakgrunnur",
   "fontImports": "Leturflutningar",
-  "fontStyles": "Leturstílar"
+  "fontStyles": "Leturstílar",
+  "exampleFontStyles": "Dæmisleturstílar",
+  "hideAoiAnalysis": "Fela greiningu",
+  "hideAoiExplainButton": "Fela útskýringahnapp",
+  "hideSkipButton": "Fela sleppihnapp"
 }

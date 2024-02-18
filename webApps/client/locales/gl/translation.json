@@ -1354,5 +1354,8 @@
   "backgroundFinish": "Acabado de Fondo",
   "fontImports": "Importacións de fontes",
   "fontStyles": "Estilos de fonte",
-  "exampleFontStyles": "Exemplos de estilos de letra"
+  "exampleFontStyles": "Exemplos de estilos de letra",
+  "hideAoiAnalysis": "Agochar Análise",
+  "hideAoiExplainButton": "Agochar Botón Explicar",
+  "hideSkipButton": "Agochar Botón Saltar"
 }

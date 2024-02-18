@@ -1169,7 +1169,7 @@
   "Twitter Client Id": "Twitter Id",
   "twitterClientId": "Twitter Id",
   "Twitter Client Secret": "Twitter Sirri Id",
-  "twitterClientSecret": "Twitter Client Secret",
+  "twitterClientSecret": "Twitter Client Sirri",
   "groupAccess": "Kungiyal Jokkude",
   "themeSelector": "Tema ñiytude",
   "canAddNewPosts": "Aɗa addude humpito jaaɓde",
@@ -1354,5 +1354,8 @@
   "backgroundFinish": "Ndogal Sufli",
   "fontImports": "Font yille",
   "fontStyles": "Font jine",
-  "exampleFontStyles": "Misal font stail"
+  "exampleFontStyles": "Misal font stail",
+  "hideAoiAnalysis": "Nokku Analisa",
+  "hideAoiExplainButton": "Nokku Tontu Buttan",
+  "hideSkipButton": "Nokku Tappude Buttan"
 }

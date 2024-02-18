@@ -612,7 +612,6 @@ export class YpApp extends YpBaseElement {
   renderMainApp() {
     return html`
       <mwc-top-app-bar
-        dense
         role="navigation"
         aria-label="top navigation"
         ?hidden="${this.appMode !== "main"}"

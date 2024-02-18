@@ -1354,5 +1354,8 @@
   "backgroundFinish": "רקע",
   "fontImports": "ייבוא גופנים",
   "fontStyles": "סגנונות גופן",
-  "exampleFontStyles": "דוגמאות גופנים"
+  "exampleFontStyles": "דוגמאות גופנים",
+  "hideAoiAnalysis": "הסתר ניתוח",
+  "hideAoiExplainButton": "הסתר כפתור הסבר",
+  "hideSkipButton": "הסתר כפתור דילוג"
 }

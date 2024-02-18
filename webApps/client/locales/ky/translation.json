@@ -1361,5 +1361,9 @@
   "pleaseAnswerInThisLanguage": "Бул тилде жооп бериңиз",
   "backgroundFinish": "Фондук аяктоо",
   "fontImports": "Шрифт импорттору",
-  "fontStyles": "Шрифт стилдери"
+  "fontStyles": "Шрифт стилдери",
+  "exampleFontStyles": "Үлгү шрифттери",
+  "hideAoiAnalysis": "Талдоону жашыр",
+  "hideAoiExplainButton": "Түшүндүрмө баскычын жашыр",
+  "hideSkipButton": "Өткөрүп жиберүү баскычын жашыр"
 }

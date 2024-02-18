@@ -1353,5 +1353,9 @@
   "pleaseAnswerInThisLanguage": "이 언어로 답해주세요",
   "backgroundFinish": "배경 마감",
   "fontImports": "글꼴 가져오기",
-  "fontStyles": "글꼴 스타일"
+  "fontStyles": "글꼴 스타일",
+  "exampleFontStyles": "예제 글꼴 스타일",
+  "hideAoiAnalysis": "분석 숨기기",
+  "hideAoiExplainButton": "설명 버튼 숨기기",
+  "hideSkipButton": "건너뛰기 버튼 숨기기"
 }

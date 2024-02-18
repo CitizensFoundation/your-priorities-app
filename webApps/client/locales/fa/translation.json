@@ -1361,5 +1361,8 @@
   "backgroundFinish": "پایان زمینه",
   "fontImports": "واردات فونت",
   "fontStyles": "سبک‌های فونت",
-  "exampleFontStyles": "نمونه سبک‌های قلم"
+  "exampleFontStyles": "نمونه سبک‌های قلم",
+  "hideAoiAnalysis": "پنهان کردن تحلیل",
+  "hideAoiExplainButton": "پنهان کردن دکمه توضیح",
+  "hideSkipButton": "پنهان کردن دکمه رد کردن"
 }

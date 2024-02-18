@@ -1366,5 +1366,11 @@
   "secondAnswer": "第二答案",
   "hereIsTheQuestion": "这是问题",
   "pleaseAnswerInThisLanguage": "请用这种语言回答",
-  "backgroundFinish": "背景"
+  "backgroundFinish": "背景",
+  "exampleFontStyles": "示例字体样式",
+  "fontImports": "字体导入（每行一个URL）",
+  "fontStyles": "字体样式",
+  "hideAoiAnalysis": "隐藏分析",
+  "hideAoiExplainButton": "隐藏解释按钮",
+  "hideSkipButton": "隐藏跳过按钮"
 }

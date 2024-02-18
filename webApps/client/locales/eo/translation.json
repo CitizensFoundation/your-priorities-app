@@ -1354,5 +1354,8 @@
   "backgroundFinish": "Fona Fino",
   "fontImports": "Tiparaj Importoj",
   "fontStyles": "Tiparaj Stiloj",
-  "exampleFontStyles": "Ekzemplaj tiparstiloj"
+  "exampleFontStyles": "Ekzemplaj tiparstiloj",
+  "hideAoiAnalysis": "Kaŝi Analizon",
+  "hideAoiExplainButton": "Kaŝi Klara Butono",
+  "hideSkipButton": "Kaŝi Salti Butono"
 }

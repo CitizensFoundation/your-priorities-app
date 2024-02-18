@@ -1353,5 +1353,9 @@
   "pleaseAnswerInThisLanguage": "Krupaya yiman bhasha manz jawab dyun",
   "backgroundFinish": "پس منظر ختم",
   "fontImports": "فونٹ درآمدات",
-  "fontStyles": "فونٹ انداز"
+  "fontStyles": "فونٹ انداز",
+  "exampleFontStyles": "مثال فانٹ انداز",
+  "hideAoiAnalysis": "تجزیہ چھپاو",
+  "hideAoiExplainButton": "تشریح بٹن چھپاو",
+  "hideSkipButton": "چھپاو بٹن تجاوز"
 }

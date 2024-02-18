@@ -1007,7 +1007,7 @@
     "my_pages": "Profile ko",
     "about": "Maipanggep",
     "help": "Tulong",
-    "settings": "Settings"
+    "settings": "Kasasaad"
   },
   "users": {
     "userInvited": "Naanyayaya nga Agar-aramat",
@@ -1033,7 +1033,7 @@
     "loggedInWithSaml": "Naka-log in nga aggamit ti SAML",
     "loggedInWithFacebook": "Naka-log in nga aggamit ti Facebook",
     "facebookLogin": "Facebook login",
-    "info": "Info",
+    "info": "Impormasion",
     "notifications": "Notipikasion",
     "name": "Pangngaran",
     "email": "Email",
@@ -1093,7 +1093,7 @@
   "Loading": "Agkarkarga...",
   "Email Lists": "Listaan ti Email",
   "Send promotional emails": "Agipadara ti promosyonal a email",
-  "Settings": "Settings",
+  "Settings": "Kasasaad",
   "Unauthorized": "Saan nga awtorisado",
   "Domain Configuration": "Daga a Kumpigurasion",
   "Community Configuration": "Komunidad a Kumpigurasion",
@@ -1140,7 +1140,7 @@
   "Theme, language, etc": "Tema, lengguahe, ken dadduma",
   "Manage badges": "Sarusan ti badges",
   "Manage profile images": "Sarusan ti profile a larawan",
-  "Config": "Config",
+  "Config": "Kasasaad",
   "New Community": "Baro a Komunidad",
   "Name": "Nagan",
   "Description": "Deskripsion",
@@ -1353,5 +1353,9 @@
   "pleaseAnswerInThisLanguage": "Pangngaasi nga isubli iti daytoy nga pagsasao",
   "backgroundFinish": "Kulay ti Likud",
   "fontImports": "Letra nga agawid",
-  "fontStyles": "Estilo ti letra"
+  "fontStyles": "Estilo ti letra",
+  "exampleFontStyles": "Halimbawa a estilo ti letra",
+  "hideAoiAnalysis": "Ilemmeng ti Analisis",
+  "hideAoiExplainButton": "Ilemmeng ti Pindutan ti Ipaliwanag",
+  "hideSkipButton": "Ilemmeng ti Laktawen a Pindutan"
 }

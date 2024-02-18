@@ -1354,5 +1354,8 @@
   "backgroundFinish": "Tapos ng Background",
   "fontImports": "Pag-import ng Font",
   "fontStyles": "Estilo ng Font",
-  "exampleFontStyles": "Halimbawa ng estilo ng font"
+  "exampleFontStyles": "Halimbawa ng estilo ng font",
+  "hideAoiAnalysis": "Itago ang Pagsusuri",
+  "hideAoiExplainButton": "Itago ang Pindutan ng Paliwanag",
+  "hideSkipButton": "Itago ang Pindutan ng Laktaw"
 }

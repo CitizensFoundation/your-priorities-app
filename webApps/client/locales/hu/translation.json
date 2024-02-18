@@ -1361,5 +1361,8 @@
   "backgroundFinish": "Háttérbefejezés",
   "fontImports": "Betűtípus importálás",
   "fontStyles": "Betűstílusok",
-  "exampleFontStyles": "Példabetűstílusok"
+  "exampleFontStyles": "Példabetűstílusok",
+  "hideAoiAnalysis": "Elemzés Elrejtése",
+  "hideAoiExplainButton": "Magyarázat Gomb Elrejtése",
+  "hideSkipButton": "Átugrás Gomb Elrejtése"
 }

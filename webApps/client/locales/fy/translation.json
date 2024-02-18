@@ -1354,5 +1354,8 @@
   "backgroundFinish": "Eftergrûn Finish",
   "fontImports": "Lettertype ymporten",
   "fontStyles": "Lettertype stilen",
-  "exampleFontStyles": "Foarbyld lettertypen"
+  "exampleFontStyles": "Foarbyld lettertypen",
+  "hideAoiAnalysis": "Ferbergje Analyse",
+  "hideAoiExplainButton": "Ferbergje Utlis Knop",
+  "hideSkipButton": "Ferbergje Oerslaan Knop"
 }

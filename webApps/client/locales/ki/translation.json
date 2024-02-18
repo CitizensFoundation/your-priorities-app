@@ -1353,5 +1353,9 @@
   "pleaseAnswerInThisLanguage": "Thabuka mũrĩo ũyũ",
   "backgroundFinish": "Mūkūrū wa Mūciī",
   "fontImports": "Maandiko ya kuimport",
-  "fontStyles": "Mitindo ya maandiko"
+  "fontStyles": "Mitindo ya maandiko",
+  "exampleFontStyles": "Mifano ya mitindo ya herufi",
+  "hideAoiAnalysis": "Hunia Uhlalutyo",
+  "hideAoiExplainButton": "Hunia Kibonyo Kielezo",
+  "hideSkipButton": "Hunia Kibonyo Kihunio"
 }

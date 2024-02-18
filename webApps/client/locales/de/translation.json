@@ -1361,5 +1361,8 @@
   "backgroundFinish": "Hintergrund",
   "fontImports": "Schriftimporte",
   "fontStyles": "Schriftstile",
-  "exampleFontStyles": "Beispielschriftarten"
+  "exampleFontStyles": "Beispielschriftarten",
+  "hideAoiAnalysis": "Analyse verbergen",
+  "hideAoiExplainButton": "Erklärung verbergen",
+  "hideSkipButton": "Überspringen verbergen"
 }

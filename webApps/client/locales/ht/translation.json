@@ -1369,5 +1369,8 @@
   "backgroundFinish": "Fini Dèyè",
   "fontImports": "Enpòte font",
   "fontStyles": "Stil font",
-  "exampleFontStyles": "Egzanp stil font"
+  "exampleFontStyles": "Egzanp stil font",
+  "hideAoiAnalysis": "Kache Analiz",
+  "hideAoiExplainButton": "Kache Bouton Eksplike",
+  "hideSkipButton": "Kache Bouton Sote"
 }

@@ -1354,5 +1354,8 @@
   "backgroundFinish": "Ֆոնի Ավարտ",
   "fontImports": "Տառատեսակների ներմուծում",
   "fontStyles": "Տառատեսակների ոճեր",
-  "exampleFontStyles": "Օրինակ տառատեսակներ"
+  "exampleFontStyles": "Օրինակ տառատեսակներ",
+  "hideAoiAnalysis": "Hide Analysis",
+  "hideAoiExplainButton": "Hide Explain Button",
+  "hideSkipButton": "Hide Skip Button"
 }

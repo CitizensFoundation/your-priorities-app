@@ -1353,5 +1353,9 @@
   "pleaseAnswerInThisLanguage": "សូមឆ្លើយតបជាភាសានេះ",
   "backgroundFinish": "ផ្ទៃខាងក្រោយ",
   "fontImports": "នាំចូលពុម្ពអក្សរ",
-  "fontStyles": "រចនាប័ទ្មពុម្ពអក្សរ"
+  "fontStyles": "រចនាប័ទ្មពុម្ពអក្សរ",
+  "exampleFontStyles": "ឧទាហរណ៍ពុម្ពអក្សរ",
+  "hideAoiAnalysis": "លាក់ការវិភាគ",
+  "hideAoiExplainButton": "លាក់ប៊ូតុងពន្យល់",
+  "hideSkipButton": "លាក់ប៊ូតុងរំលង"
 }

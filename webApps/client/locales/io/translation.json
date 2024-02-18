@@ -1353,5 +1353,9 @@
   "pleaseAnswerInThisLanguage": "Pleze respondez en ca linguo",
   "backgroundFinish": "Fono Fino",
   "fontImports": "Font importi",
-  "fontStyles": "Font stili"
+  "fontStyles": "Font stili",
+  "exampleFontStyles": "Exemplo di tipografi",
+  "hideAoiAnalysis": "Kashar Analizo",
+  "hideAoiExplainButton": "Kashar Explico Butono",
+  "hideSkipButton": "Kashar Saltar Butono"
 }

@@ -1361,5 +1361,8 @@
   "backgroundFinish": "Baggrund",
   "fontImports": "Fontimporter",
   "fontStyles": "Fontstile",
-  "exampleFontStyles": "Eksempel skrifttyper"
+  "exampleFontStyles": "Eksempel skrifttyper",
+  "hideAoiAnalysis": "Skjul Analyse",
+  "hideAoiExplainButton": "Skjul Forklar-knap",
+  "hideSkipButton": "Skjul Spring Over-knap"
 }

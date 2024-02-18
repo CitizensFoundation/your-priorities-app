@@ -1353,5 +1353,9 @@
   "pleaseAnswerInThisLanguage": "გთხოვთ, პასუხი გაეცით ამ ენაზე",
   "backgroundFinish": "ფონის დასრულება",
   "fontImports": "შრიფტის იმპორტი",
-  "fontStyles": "შრიფტის სტილები"
+  "fontStyles": "შრიფტის სტილები",
+  "exampleFontStyles": "მაგალითი შრიფტები",
+  "hideAoiAnalysis": "ანალიზის დამალვა",
+  "hideAoiExplainButton": "ღილაკის ახსნის დამალვა",
+  "hideSkipButton": "გამოტოვების ღილაკის დამალვა"
 }

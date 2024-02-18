@@ -1354,5 +1354,8 @@
   "backgroundFinish": "Cúlra",
   "fontImports": "Allmhairí Cló",
   "fontStyles": "Stíleanna Cló",
-  "exampleFontStyles": "Samplaí cló"
+  "exampleFontStyles": "Samplaí cló",
+  "hideAoiAnalysis": "Folaigh Anailís",
+  "hideAoiExplainButton": "Folaigh Cnaipe Míniú",
+  "hideSkipButton": "Folaigh Cnaipe Scipeáil"
 }

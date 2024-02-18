@@ -1354,5 +1354,8 @@
   "backgroundFinish": "Gorffeniad Cefndir",
   "fontImports": "Mewnforion Ffont",
   "fontStyles": "Arddulliau Ffont",
-  "exampleFontStyles": "Enghreifftiau o arddulliau ffont"
+  "exampleFontStyles": "Enghreifftiau o arddulliau ffont",
+  "hideAoiAnalysis": "Cuddio Dadansoddiad",
+  "hideAoiExplainButton": "Cuddio Botwm Esbonio",
+  "hideSkipButton": "Cuddio Botwm Sgipio"
 }

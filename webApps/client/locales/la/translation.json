@@ -854,7 +854,7 @@
   },
   "posts": {
     "posts": "Ideae",
-    "post": "Idea",
+    "post": "Sententia",
     "open": "Apertum",
     "inProgress": "In progressu",
     "successful": "Prosperum",
@@ -896,7 +896,7 @@
     "report": "Nuntiare ideam",
     "notify": "Notifica me de hac idea",
     "share": "Participes hanc ideam",
-    "yourPost": "Idea",
+    "yourPost": "Sententia",
     "yourPoint": "Punctum pro",
     "location": "Locus",
     "photographerName": "Photographus",
@@ -1353,5 +1353,9 @@
   "pleaseAnswerInThisLanguage": "Quaeso responde in hac lingua",
   "backgroundFinish": "Fundus Finis",
   "fontImports": "Fontes importat",
-  "fontStyles": "Stili fontium"
+  "fontStyles": "Stili fontium",
+  "exampleFontStyles": "Exempla formarum litterarum",
+  "hideAoiAnalysis": "Analyse absconde",
+  "hideAoiExplainButton": "Puga pyga Explica absconde",
+  "hideSkipButton": "Puga pyga Salta absconde"
 }

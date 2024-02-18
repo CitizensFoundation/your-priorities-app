@@ -1353,5 +1353,9 @@
   "pleaseAnswerInThisLanguage": "Осы тілде жауап беріңіз",
   "backgroundFinish": "Фондық Аяқтау",
   "fontImports": "Қаріп импорттары",
-  "fontStyles": "Қаріп стильдері"
+  "fontStyles": "Қаріп стильдері",
+  "exampleFontStyles": "Үлгі қаріп стильдері",
+  "hideAoiAnalysis": "Талдауды жасыру",
+  "hideAoiExplainButton": "Түсіндіру түймесін жасыру",
+  "hideSkipButton": "Өткізіп жіберу түймесін жасыру"
 }

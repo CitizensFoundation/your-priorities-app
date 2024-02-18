@@ -1353,5 +1353,9 @@
   "pleaseAnswerInThisLanguage": "Ples responder in ti lingue",
   "backgroundFinish": "Funde Fini",
   "fontImports": "Importationes de fontes",
-  "fontStyles": "Stiles de fontes"
+  "fontStyles": "Stiles de fontes",
+  "exampleFontStyles": "Exemplar font stil",
+  "hideAoiAnalysis": "Celar Analise",
+  "hideAoiExplainButton": "Celar Explica Button",
+  "hideSkipButton": "Celar Salta Button"
 }

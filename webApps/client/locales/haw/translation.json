@@ -1354,5 +1354,8 @@
   "backgroundFinish": "Kuaʻāina Hoʻopau",
   "fontImports": "Nā lawe kikokiko",
   "fontStyles": "Nā kaila kikokiko",
-  "exampleFontStyles": "Nā kaila hoʻohālike"
+  "exampleFontStyles": "Nā kaila hoʻohālike",
+  "hideAoiAnalysis": "Hūnā Kālailai",
+  "hideAoiExplainButton": "Hūnā Pihi Wehewehe",
+  "hideSkipButton": "Hūnā Pihi Ōlelo Hoʻopau"
 }

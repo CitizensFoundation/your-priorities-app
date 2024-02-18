@@ -1354,5 +1354,8 @@
   "backgroundFinish": "Фонăн аяклăхĕ",
   "fontImports": "Шрифт импортсем",
   "fontStyles": "Шрифт стилĕсем",
-  "exampleFontStyles": "Пример шрифт стилĕсем"
+  "exampleFontStyles": "Пример шрифт стилĕсем",
+  "hideAoiAnalysis": "Анализне Ячлар",
+  "hideAoiExplainButton": "Тӳрлӗтӗр Ячлар Тӗрĕ",
+  "hideSkipButton": "Куçар Ячлар Тӗрĕ"
 }

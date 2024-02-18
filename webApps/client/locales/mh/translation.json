@@ -464,7 +464,7 @@
   "speechToTextInfo": "Jen jabdrewot im kōnke kōttar ilo kajjitōk eo am ejjeļok ilo an kajjitōk. Ewi kōnono ke ej maroñ ke kwōj aikuij in menu in top left ke ej kab kajjitōk ilo kajin eo kwōj parijek im kwōj jela ke ej parijek.",
   "edited": "kajjitōk",
   "playVoiceRecording": "Tōrere mōttan in mō",
-  "uploadAudio": "Audio",
+  "uploadAudio": "Ōnje",
   "allowPostAudioUploads": "Kōnke allow post eo an upload audio",
   "allowPointAudioUploads": "Kabijin kein adio",
   "transcodingAudio": "Jinojino adio...",
@@ -1351,5 +1351,11 @@
   "secondAnswer": "Amsa ruo",
   "hereIsTheQuestion": "Ekar itok jān kōn aō",
   "pleaseAnswerInThisLanguage": "Jinoe kōnke ilo kajin kein",
-  "backgroundFinish": "Likatuun Aelōñ"
+  "backgroundFinish": "Likatuun Aelōñ",
+  "exampleFontStyles": "Aer kajjitōn font",
+  "fontImports": "Font imports (bar juon URL ilo lain eo an)",
+  "fontStyles": "Kajjitōn font",
+  "hideAoiAnalysis": "Kōjparok Anij",
+  "hideAoiExplainButton": "Kōjparok Bōtton eo an Kōnono",
+  "hideSkipButton": "Kōjparok Bōtton eo an Jeban"
 }

@@ -31,6 +31,7 @@ export declare class YpThemeManager {
     applyFontStyles(fontStyles: string | null): void;
     importFonts(fontImportsString: string | null): void;
     setTheme(number: number | undefined, configuration?: YpCollectionConfiguration | undefined): void;
+    updateBrowserThemeColor(): void;
     updateLiveFromConfiguration(theme: YpThemeConfiguration): void;
     themeChanged(target?: HTMLElement | undefined): void;
     getHexColor(color: string | undefined): string;

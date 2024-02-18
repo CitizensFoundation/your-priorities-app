@@ -1351,5 +1351,11 @@
   "secondAnswer": "രണ്ടാം ഉത്തരം",
   "hereIsTheQuestion": "ചോദ്യം ഇവിടെയാണ്",
   "pleaseAnswerInThisLanguage": "ഈ ഭാഷയിൽ ഉത്തരം നൽകുക",
-  "backgroundFinish": "പശ്ചാത്തല ഫിനിഷ്"
+  "backgroundFinish": "പശ്ചാത്തല ഫിനിഷ്",
+  "exampleFontStyles": "ഉദാഹരണ ഫോണ്ട് ശൈലികൾ",
+  "fontImports": "ഫോണ്ട് ഇറക്കുമതികൾ (ഓരോ വരിയിലും ഒരു URL)",
+  "fontStyles": "ഫോണ്ട് ശൈലികൾ",
+  "hideAoiAnalysis": "വിശകലനം മറയ്ക്കുക",
+  "hideAoiExplainButton": "വിവരണ ബട്ടൺ മറയ്ക്കുക",
+  "hideSkipButton": "ഒഴിവാക്കുക ബട്ടൺ മറയ്ക്കുക"
 }

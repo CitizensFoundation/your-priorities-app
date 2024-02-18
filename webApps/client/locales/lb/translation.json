@@ -1353,5 +1353,9 @@
   "pleaseAnswerInThisLanguage": "Äntwert w.e.g. an dëser Sprooch",
   "backgroundFinish": "Hannergrond Finish",
   "fontImports": "Schrëftimporter",
-  "fontStyles": "Schrëftstiler"
+  "fontStyles": "Schrëftstiler",
+  "exampleFontStyles": "Beispill Schrëftaarten",
+  "hideAoiAnalysis": "Analyse verstoppen",
+  "hideAoiExplainButton": "Erklär Knäppchen verstoppen",
+  "hideSkipButton": "Iwwersprangen Knäppchen verstoppen"
 }

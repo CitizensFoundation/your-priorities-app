@@ -1354,5 +1354,8 @@
   "backgroundFinish": "Bayanin Baya",
   "fontImports": "Shigo da Rubutu",
   "fontStyles": "Salon Rubutu",
-  "exampleFontStyles": "Misalan salo na rubutu"
+  "exampleFontStyles": "Misalan salo na rubutu",
+  "hideAoiAnalysis": "Boye Bincike",
+  "hideAoiExplainButton": "Boye Maɓallin Bayani",
+  "hideSkipButton": "Boye Maɓallin Tsallake"
 }

@@ -1354,5 +1354,8 @@
   "backgroundFinish": "Bakgrund Enda",
   "fontImports": "Skrift innflutningar",
   "fontStyles": "Skrift stílar",
-  "exampleFontStyles": "Dømi um skriftstílar"
+  "exampleFontStyles": "Dømi um skriftstílar",
+  "hideAoiAnalysis": "Fjal Greining",
+  "hideAoiExplainButton": "Fjal Forklára Knøtt",
+  "hideSkipButton": "Fjal Forða Knøtt"
 }

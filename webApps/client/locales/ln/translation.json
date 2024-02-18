@@ -1353,5 +1353,9 @@
   "pleaseAnswerInThisLanguage": "Yanola na monɔkɔ oyo",
   "backgroundFinish": "Mokɔlɔ ya Nsima",
   "fontImports": "Makomi ya mbeba",
-  "fontStyles": "Mitindo ya mbeba"
+  "fontStyles": "Mitindo ya mbeba",
+  "exampleFontStyles": "Mibeko ya mbeba",
+  "hideAoiAnalysis": "Bomba Analyse",
+  "hideAoiExplainButton": "Bomba Bokangi",
+  "hideSkipButton": "Bomba Kokima"
 }

@@ -1357,5 +1357,11 @@
   "secondAnswer": "Втор одговор",
   "hereIsTheQuestion": "Еве прашање",
   "pleaseAnswerInThisLanguage": "Ве молиме одговорете на овој јазик",
-  "backgroundFinish": "Позадина"
+  "backgroundFinish": "Позадина",
+  "exampleFontStyles": "Примери на фонтови",
+  "fontImports": "Увоз на фонтови (една URL по линија)",
+  "fontStyles": "Стилови на фонтови",
+  "hideAoiAnalysis": "Сокриј Анализа",
+  "hideAoiExplainButton": "Сокриј Копче за Објаснување",
+  "hideSkipButton": "Сокриј Копче за Прескокнување"
 }

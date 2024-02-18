@@ -1353,5 +1353,9 @@
   "pleaseAnswerInThisLanguage": "Nkunga na kikongo",
   "backgroundFinish": "Nzila ya Nkembo",
   "fontImports": "Mazita ya mukanda",
-  "fontStyles": "Mazita ya mukanda"
+  "fontStyles": "Mazita ya mukanda",
+  "exampleFontStyles": "Mfano mbandu ya mukanda",
+  "hideAoiAnalysis": "Kuficha Tála",
+  "hideAoiExplainButton": "Kuficha Buto ya Kusakidila",
+  "hideSkipButton": "Kuficha Buto ya Kulemba"
 }

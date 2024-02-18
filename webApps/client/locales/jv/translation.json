@@ -1353,5 +1353,9 @@
   "pleaseAnswerInThisLanguage": "Mangga wangsulan nganggo basa iki",
   "backgroundFinish": "Latar Mburi",
   "fontImports": "Impor Font",
-  "fontStyles": "Gaya Font"
+  "fontStyles": "Gaya Font",
+  "exampleFontStyles": "Conto gaya tulisan",
+  "hideAoiAnalysis": "Ndelikake Analisis",
+  "hideAoiExplainButton": "Ndelikake Tombol Jelaske",
+  "hideSkipButton": "Ndelikake Tombol Lompati"
 }

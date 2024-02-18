@@ -1354,5 +1354,8 @@
   "backgroundFinish": "Cùlaibh Crìochnachaidh",
   "fontImports": "All-importan Clò",
   "fontStyles": "Stoidhlichean Clò",
-  "exampleFontStyles": "Eisimpleirean de stoidhlichean clò"
+  "exampleFontStyles": "Eisimpleirean de stoidhlichean clò",
+  "hideAoiAnalysis": "Falaich Mion-sgrùdadh",
+  "hideAoiExplainButton": "Falaich Putan Mìnich",
+  "hideSkipButton": "Falaich Putan Sgioblaich"
 }

@@ -1354,5 +1354,8 @@
   "backgroundFinish": "પૃષ્ઠભૂમિ સમાપ્તિ",
   "fontImports": "ફોન્ટ આયાતો",
   "fontStyles": "ફોન્ટ શૈલીઓ",
-  "exampleFontStyles": "ઉદાહરણ ફોન્ટ શૈલીઓ"
+  "exampleFontStyles": "ઉદાહરણ ફોન્ટ શૈલીઓ",
+  "hideAoiAnalysis": "વિશ્લેષણ છુપાવો",
+  "hideAoiExplainButton": "સમજાવવા બટન છુપાવો",
+  "hideSkipButton": "છોડી દો બટન છુપાવો"
 }

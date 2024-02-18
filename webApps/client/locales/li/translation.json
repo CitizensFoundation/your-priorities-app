@@ -1353,5 +1353,9 @@
   "pleaseAnswerInThisLanguage": "Antwoord in deze taal",
   "backgroundFinish": "Achtergrónd Aafwerking",
   "fontImports": "Lettertype importe",
-  "fontStyles": "Lettertype stieles"
+  "fontStyles": "Lettertype stieles",
+  "exampleFontStyles": "Veurbeeld lettertypes",
+  "hideAoiAnalysis": "Verberg Analyse",
+  "hideAoiExplainButton": "Verberg Oetlègk Knop",
+  "hideSkipButton": "Verberg Euverslaon Knop"
 }

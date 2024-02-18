@@ -1354,5 +1354,8 @@
   "backgroundFinish": "Atzeko Planoaren Akabera",
   "fontImports": "Letra-importak",
   "fontStyles": "Letra-estiloak",
-  "exampleFontStyles": "Adibidez letra estiloak"
+  "exampleFontStyles": "Adibidez letra estiloak",
+  "hideAoiAnalysis": "Ezkutatu Analisia",
+  "hideAoiExplainButton": "Ezkutatu Azalpen Botoia",
+  "hideSkipButton": "Ezkutatu Saltatu Botoia"
 }

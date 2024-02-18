@@ -1353,5 +1353,9 @@
   "pleaseAnswerInThisLanguage": "Biko zaa na asụsụ a",
   "backgroundFinish": "Nzube Azụ",
   "fontImports": "Mbubata mkpụrụedemede",
-  "fontStyles": "Ụdị mkpụrụedemede"
+  "fontStyles": "Ụdị mkpụrụedemede",
+  "exampleFontStyles": "Ọmụmaatụ ụdị edemede",
+  "hideAoiAnalysis": "Zoo Nyocha",
+  "hideAoiExplainButton": "Zoo Bọtịnụ Nkọwa",
+  "hideSkipButton": "Zoo Bọtịnụ Agafe"
 }

@@ -205,7 +205,7 @@
   "fraudManagement": "Frod manijment",
   "enableFraudDetection": "Enable frod detection",
   "urlToReview": "URL go na dokument for review",
-  "urlToReviewActionText": "Action text for review",
+  "urlToReviewActionText": "Akshon text foh reviu",
   "copiedToClipboard": "Copy go na clipboard",
   "closeNewsfeedSubmissions": "Klos nyusfid sabmishan dem",
   "bulkTemplateSilentMode": "Send no emails wit dis template",
@@ -1353,5 +1353,9 @@
   "pleaseAnswerInThisLanguage": "Ansar na dis langwej",
   "backgroundFinish": "Bakgrong Finish",
   "fontImports": "Font imports",
-  "fontStyles": "Font styles"
+  "fontStyles": "Font style dem",
+  "exampleFontStyles": "Egzanpul font style dem",
+  "hideAoiAnalysis": "Hide Analysis",
+  "hideAoiExplainButton": "Hide Explain Button",
+  "hideSkipButton": "Hide Skip Button"
 }

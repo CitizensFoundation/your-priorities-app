@@ -1354,5 +1354,8 @@
   "backgroundFinish": "རྒྱབ་སྐྱེས་བཟོ་བཅོས།",
   "fontImports": "ཡིག་གཟུགས་ནང་འཇུག",
   "fontStyles": "ཡིག་གཟུགས་སྟོན་ཚན",
-  "exampleFontStyles": "དཔེར་བརྗོད་ཡིག་གཟུགས།"
+  "exampleFontStyles": "དཔེར་བརྗོད་ཡིག་གཟུགས།",
+  "hideAoiAnalysis": "བསྒྲིགས་བསལ་སྦས།",
+  "hideAoiExplainButton": "བསལ་བརྡ་སྦས།",
+  "hideSkipButton": "གནད་དོན་སྦས།"
 }

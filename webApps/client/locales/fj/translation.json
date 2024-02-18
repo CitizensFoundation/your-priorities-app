@@ -1354,5 +1354,8 @@
   "backgroundFinish": "Muri Vakacavari",
   "fontImports": "Vakayagataki ni matanivola",
   "fontStyles": "Kena ivakarau ni matanivola",
-  "exampleFontStyles": "Ivakaraitaki ni matailalai ni vola"
+  "exampleFontStyles": "Ivakaraitaki ni matailalai ni vola",
+  "hideAoiAnalysis": "Vunitaka na Veivakadikevi",
+  "hideAoiExplainButton": "Vunitaka na Bateni ni Vakamacala",
+  "hideSkipButton": "Vunitaka na Bateni ni Sivia"
 }

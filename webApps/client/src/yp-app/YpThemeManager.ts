@@ -457,20 +457,24 @@ export class YpThemeManager {
       }
       styleElement.textContent = fontStyles;
     } else if (styleElement) {
-      styleElement.textContent = '';
+      styleElement.textContent = "";
     }
   }
 
   importFonts(fontImportsString: string | null) {
-    document.querySelectorAll('link[data-font-import]').forEach(element => element.remove());
+    document
+      .querySelectorAll("link[data-font-import]")
+      .forEach((element) => element.remove());
 
     if (fontImportsString) {
-      const fontImports = this.sanitizeFontImports(fontImportsString.split("\n"));
+      const fontImports = this.sanitizeFontImports(
+        fontImportsString.split("\n")
+      );
       fontImports.forEach((url) => {
         const linkElement = document.createElement("link");
         linkElement.rel = "stylesheet";
         linkElement.href = url;
-        linkElement.setAttribute('data-font-import', 'true');
+        linkElement.setAttribute("data-font-import", "true");
         document.head.appendChild(linkElement);
       });
     }
@@ -513,6 +517,26 @@ export class YpThemeManager {
       }
 
       this.themeChanged();
+
+      this.updateBrowserThemeColor();
+    }
+  }
+
+  updateBrowserThemeColor() {
+    let metaThemeColor = document.querySelector('meta[name="theme-color"]');
+    let newThemeColor = this.themeColor || this.themePrimaryColor || "#000000";
+    if (newThemeColor && !newThemeColor.startsWith("#")) {
+      newThemeColor = `#${newThemeColor}`;
+    }
+
+    if (!metaThemeColor && newThemeColor) {
+      metaThemeColor = document.createElement("meta");
+      metaThemeColor.setAttribute("name", "theme-color");
+      document.getElementsByTagName("head")[0].appendChild(metaThemeColor);
+    }
+
+    if (metaThemeColor && newThemeColor) {
+      metaThemeColor.setAttribute("content", newThemeColor);
     }
   }
 

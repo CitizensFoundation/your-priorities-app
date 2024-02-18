@@ -705,7 +705,7 @@
   "editBulkStatusUpdate": "Bulk Status Update badlo",
   "bulkStatusUdateConfig": "Sāmagrī Stithi Update Config",
   "bulkStatusUpdatesTemplates": "Sāmagrī Stithi Updates Templates",
-  "selectStatusTemplate": "Template",
+  "selectStatusTemplate": "Namuna",
   "moveToGroup": "Sarko",
   "noIdeasHere": "Hanga kalpana naka.",
   "organizationsAdmin": "Sanghatananchi Admin",
@@ -1354,5 +1354,8 @@
   "backgroundFinish": "Pāṭhabhūmi Samaāpta",
   "fontImports": "Font aayat",
   "fontStyles": "Font shaili",
-  "exampleFontStyles": "Udaharan font shaili"
+  "exampleFontStyles": "Udaharan font shaili",
+  "hideAoiAnalysis": "Vishleshan Chup",
+  "hideAoiExplainButton": "Uttar Button Chup",
+  "hideSkipButton": "Chodp Button Chup"
 }

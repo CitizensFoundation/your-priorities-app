@@ -1353,5 +1353,9 @@
   "pleaseAnswerInThisLanguage": "Mwogere mu lulimi luno",
   "backgroundFinish": "Kabakole",
   "fontImports": "Okusika endagiriro",
-  "fontStyles": "Endabika y'endagiriro"
+  "fontStyles": "Endabika y'endagiriro",
+  "exampleFontStyles": "Ebyokulabirako by'endabika y'ennukuta",
+  "hideAoiAnalysis": "Kisa Okusesa",
+  "hideAoiExplainButton": "Kisa Ekinnyonnyola Buton",
+  "hideSkipButton": "Kisa Ekippe Buton"
 }

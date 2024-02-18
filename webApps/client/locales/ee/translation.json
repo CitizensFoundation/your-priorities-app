@@ -23,7 +23,7 @@
   "hideAoiResults": "Dzɔ nuwoƒe",
   "welcomeMessage": "Dɔɖoƒe gɔme",
   "welcomeHtml": "Dɔɖoƒe HTML",
-  "aoiAiAnalysisConfig": "Automated AI Analysis Config",
+  "aoiAiAnalysisConfig": "Automated AI Analisisi Config",
   "questionName": "Amesiwo",
   "allOurIdeasOptions": "Eɖokuiwo",
   "stop": "Dzɔ",
@@ -1353,6 +1353,9 @@
   "pleaseAnswerInThisLanguage": "Kɔ na miɖodoe le gbe ɖe sia",
   "backgroundFinish": "Lɛlɛwo Ɖeasɔ",
   "fontImports": "Font imports",
-  "fontStyles": "Font styles",
-  "exampleFontStyles": "Nusẽwo font styles"
+  "fontStyles": "Font sitailo",
+  "exampleFontStyles": "Nusẽwo font styles",
+  "hideAoiAnalysis": "Zã Analisisi",
+  "hideAoiExplainButton": "Zã Tsɔɔmɛ Bɔtini",
+  "hideSkipButton": "Zã Dzɔgɔ Bɔtini"
 }

@@ -1354,5 +1354,8 @@
   "backgroundFinish": "ਪਿਛੋਕੜ ਮੁਕੰਮਲ",
   "fontImports": "ਫੌਂਟ ਆਯਾਤ",
   "fontStyles": "ਫੌਂਟ ਸ਼ੈਲੀਆਂ",
-  "exampleFontStyles": "ਉਦਾਹਰਣ ਫੌਂਟ ਸਟਾਈਲ"
+  "exampleFontStyles": "ਉਦਾਹਰਣ ਫੌਂਟ ਸਟਾਈਲ",
+  "hideAoiAnalysis": "विश्लेषण छुपाओ",
+  "hideAoiExplainButton": "समझान बटन छुपाओ",
+  "hideSkipButton": "छोड़न बटन छुपाओ"
 }

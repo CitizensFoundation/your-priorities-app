@@ -1360,5 +1360,8 @@
   "backgroundFinish": "Taustaviimistlus",
   "fontImports": "Fondi import",
   "fontStyles": "Fondi stiilid",
-  "exampleFontStyles": "Näitekirjastiilid"
+  "exampleFontStyles": "Näitekirjastiilid",
+  "hideAoiAnalysis": "Peida Analüüs",
+  "hideAoiExplainButton": "Peida Selgitusnupp",
+  "hideSkipButton": "Peida Jäta Vahele Nupp"
 }

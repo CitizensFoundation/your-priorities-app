@@ -1354,5 +1354,8 @@
   "backgroundFinish": "Kev Kawm Ntxov",
   "fontImports": "Ntawv qhia nkhaus",
   "fontStyles": "Ntawv qauv",
-  "exampleFontStyles": "Piv txwv ntawm font"
+  "exampleFontStyles": "Piv txwv ntawm font",
+  "hideAoiAnalysis": "Nkaum Kev Tshuaj Ntsuam",
+  "hideAoiExplainButton": "Nkaum Piav Qhia Khawm",
+  "hideSkipButton": "Nkaum Dhia Khawm"
 }

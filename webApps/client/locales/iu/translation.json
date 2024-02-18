@@ -1353,5 +1353,9 @@
   "pleaseAnswerInThisLanguage": "Uumani oqaatsini akineq kajumissaarutigaarput",
   "backgroundFinish": "ᖃᓄᐃᑦ ᓯᕗᓪᓕᐊᖅ",
   "fontImports": "ᖃᓪᓗᓈᖅᑕᐃᑦ",
-  "fontStyles": "ᖃᓪᓗᓈᖅ ᐊᑎᖅᑕᐅᓯᖅ"
+  "fontStyles": "ᖃᓪᓗᓈᖅ ᐊᑎᖅᑕᐅᓯᖅ",
+  "exampleFontStyles": "ᐃᓕᖅᑯᑦ ᐊᑎᖅᑕᐅᓯᒪᔪᖅ",
+  "hideAoiAnalysis": "ᑕᕝᕙᓂᖅ ᓇᓗᓇᐃᖅᑕᐅᓯᒪᔪᖅ",
+  "hideAoiExplainButton": "ᑕᕝᕙᓂᖅ ᐅᓂᒃᑳᖅ ᑲᑎᖅᑕᐅᓯᒪᔪᖅ",
+  "hideSkipButton": "ᑕᕝᕙᓂᖅ ᐱᕈᕆᔭᖅ ᑲᑎᖅᑕᐅᓯᒪᔪᖅ"
 }

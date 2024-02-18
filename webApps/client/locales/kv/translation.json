@@ -1353,5 +1353,9 @@
   "pleaseAnswerInThisLanguage": "Коми кыв вӧлӧн ответны",
   "backgroundFinish": "Фонъяс Выльтӧм",
   "fontImports": "Шрифтны внедрение",
-  "fontStyles": "Шрифт стиляса"
+  "fontStyles": "Шрифт стиляса",
+  "exampleFontStyles": "Мисал шрифт стиляс",
+  "hideAoiAnalysis": "Анализыс лӧмын",
+  "hideAoiExplainButton": "Тӧськӧдлӧн нӧдзватӧм лӧмын",
+  "hideSkipButton": "Сӧрникӧдлӧн нӧдзватӧм лӧмын"
 }

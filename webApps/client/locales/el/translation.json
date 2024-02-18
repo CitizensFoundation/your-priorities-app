@@ -1360,5 +1360,8 @@
   "backgroundFinish": "Φόντο",
   "fontImports": "Εισαγωγές γραμματοσειρών",
   "fontStyles": "Στυλ γραμματοσειρών",
-  "exampleFontStyles": "Παραδείγματα γραμματοσειρών"
+  "exampleFontStyles": "Παραδείγματα γραμματοσειρών",
+  "hideAoiAnalysis": "Απόκρυψη Ανάλυσης",
+  "hideAoiExplainButton": "Απόκρυψη Κουμπιού Εξήγησης",
+  "hideSkipButton": "Απόκρυψη Κουμπιού Παράλειψης"
 }
