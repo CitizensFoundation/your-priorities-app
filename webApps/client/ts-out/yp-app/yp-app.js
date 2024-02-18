@@ -264,6 +264,22 @@ let YpApp = class YpApp extends YpBaseElement {
         this.routeData = namedMatches;
         this._routeChanged();
         this._routePageChanged(oldRouteData);
+        //TODO: Remove workaround for display buig when we have md3 top app bar
+        setTimeout(() => {
+            const topAppBar = this.$$("mwc-top-app-bar");
+            if (topAppBar) {
+                const header = topAppBar.shadowRoot.querySelector("header");
+                if (header && header.style.top == "-128px") {
+                    header.style.top = "0";
+                }
+                else if (header) {
+                }
+                else {
+                }
+            }
+            else {
+            }
+        }, 0);
     }
     //TODO: Use https://boguz.github.io/burgton-button-docs/
     renderNavigationIcon() {
@@ -380,6 +396,7 @@ let YpApp = class YpApp extends YpBaseElement {
     renderMainApp() {
         return html `
       <mwc-top-app-bar
+        dense
         role="navigation"
         aria-label="top navigation"
         ?hidden="${this.appMode !== "main"}"
@@ -389,9 +406,7 @@ let YpApp = class YpApp extends YpBaseElement {
           ${this.goForwardToPostId ? this.goForwardPostName : this.headerTitle}
         </div>
         ${this.renderActionItems()}
-        <div>
-        ${this.renderPage()}
-        </div>
+        <div>${this.renderPage()}</div>
       </mwc-top-app-bar>
     `;
     }

@@ -1358,5 +1358,11 @@
   "secondAnswer": "Tweede antwoord",
   "hereIsTheQuestion": "Hier is de vraag",
   "pleaseAnswerInThisLanguage": "Antwoord alstublieft in deze taal",
-  "backgroundFinish": "Achtergrond"
+  "backgroundFinish": "Achtergrond",
+  "exampleFontStyles": "Voorbeeld lettertypen",
+  "fontImports": "Lettertype importeren (één URL per regel)",
+  "fontStyles": "Lettertypen",
+  "hideAoiAnalysis": "Analyse verbergen",
+  "hideAoiExplainButton": "Uitlegknop verbergen",
+  "hideSkipButton": "Overslaanknop verbergen"
 }

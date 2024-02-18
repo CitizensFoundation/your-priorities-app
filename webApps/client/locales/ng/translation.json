@@ -840,7 +840,7 @@
     "add": "Yongitha kumunithi",
     "alternativeHeader": "Omutwe Omulanduluko",
     "edit": "Hindulula kumunithi",
-    "hostname": "Hostname",
+    "hostname": "Ombepo yomukundu",
     "admins": "Ombangula yaKumunithi",
     "users": "Omaye yaKumunithi",
     "delete": "Sula kumunithi",
@@ -1154,7 +1154,7 @@
   "sortBySortOrder": "Londoloka Hiilonga",
   "mediaUploads": "Omundilo gOmediya",
   "onlyAdminsCanCreateCommunities": "Onga omakwankuta gokugadha oshikundu",
-  "Facebook Client Id": "Facebook Client Id",
+  "Facebook Client Id": "Id ya Facebook",
   "facebookClientId": "Facebook Omupumbwa Id",
   "Facebook Client Secret": "Facebook Omupumbwa Ekulu",
   "facebookClientSecret": "Facebook Omupumbwa Ekulu",
@@ -1351,5 +1351,11 @@
   "secondAnswer": "Ombepo yovili",
   "hereIsTheQuestion": "Opo oshiti sha popiwa",
   "pleaseAnswerInThisLanguage": "Kokuleka oshilongo shoka",
-  "backgroundFinish": "Ombala Oshilongo"
+  "backgroundFinish": "Ombala Oshilongo",
+  "exampleFontStyles": "Oshikombo shomifano",
+  "fontImports": "Oshikombo shokungeneka (omayendelo gomumwe gokuya)",
+  "fontStyles": "Oshikombo shomifano",
+  "hideAoiAnalysis": "Fumbata Ondalulo",
+  "hideAoiExplainButton": "Fumbata Eumbo lyOmbalasikana",
+  "hideSkipButton": "Fumbata Eumbo lyOkuleka"
 }

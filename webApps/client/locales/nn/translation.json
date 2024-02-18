@@ -959,7 +959,7 @@
     "addNewsStory": "Legg til ei nyheitssak eller del ein lenke",
     "postNewsStory": "Legg til nyheitssak",
     "addComment": "Din kommentar...",
-    "postComment": "Post",
+    "postComment": "Innlegg",
     "comments": "Kommentarar",
     "howToWrite": "La oss brainstorme dei beste punkta for og mot og tenkje i løysingar...",
     "commentToShort": "Teksten er for kort!"
@@ -1351,5 +1351,11 @@
   "secondAnswer": "Andre svar",
   "hereIsTheQuestion": "Her er spørsmålet",
   "pleaseAnswerInThisLanguage": "Svar på dette språket",
-  "backgroundFinish": "Bakgrunnsfinish"
+  "backgroundFinish": "Bakgrunnsfinish",
+  "exampleFontStyles": "Døme skriftstilar",
+  "fontImports": "Skriftimportar (ein URL per linje)",
+  "fontStyles": "Skriftstilar",
+  "hideAoiAnalysis": "Gøym Analyse",
+  "hideAoiExplainButton": "Gøym Forklar-knapp",
+  "hideSkipButton": "Gøym Hopp-over-knapp"
 }

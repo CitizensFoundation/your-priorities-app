@@ -1734,8 +1734,6 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
       }
     }
 
-    debugger;
-
     return {
       name: "allOurIdeasOptions",
       icon: "settings",

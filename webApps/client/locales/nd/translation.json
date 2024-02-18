@@ -1351,5 +1351,11 @@
   "secondAnswer": "Impendulo yesibili",
   "hereIsTheQuestion": "Nansi umbuzo",
   "pleaseAnswerInThisLanguage": "Phendula kulolulimi",
-  "backgroundFinish": "Isizinda Sokuqedela"
+  "backgroundFinish": "Isizinda Sokuqedela",
+  "exampleFontStyles": "Isibonelo sefonti isitayela",
+  "fontImports": "Ukungenisa kweFonti (umugqa owodwa nge-URL)",
+  "fontStyles": "Isitayela sefonti",
+  "hideAoiAnalysis": "Fihla Ukuhlaziya",
+  "hideAoiExplainButton": "Fihla Inkinobho Yokuchasisa",
+  "hideSkipButton": "Fihla Inkinobho Yokweqa"
 }

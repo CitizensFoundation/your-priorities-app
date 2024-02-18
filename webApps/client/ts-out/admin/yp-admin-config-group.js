@@ -1571,7 +1571,6 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
                 earl.configuration.analysis_config = defaultAiAnalysisJson;
             }
         }
-        debugger;
         return {
             name: "allOurIdeasOptions",
             icon: "settings",
