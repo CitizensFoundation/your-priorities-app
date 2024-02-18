@@ -286,9 +286,9 @@ export class YpPromotionApp extends YpBaseElementWithLogin {
       <md-dialog id="errorDialog">
         <div slot="heading">${this.t("error")}</div>
         <div>${this.currentError}</div>
-        <mwc-button dialogAction="cancel" slot="secondaryAction">
+        <md-text-button dialogAction="cancel" slot="secondaryAction">
           ${this.t("ok")}
-        </mwc-button>
+        </md-text-button>
       </md-dialog>
       ${this.collection
         ? html`

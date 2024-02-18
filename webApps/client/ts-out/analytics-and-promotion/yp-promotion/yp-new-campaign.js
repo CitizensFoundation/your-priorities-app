@@ -68,7 +68,7 @@ let YpNewCampaign = class YpNewCampaign extends YpBaseElementWithLogin {
           width: 350px;
         }
 
-        mwc-textarea {
+        md-outliend-textarea {
           width: 350px;
           --mdc-theme-primary: var(--md-sys-color-primary);
           --mdc-text-field-ink-color: var(--md-sys-color-on-surface);
@@ -87,7 +87,7 @@ let YpNewCampaign = class YpNewCampaign extends YpBaseElementWithLogin {
           md-outlined-text-field {
             width: 290px;
           }
-          mwc-textarea {
+          md-outliend-textarea {
             width: 290px;
           }
         }
@@ -96,12 +96,12 @@ let YpNewCampaign = class YpNewCampaign extends YpBaseElementWithLogin {
           md-outlined-text-field {
             width: 270px;
           }
-          mwc-textarea {
+          md-outliend-textarea {
             width: 270px;
           }
         }
 
-        mwc-textarea.rounded {
+        md-outliend-textarea.rounded {
           --mdc-shape-small: 4px;
         }
 

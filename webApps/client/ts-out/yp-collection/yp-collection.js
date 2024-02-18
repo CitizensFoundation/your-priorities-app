@@ -134,10 +134,6 @@ export class YpCollection extends YpBaseElementWithLogin {
           margin-right: 8px;
         }
 
-        mwc-tab {
-          font-family: var(--app-header-font-family, Roboto);
-        }
-
         md-tabs {
           width: 960px;
         }

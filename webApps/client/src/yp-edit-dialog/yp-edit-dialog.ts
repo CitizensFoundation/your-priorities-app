@@ -171,10 +171,7 @@ export class YpEditDialog extends YpBaseElement {
           }
         }
 
-        mwc-header-panel {
-          margin-top: 0;
-          padding-top: 0 !important;
-        }
+
 
         app-toolbar {
           margin-top: 0;
@@ -304,19 +301,6 @@ export class YpEditDialog extends YpBaseElement {
           direction: rtl;
         }
 
-        md-dialog,
-        mwc-checkbox {
-          --mwc-checkbox-label: {
-            padding-right: 6px;
-          }
-        }
-
-        md-dialog,
-        mwc-radio-button {
-          --mwc-radio-button-label: {
-            padding-right: 6px;
-          }
-        }
       `,
     ];
   }

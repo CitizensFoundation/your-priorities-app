@@ -429,12 +429,12 @@ let YpForm = class YpForm extends YpBaseElement {
                 (element.type === 'submit' || element.type === 'reset'))) {
             return [];
         }
-        if (tag === 'select' || tag === 'mwc-select') {
+        if (tag === 'select' || tag === 'md-outlined-select') {
             return this._serializeSelectValues(element);
         }
         else if (tag === 'input' ||
             tag === 'md-outlined-text-field' ||
-            tag === 'mwc-textfield' ||
+            tag === 'md-filled-textfield' ||
             tag === 'yp-structured-question-edit' ||
             tag === 'yp-language-selector' ||
             tag === 'yp-theme-selector') {
@@ -463,7 +463,7 @@ let YpForm = class YpForm extends YpBaseElement {
         const type = element.tagName.toLowerCase();
         // Don't do anything for unchecked checkboxes/radio buttons.
         // Don't do anything for file, since that requires a different request.
-        if (((type === 'mwc-checkbox' || type === 'md-radio') && !element.checked) ||
+        if (((type === 'md-checkbox' || type === 'md-radio') && !element.checked) ||
             type === 'file') {
             return [];
         }

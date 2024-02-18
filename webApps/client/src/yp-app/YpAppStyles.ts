@@ -86,10 +86,6 @@ export const YpAppStyles = css`
     width: 100vw;
   }
 
-  mwc-drawer {
-    --mdc-theme-surface: var(--md-sys-color-surface-container);
-    color: var(--md-sys-color-on-surface);
-  }
 
   .loadingAppSpinnerPage {
     /* Initial state: visible and on-screen */
@@ -122,12 +118,6 @@ export const YpAppStyles = css`
     transform: translateX(0);
   }
 
-  mwc-top-app-bar {
-    --mdc-theme-primary: var(--md-sys-color-surface, #f00);
-    --mdc-theme-on-primary: var(--md-sys-color-on-surface, #0f0);
-    color: var(--md-sys-color-on-surface);
-  }
-
   .mainPage {
     margin-top: 48px;
   }
@@ -136,8 +126,5 @@ export const YpAppStyles = css`
     margin-right: 4px;
   }
 
-  @media (max-width: 800px) {
-    mwc-top-app-bar {
-      --mdc-top-app-bar-width: 100vw;
-  }
+
 `;

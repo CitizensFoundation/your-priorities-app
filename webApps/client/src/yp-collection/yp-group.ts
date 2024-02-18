@@ -414,11 +414,11 @@ export class YpGroup extends YpCollection {
       ${!this.disableNewPosts &&
       this.collection &&
       !(this.collection.configuration as YpGroupConfiguration).hideNewPost
-        ? html` <mwc-fab
+        ? html` <md-fab
             .label="${this.t("post.new")}"
             icon="lightbulb"
             @click="${this._newPost}"
-          ></mwc-fab>`
+          ></md-fab>`
         : nothing}
     `;
   }

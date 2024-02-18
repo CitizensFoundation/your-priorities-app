@@ -124,7 +124,7 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
           margin-top: 54px;
         }
 
-        mwc-dropdown-menu {
+        md-menu {
           margin-top: 16px;
         }
 

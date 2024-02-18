@@ -70,7 +70,7 @@ export class YpLanguageSelector extends YpBaseElement {
     return [
       super.styles,
       css`
-        mwc-select {
+        md-outlined-select {
           max-width: 250px;
         }
 

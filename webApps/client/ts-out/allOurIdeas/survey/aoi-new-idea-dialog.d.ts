@@ -35,8 +35,8 @@ export declare class AoiNewIdeaDialog extends YpGenerateAiImage {
     generateAiIcon(): Promise<void>;
     get tempPrompt(): string;
     regenerateIcon(): void;
-    renderAnswer(): import("lit-html").TemplateResult<1> | typeof nothing;
-    renderIcon(): import("lit-html").TemplateResult<1> | typeof nothing;
+    renderAnswer(): typeof nothing | import("lit-html").TemplateResult<1>;
+    renderIcon(): typeof nothing | import("lit-html").TemplateResult<1>;
     renderContent(): import("lit-html").TemplateResult<1>;
     renderFooter(): import("lit-html").TemplateResult<1>;
     render(): import("lit-html").TemplateResult<1>;

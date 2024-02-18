@@ -106,11 +106,11 @@ export class YpSetVideoCover extends YpBaseElement {
               <div
                 class="layout horizontal mainPhotoCheckbox"
                 ?hidden="${this.noDefaultCoverImage}">
-                <mwc-formfield .label="${this.t('useMainPhoto')}">
+                <label>${this.t('useMainPhoto')}
                   <md-radio
                     @click="${this._selectVideoCoverMainPhoto}"
                     name="useMainPhoto"></md-radio>
-                </mwc-formfield>
+              </label>
               </div>
             </div>
           </div>
