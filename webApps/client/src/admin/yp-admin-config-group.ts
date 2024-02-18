@@ -165,8 +165,8 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
     this._configChanged();
     this.configTabs = this.setupConfigTabs();
     this.requestUpdate();
-    this.fire('yp-request-update-on-parent');
-   }
+    this.fire("yp-request-update-on-parent");
+  }
 
   renderGroupTypeSelection() {
     return html`
@@ -1727,16 +1727,36 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
   _getAllOurIdeaOptionsTab() {
     let earl = this.group.configuration.allOurIdeas?.earl;
 
+    if (earl) {
+      //TODO: Move this somewhere else
+      if (!earl!.configuration!.analysis_config) {
+        earl!.configuration!.analysis_config = defaultAiAnalysisJson;
+      }
+    }
+
+    debugger;
+
     return {
       name: "allOurIdeasOptions",
       icon: "settings",
       items: [
         {
+          text: "active",
+          type: "checkbox",
+          onChange: (e: CustomEvent) =>
+            this._updateEarl(e, "active"),
+          value: earl?.active,
+          translationToken: "active",
+        },
+        {
           text: "accept_new_ideas",
           type: "checkbox",
           onChange: (e: CustomEvent) =>
             this._updateEarl(e, "configuration.accept_new_ideas"),
-          value: earl?.configuration?.accept_new_ideas,
+          value:
+            earl?.configuration?.accept_new_ideas !== undefined
+              ? earl?.configuration?.accept_new_ideas
+              : true,
           translationToken: "acceptNewIdeas",
         },
         {
@@ -1746,6 +1766,30 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
             this._updateEarl(e, "configuration.hide_results"),
           value: earl?.configuration?.hide_results,
           translationToken: "hideAoiResults",
+        },
+        {
+          text: "hide_analysis",
+          type: "checkbox",
+          onChange: (e: CustomEvent) =>
+            this._updateEarl(e, "configuration.hide_analysis"),
+          value: earl?.configuration?.hide_analysis,
+          translationToken: "hideAoiAnalysis",
+        },
+        {
+          text: "hide_skip",
+          type: "checkbox",
+          onChange: (e: CustomEvent) =>
+            this._updateEarl(e, "configuration.hide_skip"),
+          value: earl?.configuration?.hide_skip,
+          translationToken: "hideSkipButton",
+        },
+        {
+          text: "hide_explain",
+          type: "checkbox",
+          onChange: (e: CustomEvent) =>
+            this._updateEarl(e, "configuration.hide_explain"),
+          value: earl?.configuration?.hide_explain,
+          translationToken: "hideAoiExplainButton",
         },
         {
           text: "welcome_message",

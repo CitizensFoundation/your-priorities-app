@@ -1354,5 +1354,8 @@
   "backgroundFinish": "Афон Ҿыц",
   "fontImports": "Ашрифт алагаларазы",
   "fontStyles": "Ашрифт астильқәа",
-  "exampleFontStyles": "Аҧшьгаратә шрифтқәа"
+  "exampleFontStyles": "Аҧшьгаратә шрифтқәа",
+  "hideAoiAnalysis": "Акәымкәа анализ",
+  "hideAoiExplainButton": "Аҽыхьчара Аҳәара Акәымпыл",
+  "hideSkipButton": "Аҽыхьчара Аиасра Акәымпыл"
 }

@@ -52,10 +52,12 @@ interface AoiAnswerToVoteOnData {
 interface AoiEarlConfigurationData {
   welcome_message?: string;
   accept_new_ideas?: boolean;
-  show_cant_decide?: boolean;
   external_goal_params_whitelist?: string;
   external_goal_trigger_url?: string;
-  hide_results: string;
+  hide_results: boolean;
+  hide_analysis: boolean;
+  hide_explain: boolean;
+  hide_skip: boolean;
   welcome_html: string;
   target_votes: number;
   lock_results_until_target_votes: boolean;

@@ -645,7 +645,7 @@
   "hidePointAuthor": "Suma kwan kɔbɔfo",
   "hidePostAuthor": "Suma post kɔbɔfo",
   "defaultLocationLongLat": "Difɔlt location longitude,latitude",
-  "disableCommunityDomainUpLink": "Disable Domain Up Link",
+  "disableCommunityDomainUpLink": "Dum Domain So Link",
   "analyticsTrackerCode": "Google Analytics Id",
   "filterIdeas": "Sɛfa nkɔmmɔ",
   "edit": "Sesa",
@@ -1354,5 +1354,8 @@
   "backgroundFinish": "Abakɔsɛm Mu",
   "fontImports": "Font mbra",
   "fontStyles": "Font nkɔmfɛ",
-  "exampleFontStyles": "Nkyerɛase font styles"
+  "exampleFontStyles": "Nkyerɛase font styles",
+  "hideAoiAnalysis": "Sumina Nkɔkyɛre",
+  "hideAoiExplainButton": "Suma Kwan Bɔ Mu Botae",
+  "hideSkipButton": "Suma Kwan Bɔ Mu Twa"
 }

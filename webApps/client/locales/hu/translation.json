@@ -1360,5 +1360,6 @@
   "pleaseAnswerInThisLanguage": "Kérjük, ezen a nyelven válaszoljon",
   "backgroundFinish": "Háttérbefejezés",
   "fontImports": "Betűtípus importálás",
-  "fontStyles": "Betűstílusok"
+  "fontStyles": "Betűstílusok",
+  "exampleFontStyles": "Példabetűstílusok"
 }

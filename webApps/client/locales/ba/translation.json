@@ -1354,5 +1354,8 @@
   "backgroundFinish": "Фон тамамлау",
   "fontImports": "Шрифттар индереү",
   "fontStyles": "Шрифт стилдәре",
-  "exampleFontStyles": "Үрнәк хәреф стилдәре"
+  "exampleFontStyles": "Үрнәк хәреф стилдәре",
+  "hideAoiAnalysis": "Анализды йәшерергә",
+  "hideAoiExplainButton": "Төшөндөрөү төймәһен йәшерергә",
+  "hideSkipButton": "Үткәреп ҡуйыу төймәһен йәшерергә"
 }

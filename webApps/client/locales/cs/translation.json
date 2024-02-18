@@ -1360,5 +1360,8 @@
   "backgroundFinish": "Pozadí",
   "fontImports": "Import písem",
   "fontStyles": "Styly písma",
-  "exampleFontStyles": "Příklad stylů písma"
+  "exampleFontStyles": "Příklad stylů písma",
+  "hideAoiAnalysis": "Skrýt analýzu",
+  "hideAoiExplainButton": "Skrýt tlačítko vysvětlení",
+  "hideSkipButton": "Skrýt tlačítko přeskočit"
 }

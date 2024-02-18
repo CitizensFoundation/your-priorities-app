@@ -1354,5 +1354,8 @@
   "backgroundFinish": "Фон",
   "fontImports": "Імпарт шрыфтаў",
   "fontStyles": "Стылі шрыфтаў",
-  "exampleFontStyles": "Прыклады шрыфтаў"
+  "exampleFontStyles": "Прыклады шрыфтаў",
+  "hideAoiAnalysis": "Схаваць аналіз",
+  "hideAoiExplainButton": "Схаваць кнопку тлумачэння",
+  "hideSkipButton": "Схаваць кнопку прапусціць"
 }

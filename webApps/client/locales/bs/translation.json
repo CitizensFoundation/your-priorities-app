@@ -1354,5 +1354,8 @@
   "backgroundFinish": "Pozadina",
   "fontImports": "Uvoz fontova",
   "fontStyles": "Stilovi fonta",
-  "exampleFontStyles": "Primjeri stilova fonta"
+  "exampleFontStyles": "Primjeri stilova fonta",
+  "hideAoiAnalysis": "Sakrij Analizu",
+  "hideAoiExplainButton": "Sakrij Dugme za Objasnjenje",
+  "hideSkipButton": "Sakrij Dugme za Preskakanje"
 }

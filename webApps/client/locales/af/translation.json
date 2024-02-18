@@ -1354,5 +1354,8 @@
   "backgroundFinish": "Agtergrondafwerking",
   "fontImports": "Fontinvoere",
   "fontStyles": "Fontstyle",
-  "exampleFontStyles": "Voorbeeld fontstyle"
+  "exampleFontStyles": "Voorbeeld fontstyle",
+  "hideAoiAnalysis": "Versteek Ontleding",
+  "hideAoiExplainButton": "Versteek Verduidelik Knoppie",
+  "hideSkipButton": "Versteek Slaan Oor Knoppie"
 }

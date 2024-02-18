@@ -1238,7 +1238,7 @@
   "Theme Secondary Color": "Theme Secondary Color",
   "Theme Tertiary Color": "Theme Tertiary Color",
   "Theme Neutral Color": "Theme Neutral Color",
-  "Theme Neutral Variant Color": "Theme Neutral Variant Color",
+  "Theme Neutral Variant Color": "Thēma Nēutral Varēna Rangha",
   "Primary": "Staota",
   "Primary Container": "Staota Zaraθuštra",
   "Secondary": "Gaθā",
@@ -1356,5 +1356,8 @@
   "backgroundFinish": "𐬨𐬀𐬭𐬀𐬌𐬙𐬀𐬥𐬁",
   "fontImports": "Font imports",
   "fontStyles": "Font styles",
-  "exampleFontStyles": "Example font styles"
+  "exampleFontStyles": "Example font styles",
+  "hideAoiAnalysis": "Hide Analysis",
+  "hideAoiExplainButton": "Hide Explain Button",
+  "hideSkipButton": "Hide Skip Button"
 }

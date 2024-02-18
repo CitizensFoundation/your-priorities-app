@@ -1354,5 +1354,8 @@
   "backgroundFinish": "Фон хьалхар",
   "fontImports": "Шрифт импорт",
   "fontStyles": "Шрифт стиллер",
-  "exampleFontStyles": "Мисал шрифт стилеб"
+  "exampleFontStyles": "Мисал шрифт стилеб",
+  "hideAoiAnalysis": "Анализ дуьзар хъулу",
+  "hideAoiExplainButton": "ТӀетӀулар баттон дуьзар хъулу",
+  "hideSkipButton": "Къип дуьзар баттон дуьзар хъулу"
 }

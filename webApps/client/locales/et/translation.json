@@ -1359,5 +1359,6 @@
   "pleaseAnswerInThisLanguage": "Palun vastake selles keeles",
   "backgroundFinish": "Taustaviimistlus",
   "fontImports": "Fondi import",
-  "fontStyles": "Fondi stiilid"
+  "fontStyles": "Fondi stiilid",
+  "exampleFontStyles": "Näitekirjastiilid"
 }

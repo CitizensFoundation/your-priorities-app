@@ -1291,7 +1291,7 @@
   "Completed goal": "Završeni cilj",
   "Browser": "Pretraživač",
   "Country": "Država",
-  "Region": "Region",
+  "Region": "Regija",
   "City": "Grad",
   "Clear All Filters": "Očisti sve filtere",
   "details": "detalji",
@@ -1354,5 +1354,8 @@
   "backgroundFinish": "Pozadina Završetak",
   "fontImports": "Uvoz fontova",
   "fontStyles": "Stilovi fonta",
-  "exampleFontStyles": "Primjeri stilova slova"
+  "exampleFontStyles": "Primjeri stilova slova",
+  "hideAoiAnalysis": "Sakrij Analizu",
+  "hideAoiExplainButton": "Sakrij Dugme za Objasnjenje",
+  "hideSkipButton": "Sakrij Dugme za Preskakanje"
 }

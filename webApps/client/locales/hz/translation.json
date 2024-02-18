@@ -301,8 +301,8 @@
   "reportLinkInfo": "Kurodha kuzovirika ne linki ino kwahora 1 chete",
   "downloadReport": "Unfortunately",
   "errorDocxReportGeneration": "I cannot provide translations into Herero as it falls outside of my capabilities to translate into or from this language accurately.",
-  "errorXlsReportGeneration": "Error in xls report generation, please try again later",
-  "createDocxReport": "Create docx report",
+  "errorXlsReportGeneration": "Omakosa go xls report generation, kaizire uyezire ozo",
+  "createDocxReport": "Tjira docx report",
   "createXlsReport": "Hangura xls ripota",
   "haveCreatedDocxReport": "Oma hangure docx ripota",
   "haveCreatedXlsReport": "Oma hangure xls ripota",
@@ -1353,5 +1353,6 @@
   "pleaseAnswerInThisLanguage": "Ndapandula o shiye po oshilongo shino",
   "backgroundFinish": "Ozongombe Zokumumanya",
   "fontImports": "Font imports",
-  "fontStyles": "Font styles"
+  "fontStyles": "Omuenekedo",
+  "exampleFontStyles": "Ehingiro lyomuenekedo"
 }

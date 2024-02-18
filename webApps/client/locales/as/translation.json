@@ -1354,5 +1354,8 @@
   "backgroundFinish": "পটভূমি সমাপ্তি",
   "fontImports": "ফন্ট আমদানি",
   "fontStyles": "ফন্ট শৈলী",
-  "exampleFontStyles": "উদাহরণ ফন্ট শৈলী"
+  "exampleFontStyles": "উদাহরণ ফন্ট শৈলী",
+  "hideAoiAnalysis": "বিশ্লেষণ লুকুৱাওক",
+  "hideAoiExplainButton": "ব্যাখ্যা বুটাম লুকুৱাওক",
+  "hideSkipButton": "বিপদত্যাগ বুটাম লুকুৱাওক"
 }

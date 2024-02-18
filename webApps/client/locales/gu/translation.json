@@ -40,7 +40,7 @@
   "goalTree": "લક્ષ્ય વૃક્ષ",
   "futureRealityTree": "ભવિષ્ય વાસ્તવિકતા વૃક્ષ",
   "ideaGenerationGroupType": "વિચાર સર્જન",
-  "allOurIdeasGroupType": "All Our Ideas Pairwise Ranking",
+  "allOurIdeasGroupType": "All Our Ideas યુગ્મ ક્રમાંકન",
   "allowGenerativeImages": "જનરેટિવ ઇમેજીસ મંજૂર કરો",
   "reports": "અહેવાલો",
   "reportsInfo": "અહેવાલો ઉત્પન્ન કરો",
@@ -1353,5 +1353,6 @@
   "pleaseAnswerInThisLanguage": "કૃપા કરી આ ભાષામાં જવાબ આપો",
   "backgroundFinish": "પૃષ્ઠભૂમિ સમાપ્તિ",
   "fontImports": "ફોન્ટ આયાતો",
-  "fontStyles": "ફોન્ટ શૈલીઓ"
+  "fontStyles": "ફોન્ટ શૈલીઓ",
+  "exampleFontStyles": "ઉદાહરણ ફોન્ટ શૈલીઓ"
 }

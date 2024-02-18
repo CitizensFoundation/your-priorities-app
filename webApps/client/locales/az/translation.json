@@ -1354,5 +1354,8 @@
   "backgroundFinish": "Fon Bitmə",
   "fontImports": "Şrift idxalları",
   "fontStyles": "Şrift stilləri",
-  "exampleFontStyles": "Nümunə font stilləri"
+  "exampleFontStyles": "Nümunə font stilləri",
+  "hideAoiAnalysis": "Analizi Gizlət",
+  "hideAoiExplainButton": "İzah Düyməsini Gizlət",
+  "hideSkipButton": "Keçid Düyməsini Gizlət"
 }

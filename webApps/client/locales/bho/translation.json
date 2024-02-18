@@ -1354,5 +1354,8 @@
   "backgroundFinish": "पृष्ठभूमि समाप्त",
   "fontImports": "फॉन्ट आयात",
   "fontStyles": "फॉन्ट शैली",
-  "exampleFontStyles": "उदाहरण फॉन्ट शैली"
+  "exampleFontStyles": "उदाहरण फॉन्ट शैली",
+  "hideAoiAnalysis": "विश्लेषण छिपाईं",
+  "hideAoiExplainButton": "समझावे वाला बटन छिपाईं",
+  "hideSkipButton": "छोड़ीं बटन छिपाईं"
 }

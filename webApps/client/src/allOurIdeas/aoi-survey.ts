@@ -464,9 +464,18 @@ export class AoiSurvey extends YpBaseElement {
   }
 
   openResults() {
+    debugger;
     this.pageIndex = 3;
     if (this.$$("#navBar") as NavigationBar) {
       (this.$$("#navBar") as NavigationBar).activeIndex = 2;
+    }
+
+    if (this.$$("#resultsTab") as MdPrimaryTab) {
+      (this.$$("#resultsTab") as MdPrimaryTab).selected = true;
+    }
+
+    if (this.$$("#introTab") as MdPrimaryTab) {
+      (this.$$("#introTab") as MdPrimaryTab).selected = false;
     }
   }
 
@@ -560,7 +569,8 @@ export class AoiSurvey extends YpBaseElement {
             </md-primary-tab>
 
             <md-primary-tab
-              ?hidden="${this.earl?.configuration!.hide_results == "1"}"
+              id="resultsTab"
+              ?hidden="${this.earl?.configuration!.hide_results}"
               class="${this.pageIndex == PagesTypes.Results &&
               "selectedContainer"}"
               @click="${() => this.changeTabTo(2)}"
@@ -572,7 +582,7 @@ export class AoiSurvey extends YpBaseElement {
 
             <md-primary-tab
               ?hidden="${!this.hasLlm ||
-              this.earl?.configuration!.hide_results == "1"}"
+              this.earl?.configuration!.hide_analysis}"
               class="${this.pageIndex == PagesTypes.Analysis &&
               "selectedContainer"}"
               @click="${() => this.changeTabTo(3)}"
@@ -605,14 +615,14 @@ export class AoiSurvey extends YpBaseElement {
             </md-navigation-tab>
             <md-navigation-tab
               .label="${this.t("Results")}"
-              ?hidden="${this.earl?.configuration!.hide_results == "1"}"
+              ?hidden="${this.earl?.configuration!.hide_results}"
             >
               <md-icon slot="active-icon">grading</md-icon>
               <md-icon slot="inactive-icon">grading</md-icon>
             </md-navigation-tab>
             <md-navigation-tab
               .label="${this.t("Analysis")}"
-              ?hidden="${this.earl?.configuration!.hide_results == "1"}"
+              ?hidden="${this.earl?.configuration!.hide_results}"
             >
               <md-icon slot="active-icon">insights</md-icon>
               <md-icon slot="inactive-icon">insights</md-icon>

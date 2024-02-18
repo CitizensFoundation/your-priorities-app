@@ -1360,5 +1360,6 @@
   "pleaseAnswerInThisLanguage": "Por favor responde en este idioma",
   "backgroundFinish": "Acabado",
   "fontImports": "Importaciones de fuentes",
-  "fontStyles": "Estilos de fuente"
+  "fontStyles": "Estilos de fuente",
+  "exampleFontStyles": "Ejemplos de fuentes"
 }

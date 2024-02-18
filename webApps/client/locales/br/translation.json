@@ -1354,5 +1354,8 @@
   "backgroundFinish": "Achuiñ A-dreñv",
   "fontImports": "Enporzhiañ fontoù",
   "fontStyles": "Stilennoù font",
-  "exampleFontStyles": "Skouerioù stumm lizherenneg"
+  "exampleFontStyles": "Skouerioù stumm lizherenneg",
+  "hideAoiAnalysis": "Kuzhat an Dielfennadur",
+  "hideAoiExplainButton": "Kuzhat ar Bouton Displegañ",
+  "hideSkipButton": "Kuzhat ar Bouton Lammat"
 }

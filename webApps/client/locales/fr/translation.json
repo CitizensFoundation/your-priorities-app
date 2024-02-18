@@ -1360,5 +1360,6 @@
   "pleaseAnswerInThisLanguage": "Veuillez répondre dans cette langue",
   "backgroundFinish": "Finition",
   "fontImports": "Importations de polices",
-  "fontStyles": "Styles de polices"
+  "fontStyles": "Styles de polices",
+  "exampleFontStyles": "Exemples de polices"
 }

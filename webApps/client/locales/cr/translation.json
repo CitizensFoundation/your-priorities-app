@@ -1354,5 +1354,8 @@
   "backgroundFinish": "ᑲᓇᓇᐠ ᑲᑎᓯᑲᐠ",
   "fontImports": "ᐅᑎᓂᒃ ᑲᑎᓯᓇᐠ",
   "fontStyles": "ᐅᑎᓂᒃ ᐊᔭᒥᓇᐠ",
-  "exampleFontStyles": "ᐅᑌᓂᒥᐦᑕᐃᐧᐣ ᑭᐢᑎᐧᐋᐧᐠ"
+  "exampleFontStyles": "ᐅᑌᓂᒥᐦᑕᐃᐧᐣ ᑭᐢᑎᐧᐋᐧᐠ",
+  "hideAoiAnalysis": "ᑲᐧᐋᐧᐃᑲᐣ ᑕᐅᑕᐧᐃᐧᐣ",
+  "hideAoiExplainButton": "ᑲᐧᐋᐧᐃᑲᐣ ᑕᐅᑕᐧᐃᐧᐣ ᑲᐃᑲᐣ",
+  "hideSkipButton": "ᑲᐧᐋᐧᐃᑲᐣ ᓂᐱᐧᐃᐧᐣ ᑲᐃᑲᐣ"
 }

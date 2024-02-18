@@ -1354,5 +1354,8 @@
   "backgroundFinish": "Trasfondo",
   "fontImports": "Importasion ni' font",
   "fontStyles": "Estilo ni' font",
-  "exampleFontStyles": "Ehemplo estilon letra"
+  "exampleFontStyles": "Ehemplo estilon letra",
+  "hideAoiAnalysis": "Sotta Análisis",
+  "hideAoiExplainButton": "Sotta Boton Siña",
+  "hideSkipButton": "Sotta Boton Laktas"
 }

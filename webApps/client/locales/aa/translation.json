@@ -1354,5 +1354,8 @@
   "backgroundFinish": "Dag background",
   "fontImports": "Font kee waytah",
   "fontStyles": "Aabbe",
-  "exampleFontStyles": "Tusaale aabbe"
+  "exampleFontStyles": "Tusaale aabbe",
+  "hideAoiAnalysis": "Kufi Analaysis",
+  "hideAoiExplainButton": "Buqqa' Dhiibbaa",
+  "hideSkipButton": "Buqqa' Dhaaf"
 }

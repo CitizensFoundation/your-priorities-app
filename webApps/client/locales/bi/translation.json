@@ -1354,5 +1354,8 @@
   "backgroundFinish": "Bakgraon Finis",
   "fontImports": "Font impot",
   "fontStyles": "Font stael",
-  "exampleFontStyles": "Eksempol font stael"
+  "exampleFontStyles": "Eksempol font stael",
+  "hideAoiAnalysis": "Haedem Analisis",
+  "hideAoiExplainButton": "Haedem Expelen Batan",
+  "hideSkipButton": "Haedem Skip Batan"
 }

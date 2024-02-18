@@ -1360,5 +1360,8 @@
   "backgroundFinish": "Фонов завършек",
   "fontImports": "Внос на шрифтове",
   "fontStyles": "Стилове на шрифтове",
-  "exampleFontStyles": "Примерни шрифтове"
+  "exampleFontStyles": "Примерни шрифтове",
+  "hideAoiAnalysis": "Скрий Анализ",
+  "hideAoiExplainButton": "Скрий Бутона за Обяснение",
+  "hideSkipButton": "Скрий Бутона за Пропускане"
 }

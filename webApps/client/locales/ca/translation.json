@@ -1361,5 +1361,8 @@
   "backgroundFinish": "Acabat de Fons",
   "fontImports": "Importacions de fonts",
   "fontStyles": "Estils de font",
-  "exampleFontStyles": "Exemples d'estils de lletra"
+  "exampleFontStyles": "Exemples d'estils de lletra",
+  "hideAoiAnalysis": "Amaga Anàlisi",
+  "hideAoiExplainButton": "Amaga Botó Explica",
+  "hideSkipButton": "Amaga Botó Salta"
 }

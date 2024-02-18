@@ -1353,5 +1353,6 @@
   "pleaseAnswerInThisLanguage": "Vastaa tällä kielellä",
   "backgroundFinish": "Taustaväri",
   "fontImports": "Fonttituonnit",
-  "fontStyles": "Fonttityylit"
+  "fontStyles": "Fonttityylit",
+  "exampleFontStyles": "Esimerkki fonttityylit"
 }

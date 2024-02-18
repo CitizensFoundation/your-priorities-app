@@ -1354,5 +1354,8 @@
   "backgroundFinish": "Latar nga Human",
   "fontImports": "Pag-import sa Font",
   "fontStyles": "Estilo sa Font",
-  "exampleFontStyles": "Pananglitan sa estilo sa font"
+  "exampleFontStyles": "Pananglitan sa estilo sa font",
+  "hideAoiAnalysis": "Tago Analisis",
+  "hideAoiExplainButton": "Tago Ipasabot Buton",
+  "hideSkipButton": "Tago Laktaw Buton"
 }

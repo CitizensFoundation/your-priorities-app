@@ -692,19 +692,21 @@ export class AoiSurveyVoting extends YpBaseElement {
           </div>
           <div class="layout ${this.breakButtonsForVertical ? 'vertical': 'horizontal'} center-center wrap">
             <md-text-button
-              ?hidden="${!this.hasLlm}"
+              ?hidden="${!this.hasLlm || this.earl.configuration?.hide_explain}"
               class="skipButton"
               @click=${this.openLlmExplainDialog}
             >
               ${this.t("Explain")}
             </md-text-button>
             <md-outlined-button
+              ?hidden="${!this.earl.configuration?.accept_new_ideas}"
               class="newIdeaButton"
               @click="${this.openNewIdeaDialog}"
             >
               ${this.t("Add your own answer")}
             </md-outlined-button>
             <md-text-button
+              ?hidden="${this.earl.configuration?.hide_skip}"
               class="skipButton"
               @click=${() => this.voteForAnswer("skip")}
             >

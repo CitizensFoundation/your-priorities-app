@@ -1354,5 +1354,8 @@
   "backgroundFinish": "Задъний Покровъ",
   "fontImports": "Шрифтъ ввозъ",
   "fontStyles": "Стили шрифта",
-  "exampleFontStyles": "Прїмеръ шрифтъ стилъ"
+  "exampleFontStyles": "Прїмеръ шрифтъ стилъ",
+  "hideAoiAnalysis": "Скрѧти Анализъ",
+  "hideAoiExplainButton": "Скрѧти Тлъкъ Кнопка",
+  "hideSkipButton": "Скрѧти Прескочити Кнопка"
 }

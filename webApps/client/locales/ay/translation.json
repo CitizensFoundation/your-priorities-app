@@ -1354,5 +1354,8 @@
   "backgroundFinish": "Qhiparux Jaqinaka",
   "fontImports": "Qillqatana apthapiña",
   "fontStyles": "Qillqatana laykuna",
-  "exampleFontStyles": "Ejemplo letra estilos"
+  "exampleFontStyles": "Ejemplo letra estilos",
+  "hideAoiAnalysis": "Pakayña T'iqina",
+  "hideAoiExplainButton": "Pakayña Yatiqir Jaqinaka",
+  "hideSkipButton": "Pakayña Laq'añataki"
 }

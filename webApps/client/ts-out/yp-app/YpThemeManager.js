@@ -309,7 +309,6 @@ export class YpThemeManager {
     }
     sanitizeFontStyles(fontStyles) {
         const allowedProps = ["body", "font-family", "font-weight", "font-size"];
-        // Simple regex to match allowed properties and values (very basic for demonstration)
         const propValueRegex = /([a-zA-Z\-]+)\s*:\s*([^;]+);?/g;
         let sanitizedStyles = "";
         let match;
@@ -320,7 +319,6 @@ export class YpThemeManager {
         }
         return sanitizedStyles;
     }
-    // Expanded domain allowlist for fontImports
     sanitizeFontImports(fontImports) {
         const allowedDomains = [
             "fonts.googleapis.com",
@@ -335,12 +333,10 @@ export class YpThemeManager {
             "fonts.monotype.com", // Monotype
             "fontshop.com", // FontShop
             "typography.com", // Hoefler&Co.
-            // Add other trusted font providers as needed
         ];
         return fontImports.filter((url) => {
             try {
                 const parsedUrl = new URL(url);
-                // Ensure the URL protocol is HTTPS and the domain is in the allowed list
                 return (parsedUrl.protocol === "https:" &&
                     allowedDomains.some((domain) => parsedUrl.hostname.endsWith(domain) ||
                         parsedUrl.hostname.includes(domain)));
@@ -361,12 +357,10 @@ export class YpThemeManager {
             styleElement.textContent = fontStyles;
         }
         else if (styleElement) {
-            // If there are no font styles to apply, clear the existing styles
             styleElement.textContent = '';
         }
     }
     importFonts(fontImportsString) {
-        // Remove existing font import links
         document.querySelectorAll('link[data-font-import]').forEach(element => element.remove());
         if (fontImportsString) {
             const fontImports = this.sanitizeFontImports(fontImportsString.split("\n"));
@@ -378,7 +372,6 @@ export class YpThemeManager {
                 document.head.appendChild(linkElement);
             });
         }
-        // If there are no font imports to add, the removal step above has already reset the state
     }
     setTheme(number, configuration = undefined) {
         if (!configuration) {
