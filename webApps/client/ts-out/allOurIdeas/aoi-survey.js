@@ -61,33 +61,39 @@ let AoiSurvey = class AoiSurvey extends YpBaseElement {
     }
     async getEarl() {
         window.aoiAppGlobals.activity("Survey - fetch start");
-        const earlData = await window.aoiServerApi.getEarlData(this.collectionId);
-        this.earl = this.collection.configuration.allOurIdeas.earl;
-        this.question = earlData.question;
-        this.prompt = earlData.prompt;
-        this.appearanceLookup = this.question.appearance_id;
         try {
-            this.currentLeftAnswer = JSON.parse(this.prompt.left_choice_text);
-            this.currentRightAnswer = JSON.parse(this.prompt.right_choice_text);
+            const earlData = await window.aoiServerApi.getEarlData(this.collectionId);
+            this.earl = this.collection.configuration.allOurIdeas.earl;
+            this.question = earlData.question;
+            this.prompt = earlData.prompt;
+            this.appearanceLookup = this.question.appearance_id;
+            try {
+                this.currentLeftAnswer = JSON.parse(this.prompt.left_choice_text);
+                this.currentRightAnswer = JSON.parse(this.prompt.right_choice_text);
+            }
+            catch (error) {
+                console.warn("Error parsing prompt answers", error);
+                this.currentLeftAnswer = this.prompt.left_choice_text;
+                this.currentRightAnswer = this.prompt.right_choice_text;
+            }
+            this.currentPromptId = this.prompt.id;
+            document.title = this.question.name;
+            if (this.earl.active) {
+                this.surveyClosed = false;
+            }
+            else {
+                this.surveyClosed = true;
+            }
+            this.fireGlobal("set-ids", {
+                questionId: this.question.id,
+                promptId: this.prompt.id,
+            });
+            window.aoiAppGlobals.activity("Survey - fetch end");
         }
         catch (error) {
-            console.warn("Error parsing prompt answers", error);
-            this.currentLeftAnswer = this.prompt.left_choice_text;
-            this.currentRightAnswer = this.prompt.right_choice_text;
+            console.error("Error fetching earl", error);
+            window.aoiAppGlobals.activity("Survey - fetch error");
         }
-        this.currentPromptId = this.prompt.id;
-        document.title = this.question.name;
-        if (this.earl.active) {
-            this.surveyClosed = false;
-        }
-        else {
-            this.surveyClosed = true;
-        }
-        this.fireGlobal("set-ids", {
-            questionId: this.question.id,
-            promptId: this.prompt.id,
-        });
-        window.aoiAppGlobals.activity("Survey - fetch end");
     }
     disconnectedCallback() {
         super.disconnectedCallback();
