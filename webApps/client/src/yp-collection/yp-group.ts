@@ -115,10 +115,13 @@ export class YpGroup extends YpCollection {
             groupConfiguration
           )
         ) {
-          window.appDialogs.getDialogAsync("masterToast", (toast: YpSnackbar) => {
-            toast.textContent = this.t("groupConfigurationHasBeenUpdated");
-            toast.timeoutMs = 7500;
-          });
+          window.appDialogs.getDialogAsync(
+            "masterToast",
+            (toast: YpSnackbar) => {
+              toast.textContent = this.t("groupConfigurationHasBeenUpdated");
+              toast.timeoutMs = 7500;
+            }
+          );
           this._refreshAjax();
         }
         this._startConfigCheckTimer();
@@ -371,7 +374,10 @@ export class YpGroup extends YpCollection {
 
   override render() {
     if (this.collection && this.collection.configuration) {
-      if (!(this.collection as YpGroupData).configuration.groupType || (this.collection as YpGroupData).configuration.groupType == 0) {
+      if (
+        !(this.collection as YpGroupData).configuration.groupType ||
+        (this.collection as YpGroupData).configuration.groupType == 0
+      ) {
         return this.renderYpGroup();
       } else if (
         (this.collection as YpGroupData).configuration.groupType == 1
@@ -387,7 +393,7 @@ export class YpGroup extends YpCollection {
         return html``;
       }
     } else {
-      return html``;
+      return html`<md-linear-progress indeterminate></md-linear-progress> `;
     }
   }
 
@@ -894,7 +900,6 @@ export class YpGroup extends YpCollection {
       await survey.getEarl();
       this.requestUpdate();
     }*/
-
   }
 
   _setupGroupSaml(group: YpGroupData) {
@@ -919,7 +924,6 @@ export class YpGroup extends YpCollection {
     } else {
       window.appGlobals.currentSamlLoginMessage = undefined;
     }
-
   }
 
   scrollToCollectionItemSubClass() {

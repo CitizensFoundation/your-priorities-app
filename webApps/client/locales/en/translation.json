@@ -1,4 +1,6 @@
 {
+  "minimumTenVotesInfo": "Answers will only be displayed here once they have received at least ten votes.",
+  "minimumTenVotesToShowResults": "Minimum ten votes to show in results",
   "externalGoalParamsWhitelist": "External goal params whitelist",
   "targetVotes": "Target votes",
   "exampleFontStyles": "Example font styles",

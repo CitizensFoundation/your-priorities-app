@@ -17,6 +17,11 @@ import { image } from "d3";
 import { ifDefined } from "lit/directives/if-defined.js";
 import { MdOutlinedTextField } from "@material/web/textfield/outlined-text-field.js";
 
+interface IconGenerationResult {
+  imageUrl?: string;
+  error?: string;
+}
+
 @customElement("aoi-earl-ideas-editor")
 export class AoiEarlIdeasEditor extends YpStreamingLlmBase {
   @property({ type: Number })
@@ -300,6 +305,91 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmBase {
   }
 
   async generateAiIcons() {
+    const numberOfIconsToGenerateInParallel = 5;
+
+    this.isGeneratingWithAi = true;
+    this.shouldContinueGenerating = true;
+
+    for (
+      let i = 0;
+      i < this.choices!.length;
+      i += numberOfIconsToGenerateInParallel
+    ) {
+      if (!this.shouldContinueGenerating) {
+        break;
+      }
+
+      const generationPromises = [];
+      for (
+        let j = i;
+        j < i + numberOfIconsToGenerateInParallel && j < this.choices!.length;
+        j++
+      ) {
+        const choice = this.choices![j];
+
+        if (choice.data?.imageUrl) {
+          continue;
+        }
+
+        const imageGenerator = new AoiGenerateAiLogos(this.themeColor);
+        imageGenerator.collectionType = "community";
+        imageGenerator.collectionId = this.communityId!;
+
+        choice.data.isGeneratingImage = true;
+        this.requestUpdate();
+        const generationPromise = imageGenerator
+          .generateIcon(
+            choice.data.content,
+            (this.$$("#aiStyleInput") as MdOutlinedTextField).value
+          )
+          .then((result: IconGenerationResult) => {
+            // Use the interface here
+            choice.data.isGeneratingImage = undefined;
+            if (result.error) {
+              console.error(result.error);
+              return;
+            }
+
+            if (!this.shouldContinueGenerating) {
+              return;
+            }
+
+            if (result.imageUrl) {
+              return this.serverApi
+                .updateChoice(
+                  this.communityId!,
+                  this.configuration.earl!.question_id!,
+                  choice.id,
+                  {
+                    content: choice.data.content,
+                    imageUrl: result.imageUrl,
+                    choiceId: choice.id,
+                  }
+                )
+                .then(() => {
+                  choice.data.imageUrl = result.imageUrl;
+                  this.requestUpdate();
+                });
+            } else {
+              return;
+            }
+          })
+          .catch((e) => {
+            choice.data.isGeneratingImage = false;
+            console.error(e);
+          });
+
+        generationPromises.push(generationPromise);
+      }
+
+      await Promise.all(generationPromises);
+    }
+
+    this.isGeneratingWithAi = false;
+    this.currentGeneratingIndex = undefined;
+  }
+
+  async generateAiIconsOld() {
     this.imageGenerator.collectionType = "community";
     this.imageGenerator.collectionId = this.communityId!;
 

@@ -152,6 +152,7 @@ export abstract class YpCollection extends YpBaseElementWithLogin {
     if (this.collectionId) {
       //this.collection = undefined;
       this.collectionItems = undefined;
+      this.collection = undefined;
       this.collection = (await window.serverApi.getCollection(
         this.collectionType,
         this.collectionId
@@ -243,7 +244,7 @@ export abstract class YpCollection extends YpBaseElementWithLogin {
 
           .currentPage {
             margin-bottom: 220px;
-            margin-top: 16px
+            margin-top: 16px;
           }
         }
       `,
@@ -358,37 +359,33 @@ export abstract class YpCollection extends YpBaseElementWithLogin {
   override render() {
     if (this.collection) {
       return html`
-      ${this.renderHeader()} ${this.renderTabs()}
-      ${this.createFabIcon && this.createFabLabel
-        ? html`
-            <div class="layout horizontal center-center wrap">
-              <md-fab
-                ?extended="${this.wide}"
-                class="createFab"
-                @click="${this.createNewCollection}"
-                ?is-map="${this.selectedTab === CollectionTabTypes.Map}"
-                .label="${this.t(this.createFabLabel)}"
-                .icon="${this.createFabIcon}"
-              >
-                <md-icon slot="icon">add</md-icon></md-fab
-              >
-              <md-icon-button
-                hidden
-                class="filterButton"
-                .label="${this.t("filter")}"
-                ><md-icon>tune</md-icon></md-icon-button
-              >
-            </div>
-          `
-        : nothing}
-      <div class="currentPage">
-        ${this.renderCurrentTabPage()}
-      </div>
-    `;
+        ${this.renderHeader()} ${this.renderTabs()}
+        ${this.createFabIcon && this.createFabLabel
+          ? html`
+              <div class="layout horizontal center-center wrap">
+                <md-fab
+                  ?extended="${this.wide}"
+                  class="createFab"
+                  @click="${this.createNewCollection}"
+                  ?is-map="${this.selectedTab === CollectionTabTypes.Map}"
+                  .label="${this.t(this.createFabLabel)}"
+                  .icon="${this.createFabIcon}"
+                >
+                  <md-icon slot="icon">add</md-icon></md-fab
+                >
+                <md-icon-button
+                  hidden
+                  class="filterButton"
+                  .label="${this.t("filter")}"
+                  ><md-icon>tune</md-icon></md-icon-button
+                >
+              </div>
+            `
+          : nothing}
+        <div class="currentPage">${this.renderCurrentTabPage()}</div>
+      `;
     } else {
-      return html`
-        <md-linear-progress indeterminate></md-linear-progress>
-      `
+      return html` <md-linear-progress indeterminate></md-linear-progress> `;
     }
   }
 

@@ -4,7 +4,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { css, html } from "lit";
+import { css, html, nothing } from "lit";
 import { property, customElement } from "lit/decorators.js";
 import "../../common/yp-image.js";
 import { YpFormattingHelpers } from "../../common/YpFormattingHelpers.js";
@@ -23,7 +23,7 @@ let AoiSurveyResuls = class AoiSurveyResuls extends YpBaseElement {
         window.appGlobals.activity(`Results - open`);
     }
     async fetchResults() {
-        this.results = await window.aoiServerApi.getResults(this.groupId, this.question.id);
+        this.results = await window.aoiServerApi.getResults(this.groupId, this.question.id, !this.earl?.configuration?.minimum_ten_votes_to_show_results);
     }
     updated(changedProperties) {
         super.updated(changedProperties);
@@ -85,6 +85,10 @@ let AoiSurveyResuls = class AoiSurveyResuls extends YpBaseElement {
           margin-top: 32px;
           border-radius: 16px;
           margin-bottom: 8px;
+        }
+
+        .minimumTenVotesInfo {
+          padding: 16px;
         }
 
         .answerImage {
@@ -307,6 +311,9 @@ let AoiSurveyResuls = class AoiSurveyResuls extends YpBaseElement {
               </label>
             </div>
             ${this.results.map((result, index) => this.renderRow(index, result))}
+            ${this.earl.configuration?.minimum_ten_votes_to_show_results ? html `
+              <div class="minimumTenVotesInfo">${this.t('minimumTenVotesInfo')}</div>
+            ` : nothing}
             <div class="title subTitle">
               ${YpFormattingHelpers.number(this.question.votes_count)}
               ${this.t("total votes")}

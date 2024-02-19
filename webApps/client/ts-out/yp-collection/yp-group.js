@@ -289,7 +289,8 @@ let YpGroup = class YpGroup extends YpCollection {
     }
     render() {
         if (this.collection && this.collection.configuration) {
-            if (!this.collection.configuration.groupType || this.collection.configuration.groupType == 0) {
+            if (!this.collection.configuration.groupType ||
+                this.collection.configuration.groupType == 0) {
                 return this.renderYpGroup();
             }
             else if (this.collection.configuration.groupType == 1) {
@@ -306,7 +307,7 @@ let YpGroup = class YpGroup extends YpCollection {
             }
         }
         else {
-            return html ``;
+            return html `<md-linear-progress indeterminate></md-linear-progress> `;
         }
     }
     renderYpGroup() {

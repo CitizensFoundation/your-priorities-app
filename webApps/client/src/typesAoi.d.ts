@@ -57,6 +57,7 @@ interface AoiEarlConfigurationData {
   hide_results: boolean;
   hide_analysis: boolean;
   hide_explain: boolean;
+  minimum_ten_votes_to_show_results: boolean;
   hide_skip: boolean;
   welcome_html: string;
   target_votes: number;

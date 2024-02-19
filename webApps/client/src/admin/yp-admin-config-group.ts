@@ -1620,6 +1620,7 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
           hide_analysis: false,
           hide_skip: false,
           hide_explain: false,
+          minimum_ten_votes_to_show_results: true,
           target_votes: 30,
           analysis_config: defaultAiAnalysisJson,
           welcome_html: "",
@@ -1771,6 +1772,14 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
               ? earl?.configuration?.accept_new_ideas
               : true,
           translationToken: "acceptNewIdeas",
+        },
+        {
+          text: "minimumTenVotesToShowResults",
+          type: "checkbox",
+          onChange: (e: CustomEvent) =>
+            this._updateEarl(e, "configuration.minimum_ten_votes_to_show_results"),
+          value: earl?.configuration?.minimum_ten_votes_to_show_results,
+          translationToken: "minimumTenVotesToShowResults",
         },
         {
           text: "hide_results",

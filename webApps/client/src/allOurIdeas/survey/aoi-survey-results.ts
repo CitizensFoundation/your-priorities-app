@@ -39,7 +39,8 @@ export class AoiSurveyResuls extends YpBaseElement {
   async fetchResults() {
     this.results = await window.aoiServerApi.getResults(
       this.groupId,
-      this.question.id
+      this.question.id,
+      !this.earl?.configuration?.minimum_ten_votes_to_show_results
     );
   }
 
@@ -118,6 +119,10 @@ export class AoiSurveyResuls extends YpBaseElement {
           margin-top: 32px;
           border-radius: 16px;
           margin-bottom: 8px;
+        }
+
+        .minimumTenVotesInfo {
+          padding: 16px;
         }
 
         .answerImage {
@@ -344,6 +349,9 @@ export class AoiSurveyResuls extends YpBaseElement {
             ${this.results.map((result, index) =>
               this.renderRow(index, result)
             )}
+            ${this.earl.configuration?.minimum_ten_votes_to_show_results ? html`
+              <div class="minimumTenVotesInfo">${this.t('minimumTenVotesInfo')}</div>
+            `:nothing}
             <div class="title subTitle">
               ${YpFormattingHelpers.number(this.question.votes_count)}
               ${this.t("total votes")}

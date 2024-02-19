@@ -120,10 +120,11 @@ export class AoiServerApi extends YpServerApi {
 
   public async getResults(
     groupId: number,
-    questionId: number
+    questionId: number,
+    showAll = false
   ): Promise<AoiChoiceData[]> {
     return this.fetchWrapper(
-      this.baseUrlPath + `/${groupId}/choices/${questionId}/throughGroup`,
+      this.baseUrlPath + `/${groupId}/choices/${questionId}/throughGroup${showAll ? "?showAll=1" : ""}`,
     ) as unknown as AoiChoiceData[];
   }
 

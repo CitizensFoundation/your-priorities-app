@@ -48,8 +48,8 @@ export class AoiServerApi extends YpServerApi {
             body: JSON.stringify(body),
         }, false);
     }
-    async getResults(groupId, questionId) {
-        return this.fetchWrapper(this.baseUrlPath + `/${groupId}/choices/${questionId}/throughGroup`);
+    async getResults(groupId, questionId, showAll = false) {
+        return this.fetchWrapper(this.baseUrlPath + `/${groupId}/choices/${questionId}/throughGroup${showAll ? "?showAll=1" : ""}`);
     }
     llmAnswerConverstation(groupId, wsClientId, chatLog, languageName) {
         return this.fetchWrapper(this.baseUrlPath + `/${groupId}/llmAnswerExplain`, {

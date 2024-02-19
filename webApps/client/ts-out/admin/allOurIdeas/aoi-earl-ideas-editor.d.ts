@@ -51,6 +51,7 @@ export declare class AoiEarlIdeasEditor extends YpStreamingLlmBase {
     get sortedChoices(): AoiChoiceData[] | undefined;
     updated(changedProperties: Map<string | number | symbol, unknown>): void;
     generateAiIcons(): Promise<void>;
+    generateAiIconsOld(): Promise<void>;
     stopGenerating(): void;
     get allChoicesHaveIcons(): boolean | undefined;
     deleteImageUrl(choice: AoiChoiceData): Promise<void>;
