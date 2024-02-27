@@ -1,4 +1,7 @@
 {
+  "allowNewIdeasForVoting": "Allow new ideas to be voted on",
+  "newIdeasNotAllowedForVotingInfo": "(*) Your answer will not be included in this round of voting but will inform further research.",
+  "aoiModerationPrompt": "AI Moderation Instructions",
   "minimumTenVotesInfo": "Answers will only be displayed here once they have received at least ten votes.",
   "minimumTenVotesToShowResults": "Minimum ten votes to show in results",
   "externalGoalParamsWhitelist": "External goal params whitelist",

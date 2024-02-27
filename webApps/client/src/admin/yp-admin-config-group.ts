@@ -37,6 +37,8 @@ import { AoiEarlIdeasEditor } from "./allOurIdeas/aoi-earl-ideas-editor.js";
 import { AoiAdminServerApi } from "./allOurIdeas/AoiAdminServerApi.js";
 import { YpAdminApp } from "./yp-admin-app.js";
 
+const defaultModerationPrompt = `Only allow ideas that are relevant to the question.`
+
 const defaultAiAnalysisJson = {
   analyses: [
     {
@@ -1619,10 +1621,13 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
           hide_results: false,
           hide_analysis: false,
           hide_skip: false,
+          enableAiModeration: true,
+          allowNewIdeasForVoting: true,
           hide_explain: false,
           minimum_ten_votes_to_show_results: true,
           target_votes: 30,
           analysis_config: defaultAiAnalysisJson,
+          moderationPrompt: defaultModerationPrompt,
           welcome_html: "",
           welcome_message: "",
           external_goal_params_whitelist: "",
@@ -1774,12 +1779,28 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
           translationToken: "acceptNewIdeas",
         },
         {
-          text: "minimumTenVotesToShowResults",
+          text: "allowNewIdeasForVoting",
           type: "checkbox",
           onChange: (e: CustomEvent) =>
-            this._updateEarl(e, "configuration.minimum_ten_votes_to_show_results"),
-          value: earl?.configuration?.minimum_ten_votes_to_show_results,
-          translationToken: "minimumTenVotesToShowResults",
+            this._updateEarl(e, "configuration.allowNewIdeasForVoting"),
+          value: earl?.configuration?.allowNewIdeasForVoting,
+          translationToken: "allowNewIdeasForVoting",
+        },
+        {
+          text: "enableAiModeration",
+          type: "checkbox",
+          onChange: (e: CustomEvent) =>
+            this._updateEarl(e, "configuration.enableAiModeration"),
+          value: earl?.configuration?.enableAiModeration,
+          translationToken: "enableAiModeration",
+        },
+        {
+          text: "hide_results",
+          type: "checkbox",
+          onChange: (e: CustomEvent) =>
+            this._updateEarl(e, "configuration.hide_results"),
+          value: earl?.configuration?.hide_results,
+          translationToken: "hideAoiResults",
         },
         {
           text: "hide_results",
@@ -1831,6 +1852,17 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
           onChange: (e: CustomEvent) =>
             this._updateEarl(e, "configuration.welcome_html"),
           translationToken: "welcomeHtml",
+        },
+        {
+          text: "moderationPrompt",
+          type: "textarea",
+          rows: 5,
+          value: earl?.configuration?.moderationPrompt
+            ? earl?.configuration?.moderationPrompt
+            : defaultModerationPrompt,
+          onChange: (e: CustomEvent) =>
+            this._updateEarl(e, "configuration.moderationPrompt", true),
+          translationToken: "aoiModerationPrompt",
         },
         {
           text: "analysis_config",

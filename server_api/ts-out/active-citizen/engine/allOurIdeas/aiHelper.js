@@ -5,6 +5,46 @@ export class AiHelper {
         this.maxTokens = 2048;
         this.temperature = 0.7;
         this.cacheExpireTime = 60 * 60;
+        this.moderationSystemPrompt = (instructions) => `The user will provide you with a question and an answer.
+Your job is to moderate the answer if it passes automated moderation or not.
+Moderation instructions:
+${instructions}
+
+Only output: PASSES or FAILS`;
+        this.moderationUserPrompt = (question, instructions) => `
+  ${question}
+  ${instructions}
+  `;
+        this.getModerationResponse = async (instructions, question, answerToModerate) => {
+            const messages = [
+                {
+                    role: "system",
+                    content: this.moderationSystemPrompt(instructions),
+                },
+                {
+                    role: "user",
+                    content: this.moderationUserPrompt(question, answerToModerate),
+                },
+            ];
+            const response = await this.openaiClient.chat.completions.create({
+                model: this.modelName,
+                messages,
+                max_tokens: 5,
+                temperature: 0,
+            });
+            if (response &&
+                response.choices &&
+                response.choices[0] &&
+                response.choices[0].message &&
+                response.choices[0].message.content) {
+                return ["PASSES", "PASS"].includes(response.choices[0].message.content.toUpperCase())
+                    ? true
+                    : false;
+            }
+            else {
+                return false;
+            }
+        };
         this.openaiClient = new OpenAI({
             apiKey: process.env.OPENAI_API_KEY,
         });

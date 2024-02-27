@@ -55,12 +55,15 @@ interface AoiEarlConfigurationData {
   external_goal_params_whitelist?: string;
   external_goal_trigger_url?: string;
   hide_results: boolean;
+  allowNewIdeasForVoting: boolean;
+  enableAiModeration: boolean;
   hide_analysis: boolean;
   hide_explain: boolean;
   minimum_ten_votes_to_show_results: boolean;
   hide_skip: boolean;
   welcome_html: string;
   target_votes: number;
+  moderationPrompt?: string;
   analysis_config: {
     analyses: AoiSurveyAnalysisData[];
   };

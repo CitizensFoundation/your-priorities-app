@@ -64,6 +64,9 @@ let AoiNewIdeaDialog = class AoiNewIdeaDialog extends YpGenerateAiImage {
             }
             window.appGlobals.activity(`New Idea - added`);
         }
+        if (addIdeaResponse && !addIdeaResponse.error) {
+            this.fire("new-idea-addded");
+        }
     }
     scrollUp() {
         //await this.updateComplete;
@@ -122,6 +125,14 @@ let AoiNewIdeaDialog = class AoiNewIdeaDialog extends YpGenerateAiImage {
           font-size: 20px;
           margin-left: 8px;
           margin-right: 8px;
+          color: var(--md-sys-color-on-surface);
+        }
+
+        .newIdeasNotAllowedForVotingInfo {
+          margin-top: 8px;
+          margin-bottom: 8px;
+          font-size: 12px;
+          font-style: italic;
           color: var(--md-sys-color-on-surface);
         }
 
@@ -416,6 +427,13 @@ let AoiNewIdeaDialog = class AoiNewIdeaDialog extends YpGenerateAiImage {
           textType="aoiQuestionName"
         ></yp-magic-text>
       </div>
+      ${!this.earl.configuration.allowNewIdeasForVoting
+            ? html `
+            <div class="newIdeasNotAllowedForVotingInfo layout horizontal center-center">
+              ${this.t("newIdeasNotAllowedForVotingInfo")}
+            </div>
+          `
+            : nothing}
       ${this.haveAddedIdea && this.choice
             ? html `
             <div class="layout vertical center-center">

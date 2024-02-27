@@ -730,6 +730,7 @@ export class AoiSurveyVoting extends YpBaseElement {
           .question=${this.question}
           .groupId=${this.groupId}
           .group=${this.group}
+          @new-idea-addded="${() => this.voteForAnswer("skip")}"
           .earl=${this.earl}
         ></aoi-new-idea-dialog>
         ${this.llmExplainOpen

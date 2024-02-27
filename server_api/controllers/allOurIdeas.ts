@@ -151,6 +151,9 @@ export class AllOurIdeasController {
 
   async addIdea(req: Request, res: Response) {
     const { newIdea, id } = req.body;
+    const { groupId } = req.params;
+    const locale = req.query.locale;
+
     let choiceParams = {
       visitor_identifier: req.session.id,
       data: {
@@ -166,43 +169,75 @@ export class AllOurIdeasController {
     console.log(`choiceParams: ${JSON.stringify(choiceParams)}`);
 
     try {
-      const choiceResponse = await fetch(`${PAIRWISE_API_HOST}/choices.json`, {
-        method: "POST",
-        headers: defaultAuthHeader,
-        body: JSON.stringify(choiceParams),
-      });
+      const group = (await Group.findOne({
+        where: {
+          id: groupId,
+        },
+        attributes: ["id", "configuration"],
+      })) as YpGroupData;
+      const aoiConfig = group.configuration.allOurIdeas;
+      if (group && aoiConfig?.earl) {
+        const choiceResponse = await fetch(
+          `${PAIRWISE_API_HOST}/choices.json`,
+          {
+            method: "POST",
+            headers: defaultAuthHeader,
+            body: JSON.stringify(choiceParams),
+          }
+        );
 
-      if (!choiceResponse.ok) {
-        console.error(choiceResponse.statusText);
-        throw new Error("Choice creation failed.");
-      }
-
-      const choice = (await choiceResponse.json()) as AoiChoiceData;
-
-      choice.data = JSON.parse(choice.data as any) as AoiAnswerToVoteOnData;
-
-      let flagged = false;
-      if (process.env.OPENAI_API_KEY) {
-        flagged = await this.getModerationFlag(newIdea);
-        if (flagged) {
-          await this.deactivateChoice(req, choice.id);
-          console.log("----------------------------------");
-          console.log(`Flagged BY OPENAI: ${flagged}`);
-          console.log("----------------------------------");
-        } else {
-          console.log(`Not flagged BY OPENAI: ${flagged}`);
+        if (!choiceResponse.ok) {
+          console.error(choiceResponse.statusText);
+          throw new Error("Choice creation failed.");
         }
+
+        const choice = (await choiceResponse.json()) as AoiChoiceData;
+
+        choice.data = JSON.parse(choice.data as any) as AoiAnswerToVoteOnData;
+
+        let flagged = false;
+        if (
+          process.env.OPENAI_API_KEY &&
+          aoiConfig.earl?.configuration?.enableAiModeration
+        ) {
+          flagged = await this.getModerationFlag(newIdea);
+          if (flagged) {
+            await this.deactivateChoice(req, choice.id);
+            console.log("----------------------------------");
+            console.log(`Flagged BY OPENAI: ${flagged}`);
+            console.log("----------------------------------");
+          } else {
+            console.log(`Not flagged BY OPENAI Moderation API: ${flagged}`);
+
+            if (aoiConfig.earl?.configuration?.moderationPrompt) {
+              const aiHelper = new AiHelper();
+              const passedModeration = await aiHelper.getModerationResponse(
+                aoiConfig.earl.configuration.moderationPrompt,
+                aoiConfig.earl.question?.name!,
+                newIdea
+              );
+              if (!passedModeration) {
+                await this.deactivateChoice(req, choice.id);
+              }
+            }
+          }
+        } else {
+          await this.deactivateChoice(req, choice.id);
+        }
+
+        // Implement email notification logic based on choice's active status
+
+        res.json({
+          active: choice.active,
+          flagged: flagged,
+          choice: choice,
+          choice_status: choice.active ? "active" : "inactive",
+          message: `You just submitted: ${escape(newIdea)}`, // Use a proper escape function
+        });
+      } else {
+        res.status(404).send("Not found");
+        return;
       }
-
-      // Implement email notification logic based on choice's active status
-
-      res.json({
-        active: choice.active,
-        flagged: flagged,
-        choice: choice,
-        choice_status: choice.active ? "active" : "inactive",
-        message: `You just submitted: ${escape(newIdea)}`, // Use a proper escape function
-      });
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: "Addition of new idea failed" });
@@ -218,6 +253,18 @@ export class AllOurIdeasController {
     });
 
     return moderationResponse.results[0].flagged;
+  }
+
+  async getModerationResults(data: string) {
+    const openaiClient = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    });
+
+    const moderationResponse = await openaiClient.completions.create({
+      model: "",
+      prompt: data,
+      max_tokens: 1,
+    });
   }
 
   async deactivateChoice(req: Request, choiceId: number) {
@@ -789,8 +836,8 @@ export class AllOurIdeasController {
     );
     const options: any = {
       visitor_identifier: req.user
-      ? (req.user as YpUserData).id
-      : req.session.id,
+        ? (req.user as YpUserData).id
+        : req.session.id,
       // Use a static value of 5 if in test environment, so we can mock resulting API queries
       time_viewed: process.env.NODE_ENV === "test" ? 5 : params.time_viewed,
       appearance_lookup: params.appearance_lookup,

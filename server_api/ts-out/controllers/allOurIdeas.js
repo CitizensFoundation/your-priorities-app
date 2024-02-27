@@ -47,6 +47,8 @@ export class AllOurIdeasController {
     }
     async addIdea(req, res) {
         const { newIdea, id } = req.body;
+        const { groupId } = req.params;
+        const locale = req.query.locale;
         let choiceParams = {
             visitor_identifier: req.session.id,
             data: {
@@ -59,38 +61,62 @@ export class AllOurIdeasController {
         choiceParams["local_identifier"] = req.user ? req.user.id : req.session.id;
         console.log(`choiceParams: ${JSON.stringify(choiceParams)}`);
         try {
-            const choiceResponse = await fetch(`${PAIRWISE_API_HOST}/choices.json`, {
-                method: "POST",
-                headers: defaultAuthHeader,
-                body: JSON.stringify(choiceParams),
-            });
-            if (!choiceResponse.ok) {
-                console.error(choiceResponse.statusText);
-                throw new Error("Choice creation failed.");
-            }
-            const choice = (await choiceResponse.json());
-            choice.data = JSON.parse(choice.data);
-            let flagged = false;
-            if (process.env.OPENAI_API_KEY) {
-                flagged = await this.getModerationFlag(newIdea);
-                if (flagged) {
-                    await this.deactivateChoice(req, choice.id);
-                    console.log("----------------------------------");
-                    console.log(`Flagged BY OPENAI: ${flagged}`);
-                    console.log("----------------------------------");
+            const group = (await Group.findOne({
+                where: {
+                    id: groupId,
+                },
+                attributes: ["id", "configuration"],
+            }));
+            const aoiConfig = group.configuration.allOurIdeas;
+            if (group && aoiConfig?.earl) {
+                const choiceResponse = await fetch(`${PAIRWISE_API_HOST}/choices.json`, {
+                    method: "POST",
+                    headers: defaultAuthHeader,
+                    body: JSON.stringify(choiceParams),
+                });
+                if (!choiceResponse.ok) {
+                    console.error(choiceResponse.statusText);
+                    throw new Error("Choice creation failed.");
+                }
+                const choice = (await choiceResponse.json());
+                choice.data = JSON.parse(choice.data);
+                let flagged = false;
+                if (process.env.OPENAI_API_KEY &&
+                    aoiConfig.earl?.configuration?.enableAiModeration) {
+                    flagged = await this.getModerationFlag(newIdea);
+                    if (flagged) {
+                        await this.deactivateChoice(req, choice.id);
+                        console.log("----------------------------------");
+                        console.log(`Flagged BY OPENAI: ${flagged}`);
+                        console.log("----------------------------------");
+                    }
+                    else {
+                        console.log(`Not flagged BY OPENAI Moderation API: ${flagged}`);
+                        if (aoiConfig.earl?.configuration?.moderationPrompt) {
+                            const aiHelper = new AiHelper();
+                            const passedModeration = await aiHelper.getModerationResponse(aoiConfig.earl.configuration.moderationPrompt, aoiConfig.earl.question?.name, newIdea);
+                            if (!passedModeration) {
+                                await this.deactivateChoice(req, choice.id);
+                            }
+                        }
+                    }
                 }
                 else {
-                    console.log(`Not flagged BY OPENAI: ${flagged}`);
+                    await this.deactivateChoice(req, choice.id);
                 }
+                // Implement email notification logic based on choice's active status
+                res.json({
+                    active: choice.active,
+                    flagged: flagged,
+                    choice: choice,
+                    choice_status: choice.active ? "active" : "inactive",
+                    message: `You just submitted: ${escape(newIdea)}`, // Use a proper escape function
+                });
             }
-            // Implement email notification logic based on choice's active status
-            res.json({
-                active: choice.active,
-                flagged: flagged,
-                choice: choice,
-                choice_status: choice.active ? "active" : "inactive",
-                message: `You just submitted: ${escape(newIdea)}`, // Use a proper escape function
-            });
+            else {
+                res.status(404).send("Not found");
+                return;
+            }
         }
         catch (error) {
             console.error(error);
@@ -105,6 +131,16 @@ export class AllOurIdeasController {
             input: data,
         });
         return moderationResponse.results[0].flagged;
+    }
+    async getModerationResults(data) {
+        const openaiClient = new OpenAI({
+            apiKey: process.env.OPENAI_API_KEY,
+        });
+        const moderationResponse = await openaiClient.completions.create({
+            model: "",
+            prompt: data,
+            max_tokens: 1,
+        });
     }
     async deactivateChoice(req, choiceId) {
         try {
