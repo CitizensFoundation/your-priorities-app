@@ -77,7 +77,7 @@ export declare class YpAdminApp extends YpBaseElement {
     _isPageSelectedClass(page: AdminPageOptions): "" | "selectedContainer";
     _getListHeadline(type: AdminPageOptions): string;
     _getListSupportingText(type: AdminPageOptions): string;
-    _getListIcon(type: AdminPageOptions): "" | "category" | "person" | "settings" | "description" | "reports" | "translate" | "add_business" | "supervised_user_circle" | "supervisor_account" | "checklist" | "document_scanner" | "rocket_launch" | "videogroup_asset" | "workspace_premium" | "arrow_back";
+    _getListIcon(type: AdminPageOptions): "" | "category" | "settings" | "description" | "reports" | "translate" | "add_business" | "supervised_user_circle" | "supervisor_account" | "checklist" | "document_scanner" | "rocket_launch" | "videogroup_asset" | "workspace_premium" | "person" | "arrow_back";
     setPage(type: AdminPageOptions): void;
     renderMenuListItem(type: AdminPageOptions): import("lit-html").TemplateResult<1>;
     get isAllOurIdeasGroupType(): boolean;

@@ -1794,13 +1794,14 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
           value: earl?.configuration?.enableAiModeration,
           translationToken: "enableAiModeration",
         },
+
         {
-          text: "hide_results",
+          text: "minimum_ten_votes_to_show_results",
           type: "checkbox",
           onChange: (e: CustomEvent) =>
-            this._updateEarl(e, "configuration.hide_results"),
-          value: earl?.configuration?.hide_results,
-          translationToken: "hideAoiResults",
+            this._updateEarl(e, "configuration.minimum_ten_votes_to_show_results"),
+          value: earl?.configuration?.minimum_ten_votes_to_show_results,
+          translationToken: "minimumTenVotesToShowResults",
         },
         {
           text: "hide_results",

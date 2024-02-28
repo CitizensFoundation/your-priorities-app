@@ -40,9 +40,9 @@ let AoiStreamingAnalysis = class AoiStreamingAnalysis extends YpStreamingLlmBase
     }
     renderChoice(index, result) {
         return html `
-      <div class="answers layout horizontal">
+      <div class="answers layout horizontal" style="width: 100%">
         <div class="column index ideaIndex">${index + 1}.</div>
-        <div class="layout horizontal">
+        <div class="layout horizontal" style="width: 100%">
           <div class="column ideaName">
             <yp-magic-text
               id="answerText"
@@ -134,6 +134,8 @@ let AoiStreamingAnalysis = class AoiStreamingAnalysis extends YpStreamingLlmBase
           height: 60px;
           border-radius: 45px;
         }
+
+
 
         @media (max-width: 960px) {
           .ideaDescription {

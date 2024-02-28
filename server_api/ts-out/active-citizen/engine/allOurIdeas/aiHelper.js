@@ -11,9 +11,9 @@ Moderation instructions:
 ${instructions}
 
 Only output: PASSES or FAILS`;
-        this.moderationUserPrompt = (question, instructions) => `
-  ${question}
-  ${instructions}
+        this.moderationUserPrompt = (question, answer) => `
+  Question: ${question}
+  Answer: ${answer}
   `;
         this.getModerationResponse = async (instructions, question, answerToModerate) => {
             const messages = [

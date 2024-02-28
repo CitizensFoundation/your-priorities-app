@@ -26,7 +26,7 @@ export declare class AoiNewIdeaDialog extends YpGenerateAiImage {
     disconnectedCallback(): void;
     submitIdea(): Promise<void>;
     scrollUp(): void;
-    open(): void;
+    open(): Promise<void>;
     cancel(): void;
     reset(): void;
     close(): void;

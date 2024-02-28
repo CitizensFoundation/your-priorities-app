@@ -101,7 +101,7 @@ export class AoiNewIdeaDialog extends YpGenerateAiImage {
         } else {
           this.fire(
             "display-snackbar",
-            this.t("Your idea is in a moderation queue.")
+            this.t("newIdeasNotAllowedForVotingThankYou")
           );
         }
         this.fire("new-idea-added");
@@ -120,10 +120,13 @@ export class AoiNewIdeaDialog extends YpGenerateAiImage {
     }, 100);
   }
 
-  override open() {
-    this.dialog.show();
-    this.currentError = undefined;
+  override async open() {
+    this.reset();
     window.appGlobals.activity(`New Idea - open`);
+    this.dialog.show();
+    await this.updateComplete;
+    if (this.ideaText)
+      this.ideaText.value = ""
   }
 
   override cancel() {
@@ -132,8 +135,10 @@ export class AoiNewIdeaDialog extends YpGenerateAiImage {
   }
 
   reset() {
+    this.currentError = undefined;
     this.haveAddedIdea = false;
     this.choice = undefined;
+    this.imageGenerator = new AoiGenerateAiLogos(this.themeColor);
   }
 
   close() {
