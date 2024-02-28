@@ -59,13 +59,16 @@ let AoiNewIdeaDialog = class AoiNewIdeaDialog extends YpGenerateAiImage {
                 this.generateAiIcon();
             }
             else {
-                this.fire("display-snackbar", this.t("Your idea is in a moderation queue."));
+                if (this.earl.configuration?.allowNewIdeasForVoting) {
+                    this.fire("display-snackbar", this.t("Your idea is in a moderation queue."));
+                }
+                else {
+                    this.fire("display-snackbar", this.t("Your idea is in a moderation queue."));
+                }
+                this.fire("new-idea-added");
                 this.dialog.close();
             }
             window.appGlobals.activity(`New Idea - added`);
-        }
-        if (addIdeaResponse && !addIdeaResponse.error) {
-            this.fire("new-idea-addded");
         }
     }
     scrollUp() {

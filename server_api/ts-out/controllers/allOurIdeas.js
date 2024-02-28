@@ -82,10 +82,11 @@ export class AllOurIdeasController {
                 choice.data = JSON.parse(choice.data);
                 let flagged = false;
                 if (process.env.OPENAI_API_KEY &&
-                    aoiConfig.earl?.configuration?.enableAiModeration) {
+                    aoiConfig.earl?.configuration?.enableAiModeration &&
+                    aoiConfig.earl?.configuration?.allowNewIdeasForVoting) {
                     flagged = await this.getModerationFlag(newIdea);
                     if (flagged) {
-                        await this.deactivateChoice(req, choice.id);
+                        await this.deactivateChoice(req, choice);
                         console.log("----------------------------------");
                         console.log(`Flagged BY OPENAI: ${flagged}`);
                         console.log("----------------------------------");
@@ -96,13 +97,14 @@ export class AllOurIdeasController {
                             const aiHelper = new AiHelper();
                             const passedModeration = await aiHelper.getModerationResponse(aoiConfig.earl.configuration.moderationPrompt, aoiConfig.earl.question?.name, newIdea);
                             if (!passedModeration) {
-                                await this.deactivateChoice(req, choice.id);
+                                await this.deactivateChoice(req, choice);
                             }
                         }
                     }
                 }
                 else {
-                    await this.deactivateChoice(req, choice.id);
+                    console.log(`Adding idea to moderation queue`);
+                    await this.deactivateChoice(req, choice);
                 }
                 // Implement email notification logic based on choice's active status
                 res.json({
@@ -142,15 +144,16 @@ export class AllOurIdeasController {
             max_tokens: 1,
         });
     }
-    async deactivateChoice(req, choiceId) {
+    async deactivateChoice(req, choice) {
         try {
-            const response = await fetch(`${PAIRWISE_API_HOST}/questions/${req.params.questionId}/choices/${choiceId}.json`, {
+            const response = await fetch(`${PAIRWISE_API_HOST}/questions/${req.params.questionId}/choices/${choice.id}.json`, {
                 method: "PUT",
                 headers: defaultHeader,
                 body: JSON.stringify({
                     active: false,
                 }),
             });
+            choice.active = false;
         }
         catch (error) {
             console.error(error);

@@ -26,6 +26,7 @@ Only output: PASSES or FAILS`;
                     content: this.moderationUserPrompt(question, answerToModerate),
                 },
             ];
+            console.log(JSON.stringify(messages, null, 2));
             const response = await this.openaiClient.chat.completions.create({
                 model: this.modelName,
                 messages,
@@ -37,6 +38,7 @@ Only output: PASSES or FAILS`;
                 response.choices[0] &&
                 response.choices[0].message &&
                 response.choices[0].message.content) {
+                console.log("Moderation response:", response.choices[0].message.content);
                 return ["PASSES", "PASS"].includes(response.choices[0].message.content.toUpperCase())
                     ? true
                     : false;

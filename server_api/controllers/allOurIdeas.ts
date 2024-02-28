@@ -198,11 +198,12 @@ export class AllOurIdeasController {
         let flagged = false;
         if (
           process.env.OPENAI_API_KEY &&
-          aoiConfig.earl?.configuration?.enableAiModeration
+          aoiConfig.earl?.configuration?.enableAiModeration &&
+          aoiConfig.earl?.configuration?.allowNewIdeasForVoting
         ) {
           flagged = await this.getModerationFlag(newIdea);
           if (flagged) {
-            await this.deactivateChoice(req, choice.id);
+            await this.deactivateChoice(req, choice);
             console.log("----------------------------------");
             console.log(`Flagged BY OPENAI: ${flagged}`);
             console.log("----------------------------------");
@@ -217,12 +218,13 @@ export class AllOurIdeasController {
                 newIdea
               );
               if (!passedModeration) {
-                await this.deactivateChoice(req, choice.id);
+                await this.deactivateChoice(req, choice);
               }
             }
           }
         } else {
-          await this.deactivateChoice(req, choice.id);
+          console.log(`Adding idea to moderation queue`);
+          await this.deactivateChoice(req, choice);
         }
 
         // Implement email notification logic based on choice's active status
@@ -267,10 +269,10 @@ export class AllOurIdeasController {
     });
   }
 
-  async deactivateChoice(req: Request, choiceId: number) {
+  async deactivateChoice(req: Request, choice: AoiChoiceData) {
     try {
       const response = await fetch(
-        `${PAIRWISE_API_HOST}/questions/${req.params.questionId}/choices/${choiceId}.json`,
+        `${PAIRWISE_API_HOST}/questions/${req.params.questionId}/choices/${choice.id}.json`,
         {
           method: "PUT",
           headers: defaultHeader,
@@ -279,6 +281,7 @@ export class AllOurIdeasController {
           }),
         }
       );
+      choice.active = false;
     } catch (error) {
       console.error(error);
     }

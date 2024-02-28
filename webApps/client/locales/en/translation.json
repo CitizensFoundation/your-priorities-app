@@ -1,4 +1,6 @@
 {
+  "enableAiModeration": "Enable AI Moderation",
+  "newIdeasNotAllowedForVotingThankYou": "Thank you for your answer that will inform further research.",
   "allowNewIdeasForVoting": "Allow new ideas to be voted on",
   "newIdeasNotAllowedForVotingInfo": "(*) Your answer will not be included in this round of voting but will inform further research.",
   "aoiModerationPrompt": "AI Moderation Instructions",

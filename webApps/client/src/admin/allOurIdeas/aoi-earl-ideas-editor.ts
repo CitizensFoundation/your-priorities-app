@@ -492,6 +492,14 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmBase {
           --md-elevated-button-label-text-color: var(--md-sys-color-on-surface);
         }
 
+        .activeCheckboxText {
+          margin-left: 16px;
+        }
+
+        .activeCheckbox {
+          margin-top: 2px;
+        }
+
         yp-magic-text {
           min-width: 262px;
         }
@@ -819,21 +827,15 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmBase {
               <div class="losses">${answer.losses}</div>
               <div class="score">${Math.round(answer.score)}</div>
               <div class="buttons layout vertical center-center">
-                ${answer.active
-                  ? html`
-                      <md-filled-button
-                        @click="${this.toggleIdeaActivity(answer)}"
-                      >
-                        ${this.t("activated")}
-                      </md-filled-button>
-                    `
-                  : html`
-                      <md-outlined-button
-                        @click="${this.toggleIdeaActivity(answer)}"
-                      >
-                        ${this.t("deactivated")}
-                      </md-outlined-button>
-                    `}
+                <label>
+                  <md-checkbox
+                    class="activeCheckbox"
+                    .checked="${answer.active}"
+                    @click="${this.toggleIdeaActivity(answer)}"
+                  ></md-checkbox>
+                  <span class="activeCheckboxText">${this.t("active")}</span>
+                </label>
+
                 <md-linear-progress
                   class="toggleActiveProgress"
                   indeterminate
