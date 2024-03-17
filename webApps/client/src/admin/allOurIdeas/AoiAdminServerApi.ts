@@ -7,26 +7,34 @@ export class AoiAdminServerApi extends YpServerApi {
   }
 
   public async getChoices(
-    communityId: number,
+    domainId: number | undefined,
+    communityId: number | undefined,
     questionId: number
   ): Promise<AoiChoiceData[]> {
     return this.fetchWrapper(
-      this.baseUrlPath + `/${communityId}/choices/${questionId}?showAll=true`,
+      this.baseUrlPath +
+        `/${domainId || communityId}/choices/${questionId}${
+          domainId ? "/throughDomain" : ""
+        }?showAll=true`
     ) as unknown as AoiChoiceData[];
   }
 
   public async submitIdeasForCreation(
-    communityId: number,
+    domainId: number | undefined,
+    communityId: number | undefined,
     ideas: string[],
     questionName: string
   ): Promise<AoiEarlData> {
     return this.fetchWrapper(
-      this.baseUrlPath + `/${communityId}/questions`,
+      this.baseUrlPath +
+        `/${domainId || communityId}/questions${
+          domainId ? "/throughDomain" : ""
+        }`,
       {
         method: "POST",
         body: JSON.stringify({
           ideas: ideas,
-          question: questionName
+          question: questionName,
         }),
       },
       true,
@@ -37,18 +45,22 @@ export class AoiAdminServerApi extends YpServerApi {
 
   public async startGenerateIdeas(
     question: string,
-    communityId: number,
+    domainId: number | undefined,
+    communityId: number | undefined,
     wsClientSocketId: string,
     currentIdeas: string[]
   ): Promise<void> {
     return this.fetchWrapper(
-      this.baseUrlPath + `/${communityId}/generateIdeas`,
+      this.baseUrlPath +
+        `/${domainId || communityId}/generateIdeas${
+          domainId ? "/throughDomain" : ""
+        }`,
       {
         method: "PUT",
         body: JSON.stringify({
           currentIdeas,
           wsClientSocketId,
-          question
+          question,
         }),
       },
       true,
@@ -58,17 +70,23 @@ export class AoiAdminServerApi extends YpServerApi {
   }
 
   public async updateChoice(
-    communityId: number,
+    domainId: number | undefined,
+    communityId: number | undefined,
     questionId: number,
     choiceId: number,
-    choiceData: AoiAnswerToVoteOnData,
- ): Promise<void> {
+    choiceData: AoiAnswerToVoteOnData
+  ): Promise<void> {
     return this.fetchWrapper(
-      this.baseUrlPath + `/${communityId}/questions/${questionId}/choices/${choiceId}`,
+      this.baseUrlPath +
+        `/${
+          domainId || communityId
+        }/questions/${questionId}/choices/${choiceId}${
+          domainId ? "/throughDomain" : ""
+        }`,
       {
         method: "PUT",
         body: JSON.stringify({
-          data: choiceData
+          data: choiceData,
         }),
       },
       true,
@@ -81,14 +99,15 @@ export class AoiAdminServerApi extends YpServerApi {
     groupId: number,
     questionId: number,
     choiceId: number,
-    choiceData: AoiAnswerToVoteOnData,
- ): Promise<void> {
+    choiceData: AoiAnswerToVoteOnData
+  ): Promise<void> {
     return this.fetchWrapper(
-      this.baseUrlPath + `/${groupId}/questions/${questionId}/choices/${choiceId}/throughGroup`,
+      this.baseUrlPath +
+        `/${groupId}/questions/${questionId}/choices/${choiceId}/throughGroup`,
       {
         method: "PUT",
         body: JSON.stringify({
-          data: choiceData
+          data: choiceData,
         }),
       },
       true,
@@ -98,17 +117,23 @@ export class AoiAdminServerApi extends YpServerApi {
   }
 
   public async updateActive(
-    communityId: number,
+    domainId: number | undefined,
+    communityId: number | undefined,
     questionId: number,
     choiceId: number,
-    active: boolean,
- ): Promise<void> {
+    active: boolean
+  ): Promise<void> {
     return this.fetchWrapper(
-      this.baseUrlPath + `/${communityId}/questions/${questionId}/choices/${choiceId}/active`,
+      this.baseUrlPath +
+        `/${
+          domainId || communityId
+        }/questions/${questionId}/choices/${choiceId}/active${
+          domainId ? "/throughDomain" : ""
+        }`,
       {
         method: "PUT",
         body: JSON.stringify({
-          active
+          active,
         }),
       },
       true,
@@ -118,16 +143,20 @@ export class AoiAdminServerApi extends YpServerApi {
   }
 
   public async updateName(
-    communityId: number,
+    domainId: number | undefined,
+    communityId: number | undefined,
     questionId: number,
-    name: string,
- ): Promise<void> {
+    name: string
+  ): Promise<void> {
     return this.fetchWrapper(
-      this.baseUrlPath + `/${communityId}/questions/${questionId}/name`,
+      this.baseUrlPath +
+        `/${domainId || communityId}/questions/${questionId}/name${
+          domainId ? "/throughDomain" : ""
+        }`,
       {
         method: "PUT",
         body: JSON.stringify({
-          name
+          name,
         }),
       },
       true,
@@ -138,7 +167,7 @@ export class AoiAdminServerApi extends YpServerApi {
 
   public async toggleIdeaActive(
     groupId: number,
-    choiceId: number,
+    choiceId: number
   ): Promise<void> {
     return this.fetchWrapper(
       this.baseUrlPath + `/${groupId}/choices/${choiceId}/toggleActive`,

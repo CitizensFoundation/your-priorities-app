@@ -72,8 +72,8 @@ export const YpAppStyles = css`
 
   #errorCloseButton {
     --md-filled-button-label-text-color: var(--md-sys-color-on-error-container);
-    --md-sys-color-primary: var(--md-sys-color-on-error-container);
-    --md-sys-color-on-primary: var(--md-sys-color-error-container);
+    --md-sys-color-primary: var(--md-sys-color-error-container);
+    --md-sys-color-on-primary: var(--md-sys-color-on-error-container);
   }
 
   .loadingAppSpinnerPage,

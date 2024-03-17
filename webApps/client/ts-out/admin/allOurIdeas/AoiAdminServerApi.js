@@ -4,57 +4,64 @@ export class AoiAdminServerApi extends YpServerApi {
         super();
         this.baseUrlPath = urlPath;
     }
-    async getChoices(communityId, questionId) {
-        return this.fetchWrapper(this.baseUrlPath + `/${communityId}/choices/${questionId}?showAll=true`);
+    async getChoices(domainId, communityId, questionId) {
+        return this.fetchWrapper(this.baseUrlPath +
+            `/${domainId || communityId}/choices/${questionId}${domainId ? "/throughDomain" : ""}?showAll=true`);
     }
-    async submitIdeasForCreation(communityId, ideas, questionName) {
-        return this.fetchWrapper(this.baseUrlPath + `/${communityId}/questions`, {
+    async submitIdeasForCreation(domainId, communityId, ideas, questionName) {
+        return this.fetchWrapper(this.baseUrlPath +
+            `/${domainId || communityId}/questions${domainId ? "/throughDomain" : ""}`, {
             method: "POST",
             body: JSON.stringify({
                 ideas: ideas,
-                question: questionName
+                question: questionName,
             }),
         }, true, undefined, true);
     }
-    async startGenerateIdeas(question, communityId, wsClientSocketId, currentIdeas) {
-        return this.fetchWrapper(this.baseUrlPath + `/${communityId}/generateIdeas`, {
+    async startGenerateIdeas(question, domainId, communityId, wsClientSocketId, currentIdeas) {
+        return this.fetchWrapper(this.baseUrlPath +
+            `/${domainId || communityId}/generateIdeas${domainId ? "/throughDomain" : ""}`, {
             method: "PUT",
             body: JSON.stringify({
                 currentIdeas,
                 wsClientSocketId,
-                question
+                question,
             }),
         }, true, undefined, true);
     }
-    async updateChoice(communityId, questionId, choiceId, choiceData) {
-        return this.fetchWrapper(this.baseUrlPath + `/${communityId}/questions/${questionId}/choices/${choiceId}`, {
+    async updateChoice(domainId, communityId, questionId, choiceId, choiceData) {
+        return this.fetchWrapper(this.baseUrlPath +
+            `/${domainId || communityId}/questions/${questionId}/choices/${choiceId}${domainId ? "/throughDomain" : ""}`, {
             method: "PUT",
             body: JSON.stringify({
-                data: choiceData
+                data: choiceData,
             }),
         }, true, undefined, true);
     }
     async updateGroupChoice(groupId, questionId, choiceId, choiceData) {
-        return this.fetchWrapper(this.baseUrlPath + `/${groupId}/questions/${questionId}/choices/${choiceId}/throughGroup`, {
+        return this.fetchWrapper(this.baseUrlPath +
+            `/${groupId}/questions/${questionId}/choices/${choiceId}/throughGroup`, {
             method: "PUT",
             body: JSON.stringify({
-                data: choiceData
+                data: choiceData,
             }),
         }, true, undefined, true);
     }
-    async updateActive(communityId, questionId, choiceId, active) {
-        return this.fetchWrapper(this.baseUrlPath + `/${communityId}/questions/${questionId}/choices/${choiceId}/active`, {
+    async updateActive(domainId, communityId, questionId, choiceId, active) {
+        return this.fetchWrapper(this.baseUrlPath +
+            `/${domainId || communityId}/questions/${questionId}/choices/${choiceId}/active${domainId ? "/throughDomain" : ""}`, {
             method: "PUT",
             body: JSON.stringify({
-                active
+                active,
             }),
         }, true, undefined, true);
     }
-    async updateName(communityId, questionId, name) {
-        return this.fetchWrapper(this.baseUrlPath + `/${communityId}/questions/${questionId}/name`, {
+    async updateName(domainId, communityId, questionId, name) {
+        return this.fetchWrapper(this.baseUrlPath +
+            `/${domainId || communityId}/questions/${questionId}/name${domainId ? "/throughDomain" : ""}`, {
             method: "PUT",
             body: JSON.stringify({
-                name
+                name,
             }),
         }, true, undefined, true);
     }

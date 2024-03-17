@@ -29,6 +29,7 @@ import "@material/web/iconbutton/icon-button.js";
 
 import "@material/web/progress/circular-progress.js";
 import "@material/web/menu/menu.js";
+import "@material/web/fab/fab.js";
 import "@material/web/menu/menu-item.js";
 import "@material/web/button/text-button.js";
 

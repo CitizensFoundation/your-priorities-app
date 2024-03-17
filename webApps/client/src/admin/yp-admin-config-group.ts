@@ -37,7 +37,7 @@ import { AoiEarlIdeasEditor } from "./allOurIdeas/aoi-earl-ideas-editor.js";
 import { AoiAdminServerApi } from "./allOurIdeas/AoiAdminServerApi.js";
 import { YpAdminApp } from "./yp-admin-app.js";
 
-const defaultModerationPrompt = `Only allow ideas that are relevant to the question.`
+const defaultModerationPrompt = `Only allow ideas that are relevant to the question.`;
 
 const defaultAiAnalysisJson = {
   analyses: [
@@ -234,6 +234,11 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
         value="${this.collection?.description}"
       />
 
+      ${window.appGlobals.originalQueryParameters["createProjectForGroup"]
+        ? html`
+            <input type="hidden" name="createProjectForGroup" value="true" />
+          `
+        : nothing}
       ${(this.collection?.configuration as YpGroupConfiguration).ltp
         ? html`
             <input
@@ -380,7 +385,12 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
 
   _collectionIdChanged() {
     if (this.collectionId == "new" || this.collectionId == "newFolder") {
-      this.action = `/groups/${this.parentCollectionId}`;
+      if (window.appGlobals.originalQueryParameters["createProjectForGroup"]) {
+        this.parentCollectionId = window.appGlobals.domain!.id;
+        this.action = `/groups/${this.parentCollectionId}/create_community_for_group`;
+      } else {
+        this.action = `/groups/${this.parentCollectionId}`;
+      }
       this.collection = {
         id: -1,
         name: "",
@@ -1598,8 +1608,12 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
     this.requestUpdate();
   }
 
-  renderCreateEarl(communityId: number) {
+  renderCreateEarl(
+    domainId: number | undefined,
+    communityId: number | undefined
+  ) {
     return html`<aoi-earl-ideas-editor
+      .domainId="${domainId}"
       .communityId="${communityId}"
       @configuration-changed="${this.earlConfigChanged}"
       @theme-config-changed="${this.themeConfigChanged}"
@@ -1631,8 +1645,8 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
           welcome_html: "",
           welcome_message: "",
           external_goal_params_whitelist: "",
-          external_goal_trigger_url: ""
-        }
+          external_goal_trigger_url: "",
+        },
       };
       this.configTabs = this.setupConfigTabs();
       this.requestUpdate();
@@ -1664,14 +1678,22 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
     super.afterSave();
     if (this.questionNameHasChanged) {
       let communityId;
+      let domainId;
 
-      if (this.collectionId === "new") {
+      if (
+        this.collectionId === "new" &&
+        window.appGlobals.originalQueryParameters["createProjectForGroup"]
+      ) {
+        domainId = this.parentCollectionId as number;
+      } else if (this.collectionId === "new") {
         communityId = this.parentCollectionId as number;
       } else {
         communityId = this.group.community_id;
       }
+
       const serverApi = new AoiAdminServerApi();
       serverApi.updateName(
+        domainId,
         communityId,
         this.group.configuration.allOurIdeas!.earl!.question!.id,
         this.group.configuration.allOurIdeas!.earl!.question!.name
@@ -1687,8 +1709,14 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
     }
 
     let communityId;
+    let domainId;
 
-    if (this.collectionId === "new") {
+    if (
+      this.collectionId === "new" &&
+      window.appGlobals.originalQueryParameters["createProjectForGroup"]
+    ) {
+      domainId = this.parentCollectionId as number;
+    } else if (this.collectionId === "new") {
       communityId = this.parentCollectionId as number;
     } else {
       communityId = this.group.community_id;
@@ -1711,7 +1739,7 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
         {
           text: "earlConfig",
           type: "html",
-          templateData: this.renderCreateEarl(communityId),
+          templateData: this.renderCreateEarl(domainId, communityId),
         },
       ] as Array<YpStructuredConfigData>,
     } as YpConfigTabData;
@@ -1762,8 +1790,7 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
         {
           text: "active",
           type: "checkbox",
-          onChange: (e: CustomEvent) =>
-            this._updateEarl(e, "active"),
+          onChange: (e: CustomEvent) => this._updateEarl(e, "active"),
           value: earl?.active,
           translationToken: "active",
         },
@@ -1799,7 +1826,10 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
           text: "minimum_ten_votes_to_show_results",
           type: "checkbox",
           onChange: (e: CustomEvent) =>
-            this._updateEarl(e, "configuration.minimum_ten_votes_to_show_results"),
+            this._updateEarl(
+              e,
+              "configuration.minimum_ten_votes_to_show_results"
+            ),
           value: earl?.configuration?.minimum_ten_votes_to_show_results,
           translationToken: "minimumTenVotesToShowResults",
         },
@@ -1881,7 +1911,7 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
           type: "textfield",
           maxLength: 3,
           pattern: "[0-9]",
-          value:earl?.configuration?.target_votes,
+          value: earl?.configuration?.target_votes,
           translationToken: "targetVotes",
           onChange: (e: CustomEvent) =>
             this._updateEarl(e, "configuration.target_votes", true),
@@ -1891,19 +1921,27 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
           text: "externalGoalParamsWhitelist",
           type: "textfield",
           pattern: "[0-9]",
-          value:earl?.configuration?.external_goal_params_whitelist,
+          value: earl?.configuration?.external_goal_params_whitelist,
           onChange: (e: CustomEvent) =>
-            this._updateEarl(e, "configuration.external_goal_params_whitelist", true),
+            this._updateEarl(
+              e,
+              "configuration.external_goal_params_whitelist",
+              true
+            ),
           translationToken: "externalGoalParamsWhitelist",
         },
         {
           text: "externalGoalTriggerUrl",
           type: "textfield",
-          value:earl?.configuration?.external_goal_trigger_url,
+          value: earl?.configuration?.external_goal_trigger_url,
           onChange: (e: CustomEvent) =>
-            this._updateEarl(e, "configuration.external_goal_trigger_url", true),
+            this._updateEarl(
+              e,
+              "configuration.external_goal_trigger_url",
+              true
+            ),
           translationToken: "externalGoalTriggerUrl",
-        }
+        },
       ] as Array<YpStructuredConfigData>,
     } as YpConfigTabData;
   }

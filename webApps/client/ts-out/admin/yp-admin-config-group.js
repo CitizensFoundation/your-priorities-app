@@ -175,6 +175,11 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
         value="${this.collection?.description}"
       />
 
+      ${window.appGlobals.originalQueryParameters["createProjectForGroup"]
+            ? html `
+            <input type="hidden" name="createProjectForGroup" value="true" />
+          `
+            : nothing}
       ${(this.collection?.configuration).ltp
             ? html `
             <input
@@ -278,7 +283,13 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
     }
     _collectionIdChanged() {
         if (this.collectionId == "new" || this.collectionId == "newFolder") {
-            this.action = `/groups/${this.parentCollectionId}`;
+            if (window.appGlobals.originalQueryParameters["createProjectForGroup"]) {
+                this.parentCollectionId = window.appGlobals.domain.id;
+                this.action = `/groups/${this.parentCollectionId}/create_community_for_group`;
+            }
+            else {
+                this.action = `/groups/${this.parentCollectionId}`;
+            }
             this.collection = {
                 id: -1,
                 name: "",
@@ -1458,8 +1469,9 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
         };
         this.requestUpdate();
     }
-    renderCreateEarl(communityId) {
+    renderCreateEarl(domainId, communityId) {
         return html `<aoi-earl-ideas-editor
+      .domainId="${domainId}"
       .communityId="${communityId}"
       @configuration-changed="${this.earlConfigChanged}"
       @theme-config-changed="${this.themeConfigChanged}"
@@ -1489,8 +1501,8 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
                     welcome_html: "",
                     welcome_message: "",
                     external_goal_params_whitelist: "",
-                    external_goal_trigger_url: ""
-                }
+                    external_goal_trigger_url: "",
+                },
             };
             this.configTabs = this.setupConfigTabs();
             this.requestUpdate();
@@ -1511,14 +1523,19 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
         super.afterSave();
         if (this.questionNameHasChanged) {
             let communityId;
-            if (this.collectionId === "new") {
+            let domainId;
+            if (this.collectionId === "new" &&
+                window.appGlobals.originalQueryParameters["createProjectForGroup"]) {
+                domainId = this.parentCollectionId;
+            }
+            else if (this.collectionId === "new") {
                 communityId = this.parentCollectionId;
             }
             else {
                 communityId = this.group.community_id;
             }
             const serverApi = new AoiAdminServerApi();
-            serverApi.updateName(communityId, this.group.configuration.allOurIdeas.earl.question.id, this.group.configuration.allOurIdeas.earl.question.name);
+            serverApi.updateName(domainId, communityId, this.group.configuration.allOurIdeas.earl.question.id, this.group.configuration.allOurIdeas.earl.question.name);
         }
     }
     _getAllOurIdeaTab() {
@@ -1527,7 +1544,12 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
             configuration = this.group.configuration.allOurIdeas = {};
         }
         let communityId;
-        if (this.collectionId === "new") {
+        let domainId;
+        if (this.collectionId === "new" &&
+            window.appGlobals.originalQueryParameters["createProjectForGroup"]) {
+            domainId = this.parentCollectionId;
+        }
+        else if (this.collectionId === "new") {
             communityId = this.parentCollectionId;
         }
         else {
@@ -1550,7 +1572,7 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
                 {
                     text: "earlConfig",
                     type: "html",
-                    templateData: this.renderCreateEarl(communityId),
+                    templateData: this.renderCreateEarl(domainId, communityId),
                 },
             ],
         };
@@ -1721,7 +1743,7 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
                     value: earl?.configuration?.external_goal_trigger_url,
                     onChange: (e) => this._updateEarl(e, "configuration.external_goal_trigger_url", true),
                     translationToken: "externalGoalTriggerUrl",
-                }
+                },
             ],
         };
     }

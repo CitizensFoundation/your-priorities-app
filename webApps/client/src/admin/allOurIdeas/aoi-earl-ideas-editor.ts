@@ -30,6 +30,9 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmBase {
   @property({ type: Number })
   communityId: number | undefined;
 
+  @property({ type: Number })
+  domainId: number | undefined;
+
   @property({ type: Object })
   configuration!: AoiConfigurationData;
 
@@ -126,7 +129,8 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmBase {
 
   async getChoices() {
     this.choices = await this.serverApi.getChoices(
-      this.communityId!,
+      this.domainId,
+      this.communityId,
       this.configuration.earl!.question_id!
     );
   }
@@ -210,7 +214,8 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmBase {
     try {
       this.serverApi.startGenerateIdeas(
         this.configuration.earl!.question!.name,
-        this.communityId!,
+        this.domainId,
+        this.communityId,
         this.wsClientId,
         this.answers
       );
@@ -223,7 +228,8 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmBase {
     this.isSubmittingIdeas = true;
     try {
       const { question_id } = await this.serverApi.submitIdeasForCreation(
-        this.communityId!,
+        this.domainId,
+        this.communityId,
         this.answers,
         this.configuration.earl!.question!.name
       );
@@ -257,6 +263,7 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmBase {
       try {
         answer.active = !answer.active;
         await this.serverApi.updateActive(
+          this.domainId,
           this.communityId!,
           this.configuration.earl!.question_id!,
           answer.id,
@@ -332,8 +339,14 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmBase {
         }
 
         const imageGenerator = new AoiGenerateAiLogos(this.themeColor);
-        imageGenerator.collectionType = "community";
-        imageGenerator.collectionId = this.communityId!;
+
+        if (this.communityId) {
+          imageGenerator.collectionType = "community";
+          imageGenerator.collectionId = this.communityId!;
+        } else if (this.domainId) {
+          imageGenerator.collectionType = "domain";
+          imageGenerator.collectionId = this.domainId!;
+        }
 
         choice.data.isGeneratingImage = true;
         this.requestUpdate();
@@ -357,6 +370,7 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmBase {
             if (result.imageUrl) {
               return this.serverApi
                 .updateChoice(
+                  this.domainId!,
                   this.communityId!,
                   this.configuration.earl!.question_id!,
                   choice.id,
@@ -428,7 +442,8 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmBase {
         }
 
         await this.serverApi.updateChoice(
-          this.communityId!,
+          this.domainId,
+          this.communityId,
           this.configuration.earl!.question_id!,
           choice.id,
           {
@@ -469,7 +484,8 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmBase {
     choice.data.imageUrl = undefined;
 
     await this.serverApi.updateChoice(
-      this.communityId!,
+      this.domainId,
+      this.communityId,
       this.configuration.earl!.question_id!,
       choice.id,
       {

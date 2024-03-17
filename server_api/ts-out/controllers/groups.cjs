@@ -15,6 +15,7 @@ var s3multer = require('multer-s3');
 var aws = require('aws-sdk');
 var getExportFileDataForGroup = require('../utils/export_utils.cjs').getExportFileDataForGroup;
 const exportGroupToDocx = require('../utils/docx_utils.cjs').exportGroupToDocx;
+const { v4: uuidv4 } = require("uuid");
 var moment = require('moment');
 var sanitizeFilename = require("sanitize-filename");
 var queue = require('../active-citizen/workers/queue.cjs');
@@ -823,6 +824,38 @@ router.post('/:groupId/:userEmail/invite_user', auth.can('edit group'), function
         }
     });
 });
+router.post('/:domainId/create_community_for_group', auth.can('create community'), function (req, res) {
+    log.info("Creating Community for Group", { context: 'create', user: toJson(req.user) });
+    var admin_email = req.user.email;
+    var admin_name = "Administrator";
+    var community = models.Community.build({
+        name: "Community for Group: " + req.body.name,
+        description: "Community for Group",
+        access: models.Community.convertAccessFromRadioButtons(req.body),
+        domain_id: req.params.domainId,
+        user_id: req.user.id,
+        admin_email: admin_email,
+        admin_name: admin_name,
+        hostname: req.body.hostname || `${uuidv4()}.${req.ypDomain.domain_name}`,
+        user_agent: req.useragent.source,
+        ip_address: req.clientIp
+    });
+    community.save().then(function (newCommunity) {
+        log.info('Community Created', { domainId: newCommunity.domain_id, context: 'create', user: toJson(req.user) });
+        req.params.communityId = newCommunity.id;
+        newCommunity.updateAllExternalCounters(req, 'up', 'counter_communities', function () {
+            newCommunity.addCommunityAdmins(req.user).then(function (results) {
+                createGroup(req, res);
+            });
+        });
+    }).catch(function (error) {
+        log.error('Could not create community for group', { err: error, context: 'create', user: toJson(req.user) });
+        res.sendStatus(500);
+    });
+});
+router.post('/:communityId', auth.can('create group'), function (req, res) {
+    createGroup(req, res);
+});
 router.delete('/:groupId/:userId/remove_admin', auth.can('edit group'), function (req, res) {
     getGroupAndUser(req.params.groupId, req.params.userId, null, function (error, group, user) {
         if (error) {
@@ -1403,7 +1436,8 @@ router.get('/:groupId/default_post_image/:imageId', auth.can('view group'), func
         res.sendStatus(500);
     });
 });
-router.post('/:communityId', auth.can('create group'), function (req, res) {
+const createGroup = (req, res) => {
+    console.log("Creating group with community id: " + req.params.communityId);
     var group = models.Group.build({
         name: req.body.name,
         objectives: req.body.objectives,
@@ -1448,7 +1482,7 @@ router.post('/:communityId', auth.can('create group'), function (req, res) {
     }).catch(function (error) {
         sendGroupOrError(res, null, 'create', req.user, error);
     });
-});
+};
 router.put('/:id', auth.can('edit group'), function (req, res) {
     models.Group.findOne({
         where: { id: req.params.id },

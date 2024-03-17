@@ -65,7 +65,7 @@ let AoiEarlIdeasEditor = class AoiEarlIdeasEditor extends YpStreamingLlmBase {
         this.isGeneratingWithAi = false;
     }
     async getChoices() {
-        this.choices = await this.serverApi.getChoices(this.communityId, this.configuration.earl.question_id);
+        this.choices = await this.serverApi.getChoices(this.domainId, this.communityId, this.configuration.earl.question_id);
     }
     createGroupObserver() {
         const handler = {
@@ -131,7 +131,7 @@ let AoiEarlIdeasEditor = class AoiEarlIdeasEditor extends YpStreamingLlmBase {
     generateIdeas() {
         this.isGeneratingWithAi = true;
         try {
-            this.serverApi.startGenerateIdeas(this.configuration.earl.question.name, this.communityId, this.wsClientId, this.answers);
+            this.serverApi.startGenerateIdeas(this.configuration.earl.question.name, this.domainId, this.communityId, this.wsClientId, this.answers);
         }
         catch (e) {
             console.error(e);
@@ -140,7 +140,7 @@ let AoiEarlIdeasEditor = class AoiEarlIdeasEditor extends YpStreamingLlmBase {
     async submitIdeasForCreation() {
         this.isSubmittingIdeas = true;
         try {
-            const { question_id } = await this.serverApi.submitIdeasForCreation(this.communityId, this.answers, this.configuration.earl.question.name);
+            const { question_id } = await this.serverApi.submitIdeasForCreation(this.domainId, this.communityId, this.answers, this.configuration.earl.question.name);
             this.configuration.earl.question_id = question_id;
             this.configuration.earl.active = true;
             if (!this.configuration.earl.configuration) {
@@ -166,7 +166,7 @@ let AoiEarlIdeasEditor = class AoiEarlIdeasEditor extends YpStreamingLlmBase {
             this.isTogglingIdeaActive = answer.id;
             try {
                 answer.active = !answer.active;
-                await this.serverApi.updateActive(this.communityId, this.configuration.earl.question_id, answer.id, answer.active);
+                await this.serverApi.updateActive(this.domainId, this.communityId, this.configuration.earl.question_id, answer.id, answer.active);
             }
             catch (e) {
                 console.error(e);
@@ -221,8 +221,14 @@ let AoiEarlIdeasEditor = class AoiEarlIdeasEditor extends YpStreamingLlmBase {
                     continue;
                 }
                 const imageGenerator = new AoiGenerateAiLogos(this.themeColor);
-                imageGenerator.collectionType = "community";
-                imageGenerator.collectionId = this.communityId;
+                if (this.communityId) {
+                    imageGenerator.collectionType = "community";
+                    imageGenerator.collectionId = this.communityId;
+                }
+                else if (this.domainId) {
+                    imageGenerator.collectionType = "domain";
+                    imageGenerator.collectionId = this.domainId;
+                }
                 choice.data.isGeneratingImage = true;
                 this.requestUpdate();
                 const generationPromise = imageGenerator
@@ -239,7 +245,7 @@ let AoiEarlIdeasEditor = class AoiEarlIdeasEditor extends YpStreamingLlmBase {
                     }
                     if (result.imageUrl) {
                         return this.serverApi
-                            .updateChoice(this.communityId, this.configuration.earl.question_id, choice.id, {
+                            .updateChoice(this.domainId, this.communityId, this.configuration.earl.question_id, choice.id, {
                             content: choice.data.content,
                             imageUrl: result.imageUrl,
                             choiceId: choice.id,
@@ -289,7 +295,7 @@ let AoiEarlIdeasEditor = class AoiEarlIdeasEditor extends YpStreamingLlmBase {
                 if (!this.shouldContinueGenerating) {
                     break;
                 }
-                await this.serverApi.updateChoice(this.communityId, this.configuration.earl.question_id, choice.id, {
+                await this.serverApi.updateChoice(this.domainId, this.communityId, this.configuration.earl.question_id, choice.id, {
                     content: choice.data.content,
                     imageUrl,
                     choiceId: choice.id,
@@ -319,7 +325,7 @@ let AoiEarlIdeasEditor = class AoiEarlIdeasEditor extends YpStreamingLlmBase {
     }
     async deleteImageUrl(choice) {
         choice.data.imageUrl = undefined;
-        await this.serverApi.updateChoice(this.communityId, this.configuration.earl.question_id, choice.id, {
+        await this.serverApi.updateChoice(this.domainId, this.communityId, this.configuration.earl.question_id, choice.id, {
             content: choice.data.content,
             imageUrl: undefined,
             choiceId: choice.id,
@@ -741,6 +747,9 @@ __decorate([
 __decorate([
     property({ type: Number })
 ], AoiEarlIdeasEditor.prototype, "communityId", void 0);
+__decorate([
+    property({ type: Number })
+], AoiEarlIdeasEditor.prototype, "domainId", void 0);
 __decorate([
     property({ type: Object })
 ], AoiEarlIdeasEditor.prototype, "configuration", void 0);

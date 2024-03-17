@@ -240,7 +240,12 @@ let YpAdminApp = class YpAdminApp extends YpBaseElement {
         this.collectionType = splitPath[0];
         if (splitPath[1] == "new" && splitPath[2]) {
             this.collectionId = "new";
-            this.parentCollectionId = parseInt(splitPath[2]);
+            if (window.appGlobals.originalQueryParameters["createProjectForGroup"]) {
+                this.parentCollectionId = window.appGlobals.domain.id;
+            }
+            else {
+                this.parentCollectionId = parseInt(splitPath[2]);
+            }
             this.page = "configuration";
         }
         else {
@@ -336,11 +341,15 @@ let YpAdminApp = class YpAdminApp extends YpBaseElement {
             this.page = "admins";
         }
     }
-    _setupEventListeners() { }
+    _setupEventListeners() {
+        this.addListener("yp-logged-in", this._setAdminFromParent);
+    }
     _refreshAdminRights() {
         window.appUser.recheckAdminRights();
     }
-    _removeEventListeners() { }
+    _removeEventListeners() {
+        this.removeListener("yp-logged-in", this._setAdminFromParent);
+    }
     _refreshGroup() {
         this._refreshByName("#groupPage");
     }
@@ -610,18 +619,32 @@ let YpAdminApp = class YpAdminApp extends YpBaseElement {
         }
         this._setAdminConfirmed();
     }
-    async _setAdminFromParent() {
+    async _getAdminCollection() {
         switch (this.collectionType) {
             case "community":
                 const communityParentCollection = await window.serverApi.getCollection("domain", this.parentCollectionId);
                 this._setAdminConfirmedFromParent(communityParentCollection);
                 break;
             case "group":
-                const groupParentCollection = await window.serverApi.getCollection("community", this.parentCollectionId);
-                this._setAdminConfirmedFromParent(groupParentCollection);
+                if (window.appGlobals.originalQueryParameters["createProjectForGroup"]) {
+                    const groupParentCollection = await window.serverApi.getCollection("domain", this.parentCollectionId);
+                    this._setAdminConfirmedFromParent(groupParentCollection);
+                }
+                else {
+                    const groupParentCollection = await window.serverApi.getCollection("community", this.parentCollectionId);
+                    this._setAdminConfirmedFromParent(groupParentCollection);
+                }
                 break;
             default:
                 this.fire("yp-network-error", { message: this.t("unauthorized") });
+        }
+    }
+    async _setAdminFromParent() {
+        if (window.appUser.loggedIn()) {
+            this._getAdminCollection();
+        }
+        else {
+            window.appUser.openUserlogin();
         }
     }
     _setAdminConfirmedFromParent(collection) {
@@ -639,7 +662,12 @@ let YpAdminApp = class YpAdminApp extends YpBaseElement {
                     }
                     break;
                 case "group":
-                    adminConfirmed = YpAccessHelpers.checkCommunityAccess(collection);
+                    if (window.appGlobals.originalQueryParameters["createProjectForGroup"]) {
+                        adminConfirmed = YpAccessHelpers.checkDomainAccess(collection);
+                    }
+                    else {
+                        adminConfirmed = YpAccessHelpers.checkCommunityAccess(collection);
+                    }
                     if (!adminConfirmed) {
                         if (!collection.configuration
                             .onlyAdminsCanCreateGroups &&

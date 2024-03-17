@@ -73,7 +73,6 @@ let YpAiChatbotItemBase = class YpAiChatbotItemBase extends YpBaseElement {
         }
 
         .chatTextUser {
-          padding-top: 12px;
         }
 
         .userChatDialog {

@@ -1546,7 +1546,9 @@ auth.role('createDomainCommunity.createCommunity', function (domain, req, done) 
     });
 });
 auth.entity('createDomainCommunity', function (req, done) {
-    var match = req.originalUrl.match(/communities\/(\w+)/);
+    let match = req.originalUrl.match(/communities\/(\w+)/) ||
+        req.originalUrl.match(/groups\/(\w+)/) ||
+        req.originalUrl.match(/allOurIdeas\/(\w+)/);
     if (!match) {
         done(new Error('Expected url like /communities/:communityId'));
     }

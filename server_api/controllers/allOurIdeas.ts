@@ -41,7 +41,6 @@ interface YpRequest extends express.Request {
 import { AiHelper } from "../active-citizen/engine/allOurIdeas/aiHelper.js";
 import { ExplainAnswersAssistant } from "../active-citizen/engine/allOurIdeas/explainAnswersAssistant.js";
 import OpenAI from "openai";
-import { lang } from "moment";
 
 export class AllOurIdeasController {
   public path = "/api/allOurIdeas";
@@ -59,11 +58,25 @@ export class AllOurIdeasController {
       auth.can("view group"),
       this.showEarl.bind(this)
     );
+
+    this.router.post(
+      "/:domainId/questions/throughDomain",
+      auth.can("create community"),
+      this.createQuestion.bind(this)
+    );
+
     this.router.post(
       "/:communityId/questions",
       auth.can("create group"),
       this.createQuestion.bind(this)
     );
+
+    this.router.put(
+      "/:domainId/generateIdeas/throughDomain",
+      auth.can("create community"),
+      this.generateIdeas.bind(this)
+    );
+
     this.router.put(
       "/:communityId/generateIdeas",
       auth.can("create group"),
@@ -77,14 +90,21 @@ export class AllOurIdeasController {
     );
 
     this.router.get(
-      "/:communityId/choices/:questionId",
-      auth.can("create group"),
+      "/:domainId/choices/:questionId/throughDomain",
+      auth.can("create community"),
       this.getChoices.bind(this)
     );
 
     this.router.get(
       "/:groupId/choices/:questionId/throughGroup",
       auth.can("view group"),
+      this.getChoices.bind(this)
+    );
+
+
+    this.router.get(
+      "/:communityId/choices/:questionId",
+      auth.can("create group"),
       this.getChoices.bind(this)
     );
 
@@ -119,6 +139,12 @@ export class AllOurIdeasController {
     );
 
     this.router.put(
+      "/:domainId/questions/:questionId/choices/:choiceId/throughDomain",
+      auth.can("create community"),
+      this.updateCoiceData.bind(this)
+    );
+
+    this.router.put(
       "/:groupId/questions/:questionId/choices/:choiceId/throughGroup",
       auth.can("view group"),
       this.updateCoiceData.bind(this)
@@ -131,8 +157,20 @@ export class AllOurIdeasController {
     );
 
     this.router.put(
+      "/:domainId/questions/:questionId/choices/:choiceId/active/throughDomain",
+      auth.can("create community"),
+      this.updateActive.bind(this)
+    );
+
+    this.router.put(
       "/:communityId/questions/:questionId/name",
       auth.can("create group"),
+      this.updateQuestionName.bind(this)
+    );
+
+    this.router.put(
+      "/:domainId/questions/:questionId/name/throughDomain",
+      auth.can("create community"),
       this.updateQuestionName.bind(this)
     );
 
