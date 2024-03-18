@@ -28,7 +28,6 @@ const { plausibleStatsProxy, getPlausibleStats } = require("../active-citizen/en
 const { countAllModeratedItemsByGroup } = require("../active-citizen/engine/moderation/get_moderation_items.cjs");
 const { isValidDbId } = require("../utils/is_valid_db_id.cjs");
 const { Sequelize } = require("sequelize");
-const updateCommunityConfigParameters = require('./communities.cjs').updateCommunityConfigParameters;
 const getFromAnalyticsApi = require('../active-citizen/engine/analytics/manager.cjs').getFromAnalyticsApi;
 const triggerSimilaritiesTraining = require('../active-citizen/engine/analytics/manager.cjs').triggerSimilaritiesTraining;
 const sendBackAnalyticsResultsOrError = require('../active-citizen/engine/analytics/manager.cjs').sendBackAnalyticsResultsOrError;

@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateCommunityConfigParameters = void 0;
 var express = require('express');
 var router = express.Router();
 var models = require("../models/index.cjs");
@@ -675,7 +674,6 @@ const updateCommunityConfigParameters = function (req, community) {
         community.set('configuration.registrationQuestionsJson', null);
     }
 };
-exports.updateCommunityConfigParameters = updateCommunityConfigParameters;
 router.get('/:communityFolderId/communityFolders', auth.can('view community'), function (req, res) {
     getCommunityFolder(req, req.params.communityFolderId, function (error, communityFolder) {
         if (error) {
@@ -1406,7 +1404,7 @@ const createNewCommunity = (req, res) => {
         user_agent: req.useragent.source,
         ip_address: req.clientIp
     });
-    (0, exports.updateCommunityConfigParameters)(req, community);
+    updateCommunityConfigParameters(req, community);
     community.save().then(function () {
         log.info('Community Created', { community: toJson(community), context: 'create', user: toJson(req.user) });
         queue.add('process-similarities', { type: 'update-collection', communityId: community.id }, 'low');
@@ -1466,7 +1464,7 @@ router.put('/:id', auth.can('edit community'), function (req, res) {
                 community.hostname = req.body.hostname;
             }
             community.access = models.Community.convertAccessFromRadioButtons(req.body);
-            (0, exports.updateCommunityConfigParameters)(req, community);
+            updateCommunityConfigParameters(req, community);
             community.save().then(function () {
                 log.info('Community Updated', { community: toJson(community), context: 'update', user: toJson(req.user) });
                 queue.add('process-similarities', { type: 'update-collection', communityId: community.id }, 'low');

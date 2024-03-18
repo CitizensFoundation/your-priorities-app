@@ -333,7 +333,7 @@ export class YpAdminApp extends YpBaseElement {
     if (splitPath[1] == "new" && splitPath[2]) {
       this.collectionId = "new";
       if (window.appGlobals.originalQueryParameters["createProjectForGroup"]) {
-        this.parentCollectionId = window.appGlobals.domain!.id;
+        this.parentCollectionId = window.appGlobals.domain?.id;
       } else {
         this.parentCollectionId = parseInt(splitPath[2]);
       }
@@ -789,6 +789,9 @@ export class YpAdminApp extends YpBaseElement {
   }
 
   async _setAdminFromParent() {
+    if (window.appGlobals.originalQueryParameters["createProjectForGroup"]) {
+      this.parentCollectionId = window.appGlobals.domain?.id;
+    }
     if (window.appUser.loggedIn()) {
       this._getAdminCollection();
     } else {
