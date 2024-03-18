@@ -1484,6 +1484,7 @@ export class YpLogin extends YpBaseElement {
       );
       (this.$$("#createUserDialog") as Dialog).close();
     } else {
+      this.fire("yp-error", this.t("user.alreadyRegisterred"));
       console.error("No user in registerUser");
     }
   }

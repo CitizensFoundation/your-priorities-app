@@ -342,13 +342,13 @@ let YpAdminApp = class YpAdminApp extends YpBaseElement {
         }
     }
     _setupEventListeners() {
-        this.addListener("yp-logged-in", this._setAdminFromParent);
+        this.addGlobalListener("yp-logged-in", this._setAdminFromParent.bind(this));
     }
     _refreshAdminRights() {
         window.appUser.recheckAdminRights();
     }
     _removeEventListeners() {
-        this.removeListener("yp-logged-in", this._setAdminFromParent);
+        this.addGlobalListener("yp-logged-in", this._setAdminFromParent.bind(this));
     }
     _refreshGroup() {
         this._refreshByName("#groupPage");

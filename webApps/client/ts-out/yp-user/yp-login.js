@@ -1279,6 +1279,7 @@ let YpLogin = class YpLogin extends YpBaseElement {
             this.$$("#createUserDialog").close();
         }
         else {
+            this.fire("yp-error", this.t("user.alreadyRegisterred"));
             console.error("No user in registerUser");
         }
     }

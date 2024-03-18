@@ -28,6 +28,8 @@ const {countAllModeratedItemsByGroup} = require("../active-citizen/engine/modera
 const {isValidDbId} = require("../utils/is_valid_db_id.cjs");
 const {Sequelize} = require("sequelize");
 
+const updateCommunityConfigParameters = require('./communities.cjs').updateCommunityConfigParameters;
+
 const getFromAnalyticsApi = require('../active-citizen/engine/analytics/manager.cjs').getFromAnalyticsApi;
 const triggerSimilaritiesTraining = require('../active-citizen/engine/analytics/manager.cjs').triggerSimilaritiesTraining;
 const sendBackAnalyticsResultsOrError = require('../active-citizen/engine/analytics/manager.cjs').sendBackAnalyticsResultsOrError;
@@ -880,11 +882,19 @@ router.post('/:domainId/create_community_for_group', auth.can('create community'
   var community = models.Community.build({
     name: "Community for Group: " + req.body.name,
     description: "Community for Group",
-    access: models.Community.convertAccessFromRadioButtons(req.body),
+    access: 0,
+    status: "hidden",
     domain_id: req.params.domainId,
     user_id: req.user.id,
     admin_email: admin_email,
     admin_name: admin_name,
+    configuration: {
+      theme: {
+        oneColorScheme:"tonal",
+        variant:"monochrome"
+      },
+      onlyAdminsCanCreateGroups: true,
+    },
     hostname: req.body.hostname || `${uuidv4()}.${req.ypDomain.domain_name}`,
     user_agent: req.useragent.source,
     ip_address: req.clientIp

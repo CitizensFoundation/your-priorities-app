@@ -453,7 +453,7 @@ export class YpAdminApp extends YpBaseElement {
   }
 
   _setupEventListeners() {
-    this.addListener("yp-logged-in", this._setAdminFromParent);
+    this.addGlobalListener("yp-logged-in", this._setAdminFromParent.bind(this));
   }
 
   _refreshAdminRights() {
@@ -461,7 +461,7 @@ export class YpAdminApp extends YpBaseElement {
   }
 
   _removeEventListeners() {
-    this.removeListener("yp-logged-in", this._setAdminFromParent);
+    this.addGlobalListener("yp-logged-in", this._setAdminFromParent.bind(this));
   }
 
   _refreshGroup() {

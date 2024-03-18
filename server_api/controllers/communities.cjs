@@ -570,7 +570,7 @@ var truthValueFromBody = function(bodyParameter) {
   return (bodyParameter && bodyParameter!=="");
 };
 
-var updateCommunityConfigParameters = function (req, community) {
+export const updateCommunityConfigParameters = function (req, community) {
   if (!community.configuration) {
     community.set('configuration', {});
   }

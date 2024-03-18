@@ -274,12 +274,14 @@ let YpAiChatbotItemBase = class YpAiChatbotItemBase extends YpBaseElement {
     }
     renderChatGPT() {
         return html `
+
+
       <div class="layout vertical chatGPTDialogContainer">
         <div
           class="chatGPTDialog layout vertical bot-message"
           ?error="${this.isError}"
         >
-          <div class="layout ${this.wide ? 'horizontal' : 'vertical'}">
+          <div class="layout ${this.wide ? "horizontal" : "vertical"}">
             <div class="layout vertical chatImage">${this.renderCGImage()}</div>
             <div class="layout vertical chatText">
               ${resolveMarkdown(this.message, {
