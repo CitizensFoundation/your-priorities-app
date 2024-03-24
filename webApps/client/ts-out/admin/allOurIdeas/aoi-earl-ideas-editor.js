@@ -17,6 +17,7 @@ import "@material/web/chips/filter-chip.js";
 import "@material/web/chips/chip-set.js";
 import "@material/web/textfield/filled-text-field.js";
 import { AoiGenerateAiLogos } from "./aoiGenerateAiLogos.js";
+import { unsafeHTML } from "lit/directives/unsafe-html.js";
 let AoiEarlIdeasEditor = class AoiEarlIdeasEditor extends YpStreamingLlmBase {
     constructor() {
         super();
@@ -506,6 +507,14 @@ let AoiEarlIdeasEditor = class AoiEarlIdeasEditor extends YpStreamingLlmBase {
     }
     renderCreateIdeas() {
         return html `
+      <div
+        class="layout vertical center-center"
+        style="margin-top: -16px;margin-bottom: 16px;font-size: 14px;font-style: italic;"
+      >
+        <div style="max-width: 650px">
+          ${unsafeHTML(this.t("generateAnswersInfo"))}
+        </div>
+      </div>
       <div class="layout vertical center-center">
         <md-filled-text-field
           type="textarea"

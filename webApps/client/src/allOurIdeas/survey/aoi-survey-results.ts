@@ -121,6 +121,14 @@ export class AoiSurveyResuls extends YpBaseElement {
           margin-bottom: 8px;
         }
 
+        .rankOrderInfo {
+          font-size: 20px;
+          margin: 8px;
+          margin-bottom: 16px;
+          margin-top: 16px;
+          text-align: center;
+        }
+
         .minimumTenVotesInfo {
           padding: 16px;
         }
@@ -324,6 +332,7 @@ export class AoiSurveyResuls extends YpBaseElement {
     return this.results
       ? html`
           <div class="topContainer layout vertical wrap center-center">
+            <div class="rankOrderInfo">${this.t("rankedOrderInfo")}</div>
             <div class="questionTitle">
               <yp-magic-text
                 id="answerText"

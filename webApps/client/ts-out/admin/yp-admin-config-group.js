@@ -1600,12 +1600,6 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
                     onChange: this.questionNameChanged,
                 },
                 {
-                    type: "html",
-                    templateData: html `<div class="layout vertical center-center" style="margin-top: -8px;font-size: 14px;font-style: italic;">
-            <div style="max-width: 650px">${unsafeHTML(this.t("generateAnswersInfo"))}</div>
-          </div>`,
-                },
-                {
                     text: "earlConfig",
                     type: "html",
                     templateData: this.renderCreateEarl(domainId, communityId),

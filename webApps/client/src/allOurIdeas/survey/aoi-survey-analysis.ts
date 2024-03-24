@@ -79,6 +79,15 @@ export class AoiSurveyAnalysis extends YpBaseElement {
           margin-bottom: 8px;
         }
 
+
+        .analysisInfo {
+          font-size: 20px;
+          margin: 8px;
+          margin-bottom: 16px;
+          margin-top: 16px;
+          text-align: center;
+        }
+
         .analysisTitle {
           font-size: 16px;
           margin: 16px;
@@ -276,6 +285,7 @@ export class AoiSurveyAnalysis extends YpBaseElement {
   override render() {
     return html`
       <div class="topContainer layout vertical wrap center-center">
+        <div class="analysisInfo">${this.t('aiAnalysisInfo')}</div>
         <div class="layout vertical self-start">
           <div class="questionTitle">
             <yp-magic-text

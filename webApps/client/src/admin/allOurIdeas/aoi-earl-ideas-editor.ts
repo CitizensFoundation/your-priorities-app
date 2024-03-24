@@ -16,6 +16,7 @@ import { AoiGenerateAiLogos } from "./aoiGenerateAiLogos.js";
 import { image } from "d3";
 import { ifDefined } from "lit/directives/if-defined.js";
 import { MdOutlinedTextField } from "@material/web/textfield/outlined-text-field.js";
+import { unsafeHTML } from "lit/directives/unsafe-html.js";
 
 interface IconGenerationResult {
   imageUrl?: string;
@@ -675,6 +676,14 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmBase {
 
   renderCreateIdeas() {
     return html`
+      <div
+        class="layout vertical center-center"
+        style="margin-top: -16px;margin-bottom: 16px;font-size: 14px;font-style: italic;"
+      >
+        <div style="max-width: 650px">
+          ${unsafeHTML(this.t("generateAnswersInfo"))}
+        </div>
+      </div>
       <div class="layout vertical center-center">
         <md-filled-text-field
           type="textarea"
