@@ -53,6 +53,14 @@ async function fetchVotes(questionId, choiceId, utmSource) {
         throw error;
     }
 }
+function calculateElo(rating1, rating2, score1, score2) {
+    const kFactor = 32;
+    const expected1 = 1.0 / (1 + Math.pow(10, (rating2 - rating1) / 400.0));
+    const expected2 = 1.0 / (1 + Math.pow(10, (rating1 - rating2) / 400.0));
+    const newRating1 = rating1 + kFactor * (score1 - expected1);
+    const newRating2 = rating2 + kFactor * (score2 - expected2);
+    return [newRating1, newRating2];
+}
 export async function exportChoiceVotes(workPackage, done) {
     try {
         await updateUploadJobStatus(workPackage.jobId, 5);
@@ -93,22 +101,35 @@ export async function exportChoiceVotes(workPackage, done) {
         ];
         winningVotesSheet.addRow(votesHeaders);
         losingVotesSheet.addRow(votesHeaders);
+        const choiceVoteMap = new Map();
         for (let i = 0; i < choices.length; i++) {
             const choice = choices[i];
             const votes = (await fetchVotes(workPackage.questionId, choice.id, workPackage.utmSource));
+            choiceVoteMap.set(choice.id, votes);
             const voteCount = choice.wins + choice.losses;
+            let data = choice.data;
+            try {
+                const jsonData = JSON.parse(choice.data);
+                debugger;
+                if (jsonData && jsonData.content) {
+                    data = jsonData.content;
+                }
+            }
+            catch (error) {
+            }
             choicesSheet.addRow([
                 choice.id,
-                choice.question_id,
+                workPackage.questionId,
                 choice.wins,
                 choice.losses,
                 voteCount,
-                choice.score,
-                choice.data,
+                Math.round(choice.score),
+                data,
                 "N/A",
-                "N/A",
+                choice.user_created ? "User" : "Seed",
             ]);
             votes.winning_votes.forEach((vote) => {
+                console.log(`${vote.tracking ? JSON.stringify(vote.tracking) : ""}`);
                 winningVotesSheet.addRow([
                     vote.id,
                     vote.voter_id,
@@ -119,10 +140,10 @@ export async function exportChoiceVotes(workPackage, done) {
                     vote.created_at,
                     vote.updated_at,
                     vote.time_viewed,
-                    vote.tracking.utmSource,
-                    vote.tracking.utmCampaign,
-                    vote.tracking.utmMedium,
-                    vote.tracking.utmContent,
+                    vote.tracking.utm_source,
+                    vote.tracking.utm_campaign,
+                    vote.tracking.utm_medium,
+                    vote.tracking.utm_content,
                 ]);
             });
             votes.losing_votes.forEach((vote) => {
@@ -136,15 +157,54 @@ export async function exportChoiceVotes(workPackage, done) {
                     vote.created_at,
                     vote.updated_at,
                     vote.time_viewed,
-                    vote.tracking.utmSource,
-                    vote.tracking.utmCampaign,
-                    vote.tracking.utmMedium,
-                    vote.tracking.utmContent,
+                    vote.tracking.utm_source,
+                    vote.tracking.utm_campaign,
+                    vote.tracking.utm_medium,
+                    vote.tracking.utm_content,
                 ]);
             });
             const progress = Math.round((i / choices.length) * 95); // Scale to 95% maximum to leave room for final steps
             await updateUploadJobStatus(workPackage.jobId, progress);
         }
+        const eloRatings = new Map();
+        choices.forEach(choice => {
+            eloRatings.set(choice.id, 1000); // Default ELO rating
+        });
+        // NowvotesMap, iterate over choices to compute ELO ratings without fetching votes again
+        choices.forEach(choice1 => {
+            choices.forEach(choice2 => {
+                if (choice1.id === choice2.id)
+                    return; // Skip comparison with itself
+                // Assuming votesMap is a Map where each entry's key is a choice ID
+                // and its value is an object with winning_votes and losing_votes arrays
+                const votes1 = choiceVoteMap.get(choice1.id);
+                const votes2 = choiceVoteMap.get(choice2.id);
+                const directVotes1 = votes1?.winning_votes.filter(vote => vote.loser_choice_id === choice2.id) || [];
+                const directVotes2 = votes2?.winning_votes.filter(vote => vote.loser_choice_id === choice1.id) || [];
+                if (directVotes1.length === 0 && directVotes2.length === 0)
+                    return;
+                const score1 = directVotes1.length / (directVotes1.length + directVotes2.length);
+                const score2 = directVotes2.length / (directVotes2.length + directVotes1.length);
+                const currentRating1 = eloRatings.get(choice1.id) || 1500;
+                const currentRating2 = eloRatings.get(choice2.id) || 1500;
+                const [newRating1, newRating2] = calculateElo(currentRating1, currentRating2, score1, score2);
+                eloRatings.set(choice1.id, newRating1);
+                eloRatings.set(choice2.id, newRating2);
+            });
+        });
+        // After the ELO ratings are computed
+        choices.forEach((choice, i) => {
+            const eloRating = eloRatings.get(choice.id);
+            // Update the Excel sheet with the new ELO rating
+            // Note: Adjust the cell reference as needed
+            if (eloRating) {
+                choicesSheet.getCell(`H${i + 2}`).value = Math.round(eloRating);
+                console.log(`Choice ${choice.id} has elo rating ${Math.round(eloRating)}`);
+            }
+            else {
+                console.error(`Choice ${choice.id} has no elo rating`);
+            }
+        });
         // Generate and upload the workbook to S3
         const buffer = await workbook.xlsx.writeBuffer();
         const filename = `choice_votes_${uuidv4()}.xlsx`;

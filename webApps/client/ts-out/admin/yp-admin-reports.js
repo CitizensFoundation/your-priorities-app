@@ -62,7 +62,7 @@ let YpAdminReports = class YpAdminReports extends YpAdminPage {
     }
     startReportCreationResponse(data) {
         this.jobId = data.jobId;
-        this.progress = undefined;
+        this.progress = 5;
         let baseUrl = this.collectionType == "group"
             ? `/api/groups/${this.collectionId}`
             : `/api/communities/${this.collectionId}`;

@@ -96,10 +96,10 @@ interface AoiVoteData {
   id?: number;
   appearance_lookup?: string;
   tracking?: {
-    utmSource: string;
-    utmCampaign: string;
-    utmMedium: string;
-    utmContent: string;
+    utm_source: string;
+    utm_campaign: string;
+    utm_medium: string;
+    utm_content: string;
   }
   site_id?: number | null; // Assuming integers can be null based on your DB setup
   voter_id?: number | null;

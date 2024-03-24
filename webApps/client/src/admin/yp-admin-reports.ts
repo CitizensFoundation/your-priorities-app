@@ -110,7 +110,7 @@ export class YpAdminReports extends YpAdminPage {
 
   startReportCreationResponse(data: YpReportData) {
     this.jobId = data.jobId;
-    this.progress = undefined;
+    this.progress = 5;
     let baseUrl =
       this.collectionType == "group"
         ? `/api/groups/${this.collectionId}`
