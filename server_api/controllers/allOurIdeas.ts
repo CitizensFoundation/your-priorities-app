@@ -68,7 +68,7 @@ export class AllOurIdeasController {
     );
 
     this.router.get(
-      "/:groupId/:type/report_creation_progress",
+      "/:groupId/:jobId/report_creation_progress",
       auth.can("edit group"),
       this.getXlsExportProgress.bind(this)
     );
@@ -454,6 +454,7 @@ export class AllOurIdeasController {
           "process-reports",
           {
             type: reportType,
+            questionId: req.query.questionId,
             userId: (req.user as any).id,
             exportType: req.params.type,
             fileEnding: req.params.fileEnding ? req.params.fileEnding : "xlsx",

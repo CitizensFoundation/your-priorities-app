@@ -17,7 +17,7 @@ export declare class YpAdminReports extends YpAdminPage {
     reportUrl: string | undefined;
     reportGenerationUrl: string | undefined;
     downloadDisabled: boolean;
-    isAllOurIdeasGroup: boolean;
+    allOurIdeasQuestionId: number | undefined;
     toastText: string | undefined;
     autoTranslateActive: boolean;
     selectedFraudAuditId: number | undefined;

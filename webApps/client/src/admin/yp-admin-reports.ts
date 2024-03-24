@@ -41,8 +41,8 @@ export class YpAdminReports extends YpAdminPage {
   @property({ type: Boolean })
   downloadDisabled = false;
 
-  @property({ type: Boolean })
-  isAllOurIdeasGroup = false;
+  @property({ type: Number })
+  allOurIdeasQuestionId: number | undefined;
 
   @property({ type: String })
   toastText: string | undefined;
@@ -64,13 +64,18 @@ export class YpAdminReports extends YpAdminPage {
   @property({ type: String })
   reportCreationProgressUrl: string | undefined;
 
-
   override connectedCallback(): void {
     super.connectedCallback();
-    if (this.collectionType == "group" && this.collection && (this.collection as YpGroupData).configuration.allOurIdeas) {
-      this.isAllOurIdeasGroup = true;
+    if (
+      this.collectionType == "group" &&
+      this.collection &&
+      (this.collection as YpGroupData).configuration.allOurIdeas
+    ) {
+      this.allOurIdeasQuestionId = (
+        this.collection as YpGroupData
+      ).configuration.allOurIdeas?.earl?.question_id;
     } else {
-      this.isAllOurIdeasGroup = false;
+      this.allOurIdeasQuestionId = undefined;
     }
   }
 
@@ -83,9 +88,7 @@ export class YpAdminReports extends YpAdminPage {
 
   startReportCreation() {
     let url = this.action; // Adjust the URL as needed
-    if (this.isAllOurIdeasGroup) {
-      url = `/api/allOurIdeas/${this.collectionId}/start_report_creation`;
-    }
+
     const body = {
       selectedFraudAuditId: this.selectedFraudAuditId,
     };
@@ -112,10 +115,13 @@ export class YpAdminReports extends YpAdminPage {
       this.collectionType == "group"
         ? `/api/groups/${this.collectionId}`
         : `/api/communities/${this.collectionId}`;
-    if (this.isAllOurIdeasGroup) {
+    if (this.allOurIdeasQuestionId) {
       baseUrl = `/api/allOurIdeas/${this.collectionId}`;
+      this.reportCreationProgressUrl = `${baseUrl}/${this.jobId}/report_creation_progress?questionId=${this.allOurIdeasQuestionId}`;
+    } else {
+      this.reportCreationProgressUrl = `${baseUrl}/${this.jobId}/report_creation_progress`;
     }
-    this.reportCreationProgressUrl = `${baseUrl}/${this.jobId}/report_creation_progress`;
+
     this.pollLaterForProgress();
   }
 
@@ -239,6 +245,16 @@ export class YpAdminReports extends YpAdminPage {
           width: 320px;
           margin-top: 8px;
         }
+
+        md-tabs {
+          max-width: 650px;
+          width: 605px;
+        }
+        @media (max-width: 650px) {
+          md-tabs {
+            width: 100%;
+          }
+        }
       `,
     ];
   }
@@ -265,6 +281,9 @@ export class YpAdminReports extends YpAdminPage {
         this.toastText = this.t("haveCreatedDocxReport");
       }
       this.reportGenerationUrl = `/api/groups/${this.collectionId}/${this.type}/start_report_creation`;
+      if (this.allOurIdeasQuestionId) {
+        this.reportGenerationUrl = `/api/allOurIdeas/${this.collectionId}/${this.type}/start_report_creation?questionId=${this.allOurIdeasQuestionId}`;
+      }
     } else if (this.collectionType == "community") {
       if (tabs.activeTabIndex === 0) {
         this.type = "usersxls";
@@ -354,44 +373,46 @@ export class YpAdminReports extends YpAdminPage {
 
   override render() {
     return html`
-      <md-tabs
-        id="tabs"
-        @change="${this._tabChanged}"
-        .activeTabIndex="${this.selectedTab}"
-        id="paperTabs"
-      >
-        ${this.collectionType == "group"
-          ? html`
-              <md-secondary-tab
-                >${this.t("createXlsReport")}<md-icon
-                  >lightbulb_outline</md-icon
-                ></md-secondary-tab
-              >
-              <md-secondary-tab
-                ?hidden="${this.isAllOurIdeasGroup}"
-                >${this.t("createDocxReport")}<md-icon
-                  >lightbulb_outline</md-icon
-                ></md-secondary-tab
-              >
-            `
-          : nothing}
-        ${this.collectionType == "community"
-          ? html`
-              <md-secondary-tab
-                >${this.t("createXlsUsersReport")}<md-icon
-                  >lightbulb_outline</md-icon
-                ></md-secondary-tab
-              >
-              <md-secondary-tab
-                ?hidden="${!(this.collection as YpCommunityData).configuration
-                  .enableFraudDetection}"
-                >${this.t("downloadFraudAuditReport")}<md-icon
-                  >lightbulb_outline</md-icon
-                ></md-secondary-tab
-              >
-            `
-          : nothing}
-      </md-tabs>
+      <div class="layout vertical center-center">
+        <md-tabs
+          id="tabs"
+          @change="${this._tabChanged}"
+          .activeTabIndex="${this.selectedTab}"
+          id="paperTabs"
+        >
+          ${this.collectionType == "group"
+            ? html`
+                <md-secondary-tab
+                  >${this.t("createXlsReport")}<md-icon
+                    >lightbulb_outline</md-icon
+                  ></md-secondary-tab
+                >
+                <md-secondary-tab
+                  ?hidden="${this.allOurIdeasQuestionId != undefined}"
+                  >${this.t("createDocxReport")}<md-icon
+                    >lightbulb_outline</md-icon
+                  ></md-secondary-tab
+                >
+              `
+            : nothing}
+          ${this.collectionType == "community"
+            ? html`
+                <md-secondary-tab
+                  >${this.t("createXlsUsersReport")}<md-icon
+                    >lightbulb_outline</md-icon
+                  ></md-secondary-tab
+                >
+                <md-secondary-tab
+                  ?hidden="${!(this.collection as YpCommunityData).configuration
+                    .enableFraudDetection}"
+                  >${this.t("downloadFraudAuditReport")}<md-icon
+                    >lightbulb_outline</md-icon
+                  ></md-secondary-tab
+                >
+              `
+            : nothing}
+        </md-tabs>
+      </div>
       <div class="layout vertical center-center">
         ${this.reportGenerationUrl &&
         !this.reportUrl &&

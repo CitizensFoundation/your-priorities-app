@@ -8,19 +8,19 @@ const dbModels = models;
 const AcBackgroundJob = dbModels.AcBackgroundJob;
 export const updateUploadJobStatus = async (jobId, uploadProgress, data = undefined) => {
     try {
-        const progress = Math.min(Math.round(50 + uploadProgress / 2), 95);
+        const progress = uploadProgress == 100 ? 100 : Math.min(Math.round(50 + uploadProgress / 2), 95);
         if (data) {
-            await AcBackgroundJob.update({ progress }, { where: { id: jobId } });
+            await AcBackgroundJob.update({ progress, data }, { where: { id: jobId } });
         }
         else {
-            await AcBackgroundJob.update({ progress, data }, { where: { id: jobId } });
+            await AcBackgroundJob.update({ progress }, { where: { id: jobId } });
         }
     }
     catch (error) {
         console.error("updateUploadJobStatus", { error: error });
     }
 };
-export const setJobError = async (jobId, errorToUser, errorDetail) => {
+export const setJobError = async (jobId, errorToUser, errorDetail = undefined) => {
     console.error("Error in background job", { error: errorDetail });
     try {
         await AcBackgroundJob.update({ error: errorToUser, progress: 0 }, { where: { id: jobId } });

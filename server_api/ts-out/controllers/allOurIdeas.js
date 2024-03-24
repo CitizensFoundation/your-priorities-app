@@ -32,7 +32,7 @@ export class AllOurIdeasController {
     async initializeRoutes() {
         this.router.get("/:groupId", auth.can("view group"), this.showEarl.bind(this));
         this.router.put("/:groupId/:type/start_report_creation", auth.can("edit group"), this.exportXls.bind(this));
-        this.router.get("/:groupId/:type/report_creation_progress", auth.can("edit group"), this.getXlsExportProgress.bind(this));
+        this.router.get("/:groupId/:jobId/report_creation_progress", auth.can("edit group"), this.getXlsExportProgress.bind(this));
         this.router.get("/:domainId/getAoiSiteStats", auth.can("view domain"), this.getAoiSiteStats.bind(this));
         this.router.post("/:domainId/questions/throughDomain", auth.can("create community"), this.createQuestion.bind(this));
         this.router.post("/:communityId/questions", auth.can("create group"), this.createQuestion.bind(this));
@@ -264,6 +264,7 @@ export class AllOurIdeasController {
                 reportType = "start-aoi-xls-report-generation";
                 queue.add("process-reports", {
                     type: reportType,
+                    questionId: req.query.questionId,
                     userId: req.user.id,
                     exportType: req.params.type,
                     fileEnding: req.params.fileEnding ? req.params.fileEnding : "xlsx",

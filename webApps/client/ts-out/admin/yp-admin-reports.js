@@ -21,18 +21,19 @@ let YpAdminReports = class YpAdminReports extends YpAdminPage {
         this.action = "/api/communities";
         this.selectedTab = 0;
         this.downloadDisabled = false;
-        this.isAllOurIdeasGroup = false;
         this.autoTranslateActive = false;
         this.fraudAuditSelectionActive = false;
         this.waitingOnFraudAudits = false;
     }
     connectedCallback() {
         super.connectedCallback();
-        if (this.collectionType == "group" && this.collection && this.collection.configuration.allOurIdeas) {
-            this.isAllOurIdeasGroup = true;
+        if (this.collectionType == "group" &&
+            this.collection &&
+            this.collection.configuration.allOurIdeas) {
+            this.allOurIdeasQuestionId = this.collection.configuration.allOurIdeas?.earl?.question_id;
         }
         else {
-            this.isAllOurIdeasGroup = false;
+            this.allOurIdeasQuestionId = undefined;
         }
     }
     fraudItemSelection(event) {
@@ -41,9 +42,6 @@ let YpAdminReports = class YpAdminReports extends YpAdminPage {
     }
     startReportCreation() {
         let url = this.action; // Adjust the URL as needed
-        if (this.isAllOurIdeasGroup) {
-            url = `/api/allOurIdeas/${this.collectionId}/start_report_creation`;
-        }
         const body = {
             selectedFraudAuditId: this.selectedFraudAuditId,
         };
@@ -68,10 +66,13 @@ let YpAdminReports = class YpAdminReports extends YpAdminPage {
         let baseUrl = this.collectionType == "group"
             ? `/api/groups/${this.collectionId}`
             : `/api/communities/${this.collectionId}`;
-        if (this.isAllOurIdeasGroup) {
+        if (this.allOurIdeasQuestionId) {
             baseUrl = `/api/allOurIdeas/${this.collectionId}`;
+            this.reportCreationProgressUrl = `${baseUrl}/${this.jobId}/report_creation_progress?questionId=${this.allOurIdeasQuestionId}`;
         }
-        this.reportCreationProgressUrl = `${baseUrl}/${this.jobId}/report_creation_progress`;
+        else {
+            this.reportCreationProgressUrl = `${baseUrl}/${this.jobId}/report_creation_progress`;
+        }
         this.pollLaterForProgress();
     }
     pollLaterForProgress() {
@@ -174,6 +175,16 @@ let YpAdminReports = class YpAdminReports extends YpAdminPage {
           width: 320px;
           margin-top: 8px;
         }
+
+        md-tabs {
+          max-width: 650px;
+          width: 605px;
+        }
+        @media (max-width: 650px) {
+          md-tabs {
+            width: 100%;
+          }
+        }
       `,
         ];
     }
@@ -197,6 +208,9 @@ let YpAdminReports = class YpAdminReports extends YpAdminPage {
                 this.toastText = this.t("haveCreatedDocxReport");
             }
             this.reportGenerationUrl = `/api/groups/${this.collectionId}/${this.type}/start_report_creation`;
+            if (this.allOurIdeasQuestionId) {
+                this.reportGenerationUrl = `/api/allOurIdeas/${this.collectionId}/${this.type}/start_report_creation?questionId=${this.allOurIdeasQuestionId}`;
+            }
         }
         else if (this.collectionType == "community") {
             if (tabs.activeTabIndex === 0) {
@@ -282,44 +296,46 @@ let YpAdminReports = class YpAdminReports extends YpAdminPage {
     }
     render() {
         return html `
-      <md-tabs
-        id="tabs"
-        @change="${this._tabChanged}"
-        .activeTabIndex="${this.selectedTab}"
-        id="paperTabs"
-      >
-        ${this.collectionType == "group"
+      <div class="layout vertical center-center">
+        <md-tabs
+          id="tabs"
+          @change="${this._tabChanged}"
+          .activeTabIndex="${this.selectedTab}"
+          id="paperTabs"
+        >
+          ${this.collectionType == "group"
             ? html `
-              <md-secondary-tab
-                >${this.t("createXlsReport")}<md-icon
-                  >lightbulb_outline</md-icon
-                ></md-secondary-tab
-              >
-              <md-secondary-tab
-                ?hidden="${this.isAllOurIdeasGroup}"
-                >${this.t("createDocxReport")}<md-icon
-                  >lightbulb_outline</md-icon
-                ></md-secondary-tab
-              >
-            `
+                <md-secondary-tab
+                  >${this.t("createXlsReport")}<md-icon
+                    >lightbulb_outline</md-icon
+                  ></md-secondary-tab
+                >
+                <md-secondary-tab
+                  ?hidden="${this.allOurIdeasQuestionId != undefined}"
+                  >${this.t("createDocxReport")}<md-icon
+                    >lightbulb_outline</md-icon
+                  ></md-secondary-tab
+                >
+              `
             : nothing}
-        ${this.collectionType == "community"
+          ${this.collectionType == "community"
             ? html `
-              <md-secondary-tab
-                >${this.t("createXlsUsersReport")}<md-icon
-                  >lightbulb_outline</md-icon
-                ></md-secondary-tab
-              >
-              <md-secondary-tab
-                ?hidden="${!this.collection.configuration
+                <md-secondary-tab
+                  >${this.t("createXlsUsersReport")}<md-icon
+                    >lightbulb_outline</md-icon
+                  ></md-secondary-tab
+                >
+                <md-secondary-tab
+                  ?hidden="${!this.collection.configuration
                 .enableFraudDetection}"
-                >${this.t("downloadFraudAuditReport")}<md-icon
-                  >lightbulb_outline</md-icon
-                ></md-secondary-tab
-              >
-            `
+                  >${this.t("downloadFraudAuditReport")}<md-icon
+                    >lightbulb_outline</md-icon
+                  ></md-secondary-tab
+                >
+              `
             : nothing}
-      </md-tabs>
+        </md-tabs>
+      </div>
       <div class="layout vertical center-center">
         ${this.reportGenerationUrl &&
             !this.reportUrl &&
@@ -358,8 +374,8 @@ __decorate([
     property({ type: Boolean })
 ], YpAdminReports.prototype, "downloadDisabled", void 0);
 __decorate([
-    property({ type: Boolean })
-], YpAdminReports.prototype, "isAllOurIdeasGroup", void 0);
+    property({ type: Number })
+], YpAdminReports.prototype, "allOurIdeasQuestionId", void 0);
 __decorate([
     property({ type: String })
 ], YpAdminReports.prototype, "toastText", void 0);
