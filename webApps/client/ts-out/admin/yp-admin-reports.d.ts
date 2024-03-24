@@ -25,7 +25,9 @@ export declare class YpAdminReports extends YpAdminPage {
     fraudAuditsAvailable: YpFraudAuditData[] | undefined;
     waitingOnFraudAudits: boolean;
     reportCreationProgressUrl: string | undefined;
+    refresh(): void;
     connectedCallback(): void;
+    disconnectedCallback(): void;
     fraudItemSelection(event: CustomEvent): void;
     startReportCreation(): void;
     startReportCreationResponse(data: YpReportData): void;

@@ -874,6 +874,17 @@ router.post('/:groupId/:userEmail/invite_user', auth.can('edit group'), function
     }
   });
 });
+router.post('/:groupId/add_page', auth.can('edit group'), function(req, res) {
+  models.Page.newPage(req, { group_id: req.params.groupId, content: {}, title: {} }, function (error, pages) {
+    if (error) {
+      log.error('Could not create page for admin for group', { err: error, context: 'new_page', user: toJson(req.user.simple()) });
+      res.sendStatus(500);
+    } else {
+      log.info('New Community Page', {context: 'new_page', user: toJson(req.user.simple()) });
+      res.sendStatus(200);
+    }
+  });
+});
 
 router.post('/:domainId/create_community_for_group', auth.can('create community'),  function(req, res) {
   log.info("Creating Community for Group", { context: 'create', user: toJson(req.user) });
@@ -1278,18 +1289,6 @@ router.get('/:groupId/export_group_docx', auth.can('edit group'), async (req, re
   }).catch(function (error) {
     log.error('Could not export for group', { err: error, context: 'export_group', user: toJson(req.user.simple()) });
     res.sendStatus(500);
-  });
-});
-
-router.post('/:groupId/add_page', auth.can('edit group'), function(req, res) {
-  models.Page.newPage(req, { group_id: req.params.groupId, content: {}, title: {} }, function (error, pages) {
-    if (error) {
-      log.error('Could not create page for admin for group', { err: error, context: 'new_page', user: toJson(req.user.simple()) });
-      res.sendStatus(500);
-    } else {
-      log.info('New Community Page', {context: 'new_page', user: toJson(req.user.simple()) });
-      res.sendStatus(200);
-    }
   });
 });
 

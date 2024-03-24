@@ -958,7 +958,7 @@ let YpAdminApp = class YpAdminApp extends YpBaseElement {
             return "add_business";
         }
         else if (type === "reports") {
-            return "reports";
+            return "download";
         }
         else if (type === "users") {
             return "supervised_user_circle";
@@ -1024,6 +1024,7 @@ let YpAdminApp = class YpAdminApp extends YpBaseElement {
         else {
             this.page = type;
         }
+        this.fireGlobal("yp-refresh-admin-content");
     }
     renderMenuListItem(type) {
         return html `

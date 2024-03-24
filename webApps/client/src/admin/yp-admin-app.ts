@@ -1085,7 +1085,7 @@ export class YpAdminApp extends YpBaseElement {
     } else if (type === "organizations") {
       return "add_business";
     } else if (type === "reports") {
-      return "reports";
+      return "download";
     } else if (type === "users") {
       return "supervised_user_circle";
     } else if (type === "admins") {
@@ -1143,6 +1143,8 @@ export class YpAdminApp extends YpBaseElement {
     } else {
       this.page = type;
     }
+
+    this.fireGlobal("yp-refresh-admin-content");
   }
 
   renderMenuListItem(type: AdminPageOptions) {

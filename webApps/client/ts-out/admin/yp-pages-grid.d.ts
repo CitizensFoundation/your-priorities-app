@@ -24,7 +24,7 @@ export declare class YpPagesGrid extends YpBaseElement {
     _toLocaleArray(obj: Record<string, string>): Array<YpHelpPageData>;
     _editPageLocale(event: Event): Promise<void>;
     _closePageLocale(): void;
-    _dispatchAdminServerApiRequest(pageId: number | undefined, path: string, method: string, body?: any): Promise<any>;
+    _dispatchAdminServerApiRequest(pageId: number | undefined, path: string, method: string, body?: {}): Promise<any>;
     _updatePageLocale(): Promise<void>;
     _publishPage(event: Event): Promise<void>;
     _publishPageResponse(): Promise<void>;

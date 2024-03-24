@@ -239,7 +239,7 @@ let YpPagesGrid = class YpPagesGrid extends YpBaseElement {
         this.currentlyEditingTitle = undefined;
         this.$$("#editPageLocale").close();
     }
-    async _dispatchAdminServerApiRequest(pageId, path, method, body) {
+    async _dispatchAdminServerApiRequest(pageId, path, method, body = {}) {
         let pageIdPath = pageId ? `/${pageId}/${path}` : `/${path}`;
         let url = "";
         if (this.modelType === "groups" && this.groupId) {

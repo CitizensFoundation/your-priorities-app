@@ -301,7 +301,7 @@ export class YpPagesGrid extends YpBaseElement {
     pageId: number | undefined,
     path: string,
     method: string,
-    body?: any
+    body = {}
   ) {
     let pageIdPath = pageId ? `/${pageId}/${path}` : `/${path}`;
     let url = "";
@@ -411,6 +411,7 @@ export class YpPagesGrid extends YpBaseElement {
     if (addButton) {
       addButton.disabled = true;
     }
+
     await this._dispatchAdminServerApiRequest(undefined, "add_page", "POST");
     this._generateRequest();
     if (addButton) {

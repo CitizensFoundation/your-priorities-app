@@ -64,6 +64,18 @@ export class YpAdminReports extends YpAdminPage {
   @property({ type: String })
   reportCreationProgressUrl: string | undefined;
 
+  refresh() {
+    this.reportUrl = undefined;
+    this.reportGenerationUrl = undefined;
+    this.error = undefined;
+    this.progress = undefined;
+    this.selectedFraudAuditId = undefined;
+    this.fraudAuditsAvailable = undefined;
+    this.waitingOnFraudAudits = false;
+    this.fraudAuditSelectionActive = false;
+    this._tabChanged();
+  }
+
   override connectedCallback(): void {
     super.connectedCallback();
     if (
@@ -77,6 +89,16 @@ export class YpAdminReports extends YpAdminPage {
     } else {
       this.allOurIdeasQuestionId = undefined;
     }
+
+    this.addGlobalListener("yp-refresh-admin-content", this.refresh.bind(this));
+  }
+
+  override disconnectedCallback(): void {
+    this.removeGlobalListener(
+      "yp-refresh-admin-content",
+      this.refresh.bind(this)
+    );
+    super.disconnectedCallback();
   }
 
   fraudItemSelection(event: CustomEvent) {

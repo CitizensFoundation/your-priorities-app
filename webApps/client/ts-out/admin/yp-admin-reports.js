@@ -25,6 +25,17 @@ let YpAdminReports = class YpAdminReports extends YpAdminPage {
         this.fraudAuditSelectionActive = false;
         this.waitingOnFraudAudits = false;
     }
+    refresh() {
+        this.reportUrl = undefined;
+        this.reportGenerationUrl = undefined;
+        this.error = undefined;
+        this.progress = undefined;
+        this.selectedFraudAuditId = undefined;
+        this.fraudAuditsAvailable = undefined;
+        this.waitingOnFraudAudits = false;
+        this.fraudAuditSelectionActive = false;
+        this._tabChanged();
+    }
     connectedCallback() {
         super.connectedCallback();
         if (this.collectionType == "group" &&
@@ -35,6 +46,11 @@ let YpAdminReports = class YpAdminReports extends YpAdminPage {
         else {
             this.allOurIdeasQuestionId = undefined;
         }
+        this.addGlobalListener("yp-refresh-admin-content", this.refresh.bind(this));
+    }
+    disconnectedCallback() {
+        this.removeGlobalListener("yp-refresh-admin-content", this.refresh.bind(this));
+        super.disconnectedCallback();
     }
     fraudItemSelection(event) {
         this.selectedFraudAuditId = parseInt(event.target.getAttribute("data-args"));
