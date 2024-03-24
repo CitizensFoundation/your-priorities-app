@@ -22,6 +22,6 @@ export declare class AoiSurveyIntro extends YpBaseElement {
     clickStart(): void;
     clickResults(): void;
     static get styles(): any[];
-    render(): typeof nothing | import("lit-html").TemplateResult<1>;
+    render(): import("lit-html").TemplateResult<1> | typeof nothing;
 }
 //# sourceMappingURL=aoi-survey-intro.d.ts.map

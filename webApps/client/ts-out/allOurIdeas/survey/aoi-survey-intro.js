@@ -219,7 +219,7 @@ let AoiSurveyIntro = class AoiSurveyIntro extends YpBaseElement {
               textType="aoiQuestionName"
             ></yp-magic-text>
           </div>
-          <div class="description">
+          <div class="description" ?hidden="${!this.earl.configuration.welcome_message}">
             <yp-magic-text
               id="aoiWelcomeMessage"
               .contentId="${this.group.id}"

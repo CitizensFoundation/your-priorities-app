@@ -14,7 +14,7 @@ export declare class AcNotificationListPost extends YpBaseElement {
     post: YpPostData | undefined;
     updated(changedProperties: Map<string | number | symbol, unknown>): void;
     static get styles(): any[];
-    render(): typeof nothing | import("lit-html").TemplateResult<1>;
+    render(): import("lit-html").TemplateResult<1> | typeof nothing;
     _goToPost(): void;
     _notificationChanged(): void;
     _createEndorsementStrings(): void;
