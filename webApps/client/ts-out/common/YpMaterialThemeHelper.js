@@ -190,14 +190,32 @@ export function applyThemeWithContrast(doc, theme, ssName = 'material-theme') {
     applyThemeString(doc, styleString, ssName);
 }
 export function applyThemeString(doc, themeString, ssName) {
-    //@ts-ignore
-    let ss = window[ssName];
-    if (!ss) {
-        ss = new CSSStyleSheet();
-        doc.adoptedStyleSheets.push(ss);
-        //@ts-ignore
-        window[ssName] = ss;
+    try {
+        // The replace method is part of CSSStyleSheet, so if it's callable, CSSStyleSheet should be constructible.
+        const isCSSSheetConstructible = new CSSStyleSheet().replace instanceof Function;
+        if (isCSSSheetConstructible) {
+            // Cast window to any to bypass TypeScript's strict typing
+            let ss = window[ssName];
+            if (!ss) {
+                ss = new CSSStyleSheet();
+                // Again, cast to bypass TypeScript's strict typing
+                doc.adoptedStyleSheets = [...doc.adoptedStyleSheets, ss];
+                window[ssName] = ss;
+            }
+            ss.replace(themeString).catch(console.error);
+        }
     }
-    ss.replace(themeString);
+    catch (error) {
+        // Fallback to using a style element
+        if (doc instanceof Document && doc.head) {
+            let style = doc.createElement('style');
+            style.setAttribute('id', ssName);
+            style.textContent = themeString;
+            doc.head.appendChild(style);
+        }
+        else {
+            console.error('The provided document does not have a head element.', error);
+        }
+    }
 }
 //# sourceMappingURL=YpMaterialThemeHelper.js.map
