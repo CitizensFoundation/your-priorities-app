@@ -91,7 +91,7 @@ var deleteImage = function (imageId, callback) {
 };
 
 router.delete(
-  "/:domainId/:imageId/deleteVideoFromDomain",
+  "/:domainId/:imageId/deleteImageFromDomain",
   auth.can("edit domain"),
   (req, res) => {
     models.Image.removeImageFromCollection(req, res, {
@@ -113,7 +113,7 @@ router.delete(
 );
 
 router.delete(
-  "/:groupId/:imageId/deleteVideoFromGroup",
+  "/:groupId/:imageId/deleteImageFromGroup",
   auth.can("edit group"),
   (req, res) => {
     models.Image.removeImageFromCollection(req, res, {

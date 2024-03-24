@@ -156,7 +156,7 @@ module.exports = (sequelize, DataTypes) => {
   };
 
   Image.removeImageFromCollection = async (req, res) => {
-    const imageId = req.params.id;
+    const imageId = req.params.imageId;
     const groupId = req.params.groupId;
     const communityId = req.params.communityId;
     const domainId = req.params.domainId;
@@ -164,33 +164,31 @@ module.exports = (sequelize, DataTypes) => {
 
     const image = await Image.findByPk(imageId);
     if (image) {
-
-
       if (groupId) {
-        const group = await models.Group.findByPk(groupId);
+        const group = await sequelize.models.Group.findByPk(groupId);
         if (group) {
-          await group.removeLogoImage(image);
+          await group.removeGroupLogoImage(image);
         }
       }
 
       if (communityId) {
-        const community = await models.Community.findByPk(communityId);
+        const community = await sequelize.models.Community.findByPk(communityId);
         if (community) {
-          await community.removeLogoImage(image);
+          await community.removeCommunityLogoImage(image);
         }
       }
 
       if (domainId) {
-        const domain = await models.Domain.findByPk(domainId);
+        const domain = await sequelize.models.Domain.findByPk(domainId);
         if (domain) {
-          await domain.removeLogoImage(image);
+          await domain.removeDomainLogoImage(image);
         }
       }
 
       if (postId) {
-        const post = await models.Post.findByPk(postId);
+        const post = await sequelize.models.Post.findByPk(postId);
         if (post) {
-          await post.removeImage(image);
+          await post.removePostImage(image);
         }
       }
 
@@ -201,16 +199,15 @@ module.exports = (sequelize, DataTypes) => {
         async ({ CollectionImageGenerator }) => {
           try {
             const mediaManager = new CollectionImageGenerator();
-            await mediaManager.deleteMediaFormatsUrls(image.formats);
+            await mediaManager.deleteMediaFormatsUrls(image.formats ? JSON.parse(image.formats) : []);
             console.log("Deleted image", { imageId: image.id });
+            res.status(200).json({ message: "Image removed from collection" });
           } catch (error) {
             console.error("Could not delete image", { error });
             res.sendStatus(500);
           }
         }
       );
-
-      res.status(200).json({ message: "Image removed from collection" });
     } else {
       res.status(404).json({ message: "Image not found" });
     }

@@ -86,7 +86,7 @@ var deleteImage = function (imageId, callback) {
         callback(error);
     });
 };
-router.delete("/:domainId/:imageId/deleteVideoFromDomain", auth.can("edit domain"), (req, res) => {
+router.delete("/:domainId/:imageId/deleteImageFromDomain", auth.can("edit domain"), (req, res) => {
     models.Image.removeImageFromCollection(req, res, {
         domainId: req.params.domainId,
         imageId: req.params.imageId,
@@ -98,7 +98,7 @@ router.delete("/:communityId/:imageId/deleteImageFromCommunity", auth.can("edit 
         imageId: req.params.imageId,
     });
 });
-router.delete("/:groupId/:imageId/deleteVideoFromGroup", auth.can("edit group"), (req, res) => {
+router.delete("/:groupId/:imageId/deleteImageFromGroup", auth.can("edit group"), (req, res) => {
     models.Image.removeImageFromCollection(req, res, {
         groupId: req.params.groupId,
         imageId: req.params.imageId,

@@ -1,4 +1,4 @@
-import { YpServerApiBase } from './YpServerApiBase.js';
+import { YpServerApiBase } from "./YpServerApiBase.js";
 export class YpServerApiAdmin extends YpServerApiBase {
     adminMethod(url, method, body = undefined) {
         if (["GET", "HEAD"].indexOf(method) > -1) {
@@ -14,21 +14,21 @@ export class YpServerApiAdmin extends YpServerApiBase {
     removeUserFromOrganization(organizationId, userId) {
         return this.fetchWrapper(this.baseUrlPath +
             `/organizations/${organizationId}/${userId}/remove_user`, {
-            method: 'DELETE',
+            method: "DELETE",
             body: JSON.stringify({}),
         }, false);
     }
     removeAdmin(collection, collectionId, userId) {
         return this.fetchWrapper(this.baseUrlPath +
             `/${collection}/${collectionId}/${userId}/remove_admin`, {
-            method: 'DELETE',
+            method: "DELETE",
             body: JSON.stringify({}),
         }, false);
     }
     addAdmin(collection, collectionId, adminEmail) {
         return this.fetchWrapper(this.baseUrlPath +
             `/${collection}/${collectionId}/${adminEmail}/add_admin`, {
-            method: 'POST',
+            method: "POST",
             body: JSON.stringify({}),
         }, false);
     }
@@ -44,7 +44,7 @@ export class YpServerApiAdmin extends YpServerApiBase {
         }
         return this.fetchWrapper(this.baseUrlPath +
             `/${collection}/${collectionId}/${inviteEmail}/invite_user${query}`, {
-            method: 'POST',
+            method: "POST",
             body: JSON.stringify({}),
         }, true, undefined, true);
     }
@@ -52,23 +52,22 @@ export class YpServerApiAdmin extends YpServerApiBase {
     // add followup promt for additional causes
     //
     addUserToOrganization(organizationId, userId) {
-        return this.fetchWrapper(this.baseUrlPath +
-            `/organizations/${organizationId}/${userId}/add_user`, {
-            method: 'POST',
+        return this.fetchWrapper(this.baseUrlPath + `/organizations/${organizationId}/${userId}/add_user`, {
+            method: "POST",
             body: JSON.stringify({}),
         }, false);
     }
     addCollectionItem(collectionId, collectionItemType, body) {
         return this.fetchWrapper(this.baseUrlPath +
             `/${YpServerApiAdmin.transformCollectionTypeToApi(collectionItemType)}/${collectionId}`, {
-            method: 'POST',
+            method: "POST",
             body: JSON.stringify(body),
         }, false);
     }
     updateTranslation(collectionType, collectionId, body) {
         return this.fetchWrapper(this.baseUrlPath +
             `/${YpServerApiAdmin.transformCollectionTypeToApi(collectionType)}/${collectionId}/update_translation`, {
-            method: 'PUT',
+            method: "PUT",
             body: JSON.stringify(body),
         }, false);
     }
@@ -88,15 +87,48 @@ export class YpServerApiAdmin extends YpServerApiBase {
             fullType = "completeAndAddToDomain";
         }
         return this.fetchWrapper(this.baseUrlPath + `/videos/${collectionId}/${fullType}`, {
-            method: 'PUT',
+            method: "PUT",
             body: JSON.stringify(body),
+        }, false);
+    }
+    async deleteImage(imageId, collectionType, collectionId) {
+        let fullType;
+        if (collectionType == "group") {
+            fullType = "deleteImageFromGroup";
+        }
+        else if (collectionType == "community") {
+            fullType = "deleteImageFromCommunity";
+        }
+        else {
+            fullType = "deleteImageFromDomain";
+        }
+        return this.fetchWrapper(this.baseUrlPath + `/images/${collectionId}/${imageId}/${fullType}`, {
+            method: "DELETE",
+            body: JSON.stringify({}),
+        }, false);
+    }
+    async deleteVideo(videoId, collectionType, collectionId) {
+        let fullType;
+        if (collectionType == "group") {
+            fullType = "deleteVideoFromGroup";
+        }
+        else if (collectionType == "community") {
+            fullType = "deleteVideoFromCommunity";
+        }
+        else {
+            fullType = "deleteVideoFromDomain";
+        }
+        return this.fetchWrapper(this.baseUrlPath + `/videos/${collectionId}/${videoId}/${fullType}`, {
+            method: "DELETE",
+            body: JSON.stringify({}),
         }, false);
     }
     getCommunityFolders(domainId) {
         return this.fetchWrapper(this.baseUrlPath + `/domains/${domainId}/availableCommunityFolders`);
     }
     getAnalyticsData(communityId, type, params) {
-        return this.fetchWrapper(this.baseUrlPath + `/communities/${communityId}/${type}/getPlausibleSeries?${params}`);
+        return this.fetchWrapper(this.baseUrlPath +
+            `/communities/${communityId}/${type}/getPlausibleSeries?${params}`);
     }
     getSsnListCount(communityId, ssnLoginListDataId) {
         return this.fetchWrapper(this.baseUrlPath +
@@ -105,7 +137,7 @@ export class YpServerApiAdmin extends YpServerApiBase {
     deleteSsnLoginList(communityId, ssnLoginListDataId) {
         return this.fetchWrapper(this.baseUrlPath +
             `/communities/${communityId}/${ssnLoginListDataId}/ssn_login_list_count`, {
-            method: 'DELETE',
+            method: "DELETE",
             body: JSON.stringify({}),
         }, false);
     }

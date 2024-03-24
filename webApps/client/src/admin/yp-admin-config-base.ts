@@ -38,6 +38,7 @@ import { YpAdminConfigGroup } from "./yp-admin-config-group.js";
 import { MdOutlinedSelect } from "@material/web/select/outlined-select.js";
 import { YpEmojiSelector } from "../common/yp-emoji-selector.js";
 import { MdCheckbox } from "@material/web/checkbox/checkbox.js";
+import { YpConfirmationDialog } from "../yp-dialog-container/yp-confirmation-dialog.js";
 
 export const defaultLtpPromptsConfiguration = () => {
   return Object.fromEntries(Array.from({ length: 10 }, (_, i) => [i + 1, ""]));
@@ -95,6 +96,9 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
 
   @property({ type: Number })
   uploadedVideoId: number | undefined;
+
+  @property({ type: Boolean })
+  connectedVideoToCollection = false;
 
   @property({ type: String })
   editHeaderText: string | undefined;
@@ -458,6 +462,45 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
     }
   }
 
+  clearVideos() {
+    this.collectionVideoId = undefined;
+    this.videoPreviewUrl = undefined;
+    switch (this.collectionType) {
+      case "domain":
+        (this.collection as YpDomainData).DomainLogoVideos = [];
+        break;
+      case "community":
+        (this.collection as YpCommunityData).CommunityLogoVideos = [];
+        break;
+      case "group":
+        (this.collection as YpGroupData).GroupLogoVideos = [];
+        break;
+    }
+
+    this.requestUpdate();
+  }
+
+  clearImages() {
+    this.uploadedLogoImageId = undefined;
+    this.imagePreviewUrl = undefined;
+
+    switch (this.collectionType) {
+      case "domain":
+        (this.collection as YpDomainData).DomainLogoImages = [];
+        break;
+      case "community":
+        (this.collection as YpCommunityData).CommunityLogoImages = [];
+        break;
+      case "group":
+        (this.collection as YpGroupData).GroupLogoImages = [];
+        break;
+    }
+
+    this.currentLogoImages = undefined;
+
+    this.requestUpdate();
+  }
+
   renderCoverMediaContent() {
     if (this.collection?.configuration?.welcomeHTML) {
       return html`<div id="welcomeHTML">
@@ -514,7 +557,7 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
             : nothing}
         </div>
       `;
-    } else if (this.currentLogoImages) {
+    } else if (this.currentLogoImages && this.currentLogoImages.length > 0) {
       return html`
         <div style="position: relative;">
           <yp-image
@@ -543,6 +586,72 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
     }
   }
 
+  async reallyDeleteCurrentLogoImage() {
+    if (this.currentLogoImages) {
+      this.currentLogoImages.forEach(async (image) => {
+        await window.adminServerApi.deleteImage(
+          image.id,
+          this.collectionType,
+          this.collectionId as number
+        );
+      });
+    } else if (this.imagePreviewUrl) {
+      await window.adminServerApi.deleteImage(
+        this.uploadedLogoImageId!,
+        this.collectionType,
+        this.collectionId as number
+      );
+    }
+
+    this.clearImages();
+  }
+
+  async reallyDeleteCurrentVideo() {
+    if (this.collectionVideoId) {
+      await window.adminServerApi.deleteVideo(
+        this.collectionVideoId,
+        this.collectionType,
+        this.collectionId as number
+      );
+    } else if (this.videoPreviewUrl) {
+      await window.adminServerApi.deleteVideo(
+        this.uploadedVideoId!,
+        this.collectionType,
+        this.collectionId as number
+      );
+    }
+
+    this.clearVideos();
+  }
+
+  deleteCurrentLogoImage(event: CustomEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+    window.appDialogs.getDialogAsync(
+      "confirmationDialog",
+      (dialog: YpConfirmationDialog) => {
+        dialog.open(
+          this.t("confirmDeleteLogoImage"),
+          this.reallyDeleteCurrentLogoImage.bind(this)
+        );
+      }
+    );
+  }
+
+  deleteCurrentVideo(event: CustomEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+    window.appDialogs.getDialogAsync(
+      "confirmationDialog",
+      (dialog: YpConfirmationDialog) => {
+        dialog.open(
+          this.t("confirmDeleteVideo"),
+          this.reallyDeleteCurrentVideo.bind(this)
+        );
+      }
+    );
+  }
+
   renderLogoMedia() {
     return html`
       <div class="layout vertical logoImagePlaceholder">
@@ -560,6 +669,13 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
             @success="${this._logoImageUploaded}"
           >
           </yp-file-upload>
+          ${(this.currentLogoImages && this.currentLogoImages.length > 0) ||
+          this.imagePreviewUrl
+            ? html`<md-filled-icon-button class="deleteImageButton"
+                @click="${this.deleteCurrentLogoImage}"
+                ><md-icon>delete</md-icon></md-filled-icon-button
+              >`
+            : nothing}
           <div
             class="aiGenerationIconContainer"
             ?background-not-active="${!this.generatingAiImageInBackground}"
@@ -583,6 +699,13 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
             class="videoUploadContainer"
             ?has-video="${this.videoPreviewUrl || this.collectionVideoURL}"
           >
+            ${this.collectionVideoURL || this.videoPreviewUrl
+              ? html`<md-filled-icon-button
+                  style="margin-bottom: 8px;"
+                  @click="${this.deleteCurrentVideo}"
+                  ><md-icon>delete</md-icon></md-filled-icon-button
+                >`
+              : nothing}
             <yp-file-upload
               ?hidden="${!this.hasVideoUpload}"
               id="videoFileUpload"
@@ -639,6 +762,11 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
       css`
         .saveButton {
           margin-left: 16px;
+        }
+
+        .deleteImageButton {
+          margin-bottom: 48px;
+          margin-left: 18px;
         }
 
         .videoCoverCheckbox {
@@ -995,7 +1123,7 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
     this.uploadedVideoId = event.detail.videoId;
     this.collection!.configuration.useVideoCover = true;
     this.videoPreviewUrl = event.detail.videoUrl;
-    debugger;
+    this.connectedVideoToCollection = true;
     this._configChanged();
     this.requestUpdate();
   }
@@ -1016,6 +1144,7 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
     this.collectionVideoId = undefined;
     this.uploadedVideoId = undefined;
     this.videoPreviewUrl = undefined;
+    this.connectedVideoToCollection = false;
 
     (this.$$("#headerImageUpload") as YpFileUpload).clear();
     (this.$$("#logoImageUpload") as YpFileUpload).clear();

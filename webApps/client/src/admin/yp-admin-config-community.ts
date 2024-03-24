@@ -458,7 +458,7 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
           }
         );
       } else {
-        if (this.uploadedVideoId) {
+        if (this.uploadedVideoId && this.connectedVideoToCollection) {
           await window.adminServerApi.addVideoToCollection(
             community.id,
             {

@@ -357,7 +357,7 @@ let YpAdminConfigCommunity = class YpAdminConfigCommunity extends YpAdminConfigB
                 });
             }
             else {
-                if (this.uploadedVideoId) {
+                if (this.uploadedVideoId && this.connectedVideoToCollection) {
                     await window.adminServerApi.addVideoToCollection(community.id, {
                         videoId: this.uploadedVideoId,
                     }, "completeAndAddToCommunity");

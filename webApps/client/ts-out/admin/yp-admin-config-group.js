@@ -340,7 +340,7 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
         super._formResponse(event);
         const domain = event.detail;
         if (domain) {
-            if (this.uploadedVideoId) {
+            if (this.uploadedVideoId && this.connectedVideoToCollection) {
                 await window.adminServerApi.addVideoToCollection(domain.id, {
                     videoId: this.uploadedVideoId,
                 }, this.collectionType);

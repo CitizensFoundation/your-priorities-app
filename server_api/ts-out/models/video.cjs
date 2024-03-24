@@ -607,7 +607,7 @@ module.exports = (sequelize, DataTypes) => {
                 where: {
                     id: req.params.videoId,
                 },
-                attributes: ["id"],
+                attributes: ["id", "formats"],
             });
             if (video) {
                 if (req.params.groupId) {
@@ -694,8 +694,7 @@ module.exports = (sequelize, DataTypes) => {
                     }
                 }
                 else {
-                    log.error("Can't find collection for video");
-                    res.sendStatus(404);
+                    log.info("No collection for video");
                 }
                 video.deleted = true;
                 await video.save();
@@ -704,6 +703,7 @@ module.exports = (sequelize, DataTypes) => {
                         const mediaManager = new CollectionImageGenerator();
                         await mediaManager.deleteMediaFormatsUrls(video.formats);
                         console.log("Deleted video", { videoId: req.params.videoId });
+                        res.sendStatus(200);
                     }
                     catch (error) {
                         console.error("Could not delete video", { error });
@@ -772,7 +772,7 @@ module.exports = (sequelize, DataTypes) => {
                                     }, "medium", { delay: 2000 });
                                 }
                                 if (video.formats && video.formats.length > 0) {
-                                    res.sendStatus({
+                                    res.send({
                                         videoId: options.videoId,
                                         videoUrl: video.formats[0],
                                     });

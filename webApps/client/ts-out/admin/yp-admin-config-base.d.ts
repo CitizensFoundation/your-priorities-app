@@ -40,6 +40,7 @@ export declare abstract class YpAdminConfigBase extends YpAdminPage {
     uploadedLogoImageId: number | undefined;
     uploadedHeaderImageId: number | undefined;
     uploadedVideoId: number | undefined;
+    connectedVideoToCollection: boolean;
     editHeaderText: string | undefined;
     toastText: string | undefined;
     saveText: string | undefined;
@@ -85,7 +86,13 @@ export declare abstract class YpAdminConfigBase extends YpAdminPage {
     get collectionVideoURL(): string | undefined;
     get collectionVideoPosterURL(): string | undefined;
     get collectionVideos(): Array<YpVideoData> | undefined;
+    clearVideos(): void;
+    clearImages(): void;
     renderCoverMediaContent(): TemplateResult<1>;
+    reallyDeleteCurrentLogoImage(): Promise<void>;
+    reallyDeleteCurrentVideo(): Promise<void>;
+    deleteCurrentLogoImage(event: CustomEvent): void;
+    deleteCurrentVideo(event: CustomEvent): void;
     renderLogoMedia(): TemplateResult<1>;
     renderHeaderImageUploads(): TemplateResult<1>;
     static get styles(): any[];

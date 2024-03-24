@@ -1,4 +1,4 @@
-import { YpServerApiBase } from './YpServerApiBase.js';
+import { YpServerApiBase } from "./YpServerApiBase.js";
 
 export class YpServerApiAdmin extends YpServerApiBase {
   public adminMethod(
@@ -6,7 +6,7 @@ export class YpServerApiAdmin extends YpServerApiBase {
     method: string,
     body: Record<string, unknown> | undefined = undefined
   ) {
-    if (["GET","HEAD"].indexOf(method) > -1) {
+    if (["GET", "HEAD"].indexOf(method) > -1) {
       return this.fetchWrapper(url);
     } else {
       return this.fetchWrapper(
@@ -20,31 +20,24 @@ export class YpServerApiAdmin extends YpServerApiBase {
     }
   }
 
-  public removeUserFromOrganization(
-    organizationId: number,
-    userId: number
-  ) {
+  public removeUserFromOrganization(organizationId: number, userId: number) {
     return this.fetchWrapper(
       this.baseUrlPath +
         `/organizations/${organizationId}/${userId}/remove_user`,
       {
-        method: 'DELETE',
+        method: "DELETE",
         body: JSON.stringify({}),
       },
       false
     );
   }
 
-  public removeAdmin(
-    collection: string,
-    collectionId: number,
-    userId: number
-  ) {
+  public removeAdmin(collection: string, collectionId: number, userId: number) {
     return this.fetchWrapper(
       this.baseUrlPath +
         `/${collection}/${collectionId}/${userId}/remove_admin`,
       {
-        method: 'DELETE',
+        method: "DELETE",
         body: JSON.stringify({}),
       },
       false
@@ -60,7 +53,7 @@ export class YpServerApiAdmin extends YpServerApiBase {
       this.baseUrlPath +
         `/${collection}/${collectionId}/${adminEmail}/add_admin`,
       {
-        method: 'POST',
+        method: "POST",
         body: JSON.stringify({}),
       },
       false
@@ -73,12 +66,12 @@ export class YpServerApiAdmin extends YpServerApiBase {
     inviteEmail: string,
     inviteType: string
   ) {
-    let query="";
-    if (inviteType=="addUserDirectly") {
-      if (collection==="communities") {
-        query = `?addToCommunityDirectly=1`
+    let query = "";
+    if (inviteType == "addUserDirectly") {
+      if (collection === "communities") {
+        query = `?addToCommunityDirectly=1`;
       } else {
-        query = `?addToGroupDirectly=1`
+        query = `?addToGroupDirectly=1`;
       }
     }
 
@@ -86,7 +79,7 @@ export class YpServerApiAdmin extends YpServerApiBase {
       this.baseUrlPath +
         `/${collection}/${collectionId}/${inviteEmail}/invite_user${query}`,
       {
-        method: 'POST',
+        method: "POST",
         body: JSON.stringify({}),
       },
       true,
@@ -99,15 +92,11 @@ export class YpServerApiAdmin extends YpServerApiBase {
   // add followup promt for additional causes
   //
 
-  public addUserToOrganization(
-    organizationId: number,
-    userId: number
-  ) {
+  public addUserToOrganization(organizationId: number, userId: number) {
     return this.fetchWrapper(
-      this.baseUrlPath +
-        `/organizations/${organizationId}/${userId}/add_user`,
+      this.baseUrlPath + `/organizations/${organizationId}/${userId}/add_user`,
       {
-        method: 'POST',
+        method: "POST",
         body: JSON.stringify({}),
       },
       false
@@ -125,7 +114,7 @@ export class YpServerApiAdmin extends YpServerApiBase {
           collectionItemType
         )}/${collectionId}`,
       {
-        method: 'POST',
+        method: "POST",
         body: JSON.stringify(body),
       },
       false
@@ -143,7 +132,7 @@ export class YpServerApiAdmin extends YpServerApiBase {
           collectionType
         )}/${collectionId}/update_translation`,
       {
-        method: 'PUT',
+        method: "PUT",
         body: JSON.stringify(body),
       },
       false
@@ -163,12 +152,16 @@ export class YpServerApiAdmin extends YpServerApiBase {
     );
   }
 
-  public addVideoToCollection(collectionId: number, body: Record<string, unknown>, type: string) {
+  public addVideoToCollection(
+    collectionId: number,
+    body: Record<string, unknown>,
+    type: string
+  ) {
     let fullType;
 
-    if (type=="group") {
+    if (type == "group") {
       fullType = "completeAndAddToGroup";
-    } else if(type=="community") {
+    } else if (type == "community") {
       fullType = "completeAndAddToCommunity";
     } else {
       fullType = "completeAndAddToDomain";
@@ -177,8 +170,56 @@ export class YpServerApiAdmin extends YpServerApiBase {
     return this.fetchWrapper(
       this.baseUrlPath + `/videos/${collectionId}/${fullType}`,
       {
-        method: 'PUT',
+        method: "PUT",
         body: JSON.stringify(body),
+      },
+      false
+    );
+  }
+
+  async deleteImage(
+    imageId: number,
+    collectionType: string,
+    collectionId: number
+  ) {
+    let fullType;
+    if (collectionType == "group") {
+      fullType = "deleteImageFromGroup";
+    } else if (collectionType == "community") {
+      fullType = "deleteImageFromCommunity";
+    } else {
+      fullType = "deleteImageFromDomain";
+    }
+
+    return this.fetchWrapper(
+      this.baseUrlPath + `/images/${collectionId}/${imageId}/${fullType}`,
+      {
+        method: "DELETE",
+        body: JSON.stringify({}),
+      },
+      false
+    );
+  }
+
+  async deleteVideo(
+    videoId: number,
+    collectionType: string,
+    collectionId: number
+  ) {
+    let fullType;
+    if (collectionType == "group") {
+      fullType = "deleteVideoFromGroup";
+    } else if (collectionType == "community") {
+      fullType = "deleteVideoFromCommunity";
+    } else {
+      fullType = "deleteVideoFromDomain";
+    }
+
+    return this.fetchWrapper(
+      this.baseUrlPath + `/videos/${collectionId}/${videoId}/${fullType}`,
+      {
+        method: "DELETE",
+        body: JSON.stringify({}),
       },
       false
     );
@@ -192,7 +233,8 @@ export class YpServerApiAdmin extends YpServerApiBase {
 
   public getAnalyticsData(communityId: number, type: string, params: string) {
     return this.fetchWrapper(
-      this.baseUrlPath + `/communities/${communityId}/${type}/getPlausibleSeries?${params}`
+      this.baseUrlPath +
+        `/communities/${communityId}/${type}/getPlausibleSeries?${params}`
     );
   }
 
@@ -208,7 +250,7 @@ export class YpServerApiAdmin extends YpServerApiBase {
       this.baseUrlPath +
         `/communities/${communityId}/${ssnLoginListDataId}/ssn_login_list_count`,
       {
-        method: 'DELETE',
+        method: "DELETE",
         body: JSON.stringify({}),
       },
       false
