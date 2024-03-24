@@ -155,6 +155,67 @@ module.exports = (sequelize, DataTypes) => {
     return formats;
   };
 
+  Image.removeImageFromCollection = async (req, res) => {
+    const imageId = req.params.id;
+    const groupId = req.params.groupId;
+    const communityId = req.params.communityId;
+    const domainId = req.params.domainId;
+    const postId = req.params.postId;
+
+    const image = await Image.findByPk(imageId);
+    if (image) {
+
+
+      if (groupId) {
+        const group = await models.Group.findByPk(groupId);
+        if (group) {
+          await group.removeLogoImage(image);
+        }
+      }
+
+      if (communityId) {
+        const community = await models.Community.findByPk(communityId);
+        if (community) {
+          await community.removeLogoImage(image);
+        }
+      }
+
+      if (domainId) {
+        const domain = await models.Domain.findByPk(domainId);
+        if (domain) {
+          await domain.removeLogoImage(image);
+        }
+      }
+
+      if (postId) {
+        const post = await models.Post.findByPk(postId);
+        if (post) {
+          await post.removeImage(image);
+        }
+      }
+
+      image.deleted = true;
+      await image.save();
+
+      import("../active-citizen/llms/collectionImageGenerator.js").then(
+        async ({ CollectionImageGenerator }) => {
+          try {
+            const mediaManager = new CollectionImageGenerator();
+            await mediaManager.deleteMediaFormatsUrls(image.formats);
+            console.log("Deleted image", { imageId: image.id });
+          } catch (error) {
+            console.error("Could not delete image", { error });
+            res.sendStatus(500);
+          }
+        }
+      );
+
+      res.status(200).json({ message: "Image removed from collection" });
+    } else {
+      res.status(404).json({ message: "Image not found" });
+    }
+  };
+
   Image.getSharpGalleryVersions = (itemType) => {
     return [
       {

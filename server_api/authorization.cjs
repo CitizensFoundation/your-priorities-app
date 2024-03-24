@@ -429,6 +429,8 @@ auth.entity('domain', function(req, done) {
   if (!match)
     match = req.originalUrl.match(/videos\/(\w+)/);
   if (!match)
+    match = req.originalUrl.match(/images\/(\w+)/);
+  if (!match)
     match = req.originalUrl.match(/allOurIdeas\/(\w+)/);
   if (!match) {
     done(new Error('Expected url like /domains/:domainId'));
@@ -657,6 +659,9 @@ auth.entity('community', function(req, done) {
   var match = req.originalUrl.match(/communities\/(\w+)/);
   if (!match)
     match = req.originalUrl.match(/videos\/(\w+)/);
+  if (!match)
+    match = req.originalUrl.match(/images\/(\w+)/);
+
   if (!match) {
     done(new Error('Expected url like /communities/:communityId'));
   } else {
@@ -760,6 +765,9 @@ auth.entity('group', function(req, done) {
     match = req.originalUrl.match(/allOurIdeas\/(\w+)/);
   if (!match)
     match = req.originalUrl.match(/ltp\/crt\/(\w+)/);
+  if (!match)
+    match = req.originalUrl.match(/images\/(\w+)/);
+
   if (!match) {
     done(new Error('Expected url like /groups/:groupId'));
   } else {

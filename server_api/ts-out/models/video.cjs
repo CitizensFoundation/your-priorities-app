@@ -76,7 +76,7 @@ module.exports = (sequelize, DataTypes) => {
             },
             {
                 fields: ["created_at", "deleted"],
-            }
+            },
         ],
     });
     Video.associate = (models) => {
@@ -601,6 +601,126 @@ module.exports = (sequelize, DataTypes) => {
             }
         });
     };
+    Video.removeVideoFromCollection = async (req, res, options) => {
+        try {
+            const video = await sequelize.models.Video.findOne({
+                where: {
+                    id: req.params.videoId,
+                },
+                attributes: ["id"],
+            });
+            if (video) {
+                if (req.params.groupId) {
+                    const group = await sequelize.models.Group.findOne({
+                        where: {
+                            id: req.params.groupId,
+                        },
+                        attributes: ["id"],
+                    });
+                    if (group) {
+                        await group.removeGroupLogoVideo(video);
+                    }
+                    else {
+                        log.error("Could not find group for video", {
+                            groupId: req.params.groupId,
+                        });
+                        res.sendStatus(404);
+                    }
+                }
+                else if (req.params.communityId) {
+                    const community = await sequelize.models.Community.findOne({
+                        where: {
+                            id: req.params.communityId,
+                        },
+                        attributes: ["id"],
+                    });
+                    if (community) {
+                        await community.removeCommunityLogoVideo(video);
+                    }
+                    else {
+                        log.error("Could not find community for video", {
+                            communityId: req.params.communityId,
+                        });
+                        res.sendStatus(404);
+                    }
+                }
+                else if (req.params.domainId) {
+                    const domain = await sequelize.models.Domain.findOne({
+                        where: {
+                            id: req.params.domainId,
+                        },
+                        attributes: ["id"],
+                    });
+                    if (domain) {
+                        await domain.removeDomainLogoVideo(video);
+                    }
+                    else {
+                        log.error("Could not find domain for video", {
+                            domainId: req.params.domainId,
+                        });
+                        res.sendStatus(404);
+                    }
+                }
+                else if (req.params.postId) {
+                    const post = await sequelize.models.Post.findOne({
+                        where: {
+                            id: req.params.postId,
+                        },
+                        attributes: ["id"],
+                    });
+                    if (post) {
+                        await post.removePostVideo(video);
+                    }
+                    else {
+                        log.error("Could not find post for video", {
+                            postId: req.params.postId,
+                        });
+                        res.sendStatus(404);
+                    }
+                }
+                else if (req.params.pointId) {
+                    const point = await sequelize.models.Point.findOne({
+                        where: { id: req.params.pointId },
+                        attributes: ["id"],
+                    });
+                    if (point) {
+                        await point.removePointVideo(video);
+                    }
+                    else {
+                        log.error("Could not find point for video", {
+                            postId: req.params.pointId,
+                        });
+                        res.sendStatus(404);
+                    }
+                }
+                else {
+                    log.error("Can't find collection for video");
+                    res.sendStatus(404);
+                }
+                video.deleted = true;
+                await video.save();
+                import("../active-citizen/llms/collectionImageGenerator.js").then(async ({ CollectionImageGenerator }) => {
+                    try {
+                        const mediaManager = new CollectionImageGenerator();
+                        await mediaManager.deleteMediaFormatsUrls(video.formats);
+                        console.log("Deleted video", { videoId: req.params.videoId });
+                    }
+                    catch (error) {
+                        console.error("Could not delete video", { error });
+                        res.sendStatus(500);
+                    }
+                });
+            }
+            else {
+                log.error("Could not find video", { videoId: req.params.videoId });
+                res.sendStatus(404);
+            }
+        }
+        catch (error) {
+            log.error("Could not remove video from collection", { error, options });
+            res.sendStatus(500);
+        }
+    };
     Video.completeUploadAndAddToCollection = async (req, res, options) => {
         if (req.body.isZiggeo) {
             await Video.addZiggeoVideo(req, res);
@@ -632,26 +752,34 @@ module.exports = (sequelize, DataTypes) => {
                             }
                             else {
                                 if (options.postId) {
-                                    queue.add('process-moderation', {
-                                        type: 'post-review-and-annotate-images',
-                                        postId: options.postId
-                                    }, 'medium', { delay: 20000 });
+                                    queue.add("process-moderation", {
+                                        type: "post-review-and-annotate-images",
+                                        postId: options.postId,
+                                    }, "medium", { delay: 20000 });
                                 }
                                 else if (options.groupId) {
-                                    queue.add('process-moderation', {
-                                        type: 'collection-review-and-annotate-images',
+                                    queue.add("process-moderation", {
+                                        type: "collection-review-and-annotate-images",
                                         collectionId: options.groupId,
-                                        collectionType: 'group'
-                                    }, 'medium', { delay: 2000 });
+                                        collectionType: "group",
+                                    }, "medium", { delay: 2000 });
                                 }
                                 else if (options.communityId) {
-                                    queue.add('process-moderation', {
-                                        type: 'collection-review-and-annotate-images',
+                                    queue.add("process-moderation", {
+                                        type: "collection-review-and-annotate-images",
                                         collectionId: options.communityId,
-                                        collectionType: 'community'
-                                    }, 'medium', { delay: 2000 });
+                                        collectionType: "community",
+                                    }, "medium", { delay: 2000 });
                                 }
-                                res.sendStatus(200);
+                                if (video.formats && video.formats.length > 0) {
+                                    res.sendStatus({
+                                        videoId: options.videoId,
+                                        videoUrl: video.formats[0],
+                                    });
+                                }
+                                else {
+                                    res.sendStatus(404);
+                                }
                             }
                         });
                     })

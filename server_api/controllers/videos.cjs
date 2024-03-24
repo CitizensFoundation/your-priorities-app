@@ -92,6 +92,40 @@ router.put(
     });
   }
 );
+
+router.delete(
+  "/:domainId/:videoId/deleteVideoFromDomain",
+  auth.can("edit domain"),
+  (req, res) => {
+    models.Video.removeVideoFromCollection(req, res, {
+      domainId: req.params.domainId,
+      videoId: req.params.videoId,
+    });
+  }
+);
+
+router.delete(
+  "/:communityId/:videoId/deleteVideoFromCommunity",
+  auth.can("edit community"),
+  (req, res) => {
+    models.Video.removeVideoFromCollection(req, res, {
+      communityId: req.params.communityId,
+      videoId: req.params.videoId,
+    });
+  }
+);
+
+router.delete(
+  "/:groupId/:videoId/deleteVideoFromGroup",
+  auth.can("edit group"),
+  (req, res) => {
+    models.Video.removeVideoFromCollection(req, res, {
+      groupId: req.params.groupId,
+      videoId: req.params.videoId,
+    });
+  }
+);
+
 router.post(
   "/:groupId/createAndGetPreSignedUploadUrl",
   auth.can("create media"),

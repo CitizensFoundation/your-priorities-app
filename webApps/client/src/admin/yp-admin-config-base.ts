@@ -994,7 +994,8 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
   _videoUploaded(event: CustomEvent) {
     this.uploadedVideoId = event.detail.videoId;
     this.collection!.configuration.useVideoCover = true;
-    this.videoPreviewUrl = event.detail.url;
+    this.videoPreviewUrl = event.detail.videoUrl;
+    debugger;
     this._configChanged();
     this.requestUpdate();
   }
