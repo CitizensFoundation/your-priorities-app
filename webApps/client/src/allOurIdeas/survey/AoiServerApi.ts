@@ -107,9 +107,33 @@ export class AoiServerApi extends YpServerApi {
     locale: string,
     body: AoiVoteSkipData
   ): AoiVoteResponse {
+    const url = new URL(
+      `${window.location.protocol}//${window.location.host}${this.baseUrlPath}/${groupId}/questions/${questionId}/prompts/${promptId}/skip.js?locale=${locale}`
+    );
+
+    Object.keys(window.appGlobals.originalQueryParameters).forEach((key) => {
+      if (key.startsWith("utm_")) {
+        url.searchParams.append(
+          key,
+          window.aoiAppGlobals.originalQueryParameters[key]
+        );
+      }
+    });
+
+    const browserId = window.appUser.getBrowserId();
+    const browserFingerprint = window.appUser.browserFingerprint;
+    const browserFingerprintConfidence =
+      window.appUser.browserFingerprintConfidence;
+
+    url.searchParams.append("checksum_a", browserId!);
+    url.searchParams.append("checksum_b", browserFingerprint!);
+    url.searchParams.append(
+      "checksum_c",
+      browserFingerprintConfidence!.toString()
+    );
+
     return this.fetchWrapper(
-      this.baseUrlPath +
-        `/${groupId}/questions/${questionId}/prompts/${promptId}/skip.js?locale=${locale}`,
+      url.toString(),
       {
         method: "POST",
         body: JSON.stringify(body),
@@ -124,7 +148,10 @@ export class AoiServerApi extends YpServerApi {
     showAll = false
   ): Promise<AoiChoiceData[]> {
     return this.fetchWrapper(
-      this.baseUrlPath + `/${groupId}/choices/${questionId}/throughGroup${showAll ? "?showAll=1" : ""}`,
+      this.baseUrlPath +
+        `/${groupId}/choices/${questionId}/throughGroup${
+          showAll ? "?showAll=1" : ""
+        }`
     ) as unknown as AoiChoiceData[];
   }
 
@@ -134,7 +161,6 @@ export class AoiServerApi extends YpServerApi {
     chatLog: PsSimpleChatLog[],
     languageName: string
   ): Promise<void> {
-
     return this.fetchWrapper(
       this.baseUrlPath + `/${groupId}/llmAnswerExplain`,
       {
@@ -142,10 +168,10 @@ export class AoiServerApi extends YpServerApi {
         body: JSON.stringify({
           wsClientId,
           chatLog,
-          languageName
+          languageName,
         }),
       },
       false
-    ) ;
+    );
   }
 }

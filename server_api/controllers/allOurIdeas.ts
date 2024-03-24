@@ -981,7 +981,8 @@ export class AllOurIdeasController {
     requestType: "vote" | "skip" | "skip_after_flag"
   ): any {
     const session = req.session; // Assuming express-session middleware is used
-    const params = req.body; // Assuming body-parser middleware is used for JSON body parsing
+    const params = req.query;
+    const body = req.body; // Assuming body-parser middleware is used for JSON body parsing
 
     console.log(
       `getVoteRequestOptions: ${JSON.stringify(params)} s: ${session}`
@@ -991,8 +992,8 @@ export class AllOurIdeasController {
         ? (req.user as YpUserData).id
         : req.session.id,
       // Use a static value of 5 if in test environment, so we can mock resulting API queries
-      time_viewed: process.env.NODE_ENV === "test" ? 5 : params.time_viewed,
-      appearance_lookup: params.appearance_lookup,
+      time_viewed: process.env.NODE_ENV === "test" ? 5 : body.time_viewed,
+      appearance_lookup: body.appearance_lookup,
     };
 
     const trackingData: any = {
@@ -1015,15 +1016,17 @@ export class AllOurIdeasController {
 
     options.tracking = trackingData;
 
+    console.log(`---------------------- ${JSON.stringify(trackingData)}`)
+
     switch (requestType) {
       case "vote":
-        options.direction = params.direction;
+        options.direction = body.direction;
         break;
       case "skip":
-        options.skip_reason = params.cant_decide_reason;
+        options.skip_reason = body.cant_decide_reason;
         break;
       case "skip_after_flag":
-        options.skip_reason = params.flag_reason;
+        options.skip_reason = body.flag_reason;
         break;
     }
 

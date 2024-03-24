@@ -42,14 +42,26 @@ export class AoiServerApi extends YpServerApi {
         }, false);
     }
     postVoteSkip(groupId, questionId, promptId, locale, body) {
-        return this.fetchWrapper(this.baseUrlPath +
-            `/${groupId}/questions/${questionId}/prompts/${promptId}/skip.js?locale=${locale}`, {
+        const url = new URL(`${window.location.protocol}//${window.location.host}${this.baseUrlPath}/${groupId}/questions/${questionId}/prompts/${promptId}/skip.js?locale=${locale}`);
+        Object.keys(window.appGlobals.originalQueryParameters).forEach((key) => {
+            if (key.startsWith("utm_")) {
+                url.searchParams.append(key, window.aoiAppGlobals.originalQueryParameters[key]);
+            }
+        });
+        const browserId = window.appUser.getBrowserId();
+        const browserFingerprint = window.appUser.browserFingerprint;
+        const browserFingerprintConfidence = window.appUser.browserFingerprintConfidence;
+        url.searchParams.append("checksum_a", browserId);
+        url.searchParams.append("checksum_b", browserFingerprint);
+        url.searchParams.append("checksum_c", browserFingerprintConfidence.toString());
+        return this.fetchWrapper(url.toString(), {
             method: "POST",
             body: JSON.stringify(body),
         }, false);
     }
     async getResults(groupId, questionId, showAll = false) {
-        return this.fetchWrapper(this.baseUrlPath + `/${groupId}/choices/${questionId}/throughGroup${showAll ? "?showAll=1" : ""}`);
+        return this.fetchWrapper(this.baseUrlPath +
+            `/${groupId}/choices/${questionId}/throughGroup${showAll ? "?showAll=1" : ""}`);
     }
     llmAnswerConverstation(groupId, wsClientId, chatLog, languageName) {
         return this.fetchWrapper(this.baseUrlPath + `/${groupId}/llmAnswerExplain`, {
@@ -57,7 +69,7 @@ export class AoiServerApi extends YpServerApi {
             body: JSON.stringify({
                 wsClientId,
                 chatLog,
-                languageName
+                languageName,
             }),
         }, false);
     }
