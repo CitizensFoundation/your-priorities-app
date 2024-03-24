@@ -803,8 +803,8 @@ router.put('/:id', auth.can('edit domain'), function(req, res) {
       domain.set('secret_api_keys.github.client_secret', req.body.githubClientSecret);
 
 
-      domain.set('configuration.welcomeHTMLforNotLoggedInUsers',
-        (req.body.welcomeHTMLforNotLoggedInUsers && req.body.welcomeHTMLforNotLoggedInUsers!="") ? req.body.welcomeHTMLforNotLoggedInUsers : null);
+      domain.set('configuration.welcomeHtmlInsteadOfCommunitiesList',
+        (req.body.welcomeHtmlInsteadOfCommunitiesList && req.body.welcomeHtmlInsteadOfCommunitiesList!="") ? req.body.welcomeHtmlInsteadOfCommunitiesList : null);
 
       if (req.body.samlEntryPoint) {
         domain.set('secret_api_keys.saml.entryPoint', req.body.samlEntryPoint);

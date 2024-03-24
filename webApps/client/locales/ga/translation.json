@@ -35,7 +35,7 @@
   "areYouSureYouWantToDeleteThisOrganization": "An bhfuil tú cinnte gur mian leat an eagraíocht seo a scriosadh?",
   "createOrganization": "Cruthaigh eagraíocht",
   "ltpConfig": "Cumraíocht LTP",
-  "welcomeHTMLforNotLoggedInUsers": "Fáilte HTML do úsáideoirí nach bhfuil logáilte isteach",
+  "welcomeHtmlInsteadOfCommunitiesList ": "Fáilte HTML do úsáideoirí nach bhfuil logáilte isteach",
   "currentRealityTree": "Crann Réaltachta Reatha",
   "goalTree": "Crann Sprioc",
   "futureRealityTree": "Crann Réaltachta Todhchaí",

@@ -35,7 +35,7 @@
   "areYouSureYouWantToDeleteThisOrganization": "Er du sikker på at du vil slette denne organisasjonen?",
   "createOrganization": "Opprett organisasjon",
   "ltpConfig": "LTP-konfig",
-  "welcomeHTMLforNotLoggedInUsers": "Velkommen HTML for brukere som ikke er logget inn",
+  "welcomeHtmlInsteadOfCommunitiesList ": "Velkommen HTML for brukere som ikke er logget inn",
   "currentRealityTree": "Nåværende virkelighetstre",
   "goalTree": "Mål tre",
   "futureRealityTree": "Fremtidig virkelighetstre",

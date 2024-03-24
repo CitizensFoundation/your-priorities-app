@@ -914,7 +914,7 @@
   "areYouSureYouWantToDeleteThisOrganization": "Vai esat pārliecināts, ka vēlaties dzēst šo organizāciju?",
   "createOrganization": "Izveidot organizāciju",
   "ltpConfig": "LTP konfigurācija",
-  "welcomeHTMLforNotLoggedInUsers": "Sveiciens HTML neautorizētiem lietotājiem",
+  "welcomeHtmlInsteadOfCommunitiesList ": "Sveiciens HTML neautorizētiem lietotājiem",
   "currentRealityTree": "Pašreizējās Realitātes Koks",
   "goalTree": "Mērķu Koks",
   "futureRealityTree": "Nākotnes Realitātes Koks",

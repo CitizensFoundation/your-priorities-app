@@ -35,7 +35,7 @@
   "areYouSureYouWantToDeleteThisOrganization": "ཁྱེད་ཀྱིས་ཡི་གེ་ཚོགས་པ་བཏོན་གཏང་བ་འདི་ངེས་པར་ཡོད་པ་ཨིན་ན?",
   "createOrganization": "ཚོགས་པ་བཟོ",
   "ltpConfig": "LTP སྒྲིག་སྒྱུར",
-  "welcomeHTMLforNotLoggedInUsers": "ནང་འཁྲུལ་མ་འགོ་བཙུགས་པའི་HTML བཀོད་པ",
+  "welcomeHtmlInsteadOfCommunitiesList ": "ནང་འཁྲུལ་མ་འགོ་བཙུགས་པའི་HTML བཀོད་པ",
   "currentRealityTree": "ད་ལྟོའི་ཡོད་སྐུལ",
   "goalTree": "མིག་སྔོན་ཤིག",
   "futureRealityTree": "མཇུག་རྒྱུན་ཤིག",

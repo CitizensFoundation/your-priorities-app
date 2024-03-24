@@ -388,7 +388,7 @@ interface YpDomainConfiguration extends YpCollectionConfiguration {
   customUserRegistrationText?: string;
   customSamlLoginText?: string;
   samlLoginButtonUrl?: string;
-  welcomeHTMLforNotLoggedInUsers?: string;
+  welcomeHtmlInsteadOfCommunitiesList ?: string;
   ltp?: YpLtpConfiguration;
   onlyAdminsCanCreateCommunities?: boolean;
 }

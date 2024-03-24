@@ -190,7 +190,7 @@ let YpAdminConfigDomain = class YpAdminConfigDomain extends YpAdminConfigBase {
                     type: "checkbox",
                 },
                 {
-                    text: "welcomeHTMLforNotLoggedInUsers",
+                    text: "welcomeHtmlInsteadOfCommunitiesList",
                     type: "textarea",
                     rows: 5,
                 },

@@ -786,7 +786,7 @@
   "areYouSureYouWantToDeleteThisOrganization": "Är du säker på att du vill radera denna organisation?",
   "createOrganization": "Skapa organisation",
   "ltpConfig": "LTP-konfig",
-  "welcomeHTMLforNotLoggedInUsers": "Välkomst-HTML för ej inloggade användare",
+  "welcomeHtmlInsteadOfCommunitiesList ": "Välkomst-HTML för ej inloggade användare",
   "currentRealityTree": "Nuvarande verklighetsträd",
   "goalTree": "Målträd",
   "futureRealityTree": "Framtida verklighetsträd",

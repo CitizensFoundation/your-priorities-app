@@ -10,6 +10,7 @@ import { YpCollection, CollectionTabTypes } from "./yp-collection.js";
 import { customElement } from "lit/decorators.js";
 import { unsafeHTML } from "lit/directives/unsafe-html.js";
 import { html } from "lit";
+import { YpNavHelpers } from "../common/YpNavHelpers.js";
 let YpDomain = class YpDomain extends YpCollection {
     constructor() {
         super("domain", "community", "edit", "community.add");
@@ -75,13 +76,26 @@ let YpDomain = class YpDomain extends YpCollection {
                 undefined;
         }
     }
+    _openAdmin() {
+        YpNavHelpers.redirectTo(`/admin/${this.collectionType}/${this.collection.id}`);
+    }
     render() {
-        if (!this.loggedInUser &&
-            this.collection &&
+        if (this.collection &&
             this.collection.configuration
-                .welcomeHTMLforNotLoggedInUsers) {
-            return html `${unsafeHTML(this.collection.configuration
-                .welcomeHTMLforNotLoggedInUsers)}`;
+                .welcomeHtmlInsteadOfCommunitiesList) {
+            return html `
+        ${unsafeHTML(this.collection.configuration
+                .welcomeHtmlInsteadOfCommunitiesList)}
+
+        <div class="layout vertical center-center">
+          <md-icon-button
+            id="menuButton"
+            @click="${this._openAdmin}"
+            title="${this.t("domain.edit")}"
+            ><md-icon>settings</md-icon>
+          </md-icon-button>
+        </div>
+      `;
         }
         else {
             return super.render();

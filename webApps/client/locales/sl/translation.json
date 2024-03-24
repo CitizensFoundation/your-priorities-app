@@ -941,7 +941,7 @@
   "areYouSureYouWantToDeleteThisOrganization": "Ste prepričani, da želite izbrisati to organizacijo?",
   "createOrganization": "Ustvari organizacijo",
   "ltpConfig": "Konfiguracija LTP",
-  "welcomeHTMLforNotLoggedInUsers": "Dobrodošlica HTML za neprijavljene uporabnike",
+  "welcomeHtmlInsteadOfCommunitiesList ": "Dobrodošlica HTML za neprijavljene uporabnike",
   "currentRealityTree": "Drevo trenutne realnosti",
   "goalTree": "Drevo ciljev",
   "futureRealityTree": "Drevo prihodnje realnosti",

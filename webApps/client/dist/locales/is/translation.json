@@ -1206,7 +1206,7 @@
   "areYouSureYouWantToDeleteThisOrganization": "Ertu viss um að þú viljir eyða þessari stofnun?",
   "createOrganization": "Stofna stofnun",
   "ltpConfig": "LTP Stillingar",
-  "welcomeHTMLforNotLoggedInUsers": "Velkomin HTML fyrir notendur sem eru ekki innskráðir",
+  "welcomeHtmlInsteadOfCommunitiesList ": "Velkomin HTML fyrir notendur sem eru ekki innskráðir",
   "currentRealityTree": "Núverandi Raunveruleikatrjá",
   "goalTree": "Markmiðstré",
   "futureRealityTree": "Framtíðar Raunveruleikatrjá",

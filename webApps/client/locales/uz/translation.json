@@ -767,7 +767,7 @@
   "areYouSureYouWantToDeleteThisOrganization": "Ushbu tashkilotni o'chirishni xohlaysizmi?",
   "createOrganization": "Tashkilot yaratish",
   "ltpConfig": "LTP Sozlamalari",
-  "welcomeHTMLforNotLoggedInUsers": "Kirilmagan foydalanuvchilar uchun Xush kelibsiz HTML",
+  "welcomeHtmlInsteadOfCommunitiesList ": "Kirilmagan foydalanuvchilar uchun Xush kelibsiz HTML",
   "currentRealityTree": "Joriy Haqiqat Daraxti",
   "goalTree": "Maqsad Daraxti",
   "futureRealityTree": "Kelajak Haqiqat Daraxti",

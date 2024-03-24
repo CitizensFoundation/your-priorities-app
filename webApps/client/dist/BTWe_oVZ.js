@@ -749,7 +749,7 @@ ${this.t("exampleFontStyles")}:
             <div class="layout horizontal wrap">
               ${this.renderHeaderImageUploads()}
             </div>
-          `},{text:"onlyAdminsCanCreateCommunities",type:"checkbox",value:this.collection.only_admins_can_create_communities,translationToken:"domain.onlyAdminsCanCreateCommunities"},{text:"hideAllTabs",type:"checkbox"},{text:"hideDomainNews",type:"checkbox"},{text:"welcomeHTMLforNotLoggedInUsers",type:"textarea",rows:5}]}),t.push({name:"webApp",icon:"get_app",items:[{text:"appHomeScreenShortName",type:"textfield",maxLength:12},{text:"appHomeScreenIconImageUpload",type:"html",templateData:x`
+          `},{text:"onlyAdminsCanCreateCommunities",type:"checkbox",value:this.collection.only_admins_can_create_communities,translationToken:"domain.onlyAdminsCanCreateCommunities"},{text:"hideAllTabs",type:"checkbox"},{text:"hideDomainNews",type:"checkbox"},{text:"welcomeHtmlInsteadOfCommunitiesList ",type:"textarea",rows:5}]}),t.push({name:"webApp",icon:"get_app",items:[{text:"appHomeScreenShortName",type:"textfield",maxLength:12},{text:"appHomeScreenIconImageUpload",type:"html",templateData:x`
             <yp-file-upload
               id="appHomeScreenIconImageUpload"
               raised
@@ -4015,7 +4015,7 @@ const helper=i$3`
     line-height: 1;
     padding-right: 1em;
     padding-bottom: 0.5em;
-    /* As a workaround for diacritics being cut off, add a top padding and a 
+    /* As a workaround for diacritics being cut off, add a top padding and a
     negative margin to compensate */
     padding-top: 0.25em;
     margin-top: -0.25em;

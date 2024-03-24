@@ -1,4 +1,4 @@
-import { LitElement, css, html, nothing, TemplateResult } from "lit";
+import { LitElement, css, html, nothing, TemplateResult, PropertyValueMap } from "lit";
 import { property, customElement, query } from "lit/decorators.js";
 import "@material/web/button/filled-button.js";
 import "@material/web/progress/circular-progress.js";
@@ -29,6 +29,7 @@ import { YpGenerateAiImage } from "../common/yp-generate-ai-image.js";
 import { YpImage } from "../common/yp-image.js";
 import { YpAdminConfigGroup } from "./yp-admin-config-group.js";
 import { MdOutlinedSelect } from "@material/web/select/outlined-select.js";
+import { YpEmojiSelector } from "../common/yp-emoji-selector.js";
 
 export const defaultLtpPromptsConfiguration = () => {
   return Object.fromEntries(Array.from({ length: 10 }, (_, i) => [i + 1, ""]));
@@ -860,6 +861,11 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
     }
   }
 
+  protected override firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
+    super.firstUpdated(_changedProperties);
+    this._updateEmojiBindings();
+  }
+
   _getLocalizePageTitle(page: YpHelpPageData) {
     let pageLocale = "en";
     if (window.appGlobals.locale && page.title[window.appGlobals.locale]) {
@@ -937,20 +943,17 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
       (this.$$("#videoFileUpload") as YpFileUpload).clear();
   }
 
-  /*_updateEmojiBindings() {
+  _updateEmojiBindings() {
     setTimeout(() => {
       const description = this.$$('#description') as HTMLInputElement;
-      //      description.dispatchEvent(new CustomEvent("changed"));
-      const emojiSelector = this.$$(
-        '#emojiSelectorDescription'
-      ) as YpEmojiSelector;
+      const emojiSelector = this.$$('#emojiSelectorDescription') as YpEmojiSelector;
       if (description && emojiSelector) {
         emojiSelector.inputTarget = description;
       } else {
-        console.warn("Collection edit: Can't bind emojis :(");
+        console.error("Could not find emoji selector or description input")
       }
     }, 500);
-  }*/
+  }
 
   _getCurrentValue(question: YpStructuredQuestionData) {
     if (this.collection && this.collection.configuration) {

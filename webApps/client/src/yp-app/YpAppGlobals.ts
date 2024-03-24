@@ -331,7 +331,6 @@ export class YpAppGlobals extends YpCodeBase {
         ".fr": "fr",
         ".hr": "hr",
         ".hu": "hu",
-        ".is": "is",
         ".nl": "nl",
         ".no": "no",
         ".pl": "pl",

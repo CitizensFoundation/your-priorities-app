@@ -941,7 +941,7 @@
   "areYouSureYouWantToDeleteThisOrganization": "Jste si jisti, že chcete smazat tuto organizaci?",
   "createOrganization": "Vytvořit organizaci",
   "ltpConfig": "Konfigurace LTP",
-  "welcomeHTMLforNotLoggedInUsers": "Uvítací HTML pro nepřihlášené uživatele",
+  "welcomeHtmlInsteadOfCommunitiesList ": "Uvítací HTML pro nepřihlášené uživatele",
   "currentRealityTree": "Strom aktuální reality",
   "goalTree": "Cílový strom",
   "futureRealityTree": "Strom budoucí reality",

@@ -35,7 +35,7 @@
   "areYouSureYouWantToDeleteThisOrganization": "តើអ្នកប្រាកដថាចង់លុបអង្គភាពនេះទេ?",
   "createOrganization": "បង្កើតអង្គភាព",
   "ltpConfig": "ការកំណត់ LTP",
-  "welcomeHTMLforNotLoggedInUsers": "ស្វាគមន៍ HTML សម្រាប់អ្នកប្រើដែលមិនបានកត់ឈ្មោះចូល",
+  "welcomeHtmlInsteadOfCommunitiesList ": "ស្វាគមន៍ HTML សម្រាប់អ្នកប្រើដែលមិនបានកត់ឈ្មោះចូល",
   "currentRealityTree": "ដើមឈើបច្ចុប្បន្នភាព",
   "goalTree": "ដើមឈើគោលដៅ",
   "futureRealityTree": "ដើមឈើអនាគត",

@@ -7,6 +7,7 @@ import { customElement } from "lit/decorators.js";
 import { AcActivities } from "../ac-activities/ac-activities.js";
 import { unsafeHTML } from "lit/directives/unsafe-html.js";
 import { html } from "lit";
+import { YpNavHelpers } from "../common/YpNavHelpers.js";
 
 @customElement("yp-domain")
 export class YpDomain extends YpCollection {
@@ -99,17 +100,33 @@ export class YpDomain extends YpCollection {
     }
   }
 
+  _openAdmin() {
+    YpNavHelpers.redirectTo(
+      `/admin/${this.collectionType}/${this.collection!.id}`
+    );
+  }
+
   override render() {
     if (
-      !this.loggedInUser &&
       this.collection &&
       (this.collection.configuration as YpDomainConfiguration)
-        .welcomeHTMLforNotLoggedInUsers
+        .welcomeHtmlInsteadOfCommunitiesList
     ) {
-      return html`${unsafeHTML(
-        (this.collection.configuration as YpDomainConfiguration)
-          .welcomeHTMLforNotLoggedInUsers
-      )}`;
+      return html`
+        ${unsafeHTML(
+          (this.collection.configuration as YpDomainConfiguration)
+            .welcomeHtmlInsteadOfCommunitiesList
+        )}
+
+        <div class="layout vertical center-center">
+          <md-icon-button
+            id="menuButton"
+            @click="${this._openAdmin}"
+            title="${this.t("domain.edit")}"
+            ><md-icon>settings</md-icon>
+          </md-icon-button>
+        </div>
+      `;
     } else {
       return super.render();
     }

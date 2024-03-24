@@ -475,7 +475,7 @@
   "areYouSureYouWantToDeleteThisOrganization": "คุณแน่ใจหรือไม่ว่าต้องการลบองค์กรนี้?",
   "createOrganization": "สร้างองค์กร",
   "ltpConfig": "การตั้งค่า LTP",
-  "welcomeHTMLforNotLoggedInUsers": "ยินดีต้อนรับ HTML สำหรับผู้ใช้ที่ไม่ได้เข้าสู่ระบบ",
+  "welcomeHtmlInsteadOfCommunitiesList ": "ยินดีต้อนรับ HTML สำหรับผู้ใช้ที่ไม่ได้เข้าสู่ระบบ",
   "currentRealityTree": "ต้นไม้ความเป็นจริงปัจจุบัน",
   "goalTree": "ต้นไม้เป้าหมาย",
   "futureRealityTree": "ต้นไม้ความเป็นจริงในอนาคต",

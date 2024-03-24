@@ -737,7 +737,7 @@
   "areYouSureYouWantToDeleteThisOrganization": "¿Estás seguro de que quieres eliminar esta organización?",
   "createOrganization": "Crear organización",
   "ltpConfig": "Config LTP",
-  "welcomeHTMLforNotLoggedInUsers": "Bienvenida HTML para usuarios no conectados",
+  "welcomeHtmlInsteadOfCommunitiesList ": "Bienvenida HTML para usuarios no conectados",
   "currentRealityTree": "Árbol de Realidad Actual",
   "goalTree": "Árbol de Objetivos",
   "futureRealityTree": "Árbol de Realidad Futura",

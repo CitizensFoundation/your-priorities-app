@@ -902,7 +902,7 @@
   "areYouSureYouWantToDeleteThisOrganization": "Ste si istí, že chcete odstrániť túto organizáciu?",
   "createOrganization": "Vytvoriť organizáciu",
   "ltpConfig": "Konfigurácia LTP",
-  "welcomeHTMLforNotLoggedInUsers": "Uvítací HTML pre neprihlásených užívateľov",
+  "welcomeHtmlInsteadOfCommunitiesList ": "Uvítací HTML pre neprihlásených užívateľov",
   "currentRealityTree": "Strom aktuálnej reality",
   "goalTree": "Cieľový strom",
   "futureRealityTree": "Strom budúcej reality",

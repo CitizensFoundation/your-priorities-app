@@ -35,7 +35,7 @@
   "areYouSureYouWantToDeleteThisOrganization": "დარწმუნებული ხართ, რომ გსურთ ამ ორგანიზაციის წაშლა?",
   "createOrganization": "ორგანიზაციის შექმნა",
   "ltpConfig": "LTP კონფიგურაცია",
-  "welcomeHTMLforNotLoggedInUsers": "კერძო HTML არაავტორიზებული მომხმარებლებისთვის",
+  "welcomeHtmlInsteadOfCommunitiesList ": "კერძო HTML არაავტორიზებული მომხმარებლებისთვის",
   "currentRealityTree": "მიმდინარე რეალობის ხე",
   "goalTree": "მიზნის ხე",
   "futureRealityTree": "მომავალი რეალობის ხე",

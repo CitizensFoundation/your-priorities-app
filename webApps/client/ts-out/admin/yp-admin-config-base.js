@@ -718,6 +718,10 @@ export class YpAdminConfigBase extends YpAdminPage {
             console.error("Collection id setup for get help pages");
         }
     }
+    firstUpdated(_changedProperties) {
+        super.firstUpdated(_changedProperties);
+        this._updateEmojiBindings();
+    }
     _getLocalizePageTitle(page) {
         let pageLocale = "en";
         if (window.appGlobals.locale && page.title[window.appGlobals.locale]) {
@@ -788,20 +792,18 @@ export class YpAdminConfigBase extends YpAdminPage {
         if (this.$$("#videoFileUpload"))
             this.$$("#videoFileUpload").clear();
     }
-    /*_updateEmojiBindings() {
-      setTimeout(() => {
-        const description = this.$$('#description') as HTMLInputElement;
-        //      description.dispatchEvent(new CustomEvent("changed"));
-        const emojiSelector = this.$$(
-          '#emojiSelectorDescription'
-        ) as YpEmojiSelector;
-        if (description && emojiSelector) {
-          emojiSelector.inputTarget = description;
-        } else {
-          console.warn("Collection edit: Can't bind emojis :(");
-        }
-      }, 500);
-    }*/
+    _updateEmojiBindings() {
+        setTimeout(() => {
+            const description = this.$$('#description');
+            const emojiSelector = this.$$('#emojiSelectorDescription');
+            if (description && emojiSelector) {
+                emojiSelector.inputTarget = description;
+            }
+            else {
+                console.error("Could not find emoji selector or description input");
+            }
+        }, 500);
+    }
     _getCurrentValue(question) {
         if (this.collection && this.collection.configuration) {
             if (["textheader", "textdescription"].indexOf(question.type) == -1) {

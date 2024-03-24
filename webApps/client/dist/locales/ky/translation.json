@@ -831,7 +831,7 @@
   "areYouSureYouWantToDeleteThisOrganization": "Бул уюмду өчүрүүнү каалайсызбы?",
   "createOrganization": "Уюм түзүү",
   "ltpConfig": "LTP Конфигурациясы",
-  "welcomeHTMLforNotLoggedInUsers": "Кирбеген колдонуучулар үчүн HTML тосуп алуу",
+  "welcomeHtmlInsteadOfCommunitiesList ": "Кирбеген колдонуучулар үчүн HTML тосуп алуу",
   "currentRealityTree": "Азыркы Чындык Дарағы",
   "goalTree": "Максат Дарағы",
   "futureRealityTree": "Келечектеги Чындык Дарағы",

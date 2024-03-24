@@ -1,4 +1,4 @@
-import { nothing, TemplateResult } from "lit";
+import { nothing, TemplateResult, PropertyValueMap } from "lit";
 import "@material/web/button/filled-button.js";
 import "@material/web/progress/circular-progress.js";
 import "@material/web/tabs/tabs.js";
@@ -77,7 +77,7 @@ export declare abstract class YpAdminConfigBase extends YpAdminPage {
     _themeChanged(event: CustomEvent): void;
     renderSaveButton(): TemplateResult;
     renderTabs(): TemplateResult | typeof nothing;
-    renderTabPages(): TemplateResult<1> | typeof nothing;
+    renderTabPages(): typeof nothing | TemplateResult<1>;
     _generateLogo(event: CustomEvent): void;
     renderTabPage(configItems: Array<YpStructuredConfigData>, itemIndex: number): TemplateResult<1>;
     get collectionVideoURL(): string | undefined;
@@ -90,10 +90,11 @@ export declare abstract class YpAdminConfigBase extends YpAdminPage {
     renderVideoUpload(): TemplateResult;
     renderNameAndDescription(hideDescription?: boolean): TemplateResult;
     _descriptionChanged(event: CustomEvent): void;
-    render(): TemplateResult<1> | typeof nothing;
+    render(): typeof nothing | TemplateResult<1>;
     _gotAiImage(event: CustomEvent): void;
     updated(changedProperties: Map<string | number | symbol, unknown>): void;
     _getHelpPages(collectionTypeOverride?: string | undefined, collectionIdOverride?: number | undefined): Promise<void>;
+    protected firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void;
     _getLocalizePageTitle(page: YpHelpPageData): string;
     beforeSave(): void;
     afterSave(): void;
@@ -104,6 +105,7 @@ export declare abstract class YpAdminConfigBase extends YpAdminPage {
     _videoUploaded(event: CustomEvent): void;
     _getSaveCollectionPath(path: string): any;
     _clear(): void;
+    _updateEmojiBindings(): void;
     _getCurrentValue(question: YpStructuredQuestionData): any;
 }
 //# sourceMappingURL=yp-admin-config-base.d.ts.map
