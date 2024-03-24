@@ -1,4 +1,5 @@
 {
+  "answersToVoteOn": "Answers to vote on (one per line)",
   "questionName": "Question to ask",
   "closeAndGenerateIconInBackground": "Close and generate icon in background",
   "rankedOrderInfo": "These are the rank-ordered responses based on public voting",
@@ -56,7 +57,6 @@
   "aoiAiAnalysisConfig": "Automated AI Analysis Config",
   "allOurIdeasOptions": "Options",
   "stop": "Stop",
-  "answersToVoteOn": "Answers to vote on",
   "submitAnswersForCreation": "Submit Answers",
   "generateMoreIdeasWithAi": "Generate more answers with AI",
   "generateIdeasWithAi": "Generate answers with AI",

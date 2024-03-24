@@ -722,7 +722,12 @@ let YpAdminApp = class YpAdminApp extends YpBaseElement {
     exitToMainApp() {
         this.active = false;
         if (this.collectionId === "new") {
-            YpNavHelpers.redirectTo(`/${this.getParentCollectionType()}/${this.parentCollectionId}`);
+            if (window.appGlobals.originalQueryParameters["createProjectForGroup"]) {
+                YpNavHelpers.redirectTo(`/domain/${this.parentCollectionId}`);
+            }
+            else {
+                YpNavHelpers.redirectTo(`/${this.getParentCollectionType()}/${this.parentCollectionId}`);
+            }
         }
         else {
             YpNavHelpers.redirectTo(`/${this.collectionType}/${this.collectionId}`);

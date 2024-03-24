@@ -622,6 +622,13 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmBase {
           text-align: center;
         }
 
+        .generateAnswersInfo {
+          margin-top: -16px;
+          margin-bottom: 24px;
+          font-size: 14px;
+          font-style: italic;
+        }
+
         .buttons {
           padding: 8px;
           display: flex;
@@ -676,10 +683,7 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmBase {
 
   renderCreateIdeas() {
     return html`
-      <div
-        class="layout vertical center-center"
-        style="margin-top: -16px;margin-bottom: 16px;font-size: 14px;font-style: italic;"
-      >
+      <div class="layout vertical center-center generateAnswersInfo">
         <div style="max-width: 650px">
           ${unsafeHTML(this.t("generateAnswersInfo"))}
         </div>
