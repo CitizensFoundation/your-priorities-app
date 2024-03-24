@@ -27,17 +27,17 @@ export class YpEmojiDialog extends YpBaseElement {
   static override get styles() {
     return [
       css`
-        [hidden] {
-          display: none !important;
+        emoji-picker {
+          --background: var(--md-sys-color-lowest-surface);
+          --border-color: var(--md-sys-color-lowest-surface);
         }
       `,
     ];
   }
 
-
   closeDialog() {
     (this.$$("#emojiDialog") as MdDialog).open = false;
-    this.fire("dialog-closed")
+    this.fire("dialog-closed");
   }
 
   open(trigger: HTMLElement, inputTarget: HTMLInputElement) {
@@ -78,7 +78,9 @@ export class YpEmojiDialog extends YpBaseElement {
           ></emoji-picker>
         </div>
         <div slot="actions">
-          <md-button @click="${this.closeDialog}">${this.t("close")}</md-button>
+          <md-text-button @click="${this.closeDialog}"
+            >${this.t("close")}</md-text-button
+          >
         </div>
       </md-dialog>
     `;
