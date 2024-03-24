@@ -2,6 +2,8 @@ import * as fs from "fs";
 import * as path from "path";
 import * as glob from "glob";
 
+//TODO: Save a copy of the translation file before updating it, then use that copy to compare and to delete the keys that have changed in the en
+
 // Define paths
 const srcDirectory = "./src/";
 const translationFilePath = "./locales/en/translation.json";

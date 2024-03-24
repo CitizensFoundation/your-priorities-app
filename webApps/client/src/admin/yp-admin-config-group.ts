@@ -1630,6 +1630,7 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
     communityId: number | undefined
   ) {
     return html`<aoi-earl-ideas-editor
+      id="createEarl"
       .domainId="${domainId}"
       .communityId="${communityId}"
       @configuration-changed="${this.earlConfigChanged}"
@@ -1639,11 +1640,8 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
     ></aoi-earl-ideas-editor>`;
   }
 
-  questionNameChanged(event: CustomEvent) {
-    const target = (event as any).currentTarget! as MdFilledTextField;
-    const value = target.value;
+  setupEarlConfigIfNeeded() {
     const configuration = this.group.configuration.allOurIdeas!;
-
     if (!configuration.earl) {
       configuration.earl = {
         active: true,
@@ -1672,16 +1670,32 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
     if (!configuration.earl.question) {
       configuration.earl.question = {} as any;
     }
+  }
 
-    configuration.earl.question!.name = value;
+  questionNameChanged(event: CustomEvent) {
+    this.setupEarlConfigIfNeeded();
+    const target = (event as any).currentTarget! as MdFilledTextField;
+    const questionText = target.value;
+    const configuration = this.group.configuration.allOurIdeas!;
 
-    this.aoiQuestionName = value;
-    console.error("questionNameChanged", value);
+    const earlConfig = this.$$("#createEarl") as AoiEarlIdeasEditor;
+
+    if (questionText && questionText.length >= 3) {
+      earlConfig.openForAnswers = true;
+    } else {
+      earlConfig.openForAnswers = false;
+    }
+
+    configuration!.earl!.question!.name = questionText;
+
+    this.aoiQuestionName = questionText;
+
+    console.error("questionNameChanged", questionText);
 
     this.set(
       this.group.configuration.allOurIdeas!.earl,
       "question.name",
-      value
+      questionText
     );
 
     this.questionNameHasChanged = true;
@@ -1753,6 +1767,12 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
           value: this.aoiQuestionName,
           translationToken: "questionName",
           onChange: this.questionNameChanged,
+        },
+        {
+          type: "html",
+          templateData: html`<div class="layout vertical center-center" style="margin-top: -8px;font-size: 14px;font-style: italic;">
+            <div style="max-width: 650px">${unsafeHTML(this.t("generateAnswersInfo"))}</div>
+          </div>`,
         },
         {
           text: "earlConfig",
@@ -1920,23 +1940,6 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
           translationToken: "aoiModerationPrompt",
         },
         {
-          text: "analysis_config",
-          type: "textarea",
-          rows: 7,
-          value: earl?.configuration?.analysis_config
-            ? JSON.stringify(earl?.configuration?.analysis_config, null, 2)
-            : JSON.stringify(defaultAiAnalysisJson, null, 2),
-          onChange: (e: CustomEvent) =>
-            this._updateEarl(e, "configuration.analysis_config", true),
-          translationToken: "aoiAiAnalysisConfig",
-        },
-        {
-          type: "html",
-          templateData: html`<div class="layout vertical center-center" style="margin-top: -8px">
-            <div style="max-width: 700px">${unsafeHTML(this.t("aiAnalysisConfigInfo"))}</div>
-          </div>`,
-        },
-        {
           text: "targetVotes",
           type: "textfield",
           maxLength: 3,
@@ -1972,6 +1975,24 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
             ),
           translationToken: "externalGoalTriggerUrl",
         },
+        {
+          text: "analysis_config",
+          type: "textarea",
+          rows: 7,
+          value: earl?.configuration?.analysis_config
+            ? JSON.stringify(earl?.configuration?.analysis_config, null, 2)
+            : JSON.stringify(defaultAiAnalysisJson, null, 2),
+          onChange: (e: CustomEvent) =>
+            this._updateEarl(e, "configuration.analysis_config", true),
+          translationToken: "aoiAiAnalysisConfig",
+        },
+        {
+          type: "html",
+          templateData: html`<div class="layout vertical center-center" style="margin-top: -8px">
+            <div style="max-width: 700px">${unsafeHTML(this.t("aiAnalysisConfigInfo"))}</div>
+          </div>`,
+        },
+
       ] as Array<YpStructuredConfigData>,
     } as YpConfigTabData;
   }

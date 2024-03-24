@@ -20,6 +20,7 @@ import { AoiGenerateAiLogos } from "./aoiGenerateAiLogos.js";
 let AoiEarlIdeasEditor = class AoiEarlIdeasEditor extends YpStreamingLlmBase {
     constructor() {
         super();
+        this.openForAnswers = false;
         this.isGeneratingWithAi = false;
         this.isSubmittingIdeas = false;
         this.isFetchingChoices = false;
@@ -509,6 +510,7 @@ let AoiEarlIdeasEditor = class AoiEarlIdeasEditor extends YpStreamingLlmBase {
         <md-filled-text-field
           type="textarea"
           id="answers"
+          ?disabled="${!this.openForAnswers}"
           rows="14"
           @input="${this.answersChanged}"
           .label="${this.t("answersToVoteOn")}"
@@ -537,7 +539,7 @@ let AoiEarlIdeasEditor = class AoiEarlIdeasEditor extends YpStreamingLlmBase {
                   class="button"
                   @click="${this.generateIdeas}"
                   ?hidden="${!this.hasLlm}"
-                  ?disabled="${this.isGeneratingWithAi}"
+                  ?disabled="${this.isGeneratingWithAi || !this.openForAnswers}"
                   >${this.answers?.length > 1
                 ? this.t("generateMoreIdeasWithAi")
                 : this.t("generateIdeasWithAi")}
@@ -747,6 +749,9 @@ __decorate([
 __decorate([
     property({ type: Number })
 ], AoiEarlIdeasEditor.prototype, "communityId", void 0);
+__decorate([
+    property({ type: Boolean })
+], AoiEarlIdeasEditor.prototype, "openForAnswers", void 0);
 __decorate([
     property({ type: Number })
 ], AoiEarlIdeasEditor.prototype, "domainId", void 0);

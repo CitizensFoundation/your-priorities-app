@@ -62,8 +62,8 @@ export declare class YpPostPoints extends YpBaseElementWithLogin {
     _clearTextValueMobileUpOrDown(): void;
     updated(changedProperties: Map<string | number | symbol, unknown>): void;
     static get styles(): any[];
-    renderAudioUpload(type: string, hideAudio: boolean, hasCurrentAudio: string | undefined, uploadAudioPointHeader: string): TemplateResult<1> | typeof nothing;
-    renderVideoUpload(type: string, hideVideo: boolean, hasCurrentVideo: string | undefined, uploadVideoHeader: string, videoUploadedFunc: Function, uploadedVideoId: number | undefined): TemplateResult<1> | typeof nothing;
+    renderAudioUpload(type: string, hideAudio: boolean, hasCurrentAudio: string | undefined, uploadAudioPointHeader: string): typeof nothing | TemplateResult<1>;
+    renderVideoUpload(type: string, hideVideo: boolean, hasCurrentVideo: string | undefined, uploadVideoHeader: string, videoUploadedFunc: Function, uploadedVideoId: number | undefined): typeof nothing | TemplateResult<1>;
     renderMobilePointSelection(): void;
     renderPointItem(point: YpPointData, index: number): TemplateResult;
     renderPointHeader(header: string, alternativeHeader: string | undefined, headerTextType: string): TemplateResult<1>;
@@ -84,7 +84,7 @@ export declare class YpPostPoints extends YpBaseElementWithLogin {
     _audioMobileUploaded(event: CustomEvent): void;
     get mobileScrollOffset(): number;
     get listResizeScrollThreshold(): number;
-    get listPaddingTop(): 600 | 500;
+    get listPaddingTop(): 500 | 600;
     connectedCallback(): void;
     disconnectedCallback(): void;
     _listResize(): void;

@@ -1488,6 +1488,7 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
     }
     renderCreateEarl(domainId, communityId) {
         return html `<aoi-earl-ideas-editor
+      id="createEarl"
       .domainId="${domainId}"
       .communityId="${communityId}"
       @configuration-changed="${this.earlConfigChanged}"
@@ -1496,9 +1497,7 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
       .configuration="${this.group.configuration.allOurIdeas}"
     ></aoi-earl-ideas-editor>`;
     }
-    questionNameChanged(event) {
-        const target = event.currentTarget;
-        const value = target.value;
+    setupEarlConfigIfNeeded() {
         const configuration = this.group.configuration.allOurIdeas;
         if (!configuration.earl) {
             configuration.earl = {
@@ -1527,10 +1526,23 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
         if (!configuration.earl.question) {
             configuration.earl.question = {};
         }
-        configuration.earl.question.name = value;
-        this.aoiQuestionName = value;
-        console.error("questionNameChanged", value);
-        this.set(this.group.configuration.allOurIdeas.earl, "question.name", value);
+    }
+    questionNameChanged(event) {
+        this.setupEarlConfigIfNeeded();
+        const target = event.currentTarget;
+        const questionText = target.value;
+        const configuration = this.group.configuration.allOurIdeas;
+        const earlConfig = this.$$("#createEarl");
+        if (questionText && questionText.length >= 3) {
+            earlConfig.openForAnswers = true;
+        }
+        else {
+            earlConfig.openForAnswers = false;
+        }
+        configuration.earl.question.name = questionText;
+        this.aoiQuestionName = questionText;
+        console.error("questionNameChanged", questionText);
+        this.set(this.group.configuration.allOurIdeas.earl, "question.name", questionText);
         this.questionNameHasChanged = true;
         this.configTabs = this.setupConfigTabs();
         this._configChanged();
@@ -1586,6 +1598,12 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
                     value: this.aoiQuestionName,
                     translationToken: "questionName",
                     onChange: this.questionNameChanged,
+                },
+                {
+                    type: "html",
+                    templateData: html `<div class="layout vertical center-center" style="margin-top: -8px;font-size: 14px;font-style: italic;">
+            <div style="max-width: 650px">${unsafeHTML(this.t("generateAnswersInfo"))}</div>
+          </div>`,
                 },
                 {
                     text: "earlConfig",
@@ -1734,22 +1752,6 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
                     translationToken: "aoiModerationPrompt",
                 },
                 {
-                    text: "analysis_config",
-                    type: "textarea",
-                    rows: 7,
-                    value: earl?.configuration?.analysis_config
-                        ? JSON.stringify(earl?.configuration?.analysis_config, null, 2)
-                        : JSON.stringify(defaultAiAnalysisJson, null, 2),
-                    onChange: (e) => this._updateEarl(e, "configuration.analysis_config", true),
-                    translationToken: "aoiAiAnalysisConfig",
-                },
-                {
-                    type: "html",
-                    templateData: html `<div class="layout vertical center-center" style="margin-top: -8px">
-            <div style="max-width: 700px">${unsafeHTML(this.t("aiAnalysisConfigInfo"))}</div>
-          </div>`,
-                },
-                {
                     text: "targetVotes",
                     type: "textfield",
                     maxLength: 3,
@@ -1773,6 +1775,22 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
                     value: earl?.configuration?.external_goal_trigger_url,
                     onChange: (e) => this._updateEarl(e, "configuration.external_goal_trigger_url", true),
                     translationToken: "externalGoalTriggerUrl",
+                },
+                {
+                    text: "analysis_config",
+                    type: "textarea",
+                    rows: 7,
+                    value: earl?.configuration?.analysis_config
+                        ? JSON.stringify(earl?.configuration?.analysis_config, null, 2)
+                        : JSON.stringify(defaultAiAnalysisJson, null, 2),
+                    onChange: (e) => this._updateEarl(e, "configuration.analysis_config", true),
+                    translationToken: "aoiAiAnalysisConfig",
+                },
+                {
+                    type: "html",
+                    templateData: html `<div class="layout vertical center-center" style="margin-top: -8px">
+            <div style="max-width: 700px">${unsafeHTML(this.t("aiAnalysisConfigInfo"))}</div>
+          </div>`,
                 },
             ],
         };

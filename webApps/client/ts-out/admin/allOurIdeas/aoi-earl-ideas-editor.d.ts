@@ -15,6 +15,7 @@ import { MdOutlinedTextField } from "@material/web/textfield/outlined-text-field
 export declare class AoiEarlIdeasEditor extends YpStreamingLlmBase {
     groupId: number;
     communityId: number | undefined;
+    openForAnswers: boolean;
     domainId: number | undefined;
     configuration: AoiConfigurationData;
     isCreatingIdeas: boolean;
@@ -60,7 +61,7 @@ export declare class AoiEarlIdeasEditor extends YpStreamingLlmBase {
     answersChanged(): void;
     renderCreateIdeas(): import("lit-html").TemplateResult<1>;
     renderIdeasSortingChips(): import("lit-html").TemplateResult<1>;
-    renderIcon(choice: AoiChoiceData): import("lit-html").TemplateResult<1> | typeof nothing;
+    renderIcon(choice: AoiChoiceData): typeof nothing | import("lit-html").TemplateResult<1>;
     aiStyleChanged(): void;
     renderAnswerData(answer: AoiChoiceData): import("lit-html").TemplateResult<1>;
     renderEditIdeas(): import("lit-html").TemplateResult<1>;

@@ -30,6 +30,9 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmBase {
   @property({ type: Number })
   communityId: number | undefined;
 
+  @property({ type: Boolean })
+  openForAnswers = false;
+
   @property({ type: Number })
   domainId: number | undefined;
 
@@ -676,6 +679,7 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmBase {
         <md-filled-text-field
           type="textarea"
           id="answers"
+          ?disabled="${!this.openForAnswers}"
           rows="14"
           @input="${this.answersChanged}"
           .label="${this.t("answersToVoteOn")}"
@@ -704,7 +708,7 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmBase {
                   class="button"
                   @click="${this.generateIdeas}"
                   ?hidden="${!this.hasLlm}"
-                  ?disabled="${this.isGeneratingWithAi}"
+                  ?disabled="${this.isGeneratingWithAi || !this.openForAnswers}"
                   >${this.answers?.length > 1
                     ? this.t("generateMoreIdeasWithAi")
                     : this.t("generateIdeasWithAi")}

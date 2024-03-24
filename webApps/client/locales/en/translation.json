@@ -4,7 +4,7 @@
   "rankedOrderInfo": "These are the rank-ordered responses based on public voting",
   "aiAnalysisInfo": "This is an automatically generated analysis of answers by GPT-4",
   "socialMediaCreateInfo": "Name, description and logo image will be used when sharing on social media",
-  "generateAnswersInfo": "Question must be at least 3 characters long. You must generated a minimum of 6 answers below, one in each line with maximum of 140 characters per answer",
+  "generateAnswersInfo": "Questions require a minimum of 3 characters. Provide at least 6 seed answers below, one per line, with a 140-character limit each",
   "aiAnalysisConfigInfo": "Automated AI analyses utilize your LLM prompts to provide voters with an analysis of the top N and bottom N answers. By default, the system is set to analyze the pros and cons of the top 3 and bottom 3 answers. You can disable the analysis above. Here is the data format: <div style='padding-left: 16px;'><br><em>[<br>{ ideasLabel: string; ideasIdsRange: number; analysisTypes:<br>[<br>{ label: string; contextPrompt: string; } <br>] <br>} <br>]</em></div>",
   "disableCollectionUpLink": "Hide Back (up) button for user",
   "enableAiModeration": "Enable AI Moderation",
