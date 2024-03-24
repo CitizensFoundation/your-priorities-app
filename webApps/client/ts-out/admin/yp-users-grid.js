@@ -59,6 +59,11 @@ let YpUsersGrid = class YpUsersGrid extends YpBaseElement {
           width: 200px;
         }
 
+        md-circular-progress {
+          margin-top: 8px;
+          margin-left: 16px;
+        }
+
         .email {
           width: 190px;
           overflow-wrap: break-word;
@@ -70,6 +75,10 @@ let YpUsersGrid = class YpUsersGrid extends YpBaseElement {
 
         .addRemoveButtons {
           width: 150px;
+        }
+
+        md-menu-item {
+          z-index: 500;
         }
 
         vaadin-grid {
@@ -307,6 +316,7 @@ let YpUsersGrid = class YpUsersGrid extends YpBaseElement {
         </div>
         <md-menu
           .menuCorner="${Corner.START_END}"
+          positioning="popover"
           id="userItemMenu${rowData.item.id}"
           anchor="user-item-${rowData.item.id}-anchor"
           class="helpButton"
