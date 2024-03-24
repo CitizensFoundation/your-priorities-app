@@ -52,7 +52,7 @@ export class YpThemeManager {
 
   isAppleDevice = false;
   themeScheme: MaterialColorScheme = "tonal";
-  channel = new BroadcastChannel("hex_color");
+  //channel = new BroadcastChannel("hex_color");
 
   constructor() {
     const savedDarkMode = localStorage.getItem(
@@ -77,10 +77,10 @@ export class YpThemeManager {
     this.setupOldThemes();
     this.themeChanged();
 
-    this.channel.onmessage = (event: any) => {
+    /*this.channel.onmessage = (event: any) => {
       this.themeColor = event.data;
       this.themeChanged();
-    };
+    };*/
   }
 
   setupOldThemes() {

@@ -5,6 +5,7 @@ import { YpBaseElement } from "../common/yp-base-element";
 //type MaterialColorScheme = 'tonal'|'vibrant'|'expressive'|'content'|'neutral'|'monochrome'|'fidelity'|'dynamic';
 //type MaterialDynamicVariants = "monochrome" | "neutral" | "tonalSpot" | "vibrant" | "expressive" | "fidelity" | "content" | "rainbow" | "fruitSalad";
 export class YpThemeManager {
+    //channel = new BroadcastChannel("hex_color");
     constructor() {
         this.themes = [];
         this.themeColor = "#0327f8";
@@ -12,7 +13,6 @@ export class YpThemeManager {
         this.themeHighContrast = false;
         this.isAppleDevice = false;
         this.themeScheme = "tonal";
-        this.channel = new BroadcastChannel("hex_color");
         const savedDarkMode = localStorage.getItem(YpBaseElement.darkModeLocalStorageKey);
         if (savedDarkMode) {
             this.themeDarkMode = true;
@@ -29,10 +29,10 @@ export class YpThemeManager {
         }
         this.setupOldThemes();
         this.themeChanged();
-        this.channel.onmessage = (event) => {
-            this.themeColor = event.data;
-            this.themeChanged();
-        };
+        /*this.channel.onmessage = (event: any) => {
+          this.themeColor = event.data;
+          this.themeChanged();
+        };*/
     }
     setupOldThemes() {
         this.themes.push({

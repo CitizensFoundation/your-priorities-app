@@ -21,7 +21,6 @@ export declare class YpThemeManager {
     }[];
     isAppleDevice: boolean;
     themeScheme: MaterialColorScheme;
-    channel: BroadcastChannel;
     constructor();
     setupOldThemes(): void;
     updateStyles(properties: Record<string, string>): void;
