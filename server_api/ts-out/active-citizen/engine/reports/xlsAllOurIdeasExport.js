@@ -13,7 +13,7 @@ const defaultAuthHeader = new Headers({
 });
 async function fetchChoices(questionId, utmSource) {
     try {
-        const url = `${PAIRWISE_API_HOST}/questions/${questionId}/choices.json${utmSource ? `?utm_source=${utmSource}` : ""}`;
+        const url = `${PAIRWISE_API_HOST}/questions/${questionId}/choices.json?include_inactive=true&show_all=true${utmSource ? `?utm_source=${utmSource}` : ""}`;
         const response = await fetch(url, {
             method: "GET",
             headers: defaultAuthHeader,
@@ -31,9 +31,9 @@ async function fetchChoices(questionId, utmSource) {
         throw error;
     }
 }
-async function fetchVotes(choiceId, utmSource) {
+async function fetchVotes(questionId, choiceId, utmSource) {
     try {
-        let url = `${PAIRWISE_API_HOST}/choices/${choiceId}/votes.json?valid_record=true`;
+        let url = `${PAIRWISE_API_HOST}/questions/${questionId}/choices/${choiceId}/show_votes.json`;
         if (utmSource) {
             url += `&utm_source=${utmSource}`;
         }
@@ -95,7 +95,7 @@ export async function exportChoiceVotes(workPackage, done) {
         losingVotesSheet.addRow(votesHeaders);
         for (let i = 0; i < choices.length; i++) {
             const choice = choices[i];
-            const votes = (await fetchVotes(choice.id, workPackage.utmSource));
+            const votes = (await fetchVotes(workPackage.questionId, choice.id, workPackage.utmSource));
             const voteCount = choice.wins + choice.losses;
             choicesSheet.addRow([
                 choice.id,
