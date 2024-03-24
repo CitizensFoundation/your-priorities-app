@@ -1,6 +1,6 @@
 {
   "name": "@yrpri/webapp",
-  "version": "9.0.34",
+  "version": "9.0.36",
   "repository": {
     "type": "git",
     "url": "https://github.com/CitizensFoundation/your-priorities-app.git"
@@ -31,6 +31,7 @@
     "@vaadin/vaadin-grid": "^23.3.29",
     "backbone": "~1.4.1",
     "blocking-elements": "^0.1.0",
+    "broadcastchannel-polyfill": "^1.0.1",
     "chart.js": "^4.4.1",
     "country-flag-emoji-polyfill": "^0.1.8",
     "d3": "^7.8.5",
