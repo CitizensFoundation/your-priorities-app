@@ -449,6 +449,18 @@ let AoiSurvey = class AoiSurvey extends YpBaseElement {
         <div class="layout vertical center-center">
           <md-tabs aria-label="Navigation Tabs">
             <md-primary-tab
+              id="introTab"
+              class="${this.pageIndex == PagesTypes.Introduction &&
+                "selectedContainer"}"
+              selected
+              @click="${() => this.changeTabTo(0)}"
+              aria-label="${this.t("Why Participate")}"
+            >
+              <md-icon slot="icon">info</md-icon>
+              ${this.t("About this project")}
+            </md-primary-tab>
+
+            <md-primary-tab
               id="votingTab"
               ?hidden="${this.surveyClosed}"
               class="${this.pageIndex == PagesTypes.Voting &&
@@ -460,17 +472,6 @@ let AoiSurvey = class AoiSurvey extends YpBaseElement {
               ${this.t("Select answers")}
             </md-primary-tab>
 
-            <md-primary-tab
-              id="introTab"
-              class="${this.pageIndex == PagesTypes.Introduction &&
-                "selectedContainer"}"
-              selected
-              @click="${() => this.changeTabTo(0)}"
-              aria-label="${this.t("Why Participate")}"
-            >
-              <md-icon slot="icon">info</md-icon>
-              ${this.t("About this project")}
-            </md-primary-tab>
 
             <md-primary-tab
               id="resultsTab"
