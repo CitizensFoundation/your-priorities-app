@@ -138,6 +138,13 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
           height: 243px;
         }
 
+        .socialMediaCreateInfo {
+          font-size: 12px;
+          font-style: italic;
+          text-align: center;
+          padding: 8px;
+        }
+
         .saveButtonContainer {
         }
 
@@ -192,7 +199,10 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
     return this.collection
       ? html`
           <div class="layout horizontal wrap topInputContainer">
-            ${this.renderLogoMedia()}
+            <div class="layout vertical">
+              ${this.renderLogoMedia()}
+              <div class="socialMediaCreateInfo">${this.t("socialMediaCreateInfo")}</div>
+            </div>
             <div class="layout vertical">
               ${this.renderNameAndDescription()}
               ${this.renderGroupTypeSelection()}
