@@ -1,4 +1,6 @@
 {
+  "record": "Record",
+  "backgroundFinish": "Close and Create in Background",
   "reportsInfo": "Download reports",
   "answersToVoteOn": "Answers to vote on (one per line)",
   "questionName": "Question to ask",
@@ -21,7 +23,6 @@
   "exampleFontStyles": "Example font styles",
   "fontImports": "Font imports (one URL per line)",
   "fontStyles": "Font styles",
-  "backgroundFinish": "Background Finish",
   "firstAnswer": "First answer",
   "secondAnswer": "Second answer",
   "hereIsTheQuestion": "Here is the question",
@@ -1285,7 +1286,6 @@
   "Thinking": "Thinking...",
   "Send": "Send",
   "typing": "Typing",
-  "record": "Tecord",
   "send": "Send",
   "Dynamic Colors": "Dynamic Colors",
   "One Dynamic Color": "One Dynamic Color",

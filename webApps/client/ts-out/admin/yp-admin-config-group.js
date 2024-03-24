@@ -343,7 +343,7 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
             if (this.uploadedVideoId) {
                 await window.adminServerApi.addVideoToCollection(domain.id, {
                     videoId: this.uploadedVideoId,
-                }, "domain");
+                }, this.collectionType);
                 this._finishRedirect(domain);
             }
             else {

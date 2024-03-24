@@ -31,6 +31,7 @@ export declare abstract class YpAdminConfigBase extends YpAdminPage {
     method: string;
     currentLogoImages: YpImageData[] | undefined;
     collectionVideoId: number | undefined;
+    generatingAiImageInBackground: boolean;
     action: string | undefined;
     subRoute: string | undefined;
     hasVideoUpload: boolean;
@@ -43,6 +44,7 @@ export declare abstract class YpAdminConfigBase extends YpAdminPage {
     toastText: string | undefined;
     saveText: string | undefined;
     imagePreviewUrl: string | undefined;
+    videoPreviewUrl: string | undefined;
     themeId: number | undefined;
     translatedPages: Array<YpHelpPageData> | undefined;
     descriptionMaxLength: number;
@@ -77,7 +79,7 @@ export declare abstract class YpAdminConfigBase extends YpAdminPage {
     _themeChanged(event: CustomEvent): void;
     renderSaveButton(): TemplateResult;
     renderTabs(): TemplateResult | typeof nothing;
-    renderTabPages(): TemplateResult<1> | typeof nothing;
+    renderTabPages(): typeof nothing | TemplateResult<1>;
     _generateLogo(event: CustomEvent): void;
     renderTabPage(configItems: Array<YpStructuredConfigData>, itemIndex: number): TemplateResult<1>;
     get collectionVideoURL(): string | undefined;
@@ -87,10 +89,11 @@ export declare abstract class YpAdminConfigBase extends YpAdminPage {
     renderLogoMedia(): TemplateResult<1>;
     renderHeaderImageUploads(): TemplateResult<1>;
     static get styles(): any[];
-    renderVideoUpload(): TemplateResult;
+    _setVideoCover(event: CustomEvent): void;
     renderNameAndDescription(hideDescription?: boolean): TemplateResult;
     _descriptionChanged(event: CustomEvent): void;
-    render(): TemplateResult<1> | typeof nothing;
+    render(): typeof nothing | TemplateResult<1>;
+    _logoGeneratingInBackground(event: CustomEvent): void;
     _gotAiImage(event: CustomEvent): void;
     updated(changedProperties: Map<string | number | symbol, unknown>): void;
     _getHelpPages(collectionTypeOverride?: string | undefined, collectionIdOverride?: number | undefined): Promise<void>;

@@ -1,4 +1,11 @@
-import { LitElement, css, html, nothing, TemplateResult, PropertyValueMap } from "lit";
+import {
+  LitElement,
+  css,
+  html,
+  nothing,
+  TemplateResult,
+  PropertyValueMap,
+} from "lit";
 import { property, customElement, query } from "lit/decorators.js";
 import "@material/web/button/filled-button.js";
 import "@material/web/progress/circular-progress.js";
@@ -30,6 +37,7 @@ import { YpImage } from "../common/yp-image.js";
 import { YpAdminConfigGroup } from "./yp-admin-config-group.js";
 import { MdOutlinedSelect } from "@material/web/select/outlined-select.js";
 import { YpEmojiSelector } from "../common/yp-emoji-selector.js";
+import { MdCheckbox } from "@material/web/checkbox/checkbox.js";
 
 export const defaultLtpPromptsConfiguration = () => {
   return Object.fromEntries(Array.from({ length: 10 }, (_, i) => [i + 1, ""]));
@@ -60,6 +68,9 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
 
   @property({ type: Number })
   collectionVideoId: number | undefined;
+
+  @property({ type: Boolean })
+  generatingAiImageInBackground = false;
 
   @property({ type: String })
   action: string | undefined;
@@ -96,6 +107,9 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
 
   @property({ type: String })
   imagePreviewUrl: string | undefined;
+
+  @property({ type: String })
+  videoPreviewUrl: string | undefined;
 
   @property({ type: Number })
   themeId: number | undefined;
@@ -270,10 +284,7 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
       this.collection.configuration
     ) {
       // Check if All Our Ideas Group Tyep
-      if (
-        (this.collection as YpGroupData).configuration.groupType ===
-       1
-      ) {
+      if ((this.collection as YpGroupData).configuration.groupType === 1) {
         const hasQuestionId = (this.collection as YpGroupData).configuration
           ?.allOurIdeas?.earl?.question_id;
         return hasQuestionId === undefined;
@@ -399,11 +410,7 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
   }
 
   get collectionVideoURL(): string | undefined {
-    if (
-      this.collection &&
-      this.collection.configuration &&
-      this.collection.configuration.useVideoCover
-    ) {
+    if (this.collection && this.collection.configuration) {
       const collectionVideos = this.collectionVideos;
       if (collectionVideos) {
         const videoURL = YpMediaHelpers.getVideoURL(collectionVideos);
@@ -456,17 +463,35 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
       return html`<div id="welcomeHTML">
         ${unsafeHTML(this.collection.configuration.welcomeHTML)}
       </div>`;
-    } else if (this.collectionVideoURL) {
+    } else if (
+      this.collectionVideoURL &&
+      this.collection?.configuration.useVideoCover
+    ) {
       return html`
         <video
           id="videoPlayer"
           data-id="${ifDefined(this.collectionVideoId)}"
           controls
           preload="metadata"
-          class="image"
+          class="mainImage"
           src="${this.collectionVideoURL}"
           playsinline
           poster="${ifDefined(this.collectionVideoPosterURL)}"
+        ></video>
+      `;
+    } else if (
+      this.videoPreviewUrl &&
+      this.collection?.configuration.useVideoCover
+    ) {
+      return html`
+        <video
+          id="videoPlayer"
+          data-id="${ifDefined(this.collectionVideoId)}"
+          controls
+          preload="metadata"
+          class="mainImage"
+          src="${this.videoPreviewUrl}"
+          playsinline
         ></video>
       `;
     } else if (this.imagePreviewUrl) {
@@ -535,24 +560,56 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
             @success="${this._logoImageUploaded}"
           >
           </yp-file-upload>
-          <md-filled-icon-button
-            ?hidden="${!this.hasLlm}"
-            id="generateButton"
-            @click="${this._generateLogo}"
-            ><md-icon>smart_toy</md-icon></md-filled-icon-button
+          <div
+            class="aiGenerationIconContainer"
+            ?background-not-active="${!this.generatingAiImageInBackground}"
           >
-          <yp-file-upload
-            ?hidden="${!this.hasVideoUpload}"
-            id="videoFileUpload"
-            raised
-            useIconButton
-            videoUpload
-            method="POST"
-            buttonIcon="videocam"
-            .buttonText="${this.t("uploadVideo")}"
-            @success="${this._videoUploaded}"
+            <md-filled-icon-button
+              ?hidden="${!this.hasLlm}"
+              id="generateButton"
+              @click="${this._generateLogo}"
+              ><md-icon>smart_toy</md-icon></md-filled-icon-button
+            >
+            ${this.generatingAiImageInBackground
+              ? html`<md-linear-progress
+                  class="aiGenerationSpinnerInBackground"
+                  indeterminate
+                ></md-linear-progress>`
+              : nothing}
+          </div>
+
+          <div
+            class="layout vertical center-center"
+            class="videoUploadContainer"
+            ?has-video="${this.videoPreviewUrl || this.collectionVideoURL}"
           >
-          </yp-file-upload>
+            <yp-file-upload
+              ?hidden="${!this.hasVideoUpload}"
+              id="videoFileUpload"
+              raised
+              style="position: static;"
+              useIconButton
+              videoUpload
+              method="POST"
+              buttonIcon="videocam"
+              .buttonText="${this.t("uploadVideo")}"
+              @success="${this._videoUploaded}"
+            >
+            </yp-file-upload>
+            <label
+              ?hidden="${!this.videoPreviewUrl && !this.collectionVideoURL}"
+              class="layout vertical center-center videoCoverCheckbox"
+            >
+              <md-checkbox
+                id="videoCoverCheckbox"
+                name="useVideoCover"
+                @click="${this._setVideoCover}"
+                ?checked="${this.collection!.configuration.useVideoCover}"
+              >
+              </md-checkbox>
+              ${this.t("useVideoCover")}
+            </label>
+          </div>
         </div>
       </div>
     `;
@@ -584,8 +641,23 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
           margin-left: 16px;
         }
 
+        .videoCoverCheckbox {
+          padding: 8px;
+          border-radius: 20px;
+          background-color: var(--md-sys-color-surface);
+        }
+
+        md-checkbox {
+          padding: 4px;
+        }
+
         md-outlined-text-field {
           width: 400px;
+        }
+
+        .videoUploadContainer {
+          background-color: var(--md-sys-color-surface);
+          color: var(--md-sys-color-on-surface);
         }
 
         .imagePicker {
@@ -664,10 +736,24 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
           justify-content: center;
         }
 
-        #generateButton {
+        .aiGenerationIconContainer {
           margin-left: 16px;
           margin-right: 16px;
+          max-width: 42px;
+          margin-bottom: 4px;
+        }
+
+        .aiGenerationIconContainer[background-not-active] {
           margin-bottom: 16px;
+        }
+
+        #generateButton {
+
+        }
+
+        .aiGenerationSpinnerInBackground {
+          margin-top: 8px;
+          margin-left: -24px;
         }
 
         #logoImageUpload {
@@ -676,30 +762,11 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
     ];
   }
 
-  renderVideoUpload(): TemplateResult {
-    return html`
-      <div class="layout vertical uploadSection">
-        <yp-file-upload
-          id="videoFileUpload"
-          raised
-          videoUpload
-          method="POST"
-          buttonIcon="videocam"
-          .buttonText="${this.t("uploadVideo")}"
-          @success="${this._videoUploaded}"
-        >
-        </yp-file-upload>
-        <label>
-          <md-checkbox
-            name="useVideoCover"
-            ?disabled="${!this.uploadedVideoId}"
-            ?checked="${this.collection!.configuration.useVideoCover}"
-          >
-          </md-checkbox>
-          ${this.t("useVideoCover")}
-        </label>
-      </div>
-    `;
+  _setVideoCover(event: CustomEvent) {
+    this.collection!.configuration.useVideoCover = !(event.target as MdCheckbox)
+      .checked;
+    this._configChanged();
+    this.configTabs = this.setupConfigTabs();
   }
 
   renderNameAndDescription(hideDescription = false): TemplateResult {
@@ -813,6 +880,8 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
             .collectionId="${collectionId}"
             .name="${name}"
             .description="${description}"
+            @yp-generate-ai-image-background="${this
+              ._logoGeneratingInBackground}"
             @got-image="${this._gotAiImage}"
           >
           </yp-generate-ai-image>
@@ -820,7 +889,12 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
       : nothing;
   }
 
+  _logoGeneratingInBackground(event: CustomEvent) {
+    this.generatingAiImageInBackground = true;
+  }
+
   _gotAiImage(event: CustomEvent) {
+    this.generatingAiImageInBackground = false;
     this.imagePreviewUrl = event.detail.imageUrl;
     this.uploadedLogoImageId = event.detail.imageId;
     this.configChanged = true;
@@ -861,7 +935,9 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
     }
   }
 
-  protected override firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
+  protected override firstUpdated(
+    _changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>
+  ): void {
     super.firstUpdated(_changedProperties);
     this._updateEmojiBindings();
   }
@@ -918,6 +994,7 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
   _videoUploaded(event: CustomEvent) {
     this.uploadedVideoId = event.detail.videoId;
     this.collection!.configuration.useVideoCover = true;
+    this.videoPreviewUrl = event.detail.url;
     this._configChanged();
     this.requestUpdate();
   }
@@ -936,6 +1013,8 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
     this.uploadedHeaderImageId = undefined;
     this.imagePreviewUrl = undefined;
     this.collectionVideoId = undefined;
+    this.uploadedVideoId = undefined;
+    this.videoPreviewUrl = undefined;
 
     (this.$$("#headerImageUpload") as YpFileUpload).clear();
     (this.$$("#logoImageUpload") as YpFileUpload).clear();
@@ -945,12 +1024,14 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
 
   _updateEmojiBindings() {
     setTimeout(() => {
-      const description = this.$$('#description') as HTMLInputElement;
-      const emojiSelector = this.$$('#emojiSelectorDescription') as YpEmojiSelector;
+      const description = this.$$("#description") as HTMLInputElement;
+      const emojiSelector = this.$$(
+        "#emojiSelectorDescription"
+      ) as YpEmojiSelector;
       if (description && emojiSelector) {
         emojiSelector.inputTarget = description;
       } else {
-        console.error("Could not find emoji selector or description input")
+        console.error("Could not find emoji selector or description input");
       }
     }, 500);
   }

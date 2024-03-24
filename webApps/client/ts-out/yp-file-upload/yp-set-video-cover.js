@@ -34,6 +34,10 @@ let YpSetVideoCover = class YpSetVideoCover extends YpBaseElement {
           cursor: pointer;
         }
 
+        .videoPreviewContainer {
+          background-color:var(--md-sys-color-surface);
+        }
+
         .videoImages {
           overflow-x: auto;
           width: 200px;
@@ -92,6 +96,7 @@ let YpSetVideoCover = class YpSetVideoCover extends YpBaseElement {
                 ?hidden="${this.noDefaultCoverImage}">
                 <label>${this.t('useMainPhoto')}
                   <md-radio
+                    id="useMainPhotoId"
                     @click="${this._selectVideoCoverMainPhoto}"
                     name="useMainPhoto"></md-radio>
               </label>

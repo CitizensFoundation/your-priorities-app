@@ -17,6 +17,7 @@ export declare class YpGenerateAiImage extends YpBaseElement {
     jobId: number | undefined;
     styleText: HTMLInputElement;
     timeout: number | undefined;
+    resetGenerator(): void;
     connectedCallback(): Promise<void>;
     disconnectedCallback(): void;
     get finalPrompt(): string;

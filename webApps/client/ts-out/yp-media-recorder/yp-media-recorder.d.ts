@@ -1,7 +1,7 @@
 import { YpBaseElement } from "../common/yp-base-element.js";
 import "@material/web/button/filled-button.js";
 import "@material/web/radio/radio.js";
-import * as RecordRTC from 'recordrtc';
+import * as RecordRTC from "recordrtc";
 import "@material/web/dialog/dialog.js";
 import "@material/web/checkbox/checkbox.js";
 import "@material/web/radio/radio.js";

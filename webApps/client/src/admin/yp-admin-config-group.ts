@@ -447,7 +447,7 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
           {
             videoId: this.uploadedVideoId,
           },
-          "domain"
+          this.collectionType
         );
         this._finishRedirect(domain);
       } else {

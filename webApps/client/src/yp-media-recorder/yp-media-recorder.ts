@@ -4,7 +4,7 @@ import { YpBaseElement } from "../common/yp-base-element.js";
 import "@material/web/button/filled-button.js";
 import "@material/web/radio/radio.js";
 
-import * as RecordRTC from 'recordrtc';
+import * as RecordRTC from "recordrtc";
 import * as WaveSurfer from "wavesurfer.js";
 import * as RecorderPlugin from "wavesurfer.js/dist/plugin/wavesurfer.microphone.min.js";
 
@@ -108,9 +108,29 @@ export class YpMediaRecorder extends YpBaseElement {
           width: 430px;
         }
 
+        .checkboxContainer {
+          margin-bottom: 16px;
+          margin-top: 8px;
+        }
+
+        md-radio {
+          margin-left: 4px;
+        }
+
         .mainbuttons {
           width: 100%;
           margin-top: 8px;
+          margin-bottom: 8px;
+        }
+
+        .videoAspectDescription {
+          margin-top: 24px;
+          margin-bottom: 12px;
+          font-size: 14px;
+        }
+
+        label {
+          padding: 8px;
           margin-bottom: 8px;
         }
 
@@ -283,12 +303,13 @@ export class YpMediaRecorder extends YpBaseElement {
     }
   }
 
+  //TODO: Get WebRTC working again, it almost does
   override render() {
     return html`
       <md-dialog id="optionsDialog" modal>
         <div class="layout vertical center-center" slot="content">
           <div class="layout vertical center-center optionsButtons">
-            <div class="layout horizontal center-center">
+            <div hidden class="layout horizontal center-center">
               <md-filled-button
                 raised
                 dialogAction="confirm"
@@ -312,15 +333,21 @@ export class YpMediaRecorder extends YpBaseElement {
             </div>
           </div>
           <div class="videoAspectDescription">${this.t("videoFormat")}</div>
-          <div ?hidden="${this.audioRecording}">
+          <div ?hidden="${this.audioRecording}" class="checkboxContainer">
+            <label>
+              Landscape
+              <md-radio
+                @click="${this._setVideoAspect}"
+                checked
+                value="landscape"
+                ><md-icon>landscape</md-icon></md-radio
+              >
+            </label>
             <label
-              name="aspect"
-              class="aspect layout horizontal wrap"
-              @selected="${this._setVideoAspect}"
-              selected="${this.videoAspect}"
-            >
-              <md-radio value="landscape">landscape</md-radio>
-              <md-radio value="portrait">portrait</md-radio>
+              >Portrait
+              <md-radio value="portrait" @click="${this._setVideoAspect}"
+                ><md-icon>portrait</md-icon></md-radio
+              >
             </label>
           </div>
           <div class="layout horizontal center-center" slot="actions">
@@ -482,7 +509,9 @@ export class YpMediaRecorder extends YpBaseElement {
   }
 
   _setVideoAspect(event: CustomEvent) {
+    debugger;
     this.videoAspect = (event.target as HTMLInputElement).value as string;
+    debugger;
   }
 
   _selectAudioDevice(event: CustomEvent) {
@@ -578,7 +607,7 @@ export class YpMediaRecorder extends YpBaseElement {
       this.surfer.destroy();
     }
     this.previewActive = false;
-    (this.$$("#dialog") as Dialog).open = false;
+    (this.$$("#optionsDialog") as Dialog).open = false;
   }
 
   _uploadFile() {
@@ -687,10 +716,13 @@ export class YpMediaRecorder extends YpBaseElement {
     this.recordSecondsLeft = this.maxLength;
 
     // Determine if the device is mobile
-    this.isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent) || window.matchMedia("only screen and (max-width: 480px)").matches;
+    this.isMobile =
+      /Android|iPhone|iPad/i.test(navigator.userAgent) ||
+      window.matchMedia("only screen and (max-width: 480px)").matches;
 
     // Set the video aspect based on the orientation
-    this.videoAspect = window.innerHeight > window.innerWidth ? "portrait" : "landscape";
+    this.videoAspect =
+      window.innerHeight > window.innerWidth ? "portrait" : "landscape";
 
     await this.requestUpdate();
 
@@ -699,7 +731,7 @@ export class YpMediaRecorder extends YpBaseElement {
       (this.$$("#optionsDialog") as Dialog).open = true;
     } else {
       // Open the dialog and set up the recorders
-      (this.$$('#dialog') as Dialog).open = true;
+      (this.$$("#dialog") as Dialog).open = true;
       this.setupRecorders();
     }
   }

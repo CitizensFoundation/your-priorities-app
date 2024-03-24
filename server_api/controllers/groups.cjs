@@ -1502,7 +1502,7 @@ const createGroup = (req, res) => {
   console.log("Creating group with community id: "+req.params.communityId);
   var group = models.Group.build({
     name: req.body.name,
-    objectives: req.body.objectives,
+    objectives: req.body.objectives || req.body.description,
     access: models.Group.convertAccessFromRadioButtons(req.body),
     domain_id: req.ypDomain.id,
     user_id: req.user.id,
@@ -1597,7 +1597,7 @@ router.put('/:id', auth.can('edit group'), function(req, res) {
   }).then(function (group) {
     if (group) {
       group.name =req.body.name;
-      group.objectives = req.body.objectives;
+      group.objectives = req.body.objectives || req.body.description;
       group.theme_id = req.body.themeId ? parseInt(req.body.themeId) : null;
       group.access = models.Group.convertAccessFromRadioButtons(req.body);
       updateGroupConfigParameters(req, group);

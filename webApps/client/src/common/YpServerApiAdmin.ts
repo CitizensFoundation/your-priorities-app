@@ -164,8 +164,18 @@ export class YpServerApiAdmin extends YpServerApiBase {
   }
 
   public addVideoToCollection(collectionId: number, body: Record<string, unknown>, type: string) {
+    let fullType;
+
+    if (type=="group") {
+      fullType = "completeAndAddToGroup";
+    } else if(type=="community") {
+      fullType = "completeAndAddToCommunity";
+    } else {
+      fullType = "completeAndAddToDomain";
+    }
+
     return this.fetchWrapper(
-      this.baseUrlPath + `/videos/${collectionId}/${type}`,
+      this.baseUrlPath + `/videos/${collectionId}/${fullType}`,
       {
         method: 'PUT',
         body: JSON.stringify(body),

@@ -77,7 +77,17 @@ export class YpServerApiAdmin extends YpServerApiBase {
             `/${YpServerApiAdmin.transformCollectionTypeToApi(collectionType)}/${collectionId}/get_translation_texts?targetLocale=${targetLocale}`);
     }
     addVideoToCollection(collectionId, body, type) {
-        return this.fetchWrapper(this.baseUrlPath + `/videos/${collectionId}/${type}`, {
+        let fullType;
+        if (type == "group") {
+            fullType = "completeAndAddToGroup";
+        }
+        else if (type == "community") {
+            fullType = "completeAndAddToCommunity";
+        }
+        else {
+            fullType = "completeAndAddToDomain";
+        }
+        return this.fetchWrapper(this.baseUrlPath + `/videos/${collectionId}/${fullType}`, {
             method: 'PUT',
             body: JSON.stringify(body),
         }, false);

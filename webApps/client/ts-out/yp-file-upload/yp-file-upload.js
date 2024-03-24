@@ -178,8 +178,13 @@ let YpFileUpload = class YpFileUpload extends YpBaseElement {
           width: 100%;
         }
 
+        .mainContainer[has-video] {
+          background-color: var(--md-sys-color-surface);
+          padding: 16px;
+        }
+
         .removeButton {
-          margin-bottom: 18px;
+          margin-left: 16px;
         }
 
         .limitInfo {
@@ -201,7 +206,10 @@ let YpFileUpload = class YpFileUpload extends YpBaseElement {
     }
     render() {
         return html `
-      <div class="layout vertical center-center mainContainer">
+      <div
+        class="layout vertical center-center mainContainer"
+        ?has-video="${this.currentVideoId != undefined}"
+      >
         <div class="layout vertical center-center">
           <div class="layout horizontal center-center">
             ${this.useIconButton

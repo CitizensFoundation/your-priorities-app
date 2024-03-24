@@ -19,6 +19,12 @@ let YpGenerateAiImage = class YpGenerateAiImage extends YpBaseElement {
         this.submitting = false;
         this.imageType = "logo";
     }
+    resetGenerator() {
+        this.submitting = false;
+        this.currentError = undefined;
+        this.styleText.value = "";
+        this.jobId = undefined;
+    }
     async connectedCallback() {
         super.connectedCallback();
     }
@@ -30,7 +36,7 @@ let YpGenerateAiImage = class YpGenerateAiImage extends YpBaseElement {
         return `
       Name: ${this.name}
       Description: ${this.description}
-      Image style: ${this.styleText?.value || 'Something cool'}
+      Image style: ${this.styleText?.value || "Something cool"}
 
       Do not include text or labels in the image except if the user asks for it in the image style.
     `;
@@ -52,7 +58,7 @@ let YpGenerateAiImage = class YpGenerateAiImage extends YpBaseElement {
                 else if (pollingResponse.error) {
                     this.submitting = false;
                     this.fire("image-generation-error", {
-                        error: pollingResponse.error
+                        error: pollingResponse.error,
                     });
                     // Handle any errors
                     this.currentError = this.t("An error occurred while generating the image.");
@@ -122,11 +128,20 @@ let YpGenerateAiImage = class YpGenerateAiImage extends YpBaseElement {
         if (this.timeout) {
             clearTimeout(this.timeout);
         }
+        this.resetGenerator();
         this.dialog?.close();
         window.appGlobals.activity(`Generate AI Image - cancel`);
     }
     moveToBackground() {
         this.dialog?.close();
+        this.fire("yp-generate-ai-image-background", {
+            name: this.name,
+            description: this.description,
+            collectionId: this.collectionId,
+            collectionType: this.collectionType,
+            imageType: this.imageType,
+            jobId: this.jobId,
+        });
         window.appGlobals.activity(`Generate AI Image - move to background`);
     }
     textAreaKeyDown(e) {
@@ -268,7 +283,11 @@ let YpGenerateAiImage = class YpGenerateAiImage extends YpBaseElement {
       <md-text-button class="cancelButton" @click="${this.cancel}">
         ${this.t("Cancel")}
       </md-text-button>
-      <md-text-button ?hidden="${!this.submitting}" class="cancelButton" @click="${this.moveToBackground}">
+      <md-text-button
+        ?hidden="${!this.submitting}"
+        class="cancelButton"
+        @click="${this.moveToBackground}"
+      >
         ${this.t("backgroundFinish")}
       </md-text-button>
       <md-outlined-button

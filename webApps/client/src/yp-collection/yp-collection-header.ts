@@ -107,7 +107,7 @@ export class YpCollectionHeader extends YpBaseElement {
   get collectionVideoURL(): string | undefined {
     if (
       this.collection &&
-      this.collection.configuration &&
+      this.collection.configuration  &&
       this.collection.configuration.useVideoCover
     ) {
       const collectionVideos = this.collectionVideos;
