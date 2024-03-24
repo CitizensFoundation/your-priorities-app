@@ -140,10 +140,10 @@ export async function exportChoiceVotes(workPackage, done) {
                     vote.created_at,
                     vote.updated_at,
                     vote.time_viewed,
-                    vote.tracking.utm_source,
-                    vote.tracking.utm_campaign,
-                    vote.tracking.utm_medium,
-                    vote.tracking.utm_content,
+                    vote.tracking?.utm_source,
+                    vote.tracking?.utm_campaign,
+                    vote.tracking?.utm_medium,
+                    vote.tracking?.utm_content,
                 ]);
             });
             votes.losing_votes.forEach((vote) => {
@@ -157,14 +157,14 @@ export async function exportChoiceVotes(workPackage, done) {
                     vote.created_at,
                     vote.updated_at,
                     vote.time_viewed,
-                    vote.tracking.utm_source,
-                    vote.tracking.utm_campaign,
-                    vote.tracking.utm_medium,
-                    vote.tracking.utm_content,
+                    vote.tracking?.utm_source,
+                    vote.tracking?.utm_campaign,
+                    vote.tracking?.utm_medium,
+                    vote.tracking?.utm_content,
                 ]);
             });
             const progress = Math.round((i / choices.length) * 95); // Scale to 95% maximum to leave room for final steps
-            await updateUploadJobStatus(workPackage.jobId, progress);
+            await updateUploadJobStatus(workPackage.jobId, Math.max(progress, 99));
         }
         const eloRatings = new Map();
         choices.forEach(choice => {
