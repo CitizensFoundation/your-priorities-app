@@ -5,6 +5,7 @@ import express from "express";
 import crypto from "crypto";
 const dbModels = models;
 const Group = dbModels.Group;
+const AcBackgroundJob = dbModels.AcBackgroundJob;
 const PAIRWISE_API_HOST = process.env.PAIRWISE_API_HOST;
 const PAIRWISE_USERNAME = process.env.PAIRWISE_USERNAME;
 const PAIRWISE_PASSWORD = process.env.PAIRWISE_PASSWORD;
@@ -20,6 +21,7 @@ const defaultHeader = {
 import { AiHelper } from "../active-citizen/engine/allOurIdeas/aiHelper.js";
 import { ExplainAnswersAssistant } from "../active-citizen/engine/allOurIdeas/explainAnswersAssistant.js";
 import OpenAI from "openai";
+import queue from "../active-citizen/workers/queue.cjs";
 export class AllOurIdeasController {
     constructor(wsClients) {
         this.path = "/api/allOurIdeas";
@@ -29,6 +31,8 @@ export class AllOurIdeasController {
     }
     async initializeRoutes() {
         this.router.get("/:groupId", auth.can("view group"), this.showEarl.bind(this));
+        this.router.put("/:groupId/:type/start_report_creation", auth.can("edit group"), this.exportXls.bind(this));
+        this.router.get("/:groupId/:type/report_creation_progress", auth.can("edit group"), this.getXlsExportProgress.bind(this));
         this.router.get("/:domainId/getAoiSiteStats", auth.can("view domain"), this.getAoiSiteStats.bind(this));
         this.router.post("/:domainId/questions/throughDomain", auth.can("create community"), this.createQuestion.bind(this));
         this.router.post("/:communityId/questions", auth.can("create group"), this.createQuestion.bind(this));
@@ -227,6 +231,50 @@ export class AllOurIdeasController {
             //TODO: Have it refresh the websocket on the client
             res.status(404).send("Websocket not found");
         }
+    }
+    async getXlsExportProgress(req, res) {
+        AcBackgroundJob.findOne({
+            where: {
+                id: req.params.jobId,
+            },
+            attributes: ["id", "progress", "error", "data"],
+        })
+            .then((job) => {
+            res.send(job);
+        })
+            .catch((error) => {
+            console.error("Could not get backgroundJob", {
+                err: error,
+                context: "start_report_creation"
+            });
+            res.sendStatus(500);
+        });
+    }
+    async exportXls(req, res) {
+        AcBackgroundJob.createJob({}, {}, (error, jobId) => {
+            if (error) {
+                console.error("Could not create backgroundJob", {
+                    err: error,
+                    context: "start_report_creation",
+                });
+                res.sendStatus(500);
+            }
+            else {
+                let reportType;
+                reportType = "start-aoi-xls-report-generation";
+                queue.add("process-reports", {
+                    type: reportType,
+                    userId: req.user.id,
+                    exportType: req.params.type,
+                    fileEnding: req.params.fileEnding ? req.params.fileEnding : "xlsx",
+                    translateLanguage: req.query.translateLanguage,
+                    selectedFraudAuditId: req.body.selectedFraudAuditId,
+                    jobId: jobId,
+                    communityId: req.params.communityId,
+                }, "critical");
+                res.send({ jobId });
+            }
+        });
     }
     async llmAnswerExplain(req, res) {
         const { wsClientId, chatLog, languageName } = req.body;

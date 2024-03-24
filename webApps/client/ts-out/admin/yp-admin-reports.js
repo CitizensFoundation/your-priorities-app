@@ -21,16 +21,29 @@ let YpAdminReports = class YpAdminReports extends YpAdminPage {
         this.action = "/api/communities";
         this.selectedTab = 0;
         this.downloadDisabled = false;
+        this.isAllOurIdeasGroup = false;
         this.autoTranslateActive = false;
         this.fraudAuditSelectionActive = false;
         this.waitingOnFraudAudits = false;
+    }
+    connectedCallback() {
+        super.connectedCallback();
+        if (this.collectionType == "group" && this.collection && this.collection.configuration.allOurIdeas) {
+            this.isAllOurIdeasGroup = true;
+        }
+        else {
+            this.isAllOurIdeasGroup = false;
+        }
     }
     fraudItemSelection(event) {
         this.selectedFraudAuditId = parseInt(event.target.getAttribute("data-args"));
         this.startReportCreation();
     }
     startReportCreation() {
-        const url = this.action; // Adjust the URL as needed
+        let url = this.action; // Adjust the URL as needed
+        if (this.isAllOurIdeasGroup) {
+            url = `/api/allOurIdeas/${this.collectionId}/start_report_creation`;
+        }
         const body = {
             selectedFraudAuditId: this.selectedFraudAuditId,
         };
@@ -52,9 +65,12 @@ let YpAdminReports = class YpAdminReports extends YpAdminPage {
     startReportCreationResponse(data) {
         this.jobId = data.jobId;
         this.progress = undefined;
-        const baseUrl = this.collectionType == "group"
+        let baseUrl = this.collectionType == "group"
             ? `/api/groups/${this.collectionId}`
             : `/api/communities/${this.collectionId}`;
+        if (this.isAllOurIdeasGroup) {
+            baseUrl = `/api/allOurIdeas/${this.collectionId}`;
+        }
         this.reportCreationProgressUrl = `${baseUrl}/${this.jobId}/report_creation_progress`;
         this.pollLaterForProgress();
     }
@@ -280,6 +296,7 @@ let YpAdminReports = class YpAdminReports extends YpAdminPage {
                 ></md-secondary-tab
               >
               <md-secondary-tab
+                ?hidden="${this.isAllOurIdeasGroup}"
                 >${this.t("createDocxReport")}<md-icon
                   >lightbulb_outline</md-icon
                 ></md-secondary-tab
@@ -340,6 +357,9 @@ __decorate([
 __decorate([
     property({ type: Boolean })
 ], YpAdminReports.prototype, "downloadDisabled", void 0);
+__decorate([
+    property({ type: Boolean })
+], YpAdminReports.prototype, "isAllOurIdeasGroup", void 0);
 __decorate([
     property({ type: String })
 ], YpAdminReports.prototype, "toastText", void 0);

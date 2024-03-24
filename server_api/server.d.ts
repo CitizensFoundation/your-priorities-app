@@ -54,6 +54,16 @@ interface GroupClass extends DbData {
 interface AcBackgroundJobClass extends DbData {
   static updateDataAsync(jobId: number, data: any): Promise<any>;
   static updateErrorAsync(jobId: number, error: string): Promise<any>;
+  static createJob(data: any, dataTwo: any, done: Function): Promise<any>;
+}
+
+interface AcXlsExportJobData {
+  jobId: number;
+  userId: number;
+  exportType: string;
+  fileName: string;
+  utmSource: string;
+  questionId: number;
 }
 
 interface ImageClass extends DbData {

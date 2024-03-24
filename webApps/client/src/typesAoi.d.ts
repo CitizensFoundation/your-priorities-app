@@ -92,26 +92,28 @@ interface AoiVoteResponse {
 }
 
 interface AoiVoteData {
-  id: number;
+  direction?: "left" | "right" | "skip";
+  id?: number;
+  appearance_lookup?: string;
   tracking?: {
     utmSource: string;
     utmCampaign: string;
     utmMedium: string;
     utmContent: string;
   }
-  site_id: number | null; // Assuming integers can be null based on your DB setup
-  voter_id: number | null;
-  question_id: number | null;
-  prompt_id: number | null;
-  choice_id: number | null;
-  loser_choice_id: number | null;
-  created_at: Date; // Date type for datetime
-  updated_at: Date;
-  time_viewed: number | null;
-  appearance_id: number | null;
-  missing_response_time_exp: string; // Default value indicates it's always a string
-  valid_record: boolean; // Defaults to true, but included as boolean
-  validity_information: string | null; // Assuming it can be null
+  site_id?: number | null; // Assuming integers can be null based on your DB setup
+  voter_id?: number | null;
+  question_id?: number | null;
+  prompt_id?: number | null;
+  choice_id?: number | null;
+  loser_choice_id?: number | null;
+  created_at?: Date; // Date type for datetime
+  updated_at?: Date;
+  time_viewed?: number | null;
+  appearance_id?: number | null;
+  missing_response_time_exp?: string; // Default value indicates it's always a string
+  valid_record?: boolean; // Defaults to true, but included as boolean
+  validity_information?: string | null; // Assuming it can be null
 }
 
 interface AoiVoteSkipData {

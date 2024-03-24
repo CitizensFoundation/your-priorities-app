@@ -11,6 +11,7 @@ import crypto from "crypto";
 
 const dbModels: Models = models;
 const Group = dbModels.Group as GroupClass;
+const AcBackgroundJob = dbModels.AcBackgroundJob as AcBackgroundJobClass;
 
 const PAIRWISE_API_HOST = process.env.PAIRWISE_API_HOST;
 const PAIRWISE_USERNAME = process.env.PAIRWISE_USERNAME;
@@ -41,6 +42,7 @@ interface YpRequest extends express.Request {
 import { AiHelper } from "../active-citizen/engine/allOurIdeas/aiHelper.js";
 import { ExplainAnswersAssistant } from "../active-citizen/engine/allOurIdeas/explainAnswersAssistant.js";
 import OpenAI from "openai";
+import queue from "../active-citizen/workers/queue.cjs";
 
 export class AllOurIdeasController {
   public path = "/api/allOurIdeas";
@@ -57,6 +59,18 @@ export class AllOurIdeasController {
       "/:groupId",
       auth.can("view group"),
       this.showEarl.bind(this)
+    );
+
+    this.router.put(
+      "/:groupId/:type/start_report_creation",
+      auth.can("edit group"),
+      this.exportXls.bind(this)
+    );
+
+    this.router.get(
+      "/:groupId/:type/report_creation_progress",
+      auth.can("edit group"),
+      this.getXlsExportProgress.bind(this)
     );
 
     this.router.get(
@@ -400,6 +414,60 @@ export class AllOurIdeasController {
       //TODO: Have it refresh the websocket on the client
       res.status(404).send("Websocket not found");
     }
+  }
+
+  public async getXlsExportProgress(
+    req: Request,
+    res: Response
+  ): Promise<void> {
+    AcBackgroundJob.findOne({
+      where: {
+        id: req.params.jobId,
+      },
+      attributes: ["id", "progress", "error", "data"],
+    })
+      .then((job) => {
+        res.send(job);
+      })
+      .catch((error) => {
+        console.error("Could not get backgroundJob", {
+          err: error,
+          context: "start_report_creation"
+        });
+        res.sendStatus(500);
+      });
+  }
+
+  public async exportXls(req: Request, res: Response): Promise<void> {
+    AcBackgroundJob.createJob({}, {}, (error: string, jobId: number) => {
+      if (error) {
+        console.error("Could not create backgroundJob", {
+          err: error,
+          context: "start_report_creation",
+        });
+        res.sendStatus(500);
+      } else {
+        let reportType;
+        reportType = "start-aoi-xls-report-generation";
+
+        queue.add(
+          "process-reports",
+          {
+            type: reportType,
+            userId: (req.user as any).id,
+            exportType: req.params.type,
+            fileEnding: req.params.fileEnding ? req.params.fileEnding : "xlsx",
+            translateLanguage: req.query.translateLanguage,
+            selectedFraudAuditId: req.body.selectedFraudAuditId,
+            jobId: jobId,
+            communityId: req.params.communityId,
+          },
+          "critical"
+        );
+
+        res.send({ jobId });
+      }
+    });
   }
 
   public async llmAnswerExplain(req: Request, res: Response): Promise<void> {

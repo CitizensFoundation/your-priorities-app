@@ -17,6 +17,7 @@ export declare class YpAdminReports extends YpAdminPage {
     reportUrl: string | undefined;
     reportGenerationUrl: string | undefined;
     downloadDisabled: boolean;
+    isAllOurIdeasGroup: boolean;
     toastText: string | undefined;
     autoTranslateActive: boolean;
     selectedFraudAuditId: number | undefined;
@@ -24,6 +25,7 @@ export declare class YpAdminReports extends YpAdminPage {
     fraudAuditsAvailable: YpFraudAuditData[] | undefined;
     waitingOnFraudAudits: boolean;
     reportCreationProgressUrl: string | undefined;
+    connectedCallback(): void;
     fraudItemSelection(event: CustomEvent): void;
     startReportCreation(): void;
     startReportCreationResponse(data: YpReportData): void;

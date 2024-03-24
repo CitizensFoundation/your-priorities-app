@@ -41,6 +41,9 @@ export class YpAdminReports extends YpAdminPage {
   @property({ type: Boolean })
   downloadDisabled = false;
 
+  @property({ type: Boolean })
+  isAllOurIdeasGroup = false;
+
   @property({ type: String })
   toastText: string | undefined;
 
@@ -61,6 +64,16 @@ export class YpAdminReports extends YpAdminPage {
   @property({ type: String })
   reportCreationProgressUrl: string | undefined;
 
+
+  override connectedCallback(): void {
+    super.connectedCallback();
+    if (this.collectionType == "group" && this.collection && (this.collection as YpGroupData).configuration.allOurIdeas) {
+      this.isAllOurIdeasGroup = true;
+    } else {
+      this.isAllOurIdeasGroup = false;
+    }
+  }
+
   fraudItemSelection(event: CustomEvent) {
     this.selectedFraudAuditId = parseInt(
       (event.target as HTMLElement).getAttribute("data-args")!
@@ -69,7 +82,10 @@ export class YpAdminReports extends YpAdminPage {
   }
 
   startReportCreation() {
-    const url = this.action; // Adjust the URL as needed
+    let url = this.action; // Adjust the URL as needed
+    if (this.isAllOurIdeasGroup) {
+      url = `/api/allOurIdeas/${this.collectionId}/start_report_creation`;
+    }
     const body = {
       selectedFraudAuditId: this.selectedFraudAuditId,
     };
@@ -92,10 +108,13 @@ export class YpAdminReports extends YpAdminPage {
   startReportCreationResponse(data: YpReportData) {
     this.jobId = data.jobId;
     this.progress = undefined;
-    const baseUrl =
+    let baseUrl =
       this.collectionType == "group"
         ? `/api/groups/${this.collectionId}`
         : `/api/communities/${this.collectionId}`;
+    if (this.isAllOurIdeasGroup) {
+      baseUrl = `/api/allOurIdeas/${this.collectionId}`;
+    }
     this.reportCreationProgressUrl = `${baseUrl}/${this.jobId}/report_creation_progress`;
     this.pollLaterForProgress();
   }
@@ -349,6 +368,7 @@ export class YpAdminReports extends YpAdminPage {
                 ></md-secondary-tab
               >
               <md-secondary-tab
+                ?hidden="${this.isAllOurIdeasGroup}"
                 >${this.t("createDocxReport")}<md-icon
                   >lightbulb_outline</md-icon
                 ></md-secondary-tab
