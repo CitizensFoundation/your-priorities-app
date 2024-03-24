@@ -1,7 +1,8 @@
 import { YpCollection } from "./yp-collection.js";
 export declare class YpDomain extends YpCollection {
+    customWelcomeHtml: string | undefined;
     constructor();
-    refresh(): void;
+    refresh(): Promise<void>;
     scrollToCommunityItem(): void;
     scrollToCollectionItemSubClass(): void;
     _openAdmin(): void;

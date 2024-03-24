@@ -1,7 +1,7 @@
 export class YpFormattingHelpers {
-  static number(value: number | undefined): string {
+  static number(value: number | undefined, digitSeperator = ","): string {
     if (value) {
-      return value.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+      return value.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, digitSeperator);
     } else {
       return "0";
     }

@@ -54,6 +54,7 @@ export declare class YpServerApi extends YpServerApiBase {
     registerUser(body: Record<string, unknown>): Promise<any>;
     registerAnonymously(body: Record<string, unknown>): Promise<any>;
     loginUser(body: Record<string, unknown>): Promise<any>;
+    getAoiTotalStats(domainId: number): Promise<AoiSiteStats>;
     submitForm(url: string, method: string, headers: Record<string, string>, body: string): Promise<any>;
     getSurveyGroup(surveyGroupId: number): Promise<any>;
     postSurvey(surveyGroupId: number, body: Record<string, unknown>): Promise<any>;

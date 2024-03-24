@@ -29,6 +29,7 @@ export class AllOurIdeasController {
     }
     async initializeRoutes() {
         this.router.get("/:groupId", auth.can("view group"), this.showEarl.bind(this));
+        this.router.get("/:domainId/getAoiSiteStats", auth.can("view domain"), this.getAoiSiteStats.bind(this));
         this.router.post("/:domainId/questions/throughDomain", auth.can("create community"), this.createQuestion.bind(this));
         this.router.post("/:communityId/questions", auth.can("create group"), this.createQuestion.bind(this));
         this.router.put("/:domainId/generateIdeas/throughDomain", auth.can("create community"), this.generateIdeas.bind(this));
@@ -50,6 +51,36 @@ export class AllOurIdeasController {
         this.router.put("/:domainId/questions/:questionId/name/throughDomain", auth.can("create community"), this.updateQuestionName.bind(this));
         this.router.get("/:groupId/content/:extraId/:questionId/translatedText", auth.can("view group"), this.getTranslatedText.bind(this));
         this.router.get("/:groupId/content/:extraId/translatedText", auth.can("view group"), this.getTranslatedText.bind(this));
+    }
+    async getAoiSiteStats(req, res) {
+        try {
+            const choiceResponse = await fetch(`${PAIRWISE_API_HOST}/questions/site_stats.json`, {
+                method: "GET",
+                headers: defaultAuthHeader,
+            });
+            const totalGroupCount = await Group.count();
+            if (!choiceResponse.ok) {
+                console.error(choiceResponse.statusText);
+                throw new Error("Choice creation failed.");
+            }
+            const stats = (await choiceResponse.json());
+            // Add original allourideas.org stats (as of 24/4/2024)
+            stats.choices_count = stats.choices_count + 1499910;
+            stats.total_questions = totalGroupCount + 27555;
+            stats.votes_count = stats.votes_count + 60200000;
+            if (stats) {
+                res.send(stats);
+            }
+            else {
+                res.status(404).send("Not found");
+            }
+        }
+        catch (error) {
+            console.error(error);
+            res
+                .status(500)
+                .json({ error: "Failed to fetch total vote and questions count" });
+        }
     }
     async addIdea(req, res) {
         const { newIdea, id } = req.body;

@@ -1033,7 +1033,6 @@ export class YpApp extends YpBaseElement {
   async _refreshByName(id: string) {
     const el = this.$$(id) as YpCollection;
     if (el) {
-      debugger;
       await el.getCollection();
       el.refresh();
     } else {

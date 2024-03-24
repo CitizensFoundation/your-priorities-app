@@ -174,6 +174,12 @@ interface YpLtpConfiguration {
   }
 }
 
+interface AoiSiteStats {
+  choices_count: number;
+  total_questions: number;
+  votes_count: number;
+}
+
 interface YpGroupConfiguration extends YpCollectionConfiguration {
   usePostTagsForPostListItems?: boolean;
   allowAnonymousUsers?: boolean;

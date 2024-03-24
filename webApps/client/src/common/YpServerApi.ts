@@ -470,6 +470,12 @@ export class YpServerApi extends YpServerApiBase {
     );
   }
 
+  public getAoiTotalStats(domainId: number): Promise<AoiSiteStats> {
+    return this.fetchWrapper(
+      `/api/allOurIdeas/${domainId}/getAoiSiteStats`
+    ) as unknown as any;
+  }
+
   public submitForm(
     url: string,
     method: string,

@@ -251,6 +251,9 @@ export class YpServerApi extends YpServerApiBase {
             body: JSON.stringify(body),
         }, false);
     }
+    getAoiTotalStats(domainId) {
+        return this.fetchWrapper(`/api/allOurIdeas/${domainId}/getAoiSiteStats`);
+    }
     submitForm(url, method, headers, body) {
         return this.fetchWrapper(this.baseUrlPath + url, {
             method: method,

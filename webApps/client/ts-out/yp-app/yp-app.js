@@ -762,7 +762,6 @@ let YpApp = class YpApp extends YpBaseElement {
     async _refreshByName(id) {
         const el = this.$$(id);
         if (el) {
-            debugger;
             await el.getCollection();
             el.refresh();
         }

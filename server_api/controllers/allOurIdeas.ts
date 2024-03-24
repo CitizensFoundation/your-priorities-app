@@ -59,6 +59,12 @@ export class AllOurIdeasController {
       this.showEarl.bind(this)
     );
 
+    this.router.get(
+      "/:domainId/getAoiSiteStats",
+      auth.can("view domain"),
+      this.getAoiSiteStats.bind(this)
+    );
+
     this.router.post(
       "/:domainId/questions/throughDomain",
       auth.can("create community"),
@@ -100,7 +106,6 @@ export class AllOurIdeasController {
       auth.can("view group"),
       this.getChoices.bind(this)
     );
-
 
     this.router.get(
       "/:communityId/choices/:questionId",
@@ -185,6 +190,43 @@ export class AllOurIdeasController {
       auth.can("view group"),
       this.getTranslatedText.bind(this)
     );
+  }
+
+  async getAoiSiteStats(req: Request, res: Response) {
+    try {
+      const choiceResponse = await fetch(
+        `${PAIRWISE_API_HOST}/questions/site_stats.json`,
+        {
+          method: "GET",
+          headers: defaultAuthHeader,
+        }
+      );
+
+      const totalGroupCount = await Group.count();
+
+      if (!choiceResponse.ok) {
+        console.error(choiceResponse.statusText);
+        throw new Error("Choice creation failed.");
+      }
+
+      const stats = (await choiceResponse.json()) as AoiSiteStats;
+
+      // Add original allourideas.org stats (as of 24/4/2024)
+      stats.choices_count = stats.choices_count + 1499910;
+      stats.total_questions = totalGroupCount + 27555;
+      stats.votes_count = stats.votes_count + 60200000;
+
+      if (stats) {
+        res.send(stats);
+      } else {
+        res.status(404).send("Not found");
+      }
+    } catch (error) {
+      console.error(error);
+      res
+        .status(500)
+        .json({ error: "Failed to fetch total vote and questions count" });
+    }
   }
 
   async addIdea(req: Request, res: Response) {

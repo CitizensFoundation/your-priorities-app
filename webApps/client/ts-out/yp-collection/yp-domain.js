@@ -7,15 +7,17 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 import { YpAccessHelpers } from "../common/YpAccessHelpers.js";
 import { YpMediaHelpers } from "../common/YpMediaHelpers.js";
 import { YpCollection, CollectionTabTypes } from "./yp-collection.js";
-import { customElement } from "lit/decorators.js";
+import { customElement, property } from "lit/decorators.js";
 import { unsafeHTML } from "lit/directives/unsafe-html.js";
 import { html } from "lit";
 import { YpNavHelpers } from "../common/YpNavHelpers.js";
+import { YpFormattingHelpers } from "../common/YpFormattingHelpers.js";
 let YpDomain = class YpDomain extends YpCollection {
     constructor() {
         super("domain", "community", "edit", "community.add");
+        this.customWelcomeHtml = undefined;
     }
-    refresh() {
+    async refresh() {
         super.refresh();
         const domain = this.collection;
         if (domain) {
@@ -44,6 +46,24 @@ let YpDomain = class YpDomain extends YpCollection {
         window.appGlobals.currentGroup = undefined;
         window.appGlobals.signupTermsPageId = undefined;
         window.appGlobals.setHighlightedLanguages(undefined);
+        setTimeout(async () => {
+            if (domain && domain.configuration) {
+                if (domain.configuration.welcomeHtmlInsteadOfCommunitiesList) {
+                    let finalHtml = domain.configuration.welcomeHtmlInsteadOfCommunitiesList;
+                    const aoiStatsHtmlTag = "<AOI_SITE_STATS>";
+                    if (domain.configuration.welcomeHtmlInsteadOfCommunitiesList.includes(aoiStatsHtmlTag)) {
+                        const stats = (await window.serverApi.getAoiTotalStats(domain.id));
+                        if (stats) {
+                            const statsString = `<div class="layout horizontal center-center aoiSiteStats wrap">
+              <span class="aoiSiteStatItem">${YpFormattingHelpers.number(stats.total_questions)}</span> <span class="aoiSiteStatType">wiki surveys</span> created with <span class="aoiSiteStatItem">${YpFormattingHelpers.number(stats.choices_count)} </span> <span class="aoiSiteStatType">answers</span> and <span class="aoiSiteStatItem">${YpFormattingHelpers.number(stats.votes_count)} </span>  <span class="aoiSiteStatType">votes</span> since 2010
+              </div>`;
+                            finalHtml = finalHtml.replace(aoiStatsHtmlTag, statsString);
+                        }
+                    }
+                    this.customWelcomeHtml = finalHtml;
+                }
+            }
+        });
     }
     scrollToCommunityItem() {
         if (this.selectedTab === CollectionTabTypes.Newsfeed &&
@@ -83,25 +103,32 @@ let YpDomain = class YpDomain extends YpCollection {
         if (this.collection &&
             this.collection.configuration
                 .welcomeHtmlInsteadOfCommunitiesList) {
-            return html `
-        ${unsafeHTML(this.collection.configuration
-                .welcomeHtmlInsteadOfCommunitiesList)}
+            if (this.customWelcomeHtml) {
+                return html `
+          ${unsafeHTML(this.customWelcomeHtml)}
 
-        <div class="layout vertical center-center">
-          <md-icon-button
-            id="menuButton"
-            @click="${this._openAdmin}"
-            title="${this.t("domain.edit")}"
-            ><md-icon>settings</md-icon>
-          </md-icon-button>
-        </div>
-      `;
+          <div class="layout vertical center-center">
+            <md-icon-button
+              id="menuButton"
+              @click="${this._openAdmin}"
+              title="${this.t("domain.edit")}"
+              ><md-icon>settings</md-icon>
+            </md-icon-button>
+          </div>
+        `;
+            }
+            else {
+                return html ``;
+            }
         }
         else {
             return super.render();
         }
     }
 };
+__decorate([
+    property({ type: String })
+], YpDomain.prototype, "customWelcomeHtml", void 0);
 YpDomain = __decorate([
     customElement("yp-domain")
 ], YpDomain);

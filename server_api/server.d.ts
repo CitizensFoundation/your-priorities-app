@@ -23,6 +23,7 @@ interface DbData extends Model {
   static destroy(options: any): Promise<any>;
   static update(options: any, data: any): Promise<any>;
   static create(options: any): Promise<any>;
+  static count(options: any | undefined = undefined): Promise<any>;
   static build(options: any): Promise<any>;
   save(): Promise<any>;
   set(col: string, value: any): void;
