@@ -86,19 +86,13 @@ export class AoiSurveyVoting extends YpBaseElement {
     this.fire("needs-new-earl");
     window.appGlobals.activity("Voting - open");
     this.resetTimer();
-    this.installMediaQueryWatcher(
-      `(max-width: 800px)`,
-      (matches) => {
-       this.breakForVertical = matches;
-      }
-    );
+    this.installMediaQueryWatcher(`(max-width: 800px)`, (matches) => {
+      this.breakForVertical = matches;
+    });
 
-    this.installMediaQueryWatcher(
-      `(max-width: 450px)`,
-      (matches) => {
-       this.breakButtonsForVertical = matches;
-      }
-    );
+    this.installMediaQueryWatcher(`(max-width: 450px)`, (matches) => {
+      this.breakButtonsForVertical = matches;
+    });
   }
 
   override disconnectedCallback(): void {
@@ -241,11 +235,12 @@ export class AoiSurveyVoting extends YpBaseElement {
 
   async setLabelOnMdButton() {
     // Query all custom buttons
-    const customButtons = this.shadowRoot?.querySelectorAll('md-elevated-button');
+    const customButtons =
+      this.shadowRoot?.querySelectorAll("md-elevated-button");
 
     // Check if buttons are found
     if (!customButtons) {
-      console.error('No custom buttons found');
+      console.error("No custom buttons found");
       return;
     }
 
@@ -257,21 +252,25 @@ export class AoiSurveyVoting extends YpBaseElement {
       const shadow = customButton.shadowRoot;
 
       if (shadow) {
-        const labelSpan = shadow.querySelector('button .label') as HTMLElement;
+        const labelSpan = shadow.querySelector("button .label") as HTMLElement;
 
         if (labelSpan) {
           // Change the overflow property
-          labelSpan.style.overflow = 'visible';
+          labelSpan.style.overflow = "visible";
         } else {
-          console.error('Label span not found within the shadow DOM of the button');
+          console.error(
+            "Label span not found within the shadow DOM of the button"
+          );
         }
       } else {
-        console.error('Shadow DOM not found for the button');
+        console.error("Shadow DOM not found for the button");
       }
     });
   }
 
-  protected override firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
+  protected override firstUpdated(
+    _changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>
+  ): void {
     super.firstUpdated(_changedProperties);
     this.setLabelOnMdButton();
   }
@@ -327,7 +326,7 @@ export class AoiSurveyVoting extends YpBaseElement {
         .iconImageRight {
           width: 100px;
           height: 100px;
-          margin-left: 0;;
+          margin-left: 0;
           margin-right: 0;
           border-radius: 70px;
           background-color: transparent;
@@ -690,7 +689,11 @@ export class AoiSurveyVoting extends YpBaseElement {
               ></yp-magic-text>
             </md-elevated-button>
           </div>
-          <div class="layout ${this.breakButtonsForVertical ? 'vertical': 'horizontal'} center-center wrap">
+          <div
+            class="layout ${this.breakButtonsForVertical
+              ? "vertical"
+              : "horizontal"} center-center wrap"
+          >
             <md-text-button
               ?hidden="${!this.hasLlm || this.earl.configuration?.hide_explain}"
               class="skipButton"
@@ -698,19 +701,20 @@ export class AoiSurveyVoting extends YpBaseElement {
             >
               ${this.t("Explain")}
             </md-text-button>
-            <md-outlined-button
-              ?hidden="${!this.earl.configuration?.accept_new_ideas}"
-              class="newIdeaButton"
-              @click="${this.openNewIdeaDialog}"
-            >
-              ${this.t("Add your own answer")}
-            </md-outlined-button>
+
             <md-text-button
               ?hidden="${this.earl.configuration?.hide_skip}"
               class="skipButton"
               @click=${() => this.voteForAnswer("skip")}
             >
               ${this.t("Skip")}
+            </md-text-button>
+            <md-text-button
+              ?hidden="${!this.earl.configuration?.accept_new_ideas}"
+              class="newIdeaButton"
+              @click="${this.openNewIdeaDialog}"
+            >
+              ${this.t("Add your own answer")}
             </md-text-button>
           </div>
           ${this.renderProgressBar()}

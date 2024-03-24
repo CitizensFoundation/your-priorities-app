@@ -181,6 +181,7 @@ interface YpGroupConfiguration extends YpCollectionConfiguration {
   allowOneTimeLoginWithName?: boolean;
   hideGroupHeader?: boolean;
   hideAllTabs?: boolean;
+  disableCollectionUpLink?: boolean;
   anonymousAskRegistrationQuestions?: boolean;
   disableMachineTranscripts?: boolean;
   hideHelpIcon?: boolean;
@@ -360,7 +361,7 @@ type YpCommunityAccessTypes = "public" | "closed" | "secret";
 interface YpCommunityConfiguration extends YpCollectionConfiguration {
   redirectToGroupId?: number;
   facebookPixelId?: string;
-  disableDomainUpLink?: boolean;
+  disableCollectionUpLink?: boolean;
   forceSecureSamlLogin?: boolean;
   customSamlDeniedMessage?: string;
   customSamlLoginMessage?: string;

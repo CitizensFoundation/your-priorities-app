@@ -36,6 +36,7 @@ import { MdFilledTextField } from "@material/web/textfield/filled-text-field.js"
 import { AoiEarlIdeasEditor } from "./allOurIdeas/aoi-earl-ideas-editor.js";
 import { AoiAdminServerApi } from "./allOurIdeas/AoiAdminServerApi.js";
 import { YpAdminApp } from "./yp-admin-app.js";
+import { unsafeHTML } from "lit/directives/unsafe-html.js";
 
 const defaultModerationPrompt = `Only allow ideas that are relevant to the question.`;
 
@@ -1491,6 +1492,12 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
           translationToken: "hideNewsfeeds",
         },
         {
+          text: "disableCollectionUpLink",
+          type: "checkbox",
+          value: this.group.configuration.disableCollectionUpLink,
+          translationToken: "disableCollectionUpLink",
+        },
+        {
           text: "welcomeSelectPage",
           type: "html",
           hidden: !this.pages,
@@ -1631,11 +1638,11 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
       configuration.earl = {
         active: true,
         configuration: {
-          accept_new_ideas: true,
+          accept_new_ideas: false,
           hide_results: false,
           hide_analysis: false,
           hide_skip: false,
-          enableAiModeration: true,
+          enableAiModeration: false,
           allowNewIdeasForVoting: true,
           hide_explain: false,
           minimum_ten_votes_to_show_results: true,
@@ -1716,6 +1723,7 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
       window.appGlobals.originalQueryParameters["createProjectForGroup"]
     ) {
       domainId = this.parentCollectionId as number;
+      this.group.configuration.disableCollectionUpLink = true;
     } else if (this.collectionId === "new") {
       communityId = this.parentCollectionId as number;
     } else {
@@ -1834,6 +1842,12 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
           translationToken: "minimumTenVotesToShowResults",
         },
         {
+          text: "disableCollectionUpLink",
+          type: "checkbox",
+          value: this.group.configuration.disableCollectionUpLink,
+          translationToken: "disableCollectionUpLink",
+        },
+        {
           text: "hide_results",
           type: "checkbox",
           onChange: (e: CustomEvent) =>
@@ -1905,6 +1919,12 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
           onChange: (e: CustomEvent) =>
             this._updateEarl(e, "configuration.analysis_config", true),
           translationToken: "aoiAiAnalysisConfig",
+        },
+        {
+          type: "html",
+          templateData: html`<div class="layout vertical center-center" style="margin-top: -8px">
+            <div style="max-width: 700px">${unsafeHTML(this.t("aiAnalysisConfigInfo"))}</div>
+          </div>`,
         },
         {
           text: "targetVotes",

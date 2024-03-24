@@ -209,6 +209,7 @@ var updateGroupConfigParameters = function (req, group) {
     group.set('configuration.disableNameAutoTranslation', truthValueFromBody(req.body.disableNameAutoTranslation));
     group.set('configuration.externalGoalTriggerUrl', (req.body.externalGoalTriggerUrl && req.body.externalGoalTriggerUrl != "") ? req.body.externalGoalTriggerUrl : null);
     group.set('configuration.hideNewPost', truthValueFromBody(req.body.hideNewPost));
+    group.set('configuration.disableCollectionUpLink', truthValueFromBody(req.body.disableCollectionUpLink));
     group.set('configuration.makeCategoryRequiredOnNewPost', truthValueFromBody(req.body.makeCategoryRequiredOnNewPost));
     group.set('configuration.showVideoUploadDisclaimer', truthValueFromBody(req.body.showVideoUploadDisclaimer));
     group.set('configuration.welcomePageId', (req.body.welcomePageId && req.body.welcomePageId != "") ? req.body.welcomePageId : null);

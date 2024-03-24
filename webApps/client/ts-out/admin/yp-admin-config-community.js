@@ -617,7 +617,7 @@ let YpAdminConfigCommunity = class YpAdminConfigCommunity extends YpAdminConfigB
                     type: "checkbox",
                 },
                 {
-                    text: "disableDomainUpLink",
+                    text: "disableCollectionUpLink",
                     type: "checkbox",
                     translationToken: "disableCommunityDomainUpLink",
                 },

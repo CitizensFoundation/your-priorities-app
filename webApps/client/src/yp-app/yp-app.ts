@@ -506,22 +506,23 @@ export class YpApp extends YpBaseElement {
 
   //TODO: Use someth8ing like https://boguz.github.io/burgton-button-docs/
   renderNavigationIcon() {
-    let icons;
+    let icons = html``;
 
-    if (this.closePostHeader)
+    if (this.closePostHeader) {
       icons = html`<md-icon-button
         title="${this.t("close")}"
         @click="${this._closePost}"
         ><md-icon>close</md-icon></md-icon-button
       >`;
-    else
-      icons = html` <md-icon-button
+    } else if (this.showBack) {
+      icons = html`<md-icon-button
         title="${this.t("goBack")}"
         slot="actionItems"
         ?hidden="${!this.backPath}"
         @click="${this.goBack}"
         ><md-icon>arrow_upward</md-icon>
       </md-icon-button>`;
+    }
 
     return html`${icons}
     ${this.goForwardToPostId
@@ -629,7 +630,7 @@ export class YpApp extends YpBaseElement {
         role="navigation"
         .titleString="${this.goForwardToPostId && this.goForwardPostName
           ? this.goForwardPostName
-          : this.headerTitle || ""}"
+          : (this.showBack ? this.headerTitle : "") || ""}"
         aria-label="top navigation"
         ?hidden="${this.appMode !== "main"}"
       >
@@ -637,7 +638,9 @@ export class YpApp extends YpBaseElement {
         <div slot="title"></div>
         <div slot="action">${this.renderActionItems()}</div>
       </yp-top-app-bar>
-      <div class="mainPage" ?hidden="${this.appMode !== "main"}">${this.renderPage()}</div>
+      <div class="mainPage" ?hidden="${this.appMode !== "main"}">
+        ${this.renderPage()}
+      </div>
     `;
   }
 
@@ -1013,11 +1016,13 @@ export class YpApp extends YpBaseElement {
     this.autoTranslate = event.detail;
   }
 
-  _refreshGroup() {
+  async _refreshGroup() {
+    await this.updateComplete;
     this._refreshByName("#groupPage");
   }
 
-  _refreshCommunity() {
+  async _refreshCommunity() {
+    await this.updateComplete;
     this._refreshByName("#communityPage");
   }
 
@@ -1028,8 +1033,11 @@ export class YpApp extends YpBaseElement {
   async _refreshByName(id: string) {
     const el = this.$$(id) as YpCollection;
     if (el) {
+      debugger;
       await el.getCollection();
       el.refresh();
+    } else {
+      console.warn("Can't find element to refresh", id);
     }
   }
 
@@ -1516,7 +1524,7 @@ export class YpApp extends YpBaseElement {
       }
     }
 
-    if (this.showBack && header.disableDomainUpLink === true) {
+    if (this.showBack && header.disableCollectionUpLink === true) {
       this.showBack = false;
       this.headerTitle = "";
     }

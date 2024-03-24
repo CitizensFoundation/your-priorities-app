@@ -96,7 +96,7 @@ export class AoiNewIdeaDialog extends YpGenerateAiImage {
         if (this.earl.configuration?.allowNewIdeasForVoting) {
           this.fire(
             "display-snackbar",
-            this.t("Your idea is in a moderation queue.")
+            this.t("New ideas will be reviewed for originality and compliance with terms of service prior to posting.")
           );
         } else {
           this.fire(
@@ -531,7 +531,7 @@ export class AoiNewIdeaDialog extends YpGenerateAiImage {
       return html`<div class="layout horizontal footer">
         <div class="flex"></div>
         <md-text-button class="closeButton" @click="${this.close}">
-          ${this.t("close")}
+          ${this.choice?.data.isGeneratingImage ? this.t('closeAndGenerateIconInBackground') : this.t('close')}
         </md-text-button>
       </div> `;
     } else {

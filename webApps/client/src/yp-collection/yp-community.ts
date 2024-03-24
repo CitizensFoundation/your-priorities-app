@@ -192,9 +192,9 @@ export class YpCommunity extends YpCollection {
         headerDescription: headerDescription,
         headerIcon: "group-work",
         useHardBack: this._useHardBack(community.configuration),
-        disableDomainUpLink:
+        disableCollectionUpLink:
           community.configuration &&
-          community.configuration.disableDomainUpLink === true,
+          community.configuration.disableCollectionUpLink === true,
         documentTitle: community.name,
         backPath:
           community.configuration && community.configuration.customBackURL

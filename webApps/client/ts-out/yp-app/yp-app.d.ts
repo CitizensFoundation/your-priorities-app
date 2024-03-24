@@ -134,8 +134,8 @@ export declare class YpApp extends YpBaseElement {
     openUserInfoPage(pageId: number): void;
     _setLanguageName(event: CustomEvent): void;
     _autoTranslateEvent(event: CustomEvent): void;
-    _refreshGroup(): void;
-    _refreshCommunity(): void;
+    _refreshGroup(): Promise<void>;
+    _refreshCommunity(): Promise<void>;
     _refreshDomain(): void;
     _refreshByName(id: string): Promise<void>;
     _closeRightDrawer(): void;

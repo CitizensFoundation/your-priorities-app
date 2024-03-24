@@ -733,7 +733,7 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
           type: "checkbox",
         },
         {
-          text: "disableDomainUpLink",
+          text: "disableCollectionUpLink",
           type: "checkbox",
           translationToken: "disableCommunityDomainUpLink",
         },

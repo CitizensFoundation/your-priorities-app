@@ -24,6 +24,7 @@ import "../common/languages/yp-language-selector.js";
 import { YpMediaHelpers } from "../common/YpMediaHelpers.js";
 import "./allOurIdeas/aoi-earl-ideas-editor.js";
 import { AoiAdminServerApi } from "./allOurIdeas/AoiAdminServerApi.js";
+import { unsafeHTML } from "lit/directives/unsafe-html.js";
 const defaultModerationPrompt = `Only allow ideas that are relevant to the question.`;
 const defaultAiAnalysisJson = {
     analyses: [
@@ -1363,6 +1364,12 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
                     translationToken: "hideNewsfeeds",
                 },
                 {
+                    text: "disableCollectionUpLink",
+                    type: "checkbox",
+                    value: this.group.configuration.disableCollectionUpLink,
+                    translationToken: "disableCollectionUpLink",
+                },
+                {
                     text: "welcomeSelectPage",
                     type: "html",
                     hidden: !this.pages,
@@ -1487,11 +1494,11 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
             configuration.earl = {
                 active: true,
                 configuration: {
-                    accept_new_ideas: true,
+                    accept_new_ideas: false,
                     hide_results: false,
                     hide_analysis: false,
                     hide_skip: false,
-                    enableAiModeration: true,
+                    enableAiModeration: false,
                     allowNewIdeasForVoting: true,
                     hide_explain: false,
                     minimum_ten_votes_to_show_results: true,
@@ -1548,6 +1555,7 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
         if (this.collectionId === "new" &&
             window.appGlobals.originalQueryParameters["createProjectForGroup"]) {
             domainId = this.parentCollectionId;
+            this.group.configuration.disableCollectionUpLink = true;
         }
         else if (this.collectionId === "new") {
             communityId = this.parentCollectionId;
@@ -1655,6 +1663,12 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
                     translationToken: "minimumTenVotesToShowResults",
                 },
                 {
+                    text: "disableCollectionUpLink",
+                    type: "checkbox",
+                    value: this.group.configuration.disableCollectionUpLink,
+                    translationToken: "disableCollectionUpLink",
+                },
+                {
                     text: "hide_results",
                     type: "checkbox",
                     onChange: (e) => this._updateEarl(e, "configuration.hide_results"),
@@ -1718,6 +1732,12 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
                         : JSON.stringify(defaultAiAnalysisJson, null, 2),
                     onChange: (e) => this._updateEarl(e, "configuration.analysis_config", true),
                     translationToken: "aoiAiAnalysisConfig",
+                },
+                {
+                    type: "html",
+                    templateData: html `<div class="layout vertical center-center" style="margin-top: -8px">
+            <div style="max-width: 700px">${unsafeHTML(this.t("aiAnalysisConfigInfo"))}</div>
+          </div>`,
                 },
                 {
                     text: "targetVotes",

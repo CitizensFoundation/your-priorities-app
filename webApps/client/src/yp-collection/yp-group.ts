@@ -790,6 +790,9 @@ export class YpGroup extends YpCollection {
         headerIcon: "social:group",
         documentTitle: group.name,
         enableSearch: true,
+        disableCollectionUpLink:
+        group.configuration &&
+        group.configuration.disableCollectionUpLink === true,
         hideHelpIcon: group.configuration.hideHelpIcon ? true : null,
         useHardBack: this._useHardBack(group.configuration),
         backPath: backPath,

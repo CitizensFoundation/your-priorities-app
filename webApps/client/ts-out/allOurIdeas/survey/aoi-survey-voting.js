@@ -136,10 +136,10 @@ let AoiSurveyVoting = class AoiSurveyVoting extends YpBaseElement {
     }
     async setLabelOnMdButton() {
         // Query all custom buttons
-        const customButtons = this.shadowRoot?.querySelectorAll('md-elevated-button');
+        const customButtons = this.shadowRoot?.querySelectorAll("md-elevated-button");
         // Check if buttons are found
         if (!customButtons) {
-            console.error('No custom buttons found');
+            console.error("No custom buttons found");
             return;
         }
         await this.updateComplete;
@@ -148,17 +148,17 @@ let AoiSurveyVoting = class AoiSurveyVoting extends YpBaseElement {
             // Access the shadow DOM of each button
             const shadow = customButton.shadowRoot;
             if (shadow) {
-                const labelSpan = shadow.querySelector('button .label');
+                const labelSpan = shadow.querySelector("button .label");
                 if (labelSpan) {
                     // Change the overflow property
-                    labelSpan.style.overflow = 'visible';
+                    labelSpan.style.overflow = "visible";
                 }
                 else {
-                    console.error('Label span not found within the shadow DOM of the button');
+                    console.error("Label span not found within the shadow DOM of the button");
                 }
             }
             else {
-                console.error('Shadow DOM not found for the button');
+                console.error("Shadow DOM not found for the button");
             }
         });
     }
@@ -202,7 +202,7 @@ let AoiSurveyVoting = class AoiSurveyVoting extends YpBaseElement {
         .iconImageRight {
           width: 100px;
           height: 100px;
-          margin-left: 0;;
+          margin-left: 0;
           margin-right: 0;
           border-radius: 70px;
           background-color: transparent;
@@ -553,7 +553,11 @@ let AoiSurveyVoting = class AoiSurveyVoting extends YpBaseElement {
               ></yp-magic-text>
             </md-elevated-button>
           </div>
-          <div class="layout ${this.breakButtonsForVertical ? 'vertical' : 'horizontal'} center-center wrap">
+          <div
+            class="layout ${this.breakButtonsForVertical
+                ? "vertical"
+                : "horizontal"} center-center wrap"
+          >
             <md-text-button
               ?hidden="${!this.hasLlm || this.earl.configuration?.hide_explain}"
               class="skipButton"
@@ -561,19 +565,20 @@ let AoiSurveyVoting = class AoiSurveyVoting extends YpBaseElement {
             >
               ${this.t("Explain")}
             </md-text-button>
-            <md-outlined-button
-              ?hidden="${!this.earl.configuration?.accept_new_ideas}"
-              class="newIdeaButton"
-              @click="${this.openNewIdeaDialog}"
-            >
-              ${this.t("Add your own answer")}
-            </md-outlined-button>
+
             <md-text-button
               ?hidden="${this.earl.configuration?.hide_skip}"
               class="skipButton"
               @click=${() => this.voteForAnswer("skip")}
             >
               ${this.t("Skip")}
+            </md-text-button>
+            <md-text-button
+              ?hidden="${!this.earl.configuration?.accept_new_ideas}"
+              class="newIdeaButton"
+              @click="${this.openNewIdeaDialog}"
+            >
+              ${this.t("Add your own answer")}
             </md-text-button>
           </div>
           ${this.renderProgressBar()}

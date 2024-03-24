@@ -145,8 +145,8 @@ let YpCommunity = class YpCommunity extends YpCollection {
                 headerDescription: headerDescription,
                 headerIcon: "group-work",
                 useHardBack: this._useHardBack(community.configuration),
-                disableDomainUpLink: community.configuration &&
-                    community.configuration.disableDomainUpLink === true,
+                disableCollectionUpLink: community.configuration &&
+                    community.configuration.disableCollectionUpLink === true,
                 documentTitle: community.name,
                 backPath: community.configuration && community.configuration.customBackURL
                     ? community.configuration.customBackURL
