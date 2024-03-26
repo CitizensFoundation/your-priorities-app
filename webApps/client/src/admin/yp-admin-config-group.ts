@@ -145,6 +145,14 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
           padding: 8px;
         }
 
+        .aboutAccess {
+          font-size: 14px;
+          padding: 8px;
+          margin-top: -24px;
+          font-style: italic;
+          max-width: 600px;
+        }
+
         .saveButtonContainer {
         }
 
@@ -201,7 +209,9 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
           <div class="layout horizontal wrap topInputContainer">
             <div class="layout vertical">
               ${this.renderLogoMedia()}
-              <div class="socialMediaCreateInfo">${this.t("socialMediaCreateInfo")}</div>
+              <div class="socialMediaCreateInfo">
+                ${this.t("socialMediaCreateInfo")}
+              </div>
             </div>
             <div class="layout vertical">
               ${this.renderNameAndDescription()}
@@ -245,9 +255,9 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
         value="${this.collection?.description}"
       />
 
-      ${window.appGlobals.originalQueryParameters["createProjectForGroup"]
+      ${window.appGlobals.originalQueryParameters["createCommunityForGroup"]
         ? html`
-            <input type="hidden" name="createProjectForGroup" value="true" />
+            <input type="hidden" name="createCommunityForGroup" value="true" />
           `
         : nothing}
       ${(this.collection?.configuration as YpGroupConfiguration).ltp
@@ -396,7 +406,9 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
 
   _collectionIdChanged() {
     if (this.collectionId == "new" || this.collectionId == "newFolder") {
-      if (window.appGlobals.originalQueryParameters["createProjectForGroup"]) {
+      if (
+        window.appGlobals.originalQueryParameters["createCommunityForGroup"]
+      ) {
         this.parentCollectionId = window.appGlobals.domain!.id;
         this.action = `/groups/${this.parentCollectionId}/create_community_for_group`;
       } else {
@@ -407,8 +419,8 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
         name: "",
         description: "",
         objectives: "",
-        access: 0,
-        status: "active",
+        access: 3,
+        status: "hidden",
         counter_points: 0,
         counter_posts: 0,
         counter_users: 0,
@@ -464,6 +476,9 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
   }
 
   _getAccessTab() {
+    const creatingGroupDirectly =
+      this.collectionId == "new" &&
+      window.appGlobals.originalQueryParameters["createCommunityForGroup"];
     const base = {
       name: "access",
       icon: "code",
@@ -473,9 +488,7 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
           type: "html",
           templateData: html`
             <div id="access" name="access" class="layout vertical access">
-              <div class="accessHeader">
-                ${this.t("access")} ${this.groupAccess}
-              </div>
+              <div class="accessHeader">${this.t("access")}</div>
               <label>
                 <md-radio
                   value="open_to_community"
@@ -483,7 +496,9 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
                   @change="${this._groupAccessChanged}"
                   ?checked="${this.groupAccess == "open_to_community"}"
                 ></md-radio
-                >${this.t("group.openToCommunity")}</label
+                >${!creatingGroupDirectly
+                  ? this.t("group.openToCommunity")
+                  : this.t("public")}</label
               >
               <label>
                 <md-radio
@@ -494,6 +509,17 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
                 ></md-radio
                 >${this.t("private")}
               </label>
+            </div>
+          `,
+        },
+        {
+          text: "aboutAccess",
+          type: "html",
+          templateData: html`
+            <div class="aboutAccess">
+              ${!creatingGroupDirectly
+                ? this.t("aboutGroupPrivacyOptions")
+                : this.t("aboutGroupPrivacyOptionsCreateGroupDirectly")}
             </div>
           `,
         },
@@ -514,6 +540,17 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
                 `
               )}
             </md-outlined-select>
+          `,
+        },
+        {
+          text: "aboutStatus",
+          type: "html",
+          templateData: html`
+            <div class="aboutAccess">
+              ${!creatingGroupDirectly
+                ? this.t("aboutStatusOptions")
+                : this.t("aboutStatusOptionsCreateGroupDirectly")}
+            </div>
           `,
         },
       ] as Array<YpStructuredConfigData>,
@@ -1646,12 +1683,12 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
       configuration.earl = {
         active: true,
         configuration: {
-          accept_new_ideas: false,
+          accept_new_ideas: true,
           hide_results: false,
           hide_analysis: false,
           hide_skip: false,
           enableAiModeration: false,
-          allowNewIdeasForVoting: true,
+          allowAnswersNotForVoting: false,
           hide_explain: false,
           minimum_ten_votes_to_show_results: true,
           target_votes: 30,
@@ -1713,7 +1750,7 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
 
       if (
         this.collectionId === "new" &&
-        window.appGlobals.originalQueryParameters["createProjectForGroup"]
+        window.appGlobals.originalQueryParameters["createCommunityForGroup"]
       ) {
         domainId = this.parentCollectionId as number;
       } else if (this.collectionId === "new") {
@@ -1744,7 +1781,7 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
 
     if (
       this.collectionId === "new" &&
-      window.appGlobals.originalQueryParameters["createProjectForGroup"]
+      window.appGlobals.originalQueryParameters["createCommunityForGroup"]
     ) {
       domainId = this.parentCollectionId as number;
       this.group.configuration.disableCollectionUpLink = true;
@@ -1824,7 +1861,7 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
           type: "checkbox",
           onChange: (e: CustomEvent) => this._updateEarl(e, "active"),
           value: earl?.active,
-          translationToken: "active",
+          translationToken: "wikiSurveyActive",
         },
         {
           text: "accept_new_ideas",
@@ -1838,14 +1875,6 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
           translationToken: "acceptNewIdeas",
         },
         {
-          text: "allowNewIdeasForVoting",
-          type: "checkbox",
-          onChange: (e: CustomEvent) =>
-            this._updateEarl(e, "configuration.allowNewIdeasForVoting"),
-          value: earl?.configuration?.allowNewIdeasForVoting,
-          translationToken: "allowNewIdeasForVoting",
-        },
-        {
           text: "enableAiModeration",
           type: "checkbox",
           onChange: (e: CustomEvent) =>
@@ -1853,7 +1882,14 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
           value: earl?.configuration?.enableAiModeration,
           translationToken: "enableAiModeration",
         },
-
+        {
+          text: "allowAnswersNotForVoting",
+          type: "checkbox",
+          onChange: (e: CustomEvent) =>
+            this._updateEarl(e, "configuration.allowAnswersNotForVoting"),
+          value: earl?.configuration?.allowAnswersNotForVoting,
+          translationToken: "allowAnswersNotForVoting",
+        },
         {
           text: "minimum_ten_votes_to_show_results",
           type: "checkbox",
@@ -1982,11 +2018,15 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
         },
         {
           type: "html",
-          templateData: html`<div class="layout vertical center-center" style="margin-top: -8px">
-            <div style="max-width: 700px">${unsafeHTML(this.t("aiAnalysisConfigInfo"))}</div>
+          templateData: html`<div
+            class="layout vertical center-center"
+            style="margin-top: -8px"
+          >
+            <div style="max-width: 700px">
+              ${unsafeHTML(this.t("aiAnalysisConfigInfo"))}
+            </div>
           </div>`,
         },
-
       ] as Array<YpStructuredConfigData>,
     } as YpConfigTabData;
   }

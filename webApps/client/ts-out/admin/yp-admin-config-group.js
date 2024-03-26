@@ -91,6 +91,14 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
           padding: 8px;
         }
 
+        .aboutAccess {
+          font-size: 14px;
+          padding: 8px;
+          margin-top: -24px;
+          font-style: italic;
+          max-width: 600px;
+        }
+
         .saveButtonContainer {
         }
 
@@ -142,7 +150,9 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
           <div class="layout horizontal wrap topInputContainer">
             <div class="layout vertical">
               ${this.renderLogoMedia()}
-              <div class="socialMediaCreateInfo">${this.t("socialMediaCreateInfo")}</div>
+              <div class="socialMediaCreateInfo">
+                ${this.t("socialMediaCreateInfo")}
+              </div>
             </div>
             <div class="layout vertical">
               ${this.renderNameAndDescription()}
@@ -186,9 +196,9 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
         value="${this.collection?.description}"
       />
 
-      ${window.appGlobals.originalQueryParameters["createProjectForGroup"]
+      ${window.appGlobals.originalQueryParameters["createCommunityForGroup"]
             ? html `
-            <input type="hidden" name="createProjectForGroup" value="true" />
+            <input type="hidden" name="createCommunityForGroup" value="true" />
           `
             : nothing}
       ${(this.collection?.configuration).ltp
@@ -294,7 +304,7 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
     }
     _collectionIdChanged() {
         if (this.collectionId == "new" || this.collectionId == "newFolder") {
-            if (window.appGlobals.originalQueryParameters["createProjectForGroup"]) {
+            if (window.appGlobals.originalQueryParameters["createCommunityForGroup"]) {
                 this.parentCollectionId = window.appGlobals.domain.id;
                 this.action = `/groups/${this.parentCollectionId}/create_community_for_group`;
             }
@@ -306,8 +316,8 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
                 name: "",
                 description: "",
                 objectives: "",
-                access: 0,
-                status: "active",
+                access: 3,
+                status: "hidden",
                 counter_points: 0,
                 counter_posts: 0,
                 counter_users: 0,
@@ -359,6 +369,8 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
         window.appGlobals.activity("completed", "editGroup");
     }
     _getAccessTab() {
+        const creatingGroupDirectly = this.collectionId == "new" &&
+            window.appGlobals.originalQueryParameters["createCommunityForGroup"];
         const base = {
             name: "access",
             icon: "code",
@@ -368,9 +380,7 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
                     type: "html",
                     templateData: html `
             <div id="access" name="access" class="layout vertical access">
-              <div class="accessHeader">
-                ${this.t("access")} ${this.groupAccess}
-              </div>
+              <div class="accessHeader">${this.t("access")}</div>
               <label>
                 <md-radio
                   value="open_to_community"
@@ -378,7 +388,9 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
                   @change="${this._groupAccessChanged}"
                   ?checked="${this.groupAccess == "open_to_community"}"
                 ></md-radio
-                >${this.t("group.openToCommunity")}</label
+                >${!creatingGroupDirectly
+                        ? this.t("group.openToCommunity")
+                        : this.t("public")}</label
               >
               <label>
                 <md-radio
@@ -389,6 +401,17 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
                 ></md-radio
                 >${this.t("private")}
               </label>
+            </div>
+          `,
+                },
+                {
+                    text: "aboutAccess",
+                    type: "html",
+                    templateData: html `
+            <div class="aboutAccess">
+              ${!creatingGroupDirectly
+                        ? this.t("aboutGroupPrivacyOptions")
+                        : this.t("aboutGroupPrivacyOptionsCreateGroupDirectly")}
             </div>
           `,
                 },
@@ -407,6 +430,17 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
                   >
                 `)}
             </md-outlined-select>
+          `,
+                },
+                {
+                    text: "aboutStatus",
+                    type: "html",
+                    templateData: html `
+            <div class="aboutAccess">
+              ${!creatingGroupDirectly
+                        ? this.t("aboutStatusOptions")
+                        : this.t("aboutStatusOptionsCreateGroupDirectly")}
+            </div>
           `,
                 },
             ],
@@ -1503,12 +1537,12 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
             configuration.earl = {
                 active: true,
                 configuration: {
-                    accept_new_ideas: false,
+                    accept_new_ideas: true,
                     hide_results: false,
                     hide_analysis: false,
                     hide_skip: false,
                     enableAiModeration: false,
-                    allowNewIdeasForVoting: true,
+                    allowAnswersNotForVoting: false,
                     hide_explain: false,
                     minimum_ten_votes_to_show_results: true,
                     target_votes: 30,
@@ -1554,7 +1588,7 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
             let communityId;
             let domainId;
             if (this.collectionId === "new" &&
-                window.appGlobals.originalQueryParameters["createProjectForGroup"]) {
+                window.appGlobals.originalQueryParameters["createCommunityForGroup"]) {
                 domainId = this.parentCollectionId;
             }
             else if (this.collectionId === "new") {
@@ -1575,7 +1609,7 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
         let communityId;
         let domainId;
         if (this.collectionId === "new" &&
-            window.appGlobals.originalQueryParameters["createProjectForGroup"]) {
+            window.appGlobals.originalQueryParameters["createCommunityForGroup"]) {
             domainId = this.parentCollectionId;
             this.group.configuration.disableCollectionUpLink = true;
         }
@@ -1652,7 +1686,7 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
                     type: "checkbox",
                     onChange: (e) => this._updateEarl(e, "active"),
                     value: earl?.active,
-                    translationToken: "active",
+                    translationToken: "wikiSurveyActive",
                 },
                 {
                     text: "accept_new_ideas",
@@ -1664,18 +1698,18 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
                     translationToken: "acceptNewIdeas",
                 },
                 {
-                    text: "allowNewIdeasForVoting",
-                    type: "checkbox",
-                    onChange: (e) => this._updateEarl(e, "configuration.allowNewIdeasForVoting"),
-                    value: earl?.configuration?.allowNewIdeasForVoting,
-                    translationToken: "allowNewIdeasForVoting",
-                },
-                {
                     text: "enableAiModeration",
                     type: "checkbox",
                     onChange: (e) => this._updateEarl(e, "configuration.enableAiModeration"),
                     value: earl?.configuration?.enableAiModeration,
                     translationToken: "enableAiModeration",
+                },
+                {
+                    text: "allowAnswersNotForVoting",
+                    type: "checkbox",
+                    onChange: (e) => this._updateEarl(e, "configuration.allowAnswersNotForVoting"),
+                    value: earl?.configuration?.allowAnswersNotForVoting,
+                    translationToken: "allowAnswersNotForVoting",
                 },
                 {
                     text: "minimum_ten_votes_to_show_results",
@@ -1782,8 +1816,13 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
                 },
                 {
                     type: "html",
-                    templateData: html `<div class="layout vertical center-center" style="margin-top: -8px">
-            <div style="max-width: 700px">${unsafeHTML(this.t("aiAnalysisConfigInfo"))}</div>
+                    templateData: html `<div
+            class="layout vertical center-center"
+            style="margin-top: -8px"
+          >
+            <div style="max-width: 700px">
+              ${unsafeHTML(this.t("aiAnalysisConfigInfo"))}
+            </div>
           </div>`,
                 },
             ],

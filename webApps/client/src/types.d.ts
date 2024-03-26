@@ -147,6 +147,7 @@ interface YpStructuredQuestionData {
   dropdownOptions?: Array<YpDropdownData>;
   segmentName?: string;
   originalText?: string;
+  subTitle?: string;
 }
 
 interface YpErrorData {

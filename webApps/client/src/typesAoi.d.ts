@@ -55,7 +55,7 @@ interface AoiEarlConfigurationData {
   external_goal_params_whitelist?: string;
   external_goal_trigger_url?: string;
   hide_results: boolean;
-  allowNewIdeasForVoting: boolean;
+  allowAnswersNotForVoting: boolean;
   enableAiModeration: boolean;
   hide_analysis: boolean;
   hide_explain: boolean;

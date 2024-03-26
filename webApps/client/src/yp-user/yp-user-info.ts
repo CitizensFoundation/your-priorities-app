@@ -59,6 +59,7 @@ export class YpUserInfo extends YpBaseElement {
     ];
   }
 
+  //TODO: Renable My content
   override render() {
     return html`
       ${this.user
@@ -79,7 +80,7 @@ export class YpUserInfo extends YpBaseElement {
                   <md-outlined-button @click="${this._openEdit}"
                     >${this.t("user.edit")}</md-outlined-button
                   >
-                  <md-outlined-button @click="${this._openAllContentModeration}"
+                  <md-outlined-button hidden @click="${this._openAllContentModeration}"
                     >${this.t("myContent")}</md-outlined-button
                   >
                   <md-outlined-button @click="${this._logout}"

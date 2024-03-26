@@ -57,9 +57,9 @@ export declare class YpPostEdit extends YpEditBase {
     renderTabs(): TemplateResult<1>;
     renderMoreContactInfo(): TemplateResult<1>;
     get titleQuestionText(): string;
-    renderDescriptionTab(): TemplateResult<1> | typeof nothing;
-    renderPointTab(): TemplateResult<1> | typeof nothing;
-    renderLocationTab(): TemplateResult<1> | typeof nothing;
+    renderDescriptionTab(): typeof nothing | TemplateResult<1>;
+    renderPointTab(): typeof nothing | TemplateResult<1>;
+    renderLocationTab(): typeof nothing | TemplateResult<1>;
     renderCoverMediaSelection(): TemplateResult<1>;
     renderMediaTab(): TemplateResult<1>;
     _setSelectedCoverMediaType(event: CustomEvent): void;

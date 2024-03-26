@@ -14,7 +14,7 @@ export declare class YpPointNewsStoryEdit extends YpBaseElementWithLogin {
     communityId: number | undefined;
     domainId: number | undefined;
     static get styles(): any[];
-    render(): import("lit-html").TemplateResult<1> | typeof nothing;
+    render(): typeof nothing | import("lit-html").TemplateResult<1>;
     _clearButtonStat(): void;
     connectedCallback(): void;
     firstUpdated(props: Map<string | number | symbol, unknown>): void;

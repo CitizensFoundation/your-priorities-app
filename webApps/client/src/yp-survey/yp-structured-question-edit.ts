@@ -107,6 +107,16 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
           font-size: 16px;
         }
 
+        .subTitle {
+          font-size: 16px;
+          margin-top: 8px;
+          margin-bottom: 8px;
+        }
+
+        .subTitle [use-small-font] {
+          font-size: 14px;
+        }
+
         hr {
           border-top: 2px dashed var(--accent-color);
           margin-top: 48px;
@@ -340,6 +350,9 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
         maxlength="${ifDefined(this.question.maxLength || undefined)}"
       >
       </md-filled-text-field>
+      ${this.question.subTitle
+        ? html`<div class="subTitle" ?use-small-font="${this.useSmallFont}">${this.question.subTitle}</div>`
+        : nothing}
     `;
   }
 

@@ -590,7 +590,7 @@ export class AoiSurvey extends YpBaseElement {
               aria-label="${this.t("Results")}"
             >
               <md-icon slot="icon">grading</md-icon>
-              ${this.t("Rank-ordered list")}
+              ${this.t("Results")}
             </md-primary-tab>
 
             <md-primary-tab

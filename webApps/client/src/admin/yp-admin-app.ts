@@ -332,7 +332,7 @@ export class YpAdminApp extends YpBaseElement {
 
     if (splitPath[1] == "new" && splitPath[2]) {
       this.collectionId = "new";
-      if (window.appGlobals.originalQueryParameters["createProjectForGroup"]) {
+      if (window.appGlobals.originalQueryParameters["createCommunityForGroup"]) {
         this.parentCollectionId = window.appGlobals.domain?.id;
       } else {
         this.parentCollectionId = parseInt(splitPath[2]);
@@ -769,7 +769,7 @@ export class YpAdminApp extends YpBaseElement {
         this._setAdminConfirmedFromParent(communityParentCollection);
         break;
       case "group":
-        if (window.appGlobals.originalQueryParameters["createProjectForGroup"]) {
+        if (window.appGlobals.originalQueryParameters["createCommunityForGroup"]) {
           const groupParentCollection = await window.serverApi.getCollection(
             "domain",
             this.parentCollectionId as number
@@ -789,7 +789,7 @@ export class YpAdminApp extends YpBaseElement {
   }
 
   async _setAdminFromParent() {
-    if (window.appGlobals.originalQueryParameters["createProjectForGroup"]) {
+    if (window.appGlobals.originalQueryParameters["createCommunityForGroup"]) {
       this.parentCollectionId = window.appGlobals.domain?.id;
     }
     if (window.appUser.loggedIn()) {
@@ -820,7 +820,7 @@ export class YpAdminApp extends YpBaseElement {
           }
           break;
         case "group":
-          if (window.appGlobals.originalQueryParameters["createProjectForGroup"]) {
+          if (window.appGlobals.originalQueryParameters["createCommunityForGroup"]) {
             adminConfirmed = YpAccessHelpers.checkDomainAccess(
               collection as YpDomainData
             );
@@ -897,7 +897,7 @@ export class YpAdminApp extends YpBaseElement {
   exitToMainApp() {
     this.active = false;
     if (this.collectionId === "new") {
-      if (window.appGlobals.originalQueryParameters["createProjectForGroup"]) {
+      if (window.appGlobals.originalQueryParameters["createCommunityForGroup"]) {
         YpNavHelpers.redirectTo(`/domain/${this.parentCollectionId}`);
       } else {
         YpNavHelpers.redirectTo(

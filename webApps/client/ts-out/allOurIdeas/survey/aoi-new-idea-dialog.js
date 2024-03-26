@@ -59,7 +59,7 @@ let AoiNewIdeaDialog = class AoiNewIdeaDialog extends YpGenerateAiImage {
                 this.generateAiIcon();
             }
             else {
-                if (this.earl.configuration?.allowNewIdeasForVoting) {
+                if (!this.earl.configuration?.allowAnswersNotForVoting) {
                     this.fire("display-snackbar", this.t("New ideas will be reviewed for originality and compliance with terms of service prior to posting."));
                 }
                 else {
@@ -435,7 +435,7 @@ let AoiNewIdeaDialog = class AoiNewIdeaDialog extends YpGenerateAiImage {
           textType="aoiQuestionName"
         ></yp-magic-text>
       </div>
-      ${!this.earl.configuration.allowNewIdeasForVoting
+      ${this.earl.configuration.allowAnswersNotForVoting
             ? html `
             <div class="newIdeasNotAllowedForVotingInfo layout horizontal center-center">
               ${this.t("newIdeasNotAllowedForVotingInfo")}

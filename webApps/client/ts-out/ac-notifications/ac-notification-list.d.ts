@@ -21,7 +21,7 @@ export declare class AcNotificationList extends YpBaseElementWithLogin {
     lastFetchStartedAt: number | undefined;
     updated(changedProperties: Map<string | number | symbol, unknown>): void;
     static get styles(): any[];
-    renderNotification(notification: AcNotificationData): import("lit-html").TemplateResult<1> | typeof nothing;
+    renderNotification(notification: AcNotificationData): typeof nothing | import("lit-html").TemplateResult<1>;
     render(): import("lit-html").TemplateResult<1>;
     scrollEvent(event: {
         last: number;
