@@ -292,8 +292,7 @@ export class AllOurIdeasController {
         let flagged = false;
         if (
           process.env.OPENAI_API_KEY &&
-          aoiConfig.earl?.configuration?.enableAiModeration &&
-          aoiConfig.earl?.configuration?.allowNewIdeasForVoting
+          aoiConfig.earl?.configuration?.enableAiModeration
         ) {
           flagged = await this.getModerationFlag(newIdea);
           if (flagged) {
@@ -839,7 +838,15 @@ export class AllOurIdeasController {
       const choices = (await choicesResponse.json()) as AoiChoiceData[];
 
       for (const choice of choices) {
-        choice.data = JSON.parse(choice.data as any) as AoiAnswerToVoteOnData;
+        try {
+          choice.data = JSON.parse(choice.data as any) as AoiAnswerToVoteOnData;
+        } catch (error) {
+          choice.data = {
+            content: choice.data as any,
+            choiceId: choice.id,
+          }
+          console.warn(error);
+        }
       }
 
       console.log(`Number of choices fetched: ${choices.length}`);
@@ -859,7 +866,7 @@ export class AllOurIdeasController {
 
       const usedLanguageName = (req.query.languageName as string) || "English";
 
-      const analysisCacheKey = `${questionId}_${analysisTypeIndex}_${choiceIds}_${usedLanguageName}_${promptHash}_ai_analysis_v13`;
+      const analysisCacheKey = `${questionId}_${analysisTypeIndex}_${choiceIds}_${usedLanguageName}_${promptHash}_ai_analysis_v14`;
       console.log(
         `analysisCacheKey is ${analysisCacheKey} prompt ${analysisType.contextPrompt!.substring(
           0,

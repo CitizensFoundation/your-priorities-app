@@ -1,4 +1,4 @@
-import{n as t,t as a,a as i,i as s,x as e,c as l,T as r}from"./DNy5ai-q.js";import{C as n}from"./Du66DNnN.js";var o=function(t,a,i,s){for(var e,l=arguments.length,r=l<3?a:null===s?s=Object.getOwnPropertyDescriptor(a,i):s,n=t.length-1;n>=0;n--)(e=t[n])&&(r=(l<3?e(r):l>3?e(a,i,r):e(a,i))||r);return l>3&&r&&Object.defineProperty(a,i,r),r};let d=class extends i{static get styles(){return[super.styles,s`
+import{n as t,t as a,a as e,i,x as r,c as s,T as l}from"./CQmPY7fF.js";import{C as o}from"./aB6J6U0I.js";var n=function(t,a,e,i){for(var r,s=arguments.length,l=s<3?a:null===i?i=Object.getOwnPropertyDescriptor(a,e):i,o=t.length-1;o>=0;o--)(r=t[o])&&(l=(s<3?r(l):s>3?r(a,e,l):r(a,e))||l);return s>3&&l&&Object.defineProperty(a,e,l),l};let d=class extends e{static get styles(){return[super.styles,i`
         :host {
           margin-top: 16px;
         }
@@ -137,7 +137,7 @@ import{n as t,t as a,a as i,i as s,x as e,c as l,T as r}from"./DNy5ai-q.js";impo
         [hidden] {
           display: none !important;
         }
-      `]}get canvasSize(){return this.wide?135:190}firstUpdated(t){super.firstUpdated(t),this._drawCharts()}formatAmount(t){return`$${t}m`}_drawCharts(){const t=this.group.configuration.dataForVisualizationJson;this._drawChart("#overallTarget",t.overallTargetPercent,this.t("overall"),t.overallColor?t.overallColor:"#5bac51"),this._drawChart("#overallActual",t.overallActualPercent,this.t("actual"),t.overallColor?t.overallColor:"#5bac51"),this._drawChart("#yearTarget",t.yearTargetPercent,this.t("overall"),t.yearColor?t.yearColor:"#004f77"),this._drawChart("#yearActual",t.yearActualPercent,this.t("actual"),t.yearColor?t.yearColor:"#004f77")}_drawChart(t,a,i,s,e=!1){new n(this.$$(t).getContext("2d"),{type:"doughnut",data:{labels:[i,i],datasets:[{data:[a,a-100],borderColor:[e?"transparent":"#FFF",e?"transparent":"#FFF"],backgroundColor:[s,e?"transparent":"rgb(220,220,220)"]}]},options:{tooltips:!1,legend:{display:!1},toolstips:{callbacks:{label:t=>t.yLabel}}}})}render(){const t=this.group.configuration.dataForVisualizationJson;return e`
+      `]}get canvasSize(){return this.wide?135:190}firstUpdated(t){super.firstUpdated(t),this._drawCharts()}formatAmount(t){return`$${t}m`}_drawCharts(){const t=this.group.configuration.dataForVisualizationJson;this._drawChart("#overallTarget",t.overallTargetPercent,this.t("overall"),t.overallColor?t.overallColor:"#5bac51"),this._drawChart("#overallActual",t.overallActualPercent,this.t("actual"),t.overallColor?t.overallColor:"#5bac51"),this._drawChart("#yearTarget",t.yearTargetPercent,this.t("overall"),t.yearColor?t.yearColor:"#004f77"),this._drawChart("#yearActual",t.yearActualPercent,this.t("actual"),t.yearColor?t.yearColor:"#004f77")}_drawChart(t,a,e,i,r=!1){new o(this.$$(t).getContext("2d"),{type:"doughnut",data:{labels:[e,e],datasets:[{data:[a,a-100],borderColor:[r?"transparent":"#FFF",r?"transparent":"#FFF"],backgroundColor:[i,r?"transparent":"rgb(220,220,220)"]}]},options:{tooltips:!1,legend:{display:!1},toolstips:{callbacks:{label:t=>t.yLabel}}}})}render(){const t=this.group.configuration.dataForVisualizationJson;return r`
       <div class="layout vertical center-center">
         <div
           class="layout vertical stage shadow-elevation-2dp center-center"
@@ -291,11 +291,11 @@ import{n as t,t as a,a as i,i as s,x as e,c as l,T as r}from"./DNy5ai-q.js";impo
           </div>
         </div>
       </div>
-    `}};o([t({type:Object})],d.prototype,"group",void 0),d=o([a("yp-data-visualization")],d);var p=function(t,a,i,s){for(var e,l=arguments.length,r=l<3?a:null===s?s=Object.getOwnPropertyDescriptor(a,i):s,n=t.length-1;n>=0;n--)(e=t[n])&&(r=(l<3?e(r):l>3?e(a,i,r):e(a,i))||r);return l>3&&r&&Object.defineProperty(a,i,r),r};let c=class extends l{render(){return e`
+    `}};n([t({type:Object})],d.prototype,"group",void 0),d=n([a("yp-data-visualization")],d);var p=function(t,a,e,i){for(var r,s=arguments.length,l=s<3?a:null===i?i=Object.getOwnPropertyDescriptor(a,e):i,o=t.length-1;o>=0;o--)(r=t[o])&&(l=(s<3?r(l):s>3?r(a,e,l):r(a,e))||l);return s>3&&l&&Object.defineProperty(a,e,l),l};let c=class extends s{render(){return r`
       ${this.renderHeader()}
-      ${this.collection?e`
+      ${this.collection?r`
             <yp-data-visualization
               .group="${this.collection}"
             ></yp-data-visualization>
-          `:r}
+          `:l}
     `}};c=p([a("yp-group-data-viz")],c);

@@ -249,8 +249,6 @@ export class AoiSurveyAnalysis extends YpBaseElement {
   renderAnalysis() {
     let outHtml = html``;
 
-    debugger;
-
     if (
       this.earl.configuration &&
       this.earl.configuration.analysis_config?.analyses?.length > 0

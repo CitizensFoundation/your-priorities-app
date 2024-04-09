@@ -737,7 +737,7 @@
   "areYouSureYouWantToDeleteThisOrganization": "Bu organizasyonu silmek istediğinizden emin misiniz?",
   "createOrganization": "Organizasyon Oluştur",
   "ltpConfig": "LTP Ayarı",
-  "welcomeHtmlInsteadOfCommunitiesList ": "Giriş yapmamış kullanıcılar için Hoş Geldiniz HTML'i",
+  "welcomeHtmlInsteadOfCommunitiesList": "Giriş yapmamış kullanıcılar için Hoş Geldiniz HTML'i",
   "currentRealityTree": "Mevcut Gerçeklik Ağacı",
   "goalTree": "Hedef Ağacı",
   "futureRealityTree": "Gelecek Gerçeklik Ağacı",

@@ -1,4 +1,4 @@
-import{n as t,t as i,a as e,i as o,x as s,b as n,e as a,T as r}from"./DNy5ai-q.js";var l=function(t,i,e,o){for(var s,n=arguments.length,a=n<3?i:null===o?o=Object.getOwnPropertyDescriptor(i,e):o,r=t.length-1;r>=0;r--)(s=t[r])&&(a=(n<3?s(a):n>3?s(i,e,a):s(i,e))||a);return n>3&&a&&Object.defineProperty(i,e,a),a};let d=class extends e{constructor(){super(...arguments),this.spinnerActive=!1}static get styles(){return[super.styles,o`
+import{n as e,t,a as i,i as o,x as n,b as s,e as r,T as a}from"./CQmPY7fF.js";var l=function(e,t,i,o){for(var n,s=arguments.length,r=s<3?t:null===o?o=Object.getOwnPropertyDescriptor(t,i):o,a=e.length-1;a>=0;a--)(n=e[a])&&(r=(s<3?n(r):s>3?n(t,i,r):n(t,i))||r);return s>3&&r&&Object.defineProperty(t,i,r),r};let d=class extends i{constructor(){super(...arguments),this.spinnerActive=!1}static get styles(){return[super.styles,o`
         md-dialog {
           padding-left: 8px;
           padding-right: 8px;
@@ -27,7 +27,7 @@ import{n as t,t as i,a as e,i as o,x as s,b as n,e as a,T as r}from"./DNy5ai-q.j
 
         @media (max-width: 320px) {
         }
-      `]}render(){return s`
+      `]}render(){return n`
       <md-dialog id="dialog" modal>
         <div slot="headline" class="header layout horizontal center-center">
           <div>${this.t("deleteOrAnonymizeUser")}</div>
@@ -65,7 +65,7 @@ import{n as t,t as i,a as e,i as o,x as s,b as n,e as a,T as r}from"./DNy5ai-q.j
           </div>
         </div>
       </md-dialog>
-    `}_deleteUser(){window.appDialogs.getDialogAsync("confirmationDialog",(t=>{t.open(this.t("areYouSureYouWantToDeleteUser"),this._deleteUserFinalWarning.bind(this),!0)}))}_deleteUserFinalWarning(){setTimeout((()=>{window.appDialogs.getDialogAsync("confirmationDialog",(t=>{t.open(this.t("areYouReallySureYouWantToDeleteUser"),this._deleteUserForReal.bind(this),!0)}))}))}_anonymizeUser(){window.appDialogs.getDialogAsync("confirmationDialog",(t=>{t.open(this.t("areYouSureYouWantToAnonymizeUser"),this._anonymizeUserFinalWarning.bind(this),!0)}))}_anonymizeUserFinalWarning(){setTimeout((()=>{window.appDialogs.getDialogAsync("confirmationDialog",(t=>{t.open(this.t("areYouReallySureYouWantToAnonymizeUser"),this._anonymizeUserForReal.bind(this),!0)}))}))}async _deleteUserForReal(){this.spinnerActive=!0,await window.serverApi.deleteUser(),this.spinnerActive=!1,this._completed()}async _anonymizeUserForReal(){this.spinnerActive=!0,await window.serverApi.anonymizeUser(),this.spinnerActive=!1,this._completed()}open(){this.$$("#dialog").open=!0}_completed(){this.$$("#dialog").open=!1,window.location.href="/"}};l([t({type:Boolean})],d.prototype,"spinnerActive",void 0),d=l([i("yp-user-delete-or-anonymize")],d);var c=function(t,i,e,o){for(var s,n=arguments.length,a=n<3?i:null===o?o=Object.getOwnPropertyDescriptor(i,e):o,r=t.length-1;r>=0;r--)(s=t[r])&&(a=(n<3?s(a):n>3?s(i,e,a):s(i,e))||a);return n>3&&a&&Object.defineProperty(i,e,a),a};let h=class extends n{constructor(){super(...arguments),this.largerFont=!1}static get styles(){return[super.styles,o`
+    `}_deleteUser(){window.appDialogs.getDialogAsync("confirmationDialog",(e=>{e.open(this.t("areYouSureYouWantToDeleteUser"),this._deleteUserFinalWarning.bind(this),!0)}))}_deleteUserFinalWarning(){setTimeout((()=>{window.appDialogs.getDialogAsync("confirmationDialog",(e=>{e.open(this.t("areYouReallySureYouWantToDeleteUser"),this._deleteUserForReal.bind(this),!0)}))}))}_anonymizeUser(){window.appDialogs.getDialogAsync("confirmationDialog",(e=>{e.open(this.t("areYouSureYouWantToAnonymizeUser"),this._anonymizeUserFinalWarning.bind(this),!0)}))}_anonymizeUserFinalWarning(){setTimeout((()=>{window.appDialogs.getDialogAsync("confirmationDialog",(e=>{e.open(this.t("areYouReallySureYouWantToAnonymizeUser"),this._anonymizeUserForReal.bind(this),!0)}))}))}async _deleteUserForReal(){this.spinnerActive=!0,await window.serverApi.deleteUser(),this.spinnerActive=!1,this._completed()}async _anonymizeUserForReal(){this.spinnerActive=!0,await window.serverApi.anonymizeUser(),this.spinnerActive=!1,this._completed()}open(){this.$$("#dialog").open=!0}_completed(){this.$$("#dialog").open=!1,window.location.href="/"}};l([e({type:Boolean})],d.prototype,"spinnerActive",void 0),d=l([t("yp-user-delete-or-anonymize")],d);var c=function(e,t,i,o){for(var n,s=arguments.length,r=s<3?t:null===o?o=Object.getOwnPropertyDescriptor(t,i):o,a=e.length-1;a>=0;a--)(n=e[a])&&(r=(s<3?n(r):s>3?n(t,i,r):n(t,i))||r);return s>3&&r&&Object.defineProperty(t,i,r),r};let p=class extends s{constructor(){super(...arguments),this.largerFont=!1}static get styles(){return[super.styles,o`
         .icon {
           height: 32px;
           width: 32px;
@@ -78,16 +78,16 @@ import{n as t,t as i,a as e,i as o,x as s,b as n,e as a,T as r}from"./DNy5ai-q.j
           font-size: 16px;
           margin-left: 12px;
         }
-      `]}render(){const t={"larger-font":this.largerFont};return s`
-      <div class="${a(t)}">
-        ${this.user?s`
+      `]}render(){const e={"larger-font":this.largerFont};return n`
+      <div class="${r(e)}">
+        ${this.user?n`
               <yp-user-with-organization
                 class="user-info"
                 .user="${this.user}"
               ></yp-user-with-organization>
-            `:r}
+            `:a}
         <div class="message-content">
-          ${this.icon?s`<md-icon class="icon" .icon="${this.icon}"></md-icon>`:r}
+          ${this.icon?n`<md-icon class="icon" .icon="${this.icon}"></md-icon>`:a}
           <span class="message">${this.labelText}</span>
         </div>
         <div class="actions">
@@ -95,4 +95,4 @@ import{n as t,t as i,a as e,i as o,x as s,b as n,e as a,T as r}from"./DNy5ai-q.j
           <slot name="dismiss"></slot>
         </div>
       </div>
-    `}openDialog(t,i,e,o=void 0,s=void 0,n=void 0){this.labelText=i,e||(this.user=t),this.icon=o,this.largerFont=!!n,this.timeoutMs=s||5e3,this.open=!0}};c([t({type:Object})],h.prototype,"user",void 0),c([t({type:String})],h.prototype,"icon",void 0),c([t({type:Boolean})],h.prototype,"largerFont",void 0),h=c([i("ac-notification-toast")],h);
+    `}openDialog(e,t,i,o=void 0,n=void 0,s=void 0){this.labelText=t,i||(this.user=e),this.icon=o,this.largerFont=!!s,this.timeoutMs=n||5e3,this.open=!0}};c([e({type:Object})],p.prototype,"user",void 0),c([e({type:String})],p.prototype,"icon",void 0),c([e({type:Boolean})],p.prototype,"largerFont",void 0),p=c([t("ac-notification-toast")],p);

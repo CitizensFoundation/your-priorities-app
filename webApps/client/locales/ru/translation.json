@@ -704,7 +704,7 @@
   "areYouSureYouWantToDeleteThisOrganization": "Вы уверены, что хотите удалить эту организацию?",
   "createOrganization": "Создать организацию",
   "ltpConfig": "Конфигурация LTP",
-  "welcomeHtmlInsteadOfCommunitiesList ": "Приветственный HTML для неавторизованных пользователей",
+  "welcomeHtmlInsteadOfCommunitiesList": "Приветственный HTML для неавторизованных пользователей",
   "currentRealityTree": "Дерево текущей реальности",
   "goalTree": "Дерево целей",
   "futureRealityTree": "Дерево будущей реальности",

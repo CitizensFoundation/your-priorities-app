@@ -647,7 +647,13 @@ let YpAdminApp = class YpAdminApp extends YpBaseElement {
             this._getAdminCollection();
         }
         else {
-            window.appUser.openUserlogin();
+            await new Promise((resolve) => setTimeout(resolve, 250));
+            if (window.appUser.loggedIn()) {
+                this._getAdminCollection();
+            }
+            else {
+                window.appUser.openUserlogin();
+            }
         }
     }
     _setAdminConfirmedFromParent(collection) {

@@ -577,7 +577,7 @@ export class AoiSurvey extends YpBaseElement {
               aria-label="${this.t("Participate Now!")}"
             >
               <md-icon slot="icon">thumb_up</md-icon>
-              ${this.t("Select answers")}
+              ${this.t("vote")}
             </md-primary-tab>
 
 

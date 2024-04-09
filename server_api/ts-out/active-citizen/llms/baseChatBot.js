@@ -66,7 +66,7 @@ export class YpBaseChatBot {
         this.liveCostsInactivityTimeout = 1000 * 60 * 10;
         this.tempeture = 0.7;
         this.maxTokens = 4000;
-        this.llmModel = "gpt-4-0125-preview";
+        this.llmModel = "gpt-4-turbo-2024-04-09";
         this.persistMemory = false;
         this.memoryId = undefined;
         this.liveCostsBroadcastTimeout = undefined;

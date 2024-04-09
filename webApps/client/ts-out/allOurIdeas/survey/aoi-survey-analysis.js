@@ -227,7 +227,6 @@ let AoiSurveyAnalysis = class AoiSurveyAnalysis extends YpBaseElement {
     }
     renderAnalysis() {
         let outHtml = html ``;
-        debugger;
         if (this.earl.configuration &&
             this.earl.configuration.analysis_config?.analyses?.length > 0) {
             for (let i = 0; i < this.earl.configuration.analysis_config.analyses.length; i++) {

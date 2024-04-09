@@ -123,8 +123,7 @@ export class AllOurIdeasController {
                 choice.data = JSON.parse(choice.data);
                 let flagged = false;
                 if (process.env.OPENAI_API_KEY &&
-                    aoiConfig.earl?.configuration?.enableAiModeration &&
-                    aoiConfig.earl?.configuration?.allowNewIdeasForVoting) {
+                    aoiConfig.earl?.configuration?.enableAiModeration) {
                     flagged = await this.getModerationFlag(newIdea);
                     if (flagged) {
                         await this.deactivateChoice(req, choice);
@@ -545,7 +544,16 @@ export class AllOurIdeasController {
             });
             const choices = (await choicesResponse.json());
             for (const choice of choices) {
-                choice.data = JSON.parse(choice.data);
+                try {
+                    choice.data = JSON.parse(choice.data);
+                }
+                catch (error) {
+                    choice.data = {
+                        content: choice.data,
+                        choiceId: choice.id,
+                    };
+                    console.warn(error);
+                }
             }
             console.log(`Number of choices fetched: ${choices.length}`);
             const sortedChoices = choices.sort((a, b) => a.id - b.id);
@@ -557,7 +565,7 @@ export class AllOurIdeasController {
                 .digest("hex")
                 .substring(0, 8);
             const usedLanguageName = req.query.languageName || "English";
-            const analysisCacheKey = `${questionId}_${analysisTypeIndex}_${choiceIds}_${usedLanguageName}_${promptHash}_ai_analysis_v13`;
+            const analysisCacheKey = `${questionId}_${analysisTypeIndex}_${choiceIds}_${usedLanguageName}_${promptHash}_ai_analysis_v14`;
             console.log(`analysisCacheKey is ${analysisCacheKey} prompt ${analysisType.contextPrompt.substring(0, 15)}...`);
             // Implement caching logic here
             let cachedAnalysis = await req.redisClient.get(analysisCacheKey);

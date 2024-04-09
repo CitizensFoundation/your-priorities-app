@@ -49,7 +49,7 @@ export declare class YpAdminConfigGroup extends YpAdminConfigBase {
     _clear(): void;
     groupAccessOptions: Record<number, YpGroupAccessTypes>;
     updated(changedProperties: Map<string | number | symbol, unknown>): void;
-    _collectionIdChanged(): void;
+    _collectionIdChanged(): Promise<void>;
     _setupTranslations(): void;
     _formResponse(event: CustomEvent): Promise<void>;
     _finishRedirect(group: YpGroupData): void;

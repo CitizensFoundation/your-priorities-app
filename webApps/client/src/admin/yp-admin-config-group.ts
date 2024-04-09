@@ -369,7 +369,7 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
         ).allOurIdeas!.earl!.question!.name;
       }
 
-      this.groupTypeIndex = this.group.configuration.groupType || 0;
+      this.groupTypeIndex = this.group.configuration.groupType || 1;
 
       this.endorsementButtons = this.group.configuration.endorsementButtons;
 
@@ -404,7 +404,7 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
     super.updated(changedProperties);
   }
 
-  _collectionIdChanged() {
+  async _collectionIdChanged() {
     if (this.collectionId == "new" || this.collectionId == "newFolder") {
       if (
         window.appGlobals.originalQueryParameters["createCommunityForGroup"]
@@ -479,6 +479,7 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
     const creatingGroupDirectly =
       this.collectionId == "new" &&
       window.appGlobals.originalQueryParameters["createCommunityForGroup"];
+
     const base = {
       name: "access",
       icon: "code",
@@ -1864,6 +1865,16 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
           translationToken: "wikiSurveyActive",
         },
         {
+          text: "welcome_message",
+          type: "textarea",
+          rows: 5,
+          maxLength: 300,
+          value: earl?.configuration?.welcome_message,
+          onChange: (e: CustomEvent) =>
+            this._updateEarl(e, "configuration.welcome_message"),
+          translationToken: "welcomeMessage",
+        },
+        {
           text: "accept_new_ideas",
           type: "checkbox",
           onChange: (e: CustomEvent) =>
@@ -1940,16 +1951,6 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
           translationToken: "hideAoiExplainButton",
         },
         {
-          text: "welcome_message",
-          type: "textarea",
-          rows: 5,
-          maxLength: 300,
-          value: earl?.configuration?.welcome_message,
-          onChange: (e: CustomEvent) =>
-            this._updateEarl(e, "configuration.welcome_message"),
-          translationToken: "welcomeMessage",
-        },
-        {
           text: "welcome_html",
           type: "textarea",
           rows: 5,
@@ -1966,7 +1967,7 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
             ? earl?.configuration?.moderationPrompt
             : defaultModerationPrompt,
           onChange: (e: CustomEvent) =>
-            this._updateEarl(e, "configuration.moderationPrompt", true),
+            this._updateEarl(e, "configuration.moderationPrompt"),
           translationToken: "aoiModerationPrompt",
         },
         {

@@ -281,7 +281,7 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
                     .earl.question) {
                 this.aoiQuestionName = this.collection.configuration.allOurIdeas.earl.question.name;
             }
-            this.groupTypeIndex = this.group.configuration.groupType || 0;
+            this.groupTypeIndex = this.group.configuration.groupType || 1;
             this.endorsementButtons = this.group.configuration.endorsementButtons;
             if (this.collection.status) {
                 this.status = this.collection.status;
@@ -302,7 +302,7 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
         }
         super.updated(changedProperties);
     }
-    _collectionIdChanged() {
+    async _collectionIdChanged() {
         if (this.collectionId == "new" || this.collectionId == "newFolder") {
             if (window.appGlobals.originalQueryParameters["createCommunityForGroup"]) {
                 this.parentCollectionId = window.appGlobals.domain.id;
@@ -1689,6 +1689,15 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
                     translationToken: "wikiSurveyActive",
                 },
                 {
+                    text: "welcome_message",
+                    type: "textarea",
+                    rows: 5,
+                    maxLength: 300,
+                    value: earl?.configuration?.welcome_message,
+                    onChange: (e) => this._updateEarl(e, "configuration.welcome_message"),
+                    translationToken: "welcomeMessage",
+                },
+                {
                     text: "accept_new_ideas",
                     type: "checkbox",
                     onChange: (e) => this._updateEarl(e, "configuration.accept_new_ideas"),
@@ -1753,15 +1762,6 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
                     translationToken: "hideAoiExplainButton",
                 },
                 {
-                    text: "welcome_message",
-                    type: "textarea",
-                    rows: 5,
-                    maxLength: 300,
-                    value: earl?.configuration?.welcome_message,
-                    onChange: (e) => this._updateEarl(e, "configuration.welcome_message"),
-                    translationToken: "welcomeMessage",
-                },
-                {
                     text: "welcome_html",
                     type: "textarea",
                     rows: 5,
@@ -1776,7 +1776,7 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
                     value: earl?.configuration?.moderationPrompt
                         ? earl?.configuration?.moderationPrompt
                         : defaultModerationPrompt,
-                    onChange: (e) => this._updateEarl(e, "configuration.moderationPrompt", true),
+                    onChange: (e) => this._updateEarl(e, "configuration.moderationPrompt"),
                     translationToken: "aoiModerationPrompt",
                 },
                 {

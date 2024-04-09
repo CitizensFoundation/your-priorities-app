@@ -103,11 +103,16 @@ let AoiSurveyVoting = class AoiSurveyVoting extends YpBaseElement {
         else {
             try {
                 this.leftAnswer = JSON.parse(postVoteResponse.newleft);
+            }
+            catch (error) {
+                console.warn("Error parsing answers JSON", error, postVoteResponse.newleft);
+                this.leftAnswer = postVoteResponse.newleft;
+            }
+            try {
                 this.rightAnswer = JSON.parse(postVoteResponse.newright);
             }
             catch (error) {
-                console.error("Error parsing answers JSON", error, postVoteResponse.newleft, postVoteResponse.newright);
-                this.leftAnswer = postVoteResponse.newleft;
+                console.warn("Error parsing answers JSON", error, postVoteResponse.newright);
                 this.rightAnswer = postVoteResponse.newright;
             }
             this.promptId = postVoteResponse.prompt_id;
@@ -503,7 +508,7 @@ let AoiSurveyVoting = class AoiSurveyVoting extends YpBaseElement {
                 .additionalId="${this.question.id}"
                 textOnly
                 truncate="140"
-                .content="${this.leftAnswer.content}"
+                .content="${this.leftAnswer?.content || this.leftAnswer}"
                 .contentLanguage="${this.group.language}"
                 textType="aoiChoiceContent"
               ></yp-magic-text>
@@ -547,7 +552,7 @@ let AoiSurveyVoting = class AoiSurveyVoting extends YpBaseElement {
                 .additionalId="${this.question.id}"
                 textOnly
                 truncate="140"
-                .content="${this.rightAnswer.content}"
+                .content="${this.rightAnswer?.content || this.rightAnswer}"
                 .contentLanguage="${this.group.language}"
                 textType="aoiChoiceContent"
               ></yp-magic-text>
