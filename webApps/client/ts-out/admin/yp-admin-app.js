@@ -643,17 +643,29 @@ let YpAdminApp = class YpAdminApp extends YpBaseElement {
         if (window.appGlobals.originalQueryParameters["createCommunityForGroup"]) {
             this.parentCollectionId = window.appGlobals.domain?.id;
         }
-        if (window.appUser.loggedIn()) {
+        const checkLoginStatus = async (attemptsLeft) => {
+            return new Promise((resolve, reject) => {
+                const interval = setInterval(() => {
+                    if (window.appUser.loggedIn()) {
+                        clearInterval(interval);
+                        resolve(true);
+                    }
+                    else {
+                        attemptsLeft--;
+                        if (attemptsLeft <= 0) {
+                            clearInterval(interval);
+                            resolve(false);
+                        }
+                    }
+                }, 100);
+            });
+        };
+        const loggedIn = await checkLoginStatus(7);
+        if (loggedIn) {
             this._getAdminCollection();
         }
         else {
-            await new Promise((resolve) => setTimeout(resolve, 250));
-            if (window.appUser.loggedIn()) {
-                this._getAdminCollection();
-            }
-            else {
-                window.appUser.openUserlogin();
-            }
+            window.appUser.openUserlogin();
         }
     }
     _setAdminConfirmedFromParent(collection) {

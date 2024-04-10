@@ -27,7 +27,7 @@ export default {
   },
   appIndex: 'index.html',
   port: 4444,
-  nodeResolve: {exportConditions: mode === 'dev' ? ['development'] : []},
+  //nodeResolve: {exportConditions: mode === 'dev' ? ['development'] : []},
   preserveSymlinks: true,
   middleware: [
     proxy('/api/', {

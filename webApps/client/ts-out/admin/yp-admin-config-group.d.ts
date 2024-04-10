@@ -6,6 +6,7 @@ import "@material/web/select/outlined-select.js";
 import "@material/web/select/select-option.js";
 import "../yp-survey/yp-structured-question-edit.js";
 import "@trystan2k/fleshy-jsoneditor/fleshy-jsoneditor.js";
+import "./yp-admin-html-editor.js";
 import { YpAdminConfigBase } from "./yp-admin-config-base.js";
 import "../yp-file-upload/yp-file-upload.js";
 import "../yp-theme/yp-theme-selector.js";
@@ -36,13 +37,14 @@ export declare class YpAdminConfigGroup extends YpAdminConfigBase {
     static GroupType: {
         ideaGeneration: number;
         allOurIdeas: number;
+        htmlContent: number;
     };
     constructor();
     static get styles(): (any[] | import("lit").CSSResult)[];
     _setGroupType(event: CustomEvent): void;
     renderGroupTypeSelection(): import("lit-html").TemplateResult<1>;
     renderHeader(): import("lit-html").TemplateResult<1> | typeof nothing;
-    getAccessTokenName(): "secret" | "open_to_community";
+    getAccessTokenName(): "open_to_community" | "secret";
     renderHiddenInputs(): import("lit-html").TemplateResult<1>;
     _descriptionChanged(event: CustomEvent): void;
     connectedCallback(): void;
@@ -72,11 +74,14 @@ export declare class YpAdminConfigGroup extends YpAdminConfigBase {
     _getPointSettingsTab(): YpConfigTabData;
     _getAdditionalConfigTab(): YpConfigTabData;
     earlConfigChanged(event: CustomEvent): void;
+    staticHtmlConfigChanged(event: CustomEvent): void;
     themeConfigChanged(event: CustomEvent): void;
     renderCreateEarl(domainId: number | undefined, communityId: number | undefined): import("lit-html").TemplateResult<1>;
+    renderHtmlContent(domainId: number | undefined, communityId: number | undefined): import("lit-html").TemplateResult<1>;
     setupEarlConfigIfNeeded(): void;
     questionNameChanged(event: CustomEvent): void;
     afterSave(): void;
+    _getHtmlContentTab(): YpConfigTabData;
     _getAllOurIdeaTab(): YpConfigTabData;
     set(obj: any, path: string, value: any): void;
     _updateEarl(event: CustomEvent, earlUpdatePath: string, parseJson?: boolean): void;

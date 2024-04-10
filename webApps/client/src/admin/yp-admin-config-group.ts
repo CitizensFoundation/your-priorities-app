@@ -10,6 +10,8 @@ import "../yp-survey/yp-structured-question-edit.js";
 
 import "@trystan2k/fleshy-jsoneditor/fleshy-jsoneditor.js";
 
+import "./yp-admin-html-editor.js";
+
 import { Layouts } from "lit-flexbox-literals";
 import { YpAdminPage } from "./yp-admin-page.js";
 import {
@@ -37,6 +39,7 @@ import { AoiEarlIdeasEditor } from "./allOurIdeas/aoi-earl-ideas-editor.js";
 import { AoiAdminServerApi } from "./allOurIdeas/AoiAdminServerApi.js";
 import { YpAdminApp } from "./yp-admin-app.js";
 import { unsafeHTML } from "lit/directives/unsafe-html.js";
+import { YpAdminHtmlEditor } from "./yp-admin-html-editor.js";
 
 const defaultModerationPrompt = `Only allow ideas that are relevant to the question.`;
 
@@ -116,11 +119,12 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
   hasSamlLoginProvider: any;
   questionNameHasChanged = false;
 
-  groupTypeOptions = ["ideaGenerationGroupType", "allOurIdeasGroupType"];
+  groupTypeOptions = ["ideaGenerationGroupType", "allOurIdeasGroupType","htmlContentGroupType"];
 
   static GroupType = {
     ideaGeneration: 0,
     allOurIdeas: 1,
+    htmlContent: 2,
   };
 
   constructor() {
@@ -279,6 +283,18 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
               value="${JSON.stringify(
                 (this.collection?.configuration as YpGroupConfiguration)
                   .allOurIdeas
+              )}"
+            />
+          `
+        : nothing}
+      ${(this.collection?.configuration as YpGroupConfiguration).staticHtml
+        ? html`
+            <input
+              type="hidden"
+              name="staticHtml"
+              value="${JSON.stringify(
+                (this.collection?.configuration as YpGroupConfiguration)
+                  .staticHtml
               )}"
             />
           `
@@ -557,7 +573,10 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
       ] as Array<YpStructuredConfigData>,
     } as YpConfigTabData;
 
-    if (this.groupTypeIndex !== YpAdminConfigGroup.GroupType.allOurIdeas) {
+    if (
+      this.groupTypeIndex !== YpAdminConfigGroup.GroupType.allOurIdeas &&
+      this.groupTypeIndex !== YpAdminConfigGroup.GroupType.htmlContent
+    ) {
       base.items.concat([
         {
           text: "allowAnonymousUsers",
@@ -1655,6 +1674,13 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
     this.requestUpdate();
   }
 
+  staticHtmlConfigChanged(event: CustomEvent) {
+    this.group.configuration.staticHtml = (
+      this.$$("yp-admin-html-editor") as YpAdminHtmlEditor
+    ).configuration;
+    this.requestUpdate();
+  }
+
   themeConfigChanged(event: CustomEvent) {
     this.group.configuration.theme = {
       ...this.group.configuration.theme,
@@ -1676,6 +1702,20 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
       .group="${this.group}"
       .configuration="${this.group.configuration.allOurIdeas!}"
     ></aoi-earl-ideas-editor>`;
+  }
+
+  renderHtmlContent(
+    domainId: number | undefined,
+    communityId: number | undefined
+  ) {
+    return html`<yp-admin-html-editor
+      id="createStaticHtml"
+      .domainId="${domainId}"
+      .communityId="${communityId}"
+      @configuration-changed="${this.staticHtmlConfigChanged}"
+      .group="${this.group}"
+      .configuration="${this.group.configuration.staticHtml!}"
+    ></yp-admin-html-editor>`;
   }
 
   setupEarlConfigIfNeeded() {
@@ -1768,6 +1808,41 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
         this.group.configuration.allOurIdeas!.earl!.question!.name
       );
     }
+  }
+
+  _getHtmlContentTab() {
+    let configuration = this.group.configuration.staticHtml!;
+
+    if (!configuration) {
+      configuration = this.group.configuration.staticHtml = {};
+    }
+
+    let communityId;
+    let domainId;
+
+    if (
+      this.collectionId === "new" &&
+      window.appGlobals.originalQueryParameters["createCommunityForGroup"]
+    ) {
+      domainId = this.parentCollectionId as number;
+      this.group.configuration.disableCollectionUpLink = true;
+    } else if (this.collectionId === "new") {
+      communityId = this.parentCollectionId as number;
+    } else {
+      communityId = this.group.community_id;
+    }
+
+    return {
+      name: "htmlContent",
+      icon: "code",
+      items: [
+        {
+          text: "htmlContent",
+          type: "html",
+          templateData: this.renderHtmlContent(domainId, communityId),
+        },
+      ] as Array<YpStructuredConfigData>,
+    } as YpConfigTabData;
   }
 
   _getAllOurIdeaTab() {
@@ -2077,6 +2152,10 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
     ) {
       tabs.push(this._getAllOurIdeaTab());
       tabs.push(this._getAllOurIdeaOptionsTab());
+    } else if (
+      this.groupTypeIndex == YpAdminConfigGroup.GroupType.htmlContent
+    ) {
+      tabs.push(this._getHtmlContentTab());
     }
     tabs.push(this._getAccessTab());
     tabs.push(this._getThemeTab());

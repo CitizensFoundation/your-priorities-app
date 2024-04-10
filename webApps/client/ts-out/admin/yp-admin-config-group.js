@@ -14,6 +14,7 @@ import "@material/web/select/outlined-select.js";
 import "@material/web/select/select-option.js";
 import "../yp-survey/yp-structured-question-edit.js";
 import "@trystan2k/fleshy-jsoneditor/fleshy-jsoneditor.js";
+import "./yp-admin-html-editor.js";
 import { YpAdminConfigBase, defaultLtpConfiguration, defaultLtpPromptsConfiguration, } from "./yp-admin-config-base.js";
 import { YpNavHelpers } from "../common/YpNavHelpers.js";
 //import { YpEmojiSelector } from './@yrpri/common/yp-emoji-selector.js';
@@ -65,7 +66,7 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
         this.groupTypeIndex = 1;
         this.endorsementButtonsDisabled = false;
         this.questionNameHasChanged = false;
-        this.groupTypeOptions = ["ideaGenerationGroupType", "allOurIdeasGroupType"];
+        this.groupTypeOptions = ["ideaGenerationGroupType", "allOurIdeasGroupType", "htmlContentGroupType"];
         this.groupAccessOptions = {
             0: "public",
             1: "closed",
@@ -217,6 +218,16 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
               name="allOurIdeas"
               value="${JSON.stringify((this.collection?.configuration)
                 .allOurIdeas)}"
+            />
+          `
+            : nothing}
+      ${(this.collection?.configuration).staticHtml
+            ? html `
+            <input
+              type="hidden"
+              name="staticHtml"
+              value="${JSON.stringify((this.collection?.configuration)
+                .staticHtml)}"
             />
           `
             : nothing}
@@ -445,7 +456,8 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
                 },
             ],
         };
-        if (this.groupTypeIndex !== YpAdminConfigGroup_1.GroupType.allOurIdeas) {
+        if (this.groupTypeIndex !== YpAdminConfigGroup_1.GroupType.allOurIdeas &&
+            this.groupTypeIndex !== YpAdminConfigGroup_1.GroupType.htmlContent) {
             base.items.concat([
                 {
                     text: "allowAnonymousUsers",
@@ -1513,6 +1525,10 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
         this.group.configuration.allOurIdeas = this.$$("aoi-earl-ideas-editor").configuration;
         this.requestUpdate();
     }
+    staticHtmlConfigChanged(event) {
+        this.group.configuration.staticHtml = this.$$("yp-admin-html-editor").configuration;
+        this.requestUpdate();
+    }
     themeConfigChanged(event) {
         this.group.configuration.theme = {
             ...this.group.configuration.theme,
@@ -1530,6 +1546,16 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
       .group="${this.group}"
       .configuration="${this.group.configuration.allOurIdeas}"
     ></aoi-earl-ideas-editor>`;
+    }
+    renderHtmlContent(domainId, communityId) {
+        return html `<yp-admin-html-editor
+      id="createStaticHtml"
+      .domainId="${domainId}"
+      .communityId="${communityId}"
+      @configuration-changed="${this.staticHtmlConfigChanged}"
+      .group="${this.group}"
+      .configuration="${this.group.configuration.staticHtml}"
+    ></yp-admin-html-editor>`;
     }
     setupEarlConfigIfNeeded() {
         const configuration = this.group.configuration.allOurIdeas;
@@ -1600,6 +1626,36 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
             const serverApi = new AoiAdminServerApi();
             serverApi.updateName(domainId, communityId, this.group.configuration.allOurIdeas.earl.question.id, this.group.configuration.allOurIdeas.earl.question.name);
         }
+    }
+    _getHtmlContentTab() {
+        let configuration = this.group.configuration.staticHtml;
+        if (!configuration) {
+            configuration = this.group.configuration.staticHtml = {};
+        }
+        let communityId;
+        let domainId;
+        if (this.collectionId === "new" &&
+            window.appGlobals.originalQueryParameters["createCommunityForGroup"]) {
+            domainId = this.parentCollectionId;
+            this.group.configuration.disableCollectionUpLink = true;
+        }
+        else if (this.collectionId === "new") {
+            communityId = this.parentCollectionId;
+        }
+        else {
+            communityId = this.group.community_id;
+        }
+        return {
+            name: "htmlContent",
+            icon: "code",
+            items: [
+                {
+                    text: "htmlContent",
+                    type: "html",
+                    templateData: this.renderHtmlContent(domainId, communityId),
+                },
+            ],
+        };
     }
     _getAllOurIdeaTab() {
         let configuration = this.group.configuration.allOurIdeas;
@@ -1866,6 +1922,9 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
             tabs.push(this._getAllOurIdeaTab());
             tabs.push(this._getAllOurIdeaOptionsTab());
         }
+        else if (this.groupTypeIndex == YpAdminConfigGroup_1.GroupType.htmlContent) {
+            tabs.push(this._getHtmlContentTab());
+        }
         tabs.push(this._getAccessTab());
         tabs.push(this._getThemeTab());
         this.tabsPostSetup(tabs);
@@ -1880,6 +1939,7 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
 YpAdminConfigGroup.GroupType = {
     ideaGeneration: 0,
     allOurIdeas: 1,
+    htmlContent: 2,
 };
 __decorate([
     property({ type: Number })

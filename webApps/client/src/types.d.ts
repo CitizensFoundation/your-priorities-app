@@ -314,6 +314,9 @@ interface YpGroupConfiguration extends YpCollectionConfiguration {
   groupType?: number;
   ltp?: YpLtpConfiguration;
   allOurIdeas?: AoiConfigurationData;
+  staticHtml?: {
+    content?: string;
+  }
 }
 
 interface YpFraudAuditData {
