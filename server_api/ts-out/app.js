@@ -416,9 +416,9 @@ export class YourPrioritiesApi {
             saveUninitialized: true,
         };
         if (this.app.get("env") === "production") {
-            this.app.set("trust proxy", 3); // Trust three proxies
+            //this.app.set("trust proxy", 2); // Trust three proxies
             //@ts-ignore
-            sessionConfig.cookie.secure = true; // serve secure cookies
+            //sessionConfig.cookie.secure = true; // serve secure cookies
         }
         //@ts-ignore
         this.app.use(session(sessionConfig));
