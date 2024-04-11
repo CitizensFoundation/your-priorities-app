@@ -724,7 +724,7 @@
   "recentlyUsedEmoji": "Siv tshiab",
   "findAnEmoji": "Nrhiav emoji",
   "cancel": "Tso tseg",
-  "ok": "Ok",
+  "ok": "Zoo",
   "next": "Tom ntej",
   "create": "Tsim",
   "confirm": "Pom zoo",
@@ -969,7 +969,7 @@
     "inProgress": "Tab tom xa..."
   },
   "notice": {
-    "ok": "Ok",
+    "ok": "Zoo",
     "deleteConfirmation": "Koj puas xav rho tawm pawg no?"
   },
   "maps": {
@@ -1154,7 +1154,7 @@
   "sortBySortOrder": "Xaiv Los Ntawm Kev Txheeb Ze",
   "mediaUploads": "Tawm Tswv Yim Media",
   "onlyAdminsCanCreateCommunities": "Tsua Admins Tau Tsim Zej Zog",
-  "Facebook Client Id": "Facebook Client Id",
+  "Facebook Client Id": "Facebook Tus ID",
   "facebookClientId": "Facebook Tus ID Neeg Siv",
   "Facebook Client Secret": "Facebook Tus Zais Cia Neeg Siv",
   "facebookClientSecret": "Facebook Tus Zais Cia Neeg Siv",

@@ -152,7 +152,7 @@
   "deleteSelectedUsers": "Demander la suppression des sélectionnés :",
   "anonymizeSelectedUsers": "Anonymiser sélectionné :",
   "anonymizeUser": "Anonymiser utilisateur",
-  "email": "Email",
+  "email": "E-mail",
   "organization": "Organisation",
   "emailAlreadyRegisterred": "Vous ne pouvez pas définir votre email à cette adresse car elle est déjà utilisée.",
   "userHaveSetEmail": "Email défini pour",

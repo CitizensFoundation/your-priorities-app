@@ -686,7 +686,7 @@
   "endorsementHats": "Nkɔti",
   "endorsementButtons": "Ntoaso bɔtini",
   "bulkStatusUdateForInfo": "Klikea nsɛm no so ma kɔkɔbɔ",
-  "urlLink": "Link",
+  "urlLink": "Kɔnɛkhyɛn",
   "bulkStatusUdateFor": "Nkɔmbɔbɔ ma nsɛm no so",
   "inviteNotFoundOrAlreadyUsed": "Nhwɛso no annkɔ yie anaaso atumi asa no",
   "reportConfirmation": "Wo gyidi sɛ wo pɛ sɛ wo toa saiti yi nhyehyɛe no adi?",
@@ -886,7 +886,7 @@
     "new": "Foforo idea",
     "searchingFor": "Rehwehwɛ ",
     "top": "Popular",
-    "newest": "Latest",
+    "newest": "Ɛkɛseɛ",
     "random": "Randɔm",
     "inProgress": "Rekɔ so",
     "search": "Hwehwɛ nsɛm",
@@ -1381,5 +1381,5 @@
   "minimumTenVotesToShowResults": "Mpoɔ du du sɛ ɛbɛkyerɛ wɔ nson.",
   "externalGoalParamsWhitelist": "Nkɔso a ɛwɔ wɔ nkyɛw a ɛwɔ mu",
   "targetVotes": "Nkɔmhyɛe a ɛbɛtumi aba",
-  "vote": "Vote"
+  "vote": "Tie"
 }

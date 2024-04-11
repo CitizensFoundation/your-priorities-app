@@ -708,7 +708,7 @@
   "selectStatusTemplate": "Templet",
   "moveToGroup": "Hamo",
   "noIdeasHere": "Heniama hanuabadia iai.",
-  "organizationsAdmin": "Organizations Admin",
+  "organizationsAdmin": "Admin bilong olgeta",
   "unviewed": "nanuhaia",
   "notificationMarkAllViewed": "Markim olgeta Hanuabadia",
   "notificationConfirmMarkAllViewed": "Konfem olsem yu laikim markim olgeta notifikasin bilong yu olsem hanuabadia",
@@ -792,7 +792,7 @@
     "inProgress": "Longwe"
   },
   "pluralStatus": {
-    "published": "Open ideas",
+    "published": "Idia e buka",
     "successful": "Bukida lasi",
     "failed": "Daure ideas",
     "inProgress": "Ideas longwe",

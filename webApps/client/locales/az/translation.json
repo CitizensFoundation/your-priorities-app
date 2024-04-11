@@ -1,7 +1,7 @@
 {
   "thinking": "Düşünür",
   "userControlledSettings": "İstifadəçi nəzarətli ayarlar",
-  "choiceStatus": "Status",
+  "choiceStatus": "Vəziyyət",
   "activated": "Aktivləşdirilib",
   "deactivated": "Deaktivləşdirilib",
   "latest": "Ən yeni",
@@ -409,7 +409,7 @@
   "clearSearchInput": "Axtarışı təmizlə",
   "goBack": "Geri qayıt",
   "openMainMenu": "Əsas menyunu aç",
-  "publishStatus": "Status",
+  "publishStatus": "Vəziyyət",
   "groupName": "Qrup",
   "areYouSureAnonymizeSelectedContent": "Seçilmiş məzmunu anonimləşdirmək istədiyinizə əminsinizmi?",
   "areYouSureAnonymizeContent": "Bu məzmunu anonimləşdirmək istədiyinizə əminsinizmi?",

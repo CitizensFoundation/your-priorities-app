@@ -1379,7 +1379,7 @@
   "aoiModerationPrompt": "AI Moderacion Instrucciones (LLM modelman)",
   "minimumTenVotesInfo": "Jawt'atakiwa ukhamaraki jikxatapxiwa jupanakaxa janiw janiw jisk'a chunka votostaña.",
   "minimumTenVotesToShowResults": "Jisk'a chunka votos janiw jikxatapxiwa.",
-  "externalGoalParamsWhitelist": "External goal params whitelist",
+  "externalGoalParamsWhitelist": "Jach'a uñt'ataki jisk'a sartawiñapata",
   "targetVotes": "Target votos",
   "vote": "Jaqi"
 }

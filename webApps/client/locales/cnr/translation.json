@@ -1051,7 +1051,7 @@
     "add": "Dodaj zajednicu",
     "alternativeHeader": "Alternativni zaglavlje",
     "edit": "Uredi zajednicu",
-    "hostname": "Hostname",
+    "hostname": "Domaćin",
     "admins": "Administratori zajednice",
     "users": "Korisnici zajednice",
     "delete": "Izbriši zajednicu",

@@ -29,10 +29,10 @@ export declare class YpGroup extends YpCollection {
     tabLabelWithCount(type: string): string;
     getCurrentTabElement(): HTMLElement | undefined;
     getCollection(): Promise<void>;
-    renderGroupTabs(): TemplateResult<1> | typeof nothing;
+    renderGroupTabs(): typeof nothing | TemplateResult<1>;
     renderPostList(statusFilter: string): TemplateResult;
     renderCurrentGroupTabPage(): TemplateResult | undefined;
-    renderHeader(): TemplateResult<1> | typeof nothing;
+    renderHeader(): typeof nothing | TemplateResult<1>;
     render(): TemplateResult<1>;
     renderYpGroup(): TemplateResult<1>;
     _selectGroupTab(event: CustomEvent): void;

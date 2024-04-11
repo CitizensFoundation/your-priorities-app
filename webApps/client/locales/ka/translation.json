@@ -646,7 +646,7 @@
   "hidePostAuthor": "პოსტის ავტორის დამალვა",
   "defaultLocationLongLat": "საწყისი ლოკაციის გრძედი,განედი",
   "disableCommunityDomainUpLink": "დომენის ზედა ბმულის გამორთვა",
-  "analyticsTrackerCode": "Google Analytics Id",
+  "analyticsTrackerCode": "Google-ის ანალიზის ID",
   "filterIdeas": "იდეების ფილტრი",
   "edit": "რედაქტირება",
   "delete": "წაშლა",

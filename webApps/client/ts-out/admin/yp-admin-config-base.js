@@ -480,6 +480,13 @@ export class YpAdminConfigBase extends YpAdminPage {
         return html `
       <div class="layout vertical logoImagePlaceholder">
         ${this.renderCoverMediaContent()}
+        ${(this.currentLogoImages && this.currentLogoImages.length > 0) ||
+            this.imagePreviewUrl
+            ? html `<md-filled-tonal-icon-button class="deleteImageButton"
+                @click="${this.deleteCurrentLogoImage}"
+                ><md-icon>delete</md-icon></md-filled-tonal-icon-button
+              >`
+            : nothing}
         <div class="layout horizontal center-center logoUploadButtons">
           <yp-file-upload
             id="logoImageUpload"
@@ -493,13 +500,6 @@ export class YpAdminConfigBase extends YpAdminPage {
             @success="${this._logoImageUploaded}"
           >
           </yp-file-upload>
-          ${(this.currentLogoImages && this.currentLogoImages.length > 0) ||
-            this.imagePreviewUrl
-            ? html `<md-filled-icon-button class="deleteImageButton"
-                @click="${this.deleteCurrentLogoImage}"
-                ><md-icon>delete</md-icon></md-filled-icon-button
-              >`
-            : nothing}
           <div
             class="aiGenerationIconContainer"
             ?background-not-active="${!this.generatingAiImageInBackground}"
@@ -587,8 +587,9 @@ export class YpAdminConfigBase extends YpAdminPage {
         }
 
         .deleteImageButton {
-          margin-bottom: 48px;
-          margin-left: 18px;
+          position: absolute;
+          top: 8px;
+          left: 8px;
         }
 
         .videoCoverCheckbox {

@@ -213,10 +213,19 @@ export class YpLanguageSelector extends YpBaseElement {
       "yp-refresh-language-selection",
       this._refreshLanguage.bind(this)
     );
+
+    this.addGlobalListener(
+      "yp-auto-translate",
+      this._autoTranslateEvent.bind(this)
+    );
   }
 
   override disconnectedCallback() {
     super.disconnectedCallback();
+    this.removeGlobalListener(
+      "yp-auto-translate",
+      this._autoTranslateEvent.bind(this)
+    );
     this.removeGlobalListener(
       "yp-refresh-language-selection",
       this._refreshLanguage.bind(this)
@@ -256,7 +265,7 @@ export class YpLanguageSelector extends YpBaseElement {
       this.fire("yp-language-name", YpLanguages.getEnglishName(this.language));
       window.appDialogs.getDialogAsync("masterToast", (toast: any) => {
         toast.text = this.t("autoTranslationStarted");
-        toast.show();
+        toast.open = true;
       });
     }
     window.appGlobals.activity("click", "startTranslation", this.language);

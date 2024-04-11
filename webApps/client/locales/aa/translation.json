@@ -1291,7 +1291,7 @@
   "Last month": "Bil kahor",
   "Custom range": "Range gaar ah",
   "Completed goal": "Yool dhammaaday",
-  "Browser": "Browser",
+  "Browser": "Biraawsar",
   "Country": "Wadan",
   "Region": "Gobol",
   "City": "Magaalo",
@@ -1368,7 +1368,7 @@
   "wikiSurveyActive": "Survey votek kuduk yabten",
   "confirmDeleteLogoImage": "Logo image qokolteh yanay kee biyya leh tan iyya maqalay?",
   "confirmDeleteVideo": "Video tan iyya maqalay?",
-  "closeAndGenerateIconInBackground": "Close and generate icon in background",
+  "closeAndGenerateIconInBackground": "Dakikay gubbaa kee gita baxxaqu",
   "rankedOrderInfo": "Rank-ordered responses based on public voting",
   "aiAnalysisInfo": "GPT-4 answers and votes analysis kuduk",
   "socialMediaCreateInfo": "Name, description and logo image social media kuduk yabten",
@@ -1376,10 +1376,10 @@
   "aiAnalysisConfigInfo": "Automated AI analyses LLM prompts kuduk, voters analysis top N and bottom N answers. Default system top 3 and bottom 3 answers pros and cons analysis. Analysis above disable kuduk. Data format: <div style='padding-left: 16px;'><br><em>[<br>{ ideasLabel: string; ideasIdsRange: number; analysisTypes:<br>[<br>{ label: string; contextPrompt: string; } <br>] <br>} <br>]</em></div>",
   "newIdeasNotAllowedForVotingThankYou": "Answer kuduk galatoomi.",
   "newIdeasNotAllowedForVotingInfo": "(*) This survey user-submitted ideas display maay yabten.",
-  "aoiModerationPrompt": "AI Moderation Instructions (to a LLM model)",
+  "aoiModerationPrompt": "AI Moderation Barattoota (LLM model)",
   "minimumTenVotesInfo": "Answers ten votes yooqal display kuduk.",
-  "minimumTenVotesToShowResults": "Minimum ten votes to show in results",
-  "externalGoalParamsWhitelist": "External goal params whitelist",
-  "targetVotes": "Target votes",
-  "vote": "Vote"
+  "minimumTenVotesToShowResults": "Gaba tokko sagal raqdaa agarsiisu",
+  "externalGoalParamsWhitelist": "Gaba baxxaqu parametara ala",
+  "targetVotes": "Raqdaa lakkoofsa",
+  "vote": "Dabtay"
 }

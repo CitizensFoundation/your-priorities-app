@@ -90,6 +90,7 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
           font-style: italic;
           text-align: center;
           padding: 8px;
+          max-width: 425px;
         }
 
         .aboutAccess {
