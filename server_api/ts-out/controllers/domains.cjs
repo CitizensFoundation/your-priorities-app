@@ -736,7 +736,7 @@ router.get('/:id/translatedText', auth.can('view domain'), function (req, res) {
             where: {
                 id: req.params.id
             },
-            attributes: ['id', 'name', 'description']
+            attributes: ['id', 'name', 'description', 'configuration']
         }).then(function (domain) {
             if (domain) {
                 models.AcTranslationCache.getTranslation(req, domain, function (error, translation) {

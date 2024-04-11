@@ -8,7 +8,6 @@ import { YpAccessHelpers } from "../common/YpAccessHelpers.js";
 import { YpMediaHelpers } from "../common/YpMediaHelpers.js";
 import { YpCollection, CollectionTabTypes } from "./yp-collection.js";
 import { customElement, property } from "lit/decorators.js";
-import { unsafeHTML } from "lit/directives/unsafe-html.js";
 import { html } from "lit";
 import { YpNavHelpers } from "../common/YpNavHelpers.js";
 import { YpFormattingHelpers } from "../common/YpFormattingHelpers.js";
@@ -105,7 +104,14 @@ let YpDomain = class YpDomain extends YpCollection {
                 .welcomeHtmlInsteadOfCommunitiesList) {
             if (this.customWelcomeHtml) {
                 return html `
-          ${unsafeHTML(this.customWelcomeHtml)}
+          <yp-magic-text
+            id="domainWelcomeHtml"
+            .contentId="${this.collection.id}"
+            unsafeHtml
+            .content="${this.customWelcomeHtml}"
+            .contentLanguage="${this.collection.language}"
+            textType="domainWelcomeHtml"
+          ></yp-magic-text>
 
           <div class="layout vertical center-center">
             <md-icon-button

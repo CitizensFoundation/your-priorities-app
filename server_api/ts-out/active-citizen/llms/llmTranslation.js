@@ -17,7 +17,8 @@ export class YpLlmTranslation {
         // Function to recursively extract text from all elements
         function recursivelyExtractText(elements) {
             elements.each((index, element) => {
-                if (element.tagName === 'script') {
+                if (element.tagName.toLowerCase() === "script" ||
+                    element.tagName.toLowerCase().indexOf("icon") > -1) {
                     return;
                 }
                 // Check if the element itself contains a direct text node
@@ -59,20 +60,22 @@ export class YpLlmTranslation {
         const $ = cheerio.load(html);
         // Function to replace attribute values safely
         function replaceAttributeValues(container) {
-            $(container).find('input, textarea, select').each(function () {
+            $(container)
+                .find("input, textarea, select")
+                .each(function () {
                 const element = $(this);
                 // Replace placeholder attribute
-                const placeholder = element.attr('placeholder');
+                const placeholder = element.attr("placeholder");
                 if (placeholder) {
                     const index = originalStrings.indexOf(placeholder.trim());
                     if (index > -1 && translatedStrings[index]) {
-                        element.attr('placeholder', translatedStrings[index]);
+                        element.attr("placeholder", translatedStrings[index]);
                     }
                 }
                 // Replace value attribute for inputs that are not of type text, email, etc.
                 if (element.is('input[type="button"], input[type="submit"]')) {
                     const value = element.val();
-                    if (typeof value === 'string') {
+                    if (typeof value === "string") {
                         const index = originalStrings.indexOf(value.trim());
                         if (index > -1 && translatedStrings[index]) {
                             element.val(translatedStrings[index]);
@@ -83,7 +86,9 @@ export class YpLlmTranslation {
         }
         // Function to safely replace text without disrupting child elements
         function safelyReplaceText(container) {
-            $(container).contents().each(function () {
+            $(container)
+                .contents()
+                .each(function () {
                 // If the node is a text node
                 if (this.type === "text") {
                     let text = $(this).text();

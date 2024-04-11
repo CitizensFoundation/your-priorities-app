@@ -11,7 +11,7 @@ const writeFilePromise = promisify(fs.writeFile);
 // and remove the last line of the .js file (the module.exports line)
 export class YpLocaleTranslation {
     constructor() {
-        this.modelName = "gpt-4-0125-preview";
+        this.modelName = "gpt-4-turbo-2024-04-09";
         this.maxTokens = 4000;
         this.temperature = 0.0;
         this.excludeKeysFromTranslation = [

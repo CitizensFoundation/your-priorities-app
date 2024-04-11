@@ -45,6 +45,7 @@ module.exports = (sequelize, DataTypes) => {
         "communityContent",
         "domainName",
         "domainContent",
+        "domainWelcomeHtml",
         "statusChangeContent",
         "aoiChoiceContent",
         "aoiQuestionName",
@@ -137,6 +138,8 @@ module.exports = (sequelize, DataTypes) => {
                         return modelInstance.configuration.allOurIdeas.earl.configuration.welcome_message;
                     case "aoiWelcomeHtml":
                         return modelInstance.configuration.allOurIdeas.earl.configuration.welcome_html;
+                    case "domainWelcomeHtml":
+                        return modelInstance.configuration.welcomeHtmlInsteadOfCommunitiesList.replace("<AOI_SITE_STATS>", "");
                     case "alternativeTextForNewIdeaButton":
                         return modelInstance.configuration.alternativeTextForNewIdeaButton;
                     case "alternativeTextForNewIdeaButtonClosed":
@@ -637,6 +640,7 @@ module.exports = (sequelize, DataTypes) => {
                 case "aoiQuestionName":
                     return await AcTranslationCache.llmTranslation.getQuestionTranslation(targetLanguage, contentToTranslate);
                 case "aoiWelcomeHtml":
+                case "domainWelcomeHtml":
                     return await AcTranslationCache.llmTranslation.getHtmlTranslation(targetLanguage, contentToTranslate);
                 case "aoiWelcomeMessage":
                     return await AcTranslationCache.llmTranslation.getOneTranslation(targetLanguage, contentToTranslate);
@@ -697,6 +701,7 @@ module.exports = (sequelize, DataTypes) => {
                         "aoiChoiceContent",
                         "aoiQuestionName",
                         "aoiWelcomeHtml",
+                        "domainWelcomeHtml",
                         "aoiWelcomeMessage",
                     ].includes(textType)) {
                         sequelize.models.AcTranslationCache.getAoiTranslationFromLlm(textType, indexKey, contentToTranslate, targetLanguage, modelInstance, callback);
@@ -720,6 +725,7 @@ module.exports = (sequelize, DataTypes) => {
                     "aoiChoiceContent",
                     "aoiQuestionName",
                     "aoiWelcomeHtml",
+                    "domainWelcomeHtml",
                     "aoiWelcomeMessage",
                 ].includes(req.query.textType)) {
                 modelInstance

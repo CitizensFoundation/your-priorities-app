@@ -511,6 +511,7 @@ const updateTranslationForCommunity = (communityId, item, done) => {
         done(error);
     });
 };
+//TODO: Add translations for domain with domainWelcomeHtml
 module.exports = {
     getTranslatedTextsForCommunity,
     getTranslatedTextsForGroup,

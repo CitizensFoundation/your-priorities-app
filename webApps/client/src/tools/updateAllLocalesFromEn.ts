@@ -18,7 +18,7 @@ interface Translation {
 // and remove the last line of the .js file (the module.exports line)
 export class YpLocaleTranslation {
   openaiClient: OpenAI;
-  modelName = "gpt-4-0125-preview";
+  modelName = "gpt-4-turbo-2024-04-09";
   maxTokens = 4000;
   temperature = 0.0;
 

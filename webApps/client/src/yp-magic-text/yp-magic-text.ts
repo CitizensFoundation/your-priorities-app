@@ -315,6 +315,7 @@ export class YpMagicText extends YpBaseElement {
             break;
           case "domainName":
           case "domainContent":
+          case "domainWelcomeHtml":
             url = "/api/domains/" + this.contentId + "/translatedText";
             break;
           case "customRatingName":

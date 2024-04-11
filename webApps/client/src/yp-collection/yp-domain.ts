@@ -151,7 +151,14 @@ export class YpDomain extends YpCollection {
     ) {
       if (this.customWelcomeHtml) {
         return html`
-          ${unsafeHTML(this.customWelcomeHtml)}
+          <yp-magic-text
+            id="domainWelcomeHtml"
+            .contentId="${this.collection.id}"
+            unsafeHtml
+            .content="${this.customWelcomeHtml}"
+            .contentLanguage="${this.collection.language}"
+            textType="domainWelcomeHtml"
+          ></yp-magic-text>
 
           <div class="layout vertical center-center">
             <md-icon-button
