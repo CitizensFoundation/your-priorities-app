@@ -121,7 +121,8 @@ Only output: PASSES or FAILS`;
                         content: `You are a highly competent AI that is able to generate short answer ideas for questions.
                       Genereate up to 10 high quality answer ideas.
                       Never use numbers at the start of each line.
-                      Never use a dash or anything similar at the start of each line, just start with the text.
+                      Always output the ideas in the same language the user is asking the question.
+                      Never use a dash or quote or anything similar at the start of each line, just start with the text.
                       Never output more than 30 words per idea.
                       \n${firstMessageWithPreviousIdeasTemplate}`,
                     },

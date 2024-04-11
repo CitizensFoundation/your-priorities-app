@@ -1373,13 +1373,13 @@
   "aiAnalysisInfo": "ଏହା GPT-4 ଦ୍ୱାରା ଉତ୍ତର ଏବଂ ଭୋଟଗୁଡିକର ସ୍ୱଚାଳିତ ବିଶ୍ଲେଷଣ",
   "socialMediaCreateInfo": "ସୋସିଆଲ ମିଡିଆରେ ସେୟାର କଲା ବେଳେ ନାମ, ବିବରଣୀ ଏବଂ ଲୋଗୋ ଚିତ୍ର ବ୍ୟବହୃତ ହେବ",
   "generateAnswersInfo": "ପ୍ରଶ୍ନଗୁଡିକର ନୂନ୍ୟତମ 3 ଅକ୍ଷର ଆବଶ୍ୟକ। ନୀଚେ 6 ବୀଜ ଉତ୍ତର ଦିଅ, ପ୍ରତି ଲାଇନରେ ଏକ, ପ୍ରତିଟିର 140-ଅକ୍ଷର ସୀମା ସହିତ।",
-  "aiAnalysisConfigInfo": "Automated AI analyses utilize your LLM prompts to provide voters with an analysis of the top N and bottom N answers. By default, the system is set to analyze the pros and cons of the top 3 and bottom 3 answers. You can disable the analysis above. Here is the data format: <div style='padding-left: 16px;'><br><em>[<br>{ ideasLabel: string; ideasIdsRange: number; analysisTypes:<br>[<br>{ label: string; contextPrompt: string; } <br>] <br>} <br>]</em></div>",
-  "newIdeasNotAllowedForVotingThankYou": "Thank you for your answer.",
-  "newIdeasNotAllowedForVotingInfo": "(*) This survey does not display user-submitted ideas.",
-  "aoiModerationPrompt": "AI Moderation Instructions (to a LLM model)",
-  "minimumTenVotesInfo": "Answers will only be displayed here once they have received at least ten votes.",
-  "minimumTenVotesToShowResults": "Minimum ten votes to show in results",
-  "externalGoalParamsWhitelist": "External goal params whitelist",
-  "targetVotes": "Target votes",
-  "vote": "Vote"
+  "aiAnalysisConfigInfo": "ଆପଣଙ୍କର LLM ପ୍ରମ୍ପ୍ଟଗୁଡିକ ବ୍ୟବହାର କରି ଅଟୋମେଟେଡ AI ବିଶ୍ଲେଷଣ ମତଦାତାଙ୍କୁ ଶୀର୍ଷ N ଏବଂ ତଳ N ଉତ୍ତରର ବିଶ୍ଲେଷଣ ପ୍ରଦାନ କରେ। ଡିଫଲ୍ଟରେ, ସିଷ୍ଟମଟି ଶୀର୍ଷ 3 ଏବଂ ତଳ 3 ଉତ୍ତରର ପ୍ରୋଜନ୍ ଏବଂ କନସଗୁଡିକର ବିଶ୍ଲେଷଣ କରିବାକୁ ସେଟ୍ କରାଯାଇଛି। ଆପଣ ଉପରୋକ୍ତ ବିଶ୍ଲେଷଣକୁ ଅକ୍ଷମ କରିପାରିବେ। ଏଠାରେ ଡାଟା ଫର୍ମାଟ୍ ଅଛି: <div style='padding-left: 16px;'><br><em>[<br>{ ideasLabel: string; ideasIdsRange: number; analysisTypes:<br>[<br>{ label: string; contextPrompt: string; } <br>] <br>} <br>]</em></div>",
+  "newIdeasNotAllowedForVotingThankYou": "ଆପଣଙ୍କର ଉତ୍ତର ପାଇଁ ଧନ୍ୟବାଦ।",
+  "newIdeasNotAllowedForVotingInfo": "(*) ଏହି ସର୍ଭେକ୍ଷଣରେ ବ୍ୟବହାରକାରୀ-ଦାଖଲ କରା ଆଇଡିଆଗୁଡିକ ପ୍ରଦର୍ଶିତ ହୁଏନାହିଁ।",
+  "aoiModerationPrompt": "AI ମଡରେସନ ନିର୍ଦେଶନାବଳୀ",
+  "minimumTenVotesInfo": "ଉତ୍ତରଗୁଡିକ ଏଠାରେ କେବଳ ତାହାକୁ କମସେ କମ ଦଶ ଭୋଟ ମିଳିବା ପରେ ପ୍ରଦର୍ଶିତ ହେବ।",
+  "minimumTenVotesToShowResults": "ଫଳାଫଳରେ ଦେଖାଇବାକୁ ନୂନ୍ୟତମ ଦଶ ଭୋଟ",
+  "externalGoalParamsWhitelist": "ବାହ୍ୟ ଲକ୍ଷ୍ୟ ପାରାମିଟର ଶ୍ୱେତ ସୂଚୀ",
+  "targetVotes": "ଲକ୍ଷ୍ୟ ଭୋଟ",
+  "vote": "ଭୋଟ"
 }

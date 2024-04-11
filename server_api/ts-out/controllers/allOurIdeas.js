@@ -68,7 +68,7 @@ export class AllOurIdeasController {
                 throw new Error("Choice creation failed.");
             }
             const stats = (await choiceResponse.json());
-            // Add original allourideas.org stats (as of 24/4/2024)
+            // Add original allourideas.org stats (as of 24/3/2024)
             stats.choices_count = stats.choices_count + 1499910;
             stats.total_questions = totalGroupCount + 27555;
             stats.votes_count = stats.votes_count + 60200000;
