@@ -50,6 +50,13 @@ export class YpAdminHtmlEditor extends YpBaseElement {
     this.selectedTab = (event.currentTarget as MdTabs).activeTabIndex;
   }
 
+  get configuration() {
+    return {
+      content: this.content,
+      media: this.media,
+    };
+  }
+
   override connectedCallback() {
     super.connectedCallback();
     this.addGlobalListener("yp-has-video-upload", () => {
@@ -74,9 +81,22 @@ export class YpAdminHtmlEditor extends YpBaseElement {
           margin-bottom: 16px;
         }
 
+        .deleteMediaButton {
+          top: 4px;
+          left: 4px;
+          position: absolute;
+        }
+
+        .insertMediaButton {
+          bottom: 4px;
+          right: 4px;
+          position: absolute;
+        }
+
         .mediaHeader {
           font-size: 20px;
           margin: 24px;
+          margin-bottom: 8px;
         }
 
         .uploadIcon {
@@ -93,6 +113,7 @@ export class YpAdminHtmlEditor extends YpBaseElement {
           height: 100%;
           background-color: var(--md-sys-color-surface);
           color: var(--md-sys-color-on-surface);
+          margin-top: 16px;
         }
 
         .mediaContainer {
@@ -106,12 +127,7 @@ export class YpAdminHtmlEditor extends YpBaseElement {
           max-width: 100%;
           max-height: 150px;
         }
-        .buttonGroup {
-          position: absolute;
-          bottom: 0;
-          right: 0;
-          display: flex;
-        }
+
         md-filled-icon-button {
           margin: 4px;
         }
@@ -173,7 +189,6 @@ export class YpAdminHtmlEditor extends YpBaseElement {
   _videoUploaded(event: CustomEvent) {
     const uploadedVideoId = event.detail.videoId;
     const url = event.detail.videoUrl;
-    debugger;
     this.media.push({
       id: uploadedVideoId,
       type: "video",
@@ -189,50 +204,77 @@ export class YpAdminHtmlEditor extends YpBaseElement {
 
   renderMedia() {
     return html`
+      ${this.renderImageUploadOptions()}
+
       <div class="layout horizontal wrap">
         ${this.media.map(
           (media) => html`
             <div class="mediaContainer">
               ${media.type === "image"
                 ? html`
-                    <img class="mediaImage"
-                         src="${media.url}"
-                         @load="${() => this._setMediaLoaded(media.id, true)}"
-                         @error="${() => this._setMediaLoaded(media.id, false)}" />
+                    <img
+                      class="mediaImage"
+                      src="${media.url}"
+                      @load="${() => this._setMediaLoaded(media.id, true)}"
+                      @error="${() => this._setMediaLoaded(media.id, false)}"
+                    />
                   `
                 : media.type === "video"
                 ? html`
-                    <video class="mediaVideo" controls
-                           @loadedmetadata="${() => this._setMediaLoaded(media.id, true)}"
-                           @error="${() => this._setMediaLoaded(media.id, false)}">
+                    <video
+                      class="mediaVideo"
+                      controls
+                      @loadedmetadata="${() =>
+                        this._setMediaLoaded(media.id, true)}"
+                      @error="${() => this._setMediaLoaded(media.id, false)}"
+                    >
                       <source src="${media.url}" type="video/mp4" />
                     </video>
                   `
                 : nothing}
-              <div class="buttonGroup" style="display: ${this.mediaLoaded[media.id] ? 'flex' : 'none'};">
-                <md-filled-icon-button
+              <div
+                style="display: ${this.mediaLoaded[media.id]
+                  ? "flex"
+                  : "none"};"
+              >
+                <md-filled-tonal-icon-button
+                  class="deleteMediaButton"
                   @click="${() => this._removeMedia(media)}"
-                  title="${this.t("deleteMedia")}">
+                  title="${this.t("deleteMedia")}"
+                >
                   <md-icon>delete</md-icon>
-                </md-filled-icon-button>
+                </md-filled-tonal-icon-button>
                 <md-filled-icon-button
+                  class="insertMediaButton"
                   @click="${() => this._insertMediaIntoHtml(media)}"
-                  title="${this.t("insertMedia")}">
-                  <md-icon>insert_photo</md-icon>
+                  title="${this.t("insertMedia")}"
+                >
+                  <md-icon>arrow_upward</md-icon>
                 </md-filled-icon-button>
               </div>
             </div>
           `
         )}
       </div>
-      ${this.renderImageUploadOptions()}
     `;
   }
 
-
   _insertMediaIntoHtml(media: YpSimpleGroupMediaData) {
-    // Insert the selected media URL into the HTML editor or content.
-    // This method needs to be implemented based on how you want to handle the insertion.
+    if (media.type === "image") {
+      const img = `<img src="${media.url}" alt="" />\n`;
+      this.content = img + this.content;
+      this.contentChanged();
+    } else if (media.type === "video") {
+      const video = `<video controls><source src="${media.url}" type="video/mp4" /></video>\n`;
+      this.content = video + this.content;
+      this.contentChanged();
+    }
+    this.requestUpdate();
+  }
+
+  contentChanged() {
+    this.fire("configuration-changed");
+    this.debouncedSave();
   }
 
   renderImageUploadOptions() {
@@ -326,11 +368,11 @@ export class YpAdminHtmlEditor extends YpBaseElement {
           `
         : nothing}
       ${this.selectedTab === 2
-        ? html`<div class="flex previewHtml">${unsafeHTML(this.content)}</div>`
+        ? html`<div class="previewHtml">${unsafeHTML(this.content)}</div>`
         : nothing}
 
       <div class="layout horizontal center-center">
-        <div class="mediaHeader">${this.t("media")}</div>
+        <div class="mediaHeader">${this.t("addMedia")}</div>
       </div>
       ${this.renderMedia()} ${this.renderAiImageGenerator()}
     `;
@@ -343,7 +385,7 @@ export class YpAdminHtmlEditor extends YpBaseElement {
       this.content = event.detail.value;
     }
 
-    this.debouncedSave();
+    this.contentChanged();
   }
 
   debouncedSave() {

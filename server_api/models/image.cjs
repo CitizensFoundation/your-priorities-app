@@ -128,6 +128,10 @@ module.exports = (sequelize, DataTypes) => {
       through: "GroupLogoImage",
     });
     Image.belongsToMany(models.Group, {
+      as: "GroupHtmlImages",
+      through: "GroupHtmlImage",
+    });
+    Image.belongsToMany(models.Group, {
       as: "GroupHeaderImages",
       through: "GroupHeaderImage",
     });
@@ -224,7 +228,13 @@ module.exports = (sequelize, DataTypes) => {
     let removed = false;
 
     if (image) {
-      if (groupId) {
+      if (req.query.removeByUserIdOnly) {
+        if (image.user_id === req.user.id) {
+          image.deleted = true;
+          await image.save();
+          removed = true;
+        }
+      } else if (groupId) {
         const group = await sequelize.models.Group.findByPk(groupId);
         if (group) {
           const isImageInGroup = await sequelize.models.Group.findOne({
@@ -232,7 +242,7 @@ module.exports = (sequelize, DataTypes) => {
             include: [
               {
                 model: sequelize.models.Image,
-                as: "GroupLogoImages",
+                as: req.query.htmlImage ? "GroupHtmlImages" : "GroupLogoImages",
                 where: { id: imageId },
                 required: true,
               },
@@ -241,13 +251,9 @@ module.exports = (sequelize, DataTypes) => {
           if (isImageInGroup) {
             await group.removeGroupLogoImage(image);
             removed = true;
-          } else {
-            res.status(404).json({ message: "Image not found in group" });
           }
         }
-      }
-
-      if (communityId) {
+      } else if (communityId) {
         const community = await sequelize.models.Community.findByPk(
           communityId
         );
@@ -266,13 +272,9 @@ module.exports = (sequelize, DataTypes) => {
           if (isImageInCommunity) {
             await community.removeCommunityLogoImage(image);
             removed = true;
-          } else {
-            res.status(404).json({ message: "Image not found in community" });
           }
         }
-      }
-
-      if (domainId) {
+      } else if (domainId) {
         const domain = await sequelize.models.Domain.findByPk(domainId);
         if (domain) {
           const isImageInDomain = await sequelize.models.Domain.findOne({
@@ -289,13 +291,9 @@ module.exports = (sequelize, DataTypes) => {
           if (isImageInDomain) {
             await domain.removeDomainLogoImage(image);
             removed = true;
-          } else {
-            res.status(404).json({ message: "Image not found in domain" });
           }
         }
-      }
-
-      if (postId) {
+      } else if (postId) {
         const post = await sequelize.models.Post.findByPk(postId);
         if (post) {
           const isImageInPost = await sequelize.models.Post.findOne({
@@ -312,8 +310,6 @@ module.exports = (sequelize, DataTypes) => {
           if (isImageInPost) {
             await post.removePostImage(image);
             removed = true;
-          } else {
-            res.status(404).json({ message: "Image not found in post" });
           }
         }
       }

@@ -105,6 +105,10 @@ module.exports = (sequelize, DataTypes) => {
             as: "GroupLogoVideos",
             through: "GroupLogoVideo",
         });
+        Video.belongsToMany(models.Group, {
+            as: "GroupHtmlVideos",
+            through: "GroupHtmlVideo",
+        });
         Video.belongsToMany(models.Domain, {
             as: "DomainLogoVideos",
             through: "DomainLogoVideo",
@@ -611,7 +615,20 @@ module.exports = (sequelize, DataTypes) => {
             });
             let removed = false;
             if (video) {
-                if (req.params.groupId) {
+                if (req.query.byUserIdOnly) {
+                    if (video.user_id === req.user.id) {
+                        video.deleted = true;
+                        await video.save();
+                        removed = true;
+                    }
+                    else {
+                        log.error("Could not remove video from collection not same user", {
+                            videoId: req.params.videoId,
+                            userId: req.user.id,
+                        });
+                    }
+                }
+                else if (req.params.groupId) {
                     const group = await sequelize.models.Group.findOne({
                         where: {
                             id: req.params.groupId,
@@ -624,7 +641,7 @@ module.exports = (sequelize, DataTypes) => {
                             include: [
                                 {
                                     model: sequelize.models.Video,
-                                    as: "GroupLogoVideos",
+                                    as: req.query.htmlVideo ? "GroupHtmlVideos" : "GroupLogoVideos",
                                     where: { id: video.id },
                                     required: true,
                                 },
@@ -639,14 +656,12 @@ module.exports = (sequelize, DataTypes) => {
                                 groupId: req.params.groupId,
                                 videoId: req.params.videoId,
                             });
-                            res.sendStatus(404);
                         }
                     }
                     else {
                         log.error("Could not find group for video", {
                             groupId: req.params.groupId,
                         });
-                        res.sendStatus(404);
                     }
                 }
                 else if (req.params.communityId) {
@@ -677,14 +692,12 @@ module.exports = (sequelize, DataTypes) => {
                                 communityId: req.params.communityId,
                                 videoId: req.params.videoId,
                             });
-                            res.sendStatus(404);
                         }
                     }
                     else {
                         log.error("Could not find community for video", {
                             communityId: req.params.communityId,
                         });
-                        res.sendStatus(404);
                     }
                 }
                 else if (req.params.domainId) {
@@ -715,14 +728,12 @@ module.exports = (sequelize, DataTypes) => {
                                 domainId: req.params.domainId,
                                 videoId: req.params.videoId,
                             });
-                            res.sendStatus(404);
                         }
                     }
                     else {
                         log.error("Could not find domain for video", {
                             domainId: req.params.domainId,
                         });
-                        res.sendStatus(404);
                     }
                 }
                 else if (req.params.postId) {
@@ -753,14 +764,12 @@ module.exports = (sequelize, DataTypes) => {
                                 postId: req.params.postId,
                                 videoId: req.params.videoId,
                             });
-                            res.sendStatus(404);
                         }
                     }
                     else {
                         log.error("Could not find post for video", {
                             postId: req.params.postId,
                         });
-                        res.sendStatus(404);
                     }
                 }
                 else if (req.params.pointId) {
@@ -789,14 +798,12 @@ module.exports = (sequelize, DataTypes) => {
                                 pointId: req.params.pointId,
                                 videoId: req.params.videoId,
                             });
-                            res.sendStatus(404);
                         }
                     }
                     else {
                         log.error("Could not find point for video", {
                             postId: req.params.pointId,
                         });
-                        res.sendStatus(404);
                     }
                 }
                 else {
@@ -840,7 +847,7 @@ module.exports = (sequelize, DataTypes) => {
         else {
             sequelize.models.Video.findOne({
                 where: {
-                    id: options.videoId,
+                    id: options.videoId
                 },
                 attributes: sequelize.models.Video.defaultAttributesPublic.concat([
                     "user_id",

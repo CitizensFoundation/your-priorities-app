@@ -5,7 +5,10 @@ import { customElement, property } from "lit/decorators.js";
 import { YpBaseElement } from "../common/yp-base-element.js";
 import { ShadowStyles } from "../common/ShadowStyles.js";
 
-import "@material/web/iconbutton/filled-tonal-icon-button.js";
+import "@material/web/iconbutton/icon-button.js";
+import "@material/web/iconbutton/icon-button.js";
+import { MdDialog } from "@material/web/dialog/dialog.js";
+import { MdFilledTextField } from "@material/web/textfield/filled-text-field.js";
 
 @customElement("yp-simple-html-editor")
 export class YpSimpleHtmlEditor extends YpBaseElement {
@@ -33,6 +36,8 @@ export class YpSimpleHtmlEditor extends YpBaseElement {
   @property({ type: Boolean })
   showErrorLine = false;
 
+  selectedImage: HTMLImageElement | undefined;
+
   static override get styles() {
     return [
       super.styles,
@@ -41,13 +46,17 @@ export class YpSimpleHtmlEditor extends YpBaseElement {
           display: inline-block;
           margin-top: 8px;
           width: 100%;
+          height: 300px;
+        }
+
+        md-filled-text-field {
+          margin-top: 8px;
         }
 
         #htmlEditor {
           background-color: var(--md-sys-color-surface);
           color: var(--md-sys-color-on-surface);
           width: 100%;
-          height: 300px;
           border-top: 1px solid var(--md-sys-color-primary);
           border-bottom: 1px solid var(--md-sys-color-primary);
           outline: none;
@@ -81,9 +90,14 @@ export class YpSimpleHtmlEditor extends YpBaseElement {
           color: var(--md-sys-color-error);
         }
 
-        filled-tonal-icon-button {
+        md-icon-button {
           margin-left: 4px;
           margin-right: 4px;
+          margin-bottom: 4px;
+        }
+
+        .mainContainer {
+          max-width: 920px;
         }
 
         @media (max-width: 800px) {
@@ -94,95 +108,208 @@ export class YpSimpleHtmlEditor extends YpBaseElement {
       `,
     ];
   }
+  _onWidthInput(event: CustomEvent) {
+    const valid = /^(\d+px|\d+%|auto)$/.test(
+      (event.target as MdFilledTextField).value
+    );
+    (event.target as MdFilledTextField).setCustomValidity(
+      valid ? "" : this.t("Enter a valid width (e.g., 100px or 100%)")
+    );
+  }
+
+  _onHeightInput(event: CustomEvent) {
+    const valid = /^(\d+px|\d+%|auto)$/.test(
+      (event.target as MdFilledTextField).value
+    );
+    (event.target as MdFilledTextField).setCustomValidity(
+      valid ? "" : this.t("Enter a valid height (e.g., 100px or 100%)")
+    );
+  }
+
+  _onMarginInput(event: CustomEvent) {
+    const valid = /^\d*px$/.test((event.target as MdFilledTextField).value);
+    (event.target as MdFilledTextField).setCustomValidity(
+      valid ? "" : this.t("Enter a valid pixel value (e.g., 20px)")
+    );
+  }
+
+  closeImageDialog() {
+    const dialog = this.$$("#resizeDialog") as MdDialog;
+    if (dialog) {
+      dialog.open = false;
+    }
+  }
+
+  applyImageSize() {
+    const widthInput = (this.$$("#widthInput") as MdFilledTextField).value;
+    const heightInput = (this.$$("#heightInput") as MdFilledTextField).value;
+    const marginTop = (this.$$("#marginTopInput") as MdFilledTextField).value;
+    const marginRight = (this.$$("#marginRightInput") as MdFilledTextField)
+      .value;
+    const marginBottom = (this.$$("#marginBottomInput") as MdFilledTextField)
+      .value;
+    const marginLeft = (this.$$("#marginLeftInput") as MdFilledTextField).value;
+    if (this.selectedImage) {
+      this.selectedImage.style.width = widthInput;
+      this.selectedImage.style.height = heightInput;
+      this.selectedImage.style.marginTop = marginTop;
+      this.selectedImage.style.marginRight = marginRight;
+      this.selectedImage.style.marginBottom = marginBottom;
+      this.selectedImage.style.marginLeft = marginLeft;
+    }
+    const dialog = this.$$("#resizeDialog") as MdDialog;
+    if (dialog) {
+      dialog.open = false;
+    }
+  }
+
+  selectImage(image: HTMLImageElement) {
+    this.selectedImage = image; // Store reference to the selected image
+    const dialog = this.$$("#resizeDialog") as MdDialog;
+    if (dialog) {
+      dialog.open = true; // Open the dialog
+    }
+  }
+
+  renderImageEditDialog() {
+    return html`<md-dialog
+      id="resizeDialog"
+      aria-label="${this.t("resizeImage")}"
+    >
+      <form class="layout vertical" slot="content">
+        <md-filled-text-field
+          id="widthInput"
+          label="${this.t("Width (e.g., 100px or 100%)")}"
+          @input="${this._onWidthInput}"
+        ></md-filled-text-field>
+        <md-filled-text-field
+          id="heightInput"
+          label="${this.t("Height (e.g., 100px or 100%)")}"
+          @input="${this._onHeightInput}"
+        ></md-filled-text-field>
+        <md-filled-text-field
+          id="marginTopInput"
+          label="${this.t("Margin Top (px)")}"
+          @input="${this._onMarginInput}"
+        ></md-filled-text-field>
+        <md-filled-text-field
+          id="marginRightInput"
+          label="${this.t("Margin Right (px)")}"
+          @input="${this._onMarginInput}"
+        ></md-filled-text-field>
+        <md-filled-text-field
+          id="marginBottomInput"
+          label="${this.t("Margin Bottom (px)")}"
+          @input="${this._onMarginInput}"
+        ></md-filled-text-field>
+        <md-filled-text-field
+          id="marginLeftInput"
+          label="${this.t("Margin Left (px)")}"
+          @input="${this._onMarginInput}"
+        ></md-filled-text-field>
+      </form>
+      <div slot="actions">
+        <md-outlined-button
+          dialogAction="apply"
+          @click="${this.applyImageSize}"
+        >
+          ${this.t("apply")}
+        </md-outlined-button>
+        <md-outlined-button slot="actions" @click="${this.closeImageDialog}">
+          ${this.t("Close")}
+        </md-outlined-button>
+      </div>
+    </md-dialog>`;
+  }
 
   override render() {
     return html`
-      <div class="layout horizontal wrap">
+      <div class="layout horizontal wrap mainContainer">
         <div class="layout horizontal">
-          <filled-tonal-icon-button
+          <md-icon-button
             aria-label="${this.t("formatBold")}"
             @mousedown="${this._toggleBold}"
-            ><md-icon>format_bold</md-icon></filled-tonal-icon-button
+            ><md-icon>format_bold</md-icon></md-icon-button
           >
-          <filled-tonal-icon-button
+          <md-icon-button
             aria-label="${this.t("formatItalic")}"
             @mousedown="${this._toggleItalic}"
-            ><md-icon>format_italic</md-icon></filled-tonal-icon-button
+            ><md-icon>format_italic</md-icon></md-icon-button
           >
-          <filled-tonal-icon-button
+          <md-icon-button
             aria-label="${this.t("formatUnderline")}"
             @mousedown="${this._toggleUnderline}"
-            ><md-icon>format_underlined</md-icon></filled-tonal-icon-button
+            ><md-icon>format_underlined</md-icon></md-icon-button
           >
-          <filled-tonal-icon-button
+          <md-icon-button
             aria-label="${this.t("formatListBullets")}"
             @mousedown="${this._toggleListBullets}"
-            ><md-icon>format_list_bulleted</md-icon></filled-tonal-icon-button
+            ><md-icon>format_list_bulleted</md-icon></md-icon-button
           >
-          <filled-tonal-icon-button
+          <md-icon-button
             aria-label="${this.t("formatListNumbered")}"
             @mousedown="${this._toggleListNumbers}"
-            ><md-icon>format_list_numbered</md-icon></filled-tonal-icon-button
+            ><md-icon>format_list_numbered</md-icon></md-icon-button
           >
         </div>
         <div class="layout horizontal">
-          <filled-tonal-icon-button
+          <md-icon-button
             aria-label="${this.t("formatLeft")}"
             @mousedown="${this._toggleAlignLeft}"
-            ><md-icon>format_align_left</md-icon></filled-tonal-icon-button
+            ><md-icon>format_align_left</md-icon></md-icon-button
           >
-          <filled-tonal-icon-button
+          <md-icon-button
             aria-label="${this.t("formatCenter")}"
             @mousedown="${this._toggleAlignCenter}"
-            ><md-icon>format_align_center</md-icon></filled-tonal-icon-button
+            ><md-icon>format_align_center</md-icon></md-icon-button
           >
-          <filled-tonal-icon-button
+          <md-icon-button
             aria-label="${this.t("formatRight")}"
             @mousedown="${this._toggleAlignRight}"
-            ><md-icon>format_align_right</md-icon></filled-tonal-icon-button
+            ><md-icon>format_align_right</md-icon></md-icon-button
           >
         </div>
 
         <div class="layout horizontal">
-          <filled-tonal-icon-button
+          <md-icon-button
             aria-label="${this.t("formatH1")}"
             @mousedown="${this._toggleH1}"
-            ><md-icon>format_h1</md-icon></filled-tonal-icon-button
+            ><md-icon>format_h1</md-icon></md-icon-button
           >
-          <filled-tonal-icon-button
+          <md-icon-button
             aria-label="${this.t("formatH2")}"
             @mousedown="${this._toggleH2}"
-            ><md-icon>format_h2</md-icon></filled-tonal-icon-button
+            ><md-icon>format_h2</md-icon></md-icon-button
           >
-          <filled-tonal-icon-button
+          <md-icon-button
             aria-label="${this.t("formatH3")}"
             @mousedown="${this._toggleH3}"
-            ><md-icon>format_h3</md-icon></filled-tonal-icon-button
+            ><md-icon>format_h3</md-icon></md-icon-button
           >
-          <filled-tonal-icon-button
+          <md-icon-button
             aria-label="${this.t("formatH4")}"
             @mousedown="${this._toggleH4}"
-            ><md-icon>format_h4</md-icon></filled-tonal-icon-button
+            ><md-icon>format_h4</md-icon></md-icon-button
           >
-          <filled-tonal-icon-button
+          <md-icon-button
             aria-label="${this.t("formatH5")}"
             @mousedown="${this._toggleH5}"
-            ><md-icon>format_h5</md-icon></filled-tonal-icon-button
+            ><md-icon>format_h5</md-icon></md-icon-button
           >
-          <filled-tonal-icon-button
+          <md-icon-button
             aria-label="${this.t("formatH6")}"
             @mousedown="${this._toggleH6}"
-            ><md-icon>format_h6</md-icon></filled-tonal-icon-button
+            ><md-icon>format_h6</md-icon></md-icon-button
           >
-          <filled-tonal-icon-button
+          <md-icon-button
             aria-label="${this.t("formatP")}"
             @mousedown="${this._toggleP}"
-            ><md-icon>format_paragraph</md-icon></filled-tonal-icon-button
+            ><md-icon>format_paragraph</md-icon></md-icon-button
           >
-          <filled-tonal-icon-button
+          <md-icon-button
             aria-label="${this.t("formatClear")}"
             @mousedown="${this._clearFormat}"
-            ><md-icon>format_clear</md-icon></filled-tonal-icon-button
+            ><md-icon>format_clear</md-icon></md-icon-button
           >
         </div>
       </div>
@@ -208,8 +335,18 @@ export class YpSimpleHtmlEditor extends YpBaseElement {
           >/${this.question.maxLength}</span
         >
       </div>
+      ${this.renderImageEditDialog()}
     `;
   }
+
+  deselectImage() {
+    this.selectedImage = undefined;
+    const dialog = this.$$("#resizeDialog") as MdDialog;
+    if (dialog) {
+      dialog.open = false;
+    }
+  }
+
   _setFocus() {
     this.hasFocus = true;
 
@@ -233,9 +370,28 @@ export class YpSimpleHtmlEditor extends YpBaseElement {
     super.connectedCallback();
   }
 
-  protected override firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
+  override update(changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
+    super.update(changedProperties);
+    if (changedProperties.has("value")) {
+      this.setRichValue(this.value);
+    }
+  }
+
+  protected override firstUpdated(
+    _changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>
+  ): void {
     super.firstUpdated(_changedProperties);
     this.setRichValue(this.value);
+    this.shadowRoot!.querySelector("#htmlEditor")!.addEventListener(
+      "click",
+      (e) => {
+        if (e.target && (e.target as HTMLElement).tagName === "IMG") {
+          this.selectImage(e.target as HTMLImageElement);
+        } else {
+          this.deselectImage();
+        }
+      }
+    );
   }
 
   _setBlur(event: CustomEvent) {
@@ -308,7 +464,7 @@ export class YpSimpleHtmlEditor extends YpBaseElement {
   _changed() {
     this.value = this.shadowRoot!.querySelector("#htmlEditor")!.innerHTML;
     this._updateCharacterCounter();
-    this.fire('change', { value: this.value, index: this.index })
+    this.fire("change", { value: this.value, index: this.index });
   }
 
   validate() {

@@ -325,6 +325,9 @@ export class YpCollection extends YpBaseElementWithLogin {
     _selectTab(event) {
         this.selectedTab = event.currentTarget.activeTabIndex;
     }
+    _openAdmin() {
+        YpNavHelpers.redirectTo(`/admin/${this.collectionType}/${this.collection.id}`);
+    }
     _setSelectedTabFromRoute(routeTabName) {
         let tabNumber;
         switch (routeTabName) {

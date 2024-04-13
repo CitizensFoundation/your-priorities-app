@@ -5,7 +5,6 @@ export declare class YpDomain extends YpCollection {
     refresh(): Promise<void>;
     scrollToCommunityItem(): void;
     scrollToCollectionItemSubClass(): void;
-    _openAdmin(): void;
     render(): import("lit-html").TemplateResult<1>;
 }
 //# sourceMappingURL=yp-domain.d.ts.map

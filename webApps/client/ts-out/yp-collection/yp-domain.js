@@ -9,7 +9,6 @@ import { YpMediaHelpers } from "../common/YpMediaHelpers.js";
 import { YpCollection, CollectionTabTypes } from "./yp-collection.js";
 import { customElement, property } from "lit/decorators.js";
 import { html } from "lit";
-import { YpNavHelpers } from "../common/YpNavHelpers.js";
 import { YpFormattingHelpers } from "../common/YpFormattingHelpers.js";
 let YpDomain = class YpDomain extends YpCollection {
     constructor() {
@@ -95,9 +94,6 @@ let YpDomain = class YpDomain extends YpCollection {
                 undefined;
         }
     }
-    _openAdmin() {
-        YpNavHelpers.redirectTo(`/admin/${this.collectionType}/${this.collection.id}`);
-    }
     render() {
         if (this.collection &&
             this.collection.configuration
@@ -113,7 +109,10 @@ let YpDomain = class YpDomain extends YpCollection {
             textType="domainWelcomeHtml"
           ></yp-magic-text>
 
-          <div class="layout vertical center-center">
+          <div
+            class="layout vertical center-center"
+            ?hidden="${!YpAccessHelpers.checkDomainAccess(this.collection)}"
+          >
             <md-icon-button
               id="menuButton"
               @click="${this._openAdmin}"

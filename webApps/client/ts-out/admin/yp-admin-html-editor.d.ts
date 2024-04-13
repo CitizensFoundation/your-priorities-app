@@ -20,6 +20,10 @@ export declare class YpAdminHtmlEditor extends YpBaseElement {
     hasVideoUpload: boolean;
     private debounceTimer?;
     _selectTab(event: CustomEvent): void;
+    get configuration(): {
+        content: string;
+        media: YpSimpleGroupMediaData[];
+    };
     connectedCallback(): void;
     disconnectedCallback(): void;
     static get styles(): any[];
@@ -33,6 +37,7 @@ export declare class YpAdminHtmlEditor extends YpBaseElement {
     _removeMedia(media: YpSimpleGroupMediaData): void;
     renderMedia(): import("lit-html").TemplateResult<1>;
     _insertMediaIntoHtml(media: YpSimpleGroupMediaData): void;
+    contentChanged(): void;
     renderImageUploadOptions(): import("lit-html").TemplateResult<1>;
     render(): import("lit-html").TemplateResult<1>;
     changed(event: CustomEvent): void;

@@ -66,7 +66,11 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
         this.groupTypeIndex = 2;
         this.endorsementButtonsDisabled = false;
         this.questionNameHasChanged = false;
-        this.groupTypeOptions = ["ideaGenerationGroupType", "allOurIdeasGroupType", "htmlContentGroupType"];
+        this.groupTypeOptions = [
+            "ideaGenerationGroupType",
+            "allOurIdeasGroupType",
+            "htmlContentGroupType",
+        ];
         this.groupAccessOptions = {
             0: "public",
             1: "closed",
@@ -1560,7 +1564,8 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
       .collectionId="${this.collectionId}"
       @configuration-changed="${this.staticHtmlConfigChanged}"
       .group="${this.group}"
-      .configuration="${this.group.configuration.staticHtml}"
+      .content="${this.group.configuration.staticHtml?.content || ''}"
+      .media="${this.group.configuration.staticHtml?.media || []}"
     ></yp-admin-html-editor>`;
     }
     setupEarlConfigIfNeeded() {
@@ -1636,7 +1641,10 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
     _getHtmlContentTab() {
         let configuration = this.group.configuration.staticHtml;
         if (!configuration) {
-            configuration = this.group.configuration.staticHtml = {};
+            configuration = this.group.configuration.staticHtml = {
+                content: "",
+                media: [],
+            };
         }
         let communityId;
         let domainId;

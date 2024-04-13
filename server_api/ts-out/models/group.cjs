@@ -1,14 +1,18 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const async = require("async");
-const queue = require('../active-citizen/workers/queue.cjs');
+const queue = require("../active-citizen/workers/queue.cjs");
 const _ = require("lodash");
 const log = require("../utils/logger.cjs");
 module.exports = (sequelize, DataTypes) => {
     const Group = sequelize.define("Group", {
         name: { type: DataTypes.STRING, allowNull: false },
         access: { type: DataTypes.INTEGER, allowNull: false },
-        deleted: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
+        deleted: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+            defaultValue: false,
+        },
         google_analytics_code: { type: DataTypes.STRING, allowNull: true },
         objectives: DataTypes.TEXT,
         message_for_new_idea: DataTypes.TEXT,
@@ -16,7 +20,11 @@ module.exports = (sequelize, DataTypes) => {
         is_group_folder: { type: DataTypes.BOOLEAN, defaultValue: false },
         in_group_folder_id: { type: DataTypes.INTEGER, defaultValue: null },
         weight: { type: DataTypes.INTEGER, defaultValue: 0 },
-        status: { type: DataTypes.STRING, allowNull: false, defaultValue: 'active' },
+        status: {
+            type: DataTypes.STRING,
+            allowNull: false,
+            defaultValue: "active",
+        },
         counter_posts: { type: DataTypes.INTEGER, defaultValue: 0 },
         counter_points: { type: DataTypes.INTEGER, defaultValue: 0 },
         counter_users: { type: DataTypes.INTEGER, defaultValue: 0 },
@@ -24,70 +32,83 @@ module.exports = (sequelize, DataTypes) => {
         theme_id: { type: DataTypes.INTEGER, defaultValue: null },
         configuration: DataTypes.JSONB,
         language: { type: DataTypes.STRING, allowNull: true },
-        data: DataTypes.JSONB
+        data: DataTypes.JSONB,
     }, {
         defaultScope: {
             where: {
-                deleted: false
-            }
+                deleted: false,
+            },
         },
         timestamps: true,
-        createdAt: 'created_at',
-        updatedAt: 'updated_at',
+        createdAt: "created_at",
+        updatedAt: "updated_at",
         underscored: true,
-        tableName: 'groups',
+        tableName: "groups",
         indexes: [
             {
-                fields: ['name'],
+                fields: ["name"],
                 where: {
-                    deleted: false
-                }
+                    deleted: false,
+                },
             },
             {
-                fields: ['id', 'deleted']
+                fields: ["id", "deleted"],
             },
             {
-                name: 'groups_idx_counter_users',
-                fields: ['counter_users']
+                name: "groups_idx_counter_users",
+                fields: ["counter_users"],
             },
             {
-                name: 'groups_idx_counter_users_community_id_access_deleted',
-                fields: ['counter_users', 'community_id', 'access', 'deleted']
+                name: "groups_idx_counter_users_community_id_access_deleted",
+                fields: ["counter_users", "community_id", "access", "deleted"],
             },
             {
-                fields: ['community_id', 'deleted', 'in_group_folder_id']
+                fields: ["community_id", "deleted", "in_group_folder_id"],
             },
             {
-                fields: ['community_id', 'deleted', 'in_group_folder_id', 'status']
+                fields: ["community_id", "deleted", "in_group_folder_id", "status"],
             },
             {
-                fields: ['community_id', 'deleted', 'is_group_folder']
+                fields: ["community_id", "deleted", "is_group_folder"],
             },
             {
-                fields: ['community_id', 'deleted', 'is_group_folder', 'access']
+                fields: ["community_id", "deleted", "is_group_folder", "access"],
             },
             {
-                fields: ['deleted', 'in_group_folder_id', 'status', 'access']
+                fields: ["deleted", "in_group_folder_id", "status", "access"],
             },
             {
-                fields: ['community_id', 'deleted', 'in_group_folder_id', 'status', 'access']
+                fields: [
+                    "community_id",
+                    "deleted",
+                    "in_group_folder_id",
+                    "status",
+                    "access",
+                ],
             },
             {
-                name: 'ComDelComAccCountStatInGroup',
-                fields: ['deleted', 'community_id', 'access', 'counter_users', 'status', 'in_group_folder_id']
+                name: "ComDelComAccCountStatInGroup",
+                fields: [
+                    "deleted",
+                    "community_id",
+                    "access",
+                    "counter_users",
+                    "status",
+                    "in_group_folder_id",
+                ],
             },
             {
-                fields: ['id', 'deleted', 'is_group_folder']
+                fields: ["id", "deleted", "is_group_folder"],
             },
             {
-                fields: ['deleted', 'is_group_folder']
+                fields: ["deleted", "is_group_folder"],
             },
             {
-                fields: ['id', 'deleted', 'in_group_folder_id']
+                fields: ["id", "deleted", "in_group_folder_id"],
             },
             {
-                fields: ['deleted', 'in_group_folder_id']
-            }
+                fields: ["deleted", "in_group_folder_id"],
+            },
         ],
     });
     Group.associate = (models) => {
@@ -95,75 +116,136 @@ module.exports = (sequelize, DataTypes) => {
         Group.hasMany(models.Point, { foreignKey: "group_id" });
         Group.hasMany(models.Endorsement, { foreignKey: "group_id" });
         Group.hasMany(models.Category, { foreignKey: "group_id" });
-        Group.belongsTo(models.Community, { foreignKey: 'community_id' });
+        Group.belongsTo(models.Community, { foreignKey: "community_id" });
         Group.belongsTo(models.IsoCountry, { foreignKey: "iso_country_id" });
-        Group.belongsTo(models.User, { foreignKey: 'user_id' });
-        Group.hasMany(models.Group, { as: 'GroupFolders', foreignKey: "in_group_folder_id" });
-        Group.belongsTo(models.Group, { as: 'GroupFolder', foreignKey: "in_group_folder_id" });
-        Group.belongsToMany(models.Image, { through: 'GroupImage' });
-        Group.belongsToMany(models.Video, { as: 'GroupLogoVideos', through: 'GroupLogoVideo' });
-        Group.belongsToMany(models.Image, { as: 'GroupLogoImages', through: 'GroupLogoImage' });
-        Group.belongsToMany(models.Image, { as: 'GroupHeaderImages', through: 'GroupHeaderImage' });
-        Group.belongsToMany(models.User, { as: 'GroupUsers', through: 'GroupUser' });
-        Group.belongsToMany(models.User, { as: 'GroupAdmins', through: 'GroupAdmin' });
-        Group.belongsToMany(models.User, { as: 'GroupPromoters', through: 'GroupPromoter' });
+        Group.belongsTo(models.User, { foreignKey: "user_id" });
+        Group.hasMany(models.Group, {
+            as: "GroupFolders",
+            foreignKey: "in_group_folder_id",
+        });
+        Group.belongsTo(models.Group, {
+            as: "GroupFolder",
+            foreignKey: "in_group_folder_id",
+        });
+        Group.belongsToMany(models.Image, { through: "GroupImage" });
+        Group.belongsToMany(models.Video, {
+            as: "GroupLogoVideos",
+            through: "GroupLogoVideo",
+        });
+        Group.belongsToMany(models.Image, {
+            as: "GroupLogoImages",
+            through: "GroupLogoImage",
+        });
+        Group.belongsToMany(models.Video, {
+            as: "GroupHtmlVideos",
+            through: "GroupHtmlVideo",
+        });
+        Group.belongsToMany(models.Image, {
+            as: "GroupHtmlImages",
+            through: "GroupHtmlImage",
+        });
+        Group.belongsToMany(models.Image, {
+            as: "GroupHeaderImages",
+            through: "GroupHeaderImage",
+        });
+        Group.belongsToMany(models.User, {
+            as: "GroupUsers",
+            through: "GroupUser",
+        });
+        Group.belongsToMany(models.User, {
+            as: "GroupAdmins",
+            through: "GroupAdmin",
+        });
+        Group.belongsToMany(models.User, {
+            as: "GroupPromoters",
+            through: "GroupPromoter",
+        });
         Group.hasMany(models.Campaign);
     };
     Group.ACCESS_PUBLIC = 0;
     Group.ACCESS_CLOSED = 1;
     Group.ACCESS_SECRET = 2;
     Group.ACCESS_OPEN_TO_COMMUNITY = 3;
-    Group.defaultAttributesPublic = ['id', 'name', 'access', 'google_analytics_code', 'is_group_folder', 'in_group_folder_id',
-        'status', 'weight', 'theme_id', 'community_id', 'created_at', 'updated_at', 'configuration', 'language', 'objectives',
-        'counter_posts',
-        'counter_points', 'counter_users', 'user_id'];
+    Group.defaultAttributesPublic = [
+        "id",
+        "name",
+        "access",
+        "google_analytics_code",
+        "is_group_folder",
+        "in_group_folder_id",
+        "status",
+        "weight",
+        "theme_id",
+        "community_id",
+        "created_at",
+        "updated_at",
+        "configuration",
+        "language",
+        "objectives",
+        "counter_posts",
+        "counter_points",
+        "counter_users",
+        "user_id",
+    ];
     Group.masterGroupIncludes = (models) => {
         return [
             {
                 model: models.Community,
                 required: false,
-                attributes: ['id', 'theme_id', 'name', 'access', 'google_analytics_code', 'configuration', 'only_admins_can_create_groups'],
+                attributes: [
+                    "id",
+                    "theme_id",
+                    "name",
+                    "access",
+                    "google_analytics_code",
+                    "configuration",
+                    "only_admins_can_create_groups",
+                ],
                 include: [
                     {
                         model: models.Domain,
-                        attributes: ['id', 'theme_id', 'name']
-                    }
-                ]
+                        attributes: ["id", "theme_id", "name"],
+                    },
+                ],
             },
             {
                 model: models.Group,
                 required: false,
-                as: 'GroupFolder',
-                attributes: ['id', 'name']
+                as: "GroupFolder",
+                attributes: ["id", "name"],
             },
             {
                 model: models.Category,
                 required: false,
-                attributes: ['id', 'name'],
+                attributes: ["id", "name"],
                 include: [
                     {
                         model: models.Image,
                         required: false,
-                        as: 'CategoryIconImages',
+                        as: "CategoryIconImages",
                         attributes: models.Image.defaultAttributesPublic,
                         order: [
-                            [{ model: models.Image, as: 'CategoryIconImages' }, 'updated_at', 'asc']
-                        ]
-                    }
-                ]
+                            [
+                                { model: models.Image, as: "CategoryIconImages" },
+                                "updated_at",
+                                "asc",
+                            ],
+                        ],
+                    },
+                ],
             },
             {
                 model: models.Image,
-                as: 'GroupLogoImages',
+                as: "GroupLogoImages",
                 attributes: models.Image.defaultAttributesPublic,
-                required: false
+                required: false,
             },
             {
                 model: models.Image,
-                as: 'GroupHeaderImages',
+                as: "GroupHeaderImages",
                 attributes: models.Image.defaultAttributesPublic,
-                required: false
-            }
+                required: false,
+            },
         ];
     };
     Group.addVideosAndCommunityLinksToGroups = (groups, done) => {
@@ -172,7 +254,8 @@ module.exports = (sequelize, DataTypes) => {
         const groupsHash = {};
         const collectedGroupIds = [];
         for (let g = 0; g < groups.length; g++) {
-            if (groups[g].configuration && groups[g].configuration.actAsLinkToCommunityId) {
+            if (groups[g].configuration &&
+                groups[g].configuration.actAsLinkToCommunityId) {
                 linkedCommunityIds.push(groups[g].configuration.actAsLinkToCommunityId);
                 linkedCommunityIdToGroupIndex[groups[g].configuration.actAsLinkToCommunityId] = g;
             }
@@ -183,36 +266,49 @@ module.exports = (sequelize, DataTypes) => {
             (seriesCallback) => {
                 //TODO: Limit then number of VideoImages to 1 - there is one very 10 sec
                 sequelize.models.Video.findAll({
-                    attributes: ['id', 'formats', 'viewable', 'public_meta', 'created_at'],
+                    attributes: [
+                        "id",
+                        "formats",
+                        "viewable",
+                        "public_meta",
+                        "created_at",
+                    ],
                     include: [
                         {
                             model: sequelize.models.Image,
-                            as: 'VideoImages',
-                            attributes: ["formats", 'created_at'],
-                            required: false
+                            as: "VideoImages",
+                            attributes: ["formats", "created_at"],
+                            required: false,
                         },
                         {
                             model: sequelize.models.Group,
                             where: {
                                 id: {
-                                    $in: collectedGroupIds
-                                }
+                                    $in: collectedGroupIds,
+                                },
                             },
-                            as: 'GroupLogoVideos',
+                            as: "GroupLogoVideos",
                             required: true,
-                            attributes: ['id']
-                        }
+                            attributes: ["id"],
+                        },
                     ],
                     order: [
-                        [{ model: sequelize.models.Image, as: 'VideoImages' }, 'created_at', 'asc']
-                    ]
-                }).then(videos => {
+                        [
+                            { model: sequelize.models.Image, as: "VideoImages" },
+                            "created_at",
+                            "asc",
+                        ],
+                    ],
+                })
+                    .then((videos) => {
                     if (videos) {
-                        videos = _.orderBy(videos, ['created_at'], ['asc']);
+                        videos = _.orderBy(videos, ["created_at"], ["asc"]);
                         for (let v = 0; v < videos.length; v++) {
                             const groupId = videos[v].GroupLogoVideos[0].id;
                             if (groupId) {
-                                groupsHash[groupId].dataValues.GroupLogoVideos = [videos[v]];
+                                groupsHash[groupId].dataValues.GroupLogoVideos = [
+                                    videos[v],
+                                ];
                                 groupsHash[groupId].GroupLogoVideos = [videos[v]];
                             }
                             else {
@@ -224,7 +320,8 @@ module.exports = (sequelize, DataTypes) => {
                     else {
                         seriesCallback();
                     }
-                }).catch(error => {
+                })
+                    .catch((error) => {
                     seriesCallback(error);
                 });
             },
@@ -232,21 +329,34 @@ module.exports = (sequelize, DataTypes) => {
                 if (linkedCommunityIds.length > 0) {
                     sequelize.models.Community.findAll({
                         where: {
-                            id: { $in: linkedCommunityIds }
+                            id: { $in: linkedCommunityIds },
                         },
-                        attributes: ['id', 'name', 'description', 'counter_posts', 'counter_points', 'counter_users', 'language'],
+                        attributes: [
+                            "id",
+                            "name",
+                            "description",
+                            "counter_posts",
+                            "counter_points",
+                            "counter_users",
+                            "language",
+                        ],
                         order: [
-                            [{ model: sequelize.models.Image, as: 'CommunityLogoImages' }, 'created_at', 'asc']
+                            [
+                                { model: sequelize.models.Image, as: "CommunityLogoImages" },
+                                "created_at",
+                                "asc",
+                            ],
                         ],
                         include: [
                             {
                                 model: sequelize.models.Image,
-                                as: 'CommunityLogoImages',
+                                as: "CommunityLogoImages",
                                 attributes: sequelize.models.Image.defaultAttributesPublic,
-                                required: false
-                            }
-                        ]
-                    }).then(communities => {
+                                required: false,
+                            },
+                        ],
+                    })
+                        .then((communities) => {
                         async.eachOfLimit(communities, 20, (community, eachIndex, forEachVideoCallback) => {
                             const index = linkedCommunityIdToGroupIndex[community.id];
                             if (groups[index].dataValues) {
@@ -256,17 +366,18 @@ module.exports = (sequelize, DataTypes) => {
                                 groups[index].CommunityLink = community;
                             }
                             sequelize.models.Community.addVideosToCommunity(community, forEachVideoCallback);
-                        }, error => {
+                        }, (error) => {
                             seriesCallback(error);
                         });
-                    }).catch(error => {
+                    })
+                        .catch((error) => {
                         seriesCallback(error);
                     });
                 }
                 else {
                     seriesCallback();
                 }
-            }
+            },
         ], (error) => {
             done(error);
         });
@@ -274,22 +385,29 @@ module.exports = (sequelize, DataTypes) => {
     Group.addUserToGroupIfNeeded = (groupId, req, done) => {
         sequelize.models.Group.findOne({
             where: { id: groupId },
-            attributes: ['id', 'community_id', 'counter_users', 'name', 'in_group_folder_id'],
+            attributes: [
+                "id",
+                "community_id",
+                "counter_users",
+                "name",
+                "in_group_folder_id",
+            ],
         }).then((group) => {
-            if (group && group.name !== 'hidden_public_group_for_domain_level_points') {
+            if (group &&
+                group.name !== "hidden_public_group_for_domain_level_points") {
                 group.hasGroupUser(req.user).then((result) => {
                     if (!result) {
                         async.parallel([
                             (callback) => {
                                 group.addGroupUser(req.user).then((result) => {
-                                    group.increment('counter_users');
+                                    group.increment("counter_users");
                                     callback();
                                 });
                             },
                             (callback) => {
                                 sequelize.models.Community.findOne({
                                     where: { id: group.community_id },
-                                    attributes: ['id']
+                                    attributes: ["id"],
                                 }).then((community) => {
                                     if (community) {
                                         community.hasCommunityUser(req.user).then((result) => {
@@ -297,8 +415,10 @@ module.exports = (sequelize, DataTypes) => {
                                                 callback();
                                             }
                                             else {
-                                                community.addCommunityUser(req.user).then((result) => {
-                                                    community.increment('counter_users');
+                                                community
+                                                    .addCommunityUser(req.user)
+                                                    .then((result) => {
+                                                    community.increment("counter_users");
                                                     callback();
                                                 });
                                             }
@@ -316,18 +436,18 @@ module.exports = (sequelize, DataTypes) => {
                                     }
                                     else {
                                         req.ypDomain.addDomainUser(req.user).then((result) => {
-                                            req.ypDomain.increment('counter_users');
+                                            req.ypDomain.increment("counter_users");
                                             callback();
                                         });
                                     }
                                 });
-                            }
+                            },
                         ], (err) => {
                             if (group && group.in_group_folder_id) {
-                                queue.add('delayed-job', {
-                                    type: 'recount-group-folder',
-                                    groupId: groupId
-                                }, 'low');
+                                queue.add("delayed-job", {
+                                    type: "recount-group-folder",
+                                    groupId: groupId,
+                                }, "low");
                             }
                             done(err);
                         });
@@ -365,20 +485,20 @@ module.exports = (sequelize, DataTypes) => {
         async.parallel([
             (callback) => {
                 sequelize.models.Community.findOne({
-                    where: { id: this.community_id }
+                    where: { id: this.community_id },
                 }).then((community) => {
-                    if (direction === 'up')
+                    if (direction === "up")
                         community.increment(column);
-                    else if (direction === 'down')
+                    else if (direction === "down")
                         community.decrement(column);
                     callback();
                 });
             },
             (callback) => {
                 if (req.ypDomain) {
-                    if (direction === 'up')
+                    if (direction === "up")
                         req.ypDomain.increment(column);
-                    else if (direction === 'down')
+                    else if (direction === "down")
                         req.ypDomain.decrement(column);
                     callback();
                 }
@@ -388,39 +508,100 @@ module.exports = (sequelize, DataTypes) => {
             },
             (callback) => {
                 if (this.in_group_folder_id) {
-                    queue.add('delayed-job', {
-                        type: 'recount-group-folder',
-                        groupId: this.id
-                    }, 'low');
+                    queue.add("delayed-job", {
+                        type: "recount-group-folder",
+                        groupId: this.id,
+                    }, "low");
                 }
                 callback();
-            }
+            },
         ], (err) => {
             done(err);
         });
     };
-    Group.prototype.setupLogoImage = function (body, done) {
-        if (body.uploadedLogoImageId) {
+    Group.prototype.setupLogoImage = function (req, done) {
+        if (req.body.uploadedLogoImageId) {
             sequelize.models.Image.findOne({
-                where: { id: body.uploadedLogoImageId }
+                where: { id: req.body.uploadedLogoImageId, user_id: req.user.id },
             }).then((image) => {
                 if (image)
                     this.addGroupLogoImage(image);
+                else
+                    log.error("Image not found for group logo image");
                 done();
             });
         }
         else
             done();
     };
-    Group.prototype.setupHeaderImage = function (body, done) {
-        if (body.uploadedHeaderImageId) {
+    Group.prototype.setupHeaderImage = function (req, done) {
+        if (req.body.uploadedHeaderImageId) {
             sequelize.models.Image.findOne({
-                where: { id: body.uploadedHeaderImageId }
+                where: { id: req.body.uploadedHeaderImageId, user_id: req.user.id },
             }).then((image) => {
                 if (image)
                     this.addGroupHeaderImage(image);
+                else
+                    log.error("Image not found for group header image");
                 done();
             });
+        }
+        else
+            done();
+    };
+    Group.prototype.setupHtmlMedia = async (req, done) => {
+        if (req.body.staticHtml) {
+            try {
+                const staticHtml = JSON.parse(req.body.staticHtml);
+                if (staticHtml.media && staticHtml.media.length > 0) {
+                    for (let i = 0; i < staticHtml.media.length; i++) {
+                        const media = staticHtml.media[i];
+                        if (media.type === "image") {
+                            const image = await sequelize.models.Image.findOne({
+                                where: { id: media.id, user_id: req.user.id },
+                            });
+                            if (image) {
+                                const images = await this.getGroupHtmlImages({
+                                    where: { id: image.id },
+                                });
+                                if (images.length === 0) {
+                                    await this.addGroupHtmlImage(image);
+                                }
+                                else {
+                                    log.info("Image already associated with group.");
+                                }
+                            }
+                            else {
+                                log.error("Image not found for group html image");
+                            }
+                        }
+                        else if (media.type === "video") {
+                            const video = await sequelize.models.Video.findOne({
+                                where: { id: media.id, user_id: req.user.id },
+                            });
+                            if (video) {
+                                const videos = await this.getGroupHtmlVideos({
+                                    where: { id: video.id },
+                                });
+                                if (videos.length === 0) {
+                                    await this.addGroupHtmlVideo(video);
+                                }
+                                else {
+                                    log.info("Video already associated with group.");
+                                }
+                            }
+                            else {
+                                log.error("Video not found for group html video");
+                            }
+                        }
+                    }
+                }
+                done();
+            }
+            catch (error) {
+                log.error("Error parsing staticHtml", error);
+                done();
+            }
         }
         else
             done();
@@ -435,33 +616,28 @@ module.exports = (sequelize, DataTypes) => {
             return "";
         }
     };
-    Group.prototype.setupImages = function (body, done) {
+    Group.prototype.setupImages = function (req, done) {
         async.parallel([
             (callback) => {
-                this.setupLogoImage(body, (err) => {
+                this.setupLogoImage(req, (err) => {
                     if (err)
                         return callback(err);
                     callback();
                 });
             },
             (callback) => {
-                this.setupHeaderImage(body, (err) => {
+                this.setupHeaderImage(req, (err) => {
                     if (err)
                         return callback(err);
                     callback();
                 });
             },
             (callback) => {
-                if (body.deleteHeaderImage === "true") {
-                    this.setGroupHeaderImages([]).then(() => {
-                        callback();
-                    }).catch(error => {
-                        callback(error);
-                    });
-                }
-                else {
+                this.setupHtmlMedia(req, (err) => {
+                    if (err)
+                        return callback(err);
                     callback();
-                }
+                });
             }
         ], (err) => {
             done(err);
@@ -469,10 +645,10 @@ module.exports = (sequelize, DataTypes) => {
     };
     Group.prototype.setupModerationData = function () {
         if (!this.data) {
-            this.set('data', {});
+            this.set("data", {});
         }
         if (!this.data.moderation) {
-            this.set('data.moderation', {});
+            this.set("data.moderation", {});
         }
     };
     Group.prototype.report = function (req, source, callback) {
@@ -480,42 +656,52 @@ module.exports = (sequelize, DataTypes) => {
         async.series([
             (seriesCallback) => {
                 if (!this.data.moderation.lastReportedBy) {
-                    this.set('data.moderation.lastReportedBy', []);
-                    if ((source === 'user' || source === 'fromUser') && !this.data.moderation.toxicityScore) {
+                    this.set("data.moderation.lastReportedBy", []);
+                    if ((source === "user" || source === "fromUser") &&
+                        !this.data.moderation.toxicityScore) {
                         log.info("process-moderation post toxicity on manual report");
-                        queue.add('process-moderation', {
-                            type: 'estimate-collection-toxicity',
+                        queue.add("process-moderation", {
+                            type: "estimate-collection-toxicity",
                             collectionId: this.id,
-                            collectionType: 'group'
-                        }, 'high');
+                            collectionType: "group",
+                        }, "high");
                     }
                 }
-                this.set('data.moderation.lastReportedBy', [{ date: new Date(), source: source, userId: (req && req.user) ? req.user.id : null, userEmail: (req && req.user) ? req.user.email : 'anonymous' }].concat(this.data.moderation.lastReportedBy));
-                this.save().then(() => {
+                this.set("data.moderation.lastReportedBy", [
+                    {
+                        date: new Date(),
+                        source: source,
+                        userId: req && req.user ? req.user.id : null,
+                        userEmail: req && req.user ? req.user.email : "anonymous",
+                    },
+                ].concat(this.data.moderation.lastReportedBy));
+                this.save()
+                    .then(() => {
                     seriesCallback();
-                }).catch((error) => {
+                })
+                    .catch((error) => {
                     seriesCallback(error);
                 });
             },
             /* TODO: Finish sending emails to domain admins if needed
-              (seriesCallback) => {
-                   if (req && req.disableNotification===true) {
-                     seriesCallback();
-                   } else {
-                     sequelize.models.AcActivity.createActivity({
-                       type: 'activity.report.content',
-                       userId: (req && req.user) ? req.user.id : null,
-                       postId: null,
-                       groupId: this.id,
-                       communityId:  this.Community ? this.Community.id : null,
-                       domainId:  this.Community ? this.Community.domain_id : null
-                     }, (error) => {
-                       seriesCallback(error);
-                     });
-                   }
-                 }*/
+            (seriesCallback) => {
+                 if (req && req.disableNotification===true) {
+                   seriesCallback();
+                 } else {
+                   sequelize.models.AcActivity.createActivity({
+                     type: 'activity.report.content',
+                     userId: (req && req.user) ? req.user.id : null,
+                     postId: null,
+                     groupId: this.id,
+                     communityId:  this.Community ? this.Community.id : null,
+                     domainId:  this.Community ? this.Community.domain_id : null
+                   }, (error) => {
+                     seriesCallback(error);
+                   });
+                 }
+               }*/
         ], (error) => {
-            this.increment('counter_flags');
+            this.increment("counter_flags");
             callback(error);
         });
     };

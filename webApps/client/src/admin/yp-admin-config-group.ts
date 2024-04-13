@@ -119,7 +119,11 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
   hasSamlLoginProvider: any;
   questionNameHasChanged = false;
 
-  groupTypeOptions = ["ideaGenerationGroupType", "allOurIdeasGroupType","htmlContentGroupType"];
+  groupTypeOptions = [
+    "ideaGenerationGroupType",
+    "allOurIdeasGroupType",
+    "htmlContentGroupType",
+  ];
 
   static GroupType = {
     ideaGeneration: 0,
@@ -1720,7 +1724,8 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
       .collectionId="${this.collectionId}"
       @configuration-changed="${this.staticHtmlConfigChanged}"
       .group="${this.group}"
-      .configuration="${this.group.configuration.staticHtml!}"
+      .content="${this.group.configuration.staticHtml?.content || ''}"
+      .media="${this.group.configuration.staticHtml?.media || []}"
     ></yp-admin-html-editor>`;
   }
 
@@ -1820,7 +1825,10 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
     let configuration = this.group.configuration.staticHtml!;
 
     if (!configuration) {
-      configuration = this.group.configuration.staticHtml = {};
+      configuration = this.group.configuration.staticHtml = {
+        content: "",
+        media: [],
+      };
     }
 
     let communityId;

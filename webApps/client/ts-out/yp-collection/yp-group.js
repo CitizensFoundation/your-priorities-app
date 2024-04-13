@@ -16,6 +16,7 @@ import "../yp-post/yp-posts-list.js";
 import "../yp-post/yp-post-card-add.js";
 import { cache } from "lit/directives/cache.js";
 import "../allOurIdeas/aoi-survey.js";
+import { unsafeHTML } from "lit/directives/unsafe-html.js";
 export const GroupTabTypes = {
     Open: 0,
     InProgress: 1,
@@ -300,6 +301,24 @@ let YpGroup = class YpGroup extends YpCollection {
             .collectionId="${this.collectionId}"
             .collection="${this.collection}"
           ></aoi-survey>
+        `;
+            }
+            else if (this.collection.configuration.groupType == 2) {
+                return html `
+          <div class="layout vertical">
+            ${unsafeHTML(this.collection.configuration.staticHtml?.content)}
+            <div
+              class="layout vertical center-center"
+              ?hidden="${!YpAccessHelpers.checkGroupAccess(this.collection)}"
+            >
+              <md-icon-button
+                id="menuButton"
+                @click="${this._openAdmin}"
+                title="${this.t("group.edit")}"
+                ><md-icon>settings</md-icon>
+              </md-icon-button>
+            </div>
+          </div>
         `;
             }
             else {

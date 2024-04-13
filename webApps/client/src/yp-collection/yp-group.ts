@@ -22,6 +22,7 @@ import { cache } from "lit/directives/cache.js";
 import "../allOurIdeas/aoi-survey.js";
 import { YpSnackbar } from "../yp-app/yp-snackbar.js";
 import { AoiSurvey } from "../allOurIdeas/aoi-survey.js";
+import { unsafeHTML } from "lit/directives/unsafe-html.js";
 
 // TODO: Remove
 interface AcActivity extends LitElement {
@@ -388,6 +389,29 @@ export class YpGroup extends YpCollection {
             .collectionId="${this.collectionId as number}"
             .collection="${this.collection}"
           ></aoi-survey>
+        `;
+      } else if (
+        (this.collection as YpGroupData).configuration.groupType == 2
+      ) {
+        return html`
+          <div class="layout vertical">
+            ${unsafeHTML(
+              (this.collection as YpGroupData).configuration.staticHtml?.content
+            )}
+            <div
+              class="layout vertical center-center"
+              ?hidden="${!YpAccessHelpers.checkGroupAccess(
+                this.collection as YpGroupData
+              )}"
+            >
+              <md-icon-button
+                id="menuButton"
+                @click="${this._openAdmin}"
+                title="${this.t("group.edit")}"
+                ><md-icon>settings</md-icon>
+              </md-icon-button>
+            </div>
+          </div>
         `;
       } else {
         return html``;
@@ -791,8 +815,8 @@ export class YpGroup extends YpCollection {
         documentTitle: group.name,
         enableSearch: true,
         disableCollectionUpLink:
-        group.configuration &&
-        group.configuration.disableCollectionUpLink === true,
+          group.configuration &&
+          group.configuration.disableCollectionUpLink === true,
         hideHelpIcon: group.configuration.hideHelpIcon ? true : null,
         useHardBack: this._useHardBack(group.configuration),
         backPath: backPath,

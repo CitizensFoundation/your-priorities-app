@@ -45,6 +45,7 @@ export declare abstract class YpCollection extends YpBaseElementWithLogin {
     collectionIdChanged(): void;
     updated(changedProperties: Map<string | number | symbol, unknown>): void;
     _selectTab(event: CustomEvent): void;
+    _openAdmin(): void;
     _setSelectedTabFromRoute(routeTabName: string): void;
     scrollToCachedItem(): void;
     scrollToCollectionItemSubClassDomain(): void;

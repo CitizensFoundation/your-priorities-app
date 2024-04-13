@@ -137,12 +137,6 @@ export class YpDomain extends YpCollection {
     }
   }
 
-  _openAdmin() {
-    YpNavHelpers.redirectTo(
-      `/admin/${this.collectionType}/${this.collection!.id}`
-    );
-  }
-
   override render() {
     if (
       this.collection &&
@@ -160,7 +154,12 @@ export class YpDomain extends YpCollection {
             textType="domainWelcomeHtml"
           ></yp-magic-text>
 
-          <div class="layout vertical center-center">
+          <div
+            class="layout vertical center-center"
+            ?hidden="${!YpAccessHelpers.checkDomainAccess(
+              this.collection as YpDomainData
+            )}"
+          >
             <md-icon-button
               id="menuButton"
               @click="${this._openAdmin}"

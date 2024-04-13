@@ -386,6 +386,21 @@ var updateGroupConfigParameters = function (req, group) {
     else {
         group.set('configuration.allOurIdeas', null);
     }
+    const staticHtml = (req.body.staticHtml && req.body.staticHtml != "") ? req.body.staticHtml : null;
+    if (staticHtml) {
+        try {
+            const cleaned = staticHtml.trim().replace(/\n/g, '').replace(/\r/g, '');
+            const parsedJson = JSON.parse(cleaned);
+            group.set('configuration.staticHtml', parsedJson);
+        }
+        catch (error) {
+            group.set('configuration.staticHtml', undefined);
+            log.error("Error in parsing staticHtml", { error });
+        }
+    }
+    else {
+        group.set('configuration.staticHtml', undefined);
+    }
     const theme = (req.body.theme && req.body.theme != "") ? req.body.theme : null;
     if (theme) {
         try {
@@ -1472,7 +1487,7 @@ const createGroup = (req, res) => {
         group.updateAllExternalCounters(req, 'up', 'counter_groups', function () {
             models.Group.addUserToGroupIfNeeded(group.id, req, function () {
                 group.addGroupAdmins(req.user).then(function (results) {
-                    group.setupImages(req.body, function (error) {
+                    group.setupImages(req, function (error) {
                         queue.add('process-moderation', {
                             type: 'estimate-collection-toxicity',
                             collectionId: group.id,
@@ -1547,7 +1562,7 @@ router.put('/:id', auth.can('edit group'), function (req, res) {
             group.save().then(function () {
                 log.info('Group Updated', { group: toJson(group), context: 'update', user: toJson(req.user) });
                 queue.add('process-similarities', { type: 'update-collection', groupId: group.id }, 'low');
-                group.setupImages(req.body, function (error) {
+                group.setupImages(req, function (error) {
                     queue.add('process-moderation', {
                         type: 'estimate-collection-toxicity',
                         collectionId: group.id,

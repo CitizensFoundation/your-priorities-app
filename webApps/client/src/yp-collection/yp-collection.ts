@@ -418,6 +418,12 @@ export abstract class YpCollection extends YpBaseElementWithLogin {
     this.selectedTab = (event.currentTarget as MdTabs).activeTabIndex;
   }
 
+  _openAdmin() {
+    YpNavHelpers.redirectTo(
+      `/admin/${this.collectionType}/${this.collection!.id}`
+    );
+  }
+
   _setSelectedTabFromRoute(routeTabName: string): void {
     let tabNumber;
 

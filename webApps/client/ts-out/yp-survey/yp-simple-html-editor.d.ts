@@ -1,6 +1,7 @@
 import { PropertyValueMap } from "lit";
 import { YpBaseElement } from "../common/yp-base-element.js";
-import "@material/web/iconbutton/filled-tonal-icon-button.js";
+import "@material/web/iconbutton/icon-button.js";
+import "@material/web/iconbutton/icon-button.js";
 export declare class YpSimpleHtmlEditor extends YpBaseElement {
     question: YpStructuredQuestionData;
     index: number | undefined;
@@ -10,10 +11,20 @@ export declare class YpSimpleHtmlEditor extends YpBaseElement {
     hasFocus: boolean;
     allowFirefoxFocusHack: boolean;
     showErrorLine: boolean;
+    selectedImage: HTMLImageElement | undefined;
     static get styles(): any[];
+    _onWidthInput(event: CustomEvent): void;
+    _onHeightInput(event: CustomEvent): void;
+    _onMarginInput(event: CustomEvent): void;
+    closeImageDialog(): void;
+    applyImageSize(): void;
+    selectImage(image: HTMLImageElement): void;
+    renderImageEditDialog(): import("lit-html").TemplateResult<1>;
     render(): import("lit-html").TemplateResult<1>;
+    deselectImage(): void;
     _setFocus(): void;
     connectedCallback(): void;
+    update(changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void;
     protected firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void;
     _setBlur(event: CustomEvent): void;
     setRichValue(value: string): void;
