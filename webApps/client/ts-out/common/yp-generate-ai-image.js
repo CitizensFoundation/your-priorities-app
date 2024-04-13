@@ -17,6 +17,7 @@ let YpGenerateAiImage = class YpGenerateAiImage extends YpBaseElement {
     constructor() {
         super(...arguments);
         this.submitting = false;
+        this.disableBackgroundGeneration = false;
         this.imageType = "logo";
     }
     resetGenerator() {
@@ -34,8 +35,8 @@ let YpGenerateAiImage = class YpGenerateAiImage extends YpBaseElement {
     //TODO: Fix that styleText
     get finalPrompt() {
         return `
-      Name: ${this.name}
-      Description: ${this.description}
+      ${this.name ? html `Name: ${this.name}` : ""}
+      ${this.description ? html `Description: ${this.description}` : ""}
       Image style: ${this.styleText?.value || "Something cool"}
 
       Do not include text or labels in the image except if the user asks for it in the image style.
@@ -284,7 +285,7 @@ let YpGenerateAiImage = class YpGenerateAiImage extends YpBaseElement {
         ${this.t("Cancel")}
       </md-text-button>
       <md-text-button
-        ?hidden="${!this.submitting}"
+        ?hidden="${!this.submitting || this.disableBackgroundGeneration}"
         class="cancelButton"
         @click="${this.moveToBackground}"
       >
@@ -323,6 +324,9 @@ __decorate([
 __decorate([
     property({ type: String })
 ], YpGenerateAiImage.prototype, "description", void 0);
+__decorate([
+    property({ type: Boolean })
+], YpGenerateAiImage.prototype, "disableBackgroundGeneration", void 0);
 __decorate([
     property({ type: Number })
 ], YpGenerateAiImage.prototype, "collectionId", void 0);

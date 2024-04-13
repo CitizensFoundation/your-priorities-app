@@ -21,10 +21,13 @@ export class YpGenerateAiImage extends YpBaseElement {
   currentError: string | undefined;
 
   @property({ type: String })
-  name!: string;
+  name: string | undefined;
 
   @property({ type: String })
-  description!: string;
+  description: string | undefined;
+
+  @property({ type: Boolean })
+  disableBackgroundGeneration = false;
 
   @property({ type: Number })
   collectionId!: number;
@@ -61,8 +64,8 @@ export class YpGenerateAiImage extends YpBaseElement {
   //TODO: Fix that styleText
   get finalPrompt() {
     return `
-      Name: ${this.name}
-      Description: ${this.description}
+      ${this.name ? html`Name: ${this.name}` : ""}
+      ${this.description ? html`Description: ${this.description}` : ""}
       Image style: ${this.styleText?.value || "Something cool"}
 
       Do not include text or labels in the image except if the user asks for it in the image style.
@@ -347,7 +350,7 @@ export class YpGenerateAiImage extends YpBaseElement {
         ${this.t("Cancel")}
       </md-text-button>
       <md-text-button
-        ?hidden="${!this.submitting}"
+        ?hidden="${!this.submitting || this.disableBackgroundGeneration}"
         class="cancelButton"
         @click="${this.moveToBackground}"
       >

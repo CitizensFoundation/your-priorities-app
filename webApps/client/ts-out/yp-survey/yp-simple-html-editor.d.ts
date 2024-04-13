@@ -1,4 +1,6 @@
-import { YpBaseElement } from '../common/yp-base-element.js';
+import { PropertyValueMap } from "lit";
+import { YpBaseElement } from "../common/yp-base-element.js";
+import "@material/web/iconbutton/filled-tonal-icon-button.js";
 export declare class YpSimpleHtmlEditor extends YpBaseElement {
     question: YpStructuredQuestionData;
     index: number | undefined;
@@ -11,6 +13,8 @@ export declare class YpSimpleHtmlEditor extends YpBaseElement {
     static get styles(): any[];
     render(): import("lit-html").TemplateResult<1>;
     _setFocus(): void;
+    connectedCallback(): void;
+    protected firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void;
     _setBlur(event: CustomEvent): void;
     setRichValue(value: string): void;
     _updateCharacterCounter(): void;

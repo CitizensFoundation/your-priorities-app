@@ -101,7 +101,7 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
   groupAccess: YpGroupAccessTypes = "open_to_community";
 
   @property({ type: Number })
-  groupTypeIndex = 1;
+  groupTypeIndex = 2;
 
   @property({ type: Object })
   group: YpGroupData;
@@ -140,6 +140,9 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
         .mainImage {
           width: 432px;
           height: 243px;
+        }
+
+        yp-admin-html-editor {
         }
 
         .socialMediaCreateInfo {
@@ -1713,6 +1716,8 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
       id="createStaticHtml"
       .domainId="${domainId}"
       .communityId="${communityId}"
+      .parentCollectionId="${this.parentCollectionId}"
+      .collectionId="${this.collectionId}"
       @configuration-changed="${this.staticHtmlConfigChanged}"
       .group="${this.group}"
       .configuration="${this.group.configuration.staticHtml!}"

@@ -63,7 +63,7 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
     constructor() {
         super();
         this.groupAccess = "open_to_community";
-        this.groupTypeIndex = 1;
+        this.groupTypeIndex = 2;
         this.endorsementButtonsDisabled = false;
         this.questionNameHasChanged = false;
         this.groupTypeOptions = ["ideaGenerationGroupType", "allOurIdeasGroupType", "htmlContentGroupType"];
@@ -83,6 +83,9 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
         .mainImage {
           width: 432px;
           height: 243px;
+        }
+
+        yp-admin-html-editor {
         }
 
         .socialMediaCreateInfo {
@@ -1553,6 +1556,8 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
       id="createStaticHtml"
       .domainId="${domainId}"
       .communityId="${communityId}"
+      .parentCollectionId="${this.parentCollectionId}"
+      .collectionId="${this.collectionId}"
       @configuration-changed="${this.staticHtmlConfigChanged}"
       .group="${this.group}"
       .configuration="${this.group.configuration.staticHtml}"

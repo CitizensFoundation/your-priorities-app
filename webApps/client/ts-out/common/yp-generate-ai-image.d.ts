@@ -9,8 +9,9 @@ import "@material/web/textfield/filled-text-field.js";
 export declare class YpGenerateAiImage extends YpBaseElement {
     submitting: boolean;
     currentError: string | undefined;
-    name: string;
-    description: string;
+    name: string | undefined;
+    description: string | undefined;
+    disableBackgroundGeneration: boolean;
     collectionId: number;
     collectionType: string;
     imageType: YpAiGenerateImageTypes;

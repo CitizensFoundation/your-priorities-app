@@ -315,8 +315,15 @@ interface YpGroupConfiguration extends YpCollectionConfiguration {
   ltp?: YpLtpConfiguration;
   allOurIdeas?: AoiConfigurationData;
   staticHtml?: {
-    content?: string;
+    content: string;
+    media: Array<YpSimpleGroupMediaData>;
   }
+}
+
+interface YpSimpleGroupMediaData {
+  id: number;
+  type: "image" | "video";
+  url: string;
 }
 
 interface YpFraudAuditData {
