@@ -65,6 +65,9 @@ export class YpFileUpload extends YpBaseElement {
   @property({ type: Boolean })
   multi = false;
 
+  @property({ type: Boolean })
+  autoChooseFirstVideoFrameAsPost = false;
+
   /**
    * `files` is the list of files to be uploaded
    */
@@ -203,6 +206,10 @@ export class YpFileUpload extends YpBaseElement {
       css`
         .enabled {
           border: 1px dashed #555;
+        }
+
+        .uploadLinearProgress {
+          margin-top: 4px;
         }
 
         .hover {
@@ -371,6 +378,7 @@ export class YpFileUpload extends YpBaseElement {
                 <div ?hidden="${item.complete}">
                   <md-linear-progress
                     .value="${item.progress}"
+                    class="uploadLinearProgress"
                     ?indeterminate="${this.indeterminateProgress}"
                     .error="${item.error}"
                   ></md-linear-progress>
@@ -379,7 +387,7 @@ export class YpFileUpload extends YpBaseElement {
             `
           )}
         </div>
-        ${this.currentVideoId && this.transcodingComplete
+        ${this.currentVideoId && this.transcodingComplete && !this.autoChooseFirstVideoFrameAsPost
           ? html`<yp-set-video-cover
               .noDefaultCoverImage="${this.noDefaultCoverImage}"
               .videoId="${this.currentVideoId}"
@@ -730,7 +738,11 @@ export class YpFileUpload extends YpBaseElement {
                 detail: detail,
                 videoId: this.currentVideoId,
               });
+              debugger;
               this.uploadStatus = this.t("selectCoverImage");
+              if (this.autoChooseFirstVideoFrameAsPost) {
+                this.clear();
+              }
             } else
               this.fire("success", {
                 detail: detail,

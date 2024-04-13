@@ -609,6 +609,7 @@ module.exports = (sequelize, DataTypes) => {
                 },
                 attributes: ["id", "formats"],
             });
+            let removed = false;
             if (video) {
                 if (req.params.groupId) {
                     const group = await sequelize.models.Group.findOne({
@@ -618,7 +619,28 @@ module.exports = (sequelize, DataTypes) => {
                         attributes: ["id"],
                     });
                     if (group) {
-                        await group.removeGroupLogoVideo(video);
+                        const isVideoInGroup = await sequelize.models.Group.findOne({
+                            where: { id: req.params.groupId },
+                            include: [
+                                {
+                                    model: sequelize.models.Video,
+                                    as: "GroupLogoVideos",
+                                    where: { id: video.id },
+                                    required: true,
+                                },
+                            ],
+                        });
+                        if (isVideoInGroup) {
+                            await group.removeGroupLogoVideo(video);
+                            removed = true;
+                        }
+                        else {
+                            log.error("Could not find video in group", {
+                                groupId: req.params.groupId,
+                                videoId: req.params.videoId,
+                            });
+                            res.sendStatus(404);
+                        }
                     }
                     else {
                         log.error("Could not find group for video", {
@@ -635,7 +657,28 @@ module.exports = (sequelize, DataTypes) => {
                         attributes: ["id"],
                     });
                     if (community) {
-                        await community.removeCommunityLogoVideo(video);
+                        const isVideoInCommunity = await sequelize.models.Community.findOne({
+                            where: { id: req.params.communityId },
+                            include: [
+                                {
+                                    model: sequelize.models.Video,
+                                    as: "CommunityLogoVideos",
+                                    where: { id: video.id },
+                                    required: true,
+                                },
+                            ],
+                        });
+                        if (isVideoInCommunity) {
+                            await community.removeCommunityLogoVideo(video);
+                            removed = true;
+                        }
+                        else {
+                            log.error("Could not find video in community", {
+                                communityId: req.params.communityId,
+                                videoId: req.params.videoId,
+                            });
+                            res.sendStatus(404);
+                        }
                     }
                     else {
                         log.error("Could not find community for video", {
@@ -652,7 +695,28 @@ module.exports = (sequelize, DataTypes) => {
                         attributes: ["id"],
                     });
                     if (domain) {
-                        await domain.removeDomainLogoVideo(video);
+                        const isVideoInDomain = await sequelize.models.Domain.findOne({
+                            where: { id: req.params.domainId },
+                            include: [
+                                {
+                                    model: sequelize.models.Video,
+                                    as: "DomainLogoVideos",
+                                    where: { id: video.id },
+                                    required: true,
+                                },
+                            ],
+                        });
+                        if (isVideoInDomain) {
+                            await domain.removeDomainLogoVideo(video);
+                            removed = true;
+                        }
+                        else {
+                            log.error("Could not find video in domain", {
+                                domainId: req.params.domainId,
+                                videoId: req.params.videoId,
+                            });
+                            res.sendStatus(404);
+                        }
                     }
                     else {
                         log.error("Could not find domain for video", {
@@ -669,7 +733,28 @@ module.exports = (sequelize, DataTypes) => {
                         attributes: ["id"],
                     });
                     if (post) {
-                        await post.removePostVideo(video);
+                        const isVideoInPost = await sequelize.models.Post.findOne({
+                            where: { id: req.params.postId },
+                            include: [
+                                {
+                                    model: sequelize.models.Video,
+                                    as: "PostVideos",
+                                    where: { id: video.id },
+                                    required: true,
+                                },
+                            ],
+                        });
+                        if (isVideoInPost) {
+                            await post.removePostVideo(video);
+                            removed = true;
+                        }
+                        else {
+                            log.error("Could not find video in post", {
+                                postId: req.params.postId,
+                                videoId: req.params.videoId,
+                            });
+                            res.sendStatus(404);
+                        }
                     }
                     else {
                         log.error("Could not find post for video", {
@@ -684,7 +769,28 @@ module.exports = (sequelize, DataTypes) => {
                         attributes: ["id"],
                     });
                     if (point) {
-                        await point.removePointVideo(video);
+                        const isVideoInPoint = await sequelize.models.Point.findOne({
+                            where: { id: req.params.pointId },
+                            include: [
+                                {
+                                    model: sequelize.models.Video,
+                                    as: "PointVideos",
+                                    where: { id: video.id },
+                                    required: true,
+                                },
+                            ],
+                        });
+                        if (isVideoInPoint) {
+                            await point.removePointVideo(video);
+                            removed = true;
+                        }
+                        else {
+                            log.error("Could not find video in point", {
+                                pointId: req.params.pointId,
+                                videoId: req.params.videoId,
+                            });
+                            res.sendStatus(404);
+                        }
                     }
                     else {
                         log.error("Could not find point for video", {
@@ -696,20 +802,26 @@ module.exports = (sequelize, DataTypes) => {
                 else {
                     log.info("No collection for video");
                 }
-                video.deleted = true;
-                await video.save();
-                import("../active-citizen/llms/collectionImageGenerator.js").then(async ({ CollectionImageGenerator }) => {
-                    try {
-                        const mediaManager = new CollectionImageGenerator();
-                        await mediaManager.deleteMediaFormatsUrls(video.formats);
-                        console.log("Deleted video", { videoId: req.params.videoId });
-                        res.sendStatus(200);
-                    }
-                    catch (error) {
-                        console.error("Could not delete video", { error });
-                        res.sendStatus(500);
-                    }
-                });
+                if (removed) {
+                    video.deleted = true;
+                    await video.save();
+                    import("../active-citizen/llms/collectionImageGenerator.js").then(async ({ CollectionImageGenerator }) => {
+                        try {
+                            const mediaManager = new CollectionImageGenerator();
+                            await mediaManager.deleteMediaFormatsUrls(video.formats);
+                            console.log("Deleted video", { videoId: req.params.videoId });
+                            res.sendStatus(200);
+                        }
+                        catch (error) {
+                            console.error("Could not delete video", { error });
+                            res.sendStatus(500);
+                        }
+                    });
+                }
+                else {
+                    log.error("Could not remove video from collection", { options });
+                    res.sendStatus(404);
+                }
             }
             else {
                 log.error("Could not find video", { videoId: req.params.videoId });

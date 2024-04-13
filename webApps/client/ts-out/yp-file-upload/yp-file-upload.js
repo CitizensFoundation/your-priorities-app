@@ -54,6 +54,7 @@ let YpFileUpload = class YpFileUpload extends YpBaseElement {
          * `multi` indicates whether or not to allow multiple files to be uploaded.
          */
         this.multi = false;
+        this.autoChooseFirstVideoFrameAsPost = false;
         /**
          * `files` is the list of files to be uploaded
          */
@@ -116,6 +117,10 @@ let YpFileUpload = class YpFileUpload extends YpBaseElement {
             css `
         .enabled {
           border: 1px dashed #555;
+        }
+
+        .uploadLinearProgress {
+          margin-top: 4px;
         }
 
         .hover {
@@ -282,6 +287,7 @@ let YpFileUpload = class YpFileUpload extends YpBaseElement {
                 <div ?hidden="${item.complete}">
                   <md-linear-progress
                     .value="${item.progress}"
+                    class="uploadLinearProgress"
                     ?indeterminate="${this.indeterminateProgress}"
                     .error="${item.error}"
                   ></md-linear-progress>
@@ -289,7 +295,7 @@ let YpFileUpload = class YpFileUpload extends YpBaseElement {
               </div>
             `)}
         </div>
-        ${this.currentVideoId && this.transcodingComplete
+        ${this.currentVideoId && this.transcodingComplete && !this.autoChooseFirstVideoFrameAsPost
             ? html `<yp-set-video-cover
               .noDefaultCoverImage="${this.noDefaultCoverImage}"
               .videoId="${this.currentVideoId}"
@@ -608,7 +614,11 @@ let YpFileUpload = class YpFileUpload extends YpBaseElement {
                                 detail: detail,
                                 videoId: this.currentVideoId,
                             });
+                            debugger;
                             this.uploadStatus = this.t("selectCoverImage");
+                            if (this.autoChooseFirstVideoFrameAsPost) {
+                                this.clear();
+                            }
                         }
                         else
                             this.fire("success", {
@@ -796,6 +806,9 @@ __decorate([
 __decorate([
     property({ type: Boolean })
 ], YpFileUpload.prototype, "multi", void 0);
+__decorate([
+    property({ type: Boolean })
+], YpFileUpload.prototype, "autoChooseFirstVideoFrameAsPost", void 0);
 __decorate([
     property({ type: Array })
 ], YpFileUpload.prototype, "files", void 0);

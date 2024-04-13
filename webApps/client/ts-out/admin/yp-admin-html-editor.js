@@ -60,6 +60,10 @@ let YpAdminHtmlEditor = class YpAdminHtmlEditor extends YpBaseElement {
           margin-right: 4px;
         }
 
+        .videoUploadIcon {
+          margin-top: 16px;
+        }
+
         .previewHtml {
           width: 100%;
           height: 100%;
@@ -126,7 +130,6 @@ let YpAdminHtmlEditor = class YpAdminHtmlEditor extends YpBaseElement {
         this.requestUpdate();
     }
     _gotAiImage(event) {
-        debugger;
         const url = event.detail.imageUrl;
         const uploadedLogoImageId = event.detail.imageId;
         this.media.push({
@@ -139,6 +142,7 @@ let YpAdminHtmlEditor = class YpAdminHtmlEditor extends YpBaseElement {
     _videoUploaded(event) {
         const uploadedVideoId = event.detail.videoId;
         const url = event.detail.videoUrl;
+        debugger;
         this.media.push({
             id: uploadedVideoId,
             type: "video",
@@ -156,24 +160,31 @@ let YpAdminHtmlEditor = class YpAdminHtmlEditor extends YpBaseElement {
         ${this.media.map((media) => html `
             <div class="mediaContainer">
               ${media.type === "image"
-            ? html ` <img class="mediaImage" src="${media.url}" /> `
+            ? html `
+                    <img class="mediaImage"
+                         src="${media.url}"
+                         @load="${() => this._setMediaLoaded(media.id, true)}"
+                         @error="${() => this._setMediaLoaded(media.id, false)}" />
+                  `
             : media.type === "video"
                 ? html `
-                    <video class="mediaVideo" controls>
+                    <video class="mediaVideo" controls
+                           @loadedmetadata="${() => this._setMediaLoaded(media.id, true)}"
+                           @error="${() => this._setMediaLoaded(media.id, false)}">
                       <source src="${media.url}" type="video/mp4" />
                     </video>
                   `
                 : nothing}
-              <div class="buttonGroup">
+              <div class="buttonGroup" style="display: ${this.mediaLoaded[media.id] ? 'flex' : 'none'};">
                 <md-filled-icon-button
                   @click="${() => this._removeMedia(media)}"
-                  title="${this.t("deleteMedia")}"
-                  ><md-icon>delete</md-icon>
+                  title="${this.t("deleteMedia")}">
+                  <md-icon>delete</md-icon>
                 </md-filled-icon-button>
                 <md-filled-icon-button
                   @click="${() => this._insertMediaIntoHtml(media)}"
-                  title="${this.t("insertMedia")}"
-                  ><md-icon>insert_photo</md-icon>
+                  title="${this.t("insertMedia")}">
+                  <md-icon>insert_photo</md-icon>
                 </md-filled-icon-button>
               </div>
             </div>
@@ -196,7 +207,7 @@ let YpAdminHtmlEditor = class YpAdminHtmlEditor extends YpBaseElement {
             hideStatus
             class="uploadIcon"
             useIconButton
-            target="/api/images?itemType=domain-logo"
+            target="/api/images?itemType=group-html-media"
             method="POST"
             buttonIcon="photo_camera"
             .buttonText="${this.t("image.logo.upload")}"
@@ -217,9 +228,9 @@ let YpAdminHtmlEditor = class YpAdminHtmlEditor extends YpBaseElement {
             id="videoFileUpload"
             raised
             useIconButton
-            hideStatus
             videoUpload
-            class="uploadIcon"
+            autoChooseFirstVideoFrameAsPost
+            class="uploadIcon videoUploadIcon"
             method="POST"
             buttonIcon="videocam"
             .buttonText="${this.t("uploadVideo")}"

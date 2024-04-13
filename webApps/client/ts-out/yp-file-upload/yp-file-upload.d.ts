@@ -42,6 +42,7 @@ export declare class YpFileUpload extends YpBaseElement {
      * `multi` indicates whether or not to allow multiple files to be uploaded.
      */
     multi: boolean;
+    autoChooseFirstVideoFrameAsPost: boolean;
     /**
      * `files` is the list of files to be uploaded
      */
