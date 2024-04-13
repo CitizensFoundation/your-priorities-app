@@ -400,7 +400,12 @@ module.exports = (sequelize, DataTypes) => {
                   log.error("Could not connect image and video", { error });
                   res.sendStatus(500);
                 } else {
-                  res.send(jobStatus);
+                  res.send({
+                    ...jobStatus,
+                    ...{
+                      videoUrl: sequelize.models.Video.getFullUrl(video.meta),
+                    },
+                  });
                 }
               }
             );
@@ -650,13 +655,13 @@ module.exports = (sequelize, DataTypes) => {
         where: {
           id: req.params.videoId,
         },
-        attributes: ["id", "formats"],
+        attributes: ["id", "formats", "user_id", "meta"],
       });
 
       let removed = false;
 
       if (video) {
-        if (req.query.byUserIdOnly) {
+        if (req.query.removeByUserIdOnly) {
           if (video.user_id === req.user.id) {
             video.deleted = true;
             await video.save();
@@ -680,7 +685,9 @@ module.exports = (sequelize, DataTypes) => {
               include: [
                 {
                   model: sequelize.models.Video,
-                  as: req.query.htmlVideo ? "GroupHtmlVideos" : "GroupLogoVideos",
+                  as: req.query.htmlVideo
+                    ? "GroupHtmlVideos"
+                    : "GroupLogoVideos",
                   where: { id: video.id },
                   required: true,
                 },
@@ -844,11 +851,16 @@ module.exports = (sequelize, DataTypes) => {
             async ({ CollectionImageGenerator }) => {
               try {
                 const mediaManager = new CollectionImageGenerator();
-                await mediaManager.deleteMediaFormatsUrls(video.formats);
+                let formats = video.formats;
+                if (!formats) {
+                  formats = [sequelize.models.Video.getFullUrl(video.meta)];
+                }
+                log.info("foramts", { formats });
+                await mediaManager.deleteMediaFormatsUrls(formats);
                 console.log("Deleted video", { videoId: req.params.videoId });
                 res.sendStatus(200);
               } catch (error) {
-                console.error("Could not delete video", { error });
+                console.error("Could not delete video", { error, video });
                 res.sendStatus(500);
               }
             }
@@ -873,7 +885,7 @@ module.exports = (sequelize, DataTypes) => {
     } else {
       sequelize.models.Video.findOne({
         where: {
-          id: options.videoId
+          id: options.videoId,
         },
         attributes: sequelize.models.Video.defaultAttributesPublic.concat([
           "user_id",
@@ -1143,7 +1155,12 @@ module.exports = (sequelize, DataTypes) => {
                   log.error("Could not connect image and video", { error });
                   res.sendStatus(500);
                 } else {
-                  res.send(jobStatus);
+                  res.send({
+                    ...jobStatus,
+                    ...{
+                      videoUrl: sequelize.models.Video.getFullUrl(video.meta),
+                    },
+                  });
                 }
               }
             );

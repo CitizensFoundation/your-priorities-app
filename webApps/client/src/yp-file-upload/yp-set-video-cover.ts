@@ -54,8 +54,8 @@ export class YpSetVideoCover extends YpBaseElement {
         .videoImages {
           overflow-x: auto;
           width: 200px;
-          max-height: 70px;
-          height: 70px;
+          max-height: 50px;
+          height: 50px;
         }
 
         .selectedCover {

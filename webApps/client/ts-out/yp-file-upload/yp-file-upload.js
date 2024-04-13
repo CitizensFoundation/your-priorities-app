@@ -99,6 +99,7 @@ let YpFileUpload = class YpFileUpload extends YpBaseElement {
         this.shownDropText = false;
         this.videoUpload = false;
         this.audioUpload = false;
+        this.coverImageSelected = false;
         this.attachmentUpload = false;
         this.transcodingComplete = false;
         this.isPollingForTranscoding = false;
@@ -242,7 +243,7 @@ let YpFileUpload = class YpFileUpload extends YpBaseElement {
               .ariaLabel="${this.t("deleteFile")}"
               class="removeButton layout self-start"
               @click="${this.clear}"
-              ?hidden="${!this.currentFile}"
+              ?hidden="${!this.currentFile || this.currentVideoId}"
               ><md-icon>delete</md-icon></md-outlined-icon-button
             >
           </div>
@@ -295,7 +296,10 @@ let YpFileUpload = class YpFileUpload extends YpBaseElement {
               </div>
             `)}
         </div>
-        ${this.currentVideoId && this.transcodingComplete && !this.autoChooseFirstVideoFrameAsPost
+        ${this.currentVideoId && false &&
+            this.transcodingComplete &&
+            !this.coverImageSelected &&
+            !this.autoChooseFirstVideoFrameAsPost
             ? html `<yp-set-video-cover
               .noDefaultCoverImage="${this.noDefaultCoverImage}"
               .videoId="${this.currentVideoId}"
@@ -333,7 +337,7 @@ let YpFileUpload = class YpFileUpload extends YpBaseElement {
     /**
      * Clears the list of files
      */
-    clear() {
+    clear(skipEvents = false) {
         this.files = [];
         this._showDropText();
         this.uploadStatus = undefined;
@@ -344,15 +348,18 @@ let YpFileUpload = class YpFileUpload extends YpBaseElement {
         this.indeterminateProgress = false;
         this.transcodingComplete = false;
         this.capture = false;
+        this.coverImageSelected = false;
         this.isPollingForTranscoding = false;
         this.useMainPhotoForVideoCover = false;
         const fileInput = this.$$("#fileInput");
         if (fileInput)
             fileInput.value = "";
-        if (this.videoUpload)
-            this.fire("success", { detail: null, videoId: null });
-        else if (this.audioUpload)
-            this.fire("success", { detail: null, audioId: null });
+        if (!skipEvents) {
+            if (this.videoUpload)
+                this.fire("success", { detail: { videoUrl: undefined }, videoId: null });
+            else if (this.audioUpload)
+                this.fire("success", { detail: null, audioId: null });
+        }
     }
     connectedCallback() {
         super.connectedCallback();
@@ -610,14 +617,18 @@ let YpFileUpload = class YpFileUpload extends YpBaseElement {
                         this.uploadStatus = this.t("uploadCompleted");
                         this.transcodingComplete = true;
                         if (this.videoUpload) {
-                            this.fire("success", {
-                                detail: detail,
-                                videoId: this.currentVideoId,
-                            });
-                            debugger;
+                            if (detail && this.currentVideoId) {
+                                this.fire("success", {
+                                    detail: detail,
+                                    videoId: this.currentVideoId,
+                                });
+                            }
+                            else {
+                                console.error("No detail or video id");
+                            }
                             this.uploadStatus = this.t("selectCoverImage");
                             if (this.autoChooseFirstVideoFrameAsPost) {
-                                this.clear();
+                                this.clear(true);
                             }
                         }
                         else
@@ -652,9 +663,11 @@ let YpFileUpload = class YpFileUpload extends YpBaseElement {
     }
     _setVideoCover(event) {
         this.selectedVideoCoverIndex = event.detail;
+        this.coverImageSelected = true;
     }
     _setDefaultImageAsVideoCover(event) {
         this.useMainPhotoForVideoCover = event.detail;
+        this.coverImageSelected = true;
     }
     /**
      * Really uploads a file
@@ -854,6 +867,9 @@ __decorate([
 __decorate([
     property({ type: Boolean })
 ], YpFileUpload.prototype, "audioUpload", void 0);
+__decorate([
+    property({ type: Boolean })
+], YpFileUpload.prototype, "coverImageSelected", void 0);
 __decorate([
     property({ type: Boolean })
 ], YpFileUpload.prototype, "attachmentUpload", void 0);

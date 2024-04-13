@@ -144,6 +144,9 @@ export class YpFileUpload extends YpBaseElement {
   audioUpload = false;
 
   @property({ type: Boolean })
+  coverImageSelected = false;
+
+  @property({ type: Boolean })
   attachmentUpload = false;
 
   @property({ type: Number })
@@ -332,7 +335,7 @@ export class YpFileUpload extends YpBaseElement {
               .ariaLabel="${this.t("deleteFile")}"
               class="removeButton layout self-start"
               @click="${this.clear}"
-              ?hidden="${!this.currentFile}"
+              ?hidden="${!this.currentFile || this.currentVideoId}"
               ><md-icon>delete</md-icon></md-outlined-icon-button
             >
           </div>
@@ -387,7 +390,10 @@ export class YpFileUpload extends YpBaseElement {
             `
           )}
         </div>
-        ${this.currentVideoId && this.transcodingComplete && !this.autoChooseFirstVideoFrameAsPost
+        ${this.currentVideoId && false &&
+        this.transcodingComplete &&
+        !this.coverImageSelected &&
+        !this.autoChooseFirstVideoFrameAsPost
           ? html`<yp-set-video-cover
               .noDefaultCoverImage="${this.noDefaultCoverImage}"
               .videoId="${this.currentVideoId}"
@@ -427,7 +433,7 @@ export class YpFileUpload extends YpBaseElement {
   /**
    * Clears the list of files
    */
-  clear() {
+  clear(skipEvents = false) {
     this.files = [];
     this._showDropText();
     this.uploadStatus = undefined;
@@ -438,15 +444,18 @@ export class YpFileUpload extends YpBaseElement {
     this.indeterminateProgress = false;
     this.transcodingComplete = false;
     this.capture = false;
+    this.coverImageSelected = false;
     this.isPollingForTranscoding = false;
     this.useMainPhotoForVideoCover = false;
 
     const fileInput = this.$$("#fileInput") as HTMLInputElement;
     if (fileInput) fileInput.value = "";
-    if (this.videoUpload) this.fire("success", { detail: null, videoId: null });
-    else if (this.audioUpload)
-      this.fire("success", { detail: null, audioId: null });
-  }
+    if (!skipEvents) {
+      if (this.videoUpload) this.fire("success", { detail: { videoUrl: undefined }, videoId: null });
+      else if (this.audioUpload)
+        this.fire("success", { detail: null, audioId: null });
+    }
+ }
 
   override connectedCallback() {
     super.connectedCallback();
@@ -734,14 +743,18 @@ export class YpFileUpload extends YpBaseElement {
             this.uploadStatus = this.t("uploadCompleted");
             this.transcodingComplete = true;
             if (this.videoUpload) {
-              this.fire("success", {
-                detail: detail,
-                videoId: this.currentVideoId,
-              });
-              debugger;
+              if (detail && this.currentVideoId) {
+                this.fire("success", {
+                  detail: detail,
+                  videoId: this.currentVideoId,
+                });
+              } else {
+                console.error("No detail or video id");
+              }
+
               this.uploadStatus = this.t("selectCoverImage");
               if (this.autoChooseFirstVideoFrameAsPost) {
-                this.clear();
+                this.clear(true);
               }
             } else
               this.fire("success", {
@@ -772,10 +785,12 @@ export class YpFileUpload extends YpBaseElement {
 
   _setVideoCover(event: CustomEvent) {
     this.selectedVideoCoverIndex = event.detail;
+    this.coverImageSelected = true;
   }
 
   _setDefaultImageAsVideoCover(event: CustomEvent) {
     this.useMainPhotoForVideoCover = event.detail;
+    this.coverImageSelected = true;
   }
 
   /**

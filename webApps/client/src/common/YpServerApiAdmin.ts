@@ -180,7 +180,9 @@ export class YpServerApiAdmin extends YpServerApiBase {
   async deleteImage(
     imageId: number,
     collectionType: string,
-    collectionId: number
+    collectionId: number,
+    deleteByUserOnly = false,
+    htmlImage = false
   ) {
     let fullType;
     if (collectionType == "group") {
@@ -191,8 +193,23 @@ export class YpServerApiAdmin extends YpServerApiBase {
       fullType = "deleteImageFromDomain";
     }
 
+    let queryParams = "";
+
+    if (deleteByUserOnly && htmlImage) {
+      queryParams = "removeByUserIdOnly=true&htmlImage=true";
+    } else if (htmlImage) {
+      queryParams = "htmlImage=true";
+    } else if (deleteByUserOnly) {
+      queryParams = "removeByUserIdOnly=true";
+    }
+
+    if (queryParams) {
+      queryParams = "?" + queryParams;
+    }
+
     return this.fetchWrapper(
-      this.baseUrlPath + `/images/${collectionId}/${imageId}/${fullType}`,
+      this.baseUrlPath +
+        `/images/${collectionId}/${imageId}/${fullType}${queryParams}`,
       {
         method: "DELETE",
         body: JSON.stringify({}),
@@ -204,8 +221,21 @@ export class YpServerApiAdmin extends YpServerApiBase {
   async deleteVideo(
     videoId: number,
     collectionType: string,
-    collectionId: number
+    collectionId: number,
+    deleteByUserOnly = false,
+    htmlVideo = false
   ) {
+    let queryParams = "";
+    if (deleteByUserOnly && htmlVideo) {
+      queryParams = "removeByUserIdOnly=true&htmlVideo=true";
+    } else if (htmlVideo) {
+      queryParams = "htmlVideo=true";
+    } else if (deleteByUserOnly) {
+      queryParams = "removeByUserIdOnly=true";
+    }
+    if (queryParams) {
+      queryParams = "?" + queryParams;
+    }
     let fullType;
     if (collectionType == "group") {
       fullType = "deleteVideoFromGroup";
@@ -216,7 +246,8 @@ export class YpServerApiAdmin extends YpServerApiBase {
     }
 
     return this.fetchWrapper(
-      this.baseUrlPath + `/videos/${collectionId}/${videoId}/${fullType}`,
+      this.baseUrlPath +
+        `/videos/${collectionId}/${videoId}/${fullType}${queryParams}`,
       {
         method: "DELETE",
         body: JSON.stringify({}),

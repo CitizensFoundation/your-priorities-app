@@ -142,6 +142,12 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
   @property({ type: Boolean })
   gettingImageColor = false;
 
+  @property({ type: Array })
+  imageIdsUploadedByUser: number[] = [];
+
+  @property({ type: Array })
+  videoIdsUploadedByUser: number[] = [];
+
   @property({ type: String })
   detectedThemeColor: string | undefined;
 
@@ -225,6 +231,7 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
   _logoImageUploaded(event: CustomEvent) {
     var image = JSON.parse(event.detail.xhr.response);
     this.uploadedLogoImageId = image.id;
+    this.imageIdsUploadedByUser.push(image.id);
     this.imagePreviewUrl = JSON.parse(image.formats)[0];
     const formats = JSON.parse(image.formats);
     this._configChanged();
@@ -587,38 +594,46 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
   }
 
   async reallyDeleteCurrentLogoImage() {
-    if (this.currentLogoImages) {
+    if (!this.imagePreviewUrl && this.currentLogoImages) {
       this.currentLogoImages.forEach(async (image) => {
         await window.adminServerApi.deleteImage(
           image.id,
           this.collectionType,
-          this.collectionId as number
+          this.collectionId as number,
+          this.imageIdsUploadedByUser.includes(image.id)
         );
       });
-    } else if (this.imagePreviewUrl) {
+    } else if (this.imagePreviewUrl && this.uploadedLogoImageId) {
       await window.adminServerApi.deleteImage(
         this.uploadedLogoImageId!,
         this.collectionType,
-        this.collectionId as number
+        this.collectionId as number,
+        this.imageIdsUploadedByUser.includes(this.uploadedLogoImageId)
       );
+    } else {
+      console.warn("No image to delete");
     }
 
     this.clearImages();
   }
 
   async reallyDeleteCurrentVideo() {
-    if (this.collectionVideoId) {
+    if (!this.videoPreviewUrl && this.collectionVideoId) {
       await window.adminServerApi.deleteVideo(
         this.collectionVideoId,
         this.collectionType,
-        this.collectionId as number
+        this.collectionId as number,
+        this.videoIdsUploadedByUser.includes(this.collectionVideoId)
       );
-    } else if (this.videoPreviewUrl) {
+    } else if (this.videoPreviewUrl && this.uploadedVideoId) {
       await window.adminServerApi.deleteVideo(
         this.uploadedVideoId!,
         this.collectionType,
-        this.collectionId as number
+        this.collectionId as number,
+        this.videoIdsUploadedByUser.includes(this.uploadedVideoId)
       );
+    } else {
+      console.warn("No video to delete");
     }
 
     this.clearVideos();
@@ -713,6 +728,7 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
               style="position: static;"
               useIconButton
               videoUpload
+              autoChooseFirstVideoFrameAsPost
               method="POST"
               buttonIcon="videocam"
               .buttonText="${this.t("uploadVideo")}"
@@ -1026,6 +1042,7 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
     this.generatingAiImageInBackground = false;
     this.imagePreviewUrl = event.detail.imageUrl;
     this.uploadedLogoImageId = event.detail.imageId;
+    this.imageIdsUploadedByUser.push(event.detail.imageId);
     this.configChanged = true;
   }
 
@@ -1122,8 +1139,9 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
 
   _videoUploaded(event: CustomEvent) {
     this.uploadedVideoId = event.detail.videoId;
+    this.videoIdsUploadedByUser.push(event.detail.videoId);
     this.collection!.configuration.useVideoCover = true;
-    this.videoPreviewUrl = event.detail.videoUrl;
+    this.videoPreviewUrl = event.detail.detail.videoUrl;
     this.connectedVideoToCollection = true;
     this._configChanged();
     this.requestUpdate();
@@ -1146,6 +1164,8 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
     this.uploadedVideoId = undefined;
     this.videoPreviewUrl = undefined;
     this.connectedVideoToCollection = false;
+    this.imageIdsUploadedByUser = [];
+    this.videoIdsUploadedByUser = [];
 
     (this.$$("#headerImageUpload") as YpFileUpload).clear();
     (this.$$("#logoImageUpload") as YpFileUpload).clear();

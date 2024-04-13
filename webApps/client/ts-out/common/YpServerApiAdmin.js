@@ -91,7 +91,7 @@ export class YpServerApiAdmin extends YpServerApiBase {
             body: JSON.stringify(body),
         }, false);
     }
-    async deleteImage(imageId, collectionType, collectionId) {
+    async deleteImage(imageId, collectionType, collectionId, deleteByUserOnly = false, htmlImage = false) {
         let fullType;
         if (collectionType == "group") {
             fullType = "deleteImageFromGroup";
@@ -102,12 +102,39 @@ export class YpServerApiAdmin extends YpServerApiBase {
         else {
             fullType = "deleteImageFromDomain";
         }
-        return this.fetchWrapper(this.baseUrlPath + `/images/${collectionId}/${imageId}/${fullType}`, {
+        let queryParams = "";
+        if (deleteByUserOnly && htmlImage) {
+            queryParams = "removeByUserIdOnly=true&htmlImage=true";
+        }
+        else if (htmlImage) {
+            queryParams = "htmlImage=true";
+        }
+        else if (deleteByUserOnly) {
+            queryParams = "removeByUserIdOnly=true";
+        }
+        if (queryParams) {
+            queryParams = "?" + queryParams;
+        }
+        return this.fetchWrapper(this.baseUrlPath +
+            `/images/${collectionId}/${imageId}/${fullType}${queryParams}`, {
             method: "DELETE",
             body: JSON.stringify({}),
         }, false);
     }
-    async deleteVideo(videoId, collectionType, collectionId) {
+    async deleteVideo(videoId, collectionType, collectionId, deleteByUserOnly = false, htmlVideo = false) {
+        let queryParams = "";
+        if (deleteByUserOnly && htmlVideo) {
+            queryParams = "removeByUserIdOnly=true&htmlVideo=true";
+        }
+        else if (htmlVideo) {
+            queryParams = "htmlVideo=true";
+        }
+        else if (deleteByUserOnly) {
+            queryParams = "removeByUserIdOnly=true";
+        }
+        if (queryParams) {
+            queryParams = "?" + queryParams;
+        }
         let fullType;
         if (collectionType == "group") {
             fullType = "deleteVideoFromGroup";
@@ -118,7 +145,8 @@ export class YpServerApiAdmin extends YpServerApiBase {
         else {
             fullType = "deleteVideoFromDomain";
         }
-        return this.fetchWrapper(this.baseUrlPath + `/videos/${collectionId}/${videoId}/${fullType}`, {
+        return this.fetchWrapper(this.baseUrlPath +
+            `/videos/${collectionId}/${videoId}/${fullType}${queryParams}`, {
             method: "DELETE",
             body: JSON.stringify({}),
         }, false);

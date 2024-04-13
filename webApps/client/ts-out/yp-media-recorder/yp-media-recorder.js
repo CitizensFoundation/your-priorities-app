@@ -241,7 +241,7 @@ let YpMediaRecorder = class YpMediaRecorder extends YpBaseElement {
                 class="uploadFileButton"
                 @click="${this._openRecorderDialog}"
               >
-                <md-icon>fiber_manual_record</md-icon>
+                <md-icon slot="icon">fiber_manual_record</md-icon>
                 <div class="buttonText">${this.t("record")}</div>
               </md-filled-button>
             </div>
@@ -252,7 +252,7 @@ let YpMediaRecorder = class YpMediaRecorder extends YpBaseElement {
                 class="uploadFileButton"
                 @click="${this._uploadFile}"
               >
-                <md-icon>file_upload</md-icon>
+                <md-icon slot="icon">file_upload</md-icon>
                 <div class="buttonText">${this.t("upload")}</div>
               </md-filled-button>
             </div>

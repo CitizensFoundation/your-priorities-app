@@ -88,6 +88,7 @@ export declare class YpFileUpload extends YpBaseElement {
     shownDropText: boolean;
     videoUpload: boolean;
     audioUpload: boolean;
+    coverImageSelected: boolean;
     attachmentUpload: boolean;
     currentVideoId: number | undefined;
     currentAudioId: number | undefined;
@@ -127,7 +128,7 @@ export declare class YpFileUpload extends YpBaseElement {
     /**
      * Clears the list of files
      */
-    clear(): void;
+    clear(skipEvents?: boolean): void;
     connectedCallback(): void;
     /**
      * A function to set up a drop area for drag-and-drop file uploads
