@@ -549,23 +549,27 @@ module.exports = (sequelize, DataTypes) => {
         else
             done();
     };
-    Group.prototype.setupHtmlMedia = async (req, done) => {
+    Group.prototype.setupHtmlMedia = async (req, groupId, done) => {
+        log.info("--------------------------> setupHtmlMedia");
+        const group = await sequelize.models.Group.findOne({
+            where: { id: groupId },
+            attributes: ["id"]
+        });
         if (req.body.staticHtml) {
             try {
                 const staticHtml = JSON.parse(req.body.staticHtml);
                 if (staticHtml.media && staticHtml.media.length > 0) {
                     for (let i = 0; i < staticHtml.media.length; i++) {
                         const media = staticHtml.media[i];
+                        log.info("--------------------------> group", group);
+                        log.info("--------------------------------------------------------> media", media);
                         if (media.type === "image") {
                             const image = await sequelize.models.Image.findOne({
                                 where: { id: media.id, user_id: req.user.id },
                             });
                             if (image) {
-                                const images = await this.getGroupHtmlImages({
-                                    where: { id: image.id },
-                                });
-                                if (images.length === 0) {
-                                    await this.addGroupHtmlImage(image);
+                                if (!(await group.hasGroupHtmlImage(image))) {
+                                    await group.addGroupHtmlImage(image);
                                 }
                                 else {
                                     log.info("Image already associated with group.");
@@ -580,11 +584,8 @@ module.exports = (sequelize, DataTypes) => {
                                 where: { id: media.id, user_id: req.user.id },
                             });
                             if (video) {
-                                const videos = await this.getGroupHtmlVideos({
-                                    where: { id: video.id },
-                                });
-                                if (videos.length === 0) {
-                                    await this.addGroupHtmlVideo(video);
+                                if (!(await group.hasGroupHtmlVideo(video))) {
+                                    await group.addGroupHtmlVideo(video);
                                 }
                                 else {
                                     log.info("Video already associated with group.");
@@ -596,15 +597,20 @@ module.exports = (sequelize, DataTypes) => {
                         }
                     }
                 }
+                else {
+                    log.info("--------------------------> No media in staticHtml");
+                }
                 done();
             }
             catch (error) {
-                log.error("Error parsing staticHtml", error);
+                log.error("--------------------------> Error parsing staticHtml", error);
                 done();
             }
         }
-        else
+        else {
+            log.info("--------------------------> No staticHtml");
             done();
+        }
     };
     Group.prototype.getImageFormatUrl = function (formatId) {
         if (this.GroupLogoImages && this.GroupLogoImages.length > 0) {
@@ -616,7 +622,7 @@ module.exports = (sequelize, DataTypes) => {
             return "";
         }
     };
-    Group.prototype.setupImages = function (req, done) {
+    Group.prototype.setupImages = function (req, groupId, done) {
         async.parallel([
             (callback) => {
                 this.setupLogoImage(req, (err) => {
@@ -633,7 +639,7 @@ module.exports = (sequelize, DataTypes) => {
                 });
             },
             (callback) => {
-                this.setupHtmlMedia(req, (err) => {
+                this.setupHtmlMedia(req, groupId, (err) => {
                     if (err)
                         return callback(err);
                     callback();

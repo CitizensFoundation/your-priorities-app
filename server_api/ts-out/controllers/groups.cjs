@@ -1487,7 +1487,7 @@ const createGroup = (req, res) => {
         group.updateAllExternalCounters(req, 'up', 'counter_groups', function () {
             models.Group.addUserToGroupIfNeeded(group.id, req, function () {
                 group.addGroupAdmins(req.user).then(function (results) {
-                    group.setupImages(req, function (error) {
+                    group.setupImages(req, group.id, function (error) {
                         queue.add('process-moderation', {
                             type: 'estimate-collection-toxicity',
                             collectionId: group.id,
@@ -1562,7 +1562,7 @@ router.put('/:id', auth.can('edit group'), function (req, res) {
             group.save().then(function () {
                 log.info('Group Updated', { group: toJson(group), context: 'update', user: toJson(req.user) });
                 queue.add('process-similarities', { type: 'update-collection', groupId: group.id }, 'low');
-                group.setupImages(req, function (error) {
+                group.setupImages(req, req.params.id, function (error) {
                     queue.add('process-moderation', {
                         type: 'estimate-collection-toxicity',
                         collectionId: group.id,

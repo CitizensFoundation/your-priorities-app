@@ -43,16 +43,53 @@ export class CollectionImageGenerator {
         const params = {
             Bucket: bucket,
             Key: key,
-            ACL: 'private', // Changing the ACL to private
+            ACL: "private", // Changing the ACL to private
         };
         console.log(`=========================____________________>>>>>>>>>>>>>>>>> Disabling/Deleting Key from S3: ${JSON.stringify(params)}`);
         return new Promise((resolve, reject) => {
             s3.putObjectAcl(params, (err, data) => {
                 if (err) {
+                    console.error(`Error deleting image from S3: ${err}`);
                     reject(err);
                 }
                 else {
-                    resolve(data);
+                    console.log(`============= Deleted image from S3: ${imageUrl}`, data);
+                    if (process.env.CLOUDFLARE_API_KEY &&
+                        process.env.CLOUDFLARE_ZONE_ID) {
+                        console.log("Purging Cloudflare cache for image:", imageUrl);
+                        axios
+                            .post(`https://api.cloudflare.com/client/v4/zones/${process.env.CLOUDFLARE_ZONE_ID}/purge_cache`, {
+                            files: [imageUrl],
+                        }, {
+                            headers: {
+                                Authorization: `Bearer ${process.env.CLOUDFLARE_API_KEY}`,
+                                "Content-Type": "application/json",
+                            },
+                        })
+                            .then((response) => {
+                            console.log("Cloudflare cache purged:", response.data);
+                            resolve(data);
+                        })
+                            .catch((error) => {
+                            if (error.response) {
+                                console.error("Error purging Cloudflare cache:", error.response.data);
+                                console.error("Status code:", error.response.status);
+                                console.error("Headers:", error.response.headers);
+                            }
+                            else if (error.request) {
+                                // The request was made but no response was received
+                                console.error("No response received:", error.request);
+                            }
+                            else {
+                                // Something happened in setting up the request that triggered an Error
+                                console.error("Error setting up request:", error.message);
+                            }
+                            resolve(data);
+                        });
+                    }
+                    else {
+                        resolve(data);
+                    }
                 }
             });
         });
