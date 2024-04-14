@@ -321,9 +321,9 @@ let YpGroup = class YpGroup extends YpCollection {
             </div>
             <ac-activities
               id="newsfeed"
-              .label="${this.t("addCommentOrLink")}"
-              .notLoggedInLabel="${this.t("loginToAddCommentOrLink")}"
-              .addLabel="${this.t("addCommentOrLink")}"
+              .label="${this.t("addComment")}"
+              .notLoggedInLabel="${this.t("loginToAddComment")}"
+              .addLabel="${this.t("addComment")}"
               .selectedGroupTab="${this.selectedGroupTab}"
               .collectionType="${this.collectionType}"
               .collectionId="${this.collectionId}"

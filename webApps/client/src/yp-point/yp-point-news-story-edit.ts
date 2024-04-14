@@ -157,6 +157,7 @@ export class YpPointNewsStoryEdit extends YpBaseElementWithLogin {
                 <div class="layout horizontal center-center">
                   <md-filled-button
                     id="storySubmitButton"
+                    ?disabled="${this.point.content.length<3}"
                     @click="${this._sendStory}"
                     >${this.addLabel ||
                     this.t("point.postNewsStory")}</md-filled-button
@@ -264,6 +265,10 @@ export class YpPointNewsStoryEdit extends YpBaseElementWithLogin {
     if (event.code == "Space" || event.code == "enter") {
       this._checkForUrl();
     }
+    setTimeout(() => {
+      this.point!.content = this.newPointContent;
+      this.requestUpdate();
+    });
   }
 
   _clearEmbed() {
