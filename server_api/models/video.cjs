@@ -427,7 +427,10 @@ module.exports = (sequelize, DataTypes) => {
                     log.error("Could not connect image and video", { error });
                     res.sendStatus(500);
                   } else {
-                    res.send({ status: "Complete" });
+                    res.send({
+                      status: "Complete",
+                      videoUrl: sequelize.models.Video.getFullUrl(video.meta),
+                    });
                   }
                 }
               );
