@@ -41,6 +41,7 @@ let YpPointCommentList = class YpPointCommentList extends YpBaseElement {
         }
 
         yp-point-comment-edit {
+          width: 100%;
         }
 
         lit-virtualizer {
@@ -133,7 +134,6 @@ let YpPointCommentList = class YpPointCommentList extends YpBaseElement {
             <md-icon-button
               .label="${this.t('openComments')}"
               class="openCloseButton"
-              icon="keyboard_arrow_right"
               @click="${this.setOpen}"
               ?hidden="${this.open}"><md-icon>keyboard_arrow_right</md-icon></md-icon-button>
             <md-icon-button
@@ -154,11 +154,12 @@ let YpPointCommentList = class YpPointCommentList extends YpBaseElement {
                   .renderItem=${this.renderComment}
                   @rangeChanged=${this.scrollEvent}></lit-virtualizer>
 
-                <yp-point-comment-edit
+              </div>
+
+              <yp-point-comment-edit
                   @refresh="${this.refresh}"
                   .point="${this.point}"
                   .image="${this.image}"></yp-point-comment-edit>
-              </div>
             `
             : html ``}
         </div>

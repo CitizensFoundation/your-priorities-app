@@ -1,9 +1,9 @@
-import '@material/web/button/outlined-button.js';
-import '../yp-point/yp-point-news-story-edit.js';
-import './ac-activity.js';
-import './ac-activity-recommended-posts.js';
-import '@lit-labs/virtualizer';
-import { YpBaseElementWithLogin } from '../common/yp-base-element-with-login.js';
+import "@material/web/button/outlined-button.js";
+import "../yp-point/yp-point-news-story-edit.js";
+import "./ac-activity.js";
+import "./ac-activity-recommended-posts.js";
+import "@lit-labs/virtualizer";
+import { YpBaseElementWithLogin } from "../common/yp-base-element-with-login.js";
 export declare class AcActivities extends YpBaseElementWithLogin {
     disableNewPosts: boolean;
     noRecommendedPosts: boolean;
@@ -20,7 +20,7 @@ export declare class AcActivities extends YpBaseElementWithLogin {
     postId: number | undefined;
     postGroupId: number | undefined;
     userId: number | undefined;
-    mode: 'activities' | 'news_feeds';
+    mode: "activities" | "news_feeds";
     url: string | undefined;
     latestProcessedActivityAt: string | undefined;
     oldestProcessedActivityAt: string | undefined;
@@ -56,7 +56,7 @@ export declare class AcActivities extends YpBaseElementWithLogin {
     _clearScrollThreshold(): void;
     _getRecommendations(typeName: string, typeId: number): Promise<void>;
     _preProcessActivities(activities: Array<AcActivityData>): AcActivityData[];
-    _processResponse(activitiesResponse: AcActivitiesResponse): void;
+    _processResponse(activitiesResponse: AcActivitiesResponse, newData?: boolean): void;
     scrollToItem(item: AcActivityData): void;
     fireResize(): void;
 }

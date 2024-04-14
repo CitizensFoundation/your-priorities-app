@@ -4,7 +4,7 @@ var models = require("../../../models/index.cjs");
 var _ = require('lodash');
 var getCommonWhereDateOptions = function (options) {
     var where = {};
-    var dateBefore, dateAfter;
+    var dateBefore, dateAfter, afterDate, beforeData;
     var dateAtBase = {};
     if (options.beforeFilter && options.afterFilter) {
         dateAtBase[options.dateColumn] = {

@@ -1,15 +1,15 @@
-import { html, css } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { html, css } from "lit";
+import { customElement, property } from "lit/decorators.js";
 
-import { YpBaseElement } from '../common/yp-base-element.js';
+import { YpBaseElement } from "../common/yp-base-element.js";
 
-import '@material/web/iconbutton/icon-button.js';
-import './yp-point-comment-list.js';
-import './yp-point-news-story-embed.js';
-import './yp-point-actions.js';
-import { YpPointCommentList } from './yp-point-comment-list.js';
+import "@material/web/iconbutton/icon-button.js";
+import "./yp-point-comment-list.js";
+import "./yp-point-news-story-embed.js";
+import "./yp-point-actions.js";
+import { YpPointCommentList } from "./yp-point-comment-list.js";
 
-@customElement('yp-point-news-story')
+@customElement("yp-point-news-story")
 export class YpPointNewsStory extends YpBaseElement {
   @property({ type: Object })
   point!: YpPointData;
@@ -29,13 +29,15 @@ export class YpPointNewsStory extends YpBaseElement {
   @property({ type: Number })
   commentsCount = 0;
 
-  override updated(changedProperties: Map<string | number | symbol, unknown>): void {
+  override updated(
+    changedProperties: Map<string | number | symbol, unknown>
+  ): void {
     super.updated(changedProperties);
 
-    if (changedProperties.has('point')) {
+    if (changedProperties.has("point")) {
       this._pointChanged();
     }
-    if (changedProperties.has('open')) {
+    if (changedProperties.has("open")) {
       this._openChanged();
     }
   }
@@ -47,6 +49,11 @@ export class YpPointNewsStory extends YpBaseElement {
         :host {
           width: 100%;
           margin-top: 8px;
+        }
+
+        .commentsInfoContainer {
+          margin-left: 16px;
+          margin-top: 6px;
         }
 
         .userName {
@@ -97,6 +104,12 @@ export class YpPointNewsStory extends YpBaseElement {
           width: auto;
         }
 
+        @media (max-width: 520px) {
+          .newsContainer {
+            width: 90%;
+          }
+        }
+
         [hidden] {
           display: none !important;
         }
@@ -115,43 +128,49 @@ export class YpPointNewsStory extends YpBaseElement {
           truncate="10000"
           .contentLanguage="${this.point.language}"
           .content="${this.point.latestContent}"
-          .contentId="${this.point.id}">
+          .contentId="${this.point.id}"
+        >
         </yp-magic-text>
 
         <yp-point-news-story-embed
-          .embedData="${this.point.embed_data}"></yp-point-news-story-embed>
+          .embedData="${this.point.embed_data}"
+        ></yp-point-news-story-embed>
         <div class="layout horizontal">
           <yp-point-actions
             .point="${this.point}"
-            hideSharing></yp-point-actions>
-          <div class="layout horizontal start-justified">
+            hideSharing
+          ></yp-point-actions>
+          <div class="layout horizontal start-justified commentsInfoContainer">
             <div
               class="layout horizontal center-center withPointer"
               ?hidden="${!this.commentsCount}"
-              @click="${this._setOpenToValue}">
-              <div class="commentText">${this.t('point.comments')}</div>
+              @click="${this._setOpenToValue}"
+            >
+              <div class="commentText">${this.t("point.comments")}</div>
               <div id="commentCount">${this.commentsCount}</div>
             </div>
             <div
               class="layout horizontal center-center withPointer"
               @click="${this._setOpenToValue}"
-              ?hidden="${this.noComments}">
-              <div class="commentText">${this.t('noComments')}</div>
+              ?hidden="${this.noComments}"
+            >
+              <div class="commentText">${this.t("noComments")}</div>
             </div>
             <div class="layout horizontal">
               <md-icon-button
-                .label="${this.t('toggleOpenClose')}"
+                .label="${this.t("toggleOpenClose")}"
                 class="openCloseButton"
-                icon="keyboard_arrow_right"
                 @click="${this._setOpen}"
-                ?hidden="${this.open}">
+                ?hidden="${this.open}"
+                ><md-icon>keyboard_arrow_right</md-icon>
               </md-icon-button>
               <md-icon-button
-                .label="${this.t('toggleOpenClose')}"
+                .label="${this.t("toggleOpenClose")}"
                 class="openCloseButton"
-                icon="keyboard_arrow_down"
                 @click="${this._setClosed}"
-                ?hidden="${!this.open}">
+                ?hidden="${!this.open}"
+              >
+                <md-icon>keyboard_arrow_down</md-icon>
               </md-icon-button>
             </div>
           </div>
@@ -161,7 +180,8 @@ export class YpPointNewsStory extends YpBaseElement {
           @yp-set-comments-count="${this._setCommentsCount}"
           disableOpenClose
           .point="${this.point}"
-          ?hidden="${!this.withComments}"></yp-point-comment-list>
+          ?hidden="${!this.withComments}"
+        ></yp-point-comment-list>
       </div>
     `;
   }
@@ -176,7 +196,7 @@ export class YpPointNewsStory extends YpBaseElement {
 
   _openChanged() {
     if (this.open) {
-      (this.$$('#commentsList') as YpPointCommentList).refresh();
+      (this.$$("#commentsList") as YpPointCommentList).refresh();
     }
   }
 
@@ -186,12 +206,12 @@ export class YpPointNewsStory extends YpBaseElement {
 
   _setOpen() {
     this.open = true;
-    (this.$$('#commentsList') as YpPointCommentList).setOpen();
+    (this.$$("#commentsList") as YpPointCommentList).setOpen();
   }
 
   _setClosed() {
     this.open = false;
-    (this.$$('#commentsList') as YpPointCommentList).setClosed();
+    (this.$$("#commentsList") as YpPointCommentList).setClosed();
   }
 
   _setCommentsCount(event: CustomEvent) {

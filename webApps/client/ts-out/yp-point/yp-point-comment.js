@@ -40,6 +40,10 @@ let YpPointComment = class YpPointComment extends YpBaseElementWithLogin {
           padding-right: 8px;
         }
 
+        yp-user-with-organization {
+          margin-left: 8px;
+        }
+
         .userName {
           padding-bottom: 4px;
         }
@@ -48,9 +52,9 @@ let YpPointComment = class YpPointComment extends YpBaseElementWithLogin {
           margin-left: 8px;
           margin-right: 8px;
           padding-bottom: 4px;
-          margin-bottom: 8px;
+          margin-bottom: 16px;
           padding-top: 16px;
-          max-width: 300px;
+          max-width: 80%;
         }
 
         .commentDash {
@@ -79,12 +83,10 @@ let YpPointComment = class YpPointComment extends YpBaseElementWithLogin {
     render() {
         return this.point
             ? html `
-          <div class="layout ${this.wide ? "horizontal" : "vertical"}">
-            <div class="layout horizontal">
-              <yp-user-with-organization
+          <div class="layout ${this.wide ? "vertical" : "vertical"}">
+             <yp-user-with-organization
                 .user="${this.user}"
               ></yp-user-with-organization>
-            </div>
             <div class="layout vertical">
               <div class="comment">
                 ${this.point.content}

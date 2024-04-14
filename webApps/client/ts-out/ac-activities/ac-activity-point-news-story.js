@@ -9,7 +9,7 @@ import { customElement } from 'lit/decorators.js';
 import { YpNavHelpers } from '../common/YpNavHelpers.js';
 import { AcActivityWithGroupBase } from './ac-activity-with-group-base.js';
 import '../yp-magic-text/yp-magic-text.js';
-//import '../yp-point/yp-point-news-story.js';
+import '../yp-point/yp-point-news-story.js';
 let AcActivityPointNewsStory = class AcActivityPointNewsStory extends AcActivityWithGroupBase {
     static get styles() {
         return [

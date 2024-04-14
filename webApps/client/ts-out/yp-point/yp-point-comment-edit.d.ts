@@ -1,9 +1,9 @@
-import { nothing } from 'lit';
-import '@material/web/textfield/outlined-text-field.js';
-import '@material/web/button/filled-button.js';
-import '../common/yp-image.js';
-import '../yp-user/yp-user-info.js';
-import { YpBaseElementWithLogin } from '../common/yp-base-element-with-login.js';
+import { nothing } from "lit";
+import "@material/web/textfield/outlined-text-field.js";
+import "@material/web/button/filled-button.js";
+import "../common/yp-image.js";
+import "../yp-user/yp-user-info.js";
+import { YpBaseElementWithLogin } from "../common/yp-base-element-with-login.js";
 export declare class YpPointCommentEdit extends YpBaseElementWithLogin {
     comment: YpPointData | undefined;
     point: YpPointData | undefined;

@@ -70,7 +70,7 @@
     "newrelic": "^11.10.2",
     "nodemailer": "^6.9.9",
     "nodemailer-sendgrid": "^1.0.3",
-    "open-graph-scraper": "^6.3.3",
+    "open-graph-scraper": "^6.5.1",
     "openai": "^4.26.1",
     "passport": "^0.6.0",
     "passport-facebook": "^3.0.0",

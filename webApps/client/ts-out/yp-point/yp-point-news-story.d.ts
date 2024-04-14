@@ -1,8 +1,8 @@
-import { YpBaseElement } from '../common/yp-base-element.js';
-import '@material/web/iconbutton/icon-button.js';
-import './yp-point-comment-list.js';
-import './yp-point-news-story-embed.js';
-import './yp-point-actions.js';
+import { YpBaseElement } from "../common/yp-base-element.js";
+import "@material/web/iconbutton/icon-button.js";
+import "./yp-point-comment-list.js";
+import "./yp-point-news-story-embed.js";
+import "./yp-point-actions.js";
 export declare class YpPointNewsStory extends YpBaseElement {
     point: YpPointData;
     user: YpUserData | undefined;

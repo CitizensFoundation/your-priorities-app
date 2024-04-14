@@ -4,41 +4,41 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { html, css, nothing } from 'lit';
-import { property, customElement, state } from 'lit/decorators.js';
-import '@material/web/button/outlined-button.js';
-import '../yp-point/yp-point-news-story-edit.js';
-import './ac-activity.js';
-import './ac-activity-recommended-posts.js';
-import '@lit-labs/virtualizer';
-import { YpBaseElementWithLogin } from '../common/yp-base-element-with-login.js';
-import { FlowLayout } from '@lit-labs/virtualizer/layouts/flow.js';
-import { ShadowStyles } from '../common/ShadowStyles.js';
+import { html, css, nothing } from "lit";
+import { property, customElement, state } from "lit/decorators.js";
+import "@material/web/button/outlined-button.js";
+import "../yp-point/yp-point-news-story-edit.js";
+import "./ac-activity.js";
+import "./ac-activity-recommended-posts.js";
+import "@lit-labs/virtualizer";
+import { YpBaseElementWithLogin } from "../common/yp-base-element-with-login.js";
+import { FlowLayout } from "@lit-labs/virtualizer/layouts/flow.js";
+import { ShadowStyles } from "../common/ShadowStyles.js";
 let AcActivities = class AcActivities extends YpBaseElementWithLogin {
     constructor() {
         super(...arguments);
         this.disableNewPosts = false;
         this.noRecommendedPosts = true;
         this.gotInitialData = false;
-        this.mode = 'activities';
+        this.mode = "activities";
         this.closeNewsfeedSubmissions = false;
         this._moreToLoad = false;
     }
     updated(changedProperties) {
         super.updated(changedProperties);
-        if (changedProperties.has('domainId')) {
+        if (changedProperties.has("domainId")) {
             this._domainIdChanged();
         }
-        if (changedProperties.has('communityId')) {
+        if (changedProperties.has("communityId")) {
             this._communityIdChanged();
         }
-        if (changedProperties.has('groupId')) {
+        if (changedProperties.has("groupId")) {
             this._groupIdChanged();
         }
-        if (changedProperties.has('postId')) {
+        if (changedProperties.has("postId")) {
             this._postIdChanged();
         }
-        if (changedProperties.has('userId')) {
+        if (changedProperties.has("userId")) {
             this._userIdChanged();
         }
     }
@@ -76,9 +76,6 @@ let AcActivities = class AcActivities extends YpBaseElementWithLogin {
             margin-top: 8px;
             margin-left: 0;
             margin-right: 0;
-            width: -webkit-calc(100% - 16px);
-            width: -moz-calc(100% - 16px);
-            width: calc(100% - 16px);
           }
         }
 
@@ -90,9 +87,6 @@ let AcActivities = class AcActivities extends YpBaseElementWithLogin {
             margin-top: 8px;
             margin-left: 0;
             margin-right: 0;
-            width: -webkit-calc(100% - 36px);
-            width: -moz-calc(100% - 36px);
-            width: calc(100% - 36px);
           }
         }
 
@@ -100,8 +94,6 @@ let AcActivities = class AcActivities extends YpBaseElementWithLogin {
           width: 550px;
           margin: 0;
           padding: 0;
-          background-color: var(--md-sys-color-surface-container-high);
-          color: var(--md-sys-color-on-surface-container);
           border-radius: 24px;
           margin-bottom: 16px;
           margin-top: 16px;
@@ -134,7 +126,6 @@ let AcActivities = class AcActivities extends YpBaseElementWithLogin {
         }
 
         md-outlined-button {
-
         }
 
         md-icon {
@@ -198,18 +189,18 @@ let AcActivities = class AcActivities extends YpBaseElementWithLogin {
     }
     renderItem(activity, index) {
         return html `
-    <div class="layout vertical center-center" style="width: 100%;">
-    <ac-activity
-      tabindex="${index}"
-      .hasLoggedInUser="${this.isLoggedIn}"
-      class="activityContainer"
-      .activity="${activity}"
-      .postId="${this.postId}"
-      .groupId="${this.groupId}"
-      .communityId="${this.communityId}"
-      .domainId="${this.domainId}"
-    ></ac-activity>
-    </div>
+      <div class="layout vertical center-center" style="width: 100%;">
+        <ac-activity
+          tabindex="${index}"
+          .hasLoggedInUser="${this.isLoggedIn}"
+          class="activityContainer"
+          .activity="${activity}"
+          .postId="${this.postId}"
+          .groupId="${this.groupId}"
+          .communityId="${this.communityId}"
+          .domainId="${this.domainId}"
+        ></ac-activity>
+      </div>
     `;
     }
     render() {
@@ -217,15 +208,16 @@ let AcActivities = class AcActivities extends YpBaseElementWithLogin {
       <div
         class="layout horizontal topLevelActivitiesContainer center-center"
         wide="${this.wide}"
-        ?rtl="${this.rtl}">
-        <div class="layout vertical self-start center-center">
+        ?rtl="${this.rtl}"
+      >
+        <div class="layout vertical  center-center">
           ${this.loggedInUser
             ? html `
                 <div
                   .loggedInUser="${this.isLoggedIn}"
-                  elevation="1"
                   ?hidden="${this.closeNewsfeedSubmissions || !this.activities}"
-                  class="layout horizontal addNewsBox shadow-elevation-2dp shadow-transition">
+                  class="layout horizontal addNewsBox"
+                >
                   <yp-point-news-story-edit
                     .label="${this.label}"
                     .notLoggedInLabel="${this.notLoggedInLabel}"
@@ -235,16 +227,22 @@ let AcActivities = class AcActivities extends YpBaseElementWithLogin {
                     .groupId="${this.groupId}"
                     .postGroupId="${this.postGroupId}"
                     .postId="${this.postId}"
-                    @refresh="${this.loadNewData}">
+                    @refresh="${this.loadNewData}"
+                  >
                   </yp-point-news-story-edit>
                 </div>
               `
             : html `
-                <div class="layout vertical center-center">
-                  <md-outlined-button
+                <div
+                  class="layout horizontal center-center"
+                  style="width: 100%;"
+                >
+                  <md-filled-button
                     class="layout horizontal notLoggedInButton"
-                    @click="${this._openLogin}">
-                    ${this.t('loginToShareALink')}</md-outlined-button>
+                    @click="${this._openLogin}"
+                  >
+                    ${this.t("loginToShareALink")}</md-filled-button
+                  >
                 </div>
               `}
           ${this.activities
@@ -256,7 +254,8 @@ let AcActivities = class AcActivities extends YpBaseElementWithLogin {
                   .layout="${FlowLayout}"
                   id="activitiesList"
                   .renderItem=${this.renderItem.bind(this)}
-                  @rangeChanged=${this.scrollEvent}></lit-virtualizer>
+                  @rangeChanged=${this.scrollEvent}
+                ></lit-virtualizer>
               `
             : nothing}
         </div>
@@ -265,11 +264,13 @@ let AcActivities = class AcActivities extends YpBaseElementWithLogin {
           class="layout vertical self-start recommendedPosts"
           ?notActive="${this.noRecommendedPosts}"
           small="${!this.wide}"
-          ?hidden="${!this.recommendedPosts}">
+          ?hidden="${!this.recommendedPosts}"
+        >
           <ac-activity-recommended-posts
             id="recommendedPosts"
             .recommendedPosts="${this.recommendedPosts}"
-            class="layout vertical"></ac-activity-recommended-posts>
+            class="layout vertical"
+          ></ac-activity-recommended-posts>
         </div>
       </div>
     `;
@@ -287,35 +288,35 @@ let AcActivities = class AcActivities extends YpBaseElementWithLogin {
     }
     connectedCallback() {
         super.connectedCallback();
-        this.addListener('yp-point-deleted', this._pointDeleted);
-        this.addListener('yp-refresh-activities-scroll-threshold', this._clearScrollThreshold);
-        this.addListener('yp-delete-activity', this._deleteActivity);
+        this.addListener("yp-point-deleted", this._pointDeleted);
+        this.addListener("yp-refresh-activities-scroll-threshold", this._clearScrollThreshold);
+        this.addListener("yp-delete-activity", this._deleteActivity);
         switch (this.collectionType) {
-            case 'domain':
+            case "domain":
                 this.domainId = this.collectionId;
                 break;
-            case 'community':
+            case "community":
                 this.communityId = this.collectionId;
                 break;
-            case 'group':
+            case "group":
                 this.groupId = this.collectionId;
                 break;
-            case 'post':
+            case "post":
                 this.postId = this.collectionId;
                 break;
-            case 'user':
+            case "user":
                 this.userId = this.collectionId;
                 break;
         }
     }
     disconnectedCallback() {
         super.disconnectedCallback();
-        this.removeListener('yp-point-deleted', this._pointDeleted);
-        this.removeListener('yp-refresh-activities-scroll-threshold', this._clearScrollThreshold);
-        this.removeListener('yp-delete-activity', this._deleteActivity);
+        this.removeListener("yp-point-deleted", this._pointDeleted);
+        this.removeListener("yp-refresh-activities-scroll-threshold", this._clearScrollThreshold);
+        this.removeListener("yp-delete-activity", this._deleteActivity);
     }
     _openLogin() {
-        this.fire('yp-open-login');
+        this.fire("yp-open-login");
     }
     _pointDeleted(event) {
         if (this.activities) {
@@ -330,10 +331,10 @@ let AcActivities = class AcActivities extends YpBaseElementWithLogin {
     }
     get wideListOffset() {
         if (this.groupId) {
-            return '800';
+            return "800";
         }
         else {
-            return '415';
+            return "415";
         }
     }
     get ironListResizeScrollThreshold() {
@@ -346,12 +347,12 @@ let AcActivities = class AcActivities extends YpBaseElementWithLogin {
     }
     //TODO: Look into if this is needed
     get ironListPaddingTop() {
-        let offset = this.$$('#activitiesList').offsetTop;
+        let offset = this.$$("#activitiesList").offsetTop;
         offset -= 75;
         if (!this.isLoggedIn && !this.groupId)
             offset -= 75;
         if (offset > 0) {
-            console.info('News scroll offset: ' + offset);
+            console.info("News scroll offset: " + offset);
             return offset;
         }
         else {
@@ -371,7 +372,7 @@ let AcActivities = class AcActivities extends YpBaseElementWithLogin {
                     offset = this.isLoggedIn ? 700 : 610;
                 }
             }
-            console.info('News (manual) scroll offset: ' + offset);
+            console.info("News (manual) scroll offset: " + offset);
             return offset;
         }
     }
@@ -388,30 +389,30 @@ let AcActivities = class AcActivities extends YpBaseElementWithLogin {
     }
     _deleteActivity(event) {
         this.activityIdToDelete = event.detail.id;
-        window.appDialogs.getDialogAsync('confirmationDialog', (dialog) => {
-            dialog.open(this.t('activity.confirmDelete'), this._reallyDelete.bind(this));
+        window.appDialogs.getDialogAsync("confirmationDialog", (dialog) => {
+            dialog.open(this.t("activity.confirmDelete"), this._reallyDelete.bind(this));
         });
     }
     async _reallyDelete() {
         let type, collectionId;
         if (this.domainId) {
-            type = 'domains';
+            type = "domains";
             collectionId = this.domainId;
         }
         else if (this.communityId) {
-            type = 'communities';
+            type = "communities";
             collectionId = this.communityId;
         }
         else if (this.groupId) {
-            type = 'groups';
+            type = "groups";
             collectionId = this.groupId;
         }
         else if (this.postId) {
-            type = 'posts';
+            type = "posts";
             collectionId = this.postId;
         }
         else if (this.userId) {
-            type = 'users';
+            type = "users";
             collectionId = this.postId;
         }
         if (type && collectionId && this.activityIdToDelete) {
@@ -421,7 +422,7 @@ let AcActivities = class AcActivities extends YpBaseElementWithLogin {
             this.requestUpdate();
         }
         else {
-            console.error('No activity found to delete');
+            console.error("No activity found to delete");
         }
     }
     _generateRequest(typeId, typeName) {
@@ -431,15 +432,15 @@ let AcActivities = class AcActivities extends YpBaseElementWithLogin {
             this._moreToLoad = true;
             //TODO: Add a minimum threshold of filtering before enabling dynamic news_feeds again
             if (window.appUser && window.appUser.user && !this.postId) {
-                this.mode = 'activities';
+                this.mode = "activities";
                 //this.mode = 'news_feeds';
             }
             else {
-                this.mode = 'activities';
+                this.mode = "activities";
             }
-            this.url = '/api/' + this.mode + '/' + typeName + '/' + typeId;
+            this.url = "/api/" + this.mode + "/" + typeName + "/" + typeId;
             this._loadMoreData();
-            if (typeName != 'posts') {
+            if (typeName != "posts") {
                 this._getRecommendations(typeName, typeId);
             }
         }
@@ -449,58 +450,58 @@ let AcActivities = class AcActivities extends YpBaseElementWithLogin {
             this._moreToLoad = false;
             let url = this.url;
             if (this.oldestProcessedActivityAt)
-                url += '?beforeDate=' + this.oldestProcessedActivityAt;
+                url += "?beforeDate=" + this.oldestProcessedActivityAt;
             const response = (await window.serverApi.getAcActivities(url));
             this._processResponse(response);
         }
         else {
-            console.warn('Trying to load more activities without conditions');
+            console.warn("Trying to load more activities without conditions");
         }
     }
     async loadNewData() {
         if (this.url && this.latestProcessedActivityAt) {
             let url = this.url;
             if (this.oldestProcessedActivityAt)
-                url = url + '?afterDate=' + this.latestProcessedActivityAt;
-            this._processResponse((await window.serverApi.getAcActivities(url)));
+                url = url + "?afterDate=" + this.latestProcessedActivityAt;
+            this._processResponse((await window.serverApi.getAcActivities(url)), true);
         }
         else if (this.url && !this.latestProcessedActivityAt) {
-            this._processResponse((await window.serverApi.getAcActivities(this.url)));
+            this._processResponse((await window.serverApi.getAcActivities(this.url)), true);
         }
     }
     _domainIdChanged() {
         if (this.domainId) {
             this.activities = undefined;
             this.recommendedPosts = undefined;
-            this._generateRequest(this.domainId, 'domains');
+            this._generateRequest(this.domainId, "domains");
         }
     }
     _communityIdChanged() {
         if (this.communityId) {
             this.activities = undefined;
             this.recommendedPosts = undefined;
-            this._generateRequest(this.communityId, 'communities');
+            this._generateRequest(this.communityId, "communities");
         }
     }
     _groupIdChanged() {
         if (this.groupId) {
             this.activities = undefined;
             this.recommendedPosts = undefined;
-            this._generateRequest(this.groupId, 'groups');
+            this._generateRequest(this.groupId, "groups");
         }
     }
     _postIdChanged() {
         if (this.postId) {
             this.activities = undefined;
             this.recommendedPosts = undefined;
-            this._generateRequest(this.postId, 'posts');
+            this._generateRequest(this.postId, "posts");
         }
     }
     _userIdChanged() {
         if (this.userId) {
             this.activities = undefined;
             this.recommendedPosts = undefined;
-            this._generateRequest(this.userId, 'users');
+            this._generateRequest(this.userId, "users");
         }
     }
     _clearScrollThreshold() {
@@ -532,12 +533,13 @@ let AcActivities = class AcActivities extends YpBaseElementWithLogin {
     _preProcessActivities(activities) {
         for (let i = 0; i < activities.length; i++) {
             if (activities[i].Point) {
-                activities[i].Point.latestContent = activities[i].Point.PointRevisions[activities[i].Point.PointRevisions.length - 1].content;
+                activities[i].Point.latestContent =
+                    activities[i].Point.PointRevisions[activities[i].Point.PointRevisions.length - 1].content;
             }
         }
         return activities;
     }
-    _processResponse(activitiesResponse) {
+    _processResponse(activitiesResponse, newData = false) {
         const activities = this._preProcessActivities(activitiesResponse.activities);
         this.gotInitialData = true;
         if (activitiesResponse.oldestProcessedActivityAt) {
@@ -545,11 +547,11 @@ let AcActivities = class AcActivities extends YpBaseElementWithLogin {
                 activitiesResponse.oldestProcessedActivityAt;
         }
         else {
-            console.warn('Have not set oldestProcessedActivityAt');
+            console.warn("Have not set oldestProcessedActivityAt");
         }
         if (this.activities) {
             for (let i = 0; i < activities.length; i++) {
-                if (this.url.indexOf('afterDate') > -1) {
+                if (newData || this.url.indexOf("afterDate") > -1) {
                     this.activities.unshift(activities[i]);
                 }
                 else {
@@ -566,15 +568,15 @@ let AcActivities = class AcActivities extends YpBaseElementWithLogin {
                 this.latestProcessedActivityAt = activities[0].created_at;
             }
             if (!this.latestProcessedActivityAt) {
-                console.error('Have not set latest processed activity at');
+                console.error("Have not set latest processed activity at");
             }
             this._moreToLoad = true;
-            if (this.activities.length < 15 ||
+            if ((this.activities.length < 15) ||
                 (activities.length < 3 && this.activities.length < 100)) {
                 this._loadMoreData();
             }
         }
-        this.fireGlobal('yp-refresh-activities-scroll-threshold', {});
+        this.fireGlobal("yp-refresh-activities-scroll-threshold", {});
         setTimeout(() => {
             //TODO: Check out
             //this.$$("#activitiesList").fire('iron-resize');
@@ -592,13 +594,15 @@ let AcActivities = class AcActivities extends YpBaseElementWithLogin {
                 this.closeNewsfeedSubmissions = true;
             }
         }
+        console.error(`Acitivites length ${this.activities.length}`);
+        this.requestUpdate();
     }
     scrollToItem(item) {
-        console.log('Activity scrolling to item');
+        console.log("Activity scrolling to item");
         if (item && this.activities) {
             for (let i = 0; i < this.activities.length; i++) {
                 if (this.activities[i] == item) {
-                    this.$$('#list').scrollToIndex(i);
+                    this.$$("#list").scrollToIndex(i);
                     break;
                 }
             }
@@ -608,7 +612,7 @@ let AcActivities = class AcActivities extends YpBaseElementWithLogin {
         //(this.$$('#activitiesList') as LitVirtualizer).scrollToItem(item);
     }
     fireResize() {
-        console.log('fireResize');
+        console.log("fireResize");
         //TODO: Is this needed
         //this.$$("#activitiesList").fire('iron-resize');
     }
@@ -680,7 +684,7 @@ __decorate([
     state()
 ], AcActivities.prototype, "closeNewsfeedSubmissions", void 0);
 AcActivities = __decorate([
-    customElement('ac-activities')
+    customElement("ac-activities")
 ], AcActivities);
 export { AcActivities };
 //# sourceMappingURL=ac-activities.js.map

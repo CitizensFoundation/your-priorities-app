@@ -55,6 +55,8 @@ export class YpPointNewsStoryEdit extends YpBaseElementWithLogin {
           padding-top: 16px;
         }
 
+
+
         md-outlined-text-field {
           width: 460px;
           margin-top: -8px;
@@ -66,6 +68,10 @@ export class YpPointNewsStoryEdit extends YpBaseElementWithLogin {
 
         .embedData {
           padding-top: 24px;
+        }
+
+        #storySubmitButton {
+          margin-top: 16px;
         }
 
         .userImage {
@@ -139,18 +145,18 @@ export class YpPointNewsStoryEdit extends YpBaseElementWithLogin {
                   .value="${this.point.content}"
                   .label="${this.label || this.t("point.addNewsStory")}"
                   charCounter
-                  rows="2"
-                  maxrows="5"
+                  rows="4"
+                  maxrows="7"
                   @keydown="${this._keyDown}"
                   maxlength="500"
                 >
                 </md-outlined-text-field>
-                <div class="layout horizontal end-justified">
-                  <md-text-button
+                <div class="layout horizontal center-center">
+                  <md-filled-button
                     id="storySubmitButton"
                     @click="${this._sendStory}"
                     >${this.addLabel ||
-                    this.t("point.postNewsStory")}</md-text-button
+                    this.t("point.postNewsStory")}</md-filled-button
                   >
                 </div>
               </div>
@@ -275,7 +281,7 @@ export class YpPointNewsStoryEdit extends YpBaseElementWithLogin {
         const previewResponse = (await window.serverApi.pointUrlPreview(
           `url=${urls2[0]}`
         )) as Array<YpEmbedData>;
-        if (previewResponse && previewResponse.length > 0) {
+        if (previewResponse && previewResponse.length > 0 && previewResponse[0].url && previewResponse[0].title) {
           this.point.embed_data = previewResponse[0];
           this.requestUpdate();
         }

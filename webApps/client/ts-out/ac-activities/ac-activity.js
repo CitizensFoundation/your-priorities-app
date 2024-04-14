@@ -25,7 +25,12 @@ let AcActivity = class AcActivity extends YpBaseElementWithLogin {
         .activity {
           margin: 16px;
           height: 100%;
+          margin-top: 32px;
           margin-bottom: 0;
+        }
+
+        yp-user-with-organization {
+          margin-left: 8px;
         }
 
         @media (max-width: 600px) {
