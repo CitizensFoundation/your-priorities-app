@@ -1682,10 +1682,12 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
     this.requestUpdate();
   }
 
-  staticHtmlConfigChanged(event: CustomEvent) {
+  async staticHtmlConfigChanged(event: CustomEvent) {
     this.group.configuration.staticHtml = (
       this.$$("yp-admin-html-editor") as YpAdminHtmlEditor
-    ).configuration;
+    ).getConfiguration();
+    this.configTabs = this.setupConfigTabs();
+    console.log(JSON.stringify(this.group.configuration.staticHtml, null, 2))
     this.requestUpdate();
   }
 
@@ -1822,7 +1824,7 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
   }
 
   _getHtmlContentTab() {
-    let configuration = this.group.configuration.staticHtml!;
+    let configuration = this.group.configuration.staticHtml;
 
     if (!configuration) {
       configuration = this.group.configuration.staticHtml = {

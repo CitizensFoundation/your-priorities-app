@@ -14,6 +14,7 @@ import { YpGenerateAiImage } from "../common/yp-generate-ai-image.js";
 
 import "../common/yp-generate-ai-image.js";
 import { unsafeHTML } from "lit/directives/unsafe-html.js";
+import { YpConfirmationDialog } from "../yp-dialog-container/yp-confirmation-dialog";
 
 @customElement("yp-admin-html-editor")
 export class YpAdminHtmlEditor extends YpBaseElement {
@@ -38,11 +39,20 @@ export class YpAdminHtmlEditor extends YpBaseElement {
   @property({ type: Number })
   parentCollectionId: number | undefined;
 
+  @property({ type: Number })
+  mediaIdToDelete: number | undefined;
+
   @property({ type: String })
   collectionId: number | string | undefined;
 
   @property({ type: Boolean })
   hasVideoUpload = false;
+
+  @property({ type: Array })
+  imageIdsUploadedByUser: number[] = [];
+
+  @property({ type: Array })
+  videoIdsUploadedByUser: number[] = [];
 
   private debounceTimer?: number;
 
@@ -50,7 +60,11 @@ export class YpAdminHtmlEditor extends YpBaseElement {
     this.selectedTab = (event.currentTarget as MdTabs).activeTabIndex;
   }
 
-  get configuration() {
+  getConfiguration() {
+    console.log(JSON.stringify({
+      content: this.content,
+      media: this.media,
+    }));
     return {
       content: this.content,
       media: this.media,
@@ -143,6 +157,12 @@ export class YpAdminHtmlEditor extends YpBaseElement {
     generator.open();
   }
 
+  override updated(changedProperties: Map<string | number | symbol, unknown>): void {
+    if (changedProperties.has("media")) {
+      console.error("media changed", this.media);
+    }
+  }
+
   override firstUpdated(_changedProperties: PropertyValues) {}
 
   renderAiImageGenerator() {
@@ -172,7 +192,9 @@ export class YpAdminHtmlEditor extends YpBaseElement {
       type: "image",
       url: url,
     } as YpSimpleGroupMediaData);
+    this.imageIdsUploadedByUser.push(uploadedLogoImageId);
     this.requestUpdate();
+    this.contentChanged();
   }
 
   _gotAiImage(event: CustomEvent) {
@@ -183,22 +205,95 @@ export class YpAdminHtmlEditor extends YpBaseElement {
       type: "image",
       url: url,
     } as YpSimpleGroupMediaData);
+    this.imageIdsUploadedByUser.push(uploadedLogoImageId);
     this.requestUpdate();
+    this.contentChanged();
   }
 
   _videoUploaded(event: CustomEvent) {
     const uploadedVideoId = event.detail.videoId;
-    const url = event.detail.videoUrl;
+    const url = event.detail.detail.videoUrl;
     this.media.push({
       id: uploadedVideoId,
       type: "video",
       url: url,
     } as YpSimpleGroupMediaData);
+    this.videoIdsUploadedByUser.push(uploadedVideoId);
     this.requestUpdate();
+    this.contentChanged();
+  }
+
+  async reallyDeleteCurrentLogoImage() {
+    if (this.mediaIdToDelete) {
+      await window.adminServerApi.deleteImage(
+        this.mediaIdToDelete,
+        "group",
+        this.collectionId as number,
+        this.imageIdsUploadedByUser.includes(this.mediaIdToDelete),
+        true
+      );
+      this.media = this.media.filter((media) => media.id !== this.mediaIdToDelete);
+      this.imageIdsUploadedByUser = this.imageIdsUploadedByUser.filter(
+        (id) => id !== this.mediaIdToDelete
+      );
+      this.mediaIdToDelete = undefined;
+      this.contentChanged();
+    } else {
+      console.warn("No image to delete");
+    }
+  }
+
+  async reallyDeleteCurrentVideo() {
+    if (this.mediaIdToDelete) {
+      await window.adminServerApi.deleteVideo(
+        this.mediaIdToDelete,
+        "group",
+        this.collectionId as number,
+        this.videoIdsUploadedByUser.includes(this.mediaIdToDelete),
+        true
+      );
+      this.media = this.media.filter((media) => media.id !== this.mediaIdToDelete);
+      this.videoIdsUploadedByUser = this.videoIdsUploadedByUser.filter(
+        (id) => id !== this.mediaIdToDelete
+      );
+      this.mediaIdToDelete = undefined;
+      this.contentChanged()
+    } else {
+      console.warn("No video to delete");
+    }
+  }
+
+  deleteCurrentLogoImage() {
+    window.appDialogs.getDialogAsync(
+      "confirmationDialog",
+      (dialog: YpConfirmationDialog) => {
+        dialog.open(
+          this.t("confirmDeleteLogoImage"),
+          this.reallyDeleteCurrentLogoImage.bind(this)
+        );
+      }
+    );
+  }
+
+  deleteCurrentVideo() {
+    window.appDialogs.getDialogAsync(
+      "confirmationDialog",
+      (dialog: YpConfirmationDialog) => {
+        dialog.open(
+          this.t("confirmDeleteVideo"),
+          this.reallyDeleteCurrentVideo.bind(this)
+        );
+      }
+    );
   }
 
   _removeMedia(media: YpSimpleGroupMediaData) {
-    this.media = this.media.filter((m) => m.id !== media.id);
+    this.mediaIdToDelete = media.id;
+    if (media.type === "image") {
+      this.deleteCurrentLogoImage();
+    } else if (media.type === "video") {
+      this.deleteCurrentVideo();
+    }
     this.debouncedSave();
   }
 

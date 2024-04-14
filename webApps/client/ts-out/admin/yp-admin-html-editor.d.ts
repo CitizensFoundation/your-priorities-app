@@ -16,11 +16,14 @@ export declare class YpAdminHtmlEditor extends YpBaseElement {
     generatingAiImageInBackground: boolean;
     group: YpGroupData;
     parentCollectionId: number | undefined;
+    mediaIdToDelete: number | undefined;
     collectionId: number | string | undefined;
     hasVideoUpload: boolean;
+    imageIdsUploadedByUser: number[];
+    videoIdsUploadedByUser: number[];
     private debounceTimer?;
     _selectTab(event: CustomEvent): void;
-    get configuration(): {
+    getConfiguration(): {
         content: string;
         media: YpSimpleGroupMediaData[];
     };
@@ -28,12 +31,17 @@ export declare class YpAdminHtmlEditor extends YpBaseElement {
     disconnectedCallback(): void;
     static get styles(): any[];
     _generateLogo(event: CustomEvent): void;
+    updated(changedProperties: Map<string | number | symbol, unknown>): void;
     firstUpdated(_changedProperties: PropertyValues): void;
     renderAiImageGenerator(): import("lit-html").TemplateResult<1>;
     _setMediaLoaded(id: number, loaded: boolean): void;
     _logoImageUploaded(event: CustomEvent): void;
     _gotAiImage(event: CustomEvent): void;
     _videoUploaded(event: CustomEvent): void;
+    reallyDeleteCurrentLogoImage(): Promise<void>;
+    reallyDeleteCurrentVideo(): Promise<void>;
+    deleteCurrentLogoImage(): void;
+    deleteCurrentVideo(): void;
     _removeMedia(media: YpSimpleGroupMediaData): void;
     renderMedia(): import("lit-html").TemplateResult<1>;
     _insertMediaIntoHtml(media: YpSimpleGroupMediaData): void;

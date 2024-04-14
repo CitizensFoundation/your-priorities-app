@@ -1533,8 +1533,10 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
         this.group.configuration.allOurIdeas = this.$$("aoi-earl-ideas-editor").configuration;
         this.requestUpdate();
     }
-    staticHtmlConfigChanged(event) {
-        this.group.configuration.staticHtml = this.$$("yp-admin-html-editor").configuration;
+    async staticHtmlConfigChanged(event) {
+        this.group.configuration.staticHtml = this.$$("yp-admin-html-editor").getConfiguration();
+        this.configTabs = this.setupConfigTabs();
+        console.log(JSON.stringify(this.group.configuration.staticHtml, null, 2));
         this.requestUpdate();
     }
     themeConfigChanged(event) {
