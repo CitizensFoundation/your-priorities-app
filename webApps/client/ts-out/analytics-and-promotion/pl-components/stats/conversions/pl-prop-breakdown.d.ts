@@ -21,13 +21,13 @@ export declare class PlausiblePropBreakdown extends PlausibleBaseElementWithStat
     getBarMaxWidth(): "16rem" | "10rem";
     fetchPropBreakdown(): void;
     loadMore(): void;
-    renderUrl(value: PlausiblePropValueData): import("lit-html").TemplateResult<1> | typeof nothing;
+    renderUrl(value: PlausiblePropValueData): typeof nothing | import("lit-html").TemplateResult<1>;
     renderPropContent(value: PlausiblePropValueData, query: URLSearchParams): import("lit-html").TemplateResult<1>;
     renderPropValue(value: PlausiblePropValueData): import("lit-html").TemplateResult<1>;
     changePropKey(newKey: string): void;
-    renderLoading(): import("lit-html").TemplateResult<1> | typeof nothing;
+    renderLoading(): typeof nothing | import("lit-html").TemplateResult<1>;
     renderBody(): import("lit-html").TemplateResult<1>[];
     renderPill(key: string): import("lit-html").TemplateResult<1>;
-    render(): import("lit-html").TemplateResult<1> | typeof nothing;
+    render(): typeof nothing | import("lit-html").TemplateResult<1>;
 }
 //# sourceMappingURL=pl-prop-breakdown.d.ts.map

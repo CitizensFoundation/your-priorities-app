@@ -10,9 +10,9 @@ export declare class YpCollectionItemsGrid extends YpBaseElement {
     resetListSize: Function | undefined;
     skipIronListWidth: boolean;
     static get styles(): any[];
-    render(): TemplateResult<1> | typeof nothing;
+    render(): typeof nothing | TemplateResult<1>;
     renderItem(item: YpCollectionData, index: number): TemplateResult;
-    get pluralItemType(): "communities" | "groups" | "posts" | "unknownItemType";
+    get pluralItemType(): "groups" | "communities" | "posts" | "unknownItemType";
     _keypress(event: KeyboardEvent): void;
     refresh(): Promise<void>;
     firstUpdated(changedProperties: Map<string | number | symbol, unknown>): void;

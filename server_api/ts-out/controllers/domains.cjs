@@ -1218,7 +1218,7 @@ router.delete('/:domainId/:campaignId/delete_campaign', auth.can('edit domain'),
     }
 });
 //TODO: Move permission back to edit after figuring out how
-router.post('/:domainId/:start_generating_ai_image', auth.can('view domain'), function (req, res) {
+router.post('/:domainId/:start_generating/ai_image', auth.can('view domain'), function (req, res) {
     models.AcBackgroundJob.createJob({}, {}, (error, jobId) => {
         if (error) {
             log.error('Could not create backgroundJob', { err: error, context: 'start_generating_ai_image', user: toJson(req.user.simple()) });

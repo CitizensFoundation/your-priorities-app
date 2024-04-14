@@ -63,7 +63,7 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
     constructor() {
         super();
         this.groupAccess = "open_to_community";
-        this.groupTypeIndex = 2;
+        this.groupTypeIndex = 0;
         this.endorsementButtonsDisabled = false;
         this.questionNameHasChanged = false;
         this.groupTypeOptions = [
@@ -300,7 +300,7 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
                     .earl.question) {
                 this.aoiQuestionName = this.collection.configuration.allOurIdeas.earl.question.name;
             }
-            this.groupTypeIndex = this.group.configuration.groupType || 1;
+            this.groupTypeIndex = this.group.configuration.groupType || 0;
             this.endorsementButtons = this.group.configuration.endorsementButtons;
             if (this.collection.status) {
                 this.status = this.collection.status;

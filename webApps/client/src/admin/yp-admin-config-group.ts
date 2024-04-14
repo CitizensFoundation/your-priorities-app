@@ -101,7 +101,7 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
   groupAccess: YpGroupAccessTypes = "open_to_community";
 
   @property({ type: Number })
-  groupTypeIndex = 2;
+  groupTypeIndex = 0;
 
   @property({ type: Object })
   group: YpGroupData;
@@ -393,7 +393,7 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
         ).allOurIdeas!.earl!.question!.name;
       }
 
-      this.groupTypeIndex = this.group.configuration.groupType || 1;
+      this.groupTypeIndex = this.group.configuration.groupType || 0;
 
       this.endorsementButtons = this.group.configuration.endorsementButtons;
 
