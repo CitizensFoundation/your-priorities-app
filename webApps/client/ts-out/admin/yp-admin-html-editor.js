@@ -11,6 +11,7 @@ import "../yp-survey/yp-simple-html-editor.js";
 import "@material/web/tabs/primary-tab.js";
 import "@material/web/tabs/tabs.js";
 import "@material/web/icon/icon.js";
+import "@material/web/radio/radio.js";
 import "@material/web/textfield/filled-text-field.js";
 import "../common/yp-generate-ai-image.js";
 import { unsafeHTML } from "lit/directives/unsafe-html.js";
@@ -23,6 +24,7 @@ let YpAdminHtmlEditor = class YpAdminHtmlEditor extends YpBaseElement {
         this.mediaLoaded = {};
         this.generatingAiImageInBackground = false;
         this.hasVideoUpload = false;
+        this.browserPreviewType = "desktop";
         this.imageIdsUploadedByUser = [];
         this.videoIdsUploadedByUser = [];
     }
@@ -62,6 +64,10 @@ let YpAdminHtmlEditor = class YpAdminHtmlEditor extends YpBaseElement {
           margin-bottom: 16px;
         }
 
+        .previewTypeRadios {
+          margin: 16px;
+        }
+
         .deleteMediaButton {
           top: 4px;
           left: 4px;
@@ -97,6 +103,12 @@ let YpAdminHtmlEditor = class YpAdminHtmlEditor extends YpBaseElement {
           margin-top: 16px;
         }
 
+        .previewHtml[mobile-view] {
+          width: 360px;
+          max-width: 360px;
+          height: 100%;
+        }
+
         .mediaContainer {
           position: relative;
           height: 150px;
@@ -124,11 +136,6 @@ let YpAdminHtmlEditor = class YpAdminHtmlEditor extends YpBaseElement {
         const generator = this.$$("#aiImageGenerator");
         generator.open();
     }
-    updated(changedProperties) {
-        if (changedProperties.has("media")) {
-            console.error("media changed", this.media);
-        }
-    }
     firstUpdated(_changedProperties) { }
     renderAiImageGenerator() {
         return html `<yp-generate-ai-image
@@ -150,54 +157,70 @@ let YpAdminHtmlEditor = class YpAdminHtmlEditor extends YpBaseElement {
         var image = JSON.parse(event.detail.xhr.response);
         const uploadedLogoImageId = image.id;
         const url = JSON.parse(image.formats)[0];
-        this.media.push({
-            id: uploadedLogoImageId,
-            type: "image",
-            url: url,
-        });
-        this.imageIdsUploadedByUser.push(uploadedLogoImageId);
-        this.requestUpdate();
-        this.contentChanged();
+        if (url) {
+            this.media.push({
+                id: uploadedLogoImageId,
+                type: "image",
+                url: url,
+            });
+            this.imageIdsUploadedByUser.push(uploadedLogoImageId);
+            this.requestUpdate();
+            this.contentChanged();
+        }
+        else {
+            console.error("No image url in response");
+        }
     }
     _gotAiImage(event) {
         const url = event.detail.imageUrl;
-        const uploadedLogoImageId = event.detail.imageId;
-        this.media.push({
-            id: uploadedLogoImageId,
-            type: "image",
-            url: url,
-        });
-        this.imageIdsUploadedByUser.push(uploadedLogoImageId);
-        this.requestUpdate();
-        this.contentChanged();
+        if (url) {
+            const uploadedLogoImageId = event.detail.imageId;
+            this.media.push({
+                id: uploadedLogoImageId,
+                type: "image",
+                url: url,
+            });
+            this.imageIdsUploadedByUser.push(uploadedLogoImageId);
+            this.requestUpdate();
+            this.contentChanged();
+        }
+        else {
+            console.error("No image url in response");
+        }
     }
     _removeHtmlTag(url, type) {
-        if (type === 'image') {
-            const imgRegex = new RegExp(`<img[^>]+src=["']${url}["'][^>]*>`, 'gi');
-            this.content = this.content.replace(imgRegex, '');
+        if (type === "image") {
+            const imgRegex = new RegExp(`<img[^>]+src=["']${url}["'][^>]*>`, "gi");
+            this.content = this.content.replace(imgRegex, "");
         }
-        else if (type === 'video') {
-            const videoRegex = new RegExp(`<video[^>]*>\\s*<source[^>]+src=["']${url}["'][^>]*>\\s*</video>`, 'gi');
-            this.content = this.content.replace(videoRegex, '');
+        else if (type === "video") {
+            const videoRegex = new RegExp(`<video[^>]*>\\s*<source[^>]+src=["']${url}["'][^>]*>\\s*</video>`, "gi");
+            this.content = this.content.replace(videoRegex, "");
         }
         this.contentChanged();
     }
     _videoUploaded(event) {
         const uploadedVideoId = event.detail.videoId;
         const url = event.detail.detail.videoUrl;
-        this.media.push({
-            id: uploadedVideoId,
-            type: "video",
-            url: url,
-        });
-        this.videoIdsUploadedByUser.push(uploadedVideoId);
-        this.requestUpdate();
-        this.contentChanged();
+        if (url) {
+            this.media.push({
+                id: uploadedVideoId,
+                type: "video",
+                url: url,
+            });
+            this.videoIdsUploadedByUser.push(uploadedVideoId);
+            this.requestUpdate();
+            this.contentChanged();
+        }
+        else {
+            console.error("No video url in response");
+            debugger;
+        }
     }
     async reallyDeleteCurrentLogoImage() {
         if (this.mediaIdToDelete) {
             await window.adminServerApi.deleteImage(this.mediaIdToDelete, "group", this.collectionId, this.imageIdsUploadedByUser.includes(this.mediaIdToDelete), true);
-            const mediaItem = this.media.find(media => media.id === this.mediaIdToDelete);
+            const mediaItem = this.media.find((media) => media.id === this.mediaIdToDelete);
             this._removeHtmlTag(mediaItem.url, mediaItem.type);
             this.media = this.media.filter((media) => media.id !== this.mediaIdToDelete);
             this.imageIdsUploadedByUser = this.imageIdsUploadedByUser.filter((id) => id !== this.mediaIdToDelete);
@@ -211,7 +234,7 @@ let YpAdminHtmlEditor = class YpAdminHtmlEditor extends YpBaseElement {
     async reallyDeleteCurrentVideo() {
         if (this.mediaIdToDelete) {
             await window.adminServerApi.deleteVideo(this.mediaIdToDelete, "group", this.collectionId, this.videoIdsUploadedByUser.includes(this.mediaIdToDelete), true);
-            const mediaItem = this.media.find(media => media.id === this.mediaIdToDelete);
+            const mediaItem = this.media.find((media) => media.id === this.mediaIdToDelete);
             this._removeHtmlTag(mediaItem.url, mediaItem.type);
             this.media = this.media.filter((media) => media.id !== this.mediaIdToDelete);
             this.videoIdsUploadedByUser = this.videoIdsUploadedByUser.filter((id) => id !== this.mediaIdToDelete);
@@ -248,49 +271,53 @@ let YpAdminHtmlEditor = class YpAdminHtmlEditor extends YpBaseElement {
 
       <div class="layout horizontal wrap">
         ${this.media.map((media) => html `
-            <div class="mediaContainer">
-              ${media.type === "image"
+            ${media.url
             ? html `
-                    <img
-                      class="mediaImage"
-                      src="${media.url}"
-                      @load="${() => this._setMediaLoaded(media.id, true)}"
-                      @error="${() => this._setMediaLoaded(media.id, false)}"
-                    />
-                  `
-            : media.type === "video"
+                  <div class="mediaContainer">
+                    ${media.type === "image"
                 ? html `
-                    <video
-                      class="mediaVideo"
-                      controls
-                      @loadedmetadata="${() => this._setMediaLoaded(media.id, true)}"
-                      @error="${() => this._setMediaLoaded(media.id, false)}"
+                          <img
+                            class="mediaImage"
+                            src="${media.url}"
+                            @load="${() => this._setMediaLoaded(media.id, true)}"
+                            @error="${() => this._setMediaLoaded(media.id, false)}"
+                          />
+                        `
+                : media.type === "video"
+                    ? html `
+                          <video
+                            class="mediaVideo"
+                            controls
+                            @loadedmetadata="${() => this._setMediaLoaded(media.id, true)}"
+                            @error="${() => this._setMediaLoaded(media.id, false)}"
+                          >
+                            <source src="${media.url}" type="video/mp4" />
+                          </video>
+                        `
+                    : nothing}
+                    <div
+                      style="display: ${this.mediaLoaded[media.id]
+                ? "flex"
+                : "none"};"
                     >
-                      <source src="${media.url}" type="video/mp4" />
-                    </video>
-                  `
-                : nothing}
-              <div
-                style="display: ${this.mediaLoaded[media.id]
-            ? "flex"
-            : "none"};"
-              >
-                <md-filled-tonal-icon-button
-                  class="deleteMediaButton"
-                  @click="${() => this._removeMedia(media)}"
-                  title="${this.t("deleteMedia")}"
-                >
-                  <md-icon>delete</md-icon>
-                </md-filled-tonal-icon-button>
-                <md-filled-icon-button
-                  class="insertMediaButton"
-                  @click="${() => this._insertMediaIntoHtml(media)}"
-                  title="${this.t("insertMedia")}"
-                >
-                  <md-icon>arrow_upward</md-icon>
-                </md-filled-icon-button>
-              </div>
-            </div>
+                      <md-filled-tonal-icon-button
+                        class="deleteMediaButton"
+                        @click="${() => this._removeMedia(media)}"
+                        title="${this.t("deleteMedia")}"
+                      >
+                        <md-icon>delete</md-icon>
+                      </md-filled-tonal-icon-button>
+                      <md-filled-icon-button
+                        class="insertMediaButton"
+                        @click="${() => this._insertMediaIntoHtml(media)}"
+                        title="${this.t("insertMedia")}"
+                      >
+                        <md-icon>arrow_upward</md-icon>
+                      </md-filled-icon-button>
+                    </div>
+                  </div>
+                `
+            : nothing}
           `)}
       </div>
     `;
@@ -402,7 +429,32 @@ let YpAdminHtmlEditor = class YpAdminHtmlEditor extends YpBaseElement {
           `
             : nothing}
       ${this.selectedTab === 2
-            ? html `<div class="previewHtml">${unsafeHTML(this.content)}</div>`
+            ? html ` <div
+              hidden
+              class="layout vertical center-center previewTypeRadios"
+            >
+              <label>
+                <md-radio
+                  name="browserPreviewType"
+                  @click="${() => (this.browserPreviewType = "desktop")}"
+                  ?checked="${this.browserPreviewType === "desktop"}"
+                ></md-radio>
+                ${this.t("sendInviteByEmail")}</label
+              ><label>
+                <md-radio
+                  name="browserPreviewType"
+                  @click="${() => (this.browserPreviewType = "mobile")}"
+                  ?checked="${this.browserPreviewType === "mobile"}"
+                ></md-radio
+                >${this.t("addUserDirectlyIfExist")}</label
+              >
+            </div>
+            <div
+              class="previewHtml"
+              ?mobile-view=${this.browserPreviewType === "mobile"}
+            >
+              ${unsafeHTML(this.content)}
+            </div>`
             : nothing}
 
       <div class="layout horizontal center-center">
@@ -459,6 +511,9 @@ __decorate([
 __decorate([
     property({ type: Boolean })
 ], YpAdminHtmlEditor.prototype, "hasVideoUpload", void 0);
+__decorate([
+    property({ type: String })
+], YpAdminHtmlEditor.prototype, "browserPreviewType", void 0);
 __decorate([
     property({ type: Array })
 ], YpAdminHtmlEditor.prototype, "imageIdsUploadedByUser", void 0);

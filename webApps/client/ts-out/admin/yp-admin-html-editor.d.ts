@@ -4,6 +4,7 @@ import "../yp-survey/yp-simple-html-editor.js";
 import "@material/web/tabs/primary-tab.js";
 import "@material/web/tabs/tabs.js";
 import "@material/web/icon/icon.js";
+import "@material/web/radio/radio.js";
 import "@material/web/textfield/filled-text-field.js";
 import "../common/yp-generate-ai-image.js";
 export declare class YpAdminHtmlEditor extends YpBaseElement {
@@ -19,6 +20,7 @@ export declare class YpAdminHtmlEditor extends YpBaseElement {
     mediaIdToDelete: number | undefined;
     collectionId: number | string | undefined;
     hasVideoUpload: boolean;
+    browserPreviewType: "desktop" | "mobile";
     imageIdsUploadedByUser: number[];
     videoIdsUploadedByUser: number[];
     private debounceTimer?;
@@ -31,7 +33,6 @@ export declare class YpAdminHtmlEditor extends YpBaseElement {
     disconnectedCallback(): void;
     static get styles(): any[];
     _generateLogo(event: CustomEvent): void;
-    updated(changedProperties: Map<string | number | symbol, unknown>): void;
     firstUpdated(_changedProperties: PropertyValues): void;
     renderAiImageGenerator(): import("lit-html").TemplateResult<1>;
     _setMediaLoaded(id: number, loaded: boolean): void;

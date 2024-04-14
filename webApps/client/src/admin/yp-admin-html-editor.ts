@@ -9,6 +9,7 @@ import "@material/web/tabs/primary-tab.js";
 import "@material/web/tabs/tabs.js";
 import { MdTabs } from "@material/web/tabs/tabs.js";
 import "@material/web/icon/icon.js";
+import "@material/web/radio/radio.js";
 import "@material/web/textfield/filled-text-field.js";
 import { YpGenerateAiImage } from "../common/yp-generate-ai-image.js";
 
@@ -48,6 +49,9 @@ export class YpAdminHtmlEditor extends YpBaseElement {
   @property({ type: Boolean })
   hasVideoUpload = false;
 
+  @property({ type: String })
+  browserPreviewType: "desktop" | "mobile" = "desktop";
+
   @property({ type: Array })
   imageIdsUploadedByUser: number[] = [];
 
@@ -61,10 +65,12 @@ export class YpAdminHtmlEditor extends YpBaseElement {
   }
 
   getConfiguration() {
-    console.log(JSON.stringify({
-      content: this.content,
-      media: this.media,
-    }));
+    console.log(
+      JSON.stringify({
+        content: this.content,
+        media: this.media,
+      })
+    );
     return {
       content: this.content,
       media: this.media,
@@ -93,6 +99,10 @@ export class YpAdminHtmlEditor extends YpBaseElement {
         md-tabs {
           width: 100%;
           margin-bottom: 16px;
+        }
+
+        .previewTypeRadios {
+          margin: 16px;
         }
 
         .deleteMediaButton {
@@ -130,6 +140,12 @@ export class YpAdminHtmlEditor extends YpBaseElement {
           margin-top: 16px;
         }
 
+        .previewHtml[mobile-view] {
+          width: 360px;
+          max-width: 360px;
+          height: 100%;
+        }
+
         .mediaContainer {
           position: relative;
           height: 150px;
@@ -159,12 +175,6 @@ export class YpAdminHtmlEditor extends YpBaseElement {
     generator.open();
   }
 
-  override updated(changedProperties: Map<string | number | symbol, unknown>): void {
-    if (changedProperties.has("media")) {
-      console.error("media changed", this.media);
-    }
-  }
-
   override firstUpdated(_changedProperties: PropertyValues) {}
 
   renderAiImageGenerator() {
@@ -189,36 +199,47 @@ export class YpAdminHtmlEditor extends YpBaseElement {
     var image = JSON.parse(event.detail.xhr.response);
     const uploadedLogoImageId = image.id;
     const url = JSON.parse(image.formats)[0];
-    this.media.push({
-      id: uploadedLogoImageId,
-      type: "image",
-      url: url,
-    } as YpSimpleGroupMediaData);
-    this.imageIdsUploadedByUser.push(uploadedLogoImageId);
-    this.requestUpdate();
-    this.contentChanged();
+    if (url) {
+      this.media.push({
+        id: uploadedLogoImageId,
+        type: "image",
+        url: url,
+      } as YpSimpleGroupMediaData);
+      this.imageIdsUploadedByUser.push(uploadedLogoImageId);
+      this.requestUpdate();
+      this.contentChanged();
+    } else {
+      console.error("No image url in response");
+    }
   }
 
   _gotAiImage(event: CustomEvent) {
     const url = event.detail.imageUrl;
-    const uploadedLogoImageId = event.detail.imageId;
-    this.media.push({
-      id: uploadedLogoImageId,
-      type: "image",
-      url: url,
-    } as YpSimpleGroupMediaData);
-    this.imageIdsUploadedByUser.push(uploadedLogoImageId);
-    this.requestUpdate();
-    this.contentChanged();
+    if (url) {
+      const uploadedLogoImageId = event.detail.imageId;
+      this.media.push({
+        id: uploadedLogoImageId,
+        type: "image",
+        url: url,
+      } as YpSimpleGroupMediaData);
+      this.imageIdsUploadedByUser.push(uploadedLogoImageId);
+      this.requestUpdate();
+      this.contentChanged();
+    } else {
+      console.error("No image url in response");
+    }
   }
 
   _removeHtmlTag(url: string, type: string) {
-    if (type === 'image') {
-      const imgRegex = new RegExp(`<img[^>]+src=["']${url}["'][^>]*>`, 'gi');
-      this.content = this.content.replace(imgRegex, '');
-    } else if (type === 'video') {
-      const videoRegex = new RegExp(`<video[^>]*>\\s*<source[^>]+src=["']${url}["'][^>]*>\\s*</video>`, 'gi');
-      this.content = this.content.replace(videoRegex, '');
+    if (type === "image") {
+      const imgRegex = new RegExp(`<img[^>]+src=["']${url}["'][^>]*>`, "gi");
+      this.content = this.content.replace(imgRegex, "");
+    } else if (type === "video") {
+      const videoRegex = new RegExp(
+        `<video[^>]*>\\s*<source[^>]+src=["']${url}["'][^>]*>\\s*</video>`,
+        "gi"
+      );
+      this.content = this.content.replace(videoRegex, "");
     }
     this.contentChanged();
   }
@@ -226,14 +247,19 @@ export class YpAdminHtmlEditor extends YpBaseElement {
   _videoUploaded(event: CustomEvent) {
     const uploadedVideoId = event.detail.videoId;
     const url = event.detail.detail.videoUrl;
-    this.media.push({
-      id: uploadedVideoId,
-      type: "video",
-      url: url,
-    } as YpSimpleGroupMediaData);
-    this.videoIdsUploadedByUser.push(uploadedVideoId);
-    this.requestUpdate();
-    this.contentChanged();
+    if (url) {
+      this.media.push({
+        id: uploadedVideoId,
+        type: "video",
+        url: url,
+      } as YpSimpleGroupMediaData);
+      this.videoIdsUploadedByUser.push(uploadedVideoId);
+      this.requestUpdate();
+      this.contentChanged();
+    } else {
+      console.error("No video url in response");
+      debugger;
+    }
   }
 
   async reallyDeleteCurrentLogoImage() {
@@ -245,9 +271,13 @@ export class YpAdminHtmlEditor extends YpBaseElement {
         this.imageIdsUploadedByUser.includes(this.mediaIdToDelete),
         true
       );
-      const mediaItem = this.media.find(media => media.id === this.mediaIdToDelete);
+      const mediaItem = this.media.find(
+        (media) => media.id === this.mediaIdToDelete
+      );
       this._removeHtmlTag(mediaItem!.url, mediaItem!.type);
-      this.media = this.media.filter((media) => media.id !== this.mediaIdToDelete);
+      this.media = this.media.filter(
+        (media) => media.id !== this.mediaIdToDelete
+      );
       this.imageIdsUploadedByUser = this.imageIdsUploadedByUser.filter(
         (id) => id !== this.mediaIdToDelete
       );
@@ -267,14 +297,18 @@ export class YpAdminHtmlEditor extends YpBaseElement {
         this.videoIdsUploadedByUser.includes(this.mediaIdToDelete),
         true
       );
-      const mediaItem = this.media.find(media => media.id === this.mediaIdToDelete);
+      const mediaItem = this.media.find(
+        (media) => media.id === this.mediaIdToDelete
+      );
       this._removeHtmlTag(mediaItem!.url, mediaItem!.type);
-      this.media = this.media.filter((media) => media.id !== this.mediaIdToDelete);
+      this.media = this.media.filter(
+        (media) => media.id !== this.mediaIdToDelete
+      );
       this.videoIdsUploadedByUser = this.videoIdsUploadedByUser.filter(
         (id) => id !== this.mediaIdToDelete
       );
       this.mediaIdToDelete = undefined;
-      this.contentChanged()
+      this.contentChanged();
     } else {
       console.warn("No video to delete");
     }
@@ -321,50 +355,57 @@ export class YpAdminHtmlEditor extends YpBaseElement {
       <div class="layout horizontal wrap">
         ${this.media.map(
           (media) => html`
-            <div class="mediaContainer">
-              ${media.type === "image"
-                ? html`
-                    <img
-                      class="mediaImage"
-                      src="${media.url}"
-                      @load="${() => this._setMediaLoaded(media.id, true)}"
-                      @error="${() => this._setMediaLoaded(media.id, false)}"
-                    />
-                  `
-                : media.type === "video"
-                ? html`
-                    <video
-                      class="mediaVideo"
-                      controls
-                      @loadedmetadata="${() =>
-                        this._setMediaLoaded(media.id, true)}"
-                      @error="${() => this._setMediaLoaded(media.id, false)}"
+            ${media.url
+              ? html`
+                  <div class="mediaContainer">
+                    ${media.type === "image"
+                      ? html`
+                          <img
+                            class="mediaImage"
+                            src="${media.url}"
+                            @load="${() =>
+                              this._setMediaLoaded(media.id, true)}"
+                            @error="${() =>
+                              this._setMediaLoaded(media.id, false)}"
+                          />
+                        `
+                      : media.type === "video"
+                      ? html`
+                          <video
+                            class="mediaVideo"
+                            controls
+                            @loadedmetadata="${() =>
+                              this._setMediaLoaded(media.id, true)}"
+                            @error="${() =>
+                              this._setMediaLoaded(media.id, false)}"
+                          >
+                            <source src="${media.url}" type="video/mp4" />
+                          </video>
+                        `
+                      : nothing}
+                    <div
+                      style="display: ${this.mediaLoaded[media.id]
+                        ? "flex"
+                        : "none"};"
                     >
-                      <source src="${media.url}" type="video/mp4" />
-                    </video>
-                  `
-                : nothing}
-              <div
-                style="display: ${this.mediaLoaded[media.id]
-                  ? "flex"
-                  : "none"};"
-              >
-                <md-filled-tonal-icon-button
-                  class="deleteMediaButton"
-                  @click="${() => this._removeMedia(media)}"
-                  title="${this.t("deleteMedia")}"
-                >
-                  <md-icon>delete</md-icon>
-                </md-filled-tonal-icon-button>
-                <md-filled-icon-button
-                  class="insertMediaButton"
-                  @click="${() => this._insertMediaIntoHtml(media)}"
-                  title="${this.t("insertMedia")}"
-                >
-                  <md-icon>arrow_upward</md-icon>
-                </md-filled-icon-button>
-              </div>
-            </div>
+                      <md-filled-tonal-icon-button
+                        class="deleteMediaButton"
+                        @click="${() => this._removeMedia(media)}"
+                        title="${this.t("deleteMedia")}"
+                      >
+                        <md-icon>delete</md-icon>
+                      </md-filled-tonal-icon-button>
+                      <md-filled-icon-button
+                        class="insertMediaButton"
+                        @click="${() => this._insertMediaIntoHtml(media)}"
+                        title="${this.t("insertMedia")}"
+                      >
+                        <md-icon>arrow_upward</md-icon>
+                      </md-filled-icon-button>
+                    </div>
+                  </div>
+                `
+              : nothing}
           `
         )}
       </div>
@@ -480,7 +521,32 @@ export class YpAdminHtmlEditor extends YpBaseElement {
           `
         : nothing}
       ${this.selectedTab === 2
-        ? html`<div class="previewHtml">${unsafeHTML(this.content)}</div>`
+        ? html` <div
+              hidden
+              class="layout vertical center-center previewTypeRadios"
+            >
+              <label>
+                <md-radio
+                  name="browserPreviewType"
+                  @click="${() => (this.browserPreviewType = "desktop")}"
+                  ?checked="${this.browserPreviewType === "desktop"}"
+                ></md-radio>
+                ${this.t("sendInviteByEmail")}</label
+              ><label>
+                <md-radio
+                  name="browserPreviewType"
+                  @click="${() => (this.browserPreviewType = "mobile")}"
+                  ?checked="${this.browserPreviewType === "mobile"}"
+                ></md-radio
+                >${this.t("addUserDirectlyIfExist")}</label
+              >
+            </div>
+            <div
+              class="previewHtml"
+              ?mobile-view=${this.browserPreviewType === "mobile"}
+            >
+              ${unsafeHTML(this.content)}
+            </div>`
         : nothing}
 
       <div class="layout horizontal center-center">
