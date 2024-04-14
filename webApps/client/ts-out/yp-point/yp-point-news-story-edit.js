@@ -47,6 +47,7 @@ let YpPointNewsStoryEdit = class YpPointNewsStoryEdit extends YpBaseElementWithL
         .userImage {
           padding-bottom: 16px;
           padding-right: 16px;
+          margin-left: 16px;
         }
 
         .userImage[rtl] {
@@ -72,6 +73,8 @@ let YpPointNewsStoryEdit = class YpPointNewsStoryEdit extends YpBaseElementWithL
           md-outlined-text-field {
             width: 270px;
           }
+
+
 
           .embedData {
             max-width: 270px;

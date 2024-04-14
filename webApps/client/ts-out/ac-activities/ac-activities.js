@@ -216,7 +216,7 @@ let AcActivities = class AcActivities extends YpBaseElementWithLogin {
                 <div
                   .loggedInUser="${this.isLoggedIn}"
                   ?hidden="${this.closeNewsfeedSubmissions || !this.activities}"
-                  class="layout horizontal addNewsBox"
+                  class="addNewsBox"
                 >
                   <yp-point-news-story-edit
                     .label="${this.label}"

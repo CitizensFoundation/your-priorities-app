@@ -77,6 +77,7 @@ export class YpPointNewsStoryEdit extends YpBaseElementWithLogin {
         .userImage {
           padding-bottom: 16px;
           padding-right: 16px;
+          margin-left: 16px;
         }
 
         .userImage[rtl] {
@@ -102,6 +103,8 @@ export class YpPointNewsStoryEdit extends YpBaseElementWithLogin {
           md-outlined-text-field {
             width: 270px;
           }
+
+
 
           .embedData {
             max-width: 270px;
