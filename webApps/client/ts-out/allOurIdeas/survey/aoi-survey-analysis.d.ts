@@ -10,7 +10,7 @@ export declare class AoiSurveyAnalysis extends YpBaseElement {
     earl: AoiEarlData;
     connectedCallback(): Promise<void>;
     disconnectedCallback(): void;
-    renderStreamingAnalysis(): typeof nothing | import("lit-html").TemplateResult<1>;
+    renderStreamingAnalysis(): import("lit-html").TemplateResult<1> | typeof nothing;
     updated(changedProperties: Map<string | number | symbol, unknown>): void;
     static get styles(): any[];
     renderAnalysis(): import("lit-html").TemplateResult<1>;

@@ -1,4 +1,4 @@
-import { PropertyValueMap } from "lit";
+import { PropertyValueMap, nothing } from "lit";
 import { YpBaseElement } from "../common/yp-base-element.js";
 import "@material/web/iconbutton/icon-button.js";
 import "@material/web/iconbutton/icon-button.js";
@@ -19,7 +19,7 @@ export declare class YpSimpleHtmlEditor extends YpBaseElement {
     closeImageDialog(): void;
     applyImageSize(): void;
     selectImage(image: HTMLImageElement): void;
-    renderImageEditDialog(): import("lit-html").TemplateResult<1>;
+    renderImageEditDialog(): import("lit-html").TemplateResult<1> | typeof nothing;
     render(): import("lit-html").TemplateResult<1>;
     deselectImage(): void;
     _setFocus(): void;

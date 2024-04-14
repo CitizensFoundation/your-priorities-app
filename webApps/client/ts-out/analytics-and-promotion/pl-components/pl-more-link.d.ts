@@ -6,6 +6,6 @@ export declare class PlausibleMoreLink extends PlausibleBaseElement {
     site: PlausibleSiteData;
     list: PlausibleListItemData[];
     static get styles(): import("lit").CSSResult[];
-    render(): typeof nothing | import("lit-html").TemplateResult<1>;
+    render(): import("lit-html").TemplateResult<1> | typeof nothing;
 }
 //# sourceMappingURL=pl-more-link.d.ts.map

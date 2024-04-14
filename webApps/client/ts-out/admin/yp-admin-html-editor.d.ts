@@ -37,6 +37,7 @@ export declare class YpAdminHtmlEditor extends YpBaseElement {
     _setMediaLoaded(id: number, loaded: boolean): void;
     _logoImageUploaded(event: CustomEvent): void;
     _gotAiImage(event: CustomEvent): void;
+    _removeHtmlTag(url: string, type: string): void;
     _videoUploaded(event: CustomEvent): void;
     reallyDeleteCurrentLogoImage(): Promise<void>;
     reallyDeleteCurrentVideo(): Promise<void>;

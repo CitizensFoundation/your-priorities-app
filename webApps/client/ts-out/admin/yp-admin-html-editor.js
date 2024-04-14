@@ -102,7 +102,9 @@ let YpAdminHtmlEditor = class YpAdminHtmlEditor extends YpBaseElement {
           height: 150px;
           max-height: 150px;
           margin: 16px;
+          background-color: var(--md-sys-color-surface-variant);
         }
+
         .mediaImage,
         .mediaVideo {
           max-width: 100%;
@@ -169,6 +171,17 @@ let YpAdminHtmlEditor = class YpAdminHtmlEditor extends YpBaseElement {
         this.requestUpdate();
         this.contentChanged();
     }
+    _removeHtmlTag(url, type) {
+        if (type === 'image') {
+            const imgRegex = new RegExp(`<img[^>]+src=["']${url}["'][^>]*>`, 'gi');
+            this.content = this.content.replace(imgRegex, '');
+        }
+        else if (type === 'video') {
+            const videoRegex = new RegExp(`<video[^>]*>\\s*<source[^>]+src=["']${url}["'][^>]*>\\s*</video>`, 'gi');
+            this.content = this.content.replace(videoRegex, '');
+        }
+        this.contentChanged();
+    }
     _videoUploaded(event) {
         const uploadedVideoId = event.detail.videoId;
         const url = event.detail.detail.videoUrl;
@@ -184,6 +197,8 @@ let YpAdminHtmlEditor = class YpAdminHtmlEditor extends YpBaseElement {
     async reallyDeleteCurrentLogoImage() {
         if (this.mediaIdToDelete) {
             await window.adminServerApi.deleteImage(this.mediaIdToDelete, "group", this.collectionId, this.imageIdsUploadedByUser.includes(this.mediaIdToDelete), true);
+            const mediaItem = this.media.find(media => media.id === this.mediaIdToDelete);
+            this._removeHtmlTag(mediaItem.url, mediaItem.type);
             this.media = this.media.filter((media) => media.id !== this.mediaIdToDelete);
             this.imageIdsUploadedByUser = this.imageIdsUploadedByUser.filter((id) => id !== this.mediaIdToDelete);
             this.mediaIdToDelete = undefined;
@@ -196,6 +211,8 @@ let YpAdminHtmlEditor = class YpAdminHtmlEditor extends YpBaseElement {
     async reallyDeleteCurrentVideo() {
         if (this.mediaIdToDelete) {
             await window.adminServerApi.deleteVideo(this.mediaIdToDelete, "group", this.collectionId, this.videoIdsUploadedByUser.includes(this.mediaIdToDelete), true);
+            const mediaItem = this.media.find(media => media.id === this.mediaIdToDelete);
+            this._removeHtmlTag(mediaItem.url, mediaItem.type);
             this.media = this.media.filter((media) => media.id !== this.mediaIdToDelete);
             this.videoIdsUploadedByUser = this.videoIdsUploadedByUser.filter((id) => id !== this.mediaIdToDelete);
             this.mediaIdToDelete = undefined;
@@ -280,12 +297,12 @@ let YpAdminHtmlEditor = class YpAdminHtmlEditor extends YpBaseElement {
     }
     _insertMediaIntoHtml(media) {
         if (media.type === "image") {
-            const img = `<img src="${media.url}" alt="" />\n`;
+            const img = `<img src="${media.url}" alt="" style="width:300px;"/>\n`;
             this.content = img + this.content;
             this.contentChanged();
         }
         else if (media.type === "video") {
-            const video = `<video controls><source src="${media.url}" type="video/mp4" /></video>\n`;
+            const video = `<video controls style="width:300px;"><source src="${media.url}" type="video/mp4"/></video>\n`;
             this.content = video + this.content;
             this.contentChanged();
         }

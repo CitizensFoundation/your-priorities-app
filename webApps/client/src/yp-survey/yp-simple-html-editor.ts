@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-ignore */
-import { html, css, PropertyValueMap } from "lit";
+import { html, css, PropertyValueMap, nothing } from "lit";
 import { customElement, property } from "lit/decorators.js";
 
 import { YpBaseElement } from "../common/yp-base-element.js";
@@ -36,6 +36,7 @@ export class YpSimpleHtmlEditor extends YpBaseElement {
   @property({ type: Boolean })
   showErrorLine = false;
 
+  @property({ type: Object })
   selectedImage: HTMLImageElement | undefined;
 
   static override get styles() {
@@ -143,19 +144,11 @@ export class YpSimpleHtmlEditor extends YpBaseElement {
   applyImageSize() {
     const widthInput = (this.$$("#widthInput") as MdFilledTextField).value;
     const heightInput = (this.$$("#heightInput") as MdFilledTextField).value;
-    const marginTop = (this.$$("#marginTopInput") as MdFilledTextField).value;
-    const marginRight = (this.$$("#marginRightInput") as MdFilledTextField)
-      .value;
-    const marginBottom = (this.$$("#marginBottomInput") as MdFilledTextField)
-      .value;
-    const marginLeft = (this.$$("#marginLeftInput") as MdFilledTextField).value;
+    const margin = (this.$$("#marginInput") as MdFilledTextField).value;
     if (this.selectedImage) {
       this.selectedImage.style.width = widthInput;
       this.selectedImage.style.height = heightInput;
-      this.selectedImage.style.marginTop = marginTop;
-      this.selectedImage.style.marginRight = marginRight;
-      this.selectedImage.style.marginBottom = marginBottom;
-      this.selectedImage.style.marginLeft = marginLeft;
+      this.selectedImage.style.margin = margin;
     }
     const dialog = this.$$("#resizeDialog") as MdDialog;
     if (dialog) {
@@ -172,54 +165,46 @@ export class YpSimpleHtmlEditor extends YpBaseElement {
   }
 
   renderImageEditDialog() {
-    return html`<md-dialog
-      id="resizeDialog"
-      aria-label="${this.t("resizeImage")}"
-    >
-      <form class="layout vertical" slot="content">
-        <md-filled-text-field
-          id="widthInput"
-          label="${this.t("Width (e.g., 100px or 100%)")}"
-          @input="${this._onWidthInput}"
-        ></md-filled-text-field>
-        <md-filled-text-field
-          id="heightInput"
-          label="${this.t("Height (e.g., 100px or 100%)")}"
-          @input="${this._onHeightInput}"
-        ></md-filled-text-field>
-        <md-filled-text-field
-          id="marginTopInput"
-          label="${this.t("Margin Top (px)")}"
-          @input="${this._onMarginInput}"
-        ></md-filled-text-field>
-        <md-filled-text-field
-          id="marginRightInput"
-          label="${this.t("Margin Right (px)")}"
-          @input="${this._onMarginInput}"
-        ></md-filled-text-field>
-        <md-filled-text-field
-          id="marginBottomInput"
-          label="${this.t("Margin Bottom (px)")}"
-          @input="${this._onMarginInput}"
-        ></md-filled-text-field>
-        <md-filled-text-field
-          id="marginLeftInput"
-          label="${this.t("Margin Left (px)")}"
-          @input="${this._onMarginInput}"
-        ></md-filled-text-field>
-      </form>
-      <div slot="actions">
-        <md-outlined-button
-          dialogAction="apply"
-          @click="${this.applyImageSize}"
-        >
-          ${this.t("apply")}
-        </md-outlined-button>
-        <md-outlined-button slot="actions" @click="${this.closeImageDialog}">
-          ${this.t("Close")}
-        </md-outlined-button>
-      </div>
-    </md-dialog>`;
+    if (this.selectedImage) {
+      return html`<md-dialog
+        id="resizeDialog"
+        aria-label="${this.t("resizeImage")}"
+      >
+        <form class="layout vertical" slot="content">
+          <md-filled-text-field
+            id="widthInput"
+            label="${this.t("Width (e.g., 100px or 100%)")}"
+            .value="${this.selectedImage.style.width}"
+            @input="${this._onWidthInput}"
+          ></md-filled-text-field>
+          <md-filled-text-field
+            id="heightInput"
+            label="${this.t("Height (e.g., 100px or 100%)")}"
+            .value="${this.selectedImage.style.height}"
+            @input="${this._onHeightInput}"
+          ></md-filled-text-field>
+          <md-filled-text-field
+            id="marginInput"
+            .value="${this.selectedImage.style.margin}"
+            label="${this.t("Margin (px)")}"
+            @input="${this._onMarginInput}"
+          ></md-filled-text-field>
+        </form>
+        <div slot="actions">
+          <md-outlined-button slot="actions" @click="${this.closeImageDialog}">
+            ${this.t("Close")}
+          </md-outlined-button>
+          <md-outlined-button
+            dialogAction="apply"
+            @click="${this.applyImageSize}"
+          >
+            ${this.t("apply")}
+          </md-outlined-button>
+        </div>
+      </md-dialog>`;
+    } else {
+      return nothing;
+    }
   }
 
   override render() {
@@ -370,7 +355,9 @@ export class YpSimpleHtmlEditor extends YpBaseElement {
     super.connectedCallback();
   }
 
-  override update(changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
+  override update(
+    changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>
+  ): void {
     super.update(changedProperties);
     if (changedProperties.has("value")) {
       this.setRichValue(this.value);
