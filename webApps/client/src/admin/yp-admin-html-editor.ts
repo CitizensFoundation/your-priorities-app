@@ -400,7 +400,7 @@ export class YpAdminHtmlEditor extends YpBaseElement {
                         @click="${() => this._insertMediaIntoHtml(media)}"
                         title="${this.t("insertMedia")}"
                       >
-                        <md-icon>arrow_upward</md-icon>
+                        <md-icon>post_add</md-icon>
                       </md-filled-icon-button>
                     </div>
                   </div>

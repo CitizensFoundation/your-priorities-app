@@ -80,7 +80,7 @@ export class YpServerApi extends YpServerApiBase {
     }
     startGeneratingAiImage(collectionType, collectionId, imageType, prompt) {
         return this.fetchWrapper(this.baseUrlPath +
-            `/${YpServerApi.transformCollectionTypeToApi(collectionType)}/${collectionId}/start_generating_ai_image`, {
+            `/${YpServerApi.transformCollectionTypeToApi(collectionType)}/${collectionId}/start_generating/ai_image`, {
             method: 'POST',
             body: JSON.stringify({ prompt, imageType }),
         });

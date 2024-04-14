@@ -10,6 +10,7 @@ import "@material/web/tabs/tabs.js";
 import "@material/web/tabs/primary-tab.js";
 
 import "./yp-group-header.js";
+import '../ac-activities/ac-activities.js';
 
 import "../yp-post/yp-posts-list.js";
 import "../yp-post/yp-post-card-add.js";
@@ -411,6 +412,15 @@ export class YpGroup extends YpCollection {
                 ><md-icon>settings</md-icon>
               </md-icon-button>
             </div>
+            <ac-activities
+              id="newsfeed"
+              .label="${this.t("addCommentOrLink")}"
+              .notLoggedInLabel="${this.t("loginToAddCommentOrLink")}"
+              .addLabel="${this.t("addCommentOrLink")}"
+              .selectedGroupTab="${this.selectedGroupTab}"
+              .collectionType="${this.collectionType}"
+              .collectionId="${this.collectionId}"
+            ></ac-activities>
           </div>
         `;
       } else {

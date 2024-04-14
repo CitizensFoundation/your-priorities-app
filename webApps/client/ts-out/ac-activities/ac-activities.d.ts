@@ -1,4 +1,5 @@
 import '@material/web/button/outlined-button.js';
+import '../yp-point/yp-point-news-story-edit.js';
 import './ac-activity.js';
 import './ac-activity-recommended-posts.js';
 import '@lit-labs/virtualizer';
@@ -9,6 +10,9 @@ export declare class AcActivities extends YpBaseElementWithLogin {
     gotInitialData: boolean;
     activities: Array<AcActivityData> | undefined;
     domainId: number | undefined;
+    label: string | undefined;
+    addLabel: string | undefined;
+    notLoggedInLabel: string | undefined;
     collectionId: number;
     collectionType: string;
     communityId: number | undefined;
@@ -36,7 +40,7 @@ export declare class AcActivities extends YpBaseElementWithLogin {
     _openLogin(): void;
     _pointDeleted(event: CustomEvent): void;
     get wideListOffset(): "800" | "415";
-    get ironListResizeScrollThreshold(): 300 | 800;
+    get ironListResizeScrollThreshold(): 800 | 300;
     get ironListPaddingTop(): number;
     _removeActivityId(activityId: number): void;
     _deleteActivity(event: CustomEvent): void;

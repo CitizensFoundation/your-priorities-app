@@ -12,6 +12,7 @@ import { customElement, property, state } from "lit/decorators.js";
 import "@material/web/tabs/tabs.js";
 import "@material/web/tabs/primary-tab.js";
 import "./yp-group-header.js";
+import '../ac-activities/ac-activities.js';
 import "../yp-post/yp-posts-list.js";
 import "../yp-post/yp-post-card-add.js";
 import { cache } from "lit/directives/cache.js";
@@ -318,6 +319,15 @@ let YpGroup = class YpGroup extends YpCollection {
                 ><md-icon>settings</md-icon>
               </md-icon-button>
             </div>
+            <ac-activities
+              id="newsfeed"
+              .label="${this.t("addCommentOrLink")}"
+              .notLoggedInLabel="${this.t("loginToAddCommentOrLink")}"
+              .addLabel="${this.t("addCommentOrLink")}"
+              .selectedGroupTab="${this.selectedGroupTab}"
+              .collectionType="${this.collectionType}"
+              .collectionId="${this.collectionId}"
+            ></ac-activities>
           </div>
         `;
             }

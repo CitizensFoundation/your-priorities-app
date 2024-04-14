@@ -1,12 +1,14 @@
-import { nothing } from 'lit';
-import '@material/web/textfield/outlined-text-field.js';
-import '@material/web/button/text-button.js';
-import '../yp-user/yp-user-image.js';
-import './yp-point-news-story-embed.js';
-import { YpBaseElementWithLogin } from '../common/yp-base-element-with-login.js';
+import { nothing } from "lit";
+import "@material/web/textfield/outlined-text-field.js";
+import "@material/web/button/text-button.js";
+import "../yp-user/yp-user-image.js";
+import "./yp-point-news-story-embed.js";
+import { YpBaseElementWithLogin } from "../common/yp-base-element-with-login.js";
 export declare class YpPointNewsStoryEdit extends YpBaseElementWithLogin {
     loadingUrlPreview: boolean;
     loadingPostStory: boolean;
+    label: string | undefined;
+    addLabel: string | undefined;
     point: YpPointData | undefined;
     postId: number | undefined;
     postGroupId: number | undefined;

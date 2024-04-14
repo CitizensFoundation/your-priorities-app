@@ -148,7 +148,7 @@ export class YpServerApi extends YpServerApiBase {
       this.baseUrlPath +
         `/${YpServerApi.transformCollectionTypeToApi(
           collectionType
-        )}/${collectionId}/start_generating_ai_image`,{
+        )}/${collectionId}/start_generating/ai_image`,{
           method: 'POST',
           body: JSON.stringify({prompt, imageType}),
         }

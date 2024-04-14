@@ -7,7 +7,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 import { html, css, nothing } from 'lit';
 import { property, customElement, state } from 'lit/decorators.js';
 import '@material/web/button/outlined-button.js';
-//import '../yp-point/yp-point-news-story-edit.js';
+import '../yp-point/yp-point-news-story-edit.js';
 import './ac-activity.js';
 import './ac-activity-recommended-posts.js';
 import '@lit-labs/virtualizer';
@@ -227,6 +227,9 @@ let AcActivities = class AcActivities extends YpBaseElementWithLogin {
                   ?hidden="${this.closeNewsfeedSubmissions || !this.activities}"
                   class="layout horizontal addNewsBox shadow-elevation-2dp shadow-transition">
                   <yp-point-news-story-edit
+                    .label="${this.label}"
+                    .notLoggedInLabel="${this.notLoggedInLabel}"
+                    .addLabel="${this.addLabel}"
                     .domainId="${this.domainId}"
                     .communityId="${this.communityId}"
                     .groupId="${this.groupId}"
@@ -625,6 +628,15 @@ __decorate([
 __decorate([
     property({ type: Number })
 ], AcActivities.prototype, "domainId", void 0);
+__decorate([
+    property({ type: String })
+], AcActivities.prototype, "label", void 0);
+__decorate([
+    property({ type: String })
+], AcActivities.prototype, "addLabel", void 0);
+__decorate([
+    property({ type: String })
+], AcActivities.prototype, "notLoggedInLabel", void 0);
 __decorate([
     property({ type: Number })
 ], AcActivities.prototype, "collectionId", void 0);

@@ -84,7 +84,7 @@ export declare class YpPostPoints extends YpBaseElementWithLogin {
     _audioMobileUploaded(event: CustomEvent): void;
     get mobileScrollOffset(): number;
     get listResizeScrollThreshold(): number;
-    get listPaddingTop(): 500 | 600;
+    get listPaddingTop(): 600 | 500;
     connectedCallback(): void;
     disconnectedCallback(): void;
     _listResize(): void;
