@@ -200,6 +200,7 @@ module.exports = (sequelize, DataTypes) => {
         else {
             domainName = 'localhost';
         }
+        //TODO: Make sure not more than one domain is created when system is started up or two requests hit two instances simultaneously
         sequelize.models.Domain.findOrCreate({ where: { domain_name: domainName },
             defaults: { access: sequelize.models.Domain.ACCESS_PUBLIC,
                 default_locale: 'en',

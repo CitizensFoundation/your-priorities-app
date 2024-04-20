@@ -11,6 +11,7 @@ import "@material/web/textfield/outlined-text-field.js";
 
 import "../common/yp-generate-ai-image.js";
 import "../common/yp-image.js";
+import "../common/yp-form.js";
 
 import { YpEditBase } from "../common/yp-edit-base.js";
 import { YpNavHelpers } from "../common/YpNavHelpers.js";
@@ -29,16 +30,10 @@ import "@material/web/iconbutton/filled-icon-button.js";
 import { YpForm } from "../common/yp-form.js";
 import { TextField } from "@material/web/textfield/internal/text-field.js";
 import { Radio } from "@material/web/radio/internal/radio.js";
-import { MdTabs } from "@material/web/tabs/tabs.js";
+
 import { cache } from "lit/directives/cache.js";
 import { YpGenerateAiImage } from "../common/yp-generate-ai-image.js";
 
-export const EditPostTabs: Record<string, number> = {
-  Description: 0,
-  Point: 1,
-  Location: 2,
-  Media: 3,
-};
 
 @customElement("yp-post-edit")
 export class YpPostEdit extends YpEditBase {
@@ -84,6 +79,9 @@ export class YpPostEdit extends YpEditBase {
   @property({ type: Number })
   uploadedVideoId: number | undefined;
 
+  @property({ type: String })
+  subRoute!: string;
+
   @property({ type: Number })
   uploadedAudioId: number | undefined;
 
@@ -100,7 +98,7 @@ export class YpPostEdit extends YpEditBase {
   mapActive = false;
 
   @property({ type: Boolean })
-  hasOnlyOneTab = false;
+  hasOnlyOneSection = false;
 
   @property({ type: Number })
   postDescriptionLimit: number | undefined;
@@ -374,7 +372,6 @@ export class YpPostEdit extends YpEditBase {
         #generateButton {
           margin: 16px;
           margin-bottom: 24px;
-
         }
 
         .topNewPostContainer {
@@ -537,7 +534,7 @@ export class YpPostEdit extends YpEditBase {
           margin-bottom: 2px;
         }
 
-        .mediaTab {
+        .mediaSection {
           vertical-align: center;
         }
 
@@ -553,54 +550,6 @@ export class YpPostEdit extends YpEditBase {
     ];
   }
 
-  _setSelectedTab(event: CustomEvent) {
-    this.selected = (event.target as MdTabs).activeTabIndex;
-  }
-
-  renderTabs() {
-    return html`
-      <md-tabs
-        ?title-disabled="${this.group!.configuration
-          .hideNameInputAndReplaceWith}"
-        .activeTabIndex="${this.selected}"
-        @change="${this._setSelectedTab}"
-        id="paperTabs"
-        ?hidden="${this.hasOnlyOneTab}"
-      >
-        <md-secondary-tab
-          >${this.t("post.yourPost")}<md-icon
-            >lightbulb_outline</md-icon
-          ></md-secondary-tab
-        >
-
-        ${this.newPointShown
-          ? html`
-              <md-secondary-tab
-                >${this.t("post.yourPoint")}<md-icon
-                  >comment</md-icon
-                ></md-secondary-tab
-              >
-            `
-          : nothing}
-        ${!this.locationHidden
-          ? html`
-              <md-secondary-tab
-                >${this.t("post.location")}<md-icon
-                  >location_on</md-icon
-                ></md-secondary-tab
-              >
-            `
-          : nothing}
-        ${!this.mediaHidden
-          ? html`
-              <md-secondary-tab
-                >${this.t("media")}<md-icon>videocam</md-icon></md-secondary-tab
-              >
-            `
-          : nothing}
-      </md-tabs>
-    `;
-  }
 
   renderMoreContactInfo() {
     return html`
@@ -659,7 +608,7 @@ export class YpPostEdit extends YpEditBase {
     }
   }
 
-  renderDescriptionTab() {
+  renderDescriptionSection() {
     return this.group
       ? html`
           <section>
@@ -735,7 +684,7 @@ export class YpPostEdit extends YpEditBase {
                       ?required="${this.structuredQuestions == null}"
                       minlength="1"
                       name="description"
-                      .value="${this.post!.description}"
+                      .value="${this.post?.description || ""}"
                       .label="${this.t("post.description")}"
                       @change="${this._resizeScrollerIfNeeded}"
                       char-counter
@@ -823,7 +772,7 @@ export class YpPostEdit extends YpEditBase {
       : nothing;
   }
 
-  renderPointTab() {
+  renderPointSection() {
     return this.newPointShown
       ? html`
           <section class="subContainer">
@@ -832,7 +781,7 @@ export class YpPostEdit extends YpEditBase {
               ?required="${!this.group!.configuration.newPointOptional}"
               minlength="1"
               name="pointFor"
-              .value="${this.post!.pointFor || ""}"
+              .value="${this.post?.pointFor || ""}"
               .label="${this.t("point.for")}"
               charCounter
               type="textarea"
@@ -852,7 +801,7 @@ export class YpPostEdit extends YpEditBase {
       : nothing;
   }
 
-  renderLocationTab() {
+  renderLocationSection() {
     return !this.locationHidden
       ? html`
           <section>
@@ -959,7 +908,7 @@ export class YpPostEdit extends YpEditBase {
     `;
   }
 
-  renderMediaTab() {
+  renderMediaSection() {
     return html`
       <section>
         <div class="layout vertical center-center">
@@ -1067,52 +1016,10 @@ export class YpPostEdit extends YpEditBase {
   }
 
   get _pointPageHidden() {
-    return !this.newPointShown || this.selected !== EditPostTabs.Point;
+    return !this.newPointShown;
   }
 
-  get _mediaPageHidden() {
-    if (this.mediaHidden) {
-      return true;
-    }
-    if (
-      this.newPointShown &&
-      !this.locationHidden &&
-      this.selected !== EditPostTabs.Media
-    ) {
-      return true;
-    } else if (
-      this.newPointShown &&
-      this.locationHidden &&
-      this.selected !== EditPostTabs.Media - 1
-    ) {
-      return true;
-    } else if (
-      !this.newPointShown &&
-      this.locationHidden &&
-      this.selected !== EditPostTabs.Media - 2
-    ) {
-      return true;
-    } else if (
-      !this.newPointShown &&
-      !this.locationHidden &&
-      this.selected !== EditPostTabs.Media - 1
-    ) {
-      return true;
-    } else {
-      return false;
-    }
-  }
 
-  renderCurrentTabPage(): TemplateResult | undefined | {} {
-    return html`
-      <div ?hidden="${this.selected !== EditPostTabs.Description}">
-        ${this.renderDescriptionTab()}
-      </div>
-      <div ?hidden="${this._pointPageHidden}">${this.renderPointTab()}</div>
-      <div ?hidden="${false}">${this.renderLocationTab()}</div>
-      <div ?hidden="${this._mediaPageHidden}">${this.renderMediaTab()}</div>
-    `;
-  }
 
   renderHiddenInputs() {
     return html`
@@ -1157,111 +1064,108 @@ export class YpPostEdit extends YpEditBase {
   }
 
   override render() {
-    return html`
-      <yp-edit-dialog
-        name="postEdit"
-        doubleWidth
-        .customValidationFunction="${this.customValidation.bind(this)}"
-        id="editDialog"
-        icon="lightbulb_outline"
-        .action="${this.action}"
-        .useNextTabAction="${this.newPost}"
-        @next-tab-action="${this._nextTab}"
-        .method="${this.method}"
-        .heading="${this.editHeaderText ? this.editHeaderText : ""}"
-        .saveText="${this.saveText}"
-        class="container"
-        customSubmit
-        .nextActionText="${this.t("next")}"
-        .snackbarText="${this.snackbarText}"
-        .params="${this.params}"
-      >
-        ${this.group && this.post
-          ? html`
-              <div
-                class="layout vertical wrap topNewPostContainer"
-                ?no-title="${this.group.configuration
-                  .hideNameInputAndReplaceWith}"
-              >
-                ${this.renderTabs()} ${cache(this.renderCurrentTabPage())}
+    if ((this.post || this.new) && this.group) {
+      return html`
+        <yp-form id="form" method="POST" .params="${this.params}">
+          <form
+            name="ypForm"
+            .method="${this.method}"
+            .action="${this.action ? this.action : ""}"
+          >
+            <div
+              class="layout vertical wrap topNewPostContainer"
+              ?no-title="${this.group.configuration
+                .hideNameInputAndReplaceWith}"
+            >
+              <div>
+                ${this.renderDescriptionSection()}
               </div>
-              ${this.renderHiddenInputs()}
-            `
-          : nothing}
-      </yp-edit-dialog>
+              <div>${this.renderPointSection()}</div>
+              <div>${this.renderLocationSection()}</div>
+              <div ?hidden="${this.mediaHidden}">
+                ${this.renderMediaSection()}
+              </div>
+            </div>
+            ${this.renderHiddenInputs()}
+            ${this.group &&
+            this.group.configuration.alternativeTextForNewIdeaButtonHeader
+              ? html`
+                  <yp-magic-text
+                    id="alternativeTextForNewIdeaButtonHeaderId"
+                    hidden
+                    .contentId="${this.group.id}"
+                    textOnly
+                    .content="${this.group.configuration
+                      .alternativeTextForNewIdeaButtonHeader}"
+                    .contentLanguage="${this.group.language}"
+                    @new-translation="${this
+                      ._alternativeTextForNewIdeaButtonHeaderTranslation}"
+                    textType="alternativeTextForNewIdeaButtonHeader"
+                  ></yp-magic-text>
+                `
+              : nothing}
+            ${this.group && this.group.configuration.customThankYouTextNewPosts
+              ? html`
+                  <yp-magic-text
+                    id="customThankYouTextNewPostsId"
+                    hidden
+                    .contentId="${this.group.id}"
+                    textOnly
+                    .content="${this.group.configuration
+                      .customThankYouTextNewPosts}"
+                    .contentLanguage="${this.group.language}"
+                    textType="customThankYouTextNewPosts"
+                  ></yp-magic-text>
+                `
+              : nothing}
+            ${this.group && this.group.configuration.customTitleQuestionText
+              ? html`
+                  <yp-magic-text
+                    id="customTitleQuestionTextId"
+                    hidden
+                    .contentId="${this.group.id}"
+                    textOnly
+                    .content="${this.group.configuration
+                      .customTitleQuestionText}"
+                    .contentLanguage="${this.group.language}"
+                    @new-translation="${this._updatePostTitle}"
+                    textType="customTitleQuestionText"
+                  ></yp-magic-text>
+                `
+              : nothing}
+            ${this.group &&
+            this.group.configuration.alternativeTextForNewIdeaSaveButton
+              ? html`
+                  <yp-magic-text
+                    id="alternativeTextForNewIdeaSaveButtonId"
+                    hidden
+                    .contentId="${this.group.id}"
+                    textOnly
+                    .content="${this.group.configuration
+                      .alternativeTextForNewIdeaSaveButton}"
+                    .contentLanguage="${this.group.language}"
+                    @new-translation="${this
+                      ._alternativeTextForNewIdeaSaveButtonTranslation}"
+                    textType="alternativeTextForNewIdeaSaveButton"
+                  ></yp-magic-text>
+                `
+              : nothing}
 
-      ${this.group &&
-      this.group.configuration.alternativeTextForNewIdeaButtonHeader
-        ? html`
-            <yp-magic-text
-              id="alternativeTextForNewIdeaButtonHeaderId"
-              hidden
-              .contentId="${this.group.id}"
-              textOnly
-              .content="${this.group.configuration
-                .alternativeTextForNewIdeaButtonHeader}"
-              .contentLanguage="${this.group.language}"
-              @new-translation="${this
-                ._alternativeTextForNewIdeaButtonHeaderTranslation}"
-              textType="alternativeTextForNewIdeaButtonHeader"
-            ></yp-magic-text>
-          `
-        : nothing}
-      ${this.group && this.group.configuration.customThankYouTextNewPosts
-        ? html`
-            <yp-magic-text
-              id="customThankYouTextNewPostsId"
-              hidden
-              .contentId="${this.group.id}"
-              textOnly
-              .content="${this.group.configuration.customThankYouTextNewPosts}"
-              .contentLanguage="${this.group.language}"
-              textType="customThankYouTextNewPosts"
-            ></yp-magic-text>
-          `
-        : nothing}
-      ${this.group && this.group.configuration.customTitleQuestionText
-        ? html`
-            <yp-magic-text
-              id="customTitleQuestionTextId"
-              hidden
-              .contentId="${this.group.id}"
-              textOnly
-              .content="${this.group.configuration.customTitleQuestionText}"
-              .contentLanguage="${this.group.language}"
-              @new-translation="${this._updatePostTitle}"
-              textType="customTitleQuestionText"
-            ></yp-magic-text>
-          `
-        : nothing}
-      ${this.group &&
-      this.group.configuration.alternativeTextForNewIdeaSaveButton
-        ? html`
-            <yp-magic-text
-              id="alternativeTextForNewIdeaSaveButtonId"
-              hidden
-              .contentId="${this.group.id}"
-              textOnly
-              .content="${this.group.configuration
-                .alternativeTextForNewIdeaSaveButton}"
-              .contentLanguage="${this.group.language}"
-              @new-translation="${this
-                ._alternativeTextForNewIdeaSaveButtonTranslation}"
-              textType="alternativeTextForNewIdeaSaveButton"
-            ></yp-magic-text>
-          `
-        : nothing}
-
-      <yp-generate-ai-image
-        id="aiImageGenerator"
-        collectionType="group"
-        .collectionId="${this.group!.id}"
-        .name="${this.post?.name}"
-        .description="${this.post?.description}"
-        @got-image="${this._gotAiImage}"
-      >
-      </yp-generate-ai-image>
-    `;
+            <yp-generate-ai-image
+              id="aiImageGenerator"
+              collectionType="group"
+              .collectionId="${this.group!.id}"
+              .name="${this.post?.name}"
+              .description="${this.post?.description}"
+              @got-image="${this._gotAiImage}"
+            >
+            </yp-generate-ai-image>
+          </form>
+        </yp-form>
+      `;
+    } else {
+      return html`<md-linear-progress indeterminate></md-linear-progress>`;
+    }
   }
 
   _gotAiImage(event: CustomEvent) {
@@ -1291,9 +1195,47 @@ export class YpPostEdit extends YpEditBase {
     });
   }
 
+  async loadPost(postId: number) {
+    const post = await window.serverApi.getPost(postId);
+    if (post) {
+      this.post = post;
+      if (post.PostVideos && post.PostVideos.length > 0) {
+        this.currentVideoId = post.PostVideos[0].id;
+      }
+
+      if (post.PostAudios && post.PostAudios.length > 0) {
+        this.currentAudioId = post.PostAudios[0].id;
+      }
+      this.group = await window.serverApi.getGroup(this.post!.group_id);
+    } else {
+      this.post = undefined;
+      this.fire("yp-error", this.t("notFound"));
+      console.error("Post not found");
+    }
+  }
+
+  async loadGroup(groupId: number) {
+    this.group = (await window.serverApi.getGroup(groupId) as YpGroupResults).group;
+    this._setupGroup();
+  }
+
   //TODO: Investigate if any are missing .html version of listeners
   override connectedCallback() {
     super.connectedCallback();
+    const subRoute = this.subRoute.split("/");
+    const type = subRoute[1];
+    if (type === "new") {
+      this.newPost = true;
+      const groupId = Number(subRoute[2]);
+      this.loadGroup(groupId);
+    } else if (type === "edit") {
+      this.newPost = false;
+      const postId = Number(subRoute[2]);
+      this.loadPost(postId);
+    } else {
+      console.error("Unknown subroute");
+    }
+
     this.addListener("yp-form-invalid", this._formInvalid);
     this.addListener("yp-custom-form-submit", this._customSubmit);
     this.addListener("yp-open-to-unique-id", this._openToId);
@@ -1492,7 +1434,12 @@ export class YpPostEdit extends YpEditBase {
       }
     });
     this.structuredAnswersJson = JSON.stringify(answers);
-    (this.$$("#editDialog") as YpEditDialog)._reallySubmit();
+
+    this._reallySubmit();
+  }
+
+  _reallySubmit(something: boolean = false) {
+    //TODO
   }
 
   _submitWithStructuredQuestionsString() {
@@ -1518,7 +1465,7 @@ export class YpPostEdit extends YpEditBase {
     }
     if (this.post) this.post.description = description;
     this.structuredAnswersString = answers;
-    (this.$$("#editDialog") as YpEditDialog)._reallySubmit();
+    this._reallySubmit();
   }
 
   _customSubmit() {
@@ -1534,13 +1481,12 @@ export class YpPostEdit extends YpEditBase {
     ) {
       this._submitWithStructuredQuestionsString();
     } else {
-      (this.$$("#editDialog") as YpEditDialog)._reallySubmit();
+      this._reallySubmit();
     }
   }
 
   _resizeScrollerIfNeeded() {
-    if (this.$$("#editDialog"))
-      (this.$$("#editDialog") as YpEditDialog).scrollResize();
+    //TODO:
   }
 
   _getStructuredQuestionsString() {
@@ -1655,9 +1601,9 @@ export class YpPostEdit extends YpEditBase {
         pages.forceSynchronousItemUpdate();
       }
 
-      const paperTabs = this.$$('#paperTabs');
-      if (paperTabs) {
-        paperTabs.forceSynchronousItemUpdate();
+      const paperSections = this.$$('#paperSections');
+      if (paperSections) {
+        paperSections.forceSynchronousItemUpdate();
       }
       console.log('Location hidden changed');
     }, 10); */
@@ -1698,7 +1644,7 @@ export class YpPostEdit extends YpEditBase {
     }
   }
 
-  _getTabLength() {
+  _getSectionLength() {
     let length = 4;
 
     if (!this.newPointShown) {
@@ -1716,8 +1662,8 @@ export class YpPostEdit extends YpEditBase {
     return length;
   }
 
-  _nextTab() {
-    const length = this._getTabLength();
+  _nextSection() {
+    const length = this._getSectionLength();
 
     if (this.selected < length) {
       this.selected = this.selected + 1;
@@ -1733,16 +1679,10 @@ export class YpPostEdit extends YpEditBase {
         this.mapActive = false;
       }
 
-      const finalTabNumber = this._getTabLength() - 1;
+      const finalSectionNumber = this._getSectionLength() - 1;
 
-      if (finalTabNumber === 0) {
-        this.hasOnlyOneTab = true;
-      }
-
-      if (newValue == finalTabNumber) {
-        (this.$$("#editDialog") as YpEditDialog).useNextTabAction = false;
-      } else {
-        (this.$$("#editDialog") as YpEditDialog).useNextTabAction = true;
+      if (finalSectionNumber === 0) {
+        this.hasOnlyOneSection = true;
       }
 
       if (newValue == 0) {
@@ -1869,7 +1809,7 @@ export class YpPostEdit extends YpEditBase {
       if (answersText) {
         const jsonAnswers = JSON.parse(answersText);
         this.structuredAnswersJson = jsonAnswers;
-        (this.$$("#editDialog") as YpEditDialog)._reallySubmit(false);
+        this._reallySubmit(false);
       }
     }, 10);
   }
@@ -1972,7 +1912,7 @@ export class YpPostEdit extends YpEditBase {
     params: any | undefined = undefined
   ) {
     if (window.appUser && window.appUser.loggedIn() === true) {
-      this._setupGroup(group);
+
       if (newItem) {
         this.new = true;
       } else {
@@ -1983,7 +1923,7 @@ export class YpPostEdit extends YpEditBase {
         this.setupAfterOpen({ group: group });
       }
       await this.updateComplete;
-      (this.$$("#editDialog") as YpEditDialog).open();
+      //(this.$$("#editDialog") as YpEditDialog).open();
       await this.updateComplete;
       if (post) {
         this.post = post;
@@ -2007,12 +1947,11 @@ export class YpPostEdit extends YpEditBase {
     }
   }
 
-  _setupGroup(group: YpGroupData | undefined) {
-    if (group) {
-      this.group = group;
-      if (group.configuration) {
-        if (group.configuration.locationHidden) {
-          if (group.configuration.locationHidden == true) {
+  _setupGroup() {
+    if (this.group) {
+        if (this.group.configuration) {
+        if (this.group.configuration.locationHidden) {
+          if (this.group.configuration.locationHidden == true) {
             this.locationHidden = true;
           } else {
             this.locationHidden = false;
@@ -2020,19 +1959,19 @@ export class YpPostEdit extends YpEditBase {
         } else {
           this.locationHidden = false;
         }
-        if (group.configuration.postDescriptionLimit) {
-          this.postDescriptionLimit = group.configuration.postDescriptionLimit;
+        if (this.group.configuration.postDescriptionLimit) {
+          this.postDescriptionLimit = this.group.configuration.postDescriptionLimit;
         } else {
           this.postDescriptionLimit = 500;
         }
 
-        if (group.configuration.structuredQuestionsJson) {
+        if (this.group.configuration.structuredQuestionsJson) {
           setTimeout(() => {
             this.liveQuestionIds = [];
             this.uniqueIdsToElementIndexes = {};
             this.liveUniqueIds = [];
 
-            group.configuration.structuredQuestionsJson!.forEach(
+            this.group!.configuration.structuredQuestionsJson!.forEach(
               (question, index) => {
                 if (
                   question.type.toLowerCase() === "textfield" ||
@@ -2061,6 +2000,26 @@ export class YpPostEdit extends YpEditBase {
           this.postDescriptionLimit = 9999;
         }
       }, 50);
+
+      setTimeout(() => {
+        const nameElement = this.$$("#name");
+        if (nameElement) {
+          nameElement.focus();
+        }
+      }, 250);
+
+      if (
+        this.post &&
+        !this.newPost &&
+        this.post.public_data &&
+        this.post.public_data.structuredAnswersJson
+      ) {
+        this.initialStructuredAnswersJson =
+          this.post.public_data.structuredAnswersJson;
+      }
+
+      this.checkSurveyAnswers();
+
     }
   }
 
@@ -2075,27 +2034,6 @@ export class YpPostEdit extends YpEditBase {
     return false;
   }
 
-  override setupAfterOpen(params: YpEditFormParams) {
-    this._setupGroup(params.group);
-    setTimeout(() => {
-      const nameElement = this.$$("#name");
-      if (nameElement) {
-        nameElement.focus();
-      }
-    }, 250);
-
-    if (
-      this.post &&
-      !this.newPost &&
-      this.post.public_data &&
-      this.post.public_data.structuredAnswersJson
-    ) {
-      this.initialStructuredAnswersJson =
-        this.post.public_data.structuredAnswersJson;
-    }
-
-    this.checkSurveyAnswers();
-  }
 
   _alternativeTextForNewIdeaButtonHeaderTranslation() {
     setTimeout(() => {

@@ -453,14 +453,26 @@ let YpApp = class YpApp extends YpBaseElement {
           `);
                     break;
                 case "post":
-                    pageHtml = cache(html `
-            <yp-post
-              id="postPage"
-              .currentPage="${this.page}"
-              .subRoute="${this.subRoute}"
-            ></yp-post>
-          `);
-                    break;
+                    if (this.subRoute && this.subRoute.indexOf("new/") > -1) {
+                        pageHtml = cache(html `
+              <yp-post-edit
+                id="postPage"
+                .currentPage="${this.page}"
+                .subRoute="${this.subRoute}"
+              ></yp-post-edit>
+            `);
+                        break;
+                    }
+                    else {
+                        pageHtml = cache(html `
+              <yp-post
+                id="postPage"
+                .currentPage="${this.page}"
+                .subRoute="${this.subRoute}"
+              ></yp-post>
+            `);
+                        break;
+                    }
                 default:
                     pageHtml = cache(html ` <yp-view-404 name="view-404"></yp-view-404> `);
                     break;
