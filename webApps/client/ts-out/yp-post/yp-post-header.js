@@ -8,6 +8,7 @@ import { YpAccessHelpers } from "../common/YpAccessHelpers.js";
 import { nothing, html, css } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import "@material/web/iconbutton/outlined-icon-button.js";
+import "@material/web/labs/card/outlined-card.js";
 //import '../yp-post/yp-posts-list.js';
 //import '../yp-post/yp-post-card-add.js';
 import "./yp-post-actions.js";
@@ -48,8 +49,8 @@ let YpPostHeader = class YpPostHeader extends YpPostBaseWithAnswers(YpBaseElemen
 
         yp-post-cover-media {
           position: relative;
-          width: 420px;
-          height: 236px;
+          width: 600px;
+          height: 338px;
           margin-right: auto;
           margin-left: auto;
         }
@@ -61,6 +62,11 @@ let YpPostHeader = class YpPostHeader extends YpPostBaseWithAnswers(YpBaseElemen
         .postCard {
           position: relative;
           border-radius: 4px;
+          text-align: left;
+        }
+
+        .topCard {
+          max-width: 600px;
         }
 
         .mediaAndInfoContainer {
@@ -75,10 +81,14 @@ let YpPostHeader = class YpPostHeader extends YpPostBaseWithAnswers(YpBaseElemen
           max-width: 600px;
         }
 
+
         .postName {
           max-width: 600px;
-          margin-top: 16px;
+          margin: 16px;
           font-weight: bold;
+          text-align: left;
+          font-size: 20px;
+          opacity: 1.0;
         }
 
         .share {
@@ -316,12 +326,11 @@ let YpPostHeader = class YpPostHeader extends YpPostBaseWithAnswers(YpBaseElemen
     renderMenu() {
         return html `
       <div style="position: relative;" class="moreVert">
-        <md-outlined-icon-button
-          hidden
+        <md-icon-button
           @click="${this._openPostMenu}"
           title="${this.t("openPostMenu")}"
           ><md-icon>more_vert</md-icon>
-        </md-outlined-icon-button>
+        </md-icon-button>
         <md-menu id="postMenu" menuCorner="END" corner="TOP_RIGHT">
           ${this.hasPostAccess
             ? html `
@@ -394,9 +403,9 @@ let YpPostHeader = class YpPostHeader extends YpPostBaseWithAnswers(YpBaseElemen
     }
     render() {
         return html `
-      <div class="layout horizontal center-center">
-        <div
-          class="postCard layout-wrap layout horizontal shsadow-elevation-4dp shasdow-transition"
+      <div class="layout vertical center-center">
+        <md-outlined-card
+          class="topCard layout-wrap layout horizontal shsadow-elevation-4dp shasdow-transition"
         >
           <div
             class="layout vertical headerTopLevel center-center"
@@ -404,14 +413,6 @@ let YpPostHeader = class YpPostHeader extends YpPostBaseWithAnswers(YpBaseElemen
             aria-level="1"
             aria-label="${this.post.name}"
           >
-          <div class="share" ?hidden="${this.post.Group.configuration.hideSharing}">
-            <md-icon-button
-              ?less-margin="${this.post.Group.configuration.hideDownVoteForPost}"
-              .label="${this.t("post.shareInfo")}"
-              @click="${this._shareTap}"
-              ><md-icon>share</md-icon></md-icon-button
-            >
-          </div>
             ${this.post.Group.configuration.showWhoPostedPosts
             ? html `
                   <div class="layout horizontal userInfo">
@@ -424,9 +425,7 @@ let YpPostHeader = class YpPostHeader extends YpPostBaseWithAnswers(YpBaseElemen
                 `
             : nothing}
 
-            <div
-              class="layout vertical center-center wrap mediaAndInfoContainer"
-            >
+            <div class="layout vertical wrap mediaAndInfoContainer">
               <div class="layout vertical center-center coverContainer">
                 <yp-post-cover-media
                   top-left-radius
@@ -448,13 +447,13 @@ let YpPostHeader = class YpPostHeader extends YpPostBaseWithAnswers(YpBaseElemen
             : nothing}
               </div>
               <yp-magic-text
-                class="postName"
-                textType="postName"
-                .contentLanguage="${this.post.language}"
-                .content="${this.post.name}"
-                .contentId="${this.post.id}"
-              >
-              </yp-magic-text>
+                  class="postName"
+                  textType="postName"
+                  .contentLanguage="${this.post.language}"
+                  .content="${this.post.name}"
+                  .contentId="${this.post.id}"
+                >
+                </yp-magic-text>
               <div class="layout vertical center-center postDescription">
                 ${this.renderPostInformation()}
               </div>
@@ -462,8 +461,8 @@ let YpPostHeader = class YpPostHeader extends YpPostBaseWithAnswers(YpBaseElemen
                 ${this.renderActions()} ${this.renderMenu()}
               </div>
             </div>
-          </div>
-        </div>
+          </div> </md-outlined-card
+        >
       </div>
     `;
     }

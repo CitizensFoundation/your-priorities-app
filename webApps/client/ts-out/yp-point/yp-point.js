@@ -71,6 +71,14 @@ let YpPoint = class YpPoint extends YpBaseElement {
           display: block;
         }
 
+        .pointTopContainer {
+          background-color: var(--md-sys-color-surface-container-low);
+          padding: 16px;
+          border-radius: 16px;
+          padding-bottom: 0;
+          line-height: 1.5;
+        }
+
         .point-content {
           padding-right: 16px;
           padding-left: 16px;
@@ -155,6 +163,10 @@ let YpPoint = class YpPoint extends YpBaseElement {
           height: 224px;
           margin: 0;
           padding: 0;
+        }
+
+        a {
+          color: var(--md-sys-color-on-surface);
         }
 
         @media (max-width: 600px) {
@@ -493,7 +505,7 @@ let YpPoint = class YpPoint extends YpBaseElement {
     }
     render() {
         return html `
-      <div class="layout vertical">
+      <div class="layout vertical pointTopContainer">
         ${this.renderUserHeader()}
 
         <div class="layout vertical">

@@ -19,6 +19,7 @@
     "@fingerprintjs/fingerprintjs": "^3.4.1",
     "@joint/core": "^4.0.1",
     "@kano/twemoji": "^1.0.0",
+    "@lit-labs/motion": "^1.0.7",
     "@lit-labs/virtualizer": "^2.0.12",
     "@material/material-color-utilities": "^0.2.7",
     "@material/web": "^1.4.0",

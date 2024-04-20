@@ -3,9 +3,13 @@ import { property, customElement } from "lit/decorators.js";
 
 import { ifDefined } from "lit/directives/if-defined.js";
 
+import '@material/web/labs/card/filled-card.js';
+import '@material/web/labs/card/elevated-card.js';
+
 import { YpBaseElement } from "../common/yp-base-element.js";
 import { ShadowStyles } from "../common/ShadowStyles.js";
 import { YpNavHelpers } from "../common/YpNavHelpers.js";
+
 
 import "../yp-magic-text/yp-magic-text.js";
 import "./yp-post-cover-media.js";
@@ -47,15 +51,10 @@ export class YpPostCard extends YpBaseElement {
         .post-name {
           margin: 0;
           padding: 16px;
-          padding-top: 20px;
-          padding-bottom: 14px;
           cursor: pointer;
           vertical-align: middle !important;
           font-size: 20px;
-          background-color: var(--md-sys-color-primary);
-          color: var(--md-sys-color-on-primary);
-          font-weight: 500;
-          height: 50px;
+          text-align: left;
         }
 
         .post-name[largefont] {
@@ -68,8 +67,6 @@ export class YpPostCard extends YpBaseElement {
 
         .postCard {
           width: 420px;
-          background-color: var(--md-sys-color-surface-variant);
-          color: var(--md-sys-color-on-surface-variant);
         }
 
         :host {
@@ -84,6 +81,10 @@ export class YpPostCard extends YpBaseElement {
 
         .postCard[hide-post-cover] {
           height: 190px;
+        }
+
+        a {
+          color: var(--md-sys-color-on-surface);
         }
 
         .postCard[hide-post-cover][hide-actions] {
@@ -134,14 +135,13 @@ export class YpPostCard extends YpBaseElement {
         }
 
         .description {
-          font-size: 17px;
+          font-size: 16px;
           padding: 16px;
-          padding-top: 16px;
+          padding-top: 0;
+          align-items: flex-start;
           cursor: pointer;
           height: 84px;
           margin-bottom: 8px;
-          background-color: var(--md-sys-color-surface-variant);
-          color: var(--md-sys-color-on-surface-variant);
         }
 
         .description[widetext] {
@@ -336,8 +336,7 @@ export class YpPostCard extends YpBaseElement {
   override render() {
     return this.post
       ? html`
-          <div class="layout vertical center-center">
-            <div
+            <md-elevated-card
               ?mini="${this.mini}"
               .hide-post-cover="${this.post.Group.configuration.hidePostCover}"
               .hide-description="${this.post.Group.configuration
@@ -345,7 +344,7 @@ export class YpPostCard extends YpBaseElement {
               ?hide-actions="${this.post.Group.configuration
                 .hidePostActionsInGrid}"
               audio-cover="${this.isAudioCover}"
-              class="card postCard layout vertical shadow-elevation-2dp shadow-transition"
+              classss="card postCard layout vertical shadow-elevation-2dp shadow-transition"
               animated
             >
               <div class="layout vertical">
@@ -430,7 +429,7 @@ export class YpPostCard extends YpBaseElement {
                 </div>
               </div>
             </div>
-          </div>
+          </md-elevated-card>
         `
       : nothing;
   }

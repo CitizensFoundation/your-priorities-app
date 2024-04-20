@@ -267,7 +267,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
         }
 
         .point {
-          padding-top: 32px;
+          padding-top: 16px;
           padding-bottom: 32px;
           padding-left: 24px;
           padding-right: 24px;
@@ -389,7 +389,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
 
         .pointMainHeader {
           font-size: 22px;
-          margin-bottom: 32px;
+          margin-bottom: 8px;
           margin-top: 16px;
         }
 

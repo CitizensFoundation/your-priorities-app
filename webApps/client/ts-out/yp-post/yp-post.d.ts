@@ -15,7 +15,7 @@ export declare class YpPost extends YpCollection {
     photosCount: string | undefined;
     constructor();
     scrollToCollectionItemSubClass(): void;
-    static get styles(): import("lit").CSSResult[];
+    static get styles(): (any[] | import("lit").CSSResult)[];
     renderPostHeader(): TemplateResult<1>;
     renderPostTabs(): TemplateResult<1> | typeof nothing;
     renderCurrentPostTabPage(): TemplateResult | undefined;

@@ -72,7 +72,7 @@ export declare class YpAdminApp extends YpBaseElement {
     _setAdminFromParent(): Promise<void>;
     _setAdminConfirmedFromParent(collection: YpCollectionData): void;
     _setAdminConfirmed(): void;
-    getParentCollectionType(): "domain" | "community" | "";
+    getParentCollectionType(): "domain" | "" | "community";
     exitToMainApp(): void;
     render(): import("lit-html").TemplateResult<1>;
     _isPageSelectedClass(page: AdminPageOptions): "" | "selectedContainer";

@@ -1,4 +1,6 @@
 import { nothing } from "lit";
+import '@material/web/labs/card/filled-card.js';
+import '@material/web/labs/card/elevated-card.js';
 import { YpBaseElement } from "../common/yp-base-element.js";
 import "../yp-magic-text/yp-magic-text.js";
 import "./yp-post-cover-media.js";

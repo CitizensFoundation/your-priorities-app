@@ -39,7 +39,7 @@ let YpPost = class YpPost extends YpCollection {
     }
     static get styles() {
         return [
-            //      super.styles,
+            super.styles,
             ShadowStyles,
             css `
         .postHeader {
@@ -51,6 +51,7 @@ let YpPost = class YpPost extends YpCollection {
 
         md-tabs {
           z-index: 0;
+          margin-top: 32px;
         }
 
         ac-activities {
@@ -99,25 +100,23 @@ let YpPost = class YpPost extends YpCollection {
     renderPostTabs() {
         if (this.post && !this.post.Group.configuration.hideAllTabs) {
             return html `
-        <div class="layout vertical center-center">
-          <md-tabs
-            @change="${this._selectTab}"
-            .activeTabIndex="${this.selectedTab}"
+        <md-tabs
+          @change="${this._selectTab}"
+          .activeTabIndex="${this.selectedTab}"
+        >
+          <md-primary-tab
+            >${this.tabDebateCount}<md-icon slot="icon"
+              >lightbulb_outline</md-icon
+            ></md-primary-tab
           >
-            <md-primary-tab
-              >${this.tabDebateCount}<md-icon slot="icon"
-                >lightbulb_outline</md-icon
-              ></md-primary-tab
-            >
 
-            ${this.renderNewsAndMapTabs()}
-            <md-primary-tab
-              >${this.tabPhotosCount}<md-icon slot="icon"
-                >photo_camera</md-icon
-              ></md-primary-tab
-            >
-          </md-tabs>
-        </div>
+          ${this.renderNewsAndMapTabs()}
+          <md-primary-tab
+            >${this.tabPhotosCount}<md-icon slot="icon"
+              >photo_camera</md-icon
+            ></md-primary-tab
+          >
+        </md-tabs>
       `;
         }
         else {
@@ -129,7 +128,7 @@ let YpPost = class YpPost extends YpCollection {
         if (this.post) {
             switch (this.selectedTab) {
                 case PostTabTypes.Debate:
-                    page = html ` <yp-post-points
+                    page = html `<yp-post-points
             id="pointsSection"
             role="main"
             aria-label="${this.t("debate")}"
@@ -187,7 +186,10 @@ let YpPost = class YpPost extends YpCollection {
     render() {
         return this.post
             ? html `
-          ${this.renderPostHeader()} ${this.renderPostTabs()}
+          ${this.renderPostHeader()}
+          <div class="layout vertical center-center">
+            ${this.renderPostTabs()}
+          </div>
           ${this.renderCurrentPostTabPage()}
           ${!this.disableNewPosts &&
                 this.post &&

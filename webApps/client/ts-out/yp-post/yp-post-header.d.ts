@@ -1,5 +1,6 @@
 import { TemplateResult } from "lit";
 import "@material/web/iconbutton/outlined-icon-button.js";
+import "@material/web/labs/card/outlined-card.js";
 import "./yp-post-actions.js";
 import { YpBaseElementWithLogin } from "../common/yp-base-element-with-login.js";
 import "./yp-post-transcript.js";

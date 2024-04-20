@@ -6,6 +6,7 @@ import { nothing, html, TemplateResult, LitElement, css } from "lit";
 import { customElement, property } from "lit/decorators.js";
 
 import "@material/web/iconbutton/outlined-icon-button.js";
+import "@material/web/labs/card/outlined-card.js";
 
 //import '../yp-post/yp-posts-list.js';
 //import '../yp-post/yp-post-card-add.js';
@@ -62,8 +63,8 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
 
         yp-post-cover-media {
           position: relative;
-          width: 420px;
-          height: 236px;
+          width: 600px;
+          height: 338px;
           margin-right: auto;
           margin-left: auto;
         }
@@ -75,6 +76,11 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
         .postCard {
           position: relative;
           border-radius: 4px;
+          text-align: left;
+        }
+
+        .topCard {
+          max-width: 600px;
         }
 
         .mediaAndInfoContainer {
@@ -89,10 +95,14 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
           max-width: 600px;
         }
 
+
         .postName {
           max-width: 600px;
-          margin-top: 16px;
+          margin: 16px;
           font-weight: bold;
+          text-align: left;
+          font-size: 20px;
+          opacity: 1.0;
         }
 
         .share {
@@ -332,12 +342,11 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
   renderMenu() {
     return html`
       <div style="position: relative;" class="moreVert">
-        <md-outlined-icon-button
-          hidden
+        <md-icon-button
           @click="${this._openPostMenu}"
           title="${this.t("openPostMenu")}"
           ><md-icon>more_vert</md-icon>
-        </md-outlined-icon-button>
+        </md-icon-button>
         <md-menu id="postMenu" menuCorner="END" corner="TOP_RIGHT">
           ${this.hasPostAccess
             ? html`
@@ -422,9 +431,9 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
 
   override render() {
     return html`
-      <div class="layout horizontal center-center">
-        <div
-          class="postCard layout-wrap layout horizontal shsadow-elevation-4dp shasdow-transition"
+      <div class="layout vertical center-center">
+        <md-outlined-card
+          class="topCard layout-wrap layout horizontal shsadow-elevation-4dp shasdow-transition"
         >
           <div
             class="layout vertical headerTopLevel center-center"
@@ -432,14 +441,6 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
             aria-level="1"
             aria-label="${this.post.name}"
           >
-          <div class="share" ?hidden="${this.post.Group.configuration.hideSharing}">
-            <md-icon-button
-              ?less-margin="${this.post.Group.configuration.hideDownVoteForPost}"
-              .label="${this.t("post.shareInfo")}"
-              @click="${this._shareTap}"
-              ><md-icon>share</md-icon></md-icon-button
-            >
-          </div>
             ${this.post.Group.configuration.showWhoPostedPosts
               ? html`
                   <div class="layout horizontal userInfo">
@@ -452,9 +453,7 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
                 `
               : nothing}
 
-            <div
-              class="layout vertical center-center wrap mediaAndInfoContainer"
-            >
+            <div class="layout vertical wrap mediaAndInfoContainer">
               <div class="layout vertical center-center coverContainer">
                 <yp-post-cover-media
                   top-left-radius
@@ -476,13 +475,13 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
                   : nothing}
               </div>
               <yp-magic-text
-                class="postName"
-                textType="postName"
-                .contentLanguage="${this.post.language}"
-                .content="${this.post.name}"
-                .contentId="${this.post.id}"
-              >
-              </yp-magic-text>
+                  class="postName"
+                  textType="postName"
+                  .contentLanguage="${this.post.language}"
+                  .content="${this.post.name}"
+                  .contentId="${this.post.id}"
+                >
+                </yp-magic-text>
               <div class="layout vertical center-center postDescription">
                 ${this.renderPostInformation()}
               </div>
@@ -490,8 +489,8 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
                 ${this.renderActions()} ${this.renderMenu()}
               </div>
             </div>
-          </div>
-        </div>
+          </div> </md-outlined-card
+        >
       </div>
     `;
   }
