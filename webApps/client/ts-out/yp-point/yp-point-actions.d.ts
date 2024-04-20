@@ -1,6 +1,6 @@
-import { nothing } from 'lit';
-import '@material/web/iconbutton/outlined-icon-button.js';
-import { YpBaseElement } from '../common/yp-base-element.js';
+import { nothing } from "lit";
+import "@material/web/iconbutton/outlined-icon-button.js";
+import { YpBaseElement } from "../common/yp-base-element.js";
 export declare class YpPointActions extends YpBaseElement {
     point: YpPointData | undefined;
     hideNotHelpful: boolean;
@@ -11,7 +11,7 @@ export declare class YpPointActions extends YpBaseElement {
     pointQualityValue: number | undefined;
     pointUrl: string | undefined;
     static get styles(): any[];
-    render(): typeof nothing | import("lit-html").TemplateResult<1>;
+    render(): import("lit-html").TemplateResult<1> | typeof nothing;
     connectedCallback(): void;
     disconnectedCallback(): void;
     get masterHideSharing(): boolean | undefined;

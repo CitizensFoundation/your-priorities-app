@@ -4,19 +4,19 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { nothing, html, css } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
-import '@material/web/progress/linear-progress.js';
+import { nothing, html, css } from "lit";
+import { customElement, property } from "lit/decorators.js";
+import "@material/web/progress/linear-progress.js";
 //import { Radio } from '@material/md-radio';
-import '@material/web/textfield/outlined-text-field.js';
-import '@material/web/radio/radio.js';
-import '../yp-file-upload/yp-file-upload.js';
-import '../common/yp-emoji-selector.js';
-import '../yp-point/yp-point.js';
-import { YpFormattingHelpers } from '../common/YpFormattingHelpers.js';
-import { YpBaseElementWithLogin } from '../common/yp-base-element-with-login.js';
-import { FlowLayout } from '@lit-labs/virtualizer/layouts/flow.js';
-import { ifDefined } from 'lit/directives/if-defined.js';
+import "@material/web/textfield/outlined-text-field.js";
+import "@material/web/radio/radio.js";
+import "../yp-file-upload/yp-file-upload.js";
+import "../common/yp-emoji-selector.js";
+import "../yp-point/yp-point.js";
+import { YpFormattingHelpers } from "../common/YpFormattingHelpers.js";
+import { YpBaseElementWithLogin } from "../common/yp-base-element-with-login.js";
+import { FlowLayout } from "@lit-labs/virtualizer/layouts/flow.js";
+import { ifDefined } from "lit/directives/if-defined.js";
 //import { YpAutoTranslateDialog } from '../yp-dialog-container/yp-autotranslate-dialog.js';
 let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
     constructor() {
@@ -24,7 +24,7 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
         this.fetchActive = false;
         this.isAdmin = false;
         this.disableDebate = false;
-        this.pointUpOrDownSelected = 'pointFor';
+        this.pointUpOrDownSelected = "pointFor";
         this.addPointDisabled = false;
         this.hideUpVideo = false;
         this.hideDownVideo = false;
@@ -44,69 +44,69 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
         this.noMorePoints = false;
     }
     get textValueUp() {
-        if (this.$$('#up_point'))
-            return this.$$('#up_point').value;
+        if (this.$$("#up_point"))
+            return this.$$("#up_point").value;
         else
-            return '';
+            return "";
     }
     _clearTextValueUp() {
-        if (this.$$('#up_point'))
-            this.$$('#up_point').value = '';
+        if (this.$$("#up_point"))
+            this.$$("#up_point").value = "";
     }
     get textValueDown() {
-        if (this.$$('#down_point'))
-            return this.$$('#down_point').value;
+        if (this.$$("#down_point"))
+            return this.$$("#down_point").value;
         else
-            return '';
+            return "";
     }
     _clearTextValueDown() {
-        if (this.$$('#down_point'))
-            this.$$('#down_point').value = '';
+        if (this.$$("#down_point"))
+            this.$$("#down_point").value = "";
     }
     get textValueMobileUpOrDown() {
-        if (this.$$('#mobile_point'))
-            return this.$$('#mobile_point').value;
+        if (this.$$("#mobile_point"))
+            return this.$$("#mobile_point").value;
         else
-            return '';
+            return "";
     }
     _clearTextValueMobileUpOrDown() {
-        if (this.$$('#up_point'))
-            this.$$('#up_point').value = '';
+        if (this.$$("#up_point"))
+            this.$$("#up_point").value = "";
     }
     updated(changedProperties) {
         super.updated(changedProperties);
-        if (changedProperties.has('wide')) {
+        if (changedProperties.has("wide")) {
             this._updateEmojiBindings();
         }
-        if (changedProperties.has('points')) {
+        if (changedProperties.has("points")) {
             this._pointsChanged();
         }
-        if (changedProperties.has('post')) {
+        if (changedProperties.has("post")) {
             this._postChanged();
         }
-        if (changedProperties.has('isAdmin')) {
+        if (changedProperties.has("isAdmin")) {
             this._isAdminChanged();
         }
-        if (changedProperties.has('pointUpOrDownSelected') ||
-            changedProperties.has('post')) {
+        if (changedProperties.has("pointUpOrDownSelected") ||
+            changedProperties.has("post")) {
             this._pointUpOrDownSelectedChanged();
         }
-        if (changedProperties.has('hasCurrentUpVideo')) {
+        if (changedProperties.has("hasCurrentUpVideo")) {
             this._hasCurrentUpVideo();
         }
-        if (changedProperties.has('hasCurrentDownVideo')) {
+        if (changedProperties.has("hasCurrentDownVideo")) {
             this._hasCurrentDownVideo();
         }
-        if (changedProperties.has('hasCurrentMobileVideo')) {
+        if (changedProperties.has("hasCurrentMobileVideo")) {
             this._hasCurrentMobileVideo();
         }
-        if (changedProperties.has('hasCurrentUpAudio')) {
+        if (changedProperties.has("hasCurrentUpAudio")) {
             this._hasCurrentUpAudio();
         }
-        if (changedProperties.has('hasCurrentDownAudio')) {
+        if (changedProperties.has("hasCurrentDownAudio")) {
             this._hasCurrentDownAudio();
         }
-        if (changedProperties.has('hasCurrentMobileAudio')) {
+        if (changedProperties.has("hasCurrentMobileAudio")) {
             this._hasCurrentMobileAudio();
         }
     }
@@ -125,8 +125,6 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
         }
 
         .main-container {
-          background-color: var(--md-sys-color-surface-container);
-          color: var(--md-sys-color-on-surface-container);
           margin-top: 24px;
           border-radius: 32px;
         }
@@ -252,7 +250,6 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
           }
         }
 
-
         .pointMainHeader {
           font-size: 22px;
           margin-bottom: 32px;
@@ -265,7 +262,6 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
             max-width: 90%;
           }
         }
-
 
         #pointUpMaterialNotUsed {
           border-top: solid 2px;
@@ -403,7 +399,7 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
               ?hidden="${!this.post.Group.configuration
                 .showVideoUploadDisclaimer || !uploadedVideoId}"
             >
-              ${this.t('videoUploadDisclaimer')}
+              ${this.t("videoUploadDisclaimer")}
             </div>
             <div class="layout horizontal center-center">
               <md-outlined-button
@@ -426,19 +422,21 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
         class="layout horizontal center-center pointButtons"
         ?hidden="${this.post.Group.configuration.hidePointAgainst}"
       >
-        <label>${this.t('pointForShort')}
+        <label
+          >${this.t("pointForShort")}
           <md-radio
             @click="${this._chooseUpOrDownRadio}"
-            ?selected="${this.pointUpOrDownSelected == 'pointFor'}"
+            ?selected="${this.pointUpOrDownSelected == "pointFor"}"
             id="upRadio"
             name="upOrDown"
           ></md-radio>
         </label>
 
-        <label>${this.t('pointAgainstShort')}
+        <label
+          >${this.t("pointAgainstShort")}
           <md-radio
             @click="${this._chooseUpOrDownRadio}"
-            ?selected="${this.pointUpOrDownSelected == 'pointAgainst'}"
+            ?selected="${this.pointUpOrDownSelected == "pointAgainst"}"
             id="downRadio"
             name="upOrDown"
           ></md-radio>
@@ -458,7 +456,11 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
         class="pointMaterial"
         ?is-last-point="${point.isLastPointInList}"
       >
-        <yp-point .point="${point}" .group="${this.post.Group}" .post="${this.post}"></yp-point>
+        <yp-point
+          .point="${point}"
+          .group="${this.post.Group}"
+          .post="${this.post}"
+        ></yp-point>
       </div>
     </div>`;
     }
@@ -493,83 +495,87 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
         if (false && points && points.length == 0) {
             return html `<div class="point">
         ${this.renderPointHeader(header, "Engin rök til", headerTextType)}
-        </div>
-        `;
+      </div> `;
         }
         else {
             return html `
-      <div class="point">
-        ${this.renderPointHeader(header, alternativeHeader, headerTextType)}
-
-        <div
-          id="point${type}Material"
-          class="pointInputMaterial
-                    layout vertical
-                  shadow-elevation-2dp shadow-transition"
-          ?hidden="${this.post.Group.configuration.disableDebate}"
-        >
-          <md-outlined-text-field
-            id="${type.toLowerCase()}_point"
-            @focus="${pointFocusFunction}"
-            @blur="${this.blurOutlinedTextField}"
-            .label="${label ? label : ''}"
-            charCounter
-            type="textarea"
-            rows="2"
-            @keyup="${() => { this.requestUpdate(); }}"
-            ?hidden="${hideText}"
-            maxrows="3"
-            .maxlength="${this.pointMaxLength}"
-          >
-          </md-outlined-text-field>
-
-          ${mobile ? this.renderMobilePointSelection() : nothing}
+        <div class="point">
+          ${this.renderPointHeader(header, alternativeHeader, headerTextType)}
 
           <div
-            class="layout horizontal end"
-            ?rtl="${this.rtl}"
-            ?hidden="${this.post.Group.configuration.hideEmoji}"
+            id="point${type}Material"
+            class="pointInputMaterial
+                    layout vertical
+                  shadow-elevation-2dp shadow-transition"
+            ?hidden="${this.post.Group.configuration.disableDebate}"
           >
-            <div class="flex"></div>
-            <yp-emoji-selector
-              id="point${type}EmojiSelector"
+            <md-outlined-text-field
+              id="${type.toLowerCase()}_point"
+              @focus="${pointFocusFunction}"
+              @blur="${this.blurOutlinedTextField}"
+              .label="${label ? label : ""}"
+              charCounter
+              type="textarea"
+              rows="2"
+              @keyup="${() => {
+                this.requestUpdate();
+            }}"
               ?hidden="${hideText}"
-            ></yp-emoji-selector>
-          </div>
+              maxrows="3"
+              .maxlength="${this.pointMaxLength}"
+            >
+            </md-outlined-text-field>
 
-          <div class="layout horizontal center-justified">
-            ${this.renderVideoUpload(type, hideVideo, hasCurrentVideo, uploadVideoHeader, videoUploadedFunc, uploadedVideoId)}
-            ${this.renderAudioUpload(type, hideAudio, hasCurrentAudio, uploadAudioPointHeader)}
-          </div>
+            ${mobile ? this.renderMobilePointSelection() : nothing}
 
-          <div>
-            <div class="addPointFab layout horizontal center-center">
-              <md-outlined-button
-                raised
-                trailingIcon
-                class="submitButton"
-                ?disabled="${this.addPointDisabled}"
-                ?hidden="${!ifLengthIsRight}"
-                @click="${addPointFunc}"
-              >${this.t('postPoint')}<md-icon slot="icon">add</md-icon></md-outlined-button>
+            <div
+              class="layout horizontal end"
+              ?rtl="${this.rtl}"
+              ?hidden="${this.post.Group.configuration.hideEmoji}"
+            >
+              <div class="flex"></div>
+              <yp-emoji-selector
+                id="point${type}EmojiSelector"
+                ?hidden="${hideText}"
+              ></yp-emoji-selector>
+            </div>
+
+            <div class="layout horizontal center-justified">
+              ${this.renderVideoUpload(type, hideVideo, hasCurrentVideo, uploadVideoHeader, videoUploadedFunc, uploadedVideoId)}
+              ${this.renderAudioUpload(type, hideAudio, hasCurrentAudio, uploadAudioPointHeader)}
+            </div>
+
+            <div>
+              <div class="addPointFab layout horizontal center-center">
+                <md-outlined-button
+                  raised
+                  trailingIcon
+                  class="submitButton"
+                  ?disabled="${this.addPointDisabled}"
+                  ?hidden="${!ifLengthIsRight}"
+                  @click="${addPointFunc}"
+                  >${this.t("postPoint")}<md-icon slot="icon"
+                    >add</md-icon
+                  ></md-outlined-button
+                >
+              </div>
             </div>
           </div>
-        </div>
 
-        ${points
+          ${points
                 ? html `
-              <lit-virtualizer
-                id="list${type}"
-                .items=${points}
-                .layout="${FlowLayout}"
-                .scrollTarget="${window}"
-                .renderItem=${this.renderPointItem.bind(this)}
-                @rangeChanged=${this.scrollEvent}
-              ></lit-virtualizer>
-            `
+                <lit-virtualizer
+                  id="list${type}"
+                  .items=${points}
+                  .layout="${FlowLayout}"
+                  .scrollTarget="${window}"
+                  .renderItem=${this.renderPointItem.bind(this)}
+                  @rangeChanged=${this.scrollEvent}
+                ></lit-virtualizer>
+              `
                 : nothing}
-      </div>
-    `;
+        </div>
+      `;
         }
     }
     scrollEvent(event /*RangeChangedEvent*/) {
@@ -628,8 +634,8 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
               class="layout vertical topContainer center-center"
             >
               <div class="main-container layout horizontal">
-                ${this.renderPointList('Up', this.t('pointsFor'), this.post.Group.configuration.alternativePointForHeader, 'alternativePointForHeader', this.labelUp, this.hideUpVideo, this.hideUpText, this.hasCurrentUpVideo, this._videoUpUploaded, this.t('uploadVideoPointFor'), this.uploadedVideoUpId, this.focusUpPoint, this.hideUpAudio, this.hasCurrentUpAudio, this.t('uploadAudioPointFor'), this.ifLengthUpIsRight, this.addPointUp, this.upPoints)}
-                ${this.renderPointList('Down', this.t('pointsAgainst'), this.post.Group.configuration.alternativePointAgainstHeader, 'alternativePointAgainstHeader', this.labelDown, this.hideDownVideo, this.hideDownText, this.hasCurrentDownVideo, this._videoDownUploaded, this.t('uploadVideoPointAgainst'), this.uploadedVideoDownId, this.focusDownPoint, this.hideDownAudio, this.hasCurrentDownAudio, this.t('uploadAudioPointAgainst'), this.ifLengthDownIsRight, this.addPointDown, this.downPoints)}
+                ${this.renderPointList("Up", this.t("pointsFor"), this.post.Group.configuration.alternativePointForHeader, "alternativePointForHeader", this.labelUp, this.hideUpVideo, this.hideUpText, this.hasCurrentUpVideo, this._videoUpUploaded, this.t("uploadVideoPointFor"), this.uploadedVideoUpId, this.focusUpPoint, this.hideUpAudio, this.hasCurrentUpAudio, this.t("uploadAudioPointFor"), this.ifLengthUpIsRight, this.addPointUp, this.upPoints)}
+                ${this.renderPointList("Down", this.t("pointsAgainst"), this.post.Group.configuration.alternativePointAgainstHeader, "alternativePointAgainstHeader", this.labelDown, this.hideDownVideo, this.hideDownText, this.hasCurrentDownVideo, this._videoDownUploaded, this.t("uploadVideoPointAgainst"), this.uploadedVideoDownId, this.focusDownPoint, this.hideDownAudio, this.hasCurrentDownAudio, this.t("uploadAudioPointAgainst"), this.ifLengthDownIsRight, this.addPointDown, this.downPoints)}
               </div>
             </div>
           `
@@ -637,7 +643,7 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
       ${this.smallReady
             ? html `
             <div ?rtl="${this.rtl}" class="layout vertical center-center">
-              ${this.renderPointList('Mobile', this.t('Rök með og á móti'), this.post.Group.configuration.alternativePointAgainstHeader, 'alternativePointAgainstHeader', this.labelMobileUpOrDown, this.hideMobileVideo, this.hideMobileText, this.hasCurrentMobileVideo, this._videoMobileUploaded, this.t('uploadVideoPointAgainst'), this.uploadedVideoMobileId, this.focusMobilePoint, this.hideMobileAudio, this.hasCurrentMobileAudio, this.t('uploadAudioPointAgainst'), this.ifLengthMobileIsRight, this.addMobilePointUpOrDown, this.points, true)}
+              ${this.renderPointList("Mobile", this.t("Rök með og á móti"), this.post.Group.configuration.alternativePointAgainstHeader, "alternativePointAgainstHeader", this.labelMobileUpOrDown, this.hideMobileVideo, this.hideMobileText, this.hasCurrentMobileVideo, this._videoMobileUploaded, this.t("uploadVideoPointAgainst"), this.uploadedVideoMobileId, this.focusMobilePoint, this.hideMobileAudio, this.hasCurrentMobileAudio, this.t("uploadAudioPointAgainst"), this.ifLengthMobileIsRight, this.addMobilePointUpOrDown, this.points, true)}
             </div>
           `
             : nothing}
@@ -645,12 +651,12 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
     `;
     }
     _chooseUpOrDownRadio() {
-        const up = this.$$('#upRadio');
-        const down = this.$$('#downRadio');
+        const up = this.$$("#upRadio");
+        const down = this.$$("#downRadio");
         if (up.checked)
-            this.pointUpOrDownSelected = 'pointFor';
+            this.pointUpOrDownSelected = "pointFor";
         else if (down.checked)
-            this.pointUpOrDownSelected = 'pointAgainst';
+            this.pointUpOrDownSelected = "pointAgainst";
     }
     get wideReady() {
         return this.wide && this.post;
@@ -670,7 +676,7 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
         }
     }
     _openLogin() {
-        this.fire('yp-open-login');
+        this.fire("yp-open-login");
     }
     _videoUpUploaded(event) {
         this.uploadedVideoUpId = event.detail.videoId;
@@ -692,7 +698,7 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
     }
     get mobileScrollOffset() {
         if (!this.wide && this.post) {
-            const element = this.$$('#listMobile');
+            const element = this.$$("#listMobile");
             if (element) {
                 let top = element.getBoundingClientRect().top;
                 if (top <= 0) {
@@ -728,35 +734,26 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
     connectedCallback() {
         super.connectedCallback();
         const ua = navigator.userAgent.toLowerCase();
-        const isAndroid = ua.indexOf('android') > -1;
+        const isAndroid = ua.indexOf("android") > -1;
         if (isAndroid) {
             this.isAndroid = true;
         }
-        window.addEventListener('resize', this._processStoredPoints.bind(this));
-        this.addListener('yp-point-deleted', this._pointDeleted);
-        this.addListener('yp-update-point-in-list', this._updatePointInLists);
-        this.addListener('yp-list-resize', this._listResize);
-        this.addListener('yp-update-points-for-post', this._loadNewPointsIfNeeded);
+        window.addEventListener("resize", this._processStoredPoints.bind(this));
+        this.addListener("yp-point-deleted", this._pointDeleted);
+        this.addListener("yp-update-point-in-list", this._updatePointInLists);
+        this.addListener("yp-list-resize", this._listResize);
+        this.addListener("yp-update-points-for-post", this._loadNewPointsIfNeeded);
     }
     disconnectedCallback() {
         super.disconnectedCallback();
-        window.removeEventListener('resize', this._processStoredPoints);
-        this.removeListener('yp-point-deleted', this._pointDeleted);
-        this.removeListener('yp-update-point-in-list', this._updatePointInLists);
-        this.removeListener('yp-list-resize', this._listResize);
-        this.removeListener('yp-update-points-for-post', this._loadNewPointsIfNeeded);
+        window.removeEventListener("resize", this._processStoredPoints);
+        this.removeListener("yp-point-deleted", this._pointDeleted);
+        this.removeListener("yp-update-point-in-list", this._updatePointInLists);
+        this.removeListener("yp-list-resize", this._listResize);
+        this.removeListener("yp-update-points-for-post", this._loadNewPointsIfNeeded);
     }
     _listResize() {
-        //TODO: Check if this
-        if (this.$$('#listUp')) {
-            //     ((this.$$('#listUp') as LitVirtualizer).layout).reflowIfNeeded(false);
-        }
-        if (this.$$('#listDown')) {
-            //      ((this.$$('#listDown') as LitVirtualizer).layout as Layout1d).reflowIfNeeded(false);
-        }
-        if (this.$$('#listMobile')) {
-            //      ((this.$$('#listMobile') as LitVirtualizer).layout as Layout1d).reflowIfNeeded(false);
-        }
+        window.scrollBy(0, 200);
     }
     _loadNewPointsIfNeeded(event) {
         if (this.post && this.post.id == event.detail.postId) {
@@ -764,7 +761,7 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
                 this._getNewPoints();
             }
             else {
-                console.error('Trying to send point without latestPointCreatedAt');
+                console.error("Trying to send point without latestPointCreatedAt");
             }
         }
     }
@@ -775,7 +772,7 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
                 this._getMorePoints();
             }
             else {
-                console.warn('Trying to load more points early');
+                console.warn("Trying to load more points early");
                 this.loadMoreInProgress = false;
             }
         }
@@ -802,7 +799,7 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
         }
         let haveAddedPoint = false;
         points = this._interleaveMorePoints(points);
-        points.forEach(point => {
+        points.forEach((point) => {
             if (this._addMorePoint(point)) {
                 haveAddedPoint = true;
             }
@@ -828,7 +825,7 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
         if (this.latestPointCreatedAt) {
             let points = (await window.serverApi.getNewPoints(this.post.id, this.latestPointCreatedAt));
             points = this._preProcessPoints(points);
-            points.forEach(point => {
+            points.forEach((point) => {
                 this._insertNewPoint(point);
             });
             await this.updateComplete;
@@ -848,10 +845,10 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
     _updateEmojiBindings() {
         setTimeout(() => {
             if (this.wide) {
-                const upPoint = this.$$('#up_point');
-                const downPoint = this.$$('#down_point');
-                const upEmoji = this.$$('#pointUpEmojiSelector');
-                const downEmoji = this.$$('#pointDownEmojiSelector');
+                const upPoint = this.$$("#up_point");
+                const downPoint = this.$$("#down_point");
+                const upEmoji = this.$$("#pointUpEmojiSelector");
+                const downEmoji = this.$$("#pointDownEmojiSelector");
                 if (upPoint && downPoint && upEmoji && downEmoji) {
                     upEmoji.inputTarget = upPoint;
                     downEmoji.inputTarget = downPoint;
@@ -861,8 +858,8 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
                 }
             }
             else {
-                const upDownPoint = this.$$('#mobile_point');
-                const upDownEmoji = this.$$('#pointMobileEmojiSelector');
+                const upDownPoint = this.$$("#mobile_point");
+                const upDownEmoji = this.$$("#pointMobileEmojiSelector");
                 if (upDownPoint && upDownEmoji) {
                     upDownEmoji.inputTarget = upDownPoint;
                 }
@@ -873,7 +870,7 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
         }, 500);
     }
     _pointUpOrDownSelectedChanged() {
-        if (this.pointUpOrDownSelected == 'pointFor') {
+        if (this.pointUpOrDownSelected == "pointFor") {
             if (this.post &&
                 this.post.Group &&
                 this.post.Group.configuration &&
@@ -882,11 +879,11 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
                     this.post.Group.configuration.alternativePointForLabel;
             }
             else {
-                this.labelMobileUpOrDown = this.t('point.for');
+                this.labelMobileUpOrDown = this.t("point.for");
             }
             this.selectedPointForMobile = true;
         }
-        else if (this.pointUpOrDownSelected == 'pointAgainst') {
+        else if (this.pointUpOrDownSelected == "pointAgainst") {
             if (this.post &&
                 this.post.Group &&
                 this.post.Group.configuration &&
@@ -895,7 +892,7 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
                     this.post.Group.configuration.alternativePointAgainstLabel;
             }
             else {
-                this.labelMobileUpOrDown = this.t('point.against');
+                this.labelMobileUpOrDown = this.t("point.against");
             }
             this.selectedPointForMobile = false;
         }
@@ -908,12 +905,12 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
         this.hideUpVideo = false;
         this.hideDownVideo = false;
         this.hideMobileVideo = false;
-        if (this.$$('#videoFileUploadUp'))
-            this.$$('#videoFileUploadUp').clear();
-        if (this.$$('#videoFileUploadDown'))
-            this.$$('#videoFileUploadDown').clear();
-        if (this.$$('#videoFileUploadMobile'))
-            this.$$('#videoFileUploadMobile').clear();
+        if (this.$$("#videoFileUploadUp"))
+            this.$$("#videoFileUploadUp").clear();
+        if (this.$$("#videoFileUploadDown"))
+            this.$$("#videoFileUploadDown").clear();
+        if (this.$$("#videoFileUploadMobile"))
+            this.$$("#videoFileUploadMobile").clear();
     }
     _clearAudio() {
         this.uploadedAudioUpId = undefined;
@@ -923,12 +920,12 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
         this.hideUpAudio = false;
         this.hideDownAudio = false;
         this.hideMobileAudio = false;
-        if (this.$$('#audioFileUploadUp'))
-            this.$$('#audioFileUploadUp').clear();
-        if (this.$$('#audioFileUploadDown'))
-            this.$$('#audioFileUploadDown').clear();
-        if (this.$$('#audioFileUploadMobile'))
-            this.$$('#audioFileUploadMobile').clear();
+        if (this.$$("#audioFileUploadUp"))
+            this.$$("#audioFileUploadUp").clear();
+        if (this.$$("#audioFileUploadDown"))
+            this.$$("#audioFileUploadDown").clear();
+        if (this.$$("#audioFileUploadMobile"))
+            this.$$("#audioFileUploadMobile").clear();
     }
     _isAdminChanged() {
         if (this.post &&
@@ -966,7 +963,7 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
                     this.loadedPointIds[this.storedPoints[i].id] = true;
                 }
                 this._processStoredPoints();
-                this.removeElementsByClass(this, 'inserted-outside-list');
+                this.removeElementsByClass(this, "inserted-outside-list");
                 this._updateCounterInfo();
                 this._scrollPointIntoView();
                 this._checkForMultipleLanguages();
@@ -1001,7 +998,7 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
                 this.labelUp = this.post.Group.configuration.alternativePointForLabel;
             }
             else {
-                this.labelUp = this.t('point.for');
+                this.labelUp = this.t("point.for");
             }
             if (this.post &&
                 this.post.Group &&
@@ -1011,7 +1008,7 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
                     this.post.Group.configuration.alternativePointAgainstLabel;
             }
             else {
-                this.labelDown = this.t('point.against');
+                this.labelDown = this.t("point.against");
             }
         }
         setTimeout(() => {
@@ -1029,8 +1026,8 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
     }
     _updatePointLabels() {
         setTimeout(() => {
-            const forLabel = this.$$('#alternativePointForLabelId');
-            const againstLabel = this.$$('#alternativePointAgainstLabelId');
+            const forLabel = this.$$("#alternativePointForLabelId");
+            const againstLabel = this.$$("#alternativePointAgainstLabelId");
             if (forLabel && forLabel.finalContent) {
                 this.labelUp = forLabel.finalContent;
             }
@@ -1040,7 +1037,7 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
         });
     }
     _processStoredPoints() {
-        console.info('_processStoredPoints');
+        console.info("_processStoredPoints");
         if (this.storedPoints && this.storedPoints.length > 0) {
             const upPoints = [];
             const downPoints = [];
@@ -1087,22 +1084,22 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
     }
     _checkForMultipleLanguages() {
         if (this.upPoints &&
-            !localStorage.getItem('dontPromptForAutoTranslation') &&
-            !sessionStorage.getItem('dontPromptForAutoTranslation')) {
+            !localStorage.getItem("dontPromptForAutoTranslation") &&
+            !sessionStorage.getItem("dontPromptForAutoTranslation")) {
             let firstLanguage;
             let multipleLanguages = false;
             this.upPoints.forEach(function (point) {
                 if (point.language && !multipleLanguages) {
-                    if (!firstLanguage && point.language !== '??') {
+                    if (!firstLanguage && point.language !== "??") {
                         firstLanguage = point.language;
                     }
                     else if (firstLanguage &&
                         firstLanguage !== point.language &&
-                        point.language !== '??') {
+                        point.language !== "??") {
                         multipleLanguages = true;
-                        console.info('Multiple point languages: ' +
+                        console.info("Multiple point languages: " +
                             firstLanguage +
-                            ' and ' +
+                            " and " +
                             point.language);
                     }
                 }
@@ -1110,16 +1107,16 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
             if (!multipleLanguages && this.downPoints) {
                 this.downPoints.forEach(function (point) {
                     if (point.language && !multipleLanguages) {
-                        if (!firstLanguage && point.language !== '??') {
+                        if (!firstLanguage && point.language !== "??") {
                             firstLanguage = point.language;
                         }
                         else if (firstLanguage &&
                             firstLanguage != point.language &&
-                            point.language !== '??') {
+                            point.language !== "??") {
                             multipleLanguages = true;
-                            console.info('Multiple point languages: ' +
+                            console.info("Multiple point languages: " +
                                 firstLanguage +
-                                ' and ' +
+                                " and " +
                                 point.language);
                         }
                     }
@@ -1138,7 +1135,7 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
     interleaveArrays(arrayA, arrayB) {
         const arrs = [arrayA, arrayB];
         // eslint-disable-next-line prefer-spread
-        const maxLength = Math.max.apply(Math, arrs.map(arr => {
+        const maxLength = Math.max.apply(Math, arrs.map((arr) => {
             return arr.length;
         }));
         const result = [];
@@ -1161,7 +1158,7 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
             setTimeout(() => {
                 let hasFoundIt = false;
                 if (!this.wide && this.points) {
-                    this.points.forEach(point => {
+                    this.points.forEach((point) => {
                         if (!hasFoundIt && point.id == this.scrollToId) {
                             //TODO: Fix below
                             //this.$$('#listMobile').scrollToItem(point);
@@ -1170,7 +1167,7 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
                     });
                 }
                 else if (this.upPoints && this.downPoints) {
-                    this.upPoints.forEach(point => {
+                    this.upPoints.forEach((point) => {
                         if (!hasFoundIt && point.id == this.scrollToId) {
                             //TODO: Make this work
                             //this.$$('#listUp').scrollToItem(point);
@@ -1178,7 +1175,7 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
                         }
                     });
                     if (!hasFoundIt) {
-                        this.downPoints.forEach(point => {
+                        this.downPoints.forEach((point) => {
                             if (!hasFoundIt && point.id == this.scrollToId) {
                                 //TODO: Make this work
                                 //this.$$('#listDown').scrollToItem(point);
@@ -1226,20 +1223,20 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
                     points[i].PointRevisions[points[i].PointRevisions.length - 1].content;
             }
             else {
-                console.warn('No content for point in _preProcessPoints');
+                console.warn("No content for point in _preProcessPoints");
             }
         }
         return points;
     }
     _updateCounterInfo() {
         if (this.wide && this.upPoints) {
-            this.fire('yp-debate-info', {
+            this.fire("yp-debate-info", {
                 count: this.totalCount,
                 firstPoint: this.upPoints[0],
             });
         }
         else if (this.points) {
-            this.fire('yp-debate-info', {
+            this.fire("yp-debate-info", {
                 count: this.totalCount,
                 firstPoint: this.points[0],
             });
@@ -1265,7 +1262,7 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
             this._scrollPointIntoView();
             setTimeout(() => {
                 this._listResize();
-            }, 2500);
+            }, 10);
             this.storedPoints?.unshift(point);
         }
     }
@@ -1299,22 +1296,22 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
         this.addPointDisabled = false;
         point = this._preProcessPoints([point])[0];
         if (this.currentVideoId) {
-            point.checkTranscriptFor = 'video';
+            point.checkTranscriptFor = "video";
         }
         else if (this.currentAudioId) {
-            point.checkTranscriptFor = 'audio';
+            point.checkTranscriptFor = "audio";
         }
         if (point.value > 0) {
             this.newPointTextCombined =
-                this.t('point.forAdded') +
-                    ' ' +
+                this.t("point.forAdded") +
+                    " " +
                     YpFormattingHelpers.truncate(point.content, 21);
             this._clearTextValueUp();
         }
         else {
             this.newPointTextCombined =
-                this.t('point.againstAdded') +
-                    ' ' +
+                this.t("point.againstAdded") +
+                    " " +
                     YpFormattingHelpers.truncate(point.content, 21);
             this._clearTextValueDown();
         }
@@ -1325,30 +1322,30 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
         //this.$$('#newPointToast').show();
         this._updateCounterInfo();
         if (point.value > 0) {
-            window.appGlobals.activity('completed', 'newPointFor');
+            window.appGlobals.activity("completed", "newPointFor");
         }
         else {
-            window.appGlobals.activity('completed', 'newPointAgainst');
+            window.appGlobals.activity("completed", "newPointAgainst");
         }
         this._clearVideo();
         this._clearAudio();
     }
     addPointUp() {
         this.addPoint(this.textValueUp, 1, this.uploadedVideoUpId, this.uploadedAudioUpId);
-        window.appGlobals.activity('add', 'pointUp');
+        window.appGlobals.activity("add", "pointUp");
     }
     addPointDown() {
         this.addPoint(this.textValueDown, -1, this.uploadedVideoDownId, this.uploadedAudioDownId);
-        window.appGlobals.activity('add', 'pointDown');
+        window.appGlobals.activity("add", "pointDown");
     }
     addMobilePointUpOrDown() {
-        if (this.pointUpOrDownSelected == 'pointFor') {
+        if (this.pointUpOrDownSelected == "pointFor") {
             this.addPoint(this.textValueMobileUpOrDown, 1, this.uploadedVideoMobileId, this.uploadedAudioMobileId);
-            window.appGlobals.activity('add', 'pointUp');
+            window.appGlobals.activity("add", "pointUp");
         }
-        else if (this.pointUpOrDownSelected == 'pointAgainst') {
+        else if (this.pointUpOrDownSelected == "pointAgainst") {
             this.addPoint(this.textValueMobileUpOrDown, -1, this.uploadedVideoMobileId, this.uploadedAudioMobileId);
-            window.appGlobals.activity('add', 'pointDown');
+            window.appGlobals.activity("add", "pointDown");
         }
     }
     async addPoint(content, value, videoId, audioId) {
@@ -1379,14 +1376,14 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
             }
             point = this._preProcessPoints([point])[0];
             if (this.currentVideoId) {
-                await window.serverApi.completeMediaPoint('videos', point.id, {
+                await window.serverApi.completeMediaPoint("videos", point.id, {
                     videoId: this.currentVideoId,
                     appLanguage: this.language,
                 });
                 window.appGlobals.showSpeechToTextInfoIfNeeded();
             }
             else if (this.currentAudioId) {
-                await window.serverApi.completeMediaPoint('audios', point.id, {
+                await window.serverApi.completeMediaPoint("audios", point.id, {
                     videoId: this.currentAudioId,
                     appLanguage: this.language,
                 });
@@ -1400,13 +1397,13 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
         }
     }
     focusUpPoint() {
-        window.appGlobals.activity('focus', 'pointUp');
+        window.appGlobals.activity("focus", "pointUp");
     }
     focusDownPoint() {
-        window.appGlobals.activity('focus', 'pointDown');
+        window.appGlobals.activity("focus", "pointDown");
     }
     focusMobilePoint() {
-        window.appGlobals.activity('focus', 'mobilePoint');
+        window.appGlobals.activity("focus", "mobilePoint");
     }
     focusOutlinedTextField(event) {
         if (window.innerWidth > 500) {
@@ -1479,27 +1476,27 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
         }
     }
     get ifLengthUpIsRight() {
-        return this.ifLengthIsRight('up', this.textValueUp, this.uploadedVideoUpId, this.uploadedAudioUpId);
+        return this.ifLengthIsRight("up", this.textValueUp, this.uploadedVideoUpId, this.uploadedAudioUpId);
     }
     get ifLengthDownIsRight() {
-        return this.ifLengthIsRight('down', this.textValueDown, this.uploadedVideoDownId, this.uploadedAudioDownId);
+        return this.ifLengthIsRight("down", this.textValueDown, this.uploadedVideoDownId, this.uploadedAudioDownId);
     }
     get ifLengthMobileIsRight() {
-        return this.ifLengthIsRight('mobile', this.textValueMobileUpOrDown, this.uploadedVideoMobileId, this.uploadedAudioMobileId);
+        return this.ifLengthIsRight("mobile", this.textValueMobileUpOrDown, this.uploadedVideoMobileId, this.uploadedAudioMobileId);
     }
     ifLengthIsRight(type, textValue, hasVideoId, hasAudioId) {
         if (hasVideoId != undefined) {
-            if (type === 'up') {
+            if (type === "up") {
                 this.hideUpVideo = false;
                 this.hideUpAudio = true;
                 this.hideUpText = true;
             }
-            if (type === 'down') {
+            if (type === "down") {
                 this.hideDownVideo = false;
                 this.hideDownAudio = true;
                 this.hideDownText = true;
             }
-            if (type === 'mobile') {
+            if (type === "mobile") {
                 this.hideMobileVideo = false;
                 this.hideMobileAudio = true;
                 this.hideMobileText = true;
@@ -1507,17 +1504,17 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
             return true;
         }
         else if (hasAudioId != undefined) {
-            if (type === 'up') {
+            if (type === "up") {
                 this.hideUpAudio = false;
                 this.hideUpVideo = true;
                 this.hideUpText = true;
             }
-            if (type === 'down') {
+            if (type === "down") {
                 this.hideDownAudio = false;
                 this.hideDownVideo = true;
                 this.hideDownText = true;
             }
-            if (type === 'mobile') {
+            if (type === "mobile") {
                 this.hideMobileAudio = false;
                 this.hideMobileVideo = true;
                 this.hideMobileText = true;
@@ -1525,17 +1522,17 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
             return true;
         }
         else if (textValue && textValue.length === 0) {
-            if (type === 'up') {
+            if (type === "up") {
                 this.hideUpVideo = false;
                 this.hideUpAudio = false;
                 this.hideUpText = false;
             }
-            if (type === 'down') {
+            if (type === "down") {
                 this.hideDownVideo = false;
                 this.hideDownAudio = false;
                 this.hideDownText = false;
             }
-            if (type === 'mobile') {
+            if (type === "mobile") {
                 this.hideMobileVideo = false;
                 this.hideMobileAudio = false;
                 this.hideMobileText = false;
@@ -1545,17 +1542,17 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
         else if (textValue != null &&
             textValue.length > 0 &&
             textValue.trim().length > 0) {
-            if (type === 'up') {
+            if (type === "up") {
                 this.hideUpVideo = true;
                 this.hideUpAudio = true;
                 this.hideUpText = false;
             }
-            if (type === 'down') {
+            if (type === "down") {
                 this.hideDownVideo = true;
                 this.hideDownAudio = true;
                 this.hideDownText = false;
             }
-            if (type === 'mobile') {
+            if (type === "mobile") {
                 this.hideMobileVideo = true;
                 this.hideMobileAudio = true;
                 this.hideMobileText = false;
@@ -1696,7 +1693,7 @@ __decorate([
     property({ type: Array })
 ], YpPostPoints.prototype, "storedPoints", void 0);
 YpPostPoints = __decorate([
-    customElement('yp-post-points')
+    customElement("yp-post-points")
 ], YpPostPoints);
 export { YpPostPoints };
 //# sourceMappingURL=yp-post-points.js.map

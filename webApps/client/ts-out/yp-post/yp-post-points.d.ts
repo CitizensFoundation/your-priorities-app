@@ -1,11 +1,11 @@
-import { nothing, TemplateResult } from 'lit';
-import '@material/web/progress/linear-progress.js';
-import '@material/web/textfield/outlined-text-field.js';
-import '@material/web/radio/radio.js';
-import '../yp-file-upload/yp-file-upload.js';
-import '../common/yp-emoji-selector.js';
-import '../yp-point/yp-point.js';
-import { YpBaseElementWithLogin } from '../common/yp-base-element-with-login.js';
+import { nothing, TemplateResult } from "lit";
+import "@material/web/progress/linear-progress.js";
+import "@material/web/textfield/outlined-text-field.js";
+import "@material/web/radio/radio.js";
+import "../yp-file-upload/yp-file-upload.js";
+import "../common/yp-emoji-selector.js";
+import "../yp-point/yp-point.js";
+import { YpBaseElementWithLogin } from "../common/yp-base-element-with-login.js";
 export declare class YpPostPoints extends YpBaseElementWithLogin {
     fetchActive: boolean;
     isAdmin: boolean;
@@ -62,8 +62,8 @@ export declare class YpPostPoints extends YpBaseElementWithLogin {
     _clearTextValueMobileUpOrDown(): void;
     updated(changedProperties: Map<string | number | symbol, unknown>): void;
     static get styles(): any[];
-    renderAudioUpload(type: string, hideAudio: boolean, hasCurrentAudio: string | undefined, uploadAudioPointHeader: string): typeof nothing | TemplateResult<1>;
-    renderVideoUpload(type: string, hideVideo: boolean, hasCurrentVideo: string | undefined, uploadVideoHeader: string, videoUploadedFunc: Function, uploadedVideoId: number | undefined): typeof nothing | TemplateResult<1>;
+    renderAudioUpload(type: string, hideAudio: boolean, hasCurrentAudio: string | undefined, uploadAudioPointHeader: string): TemplateResult<1> | typeof nothing;
+    renderVideoUpload(type: string, hideVideo: boolean, hasCurrentVideo: string | undefined, uploadVideoHeader: string, videoUploadedFunc: Function, uploadedVideoId: number | undefined): TemplateResult<1> | typeof nothing;
     renderMobilePointSelection(): void;
     renderPointItem(point: YpPointData, index: number): TemplateResult;
     renderPointHeader(header: string, alternativeHeader: string | undefined, headerTextType: string): TemplateResult<1>;

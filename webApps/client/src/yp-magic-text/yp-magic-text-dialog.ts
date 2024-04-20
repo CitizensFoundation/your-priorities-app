@@ -1,14 +1,14 @@
-import { html, css, nothing } from 'lit';
-import { property, customElement } from 'lit/decorators.js';
+import { html, css, nothing } from "lit";
+import { property, customElement } from "lit/decorators.js";
 
-import { ifDefined } from 'lit/directives/if-defined.js';
-import { unsafeHTML } from 'lit/directives/unsafe-html.js';
+import { ifDefined } from "lit/directives/if-defined.js";
+import { unsafeHTML } from "lit/directives/unsafe-html.js";
 
-import { YpMagicText } from './yp-magic-text.js';
-import { MdDialog } from '@material/web/dialog/dialog.js';
-import '@material/web/dialog/dialog.js';
+import { YpMagicText } from "./yp-magic-text.js";
+import { MdDialog } from "@material/web/dialog/dialog.js";
+import "@material/web/dialog/dialog.js";
 
-@customElement('yp-magic-text-dialog')
+@customElement("yp-magic-text-dialog")
 export class YpMagicTextDialog extends YpMagicText {
   static override get styles() {
     return [
@@ -47,24 +47,27 @@ export class YpMagicTextDialog extends YpMagicText {
 
   override render() {
     return html`
-      <md-dialog id="dialog" aria-label="${this.t('textDialog')}">
+      <md-dialog id="dialog" aria-label="${this.t("textDialog")}">
         <div slot="content">
           ${this.finalContent
             ? html` <div>${unsafeHTML(this.finalContent)}</div> `
             : html` <div>${this.content}</div> `}
         </div>
-        <md-outlined-button slot="actions" dialogAction="close">
+        <md-text-button
+          slot="actions"
+          @click="${() => ((this.$$("#dialog") as MdDialog).open = false)}"
+        >
           ${this.closeDialogText}
-        </md-outlined-button>
+        </md-text-button>
       </md-dialog>
     `;
   }
 
   override subClassProcessing() {
-    this.processedContent = this.processedContent?.replace(/\n/g, '<br />');
+    this.processedContent = this.processedContent?.replace(/\n/g, "<br />");
   }
 
-  open(
+  async open(
     content: string,
     contentId: number,
     extraId: number,
@@ -87,10 +90,11 @@ export class YpMagicTextDialog extends YpMagicText {
     this.structuredQuestionsConfig = structuredQuestionsConfig;
     this.closeDialogText = closeDialogText;
     this.disableTranslation = disableTranslation;
-    (this.$$('#dialog') as MdDialog).open = true;
+    await this.updateComplete;
+    (this.$$("#dialog") as MdDialog).open = true;
     setTimeout(() => {
       //TODO: What to fire here?
-      this.fire('iron-resize');
+      this.fire("iron-resize");
     }, 50);
   }
 }

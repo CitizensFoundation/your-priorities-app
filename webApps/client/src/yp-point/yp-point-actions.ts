@@ -1,13 +1,13 @@
-import { html, css, nothing } from 'lit';
-import { property, customElement } from 'lit/decorators.js';
+import { html, css, nothing } from "lit";
+import { property, customElement } from "lit/decorators.js";
 
-import '@material/web/iconbutton/outlined-icon-button.js';
+import "@material/web/iconbutton/outlined-icon-button.js";
 
-import { removeClass } from '../common/RemoveClass.js';
+import { removeClass } from "../common/RemoveClass.js";
 
-import { YpBaseElement } from '../common/yp-base-element.js';
+import { YpBaseElement } from "../common/yp-base-element.js";
 
-@customElement('yp-point-actions')
+@customElement("yp-point-actions")
 export class YpPointActions extends YpBaseElement {
   @property({ type: Object })
   point: YpPointData | undefined;
@@ -54,11 +54,9 @@ export class YpPointActions extends YpBaseElement {
         }
 
         .up-selected {
-
         }
 
         .down-selected {
-
         }
 
         .middle {
@@ -103,34 +101,48 @@ export class YpPointActions extends YpBaseElement {
       ? html`
           <div
             class="all-actions layout horizontal center-center"
-            ?hidden="${this.hideNotHelpful}">
+            ?hidden="${this.hideNotHelpful}"
+          >
             <div id="actionUp" class="actionUp layout horizontal">
               <md-icon-button
-                .label="${this.t('point.helpful')}"
+                toggle
+                ?selected="${this.pointQualityValue
+                  ? this.pointQualityValue > 0
+                  : false}"
+                .label="${this.t("point.helpful")}"
                 ?disabled="${this.allDisabled}"
                 icon="arrow_upward"
                 class="point-up-vote-icon myButton"
-                @click="${this.pointHelpful}"><md-icon>arrow_upward</md-icon></md-icon-button>
+                @click="${this.pointHelpful}"
+                ><md-icon>arrow_upward</md-icon></md-icon-button
+              >
               <div class="action-text action-up layouthorizontal ">
                 ${this.point.counter_quality_up}
               </div>
             </div>
             <div id="actionDown" class="actionDown layout horizontal">
               <md-icon-button
-                .label="${this.t('point.not_helpful')}"
+                toggle
+                ?selected="${this.pointQualityValue
+                  ? this.pointQualityValue < 0
+                  : false}"
+                .label="${this.t("point.not_helpful")}"
                 ?disabled="${this.allDisabled}"
                 icon="arrow_downward"
                 class="point-down-vote-icon myButton"
-                @click="${this.pointNotHelpful}"><md-icon>arrow_downward</md-icon></md-icon-button>
+                @click="${this.pointNotHelpful}"
+                ><md-icon>arrow_downward</md-icon></md-icon-button
+              >
               <div class="action-text">${this.point.counter_quality_down}</div>
             </div>
             <md-icon-button
               icon="share"
               ?hidden="${true || this.masterHideSharing}"
               class="shareIcon"
-              .label="${this.t('sharePoint')}"
+              .label="${this.t("sharePoint")}"
               up-voted="${this.isUpVoted}"
-              @click="${this._shareTap}"></md-icon-button>
+              @click="${this._shareTap}"
+            ></md-icon-button>
           </div>
         `
       : nothing;
@@ -139,7 +151,7 @@ export class YpPointActions extends YpBaseElement {
   override connectedCallback() {
     super.connectedCallback();
     this.addGlobalListener(
-      'yp-got-endorsements-and-qualities',
+      "yp-got-endorsements-and-qualities",
       this._updateQualitiesFromSignal.bind(this)
     );
   }
@@ -147,19 +159,21 @@ export class YpPointActions extends YpBaseElement {
   override disconnectedCallback() {
     super.disconnectedCallback();
     this.removeGlobalListener(
-      'yp-got-endorsements-and-qualities',
+      "yp-got-endorsements-and-qualities",
       this._updateQualitiesFromSignal.bind(this)
     );
   }
 
   get masterHideSharing() {
-    return this.hideSharing || (this.configuration && this.configuration.hideSharing);
+    return (
+      this.hideSharing || (this.configuration && this.configuration.hideSharing)
+    );
   }
 
   _sharedContent(event: CustomEvent) {
     const shareData = event.detail;
     window.appGlobals.activity(
-      'pointShared',
+      "pointShared",
       shareData.social,
       this.point ? this.point.id : -1
     );
@@ -168,17 +182,17 @@ export class YpPointActions extends YpBaseElement {
   _shareTap(event: CustomEvent) {
     const detail = event.detail;
     window.appGlobals.activity(
-      'pointShareHeaderOpen',
+      "pointShareHeaderOpen",
       detail.brand,
       this.point ? this.point.id : -1
     );
 
     window.appDialogs.getDialogAsync(
-      'shareDialog',
+      "shareDialog",
       (dialog: YpShareDialogData) => {
         dialog.open(
-          this.pointUrl || '',
-          this.t('sharePoint'),
+          this.pointUrl || "",
+          this.t("sharePoint"),
           this._sharedContent
         );
       }
@@ -230,15 +244,15 @@ export class YpPointActions extends YpBaseElement {
 
   _resetClasses() {
     if (this.pointQualityValue && this.pointQualityValue > 0) {
-      (this.$$('#actionUp') as HTMLElement).className += ' ' + 'up-selected';
-      removeClass(this.$$('#actionDown') as HTMLElement, 'down-selected');
+      (this.$$("#actionUp") as HTMLElement).className += " " + "up-selected";
+      removeClass(this.$$("#actionDown") as HTMLElement, "down-selected");
     } else if (this.pointQualityValue && this.pointQualityValue < 0) {
-      (this.$$('#actionDown') as HTMLElement).className +=
-        ' ' + 'down-selected';
-      removeClass(this.$$('#actionUp') as HTMLElement, 'up-selected');
+      (this.$$("#actionDown") as HTMLElement).className +=
+        " " + "down-selected";
+      removeClass(this.$$("#actionUp") as HTMLElement, "up-selected");
     } else {
-      removeClass(this.$$('#actionUp') as HTMLElement, 'up-selected');
-      removeClass(this.$$('#actionDown') as HTMLElement, 'down-selected');
+      removeClass(this.$$("#actionUp") as HTMLElement, "up-selected");
+      removeClass(this.$$("#actionDown") as HTMLElement, "down-selected");
     }
   }
 
@@ -251,9 +265,9 @@ export class YpPointActions extends YpBaseElement {
     if (this.point && window.appUser.loggedIn() === true) {
       let method;
       if (this.pointQualityValue === value) {
-        method = 'DELETE';
+        method = "DELETE";
       } else {
-        method = 'POST';
+        method = "POST";
       }
       const pointQuality = (await window.serverApi.setPointQuality(
         this.point.id,
@@ -285,9 +299,14 @@ export class YpPointActions extends YpBaseElement {
 
     if (oldPointQualityValue) {
       if (oldPointQualityValue > 0)
-        this.point!.counter_quality_up = Math.max(0,this.point!.counter_quality_up - 1);
+        this.point!.counter_quality_up = Math.max(
+          0,
+          this.point!.counter_quality_up - 1
+        );
       else if (oldPointQualityValue < 0)
-        this.point!.counter_quality_down = Math.max(this.point!.counter_quality_down - 1);
+        this.point!.counter_quality_down = Math.max(
+          this.point!.counter_quality_down - 1
+        );
     }
     if (pointQuality.value > 0)
       this.point!.counter_quality_up = this.point!.counter_quality_up + 1;
@@ -308,12 +327,12 @@ export class YpPointActions extends YpBaseElement {
     this.generatePointQuality(1);
     this.isUpVoted = true;
     this.requestUpdate;
-    window.appGlobals.activity('clicked', 'pointHelpful', this.point!.id);
+    window.appGlobals.activity("clicked", "pointHelpful", this.point!.id);
   }
 
   pointNotHelpful() {
     this.allDisabled = true;
-    window.appGlobals.activity('clicked', 'pointNotHelpful', this.point!.id);
+    window.appGlobals.activity("clicked", "pointNotHelpful", this.point!.id);
     this.generatePointQuality(-1);
     this.requestUpdate;
   }

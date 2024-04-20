@@ -41,10 +41,12 @@ let YpEditDialog = class YpEditDialog extends YpBaseElement {
         md-dialog.popUpDialogDouble {
           width: 1024px;
           max-width: 1024px;
+          height: 100%;
+          max-height: 750px;
         }
 
-        md-dialog[open][is-safari]{
-         // height: 100%;
+        md-dialog[open][is-safari] {
+          // height: 100%;
         }
 
         .fullScreenDialog {
@@ -106,8 +108,6 @@ let YpEditDialog = class YpEditDialog extends YpBaseElement {
             min-width: 320px;
           }
         }
-
-
 
         app-toolbar {
           margin-top: 0;
@@ -236,7 +236,6 @@ let YpEditDialog = class YpEditDialog extends YpBaseElement {
         md-dialog[rtl] {
           direction: rtl;
         }
-
       `,
         ];
     }
@@ -273,7 +272,8 @@ let YpEditDialog = class YpEditDialog extends YpBaseElement {
                         disabled
                         ?long-button-text="${this.hasLongSaveText}"
                         slot="footer"
-                      >${this.t("uploading.inProgress")}</md-text-button>
+                        >${this.t("uploading.inProgress")}</md-text-button
+                      >
                     `}
               `
             : html ``}
@@ -300,9 +300,7 @@ let YpEditDialog = class YpEditDialog extends YpBaseElement {
             </form>
           </yp-form>
         </div>
-        <md-circular-progress
-          id="spinner"
-        ></md-circular-progress>
+        <md-circular-progress id="spinner"></md-circular-progress>
       </div>
     `;
     }
@@ -398,9 +396,9 @@ let YpEditDialog = class YpEditDialog extends YpBaseElement {
         class="${this.computeClass}"
         with-backdrop="${!this.wide}"
       >
-        <div slot="headline">${this.heading}</div>
-        ${
-        /*this.narrow*/ false
+        <span slot="headline">
+          <md-icon-button @click="${this.close}"><md-icon>close</md-icon></md-icon-button> <span>${this.heading}</span></span>
+        ${this.narrow
             ? this.renderMobileView()
             : this.renderDesktopView()}
       </md-dialog>
@@ -440,7 +438,7 @@ let YpEditDialog = class YpEditDialog extends YpBaseElement {
         this.fire("next-tab-action");
     }
     get computeClass() {
-        if (false && this.narrow)
+        if (this.narrow)
             return "fullScreenDialog";
         else if (this.doubleWidth)
             return "popUpDialogDouble";
@@ -501,7 +499,7 @@ let YpEditDialog = class YpEditDialog extends YpBaseElement {
             else {
                 this.snackbarTextCombined = this.snackbarText;
             }
-            this.fire('yp-open-toast', { text: this.snackbarTextCombined });
+            this.fire("yp-open-toast", { text: this.snackbarTextCombined });
         }
     }
     _formError(event) {

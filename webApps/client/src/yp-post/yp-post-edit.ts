@@ -377,11 +377,17 @@ export class YpPostEdit extends YpEditBase {
 
         }
 
+        md-secondary-tab {
+          --md-secondary-tab-container-color: var(--md-sys-color-surface-container-highest);
+        }
+
         .topNewPostContainer {
-          background-color: var(--md-sys-color-surface);
           color: var(--md-sys-color-on-surface);
-          padding: 16px;
+          padding: 32px;
           margin: 0;
+          border-radius: 16px;
+          padding-bottom: 64px;
+          padding-top: 0;
         }
 
         yp-edit-dialog {
@@ -964,7 +970,7 @@ export class YpPostEdit extends YpEditBase {
       <section>
         <div class="layout vertical center-center">
           ${this.renderCoverMediaSelection()}
-          <div class="layout vertical center-center wrap">
+          <div class="layout horizontal center-center wrap">
             <div
               class="layout vertical center-center self-start uploadSection"
               ?hidden="${this.group!.configuration.hidePostImageUploads}"

@@ -150,11 +150,10 @@ export class YpMagicText extends YpBaseElement {
           : html` <div>${this.truncatedContent}</div> `}
         ${this.showMoreText && this.moreText
           ? html`
-              <md-outlined-button
+              <md-text-button
                 class="moreText"
                 @click="${this._openFullScreen}"
-                .label="${this.moreText}"
-              ></md-outlined-button>
+              >${this.moreText}</md-text-button>
             `
           : nothing}
         <md-linear-progress
@@ -189,6 +188,7 @@ export class YpMagicText extends YpBaseElement {
       this.moreText !== undefined &&
       this.content !== undefined &&
       this.truncate !== undefined &&
+      this.truncate !== null &&
       this.content.length > this.truncate
     );
   }

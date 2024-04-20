@@ -105,10 +105,12 @@ export class YpEditDialog extends YpBaseElement {
         md-dialog.popUpDialogDouble {
           width: 1024px;
           max-width: 1024px;
+          height: 100%;
+          max-height: 750px;
         }
 
-        md-dialog[open][is-safari]{
-         // height: 100%;
+        md-dialog[open][is-safari] {
+          // height: 100%;
         }
 
         .fullScreenDialog {
@@ -170,8 +172,6 @@ export class YpEditDialog extends YpBaseElement {
             min-width: 320px;
           }
         }
-
-
 
         app-toolbar {
           margin-top: 0;
@@ -300,7 +300,6 @@ export class YpEditDialog extends YpBaseElement {
         md-dialog[rtl] {
           direction: rtl;
         }
-
       `,
     ];
   }
@@ -338,7 +337,8 @@ export class YpEditDialog extends YpBaseElement {
                         disabled
                         ?long-button-text="${this.hasLongSaveText}"
                         slot="footer"
-                      >${this.t("uploading.inProgress")}</md-text-button>
+                        >${this.t("uploading.inProgress")}</md-text-button
+                      >
                     `}
               `
             : html``}
@@ -365,9 +365,7 @@ export class YpEditDialog extends YpBaseElement {
             </form>
           </yp-form>
         </div>
-        <md-circular-progress
-          id="spinner"
-        ></md-circular-progress>
+        <md-circular-progress id="spinner"></md-circular-progress>
       </div>
     `;
   }
@@ -465,9 +463,10 @@ export class YpEditDialog extends YpBaseElement {
         class="${this.computeClass}"
         with-backdrop="${!this.wide}"
       >
-        <div slot="headline">${this.heading}</div>
+        <span slot="headline">
+          <md-icon-button @click="${this.close}"><md-icon>close</md-icon></md-icon-button> <span>${this.heading}</span></span>
         ${
-          /*this.narrow*/ false
+          this.narrow
             ? this.renderMobileView()
             : this.renderDesktopView()
         }
@@ -494,7 +493,9 @@ export class YpEditDialog extends YpBaseElement {
     }*/
   }
 
-  override updated(changedProperties: Map<string | number | symbol, unknown>): void {
+  override updated(
+    changedProperties: Map<string | number | symbol, unknown>
+  ): void {
     super.updated(changedProperties);
     if (changedProperties.has("opened") === false) {
       //TODO: Look into if this is needed
@@ -515,7 +516,7 @@ export class YpEditDialog extends YpBaseElement {
   }
 
   get computeClass() {
-    if (false && this.narrow) return "fullScreenDialog";
+    if (this.narrow) return "fullScreenDialog";
     else if (this.doubleWidth) return "popUpDialogDouble";
     else return "popUpDialog";
   }
@@ -578,7 +579,7 @@ export class YpEditDialog extends YpBaseElement {
       } else {
         this.snackbarTextCombined = this.snackbarText;
       }
-      this.fire('yp-open-toast', {text: this.snackbarTextCombined});
+      this.fire("yp-open-toast", { text: this.snackbarTextCombined });
     }
   }
 
@@ -701,9 +702,7 @@ export class YpEditDialog extends YpBaseElement {
       validated = true;
     }
 
-    if (
-      validated
-    ) {
+    if (validated) {
       form.submit();
       (this.$$("#spinner") as Progress).hidden = false;
     } else {

@@ -92,11 +92,11 @@ let YpPostActions = class YpPostActions extends YpBaseElement {
         }
 
         .hearts-up-selected {
-          color: var(--primary-hearts-color-up, rgba(168, 0, 0, 0.72));
+
         }
 
         .hearts-down-selected {
-          color: var(--primary-hearts-color-up, rgba(168, 0, 0, 0.72));
+
         }
 
         .action-debate {
@@ -217,14 +217,14 @@ let YpPostActions = class YpPostActions extends YpBaseElement {
           ?only-up-vote-showing="${this.onlyUpVoteShowing}"
           class="action-up layout horizontal layout start justified"
         >
-          <md-icon-button
+          <md-icon-button toggle ?selected="${this.isEndorsed}"
             id="iconUpButton"
             .smaller-icons="${this.smallerIcons}"
             ?disabled="${this.votingStateDisabled}"
             .title="${this.customVoteUpHoverText}"
             class="action-icon up-vote-icon largeButton"
             @click="${this.upVote}"
-            ><md-icon
+            ><md-icon slot="selected">${this.endorseModeIcon(this.endorsementButtons, "up")}</md-icon><md-icon id="actionUpIcon"
               >${this.endorseModeIcon(this.endorsementButtons, "up")}</md-icon
             ></md-icon-button
           >
@@ -239,10 +239,13 @@ let YpPostActions = class YpPostActions extends YpBaseElement {
 
         <div
           class="action-debate layout horizontal"
-          ?hidden="${this.hideDebate || (this.headerMode && !this.post.Group.configuration.hideAllTabs)}"
+          ?hidden="${this.hideDebate ||
+            (this.headerMode && !this.post.Group.configuration.hideAllTabs)}"
         >
-         <md-icon>chat_bubble_outline</md-icon>
-         <md-badge .value="${YpFormattingHelpers.number(this.post.counter_points)}"></md-badge>
+          <md-icon>chat_bubble_outline</md-icon>
+          <md-badge
+            .value="${YpFormattingHelpers.number(this.post.counter_points)}"
+          ></md-badge>
         </div>
 
         <div
@@ -250,15 +253,13 @@ let YpPostActions = class YpPostActions extends YpBaseElement {
           class="action-down layout horizontal layout center justified"
           ?hidden="${this.post.Group.configuration.hideDownVoteForPost}"
         >
-          <md-icon-button
+          <md-icon-button toggle ?selected="${this.isOpposed}"
             smaller-icons="${this.smallerIcons}"
             ?disabled="${this.votingStateDisabled}"
             title="${this.customVoteDownHoverText}"
             class="action-icon down-vote-icon mainIcons"
             @click="${this.downVote}"
-            ><md-icon
-              >${this.endorseModeIconDown}</md-icon
-            ></md-icon-button
+            ><md-icon slot="selected">${this.endorseModeIconDown}</md-icon><md-icon>${this.endorseModeIconDown}</md-icon></md-icon-button
           >
           <div
             class="action-text down-text"
@@ -272,6 +273,9 @@ let YpPostActions = class YpPostActions extends YpBaseElement {
     }
     get isEndorsed() {
         return this.endorseValue > 0;
+    }
+    get isOpposed() {
+        return this.endorseValue < 0;
     }
     get votingStateDisabled() {
         if (this.allDisabled) {
@@ -338,10 +342,11 @@ let YpPostActions = class YpPostActions extends YpBaseElement {
                     this.post.Group.configuration &&
                     this.post.Group.configuration.hideDebateIcon)));
     }
-    updated(changedProperties) {
+    async updated(changedProperties) {
         super.updated(changedProperties);
         // TODO: Test this well is it working as expected
         if (changedProperties.has("post") && this.post) {
+            await this.updateComplete;
             YpFormattingHelpers.removeClass(this.$$("#actionUp"), "hearts-up-selected");
             YpFormattingHelpers.removeClass(this.$$("#actionDown"), "hearts-down-selected");
             YpFormattingHelpers.removeClass(this.$$("#actionUp"), "default-buttons-up-selected");
@@ -423,7 +428,7 @@ let YpPostActions = class YpPostActions extends YpBaseElement {
             return "thumb_down";
         }
         else if (endorsementButtons == "hearts" && upDown == "up") {
-            return "favorite_border";
+            return "favorite";
         }
         else if (endorsementButtons == "hearts" && upDown == "down") {
             return "do_not_disturb";
@@ -461,13 +466,13 @@ let YpPostActions = class YpPostActions extends YpBaseElement {
                 this.$$("#actionDown").className += " " + "hearts-down-selected";
                 YpFormattingHelpers.removeClass(this.$$("#actionUp"), "hearts-up-selected");
                 this.$$("#iconUpButton").innerHTML =
-                    "<md-icon>favoriate_border/md-icon>";
+                    "<md-icon>favorite</md-icon>";
             }
             else {
                 YpFormattingHelpers.removeClass(this.$$("#actionUp"), "hearts-up-selected");
                 YpFormattingHelpers.removeClass(this.$$("#actionDown"), "hearts-down-selected");
                 this.$$("#iconUpButton").innerHTML =
-                    "<md-icon>favorite_border/md-icon>";
+                    "<md-icon>favorite</md-icon>";
             }
         }
         else {
@@ -485,6 +490,7 @@ let YpPostActions = class YpPostActions extends YpBaseElement {
                 YpFormattingHelpers.removeClass(this.$$("#actionDown"), "default-buttons-down-selected");
             }
         }
+        this.requestUpdate();
     }
     _enableVoting() {
         if (!this.votingDisabled) {
