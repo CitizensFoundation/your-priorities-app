@@ -317,7 +317,8 @@ interface YpGroupConfiguration extends YpCollectionConfiguration {
   staticHtml?: {
     content: string;
     media: Array<YpSimpleGroupMediaData>;
-  }
+  },
+  useNewVersion?: boolean;
 }
 
 interface YpSimpleGroupMediaData {

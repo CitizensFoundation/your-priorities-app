@@ -1,0 +1,21 @@
+{
+  "presets": [
+    ["@babel/preset-env", {
+      "targets": "last 3 version",
+      "debug": false,
+      "modules": "commonjs"
+    }]
+  ],
+  "plugins": ["add-module-exports"],
+  "env": {
+      "test": {
+        "plugins": [
+          ["istanbul", {
+            "exclude": [
+              "test/**/*.spec.js"
+          ]
+        }]
+      ]
+    }
+  }
+}

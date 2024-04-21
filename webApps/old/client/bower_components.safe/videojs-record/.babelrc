@@ -1,0 +1,22 @@
+{
+  "presets": [
+    ["env", {
+      "targets": {
+        "browsers": ["last 3 versions"]
+      },
+      "debug": false
+    }]
+  ],
+  "plugins": ["add-module-exports"],
+  "env": {
+      "test": {
+        "plugins": [
+          ["istanbul", {
+            "exclude": [
+              "test/**/*.spec.js"
+          ]
+        }]
+      ]
+    }
+  }
+}

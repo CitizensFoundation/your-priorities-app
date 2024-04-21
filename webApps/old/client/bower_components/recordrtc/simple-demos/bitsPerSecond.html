@@ -1,0 +1,67 @@
+<style>
+    html, body, video, canvas {
+        margin: 0!important;
+        padding: 0!important;
+    }
+</style>
+
+<title>Using "bitsPerSecond" | RecordRTC</title>
+<h1>Using "bitsPerSecond"</h1>
+
+<video id="video-preview" controls autoplay playsinline></video>
+
+<script src="https://cdn.webrtc-experiment.com/RecordRTC.js"></script>
+<script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
+<script>
+navigator.getUserMedia = navigator.getUserMedia || navigator.mozGetUserMedia || navigator.webkitGetUserMedia;
+
+var videoPreview = document.getElementById('video-preview');
+
+var mediaHints = {
+    mandatory: {
+        minWidth: 640,
+        maxWidth: 640,
+        minHeight: 480,
+        maxHeight: 480,
+        minFrameRate: 30,
+        maxFrameRate: 30
+    },
+    optional: []
+};
+
+if(!!navigator.mozGetUserMedia) {
+    mediaHints = {
+        width: 640,
+        height: 480,
+        frameRate: 30
+    };
+}
+
+navigator.mediaDevices.getUserMedia({video: mediaHints, audio: true}).then(function(camera) {
+    var recorder = RecordRTC(camera, {
+        recorderType: MediaStreamRecorder,
+        mimeType: 'video/webm',
+        audioBitsPerSecond: 6000, // min: 100bps max: 6000bps
+        videoBitsPerSecond: -5000 // min: -5000bps max: 100000bps
+    });
+
+    recorder.setRecordingDuration(10 * 1000).onRecordingStopped(function() {
+        var blob = recorder.getBlob();
+        recorder = null;
+        camera.stop();
+
+        videoPreview.srcObject = null;
+        videoPreview.src = URL.createObjectURL(blob);
+    });
+
+    recorder.startRecording();
+
+    videoPreview.srcObject = camera;
+}).catch(function(error) {
+    alert('Unable to capture camera. Please check console logs.');
+    console.error(error);
+});
+</script>
+
+<footer style="margin-top: 20px;"><small id="send-message"></small></footer>
+<script src="https://cdn.webrtc-experiment.com/common.js"></script>

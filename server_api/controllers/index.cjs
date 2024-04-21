@@ -278,19 +278,27 @@ let sendIndex = async (req, res) => {
   let indexFilePath;
   log.info('Index Viewed', { userId: req.user ? req.user.id : null });
 
-  if (process.env.RUN_OLD_VERSION) {
-    if (process.env.NODE_ENV === 'production' || process.env.FORCE_PRODUCTION === "true") {
-      indexFilePath = path.resolve(req.dirName, '../../../webApps/old/client/dist/index.html');
+  let useNewVersion = req.query.useNewVersion === "true";
+
+  if (req.ypDomain && req.ypDomain.configuration && req.ypDomain.configuration.useNewVersion) {
+    useNewVersion = true;
+  }
+
+  if (true || process.env.NODE_ENV === 'production' || process.env.FORCE_PRODUCTION === "true") {
+    if (useNewVersion) {
+      indexFilePath = path.resolve(req.dirName, '../../webApps/client/dist/index.html');
     } else {
-      indexFilePath = path.resolve(req.dirName, '../../../webApps/old/client/dist/index.html');
+      indexFilePath = path.resolve(req.dirName, '../../webApps/old/client/build/bundled/index.html');
     }
   } else {
+    if (useNewVersion) {
+      indexFilePath = path.resolve(req.dirName, '../../webApps/client/index.html');
+    } else {
+      indexFilePath = path.resolve(req.dirName, '../../webApps/old/client/index.html');
+    }
   }
-  if (process.env.NODE_ENV === 'production' || process.env.FORCE_PRODUCTION === "true") {
-    indexFilePath = path.resolve(req.dirName, '../../../webApps/client/dist/index.html');
-  } else {
-    indexFilePath = path.resolve(req.dirName, '../../../webApps/client/dist/index.html');
-  }
+
+  log.info(`Index file path: ${indexFilePath}`)
 
   fs.readFile(indexFilePath, 'utf8', async (err, indexFileData) => {
     if (err) {

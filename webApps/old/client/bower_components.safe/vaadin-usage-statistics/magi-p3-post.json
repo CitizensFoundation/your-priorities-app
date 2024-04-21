@@ -1,0 +1,9 @@
+{
+  "files": ["package.json"],
+  "from": [
+    "\"license\": \"Apache-2.0\","
+  ],
+  "to": [
+    "\"license\": \"Apache-2.0\",\n\"scripts\": {\n\"postinstall\": \"node check.js\",\n\"disable\": \"npm config set @vaadin/vaadin-usage-statistics:disabled true && npm run postinstall\",\n\"enable\": \"npm config set @vaadin/vaadin-usage-statistics:disabled false && npm run postinstall\"\n},"
+  ]
+}

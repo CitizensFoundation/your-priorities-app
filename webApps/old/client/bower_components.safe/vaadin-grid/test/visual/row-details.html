@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+
+<head lang="en">
+  <meta charset="UTF-8">
+  <title>Row details visual tests</title>
+  <script src="../../../webcomponentsjs/webcomponents-lite.js"></script>
+  <script>
+    const theme = window.location.search.replace(/.*theme=(\w+).*/, '$1') || 'lumo';
+    document.write(`<link rel="import" href="../../theme/${theme}/vaadin-grid.html">`);
+    document.write(`<link rel="import" href="../../theme/${theme}/vaadin-grid-column-group.html">`);
+  </script>
+  <script src="../../demo/grid-demo-data.js"></script>
+  <link href="../../demo/x-data-provider.html" rel="import">
+</head>
+
+<body>
+  <style media="screen">
+    .capture-block {
+      display: inline-block;
+      width: 800px;
+    }
+  </style>
+
+  <div class="capture-block" id="row-details">
+    <dom-bind>
+      <template>
+        <x-array-data-provider items="{{items}}"></x-array-data-provider>
+        <vaadin-grid items="[[items]]" size="200">
+          <template class="row-details">
+            <div class="details-cell">
+              <h1>Hi, I'm [[item.name.first]]</h1>
+            </div>
+          </template>
+
+          <vaadin-grid-column-group>
+            <template class="header">
+              <div class="header-content">
+                <b>1-200 of 15,554</b>
+                <input placeholder="Search profiles" focus-target>
+              </div>
+            </template>
+
+            <vaadin-grid-column width="45px" flex-grow="0">
+              <template>
+                <input type="checkbox" checked="{{selected::change}}">
+              </template>
+            </vaadin-grid-column>
+
+            <vaadin-grid-column resizable>
+              <template class="header">Email</template>
+              <template>[[item.email]]</template>
+            </vaadin-grid-column>
+
+            <vaadin-grid-column>
+              <template class="header">City</template>
+              <template>[[item.location.city]]</template>
+            </vaadin-grid-column>
+
+            <vaadin-grid-column>
+              <template class="header">State</template>
+              <template>[[item.location.state]]</template>
+            </vaadin-grid-column>
+          </vaadin-grid-column-group>
+
+        </vaadin-grid>
+      </template>
+    </dom-bind>
+  </div>
+</body>

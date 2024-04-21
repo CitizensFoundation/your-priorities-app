@@ -3,7 +3,7 @@ var _ = require("lodash");
 var async = require('async');
 
 var setupIconsFromDefault = function(callback) {
-  icons = [
+  const icons = [
     {
       "src": "/images/manifest_yp/icon-192x192.png",
       "sizes": "192x192",

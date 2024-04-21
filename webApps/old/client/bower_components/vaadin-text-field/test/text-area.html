@@ -1,0 +1,569 @@
+<!doctype html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>vaadin-text-area tests</title>
+
+  <script src="../../web-component-tester/browser.js"></script>
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <link rel="import" href="../../test-fixture/test-fixture.html">
+  <link rel="import" href="../vaadin-text-area.html">
+
+  <link rel="import" href="helpers.html">
+</head>
+
+<body>
+  <test-fixture id="default">
+    <template>
+      <vaadin-text-area></vaadin-text-area>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="default-with-slotted-input">
+    <template>
+      <vaadin-text-area>
+        <textarea slot="textarea"></textarea>
+      </vaadin-text-area>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="default-with-slotted-helper">
+    <template>
+      <vaadin-text-area>
+        <div slot="helper">foo</div>
+      </vaadin-text-area>
+    </template>
+  </test-fixture>
+
+  <script>
+    ['', 'with slotted input'].forEach(condition => {
+      let fixtureName = '';
+      if (condition !== '') {
+        fixtureName = '-with-slotted-input';
+      }
+
+      describe(`properties ${condition}`, () => {
+        var textArea, input;
+
+        beforeEach(() => {
+          textArea = fixture(`default${fixtureName}`);
+          input = textArea.inputElement;
+        });
+
+        describe(`native ${condition}`, () => {
+
+          function assertAttrCanBeSet(prop, value) {
+            textArea[prop] = value;
+            var attrval = input.getAttribute(prop);
+
+            if (value === true) {
+              expect(attrval).not.to.be.null;
+            } else if (value === false) {
+              expect(attrval).to.be.null;
+            } else if (value) {
+              expect(attrval).to.be.equal(String(value));
+            }
+          }
+
+          function assertPropCanBeSet(prop, value) {
+            for (let i = 0; i < 3; i ++) {
+              // Check different values
+              const newValue = typeof value === 'boolean' ? i % 2 === 0 : value + i;
+              textArea[prop] = newValue;
+              expect(input[prop]).to.be.equal(newValue);
+            }
+          }
+
+          ['placeholder', 'value'].forEach(prop => {
+            it('should set string property ' + prop, () => {
+              assertPropCanBeSet(prop, 'foo');
+            });
+          });
+
+          ['autofocus', 'disabled'].forEach(prop => {
+            it('should set boolean property ' + prop, () => {
+              assertPropCanBeSet(prop, true);
+            });
+          });
+
+          ['maxlength', 'minlength'].forEach(prop => {
+            it('should set numeric attribute ' + prop, () => {
+              assertAttrCanBeSet(prop, 2);
+            });
+          });
+
+          ['autocomplete'].forEach(prop => {
+            it('should set boolean attribute ' + prop, () => {
+              assertAttrCanBeSet(prop, 'on');
+            });
+          });
+
+          ['autocapitalize'].forEach(function(prop) {
+            it('should set boolean attribute ' + prop, function() {
+              assertAttrCanBeSet(prop, 'none');
+            });
+          });
+
+          ['autocomplete', 'autocorrect', 'readonly', 'required'].forEach(prop => {
+            it('should set boolean attribute ' + prop, () => {
+              assertAttrCanBeSet(prop, true);
+              assertAttrCanBeSet(prop, false);
+            });
+          });
+        });
+
+        describe(`binding ${condition}`, () => {
+          it('default value should be empty string', () => {
+            expect(textArea.value).to.be.equal('');
+          });
+
+          it('setting input value updates value', () => {
+            input.value = 'foo';
+            input.dispatchEvent(new Event('input', {bubbles: true, cancelable: true, composed: true}));
+            expect(textArea.value).to.be.equal('foo');
+          });
+
+          it('setting input value updates has-value attribute', () => {
+            textArea.value = 'foo';
+            expect(textArea.hasAttribute('has-value')).to.be.true;
+          });
+
+          it('setting value to undefined should not update has-value attribute', () => {
+            textArea.value = undefined;
+            expect(textArea.hasAttribute('has-value')).to.be.false;
+          });
+
+          it('setting empty value does not update has-value attribute', () => {
+            textArea.value = '';
+            expect(textArea.hasAttribute('has-value')).to.be.false;
+          });
+
+          // User could accidentally set a 0 or false value
+          it('setting number value updates has-value attribute', () => {
+            textArea.value = 0;
+            expect(textArea.hasAttribute('has-value')).to.be.true;
+          });
+
+          it('setting boolean value updates has-value attribute', () => {
+            textArea.value = false;
+            expect(textArea.hasAttribute('has-value')).to.be.true;
+          });
+        });
+
+        if (!window.ShadyDOM) {
+          describe(`label ${condition}`, () => {
+            it('should not update focused property on click if disabled', () => {
+              textArea.disabled = true;
+              const label = textArea.root.querySelector('[part="label"]');
+              label.click();
+              expect(textArea.getAttribute('focused')).to.be.null;
+            });
+          });
+        }
+
+        describe('prevent invalid input', () => {
+          beforeEach(() => {
+            textArea.preventInvalidInput = true;
+            textArea.value = '1';
+          });
+
+          function inputText(value) {
+            textArea.inputElement.value = value;
+            textArea.inputElement.dispatchEvent(new CustomEvent('input'));
+          }
+
+          it('should prevent non matching input', () => {
+            textArea.pattern = '[0-9]*';
+            inputText('f');
+            expect(textArea.inputElement.value).to.equal('1');
+          });
+
+          it('should not prevent input when pattern is invalid', () => {
+            textArea.pattern = '[0-9])))]*';
+            inputText('f');
+            expect(textArea.inputElement.value).to.equal('f');
+          });
+        });
+      });
+
+      describe(`vaadin-text-area-appear${condition}`, () => {
+        let textArea;
+
+        beforeEach(() => textArea = fixture(`default${fixtureName}`));
+
+        it('should update height on show after hidden', done => {
+          const savedHeight = textArea.clientHeight;
+          textArea.hidden = true;
+          // Three new lines will expand initial height
+          textArea.value = '\n\n\n';
+          listenOnce(textArea, 'animationend', () => {
+            expect(textArea.clientHeight).to.be.above(savedHeight);
+            done();
+          });
+          textArea.hidden = false;
+        });
+
+        it('should not update height on custom animation name', done => {
+          const spy = sinon.spy(textArea, '_updateHeight');
+          listenOnce(textArea, 'animationend', () => {
+            expect(spy.called).to.be.false;
+            done();
+          });
+
+          const ev = new Event('animationend');
+          ev.animationName = 'foo';
+          textArea.dispatchEvent(ev);
+        });
+      });
+
+      describe(`multi-line ${condition}`, () => {
+        let textArea, input, inputField;
+
+        beforeEach(() => {
+          textArea = fixture(`default${fixtureName}`);
+          input = textArea.inputElement;
+          inputField = textArea.shadowRoot.querySelector('[part=input-field]');
+        });
+
+        it('should grow height with unwrapped text', () => {
+          const originalHeight = parseInt(window.getComputedStyle(inputField).height);
+
+          // Make sure there are enough characters to grow the textarea
+          textArea.value = Array(400).join('400');
+
+          const newHeight = parseInt(window.getComputedStyle(inputField).height);
+          expect(newHeight).to.be.at.least(originalHeight + 10);
+        });
+
+        it('should not grow over max-height', () => {
+          inputField.style.padding = '0';
+          inputField.style.border = 'none';
+          textArea.style.maxHeight = '100px';
+          const container = textArea.root.querySelector('.vaadin-text-area-container');
+
+          textArea.value = `
+          there
+          should
+          be
+          a
+          lot
+          of
+          rows`;
+
+          expect(parseFloat(window.getComputedStyle(textArea).height)).to.be.lte(100);
+          expect(parseFloat(window.getComputedStyle(container).height)).to.be.lte(100);
+          expect(parseFloat(window.getComputedStyle(inputField).height)).to.be.lte(100);
+        });
+
+        it('should not shrink less than min-height', () => {
+          textArea.style.minHeight = '125px';
+          const container = textArea.root.querySelector('.vaadin-text-area-container');
+
+          expect(window.getComputedStyle(textArea).height).to.be.equal('125px');
+          expect(window.getComputedStyle(container).height).to.be.equal('125px');
+          expect(parseFloat(window.getComputedStyle(inputField).height)).to.be.above(100);
+
+          // Check that value modification doesn't break min-height rule
+          textArea.value = `1 row`;
+
+          expect(window.getComputedStyle(textArea).height).to.be.equal('125px');
+          expect(window.getComputedStyle(container).height).to.be.equal('125px');
+          expect(parseFloat(window.getComputedStyle(inputField).height)).to.be.above(100);
+        });
+
+        it('should stay between min and max height', () => {
+          textArea.style.minHeight = '100px';
+          textArea.style.maxHeight = '175px';
+          const container = textArea.root.querySelector('.vaadin-text-area-container');
+
+          expect(window.getComputedStyle(textArea).height).to.be.equal('100px');
+          expect(window.getComputedStyle(container).height).to.be.equal('100px');
+          expect(parseFloat(window.getComputedStyle(input).height)).to.be.below(100);
+
+          // Check that value modification doesn't break min-height rule
+          textArea.value = `
+          there
+          should
+          be
+          a
+          lot
+          of
+          rows
+          and
+          more
+          and
+          even
+          more`;
+
+          expect(window.getComputedStyle(textArea).height).to.be.equal('175px');
+          expect(window.getComputedStyle(container).height).to.be.equal('175px');
+          expect(parseFloat(window.getComputedStyle(inputField).height)).to.be.above(150);
+        });
+
+        it('should increase inputField height', () => {
+          textArea.style.height = '200px';
+          textArea.value = 'foo';
+          expect(inputField.clientHeight).to.be.closeTo(200, 10);
+        });
+
+        it('should maintain scroll top', () => {
+          textArea.style.maxHeight = '100px';
+          textArea.value = Array(400).join('400');
+          inputField.scrollTop = 200;
+          textArea.value += 'foo';
+          expect(inputField.scrollTop).to.equal(200);
+        });
+
+        it('should decrease height automatically', () => {
+          textArea.value = Array(400).join('400');
+          const height = textArea.clientHeight;
+          textArea.value = '';
+          expect(textArea.clientHeight).to.be.below(height);
+        });
+
+        it('should not change height', () => {
+          textArea.style.maxHeight = '100px';
+          textArea.value = Array(400).join('400');
+          const height = textArea.clientHeight;
+
+          textArea.value = textArea.value.slice(0, -1);
+          expect(textArea.clientHeight).to.equal(height);
+        });
+
+        it('should have the correct width', () => {
+          textArea.style.width = '300px';
+          expect(input.clientWidth).to.equal(Math.round(
+            textArea.clientWidth
+            - parseFloat(getComputedStyle(inputField).marginLeft)
+            - parseFloat(getComputedStyle(inputField).marginRight)
+            - parseFloat(getComputedStyle(inputField).paddingLeft)
+            - parseFloat(getComputedStyle(inputField).paddingRight)
+            - parseFloat(getComputedStyle(inputField).borderLeftWidth)
+            - parseFloat(getComputedStyle(inputField).borderRightWidth)
+          ));
+        });
+
+        it('should have matching scrollHeight', () => {
+          inputField.style.padding = '0';
+          textArea.style.maxHeight = '100px';
+
+          textArea.value = Array(400).join('400');
+          textArea.value = textArea.value.slice(0, -1);
+          expect(input.scrollHeight).to.equal(inputField.scrollHeight);
+        });
+
+        it('should cover input field', () => {
+          inputField.style.padding = '0';
+          inputField.style.border = 'none';
+          textArea.style.minHeight = '300px';
+          textArea.style.padding = '0';
+          textArea.value = 'foo';
+
+          expect(input.clientHeight).to.equal(Math.round(
+            textArea.clientHeight
+            - parseFloat(getComputedStyle(inputField).marginTop)
+            - parseFloat(getComputedStyle(inputField).marginBottom)
+            - parseFloat(getComputedStyle(inputField).paddingTop)
+            - parseFloat(getComputedStyle(inputField).paddingBottom)
+            - parseFloat(getComputedStyle(inputField).borderTopWidth)
+            - parseFloat(getComputedStyle(inputField).borderBottomWidth)
+          ));
+        });
+      });
+
+      // FIXME(platosha): Flaky with P2 in IE 11, fails with undefined `spy`.
+      const isIe = /\bTrident\b/.test(navigator.userAgent);
+      (isIe ? describe.skip : describe)(`resize ${condition}`, () => {
+        let textArea, spy;
+
+        beforeEach(() => {
+          textArea = fixture(`default${fixtureName}`);
+          spy = sinon.spy();
+          textArea.addEventListener('iron-resize', spy);
+        });
+
+        it('should not dispatch `iron-resize` event on init', () => {
+          expect(spy.callCount).to.equal(0);
+        });
+
+        it('should dispatch `iron-resize` event on height change', () => {
+          textArea.value = `
+          there
+          should
+          be
+          a
+          lot
+          of
+          rows`;
+          expect(spy.callCount).to.equal(1);
+        });
+
+        it('should not dispatch `iron-resize` event on value change if height did not change', () => {
+          textArea.value = 'just 1 row';
+          expect(spy.callCount).to.equal(0);
+        });
+      });
+    });
+
+    describe(`helper`, () => {
+      it('should not get focus after helper click', function() {
+        const textAreaSlottedHelper = fixture('default-with-slotted-helper');
+        const spy = sinon.spy(textAreaSlottedHelper, 'focus');
+        const helper = textAreaSlottedHelper.querySelector('[slot="helper"]');
+
+        helper.click();
+
+        expect(spy.called).to.be.false;
+      });
+    });
+
+
+    describe('--_text-area-vertical-scroll-position CSS variable', () => {
+      let textArea, inputField;
+
+      function wheel({element = inputField, deltaY = 0}) {
+        const e = new CustomEvent('wheel', {bubbles: true, cancelable: true});
+        e.deltaY = deltaY;
+        e.deltaX = 0;
+        element.dispatchEvent(e);
+        return e;
+      }
+
+      function getVerticalScrollPosition() {
+        if (window.ShadyCSS) {
+          return window.ShadyCSS.getComputedStyleValue(textArea, '--_text-area-vertical-scroll-position');
+        } else {
+          return getComputedStyle(textArea).getPropertyValue('--_text-area-vertical-scroll-position');
+        }
+      }
+
+      beforeEach(() => {
+        textArea = fixture(`default`);
+        inputField = textArea.root.querySelector('[part=input-field]');
+        textArea.style.height = '100px';
+        textArea.value = 'a\nb\nc\nd\ne\nf\ng\nh\ni\nj\nk\nl\nm\nn\no\np\nq\nr\ns\nt\nu\nv\nw\nx\ny\nz';
+      });
+
+      it('should be 0 initially', () => {
+        expect(getVerticalScrollPosition()).to.equal('0px');
+      });
+
+      it('should update value on scroll', async() => {
+        inputField.scrollTop = 10;
+        await oneEvent(inputField, 'scroll');
+        expect(getVerticalScrollPosition()).to.equal('10px');
+      });
+
+      it('should update value on wheel', async() => {
+        wheel({deltaY: 10});
+        expect(getVerticalScrollPosition()).to.equal('10px');
+      });
+
+      it('should scroll on wheel', async() => {
+        wheel({deltaY: 10});
+        expect(inputField.scrollTop).to.equal(10);
+      });
+
+      it('should cancel wheel event', () => {
+        const e = wheel({deltaY: 10});
+        expect(e.defaultPrevented).to.be.true;
+      });
+
+      it('should update value on resize', async() => {
+        inputField.scrollTop = 10;
+        await oneEvent(inputField, 'scroll');
+        textArea.style.height = `${inputField.scrollHeight}px`;
+        await oneEvent(inputField, 'scroll');
+        expect(getVerticalScrollPosition()).to.equal('0px');
+      });
+    });
+
+    describe('pattern', () => {
+      // eslint-disable-next-line max-len
+      // https://github.com/web-platform-tests/wpt/blob/7b0ebaccc62b566a1965396e5be7bb2bc06f841f/html/semantics/forms/constraints/form-validation-validity-patternMismatch.html
+
+      let element;
+
+      function userSetValue(value) {
+        element.value = value;
+        element.dispatchEvent(new CustomEvent('input'));
+      }
+
+      beforeEach(() => {
+        element = fixture(`default`);
+      });
+
+      it('should be valid when pattern property is not set', () => {
+        element.pattern = null;
+        userSetValue('abc');
+        expect(element.validate()).to.be.true;
+      });
+
+      it('should be valid when value property is empty', () => {
+        element.pattern = '[A-Z]+';
+        userSetValue('');
+        expect(element.validate()).to.be.true;
+      });
+
+      it('should be valid when value property matches the pattern', () => {
+        element.pattern = '[A-Z]{1}';
+        userSetValue('A');
+        expect(element.validate()).to.be.true;
+      });
+
+      it('should be valid when value property matches the pattern (multiline)', () => {
+        element.pattern = '[A-Z\n]{3}';
+        userSetValue('A\nJ');
+        expect(element.validate()).to.be.true;
+      });
+
+      it('should be valid when unicode value property matches the pattern', () => {
+        element.pattern = '[A-Z]+';
+        userSetValue('\u0041\u0042\u0043');
+        expect(element.validate()).to.be.true;
+      });
+
+      it('should be invalid when value property mismatches the pattern', () => {
+        element.pattern = '[a-z]{3,}';
+        userSetValue('ABCD');
+        expect(element.validate()).to.be.false;
+      });
+
+      it('should be invalid when value property mismatches the pattern, even if a subset matches', () => {
+        element.pattern = '[A-Z]+';
+        userSetValue('ABC123');
+        expect(element.validate()).to.be.false;
+      });
+
+      it('should be valid when pattern contains invalid regular expression', () => {
+        element.pattern = '(abc';
+        userSetValue('de');
+        expect(element.validate()).to.be.true;
+      });
+
+      it('should be valid when pattern tries to escape a group', () => {
+        element.pattern = 'a)(b';
+        userSetValue('de');
+        expect(element.validate()).to.be.true;
+      });
+
+      it('should be valid when pattern uses Unicode features', () => {
+        element.pattern = 'a\u{10FFFF}';
+        userSetValue('a\u{10FFFF}');
+        expect(element.validate()).to.be.true;
+      });
+
+      it('should be valid when value matches JavaScript-specific regular expression', () => {
+        element.pattern = '\\u1234\\cx[5-[]{2}';
+        userSetValue('\u1234\x18[6');
+        expect(element.validate()).to.be.true;
+      });
+
+      it('should be invalid when value mismatches JavaScript-specific regular expression', () => {
+        element.pattern = '\\u1234\\cx[5-[]{2}';
+        userSetValue('\u1234\x18[4');
+        expect(element.validate()).to.be.false;
+      });
+    });
+  </script>
+</body>

@@ -1,0 +1,71 @@
+{
+  "name": "videojs-record",
+  "version": "2.4.1",
+  "homepage": "https://github.com/collab-project/videojs-record",
+  "description": "A video.js plugin for recording audio/video/image files.",
+  "license": "MIT",
+  "authors": [
+    "Collab"
+  ],
+  "main": [
+    "src/js/videojs.record.js",
+    "src/css/videojs.record.scss"
+  ],
+  "moduleType": [
+    "amd",
+    "globals",
+    "node",
+    "es6"
+  ],
+  "keywords": [
+    "waveform",
+    "audio",
+    "video",
+    "wavesurfer",
+    "videojs",
+    "videojs-plugin",
+    "player",
+    "record",
+    "stream",
+    "microphone",
+    "recorder",
+    "RecordRTC",
+    "libvorbis.js",
+    "vorbis",
+    "ogg",
+    "mp3",
+    "opus"
+  ],
+  "ignore": [
+    ".gitignore",
+    "node_modules",
+    "bower_components",
+    "examples",
+    "docs"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/collab-project/videojs-record.git"
+  },
+  "dependencies": {
+    "recordrtc": ">=5.4.7",
+    "video.js": ">=6.0.0",
+    "videojs-wavesurfer": ">=2.5.0",
+    "webrtc-adapter": ">=5.0.0"
+  },
+  "devDependencies": {
+    "lamejs": "https://github.com/zhuker/lamejs.git",
+    "libvorbis.js": ">=1.1.1",
+    "opus-recorderjs": ">=4.0.0",
+    "recorderjs": "https://github.com/mattdiamond/Recorderjs.git"
+  },
+  "_release": "2.4.1",
+  "_resolution": {
+    "type": "version",
+    "tag": "2.4.1",
+    "commit": "3f290803d6bd31fc6a06bbe5352ea1b2e4ea3b62"
+  },
+  "_source": "https://github.com/collab-project/videojs-record.git",
+  "_target": "^2.4.1",
+  "_originalSource": "videojs-record"
+}

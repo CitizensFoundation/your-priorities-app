@@ -1,0 +1,28 @@
+{
+  "name": "lite-signal",
+  "version": "1.0.1",
+  "description": "Basic publish-subscribe functionality",
+  "keywords": [
+    "web-component",
+    "polymer",
+    "signals"
+  ],
+  "authors": [
+    "Jonathan Lin"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/ernsheong/lite-signal.git"
+  },
+  "main": "lite-signal.html",
+  "license": "http://polymer.github.io/LICENSE.txt",
+  "homepage": "https://github.com/ernsheong/lite-signal/",
+  "ignore": [],
+  "dependencies": {
+    "polymer": "^2.2.0"
+  },
+  "devDependencies": {
+    "webcomponentsjs": "webcomponents/webcomponentsjs#^1.0.0",
+    "web-component-tester": "^6.4.0"
+  }
+}

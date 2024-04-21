@@ -44,7 +44,7 @@ import cors from "cors";
 import log from "./utils/loggerTs.js";
 import { createClient } from "redis";
 import { Notifier } from "@airbrake/node";
-import { fileURLToPath } from 'url';
+import { fileURLToPath } from "url";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 let airbrake;
 if (process.env.AIRBRAKE_PROJECT_ID && process.env.AIRBRAKE_API_KEY) {
@@ -54,35 +54,43 @@ if (process.env.AIRBRAKE_PROJECT_ID && process.env.AIRBRAKE_API_KEY) {
         performanceStats: false,
     });
 }
-process.on('uncaughtException', (err) => {
-    console.error('There was an uncaught error', err);
-    log.error('There was an uncaught error', err);
+process.on("uncaughtException", (err) => {
+    console.error("There was an uncaught error", err);
+    log.error("There was an uncaught error", err);
     if (airbrake) {
         airbrake.notify(err).then((airbrakeErr) => {
             if (airbrakeErr.error) {
-                log.error('AirBrake Error', { context: 'airbrake', err: airbrakeErr.error, errorStatus: 500 });
+                log.error("AirBrake Error", {
+                    context: "airbrake",
+                    err: airbrakeErr.error,
+                    errorStatus: 500,
+                });
             }
         });
     }
     //TODO: What else do we want to do here? We need to exit but can we restart it right away?
     process.exit(1);
 });
-process.on('unhandledRejection', (reason, promise) => {
-    console.error('Unhandled Rejection at:', promise, 'reason:', reason);
-    log.error('Unhandled Rejection at:', promise, 'reason:', reason);
+process.on("unhandledRejection", (reason, promise) => {
+    console.error("Unhandled Rejection at:", promise, "reason:", reason);
+    log.error("Unhandled Rejection at:", promise, "reason:", reason);
     if (reason.stack) {
         console.error(reason.stack);
-        log.error('Unhandled Rejection at:', promise, 'reason:', reason);
+        log.error("Unhandled Rejection at:", promise, "reason:", reason);
     }
     if (airbrake) {
         airbrake.notify(reason).then((airbrakeErr) => {
             if (airbrakeErr.error) {
-                log.error('AirBrake Error', { context: 'airbrake', err: airbrakeErr.error, errorStatus: 500 });
+                log.error("AirBrake Error", {
+                    context: "airbrake",
+                    err: airbrakeErr.error,
+                    errorStatus: 500,
+                });
             }
         });
     }
     //TODO: Look if this is safe to do in production, should be
-    if (process.env.NODE_ENV !== 'production') {
+    if (process.env.NODE_ENV !== "production") {
         process.exit(1);
     }
 });
@@ -187,9 +195,9 @@ export class YourPrioritiesApi {
         this.initializeMiddlewares();
         this.handleShortenedRedirects();
         this.handleServiceWorkerRequests();
-        this.setupStaticFileServing();
         this.initializeRateLimiting();
         this.setupDomainAndCommunity();
+        this.setupStaticFileServing();
         this.setupSitemapRoute();
         this.initializePassportStrategies();
         this.checkAuthForSsoInit();
@@ -363,37 +371,42 @@ export class YourPrioritiesApi {
         this.app.use("/ThirdParty", express.static(path.join(landUseGamePath, "ThirdParty")));
         this.app.use("/Widgets", express.static(path.join(landUseGamePath, "Widgets")));
         this.app.use("/Workers", express.static(path.join(landUseGamePath, "Workers")));
-        // Analytics app
-        const analyticsAppPath = path.join(baseDir, "old/analytics_app/dist");
-        this.app.use("/analytics/", express.static(analyticsAppPath));
-        this.app.use("/analytics/domain/*", express.static(analyticsAppPath));
-        this.app.use("/analytics/community/*", express.static(analyticsAppPath));
-        this.app.use("/analytics/group/*", express.static(analyticsAppPath));
-        // Admin app
-        let adminAppPath;
-        if (process.env.RUN_OLD_VERSION) {
-            adminAppPath = path.join(baseDir, "old/admin_app/dist");
-        }
-        else {
-            adminAppPath = path.join(baseDir, "client/dist");
-        }
-        this.app.use("/admin/", express.static(adminAppPath));
-        this.app.use("/admin/domain/*", express.static(adminAppPath));
-        this.app.use("/admin/community/*", express.static(adminAppPath));
-        this.app.use("/admin/group/*", express.static(adminAppPath));
-        let clientAppPath;
-        if (process.env.RUN_OLD_VERSION) {
-            clientAppPath = path.join(baseDir, "old/client/dist");
-        }
-        else {
-            clientAppPath = path.join(baseDir, "client/dist");
-        }
-        this.app.use("/", express.static(clientAppPath));
-        this.app.use("/domain/*", express.static(clientAppPath));
-        this.app.use("/community/*", express.static(clientAppPath));
-        this.app.use("/group/*", express.static(clientAppPath));
-        this.app.use("/post/*", express.static(clientAppPath));
-        this.app.use("/favicon.ico", express.static(clientAppPath));
+        // Middleware to set paths based on query parameters
+        this.app.use((req, res, next) => {
+            const baseDir = path.join(__dirname, "../../webApps");
+            let useNewVersion = req.query.useNewVersion === "true";
+            if (req.ypDomain && req.ypDomain.configuration && req.ypDomain.configuration.useNewVersion === true) {
+                useNewVersion = true;
+            }
+            console.log(`Using new version: ${useNewVersion}`);
+            // Set the paths depending on the version
+            req.adminAppPath = useNewVersion
+                ? path.join(baseDir, "client/dist")
+                : path.join(baseDir, "old/admin_app/dist");
+            req.clientAppPath = useNewVersion
+                ? path.join(baseDir, "client/dist")
+                : path.join(baseDir, "old/client/build/bundled");
+            // Only apply static middleware to certain paths
+            if (req.path.startsWith("/admin") ||
+                req.path.startsWith("/promotion") ||
+                req.path.startsWith("/land_use") ||
+                req.path.startsWith("/") ||
+                req.path.startsWith("/domain") ||
+                req.path.startsWith("/community") ||
+                req.path.startsWith("/group") ||
+                req.path.startsWith("/post") ||
+                req.path === "/favicon.ico") {
+                // Specific paths to use the adminAppPath or clientAppPath
+                const staticPath = req.path.startsWith("/admin")
+                    ? req.adminAppPath
+                    : req.clientAppPath;
+                console.log("Static path", staticPath);
+                express.static(staticPath)(req, res, next);
+            }
+            else {
+                next(); // Continue to other middleware/routes that are not for serving static files
+            }
+        });
     }
     initializeMiddlewares() {
         this.app.use(morgan("combined"));

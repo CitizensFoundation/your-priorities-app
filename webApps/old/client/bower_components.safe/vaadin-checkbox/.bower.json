@@ -1,0 +1,59 @@
+{
+  "name": "vaadin-checkbox",
+  "homepage": "https://vaadin.com/components",
+  "authors": [
+    "Vaadin Ltd"
+  ],
+  "description": "vaadin-checkbox",
+  "main": [
+    "vaadin-checkbox.html",
+    "theme/material/vaadin-checkbox-group.html",
+    "theme/material/vaadin-checkbox.html"
+  ],
+  "keywords": [
+    "Vaadin",
+    "checkbox",
+    "web-components",
+    "web-component",
+    "polymer"
+  ],
+  "license": "Apache-2.0",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "gulpfile.js",
+    "package-lock.json",
+    "wct.conf.js"
+  ],
+  "dependencies": {
+    "polymer": "^2.0.0",
+    "vaadin-control-state-mixin": "vaadin/vaadin-control-state-mixin#^2.1.1",
+    "vaadin-themable-mixin": "vaadin/vaadin-themable-mixin#^1.2.1",
+    "vaadin-lumo-styles": "vaadin/vaadin-lumo-styles#^1.2.0",
+    "vaadin-material-styles": "vaadin/vaadin-material-styles#^1.2.0",
+    "vaadin-element-mixin": "vaadin/vaadin-element-mixin#^2.0.0"
+  },
+  "devDependencies": {
+    "iron-component-page": "^3.0.0",
+    "iron-test-helpers": "^2.0.0",
+    "webcomponentsjs": "^1.0.1",
+    "web-component-tester": "^6.1.5",
+    "vaadin-demo-helpers": "vaadin/vaadin-demo-helpers#^2.2.0",
+    "iron-form": "^2.0.1",
+    "vaadin-button": "vaadin/vaadin-button#^2.1.0"
+  },
+  "resolutions": {
+    "vaadin-element-mixin": "^2.0.0"
+  },
+  "version": "2.2.7",
+  "_release": "2.2.7",
+  "_resolution": {
+    "type": "version",
+    "tag": "v2.2.7",
+    "commit": "d83154f05b5658bc843972b18a5718e562d5bb50"
+  },
+  "_source": "https://github.com/vaadin/vaadin-checkbox.git",
+  "_target": "^2.2.1",
+  "_originalSource": "vaadin/vaadin-checkbox"
+}

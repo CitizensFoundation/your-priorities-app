@@ -1,0 +1,72 @@
+<style>
+    html, body {
+        margin: 0!important;
+        padding: 0!important;
+    }
+</style>
+
+<title>MS-Edge Audio Recording using RecordRTC</title>
+<h1>MS-Edge Audio Recording using RecordRTC</h1>
+
+<br>
+<button id="btn-start-recording">Start Recording</button>
+<button id="btn-stop-recording" disabled>Stop Recording</button>
+
+<hr>
+<audio controls autoplay playsinline></audio>
+
+<script src="https://cdn.webrtc-experiment.com/RecordRTC.js"></script>
+<script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
+<script>
+var audio = document.querySelector('audio');
+
+function captureMicrophone(callback) {
+    navigator.mediaDevices.getUserMedia({audio: true}).then(function(microphone) {
+        callback(microphone);
+    }).catch(function(error) {
+        alert('Unable to capture your microphone. Please check console logs. Please make sure to enable Windows Start Button => Settings => Privacy => Camera+Microphone for Edge browser.');
+        console.error(error);
+    });
+}
+
+function stopRecordingCallback() {
+    audio.srcObject = null;
+    var blob = recorder.getBlob();
+    audio.src = URL.createObjectURL(blob);
+
+    recorder.microphone.stop();
+}
+
+var isEdge = navigator.userAgent.indexOf('Edge') !== -1 && (!!navigator.msSaveOrOpenBlob || !!navigator.msSaveBlob);
+var recorder; // globally accessible
+
+document.getElementById('btn-start-recording').onclick = function() {
+    this.disabled = true;
+    captureMicrophone(function(microphone) {
+        audio.srcObject = microphone;
+
+        recorder = RecordRTC(microphone, {
+            type: 'audio',
+            recorderType: StereoAudioRecorder, // this line is required for MS-Edge
+            // sampleRate: 44100,
+            numberOfAudioChannels: isEdge ? 1 : 2,
+            // bufferSize: 16384
+        });
+
+        recorder.startRecording();
+
+        // release microphone on stopRecording
+        recorder.microphone = microphone;
+
+        document.getElementById('btn-stop-recording').disabled = false;
+    });
+};
+
+document.getElementById('btn-stop-recording').onclick = function() {
+    this.disabled = true;
+    recorder.stopRecording(stopRecordingCallback);
+};
+</script>
+
+<footer style="margin-top: 20px;"><small id="send-message"></small></footer>
+<script src="https://cdn.webrtc-experiment.com/common.js"></script>

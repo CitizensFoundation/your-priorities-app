@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>paper-share-button demo</title>
+
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+
+    <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
+    <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
+    <link rel="import" href="../paper-share-button.html">
+
+    <style is="custom-style" include="demo-pages-shared-styles">
+    </style>
+  </head>
+  <body>
+    <div class="vertical-section-container centered">
+      <h3>paper-share-button can share url through many social media</h3>
+      <demo-snippet>
+        <template>
+          <paper-share-button url="https://www.webcomponents.org/" facebook google twitter reddit blogger vk tumblr email></paper-share-button>
+        </template>
+      </demo-snippet>
+      <h3>paper-share-button can be monochrome</h3>
+      <demo-snippet>
+        <template>
+          <paper-share-button monochrome url="https://www.webcomponents.org/" facebook google twitter reddit blogger vk tumblr email></paper-share-button>
+        </template>
+      </demo-snippet>
+      <h3>paper-share-button can open popup w/ compatible social media (Not working in frame)</h3>
+      <demo-snippet>
+        <template>
+          <paper-share-button popup url="https://www.webcomponents.org/" facebook google twitter></paper-share-button>
+        </template>
+      </demo-snippet>
+      <h3>paper-share-button can share the actual url</h3>
+      <demo-snippet>
+        <template>
+          <paper-share-button auto-url twitter facebook></paper-share-button>
+        </template>
+      </demo-snippet>
+    </div>
+  </body>
+</html>

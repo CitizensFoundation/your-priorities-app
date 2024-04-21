@@ -1,0 +1,34 @@
+{
+  "name": "@vaadin/vaadin-text-field",
+  "version": "2.3.5",
+  "description": "vaadin-text-field",
+  "main": "vaadin-text-field.html",
+  "repository": "vaadin/vaadin-text-field",
+  "keywords": [
+    "Vaadin",
+    "input",
+    "web-components",
+    "web-component",
+    "polymer"
+  ],
+  "author": "Vaadin Ltd",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/vaadin/vaadin-text-field/issues"
+  },
+  "homepage": "https://vaadin.com/components",
+  "files": [
+    "vaadin-*.js",
+    "src",
+    "theme"
+  ],
+  "scripts": {
+    "test": "wct",
+    "prestart": "polymer analyze vaadin-* > analysis.json",
+    "start": "polymer serve --port 3000 --open",
+    "preversion": "gulp version:update"
+  },
+  "devDependencies": {
+    "@vaadin/vaadin-component-dev-dependencies": "^1.0.0"
+  }
+}

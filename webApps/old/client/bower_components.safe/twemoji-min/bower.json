@@ -1,0 +1,29 @@
+{
+  "name": "twemoji-min",
+  "authors": [
+    "Radek Pazdera <radek@kano.me>"
+  ],
+  "description": "Twemoji without embedded images",
+  "main": "./2/twemoji.npm.js",
+  "keywords": [
+    "emoji",
+    "DOM",
+    "parser",
+    "images",
+    "retina",
+    "Twitter",
+    "unicode"
+  ],
+  "license": "MIT",
+  "homepage": "git://github.com/KanoComputing/twemoji-min.git",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "devDependencies": {
+    "twemoji": "^2.3.0"
+  }
+}

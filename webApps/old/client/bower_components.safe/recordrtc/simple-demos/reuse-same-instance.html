@@ -1,0 +1,75 @@
+<style>
+    html, body, video, canvas {
+        margin: 0!important;
+        padding: 0!important;
+    }
+</style>
+
+<title>Reuse Same Instance using RecordRTC</title>
+<h1>Reuse Same Instance using RecordRTC</h1>
+
+<br>
+<button id="btn-enable-camera">Enable Camera</button>
+<button id="btn-start-recording" disabled>Start Recording</button>
+<button id="btn-stop-recording" disabled>Stop Recording</button>
+
+<hr>
+<video controls autoplay playsinline></video>
+
+<script src="https://cdn.webrtc-experiment.com/RecordRTC.js"></script>
+<script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
+<script>
+var video = document.querySelector('video');
+
+function captureCamera(callback) {
+    navigator.mediaDevices.getUserMedia({ audio: true, video: true }).then(function(camera) {
+        callback(camera);
+    }).catch(function(error) {
+        alert('Unable to capture your camera. Please check console logs.');
+        console.error(error);
+    });
+}
+
+function stopRecordingCallback() {
+    video.srcObject = null;
+    var blob = recorder.getBlob();
+    video.src = URL.createObjectURL(blob);
+
+    document.getElementById('btn-start-recording').disabled = false;
+}
+
+var recorder; // globally accessible
+
+document.getElementById('btn-enable-camera').onclick = function() {
+    this.disabled = true;
+
+    captureCamera(function(camera) {
+        recorder = RecordRTC(camera, {
+            type: 'video'
+        });
+
+        recorder.camera = camera;
+
+        document.getElementById('btn-start-recording').disabled = false;
+
+        video.srcObject = recorder.camera;
+    });
+};
+
+document.getElementById('btn-start-recording').onclick = function() {
+    this.disabled = true;
+
+    video.srcObject = recorder.camera;
+
+    recorder.startRecording();
+    document.getElementById('btn-stop-recording').disabled = false;
+};
+
+document.getElementById('btn-stop-recording').onclick = function() {
+    this.disabled = true;
+    recorder.stopRecording(stopRecordingCallback);
+};
+</script>
+
+<footer style="margin-top: 20px;"><small id="send-message"></small></footer>
+<script src="https://cdn.webrtc-experiment.com/common.js"></script>

@@ -1,0 +1,308 @@
+<!--
+@license
+Copyright (c) 2017 Vaadin Ltd.
+This program is available under Apache License Version 2.0, available at https://vaadin.com/license/
+-->
+
+<link rel="import" href="../../polymer/polymer-element.html">
+<link rel="import" href="../../polymer/lib/elements/custom-style.html">
+<link rel="import" href="vaadin-text-field.html">
+
+<dom-module id="vaadin-number-field-template">
+  <template>
+    <style>
+      :host([readonly]) {
+        pointer-events: none;
+      }
+
+      [part="decrease-button"]::before {
+        content: "−";
+      }
+
+      [part="increase-button"]::before {
+        content: "+";
+      }
+
+      [part="decrease-button"],
+      [part="increase-button"] {
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
+
+      /* Hide the native arrow icons */
+      [part="value"]::-webkit-outer-spin-button,
+      [part="value"]::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+
+      [part="value"] {
+        /* Older Firefox versions (v47.0) requires !important */
+        -moz-appearance: textfield !important;
+      }
+    </style>
+
+    <div
+      disabled$="[[!_allowed(-1, value, min, max)]]"
+      part="decrease-button"
+      on-click="_decreaseValue"
+      on-touchend="_decreaseButtonTouchend"
+      hidden$="[[!hasControls]]">
+    </div>
+
+    <div
+      disabled$="[[!_allowed(1, value, min, max)]]"
+      part="increase-button"
+      on-click="_increaseValue"
+      on-touchend="_increaseButtonTouchend"
+      hidden$="[[!hasControls]]">
+    </div>
+  </template>
+
+  <script>
+    (function() {
+      let memoizedTemplate;
+
+      /**
+      * `<vaadin-number-field>` is a Polymer 2 element for number field control in forms.
+      *
+      * ```html
+      * <vaadin-number-field label="Number">
+      * </vaadin-number-field>
+      * ```
+      *
+      * @memberof Vaadin
+      * @extends Vaadin.TextFieldElement
+      * @demo demo/index.html
+      */
+      class NumberFieldElement extends Vaadin.TextFieldElement {
+        static get is() {
+          return 'vaadin-number-field';
+        }
+
+        static get version() {
+          return '2.3.5';
+        }
+
+        static get properties() {
+          return {
+            /**
+            * Set to true to display value increase/decrease controls.
+            */
+            hasControls: {
+              type: Boolean,
+              value: false,
+              reflectToAttribute: true
+            },
+
+            /**
+            * The minimum value of the field.
+            */
+            min: {
+              type: Number,
+              reflectToAttribue: true,
+              observer: '_minChanged'
+            },
+
+            /**
+             * The maximum value of the field.
+             */
+            max: {
+              type: Number,
+              reflectToAttribue: true,
+              observer: '_maxChanged'
+            },
+
+            /**
+             * Specifies the allowed number intervals of the field.
+             */
+            step: {
+              type: Number,
+              reflectToAttribue: true,
+              observer: '_stepChanged',
+              value: 1
+            }
+
+          };
+        }
+
+        ready() {
+          super.ready();
+          this.__previousValidInput = this.value || '';
+          this.inputElement.type = 'number';
+          this.inputElement.addEventListener('change', this.__onInputChange.bind(this));
+        }
+
+        _decreaseButtonTouchend(e) {
+          // Cancel the following click and focus events
+          e.preventDefault();
+          this._decreaseValue();
+        }
+
+        _increaseButtonTouchend(e) {
+          // Cancel the following click and focus events
+          e.preventDefault();
+          this._increaseValue();
+        }
+
+        static get template() {
+          if (!memoizedTemplate) {
+            // Clone the superclass template
+            memoizedTemplate = super.template.cloneNode(true);
+
+            // Retrieve this element's dom-module template
+            const thisTemplate = Polymer.DomModule.import(this.is + '-template', 'template');
+            const decreaseButton = thisTemplate.content.querySelector('[part="decrease-button"]');
+            const increaseButton = thisTemplate.content.querySelector('[part="increase-button"]');
+            const styles = thisTemplate.content.querySelector('style');
+
+            // Add the buttons and styles to the text-field template
+            const inputField = memoizedTemplate.content.querySelector('[part="input-field"]');
+            const prefixSlot = memoizedTemplate.content.querySelector('[name="prefix"]');
+            inputField.insertBefore(decreaseButton, prefixSlot);
+            inputField.appendChild(increaseButton);
+            memoizedTemplate.content.appendChild(styles);
+
+            return memoizedTemplate;
+          }
+        }
+
+        _decreaseValue() {
+          const currentValueOverMax = this.max != null && this.value != null && this.value != '' && this.value > this.max;
+          if (currentValueOverMax) {
+            this._setValue(this.max);
+          } else {
+            const incrementSign = this._getAllowedIncrementSign(-1);
+
+            if (incrementSign) {
+              this.__add(incrementSign);
+            }
+          }
+        }
+
+        _increaseValue() {
+          const currentValueUnderMin = this.min != null && this.value != null && this.value != '' && this.value < this.min;
+
+          if (currentValueUnderMin) {
+            this._setValue(this.min);
+          } else {
+            const incrementSign = this._getAllowedIncrementSign(1);
+
+            if (incrementSign) {
+              this.__add(incrementSign);
+            }
+          }
+        }
+
+        __add(sign) {
+          const incr = sign * (this.step || 1);
+          // Behave like native number input adjusting to the next exact multiple of step.
+          this._setValue(this._getValue(incr));
+        }
+
+        _setValue(value) {
+          this.value = this.inputElement.value = value;
+          this.dispatchEvent(new CustomEvent('change', {bubbles: true}));
+        }
+
+        _getValue(incr) {
+          return (incr + (incr * Math.floor((parseFloat(this.value || 0) / incr).toFixed(1)))).toFixed(this.__decimals);
+        }
+
+        _getAllowedIncrementSign(sign) {
+          if (this.disabled) {
+            return false;
+          }
+
+          const initialIncr = sign * (this.step || 1);
+
+          if (initialIncr > 0) {
+            const validMin = this.min == null || this._getValue(initialIncr) > this.min;
+            const validMax = this.max == null || this.value < this.max;
+
+            if (validMin && validMax) {
+              return sign;
+            } else if (!validMax) {
+              return false;
+            } else if (!validMin) {
+              return this.min / initialIncr;
+            }
+          } else {
+            const validMin = this.min == null || this.value > this.min;
+            const validMax = this.max == null || this._getValue(initialIncr) < this.max;
+
+            if (validMin && validMax) {
+              return sign;
+            } else if (!validMin) {
+              return false;
+            } else if (!validMax) {
+              return this.max / (this.step || 1);
+            }
+          }
+        }
+
+        _allowed(sign) {
+          const incr = sign * (this.step || 1);
+          return !this.disabled && (incr < 0
+            ? this.min == null || this.value > this.min
+            : this.max == null || this.value < this.max);
+        }
+
+        _minChanged() {
+          this.inputElement.min = this.min;
+        }
+
+        _maxChanged() {
+          this.inputElement.max = this.max;
+        }
+
+        _valueChanged(newVal, oldVal) {
+          // Validate value to be numeric
+          if (newVal && isNaN(parseFloat(newVal).toFixed(this.__decimals))) {
+            this.value = '';
+          } else if (!isNaN(parseFloat(this.value)) &&
+            parseFloat(this.value) !== parseFloat(parseFloat(this.value).toFixed(this.__decimals))) {
+            // Validate correct decimals
+            this.value = parseFloat(parseFloat(this.value).toFixed(this.__decimals));
+          }
+
+          super._valueChanged(this.value, oldVal);
+        }
+
+        __onInputChange() {
+          this.checkValidity() && this.__adjustDecimals();
+        }
+
+        __adjustDecimals() {
+          // when step is not an integer, adjust decimals.
+          this.inputElement.value && (this.value = parseFloat(this.inputElement.value).toFixed(this.__decimals));
+        }
+
+        _stepChanged(step) {
+          this.inputElement.step = step;
+          // Compute number of dedimals to display in input based on provided step
+          this.__decimals = String(step).replace(/^\d*\.?(.*)?$/, '$1').length;
+          this.__adjustDecimals();
+        }
+
+        checkValidity() {
+          // text-field mixin does not check against `min` and `max`
+          if (this.min !== undefined || this.max !== undefined) {
+            this.invalid = !this.inputElement.checkValidity();
+          }
+          return super.checkValidity();
+        }
+      }
+
+      window.customElements.define(NumberFieldElement.is, NumberFieldElement);
+
+      /**
+       * @namespace Vaadin
+       */
+      window.Vaadin = window.Vaadin || {};
+      Vaadin.NumberFieldElement = NumberFieldElement;
+    })();
+  </script>
+</dom-module>

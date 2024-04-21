@@ -1,0 +1,17 @@
+{
+  "name": "vaadin-development-mode-detector",
+  "description": "Element for detecting that an application using Vaadin Elements is running in devlopment mode",
+  "main": "vaadin-development-mode-detector.html",
+  "license": "Apache2",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {},
+  "devDependencies": {
+    "webcomponentsjs": "webcomponents/webcomponentsjs#^1.0.0"
+  }
+}

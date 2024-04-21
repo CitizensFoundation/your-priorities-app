@@ -1,0 +1,82 @@
+<style>
+    html, body {
+        margin: 0!important;
+        padding: 0!important;
+    }
+</style>
+
+<title>ondataavailable | StereoAudioRecorder | RecordRTC</title>
+<h1>ondataavailable | StereoAudioRecorder | using RecordRTC</h1>
+
+Interval: <input id="interval" type="text" value="3000"> milliseconds
+<hr>
+<button id="btn-start-recording">Start Recording</button>
+<button id="btn-stop-recording" disabled>Stop Recording</button>
+
+<hr>
+<audio controls autoplay playsinline></audio>
+
+<div id="audio-blobs-container" style="margin-top: 20px;">
+    <h2 style="margin-bottom: 20px;">Audio Blobs Goes Here:</h2>
+</div>
+
+<script src="https://cdn.webrtc-experiment.com/RecordRTC.js"></script>
+<script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
+
+<script>
+var audio = document.querySelector('audio');
+var audioBlobsContainer = document.querySelector('#audio-blobs-container');
+
+function capturemicrophone(callback) {
+    navigator.mediaDevices.getUserMedia({ audio: true }).then(function(microphone) {
+        callback(microphone);
+    }).catch(function(error) {
+        alert('Unable to capture your microphone. Please check console logs.');
+        console.error(error);
+    });
+}
+
+function stopRecordingCallback() {
+    audio.src = audio.srcObject = null;
+    recorder.microphone.stop();
+    recorder = null;
+}
+
+var recorder; // globally accessible
+
+document.getElementById('btn-start-recording').onclick = function() {
+    this.disabled = true;
+    capturemicrophone(function(microphone) {
+        audio.srcObject = microphone;
+
+        recorder = RecordRTC(microphone, {
+            recorderType: StereoAudioRecorder,
+            mimeType: 'audio/wav',
+            timeSlice: parseInt(document.querySelector('#interval').value), // pass this parameter
+            ondataavailable: function(blob) {
+                var audio = document.createElement('audio');
+                audio.controls = true;
+                audio.srcObject = null;
+                audio.src = URL.createObjectURL(blob);
+                audioBlobsContainer.appendChild(audio);
+                audioBlobsContainer.appendChild(document.createElement('hr'));
+            }
+        });
+
+        recorder.startRecording();
+
+        // release microphone on stopRecording
+        recorder.microphone = microphone;
+
+        document.getElementById('btn-stop-recording').disabled = false;
+    });
+};
+
+document.getElementById('btn-stop-recording').onclick = function() {
+    this.disabled = true;
+    recorder.stopRecording(stopRecordingCallback);
+};
+</script>
+
+<footer style="margin-top: 20px;"><small id="send-message"></small></footer>
+<script src="https://cdn.webrtc-experiment.com/common.js"></script>

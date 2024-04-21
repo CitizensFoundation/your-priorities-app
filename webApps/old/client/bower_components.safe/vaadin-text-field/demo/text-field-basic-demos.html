@@ -1,0 +1,54 @@
+<dom-module id="text-field-basic-demos">
+  <template>
+    <style include="vaadin-component-demo-shared-styles">
+      :host {
+        display: block;
+      }
+    </style>
+
+
+    <h3>Label, Placeholder and Value</h3>
+    <vaadin-demo-snippet id="text-field-basic-demos-label-placeholder-value">
+      <template preserve-content>
+        <vaadin-text-field label="Label"></vaadin-text-field>
+        <vaadin-text-field placeholder="Placeholder"></vaadin-text-field>
+        <vaadin-text-field value="Value"></vaadin-text-field>
+      </template>
+    </vaadin-demo-snippet>
+
+
+    <h3>States</h3>
+    <vaadin-demo-snippet id="text-field-basic-demos-states">
+      <template preserve-content>
+        <vaadin-text-field label="Enabled" value="Value"></vaadin-text-field>
+        <vaadin-text-field label="Disabled" value="Value" disabled></vaadin-text-field>
+        <vaadin-text-field label="Read only" value="Value" readonly></vaadin-text-field>
+      </template>
+    </vaadin-demo-snippet>
+
+    <h3>Autoselect</h3>
+    <vaadin-demo-snippet id="text-field-basic-demos-autoselect">
+      <template preserve-content>
+        <vaadin-text-field label="Autoselect" value="Text selected on focus" autoselect></vaadin-text-field>
+      </template>
+    </vaadin-demo-snippet>
+
+    <h3>Display the Clear Button</h3>
+    <p>Use the <code>clear-button-visible</code> attribute to display the clear button of an individual text field.</p>
+    <vaadin-demo-snippet id="text-field-basic-demos-clear-button">
+      <template preserve-content>
+        <vaadin-text-field label="Search" clear-button-visible value="Value"></vaadin-text-field>
+      </template>
+    </vaadin-demo-snippet>
+
+
+  </template>
+  <script>
+    class TextFieldBasicDemos extends DemoReadyEventEmitter(TextFieldDemo(Polymer.Element)) {
+      static get is() {
+        return 'text-field-basic-demos';
+      }
+    }
+    customElements.define(TextFieldBasicDemos.is, TextFieldBasicDemos);
+  </script>
+</dom-module>

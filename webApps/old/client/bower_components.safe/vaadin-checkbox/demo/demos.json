@@ -1,0 +1,59 @@
+{
+  "name": "Vaadin Checkbox",
+  "pages": [
+  {
+    "name": "Basics",
+    "url": "checkbox-basic-demos",
+    "src": "checkbox-basic-demos.html",
+    "meta": {
+      "title": "Vaadin Checkbox Basics",
+      "description": "",
+      "image": ""
+     }
+  }
+  ,
+  {
+    "name": "Indeterminate State",
+    "url": "checkbox-indeterminate-demos",
+    "src": "checkbox-indeterminate-demos.html",
+    "meta": {
+      "title": "Vaadin Checkbox Indeterminate State",
+      "description": "",
+      "image": ""
+     }
+  }
+  ,
+  {
+    "name": "Accessibility",
+    "url": "checkbox-accessibility-demos",
+    "src": "checkbox-a11y-demos.html",
+    "meta": {
+      "title": "Vaadin Checkbox Accessibility",
+      "description": "",
+      "image": ""
+     }
+  }
+  ,
+  {
+    "name": "Checkbox Group",
+    "url": "checkbox-group-demos",
+    "src": "checkbox-group-demos.html",
+    "meta": {
+      "title": "vaadin-checkbox-group Examples",
+      "description": "",
+      "image": ""
+    }
+  }
+  ,
+  {
+    "name": "Checkbox Group Validation",
+    "url": "checkbox-group-validation-demos",
+    "src": "checkbox-group-validation-demos.html",
+    "meta": {
+      "title": "vaadin-checkbox-group Validation Examples",
+      "description": "",
+      "image": ""
+    }
+  }
+  ]
+}

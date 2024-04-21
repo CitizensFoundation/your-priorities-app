@@ -1,0 +1,13 @@
+<script>
+  window.listenOnce = (element, eventName, callback) => {
+    const listener = e => {
+      element.removeEventListener(eventName, listener);
+      callback(e);
+    };
+    element.addEventListener(eventName, listener);
+  };
+
+  window.oneEvent = (element, eventName) => {
+    return new Promise((resolve) => listenOnce(element, eventName, resolve));
+  };
+</script>

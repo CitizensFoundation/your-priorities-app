@@ -1,0 +1,14 @@
+{
+  "files": [
+    "package.json",
+    "vaadin-usage-statistics.js"
+  ],
+  "from": [
+    "\"license\": \"Apache-2.0\",",
+    "import './vaadin-usage-statistics-collect.js';"
+  ],
+  "to": [
+    "\"license\": \"Apache-2.0\",\n\"scripts\": {\n\"postinstall\": \"node check.cjs\",\n\"disable\": \"npm config set @vaadin/vaadin-usage-statistics:disabled true && npm run postinstall\",\n\"enable\": \"npm config set @vaadin/vaadin-usage-statistics:disabled false && npm run postinstall\"\n},",
+    "export * from './vaadin-usage-statistics-collect.js';"
+  ]
+}
