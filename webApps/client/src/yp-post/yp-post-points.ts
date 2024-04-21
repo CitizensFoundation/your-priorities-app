@@ -277,8 +277,11 @@ export class YpPostPoints extends YpBaseElementWithLogin {
           padding-top: 24px;
           padding-left: 16px;
           padding-right: 16px;
-          padding-bottom: 16px;
+          padding-bottom: 0;
           margin-bottom: 16px;
+          border-radius: 16px;
+          max-width: 396px;
+          background-color: var(--md-sys-color-surface-container-lowest);
         }
 
         yp-point {
@@ -683,8 +686,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
           <div
             id="point${type}Material"
             class="pointInputMaterial
-                    layout vertical
-                  shadow-elevation-2dp shadow-transition"
+                    layout vertical"
             ?hidden="${this.post.Group.configuration.disableDebate}"
           >
             <md-outlined-text-field
@@ -694,13 +696,13 @@ export class YpPostPoints extends YpBaseElementWithLogin {
               .label="${label ? label : ""}"
               charCounter
               type="textarea"
-              rows="2"
+              rows="4"
               @keyup="${() => {
                 this.requestUpdate();
               }}"
               ?hidden="${hideText}"
-              maxrows="3"
-              .maxlength="${this.pointMaxLength}"
+              maxrows="4"
+              .maxLength="${this.pointMaxLength}"
             >
             </md-outlined-text-field>
 
