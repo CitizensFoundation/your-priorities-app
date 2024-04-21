@@ -435,12 +435,31 @@ export class YourPrioritiesApi {
       (req: YpRequest, res: express.Response, next: NextFunction) => {
         const baseDir = path.join(__dirname, "../../webApps");
 
-        let useNewVersion = req.query.useNewVersion === "true";
-        if (req.ypDomain && req.ypDomain.configuration && req.ypDomain.configuration.useNewVersion===true) {
-          useNewVersion = true;
+        let useNewVersion =
+          req.query.useNewVersion === "true" ||
+          (req.session as any).useNewVersion === true;
+        let useNewVersionIsFalse = req.query.useNewVersion === "false";
+
+        if (req.query.useNewVersion === "true") {
+          (req.session as any).useNewVersion = true;
+          console.log(
+            `Setting new version preference: ${req.query.useNewVersion}`
+          );
+          if (
+            req.ypDomain &&
+            req.ypDomain.configuration &&
+            req.ypDomain.configuration.useNewVersion === true
+          ) {
+            useNewVersion = true;
+          }
+        } else if (useNewVersionIsFalse) {
+          (req.session as any).useNewVersion = false;
+          console.log(`Setting new version preference: false`);
         }
 
-        console.log(`Using new version: ${useNewVersion}`)
+        console.log(
+          `------------------------------> Using new version: ${useNewVersion}`
+        );
 
         // Set the paths depending on the version
         req.adminAppPath = useNewVersion
@@ -454,6 +473,7 @@ export class YourPrioritiesApi {
         if (
           req.path.startsWith("/admin") ||
           req.path.startsWith("/promotion") ||
+          req.path.startsWith("/images") ||
           req.path.startsWith("/land_use") ||
           req.path.startsWith("/") ||
           req.path.startsWith("/domain") ||

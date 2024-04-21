@@ -374,11 +374,23 @@ export class YourPrioritiesApi {
         // Middleware to set paths based on query parameters
         this.app.use((req, res, next) => {
             const baseDir = path.join(__dirname, "../../webApps");
-            let useNewVersion = req.query.useNewVersion === "true";
-            if (req.ypDomain && req.ypDomain.configuration && req.ypDomain.configuration.useNewVersion === true) {
-                useNewVersion = true;
+            let useNewVersion = req.query.useNewVersion === "true" ||
+                req.session.useNewVersion === true;
+            let useNewVersionIsFalse = req.query.useNewVersion === "false";
+            if (req.query.useNewVersion === "true") {
+                req.session.useNewVersion = true;
+                console.log(`Setting new version preference: ${req.query.useNewVersion}`);
+                if (req.ypDomain &&
+                    req.ypDomain.configuration &&
+                    req.ypDomain.configuration.useNewVersion === true) {
+                    useNewVersion = true;
+                }
             }
-            console.log(`Using new version: ${useNewVersion}`);
+            else if (useNewVersionIsFalse) {
+                req.session.useNewVersion = false;
+                console.log(`Setting new version preference: false`);
+            }
+            console.log(`------------------------------> Using new version: ${useNewVersion}`);
             // Set the paths depending on the version
             req.adminAppPath = useNewVersion
                 ? path.join(baseDir, "client/dist")
@@ -389,6 +401,7 @@ export class YourPrioritiesApi {
             // Only apply static middleware to certain paths
             if (req.path.startsWith("/admin") ||
                 req.path.startsWith("/promotion") ||
+                req.path.startsWith("/images") ||
                 req.path.startsWith("/land_use") ||
                 req.path.startsWith("/") ||
                 req.path.startsWith("/domain") ||

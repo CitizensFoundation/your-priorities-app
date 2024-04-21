@@ -278,7 +278,7 @@ let sendIndex = async (req, res) => {
   let indexFilePath;
   log.info('Index Viewed', { userId: req.user ? req.user.id : null });
 
-  let useNewVersion = req.query.useNewVersion === "true";
+  let useNewVersion = req.query.useNewVersion === "true" || req.session.useNewVersion === true;
 
   if (req.ypDomain && req.ypDomain.configuration && req.ypDomain.configuration.useNewVersion) {
     useNewVersion = true;
