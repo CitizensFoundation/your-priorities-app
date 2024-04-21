@@ -433,6 +433,7 @@ const getCommunity = function (req, done) {
                         required: false,
                         order: [
                             ['counter_users', 'desc'],
+                            [{ model: models.Image, as: 'GroupLogoImages' }, 'created_at', 'asc']
                         ],
                         include: models.Group.masterGroupIncludes(models)
                     }).then(function (groups) {
@@ -464,6 +465,7 @@ const getCommunity = function (req, done) {
                             attributes: models.Group.defaultAttributesPublic,
                             order: [
                                 ['counter_users', 'desc'],
+                                [{ model: models.Image, as: 'GroupLogoImages' }, 'created_at', 'asc']
                             ],
                             include: [
                                 {
