@@ -1611,7 +1611,7 @@ router.put('/:id', auth.can('edit group'), function(req, res) {
     ]
   }).then(function (group) {
     if (group) {
-      group.name =req.body.name;
+      group.name = req.body.name;
       group.objectives = req.body.objectives || req.body.description;
       group.theme_id = req.body.themeId ? parseInt(req.body.themeId) : null;
       group.access = models.Group.convertAccessFromRadioButtons(req.body);

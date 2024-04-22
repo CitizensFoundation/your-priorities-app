@@ -377,18 +377,24 @@ export class YourPrioritiesApi {
             let useNewVersion = req.query.useNewVersion === "true" ||
                 req.session.useNewVersion === true;
             let useNewVersionIsFalse = req.query.useNewVersion === "false";
+            if (req.ypDomain &&
+                req.ypDomain.configuration &&
+                req.ypDomain.configuration.useNewVersion === false) {
+                useNewVersionIsFalse = true;
+            }
             if (req.query.useNewVersion === "true") {
                 req.session.useNewVersion = true;
                 console.log(`Setting new version preference: ${req.query.useNewVersion}`);
-                if (req.ypDomain &&
-                    req.ypDomain.configuration &&
-                    req.ypDomain.configuration.useNewVersion === true) {
-                    useNewVersion = true;
-                }
             }
             else if (useNewVersionIsFalse) {
                 req.session.useNewVersion = false;
                 console.log(`Setting new version preference: false`);
+            }
+            if (req.ypDomain &&
+                req.ypDomain.configuration &&
+                req.ypDomain.configuration.useNewVersion === true &&
+                !useNewVersionIsFalse) {
+                useNewVersion = true;
             }
             console.log(`------------------------------> Using new version: ${useNewVersion}`);
             // Set the paths depending on the version

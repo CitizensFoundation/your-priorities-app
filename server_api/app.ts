@@ -440,21 +440,31 @@ export class YourPrioritiesApi {
           (req.session as any).useNewVersion === true;
         let useNewVersionIsFalse = req.query.useNewVersion === "false";
 
+        if (
+          req.ypDomain &&
+          req.ypDomain.configuration &&
+          req.ypDomain.configuration.useNewVersion === false
+        ) {
+          useNewVersionIsFalse = true;
+        }
+
         if (req.query.useNewVersion === "true") {
           (req.session as any).useNewVersion = true;
           console.log(
             `Setting new version preference: ${req.query.useNewVersion}`
           );
-          if (
-            req.ypDomain &&
-            req.ypDomain.configuration &&
-            req.ypDomain.configuration.useNewVersion === true
-          ) {
-            useNewVersion = true;
-          }
         } else if (useNewVersionIsFalse) {
           (req.session as any).useNewVersion = false;
           console.log(`Setting new version preference: false`);
+        }
+
+        if (
+          req.ypDomain &&
+          req.ypDomain.configuration &&
+          req.ypDomain.configuration.useNewVersion === true &&
+          !useNewVersionIsFalse
+        ) {
+          useNewVersion = true;
         }
 
         console.log(
