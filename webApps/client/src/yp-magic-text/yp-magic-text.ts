@@ -4,12 +4,9 @@ import { property, customElement } from "lit/decorators.js";
 import { ifDefined } from "lit/directives/if-defined.js";
 import { unsafeHTML } from "lit/directives/unsafe-html.js";
 
-import * as linkify from "linkifyjs";
 import linkifyHtml from "linkify-html";
 
 import { YpBaseElement } from "../common/yp-base-element.js";
-
-import { twemoji } from "@kano/twemoji/index.es.js";
 
 import "@material/web/progress/linear-progress.js";
 
@@ -537,13 +534,6 @@ export class YpMagicText extends YpBaseElement {
         },
       }) as string;
       this.processedContent = this.processedContent.replace(/&amp;/g, "&");
-      this.processedContent = twemoji
-        .parse(this.processedContent)
-        .replace(/&amp;quot;/g, '"')
-        .replace(
-          /class="emoji" /g,
-          'style="height: 1em;width: 1em;margin: 0 .3em 0 .3em;vertical-align: -0.1em;" '
-        );
     } else if (this.processedContent) {
       this.processedContent = linkifyHtml(this.processedContent, {
         format: (value: string, type: string) => {

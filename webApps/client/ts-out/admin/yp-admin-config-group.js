@@ -269,6 +269,7 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
         this.group.description = description;
         this.group.objectives = description;
         super._descriptionChanged(event);
+        this._configChanged();
     }
     connectedCallback() {
         super.connectedCallback();
@@ -334,7 +335,7 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
                 id: -1,
                 name: "",
                 description: "",
-                objectives: "",
+                objectives: undefined,
                 access: 3,
                 status: "hidden",
                 counter_points: 0,

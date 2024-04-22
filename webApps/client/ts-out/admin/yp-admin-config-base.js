@@ -926,6 +926,7 @@ export class YpAdminConfigBase extends YpAdminPage {
     }
     _configChanged() {
         this.configChanged = true;
+        this.requestUpdate();
     }
     _videoUploaded(event) {
         this.uploadedVideoId = event.detail.videoId;

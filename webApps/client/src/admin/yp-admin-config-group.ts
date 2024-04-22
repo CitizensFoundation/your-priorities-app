@@ -338,6 +338,7 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
     this.group.description = description;
     this.group.objectives = description;
     super._descriptionChanged(event);
+    this._configChanged();
   }
 
   override connectedCallback() {
@@ -442,7 +443,7 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
         id: -1,
         name: "",
         description: "",
-        objectives: "",
+        objectives: undefined,
         access: 3,
         status: "hidden",
         counter_points: 0,

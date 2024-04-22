@@ -1135,6 +1135,7 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
 
   _configChanged() {
     this.configChanged = true;
+    this.requestUpdate();
   }
 
   _videoUploaded(event: CustomEvent) {

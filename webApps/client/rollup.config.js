@@ -44,29 +44,22 @@ export default {
     }),
     html({
       minify: true,
-      publicPath: '/'
-      //      injectServiceWorker: true,
-      //      serviceWorkerPath: 'dist/sw.js',
+      publicPath: '/',
+      injectServiceWorker: true,
+      serviceWorkerPath: '/sw.js',
     }),
     copy({
       targets: [
         { src: 'locales', dest: 'dist/' },
         { src: 'topo', dest: 'dist/' },
-        { src: 'images/*', dest: 'dist/' },
+        { src: 'images', dest: 'dist/' },
+        { src: 'sw.js', dest: 'dist/' },
+        { src: 'offline.html', dest: 'dist/' },
         { src: 'node_modules/broadcastchannel-polyfill/index.js', dest: 'dist/node_modules/broadcastchannel-polyfill/' },
       ],
     }),
     resolve(),
-    terser({
-      //ecma: 2021,
-      //module: true,
-      //warnings: true,
-      /*mangle: {
-        properties: {
-          regex: /^__/,
-        },
-      },*/
-    }),
+    terser({}),
     //summary(),
   ],
 };

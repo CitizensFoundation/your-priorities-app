@@ -281,7 +281,7 @@ export class YpPostActions extends YpBaseElement {
           (this.headerMode && !this.post.Group.configuration.hideAllTabs)}"
         >
           <md-icon>chat_bubble_outline</md-icon>
-          <md-badge
+          <md-badge ?hidden="${this.post.counter_points==0}"
             .value="${YpFormattingHelpers.number(this.post.counter_points)}"
           ></md-badge>
         </div>
