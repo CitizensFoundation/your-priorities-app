@@ -12,7 +12,7 @@ var deliverPointNotification = require('../engine/notifications/point_delivery.c
 const processGeneralNotification = require('../engine/notifications/process_general_notifications.cjs');
 var airbrake = null;
 if (process.env.AIRBRAKE_PROJECT_ID) {
-    airbrake = require('../utils/airbrake.js');
+    airbrake = require('../utils/airbrake.cjs');
 }
 var NotificationDeliveryWorker = function () { };
 NotificationDeliveryWorker.prototype.process = function (notificationJson, callback) {

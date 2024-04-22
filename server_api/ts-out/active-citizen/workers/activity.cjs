@@ -7,7 +7,7 @@ const toJson = require('../utils/to_json.cjs');
 const async = require('async');
 let airbrake = null;
 if (process.env.AIRBRAKE_PROJECT_ID) {
-    airbrake = require('../utils/airbrake.js');
+    airbrake = require('../utils/airbrake.cjs');
 }
 const generatePostNotification = require('../engine/notifications/generate_post_notifications.cjs');
 const generatePointNotification = require('../engine/notifications/generate_point_notifications.cjs');
