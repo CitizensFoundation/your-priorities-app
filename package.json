@@ -144,11 +144,11 @@
   "scripts": {
     "publish_live": "npm run build;npm pack && node repack && node publish.js https://registry.npmjs.org/",
     "publish_local": "npm run build;npm pack && node repack && node publish.js http://localhost:4873",
-    "start": "nodemon -e ts ts-out/server_api/server.js",
-    "watch-start": "tsc --project ./ --outDir ./ts-out -w & nodemon -q ./ts-out/server.js",
+    "start": "nodemon -e ts server_api/ts-out/server.js",
+    "watch-start": "tsc --project ./server_api --outDir ./server_api/ts-out -w & nodemon -q ./server_api/ts-out/server.js",
     "dev": "nodemon --config nodemon.json ./ts-out/server_api/server.js",
     "dev:debug": "nodemon --config nodemon.json --inspect-brk api_app.ts",
-    "build": "tsc --project ./ --outDir ./ts-out && ncp views ts-out/views && ncp config ts-out/config && ncp active-citizen/email_templates ts-out/active-citizen/email_templates && ncp active-citizen/locales ts-out/active-citizen/locales"
+    "build": "cd server_api;tsc --project ./ --outDir ./ts-out && ncp views ts-out/views && ncp config ts-out/config && ncp active-citizen/email_templates ts-out/active-citizen/email_templates && ncp active-citizen/locales ts-out/active-citizen/locales"
   },
   "cacheDirectories": [
     "node_modules"

@@ -17,4 +17,7 @@ projectFilesBackup/
 .editorconfig
 server_api/uploads/
 
-
+startWatchWithEnv.sh
+startWorkerWithEnv.sh
+server_api/ts-out/config/config.json
+server_api/config/config.json

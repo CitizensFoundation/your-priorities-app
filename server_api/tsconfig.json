@@ -18,15 +18,15 @@
       "../webApps/client/src/types.d.ts",
       "../webApps/client/src/typesAoi.d.ts",
       "../webApps/client/src/typesLlms.d.ts"
-    ]
+      ]
   },
   "include": [
     "**/*.ts",
     "**/*.js",
     "**/*.cjs",
     "**/*.json",
-    "./node_modules/@policysynth/agents/validation.d.ts",
-    "./node_modules/@policysynth/agents/types.d.ts",
-    "active-citizen/engine/moderation/fraud/FraudDeletePointQualities.cjs"
+    "../node_modules/@policysynth/agents/validation.d.ts",
+    "../node_modules/@policysynth/agents/types.d.ts",
+    "./active-citizen/engine/moderation/fraud/FraudDeletePointQualities.cjs"
   ]
 }
