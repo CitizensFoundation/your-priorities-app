@@ -20,6 +20,8 @@ self.addEventListener('install', event => {
 
 // Fetch event: Implement different strategies based on the resource type
 self.addEventListener('fetch', event => {
+  if (event.request.method !== 'GET') return;
+
   if (event.request.url.match(/\.[js]$/)) {
     // Cache First strategy for .js files
     event.respondWith(
