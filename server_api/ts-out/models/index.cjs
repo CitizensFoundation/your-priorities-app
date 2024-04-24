@@ -49,7 +49,7 @@ if (process.env.NODE_ENV === 'production') {
     }
 }
 else {
-    const configPath = path.join(process.cwd(), 'server_api', 'ts-out', 'config', 'config.json');
+    const configPath = path.join(process.cwd(), 'ts-out', 'config', 'config.json');
     const config = require(configPath)[env];
     sequelize = new Sequelize(config.database, config.username, config.password, _.merge(config, {
         dialect: 'postgres',
