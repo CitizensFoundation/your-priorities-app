@@ -564,7 +564,7 @@ export class AoiEarlIdeasEditor extends YpStreamingLlmBase {
           max-width: 400px;
           max-height: 120px;
           height: 120px;
-          white-space: collapse balance;
+          white-space: normal;
           font-size: 16px;
           --md-elevated-button-container-height: 120px !important;
           --md-elevated-button-hover-label-text-color: var(
