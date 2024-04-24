@@ -239,6 +239,12 @@ let AoiNewIdeaDialog = class AoiNewIdeaDialog extends YpGenerateAiImage {
           );
         }
 
+        @supports (white-space: collapse balance) {
+          .iconContainer md-elevated-button {
+            white-space: collapse balance;
+          }
+        }
+
         .iconContainer {
           position: relative;
         }

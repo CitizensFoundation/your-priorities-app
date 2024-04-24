@@ -405,6 +405,12 @@ let AoiEarlIdeasEditor = class AoiEarlIdeasEditor extends YpStreamingLlmBase {
           );
         }
 
+        @supports (white-space: collapse balance) {
+          .iconContainer md-elevated-button {
+            white-space: collapse balance;
+          }
+        }
+
         #aiStyleInput {
           margin-bottom: 16px;
         }

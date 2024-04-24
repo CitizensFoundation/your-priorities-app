@@ -235,6 +235,12 @@ let AoiSurveyVoting = class AoiSurveyVoting extends YpBaseElement {
           );
         }
 
+        @supports (white-space: collapse balance) {
+          .buttonContainer md-elevated-button {
+            white-space: collapse balance;
+          }
+        }
+
         .spinnerContainer {
           display: flex;
           align-items: center;
