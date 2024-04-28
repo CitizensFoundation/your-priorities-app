@@ -102,6 +102,9 @@ const socketOptions = {
         if (retries > 35000) {
             console.error("Max redis retries reached");
         }
+        else {
+            console.error("Redis reconnecting", { retries });
+        }
         return Math.min(retries * 10, 3000);
     },
 };
@@ -115,6 +118,7 @@ if (process.env.REDIS_URL) {
         redisClient = createClient({
             legacyMode: false,
             url: redisUrl,
+            pingInterval: 1000,
             socket: {
                 reconnectStrategy: socketOptions.reconnectStrategy,
                 tls: true,
@@ -216,12 +220,6 @@ export class YourPrioritiesApi {
         this.initializeRoutes();
         this.initializeEsControllers();
     }
-    addDirnameToRequest() {
-        this.app.use((req, res, next) => {
-            req.dirName = __dirname;
-            next();
-        });
-    }
     addRedisToRequest() {
         this.app.use((req, res, next) => {
             if (this.redisClient && typeof this.redisClient.get === "function") {
@@ -231,6 +229,12 @@ export class YourPrioritiesApi {
             else {
                 log.error("Redis client get method not found or client not initialized");
             }
+            next();
+        });
+    }
+    addDirnameToRequest() {
+        this.app.use((req, res, next) => {
+            req.dirName = __dirname;
             next();
         });
     }
