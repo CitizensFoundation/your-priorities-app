@@ -1,30 +1,51 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const models = require("../../../models/index.cjs");
-const async = require('async');
-const log = require('../../utils/logger.cjs');
-const TOXICITY_THRESHOLD = 0.50;
+const async = require("async");
+const log = require("../../utils/logger.cjs");
+const TOXICITY_THRESHOLD = 0.5;
 const TOXICITY_EMAIL_THRESHOLD = 0.75;
-const Perspective = require('./perspective_api_client.cjs');
+const Perspective = require("./perspective_api_client.cjs");
 const queue = require("../../workers/queue.cjs");
 let perspectiveApi;
 if (process.env.GOOGLE_PERSPECTIVE_API_KEY) {
     perspectiveApi = new Perspective({
         apiKey: process.env.GOOGLE_PERSPECTIVE_API_KEY,
-        projectId: process.env.GOOGLE_TRANSLATE_PROJECT_ID ? process.env.GOOGLE_TRANSLATE_PROJECT_ID : undefined,
+        projectId: process.env.GOOGLE_TRANSLATE_PROJECT_ID
+            ? process.env.GOOGLE_TRANSLATE_PROJECT_ID
+            : undefined,
     });
 }
 const getToxicityScoreForText = (text, doNotStore, callback) => {
     log.info("getToxicityScoreForText starting", { doNotStore });
     if (text && text !== "") {
-        perspectiveApi.analyze(text, { doNotStore, attributes: [
-                'TOXICITY', 'SEVERE_TOXICITY', 'IDENTITY_ATTACK',
-                'THREAT', 'INSULT', 'PROFANITY', 'SEXUALLY_EXPLICIT',
-                'FLIRTATION'
-            ] }).then(result => {
+        perspectiveApi
+            .analyze(text, {
+            doNotStore,
+            attributes: [
+                "TOXICITY",
+                "SEVERE_TOXICITY",
+                "IDENTITY_ATTACK",
+                "THREAT",
+                "INSULT",
+                "PROFANITY",
+                "SEXUALLY_EXPLICIT",
+                "FLIRTATION",
+                // New experimental attributes
+                "AFFINITY_EXPERIMENTAL",
+                "COMPASSION_EXPERIMENTAL",
+                "CURIOSITY_EXPERIMENTAL",
+                "NUANCE_EXPERIMENTAL",
+                "PERSONAL_STORY_EXPERIMENTAL",
+                "REASONING_EXPERIMENTAL",
+                "RESPECT_EXPERIMENTAL",
+            ],
+        })
+            .then((result) => {
             log.info("getToxicityScoreForText results");
             callback(null, result);
-        }).catch(error => {
+        })
+            .catch((error) => {
             if (error &&
                 error.stack &&
                 error.stack.indexOf("ResponseError: Attribute") > -1 &&
@@ -44,36 +65,67 @@ const getToxicityScoreForText = (text, doNotStore, callback) => {
 };
 const setupModelPublicDataScore = (model, text, results) => {
     if (!model.data)
-        model.set('data', {});
+        model.set("data", {});
     if (!model.data.moderation)
-        model.set('data.moderation', {});
-    model.set('data.moderation.rawToxicityResults', results);
+        model.set("data.moderation", {});
+    model.set("data.moderation.rawToxicityResults", results);
+    // Existing attributes
     let toxicityScore, severeToxicityScore, identityAttackScore, threatScore, insultScore, profanityScore, sexuallyExplicitScore, flirtationScore;
+    // New attributes
+    let affinityScore, compassionScore, curiosityScore, nuanceScore, personalStoryScore, reasoningScore, respectScore;
     try {
+        // Existing scores
         toxicityScore = results.attributeScores["TOXICITY"].summaryScore.value;
-        severeToxicityScore = results.attributeScores["SEVERE_TOXICITY"].summaryScore.value;
-        identityAttackScore = results.attributeScores["IDENTITY_ATTACK"].summaryScore.value;
+        severeToxicityScore =
+            results.attributeScores["SEVERE_TOXICITY"].summaryScore.value;
+        identityAttackScore =
+            results.attributeScores["IDENTITY_ATTACK"].summaryScore.value;
         threatScore = results.attributeScores["THREAT"].summaryScore.value;
         insultScore = results.attributeScores["INSULT"].summaryScore.value;
         profanityScore = results.attributeScores["PROFANITY"].summaryScore.value;
-        sexuallyExplicitScore = results.attributeScores["SEXUALLY_EXPLICIT"].summaryScore.value;
+        sexuallyExplicitScore =
+            results.attributeScores["SEXUALLY_EXPLICIT"].summaryScore.value;
         flirtationScore = results.attributeScores["FLIRTATION"].summaryScore.value;
+        affinityScore =
+            results.attributeScores["AFFINITY_EXPERIMENTAL"].summaryScore.value;
+        compassionScore =
+            results.attributeScores["COMPASSION_EXPERIMENTAL"].summaryScore.value;
+        curiosityScore =
+            results.attributeScores["CURIOSITY_EXPERIMENTAL"].summaryScore.value;
+        nuanceScore =
+            results.attributeScores["NUANCE_EXPERIMENTAL"].summaryScore.value;
+        personalStoryScore =
+            results.attributeScores["PERSONAL_STORY_EXPERIMENTAL"].summaryScore.value;
+        reasoningScore =
+            results.attributeScores["REASONING_EXPERIMENTAL"].summaryScore.value;
+        respectScore =
+            results.attributeScores["RESPECT_EXPERIMENTAL"].summaryScore.value;
     }
     catch (error) {
         log.error(error);
     }
-    model.set('data.moderation.toxicityScore', toxicityScore);
-    model.set('data.moderation.severeToxicityScore', severeToxicityScore);
-    model.set('data.moderation.identityAttackScore', identityAttackScore);
-    model.set('data.moderation.threatScore', threatScore);
-    model.set('data.moderation.insultScore', insultScore);
-    model.set('data.moderation.profanityScore', profanityScore);
-    model.set('data.moderation.sexuallyExplicitScore', sexuallyExplicitScore);
-    model.set('data.moderation.flirtationScore', flirtationScore);
-    model.set('data.moderation.textUsedForScore', text);
+    model.set("data.moderation.toxicityScore", toxicityScore);
+    model.set("data.moderation.severeToxicityScore", severeToxicityScore);
+    model.set("data.moderation.identityAttackScore", identityAttackScore);
+    model.set("data.moderation.threatScore", threatScore);
+    model.set("data.moderation.insultScore", insultScore);
+    model.set("data.moderation.profanityScore", profanityScore);
+    model.set("data.moderation.sexuallyExplicitScore", sexuallyExplicitScore);
+    model.set("data.moderation.flirtationScore", flirtationScore);
+    model.set("data.moderation.textUsedForScore", text);
+    model.set("data.moderation.affinityScore", affinityScore);
+    model.set("data.moderation.compassionScore", compassionScore);
+    model.set("data.moderation.curiosityScore", curiosityScore);
+    model.set("data.moderation.nuanceScore", nuanceScore);
+    model.set("data.moderation.personalStoryScore", personalStoryScore);
+    model.set("data.moderation.reasoningScore", reasoningScore);
+    model.set("data.moderation.respectScore", respectScore);
 };
-const hasModelBreachedToxicityThreshold = model => {
-    if (model.data && model.data.moderation && (model.data.moderation.toxicityScore || model.data.moderation.severeToxicityScore)) {
+const hasModelBreachedToxicityThreshold = (model) => {
+    if (model.data &&
+        model.data.moderation &&
+        (model.data.moderation.toxicityScore ||
+            model.data.moderation.severeToxicityScore)) {
         if (model.data.moderation.toxicityScore > TOXICITY_THRESHOLD) {
             return true;
         }
@@ -85,8 +137,11 @@ const hasModelBreachedToxicityThreshold = model => {
         return false;
     }
 };
-const hasModelBreachedToxicityEmailThreshold = model => {
-    if (model.data && model.data.moderation && (model.data.moderation.toxicityScore || model.data.moderation.severeToxicityScore)) {
+const hasModelBreachedToxicityEmailThreshold = (model) => {
+    if (model.data &&
+        model.data.moderation &&
+        (model.data.moderation.toxicityScore ||
+            model.data.moderation.severeToxicityScore)) {
         if (model.data.moderation.toxicityScore > TOXICITY_EMAIL_THRESHOLD) {
             return true;
         }
@@ -102,10 +157,12 @@ const getTranslatedTextForCollection = (collectionType, model, callback) => {
     let name, content;
     async.parallel([
         (parallelCallback) => {
-            const req = { query: {
-                    textType: collectionType === 'community' ? 'communityName' : 'groupName',
-                    targetLanguage: 'en'
-                } };
+            const req = {
+                query: {
+                    textType: collectionType === "community" ? "communityName" : "groupName",
+                    targetLanguage: "en",
+                },
+            };
             models.AcTranslationCache.getTranslation(req, model, (error, translation) => {
                 if (error) {
                     parallelCallback(error);
@@ -117,10 +174,14 @@ const getTranslatedTextForCollection = (collectionType, model, callback) => {
             });
         },
         (parallelCallback) => {
-            const req = { query: {
-                    textType: collectionType === 'community' ? 'communityContent' : 'groupContent',
-                    targetLanguage: 'en'
-                } };
+            const req = {
+                query: {
+                    textType: collectionType === "community"
+                        ? "communityContent"
+                        : "groupContent",
+                    targetLanguage: "en",
+                },
+            };
             models.AcTranslationCache.getTranslation(req, model, (error, translation) => {
                 if (error) {
                     parallelCallback(error);
@@ -130,8 +191,8 @@ const getTranslatedTextForCollection = (collectionType, model, callback) => {
                     parallelCallback();
                 }
             });
-        }
-    ], error => {
+        },
+    ], (error) => {
         if (name && content) {
             callback(error, `${name.content} ${content.content}`);
         }
@@ -144,9 +205,9 @@ const getTranslatedTextForCollection = (collectionType, model, callback) => {
 const getTranslatedTextForPoint = (point, callback) => {
     const req = {
         query: {
-            textType: 'pointContent',
-            targetLanguage: 'en'
-        }
+            textType: "pointContent",
+            targetLanguage: "en",
+        },
     };
     models.AcTranslationCache.getTranslation(req, point, (error, translation) => {
         if (error) {
@@ -162,10 +223,12 @@ const getTranslatedTextForPost = (post, callback) => {
     let postStructuredAnswers = "";
     async.parallel([
         (parallelCallback) => {
-            const req = { query: {
-                    textType: 'postName',
-                    targetLanguage: 'en'
-                } };
+            const req = {
+                query: {
+                    textType: "postName",
+                    targetLanguage: "en",
+                },
+            };
             models.AcTranslationCache.getTranslation(req, post, (error, translation) => {
                 if (error) {
                     parallelCallback(error);
@@ -177,10 +240,12 @@ const getTranslatedTextForPost = (post, callback) => {
             });
         },
         (parallelCallback) => {
-            const req = { query: {
-                    textType: 'postContent',
-                    targetLanguage: 'en'
-                } };
+            const req = {
+                query: {
+                    textType: "postContent",
+                    targetLanguage: "en",
+                },
+            };
             models.AcTranslationCache.getTranslation(req, post, (error, translation) => {
                 if (error) {
                     parallelCallback(error);
@@ -192,10 +257,12 @@ const getTranslatedTextForPost = (post, callback) => {
             });
         },
         (parallelCallback) => {
-            const req = { query: {
-                    textType: 'postTranscriptContent',
-                    targetLanguage: 'en'
-                } };
+            const req = {
+                query: {
+                    textType: "postTranscriptContent",
+                    targetLanguage: "en",
+                },
+            };
             models.AcTranslationCache.getTranslation(req, post, (error, translation) => {
                 if (error) {
                     log.warn("No text from translate", { error });
@@ -228,10 +295,10 @@ const getTranslatedTextForPost = (post, callback) => {
             else {
                 parallelCallback();
             }
-        }
-    ], error => {
+        },
+    ], (error) => {
         if (postName && (postDescription || postStructuredAnswers)) {
-            callback(error, `${postName.content} ${postDescription ? postDescription.content : ''} ${postStructuredAnswers} ${postTranscript ? postTranscript.content : ''}`);
+            callback(error, `${postName.content} ${postDescription ? postDescription.content : ""} ${postStructuredAnswers} ${postTranscript ? postTranscript.content : ""}`);
         }
         else {
             log.error("No postname for toxicity!", { error });
@@ -249,28 +316,39 @@ const estimateToxicityScoreForCollection = (options, callback) => {
             collectionIncludes = [
                 {
                     model: models.Community,
-                    attributes: ['id', 'access', 'domain_id']
-                }
+                    attributes: ["id", "access", "domain_id"],
+                },
             ];
-            attributes = ['id', 'language', 'name', 'objectives', 'data'];
+            attributes = ["id", "language", "name", "objectives", "data"];
         }
         else {
-            attributes = ['id', 'language', 'name', 'domain_id', 'description', 'data'];
+            attributes = [
+                "id",
+                "language",
+                "name",
+                "domain_id",
+                "description",
+                "data",
+            ];
         }
-        model.unscoped().findOne({
+        model
+            .unscoped()
+            .findOne({
             where: {
-                id: options.collectionId
+                id: options.collectionId,
             },
             include: collectionIncludes,
-            attributes: attributes
-        }).then(collection => {
+            attributes: attributes,
+        })
+            .then((collection) => {
             if (collection) {
                 let doNotStoreValue = collection.access === 0;
-                if (options.collectionType === "group" && collection.Community.access === 0)
+                if (options.collectionType === "group" &&
+                    collection.Community.access === 0)
                     doNotStoreValue = true;
                 let textContent, textUsed, transcriptText;
                 textContent = `${collection.name}`;
-                if (textContent !== '') {
+                if (textContent !== "") {
                     log.info("getToxicityScoreForText collection getting translated text");
                     getTranslatedTextForCollection(options.collectionType, collection, (error, translatedText) => {
                         log.info("getToxicityScoreForText collection got translated text", { translatedText, error });
@@ -285,14 +363,19 @@ const estimateToxicityScoreForCollection = (options, callback) => {
                             else if (results) {
                                 collection.reload().then(() => {
                                     setupModelPublicDataScore(collection, textUsed, results);
-                                    collection.save().then(() => {
+                                    collection
+                                        .save()
+                                        .then(() => {
                                         if (hasModelBreachedToxicityThreshold(collection)) {
-                                            collection.report({ disableNotification: !hasModelBreachedToxicityEmailThreshold(collection) }, "perspectiveAPI", callback);
+                                            collection.report({
+                                                disableNotification: !hasModelBreachedToxicityEmailThreshold(collection),
+                                            }, "perspectiveAPI", callback);
                                         }
                                         else {
                                             callback();
                                         }
-                                    }).catch(error => {
+                                    })
+                                        .catch((error) => {
                                         callback(error);
                                     });
                                 });
@@ -313,7 +396,8 @@ const estimateToxicityScoreForCollection = (options, callback) => {
                 log.error("getToxicityScoreForText collection could not find collection");
                 callback("Could not find collection");
             }
-        }).catch(error => {
+        })
+            .catch((error) => {
             log.error("getToxicityScoreForText collection error", { error });
             callback(error);
         });
@@ -326,49 +410,65 @@ const estimateToxicityScoreForCollection = (options, callback) => {
 const estimateToxicityScoreForPost = (options, callback) => {
     if (process.env.GOOGLE_PERSPECTIVE_API_KEY) {
         log.info("getToxicityScoreForText post preparing");
-        models.Post.unscoped().findOne({
+        models.Post.unscoped()
+            .findOne({
             where: {
-                id: options.postId
+                id: options.postId,
             },
             include: [
                 {
                     model: models.Audio,
-                    as: 'PostAudios',
-                    required: false
+                    as: "PostAudios",
+                    required: false,
                 },
                 {
                     model: models.Video,
-                    as: 'PostVideos',
-                    required: false
+                    as: "PostVideos",
+                    required: false,
                 },
                 {
                     model: models.Group,
-                    attributes: ['id', 'access'],
+                    attributes: ["id", "access"],
                     include: [
                         {
                             model: models.Community,
                             required: true,
-                            attributes: ['id', 'access'],
+                            attributes: ["id", "access"],
                             include: [
                                 {
                                     model: models.Domain,
                                     required: true,
-                                    attributes: ['id']
-                                }
-                            ]
-                        }
-                    ]
+                                    attributes: ["id"],
+                                },
+                            ],
+                        },
+                    ],
                 },
                 {
                     model: models.User,
-                    attribues: ['id', 'age_group']
-                }
+                    attribues: ["id", "age_group"],
+                },
             ],
-            attributes: ['id', 'name', 'description', 'language', 'data', 'group_id', 'public_data', 'user_id', 'user_agent', 'ip_address']
-        }).then(post => {
+            attributes: [
+                "id",
+                "name",
+                "description",
+                "language",
+                "data",
+                "group_id",
+                "public_data",
+                "user_id",
+                "user_agent",
+                "ip_address",
+            ],
+        })
+            .then((post) => {
             if (post) {
-                let doNotStoreValue = (post.Group.access === 0 && post.Group.Community.access === 0) ? false : true;
-                if (post.User.age_group && (post.User.age_group === "0-12" || post.User.age_group === "0"))
+                let doNotStoreValue = post.Group.access === 0 && post.Group.Community.access === 0
+                    ? false
+                    : true;
+                if (post.User.age_group &&
+                    (post.User.age_group === "0-12" || post.User.age_group === "0"))
                     doNotStoreValue = true;
                 let textContent, textUsed, transcriptText;
                 if (post.public_data &&
@@ -376,8 +476,8 @@ const estimateToxicityScoreForPost = (options, callback) => {
                     post.public_data.transcript.text) {
                     transcriptText = post.public_data.transcript.text;
                 }
-                textContent = `${post.name} ${post.description} ${transcriptText ? transcriptText : ''}`;
-                if (textContent !== '') {
+                textContent = `${post.name} ${post.description} ${transcriptText ? transcriptText : ""}`;
+                if (textContent !== "") {
                     log.info("getToxicityScoreForText post getting translated text");
                     getTranslatedTextForPost(post, (error, translatedText) => {
                         //log.info("getToxicityScoreForText post got translated text", { translatedText, error });
@@ -393,15 +493,20 @@ const estimateToxicityScoreForPost = (options, callback) => {
                                 else if (results) {
                                     post.reload().then(() => {
                                         setupModelPublicDataScore(post, textUsed, results);
-                                        post.save().then(() => {
+                                        post
+                                            .save()
+                                            .then(() => {
                                             sendPostAnalyticsEvent(post);
                                             if (hasModelBreachedToxicityThreshold(post)) {
-                                                post.report({ disableNotification: !hasModelBreachedToxicityEmailThreshold(post) }, "perspectiveAPI", callback);
+                                                post.report({
+                                                    disableNotification: !hasModelBreachedToxicityEmailThreshold(post),
+                                                }, "perspectiveAPI", callback);
                                             }
                                             else {
                                                 callback();
                                             }
-                                        }).catch(error => {
+                                        })
+                                            .catch((error) => {
                                             callback(error);
                                         });
                                     });
@@ -423,7 +528,8 @@ const estimateToxicityScoreForPost = (options, callback) => {
                 log.error("getToxicityScoreForText post could not find post");
                 callback("Could not find post");
             }
-        }).catch(error => {
+        })
+            .catch((error) => {
             log.error("getToxicityScoreForText post error", { error });
             callback(error);
         });
@@ -436,63 +542,77 @@ const estimateToxicityScoreForPost = (options, callback) => {
 const estimateToxicityScoreForPoint = (options, callback) => {
     if (process.env.GOOGLE_PERSPECTIVE_API_KEY) {
         log.info("getToxicityScoreForText preparing");
-        models.Point.unscoped().findOne({
-            attributes: ['id', 'language', 'data', 'post_id', 'group_id', 'user_id', 'user_agent', 'ip_address'],
-            where: {
-                id: options.pointId
-            },
-            order: [
-                [models.PointRevision, 'created_at', 'asc'],
+        models.Point.unscoped()
+            .findOne({
+            attributes: [
+                "id",
+                "language",
+                "data",
+                "post_id",
+                "group_id",
+                "user_id",
+                "user_agent",
+                "ip_address",
             ],
+            where: {
+                id: options.pointId,
+            },
+            order: [[models.PointRevision, "created_at", "asc"]],
             include: [
                 {
                     model: models.Audio,
-                    as: 'PointAudios',
-                    required: false
+                    as: "PointAudios",
+                    required: false,
                 },
                 {
                     model: models.Video,
-                    as: 'PointVideos',
-                    required: false
+                    as: "PointVideos",
+                    required: false,
                 },
                 {
                     model: models.Group,
-                    attributes: ['id', 'access'],
+                    attributes: ["id", "access"],
                     required: false,
                     include: [
                         {
                             model: models.Community,
                             required: false,
-                            attributes: ['id', 'access'],
+                            attributes: ["id", "access"],
                             include: [
                                 {
                                     model: models.Domain,
                                     required: false,
-                                    attributes: ['id'],
-                                }
-                            ]
-                        }
-                    ]
+                                    attributes: ["id"],
+                                },
+                            ],
+                        },
+                    ],
                 },
                 {
                     model: models.PointRevision,
-                    attribues: ['id', 'content']
+                    attribues: ["id", "content"],
                 },
                 {
                     model: models.User,
-                    attribues: ['id', 'age_group']
-                }
-            ]
-        }).then(point => {
+                    attribues: ["id", "age_group"],
+                },
+            ],
+        })
+            .then((point) => {
             if (point) {
                 let doNotStoreValue = true;
-                if (point.Group && point.Group.access === 0 && (!point.Group.Community || point.Group.Community.access === 0))
+                if (point.Group &&
+                    point.Group.access === 0 &&
+                    (!point.Group.Community || point.Group.Community.access === 0))
                     doNotStoreValue = false;
-                if (point.User && point.User.age_group && (point.User.age_group === "0-12" || point.User.age_group === "0"))
+                if (point.User &&
+                    point.User.age_group &&
+                    (point.User.age_group === "0-12" || point.User.age_group === "0"))
                     doNotStoreValue = true;
                 let textContent, textUsed;
-                textContent = point.PointRevisions[point.PointRevisions.length - 1].content;
-                if (textContent && textContent !== '') {
+                textContent =
+                    point.PointRevisions[point.PointRevisions.length - 1].content;
+                if (textContent && textContent !== "") {
                     log.info("getToxicityScoreForText getting translated text");
                     getTranslatedTextForPoint(point, (error, translatedText) => {
                         //log.info("getToxicityScoreForText got translated text", { translatedText, error });
@@ -509,47 +629,57 @@ const estimateToxicityScoreForPoint = (options, callback) => {
                             else if (results) {
                                 point.reload().then(() => {
                                     setupModelPublicDataScore(point, textUsed, results);
-                                    point.save().then(() => {
+                                    point
+                                        .save()
+                                        .then(() => {
                                         sendPointAnalyticsEvent(point);
                                         if (hasModelBreachedToxicityThreshold(point)) {
                                             if (point.post_id) {
-                                                models.Post.unscoped().findOne({
+                                                models.Post.unscoped()
+                                                    .findOne({
                                                     where: {
-                                                        id: point.post_id
+                                                        id: point.post_id,
                                                     },
-                                                    attributes: ["id", 'data'],
+                                                    attributes: ["id", "data"],
                                                     include: [
                                                         {
                                                             model: models.Group,
-                                                            attributes: ['id'],
+                                                            attributes: ["id"],
                                                             include: [
                                                                 {
                                                                     model: models.Community,
-                                                                    attributes: ['id'],
+                                                                    attributes: ["id"],
                                                                     include: [
                                                                         {
                                                                             model: models.Domain,
-                                                                            attributes: ['id']
-                                                                        }
-                                                                    ]
-                                                                }
-                                                            ]
-                                                        }
-                                                    ]
-                                                }).then(post => {
-                                                    point.report({ disableNotification: !hasModelBreachedToxicityEmailThreshold(point) }, 'perspectiveAPI', post, callback);
-                                                }).catch(error => {
+                                                                            attributes: ["id"],
+                                                                        },
+                                                                    ],
+                                                                },
+                                                            ],
+                                                        },
+                                                    ],
+                                                })
+                                                    .then((post) => {
+                                                    point.report({
+                                                        disableNotification: !hasModelBreachedToxicityEmailThreshold(point),
+                                                    }, "perspectiveAPI", post, callback);
+                                                })
+                                                    .catch((error) => {
                                                     callback(error);
                                                 });
                                             }
                                             else {
-                                                point.report({ disableNotification: !hasModelBreachedToxicityEmailThreshold(point) }, 'perspectiveAPI', null, callback);
+                                                point.report({
+                                                    disableNotification: !hasModelBreachedToxicityEmailThreshold(point),
+                                                }, "perspectiveAPI", null, callback);
                                             }
                                         }
                                         else {
                                             callback();
                                         }
-                                    }).catch(error => {
+                                    })
+                                        .catch((error) => {
                                         callback(error);
                                     });
                                 });
@@ -570,7 +700,8 @@ const estimateToxicityScoreForPoint = (options, callback) => {
                 log.error("getToxicityScoreForText could not find point");
                 callback("Could not find point");
             }
-        }).catch(error => {
+        })
+            .catch((error) => {
             log.error("getToxicityScoreForText error", { error });
             callback(error);
         });
@@ -582,7 +713,9 @@ const estimateToxicityScoreForPoint = (options, callback) => {
 };
 const sendPostAnalyticsEvent = (post) => {
     try {
-        if (post.data && post.data.moderation && post.data.moderation.toxicityScore) {
+        if (post.data &&
+            post.data.moderation &&
+            post.data.moderation.toxicityScore) {
             const moderationScore = JSON.parse(JSON.stringify(post.data.moderation));
             moderationScore.rawToxicityResults = undefined;
             moderationScore.textUsedForScore = undefined;
@@ -604,8 +737,8 @@ const sendPostAnalyticsEvent = (post) => {
                     props: moderationScore,
                     user_agent: post.user_agent || "Internal systems",
                     ipAddress: post.ip_address || "127.0.0.1",
-                    server_timestamp: Date.now()
-                }
+                    server_timestamp: Date.now(),
+                },
             };
             if (hasModelBreachedToxicityEmailThreshold(post)) {
                 analyticsEvent.body.type = "evaluated - post toxicity high";
@@ -616,7 +749,7 @@ const sendPostAnalyticsEvent = (post) => {
             else {
                 analyticsEvent.body.type = "evaluated - post toxicity low";
             }
-            queue.add('delayed-job', { type: 'create-activity-from-app', workData: analyticsEvent }, 'medium');
+            queue.add("delayed-job", { type: "create-activity-from-app", workData: analyticsEvent }, "medium");
         }
     }
     catch (error) {
@@ -625,7 +758,9 @@ const sendPostAnalyticsEvent = (post) => {
 };
 const sendPointAnalyticsEvent = (point) => {
     try {
-        if (point.data && point.data.moderation && point.data.moderation.toxicityScore) {
+        if (point.data &&
+            point.data.moderation &&
+            point.data.moderation.toxicityScore) {
             const moderationScore = JSON.parse(JSON.stringify(point.data.moderation));
             moderationScore.rawToxicityResults = undefined;
             moderationScore.textUsedForScore = undefined;
@@ -647,8 +782,8 @@ const sendPointAnalyticsEvent = (point) => {
                     props: moderationScore,
                     user_agent: point.user_agent || "Internal systems",
                     ipAddress: point.ip_address || "127.0.0.1",
-                    server_timestamp: Date.now()
-                }
+                    server_timestamp: Date.now(),
+                },
             };
             if (hasModelBreachedToxicityEmailThreshold(point)) {
                 analyticsEvent.body.type = "evaluated - point toxicity high";
@@ -659,7 +794,7 @@ const sendPointAnalyticsEvent = (point) => {
             else {
                 analyticsEvent.body.type = "evaluated - point toxicity low";
             }
-            queue.add('delayed-job', { type: 'create-activity-from-app', workData: analyticsEvent }, 'medium');
+            queue.add("delayed-job", { type: "create-activity-from-app", workData: analyticsEvent }, "medium");
         }
     }
     catch (error) {
@@ -669,5 +804,5 @@ const sendPointAnalyticsEvent = (point) => {
 module.exports = {
     estimateToxicityScoreForPoint,
     estimateToxicityScoreForPost,
-    estimateToxicityScoreForCollection
+    estimateToxicityScoreForCollection,
 };

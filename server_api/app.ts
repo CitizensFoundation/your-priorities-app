@@ -383,7 +383,7 @@ export class YourPrioritiesApi {
   }
 
   setupStaticFileServing(): void {
-    const baseDir = path.join(__dirname, "../../webApps");
+    const baseDir = path.join(__dirname, "../webAppsDist");
 
     // Promotion app
     const promotionAppPath = path.join(baseDir, "old/promotion_app/dist");
@@ -433,7 +433,7 @@ export class YourPrioritiesApi {
     // Middleware to set paths based on query parameters
     this.app.use(
       (req: YpRequest, res: express.Response, next: NextFunction) => {
-        const baseDir = path.join(__dirname, "../../webApps");
+        const baseDir = path.join(__dirname, "../webAppsDist");
 
         let useNewVersion =
           req.query.useNewVersion === "true" ||
@@ -474,7 +474,7 @@ export class YourPrioritiesApi {
         // Set the paths depending on the version
         req.adminAppPath = useNewVersion
           ? path.join(baseDir, "client/dist")
-          : path.join(baseDir, "old/admin_app/dist");
+          : path.join(baseDir, "old/translationApp/dist");
         req.clientAppPath = useNewVersion
           ? path.join(baseDir, "client/dist")
           : path.join(baseDir, "old/client/build/bundled");

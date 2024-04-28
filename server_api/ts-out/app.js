@@ -351,7 +351,7 @@ export class YourPrioritiesApi {
         });
     }
     setupStaticFileServing() {
-        const baseDir = path.join(__dirname, "../../webApps");
+        const baseDir = path.join(__dirname, "../webAppsDist");
         // Promotion app
         const promotionAppPath = path.join(baseDir, "old/promotion_app/dist");
         this.app.use("/promotion", express.static(promotionAppPath));
@@ -373,7 +373,7 @@ export class YourPrioritiesApi {
         this.app.use("/Workers", express.static(path.join(landUseGamePath, "Workers")));
         // Middleware to set paths based on query parameters
         this.app.use((req, res, next) => {
-            const baseDir = path.join(__dirname, "../../webApps");
+            const baseDir = path.join(__dirname, "../webAppsDist");
             let useNewVersion = req.query.useNewVersion === "true" ||
                 req.session.useNewVersion === true;
             let useNewVersionIsFalse = req.query.useNewVersion === "false";
@@ -400,7 +400,7 @@ export class YourPrioritiesApi {
             // Set the paths depending on the version
             req.adminAppPath = useNewVersion
                 ? path.join(baseDir, "client/dist")
-                : path.join(baseDir, "old/admin_app/dist");
+                : path.join(baseDir, "old/translationApp/dist");
             req.clientAppPath = useNewVersion
                 ? path.join(baseDir, "client/dist")
                 : path.join(baseDir, "old/client/build/bundled");

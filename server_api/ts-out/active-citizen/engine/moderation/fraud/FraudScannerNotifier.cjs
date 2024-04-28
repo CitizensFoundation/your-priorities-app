@@ -19,32 +19,38 @@ class FraudScannerNotifier {
         this.scannerModels = [FraudGetEndorsements, FraudGetRatings, FraudGetPointQualities];
     }
     getCommunityURL() {
-        const domainName = this.currentCommunity.Domain.domain_name;
-        let hostname = this.currentCommunity.hostname;
-        const id = this.currentCommunity.id;
-        if (domainName === "parliament.scot") {
-            hostname = "engage";
-        }
-        else if (domainName === "multicitychallenge.org" && process.env.US_CLUSTER != null) {
-            hostname = "ideas";
-        }
-        else if (domainName === "engage-southampton.ac.uk") {
-            hostname = "scca-online";
-        }
-        else if (domainName === "multicitychallenge.org") {
-            hostname = "yp";
-        }
-        else if (domainName === "mycitychallenge.org") {
-            hostname = "ideas";
-        }
-        else if (domainName === "engagebritain.org") {
-            hostname = "socialcare";
-        }
-        if (hostname) {
-            return `https://${hostname}.${domainName}/community/${id}`;
+        if (this.currentCommunity && this.currentCommunity.Domain && this.currentCommunity.Domain.domain_name) {
+            const domainName = this.currentCommunity.Domain.domain_name;
+            let hostname = this.currentCommunity.hostname;
+            const id = this.currentCommunity.id;
+            if (domainName === "parliament.scot") {
+                hostname = "engage";
+            }
+            else if (domainName === "multicitychallenge.org" && process.env.US_CLUSTER != null) {
+                hostname = "ideas";
+            }
+            else if (domainName === "engage-southampton.ac.uk") {
+                hostname = "scca-online";
+            }
+            else if (domainName === "multicitychallenge.org") {
+                hostname = "yp";
+            }
+            else if (domainName === "mycitychallenge.org") {
+                hostname = "ideas";
+            }
+            else if (domainName === "engagebritain.org") {
+                hostname = "socialcare";
+            }
+            if (hostname) {
+                return `https://${hostname}.${domainName}/community/${id}`;
+            }
+            else {
+                return `https://${domainName}/community/${id}`;
+            }
         }
         else {
-            return `https://${domainName}/community/${id}`;
+            console.error("No domain name for community");
+            return "";
         }
     }
     setupCounts(items, collectionType) {
@@ -85,36 +91,42 @@ class FraudScannerNotifier {
         }
     }
     async sendNotificationEmails(fraudAuditResults) {
-        const admins = this.currentCommunity.CommunityAdmins;
-        let textsHtml = "";
-        for (let t = 0; t < fraudAuditResults.length; t++) {
-            textsHtml += `${fraudAuditResults[t].collectionType}: ${this.formatNumber(fraudAuditResults[t].count)} items`;
-            if (fraudAuditResults[t].changeFromLastCount) {
-                textsHtml += ` (${this.getNumberSign(fraudAuditResults[t].changeFromLastCount)}${this.formatNumber(fraudAuditResults[t].changeFromLastCount)})`;
+        if (this.currentCommunity && this.currentCommunity.CommunityAdmins && this.currentCommunity.CommunityAdmins.length > 0) {
+            const admins = this.currentCommunity.CommunityAdmins;
+            let textsHtml = "";
+            for (let t = 0; t < fraudAuditResults.length; t++) {
+                textsHtml += `${fraudAuditResults[t].collectionType}: ${this.formatNumber(fraudAuditResults[t].count)} items`;
+                if (fraudAuditResults[t].changeFromLastCount) {
+                    textsHtml += ` (${this.getNumberSign(fraudAuditResults[t].changeFromLastCount)}${this.formatNumber(fraudAuditResults[t].changeFromLastCount)})`;
+                }
+                textsHtml += `</br>`;
             }
-            textsHtml += `</br>`;
+            const content = `
+        <div>
+          <h1>${i18n.t('notification.email.possibleFraudHeader')}</h1>
+          <p>${i18n.t('notification.email.possibleFraudInformation')}</p>
+          <h2>${i18n.t('notification.email.possibleFraudSubHeader')}</h2>
+          <p>${textsHtml}</p>
+          <p>${i18n.t('notification.email.possibleFraudFooter')}</p>
+        </div>
+      `;
+            for (let u = 0; u < Math.min(admins.length, 5); u++) {
+                queue.add('send-one-email', {
+                    subject: { translateToken: 'notification.email.possibleFraudHeader', contentName: this.currentCommunity.name },
+                    template: 'general_user_notification',
+                    user: admins[u],
+                    domain: this.currentCommunity.Domain,
+                    community: this.currentCommunity,
+                    object: fraudAuditResults,
+                    header: "",
+                    content: content,
+                    link: this.getCommunityURL()
+                }, 'high');
+            }
         }
-        const content = `
-      <div>
-        <h1>${i18n.t('notification.email.possibleFraudHeader')}</h1>
-        <p>${i18n.t('notification.email.possibleFraudInformation')}</p>
-        <h2>${i18n.t('notification.email.possibleFraudSubHeader')}</h2>
-        <p>${textsHtml}</p>
-        <p>${i18n.t('notification.email.possibleFraudFooter')}</p>
-      </div>
-    `;
-        for (let u = 0; u < Math.min(admins.length, 5); u++) {
-            queue.add('send-one-email', {
-                subject: { translateToken: 'notification.email.possibleFraudHeader', contentName: this.currentCommunity.name },
-                template: 'general_user_notification',
-                user: admins[u],
-                domain: this.currentCommunity.Domain,
-                community: this.currentCommunity,
-                object: fraudAuditResults,
-                header: "",
-                content: content,
-                link: this.getCommunityURL()
-            }, 'high');
+        else {
+            console.error("No community admins found");
+            return;
         }
     }
     getContainerOldCount(collectionType) {
@@ -215,8 +227,16 @@ class FraudScannerNotifier {
                 for (let i = 0; i < communities.length; i++) {
                     console.log("Processing community: " + communities[i].name);
                     this.currentCommunity = communities[i];
-                    await this.scan();
-                    await this.notify();
+                    try {
+                        await this.scan();
+                        await this.notify();
+                    }
+                    catch (error) {
+                        console.error("Error processing community: " + communities[i].name);
+                        console.error(error);
+                        reject(error);
+                        return;
+                    }
                 }
                 resolve();
             }

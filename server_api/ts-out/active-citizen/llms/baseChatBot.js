@@ -6,8 +6,18 @@ import ioredis from "ioredis";
 //import { IEngineConstants } from "@policysynth/agents/constants.js";
 //TODO: Use tiktoken
 const WORDS_TO_TOKENS_MAGIC_CONSTANT = 1.3;
+let tlsConfig = {
+    rejectUnauthorized: false,
+};
+if (!process.env.REDIS_URL || process.env.REDIS_URL.indexOf("localhost") > -1) {
+    tlsConfig = undefined;
+}
 //@ts-ignore
-const redis = new ioredis.default(process.env.REDIS_MEMORY_URL || process.env.REDIS_URL || "redis://localhost:6379");
+const redis = new ioredis.default(process.env.REDIS_MEMORY_URL ||
+    process.env.REDIS_URL ||
+    "redis://localhost:6379", {
+    tls: tlsConfig,
+});
 export class YpBaseChatBot {
     get redisKey() {
         return `${YpBaseChatBot.redisMemoryKeyPrefix}-${this.memoryId}`;

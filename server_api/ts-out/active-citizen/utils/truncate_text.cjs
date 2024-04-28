@@ -1,6 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 module.exports = (input, length, killwords, end) => {
+    if (!input)
+        return '';
     var orig = input;
     length = length || 255;
     if (input.length <= length)

@@ -1,7 +1,7 @@
 import { OpenAI } from "openai";
 export class AiHelper {
     constructor(wsClientSocket = undefined) {
-        this.modelName = "gpt-4-turbo-2024-04-09"; //"gpt-4-turbo-2024-04-09";
+        this.modelName = "gpt-4-turbo-2024-04-09";
         this.maxTokens = 2048;
         this.temperature = 0.7;
         this.cacheExpireTime = 60 * 60;
