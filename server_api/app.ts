@@ -149,7 +149,7 @@ async function initializeRedis() {
     redisClient = createClient({
       legacyMode: false,
       url: redisUrl,
-      pingInterval: 1000,
+//      pingInterval: 1000,
       socket: {
         tls: redisUrl.startsWith('rediss://'),
         rejectUnauthorized: false
