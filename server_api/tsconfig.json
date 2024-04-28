@@ -8,17 +8,15 @@
     "allowSyntheticDefaultImports": true,
     "baseUrl": ".",
     "skipLibCheck": true,
-    "outDir": "ts-out/",
+    "outDir": "./ts-out",
+    "rootDir": "./",
     "allowJs": true,
-    //"declaration": true,
-    //"declarationMap": true,
-    //"sourceMap": true,
     "types": [
       "./server.d.ts",
       "../webApps/client/src/types.d.ts",
       "../webApps/client/src/typesAoi.d.ts",
       "../webApps/client/src/typesLlms.d.ts"
-      ]
+    ]
   },
   "include": [
     "**/*.ts",
@@ -28,5 +26,6 @@
     "node_modules/@policysynth/agents/validation.d.ts",
     "node_modules/@policysynth/agents/types.d.ts",
     "./active-citizen/engine/moderation/fraud/FraudDeletePointQualities.cjs"
-  ]
+  ],
+  "exclude": ["webAppsDist", "ts-out"]
 }

@@ -1,0 +1,85 @@
+{
+  "entrypoint": "index.html",
+  "shell": "src/yp-app/yp-app.html",
+  "fragments": [
+    "src/yp-community/yp-community.html",
+    "src/yp-community/yp-community-folder.html",
+    "src/yp-group/yp-group.html",
+    "src/yp-domain/yp-domain.html",
+    "src/yp-post/yp-post.html",
+    "src/yp-user/yp-user.html",
+    "src/yp-dialog-container/yp-dialog-container-logged-in.html",
+    "src/yp-dialog-container/yp-dialog-container-admin.html",
+    "src/yp-dialog-container/yp-dialog-container-bulk-status-updates.html",
+    "src/yp-dialog-container/yp-dialog-container-users-grid.html",
+    "src/yp-dialog-container/yp-dialog-container-data-viz.html",
+    "src/yp-dialog-container/yp-dialog-container-media-recorder.html",
+    "src/yp-dialog-container/yp-dialog-container-delayed.html",
+    "src/yp-dialog-container/yp-dialog-container-duplicate-collection.html",
+    "src/yp-dialog-container/yp-dialog-container-create-report.html",
+    "src/yp-rating/yp-dialog-ratings.html",
+    "src/yp-dialog-container/yp-dialog-container-moderation.html",
+    "src/yp-dialog-container/yp-dialog-vaadin-grid-shared.html",
+    "src/yp-app/yp-view-404.html"
+  ],
+  "sources": [
+    "src/**/*",
+    "images/**/*",
+    "styles/**/*",
+    "locales/**/*",
+    "bower.json",
+    "index.html",
+    "src/yp-app/yp-app.html",
+    "src/yp-community/yp-community.html",
+    "src/yp-community/yp-community-folder.html",
+    "src/yp-group/yp-group.html",
+    "src/yp-domain/yp-domain.html",
+    "src/yp-post/yp-post.html",
+    "src/yp-user/yp-user.html",
+    "src/yp-dialog-container/yp-dialog-container-logged-in.html",
+    "src/yp-dialog-container/yp-dialog-container-admin.html",
+    "src/yp-dialog-container/yp-dialog-container-bulk-status-updates.html",
+    "src/yp-dialog-container/yp-dialog-container-users-grid.html",
+    "src/yp-dialog-container/yp-dialog-container-data-viz.html",
+    "src/yp-dialog-container/yp-dialog-container-media-recorder.html",
+    "src/yp-dialog-container/yp-dialog-container-delayed.html",
+    "src/yp-dialog-container/yp-dialog-container-duplicate-collection.html",
+    "src/yp-dialog-container/yp-dialog-container-create-report.html",
+    "src/yp-rating/yp-dialog-ratings.html",
+    "src/yp-dialog-container/yp-dialog-container-moderation.html",
+    "src/yp-dialog-container/yp-dialog-vaadin-grid-shared.html",
+    "src/yp-app/yp-view-404.html"
+  ],
+  "extraDependencies": [
+    "bower_components/webcomponentsjs/*.js",
+    "bower_components/i18next/i18next.min.js",
+    "bower_components/i18next-xhr-backend/i18nextXHRBackend.min.js",
+    "bower_components/webcomponentsjs/webcomponents*.js",
+    "bower_components/webcomponentsjs/custom*.js",
+    "src/privacy.html",
+    "src/terms.html"
+  ],
+  "builds": [
+    {
+      "name": "bundled",
+      "bundle": true,
+      "js": {
+        "compile": true,
+        "minify": true
+      },
+      "css": {
+        "minify": true
+      },
+      "html": {
+        "minify": true
+      },
+      "addServiceWorker": true
+    }
+  ],
+  "lint": {
+    "rules": [
+      "polymer-2-hybrid"
+    ]
+  },
+  "moduleResolution": "node"
+}
