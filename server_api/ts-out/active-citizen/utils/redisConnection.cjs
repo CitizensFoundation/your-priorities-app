@@ -21,9 +21,9 @@ if (process.env.REDIS_URL) {
 else {
     redisClient = redis.createClient({ legacyMode: true });
 }
-redisClient.on('error', err => console.error('Redis client error', err));
-redisClient.on('connect', () => console.log('Redis client is connect'));
-redisClient.on('reconnecting', () => console.log('Redis client is reconnecting'));
-redisClient.on('ready', () => console.log('Redis client is ready'));
+redisClient.on('error', err => console.error('Backend Redis client error', err));
+redisClient.on('connect', () => console.log('Backend Redis client is connect'));
+redisClient.on('reconnecting', () => console.log('Backend  Redis client is reconnecting'));
+redisClient.on('ready', () => console.log('Backend Redis client is ready'));
 redisClient.connect().catch(console.error);
 module.exports = redisClient;

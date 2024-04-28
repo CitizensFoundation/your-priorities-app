@@ -109,35 +109,46 @@ const socketOptions = {
     },
 };
 let redisClient;
-if (process.env.REDIS_URL) {
-    let redisUrl = process.env.REDIS_URL;
-    if (redisUrl.startsWith("redis://h:")) {
-        redisUrl = redisUrl.replace("redis://h:", "redis://:");
-    }
-    if (redisUrl.includes("rediss://")) {
+async function initializeRedis() {
+    if (process.env.REDIS_URL) {
+        let redisUrl = process.env.REDIS_URL;
+        if (redisUrl.startsWith("redis://h:")) {
+            redisUrl = redisUrl.replace("redis://h:", "redis://:");
+        }
         redisClient = createClient({
             legacyMode: false,
             url: redisUrl,
             pingInterval: 1000,
             socket: {
-                reconnectStrategy: socketOptions.reconnectStrategy,
-                tls: true,
-                rejectUnauthorized: false,
+                tls: redisUrl.startsWith('rediss://'),
+                rejectUnauthorized: false
             },
         });
     }
     else {
-        redisClient = createClient({ legacyMode: false, url: redisUrl });
+        redisClient = createClient({ legacyMode: false });
+    }
+    // Attach event listeners before connecting
+    redisClient.on("error", (err) => {
+        console.error("App Redis client error", err);
+    });
+    redisClient.on("connect", () => {
+        console.log("App Redis client is connected");
+    });
+    redisClient.on("reconnecting", () => {
+        console.log("App Redis client is reconnecting");
+    });
+    redisClient.on("ready", () => {
+        console.log("App Redis client is ready");
+    });
+    try {
+        await redisClient.connect();
+    }
+    catch (err) {
+        console.error("App Failed to connect Redis client", err);
     }
 }
-else {
-    redisClient = createClient({ legacyMode: false });
-}
-redisClient.on("error", (err) => console.error("Redis client error", err));
-redisClient.on("connect", () => console.log("Redis client is connect"));
-redisClient.on("reconnecting", () => console.log("Redis client is reconnecting"));
-redisClient.on("ready", () => console.log("Redis client is ready"));
-redisClient.connect().catch(console.error);
+initializeRedis();
 export class YourPrioritiesApi {
     constructor(port = undefined) {
         this.bearerCallback = function () {

@@ -112,6 +112,7 @@ import {
 } from "./bot_control.js";
 import WebSocket, { WebSocketServer } from "ws";
 import { v4 as uuidv4 } from "uuid";
+import { RedisClientType } from "@redis/client";
 
 interface YpRequest extends express.Request {
   ypDomain?: any;
@@ -135,40 +136,51 @@ const socketOptions = {
   },
 };
 
-let redisClient: any;
-if (process.env.REDIS_URL) {
-  let redisUrl = process.env.REDIS_URL;
+let redisClient: RedisClientType;
 
-  if (redisUrl.startsWith("redis://h:")) {
-    redisUrl = redisUrl.replace("redis://h:", "redis://:");
-  }
+async function initializeRedis() {
+  if (process.env.REDIS_URL) {
+    let redisUrl = process.env.REDIS_URL;
 
-  if (redisUrl.includes("rediss://")) {
+    if (redisUrl.startsWith("redis://h:")) {
+      redisUrl = redisUrl.replace("redis://h:", "redis://:");
+    }
+
     redisClient = createClient({
       legacyMode: false,
       url: redisUrl,
       pingInterval: 1000,
       socket: {
-        reconnectStrategy: socketOptions.reconnectStrategy,
-        tls: true,
-        rejectUnauthorized: false,
+        tls: redisUrl.startsWith('rediss://'),
+        rejectUnauthorized: false
       },
     });
   } else {
-    redisClient = createClient({ legacyMode: false, url: redisUrl });
+    redisClient = createClient({ legacyMode: false });
   }
-} else {
-  redisClient = createClient({ legacyMode: false });
+
+  // Attach event listeners before connecting
+  redisClient.on("error", (err) => {
+    console.error("App Redis client error", err);
+  });
+  redisClient.on("connect", () => {
+    console.log("App Redis client is connected");
+  });
+  redisClient.on("reconnecting", () => {
+    console.log("App Redis client is reconnecting");
+  });
+  redisClient.on("ready", () => {
+    console.log("App Redis client is ready");
+  });
+
+  try {
+    await redisClient.connect();
+  } catch (err) {
+    console.error("App Failed to connect Redis client", err);
+  }
 }
 
-redisClient.on("error", (err: any) => console.error("Redis client error", err));
-redisClient.on("connect", () => console.log("Redis client is connect"));
-redisClient.on("reconnecting", () =>
-  console.log("Redis client is reconnecting")
-);
-redisClient.on("ready", () => console.log("Redis client is ready"));
-
-redisClient.connect().catch(console.error);
+initializeRedis();
 
 export class YourPrioritiesApi {
   public app: express.Application;
