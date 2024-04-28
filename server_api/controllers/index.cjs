@@ -348,12 +348,12 @@ let sendIndex = async (req, res) => {
   if (useNewVersion) {
     indexFilePath = path.resolve(
       req.dirName,
-      "../../webApps/client/dist/index.html"
+      "../webAppsDist/client/dist/index.html"
     );
   } else {
     indexFilePath = path.resolve(
       req.dirName,
-      "../../webApps/old/client/build/bundled/index.html"
+      "../webAppsDist/old/client/build/bundled/index.html"
     );
   }
 

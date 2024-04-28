@@ -275,10 +275,10 @@ let sendIndex = async (req, res) => {
         useNewVersion = true;
     }
     if (useNewVersion) {
-        indexFilePath = path.resolve(req.dirName, "../../webApps/client/dist/index.html");
+        indexFilePath = path.resolve(req.dirName, "../webAppsDist/client/dist/index.html");
     }
     else {
-        indexFilePath = path.resolve(req.dirName, "../../webApps/old/client/build/bundled/index.html");
+        indexFilePath = path.resolve(req.dirName, "../webAppsDist/old/client/build/bundled/index.html");
     }
     log.info(`Index file path: ${indexFilePath}`);
     fs.readFile(indexFilePath, "utf8", async (err, indexFileData) => {
