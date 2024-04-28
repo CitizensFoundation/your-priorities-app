@@ -101,17 +101,6 @@ process.on("unhandledRejection", (reason, promise) => {
 import { botsWithJavascript, isBadBot, } from "./bot_control.js";
 import { WebSocketServer } from "ws";
 import { v4 as uuidv4 } from "uuid";
-const socketOptions = {
-    reconnectStrategy: (retries) => {
-        if (retries > 35000) {
-            console.error("Max redis retries reached");
-        }
-        else {
-            console.error("Redis reconnecting", { retries });
-        }
-        return Math.min(retries * 10, 3000);
-    },
-};
 export class YourPrioritiesApi {
     constructor(port = undefined) {
         this.bearerCallback = function () {
@@ -203,7 +192,7 @@ export class YourPrioritiesApi {
             this.redisClient = createClient({
                 legacyMode: false,
                 url: redisUrl,
-                //      pingInterval: 1000,
+                pingInterval: 10000,
                 socket: {
                     tls: redisUrl.startsWith("rediss://"),
                     rejectUnauthorized: false

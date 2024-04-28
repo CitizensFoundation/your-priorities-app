@@ -129,17 +129,6 @@ interface YpRequest extends express.Request {
   dirName?: string;
 }
 
-const socketOptions = {
-  reconnectStrategy: (retries: number) => {
-    if (retries > 35000) {
-      console.error("Max redis retries reached");
-    } else {
-      console.error("Redis reconnecting", { retries });
-    }
-    return Math.min(retries * 10, 3000);
-  },
-};
-
 export class YourPrioritiesApi {
   public app: express.Application;
   public port: number;
@@ -180,7 +169,7 @@ export class YourPrioritiesApi {
       this.redisClient = createClient({
         legacyMode: false,
         url: redisUrl,
-        //      pingInterval: 1000,
+        pingInterval: 10000,
         socket: {
           tls: redisUrl.startsWith("rediss://"),
           rejectUnauthorized: false
