@@ -108,47 +108,6 @@ const socketOptions = {
         return Math.min(retries * 10, 3000);
     },
 };
-let redisClient;
-async function initializeRedis() {
-    if (process.env.REDIS_URL) {
-        let redisUrl = process.env.REDIS_URL;
-        if (redisUrl.startsWith("redis://h:")) {
-            redisUrl = redisUrl.replace("redis://h:", "redis://:");
-        }
-        redisClient = createClient({
-            legacyMode: false,
-            url: redisUrl,
-            //      pingInterval: 1000,
-            socket: {
-                tls: redisUrl.startsWith('rediss://'),
-                rejectUnauthorized: false
-            },
-        });
-    }
-    else {
-        redisClient = createClient({ legacyMode: false });
-    }
-    // Attach event listeners before connecting
-    redisClient.on("error", (err) => {
-        console.error("App Redis client error", err);
-    });
-    redisClient.on("connect", () => {
-        console.log("App Redis client is connected");
-    });
-    redisClient.on("reconnecting", () => {
-        console.log("App Redis client is reconnecting");
-    });
-    redisClient.on("ready", () => {
-        console.log("App Redis client is ready");
-    });
-    try {
-        await redisClient.connect();
-    }
-    catch (err) {
-        console.error("App Failed to connect Redis client", err);
-    }
-}
-initializeRedis();
 export class YourPrioritiesApi {
     constructor(port = undefined) {
         this.bearerCallback = function () {
@@ -215,7 +174,7 @@ export class YourPrioritiesApi {
         this.app = express();
         this.port = port || (process.env.PORT ? parseInt(process.env.PORT) : 4242);
         this.wsClients = new Map();
-        this.redisClient = redisClient;
+        this.initializeRedis();
         this.addRedisToRequest();
         this.addDirnameToRequest();
         this.forceHttps();
@@ -231,11 +190,48 @@ export class YourPrioritiesApi {
         this.initializeRoutes();
         this.initializeEsControllers();
     }
+    async initializeRedis() {
+        if (process.env.REDIS_URL) {
+            let redisUrl = process.env.REDIS_URL;
+            if (redisUrl.startsWith("redis://h:")) {
+                redisUrl = redisUrl.replace("redis://h:", "redis://:");
+            }
+            this.redisClient = createClient({
+                legacyMode: false,
+                url: redisUrl,
+                //      pingInterval: 1000,
+                socket: {
+                    tls: redisUrl.startsWith("rediss://"),
+                    rejectUnauthorized: false
+                },
+            });
+        }
+        else {
+            this.redisClient = createClient({ legacyMode: false });
+        }
+        this.redisClient.on("error", (err) => {
+            console.error("App Redis client error", err);
+        });
+        this.redisClient.on("connect", () => {
+            console.log("App Redis client is connected");
+        });
+        this.redisClient.on("reconnecting", () => {
+            console.log("App Redis client is reconnecting");
+        });
+        this.redisClient.on("ready", () => {
+            console.log("App Redis client is ready");
+        });
+        try {
+            await this.redisClient.connect();
+        }
+        catch (err) {
+            console.error("App Failed to connect Redis client", err);
+        }
+    }
     addRedisToRequest() {
         this.app.use((req, res, next) => {
             if (this.redisClient && typeof this.redisClient.get === "function") {
                 req.redisClient = this.redisClient;
-                log.info("Have connected redis client to request");
             }
             else {
                 log.error("Redis client get method not found or client not initialized");
