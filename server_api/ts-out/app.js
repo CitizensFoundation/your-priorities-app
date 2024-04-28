@@ -97,6 +97,14 @@ process.on("unhandledRejection", (reason, promise) => {
 import { botsWithJavascript, isBadBot, } from "./bot_control.js";
 import { WebSocketServer } from "ws";
 import { v4 as uuidv4 } from "uuid";
+const socketOptions = {
+    reconnectStrategy: (retries) => {
+        if (retries > 35000) {
+            console.error("Max redis retries reached");
+        }
+        return Math.min(retries * 10, 3000);
+    },
+};
 let redisClient;
 if (process.env.REDIS_URL) {
     let redisUrl = process.env.REDIS_URL;
@@ -107,7 +115,11 @@ if (process.env.REDIS_URL) {
         redisClient = createClient({
             legacyMode: false,
             url: redisUrl,
-            socket: { tls: true, rejectUnauthorized: false },
+            socket: {
+                reconnectStrategy: socketOptions.reconnectStrategy,
+                tls: true,
+                rejectUnauthorized: false,
+            },
         });
     }
     else {

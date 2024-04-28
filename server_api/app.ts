@@ -124,6 +124,15 @@ interface YpRequest extends express.Request {
   dirName?: string;
 }
 
+const socketOptions = {
+  reconnectStrategy: (retries: number) => {
+    if (retries > 35000) {
+      console.error("Max redis retries reached");
+    }
+    return Math.min(retries * 10, 3000);
+  },
+};
+
 let redisClient: any;
 if (process.env.REDIS_URL) {
   let redisUrl = process.env.REDIS_URL;
@@ -136,7 +145,11 @@ if (process.env.REDIS_URL) {
     redisClient = createClient({
       legacyMode: false,
       url: redisUrl,
-      socket: { tls: true, rejectUnauthorized: false },
+      socket: {
+        reconnectStrategy: socketOptions.reconnectStrategy,
+        tls: true,
+        rejectUnauthorized: false,
+      },
     });
   } else {
     redisClient = createClient({ legacyMode: false, url: redisUrl });
