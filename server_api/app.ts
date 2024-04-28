@@ -65,6 +65,10 @@ if (process.env.AIRBRAKE_PROJECT_ID && process.env.AIRBRAKE_API_KEY) {
 process.on("uncaughtException", (err) => {
   console.error("There was an uncaught error", err);
   log.error("There was an uncaught error", err);
+  if (err.stack) {
+    console.error(err.stack);
+    log.error(err.stack);
+  }
   if (airbrake) {
     airbrake.notify(err).then((airbrakeErr: any) => {
       if (airbrakeErr.error) {
