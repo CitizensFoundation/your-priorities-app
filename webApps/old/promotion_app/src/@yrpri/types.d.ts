@@ -280,7 +280,7 @@ interface YpEndorsement {
 
 interface YpOrganizationData extends YpDatabaseItem {
   name: string;
-  OrganizationLogoImages: Array<YpImageData>;
+  OrgLogoImgs: Array<YpImageData>;
 }
 
 interface YpMemberships {

@@ -431,7 +431,7 @@ interface YpOrganizationData extends YpDatabaseItem {
   name: string;
   description?: string;
   website?: string;
-  OrganizationLogoImages?: Array<YpImageData>;
+  OrgLogoImgs?: Array<YpImageData>;
 }
 
 interface YpMemberships {

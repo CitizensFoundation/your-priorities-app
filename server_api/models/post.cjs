@@ -636,7 +636,7 @@ module.exports = (sequelize, DataTypes) => {
             include: [
               {
                 model: sequelize.models.Image,
-                as: 'OrganizationLogoImages',
+                as: 'OrgLogoImgs',
                 attributes: ['id', 'formats'],
                 required: false
               }
@@ -644,7 +644,7 @@ module.exports = (sequelize, DataTypes) => {
           }
         ],
         order: [
-          [ { model: sequelize.models.Organization, as: 'OrganizationUsers' }, { model: sequelize.models.Image, as: 'OrganizationLogoImages' }, 'created_at', 'asc' ]
+          [ { model: sequelize.models.Organization, as: 'OrganizationUsers' }, { model: sequelize.models.Image, as: 'OrgLogoImgs' }, 'created_at', 'asc' ]
         ]
       }).then(users => {
         if (users && users.length>0) {

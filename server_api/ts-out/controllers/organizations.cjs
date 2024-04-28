@@ -79,7 +79,7 @@ router.get('/:domainId/domainOrganizations', auth.can('create domainOrganization
     models.Organization.findAll({
         where: { domain_id: req.params.domainId },
         order: [
-            [{ model: models.Image, as: 'OrganizationLogoImages' }, 'created_at', 'asc'],
+            [{ model: models.Image, as: 'OrgLogoImgs' }, 'created_at', 'asc'],
         ],
         include: [
             {
@@ -87,7 +87,7 @@ router.get('/:domainId/domainOrganizations', auth.can('create domainOrganization
                 attributes: models.Domain.defaultAttributesPublic
             },
             {
-                model: models.Image, as: 'OrganizationLogoImages',
+                model: models.Image, as: 'OrgLogoImgs',
                 required: false
             },
         ]
@@ -108,7 +108,7 @@ router.get('/:id', auth.can('view organization'), function (req, res) {
         where: { id: req.params.id },
         order: [
             [{ model: models.Group }, 'counter_users', 'desc'],
-            [{ model: models.Image, as: 'OrganizationLogoImages' }, 'created_at', 'asc'],
+            [{ model: models.Image, as: 'OrgLogoImgs' }, 'created_at', 'asc'],
             [{ model: models.Image, as: 'OrganizationHeaderImages' }, 'created_at', 'asc'],
             [models.Group, { model: models.Image, as: 'GroupLogoImages' }, 'created_at', 'asc']
         ],
@@ -118,7 +118,7 @@ router.get('/:id', auth.can('view organization'), function (req, res) {
                 attributes: models.Domain.defaultAttributesPublic
             },
             {
-                model: models.Image, as: 'OrganizationLogoImages',
+                model: models.Image, as: 'OrgLogoImgs',
                 required: false
             },
             {

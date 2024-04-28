@@ -171,8 +171,8 @@ let YpOrganizationGrid = class YpOrganizationGrid extends YpBaseElement {
         editDialog.open(false, {});
     }
     _organizationImageUrl(organization) {
-        if (organization.OrganizationLogoImages) {
-            return YpMediaHelpers.getImageFormatUrl(organization.OrganizationLogoImages, 2);
+        if (organization.OrgLogoImgs) {
+            return YpMediaHelpers.getImageFormatUrl(organization.OrgLogoImgs, 2);
         }
         else {
             return null;

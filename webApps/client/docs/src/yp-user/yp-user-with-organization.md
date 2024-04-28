@@ -35,7 +35,7 @@ const user: YpUserData = {
   OrganizationUsers: [
     {
       name: 'Organization Name',
-      OrganizationLogoImages: [
+      OrgLogoImgs: [
         {
           formats: [
             // Image formats here

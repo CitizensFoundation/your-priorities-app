@@ -28,7 +28,7 @@ var getNewsFeedItems = function (options, callback) {
         order: [
             ["latest_activity_at", "desc"],
             [models.AcActivity, models.User, { model: models.Image, as: 'UserProfileImages' }, 'created_at', 'asc'],
-            [models.AcActivity, models.User, { model: models.Organization, as: 'OrganizationUsers' }, { model: models.Image, as: 'OrganizationLogoImages' }, 'created_at', 'asc']
+            [models.AcActivity, models.User, { model: models.Organization, as: 'OrganizationUsers' }, { model: models.Image, as: 'OrgLogoImgs' }, 'created_at', 'asc']
         ],
         limit: options.limit || GENERAL_NEWS_FEED_LIMIT,
         include: [
@@ -59,7 +59,7 @@ var getAllActivities = function (options, callback) {
         order: [
             ["created_at", "desc"],
             [models.User, { model: models.Image, as: 'UserProfileImages' }, 'created_at', 'asc'],
-            [models.User, { model: models.Organization, as: 'OrganizationUsers' }, { model: models.Image, as: 'OrganizationLogoImages' }, 'created_at', 'asc']
+            [models.User, { model: models.Organization, as: 'OrganizationUsers' }, { model: models.Image, as: 'OrgLogoImgs' }, 'created_at', 'asc']
         ],
         include: activitiesDefaultIncludes(options)
     }).then(function (activities) {

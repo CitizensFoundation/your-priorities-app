@@ -147,10 +147,10 @@
 
       _organizationImageUrl: function (user) {
         if (user && user.OrganizationUsers && user.OrganizationUsers.length > 0 &&
-          user.OrganizationUsers[0].OrganizationLogoImages &&
-          user.OrganizationUsers[0].OrganizationLogoImages.length > 0 &&
-          user.OrganizationUsers[0].OrganizationLogoImages[0].formats) {
-          return this.getImageFormatUrl(user.OrganizationUsers[0].OrganizationLogoImages, 2);
+          user.OrganizationUsers[0].OrgLogoImgs &&
+          user.OrganizationUsers[0].OrgLogoImgs.length > 0 &&
+          user.OrganizationUsers[0].OrgLogoImgs[0].formats) {
+          return this.getImageFormatUrl(user.OrganizationUsers[0].OrgLogoImgs, 2);
         } else {
           return null;
         }

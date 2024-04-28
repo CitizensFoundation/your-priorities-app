@@ -217,9 +217,9 @@ export class YpOrganizationGrid extends YpBaseElement {
   }
 
   _organizationImageUrl(organization: any): string | null {
-    if (organization.OrganizationLogoImages) {
+    if (organization.OrgLogoImgs) {
       return YpMediaHelpers.getImageFormatUrl(
-        organization.OrganizationLogoImages,
+        organization.OrgLogoImgs,
         2
       );
     } else {

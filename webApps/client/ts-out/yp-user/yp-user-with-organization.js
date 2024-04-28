@@ -133,10 +133,10 @@ let YpUserWithOrganization = class YpUserWithOrganization extends YpBaseElement 
         if (this.user &&
             this.user.OrganizationUsers &&
             this.user.OrganizationUsers.length > 0 &&
-            this.user.OrganizationUsers[0].OrganizationLogoImages &&
-            this.user.OrganizationUsers[0].OrganizationLogoImages.length > 0 &&
-            this.user.OrganizationUsers[0].OrganizationLogoImages[0].formats) {
-            return YpMediaHelpers.getImageFormatUrl(this.user.OrganizationUsers[0].OrganizationLogoImages, 2);
+            this.user.OrganizationUsers[0].OrgLogoImgs &&
+            this.user.OrganizationUsers[0].OrgLogoImgs.length > 0 &&
+            this.user.OrganizationUsers[0].OrgLogoImgs[0].formats) {
+            return YpMediaHelpers.getImageFormatUrl(this.user.OrganizationUsers[0].OrgLogoImgs, 2);
         }
         else {
             return undefined;

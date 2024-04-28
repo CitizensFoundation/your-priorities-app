@@ -49,7 +49,7 @@ module.exports = (sequelize, DataTypes) => {
     Organization.belongsTo(models.Domain, { foreignKey: 'domain_id'});
     Organization.belongsTo(models.Community, { foreignKey: 'community_id'});
     Organization.belongsTo(models.User, { foreignKey: 'user_id'});
-    Organization.belongsToMany(models.Image, { as: 'OrganizationLogoImages', through: 'OrganizationLogoImage' });
+    Organization.belongsToMany(models.Image, { as: 'OrgLogoImgs', through: 'OrganizationLogoImage' });
     Organization.belongsToMany(models.Image, { as: 'OrganizationHeaderImages', through: 'OrganizationHeaderImage' });
     Organization.belongsToMany(models.User, { as: 'OrganizationUsers', through: 'OrganizationUser' });
     Organization.belongsToMany(models.User, { as: 'OrganizationAdmins', through: 'OrganizationAdmin' });
