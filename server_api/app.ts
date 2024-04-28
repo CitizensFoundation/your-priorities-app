@@ -1018,6 +1018,30 @@ export class YourPrioritiesApi {
     const pub = this.redisClient.duplicate();
     const sub = this.redisClient.duplicate();
 
+    pub.on('error', (err) => {
+      console.error('Publisher Redis client error:', err);
+    });
+
+    pub.on("connect", () => {
+      console.log("Publisher Redis client is connected");
+    });
+
+    pub.on("reconnecting", () => {
+      console.log("Publisher Redis client is reconnecting");
+    });
+
+    sub.on('error', (err) => {
+      console.error('Subscriber Redis client error:', err);
+    });
+
+    sub.on("connect", () => {
+      console.log("Subscriber Redis client is connected");
+    });
+
+    sub.on("reconnecting", () => {
+      console.log("Subscriber Redis client is reconnecting");
+    });
+
     try {
       await Promise.all([pub.connect(), sub.connect()]);
     } catch (err) {
