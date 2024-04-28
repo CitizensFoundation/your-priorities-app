@@ -9,7 +9,7 @@ if (process.env.REDIS_URL) {
     }
     if (redisUrl.includes("rediss://")) {
         redisClient = redis.createClient({
-            legacyMode: true,
+            legacyMode: false,
             url: redisUrl,
             socket: { tls: true, rejectUnauthorized: false },
         });
