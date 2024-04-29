@@ -393,11 +393,6 @@ export class YourPrioritiesApi {
             let useNewVersion = req.query.useNewVersion === "true" ||
                 req.session.useNewVersion === true;
             let useNewVersionIsFalse = req.query.useNewVersion === "false";
-            if (req.ypDomain &&
-                req.ypDomain.configuration &&
-                req.ypDomain.configuration.useNewVersion === false) {
-                useNewVersionIsFalse = true;
-            }
             if (req.query.useNewVersion === "true") {
                 req.session.useNewVersion = true;
                 console.log(`Setting new version preference: ${req.query.useNewVersion}`);
