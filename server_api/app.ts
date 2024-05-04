@@ -518,7 +518,6 @@ export class YourPrioritiesApi {
           );
         }
 
-
         if (
           req.ypDomain &&
           req.ypDomain.configuration &&
@@ -531,7 +530,7 @@ export class YourPrioritiesApi {
         console.log(
           `------XY-----------------------> Using new version: ${useNewVersion}`
         );
-        console.log(`${req.ypDomain.configuration.useNewVersion}`)
+        console.log(`${req.ypDomain.configuration.useNewVersion}`);
 
         // Set the paths depending on the version
         req.adminAppPath = useNewVersion
@@ -559,6 +558,7 @@ export class YourPrioritiesApi {
     this.app.use("/group", index);
     this.app.use("/post", index);
     this.app.use("/user", index);
+    this.app.use("/admin", index);
     this.app.use("/survey*", index);
     this.app.use("/api/domains", domains);
     this.app.use("/api/organizations", organizations);
