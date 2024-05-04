@@ -264,116 +264,154 @@ let replaceWithHardCodedFallback = (req, indexFileData) => {
     }
     return indexFileData;
 };
+let indexCache = {
+    newVersion: {
+        data: null,
+        lastModified: null
+    },
+    oldVersion: {
+        data: null,
+        lastModified: null
+    }
+};
+async function cacheIndexFile(filePath, versionKey) {
+    try {
+        const stats = await fs.promises.stat(filePath);
+        const data = await fs.promises.readFile(filePath, "utf8");
+        indexCache[versionKey].lastModified = stats.mtime.toUTCString();
+        indexCache[versionKey].data = data;
+    }
+    catch (err) {
+        console.error("Error caching index file:", err);
+    }
+}
+async function replaceSiteData(indexFileData, req) {
+    if (process.env.ZIGGEO_ENABLED &&
+        req.ypDomain.configuration.ziggeoApplicationToken) {
+        indexFileData = indexFileData.replace('<html lang="en">', `<html lang="en">${ziggeoHeaders(req.ypDomain.configuration.ziggeoApplicationToken)}`);
+    }
+    if (req.ypDomain.configuration &&
+        req.ypDomain.configuration.preloadCssUrl) {
+        indexFileData = indexFileData.replace('<html lang="en">', `<html lang="en"><link rel="stylesheet" href="${req.ypDomain.configuration.preloadCssUrl}">`);
+    }
+    if (req.ypDomain &&
+        req.ypDomain.configuration &&
+        req.ypDomain.configuration.plausibleDataDomains &&
+        req.ypDomain.configuration.plausibleDataDomains.length > 5) {
+        indexFileData = indexFileData.replace("XplcX", getPlausibleCode(req.ypDomain.configuration.plausibleDataDomains));
+    }
+    else {
+        indexFileData = indexFileData.replace("XplcX", "");
+    }
+    if (req.ypDomain &&
+        req.ypDomain.configuration &&
+        req.ypDomain.configuration.ga4Tag &&
+        req.ypDomain.configuration.ga4Tag.length > 4) {
+        indexFileData = indexFileData.replace("Xga4X", getGA4Code(req.ypDomain.configuration.ga4Tag));
+    }
+    else {
+        indexFileData = indexFileData.replace("Xga4X", "");
+    }
+    if (req.hostname) {
+        if (req.hostname.indexOf("betrireykjavik.is") > -1) {
+            indexFileData = replaceForBetterReykjavik(indexFileData);
+        }
+        else if (req.hostname.indexOf("betraisland.is") > -1) {
+            indexFileData = replaceForBetterIceland(indexFileData);
+        }
+        else if (req.hostname.indexOf("smarter.nj.gov") > -1) {
+            indexFileData = replaceForSmarterNJ(indexFileData);
+        }
+        else if (req.hostname.indexOf("puttingcommunitiesfirst.org.uk") > -1) {
+            indexFileData = replaceForCommunityFund(indexFileData);
+        }
+        else if (req.hostname.indexOf("parliament.scot") > -1) {
+            indexFileData = replaceForParlScot(indexFileData);
+        }
+        else if (req.hostname.indexOf("ypus.org") > -1) {
+            indexFileData = replaceForYrpri(indexFileData);
+        }
+        else if (req.hostname.indexOf("mycitychallenge.org") > -1) {
+            indexFileData = replaceForMyCityChallenge(indexFileData);
+        }
+        else if (req.hostname.indexOf("engagebritain.org") > -1) {
+            indexFileData = replaceForEngageBritain(indexFileData);
+        }
+        else if (req.hostname.indexOf("tarsalgo.net") > -1) {
+            indexFileData = replaceForTarsalgo(indexFileData);
+        }
+        else if (req.hostname.indexOf("junges.wien") > -1) {
+            indexFileData = replaceForJungesWien(indexFileData);
+        }
+        else if (req.hostname.indexOf("openmontana.org") > -1) {
+            indexFileData = replaceForOpenMontana(indexFileData);
+        }
+        else if (req.hostname.indexOf("yrpri.org") > -1) {
+            indexFileData = replaceForYrpri(indexFileData);
+        }
+        else {
+            indexFileData = replaceFromEnv(indexFileData);
+        }
+    }
+    else {
+        log.warn("No req.hostname");
+        indexFileData = replaceFromEnv(indexFileData);
+    }
+    try {
+        indexFileData = await replaceSharingData(req, indexFileData);
+    }
+    catch (error) {
+        log.error(`Error in index.html creation: ${error}`);
+        try {
+            indexFileData = replaceWithHardCodedFallback(req, indexFileData);
+        }
+        catch (error) {
+            log.error(`Error in index.html creation: ${error}`);
+        }
+    }
+    return indexFileData;
+}
 let sendIndex = async (req, res) => {
-    let indexFilePath;
     log.info("Index Viewed", { userId: req.user ? req.user.id : null });
     let useNewVersion = req.query.useNewVersion === "true" || req.session.useNewVersion === true;
+    // Check domain-specific configuration and query override
     if (req.ypDomain &&
         req.ypDomain.configuration &&
         req.ypDomain.configuration.useNewVersion === true &&
         req.query.useNewVersion !== "false") {
         useNewVersion = true;
     }
-    if (useNewVersion) {
-        indexFilePath = path.resolve(req.dirName, "../webAppsDist/client/dist/index.html");
+    let useNewVersionIsFalse = req.query.useNewVersion === "false";
+    // Handle user preferences for version switching
+    if (useNewVersion && !useNewVersionIsFalse) {
+        req.session.useNewVersion = true;
+        console.log(`Setting new version preference: ${req.query.useNewVersion}`);
     }
-    else {
-        indexFilePath = path.resolve(req.dirName, "../webAppsDist/old/client/build/bundled/index.html");
+    else if (useNewVersionIsFalse) {
+        req.session.useNewVersion = false;
+        console.log(`Setting new version preference: false`);
+    }
+    let versionKey = useNewVersion ? 'newVersion' : 'oldVersion';
+    let indexFilePath = path.resolve(req.dirName, useNewVersion ? "../webAppsDist/client/dist/index.html" : "../webAppsDist/old/client/build/bundled/index.html");
+    // Ensure the version file is cached
+    if (!indexCache[versionKey].data || !indexCache[versionKey].lastModified) {
+        await cacheIndexFile(indexFilePath, versionKey);
     }
     log.info(`Index file path: ${indexFilePath}`);
-    fs.readFile(indexFilePath, "utf8", async (err, indexFileData) => {
-        if (err) {
-            console.error("Cant read index file");
-            throw err;
-        }
-        else {
-            if (process.env.ZIGGEO_ENABLED &&
-                req.ypDomain.configuration.ziggeoApplicationToken) {
-                indexFileData = indexFileData.replace('<html lang="en">', `<html lang="en">${ziggeoHeaders(req.ypDomain.configuration.ziggeoApplicationToken)}`);
-            }
-            if (req.ypDomain.configuration &&
-                req.ypDomain.configuration.preloadCssUrl) {
-                indexFileData = indexFileData.replace('<html lang="en">', `<html lang="en"><link rel="stylesheet" href="${req.ypDomain.configuration.preloadCssUrl}">`);
-            }
-            if (req.ypDomain &&
-                req.ypDomain.configuration &&
-                req.ypDomain.configuration.plausibleDataDomains &&
-                req.ypDomain.configuration.plausibleDataDomains.length > 5) {
-                indexFileData = indexFileData.replace("XplcX", getPlausibleCode(req.ypDomain.configuration.plausibleDataDomains));
-            }
-            else {
-                indexFileData = indexFileData.replace("XplcX", "");
-            }
-            if (req.ypDomain &&
-                req.ypDomain.configuration &&
-                req.ypDomain.configuration.ga4Tag &&
-                req.ypDomain.configuration.ga4Tag.length > 4) {
-                indexFileData = indexFileData.replace("Xga4X", getGA4Code(req.ypDomain.configuration.ga4Tag));
-            }
-            else {
-                indexFileData = indexFileData.replace("Xga4X", "");
-            }
-            if (req.hostname) {
-                if (req.hostname.indexOf("betrireykjavik.is") > -1) {
-                    indexFileData = replaceForBetterReykjavik(indexFileData);
-                }
-                else if (req.hostname.indexOf("betraisland.is") > -1) {
-                    indexFileData = replaceForBetterIceland(indexFileData);
-                }
-                else if (req.hostname.indexOf("smarter.nj.gov") > -1) {
-                    indexFileData = replaceForSmarterNJ(indexFileData);
-                }
-                else if (req.hostname.indexOf("puttingcommunitiesfirst.org.uk") > -1) {
-                    indexFileData = replaceForCommunityFund(indexFileData);
-                }
-                else if (req.hostname.indexOf("parliament.scot") > -1) {
-                    indexFileData = replaceForParlScot(indexFileData);
-                }
-                else if (req.hostname.indexOf("ypus.org") > -1) {
-                    indexFileData = replaceForYrpri(indexFileData);
-                }
-                else if (req.hostname.indexOf("mycitychallenge.org") > -1) {
-                    indexFileData = replaceForMyCityChallenge(indexFileData);
-                }
-                else if (req.hostname.indexOf("engagebritain.org") > -1) {
-                    indexFileData = replaceForEngageBritain(indexFileData);
-                }
-                else if (req.hostname.indexOf("tarsalgo.net") > -1) {
-                    indexFileData = replaceForTarsalgo(indexFileData);
-                }
-                else if (req.hostname.indexOf("junges.wien") > -1) {
-                    indexFileData = replaceForJungesWien(indexFileData);
-                }
-                else if (req.hostname.indexOf("openmontana.org") > -1) {
-                    indexFileData = replaceForOpenMontana(indexFileData);
-                }
-                else if (req.hostname.indexOf("yrpri.org") > -1) {
-                    indexFileData = replaceForYrpri(indexFileData);
-                }
-                else {
-                    indexFileData = replaceFromEnv(indexFileData);
-                }
-            }
-            else {
-                log.warn("No req.hostname");
-                indexFileData = replaceFromEnv(indexFileData);
-            }
-            try {
-                indexFileData = await replaceSharingData(req, indexFileData);
-            }
-            catch (error) {
-                log.error(`Error in index.html creation: ${error}`);
-                try {
-                    indexFileData = replaceWithHardCodedFallback(req, indexFileData);
-                }
-                catch (error) {
-                    log.error(`Error in index.html creation: ${error}`);
-                }
-            }
-            res.send(indexFileData);
-        }
-    });
+    try {
+        let indexFileData = indexCache[versionKey].data;
+        indexFileData = await replaceSiteData(indexFileData, req);
+        res.setHeader("Cache-Control", "no-cache, must-revalidate");
+        res.setHeader("Last-Modified", indexCache[versionKey].lastModified);
+        res.send(indexFileData);
+    }
+    catch (error) {
+        log.error(`Error in index.html processing: ${error}`);
+        res.status(500).send("Server error");
+    }
 };
+cacheIndexFile(path.resolve(__dirname, "../../webAppsDist/client/dist/index.html"), 'newVersion');
+cacheIndexFile(path.resolve(__dirname, "../../webAppsDist/old/client/build/bundled/index.html"), 'oldVersion');
 router.get("/", function (req, res) {
     sendIndex(req, res);
 });

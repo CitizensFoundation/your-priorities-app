@@ -147,7 +147,6 @@ export class YourPrioritiesApi {
     this.forceHttps();
     this.initializeMiddlewares();
     this.handleShortenedRedirects();
-    this.handleServiceWorkerRequests();
     this.initializeRateLimiting();
     this.setupDomainAndCommunity();
     this.setupStaticFileServing();
@@ -172,7 +171,7 @@ export class YourPrioritiesApi {
         pingInterval: 10000,
         socket: {
           tls: redisUrl.startsWith("rediss://"),
-          rejectUnauthorized: false
+          rejectUnauthorized: false,
         },
       });
     } else {
@@ -274,20 +273,21 @@ export class YourPrioritiesApi {
     );
   }
 
-  handleServiceWorkerRequests(): void {
-    this.app.get(
-      "/*",
-      (req: YpRequest, res: express.Response, next: NextFunction) => {
-        if (req.url.indexOf("service-worker.js") > -1) {
-          res.setHeader(
-            "Cache-Control",
-            "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0"
-          );
-          res.setHeader("Last-Modified", new Date(Date.now()).toUTCString());
-        }
-        next();
-      }
+  handleServiceWorker(req: YpRequest, res: express.Response) {
+    res.setHeader(
+      "Cache-Control",
+      "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0"
     );
+    res.setHeader("Last-Modified", new Date().toUTCString());
+
+    const filePath = req.path.includes("/sw.js")
+      ? path.join(__dirname, "../webAppsDist/client/dist/sw.js")
+      : path.join(
+          __dirname,
+          "../webAppsDist/old/client/build/bundled/service-worker.js"
+        );
+
+    res.sendFile(filePath);
   }
 
   setupDomainAndCommunity(): void {
@@ -400,8 +400,57 @@ export class YourPrioritiesApi {
     );
   }
 
+  initializeMiddlewares() {
+    this.app.use(morgan("combined"));
+    this.app.use(useragent.express());
+    this.app.use(requestIp.mw());
+    this.app.use(bodyParser.json({ limit: "10mb", strict: false }));
+    this.app.use(bodyParser.urlencoded({ limit: "10mb", extended: true }));
+    this.app.use(cors());
+    this.app.use(compression());
+    this.app.set("views", __dirname + "/views");
+    this.app.set("view engine", "pug");
+
+    const store = new connectRedis({ client: this.redisClient, ttl: 86400 });
+    const sessionConfig = {
+      store: store,
+      name: "yrpr.sid",
+      secret: process.env.SESSION_SECRET || "not so secret... use env var.",
+      resave: false,
+      proxy: process.env.USING_NGINX_PROXY ? true : undefined,
+      cookie: { autoSubDomain: true },
+      saveUninitialized: true,
+    };
+    if (this.app.get("env") === "production") {
+      this.app.set("trust proxy", 3); // Trust three proxies
+      //@ts-ignore
+      sessionConfig.cookie.secure = true; // serve secure cookies
+    }
+    //@ts-ignore
+    this.app.use(session(sessionConfig));
+  }
+
+  async initializeEsControllers() {
+    console.log("Initializing ES controllers");
+
+    const { AllOurIdeasController } = await import(
+      "./controllers/allOurIdeas.js"
+    );
+    console.log("Initializing ES controllers 2 " + this.wsClients);
+    const aoiController = new AllOurIdeasController(this.wsClients);
+    console.log(
+      `AOI controller path: ${aoiController.path} ${aoiController.router}`
+    );
+    this.app.use(aoiController.path, aoiController.router);
+
+    // Setup those here so they wont override the ES controllers
+    this.setupErrorHandler();
+  }
+
   setupStaticFileServing(): void {
     const baseDir = path.join(__dirname, "../webAppsDist");
+    this.app.get("/sw.js", this.handleServiceWorker);
+    this.app.get("/service-worker.js", this.handleServiceWorker);
 
     // Promotion app
     const promotionAppPath = path.join(baseDir, "old/promotion_app/dist");
@@ -459,15 +508,16 @@ export class YourPrioritiesApi {
 
         let useNewVersionIsFalse = req.query.useNewVersion === "false";
 
-        if (req.query.useNewVersion === "true") {
+        if (useNewVersionIsFalse) {
+          (req.session as any).useNewVersion = false;
+          console.log(`Setting new version preference: false`);
+        } else if (useNewVersion && !useNewVersionIsFalse) {
           (req.session as any).useNewVersion = true;
           console.log(
             `Setting new version preference: ${req.query.useNewVersion}`
           );
-        } else if (useNewVersionIsFalse) {
-          (req.session as any).useNewVersion = false;
-          console.log(`Setting new version preference: false`);
         }
+
 
         if (
           req.ypDomain &&
@@ -479,88 +529,27 @@ export class YourPrioritiesApi {
         }
 
         console.log(
-          `------------------------------> Using new version: ${useNewVersion}`
+          `------XY-----------------------> Using new version: ${useNewVersion}`
         );
+        console.log(`${req.ypDomain.configuration.useNewVersion}`)
 
         // Set the paths depending on the version
         req.adminAppPath = useNewVersion
           ? path.join(baseDir, "client/dist")
           : path.join(baseDir, "old/translationApp/dist");
+
         req.clientAppPath = useNewVersion
           ? path.join(baseDir, "client/dist")
           : path.join(baseDir, "old/client/build/bundled");
 
-        // Only apply static middleware to certain paths
-        if (
-          req.path.startsWith("/admin") ||
-          req.path.startsWith("/promotion") ||
-          req.path.startsWith("/images") ||
-          req.path.startsWith("/land_use") ||
-          req.path.startsWith("/") ||
-          req.path.startsWith("/domain") ||
-          req.path.startsWith("/community") ||
-          req.path.startsWith("/group") ||
-          req.path.startsWith("/post") ||
-          req.path === "/favicon.ico"
-        ) {
-          // Specific paths to use the adminAppPath or clientAppPath
-          const staticPath = req.path.startsWith("/admin")
-            ? req.adminAppPath!
-            : req.clientAppPath!;
-          console.log("Static path", staticPath);
-          express.static(staticPath)(req, res, next);
-        } else {
-          next(); // Continue to other middleware/routes that are not for serving static files
-        }
+        const staticPath = req.path.startsWith("/admin")
+          ? req.adminAppPath!
+          : req.clientAppPath!;
+
+        console.log("Static path", staticPath);
+        express.static(staticPath)(req, res, next);
       }
     );
-  }
-
-  initializeMiddlewares() {
-    this.app.use(morgan("combined"));
-    this.app.use(useragent.express());
-    this.app.use(requestIp.mw());
-    this.app.use(bodyParser.json({ limit: "10mb", strict: false }));
-    this.app.use(bodyParser.urlencoded({ limit: "10mb", extended: true }));
-    this.app.use(cors());
-    this.app.use(compression());
-    this.app.set("views", __dirname + "/views");
-    this.app.set("view engine", "pug");
-
-    const store = new connectRedis({ client: this.redisClient, ttl: 86400 });
-    const sessionConfig = {
-      store: store,
-      name: "yrpr.sid",
-      secret: process.env.SESSION_SECRET || "not so secret... use env var.",
-      resave: false,
-      proxy: process.env.USING_NGINX_PROXY ? true : undefined,
-      cookie: { autoSubDomain: true },
-      saveUninitialized: true,
-    };
-    if (this.app.get("env") === "production") {
-      this.app.set("trust proxy", 3); // Trust three proxies
-      //@ts-ignore
-      sessionConfig.cookie.secure = true; // serve secure cookies
-    }
-    //@ts-ignore
-    this.app.use(session(sessionConfig));
-  }
-
-  async initializeEsControllers() {
-    console.log("Initializing ES controllers");
-
-    const { AllOurIdeasController } = await import(
-      "./controllers/allOurIdeas.js"
-    );
-    console.log("Initializing ES controllers 2 " + this.wsClients);
-    const aoiController = new AllOurIdeasController(this.wsClients);
-    console.log(
-      `AOI controller path: ${aoiController.path} ${aoiController.router}`
-    );
-    this.app.use(aoiController.path, aoiController.router);
-
-    // Setup those here so they wont override the ES controllers
-    this.setupErrorHandler();
   }
 
   initializeRoutes() {
@@ -1000,8 +989,8 @@ export class YourPrioritiesApi {
     const pub = this.redisClient.duplicate();
     const sub = this.redisClient.duplicate();
 
-    pub.on('error', (err) => {
-      console.error('Publisher Redis client error:', err);
+    pub.on("error", (err) => {
+      console.error("Publisher Redis client error:", err);
     });
 
     pub.on("connect", () => {
@@ -1012,8 +1001,8 @@ export class YourPrioritiesApi {
       console.log("Publisher Redis client is reconnecting");
     });
 
-    sub.on('error', (err) => {
-      console.error('Subscriber Redis client error:', err);
+    sub.on("error", (err) => {
+      console.error("Subscriber Redis client error:", err);
     });
 
     sub.on("connect", () => {

@@ -173,7 +173,6 @@ export class YourPrioritiesApi {
         this.forceHttps();
         this.initializeMiddlewares();
         this.handleShortenedRedirects();
-        this.handleServiceWorkerRequests();
         this.initializeRateLimiting();
         this.setupDomainAndCommunity();
         this.setupStaticFileServing();
@@ -195,7 +194,7 @@ export class YourPrioritiesApi {
                 pingInterval: 10000,
                 socket: {
                     tls: redisUrl.startsWith("rediss://"),
-                    rejectUnauthorized: false
+                    rejectUnauthorized: false,
                 },
             });
         }
@@ -267,14 +266,13 @@ export class YourPrioritiesApi {
             }
         });
     }
-    handleServiceWorkerRequests() {
-        this.app.get("/*", (req, res, next) => {
-            if (req.url.indexOf("service-worker.js") > -1) {
-                res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0");
-                res.setHeader("Last-Modified", new Date(Date.now()).toUTCString());
-            }
-            next();
-        });
+    handleServiceWorker(req, res) {
+        res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0");
+        res.setHeader("Last-Modified", new Date().toUTCString());
+        const filePath = req.path.includes("/sw.js")
+            ? path.join(__dirname, "../webAppsDist/client/dist/sw.js")
+            : path.join(__dirname, "../webAppsDist/old/client/build/bundled/service-worker.js");
+        res.sendFile(filePath);
     }
     setupDomainAndCommunity() {
         this.app.use((req, res, next) => {
@@ -366,78 +364,6 @@ export class YourPrioritiesApi {
             next();
         });
     }
-    setupStaticFileServing() {
-        const baseDir = path.join(__dirname, "../webAppsDist");
-        // Promotion app
-        const promotionAppPath = path.join(baseDir, "old/promotion_app/dist");
-        this.app.use("/promotion", express.static(promotionAppPath));
-        this.app.use("/promotion/domain/*", express.static(promotionAppPath));
-        this.app.use("/promotion/community/*", express.static(promotionAppPath));
-        this.app.use("/promotion/group/*", express.static(promotionAppPath));
-        this.app.use("/promotion/post/*", express.static(promotionAppPath));
-        this.app.use("/promotion/locales/en/*", express.static(path.join(promotionAppPath, "locales/en")));
-        this.app.use("/promotion/locales/is/*", express.static(path.join(promotionAppPath, "locales/is")));
-        // Land use game
-        const landUseGamePath = path.join(baseDir, "land_use_game/dist");
-        this.app.use("/land_use", express.static(landUseGamePath));
-        this.app.use("/land_use/*", express.static(landUseGamePath));
-        this.app.use("/land_use/locales/en/*", express.static(path.join(landUseGamePath, "locales/en")));
-        this.app.use("/land_use/locales/is/*", express.static(path.join(landUseGamePath, "locales/is")));
-        this.app.use("/Assets", express.static(path.join(landUseGamePath, "Assets")));
-        this.app.use("/ThirdParty", express.static(path.join(landUseGamePath, "ThirdParty")));
-        this.app.use("/Widgets", express.static(path.join(landUseGamePath, "Widgets")));
-        this.app.use("/Workers", express.static(path.join(landUseGamePath, "Workers")));
-        // Middleware to set paths based on query parameters
-        this.app.use((req, res, next) => {
-            const baseDir = path.join(__dirname, "../webAppsDist");
-            let useNewVersion = req.query.useNewVersion === "true" ||
-                req.session.useNewVersion === true;
-            let useNewVersionIsFalse = req.query.useNewVersion === "false";
-            if (req.query.useNewVersion === "true") {
-                req.session.useNewVersion = true;
-                console.log(`Setting new version preference: ${req.query.useNewVersion}`);
-            }
-            else if (useNewVersionIsFalse) {
-                req.session.useNewVersion = false;
-                console.log(`Setting new version preference: false`);
-            }
-            if (req.ypDomain &&
-                req.ypDomain.configuration &&
-                req.ypDomain.configuration.useNewVersion === true &&
-                !useNewVersionIsFalse) {
-                useNewVersion = true;
-            }
-            console.log(`------------------------------> Using new version: ${useNewVersion}`);
-            // Set the paths depending on the version
-            req.adminAppPath = useNewVersion
-                ? path.join(baseDir, "client/dist")
-                : path.join(baseDir, "old/translationApp/dist");
-            req.clientAppPath = useNewVersion
-                ? path.join(baseDir, "client/dist")
-                : path.join(baseDir, "old/client/build/bundled");
-            // Only apply static middleware to certain paths
-            if (req.path.startsWith("/admin") ||
-                req.path.startsWith("/promotion") ||
-                req.path.startsWith("/images") ||
-                req.path.startsWith("/land_use") ||
-                req.path.startsWith("/") ||
-                req.path.startsWith("/domain") ||
-                req.path.startsWith("/community") ||
-                req.path.startsWith("/group") ||
-                req.path.startsWith("/post") ||
-                req.path === "/favicon.ico") {
-                // Specific paths to use the adminAppPath or clientAppPath
-                const staticPath = req.path.startsWith("/admin")
-                    ? req.adminAppPath
-                    : req.clientAppPath;
-                console.log("Static path", staticPath);
-                express.static(staticPath)(req, res, next);
-            }
-            else {
-                next(); // Continue to other middleware/routes that are not for serving static files
-            }
-        });
-    }
     initializeMiddlewares() {
         this.app.use(morgan("combined"));
         this.app.use(useragent.express());
@@ -475,6 +401,65 @@ export class YourPrioritiesApi {
         this.app.use(aoiController.path, aoiController.router);
         // Setup those here so they wont override the ES controllers
         this.setupErrorHandler();
+    }
+    setupStaticFileServing() {
+        const baseDir = path.join(__dirname, "../webAppsDist");
+        this.app.get("/sw.js", this.handleServiceWorker);
+        this.app.get("/service-worker.js", this.handleServiceWorker);
+        // Promotion app
+        const promotionAppPath = path.join(baseDir, "old/promotion_app/dist");
+        this.app.use("/promotion", express.static(promotionAppPath));
+        this.app.use("/promotion/domain/*", express.static(promotionAppPath));
+        this.app.use("/promotion/community/*", express.static(promotionAppPath));
+        this.app.use("/promotion/group/*", express.static(promotionAppPath));
+        this.app.use("/promotion/post/*", express.static(promotionAppPath));
+        this.app.use("/promotion/locales/en/*", express.static(path.join(promotionAppPath, "locales/en")));
+        this.app.use("/promotion/locales/is/*", express.static(path.join(promotionAppPath, "locales/is")));
+        // Land use game
+        const landUseGamePath = path.join(baseDir, "land_use_game/dist");
+        this.app.use("/land_use", express.static(landUseGamePath));
+        this.app.use("/land_use/*", express.static(landUseGamePath));
+        this.app.use("/land_use/locales/en/*", express.static(path.join(landUseGamePath, "locales/en")));
+        this.app.use("/land_use/locales/is/*", express.static(path.join(landUseGamePath, "locales/is")));
+        this.app.use("/Assets", express.static(path.join(landUseGamePath, "Assets")));
+        this.app.use("/ThirdParty", express.static(path.join(landUseGamePath, "ThirdParty")));
+        this.app.use("/Widgets", express.static(path.join(landUseGamePath, "Widgets")));
+        this.app.use("/Workers", express.static(path.join(landUseGamePath, "Workers")));
+        // Middleware to set paths based on query parameters
+        this.app.use((req, res, next) => {
+            const baseDir = path.join(__dirname, "../webAppsDist");
+            let useNewVersion = req.query.useNewVersion === "true" ||
+                req.session.useNewVersion === true;
+            let useNewVersionIsFalse = req.query.useNewVersion === "false";
+            if (useNewVersionIsFalse) {
+                req.session.useNewVersion = false;
+                console.log(`Setting new version preference: false`);
+            }
+            else if (useNewVersion && !useNewVersionIsFalse) {
+                req.session.useNewVersion = true;
+                console.log(`Setting new version preference: ${req.query.useNewVersion}`);
+            }
+            if (req.ypDomain &&
+                req.ypDomain.configuration &&
+                req.ypDomain.configuration.useNewVersion === true &&
+                !useNewVersionIsFalse) {
+                useNewVersion = true;
+            }
+            console.log(`------XY-----------------------> Using new version: ${useNewVersion}`);
+            console.log(`${req.ypDomain.configuration.useNewVersion}`);
+            // Set the paths depending on the version
+            req.adminAppPath = useNewVersion
+                ? path.join(baseDir, "client/dist")
+                : path.join(baseDir, "old/translationApp/dist");
+            req.clientAppPath = useNewVersion
+                ? path.join(baseDir, "client/dist")
+                : path.join(baseDir, "old/client/build/bundled");
+            const staticPath = req.path.startsWith("/admin")
+                ? req.adminAppPath
+                : req.clientAppPath;
+            console.log("Static path", staticPath);
+            express.static(staticPath)(req, res, next);
+        });
     }
     initializeRoutes() {
         this.app.use("/", index);
@@ -790,8 +775,8 @@ export class YourPrioritiesApi {
         }
         const pub = this.redisClient.duplicate();
         const sub = this.redisClient.duplicate();
-        pub.on('error', (err) => {
-            console.error('Publisher Redis client error:', err);
+        pub.on("error", (err) => {
+            console.error("Publisher Redis client error:", err);
         });
         pub.on("connect", () => {
             console.log("Publisher Redis client is connected");
@@ -799,8 +784,8 @@ export class YourPrioritiesApi {
         pub.on("reconnecting", () => {
             console.log("Publisher Redis client is reconnecting");
         });
-        sub.on('error', (err) => {
-            console.error('Subscriber Redis client error:', err);
+        sub.on("error", (err) => {
+            console.error("Subscriber Redis client error:", err);
         });
         sub.on("connect", () => {
             console.log("Subscriber Redis client is connected");

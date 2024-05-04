@@ -46,6 +46,7 @@ export default {
       minify: true,
       publicPath: '/',
       injectServiceWorker: true,
+      extractAssets: false,
       serviceWorkerPath: '/sw.js',
     }),
     copy({
@@ -55,6 +56,9 @@ export default {
         { src: 'images', dest: 'dist/' },
         { src: 'sw.js', dest: 'dist/' },
         { src: 'offline.html', dest: 'dist/' },
+        //TODO: Remove this after the new version has been fully launched - in here so one can switch between the old and new version
+        { src: '../old/client/build/bundled/src', dest: 'dist/' },
+        { src: '../old/client/build/bundled/bower_components', dest: 'dist/' },
         { src: 'node_modules/broadcastchannel-polyfill/index.js', dest: 'dist/node_modules/broadcastchannel-polyfill/' },
       ],
     }),
