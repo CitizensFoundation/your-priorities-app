@@ -64,7 +64,7 @@ process.on("uncaughtException", (err) => {
     if (airbrake) {
         airbrake.notify(err).then((airbrakeErr) => {
             if (airbrakeErr.error) {
-                log.error("AirBrake Error", {
+                log.error("AirBrake Error Internal", {
                     context: "airbrake",
                     err: airbrakeErr.error,
                     errorStatus: 500,
@@ -463,6 +463,7 @@ export class YourPrioritiesApi {
     }
     initializeRoutes() {
         this.app.use("/", index);
+        this.app.use("/index.html", index);
         this.app.use("/domain", index);
         this.app.use("/community", index);
         this.app.use("/group", index);
