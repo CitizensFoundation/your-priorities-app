@@ -458,7 +458,13 @@ export class YourPrioritiesApi {
                 ? req.adminAppPath
                 : req.clientAppPath;
             console.log("Static path", staticPath);
-            express.static(staticPath)(req, res, next);
+            // Check if the request is for index.html
+            if (req.path === "/" || req.path === "/index.html") {
+                index(req, res, next); // Use your dynamic handler
+            }
+            else {
+                express.static(staticPath)(req, res, next);
+            }
         });
     }
     initializeRoutes() {
