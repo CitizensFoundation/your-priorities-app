@@ -351,7 +351,7 @@ async function cacheIndexFile(filePath, versionKey) {
   }
 }
 
-async function replaceSiteData(indexFileData, req) {
+async function replaceSiteData(indexFileData, req, useNewVersion) {
   if (
     process.env.ZIGGEO_ENABLED &&
     req.ypDomain.configuration.ziggeoApplicationToken
@@ -374,6 +374,15 @@ async function replaceSiteData(indexFileData, req) {
     );
   }
 
+  //TODO: Remove when old client app version is deprecated fully
+  const plausibleReplaceKeyOld = `XplcX`;
+  const ga4TagKeyOld = `Xga4X`;
+
+  const plausibleReplaceKeyNew = `<meta name="XplcX" content="XplcX">`;
+  const ga4TagKeyNew = `<meta name="Xga4X" content="Xga4X">`;
+
+  const plausibleReplaceKey = useNewVersion ? plausibleReplaceKeyNew : plausibleReplaceKeyOld;
+
   if (
     req.ypDomain &&
     req.ypDomain.configuration &&
@@ -381,12 +390,14 @@ async function replaceSiteData(indexFileData, req) {
     req.ypDomain.configuration.plausibleDataDomains.length > 5
   ) {
     indexFileData = indexFileData.replace(
-      "XplcX",
+      plausibleReplaceKey,
       getPlausibleCode(req.ypDomain.configuration.plausibleDataDomains)
     );
   } else {
-    indexFileData = indexFileData.replace("XplcX", "");
+    indexFileData = indexFileData.replace(plausibleReplaceKey, "");
   }
+
+  const ga4TagKey = useNewVersion ? ga4TagKeyNew : ga4TagKeyOld;
 
   if (
     req.ypDomain &&
@@ -395,11 +406,11 @@ async function replaceSiteData(indexFileData, req) {
     req.ypDomain.configuration.ga4Tag.length > 4
   ) {
     indexFileData = indexFileData.replace(
-      "Xga4X",
+      ga4TagKey,
       getGA4Code(req.ypDomain.configuration.ga4Tag)
     );
   } else {
-    indexFileData = indexFileData.replace("Xga4X", "");
+    indexFileData = indexFileData.replace(ga4TagKey, "");
   }
 
   if (req.hostname) {
@@ -494,7 +505,7 @@ let sendIndex = async (req, res) => {
   try {
     let indexFileData = indexCache[versionKey].data;
 
-    indexFileData = await replaceSiteData(indexFileData, req);
+    indexFileData = await replaceSiteData(indexFileData, req, useNewVersion);
 
     res.setHeader("Cache-Control", "no-cache, must-revalidate");
     res.setHeader("Last-Modified", indexCache[versionKey].lastModified);

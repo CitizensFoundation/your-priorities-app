@@ -285,7 +285,7 @@ async function cacheIndexFile(filePath, versionKey) {
         console.error("Error caching index file:", err);
     }
 }
-async function replaceSiteData(indexFileData, req) {
+async function replaceSiteData(indexFileData, req, useNewVersion) {
     if (process.env.ZIGGEO_ENABLED &&
         req.ypDomain.configuration.ziggeoApplicationToken) {
         indexFileData = indexFileData.replace('<html lang="en">', `<html lang="en">${ziggeoHeaders(req.ypDomain.configuration.ziggeoApplicationToken)}`);
@@ -294,23 +294,30 @@ async function replaceSiteData(indexFileData, req) {
         req.ypDomain.configuration.preloadCssUrl) {
         indexFileData = indexFileData.replace('<html lang="en">', `<html lang="en"><link rel="stylesheet" href="${req.ypDomain.configuration.preloadCssUrl}">`);
     }
+    //TODO: Remove when old client app version is deprecated fully
+    const plausibleReplaceKeyOld = `XplcX`;
+    const ga4TagKeyOld = `Xga4X`;
+    const plausibleReplaceKeyNew = `<meta name="XplcX" content="XplcX">`;
+    const ga4TagKeyNew = `<meta name="Xga4X" content="Xga4X">`;
+    const plausibleReplaceKey = useNewVersion ? plausibleReplaceKeyNew : plausibleReplaceKeyOld;
     if (req.ypDomain &&
         req.ypDomain.configuration &&
         req.ypDomain.configuration.plausibleDataDomains &&
         req.ypDomain.configuration.plausibleDataDomains.length > 5) {
-        indexFileData = indexFileData.replace("XplcX", getPlausibleCode(req.ypDomain.configuration.plausibleDataDomains));
+        indexFileData = indexFileData.replace(plausibleReplaceKey, getPlausibleCode(req.ypDomain.configuration.plausibleDataDomains));
     }
     else {
-        indexFileData = indexFileData.replace("XplcX", "");
+        indexFileData = indexFileData.replace(plausibleReplaceKey, "");
     }
+    const ga4TagKey = useNewVersion ? ga4TagKeyNew : ga4TagKeyOld;
     if (req.ypDomain &&
         req.ypDomain.configuration &&
         req.ypDomain.configuration.ga4Tag &&
         req.ypDomain.configuration.ga4Tag.length > 4) {
-        indexFileData = indexFileData.replace("Xga4X", getGA4Code(req.ypDomain.configuration.ga4Tag));
+        indexFileData = indexFileData.replace(ga4TagKey, getGA4Code(req.ypDomain.configuration.ga4Tag));
     }
     else {
-        indexFileData = indexFileData.replace("Xga4X", "");
+        indexFileData = indexFileData.replace(ga4TagKey, "");
     }
     if (req.hostname) {
         if (req.hostname.indexOf("betrireykjavik.is") > -1) {
@@ -400,7 +407,7 @@ let sendIndex = async (req, res) => {
     log.info(`Index file path: ${indexFilePath}`);
     try {
         let indexFileData = indexCache[versionKey].data;
-        indexFileData = await replaceSiteData(indexFileData, req);
+        indexFileData = await replaceSiteData(indexFileData, req, useNewVersion);
         res.setHeader("Cache-Control", "no-cache, must-revalidate");
         res.setHeader("Last-Modified", indexCache[versionKey].lastModified);
         res.send(indexFileData);
