@@ -239,7 +239,7 @@ export class YpServerApi extends YpServerApiBase {
             body: JSON.stringify(body),
         }, false);
     }
-    registerAnonymously(body) {
+    async registerAnonymously(body) {
         return this.fetchWrapper(this.baseUrlPath + `/users/register_anonymously`, {
             method: "POST",
             body: JSON.stringify(body),

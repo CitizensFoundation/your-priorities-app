@@ -1161,11 +1161,14 @@ export class YpLogin extends YpBaseElement {
         if (this.$$("#dialogOneTimeWithName") as Dialog) {
           (this.$$("#dialogOneTimeWithName") as Dialog).close();
         }
+        return true;
       } else {
         console.error("No user in anonymousLogin");
+        return false;
       }
     } else {
       console.error("No anon group in config");
+      return false;
     }
   }
 

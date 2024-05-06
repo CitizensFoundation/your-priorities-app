@@ -38,108 +38,142 @@ export class AoiServerApi extends YpServerApi {
     ) as unknown as AoiAnalysisResponse;
   }
 
-  public submitIdea(
+  async checkLogin() {
+    if (window.appUser.loggedIn()) return true;
+
+    if (window.appGlobals.currentAnonymousGroup) {
+      const user = (await window.serverApi.registerAnonymously({
+        groupId: window.appGlobals.currentAnonymousGroup.id,
+        trackingParameters: window.appGlobals.originalQueryParameters,
+      })) as YpUserData;
+      if (user) {
+        window.appUser.setLoggedInUser(user);
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      return false;
+    }
+  }
+
+  public async submitIdea(
     groupId: number,
     questionId: number,
     newIdea: string
-  ): AoiAddIdeaResponse {
-    return this.fetchWrapper(
-      this.baseUrlPath + `/${groupId}/questions/${questionId}/addIdea`,
-      {
-        method: "POST",
-        body: JSON.stringify({ newIdea }),
-      },
-      false
-    ) as unknown as AoiAddIdeaResponse;
+  ): Promise<AoiAddIdeaResponse | null> {
+    if (await this.checkLogin()) {
+      return this.fetchWrapper(
+        this.baseUrlPath + `/${groupId}/questions/${questionId}/addIdea`,
+        {
+          method: "POST",
+          body: JSON.stringify({ newIdea }),
+        },
+        false
+      ) as unknown as AoiAddIdeaResponse;
+    } else {
+      window.appUser.openUserlogin();
+      return null;
+    }
   }
 
-  public postVote(
+  public async postVote(
     groupId: number,
     questionId: number,
     promptId: number,
     locale: string,
     body: AoiVoteData,
     direction: "left" | "right" | "skip"
-  ): AoiVoteResponse {
-    const url = new URL(
-      `${window.location.protocol}//${window.location.host}${
-        this.baseUrlPath
-      }/${groupId}/questions/${questionId}/prompts/${promptId}/${
-        direction == "skip" ? "skips" : "votes"
-      }?locale=${locale}`
-    );
+  ): Promise<AoiVoteResponse | null> {
+    if (await this.checkLogin()) {
+      const url = new URL(
+        `${window.location.protocol}//${window.location.host}${
+          this.baseUrlPath
+        }/${groupId}/questions/${questionId}/prompts/${promptId}/${
+          direction == "skip" ? "skips" : "votes"
+        }?locale=${locale}`
+      );
 
-    Object.keys(window.appGlobals.originalQueryParameters).forEach((key) => {
-      if (key.startsWith("utm_")) {
-        url.searchParams.append(
-          key,
-          window.aoiAppGlobals.originalQueryParameters[key]
-        );
-      }
-    });
+      Object.keys(window.appGlobals.originalQueryParameters).forEach((key) => {
+        if (key.startsWith("utm_")) {
+          url.searchParams.append(
+            key,
+            window.aoiAppGlobals.originalQueryParameters[key]
+          );
+        }
+      });
 
-    const browserId = window.appUser.getBrowserId();
-    const browserFingerprint = window.appUser.browserFingerprint;
-    const browserFingerprintConfidence =
-      window.appUser.browserFingerprintConfidence;
+      const browserId = window.appUser.getBrowserId();
+      const browserFingerprint = window.appUser.browserFingerprint;
+      const browserFingerprintConfidence =
+        window.appUser.browserFingerprintConfidence;
 
-    url.searchParams.append("checksum_a", browserId!);
-    url.searchParams.append("checksum_b", browserFingerprint!);
-    url.searchParams.append(
-      "checksum_c",
-      browserFingerprintConfidence!.toString()
-    );
+      url.searchParams.append("checksum_a", browserId!);
+      url.searchParams.append("checksum_b", browserFingerprint!);
+      url.searchParams.append(
+        "checksum_c",
+        browserFingerprintConfidence!.toString()
+      );
 
-    return this.fetchWrapper(
-      url.toString(),
-      {
-        method: "POST",
-        body: JSON.stringify(body),
-      },
-      false
-    ) as unknown as AoiVoteResponse;
+      return this.fetchWrapper(
+        url.toString(),
+        {
+          method: "POST",
+          body: JSON.stringify(body),
+        },
+        false
+      ) as unknown as AoiVoteResponse;
+    } else {
+      window.appUser.openUserlogin();
+      return null;
+    }
   }
 
-  public postVoteSkip(
+  public async postVoteSkip(
     groupId: number,
     questionId: number,
     promptId: number,
     locale: string,
     body: AoiVoteSkipData
-  ): AoiVoteResponse {
-    const url = new URL(
-      `${window.location.protocol}//${window.location.host}${this.baseUrlPath}/${groupId}/questions/${questionId}/prompts/${promptId}/skip.js?locale=${locale}`
-    );
+  ): Promise<AoiVoteResponse | null> {
+    if (await this.checkLogin()) {
+      const url = new URL(
+        `${window.location.protocol}//${window.location.host}${this.baseUrlPath}/${groupId}/questions/${questionId}/prompts/${promptId}/skip.js?locale=${locale}`
+      );
 
-    Object.keys(window.appGlobals.originalQueryParameters).forEach((key) => {
-      if (key.startsWith("utm_")) {
-        url.searchParams.append(
-          key,
-          window.aoiAppGlobals.originalQueryParameters[key]
-        );
-      }
-    });
+      Object.keys(window.appGlobals.originalQueryParameters).forEach((key) => {
+        if (key.startsWith("utm_")) {
+          url.searchParams.append(
+            key,
+            window.aoiAppGlobals.originalQueryParameters[key]
+          );
+        }
+      });
 
-    const browserId = window.appUser.getBrowserId();
-    const browserFingerprint = window.appUser.browserFingerprint;
-    const browserFingerprintConfidence =
-      window.appUser.browserFingerprintConfidence;
+      const browserId = window.appUser.getBrowserId();
+      const browserFingerprint = window.appUser.browserFingerprint;
+      const browserFingerprintConfidence =
+        window.appUser.browserFingerprintConfidence;
 
-    url.searchParams.append("checksum_a", browserId!);
-    url.searchParams.append("checksum_b", browserFingerprint!);
-    url.searchParams.append(
-      "checksum_c",
-      browserFingerprintConfidence!.toString()
-    );
+      url.searchParams.append("checksum_a", browserId!);
+      url.searchParams.append("checksum_b", browserFingerprint!);
+      url.searchParams.append(
+        "checksum_c",
+        browserFingerprintConfidence!.toString()
+      );
 
-    return this.fetchWrapper(
-      url.toString(),
-      {
-        method: "POST",
-        body: JSON.stringify(body),
-      },
-      false
-    ) as unknown as AoiVoteResponse;
+      return this.fetchWrapper(
+        url.toString(),
+        {
+          method: "POST",
+          body: JSON.stringify(body),
+        },
+        false
+      ) as unknown as AoiVoteResponse;
+    } else {
+      window.appUser.openUserlogin();
+      return null;
+    }
   }
 
   public async getResults(

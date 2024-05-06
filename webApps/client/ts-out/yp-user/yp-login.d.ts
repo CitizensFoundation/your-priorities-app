@@ -68,7 +68,7 @@ export declare class YpLogin extends YpBaseElement {
     _facebookLogin(): void;
     oneTimeLogin(): void;
     finishOneTimeLoginWithName(): void;
-    anonymousLogin(loginSubType?: string, registrationAnswers?: Record<string, string>[] | undefined): Promise<void>;
+    anonymousLogin(loginSubType?: string, registrationAnswers?: Record<string, string>[] | undefined): Promise<boolean>;
     _isInApp(): boolean;
     _openSamlLogin(): void;
     firstUpdated(): void;

@@ -1016,13 +1016,16 @@ let YpLogin = class YpLogin extends YpBaseElement {
                 if (this.$$("#dialogOneTimeWithName")) {
                     this.$$("#dialogOneTimeWithName").close();
                 }
+                return true;
             }
             else {
                 console.error("No user in anonymousLogin");
+                return false;
             }
         }
         else {
             console.error("No anon group in config");
+            return false;
         }
     }
     _isInApp() {

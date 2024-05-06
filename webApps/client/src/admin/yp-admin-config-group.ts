@@ -1755,6 +1755,7 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
           external_goal_trigger_url: "",
         },
       };
+      this.group.configuration.allowAnonymousUsers = true;
       this.configTabs = this.setupConfigTabs();
       this.requestUpdate();
     }
@@ -1965,6 +1966,12 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
           onChange: (e: CustomEvent) =>
             this._updateEarl(e, "configuration.welcome_message"),
           translationToken: "welcomeMessage",
+        },
+        {
+          text: "allowAnonymousUsers",
+          type: "checkbox",
+          value: this.group.configuration.allowAnonymousUsers,
+          translationToken: "allowAnonymousUsersToVote",
         },
         {
           text: "accept_new_ideas",

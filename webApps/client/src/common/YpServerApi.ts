@@ -448,7 +448,7 @@ export class YpServerApi extends YpServerApiBase {
     );
   }
 
-  public registerAnonymously(body: Record<string, unknown>) {
+  public async registerAnonymously(body: Record<string, unknown>) {
     return this.fetchWrapper(
       this.baseUrlPath + `/users/register_anonymously`,
       {

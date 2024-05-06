@@ -1594,6 +1594,7 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
                     external_goal_trigger_url: "",
                 },
             };
+            this.group.configuration.allowAnonymousUsers = true;
             this.configTabs = this.setupConfigTabs();
             this.requestUpdate();
         }
@@ -1769,6 +1770,12 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
                     value: earl?.configuration?.welcome_message,
                     onChange: (e) => this._updateEarl(e, "configuration.welcome_message"),
                     translationToken: "welcomeMessage",
+                },
+                {
+                    text: "allowAnonymousUsers",
+                    type: "checkbox",
+                    value: this.group.configuration.allowAnonymousUsers,
+                    translationToken: "allowAnonymousUsersToVote",
                 },
                 {
                     text: "accept_new_ideas",
