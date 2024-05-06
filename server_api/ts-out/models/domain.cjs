@@ -113,6 +113,9 @@ module.exports = (sequelize, DataTypes) => {
                 else if (domain.domain_name === 'engage-southampton.ac.uk') {
                     callbackDomainName = 'scca-online.' + domain.domain_name;
                 }
+                else if (domain.domain_name === 'boliden.com') {
+                    callbackDomainName = 'sidtjarn.' + domain.domain_name;
+                }
                 else if (domain.domain_name === 'multicitychallenge.org' && process.env.US_CLUSTER != null) {
                     callbackDomainName = 'ideas.' + domain.domain_name;
                 }

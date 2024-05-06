@@ -13,58 +13,61 @@
         </h1>
       <div id="left-top" style="float: left;">
         <% if (envValues!=null && envValues.banner_image != null) { %>
-          <img style="margin: 0;padding-bottom: 10px;padding-top: 16px;height:74px;" alt="<%= envValues.emailName %>" src="<%= envValues.banner_image %>" />
+          <img style="margin: 0;padding-bottom: 10px;height:74px;" alt="<%= envValues.emailName %>" src="<%= envValues.banner_image %>" />
         <% } else { %>
             <% if (domain.domain_name == 'betrireykjavik.is') { %>
-              <img style="margin: 0;padding-bottom: 10px;padding-top: 16px;" alt="Betri Reykjavík" src="https://s3.amazonaws.com/yrpri-direct-asset/yrpri6_emails/BR_email.png" />
+              <img style="margin: 0;padding-bottom: 10px;" alt="Betri Reykjavík" src="https://s3.amazonaws.com/yrpri-direct-asset/yrpri6_emails/BR_email.png" />
             <% } %>
             <% if (domain.domain_name == 'betraisland.is') { %>
-              <img style="margin: 0;padding-bottom: 10px;padding-top: 16px;" alt="Betra Ísland" src="https://s3.amazonaws.com/yrpri-direct-asset/yrpri6_emails/bi_email.png" />
+              <img style="margin: 0;padding-bottom: 10px;" alt="Betra Ísland" src="https://s3.amazonaws.com/yrpri-direct-asset/yrpri6_emails/bi_email.png" />
             <% } %>
             <% if (domain.domain_name  == 'yrpri.org') { %>
-              <img style="margin: 0;padding-bottom: 10px;padding-top: 16px;" alt="Your Priorities" src="https://s3.amazonaws.com/yrpri-direct-asset/yrpri6_emails/yp_email.png" />
+              <img style="margin: 0;padding-bottom: 10px;" alt="Your Priorities" src="https://s3.amazonaws.com/yrpri-direct-asset/yrpri6_emails/yp_email.png" />
             <% } %>
             <% if (domain.domain_name  == 'staging-yp.is') { %>
-              <img style="margin: 0;padding-bottom: 10px;padding-top: 16px;" alt="Your Priorities" src="https://s3.amazonaws.com/yrpri-direct-asset/yrpri6_emails/yp_email.png" />
+              <img style="margin: 0;padding-bottom: 10px;" alt="Your Priorities" src="https://s3.amazonaws.com/yrpri-direct-asset/yrpri6_emails/yp_email.png" />
             <% } %>
             <% if (domain.domain_name  == 'ypus.org') { %>
-              <img style="margin: 0;padding-bottom: 10px;padding-top: 16px;" alt="Your Priorities US" src="https://s3.amazonaws.com/yrpri-direct-asset/yrpri6_emails/yp_email.png" />
+              <img style="margin: 0;padding-bottom: 10px;" alt="Your Priorities US" src="https://s3.amazonaws.com/yrpri-direct-asset/yrpri6_emails/yp_email.png" />
             <% } %>
             <% if (domain.domain_name  == 'tarsalgo.net') { %>
               <img style="margin: 0;padding-bottom: 10px;padding-top: 16px;height: 74px" alt="társalgó" src="https://yrpri-eu-direct-assets.s3-eu-west-1.amazonaws.com/tarsargo_email_banner.png" />
             <% } %>
             <% if (domain.domain_name  == 'junges.wien') { %>
-                <img style="margin: 0;padding-bottom: 10px;padding-top: 16px;" alt="wienXtra" src="https://www.junges.wien/minio.yrpri.production/WIENXTRA-logo.png" />
+                <img style="margin: 0;padding-bottom: 10px;" alt="wienXtra" src="https://www.junges.wien/minio.yrpri.production/WIENXTRA-logo.png" />
             <% } %>
             <% if (domain.domain_name  == 'forbrukerradet.no') { %>
               <img style="margin: 0;padding-bottom: 10px;padding-top: 16px;" alt="Mine idéer Forbrukerrådet" src="https://s3-eu-west-1.amazonaws.com/yrpri-eu-direct-assets/forbrukerradet_logo_small.png" />
             <% } %>
             <% if (domain.domain_name  == 'multicitychallenge.org') { %>
-              <img style="margin: 0;padding-bottom: 10px;padding-top: 16px;" alt="Multi City Challenge" src="https://yrpri-eu-direct-assets.s3-eu-west-1.amazonaws.com/cityChallengeEmailBanner2.png" />
+              <img style="margin: 0;padding-bottom: 10px;" alt="Multi City Challenge" src="https://yrpri-eu-direct-assets.s3-eu-west-1.amazonaws.com/cityChallengeEmailBanner2.png" />
             <% } %>
             <% if (domain.domain_name  == 'engagebritain.org') { %>
-              <img style="margin: 0;padding-bottom: 10px;padding-top: 16px;" height="76" width="354" alt="Engage Britain" src="https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/eb_email.png" />
+              <img style="margin: 0;padding-bottom: 10px;" height="76" width="354" alt="Engage Britain" src="https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/eb_email.png" />
             <% } %>
             <% if (domain.domain_name  == 'mycitychallenge.org') { %>
-                <img style="margin: 0;padding-bottom: 10px;padding-top: 14px;" alt="My City Challenge" src="https://yrpri-direct-asset.s3.amazonaws.com/Oakland_logo_email+(1).png" />
+                <img style="margin: 0;padding-bottom: 10px;" alt="My City Challenge" src="https://yrpri-direct-asset.s3.amazonaws.com/Oakland_logo_email+(1).png" />
             <% } %>
             <% if (domain.domain_name  == 'idea-synergy.com') { %>
               <img style="margin: 0;padding-bottom: 10px;padding-top: 16px;" height="75" width="75" alt="Idea Synergy" src="https://www.idea-synergy.com/wp-content/uploads/2018/06/IdeaSynergy_Bulb_OrangeCircle_105x105.png" />
             <% } %>
             <% if (domain.domain_name  == 'smarter.nj.gov') { %>
-              <img style="margin: 0;padding-bottom: 10px;padding-top: 16px;" alt="Smarter NJ" src="https://s3.amazonaws.com/yrpri-usa-production-direct-assets/smnj_email_header.png" />
+              <img style="margin: 0;padding-bottom: 10px;" alt="Smarter NJ" src="https://s3.amazonaws.com/yrpri-usa-production-direct-assets/smnj_email_header.png" />
             <% } %>
             <% if (domain.domain_name  == 'parliament.scot') { %>
-              <img style="margin: 0;padding-bottom: 10px;padding-top: 16px;" height="74" alt="Scottish Parliament" src="https://yrpri-eu-direct-assets.s3-eu-west-1.amazonaws.com/Scottish_Parliament_emblem_2.png" />
+              <img style="margin: 0;padding-bottom: 10px;" height="74" alt="Scottish Parliament" src="https://yrpri-eu-direct-assets.s3-eu-west-1.amazonaws.com/Scottish_Parliament_emblem_2.png" />
             <% } %>
             <% if (domain.domain_name  == 'engage-southampton.ac.uk') { %>
-              <img style="margin: 0;padding-bottom: 10px;padding-top: 16px;" height="74" alt="Scottish Parliament" src="https://yrpri-eu-direct-assets.s3-eu-west-1.amazonaws.com/sccaLogo.png" />
+              <img style="margin: 0;padding-bottom: 10px;" height="74" alt="Scottish Parliament" src="https://yrpri-eu-direct-assets.s3-eu-west-1.amazonaws.com/sccaLogo.png" />
+            <% } %>
+            <% if (domain.domain_name  == 'boliden.com') { %>
+              <img style="margin: 0;padding-bottom: 10px;" height="74" alt="Boliden Sidtjarn" src="https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/Boliden_email_banner.png" />
             <% } %>
             <% if (domain.domain_name  == 'puttingcommunitiesfirst.org.uk') { %>
-                <img style="margin: 0;padding-bottom: 10px;padding-top: 16px;" height="76" alt="Putting Communities First Logo" src="https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/communityFund/communityFundYrpriEmailBanner.png" />
+                <img style="margin: 0;padding-bottom: 10px;" height="76" alt="Putting Communities First Logo" src="https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/communityFund/communityFundYrpriEmailBanner.png" />
             <% } %>
             <% if (domain.domain_name  == 'openmontana.org') { %>
-                <img style="margin: 0;padding-bottom: 10px;padding-top: 16px;" height="76" alt="Open Montana Logo" src="https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/openMontanaEmailHeader.png" />
+                <img style="margin: 0;padding-bottom: 10px;" height="76" alt="Open Montana Logo" src="https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/openMontanaEmailHeader.png" />
             <% } %>
         <% } %>
       </div>

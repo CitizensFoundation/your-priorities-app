@@ -419,8 +419,9 @@ export class YourPrioritiesApi {
       resave: false,
       proxy: process.env.USING_NGINX_PROXY ? true : undefined,
       cookie: { autoSubDomain: true },
-      saveUninitialized: true,
+      saveUninitialized: false,
     };
+
     if (this.app.get("env") === "production") {
       this.app.set("trust proxy", 3); // Trust three proxies
       //@ts-ignore
@@ -439,7 +440,7 @@ export class YourPrioritiesApi {
     console.log("Initializing ES controllers 2 " + this.wsClients);
     const aoiController = new AllOurIdeasController(this.wsClients);
     console.log(
-      `AOI controller path: ${aoiController.path} ${aoiController.router}`
+      `Controller path: ${aoiController.path} ${aoiController.router}`
     );
     this.app.use(aoiController.path, aoiController.router);
 

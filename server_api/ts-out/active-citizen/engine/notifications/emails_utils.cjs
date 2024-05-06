@@ -351,6 +351,12 @@ var sendOneEmail = function (emailLocals, callback) {
                             hostname: "scca-online",
                         };
                     }
+                    else if (emailLocals.domain.domain_name.indexOf("boliden.com") > -1) {
+                        fromEmail = "Boliden Sidtjarn <sidtjarn@boliden.com>";
+                        emailLocals["community"] = {
+                            hostname: "sidtjarn",
+                        };
+                    }
                     else if (emailLocals.domain.domain_name.indexOf("parliament.scot") > -1) {
                         fromEmail =
                             "Engage Scottish Parliament <engage@engage.parliament.scot>";
