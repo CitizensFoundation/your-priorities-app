@@ -16,33 +16,20 @@ const randomstring = require('randomstring');
 const { sendPlausibleFavicon } = require("../active-citizen/engine/analytics/plausible/manager.cjs");
 var getAllModeratedItemsByUser = require('../active-citizen/engine/moderation/get_moderation_items.cjs').getAllModeratedItemsByUser;
 const performSingleModerationAction = require('../active-citizen/engine/moderation/process_moderation_items.cjs').performSingleModerationAction;
-const logoutFromSession = (req, res, statusCode) => {
+const logoutFromSession = (req, res, statusCode = 200) => {
     if (req.session) {
-        req.session.user = null;
-        req.session.save(function (err) {
+        req.session.destroy((err) => {
             if (err) {
-                log.error("Error on destroying session", { err: err });
-                res.sendStatus(500);
+                log.error("Error on destroying session", { err });
+                return res.sendStatus(500);
             }
-            else {
-                req.session.regenerate(function (innerErr) {
-                    if (innerErr) {
-                        log.error("Error on destroying session", { err: innerErr });
-                        res.sendStatus(500);
-                    }
-                    else {
-                        log.info("Have destroy session");
-                        req.user = null;
-                        req.session = null;
-                        res.sendStatus(statusCode || 200);
-                    }
-                });
-            }
+            res.clearCookie('yrpri.sid', { path: '/' });
+            log.info("Session destroyed successfully");
+            res.sendStatus(statusCode);
         });
     }
     else {
-        req.user = null;
-        res.sendStatus(200);
+        res.sendStatus(statusCode);
     }
 };
 var sendUserOrError = function (res, user, context, error, errorStatus) {

@@ -414,7 +414,7 @@ export class YourPrioritiesApi {
     const store = new connectRedis({ client: this.redisClient, ttl: 86400 });
     const sessionConfig = {
       store: store,
-      name: "yrpr.sid",
+      name: "yrpri.sid",
       secret: process.env.SESSION_SECRET || "not so secret... use env var.",
       resave: false,
       proxy: process.env.USING_NGINX_PROXY ? true : undefined,
