@@ -146,6 +146,8 @@ export class YpCollection extends YpBaseElementWithLogin {
         }
 
         .header {
+          background-image: var(--top-area-background-image, none);
+          height: 300px;
         }
 
         .createFab[is-map] {
