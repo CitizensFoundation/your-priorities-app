@@ -17,6 +17,7 @@ projectFilesBackup/
 .editorconfig
 server_api/uploads/
 
+pushSubTreeToHeroku.sh
 startWatchWithEnv.sh
 startWorkerWithEnv.sh
 server_api/ts-out/config/config.json
