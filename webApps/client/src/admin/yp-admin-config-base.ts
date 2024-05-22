@@ -67,6 +67,9 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
   @property({ type: Array })
   currentLogoImages: YpImageData[] | undefined;
 
+  @property({ type: Array })
+  currentHeaderImages: YpImageData[] | undefined;
+
   @property({ type: Number })
   collectionVideoId: number | undefined;
 
@@ -487,6 +490,25 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
     this.requestUpdate();
   }
 
+  clearHeaderImage() {
+    this.uploadedHeaderImageId = undefined;
+    switch (this.collectionType) {
+      case "domain":
+        (this.collection as YpDomainData).DomainHeaderImages = [];
+        break;
+      case "community":
+        (this.collection as YpCommunityData).CommunityHeaderImages = [];
+        break;
+      case "group":
+        (this.collection as YpGroupData).GroupHeaderImages = [];
+        break;
+    }
+
+    this.currentHeaderImages = undefined;
+
+    this.requestUpdate();
+  }
+
   clearImages() {
     this.uploadedLogoImageId = undefined;
     this.imagePreviewUrl = undefined;
@@ -617,6 +639,23 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
     this.clearImages();
   }
 
+  async reallyDeleteCurrentHeaderImage() {
+    if (this.currentHeaderImages) {
+      this.currentHeaderImages.forEach(async (image) => {
+        await window.adminServerApi.deleteImage(
+          image.id,
+          this.collectionType,
+          this.collectionId as number,
+          this.imageIdsUploadedByUser.includes(image.id)
+        );
+      });
+    } else {
+      console.warn("No image to delete");
+    }
+
+    this.clearHeaderImage();
+  }
+
   async reallyDeleteCurrentVideo() {
     if (!this.videoPreviewUrl && this.collectionVideoId) {
       await window.adminServerApi.deleteVideo(
@@ -653,6 +692,20 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
     );
   }
 
+  deleteCurrentHeaderImage(event: CustomEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+    window.appDialogs.getDialogAsync(
+      "confirmationDialog",
+      (dialog: YpConfirmationDialog) => {
+        dialog.open(
+          this.t("confirmDeleteLogoImage"),
+          this.reallyDeleteCurrentHeaderImage.bind(this)
+        );
+      }
+    );
+  }
+
   deleteCurrentVideo(event: CustomEvent) {
     event.preventDefault();
     event.stopPropagation();
@@ -672,12 +725,13 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
       <div class="layout vertical logoImagePlaceholder">
         ${this.renderCoverMediaContent()}
         ${(this.currentLogoImages && this.currentLogoImages.length > 0) ||
-          this.imagePreviewUrl
-            ? html`<md-filled-tonal-icon-button class="deleteImageButton"
-                @click="${this.deleteCurrentLogoImage}"
-                ><md-icon>delete</md-icon></md-filled-tonal-icon-button
-              >`
-            : nothing}
+        this.imagePreviewUrl
+          ? html`<md-filled-tonal-icon-button
+              class="deleteImageButton"
+              @click="${this.deleteCurrentLogoImage}"
+              ><md-icon>delete</md-icon></md-filled-tonal-icon-button
+            >`
+          : nothing}
         <div class="layout horizontal center-center logoUploadButtons">
           <yp-file-upload
             id="logoImageUpload"
@@ -758,7 +812,6 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
     return html`
       <div class="layout horizontal">
         <yp-file-upload
-          ?hidden="${this.collectionId == "new"}"
           id="headerImageUpload"
           raised
           target="/api/images?itemType=domain-header"
@@ -768,6 +821,13 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
           @success="${this._headerImageUploaded}"
         >
         </yp-file-upload>
+        ${this.currentHeaderImages && this.currentHeaderImages.length > 0
+          ? html`
+              <md-icon-button @click="${this.deleteCurrentHeaderImage}">
+                <md-icon>delete</md-icon>
+              </md-icon-button>
+            `
+          : nothing}
       </div>
     `;
   }

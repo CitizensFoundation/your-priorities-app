@@ -73,6 +73,7 @@ let YpAdminConfigDomain = class YpAdminConfigDomain extends YpAdminConfigBase {
     updated(changedProperties) {
         if (changedProperties.has("collection") && this.collection) {
             this.currentLogoImages = this.collection.DomainLogoImages;
+            this.currentHeaderImages = this.collection.DomainHeaderImages;
             this._setupTranslations();
             //this._updateEmojiBindings();
             if (!this.collection.configuration.ltp) {

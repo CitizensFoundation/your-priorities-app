@@ -49,6 +49,10 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
           display: block;
         }
 
+        .userInfo {
+          margin: 16px;
+        }
+
         .infoContainer {
           line-height: var(--description-line-height, 1.3);
           padding: 0px;

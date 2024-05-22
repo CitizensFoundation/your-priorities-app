@@ -10,7 +10,7 @@ import "@material/web/tabs/tabs.js";
 import "@material/web/tabs/primary-tab.js";
 
 import "./yp-group-header.js";
-import '../ac-activities/ac-activities.js';
+import "../ac-activities/ac-activities.js";
 
 import "../yp-post/yp-posts-list.js";
 import "../yp-post/yp-post-card-add.js";
@@ -741,8 +741,8 @@ export class YpGroup extends YpCollection {
       }
 
       if (
-        group.configuration.theme != null ||
-        (group.configuration &&
+        group.configuration &&
+        (group.configuration.theme != null ||
           group.configuration.themeOverrideColorPrimary != null)
       ) {
         window.appGlobals.theme.setTheme(group.theme_id, group.configuration);

@@ -36,6 +36,7 @@ let YpEditDialog = class YpEditDialog extends YpBaseElement {
           // height: 100%;
           width: 1024px;
           height: 100%;
+          --md-dialog-container-color: var(--md-sys-color-surface-container-lowest);
         }
 
         md-dialog.popUpDialogDouble {

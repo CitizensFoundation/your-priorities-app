@@ -12,7 +12,7 @@ import { customElement, property, state } from "lit/decorators.js";
 import "@material/web/tabs/tabs.js";
 import "@material/web/tabs/primary-tab.js";
 import "./yp-group-header.js";
-import '../ac-activities/ac-activities.js';
+import "../ac-activities/ac-activities.js";
 import "../yp-post/yp-posts-list.js";
 import "../yp-post/yp-post-card-add.js";
 import { cache } from "lit/directives/cache.js";
@@ -606,8 +606,8 @@ let YpGroup = class YpGroup extends YpCollection {
             if (group.Community?.configuration) {
                 window.appGlobals.analytics.setCommunityPixelTracker(group.Community.configuration.facebookPixelId);
             }
-            if (group.configuration.theme != null ||
-                (group.configuration &&
+            if (group.configuration &&
+                (group.configuration.theme != null ||
                     group.configuration.themeOverrideColorPrimary != null)) {
                 window.appGlobals.theme.setTheme(group.theme_id, group.configuration);
             }

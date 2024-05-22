@@ -232,6 +232,11 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
       this.currentLogoImages = (
         this.collection as YpCommunityData
       ).CommunityLogoImages;
+
+      this.currentHeaderImages = (
+        this.collection as YpCommunityData
+      ).CommunityHeaderImages;
+
       this._communityChanged();
 
       if (!(this.collection.configuration as YpCommunityConfiguration).ltp) {

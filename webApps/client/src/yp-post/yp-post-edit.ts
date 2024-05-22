@@ -378,7 +378,7 @@ export class YpPostEdit extends YpEditBase {
         }
 
         md-secondary-tab {
-          --md-secondary-tab-container-color: var(--md-sys-color-surface-container-highest);
+          --md-secondary-tab-container-color: var(--md-sys-color-surface-container-lowest);
         }
 
         .topNewPostContainer {
@@ -415,6 +415,10 @@ export class YpPostEdit extends YpEditBase {
 
         yp-post-location {
           min-height: 320px;
+        }
+
+        md-tab {
+          --md-secondary-tab-container-color: var(--md-sys-color-surface-container-lowest);
         }
 
         @media (max-width: 600px) {

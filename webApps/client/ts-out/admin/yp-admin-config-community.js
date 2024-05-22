@@ -179,6 +179,7 @@ let YpAdminConfigCommunity = class YpAdminConfigCommunity extends YpAdminConfigB
     updated(changedProperties) {
         if (changedProperties.has("collection") && this.collection) {
             this.currentLogoImages = this.collection.CommunityLogoImages;
+            this.currentHeaderImages = this.collection.CommunityHeaderImages;
             this._communityChanged();
             if (!this.collection.configuration.ltp) {
                 this.collection.configuration.ltp =

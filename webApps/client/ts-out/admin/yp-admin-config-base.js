@@ -343,6 +343,22 @@ export class YpAdminConfigBase extends YpAdminPage {
         }
         this.requestUpdate();
     }
+    clearHeaderImage() {
+        this.uploadedHeaderImageId = undefined;
+        switch (this.collectionType) {
+            case "domain":
+                this.collection.DomainHeaderImages = [];
+                break;
+            case "community":
+                this.collection.CommunityHeaderImages = [];
+                break;
+            case "group":
+                this.collection.GroupHeaderImages = [];
+                break;
+        }
+        this.currentHeaderImages = undefined;
+        this.requestUpdate();
+    }
     clearImages() {
         this.uploadedLogoImageId = undefined;
         this.imagePreviewUrl = undefined;
@@ -459,6 +475,17 @@ export class YpAdminConfigBase extends YpAdminPage {
         }
         this.clearImages();
     }
+    async reallyDeleteCurrentHeaderImage() {
+        if (this.currentHeaderImages) {
+            this.currentHeaderImages.forEach(async (image) => {
+                await window.adminServerApi.deleteImage(image.id, this.collectionType, this.collectionId, this.imageIdsUploadedByUser.includes(image.id));
+            });
+        }
+        else {
+            console.warn("No image to delete");
+        }
+        this.clearHeaderImage();
+    }
     async reallyDeleteCurrentVideo() {
         if (!this.videoPreviewUrl && this.collectionVideoId) {
             await window.adminServerApi.deleteVideo(this.collectionVideoId, this.collectionType, this.collectionId, this.videoIdsUploadedByUser.includes(this.collectionVideoId));
@@ -478,6 +505,13 @@ export class YpAdminConfigBase extends YpAdminPage {
             dialog.open(this.t("confirmDeleteLogoImage"), this.reallyDeleteCurrentLogoImage.bind(this));
         });
     }
+    deleteCurrentHeaderImage(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        window.appDialogs.getDialogAsync("confirmationDialog", (dialog) => {
+            dialog.open(this.t("confirmDeleteLogoImage"), this.reallyDeleteCurrentHeaderImage.bind(this));
+        });
+    }
     deleteCurrentVideo(event) {
         event.preventDefault();
         event.stopPropagation();
@@ -491,10 +525,11 @@ export class YpAdminConfigBase extends YpAdminPage {
         ${this.renderCoverMediaContent()}
         ${(this.currentLogoImages && this.currentLogoImages.length > 0) ||
             this.imagePreviewUrl
-            ? html `<md-filled-tonal-icon-button class="deleteImageButton"
-                @click="${this.deleteCurrentLogoImage}"
-                ><md-icon>delete</md-icon></md-filled-tonal-icon-button
-              >`
+            ? html `<md-filled-tonal-icon-button
+              class="deleteImageButton"
+              @click="${this.deleteCurrentLogoImage}"
+              ><md-icon>delete</md-icon></md-filled-tonal-icon-button
+            >`
             : nothing}
         <div class="layout horizontal center-center logoUploadButtons">
           <yp-file-upload
@@ -575,7 +610,6 @@ export class YpAdminConfigBase extends YpAdminPage {
         return html `
       <div class="layout horizontal">
         <yp-file-upload
-          ?hidden="${this.collectionId == "new"}"
           id="headerImageUpload"
           raised
           target="/api/images?itemType=domain-header"
@@ -585,6 +619,13 @@ export class YpAdminConfigBase extends YpAdminPage {
           @success="${this._headerImageUploaded}"
         >
         </yp-file-upload>
+        ${this.currentHeaderImages && this.currentHeaderImages.length > 0
+            ? html `
+              <md-icon-button @click="${this.deleteCurrentHeaderImage}">
+                <md-icon>delete</md-icon>
+              </md-icon-button>
+            `
+            : nothing}
       </div>
     `;
     }
@@ -1009,6 +1050,9 @@ __decorate([
 __decorate([
     property({ type: Array })
 ], YpAdminConfigBase.prototype, "currentLogoImages", void 0);
+__decorate([
+    property({ type: Array })
+], YpAdminConfigBase.prototype, "currentHeaderImages", void 0);
 __decorate([
     property({ type: Number })
 ], YpAdminConfigBase.prototype, "collectionVideoId", void 0);

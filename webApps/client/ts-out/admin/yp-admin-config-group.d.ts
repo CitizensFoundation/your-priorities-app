@@ -4,6 +4,8 @@ import "@material/web/button/filled-button.js";
 import "@material/web/progress/linear-progress.js";
 import "@material/web/select/outlined-select.js";
 import "@material/web/select/select-option.js";
+import '@material/web/menu/menu.js';
+import '@material/web/menu/menu-item.js';
 import "../yp-survey/yp-structured-question-edit.js";
 import "@trystan2k/fleshy-jsoneditor/fleshy-jsoneditor.js";
 import "./yp-admin-html-editor.js";
@@ -73,6 +75,8 @@ export declare class YpAdminConfigGroup extends YpAdminConfigBase {
     _customRatingsTextChanged(event: CustomEvent): void;
     _getPointSettingsTab(): YpConfigTabData;
     _getAdditionalConfigTab(): YpConfigTabData;
+    renderActionMenu(): import("lit-html").TemplateResult<1>;
+    _menuSelection(event: any): void;
     earlConfigChanged(event: CustomEvent): void;
     staticHtmlConfigChanged(event: CustomEvent): Promise<void>;
     themeConfigChanged(event: CustomEvent): void;

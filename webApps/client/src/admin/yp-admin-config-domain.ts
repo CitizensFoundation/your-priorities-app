@@ -5,6 +5,8 @@ import { Layouts } from "lit-flexbox-literals";
 //import { YpBaseWithLogin } from './@yrpri/common/yp-base-element-with-login.js';
 import { YpAdminPage } from "./yp-admin-page.js";
 
+
+
 import "../yp-survey/yp-structured-question-edit.js";
 import "../yp-file-upload/yp-file-upload.js";
 
@@ -24,6 +26,7 @@ import "../common/languages/yp-language-selector.js";
 
 import "./yp-admin-communities.js";
 import { YpMediaHelpers } from "../common/YpMediaHelpers.js";
+import { Corner } from "@material/web/menu/menu.js";
 
 @customElement("yp-admin-config-domain")
 export class YpAdminConfigDomain extends YpAdminConfigBase {
@@ -96,6 +99,10 @@ export class YpAdminConfigDomain extends YpAdminConfigBase {
       this.currentLogoImages = (
         this.collection as YpDomainData
       ).DomainLogoImages;
+
+      this.currentHeaderImages = (
+        this.collection as YpDomainData
+      ).DomainHeaderImages;
 
       this._setupTranslations();
       //this._updateEmojiBindings();
@@ -197,7 +204,7 @@ export class YpAdminConfigDomain extends YpAdminConfigBase {
             <yp-theme-selector
               @config-updated="${this._configChanged}"
               ?hasLogoImage="${this.imagePreviewUrl ||
-                YpMediaHelpers.getImageFormatUrl(this.currentLogoImages)}"
+              YpMediaHelpers.getImageFormatUrl(this.currentLogoImages)}"
               @get-color-from-logo="${this.getColorFromLogo}"
               @yp-theme-configuration-changed="${this._themeChanged}"
               .themeConfiguration="${this.collection!.configuration.theme!}"

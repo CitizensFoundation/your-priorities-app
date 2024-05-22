@@ -3,7 +3,7 @@ import { TemplateResult, nothing } from "lit";
 import "@material/web/tabs/tabs.js";
 import "@material/web/tabs/primary-tab.js";
 import "./yp-group-header.js";
-import '../ac-activities/ac-activities.js';
+import "../ac-activities/ac-activities.js";
 import "../yp-post/yp-posts-list.js";
 import "../yp-post/yp-post-card-add.js";
 import "../allOurIdeas/aoi-survey.js";

@@ -30,6 +30,7 @@ export declare abstract class YpAdminConfigBase extends YpAdminPage {
     configChanged: boolean;
     method: string;
     currentLogoImages: YpImageData[] | undefined;
+    currentHeaderImages: YpImageData[] | undefined;
     collectionVideoId: number | undefined;
     generatingAiImageInBackground: boolean;
     action: string | undefined;
@@ -89,11 +90,14 @@ export declare abstract class YpAdminConfigBase extends YpAdminPage {
     get collectionVideoPosterURL(): string | undefined;
     get collectionVideos(): Array<YpVideoData> | undefined;
     clearVideos(): void;
+    clearHeaderImage(): void;
     clearImages(): void;
     renderCoverMediaContent(): TemplateResult<1>;
     reallyDeleteCurrentLogoImage(): Promise<void>;
+    reallyDeleteCurrentHeaderImage(): Promise<void>;
     reallyDeleteCurrentVideo(): Promise<void>;
     deleteCurrentLogoImage(event: CustomEvent): void;
+    deleteCurrentHeaderImage(event: CustomEvent): void;
     deleteCurrentVideo(event: CustomEvent): void;
     renderLogoMedia(): TemplateResult<1>;
     renderHeaderImageUploads(): TemplateResult<1>;

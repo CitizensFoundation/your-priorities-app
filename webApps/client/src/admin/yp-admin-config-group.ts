@@ -5,6 +5,8 @@ import "@material/web/button/filled-button.js";
 import "@material/web/progress/linear-progress.js";
 import "@material/web/select/outlined-select.js";
 import "@material/web/select/select-option.js";
+import '@material/web/menu/menu.js';
+import '@material/web/menu/menu-item.js';
 
 import "../yp-survey/yp-structured-question-edit.js";
 
@@ -363,7 +365,10 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
   ): void {
     if (changedProperties.has("collection") && this.collection) {
       this.group = this.collection as YpGroupData;
+
       this.currentLogoImages = (this.collection as YpGroupData).GroupLogoImages;
+      this.currentHeaderImages = (this.collection as YpGroupData).GroupHeaderImages
+
       this.collection.description = this.group.objectives;
       this.group.description = this.group.objectives;
       this.groupAccess = this.groupAccessOptions[
@@ -1674,6 +1679,112 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
         },
       ] as Array<YpStructuredConfigData>,
     } as YpConfigTabData;
+  }
+
+
+
+  renderActionMenu() {
+    return html`
+      <md-menu
+        id="helpMenu"
+        positioning="popover"
+        .menuCorner="${Corner.START_END}"
+        anchor="helpIconButton"
+      >
+        <md-menu-item @click="${this._menuSelection}" id="editMenuItem">
+          <div slot="headline">Edit</div>
+        </md-menu-item>
+        <md-menu-item @click="${this._menuSelection}" id="newCategoryMenuItem">
+          <div slot="headline">New Category</div>
+        </md-menu-item>
+        <md-menu-item @click="${this._menuSelection}" id="deleteMenuItem">
+          <div slot="headline">Delete</div>
+        </md-menu-item>
+        <md-menu-item @click="${this._menuSelection}" id="cloneMenuItem">
+          <div slot="headline">Clone</div>
+        </md-menu-item>
+        <md-menu-item @click="${this._menuSelection}" id="usersMenuItem">
+          <div slot="headline">Users</div>
+        </md-menu-item>
+        <md-menu-item @click="${this._menuSelection}" id="adminsMenuItem">
+          <div slot="headline">Admins</div>
+        </md-menu-item>
+        <md-menu-item @click="${this._menuSelection}" id="promotersMenuItem">
+          <div slot="headline">Promoters</div>
+        </md-menu-item>
+        <md-menu-item @click="${this._menuSelection}" id="pagesMenuItem">
+          <div slot="headline">Pages</div>
+        </md-menu-item>
+        <md-menu-item @click="${this._menuSelection}" id="addPostMenuItem">
+          <div slot="headline">Add Post</div>
+        </md-menu-item>
+        <md-menu-item @click="${this._menuSelection}" id="deleteContentMenuItem">
+          <div slot="headline">Delete Content</div>
+        </md-menu-item>
+        <md-menu-item @click="${this._menuSelection}" id="moderationMenuItem">
+          <div slot="headline">Moderation</div>
+        </md-menu-item>
+        <md-menu-item @click="${this._menuSelection}" id="moderationAllMenuItem">
+          <div slot="headline">Moderation All</div>
+        </md-menu-item>
+        <md-menu-item @click="${this._menuSelection}" id="exportDocxMenuItem">
+          <div slot="headline">Export Docx</div>
+        </md-menu-item>
+        <md-menu-item @click="${this._menuSelection}" id="exportXlsMenuItem">
+          <div slot="headline">Export Xls</div>
+        </md-menu-item>
+        <md-menu-item @click="${this._menuSelection}" id="anonymizeMenuItem">
+          <div slot="headline">Anonymize</div>
+        </md-menu-item>
+        <md-menu-item @click="${this._menuSelection}" id="newGroupItem">
+          <div slot="headline">New Group</div>
+        </md-menu-item>
+        <md-menu-item @click="${this._menuSelection}" id="newGroupFolderItem">
+          <div slot="headline">New Group Folder</div>
+        </md-menu-item>
+        <md-menu-item @click="${this._menuSelection}" id="openPromotionApp">
+          <div slot="headline">Open Promotion App</div>
+        </md-menu-item>
+        <md-menu-item @click="${this._menuSelection}" id="openAnalyticsApp">
+          <div slot="headline">Open Analytics App</div>
+        </md-menu-item>
+        <md-menu-item @click="${this._menuSelection}" id="openAdminApp">
+          <div slot="headline">Open Admin App</div>
+        </md-menu-item>
+      </md-menu>
+    `;
+  }
+
+  _menuSelection(event) {
+    const id = event.target.id;
+    switch (id) {
+      case "newCategoryMenuItem":
+        this._openCategoryEdit();
+        break;
+      case "deleteMenuItem":
+        this._openDelete();
+        break;
+      case "cloneMenuItem":
+        this._openClone();
+        break;
+      case "promotersMenuItem":
+        this._openPromotersDialog();
+        break;
+      case "deleteContentMenuItem":
+        this._openDeleteContent();
+        break;
+      case "anonymizeMenuItem":
+        this._openAnonymizeContent();
+        break;
+      case "newGroupItem":
+        this._newGroup();
+        break;
+      case "newGroupFolderItem":
+        this._newGroupFolder();
+        break;
+      default:
+        break;
+    }
   }
 
   earlConfigChanged(event: CustomEvent) {
