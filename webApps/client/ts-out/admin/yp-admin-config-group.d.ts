@@ -75,8 +75,6 @@ export declare class YpAdminConfigGroup extends YpAdminConfigBase {
     _customRatingsTextChanged(event: CustomEvent): void;
     _getPointSettingsTab(): YpConfigTabData;
     _getAdditionalConfigTab(): YpConfigTabData;
-    renderActionMenu(): import("lit-html").TemplateResult<1>;
-    _menuSelection(event: any): void;
     earlConfigChanged(event: CustomEvent): void;
     staticHtmlConfigChanged(event: CustomEvent): Promise<void>;
     themeConfigChanged(event: CustomEvent): void;

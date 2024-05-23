@@ -1683,7 +1683,7 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
 
 
 
-  renderActionMenu() {
+  /*renderActionMenu() {
     return html`
       <md-menu
         id="helpMenu"
@@ -1753,9 +1753,9 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
         </md-menu-item>
       </md-menu>
     `;
-  }
+  }*/
 
-  _menuSelection(event) {
+  /*_menuSelection(event) {
     const id = event.target.id;
     switch (id) {
       case "newCategoryMenuItem":
@@ -1785,7 +1785,7 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
       default:
         break;
     }
-  }
+  }*/
 
   earlConfigChanged(event: CustomEvent) {
     this.group.configuration.allOurIdeas = (
