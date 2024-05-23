@@ -72,6 +72,7 @@ export class YpPagesGrid extends YpBaseElement {
 
         .pageItem {
           padding-right: 16px;
+          padding-top: 8px;
         }
 
         #editPageLocale {
@@ -94,14 +95,6 @@ export class YpPagesGrid extends YpBaseElement {
           margin-left: 16px;
         }
 
-        .pageItem {
-          padding-top: 8px;
-        }
-
-        [hidden] {
-          display: none !important;
-        }
-
         .localeInputContasiner {
           padding: 2px;
           margin-bottom: 8px;
@@ -112,16 +105,28 @@ export class YpPagesGrid extends YpBaseElement {
           margin-right: 16px;
         }
 
-        .pageItem {
-          margin-right: 16px;
-        }
-
         .addLocaleButton {
           margin-right: 16px;
         }
 
+        .pageControls {
+          display: flex;
+          gap: 8px;
+        }
+
         #addPageButton {
           margin: 24px;
+        }
+
+        .pageRow {
+          display: flex;
+          align-items: center;
+          margin: 16px;
+        }
+
+        .title {
+          width: 200px;
+          max-width: 200px;
         }
       `,
     ];
@@ -146,13 +151,12 @@ export class YpPagesGrid extends YpBaseElement {
         <div id="scrollable">
           ${this.pages?.map((page) => {
             return html`
-              <div class="layout horizontal">
+              <div class="pageRow">
                 <div class="pageItem id">${page.id}</div>
                 <div class="pageItem title">${page.title.en}</div>
-
-                ${this._toLocaleArray(page.title).map(
-                  (item) => html`
-                    <div class="layout vertical center-center">
+                <div class="pageControls">
+                  ${this._toLocaleArray(page.title).map(
+                    (item) => html`
                       <md-text-button
                         class="locale"
                         data-args-page="${JSON.stringify(page)}"
@@ -160,47 +164,42 @@ export class YpPagesGrid extends YpBaseElement {
                         @click="${this._editPageLocale}"
                         >${item.locale}</md-text-button
                       >
-                    </div>
-                  `
-                )}
-
-                <md-outlined-text-field
-                  class="localeInput"
-                  id="localeInput"
-                  length="2"
-                  maxlength="2"
-                ></md-outlined-text-field>
-
-                <md-text-button
-                  data-args="${page.id}"
-                  class="addLocaleButton"
-                  @click="${this._addLocale}"
-                  >${this.t("pages.addLocale")}</md-text-button
-                >
-                <md-text-button
-                  ?hidden="${page.published}"
-                  data-args="${page.id}"
-                  @click="${this._publishPage}"
-                  >${this.t("pages.publish")}</md-text-button
-                >
-
-                <md-text-button
-                  data-args="${page.id}"
-                  ?hidden="${!page.published}"
-                  @click="${this._unPublishPage}"
-                  >${this.t("pages.unPublish")}</md-text-button
-                >
-
-                <md-text-button
-                  data-args="${page.id}"
-                  @click="${this._deletePage}"
-                  >${this.t("pages.deletePage")}</md-text-button
-                >
+                    `
+                  )}
+                  <md-outlined-text-field
+                    class="localeInput"
+                    id="localeInput"
+                    length="2"
+                    maxlength="2"
+                  ></md-outlined-text-field>
+                  <md-text-button
+                    data-args="${page.id}"
+                    class="addLocaleButton"
+                    @click="${this._addLocale}"
+                    >${this.t("pages.addLocale")}</md-text-button
+                  >
+                  <md-text-button
+                    ?hidden="${page.published}"
+                    data-args="${page.id}"
+                    @click="${this._publishPage}"
+                    >${this.t("pages.publish")}</md-text-button
+                  >
+                  <md-text-button
+                    data-args="${page.id}"
+                    ?hidden="${!page.published}"
+                    @click="${this._unPublishPage}"
+                    >${this.t("pages.unPublish")}</md-text-button
+                  >
+                  <md-text-button
+                    data-args="${page.id}"
+                    @click="${this._deletePage}"
+                    >${this.t("pages.deletePage")}</md-text-button
+                  >
+                </div>
               </div>
             `;
           })}
         </div>
-
         <div class="layout horizontal">
           <md-filled-button id="addPageButton" @click="${this._addPage}"
             >${this.t("pages.addPage")}</md-filled-button

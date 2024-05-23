@@ -645,7 +645,7 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
       ${this.smallReady
             ? html `
             <div ?rtl="${this.rtl}" class="layout vertical center-center">
-              ${this.renderPointList("Mobile", this.t("Rök með og á móti"), this.post.Group.configuration.alternativePointAgainstHeader, "alternativePointAgainstHeader", this.labelMobileUpOrDown, this.hideMobileVideo, this.hideMobileText, this.hasCurrentMobileVideo, this._videoMobileUploaded, this.t("uploadVideoPointAgainst"), this.uploadedVideoMobileId, this.focusMobilePoint, this.hideMobileAudio, this.hasCurrentMobileAudio, this.t("uploadAudioPointAgainst"), this.ifLengthMobileIsRight, this.addMobilePointUpOrDown, this.points, true)}
+              ${this.renderPointList("Mobile", this.t("pointsForAndAgainst"), this.post.Group.configuration.alternativePointAgainstHeader, "alternativePointAgainstHeader", this.labelMobileUpOrDown, this.hideMobileVideo, this.hideMobileText, this.hasCurrentMobileVideo, this._videoMobileUploaded, this.t("uploadVideoPointAgainst"), this.uploadedVideoMobileId, this.focusMobilePoint, this.hideMobileAudio, this.hasCurrentMobileAudio, this.t("uploadAudioPointAgainst"), this.ifLengthMobileIsRight, this.addMobilePointUpOrDown, this.points, true)}
             </div>
           `
             : nothing}

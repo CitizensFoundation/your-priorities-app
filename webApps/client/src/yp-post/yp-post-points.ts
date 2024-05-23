@@ -878,7 +878,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
             <div ?rtl="${this.rtl}" class="layout vertical center-center">
               ${this.renderPointList(
                 "Mobile",
-                this.t("Rök með og á móti"),
+                this.t("pointsForAndAgainst"),
                 this.post.Group.configuration.alternativePointAgainstHeader,
                 "alternativePointAgainstHeader",
                 this.labelMobileUpOrDown,
