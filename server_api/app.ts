@@ -459,6 +459,16 @@ export class YourPrioritiesApi {
 
   setupStaticFileServing(): void {
     const baseDir = path.join(__dirname, "../webAppsDist");
+
+    this.app.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
+      if (req.path.endsWith('.js')) {
+        res.setHeader('Cache-Control', 'public, max-age=31536000, s-maxage=86400, stale-while-revalidate=86400'); // 1 year cache, 1 day revalidate
+      } else if (req.path.match(/\.(png|jpg|jpeg|gif)$/)) {
+        res.setHeader('Cache-Control', 'public, max-age=2592000, s-maxage=86400, stale-while-revalidate=86400');
+      }
+      next();
+    });
+
     this.app.get("/sw.js", this.handleServiceWorker);
     this.app.get("/service-worker.js", this.handleServiceWorker);
 
