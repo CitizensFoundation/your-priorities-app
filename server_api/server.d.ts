@@ -1,5 +1,6 @@
 declare module 'logger';
 declare module 'iso-639-1';
+declare module 'newrelic';
 
 interface Logger {
   debug(text: string): void;

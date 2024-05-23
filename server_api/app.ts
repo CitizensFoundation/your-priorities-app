@@ -13,6 +13,15 @@ import rateLimit from "express-rate-limit";
 import { RedisStore as RedisLimitStore } from "rate-limit-redis";
 import passport from "passport";
 import models from "./models/index.cjs";
+
+if (process.env.NEW_RELIC_APP_NAME) {
+  import('newrelic').then(newrelic => {
+    console.log('New Relic imported', newrelic);
+  }).catch(err => {
+    console.error('Failed to import New Relic', err);
+  });
+}
+
 import auth from "./authorization.cjs";
 import index from "./controllers/index.cjs";
 import news_feeds from "./active-citizen/controllers/news_feeds.cjs";
