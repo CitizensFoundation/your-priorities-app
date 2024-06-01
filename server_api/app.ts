@@ -464,7 +464,9 @@ export class YourPrioritiesApi {
       if (req.path.endsWith('.js')) {
         res.setHeader('Cache-Control', 'public, max-age=31536000, s-maxage=86400, stale-while-revalidate=86400'); // 1 year cache, 1 day revalidate
       } else if (req.path.match(/\.(png|jpg|jpeg|gif)$/)) {
-        res.setHeader('Cache-Control', 'public, max-age=2592000, s-maxage=86400, stale-while-revalidate=86400');
+        res.setHeader('Cache-Control', 'public, max-age=2592000, s-maxage=86400, stale-while-revalidate=86400'); // 1 month cache, 1 day revalidate
+      } else if (req.path.endsWith('.json')) {
+        res.setHeader('Cache-Control', 'public, max-age=43200, s-maxage=60, stale-while-revalidate=60'); // 12 hour cache, 5 minutes revalidate
       }
       next();
     });

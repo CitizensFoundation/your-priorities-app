@@ -227,6 +227,8 @@ var updateGroupConfigParameters = function (req, group) {
 
   group.set('configuration.disableCollectionUpLink', truthValueFromBody(req.body.disableCollectionUpLink));
 
+  group.set('configuration.disableCommunityUpLink', truthValueFromBody(req.body.disableCommunityUpLink));
+
   group.set('configuration.makeCategoryRequiredOnNewPost', truthValueFromBody(req.body.makeCategoryRequiredOnNewPost));
 
   group.set('configuration.showVideoUploadDisclaimer', truthValueFromBody(req.body.showVideoUploadDisclaimer));

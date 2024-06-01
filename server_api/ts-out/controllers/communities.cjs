@@ -574,6 +574,7 @@ const updateCommunityConfigParameters = function (req, community) {
     }
     community.set('configuration.alternativeHeader', (req.body.alternativeHeader && req.body.alternativeHeader != "") ? req.body.alternativeHeader : null);
     community.set('configuration.disableCollectionUpLink', (req.body.disableCollectionUpLink && req.body.disableCollectionUpLink != "") ? true : false);
+    community.set('configuration.disableDomainUpLink', (req.body.disableDomainUpLink && req.body.disableDomainUpLink != "") ? true : false);
     community.set('configuration.defaultLocationLongLat', (req.body.defaultLocationLongLat && req.body.defaultLocationLongLat != "") ? req.body.defaultLocationLongLat : null);
     community.set('configuration.facebookPixelId', (req.body.facebookPixelId && req.body.facebookPixelId != "") ? req.body.facebookPixelId : null);
     community.set('configuration.disableNameAutoTranslation', (req.body.disableNameAutoTranslation && req.body.disableNameAutoTranslation != "") ? true : false);
