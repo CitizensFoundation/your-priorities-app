@@ -3,7 +3,7 @@ import { YpBaseChatBot } from "../../llms/baseChatBot.js";
 export class ExplainAnswersAssistant extends YpBaseChatBot {
     constructor(wsClientId, wsClients, languageName) {
         super(wsClientId, wsClients, undefined);
-        this.modelName = "gpt-4-turbo-2024-04-09";
+        this.modelName = "gpt-4o";
         this.maxTokens = 4000;
         this.temperature = 0.8;
         this.explainConversation = async (chatLog) => {

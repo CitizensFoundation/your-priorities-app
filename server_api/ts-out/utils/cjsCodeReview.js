@@ -5,7 +5,7 @@ import { promisify } from "util";
 const readFilePromise = promisify(fs.readFile);
 export class YpCjsCodeReview {
     constructor() {
-        this.modelName = "gpt-4-turbo-2024-04-09";
+        this.modelName = "gpt-4o";
         this.maxTokens = 4000;
         this.temperature = 0.0;
         this.openaiClient = new OpenAI({

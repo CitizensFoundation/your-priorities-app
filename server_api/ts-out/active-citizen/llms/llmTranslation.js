@@ -4,7 +4,7 @@ import { YpLanguages } from "../../utils/ypLanguages.js";
 import * as cheerio from "cheerio";
 export class YpLlmTranslation {
     constructor() {
-        this.modelName = "gpt-4-turbo-2024-04-09";
+        this.modelName = "gpt-4o";
         this.maxTokens = 4000;
         this.temperature = 0.0;
         this.openaiClient = new OpenAI({
