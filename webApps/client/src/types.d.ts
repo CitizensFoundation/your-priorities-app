@@ -163,7 +163,7 @@ interface YpStructuredQuestionJson extends YpStructuredQuestionData {
 
 interface YpStructuredAnswer {
   uniqueId: string;
-  value: string | boolean;
+  value: string | boolean | number;
 }
 
 interface YpLtpConfiguration {

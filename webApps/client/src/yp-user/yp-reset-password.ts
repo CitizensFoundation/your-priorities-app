@@ -46,7 +46,7 @@ export class YpResetPassword extends YpBaseElement {
             .label="${this.t("password")}"
             .value="${this.password}"
             autocomplete="off"
-            .validationMessage="${this.passwordErrorMessage}"
+            validationMessage="${this.passwordErrorMessage}"
           >
           </md-outlined-text-field>
         </div>
@@ -92,15 +92,18 @@ export class YpResetPassword extends YpBaseElement {
 
   _cancel() {
     this.fire("cancel");
+    window.location.href = "/";
   }
 
   _loginCompleted(user: YpUserData) {
     window.appUser.setLoggedInUser(user);
     this.fire("logged-in");
+    window.location.href = "/";
   }
 
-  open(token: string) {
+  async open(token: string) {
     if (token) this.token = token;
+    await this.updateComplete;
     (this.$$("#dialog") as Dialog).show();
   }
 

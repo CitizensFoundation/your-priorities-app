@@ -705,7 +705,7 @@ export class YpServerApi extends YpServerApiBase {
     return this.fetchWrapper(
       this.baseUrlPath + `/users/forgot_password`,
       {
-        method: 'PUT',
+        method: 'POST',
         body: JSON.stringify(body),
       },
       false

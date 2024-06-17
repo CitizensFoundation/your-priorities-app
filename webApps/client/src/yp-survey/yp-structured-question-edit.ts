@@ -871,6 +871,7 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
             }
           }
         }
+
         if (selectedCheckboxes !== "") {
           value = selectedCheckboxes.substring(
             0,
@@ -881,7 +882,21 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
         value = (item as Checkbox).checked;
       }
 
-      if (value != undefined && this.question.uniqueId) {
+      if (value != undefined && this.question.uniqueId && this.question.subType=="number") {
+        let intValue;
+
+        try {
+          intValue = parseInt(value as string);
+        } catch (error: any) {
+          console.error(`Can't parse value as integer: ${error}`);
+        }
+
+        if (intValue!==undefined) {
+          return { uniqueId: this.question.uniqueId, value: intValue };
+        } else {
+          return { uniqueId: this.question.uniqueId, value: value };
+        }
+      } else if (value != undefined && this.question.uniqueId) {
         return { uniqueId: this.question.uniqueId, value: value };
       } else {
         console.error(`Can't find answer for question: ${this.question.text}`);

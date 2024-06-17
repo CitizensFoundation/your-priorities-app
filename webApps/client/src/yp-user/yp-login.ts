@@ -1500,6 +1500,7 @@ export class YpLogin extends YpBaseElement {
     if (user) {
       this._loginCompleted(user);
     } else {
+      this.fire("yp-error", this.t("user.loginNotAuthorized"));
       console.error("No user in loginUser");
     }
   }
