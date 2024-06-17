@@ -81,13 +81,14 @@ let YpApiActionDialog = class YpApiActionDialog extends YpBaseElement {
             if (this.onFinishedFunction) {
                 this.onFinishedFunction(response);
             }
+            this.$$("#confirmationDialog").close();
         }
         else {
             this.finalDeleteWarning = false;
             this.confirmationText = this.t("finalDeleteWarning");
+            await this.updateComplete;
             this.$$("#confirmationDialog").show();
         }
-        this.$$("#confirmationDialog").close();
     }
 };
 __decorate([
