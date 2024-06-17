@@ -5,8 +5,9 @@ import "@material/web/button/filled-button.js";
 import "@material/web/progress/linear-progress.js";
 import "@material/web/select/outlined-select.js";
 import "@material/web/select/select-option.js";
-import '@material/web/menu/menu.js';
-import '@material/web/menu/menu-item.js';
+import "@material/web/menu/menu.js";
+import "@material/web/menu/menu-item.js";
+import "@material/web/iconbutton/icon-button.js";
 
 import "../yp-survey/yp-structured-question-edit.js";
 
@@ -42,6 +43,8 @@ import { AoiAdminServerApi } from "./allOurIdeas/AoiAdminServerApi.js";
 import { YpAdminApp } from "./yp-admin-app.js";
 import { unsafeHTML } from "lit/directives/unsafe-html.js";
 import { YpAdminHtmlEditor } from "./yp-admin-html-editor.js";
+import { Corner, Menu } from "@material/web/menu/menu.js";
+import { YpApiActionDialog } from "../yp-api-action-dialog/yp-api-action-dialog.js";
 
 const defaultModerationPrompt = `Only allow ideas that are relevant to the question.`;
 
@@ -167,7 +170,9 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
           max-width: 600px;
         }
 
-        .saveButtonContainer {
+        .actionButtonContainer {
+          margin-left: 16px;
+          margin-top: 16px;
         }
 
         .accessHeader {
@@ -231,7 +236,15 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
               ${this.renderNameAndDescription()}
               ${this.renderGroupTypeSelection()}
             </div>
-            <div class="saveButtonContainer">${this.renderSaveButton()}</div>
+            <div class="layout vertical center-center">
+              <div class="layout horizontal center-center">
+                ${this.renderSaveButton()}
+              </div>
+              <div class="actionButtonContainer layout horizontal center-center">
+                ${this.renderActionMenu()}
+              </div>
+              <div class="flex"></div>
+            </div>
           </div>
           <input
             type="hidden"
@@ -367,7 +380,9 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
       this.group = this.collection as YpGroupData;
 
       this.currentLogoImages = (this.collection as YpGroupData).GroupLogoImages;
-      this.currentHeaderImages = (this.collection as YpGroupData).GroupHeaderImages
+      this.currentHeaderImages = (
+        this.collection as YpGroupData
+      ).GroupHeaderImages;
 
       this.collection.description = this.group.objectives;
       this.group.description = this.group.objectives;
@@ -1681,83 +1696,92 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
     } as YpConfigTabData;
   }
 
-
-
-  /*renderActionMenu() {
+  renderActionMenu() {
     return html`
-      <md-menu
-        id="helpMenu"
-        positioning="popover"
-        .menuCorner="${Corner.START_END}"
-        anchor="helpIconButton"
-      >
-        <md-menu-item @click="${this._menuSelection}" id="editMenuItem">
-          <div slot="headline">Edit</div>
-        </md-menu-item>
-        <md-menu-item @click="${this._menuSelection}" id="newCategoryMenuItem">
-          <div slot="headline">New Category</div>
-        </md-menu-item>
-        <md-menu-item @click="${this._menuSelection}" id="deleteMenuItem">
-          <div slot="headline">Delete</div>
-        </md-menu-item>
-        <md-menu-item @click="${this._menuSelection}" id="cloneMenuItem">
-          <div slot="headline">Clone</div>
-        </md-menu-item>
-        <md-menu-item @click="${this._menuSelection}" id="usersMenuItem">
-          <div slot="headline">Users</div>
-        </md-menu-item>
-        <md-menu-item @click="${this._menuSelection}" id="adminsMenuItem">
-          <div slot="headline">Admins</div>
-        </md-menu-item>
-        <md-menu-item @click="${this._menuSelection}" id="promotersMenuItem">
-          <div slot="headline">Promoters</div>
-        </md-menu-item>
-        <md-menu-item @click="${this._menuSelection}" id="pagesMenuItem">
-          <div slot="headline">Pages</div>
-        </md-menu-item>
-        <md-menu-item @click="${this._menuSelection}" id="addPostMenuItem">
-          <div slot="headline">Add Post</div>
-        </md-menu-item>
-        <md-menu-item @click="${this._menuSelection}" id="deleteContentMenuItem">
-          <div slot="headline">Delete Content</div>
-        </md-menu-item>
-        <md-menu-item @click="${this._menuSelection}" id="moderationMenuItem">
-          <div slot="headline">Moderation</div>
-        </md-menu-item>
-        <md-menu-item @click="${this._menuSelection}" id="moderationAllMenuItem">
-          <div slot="headline">Moderation All</div>
-        </md-menu-item>
-        <md-menu-item @click="${this._menuSelection}" id="exportDocxMenuItem">
-          <div slot="headline">Export Docx</div>
-        </md-menu-item>
-        <md-menu-item @click="${this._menuSelection}" id="exportXlsMenuItem">
-          <div slot="headline">Export Xls</div>
-        </md-menu-item>
-        <md-menu-item @click="${this._menuSelection}" id="anonymizeMenuItem">
-          <div slot="headline">Anonymize</div>
-        </md-menu-item>
-        <md-menu-item @click="${this._menuSelection}" id="newGroupItem">
-          <div slot="headline">New Group</div>
-        </md-menu-item>
-        <md-menu-item @click="${this._menuSelection}" id="newGroupFolderItem">
-          <div slot="headline">New Group Folder</div>
-        </md-menu-item>
-        <md-menu-item @click="${this._menuSelection}" id="openPromotionApp">
-          <div slot="headline">Open Promotion App</div>
-        </md-menu-item>
-        <md-menu-item @click="${this._menuSelection}" id="openAnalyticsApp">
-          <div slot="headline">Open Analytics App</div>
-        </md-menu-item>
-        <md-menu-item @click="${this._menuSelection}" id="openAdminApp">
-          <div slot="headline">Open Admin App</div>
-        </md-menu-item>
-      </md-menu>
+      <div style="position: relative;">
+        <md-outlined-icon-button
+          .ariaLabelSelected="${this.t("actions")}"
+          id="menuAnchor"
+          type="button"
+          @click="${() => ((this.$$("#actionMenu") as Menu).open = true)}"
+          ><md-icon>menu</md-icon></md-outlined-icon-button
+        >
+        <md-menu
+          id="actionMenu"
+          positioning="popover"
+          .menuCorner="${Corner.START_END}"
+          anchor="menuAnchor"
+        >
+          <md-menu-item
+            hidden
+            @click="${this._menuSelection}"
+            id="newCategoryMenuItem"
+          >
+            <div slot="headline">New Category</div>
+          </md-menu-item>
+          <md-menu-item @click="${this._menuSelection}" id="deleteMenuItem">
+            <div slot="headline">Delete</div>
+          </md-menu-item>
+          <md-menu-item
+            hidden
+            @click="${this._menuSelection}"
+            id="cloneMenuItem"
+          >
+            <div slot="headline">Clone</div>
+          </md-menu-item>
+          <md-menu-item
+            hidden
+            @click="${this._menuSelection}"
+            id="promotersMenuItem"
+          >
+            <div slot="headline">Promoters</div>
+          </md-menu-item>
+          <md-menu-item
+            hidden
+            @click="${this._menuSelection}"
+            id="deleteContentMenuItem"
+          >
+            <div slot="headline">Delete Content</div>
+          </md-menu-item>
+          <md-menu-item
+            hidden
+            @click="${this._menuSelection}"
+            id="anonymizeMenuItem"
+          >
+            <div slot="headline">Anonymize</div>
+          </md-menu-item>
+        </md-menu>
+      </div>
     `;
-  }*/
+  }
 
-  /*_menuSelection(event) {
-    const id = event.target.id;
-    switch (id) {
+  _onDeleted() {
+    this.dispatchEvent(
+      new CustomEvent("yp-refresh-community", { bubbles: true, composed: true })
+    );
+    YpNavHelpers.redirectTo("/community/" + this.group.community_id);
+  }
+
+  _openDelete() {
+    window.appGlobals.activity("open", "group.delete");
+
+    window.appDialogs.getDialogAsync(
+      "apiActionDialog",
+      (dialog: YpApiActionDialog) => {
+        dialog.setup(
+          "/api/groups/" + this.group.id,
+          this.t("groupDeleteConfirmation"),
+          this._onDeleted.bind(this)
+        );
+        dialog.open({ finalDeleteWarning: true });
+      }
+    );
+  }
+
+  _menuSelection(event: CustomEvent) {
+    const id = (event.target as any)?.id;
+    this._openDelete();
+    /*switch (id) {
       case "newCategoryMenuItem":
         this._openCategoryEdit();
         break;
@@ -1785,7 +1809,8 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
       default:
         break;
     }
-  }*/
+    */
+  }
 
   earlConfigChanged(event: CustomEvent) {
     this.group.configuration.allOurIdeas = (
@@ -1799,7 +1824,7 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
       this.$$("yp-admin-html-editor") as YpAdminHtmlEditor
     ).getConfiguration();
     this.configTabs = this.setupConfigTabs();
-    console.log(JSON.stringify(this.group.configuration.staticHtml, null, 2))
+    console.log(JSON.stringify(this.group.configuration.staticHtml, null, 2));
     this.requestUpdate();
   }
 
@@ -1838,7 +1863,7 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
       .collectionId="${this.collectionId}"
       @configuration-changed="${this.staticHtmlConfigChanged}"
       .group="${this.group}"
-      .content="${this.group.configuration.staticHtml?.content || ''}"
+      .content="${this.group.configuration.staticHtml?.content || ""}"
       .media="${this.group.configuration.staticHtml?.media || []}"
     ></yp-admin-html-editor>`;
   }

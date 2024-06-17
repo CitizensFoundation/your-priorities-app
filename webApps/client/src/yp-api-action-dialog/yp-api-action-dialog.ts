@@ -109,11 +109,14 @@ export class YpApiActionDialog extends YpBaseElement {
       if (this.onFinishedFunction) {
         this.onFinishedFunction(response);
       }
+      (this.$$("#confirmationDialog") as Dialog).close()
     } else {
       this.finalDeleteWarning = false;
       this.confirmationText = this.t("finalDeleteWarning");
+
+      await this.updateComplete;
+
       (this.$$("#confirmationDialog") as Dialog).show();
     }
-    (this.$$("#confirmationDialog") as Dialog).close()
   }
 }

@@ -29,6 +29,8 @@ import { ifDefined } from "lit/directives/if-defined.js";
 import { TextField } from "@material/web/textfield/internal/text-field.js";
 import { Radio } from "@material/web/radio/internal/radio.js";
 import { YpMediaHelpers } from "../common/YpMediaHelpers.js";
+import { Corner, Menu } from "@material/web/menu/menu.js";
+import { YpApiActionDialog } from "../yp-api-action-dialog/yp-api-action-dialog.js";
 
 @customElement("yp-admin-config-community")
 export class YpAdminConfigCommunity extends YpAdminConfigBase {
@@ -83,6 +85,11 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
           padding: 8px;
         }
 
+        .actionButtonContainer {
+          margin-left: 16px;
+          margin-top: 16px;
+        }
+
         md-radio {
           margin-right: 4px;
         }
@@ -112,10 +119,139 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
               ></md-outlined-text-field>
               <div class="hostnameInfo">https://${this.hostnameExample}</div>
             </div>
-            <div>${this.renderSaveButton()}</div>
+            <div class="layout vertical center-center">
+              <div class="layout horizontal center-center">
+                ${this.renderSaveButton()}
+              </div>
+              <div
+                class="actionButtonContainer layout horizontal center-center"
+              >
+                ${this.renderActionMenu()}
+              </div>
+              <div class="flex"></div>
+            </div>
           </div>
         `
       : nothing;
+  }
+
+  renderActionMenu() {
+    return html`
+      <div style="position: relative;">
+        <md-outlined-icon-button
+          .ariaLabelSelected="${this.t("actions")}"
+          id="menuAnchor"
+          type="button"
+          @click="${() => ((this.$$("#actionMenu") as Menu).open = true)}"
+          ><md-icon>menu</md-icon></md-outlined-icon-button
+        >
+        <md-menu
+          id="actionMenu"
+          positioning="popover"
+          .menuCorner="${Corner.START_END}"
+          anchor="menuAnchor"
+        >
+          <md-menu-item
+            hidden
+            @click="${this._menuSelection}"
+            id="newCategoryMenuItem"
+          >
+            <div slot="headline">New Category</div>
+          </md-menu-item>
+          <md-menu-item @click="${this._menuSelection}" id="deleteMenuItem">
+            <div slot="headline">Delete</div>
+          </md-menu-item>
+          <md-menu-item
+            hidden
+            @click="${this._menuSelection}"
+            id="cloneMenuItem"
+          >
+            <div slot="headline">Clone</div>
+          </md-menu-item>
+          <md-menu-item
+            hidden
+            @click="${this._menuSelection}"
+            id="promotersMenuItem"
+          >
+            <div slot="headline">Promoters</div>
+          </md-menu-item>
+          <md-menu-item
+            hidden
+            @click="${this._menuSelection}"
+            id="deleteContentMenuItem"
+          >
+            <div slot="headline">Delete Content</div>
+          </md-menu-item>
+          <md-menu-item
+            hidden
+            @click="${this._menuSelection}"
+            id="anonymizeMenuItem"
+          >
+            <div slot="headline">Anonymize</div>
+          </md-menu-item>
+        </md-menu>
+      </div>
+    `;
+  }
+
+  _onDeleted() {
+    this.dispatchEvent(
+      new CustomEvent("yp-refresh-domain", { bubbles: true, composed: true })
+    );
+
+    YpNavHelpers.redirectTo(
+      "/domain/" + (this.collection as YpCommunityData).domain_id
+    );
+  }
+
+  _openDelete() {
+    window.appGlobals.activity("open", "group.delete");
+
+    window.appDialogs.getDialogAsync(
+      "apiActionDialog",
+      (dialog: YpApiActionDialog) => {
+        dialog.setup(
+          "/api/communities/" + this.collection!.id,
+          this.t("communityDeleteConfirmation"),
+          this._onDeleted.bind(this)
+        );
+        dialog.open({ finalDeleteWarning: true });
+      }
+    );
+  }
+
+  _menuSelection(event: CustomEvent) {
+    const id = (event.target as any)?.id;
+    this._openDelete();
+    /*switch (id) {
+      case "newCategoryMenuItem":
+        this._openCategoryEdit();
+        break;
+      case "deleteMenuItem":
+        this._openDelete();
+        break;
+      case "cloneMenuItem":
+        this._openClone();
+        break;
+      case "promotersMenuItem":
+        this._openPromotersDialog();
+        break;
+      case "deleteContentMenuItem":
+        this._openDeleteContent();
+        break;
+      case "anonymizeMenuItem":
+        this._openAnonymizeContent();
+        break;
+      case "newGroupItem":
+        this._newGroup();
+        break;
+      case "newGroupFolderItem":
+        this._newGroupFolder();
+        break;
+      default:
+        break;
+    }
+    */
   }
 
   renderHiddenAccessSettings() {
@@ -559,8 +695,8 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
         {
           text: "alwaysShowOnDomainPage",
           type: "checkbox",
-          value: (this.collection as YpCommunityData)
-            .configuration.alwaysShowOnDomainPage,
+          value: (this.collection as YpCommunityData).configuration
+            .alwaysShowOnDomainPage,
           translationToken: "alwaysShowOnDomainPage",
         },
       ] as Array<YpStructuredConfigData>,
@@ -726,7 +862,7 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
             <yp-theme-selector
               @config-updated="${this._configChanged}"
               ?hasLogoImage="${this.imagePreviewUrl ||
-                YpMediaHelpers.getImageFormatUrl(this.currentLogoImages)}"
+              YpMediaHelpers.getImageFormatUrl(this.currentLogoImages)}"
               @get-color-from-logo="${this.getColorFromLogo}"
               @yp-theme-configuration-changed="${this._themeChanged}"
               .themeConfiguration="${this.collection!.configuration.theme!}"
