@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Minimum ti stemmer for å vise i resultata",
   "externalGoalParamsWhitelist": "Ekstern målparametrar kvitelist",
   "targetVotes": "Målstemmer",
-  "vote": "Røyst"
+  "vote": "Røyst",
+  "pointsForAndAgainst": "Argument for og imot",
+  "allowAnonymousUsersToVote": "Tillat brukar å stemme utan innlogging",
+  "loginToAddComment": "Logg inn for å leggje til kommentar",
+  "addComment": "Legg til kommentar",
+  "loginToAddCommentOrLink": "Logg inn for å leggje til kommentar eller lenke",
+  "addCommentOrLink": "Legg til kommentar eller lenke",
+  "apply": "Bruk",
+  "addMedia": "Legg til media",
+  "htmlContent": "HTML-innhald",
+  "previewHtml": "Førehandsvis HTML",
+  "simpleHtmlEditor": "Enkel HTML-redigerar",
+  "editHtmlDirectly": "Rediger HTML direkte"
 }

@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "最少十票才显示结果",
   "externalGoalParamsWhitelist": "外部目标参数白名单",
   "targetVotes": "目标票数",
-  "vote": "投票"
+  "vote": "投票",
+  "pointsForAndAgainst": "赞成和反对的观点",
+  "allowAnonymousUsersToVote": "允许用户无需登录即可投票",
+  "loginToAddComment": "登录以添加评论",
+  "addComment": "添加评论",
+  "loginToAddCommentOrLink": "登录以添加评论或链接",
+  "addCommentOrLink": "添加评论或链接",
+  "apply": "应用",
+  "addMedia": "添加媒体",
+  "htmlContent": "HTML内容",
+  "previewHtml": "预览HTML",
+  "simpleHtmlEditor": "简易HTML编辑器",
+  "editHtmlDirectly": "直接编辑HTML"
 }

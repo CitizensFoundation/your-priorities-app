@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "ಫಲಿತಾಂಶಗಳಲ್ಲಿ ತೋರಿಸಲು ಕನಿಷ್ಠ ಹತ್ತು ಮತಗಳು",
   "externalGoalParamsWhitelist": "ಬಾಹ್ಯ ಗುರಿ ಪ್ಯಾರಾಮ್ಸ್ ವೈಟ್ಲಿಸ್ಟ್",
   "targetVotes": "ಗುರಿ ಮತಗಳು",
-  "vote": "ಮತ"
+  "vote": "ಮತ",
+  "pointsForAndAgainst": "ಪರ ಮತ್ತು ವಿರುದ್ಧ ಅಂಕಗಳು",
+  "allowAnonymousUsersToVote": "ಲಾಗಿನ್ ಖಾತೆ ಇಲ್ಲದೆ ಮತದಾನ ಅನುಮತಿಸಿ",
+  "loginToAddComment": "ಕಾಮೆಂಟ್ ಸೇರಿಸಲು ಲಾಗಿನ್ ಮಾಡಿ",
+  "addComment": "ಕಾಮೆಂಟ್ ಸೇರಿಸಿ",
+  "loginToAddCommentOrLink": "ಕಾಮೆಂಟ್ ಅಥವಾ ಲಿಂಕ್ ಸೇರಿಸಲು ಲಾಗಿನ್ ಮಾಡಿ",
+  "addCommentOrLink": "ಕಾಮೆಂಟ್ ಅಥವಾ ಲಿಂಕ್ ಸೇರಿಸಿ",
+  "apply": "ಅನ್ವಯಿಸು",
+  "addMedia": "ಮಾಧ್ಯಮ ಸೇರಿಸಿ",
+  "htmlContent": "HTML ವಿಷಯ",
+  "previewHtml": "HTML ಮುನ್ನೋಟ",
+  "simpleHtmlEditor": "ಸರಳ HTML ಸಂಪಾದಕ",
+  "editHtmlDirectly": "ನೇರವಾಗಿ HTML ಸಂಪಾದಿಸಿ"
 }

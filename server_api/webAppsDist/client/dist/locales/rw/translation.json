@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Amajwi icumi nibura kugira ngo agaragare mu bisubizo",
   "externalGoalParamsWhitelist": "Urutonde rw'ibyemerewe mu ntego z'inyuma",
   "targetVotes": "Amajwi agenewe",
-  "vote": "Itora"
+  "vote": "Itora",
+  "pointsForAndAgainst": "Amanota y'impande zombi",
+  "allowAnonymousUsersToVote": "Emeza gutora utarinjira",
+  "loginToAddComment": "Injira ushyireho igitekerezo",
+  "addComment": "Tanga igitekerezo",
+  "loginToAddCommentOrLink": "Injira ushyireho igitekerezo cyangwa uhuzanzira",
+  "addCommentOrLink": "Tanga igitekerezo cyangwa uhuzanzira",
+  "apply": "Shyira mu bikorwa",
+  "addMedia": "Shyiraho itangazamakuru",
+  "htmlContent": "Ibirimo HTML",
+  "previewHtml": "Reba HTML",
+  "simpleHtmlEditor": "Umuhinduzi wa HTML woroshye",
+  "editHtmlDirectly": "Hindura HTML uko yakabaye"
 }

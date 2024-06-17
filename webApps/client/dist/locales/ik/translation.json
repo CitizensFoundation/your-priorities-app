@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Avaġiñ aullaqtirutaat tusaqquqattaarut",
   "externalGoalParamsWhitelist": "Tikkuarutinik Anguniaqtuq Params Whitelist",
   "targetVotes": "Qinikhat Tigumiaq",
-  "vote": "Taugaam"
+  "vote": "Taugaam",
+  "pointsForAndAgainst": "Iḷisautit atqan atuqługu",
+  "allowAnonymousUsersToVote": "Iḷisaġvikmiġniġaaq atuqługu",
+  "loginToAddComment": "Iḷisaġvikniġaaq uqautchiksiñ",
+  "addComment": "Uqautchiksiñ ilaġiñ",
+  "loginToAddCommentOrLink": "Iḷisaġvikniġaaq uqautchiksiñ imaluunniit tautuk",
+  "addCommentOrLink": "Uqautchiksiñ imaluunniit tautuk",
+  "apply": "Atuġuq",
+  "addMedia": "Iḷisaġvikniġaaq aallakaatitaq",
+  "htmlContent": "HTML Imaitchuq",
+  "previewHtml": "HTML-mik takuqsiñiq",
+  "simpleHtmlEditor": "HTML-mik saġviksaq siḷaġvik",
+  "editHtmlDirectly": "HTML-mik tikiġaġniq"
 }

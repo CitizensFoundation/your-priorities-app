@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Minimal sepuluh suara untuk ditampilkan dalam hasil",
   "externalGoalParamsWhitelist": "Daftar putih parameter tujuan eksternal",
   "targetVotes": "Suara target",
-  "vote": "Pilih"
+  "vote": "Pilih",
+  "pointsForAndAgainst": "Poin pro dan kontra",
+  "allowAnonymousUsersToVote": "Izinkan pengguna untuk memilih tanpa akun",
+  "loginToAddComment": "Masuk untuk menambahkan komentar",
+  "addComment": "Tambahkan komentar",
+  "loginToAddCommentOrLink": "Masuk untuk menambahkan komentar atau tautan",
+  "addCommentOrLink": "Tambahkan komentar atau tautan",
+  "apply": "Terapkan",
+  "addMedia": "Tambahkan media",
+  "htmlContent": "Konten HTML",
+  "previewHtml": "Pratinjau HTML",
+  "simpleHtmlEditor": "Editor HTML sederhana",
+  "editHtmlDirectly": "Edit HTML langsung"
 }

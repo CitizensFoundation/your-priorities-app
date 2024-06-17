@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Votekɛnɛya 10 kɛnɛya kɛnɛ",
   "externalGoalParamsWhitelist": "Kafo danbele ka tɛmɛ",
   "targetVotes": "Kunafoni kɛnɛya",
-  "vote": "Kanu"
+  "vote": "Kanu",
+  "pointsForAndAgainst": "Anw ka kɛnɛya kɛ",
+  "allowAnonymousUsersToVote": "Anw ka bɔ kura la, ka anw b'a bila kɔnɔ",
+  "loginToAddComment": "Kɔnɔn bila kɛnɛya kari",
+  "addComment": "Kɛnɛya kari",
+  "loginToAddCommentOrLink": "Kɔnɔn bila kɛnɛya tabi jɔgɔ",
+  "addCommentOrLink": "Kɛnɛya tabi jɔgɔ",
+  "apply": "Kasɛbɛ",
+  "addMedia": "Mɛdiya kari",
+  "htmlContent": "HTML Danbele",
+  "previewHtml": "HTML Wɛrɛwɛrɛ",
+  "simpleHtmlEditor": "HTML Danbele Kelen",
+  "editHtmlDirectly": "HTML Kɛnɛya Kɔrɔbɔ"
 }

@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Bonya jo bo lesome go bontsha mo dipholong",
   "externalGoalParamsWhitelist": "Lenane la dithibelo tsa sepheo sa kantle",
   "targetVotes": "Bonya jo bo lejwa",
-  "vote": "Vouta"
+  "vote": "Vouta",
+  "pointsForAndAgainst": "Diponagalo tsa go tshegetsa le go ganetsa",
+  "allowAnonymousUsersToVote": "Letla modirisi go vouta a sa tsena akhaonto",
+  "loginToAddComment": "Tsena go tsenya tshedimosetso",
+  "addComment": "Tsenya tshedimosetso",
+  "loginToAddCommentOrLink": "Tsena go tsenya tshedimosetso kgotsa kgokagano",
+  "addCommentOrLink": "Tsenya tshedimosetso kgotsa kgokagano",
+  "apply": "Dirisa",
+  "addMedia": "Tsenya media",
+  "htmlContent": "Dikahare tsa HTML",
+  "previewHtml": "Sekaseka HTML",
+  "simpleHtmlEditor": "Mokwadi wa HTML o bonolo",
+  "editHtmlDirectly": "Fetola HTML ka kotloloho"
 }

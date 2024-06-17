@@ -441,7 +441,7 @@
   "content": "Susbaint",
   "multiSortEnabled": "Cuir an comas ioma-shortadh",
   "creator": "Cruthaiche",
-  "severeToxicityScore": "S.Toxicity",
+  "severeToxicityScore": "P.Toxicity",
   "toxicityScore": "Puinnseanta",
   "source": "Stòr",
   "domainContentModeration": "Riaghladh fearainn",
@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Deich bhòtaichean as ìsle airson sealltainn ann an toraidhean",
   "externalGoalParamsWhitelist": "Liosta geal paramadairean amas taobh a-muigh",
   "targetVotes": "Bhòtaichean targaid",
-  "vote": "Bhòt"
+  "vote": "Bhòt",
+  "pointsForAndAgainst": "Puingean airson is an aghaidh",
+  "allowAnonymousUsersToVote": "Leig le cleachdaiche bhòtadh gun chunntas logaidh a-steach",
+  "loginToAddComment": "Log a-steach gus beachd a chur ris",
+  "addComment": "Cuir beachd ris",
+  "loginToAddCommentOrLink": "Log a-steach gus beachd no ceangal a chur ris",
+  "addCommentOrLink": "Cuir beachd no ceangal ris",
+  "apply": "Cuir a-steach",
+  "addMedia": "Cuir meadhanan ris",
+  "htmlContent": "Susbaint HTML",
+  "previewHtml": "Ro-shealladh HTML",
+  "simpleHtmlEditor": "Deasaiche HTML sìmplidh",
+  "editHtmlDirectly": "Deasaich HTML gu dìreach"
 }

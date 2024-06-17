@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Sagalee xiqqaa kudhan agarsiisuuf barbaachisa",
   "externalGoalParamsWhitelist": "Albuda galii gara alaatiif liistii",
   "targetVotes": "Sagalee kaayyoo",
-  "vote": "Filadhu"
+  "vote": "Filadhu",
+  "pointsForAndAgainst": "Furmaataafi mormii",
+  "allowAnonymousUsersToVote": "Fayyadamtoonni akkaataawwan galmeessanii malee sagalee kennuu danda'u",
+  "loginToAddComment": "Galmaa'i yaada dabalataaf",
+  "addComment": "Yaada dabalataa galchi",
+  "loginToAddCommentOrLink": "Galmaa'i yaada ykn linkii dabalataaf",
+  "addCommentOrLink": "Yaada ykn linkii dabalataa galchi",
+  "apply": "Itti fufi",
+  "addMedia": "Miidiyaa galchi",
+  "htmlContent": "HTML Dhangii",
+  "previewHtml": "HTML Jala bulti",
+  "simpleHtmlEditor": "HTML qulqulleessituu saffisaa",
+  "editHtmlDirectly": "HTML sirriitti qulqulleessi"
 }

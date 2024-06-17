@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "ফলাফলে দেখানোর জন্য ন্যূনতম দশ ভোট",
   "externalGoalParamsWhitelist": "বাহ্যিক লক্ষ্য পরামিতি তালিকা",
   "targetVotes": "লক্ষ্য ভোট",
-  "vote": "ভোট"
+  "vote": "ভোট",
+  "pointsForAndAgainst": "পক্ষ ও বিপক্ষের পয়েন্ট",
+  "allowAnonymousUsersToVote": "লগইন ছাড়াই ভোট দেওয়ার অনুমতি",
+  "loginToAddComment": "মন্তব্য যোগ করতে লগইন করুন",
+  "addComment": "মন্তব্য যোগ করুন",
+  "loginToAddCommentOrLink": "মন্তব্য বা লিঙ্ক যোগ করতে লগইন করুন",
+  "addCommentOrLink": "মন্তব্য বা লিঙ্ক যোগ করুন",
+  "apply": "প্রয়োগ করুন",
+  "addMedia": "মিডিয়া যোগ করুন",
+  "htmlContent": "HTML বিষয়বস্তু",
+  "previewHtml": "HTML প্রাকদর্শন",
+  "simpleHtmlEditor": "সাধারণ HTML সম্পাদক",
+  "editHtmlDirectly": "সরাসরি HTML সম্পাদনা করুন"
 }

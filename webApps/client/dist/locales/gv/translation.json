@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Jeih voteyn er y chooid sloo dy heet er nyn soilshaghey ayns ny torçhyn",
   "externalGoalParamsWhitelist": "Rolley geill paramaderyn çheet-mooie",
   "targetVotes": "Voteyn targaid",
-  "vote": "Vote"
+  "vote": "Vote",
+  "pointsForAndAgainst": "Poyntyn son as noi",
+  "allowAnonymousUsersToVote": "Lhig da'n ymmydeyr vote gyn loggal stiagh",
+  "loginToAddComment": "Loggal stiagh dy chur coontey",
+  "addComment": "Cur coontey",
+  "loginToAddCommentOrLink": "Loggal stiagh dy chur coontey ny kiangley",
+  "addCommentOrLink": "Cur coontey ny kiangley",
+  "apply": "Cur rish",
+  "addMedia": "Cur meanyn",
+  "htmlContent": "Sushtal HTML",
+  "previewHtml": "Roie-sheall HTML",
+  "simpleHtmlEditor": "Reagheyder HTML bunneydagh",
+  "editHtmlDirectly": "Reaghey HTML dy jarroo"
 }

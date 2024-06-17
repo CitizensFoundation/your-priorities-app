@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Nda zyt nyi vut guz nda zyt nde jju zyt nyi.",
   "externalGoalParamsWhitelist": "Nda zyt nyi vut guz nda zyt nde jju zyt nyi.",
   "targetVotes": "Nda zyt nyi vut guz nda zyt nde jju zyt nyi.",
-  "vote": "投票"
+  "vote": "投票",
+  "pointsForAndAgainst": "ꉻꃅꑤꇬꉻꃅ",
+  "allowAnonymousUsersToVote": "ꀉꐚꉻꌅꇩꀐꌠꉻꐚꑤꀋꉬꀐꌠꉻꐚꑤꀋꉬ",
+  "loginToAddComment": "ꀐꌠꉻꐚꑤꀋꉬꀐꌠꉻꐚꑤꀋꉬꑭꐚꉻꐚꑤꀋꉬ",
+  "addComment": "ꑭꐚꉻꐚꑤꀋꉬ",
+  "loginToAddCommentOrLink": "ꀐꌠꉻꐚꑤꀋꉬꀐꌠꉻꐚꑤꀋꉬꑭꐚꉻꐚꑤꀋꉬꀋꉬꑭꐚꉻꐚꑤꀋꉬ",
+  "addCommentOrLink": "ꑭꐚꉻꐚꑤꀋꉬꀋꉬꑭꐚꉻꐚꑤꀋꉬ",
+  "apply": "ꉻꑤꀋꉬ",
+  "addMedia": "ꉻꃅꑤꇬꉻꃅ",
+  "htmlContent": "HTML ꉻꃅꑤꇬꉻꃅ",
+  "previewHtml": "HTML ꉻꃅꑤꇬꉻꃅ",
+  "simpleHtmlEditor": "HTML ꉻꃅꑤꇬꉻꃅ",
+  "editHtmlDirectly": "HTML ꉻꃅꑤꇬꉻꃅ"
 }

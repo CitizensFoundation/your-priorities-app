@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Íosmhéid deich vótaí le taispeáint sna torthaí",
   "externalGoalParamsWhitelist": "Liosta bán paraiméadair spriocanna seachtracha",
   "targetVotes": "Vótaí sprioc",
-  "vote": "Vóta"
+  "vote": "Vóta",
+  "pointsForAndAgainst": "Pointí ar son agus in aghaidh",
+  "allowAnonymousUsersToVote": "Ceadaigh vótáil gan cuntas",
+  "loginToAddComment": "Logáil isteach chun trácht a chur leis",
+  "addComment": "Cuir trácht leis",
+  "loginToAddCommentOrLink": "Logáil isteach chun trácht nó nasc a chur leis",
+  "addCommentOrLink": "Cuir trácht nó nasc leis",
+  "apply": "Cuir i bhfeidhm",
+  "addMedia": "Cuir meáin leis",
+  "htmlContent": "Ábhar HTML",
+  "previewHtml": "Réamhamharc HTML",
+  "simpleHtmlEditor": "Eagarthóir HTML simplí",
+  "editHtmlDirectly": "Cuir HTML in eagar go díreach"
 }

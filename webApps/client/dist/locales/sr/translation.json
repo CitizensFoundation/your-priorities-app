@@ -729,7 +729,7 @@
   "aoiAiAnalysisConfig": "Konfiguracija AI analize",
   "questionName": "Pitanje",
   "allOurIdeasOptions": "Opcije",
-  "stop": "Stop",
+  "stop": "Zaustavi",
   "answersToVoteOn": "Odgovori za glasanje",
   "submitAnswersForCreation": "Pošalji odgovore",
   "generateMoreIdeasWithAi": "Generiši više ideja sa AI",
@@ -1388,5 +1388,17 @@
   "minimumTenVotesToShowResults": "Minimum deset glasova za prikaz u rezultatima",
   "externalGoalParamsWhitelist": "Spisak dozvoljenih parametara za spoljni cilj",
   "targetVotes": "Ciljani glasovi",
-  "vote": "Glasaj"
+  "vote": "Glasaj",
+  "pointsForAndAgainst": "Poena za i protiv",
+  "allowAnonymousUsersToVote": "Dozvoli glasanje bez naloga",
+  "loginToAddComment": "Prijavi se da dodaš komentar",
+  "addComment": "Dodaj komentar",
+  "loginToAddCommentOrLink": "Prijavi se da dodaš komentar ili link",
+  "addCommentOrLink": "Dodaj komentar ili link",
+  "apply": "Primeni",
+  "addMedia": "Dodaj medije",
+  "htmlContent": "HTML sadržaj",
+  "previewHtml": "Pregledaj HTML",
+  "simpleHtmlEditor": "Jednostavan HTML uređivač",
+  "editHtmlDirectly": "Uredi HTML direktno"
 }

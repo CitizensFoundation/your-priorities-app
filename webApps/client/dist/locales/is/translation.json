@@ -1518,5 +1518,17 @@
   "yourIdea": "Svarið þitt",
   "chatInput": "Spurðu mig spurningu",
   "yourIdeaHasBeenAdded": "Hugmynd þín hefur verið bætt við, búið er að búa til táknmynd.",
-  "aiIconInfo": "Táknmynd fyrir svarið þitt er verið að búa til, þú getur lokað glugganum eða beðið eftir að myndin verði tilbúin. Þú munt einnig hafa möguleika á að endurgera táknmyndina."
+  "aiIconInfo": "Táknmynd fyrir svarið þitt er verið að búa til, þú getur lokað glugganum eða beðið eftir að myndin verði tilbúin. Þú munt einnig hafa möguleika á að endurgera táknmyndina.",
+  "pointsForAndAgainst": "Rök með og á móti",
+  "allowAnonymousUsersToVote": "Leyfa notanda að kjósa án innskráningar",
+  "loginToAddComment": "Skráðu þig inn til að bæta við athugasemd",
+  "addComment": "Bæta við athugasemd",
+  "loginToAddCommentOrLink": "Skráðu þig inn til að bæta við athugasemd eða tengil",
+  "addCommentOrLink": "Bæta við athugasemd eða tengil",
+  "apply": "Nota",
+  "addMedia": "Bæta við miðli",
+  "htmlContent": "HTML efni",
+  "previewHtml": "Forskoða HTML",
+  "simpleHtmlEditor": "Einfaldur HTML ritill",
+  "editHtmlDirectly": "Breyta HTML beint"
 }

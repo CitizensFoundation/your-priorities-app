@@ -1331,7 +1331,7 @@
   "domainFraudManagement": "ການຈັດການການຜິດພາດຂອງດໍ່ເມນ",
   "Access": "ເຂົ້າເຖິງ",
   "openOrganizationMenu": "ເປີດເມນູຂອງອົງການ",
-  "Listasafn Reykjavíkur": "Listasafn Reykjavíkur",
+  "Listasafn Reykjavíkur": "ສະຖາບັນລາຍຊື່ປະຫວັດສາດ ຣີກຢາວິກ",
   "Override theme": "ອົງປະກອບທີມ",
   "Analytics & Marketing": "ການວິເຄາະ & ການຕິດຕາມຂອງການຂາຍ",
   "Promote your survey": "ເພີ່ມການສຳຫຼວດຂອງທ່ານ",
@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "ສຸດນ້ອຍສິບໂຫວດເພື່ອສະແດງໃນຜົນຜະລິດ",
   "externalGoalParamsWhitelist": "ລາຍຊື່ພາລາມີເຕີບາງປະກອບຕ່າງນອກ",
   "targetVotes": "ຄະແນນປະຈຳເປົ້າໝາຍ",
-  "vote": "ຫຼິ້ນຄືນ"
+  "vote": "ຫຼິ້ນຄືນ",
+  "pointsForAndAgainst": "ຄະແນນສຳລັບແລະກັບ",
+  "allowAnonymousUsersToVote": "ອະນຸຍາດໃຫ້ຜູ້ໃຊ້ສະໝັກໂດຍບໍ່ຕ້ອງເຂົ້າລະບົບ",
+  "loginToAddComment": "ເຂົ້າລະບົບເພື່ອເພີ່ມຄຳເຫັນ",
+  "addComment": "ເພີ່ມຄຳເຫັນ",
+  "loginToAddCommentOrLink": "ເຂົ້າລະບົບເພື່ອເພີ່ມຄຳເຫັນຫຼືລິ້ງ",
+  "addCommentOrLink": "ເພີ່ມຄຳເຫັນຫຼືລິ້ງ",
+  "apply": "ສະໝັກ",
+  "addMedia": "ເພີ່ມສື່",
+  "htmlContent": "ເນື້ອຫາ HTML",
+  "previewHtml": "ສະແດງຕົວຢ່າງ HTML",
+  "simpleHtmlEditor": "ແບບດອກ HTML ງ່າຍ",
+  "editHtmlDirectly": "ແກ້ໄຂ HTML ທັນທີ"
 }

@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Udduɗe gooto eɗen ngonannde to waɗde e sakketeeji",
   "externalGoalParamsWhitelist": "Ngal eɗen ngonannde eɗen ngam bayyinɗo",
   "targetVotes": "Eɗen ngonannde sakketeeji",
-  "vote": "Diiwaan"
+  "vote": "Diiwaan",
+  "pointsForAndAgainst": "Daliiji e ɓeeyditi",
+  "allowAnonymousUsersToVote": "Noddu ɗum ena mbaawaa toɓɓude e hesere",
+  "loginToAddComment": "Hesere ngam ɓeydude walla",
+  "addComment": "Ɓeydu walla",
+  "loginToAddCommentOrLink": "Hesere ngam ɓeydude walla walla jokkol",
+  "addCommentOrLink": "Ɓeydu walla walla jokkol",
+  "apply": "Jokkondir",
+  "addMedia": "Ɓeydu puɗɗugol",
+  "htmlContent": "HTML Puɗɗugol",
+  "previewHtml": "Jiytol HTML",
+  "simpleHtmlEditor": "HTML Tuma Bonnde",
+  "editHtmlDirectly": "Taƴtol HTML kadi"
 }

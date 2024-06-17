@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Minimum diesch vuschs per mussar en ils resultats",
   "externalGoalParamsWhitelist": "Glista alva da params da finamiras externas",
   "targetVotes": "Vuschs mira",
-  "vote": "Votar"
+  "vote": "Votar",
+  "pointsForAndAgainst": "Puncts pro e contra",
+  "allowAnonymousUsersToVote": "Permetter votar senza conto",
+  "loginToAddComment": "Annunziar per agiuntar commentari",
+  "addComment": "Agiuntar commentari",
+  "loginToAddCommentOrLink": "Annunziar per agiuntar commentari u colliaziun",
+  "addCommentOrLink": "Agiuntar commentari u colliaziun",
+  "apply": "Applitgar",
+  "addMedia": "Agiuntar medias",
+  "htmlContent": "Cuntegn HTML",
+  "previewHtml": "Previsiun HTML",
+  "simpleHtmlEditor": "Editur HTML simpel",
+  "editHtmlDirectly": "Editar HTML directamain"
 }

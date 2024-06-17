@@ -1275,7 +1275,7 @@
   "Error fetching analysis": "Chyba načítání analýzy",
   "Generating analysis with GPT-4": "Generování analýzy s GPT-4",
   "Vote Analysis": "Analýza hlasů",
-  "Admin": "Admin",
+  "Admin": "Správce",
   "Start Voting": "Začít hlasování",
   "Open Results": "Otevřít výsledky",
   "How likely to win": "Pravděpodobnost výhry",
@@ -1387,5 +1387,17 @@
   "minimumTenVotesToShowResults": "Minimálně deset hlasů pro zobrazení ve výsledcích",
   "externalGoalParamsWhitelist": "Whitelist externích cílových parametrů",
   "targetVotes": "Cílové hlasy",
-  "vote": "Hlasovat"
+  "vote": "Hlasovat",
+  "pointsForAndAgainst": "Body pro a proti",
+  "allowAnonymousUsersToVote": "Povolit hlasování bez účtu",
+  "loginToAddComment": "Přihlásit k přidání komentáře",
+  "addComment": "Přidat komentář",
+  "loginToAddCommentOrLink": "Přihlásit k přidání komentáře nebo odkazu",
+  "addCommentOrLink": "Přidat komentář nebo odkaz",
+  "apply": "Použít",
+  "addMedia": "Přidat média",
+  "htmlContent": "HTML obsah",
+  "previewHtml": "Náhled HTML",
+  "simpleHtmlEditor": "Jednoduchý HTML editor",
+  "editHtmlDirectly": "Editovat HTML přímo"
 }

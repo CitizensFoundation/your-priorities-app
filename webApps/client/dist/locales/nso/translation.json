@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Bonyane diloutu tse leshome go bontsha diphetho",
   "externalGoalParamsWhitelist": "Lenane la tšhweletso ya merero ya ka ntle",
   "targetVotes": "Diloutu tse lebisitsweng",
-  "vote": "Vouta"
+  "vote": "Vouta",
+  "pointsForAndAgainst": "Mabaka a go tshehetsa le go ganetsa",
+  "allowAnonymousUsersToVote": "Dumelela modiriši go vouta a se na akhaonto ya go tsena",
+  "loginToAddComment": "Tsena go tšea maikutlo",
+  "addComment": "Tšea maikutlo",
+  "loginToAddCommentOrLink": "Tsena go tšea maikutlo goba kgokagano",
+  "addCommentOrLink": "Tšea maikutlo goba kgokagano",
+  "apply": "Diriša",
+  "addMedia": "Tsenya media",
+  "htmlContent": "Dikahare tša HTML",
+  "previewHtml": "Hlahloba HTML",
+  "simpleHtmlEditor": "Mohlophisi wa HTML o bonolo",
+  "editHtmlDirectly": "Fetola HTML ka kotloloho"
 }

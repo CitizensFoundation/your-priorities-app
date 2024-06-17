@@ -320,7 +320,7 @@
   "useCommunityTopBanner": "Community top banner hmang",
   "customThankYouTextNewPosts": "Thar post tan custom lawmthu",
   "allPostsBlockedByDefault": "Post te hi moderation avangin block",
-  "pointCharLimit": "Point character limit (default 500)",
+  "pointCharLimit": "Point tihhming hran (a tihchhuah 500)",
   "forcePostSortMethodAs": "Default post sort (thar ber, top, sawi zauh zelte, random)",
   "editAdminComment": "Admin comment edit",
   "commentFromAdmin": "Admin comment",
@@ -330,7 +330,7 @@
   "userImage": {
     "deleteConfirmation": "Hei hi image chu delete turin nisei em?"
   },
-  "customTermsIntroText": "Custom terms introduction text",
+  "customTermsIntroText": "Thupek thar hrilhfiahna thu",
   "customUserNamePrompt": "Zirtirtu hming thar siam dan hnena hriattirna",
   "alternativeTextForNewIdeaButton": "'Thawh hnuaihna thar' bultum thlalak hman dan",
   "alternativeTextForNewIdeaButtonClosed": "'Thawh hnuaihna thar' khar bultum thlalak hman dan",
@@ -483,7 +483,7 @@
   "pointAudioInfo": "Thiamna lam hre chiang rawh. Audio chhung zat chhinchhiahna hi ",
   "pointAudioInfoAndroid": "Android-ah video rekording hmang, audio chauh a hmang ang.",
   "allowPointVideoUploads": "Point video tihchhuahna a ngai",
-  "seconds": "seconds",
+  "seconds": "sekẹn",
   "videoPostUploadLimitSec": "Post video hniamna seconds-ah (chunglam 600s)",
   "videoPointUploadLimitSec": "Point video hniamna seconds-ah (chunglam 600s)",
   "audioPostUploadLimitSec": "Post audio hniamna seconds-ah (chunglam 600s)",
@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Vote panga zat chiah a nih hnuah chhawpchhuah a ni ang",
   "externalGoalParamsWhitelist": "External goal params whitelist",
   "targetVotes": "Thlak letna",
-  "vote": "Thlak"
+  "vote": "Thlak",
+  "pointsForAndAgainst": "Thil tih ṭha leh tih loh",
+  "allowAnonymousUsersToVote": "Login account lai lovin vote theihna pe",
+  "loginToAddComment": "Comment thêmna turin login rawh",
+  "addComment": "Comment thêm rawh",
+  "loginToAddCommentOrLink": "Comment emaw link thêmna turin login rawh",
+  "addCommentOrLink": "Comment emaw link thêm rawh",
+  "apply": "Zirchiang rawh",
+  "addMedia": "Media thêm rawh",
+  "htmlContent": "HTML Ziahna",
+  "previewHtml": "HTML Enfiahna",
+  "simpleHtmlEditor": "HTML editor ṭha tak",
+  "editHtmlDirectly": "HTML thlak let rawh"
 }

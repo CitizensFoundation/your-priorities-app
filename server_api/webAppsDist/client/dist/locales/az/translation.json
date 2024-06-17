@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Nəticələrdə göstərmək üçün minimum on səs",
   "externalGoalParamsWhitelist": "Xarici məqsəd parametrlərinin ağ siyahısı",
   "targetVotes": "Hədəf səslər",
-  "vote": "Səsvermə"
+  "vote": "Səsvermə",
+  "pointsForAndAgainst": "Ləğv və əleyhinə səslər",
+  "allowAnonymousUsersToVote": "Giriş hesabı olmadan səs verməyə icazə ver",
+  "loginToAddComment": "Şərh əlavə etmək üçün daxil olun",
+  "addComment": "Şərh əlavə et",
+  "loginToAddCommentOrLink": "Şərh və ya link əlavə etmək üçün daxil olun",
+  "addCommentOrLink": "Şərh və ya link əlavə et",
+  "apply": "Tətbiq et",
+  "addMedia": "Media əlavə et",
+  "htmlContent": "HTML Məzmunu",
+  "previewHtml": "HTML Önizləmə",
+  "simpleHtmlEditor": "Sadə HTML redaktoru",
+  "editHtmlDirectly": "HTML-i birbaşa redaktə et"
 }

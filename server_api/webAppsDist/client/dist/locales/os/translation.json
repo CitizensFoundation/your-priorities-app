@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Фæстæг дæр хъæлонцы кæнынц куыдон",
   "externalGoalParamsWhitelist": "Артæмæ цæлкъадон параметрын цæрынгæнджыл",
   "targetVotes": "Цæлкъадон хъæлонцы",
-  "vote": "Хъæл"
+  "vote": "Хъæл",
+  "pointsForAndAgainst": "Махъбæлонгонд æмæ кæсонгонд",
+  "allowAnonymousUsersToVote": "Архайæг рæдыдисынц ацы хъæлонгæнæн",
+  "loginToAddComment": "Рæдыдисынцы баив æрцыдис",
+  "addComment": "Æрцыдис баив",
+  "loginToAddCommentOrLink": "Рæдыдисынцы баив æрцыдис ма link",
+  "addCommentOrLink": "Æрцыдис ма link баив",
+  "apply": "Бафæст",
+  "addMedia": "Медиаг баив",
+  "htmlContent": "HTML æмæхъæлон",
+  "previewHtml": "HTML рæзырд",
+  "simpleHtmlEditor": "HTML сæрмагонд æрвитæн",
+  "editHtmlDirectly": "HTML рæстæггонд"
 }

@@ -1388,5 +1388,17 @@
   "minimumTenVotesToShowResults": "Sonuçlarda göstermek için minimum on oy",
   "externalGoalParamsWhitelist": "Harici hedef parametreleri beyaz listesi",
   "targetVotes": "Hedef oylar",
-  "vote": "Oy"
+  "vote": "Oy",
+  "pointsForAndAgainst": "Lehte ve aleyhte puanlar",
+  "allowAnonymousUsersToVote": "Kullanıcının giriş yapmadan oy vermesine izin ver",
+  "loginToAddComment": "Yorum eklemek için giriş yap",
+  "addComment": "Yorum ekle",
+  "loginToAddCommentOrLink": "Yorum veya bağlantı eklemek için giriş yap",
+  "addCommentOrLink": "Yorum veya bağlantı ekle",
+  "apply": "Uygula",
+  "addMedia": "Medya ekle",
+  "htmlContent": "HTML İçeriği",
+  "previewHtml": "HTML Önizleme",
+  "simpleHtmlEditor": "Basit HTML düzenleyici",
+  "editHtmlDirectly": "HTML'i doğrudan düzenle"
 }

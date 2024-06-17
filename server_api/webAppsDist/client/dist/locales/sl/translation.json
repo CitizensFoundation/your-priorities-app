@@ -1387,5 +1387,17 @@
   "minimumTenVotesToShowResults": "Najmanj deset glasov za prikaz v rezultatih",
   "externalGoalParamsWhitelist": "Seznam dovoljenih parametrov za zunanje cilje",
   "targetVotes": "Ciljno število glasov",
-  "vote": "Glasuj"
+  "vote": "Glasuj",
+  "pointsForAndAgainst": "Točke za in proti",
+  "allowAnonymousUsersToVote": "Dovoli glasovanje brez računa",
+  "loginToAddComment": "Prijava za dodajanje komentarja",
+  "addComment": "Dodaj komentar",
+  "loginToAddCommentOrLink": "Prijava za komentar ali povezavo",
+  "addCommentOrLink": "Dodaj komentar ali povezavo",
+  "apply": "Uporabi",
+  "addMedia": "Dodaj medij",
+  "htmlContent": "HTML vsebina",
+  "previewHtml": "Predogled HTML",
+  "simpleHtmlEditor": "Preprost HTML urejevalnik",
+  "editHtmlDirectly": "Uredi HTML neposredno"
 }

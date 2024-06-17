@@ -1388,5 +1388,17 @@
   "minimumTenVotesToShowResults": "حداقل ده رأی برای نمایش در نتایج",
   "externalGoalParamsWhitelist": "لیست سفید پارامترهای هدف خارجی",
   "targetVotes": "رأی‌های هدف",
-  "vote": "رأی"
+  "vote": "رأی",
+  "pointsForAndAgainst": "امتیازات موافق و مخالف",
+  "allowAnonymousUsersToVote": "اجازه رأی دادن بدون حساب کاربری",
+  "loginToAddComment": "ورود برای افزودن نظر",
+  "addComment": "افزودن نظر",
+  "loginToAddCommentOrLink": "ورود برای افزودن نظر یا پیوند",
+  "addCommentOrLink": "افزودن نظر یا پیوند",
+  "apply": "اعمال",
+  "addMedia": "افزودن رسانه",
+  "htmlContent": "محتوای HTML",
+  "previewHtml": "پیش‌نمایش HTML",
+  "simpleHtmlEditor": "ویرایشگر HTML ساده",
+  "editHtmlDirectly": "ویرایش مستقیم HTML"
 }

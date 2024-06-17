@@ -441,7 +441,7 @@
   "content": "ʻIkepili",
   "multiSortEnabled": "ʻAe i ka hoʻopili nui",
   "creator": "Mea haku",
-  "severeToxicityScore": "S.Toxicity",
+  "severeToxicityScore": "ʻAʻaiʻo",
   "toxicityScore": "ʻAʻai",
   "source": "Kumu",
   "domainContentModeration": "Hoʻoponopono kahua",
@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "ʻUmi koho liʻiliʻi e hōʻike i nā hopena",
   "externalGoalParamsWhitelist": "Papa inoa keʻokeʻo o nā param o ka pahuhopu waho",
   "targetVotes": "Nā koho pahuhopu",
-  "vote": "Koho"
+  "vote": "Koho",
+  "pointsForAndAgainst": "Nā kiko kū'ē",
+  "allowAnonymousUsersToVote": "ʻAe i ka mea hoʻohana e koho me ka moʻokāki ʻole",
+  "loginToAddComment": "E komo e hoʻohui manaʻo",
+  "addComment": "Hoʻohui manaʻo",
+  "loginToAddCommentOrLink": "E komo e hoʻohui manaʻo a i ʻole loulou",
+  "addCommentOrLink": "Hoʻohui manaʻo a i ʻole loulou",
+  "apply": "Hoʻomohala",
+  "addMedia": "Hoʻohui pāpaho",
+  "htmlContent": "ʻIkepili HTML",
+  "previewHtml": "Nānā HTML",
+  "simpleHtmlEditor": "Mea hoʻoponopono HTML maʻalahi",
+  "editHtmlDirectly": "Hoʻoponopono HTML pololei"
 }

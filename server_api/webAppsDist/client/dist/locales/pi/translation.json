@@ -649,7 +649,7 @@
   "hidePostAuthor": "Lekhaka posta guhā",
   "defaultLocationLongLat": "Sādhāraṇa sthāna deśāntara,akṣāṁśa",
   "disableCommunityDomainUpLink": "Domain Upari Link Nivāraṇa",
-  "analyticsTrackerCode": "Google Analytics Id",
+  "analyticsTrackerCode": "Google Sādhāraṇa Id",
   "filterIdeas": "Vikalpa vichāraṇa",
   "edit": "Sampādita",
   "delete": "Mita",
@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Dasa matabhedāni dassetuṃ nyūnatamaṃ",
   "externalGoalParamsWhitelist": "Bāhyārthika lakṣya paramāṇu śvetasūci",
   "targetVotes": "Lakṣita matabhedāni",
-  "vote": "Matabheda"
+  "vote": "Matabheda",
+  "pointsForAndAgainst": "पक्षविपक्षबिन्दु",
+  "allowAnonymousUsersToVote": "लेखाविना मतदान देय",
+  "loginToAddComment": "टिप्पणी योजनाय लॉगिन",
+  "addComment": "टिप्पणी योज",
+  "loginToAddCommentOrLink": "टिप्पणी वा लिंक योजनाय लॉगिन",
+  "addCommentOrLink": "टिप्पणी वा लिंक योज",
+  "apply": "प्रयोग",
+  "addMedia": "माध्यम योज",
+  "htmlContent": "HTML अन्तर्वस्तु",
+  "previewHtml": "HTML पूर्वदर्शन",
+  "simpleHtmlEditor": "सरल HTML सम्पादक",
+  "editHtmlDirectly": "साक्षात् HTML सम्पादन"
 }

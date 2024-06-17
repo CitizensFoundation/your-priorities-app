@@ -1334,7 +1334,7 @@
   "domainFraudManagement": "ଡୋମେନ୍ ଜାଲସାଜି ପ୍ରବନ୍ଧନ",
   "Access": "ପ୍ରବେଶ",
   "openOrganizationMenu": "ସଂସ୍ଥା ମେନୁ ଖୋଲନ୍ତୁ",
-  "Listasafn Reykjavíkur": "Listasafn Reykjavíkur",
+  "Listasafn Reykjavíkur": "ଲିସ୍ତାସାଫ୍ନ ରେଇକଜାଭିକୁର",
   "Override theme": "ଥୀମ୍ ଓଭରରାଇଡ୍",
   "Analytics & Marketing": "ବିଶ୍ଲେଷଣ ଏବଂ ବିପଣନ",
   "Promote your survey": "ଆପଣଙ୍କ ସର୍ଭେକୁ ପ୍ରଚାର କରନ୍ତୁ",
@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "ଫଳାଫଳରେ ଦେଖାଇବାକୁ ନୂନ୍ୟତମ ଦଶ ଭୋଟ",
   "externalGoalParamsWhitelist": "ବାହ୍ୟ ଲକ୍ଷ୍ୟ ପାରାମିଟର ଶ୍ୱେତ ସୂଚୀ",
   "targetVotes": "ଲକ୍ଷ୍ୟ ଭୋଟ",
-  "vote": "ଭୋଟ"
+  "vote": "ଭୋଟ",
+  "pointsForAndAgainst": "ପକ୍ଷ ଓ ବିପକ୍ଷ ପାଇଁ ପଏଣ୍ଟ",
+  "allowAnonymousUsersToVote": "ଲଗଇନ୍ ବିନା ଭୋଟ ଦେବାକୁ ଅନୁମତି ଦିଅ",
+  "loginToAddComment": "ମତାମତ ଯୋଡ଼ିବାକୁ ଲଗଇନ୍ କର",
+  "addComment": "ମତାମତ ଯୋଡ଼",
+  "loginToAddCommentOrLink": "ମତାମତ କିମ୍ବା ଲିଙ୍କ ଯୋଡ଼ିବାକୁ ଲଗଇନ୍ କର",
+  "addCommentOrLink": "ମତାମତ କିମ୍ବା ଲିଙ୍କ ଯୋଡ଼",
+  "apply": "ଆବେଦନ",
+  "addMedia": "ମିଡିଆ ଯୋଡ଼",
+  "htmlContent": "HTML ବିଷୟବସ୍ତୁ",
+  "previewHtml": "HTML ପୂର୍ବଦର୍ଶନ",
+  "simpleHtmlEditor": "ସରଳ HTML ସମ୍ପାଦକ",
+  "editHtmlDirectly": "HTML ସିଧାସଳଖ ସମ୍ପାଦନା"
 }

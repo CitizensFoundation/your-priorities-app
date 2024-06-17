@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Tsawg kawg kaum pov npav kom qhia hauv cov txiaj ntsig",
   "externalGoalParamsWhitelist": "Daim ntawv teev cov hom phiaj sab nraud",
   "targetVotes": "Cov pov npav hom phiaj",
-  "vote": "Pov Npav"
+  "vote": "Pov Npav",
+  "pointsForAndAgainst": "Cov ntsiab lus zoo thiab phem",
+  "allowAnonymousUsersToVote": "Tso cai rau tus neeg siv pov npav tsis tas yuav nkag mus",
+  "loginToAddComment": "Nkag mus kom ntxiv lus",
+  "addComment": "Ntxiv lus",
+  "loginToAddCommentOrLink": "Nkag mus kom ntxiv lus lossis txuas",
+  "addCommentOrLink": "Ntxiv lus lossis txuas",
+  "apply": "Thov",
+  "addMedia": "Ntxiv xov xwm",
+  "htmlContent": "Cov ntsiab lus HTML",
+  "previewHtml": "Saib ua ntej HTML",
+  "simpleHtmlEditor": "Cov khoos phis tawj HTML yooj yim",
+  "editHtmlDirectly": "Kho HTML ncaj qha"
 }

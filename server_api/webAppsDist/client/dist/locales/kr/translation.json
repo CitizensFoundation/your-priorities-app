@@ -1373,7 +1373,7 @@
   "aiAnalysisInfo": "Wannan ita ce nazarin da aka samar ta atomatik na amsoshi da kuri'u ta GPT-4",
   "socialMediaCreateInfo": "Sunan, bayanin da hoton tambari za a yi amfani da su yayin raba a kafofin sada zumunta",
   "generateAnswersInfo": "Tambayoyi suna buƙatar mafi ƙarancin haruffa 3. Bayar da aƙalla amsoshin farko 6 a ƙasa, ɗaya a layi, tare da iyaka na haruffa 140 kowanne.",
-  "aiAnalysisConfigInfo": "Automated AI analyses utilize your LLM prompts to provide voters with an analysis of the top N and bottom N answers. By default, the system is set to analyze the pros and cons of the top 3 and bottom 3 answers. You can disable the analysis above. Here is the data format: <div style='padding-left: 16px;'><br><em>[<br>{ ideasLabel: string; ideasIdsRange: number; analysisTypes:<br>[<br>{ label: string; contextPrompt: string; } <br>] <br>} <br>]</em></div>",
+  "aiAnalysisConfigInfo": "AI ta atomatik tana amfani da umarnin LLM don ba da bincike kan amsoshin sama da ƙasa N. Ta tsohuwa, an saita tsarin don bincika fa'idodi da rashin amfanin amsoshin sama 3 da ƙasa 3. Za ka iya kashe binciken a sama. Ga tsarin bayanan: <div style='padding-left: 16px;'><br><em>[<br>{ ideasLabel: string; ideasIdsRange: number; analysisTypes:<br>[<br>{ label: string; contextPrompt: string; } <br>] <br>} <br>]</em></div>",
   "newIdeasNotAllowedForVotingThankYou": "Na gode da amsarka.",
   "newIdeasNotAllowedForVotingInfo": "(*) Wannan binciken ba ya nuna ra'ayoyin da masu amfani suka gabatar ba.",
   "aoiModerationPrompt": "Umarnin Tsarin AI (zuwa samfurin LLM)",
@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Mafi karancin kuri'u goma don nuna a sakamakon",
   "externalGoalParamsWhitelist": "Jerin fararen hula na burin waje",
   "targetVotes": "Kuri'un manufa",
-  "vote": "Kada"
+  "vote": "Kada",
+  "pointsForAndAgainst": "Dali da kuma kishiyoyi",
+  "allowAnonymousUsersToVote": "Bada damar zabe ba tare da asusun shiga ba",
+  "loginToAddComment": "Shiga don ƙara sharhi",
+  "addComment": "Ƙara sharhi",
+  "loginToAddCommentOrLink": "Shiga don ƙara sharhi ko haɗi",
+  "addCommentOrLink": "Ƙara sharhi ko haɗi",
+  "apply": "Aiwatar",
+  "addMedia": "Ƙara kafofin watsa labarai",
+  "htmlContent": "Abun ciki na HTML",
+  "previewHtml": "Duba HTML",
+  "simpleHtmlEditor": "Editan HTML mai sauƙi",
+  "editHtmlDirectly": "Shirya HTML kai tsaye"
 }

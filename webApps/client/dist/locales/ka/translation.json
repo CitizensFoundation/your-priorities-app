@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "მინიმუმ ათი ხმა შედეგებში ჩვენებასთან",
   "externalGoalParamsWhitelist": "გარე მიზნის პარამეტრების თეთრი სია",
   "targetVotes": "მიზნის ხმები",
-  "vote": "ხმა"
+  "vote": "ხმა",
+  "pointsForAndAgainst": "მხრივ ქულები",
+  "allowAnonymousUsersToVote": "მომხმარებელს ხმის მიცემა ანგარიშის გარეშე",
+  "loginToAddComment": "შესვლა კომენტარის დასამატებლად",
+  "addComment": "დაამატე კომენტარი",
+  "loginToAddCommentOrLink": "შესვლა კომენტარის ან ბმულის დასამატებლად",
+  "addCommentOrLink": "დაამატე კომენტარი ან ბმული",
+  "apply": "გამოიყენე",
+  "addMedia": "დაამატე მედია",
+  "htmlContent": "HTML შინაარსი",
+  "previewHtml": "HTML წინასწარი ხილვა",
+  "simpleHtmlEditor": "მარტივი HTML რედაქტორი",
+  "editHtmlDirectly": "შეცვალე HTML პირდაპირ"
 }

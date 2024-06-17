@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Minimum napulo ka boto aron ipakita sa mga resulta",
   "externalGoalParamsWhitelist": "Gawas nga lista sa puti sa mga parametro sa tumong",
   "targetVotes": "Target nga mga boto",
-  "vote": "Boto"
+  "vote": "Boto",
+  "pointsForAndAgainst": "Mga punto alang ug batok",
+  "allowAnonymousUsersToVote": "Tugotan ang gumagamit nga moboto nga walay account sa pag-login",
+  "loginToAddComment": "Mag-login aron makadugang komento",
+  "addComment": "Idugang ang komento",
+  "loginToAddCommentOrLink": "Mag-login aron makadugang komento o link",
+  "addCommentOrLink": "Idugang ang komento o link",
+  "apply": "I-apply",
+  "addMedia": "Idugang ang media",
+  "htmlContent": "HTML nga Sulud",
+  "previewHtml": "I-preview ang HTML",
+  "simpleHtmlEditor": "Yano nga editor sa HTML",
+  "editHtmlDirectly": "I-edit ang HTML direkta"
 }

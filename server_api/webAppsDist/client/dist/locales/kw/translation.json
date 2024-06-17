@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Deg votyans lesta rag diskwedhes yn ughelderow",
   "externalGoalParamsWhitelist": "Rhestr gwyn parametrow palas diavaes",
   "targetVotes": "Votyans targys",
-  "vote": "Votya"
+  "vote": "Votya",
+  "pointsForAndAgainst": "Poyntys rag ha ken",
+  "allowAnonymousUsersToVote": "Gul votya heb akkownt logya",
+  "loginToAddComment": "Logya rag keworra koment",
+  "addComment": "Keworra koment",
+  "loginToAddCommentOrLink": "Logya rag keworra koment po kevren",
+  "addCommentOrLink": "Keworra koment po kevren",
+  "apply": "Gwra",
+  "addMedia": "Keworra media",
+  "htmlContent": "Kynnwys HTML",
+  "previewHtml": "Ragweles HTML",
+  "simpleHtmlEditor": "Golygyer HTML seml",
+  "editHtmlDirectly": "Golygya HTML yn unnik"
 }

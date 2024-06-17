@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Дегга юкъара децале хьахь хилар ю",
   "externalGoalParamsWhitelist": "Арахьара максадан параметраш",
   "targetVotes": "Хьажоргаш ду",
-  "vote": "Хьаьжна"
+  "vote": "Хьаьжна",
+  "pointsForAndAgainst": "Хьаьжна а, цӀерийна а очкан",
+  "allowAnonymousUsersToVote": "Декъашхо тӀетаӀе хьау лаьцна гӀотту",
+  "loginToAddComment": "ГӀотту тӀетаӀе билгало",
+  "addComment": "Билгало тӀетаӀе",
+  "loginToAddCommentOrLink": "ГӀотту тӀетаӀе билгало я линк",
+  "addCommentOrLink": "Билгало я линк тӀетаӀе",
+  "apply": "Къайла",
+  "addMedia": "Медиа тӀетаӀе",
+  "htmlContent": "HTML мазмуна",
+  "previewHtml": "HTML хьалхара",
+  "simpleHtmlEditor": "HTML сихаьрдиг",
+  "editHtmlDirectly": "HTML дӀаяздай"
 }

@@ -1017,7 +1017,7 @@
     "inProgress": "Ap telechaje..."
   },
   "notice": {
-    "ok": "Ok",
+    "ok": "Dakò",
     "deleteConfirmation": "Èske ou vle efase gwoup sa a?"
   },
   "maps": {
@@ -1395,5 +1395,17 @@
   "minimumTenVotesToShowResults": "Minimòm dis vòt pou montre nan rezilta yo",
   "externalGoalParamsWhitelist": "Lis blan paramèt objektif ekstèn",
   "targetVotes": "Vòt sib",
-  "vote": "Vote"
+  "vote": "Vote",
+  "pointsForAndAgainst": "Pwen pou ak kont",
+  "allowAnonymousUsersToVote": "Pèmèt itilizatè vote san kont",
+  "loginToAddComment": "Konekte pou ajoute kòmantè",
+  "addComment": "Ajoute kòmantè",
+  "loginToAddCommentOrLink": "Konekte pou ajoute kòmantè oswa lyen",
+  "addCommentOrLink": "Ajoute kòmantè oswa lyen",
+  "apply": "Aplike",
+  "addMedia": "Ajoute medya",
+  "htmlContent": "Kontni HTML",
+  "previewHtml": "Previzyalize HTML",
+  "simpleHtmlEditor": "Editè HTML senp",
+  "editHtmlDirectly": "Edite HTML dirèkteman"
 }

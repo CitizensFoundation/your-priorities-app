@@ -1387,5 +1387,17 @@
   "minimumTenVotesToShowResults": "Vähemalt kümme häält tulemuste kuvamiseks",
   "externalGoalParamsWhitelist": "Väliste eesmärkide parameetrite lubatud nimekiri",
   "targetVotes": "Sihtmärgi hääled",
-  "vote": "Hääleta"
+  "vote": "Hääleta",
+  "pointsForAndAgainst": "Poolt- ja vastupunktid",
+  "allowAnonymousUsersToVote": "Luba hääletada ilma kontota",
+  "loginToAddComment": "Logi sisse kommentaari lisamiseks",
+  "addComment": "Lisa kommentaar",
+  "loginToAddCommentOrLink": "Logi sisse, et lisada kommentaar või link",
+  "addCommentOrLink": "Lisa kommentaar või link",
+  "apply": "Rakenda",
+  "addMedia": "Lisa meedia",
+  "htmlContent": "HTML sisu",
+  "previewHtml": "Eelvaade HTML",
+  "simpleHtmlEditor": "Lihtne HTML redaktor",
+  "editHtmlDirectly": "Muuda HTML otse"
 }

@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Kura kumi ni minimumu ya kuonyesha mukwa",
   "externalGoalParamsWhitelist": "Rutonde rwa parameta za shabaha za nje",
   "targetVotes": "Kura shabaha",
-  "vote": "Kũrĩra"
+  "vote": "Kũrĩra",
+  "pointsForAndAgainst": "Makemano ma na kĩrĩra",
+  "allowAnonymousUsersToVote": "Wekaniria mũndũ kũhota bila akaũnti",
+  "loginToAddComment": "Kĩrĩra kũongerera ũgũrũ",
+  "addComment": "Ũongerere ũgũrũ",
+  "loginToAddCommentOrLink": "Kĩrĩra kũongerera ũgũrũ kana njira",
+  "addCommentOrLink": "Ũongerere ũgũrũ kana njira",
+  "apply": "Kũhitha",
+  "addMedia": "Ũongerere mĩthĩa",
+  "htmlContent": "Mũkara wa HTML",
+  "previewHtml": "Kũhũrũra HTML",
+  "simpleHtmlEditor": "Mũhariri wa HTML nyorosho",
+  "editHtmlDirectly": "Kũhariri HTML motheo"
 }

@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "מינימום צען וואָוטס צו ווײַזן אין רעזולטאַטן",
   "externalGoalParamsWhitelist": "עקסטערנע ציל פּאַראַמעטערס ווײַסליסט",
   "targetVotes": "ציל וואָוטס",
-  "vote": "וואָוט"
+  "vote": "וואָוט",
+  "pointsForAndAgainst": "פונקטן פֿאַר און קעגן",
+  "allowAnonymousUsersToVote": "לאָזן באַניצער צו שטימען אָן אַ לאָגין חשבון",
+  "loginToAddComment": "לאָגין צו לייגן קאָמענטאַר",
+  "addComment": "לייג קאָמענטאַר",
+  "loginToAddCommentOrLink": "לאָגין צו לייגן קאָמענטאַר אָדער לינק",
+  "addCommentOrLink": "לייג קאָמענטאַר אָדער לינק",
+  "apply": "אַפּלייַען",
+  "addMedia": "לייג מעדיע",
+  "htmlContent": "HTML אינהאַלט",
+  "previewHtml": "פֿאָרויסשטעלן HTML",
+  "simpleHtmlEditor": "פּשוט HTML רעדאַקטאָר",
+  "editHtmlDirectly": "רעדאַקטירן HTML דירעקט"
 }

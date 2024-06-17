@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Voti zomi ya minimum mpo na komonana na résultats",
   "externalGoalParamsWhitelist": "Liste ya paramètres ya but ya libanda",
   "targetVotes": "Voti ya cible",
-  "vote": "Pona"
+  "vote": "Pona",
+  "pointsForAndAgainst": "Makambo ya pɔsɔ na mosusu",
+  "allowAnonymousUsersToVote": "Tiká moto apesa vote na ye na kozanga compte",
+  "loginToAddComment": "Bɔkɔlɔ na yango mpo na kobakisa maloba",
+  "addComment": "Bakisa maloba",
+  "loginToAddCommentOrLink": "Bɔkɔlɔ na yango mpo na kobakisa maloba to likanisi",
+  "addCommentOrLink": "Bakisa maloba to likanisi",
+  "apply": "Salá",
+  "addMedia": "Bakisa média",
+  "htmlContent": "Mokili ya HTML",
+  "previewHtml": "Talá HTML liboso",
+  "simpleHtmlEditor": "Editeur HTML ya pɛtɛɛ",
+  "editHtmlDirectly": "Kokoma HTML na mabɔkɔ"
 }

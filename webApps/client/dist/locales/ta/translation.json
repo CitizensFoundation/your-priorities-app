@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "முடிவுகளில் காட்ட குறைந்தபட்சம் பத்து வாக்குகள்",
   "externalGoalParamsWhitelist": "வெளிப்புற இலக்கு அளவுருக்கள் பட்டியல்",
   "targetVotes": "இலக்கு வாக்குகள்",
-  "vote": "வாக்களி"
+  "vote": "வாக்களி",
+  "pointsForAndAgainst": "ஆதாரங்களும் எதிர்ப்புகளும்",
+  "allowAnonymousUsersToVote": "உள்நுழைவு இல்லாமல் வாக்களிக்க அனுமதி",
+  "loginToAddComment": "கருத்து சேர்க்க உள்நுழைக",
+  "addComment": "கருத்து சேர்",
+  "loginToAddCommentOrLink": "கருத்து அல்லது இணைப்பு சேர்க்க உள்நுழைக",
+  "addCommentOrLink": "கருத்து அல்லது இணைப்பு சேர்",
+  "apply": "பயன்படுத்து",
+  "addMedia": "ஊடகம் சேர்",
+  "htmlContent": "HTML உள்ளடக்கம்",
+  "previewHtml": "HTML முன்னோட்டம்",
+  "simpleHtmlEditor": "எளிய HTML திருத்தி",
+  "editHtmlDirectly": "HTML நேரடியாக திருத்து"
 }

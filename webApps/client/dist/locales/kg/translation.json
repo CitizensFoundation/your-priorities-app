@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Voti zomi ya liboso mpo na komonana na bisalu",
   "externalGoalParamsWhitelist": "Lisolo ya mikano ya libanda",
   "targetVotes": "Voti ya cible",
-  "vote": "Vota"
+  "vote": "Vota",
+  "pointsForAndAgainst": "Makanda ya pona na mabe",
+  "allowAnonymousUsersToVote": "Tika muntu kotanga na kotala konti te",
+  "loginToAddComment": "Kotanga mpo na kokoma ndimbola",
+  "addComment": "Kokoma ndimbola",
+  "loginToAddCommentOrLink": "Kotanga mpo na kokoma ndimbola to kati",
+  "addCommentOrLink": "Kokoma ndimbola to kati",
+  "apply": "Sala",
+  "addMedia": "Kokoma media",
+  "htmlContent": "Mukanda ya HTML",
+  "previewHtml": "Tala mukanda ya HTML",
+  "simpleHtmlEditor": "Mokanda ya HTML ya pɛtɛɛ",
+  "editHtmlDirectly": "Kokoma HTML mbala moko"
 }

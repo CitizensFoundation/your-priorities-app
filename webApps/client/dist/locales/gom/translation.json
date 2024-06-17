@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "निकालात दाखवण्यासाठी किमान दहा मते",
   "externalGoalParamsWhitelist": "बाह्य ध्येय पॅरामीटर्स व्हाइटलिस्ट",
   "targetVotes": "लक्ष्य मते",
-  "vote": "मत"
+  "vote": "मत",
+  "pointsForAndAgainst": "Muddem ani viruddhank points",
+  "allowAnonymousUsersToVote": "Login account vinaar matdaan korchya vavr",
+  "loginToAddComment": "Comment add korcheak login kor",
+  "addComment": "Comment add kor",
+  "loginToAddCommentOrLink": "Comment kiva link add korcheak login kor",
+  "addCommentOrLink": "Comment kiva link add kor",
+  "apply": "Lagoo kor",
+  "addMedia": "Media add kor",
+  "htmlContent": "HTML Vixoy",
+  "previewHtml": "HTML Jhalak",
+  "simpleHtmlEditor": "Soppi HTML sampadak",
+  "editHtmlDirectly": "HTML thaim siddha sampad"
 }

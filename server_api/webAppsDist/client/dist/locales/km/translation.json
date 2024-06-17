@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "ចំនួនឆ្នោតអប្បបរមាដើម្បីបង្ហាញក្នុងលទ្ធផល",
   "externalGoalParamsWhitelist": "បញ្ជីសមាសភាពគោលដៅខាងក្រៅ",
   "targetVotes": "ចំនួនឆ្នោតគោលដៅ",
-  "vote": "បោះឆ្នោត"
+  "vote": "បោះឆ្នោត",
+  "pointsForAndAgainst": "ពិន្ទុគុណនិងខាងអវិជ្ជមាន",
+  "allowAnonymousUsersToVote": "អនុញ្ញាតឱ្យអ្នកប្រើប្រាស់បោះឆ្នោតដោយគ្មានគណនី",
+  "loginToAddComment": "ចូលដើម្បីបន្ថែមមតិ",
+  "addComment": "បន្ថែមមតិ",
+  "loginToAddCommentOrLink": "ចូលដើម្បីបន្ថែមមតិឬតំណ",
+  "addCommentOrLink": "បន្ថែមមតិឬតំណ",
+  "apply": "អនុវត្ត",
+  "addMedia": "បន្ថែមមេឌា",
+  "htmlContent": "មាតិការ HTML",
+  "previewHtml": "មើលមុន HTML",
+  "simpleHtmlEditor": "កម្មវិធីកែសម្រួល HTML សាមញ្ញ",
+  "editHtmlDirectly": "កែ HTML ដោយផ្ទាល់"
 }

@@ -1388,5 +1388,17 @@
   "minimumTenVotesToShowResults": "Мінімум десять голосів для відображення в результатах",
   "externalGoalParamsWhitelist": "Білий список параметрів зовнішньої мети",
   "targetVotes": "Цільові голоси",
-  "vote": "Голосувати"
+  "vote": "Голосувати",
+  "pointsForAndAgainst": "За і проти",
+  "allowAnonymousUsersToVote": "Дозволити голосування без реєстрації",
+  "loginToAddComment": "Увійдіть, щоб додати коментар",
+  "addComment": "Додати коментар",
+  "loginToAddCommentOrLink": "Увійдіть, щоб додати коментар чи посилання",
+  "addCommentOrLink": "Додати коментар чи посилання",
+  "apply": "Застосувати",
+  "addMedia": "Додати медіа",
+  "htmlContent": "HTML вміст",
+  "previewHtml": "Перегляд HTML",
+  "simpleHtmlEditor": "Простий HTML редактор",
+  "editHtmlDirectly": "Редагувати HTML напряму"
 }

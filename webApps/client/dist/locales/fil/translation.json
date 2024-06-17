@@ -1015,7 +1015,7 @@
     "addAdmin": "Magdagdag ng admin",
     "removeUser": "Alisin ang user",
     "inviteUser": "Imbitahan ang user",
-    "email": "email",
+    "email": "Email",
     "removeFromOrganization": "Alisin ang organisasyon",
     "addToOrganization": "Magdagdag ng organisasyon",
     "selectOrganization": "Piliin ang organisasyon"
@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Minimum na sampung boto para ipakita sa mga resulta",
   "externalGoalParamsWhitelist": "Whitelist ng mga panlabas na parameter ng layunin",
   "targetVotes": "Target na boto",
-  "vote": "Boto"
+  "vote": "Boto",
+  "pointsForAndAgainst": "Mga puntos para at laban",
+  "allowAnonymousUsersToVote": "Pahintulutan ang user na bumoto nang walang account",
+  "loginToAddComment": "Mag-login para magdagdag ng komento",
+  "addComment": "Magdagdag ng komento",
+  "loginToAddCommentOrLink": "Mag-login para magdagdag ng komento o link",
+  "addCommentOrLink": "Magdagdag ng komento o link",
+  "apply": "Ilapat",
+  "addMedia": "Magdagdag ng media",
+  "htmlContent": "Nilalaman ng HTML",
+  "previewHtml": "I-preview ang HTML",
+  "simpleHtmlEditor": "Simpleng editor ng HTML",
+  "editHtmlDirectly": "I-edit nang direkta ang HTML"
 }

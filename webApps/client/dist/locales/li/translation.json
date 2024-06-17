@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Minimaal tien stemme veur weergave in resultate",
   "externalGoalParamsWhitelist": "Externe doel parameters witlieste",
   "targetVotes": "Doelstemme",
-  "vote": "Stömme"
+  "vote": "Stömme",
+  "pointsForAndAgainst": "Punte veur en teage",
+  "allowAnonymousUsersToVote": "Laot gebroeker stemme zónger aanmelding",
+  "loginToAddComment": "Meld aan óm opmerking toe te voege",
+  "addComment": "Voeg opmerking toe",
+  "loginToAddCommentOrLink": "Meld aan óm opmerking of link toe te voege",
+  "addCommentOrLink": "Voeg opmerking of link toe",
+  "apply": "Pas toe",
+  "addMedia": "Voeg media toe",
+  "htmlContent": "HTML-inhawd",
+  "previewHtml": "Bekiek HTML",
+  "simpleHtmlEditor": "Eenvoudige HTML-editor",
+  "editHtmlDirectly": "Bewirk HTML direk"
 }

@@ -1219,7 +1219,7 @@
   "Neutral": "Neutre",
   "Monochrome": "Monochrome",
   "Fidelity": "Fidelity",
-  "Tonal Spot": "Tonal Spot",
+  "Tonal Spot": "Nkómbó Tóni",
   "Rainbow": "Mulumu",
   "Fruit Salad": "Saladi ya Mbuma",
   "filter": "Sefya",
@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Voti zomi ya libosó mpo na komonana na bisála",
   "externalGoalParamsWhitelist": "Lisíto ya mikano ya libándá",
   "targetVotes": "Voti ya cible",
-  "vote": "Vota"
+  "vote": "Vota",
+  "pointsForAndAgainst": "Makumbu ma mpe ma mabe",
+  "allowAnonymousUsersToVote": "Tika muji kuvota tshisumbu tshidi",
+  "loginToAddComment": "Kabula kuingia kulongosha mulongolodi",
+  "addComment": "Longosha mulongolodi",
+  "loginToAddCommentOrLink": "Kabula kuingia kulongosha mulongolodi to dikima",
+  "addCommentOrLink": "Longosha mulongolodi to dikima",
+  "apply": "Kabula",
+  "addMedia": "Longosha midia",
+  "htmlContent": "Mukanda wa HTML",
+  "previewHtml": "Tala mukanda wa HTML",
+  "simpleHtmlEditor": "Muhinduzi wa HTML mukuse",
+  "editHtmlDirectly": "Hindula HTML ne bua kudibu"
 }

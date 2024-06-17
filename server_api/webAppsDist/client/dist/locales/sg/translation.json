@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Kêtê 10 na ti mbi na ti mbi na ti mbi.",
   "externalGoalParamsWhitelist": "Lôndö ti na parametres na ti mbi na ti mbi.",
   "targetVotes": "Ti mbi na ti mbi",
-  "vote": "Vote"
+  "vote": "Bato",
+  "pointsForAndAgainst": "Mingbi na kôzö",
+  "allowAnonymousUsersToVote": "Kwe na ti mo gbû na tî login",
+  "loginToAddComment": "Login na ti gbû",
+  "addComment": "Ti gbû",
+  "loginToAddCommentOrLink": "Login na ti gbû na tî sô",
+  "addCommentOrLink": "Ti gbû na tî sô",
+  "apply": "Kôdörö",
+  "addMedia": "Ti média",
+  "htmlContent": "Kôntêni HTML",
+  "previewHtml": "Kôdörö HTML",
+  "simpleHtmlEditor": "Éditörö HTML sêngê",
+  "editHtmlDirectly": "Éditörö HTML tîrê"
 }

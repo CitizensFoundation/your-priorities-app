@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Kavote 'e hongofulu pe lahi ange ke fakahaa'i 'i he ola",
   "externalGoalParamsWhitelist": "Lisi fakangofua 'o e ngaahi tefito'i 'ulungaanga 'o e ngaue 'i tu'a",
   "targetVotes": "Ngaahi kavote 'oku fakataumu'a",
-  "vote": "Vouti"
+  "vote": "Vouti",
+  "pointsForAndAgainst": "Mapoinzi ya uyo na uyo",
+  "allowAnonymousUsersToVote": "Lola mushandisi kuvhota asina account yekupinda",
+  "loginToAddComment": "Pinda kuti uwedzere taura",
+  "addComment": "Wedzera taura",
+  "loginToAddCommentOrLink": "Pinda kuti uwedzere taura kana link",
+  "addCommentOrLink": "Wedzera taura kana link",
+  "apply": "Shandisa",
+  "addMedia": "Wedzera midhiya",
+  "htmlContent": "Zvemukati zveHTML",
+  "previewHtml": "Ona HTML isati yabuda",
+  "simpleHtmlEditor": "Mupepeti weHTML wakareruka",
+  "editHtmlDirectly": "Gadzirisa HTML zvakananga"
 }

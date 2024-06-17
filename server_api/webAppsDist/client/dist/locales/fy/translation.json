@@ -1108,7 +1108,7 @@
   "Pages": "Siden",
   "Groups": "Groepen",
   "Communities": "Mienskippen",
-  "Badges": "Badges",
+  "Badges": "Batches",
   "Profile Images": "Profylbylden",
   "Back to domain": "Werom nei domein",
   "Back to community": "Werom nei mienskip",
@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Minimum tsien stimmen om yn resultaten te toanen",
   "externalGoalParamsWhitelist": "Eksterne doel parameters wytlist",
   "targetVotes": "Doelstimmen",
-  "vote": "Stim"
+  "vote": "Stim",
+  "pointsForAndAgainst": "Punten foar en tsjin",
+  "allowAnonymousUsersToVote": "Stean brûker ta om te stimmen sûnder inlogge",
+  "loginToAddComment": "Ynlogge om kommentaar ta te foegjen",
+  "addComment": "Foegje kommentaar ta",
+  "loginToAddCommentOrLink": "Ynlogge om kommentaar of keppeling ta te foegjen",
+  "addCommentOrLink": "Foegje kommentaar of keppeling ta",
+  "apply": "Tapasse",
+  "addMedia": "Foegje media ta",
+  "htmlContent": "HTML Ynhâld",
+  "previewHtml": "Foarbyld HTML",
+  "simpleHtmlEditor": "Ienfâldige HTML bewurker",
+  "editHtmlDirectly": "Bewurkje HTML direkt"
 }

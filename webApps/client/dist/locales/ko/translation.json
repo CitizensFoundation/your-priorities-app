@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "결과에 표시하려면 최소 열 표 필요",
   "externalGoalParamsWhitelist": "외부 목표 파라미터 화이트리스트",
   "targetVotes": "목표 투표수",
-  "vote": "투표"
+  "vote": "투표",
+  "pointsForAndAgainst": "찬반 포인트",
+  "allowAnonymousUsersToVote": "로그인 없이 투표 허용",
+  "loginToAddComment": "댓글 추가를 위해 로그인",
+  "addComment": "댓글 추가",
+  "loginToAddCommentOrLink": "댓글 또는 링크 추가를 위해 로그인",
+  "addCommentOrLink": "댓글 또는 링크 추가",
+  "apply": "적용",
+  "addMedia": "미디어 추가",
+  "htmlContent": "HTML 내용",
+  "previewHtml": "HTML 미리보기",
+  "simpleHtmlEditor": "간단한 HTML 편집기",
+  "editHtmlDirectly": "HTML 직접 편집"
 }

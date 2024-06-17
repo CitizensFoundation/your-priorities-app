@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Ombanda oongombe ombanda ota popi.",
   "externalGoalParamsWhitelist": "Ombanda oongombe ombanda ota popi.",
   "targetVotes": "Ombanda oongombe ombanda ota popi.",
-  "vote": "Vhota"
+  "vote": "Vhota",
+  "pointsForAndAgainst": "Omapopithiro yomahongero nombinga",
+  "allowAnonymousUsersToVote": "Tjitireze omushasho kutja kovota ngatjiri ombazu zomupinganiso",
+  "loginToAddComment": "Pinda kutja oze komendekero",
+  "addComment": "Oze komendekero",
+  "loginToAddCommentOrLink": "Pinda kutja oze komendekero kana ombazu",
+  "addCommentOrLink": "Oze komendekero kana ombazu",
+  "apply": "Shigongora",
+  "addMedia": "Oze omediya",
+  "htmlContent": "Ombazu yaHTML",
+  "previewHtml": "Ozongerezera yaHTML",
+  "simpleHtmlEditor": "Omupehongero waHTML omukuru",
+  "editHtmlDirectly": "Hindura HTML ngokutazimuna"
 }

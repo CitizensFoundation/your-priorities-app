@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Ақаллан даҳ раъй барои намоиш дар натиҷаҳо",
   "externalGoalParamsWhitelist": "Рӯйхати сафеди параметрҳои ҳадафи беруна",
   "targetVotes": "Раъйҳои ҳадаф",
-  "vote": "Раъй"
+  "vote": "Раъй",
+  "pointsForAndAgainst": "Нуқтаҳо барои ва зидд",
+  "allowAnonymousUsersToVote": "Иҷозат ба корбар бидуни ҳисоби воридшавӣ раъй диҳад",
+  "loginToAddComment": "Ворид шавед барои изофаи шарҳ",
+  "addComment": "Иловаи шарҳ",
+  "loginToAddCommentOrLink": "Ворид шавед барои изофаи шарҳ ё пайванд",
+  "addCommentOrLink": "Иловаи шарҳ ё пайванд",
+  "apply": "Татбиқ кунед",
+  "addMedia": "Иловаи расона",
+  "htmlContent": "Мундариҷаи HTML",
+  "previewHtml": "Пешнамоиши HTML",
+  "simpleHtmlEditor": "Таҳриргари оддии HTML",
+  "editHtmlDirectly": "Таҳрири мустақими HTML"
 }

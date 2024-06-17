@@ -444,7 +444,7 @@
   "content": "Ibikorwa",
   "multiSortEnabled": "Tangura kugira uburyo bwinshi bwo gutora",
   "creator": "Umuremyi",
-  "severeToxicityScore": "S.Toxicity",
+  "severeToxicityScore": "Uburozi",
   "toxicityScore": "Uburozi",
   "source": "Isôko",
   "domainContentModeration": "Kugenzura urubuga",
@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Amajwi icumi ntarengwa kugira agaragare mu bisubizo",
   "externalGoalParamsWhitelist": "Urutonde rw'ibikorwa vy'inyuma vyemewe",
   "targetVotes": "Amajwi y'ihangiro",
-  "vote": "Gutora"
+  "vote": "Gutora",
+  "pointsForAndAgainst": "Amanota y'inyungu n'igihombo",
+  "allowAnonymousUsersToVote": "Emeza umukoresha gutora atarinjiye",
+  "loginToAddComment": "Injira kugira ushireho iciyumviro",
+  "addComment": "Shiraho iciyumviro",
+  "loginToAddCommentOrLink": "Injira kugira ushireho iciyumviro canke urunani",
+  "addCommentOrLink": "Shiraho iciyumviro canke urunani",
+  "apply": "Shira mu ngiro",
+  "addMedia": "Shiraho itangazamakuru",
+  "htmlContent": "Ibirimwo HTML",
+  "previewHtml": "Raba HTML",
+  "simpleHtmlEditor": "Umuhinyanyuzi wa HTML woroshe",
+  "editHtmlDirectly": "Hindura HTML uko yakabaye"
 }

@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Minim deg votas ad jonön in jüls",
   "externalGoalParamsWhitelist": "Lised vödas züla pro mäxets plödik",
   "targetVotes": "Vots zülik",
-  "vote": "Votön"
+  "vote": "Votön",
+  "pointsForAndAgainst": "Pünods pro e kontra",
+  "allowAnonymousUsersToVote": "Dälön gebani votön nen kaliädakal",
+  "loginToAddComment": "Kaliädön ad läükön komenti",
+  "addComment": "Läükön komenti",
+  "loginToAddCommentOrLink": "Kaliädön ad läükön komenti u yüm",
+  "addCommentOrLink": "Läükön komenti u yüm",
+  "apply": "Dunön",
+  "addMedia": "Läükön mediat",
+  "htmlContent": "Koned HTML",
+  "previewHtml": "Büologedön HTML",
+  "simpleHtmlEditor": "Redakön HTML semik",
+  "editHtmlDirectly": "Redakön HTML direkiko"
 }

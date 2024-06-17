@@ -1140,7 +1140,7 @@
   "Theme, language, etc": "Tema, lengguahi, yan otro",
   "Manage badges": "Atministra insignias",
   "Manage profile images": "Atministra retratu perfil",
-  "Config": "Config",
+  "Config": "Kontet",
   "New Community": "Komunidåt Nuebu",
   "Name": "Nå'an",
   "Description": "Deskripsion",
@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Minålo diez na votos para ta'håna i resulta",
   "externalGoalParamsWhitelist": "Lista blanca para parámetros di metas externas",
   "targetVotes": "Metas na votos",
-  "vote": "Boto"
+  "vote": "Boto",
+  "pointsForAndAgainst": "Puntos para i kontra",
+  "allowAnonymousUsersToVote": "Permite umaloten sin konta login",
+  "loginToAddComment": "Login para umåtte komentårio",
+  "addComment": "Åtte komentårio",
+  "loginToAddCommentOrLink": "Login para umåtte komentårio yan link",
+  "addCommentOrLink": "Åtte komentårio yan link",
+  "apply": "Applika",
+  "addMedia": "Åtte media",
+  "htmlContent": "Kontenido HTML",
+  "previewHtml": "Prebista HTML",
+  "simpleHtmlEditor": "Editot HTML simple",
+  "editHtmlDirectly": "Edita HTML direkta"
 }

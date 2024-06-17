@@ -500,7 +500,7 @@
   "postCoverVideoInfo": "Incarga video in formato HD paisagistic. Longitudine maxime del video es ",
   "postCoverAudio": "Audio",
   "postCoverAudioInfo": "Parla con voce clara. Longitudine maxime del audio es ",
-  "media": "Media",
+  "media": "Medios",
   "removalAndDeletionInProgress": "Remotion e deletion es in progresso. Proba recargar le pagina un poco plus tarde.",
   "removalsAndDeletionsInProgress": "Remotiones e deletiones es in progresso ma pote durar un tempore dependente del numero de usatores affectate. Proba recargar le pagina un poco plus tarde.",
   "removalsInProgress": "Remotiones es in progresso ma pote durar un tempore pro completar, dependente del numero de usatores affectate. Proba recargar le pagina un poco plus tarde.",
@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Minimo dece votos pro monstrar in resultatos",
   "externalGoalParamsWhitelist": "Lista blanca de parametros de objectivo extern",
   "targetVotes": "Votos objectivo",
-  "vote": "Vota"
+  "vote": "Vota",
+  "pointsForAndAgainst": "Punctos pro e contra",
+  "allowAnonymousUsersToVote": "Permitter votar sin conto",
+  "loginToAddComment": "Aperir session pro adder commento",
+  "addComment": "Adder commento",
+  "loginToAddCommentOrLink": "Aperir session pro adder commento o ligamine",
+  "addCommentOrLink": "Adder commento o ligamine",
+  "apply": "Applicar",
+  "addMedia": "Adder medio",
+  "htmlContent": "Contento HTML",
+  "previewHtml": "Previsualisar HTML",
+  "simpleHtmlEditor": "Editor HTML simple",
+  "editHtmlDirectly": "Editar HTML directemente"
 }

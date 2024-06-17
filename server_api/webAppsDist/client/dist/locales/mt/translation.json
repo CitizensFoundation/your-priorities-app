@@ -409,7 +409,7 @@
   "clearSearchInput": "Ħassar l-input tat-tfittxija",
   "goBack": "Mur lura",
   "openMainMenu": "Iftaħ il-menu prinċipali",
-  "publishStatus": "Status",
+  "publishStatus": "Stat",
   "groupName": "Grupp",
   "areYouSureAnonymizeSelectedContent": "Int żgur li trid tanonimizza l-kontenut magħżul?",
   "areYouSureAnonymizeContent": "Int żgur li trid tanonimizza dan il-kontenut?",
@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Minimu għaxar voti biex jidhru fir-riżultati",
   "externalGoalParamsWhitelist": "Whitelist tal-parametri tal-għan estern",
   "targetVotes": "Voti fil-mira",
-  "vote": "Vota"
+  "vote": "Vota",
+  "pointsForAndAgainst": "Punti favur u kontra",
+  "allowAnonymousUsersToVote": "Ħalli lill-utent jivvota mingħajr kont",
+  "loginToAddComment": "Idħol biex iżżid kumment",
+  "addComment": "Żid kumment",
+  "loginToAddCommentOrLink": "Idħol biex iżżid kumment jew link",
+  "addCommentOrLink": "Żid kumment jew link",
+  "apply": "Applika",
+  "addMedia": "Żid midja",
+  "htmlContent": "Kontenut HTML",
+  "previewHtml": "Previżjoni HTML",
+  "simpleHtmlEditor": "Editur HTML sempliċi",
+  "editHtmlDirectly": "Editja HTML direttament"
 }

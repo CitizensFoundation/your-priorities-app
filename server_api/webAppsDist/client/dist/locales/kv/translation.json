@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Минимум десять голосов для отображения в результатах",
   "externalGoalParamsWhitelist": "Белый список внешних параметров цели",
   "targetVotes": "Целевые голоса",
-  "vote": "Голосовать"
+  "vote": "Голосовать",
+  "pointsForAndAgainst": "Мындасын да каршынын очкыс",
+  "allowAnonymousUsersToVote": "Сайтӧм вӧлӧмыськӧмын тӧрлата кылӧн вотчыны",
+  "loginToAddComment": "Комментарий додзыны вӧлӧмыськӧмын",
+  "addComment": "Комментарий додзыны",
+  "loginToAddCommentOrLink": "Комментарий яик сылтӧм додзыны вӧлӧмыськӧмын",
+  "addCommentOrLink": "Комментарий яик сылтӧм додзыны",
+  "apply": "Кылӧны",
+  "addMedia": "Медиа додзыны",
+  "htmlContent": "HTML содтӧм",
+  "previewHtml": "HTML предпросмотр",
+  "simpleHtmlEditor": "Простой HTML редактор",
+  "editHtmlDirectly": "HTML тикше кылӧны"
 }

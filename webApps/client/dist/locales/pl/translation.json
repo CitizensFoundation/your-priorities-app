@@ -728,7 +728,7 @@
   "aoiAiAnalysisConfig": "Konfiguracja AI",
   "questionName": "Pytanie",
   "allOurIdeasOptions": "Opcje",
-  "stop": "Stop",
+  "stop": "Zatrzymaj",
   "answersToVoteOn": "Odpowiedzi do głosowania",
   "submitAnswersForCreation": "Zatwierdź odpowiedzi",
   "generateMoreIdeasWithAi": "Generuj więcej pomysłów z AI",
@@ -1388,5 +1388,17 @@
   "minimumTenVotesToShowResults": "Minimum dziesięć głosów do wyświetlenia w wynikach",
   "externalGoalParamsWhitelist": "Biała lista parametrów zewnętrznych celów",
   "targetVotes": "Docelowa liczba głosów",
-  "vote": "Głosuj"
+  "vote": "Głosuj",
+  "pointsForAndAgainst": "Za i przeciw",
+  "allowAnonymousUsersToVote": "Zezwól na głosowanie bez logowania",
+  "loginToAddComment": "Zaloguj się, aby dodać komentarz",
+  "addComment": "Dodaj komentarz",
+  "loginToAddCommentOrLink": "Zaloguj się, aby dodać komentarz lub link",
+  "addCommentOrLink": "Dodaj komentarz lub link",
+  "apply": "Zastosuj",
+  "addMedia": "Dodaj media",
+  "htmlContent": "Zawartość HTML",
+  "previewHtml": "Podgląd HTML",
+  "simpleHtmlEditor": "Prosty edytor HTML",
+  "editHtmlDirectly": "Edytuj HTML bezpośrednio"
 }

@@ -1388,5 +1388,17 @@
   "minimumTenVotesToShowResults": "Минимум десять голосов для отображения в результатах",
   "externalGoalParamsWhitelist": "Белый список параметров внешней цели",
   "targetVotes": "Целевые голоса",
-  "vote": "Голосовать"
+  "vote": "Голосовать",
+  "pointsForAndAgainst": "За и против",
+  "allowAnonymousUsersToVote": "Голосование без регистрации",
+  "loginToAddComment": "Войдите, чтобы комментировать",
+  "addComment": "Добавить комментарий",
+  "loginToAddCommentOrLink": "Войдите, чтобы добавить комментарий или ссылку",
+  "addCommentOrLink": "Добавить комментарий или ссылку",
+  "apply": "Применить",
+  "addMedia": "Добавить медиа",
+  "htmlContent": "HTML-содержимое",
+  "previewHtml": "Предпросмотр HTML",
+  "simpleHtmlEditor": "Простой HTML-редактор",
+  "editHtmlDirectly": "Редактировать HTML"
 }

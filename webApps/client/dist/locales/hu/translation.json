@@ -1388,5 +1388,17 @@
   "minimumTenVotesToShowResults": "Minimum tíz szavazat a megjelenítéshez",
   "externalGoalParamsWhitelist": "Külső célparaméterek fehérlistája",
   "targetVotes": "Célszavazatok",
-  "vote": "Szavazás"
+  "vote": "Szavazás",
+  "pointsForAndAgainst": "Érvek és ellenérvek",
+  "allowAnonymousUsersToVote": "Szavazás bejelentkezés nélkül",
+  "loginToAddComment": "Bejelentkezés hozzászóláshoz",
+  "addComment": "Hozzászólás hozzáadása",
+  "loginToAddCommentOrLink": "Bejelentkezés hozzászólás vagy link hozzáadásához",
+  "addCommentOrLink": "Hozzászólás vagy link hozzáadása",
+  "apply": "Alkalmaz",
+  "addMedia": "Média hozzáadása",
+  "htmlContent": "HTML tartalom",
+  "previewHtml": "HTML előnézet",
+  "simpleHtmlEditor": "Egyszerű HTML szerkesztő",
+  "editHtmlDirectly": "HTML szerkesztése közvetlenül"
 }

@@ -1154,7 +1154,7 @@
   "sortBySortOrder": "Сортлау Чӑнӑпа Сортлаштару",
   "mediaUploads": "Медиа Йӗркелӗв",
   "onlyAdminsCanCreateCommunities": "Тик администраторсем хӑватлӑхсем пулӑшать",
-  "Facebook Client Id": "Facebook Client Id",
+  "Facebook Client Id": "Facebook клиентăн идентификаторĕ",
   "facebookClientId": "Facebook клиентăн ID",
   "Facebook Client Secret": "Facebook клиентăн секретĕ",
   "facebookClientSecret": "Facebook клиентăн секретĕ",
@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Çавăн пекех пулса таврахсене кăтартма пулать",
   "externalGoalParamsWhitelist": "Кунта пĕрлешĕн параметрсем",
   "targetVotes": "Çавăн пекех",
-  "vote": "Çав"
+  "vote": "Çав",
+  "pointsForAndAgainst": "Пур и палăр пултарăвĕсем",
+  "allowAnonymousUsersToVote": "Хутшăнаканса танлăхсиз тавра пулать",
+  "loginToAddComment": "Комментарий çыхăнни танлăхлă",
+  "addComment": "Комментарий çых",
+  "loginToAddCommentOrLink": "Комментарий йĕртме ссылка çыхăнни танлăхлă",
+  "addCommentOrLink": "Комментарий йĕртме ссылка çых",
+  "apply": "Хутнă",
+  "addMedia": "Медиа çых",
+  "htmlContent": "HTML эçлек",
+  "previewHtml": "HTML кăтартни",
+  "simpleHtmlEditor": "Япалак HTML редакторĕ",
+  "editHtmlDirectly": "HTML-не тĕпчекен тӳрлет"
 }

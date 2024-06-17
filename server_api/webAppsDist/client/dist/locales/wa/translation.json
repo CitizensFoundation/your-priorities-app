@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Minimum dix vôtes pou mostrer dins les rèsultats",
   "externalGoalParamsWhitelist": "Liste blanke des parametes d'but foû",
   "targetVotes": "Vôtes cibe",
-  "vote": "Voter"
+  "vote": "Voter",
+  "pointsForAndAgainst": "Ponts po et côtre",
+  "allowAnonymousUsersToVote": "Permettez a l'uzeu d'voter sins conte",
+  "loginToAddComment": "Ouvrez session po radjouter comintaire",
+  "addComment": "Radjoutez comintaire",
+  "loginToAddCommentOrLink": "Ouvrez session po radjouter comintaire ou lyin",
+  "addCommentOrLink": "Radjoutez comintaire ou lyin",
+  "apply": "Applikez",
+  "addMedia": "Radjoutez média",
+  "htmlContent": "Contnou HTML",
+  "previewHtml": "Prévisualisez HTML",
+  "simpleHtmlEditor": "Éditeu HTML simp",
+  "editHtmlDirectly": "Éditez HTML dirèk"
 }

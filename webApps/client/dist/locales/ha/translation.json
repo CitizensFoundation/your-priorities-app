@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Mafi karancin kuri'u goma don nuna a sakamako",
   "externalGoalParamsWhitelist": "Jerin fararen hula na burin waje",
   "targetVotes": "Kuri'un da ake nufi",
-  "vote": "Kada Kuri'a"
+  "vote": "Kada Kuri'a",
+  "pointsForAndAgainst": "Maki don da kuma akasin",
+  "allowAnonymousUsersToVote": "Bari mai amfani ya kada kuri'a ba tare da asusun shiga ba",
+  "loginToAddComment": "Shiga don ƙara sharhi",
+  "addComment": "Ƙara sharhi",
+  "loginToAddCommentOrLink": "Shiga don ƙara sharhi ko hanyar haɗi",
+  "addCommentOrLink": "Ƙara sharhi ko hanyar haɗi",
+  "apply": "Aiwatar",
+  "addMedia": "Ƙara kafofin watsa labarai",
+  "htmlContent": "Abun cikin HTML",
+  "previewHtml": "Duba HTML",
+  "simpleHtmlEditor": "Editan HTML mai sauƙi",
+  "editHtmlDirectly": "Shirya HTML kai tsaye"
 }

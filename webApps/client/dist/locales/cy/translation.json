@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Isafswm deg pleidlais i'w harddangos yn y canlyniadau",
   "externalGoalParamsWhitelist": "Rhestr wen paramedrau nod allanol",
   "targetVotes": "Pleidleisiau targed",
-  "vote": "Pleidleisio"
+  "vote": "Pleidleisio",
+  "pointsForAndAgainst": "Pwyntiau dros ac yn erbyn",
+  "allowAnonymousUsersToVote": "Caniatáu defnyddiwr i bleidleisio heb gyfrif mewngofnodi",
+  "loginToAddComment": "Mewngofnodi i ychwanegu sylw",
+  "addComment": "Ychwanegu sylw",
+  "loginToAddCommentOrLink": "Mewngofnodi i ychwanegu sylw neu ddolen",
+  "addCommentOrLink": "Ychwanegu sylw neu ddolen",
+  "apply": "Gwneud cais",
+  "addMedia": "Ychwanegu cyfryngau",
+  "htmlContent": "Cynnwys HTML",
+  "previewHtml": "Rhagolwg HTML",
+  "simpleHtmlEditor": "Golygydd HTML syml",
+  "editHtmlDirectly": "Golygu HTML yn uniongyrchol"
 }

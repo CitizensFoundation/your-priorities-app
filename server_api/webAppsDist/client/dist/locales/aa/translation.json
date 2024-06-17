@@ -40,7 +40,7 @@
   "goalTree": "Kaayyoo Miti",
   "futureRealityTree": "Haqaaqii Fuula Duraa Miti",
   "ideaGenerationGroupType": "Fikrad abuurid",
-  "allOurIdeasGroupType": "All Our Ideas Pairwise Ranking",
+  "allOurIdeasGroupType": "All Our Ideas Isuduwaha Labada Dhinac",
   "allowGenerativeImages": "Sawirada abuurista ogolow",
   "reports": "Warbixinno",
   "reportsInfo": "Warbixinno abuur",
@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Gaba tokko sagal raqdaa agarsiisu",
   "externalGoalParamsWhitelist": "Gaba baxxaqu parametara ala",
   "targetVotes": "Raqdaa lakkoofsa",
-  "vote": "Dabtay"
+  "vote": "Dabtay",
+  "pointsForAndAgainst": "Kab iyo diidmada dhibco",
+  "allowAnonymousUsersToVote": "Qofka isticmaalaha ogolow inuu cod bixiyo iyada oo aan xisaab lahayn",
+  "loginToAddComment": "Soo gal si aad faallo u darto",
+  "addComment": "Ku dar faallo",
+  "loginToAddCommentOrLink": "Soo gal si aad faallo ama xiriiriye u darto",
+  "addCommentOrLink": "Ku dar faallo ama xiriiriye",
+  "apply": "Codso",
+  "addMedia": "Ku dar warbaahin",
+  "htmlContent": "HTML Qoraalka",
+  "previewHtml": "HTML Falanqee",
+  "simpleHtmlEditor": "Tifatiraha HTML Fudud",
+  "editHtmlDirectly": "Si toos ah u tafatir HTML"
 }

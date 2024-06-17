@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Ombanda dha li 10 okuza omalutu.",
   "externalGoalParamsWhitelist": "Oluhongitho lwa zongomara zokunyeletwa",
   "targetVotes": "Ombanda dha shilongo",
-  "vote": "Vota"
+  "vote": "Vota",
+  "pointsForAndAgainst": "Poniponipo ya kwa na koshi",
+  "allowAnonymousUsersToVote": "Nekelapo moshilongo oye a vota ngaashi na konto ya login",
+  "loginToAddComment": "Login kutya ota kala komento",
+  "addComment": "Kala komento",
+  "loginToAddCommentOrLink": "Login kutya ota kala komento kana linki",
+  "addCommentOrLink": "Kala komento kana linki",
+  "apply": "Shanditha",
+  "addMedia": "Kala media",
+  "htmlContent": "HTML Okuhalamo",
+  "previewHtml": "Ondjila HTML",
+  "simpleHtmlEditor": "Omupepi gwa HTML olya",
+  "editHtmlDirectly": "Hindura HTML ngaashi"
 }

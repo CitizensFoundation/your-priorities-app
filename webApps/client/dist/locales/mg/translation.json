@@ -441,7 +441,7 @@
   "content": "Votoaty",
   "multiSortEnabled": "Avelao ny fisokafan'ny maro",
   "creator": "Mpamorona",
-  "severeToxicityScore": "S.Toxicity",
+  "severeToxicityScore": "Fahapoizinana",
   "toxicityScore": "Fahapoizinana",
   "source": "Loharano",
   "domainContentModeration": "Fanaraha-maso ny sehatra",
@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Valim-pifidianana farafahakeliny folo vao aseho amin'ny valiny",
   "externalGoalParamsWhitelist": "Lisitry ny paramètre tanjona ivelany",
   "targetVotes": "Isan'ny vato kendrena",
-  "vote": "Vato"
+  "vote": "Vato",
+  "pointsForAndAgainst": "Tombontsoa sy tsy tombontsoa",
+  "allowAnonymousUsersToVote": "Avelao ny mpampiasa hifidy tsy misy kaonty fidirana",
+  "loginToAddComment": "Hiditra hampiditra hevitra",
+  "addComment": "Ampio hevitra",
+  "loginToAddCommentOrLink": "Hiditra hampiditra hevitra na rohy",
+  "addCommentOrLink": "Ampio hevitra na rohy",
+  "apply": "Ampiharo",
+  "addMedia": "Ampio haino aman-jery",
+  "htmlContent": "Votoaty HTML",
+  "previewHtml": "Topi-maso HTML",
+  "simpleHtmlEditor": "Tonian-dahatsoratra HTML tsotra",
+  "editHtmlDirectly": "Hanova HTML mivantana"
 }

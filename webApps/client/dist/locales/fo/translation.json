@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Minst tíggju atkvøður at vísa í úrslitum",
   "externalGoalParamsWhitelist": "Ytri mál parametrar hvítlisti",
   "targetVotes": "Mál atkvøður",
-  "vote": "Atkvøða"
+  "vote": "Atkvøða",
+  "pointsForAndAgainst": "Stig fyri og ímóti",
+  "allowAnonymousUsersToVote": "Loyv brúkara at atkvøða uttan innritanarkonto",
+  "loginToAddComment": "Rita inn fyri at leggja viðmerking afturat",
+  "addComment": "Legg viðmerking afturat",
+  "loginToAddCommentOrLink": "Rita inn fyri at leggja viðmerking ella leinkju afturat",
+  "addCommentOrLink": "Legg viðmerking ella leinkju afturat",
+  "apply": "Brúka",
+  "addMedia": "Legg miðil afturat",
+  "htmlContent": "HTML Innihald",
+  "previewHtml": "Forskoða HTML",
+  "simpleHtmlEditor": "Einfaldur HTML ritil",
+  "editHtmlDirectly": "Rætta HTML beinleiðis"
 }

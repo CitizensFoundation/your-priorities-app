@@ -1387,5 +1387,17 @@
   "minimumTenVotesToShowResults": "Минимум десет гласа за показване в резултатите",
   "externalGoalParamsWhitelist": "Списък за разрешаване на външни целеви параметри",
   "targetVotes": "Целеви гласове",
-  "vote": "Гласувай"
+  "vote": "Гласувай",
+  "pointsForAndAgainst": "За и против",
+  "allowAnonymousUsersToVote": "Гласуване без акаунт",
+  "loginToAddComment": "Вход за коментар",
+  "addComment": "Добави коментар",
+  "loginToAddCommentOrLink": "Вход за коментар или връзка",
+  "addCommentOrLink": "Добави коментар или връзка",
+  "apply": "Приложи",
+  "addMedia": "Добави медия",
+  "htmlContent": "HTML съдържание",
+  "previewHtml": "Преглед на HTML",
+  "simpleHtmlEditor": "Прост HTML редактор",
+  "editHtmlDirectly": "Редактирай HTML"
 }

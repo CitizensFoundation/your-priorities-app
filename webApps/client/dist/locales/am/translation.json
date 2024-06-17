@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "በውጤት ለመታየት አንድ እሴት ቢያንስ አስር ድምፆች ይፈልጋል",
   "externalGoalParamsWhitelist": "ውጫዊ ዓላማ ፓራሜትሮች የሚቀበሉ ዝርዝር",
   "targetVotes": "ተመን ድምፆች",
-  "vote": "አድምጥ"
+  "vote": "አድምጥ",
+  "pointsForAndAgainst": "ስለእናት እና ስለአባት ነጥቦች",
+  "allowAnonymousUsersToVote": "በመመዝገብ አካውንት ሳይኖር ተጠቃሚው እንዲምረጥ ፍቀድ",
+  "loginToAddComment": "አስተያየት ለመጨመር እባክዎ ይግቡ",
+  "addComment": "አስተያየት ጨምር",
+  "loginToAddCommentOrLink": "አስተያየት ወይም ሊንክ ለመጨመር እባክዎ ይግቡ",
+  "addCommentOrLink": "አስተያየት ወይም ሊንክ ጨምር",
+  "apply": "ተግባር",
+  "addMedia": "ሚዲያ ጨምር",
+  "htmlContent": "HTML ይዘት",
+  "previewHtml": "HTML አሳይ",
+  "simpleHtmlEditor": "ቀላል HTML አርታኢ",
+  "editHtmlDirectly": "HTML ቀጥተኛ አርትዕ"
 }

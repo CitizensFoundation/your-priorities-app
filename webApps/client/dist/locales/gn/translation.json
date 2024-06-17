@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Diez voto mbovyvéva ojehechauka hag̃ua resultado-pe",
   "externalGoalParamsWhitelist": "Lista blanca parámetro objetivo externo",
   "targetVotes": "Voto objetivo",
-  "vote": "Vota"
+  "vote": "Vota",
+  "pointsForAndAgainst": "Mbohapykue ha'eve",
+  "allowAnonymousUsersToVote": "Eheja tapicha oñembohovái oike'ỹre",
+  "loginToAddComment": "Eike oñemoañete hag̃ua",
+  "addComment": "Oñemoañete",
+  "loginToAddCommentOrLink": "Eike oñemoañete térã oñemoambue hag̃ua",
+  "addCommentOrLink": "Oñemoañete térã oñemoambue",
+  "apply": "Ejapo",
+  "addMedia": "Oñemoambue ta'ãnga",
+  "htmlContent": "HTML Mba'ekuaa",
+  "previewHtml": "Ñemoañete HTML",
+  "simpleHtmlEditor": "HTML ñemyatyrõ mbyky",
+  "editHtmlDirectly": "Japo HTML hekopete"
 }

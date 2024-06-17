@@ -1388,5 +1388,17 @@
   "minimumTenVotesToShowResults": "Mínim deu vots per mostrar en resultats",
   "externalGoalParamsWhitelist": "Llista blanca de paràmetres d'objectiu extern",
   "targetVotes": "Vots objectiu",
-  "vote": "Vot"
+  "vote": "Vot",
+  "pointsForAndAgainst": "Punts a favor i en contra",
+  "allowAnonymousUsersToVote": "Permet votar sense compte",
+  "loginToAddComment": "Inicia sessió per comentar",
+  "addComment": "Afegeix comentari",
+  "loginToAddCommentOrLink": "Inicia sessió per afegir comentari o enllaç",
+  "addCommentOrLink": "Afegeix comentari o enllaç",
+  "apply": "Aplica",
+  "addMedia": "Afegeix mitjans",
+  "htmlContent": "Contingut HTML",
+  "previewHtml": "Previsualitza HTML",
+  "simpleHtmlEditor": "Editor HTML simple",
+  "editHtmlDirectly": "Edita HTML directament"
 }

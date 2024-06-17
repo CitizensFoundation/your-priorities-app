@@ -107,7 +107,7 @@
   "targetAudience": "Audiénsi target",
   "promotionText": "Téks promosi",
   "newAdGroup": "Grup iklan anyar",
-  "Realtime": "Realtime",
+  "Realtime": "Langsung",
   "All time": "Sapanjang waktu",
   "Year to Date": "Taun ka Tanggal",
   "Last 12 months": "12 bulan ka tukang",
@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Minimum sapuluh sora pikeun ditémbongkeun dina hasil",
   "externalGoalParamsWhitelist": "Daptar bodas param tujuan éksternal",
   "targetVotes": "Sora target",
-  "vote": "Milih"
+  "vote": "Milih",
+  "pointsForAndAgainst": "Poin pro jeung kontra",
+  "allowAnonymousUsersToVote": "Ngidinan pamaké milih tanpa akun",
+  "loginToAddComment": "Lebet pikeun nambahkeun koméntar",
+  "addComment": "Tambahkeun koméntar",
+  "loginToAddCommentOrLink": "Lebet pikeun nambahkeun koméntar atanapi tumbu",
+  "addCommentOrLink": "Tambahkeun koméntar atanapi tumbu",
+  "apply": "Larapkeun",
+  "addMedia": "Tambahkeun média",
+  "htmlContent": "Eusi HTML",
+  "previewHtml": "Tingali HTML",
+  "simpleHtmlEditor": "Éditor HTML basajan",
+  "editHtmlDirectly": "Édit HTML langsung"
 }

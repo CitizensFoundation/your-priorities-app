@@ -1390,5 +1390,17 @@
   "minimumTenVotesToShowResults": "Natijalarni ko'rsatish uchun kamida o'n ovoz",
   "externalGoalParamsWhitelist": "Tashqi maqsad parametrlari ro'yxati",
   "targetVotes": "Maqsadli ovozlar",
-  "vote": "Ovoz berish"
+  "vote": "Ovoz berish",
+  "pointsForAndAgainst": "Taraf-muqobil ballar",
+  "allowAnonymousUsersToVote": "Kirish hisobisiz ovoz berishga ruxsat berish",
+  "loginToAddComment": "Izoh qo'shish uchun kirish",
+  "addComment": "Izoh qo'shish",
+  "loginToAddCommentOrLink": "Izoh yoki havola qo'shish uchun kirish",
+  "addCommentOrLink": "Izoh yoki havola qo'shish",
+  "apply": "Qo'llash",
+  "addMedia": "Media qo'shish",
+  "htmlContent": "HTML Tarkibi",
+  "previewHtml": "HTMLni ko'rib chiqish",
+  "simpleHtmlEditor": "Oddiy HTML muharriri",
+  "editHtmlDirectly": "HTMLni to'g'ridan-to'g'ri tahrirlash"
 }

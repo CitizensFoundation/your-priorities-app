@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Minimu dieci voti per mostrare nei risultati",
   "externalGoalParamsWhitelist": "Lista bianca di parametri di obiettivo esterni",
   "targetVotes": "Voti obiettivo",
-  "vote": "Votu"
+  "vote": "Votu",
+  "pointsForAndAgainst": "Punti pro e contra",
+  "allowAnonymousUsersToVote": "Permite votu senza contu",
+  "loginToAddComment": "Intra pro agiunghe comentu",
+  "addComment": "Agiunghe comentu",
+  "loginToAddCommentOrLink": "Intra pro agiunghe comentu o ligame",
+  "addCommentOrLink": "Agiunghe comentu o ligame",
+  "apply": "Aplica",
+  "addMedia": "Agiunghe multimedia",
+  "htmlContent": "Contenutu HTML",
+  "previewHtml": "Anteprima HTML",
+  "simpleHtmlEditor": "Editore HTML semprici",
+  "editHtmlDirectly": "Edita HTML diretamente"
 }

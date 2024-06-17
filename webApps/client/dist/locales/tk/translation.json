@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Netijelerde görkezmek üçin iň az on ses",
   "externalGoalParamsWhitelist": "Daşarky maksat parametrleriniň ak reňk sanawy",
   "targetVotes": "Nyşan sesler",
-  "vote": "Ses bermek"
+  "vote": "Ses bermek",
+  "pointsForAndAgainst": "Taraplar üçin ballar",
+  "allowAnonymousUsersToVote": "Ulanyjynyň hasaba girmän ses bermegine rugsat beriň",
+  "loginToAddComment": "Teswir goşmak üçin giriň",
+  "addComment": "Teswir goş",
+  "loginToAddCommentOrLink": "Teswir ýa-da baglanyşyk goşmak üçin giriň",
+  "addCommentOrLink": "Teswir ýa-da baglanyşyk goş",
+  "apply": "Ulanyň",
+  "addMedia": "Media goş",
+  "htmlContent": "HTML Mazy",
+  "previewHtml": "HTML-i gözden geçiriň",
+  "simpleHtmlEditor": "Ýönekeý HTML redaktory",
+  "editHtmlDirectly": "HTML-i göni redaktirläň"
 }

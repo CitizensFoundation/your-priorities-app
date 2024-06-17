@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "ต้องการอย่างน้อยสิบโหวตเพื่อแสดงในผลลัพธ์",
   "externalGoalParamsWhitelist": "รายการอนุญาตพารามิเตอร์เป้าหมายภายนอก",
   "targetVotes": "เป้าหมายโหวต",
-  "vote": "โหวต"
+  "vote": "โหวต",
+  "pointsForAndAgainst": "ข้อดีและข้อเสีย",
+  "allowAnonymousUsersToVote": "อนุญาตให้ผู้ใช้โหวตโดยไม่ต้องล็อกอิน",
+  "loginToAddComment": "ล็อกอินเพื่อเพิ่มความคิดเห็น",
+  "addComment": "เพิ่มความคิดเห็น",
+  "loginToAddCommentOrLink": "ล็อกอินเพื่อเพิ่มความคิดเห็นหรือลิงก์",
+  "addCommentOrLink": "เพิ่มความคิดเห็นหรือลิงก์",
+  "apply": "ใช้งาน",
+  "addMedia": "เพิ่มสื่อ",
+  "htmlContent": "เนื้อหา HTML",
+  "previewHtml": "แสดงตัวอย่าง HTML",
+  "simpleHtmlEditor": "ตัวแก้ไข HTML ง่าย",
+  "editHtmlDirectly": "แก้ไข HTML โดยตรง"
 }

@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Мінімум дзесяць галасоў для паказу ў выніках",
   "externalGoalParamsWhitelist": "Белы спіс параметраў знешняй мэты",
   "targetVotes": "Мэтавыя галасы",
-  "vote": "Галасаваць"
+  "vote": "Галасаваць",
+  "pointsForAndAgainst": "Аргументы за і супраць",
+  "allowAnonymousUsersToVote": "Дазволіць галасаваць без уліковага запісу",
+  "loginToAddComment": "Увайдзіце, каб дадаць каментар",
+  "addComment": "Дадаць каментар",
+  "loginToAddCommentOrLink": "Увайдзіце, каб дадаць каментар ці спасылку",
+  "addCommentOrLink": "Дадаць каментар ці спасылку",
+  "apply": "Ужыць",
+  "addMedia": "Дадаць медыя",
+  "htmlContent": "HTML змесціва",
+  "previewHtml": "Прагляд HTML",
+  "simpleHtmlEditor": "Просты рэдактар HTML",
+  "editHtmlDirectly": "Рэдагаваць HTML напрамую"
 }

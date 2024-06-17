@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "لږترلږه لس رایې د پایلو په ښودلو کې",
   "externalGoalParamsWhitelist": "بهرنی هدف پارامیټر سپین لیست",
   "targetVotes": "هدف رایې",
-  "vote": "رایه"
+  "vote": "رایه",
+  "pointsForAndAgainst": "ملاتړ او مخالفت نکتې",
+  "allowAnonymousUsersToVote": "د ننوتلو پرته د کارن رایه ورکول اجازه ورکړئ",
+  "loginToAddComment": "د تبصرې اضافه کولو لپاره ننوتل",
+  "addComment": "تبصره اضافه کړئ",
+  "loginToAddCommentOrLink": "د تبصرې یا لینک اضافه کولو لپاره ننوتل",
+  "addCommentOrLink": "تبصره یا لینک اضافه کړئ",
+  "apply": "طبق کړئ",
+  "addMedia": "رسنۍ اضافه کړئ",
+  "htmlContent": "HTML مینځپانګه",
+  "previewHtml": "HTML مخکتنه",
+  "simpleHtmlEditor": "ساده HTML سمونګر",
+  "editHtmlDirectly": "په مستقیم ډول HTML سمون کړئ"
 }

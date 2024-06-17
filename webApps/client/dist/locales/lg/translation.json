@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Obululu obutono kkumi okulaga mu byavudde mu kunoonyereza",
   "externalGoalParamsWhitelist": "Olukalala lw'emigaso egy'ebweru",
   "targetVotes": "Obululu obw'okulondako",
-  "vote": "Kulonda"
+  "vote": "Kulonda",
+  "pointsForAndAgainst": "Obubonero obuwakanya n'obuwagira",
+  "allowAnonymousUsersToVote": "Kkiriza omukozi okulonda awatali akawunti",
+  "loginToAddComment": "Yingira okwongeraako okunnyonnyola",
+  "addComment": "Yongerako okunnyonnyola",
+  "loginToAddCommentOrLink": "Yingira okwongerako okunnyonnyola oba olukalala",
+  "addCommentOrLink": "Yongerako okunnyonnyola oba olukalala",
+  "apply": "Kozesa",
+  "addMedia": "Yongerako ekitangaza",
+  "htmlContent": "Ebirimu bya HTML",
+  "previewHtml": "Laba HTML nga tennaba kuteekebwamu",
+  "simpleHtmlEditor": "Omukozi wa HTML omusavu",
+  "editHtmlDirectly": "Kola ku HTML butereevu"
 }

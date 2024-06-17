@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Näticälärdä kürsätü öçen minimom un tawış",
   "externalGoalParamsWhitelist": "Tışqı maqsat parametrları akkreditatsiäse",
   "targetVotes": "Maqsat tawışlar",
-  "vote": "Тавыш бирү"
+  "vote": "Тавыш бирү",
+  "pointsForAndAgainst": "Өчен һәм каршы очко",
+  "allowAnonymousUsersToVote": "Керүсез тавыш бирү мөмкинлеге",
+  "loginToAddComment": "Комментарий өстәү өчен керегез",
+  "addComment": "Комментарий өстәү",
+  "loginToAddCommentOrLink": "Комментарий яки сылтама өстәү өчен керегез",
+  "addCommentOrLink": "Комментарий яки сылтама өстәү",
+  "apply": "Кулланырга",
+  "addMedia": "Медиа өстәү",
+  "htmlContent": "HTML эчтәлек",
+  "previewHtml": "HTML карап чыгу",
+  "simpleHtmlEditor": "Гади HTML мөхәррире",
+  "editHtmlDirectly": "Турыдан-туры HTML төзәтү"
 }

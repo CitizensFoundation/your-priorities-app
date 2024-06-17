@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Gutxieneko hamar boto emaitzak erakusteko",
   "externalGoalParamsWhitelist": "Kanpoko helburu parametrien zerrenda zuria",
   "targetVotes": "Helburu botoak",
-  "vote": "Botoa"
+  "vote": "Botoa",
+  "pointsForAndAgainst": "Aldeko eta kontrako puntuak",
+  "allowAnonymousUsersToVote": "Erabiltzaileari saioa hasi gabe bozkatzea baimendu",
+  "loginToAddComment": "Iruzkina gehitzeko saioa hasi",
+  "addComment": "Iruzkina gehitu",
+  "loginToAddCommentOrLink": "Iruzkina edo esteka gehitzeko saioa hasi",
+  "addCommentOrLink": "Iruzkina edo esteka gehitu",
+  "apply": "Aplikatu",
+  "addMedia": "Multimedia gehitu",
+  "htmlContent": "HTML edukia",
+  "previewHtml": "HTML aurreikusi",
+  "simpleHtmlEditor": "HTML editore sinplea",
+  "editHtmlDirectly": "HTML zuzenean editatu"
 }

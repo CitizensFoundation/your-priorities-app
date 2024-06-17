@@ -1018,7 +1018,7 @@
     "addAdmin": "Thêm quản trị",
     "removeUser": "Xóa người dùng",
     "inviteUser": "Mời người dùng",
-    "email": "email",
+    "email": "Email",
     "removeFromOrganization": "Xóa tổ chức",
     "addToOrganization": "Thêm tổ chức",
     "selectOrganization": "Chọn tổ chức"
@@ -1197,7 +1197,7 @@
   "New Group": "Nhóm mới",
   "haveCreatedXLsReport": "Đã tạo báo cáo XLs",
   "description": "Mô tả",
-  "website": "website",
+  "website": "Website",
   "organizationTree": {
     "new": "Tổ chức",
     "toast": {
@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Tối thiểu mười phiếu bầu để hiển thị trong kết quả",
   "externalGoalParamsWhitelist": "Danh sách trắng tham số mục tiêu bên ngoài",
   "targetVotes": "Phiếu bầu mục tiêu",
-  "vote": "Bỏ phiếu"
+  "vote": "Bỏ phiếu",
+  "pointsForAndAgainst": "Điểm ủng hộ và chống lại",
+  "allowAnonymousUsersToVote": "Cho phép bỏ phiếu không cần tài khoản",
+  "loginToAddComment": "Đăng nhập để thêm bình luận",
+  "addComment": "Thêm bình luận",
+  "loginToAddCommentOrLink": "Đăng nhập để thêm bình luận hoặc liên kết",
+  "addCommentOrLink": "Thêm bình luận hoặc liên kết",
+  "apply": "Áp dụng",
+  "addMedia": "Thêm phương tiện",
+  "htmlContent": "Nội dung HTML",
+  "previewHtml": "Xem trước HTML",
+  "simpleHtmlEditor": "Trình soạn thảo HTML đơn giản",
+  "editHtmlDirectly": "Chỉnh sửa HTML trực tiếp"
 }

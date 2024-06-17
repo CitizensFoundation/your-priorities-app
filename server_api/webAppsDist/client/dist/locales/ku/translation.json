@@ -1015,7 +1015,7 @@
     "addAdmin": "Adminê zêde bike",
     "removeUser": "Bikarhênerê rake",
     "inviteUser": "Bikarhênerê vexwîne",
-    "email": "email",
+    "email": "ئیمەیڵ",
     "removeFromOrganization": "Rêxistinê rake",
     "addToOrganization": "Rêxistinê zêde bike",
     "selectOrganization": "Rêxistinê hilbijêre"
@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Kêmtirîn deh dengan ji bo nîşandan di encamên de",
   "externalGoalParamsWhitelist": "Rêzeya armancên derve yên agahdariyê",
   "targetVotes": "Dengên armanc",
-  "vote": "دەنگ"
+  "vote": "دەنگ",
+  "pointsForAndAgainst": "خاڵەکان بۆ و دژی",
+  "allowAnonymousUsersToVote": "ڕێگە بدە بە بەکارهێنەر دەنگ بدات بێ ئەکاونتی چوونەژوور",
+  "loginToAddComment": "چوونەژوور بۆ زیادکردنی لێدوان",
+  "addComment": "زیادکردنی لێدوان",
+  "loginToAddCommentOrLink": "چوونەژوور بۆ زیادکردنی لێدوان یان بەستەر",
+  "addCommentOrLink": "زیادکردنی لێدوان یان بەستەر",
+  "apply": "جێبەجێکردن",
+  "addMedia": "زیادکردنی میدیا",
+  "htmlContent": "ناوەڕۆکی HTML",
+  "previewHtml": "پێشبینینی HTML",
+  "simpleHtmlEditor": "دەستکاریکەری HTML سادە",
+  "editHtmlDirectly": "دەستکاریکردنی HTML بەراستەوخۆ"
 }

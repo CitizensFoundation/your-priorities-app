@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Dek mouezh d'an nebeutañ evit bezañ diskouezet er disoc'hoù",
   "externalGoalParamsWhitelist": "Roll gwenn paramedroù pal diavaez",
   "targetVotes": "Mouezhioù pal",
-  "vote": "Mouezhiañ"
+  "vote": "Mouezhiañ",
+  "pointsForAndAgainst": "Poentoù evit hag a-enep",
+  "allowAnonymousUsersToVote": "Aotren an implijer da vouezhiañ hep kont",
+  "loginToAddComment": "Kevreañ evit ouzhpennañ evezhiadenn",
+  "addComment": "Ouzhpennañ evezhiadenn",
+  "loginToAddCommentOrLink": "Kevreañ evit ouzhpennañ evezhiadenn pe liamm",
+  "addCommentOrLink": "Ouzhpennañ evezhiadenn pe liamm",
+  "apply": "Arverañ",
+  "addMedia": "Ouzhpennañ media",
+  "htmlContent": "Danvez HTML",
+  "previewHtml": "Rakwelet HTML",
+  "simpleHtmlEditor": "Aozer HTML eeun",
+  "editHtmlDirectly": "Aozañ HTML eeun"
 }

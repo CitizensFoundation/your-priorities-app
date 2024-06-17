@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "ఫలితాలలో చూపించడానికి కనీసం పది ఓట్లు",
   "externalGoalParamsWhitelist": "బాహ్య లక్ష్య పరామితుల వైట్‌లిస్ట్",
   "targetVotes": "లక్ష్య ఓట్లు",
-  "vote": "ఓటు"
+  "vote": "ఓటు",
+  "pointsForAndAgainst": "పక్షాన పక్షాన పాయింట్లు",
+  "allowAnonymousUsersToVote": "లాగిన్ లేకుండా ఓటు వేయనివ్వండి",
+  "loginToAddComment": "వ్యాఖ్య జోడించడానికి లాగిన్ చేయండి",
+  "addComment": "వ్యాఖ్య జోడించు",
+  "loginToAddCommentOrLink": "వ్యాఖ్య లేదా లింక్ జోడించడానికి లాగిన్ చేయండి",
+  "addCommentOrLink": "వ్యాఖ్య లేదా లింక్ జోడించు",
+  "apply": "అమలు చేయండి",
+  "addMedia": "మీడియా జోడించు",
+  "htmlContent": "HTML విషయం",
+  "previewHtml": "HTML ప్రివ్యూ",
+  "simpleHtmlEditor": "సింపుల్ HTML ఎడిటర్",
+  "editHtmlDirectly": "HTML నేరుగా మార్చు"
 }

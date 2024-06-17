@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Minimum decem suffragia ad ostendendum in resultatis",
   "externalGoalParamsWhitelist": "Externae finis parametri album",
   "targetVotes": "Suffragia destinata",
-  "vote": "Suffragium"
+  "vote": "Suffragium",
+  "pointsForAndAgainst": "Pro et contra rationes",
+  "allowAnonymousUsersToVote": "Sine ratione accedere suffragium permitte",
+  "loginToAddComment": "Accede ad commentum addendum",
+  "addComment": "Commentum addere",
+  "loginToAddCommentOrLink": "Accede ad commentum vel nexum addendum",
+  "addCommentOrLink": "Commentum vel nexum addere",
+  "apply": "Applica",
+  "addMedia": "Media addere",
+  "htmlContent": "HTML Contentus",
+  "previewHtml": "Praevisum HTML",
+  "simpleHtmlEditor": "Editor HTML simplex",
+  "editHtmlDirectly": "HTML directe recensere"
 }

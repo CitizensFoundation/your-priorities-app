@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Ажәабжьқәа рыла аминимум жәаба бжьы аҭахуп",
   "externalGoalParamsWhitelist": "Авалиақәа рсиа аҿырԥштә",
   "targetVotes": "Ишьақәыргылоу абжьықәа",
-  "vote": "Абжьы"
+  "vote": "Абжьы",
+  "pointsForAndAgainst": "Азы апунктқәа рызҵаара",
+  "allowAnonymousUsersToVote": "Алахәыла алогин ада дызлауа алшоит",
+  "loginToAddComment": "Алогин ахь адкылара ацҵара",
+  "addComment": "Акомментари ацҵара",
+  "loginToAddCommentOrLink": "Алогин ахь акомментари ма ахырхарҭа ацҵара",
+  "addCommentOrLink": "Акомментари ма ахырхарҭа ацҵара",
+  "apply": "Ақәҿиара",
+  "addMedia": "Амедиа ацҵара",
+  "htmlContent": "HTML аҵакы",
+  "previewHtml": "HTML ахәаԥшра",
+  "simpleHtmlEditor": "Ихадоу HTML редактор",
+  "editHtmlDirectly": "HTML рыцқьара"
 }

@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "מינימום עשרה קולות להצגה בתוצאות",
   "externalGoalParamsWhitelist": "רשימת היתרים לפרמטרים חיצוניים",
   "targetVotes": "קולות יעד",
-  "vote": "הצבעה"
+  "vote": "הצבעה",
+  "pointsForAndAgainst": "נקודות חיוביות ושליליות",
+  "allowAnonymousUsersToVote": "אפשר הצבעה ללא חשבון",
+  "loginToAddComment": "התחבר להוספת תגובה",
+  "addComment": "הוסף תגובה",
+  "loginToAddCommentOrLink": "התחבר להוספת תגובה או קישור",
+  "addCommentOrLink": "הוסף תגובה או קישור",
+  "apply": "החל",
+  "addMedia": "הוסף מדיה",
+  "htmlContent": "תוכן HTML",
+  "previewHtml": "תצוגה מקדימה של HTML",
+  "simpleHtmlEditor": "עורך HTML פשוט",
+  "editHtmlDirectly": "ערוך HTML ישירות"
 }

@@ -1389,5 +1389,17 @@
   "minimumTenVotesToShowResults": "Minim zece voturi pentru a fi afișate în rezultate",
   "externalGoalParamsWhitelist": "Lista albă a parametrilor obiectivului extern",
   "targetVotes": "Voturi țintă",
-  "vote": "Vot"
+  "vote": "Vot",
+  "pointsForAndAgainst": "Puncte pro și contra",
+  "allowAnonymousUsersToVote": "Permite votul fără cont",
+  "loginToAddComment": "Autentificare pentru comentariu",
+  "addComment": "Adaugă comentariu",
+  "loginToAddCommentOrLink": "Autentificare pentru comentariu sau link",
+  "addCommentOrLink": "Adaugă comentariu sau link",
+  "apply": "Aplică",
+  "addMedia": "Adaugă media",
+  "htmlContent": "Conținut HTML",
+  "previewHtml": "Previzualizează HTML",
+  "simpleHtmlEditor": "Editor HTML simplu",
+  "editHtmlDirectly": "Editează HTML direct"
 }

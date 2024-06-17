@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Vähintään kymmenen ääntä näyttääkseen tuloksissa",
   "externalGoalParamsWhitelist": "Ulkopuolisten tavoiteparametrien sallittu lista",
   "targetVotes": "Tavoiteäänet",
-  "vote": "Äänestä"
+  "vote": "Äänestä",
+  "pointsForAndAgainst": "Puolesta ja vastaan",
+  "allowAnonymousUsersToVote": "Salli äänestys ilman kirjautumista",
+  "loginToAddComment": "Kirjaudu lisätäksesi kommentin",
+  "addComment": "Lisää kommentti",
+  "loginToAddCommentOrLink": "Kirjaudu lisätäksesi kommentin tai linkin",
+  "addCommentOrLink": "Lisää kommentti tai linkki",
+  "apply": "Käytä",
+  "addMedia": "Lisää media",
+  "htmlContent": "HTML-sisältö",
+  "previewHtml": "Esikatsele HTML",
+  "simpleHtmlEditor": "Yksinkertainen HTML-editori",
+  "editHtmlDirectly": "Muokkaa HTML suoraan"
 }

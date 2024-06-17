@@ -1009,7 +1009,7 @@
   "disableMachineTranscripts": "Dezactivează transcrierile automate",
   "public": "Public",
   "closed": "închis",
-  "secret": "secret",
+  "secret": "Secret",
   "uploadingAttachment": "Se încarcă atașamentul",
   "allowOneTimeLoginWithName": "Permite autentificare unică cu nume",
   "oneTimeLoginWithName": "Autentificare unică cu nume",
@@ -1200,7 +1200,7 @@
   "New Group": "Grup Nou",
   "haveCreatedXLsReport": "Raport XL creat",
   "description": "Descriere",
-  "website": "website",
+  "website": "Website",
   "organizationTree": {
     "new": "Organizație",
     "toast": {
@@ -1389,5 +1389,17 @@
   "minimumTenVotesToShowResults": "Minim zece voturi pentru a fi afișate în rezultate",
   "externalGoalParamsWhitelist": "Lista albă a parametrilor obiectivului extern",
   "targetVotes": "Voturi țintă",
-  "vote": "Vot"
+  "vote": "Vot",
+  "pointsForAndAgainst": "Puncte pro și contra",
+  "allowAnonymousUsersToVote": "Permite votul fără cont",
+  "loginToAddComment": "Autentificare pentru a adăuga comentariu",
+  "addComment": "Adaugă comentariu",
+  "loginToAddCommentOrLink": "Autentificare pentru a adăuga comentariu sau link",
+  "addCommentOrLink": "Adaugă comentariu sau link",
+  "apply": "Aplică",
+  "addMedia": "Adaugă media",
+  "htmlContent": "Conținut HTML",
+  "previewHtml": "Previzualizează HTML",
+  "simpleHtmlEditor": "Editor HTML simplu",
+  "editHtmlDirectly": "Editează HTML direct"
 }

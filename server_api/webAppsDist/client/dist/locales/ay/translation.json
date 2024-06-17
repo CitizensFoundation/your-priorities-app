@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Jisk'a chunka votos janiw jikxatapxiwa.",
   "externalGoalParamsWhitelist": "Jach'a uñt'ataki jisk'a sartawiñapata",
   "targetVotes": "Target votos",
-  "vote": "Jaqi"
+  "vote": "Jaqi",
+  "pointsForAndAgainst": "Jach'a puntos ukañataki",
+  "allowAnonymousUsersToVote": "Jan waliq usuario jach'aqatakiw yanapt'ayañatakixa",
+  "loginToAddComment": "Yanapt'ayañatakixa yatiqirinakapa",
+  "addComment": "Yatiqirinakapa",
+  "loginToAddCommentOrLink": "Yanapt'ayañatakixa yatiqirinakapa utjkiti",
+  "addCommentOrLink": "Yatiqirinakapa utjkiti",
+  "apply": "Churapxaña",
+  "addMedia": "Multimedia churapxaña",
+  "htmlContent": "HTML Uñstawi",
+  "previewHtml": "HTML Qhawapxi",
+  "simpleHtmlEditor": "HTML Sullkatapxi",
+  "editHtmlDirectly": "HTML Jach'a kamachina"
 }
