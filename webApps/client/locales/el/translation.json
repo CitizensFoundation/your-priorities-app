@@ -1387,5 +1387,17 @@
   "minimumTenVotesToShowResults": "Ελάχιστες δέκα ψήφοι για εμφάνιση στα αποτελέσματα",
   "externalGoalParamsWhitelist": "Λευκή λίστα παραμέτρων εξωτερικού στόχου",
   "targetVotes": "Στόχος ψήφοι",
-  "vote": "Ψηφοφορία"
+  "vote": "Ψηφοφορία",
+  "pointsForAndAgainst": "Υπέρ και κατά",
+  "allowAnonymousUsersToVote": "Επιτρέψτε ψηφοφορία χωρίς λογαριασμό",
+  "loginToAddComment": "Σύνδεση για σχόλιο",
+  "addComment": "Προσθήκη σχολίου",
+  "loginToAddCommentOrLink": "Σύνδεση για σχόλιο ή σύνδεσμο",
+  "addCommentOrLink": "Προσθήκη σχολίου ή συνδέσμου",
+  "apply": "Εφαρμογή",
+  "addMedia": "Προσθήκη μέσου",
+  "htmlContent": "HTML Περιεχόμενο",
+  "previewHtml": "Προεπισκόπηση HTML",
+  "simpleHtmlEditor": "Απλός επεξεργαστής HTML",
+  "editHtmlDirectly": "Επεξεργασία HTML απευθείας"
 }

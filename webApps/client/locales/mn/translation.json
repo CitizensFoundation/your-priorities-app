@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Үр дүнд харуулахын тулд дор хаяж арван санал шаардлагатай",
   "externalGoalParamsWhitelist": "Гадаад зорилго параметрүүдийн жагсаалт",
   "targetVotes": "Зорилтот саналууд",
-  "vote": "Санал өгөх"
+  "vote": "Санал өгөх",
+  "pointsForAndAgainst": "Талуудын оноо",
+  "allowAnonymousUsersToVote": "Нэвтрэхгүйгээр санал өгөхийг зөвшөөрөх",
+  "loginToAddComment": "Сэтгэгдэл нэмэхийн тулд нэвтрэнэ үү",
+  "addComment": "Сэтгэгдэл нэмэх",
+  "loginToAddCommentOrLink": "Сэтгэгдэл эсвэл холбоос нэмэхийн тулд нэвтрэнэ үү",
+  "addCommentOrLink": "Сэтгэгдэл эсвэл холбоос нэмэх",
+  "apply": "Хэрэглэх",
+  "addMedia": "Медиа нэмэх",
+  "htmlContent": "HTML агуулга",
+  "previewHtml": "HTML-г үзэх",
+  "simpleHtmlEditor": "Энгийн HTML засварлагч",
+  "editHtmlDirectly": "HTML-г шууд засварлах"
 }

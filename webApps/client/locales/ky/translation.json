@@ -1389,5 +1389,17 @@
   "minimumTenVotesToShowResults": "Жыйынтыктарда көрсөтүү үчүн минимум он добуш",
   "externalGoalParamsWhitelist": "Тышкы максаттуу параметрлердин ак тизмеси",
   "targetVotes": "Максаттуу добуштар",
-  "vote": "Добуш"
+  "vote": "Добуш",
+  "pointsForAndAgainst": "Тармактар жана каршылыктар",
+  "allowAnonymousUsersToVote": "Колдонуучуну каттоосуз добуш берүүгө уруксат берүү",
+  "loginToAddComment": "Комментарий кошуу үчүн кирүү",
+  "addComment": "Комментарий кошуу",
+  "loginToAddCommentOrLink": "Комментарий же шилтеме кошуу үчүн кирүү",
+  "addCommentOrLink": "Комментарий же шилтеме кошуу",
+  "apply": "Колдонуу",
+  "addMedia": "Медиа кошуу",
+  "htmlContent": "HTML мазмуну",
+  "previewHtml": "HTML алдын ала көрүү",
+  "simpleHtmlEditor": "Жөнөкөй HTML редактору",
+  "editHtmlDirectly": "Түз HTMLди түзөтүү"
 }

@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Күрһәтеү өсөн минимум ун тауыш",
   "externalGoalParamsWhitelist": "Тышҡы маҡсат параметрҙары аҡлы исемлеге",
   "targetVotes": "Маҡсат тауыштар",
-  "vote": "Тауыш биреү"
+  "vote": "Тауыш биреү",
+  "pointsForAndAgainst": "Өсөн һәм ҡаршы мәрәйҙәр",
+  "allowAnonymousUsersToVote": "Танытмаһыҙ тауыш бирергә рөхсәт итегеҙ",
+  "loginToAddComment": "Комментарий өҫтәү өсөн танылығыҙ",
+  "addComment": "Комментарий өҫтәргә",
+  "loginToAddCommentOrLink": "Комментарий йәки һылтанма өҫтәү өсөн танылығыҙ",
+  "addCommentOrLink": "Комментарий йәки һылтанма өҫтәргә",
+  "apply": "Ҡулланығыҙ",
+  "addMedia": "Медиа өҫтәргә",
+  "htmlContent": "HTML эстәлеге",
+  "previewHtml": "HTML ҡарап сығыу",
+  "simpleHtmlEditor": "Ябай HTML мөхәррире",
+  "editHtmlDirectly": "HTML-де туранан-тура мөхәррирләү"
 }

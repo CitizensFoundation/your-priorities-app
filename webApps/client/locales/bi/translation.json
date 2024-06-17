@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Minimam ten vot blong so long risal",
   "externalGoalParamsWhitelist": "Eksternal gol params waetlis",
   "targetVotes": "Target vot",
-  "vote": "Vot"
+  "vote": "Vot",
+  "pointsForAndAgainst": "Poem blong sapot mo agensem",
+  "allowAnonymousUsersToVote": "Letem yusa blong vot weaot login akaon",
+  "loginToAddComment": "Login blong putum koment",
+  "addComment": "Putum koment",
+  "loginToAddCommentOrLink": "Login blong putum koment o link",
+  "addCommentOrLink": "Putum koment o link",
+  "apply": "Aplae",
+  "addMedia": "Putum media",
+  "htmlContent": "HTML Konten",
+  "previewHtml": "Pribyu HTML",
+  "simpleHtmlEditor": "Simpol HTML edita",
+  "editHtmlDirectly": "Editim HTML stret"
 }

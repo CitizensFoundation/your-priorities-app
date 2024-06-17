@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "ഫലങ്ങൾ കാണാൻ കുറഞ്ഞത് പത്ത് വോട്ടുകൾ",
   "externalGoalParamsWhitelist": "ബാഹ്യ ലക്ഷ്യ പാരാമീറ്റർ വൈറ്റ്ലിസ്റ്റ്",
   "targetVotes": "ലക്ഷ്യ വോട്ടുകൾ",
-  "vote": "വോട്ട്"
+  "vote": "വോട്ട്",
+  "pointsForAndAgainst": "പക്ഷവും വിപക്ഷവും",
+  "allowAnonymousUsersToVote": "ലോഗിൻ ഇല്ലാതെ വോട്ട് ചെയ്യാൻ അനുവദിക്കുക",
+  "loginToAddComment": "അഭിപ്രായം ചേർക്കാൻ ലോഗിൻ ചെയ്യുക",
+  "addComment": "അഭിപ്രായം ചേർക്കുക",
+  "loginToAddCommentOrLink": "അഭിപ്രായം അല്ലെങ്കിൽ ലിങ്ക് ചേർക്കാൻ ലോഗിൻ ചെയ്യുക",
+  "addCommentOrLink": "അഭിപ്രായം അല്ലെങ്കിൽ ലിങ്ക് ചേർക്കുക",
+  "apply": "പ്രയോഗിക്കുക",
+  "addMedia": "മീഡിയ ചേർക്കുക",
+  "htmlContent": "HTML ഉള്ളടക്കം",
+  "previewHtml": "HTML പ്രിവ്യൂ",
+  "simpleHtmlEditor": "ലളിതമായ HTML എഡിറ്റർ",
+  "editHtmlDirectly": "HTML നേരിട്ട് എഡിറ്റ് ചെയ്യുക"
 }

@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "ප්‍රතිඵල පෙන්වීමට අවම ඡන්ද දහයක්",
   "externalGoalParamsWhitelist": "බාහිර අරමුණු පරාමිති සුදු ලැයිස්තුව",
   "targetVotes": "ඉලක්ක ඡන්ද",
-  "vote": "ඡන්දය"
+  "vote": "ඡන්දය",
+  "pointsForAndAgainst": "පක්ෂ සහ විපක්ෂ ලකුණු",
+  "allowAnonymousUsersToVote": "පරිශීලකයාට ලොගින් වීමක් නැතිව ඡන්දය දීමට ඉඩ හරින්න",
+  "loginToAddComment": "අදහස් එක් කිරීමට ලොගින් වන්න",
+  "addComment": "අදහස් එක් කරන්න",
+  "loginToAddCommentOrLink": "අදහස් හෝ සබැඳියක් එක් කිරීමට ලොගින් වන්න",
+  "addCommentOrLink": "අදහස් හෝ සබැඳියක් එක් කරන්න",
+  "apply": "අයදුම් කරන්න",
+  "addMedia": "මාධ්‍ය එක් කරන්න",
+  "htmlContent": "HTML අන්තර්ගතය",
+  "previewHtml": "HTML පෙරදසුන",
+  "simpleHtmlEditor": "සරල HTML සංස්කාරකය",
+  "editHtmlDirectly": "HTML සෘජුවම සංස්කරණය කරන්න"
 }

@@ -1394,5 +1394,17 @@
   "minimumTenVotesToShowResults": "عشرة أصوات كحد أدنى للظهور في النتائج",
   "externalGoalParamsWhitelist": "قائمة بيضاء لمعايير الأهداف الخارجية",
   "targetVotes": "أصوات الهدف",
-  "vote": "تصويت"
+  "vote": "تصويت",
+  "pointsForAndAgainst": "النقاط المؤيدة والمعارضة",
+  "allowAnonymousUsersToVote": "السماح بالتصويت بدون حساب",
+  "loginToAddComment": "تسجيل الدخول لإضافة تعليق",
+  "addComment": "أضف تعليق",
+  "loginToAddCommentOrLink": "تسجيل لإضافة تعليق أو رابط",
+  "addCommentOrLink": "أضف تعليق أو رابط",
+  "apply": "تطبيق",
+  "addMedia": "إضافة وسائط",
+  "htmlContent": "محتوى HTML",
+  "previewHtml": "معاينة HTML",
+  "simpleHtmlEditor": "محرر HTML بسيط",
+  "editHtmlDirectly": "تحرير HTML مباشرة"
 }

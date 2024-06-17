@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "結果に表示するための最低10票",
   "externalGoalParamsWhitelist": "外部目標パラメーターホワイトリスト",
   "targetVotes": "目標投票数",
-  "vote": "投票"
+  "vote": "投票",
+  "pointsForAndAgainst": "賛否点",
+  "allowAnonymousUsersToVote": "ログインなしで投票可能",
+  "loginToAddComment": "コメント追加のためログイン",
+  "addComment": "コメント追加",
+  "loginToAddCommentOrLink": "コメントまたはリンク追加のためログイン",
+  "addCommentOrLink": "コメントまたはリンク追加",
+  "apply": "適用",
+  "addMedia": "メディア追加",
+  "htmlContent": "HTMLコンテンツ",
+  "previewHtml": "HTMLプレビュー",
+  "simpleHtmlEditor": "シンプルHTMLエディター",
+  "editHtmlDirectly": "HTML直接編集"
 }

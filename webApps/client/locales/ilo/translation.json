@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Maminimum a mabalin a pummanaw a boto tapno maipakita iti resulta",
   "externalGoalParamsWhitelist": "Panaglabas a lista ti parametron ti gundaway",
   "targetVotes": "Target a boto",
-  "vote": "Botos"
+  "vote": "Botos",
+  "pointsForAndAgainst": "Puntos para ken kontra",
+  "allowAnonymousUsersToVote": "Pabaelan ti agboto nga awan ti login a cuenta",
+  "loginToAddComment": "Login tapno agikabil ti komentario",
+  "addComment": "Agikabil ti komentario",
+  "loginToAddCommentOrLink": "Login tapno agikabil ti komentario wenno link",
+  "addCommentOrLink": "Agikabil ti komentario wenno link",
+  "apply": "Aplikar",
+  "addMedia": "Agikabil ti midia",
+  "htmlContent": "HTML nga Aglawlaw",
+  "previewHtml": "Preview ti HTML",
+  "simpleHtmlEditor": "Simple a HTML editor",
+  "editHtmlDirectly": "Iurnos ti HTML nga agdama"
 }

@@ -628,7 +628,7 @@
   "disableDebate": "Khubaza ingxoxo",
   "welcomeHTML": "welcome HTML (sebenzisa ngokunakekela)",
   "disableFacebookLoginForGroup": "Khubaza ukungena nge-Facebook kweqembu",
-  "facebookPixelId": "Facebook pixel id",
+  "facebookPixelId": "Ikhodi ye-Facebook pixel",
   "downloadFacebookImagesForUser": "Landa izithombe ze-Facebook zabasebenzisi kusizindalwazi sethu",
   "customUserRegistrationText": "Umbhalo wokubhalisa umsebenzisi owenziwe ngokwezifiso",
   "participateAnonymously": "Thatha ingxenye ngokungaziwa",
@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Amavoti alinganiselwa kwelishumi ukubonisa emiphumeleni",
   "externalGoalParamsWhitelist": "Uhlu lwamapharamitha omgomo wangaphandle",
   "targetVotes": "Amavoti anqunyiwe",
-  "vote": "Vota"
+  "vote": "Vota",
+  "pointsForAndAgainst": "Amaphuzu okusekela lokuphikisa",
+  "allowAnonymousUsersToVote": "Vumela umsebenzisi ukuvota engenalogin",
+  "loginToAddComment": "Ngena ukwengeza impendulo",
+  "addComment": "Faka impendulo",
+  "loginToAddCommentOrLink": "Ngena ukwengeza impendulo kumbe isixhumanisi",
+  "addCommentOrLink": "Faka impendulo kumbe isixhumanisi",
+  "apply": "Sebenzisa",
+  "addMedia": "Faka abezindaba",
+  "htmlContent": "Okuqukethwe kwe-HTML",
+  "previewHtml": "Buka kuqala i-HTML",
+  "simpleHtmlEditor": "Umhleli we-HTML olula",
+  "editHtmlDirectly": "Hlela i-HTML ngqo"
 }

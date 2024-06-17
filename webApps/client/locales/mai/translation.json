@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "परिणामों में दिखाने के लिए न्यूनतम दस वोट",
   "externalGoalParamsWhitelist": "बाहरी लक्ष्य पैरामीटर सूची",
   "targetVotes": "लक्ष्य मत",
-  "vote": "वोट"
+  "vote": "वोट",
+  "pointsForAndAgainst": "पक्ष आ विपक्षक अंक",
+  "allowAnonymousUsersToVote": "बिना लॉगिन खाता वोट देबाक अनुमति दिअ",
+  "loginToAddComment": "टिप्पणी जोड़बाक लेल लॉगिन करू",
+  "addComment": "टिप्पणी जोड़ू",
+  "loginToAddCommentOrLink": "टिप्पणी वा लिंक जोड़बाक लेल लॉगिन करू",
+  "addCommentOrLink": "टिप्पणी वा लिंक जोड़ू",
+  "apply": "लागू करू",
+  "addMedia": "मीडिया जोड़ू",
+  "htmlContent": "HTML सामग्री",
+  "previewHtml": "HTML पूर्वावलोकन",
+  "simpleHtmlEditor": "सरल HTML संपादक",
+  "editHtmlDirectly": "सीधे HTML संपादित करू"
 }

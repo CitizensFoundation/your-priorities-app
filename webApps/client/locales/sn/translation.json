@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Mavhoti gumi ari pasi kuti aratidzwe mumhedzisiro",
   "externalGoalParamsWhitelist": "Chinyorwa chekunze chemazano",
   "targetVotes": "Vhoti dzinangwa",
-  "vote": "Vhota"
+  "vote": "Vhota",
+  "pointsForAndAgainst": "Pfungwa dzekutsigira nekupikisa",
+  "allowAnonymousUsersToVote": "Bvumira mushandisi kuvhota asina account yekupinda",
+  "loginToAddComment": "Pinda kuti uwedzere taura",
+  "addComment": "Wedzera taura",
+  "loginToAddCommentOrLink": "Pinda kuti uwedzere taura kana link",
+  "addCommentOrLink": "Wedzera taura kana link",
+  "apply": "Shandisa",
+  "addMedia": "Wedzera midhiya",
+  "htmlContent": "Zvemukati zveHTML",
+  "previewHtml": "Ongorora HTML",
+  "simpleHtmlEditor": "Mupepeti weHTML akareruka",
+  "editHtmlDirectly": "Gadzirisa HTML zvakananga"
 }

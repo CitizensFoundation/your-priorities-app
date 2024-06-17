@@ -1331,7 +1331,7 @@
   "domainFraudManagement": "Область Обман Управление",
   "Access": "Доступъ",
   "openOrganizationMenu": "Открыти Организација Меню",
-  "Listasafn Reykjavíkur": "Listasafn Reykjavíkur",
+  "Listasafn Reykjavíkur": "Листасафнъ Реикявику",
   "Override theme": "Превозможи Тема",
   "Analytics & Marketing": "Аналитика & Маркетингъ",
   "Promote your survey": "Продвигай Въпросникъ",
@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Минимумъ десять голосовъ къ показу въ результатѣхъ",
   "externalGoalParamsWhitelist": "Белый списокъ внешнихъ параметровъ цели",
   "targetVotes": "Цель голосовъ",
-  "vote": "Голосовать"
+  "vote": "Голосовать",
+  "pointsForAndAgainst": "Точки за и против",
+  "allowAnonymousUsersToVote": "Допустити глас без записи",
+  "loginToAddComment": "Входи чтобы коментовати",
+  "addComment": "Додати коментарий",
+  "loginToAddCommentOrLink": "Входи чтобы коментовати или связати",
+  "addCommentOrLink": "Додати коментарий или связь",
+  "apply": "Применити",
+  "addMedia": "Додати медиа",
+  "htmlContent": "HTML Съдържание",
+  "previewHtml": "Предпросмотр HTML",
+  "simpleHtmlEditor": "Простъй HTML редактор",
+  "editHtmlDirectly": "Редактировати HTML прямо"
 }

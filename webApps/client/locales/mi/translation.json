@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Tekau pōti te iti rawa hei whakaatu i ngā hua",
   "externalGoalParamsWhitelist": "Rārangi ma ki ngā tawhā whāinga o waho",
   "targetVotes": "Pōti whāinga",
-  "vote": "Pōti"
+  "vote": "Pōti",
+  "pointsForAndAgainst": "Ngā tohu mō me te kē",
+  "allowAnonymousUsersToVote": "Tukua te pōti kāore he pūkete",
+  "loginToAddComment": "Takiuru hei tāpiri kōrero",
+  "addComment": "Tāpiri kōrero",
+  "loginToAddCommentOrLink": "Takiuru hei tāpiri kōrero, hono rānei",
+  "addCommentOrLink": "Tāpiri kōrero, hono rānei",
+  "apply": "Tonoa",
+  "addMedia": "Tāpiri pāpāho",
+  "htmlContent": "Ihirangi HTML",
+  "previewHtml": "Arokite HTML",
+  "simpleHtmlEditor": "Ētita HTML māmā",
+  "editHtmlDirectly": "Whakatika HTML tika"
 }

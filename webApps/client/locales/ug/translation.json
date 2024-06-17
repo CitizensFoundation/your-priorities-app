@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "نەتىجىلەرنى كۆرسىتىش ئۈچۈن ئەڭ ئاز ئون ئاۋاز",
   "externalGoalParamsWhitelist": "تاشقى مەقسەت پارامېتىرلىرىنىڭ ئاق تىزىملىكى",
   "targetVotes": "نىشان ئاۋازلار",
-  "vote": "ئاۋاز بېرىش"
+  "vote": "ئاۋاز بېرىش",
+  "pointsForAndAgainst": "ئۇپ-چۈشلەر",
+  "allowAnonymousUsersToVote": "تىزىملىتىشسىز ئاۋاز بېرىشكە يول قوي",
+  "loginToAddComment": "ئىنكاس قوشۇش ئۈچۈن كىرىڭ",
+  "addComment": "ئىنكاس قوش",
+  "loginToAddCommentOrLink": "ئىنكاس ياكى ئۇلانما قوشۇش ئۈچۈن كىرىڭ",
+  "addCommentOrLink": "ئىنكاس ياكى ئۇلانما قوش",
+  "apply": "قوللىنىش",
+  "addMedia": "مېدىيا قوش",
+  "htmlContent": "HTML مەزمۇنى",
+  "previewHtml": "HTML نى كۆرۈپ بېقىش",
+  "simpleHtmlEditor": "ئاددى HTML تەھرىرلىگۈچ",
+  "editHtmlDirectly": "HTML نى بىۋاسىتە تەھرىرلە"
 }

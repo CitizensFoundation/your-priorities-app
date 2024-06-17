@@ -1387,5 +1387,17 @@
   "minimumTenVotesToShowResults": "Minimálne desať hlasov pre zobrazenie výsledkov",
   "externalGoalParamsWhitelist": "Zoznam povolených parametrov externého cieľa",
   "targetVotes": "Cieľové hlasy",
-  "vote": "Hlasovať"
+  "vote": "Hlasovať",
+  "pointsForAndAgainst": "Body za a proti",
+  "allowAnonymousUsersToVote": "Povoliť hlasovanie bez účtu",
+  "loginToAddComment": "Prihlásiť sa na pridanie komentára",
+  "addComment": "Pridať komentár",
+  "loginToAddCommentOrLink": "Prihlásiť sa na pridanie komentára alebo odkazu",
+  "addCommentOrLink": "Pridať komentár alebo odkaz",
+  "apply": "Použiť",
+  "addMedia": "Pridať média",
+  "htmlContent": "HTML obsah",
+  "previewHtml": "Náhľad HTML",
+  "simpleHtmlEditor": "Jednoduchý HTML editor",
+  "editHtmlDirectly": "Upraviť HTML priamo"
 }

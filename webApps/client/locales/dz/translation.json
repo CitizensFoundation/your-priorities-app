@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "ལན་བཅུ་ལས་མཐའ་མ་སྟོན་པ་ཡིན།",
   "externalGoalParamsWhitelist": "ཕྱི་མཐའི་དམིགས་གཞི་གོ་རིམ་ཀར་ཆག",
   "targetVotes": "ལན་གསོག་འགོད་ཚད།",
-  "vote": "འདེམས།"
+  "vote": "འདེམས།",
+  "pointsForAndAgainst": "བརྡ་དང་ཕན་ཚུལ།",
+  "allowAnonymousUsersToVote": "ཐོ་བཀོད་མེད་པར་དཔའ་བཅམ་འབད་བཅུག",
+  "loginToAddComment": "བསྐྱར་དཔའ་བཅམ་འབད་དོན་ལུ་ཐོ་བཀོད་འབད",
+  "addComment": "བསྐྱར་དཔའ་བཅམ།",
+  "loginToAddCommentOrLink": "བསྐྱར་དཔའ་བཅམ་ཡང་ན་འབྲེལ་ལམ་འབད",
+  "addCommentOrLink": "བསྐྱར་དཔའ་བཅམ་ཡང་ན་འབྲེལ་ལམ།",
+  "apply": "བཀོལ་བསྐུར།",
+  "addMedia": "བརྙན་ལམ་ཁ་སྐོང་བཅུག",
+  "htmlContent": "HTML ནང་དོན།",
+  "previewHtml": "HTML སྔོན་ལྟ།",
+  "simpleHtmlEditor": "ཨེས་ཨེམ་ཨེལ་གྱི་སྐུད་རྟགས་བཟོ།",
+  "editHtmlDirectly": "ཨེས་ཨེམ་ཨེལ་རྣམ་པར་བཟོ།"
 }

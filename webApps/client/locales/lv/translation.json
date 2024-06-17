@@ -1387,5 +1387,17 @@
   "minimumTenVotesToShowResults": "Minimāli desmit balsis, lai parādītu rezultātos",
   "externalGoalParamsWhitelist": "Ārējo mērķu parametru saraksts",
   "targetVotes": "Mērķa balsis",
-  "vote": "Balsot"
+  "vote": "Balsot",
+  "pointsForAndAgainst": "Par un pret punkti",
+  "allowAnonymousUsersToVote": "Ļaut lietotājam balsot bez konta",
+  "loginToAddComment": "Pieslēgties, lai pievienotu komentāru",
+  "addComment": "Pievienot komentāru",
+  "loginToAddCommentOrLink": "Pieslēgties, lai pievienotu komentāru vai saiti",
+  "addCommentOrLink": "Pievienot komentāru vai saiti",
+  "apply": "Pieteikties",
+  "addMedia": "Pievienot mediju",
+  "htmlContent": "HTML saturs",
+  "previewHtml": "HTML priekšskatījums",
+  "simpleHtmlEditor": "Vienkāršs HTML redaktors",
+  "editHtmlDirectly": "Rediģēt HTML tieši"
 }

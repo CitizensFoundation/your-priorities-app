@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "کەمترین دەنگی دەهێنە بۆ نیشاندان لە ئەنجامەکان",
   "externalGoalParamsWhitelist": "لیستی سپیی پارامەترەکانی ئامانجی دەرەکی",
   "targetVotes": "دەنگە ئامانجەکان",
-  "vote": "دەنگ بدە"
+  "vote": "دەنگ بدە",
+  "pointsForAndAgainst": "خاڵەکان بۆ و دژی",
+  "allowAnonymousUsersToVote": "ڕێگە بدە بە بەکارهێنەر دەنگ بدات بێ ئەکاونت",
+  "loginToAddComment": "چوونەژوورەوە بۆ زیادکردنی لێدوان",
+  "addComment": "زیادکردنی لێدوان",
+  "loginToAddCommentOrLink": "چوونەژوورەوە بۆ زیادکردنی لێدوان یان بەستەر",
+  "addCommentOrLink": "زیادکردنی لێدوان یان بەستەر",
+  "apply": "جێبەجێکردن",
+  "addMedia": "زیادکردنی میدیا",
+  "htmlContent": "ناوەڕۆکی HTML",
+  "previewHtml": "پێشبینینی HTML",
+  "simpleHtmlEditor": "دەستکاریکەری HTML سادە",
+  "editHtmlDirectly": "دەستکاریکردنی HTML بەراستەوخۆ"
 }

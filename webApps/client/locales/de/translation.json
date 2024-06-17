@@ -1388,5 +1388,17 @@
   "minimumTenVotesToShowResults": "Mindestens zehn Stimmen zur Anzeige in Ergebnissen",
   "externalGoalParamsWhitelist": "Externe Zielparameter-Whitelist",
   "targetVotes": "Zielstimmen",
-  "vote": "Abstimmen"
+  "vote": "Abstimmen",
+  "pointsForAndAgainst": "Pro- und Kontrapunkte",
+  "allowAnonymousUsersToVote": "Abstimmung ohne Konto erlauben",
+  "loginToAddComment": "Zum Kommentieren anmelden",
+  "addComment": "Kommentar hinzufügen",
+  "loginToAddCommentOrLink": "Zum Hinzufügen anmelden",
+  "addCommentOrLink": "Kommentar oder Link hinzufügen",
+  "apply": "Anwenden",
+  "addMedia": "Medien hinzufügen",
+  "htmlContent": "HTML-Inhalt",
+  "previewHtml": "HTML-Vorschau",
+  "simpleHtmlEditor": "Einfacher HTML-Editor",
+  "editHtmlDirectly": "HTML direkt bearbeiten"
 }

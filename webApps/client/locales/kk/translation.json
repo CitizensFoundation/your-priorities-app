@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Нәтижелерді көрсету үшін кемінде он дауыс",
   "externalGoalParamsWhitelist": "Сыртқы мақсат параметрлерінің ақ тізімі",
   "targetVotes": "Мақсатты дауыстар",
-  "vote": "Дауыс"
+  "vote": "Дауыс",
+  "pointsForAndAgainst": "Үшін және қарсы ұпайлар",
+  "allowAnonymousUsersToVote": "Кірусіз дауыс беруге рұқсат ету",
+  "loginToAddComment": "Түсініктеме қосу үшін кіріңіз",
+  "addComment": "Түсініктеме қосу",
+  "loginToAddCommentOrLink": "Түсініктеме немесе сілтеме қосу үшін кіріңіз",
+  "addCommentOrLink": "Түсініктеме немесе сілтеме қосу",
+  "apply": "Қолдану",
+  "addMedia": "Медиа қосу",
+  "htmlContent": "HTML мазмұны",
+  "previewHtml": "HTML алдын ала қарау",
+  "simpleHtmlEditor": "Қарапайым HTML редакторы",
+  "editHtmlDirectly": "Тікелей HTML өңдеу"
 }

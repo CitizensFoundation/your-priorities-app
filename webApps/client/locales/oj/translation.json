@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Nibwaakaawin nibwaakaa ji-aadizookewaad giiwedinaasiin",
   "externalGoalParamsWhitelist": "Gaa-biboonagak onji-mazina'iganan",
   "targetVotes": "Nibwaakaawin onji-aadizookaan",
-  "vote": "Biboon"
+  "vote": "Biboon",
+  "pointsForAndAgainst": "Akiwenziiwaad miinawaa naawakwaad",
+  "allowAnonymousUsersToVote": "Mashkawiziiwag bwaajige naandagwiiwin",
+  "loginToAddComment": "Bwaajige naandagwiiwin",
+  "addComment": "Naandagwiiwin",
+  "loginToAddCommentOrLink": "Bwaajige naandagwiiwin zhigo naandagwiiwin",
+  "addCommentOrLink": "Naandagwiiwin zhigo naandagwiiwin",
+  "apply": "Gchiwebzi",
+  "addMedia": "Naandagwiiwin onji-media",
+  "htmlContent": "HTML Aya'aag",
+  "previewHtml": "HTML Aya'aag onji-waabamaa",
+  "simpleHtmlEditor": "HTML Gikinoo'amaadiwin",
+  "editHtmlDirectly": "HTML Gikinoo'amaadiwin"
 }

@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Minim tenpela vot long soim long risal",
   "externalGoalParamsWhitelist": "Eksternal gol params whitelist",
   "targetVotes": "Target vot",
-  "vote": "Voutim"
+  "vote": "Voutim",
+  "pointsForAndAgainst": "Puanita hanenai",
+  "allowAnonymousUsersToVote": "Larim yusa vouta bai no login akaun",
+  "loginToAddComment": "Login long adim koment",
+  "addComment": "Adim koment",
+  "loginToAddCommentOrLink": "Login long adim koment o link",
+  "addCommentOrLink": "Adim koment o link",
+  "apply": "Aplaim",
+  "addMedia": "Adim media",
+  "htmlContent": "HTML Saiten",
+  "previewHtml": "Lukim HTML",
+  "simpleHtmlEditor": "Simpol HTML edita",
+  "editHtmlDirectly": "Editim HTML stret"
 }

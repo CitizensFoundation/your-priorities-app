@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "O kere ju idibo mẹwa lati han ni awọn abajade",
   "externalGoalParamsWhitelist": "Akojọ funfun ti awọn paramita ibi-afẹde ita",
   "targetVotes": "Idibo ibi-afẹde",
-  "vote": "Dibo"
+  "vote": "Dibo",
+  "pointsForAndAgainst": "Awọn aaye fun ati lodi si",
+  "allowAnonymousUsersToVote": "Gba olumulo laaye lati dibo laisi iroyin wiwọle",
+  "loginToAddComment": "Wọle lati fi asọye kun",
+  "addComment": "Fi asọye kun",
+  "loginToAddCommentOrLink": "Wọle lati fi asọye tabi ọna asopọ kun",
+  "addCommentOrLink": "Fi asọye tabi ọna asopọ kun",
+  "apply": "Waye",
+  "addMedia": "Fi aworan kun",
+  "htmlContent": "Akoonu HTML",
+  "previewHtml": "Awotẹlẹ HTML",
+  "simpleHtmlEditor": "Olootu HTML rọrun",
+  "editHtmlDirectly": "Ṣatunkọ HTML taara"
 }

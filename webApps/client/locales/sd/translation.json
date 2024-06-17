@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "ڳڻپل ڏس ووٽ نتيجن ۾ ڏيکارڻ لاءِ",
   "externalGoalParamsWhitelist": "باهري مقصد پيراميٽرز وائٽلسٽ",
   "targetVotes": "هدف ووٽ",
-  "vote": "ووٽ"
+  "vote": "ووٽ",
+  "pointsForAndAgainst": "حق مخالفت ۽ حمايت جا پوائنٽ",
+  "allowAnonymousUsersToVote": "بغير لاگ ان اڪائونٽ کان ووٽ ڏيڻ جي اجازت ڏيو",
+  "loginToAddComment": "تبصره ڏانهن لاگ ان ٿيو",
+  "addComment": "تبصره شامل ڪريو",
+  "loginToAddCommentOrLink": "تبصره يا لنڪ شامل ڪرڻ لاءِ لاگ ان ٿيو",
+  "addCommentOrLink": "تبصره يا لنڪ شامل ڪريو",
+  "apply": "لاگو ڪريو",
+  "addMedia": "ميڊيا شامل ڪريو",
+  "htmlContent": "HTML مواد",
+  "previewHtml": "HTML جي پيش نظارتي",
+  "simpleHtmlEditor": "سادو HTML ايڊيٽر",
+  "editHtmlDirectly": "بااختيار HTML ايڊيٽ ڪريو"
 }

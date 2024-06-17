@@ -1388,5 +1388,17 @@
   "minimumTenVotesToShowResults": "Minst tio röster för att visas i resultat",
   "externalGoalParamsWhitelist": "Vitlista för externa målparametrar",
   "targetVotes": "Målröster",
-  "vote": "Rösta"
+  "vote": "Rösta",
+  "pointsForAndAgainst": "För- och nackdelar",
+  "allowAnonymousUsersToVote": "Tillåt röstning utan konto",
+  "loginToAddComment": "Logga in för att kommentera",
+  "addComment": "Lägg till kommentar",
+  "loginToAddCommentOrLink": "Logga in för att kommentera eller länka",
+  "addCommentOrLink": "Lägg till kommentar eller länk",
+  "apply": "Tillämpa",
+  "addMedia": "Lägg till media",
+  "htmlContent": "HTML-innehåll",
+  "previewHtml": "Förhandsgranska HTML",
+  "simpleHtmlEditor": "Enkel HTML-redigerare",
+  "editHtmlDirectly": "Redigera HTML direkt"
 }

@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Minimum sepuluh undi untuk dipaparkan dalam keputusan",
   "externalGoalParamsWhitelist": "Senarai putih parameter matlamat luaran",
   "targetVotes": "Undi sasaran",
-  "vote": "Undi"
+  "vote": "Undi",
+  "pointsForAndAgainst": "Mata untuk dan melawan",
+  "allowAnonymousUsersToVote": "Benarkan pengguna mengundi tanpa akaun",
+  "loginToAddComment": "Log masuk untuk tambah komen",
+  "addComment": "Tambah komen",
+  "loginToAddCommentOrLink": "Log masuk untuk tambah komen atau pautan",
+  "addCommentOrLink": "Tambah komen atau pautan",
+  "apply": "Guna",
+  "addMedia": "Tambah media",
+  "htmlContent": "Kandungan HTML",
+  "previewHtml": "Pratonton HTML",
+  "simpleHtmlEditor": "Editor HTML ringkas",
+  "editHtmlDirectly": "Edit HTML secara langsung"
 }

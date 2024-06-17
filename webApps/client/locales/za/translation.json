@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "显示结果最少十票",
   "externalGoalParamsWhitelist": "外部目标参数白名单",
   "targetVotes": "目标票数",
-  "vote": "Coux"
+  "vote": "Coux",
+  "pointsForAndAgainst": "Youx ma daemx",
+  "allowAnonymousUsersToVote": "Caeuz miz votv boux daengzminz",
+  "loginToAddComment": "Dengluh hoz gwnz",
+  "addComment": "Hoz gwnz",
+  "loginToAddCommentOrLink": "Dengluh hoz gwnz huo gwnzlienz",
+  "addCommentOrLink": "Hoz gwnz huo gwnzlienz",
+  "apply": "Yungz",
+  "addMedia": "Hoz meiz",
+  "htmlContent": "HTML ngeih",
+  "previewHtml": "Saenq HTML",
+  "simpleHtmlEditor": "HTML gwnzsw",
+  "editHtmlDirectly": "Gwnzsw HTML"
 }

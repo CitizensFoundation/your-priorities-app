@@ -1388,5 +1388,17 @@
   "minimumTenVotesToShowResults": "最少十票才顯示結果",
   "externalGoalParamsWhitelist": "外部目標參數白名單",
   "targetVotes": "目標票數",
-  "vote": "投票"
+  "vote": "投票",
+  "pointsForAndAgainst": "贊成與反對點",
+  "allowAnonymousUsersToVote": "允許用戶無需登錄即可投票",
+  "loginToAddComment": "登錄以添加評論",
+  "addComment": "添加評論",
+  "loginToAddCommentOrLink": "登錄以添加評論或鏈接",
+  "addCommentOrLink": "添加評論或鏈接",
+  "apply": "應用",
+  "addMedia": "添加媒體",
+  "htmlContent": "HTML內容",
+  "previewHtml": "預覽HTML",
+  "simpleHtmlEditor": "簡易HTML編輯器",
+  "editHtmlDirectly": "直接編輯HTML"
 }

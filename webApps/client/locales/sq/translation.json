@@ -1387,5 +1387,17 @@
   "minimumTenVotesToShowResults": "Minimumi dhjetë vota për të shfaqur në rezultate",
   "externalGoalParamsWhitelist": "Lista e lejuar e parametrave të qëllimit të jashtëm",
   "targetVotes": "Votat objektiv",
-  "vote": "Voto"
+  "vote": "Voto",
+  "pointsForAndAgainst": "Pikët pro dhe kundër",
+  "allowAnonymousUsersToVote": "Lejo votimin pa llogari",
+  "loginToAddComment": "Kyçu për të shtuar koment",
+  "addComment": "Shto koment",
+  "loginToAddCommentOrLink": "Kyçu për të shtuar koment ose lidhje",
+  "addCommentOrLink": "Shto koment ose lidhje",
+  "apply": "Apliko",
+  "addMedia": "Shto media",
+  "htmlContent": "Përmbajtje HTML",
+  "previewHtml": "Parashiko HTML",
+  "simpleHtmlEditor": "Redaktues HTML i thjeshtë",
+  "editHtmlDirectly": "Redakto HTML direkt"
 }

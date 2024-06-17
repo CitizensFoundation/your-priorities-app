@@ -1216,7 +1216,7 @@
   "An error occurred": "Kwenzekile iphutha. Zama futhi.",
   "Cancel": "Khansela",
   "Tonal": "Tonal",
-  "Vibrant": "Vibrant",
+  "Vibrant": "Qhakazile",
   "Expressive": "Eveza",
   "Content": "Okuqukethwe",
   "Neutral": "Nokungathathi hlangothi",
@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Amavoti ayishumi ubuncane ukubonisa emiphumeleni",
   "externalGoalParamsWhitelist": "Uhlu olumhlophe lwamapharamitha womgomo wangaphandle",
   "targetVotes": "Amavoti anqunyiwe",
-  "vote": "Vota"
+  "vote": "Vota",
+  "pointsForAndAgainst": "Amanqaku okusekela nokuphikisa",
+  "allowAnonymousUsersToVote": "Vumela umsebenzisi ukuvota ngaphandle kwe-akhawunti yokungena",
+  "loginToAddComment": "Ngena ukufaka amazwana",
+  "addComment": "Faka amazwana",
+  "loginToAddCommentOrLink": "Ngena ukufaka amazwana noma isixhumanisi",
+  "addCommentOrLink": "Faka amazwana noma isixhumanisi",
+  "apply": "Sebenzisa",
+  "addMedia": "Faka abezindaba",
+  "htmlContent": "Okuqukethwe kwe-HTML",
+  "previewHtml": "Buka kuqala i-HTML",
+  "simpleHtmlEditor": "Umhleli we-HTML olula",
+  "editHtmlDirectly": "Hlela i-HTML ngqo"
 }

@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Juróom benni vot ngir won ci nataal bi",
   "externalGoalParamsWhitelist": "Lislaayu parametar yu biti",
   "targetVotes": "Vot yu cib ñatteel",
-  "vote": "Vóot"
+  "vote": "Vóot",
+  "pointsForAndAgainst": "Xool ak yëgleel",
+  "allowAnonymousUsersToVote": "May jëfandikukat buñu amal kont bi",
+  "loginToAddComment": "Dugal ngir yokk sa xalaat",
+  "addComment": "Yokk xalaat",
+  "loginToAddCommentOrLink": "Dugal ngir yokk sa xalaat walla lëkkalekaay",
+  "addCommentOrLink": "Yokk xalaat walla lëkkalekaay",
+  "apply": "Jëfandikoo",
+  "addMedia": "Yokk media",
+  "htmlContent": "Kontaanu HTML",
+  "previewHtml": "Seet HTML bi",
+  "simpleHtmlEditor": "Jumtukaay HTML bu saafara",
+  "editHtmlDirectly": "Soppi HTML bu njëkk"
 }

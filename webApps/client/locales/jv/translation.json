@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Minimal sepuluh swara kanggo ditampilake ing asil",
   "externalGoalParamsWhitelist": "Dhaptar putih paramèter tujuan njaba",
   "targetVotes": "Target swara",
-  "vote": "Milih"
+  "vote": "Milih",
+  "pointsForAndAgainst": "Poin pro lan kontra",
+  "allowAnonymousUsersToVote": "Ngidini pangguna milih tanpa akun",
+  "loginToAddComment": "Mlebu kanggo nambah komentar",
+  "addComment": "Tambah komentar",
+  "loginToAddCommentOrLink": "Mlebu kanggo nambah komentar utawa pranala",
+  "addCommentOrLink": "Tambah komentar utawa pranala",
+  "apply": "Lamar",
+  "addMedia": "Tambah media",
+  "htmlContent": "Konten HTML",
+  "previewHtml": "Pratayang HTML",
+  "simpleHtmlEditor": "Editor HTML prasaja",
+  "editHtmlDirectly": "Sunting HTML langsung"
 }

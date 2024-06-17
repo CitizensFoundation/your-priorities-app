@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Մինիմալ տաս քվեներ՝ արդյունքները ցուցադրելու համար",
   "externalGoalParamsWhitelist": "Արտաքին նպատակի պարամետրերի սպիտակ ցուցակ",
   "targetVotes": "Նպատակական քվեներ",
-  "vote": "Քվեարկել"
+  "vote": "Քվեարկել",
+  "pointsForAndAgainst": "կողմ և դեմ միավորներ",
+  "allowAnonymousUsersToVote": "թույլատրել մասնակցել առանց մուտքագրման",
+  "loginToAddComment": "Մուտք գործեք՝ մեկնաբանություն ավելացնելու համար",
+  "addComment": "Ավելացնել մեկնաբանություն",
+  "loginToAddCommentOrLink": "Մուտք գործեք՝ մեկնաբանություն կամ հղում ավելացնելու համար",
+  "addCommentOrLink": "Ավելացնել մեկնաբանություն կամ հղում",
+  "apply": "Դիմել",
+  "addMedia": "Ավելացնել մեդիա",
+  "htmlContent": "HTML բովանդակություն",
+  "previewHtml": "HTML նախադիտում",
+  "simpleHtmlEditor": "Պարզ HTML խմբագիր",
+  "editHtmlDirectly": "Խմբագրել HTML-ը ուղղակի"
 }

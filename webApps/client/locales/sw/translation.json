@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Kura za chini kumi kuonyesha matokeo",
   "externalGoalParamsWhitelist": "Orodha nyeupe ya malengo ya nje",
   "targetVotes": "Kura lengwa",
-  "vote": "Piga Kura"
+  "vote": "Piga Kura",
+  "pointsForAndAgainst": "Hoja za na dhidi",
+  "allowAnonymousUsersToVote": "Ruhusu mtumiaji kupiga kura bila akaunti",
+  "loginToAddComment": "Ingia kuongeza maoni",
+  "addComment": "Ongeza maoni",
+  "loginToAddCommentOrLink": "Ingia kuongeza maoni au kiungo",
+  "addCommentOrLink": "Ongeza maoni au kiungo",
+  "apply": "Tumia",
+  "addMedia": "Ongeza media",
+  "htmlContent": "Yaliyomo ya HTML",
+  "previewHtml": "Hakiki HTML",
+  "simpleHtmlEditor": "Mhariri wa HTML Rahisi",
+  "editHtmlDirectly": "Hariri HTML moja kwa moja"
 }

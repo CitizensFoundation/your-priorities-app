@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Minimu dece voti per mostrà in risultati",
   "externalGoalParamsWhitelist": "Lista bianca di parametri di scopu esternu",
   "targetVotes": "Voti obiettivi",
-  "vote": "Vutà"
+  "vote": "Vutà",
+  "pointsForAndAgainst": "Punti prò è contru",
+  "allowAnonymousUsersToVote": "Permette à l'utilizatore di votà senza un contu di cunnessione",
+  "loginToAddComment": "Cunnettatevi per aghjunghje un cummentariu",
+  "addComment": "Aghjunghje cummentariu",
+  "loginToAddCommentOrLink": "Cunnettatevi per aghjunghje un cummentariu o ligame",
+  "addCommentOrLink": "Aghjunghje cummentariu o ligame",
+  "apply": "Applica",
+  "addMedia": "Aghjunghje media",
+  "htmlContent": "Cuntenutu HTML",
+  "previewHtml": "Anteprima HTML",
+  "simpleHtmlEditor": "Editore HTML simplice",
+  "editHtmlDirectly": "Edità HTML direttamente"
 }

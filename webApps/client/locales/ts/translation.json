@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Mavhoti ya khume yo kombisa eka swiphumo",
   "externalGoalParamsWhitelist": "Ndzawulo ya swikongomelo swa le handle",
   "targetVotes": "Mavhoti ya xikongomelo",
-  "vote": "Hlawula"
+  "vote": "Hlawula",
+  "pointsForAndAgainst": "Maphuzu ya ku pfumela na ku ala",
+  "allowAnonymousUsersToVote": "Pfumelela muendzi ku vhotela handle ka akhawunti",
+  "loginToAddComment": "Nghena ku engetela xiringanyeto",
+  "addComment": "Engetela xiringanyeto",
+  "loginToAddCommentOrLink": "Nghena ku engetela xiringanyeto kumbe xikombiso",
+  "addCommentOrLink": "Engetela xiringanyeto kumbe xikombiso",
+  "apply": "Kombela",
+  "addMedia": "Engetela tifayili ta swifaniso",
+  "htmlContent": "Tindzimi ta HTML",
+  "previewHtml": "Lavisisa HTML",
+  "simpleHtmlEditor": "Mupepeteli wa HTML wo olova",
+  "editHtmlDirectly": "Lulamisa HTML hi ku kongoma"
 }

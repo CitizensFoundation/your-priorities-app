@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Minimum tien stemme om in resultate te wys",
   "externalGoalParamsWhitelist": "Eksterne doelwit params witlys",
   "targetVotes": "Teikenstemme",
-  "vote": "Stem"
+  "vote": "Stem",
+  "pointsForAndAgainst": "Punte vir en teen",
+  "allowAnonymousUsersToVote": "Laat gebruiker stem sonder 'n rekening",
+  "loginToAddComment": "Teken in om kommentaar te lewer",
+  "addComment": "Voeg kommentaar by",
+  "loginToAddCommentOrLink": "Teken in om kommentaar of skakel by te voeg",
+  "addCommentOrLink": "Voeg kommentaar of skakel by",
+  "apply": "Pas toe",
+  "addMedia": "Voeg media by",
+  "htmlContent": "HTML Inhoud",
+  "previewHtml": "Voorskou HTML",
+  "simpleHtmlEditor": "Eenvoudige HTML redigeerder",
+  "editHtmlDirectly": "Wysig HTML direk"
 }

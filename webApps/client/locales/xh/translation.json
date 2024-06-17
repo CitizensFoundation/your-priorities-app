@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Ubuncinane bamavoti alishumi ukubonisa kwiziphumo",
   "externalGoalParamsWhitelist": "Uluhlu lwamagama angundoqo angaphandle",
   "targetVotes": "Amavoti ekujoliswe kuwo",
-  "vote": "Vota"
+  "vote": "Vota",
+  "pointsForAndAgainst": "Amanqaku okuvumela nokuchasa",
+  "allowAnonymousUsersToVote": "Vumela umsebenzisi ukuba avote ngaphandle kweakhawunti yokungena",
+  "loginToAddComment": "Ngena ukongeza izimvo",
+  "addComment": "Yongeza izimvo",
+  "loginToAddCommentOrLink": "Ngena ukongeza izimvo okanye ikhonkco",
+  "addCommentOrLink": "Yongeza izimvo okanye ikhonkco",
+  "apply": "Sebenzisa",
+  "addMedia": "Yongeza imidiya",
+  "htmlContent": "Umxholo we-HTML",
+  "previewHtml": "Jonga kuqala i-HTML",
+  "simpleHtmlEditor": "Umhleli we-HTML elula",
+  "editHtmlDirectly": "Hlela i-HTML ngqo"
 }

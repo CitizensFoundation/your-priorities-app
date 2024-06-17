@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Minimaliai dešimt balsų, kad būtų rodoma rezultatuose",
   "externalGoalParamsWhitelist": "Išorinių tikslų parametrų sąrašas",
   "targetVotes": "Tiksliniai balsai",
-  "vote": "Balsuoti"
+  "vote": "Balsuoti",
+  "pointsForAndAgainst": "Už ir prieš taškai",
+  "allowAnonymousUsersToVote": "Leisti balsuoti be prisijungimo",
+  "loginToAddComment": "Prisijunkite, kad pridėtumėte komentarą",
+  "addComment": "Pridėti komentarą",
+  "loginToAddCommentOrLink": "Prisijunkite, kad pridėtumėte komentarą arba nuorodą",
+  "addCommentOrLink": "Pridėti komentarą arba nuorodą",
+  "apply": "Taikyti",
+  "addMedia": "Pridėti mediją",
+  "htmlContent": "HTML turinys",
+  "previewHtml": "Peržiūrėti HTML",
+  "simpleHtmlEditor": "Paprastas HTML redaktorius",
+  "editHtmlDirectly": "Redaguoti HTML tiesiogiai"
 }

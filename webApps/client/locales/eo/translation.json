@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Minimume dek voĉoj por montri en rezultoj",
   "externalGoalParamsWhitelist": "Ekstera celparametroj permeslisto",
   "targetVotes": "Celaj voĉoj",
-  "vote": "Voĉdoni"
+  "vote": "Voĉdoni",
+  "pointsForAndAgainst": "Por kaj kontraŭ",
+  "allowAnonymousUsersToVote": "Permesi voĉdoni sen ensaluti",
+  "loginToAddComment": "Ensaluti por komenti",
+  "addComment": "Aldoni komenton",
+  "loginToAddCommentOrLink": "Ensaluti por komenti aŭ ligi",
+  "addCommentOrLink": "Aldoni komenton aŭ ligon",
+  "apply": "Apliki",
+  "addMedia": "Aldoni amaskomunikilojn",
+  "htmlContent": "HTML Enhavo",
+  "previewHtml": "Antaŭrigardi HTML",
+  "simpleHtmlEditor": "Simpla HTML redaktilo",
+  "editHtmlDirectly": "Rekte redakti HTML"
 }

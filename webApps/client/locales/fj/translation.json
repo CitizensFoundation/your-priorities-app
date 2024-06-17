@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "E tini na voti lailai me laurai ena kena isau",
   "externalGoalParamsWhitelist": "Vakarawarawa ni sasaga ni bati ni ituvatuva",
   "targetVotes": "Votu ni sasaga",
-  "vote": "Votetaka"
+  "vote": "Votetaka",
+  "pointsForAndAgainst": "Vakamacala ni veika vinaka kei na ca",
+  "allowAnonymousUsersToVote": "Solia na dodonu ni veivotu ni sega ni curu",
+  "loginToAddComment": "Curu me vakuria na vakasama",
+  "addComment": "Vakuria na vakasama",
+  "loginToAddCommentOrLink": "Curu me vakuria na vakasama se soqo",
+  "addCommentOrLink": "Vakuria na vakasama se soqo",
+  "apply": "Vakayagataka",
+  "addMedia": "Vakuria na itabaqase",
+  "htmlContent": "Mata ni HTML",
+  "previewHtml": "Raica na HTML",
+  "simpleHtmlEditor": "Dauvola ni HTML rawarawa",
+  "editHtmlDirectly": "Vola sara ga na HTML"
 }

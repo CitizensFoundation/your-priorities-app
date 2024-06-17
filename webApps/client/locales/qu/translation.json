@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Chunka votokuna aswan qhawachinapaq",
   "externalGoalParamsWhitelist": "Hawa churasqa parametrukuna",
   "targetVotes": "Churasqa votokuna",
-  "vote": "Votay"
+  "vote": "Votay",
+  "pointsForAndAgainst": "Imaynataq mana imaynataq",
+  "allowAnonymousUsersToVote": "Mana yupaychana rakiypi kachkaqta votachiy",
+  "loginToAddComment": "Yaykuy willaykunata yapay",
+  "addComment": "Willayta yapay",
+  "loginToAddCommentOrLink": "Yaykuy willaykunata utaq t'inkita yapay",
+  "addCommentOrLink": "Willay utaq t'inki yapay",
+  "apply": "Churay",
+  "addMedia": "Midyata yapay",
+  "htmlContent": "HTML T'iqi",
+  "previewHtml": "HTML ñawinchay",
+  "simpleHtmlEditor": "HTML sumaq llamk'ay",
+  "editHtmlDirectly": "HTML-ta chiqanpi llamk'ay"
 }

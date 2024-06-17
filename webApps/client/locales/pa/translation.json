@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "ਨਤੀਜਿਆਂ ਵਿੱਚ ਦਿਖਾਉਣ ਲਈ ਘੱਟੋ-ਘੱਟ ਦਸ ਵੋਟ",
   "externalGoalParamsWhitelist": "ਬਾਹਰੀ ਮਕਸਦ ਪੈਰਾਮੀਟਰ ਸਫੇਦ ਸੂਚੀ",
   "targetVotes": "ਨਿਸ਼ਾਨਾ ਵੋਟ",
-  "vote": "ਵੋਟ"
+  "vote": "ਵੋਟ",
+  "pointsForAndAgainst": "ਪੱਖ ਅਤੇ ਵਿਰੋਧ",
+  "allowAnonymousUsersToVote": "ਲੌਗਿਨ ਤੋਂ ਬਿਨਾਂ ਵੋਟ ਦੇਣ ਦੀ ਆਗਿਆ ਦਿਓ",
+  "loginToAddComment": "ਟਿੱਪਣੀ ਜੋੜਨ ਲਈ ਲੌਗਿਨ ਕਰੋ",
+  "addComment": "ਟਿੱਪਣੀ ਜੋੜੋ",
+  "loginToAddCommentOrLink": "ਟਿੱਪਣੀ ਜਾਂ ਲਿੰਕ ਜੋੜਨ ਲਈ ਲੌਗਿਨ ਕਰੋ",
+  "addCommentOrLink": "ਟਿੱਪਣੀ ਜਾਂ ਲਿੰਕ ਜੋੜੋ",
+  "apply": "ਲਾਗੂ ਕਰੋ",
+  "addMedia": "ਮੀਡੀਆ ਜੋੜੋ",
+  "htmlContent": "HTML ਸਮੱਗਰੀ",
+  "previewHtml": "HTML ਪ੍ਰੀਵਿਊ",
+  "simpleHtmlEditor": "ਸਾਧਾ HTML ਸੰਪਾਦਕ",
+  "editHtmlDirectly": "HTML ਸਿੱਧੇ ਸੰਪਾਦਿਤ ਕਰੋ"
 }

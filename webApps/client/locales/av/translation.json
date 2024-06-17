@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Минималла десят тав гӀоралла кхочушделара",
   "externalGoalParamsWhitelist": "Арахьара меттиган параметраш",
   "targetVotes": "Хьалхара таваш",
-  "vote": "Рухъа"
+  "vote": "Рухъа",
+  "pointsForAndAgainst": "Хьал ва цӀе ва",
+  "allowAnonymousUsersToVote": "Хьал болу вац Iсар бачӀахьа",
+  "loginToAddComment": "Iсар болу тӀетӀар а",
+  "addComment": "ТӀетӀар а",
+  "loginToAddCommentOrLink": "Iсар болу тӀетӀар амма хьалхар а",
+  "addCommentOrLink": "ТӀетӀар амма хьалхар а",
+  "apply": "Барам",
+  "addMedia": "Медиа тӀетӀар а",
+  "htmlContent": "HTML мазар",
+  "previewHtml": "HTML къараб",
+  "simpleHtmlEditor": "HTML гӀирс дакъан",
+  "editHtmlDirectly": "HTML гӀирс дуьз"
 }

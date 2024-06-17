@@ -1381,5 +1381,17 @@
   "minimumTenVotesToShowResults": "Resultda pibirkhiba matung ten vote minimum",
   "externalGoalParamsWhitelist": "বাহ্যিক লক্ষ্য প্যারাম ধলা",
   "targetVotes": "লক্ষ্য ভোট",
-  "vote": "ভোট"
+  "vote": "ভোট",
+  "pointsForAndAgainst": "পক্ষ আরু বিপক্ষৰ পইণ্ট",
+  "allowAnonymousUsersToVote": "লগইন একাউণ্ট অবিহনে ভোট দিবলৈ অনুমতি দিয়ক",
+  "loginToAddComment": "মন্তব্য যোগ কৰিবলৈ লগইন কৰক",
+  "addComment": "মন্তব্য যোগ কৰক",
+  "loginToAddCommentOrLink": "মন্তব্য বা লিংক যোগ কৰিবলৈ লগইন কৰক",
+  "addCommentOrLink": "মন্তব্য বা লিংক যোগ কৰক",
+  "apply": "প্ৰয়োগ কৰক",
+  "addMedia": "মিডিয়া যোগ কৰক",
+  "htmlContent": "HTML বিষয়বস্তু",
+  "previewHtml": "HTML প্ৰিভিউ কৰক",
+  "simpleHtmlEditor": "সৰল HTML সম্পাদক",
+  "editHtmlDirectly": "সৰাসৰি HTML সম্পাদনা কৰক"
 }
