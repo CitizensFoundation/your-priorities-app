@@ -177,7 +177,9 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
               <div class="layout horizontal center-center">
                 ${this.renderSaveButton()}
               </div>
-              <div class="actionButtonContainer layout horizontal center-center">
+              <div
+                class="actionButtonContainer layout horizontal center-center"
+              >
                 ${this.renderActionMenu()}
               </div>
               <div class="flex"></div>
@@ -1891,7 +1893,9 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
                 {
                     text: "allowAnonymousUsers",
                     type: "checkbox",
-                    value: this.group.configuration.allowAnonymousUsers,
+                    value: this.group.configuration.allowAnonymousUsers !== undefined
+                        ? this.group.configuration.allowAnonymousUsers
+                        : true,
                     translationToken: "allowAnonymousUsersToVote",
                 },
                 {

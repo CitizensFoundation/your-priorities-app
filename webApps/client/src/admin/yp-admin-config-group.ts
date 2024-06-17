@@ -240,7 +240,9 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
               <div class="layout horizontal center-center">
                 ${this.renderSaveButton()}
               </div>
-              <div class="actionButtonContainer layout horizontal center-center">
+              <div
+                class="actionButtonContainer layout horizontal center-center"
+              >
                 ${this.renderActionMenu()}
               </div>
               <div class="flex"></div>
@@ -2106,7 +2108,10 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
         {
           text: "allowAnonymousUsers",
           type: "checkbox",
-          value: this.group.configuration.allowAnonymousUsers,
+          value:
+            this.group.configuration.allowAnonymousUsers !== undefined
+              ? this.group.configuration.allowAnonymousUsers
+              : true,
           translationToken: "allowAnonymousUsersToVote",
         },
         {
