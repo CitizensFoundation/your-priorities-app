@@ -1293,6 +1293,7 @@ let YpLogin = class YpLogin extends YpBaseElement {
             this._loginCompleted(user);
         }
         else {
+            this.fire("yp-error", this.t("user.loginNotAuthorized"));
             console.error("No user in loginUser");
         }
     }

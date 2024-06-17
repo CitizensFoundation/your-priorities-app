@@ -124,6 +124,9 @@ export const YpAppStyles = css `
     margin-right: 4px;
   }
 
-
+  .activeBadge {
+    margin-left: -16px;
+    margin-top: 2px;
+  }
 `;
 //# sourceMappingURL=YpAppStyles.js.map

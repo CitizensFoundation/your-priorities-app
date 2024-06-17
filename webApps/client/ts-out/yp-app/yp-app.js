@@ -986,7 +986,7 @@ let YpApp = class YpApp extends YpBaseElement {
     }
     openResetPasswordDialog(resetPasswordToken) {
         // TODO: Remove any
-        this.getDialogAsync("resetPassword", (dialog) => {
+        this.getDialogAsync("resetPassword", async (dialog) => {
             dialog.open(resetPasswordToken);
         });
     }
@@ -1074,9 +1074,9 @@ let YpApp = class YpApp extends YpBaseElement {
         await new Promise((resolve) => setTimeout(resolve, 300));
         this.navDrawerOpened = false;
     }
-    getDialogAsync(idName, callback) {
-        // Todo: Get Working
-        //(this.$$("#dialogContainer") as YpAppDialog).getDialogAsync(idName, callback);
+    async getDialogAsync(idName, callback) {
+        await this.updateComplete;
+        this.$$("#dialogContainer").getDialogAsync(idName, callback);
     }
     closeDialog(idName) {
         this.$$("#dialogContainer").closeDialog(idName);

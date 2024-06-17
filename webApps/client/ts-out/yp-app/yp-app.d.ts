@@ -168,7 +168,7 @@ export declare class YpApp extends YpBaseElement {
     }, keepOpenForPost?: boolean): boolean;
     _openNavDrawer(): Promise<void>;
     _closeNavDrawer(): Promise<void>;
-    getDialogAsync(idName: string, callback: Function): void;
+    getDialogAsync(idName: string, callback: Function): Promise<void>;
     closeDialog(idName: string): void;
     _dialogClosed(event: CustomEvent): void;
     scrollPageToTop(): void;

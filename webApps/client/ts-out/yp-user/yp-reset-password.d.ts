@@ -12,7 +12,7 @@ export declare class YpResetPassword extends YpBaseElement {
     _validateAndSend(): Promise<void>;
     _cancel(): void;
     _loginCompleted(user: YpUserData): void;
-    open(token: string): void;
+    open(token: string): Promise<void>;
     close(): void;
 }
 //# sourceMappingURL=yp-reset-password.d.ts.map
