@@ -77,7 +77,6 @@ export class YpResetPassword extends YpBaseElement {
   async _validateAndSend() {
     const passwordField = this.$$("#password") as TextField;
     if (passwordField && passwordField.checkValidity() && passwordField.value) {
-      let password = passwordField.value;
       const response = await window.serverApi.resetPassword(this.token, {
         password: passwordField.value,
       });
@@ -109,7 +108,8 @@ export class YpResetPassword extends YpBaseElement {
   async open(token: string) {
     if (token) {
       this.token = token;
-      if (this.token.endsWith("/")) this.token = this.token.slice(0, -1);
+    } else {
+      console.error("No token provided to reset password");
     }
     await this.updateComplete;
     (this.$$("#dialog") as Dialog).show();
