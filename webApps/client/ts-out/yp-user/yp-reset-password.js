@@ -18,15 +18,19 @@ let YpResetPassword = class YpResetPassword extends YpBaseElement {
         this.passwordErrorMessage = "";
     }
     static get styles() {
-        return [super.styles, css `
-      md-dialog[open][is-safari] {
+        return [
+            super.styles,
+            css `
+        md-dialog[open][is-safari] {
           height: 100%;
         }
-    `];
+      `,
+        ];
     }
     render() {
         return html `
-      <md-dialog id="dialog"
+      <md-dialog
+        id="dialog"
         @cancel="${this.scrimDisableAction}"
         ?is-safari="${this.isSafari}"
       >
@@ -67,6 +71,7 @@ let YpResetPassword = class YpResetPassword extends YpBaseElement {
     async _validateAndSend() {
         const passwordField = this.$$("#password");
         if (passwordField && passwordField.checkValidity() && passwordField.value) {
+            let password = passwordField.value;
             const response = await window.serverApi.resetPassword(this.token, {
                 password: passwordField.value,
             });
@@ -91,8 +96,11 @@ let YpResetPassword = class YpResetPassword extends YpBaseElement {
         window.location.href = "/";
     }
     async open(token) {
-        if (token)
+        if (token) {
             this.token = token;
+            if (this.token.endsWith("/"))
+                this.token = this.token.slice(0, -1);
+        }
         await this.updateComplete;
         this.$$("#dialog").show();
     }
