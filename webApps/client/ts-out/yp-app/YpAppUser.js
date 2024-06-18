@@ -162,10 +162,15 @@ export class YpAppUser extends YpCodeBase {
         this.openUserlogin();
     }
     openUserlogin(email = undefined, collectionConfiguration = undefined) {
-        window.appDialogs.getDialogAsync("userLogin", (dialog) => {
-            dialog.setup(this._handleLogin.bind(this), window.appGlobals.domain);
-            dialog.openDialog(undefined, email, collectionConfiguration);
-        });
+        if (!window.appDialogs) {
+            this.addGlobalListener("yp-app-dialogs-ready", this.openUserlogin.bind(this));
+        }
+        else {
+            window.appDialogs.getDialogAsync("userLogin", (dialog) => {
+                dialog.setup(this._handleLogin.bind(this), window.appGlobals.domain);
+                dialog.openDialog(undefined, email, collectionConfiguration);
+            });
+        }
     }
     autoAnonymousLogin() {
         setTimeout(() => {
@@ -215,49 +220,56 @@ export class YpAppUser extends YpCodeBase {
         }, 450);
     }
     _checkLoginForParameters() {
-        /* TODO: Get working again
+        //TODO: Get working again
         if (this.loginForEditParams) {
-          const loginParams = this.loginForEditParams;
-          // TODO: Remove any
-          window.appDialogs.getAsync(loginParams.editDialog, (dialog: any) => {
-            dialog.setup(null, true, loginParams.refreshFunction);
-            dialog.open('new', loginParams.params);
-            this.loginForEditParams = null;
-          });
-        } else if (this.loginForNewPointParams) {
-          const newPointParams = this.loginForNewPointParams;
-          newPointParams.postPointsElement.addPoint(newPointParams.params.content, newPointParams.params.value);
-          this.loginForNewPointParams = null;
-        } else if (this.loginForEndorseParams) {
-          const endorseParams = this.loginForEndorseParams;
-          endorseParams.postActionElement.generateEndorsementFromLogin(endorseParams.params.value);
-          this.loginForEndorseParams = null;
-        } else if (this.loginForRatingsParams) {
-          const ratingsParams = this.loginForRatingsParams;
-          ratingsParams.postActionElement.openRatingsDialog();
-          this.loginForRatingsParams = null;
-        } else if (this.loginForPointQualityParams) {
-          const pointQualityParams = this.loginForPointQualityParams;
-          pointQualityParams.pointActionElement.generatePointQualityFromLogin(pointQualityParams.params.value);
-          this.loginForPointQualityParams = null;
-        } else if (this.loginForMembershipParams) {
-          const membershipParams = this.loginForMembershipParams;
-          membershipParams.membershipActionElement.generateMembershipFromLogin(membershipParams.params.value);
-          this.loginForMembershipParams = null;
-        } else if (this.loginForAcceptInviteParams) {
-          const acceptInviteParams = this.loginForAcceptInviteParams;
-          // TODO: Remove any
-          window.appDialogs.getAsync("acceptInvite", (dialog: any) => {
-            dialog.reOpen(acceptInviteParams.token);
-            dialog.afterLogin(acceptInviteParams.token);
-            this.loginForAcceptInviteParams = null;
-          });
-        } else if (this.loginFor401refreshFunction) {
-          this.loginFor401refreshFunction();
-        } else if (this.loginForNotificationSettingsParams) {
-          this.openNotificationSettings();
+            const loginParams = this.loginForEditParams;
+            // TODO: Remove any
+            window.appDialogs.getDialogAsync(loginParams.editDialog, (dialog) => {
+                dialog.setup(null, true, loginParams.refreshFunction);
+                dialog.open('new', loginParams.params);
+                this.loginForEditParams = null;
+            });
         }
-        */
+        else if (this.loginForNewPointParams) {
+            const newPointParams = this.loginForNewPointParams;
+            //newPointParams.postPointsElement.addPoint(newPointParams.params.content, newPointParams.params.value);
+            this.loginForNewPointParams = null;
+        }
+        else if (this.loginForEndorseParams) {
+            const endorseParams = this.loginForEndorseParams;
+            endorseParams.postActionElement.generateEndorsementFromLogin(endorseParams.params.value);
+            this.loginForEndorseParams = null;
+        }
+        else if (this.loginForRatingsParams) {
+            const ratingsParams = this.loginForRatingsParams;
+            ratingsParams.postActionElement.openRatingsDialog();
+            this.loginForRatingsParams = null;
+        }
+        else if (this.loginForPointQualityParams) {
+            const pointQualityParams = this.loginForPointQualityParams;
+            pointQualityParams.pointActionElement.generatePointQualityFromLogin(pointQualityParams.params.value);
+            this.loginForPointQualityParams = null;
+        }
+        else if (this.loginForMembershipParams) {
+            const membershipParams = this.loginForMembershipParams;
+            //(membershipParams.membershipActionElement as YpMemberships).generateMembershipFromLogin(membershipParams.params.value);
+            this.loginForMembershipParams = null;
+        }
+        else if (this.loginForAcceptInviteParams) {
+            const acceptInviteParams = this.loginForAcceptInviteParams;
+            // TODO: Remove any
+            window.appDialogs.getDialogAsync("acceptInvite", (dialog) => {
+                dialog.reOpen(acceptInviteParams.token);
+                dialog.afterLogin(acceptInviteParams.token);
+                this.loginForAcceptInviteParams = null;
+            });
+        }
+        else if (this.loginFor401refreshFunction) {
+            this.loginFor401refreshFunction();
+        }
+        else if (this.loginForNotificationSettingsParams) {
+            this.openNotificationSettings();
+        }
     }
     openNotificationSettings() {
         // TODO: Remove any

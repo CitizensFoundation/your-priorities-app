@@ -361,7 +361,7 @@ export class YpApp extends YpBaseElement {
     window.addEventListener("locationchange", this.updateLocation.bind(this));
     window.addEventListener("location-changed", this.updateLocation.bind(this));
     window.addEventListener("popstate", this.updateLocation.bind(this));
-    this.addListener("yp-app-dialogs-ready", this._appDialogsReady.bind(this));
+    this.addGlobalListener("yp-app-dialogs-ready", this._appDialogsReady.bind(this));
     this._setupTouchEvents();
   }
 
@@ -422,7 +422,7 @@ export class YpApp extends YpBaseElement {
     window.removeEventListener("locationchange", this.updateLocation);
     window.removeEventListener("location-changed", this.updateLocation);
     window.removeEventListener("popstate", this.updateLocation);
-    this.removeListener(
+    this.removeGlobalListener(
       "yp-app-dialogs-ready",
       this._appDialogsReady.bind(this)
     );

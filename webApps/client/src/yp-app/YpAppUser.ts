@@ -6,6 +6,9 @@ import { YpRegistrationQuestionsDialog } from "../yp-user/yp-registration-questi
 
 import FingerprintJS from "@fingerprintjs/fingerprintjs";
 import { YpSnackbar } from "./yp-snackbar.js";
+import { YpPostActions } from "../yp-post/yp-post-actions.js";
+import { YpPostRatingsInfo } from "../yp-rating/yp-post-ratings-info.js";
+import { YpPointActions } from "../yp-point/yp-point-actions.js";
 
 export class YpAppUser extends YpCodeBase {
   serverApi: YpServerApi;
@@ -276,10 +279,14 @@ export class YpAppUser extends YpCodeBase {
     email: string | undefined = undefined,
     collectionConfiguration: object | undefined = undefined
   ) {
-    window.appDialogs.getDialogAsync("userLogin", (dialog: YpLogin) => {
-      dialog.setup(this._handleLogin.bind(this), window.appGlobals.domain!);
-      dialog.openDialog(undefined, email, collectionConfiguration);
-    });
+    if (!window.appDialogs) {
+      this.addGlobalListener("yp-app-dialogs-ready", this.openUserlogin.bind(this));
+    } else {
+      window.appDialogs.getDialogAsync("userLogin", (dialog: YpLogin) => {
+        dialog.setup(this._handleLogin.bind(this), window.appGlobals.domain!);
+        dialog.openDialog(undefined, email, collectionConfiguration);
+      });
+    }
   }
 
   autoAnonymousLogin() {
@@ -338,39 +345,40 @@ export class YpAppUser extends YpCodeBase {
   }
 
   _checkLoginForParameters() {
-    /* TODO: Get working again
+
+    //TODO: Get working again
     if (this.loginForEditParams) {
       const loginParams = this.loginForEditParams;
       // TODO: Remove any
-      window.appDialogs.getAsync(loginParams.editDialog, (dialog: any) => {
+      window.appDialogs.getDialogAsync(loginParams.editDialog as any, (dialog: any) => {
         dialog.setup(null, true, loginParams.refreshFunction);
         dialog.open('new', loginParams.params);
         this.loginForEditParams = null;
       });
     } else if (this.loginForNewPointParams) {
       const newPointParams = this.loginForNewPointParams;
-      newPointParams.postPointsElement.addPoint(newPointParams.params.content, newPointParams.params.value);
+      //newPointParams.postPointsElement.addPoint(newPointParams.params.content, newPointParams.params.value);
       this.loginForNewPointParams = null;
     } else if (this.loginForEndorseParams) {
       const endorseParams = this.loginForEndorseParams;
-      endorseParams.postActionElement.generateEndorsementFromLogin(endorseParams.params.value);
+      (endorseParams.postActionElement as YpPostActions).generateEndorsementFromLogin(endorseParams.params.value);
       this.loginForEndorseParams = null;
     } else if (this.loginForRatingsParams) {
       const ratingsParams = this.loginForRatingsParams;
-      ratingsParams.postActionElement.openRatingsDialog();
+      (ratingsParams.postActionElement as YpPostRatingsInfo).openRatingsDialog();
       this.loginForRatingsParams = null;
     } else if (this.loginForPointQualityParams) {
       const pointQualityParams = this.loginForPointQualityParams;
-      pointQualityParams.pointActionElement.generatePointQualityFromLogin(pointQualityParams.params.value);
+      (pointQualityParams.pointActionElement as YpPointActions).generatePointQualityFromLogin(pointQualityParams.params.value);
       this.loginForPointQualityParams = null;
     } else if (this.loginForMembershipParams) {
       const membershipParams = this.loginForMembershipParams;
-      membershipParams.membershipActionElement.generateMembershipFromLogin(membershipParams.params.value);
+      //(membershipParams.membershipActionElement as YpMemberships).generateMembershipFromLogin(membershipParams.params.value);
       this.loginForMembershipParams = null;
     } else if (this.loginForAcceptInviteParams) {
       const acceptInviteParams = this.loginForAcceptInviteParams;
       // TODO: Remove any
-      window.appDialogs.getAsync("acceptInvite", (dialog: any) => {
+      window.appDialogs.getDialogAsync("acceptInvite", (dialog: any) => {
         dialog.reOpen(acceptInviteParams.token);
         dialog.afterLogin(acceptInviteParams.token);
         this.loginForAcceptInviteParams = null;
@@ -380,7 +388,7 @@ export class YpAppUser extends YpCodeBase {
     } else if (this.loginForNotificationSettingsParams) {
       this.openNotificationSettings();
     }
-    */
+
   }
 
   openNotificationSettings() {

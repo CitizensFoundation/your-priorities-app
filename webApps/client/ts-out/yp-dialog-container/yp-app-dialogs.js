@@ -222,7 +222,7 @@ let YpAppDialogs = class YpAppDialogs extends YpBaseElement {
     }
     connectedCallback() {
         super.connectedCallback();
-        this.fire('yp-app-dialogs-ready', this);
+        this.fireGlobal('yp-app-dialogs-ready', this);
         setTimeout(() => {
             import('./yp-dialog-container-delayed.js').then(() => {
                 this.haveLoadedDelayed = true;
