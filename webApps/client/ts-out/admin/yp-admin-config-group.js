@@ -178,6 +178,7 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
                 ${this.renderSaveButton()}
               </div>
               <div
+                ?hidden="${this.collectionId == "new"}"
                 class="actionButtonContainer layout horizontal center-center"
               >
                 ${this.renderActionMenu()}

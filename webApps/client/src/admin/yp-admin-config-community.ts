@@ -124,6 +124,7 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
                 ${this.renderSaveButton()}
               </div>
               <div
+                ?hidden="${this.collectionId == "new"}"
                 class="actionButtonContainer layout horizontal center-center"
               >
                 ${this.renderActionMenu()}
