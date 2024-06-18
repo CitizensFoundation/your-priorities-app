@@ -1091,7 +1091,10 @@ export class YpApp extends YpBaseElement {
 
   _routePageChanged(oldRouteData: Record<string, string>) {
     if (this.routeData) {
-      const params = this.route.split("/");
+      let params = this.route.split("/");
+      params = params.filter((el) => {
+        return el != "";
+      });
       if (
         this.route.indexOf("/user/reset_password") > -1 ||
         this.route.indexOf("/user/open_notification_settings") > -1 ||
