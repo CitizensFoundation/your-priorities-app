@@ -7,7 +7,7 @@ const queue = require("./queue.cjs");
 const i18n = require("../utils/i18n.cjs");
 const toJson = require("../utils/to_json.cjs");
 const _ = require("lodash");
-const { addPlausibleEvent } = require("../engine/analytics/plausible/manager.cjs");
+const { addPlausibleEvent, } = require("../engine/analytics/plausible/manager.cjs");
 const { recountGroupFolder } = require("./recount.cjs");
 let airbrake = null;
 if (process.env.AIRBRAKE_PROJECT_ID) {
@@ -178,7 +178,7 @@ const delayedCreateActivityFromApp = (workPackage, callback) => {
             type: workData.body.type,
             useTypeNameUnchanged: workData.body.useTypeNameUnchanged,
             originalQueryString: workData.body.originalQueryString,
-            props: workData.body.props
+            props: workData.body.props,
         },
         user_id: workData.userId,
         domain_id: workData.domainId,
@@ -200,7 +200,8 @@ const delayedCreateActivityFromApp = (workPackage, callback) => {
             if (workData.body.type === "pageview") {
                 plausibleEvent = `pageview`;
             }
-            else if (!workData.body.useTypeNameUnchanged) {
+            else if (!workData.body.useTypeNameUnchanged &&
+                workData.body.object) {
                 plausibleEvent = `${workData.body.object} - ${workData.body.type}`;
             }
             else {
