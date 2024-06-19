@@ -47,7 +47,6 @@ export abstract class YpStreamingLlmBase extends YpBaseElement {
     super();
   }
 
-
   override connectedCallback() {
     super.connectedCallback();
     if (!this.disableWebsockets) {
@@ -56,6 +55,11 @@ export abstract class YpStreamingLlmBase extends YpBaseElement {
   }
 
   initWebSockets() {
+    if (this.heartbeatInterval) {
+      clearInterval(this.heartbeatInterval);
+      this.heartbeatInterval = undefined;
+    }
+
     let wsEndpoint;
 
     if (
@@ -120,6 +124,10 @@ export abstract class YpStreamingLlmBase extends YpBaseElement {
     console.error("WebSocket onWsOpen");
     this.sendHeartbeat();
 
+    if (this.heartbeatInterval) {
+      clearInterval(this.heartbeatInterval);
+    }
+
     //@ts-ignore
     this.heartbeatInterval = setInterval(() => this.sendHeartbeat(), 55000);
     this.ws.onmessage = (messageEvent) => {
@@ -179,7 +187,6 @@ export abstract class YpStreamingLlmBase extends YpBaseElement {
 
   async onMessage(event: MessageEvent) {
     const data: PsAiChatWsMessage = JSON.parse(event.data);
-    //console.error(event.data);
 
     switch (data.sender) {
       case "bot":
