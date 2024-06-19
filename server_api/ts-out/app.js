@@ -12,10 +12,12 @@ import rateLimit from "express-rate-limit";
 import passport from "passport";
 import models from "./models/index.cjs";
 if (process.env.NEW_RELIC_APP_NAME) {
-    import('newrelic').then(newrelic => {
-        console.log('New Relic imported', newrelic);
-    }).catch(err => {
-        console.error('Failed to import New Relic', err);
+    import("newrelic")
+        .then((newrelic) => {
+        console.log("New Relic imported", newrelic);
+    })
+        .catch((err) => {
+        console.error("Failed to import New Relic", err);
     });
 }
 import auth from "./authorization.cjs";
@@ -412,14 +414,14 @@ export class YourPrioritiesApi {
     setupStaticFileServing() {
         const baseDir = path.join(__dirname, "../webAppsDist");
         this.app.use((req, res, next) => {
-            if (req.path.endsWith('.js')) {
-                res.setHeader('Cache-Control', 'public, max-age=31536000, s-maxage=86400, stale-while-revalidate=86400'); // 1 year cache, 1 day revalidate
+            if (req.path.endsWith(".js")) {
+                res.setHeader("Cache-Control", "public, max-age=31536000, s-maxage=86400, stale-while-revalidate=86400"); // 1 year cache, 1 day revalidate
             }
             else if (req.path.match(/\.(png|jpg|jpeg|gif)$/)) {
-                res.setHeader('Cache-Control', 'public, max-age=2592000, s-maxage=86400, stale-while-revalidate=86400'); // 1 month cache, 1 day revalidate
+                res.setHeader("Cache-Control", "public, max-age=2592000, s-maxage=86400, stale-while-revalidate=86400"); // 1 month cache, 1 day revalidate
             }
-            else if (req.path.endsWith('.json')) {
-                res.setHeader('Cache-Control', 'public, max-age=43200, s-maxage=60, stale-while-revalidate=60'); // 12 hour cache, 5 minutes revalidate
+            else if (req.path.endsWith(".json")) {
+                res.setHeader("Cache-Control", "public, max-age=43200, s-maxage=60, stale-while-revalidate=60"); // 12 hour cache, 5 minutes revalidate
             }
             next();
         });
@@ -786,20 +788,54 @@ export class YourPrioritiesApi {
         });
     }
     async listen() {
-        let server;
-        const portNumber = process.env.PORT ? parseInt(process.env.PORT) : 4242;
-        if (process.env.YOUR_PRIORITIES_LISTEN_HOST) {
-            server = this.app.listen(portNumber, process.env.YOUR_PRIORITIES_LISTEN_HOST, () => {
-                log.info(`Your Priorities Platform API Server listening on port ${process.env.YOUR_PRIORITIES_LISTEN_HOST}:${this.app.get("port")} on ${process.env.NODE_ENV}`);
+        const server = await this.setupHttpsServer();
+        const [pub, sub] = await this.setupPubSub();
+        this.ws = new WebSocketServer({ server: server });
+        this.ws.on("connection", (ws) => {
+            const clientId = uuidv4();
+            this.wsClients.set(clientId, ws);
+            console.log(`New WebSocket connection: clientId ${clientId}`);
+            ws.send(JSON.stringify({ clientId: clientId }));
+            ws.on("message", (message) => {
+                let parsedMessage;
+                try {
+                    parsedMessage = JSON.parse(message);
+                }
+                catch (e) {
+                    console.log(`Received non-JSON message from client ${clientId}:`, message);
+                    parsedMessage = message;
+                }
+                if (parsedMessage && parsedMessage.type === "heartbeat") {
+                    console.log(`Received heartbeat from client ${clientId}`);
+                    ws.send(JSON.stringify({ type: "heartbeat_ack" }));
+                }
+                else if (!this.wsClients.has(clientId)) {
+                    const messageToSend = JSON.stringify({
+                        clientId,
+                        action: "directMessage",
+                        data: parsedMessage,
+                    });
+                    pub
+                        .publish("ypWebsocketChannel", messageToSend)
+                        .then((reply) => {
+                        console.log(`Message published to ypWebsocketChannel: ${reply}`);
+                    })
+                        .catch((err) => {
+                        console.error(`Error publishing to Redis channel ypWebsocketChannel:`, err);
+                    });
+                }
             });
-        }
-        else {
-            server = this.app.listen(portNumber, function () {
-                log.info("Your Priorities Platform API Server listening on port " +
-                    server.address().port +
-                    ` on ${process.env.NODE_ENV}`);
+            ws.on("close", () => {
+                this.wsClients.delete(clientId);
+                console.log(`WebSocket connection closed: clientId ${clientId}`);
             });
-        }
+            ws.on("error", (err) => {
+                this.wsClients.delete(clientId);
+                console.error(`WebSocket error with clientId ${clientId}:`, err);
+            });
+        });
+    }
+    async setupPubSub() {
         const pub = this.redisClient.duplicate();
         const sub = this.redisClient.duplicate();
         pub.on("error", (err) => {
@@ -826,23 +862,16 @@ export class YourPrioritiesApi {
         catch (err) {
             console.error("Error connecting to Redis:", err);
         }
-        sub.subscribe("ypWebsocketChannel", (err, count) => {
-            if (err) {
-                console.error("Error subscribing to Redis:", err);
-            }
-            else {
-                console.log(`Subscribed to ${count} channel(s)`);
-            }
-        });
-        sub.on("message", (channel, message, listen) => {
+        sub.subscribe("ypWebsocketChannel", (message, channel) => {
             try {
-                const { clientId, action, data } = JSON.parse(message);
+                const parsedMessage = JSON.parse(message);
+                const { clientId, action, data } = parsedMessage;
                 console.log(`Received message from Redis: ${message} at ${channel}`);
                 switch (action) {
                     case "broadcast":
                         this.wsClients.forEach((ws, id) => {
                             try {
-                                ws.send(data);
+                                ws.send(JSON.stringify(data));
                             }
                             catch (err) {
                                 console.error(`Error sending broadcast message to client ${id}:`, err);
@@ -853,7 +882,7 @@ export class YourPrioritiesApi {
                         const ws = this.wsClients.get(clientId);
                         if (ws) {
                             try {
-                                ws.send(data);
+                                ws.send(JSON.stringify(data));
                             }
                             catch (err) {
                                 console.error(`Error sending direct message to client ${clientId}:`, err);
@@ -864,49 +893,44 @@ export class YourPrioritiesApi {
                             this.wsClients.delete(clientId);
                         }
                         break;
-                    // Add other cases as necessary
                 }
             }
             catch (e) {
                 console.error("Error handling message from Redis:", e);
             }
         });
-        this.ws = new WebSocketServer({ server: server });
-        this.ws.on("connection", (ws) => {
-            const clientId = uuidv4();
-            this.wsClients.set(clientId, ws);
-            console.log(`------------------------ >  New WebSocket connection: clientId ${clientId}`);
-            console.log(this.wsClients.get(clientId) == null);
-            ws.send(JSON.stringify({ clientId: clientId }));
-            ws.on("message", (message) => {
-                let parsedMessage;
-                try {
-                    parsedMessage = JSON.parse(message);
-                }
-                catch (e) {
-                    console.log(`Received non-JSON message from client ${clientId}:`, message);
-                    parsedMessage = message;
-                }
-                finally {
-                    if (parsedMessage && parsedMessage.type === "heartbeat") {
-                        console.log(`Received heartbeat from client ${clientId}`);
-                        ws.send(JSON.stringify({ type: "heartbeat_ack" }));
-                    }
-                    pub.publish("ypWebsocketChannel", JSON.stringify({
-                        clientId,
-                        action: "directMessage",
-                        message: parsedMessage,
-                    }));
-                }
+        return [pub, sub];
+    }
+    handleLocalMessage(clientId, parsedMessage) {
+        const ws = this.wsClients.get(clientId);
+        if (ws) {
+            try {
+                ws.send(parsedMessage);
+            }
+            catch (err) {
+                console.error(`Error sending message to client ${clientId}:`, err);
+            }
+        }
+        else {
+            console.warn(`No WebSocket found for clientId ${clientId}`);
+            this.wsClients.delete(clientId);
+        }
+    }
+    setupHttpsServer() {
+        let server;
+        const portNumber = process.env.PORT ? parseInt(process.env.PORT) : 4242;
+        if (process.env.YOUR_PRIORITIES_LISTEN_HOST) {
+            server = this.app.listen(portNumber, process.env.YOUR_PRIORITIES_LISTEN_HOST, () => {
+                log.info(`Your Priorities Platform API Server listening on port ${process.env.YOUR_PRIORITIES_LISTEN_HOST}:${this.app.get("port")} on ${process.env.NODE_ENV}`);
             });
-            ws.on("close", () => {
-                this.wsClients.delete(clientId);
-                console.log(`WebSocket connection closed: clientId ${clientId}`);
+        }
+        else {
+            server = this.app.listen(portNumber, function () {
+                log.info("Your Priorities Platform API Server listening on port " +
+                    server.address().port +
+                    ` on ${process.env.NODE_ENV}`);
             });
-            ws.on("error", (err) => {
-                this.wsClients.delete(clientId);
-                console.error(`WebSocket error with clientId ${clientId}:`, err);
-            });
-        });
+        }
+        return server;
     }
 }

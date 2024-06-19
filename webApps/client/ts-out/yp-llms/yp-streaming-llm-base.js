@@ -27,6 +27,10 @@ export class YpStreamingLlmBase extends YpBaseElement {
         }
     }
     initWebSockets() {
+        if (this.heartbeatInterval) {
+            clearInterval(this.heartbeatInterval);
+            this.heartbeatInterval = undefined;
+        }
         let wsEndpoint;
         if (window.location.hostname === "localhost" ||
             window.location.hostname === "192.1.168") {
@@ -78,6 +82,9 @@ export class YpStreamingLlmBase extends YpBaseElement {
     onWsOpen() {
         console.error("WebSocket onWsOpen");
         this.sendHeartbeat();
+        if (this.heartbeatInterval) {
+            clearInterval(this.heartbeatInterval);
+        }
         //@ts-ignore
         this.heartbeatInterval = setInterval(() => this.sendHeartbeat(), 55000);
         this.ws.onmessage = (messageEvent) => {
@@ -130,7 +137,6 @@ export class YpStreamingLlmBase extends YpBaseElement {
     }
     async onMessage(event) {
         const data = JSON.parse(event.data);
-        //console.error(event.data);
         switch (data.sender) {
             case "bot":
                 this.addChatBotElement(data);
