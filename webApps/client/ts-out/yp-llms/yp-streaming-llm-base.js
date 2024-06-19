@@ -18,6 +18,7 @@ export class YpStreamingLlmBase extends YpBaseElement {
         this.scrollStart = 0;
         this.defaultDevWsPort = 4242;
         this.disableWebsockets = false;
+        this.wsManuallyClosed = false;
     }
     connectedCallback() {
         super.connectedCallback();
@@ -46,22 +47,24 @@ export class YpStreamingLlmBase extends YpBaseElement {
                 setTimeout(() => this.initWebSockets(), this.webSocketsErrorCount > 1
                     ? this.webSocketsErrorCount * 1000
                     : 2000);
-                this.fire('yp-ws-error', { error: error });
+                this.fire("yp-ws-error", { error: error });
             };
             this.ws.onclose = (error) => {
                 console.error("WebSocket Close " + error);
                 this.webSocketsErrorCount++;
-                setTimeout(() => this.initWebSockets(), this.webSocketsErrorCount > 1
-                    ? this.webSocketsErrorCount * 1000
-                    : 2000);
-                this.fire('yp-ws-closed');
+                if (!this.wsManuallyClosed) {
+                    setTimeout(() => this.initWebSockets(), this.webSocketsErrorCount > 1
+                        ? this.webSocketsErrorCount * 1000
+                        : 2000);
+                }
+                this.fire("yp-ws-closed");
             };
         }
         catch (error) {
             console.error("WebSocket Error " + error);
             this.webSocketsErrorCount++;
             setTimeout(() => this.initWebSockets(), this.webSocketsErrorCount > 1 ? this.webSocketsErrorCount * 1000 : 1500);
-            this.fire('yp-ws-error', { error: error });
+            this.fire("yp-ws-error", { error: error });
         }
     }
     sendHeartbeat() {
@@ -83,7 +86,7 @@ export class YpStreamingLlmBase extends YpBaseElement {
                 this.wsClientId = data.clientId;
                 this.ws.onmessage = this.onMessage.bind(this);
                 console.error(`WebSocket clientId: ${this.wsClientId}`);
-                this.fire('yp-ws-opened', { clientId: this.wsClientId });
+                this.fire("yp-ws-opened", { clientId: this.wsClientId });
             }
             else {
                 console.error("Error: No clientId received from server!");
@@ -118,8 +121,10 @@ export class YpStreamingLlmBase extends YpBaseElement {
         super.disconnectedCallback();
         if (this.heartbeatInterval) {
             clearInterval(this.heartbeatInterval);
+            this.heartbeatInterval = undefined;
         }
         if (this.ws) {
+            this.wsManuallyClosed = true;
             this.ws.close();
         }
     }
@@ -142,9 +147,9 @@ export class YpStreamingLlmBase extends YpBaseElement {
         if (!this.userScrolled && this.$$(this.scrollElementSelector)) {
             this.programmaticScroll = true;
             const element = this.$$(this.scrollElementSelector);
-            if (element.tagName === 'INPUT' ||
-                element.tagName === 'TEXTAREA' ||
-                element.tagName === 'MD-OUTLINED-TEXT-FIELD') {
+            if (element.tagName === "INPUT" ||
+                element.tagName === "TEXTAREA" ||
+                element.tagName === "MD-OUTLINED-TEXT-FIELD") {
                 // Move the cursor to the end of the text
                 element.selectionStart = element.selectionEnd = element.value.length;
                 element.scrollTop = element.scrollHeight - 100;

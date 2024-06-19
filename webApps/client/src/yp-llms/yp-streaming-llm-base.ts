@@ -18,7 +18,7 @@ export abstract class YpStreamingLlmBase extends YpBaseElement {
   ws!: WebSocket;
 
   @property({ type: String })
-  scrollElementSelector = "#chat-messages"
+  scrollElementSelector = "#chat-messages";
 
   @property({ type: Boolean })
   userScrolled = false;
@@ -41,10 +41,12 @@ export abstract class YpStreamingLlmBase extends YpBaseElement {
   heartbeatInterval: number | undefined;
 
   disableWebsockets = false;
+  wsManuallyClosed = false;
 
   constructor() {
     super();
   }
+
 
   override connectedCallback() {
     super.connectedCallback();
@@ -80,18 +82,20 @@ export abstract class YpStreamingLlmBase extends YpBaseElement {
             ? this.webSocketsErrorCount * 1000
             : 2000
         );
-        this.fire('yp-ws-error', { error: error })
+        this.fire("yp-ws-error", { error: error });
       };
       this.ws.onclose = (error) => {
         console.error("WebSocket Close " + error);
         this.webSocketsErrorCount++;
-        setTimeout(
-          () => this.initWebSockets(),
-          this.webSocketsErrorCount > 1
-            ? this.webSocketsErrorCount * 1000
-            : 2000
-        );
-        this.fire('yp-ws-closed')
+        if (!this.wsManuallyClosed) {
+          setTimeout(
+            () => this.initWebSockets(),
+            this.webSocketsErrorCount > 1
+              ? this.webSocketsErrorCount * 1000
+              : 2000
+          );
+        }
+        this.fire("yp-ws-closed");
       };
     } catch (error) {
       console.error("WebSocket Error " + error);
@@ -100,7 +104,7 @@ export abstract class YpStreamingLlmBase extends YpBaseElement {
         () => this.initWebSockets(),
         this.webSocketsErrorCount > 1 ? this.webSocketsErrorCount * 1000 : 1500
       );
-      this.fire('yp-ws-error', { error: error })
+      this.fire("yp-ws-error", { error: error });
     }
   }
 
@@ -124,7 +128,7 @@ export abstract class YpStreamingLlmBase extends YpBaseElement {
         this.wsClientId = data.clientId;
         this.ws.onmessage = this.onMessage.bind(this);
         console.error(`WebSocket clientId: ${this.wsClientId}`);
-        this.fire('yp-ws-opened', { clientId: this.wsClientId });
+        this.fire("yp-ws-opened", { clientId: this.wsClientId });
       } else {
         console.error("Error: No clientId received from server!");
       }
@@ -164,9 +168,11 @@ export abstract class YpStreamingLlmBase extends YpBaseElement {
 
     if (this.heartbeatInterval) {
       clearInterval(this.heartbeatInterval);
+      this.heartbeatInterval = undefined;
     }
 
     if (this.ws) {
+      this.wsManuallyClosed = true;
       this.ws.close();
     }
   }
@@ -194,12 +200,16 @@ export abstract class YpStreamingLlmBase extends YpBaseElement {
       this.programmaticScroll = true;
       const element = this.$$(this.scrollElementSelector)!;
 
-      if (element.tagName === 'INPUT' ||
-          element.tagName === 'TEXTAREA' ||
-          element.tagName === 'MD-OUTLINED-TEXT-FIELD') {
+      if (
+        element.tagName === "INPUT" ||
+        element.tagName === "TEXTAREA" ||
+        element.tagName === "MD-OUTLINED-TEXT-FIELD"
+      ) {
         // Move the cursor to the end of the text
-        (element as HTMLInputElement).selectionStart = (element as HTMLInputElement).selectionEnd = (element as HTMLInputElement).value.length;
-        element.scrollTop = element.scrollHeight-100;
+        (element as HTMLInputElement).selectionStart = (
+          element as HTMLInputElement
+        ).selectionEnd = (element as HTMLInputElement).value.length;
+        element.scrollTop = element.scrollHeight - 100;
       } else {
         // For non-text field elements, use scrollTop and scrollHeight to scroll
         element.scrollTop = element.scrollHeight;

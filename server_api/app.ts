@@ -1054,6 +1054,7 @@ export class YourPrioritiesApi {
         console.log(`Subscribed to ${count} channel(s)`);
       }
     });
+
     sub.on("message", (channel: any, message: any, listen: any) => {
       try {
         const { clientId, action, data } = JSON.parse(message);
