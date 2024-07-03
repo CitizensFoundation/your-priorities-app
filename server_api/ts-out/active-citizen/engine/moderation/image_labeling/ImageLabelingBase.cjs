@@ -1,5 +1,4 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 const vision = require('@google-cloud/vision');
 const models = require("../../../../models/index.cjs");
 var downloadFile = require('download-file');

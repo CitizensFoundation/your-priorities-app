@@ -1,5 +1,4 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 module.exports = (sequelize, DataTypes) => {
     const AcFollowing = sequelize.define("AcFollowing", {
         value: { type: DataTypes.INTEGER },

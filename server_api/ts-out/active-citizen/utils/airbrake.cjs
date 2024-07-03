@@ -1,5 +1,4 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 if (process.env.AIRBRAKE_PROJECT_ID) {
     const Airbrake = require('@airbrake/node');
     let airBrake = null;

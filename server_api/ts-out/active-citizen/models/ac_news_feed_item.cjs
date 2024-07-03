@@ -1,5 +1,4 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 const commonIndexForActivitiesAndNewsFeeds = require('../engine/news_feeds/activity_and_item_index_definitions.cjs').commonIndexForActivitiesAndNewsFeeds;
 const _ = require('lodash');
 module.exports = (sequelize, DataTypes) => {

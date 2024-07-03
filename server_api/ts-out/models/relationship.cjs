@@ -1,5 +1,4 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 module.exports = (sequelize, DataTypes) => {
     var Relationship = sequelize.define("Relationship", {
         relationship_type: { type: DataTypes.INTEGER, allowNull: false }

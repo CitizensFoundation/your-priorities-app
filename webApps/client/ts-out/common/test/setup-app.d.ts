@@ -16,7 +16,7 @@ export declare class YpTestHelpers {
         group: YpGroupData;
         hasNonOpenPosts: boolean;
     };
-    static getImages(): YpImageData[];
+    static getImages(): Array<YpImageData>;
     static getFetchMock(): fetchMock.FetchMockStatic;
     static renderCommonHeader(): import("lit-html").TemplateResult<1>;
 }

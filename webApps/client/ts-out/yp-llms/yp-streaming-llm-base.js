@@ -19,6 +19,7 @@ export class YpStreamingLlmBase extends YpBaseElement {
         this.defaultDevWsPort = 4242;
         this.disableWebsockets = false;
         this.wsManuallyClosed = false;
+        this.heartBeatRate = 55000;
     }
     connectedCallback() {
         super.connectedCallback();
@@ -73,6 +74,7 @@ export class YpStreamingLlmBase extends YpBaseElement {
     }
     sendHeartbeat() {
         if (this.ws.readyState === WebSocket.OPEN) {
+            console.error("Sending heartbeath");
             this.ws.send(JSON.stringify({ type: "heartbeat" }));
         }
         else {
@@ -86,7 +88,7 @@ export class YpStreamingLlmBase extends YpBaseElement {
             clearInterval(this.heartbeatInterval);
         }
         //@ts-ignore
-        this.heartbeatInterval = setInterval(() => this.sendHeartbeat(), 55000);
+        this.heartbeatInterval = setInterval(() => this.sendHeartbeat(), this.heartBeatRate);
         this.ws.onmessage = (messageEvent) => {
             const data = JSON.parse(messageEvent.data);
             if (data.clientId) {

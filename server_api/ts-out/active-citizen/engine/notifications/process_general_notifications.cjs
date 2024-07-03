@@ -1,5 +1,4 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 var queue = require('../../workers/queue.cjs');
 var models = require("../../../models/index.cjs");
 var truncate = require('../../utils/truncate_text.cjs');

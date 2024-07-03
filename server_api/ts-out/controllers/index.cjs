@@ -1,5 +1,4 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 let express = require("express");
 let router = express.Router();
 let log = require("../utils/logger.cjs");

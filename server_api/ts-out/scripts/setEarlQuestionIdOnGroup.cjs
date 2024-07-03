@@ -1,5 +1,4 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 var models = require("../models/index.cjs");
 var questionId = process.argv[2];
 var groupId = process.argv[3];

@@ -1,5 +1,4 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 const _ = require("lodash");
 const models = require("../../../../models/index.cjs");
 const i18n = require('../../../utils/i18n.cjs');

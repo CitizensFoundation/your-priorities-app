@@ -15,6 +15,7 @@ export declare abstract class YpStreamingLlmBase extends YpBaseElement {
     heartbeatInterval: number | undefined;
     disableWebsockets: boolean;
     wsManuallyClosed: boolean;
+    heartBeatRate: number;
     constructor();
     connectedCallback(): void;
     initWebSockets(): void;

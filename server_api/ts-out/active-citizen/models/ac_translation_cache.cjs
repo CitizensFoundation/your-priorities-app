@@ -1,5 +1,4 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 const { Translate } = require("@google-cloud/translate").v2;
 const farmhash = require("farmhash");
 const log = require("../utils/logger.cjs");

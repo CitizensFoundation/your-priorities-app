@@ -37,6 +37,7 @@ let AoiLlmExplainDialog = class AoiLlmExplainDialog extends YpChatbotBase {
         this.addEventListener("chatbot-close", this.cancel);
     }
     async sendFirstQuestion() {
+        window.appGlobals.activity(`Explain - first qestion`);
         const firstMessage = `**${this.t("hereIsTheQuestion")}:**
 ${this.questionText}
 

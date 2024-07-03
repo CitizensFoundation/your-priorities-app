@@ -1,5 +1,4 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 const request = require("request").defaults({ encoding: null });
 const fs = require("fs");
 const randomstring = require("randomstring");

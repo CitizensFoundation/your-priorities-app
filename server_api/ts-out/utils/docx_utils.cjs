@@ -1,5 +1,4 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 const log = require('./logger.cjs');
 var models = require('../models/index.cjs');
 var async = require('async');

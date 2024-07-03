@@ -1,5 +1,4 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 const queue = require('../../workers/queue.cjs');
 const models = require("../../../models/index.cjs");
 const async = require('async');

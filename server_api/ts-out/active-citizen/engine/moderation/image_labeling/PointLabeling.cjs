@@ -1,5 +1,4 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 const ImageLabelingBase = require("./ImageLabelingBase.cjs");
 const models = require("../../../../models/index.cjs");
 class PointLabeling extends ImageLabelingBase {

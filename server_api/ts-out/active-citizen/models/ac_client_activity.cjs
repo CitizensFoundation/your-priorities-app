@@ -1,5 +1,4 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 module.exports = (sequelize, DataTypes) => {
     const AcClientActivity = sequelize.define("AcClientActivity", {
         type: { type: DataTypes.STRING, allowNull: false },

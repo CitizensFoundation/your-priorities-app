@@ -1,5 +1,4 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 // https://gist.github.com/mojodna/1251812
 var async = require("async");
 var models = require("../../models/index.cjs");

@@ -1,5 +1,4 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 var async = require("async");
 var crypto = require("crypto");
 var express = require('express');

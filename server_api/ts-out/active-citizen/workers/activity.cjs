@@ -1,6 +1,5 @@
 "use strict";
 // https://gist.github.com/mojodna/1251812
-Object.defineProperty(exports, "__esModule", { value: true });
 const models = require("../../models/index.cjs");
 const log = require('../utils/logger.cjs');
 const toJson = require('../utils/to_json.cjs');

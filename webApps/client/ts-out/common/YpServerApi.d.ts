@@ -29,7 +29,7 @@ export declare class YpServerApi extends YpServerApiBase {
     getHasNonOpenPosts(groupId: number): Promise<any>;
     getHelpPages(collectionType: string, collectionId: number): Promise<any>;
     getTranslation(translateUrl: string): Promise<any>;
-    getTranslatedRegistrationQuestions(groupId: number, targetLanguage: string): string[];
+    getTranslatedRegistrationQuestions(groupId: number, targetLanguage: string): Array<string>;
     sendRegistrationQuestions(registrationAnswers: Array<Record<string, string>>): Promise<any>;
     savePostTranscript(postId: number, body: Record<string, unknown>): Promise<any>;
     getPostTranscriptStatus(groupId: number, tabName: string | undefined): Promise<any>;

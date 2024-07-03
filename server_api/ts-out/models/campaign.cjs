@@ -1,5 +1,4 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 const queue = require("../active-citizen/workers/queue.cjs");
 module.exports = (sequelize, DataTypes) => {
     const Campaign = sequelize.define("Campaign", {

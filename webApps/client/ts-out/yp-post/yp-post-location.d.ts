@@ -1,4 +1,3 @@
-/// <reference path="../../src/types.d.ts" />
 import { nothing } from 'lit';
 import '@material/web/button/outlined-button.js';
 import '@material/web/progress/circular-progress.js';

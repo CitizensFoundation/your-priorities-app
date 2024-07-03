@@ -1,5 +1,4 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 const _ = require("lodash");
 const FraudGetBase = require('./FraudGetBase.cjs');
 const models = require("../../../../models/index.cjs");

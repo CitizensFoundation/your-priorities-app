@@ -74,7 +74,7 @@ interface ImageClass extends DbData {
 type YpChatBotMemoryStageTypes = PsMemoryStageTypes | "chatbot-conversation";
 
 interface PsChatBotMemoryData extends PsBaseMemoryData {
-  stages: Record<YpChatBotMemoryStageTypes, IEngineInnovationStagesData>;
+  stages: Record<any, any>;
   chatLog?: PsSimpleChatLog[];
   problemStatement?: PsProblemStatement;
   currentStage: YpChatBotMemoryStageTypes;

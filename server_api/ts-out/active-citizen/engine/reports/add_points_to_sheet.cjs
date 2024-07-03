@@ -1,5 +1,4 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 const moment = require("moment");
 const getMediaTranscripts = require("./common_utils.cjs").getMediaTranscripts;
 const getPointMediaUrls = require("./common_utils.cjs").getPointMediaUrls;

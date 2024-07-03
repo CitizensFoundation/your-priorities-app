@@ -1,5 +1,4 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 var models = require("../../../models/index.cjs");
 var _ = require('lodash');
 var getCommonWhereDateOptions = function (options) {

@@ -1,5 +1,4 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 var filterNotificationForDelivery = require("./emails_utils.cjs").filterNotificationForDelivery;
 module.exports = function (notification, user, callback) {
     if (notification &&

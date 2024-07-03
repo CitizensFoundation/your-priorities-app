@@ -1,5 +1,4 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 const models = require("../../../models/index.cjs");
 const log = require('../../utils/logger.cjs');
 const moment = require('moment');

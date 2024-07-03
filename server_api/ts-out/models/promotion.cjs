@@ -1,5 +1,4 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 module.exports = (sequelize, DataTypes) => {
     const Promotion = sequelize.define("Promotion", {
         content: { type: DataTypes.TEXT, allowNull: false },

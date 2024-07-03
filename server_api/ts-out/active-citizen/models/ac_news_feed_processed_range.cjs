@@ -1,5 +1,4 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 module.exports = (sequelize, DataTypes) => {
     const AcNewsFeedProcessedRange = sequelize.define("AcNewsFeedProcessedRange", {
         latest_activity_at: { type: DataTypes.DATE, allowNull: false },

@@ -1,5 +1,4 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 const log = require('../utils/logger.cjs');
 const queue = require('../workers/queue.cjs');
 const toJson = require('../utils/to_json.cjs');

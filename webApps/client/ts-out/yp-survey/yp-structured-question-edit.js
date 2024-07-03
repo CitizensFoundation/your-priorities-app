@@ -784,16 +784,21 @@ let YpStructuredQuestionEdit = class YpStructuredQuestionEdit extends YpBaseElem
             else if (this.question.type.toLowerCase() === "checkbox") {
                 value = item.checked;
             }
-            if (value != undefined && this.question.uniqueId && this.question.subType == "number") {
-                let intValue;
+            if (value != undefined && this.question.uniqueId && this.question.subType === "number") {
+                let numValue;
                 try {
-                    intValue = parseInt(value);
+                    // First, try parsing as a float
+                    numValue = parseFloat(value);
+                    // If it's an integer, convert it to an integer
+                    if (Number.isInteger(numValue)) {
+                        numValue = parseInt(value, 10);
+                    }
                 }
                 catch (error) {
-                    console.error(`Can't parse value as integer: ${error}`);
+                    console.error(`Can't parse value as number: ${error}`);
                 }
-                if (intValue !== undefined) {
-                    return { uniqueId: this.question.uniqueId, value: intValue };
+                if (numValue !== undefined && !isNaN(numValue)) {
+                    return { uniqueId: this.question.uniqueId, value: numValue };
                 }
                 else {
                     return { uniqueId: this.question.uniqueId, value: value };

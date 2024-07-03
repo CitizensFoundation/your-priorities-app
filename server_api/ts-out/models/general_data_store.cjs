@@ -1,5 +1,4 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 module.exports = function (sequelize, DataTypes) {
     const GeneralDataStore = sequelize.define("GeneralDataStore", {
         data: DataTypes.JSONB

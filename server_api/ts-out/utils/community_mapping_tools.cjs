@@ -1,5 +1,4 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 const models = require('../models/index.cjs');
 async function getTranslationForMap(textType, model, targetLanguage) {
     return await new Promise((resolve, reject) => {

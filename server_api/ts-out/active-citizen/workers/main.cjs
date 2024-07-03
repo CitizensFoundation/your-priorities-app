@@ -1,5 +1,4 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 var i18n = require('../utils/i18n.cjs');
 var Backend = require('i18next-node-fs-backend');
 var log = require('../utils/logger.cjs');

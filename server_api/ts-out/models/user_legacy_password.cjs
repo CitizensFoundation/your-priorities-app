@@ -1,5 +1,4 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 module.exports = (sequelize, DataTypes) => {
     const UserLegacyPassword = sequelize.define("UserLegacyPassword", {
         encrypted_password: { type: DataTypes.STRING, allowNull: false }

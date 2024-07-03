@@ -1,5 +1,4 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 const async = require("async");
 module.exports = (sequelize, DataTypes) => {
     const Category = sequelize.define("Category", {

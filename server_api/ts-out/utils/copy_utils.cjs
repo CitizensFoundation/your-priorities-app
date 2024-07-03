@@ -1,5 +1,4 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 var models = require('../models/index.cjs');
 var async = require('async');
 const { cloneTranslationForGroup } = require("../active-citizen/utils/translation_cloning.cjs");

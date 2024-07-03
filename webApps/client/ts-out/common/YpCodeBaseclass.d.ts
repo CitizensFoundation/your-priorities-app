@@ -24,7 +24,7 @@ export declare class YpCodeBase {
     constructor();
     installMediaQueryWatcher: (mediaQuery: string, layoutChangedCallback: (mediaQueryMatches: boolean) => void) => void;
     _languageEvent(event: CustomEvent): void;
-    fire(eventName: string, data: string | number | boolean | object | null | undefined, target: LitElement | Document): void;
+    fire(eventName: string, data: (object | string | boolean | number | null) | undefined, target: LitElement | Document): void;
     fireGlobal(eventName: string, data?: object | string | boolean | number | null): void;
     addListener(name: string, callback: Function, target: LitElement | Document): void;
     addGlobalListener(name: string, callback: Function): void;

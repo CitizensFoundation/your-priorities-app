@@ -1,5 +1,4 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 module.exports = (sequelize, DataTypes) => {
     const RequestToJoin = sequelize.define("RequestToJoin", {
         type: { type: DataTypes.INTEGER, allowNull: false }

@@ -1,5 +1,4 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 const async = require('async');
 const queue = require('../active-citizen/workers/queue.cjs');
 const log = require('../utils/logger.cjs');

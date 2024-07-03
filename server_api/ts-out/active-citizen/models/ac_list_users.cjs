@@ -1,5 +1,4 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 module.exports = (sequelize, DataTypes) => {
     const AcListUser = sequelize.define("AcListUser", {
         data: DataTypes.JSONB,

@@ -1,5 +1,4 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 module.exports = function (sequelize, DataTypes) {
     const Endorsement = sequelize.define("Endorsement", {
         value: { type: DataTypes.INTEGER, allowNull: false },

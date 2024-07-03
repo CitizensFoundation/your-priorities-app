@@ -1,5 +1,4 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 var DEBUG_EMAILS_TO_TEMP_FIlE = false;
 var log = require("../../utils/logger.cjs");
 var async = require("async");

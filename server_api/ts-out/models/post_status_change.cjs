@@ -1,5 +1,4 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 module.exports = (sequelize, DataTypes) => {
     const PostStatusChange = sequelize.define("PostStatusChange", {
         subject: { type: DataTypes.STRING, allowNull: true },

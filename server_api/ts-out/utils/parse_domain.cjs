@@ -1,5 +1,4 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 const parseDomain = (urlPath) => {
     const results = {};
     const splitPath = urlPath.split(".");

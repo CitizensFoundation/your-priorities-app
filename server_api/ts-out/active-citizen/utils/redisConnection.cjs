@@ -1,5 +1,4 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 const redis = require("redis");
 let redisClient;
 if (process.env.REDIS_URL) {

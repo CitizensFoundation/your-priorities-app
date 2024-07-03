@@ -1,5 +1,4 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 const log = require('../utils/logger.cjs');
 const aws = require('aws-sdk');
 const _ = require('lodash');

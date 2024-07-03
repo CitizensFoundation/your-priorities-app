@@ -1,5 +1,4 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 module.exports = function (sequelize, DataTypes) {
     const IsoCountry = sequelize.define("IsoCountry", {
         code: DataTypes.STRING,

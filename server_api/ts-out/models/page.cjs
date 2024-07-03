@@ -1,5 +1,4 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 const async = require('async');
 const _ = require('lodash');
 module.exports = (sequelize, DataTypes) => {

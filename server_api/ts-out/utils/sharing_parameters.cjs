@@ -1,5 +1,4 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 const models = require("../models/index.cjs");
 const url = require("url");
 const updateParametersFromCampaign = async (utmContent, collectionType, collectionId, parameters) => {

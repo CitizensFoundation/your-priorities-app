@@ -1,5 +1,4 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 module.exports = (sequelize, DataTypes) => {
     const AcMute = sequelize.define("AcMute", {
         deleted: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false }

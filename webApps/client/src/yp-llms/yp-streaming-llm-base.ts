@@ -43,6 +43,8 @@ export abstract class YpStreamingLlmBase extends YpBaseElement {
   disableWebsockets = false;
   wsManuallyClosed = false;
 
+  heartBeatRate = 55000;
+
   constructor() {
     super();
   }
@@ -114,6 +116,7 @@ export abstract class YpStreamingLlmBase extends YpBaseElement {
 
   sendHeartbeat() {
     if (this.ws.readyState === WebSocket.OPEN) {
+      console.error("Sending heartbeath");
       this.ws.send(JSON.stringify({ type: "heartbeat" }));
     } else {
       console.error("WebSocket not open");
@@ -129,7 +132,7 @@ export abstract class YpStreamingLlmBase extends YpBaseElement {
     }
 
     //@ts-ignore
-    this.heartbeatInterval = setInterval(() => this.sendHeartbeat(), 55000);
+    this.heartbeatInterval = setInterval(() => this.sendHeartbeat(), this.heartBeatRate);
     this.ws.onmessage = (messageEvent) => {
       const data = JSON.parse(messageEvent.data);
       if (data.clientId) {

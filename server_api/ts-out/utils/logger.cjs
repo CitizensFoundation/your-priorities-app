@@ -1,5 +1,4 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 var bunyan = require('bunyan');
 var PrettyStream = require('bunyan-prettystream');
 var logger;

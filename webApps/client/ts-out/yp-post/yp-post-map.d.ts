@@ -1,4 +1,3 @@
-/// <reference path="../../src/types.d.ts" />
 import { nothing } from 'lit';
 import { YpBaseElement } from '../common/yp-base-element.js';
 import 'lit-google-map';

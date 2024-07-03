@@ -1,5 +1,4 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 const models = require("../../models/index.cjs");
 const domainId = process.argv[2];
 const useNewVersionStatus = process.argv[3];
