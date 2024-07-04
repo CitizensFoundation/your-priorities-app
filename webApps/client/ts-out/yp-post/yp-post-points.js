@@ -206,7 +206,6 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
         }
 
         md-outlined-button {
-          font-family: var(--app-header-font-family, Roboto);
         }
 
         lit-virtualizer {

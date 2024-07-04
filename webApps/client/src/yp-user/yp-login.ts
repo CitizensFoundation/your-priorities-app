@@ -300,7 +300,6 @@ export class YpLogin extends YpBaseElement {
 
         md-textarea,
         md-textfield {
-          font-family: var(--app-header-font-family, Roboto);
         }
 
         .innerScroll {

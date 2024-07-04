@@ -7,6 +7,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 import { LitElement, css, html } from "lit";
 import { property } from "lit/decorators.js";
 import { Layouts } from "../flexbox-literals/classes.js";
+import { styles as typescaleStyles } from "@material/web/typography/md-typescale-styles.js";
 import "@material/web/iconbutton/outlined-icon-button.js";
 export class YpBaseElement extends LitElement {
     constructor() {
@@ -38,6 +39,7 @@ export class YpBaseElement extends LitElement {
           margin-bottom: 16px;
         }
       `,
+            typescaleStyles,
         ];
     }
     get isAppleDevice() {

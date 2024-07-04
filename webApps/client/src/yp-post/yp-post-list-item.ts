@@ -47,7 +47,6 @@ export class YpPostListItem extends YpPostBaseWithAnswers(YpBaseElement) {
           color: var(--md-sys-color-on-secondary-container);
           letter-spacing: 0.0125em;
           font-weight: var(--app-header-font-weight, 500);
-          font-family: var(--app-header-font-family, Roboto);
         }
 
         .postNameContainer {

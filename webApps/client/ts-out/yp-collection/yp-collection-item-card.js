@@ -24,7 +24,6 @@ let YpCollectionItemCard = class YpCollectionItemCard extends YpBaseElement {
           font-size: 15px;
           padding: 8px;
           padding: 16px;
-          font-family: var(--app-header-font-family, Roboto);
         }
 
         .description[widetext] {
@@ -94,7 +93,6 @@ let YpCollectionItemCard = class YpCollectionItemCard extends YpBaseElement {
           vertical-align: middle;
           width: auto;
           font-size: 22px;
-          font-family: var(--app-header-font-family, Roboto);
         }
 
         .collection-name[widetext] {

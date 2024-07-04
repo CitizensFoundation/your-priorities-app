@@ -69,7 +69,7 @@ let YpMagicText = YpMagicText_1 = class YpMagicText extends YpBaseElement {
     render() {
         return html `
       <div
-        class="container layout vertical center-center"
+        class="container layout vertical"
         ?rlt="${this.rtl}"
         ?more-text="${this.showMoreText}"
       >

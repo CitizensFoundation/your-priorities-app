@@ -136,7 +136,7 @@ export class YpMagicText extends YpBaseElement {
   override render() {
     return html`
       <div
-        class="container layout vertical center-center"
+        class="container layout vertical"
         ?rlt="${this.rtl}"
         ?more-text="${this.showMoreText}"
       >

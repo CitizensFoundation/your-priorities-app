@@ -1,6 +1,7 @@
 import { LitElement, css, html } from "lit";
 import { property } from "lit/decorators.js";
 import { Layouts } from "../flexbox-literals/classes.js";
+import { styles as typescaleStyles } from "@material/web/typography/md-typescale-styles.js";
 
 import "@material/web/iconbutton/outlined-icon-button.js";
 
@@ -47,6 +48,7 @@ export class YpBaseElement extends LitElement {
           margin-bottom: 16px;
         }
       `,
+      typescaleStyles,
     ] as any;
   }
 
@@ -136,7 +138,6 @@ export class YpBaseElement extends LitElement {
     );
 
     this.removeGlobalListener("yp-boot-from-server", this.hasBooted.bind(this));
-
   }
 
   _changeThemeColor(event: CustomEvent) {

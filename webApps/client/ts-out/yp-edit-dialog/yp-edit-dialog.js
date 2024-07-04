@@ -29,7 +29,6 @@ let YpEditDialog = class YpEditDialog extends YpBaseElement {
             super.styles,
             css `
         :host {
-          font-family: var(--app-header-font-family, Roboto);
         }
 
         md-dialog {
@@ -73,7 +72,6 @@ let YpEditDialog = class YpEditDialog extends YpBaseElement {
         }
 
         md-text-button {
-          font-family: var(--app-header-font-family, Roboto);
         }
 
         md-text-button[long-button-text] {

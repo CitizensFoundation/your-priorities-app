@@ -246,7 +246,6 @@ let YpPostEdit = class YpPostEdit extends YpEditBase {
         }
 
         div {
-          font-family: var(--app-header-font-family, Roboto);
         }
 
         .container {

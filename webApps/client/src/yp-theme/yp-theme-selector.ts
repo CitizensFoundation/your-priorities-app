@@ -467,6 +467,9 @@ export class YpThemeSelector extends YpBaseElement {
   :root {
     --md-ref-typeface-brand: Roboto, serif;
     --md-ref-typeface-plain: Roboto, serif;
+
+    --md-sys-typescale-headline-font: "Roboto";
+    --md-sys-typescale-title-font: "Roboto";
   }
 </code>
 ${this.t("exampleFontStyles")}:
