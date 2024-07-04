@@ -168,7 +168,7 @@ export class YpCollectionHeader extends YpBaseElement {
         .collection-name {
           font-family: var(--md-ref-typeface-brand); /*var(--md-sys-typescale-title-medium-font);*/
           font-size: var(--md-sys-typescale-title-medium-size, 22px);
-          font-weight: var(--md-sys-typescale-title-medium-weight, 500);
+          font-weight: var(--md-sys-typescale-title-medium-weight, 400);
           line-height: var(--md-sys-typescale-title-medium-line-height);
           padding: 16px;
           max-width: 320px;

@@ -400,7 +400,7 @@ let YpApp = class YpApp extends YpBaseElement {
             ? this.goForwardPostName
             : (this.showBack ? this.headerTitle : "") || ""}"
         aria-label="top navigation"
-        ?hidden="${this.appMode !== "main"}"
+        ?hidden="${(this.appMode !== "main") || window.appGlobals.domain?.configuration.hideAppBarIfWelcomeHtml}"
       >
         <div slot="navigation">${this.renderNavigationIcon()}</div>
         <div slot="title"></div>

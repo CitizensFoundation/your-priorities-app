@@ -1,4 +1,5 @@
 {
+  "hideAppBarIfWelcomeHtml": "Hide app bar if Welcome HTML",
   "pointsForAndAgainst": "Points for and against",
   "allowAnonymousUsersToVote": "Allow user to vote without a login account",
   "loginToAddComment": "Login to add comment",

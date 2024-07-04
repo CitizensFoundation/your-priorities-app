@@ -806,6 +806,8 @@ router.put('/:id', auth.can('edit domain'), function(req, res) {
       domain.set('configuration.welcomeHtmlInsteadOfCommunitiesList',
         (req.body.welcomeHtmlInsteadOfCommunitiesList && req.body.welcomeHtmlInsteadOfCommunitiesList!="") ? req.body.welcomeHtmlInsteadOfCommunitiesList : null);
 
+      domain.set('configuration.hideAppBarIfWelcomeHtml', truthValueFromBody(req.body.hideAppBarIfWelcomeHtml));
+
       if (req.body.samlEntryPoint) {
         domain.set('secret_api_keys.saml.entryPoint', req.body.samlEntryPoint);
         domain.set('secret_api_keys.saml.callbackUrl', req.body.samlCallbackUrl);

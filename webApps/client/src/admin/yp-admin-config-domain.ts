@@ -240,6 +240,10 @@ export class YpAdminConfigDomain extends YpAdminConfigBase {
           type: "textarea",
           rows: 5,
         },
+        {
+          text: "hideAppBarIfWelcomeHtml",
+          type: "checkbox",
+        },
       ],
     });
 

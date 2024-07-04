@@ -408,6 +408,7 @@ interface YpDomainConfiguration extends YpCollectionConfiguration {
   customSamlLoginText?: string;
   samlLoginButtonUrl?: string;
   welcomeHtmlInsteadOfCommunitiesList ?: string;
+  hideAppBarIfWelcomeHtml?: boolean;
   ltp?: YpLtpConfiguration;
   onlyAdminsCanCreateCommunities?: boolean;
 }
