@@ -15,6 +15,7 @@ import { YpBaseElement } from '../common/yp-base-element.js';
 export class PsAddConnectorDialog extends YpBaseElement {
   @property({ type: Boolean }) open = false;
   @property({ type: Number }) selectedAgentId: number | null = null;
+  @property({ type: Number }) groupId!: number;
 
   @property({ type: String })
   selectedInputOutputType: "input" | "output" | null = null;
@@ -33,7 +34,7 @@ export class PsAddConnectorDialog extends YpBaseElement {
 
   async fetchActiveConnectorClasses() {
     try {
-      this.activeConnectorClasses = await this.api.getActiveConnectorClasses();
+      this.activeConnectorClasses = await this.api.getActiveConnectorClasses(this.groupId);
     } catch (error) {
       console.error('Error fetching active connector classes:', error);
     }
@@ -103,6 +104,7 @@ export class PsAddConnectorDialog extends YpBaseElement {
 
     try {
       const newConnector = await this.api.createConnector(
+        this.groupId,
         this.selectedAgentId,
         this.selectedConnectorClassId,
         this.connectorName,

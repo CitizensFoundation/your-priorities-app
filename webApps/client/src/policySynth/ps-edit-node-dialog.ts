@@ -6,7 +6,7 @@ import '@material/web/button/text-button.js';
 import '@material/web/button/filled-button.js';
 import '@material/web/select/filled-select.js';
 import '@material/web/select/select-option.js';
-import '@yrpri/webapp/yp-survey/yp-structured-question-edit.js';
+import '../yp-survey/yp-structured-question-edit.js';
 import './ps-ai-model-selector.js';
 
 import { PsAiModelSize } from '@policysynth/agents/aiModelTypes.js';
@@ -17,6 +17,8 @@ import { YpBaseElement } from '../common/yp-base-element.js';
 export class PsEditNodeDialog extends YpBaseElement {
   @property({ type: Boolean }) open = false;
   @property({ type: Object }) nodeToEditInfo: any;
+
+  @property({ type: Number }) groupId!: number;
 
   @state() private activeAiModels: PsAiModelAttributes[] = [];
   @state() private selectedAiModels: {
@@ -35,7 +37,7 @@ export class PsEditNodeDialog extends YpBaseElement {
 
   async fetchActiveAiModels() {
     try {
-      this.activeAiModels = await this.api.getActiveAiModels();
+      this.activeAiModels = await this.api.getActiveAiModels(this.groupId);
     } catch (error) {
       console.error('Error fetching active AI models:', error);
     }

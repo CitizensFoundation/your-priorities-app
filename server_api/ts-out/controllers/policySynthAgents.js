@@ -19,7 +19,7 @@ export class PolicySynthAgentsController {
         this.router = express.Router();
         this.getAgent = async (req, res) => {
             try {
-                const agent = await this.agentManager.getAgent(req.params.id);
+                const agent = await this.agentManager.getAgent(req.params.groupId);
                 res.json(agent);
             }
             catch (error) {
@@ -361,7 +361,7 @@ export class PolicySynthAgentsController {
         }
     }
     initializeRoutes() {
-        this.router.get(this.path + "/:groupId/:id", auth.can("view group"), this.getAgent);
+        this.router.get(this.path + "/:groupId", auth.can("view group"), this.getAgent);
         this.router.put(this.path + "/:groupId/:agentId/:nodeType/:nodeId/configuration", auth.can("edit group"), this.updateNodeConfiguration);
         this.router.post(this.path + "/:groupId/:id/control", auth.can("edit group"), this.controlAgent);
         this.router.get(this.path + "/:groupId/:id/status", auth.can("view group"), this.getAgentStatus);

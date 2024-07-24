@@ -22,6 +22,9 @@ export class PsOperationsView extends PsBaseWithRunningAgentObserver {
   @property({ type: Object })
   currentAgent!: PsAgentAttributes;
 
+  @property({ type: Number })
+  groupId!: number;
+
   private graph!: dia.Graph;
   private paper!: dia.Paper;
   private elements: { [key: string]: dia.Element } = {};
@@ -452,6 +455,7 @@ export class PsOperationsView extends PsBaseWithRunningAgentObserver {
       label: agent.Class?.configuration.description,
       text: agent.Class?.configuration.description,
       agentId: agent.id,
+      groupId: this.groupId,
       nodeType: 'agent' as PsAgentsNodeType,
       attrs: {
         //cause: node.description,
@@ -483,6 +487,7 @@ export class PsOperationsView extends PsBaseWithRunningAgentObserver {
         label: connector.Class?.configuration.description,
         text: connector.Class?.configuration.description,
         connectorId: connector.id,
+        groupId: this.groupId,
         nodeType: 'connector' as PsAgentsNodeType,
         attrs: {
           //cause: node.description,
@@ -664,7 +669,7 @@ export class PsOperationsView extends PsBaseWithRunningAgentObserver {
           margin: 0 0;
           width: 100%;
           position: absolute;
-          top: 64px;
+          top: 120px;
           left: 0;
           width: 100%;
           height: 56px;
@@ -678,7 +683,7 @@ export class PsOperationsView extends PsBaseWithRunningAgentObserver {
         .controlPanelContainer {
           margin: 0 0;
           position: absolute;
-          top: 64px;
+          top: 120px;
           left: 0;
           width: 100%;
           height: 62px;

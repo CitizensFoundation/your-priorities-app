@@ -6,7 +6,6 @@ import "./yp-group-header.js";
 import "../ac-activities/ac-activities.js";
 import "../yp-post/yp-posts-list.js";
 import "../yp-post/yp-post-card-add.js";
-import "../allOurIdeas/aoi-survey.js";
 export declare const GroupTabTypes: Record<string, number>;
 export declare class YpGroup extends YpCollection {
     collection: YpGroupData | undefined;
@@ -16,7 +15,9 @@ export declare class YpGroup extends YpCollection {
     selectedGroupTab: number;
     configCheckTimer: ReturnType<typeof setTimeout> | undefined;
     newGroupRefresh: boolean;
+    isImportingCode: boolean;
     haveLoadedAgentsOps: boolean;
+    haveLoadedAllOurIdeas: boolean;
     tabCounters: Record<string, number>;
     configCheckTTL: number;
     constructor();

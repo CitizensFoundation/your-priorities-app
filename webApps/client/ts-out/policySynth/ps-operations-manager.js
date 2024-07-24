@@ -4,22 +4,23 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { css, html } from 'lit';
-import { property, customElement, query } from 'lit/decorators.js';
-import '@material/web/iconbutton/icon-button.js';
-import '@material/web/progress/linear-progress.js';
-import '@material/web/tabs/tabs.js';
-import '@material/web/tabs/primary-tab.js';
-import '@material/web/textfield/outlined-text-field.js';
-import '@material/web/iconbutton/outlined-icon-button.js';
-import '@material/web/button/filled-tonal-button.js';
-import './ps-operations-view.js';
-import './PsServerApi.js';
-import { PsServerApi } from './PsServerApi.js';
-import './ps-edit-node-dialog.js';
-import './ps-add-agent-dialog.js';
-import './ps-add-connector-dialog.js';
-import { PsBaseWithRunningAgentObserver } from './ps-base-with-running-agents.js';
+import { css, html } from "lit";
+import { property, customElement, query } from "lit/decorators.js";
+import "@material/web/iconbutton/icon-button.js";
+import "@material/web/progress/linear-progress.js";
+import "@material/web/tabs/tabs.js";
+import "@material/web/tabs/primary-tab.js";
+import "@material/web/textfield/outlined-text-field.js";
+import "@material/web/iconbutton/outlined-icon-button.js";
+import "@material/web/button/filled-tonal-button.js";
+import "./ps-operations-view.js";
+import "./PsServerApi.js";
+import { PsServerApi } from "./PsServerApi.js";
+import "./ps-edit-node-dialog.js";
+import "./ps-add-agent-dialog.js";
+import "./ps-add-connector-dialog.js";
+import { PsBaseWithRunningAgentObserver } from "./ps-base-with-running-agents.js";
+import { PsAppGlobals } from "./PsAppGlobals.js";
 let PsOperationsManager = class PsOperationsManager extends PsBaseWithRunningAgentObserver {
     constructor() {
         super();
@@ -31,21 +32,23 @@ let PsOperationsManager = class PsOperationsManager extends PsBaseWithRunningAge
         this.showAddConnectorDialog = false;
         this.selectedAgentIdForConnector = null;
         this.selectedInputOutputType = null;
+        this.groupId = 30995; //!: number;
         this.activeAiModels = [];
         this.api = new PsServerApi();
-        this.getAgent();
+        window.psAppGlobals = new PsAppGlobals(this.api);
     }
     async getAgent() {
         this.isFetchingAgent = true;
         try {
+            debugger;
             if (!this.groupId) {
-                throw new Error('Current group ID is not set');
+                throw new Error("Current group ID is not set");
             }
             const agent = await this.api.getAgent(this.groupId);
             this.currentAgent = agent;
         }
         catch (error) {
-            console.error('Error fetching agent:', error);
+            console.error("Error fetching agent:", error);
         }
         finally {
             this.isFetchingAgent = false;
@@ -53,28 +56,29 @@ let PsOperationsManager = class PsOperationsManager extends PsBaseWithRunningAge
     }
     async connectedCallback() {
         super.connectedCallback();
-        this.addEventListener('edit-node', this.openEditNodeDialog);
-        this.addEventListener('add-connector', this.openAddConnectorDialog);
-        this.addEventListener('get-costs', this.fetchAgentCosts);
-        this.addEventListener('add-agent', this.openAddAgentDialog);
+        this.getAgent();
+        this.addEventListener("edit-node", this.openEditNodeDialog);
+        this.addEventListener("add-connector", this.openAddConnectorDialog);
+        this.addEventListener("get-costs", this.fetchAgentCosts);
+        this.addEventListener("add-agent", this.openAddAgentDialog);
     }
     async fetchAgentCosts() {
         if (this.currentAgentId) {
             try {
-                this.totalCosts = await this.api.getAgentCosts(this.currentAgentId);
+                this.totalCosts = await this.api.getAgentCosts(this.groupId, this.currentAgentId);
             }
             catch (error) {
-                console.error('Error fetching agent costs:', error);
+                console.error("Error fetching agent costs:", error);
             }
         }
     }
     // Add this method to fetch and set active AI models
     async fetchActiveAiModels() {
         try {
-            this.activeAiModels = await this.api.getActiveAiModels();
+            this.activeAiModels = await this.api.getActiveAiModels(this.groupId);
         }
         catch (error) {
-            console.error('Error fetching active AI models:', error);
+            console.error("Error fetching active AI models:", error);
         }
     }
     async handleEditDialogSave(event) {
@@ -83,31 +87,32 @@ let PsOperationsManager = class PsOperationsManager extends PsBaseWithRunningAge
         if (!this.nodeToEditInfo)
             return;
         try {
-            const nodeType = 'Class' in this.nodeToEditInfo &&
-                this.nodeToEditInfo.Class?.name.toLowerCase().includes('agent')
-                ? 'agent'
-                : 'connector';
+            const nodeType = "Class" in this.nodeToEditInfo &&
+                this.nodeToEditInfo.Class?.name.toLowerCase().includes("agent")
+                ? "agent"
+                : "connector";
             const nodeId = this.nodeToEditInfo.id;
-            await this.api.updateNodeConfiguration(nodeType, nodeId, updatedConfig);
+            await this.api.updateNodeConfiguration(this.groupId, nodeType, nodeId, updatedConfig);
             debugger;
             // Handle AI model updates for agents
-            if (nodeType === 'agent' && aiModelUpdates) {
-                const currentAiModels = await this.api.getAgentAiModels(nodeId);
+            if (nodeType === "agent" && aiModelUpdates) {
+                const currentAiModels = await this.api.getAgentAiModels(this.groupId, nodeId);
                 for (const update of aiModelUpdates) {
-                    const currentModel = currentAiModels.find(m => m.configuration.modelSize === update.size);
+                    const currentModel = currentAiModels.find((m) => m.configuration.modelSize === update.size);
                     if (currentModel && update.modelId === null) {
-                        await this.api.removeAgentAiModel(nodeId, currentModel.id);
+                        await this.api.removeAgentAiModel(this.groupId, nodeId, currentModel.id);
                     }
-                    else if (update.modelId !== null && currentModel?.id !== update.modelId) {
+                    else if (update.modelId !== null &&
+                        currentModel?.id !== update.modelId) {
                         if (currentModel) {
-                            await this.api.removeAgentAiModel(nodeId, currentModel.id);
+                            await this.api.removeAgentAiModel(this.groupId, nodeId, currentModel.id);
                         }
-                        await this.api.addAgentAiModel(nodeId, update.modelId, update.size);
+                        await this.api.addAgentAiModel(this.groupId, nodeId, update.modelId, update.size);
                     }
                 }
             }
             // Update the local state
-            if (nodeType === 'agent') {
+            if (nodeType === "agent") {
                 this.currentAgent = {
                     ...this.currentAgent,
                     configuration: {
@@ -117,10 +122,10 @@ let PsOperationsManager = class PsOperationsManager extends PsBaseWithRunningAge
                 };
                 // Update AI models in local state
                 if (aiModelUpdates) {
-                    const updatedAiModels = this.currentAgent.AiModels.filter(model => !aiModelUpdates.some((update) => update.size === model.configuration.modelSize));
+                    const updatedAiModels = this.currentAgent.AiModels.filter((model) => !aiModelUpdates.some((update) => update.size === model.configuration.modelSize));
                     for (const update of aiModelUpdates) {
                         if (update.modelId !== null) {
-                            const newModel = this.activeAiModels.find(m => m.id === update.modelId);
+                            const newModel = this.activeAiModels.find((m) => m.id === update.modelId);
                             if (newModel) {
                                 updatedAiModels.push(newModel);
                             }
@@ -135,7 +140,7 @@ let PsOperationsManager = class PsOperationsManager extends PsBaseWithRunningAge
             else {
                 // Update connector (unchanged from your original code)
                 if (isInputConnector) {
-                    const updatedInputConnectors = this.currentAgent.InputConnectors.map(connector => connector.id === nodeId
+                    const updatedInputConnectors = this.currentAgent.InputConnectors.map((connector) => connector.id === nodeId
                         ? {
                             ...connector,
                             configuration: {
@@ -150,7 +155,7 @@ let PsOperationsManager = class PsOperationsManager extends PsBaseWithRunningAge
                     };
                 }
                 else {
-                    const updatedOutputConnectors = this.currentAgent.OutputConnectors.map(connector => connector.id === nodeId
+                    const updatedOutputConnectors = this.currentAgent.OutputConnectors.map((connector) => connector.id === nodeId
                         ? {
                             ...connector,
                             configuration: {
@@ -169,7 +174,7 @@ let PsOperationsManager = class PsOperationsManager extends PsBaseWithRunningAge
             this.showEditNodeDialog = false;
         }
         catch (error) {
-            console.error('Failed to update node configuration:', error);
+            console.error("Failed to update node configuration:", error);
             // You might want to show an error message to the user here
         }
     }
@@ -186,15 +191,15 @@ let PsOperationsManager = class PsOperationsManager extends PsBaseWithRunningAge
         this.showAddAgentDialog = true;
     }
     tabChanged() {
-        this.activeTabIndex = this.$$('#tabBar').activeTabIndex;
+        this.activeTabIndex = this.$$("#tabBar").activeTabIndex;
     }
     randomizeTheme() {
         const randomColor = Math.floor(Math.random() * 16777215).toString(16);
-        this.fire('yp-theme-color', `#${randomColor}`);
+        this.fire("yp-theme-color", `#${randomColor}`);
     }
     renderTotalCosts() {
-        return html `${this.t('Costs')}
-    ${this.totalCosts !== undefined ? `($${this.totalCosts.toFixed(2)})` : ''}`;
+        return html `${this.t("Costs")}
+    ${this.totalCosts !== undefined ? `($${this.totalCosts.toFixed(2)})` : ""}`;
     }
     render() {
         if (this.isFetchingAgent) {
@@ -205,6 +210,7 @@ let PsOperationsManager = class PsOperationsManager extends PsBaseWithRunningAge
         <ps-edit-node-dialog
           ?open="${this.showEditNodeDialog}"
           .nodeToEditInfo="${this.nodeToEditInfo}"
+          .groupid="${this.groupId}"
           @save="${this.handleEditDialogSave}"
           @close="${() => (this.showEditNodeDialog = false)}"
         ></ps-edit-node-dialog>
@@ -229,11 +235,11 @@ let PsOperationsManager = class PsOperationsManager extends PsBaseWithRunningAge
         <md-tabs id="tabBar" @change="${this.tabChanged}">
           <md-primary-tab id="configure-tab" aria-controls="configure-panel">
             <md-icon slot="icon">support_agent</md-icon>
-            ${this.t('Agents Operations')}
+            ${this.t("Agents Operations")}
           </md-primary-tab>
           <md-primary-tab id="crt-tab" aria-controls="crt-panel">
             <md-icon slot="icon">checklist</md-icon>
-            ${this.t('Audit Log')}
+            ${this.t("Audit Log")}
           </md-primary-tab>
           <md-primary-tab id="crt-tab" aria-controls="crt-panel">
             <md-icon slot="icon">account_balance</md-icon>
@@ -242,6 +248,7 @@ let PsOperationsManager = class PsOperationsManager extends PsBaseWithRunningAge
         </md-tabs>
         <ps-operations-view
           .currentAgent="${this.currentAgent}"
+          .groupId="${this.groupId}"
         ></ps-operations-view>
         ${this.renderThemeToggle()}
       `;
@@ -311,11 +318,11 @@ let PsOperationsManager = class PsOperationsManager extends PsBaseWithRunningAge
           margin-bottom: 16px;
         }
 
-        [type='textarea'] {
+        [type="textarea"] {
           min-height: 150px;
         }
 
-        [type='textarea'][supporting-text] {
+        [type="textarea"][supporting-text] {
           min-height: 76px;
         }
 
@@ -436,13 +443,13 @@ __decorate([
     property({ type: String })
 ], PsOperationsManager.prototype, "selectedInputOutputType", void 0);
 __decorate([
-    query('ps-operations-view')
+    query("ps-operations-view")
 ], PsOperationsManager.prototype, "agentElement", void 0);
 __decorate([
     property({ type: Number })
 ], PsOperationsManager.prototype, "groupId", void 0);
 PsOperationsManager = __decorate([
-    customElement('ps-operations-manager')
+    customElement("ps-operations-manager")
 ], PsOperationsManager);
 export { PsOperationsManager };
 //# sourceMappingURL=ps-operations-manager.js.map

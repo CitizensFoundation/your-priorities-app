@@ -1,15 +1,16 @@
-import { nothing } from 'lit';
-import '@material/web/iconbutton/icon-button.js';
-import '@material/web/progress/circular-progress.js';
-import '@material/web/progress/linear-progress.js';
-import '@material/web/menu/menu.js';
-import '@material/web/menu/menu-item.js';
-import { PsServerApi } from './PsServerApi.js';
-import { PsOperationsBaseNode } from './ps-operations-base-node.js';
-import { MdMenu } from '@material/web/menu/menu.js';
+import { nothing } from "lit";
+import "@material/web/iconbutton/icon-button.js";
+import "@material/web/progress/circular-progress.js";
+import "@material/web/progress/linear-progress.js";
+import "@material/web/menu/menu.js";
+import "@material/web/menu/menu-item.js";
+import { PsServerApi } from "./PsServerApi.js";
+import { PsOperationsBaseNode } from "./ps-operations-base-node.js";
+import { MdMenu } from "@material/web/menu/menu.js";
 export declare class PsAgentNode extends PsOperationsBaseNode {
     agent: PsAgentAttributes;
     agentId: number;
+    groupId: number;
     private agentState;
     private latestMessage;
     private progress;

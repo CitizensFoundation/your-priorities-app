@@ -8,25 +8,25 @@ export class PsServerApi extends YpServerApiBase {
     async getAgent(groupId) {
         return (await this.fetchWrapper(this.baseUrlPath + `${this.baseAgentsPath}${groupId}`, {}, false));
     }
-    async removeAgentAiModel(agentId, modelId) {
-        return this.fetchWrapper(`${this.baseUrlPath}/agents/${agentId}/ai-models/${modelId}`, {
+    async removeAgentAiModel(groupId, agentId, modelId) {
+        return this.fetchWrapper(`${this.baseUrlPath}/agents/${groupId}/${agentId}/ai-models/${modelId}`, {
             method: 'DELETE',
         });
     }
-    async addAgentAiModel(agentId, modelId, size) {
-        return this.fetchWrapper(`${this.baseUrlPath}/agents/${agentId}/ai-models`, {
+    async addAgentAiModel(groupId, agentId, modelId, size) {
+        return this.fetchWrapper(`${this.baseUrlPath}/agents/${groupId}/${agentId}/ai-models`, {
             method: 'POST',
             body: JSON.stringify({ modelId, size }),
         });
     }
-    async updateAgentConfiguration(agentId, updatedConfig) {
-        return this.fetchWrapper(this.baseUrlPath + `${this.baseAgentsPath}${agentId}/configuration`, {
+    async updateAgentConfiguration(groupId, agentId, updatedConfig) {
+        return this.fetchWrapper(this.baseUrlPath + `${this.baseAgentsPath}${groupId}/${agentId}/configuration`, {
             method: 'PUT',
             body: JSON.stringify(updatedConfig),
         }, false);
     }
     async createAgent(name, agentClassId, aiModels, parentAgentId, groupId) {
-        return this.fetchWrapper(this.baseUrlPath + this.baseAgentsPath, {
+        return this.fetchWrapper(this.baseUrlPath + this.baseAgentsPath + `${groupId}`, {
             method: 'POST',
             body: JSON.stringify({
                 name,
@@ -37,32 +37,32 @@ export class PsServerApi extends YpServerApiBase {
             }),
         }, false);
     }
-    async getAgentAiModels(agentId) {
-        return this.fetchWrapper(`${this.baseUrlPath}/agents/${agentId}/ai-models`);
+    async getAgentAiModels(groupId, agentId) {
+        return this.fetchWrapper(`${this.baseUrlPath}/agents/${groupId}/${agentId}/ai-models`);
     }
-    async getActiveAiModels() {
-        return this.fetchWrapper(this.baseUrlPath + `${this.baseAgentsPath}registry/aiModels`, {
+    async getActiveAiModels(groupId) {
+        return this.fetchWrapper(this.baseUrlPath + `${this.baseAgentsPath}${groupId}/registry/aiModels`, {
             method: 'GET',
         }, false);
     }
-    async getActiveAgentClasses() {
-        return this.fetchWrapper(this.baseUrlPath + `${this.baseAgentsPath}registry/agentClasses`, {
+    async getActiveAgentClasses(groupId) {
+        return this.fetchWrapper(this.baseUrlPath + `${this.baseAgentsPath}${groupId}/registry/agentClasses`, {
             method: 'GET',
         }, false);
     }
-    async getActiveConnectorClasses() {
-        return this.fetchWrapper(this.baseUrlPath + `${this.baseAgentsPath}registry/connectorClasses`, {
+    async getActiveConnectorClasses(groupId) {
+        return this.fetchWrapper(this.baseUrlPath + `${this.baseAgentsPath}${groupId}/registry/connectorClasses`, {
             method: 'GET',
         }, false);
     }
-    async getAgentCosts(agentId) {
-        const response = (await this.fetchWrapper(this.baseUrlPath + `${this.baseAgentsPath}${agentId}/costs`, {
+    async getAgentCosts(groupId, agentId) {
+        const response = (await this.fetchWrapper(this.baseUrlPath + `${this.baseAgentsPath}${groupId}/${agentId}/costs`, {
             method: 'GET',
         }, false));
         return parseFloat(response.totalCost);
     }
-    async createConnector(agentId, connectorClassId, name, type) {
-        const response = await fetch(`/api/agents/${agentId}/${type}Connectors`, {
+    async createConnector(groupId, agentId, connectorClassId, name, type) {
+        const response = await fetch(`/api/agents/${groupId}/${agentId}/${type}Connectors`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -74,44 +74,38 @@ export class PsServerApi extends YpServerApiBase {
         }
         return response.json();
     }
-    updateNode(agentId, updatedNode) {
-        return this.fetchWrapper(this.baseUrlPath + `${this.baseAgentsPath}${agentId}`, {
+    updateNode(groupId, agentId, updatedNode) {
+        return this.fetchWrapper(this.baseUrlPath + `${this.baseAgentsPath}${groupId}/${agentId}`, {
             method: 'PUT',
             body: JSON.stringify(updatedNode),
         }, false);
     }
-    async updateNodeConfiguration(nodeType, nodeId, updatedConfig) {
+    async updateNodeConfiguration(groupId, nodeType, nodeId, updatedConfig) {
         return this.fetchWrapper(this.baseUrlPath +
-            `${this.baseAgentsPath}${nodeId}/${nodeType}/configuration`, {
+            `${this.baseAgentsPath}${groupId}/${nodeId}/${nodeType}/configuration`, {
             method: 'PUT',
             body: JSON.stringify(updatedConfig),
         }, false);
     }
-    async getAgentStatus(agentId) {
-        return this.fetchWrapper(this.baseUrlPath + `${this.baseAgentsPath}${agentId}/status`, {
+    async getAgentStatus(groupId, agentId) {
+        return this.fetchWrapper(this.baseUrlPath + `${this.baseAgentsPath}${groupId}/${agentId}/status`, {
             method: 'GET',
         }, false);
     }
-    async controlAgent(agentId, action) {
-        return this.fetchWrapper(`/api/agents/${agentId}/control`, {
+    async controlAgent(groupId, agentId, action) {
+        return this.fetchWrapper(`/api/agents/${groupId}/${agentId}/control`, {
             method: 'POST',
             body: JSON.stringify({ action: action }),
         });
     }
-    async startAgent(agentId) {
-        return this.controlAgent(agentId, 'start');
+    async startAgent(groupId, agentId) {
+        return this.controlAgent(groupId, agentId, 'start');
     }
-    async pauseAgent(agentId) {
-        return this.controlAgent(agentId, 'pause');
+    async pauseAgent(groupId, agentId) {
+        return this.controlAgent(groupId, agentId, 'pause');
     }
-    async stopAgent(agentId) {
-        return this.controlAgent(agentId, 'stop');
-    }
-    deleteNode(treeId, nodeId) {
-        return this.fetchWrapper(this.baseUrlPath + `${this.baseAgentsPath}${treeId}`, {
-            method: 'DELETE',
-            body: JSON.stringify({ nodeId }),
-        }, false);
+    async stopAgent(groupId, agentId) {
+        return this.controlAgent(groupId, agentId, 'stop');
     }
 }
 //# sourceMappingURL=PsServerApi.js.map

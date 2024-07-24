@@ -195,7 +195,7 @@ export class PolicySynthAgentsController {
 
   public initializeRoutes() {
     this.router.get(
-      this.path + "/:groupId/:id",
+      this.path + "/:groupId",
       auth.can("view group"),
       this.getAgent
     );
@@ -275,7 +275,7 @@ export class PolicySynthAgentsController {
 
   getAgent = async (req: express.Request, res: express.Response) => {
     try {
-      const agent = await this.agentManager.getAgent(req.params.id);
+      const agent = await this.agentManager.getAgent(req.params.groupId);
       res.json(agent);
     } catch (error) {
       console.error("Error in getAgent:", error);

@@ -17,6 +17,9 @@ export class PsAgentConnector extends PsOperationsBaseNode {
   @property({ type: Number })
   connectorId!: number;
 
+  @property({ type: Number })
+  groupId!: number;
+
   override connectedCallback(): void {
     super.connectedCallback();
     this.connector = window.psAppGlobals.getConnectorInstance(this.connectorId)!;

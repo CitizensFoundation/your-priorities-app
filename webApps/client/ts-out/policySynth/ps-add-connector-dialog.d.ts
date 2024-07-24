@@ -8,6 +8,7 @@ import { YpBaseElement } from '../common/yp-base-element.js';
 export declare class PsAddConnectorDialog extends YpBaseElement {
     open: boolean;
     selectedAgentId: number | null;
+    groupId: number;
     selectedInputOutputType: "input" | "output" | null;
     private activeConnectorClasses;
     private selectedConnectorClassId;

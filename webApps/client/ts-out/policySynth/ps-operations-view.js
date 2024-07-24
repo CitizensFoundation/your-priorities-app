@@ -365,6 +365,7 @@ let PsOperationsView = class PsOperationsView extends PsBaseWithRunningAgentObse
             label: agent.Class?.configuration.description,
             text: agent.Class?.configuration.description,
             agentId: agent.id,
+            groupId: this.groupId,
             nodeType: 'agent',
             attrs: {
             //cause: node.description,
@@ -392,6 +393,7 @@ let PsOperationsView = class PsOperationsView extends PsBaseWithRunningAgentObse
                 label: connector.Class?.configuration.description,
                 text: connector.Class?.configuration.description,
                 connectorId: connector.id,
+                groupId: this.groupId,
                 nodeType: 'connector',
                 attrs: {
                 //cause: node.description,
@@ -552,7 +554,7 @@ let PsOperationsView = class PsOperationsView extends PsBaseWithRunningAgentObse
           margin: 0 0;
           width: 100%;
           position: absolute;
-          top: 64px;
+          top: 120px;
           left: 0;
           width: 100%;
           height: 56px;
@@ -566,7 +568,7 @@ let PsOperationsView = class PsOperationsView extends PsBaseWithRunningAgentObse
         .controlPanelContainer {
           margin: 0 0;
           position: absolute;
-          top: 64px;
+          top: 120px;
           left: 0;
           width: 100%;
           height: 62px;
@@ -729,6 +731,9 @@ let PsOperationsView = class PsOperationsView extends PsBaseWithRunningAgentObse
 __decorate([
     property({ type: Object })
 ], PsOperationsView.prototype, "currentAgent", void 0);
+__decorate([
+    property({ type: Number })
+], PsOperationsView.prototype, "groupId", void 0);
 PsOperationsView = __decorate([
     customElement('ps-operations-view')
 ], PsOperationsView);

@@ -17,11 +17,12 @@ export class PsServerApi extends YpServerApiBase {
   }
 
   public async removeAgentAiModel(
+    groupId: number,
     agentId: number,
     modelId: number
   ): Promise<void> {
     return this.fetchWrapper(
-      `${this.baseUrlPath}/agents/${agentId}/ai-models/${modelId}`,
+      `${this.baseUrlPath}/agents/${groupId}/${agentId}/ai-models/${modelId}`,
       {
         method: 'DELETE',
       }
@@ -29,12 +30,13 @@ export class PsServerApi extends YpServerApiBase {
   }
 
   public async addAgentAiModel(
+    groupId: number,
     agentId: number,
     modelId: number,
     size: PsAiModelSize
   ): Promise<void> {
     return this.fetchWrapper(
-      `${this.baseUrlPath}/agents/${agentId}/ai-models`,
+      `${this.baseUrlPath}/agents/${groupId}/${agentId}/ai-models`,
       {
         method: 'POST',
         body: JSON.stringify({ modelId, size }),
@@ -44,11 +46,12 @@ export class PsServerApi extends YpServerApiBase {
 
 
   public async updateAgentConfiguration(
+    groupId: number,
     agentId: number,
     updatedConfig: Partial<PsAgentAttributes['configuration']>
   ): Promise<void> {
     return this.fetchWrapper(
-      this.baseUrlPath + `${this.baseAgentsPath}${agentId}/configuration`,
+      this.baseUrlPath + `${this.baseAgentsPath}${groupId}/${agentId}/configuration`,
       {
         method: 'PUT',
         body: JSON.stringify(updatedConfig),
@@ -65,7 +68,7 @@ export class PsServerApi extends YpServerApiBase {
     groupId?: number
   ): Promise<PsAgentAttributes> {
     return this.fetchWrapper(
-      this.baseUrlPath + this.baseAgentsPath,
+      this.baseUrlPath + this.baseAgentsPath+`${groupId}`,
       {
         method: 'POST',
         body: JSON.stringify({
@@ -81,16 +84,19 @@ export class PsServerApi extends YpServerApiBase {
   }
 
   public async getAgentAiModels(
+    groupId: number,
     agentId: number
   ): Promise<PsAiModelAttributes[]> {
     return this.fetchWrapper(
-      `${this.baseUrlPath}/agents/${agentId}/ai-models`
+      `${this.baseUrlPath}/agents/${groupId}/${agentId}/ai-models`
     ) as Promise<PsAiModelAttributes[]>;
   }
 
-  public async getActiveAiModels(): Promise<PsAiModelAttributes[]> {
+  public async getActiveAiModels(
+    groupId: number
+  ): Promise<PsAiModelAttributes[]> {
     return this.fetchWrapper(
-      this.baseUrlPath + `${this.baseAgentsPath}registry/aiModels`,
+      this.baseUrlPath + `${this.baseAgentsPath}${groupId}/registry/aiModels`,
       {
         method: 'GET',
       },
@@ -98,9 +104,9 @@ export class PsServerApi extends YpServerApiBase {
     ) as Promise<PsAiModelAttributes[]>;
   }
 
-  public async getActiveAgentClasses(): Promise<PsAgentClassAttributes[]> {
+  public async getActiveAgentClasses( groupId: number): Promise<PsAgentClassAttributes[]> {
     return this.fetchWrapper(
-      this.baseUrlPath + `${this.baseAgentsPath}registry/agentClasses`,
+      this.baseUrlPath + `${this.baseAgentsPath}${groupId}/registry/agentClasses`,
       {
         method: 'GET',
       },
@@ -108,11 +114,11 @@ export class PsServerApi extends YpServerApiBase {
     ) as Promise<PsAgentClassAttributes[]>;
   }
 
-  public async getActiveConnectorClasses(): Promise<
+  public async getActiveConnectorClasses(groupId: number): Promise<
     PsAgentConnectorClassAttributes[]
   > {
     return this.fetchWrapper(
-      this.baseUrlPath + `${this.baseAgentsPath}registry/connectorClasses`,
+      this.baseUrlPath + `${this.baseAgentsPath}${groupId}/registry/connectorClasses`,
       {
         method: 'GET',
       },
@@ -122,9 +128,9 @@ export class PsServerApi extends YpServerApiBase {
 
 
 
-  public async getAgentCosts(agentId: number): Promise<number> {
+  public async getAgentCosts(groupId: number, agentId: number): Promise<number> {
     const response = (await this.fetchWrapper(
-      this.baseUrlPath + `${this.baseAgentsPath}${agentId}/costs`,
+      this.baseUrlPath + `${this.baseAgentsPath}${groupId}/${agentId}/costs`,
       {
         method: 'GET',
       },
@@ -135,12 +141,13 @@ export class PsServerApi extends YpServerApiBase {
 
 
   async createConnector(
+    groupId: number,
     agentId: number,
     connectorClassId: number,
     name: string,
     type: 'input' | 'output'
   ): Promise<PsAgentConnectorAttributes> {
-    const response = await fetch(`/api/agents/${agentId}/${type}Connectors`, {
+    const response = await fetch(`/api/agents/${groupId}/${agentId}/${type}Connectors`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -156,11 +163,12 @@ export class PsServerApi extends YpServerApiBase {
   }
 
   public updateNode(
+    groupId: number,
     agentId: number,
     updatedNode: PsAgentAttributes
   ): Promise<void> {
     return this.fetchWrapper(
-      this.baseUrlPath + `${this.baseAgentsPath}${agentId}`,
+      this.baseUrlPath + `${this.baseAgentsPath}${groupId}/${agentId}`,
       {
         method: 'PUT',
         body: JSON.stringify(updatedNode),
@@ -170,6 +178,7 @@ export class PsServerApi extends YpServerApiBase {
   }
 
   public async updateNodeConfiguration(
+    groupId: number,
     nodeType: 'agent' | 'connector',
     nodeId: number,
     updatedConfig: Partial<
@@ -179,7 +188,7 @@ export class PsServerApi extends YpServerApiBase {
   ): Promise<void> {
     return this.fetchWrapper(
       this.baseUrlPath +
-        `${this.baseAgentsPath}${nodeId}/${nodeType}/configuration`,
+        `${this.baseAgentsPath}${groupId}/${nodeId}/${nodeType}/configuration`,
       {
         method: 'PUT',
         body: JSON.stringify(updatedConfig),
@@ -188,9 +197,9 @@ export class PsServerApi extends YpServerApiBase {
     ) as Promise<void>;
   }
 
-  public async getAgentStatus(agentId: number): Promise<PsAgentStatus> {
+  public async getAgentStatus(groupId: number, agentId: number): Promise<PsAgentStatus> {
     return this.fetchWrapper(
-      this.baseUrlPath + `${this.baseAgentsPath}${agentId}/status`,
+      this.baseUrlPath + `${this.baseAgentsPath}${groupId}/${agentId}/status`,
       {
         method: 'GET',
       },
@@ -198,33 +207,22 @@ export class PsServerApi extends YpServerApiBase {
     ) as Promise<PsAgentStatus>;
   }
 
-  async controlAgent(agentId: number, action: 'start' | 'pause' | 'stop') {
-    return this.fetchWrapper(`/api/agents/${agentId}/control`, {
+  async controlAgent(groupId: number, agentId: number, action: 'start' | 'pause' | 'stop') {
+    return this.fetchWrapper(`/api/agents/${groupId}/${agentId}/control`, {
       method: 'POST',
       body: JSON.stringify({ action: action }),
     });
   }
 
-  async startAgent(agentId: number) {
-    return this.controlAgent(agentId, 'start');
+  async startAgent(groupId: number, agentId: number) {
+    return this.controlAgent(groupId, agentId, 'start');
   }
 
-  async pauseAgent(agentId: number) {
-    return this.controlAgent(agentId, 'pause');
+  async pauseAgent(groupId: number,agentId: number) {
+    return this.controlAgent(groupId,agentId, 'pause');
   }
 
-  async stopAgent(agentId: number) {
-    return this.controlAgent(agentId, 'stop');
-  }
-
-  public deleteNode(treeId: string | number, nodeId: string): Promise<void> {
-    return this.fetchWrapper(
-      this.baseUrlPath + `${this.baseAgentsPath}${treeId}`,
-      {
-        method: 'DELETE',
-        body: JSON.stringify({ nodeId }),
-      },
-      false
-    ) as Promise<void>;
+  async stopAgent(groupId: number, agentId: number) {
+    return this.controlAgent(groupId, agentId, 'stop');
   }
 }

@@ -16,8 +16,8 @@ import "../ac-activities/ac-activities.js";
 import "../yp-post/yp-posts-list.js";
 import "../yp-post/yp-post-card-add.js";
 import { cache } from "lit/directives/cache.js";
-import "../allOurIdeas/aoi-survey.js";
 import { unsafeHTML } from "lit/directives/unsafe-html.js";
+import { YpGroupType } from "./ypGroupType.js";
 export const GroupTabTypes = {
     Open: 0,
     InProgress: 1,
@@ -33,7 +33,9 @@ let YpGroup = class YpGroup extends YpCollection {
         this.disableNewPosts = false;
         this.selectedGroupTab = GroupTabTypes.Open;
         this.newGroupRefresh = false;
+        this.isImportingCode = false;
         this.haveLoadedAgentsOps = false;
+        this.haveLoadedAllOurIdeas = false;
         this.tabCounters = {};
         this.configCheckTTL = 45000;
     }
@@ -184,9 +186,15 @@ let YpGroup = class YpGroup extends YpCollection {
             if (groupResults) {
                 this.collection = groupResults.group;
                 this.hasNonOpenPosts = groupResults.hasNonOpenPosts;
-                if (!this.haveLoadedAgentsOps && this.collection.configuration.groupType === 3) {
-                    this.haveLoadedAgentsOps = true;
+                if (!this.haveLoadedAgentsOps &&
+                    this.collection.configuration.groupType == YpGroupType.PsAgentWorkflow) {
                     import("../policySynth/ps-operations-manager.js");
+                    this.haveLoadedAgentsOps = true;
+                }
+                else if (!this.haveLoadedAllOurIdeas &&
+                    this.collection.configuration.groupType == YpGroupType.AllOurIdeas) {
+                    import("../allOurIdeas/aoi-survey.js");
+                    this.haveLoadedAllOurIdeas = true;
                 }
                 this.refresh();
             }
@@ -296,20 +304,36 @@ let YpGroup = class YpGroup extends YpCollection {
     }
     render() {
         if (this.collection && this.collection.configuration) {
-            if (!this.collection.configuration.groupType ||
-                this.collection.configuration.groupType == 0) {
+            let groupType = 0;
+            if (this.collection.configuration.groupType) {
+                // If groupType is string, convert it to number
+                //TODO: convert it to number when storing but keep this for backwards compatibility
+                if (typeof this.collection.configuration.groupType ===
+                    "string") {
+                    groupType = parseInt(this.collection.configuration
+                        .groupType);
+                }
+                else {
+                    groupType = this.collection.configuration
+                        .groupType;
+                }
+            }
+            if (groupType == YpGroupType.IdeaGenerationAndDebate) {
                 return this.renderYpGroup();
             }
-            else if (this.collection.configuration.groupType == 1) {
-                return html `
-          <aoi-survey
+            else if (groupType == YpGroupType.AllOurIdeas) {
+                if (this.haveLoadedAllOurIdeas) {
+                    return html `<aoi-survey
             id="aoiSurvey"
             .collectionId="${this.collectionId}"
             .collection="${this.collection}"
-          ></aoi-survey>
-        `;
+          ></aoi-survey>`;
+                }
+                else {
+                    return html ``;
+                }
             }
-            else if (this.collection.configuration.groupType == 2) {
+            else if (groupType == YpGroupType.StaticHtml) {
                 return html `
           <div class="layout vertical">
             ${unsafeHTML(this.collection.configuration.staticHtml?.content)}
@@ -336,10 +360,15 @@ let YpGroup = class YpGroup extends YpCollection {
           </div>
         `;
             }
-            else if (this.collection.configuration.groupType == 2) {
-                return html `<ps-operations-manager
-          .groupId="${this.collectionId}"
-        ></ps-operations-manager>`;
+            else if (groupType == YpGroupType.PsAgentWorkflow) {
+                if (this.haveLoadedAgentsOps) {
+                    return html `<ps-operations-manager
+            .groupId="${this.collection.id}"
+          ></ps-operations-manager>`;
+                }
+                else {
+                    return html ``;
+                }
             }
             else {
                 return html ``;
@@ -821,6 +850,15 @@ __decorate([
 __decorate([
     state()
 ], YpGroup.prototype, "newGroupRefresh", void 0);
+__decorate([
+    state()
+], YpGroup.prototype, "isImportingCode", void 0);
+__decorate([
+    state()
+], YpGroup.prototype, "haveLoadedAgentsOps", void 0);
+__decorate([
+    state()
+], YpGroup.prototype, "haveLoadedAllOurIdeas", void 0);
 YpGroup = __decorate([
     customElement("yp-group")
 ], YpGroup);

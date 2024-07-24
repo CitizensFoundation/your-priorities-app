@@ -1,4 +1,12 @@
 {
+  "addNewAgent": "Add new agent",
+  "selectAgentClass": "Select agent class",
+  "agentName": "Agent name",
+  "addAgent": "Add agent",
+  "selectSmallAiModel": "Select Small AI model",
+  "selectMediumAiModel": "Select Medium AI model",
+  "selectLargeAiModel": "Select Large AI model",
+  "aiModelAgentCreateInfo": "Choose requested AI models",
   "hideAppBarIfWelcomeHtml": "Hide app bar if Welcome HTML",
   "pointsForAndAgainst": "Points for and against",
   "allowAnonymousUsersToVote": "Allow user to vote without a login account",

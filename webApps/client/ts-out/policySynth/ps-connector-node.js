@@ -119,6 +119,9 @@ __decorate([
 __decorate([
     property({ type: Number })
 ], PsAgentConnector.prototype, "connectorId", void 0);
+__decorate([
+    property({ type: Number })
+], PsAgentConnector.prototype, "groupId", void 0);
 PsAgentConnector = __decorate([
     customElement('ps-connector-node')
 ], PsAgentConnector);

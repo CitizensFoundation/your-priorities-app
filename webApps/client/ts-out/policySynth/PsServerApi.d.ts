@@ -4,25 +4,24 @@ export declare class PsServerApi extends YpServerApiBase {
     baseAgentsPath: string;
     constructor(urlPath?: string);
     getAgent(groupId: number): Promise<PsAgentAttributes>;
-    removeAgentAiModel(agentId: number, modelId: number): Promise<void>;
-    addAgentAiModel(agentId: number, modelId: number, size: PsAiModelSize): Promise<void>;
-    updateAgentConfiguration(agentId: number, updatedConfig: Partial<PsAgentAttributes['configuration']>): Promise<void>;
+    removeAgentAiModel(groupId: number, agentId: number, modelId: number): Promise<void>;
+    addAgentAiModel(groupId: number, agentId: number, modelId: number, size: PsAiModelSize): Promise<void>;
+    updateAgentConfiguration(groupId: number, agentId: number, updatedConfig: Partial<PsAgentAttributes['configuration']>): Promise<void>;
     createAgent(name: string, agentClassId: number, aiModels: {
         [key: string]: number;
     }, parentAgentId: number, groupId?: number): Promise<PsAgentAttributes>;
-    getAgentAiModels(agentId: number): Promise<PsAiModelAttributes[]>;
-    getActiveAiModels(): Promise<PsAiModelAttributes[]>;
-    getActiveAgentClasses(): Promise<PsAgentClassAttributes[]>;
-    getActiveConnectorClasses(): Promise<PsAgentConnectorClassAttributes[]>;
-    getAgentCosts(agentId: number): Promise<number>;
-    createConnector(agentId: number, connectorClassId: number, name: string, type: 'input' | 'output'): Promise<PsAgentConnectorAttributes>;
-    updateNode(agentId: number, updatedNode: PsAgentAttributes): Promise<void>;
-    updateNodeConfiguration(nodeType: 'agent' | 'connector', nodeId: number, updatedConfig: Partial<PsAgentAttributes['configuration'] | PsAgentConnectorAttributes['configuration']>): Promise<void>;
-    getAgentStatus(agentId: number): Promise<PsAgentStatus>;
-    controlAgent(agentId: number, action: 'start' | 'pause' | 'stop'): Promise<any>;
-    startAgent(agentId: number): Promise<any>;
-    pauseAgent(agentId: number): Promise<any>;
-    stopAgent(agentId: number): Promise<any>;
-    deleteNode(treeId: string | number, nodeId: string): Promise<void>;
+    getAgentAiModels(groupId: number, agentId: number): Promise<PsAiModelAttributes[]>;
+    getActiveAiModels(groupId: number): Promise<PsAiModelAttributes[]>;
+    getActiveAgentClasses(groupId: number): Promise<PsAgentClassAttributes[]>;
+    getActiveConnectorClasses(groupId: number): Promise<PsAgentConnectorClassAttributes[]>;
+    getAgentCosts(groupId: number, agentId: number): Promise<number>;
+    createConnector(groupId: number, agentId: number, connectorClassId: number, name: string, type: 'input' | 'output'): Promise<PsAgentConnectorAttributes>;
+    updateNode(groupId: number, agentId: number, updatedNode: PsAgentAttributes): Promise<void>;
+    updateNodeConfiguration(groupId: number, nodeType: 'agent' | 'connector', nodeId: number, updatedConfig: Partial<PsAgentAttributes['configuration'] | PsAgentConnectorAttributes['configuration']>): Promise<void>;
+    getAgentStatus(groupId: number, agentId: number): Promise<PsAgentStatus>;
+    controlAgent(groupId: number, agentId: number, action: 'start' | 'pause' | 'stop'): Promise<any>;
+    startAgent(groupId: number, agentId: number): Promise<any>;
+    pauseAgent(groupId: number, agentId: number): Promise<any>;
+    stopAgent(groupId: number, agentId: number): Promise<any>;
 }
 //# sourceMappingURL=PsServerApi.d.ts.map

@@ -10,6 +10,7 @@ import { PsServerApi } from './PsServerApi.js';
 import { PsBaseWithRunningAgentObserver } from './ps-base-with-running-agents.js';
 export declare class PsOperationsView extends PsBaseWithRunningAgentObserver {
     currentAgent: PsAgentAttributes;
+    groupId: number;
     private graph;
     private paper;
     private elements;

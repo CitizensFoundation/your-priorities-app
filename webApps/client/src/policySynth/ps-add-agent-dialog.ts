@@ -38,7 +38,7 @@ export class PsAddAgentDialog extends YpBaseElement {
 
   async fetchActiveAgentClasses() {
     try {
-      this.activeAgentClasses = await this.api.getActiveAgentClasses();
+      this.activeAgentClasses = await this.api.getActiveAgentClasses(this.groupId);
     } catch (error) {
       console.error('Error fetching active agent classes:', error);
     }
@@ -46,7 +46,7 @@ export class PsAddAgentDialog extends YpBaseElement {
 
   async fetchActiveAiModels() {
     try {
-      this.activeAiModels = await this.api.getActiveAiModels();
+      this.activeAiModels = await this.api.getActiveAiModels(this.groupId);
     } catch (error) {
       console.error('Error fetching active AI models:', error);
     }

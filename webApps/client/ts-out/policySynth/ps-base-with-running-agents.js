@@ -7,12 +7,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 import { property } from "lit/decorators.js";
 import { YpBaseElement } from "../common/yp-base-element.js";
 export class PsBaseWithRunningAgentObserver extends YpBaseElement {
-    constructor() {
-        super(...arguments);
-        this.currentRunningAgentId = window.psAppGlobals.currentRunningAgentId;
-    }
     connectedCallback() {
         super.connectedCallback();
+        window.psAppGlobals.currentRunningAgentId = window.psAppGlobals.currentRunningAgentId;
         window.psAppGlobals.addCurrentAgentListener(this.handleAgentChange.bind(this));
     }
     disconnectedCallback() {

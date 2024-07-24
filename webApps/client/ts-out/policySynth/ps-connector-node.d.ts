@@ -7,6 +7,7 @@ import { PsOperationsBaseNode } from './ps-operations-base-node.js';
 export declare class PsAgentConnector extends PsOperationsBaseNode {
     connector: PsAgentConnectorAttributes;
     connectorId: number;
+    groupId: number;
     connectedCallback(): void;
     static get styles(): (any[] | import("lit").CSSResult)[];
     editNode(): void;

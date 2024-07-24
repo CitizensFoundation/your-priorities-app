@@ -31,7 +31,7 @@ let PsAddConnectorDialog = class PsAddConnectorDialog extends YpBaseElement {
     }
     async fetchActiveConnectorClasses() {
         try {
-            this.activeConnectorClasses = await this.api.getActiveConnectorClasses();
+            this.activeConnectorClasses = await this.api.getActiveConnectorClasses(this.groupId);
         }
         catch (error) {
             console.error('Error fetching active connector classes:', error);
@@ -90,7 +90,7 @@ let PsAddConnectorDialog = class PsAddConnectorDialog extends YpBaseElement {
             return;
         }
         try {
-            const newConnector = await this.api.createConnector(this.selectedAgentId, this.selectedConnectorClassId, this.connectorName, this.selectedInputOutputType);
+            const newConnector = await this.api.createConnector(this.groupId, this.selectedAgentId, this.selectedConnectorClassId, this.connectorName, this.selectedInputOutputType);
             this.dispatchEvent(new CustomEvent('connector-added', {
                 detail: { connector: newConnector },
             }));
@@ -120,6 +120,9 @@ __decorate([
 __decorate([
     property({ type: Number })
 ], PsAddConnectorDialog.prototype, "selectedAgentId", void 0);
+__decorate([
+    property({ type: Number })
+], PsAddConnectorDialog.prototype, "groupId", void 0);
 __decorate([
     property({ type: String })
 ], PsAddConnectorDialog.prototype, "selectedInputOutputType", void 0);

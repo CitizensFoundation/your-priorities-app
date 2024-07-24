@@ -4,20 +4,20 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { css, html, nothing } from 'lit';
-import { property, query, customElement, state } from 'lit/decorators.js';
-import '@material/web/iconbutton/icon-button.js';
-import '@material/web/progress/circular-progress.js';
-import '@material/web/progress/linear-progress.js';
-import '@material/web/menu/menu.js';
-import '@material/web/menu/menu-item.js';
-import { PsServerApi } from './PsServerApi.js';
-import { PsOperationsBaseNode } from './ps-operations-base-node.js';
+import { css, html, nothing } from "lit";
+import { property, query, customElement, state } from "lit/decorators.js";
+import "@material/web/iconbutton/icon-button.js";
+import "@material/web/progress/circular-progress.js";
+import "@material/web/progress/linear-progress.js";
+import "@material/web/menu/menu.js";
+import "@material/web/menu/menu-item.js";
+import { PsServerApi } from "./PsServerApi.js";
+import { PsOperationsBaseNode } from "./ps-operations-base-node.js";
 let PsAgentNode = class PsAgentNode extends PsOperationsBaseNode {
     constructor() {
         super();
-        this.agentState = 'stopped';
-        this.latestMessage = '';
+        this.agentState = "stopped";
+        this.latestMessage = "";
         this.menuOpen = false;
         this.api = new PsServerApi();
     }
@@ -42,11 +42,11 @@ let PsAgentNode = class PsAgentNode extends PsOperationsBaseNode {
         }
     }
     addInputConnector() {
-        this.fire('add-connector', { agentId: this.agent.id, type: 'input' });
+        this.fire("add-connector", { agentId: this.agent.id, type: "input" });
         this.menuOpen = false;
     }
     addOutputConnector() {
-        this.fire('add-connector', { agentId: this.agent.id, type: 'output' });
+        this.fire("add-connector", { agentId: this.agent.id, type: "output" });
         this.menuOpen = false;
     }
     startStatusUpdates() {
@@ -60,65 +60,65 @@ let PsAgentNode = class PsAgentNode extends PsOperationsBaseNode {
     }
     async updateAgentStatus() {
         try {
-            const status = await this.api.getAgentStatus(this.agent.id);
+            const status = await this.api.getAgentStatus(this.groupId, this.agent.id);
             if (status) {
                 this.agentState = status.state;
                 this.progress = status.progress;
-                this.latestMessage = status.messages[status.messages.length - 1] || '';
-                if (this.agentState === 'stopped' || this.agentState === 'error') {
+                this.latestMessage = status.messages[status.messages.length - 1] || "";
+                if (this.agentState === "stopped" || this.agentState === "error") {
                     this.stopStatusUpdates();
                 }
                 this.requestUpdate();
-                this.fire('get-costs');
+                this.fire("get-costs");
             }
         }
         catch (error) {
-            console.error('Failed to get agent status:', error);
+            console.error("Failed to get agent status:", error);
         }
     }
     async startAgent() {
         try {
-            await this.api.startAgent(this.agent.id);
-            this.agentState = 'running';
+            await this.api.startAgent(this.groupId, this.agent.id);
+            this.agentState = "running";
             window.psAppGlobals.setCurrentRunningAgentId(this.agent.id);
             this.startStatusUpdates();
             this.requestUpdate();
         }
         catch (error) {
-            console.error('Failed to start agent:', error);
+            console.error("Failed to start agent:", error);
         }
     }
     async pauseAgent() {
         try {
-            await this.api.pauseAgent(this.agent.id);
-            this.agentState = 'paused';
+            await this.api.pauseAgent(this.groupId, this.agent.id);
+            this.agentState = "paused";
             this.requestUpdate();
         }
         catch (error) {
-            console.error('Failed to pause agent:', error);
+            console.error("Failed to pause agent:", error);
         }
     }
     async stopAgent() {
         try {
-            await this.api.stopAgent(this.agent.id);
-            this.agentState = 'stopped';
+            await this.api.stopAgent(this.groupId, this.agent.id);
+            this.agentState = "stopped";
             window.psAppGlobals.setCurrentRunningAgentId(undefined);
             this.stopStatusUpdates();
             this.requestUpdate();
         }
         catch (error) {
-            console.error('Failed to stop agent:', error);
+            console.error("Failed to stop agent:", error);
         }
     }
     editNode() {
-        this.fire('edit-node', {
+        this.fire("edit-node", {
             nodeId: this.nodeId,
             element: this.agent,
         });
     }
     renderActionButtons() {
         switch (this.agentState) {
-            case 'running':
+            case "running":
                 return html `
           <md-icon-button @click="${this.pauseAgent}">
             <md-icon>pause</md-icon>
@@ -127,7 +127,7 @@ let PsAgentNode = class PsAgentNode extends PsOperationsBaseNode {
             <md-icon>stop</md-icon>
           </md-icon-button>
         `;
-            case 'paused':
+            case "paused":
                 return html `
           <md-icon-button @click="${this.startAgent}">
             <md-icon>play_arrow</md-icon>
@@ -136,8 +136,8 @@ let PsAgentNode = class PsAgentNode extends PsOperationsBaseNode {
             <md-icon>stop</md-icon>
           </md-icon-button>
         `;
-            case 'stopped':
-            case 'error':
+            case "stopped":
+            case "error":
                 return html `
           <md-icon-button @click="${this.startAgent}">
             <md-icon>play_arrow</md-icon>
@@ -167,9 +167,9 @@ let PsAgentNode = class PsAgentNode extends PsOperationsBaseNode {
           alt="${this.agent.Class?.name}"
         />
         <div class="contentContainer">
-          <div class="agentName">${this.agent.configuration['name']}</div>
+          <div class="agentName">${this.agent.configuration["name"]}</div>
           <div class="agentClassName">${this.agent.Class?.name}</div>
-          ${this.agentState === 'running' ? this.renderProgress() : nothing}
+          ${this.agentState === "running" ? this.renderProgress() : nothing}
           <div class="statusMessage">${this.latestMessage}</div>
         </div>
         <div class="buttonContainer">
@@ -315,6 +315,9 @@ __decorate([
     property({ type: Number })
 ], PsAgentNode.prototype, "agentId", void 0);
 __decorate([
+    property({ type: Number })
+], PsAgentNode.prototype, "groupId", void 0);
+__decorate([
     state()
 ], PsAgentNode.prototype, "agentState", void 0);
 __decorate([
@@ -327,13 +330,13 @@ __decorate([
     state()
 ], PsAgentNode.prototype, "menuOpen", void 0);
 __decorate([
-    query('#menuAnchor')
+    query("#menuAnchor")
 ], PsAgentNode.prototype, "menuAnchor", void 0);
 __decorate([
-    query('#agentMenu')
+    query("#agentMenu")
 ], PsAgentNode.prototype, "agentMenu", void 0);
 PsAgentNode = __decorate([
-    customElement('ps-agent-node')
+    customElement("ps-agent-node")
 ], PsAgentNode);
 export { PsAgentNode };
 //# sourceMappingURL=ps-agent-node.js.map

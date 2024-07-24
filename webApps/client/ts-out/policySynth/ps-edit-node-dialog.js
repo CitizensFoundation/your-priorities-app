@@ -11,7 +11,7 @@ import '@material/web/button/text-button.js';
 import '@material/web/button/filled-button.js';
 import '@material/web/select/filled-select.js';
 import '@material/web/select/select-option.js';
-import '@yrpri/webapp/yp-survey/yp-structured-question-edit.js';
+import '../yp-survey/yp-structured-question-edit.js';
 import './ps-ai-model-selector.js';
 import { PsServerApi } from './PsServerApi.js';
 import { YpBaseElement } from '../common/yp-base-element.js';
@@ -30,7 +30,7 @@ let PsEditNodeDialog = class PsEditNodeDialog extends YpBaseElement {
     }
     async fetchActiveAiModels() {
         try {
-            this.activeAiModels = await this.api.getActiveAiModels();
+            this.activeAiModels = await this.api.getActiveAiModels(this.groupId);
         }
         catch (error) {
             console.error('Error fetching active AI models:', error);
@@ -208,6 +208,9 @@ __decorate([
 __decorate([
     property({ type: Object })
 ], PsEditNodeDialog.prototype, "nodeToEditInfo", void 0);
+__decorate([
+    property({ type: Number })
+], PsEditNodeDialog.prototype, "groupId", void 0);
 __decorate([
     state()
 ], PsEditNodeDialog.prototype, "activeAiModels", void 0);
