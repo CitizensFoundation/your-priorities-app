@@ -33,6 +33,7 @@ let YpGroup = class YpGroup extends YpCollection {
         this.disableNewPosts = false;
         this.selectedGroupTab = GroupTabTypes.Open;
         this.newGroupRefresh = false;
+        this.haveLoadedAgentsOps = false;
         this.tabCounters = {};
         this.configCheckTTL = 45000;
     }
@@ -183,6 +184,10 @@ let YpGroup = class YpGroup extends YpCollection {
             if (groupResults) {
                 this.collection = groupResults.group;
                 this.hasNonOpenPosts = groupResults.hasNonOpenPosts;
+                if (!this.haveLoadedAgentsOps && this.collection.configuration.groupType === 3) {
+                    this.haveLoadedAgentsOps = true;
+                    import("../policySynth/ps-operations-manager.js");
+                }
                 this.refresh();
             }
         }
@@ -330,6 +335,11 @@ let YpGroup = class YpGroup extends YpCollection {
             ></ac-activities>
           </div>
         `;
+            }
+            else if (this.collection.configuration.groupType == 2) {
+                return html `<ps-operations-manager
+          .groupId="${this.collectionId}"
+        ></ps-operations-manager>`;
             }
             else {
                 return html ``;

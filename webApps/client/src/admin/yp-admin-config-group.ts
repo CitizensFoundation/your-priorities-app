@@ -128,12 +128,14 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
     "ideaGenerationGroupType",
     "allOurIdeasGroupType",
     "htmlContentGroupType",
+    "policySynthAgentsWorkflow"
   ];
 
   static GroupType = {
     ideaGeneration: 0,
     allOurIdeas: 1,
     htmlContent: 2,
+    policySynthAgentsWorkflow: 3
   };
 
   constructor() {

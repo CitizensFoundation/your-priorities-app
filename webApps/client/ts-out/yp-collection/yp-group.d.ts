@@ -16,6 +16,7 @@ export declare class YpGroup extends YpCollection {
     selectedGroupTab: number;
     configCheckTimer: ReturnType<typeof setTimeout> | undefined;
     newGroupRefresh: boolean;
+    haveLoadedAgentsOps: boolean;
     tabCounters: Record<string, number>;
     configCheckTTL: number;
     constructor();

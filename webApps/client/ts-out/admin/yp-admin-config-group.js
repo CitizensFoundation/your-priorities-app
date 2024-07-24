@@ -74,6 +74,7 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
             "ideaGenerationGroupType",
             "allOurIdeasGroupType",
             "htmlContentGroupType",
+            "policySynthAgentsWorkflow"
         ];
         this.groupAccessOptions = {
             0: "public",
@@ -2086,6 +2087,7 @@ YpAdminConfigGroup.GroupType = {
     ideaGeneration: 0,
     allOurIdeas: 1,
     htmlContent: 2,
+    policySynthAgentsWorkflow: 3
 };
 __decorate([
     property({ type: Number })

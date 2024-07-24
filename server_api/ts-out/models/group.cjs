@@ -30,6 +30,10 @@ module.exports = (sequelize, DataTypes) => {
         counter_flags: { type: DataTypes.INTEGER, defaultValue: 0 },
         theme_id: { type: DataTypes.INTEGER, defaultValue: null },
         configuration: DataTypes.JSONB,
+        private_access_configuration: {
+            type: DataTypes.JSONB,
+            allowNull: true,
+        },
         language: { type: DataTypes.STRING, allowNull: true },
         data: DataTypes.JSONB,
     }, {
@@ -52,6 +56,16 @@ module.exports = (sequelize, DataTypes) => {
             },
             {
                 fields: ["id", "deleted"],
+            },
+            {
+                fields: ['private_access_configuration'],
+                using: 'gin',
+                operator: 'jsonb_path_ops'
+            },
+            {
+                fields: ['configuration'],
+                using: 'gin',
+                operator: 'jsonb_path_ops'
             },
             {
                 name: "groups_idx_counter_users",

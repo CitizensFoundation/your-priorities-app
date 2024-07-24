@@ -1,0 +1,1 @@
+{"version":3,"file":"ps-connector-shape.d.ts","sourceRoot":"","sources":["../../src/policySynth/ps-connector-shape.ts"],"names":[],"mappings":"AAAA,OAAO,EAAO,MAAM,EAAW,MAAM,aAAa,CAAC;AACnD,OAAO,EAAE,eAAe,EAAE,MAAM,kBAAkB,CAAC;AAEnD,qBAAa,cAAe,SAAQ,MAAM,CAAC,QAAQ,CAAC,SAAS;IAClD,QAAQ;IAWjB,IAAI,yBAAmB;CACxB"}

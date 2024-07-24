@@ -64,10 +64,14 @@ import { YpServerApiAdmin } from "../common/YpServerApiAdmin.js";
 import { MdDialog } from "@material/web/dialog/dialog.js";
 import { YpDrawer } from "./yp-drawer.js";
 import { YpSnackbar } from "./yp-snackbar.js";
+import { PsAppGlobals } from "../policySynth/PsAppGlobals.js";
+import { PsServerApi } from "../policySynth/PsServerApi.js";
 
 declare global {
   interface Window {
     appGlobals: YpAppGlobals;
+    psAppGlobals: PsAppGlobals;
+    psServerApi: PsServerApi;
     appUser: YpAppUser;
     appDialogs: YpAppDialogs;
     serverApi: YpServerApi;

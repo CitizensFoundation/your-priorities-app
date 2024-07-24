@@ -63,6 +63,8 @@ export class YpGroup extends YpCollection {
   @state()
   newGroupRefresh = false;
 
+  haveLoadedAgentsOps = false;
+
   tabCounters: Record<string, number> = {};
   configCheckTTL = 45000;
 
@@ -262,11 +264,17 @@ export class YpGroup extends YpCollection {
       if (groupResults) {
         this.collection = groupResults.group;
         this.hasNonOpenPosts = groupResults.hasNonOpenPosts;
+        if (!this.haveLoadedAgentsOps && this.collection.configuration.groupType === 3) {
+          this.haveLoadedAgentsOps = true;
+          import("../policySynth/ps-operations-manager.js");
+        }
         this.refresh();
       }
     }
     window.appGlobals.retryMethodAfter401Login = undefined;
   }
+
+
 
   //TODO: Fix moving on to the next group with focus if 0 ideas in Open
   renderGroupTabs() {
@@ -423,6 +431,12 @@ export class YpGroup extends YpCollection {
             ></ac-activities>
           </div>
         `;
+      } else if (
+        (this.collection as YpGroupData).configuration.groupType == 2
+      ) {
+        return html`<ps-operations-manager
+          .groupId="${this.collectionId}"
+        ></ps-operations-manager>`;
       } else {
         return html``;
       }

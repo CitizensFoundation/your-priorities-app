@@ -16,6 +16,7 @@
     "locales/**/*"
   ],
   "dependencies": {
+    "@policysynth/agents": "^1.3.12",
     "@fingerprintjs/fingerprintjs": "^3.4.2",
     "@joint/core": "^4.0.4",
     "@kano/twemoji": "^1.0.0",
@@ -23,7 +24,6 @@
     "@lit-labs/virtualizer": "^2.0.13",
     "@material/material-color-utilities": "^0.3.0",
     "@material/web": "^1.5.1",
-    "@policysynth/agents": "^1.3.0",
     "@polymer/polymer": "^3.5.1",
     "@trystan2k/fleshy-jsoneditor": "^3.0.0",
     "@ungap/structured-clone": "^1.2.0",

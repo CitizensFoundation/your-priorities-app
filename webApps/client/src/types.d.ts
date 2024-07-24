@@ -319,6 +319,18 @@ interface YpGroupConfiguration extends YpCollectionConfiguration {
     media: Array<YpSimpleGroupMediaData>;
   },
   useNewVersion?: boolean;
+  agents?: YpPsAgentConfiguration;
+}
+
+interface YpGroupPrivateAccessConfiguration {
+  aiModelId?: number;
+  externalApiId?: number;
+  projectId?: string;
+  apiKey: string;
+}
+
+interface YpPsAgentConfiguration {
+  topLevelAgentId: number;
 }
 
 interface YpSimpleGroupMediaData {
@@ -566,6 +578,7 @@ interface YpGroupData extends YpCollectionData {
   community_id: number;
   access: number;
   configuration: YpGroupConfiguration;
+  private_access_configuration?: YpGroupPrivateAccessConfiguration[];
   Community?: YpCommunityData;
   Categories?: Array<YpCategoryData>;
   GroupLogoVideos?: Array<YpVideoData>;

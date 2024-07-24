@@ -33,6 +33,9 @@
   "exclude": ["**/*.spec.ts"],
   "include": [
     //Do not include all @policysynth/agents files as they include yourPriorities.d.ts that might conflict
+    "./node_modules/@policysynth/agents/agents.d.ts",
+    "./node_modules/@policysynth/agents/connectors.d.ts",
+    "./node_modules/@policysynth/agents/streamingLlms.d.ts",
     "./node_modules/@policysynth/agents/validation.d.ts",
     "src/**/*.ts"
   ]

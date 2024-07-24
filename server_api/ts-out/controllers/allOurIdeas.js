@@ -5,6 +5,7 @@ import express from "express";
 import crypto from "crypto";
 const dbModels = models;
 const Group = dbModels.Group;
+const User = dbModels.User;
 const AcBackgroundJob = dbModels.AcBackgroundJob;
 const PAIRWISE_API_HOST = process.env.PAIRWISE_API_HOST;
 const PAIRWISE_USERNAME = process.env.PAIRWISE_USERNAME;

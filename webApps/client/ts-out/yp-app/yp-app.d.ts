@@ -24,9 +24,13 @@ import "../yp-collection/yp-group.js";
 import "./yp-app-nav-drawer.js";
 import "../yp-post/yp-post.js";
 import { YpServerApiAdmin } from "../common/YpServerApiAdmin.js";
+import { PsAppGlobals } from "../policySynth/PsAppGlobals.js";
+import { PsServerApi } from "../policySynth/PsServerApi.js";
 declare global {
     interface Window {
         appGlobals: YpAppGlobals;
+        psAppGlobals: PsAppGlobals;
+        psServerApi: PsServerApi;
         appUser: YpAppUser;
         appDialogs: YpAppDialogs;
         serverApi: YpServerApi;

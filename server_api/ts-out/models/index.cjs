@@ -2,8 +2,8 @@
 const fs = require("fs");
 const path = require("path");
 const env = process.env.NODE_ENV || "development";
-const _ = require('lodash');
-const { Sequelize, DataTypes } = require('sequelize');
+const _ = require("lodash");
+const { Sequelize, DataTypes } = require("sequelize");
 let sequelize;
 const Op = Sequelize.Op;
 const operatorsAliases = {
@@ -22,43 +22,43 @@ const operatorsAliases = {
     $notBetween: Op.notBetween,
     $like: Op.like,
     $contains: Op.contains,
-    $any: Op.any
+    $any: Op.any,
 };
-if (process.env.NODE_ENV === 'production') {
+if (process.env.NODE_ENV === "production") {
     if (process.env.DISABLE_PG_SSL) {
         sequelize = new Sequelize(process.env.DATABASE_URL, {
-            dialect: 'postgres',
+            dialect: "postgres",
             minifyAliases: true,
             logging: false,
-            operatorsAliases: operatorsAliases
+            operatorsAliases: operatorsAliases,
         });
     }
     else {
         sequelize = new Sequelize(process.env.DATABASE_URL, {
-            dialect: 'postgres',
+            dialect: "postgres",
             dialectOptions: {
                 ssl: {
-                    rejectUnauthorized: false
-                }
+                    rejectUnauthorized: false,
+                },
             },
             minifyAliases: true,
             logging: false,
-            operatorsAliases: operatorsAliases
+            operatorsAliases: operatorsAliases,
         });
     }
 }
 else {
-    const configPath = path.join(process.cwd(), 'ts-out', 'config', 'config.json');
+    const configPath = path.join(process.cwd(), "ts-out", "config", "config.json");
     const config = require(configPath)[env];
     sequelize = new Sequelize(config.database, config.username, config.password, _.merge(config, {
-        dialect: 'postgres',
+        dialect: "postgres",
         minifyAliases: true,
         dialectOptions: {
             ssl: false,
-            rejectUnauthorized: false
+            rejectUnauthorized: false,
         },
         logging: false,
-        operatorsAliases: operatorsAliases
+        operatorsAliases: operatorsAliases,
     }));
 }
 const db = {};
@@ -69,7 +69,7 @@ async function createCompoundIndexes(indexCommands) {
             console.log(`Successfully created index with command: ${command}`);
         }
         catch (error) {
-            if (error.message.indexOf('already exists') > -1) {
+            if (error.message.indexOf("already exists") > -1) {
                 //console.log("already exists")
             }
             else {
@@ -141,25 +141,34 @@ const compoundIndexCommands = [
     `CREATE INDEX posts_idx2_counter_sum_group_id_category_id_deleted ON posts ((counter_endorsements_up-counter_endorsements_down),group_id,category_id,deleted)`,
 ];
 // Read models from local folder
-fs
-    .readdirSync(__dirname)
+fs.readdirSync(__dirname)
     .filter((file) => {
-    return (file.indexOf(".") !== 0) && (file !== "index.cjs");
+    return file.indexOf(".") !== 0 && file !== "index.cjs";
 })
     .forEach((file) => {
     const model = require(path.join(__dirname, file))(sequelize, DataTypes);
     db[model.name] = model;
 });
 // Read from active citizen,
-// TODO Load from npm module if not found locally
-const acDirname = __dirname + '/../active-citizen/models';
-fs
-    .readdirSync(acDirname)
+const acDirname = __dirname + "/../active-citizen/models";
+fs.readdirSync(acDirname)
     .filter((file) => {
-    return (file.indexOf(".") !== 0);
+    return file.indexOf(".") !== 0;
 })
     .forEach((file) => {
     const model = require(path.join(acDirname, file))(sequelize, DataTypes);
+    db[model.name] = model;
+});
+const pcDirname = __dirname + "/../../node_modules/@policysynth/agents/dbModels";
+fs.readdirSync(pcDirname)
+    .filter((file) => {
+    return (file.indexOf(".") !== 0 &&
+        file.indexOf(".js") > -1 &&
+        file.indexOf(".js.map") === -1 &&
+        file.startsWith("yp") === -1);
+})
+    .forEach((file) => {
+    const model = require(path.join(pcDirname, file))(sequelize, DataTypes);
     db[model.name] = model;
 });
 Object.keys(db).forEach((modelName) => {
@@ -167,7 +176,7 @@ Object.keys(db).forEach((modelName) => {
         db[modelName].associate(db);
     }
 });
-if (process.env.FORCE_DB_SYNC || process.env.NODE_ENV === 'development') {
+if (process.env.FORCE_DB_SYNC || process.env.NODE_ENV === "development") {
     sequelize.sync().then(async () => {
         await createCompoundIndexes(compoundIndexCommands);
         db.Post.addFullTextIndex();

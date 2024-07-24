@@ -11,6 +11,7 @@ import crypto from "crypto";
 
 const dbModels: Models = models;
 const Group = dbModels.Group as GroupClass;
+const User = dbModels.User as UserClass;
 const AcBackgroundJob = dbModels.AcBackgroundJob as AcBackgroundJobClass;
 
 const PAIRWISE_API_HOST = process.env.PAIRWISE_API_HOST;

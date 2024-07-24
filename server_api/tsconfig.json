@@ -24,9 +24,11 @@
     "**/*.cjs",
     "**/*.json",
     //Do not include all @policysynth/agents files as they include yourPriorities.d.ts that might conflict
-    "node_modules/@policysynth/agents/validation.d.ts",
-    "node_modules/@policysynth/agents/types.d.ts",
-    "./active-citizen/engine/moderation/fraud/FraudDeletePointQualities.cjs"
+    "node_modules/@policysynth/agents/agents.d.ts",
+    "node_modules/@policysynth/agents/connectors.d.ts",
+    "node_modules/@policysynth/agents/rag.d.ts",
+    "node_modules/@policysynth/agents/streamingLLms.d.ts",
+    "node_modules/@policysynth/agents/validation.d.ts"
   ],
   "exclude": ["webAppsDist", "ts-out"]
 }

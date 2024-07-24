@@ -1255,7 +1255,7 @@ export class YpAdminApp extends YpBaseElement {
                             `
                           : html` ${this.renderMenuListItem("organizations")}`}
                         ${!this.isAllOurIdeasGroupType
-                          ? this.renderMenuListItem("aiAnalysis")
+                          ? /*this.renderMenuListItem("aiAnalysis")*/ nothing
                           : nothing}
                       `
                     : html``}

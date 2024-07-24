@@ -52,6 +52,11 @@ interface GroupClass extends DbData {
   };
 }
 
+interface UserClass extends DbData {
+  email: string;
+}
+
+
 interface AcBackgroundJobClass extends DbData {
   static updateDataAsync(jobId: number, data: any): Promise<any>;
   static updateErrorAsync(jobId: number, error: string): Promise<any>;
