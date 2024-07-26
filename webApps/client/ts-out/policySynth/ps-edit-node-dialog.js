@@ -154,7 +154,6 @@ let PsEditNodeDialog = class PsEditNodeDialog extends YpBaseElement {
             }
         });
         let aiModelUpdates;
-        debugger;
         if (this.nodeToEditInfo.Class.configuration.requestedAiModelSizes) {
             aiModelUpdates = Object.entries(this.selectedAiModels).map(([size, modelId]) => {
                 return {

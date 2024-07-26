@@ -110,7 +110,6 @@ let PsAddAgentDialog = class PsAddAgentDialog extends YpBaseElement {
         event.preventDefault();
     }
     async _handleAddAgent() {
-        debugger;
         const selectedModels = Object.entries(this.selectedAiModelIds)
             .filter(([_, value]) => value !== null)
             .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {});

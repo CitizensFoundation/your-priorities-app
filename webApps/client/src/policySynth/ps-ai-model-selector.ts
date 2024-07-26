@@ -153,7 +153,6 @@ export class PsAiModelSelector extends YpBaseElement {
   }
 
   private _emitChangeEvent() {
-    debugger;
     this.dispatchEvent(
       new CustomEvent('ai-models-changed', {
         detail: { selectedAiModelIds: this.selectedAiModelIds },

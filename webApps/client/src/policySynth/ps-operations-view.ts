@@ -14,6 +14,7 @@ import { PsServerApi } from './PsServerApi.js';
 import { AgentShape, AgentsShapeView } from './ps-agent-shape.js';
 import { ConnectorShape } from './ps-connector-shape.js';
 import { PsBaseWithRunningAgentObserver } from './ps-base-with-running-agents.js';
+import { YpNavHelpers } from '../common/YpNavHelpers.js';
 
 type Cell = dia.Element | dia.Link;
 
@@ -633,14 +634,14 @@ export class PsOperationsView extends PsBaseWithRunningAgentObserver {
 
         .agentContainer {
           color: var(--md-sys-color-on-surface);
-          background-color: var(--md-sys-color-surface-container-high);
+          background-color: var(--md-sys-color-surface-container-lowest);
           border-radius: 16px;
           padding: 0;
         }
 
         .agentContainerRunning {
           color: var(--md-sys-color-on-surface);
-          background-color: var(--md-sys-color-surface-container-lowest);
+          background-color: var(--md-sys-color-surface-container-higest);
           border-radius: 16px;
           padding: 0;
         }
@@ -779,6 +780,12 @@ export class PsOperationsView extends PsBaseWithRunningAgentObserver {
     window.psAppGlobals.setCurrentRunningAgentId(this.currentAgent.id);
   }
 
+  openConfig() {
+    YpNavHelpers.redirectTo(
+      `/admin/group/${this.groupId}`
+    );
+  }
+
   override render() {
     return html`
       <div class="controlPanelContainer"></div>
@@ -822,7 +829,7 @@ export class PsOperationsView extends PsBaseWithRunningAgentObserver {
                 ><md-icon>play_arrow</md-icon></md-outlined-icon-button
               >`}
 
-          <md-icon-button @click="${() => this.pan('left')}"
+          <md-icon-button @click="${this.openConfig}"
             ><md-icon>settings</md-icon></md-icon-button
           >
         </div>

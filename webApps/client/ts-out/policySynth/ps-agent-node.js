@@ -68,6 +68,10 @@ let PsAgentNode = class PsAgentNode extends PsOperationsBaseNode {
                 if (this.agentState === "stopped" || this.agentState === "error") {
                     this.stopStatusUpdates();
                 }
+                else if (this.agentState === "running" && !this.statusInterval) {
+                    console.log("Starting status updates from server");
+                    this.startStatusUpdates();
+                }
                 this.requestUpdate();
                 this.fire("get-costs");
             }
@@ -120,7 +124,7 @@ let PsAgentNode = class PsAgentNode extends PsOperationsBaseNode {
         switch (this.agentState) {
             case "running":
                 return html `
-          <md-icon-button @click="${this.pauseAgent}">
+          <md-icon-button @click="${this.pauseAgent}" disabled>
             <md-icon>pause</md-icon>
           </md-icon-button>
           <md-icon-button @click="${this.stopAgent}">
@@ -137,6 +141,7 @@ let PsAgentNode = class PsAgentNode extends PsOperationsBaseNode {
           </md-icon-button>
         `;
             case "stopped":
+            case "completed":
             case "error":
                 return html `
           <md-icon-button @click="${this.startAgent}">

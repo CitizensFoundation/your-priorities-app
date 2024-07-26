@@ -22,7 +22,7 @@ export class PsAgentNode extends PsOperationsBaseNode {
   @property({ type: Number }) groupId!: number;
 
   @state()
-  private agentState: "running" | "paused" | "stopped" | "error" = "stopped";
+  private agentState: "running" | "paused" | "stopped" | "error" | "completed" = "stopped";
 
   @state()
   private latestMessage: string = "";
@@ -103,12 +103,16 @@ export class PsAgentNode extends PsOperationsBaseNode {
           | "running"
           | "paused"
           | "stopped"
+          | "completed"
           | "error";
         this.progress = status.progress;
         this.latestMessage = status.messages[status.messages.length - 1] || "";
 
         if (this.agentState === "stopped" || this.agentState === "error") {
           this.stopStatusUpdates();
+        } else if (this.agentState === "running" && !this.statusInterval) {
+          console.log("Starting status updates from server");
+          this.startStatusUpdates();
         }
 
         this.requestUpdate();
@@ -164,7 +168,7 @@ export class PsAgentNode extends PsOperationsBaseNode {
     switch (this.agentState) {
       case "running":
         return html`
-          <md-icon-button @click="${this.pauseAgent}">
+          <md-icon-button @click="${this.pauseAgent}" disabled>
             <md-icon>pause</md-icon>
           </md-icon-button>
           <md-icon-button @click="${this.stopAgent}">
@@ -181,6 +185,7 @@ export class PsAgentNode extends PsOperationsBaseNode {
           </md-icon-button>
         `;
       case "stopped":
+      case "completed":
       case "error":
         return html`
           <md-icon-button @click="${this.startAgent}">

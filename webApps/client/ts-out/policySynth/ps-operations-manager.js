@@ -40,12 +40,12 @@ let PsOperationsManager = class PsOperationsManager extends PsBaseWithRunningAge
     async getAgent() {
         this.isFetchingAgent = true;
         try {
-            debugger;
             if (!this.groupId) {
                 throw new Error("Current group ID is not set");
             }
             const agent = await this.api.getAgent(this.groupId);
             this.currentAgent = agent;
+            this.currentAgentId = agent.id;
         }
         catch (error) {
             console.error("Error fetching agent:", error);
@@ -93,7 +93,6 @@ let PsOperationsManager = class PsOperationsManager extends PsBaseWithRunningAge
                 : "connector";
             const nodeId = this.nodeToEditInfo.id;
             await this.api.updateNodeConfiguration(this.groupId, nodeType, nodeId, updatedConfig);
-            debugger;
             // Handle AI model updates for agents
             if (nodeType === "agent" && aiModelUpdates) {
                 const currentAiModels = await this.api.getAgentAiModels(this.groupId, nodeId);

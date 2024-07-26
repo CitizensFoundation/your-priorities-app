@@ -79,12 +79,12 @@ export class PsOperationsManager extends PsBaseWithRunningAgentObserver {
   async getAgent() {
     this.isFetchingAgent = true;
     try {
-      debugger;
       if (!this.groupId) {
         throw new Error("Current group ID is not set");
       }
       const agent = await this.api.getAgent(this.groupId);
       this.currentAgent = agent;
+      this.currentAgentId = agent.id;
     } catch (error) {
       console.error("Error fetching agent:", error);
     } finally {
@@ -156,8 +156,6 @@ export class PsOperationsManager extends PsBaseWithRunningAgentObserver {
         nodeId,
         updatedConfig
       );
-
-      debugger;
 
       // Handle AI model updates for agents
       if (nodeType === "agent" && aiModelUpdates) {
