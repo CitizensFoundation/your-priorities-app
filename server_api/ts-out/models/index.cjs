@@ -159,18 +159,6 @@ fs.readdirSync(acDirname)
     const model = require(path.join(acDirname, file))(sequelize, DataTypes);
     db[model.name] = model;
 });
-const pcDirname = __dirname + "/../../node_modules/@policysynth/agents/dbModels";
-fs.readdirSync(pcDirname)
-    .filter((file) => {
-    return (file.indexOf(".") !== 0 &&
-        file.indexOf(".js") > -1 &&
-        file.indexOf(".js.map") === -1 &&
-        file.startsWith("yp") === -1);
-})
-    .forEach((file) => {
-    const model = require(path.join(pcDirname, file))(sequelize, DataTypes);
-    db[model.name] = model;
-});
 Object.keys(db).forEach((modelName) => {
     if ("associate" in db[modelName]) {
         db[modelName].associate(db);
