@@ -220,11 +220,13 @@ export class YpApp extends YpBaseElement {
     this._setupEventListeners();
     this._setupSamlCallback();
     this.updateLocation();
+    document.addEventListener('keydown', this._handleKeyDown.bind(this));
   }
 
   override disconnectedCallback() {
     super.disconnectedCallback();
     this._removeEventListeners();
+    document.removeEventListener('keydown', this._handleKeyDown.bind(this));
   }
 
   override async updated(
@@ -236,7 +238,7 @@ export class YpApp extends YpBaseElement {
       if (!this.haveLoadedAdminApp && this.appMode == "admin") {
         this.loadingAppSpinner = true;
         await this.updateComplete;
-        import("../admin/yp-admin-app.js");
+        await import("../admin/yp-admin-app.js");
         this.haveLoadedAdminApp = true;
         this.loadingAppSpinner = false;
       }
@@ -1568,6 +1570,17 @@ export class YpApp extends YpBaseElement {
   toggleSearch() {
     //TODO: When we have postFilter live
     //this.$$("#search")?.toggle();
+  }
+
+  _handleKeyDown(event: KeyboardEvent) {
+    if (event.key === 'Escape') {
+      if (this.closePostHeader) {
+        this._closePost();
+      } else if (!this.showBack) {
+        // If there's no back arrow, we don't want to do anything on ESC
+        event.preventDefault();
+      }
+    }
   }
 
   _setupTouchEvents() {

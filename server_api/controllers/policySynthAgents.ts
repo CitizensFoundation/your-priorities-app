@@ -13,11 +13,41 @@ import {
   PsAiModelType,
 } from "@policysynth/agents/aiModelTypes.js";
 import { PsAgentClass } from "@policysynth/agents/dbModels/agentClass.js";
+import { PsAgent } from "@policysynth/agents/dbModels/agent.js";
+import { PsAgentAuditLog } from "@policysynth/agents/dbModels/agentAuditLog.js";
+import { PsAgentConnector } from "@policysynth/agents/dbModels/agentConnector.js";
+import { PsAgentConnectorClass } from "@policysynth/agents/dbModels/agentConnectorClass.js";
+import { PsAgentRegistry } from "@policysynth/agents/dbModels/agentRegistry.js";
+import { PsExternalApiUsage } from "@policysynth/agents/dbModels/externalApiUsage.js";
+import { PsExternalApi } from "@policysynth/agents/dbModels/externalApis.js";
+import { PsModelUsage } from "@policysynth/agents/dbModels/modelUsage.js";
+import { sequelize as psSequelize } from "@policysynth/agents/dbModels/index.js";
 
 const dbModels: Models = models;
 const Group = dbModels.Group as GroupClass;
 const User = dbModels.User as UserClass;
 
+
+const psModels: Models = {
+  PsAgentClass,
+  PsExternalApiUsage,
+  PsModelUsage,
+  PsAgentConnector,
+  PsAgent,
+  PsAgentAuditLog,
+  PsAgentConnectorClass,
+  PsAgentRegistry,
+  PsAiModel,
+  PsExternalApi
+};
+
+interface YpRequest extends express.Request {
+  ypDomain?: any;
+  ypCommunity?: any;
+  sso?: any;
+  redisClient?: any;
+  user?: any;
+}
 export class PolicySynthAgentsController {
   public path = "/api/agents";
   public router = express.Router();
@@ -37,8 +67,28 @@ export class PolicySynthAgentsController {
     this.agentRegistryManager = new AgentRegistryManager();
 
     this.initializeRoutes();
+    this.initializeModels();
     this.setupAiModels();
   }
+
+  initializeModels = async () => {
+    try {
+      console.log(`All Models Loaded Init`);
+
+      // Call associate method to set up associations
+      for (const modelName of Object.keys(psModels)) {
+        if (psModels[modelName].associate) {
+          await psModels[modelName].associate(psSequelize.models);
+        }
+      }
+
+      console.log("All models initialized successfully.");
+
+    } catch (error) {
+      console.error("Error initializing models:", error);
+      process.exit(1);
+    }
+  };
 
   static setupApiKeysForGroup = async (group: typeof Group) => {
     const anthropicSonnet = await PsAiModel.findOne({
@@ -195,79 +245,79 @@ export class PolicySynthAgentsController {
 
   public initializeRoutes() {
     this.router.get(
-      this.path + "/:groupId",
+      "/:groupId",
       auth.can("view group"),
       this.getAgent
     );
     this.router.put(
-      this.path + "/:groupId/:agentId/:nodeType/:nodeId/configuration",
+      "/:groupId/:agentId/:nodeType/:nodeId/configuration",
       auth.can("edit group"),
       this.updateNodeConfiguration
     );
 
     this.router.post(
-      this.path + "/:groupId/:id/control",
+      "/:groupId/:id/control",
       auth.can("edit group"),
       this.controlAgent
     );
     this.router.get(
-      this.path + "/:groupId/:id/status",
+      "/:groupId/:id/status",
       auth.can("view group"),
       this.getAgentStatus
     );
     this.router.get(
-      this.path + "/:groupId/:id/costs",
+      "/:groupId/:id/costs",
       auth.can("view group"),
       this.getAgentCosts
     );
     this.router.get(
-      this.path + "/:groupId/registry/agentClasses",
+      "/:groupId/registry/agentClasses",
       auth.can("view group"),
       this.getActiveAgentClasses
     );
     this.router.get(
-      this.path + "/:groupId/registry/connectorClasses",
+      "/:groupId/registry/connectorClasses",
       auth.can("view group"),
       this.getActiveConnectorClasses
     );
     this.router.get(
-      this.path + "/:groupId/registry/aiModels",
+      "/:groupId/registry/aiModels",
       auth.can("view group"),
       this.getActiveAiModels
     );
     this.router.post(
-      this.path + "/:groupId",
+      "/:groupId",
       auth.can("edit group"),
       this.createAgent
     );
     this.router.post(
-      this.path + "/:groupId/:agentId/outputConnectors",
+      "/:groupId/:agentId/outputConnectors",
       auth.can("edit group"),
       this.createOutputConnector
     );
     this.router.post(
-      this.path + "/:groupId/:agentId/inputConnectors",
+      "/:groupId/:agentId/inputConnectors",
       auth.can("edit group"),
       this.createInputConnector
     );
     this.router.put(
-      this.path + "/:groupId/:nodeId/:nodeType/configuration",
+      "/:groupId/:nodeId/:nodeType/configuration",
       auth.can("edit group"),
       this.updateNodeConfiguration
     );
 
     this.router.get(
-      this.path + "/:groupId/:id/ai-models",
+      "/:groupId/:id/ai-models",
       auth.can("view group"),
       this.getAgentAiModels
     );
     this.router.delete(
-      this.path + "/:groupId/:agentId/ai-models/:modelId",
+      "/:groupId/:agentId/ai-models/:modelId",
       auth.can("edit group"),
       this.removeAgentAiModel
     );
     this.router.post(
-      this.path + "/:groupId/:agentId/ai-models",
+      "/:groupId/:agentId/ai-models",
       auth.can("edit group"),
       this.addAgentAiModel
     );
@@ -439,7 +489,7 @@ export class PolicySynthAgentsController {
     }
   };
 
-  createAgent = async (req: express.Request, res: express.Response) => {
+  createAgent = async (req: YpRequest, res: express.Response) => {
     const { name, agentClassId, aiModels, parentAgentId } = req.body;
 
     try {
@@ -447,6 +497,8 @@ export class PolicySynthAgentsController {
         name,
         agentClassId,
         aiModels,
+        parseInt(req.params.groupId),
+        req.user.id,
         parentAgentId
       );
       res.status(201).json(createdAgent);

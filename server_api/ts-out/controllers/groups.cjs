@@ -2065,7 +2065,7 @@ const createGroup = (req, res) => {
                             collectionId: group.id,
                             collectionType: "group",
                         }, "medium");
-                        if (group.configuration.groupType === 3) {
+                        if (group.configuration.groupType == 3) {
                             import("./policySynthAgents.js").then(({ PolicySynthAgentsController }) => {
                                 PolicySynthAgentsController.setupApiKeysForGroup(group)
                                     .then(() => {

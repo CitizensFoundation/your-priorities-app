@@ -184,6 +184,7 @@ export declare class YpApp extends YpBaseElement {
     _onSearch(e: CustomEvent): void;
     _onUserChanged(event: CustomEvent): void;
     toggleSearch(): void;
+    _handleKeyDown(event: KeyboardEvent): void;
     _setupTouchEvents(): void;
     _removeTouchEvents(): void;
     _handleTouchStart(event: any): void;

@@ -318,7 +318,7 @@ export class PsOperationsManager extends PsBaseWithRunningAgentObserver {
         <ps-edit-node-dialog
           ?open="${this.showEditNodeDialog}"
           .nodeToEditInfo="${this.nodeToEditInfo}"
-          .groupid="${this.groupId}"
+          .groupId="${this.groupId}"
           @save="${this.handleEditDialogSave}"
           @close="${() => (this.showEditNodeDialog = false)}"
         ></ps-edit-node-dialog>
@@ -333,7 +333,7 @@ export class PsOperationsManager extends PsBaseWithRunningAgentObserver {
 
         <ps-add-connector-dialog
           ?open="${this.showAddConnectorDialog}"
-          .groupid="${this.groupId}"
+          .groupId="${this.groupId}"
           @connector-added="${this.getAgent}"
           .selectedAgentId="${this.selectedAgentIdForConnector}"
           .selectedInputOutputType="${this.selectedInputOutputType}"

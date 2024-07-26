@@ -818,6 +818,8 @@ auth.entity('group', function (req, done) {
     if (!match)
         match = req.originalUrl.match(/allOurIdeas\/(\w+)/);
     if (!match)
+        match = req.originalUrl.match(/agents\/(\w+)/);
+    if (!match)
         match = req.originalUrl.match(/ltp\/crt\/(\w+)/);
     if (!match)
         match = req.originalUrl.match(/images\/(\w+)/);
@@ -997,6 +999,8 @@ auth.entity('post', function (req, done) {
         match = req.originalUrl.match(/videos\/(\w+)/);
     if (!match)
         match = req.originalUrl.match(/ratings\/(\w+)/);
+    if (!match)
+        match = req.originalUrl.match(/agents\/(\w+)/);
     if (!match)
         match = req.originalUrl.match(/ltp\/crt\/(\w+)/);
     if (!match)
@@ -1465,6 +1469,8 @@ auth.entity('createGroupPost', function (req, done) {
         match = req.originalUrl.match(/videos\/(\w+)/);
     if (!match)
         match = req.originalUrl.match(/audios\/(\w+)/);
+    if (!match)
+        match = req.originalUrl.match(/agents\/(\w+)/);
     if (!match)
         match = req.originalUrl.match(/ltp\/crt\/(\w+)/);
     if (!match) {

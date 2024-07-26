@@ -30,7 +30,7 @@ let PsOperationsView = class PsOperationsView extends PsBaseWithRunningAgentObse
     }
     async connectedCallback() {
         super.connectedCallback();
-        window.psAppGlobals.activity(`Agent Ops - open`);
+        window.appGlobals.activity(`Agent Ops - open`);
         window.addEventListener('resize', () => {
             this.updatePaperSize();
         });
@@ -95,7 +95,7 @@ let PsOperationsView = class PsOperationsView extends PsBaseWithRunningAgentObse
     }
     disconnectedCallback() {
         super.disconnectedCallback();
-        window.psAppGlobals.activity(`Agent Ops - close`);
+        window.appGlobals.activity(`Agent Ops - close`);
     }
     handleNodeDoubleClick(element, zoomOut = false) {
         const bbox = element.getBBox();

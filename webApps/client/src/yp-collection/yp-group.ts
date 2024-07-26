@@ -275,13 +275,13 @@ export class YpGroup extends YpCollection {
           !this.haveLoadedAgentsOps &&
           this.collection.configuration.groupType == YpGroupType.PsAgentWorkflow
         ) {
-          import("../policySynth/ps-operations-manager.js");
+          await import("../policySynth/ps-operations-manager.js");
           this.haveLoadedAgentsOps = true;
         } else if (
           !this.haveLoadedAllOurIdeas &&
           this.collection.configuration.groupType == YpGroupType.AllOurIdeas
         ) {
-          import("../allOurIdeas/aoi-survey.js");
+          await import("../allOurIdeas/aoi-survey.js");
           this.haveLoadedAllOurIdeas = true;
         }
         this.refresh();

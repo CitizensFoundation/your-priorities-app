@@ -43,7 +43,7 @@ export class PsOperationsView extends PsBaseWithRunningAgentObserver {
 
   override async connectedCallback() {
     super.connectedCallback();
-    window.psAppGlobals.activity(`Agent Ops - open`);
+    window.appGlobals.activity(`Agent Ops - open`);
 
     window.addEventListener('resize', () => {
       this.updatePaperSize();
@@ -130,7 +130,7 @@ export class PsOperationsView extends PsBaseWithRunningAgentObserver {
 
   override disconnectedCallback(): void {
     super.disconnectedCallback();
-    window.psAppGlobals.activity(`Agent Ops - close`);
+    window.appGlobals.activity(`Agent Ops - close`);
   }
 
   private handleNodeDoubleClick(
