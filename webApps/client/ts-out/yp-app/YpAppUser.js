@@ -606,12 +606,18 @@ export class YpAppUser extends YpCodeBase {
     async logout() {
         this.hasIssuedLogout = true;
         (await this.serverApi.logout());
-        this.toastLogoutTextCombined =
-            this.t("user.logoutCompleteFor") + " " + this.user?.name;
-        this.fireGlobal("yp-open-toast", { text: this.toastLogoutTextCombined });
-        this.fireGlobal("yp-close-right-drawer", true);
         this.removeUserSession();
-        this.recheckAdminRights();
+        const moveUserToHomePageLocation = true;
+        if (moveUserToHomePageLocation) {
+            window.location.href = "/";
+        }
+        else {
+            this.toastLogoutTextCombined =
+                this.t("user.logoutCompleteFor") + " " + this.user?.name;
+            this.fireGlobal("yp-open-toast", { text: this.toastLogoutTextCombined });
+            this.fireGlobal("yp-close-right-drawer", true);
+            this.recheckAdminRights();
+        }
     }
     checkRegistrationAnswersCurrent() {
         if (this.user) {
