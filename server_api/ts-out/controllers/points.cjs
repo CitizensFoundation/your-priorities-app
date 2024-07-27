@@ -136,6 +136,7 @@ var loadPointWithAll = function (pointId, callback) {
                         model: models.Image,
                         as: "UserProfileImages",
                         required: false,
+                        through: { attributes: [] }
                     },
                 ],
             },
@@ -313,6 +314,7 @@ router.get("/:parentPointId/comments", auth.can("view point"), function (req, re
                                 model: models.Image,
                                 as: "UserProfileImages",
                                 required: false,
+                                through: { attributes: [] }
                             },
                         ],
                     },

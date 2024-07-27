@@ -22,11 +22,11 @@ import { PsExternalApiUsage } from "@policysynth/agents/dbModels/externalApiUsag
 import { PsExternalApi } from "@policysynth/agents/dbModels/externalApis.js";
 import { PsModelUsage } from "@policysynth/agents/dbModels/modelUsage.js";
 import { sequelize as psSequelize } from "@policysynth/agents/dbModels/index.js";
+import { PsAgentClassCategories } from "@policysynth/agents/agentCategories.js";
 
 const dbModels: Models = models;
 const Group = dbModels.Group as GroupClass;
 const User = dbModels.User as UserClass;
-
 
 const psModels: Models = {
   PsAgentClass,
@@ -38,7 +38,7 @@ const psModels: Models = {
   PsAgentConnectorClass,
   PsAgentRegistry,
   PsAiModel,
-  PsExternalApi
+  PsExternalApi,
 };
 
 interface YpRequest extends express.Request {
@@ -83,7 +83,6 @@ export class PolicySynthAgentsController {
       }
 
       console.log("All models initialized successfully.");
-
     } catch (error) {
       console.error("Error initializing models:", error);
       process.exit(1);
@@ -215,6 +214,9 @@ export class PolicySynthAgentsController {
       console.log("Created test AI model:", openAiGpt4Mini);
 
       const topLevelAgentClassConfig: PsAgentClassAttributesConfiguration = {
+        category: PsAgentClassCategories.PolicySynthTopLevel,
+        subCategory: "group",
+        hasPublicAccess: true,
         description: "A top-level agent that coordinates other agents",
         queueName: "noqueue",
         imageUrl:
@@ -244,11 +246,7 @@ export class PolicySynthAgentsController {
   }
 
   public initializeRoutes() {
-    this.router.get(
-      "/:groupId",
-      auth.can("view group"),
-      this.getAgent
-    );
+    this.router.get("/:groupId", auth.can("view group"), this.getAgent);
     this.router.put(
       "/:groupId/:agentId/:nodeType/:nodeId/configuration",
       auth.can("edit group"),
@@ -285,11 +283,7 @@ export class PolicySynthAgentsController {
       auth.can("view group"),
       this.getActiveAiModels
     );
-    this.router.post(
-      "/:groupId",
-      auth.can("edit group"),
-      this.createAgent
-    );
+    this.router.post("/:groupId", auth.can("edit group"), this.createAgent);
     this.router.post(
       "/:groupId/:agentId/outputConnectors",
       auth.can("edit group"),
@@ -457,13 +451,10 @@ export class PolicySynthAgentsController {
     }
   };
 
-  getActiveAgentClasses = async (
-    req: express.Request,
-    res: express.Response
-  ) => {
+  getActiveAgentClasses = async (req: YpRequest, res: express.Response) => {
     try {
       const activeAgentClasses =
-        await this.agentRegistryManager.getActiveAgentClasses();
+        await this.agentRegistryManager.getActiveAgentClasses(req.user.id);
       res.json(activeAgentClasses);
     } catch (error) {
       console.error("Error fetching active agent classes:", error);
@@ -475,13 +466,10 @@ export class PolicySynthAgentsController {
     }
   };
 
-  getActiveConnectorClasses = async (
-    req: express.Request,
-    res: express.Response
-  ) => {
+  getActiveConnectorClasses = async (req: YpRequest, res: express.Response) => {
     try {
       const activeConnectorClasses =
-        await this.agentRegistryManager.getActiveConnectorClasses();
+        await this.agentRegistryManager.getActiveConnectorClasses(req.user.id);
       res.json(activeConnectorClasses);
     } catch (error) {
       console.error("Error fetching active connector classes:", error);

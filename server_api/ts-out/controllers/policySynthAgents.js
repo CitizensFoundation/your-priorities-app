@@ -19,6 +19,7 @@ import { PsExternalApiUsage } from "@policysynth/agents/dbModels/externalApiUsag
 import { PsExternalApi } from "@policysynth/agents/dbModels/externalApis.js";
 import { PsModelUsage } from "@policysynth/agents/dbModels/modelUsage.js";
 import { sequelize as psSequelize } from "@policysynth/agents/dbModels/index.js";
+import { PsAgentClassCategories } from "@policysynth/agents/agentCategories.js";
 const dbModels = models;
 const Group = dbModels.Group;
 const User = dbModels.User;
@@ -32,7 +33,7 @@ const psModels = {
     PsAgentConnectorClass,
     PsAgentRegistry,
     PsAiModel,
-    PsExternalApi
+    PsExternalApi,
 };
 export class PolicySynthAgentsController {
     constructor(wsClients) {
@@ -153,7 +154,7 @@ export class PolicySynthAgentsController {
         };
         this.getActiveAgentClasses = async (req, res) => {
             try {
-                const activeAgentClasses = await this.agentRegistryManager.getActiveAgentClasses();
+                const activeAgentClasses = await this.agentRegistryManager.getActiveAgentClasses(req.user.id);
                 res.json(activeAgentClasses);
             }
             catch (error) {
@@ -168,7 +169,7 @@ export class PolicySynthAgentsController {
         };
         this.getActiveConnectorClasses = async (req, res) => {
             try {
-                const activeConnectorClasses = await this.agentRegistryManager.getActiveConnectorClasses();
+                const activeConnectorClasses = await this.agentRegistryManager.getActiveConnectorClasses(req.user.id);
                 res.json(activeConnectorClasses);
             }
             catch (error) {
@@ -372,6 +373,9 @@ export class PolicySynthAgentsController {
             });
             console.log("Created test AI model:", openAiGpt4Mini);
             const topLevelAgentClassConfig = {
+                category: PsAgentClassCategories.PolicySynthTopLevel,
+                subCategory: "group",
+                hasPublicAccess: true,
                 description: "A top-level agent that coordinates other agents",
                 queueName: "noqueue",
                 imageUrl: "https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/topLevelAgent.png",

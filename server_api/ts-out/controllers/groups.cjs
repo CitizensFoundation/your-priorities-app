@@ -755,6 +755,7 @@ const getGroupFolder = function (req, done) {
                                     as: "GroupAdmins",
                                     attributes: ["id"],
                                     required: true,
+                                    through: { attributes: [] },
                                     where: {
                                         id: req.user.id,
                                     },
@@ -1879,6 +1880,7 @@ router.get("/:groupId/admin_users", auth.can("edit group"), function (req, res) 
                 model: models.User,
                 attributes: _.concat(models.User.defaultAttributesWithSocialMediaPublicAndEmail, ["created_at", "last_login_at"]),
                 as: "GroupAdmins",
+                through: { attributes: [] },
                 required: true,
                 include: [
                     {
@@ -1923,6 +1925,7 @@ router.get("/:groupId/promotion_users", auth.can("edit group"), function (req, r
                 attributes: _.concat(models.User.defaultAttributesWithSocialMediaPublicAndEmail, ["created_at", "last_login_at"]),
                 as: "GroupPromoters",
                 required: true,
+                through: { attributes: [] },
                 include: [
                     {
                         model: models.Organization,
@@ -1966,6 +1969,7 @@ router.get("/:groupId/users", auth.can("edit group"), function (req, res) {
                 attributes: _.concat(models.User.defaultAttributesWithSocialMediaPublicAndEmail, ["created_at", "last_login_at"]),
                 as: "GroupUsers",
                 required: true,
+                through: { attributes: [] },
                 include: [
                     {
                         model: models.Organization,

@@ -1268,6 +1268,7 @@ const getGroupFolder = function (req, done) {
                       as: "GroupAdmins",
                       attributes: ["id"],
                       required: true,
+                      through: { attributes: [] },
                       where: {
                         id: req.user.id,
                       },
@@ -2670,6 +2671,7 @@ router.get(
             ["created_at", "last_login_at"]
           ),
           as: "GroupAdmins",
+          through: { attributes: [] },
           required: true,
           include: [
             {
@@ -2721,6 +2723,7 @@ router.get(
           ),
           as: "GroupPromoters",
           required: true,
+          through: { attributes: [] },
           include: [
             {
               model: models.Organization,
@@ -2768,6 +2771,7 @@ router.get("/:groupId/users", auth.can("edit group"), function (req, res) {
         ),
         as: "GroupUsers",
         required: true,
+        through: { attributes: [] },
         include: [
           {
             model: models.Organization,

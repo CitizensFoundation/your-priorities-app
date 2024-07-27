@@ -145,6 +145,7 @@ var loadPointWithAll = function (pointId, callback) {
             model: models.Image,
             as: "UserProfileImages",
             required: false,
+            through: { attributes: [] }
           },
         ],
       },
@@ -328,6 +329,7 @@ router.get(
                   model: models.Image,
                   as: "UserProfileImages",
                   required: false,
+                  through: { attributes: [] }
                 },
               ],
             },
