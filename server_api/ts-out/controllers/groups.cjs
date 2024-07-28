@@ -2051,6 +2051,19 @@ const addAgentFabricUserToSessionIfNeeded = async (req) => {
         log.info("Creating group with user id: " + userId);
     }
 };
+const copyThemeAndLogoFromAgentFabricGroup = async (newGroup, agentFabricGroup) => {
+    if (agentFabricGroup.configuration && agentFabricGroup.configuration.theme) {
+        newGroup.configuration.theme = { ...agentFabricGroup.configuration.theme };
+        await newGroup.save();
+    }
+    if (agentFabricGroup.GroupLogoImages && agentFabricGroup.GroupLogoImages.length > 0) {
+        log.info("Copying logo images from agent fabric group");
+        for (const logoImage of agentFabricGroup.GroupLogoImages) {
+            log.info(`Copying logo image ${logoImage.id} from agent fabric group`);
+            await newGroup.addGroupLogoImage(logoImage);
+        }
+    }
+};
 const createGroup = async (req, res) => {
     console.log("Creating group with community id: " + req.params.communityId);
     if (!req.user) {
@@ -2088,13 +2101,34 @@ const createGroup = async (req, res) => {
     updateGroupConfigParameters(req, group);
     group
         .save()
-        .then(function (group) {
+        .then(async function (group) {
         log.info("Group Created", {
             groupId: group.id,
             context: "create",
             userId: req.user.id,
         });
         queue.add("process-similarities", { type: "update-collection", groupId: group.id }, "low");
+        if (req.query.agentFabricGroupId) {
+            try {
+                const agentFabricGroup = await models.Group.findByPk(req.query.agentFabricGroupId, {
+                    include: [{
+                            model: models.Image,
+                            as: 'GroupLogoImages'
+                        }]
+                });
+                if (agentFabricGroup) {
+                    await copyThemeAndLogoFromAgentFabricGroup(group, agentFabricGroup);
+                }
+            }
+            catch (error) {
+                log.error("Error copying theme and logo from agent fabric group", {
+                    context: "create",
+                    newGroupId: group.id,
+                    agentFabricGroupId: req.query.agentFabricGroupId,
+                    error: error,
+                });
+            }
+        }
         group.updateAllExternalCounters(req, "up", "counter_groups", function () {
             models.Group.addUserToGroupIfNeeded(group.id, req, function () {
                 group.addGroupAdmins(req.user).then(function (results) {
