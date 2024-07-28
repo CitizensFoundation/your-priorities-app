@@ -290,6 +290,13 @@ let YpApp = class YpApp extends YpBaseElement {
         ><md-icon>close</md-icon></md-icon-button
       >`;
         }
+        else if (this.keepOpenForGroup) {
+            icons = html `<md-icon-button
+        title="${this.t("close")}"
+        @click="${this._closeForGroup}"
+        ><md-icon>close</md-icon></md-icon-button
+      >`;
+        }
         else if (this.showBack) {
             icons = html `<md-icon-button
         title="${this.t("goBack")}"
@@ -1027,6 +1034,15 @@ let YpApp = class YpApp extends YpBaseElement {
         this.storedBackPath = undefined;
         this.storedLastDocumentTitle = undefined;
     }
+    _closeForGroup() {
+        if (this.keepOpenForGroup) {
+            YpNavHelpers.redirectTo(this.keepOpenForGroup);
+        }
+        else {
+            console.error("No keepOpenForGroup");
+        }
+        this.keepOpenForGroup = undefined;
+    }
     _closePost() {
         if (this.keepOpenForPost)
             YpNavHelpers.redirectTo(this.keepOpenForPost);
@@ -1166,6 +1182,9 @@ let YpApp = class YpApp extends YpBaseElement {
         else {
             this.hideHelpIcon = false;
         }
+        if (header.keepOpenForGroup) {
+            this.keepOpenForGroup = header.keepOpenForGroup;
+        }
         if (this.communityBackOverride &&
             this.backPath &&
             window.location.pathname.indexOf("/community/") > -1) {
@@ -1217,6 +1236,9 @@ let YpApp = class YpApp extends YpBaseElement {
         if (event.key === 'Escape') {
             if (this.closePostHeader) {
                 this._closePost();
+            }
+            else if (this.keepOpenForGroup) {
+                this._closeForGroup();
             }
             else if (!this.showBack) {
                 // If there's no back arrow, we don't want to do anything on ESC
@@ -1385,6 +1407,12 @@ __decorate([
 __decorate([
     property({ type: Boolean })
 ], YpApp.prototype, "languageLoaded", void 0);
+__decorate([
+    property({ type: String })
+], YpApp.prototype, "keepOpenForPost", void 0);
+__decorate([
+    property({ type: String })
+], YpApp.prototype, "keepOpenForGroup", void 0);
 YpApp = __decorate([
     customElement("yp-app")
 ], YpApp);

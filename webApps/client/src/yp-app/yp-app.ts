@@ -170,6 +170,14 @@ export class YpApp extends YpBaseElement {
   @property({ type: Boolean })
   languageLoaded = false;
 
+  //TODO: Refactor this
+  @property({ type: String })
+  keepOpenForPost: string | undefined;
+
+  //TODO: Refactor this
+  @property({ type: String })
+  keepOpenForGroup: string | undefined;
+
   anchor: HTMLElement | null = null;
 
   previousSearches: Array<string> = [];
@@ -178,7 +186,6 @@ export class YpApp extends YpBaseElement {
 
   storedLastDocumentTitle: string | undefined;
 
-  keepOpenForPost: string | undefined;
 
   useHardBack = false;
 
@@ -518,6 +525,12 @@ export class YpApp extends YpBaseElement {
       icons = html`<md-icon-button
         title="${this.t("close")}"
         @click="${this._closePost}"
+        ><md-icon>close</md-icon></md-icon-button
+      >`;
+    } else if (this.keepOpenForGroup) {
+      icons = html`<md-icon-button
+        title="${this.t("close")}"
+        @click="${this._closeForGroup}"
         ><md-icon>close</md-icon></md-icon-button
       >`;
     } else if (this.showBack) {
@@ -1361,6 +1374,15 @@ export class YpApp extends YpBaseElement {
     this.storedLastDocumentTitle = undefined;
   }
 
+  _closeForGroup() {
+    if (this.keepOpenForGroup) {
+      YpNavHelpers.redirectTo(this.keepOpenForGroup);
+    }  else {
+      console.error("No keepOpenForGroup");
+    }
+    this.keepOpenForGroup = undefined;
+  }
+
   _closePost() {
     if (this.keepOpenForPost) YpNavHelpers.redirectTo(this.keepOpenForPost);
 
@@ -1517,6 +1539,10 @@ export class YpApp extends YpBaseElement {
       this.hideHelpIcon = false;
     }
 
+    if (header.keepOpenForGroup) {
+      this.keepOpenForGroup = header.keepOpenForGroup;
+    }
+
     if (
       this.communityBackOverride &&
       this.backPath &&
@@ -1576,6 +1602,8 @@ export class YpApp extends YpBaseElement {
     if (event.key === 'Escape') {
       if (this.closePostHeader) {
         this._closePost();
+      } else if (this.keepOpenForGroup) {
+        this._closeForGroup();
       } else if (!this.showBack) {
         // If there's no back arrow, we don't want to do anything on ESC
         event.preventDefault();

@@ -48,6 +48,12 @@ export abstract class PsOperationsBaseNode extends PsBaseWithRunningAgentObserve
           left: 8px;
         }
 
+        .middleIcon {
+          position: absolute;
+          bottom: 0;
+          left: 51px;
+        }
+
         .typeIcon {
           color: var(--md-sys-color-primary);
         }

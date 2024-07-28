@@ -72,11 +72,12 @@ export declare class YpApp extends YpBaseElement {
     userDrawerOpened: boolean;
     navDrawerOpened: boolean;
     languageLoaded: boolean;
+    keepOpenForPost: string | undefined;
+    keepOpenForGroup: string | undefined;
     anchor: HTMLElement | null;
     previousSearches: Array<string>;
     storedBackPath: string | undefined;
     storedLastDocumentTitle: string | undefined;
-    keepOpenForPost: string | undefined;
     useHardBack: boolean;
     _scrollPositionMap: {};
     goBackToPostId: number | undefined;
@@ -156,6 +157,7 @@ export declare class YpApp extends YpBaseElement {
     _setHomeLink(event: CustomEvent): void;
     setKeepOpenForPostsOn(goBackToPage: string): void;
     _resetKeepOpenForPage(): void;
+    _closeForGroup(): void;
     _closePost(): void;
     get closePostHeader(): boolean;
     _isGroupOpen(params: {

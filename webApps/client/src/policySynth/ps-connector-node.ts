@@ -122,8 +122,9 @@ export class PsAgentConnector extends PsOperationsBaseNode {
     this.fire("yp-change-header", {
       headerTitle: YpFormattingHelpers.truncate(this.agentName, 80),
       documentTitle: this.connector.configuration.name,
-      headerDescription: "", //this.truncate(this.post.Group.objectives,45),
+      headerDescription: "",
       backPath: "/group/" + this.groupId,
+      keepOpenForGroup: `/group/${this.groupId}`,
     });
     YpNavHelpers.redirectTo(gotoLocation);
   }
@@ -142,12 +143,8 @@ export class PsAgentConnector extends PsOperationsBaseNode {
           <div class="name instanceName">${this.connector.Class?.name}</div>
           <md-icon class="typeIconCore">checklist</md-icon>
 
-          <md-icon-button class="editButton" @click="${this.editNode}"
-            ><md-icon>settings</md-icon></md-icon-button
-          >
-
           ${this.groupIdWithContent ? html`
-            <md-icon-button @click="${this.openGroup}">
+            <md-icon-button  class="middleIcon" @click="${this.openGroup}">
               <md-icon>open_in_browser</md-icon>
             </md-icon-button>
               `: nothing}

@@ -38,6 +38,12 @@ let PsOperationsBaseNode = class PsOperationsBaseNode extends PsBaseWithRunningA
           left: 8px;
         }
 
+        .middleIcon {
+          position: absolute;
+          bottom: 0;
+          left: 51px;
+        }
+
         .typeIcon {
           color: var(--md-sys-color-primary);
         }
