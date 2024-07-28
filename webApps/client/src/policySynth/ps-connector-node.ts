@@ -120,8 +120,8 @@ export class PsAgentConnector extends PsOperationsBaseNode {
   openGroup() {
     const gotoLocation = `/group/${this.groupIdWithContent}`;
     this.fire("yp-change-header", {
-      headerTitle: YpFormattingHelpers.truncate(this.agentName, 80),
-      documentTitle: this.connector.configuration.name,
+      headerTitle: " ",
+      documentTitle: this.agentName,
       headerDescription: "",
       backPath: "/group/" + this.groupId,
       keepOpenForGroup: `/group/${this.groupId}`,

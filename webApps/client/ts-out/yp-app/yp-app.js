@@ -83,12 +83,12 @@ let YpApp = class YpApp extends YpBaseElement {
         this._setupEventListeners();
         this._setupSamlCallback();
         this.updateLocation();
-        document.addEventListener('keydown', this._handleKeyDown.bind(this));
+        document.addEventListener("keydown", this._handleKeyDown.bind(this));
     }
     disconnectedCallback() {
         super.disconnectedCallback();
         this._removeEventListeners();
-        document.removeEventListener('keydown', this._handleKeyDown.bind(this));
+        document.removeEventListener("keydown", this._handleKeyDown.bind(this));
     }
     async updated(changedProperties) {
         super.updated(changedProperties);
@@ -402,14 +402,21 @@ let YpApp = class YpApp extends YpBaseElement {
     `;
     }
     renderMainApp() {
+        let titleString = this.goForwardToPostId && this.goForwardPostName
+            ? this.goForwardPostName
+            : (this.showBack ? this.headerTitle : "") || "";
+        //TODO: Refactor this logic
+        if (this.keepOpenForGroup || this.closePostHeader) {
+            titleString = "";
+        }
+        debugger;
         return html `
       <yp-top-app-bar
         role="navigation"
-        .titleString="${this.goForwardToPostId && this.goForwardPostName
-            ? this.goForwardPostName
-            : (this.showBack ? this.headerTitle : "") || ""}"
+        .titleString="${titleString}"
         aria-label="top navigation"
-        ?hidden="${(this.appMode !== "main") || window.appGlobals.domain?.configuration.hideAppBarIfWelcomeHtml}"
+        ?hidden="${this.appMode !== "main" ||
+            window.appGlobals.domain?.configuration.hideAppBarIfWelcomeHtml}"
       >
         <div slot="navigation">${this.renderNavigationIcon()}</div>
         <div slot="title"></div>
@@ -1233,7 +1240,7 @@ let YpApp = class YpApp extends YpBaseElement {
         //this.$$("#search")?.toggle();
     }
     _handleKeyDown(event) {
-        if (event.key === 'Escape') {
+        if (event.key === "Escape") {
             if (this.closePostHeader) {
                 this._closePost();
             }

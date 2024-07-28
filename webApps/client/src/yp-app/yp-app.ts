@@ -186,7 +186,6 @@ export class YpApp extends YpBaseElement {
 
   storedLastDocumentTitle: string | undefined;
 
-
   useHardBack = false;
 
   _scrollPositionMap = {};
@@ -227,13 +226,13 @@ export class YpApp extends YpBaseElement {
     this._setupEventListeners();
     this._setupSamlCallback();
     this.updateLocation();
-    document.addEventListener('keydown', this._handleKeyDown.bind(this));
+    document.addEventListener("keydown", this._handleKeyDown.bind(this));
   }
 
   override disconnectedCallback() {
     super.disconnectedCallback();
     this._removeEventListeners();
-    document.removeEventListener('keydown', this._handleKeyDown.bind(this));
+    document.removeEventListener("keydown", this._handleKeyDown.bind(this));
   }
 
   override async updated(
@@ -374,7 +373,10 @@ export class YpApp extends YpBaseElement {
     window.addEventListener("locationchange", this.updateLocation.bind(this));
     window.addEventListener("location-changed", this.updateLocation.bind(this));
     window.addEventListener("popstate", this.updateLocation.bind(this));
-    this.addGlobalListener("yp-app-dialogs-ready", this._appDialogsReady.bind(this));
+    this.addGlobalListener(
+      "yp-app-dialogs-ready",
+      this._appDialogsReady.bind(this)
+    );
     this._setupTouchEvents();
   }
 
@@ -644,14 +646,25 @@ export class YpApp extends YpBaseElement {
   }
 
   renderMainApp() {
+    let titleString =
+      this.goForwardToPostId && this.goForwardPostName
+        ? this.goForwardPostName
+        : (this.showBack ? this.headerTitle : "") || "";
+
+    //TODO: Refactor this logic
+    if (this.keepOpenForGroup || this.closePostHeader) {
+      titleString = "";
+    }
+
+    debugger;
+
     return html`
       <yp-top-app-bar
         role="navigation"
-        .titleString="${this.goForwardToPostId && this.goForwardPostName
-          ? this.goForwardPostName
-          : (this.showBack ? this.headerTitle : "") || ""}"
+        .titleString="${titleString}"
         aria-label="top navigation"
-        ?hidden="${(this.appMode !== "main") || window.appGlobals.domain?.configuration.hideAppBarIfWelcomeHtml}"
+        ?hidden="${this.appMode !== "main" ||
+        window.appGlobals.domain?.configuration.hideAppBarIfWelcomeHtml}"
       >
         <div slot="navigation">${this.renderNavigationIcon()}</div>
         <div slot="title"></div>
@@ -1377,7 +1390,7 @@ export class YpApp extends YpBaseElement {
   _closeForGroup() {
     if (this.keepOpenForGroup) {
       YpNavHelpers.redirectTo(this.keepOpenForGroup);
-    }  else {
+    } else {
       console.error("No keepOpenForGroup");
     }
     this.keepOpenForGroup = undefined;
@@ -1449,7 +1462,10 @@ export class YpApp extends YpBaseElement {
 
   async getDialogAsync(idName: string, callback: Function) {
     await this.updateComplete;
-    (this.$$("#dialogContainer") as YpAppDialogs).getDialogAsync(idName, callback);
+    (this.$$("#dialogContainer") as YpAppDialogs).getDialogAsync(
+      idName,
+      callback
+    );
   }
 
   closeDialog(idName: string) {
@@ -1599,7 +1615,7 @@ export class YpApp extends YpBaseElement {
   }
 
   _handleKeyDown(event: KeyboardEvent) {
-    if (event.key === 'Escape') {
+    if (event.key === "Escape") {
       if (this.closePostHeader) {
         this._closePost();
       } else if (this.keepOpenForGroup) {

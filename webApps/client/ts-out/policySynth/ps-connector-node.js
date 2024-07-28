@@ -12,7 +12,6 @@ import "@material/web/menu/menu.js";
 import "@material/web/menu/menu-item.js";
 import { PsOperationsBaseNode } from "./ps-operations-base-node.js";
 import { YpNavHelpers } from "../common/YpNavHelpers.js";
-import { YpFormattingHelpers } from "../common/YpFormattingHelpers.js";
 let PsAgentConnector = class PsAgentConnector extends PsOperationsBaseNode {
     connectedCallback() {
         super.connectedCallback();
@@ -99,8 +98,8 @@ let PsAgentConnector = class PsAgentConnector extends PsOperationsBaseNode {
     openGroup() {
         const gotoLocation = `/group/${this.groupIdWithContent}`;
         this.fire("yp-change-header", {
-            headerTitle: YpFormattingHelpers.truncate(this.agentName, 80),
-            documentTitle: this.connector.configuration.name,
+            headerTitle: " ",
+            documentTitle: this.agentName,
             headerDescription: "",
             backPath: "/group/" + this.groupId,
             keepOpenForGroup: `/group/${this.groupId}`,

@@ -102,7 +102,8 @@ auth.isAuthenticated = function (req, group) {
             log.info("isAuthenticated: Is regular user");
         }
     }
-    else if (process.env.PS_TEMP_AGENTS_FABRIC_GROUP_API_KEY &&
+    else if (false &&
+        process.env.PS_TEMP_AGENTS_FABRIC_GROUP_API_KEY &&
         req.headers["x-api-key"] === process.env.PS_TEMP_AGENTS_FABRIC_GROUP_API_KEY) {
         log.info("isAuthenticated: Is API key user");
         return true;
@@ -126,44 +127,45 @@ auth.isAuthenticatedNoAnonymousCheck = function (req) {
     return req.isAuthenticated();
 };
 auth.authNeedsGroupForCreate = function (group, req, done) {
-    models.Group.findOne({
-        where: { id: group.id },
-        attributes: ["id", "access", "user_id", "configuration"],
-        include: [
-            {
-                model: models.Community,
-                required: true,
-                attributes: ["id", "access", "user_id", "configuration"],
-            },
-        ],
-    })
-        .then(function (group) {
-        isAuthenticatedAndCorrectLoginProvider(req, group, function (results) {
-            if (!results) {
-                done(null, false);
-            }
-            else if (process.env.PS_TEMP_AGENTS_FABRIC_GROUP_API_KEY &&
-                req.headers["x-api-key"] ===
-                    process.env.PS_TEMP_AGENTS_FABRIC_GROUP_API_KEY) {
-                done(null, true);
-            }
-            else {
-                if (group.access === models.Group.ACCESS_PUBLIC) {
-                    done(null, true);
-                }
-                else if (req.user && group.user_id === req.user.id) {
-                    done(null, true);
+    if (process.env.PS_TEMP_AGENTS_FABRIC_GROUP_API_KEY &&
+        req.headers["x-api-key"] === process.env.PS_TEMP_AGENTS_FABRIC_GROUP_API_KEY) {
+        done(null, true);
+    }
+    else {
+        models.Group.findOne({
+            where: { id: group.id },
+            attributes: ["id", "access", "user_id", "configuration"],
+            include: [
+                {
+                    model: models.Community,
+                    required: true,
+                    attributes: ["id", "access", "user_id", "configuration"],
+                },
+            ],
+        })
+            .then(function (group) {
+            isAuthenticatedAndCorrectLoginProvider(req, group, function (results) {
+                if (!results) {
+                    done(null, false);
                 }
                 else {
-                    auth.isGroupMemberOrOpenToCommunityMember(group, req, done);
+                    if (group.access === models.Group.ACCESS_PUBLIC) {
+                        done(null, true);
+                    }
+                    else if (req.user && group.user_id === req.user.id) {
+                        done(null, true);
+                    }
+                    else {
+                        auth.isGroupMemberOrOpenToCommunityMember(group, req, done);
+                    }
                 }
-            }
+            });
+        })
+            .catch(function (error) {
+            log.error("Error in authentication", { error });
+            done(null, false);
         });
-    })
-        .catch(function (error) {
-        log.error("Error in authentication", { error });
-        done(null, false);
-    });
+    }
 };
 auth.hasCommunitySsnLoginListAccess = function (community, req, done) {
     if (community.configuration &&
@@ -1071,22 +1073,29 @@ auth.role("post.vote", function (post, req, done) {
         .then(function (post) {
         log.info("In post.vote found post");
         if (post) {
-            isAuthenticatedAndCorrectLoginProvider(req, post.Group, function (results) {
-                if (!results) {
-                    done(null, false);
-                }
-                else {
-                    if (post.Group.access === models.Group.ACCESS_PUBLIC) {
-                        done(null, true);
-                    }
-                    else if (req.user && post.user_id === req.user.id) {
-                        done(null, true);
+            if (process.env.PS_TEMP_AGENTS_FABRIC_GROUP_API_KEY &&
+                req.headers["x-api-key"] ===
+                    process.env.PS_TEMP_AGENTS_FABRIC_GROUP_API_KEY) {
+                done(null, true);
+            }
+            else {
+                isAuthenticatedAndCorrectLoginProvider(req, post.Group, function (results) {
+                    if (!results) {
+                        done(null, false);
                     }
                     else {
-                        auth.isGroupMemberOrOpenToCommunityMember(post.Group, req, done);
+                        if (post.Group.access === models.Group.ACCESS_PUBLIC) {
+                            done(null, true);
+                        }
+                        else if (req.user && post.user_id === req.user.id) {
+                            done(null, true);
+                        }
+                        else {
+                            auth.isGroupMemberOrOpenToCommunityMember(post.Group, req, done);
+                        }
                     }
-                }
-            });
+                });
+            }
         }
         else {
             done(null, false);
@@ -1631,6 +1640,7 @@ auth.role("createCommunityGroup.createGroup", function (community, req, done) {
         }
         else if (!auth.isAuthenticated(req) &&
             process.env.PS_TEMP_AGENTS_FABRIC_GROUP_API_KEY) {
+            console.log(`XXXY: ${req.headers["x-api-key"]}`);
             if (req.headers["x-api-key"] ===
                 process.env.PS_TEMP_AGENTS_FABRIC_GROUP_API_KEY) {
                 done(null, true);
