@@ -409,7 +409,7 @@ export class PolicySynthAgentsController {
   };
 
   createConnector = async (
-    req: express.Request,
+    req: YpRequest,
     res: express.Response,
     type: "input" | "output"
   ) => {
@@ -428,6 +428,7 @@ export class PolicySynthAgentsController {
       const createdConnector = await this.agentConnectorManager.createConnector(
         parseInt(agentId),
         connectorClassId,
+        req.user.id,
         name,
         type
       );

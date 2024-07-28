@@ -132,7 +132,7 @@ export class PolicySynthAgentsController {
                     .send("Agent ID, connector class ID, name, and type (input/output) are required");
             }
             try {
-                const createdConnector = await this.agentConnectorManager.createConnector(parseInt(agentId), connectorClassId, name, type);
+                const createdConnector = await this.agentConnectorManager.createConnector(parseInt(agentId), connectorClassId, req.user.id, name, type);
                 res.status(201).json(createdConnector);
             }
             catch (error) {
