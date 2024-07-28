@@ -11,6 +11,7 @@ export declare class PsAgentNode extends PsOperationsBaseNode {
     agent: PsAgentAttributes;
     agentId: number;
     groupId: number;
+    running: boolean;
     private agentState;
     private latestMessage;
     private progress;

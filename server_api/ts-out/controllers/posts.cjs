@@ -33,6 +33,32 @@ var changePostCounter = function (req, postId, column, upDown, next) {
         }
     });
 };
+//TODO: Refactor this as not to repeate it in controlelrs
+const addAgentFabricUserToSessionIfNeeded = async (req) => {
+    let userId = (req.user && req.user.id) ? req.user.id : null;
+    if (!userId &&
+        req.query.agentFabricUserId &&
+        process.env.PS_TEMP_AGENTS_FABRIC_GROUP_API_KEY &&
+        req.headers["x-api-key"] === process.env.PS_TEMP_AGENTS_FABRIC_GROUP_API_KEY) {
+        log.info(`Creating group with temp agents fabric group api key ${req.query.agentFabricUserId}`);
+        userId = req.query.agentFabricUserId;
+        try {
+            const loadedUser = await models.User.findByPk(userId);
+            req.user = loadedUser;
+        }
+        catch (error) {
+            log.error(`Could not find user with id ${userId}`, {
+                context: "create",
+                userId: userId,
+                error: error,
+            });
+            throw error;
+        }
+    }
+    else {
+        log.info("Creating group with user id: " + userId);
+    }
+};
 var decrementOldCountersIfNeeded = function (req, oldEndorsementValue, postId, endorsement, next) {
     if (oldEndorsementValue) {
         if (oldEndorsementValue > 0) {
@@ -1036,7 +1062,21 @@ router.put("/:id/editTranscript", auth.can("edit post"), function (req, res) {
         sendPostOrError(res, req.params.id, "editTranscript", req.user, error, 500);
     });
 });
-router.post("/:groupId", auth.can("create post"), function (req, res) {
+router.post("/:groupId", auth.can("create post"), async function (req, res) {
+    if (!req.user || !req.user.id) {
+        try {
+            await addAgentFabricUserToSessionIfNeeded(req);
+        }
+        catch (error) {
+            log.error("Could not add agent fabric user to session", {
+                context: "create",
+                userId: req.user.id,
+                error: error,
+            });
+            res.sendStatus(500);
+            return;
+        }
+    }
     models.Group.findOne({
         where: {
             id: req.params.groupId,
@@ -1566,7 +1606,21 @@ router.delete("/:id/anonymize_content", auth.can("edit post"), function (req, re
         }
     });
 });
-router.post("/:id/endorse", auth.can("vote on post"), function (req, res) {
+router.post("/:id/endorse", auth.can("vote on post"), async function (req, res) {
+    if (!req.user) {
+        try {
+            await addAgentFabricUserToSessionIfNeeded(req);
+        }
+        catch (error) {
+            log.error("Could not add agent fabric user to session", {
+                context: "create",
+                userId: req.user.id,
+                error: error,
+            });
+            res.sendStatus(500);
+            return;
+        }
+    }
     var post;
     models.Post.findOne({
         where: {

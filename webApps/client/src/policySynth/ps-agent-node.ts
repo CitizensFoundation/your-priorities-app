@@ -21,8 +21,11 @@ export class PsAgentNode extends PsOperationsBaseNode {
 
   @property({ type: Number }) groupId!: number;
 
+  @property({ type: Boolean, reflect: true }) running = false;
+
   @state()
-  private agentState: "running" | "paused" | "stopped" | "error" | "completed" = "stopped";
+  private agentState: "running" | "paused" | "stopped" | "error" | "completed" =
+    "stopped";
 
   @state()
   private latestMessage: string = "";
@@ -84,7 +87,7 @@ export class PsAgentNode extends PsOperationsBaseNode {
   startStatusUpdates() {
     this.statusInterval = window.setInterval(
       () => this.updateAgentStatus(),
-      1000
+      5000
     );
   }
 
@@ -117,6 +120,12 @@ export class PsAgentNode extends PsOperationsBaseNode {
 
         this.requestUpdate();
         this.fire("get-costs");
+
+        if (this.agentState ==="running") {
+          this.running = true;
+        } else {
+          this.running = false;
+        }
       }
     } catch (error) {
       console.error("Failed to get agent status:", error);

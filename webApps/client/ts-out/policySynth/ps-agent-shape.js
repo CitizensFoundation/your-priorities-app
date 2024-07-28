@@ -4,6 +4,7 @@ const api = new PsServerApi();
 export class AgentsShapeView extends dia.ElementView {
     constructor() {
         super(...arguments);
+        this.observer = null;
         this.updateNodePosition = util.debounce(() => {
             const nodeType = this.model.attributes.nodeType;
             const nodeId = nodeType === "agent"
@@ -15,6 +16,13 @@ export class AgentsShapeView extends dia.ElementView {
                 graphPosY: position.y,
             });
         }, 500);
+    }
+    remove() {
+        if (this.observer) {
+            this.observer.disconnect();
+        }
+        super.remove();
+        return this;
     }
     render() {
         super.render();
@@ -47,11 +55,13 @@ export class AgentsShapeView extends dia.ElementView {
         >
      </ps-agent-node>`;
                 div.className = "agentContainer";
+                this.setupRunningObserver(div);
             }
             else {
                 div.innerHTML = `<ps-connector-node
           connectorId="${this.model.attributes.connectorId}"
           groupId="${this.model.attributes.groupId}"
+          agentName="${this.model.attributes.agentName}"
         >
       </ps-connector-node>`;
                 div.className = "connectorContainer";
@@ -65,6 +75,25 @@ export class AgentsShapeView extends dia.ElementView {
         this.listenTo(this.model, "change:position", this.updateNodePosition);
         this.update();
         return this;
+    }
+    setupRunningObserver(div) {
+        const agentNode = div.querySelector('ps-agent-node');
+        if (agentNode) {
+            this.observer = new MutationObserver((mutations) => {
+                mutations.forEach((mutation) => {
+                    if (mutation.type === 'attributes' && mutation.attributeName === 'running') {
+                        const isRunning = agentNode.hasAttribute('running');
+                        if (isRunning) {
+                            div.classList.add('agentContainerRunning');
+                        }
+                        else {
+                            div.classList.remove('agentContainerRunning');
+                        }
+                    }
+                });
+            });
+            this.observer.observe(agentNode, { attributes: true, attributeFilter: ['running'] });
+        }
     }
 }
 export class AgentShape extends shapes.standard.Rectangle {

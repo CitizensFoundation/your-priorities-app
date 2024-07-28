@@ -394,6 +394,7 @@ let PsOperationsView = class PsOperationsView extends PsBaseWithRunningAgentObse
                 label: connector.Class?.configuration.description,
                 text: connector.Class?.configuration.description,
                 connectorId: connector.id,
+                agentName: sourceAgent.configuration.name,
                 groupId: this.groupId,
                 nodeType: 'connector',
                 attrs: {
@@ -519,14 +520,14 @@ let PsOperationsView = class PsOperationsView extends PsBaseWithRunningAgentObse
 
         .agentContainer {
           color: var(--md-sys-color-on-surface);
-          background-color: var(--md-sys-color-surface-container-lowest);
+          background-color: var(--md-sys-color-surface-container-low);
           border-radius: 16px;
           padding: 0;
         }
 
         .agentContainerRunning {
           color: var(--md-sys-color-on-surface);
-          background-color: var(--md-sys-color-surface-container-higest);
+          background-color: var(--md-sys-color-surface-container-lowest);
           border-radius: 16px;
           padding: 0;
         }

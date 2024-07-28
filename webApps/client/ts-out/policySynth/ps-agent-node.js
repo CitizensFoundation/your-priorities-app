@@ -16,6 +16,7 @@ import { PsOperationsBaseNode } from "./ps-operations-base-node.js";
 let PsAgentNode = class PsAgentNode extends PsOperationsBaseNode {
     constructor() {
         super();
+        this.running = false;
         this.agentState = "stopped";
         this.latestMessage = "";
         this.menuOpen = false;
@@ -50,7 +51,7 @@ let PsAgentNode = class PsAgentNode extends PsOperationsBaseNode {
         this.menuOpen = false;
     }
     startStatusUpdates() {
-        this.statusInterval = window.setInterval(() => this.updateAgentStatus(), 1000);
+        this.statusInterval = window.setInterval(() => this.updateAgentStatus(), 5000);
     }
     stopStatusUpdates() {
         if (this.statusInterval) {
@@ -74,6 +75,12 @@ let PsAgentNode = class PsAgentNode extends PsOperationsBaseNode {
                 }
                 this.requestUpdate();
                 this.fire("get-costs");
+                if (this.agentState === "running") {
+                    this.running = true;
+                }
+                else {
+                    this.running = false;
+                }
             }
         }
         catch (error) {
@@ -322,6 +329,9 @@ __decorate([
 __decorate([
     property({ type: Number })
 ], PsAgentNode.prototype, "groupId", void 0);
+__decorate([
+    property({ type: Boolean, reflect: true })
+], PsAgentNode.prototype, "running", void 0);
 __decorate([
     state()
 ], PsAgentNode.prototype, "agentState", void 0);

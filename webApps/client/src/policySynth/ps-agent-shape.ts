@@ -4,6 +4,16 @@ import { PsServerApi } from "./PsServerApi";
 const api = new PsServerApi();
 
 export class AgentsShapeView extends dia.ElementView {
+  private observer: MutationObserver | null = null;
+
+  override remove(): this {
+    if (this.observer) {
+      this.observer.disconnect();
+    }
+    super.remove();
+    return this;
+  }
+
   override render() {
     super.render();
 
@@ -43,10 +53,12 @@ export class AgentsShapeView extends dia.ElementView {
         >
      </ps-agent-node>`;
         div.className = "agentContainer";
+        this.setupRunningObserver(div);
       } else {
         div.innerHTML = `<ps-connector-node
           connectorId="${this.model.attributes.connectorId}"
           groupId="${this.model.attributes.groupId}"
+          agentName="${this.model.attributes.agentName}"
         >
       </ps-connector-node>`;
         div.className = "connectorContainer";
@@ -65,6 +77,27 @@ export class AgentsShapeView extends dia.ElementView {
     this.update();
     return this;
   }
+
+  private setupRunningObserver(div: HTMLDivElement) {
+    const agentNode = div.querySelector('ps-agent-node');
+    if (agentNode) {
+      this.observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+          if (mutation.type === 'attributes' && mutation.attributeName === 'running') {
+            const isRunning = agentNode.hasAttribute('running');
+            if (isRunning) {
+              div.classList.add('agentContainerRunning');
+            } else {
+              div.classList.remove('agentContainerRunning');
+            }
+          }
+        });
+      });
+
+      this.observer.observe(agentNode, { attributes: true, attributeFilter: ['running'] });
+    }
+  }
+
 
   updateNodePosition = util.debounce(() => {
     const nodeType = this.model.attributes.nodeType;

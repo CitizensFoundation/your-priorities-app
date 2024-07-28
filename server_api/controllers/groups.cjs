@@ -2831,8 +2831,51 @@ router.get(
   }
 );
 
-const createGroup = (req, res) => {
+//TODO: Refactor this as not to repeate it in controlelrs
+const addAgentFabricUserToSessionIfNeeded = async (req) => {
+  let userId = (req.user && req.user.id) ? req.user.id : null;
+  if (
+    !userId &&
+    req.query.agentFabricUserId &&
+    process.env.PS_TEMP_AGENTS_FABRIC_GROUP_API_KEY &&
+    req.headers["x-api-key"] === process.env.PS_TEMP_AGENTS_FABRIC_GROUP_API_KEY
+  ) {
+    log.info(`Creating group with temp agents fabric group api key ${req.query.agentFabricUserId}`);
+    userId = req.query.agentFabricUserId;
+    try {
+      const loadedUser = await models.User.findByPk(userId);
+      req.user = loadedUser;
+    } catch(error) {
+      log.error(`Could not find user with id ${userId}`, {
+        context: "create",
+        userId: userId,
+        error: error,
+      });
+      throw error;
+    }
+  } else {
+    log.info("Creating group with user id: " + userId);
+  }
+}
+
+const createGroup = async (req, res) => {
   console.log("Creating group with community id: " + req.params.communityId);
+
+  if (!req.user) {
+    try {
+      await addAgentFabricUserToSessionIfNeeded(req);
+    } catch(error) {
+      log.error("Could not add agent fabric user to session", {
+        context: "create",
+        userId: req.user.id,
+        error: error,
+      });
+      res.sendStatus(500);
+      return;
+    }
+
+  }
+
   var group = models.Group.build({
     name: req.body.name,
     objectives: req.body.objectives || req.body.description,
@@ -2894,7 +2937,7 @@ const createGroup = (req, res) => {
                 },
                 "medium"
               );
-              if (group.configuration.groupType==3) {
+              if (group.configuration.groupType == 3) {
                 import("./policySynthAgents.js").then(
                   ({ PolicySynthAgentsController }) => {
                     PolicySynthAgentsController.setupApiKeysForGroup(group)
@@ -2904,10 +2947,22 @@ const createGroup = (req, res) => {
                           context: "create",
                           userId: req.user.id,
                         });
-                        sendGroupOrError(res, group, "createGroup", req.user, error);
+                        sendGroupOrError(
+                          res,
+                          group,
+                          "createGroup",
+                          req.user,
+                          error
+                        );
                       })
                       .catch((error) => {
-                        sendGroupOrError(res, group, "createGroup", req.user, error);
+                        sendGroupOrError(
+                          res,
+                          group,
+                          "createGroup",
+                          req.user,
+                          error
+                        );
                         log.error("Policy Synth Agents Api Keys Not Created", {
                           groupId: group.id,
                           context: "create",

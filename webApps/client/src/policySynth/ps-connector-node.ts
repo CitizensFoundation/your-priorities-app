@@ -1,15 +1,17 @@
-import { PropertyValueMap, css, html, nothing } from 'lit';
-import { property, customElement } from 'lit/decorators.js';
+import { PropertyValueMap, css, html, nothing } from "lit";
+import { property, customElement } from "lit/decorators.js";
 
-import '@material/web/iconbutton/icon-button.js';
-import '@material/web/progress/circular-progress.js';
-import '@material/web/menu/menu.js';
-import '@material/web/menu/menu-item.js';
+import "@material/web/iconbutton/icon-button.js";
+import "@material/web/progress/circular-progress.js";
+import "@material/web/menu/menu.js";
+import "@material/web/menu/menu-item.js";
 
-import { MdMenu } from '@material/web/menu/menu.js';
-import { PsOperationsBaseNode } from './ps-operations-base-node.js';
+import { MdMenu } from "@material/web/menu/menu.js";
+import { PsOperationsBaseNode } from "./ps-operations-base-node.js";
+import { YpNavHelpers } from "../common/YpNavHelpers.js";
+import { YpFormattingHelpers } from "../common/YpFormattingHelpers.js";
 
-@customElement('ps-connector-node')
+@customElement("ps-connector-node")
 export class PsAgentConnector extends PsOperationsBaseNode {
   @property({ type: Object })
   connector!: PsAgentConnectorAttributes;
@@ -20,9 +22,23 @@ export class PsAgentConnector extends PsOperationsBaseNode {
   @property({ type: Number })
   groupId!: number;
 
+  @property({ type: String })
+  agentName!: string;
+
+  @property({ type: Number })
+  groupIdWithContent: number | undefined;
+
   override connectedCallback(): void {
     super.connectedCallback();
-    this.connector = window.psAppGlobals.getConnectorInstance(this.connectorId)!;
+    this.connector = window.psAppGlobals.getConnectorInstance(
+      this.connectorId
+    )!;
+    //TODO: Fix this by adding .answsers to the configuration
+    //@ts-ignore
+    if (this.connector.configuration["groupId"]) {
+      //@ts-ignore
+      this.groupIdWithContent = this.connector.configuration["groupId"];
+    }
   }
 
   static override get styles() {
@@ -79,14 +95,14 @@ export class PsAgentConnector extends PsOperationsBaseNode {
   }
 
   override editNode() {
-    this.fire('edit-node', {
+    this.fire("edit-node", {
       nodeId: this.nodeId,
       element: this.connector,
     });
   }
 
   toggleMenu() {
-    const menu = this.shadowRoot?.getElementById('menu') as MdMenu;
+    const menu = this.shadowRoot?.getElementById("menu") as MdMenu;
     menu.open = !menu.open;
   }
 
@@ -101,19 +117,40 @@ export class PsAgentConnector extends PsOperationsBaseNode {
     `;
   }
 
+  openGroup() {
+    const gotoLocation = `/group/${this.groupIdWithContent}`;
+    this.fire("yp-change-header", {
+      headerTitle: YpFormattingHelpers.truncate(this.agentName, 80),
+      documentTitle: this.connector.configuration.name,
+      headerDescription: "", //this.truncate(this.post.Group.objectives,45),
+      backPath: "/group/" + this.groupId,
+    });
+    YpNavHelpers.redirectTo(gotoLocation);
+  }
+
   override render() {
     //TODO: Add typedefs for the different configurations
     if (this.connector) {
       return html`
         <div class="layout vertical mainContainer">
           ${this.renderImage()}
-          ${this.connector.configuration['name']
+          ${this.connector.configuration["name"]
             ? html`<div class="name ">
-                ${this.connector.configuration['name']}
+                ${this.connector.configuration["name"]}
               </div>`
             : nothing}
           <div class="name instanceName">${this.connector.Class?.name}</div>
           <md-icon class="typeIconCore">checklist</md-icon>
+
+          <md-icon-button class="editButton" @click="${this.editNode}"
+            ><md-icon>settings</md-icon></md-icon-button
+          >
+
+          ${this.groupIdWithContent ? html`
+            <md-icon-button @click="${this.openGroup}">
+              <md-icon>open_in_browser</md-icon>
+            </md-icon-button>
+              `: nothing}
 
           <md-icon-button class="editButton" @click="${this.editNode}"
             ><md-icon>settings</md-icon></md-icon-button
