@@ -69,6 +69,9 @@ export abstract class YpCollection extends YpBaseElementWithLogin {
   @property({ type: String })
   createFabLabel: string | undefined;
 
+  @property({ type: String })
+  headerImageUrl: string | undefined;
+
   collectionType: string;
   collectionItemType: string | null;
   collectionCreateFabIcon: string;

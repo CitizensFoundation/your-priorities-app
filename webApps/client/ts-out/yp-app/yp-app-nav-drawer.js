@@ -154,9 +154,6 @@ let YpAppNavDrawer = class YpAppNavDrawer extends YpBaseElement {
           padding: 8px;
         }
 
-        md-icon {
-        }
-
         .languageSelector {
           margin-left: 8px;
           margin-right: 8px;

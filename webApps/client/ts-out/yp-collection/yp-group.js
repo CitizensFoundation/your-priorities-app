@@ -679,14 +679,11 @@ let YpGroup = class YpGroup extends YpCollection {
                 group.Community &&
                 group.Community.CommunityHeaderImages &&
                 group.Community.CommunityHeaderImages.length > 0) {
-                YpMediaHelpers.setupTopHeaderImage(this, group.Community.CommunityHeaderImages);
+                this.headerImageUrl = YpMediaHelpers.getImageFormatUrl(group.Community.CommunityHeaderImages, 0);
             }
             else if (group.GroupHeaderImages &&
                 group.GroupHeaderImages.length > 0) {
-                YpMediaHelpers.setupTopHeaderImage(this, group.GroupHeaderImages);
-            }
-            else {
-                YpMediaHelpers.setupTopHeaderImage(this, null);
+                this.headerImageUrl = YpMediaHelpers.getImageFormatUrl(group.GroupHeaderImages, 0);
             }
             let backPath;
             let headerTitle;

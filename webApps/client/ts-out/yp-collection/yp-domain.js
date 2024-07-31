@@ -24,10 +24,7 @@ let YpDomain = class YpDomain extends YpCollection {
             this.collectionItems = domain.Communities;
             this.setFabIconIfAccess(domain.only_admins_can_create_communities, YpAccessHelpers.checkDomainAccess(domain));
             if (domain.DomainHeaderImages && domain.DomainHeaderImages.length > 0) {
-                YpMediaHelpers.setupTopHeaderImage(this, domain.DomainHeaderImages);
-            }
-            else {
-                YpMediaHelpers.setupTopHeaderImage(this, null);
+                this.headerImageUrl = YpMediaHelpers.getImageFormatUrl(domain.DomainHeaderImages, 0);
             }
             window.appGlobals.theme.setTheme(domain.theme_id, domain.configuration);
         }

@@ -33,10 +33,7 @@ let YpCommunity = class YpCommunity extends YpCollection {
             this.setFabIconIfAccess(community.only_admins_can_create_groups, YpAccessHelpers.checkCommunityAccess(community));
             if (community.CommunityHeaderImages &&
                 community.CommunityHeaderImages.length > 0) {
-                YpMediaHelpers.setupTopHeaderImage(this, community.CommunityHeaderImages);
-            }
-            else {
-                YpMediaHelpers.setupTopHeaderImage(this, null);
+                this.headerImageUrl = YpMediaHelpers.getImageFormatUrl(community.CommunityHeaderImages, 0);
             }
             if (!community.configuration.theme &&
                 community.Domain?.configuration.theme) {

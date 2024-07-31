@@ -2,6 +2,7 @@ import { nothing } from "lit";
 import { YpBaseElement } from "../common/yp-base-element.js";
 import "../common/yp-image.js";
 import "@material/web/iconbutton/outlined-icon-button.js";
+import "@material/web/iconbutton/filled-tonal-icon-button.js";
 import "@material/web/menu/menu.js";
 import "@material/web/menu/menu-item.js";
 import "../yp-magic-text/yp-magic-text.js";
@@ -32,6 +33,7 @@ export declare class YpCollectionHeader extends YpBaseElement {
     renderFirstBoxContent(): import("lit-html").TemplateResult<1> | typeof nothing;
     _openAnalyticsAndPromption(): void;
     _openAdmin(): void;
+    _openCreateGroupFolder(): void;
     renderMenu(): import("lit-html").TemplateResult<1>;
     renderFooter(): import("lit-html").TemplateResult<1>;
     render(): import("lit-html").TemplateResult<1>;

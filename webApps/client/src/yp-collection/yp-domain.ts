@@ -34,12 +34,10 @@ export class YpDomain extends YpCollection {
       );
 
       if (domain.DomainHeaderImages && domain.DomainHeaderImages.length > 0) {
-        YpMediaHelpers.setupTopHeaderImage(
-          this,
-          domain.DomainHeaderImages as Array<YpImageData>
+        this.headerImageUrl = YpMediaHelpers.getImageFormatUrl(
+          domain.DomainHeaderImages as Array<YpImageData>,
+          0
         );
-      } else {
-        YpMediaHelpers.setupTopHeaderImage(this, null);
       }
 
       window.appGlobals.theme.setTheme(domain.theme_id, domain.configuration);

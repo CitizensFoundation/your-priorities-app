@@ -13,6 +13,7 @@ import { YpCollectionHelpers } from "../common/YpCollectionHelpers.js";
 
 import "../common/yp-image.js";
 import "@material/web/iconbutton/outlined-icon-button.js";
+import "@material/web/iconbutton/filled-tonal-icon-button.js";
 import "@material/web/menu/menu.js";
 import "@material/web/menu/menu-item.js";
 
@@ -107,7 +108,7 @@ export class YpCollectionHeader extends YpBaseElement {
   get collectionVideoURL(): string | undefined {
     if (
       this.collection &&
-      this.collection.configuration  &&
+      this.collection.configuration &&
       this.collection.configuration.useVideoCover
     ) {
       const collectionVideos = this.collectionVideos;
@@ -166,7 +167,9 @@ export class YpCollectionHeader extends YpBaseElement {
         }
 
         .collection-name {
-          font-family: var(--md-ref-typeface-brand); /*var(--md-sys-typescale-title-medium-font);*/
+          font-family: var(
+            --md-ref-typeface-brand
+          ); /*var(--md-sys-typescale-title-medium-font);*/
           font-size: var(--md-sys-typescale-title-medium-size, 22px);
           font-weight: var(--md-sys-typescale-title-medium-weight, 400);
           line-height: var(--md-sys-typescale-title-medium-line-height);
@@ -184,8 +187,6 @@ export class YpCollectionHeader extends YpBaseElement {
         }
 
         .nameText {
-          background-color: var(--md-sys-color-primary-container);
-          color: var(--md-sys-color-on-primary-container);
           border-radius: 16px;
         }
 
@@ -193,14 +194,7 @@ export class YpCollectionHeader extends YpBaseElement {
           width: 100%;
         }
 
-        .large-card {
-          background-color: var(--md-sys-color-surface-container-low);
-          color: var(--md-sys-color-on-surface);
-          height: 243px;
-          width: 432px;
-          border-radius: 16px;
-          padding: 0 !important;
-          margin-top: 0 !important;
+        .collectionDescription {
         }
 
         .image,
@@ -221,10 +215,11 @@ export class YpCollectionHeader extends YpBaseElement {
         }
 
         .description {
-          padding: 16px;
-          vertical-align: middle;
-          font-size: 16px;
-          line-height: 1.35;
+          padding: 32px;
+          padding-top: 0;
+          font-size: 18px;
+          font-weight: 400;
+          line-height: 1.40;
         }
 
         .description[widetext] {
@@ -240,6 +235,12 @@ export class YpCollectionHeader extends YpBaseElement {
         :host {
           margin-top: 32px;
           margin-bottom: 32px;
+        }
+
+        .topContainer {
+          margin-top: 32px;
+          max-width: 1200px;
+          width: 100%;
         }
 
         @media (max-width: 960px) {
@@ -259,7 +260,7 @@ export class YpCollectionHeader extends YpBaseElement {
             max-width: 306px;
           }
 
-          .large-card {
+          .collectionDescription {
             width: 100%;
             height: 100%;
             margin-left: 8px;
@@ -422,22 +423,28 @@ export class YpCollectionHeader extends YpBaseElement {
     );
   }
 
+  _openCreateGroupFolder() {}
+
   renderMenu() {
     return html`
       <div class="menuButton">
         <div class="layout horizontal">
-          <md-icon-button
-            id="menuButton"
+          <md-filled-tonal-icon-button
+            ?hidden="${this.collectionType === "domain"}"
+            @click="${this._openCreateGroupFolder}"
+            title="${this.openMenuLabel}"
+            ><md-icon>create_new_folder</md-icon>
+          </md-filled-tonal-icon-button>
+          <md-filled-tonal-icon-button
             @click="${this._openAnalyticsAndPromption}"
             title="${this.openMenuLabel}"
-            ><md-icon>analytics</md-icon>
-          </md-icon-button>
-          <md-icon-button
-            id="menuButton"
+            ><md-icon>monitoring</md-icon>
+          </md-filled-tonal-icon-button>
+          <md-filled-tonal-icon-button
             @click="${this._openAdmin}"
             title="${this.openMenuLabel}"
             ><md-icon>settings</md-icon>
-          </md-icon-button>
+          </md-filled-tonal-icon-button>
         </div>
       </div>
     `;
@@ -458,16 +465,9 @@ export class YpCollectionHeader extends YpBaseElement {
     return html`
       ${this.collection
         ? html`
-            <div class="layout horizontal wrap">
-              <div
-                is-video="${ifDefined(this.collectionVideoURL)}"
-                id="cardImage"
-                class="large-card imageCard top-card"
-              >
-                ${this.renderFirstBoxContent()}
-              </div>
-              <div id="card" class="large-card textBox layout horizontal">
-                <div class="descriptionContainer">
+            <div class="layout vertical center-center">
+              <div class="layout vertical topContainer">
+                <div class="layout horizontal ${!this.wide ? "wrap" : ""}">
                   <div class="nameText">
                     <yp-magic-text
                       class="collection-name"
@@ -487,24 +487,37 @@ export class YpCollectionHeader extends YpBaseElement {
                     >
                     </yp-magic-text>
                   </div>
-                  <yp-magic-text
-                    id="description"
-                    class="description collectionDescription"
-                    .textType="${YpCollectionHelpers.descriptionTextType(
-                      this.collectionType
-                    )}"
-                    ?largeFont="${this.largeFont}"
-                    .contentLanguage="${this.collection.language}"
-                    truncate="300"
-                    .content="${this.collection.description ||
-                    this.collection.objectives}"
-                    .contentId="${this.collection.id}"
-                  >
-                  </yp-magic-text>
+                  ${this.hasCollectionAccess ? this.renderMenu() : nothing}
                 </div>
+                <div class="layout horizontal ${!this.wide ? "wrap" : ""}">
+                  <div
+                    is-video="${ifDefined(this.collectionVideoURL)}"
+                    id="cardImage"
+                    class="collectionDescriptionimageCard top-card"
+                  >
+                    ${this.renderFirstBoxContent()}
+                  </div>
+                  <div id="card" class="layout horizontal">
+                    <div class="descriptionContainer">
+                      <yp-magic-text
+                        id="description"
+                        class="description collectionDescription"
+                        .textType="${YpCollectionHelpers.descriptionTextType(
+                          this.collectionType
+                        )}"
+                        ?largeFont="${this.largeFont}"
+                        .contentLanguage="${this.collection.language}"
+                        truncate="300"
+                        .content="${this.collection.description ||
+                        this.collection.objectives}"
+                        .contentId="${this.collection.id}"
+                      >
+                      </yp-magic-text>
+                    </div>
 
-                ${this.hasCollectionAccess ? this.renderMenu() : nothing}
-                ${this.renderFooter()}
+                    ${this.renderFooter()}
+                  </div>
+                </div>
               </div>
             </div>
           `

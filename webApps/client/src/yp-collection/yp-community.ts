@@ -43,12 +43,9 @@ export class YpCommunity extends YpCollection {
         community.CommunityHeaderImages &&
         community.CommunityHeaderImages.length > 0
       ) {
-        YpMediaHelpers.setupTopHeaderImage(
-          this,
-          community.CommunityHeaderImages as Array<YpImageData>
-        );
-      } else {
-        YpMediaHelpers.setupTopHeaderImage(this, null);
+        this.headerImageUrl = YpMediaHelpers.getImageFormatUrl(
+          community.CommunityHeaderImages as Array<YpImageData>,
+          0);
       }
 
       if (

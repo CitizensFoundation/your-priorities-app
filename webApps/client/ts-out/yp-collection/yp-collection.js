@@ -442,4 +442,7 @@ __decorate([
 __decorate([
     property({ type: String })
 ], YpCollection.prototype, "createFabLabel", void 0);
+__decorate([
+    property({ type: String })
+], YpCollection.prototype, "headerImageUrl", void 0);
 //# sourceMappingURL=yp-collection.js.map
