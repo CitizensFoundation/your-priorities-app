@@ -286,6 +286,17 @@ export class PolicySynthAgentsController {
                 res.status(500).send("Internal Server Error");
             }
         };
+        this.getAgentCostsDetail = async (req, res) => {
+            try {
+                const agentId = parseInt(req.params.id);
+                const costRows = await this.agentCostManager.getDetailedAgentCosts(agentId);
+                res.json(costRows);
+            }
+            catch (error) {
+                console.error("Error calculating agent costs detail:", error);
+                res.status(500).send("Internal Server Error");
+            }
+        };
         this.wsClients = wsClients;
         this.agentQueueManager = new AgentQueueManager();
         this.agentCostManager = new AgentCostManager();
@@ -408,6 +419,7 @@ export class PolicySynthAgentsController {
         this.router.post("/:groupId/:id/control", auth.can("edit group"), this.controlAgent);
         this.router.get("/:groupId/:id/status", auth.can("view group"), this.getAgentStatus);
         this.router.get("/:groupId/:id/costs", auth.can("view group"), this.getAgentCosts);
+        this.router.get("/:groupId/:id/costs/detail", auth.can("view group"), this.getAgentCostsDetail);
         this.router.get("/:groupId/registry/agentClasses", auth.can("view group"), this.getActiveAgentClasses);
         this.router.get("/:groupId/registry/connectorClasses", auth.can("view group"), this.getActiveConnectorClasses);
         this.router.get("/:groupId/registry/aiModels", auth.can("view group"), this.getActiveAiModels);

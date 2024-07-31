@@ -1,6 +1,7 @@
 import { nothing } from "lit";
 import "@material/web/button/text-button.js";
 import "../yp-user/yp-user-info.js";
+import "../common/languages/yp-language-selector.js";
 import "./ac-notification-list-post.js";
 import "./ac-notification-list-point.js";
 import "./ac-notification-list-general-item.js";

@@ -29,6 +29,16 @@ export class PsServerApi extends YpServerApiBase {
     );
   }
 
+  public async getDetailedAgentCosts(groupId: number, agentId: number): Promise<PsDetailedAgentCostResults[]> {
+    return this.fetchWrapper(
+      this.baseUrlPath + `${this.baseAgentsPath}${groupId}/${agentId}/costs/detail`,
+      {
+        method: 'GET',
+      },
+      false
+    ) as Promise<PsDetailedAgentCostResults[]>;
+  }
+
   public async addAgentAiModel(
     groupId: number,
     agentId: number,

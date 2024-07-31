@@ -38,6 +38,10 @@ export class YpBaseElement extends LitElement {
           font-size: 14px;
           margin-bottom: 16px;
         }
+
+        .themeToggleText {
+          margin-top: 8px;
+        }
       `,
             typescaleStyles,
         ];
@@ -220,7 +224,7 @@ export class YpBaseElement extends LitElement {
                 ><md-icon>light_mode</md-icon></md-outlined-icon-button
               >
             `}
-        <div ?hidden="${hideText}">${this.t("Light/Dark")}</div>
+        <div class="themeToggleText" ?hidden="${hideText}">${this.t("Light/Dark")}</div>
       </div>
 
       <div
@@ -242,7 +246,7 @@ export class YpBaseElement extends LitElement {
                 ><md-icon>contrast_rtl_off</md-icon></md-outlined-icon-button
               >
             `}
-        <div ?hidden="${hideText}">${this.t("Contrast")}</div>
+        <div class="themeToggleText" ?hidden="${hideText}">${this.t("Contrast")}</div>
       </div>`;
     }
 }

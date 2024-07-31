@@ -60,6 +60,7 @@ let YpApp = class YpApp extends YpBaseElement {
         this.userDrawerOpened = false;
         this.navDrawerOpened = false;
         this.languageLoaded = false;
+        this.breadcrumbs = [];
         this.anchor = null;
         this.previousSearches = [];
         this.useHardBack = false;
@@ -338,7 +339,7 @@ let YpApp = class YpApp extends YpBaseElement {
         class="topActionItem"
         @click="${this._openNavDrawer}"
         title="${this.t("menu.help")}"
-        ><md-icon>menu</md-icon></md-icon-button
+        ><md-icon>explore</md-icon></md-icon-button
       >
 
       <div
@@ -357,7 +358,7 @@ let YpApp = class YpApp extends YpBaseElement {
           <md-menu
             id="helpMenu"
             positioning="popover"
-            .menuCorner="${Corner.START_END}"
+            .menuCorner="${Corner.START_START}"
             anchor="helpIconButton"
           >
             ${this.translatedPages(this.pages).map((page, index) => html `
@@ -409,12 +410,12 @@ let YpApp = class YpApp extends YpBaseElement {
         if (this.keepOpenForGroup || this.closePostHeader) {
             titleString = "";
         }
-        debugger;
         return html `
       <yp-top-app-bar
         role="navigation"
         .titleString="${titleString}"
         aria-label="top navigation"
+        ?hideBreadcrumbs="${!titleString || titleString == ""}"
         ?hidden="${this.appMode !== "main" ||
             window.appGlobals.domain?.configuration.hideAppBarIfWelcomeHtml}"
       >
@@ -489,7 +490,7 @@ let YpApp = class YpApp extends YpBaseElement {
     }
     renderTopBar() {
         return html `
-      <yp-drawer id="leftDrawer" @closed="${this._closeNavDrawer}">
+      <yp-drawer id="leftDrawer" position="right" @closed="${this._closeNavDrawer}">
         <yp-app-nav-drawer
           id="ypNavDrawer"
           .homeLink="${this.homeLink}"
@@ -1206,6 +1207,24 @@ let YpApp = class YpApp extends YpBaseElement {
             this.showBack = false;
             this.headerTitle = "";
         }
+        if (header.headerTitle && header.backPath) {
+            this.updateBreadcrumbs({
+                name: header.headerTitle || '',
+                url: header.backPath || ''
+            });
+        }
+    }
+    updateBreadcrumbs(newBreadcrumb) {
+        const existingIndex = this.breadcrumbs.findIndex(b => b.url === newBreadcrumb.url);
+        if (existingIndex !== -1) {
+            // If the breadcrumb already exists, trim the array to this point
+            this.breadcrumbs = this.breadcrumbs.slice(0, existingIndex + 1);
+        }
+        else {
+            // Otherwise, add the new breadcrumb
+            this.breadcrumbs = [...this.breadcrumbs, newBreadcrumb];
+        }
+        this.$$("yp-top-app-bar").breadcrumbs = this.breadcrumbs;
     }
     goBack() {
         if (this.backPath) {
@@ -1420,6 +1439,9 @@ __decorate([
 __decorate([
     property({ type: String })
 ], YpApp.prototype, "keepOpenForGroup", void 0);
+__decorate([
+    property({ type: Array })
+], YpApp.prototype, "breadcrumbs", void 0);
 YpApp = __decorate([
     customElement("yp-app")
 ], YpApp);

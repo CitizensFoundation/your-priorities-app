@@ -106,6 +106,7 @@
     "typescript": "^5.5.3"
   },
   "scripts": {
+    "copyInLocalAgents": "cp -R ../../../policy-synth/agents/ts-out/* ./node_modules/@policysynth/agents/;cp ../../../policy-synth/agents/src/*.d.ts ./node_modules/@policysynth/agents/;",
     "prepublishOnly": "npm pack && node repack",
     "publish_live": "npm pack && node repack && node publish.js https://registry.npmjs.org/",
     "publish_local": "npm pack && node repack && node publish.js http://localhost:4873",

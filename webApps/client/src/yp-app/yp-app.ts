@@ -66,6 +66,7 @@ import { YpDrawer } from "./yp-drawer.js";
 import { YpSnackbar } from "./yp-snackbar.js";
 import { PsAppGlobals } from "../policySynth/PsAppGlobals.js";
 import { PsServerApi } from "../policySynth/PsServerApi.js";
+import { YpTopAppBar } from "./yp-top-app-bar.js";
 
 declare global {
   interface Window {
@@ -177,6 +178,9 @@ export class YpApp extends YpBaseElement {
   //TODO: Refactor this
   @property({ type: String })
   keepOpenForGroup: string | undefined;
+
+  @property({ type: Array })
+  breadcrumbs: Array<{ name: string; url: string }> = [];
 
   anchor: HTMLElement | null = null;
 
@@ -579,7 +583,7 @@ export class YpApp extends YpBaseElement {
         class="topActionItem"
         @click="${this._openNavDrawer}"
         title="${this.t("menu.help")}"
-        ><md-icon>menu</md-icon></md-icon-button
+        ><md-icon>explore</md-icon></md-icon-button
       >
 
       <div
@@ -598,7 +602,7 @@ export class YpApp extends YpBaseElement {
           <md-menu
             id="helpMenu"
             positioning="popover"
-            .menuCorner="${Corner.START_END}"
+            .menuCorner="${Corner.START_START}"
             anchor="helpIconButton"
           >
             ${this.translatedPages(this.pages).map(
@@ -656,13 +660,12 @@ export class YpApp extends YpBaseElement {
       titleString = "";
     }
 
-    debugger;
-
     return html`
       <yp-top-app-bar
         role="navigation"
         .titleString="${titleString}"
         aria-label="top navigation"
+        ?hideBreadcrumbs="${!titleString || titleString==""}"
         ?hidden="${this.appMode !== "main" ||
         window.appGlobals.domain?.configuration.hideAppBarIfWelcomeHtml}"
       >
@@ -740,7 +743,7 @@ export class YpApp extends YpBaseElement {
 
   renderTopBar() {
     return html`
-      <yp-drawer id="leftDrawer" @closed="${this._closeNavDrawer}">
+      <yp-drawer id="leftDrawer" position="right" @closed="${this._closeNavDrawer}">
         <yp-app-nav-drawer
           id="ypNavDrawer"
           .homeLink="${this.homeLink}"
@@ -1578,6 +1581,25 @@ export class YpApp extends YpBaseElement {
       this.showBack = false;
       this.headerTitle = "";
     }
+
+    if (header.headerTitle && header.backPath) {
+      this.updateBreadcrumbs({
+        name: header.headerTitle || '',
+        url: header.backPath || ''
+      });
+    }
+  }
+
+  updateBreadcrumbs(newBreadcrumb: {name: string, url: string}) {
+    const existingIndex = this.breadcrumbs.findIndex(b => b.url === newBreadcrumb.url);
+    if (existingIndex !== -1) {
+      // If the breadcrumb already exists, trim the array to this point
+      this.breadcrumbs = this.breadcrumbs.slice(0, existingIndex + 1);
+    } else {
+      // Otherwise, add the new breadcrumb
+      this.breadcrumbs = [...this.breadcrumbs, newBreadcrumb];
+    }
+    (this.$$("yp-top-app-bar") as YpTopAppBar).breadcrumbs = this.breadcrumbs;
   }
 
   goBack() {

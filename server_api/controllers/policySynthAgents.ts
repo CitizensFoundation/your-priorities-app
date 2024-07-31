@@ -269,6 +269,11 @@ export class PolicySynthAgentsController {
       this.getAgentCosts
     );
     this.router.get(
+      "/:groupId/:id/costs/detail",
+      auth.can("view group"),
+      this.getAgentCostsDetail
+    );
+    this.router.get(
       "/:groupId/registry/agentClasses",
       auth.can("view group"),
       this.getActiveAgentClasses
@@ -607,6 +612,17 @@ export class PolicySynthAgentsController {
       res.json(totalCosts);
     } catch (error) {
       console.error("Error calculating agent costs:", error);
+      res.status(500).send("Internal Server Error");
+    }
+  };
+
+  getAgentCostsDetail = async (req: express.Request, res: express.Response) => {
+    try {
+      const agentId = parseInt(req.params.id);
+      const costRows = await this.agentCostManager.getDetailedAgentCosts(agentId);
+      res.json(costRows);
+    } catch (error) {
+      console.error("Error calculating agent costs detail:", error);
       res.status(500).send("Internal Server Error");
     }
   };

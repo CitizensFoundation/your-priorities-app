@@ -5,6 +5,8 @@ import "@material/web/tabs/primary-tab.js";
 import "@material/web/textfield/outlined-text-field.js";
 import "@material/web/iconbutton/outlined-icon-button.js";
 import "@material/web/button/filled-tonal-button.js";
+import "@vaadin/grid";
+import "@vaadin/grid/vaadin-grid-sort-column.js";
 import "./ps-operations-view.js";
 import "./PsServerApi.js";
 import { PsServerApi } from "./PsServerApi.js";
@@ -27,6 +29,7 @@ export declare class PsOperationsManager extends PsBaseWithRunningAgentObserver 
     selectedInputOutputType: string | null;
     agentElement: PsOperationsView;
     groupId: number;
+    detailedCosts: PsDetailedAgentCostResults[];
     private activeAiModels;
     api: PsServerApi;
     constructor();
@@ -38,9 +41,11 @@ export declare class PsOperationsManager extends PsBaseWithRunningAgentObserver 
     openEditNodeDialog(event: CustomEvent): void;
     openAddConnectorDialog(event: CustomEvent): void;
     openAddAgentDialog(event: CustomEvent): void;
-    tabChanged(): void;
     randomizeTheme(): void;
     renderTotalCosts(): import("lit-html").TemplateResult<1>;
+    getDetailedAgentCosts(): Promise<void>;
+    renderDetailedCostsTab(): import("lit-html").TemplateResult<1>;
+    tabChanged(): void;
     render(): import("lit-html").TemplateResult<1>;
     static get styles(): any[];
 }

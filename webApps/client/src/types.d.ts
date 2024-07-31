@@ -745,6 +745,8 @@ type YpAiGenerateImageTypes = "logo" | "icon";
 interface YpUserData {
   id: number;
   name: string;
+  created_at?: Date;
+  updated_at?: Date;
   email?: string;
   profile_data?: YpUserProfileData;
   isSamlEmployee?: boolean;

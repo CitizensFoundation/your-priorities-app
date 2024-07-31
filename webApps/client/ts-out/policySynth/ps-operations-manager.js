@@ -5,7 +5,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 import { css, html } from "lit";
-import { property, customElement, query } from "lit/decorators.js";
+import { property, customElement, query, state } from "lit/decorators.js";
 import "@material/web/iconbutton/icon-button.js";
 import "@material/web/progress/linear-progress.js";
 import "@material/web/tabs/tabs.js";
@@ -13,6 +13,8 @@ import "@material/web/tabs/primary-tab.js";
 import "@material/web/textfield/outlined-text-field.js";
 import "@material/web/iconbutton/outlined-icon-button.js";
 import "@material/web/button/filled-tonal-button.js";
+import "@vaadin/grid";
+import "@vaadin/grid/vaadin-grid-sort-column.js";
 import "./ps-operations-view.js";
 import "./PsServerApi.js";
 import { PsServerApi } from "./PsServerApi.js";
@@ -21,6 +23,7 @@ import "./ps-add-agent-dialog.js";
 import "./ps-add-connector-dialog.js";
 import { PsBaseWithRunningAgentObserver } from "./ps-base-with-running-agents.js";
 import { PsAppGlobals } from "./PsAppGlobals.js";
+import { YpFormattingHelpers } from "../common/YpFormattingHelpers.js";
 let PsOperationsManager = class PsOperationsManager extends PsBaseWithRunningAgentObserver {
     constructor() {
         super();
@@ -33,6 +36,7 @@ let PsOperationsManager = class PsOperationsManager extends PsBaseWithRunningAge
         this.selectedAgentIdForConnector = null;
         this.selectedInputOutputType = null;
         this.groupId = 30995; //!: number;
+        this.detailedCosts = [];
         this.activeAiModels = [];
         this.api = new PsServerApi();
         window.psAppGlobals = new PsAppGlobals(this.api);
@@ -189,9 +193,6 @@ let PsOperationsManager = class PsOperationsManager extends PsBaseWithRunningAge
     openAddAgentDialog(event) {
         this.showAddAgentDialog = true;
     }
-    tabChanged() {
-        this.activeTabIndex = this.$$("#tabBar").activeTabIndex;
-    }
     randomizeTheme() {
         const randomColor = Math.floor(Math.random() * 16777215).toString(16);
         this.fire("yp-theme-color", `#${randomColor}`);
@@ -199,6 +200,82 @@ let PsOperationsManager = class PsOperationsManager extends PsBaseWithRunningAge
     renderTotalCosts() {
         return html `${this.t("Costs")}
     ${this.totalCosts !== undefined ? `($${this.totalCosts.toFixed(2)})` : ""}`;
+    }
+    async getDetailedAgentCosts() {
+        if (this.currentAgentId) {
+            try {
+                this.detailedCosts = await this.api.getDetailedAgentCosts(this.groupId, this.currentAgentId);
+                this.requestUpdate();
+            }
+            catch (error) {
+                console.error("Error fetching detailed agent costs:", error);
+            }
+        }
+    }
+    renderDetailedCostsTab() {
+        return html `
+      <vaadin-grid .items="${this.detailedCosts}">
+        <vaadin-grid-sort-column
+          hidden
+          path="createdAt"
+          header="${this.t("Date")}"
+        ></vaadin-grid-sort-column>
+        <vaadin-grid-sort-column
+          path="agentName"
+          header="${this.t("Agent")}"
+        ></vaadin-grid-sort-column>
+        <vaadin-grid-sort-column
+          path="aiModelName"
+          header="${this.t("AI Model")}"
+          auto-width
+        ></vaadin-grid-sort-column>
+        <vaadin-grid-sort-column
+          path="tokenInCount"
+          header="${this.t("Tokens In")}"
+          .renderer="${(root, _column, rowData) => {
+            root.textContent = `${YpFormattingHelpers.number(rowData.item.tokenInCount)}`;
+        }}"
+        ></vaadin-grid-sort-column>
+        <vaadin-grid-sort-column
+          path="tokenOutCount"
+          header="${this.t("Tokens Out")}"
+          .renderer="${(root, _column, rowData) => {
+            root.textContent = `${YpFormattingHelpers.number(rowData.item.tokenOutCount)}`;
+        }}"
+        ></vaadin-grid-sort-column>
+        <vaadin-grid-sort-column
+          path="costIn"
+          header="${this.t("Cost In")}"
+          .renderer="${(root, _column, rowData) => {
+            root.textContent = `$${rowData.item.costIn.toFixed(4)}`;
+        }}"
+        >
+        </vaadin-grid-sort-column>
+        <vaadin-grid-sort-column
+          path="costOut"
+          header="${this.t("Cost Out")}"
+          .renderer="${(root, _column, rowData) => {
+            root.textContent = `$${rowData.item.costOut.toFixed(4)}`;
+        }}"
+        >
+        </vaadin-grid-sort-column>
+        <vaadin-grid-sort-column
+          path="totalCost"
+          header="${this.t("Total Cost")}"
+          .renderer="${(root, _column, rowData) => {
+            root.textContent = `$${rowData.item.totalCost.toFixed(4)}`;
+        }}"
+        >
+        </vaadin-grid-sort-column>
+      </vaadin-grid>
+    `;
+    }
+    tabChanged() {
+        this.activeTabIndex = this.$$("#tabBar").activeTabIndex;
+        if (this.activeTabIndex === 2) {
+            // Assuming the costs tab is the third tab (index 2)
+            this.getDetailedAgentCosts();
+        }
     }
     render() {
         if (this.isFetchingAgent) {
@@ -240,15 +317,24 @@ let PsOperationsManager = class PsOperationsManager extends PsBaseWithRunningAge
             <md-icon slot="icon">checklist</md-icon>
             ${this.t("Audit Log")}
           </md-primary-tab>
-          <md-primary-tab id="crt-tab" aria-controls="crt-panel">
+          <md-primary-tab id="costs-tab" aria-controls="costs-panel">
             <md-icon slot="icon">account_balance</md-icon>
             ${this.renderTotalCosts()}
           </md-primary-tab>
         </md-tabs>
-        <ps-operations-view
-          .currentAgent="${this.currentAgent}"
-          .groupId="${this.groupId}"
-        ></ps-operations-view>
+
+        ${this.activeTabIndex === 0
+                ? html `
+              <ps-operations-view
+                .currentAgent="${this.currentAgent}"
+                .groupId="${this.groupId}"
+              ></ps-operations-view>
+            `
+                : ""}
+        ${this.activeTabIndex === 1
+                ? html ` <!-- Render Audit Log tab content here --> `
+                : ""}
+        ${this.activeTabIndex === 2 ? this.renderDetailedCostsTab() : ""}
         ${this.renderThemeToggle()}
       `;
         }
@@ -404,6 +490,69 @@ let PsOperationsManager = class PsOperationsManager extends PsBaseWithRunningAge
         [hidden] {
           display: none !important;
         }
+
+        vaadin-grid {
+          background-color: var(--md-sys-color-surface);
+          color: var(--md-sys-color-on-surface);
+          font-family: var(--md-sys-typescale-body-medium-font-family-name);
+          font-size: var(--md-sys-typescale-body-medium-font-size);
+          font-weight: var(--md-sys-typescale-body-medium-font-weight);
+          line-height: var(--md-sys-typescale-body-medium-line-height);
+        }
+
+        vaadin-grid::part(header-cell) {
+          background-color: var(--md-sys-color-surface-container);
+          color: var(--md-sys-color-on-surface-variant);
+          font-weight: var(--md-sys-typescale-title-small-font-weight);
+        }
+
+        vaadin-grid::part(cell) {
+          color: var(--md-sys-color-on-surface-container);
+        }
+
+        vaadin-grid::part(body-cell) {
+          background-color: var(--md-sys-color-surface-container-lowest);
+          border-bottom: 1px solid var(--md-sys-color-outline-variant);
+        }
+
+        vaadin-grid::part(row) {
+          background-color: var(--md-sys-color-surface-container-lowest);
+          color: var(--md-sys-color-on-surface);
+        }
+
+        vaadin-grid::part(row):nth-child(even) {
+          background-color: var(--md-sys-color-surface-variant);
+        }
+
+        vaadin-grid::part(row:hover) {
+          background-color: var(--md-sys-color-surface-container-highest);
+        }
+
+        vaadin-grid::part(selected-row) {
+          background-color: var(--md-sys-color-secondary-container);
+          color: var(--md-sys-color-on-secondary-container);
+        }
+
+        /* Ensure proper spacing and alignment */
+        vaadin-grid-cell-content {
+          padding: 12px 16px;
+        }
+
+        /* Style for the sort indicators */
+        vaadin-grid-sorter {
+          color: var(--md-sys-color-on-surface-variant);
+        }
+
+        vaadin-grid-sorter[direction] {
+          color: var(--md-sys-color-primary);
+        }
+
+        /* Adjust these values as needed for your specific layout */
+        vaadin-grid {
+          height: 400px;
+          margin-top: 16px;
+          margin-bottom: 16px;
+        }
       `,
         ];
     }
@@ -447,6 +596,9 @@ __decorate([
 __decorate([
     property({ type: Number })
 ], PsOperationsManager.prototype, "groupId", void 0);
+__decorate([
+    state()
+], PsOperationsManager.prototype, "detailedCosts", void 0);
 PsOperationsManager = __decorate([
     customElement("ps-operations-manager")
 ], PsOperationsManager);

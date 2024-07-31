@@ -8,6 +8,8 @@ import "@material/web/button/text-button.js";
 
 import "../yp-user/yp-user-info.js";
 
+import "../common/languages/yp-language-selector.js";
+
 import "./ac-notification-list-post.js";
 import "./ac-notification-list-point.js";
 import "./ac-notification-list-general-item.js";
@@ -131,6 +133,14 @@ export class AcNotificationList extends YpBaseElementWithLogin {
         .notificationHeader {
           margin-bottom: 2px;
         }
+
+        yp-language-selector {
+          margin: 16px;
+        }
+
+        .themeSelection {
+          margin-top: 16px;
+        }
       `,
     ];
   }
@@ -140,7 +150,7 @@ export class AcNotificationList extends YpBaseElementWithLogin {
       case "postNotification":
       case "notification.post.new":
       case "notification.post.endorsement":
-          return html`
+        return html`
           <ac-notification-list-post
             class="notificationItem"
             .notification="${notification}"
@@ -149,7 +159,7 @@ export class AcNotificationList extends YpBaseElementWithLogin {
       case "pointNotification":
       case "notification.point.new":
       case "notification.point.quality":
-          return html`
+        return html`
           <ac-notification-list-point
             class="notificationItem"
             .notification="${notification}"
@@ -204,6 +214,14 @@ export class AcNotificationList extends YpBaseElementWithLogin {
                 @open-user-edit="${this._openEdit}"
                 .user="${this.loggedInUser}"
               ></yp-user-info>
+              <div class="layout horizontal center-center themeSelection">
+                ${this.renderThemeToggle()}
+              </div>
+              <div class="languageSelector layout vertical self-start">
+                <yp-language-selector
+                  class="languageSelector"
+                ></yp-language-selector>
+              </div>
               <div
                 class="notificationHeader layout horizontal center-center"
                 ?hidden="${!this.notificationsLength}"

@@ -241,7 +241,7 @@ export class YpAppNavDrawer extends YpBaseElement {
       <div class="material">
         ${this.homeLink
           ? html`
-              <div class="header layout vertical center-center">
+              <div hidden class="header layout vertical center-center">
                 <md-icon icon="home" @click="${this._goBack}"></md-icon>
                 <div role="button" @click="${this._goBack}">
                   ${this.homeLink.name}
@@ -249,11 +249,11 @@ export class YpAppNavDrawer extends YpBaseElement {
               </div>
             `
           : nothing}
-        <div class="languageSelector layout vertical self-start">
+        <div hidden class="languageSelector layout vertical self-start">
           <yp-language-selector class="languageSelector"></yp-language-selector>
         </div>
 
-        <div class="layout horizontal center-center themeSelection">
+        <div hidden class="layout horizontal center-center themeSelection">
           ${this.renderThemeToggle()}
         </div>
 

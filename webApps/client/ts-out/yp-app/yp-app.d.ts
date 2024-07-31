@@ -74,6 +74,10 @@ export declare class YpApp extends YpBaseElement {
     languageLoaded: boolean;
     keepOpenForPost: string | undefined;
     keepOpenForGroup: string | undefined;
+    breadcrumbs: Array<{
+        name: string;
+        url: string;
+    }>;
     anchor: HTMLElement | null;
     previousSearches: Array<string>;
     storedBackPath: string | undefined;
@@ -182,6 +186,10 @@ export declare class YpApp extends YpBaseElement {
     _closeUserDrawer(): Promise<void>;
     _login(): void;
     _onChangeHeader(event: CustomEvent): void;
+    updateBreadcrumbs(newBreadcrumb: {
+        name: string;
+        url: string;
+    }): void;
     goBack(): void;
     _onSearch(e: CustomEvent): void;
     _onUserChanged(event: CustomEvent): void;

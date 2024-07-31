@@ -13,6 +13,11 @@ export class PsServerApi extends YpServerApiBase {
             method: 'DELETE',
         });
     }
+    async getDetailedAgentCosts(groupId, agentId) {
+        return this.fetchWrapper(this.baseUrlPath + `${this.baseAgentsPath}${groupId}/${agentId}/costs/detail`, {
+            method: 'GET',
+        }, false);
+    }
     async addAgentAiModel(groupId, agentId, modelId, size) {
         return this.fetchWrapper(`${this.baseUrlPath}/agents/${groupId}/${agentId}/ai-models`, {
             method: 'POST',
