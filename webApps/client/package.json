@@ -16,7 +16,7 @@
     "locales/**/*"
   ],
   "dependencies": {
-    "@policysynth/agents": "^1.3.23",
+    "@policysynth/agents": "^1.3.28",
     "@fingerprintjs/fingerprintjs": "^3.4.2",
     "@joint/core": "^4.0.4",
     "@kano/twemoji": "^1.0.0",
