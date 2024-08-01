@@ -312,6 +312,7 @@ interface YpGroupConfiguration extends YpCollectionConfiguration {
   registrationQuestions?: string;
   allowGenerativeImages?: boolean;
   groupType?: number;
+  hideGroupType?: boolean;
   ltp?: YpLtpConfiguration;
   allOurIdeas?: AoiConfigurationData;
   staticHtml?: {
@@ -578,6 +579,7 @@ interface YpGroupData extends YpCollectionData {
   community_id: number;
   access: number;
   configuration: YpGroupConfiguration;
+  is_group_folder?: boolean;
   private_access_configuration?: YpGroupPrivateAccessConfiguration[];
   Community?: YpCommunityData;
   Categories?: Array<YpCategoryData>;

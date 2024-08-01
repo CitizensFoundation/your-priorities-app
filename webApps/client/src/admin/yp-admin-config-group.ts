@@ -128,14 +128,14 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
     "ideaGenerationGroupType",
     "allOurIdeasGroupType",
     "htmlContentGroupType",
-    "policySynthAgentsWorkflow"
+    "policySynthAgentsWorkflow",
   ];
 
   static GroupType = {
     ideaGeneration: 0,
     allOurIdeas: 1,
     htmlContent: 2,
-    policySynthAgentsWorkflow: 3
+    policySynthAgentsWorkflow: 3,
   };
 
   constructor() {
@@ -689,6 +689,11 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
           onChange: "_inheritThemeChanged",
         },
         {
+          text: "mediaUploads",
+          type: "html",
+          templateData: this.renderHeaderImageUploads(),
+        },
+        {
           text: "themeSelector",
           type: "html",
           templateData: html`
@@ -703,6 +708,10 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
               .themeConfiguration="${this.group.configuration.theme!}"
             ></yp-theme-selector>
           `,
+        },
+        {
+          text: "hideGroupType",
+          type: "checkbox",
         },
       ] as Array<YpStructuredConfigData>,
     } as YpConfigTabData;

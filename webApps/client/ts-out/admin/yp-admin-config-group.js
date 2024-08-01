@@ -74,7 +74,7 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
             "ideaGenerationGroupType",
             "allOurIdeasGroupType",
             "htmlContentGroupType",
-            "policySynthAgentsWorkflow"
+            "policySynthAgentsWorkflow",
         ];
         this.groupAccessOptions = {
             0: "public",
@@ -561,6 +561,11 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
                     onChange: "_inheritThemeChanged",
                 },
                 {
+                    text: "mediaUploads",
+                    type: "html",
+                    templateData: this.renderHeaderImageUploads(),
+                },
+                {
                     text: "themeSelector",
                     type: "html",
                     templateData: html `
@@ -575,6 +580,10 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
               .themeConfiguration="${this.group.configuration.theme}"
             ></yp-theme-selector>
           `,
+                },
+                {
+                    text: "hideGroupType",
+                    type: "checkbox",
                 },
             ],
         };
@@ -2087,7 +2096,7 @@ YpAdminConfigGroup.GroupType = {
     ideaGeneration: 0,
     allOurIdeas: 1,
     htmlContent: 2,
-    policySynthAgentsWorkflow: 3
+    policySynthAgentsWorkflow: 3,
 };
 __decorate([
     property({ type: Number })

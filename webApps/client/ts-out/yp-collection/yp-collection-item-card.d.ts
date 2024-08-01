@@ -15,6 +15,7 @@ export declare class YpCollectionItemCard extends YpBaseElement {
     goToItem(event: CustomEvent): void;
     _setupFontNameFontSize(): void;
     get isGroupFolder(): boolean | undefined;
+    get collectionItemCount(): number;
     updated(changedProperties: Map<string | number | symbol, unknown>): void;
     renderLogoImage(): import("lit-html").TemplateResult<1>;
     renderDataViz(): import("lit-html").TemplateResult<1>;

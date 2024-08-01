@@ -154,6 +154,9 @@ let YpCollectionHeader = class YpCollectionHeader extends YpBaseElement {
             super.styles,
             css `
         .stats {
+          width: 100%;
+          text-align: right;
+          justify-content: flex-end;
         }
 
         .bannerImage {
@@ -164,11 +167,13 @@ let YpCollectionHeader = class YpCollectionHeader extends YpBaseElement {
 
         .nameAndActions {
           width: 100%;
+          margin-top: 64px;
+          margin-bottom: 24px;
         }
 
-        md-icon-button {
-          margin-top: 10px;
-          margin-right: 4px;
+        .allContent {
+          margin-left: 64px;
+          margin-right: 64px;
         }
 
         .collection-name {
@@ -195,6 +200,10 @@ let YpCollectionHeader = class YpCollectionHeader extends YpBaseElement {
 
         .descriptionContainer {
           width: 100%;
+        }
+
+        .description {
+          padding-left: 32px;
         }
 
         .image,
@@ -234,6 +243,14 @@ let YpCollectionHeader = class YpCollectionHeader extends YpBaseElement {
           margin-top: 0px;
           max-width: 1080px;
           width: 100%;
+        }
+
+        md-filled-tonal-icon-button {
+          margin-left: 32px;
+        }
+
+        .collectionDescriptionimageCard {
+          margin-top: 16px;
         }
 
         @media (max-width: 960px) {
@@ -422,7 +439,7 @@ let YpCollectionHeader = class YpCollectionHeader extends YpBaseElement {
     }
     renderStats() {
         return html `
-      <div class="stats layout horizontal">
+      <div class="layout horizontal stats">
         <yp-collection-stats
           .collectionType="${this.collectionType}"
           .collection="${this.collection}"
@@ -452,53 +469,55 @@ let YpCollectionHeader = class YpCollectionHeader extends YpBaseElement {
             <div class="layout vertical center-center">
               <div class="layout vertical topContainer">
                 ${this.renderHeaderBanner()}
-                <div
-                  class="layout horizontal nameAndActions ${!this.wide
+                <div class="allContent">
+                  <div
+                    class="layout horizontal nameAndActions ${!this.wide
                 ? "wrap"
                 : ""}"
-                >
-                  <div class="nameText">
-                    <yp-magic-text
-                      class="collection-name"
-                      role="heading"
-                      aria-level="1"
-                      aria-label="${this.collection.name}"
-                      .textType="${YpCollectionHelpers.nameTextType(this.collectionType)}"
-                      .contentLanguage="${this.collection.language}"
-                      ?disableTranslation="${this.collection.configuration
-                ?.disableNameAutoTranslation}"
-                      textOnly
-                      .content="${this.collection.name}"
-                      .contentId="${this.collection.id}"
-                    >
-                    </yp-magic-text>
-                  </div>
-                  <div class="flex"></div>
-                  ${this.hasCollectionAccess ? this.renderMenu() : nothing}
-                </div>
-                <div class="layout horizontal ${!this.wide ? "wrap" : ""}">
-                  <div
-                    is-video="${ifDefined(this.collectionVideoURL)}"
-                    id="cardImage"
-                    class="collectionDescriptionimageCard top-card"
                   >
-                    ${this.renderFirstBoxContent()}
-                  </div>
-                  <div id="card" class="layout vertical">
-                    <div class="descriptionContainer">
+                    <div class="nameText">
                       <yp-magic-text
-                        id="description"
-                        class="description collectionDescription"
-                        .textType="${YpCollectionHelpers.descriptionTextType(this.collectionType)}"
-                        ?largeFont="${this.largeFont}"
+                        class="collection-name"
+                        role="heading"
+                        aria-level="1"
+                        aria-label="${this.collection.name}"
+                        .textType="${YpCollectionHelpers.nameTextType(this.collectionType)}"
                         .contentLanguage="${this.collection.language}"
-                        truncate="300"
-                        .content="${this.collection.description ||
-                this.collection.objectives}"
+                        ?disableTranslation="${this.collection.configuration
+                ?.disableNameAutoTranslation}"
+                        textOnly
+                        .content="${this.collection.name}"
                         .contentId="${this.collection.id}"
                       >
                       </yp-magic-text>
-                      ${this.renderStats()}
+                    </div>
+                    <div class="flex"></div>
+                    ${this.hasCollectionAccess ? this.renderMenu() : nothing}
+                  </div>
+                  <div class="layout horizontal ${!this.wide ? "wrap" : ""}">
+                    <div
+                      is-video="${ifDefined(this.collectionVideoURL)}"
+                      id="cardImage"
+                      class="collectionDescriptionimageCard top-card"
+                    >
+                      ${this.renderFirstBoxContent()}
+                    </div>
+                    <div id="card" class="layout vertical">
+                      <div class="descriptionContainer">
+                        <yp-magic-text
+                          id="description"
+                          class="description collectionDescription"
+                          .textType="${YpCollectionHelpers.descriptionTextType(this.collectionType)}"
+                          ?largeFont="${this.largeFont}"
+                          .contentLanguage="${this.collection.language}"
+                          truncate="300"
+                          .content="${this.collection.description ||
+                this.collection.objectives}"
+                          .contentId="${this.collection.id}"
+                        >
+                        </yp-magic-text>
+                        ${this.renderStats()}
+                      </div>
                     </div>
                   </div>
                 </div>

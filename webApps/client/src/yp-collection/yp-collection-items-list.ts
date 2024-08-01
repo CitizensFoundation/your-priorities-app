@@ -43,8 +43,18 @@ export class YpCollectionItemsList extends YpBaseElement {
       css`
         .card {
           padding: 0;
-          padding-top: 24px;
           width: 100%;
+        }
+
+        lit-virtualizer {
+          margin-top: 80px;
+          margin-left: 32px;
+          margin-right: 32px;
+          padding-left: 32px;
+          padding-right: 32px;
+          //TODO: Check this !important usage
+          max-width: 888px !important;
+          min-width: 888px !important;
         }
 
         a {
@@ -53,6 +63,15 @@ export class YpCollectionItemsList extends YpBaseElement {
         }
 
         @media (max-width: 600px) {
+          lit-virtualizer {
+            margin-top: 80px;
+            margin-left: 8px;
+            margin-right: 8px;
+            padding-left: 8px;
+            padding-right: 8px;
+            width: 100% !important;
+            min-width: 100% !important;
+          }
           .card {
             margin-bottom: 16px;
           }
@@ -79,7 +98,7 @@ export class YpCollectionItemsList extends YpBaseElement {
   }
 
   renderItem(item: YpCollectionData, index: number): TemplateResult {
-    return html`<div style="width:100%">
+    return html`
       <div class="layout vertical center-center">
         <yp-collection-item-card
           class="card"
@@ -90,7 +109,7 @@ export class YpCollectionItemsList extends YpBaseElement {
           @click="${this._selectedItemChanged.bind(this)}"
         ></yp-collection-item-card>
       </div>
-    </div> `;
+    `;
   }
 
   get pluralItemType() {

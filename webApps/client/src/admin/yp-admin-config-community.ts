@@ -129,7 +129,6 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
               >
                 ${this.renderActionMenu()}
               </div>
-              ${this.renderHeaderImageUploads()}
               <div class="flex"></div>
             </div>
           </div>
@@ -722,6 +721,11 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
             >
             </yp-language-selector>
           `,
+        },
+        {
+          text:"mediaUploads",
+          type:"html",
+          templateData: this.renderHeaderImageUploads(),
         },
         {
           text: "facebookPixelId",

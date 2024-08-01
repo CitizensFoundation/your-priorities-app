@@ -459,6 +459,12 @@ var updateGroupConfigParameters = function (req, group) {
     "configuration.hideVoteCount",
     truthValueFromBody(req.body.hideVoteCount)
   );
+
+  group.set(
+    "configuration.hideGroupType",
+    truthValueFromBody(req.body.hideGroupType)
+  );
+
   group.set(
     "configuration.hideVoteCountUntilVoteCompleted",
     truthValueFromBody(req.body.hideVoteCountUntilVoteCompleted)

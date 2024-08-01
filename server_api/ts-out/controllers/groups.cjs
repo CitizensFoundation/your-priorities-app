@@ -271,6 +271,7 @@ var updateGroupConfigParameters = function (req, group) {
         ? req.body.welcomePageId
         : null);
     group.set("configuration.hideVoteCount", truthValueFromBody(req.body.hideVoteCount));
+    group.set("configuration.hideGroupType", truthValueFromBody(req.body.hideGroupType));
     group.set("configuration.hideVoteCountUntilVoteCompleted", truthValueFromBody(req.body.hideVoteCountUntilVoteCompleted));
     group.set("configuration.hidePostCover", truthValueFromBody(req.body.hidePostCover));
     group.set("configuration.hidePostDescription", truthValueFromBody(req.body.hidePostDescription));

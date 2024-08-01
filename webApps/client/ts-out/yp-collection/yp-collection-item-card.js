@@ -23,6 +23,9 @@ let YpCollectionItemCard = class YpCollectionItemCard extends YpBaseElement {
         .description {
           line-height: 25px;
           font-size: 17px;
+          flex: 1;
+          min-width: 0; /* This prevents overflow issues in some browsers */
+          width: 100%;
         }
 
         .groupType {
@@ -37,13 +40,16 @@ let YpCollectionItemCard = class YpCollectionItemCard extends YpBaseElement {
         }
 
         .stats {
-          position: absolute;
-          bottom: 0;
-          right: 0;
+          width: 100%;
+          text-align: right;
+          justify-content: flex-end;
         }
 
         .collectionCard {
-          width: 100%;
+          padding-right: 32px;
+          padding-top: 16px;
+          padding-bottom: 16px;
+          margin-bottom: 16px;
         }
 
         a {
@@ -67,11 +73,7 @@ let YpCollectionItemCard = class YpCollectionItemCard extends YpBaseElement {
         yp-image {
           padding: 0;
           margin: 0;
-        }
-
-        yp-image {
-          padding: 0;
-          margin: 0;
+          margin-right: 80px;
         }
 
         .collectionCard {
@@ -82,10 +84,16 @@ let YpCollectionItemCard = class YpCollectionItemCard extends YpBaseElement {
           vertical-align: text-top;
         }
 
-        .collection-name {
+        .collection-name,
+        .collectionItemCount {
           cursor: pointer;
           font-size: 22px;
           font-weight: 700;
+          margin-bottom: 16px;
+        }
+
+        .collectionItemCount {
+          padding-left: 8px;
         }
 
         yp-image[archived] {
@@ -224,27 +232,26 @@ let YpCollectionItemCard = class YpCollectionItemCard extends YpBaseElement {
         }
     }
     get groupTypeName() {
-        if (this.item &&
-            this.item.configuration.groupType) {
-            switch (parseInt(this.item.configuration.groupType)) {
+        if (this.item.configuration.hideGroupType === true) {
+            return "";
+        }
+        else if (this.item.configuration.groupType) {
+            switch (parseInt(this.item.configuration
+                .groupType)) {
                 case YpGroupType.AllOurIdeas:
                     return this.t("pairwiseVoting");
-                    break;
                 case YpGroupType.IdeaGenerationAndDebate:
                     return this.t("ideas");
-                    break;
                 case YpGroupType.PsAgentWorkflow:
                     return this.t("workFlow");
-                    break;
                 case YpGroupType.StaticHtml:
                     return this.t("html");
-                    break;
                 default:
-                    return "";
+                    return this.t("ideas");
             }
         }
         else {
-            return "";
+            return this.t("ideas");
         }
     }
     goToItem(event) {
@@ -292,9 +299,24 @@ let YpCollectionItemCard = class YpCollectionItemCard extends YpBaseElement {
         }
     }
     get isGroupFolder() {
-        return (this.collection &&
+        return ((this.collection &&
             this.collection.configuration.groupType ===
-                YpGroupType.Folder);
+                YpGroupType.Folder) ||
+            this.collection.is_group_folder);
+    }
+    get collectionItemCount() {
+        if (this.statsCollectionType === "group") {
+            return this.item.counter_posts || 0;
+        }
+        else if (this.statsCollectionType === "community") {
+            return this.item.counter_groups || 0;
+        }
+        else if (this.statsCollectionType === "domain") {
+            return this.item.counter_communities || 0;
+        }
+        else {
+            return 0;
+        }
     }
     updated(changedProperties) {
         super.updated(changedProperties);
@@ -338,8 +360,7 @@ let YpCollectionItemCard = class YpCollectionItemCard extends YpBaseElement {
     }
     renderCollectionType() {
         if (this.item?.configuration &&
-            this.item.configuration.groupType) {
-            debugger;
+            this.item.configuration.hideGroupType !== true) {
             return html `<div class="groupType" ?is-folder="${this.isGroupFolder}">
         ${this.groupTypeName}
       </div>`;
@@ -356,21 +377,30 @@ let YpCollectionItemCard = class YpCollectionItemCard extends YpBaseElement {
             : html ` ${this.renderLogoImage()} `}
         <div class="informationText layout vertical flex">
           ${this.renderCollectionType()}
-          <yp-magic-text
-            id="collectionName"
-            class="collection-name"
-            ?archived="${this.archived}"
-            ?featured="${this.featured}"
-            ?largefont="${this.largeFont}"
-            @click="${this.goToItem}"
-            .textType="${YpCollectionHelpers.nameTextType(this.itemType)}"
-            .contentLanguage="${this.contentLanguage}"
-            ?disableTranslation="${this.collection.configuration
+          <div class="layout horizontal">
+            <yp-magic-text
+              id="collectionName"
+              class="collection-name"
+              ?archived="${this.archived}"
+              ?featured="${this.featured}"
+              ?largefont="${this.largeFont}"
+              @click="${this.goToItem}"
+              .textType="${YpCollectionHelpers.nameTextType(this.itemType)}"
+              .contentLanguage="${this.contentLanguage}"
+              ?disableTranslation="${this.collection.configuration
             ?.disableNameAutoTranslation}"
-            textOnly
-            .content="${this.contentName}"
-            .contentId="${this.contentId}"
-          ></yp-magic-text>
+              textOnly
+              .content="${this.contentName}"
+              .contentId="${this.contentId}"
+            ></yp-magic-text>
+            ${this.collectionItemCount > 0
+            ? html `
+                  <div class="collectionItemCount">
+                    (${this.collectionItemCount})
+                  </div>
+                `
+            : nothing}
+          </div>
           <yp-magic-text
             id="description"
             class="description layout vertical withPointer"
@@ -386,13 +416,12 @@ let YpCollectionItemCard = class YpCollectionItemCard extends YpBaseElement {
             truncate="300"
           >
           </yp-magic-text>
-        </div>
-
-        <div class="stats layout horizontal">
-          <yp-collection-stats
-            .collectionType="${this.statsCollectionType}"
-            .collection="${this.statsCollection}"
-          ></yp-collection-stats>
+          <div class="stats layout horizontal">
+            <yp-collection-stats
+              .collectionType="${this.statsCollectionType}"
+              .collection="${this.statsCollection}"
+            ></yp-collection-stats>
+          </div>
         </div>
 
         ${!this.collection

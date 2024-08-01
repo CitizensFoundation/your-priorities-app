@@ -46,6 +46,7 @@ export declare abstract class YpCollection extends YpBaseElementWithLogin {
     setFabIconIfAccess(onlyAdminCanCreate: boolean, hasCollectionAccess: boolean): void;
     _useHardBack(configuration: YpCollectionConfiguration): boolean;
     createNewCollection(): void;
+    get hasCustomTheme(): boolean;
     static get styles(): any[];
     renderHeader(): TemplateResult<1> | typeof nothing;
     renderNewsAndMapTabs(): TemplateResult<1>;

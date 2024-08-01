@@ -224,6 +224,17 @@ export class YpCollection extends YpBaseElementWithLogin {
         }
         YpNavHelpers.redirectTo(`/admin/${childCollectionType}/new/${this.collectionId}`);
     }
+    get hasCustomTheme() {
+        if (this.collection &&
+            this.collection.configuration &&
+            this.collection.configuration.theme) {
+            return !this.collection.configuration.theme
+                .oneDynamicColor;
+        }
+        else {
+            return false;
+        }
+    }
     // UI
     static get styles() {
         return [
@@ -234,16 +245,29 @@ export class YpCollection extends YpBaseElementWithLogin {
           --md-fab-container-shape: 4px;
           //--md-fab-label-text-size: 16px !important;
           --md-fab-label-text-weight: 600 !important;
+          margin-bottom: 24px;
         }
 
         md-tabs {
           border-bottom-color: transparent;
         }
 
+        .mainContent {
+          margin-left: 64px;
+          margin-right: 64px;
+        }
+
         md-secondary-tab {
           min-width: 140px;
-          padding-right: 8px;
-          padding-left: 8px;
+          padding-right: 16px;
+          padding-left: 16px;
+          --md-secondary-tab-active-indicator-height: 3px;
+        }
+
+        md-secondary-tab[has-custom-theme] {
+          --md-secondary-tab-active-indicator-color: var(
+            --md-sys-color-primary-container
+          );
         }
 
         md-icon-button {
@@ -305,12 +329,15 @@ export class YpCollection extends YpBaseElementWithLogin {
     }
     renderNewsAndMapTabs() {
         return html `
-      <md-secondary-tab ?hidden="${this.hideNewsfeed}"
+      <md-secondary-tab
+        ?has-custom-theme="${this.hasCustomTheme}"
+        ?hidden="${this.hideNewsfeed}"
         >${this.t("post.tabs.news")}<md-icon slot="icon"
           >rss_feed</md-icon
         ></md-secondary-tab
       >
       <md-secondary-tab
+        ?has-custom-theme="${this.hasCustomTheme}"
         ?hidden="${this.locationHidden || this.collectionType == "domain"}"
       >
         ${this.t("post.tabs.location")}<md-icon slot="icon"
@@ -327,7 +354,9 @@ export class YpCollection extends YpBaseElementWithLogin {
             @change="${this._selectTab}"
             .activeTabIndex="${this.selectedTab}"
           >
-            <md-secondary-tab ?hidden="${this.hideCollection}"
+            <md-secondary-tab
+              ?has-custom-theme="${this.hasCustomTheme}"
+              ?hidden="${this.hideCollection}"
               >${this.collectionTabLabel}
               <md-icon slot="icon">groups</md-icon></md-secondary-tab
             >
@@ -381,7 +410,7 @@ export class YpCollection extends YpBaseElementWithLogin {
         <div class="layout vertical center-center">
           <div class="layout vertical topContainer">
             ${this.renderHeader()}
-            <div class="layout horizontal">
+            <div class="layout horizontal mainContent">
               ${this.renderTabs()}
               <div class="flex"></div>
               ${this.createFabIcon && this.createFabLabel
