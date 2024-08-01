@@ -11,11 +11,14 @@ export declare class YpCollectionItemCard extends YpBaseElement {
     get archived(): boolean;
     get featured(): boolean;
     connectedCallback(): void;
+    get groupTypeName(): string;
     goToItem(event: CustomEvent): void;
     _setupFontNameFontSize(): void;
+    get isGroupFolder(): boolean | undefined;
     updated(changedProperties: Map<string | number | symbol, unknown>): void;
     renderLogoImage(): import("lit-html").TemplateResult<1>;
     renderDataViz(): import("lit-html").TemplateResult<1>;
+    renderCollectionType(): import("lit-html").TemplateResult<1> | typeof nothing;
     renderCardInfo(): import("lit-html").TemplateResult<1>;
     get statsCollection(): YpCollectionData;
     get statsCollectionType(): string;

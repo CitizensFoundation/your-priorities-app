@@ -87,6 +87,7 @@ let YpAdminConfigCommunity = class YpAdminConfigCommunity extends YpAdminConfigB
               >
                 ${this.renderActionMenu()}
               </div>
+              ${this.renderHeaderImageUploads()}
               <div class="flex"></div>
             </div>
           </div>

@@ -54,12 +54,12 @@ let YpCollectionStats = class YpCollectionStats extends YpBaseElement {
 
               ${this.collectionType === 'community'
                 ? html `
-                    <md-icon
+                    <md-icon hidden
                       title="${this.t('stats.groups')}"
                       class="stats-icon"
                       >groups</md-icon
                     >
-                    <div title="${this.t('stats.groups')}" class="stats-text">
+                    <div hidden title="${this.t('stats.groups')}" class="stats-text">
                       ${YpFormattingHelpers.number(this.collection.counter_groups)}
                     </div>
                   `

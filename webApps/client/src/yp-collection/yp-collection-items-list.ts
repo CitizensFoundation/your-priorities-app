@@ -16,8 +16,8 @@ import { ifDefined } from "lit/directives/if-defined.js";
 
 import "./yp-collection-item-card.js";
 
-@customElement("yp-collection-items-grid")
-export class YpCollectionItemsGrid extends YpBaseElement {
+@customElement("yp-collection-items-list")
+export class YpCollectionItemsList extends YpBaseElement {
   @property({ type: Object })
   collection: YpCollectionData | undefined;
 
@@ -44,10 +44,7 @@ export class YpCollectionItemsGrid extends YpBaseElement {
         .card {
           padding: 0;
           padding-top: 24px;
-        }
-
-        .card[wide-padding] {
-          padding: 16px !important;
+          width: 100%;
         }
 
         a {

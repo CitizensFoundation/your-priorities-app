@@ -2,7 +2,7 @@ import { YpAccessHelpers } from "../common/YpAccessHelpers.js";
 import { YpMediaHelpers } from "../common/YpMediaHelpers.js";
 
 import { YpCollection } from "./yp-collection.js";
-import { YpCollectionItemsGrid } from "./yp-collection-items-grid.js";
+import { YpCollectionItemsList } from "./yp-collection-items-list.js";
 import { TemplateResult, html, nothing, LitElement } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 
@@ -1013,7 +1013,7 @@ export class YpGroup extends YpCollection {
       window.appGlobals.cache.backToCommunityGroupItems &&
       window.appGlobals.cache.backToCommunityGroupItems[this.collection.id]
     ) {
-      (this.$$("#collectionItems") as YpCollectionItemsGrid).scrollToItem(
+      (this.$$("#collectionItems") as YpCollectionItemsList).scrollToItem(
         window.appGlobals.cache.backToCommunityGroupItems[this.collection.id]
       );
       window.appGlobals.cache.backToCommunityGroupItems[this.collection.id] =

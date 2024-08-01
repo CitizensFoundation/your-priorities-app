@@ -29,13 +29,14 @@ export declare class YpCollectionHeader extends YpBaseElement {
     get collectionVideoPosterURL(): string | undefined;
     get collectionHeaderImagePath(): string | undefined;
     static get styles(): any[];
-    renderStats(): import("lit-html").TemplateResult<1> | typeof nothing;
     renderFirstBoxContent(): import("lit-html").TemplateResult<1> | typeof nothing;
+    renderFooter(): import("lit-html").TemplateResult<1>;
     _openAnalyticsAndPromption(): void;
     _openAdmin(): void;
     _openCreateGroupFolder(): void;
     renderMenu(): import("lit-html").TemplateResult<1>;
-    renderFooter(): import("lit-html").TemplateResult<1>;
+    renderStats(): import("lit-html").TemplateResult<1>;
+    renderHeaderBanner(): import("lit-html").TemplateResult<1> | typeof nothing;
     render(): import("lit-html").TemplateResult<1>;
     connectedCallback(): void;
     disconnectedCallback(): void;

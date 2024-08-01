@@ -57,7 +57,7 @@ let YpGroupHeader = class YpGroupHeader extends YpCollectionHeader {
       `;
         }
         else {
-            return super.renderFooter();
+            return html ``;
         }
     }
 };

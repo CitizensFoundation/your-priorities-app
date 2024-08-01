@@ -57,7 +57,7 @@ export class YpGroupHeader extends YpCollectionHeader {
         </div>
       `;
     } else {
-      return super.renderFooter();
+      return html``;
     }
   }
 }

@@ -156,9 +156,16 @@ export class YpCollectionHeader extends YpBaseElement {
       super.styles,
       css`
         .stats {
-          position: absolute;
-          bottom: 0;
-          right: 8px;
+        }
+
+        .bannerImage {
+          width: 100%;
+          height: 169px;
+          object-fit: cover;
+        }
+
+        .nameAndActions {
+          width: 100%;
         }
 
         md-icon-button {
@@ -170,11 +177,9 @@ export class YpCollectionHeader extends YpBaseElement {
           font-family: var(
             --md-ref-typeface-brand
           ); /*var(--md-sys-typescale-title-medium-font);*/
-          font-size: var(--md-sys-typescale-title-medium-size, 22px);
-          font-weight: var(--md-sys-typescale-title-medium-weight, 400);
+          font-size: var(--md-sys-typescale-title-medium-size, 36px);
+          font-weight: var(--md-sys-typescale-title-medium-weight, 700);
           line-height: var(--md-sys-typescale-title-medium-line-height);
-          padding: 16px;
-          max-width: 320px;
           text-align: left;
         }
 
@@ -194,19 +199,10 @@ export class YpCollectionHeader extends YpBaseElement {
           width: 100%;
         }
 
-        .collectionDescription {
-        }
-
         .image,
         video {
-          width: 432px;
-          height: 243px;
-        }
-
-        .menuButton {
-          position: absolute;
-          top: 0;
-          right: 0;
+          width: 420px;
+          height: 236px;
         }
 
         .textBox {
@@ -215,11 +211,9 @@ export class YpCollectionHeader extends YpBaseElement {
         }
 
         .description {
-          padding: 32px;
-          padding-top: 0;
           font-size: 18px;
           font-weight: 400;
-          line-height: 1.40;
+          line-height: 1.5;
         }
 
         .description[widetext] {
@@ -227,8 +221,8 @@ export class YpCollectionHeader extends YpBaseElement {
         }
 
         #welcomeHTML {
-          width: 432px;
-          max-width: 432px;
+          width: 420px;
+          max-width: 420px;
           overflow: hidden;
         }
 
@@ -238,8 +232,9 @@ export class YpCollectionHeader extends YpBaseElement {
         }
 
         .topContainer {
-          margin-top: 32px;
-          max-width: 1200px;
+          margin: 0;
+          margin-top: 0px;
+          max-width: 1080px;
           width: 100%;
         }
 
@@ -250,9 +245,6 @@ export class YpCollectionHeader extends YpBaseElement {
             padding-top: 8px !important;
             width: 100%;
             margin-top: 8px;
-          }
-
-          .cardImage {
           }
 
           #welcomeHTML {
@@ -362,19 +354,6 @@ export class YpCollectionHeader extends YpBaseElement {
     ];
   }
 
-  renderStats() {
-    switch (this.collectionType) {
-      case "domain":
-        return html``;
-      case "community":
-        return html``;
-      case "group":
-        return html``;
-      default:
-        return nothing;
-    }
-  }
-
   renderFirstBoxContent() {
     if (this.collection?.configuration?.welcomeHTML) {
       return html`<div id="welcomeHTML">
@@ -409,6 +388,10 @@ export class YpCollectionHeader extends YpBaseElement {
     } else {
       return nothing;
     }
+  }
+
+  renderFooter() {
+    return html``;
   }
 
   _openAnalyticsAndPromption() {
@@ -450,7 +433,7 @@ export class YpCollectionHeader extends YpBaseElement {
     `;
   }
 
-  renderFooter() {
+  renderStats() {
     return html`
       <div class="stats layout horizontal">
         <yp-collection-stats
@@ -461,19 +444,38 @@ export class YpCollectionHeader extends YpBaseElement {
     `;
   }
 
+  renderHeaderBanner() {
+    if (this.collectionHeaderImagePath) {
+      return html`
+        <yp-image
+          class="bannerImage"
+          .alt="${this.t("bannerImage")}"
+          sizing="cover"
+          .src="${this.collectionHeaderImagePath}"
+        ></yp-image>
+      `;
+    } else {
+      return nothing;
+    }
+  }
+
   override render() {
     return html`
       ${this.collection
         ? html`
             <div class="layout vertical center-center">
               <div class="layout vertical topContainer">
-                <div class="layout horizontal ${!this.wide ? "wrap" : ""}">
+                ${this.renderHeaderBanner()}
+                <div
+                  class="layout horizontal nameAndActions ${!this.wide
+                    ? "wrap"
+                    : ""}"
+                >
                   <div class="nameText">
                     <yp-magic-text
                       class="collection-name"
                       role="heading"
                       aria-level="1"
-                      ?largeFont="${this.largeFont}"
                       aria-label="${this.collection.name}"
                       .textType="${YpCollectionHelpers.nameTextType(
                         this.collectionType
@@ -487,6 +489,7 @@ export class YpCollectionHeader extends YpBaseElement {
                     >
                     </yp-magic-text>
                   </div>
+                  <div class="flex"></div>
                   ${this.hasCollectionAccess ? this.renderMenu() : nothing}
                 </div>
                 <div class="layout horizontal ${!this.wide ? "wrap" : ""}">
@@ -497,7 +500,7 @@ export class YpCollectionHeader extends YpBaseElement {
                   >
                     ${this.renderFirstBoxContent()}
                   </div>
-                  <div id="card" class="layout horizontal">
+                  <div id="card" class="layout vertical">
                     <div class="descriptionContainer">
                       <yp-magic-text
                         id="description"
@@ -513,12 +516,12 @@ export class YpCollectionHeader extends YpBaseElement {
                         .contentId="${this.collection.id}"
                       >
                       </yp-magic-text>
+                      ${this.renderStats()}
                     </div>
-
-                    ${this.renderFooter()}
                   </div>
                 </div>
               </div>
+              ${this.renderFooter()}
             </div>
           `
         : html``}

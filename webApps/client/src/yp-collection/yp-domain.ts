@@ -2,7 +2,7 @@ import { YpAccessHelpers } from "../common/YpAccessHelpers.js";
 import { YpMediaHelpers } from "../common/YpMediaHelpers.js";
 
 import { YpCollection, CollectionTabTypes } from "./yp-collection.js";
-import { YpCollectionItemsGrid } from "./yp-collection-items-grid.js";
+import { YpCollectionItemsList } from "./yp-collection-items-list.js";
 import { customElement, property } from "lit/decorators.js";
 import { AcActivities } from "../ac-activities/ac-activities.js";
 import { unsafeHTML } from "lit/directives/unsafe-html.js";
@@ -112,7 +112,7 @@ export class YpDomain extends YpCollection {
         window.appGlobals.cache.backToDomainCommunityItems &&
         window.appGlobals.cache.backToDomainCommunityItems[this.collection.id]
       ) {
-        (this.$$("#collectionItems") as YpCollectionItemsGrid).scrollToItem(
+        (this.$$("#collectionItems") as YpCollectionItemsList).scrollToItem(
           window.appGlobals.cache.backToDomainCommunityItems[this.collection.id]
         );
         window.appGlobals.cache.backToDomainCommunityItems[this.collection.id] =
@@ -127,7 +127,7 @@ export class YpDomain extends YpCollection {
       window.appGlobals.cache.backToDomainCommunityItems &&
       window.appGlobals.cache.backToDomainCommunityItems[this.collection.id]
     ) {
-      (this.$$("#collectionItems") as YpCollectionItemsGrid).scrollToItem(
+      (this.$$("#collectionItems") as YpCollectionItemsList).scrollToItem(
         window.appGlobals.cache.backToDomainCommunityItems[this.collection.id]
       );
       window.appGlobals.cache.backToDomainCommunityItems[this.collection.id] =

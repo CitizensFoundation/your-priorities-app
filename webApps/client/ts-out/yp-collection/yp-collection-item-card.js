@@ -13,6 +13,7 @@ import "../common/yp-image.js";
 import "../yp-magic-text/yp-magic-text.js";
 import "./yp-collection-stats.js";
 import { YpNavHelpers } from "../common/YpNavHelpers.js";
+import { YpGroupType } from "./ypGroupType.js";
 let YpCollectionItemCard = class YpCollectionItemCard extends YpBaseElement {
     static get styles() {
         return [
@@ -20,50 +21,47 @@ let YpCollectionItemCard = class YpCollectionItemCard extends YpBaseElement {
             ShadowStyles,
             css `
         .description {
-          line-height: var(--description-line-height, 1.3);
-          font-size: 15px;
-          padding: 8px;
-          padding: 16px;
+          line-height: 25px;
+          font-size: 17px;
         }
 
-        .description[widetext] {
+        .groupType {
           font-size: 14px;
+          font-weight: 500;
+          color: var(--md-sys-color-primary);
+          text-transform: uppercase;
         }
 
-        .description[largefont] {
-          font-size: 16px;
+        .groupType[is-folder] {
+          color: var(--md-sys-color-secondary);
         }
 
         .stats {
           position: absolute;
           bottom: 0;
-          right: 38px;
+          right: 0;
         }
 
         .collectionCard {
-          width: 860px;
-          background-color: var(--md-sys-color-surface-container-high);
+          width: 100%;
+        }
+
+        a {
           color: var(--md-sys-color-on-surface);
-          margin: 8px;
-          position: relative;
-          border-radius: 16px;
         }
 
         .collectionCard[featured] {
         }
 
         yp-image {
-          width: 320px;
-          height: 180px;
-          border-radius: 16px 0 0 16px;
+          width: 292px;
+          height: 164px;
         }
 
         yp-image[featured] {
         }
 
         .card-content {
-          padding: 0;
-          padding-bottom: 48px;
         }
 
         yp-image {
@@ -85,22 +83,9 @@ let YpCollectionItemCard = class YpCollectionItemCard extends YpBaseElement {
         }
 
         .collection-name {
-          font-size: var(--mdc-typography-headline2-font-size);
-          font-weight: var(--mdc-typography-headline2-font-weight);
           cursor: pointer;
-          padding: 16px;
-          padding-bottom: 0;
-          vertical-align: middle;
-          width: auto;
           font-size: 22px;
-        }
-
-        .collection-name[widetext] {
-          font-size: 18px;
-        }
-
-        .collection-name[largefont] {
-          font-size: 20px;
+          font-weight: 700;
         }
 
         yp-image[archived] {
@@ -178,27 +163,21 @@ let YpCollectionItemCard = class YpCollectionItemCard extends YpBaseElement {
         }
 
         @media (max-width: 420px) {
-
-
           yp-membership-button {
             top: 205px;
           }
         }
 
         @media (max-width: 375px) {
-
           yp-membership-button {
             top: 185px;
           }
         }
 
         @media (max-width: 360px) {
-
         }
 
         @media (max-width: 320px) {
-
-
           yp-membership-button {
             top: 155px;
           }
@@ -242,6 +221,30 @@ let YpCollectionItemCard = class YpCollectionItemCard extends YpBaseElement {
         else if (this.item && this.item.Domain) {
             this.collection = this.item.Domain;
             this.itemType = "community";
+        }
+    }
+    get groupTypeName() {
+        if (this.item &&
+            this.item.configuration.groupType) {
+            switch (parseInt(this.item.configuration.groupType)) {
+                case YpGroupType.AllOurIdeas:
+                    return this.t("pairwiseVoting");
+                    break;
+                case YpGroupType.IdeaGenerationAndDebate:
+                    return this.t("ideas");
+                    break;
+                case YpGroupType.PsAgentWorkflow:
+                    return this.t("workFlow");
+                    break;
+                case YpGroupType.StaticHtml:
+                    return this.t("html");
+                    break;
+                default:
+                    return "";
+            }
+        }
+        else {
+            return "";
         }
     }
     goToItem(event) {
@@ -288,6 +291,11 @@ let YpCollectionItemCard = class YpCollectionItemCard extends YpBaseElement {
             collectionName.className = classNames;
         }
     }
+    get isGroupFolder() {
+        return (this.collection &&
+            this.collection.configuration.groupType ===
+                YpGroupType.Folder);
+    }
     updated(changedProperties) {
         super.updated(changedProperties);
         if (changedProperties.has("collection") && this.collection) {
@@ -328,6 +336,18 @@ let YpCollectionItemCard = class YpCollectionItemCard extends YpBaseElement {
       ></yp-data-visualization>
     `;
     }
+    renderCollectionType() {
+        if (this.item?.configuration &&
+            this.item.configuration.groupType) {
+            debugger;
+            return html `<div class="groupType" ?is-folder="${this.isGroupFolder}">
+        ${this.groupTypeName}
+      </div>`;
+        }
+        else {
+            return nothing;
+        }
+    }
     renderCardInfo() {
         return html `
       <div class="layout horizontal wrap">
@@ -335,6 +355,7 @@ let YpCollectionItemCard = class YpCollectionItemCard extends YpBaseElement {
             ? html ` ${this.renderDataViz()} `
             : html ` ${this.renderLogoImage()} `}
         <div class="informationText layout vertical flex">
+          ${this.renderCollectionType()}
           <yp-magic-text
             id="collectionName"
             class="collection-name"

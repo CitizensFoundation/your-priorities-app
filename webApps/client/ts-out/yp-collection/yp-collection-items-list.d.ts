@@ -1,7 +1,7 @@
 import { nothing, TemplateResult } from "lit";
 import { YpBaseElement } from "../common/yp-base-element.js";
 import "./yp-collection-item-card.js";
-export declare class YpCollectionItemsGrid extends YpBaseElement {
+export declare class YpCollectionItemsList extends YpBaseElement {
     collection: YpCollectionData | undefined;
     collectionItems: Array<YpCollectionData> | undefined;
     collectionItemType: string;
@@ -21,4 +21,4 @@ export declare class YpCollectionItemsGrid extends YpBaseElement {
     _selectedItemChanged(event: CustomEvent): void;
     scrollToItem(item: YpDatabaseItem | undefined): void;
 }
-//# sourceMappingURL=yp-collection-items-grid.d.ts.map
+//# sourceMappingURL=yp-collection-items-list.d.ts.map

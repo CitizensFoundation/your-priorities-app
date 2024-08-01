@@ -23,7 +23,7 @@
     "@lit-labs/motion": "^1.0.7",
     "@lit-labs/virtualizer": "^2.0.13",
     "@material/material-color-utilities": "^0.3.0",
-    "@material/web": "^1.5.1",
+    "@material/web": "^2.0.0",
     "@polymer/polymer": "^3.5.1",
     "@trystan2k/fleshy-jsoneditor": "^3.0.0",
     "@ungap/structured-clone": "^1.2.0",
