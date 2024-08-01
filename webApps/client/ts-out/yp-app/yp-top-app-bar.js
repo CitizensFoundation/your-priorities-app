@@ -82,7 +82,6 @@ let YpTopAppBar = class YpTopAppBar extends YpBaseElement {
           flex-grow: 1;
           text-align: left;
           margin-left: 6px;
-          margin-bottom: 1px;
           transform: translateY(-15%);
         }
 
@@ -104,7 +103,7 @@ let YpTopAppBar = class YpTopAppBar extends YpBaseElement {
           .top-app-bar {
             padding-top: 0;
             padding-bottom: 0;
-            padding-left: 8px;
+            padding-left: 16px;
             padding-right: 0;
           }
 

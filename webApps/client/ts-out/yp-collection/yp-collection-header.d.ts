@@ -21,6 +21,12 @@ export declare class YpCollectionHeader extends YpBaseElement {
     audioPlayListener: Function | undefined;
     audioPauseListener: Function | undefined;
     audioEndedListener: Function | undefined;
+    connectedCallback(): void;
+    disconnectedCallback(): void;
+    firstUpdated(changedProperties: Map<string | number | symbol, unknown>): void;
+    updated(changedProperties: Map<string | number | symbol, unknown>): void;
+    _pauseMediaPlayback(): void;
+    _menuSelection(event: CustomEvent): void;
     get hasCollectionAccess(): boolean;
     get collectionVideos(): Array<YpVideoData> | undefined;
     get openMenuLabel(): string;
@@ -31,18 +37,12 @@ export declare class YpCollectionHeader extends YpBaseElement {
     static get styles(): any[];
     renderFirstBoxContent(): import("lit-html").TemplateResult<1> | typeof nothing;
     renderFooter(): import("lit-html").TemplateResult<1>;
-    _openAnalyticsAndPromption(): void;
+    _openAnalyticsAndPromotions(): void;
     _openAdmin(): void;
     _openCreateGroupFolder(): void;
     renderMenu(): import("lit-html").TemplateResult<1>;
     renderStats(): import("lit-html").TemplateResult<1>;
     renderHeaderBanner(): import("lit-html").TemplateResult<1> | typeof nothing;
     render(): import("lit-html").TemplateResult<1>;
-    connectedCallback(): void;
-    disconnectedCallback(): void;
-    firstUpdated(changedProperties: Map<string | number | symbol, unknown>): void;
-    updated(changedProperties: Map<string | number | symbol, unknown>): void;
-    _pauseMediaPlayback(): void;
-    _menuSelection(event: CustomEvent): void;
 }
 //# sourceMappingURL=yp-collection-header.d.ts.map

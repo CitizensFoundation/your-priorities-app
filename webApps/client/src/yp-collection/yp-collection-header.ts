@@ -49,6 +49,63 @@ export class YpCollectionHeader extends YpBaseElement {
   audioPauseListener: Function | undefined;
   audioEndedListener: Function | undefined;
 
+  override connectedCallback() {
+    super.connectedCallback();
+    this.addGlobalListener(
+      "yp-got-admin-rights",
+      this.requestUpdate.bind(this)
+    );
+    this.addGlobalListener(
+      "yp-pause-media-playback",
+      this._pauseMediaPlayback.bind(this)
+    );
+  }
+
+  override disconnectedCallback() {
+    super.disconnectedCallback();
+    this.removeGlobalListener("yp-got-admin-rights", this.requestUpdate);
+    this.removeGlobalListener(
+      "yp-pause-media-playback",
+      this._pauseMediaPlayback
+    );
+    YpMediaHelpers.detachMediaListeners(this as YpElementWithPlayback);
+  }
+
+  override firstUpdated(
+    changedProperties: Map<string | number | symbol, unknown>
+  ) {
+    super.firstUpdated(changedProperties);
+    YpMediaHelpers.attachMediaListeners(this as YpElementWithPlayback);
+  }
+
+  override updated(changedProperties: Map<string | number | symbol, unknown>) {
+    super.updated(changedProperties);
+
+    // TODO: Test this well is it working as expected
+    if (changedProperties.has("collection")) {
+      YpMediaHelpers.detachMediaListeners(this as YpElementWithPlayback);
+    }
+
+    if (this.collection) {
+      YpMediaHelpers.attachMediaListeners(this as YpElementWithPlayback);
+    }
+  }
+
+  _pauseMediaPlayback() {
+    YpMediaHelpers.pauseMediaPlayback(this as YpElementWithPlayback);
+  }
+
+  _menuSelection(event: CustomEvent) {
+    debugger;
+    if (this.collection) {
+      if (event.detail.item.id === "editMenuItem")
+        window.location.href = `/admin/${this.collectionType}/${this.collection.id}`;
+      else if (event.detail.item.id === "openAnalyticsApp")
+        window.location.href = `/analytics/${this.collectionType}/${this.collection.id}`;
+      (this.$$("#adminMenu") as MdMenu).close();
+    }
+  }
+
   get hasCollectionAccess(): boolean {
     switch (this.collectionType) {
       case "domain":
@@ -394,7 +451,7 @@ export class YpCollectionHeader extends YpBaseElement {
     return html``;
   }
 
-  _openAnalyticsAndPromption() {
+  _openAnalyticsAndPromotions() {
     YpNavHelpers.redirectTo(
       `/analytics/${this.collectionType}/${this.collection!.id}`
     );
@@ -419,7 +476,7 @@ export class YpCollectionHeader extends YpBaseElement {
             ><md-icon>create_new_folder</md-icon>
           </md-filled-tonal-icon-button>
           <md-filled-tonal-icon-button
-            @click="${this._openAnalyticsAndPromption}"
+            @click="${this._openAnalyticsAndPromotions}"
             title="${this.openMenuLabel}"
             ><md-icon>monitoring</md-icon>
           </md-filled-tonal-icon-button>
@@ -526,64 +583,5 @@ export class YpCollectionHeader extends YpBaseElement {
           `
         : html``}
     `;
-  }
-
-  // EVENTS
-
-  override connectedCallback() {
-    super.connectedCallback();
-    this.addGlobalListener(
-      "yp-got-admin-rights",
-      this.requestUpdate.bind(this)
-    );
-    this.addGlobalListener(
-      "yp-pause-media-playback",
-      this._pauseMediaPlayback.bind(this)
-    );
-  }
-
-  override disconnectedCallback() {
-    super.disconnectedCallback();
-    this.removeGlobalListener("yp-got-admin-rights", this.requestUpdate);
-    this.removeGlobalListener(
-      "yp-pause-media-playback",
-      this._pauseMediaPlayback
-    );
-    YpMediaHelpers.detachMediaListeners(this as YpElementWithPlayback);
-  }
-
-  override firstUpdated(
-    changedProperties: Map<string | number | symbol, unknown>
-  ) {
-    super.firstUpdated(changedProperties);
-    YpMediaHelpers.attachMediaListeners(this as YpElementWithPlayback);
-  }
-
-  override updated(changedProperties: Map<string | number | symbol, unknown>) {
-    super.updated(changedProperties);
-
-    // TODO: Test this well is it working as expected
-    if (changedProperties.has("collection")) {
-      YpMediaHelpers.detachMediaListeners(this as YpElementWithPlayback);
-    }
-
-    if (this.collection) {
-      YpMediaHelpers.attachMediaListeners(this as YpElementWithPlayback);
-    }
-  }
-
-  _pauseMediaPlayback() {
-    YpMediaHelpers.pauseMediaPlayback(this as YpElementWithPlayback);
-  }
-
-  _menuSelection(event: CustomEvent) {
-    debugger;
-    if (this.collection) {
-      if (event.detail.item.id === "editMenuItem")
-        window.location.href = `/admin/${this.collectionType}/${this.collection.id}`;
-      else if (event.detail.item.id === "openAnalyticsApp")
-        window.location.href = `/analytics/${this.collectionType}/${this.collection.id}`;
-      (this.$$("#adminMenu") as MdMenu).close();
-    }
   }
 }

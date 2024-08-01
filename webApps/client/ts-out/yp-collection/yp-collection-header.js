@@ -25,6 +25,44 @@ let YpCollectionHeader = class YpCollectionHeader extends YpBaseElement {
         super(...arguments);
         this.hideImage = false;
     }
+    connectedCallback() {
+        super.connectedCallback();
+        this.addGlobalListener("yp-got-admin-rights", this.requestUpdate.bind(this));
+        this.addGlobalListener("yp-pause-media-playback", this._pauseMediaPlayback.bind(this));
+    }
+    disconnectedCallback() {
+        super.disconnectedCallback();
+        this.removeGlobalListener("yp-got-admin-rights", this.requestUpdate);
+        this.removeGlobalListener("yp-pause-media-playback", this._pauseMediaPlayback);
+        YpMediaHelpers.detachMediaListeners(this);
+    }
+    firstUpdated(changedProperties) {
+        super.firstUpdated(changedProperties);
+        YpMediaHelpers.attachMediaListeners(this);
+    }
+    updated(changedProperties) {
+        super.updated(changedProperties);
+        // TODO: Test this well is it working as expected
+        if (changedProperties.has("collection")) {
+            YpMediaHelpers.detachMediaListeners(this);
+        }
+        if (this.collection) {
+            YpMediaHelpers.attachMediaListeners(this);
+        }
+    }
+    _pauseMediaPlayback() {
+        YpMediaHelpers.pauseMediaPlayback(this);
+    }
+    _menuSelection(event) {
+        debugger;
+        if (this.collection) {
+            if (event.detail.item.id === "editMenuItem")
+                window.location.href = `/admin/${this.collectionType}/${this.collection.id}`;
+            else if (event.detail.item.id === "openAnalyticsApp")
+                window.location.href = `/analytics/${this.collectionType}/${this.collection.id}`;
+            this.$$("#adminMenu").close();
+        }
+    }
     get hasCollectionAccess() {
         switch (this.collectionType) {
             case "domain":
@@ -351,7 +389,7 @@ let YpCollectionHeader = class YpCollectionHeader extends YpBaseElement {
     renderFooter() {
         return html ``;
     }
-    _openAnalyticsAndPromption() {
+    _openAnalyticsAndPromotions() {
         YpNavHelpers.redirectTo(`/analytics/${this.collectionType}/${this.collection.id}`);
     }
     _openAdmin() {
@@ -369,7 +407,7 @@ let YpCollectionHeader = class YpCollectionHeader extends YpBaseElement {
             ><md-icon>create_new_folder</md-icon>
           </md-filled-tonal-icon-button>
           <md-filled-tonal-icon-button
-            @click="${this._openAnalyticsAndPromption}"
+            @click="${this._openAnalyticsAndPromotions}"
             title="${this.openMenuLabel}"
             ><md-icon>monitoring</md-icon>
           </md-filled-tonal-icon-button>
@@ -470,45 +508,6 @@ let YpCollectionHeader = class YpCollectionHeader extends YpBaseElement {
           `
             : html ``}
     `;
-    }
-    // EVENTS
-    connectedCallback() {
-        super.connectedCallback();
-        this.addGlobalListener("yp-got-admin-rights", this.requestUpdate.bind(this));
-        this.addGlobalListener("yp-pause-media-playback", this._pauseMediaPlayback.bind(this));
-    }
-    disconnectedCallback() {
-        super.disconnectedCallback();
-        this.removeGlobalListener("yp-got-admin-rights", this.requestUpdate);
-        this.removeGlobalListener("yp-pause-media-playback", this._pauseMediaPlayback);
-        YpMediaHelpers.detachMediaListeners(this);
-    }
-    firstUpdated(changedProperties) {
-        super.firstUpdated(changedProperties);
-        YpMediaHelpers.attachMediaListeners(this);
-    }
-    updated(changedProperties) {
-        super.updated(changedProperties);
-        // TODO: Test this well is it working as expected
-        if (changedProperties.has("collection")) {
-            YpMediaHelpers.detachMediaListeners(this);
-        }
-        if (this.collection) {
-            YpMediaHelpers.attachMediaListeners(this);
-        }
-    }
-    _pauseMediaPlayback() {
-        YpMediaHelpers.pauseMediaPlayback(this);
-    }
-    _menuSelection(event) {
-        debugger;
-        if (this.collection) {
-            if (event.detail.item.id === "editMenuItem")
-                window.location.href = `/admin/${this.collectionType}/${this.collection.id}`;
-            else if (event.detail.item.id === "openAnalyticsApp")
-                window.location.href = `/analytics/${this.collectionType}/${this.collection.id}`;
-            this.$$("#adminMenu").close();
-        }
     }
 };
 __decorate([

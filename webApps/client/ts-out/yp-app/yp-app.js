@@ -297,6 +297,16 @@ let YpApp = class YpApp extends YpBaseElement {
         @click="${this._closeForGroup}"
         ><md-icon>close</md-icon></md-icon-button
       >`;
+            //TODO: Fix this it should show arrow up when landing on the site for the first time not going back
+        }
+        else if (this.showBack && this.breadcrumbs.length > 1) {
+            icons = html `<md-icon-button
+        title="${this.t("goBack")}"
+        slot="actionItems"
+        ?hidden="${!this.backPath}"
+        @click="${this.goBack}"
+        ><md-icon>arrow_back</md-icon>
+      </md-icon-button>`;
         }
         else if (this.showBack) {
             icons = html `<md-icon-button
