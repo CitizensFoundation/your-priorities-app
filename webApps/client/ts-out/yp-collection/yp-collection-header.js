@@ -261,7 +261,7 @@ let YpCollectionHeader = class YpCollectionHeader extends YpBaseElement {
         }
 
         .collectionDescriptionimageCard {
-          margin-top: 16px;
+          margin-top: 8px;
         }
 
         @media (max-width: 960px) {

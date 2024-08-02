@@ -32,12 +32,6 @@ export declare class YpGroup extends YpCollection {
     tabLabelWithCount(type: string): string;
     getCurrentTabElement(): HTMLElement | undefined;
     getCollection(): Promise<void>;
-    renderGroupTabs(): TemplateResult<1> | typeof nothing;
-    renderPostList(statusFilter: string): TemplateResult;
-    renderCurrentGroupTabPage(): TemplateResult | undefined;
-    renderHeader(): TemplateResult<1> | typeof nothing;
-    render(): TemplateResult<1>;
-    renderYpGroup(): TemplateResult<1>;
     _selectGroupTab(event: CustomEvent): void;
     _openHelpPageIfNeededOnce(): void;
     _refreshAjax(): void;
@@ -50,5 +44,15 @@ export declare class YpGroup extends YpCollection {
     refresh(fromMainApp?: boolean): Promise<void>;
     _setupGroupSaml(group: YpGroupData): void;
     scrollToCollectionItemSubClass(): void;
+    renderTabs(): TemplateResult<1> | typeof nothing;
+    renderPostList(statusFilter: string): TemplateResult;
+    renderCurrentGroupTabPage(): TemplateResult | undefined;
+    renderAllOurIdeas(): TemplateResult<1>;
+    renderStaticHtml(): TemplateResult<1>;
+    renderHeader(): TemplateResult<1> | typeof nothing;
+    get cleanedGroupType(): number;
+    renderAgentsOps(): TemplateResult<1>;
+    render(): TemplateResult<1>;
+    renderYpGroup(): TemplateResult<1>;
 }
 //# sourceMappingURL=yp-group.d.ts.map

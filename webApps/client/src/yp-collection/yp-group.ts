@@ -1,7 +1,7 @@
 import { YpAccessHelpers } from "../common/YpAccessHelpers.js";
 import { YpMediaHelpers } from "../common/YpMediaHelpers.js";
 
-import { YpCollection } from "./yp-collection.js";
+import { CollectionTabTypes, YpCollection } from "./yp-collection.js";
 import { YpCollectionItemsList } from "./yp-collection-items-list.js";
 import { TemplateResult, html, nothing, LitElement } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
@@ -288,225 +288,6 @@ export class YpGroup extends YpCollection {
       }
     }
     window.appGlobals.retryMethodAfter401Login = undefined;
-  }
-
-  //TODO: Fix moving on to the next group with focus if 0 ideas in Open
-  renderGroupTabs() {
-    if (this.collection && !this.tabsHidden) {
-      return html`
-        <div class="layout vertical center-center">
-          <md-tabs
-            @change="${this._selectGroupTab}"
-            .activeTabIndex="${this.selectedGroupTab}"
-          >
-            <md-primary-tab
-              >${this.tabLabelWithCount("open")}<md-icon slot="icon"
-                >lightbulb_outline</md-icon
-              ></md-primary-tab
-            >
-            ${this.hasNonOpenPosts
-              ? html`
-                  <md-primary-tab
-                    >${this.tabLabelWithCount("inProgress")}<md-icon slot="icon"
-                      >lightbulb_outline</md-icon
-                    ></md-primary-tab
-                  >
-                  <md-primary-tab
-                    >${this.tabLabelWithCount("successful")}<md-icon slot="icon"
-                      >lightbulb_outline</md-icon
-                    ></md-primary-tab
-                  >
-                  <md-primary-tab
-                    >${this.tabLabelWithCount("failed")}<md-icon slot="icon"
-                      >lightbulb_outline</md-icon
-                    >
-                  </md-primary-tab>
-                `
-              : nothing}
-            ${this.renderNewsAndMapTabs()}
-          </md-tabs>
-        </div>
-      `;
-    } else {
-      return nothing;
-    }
-  }
-
-  renderPostList(statusFilter: string): TemplateResult {
-    return this.collection
-      ? html`<div class="layout vertical center-center">
-          <yp-posts-list
-            id="${statusFilter}PostList"
-            role="main"
-            aria-label="${this.t("posts.posts")}"
-            .selectedGroupTab="${this.selectedGroupTab}"
-            .listRoute="${this.subRoute}"
-            .statusFilter="${statusFilter}"
-            .searchingFor="${this.searchingFor}"
-            .group="${this.collection as YpGroupData}"
-          ></yp-posts-list>
-        </div> `
-      : html``;
-  }
-
-  renderCurrentGroupTabPage(): TemplateResult | undefined {
-    let page: TemplateResult | undefined;
-
-    switch (this.selectedGroupTab) {
-      case GroupTabTypes.Open:
-        page = this.renderPostList("open");
-        break;
-      case GroupTabTypes.InProgress:
-        page = this.renderPostList("in_progress");
-        break;
-      case GroupTabTypes.Successful:
-        page = this.renderPostList("successful");
-        break;
-      case GroupTabTypes.Failed:
-        page = this.renderPostList("failed");
-        break;
-      case GroupTabTypes.Newsfeed:
-        page = html` <ac-activities
-          id="newsfeed"
-          .selectedGroupTab="${this.selectedGroupTab}"
-          .collectionType="${this.collectionType}"
-          .collectionId="${this.collectionId}"
-        ></ac-activities>`;
-        break;
-      case GroupTabTypes.Map:
-        page = html``;
-        break;
-    }
-
-    return page;
-  }
-
-  override renderHeader() {
-    return this.collection && !this.noHeader
-      ? html`
-          <div class="layout vertical center-center header">
-            <yp-group-header
-              .collection="${this.collection}"
-              .collectionType="${this.collectionType}"
-              aria-label="${this.collectionType}"
-              role="banner"
-            ></yp-group-header>
-          </div>
-        `
-      : nothing;
-  }
-
-  override render() {
-    if (this.collection && this.collection.configuration) {
-      let groupType: number = 0;
-
-      if ((this.collection as YpGroupData).configuration.groupType) {
-        // If groupType is string, convert it to number
-        //TODO: convert it to number when storing but keep this for backwards compatibility
-        if (
-          typeof (this.collection as YpGroupData).configuration.groupType ===
-          "string"
-        ) {
-          groupType = parseInt(
-            (this.collection as YpGroupData).configuration
-              .groupType as unknown as string
-          );
-        } else {
-          groupType = (this.collection as YpGroupData).configuration
-            .groupType as unknown as number;
-        }
-      }
-
-      if (groupType == YpGroupType.IdeaGenerationAndDebate) {
-        return this.renderYpGroup();
-      } else if (groupType == YpGroupType.AllOurIdeas) {
-        if (this.haveLoadedAllOurIdeas) {
-          return html`<aoi-survey
-            id="aoiSurvey"
-            .collectionId="${this.collectionId as number}"
-            .collection="${this.collection}"
-          ></aoi-survey>`;
-        } else {
-          return html``;
-        }
-      } else if (groupType == YpGroupType.StaticHtml) {
-        return html`
-          <div class="layout vertical">
-            ${unsafeHTML(
-              (this.collection as YpGroupData).configuration.staticHtml?.content
-            )}
-            <div
-              class="layout vertical center-center"
-              ?hidden="${!YpAccessHelpers.checkGroupAccess(
-                this.collection as YpGroupData
-              )}"
-            >
-              <md-icon-button
-                id="menuButton"
-                @click="${this._openAdmin}"
-                title="${this.t("group.edit")}"
-                ><md-icon>settings</md-icon>
-              </md-icon-button>
-            </div>
-            <ac-activities
-              id="newsfeed"
-              .label="${this.t("addComment")}"
-              .notLoggedInLabel="${this.t("loginToAddComment")}"
-              .addLabel="${this.t("addComment")}"
-              .selectedGroupTab="${this.selectedGroupTab}"
-              .collectionType="${this.collectionType}"
-              .collectionId="${this.collectionId}"
-            ></ac-activities>
-          </div>
-        `;
-      } else if (groupType == YpGroupType.PsAgentWorkflow) {
-        if (this.haveLoadedAgentsOps) {
-          return html`<ps-operations-manager
-            .groupId="${this.collection.id}"
-          ></ps-operations-manager>`;
-        } else {
-          return html``;
-        }
-      } else {
-        return html``;
-      }
-    } else {
-      return html`<md-linear-progress indeterminate></md-linear-progress> `;
-    }
-  }
-
-  renderYpGroup() {
-    return html`
-      ${this.renderHeader()}
-      ${this.collection &&
-      !(this.collection.configuration as YpGroupConfiguration).hideNewPost
-        ? html` <div
-            class="layout vertical center-center"
-            ?hidden="${(this.collection.configuration as YpGroupConfiguration)
-              .hideNewPost}"
-          >
-            <div>
-              <yp-post-card-add
-                role="button"
-                aria-label="${this.t("post.new")}"
-                .group="${this.collection as YpGroupData}"
-                ?disableNewPosts="${this.disableNewPosts}"
-                @new-post="${this._newPost}"
-              ></yp-post-card-add>
-            </div>
-          </div>`
-        : nothing}
-      ${this.renderGroupTabs()} ${cache(this.renderCurrentGroupTabPage())}
-      ${!this.disableNewPosts &&
-      this.collection &&
-      !(this.collection.configuration as YpGroupConfiguration).hideNewPost
-        ? html` <md-fab
-            .label="${this.t("post.new")}"
-            icon="lightbulb"
-            @click="${this._newPost}"
-          ></md-fab>`
-        : nothing}
-    `;
   }
 
   _selectGroupTab(event: CustomEvent) {
@@ -836,7 +617,8 @@ export class YpGroup extends YpCollection {
       ) {
         this.headerImageUrl = YpMediaHelpers.getImageFormatUrl(
           group.GroupHeaderImages as Array<YpImageData>,
-          0);
+          0
+        );
       }
 
       let backPath;
@@ -1019,5 +801,240 @@ export class YpGroup extends YpCollection {
       window.appGlobals.cache.backToCommunityGroupItems[this.collection.id] =
         undefined;
     }
+  }
+
+  //TODO: Fix moving on to the next group with focus if 0 ideas in Open
+  override renderTabs() {
+    if (this.collection && !this.tabsHidden) {
+      return html`
+        <div class="layout vertical center-center">
+          <md-tabs
+            @change="${this._selectGroupTab}"
+            .activeTabIndex="${this.selectedGroupTab}"
+          >
+            <md-secondary-tab
+              >${this.tabLabelWithCount("open")}<md-icon slot="icon"
+                >lightbulb_outline</md-icon
+              ></md-secondary-tab
+            >
+            ${this.hasNonOpenPosts
+              ? html`
+                  <md-secondary-tab
+                    >${this.tabLabelWithCount("inProgress")}<md-icon slot="icon"
+                      >lightbulb_outline</md-icon
+                    ></md-secondary-tab
+                  >
+                  <md-secondary-tab
+                    >${this.tabLabelWithCount("successful")}<md-icon slot="icon"
+                      >lightbulb_outline</md-icon
+                    ></md-secondary-tab
+                  >
+                  <md-secondary-tab
+                    >${this.tabLabelWithCount("failed")}<md-icon slot="icon"
+                      >lightbulb_outline</md-icon
+                    >
+                  </md-secondary-tab>
+                `
+              : nothing}
+            ${this.renderNewsAndMapTabs()}
+          </md-tabs>
+        </div>
+      `;
+    } else {
+      return nothing;
+    }
+  }
+
+  renderPostList(statusFilter: string): TemplateResult {
+    return this.collection
+      ? html`<div class="layout vertical center-center">
+          <yp-posts-list
+            id="${statusFilter}PostList"
+            role="main"
+            aria-label="${this.t("posts.posts")}"
+            .selectedGroupTab="${this.selectedGroupTab}"
+            .listRoute="${this.subRoute}"
+            .statusFilter="${statusFilter}"
+            .searchingFor="${this.searchingFor}"
+            .group="${this.collection as YpGroupData}"
+          ></yp-posts-list>
+        </div> `
+      : html``;
+  }
+
+  renderCurrentGroupTabPage(): TemplateResult | undefined {
+    let page: TemplateResult | undefined;
+
+    switch (this.selectedGroupTab) {
+      case GroupTabTypes.Open:
+        page = this.renderPostList("open");
+        break;
+      case GroupTabTypes.InProgress:
+        page = this.renderPostList("in_progress");
+        break;
+      case GroupTabTypes.Successful:
+        page = this.renderPostList("successful");
+        break;
+      case GroupTabTypes.Failed:
+        page = this.renderPostList("failed");
+        break;
+      case GroupTabTypes.Newsfeed:
+        page = html` <ac-activities
+          id="newsfeed"
+          .selectedGroupTab="${this.selectedGroupTab}"
+          .collectionType="${this.collectionType}"
+          .collectionId="${this.collectionId}"
+        ></ac-activities>`;
+        break;
+      case GroupTabTypes.Map:
+        page = html``;
+        break;
+    }
+
+    return page;
+  }
+
+  renderAllOurIdeas() {
+    return html`
+      <aoi-survey
+        id="aoiSurvey"
+        .collectionId="${this.collectionId as number}"
+        .collection="${this.collection}"
+      ></aoi-survey>
+    `;
+  }
+
+  renderStaticHtml() {
+    return html`
+      <div class="layout vertical">
+        ${unsafeHTML(
+          (this.collection as YpGroupData).configuration.staticHtml?.content
+        )}
+        <div
+          class="layout vertical center-center"
+          ?hidden="${!YpAccessHelpers.checkGroupAccess(
+            this.collection as YpGroupData
+          )}"
+        >
+          <md-icon-button
+            id="menuButton"
+            @click="${this._openAdmin}"
+            title="${this.t("group.edit")}"
+            ><md-icon>settings</md-icon>
+          </md-icon-button>
+        </div>
+        <ac-activities
+          id="newsfeed"
+          .label="${this.t("addComment")}"
+          .notLoggedInLabel="${this.t("loginToAddComment")}"
+          .addLabel="${this.t("addComment")}"
+          .selectedGroupTab="${this.selectedGroupTab}"
+          .collectionType="${this.collectionType}"
+          .collectionId="${this.collectionId}"
+        ></ac-activities>
+      </div>
+    `;
+  }
+
+  override renderHeader() {
+    return this.collection && !this.noHeader
+      ? html`
+          <div class="layout vertical center-center header">
+            <yp-group-header
+              .collection="${this.collection}"
+              .collectionType="${this.collectionType}"
+              aria-label="${this.collectionType}"
+              role="banner"
+            ></yp-group-header>
+          </div>
+        `
+      : nothing;
+  }
+
+  get cleanedGroupType() {
+    let groupType = 0;
+    if ((this.collection as YpGroupData).configuration.groupType) {
+      // If groupType is string, convert it to number
+      //TODO: convert it to number when storing but keep this for backwards compatibility
+      if (
+        typeof (this.collection as YpGroupData).configuration.groupType ===
+        "string"
+      ) {
+        groupType = parseInt(
+          (this.collection as YpGroupData).configuration
+            .groupType as unknown as string
+        );
+      } else {
+        groupType = (this.collection as YpGroupData).configuration
+          .groupType as unknown as number;
+      }
+    }
+
+    return groupType;
+  }
+
+  renderAgentsOps() {
+    return html`<ps-operations-manager
+      .groupId="${this.collection!.id}"
+    ></ps-operations-manager>`;
+  }
+
+  override render() {
+    if (!this.collection || !this.collection.configuration) {
+      return html`<md-linear-progress indeterminate></md-linear-progress>`;
+    }
+
+    switch (this.cleanedGroupType) {
+      case YpGroupType.IdeaGenerationAndDebate:
+        return this.renderYpGroup();
+
+      case YpGroupType.AllOurIdeas:
+        return this.haveLoadedAllOurIdeas ? this.renderAllOurIdeas() : html``;
+
+      case YpGroupType.StaticHtml:
+        return this.renderStaticHtml();
+
+      case YpGroupType.PsAgentWorkflow:
+        return this.haveLoadedAgentsOps ? this.renderAgentsOps() : html``;
+
+      default:
+        return html``;
+    }
+  }
+
+  renderYpGroup() {
+    return html`
+    <div class="layout vertical center-center">
+      <div class="layout vertical topContainer">
+        ${this.renderHeader()}
+        <div class="layout horizontal mainContent">
+          ${this.renderTabs()}
+          <div class="flex"></div>
+          ${this.createFabIcon && this.createFabLabel
+            ? html`
+                <md-fab
+                  lowered
+                  ?hidden=${(this.collection!.configuration as YpGroupConfiguration).hideNewPost}
+                  size="large"
+                  ?extended="${this.wide}"
+                  class="createFab"
+                  variant="primary"
+                  @click="${this._newPost}"
+                  ?is-map="${this.selectedTab === CollectionTabTypes.Map}"
+                  .label="${this.t(this.createFabLabel)}"
+                  .icon="${this.createFabIcon}"
+                >
+                  <md-icon hidden slot="icon">add_circle</md-icon></md-fab
+                >
+              `
+            : nothing}
+        </div>
+      </div>
+    </div>
+    <div class="currentPage layout vertical center-center">
+      <div class="topContainer">${this.renderCurrentGroupTabPage()}</div>
+    </div>
+  `;
+
   }
 }
