@@ -133,6 +133,7 @@ export abstract class YpCollection extends YpBaseElementWithLogin {
         documentTitle: this.collection.name,
         headerDescription:
           this.collection.description || this.collection.objectives,
+        currentTheme: this.collection.configuration?.theme,
       });
 
       if (
@@ -368,7 +369,7 @@ export abstract class YpCollection extends YpBaseElementWithLogin {
         }
 
         md-secondary-tab {
-          min-width: 140px;
+          width: 180px;
           padding-right: 16px;
           padding-left: 16px;
           --md-secondary-tab-active-indicator-height: 3px;

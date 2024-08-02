@@ -119,6 +119,10 @@ export class YpMagicText extends YpBaseElement {
           margin-top: 8px;
         }
 
+        a {
+          color: var(--md-sys-color-on-surface);
+        }
+
         md-linear-progress {
           margin-top: 12px;
           width: 80%;
@@ -526,6 +530,7 @@ export class YpMagicText extends YpBaseElement {
       //this.processedContent = sanitizeHtml(this.processedContent, {allowedTags: ['b', 'i', 'em', 'strong']});
       this.processedContent = this.processedContent.replace(/&amp;/g, "&");
       this.processedContent = linkifyHtml(this.processedContent, {
+        target: "_blank",
         format: (value: string, type: string) => {
           if (type === "url" && value.length > this.linkifyCutoff - 1) {
             value = value.slice(0, this.linkifyCutoff) + "…";

@@ -171,6 +171,9 @@ export class YpApp extends YpBaseElement {
   @property({ type: Boolean })
   languageLoaded = false;
 
+  @property({ type: Object })
+  currentTheme?: YpThemeConfiguration;
+
   //TODO: Refactor this
   @property({ type: String })
   keepOpenForPost: string | undefined;
@@ -463,6 +466,14 @@ export class YpApp extends YpBaseElement {
     }
   }
 
+  get hasStaticTheme() {
+    if (this.currentTheme) {
+      return !this.currentTheme.oneDynamicColor;
+    } else {
+      return false;
+    }
+  }
+
   updateLocation() {
     let path = window.location.pathname;
 
@@ -640,6 +651,7 @@ export class YpApp extends YpBaseElement {
               <md-badge
                 id="notificationBadge"
                 class="activeBadge"
+                ?has-static-theme="${this.hasStaticTheme}"
                 .value="${this.numberOfUnViewedNotifications}"
                 ?hidden="${!this.numberOfUnViewedNotifications}"
               >
@@ -1101,6 +1113,7 @@ export class YpApp extends YpBaseElement {
     } else {
       this.numberOfUnViewedNotifications = "";
     }
+    this.numberOfUnViewedNotifications = "2"
   }
 
   _redirectTo(event: CustomEvent) {
@@ -1596,6 +1609,10 @@ export class YpApp extends YpBaseElement {
         name: header.headerTitle || '',
         url: header.backPath || ''
       });
+    }
+
+    if (header.currentTheme) {
+      this.currentTheme = header.currentTheme;
     }
   }
 

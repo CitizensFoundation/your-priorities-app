@@ -731,6 +731,11 @@ export class YpAdminConfigBase extends YpAdminPage {
           margin-right: 16px;
         }
 
+        #videoPlayer {
+          width: 432px;
+          height: 243px;
+        }
+
         .logoUploadButtons {
           position: absolute;
           height: 48px;

@@ -1626,12 +1626,7 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
             </md-outlined-select>
           `,
         },
-        {
-          text: "urlToReview",
-          type: "textfield",
-          value: this.group.configuration.urlToReview,
-          translationToken: "urlToReview",
-        },
+
         {
           text: "urlToReviewActionText",
           type: "textfield",

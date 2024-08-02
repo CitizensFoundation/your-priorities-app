@@ -359,7 +359,8 @@ let YpCollectionItemCard = class YpCollectionItemCard extends YpBaseElement {
     `;
     }
     renderCollectionType() {
-        if (this.item?.configuration &&
+        if (this.statsCollectionType === "group" &&
+            this.item?.configuration &&
             this.item.configuration.hideGroupType !== true) {
             return html `<div class="groupType" ?is-folder="${this.isGroupFolder}">
         ${this.groupTypeName}

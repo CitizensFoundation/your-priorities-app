@@ -206,6 +206,20 @@ export class YpCollectionHeader extends YpBaseElement {
     return YpMediaHelpers.getImageFormatUrl(this.collectionHeaderImages, 0);
   }
 
+  _openAnalyticsAndPromotions() {
+    YpNavHelpers.redirectTo(
+      `/analytics/${this.collectionType}/${this.collection!.id}`
+    );
+  }
+
+  _openAdmin() {
+    YpNavHelpers.redirectTo(
+      `/admin/${this.collectionType}/${this.collection!.id}`
+    );
+  }
+
+  _openCreateGroupFolder() {}
+
   // UI
 
   static override get styles() {
@@ -265,6 +279,10 @@ export class YpCollectionHeader extends YpBaseElement {
           padding-left: 32px;
         }
 
+        .description[hide-logo-image] {
+          padding-left: 0;
+        }
+
         .image,
         video {
           width: 420px;
@@ -293,7 +311,7 @@ export class YpCollectionHeader extends YpBaseElement {
         }
 
         :host {
-          margin-top: 32px;
+          margin-top: 42px;
           margin-bottom: 32px;
         }
 
@@ -428,7 +446,7 @@ export class YpCollectionHeader extends YpBaseElement {
     ];
   }
 
-  renderFirstBoxContent() {
+  renderMediaContent() {
     if (this.collection?.configuration?.welcomeHTML) {
       return html`<div id="welcomeHTML">
         ${unsafeHTML(this.collection.configuration.welcomeHTML)}
@@ -446,7 +464,7 @@ export class YpCollectionHeader extends YpBaseElement {
           poster="${ifDefined(this.collectionVideoPosterURL)}"
         ></video>
       `;
-    } else if (this.collection) {
+    } else if (this.collection && !this.hideLogoImage) {
       return html`
         <yp-image
           class="image"
@@ -467,20 +485,6 @@ export class YpCollectionHeader extends YpBaseElement {
   renderFooter() {
     return html``;
   }
-
-  _openAnalyticsAndPromotions() {
-    YpNavHelpers.redirectTo(
-      `/analytics/${this.collectionType}/${this.collection!.id}`
-    );
-  }
-
-  _openAdmin() {
-    YpNavHelpers.redirectTo(
-      `/admin/${this.collectionType}/${this.collection!.id}`
-    );
-  }
-
-  _openCreateGroupFolder() {}
 
   renderMenu() {
     return html`
@@ -518,6 +522,24 @@ export class YpCollectionHeader extends YpBaseElement {
     `;
   }
 
+  get hideLogoImage(): boolean {
+    if (
+      this.collectionType == "group" &&
+      (this.collection?.configuration as YpGroupConfiguration)
+        .alwaysHideLogoImage
+    ) {
+      return true;
+    } else if (
+      this.collectionType == "community" &&
+      (this.collection?.configuration as YpCommunityConfiguration)
+        .alwaysHideLogoImage
+    ) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   renderHeaderBanner() {
     if (this.collectionHeaderImagePath) {
       return html`
@@ -533,6 +555,44 @@ export class YpCollectionHeader extends YpBaseElement {
     }
   }
 
+  renderName() {
+    return html`
+      <div class="nameText">
+        <yp-magic-text
+          class="collection-name"
+          role="heading"
+          aria-level="1"
+          aria-label="${this.collection!.name}"
+          .textType="${YpCollectionHelpers.nameTextType(this.collectionType)}"
+          .contentLanguage="${this.collection!.language}"
+          ?disableTranslation="${this.collection!.configuration
+            ?.disableNameAutoTranslation}"
+          textOnly
+          .content="${this.collection!.name}"
+          .contentId="${this.collection!.id}"
+        >
+        </yp-magic-text>
+      </div>
+    `;
+  }
+
+  renderDescription() {
+    return html`<yp-magic-text
+      id="description"
+      ?hide-logo-image="${this.hideLogoImage}"
+      class="description collectionDescription"
+      .textType="${YpCollectionHelpers.descriptionTextType(
+        this.collectionType
+      )}"
+      ?largeFont="${this.largeFont}"
+      .contentLanguage="${this.collection!.language}"
+      truncate="300"
+      .content="${this.collection!.description || this.collection!.objectives}"
+      .contentId="${this.collection!.id}"
+    >
+    </yp-magic-text>`;
+  }
+
   override render() {
     return html`
       ${this.collection
@@ -542,28 +602,9 @@ export class YpCollectionHeader extends YpBaseElement {
                 ${this.renderHeaderBanner()}
                 <div class="allContent">
                   <div
-                    class="layout horizontal nameAndActions ${!this.wide
-                      ? "wrap"
-                      : ""}"
+                    class="layout horizontal nameAndActions wrap"
                   >
-                    <div class="nameText">
-                      <yp-magic-text
-                        class="collection-name"
-                        role="heading"
-                        aria-level="1"
-                        aria-label="${this.collection.name}"
-                        .textType="${YpCollectionHelpers.nameTextType(
-                          this.collectionType
-                        )}"
-                        .contentLanguage="${this.collection.language}"
-                        ?disableTranslation="${this.collection.configuration
-                          ?.disableNameAutoTranslation}"
-                        textOnly
-                        .content="${this.collection.name}"
-                        .contentId="${this.collection.id}"
-                      >
-                      </yp-magic-text>
-                    </div>
+                    ${this.renderName()}
                     <div class="flex"></div>
                     ${this.hasCollectionAccess ? this.renderMenu() : nothing}
                   </div>
@@ -573,25 +614,11 @@ export class YpCollectionHeader extends YpBaseElement {
                       id="cardImage"
                       class="collectionDescriptionimageCard top-card"
                     >
-                      ${this.renderFirstBoxContent()}
+                      ${this.renderMediaContent()}
                     </div>
                     <div id="card" class="layout vertical">
                       <div class="descriptionContainer">
-                        <yp-magic-text
-                          id="description"
-                          class="description collectionDescription"
-                          .textType="${YpCollectionHelpers.descriptionTextType(
-                            this.collectionType
-                          )}"
-                          ?largeFont="${this.largeFont}"
-                          .contentLanguage="${this.collection.language}"
-                          truncate="300"
-                          .content="${this.collection.description ||
-                          this.collection.objectives}"
-                          .contentId="${this.collection.id}"
-                        >
-                        </yp-magic-text>
-                        ${this.renderStats()}
+                        ${this.renderDescription()} ${this.renderStats()}
                       </div>
                     </div>
                   </div>

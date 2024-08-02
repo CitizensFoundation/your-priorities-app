@@ -776,13 +776,6 @@ var updateGroupConfigParameters = function (req, group) {
   }
 
   group.set(
-    "configuration.urlToReview",
-    req.body.urlToReview && req.body.urlToReview != ""
-      ? req.body.urlToReview
-      : null
-  );
-
-  group.set(
     "configuration.urlToReviewActionText",
     req.body.urlToReviewActionText && req.body.urlToReviewActionText != ""
       ? req.body.urlToReviewActionText

@@ -40,10 +40,17 @@ let YpCollectionStats = class YpCollectionStats extends YpBaseElement {
             ? html `
           <div class="stats layout horizontal end-justified">
             <div class="layout horizontal">
-              <md-icon title="${this.t("stats.posts")}" class="stats-icon bulb"
+              <md-icon
+                ?hidden="${this.collectionType === "group"}"
+                title="${this.t("stats.posts")}"
+                class="stats-icon bulb"
                 >lightbulb_outline</md-icon
               >
-              <div title="${this.t("stats.posts")}" class="stats-text">
+              <div
+                title="${this.t("stats.posts")}"
+                class="stats-text"
+                ?hidden="${this.collectionType === "group"}"
+              >
                 ${YpFormattingHelpers.number(this.collection.counter_posts)}
               </div>
 

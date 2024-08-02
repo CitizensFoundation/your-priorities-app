@@ -1,4 +1,5 @@
 {
+  "alwaysHideLogoImage": "Hide logo image",
   "hideGroupType": "Hide group type",
   "smarterCrowdsourcing": "Smarter Crowdsourcing",
   "problems": "Problems",
@@ -164,8 +165,8 @@
   "allOurIdeas": "All Our Ideas",
   "futureRealityTree": "Future Reality Tree",
   "ideaGenerationGroupType": "Idea generation",
-  "allOurIdeasGroupType": "All Our Ideas Pairwise Ranking",
-  "policySynthAgentsWorkflow": "Policy Synth Agents Workflow",
+  "allOurIdeasGroupType": "Pairwise Voting",
+  "policySynthAgentsWorkflow": "Agents Workflow",
   "allowGenerativeImages": "Allow generative images",
   "reports": "Reports",
   "private": "Private",
@@ -932,7 +933,7 @@
     "post": {
       "new": "Idea",
       "status": {
-       "change": "Status update"
+        "change": "Status update"
       }
     },
     "point": {
@@ -970,7 +971,7 @@
   "myAdminGroups": "Groups Admin",
 
   "community": {
-    "add": "Add community",
+    "add": "Create community",
     "alternativeHeader": "Alternative Header",
     "edit": "Edit community",
     "hostname": "Hostname",
@@ -1155,7 +1156,6 @@
     "about": "About",
     "help": "Help",
     "settings": "Settings"
-
   },
 
   "users": {
@@ -1243,7 +1243,7 @@
   "Analysis": "Analysis",
   "Target votes reached!": "Target votes reached!",
   "Finish and return": "Finish and return",
-  "Loading":  "Loading...",
+  "Loading": "Loading...",
   "Email Lists": "Email Lists",
   "Send promotional emails": "Send promotional emails",
   "Settings": "Settings",

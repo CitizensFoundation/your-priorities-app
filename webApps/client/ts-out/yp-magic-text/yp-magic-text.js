@@ -53,6 +53,10 @@ let YpMagicText = YpMagicText_1 = class YpMagicText extends YpBaseElement {
           margin-top: 8px;
         }
 
+        a {
+          color: var(--md-sys-color-on-surface);
+        }
+
         md-linear-progress {
           margin-top: 12px;
           width: 80%;
@@ -374,6 +378,7 @@ let YpMagicText = YpMagicText_1 = class YpMagicText extends YpBaseElement {
             //this.processedContent = sanitizeHtml(this.processedContent, {allowedTags: ['b', 'i', 'em', 'strong']});
             this.processedContent = this.processedContent.replace(/&amp;/g, "&");
             this.processedContent = linkifyHtml(this.processedContent, {
+                target: "_blank",
                 format: (value, type) => {
                     if (type === "url" && value.length > this.linkifyCutoff - 1) {
                         value = value.slice(0, this.linkifyCutoff) + "…";

@@ -34,15 +34,18 @@ export declare class YpCollectionHeader extends YpBaseElement {
     get collectionVideoURL(): string | undefined;
     get collectionVideoPosterURL(): string | undefined;
     get collectionHeaderImagePath(): string | undefined;
-    static get styles(): any[];
-    renderFirstBoxContent(): import("lit-html").TemplateResult<1> | typeof nothing;
-    renderFooter(): import("lit-html").TemplateResult<1>;
     _openAnalyticsAndPromotions(): void;
     _openAdmin(): void;
     _openCreateGroupFolder(): void;
+    static get styles(): any[];
+    renderMediaContent(): import("lit-html").TemplateResult<1> | typeof nothing;
+    renderFooter(): import("lit-html").TemplateResult<1>;
     renderMenu(): import("lit-html").TemplateResult<1>;
     renderStats(): import("lit-html").TemplateResult<1>;
+    get hideLogoImage(): boolean;
     renderHeaderBanner(): import("lit-html").TemplateResult<1> | typeof nothing;
+    renderName(): import("lit-html").TemplateResult<1>;
+    renderDescription(): import("lit-html").TemplateResult<1>;
     render(): import("lit-html").TemplateResult<1>;
 }
 //# sourceMappingURL=yp-collection-header.d.ts.map

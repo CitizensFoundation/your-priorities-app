@@ -1480,12 +1480,6 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
           `,
                 },
                 {
-                    text: "urlToReview",
-                    type: "textfield",
-                    value: this.group.configuration.urlToReview,
-                    translationToken: "urlToReview",
-                },
-                {
                     text: "urlToReviewActionText",
                     type: "textfield",
                     maxLength: 30,

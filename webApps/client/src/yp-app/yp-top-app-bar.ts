@@ -88,6 +88,7 @@ export class YpTopAppBar extends YpBaseElement {
           --top-app-bar-height: 48px;
           --top-app-bar-expanded-height: 80px;
         }
+
         .top-app-bar {
           display: flex;
           align-items: center;
@@ -102,6 +103,14 @@ export class YpTopAppBar extends YpBaseElement {
           right: 0;
           transition: top 0.3s;
           z-index: 1;
+        }
+
+        .middleContainer {
+          width: 982px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding-left: 12px;
         }
 
         .title {
@@ -217,13 +226,17 @@ export class YpTopAppBar extends YpBaseElement {
       : "top-app-bar";
 
     return html`
-      <div class="${appBarClass}">
-        <slot name="navigation"></slot>
-        <div class="title ${this.isTitleLong ? "expanded" : ""}">
-          ${this.titleString}
-          ${this.breadcrumbs.length > 0 ? this.renderBreadcrumbsDropdown() : ""}
+      <div class="${appBarClass} layout center-center">
+        <div class="middleContainer">
+          <slot name="navigation"></slot>
+          <div class="title ${this.isTitleLong ? "expanded" : ""}">
+            ${this.titleString}
+            ${this.breadcrumbs.length > 0
+              ? this.renderBreadcrumbsDropdown()
+              : ""}
+          </div>
+          <slot name="action"></slot>
         </div>
-        <slot name="action"></slot>
       </div>
     `;
   }

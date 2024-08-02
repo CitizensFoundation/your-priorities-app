@@ -598,6 +598,10 @@ let YpAdminConfigCommunity = class YpAdminConfigCommunity extends YpAdminConfigB
                     templateData: this.renderHeaderImageUploads(),
                 },
                 {
+                    text: "alwaysHideLogoImage",
+                    type: "checkbox",
+                },
+                {
                     text: "facebookPixelId",
                     type: "textfield",
                     maxLength: 40,

@@ -72,6 +72,7 @@ export declare class YpApp extends YpBaseElement {
     userDrawerOpened: boolean;
     navDrawerOpened: boolean;
     languageLoaded: boolean;
+    currentTheme?: YpThemeConfiguration;
     keepOpenForPost: string | undefined;
     keepOpenForGroup: string | undefined;
     breadcrumbs: Array<{
@@ -111,6 +112,7 @@ export declare class YpApp extends YpBaseElement {
     static get styles(): any[];
     _haveCopiedNotification(): void;
     _appDialogsReady(event: CustomEvent): void;
+    get hasStaticTheme(): boolean;
     updateLocation(): void;
     renderNavigationIcon(): import("lit-html").TemplateResult<1>;
     _openHelpMenu(): void;

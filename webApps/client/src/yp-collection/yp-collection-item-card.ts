@@ -381,7 +381,7 @@ export class YpCollectionItemCard extends YpBaseElement {
   }
 
   renderCollectionType() {
-    if (
+    if (this.statsCollectionType === "group" &&
       this.item?.configuration &&
       (this.item as YpGroupData).configuration.hideGroupType !== true
     ) {

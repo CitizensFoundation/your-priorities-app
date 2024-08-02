@@ -281,7 +281,6 @@ interface YpGroupConfiguration extends YpCollectionConfiguration {
   forceShowDebateCountOnPost?: boolean;
   closeNewsfeedSubmissions?: boolean;
   usePostTagsForPostCards?: boolean;
-  urlToReview?: string;
   urlToReviewActionText?: string;
   dataForVisualization?: string;
   hideNewsfeeds?: boolean;
@@ -408,6 +407,7 @@ interface YpCommunityConfiguration extends YpCollectionConfiguration {
   ltp?: YpLtpConfiguration;
   onlyAdminsCanCreateGroups?: boolean;
   alwaysShowOnDomainPage?: boolean;
+  alwaysHideLogoImage?: boolean;
 }
 
 interface YpPromoterRights {

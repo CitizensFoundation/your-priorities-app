@@ -878,6 +878,11 @@ const updateCommunityConfigParameters = function (req, community) {
   );
 
   community.set(
+    "configuration.alwaysHideLogoImage",
+    truthValueFromBody(req.body.alwaysHideLogoImage)
+  );
+
+  community.set(
     "configuration.recalculateCountersRecursively",
     truthValueFromBody(req.body.recalculateCountersRecursively)
   );

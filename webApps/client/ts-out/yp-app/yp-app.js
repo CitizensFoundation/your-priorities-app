@@ -230,6 +230,14 @@ let YpApp = class YpApp extends YpBaseElement {
             window.appDialogs = event.detail;
         }
     }
+    get hasStaticTheme() {
+        if (this.currentTheme) {
+            return !this.currentTheme.oneDynamicColor;
+        }
+        else {
+            return false;
+        }
+    }
     updateLocation() {
         let path = window.location.pathname;
         if (path.includes("/admin")) {
@@ -395,6 +403,7 @@ let YpApp = class YpApp extends YpBaseElement {
               <md-badge
                 id="notificationBadge"
                 class="activeBadge"
+                ?has-static-theme="${this.hasStaticTheme}"
                 .value="${this.numberOfUnViewedNotifications}"
                 ?hidden="${!this.numberOfUnViewedNotifications}"
               >
@@ -814,6 +823,7 @@ let YpApp = class YpApp extends YpBaseElement {
         else {
             this.numberOfUnViewedNotifications = "";
         }
+        this.numberOfUnViewedNotifications = "2";
     }
     _redirectTo(event) {
         if (event.detail.path) {
@@ -1223,6 +1233,9 @@ let YpApp = class YpApp extends YpBaseElement {
                 url: header.backPath || ''
             });
         }
+        if (header.currentTheme) {
+            this.currentTheme = header.currentTheme;
+        }
     }
     updateBreadcrumbs(newBreadcrumb) {
         const existingIndex = this.breadcrumbs.findIndex(b => b.url === newBreadcrumb.url);
@@ -1443,6 +1456,9 @@ __decorate([
 __decorate([
     property({ type: Boolean })
 ], YpApp.prototype, "languageLoaded", void 0);
+__decorate([
+    property({ type: Object })
+], YpApp.prototype, "currentTheme", void 0);
 __decorate([
     property({ type: String })
 ], YpApp.prototype, "keepOpenForPost", void 0);
