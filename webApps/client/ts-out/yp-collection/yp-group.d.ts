@@ -1,7 +1,8 @@
 import { YpCollection } from "./yp-collection.js";
 import { TemplateResult, nothing } from "lit";
 import "@material/web/tabs/tabs.js";
-import "@material/web/tabs/primary-tab.js";
+import "@material/web/tabs/secondary-tab.js";
+import "@material/web/fab/fab.js";
 import "./yp-group-header.js";
 import "../ac-activities/ac-activities.js";
 import "../yp-post/yp-posts-list.js";

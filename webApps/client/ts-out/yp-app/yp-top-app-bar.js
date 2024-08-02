@@ -59,7 +59,7 @@ let YpTopAppBar = class YpTopAppBar extends YpBaseElement {
             super.styles,
             css `
         :host {
-          --top-app-bar-height: 48px;
+          --top-app-bar-height: 60px;
           --top-app-bar-expanded-height: 80px;
         }
 

@@ -311,7 +311,7 @@ export class YpCollectionHeader extends YpBaseElement {
         }
 
         :host {
-          margin-top: 42px;
+          margin-top: 54px;
           margin-bottom: 32px;
         }
 

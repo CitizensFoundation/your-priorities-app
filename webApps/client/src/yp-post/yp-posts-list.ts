@@ -10,7 +10,7 @@ import "@material/web/iconbutton/icon-button.js";
 import "@material/web/textfield/outlined-text-field.js";
 
 import "./yp-posts-filter.js";
-import "./yp-post-card.js";
+import "./yp-post-list-item.js";
 
 import { ShadowStyles } from "../common/ShadowStyles.js";
 import { YpPostCard } from "./yp-post-card.js";
@@ -62,7 +62,7 @@ export class YpPostsList extends YpBaseElement {
   showSearchIcon = false;
 
   @property({ type: Boolean, reflect: true })
-  grid = true;
+  grid = false;
 
   @state() randomSeed: number | undefined;
 
@@ -77,7 +77,6 @@ export class YpPostsList extends YpBaseElement {
   static override get styles() {
     return [
       super.styles,
-      ShadowStyles,
       css`
         .cardContainer {
           width: 100%;
@@ -87,6 +86,11 @@ export class YpPostsList extends YpBaseElement {
         .postsFilter {
           padding-left: 16px;
           height: 36px;
+        }
+
+        yp-post-list-item {
+          margin-bottom: 72px;
+          margin-top: 72px;
         }
 
         .objectives {
@@ -109,10 +113,11 @@ export class YpPostsList extends YpBaseElement {
         }
 
         lit-virtualizer {
-          height: 100vh;
-          width: 100vw;
-          overflow: hidden;
+          //TODO: Check this !important usage
+          max-width: 952px !important;
+          min-width: 952px !important;
         }
+
 
         yp-posts-filter {
           margin-bottom: 8px;
@@ -133,7 +138,6 @@ export class YpPostsList extends YpBaseElement {
         }
 
         yp-posts-filter {
-          padding-right: 16px;
         }
 
         .half {
@@ -142,17 +146,11 @@ export class YpPostsList extends YpBaseElement {
 
         .searchBox {
           margin-bottom: 22px;
-          margin-right: 8px;
         }
 
         .card {
-          margin-left: 0;
-          margin-right: 0;
-          padding-left: 0;
-          padding-right: 0;
-          height: 435px !important;
-          width: 416px !important;
-          border-radius: 4px;
+          padding: 0;
+          width: 100%;
         }
 
         yp-post-card {
@@ -198,6 +196,21 @@ export class YpPostsList extends YpBaseElement {
           .postsFilter {
             padding-left: 16px;
             width: 215px !important;
+          }
+        }
+
+        @media (max-width: 600px) {
+          lit-virtualizer {
+            margin-top: 80px;
+            margin-left: 8px;
+            margin-right: 8px;
+            padding-left: 8px;
+            padding-right: 8px;
+            width: 100% !important;
+            min-width: 100% !important;
+          }
+          .card {
+            margin-bottom: 16px;
           }
         }
 
@@ -258,29 +271,53 @@ export class YpPostsList extends YpBaseElement {
 
   override render() {
     return html`
-      <div class="layout vertical center-center topMost">
-        ${
-          this.noPosts
-            ? html`
-                <div class="layout horiztonal center-center">
-                  <div
-                    class="noIdeas layout horizontal center-center shadow-elevation-6dp shadow-transition"
-                    ?hidden="${this.group.configuration
-                      .allPostsBlockedByDefault}"
-                  >
-                    <div class="noIdeasText">${this.t("noIdeasHere")}</div>
-                  </div>
+      <div class="layout vertical center-centser topMost">
+        ${this.noPosts
+          ? html`
+              <div class="layout horiztonal center-center">
+                <div
+                  class="noIdeas layout horizontal center-center shadow-elevation-6dp shadow-transition"
+                  ?hidden="${this.group.configuration.allPostsBlockedByDefault}"
+                >
+                  <div class="noIdeasText">${this.t("noIdeasHere")}</div>
                 </div>
-              `
-            : nothing
-        }
+              </div>
+            `
+          : nothing}
         <div
-          class="searchContainer layout horizontal center-center wrap"
-          ?hidden="${
-            this.group.configuration.hidePostFilterAndSearch || this.noPosts
-          }"
+          class="searchContainer layout horizontal wrap"
+          ?hidden="${this.group.configuration.hidePostFilterAndSearch ||
+          this.noPosts}"
         >
           <div class="layout horizontal center-center">
+            <md-outlined-text-field
+              id="searchInput"
+              @keydown="${this._searchKey}"
+              .label="${this.t("searchFor")}"
+              .value="${this.searchingFor ? this.searchingFor : ""}"
+              class="searchBox"
+            >
+            </md-outlined-text-field>
+
+            ${this.searchingFor
+              ? html`
+                  <md-icon-button
+                    aria-label="${this.t("clearSearchInput")}"
+                    @click="${this._clearSearch}"
+                    class="clear-search-trigger"
+                    ><md-icon>clear</md-icon></md-icon-button
+                  >
+                `
+              : nothing}
+
+            <md-icon-button
+              .label="${this.t("startSearch")}"
+              @click="${this._search}"
+              ?hiddsen="${!this.showSearchIcon}"
+              ><md-icon>search</md-icon></md-icon-button
+            >
+          </div>
+          <div class="layout horizontal">
             <yp-posts-filter
               @click="${this._tapOnFilter}"
               .subTitle="${this.subTitle ? this.subTitle : ""}"
@@ -297,92 +334,38 @@ export class YpPostsList extends YpBaseElement {
             >
             </yp-posts-filter>
           </div>
-          <div class="layout horizontal center-center">
-            <md-outlined-text-field
-              id="searchInput"
-              @keydown="${this._searchKey}"
-              .label="${this.t("searchFor")}"
-              .value="${this.searchingFor ? this.searchingFor : ""}"
-              class="searchBox"
-            >
-            </md-outlined-text-field>
-
-              ${
-                this.searchingFor
-                  ? html`
-                      <md-icon-button
-                        aria-label="${this.t("clearSearchInput")}"
-                        @click="${this._clearSearch}"
-                        class="clear-search-trigger"
-                        ><md-icon>clear</md-icon></md-icon-button
-                      >
-                    `
-                  : nothing
-              }
-
-           <md-icon-button
-              .label="${this.t("startSearch")}"
-
-              @click="${this._search}"
-              ?hiddsen="${!this.showSearchIcon}"
-            ><md-icon>search</md-icon></md-icon-button>
-          </div>
         </div>
-        ${
-          this.posts
-            ? html`
-                <lit-virtualizer
-                  id="list"
-                  .items=${this.posts}
-                  .layout="${this.grid
-                    ? grid({
-                        itemSize: { width: "420px", height: "442px" },
-                        gap: "64px 32px",
-                        justify: "center",
-                        padding: "0",
-                      })
-                    : flow()}"
-                  .scrollTarget="${window}"
-                  .renderItem=${this.renderPostItem.bind(this)}
-                  @rangeChanged=${this.scrollEvent}
-                ></lit-virtualizer>
-              `
-            : nothing
-        }
+        ${this.posts
+          ? html`
+              <lit-virtualizer
+                id="list"
+                .items=${this.posts}
+                .layout="${flow()}"
+                .scrollTarget="${window}"
+                .renderItem=${this.renderPostItem.bind(this)}
+                @rangeChanged=${this.scrollEvent}
+              ></lit-virtualizer>
+            `
+          : nothing}
       </div>
     `;
   }
 
   renderPostItem(post: YpPostData, index?: number | undefined): TemplateResult {
     const tabindex = index !== undefined ? index + 1 : 0;
-    if (false && this.desktopListFormat) {
-      return html`
-        <yp-post-list-item
-          aria-label="${post.name}"
-          @keypress="${this._keypress.bind(this)}"
-          @click="${this._selectedItemChanged.bind(this)}"
-          tabindex="${tabindex}"
-          id="postCard${post.id}"
-          class="card"
-          .post="${post}"
-        >
-        </yp-post-list-item>
-      `;
-    } else {
-      return html`
-        <yp-post-card
-          aria-label="${post.name}"
-          ?is-last-item="${this._isLastItem(index!)}"
-          @keypress="${this._keypress.bind(this)}"
-          @click="${this._selectedItemChanged.bind(this)}"
-          tabindex="${tabindex}"
-          id="postCard${post.id}"
-          class="csard"
-          .post="${post}"
-        >
-        </yp-post-card>
-      `;
-    }
+    return html`
+      <yp-post-list-item
+        aria-label="${post.name}"
+        ?is-last-item="${this._isLastItem(index!)}"
+        @keypress="${this._keypress.bind(this)}"
+        @click="${this._selectedItemChanged.bind(this)}"
+        tabindex="${tabindex}"
+        id="postCard${post.id}"
+        class="csard"
+        .post="${post}"
+      >
+      </yp-post-list-item>
+    `;
   }
 
   get desktopListFormat() {

@@ -143,7 +143,7 @@ let YpPostsFilter = class YpPostsFilter extends YpBaseElement {
     }
     render() {
         return html `
-      <div class="layout horizontal center-center mainContainer wrap">
+      <div class="layout horizontal mainContainer wrap">
         ${this.showFilter
             ? html `
               <div>

@@ -361,6 +361,8 @@ export abstract class YpCollection extends YpBaseElementWithLogin {
 
         md-tabs {
           border-bottom-color: transparent;
+          max-width: 720px;
+          overflow-y: scroll;
         }
 
         .mainContent {

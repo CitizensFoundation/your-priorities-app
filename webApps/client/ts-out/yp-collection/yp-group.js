@@ -10,7 +10,8 @@ import { CollectionTabTypes, YpCollection } from "./yp-collection.js";
 import { html, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import "@material/web/tabs/tabs.js";
-import "@material/web/tabs/primary-tab.js";
+import "@material/web/tabs/secondary-tab.js";
+import "@material/web/fab/fab.js";
 import "./yp-group-header.js";
 import "../ac-activities/ac-activities.js";
 import "../yp-post/yp-posts-list.js";
@@ -792,37 +793,35 @@ let YpGroup = class YpGroup extends YpCollection {
     }
     renderYpGroup() {
         return html `
-    <div class="layout vertical center-center">
-      <div class="layout vertical topContainer">
-        ${this.renderHeader()}
-        <div class="layout horizontal mainContent">
-          ${this.renderTabs()}
-          <div class="flex"></div>
-          ${this.createFabIcon && this.createFabLabel
-            ? html `
-                <md-fab
-                  lowered
-                  ?hidden=${this.collection.configuration.hideNewPost}
-                  size="large"
-                  ?extended="${this.wide}"
-                  class="createFab"
-                  variant="primary"
-                  @click="${this._newPost}"
-                  ?is-map="${this.selectedTab === CollectionTabTypes.Map}"
-                  .label="${this.t(this.createFabLabel)}"
-                  .icon="${this.createFabIcon}"
-                >
-                  <md-icon hidden slot="icon">add_circle</md-icon></md-fab
-                >
-              `
-            : nothing}
+      <div class="layout vertical center-center">
+        <div class="layout vertical topContainer">
+          ${this.renderHeader()}
+          <div class="layout horizontal mainContent">
+            ${this.renderTabs()}
+            <div class="flex"></div>
+            <md-fab
+              lowered
+              ?hidden=${this.collection.configuration
+            .hideNewPost}
+              size="large"
+              ?extended="${this.wide}"
+              class="createFab"
+              variant="primary"
+              @click="${this._newPost}"
+              ?is-map="${this.selectedTab === CollectionTabTypes.Map}"
+              .label="${this.t("post.new")}"
+              aria-label="${this.t("post.new")}"
+              .icon="${this.createFabIcon}"
+            >
+              <md-icon hidden slot="icon">add_circle</md-icon></md-fab
+            >
+          </div>
         </div>
       </div>
-    </div>
-    <div class="currentPage layout vertical center-center">
-      <div class="topContainer">${this.renderCurrentGroupTabPage()}</div>
-    </div>
-  `;
+      <div class="currentPage layout vertical center-center">
+        <div class="topContainer">${this.renderCurrentGroupTabPage()}</div>
+      </div>
+    `;
     }
 };
 __decorate([

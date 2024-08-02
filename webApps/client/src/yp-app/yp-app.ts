@@ -1113,7 +1113,6 @@ export class YpApp extends YpBaseElement {
     } else {
       this.numberOfUnViewedNotifications = "";
     }
-    this.numberOfUnViewedNotifications = "2"
   }
 
   _redirectTo(event: CustomEvent) {
