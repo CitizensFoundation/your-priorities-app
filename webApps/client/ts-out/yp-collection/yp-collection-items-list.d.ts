@@ -12,7 +12,7 @@ export declare class YpCollectionItemsList extends YpBaseElement {
     static get styles(): any[];
     render(): TemplateResult<1> | typeof nothing;
     renderItem(item: YpCollectionData, index: number): TemplateResult;
-    get pluralItemType(): "communities" | "groups" | "posts" | "unknownItemType";
+    get pluralItemType(): "groups" | "posts" | "communities" | "unknownItemType";
     _keypress(event: KeyboardEvent): void;
     refresh(): Promise<void>;
     firstUpdated(changedProperties: Map<string | number | symbol, unknown>): void;
