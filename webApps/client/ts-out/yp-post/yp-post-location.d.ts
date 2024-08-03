@@ -18,7 +18,7 @@ export declare class YpPostLocation extends YpBaseElement {
     narrowPad: boolean;
     updated(changedProperties: Map<string | number | symbol, unknown>): void;
     static get styles(): any[];
-    render(): import("lit-html").TemplateResult<1> | typeof nothing;
+    render(): typeof nothing | import("lit-html").TemplateResult<1>;
     _mapZoomChanged(event: CustomEvent): void;
     get mapZoom(): number;
     _submitOnEnter(event: KeyboardEvent): void;
