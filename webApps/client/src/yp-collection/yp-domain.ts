@@ -167,7 +167,7 @@ export class YpDomain extends YpCollection {
   override render() {
     if (
       this.collection &&
-      this.loggedInUser &&
+      !this.loggedInUser &&
       (this.collection.configuration as YpDomainConfiguration)
         .welcomeHtmlInsteadOfCommunitiesList
     ) {

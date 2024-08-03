@@ -119,7 +119,7 @@ let YpDomain = class YpDomain extends YpCollection {
     }
     render() {
         if (this.collection &&
-            this.loggedInUser &&
+            !this.loggedInUser &&
             this.collection.configuration
                 .welcomeHtmlInsteadOfCommunitiesList) {
             if (this.customWelcomeHtml) {

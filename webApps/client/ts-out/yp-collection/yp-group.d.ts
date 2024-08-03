@@ -47,12 +47,12 @@ export declare class YpGroup extends YpCollection {
     refresh(fromMainApp?: boolean): Promise<void>;
     _setupGroupSaml(group: YpGroupData): void;
     scrollToCollectionItemSubClass(): void;
-    renderTabs(): typeof nothing | TemplateResult<1>;
+    renderTabs(): TemplateResult<1> | typeof nothing;
     renderPostList(statusFilter: string): TemplateResult;
     renderCurrentGroupTabPage(): TemplateResult | undefined;
     renderAllOurIdeas(): TemplateResult<1>;
     renderStaticHtml(): TemplateResult<1>;
-    renderHeader(): typeof nothing | TemplateResult<1>;
+    renderHeader(): TemplateResult<1> | typeof nothing;
     get cleanedGroupType(): number;
     renderAgentsOps(): TemplateResult<1>;
     render(): TemplateResult<1>;

@@ -28,7 +28,6 @@ let YpDomainHeader = class YpDomainHeader extends YpCollectionHeader {
         }
 
         .menuButton {
-          margin-right: 42px;
         }
 
         .collectionDescriptionimageCard {
