@@ -13,7 +13,7 @@ export declare class YpTopAppBar extends YpBaseElement {
         name: string;
         url: string;
     }>;
-    renderBreadcrumbsDropdown(): typeof nothing | TemplateResult<1>;
+    renderBreadcrumbsDropdown(): TemplateResult<1> | typeof nothing;
     navigateTo(url: string): void;
     private _toggleMenu;
     private _onMenuClosed;

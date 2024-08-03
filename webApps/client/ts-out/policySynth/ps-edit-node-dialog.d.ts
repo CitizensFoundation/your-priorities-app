@@ -27,7 +27,7 @@ export declare class PsEditNodeDialog extends YpBaseElement {
     render(): import("lit-html").TemplateResult<1>;
     _renderNodeEditHeadline(): import("lit-html").TemplateResult<1>;
     _renderEditForm(): import("lit-html").TemplateResult<1>;
-    _renderAiModelSelector(): import("lit-html").TemplateResult<1> | "";
+    _renderAiModelSelector(): "" | import("lit-html").TemplateResult<1>;
     _getInitialAnswers(): {
         uniqueId: string;
         value: unknown;

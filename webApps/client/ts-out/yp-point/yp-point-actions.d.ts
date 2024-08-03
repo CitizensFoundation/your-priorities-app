@@ -11,7 +11,7 @@ export declare class YpPointActions extends YpBaseElement {
     pointQualityValue: number | undefined;
     pointUrl: string | undefined;
     static get styles(): any[];
-    render(): typeof nothing | import("lit-html").TemplateResult<1>;
+    render(): import("lit-html").TemplateResult<1> | typeof nothing;
     connectedCallback(): void;
     disconnectedCallback(): void;
     get masterHideSharing(): boolean | undefined;

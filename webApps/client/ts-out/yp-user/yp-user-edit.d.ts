@@ -16,7 +16,7 @@ export declare class YpUserEdit extends YpEditBase {
     notificationSettings: AcNotificationSettingsData | undefined;
     updated(changedProperties: Map<string | number | symbol, unknown>): void;
     static get styles(): any[];
-    render(): typeof nothing | import("lit-html").TemplateResult<1>;
+    render(): import("lit-html").TemplateResult<1> | typeof nothing;
     connectedCallback(): void;
     disconnectedCallback(): void;
     _editResponse(event: CustomEvent): void;

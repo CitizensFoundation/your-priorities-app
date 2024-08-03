@@ -44,6 +44,9 @@ export class YpPostListItem extends YpBaseElement {
           text-align: left;
           margin-bottom: 8px;
           line-height: 33px;
+          font-family: var(
+            --md-ref-typeface-brand
+          );
         }
 
         .share {

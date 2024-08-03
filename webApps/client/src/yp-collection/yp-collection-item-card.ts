@@ -95,12 +95,16 @@ export class YpCollectionItemCard extends YpBaseElement {
           vertical-align: text-top;
         }
 
+
         .collection-name,
         .collectionItemCount {
           cursor: pointer;
           font-size: 22px;
           font-weight: 700;
           margin-bottom: 16px;
+          font-family: var(
+            --md-ref-typeface-brand
+          );
         }
 
         .collectionItemCount {
@@ -125,16 +129,6 @@ export class YpCollectionItemCard extends YpBaseElement {
           padding-right: 0;
           margin-right: 0;
           text-align: right;
-        }
-
-        .collection-name[featured] {
-        }
-
-        .collection-name[archived] {
-        }
-
-        .collection-name[has-data-viz] {
-          padding-top: 26px;
         }
 
         yp-membership-button[archived] {
@@ -284,34 +278,9 @@ export class YpCollectionItemCard extends YpBaseElement {
     }
   }
 
+  // Deprecated
   _setupFontNameFontSize() {
-    const collectionName = this.$$("#collectionName") as HTMLElement;
-    if (collectionName && this.collection) {
-      let classNames = "collection-name ";
-      if (this.wide) {
-        if (this.collection.name.length <= 18) {
-          classNames += "collectionNameFontSize4Wide";
-        } else if (this.collection.name.length > 40) {
-          classNames += "collectionNameFontSize1Wide";
-        } else if (this.collection.name.length > 30) {
-          classNames += "collectionNameFontSize2Wide";
-        } else if (this.collection.name.length > 18) {
-          classNames += "collectionNameFontSize3Wide";
-        }
-      } else {
-        if (this.collection.name.length <= 18) {
-          classNames += "collectionNameFontSize4Mobile";
-        } else if (this.collection.name.length > 40) {
-          classNames += "collectionNameFontSize1Mobile";
-        } else if (this.collection.name.length > 30) {
-          classNames += "collectionNameFontSize2Mobile";
-        } else if (this.collection.name.length > 18) {
-          classNames += "collectionNameFontSize3Mobile";
-        }
-      }
 
-      collectionName.className = classNames;
-    }
   }
 
   get isGroupFolder() {

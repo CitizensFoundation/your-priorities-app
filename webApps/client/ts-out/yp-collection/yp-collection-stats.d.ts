@@ -5,6 +5,6 @@ export declare class YpCollectionStats extends YpBaseElement {
     collection: YpCollectionData | undefined;
     collectionType: string | undefined;
     static get styles(): any[];
-    render(): typeof nothing | import("lit-html").TemplateResult<1>;
+    render(): import("lit-html").TemplateResult<1> | typeof nothing;
 }
 //# sourceMappingURL=yp-collection-stats.d.ts.map

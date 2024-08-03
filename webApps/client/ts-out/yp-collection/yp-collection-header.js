@@ -195,14 +195,6 @@ let YpCollectionHeader = class YpCollectionHeader extends YpBaseElement {
           text-align: left;
         }
 
-        .collection-name[widetext] {
-          font-size: var(--mdc-typography-headline1-widetext-font-size, 20px);
-        }
-
-        .collection-name[largeFont] {
-          font-size: var(--mdc-typography-headline1-widetext-font-size, 20px);
-        }
-
         .nameText {
           border-radius: 16px;
         }
@@ -210,10 +202,6 @@ let YpCollectionHeader = class YpCollectionHeader extends YpBaseElement {
         .descriptionContainer {
           width: 100%;
           min-width: 532px;
-        }
-
-        .description {
-          padding-left: 32px;
         }
 
         .description[hide-logo-image] {
@@ -263,6 +251,7 @@ let YpCollectionHeader = class YpCollectionHeader extends YpBaseElement {
 
         .collectionDescriptionimageCard {
           margin-top: 8px;
+          margin-right: 32px;
         }
 
         @media (max-width: 960px) {

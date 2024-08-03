@@ -33,9 +33,8 @@ let YpGroupHeader = class YpGroupHeader extends YpCollectionHeader {
         }
 
         .description {
-          padding-left: 0px;
           margin-top: 8px;
-          width: 100%;
+          max-width: 500px;
         }
 
         .menuButton {
