@@ -47,6 +47,9 @@ export class YpCollection extends YpBaseElementWithLogin {
             // this.getCollection();
         }
     }
+    setupTheme() {
+        console.error("Implement setupTheme in subclass");
+    }
     // DATA PROCESSING
     connectedCallback() {
         super.connectedCallback();
@@ -85,7 +88,9 @@ export class YpCollection extends YpBaseElementWithLogin {
     }
     async getCollection() {
         if (this.collectionId) {
-            //this.collection = undefined;
+            if (this.collection) {
+                this.setupTheme();
+            }
             this.collectionItems = undefined;
             this.collection = undefined;
             this.collection = (await window.serverApi.getCollection(this.collectionType, this.collectionId));

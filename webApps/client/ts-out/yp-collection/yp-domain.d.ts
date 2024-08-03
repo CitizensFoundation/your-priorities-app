@@ -1,10 +1,14 @@
 import { YpCollection } from "./yp-collection.js";
+import { nothing } from "lit";
+import "./yp-domain-header.js";
 export declare class YpDomain extends YpCollection {
     customWelcomeHtml: string | undefined;
     constructor();
+    static get styles(): (any[] | import("lit").CSSResult)[];
     refresh(): Promise<void>;
     scrollToCommunityItem(): void;
     scrollToCollectionItemSubClass(): void;
+    renderHeader(): typeof nothing | import("lit-html").TemplateResult<1>;
     render(): import("lit-html").TemplateResult<1>;
 }
 //# sourceMappingURL=yp-domain.d.ts.map

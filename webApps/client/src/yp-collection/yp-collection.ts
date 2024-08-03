@@ -108,6 +108,10 @@ export abstract class YpCollection extends YpBaseElementWithLogin {
 
   abstract scrollToCollectionItemSubClass(): void;
 
+  setupTheme() {
+    console.error("Implement setupTheme in subclass");
+  }
+
   // DATA PROCESSING
 
   override connectedCallback() {
@@ -154,7 +158,9 @@ export abstract class YpCollection extends YpBaseElementWithLogin {
 
   async getCollection() {
     if (this.collectionId) {
-      //this.collection = undefined;
+      if (this.collection) {
+        this.setupTheme();
+      }
       this.collectionItems = undefined;
       this.collection = undefined;
       this.collection = (await window.serverApi.getCollection(

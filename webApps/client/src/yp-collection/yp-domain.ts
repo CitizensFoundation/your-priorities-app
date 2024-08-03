@@ -6,9 +6,11 @@ import { YpCollectionItemsList } from "./yp-collection-items-list.js";
 import { customElement, property } from "lit/decorators.js";
 import { AcActivities } from "../ac-activities/ac-activities.js";
 import { unsafeHTML } from "lit/directives/unsafe-html.js";
-import { html, nothing } from "lit";
+import { css, html, nothing } from "lit";
 import { YpNavHelpers } from "../common/YpNavHelpers.js";
 import { YpFormattingHelpers } from "../common/YpFormattingHelpers.js";
+
+import "./yp-domain-header.js";
 
 @customElement("yp-domain")
 export class YpDomain extends YpCollection {
@@ -17,6 +19,17 @@ export class YpDomain extends YpCollection {
 
   constructor() {
     super("domain", "community", "edit", "community.add");
+  }
+
+  static override get styles() {
+    return [
+      super.styles,
+      css`
+        yp-domain-header {
+          width: 100%;
+        }
+      `,
+    ];
   }
 
   override async refresh() {
@@ -90,6 +103,7 @@ export class YpDomain extends YpCollection {
         }
       }
     });
+    this.requestUpdate();
   }
 
   scrollToCommunityItem() {
@@ -135,9 +149,25 @@ export class YpDomain extends YpCollection {
     }
   }
 
+  override renderHeader() {
+    return this.collection && !this.noHeader
+      ? html`
+          <div class="layout vertical center-center header">
+            <yp-domain-header
+              .collection="${this.collection}"
+              .collectionType="${this.collectionType}"
+              aria-label="${this.collectionType}"
+              role="banner"
+            ></yp-domain-header>
+          </div>
+        `
+      : nothing;
+  }
+
   override render() {
     if (
       this.collection &&
+      this.loggedInUser &&
       (this.collection.configuration as YpDomainConfiguration)
         .welcomeHtmlInsteadOfCommunitiesList
     ) {

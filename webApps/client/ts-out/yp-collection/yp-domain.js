@@ -8,12 +8,23 @@ import { YpAccessHelpers } from "../common/YpAccessHelpers.js";
 import { YpMediaHelpers } from "../common/YpMediaHelpers.js";
 import { YpCollection, CollectionTabTypes } from "./yp-collection.js";
 import { customElement, property } from "lit/decorators.js";
-import { html } from "lit";
+import { css, html, nothing } from "lit";
 import { YpFormattingHelpers } from "../common/YpFormattingHelpers.js";
+import "./yp-domain-header.js";
 let YpDomain = class YpDomain extends YpCollection {
     constructor() {
         super("domain", "community", "edit", "community.add");
         this.customWelcomeHtml = undefined;
+    }
+    static get styles() {
+        return [
+            super.styles,
+            css `
+        yp-domain-header {
+          width: 100%;
+        }
+      `,
+        ];
     }
     async refresh() {
         super.refresh();
@@ -59,6 +70,7 @@ let YpDomain = class YpDomain extends YpCollection {
                 }
             }
         });
+        this.requestUpdate();
     }
     scrollToCommunityItem() {
         if (this.selectedTab === CollectionTabTypes.Newsfeed &&
@@ -91,8 +103,23 @@ let YpDomain = class YpDomain extends YpCollection {
                 undefined;
         }
     }
+    renderHeader() {
+        return this.collection && !this.noHeader
+            ? html `
+          <div class="layout vertical center-center header">
+            <yp-domain-header
+              .collection="${this.collection}"
+              .collectionType="${this.collectionType}"
+              aria-label="${this.collectionType}"
+              role="banner"
+            ></yp-domain-header>
+          </div>
+        `
+            : nothing;
+    }
     render() {
         if (this.collection &&
+            this.loggedInUser &&
             this.collection.configuration
                 .welcomeHtmlInsteadOfCommunitiesList) {
             if (this.customWelcomeHtml) {

@@ -59,7 +59,7 @@ export class YpPostListItem extends YpBaseElement {
 
         .actionsBar {
           margin-left: 372px;
-          margin-top: -42px;
+          margin-top: -24px;
         }
 
         .postCardCursor {

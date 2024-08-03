@@ -180,6 +180,9 @@ let YpGroup = class YpGroup extends YpCollection {
             this.refresh();
         }
         else if (this.collectionId) {
+            if (this.collection) {
+                this.setupTheme();
+            }
             this.collection = undefined;
             this.collectionItems = undefined;
             const groupResults = (await window.serverApi.getCollection(this.collectionType, this.collectionId));
@@ -408,6 +411,66 @@ let YpGroup = class YpGroup extends YpCollection {
             }
           }
         },*/
+    setupTheme() {
+        const group = this.collection;
+        try {
+            if (group.configuration && group.configuration.theme) {
+                if (group.configuration.inheritThemeFromCommunity && group.Community) {
+                    window.appGlobals.theme.setTheme(undefined, group.Community.configuration);
+                }
+                else {
+                    window.appGlobals.theme.setTheme(undefined, group.configuration);
+                }
+            }
+            else if (group.configuration &&
+                group.configuration.themeOverrideColorPrimary) {
+                window.appGlobals.theme.setTheme(undefined, group.configuration);
+            }
+            else if (group.Community && group.Community.configuration.theme) {
+                window.appGlobals.theme.setTheme(undefined, group.Community.configuration);
+            }
+            else if (group.theme_id) {
+                window.appGlobals.theme.setTheme(group.theme_id, group.configuration);
+            }
+            else if (group.Community &&
+                group.Community.configuration.themeOverrideColorPrimary) {
+                window.appGlobals.theme.setTheme(group.Community.theme_id, group.Community.configuration);
+            }
+            else if (group.Community &&
+                group.Community.Domain &&
+                group.Community.Domain.configuration.theme) {
+                window.appGlobals.theme.setTheme(group.Community.Domain.theme_id);
+            }
+            else {
+                window.appGlobals.theme.setTheme(1);
+            }
+        }
+        catch (error) {
+            console.error("Error setting group theme", error);
+        }
+    }
+    setupThemeOld() {
+        const group = this.collection;
+        if (group.configuration &&
+            (group.configuration.theme != null ||
+                group.configuration.themeOverrideColorPrimary != null)) {
+            window.appGlobals.theme.setTheme(undefined, group.configuration);
+        }
+        else if (group.Community &&
+            (group.Community.configuration.theme != null ||
+                (group.Community.configuration &&
+                    group.Community.configuration.themeOverrideColorPrimary))) {
+            window.appGlobals.theme.setTheme(group.Community.theme_id, group.Community.configuration);
+        }
+        else if (group.Community &&
+            group.Community.Domain &&
+            group.Community.Domain.configuration.theme != null) {
+            window.appGlobals.theme.setTheme(group.Community.Domain.theme_id);
+        }
+        else {
+            window.appGlobals.theme.setTheme(1);
+        }
+    }
     async refresh(fromMainApp = false) {
         super.refresh();
         const group = this.collection;
@@ -435,25 +498,7 @@ let YpGroup = class YpGroup extends YpCollection {
             if (group.Community?.configuration) {
                 window.appGlobals.analytics.setCommunityPixelTracker(group.Community.configuration.facebookPixelId);
             }
-            if (group.configuration &&
-                (group.configuration.theme != null ||
-                    group.configuration.themeOverrideColorPrimary != null)) {
-                window.appGlobals.theme.setTheme(group.theme_id, group.configuration);
-            }
-            else if (group.Community &&
-                (group.Community.configuration.theme != null ||
-                    (group.Community.configuration &&
-                        group.Community.configuration.themeOverrideColorPrimary))) {
-                window.appGlobals.theme.setTheme(group.Community.theme_id, group.Community.configuration);
-            }
-            else if (group.Community &&
-                group.Community.Domain &&
-                group.Community.Domain.configuration.theme != null) {
-                window.appGlobals.theme.setTheme(group.Community.Domain.theme_id);
-            }
-            else {
-                window.appGlobals.theme.setTheme(1);
-            }
+            this.setupTheme();
             if (group.configuration.locationHidden) {
                 if (group.configuration.locationHidden == true) {
                     this.locationHidden = true;
@@ -585,6 +630,7 @@ let YpGroup = class YpGroup extends YpCollection {
           await survey.getEarl();
           this.requestUpdate();
         }*/
+        this.requestUpdate();
     }
     _setupGroupSaml(group) {
         if (group.Community &&

@@ -27,19 +27,17 @@ let YpGroupHeader = class YpGroupHeader extends YpCollectionHeader {
 
         .nameAndActions {
           width: 100%;
-          margin-top: 16px;
-          margin-bottom: 24px;
-          width: 532px;
+          min-width: 100%;
+          margin-top: 0px;
+          margin-bottom: 8px;
         }
 
         .description {
-          margin-top: 8px;
           max-width: 500px;
           padding-left: 0;
         }
 
         .menuButton {
-          margin-right: 42px;
         }
 
         .collectionDescriptionimageCard {
@@ -91,7 +89,7 @@ let YpGroupHeader = class YpGroupHeader extends YpCollectionHeader {
             <div class="layout vertical center-center">
               <div class="layout vertical topContainer">
                 <div class="allContent">
-                  <div class="layout horizontal">
+                  <div class="layout vertical">
                     <div class="layout vertical">
                       <div class="layout horizontal">
                         <div
@@ -100,24 +98,27 @@ let YpGroupHeader = class YpGroupHeader extends YpCollectionHeader {
                         >
                           ${this.groupTypeName}
                         </div>
+                      </div>
+                      <div class="layout horizontal nameAndActions">
+                        ${this.renderName()}
                         <div class="flex"></div>
                         ${this.hasCollectionAccess
                 ? this.renderMenu()
                 : nothing}
                       </div>
-                      <div class="layout vertical nameAndActions">
-                        ${this.renderName()}
+                    </div>
+                    <div class="layout horizontal">
                         <div class="descriptionContainer">
                           ${this.renderDescription()} ${this.renderStats()}
                         </div>
-                      </div>
-                    </div>
                     <div
                       is-video="${ifDefined(this.collectionVideoURL)}"
                       id="cardImage"
                       class="collectionDescriptionimageCard top-card"
                     >
                       ${this.renderMediaContent()}
+                    </div>
+
                     </div>
                   </div>
                 </div>

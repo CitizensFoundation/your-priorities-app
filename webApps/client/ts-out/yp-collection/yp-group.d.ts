@@ -42,6 +42,8 @@ export declare class YpGroup extends YpCollection {
     get _isCurrentPostsTab(): boolean;
     _loadMoreData(): void;
     goToPostOrNewsItem(): void;
+    setupTheme(): void;
+    setupThemeOld(): void;
     refresh(fromMainApp?: boolean): Promise<void>;
     _setupGroupSaml(group: YpGroupData): void;
     scrollToCollectionItemSubClass(): void;

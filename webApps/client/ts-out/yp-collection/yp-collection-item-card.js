@@ -23,7 +23,9 @@ let YpCollectionItemCard = class YpCollectionItemCard extends YpBaseElement {
         .description {
           line-height: 25px;
           font-size: 17px;
-          width: 580px;
+          /*width: 580px;*/
+          width: 100%;
+          min-width: 100%;
         }
 
         .groupType {

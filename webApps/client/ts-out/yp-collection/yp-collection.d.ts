@@ -31,6 +31,7 @@ export declare abstract class YpCollection extends YpBaseElementWithLogin {
     constructor(collectionType: string, collectionItemType: string | null, collectionCreateFabIcon: string, collectionCreateFabLabel: string);
     loggedInUserCustom(): Promise<void>;
     abstract scrollToCollectionItemSubClass(): void;
+    setupTheme(): void;
     connectedCallback(): void;
     refresh(): void;
     getCollection(): Promise<void>;
