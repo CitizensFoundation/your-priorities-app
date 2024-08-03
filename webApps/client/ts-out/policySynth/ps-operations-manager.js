@@ -345,6 +345,7 @@ let PsOperationsManager = class PsOperationsManager extends PsBaseWithRunningAge
             css `
         md-tabs {
           margin-bottom: 64px;
+          margin-top: 48px;
         }
         md-filled-select {
           width: 100%;

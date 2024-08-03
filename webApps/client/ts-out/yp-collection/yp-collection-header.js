@@ -164,6 +164,8 @@ let YpCollectionHeader = class YpCollectionHeader extends YpBaseElement {
           width: 100%;
           text-align: right;
           justify-content: flex-end;
+          margin-left: -8px;
+          margin-top: 8px;
         }
 
         .bannerImage {

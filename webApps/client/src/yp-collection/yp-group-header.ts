@@ -24,6 +24,36 @@ export class YpGroupHeader extends YpCollectionHeader {
         .groupType[is-folder] {
           color: var(--md-sys-color-secondary);
         }
+
+        .nameAndActions {
+          width: 100%;
+          margin-top: 16px;
+          margin-bottom: 24px;
+        }
+
+        .description {
+          padding-right: 32px;
+          padding-left: 0px;
+          margin-top: 8px;
+        }
+
+        .menuButton {
+          margin-right: 42px;
+        }
+
+        .collectionDescriptionimageCard {
+          margin-top: 0;
+        }
+
+        .topContainer {
+          margin-top: 24px;
+        }
+
+        .stats {
+          width: 100%;
+          text-align: left;
+          justify-content: flex-start;
+        }
       `,
     ];
   }
@@ -46,7 +76,6 @@ export class YpGroupHeader extends YpCollectionHeader {
         ? html`
             <div class="layout vertical center-center">
               <div class="layout vertical topContainer">
-                ${/*this.renderHeaderBanner()*/ {}}
                 <div class="allContent">
                   <div class="layout horizontal">
                     <div class="layout vertical">
@@ -62,7 +91,7 @@ export class YpGroupHeader extends YpCollectionHeader {
                           ? this.renderMenu()
                           : nothing}
                       </div>
-                      <div class="layout horizontal nameAndActions wrap">
+                      <div class="layout vertical nameAndActions">
                         ${this.renderName()}
                         <div class="descriptionContainer">
                           ${this.renderDescription()} ${this.renderStats()}
