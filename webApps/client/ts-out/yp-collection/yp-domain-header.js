@@ -23,7 +23,6 @@ let YpDomainHeader = class YpDomainHeader extends YpCollectionHeader {
 
         .description {
           margin-top: 8px;
-          max-width: 500px;
           padding-left: 0;
         }
 
@@ -36,6 +35,10 @@ let YpDomainHeader = class YpDomainHeader extends YpCollectionHeader {
 
         .topContainer {
           margin-top: 24px;
+        }
+
+        .descriptionContainer {
+          min-width: 100%;
         }
 
         .stats {
