@@ -29,12 +29,13 @@ let YpGroupHeader = class YpGroupHeader extends YpCollectionHeader {
           width: 100%;
           margin-top: 16px;
           margin-bottom: 24px;
+          width: 532px;
         }
 
         .description {
-          padding-right: 32px;
           padding-left: 0px;
           margin-top: 8px;
+          width: 100%;
         }
 
         .menuButton {
@@ -54,6 +55,23 @@ let YpGroupHeader = class YpGroupHeader extends YpCollectionHeader {
           text-align: left;
           justify-content: flex-start;
         }
+
+        @media (max-width: 600px) {
+          .nameAndActions {
+            width: 100%;
+          }
+
+          .description {
+            width: 100%;
+          }
+
+          .collectionDescriptionimageCard {
+            margin-top: 0;
+          }
+
+          .topContainer {
+            margin-top: 0;
+          }
       `,
         ];
     }

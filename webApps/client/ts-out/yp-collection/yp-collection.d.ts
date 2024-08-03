@@ -48,9 +48,9 @@ export declare abstract class YpCollection extends YpBaseElementWithLogin {
     createNewCollection(): void;
     get hasCustomTheme(): boolean;
     static get styles(): any[];
-    renderHeader(): TemplateResult<1> | typeof nothing;
+    renderHeader(): typeof nothing | TemplateResult<1>;
     renderNewsAndMapTabs(): TemplateResult<1>;
-    renderTabs(): TemplateResult<1> | typeof nothing;
+    renderTabs(): typeof nothing | TemplateResult<1>;
     renderCurrentTabPage(): TemplateResult | undefined;
     render(): TemplateResult<1>;
 }

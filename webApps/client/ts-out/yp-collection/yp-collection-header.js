@@ -208,7 +208,7 @@ let YpCollectionHeader = class YpCollectionHeader extends YpBaseElement {
         }
 
         .descriptionContainer {
-          width: 100%;
+          width: 532px;
         }
 
         .description {
@@ -247,13 +247,11 @@ let YpCollectionHeader = class YpCollectionHeader extends YpBaseElement {
         }
 
         :host {
-          margin-top: 54px;
           margin-bottom: 32px;
         }
 
         .topContainer {
           margin: 0;
-          margin-top: 0px;
           max-width: 1080px;
           width: 100%;
         }
@@ -278,6 +276,10 @@ let YpCollectionHeader = class YpCollectionHeader extends YpBaseElement {
           #welcomeHTML {
             width: 306px;
             max-width: 306px;
+          }
+
+          .descriptionContainer {
+            width: 100%;
           }
 
           .collectionDescription {
@@ -525,9 +527,7 @@ let YpCollectionHeader = class YpCollectionHeader extends YpBaseElement {
               <div class="layout vertical topContainer">
                 ${this.renderHeaderBanner()}
                 <div class="allContent">
-                  <div
-                    class="layout horizontal nameAndActions wrap"
-                  >
+                  <div class="layout horizontal nameAndActions wrap">
                     ${this.renderName()}
                     <div class="flex"></div>
                     ${this.hasCollectionAccess ? this.renderMenu() : nothing}

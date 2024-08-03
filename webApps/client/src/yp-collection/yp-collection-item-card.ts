@@ -36,9 +36,7 @@ export class YpCollectionItemCard extends YpBaseElement {
         .description {
           line-height: 25px;
           font-size: 17px;
-          flex: 1;
-          min-width: 0; /* This prevents overflow issues in some browsers */
-          width: 100%;
+          width: 580px;
         }
 
         .groupType {
@@ -184,6 +182,10 @@ export class YpCollectionItemCard extends YpBaseElement {
         }
 
         @media (max-width: 420px) {
+          .description {
+            width: 100%;
+          }
+
           yp-membership-button {
             top: 205px;
           }
@@ -381,7 +383,8 @@ export class YpCollectionItemCard extends YpBaseElement {
   }
 
   renderCollectionType() {
-    if (this.statsCollectionType === "group" &&
+    if (
+      this.statsCollectionType === "group" &&
       this.item?.configuration &&
       (this.item as YpGroupData).configuration.hideGroupType !== true
     ) {

@@ -483,7 +483,7 @@ export class PsOperationsManager extends PsBaseWithRunningAgentObserver {
       css`
         md-tabs {
           margin-bottom: 64px;
-          margin-top: 48px;
+          margin-top: -16px; /* Look into this hack */
         }
         md-filled-select {
           width: 100%;

@@ -88,6 +88,7 @@ let YpPostListItem = class YpPostListItem extends YpBaseElement {
           font-weight: 400;
           line-height: 26px;
           cursor: pointer;
+          width: 566px;
         }
 
         .description[widetext] {
@@ -184,6 +185,13 @@ let YpPostListItem = class YpPostListItem extends YpBaseElement {
 
         .share[mini] {
           display: none;
+        }
+
+
+        @media (max-width: 960px) {
+          .description {
+            width: 100%;
+          }
         }
       `,
         ];

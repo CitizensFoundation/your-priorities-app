@@ -117,7 +117,7 @@ export const YpAppStyles = css `
   }
 
   .mainPage {
-    margin-top: px;
+    margin-top: 64px;
   }
 
   #helpIconButton {

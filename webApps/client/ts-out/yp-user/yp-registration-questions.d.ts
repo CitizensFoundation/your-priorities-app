@@ -24,7 +24,7 @@ export declare class YpRegistrationQuestions extends YpBaseElement {
     _goToNextIndex(event: CustomEvent): void;
     _skipToId(event: CustomEvent, showItems: boolean): void;
     _skipToWithHideId(event: CustomEvent, showItems: boolean): void;
-    render(): import("lit-html").TemplateResult<1> | typeof nothing;
+    render(): typeof nothing | import("lit-html").TemplateResult<1>;
     get structuredQuestions(): Array<YpStructuredQuestionData> | undefined;
     get filteredQuestions(): YpStructuredQuestionData[] | null;
     _autoTranslateEvent(event: CustomEvent): void;
