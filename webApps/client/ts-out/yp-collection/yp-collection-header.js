@@ -208,7 +208,8 @@ let YpCollectionHeader = class YpCollectionHeader extends YpBaseElement {
         }
 
         .descriptionContainer {
-          width: 532px;
+          width: 100%;
+          min-width: 532px;
         }
 
         .description {
@@ -280,6 +281,7 @@ let YpCollectionHeader = class YpCollectionHeader extends YpBaseElement {
 
           .descriptionContainer {
             width: 100%;
+            min-width: 100%;
           }
 
           .collectionDescription {
