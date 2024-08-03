@@ -247,6 +247,8 @@ export class YpCollection extends YpBaseElementWithLogin {
           //--md-fab-label-text-size: 16px !important;
           --md-fab-label-text-weight: 600 !important;
           margin-bottom: 24px;
+          --md-fab-container-elevation: 0;
+          --md-fab-container-shadow-color: transparent;
         }
 
         md-tabs {
