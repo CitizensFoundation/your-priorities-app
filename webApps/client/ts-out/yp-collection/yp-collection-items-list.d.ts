@@ -10,7 +10,7 @@ export declare class YpCollectionItemsList extends YpBaseElement {
     resetListSize: Function | undefined;
     skipIronListWidth: boolean;
     static get styles(): any[];
-    render(): TemplateResult<1> | typeof nothing;
+    render(): typeof nothing | TemplateResult<1>;
     renderItem(item: YpCollectionData, index: number): TemplateResult;
     get pluralItemType(): "communities" | "groups" | "posts" | "unknownItemType";
     _keypress(event: KeyboardEvent): void;

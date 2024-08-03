@@ -270,6 +270,10 @@ export class YpCollectionHeader extends YpBaseElement {
           min-width: 532px;
         }
 
+        .description {
+          padding-left: 32px;
+        }
+
         .description[hide-logo-image] {
           padding-left: 0;
         }
@@ -317,7 +321,6 @@ export class YpCollectionHeader extends YpBaseElement {
 
         .collectionDescriptionimageCard {
           margin-top: 8px;
-          margin-right: 32px;
         }
 
         @media (max-width: 960px) {

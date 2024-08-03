@@ -66,13 +66,13 @@ export declare class YpAdminApp extends YpBaseElement {
     renderGroupConfigPage(): import("lit-html").TemplateResult<1>;
     renderCommunityConfigPage(): import("lit-html").TemplateResult<1>;
     renderDomainConfigPage(): import("lit-html").TemplateResult<1>;
-    _renderPage(): import("lit-html").TemplateResult<1> | typeof nothing;
+    _renderPage(): typeof nothing | import("lit-html").TemplateResult<1>;
     getCollection(): Promise<void>;
     _getAdminCollection(): Promise<void>;
     _setAdminFromParent(): Promise<void>;
     _setAdminConfirmedFromParent(collection: YpCollectionData): void;
     _setAdminConfirmed(): void;
-    getParentCollectionType(): "" | "community" | "domain";
+    getParentCollectionType(): "" | "domain" | "community";
     exitToMainApp(): void;
     render(): import("lit-html").TemplateResult<1>;
     _isPageSelectedClass(page: AdminPageOptions): "" | "selectedContainer";

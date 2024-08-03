@@ -35,6 +35,7 @@ export class YpGroupHeader extends YpCollectionHeader {
         .description {
           margin-top: 8px;
           max-width: 500px;
+          padding-left: 0;
         }
 
         .menuButton {
