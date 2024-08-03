@@ -72,6 +72,9 @@ export abstract class YpCollection extends YpBaseElementWithLogin {
   @property({ type: String })
   headerImageUrl: string | undefined;
 
+  @property({ type: Boolean })
+  useEvenOddItemLayout = false;
+
   collectionType: string;
   collectionItemType: string | null;
   collectionCreateFabIcon: string;
@@ -507,6 +510,7 @@ export abstract class YpCollection extends YpBaseElementWithLogin {
                 .collectionType="${this.collectionType}"
                 .collectionItemType="${this.collectionItemType}"
                 .collectionId="${this.collectionId!}"
+                ?useEvenOddItemLayout="${this.useEvenOddItemLayout}"
               ></yp-collection-items-list>`
             : html``;
         break;

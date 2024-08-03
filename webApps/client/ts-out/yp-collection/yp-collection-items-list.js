@@ -17,6 +17,7 @@ let YpCollectionItemsList = class YpCollectionItemsList extends YpBaseElement {
     constructor() {
         super(...arguments);
         this.grid = false;
+        this.useEvenOddItemLayout = false;
         this.skipIronListWidth = false;
     }
     static get styles() {
@@ -83,6 +84,8 @@ let YpCollectionItemsList = class YpCollectionItemsList extends YpBaseElement {
       <div class="layout vertical center-center">
         <yp-collection-item-card
           class="card"
+          .index="${index}"
+          ?useEvenOddItemLayout="${this.useEvenOddItemLayout}"
           aria-label="${item.name}"
           ariarole="listitem"
           .item="${item}"
@@ -176,6 +179,9 @@ __decorate([
 __decorate([
     property({ type: Boolean, reflect: true })
 ], YpCollectionItemsList.prototype, "grid", void 0);
+__decorate([
+    property({ type: Boolean })
+], YpCollectionItemsList.prototype, "useEvenOddItemLayout", void 0);
 YpCollectionItemsList = __decorate([
     customElement("yp-collection-items-list")
 ], YpCollectionItemsList);

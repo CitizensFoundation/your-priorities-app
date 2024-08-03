@@ -188,6 +188,7 @@ export class YpThemeSelector extends YpBaseElement {
   override updated(changedProperties: Map<string | number | symbol, unknown>) {
     let shouldUpdateConfiguration = false;
 
+
     // Check if any of the relevant properties have changed
     [
       "oneDynamicThemeColor",
@@ -204,13 +205,14 @@ export class YpThemeSelector extends YpBaseElement {
       if (changedProperties.has(prop)) {
         shouldUpdateConfiguration = true;
         this.updateDisabledInputs();
-        this.fire("config-updated");
+        //this.fire("config-updated");
       }
     });
-
     if (changedProperties.has("oneDynamicThemeColor")) {
-      this.channel.postMessage(this.oneDynamicThemeColor);
+      //this.channel.postMessage(this.oneDynamicThemeColor);
     }
+
+
 
     if (shouldUpdateConfiguration) {
       // Update the themeConfiguration object
@@ -245,6 +247,7 @@ export class YpThemeSelector extends YpBaseElement {
           this.themeConfiguration
         );
       }
+
 
       this.fire("yp-theme-configuration-changed", this.themeConfiguration);
     }

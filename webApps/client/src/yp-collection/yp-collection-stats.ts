@@ -80,12 +80,12 @@ export class YpCollectionStats extends YpBaseElement {
                 : nothing}
               ${this.collectionType === "domain"
                 ? html`
-                    <md-icon
+                    <md-icon hidden
                       title="${this.t("stats.communities")}"
                       class="stats-icon"
                       >groups</md-icon
                     >
-                    <div
+                    <div hidden
                       title="${this.t("stats.communities")}"
                       class="stats-text"
                     >

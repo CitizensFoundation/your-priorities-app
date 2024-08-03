@@ -33,6 +33,9 @@ export class YpCollectionItemsList extends YpBaseElement {
   @property({ type: Boolean, reflect: true })
   grid = false;
 
+  @property({ type: Boolean })
+  useEvenOddItemLayout = false;
+
   resetListSize: Function | undefined;
   skipIronListWidth = false;
 
@@ -102,6 +105,8 @@ export class YpCollectionItemsList extends YpBaseElement {
       <div class="layout vertical center-center">
         <yp-collection-item-card
           class="card"
+          .index="${index}"
+          ?useEvenOddItemLayout="${this.useEvenOddItemLayout}"
           aria-label="${item.name}"
           ariarole="listitem"
           .item="${item}"

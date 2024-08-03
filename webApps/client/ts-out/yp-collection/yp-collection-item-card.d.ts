@@ -7,6 +7,9 @@ export declare class YpCollectionItemCard extends YpBaseElement {
     item: YpCollectionData | undefined;
     itemType: string | undefined;
     collection: YpCollectionData | undefined;
+    useEvenOddItemLayout: boolean;
+    index: number;
+    get isEvenIndex(): boolean;
     static get styles(): any[];
     get archived(): boolean;
     get featured(): boolean;
@@ -20,6 +23,10 @@ export declare class YpCollectionItemCard extends YpBaseElement {
     renderLogoImage(): import("lit-html").TemplateResult<1>;
     renderDataViz(): import("lit-html").TemplateResult<1>;
     renderCollectionType(): import("lit-html").TemplateResult<1> | typeof nothing;
+    renderCollectionName(): import("lit-html").TemplateResult<1>;
+    renderCollectionDescription(): import("lit-html").TemplateResult<1>;
+    renderMembershipButton(): import("lit-html").TemplateResult<1> | typeof nothing;
+    renderCollectionStats(): import("lit-html").TemplateResult<1>;
     renderCardInfo(): import("lit-html").TemplateResult<1>;
     get statsCollection(): YpCollectionData;
     get statsCollectionType(): string;

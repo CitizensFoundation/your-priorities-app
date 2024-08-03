@@ -15,6 +15,14 @@ import "./yp-collection-stats.js";
 import { YpNavHelpers } from "../common/YpNavHelpers.js";
 import { YpGroupType } from "./ypGroupType.js";
 let YpCollectionItemCard = class YpCollectionItemCard extends YpBaseElement {
+    constructor() {
+        super(...arguments);
+        this.useEvenOddItemLayout = false;
+        this.index = 0;
+    }
+    get isEvenIndex() {
+        return this.index % 2 === 0;
+    }
     static get styles() {
         return [
             super.styles,
@@ -23,8 +31,7 @@ let YpCollectionItemCard = class YpCollectionItemCard extends YpBaseElement {
         .description {
           line-height: 25px;
           font-size: 17px;
-          /*width: 580px;*/
-          width: 100%;
+          width: 618px;
           min-width: 100%;
         }
 
@@ -49,7 +56,7 @@ let YpCollectionItemCard = class YpCollectionItemCard extends YpBaseElement {
           padding-right: 32px;
           padding-top: 16px;
           padding-bottom: 16px;
-          margin-bottom: 16px;
+          margin-bottom: 48px;
         }
 
         a {
@@ -73,7 +80,12 @@ let YpCollectionItemCard = class YpCollectionItemCard extends YpBaseElement {
         yp-image {
           padding: 0;
           margin: 0;
-          margin-right: 80px;
+          margin-right: 42px;
+        }
+
+        yp-image[is-odd] {
+          margin-right: 0;
+          margin-left: 42px;
         }
 
         .collectionCard {
@@ -84,16 +96,13 @@ let YpCollectionItemCard = class YpCollectionItemCard extends YpBaseElement {
           vertical-align: text-top;
         }
 
-
         .collection-name,
         .collectionItemCount {
           cursor: pointer;
           font-size: 22px;
           font-weight: 700;
           margin-bottom: 16px;
-          font-family: var(
-            --md-ref-typeface-brand
-          );
+          font-family: var(--md-ref-typeface-brand);
         }
 
         .collectionItemCount {
@@ -262,8 +271,7 @@ let YpCollectionItemCard = class YpCollectionItemCard extends YpBaseElement {
         }
     }
     // Deprecated
-    _setupFontNameFontSize() {
-    }
+    _setupFontNameFontSize() { }
     get isGroupFolder() {
         return ((this.collection &&
             this.collection.configuration.groupType ===
@@ -296,6 +304,7 @@ let YpCollectionItemCard = class YpCollectionItemCard extends YpBaseElement {
       ${YpCollectionHelpers.logoImagePath(this.itemType, this.item)
             ? html `
             <yp-image
+             ?is-odd="${this.useEvenOddItemLayout && !this.isEvenIndex}"
               sizing="cover"
               ?archived="${this.archived}"
               alt="${this.collection.name}"
@@ -336,72 +345,103 @@ let YpCollectionItemCard = class YpCollectionItemCard extends YpBaseElement {
             return nothing;
         }
     }
-    renderCardInfo() {
+    renderCollectionName() {
         return html `
-      <div class="layout horizontal wrap">
-        ${this.itemType === "groupDataViz"
-            ? html ` ${this.renderDataViz()} `
-            : html ` ${this.renderLogoImage()} `}
-        <div class="informationText layout vertical flex">
-          ${this.renderCollectionType()}
-          <div class="layout horizontal">
-            <yp-magic-text
-              id="collectionName"
-              class="collection-name"
-              ?archived="${this.archived}"
-              ?featured="${this.featured}"
-              ?largefont="${this.largeFont}"
-              @click="${this.goToItem}"
-              .textType="${YpCollectionHelpers.nameTextType(this.itemType)}"
-              .contentLanguage="${this.contentLanguage}"
-              ?disableTranslation="${this.collection.configuration
+      <div class="layout horizontal">
+        <yp-magic-text
+          id="collectionName"
+          class="collection-name"
+          ?archived="${this.archived}"
+          ?featured="${this.featured}"
+          ?largefont="${this.largeFont}"
+          @click="${this.goToItem}"
+          .textType="${YpCollectionHelpers.nameTextType(this.itemType)}"
+          .contentLanguage="${this.contentLanguage}"
+          ?disableTranslation="${this.collection.configuration
             ?.disableNameAutoTranslation}"
-              textOnly
-              .content="${this.contentName}"
-              .contentId="${this.contentId}"
-            ></yp-magic-text>
-            ${this.collectionItemCount > 0
+          textOnly
+          .content="${this.contentName}"
+          .contentId="${this.contentId}"
+        ></yp-magic-text>
+        ${true || this.collectionItemCount > 0
             ? html `
-                  <div class="collectionItemCount">
-                    (${this.collectionItemCount})
-                  </div>
-                `
-            : nothing}
-          </div>
-          <yp-magic-text
-            id="description"
-            class="description layout vertical withPointer"
-            ?featured="${this.featured}"
-            ?largefont="${this.largeFont}"
-            textType="collectionContent"
-            .textType="${YpCollectionHelpers.descriptionTextType(this.itemType)}"
-            .contentLanguage="${this.contentLanguage}"
-            textOnly
-            removeUrls
-            .content="${this.contentDescription}"
-            .contentId="${this.contentId}"
-            truncate="300"
-          >
-          </yp-magic-text>
-          <div class="stats layout horizontal">
-            <yp-collection-stats
-              .collectionType="${this.statsCollectionType}"
-              .collection="${this.statsCollection}"
-            ></yp-collection-stats>
-          </div>
-        </div>
-
-        ${!this.collection
-            ? html `
-              <yp-membership-button
-                .archived="${this.archived}"
-                .featured="${this.featured}"
-                .collection="${this.collection}"
-              ></yp-membership-button>
+              <div class="collectionItemCount">
+                (${this.collectionItemCount})
+              </div>
             `
-            : html ``}
+            : nothing}
       </div>
     `;
+    }
+    renderCollectionDescription() {
+        return html `
+      <yp-magic-text
+        id="description"
+        class="description layout vertical withPointer"
+        ?featured="${this.featured}"
+        ?largefont="${this.largeFont}"
+        textType="collectionContent"
+        .textType="${YpCollectionHelpers.descriptionTextType(this.itemType)}"
+        .contentLanguage="${this.contentLanguage}"
+        textOnly
+        removeUrls
+        .content="${this.contentDescription}"
+        .contentId="${this.contentId}"
+        truncate="300"
+      >
+      </yp-magic-text>
+    `;
+    }
+    renderMembershipButton() {
+        if (false) {
+            return html `${!this.collection
+                ? html `
+            <yp-membership-button
+              hidden
+              .archived="${this.archived}"
+              .featured="${this.featured}"
+              .collection="${this.collection}"
+            ></yp-membership-button>
+          `
+                : html ``} `;
+        }
+        else {
+            return nothing;
+        }
+    }
+    renderCollectionStats() {
+        return html `<div class="stats layout horizontal">
+      <yp-collection-stats
+        .collectionType="${this.statsCollectionType}"
+        .collection="${this.statsCollection}"
+      ></yp-collection-stats>
+    </div>`;
+    }
+    renderCardInfo() {
+        if (this.useEvenOddItemLayout && !this.isEvenIndex) {
+            return html `
+        <div class="layout horizontal wrap">
+          <div class="informationText layout vertical flex">
+            ${this.renderCollectionType()} ${this.renderCollectionName()}
+            ${this.renderCollectionDescription()}
+            ${this.renderCollectionStats()}
+          </div>
+          ${this.renderLogoImage()}
+        </div>
+      `;
+        }
+        else {
+            return html `
+        <div class="layout horizontal wrap">
+          ${this.renderLogoImage()}
+          <div class="informationText layout vertical flex">
+            ${this.renderCollectionType()} ${this.renderCollectionName()}
+            ${this.renderCollectionDescription()}
+            ${this.renderCollectionStats()}
+          </div>
+        </div>
+      `;
+        }
     }
     get statsCollection() {
         if (this.itemType === "groupCommunityLink") {
@@ -493,6 +533,12 @@ __decorate([
 __decorate([
     property({ type: Object })
 ], YpCollectionItemCard.prototype, "collection", void 0);
+__decorate([
+    property({ type: Boolean })
+], YpCollectionItemCard.prototype, "useEvenOddItemLayout", void 0);
+__decorate([
+    property({ type: Number })
+], YpCollectionItemCard.prototype, "index", void 0);
 YpCollectionItemCard = __decorate([
     customElement("yp-collection-item-card")
 ], YpCollectionItemCard);

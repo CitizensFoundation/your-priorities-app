@@ -153,11 +153,11 @@ let YpThemeSelector = class YpThemeSelector extends YpBaseElement {
             if (changedProperties.has(prop)) {
                 shouldUpdateConfiguration = true;
                 this.updateDisabledInputs();
-                this.fire("config-updated");
+                //this.fire("config-updated");
             }
         });
         if (changedProperties.has("oneDynamicThemeColor")) {
-            this.channel.postMessage(this.oneDynamicThemeColor);
+            //this.channel.postMessage(this.oneDynamicThemeColor);
         }
         if (shouldUpdateConfiguration) {
             // Update the themeConfiguration object

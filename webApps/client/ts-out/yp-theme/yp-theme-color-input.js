@@ -79,18 +79,21 @@ let YpThemeColorInput = class YpThemeColorInput extends YpBaseElement {
         console.error(`Invalid color: ${inputValue}`);
     }
     _onPaste(event) {
-        event.preventDefault();
-        let pastedText = "";
+        return; //TODO: Fix below
+        /*event.preventDefault();
+        let pastedText: string = "";
         if (event.clipboardData && event.clipboardData.getData) {
-            pastedText = event.clipboardData.getData("text/plain");
+          pastedText = event.clipboardData.getData("text/plain");
         }
         // Removing any non-hexadecimal characters from the pasted text
         const sanitizedText = pastedText.replace(/[^0-9A-Fa-f]/g, "");
+    
+    
         // Checking if the sanitized text is a valid hex color code
         if (this.isValidHex(`#${sanitizedText}`)) {
-            this.color = sanitizedText;
-            this.fire("input", { color: `#${this.color}` });
-        }
+          this.color = sanitizedText;
+          this.fire("input", { color: `#${this.color}` });
+        }*/
     }
     openPalette() {
         const picker = this.shadowRoot.querySelector("hex-color-picker");
@@ -127,9 +130,12 @@ let YpThemeColorInput = class YpThemeColorInput extends YpBaseElement {
             "ArrowLeft",
             "ArrowRight",
             "Delete",
+            "Control",
+            "Meta",
+            "v" // This includes 'v' for paste (Ctrl+V / Cmd+V)
         ];
-        if (allowedKeys.includes(event.key)) {
-            return; // Do not interfere with navigation/control keys
+        if (allowedKeys.includes(event.key) || (event.ctrlKey && event.key === 'v') || (event.metaKey && event.key === 'v')) {
+            return; // Do not interfere with navigation/control keys and paste (Ctrl+V / Cmd+V)
         }
         // Check if the key is a valid hexadecimal character
         const isHexDigit = /^[0-9A-Fa-f]$/.test(event.key);

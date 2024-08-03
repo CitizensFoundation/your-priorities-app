@@ -31,6 +31,7 @@ export class YpCollection extends YpBaseElementWithLogin {
         this.hideNewsfeed = false;
         this.locationHidden = false;
         this.hideCollection = false;
+        this.useEvenOddItemLayout = false;
         this.collectionType = collectionType;
         this.collectionItemType = collectionItemType;
         this.collectionCreateFabIcon = collectionCreateFabIcon;
@@ -392,6 +393,7 @@ export class YpCollection extends YpBaseElementWithLogin {
                 .collectionType="${this.collectionType}"
                 .collectionItemType="${this.collectionItemType}"
                 .collectionId="${this.collectionId}"
+                ?useEvenOddItemLayout="${this.useEvenOddItemLayout}"
               ></yp-collection-items-list>`
                         : html ``;
                 break;
@@ -501,4 +503,7 @@ __decorate([
 __decorate([
     property({ type: String })
 ], YpCollection.prototype, "headerImageUrl", void 0);
+__decorate([
+    property({ type: Boolean })
+], YpCollection.prototype, "useEvenOddItemLayout", void 0);
 //# sourceMappingURL=yp-collection.js.map

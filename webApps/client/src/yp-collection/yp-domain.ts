@@ -17,6 +17,9 @@ export class YpDomain extends YpCollection {
   @property({ type: String })
   customWelcomeHtml: string | undefined = undefined;
 
+  @property({ type: Boolean })
+  override useEvenOddItemLayout = true;
+
   constructor() {
     super("domain", "community", "edit", "community.add");
   }

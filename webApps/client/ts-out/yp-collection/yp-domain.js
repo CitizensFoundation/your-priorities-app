@@ -15,6 +15,7 @@ let YpDomain = class YpDomain extends YpCollection {
     constructor() {
         super("domain", "community", "edit", "community.add");
         this.customWelcomeHtml = undefined;
+        this.useEvenOddItemLayout = true;
     }
     static get styles() {
         return [
@@ -158,6 +159,9 @@ let YpDomain = class YpDomain extends YpCollection {
 __decorate([
     property({ type: String })
 ], YpDomain.prototype, "customWelcomeHtml", void 0);
+__decorate([
+    property({ type: Boolean })
+], YpDomain.prototype, "useEvenOddItemLayout", void 0);
 YpDomain = __decorate([
     customElement("yp-domain")
 ], YpDomain);

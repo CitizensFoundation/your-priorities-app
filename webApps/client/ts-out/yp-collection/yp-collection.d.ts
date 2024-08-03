@@ -24,6 +24,7 @@ export declare abstract class YpCollection extends YpBaseElementWithLogin {
     createFabIcon: string | undefined;
     createFabLabel: string | undefined;
     headerImageUrl: string | undefined;
+    useEvenOddItemLayout: boolean;
     collectionType: string;
     collectionItemType: string | null;
     collectionCreateFabIcon: string;

@@ -441,7 +441,7 @@ export class YpThemeManager {
                 this.themeTertiaryColor = theme.tertiaryColor;
                 this.themeNeutralColor = theme.neutralColor;
                 this.themeNeutralVariantColor = theme.neutralVariantColor;
-                this.themeVariant = theme.variant || "fidelity";
+                this.themeVariant = undefined; //TODO: Look into those how those work, theme.variant || "fidelity";
             }
             this.themeChanged();
         }

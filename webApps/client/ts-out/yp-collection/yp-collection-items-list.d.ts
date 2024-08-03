@@ -7,6 +7,7 @@ export declare class YpCollectionItemsList extends YpBaseElement {
     collectionItemType: string;
     sortedCollectionItems: Array<YpCollectionData> | undefined;
     grid: boolean;
+    useEvenOddItemLayout: boolean;
     resetListSize: Function | undefined;
     skipIronListWidth: boolean;
     static get styles(): any[];
