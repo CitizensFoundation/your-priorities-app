@@ -495,7 +495,6 @@ export class YpPostActions extends YpBaseElement {
   }
 
   _updateEndorsements(event: CustomEvent | undefined = undefined) {
-    debugger;
     if (
       window.appUser &&
       window.appUser.loggedIn() &&
@@ -626,7 +625,6 @@ export class YpPostActions extends YpBaseElement {
   }
 
   generateEndorsementFromLogin(value: number) {
-    debugger;
     if (!window.appUser.endorsementPostsIndex[this.post.id]) {
       this.generateEndorsement(value);
     }

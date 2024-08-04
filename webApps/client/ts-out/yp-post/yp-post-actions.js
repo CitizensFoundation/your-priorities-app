@@ -416,7 +416,6 @@ let YpPostActions = class YpPostActions extends YpBaseElement {
         }
     }
     _updateEndorsements(event = undefined) {
-        debugger;
         if (window.appUser &&
             window.appUser.loggedIn() &&
             window.appUser.user &&
@@ -523,7 +522,6 @@ let YpPostActions = class YpPostActions extends YpBaseElement {
         }
     }
     generateEndorsementFromLogin(value) {
-        debugger;
         if (!window.appUser.endorsementPostsIndex[this.post.id]) {
             this.generateEndorsement(value);
         }

@@ -89,8 +89,8 @@ export class YpPostsList extends YpBaseElement {
         }
 
         yp-post-list-item {
-          margin-bottom: 72px;
-          margin-top: 72px;
+          margin-bottom: 80px;
+          margin-top: 80px;
         }
 
         .objectives {

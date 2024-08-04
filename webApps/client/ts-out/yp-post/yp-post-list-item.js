@@ -91,7 +91,7 @@ let YpPostListItem = class YpPostListItem extends YpBaseElement {
           font-weight: 400;
           line-height: 26px;
           cursor: pointer;
-          width: 566px;
+          width: 558px;
         }
 
         .description[widetext] {

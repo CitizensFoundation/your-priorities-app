@@ -25,6 +25,9 @@ let YpPostHeader = class YpPostHeader extends YpPostBaseWithAnswers(YpBaseElemen
         this.isAudioCover = false;
         this.hideActions = false;
         this.transcriptActive = false;
+        //TODO: Maybe refactor this if post header is never used with both
+        this.onlyRenderTopActionBar = false;
+        this.hideTopActionBar = false;
     }
     //TODO: Make corners on posts card different
     static get styles() {
@@ -66,7 +69,6 @@ let YpPostHeader = class YpPostHeader extends YpPostBaseWithAnswers(YpBaseElemen
         .actionBar {
           margin-bottom: 48px;
         }
-
 
         .moreVert {
         }
@@ -373,22 +375,30 @@ let YpPostHeader = class YpPostHeader extends YpPostBaseWithAnswers(YpBaseElemen
         aria-level="1"
         aria-label="${this.post.name}"
       >
-        <div class="layout horizontal actionBar">
-          ${this.renderClose()}
-          <div class="flex"></div>
-          ${this.renderMenu()}
-        </div>
-        ${this.post.Group.configuration.showWhoPostedPosts
-            ? this.renderUser()
+        ${!this.hideTopActionBar
+            ? html `
+              <div class="layout horizontal actionBar">
+                ${this.renderClose()}
+                <div class="flex"></div>
+                ${this.renderMenu()}
+              </div>
+            `
             : nothing}
-        <div class="layout horizontal">
-          <div class="layout vertical center-center mediaContainer">
-            ${this.renderCoverMedia()} ${this.renderActions()}
-          </div>
-          <div class="layout vertical">
-            ${this.renderName()} ${this.renderPostInformation()}
-          </div>
-        </div>
+        ${!this.onlyRenderTopActionBar
+            ? nothing
+            : html `
+              ${this.post.Group.configuration.showWhoPostedPosts
+                ? this.renderUser()
+                : nothing}
+              <div class="layout horizontal">
+                <div class="layout vertical center-center mediaContainer">
+                  ${this.renderCoverMedia()} ${this.renderActions()}
+                </div>
+                <div class="layout vertical">
+                  ${this.renderName()} ${this.renderPostInformation()}
+                </div>
+              </div>
+            `}
       </div>
     `;
     }
@@ -554,6 +564,12 @@ __decorate([
 __decorate([
     property({ type: Boolean })
 ], YpPostHeader.prototype, "transcriptActive", void 0);
+__decorate([
+    property({ type: Boolean })
+], YpPostHeader.prototype, "onlyRenderTopActionBar", void 0);
+__decorate([
+    property({ type: Boolean })
+], YpPostHeader.prototype, "hideTopActionBar", void 0);
 __decorate([
     property({ type: Object })
 ], YpPostHeader.prototype, "post", void 0);

@@ -772,7 +772,6 @@ export class YpAppUser extends YpCodeBase {
   _onUserChanged(event: CustomEvent) {
     const user = event.detail;
     if (user) {
-      debugger;
       this._updateEndorsementPostsIndex(user);
       this._updatePointQualitiesIndex(user);
       this._updateRatingPostsIndex(user);

@@ -10,6 +10,8 @@ export declare class YpPostHeader extends YpPostHeader_base {
     isAudioCover: boolean;
     hideActions: boolean;
     transcriptActive: boolean;
+    onlyRenderTopActionBar: boolean;
+    hideTopActionBar: boolean;
     post: YpPostData;
     static get styles(): any[];
     renderPostInformation(): TemplateResult<1>;

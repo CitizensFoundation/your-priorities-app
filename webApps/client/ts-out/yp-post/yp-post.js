@@ -42,6 +42,14 @@ let YpPost = class YpPost extends YpCollection {
             super.styles,
             ShadowStyles,
             css `
+        .frameContainer {
+          max-width: 980px;
+          margin: 32px;
+          padding: 32px;
+          border-radius: 4px;
+          border: 1px solid var(--md-sys-color-secondary);
+        }
+
         .postHeader {
           padding: 16px;
           background-color: var(--md-sys-color-primary);
@@ -89,13 +97,20 @@ let YpPost = class YpPost extends YpCollection {
         ];
     }
     renderPostHeader() {
-        return html `<yp-post-header
-      id="postCard"
-      class="largeCard"
-      .post="${this.post}"
-      @refresh="${this._getPost}"
-      headermode
-    ></yp-post-header>`;
+        return html `
+      <div class="layout vertical">
+        <yp-post-header
+          onlyRenderTopActionBar
+          .post="${this.post}"
+        ></yp-post-header>
+        <yp-post-header
+          hideTopActionBar
+          id="postCard"
+          .post="${this.post}"
+          @refresh="${this._getPost}"
+        ></yp-post-header>
+      </div>
+    `;
     }
     renderPostTabs() {
         if (this.post && !this.post.Group.configuration.hideAllTabs) {
@@ -186,22 +201,26 @@ let YpPost = class YpPost extends YpCollection {
     render() {
         return this.post
             ? html `
-          ${this.renderPostHeader()}
           <div class="layout vertical center-center">
-            ${this.renderPostTabs()}
-          </div>
-          ${this.renderCurrentPostTabPage()}
-          ${!this.disableNewPosts &&
+            <div class="frameContainer">
+              ${this.renderPostHeader()}
+              <div class="layout vertical center-center">
+                ${this.renderPostTabs()}
+              </div>
+              ${this.renderCurrentPostTabPage()}
+              ${!this.disableNewPosts &&
                 this.post &&
                 !this.post.Group.configuration.hideNewPost &&
                 !this.post.Group.configuration.hideNewPostOnPostPage
                 ? html `<md-fab
-                hidden
-                .label="${this.t("post.new")}"
-                @click="${this._newPost}"
-                ><md-icon>lightbuld</md-icon></md-fab
-              >`
+                    hidden
+                    .label="${this.t("post.new")}"
+                    @click="${this._newPost}"
+                    ><md-icon>lightbuld</md-icon></md-fab
+                  >`
                 : nothing}
+            </div>
+          </div>
         `
             : html ``;
     }

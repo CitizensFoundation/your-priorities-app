@@ -37,6 +37,13 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
   @property({ type: Boolean })
   transcriptActive = false;
 
+  //TODO: Maybe refactor this if post header is never used with both
+  @property({ type: Boolean })
+  onlyRenderTopActionBar = false;
+
+  @property({ type: Boolean })
+  hideTopActionBar = false;
+
   @property({ type: Object })
   override post!: YpPostData;
 
@@ -80,7 +87,6 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
         .actionBar {
           margin-bottom: 48px;
         }
-
 
         .moreVert {
         }
@@ -405,22 +411,30 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
         aria-level="1"
         aria-label="${this.post.name}"
       >
-        <div class="layout horizontal actionBar">
-          ${this.renderClose()}
-          <div class="flex"></div>
-          ${this.renderMenu()}
-        </div>
-        ${this.post.Group.configuration.showWhoPostedPosts
-          ? this.renderUser()
+        ${!this.hideTopActionBar
+          ? html`
+              <div class="layout horizontal actionBar">
+                ${this.renderClose()}
+                <div class="flex"></div>
+                ${this.renderMenu()}
+              </div>
+            `
           : nothing}
-        <div class="layout horizontal">
-          <div class="layout vertical center-center mediaContainer">
-            ${this.renderCoverMedia()} ${this.renderActions()}
-          </div>
-          <div class="layout vertical">
-            ${this.renderName()} ${this.renderPostInformation()}
-          </div>
-        </div>
+        ${!this.onlyRenderTopActionBar
+          ? nothing
+          : html`
+              ${this.post.Group.configuration.showWhoPostedPosts
+                ? this.renderUser()
+                : nothing}
+              <div class="layout horizontal">
+                <div class="layout vertical center-center mediaContainer">
+                  ${this.renderCoverMedia()} ${this.renderActions()}
+                </div>
+                <div class="layout vertical">
+                  ${this.renderName()} ${this.renderPostInformation()}
+                </div>
+              </div>
+            `}
       </div>
     `;
   }
