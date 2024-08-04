@@ -195,7 +195,7 @@ let YpPost = class YpPost extends YpCollection {
                 this.post &&
                 !this.post.Group.configuration.hideNewPost &&
                 !this.post.Group.configuration.hideNewPostOnPostPage
-                ? html ` <md-fab
+                ? html `<md-fab
                 hidden
                 .label="${this.t("post.new")}"
                 @click="${this._newPost}"

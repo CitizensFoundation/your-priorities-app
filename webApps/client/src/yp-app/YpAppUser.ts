@@ -114,6 +114,7 @@ export class YpAppUser extends YpCodeBase {
         "yp-reset-password",
         this._resetPassword.bind(this)
       );
+      this.addGlobalListener("yp-logged-in", this._onUserChanged.bind(this));
     }
   }
 
@@ -280,7 +281,10 @@ export class YpAppUser extends YpCodeBase {
     collectionConfiguration: object | undefined = undefined
   ) {
     if (!window.appDialogs) {
-      this.addGlobalListener("yp-app-dialogs-ready", this.openUserlogin.bind(this));
+      this.addGlobalListener(
+        "yp-app-dialogs-ready",
+        this.openUserlogin.bind(this)
+      );
     } else {
       window.appDialogs.getDialogAsync("userLogin", (dialog: YpLogin) => {
         dialog.setup(this._handleLogin.bind(this), window.appGlobals.domain!);
@@ -345,31 +349,39 @@ export class YpAppUser extends YpCodeBase {
   }
 
   _checkLoginForParameters() {
-
     //TODO: Get working again
     if (this.loginForEditParams) {
       const loginParams = this.loginForEditParams;
       // TODO: Remove any
-      window.appDialogs.getDialogAsync(loginParams.editDialog as any, (dialog: any) => {
-        dialog.setup(null, true, loginParams.refreshFunction);
-        dialog.open('new', loginParams.params);
-        this.loginForEditParams = null;
-      });
+      window.appDialogs.getDialogAsync(
+        loginParams.editDialog as any,
+        (dialog: any) => {
+          dialog.setup(null, true, loginParams.refreshFunction);
+          dialog.open("new", loginParams.params);
+          this.loginForEditParams = null;
+        }
+      );
     } else if (this.loginForNewPointParams) {
       const newPointParams = this.loginForNewPointParams;
       //newPointParams.postPointsElement.addPoint(newPointParams.params.content, newPointParams.params.value);
       this.loginForNewPointParams = null;
     } else if (this.loginForEndorseParams) {
       const endorseParams = this.loginForEndorseParams;
-      (endorseParams.postActionElement as YpPostActions).generateEndorsementFromLogin(endorseParams.params.value);
+      (
+        endorseParams.postActionElement as YpPostActions
+      ).generateEndorsementFromLogin(endorseParams.params.value);
       this.loginForEndorseParams = null;
     } else if (this.loginForRatingsParams) {
       const ratingsParams = this.loginForRatingsParams;
-      (ratingsParams.postActionElement as YpPostRatingsInfo).openRatingsDialog();
+      (
+        ratingsParams.postActionElement as YpPostRatingsInfo
+      ).openRatingsDialog();
       this.loginForRatingsParams = null;
     } else if (this.loginForPointQualityParams) {
       const pointQualityParams = this.loginForPointQualityParams;
-      (pointQualityParams.pointActionElement as YpPointActions).generatePointQualityFromLogin(pointQualityParams.params.value);
+      (
+        pointQualityParams.pointActionElement as YpPointActions
+      ).generatePointQualityFromLogin(pointQualityParams.params.value);
       this.loginForPointQualityParams = null;
     } else if (this.loginForMembershipParams) {
       const membershipParams = this.loginForMembershipParams;
@@ -388,7 +400,6 @@ export class YpAppUser extends YpCodeBase {
     } else if (this.loginForNotificationSettingsParams) {
       this.openNotificationSettings();
     }
-
   }
 
   openNotificationSettings() {
@@ -645,11 +656,14 @@ export class YpAppUser extends YpCodeBase {
           } ${this.t("ofNumber")} ${
             group.configuration.maxNumberOfGroupVotes
           } ${this.t("votesForGroup")}`;
-          window.appDialogs.getDialogAsync("masterToast", (toast: YpSnackbar) => {
-            toast.labelText = text;
-            toast.open = true;
-            toast.timeoutMs = 4000;
-          });
+          window.appDialogs.getDialogAsync(
+            "masterToast",
+            (toast: YpSnackbar) => {
+              toast.labelText = text;
+              toast.open = true;
+              toast.timeoutMs = 4000;
+            }
+          );
         }
 
         this.fireGlobal("got-endorsements-and-qualities", {
@@ -755,8 +769,10 @@ export class YpAppUser extends YpCodeBase {
     }
   }
 
-  _onUserChanged(user: YpUserData | null) {
+  _onUserChanged(event: CustomEvent) {
+    const user = event.detail;
     if (user) {
+      debugger;
       this._updateEndorsementPostsIndex(user);
       this._updatePointQualitiesIndex(user);
       this._updateRatingPostsIndex(user);
@@ -773,7 +789,7 @@ export class YpAppUser extends YpCodeBase {
       window.location.href = "/";
     } else {
       this.toastLogoutTextCombined =
-      this.t("user.logoutCompleteFor") + " " + this.user?.name;
+        this.t("user.logoutCompleteFor") + " " + this.user?.name;
       this.fireGlobal("yp-open-toast", { text: this.toastLogoutTextCombined });
       this.fireGlobal("yp-close-right-drawer", true);
       this.recheckAdminRights();
@@ -921,7 +937,8 @@ export class YpAppUser extends YpCodeBase {
         this.membershipsIndex.groups[memberships.GroupUsers[i].id] = true;
       }
       for (i = 0; i < memberships.CommunityUsers.length; i++) {
-        this.membershipsIndex.communities[memberships.CommunityUsers[i].id] = true;
+        this.membershipsIndex.communities[memberships.CommunityUsers[i].id] =
+          true;
       }
       for (i = 0; i < memberships.DomainUsers.length; i++) {
         this.membershipsIndex.domains[memberships.DomainUsers[i].id] = true;

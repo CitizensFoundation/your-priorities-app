@@ -8,6 +8,7 @@ import { YpAccessHelpers } from "../common/YpAccessHelpers.js";
 import { nothing, html, css } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import "@material/web/iconbutton/outlined-icon-button.js";
+import "@material/web/iconbutton/filled-tonal-icon-button.js";
 import "@material/web/labs/card/outlined-card.js";
 //import '../yp-post/yp-posts-list.js';
 //import '../yp-post/yp-post-card-add.js';
@@ -35,96 +36,47 @@ let YpPostHeader = class YpPostHeader extends YpPostBaseWithAnswers(YpBaseElemen
           display: block;
         }
 
-        .userInfo {
-          margin: 16px;
-        }
-
-        .infoContainer {
-          line-height: var(--description-line-height, 1.3);
-          padding: 0px;
-          padding-bottom: 0;
-          padding-top: 16px;
-        }
-
         .category-icon {
           width: 100px;
           height: 100px;
         }
 
         yp-post-cover-media {
-          position: relative;
-          width: 600px;
-          height: 338px;
-          margin-right: auto;
-          margin-left: auto;
-        }
-
-        yp-post-cover-media[audio-cover] {
-          height: 90px;
-        }
-
-        .postCard {
-          position: relative;
-          border-radius: 4px;
-          text-align: left;
-        }
-
-        .topCard {
-          max-width: 600px;
-        }
-
-        .mediaAndInfoContainer {
-          margin-bottom: 16px;
+          width: 420px;
+          height: 236px;
         }
 
         .description {
-          padding-bottom: 2px;
-          padding-left: 16px;
-          padding-right: 16px;
-          line-height: 1.75;
-          max-width: 600px;
+          font-size: 18px;
+          font-weight: 400;
+          line-height: 25px;
         }
-
 
         .postName {
-          max-width: 600px;
-          margin: 16px;
-          font-weight: bold;
+          font-family: var(
+            --md-ref-typeface-brand
+          ); /*var(--md-sys-typescale-title-medium-font);*/
+          font-size: var(--md-sys-typescale-title-medium-size, 36px);
+          font-weight: var(--md-sys-typescale-title-medium-weight, 700);
+          line-height: var(--md-sys-typescale-title-medium-line-height, 48px);
           text-align: left;
-          font-size: 20px;
-          opacity: 1.0;
-        }
-
-        .share {
           margin-bottom: 16px;
         }
 
-        .mobileName {
-          display: none;
+        .actionBar {
+          margin-bottom: 48px;
         }
 
-        .shareIcon {
-          position: absolute;
-          text-align: right;
-          width: 44px;
-          height: 44px;
-          right: 42px;
-          bottom: 3px;
-        }
-
-        .postActions {
-          align-self: flex-end;
-          align-items: flex-end;
-          margin-top: 16px;
-          width: 100%;
-        }
 
         .moreVert {
         }
 
-        .moreVertButton {
-          width: 46px;
-          height: 46px;
+        .userInfo {
+          margin-bottom: 16px;
+        }
+
+        .mediaContainer {
+          align-self: flex-start;
         }
 
         .customRatings {
@@ -133,51 +85,18 @@ let YpPostHeader = class YpPostHeader extends YpPostBaseWithAnswers(YpBaseElemen
           right: 85px;
         }
 
-        @media (max-width: 960px) {
-          .moreVert {
-            position: absolute;
-            top: 4px;
-            bottom: initial;
-            right: 2px;
-          }
+        .coverContainer {
+          margin-right: 24px;
+          margin-bottom: 40px;
+        }
 
+        @media (max-width: 960px) {
           .description[has-custom-ratings] {
             padding-bottom: 18px;
           }
 
           .customRatings {
             right: 46px;
-          }
-
-          .mobileName {
-            margin-right: 38px;
-          }
-
-          .shareIcon {
-            right: 8px;
-            bottom: 2px;
-          }
-
-          .postActions {
-            right: 55px;
-            bottom: 2px;
-          }
-
-          .infoContainer {
-            padding-bottom: 16px;
-            padding-top: 16px;
-          }
-
-          .mobileName {
-            display: block;
-          }
-
-          .desktopName {
-            display: none;
-          }
-
-          :host {
-            max-width: 600px;
           }
 
           .postCard {
@@ -193,19 +112,14 @@ let YpPostHeader = class YpPostHeader extends YpPostBaseWithAnswers(YpBaseElemen
           }
 
           .infoContainer {
-            width: 100%;
-            margin-bottom: 32px;
           }
 
           .description {
-            margin-bottom: 8px;
-            margin-top: 8px;
           }
         }
 
         @media (max-width: 800px) {
           :host {
-            max-width: 423px;
             width: 100%;
           }
 
@@ -219,10 +133,12 @@ let YpPostHeader = class YpPostHeader extends YpPostBaseWithAnswers(YpBaseElemen
             width: 100%;
           }
 
+          .coverContainer {
+            margin-right: 0;
+          }
+
           .postCard {
             width: 100% !important;
-            margin: 8px;
-            margin-top: 4px;
           }
 
           yp-post-cover-media {
@@ -317,8 +233,8 @@ let YpPostHeader = class YpPostHeader extends YpPostBaseWithAnswers(YpBaseElemen
                 skipSanitize
                 .contentId="${this.post.id}"
                 class="description"
-                .truncate="${5000 ||
-                this.post.Group.configuration.descriptionTruncateAmount}"
+                .truncate="${this.post.Group.configuration
+                .descriptionTruncateAmount || 500}"
                 .moreText="${this.t("readMore")}"
                 .closeDialogText="${this.t("close")}"
               >
@@ -405,68 +321,74 @@ let YpPostHeader = class YpPostHeader extends YpPostBaseWithAnswers(YpBaseElemen
           ></yp-post-actions>
         `} `;
     }
+    renderName() {
+        return html `<yp-magic-text
+      class="postName"
+      textType="postName"
+      .contentLanguage="${this.post.language}"
+      .content="${this.post.name}"
+      .contentId="${this.post.id}"
+    >
+    </yp-magic-text>`;
+    }
+    renderUser() {
+        return html `<div class="layout horizontal userInfo">
+      <yp-user-with-organization
+        class="userWithOrg"
+        hide-image
+        .user="${this.post.User}"
+      ></yp-user-with-organization>
+    </div>`;
+    }
+    renderCoverMedia() {
+        return html ` <div class="layout vertical center-center coverContainer">
+      <yp-post-cover-media
+        top-left-radius
+        show-video
+        show-audio
+        ?hasTranscript="${this.post.public_data?.transcript?.text}"
+        .altTag="${this.post.name}"
+        ?audio-cover="${this.isAudioCover}"
+        header-mode
+        .post="${this.post}"
+      >
+      </yp-post-cover-media>
+      ${this.transcriptActive
+            ? html ` <yp-post-transcript .post="${this.post}"></yp-post-transcript> `
+            : nothing}
+    </div>`;
+    }
+    renderClose() {
+        return html `<md-filled-tonal-icon-button
+      @click="${() => YpNavHelpers.redirectTo("/group/" + this.post.group_id)}"
+      title="${this.t("close")}"
+      ><md-icon>close</md-icon>
+    </md-filled-tonal-icon-button>`;
+    }
     render() {
         return html `
-      <div class="layout vertical center-center">
-        <md-outlined-card
-          class="topCard layout-wrap layout horizontal shsadow-elevation-4dp shasdow-transition"
-        >
-          <div
-            class="layout vertical headerTopLevel center-center"
-            role="heading"
-            aria-level="1"
-            aria-label="${this.post.name}"
-          >
-            ${this.post.Group.configuration.showWhoPostedPosts
-            ? html `
-                  <div class="layout horizontal userInfo">
-                    <yp-user-with-organization
-                      class="userWithOrg"
-                      hide-image
-                      .user="${this.post.User}"
-                    ></yp-user-with-organization>
-                  </div>
-                `
+      <div
+        class="layout vertical"
+        role="heading"
+        aria-level="1"
+        aria-label="${this.post.name}"
+      >
+        <div class="layout horizontal actionBar">
+          ${this.renderClose()}
+          <div class="flex"></div>
+          ${this.renderMenu()}
+        </div>
+        ${this.post.Group.configuration.showWhoPostedPosts
+            ? this.renderUser()
             : nothing}
-
-            <div class="layout vertical wrap mediaAndInfoContainer">
-              <div class="layout vertical center-center coverContainer">
-                <yp-post-cover-media
-                  top-left-radius
-                  show-video
-                  show-audio
-                  ?hasTranscript="${this.post.public_data?.transcript?.text}"
-                  .altTag="${this.post.name}"
-                  ?audio-cover="${this.isAudioCover}"
-                  header-mode
-                  .post="${this.post}"
-                >
-                </yp-post-cover-media>
-                ${this.transcriptActive
-            ? html `
-                      <yp-post-transcript
-                        .post="${this.post}"
-                      ></yp-post-transcript>
-                    `
-            : nothing}
-              </div>
-              <yp-magic-text
-                  class="postName"
-                  textType="postName"
-                  .contentLanguage="${this.post.language}"
-                  .content="${this.post.name}"
-                  .contentId="${this.post.id}"
-                >
-                </yp-magic-text>
-              <div class="layout vertical center-center postDescription">
-                ${this.renderPostInformation()}
-              </div>
-              <div class="layout horizontal center-center">
-                ${this.renderActions()} ${this.renderMenu()}
-              </div>
-            </div>
-          </div> </md-outlined-card
-        >
+        <div class="layout horizontal">
+          <div class="layout vertical center-center mediaContainer">
+            ${this.renderCoverMedia()} ${this.renderActions()}
+          </div>
+          <div class="layout vertical">
+            ${this.renderName()} ${this.renderPostInformation()}
+          </div>
+        </div>
       </div>
     `;
     }

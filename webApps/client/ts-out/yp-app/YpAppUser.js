@@ -34,6 +34,7 @@ export class YpAppUser extends YpCodeBase {
             }
             this.addGlobalListener("yp-forgot-password", this._forgotPassword.bind(this));
             this.addGlobalListener("yp-reset-password", this._resetPassword.bind(this));
+            this.addGlobalListener("yp-logged-in", this._onUserChanged.bind(this));
         }
     }
     getBrowserId() {
@@ -226,7 +227,7 @@ export class YpAppUser extends YpCodeBase {
             // TODO: Remove any
             window.appDialogs.getDialogAsync(loginParams.editDialog, (dialog) => {
                 dialog.setup(null, true, loginParams.refreshFunction);
-                dialog.open('new', loginParams.params);
+                dialog.open("new", loginParams.params);
                 this.loginForEditParams = null;
             });
         }
@@ -595,8 +596,10 @@ export class YpAppUser extends YpCodeBase {
             this.pointQualitiesIndex = {};
         }
     }
-    _onUserChanged(user) {
+    _onUserChanged(event) {
+        const user = event.detail;
         if (user) {
+            debugger;
             this._updateEndorsementPostsIndex(user);
             this._updatePointQualitiesIndex(user);
             this._updateRatingPostsIndex(user);
@@ -741,7 +744,8 @@ export class YpAppUser extends YpCodeBase {
                 this.membershipsIndex.groups[memberships.GroupUsers[i].id] = true;
             }
             for (i = 0; i < memberships.CommunityUsers.length; i++) {
-                this.membershipsIndex.communities[memberships.CommunityUsers[i].id] = true;
+                this.membershipsIndex.communities[memberships.CommunityUsers[i].id] =
+                    true;
             }
             for (i = 0; i < memberships.DomainUsers.length; i++) {
                 this.membershipsIndex.domains[memberships.DomainUsers[i].id] = true;

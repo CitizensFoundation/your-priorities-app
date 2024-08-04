@@ -229,10 +229,6 @@ let YpCollectionHeader = class YpCollectionHeader extends YpBaseElement {
           line-height: 1.5;
         }
 
-        .description[widetext] {
-          font-size: 14px;
-        }
-
         #welcomeHTML {
           width: 420px;
           max-width: 420px;
@@ -253,17 +249,8 @@ let YpCollectionHeader = class YpCollectionHeader extends YpBaseElement {
           margin-left: 32px;
         }
 
-        .collectionDescriptionimageCard {
-          margin-top: 8px;
-        }
-
         @media (max-width: 960px) {
           :host {
-            max-width: 423px;
-            padding: 0 !important;
-            padding-top: 8px !important;
-            width: 100%;
-            margin-top: 8px;
           }
 
           #welcomeHTML {
@@ -282,10 +269,6 @@ let YpCollectionHeader = class YpCollectionHeader extends YpBaseElement {
             margin-left: 8px;
             margin-right: 8px;
             margin-top: 8px !important;
-          }
-
-          .top-card {
-            margin-bottom: 16px;
           }
 
           yp-image,
@@ -530,7 +513,7 @@ let YpCollectionHeader = class YpCollectionHeader extends YpBaseElement {
                     <div
                       is-video="${ifDefined(this.collectionVideoURL)}"
                       id="cardImage"
-                      class="collectionDescriptionimageCard top-card"
+                      class="top-card"
                     >
                       ${this.renderMediaContent()}
                     </div>

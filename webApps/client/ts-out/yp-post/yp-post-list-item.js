@@ -79,7 +79,7 @@ let YpPostListItem = class YpPostListItem extends YpBaseElement {
           width: 360px;
           min-width: 360px;
           height: 203px;
-          margin-right: 26px;
+          margin-right: 32px;
         }
 
         .post-name[mini] {
@@ -104,6 +104,7 @@ let YpPostListItem = class YpPostListItem extends YpBaseElement {
         }
 
         .postActions {
+          margin-left: 12px;
         }
 
         .shareIcon {

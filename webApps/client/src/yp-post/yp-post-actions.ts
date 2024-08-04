@@ -113,11 +113,12 @@ export class YpPostActions extends YpBaseElement {
         }
 
         .action-text {
-          font-size: 16px;
+          font-size: 23px;
           text-align: left;
           vertical-align: bottom;
-          padding-top: 8px;
+          padding-top: 6px;
           margin-top: 4px;
+          margin-left: 8px;
         }
 
         .action-icon {
@@ -169,7 +170,7 @@ export class YpPostActions extends YpBaseElement {
 
         .up-text {
           padding-top: 4px;
-          margin-right: 12px;
+          margin-right: 32px;
           padding-left: 4px;
           padding-bottom: 8px;
         }
@@ -183,19 +184,13 @@ export class YpPostActions extends YpBaseElement {
         }
 
         md-filled-tonal-icon-button.mainIcons {
-          width: 48px;
-          height: 48px;
         }
 
         md-filled-tonal-icon-button.debateIcon {
-          width: 46px;
-          height: 46px;
           margin-top: 2px;
         }
 
         md-filled-tonal-icon-button[smaller-icons] {
-          height: 48px;
-          width: 48px;
         }
 
         .debate-icon {
@@ -284,7 +279,7 @@ export class YpPostActions extends YpBaseElement {
             ?only-up-vote-showing="${this.onlyUpVoteShowing}"
             class="action-up layout horizontal layout start justified"
           >
-            <md-icon-button
+            <md-filled-icon-button
               toggle
               ?selected="${this.isEndorsed}"
               id="iconUpButton"
@@ -297,7 +292,7 @@ export class YpPostActions extends YpBaseElement {
                 >${this.endorseModeIcon(this.endorsementButtons, "up")}</md-icon
               ><md-icon id="actionUpIcon"
                 >${this.endorseModeIcon(this.endorsementButtons, "up")}</md-icon
-              ></md-icon-button
+              ></md-filled-icon-button
             >
             <div
               ?rtl="${this.rtl}"
@@ -313,7 +308,7 @@ export class YpPostActions extends YpBaseElement {
             class="action-down layout horizontal layout center justified"
             ?hidden="${this.post.Group.configuration.hideDownVoteForPost}"
           >
-            <md-icon-button
+            <md-filled-icon-button
               toggle
               ?selected="${this.isOpposed}"
               smaller-icons="${this.smallerIcons}"
@@ -322,7 +317,7 @@ export class YpPostActions extends YpBaseElement {
               class="action-icon down-vote-icon mainIcons"
               @click="${this.downVote}"
               ><md-icon slot="selected">${this.endorseModeIconDown}</md-icon
-              ><md-icon>${this.endorseModeIconDown}</md-icon></md-icon-button
+              ><md-icon>${this.endorseModeIconDown}</md-icon></md-filled-icon-button
             >
             <div
               class="action-text down-text"
@@ -500,6 +495,7 @@ export class YpPostActions extends YpBaseElement {
   }
 
   _updateEndorsements(event: CustomEvent | undefined = undefined) {
+    debugger;
     if (
       window.appUser &&
       window.appUser.loggedIn() &&
@@ -630,6 +626,7 @@ export class YpPostActions extends YpBaseElement {
   }
 
   generateEndorsementFromLogin(value: number) {
+    debugger;
     if (!window.appUser.endorsementPostsIndex[this.post.id]) {
       this.generateEndorsement(value);
     }

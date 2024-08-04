@@ -1,5 +1,6 @@
 import { TemplateResult } from "lit";
 import "@material/web/iconbutton/outlined-icon-button.js";
+import "@material/web/iconbutton/filled-tonal-icon-button.js";
 import "@material/web/labs/card/outlined-card.js";
 import "./yp-post-actions.js";
 import { YpBaseElementWithLogin } from "../common/yp-base-element-with-login.js";
@@ -14,6 +15,10 @@ export declare class YpPostHeader extends YpPostHeader_base {
     renderPostInformation(): TemplateResult<1>;
     renderMenu(): TemplateResult<1>;
     renderActions(): TemplateResult<1>;
+    renderName(): TemplateResult<1>;
+    renderUser(): TemplateResult<1>;
+    renderCoverMedia(): TemplateResult<1>;
+    renderClose(): TemplateResult<1>;
     render(): TemplateResult<1>;
     _openPostMenu(): void;
     _sharedContent(event: CustomEvent): void;

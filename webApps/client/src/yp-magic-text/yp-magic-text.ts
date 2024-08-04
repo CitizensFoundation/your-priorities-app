@@ -9,6 +9,7 @@ import linkifyHtml from "linkify-html";
 import { YpBaseElement } from "../common/yp-base-element.js";
 
 import "@material/web/progress/linear-progress.js";
+import "@material/web/button/filled-tonal-button.js";
 
 @customElement("yp-magic-text")
 export class YpMagicText extends YpBaseElement {
@@ -116,7 +117,19 @@ export class YpMagicText extends YpBaseElement {
         }
 
         .moreText {
-          margin-top: 8px;
+          margin-top: 24px;
+        }
+
+        .no-flex {
+          flex: none;
+        }
+
+        .end {
+          align-self: end;
+        }
+
+        .middle {
+          align-self: center;
         }
 
         a {
@@ -150,12 +163,13 @@ export class YpMagicText extends YpBaseElement {
           ? html` <div>${unsafeHTML(this.truncatedContent)}</div> `
           : html` <div>${this.truncatedContent}</div> `}
         ${this.showMoreText && this.moreText
-          ? html`
-              <md-text-button
-                class="moreText"
+          ? html`<div class="layout vertical center-center">
+              <md-filled-tonal-button
+                class="moreText no-flex middle"
                 @click="${this._openFullScreen}"
-              >${this.moreText}</md-text-button>
-            `
+                >${this.moreText}</md-filled-tonal-button
+              >
+            </div> `
           : nothing}
         <md-linear-progress
           indeterminate
@@ -522,7 +536,6 @@ export class YpMagicText extends YpBaseElement {
     } else {
       this.finalContent = undefined;
     }
-
   }
 
   _linksAndEmojis() {

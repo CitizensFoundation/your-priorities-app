@@ -125,7 +125,7 @@ export declare class YpAppUser extends YpCodeBase {
     updateRatingForPost(postId: number, typeIndex: number, newRating: YpRatingData | undefined): void;
     updatePointQualityForPost(pointId: number, newPointQuality: YpPointQuality): void;
     _updatePointQualitiesIndex(user: YpUserData): void;
-    _onUserChanged(user: YpUserData | null): void;
+    _onUserChanged(event: CustomEvent): void;
     logout(): Promise<void>;
     checkRegistrationAnswersCurrent(): void;
     setHasRegistrationAnswers(): void;
