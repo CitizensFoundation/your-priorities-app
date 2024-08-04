@@ -365,7 +365,7 @@ let YpPost = class YpPost extends YpCollection {
         }
     }
     async getCollection() {
-        debugger;
+        console.warn("Trying to get collection in post");
     }
     async _getPost() {
         if (this.collectionId) {

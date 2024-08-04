@@ -115,7 +115,7 @@ export class YpBaseElement extends LitElement {
   }
 
   setStaticThemeFromConfig() {
-    console.error(`hasStaticTheme is ${window.appGlobals.theme.hasStaticTheme}`);
+    //console.error(`hasStaticTheme is ${window.appGlobals.theme.hasStaticTheme}`);
     this.hasStaticTheme = window.appGlobals.theme.hasStaticTheme;
   }
 

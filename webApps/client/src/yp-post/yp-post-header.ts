@@ -285,7 +285,7 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
           <md-menu
             id="actionMenu"
             positioning="popover"
-            .menuCorner="${Corner.START_END}"
+            .menuCorner="${Corner.START_START}"
             anchor="menuAnchor"
           >
             <md-menu-item @click="${this._openEdit}">

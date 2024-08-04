@@ -432,7 +432,7 @@ export class YpPost extends YpCollection {
   }
 
   override async getCollection() {
-    debugger;
+    console.warn("Trying to get collection in post")
   }
 
   async _getPost() {
