@@ -7,7 +7,7 @@ import connectRedis from "connect-redis";
 import useragent from "express-useragent";
 import requestIp from "request-ip";
 import compression from "compression";
-import * as isBot from "isbot";
+import { isbot } from "isbot";
 import redis from "redis";
 import rateLimit from "express-rate-limit";
 import { RedisStore as RedisLimitStore } from "rate-limit-redis";
@@ -322,8 +322,8 @@ export class YourPrioritiesApi {
   }
 
   async initializeRateLimiting() {
-    // Wait for one second
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    // Wait for one second why? TOTO: Figure this out
+    //await new Promise((resolve) => setTimeout(resolve, 1000));
     const botRateLimiter = rateLimit({
       windowMs: process.env.RATE_LIMITER_WINDOW_MS
         ? parseInt(process.env.RATE_LIMITER_WINDOW_MS, 10)
@@ -342,9 +342,7 @@ export class YourPrioritiesApi {
           !req.originalUrl.endsWith("/sitemap.xml")
         ) {
           const isBotBad = isBadBot(ua.toLowerCase());
-          //TODO: CHECK THIS
-          //@ts-ignore
-          if (!botsWithJavascript(ua) && (isBot(ua) || isBadBot(ua))) {
+          if (!botsWithJavascript(ua) && (isbot(ua) || isBadBot(ua))) {
             if (isBotBad) {
               botRateLimiter(req, res, () => {
                 nonSPArouter(req, res, next);
