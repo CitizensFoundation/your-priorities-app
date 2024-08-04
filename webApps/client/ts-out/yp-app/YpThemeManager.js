@@ -11,7 +11,7 @@ export class YpThemeManager {
         this.themeColor = "#0327f8";
         this.themeDarkMode = false;
         this.themeHighContrast = false;
-        this.alwaysUseLowestContainer = false;
+        this.useLowestContainerSurface = false;
         this.isAppleDevice = false;
         this.themeScheme = "tonal";
         const savedDarkMode = localStorage.getItem(YpBaseElement.darkModeLocalStorageKey);
@@ -383,7 +383,7 @@ export class YpThemeManager {
         }
         // Reset
         this.themeScheme = "tonal";
-        this.alwaysUseLowestContainer = false;
+        this.useLowestContainerSurface = false;
         if (!configuration.theme) {
             this.setThemeFromOldConfiguration(number, configuration);
         }
@@ -399,8 +399,8 @@ export class YpThemeManager {
                 this.themeTertiaryColor = configuration.theme.tertiaryColor;
                 this.themeNeutralColor = configuration.theme.neutralColor;
                 this.themeNeutralVariantColor = configuration.theme.neutralVariantColor;
-                this.alwaysUseLowestContainer =
-                    configuration.theme.alwaysUseLowestContainer || false;
+                this.useLowestContainerSurface =
+                    configuration.theme.useLowestContainerSurface || false;
                 //this.themeVariant = configuration.theme.variant;
             }
             if (configuration.theme.fontStyles) {
@@ -474,7 +474,7 @@ export class YpThemeManager {
         }
         else {
             if (this.themeColor) {
-                themeCss = themeFromSourceColorWithContrast(this.getHexColor(this.themeColor), this.themeVariant, isDark, this.themeScheme, this.themeHighContrast ? 2.0 : 0.0);
+                themeCss = themeFromSourceColorWithContrast(this.getHexColor(this.themeColor), this.themeVariant, isDark, this.themeScheme, this.themeHighContrast ? 1.0 : 0.0, this.useLowestContainerSurface);
             }
             else {
                 themeCss = themeFromSourceColorWithContrast({
@@ -483,7 +483,7 @@ export class YpThemeManager {
                     tertiary: this.getHexColor(this.themeTertiaryColor || "#000000"),
                     neutral: this.getHexColor(this.themeNeutralColor || "#000000"),
                     neutralVariant: this.getHexColor(this.themeNeutralVariantColor || "#000000"),
-                }, this.themeVariant, isDark, "dynamic", this.themeHighContrast ? 2.0 : 0.0);
+                }, this.themeVariant, isDark, "dynamic", this.themeHighContrast ? 1.0 : 0.0, this.useLowestContainerSurface);
             }
             const customColors = themeFromSourceColor(argbFromHex(this.themeColor || this.themePrimaryColor || "#000000"), [
                 {

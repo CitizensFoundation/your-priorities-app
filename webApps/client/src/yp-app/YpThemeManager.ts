@@ -27,7 +27,7 @@ export class YpThemeManager {
   themeNeutralColor: string | undefined;
   themeNeutralVariantColor: string | undefined;
   themeVariant: MaterialDynamicVariants | undefined;
-  alwaysUseLowestContainer = false;
+  useLowestContainerSurface = false;
 
   static themeScemesOptionsWithName = [
     { name: "Tonal", value: "tonal" },
@@ -492,7 +492,7 @@ export class YpThemeManager {
 
     // Reset
     this.themeScheme = "tonal";
-    this.alwaysUseLowestContainer = false;
+    this.useLowestContainerSurface = false;
 
     if (!configuration.theme) {
       this.setThemeFromOldConfiguration(number, configuration);
@@ -507,8 +507,9 @@ export class YpThemeManager {
         this.themeTertiaryColor = configuration.theme.tertiaryColor;
         this.themeNeutralColor = configuration.theme.neutralColor;
         this.themeNeutralVariantColor = configuration.theme.neutralVariantColor;
-        this.alwaysUseLowestContainer =
-          configuration.theme.alwaysUseLowestContainer || false;
+        this.useLowestContainerSurface =
+          configuration.theme.useLowestContainerSurface || false;
+
         //this.themeVariant = configuration.theme.variant;
       }
 
@@ -598,7 +599,8 @@ export class YpThemeManager {
           this.themeVariant,
           isDark,
           this.themeScheme,
-          this.themeHighContrast ? 2.0 : 0.0
+          this.themeHighContrast ? 1.0 : 0.0,
+          this.useLowestContainerSurface
         );
       } else {
         themeCss = themeFromSourceColorWithContrast(
@@ -614,7 +616,8 @@ export class YpThemeManager {
           this.themeVariant,
           isDark,
           "dynamic",
-          this.themeHighContrast ? 2.0 : 0.0
+          this.themeHighContrast ? 1.0 : 0.0,
+          this.useLowestContainerSurface
         );
       }
 

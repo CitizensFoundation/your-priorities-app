@@ -250,7 +250,7 @@ let YpCollectionItemCard = class YpCollectionItemCard extends YpBaseElement {
                 case YpGroupType.IdeaGenerationAndDebate:
                     return this.t("ideas");
                 case YpGroupType.PsAgentWorkflow:
-                    return this.t("workFlow");
+                    return this.t("workflow");
                 case YpGroupType.StaticHtml:
                     return this.t("html");
                 default:

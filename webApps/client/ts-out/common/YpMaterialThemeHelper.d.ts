@@ -13,10 +13,10 @@ export declare function themeFromSourceColorWithContrast(color: string | {
     tertiary: string;
     neutral: string;
     neutralVariant: string;
-}, variant: MaterialDynamicVariants | undefined, isDark: boolean, scheme: MaterialColorScheme, contrast: number): {
+}, variant: MaterialDynamicVariants | undefined, isDark: boolean, scheme: MaterialColorScheme, contrast: number, useLowestContainerSurface: boolean): {
     [key: string]: string;
 };
-export declare function themeFromScheme(colorScheme: MatScheme): {
+export declare function themeFromScheme(colorScheme: MatScheme, useLowestContainerSurface: boolean): {
     [key: string]: string;
 };
 export declare function applyThemeWithContrast(doc: DocumentOrShadowRoot, theme: {

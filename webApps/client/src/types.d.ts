@@ -37,7 +37,7 @@ interface YpThemeConfiguration {
   tertiaryColor?: string;
   neutralColor?: string;
   neutralVariantColor?: string;
-  alwaysUseLowestContainer?: boolean;
+  useLowestContainerSurface?: boolean;
   iconPrompt?: string;
   fontStyles?: string;
   fontImports?: string;

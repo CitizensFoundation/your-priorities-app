@@ -124,7 +124,8 @@ export function themeFromSourceColorWithContrast(
     variant: MaterialDynamicVariants | undefined,
     isDark: boolean,
     scheme: MaterialColorScheme,
-    contrast: number
+    contrast: number,
+    useLowestContainerSurface: boolean
 ) {
   if (typeof color !== 'string' && scheme !== 'dynamic' || typeof color !== 'object' && scheme === 'dynamic') {
     throw new Error('color / scheme type mismatch');
@@ -224,10 +225,10 @@ export function themeFromSourceColorWithContrast(
     });
   }
 
-  return themeFromScheme(colorScheme!);
+  return themeFromScheme(colorScheme!, useLowestContainerSurface);
 }
 
-export function themeFromScheme(colorScheme: MatScheme) {
+export function themeFromScheme(colorScheme: MatScheme, useLowestContainerSurface: boolean) {
   //@ts-ignore
   const colors = generateMaterialColors(colorScheme);
   const theme: { [key: string]: string } = {};
@@ -235,6 +236,10 @@ export function themeFromScheme(colorScheme: MatScheme) {
   for (const [key, value] of Object.entries(colors)) {
     //@ts-ignore
     theme[key] = hexFromArgb(value.getArgb(colorScheme));
+  }
+
+  if (useLowestContainerSurface) {
+    theme["surface"] = theme["surface-container-lowest"]
   }
 
   return theme;

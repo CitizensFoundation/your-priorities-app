@@ -94,7 +94,7 @@ const variantIndexMap = {
     "rainbow": 7,
     "fruitSalad": 8
 };
-export function themeFromSourceColorWithContrast(color, variant, isDark, scheme, contrast) {
+export function themeFromSourceColorWithContrast(color, variant, isDark, scheme, contrast, useLowestContainerSurface) {
     if (typeof color !== 'string' && scheme !== 'dynamic' || typeof color !== 'object' && scheme === 'dynamic') {
         throw new Error('color / scheme type mismatch');
     }
@@ -171,15 +171,18 @@ export function themeFromSourceColorWithContrast(color, variant, isDark, scheme,
             neutralVariantPalette: TonalPalette.fromHueAndChroma(neutralVariant.hue, neutralVariant.chroma),
         });
     }
-    return themeFromScheme(colorScheme);
+    return themeFromScheme(colorScheme, useLowestContainerSurface);
 }
-export function themeFromScheme(colorScheme) {
+export function themeFromScheme(colorScheme, useLowestContainerSurface) {
     //@ts-ignore
     const colors = generateMaterialColors(colorScheme);
     const theme = {};
     for (const [key, value] of Object.entries(colors)) {
         //@ts-ignore
         theme[key] = hexFromArgb(value.getArgb(colorScheme));
+    }
+    if (useLowestContainerSurface) {
+        theme["surface"] = theme["surface-container-lowest"];
     }
     return theme;
 }

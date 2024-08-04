@@ -11,7 +11,7 @@ export declare class YpThemeManager {
     themeNeutralColor: string | undefined;
     themeNeutralVariantColor: string | undefined;
     themeVariant: MaterialDynamicVariants | undefined;
-    alwaysUseLowestContainer: boolean;
+    useLowestContainerSurface: boolean;
     static themeScemesOptionsWithName: {
         name: string;
         value: string;

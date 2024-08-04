@@ -18,6 +18,7 @@ export declare class YpThemeSelector extends YpBaseElement {
     themeConfiguration: YpThemeConfiguration;
     disableSelection: boolean | undefined;
     disableMultiInputs: boolean;
+    useLowestContainerSurface: boolean;
     disableOneThemeColorInputs: boolean;
     hasLogoImage: boolean;
     channel: BroadcastChannel;
@@ -34,6 +35,7 @@ export declare class YpThemeSelector extends YpBaseElement {
     get currentThemeSchemaIndex(): number;
     updateFontStyles(event: CustomEvent): void;
     updateFontImports(event: CustomEvent): void;
+    setLowestContainerSurface(event: CustomEvent): Promise<void>;
     render(): import("lit-html").TemplateResult<1>;
     renderPallette(): import("lit-html").TemplateResult<1>;
 }

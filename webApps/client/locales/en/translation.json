@@ -1,4 +1,8 @@
 {
+  "workflow": "Workflow",
+  "ideas": "Ideas",
+  "pairwiseVoting": "Pairwise Voting",
+  "useLowestContainerSurface": "Use lowest container surface",
   "alwaysHideLogoImage": "Hide logo image",
   "hideGroupType": "Hide group type",
   "smarterCrowdsourcing": "Smarter Crowdsourcing",
@@ -268,7 +272,6 @@
   "noGroupCardShadow": "No group card shadow",
   "centerGroupName": "Center group name in lists",
   "hideStatsAndMembership": "Hide stats and membership in lists",
-  "alwaysHideLogoImage": "Always hide logo image",
   "showNameUnderLogoImage": "Show name under logo image",
   "galleryMode": "Gallery mode",
   "muteNotificationsForEndorsements": "Mute notifications for endorsements",
