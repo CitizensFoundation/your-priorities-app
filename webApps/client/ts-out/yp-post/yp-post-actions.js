@@ -78,7 +78,7 @@ let YpPostActions = class YpPostActions extends YpBaseElement {
           vertical-align: bottom;
           padding-top: 6px;
           margin-top: 4px;
-          margin-left: 8px;
+          margin-left: 16px;
         }
 
         .action-icon {

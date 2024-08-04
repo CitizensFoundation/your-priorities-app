@@ -74,11 +74,12 @@ export class YpPost extends YpCollection {
       ShadowStyles,
       css`
         .frameContainer {
-          max-width: 980px;
+          max-width: 970px;
           margin: 32px;
+          margin-top: 0;
           padding: 32px;
           border-radius: 4px;
-          border: 1px solid var(--md-sys-color-secondary);
+          border: 1px solid var(--md-sys-color-outline);
         }
 
         .postHeader {
@@ -89,8 +90,14 @@ export class YpPost extends YpCollection {
         }
 
         md-tabs {
-          z-index: 0;
-          margin-top: 32px;
+          margin-top: 64px;
+          min-width: 90%;
+        }
+
+        .dividerLine {
+          border-top: 1px solid var(--md-sys-color-outline);
+          margin-top: 64px;
+          margin-bottom: 16px;
         }
 
         ac-activities {
@@ -272,9 +279,12 @@ export class YpPost extends YpCollection {
   get tabPhotosCount(): string {
     const labelTranslation = this.t("post.tabs.photos");
 
-    return `${labelTranslation} (${
-      this.photosCount != undefined ? this.photosCount : "..."
-    })`;
+    if (this.photosCount) {
+      return `${labelTranslation} (${this.photosCount
+      })`;
+    } else {
+      return `${labelTranslation}`;
+    }
   }
 
   _selectedTabChanged() {
