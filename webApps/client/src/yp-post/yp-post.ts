@@ -149,7 +149,7 @@ export class YpPost extends YpCollection {
           position: fixed;
           top: 37%;
           transform: translateY(-50%);
-          z-index: 2;
+          z-index: 20;
         }
 
         .leftArrowNavigationButton {

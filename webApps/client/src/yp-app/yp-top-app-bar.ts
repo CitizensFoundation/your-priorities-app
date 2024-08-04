@@ -102,7 +102,7 @@ export class YpTopAppBar extends YpBaseElement {
           left: 0;
           right: 0;
           transition: top 0.3s;
-          z-index: 1;
+          z-index: 2000;
         }
 
         .middleContainer {
