@@ -39,6 +39,7 @@ export class YpCollection extends YpBaseElementWithLogin {
         //TODO: Fix this as it causes loadMoreData to be called twice on post lists at least
         this.addGlobalListener("yp-logged-in", this.loggedInUserCustom.bind(this));
         this.addGlobalListener("yp-got-admin-rights", this.getCollection.bind(this));
+        this.addGlobalListener("yp-theme-applied", this.themeApplied.bind(this));
     }
     async loggedInUserCustom() {
         this.refresh();
@@ -56,6 +57,13 @@ export class YpCollection extends YpBaseElementWithLogin {
         super.connectedCallback();
         if (this.collection)
             this.refresh();
+    }
+    async themeApplied() {
+        this.requestUpdate();
+    }
+    disconnectedCallback() {
+        super.disconnectedCallback();
+        this.removeGlobalListener("yp-theme-applied", this.themeApplied.bind(this));
     }
     refresh() {
         console.info("REFRESH");
@@ -90,7 +98,7 @@ export class YpCollection extends YpBaseElementWithLogin {
     async getCollection() {
         if (this.collectionId) {
             if (this.collection) {
-                this.setupTheme();
+                //this.setupTheme();
             }
             this.collectionItems = undefined;
             this.collection = undefined;
@@ -231,40 +239,25 @@ export class YpCollection extends YpBaseElementWithLogin {
         }
         YpNavHelpers.redirectTo(`/admin/${childCollectionType}/new/${this.collectionId}`);
     }
-    get hasCustomTheme() {
-        if (this.collection &&
-            this.collection.configuration &&
-            this.collection.configuration.theme) {
-            const configuration = this.collection.configuration;
-            if (configuration.inheritThemeFromCommunity) {
-                return !(this.collection.Community?.configuration).theme
-                    .oneDynamicColor;
-            }
-            else {
-                return !this.collection.configuration.theme
-                    .oneDynamicColor;
-            }
-        }
-        else {
-            return false;
-        }
-    }
     // UI
     static get styles() {
         return [
             super.styles,
             css `
         md-fab {
-          z-index: 1;
           --md-fab-container-shape: 4px;
-          //--md-fab-label-text-size: 16px !important;
+          --md-fab-label-text-size: 16px !important;
           --md-fab-label-text-weight: 600 !important;
           margin-bottom: 24px;
           --md-fab-container-elevation: 0;
           --md-fab-container-shadow-color: transparent;
         }
 
-        md-fab:not([has-dynamic-theme]) {
+        .createFab {
+          width: 225px;
+        }
+
+        md-fab:not([has-static-theme]) {
           --md-sys-color-primary-container: var(--md-sys-color-primary);
           --md-sys-color-on-primary-container: var(--md-sys-color-on-primary);
         }
@@ -287,7 +280,7 @@ export class YpCollection extends YpBaseElementWithLogin {
           --md-secondary-tab-active-indicator-height: 3px;
         }
 
-        md-secondary-tab[has-dynamic-theme] {
+        md-secondary-tab[has-static-theme] {
           --md-secondary-tab-active-indicator-color: var(
             --md-sys-color-primary-container
           );
@@ -353,14 +346,14 @@ export class YpCollection extends YpBaseElementWithLogin {
     renderNewsAndMapTabs() {
         return html `
       <md-secondary-tab
-        ?has-dynamic-theme="${this.hasCustomTheme}"
+        ?has-static-theme="${this.hasStaticTheme}"
         ?hidden="${this.hideNewsfeed}"
         >${this.t("post.tabs.news")}<md-icon slot="icon"
           >rss_feed</md-icon
         ></md-secondary-tab
       >
       <md-secondary-tab
-        ?has-dynamic-theme="${this.hasCustomTheme}"
+        ?has-static-theme="${this.hasStaticTheme}"
         ?hidden="${this.locationHidden || this.collectionType == "domain"}"
       >
         ${this.t("post.tabs.location")}<md-icon slot="icon"
@@ -378,7 +371,7 @@ export class YpCollection extends YpBaseElementWithLogin {
             .activeTabIndex="${this.selectedTab}"
           >
             <md-secondary-tab
-              ?has-dynamic-theme="${this.hasCustomTheme}"
+              ?has-static-theme="${this.hasStaticTheme}"
               ?hidden="${this.hideCollection}"
               >${this.collectionTabLabel}
               <md-icon slot="icon">groups</md-icon></md-secondary-tab
@@ -446,7 +439,7 @@ export class YpCollection extends YpBaseElementWithLogin {
                       ><md-icon>tune</md-icon></md-icon-button
                     >
                     <md-fab
-                      ?has-dynamic-theme="${this.hasCustomTheme}"
+                      ?has-static-theme="${this.hasStaticTheme}"
                       lowered
                       size="large"
                       ?extended="${this.wide}"

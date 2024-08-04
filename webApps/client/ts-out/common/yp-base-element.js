@@ -18,6 +18,7 @@ export class YpBaseElement extends LitElement {
         this.hasLlm = false;
         this.largeFont = false;
         this.themeColor = "#002255";
+        this.hasStaticTheme = false;
         this.installMediaQueryWatcher = (mediaQuery, layoutChangedCallback) => {
             let mql = window.matchMedia(mediaQuery);
             mql.addListener((e) => layoutChangedCallback(e.matches));
@@ -56,6 +57,7 @@ export class YpBaseElement extends LitElement {
         //TODO: Do the large font thing with css custom properties
         this.addGlobalListener("yp-large-font", this._largeFont.bind(this));
         this.addGlobalListener("yp-theme-color", this._changeThemeColor.bind(this));
+        this.addGlobalListener("yp-theme-applied", this.setStaticThemeFromConfig.bind(this));
         this.addGlobalListener("yp-theme-dark-mode", this._changeThemeDarkMode.bind(this));
         if (window.appGlobals &&
             window.appGlobals.i18nTranslation &&
@@ -70,6 +72,10 @@ export class YpBaseElement extends LitElement {
             this.wide = matches;
         });
         this.setupThemeSettings();
+    }
+    setStaticThemeFromConfig() {
+        console.error(`hasStaticTheme is ${window.appGlobals.theme.hasStaticTheme}`);
+        this.hasStaticTheme = window.appGlobals.theme.hasStaticTheme;
     }
     hasBooted() {
         this.hasLlm = window.appGlobals.hasLlm;
@@ -90,6 +96,7 @@ export class YpBaseElement extends LitElement {
         this.removeGlobalListener("yp-theme-color", this._changeThemeColor.bind(this));
         this.removeGlobalListener("yp-theme-dark-mode", this._changeThemeDarkMode.bind(this));
         this.removeGlobalListener("yp-boot-from-server", this.hasBooted.bind(this));
+        this.removeGlobalListener("yp-theme-applied", this.setStaticThemeFromConfig.bind(this));
     }
     _changeThemeColor(event) {
         this.themeColor = event.detail;
@@ -276,4 +283,7 @@ __decorate([
 __decorate([
     property({ type: Boolean })
 ], YpBaseElement.prototype, "themeHighContrast", void 0);
+__decorate([
+    property({ type: Boolean })
+], YpBaseElement.prototype, "hasStaticTheme", void 0);
 //# sourceMappingURL=yp-base-element.js.map

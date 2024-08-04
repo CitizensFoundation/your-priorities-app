@@ -12,6 +12,7 @@ export class YpThemeManager {
         this.themeDarkMode = false;
         this.themeHighContrast = false;
         this.useLowestContainerSurface = false;
+        this.hasStaticTheme = false;
         this.isAppleDevice = false;
         this.themeScheme = "tonal";
         const savedDarkMode = localStorage.getItem(YpBaseElement.darkModeLocalStorageKey);
@@ -384,6 +385,7 @@ export class YpThemeManager {
         // Reset
         this.themeScheme = "tonal";
         this.useLowestContainerSurface = false;
+        this.hasStaticTheme = false;
         if (!configuration.theme) {
             this.setThemeFromOldConfiguration(number, configuration);
         }
@@ -401,6 +403,9 @@ export class YpThemeManager {
                 this.themeNeutralVariantColor = configuration.theme.neutralVariantColor;
                 this.useLowestContainerSurface =
                     configuration.theme.useLowestContainerSurface || false;
+                if (!configuration.theme.oneDynamicColor) {
+                    this.hasStaticTheme = true;
+                }
                 //this.themeVariant = configuration.theme.variant;
             }
             if (configuration.theme.fontStyles) {

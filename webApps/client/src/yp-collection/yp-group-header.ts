@@ -10,6 +10,10 @@ export class YpGroupHeader extends YpCollectionHeader {
   @property({ type: Object })
   override collection: YpGroupData | undefined;
 
+  constructor() {
+    super();
+  }
+
   static override get styles() {
     return [
       super.styles,

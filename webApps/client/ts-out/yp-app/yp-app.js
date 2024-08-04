@@ -230,7 +230,7 @@ let YpApp = class YpApp extends YpBaseElement {
             window.appDialogs = event.detail;
         }
     }
-    get hasStaticTheme() {
+    get hasStaticBadgeTheme() {
         if (this.currentTheme) {
             return !this.currentTheme.oneDynamicColor;
         }
@@ -403,7 +403,7 @@ let YpApp = class YpApp extends YpBaseElement {
               <md-badge
                 id="notificationBadge"
                 class="activeBadge"
-                ?has-static-theme="${this.hasStaticTheme}"
+                ?has-static-theme="${this.hasStaticBadgeTheme}"
                 .value="${this.numberOfUnViewedNotifications}"
                 ?hidden="${!this.numberOfUnViewedNotifications}"
               >

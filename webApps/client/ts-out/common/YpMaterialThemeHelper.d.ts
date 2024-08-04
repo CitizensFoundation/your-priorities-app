@@ -16,7 +16,7 @@ export declare function themeFromSourceColorWithContrast(color: string | {
 }, variant: MaterialDynamicVariants | undefined, isDark: boolean, scheme: MaterialColorScheme, contrast: number, useLowestContainerSurface: boolean): {
     [key: string]: string;
 };
-export declare function themeFromScheme(colorScheme: MatScheme, useLowestContainerSurface: boolean): {
+export declare function themeFromScheme(colorScheme: MatScheme, useLowestContainerSurface: boolean, isDark: boolean): {
     [key: string]: string;
 };
 export declare function applyThemeWithContrast(doc: DocumentOrShadowRoot, theme: {

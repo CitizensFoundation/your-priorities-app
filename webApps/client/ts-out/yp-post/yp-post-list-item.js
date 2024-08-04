@@ -49,7 +49,7 @@ let YpPostListItem = class YpPostListItem extends YpBaseElement {
 
         .actionsBar {
           margin-left: 372px;
-          margin-top: -24px;
+          margin-top: -12px;
         }
 
         .postCardCursor {

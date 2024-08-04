@@ -22,6 +22,7 @@ export declare class YpGroup extends YpCollection {
     tabCounters: Record<string, number>;
     configCheckTTL: number;
     constructor();
+    themeApplied(): Promise<void>;
     connectedCallback(): void;
     disconnectedCallback(): void;
     _cancelConfigCheckTimer(): void;

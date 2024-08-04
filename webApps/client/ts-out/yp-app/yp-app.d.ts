@@ -112,7 +112,7 @@ export declare class YpApp extends YpBaseElement {
     static get styles(): any[];
     _haveCopiedNotification(): void;
     _appDialogsReady(event: CustomEvent): void;
-    get hasStaticTheme(): boolean;
+    get hasStaticBadgeTheme(): boolean;
     updateLocation(): void;
     renderNavigationIcon(): import("lit-html").TemplateResult<1>;
     _openHelpMenu(): void;

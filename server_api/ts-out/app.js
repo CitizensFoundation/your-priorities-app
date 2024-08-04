@@ -342,7 +342,6 @@ export class YourPrioritiesApi {
                 const url = req.get("host") + req.originalUrl;
                 const redisKey = "cache:sitemapv14:" + url;
                 const sitemap = await req.redisClient.get(redisKey);
-                log.debug("GOT SITEMAPS!!!!" + sitemap);
                 if (sitemap) {
                     res.header("Content-Type", "application/xml");
                     res.send(sitemap);

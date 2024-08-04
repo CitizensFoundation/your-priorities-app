@@ -1,7 +1,7 @@
 export declare class YpThemeManager {
     themes: Array<Record<string, boolean | string | Record<string, string>>>;
-    selectedTheme: number | undefined;
     selectedFont: string | undefined;
+    currentTheme: string | undefined;
     themeColor: string | undefined;
     themeDarkMode: boolean;
     themeHighContrast: boolean;
@@ -12,6 +12,7 @@ export declare class YpThemeManager {
     themeNeutralVariantColor: string | undefined;
     themeVariant: MaterialDynamicVariants | undefined;
     useLowestContainerSurface: boolean;
+    hasStaticTheme: boolean;
     static themeScemesOptionsWithName: {
         name: string;
         value: string;

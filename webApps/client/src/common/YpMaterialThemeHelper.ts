@@ -225,10 +225,10 @@ export function themeFromSourceColorWithContrast(
     });
   }
 
-  return themeFromScheme(colorScheme!, useLowestContainerSurface);
+  return themeFromScheme(colorScheme!, useLowestContainerSurface, isDark);
 }
 
-export function themeFromScheme(colorScheme: MatScheme, useLowestContainerSurface: boolean) {
+export function themeFromScheme(colorScheme: MatScheme, useLowestContainerSurface: boolean, isDark: boolean) {
   //@ts-ignore
   const colors = generateMaterialColors(colorScheme);
   const theme: { [key: string]: string } = {};
@@ -238,8 +238,12 @@ export function themeFromScheme(colorScheme: MatScheme, useLowestContainerSurfac
     theme[key] = hexFromArgb(value.getArgb(colorScheme));
   }
 
+  //TODO: Lookinto this
   if (useLowestContainerSurface) {
-    theme["surface"] = theme["surface-container-lowest"]
+    theme["surface"] = theme["surface-container-lowest"];
+    if (!isDark) {
+      theme["on-primary-container"] = theme["on-surface"];
+    }
   }
 
   return theme;
@@ -287,5 +291,11 @@ export function applyThemeString(doc: DocumentOrShadowRoot, themeString: string,
     } else {
       console.error('The provided document does not have a head element.', error);
     }
+  } finally {
+    const event = new CustomEvent("yp-theme-applied", {
+      bubbles: true,
+      composed: true,
+    });
+    document.dispatchEvent(event);
   }
 }

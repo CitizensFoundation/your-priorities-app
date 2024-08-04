@@ -39,6 +39,11 @@ let YpGroup = class YpGroup extends YpCollection {
         this.tabCounters = {};
         this.configCheckTTL = 45000;
     }
+    async themeApplied() {
+        super.themeApplied();
+        this.setStaticThemeFromConfig();
+        this.requestUpdate();
+    }
     connectedCallback() {
         super.connectedCallback();
         this.addListener("yp-post-count", this._updateTabPostCount);
@@ -181,7 +186,7 @@ let YpGroup = class YpGroup extends YpCollection {
         }
         else if (this.collectionId) {
             if (this.collection) {
-                this.setupTheme();
+                //this.setupTheme();
             }
             this.collection = undefined;
             this.collectionItems = undefined;
@@ -671,6 +676,7 @@ let YpGroup = class YpGroup extends YpCollection {
             .activeTabIndex="${this.selectedGroupTab}"
           >
             <md-secondary-tab
+               ?has-static-theme="${this.hasStaticTheme}"
               >${this.tabLabelWithCount("open")}<md-icon slot="icon"
                 >lightbulb_outline</md-icon
               ></md-secondary-tab
@@ -678,16 +684,19 @@ let YpGroup = class YpGroup extends YpCollection {
             ${this.hasNonOpenPosts
                 ? html `
                   <md-secondary-tab
+                   ?has-static-theme="${this.hasStaticTheme}"
                     >${this.tabLabelWithCount("inProgress")}<md-icon slot="icon"
                       >lightbulb_outline</md-icon
                     ></md-secondary-tab
                   >
                   <md-secondary-tab
+                   ?has-static-theme="${this.hasStaticTheme}"
                     >${this.tabLabelWithCount("successful")}<md-icon slot="icon"
                       >lightbulb_outline</md-icon
                     ></md-secondary-tab
                   >
                   <md-secondary-tab
+                   ?has-static-theme="${this.hasStaticTheme}"
                     >${this.tabLabelWithCount("failed")}<md-icon slot="icon"
                       >lightbulb_outline</md-icon
                     >
@@ -846,7 +855,7 @@ let YpGroup = class YpGroup extends YpCollection {
             ${this.renderTabs()}
             <div class="flex"></div>
             <md-fab
-              ?has-dynamic-theme="${this.hasCustomTheme}"
+              ?has-static-theme="${this.hasStaticTheme}"
               lowered
               ?hidden=${this.collection.configuration
             .hideNewPost}

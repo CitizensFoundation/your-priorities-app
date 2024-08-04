@@ -466,7 +466,7 @@ export class YpApp extends YpBaseElement {
     }
   }
 
-  get hasStaticTheme() {
+  get hasStaticBadgeTheme() {
     if (this.currentTheme) {
       return !this.currentTheme.oneDynamicColor;
     } else {
@@ -651,7 +651,7 @@ export class YpApp extends YpBaseElement {
               <md-badge
                 id="notificationBadge"
                 class="activeBadge"
-                ?has-static-theme="${this.hasStaticTheme}"
+                ?has-static-theme="${this.hasStaticBadgeTheme}"
                 .value="${this.numberOfUnViewedNotifications}"
                 ?hidden="${!this.numberOfUnViewedNotifications}"
               >

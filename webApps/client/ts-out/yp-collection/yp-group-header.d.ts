@@ -1,6 +1,7 @@
 import { YpCollectionHeader } from "./yp-collection-header.js";
 export declare class YpGroupHeader extends YpCollectionHeader {
     collection: YpGroupData | undefined;
+    constructor();
     static get styles(): (any[] | import("lit").CSSResult)[];
     get groupTypeName(): string;
     get isGroupFolder(): boolean | undefined;

@@ -23,6 +23,7 @@ import { YpBaseElementWithLogin } from "../common/yp-base-element-with-login.js"
 import "./yp-post-transcript.js";
 //import { any /*YpApiActionDialog*/ } from '../yp-api-action-dialog/yp-api-action-dialog.js';
 import { YpPostBaseWithAnswers } from "./yp-post-base-with-answers.js";
+import { Corner, MdMenu } from "@material/web/menu/menu.js";
 
 @customElement("yp-post-header")
 export class YpPostHeader extends YpPostBaseWithAnswers(
@@ -60,6 +61,10 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
         .category-icon {
           width: 100px;
           height: 100px;
+        }
+
+        .topActionButton {
+          margin-left: 32px;
         }
 
         yp-post-cover-media {
@@ -266,70 +271,69 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
   }
 
   renderMenu() {
-    return html`
-      <div style="position: relative;" class="moreVert">
-        <md-icon-button
-          @click="${this._openPostMenu}"
-          title="${this.t("openPostMenu")}"
-          ><md-icon>more_vert</md-icon>
-        </md-icon-button>
-        <md-menu id="postMenu" menuCorner="END" corner="TOP_RIGHT">
-          ${this.hasPostAccess
-            ? html`
-                <md-menu-item @click="${this._openEdit}">
-                  ${this.t("post.edit")}
-                </md-menu-item>
-                <md-menu-item
-                  @click="${this._openMovePost}"
-                  ?hidden="${!YpAccessHelpers.checkPostAdminOnlyAccess(
-                    this.post
-                  )}"
-                >
-                  ${this.t("post.move")}
-                </md-menu-item>
-                <md-menu-item
-                  @click="${this._openPostStatusChange}"
-                  ?hidden="${!YpAccessHelpers.checkPostAdminOnlyAccess(
-                    this.post
-                  )}"
-                >
-                  ${this.t("post.statusChange")}
-                </md-menu-item>
-                <md-menu-item
-                  @click="${this._openPostStatusChangeNoEmails}"
-                  ?hidden="${!YpAccessHelpers.checkPostAdminOnlyAccess(
-                    this.post
-                  )}"
-                >
-                  ${this.t("post.statusChangeNoEmails")}
-                </md-menu-item>
-                <md-menu-item @click="${this._openDelete}">
-                  ${this.t("post.delete")}
-                </md-menu-item>
-                <md-menu-item
-                  @click="${this._openAnonymizeContent}"
-                  ?hidden="${!YpAccessHelpers.checkPostAdminOnlyAccess(
-                    this.post
-                  )}"
-                >
-                  ${this.t("anonymizePostAndContent")}
-                </md-menu-item>
-                <md-menu-item
-                  @click="${this._openDeleteContent}"
-                  ?hidden="${!YpAccessHelpers.checkPostAdminOnlyAccess(
-                    this.post
-                  )}"
-                >
-                  ${this.t("deletePostContent")}
-                </md-menu-item>
-              `
-            : nothing}
-          <md-menu-item hidden @click="${this._openReport}">
-            ${this.t("post.report")}
-          </md-menu-item>
-        </md-menu>
-      </div>
-    `;
+    if (this.hasPostAccess) {
+      return html`
+        <div style="position: relative;" class="moreVert">
+          <md-filled-tonal-icon-button
+            id="menuAnchor"
+            type="button"
+            class="topActionButton"
+            @click="${this._openPostMenu}"
+            title="${this.t("openPostMenu")}"
+            ><md-icon>more_vert</md-icon>
+          </md-filled-tonal-icon-button>
+          <md-menu
+            id="actionMenu"
+            positioning="popover"
+            .menuCorner="${Corner.START_END}"
+            anchor="menuAnchor"
+          >
+            <md-menu-item @click="${this._openEdit}">
+              ${this.t("post.edit")}
+            </md-menu-item>
+            <md-menu-item
+              @click="${this._openMovePost}"
+              ?hidden="${!YpAccessHelpers.checkPostAdminOnlyAccess(this.post)}"
+            >
+              ${this.t("post.move")}
+            </md-menu-item>
+            <md-menu-item
+              @click="${this._openPostStatusChange}"
+              ?hidden="${!YpAccessHelpers.checkPostAdminOnlyAccess(this.post)}"
+            >
+              ${this.t("post.statusChange")}
+            </md-menu-item>
+            <md-menu-item
+              @click="${this._openPostStatusChangeNoEmails}"
+              ?hidden="${!YpAccessHelpers.checkPostAdminOnlyAccess(this.post)}"
+            >
+              ${this.t("post.statusChangeNoEmails")}
+            </md-menu-item>
+            <md-menu-item @click="${this._openDelete}">
+              ${this.t("post.delete")}
+            </md-menu-item>
+            <md-menu-item
+              @click="${this._openAnonymizeContent}"
+              ?hidden="${!YpAccessHelpers.checkPostAdminOnlyAccess(this.post)}"
+            >
+              ${this.t("anonymizePostAndContent")}
+            </md-menu-item>
+            <md-menu-item
+              @click="${this._openDeleteContent}"
+              ?hidden="${!YpAccessHelpers.checkPostAdminOnlyAccess(this.post)}"
+            >
+              ${this.t("deletePostContent")}
+            </md-menu-item>
+
+            <md-menu-item hidden @click="${this._openReport}">
+              ${this.t("post.report")}
+            </md-menu-item>
+          </md-menu>
+        </div>
+      `;
+    } else {
+      return nothing;
+    }
   }
 
   renderActions() {
@@ -403,6 +407,30 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
     </md-filled-tonal-icon-button>`;
   }
 
+  renderTopActionButtons() {
+    if (this.loggedInUser) {
+      return html`
+        <md-filled-tonal-icon-button
+          type="button"
+          class="topActionButton"
+          @click="${this._openEdit}"
+          title="${this.t("openEdit")}"
+          ><md-icon>edit</md-icon>
+        </md-filled-tonal-icon-button>
+      `;
+    } else {
+      return html`
+        <md-filled-tonal-icon-button
+          type="button"
+          class="topActionButton"
+          @click="${this._openReport}"
+          title="${this.t("openReportPost")}"
+          ><md-icon>report</md-icon>
+        </md-filled-tonal-icon-button>
+      `;
+    }
+  }
+
   override render() {
     return html`
       <div
@@ -416,7 +444,7 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
               <div class="layout horizontal actionBar">
                 ${this.renderClose()}
                 <div class="flex"></div>
-                ${this.renderMenu()}
+                ${this.renderTopActionButtons()} ${this.renderMenu()}
               </div>
             `
           : nothing}
@@ -440,7 +468,7 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
   }
 
   _openPostMenu() {
-    (this.$$("#postMenu") as any) /*Menu*/.open = true;
+    (this.$$("#actionMenu") as MdMenu).open = true;
   }
 
   _sharedContent(event: CustomEvent) {
@@ -540,8 +568,6 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
   }
 
   _openMovePost() {
-    (this.$$("#helpMenu") as any) /*Menu*/
-      .select(-1);
     window.appGlobals.activity("open", "movePost");
     //TODO: movePost
     /*window.appDialogs.getDialogAsync('postMove', dialog => {
@@ -550,8 +576,6 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
   }
 
   _openPostStatusChangeNoEmails() {
-    (this.$$("#helpMenu") as any) /*Menu*/
-      .select(-1);
     window.appGlobals.activity("open", "statusChangeNoEmails");
     //TODO: Finish
     /*window.appDialogs.getDialogAsync('postStatusChangeEdit', dialog => {
@@ -561,8 +585,6 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
   }
 
   _openPostStatusChange() {
-    (this.$$("#helpMenu") as any) /*Menu*/
-      .select(-1);
     window.appGlobals.activity("open", "post.statusChangeEdit");
     //TODO: Finish
     /*window.appDialogs.getDialogAsync('postStatusChangeEdit', dialog => {
@@ -572,8 +594,6 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
   }
 
   _openEdit() {
-    (this.$$("#helpMenu") as any) /*Menu*/
-      .select(-1);
     window.appGlobals.activity("open", "post.edit");
     window.appDialogs.getDialogAsync(
       "postEdit",
@@ -607,8 +627,6 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
   }
 
   _openDelete() {
-    (this.$$("#helpMenu") as any) /*Menu*/
-      .select(-1);
     window.appGlobals.activity("open", "post.delete");
     window.appDialogs.getDialogAsync(
       "apiActionDialog",
@@ -624,8 +642,6 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
   }
 
   _openDeleteContent() {
-    (this.$$("#helpMenu") as any) /*Menu*/
-      .select(-1);
     window.appGlobals.activity("open", "postDeleteContent");
     window.appDialogs.getDialogAsync(
       "apiActionDialog",
@@ -640,8 +656,6 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
   }
 
   _openAnonymizeContent() {
-    (this.$$("#helpMenu") as any) /*Menu*/
-      .select(-1);
     window.appGlobals.activity("open", "postAnonymizeContent");
     window.appDialogs.getDialogAsync(
       "apiActionDialog",

@@ -64,6 +64,7 @@ export class YpPostActions extends YpBaseElement {
       "yp-got-endorsements-and-qualities",
       this._updateEndorsementsFromSignal.bind(this)
     );
+    this.setStaticThemeFromConfig();
   }
 
   override disconnectedCallback() {
@@ -83,7 +84,7 @@ export class YpPostActions extends YpBaseElement {
         this.$$("#actionDown")!.className += " " + "default-buttons-color";
         this.$$("#actionUp")!.className += " " + "default-buttons-color";
       } else {
-        console.error("Could not find action buttons in post actions");
+        console.warn("Could not find action buttons in post actions");
       }
     }
   }
@@ -148,6 +149,13 @@ export class YpPostActions extends YpBaseElement {
         .action-debate {
           margin-left: 8px;
           margin-right: 16px;
+        }
+
+        md-filled-icon-button[is-static-theme] {
+          --md-sys-color-primary: var(--md-sys-color-primary-container);
+          --md-sys-color-on-primary: var(--md-sys-color-on-primary-container);
+          --md-filled-icon-button-toggle-icon-color: var(--md-sys-color-on-primary-container);
+          --md-filled-icon-button-toggle-hover-icon-color: var(--md-sys-color-on-primary-container);
         }
 
         md-badge {
@@ -280,6 +288,7 @@ export class YpPostActions extends YpBaseElement {
             class="action-up layout horizontal layout start justified"
           >
             <md-filled-icon-button
+              ?is-static-theme="${this.hasStaticTheme}"
               toggle
               ?selected="${this.isEndorsed}"
               id="iconUpButton"
@@ -310,6 +319,7 @@ export class YpPostActions extends YpBaseElement {
           >
             <md-filled-icon-button
               toggle
+              ?is-static-theme="${this.hasStaticTheme}"
               ?selected="${this.isOpposed}"
               smaller-icons="${this.smallerIcons}"
               ?disabled="${this.votingStateDisabled}"
@@ -612,7 +622,7 @@ export class YpPostActions extends YpBaseElement {
         }
       }
     } else {
-      console.error("Could not find action buttons in post actions");
+      console.warn("Could not find action buttons in post actions");
     }
 
     this.requestUpdate();

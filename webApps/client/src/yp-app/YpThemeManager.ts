@@ -16,8 +16,8 @@ import { YpBaseElement } from "../common/yp-base-element";
 
 export class YpThemeManager {
   themes: Array<Record<string, boolean | string | Record<string, string>>> = [];
-  selectedTheme: number | undefined;
   selectedFont: string | undefined;
+  currentTheme: string | undefined;
   themeColor: string | undefined = "#0327f8";
   themeDarkMode = false;
   themeHighContrast = false;
@@ -28,6 +28,7 @@ export class YpThemeManager {
   themeNeutralVariantColor: string | undefined;
   themeVariant: MaterialDynamicVariants | undefined;
   useLowestContainerSurface = false;
+  hasStaticTheme = false;
 
   static themeScemesOptionsWithName = [
     { name: "Tonal", value: "tonal" },
@@ -493,6 +494,7 @@ export class YpThemeManager {
     // Reset
     this.themeScheme = "tonal";
     this.useLowestContainerSurface = false;
+    this.hasStaticTheme = false;
 
     if (!configuration.theme) {
       this.setThemeFromOldConfiguration(number, configuration);
@@ -509,7 +511,9 @@ export class YpThemeManager {
         this.themeNeutralVariantColor = configuration.theme.neutralVariantColor;
         this.useLowestContainerSurface =
           configuration.theme.useLowestContainerSurface || false;
-
+        if (!configuration.theme.oneDynamicColor) {
+          this.hasStaticTheme = true;
+        }
         //this.themeVariant = configuration.theme.variant;
       }
 

@@ -9,12 +9,14 @@ export declare class YpBaseElement extends LitElement {
     themeColor: string;
     themeDarkMode: boolean | undefined;
     themeHighContrast: boolean | undefined;
+    hasStaticTheme: boolean;
     static darkModeLocalStorageKey: string;
     static highContrastLocalStorageKey: string;
     static get styles(): any;
     get isAppleDevice(): boolean;
     installMediaQueryWatcher: (mediaQuery: string, layoutChangedCallback: (mediaQueryMatches: boolean) => void) => void;
     connectedCallback(): void;
+    setStaticThemeFromConfig(): void;
     hasBooted(): void;
     setupBootListener(): void;
     setupThemeSettings(): Promise<void>;

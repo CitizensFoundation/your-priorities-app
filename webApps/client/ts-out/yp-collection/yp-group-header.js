@@ -10,6 +10,9 @@ import { YpCollectionHeader } from "./yp-collection-header.js";
 import { ifDefined } from "lit/directives/if-defined.js";
 import { YpGroupType } from "./ypGroupType.js";
 let YpGroupHeader = class YpGroupHeader extends YpCollectionHeader {
+    constructor() {
+        super();
+    }
     static get styles() {
         return [
             super.styles,
