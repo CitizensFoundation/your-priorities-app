@@ -370,6 +370,11 @@ export abstract class YpCollection extends YpBaseElementWithLogin {
           --md-fab-container-shadow-color: transparent;
         }
 
+        md-fab:not([has-dynamic-theme]) {
+          --md-sys-color-primary-container: var(--md-sys-color-primary);
+          --md-sys-color-on-primary-container: var(--md-sys-color-on-primary);
+        }
+
         md-tabs {
           border-bottom-color: transparent;
           max-width: 720px;
@@ -388,7 +393,7 @@ export abstract class YpCollection extends YpBaseElementWithLogin {
           --md-secondary-tab-active-indicator-height: 3px;
         }
 
-        md-secondary-tab[has-custom-theme] {
+        md-secondary-tab[has-dynamic-theme] {
           --md-secondary-tab-active-indicator-color: var(
             --md-sys-color-primary-container
           );
@@ -456,14 +461,14 @@ export abstract class YpCollection extends YpBaseElementWithLogin {
   renderNewsAndMapTabs() {
     return html`
       <md-secondary-tab
-        ?has-custom-theme="${this.hasCustomTheme}"
+        ?has-dynamic-theme="${this.hasCustomTheme}"
         ?hidden="${this.hideNewsfeed}"
         >${this.t("post.tabs.news")}<md-icon slot="icon"
           >rss_feed</md-icon
         ></md-secondary-tab
       >
       <md-secondary-tab
-        ?has-custom-theme="${this.hasCustomTheme}"
+        ?has-dynamic-theme="${this.hasCustomTheme}"
         ?hidden="${this.locationHidden || this.collectionType == "domain"}"
       >
         ${this.t("post.tabs.location")}<md-icon slot="icon"
@@ -482,7 +487,7 @@ export abstract class YpCollection extends YpBaseElementWithLogin {
             .activeTabIndex="${this.selectedTab}"
           >
             <md-secondary-tab
-              ?has-custom-theme="${this.hasCustomTheme}"
+              ?has-dynamic-theme="${this.hasCustomTheme}"
               ?hidden="${this.hideCollection}"
               >${this.collectionTabLabel}
               <md-icon slot="icon">groups</md-icon></md-secondary-tab
@@ -554,6 +559,7 @@ export abstract class YpCollection extends YpBaseElementWithLogin {
                       ><md-icon>tune</md-icon></md-icon-button
                     >
                     <md-fab
+                      ?has-dynamic-theme="${this.hasCustomTheme}"
                       lowered
                       size="large"
                       ?extended="${this.wide}"
