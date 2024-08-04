@@ -11,6 +11,7 @@ export class YpThemeManager {
         this.themeColor = "#0327f8";
         this.themeDarkMode = false;
         this.themeHighContrast = false;
+        this.alwaysUseLowestContainer = false;
         this.isAppleDevice = false;
         this.themeScheme = "tonal";
         const savedDarkMode = localStorage.getItem(YpBaseElement.darkModeLocalStorageKey);
@@ -380,6 +381,9 @@ export class YpThemeManager {
             console.warn("No configuration found");
             return;
         }
+        // Reset
+        this.themeScheme = "tonal";
+        this.alwaysUseLowestContainer = false;
         if (!configuration.theme) {
             this.setThemeFromOldConfiguration(number, configuration);
         }
@@ -395,6 +399,8 @@ export class YpThemeManager {
                 this.themeTertiaryColor = configuration.theme.tertiaryColor;
                 this.themeNeutralColor = configuration.theme.neutralColor;
                 this.themeNeutralVariantColor = configuration.theme.neutralVariantColor;
+                this.alwaysUseLowestContainer =
+                    configuration.theme.alwaysUseLowestContainer || false;
                 //this.themeVariant = configuration.theme.variant;
             }
             if (configuration.theme.fontStyles) {
@@ -441,7 +447,7 @@ export class YpThemeManager {
                 this.themeTertiaryColor = theme.tertiaryColor;
                 this.themeNeutralColor = theme.neutralColor;
                 this.themeNeutralVariantColor = theme.neutralVariantColor;
-                this.themeVariant = undefined; //TODO: Look into those how those work, theme.variant || "fidelity";
+                this.themeVariant = "fidelity"; //TODO: Look into those how those work, theme.variant || "fidelity";
             }
             this.themeChanged();
         }
@@ -479,6 +485,19 @@ export class YpThemeManager {
                     neutralVariant: this.getHexColor(this.themeNeutralVariantColor || "#000000"),
                 }, this.themeVariant, isDark, "dynamic", this.themeHighContrast ? 2.0 : 0.0);
             }
+            const customColors = themeFromSourceColor(argbFromHex(this.themeColor || this.themePrimaryColor || "#000000"), [
+                {
+                    name: "up-vote",
+                    value: argbFromHex("#2ECC71"),
+                    blend: true,
+                },
+                {
+                    name: "down-vote",
+                    value: argbFromHex("#E74C3C"),
+                    blend: true,
+                },
+            ]);
+            //console.error(JSON.stringify(customColors, null, 2));
             applyThemeWithContrast(document, themeCss);
         }
     }

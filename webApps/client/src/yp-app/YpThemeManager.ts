@@ -27,6 +27,7 @@ export class YpThemeManager {
   themeNeutralColor: string | undefined;
   themeNeutralVariantColor: string | undefined;
   themeVariant: MaterialDynamicVariants | undefined;
+  alwaysUseLowestContainer = false;
 
   static themeScemesOptionsWithName = [
     { name: "Tonal", value: "tonal" },
@@ -489,6 +490,10 @@ export class YpThemeManager {
       return;
     }
 
+    // Reset
+    this.themeScheme = "tonal";
+    this.alwaysUseLowestContainer = false;
+
     if (!configuration.theme) {
       this.setThemeFromOldConfiguration(number, configuration);
     } else {
@@ -502,6 +507,8 @@ export class YpThemeManager {
         this.themeTertiaryColor = configuration.theme.tertiaryColor;
         this.themeNeutralColor = configuration.theme.neutralColor;
         this.themeNeutralVariantColor = configuration.theme.neutralVariantColor;
+        this.alwaysUseLowestContainer =
+          configuration.theme.alwaysUseLowestContainer || false;
         //this.themeVariant = configuration.theme.variant;
       }
 
@@ -552,7 +559,7 @@ export class YpThemeManager {
         this.themeTertiaryColor = theme.tertiaryColor;
         this.themeNeutralColor = theme.neutralColor;
         this.themeNeutralVariantColor = theme.neutralVariantColor;
-        this.themeVariant = undefined//TODO: Look into those how those work, theme.variant || "fidelity";
+        this.themeVariant = "fidelity"; //TODO: Look into those how those work, theme.variant || "fidelity";
       }
       this.themeChanged();
     }
@@ -611,6 +618,23 @@ export class YpThemeManager {
         );
       }
 
+      const customColors = themeFromSourceColor(
+        argbFromHex(this.themeColor || this.themePrimaryColor || "#000000"),
+        [
+          {
+            name: "up-vote",
+            value: argbFromHex("#2ECC71"),
+            blend: true,
+          },
+          {
+            name: "down-vote",
+            value: argbFromHex("#E74C3C"),
+            blend: true,
+          },
+        ]
+      );
+
+      //console.error(JSON.stringify(customColors, null, 2));
       applyThemeWithContrast(document, themeCss);
     }
   }

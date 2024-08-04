@@ -137,6 +137,9 @@ export function themeFromSourceColorWithContrast(
   if (variant) {
     variantIndex = variantIndexMap[variant!];
   }
+
+  //scheme = "vibrant";
+  console.error("scheme", scheme);
   if (scheme === 'tonal') {
     //@ts-ignore
     colorScheme = new SchemeTonalSpot(
