@@ -124,6 +124,20 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
           padding: 0;
         }
 
+        .pointInfo {
+          opacity: 0.5;
+          font-size: 17px;
+          font-weight: 400;
+          margin-top: 32px;
+        }
+
+        .pointInfoIcon {
+          width: 24px;
+          height: 24px;
+          padding-left: 4px;
+          padding-right: 4px;
+        }
+
         .main-container {
           margin-top: 24px;
           border-radius: 32px;
@@ -619,6 +633,14 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
         `
             : nothing}`;
     }
+    renderPointInfo() {
+        return html `
+      <div class="pointInfo">
+        ${this.t('upvote')} <md-icon class="pointInfoIcon">arrow_upward</md-icon> ${this.t('orDownvote')}
+        <md-icon class="pointInfoIcon">arrow_downward</md-icon> ${this.t('pointsByPressingTheArrows')}
+      </div>
+    `;
+    }
     render() {
         return html `
       <div class="processBar layout horizontal center-center">
@@ -634,6 +656,7 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
               ?rtl="${this.rtl}"
               class="layout vertical topContainer center-center"
             >
+              ${this.renderPointInfo()}
               <div class="main-container layout horizontal">
                 ${this.renderPointList("Up", this.t("pointsFor"), this.post.Group.configuration.alternativePointForHeader, "alternativePointForHeader", this.labelUp, this.hideUpVideo, this.hideUpText, this.hasCurrentUpVideo, this._videoUpUploaded, this.t("uploadVideoPointFor"), this.uploadedVideoUpId, this.focusUpPoint, this.hideUpAudio, this.hasCurrentUpAudio, this.t("uploadAudioPointFor"), this.ifLengthUpIsRight, this.addPointUp, this.upPoints)}
                 ${this.renderPointList("Down", this.t("pointsAgainst"), this.post.Group.configuration.alternativePointAgainstHeader, "alternativePointAgainstHeader", this.labelDown, this.hideDownVideo, this.hideDownText, this.hasCurrentDownVideo, this._videoDownUploaded, this.t("uploadVideoPointAgainst"), this.uploadedVideoDownId, this.focusDownPoint, this.hideDownAudio, this.hasCurrentDownAudio, this.t("uploadAudioPointAgainst"), this.ifLengthDownIsRight, this.addPointDown, this.downPoints)}

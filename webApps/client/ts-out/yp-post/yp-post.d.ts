@@ -17,9 +17,11 @@ export declare class YpPost extends YpCollection {
     scrollToCollectionItemSubClass(): void;
     setupTheme(): void;
     static get styles(): (any[] | import("lit").CSSResult)[];
+    renderPostStaticHeader(): TemplateResult<1>;
     renderPostHeader(): TemplateResult<1>;
     renderPostTabs(): TemplateResult<1> | typeof nothing;
     renderCurrentPostTabPage(): TemplateResult | undefined;
+    renderNavigationButtons(): TemplateResult<1>;
     render(): TemplateResult<1>;
     get tabDebateCount(): string;
     get tabPhotosCount(): string;

@@ -1,4 +1,7 @@
 {
+  "upvote": "Upvote",
+  "orDownvote": "or downvote",
+  "pointsByPressingTheArrows": "points by pressing the arrows",
   "workflow": "Workflow",
   "ideas": "Ideas",
   "pairwiseVoting": "Pairwise Voting",

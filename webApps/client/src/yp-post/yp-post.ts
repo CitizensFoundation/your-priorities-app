@@ -126,6 +126,7 @@ export class YpPost extends YpCollection {
           padding: 32px;
           border-radius: 4px;
           border: 1px solid var(--md-sys-color-outline);
+          position: relative;
         }
 
         .postHeader {
@@ -135,6 +136,29 @@ export class YpPost extends YpCollection {
           width: 940px;
         }
 
+        .postStaticHeader {
+          position: fixed;
+          top: 10%;
+          z-index: 1000;
+        }
+
+        .arrowNavigation {
+          --md-filled-tonal-icon-button-container-width: 64px;
+          --md-filled-tonal-icon-button-container-height: 64px;
+          --md-filled-tonal-icon-button-icon-size: 48px;
+          position: fixed;
+          top: 37%;
+          transform: translateY(-50%);
+          z-index: 2;
+        }
+
+        .leftArrowNavigationButton {
+          left: calc(50% - (940px / 2) - 80px);
+        }
+
+        .rightArrowNavigationButton {
+          right: calc(50% - (940px / 2) - 80px);
+        }
         md-tabs {
           margin-top: 64px;
           min-width: 90%;
@@ -181,20 +205,24 @@ export class YpPost extends YpCollection {
     ];
   }
 
+  renderPostStaticHeader() {
+    return html`
+      <yp-post-header
+        class="postStaticccHeader"
+        onlyRenderTopActionBar
+        .post="${this.post!}"
+      ></yp-post-header>
+    `;
+  }
+
   renderPostHeader() {
     return html`
-      <div class="layout vertical">
-        <yp-post-header
-          onlyRenderTopActionBar
-          .post="${this.post!}"
-        ></yp-post-header>
-        <yp-post-header
-          hideTopActionBar
-          id="postCard"
-          .post="${this.post!}"
-          @refresh="${this._getPost}"
-        ></yp-post-header>
-      </div>
+      <yp-post-header
+        hideTopActionBar
+        id="postCard"
+        .post="${this.post!}"
+        @refresh="${this._getPost}"
+      ></yp-post-header>
     `;
   }
 
@@ -287,12 +315,32 @@ export class YpPost extends YpCollection {
     return page;
   }
 
+  renderNavigationButtons() {
+    return html`
+      <div style="position: relative;">
+        <md-filled-tonal-icon-button
+          class="arrowNavigation leftArrowNavigationButton"
+        >
+          <md-icon>keyboard_arrow_left</md-icon>
+        </md-filled-tonal-icon-button>
+        <md-filled-tonal-icon-button
+          class="arrowNavigation rightArrowNavigationButton"
+        >
+          <md-icon>keyboard_arrow_right</md-icon>
+        </md-filled-tonal-icon-button>
+      </div>
+    `;
+  }
+
   override render() {
     return this.post
       ? html`
           <div class="layout vertical center-center">
             <div class="frameContainer">
-              ${this.renderPostHeader()}
+              <div class="layout vertical">
+                ${this.renderPostStaticHeader()} ${this.renderPostHeader()}
+              </div>
+              ${this.renderNavigationButtons()}
               <div class="layout vertical center-center">
                 ${this.renderPostTabs()}
               </div>
@@ -432,7 +480,7 @@ export class YpPost extends YpCollection {
   }
 
   override async getCollection() {
-    console.warn("Trying to get collection in post")
+    console.warn("Trying to get collection in post");
   }
 
   async _getPost() {

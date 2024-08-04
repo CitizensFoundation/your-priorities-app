@@ -140,6 +140,7 @@ export class YpTopAppBar extends YpBaseElement {
             padding-bottom: 0;
             padding-left: 16px;
             padding-right: 0;
+            background: var(--md-sys-color-surface);
           }
 
           .top-app-bar.expanded {

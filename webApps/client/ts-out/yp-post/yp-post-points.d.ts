@@ -70,6 +70,7 @@ export declare class YpPostPoints extends YpBaseElementWithLogin {
     renderPointList(type: string, header: string, alternativeHeader: string | undefined, headerTextType: string, label: string | undefined, hideVideo: boolean, hideText: boolean, hasCurrentVideo: string | undefined, videoUploadedFunc: Function, uploadVideoHeader: string, uploadedVideoId: number | undefined, pointFocusFunction: Function, hideAudio: boolean, hasCurrentAudio: string | undefined, uploadAudioPointHeader: string, ifLengthIsRight: boolean, addPointFunc: Function, points: Array<YpPointData> | undefined, mobile?: boolean): TemplateResult<1>;
     scrollEvent(event: any): void;
     renderTranslationPlaceholders(): TemplateResult<1>;
+    renderPointInfo(): TemplateResult<1>;
     render(): TemplateResult<1>;
     _chooseUpOrDownRadio(): void;
     get wideReady(): false | YpPostData;

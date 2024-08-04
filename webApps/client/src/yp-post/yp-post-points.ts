@@ -261,6 +261,20 @@ export class YpPostPoints extends YpBaseElementWithLogin {
           padding: 0;
         }
 
+        .pointInfo {
+          opacity: 0.5;
+          font-size: 17px;
+          font-weight: 400;
+          margin-top: 32px;
+        }
+
+        .pointInfoIcon {
+          width: 24px;
+          height: 24px;
+          padding-left: 4px;
+          padding-right: 4px;
+        }
+
         .main-container {
           margin-top: 24px;
           border-radius: 32px;
@@ -812,6 +826,15 @@ export class YpPostPoints extends YpBaseElementWithLogin {
       : nothing}`;
   }
 
+  renderPointInfo() {
+    return html`
+      <div class="pointInfo">
+        ${this.t('upvote')} <md-icon class="pointInfoIcon">arrow_upward</md-icon> ${this.t('orDownvote')}
+        <md-icon class="pointInfoIcon">arrow_downward</md-icon> ${this.t('pointsByPressingTheArrows')}
+      </div>
+    `;
+  }
+
   override render() {
     return html`
       <div class="processBar layout horizontal center-center">
@@ -827,6 +850,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
               ?rtl="${this.rtl}"
               class="layout vertical topContainer center-center"
             >
+              ${this.renderPointInfo()}
               <div class="main-container layout horizontal">
                 ${this.renderPointList(
                   "Up",
