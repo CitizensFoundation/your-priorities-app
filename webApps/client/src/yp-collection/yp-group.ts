@@ -1071,6 +1071,7 @@ export class YpGroup extends YpCollection {
             ${this.renderTabs()}
             <div class="flex"></div>
             <md-fab
+              ?has-dynamic-theme="${this.hasCustomTheme}"
               lowered
               ?hidden=${(this.collection!.configuration as YpGroupConfiguration)
                 .hideNewPost}

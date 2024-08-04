@@ -347,8 +347,14 @@ export abstract class YpCollection extends YpBaseElementWithLogin {
       this.collection.configuration &&
       this.collection.configuration.theme
     ) {
-      return !(this.collection.configuration as YpGroupConfiguration).theme!
+      const configuration = this.collection.configuration as YpGroupConfiguration;
+      if (configuration.inheritThemeFromCommunity) {
+        return !((this.collection as YpGroupData).Community?.configuration as YpGroupConfiguration).theme!
         .oneDynamicColor;
+      } else {
+        return !(this.collection.configuration as YpGroupConfiguration).theme!
+        .oneDynamicColor;
+      }
     } else {
       return false;
     }

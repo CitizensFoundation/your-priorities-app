@@ -235,8 +235,15 @@ export class YpCollection extends YpBaseElementWithLogin {
         if (this.collection &&
             this.collection.configuration &&
             this.collection.configuration.theme) {
-            return !this.collection.configuration.theme
-                .oneDynamicColor;
+            const configuration = this.collection.configuration;
+            if (configuration.inheritThemeFromCommunity) {
+                return !(this.collection.Community?.configuration).theme
+                    .oneDynamicColor;
+            }
+            else {
+                return !this.collection.configuration.theme
+                    .oneDynamicColor;
+            }
         }
         else {
             return false;
