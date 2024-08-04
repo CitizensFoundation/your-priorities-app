@@ -68,6 +68,52 @@ export class YpPost extends YpCollection {
     //TODO: Do we need this
   }
 
+  override setupTheme() {
+    try {
+      const group = this.post!.Group;
+      if (group.configuration && group.configuration.theme) {
+        if (group.configuration.inheritThemeFromCommunity && group.Community) {
+          window.appGlobals.theme.setTheme(
+            undefined,
+            group.Community.configuration
+          );
+        } else {
+          window.appGlobals.theme.setTheme(undefined, group.configuration);
+        }
+      } else if (
+        group.configuration &&
+        group.configuration.themeOverrideColorPrimary
+      ) {
+        window.appGlobals.theme.setTheme(undefined, group.configuration);
+      } else if (group.Community && group.Community.configuration.theme) {
+        window.appGlobals.theme.setTheme(
+          undefined,
+          group.Community.configuration
+        );
+      } else if (group.theme_id) {
+        window.appGlobals.theme.setTheme(group.theme_id, group.configuration);
+      } else if (
+        group.Community &&
+        group.Community.configuration.themeOverrideColorPrimary
+      ) {
+        window.appGlobals.theme.setTheme(
+          group.Community.theme_id,
+          group.Community.configuration
+        );
+      } else if (
+        group.Community &&
+        group.Community.Domain &&
+        group.Community.Domain.configuration.theme
+      ) {
+        window.appGlobals.theme.setTheme(group.Community.Domain.theme_id);
+      } else {
+        window.appGlobals.theme.setTheme(1);
+      }
+    } catch (error) {
+      console.error("Error setting group theme", error);
+    }
+  }
+
   static override get styles() {
     return [
       super.styles,
@@ -159,17 +205,17 @@ export class YpPost extends YpCollection {
           @change="${this._selectTab}"
           .activeTabIndex="${this.selectedTab}"
         >
-          <md-primary-tab
+          <md-secondary-tab ?has-static-theme="${this.hasStaticTheme}"
             >${this.tabDebateCount}<md-icon slot="icon"
               >lightbulb_outline</md-icon
-            ></md-primary-tab
+            ></md-secondary-tab
           >
 
           ${this.renderNewsAndMapTabs()}
-          <md-primary-tab
+          <md-secondary-tab ?has-static-theme="${this.hasStaticTheme}"
             >${this.tabPhotosCount}<md-icon slot="icon"
               >photo_camera</md-icon
-            ></md-primary-tab
+            ></md-secondary-tab
           >
         </md-tabs>
       `;
@@ -280,8 +326,7 @@ export class YpPost extends YpCollection {
     const labelTranslation = this.t("post.tabs.photos");
 
     if (this.photosCount) {
-      return `${labelTranslation} (${this.photosCount
-      })`;
+      return `${labelTranslation} (${this.photosCount})`;
     } else {
       return `${labelTranslation}`;
     }
@@ -386,6 +431,10 @@ export class YpPost extends YpCollection {
     }
   }
 
+  override async getCollection() {
+    debugger;
+  }
+
   async _getPost() {
     if (this.collectionId) {
       this.post = undefined;
@@ -394,6 +443,7 @@ export class YpPost extends YpCollection {
         this.collectionId
       )) as YpPostData | undefined;
       if (this.post) {
+        this.setupTheme();
         this._processIncomingPost();
         this._getHelpPages("group", this.post.group_id);
       }
@@ -477,29 +527,6 @@ export class YpPost extends YpCollection {
         }
       } else {
         this.disableNewPosts = false;
-      }
-
-      if (
-        this.post.Group.configuration.theme != null ||
-        (this.post.Group.configuration &&
-          this.post.Group.configuration.themeOverrideColorPrimary != null)
-      ) {
-        window.appGlobals.theme.setTheme(
-          this.post.Group.theme_id,
-          this.post.Group.configuration
-        );
-      } else if (
-        this.post.Group.Community &&
-        (this.post.Group.Community.configuration.theme != null ||
-          (this.post.Group.Community.configuration &&
-            this.post.Group.Community.configuration.themeOverrideColorPrimary))
-      ) {
-        window.appGlobals.theme.setTheme(
-          this.post.Group.Community.theme_id,
-          this.post.Group.Community.configuration
-        );
-      } else {
-        window.appGlobals.theme.setTheme(1);
       }
 
       if (this.post.Group.Community) {

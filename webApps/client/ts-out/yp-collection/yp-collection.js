@@ -255,6 +255,7 @@ export class YpCollection extends YpBaseElementWithLogin {
 
         .createFab {
           width: 225px;
+          margin-left: 64px;
         }
 
         md-fab:not([has-static-theme]) {

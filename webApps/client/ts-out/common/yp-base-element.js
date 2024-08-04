@@ -53,6 +53,7 @@ export class YpBaseElement extends LitElement {
     connectedCallback() {
         super.connectedCallback();
         this.hasLlm = window.appGlobals.hasLlm;
+        this.setStaticThemeFromConfig();
         this.addGlobalListener("yp-language-loaded", this._languageEvent.bind(this));
         //TODO: Do the large font thing with css custom properties
         this.addGlobalListener("yp-large-font", this._largeFont.bind(this));

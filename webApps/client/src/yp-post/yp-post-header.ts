@@ -408,27 +408,34 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
   }
 
   renderTopActionButtons() {
-    if (this.loggedInUser) {
-      return html`
-        <md-filled-tonal-icon-button
-          type="button"
-          class="topActionButton"
-          @click="${this._openEdit}"
-          title="${this.t("openEdit")}"
-          ><md-icon>edit</md-icon>
-        </md-filled-tonal-icon-button>
-      `;
-    } else {
-      return html`
-        <md-filled-tonal-icon-button
-          type="button"
-          class="topActionButton"
-          @click="${this._openReport}"
-          title="${this.t("openReportPost")}"
-          ><md-icon>report</md-icon>
-        </md-filled-tonal-icon-button>
-      `;
-    }
+    return html`
+      ${this.loggedInUser
+        ? html`
+            <md-filled-tonal-icon-button
+              type="button"
+              class="topActionButton"
+              @click="${this._openEdit}"
+              title="${this.t("openEdit")}"
+              ><md-icon>edit</md-icon>
+            </md-filled-tonal-icon-button>
+          `
+        : html`
+            <md-filled-tonal-icon-button
+              type="button"
+              class="topActionButton"
+              @click="${this._openReport}"
+              title="${this.t("openReportPost")}"
+              ><md-icon>report</md-icon>
+            </md-filled-tonal-icon-button>
+          `}
+      <md-filled-tonal-icon-button
+        type="button"
+        class="topActionButton"
+        @click="${this._shareTap}"
+        title="${this.t("openShare")}"
+        ><md-icon>share</md-icon>
+      </md-filled-tonal-icon-button>
+    `;
   }
 
   override render() {

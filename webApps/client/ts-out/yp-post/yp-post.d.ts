@@ -15,6 +15,7 @@ export declare class YpPost extends YpCollection {
     photosCount: string | undefined;
     constructor();
     scrollToCollectionItemSubClass(): void;
+    setupTheme(): void;
     static get styles(): (any[] | import("lit").CSSResult)[];
     renderPostHeader(): TemplateResult<1>;
     renderPostTabs(): TemplateResult<1> | typeof nothing;
@@ -34,6 +35,7 @@ export declare class YpPost extends YpCollection {
     _headerClasses(): "layout vertical postHeader wrap" | "layout horizontal postHeader";
     get postName(): string;
     get postDescription(): string;
+    getCollection(): Promise<void>;
     _getPost(): Promise<void>;
     collectionIdChanged(): void;
     _processIncomingPost(fromCache?: boolean): void;

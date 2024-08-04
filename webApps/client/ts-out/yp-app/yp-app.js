@@ -292,7 +292,10 @@ let YpApp = class YpApp extends YpBaseElement {
     //TODO: Use someth8ing like https://boguz.github.io/burgton-button-docs/
     renderNavigationIcon() {
         let icons = html ``;
-        if (this.closePostHeader) {
+        if (this.page === "post") {
+            icons = html ``;
+        }
+        else if (this.closePostHeader) {
             icons = html `<md-icon-button
         title="${this.t("close")}"
         @click="${this._closePost}"
@@ -432,7 +435,7 @@ let YpApp = class YpApp extends YpBaseElement {
         return html `
       <yp-top-app-bar
         role="navigation"
-        .titleString="${titleString}"
+        .titleString="${this.page != "post" ? titleString : ''}"
         aria-label="top navigation"
         ?hideBreadcrumbs="${!titleString || titleString == ""}"
         ?hidden="${this.appMode !== "main" ||
@@ -509,7 +512,11 @@ let YpApp = class YpApp extends YpBaseElement {
     }
     renderTopBar() {
         return html `
-      <yp-drawer id="leftDrawer" position="right" @closed="${this._closeNavDrawer}">
+      <yp-drawer
+        id="leftDrawer"
+        position="right"
+        @closed="${this._closeNavDrawer}"
+      >
         <yp-app-nav-drawer
           id="ypNavDrawer"
           .homeLink="${this.homeLink}"
@@ -1228,8 +1235,8 @@ let YpApp = class YpApp extends YpBaseElement {
         }
         if (header.headerTitle && header.backPath) {
             this.updateBreadcrumbs({
-                name: header.headerTitle || '',
-                url: header.backPath || ''
+                name: header.headerTitle || "",
+                url: header.backPath || "",
             });
         }
         if (header.currentTheme) {
@@ -1237,7 +1244,7 @@ let YpApp = class YpApp extends YpBaseElement {
         }
     }
     updateBreadcrumbs(newBreadcrumb) {
-        const existingIndex = this.breadcrumbs.findIndex(b => b.url === newBreadcrumb.url);
+        const existingIndex = this.breadcrumbs.findIndex((b) => b.url === newBreadcrumb.url);
         if (existingIndex !== -1) {
             // If the breadcrumb already exists, trim the array to this point
             this.breadcrumbs = this.breadcrumbs.slice(0, existingIndex + 1);

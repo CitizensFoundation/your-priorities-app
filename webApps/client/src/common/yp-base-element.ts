@@ -77,6 +77,8 @@ export class YpBaseElement extends LitElement {
 
     this.hasLlm = window.appGlobals.hasLlm;
 
+    this.setStaticThemeFromConfig();
+
     this.addGlobalListener(
       "yp-language-loaded",
       this._languageEvent.bind(this)

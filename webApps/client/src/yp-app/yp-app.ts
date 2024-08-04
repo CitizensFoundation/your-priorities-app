@@ -538,7 +538,9 @@ export class YpApp extends YpBaseElement {
   renderNavigationIcon() {
     let icons = html``;
 
-    if (this.closePostHeader) {
+    if (this.page === "post") {
+      icons = html``;
+    } else if (this.closePostHeader) {
       icons = html`<md-icon-button
         title="${this.t("close")}"
         @click="${this._closePost}"
@@ -550,8 +552,8 @@ export class YpApp extends YpBaseElement {
         @click="${this._closeForGroup}"
         ><md-icon>close</md-icon></md-icon-button
       >`;
-    //TODO: Fix this it should show arrow up when landing on the site for the first time not going back
-    } else if (this.showBack && this.breadcrumbs.length>1) {
+      //TODO: Fix this it should show arrow up when landing on the site for the first time not going back
+    } else if (this.showBack && this.breadcrumbs.length > 1) {
       icons = html`<md-icon-button
         title="${this.t("goBack")}"
         slot="actionItems"
@@ -559,7 +561,7 @@ export class YpApp extends YpBaseElement {
         @click="${this.goBack}"
         ><md-icon>arrow_back</md-icon>
       </md-icon-button>`;
-    }  else if (this.showBack) {
+    } else if (this.showBack) {
       icons = html`<md-icon-button
         title="${this.t("goBack")}"
         slot="actionItems"
@@ -684,9 +686,9 @@ export class YpApp extends YpBaseElement {
     return html`
       <yp-top-app-bar
         role="navigation"
-        .titleString="${titleString}"
+        .titleString="${this.page != "post" ? titleString : ''}"
         aria-label="top navigation"
-        ?hideBreadcrumbs="${!titleString || titleString==""}"
+        ?hideBreadcrumbs="${!titleString || titleString == ""}"
         ?hidden="${this.appMode !== "main" ||
         window.appGlobals.domain?.configuration.hideAppBarIfWelcomeHtml}"
       >
@@ -764,7 +766,11 @@ export class YpApp extends YpBaseElement {
 
   renderTopBar() {
     return html`
-      <yp-drawer id="leftDrawer" position="right" @closed="${this._closeNavDrawer}">
+      <yp-drawer
+        id="leftDrawer"
+        position="right"
+        @closed="${this._closeNavDrawer}"
+      >
         <yp-app-nav-drawer
           id="ypNavDrawer"
           .homeLink="${this.homeLink}"
@@ -1605,8 +1611,8 @@ export class YpApp extends YpBaseElement {
 
     if (header.headerTitle && header.backPath) {
       this.updateBreadcrumbs({
-        name: header.headerTitle || '',
-        url: header.backPath || ''
+        name: header.headerTitle || "",
+        url: header.backPath || "",
       });
     }
 
@@ -1615,8 +1621,10 @@ export class YpApp extends YpBaseElement {
     }
   }
 
-  updateBreadcrumbs(newBreadcrumb: {name: string, url: string}) {
-    const existingIndex = this.breadcrumbs.findIndex(b => b.url === newBreadcrumb.url);
+  updateBreadcrumbs(newBreadcrumb: { name: string; url: string }) {
+    const existingIndex = this.breadcrumbs.findIndex(
+      (b) => b.url === newBreadcrumb.url
+    );
     if (existingIndex !== -1) {
       // If the breadcrumb already exists, trim the array to this point
       this.breadcrumbs = this.breadcrumbs.slice(0, existingIndex + 1);
