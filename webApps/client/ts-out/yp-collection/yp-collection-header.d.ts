@@ -38,12 +38,12 @@ export declare class YpCollectionHeader extends YpBaseElement {
     _openAdmin(): void;
     _openCreateGroupFolder(): void;
     static get styles(): any[];
-    renderMediaContent(): import("lit-html").TemplateResult<1> | typeof nothing;
+    renderMediaContent(): typeof nothing | import("lit-html").TemplateResult<1>;
     renderFooter(): import("lit-html").TemplateResult<1>;
     renderMenu(): import("lit-html").TemplateResult<1>;
     renderStats(): import("lit-html").TemplateResult<1>;
     get hideLogoImage(): boolean;
-    renderHeaderBanner(): import("lit-html").TemplateResult<1> | typeof nothing;
+    renderHeaderBanner(): typeof nothing | import("lit-html").TemplateResult<1>;
     renderName(): import("lit-html").TemplateResult<1>;
     renderDescription(): import("lit-html").TemplateResult<1>;
     render(): import("lit-html").TemplateResult<1>;

@@ -200,7 +200,7 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
         .addPointFab {
           width: 100%;
           margin-top: 16px;
-          margin-bottom: 48px;
+          margin-bottom: 32px;
           margin-left: 24px;
         }
 

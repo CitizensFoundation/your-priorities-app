@@ -9,7 +9,7 @@ export declare class YpDomain extends YpCollection {
     refresh(): Promise<void>;
     scrollToCommunityItem(): void;
     scrollToCollectionItemSubClass(): void;
-    renderHeader(): import("lit-html").TemplateResult<1> | typeof nothing;
+    renderHeader(): typeof nothing | import("lit-html").TemplateResult<1>;
     render(): import("lit-html").TemplateResult<1>;
 }
 //# sourceMappingURL=yp-domain.d.ts.map
