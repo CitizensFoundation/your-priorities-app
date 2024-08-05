@@ -7,7 +7,7 @@ export declare class YpPostCardAdd extends YpBaseElement {
     group: YpGroupData | undefined;
     index: number | undefined;
     static get styles(): any[];
-    render(): import("lit-html").TemplateResult<1> | typeof nothing;
+    render(): typeof nothing | import("lit-html").TemplateResult<1>;
     _keyDown(event: KeyboardEvent): void;
     _newPost(): void;
 }

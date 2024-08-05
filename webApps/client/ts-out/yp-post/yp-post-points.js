@@ -610,6 +610,7 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
                   class="submitButton"
                    ?is-up="${type == "Up"}"
                    ?is-down="${type == "Down"}"
+                   ?hidden="${!ifLengthIsRight}"
                   ?disabled="${this.addPointDisabled || !ifLengthIsRight}"
                   @click="${addPointFunc}"
                   >${this.t("postPoint")}</md-filled-button
