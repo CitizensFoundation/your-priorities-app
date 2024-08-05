@@ -83,6 +83,7 @@ let YpPost = class YpPost extends YpCollection {
             css `
         .frameContainer {
           max-width: 970px;
+          min-height: 1000px;
           margin: 32px;
           margin-top: 0;
           padding: 32px;
@@ -196,6 +197,15 @@ let YpPost = class YpPost extends YpCollection {
             return false;
         }
     }
+    handleKeydown(event) {
+        debugger;
+        if (event.key === "ArrowLeft" && !this.leftArrowDisabled) {
+            this.goToPreviousPost();
+        }
+        else if (event.key === "ArrowRight" && !this.rightArrowDisabled) {
+            this.goToNextPost();
+        }
+    }
     renderPostStaticHeader() {
         return html `
       <yp-post-header
@@ -305,9 +315,8 @@ let YpPost = class YpPost extends YpCollection {
         if (this.post) {
             const previousPost = window.appGlobals.cache.getPreviousPostInGroupList(this.post.group_id, this.post.id);
             if (previousPost) {
-                const path = `/post/${previousPost.id}`;
-                window.app.setKeepOpenForPostsOn(path);
-                YpNavHelpers.redirectTo(path);
+                YpNavHelpers.goToPost(previousPost.id);
+                window.appGlobals.cache.cachedPostItem = previousPost;
                 this.fireGlobal("yp-scroll-to-post-for-group-id", {
                     groupId: this.post.group_id,
                     postId: previousPost.id,
@@ -319,14 +328,12 @@ let YpPost = class YpPost extends YpCollection {
         if (this.post) {
             const nextPost = window.appGlobals.cache.getNextPostInGroupList(this.post.group_id, this.post.id);
             if (nextPost) {
-                const path = `/post/${nextPost.id}`;
-                window.app.setKeepOpenForPostsOn(path);
-                YpNavHelpers.redirectTo(path);
+                YpNavHelpers.goToPost(nextPost.id);
+                window.appGlobals.cache.cachedPostItem = nextPost;
                 this.fireGlobal("yp-scroll-to-post-for-group-id", {
                     groupId: this.post.group_id,
                     postId: nextPost.id,
                 });
-                debugger;
             }
         }
     }
@@ -428,11 +435,13 @@ let YpPost = class YpPost extends YpCollection {
         super.connectedCallback();
         this.addListener("yp-debate-info", this._updateDebateInfo);
         this.addListener("yp-post-image-count", this._updatePostImageCount);
+        document.addEventListener("keydown", this.handleKeydown.bind(this));
     }
     disconnectedCallback() {
         super.disconnectedCallback();
         this.removeListener("yp-debate-info", this._updateDebateInfo);
         this.removeListener("yp-post-image-count", this._updatePostImageCount);
+        document.removeEventListener("keydown", this.handleKeydown.bind(this));
     }
     _updatePostImageCount(event) {
         const imageCount = event.detail;

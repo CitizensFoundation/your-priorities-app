@@ -20,6 +20,7 @@ export declare class YpPost extends YpCollection {
     get leftArrowDisabled(): boolean;
     get rightArrowDisabled(): boolean;
     get bothArrowsDisabled(): boolean;
+    handleKeydown(event: KeyboardEvent): void;
     renderPostStaticHeader(): TemplateResult<1>;
     renderPostHeader(): TemplateResult<1>;
     renderPostTabs(): TemplateResult<1>;

@@ -120,8 +120,8 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
         }
 
         md-linear-progress {
-          width: 88%;
-          margin-top: 32px;
+          width: 95%;
+          margin-top: 64px;
         }
 
         md-filled-button[has-static-theme] {
