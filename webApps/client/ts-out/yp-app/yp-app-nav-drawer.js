@@ -105,6 +105,10 @@ let YpAppNavDrawer = class YpAppNavDrawer extends YpBaseElement {
         return [
             super.styles,
             css `
+
+      :host {
+        z-index: 5000;
+      }
         .header {
           padding-top: 16px;
           font-weight: bold;
