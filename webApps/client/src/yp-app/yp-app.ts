@@ -97,6 +97,9 @@ export class YpApp extends YpBaseElement {
   @property({ type: String })
   page: string | undefined;
 
+  @property({ type: Number })
+  scrollPosition = 0;
+
   @property({ type: String })
   appMode = "main" as YpAppModes;
 
@@ -235,12 +238,19 @@ export class YpApp extends YpBaseElement {
     this._setupSamlCallback();
     this.updateLocation();
     document.addEventListener("keydown", this._handleKeyDown.bind(this));
+    window.addEventListener('scroll', this._handleScroll.bind(this));
   }
 
   override disconnectedCallback() {
     super.disconnectedCallback();
     this._removeEventListeners();
     document.removeEventListener("keydown", this._handleKeyDown.bind(this));
+    window.removeEventListener('scroll', this._handleScroll.bind(this));
+  }
+
+  _handleScroll() {
+    this.scrollPosition = window.pageYOffset;
+    this.requestUpdate('scrollPosition');
   }
 
   override async updated(
@@ -535,15 +545,11 @@ export class YpApp extends YpBaseElement {
     this._routePageChanged(oldRouteData);
   }
 
-  get hideCloseForPostIfAtTopOfPage() {
-    return this.page === "post" // And should know and check scroll positions;
-  }
-
   //TODO: Use someth8ing like https://boguz.github.io/burgton-button-docs/
   renderNavigationIcon() {
     let icons = html``;
 
-    if (this.hideCloseForPostIfAtTopOfPage) {
+    if (this.page === "post" && this.scrollPosition <= 70) {
       icons = html``;
     } else if (this.closePostHeader) {
       icons = html`<md-icon-button

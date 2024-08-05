@@ -47,6 +47,7 @@ import { YpServerApiAdmin } from "../common/YpServerApiAdmin.js";
 let YpApp = class YpApp extends YpBaseElement {
     constructor() {
         super();
+        this.scrollPosition = 0;
         this.appMode = "main";
         this.showSearch = false;
         this.showBack = false;
@@ -85,11 +86,17 @@ let YpApp = class YpApp extends YpBaseElement {
         this._setupSamlCallback();
         this.updateLocation();
         document.addEventListener("keydown", this._handleKeyDown.bind(this));
+        window.addEventListener('scroll', this._handleScroll.bind(this));
     }
     disconnectedCallback() {
         super.disconnectedCallback();
         this._removeEventListeners();
         document.removeEventListener("keydown", this._handleKeyDown.bind(this));
+        window.removeEventListener('scroll', this._handleScroll.bind(this));
+    }
+    _handleScroll() {
+        this.scrollPosition = window.pageYOffset;
+        this.requestUpdate('scrollPosition');
     }
     async updated(changedProperties) {
         super.updated(changedProperties);
@@ -289,13 +296,10 @@ let YpApp = class YpApp extends YpBaseElement {
         this._routeChanged();
         this._routePageChanged(oldRouteData);
     }
-    get hideCloseForPostIfAtTopOfPage() {
-        return this.page === "post"; // And should know and check scroll positions;
-    }
     //TODO: Use someth8ing like https://boguz.github.io/burgton-button-docs/
     renderNavigationIcon() {
         let icons = html ``;
-        if (this.hideCloseForPostIfAtTopOfPage) {
+        if (this.page === "post" && this.scrollPosition <= 70) {
             icons = html ``;
         }
         else if (this.closePostHeader) {
@@ -1393,6 +1397,9 @@ __decorate([
 __decorate([
     property({ type: String })
 ], YpApp.prototype, "page", void 0);
+__decorate([
+    property({ type: Number })
+], YpApp.prototype, "scrollPosition", void 0);
 __decorate([
     property({ type: String })
 ], YpApp.prototype, "appMode", void 0);
