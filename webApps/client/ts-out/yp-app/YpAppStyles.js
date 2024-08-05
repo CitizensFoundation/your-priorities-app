@@ -39,7 +39,7 @@ export const YpAppStyles = css `
     left: 0;
     height: 100vh;
     width: 100vw;
-    background-color:var(--md-sys-color-surface);
+    background-color: var(--md-sys-color-surface);
     color: var(--md-sys-color-on-surface);
     display: flex;
     justify-content: center;
@@ -83,7 +83,6 @@ export const YpAppStyles = css `
     height: 100vh;
     width: 100vw;
   }
-
 
   .loadingAppSpinnerPage {
     /* Initial state: visible and on-screen */
@@ -138,6 +137,17 @@ export const YpAppStyles = css `
     --md-badge-text-color: var(--md-sys-color-on-primary-container);
     --md-badge-large-color: var(--md-sys-color-primary-container);
     --md-badge-large-label-text-color: var(--md-sys-color-on-primary-container);
+  }
+
+  .closeButton {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.1s ease, visibility 0.1s ease;
+  }
+
+  .closeButton.visible {
+    opacity: 1;
+    visibility: visible;
   }
 `;
 //# sourceMappingURL=YpAppStyles.js.map

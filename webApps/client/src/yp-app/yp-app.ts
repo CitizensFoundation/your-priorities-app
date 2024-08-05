@@ -238,19 +238,19 @@ export class YpApp extends YpBaseElement {
     this._setupSamlCallback();
     this.updateLocation();
     document.addEventListener("keydown", this._handleKeyDown.bind(this));
-    window.addEventListener('scroll', this._handleScroll.bind(this));
+    window.addEventListener("scroll", this._handleScroll.bind(this));
   }
 
   override disconnectedCallback() {
     super.disconnectedCallback();
     this._removeEventListeners();
     document.removeEventListener("keydown", this._handleKeyDown.bind(this));
-    window.removeEventListener('scroll', this._handleScroll.bind(this));
+    window.removeEventListener("scroll", this._handleScroll.bind(this));
   }
 
   _handleScroll() {
     this.scrollPosition = window.pageYOffset;
-    this.requestUpdate('scrollPosition');
+    this.requestUpdate("scrollPosition");
   }
 
   override async updated(
@@ -549,11 +549,12 @@ export class YpApp extends YpBaseElement {
   renderNavigationIcon() {
     let icons = html``;
 
-    if (this.page === "post" && this.scrollPosition <= 70) {
-      icons = html``;
-    } else if (this.closePostHeader) {
+    let closeButtonVisible = (this.page !== "post" || (this.page === "post" && this.scrollPosition > 64));
+
+    if (this.closePostHeader) {
       icons = html`<md-icon-button
         title="${this.t("close")}"
+        class="closeButton ${closeButtonVisible ? "visible" : ""}"
         @click="${this._closePost}"
         ><md-icon>close</md-icon></md-icon-button
       >`;
@@ -576,6 +577,7 @@ export class YpApp extends YpBaseElement {
       icons = html`<md-icon-button
         title="${this.t("goBack")}"
         slot="actionItems"
+        class="closeButton ${closeButtonVisible ? "visible" : ""}"
         ?hidden="${!this.backPath}"
         @click="${this.goBack}"
         ><md-icon>arrow_upward</md-icon>
@@ -697,7 +699,7 @@ export class YpApp extends YpBaseElement {
     return html`
       <yp-top-app-bar
         role="navigation"
-        .titleString="${this.page != "post" ? titleString : ''}"
+        .titleString="${this.page != "post" ? titleString : ""}"
         aria-label="top navigation"
         ?hideBreadcrumbs="${!titleString || titleString == ""}"
         ?hidden="${this.appMode !== "main" ||
@@ -1319,7 +1321,6 @@ export class YpApp extends YpBaseElement {
               this.routeData.page === "group"
             )
           ) {
-
             if (oldRouteData && oldRouteData.page == "post") {
               skipMasterScroll = true;
             }

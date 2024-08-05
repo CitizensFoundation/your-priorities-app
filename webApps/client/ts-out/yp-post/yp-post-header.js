@@ -29,6 +29,7 @@ let YpPostHeader = class YpPostHeader extends YpPostBaseWithAnswers(YpBaseElemen
         //TODO: Maybe refactor this if post header is never used with both
         this.onlyRenderTopActionBar = false;
         this.hideTopActionBar = false;
+        this.hasNoLeftRightButtons = false;
     }
     //TODO: Make corners on posts card different
     static get styles() {
@@ -379,7 +380,9 @@ let YpPostHeader = class YpPostHeader extends YpPostBaseWithAnswers(YpBaseElemen
         return html `<md-filled-tonal-icon-button
       @click="${() => YpNavHelpers.redirectTo("/group/" + this.post.group_id)}"
       title="${this.t("close")}"
-      ><md-icon>close</md-icon>
+      ><md-icon
+        >${this.hasNoLeftRightButtons ? "arrow_upward" : "close"}</md-icon
+      >
     </md-filled-tonal-icon-button>`;
     }
     renderTopActionButtons() {
@@ -601,6 +604,9 @@ __decorate([
 __decorate([
     property({ type: Boolean })
 ], YpPostHeader.prototype, "hideTopActionBar", void 0);
+__decorate([
+    property({ type: Boolean })
+], YpPostHeader.prototype, "hasNoLeftRightButtons", void 0);
 __decorate([
     property({ type: Object })
 ], YpPostHeader.prototype, "post", void 0);

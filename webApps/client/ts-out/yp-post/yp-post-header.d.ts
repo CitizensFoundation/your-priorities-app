@@ -12,6 +12,7 @@ export declare class YpPostHeader extends YpPostHeader_base {
     transcriptActive: boolean;
     onlyRenderTopActionBar: boolean;
     hideTopActionBar: boolean;
+    hasNoLeftRightButtons: boolean;
     post: YpPostData;
     static get styles(): any[];
     renderPostInformation(): TemplateResult<1>;

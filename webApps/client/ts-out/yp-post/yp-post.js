@@ -215,7 +215,7 @@ let YpPost = class YpPost extends YpCollection {
     renderPostStaticHeader() {
         return html `
       <yp-post-header
-        class="postStaticccHeader"
+        ?hasNoLeftRightButtons="${this.bothArrowsDisabled}"
         onlyRenderTopActionBar
         .post="${this.post}"
       ></yp-post-header>

@@ -45,6 +45,9 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
   @property({ type: Boolean })
   hideTopActionBar = false;
 
+  @property({ type: Boolean })
+  hasNoLeftRightButtons = false;
+
   @property({ type: Object })
   override post!: YpPostData;
 
@@ -403,7 +406,9 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
     return html`<md-filled-tonal-icon-button
       @click="${() => YpNavHelpers.redirectTo("/group/" + this.post.group_id)}"
       title="${this.t("close")}"
-      ><md-icon>close</md-icon>
+      ><md-icon
+        >${this.hasNoLeftRightButtons ? "arrow_upward" : "close"}</md-icon
+      >
     </md-filled-tonal-icon-button>`;
   }
 

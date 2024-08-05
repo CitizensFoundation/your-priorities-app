@@ -86,17 +86,17 @@ let YpApp = class YpApp extends YpBaseElement {
         this._setupSamlCallback();
         this.updateLocation();
         document.addEventListener("keydown", this._handleKeyDown.bind(this));
-        window.addEventListener('scroll', this._handleScroll.bind(this));
+        window.addEventListener("scroll", this._handleScroll.bind(this));
     }
     disconnectedCallback() {
         super.disconnectedCallback();
         this._removeEventListeners();
         document.removeEventListener("keydown", this._handleKeyDown.bind(this));
-        window.removeEventListener('scroll', this._handleScroll.bind(this));
+        window.removeEventListener("scroll", this._handleScroll.bind(this));
     }
     _handleScroll() {
         this.scrollPosition = window.pageYOffset;
-        this.requestUpdate('scrollPosition');
+        this.requestUpdate("scrollPosition");
     }
     async updated(changedProperties) {
         super.updated(changedProperties);
@@ -299,12 +299,11 @@ let YpApp = class YpApp extends YpBaseElement {
     //TODO: Use someth8ing like https://boguz.github.io/burgton-button-docs/
     renderNavigationIcon() {
         let icons = html ``;
-        if (this.page === "post" && this.scrollPosition <= 70) {
-            icons = html ``;
-        }
-        else if (this.closePostHeader) {
+        let closeButtonVisible = (this.page !== "post" || (this.page === "post" && this.scrollPosition > 64));
+        if (this.closePostHeader) {
             icons = html `<md-icon-button
         title="${this.t("close")}"
+        class="closeButton ${closeButtonVisible ? "visible" : ""}"
         @click="${this._closePost}"
         ><md-icon>close</md-icon></md-icon-button
       >`;
@@ -330,6 +329,7 @@ let YpApp = class YpApp extends YpBaseElement {
             icons = html `<md-icon-button
         title="${this.t("goBack")}"
         slot="actionItems"
+        class="closeButton ${closeButtonVisible ? "visible" : ""}"
         ?hidden="${!this.backPath}"
         @click="${this.goBack}"
         ><md-icon>arrow_upward</md-icon>
@@ -442,7 +442,7 @@ let YpApp = class YpApp extends YpBaseElement {
         return html `
       <yp-top-app-bar
         role="navigation"
-        .titleString="${this.page != "post" ? titleString : ''}"
+        .titleString="${this.page != "post" ? titleString : ""}"
         aria-label="top navigation"
         ?hideBreadcrumbs="${!titleString || titleString == ""}"
         ?hidden="${this.appMode !== "main" ||
