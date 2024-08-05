@@ -118,7 +118,7 @@ export class YpPostActions extends YpBaseElement {
           text-align: left;
           vertical-align: bottom;
           padding-top: 6px;
-          margin-top: 4px;
+          margin-top: 6px;
           margin-left: 16px;
         }
 
@@ -175,11 +175,11 @@ export class YpPostActions extends YpBaseElement {
           padding-right: 16px;
           padding-top: 0px;
           padding-left: 4px;
-          padding-bottom: 7px;
+          padding-bottom: 8px;
         }
 
         .up-text {
-          padding-top: 4px;
+          padding-top: 0px;
           margin-right: 32px;
           padding-left: 4px;
           padding-bottom: 8px;
@@ -293,11 +293,10 @@ export class YpPostActions extends YpBaseElement {
               ?is-static-theme="${this.hasStaticTheme}"
               toggle
               ?selected="${this.isEndorsed}"
-              id="iconUpButton"
               .smaller-icons="${this.smallerIcons}"
               ?disabled="${this.votingStateDisabled}"
               .title="${this.customVoteUpHoverText}"
-              class="action-icon up-vote-icon largeButton"
+               class="action-icon up-vote-icon mainIcons"
               @click="${this.upVote}"
               ><md-icon slot="selected"
                 >${this.endorseModeIcon(this.endorsementButtons, "up")}</md-icon
@@ -316,7 +315,7 @@ export class YpPostActions extends YpBaseElement {
 
           <div
             id="actionDown"
-            class="action-down layout horizontal layout center justified"
+            class="action-down layout horizontal layout start justified"
             ?hidden="${this.post.Group.configuration.hideDownVoteForPost}"
           >
             <md-filled-icon-button
