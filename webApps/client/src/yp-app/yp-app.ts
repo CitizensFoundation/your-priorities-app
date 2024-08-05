@@ -67,6 +67,7 @@ import { YpSnackbar } from "./yp-snackbar.js";
 import { PsAppGlobals } from "../policySynth/PsAppGlobals.js";
 import { PsServerApi } from "../policySynth/PsServerApi.js";
 import { YpTopAppBar } from "./yp-top-app-bar.js";
+import { skip } from "node:test";
 
 declare global {
   interface Window {
@@ -1308,9 +1309,14 @@ export class YpApp extends YpBaseElement {
               this.routeData.page === "group"
             )
           ) {
+
+            if (oldRouteData && oldRouteData.page == "post") {
+              skipMasterScroll = true;
+            }
+
             if (!skipMasterScroll) {
               window.scrollTo(0, map[this.routeData.page]);
-              console.info(
+              console.error(
                 "Main window scroll " +
                   this.routeData.page +
                   " to " +
@@ -1322,7 +1328,7 @@ export class YpApp extends YpBaseElement {
               );
             }
           } else if (!skipMasterScroll) {
-            console.info("AppLayout scroll to top");
+            console.error("AppLayout scroll to top");
             setTimeout(() => {
               window.scrollTo(0, 0);
             });

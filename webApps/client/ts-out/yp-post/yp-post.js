@@ -198,7 +198,6 @@ let YpPost = class YpPost extends YpCollection {
         }
     }
     handleKeydown(event) {
-        debugger;
         if (event.key === "ArrowLeft" && !this.leftArrowDisabled) {
             this.goToPreviousPost();
         }

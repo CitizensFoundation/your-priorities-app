@@ -51,7 +51,7 @@ export class YpCache extends YpCodeBase {
         return undefined;
     }
     addPostsToCacheLater(posts) {
-        const laterTimeoutMs = Math.floor(Math.random() * 1000) + 750;
+        const laterTimeoutMs = Math.floor(Math.random() * 500) + 250;
         setTimeout(() => {
             this.addPostsToCache(posts);
         }, laterTimeoutMs);

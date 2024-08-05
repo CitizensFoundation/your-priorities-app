@@ -977,9 +977,12 @@ let YpApp = class YpApp extends YpBaseElement {
                         !(oldRouteData &&
                             oldRouteData.page === "community" &&
                             this.routeData.page === "group")) {
+                        if (oldRouteData && oldRouteData.page == "post") {
+                            skipMasterScroll = true;
+                        }
                         if (!skipMasterScroll) {
                             window.scrollTo(0, map[this.routeData.page]);
-                            console.info("Main window scroll " +
+                            console.error("Main window scroll " +
                                 this.routeData.page +
                                 " to " +
                                 map[this.routeData.page]);
@@ -989,7 +992,7 @@ let YpApp = class YpApp extends YpBaseElement {
                         }
                     }
                     else if (!skipMasterScroll) {
-                        console.info("AppLayout scroll to top");
+                        console.error("AppLayout scroll to top");
                         setTimeout(() => {
                             window.scrollTo(0, 0);
                         });

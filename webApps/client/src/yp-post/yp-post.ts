@@ -213,7 +213,12 @@ export class YpPost extends YpCollection {
   }
 
   get leftArrowDisabled() {
-    if (window.appGlobals.cache.getPreviousPostInGroupList(this.post!.group_id, this.post!.id)) {
+    if (
+      window.appGlobals.cache.getPreviousPostInGroupList(
+        this.post!.group_id,
+        this.post!.id
+      )
+    ) {
       return false;
     } else {
       return true;
@@ -221,7 +226,12 @@ export class YpPost extends YpCollection {
   }
 
   get rightArrowDisabled() {
-    if (window.appGlobals.cache.getNextPostInGroupList(this.post!.group_id, this.post!.id)) {
+    if (
+      window.appGlobals.cache.getNextPostInGroupList(
+        this.post!.group_id,
+        this.post!.id
+      )
+    ) {
       return false;
     } else {
       return true;
@@ -237,7 +247,6 @@ export class YpPost extends YpCollection {
   }
 
   handleKeydown(event: KeyboardEvent) {
-    debugger;
     if (event.key === "ArrowLeft" && !this.leftArrowDisabled) {
       this.goToPreviousPost();
     } else if (event.key === "ArrowRight" && !this.rightArrowDisabled) {
@@ -367,7 +376,7 @@ export class YpPost extends YpCollection {
         this.fireGlobal("yp-scroll-to-post-for-group-id", {
           groupId: this.post.group_id,
           postId: previousPost.id,
-        })
+        });
       }
     }
   }
@@ -384,7 +393,7 @@ export class YpPost extends YpCollection {
         this.fireGlobal("yp-scroll-to-post-for-group-id", {
           groupId: this.post.group_id,
           postId: nextPost.id,
-        })
+        });
       }
     }
   }

@@ -406,6 +406,7 @@ export class YpPostsList extends YpBaseElement {
     changedProperties: Map<string | number | symbol, unknown>
   ) {
     super.firstUpdated(changedProperties);
+
   }
 
   _clearSearch() {
@@ -459,7 +460,6 @@ export class YpPostsList extends YpBaseElement {
       this.scrollToPostForGroupId.bind(this)
     );
     this.addListener("refresh", this._refreshPost);
-
     if (this.posts) {
       if (window.appGlobals.cache.cachedPostItem !== undefined) {
         this.scrollToPost(window.appGlobals.cache.cachedPostItem);
@@ -472,6 +472,7 @@ export class YpPostsList extends YpBaseElement {
       }
     }
   }
+
 
   override disconnectedCallback() {
     super.disconnectedCallback();
