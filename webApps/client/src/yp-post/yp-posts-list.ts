@@ -473,7 +473,6 @@ export class YpPostsList extends YpBaseElement {
     }
   }
 
-
   override disconnectedCallback() {
     super.disconnectedCallback();
     this.removeListener("yp-filter-category-change", this._categoryChanged);

@@ -36,6 +36,7 @@ export declare class YpThemeManager {
     updateLiveFromConfiguration(theme: YpThemeConfiguration): void;
     themeChanged(target?: HTMLElement | undefined): void;
     hexToRgb(hex: string): string;
+    createSemiTransparentColor(colorInt: number, opacity: number): number;
     intToHex(colorInt: number): string;
     getHexColor(color: string | undefined): string;
 }

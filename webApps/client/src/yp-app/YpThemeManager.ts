@@ -646,12 +646,15 @@ export class YpThemeManager {
       if (customColors.customColors) {
         let colorUp,
           onColorUp,
+          surfaceColorUp,
           colorContainerUp,
           onColorContainerUp,
           colorDown,
+          surfaceColorDown,
           onColorDown,
           colorContainerDown,
           onColorContainerDown;
+
 
         if (isDark) {
           colorUp = customColors.customColors[0].dark.color;
@@ -659,6 +662,7 @@ export class YpThemeManager {
           colorContainerUp = customColors.customColors[0].dark.colorContainer;
           onColorContainerUp =
             customColors.customColors[0].dark.onColorContainer;
+
 
           colorDown = customColors.customColors[1].dark.color;
           onColorDown = customColors.customColors[1].dark.onColor;
@@ -669,6 +673,7 @@ export class YpThemeManager {
           colorUp = customColors.customColors[0].light.color;
           onColorUp = customColors.customColors[0].light.onColor;
           colorContainerUp = customColors.customColors[0].light.colorContainer;
+
           onColorContainerUp =
             customColors.customColors[0].light.onColorContainer;
 
@@ -679,6 +684,23 @@ export class YpThemeManager {
           onColorContainerDown =
             customColors.customColors[1].light.onColorContainer;
         }
+
+        surfaceColorUp = this.createSemiTransparentColor(colorContainerUp, 0.01);
+        surfaceColorDown = this.createSemiTransparentColor(
+          colorContainerDown,
+          0.25
+        );
+
+        document.documentElement.style.setProperty(
+          "--yp-sys-color-surface-up",
+          this.intToHex(surfaceColorUp)
+        );
+
+        document.documentElement.style.setProperty(
+          "--yp-sys-color-surface-down",
+          this.intToHex(surfaceColorDown)
+        );
+
 
         document.documentElement.style.setProperty(
           "--yp-sys-color-up",
@@ -693,7 +715,7 @@ export class YpThemeManager {
           this.intToHex(colorContainerUp)
         );
         document.documentElement.style.setProperty(
-          "--yp-sys-color-container-up-on",
+          "--yp-sys-color-on-container-up",
           this.intToHex(onColorContainerUp)
         );
 
@@ -710,7 +732,7 @@ export class YpThemeManager {
           this.intToHex(colorContainerDown)
         );
         document.documentElement.style.setProperty(
-          "--yp-sys-color-container-down-on",
+          "--yp-sys-color-on-container-down",
           this.intToHex(onColorContainerDown)
         );
       }
@@ -728,6 +750,15 @@ export class YpThemeManager {
     const g = (bigint >> 8) & 255;
     const b = bigint & 255;
     return `${r},${g},${b}`;
+  }
+
+  createSemiTransparentColor(colorInt: number, opacity: number): number {
+    const r = (colorInt >> 16) & 255;
+    const g = (colorInt >> 8) & 255;
+    const b = colorInt & 255;
+    const a = Math.round(opacity * 255);
+
+    return (a << 24) | (r << 16) | (g << 8) | b;
   }
 
   intToHex(colorInt: number): string {

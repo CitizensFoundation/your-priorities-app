@@ -341,7 +341,30 @@ export class YpPostPoints extends YpBaseElementWithLogin {
           margin-left: 24px;
         }
 
-        md-outlined-text-field {
+        md-filled-text-field[is-up] {
+          --md-filled-text-field-container-color: var(--md-sys-color-surface-container);
+          --md-filled-text-field-active-indicator-color: var(--yp-sys-color-up);
+          --md-filled-text-field-caret-color: var(--yp-sys-color-on-container-up);
+          --md-filled-field-focus-label-text-color: var(--yp-sys-color-on-container-up);
+          --md-filled-field-focus-active-indicator-color: var(--yp-sys-color-up);
+        }
+
+        md-filled-text-field[is-down] {
+          --md-filled-text-field-container-color: var(--md-sys-color-surface-container);
+          --md-filled-text-field-active-indicator-color: var(--yp-sys-color-down);
+          --md-filled-text-field-caret-color: var(--yp-sys-color-on-container-down);
+          --md-filled-field-focus-label-text-color: var(--yp-sys-color-on-container-down);
+          --md-filled-field-focus-active-indicator-color: var(--yp-sys-color-down);
+        }
+
+        .submitButton[is-up] {
+          --md-filled-button-container-color: var(--yp-sys-color-up);
+          --md-filled-button-label-text-color: var(--yp-sys-color-on-up);
+        }
+
+        .submitButton[is-down] {
+          --md-filled-button-container-color: var(--yp-sys-color-down);
+          --md-filled-button-label-text-color: var(--yp-sys-color-on-down);
         }
 
         .howToWriteInfoText {
@@ -707,7 +730,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
   ) {
     if (false && points && points!.length == 0) {
       return html`<div class="point">
-        ${this.renderPointHeader(header, "Engin rök til", headerTextType)}
+        ${this.renderPointHeader(header, "Engin rök til", headerTextType, 0)}
       </div> `;
     } else {
       return html`
@@ -734,6 +757,8 @@ export class YpPostPoints extends YpBaseElementWithLogin {
                 : nothing}
 
               <md-filled-text-field
+                ?is-up="${type == "Up"}"
+                ?is-down="${type == "Down"}"
                 id="${type.toLowerCase()}_point"
                 @focus="${pointFocusFunction}"
                 @blur="${this.blurOutlinedTextField}"
@@ -779,6 +804,8 @@ export class YpPostPoints extends YpBaseElementWithLogin {
                 <md-filled-button
                   ?has-static-theme="${this.hasStaticTheme}"
                   class="submitButton"
+                   ?is-up="${type == "Up"}"
+                   ?is-down="${type == "Down"}"
                   ?disabled="${this.addPointDisabled || !ifLengthIsRight}"
                   @click="${addPointFunc}"
                   >${this.t("postPoint")}</md-filled-button
