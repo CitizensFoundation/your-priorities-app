@@ -11,6 +11,7 @@ import "@material/web/textfield/outlined-text-field.js";
 import "@material/web/radio/radio.js";
 
 import "../yp-file-upload/yp-file-upload.js";
+import "../yp-file-upload/yp-file-upload-icon.js";
 import "../common/yp-emoji-selector.js";
 
 import { YpFileUpload } from "../yp-file-upload/yp-file-upload.js";
@@ -255,6 +256,11 @@ export class YpPostPoints extends YpBaseElementWithLogin {
           display: block;
         }
 
+        md-filled-button[has-static-theme] {
+          --md-filled-button-container-color: var(--md-sys-color-primary-container);
+          --md-filled-button-label-text-color: var(--md-sys-color-on-primary-container);
+        }
+
         .happyFace {
           color: var(--yp-sys-color-up);
           --md-icon-size: 48px;
@@ -325,6 +331,9 @@ export class YpPostPoints extends YpBaseElementWithLogin {
 
         .addPointFab {
           width: 100%;
+          margin-top: 16px;
+          margin-bottom: 48px;
+          margin-left: 24px;
         }
 
         md-outlined-text-field {
@@ -492,7 +501,8 @@ export class YpPostPoints extends YpBaseElementWithLogin {
               class="layout vertical center-center"
               ?hidden="${!this.isLoggedIn}"
             >
-              <yp-file-upload
+              <yp-file-upload-icon
+                simple
                 id="audioFileUpload${type}"
                 current-file="${ifDefined(hasCurrentAudio)}"
                 container-type="points"
@@ -506,18 +516,16 @@ export class YpPostPoints extends YpBaseElementWithLogin {
                 method="POST"
                 @success="${this._audioUpUploaded}"
               >
-              </yp-file-upload>
+              </yp-file-upload-icon>
             </div>
             <div class="layout horizontal center-center">
-              <md-outlined-button
+              <md-icon-button
                 class="uploadNotLoggedIn"
-                icon="keyboard_voice"
-                raised
                 ?hidden="${this.isLoggedIn}"
                 @click="${this._openLogin}"
                 .label="${uploadAudioPointHeader}"
-              >
-              </md-outlined-button>
+                ><md-icon>keyboard_voice</md-icon>
+              </md-icon-button>
             </div>
           </div>
         `
@@ -539,7 +547,8 @@ export class YpPostPoints extends YpBaseElementWithLogin {
               class="layout vertical center-center self-start"
               ?hidden="${!this.isLoggedIn}"
             >
-              <yp-file-upload
+              <yp-file-upload-icon
+                simple
                 id="videoFileUpload${type}"
                 noDefaultCoverImage
                 .uploadLimitSeconds="${this.post.Group.configuration
@@ -554,7 +563,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
                 .buttonText="${uploadVideoHeader}"
                 @success="${videoUploadedFunc}"
               >
-              </yp-file-upload>
+              </yp-file-upload-icon>
             </div>
             <div
               class="videoUploadDisclamer"
@@ -564,15 +573,13 @@ export class YpPostPoints extends YpBaseElementWithLogin {
               ${this.t("videoUploadDisclaimer")}
             </div>
             <div class="layout horizontal center-center">
-              <md-outlined-button
+              <md-icon-button
                 class="uploadNotLoggedIn"
-                icon="videocam"
-                raised
                 ?hidden="${this.isLoggedIn}"
                 @click="${this._openLogin}"
                 .label="${uploadVideoHeader}"
-              >
-              </md-outlined-button>
+                ><md-icon>videocam</md-icon>
+              </md-icon-button>
             </div>
           </div>
         `
@@ -716,7 +723,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
             <div class="layout horizontal">
               ${window.appUser.user
                 ? html`<yp-user-image
-                     medium
+                    medium
                     .user="${window.appUser.user}"
                   ></yp-user-image>`
                 : nothing}
@@ -736,50 +743,42 @@ export class YpPostPoints extends YpBaseElementWithLogin {
                 ?hidden="${hideText}"
                 maxrows="4"
                 .maxLength="${this.pointMaxLength}"
-              >
-                <yp-emoji-selector
-                  slot="trailing-icon"
-                  id="point${type}EmojiSelector"
-                  ?hidden="${hideText ||
-                  this.post.Group.configuration.hideEmoji}"
-                ></yp-emoji-selector>
+                ><div class="layout vertical" slot="trailing-icon">
+                  <yp-emoji-selector
+                    id="point${type}EmojiSelector"
+                    ?hidden="${hideText ||
+                    this.post.Group.configuration.hideEmoji}"
+                  ></yp-emoji-selector>
+
+                  ${this.renderVideoUpload(
+                    type,
+                    hideVideo,
+                    hasCurrentVideo,
+                    uploadVideoHeader,
+                    videoUploadedFunc,
+                    uploadedVideoId
+                  )}
+                  ${this.renderAudioUpload(
+                    type,
+                    hideAudio,
+                    hasCurrentAudio,
+                    uploadAudioPointHeader
+                  )}
+                </div>
               </md-filled-text-field>
             </div>
 
             ${mobile ? this.renderMobilePointSelection() : nothing}
 
-            <div class="layout horizontal center-justified">
-              ${this.renderVideoUpload(
-                type,
-                hideVideo,
-                hasCurrentVideo,
-                uploadVideoHeader,
-                videoUploadedFunc,
-                uploadedVideoId
-              )}
-              ${this.renderAudioUpload(
-                type,
-                hideAudio,
-                hasCurrentAudio,
-                uploadAudioPointHeader
-              )}
-            </div>
-
-            <div>
-              <div class="addPointFab layout horizontal center-center">
-                <md-outlined-button
-                  raised
-                  trailingIcon
+            <div class="addPointFab layout horizontal center-center">
+                <md-filled-button
+                  ?has-static-theme="${this.hasStaticTheme}"
                   class="submitButton"
-                  ?disabled="${this.addPointDisabled}"
-                  ?hidden="${!ifLengthIsRight}"
+                  ?disabled="${this.addPointDisabled || !ifLengthIsRight}"
                   @click="${addPointFunc}"
-                  >${this.t("postPoint")}<md-icon slot="icon"
-                    >add</md-icon
-                  ></md-outlined-button
+                  >${this.t("postPoint")}</md-filled-button
                 >
               </div>
-            </div>
           </div>
 
           ${points

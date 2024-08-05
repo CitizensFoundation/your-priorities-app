@@ -3,6 +3,7 @@ import "@material/web/progress/linear-progress.js";
 import "@material/web/textfield/outlined-text-field.js";
 import "@material/web/radio/radio.js";
 import "../yp-file-upload/yp-file-upload.js";
+import "../yp-file-upload/yp-file-upload-icon.js";
 import "../common/yp-emoji-selector.js";
 import "../yp-point/yp-point.js";
 import { YpBaseElementWithLogin } from "../common/yp-base-element-with-login.js";
