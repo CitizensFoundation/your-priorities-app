@@ -204,6 +204,13 @@ let YpPost = class YpPost extends YpCollection {
         else if (event.key === "ArrowRight" && !this.rightArrowDisabled) {
             this.goToNextPost();
         }
+        else if (event.key === "Escape") {
+            if (this.post) {
+                event.preventDefault();
+                event.stopPropagation();
+                YpNavHelpers.redirectTo("/group/" + this.post.group_id);
+            }
+        }
     }
     renderPostStaticHeader() {
         return html `

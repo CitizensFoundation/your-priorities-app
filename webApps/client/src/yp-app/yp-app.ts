@@ -535,11 +535,15 @@ export class YpApp extends YpBaseElement {
     this._routePageChanged(oldRouteData);
   }
 
+  get hideCloseForPostIfAtTopOfPage() {
+    return this.page === "post" // And should know and check scroll positions;
+  }
+
   //TODO: Use someth8ing like https://boguz.github.io/burgton-button-docs/
   renderNavigationIcon() {
     let icons = html``;
 
-    if (this.page === "post") {
+    if (this.hideCloseForPostIfAtTopOfPage) {
       icons = html``;
     } else if (this.closePostHeader) {
       icons = html`<md-icon-button
