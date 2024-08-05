@@ -61,7 +61,6 @@ let YpPoint = class YpPoint extends YpBaseElement {
     _updateQualities() {
         this.isUpVoted = false;
         this.isDownVoted = false;
-        debugger;
         if (this.point &&
             window.appUser &&
             window.appUser.loggedIn() &&
@@ -90,12 +89,29 @@ let YpPoint = class YpPoint extends YpBaseElement {
             this._isEditingChanged();
         }
     }
+    get masterHideSharing() {
+        return (this.group &&
+            this.group.configuration &&
+            this.group.configuration.hideSharing);
+    }
     static get styles() {
         return [
             super.styles,
             css `
         :host {
           display: block;
+        }
+
+        .shareIcon {
+          margin-top: 8px;
+        }
+
+        #reportPointIconButton {
+          margin-top: 8px;
+        }
+
+        yp-user-with-organization {
+          margin-top: 16px;
         }
 
         .pointTopContainer {
@@ -122,7 +138,7 @@ let YpPoint = class YpPoint extends YpBaseElement {
         .point-content {
           padding-right: 16px;
           padding-left: 16px;
-          margin-top: 16px;
+          margin-top: 8px;
         }
 
         #pointContentTranscript,
@@ -177,7 +193,7 @@ let YpPoint = class YpPoint extends YpBaseElement {
 
         .actionContainer {
           margin-top: 8px;
-          margin-bottom: 16px;
+          margin-bottom: 4px;
         }
 
         [hidden] {
@@ -335,16 +351,23 @@ let YpPoint = class YpPoint extends YpBaseElement {
           class="userInfoContainer layout horizontal"
           ?hidden="${this.hideUser}"
         >
-          <div
-            class="layout horizontal"
-            ?hidden="${this.group.configuration.hidePointAuthor}"
-          >
+          <div class="layout horizontal" style="width: 100%">
             <yp-user-with-organization
               .titleDate="${this.point.created_at}"
               inverted
+              mediumImage
+              ?hidden="${this.group.configuration.hidePointAuthor}"
               .user="${this.user}"
               class="userWithOrganization"
             ></yp-user-with-organization>
+            <div class="flex"></div>
+            <md-icon-button
+              ?hidden="${this.masterHideSharing}"
+              class="shareIcon"
+              .label="${this.t("sharePoint")}"
+              @click="${this._shareTap}"
+              ><md-icon>share</md-icon></md-icon-button
+            >
           </div>
         </div>`
             : nothing;
@@ -548,15 +571,12 @@ let YpPoint = class YpPoint extends YpBaseElement {
               @changed="${this._updateQualities}"
               .configuration="${this.post?.Group?.configuration}"
             ></yp-point-actions>
+            <div class="flex"></div>
             <md-icon-button
-              hidden
               .label="${this.t("point.report")}"
               id="reportPointIconButton"
-              icon="warning"
               @click="${this._reportPoint}"
-            ></md-icon-button>
-            <div class="flex"></div>
-
+            ><md-icon>warning</md-icon></md-icon-button>
             ${this.hasPointAccess ? this.renderEditMenu() : nothing}
           </div>
         </div>

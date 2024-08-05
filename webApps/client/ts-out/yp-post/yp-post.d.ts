@@ -1,5 +1,5 @@
 import { YpCollection } from "../yp-collection/yp-collection.js";
-import { nothing, TemplateResult } from "lit";
+import { TemplateResult } from "lit";
 import "@material/web/fab/fab.js";
 import "./yp-post-header.js";
 import "./yp-post-points.js";
@@ -19,7 +19,7 @@ export declare class YpPost extends YpCollection {
     static get styles(): (any[] | import("lit").CSSResult)[];
     renderPostStaticHeader(): TemplateResult<1>;
     renderPostHeader(): TemplateResult<1>;
-    renderPostTabs(): TemplateResult<1> | typeof nothing;
+    renderPostTabs(): TemplateResult<1>;
     renderCurrentPostTabPage(): TemplateResult | undefined;
     renderNavigationButtons(): TemplateResult<1>;
     render(): TemplateResult<1>;

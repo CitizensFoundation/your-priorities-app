@@ -90,6 +90,11 @@ let YpPost = class YpPost extends YpCollection {
           position: relative;
         }
 
+        .dividerLine {
+          opacity: 0.3;
+          max-width: 88%;
+        }
+
         .postHeader {
           padding: 16px;
           background-color: var(--md-sys-color-primary);
@@ -208,7 +213,7 @@ let YpPost = class YpPost extends YpCollection {
       `;
         }
         else {
-            return nothing;
+            return html `<md-divider class="dividerLine"></md-divider>`;
         }
     }
     renderCurrentPostTabPage() {

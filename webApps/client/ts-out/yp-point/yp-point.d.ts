@@ -47,6 +47,7 @@ export declare class YpPoint extends YpBaseElement {
     _updateQualitiesFromSignal(): void;
     _updateQualities(): void;
     updated(changedProperties: Map<string | number | symbol, unknown>): void;
+    get masterHideSharing(): boolean | undefined;
     static get styles(): any[];
     renderAdminComments(): void;
     renderUserHeader(): TemplateResult<1> | typeof nothing;

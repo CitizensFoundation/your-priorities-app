@@ -45,8 +45,8 @@ export class YpPointActions extends YpBaseElement {
         }
 
         .action-text {
-          font-size: 12px;
-          padding-top: 12px;
+          font-size: 16px;
+          padding-top: 8px;
           padding-left: 6px;
         }
 
@@ -148,14 +148,6 @@ export class YpPointActions extends YpBaseElement {
               >
               <div class="action-text">${this.point.counter_quality_down}</div>
             </div>
-            <md-icon-button
-              icon="share"
-              ?hidden="${true || this.masterHideSharing}"
-              class="shareIcon"
-              .label="${this.t("sharePoint")}"
-              up-voted="${this.isUpVoted}"
-              @click="${this._shareTap}"
-            ></md-icon-button>
           </div>
         `
       : nothing;

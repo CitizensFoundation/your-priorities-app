@@ -4,6 +4,7 @@ export declare class YpUserWithOrganization extends YpBaseElement {
     user: YpUserData;
     titleDate: Date | undefined;
     hideImage: boolean;
+    mediumImage: boolean;
     inverted: boolean;
     static get styles(): any[];
     render(): import("lit-html").TemplateResult<1>;

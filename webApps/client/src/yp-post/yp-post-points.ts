@@ -256,6 +256,11 @@ export class YpPostPoints extends YpBaseElementWithLogin {
           display: block;
         }
 
+        md-linear-progress {
+          width: 88%;
+          margin-top: 32px;
+        }
+
         md-filled-button[has-static-theme] {
           --md-filled-button-container-color: var(--md-sys-color-primary-container);
           --md-filled-button-label-text-color: var(--md-sys-color-on-primary-container);
@@ -297,7 +302,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
           opacity: 0.5;
           font-size: 17px;
           font-weight: 400;
-          margin-top: 32px;
+          margin-top: 48px;
           margin-bottom: 32px;
         }
 
@@ -866,7 +871,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
 
       ${this.wideReady
         ? html`
-            <div ?rtl="${this.rtl}" class="layout vertical topContainer">
+            <div ?rtl="${this.rtl}" class="layout vertical topContainer" ?hidden="${this.fetchActive}">
               ${this.renderPointInfo()}
               <div class="main-container layout horizontal">
                 ${this.renderPointList(
