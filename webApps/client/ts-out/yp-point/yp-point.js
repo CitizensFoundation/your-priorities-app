@@ -108,6 +108,7 @@ let YpPoint = class YpPoint extends YpBaseElement {
 
         #reportPointIconButton {
           margin-top: 8px;
+          --md-icon-button-icon-color: var(--md-sys-color-outline-variant);
         }
 
         yp-user-with-organization {
