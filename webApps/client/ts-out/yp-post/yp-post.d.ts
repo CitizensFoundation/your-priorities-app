@@ -17,10 +17,15 @@ export declare class YpPost extends YpCollection {
     scrollToCollectionItemSubClass(): void;
     setupTheme(): void;
     static get styles(): (any[] | import("lit").CSSResult)[];
+    get leftArrowDisabled(): boolean;
+    get rightArrowDisabled(): boolean;
+    get bothArrowsDisabled(): boolean;
     renderPostStaticHeader(): TemplateResult<1>;
     renderPostHeader(): TemplateResult<1>;
     renderPostTabs(): TemplateResult<1>;
     renderCurrentPostTabPage(): TemplateResult | undefined;
+    goToPreviousPost(): void;
+    goToNextPost(): void;
     renderNavigationButtons(): TemplateResult<1>;
     render(): TemplateResult<1>;
     get tabDebateCount(): string;

@@ -211,6 +211,30 @@ export class YpPost extends YpCollection {
     ];
   }
 
+  get leftArrowDisabled() {
+    if (window.appGlobals.cache.getPreviousPostInGroupList(this.post!.group_id, this.post!.id)) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  get rightArrowDisabled() {
+    if (window.appGlobals.cache.getNextPostInGroupList(this.post!.group_id, this.post!.id)) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  get bothArrowsDisabled() {
+    if (this.leftArrowDisabled && this.rightArrowDisabled) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   renderPostStaticHeader() {
     return html`
       <yp-post-header
@@ -321,15 +345,56 @@ export class YpPost extends YpCollection {
     return page;
   }
 
+  goToPreviousPost() {
+    if (this.post) {
+      const previousPost = window.appGlobals.cache.getPreviousPostInGroupList(
+        this.post.group_id,
+        this.post.id
+      );
+      if (previousPost) {
+        const path = `/post/${previousPost.id}`;
+        window.app.setKeepOpenForPostsOn(path);
+        YpNavHelpers.redirectTo(path);
+        this.fireGlobal("yp-scroll-to-post-for-group-id", {
+          groupId: this.post.group_id,
+          postId: previousPost.id,
+        })
+      }
+    }
+  }
+
+  goToNextPost() {
+    if (this.post) {
+      const nextPost = window.appGlobals.cache.getNextPostInGroupList(
+        this.post.group_id,
+        this.post.id
+      );
+      if (nextPost) {
+        const path = `/post/${nextPost.id}`;
+        window.app.setKeepOpenForPostsOn(path);
+        YpNavHelpers.redirectTo(path);
+        this.fireGlobal("yp-scroll-to-post-for-group-id", {
+          groupId: this.post.group_id,
+          postId: nextPost.id,
+        })
+        debugger;
+      }
+    }
+  }
+
   renderNavigationButtons() {
     return html`
-      <div style="position: relative;">
+      <div style="position: relative;" ?hidden="${this.bothArrowsDisabled}">
         <md-filled-tonal-icon-button
+          ?disabled="${this.leftArrowDisabled}"
+          @click="${this.goToPreviousPost}"
           class="arrowNavigation leftArrowNavigationButton"
         >
           <md-icon>keyboard_arrow_left</md-icon>
         </md-filled-tonal-icon-button>
         <md-filled-tonal-icon-button
+          ?disabled="${this.rightArrowDisabled}"
+          @click="${this.goToNextPost}"
           class="arrowNavigation rightArrowNavigationButton"
         >
           <md-icon>keyboard_arrow_right</md-icon>

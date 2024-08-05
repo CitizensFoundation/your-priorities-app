@@ -69,7 +69,6 @@ let YpPostsList = class YpPostsList extends YpBaseElement {
           min-width: 952px !important;
         }
 
-
         yp-posts-filter {
           margin-bottom: 8px;
           margin-left: 8px;
@@ -361,10 +360,30 @@ let YpPostsList = class YpPostsList extends YpBaseElement {
             this._loadMoreData();
         }
     }
+    scrollToPostForGroupId(event) {
+        const groupId = event.detail.groupId;
+        const postId = event.detail.postId;
+        if (groupId && postId && this.group && this.group.id === groupId) {
+            const posts = window.appGlobals.cache.currentPostListForGroup[groupId];
+            if (posts) {
+                for (let i = 0; i < posts.length; i++) {
+                    if (posts[i].id == postId) {
+                        this.$$("#list").scrollToIndex(i);
+                        if (posts.length < i + 3) {
+                            console.error(`Loading more data for group ${groupId} to scroll to post ${postId} at index ${i} length ${posts.length}`);
+                            this._loadMoreData();
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+    }
     async connectedCallback() {
         super.connectedCallback();
         this.addListener("yp-filter-category-change", this._categoryChanged);
         this.addListener("yp-filter-changed", this._filterChanged);
+        this.addGlobalListener("yp-scroll-to-post-for-group-id", this.scrollToPostForGroupId.bind(this));
         this.addListener("refresh", this._refreshPost);
         if (this.posts) {
             if (window.appGlobals.cache.cachedPostItem !== undefined) {
@@ -382,6 +401,7 @@ let YpPostsList = class YpPostsList extends YpBaseElement {
         this.removeListener("yp-filter-category-change", this._categoryChanged);
         this.removeListener("yp-filter-changed", this._filterChanged);
         this.removeListener("refresh", this._refreshPost);
+        this.removeGlobalListener("yp-scroll-to-post-for-group-id", this.scrollToPostForGroupId.bind(this));
     }
     _selectedItemChanged(event) {
         const postCard = event.target;
@@ -621,6 +641,9 @@ let YpPostsList = class YpPostsList extends YpBaseElement {
                 }
                 if (postsInfo.posts.length == 0 && this.posts.length == 0) {
                     this.noPosts = true;
+                }
+                else {
+                    window.appGlobals.cache.setCurrentPostListForGroup(this.group.id, this.posts);
                 }
                 if (postsInfo.posts.length > 0) {
                     this.noPosts = false;

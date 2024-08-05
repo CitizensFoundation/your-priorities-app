@@ -39,6 +39,7 @@ export declare class YpPostsList extends YpBaseElement {
     scrollEvent(event: {
         last: number;
     }): void;
+    scrollToPostForGroupId(event: CustomEvent): void;
     connectedCallback(): Promise<void>;
     disconnectedCallback(): void;
     _selectedItemChanged(event: CustomEvent): void;

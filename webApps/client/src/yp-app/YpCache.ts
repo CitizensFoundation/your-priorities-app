@@ -15,6 +15,52 @@ export class YpCache extends YpCodeBase {
 
   postItemsCache: Record<number, YpPostData> = {};
 
+  currentPostListForGroup: Record<number, Array<YpPostData>> = {};
+
+  setCurrentPostListForGroup(groupId: number, posts: Array<YpPostData>) {
+    this.currentPostListForGroup[groupId] = posts;
+  }
+
+  getPostPositionInTheGroupList(groupId: number, postId: number) {
+    const posts = this.currentPostListForGroup[groupId];
+    if (posts) {
+      for (let i = 0; i < posts.length; i++) {
+        if (posts[i].id === postId) {
+          return i;
+        }
+      }
+    }
+    return -1;
+  }
+
+  getPreviousPostInGroupList(groupId: number, postId: number) {
+    const posts = this.currentPostListForGroup[groupId];
+    if (posts) {
+      for (let i = 0; i < posts.length; i++) {
+        if (posts[i].id === postId) {
+          if (i > 0) {
+            return posts[i - 1];
+          }
+        }
+      }
+    }
+    return undefined;
+  }
+
+  getNextPostInGroupList(groupId: number, postId: number) {
+    const posts = this.currentPostListForGroup[groupId];
+    if (posts) {
+      for (let i = 0; i < posts.length; i++) {
+        if (posts[i].id === postId) {
+          if (i < posts.length - 1) {
+            return posts[i + 1];
+          }
+        }
+      }
+    }
+    return undefined
+  }
+
   autoTranslateCache: Record<string, string[] | string> = {};
 
   addPostsToCacheLater(posts: Array<YpPostData>) {

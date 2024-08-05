@@ -7,6 +7,11 @@ export declare class YpCache extends YpCodeBase {
     communityItemsCache: Record<number, YpCommunityData>;
     groupItemsCache: Record<number, YpGroupData>;
     postItemsCache: Record<number, YpPostData>;
+    currentPostListForGroup: Record<number, Array<YpPostData>>;
+    setCurrentPostListForGroup(groupId: number, posts: Array<YpPostData>): void;
+    getPostPositionInTheGroupList(groupId: number, postId: number): number;
+    getPreviousPostInGroupList(groupId: number, postId: number): YpPostData | undefined;
+    getNextPostInGroupList(groupId: number, postId: number): YpPostData | undefined;
     autoTranslateCache: Record<string, string[] | string>;
     addPostsToCacheLater(posts: Array<YpPostData>): void;
     addPostsToCache(posts: Array<YpPostData>): void;

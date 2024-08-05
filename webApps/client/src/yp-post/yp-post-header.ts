@@ -374,7 +374,7 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
     return html`<div class="layout horizontal userInfo">
       <yp-user-with-organization
         class="userWithOrg"
-        hide-image
+        mediumImage
         .user="${this.post.User}"
       ></yp-user-with-organization>
     </div>`;

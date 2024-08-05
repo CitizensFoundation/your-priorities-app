@@ -352,7 +352,7 @@ let YpPostHeader = class YpPostHeader extends YpPostBaseWithAnswers(YpBaseElemen
         return html `<div class="layout horizontal userInfo">
       <yp-user-with-organization
         class="userWithOrg"
-        hide-image
+        mediumImage
         .user="${this.post.User}"
       ></yp-user-with-organization>
     </div>`;

@@ -19,7 +19,7 @@ export declare class PlausibleDatePicker extends PlausibleBaseElementWithState {
     static get styles(): import("lit").CSSResult[];
     updated(changedProperties: Map<string | number | symbol, unknown>): void;
     renderArrow(period: string, prevDate: string, nextDate: string): import("lit-html").TemplateResult<1>;
-    datePickerArrows(): typeof nothing | import("lit-html").TemplateResult<1>;
+    datePickerArrows(): import("lit-html").TemplateResult<1> | typeof nothing;
     handleKeydown(e: KeyboardEvent): boolean;
     handleClick(e: MouseEvent): void;
     setCustomDate(dates: string[]): void;
@@ -28,7 +28,7 @@ export declare class PlausibleDatePicker extends PlausibleBaseElementWithState {
     close(): void;
     openCalendar(): Promise<void>;
     renderLink(period: string, text: string, opts?: any): import("lit-html").TemplateResult<1>;
-    renderDropDownContent(): typeof nothing | import("lit-html").TemplateResult<1>;
+    renderDropDownContent(): import("lit-html").TemplateResult<1> | typeof nothing;
     renderPicker(): import("lit-html").TemplateResult<1>;
     render(): import("lit-html").TemplateResult<1>;
 }

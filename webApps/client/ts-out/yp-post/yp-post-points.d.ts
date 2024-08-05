@@ -63,8 +63,8 @@ export declare class YpPostPoints extends YpBaseElementWithLogin {
     _clearTextValueMobileUpOrDown(): void;
     updated(changedProperties: Map<string | number | symbol, unknown>): void;
     static get styles(): any[];
-    renderAudioUpload(type: string, hideAudio: boolean, hasCurrentAudio: string | undefined, uploadAudioPointHeader: string): typeof nothing | TemplateResult<1>;
-    renderVideoUpload(type: string, hideVideo: boolean, hasCurrentVideo: string | undefined, uploadVideoHeader: string, videoUploadedFunc: Function, uploadedVideoId: number | undefined): typeof nothing | TemplateResult<1>;
+    renderAudioUpload(type: string, hideAudio: boolean, hasCurrentAudio: string | undefined, uploadAudioPointHeader: string): TemplateResult<1> | typeof nothing;
+    renderVideoUpload(type: string, hideVideo: boolean, hasCurrentVideo: string | undefined, uploadVideoHeader: string, videoUploadedFunc: Function, uploadedVideoId: number | undefined): TemplateResult<1> | typeof nothing;
     renderMobilePointSelection(): void;
     renderPointItem(point: YpPointData, index: number): TemplateResult;
     renderHeaderIcon(headerTextType: string): TemplateResult<1>;
