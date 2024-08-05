@@ -14,7 +14,7 @@ export declare class YpSetVideoCover extends YpBaseElement {
     useMainPhotoForVideoCover: boolean;
     noDefaultCoverImage: boolean;
     static get styles(): any[];
-    render(): typeof nothing | import("lit-html").TemplateResult<1>;
+    render(): import("lit-html").TemplateResult<1> | typeof nothing;
     _classFromImageIndex(index: number): "selectedCover" | "coverImage";
     updated(changedProperties: Map<string | number | symbol, unknown>): void;
     _getVideoMeta(): Promise<void>;

@@ -14,6 +14,7 @@ let YpPointActions = class YpPointActions extends YpBaseElement {
         super(...arguments);
         this.hideNotHelpful = false;
         this.isUpVoted = false;
+        this.isDownVoted = false;
         this.allDisabled = false;
         this.hideSharing = false;
     }
@@ -29,6 +30,14 @@ let YpPointActions = class YpPointActions extends YpBaseElement {
           font-size: 12px;
           padding-top: 12px;
           padding-left: 6px;
+        }
+
+        md-icon-button[down-voted] {
+          --md-sys-color-primary: var(--yp-sys-color-down);
+        }
+
+        md-icon-button[up-voted] {
+          --md-sys-color-primary: var(--yp-sys-color-up);
         }
 
         .action-up {
@@ -94,6 +103,7 @@ let YpPointActions = class YpPointActions extends YpBaseElement {
                 : false}"
                 .label="${this.t("point.helpful")}"
                 ?disabled="${this.allDisabled}"
+                up-voted="${this.isUpVoted}"
                 icon="arrow_upward"
                 class="point-up-vote-icon myButton"
                 @click="${this.pointHelpful}"
@@ -110,6 +120,7 @@ let YpPointActions = class YpPointActions extends YpBaseElement {
                 ? this.pointQualityValue < 0
                 : false}"
                 .label="${this.t("point.not_helpful")}"
+                down-voted="${this.isDownVoted}"
                 ?disabled="${this.allDisabled}"
                 icon="arrow_downward"
                 class="point-down-vote-icon myButton"
@@ -138,6 +149,10 @@ let YpPointActions = class YpPointActions extends YpBaseElement {
         super.disconnectedCallback();
         this.removeGlobalListener("yp-got-endorsements-and-qualities", this._updateQualitiesFromSignal.bind(this));
     }
+    firstUpdated(_changedProperties) {
+        super.firstUpdated(_changedProperties);
+        this._updateQualities();
+    }
     get masterHideSharing() {
         return (this.hideSharing || (this.configuration && this.configuration.hideSharing));
     }
@@ -158,6 +173,7 @@ let YpPointActions = class YpPointActions extends YpBaseElement {
         }
         else {
             this.isUpVoted = false;
+            this.isDownVoted = false;
         }
     }
     _updateQualitiesFromSignal() {
@@ -169,20 +185,27 @@ let YpPointActions = class YpPointActions extends YpBaseElement {
             window.appUser.loggedIn() &&
             window.appUser.user &&
             window.appUser.user.PointQualities) {
+            this.isUpVoted = false;
+            this.isDownVoted = false;
             const thisPointQuality = window.appUser.pointQualitiesIndex[this.point.id];
             if (thisPointQuality) {
                 this._setPointQuality(thisPointQuality.value);
                 if (thisPointQuality.value > 0) {
                     this.isUpVoted = true;
                 }
+                else if (thisPointQuality.value < 0) {
+                    this.isDownVoted = true;
+                }
             }
             else {
                 this.isUpVoted = false;
+                this.isDownVoted = false;
                 this._setPointQuality(undefined);
             }
         }
         else {
             this.isUpVoted = false;
+            this.isDownVoted = false;
             this._setPointQuality(undefined);
         }
     }
@@ -250,6 +273,7 @@ let YpPointActions = class YpPointActions extends YpBaseElement {
             this.point.counter_quality_up = this.point.counter_quality_up + 1;
         else if (pointQuality.value < 0)
             this.point.counter_quality_down = this.point.counter_quality_down + 1;
+        this.fire("changed");
         this.requestUpdate();
     }
     generatePointQualityFromLogin(value) {
@@ -267,6 +291,7 @@ let YpPointActions = class YpPointActions extends YpBaseElement {
     pointNotHelpful() {
         this.allDisabled = true;
         window.appGlobals.activity("clicked", "pointNotHelpful", this.point.id);
+        this.isDownVoted = true;
         this.generatePointQuality(-1);
         this.requestUpdate;
     }
@@ -280,6 +305,9 @@ __decorate([
 __decorate([
     property({ type: Boolean })
 ], YpPointActions.prototype, "isUpVoted", void 0);
+__decorate([
+    property({ type: Boolean })
+], YpPointActions.prototype, "isDownVoted", void 0);
 __decorate([
     property({ type: Boolean })
 ], YpPointActions.prototype, "allDisabled", void 0);

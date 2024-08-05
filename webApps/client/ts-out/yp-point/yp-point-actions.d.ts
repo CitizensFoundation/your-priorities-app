@@ -1,19 +1,21 @@
-import { nothing } from "lit";
+import { nothing, PropertyValues } from "lit";
 import "@material/web/iconbutton/outlined-icon-button.js";
 import { YpBaseElement } from "../common/yp-base-element.js";
 export declare class YpPointActions extends YpBaseElement {
     point: YpPointData | undefined;
     hideNotHelpful: boolean;
     isUpVoted: boolean;
+    isDownVoted: boolean;
     allDisabled: boolean;
     hideSharing: boolean;
     configuration: YpGroupConfiguration | undefined;
     pointQualityValue: number | undefined;
     pointUrl: string | undefined;
     static get styles(): any[];
-    render(): typeof nothing | import("lit-html").TemplateResult<1>;
+    render(): import("lit-html").TemplateResult<1> | typeof nothing;
     connectedCallback(): void;
     disconnectedCallback(): void;
+    protected firstUpdated(_changedProperties: PropertyValues): void;
     get masterHideSharing(): boolean | undefined;
     _sharedContent(event: CustomEvent): void;
     _shareTap(event: CustomEvent): void;

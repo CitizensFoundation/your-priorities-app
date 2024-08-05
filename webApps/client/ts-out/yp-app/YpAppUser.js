@@ -576,6 +576,10 @@ export class YpAppUser extends YpCodeBase {
                         break;
                     }
                 }
+                if (!hasChanged && newPointQuality) {
+                    this.user.PointQualities.push(newPointQuality);
+                    hasChanged = true;
+                }
                 if (hasChanged)
                     this._updatePointQualitiesIndex(this.user);
             }
