@@ -197,11 +197,6 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
           padding-top: 4px;
         }
 
-        .point .main-container .topContainer {
-          background-color: var(--md-sys-color-secondary-container);
-          color: var(--md-sys-color-on-secondary-container);
-        }
-
         .penContainer {
           margin-top: 42px;
         }
@@ -530,6 +525,7 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
               @blur="${this.blurOutlinedTextField}"
               .label="${label ? label : ""}"
               charCounter
+              hasTrailingIcon
               type="textarea"
               rows="4"
               @keyup="${() => {
@@ -539,21 +535,14 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
               maxrows="4"
               .maxLength="${this.pointMaxLength}"
             >
+              <yp-emoji-selector
+                slot="trailing-icon"
+                id="point${type}EmojiSelector"
+                ?hidden="${hideText || this.post.Group.configuration.hideEmoji}"
+              ></yp-emoji-selector>
             </md-outlined-text-field>
 
             ${mobile ? this.renderMobilePointSelection() : nothing}
-
-            <div
-              class="layout horizontal end"
-              ?rtl="${this.rtl}"
-              ?hidden="${this.post.Group.configuration.hideEmoji}"
-            >
-              <div class="flex"></div>
-              <yp-emoji-selector
-                id="point${type}EmojiSelector"
-                ?hidden="${hideText}"
-              ></yp-emoji-selector>
-            </div>
 
             <div class="layout horizontal center-justified">
               ${this.renderVideoUpload(type, hideVideo, hasCurrentVideo, uploadVideoHeader, videoUploadedFunc, uploadedVideoId)}
@@ -636,8 +625,8 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
     renderPointInfo() {
         return html `
       <div class="pointInfo">
-        ${this.t('upvote')} <md-icon class="pointInfoIcon">arrow_upward</md-icon> ${this.t('orDownvote')}
-        <md-icon class="pointInfoIcon">arrow_downward</md-icon> ${this.t('pointsByPressingTheArrows')}
+        ${this.t("upvote")}
+        <md-icon class="pointInfoIcon">arrow_upward</md-icon> ${this.t("orDownvote")} <md-icon class="pointInfoIcon">arrow_downward</md-icon> ${this.t("pointsByPressingTheArrows")}
       </div>
     `;
     }

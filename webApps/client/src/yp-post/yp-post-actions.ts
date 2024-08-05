@@ -155,6 +155,8 @@ export class YpPostActions extends YpBaseElement {
           --md-sys-color-primary: var(--md-sys-color-primary-container);
           --md-sys-color-on-primary: var(--md-sys-color-on-primary-container);
           --md-filled-icon-button-toggle-icon-color: var(--md-sys-color-on-primary-container);
+          --md-filled-icon-button-toggle-focus-icon-color: var(--md-sys-color-on-primary-container);
+          --md-filled-icon-button-toggle-pressed-icon-color: var(--md-sys-color-on-primary-container);
           --md-filled-icon-button-toggle-hover-icon-color: var(--md-sys-color-on-primary-container);
         }
 

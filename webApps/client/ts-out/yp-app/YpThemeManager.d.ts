@@ -35,6 +35,7 @@ export declare class YpThemeManager {
     updateBrowserThemeColor(): void;
     updateLiveFromConfiguration(theme: YpThemeConfiguration): void;
     themeChanged(target?: HTMLElement | undefined): void;
+    intToHex(colorInt: number): string;
     getHexColor(color: string | undefined): string;
 }
 //# sourceMappingURL=YpThemeManager.d.ts.map

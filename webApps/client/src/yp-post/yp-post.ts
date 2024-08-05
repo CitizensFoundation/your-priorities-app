@@ -147,7 +147,7 @@ export class YpPost extends YpCollection {
           --md-filled-tonal-icon-button-container-height: 64px;
           --md-filled-tonal-icon-button-icon-size: 48px;
           position: fixed;
-          top: 37%;
+          top: 500px;
           transform: translateY(-50%);
           z-index: 20;
         }
@@ -159,6 +159,7 @@ export class YpPost extends YpCollection {
         .rightArrowNavigationButton {
           right: calc(50% - (940px / 2) - 80px);
         }
+
         md-tabs {
           margin-top: 64px;
           min-width: 90%;

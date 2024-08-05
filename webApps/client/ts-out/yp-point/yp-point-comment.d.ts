@@ -11,7 +11,7 @@ export declare class YpPointComment extends YpBaseElementWithLogin {
     hideUser: boolean;
     updated(changedProperties: Map<string | number | symbol, unknown>): void;
     static get styles(): any[];
-    render(): import("lit-html").TemplateResult<1> | typeof nothing;
+    render(): typeof nothing | import("lit-html").TemplateResult<1>;
     connectedCallback(): void;
     disconnectedCallback(): void;
     _deletePoint(): void;

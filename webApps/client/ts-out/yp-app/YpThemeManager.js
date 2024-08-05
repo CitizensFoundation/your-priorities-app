@@ -503,8 +503,50 @@ export class YpThemeManager {
                 },
             ]);
             //console.error(JSON.stringify(customColors, null, 2));
+            if (customColors.customColors) {
+                let colorUp, onColorUp, colorContainerUp, onColorContainerUp, colorDown, onColorDown, colorContainerDown, onColorContainerDown;
+                if (isDark) {
+                    colorUp = customColors.customColors[0].dark.color;
+                    onColorUp = customColors.customColors[0].dark.onColor;
+                    colorContainerUp = customColors.customColors[0].dark.colorContainer;
+                    onColorContainerUp = customColors.customColors[0].dark.onColorContainer;
+                    colorDown = customColors.customColors[1].dark.color;
+                    onColorDown = customColors.customColors[1].dark.onColor;
+                    colorContainerDown = customColors.customColors[1].dark.colorContainer;
+                    onColorContainerDown = customColors.customColors[1].dark.onColorContainer;
+                }
+                else {
+                    colorUp = customColors.customColors[0].light.color;
+                    onColorUp = customColors.customColors[0].light.onColor;
+                    colorContainerUp = customColors.customColors[0].light.colorContainer;
+                    onColorContainerUp = customColors.customColors[0].light.onColorContainer;
+                    colorDown = customColors.customColors[1].light.color;
+                    onColorDown = customColors.customColors[1].light.onColor;
+                    colorContainerDown = customColors.customColors[1].light.colorContainer;
+                    onColorContainerDown = customColors.customColors[1].light.onColorContainer;
+                }
+                document.documentElement.style.setProperty('--yp-sys-color-up', this.intToHex(colorUp));
+                document.documentElement.style.setProperty('--yp-sys-color-up-on', this.intToHex(onColorUp));
+                document.documentElement.style.setProperty('--yp-sys-color-container-up', this.intToHex(colorContainerUp));
+                document.documentElement.style.setProperty('--yp-sys-color-container-up-on', this.intToHex(onColorContainerUp));
+                document.documentElement.style.setProperty('--yp-sys-color-down', this.intToHex(colorDown));
+                document.documentElement.style.setProperty('--yp-sys-color-down-on', this.intToHex(onColorDown));
+                document.documentElement.style.setProperty('--yp-sys-color-container-down', this.intToHex(colorContainerDown));
+                document.documentElement.style.setProperty('--yp-sys-color-container-down-on', this.intToHex(onColorContainerDown));
+            }
             applyThemeWithContrast(document, themeCss);
         }
+    }
+    intToHex(colorInt) {
+        // Convert to hex, pad with zeros, and remove '0x' prefix
+        const hex = colorInt.toString(16).padStart(8, '0');
+        // Extract ARGB components
+        const alpha = hex.slice(0, 2);
+        const red = hex.slice(2, 4);
+        const green = hex.slice(4, 6);
+        const blue = hex.slice(6, 8);
+        // Return hex color code (with or without alpha)
+        return `#${red}${green}${blue}`;
     }
     getHexColor(color) {
         if (color) {
