@@ -14,6 +14,7 @@ let YpUserImage = class YpUserImage extends YpBaseElement {
         super(...arguments);
         this.veryLarge = false;
         this.large = false;
+        this.medium = false;
         this.noDefault = false;
         this.noProfileImage = false;
     }
@@ -38,14 +39,14 @@ let YpUserImage = class YpUserImage extends YpBaseElement {
           width: 90px;
         }
 
+        .medium {
+          height: 40px;
+          width: 40px;
+        }
+
         .veryLarge {
           height: 200px;
           width: 200px;
-        }
-
-        .medium {
-          height: 48px;
-          width: 48px;
         }
 
         .rounded {
@@ -166,7 +167,9 @@ let YpUserImage = class YpUserImage extends YpBaseElement {
     }
     get computeClass() {
         //TODO: Add back very-large if needed
-        if (!this.large && !this.veryLarge)
+        if (this.medium)
+            return "medium rounded";
+        else if (!this.large && !this.veryLarge)
             return 'small rounded';
         else if (this.large)
             return 'large rounded-more';
@@ -190,6 +193,9 @@ __decorate([
 __decorate([
     property({ type: Boolean })
 ], YpUserImage.prototype, "large", void 0);
+__decorate([
+    property({ type: Boolean })
+], YpUserImage.prototype, "medium", void 0);
 __decorate([
     property({ type: String })
 ], YpUserImage.prototype, "titleFromUser", void 0);

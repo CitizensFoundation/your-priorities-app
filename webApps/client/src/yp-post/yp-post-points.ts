@@ -255,6 +255,32 @@ export class YpPostPoints extends YpBaseElementWithLogin {
           display: block;
         }
 
+        .happyFace {
+          color: var(--yp-sys-color-up);
+          --md-icon-size: 48px;
+          margin-right: 16px;
+          margin-top: -6px;
+          margin-left: -4px;
+        }
+
+        .sadFace {
+          color: var(--yp-sys-color-down);
+          --md-icon-size: 48px;
+          margin-right: 16px;
+          margin-top: -6px;
+          margin-left: -4px;
+        }
+
+        yp-user-image {
+          margin-right: 16px;
+        }
+
+        .topContainer {
+        }
+
+        .main-container {
+        }
+
         .processBar {
           height: 4px;
           margin: 0;
@@ -266,6 +292,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
           font-size: 17px;
           font-weight: 400;
           margin-top: 32px;
+          margin-bottom: 32px;
         }
 
         .pointInfoIcon {
@@ -275,56 +302,29 @@ export class YpPostPoints extends YpBaseElementWithLogin {
           padding-right: 4px;
         }
 
-        .main-container {
-          margin-top: 24px;
-          border-radius: 32px;
-        }
-
         .point {
-          padding-top: 16px;
-          padding-bottom: 32px;
-          padding-left: 24px;
-          padding-right: 24px;
+          max-width: 420px;
+          margin-right: 32px;
+          margin-left: 32px;
         }
 
         .pointInputMaterial {
-          padding-top: 24px;
-          padding-left: 16px;
-          padding-right: 16px;
-          padding-bottom: 0;
-          margin-bottom: 16px;
-          border-radius: 16px;
-          max-width: 396px;
-          background-color: var(--md-sys-color-surface-container-lowest);
         }
 
         yp-point {
-          padding-top: 8px;
         }
 
         .pointMaterial {
-          padding-top: 8px;
-          padding-left: 0;
-          padding-right: 0;
-          width: 430px;
-          margin-bottom: 12px;
         }
 
         .thumbIcon {
-          height: 64px;
-          width: 64px;
-          padding-bottom: 16px;
         }
 
         .editIcon {
-          height: 28px;
-          width: 28px;
-          padding-bottom: 16px;
         }
 
         .addPointFab {
           width: 100%;
-          margin-bottom: 18px;
         }
 
         md-outlined-text-field {
@@ -343,8 +343,6 @@ export class YpPostPoints extends YpBaseElementWithLogin {
         }
 
         #pointUpOrDownMaterial {
-          margin-top: 16px;
-          width: 100%;
         }
 
         .mobileFab {
@@ -400,8 +398,10 @@ export class YpPostPoints extends YpBaseElementWithLogin {
 
         .pointMainHeader {
           font-size: 22px;
-          margin-bottom: 8px;
-          margin-top: 16px;
+          font-weight: 700;
+          font-family: var(--md-ref-typeface-brand);
+          margin-top: 32px;
+          margin-bottom: 32px;
         }
 
         @media (max-width: 420px) {
@@ -629,23 +629,33 @@ export class YpPostPoints extends YpBaseElementWithLogin {
     </div>`;
   }
 
+  renderHeaderIcon(headerTextType: string) {
+    if (headerTextType == "alternativePointForHeader") {
+      return html` <md-icon class="happyFace">sentiment_satisfied</md-icon> `;
+    } else {
+      return html` <md-icon class="sadFace">sentiment_dissatisfied</md-icon> `;
+    }
+  }
+
   renderPointHeader(
     header: string,
     alternativeHeader: string | undefined,
-    headerTextType: string
+    headerTextType: string,
+    pointsLength: number
   ) {
     return !alternativeHeader
       ? html`
           <div
-            class="pointMainHeader layout horizontal center-center"
+            class="pointMainHeader layout horizontal"
             role="heading"
             aria-level="2"
           >
-            ${header}
+            ${this.renderHeaderIcon(headerTextType)} ${header} (${pointsLength})
           </div>
         `
       : html`
-          <div class="pointMainHeader layout horizontal center-center">
+          <div class="pointMainHeader layout horizontal">
+            ${this.renderHeaderIcon(headerTextType)}
             <yp-magic-text
               .contentId="${this.post.Group.id}"
               textOnly
@@ -654,6 +664,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
               role="heading"
               aria-level="2"
               class="ratingName"
+              .postfixText=" (${pointsLength})"
               textType="${headerTextType}"
             >
             </yp-magic-text>
@@ -689,7 +700,12 @@ export class YpPostPoints extends YpBaseElementWithLogin {
     } else {
       return html`
         <div class="point">
-          ${this.renderPointHeader(header, alternativeHeader, headerTextType)}
+          ${this.renderPointHeader(
+            header,
+            alternativeHeader,
+            headerTextType,
+            points ? points.length : 0
+          )}
 
           <div
             id="point${type}Material"
@@ -697,28 +713,38 @@ export class YpPostPoints extends YpBaseElementWithLogin {
                     layout vertical"
             ?hidden="${this.post.Group.configuration.disableDebate}"
           >
-            <md-outlined-text-field
-              id="${type.toLowerCase()}_point"
-              @focus="${pointFocusFunction}"
-              @blur="${this.blurOutlinedTextField}"
-              .label="${label ? label : ""}"
-              charCounter
-              hasTrailingIcon
-              type="textarea"
-              rows="4"
-              @keyup="${() => {
-                this.requestUpdate();
-              }}"
-              ?hidden="${hideText}"
-              maxrows="4"
-              .maxLength="${this.pointMaxLength}"
-            >
-              <yp-emoji-selector
-                slot="trailing-icon"
-                id="point${type}EmojiSelector"
-                ?hidden="${hideText || this.post.Group.configuration.hideEmoji}"
-              ></yp-emoji-selector>
-            </md-outlined-text-field>
+            <div class="layout horizontal">
+              ${window.appUser.user
+                ? html`<yp-user-image
+                     medium
+                    .user="${window.appUser.user}"
+                  ></yp-user-image>`
+                : nothing}
+
+              <md-filled-text-field
+                id="${type.toLowerCase()}_point"
+                @focus="${pointFocusFunction}"
+                @blur="${this.blurOutlinedTextField}"
+                .label="${label ? label : ""}"
+                charCounter
+                hasTrailingIcon
+                type="textarea"
+                rows="4"
+                @keyup="${() => {
+                  this.requestUpdate();
+                }}"
+                ?hidden="${hideText}"
+                maxrows="4"
+                .maxLength="${this.pointMaxLength}"
+              >
+                <yp-emoji-selector
+                  slot="trailing-icon"
+                  id="point${type}EmojiSelector"
+                  ?hidden="${hideText ||
+                  this.post.Group.configuration.hideEmoji}"
+                ></yp-emoji-selector>
+              </md-filled-text-field>
+            </div>
 
             ${mobile ? this.renderMobilePointSelection() : nothing}
 
@@ -817,13 +843,15 @@ export class YpPostPoints extends YpBaseElementWithLogin {
 
   renderPointInfo() {
     return html`
-      <div class="pointInfo">
-        ${this.t("upvote")}
-        <md-icon class="pointInfoIcon">arrow_upward</md-icon> ${this.t(
-          "orDownvote"
-        )} <md-icon class="pointInfoIcon">arrow_downward</md-icon> ${this.t(
-          "pointsByPressingTheArrows"
-        )}
+      <div class="pointInfo layout vertical center-center">
+        <div>
+          ${this.t("upvote")}
+          <md-icon class="pointInfoIcon">arrow_upward</md-icon> ${this.t(
+            "orDownvote"
+          )} <md-icon class="pointInfoIcon">arrow_downward</md-icon> ${this.t(
+            "pointsByPressingTheArrows"
+          )}
+        </div>
       </div>
     `;
   }
@@ -839,10 +867,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
 
       ${this.wideReady
         ? html`
-            <div
-              ?rtl="${this.rtl}"
-              class="layout vertical topContainer center-center"
-            >
+            <div ?rtl="${this.rtl}" class="layout vertical topContainer">
               ${this.renderPointInfo()}
               <div class="main-container layout horizontal">
                 ${this.renderPointList(

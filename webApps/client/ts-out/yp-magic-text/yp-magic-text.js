@@ -15,6 +15,7 @@ import "@material/web/button/filled-tonal-button.js";
 let YpMagicText = YpMagicText_1 = class YpMagicText extends YpBaseElement {
     constructor() {
         super(...arguments);
+        this.postfixText = "";
         this.unsafeHtml = false;
         this.autoTranslate = false;
         this.textOnly = false;
@@ -91,10 +92,10 @@ let YpMagicText = YpMagicText_1 = class YpMagicText extends YpBaseElement {
         ?more-text="${this.showMoreText}"
       >
         ${this.finalContent
-            ? html ` <div>${unsafeHTML(this.finalContent)}</div> `
+            ? html ` <div>${unsafeHTML(`${this.finalContent}${this.postfixText}`)}</div> `
             : this.unsafeHtml
-                ? html ` <div>${unsafeHTML(this.truncatedContent)}</div> `
-                : html ` <div>${this.truncatedContent}</div> `}
+                ? html ` <div>${unsafeHTML(`${this.truncatedContent}${this.postfixText}`)}</div> `
+                : html ` <div>${this.truncatedContent}${this.postfixText}</div> `}
         ${this.showMoreText && this.moreText
             ? html `<div class="layout vertical center-center">
               <md-filled-tonal-button
@@ -441,6 +442,9 @@ __decorate([
 __decorate([
     property({ type: String })
 ], YpMagicText.prototype, "truncatedContent", void 0);
+__decorate([
+    property({ type: String })
+], YpMagicText.prototype, "postfixText", void 0);
 __decorate([
     property({ type: Number })
 ], YpMagicText.prototype, "contentId", void 0);

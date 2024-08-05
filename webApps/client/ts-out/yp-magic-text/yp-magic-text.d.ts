@@ -4,6 +4,7 @@ import "@material/web/button/filled-tonal-button.js";
 export declare class YpMagicText extends YpBaseElement {
     content: string | undefined;
     truncatedContent: string | undefined;
+    postfixText: string;
     contentId: number | undefined;
     extraId: number | undefined;
     additionalId: number | undefined;

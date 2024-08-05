@@ -19,6 +19,9 @@ export class YpMagicText extends YpBaseElement {
   @property({ type: String })
   truncatedContent: string | undefined;
 
+  @property({ type: String })
+  postfixText = "";
+
   @property({ type: Number })
   contentId: number | undefined;
 
@@ -158,10 +161,10 @@ export class YpMagicText extends YpBaseElement {
         ?more-text="${this.showMoreText}"
       >
         ${this.finalContent
-          ? html` <div>${unsafeHTML(this.finalContent)}</div> `
+          ? html` <div>${unsafeHTML(`${this.finalContent}${this.postfixText}`)}</div> `
           : this.unsafeHtml
-          ? html` <div>${unsafeHTML(this.truncatedContent)}</div> `
-          : html` <div>${this.truncatedContent}</div> `}
+          ? html` <div>${unsafeHTML(`${this.truncatedContent}${this.postfixText}`)}</div> `
+          : html` <div>${this.truncatedContent}${this.postfixText}</div> `}
         ${this.showMoreText && this.moreText
           ? html`<div class="layout vertical center-center">
               <md-filled-tonal-button
