@@ -4,9 +4,11 @@ import "@material/web/progress/circular-progress.js";
 import "@material/web/progress/linear-progress.js";
 import "@material/web/menu/menu.js";
 import "@material/web/menu/menu-item.js";
+import "@trystan2k/fleshy-jsoneditor/fleshy-jsoneditor.js";
 import { PsServerApi } from "./PsServerApi.js";
 import { PsOperationsBaseNode } from "./ps-operations-base-node.js";
 import { MdMenu } from "@material/web/menu/menu.js";
+import { MdDialog } from "@material/web/dialog/dialog.js";
 export declare class PsAgentNode extends PsOperationsBaseNode {
     agent: PsAgentAttributes;
     agentId: number;
@@ -16,8 +18,10 @@ export declare class PsAgentNode extends PsOperationsBaseNode {
     private latestMessage;
     private progress;
     private menuOpen;
+    private agentMemory;
     menuAnchor: HTMLElement;
     agentMenu: MdMenu;
+    memoryDialog: MdDialog;
     api: PsServerApi;
     private statusInterval;
     constructor();
@@ -25,6 +29,8 @@ export declare class PsAgentNode extends PsOperationsBaseNode {
     connectedCallback(): void;
     disconnectedCallback(): void;
     toggleMenu(e: Event): void;
+    fetchAgentMemory(): Promise<void>;
+    openMemoryDialog(): void;
     addInputConnector(): void;
     addOutputConnector(): void;
     startStatusUpdates(): void;
@@ -34,9 +40,10 @@ export declare class PsAgentNode extends PsOperationsBaseNode {
     pauseAgent(): Promise<void>;
     stopAgent(): Promise<void>;
     editNode(): void;
+    renderMemoryDialog(): import("lit-html").TemplateResult<1>;
     renderActionButtons(): import("lit-html").TemplateResult<1>;
     renderProgress(): import("lit-html").TemplateResult<1>;
-    render(): typeof nothing | import("lit-html").TemplateResult<1>;
+    render(): import("lit-html").TemplateResult<1> | typeof nothing;
     static get styles(): (any[] | import("lit").CSSResult)[];
 }
 //# sourceMappingURL=ps-agent-node.d.ts.map

@@ -8,6 +8,11 @@ export class PsServerApi extends YpServerApiBase {
     async getAgent(groupId) {
         return (await this.fetchWrapper(this.baseUrlPath + `${this.baseAgentsPath}${groupId}`, {}, false));
     }
+    async getAgentMemory(groupId, agentId) {
+        return this.fetchWrapper(this.baseUrlPath + `${this.baseAgentsPath}${groupId}/${agentId}/memory`, {
+            method: 'GET',
+        }, false);
+    }
     async removeAgentAiModel(groupId, agentId, modelId) {
         return this.fetchWrapper(`${this.baseUrlPath}/agents/${groupId}/${agentId}/ai-models/${modelId}`, {
             method: 'DELETE',

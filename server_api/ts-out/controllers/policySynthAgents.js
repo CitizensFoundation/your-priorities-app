@@ -55,6 +55,38 @@ export class PolicySynthAgentsController {
                 process.exit(1);
             }
         };
+        this.getAgentMemory = async (req, res) => {
+            try {
+                const { groupId, agentId } = req.params;
+                console.log(`Attempting to get memory for agent ${agentId} in group ${groupId}`);
+                // Get the memory key for the specified agent
+                const memoryKey = await this.agentManager.getSubAgentMemoryKey(groupId, parseInt(agentId));
+                if (!memoryKey) {
+                    console.log(`Memory key not found for agent ${agentId}`);
+                    return res.status(404).json({ error: "Memory key not found for the specified agent" });
+                }
+                console.log(`Memory key found: ${memoryKey}`);
+                // Use the Redis client to get the memory contents
+                const memoryContents = await req.redisClient.get(memoryKey);
+                if (!memoryContents) {
+                    console.log(`Memory contents not found for key ${memoryKey}`);
+                    return res.status(404).json({ error: "Memory contents not found" });
+                }
+                console.log(`Memory contents retrieved successfully`);
+                // Parse the memory contents (assuming it's stored as JSON)
+                const parsedMemoryContents = JSON.parse(memoryContents);
+                res.json(parsedMemoryContents);
+            }
+            catch (error) {
+                console.error("Error retrieving agent memory:", error);
+                if (error instanceof Error) {
+                    res.status(500).json({ error: error.message });
+                }
+                else {
+                    res.status(500).json({ error: "An unexpected error occurred" });
+                }
+            }
+        };
         this.getAgent = async (req, res) => {
             try {
                 const agent = await this.agentManager.getAgent(req.params.groupId);
@@ -430,6 +462,7 @@ export class PolicySynthAgentsController {
         this.router.get("/:groupId/:id/ai-models", auth.can("view group"), this.getAgentAiModels);
         this.router.delete("/:groupId/:agentId/ai-models/:modelId", auth.can("edit group"), this.removeAgentAiModel);
         this.router.post("/:groupId/:agentId/ai-models", auth.can("edit group"), this.addAgentAiModel);
+        this.router.get("/:groupId/:agentId/memory", auth.can("view group"), this.getAgentMemory);
     }
 }
 _a = PolicySynthAgentsController;

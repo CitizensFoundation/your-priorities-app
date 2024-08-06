@@ -6,10 +6,12 @@ import "@material/web/progress/circular-progress.js";
 import "@material/web/progress/linear-progress.js";
 import "@material/web/menu/menu.js";
 import "@material/web/menu/menu-item.js";
+import "@trystan2k/fleshy-jsoneditor/fleshy-jsoneditor.js";
 
 import { PsServerApi } from "./PsServerApi.js";
 import { PsOperationsBaseNode } from "./ps-operations-base-node.js";
 import { MdMenu } from "@material/web/menu/menu.js";
+import { MdDialog } from "@material/web/dialog/dialog.js";
 
 @customElement("ps-agent-node")
 export class PsAgentNode extends PsOperationsBaseNode {
@@ -36,11 +38,17 @@ export class PsAgentNode extends PsOperationsBaseNode {
   @state()
   private menuOpen = false;
 
+  @state()
+  private agentMemory: object | null = null;
+
   @query("#menuAnchor")
   menuAnchor!: HTMLElement;
 
   @query("#agentMenu")
   agentMenu!: MdMenu;
+
+  @query("#memoryDialog")
+  memoryDialog!: MdDialog;
 
   override api: PsServerApi;
   private statusInterval: number | undefined;
@@ -72,6 +80,24 @@ export class PsAgentNode extends PsOperationsBaseNode {
     if (this.agentMenu) {
       this.agentMenu.open = !this.agentMenu.open;
     }
+  }
+
+  async fetchAgentMemory() {
+    try {
+      const memory = await this.api.getAgentMemory(this.groupId, this.agent.id);
+      this.agentMemory = memory;
+      if (!this.agentMemory) {
+        this.agentMemory = { error: "No memory available" };
+      }
+    } catch (error) {
+      console.error("Error fetching agent memory:", error);
+      this.agentMemory = { error: "Failed to fetch agent memory" };
+    }
+  }
+
+  openMemoryDialog() {
+    this.fetchAgentMemory();
+    this.memoryDialog.show();
   }
 
   addInputConnector() {
@@ -121,7 +147,7 @@ export class PsAgentNode extends PsOperationsBaseNode {
         this.requestUpdate();
         this.fire("get-costs");
 
-        if (this.agentState ==="running") {
+        if (this.agentState === "running") {
           this.running = true;
         } else {
           this.running = false;
@@ -171,6 +197,31 @@ export class PsAgentNode extends PsOperationsBaseNode {
       nodeId: this.nodeId,
       element: this.agent,
     });
+  }
+
+  renderMemoryDialog() {
+    return html`
+      <md-dialog id="memoryDialog" style="width: 90vw;height:90vh;">
+        <div slot="headline">${this.t("agentMemoryExplorer")}</div>
+        <div slot="content">
+          ${this.agentMemory && !(this.agentMemory as any).error
+            ? html`
+                <fleshy-jsoneditor
+                  .content=${JSON.stringify(this.agentMemory, null, 2)}
+                  mode="view"
+                ></fleshy-jsoneditor>
+              `
+            : this.agentMemory && (this.agentMemory as any).error
+            ? html`${(this.agentMemory as any).error}`
+            : html`<md-linear-progress indeterminate></md-linear-progress>`}
+        </div>
+        <div slot="actions">
+          <md-text-button @click=${() => this.memoryDialog.close()}>
+            ${this.t("close")}
+          </md-text-button>
+        </div>
+      </md-dialog>
+    `;
   }
 
   renderActionButtons() {
@@ -242,6 +293,9 @@ export class PsAgentNode extends PsOperationsBaseNode {
             <md-menu-item @click="${this.addOutputConnector}">
               <div slot="headline">Add Output Connector</div>
             </md-menu-item>
+            <md-menu-item @click="${this.openMemoryDialog}">
+              <div slot="headline">Explore Memory</div>
+            </md-menu-item>
           </md-menu>
 
           ${this.renderActionButtons()}
@@ -251,6 +305,7 @@ export class PsAgentNode extends PsOperationsBaseNode {
           </md-icon-button>
         </div>
       </div>
+      ${this.renderMemoryDialog()}
     `;
   }
 

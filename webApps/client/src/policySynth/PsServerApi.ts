@@ -16,6 +16,16 @@ export class PsServerApi extends YpServerApiBase {
     )) as unknown as PsAgentAttributes;
   }
 
+  public async getAgentMemory(groupId: number, agentId: number): Promise<object> {
+    return this.fetchWrapper(
+      this.baseUrlPath + `${this.baseAgentsPath}${groupId}/${agentId}/memory`,
+      {
+        method: 'GET',
+      },
+      false
+    ) as Promise<object>;
+  }
+
   public async removeAgentAiModel(
     groupId: number,
     agentId: number,
