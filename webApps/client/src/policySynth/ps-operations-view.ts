@@ -30,6 +30,9 @@ export class PsOperationsView extends PsBaseWithRunningAgentObserver {
   @property({ type: Object })
   group!: YpGroupData;
 
+  @property({ type: Object })
+  connectorRegistry: { [key: number]: PsAgentConnectorAttributes } = {};
+
   private graph!: dia.Graph;
   private paper!: dia.Paper;
   private elements: { [key: string]: dia.Element } = {};

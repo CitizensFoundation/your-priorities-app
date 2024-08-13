@@ -35,6 +35,7 @@ export declare class PsOperationsManager extends PsBaseWithRunningAgentObserver 
     api: PsServerApi;
     constructor();
     getAgent(): Promise<void>;
+    private updateConnectorRegistry;
     connectedCallback(): Promise<void>;
     fetchAgentCosts(): Promise<void>;
     fetchActiveAiModels(): Promise<void>;

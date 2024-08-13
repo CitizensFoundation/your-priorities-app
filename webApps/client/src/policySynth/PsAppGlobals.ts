@@ -10,6 +10,9 @@ export class PsAppGlobals extends YpAppGlobals {
   connectorsInstanceRegistry: Map<number, PsAgentConnectorAttributes> =
     new Map();
 
+  activeConnectorsInstanceRegistry: Map<number, PsAgentConnectorAttributes> =
+    new Map();
+
   currentRunningAgentId: number | undefined;
   currentAgentListeners: any[] = [];
 

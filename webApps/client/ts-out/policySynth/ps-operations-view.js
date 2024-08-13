@@ -22,6 +22,7 @@ import { YpMediaHelpers } from "../common/YpMediaHelpers.js";
 let PsOperationsView = class PsOperationsView extends PsBaseWithRunningAgentObserver {
     constructor() {
         super();
+        this.connectorRegistry = {};
         this.elements = {};
         this.selection = null;
         this.panning = false;
@@ -746,6 +747,9 @@ __decorate([
 __decorate([
     property({ type: Object })
 ], PsOperationsView.prototype, "group", void 0);
+__decorate([
+    property({ type: Object })
+], PsOperationsView.prototype, "connectorRegistry", void 0);
 PsOperationsView = __decorate([
     customElement("ps-operations-view")
 ], PsOperationsView);

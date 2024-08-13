@@ -12,6 +12,9 @@ export declare class PsOperationsView extends PsBaseWithRunningAgentObserver {
     currentAgent: PsAgentAttributes;
     groupId: number;
     group: YpGroupData;
+    connectorRegistry: {
+        [key: number]: PsAgentConnectorAttributes;
+    };
     private graph;
     private paper;
     private elements;

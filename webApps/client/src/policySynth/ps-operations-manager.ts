@@ -94,11 +94,29 @@ export class PsOperationsManager extends PsBaseWithRunningAgentObserver {
       const agent = await this.api.getAgent(this.groupId);
       this.currentAgent = agent;
       this.currentAgentId = agent.id;
+
+      this.updateConnectorRegistry(agent);
     } catch (error) {
       console.error("Error fetching agent:", error);
     } finally {
       this.isFetchingAgent = false;
     }
+  }
+
+  private updateConnectorRegistry(agent: PsAgentAttributes) {
+    const processConnectors = (connectors: PsAgentConnectorAttributes[] | undefined) => {
+      connectors?.forEach(connector => {
+        window.psAppGlobals.activeConnectorsInstanceRegistry.set(connector.id, connector);
+      });
+    };
+
+    processConnectors(agent.InputConnectors);
+    processConnectors(agent.OutputConnectors);
+
+    agent.SubAgents?.forEach(subAgent => {
+      processConnectors(subAgent.InputConnectors);
+      processConnectors(subAgent.OutputConnectors);
+    });
   }
 
   override async connectedCallback() {

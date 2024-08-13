@@ -4,6 +4,8 @@ import "@material/web/progress/circular-progress.js";
 import "@material/web/progress/linear-progress.js";
 import "@material/web/menu/menu.js";
 import "@material/web/menu/menu-item.js";
+import "@material/web/menu/sub-menu.js";
+import "@material/web/divider/divider.js";
 import "@trystan2k/fleshy-jsoneditor/fleshy-jsoneditor.js";
 import { PsServerApi } from "./PsServerApi.js";
 import { PsOperationsBaseNode } from "./ps-operations-base-node.js";
@@ -46,7 +48,8 @@ export declare class PsAgentNode extends PsOperationsBaseNode {
     renderMemoryDialog(): import("lit-html").TemplateResult<1>;
     renderActionButtons(): import("lit-html").TemplateResult<1>;
     renderProgress(): import("lit-html").TemplateResult<1>;
-    renderConnectorMenu(): import("lit-html").TemplateResult<1>;
+    addExistingConnector(connectorId: number, type: "input" | "output"): void;
+    renderConnectorMenu(): import("lit-html").TemplateResult<1> | typeof nothing;
     renderMainMenu(): import("lit-html").TemplateResult<1>;
     render(): import("lit-html").TemplateResult<1> | typeof nothing;
     static get styles(): (any[] | import("lit").CSSResult)[];

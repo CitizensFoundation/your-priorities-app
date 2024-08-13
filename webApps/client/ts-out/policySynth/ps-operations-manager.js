@@ -49,6 +49,7 @@ let PsOperationsManager = class PsOperationsManager extends PsBaseWithRunningAge
             const agent = await this.api.getAgent(this.groupId);
             this.currentAgent = agent;
             this.currentAgentId = agent.id;
+            this.updateConnectorRegistry(agent);
         }
         catch (error) {
             console.error("Error fetching agent:", error);
@@ -56,6 +57,19 @@ let PsOperationsManager = class PsOperationsManager extends PsBaseWithRunningAge
         finally {
             this.isFetchingAgent = false;
         }
+    }
+    updateConnectorRegistry(agent) {
+        const processConnectors = (connectors) => {
+            connectors?.forEach(connector => {
+                window.psAppGlobals.activeConnectorsInstanceRegistry.set(connector.id, connector);
+            });
+        };
+        processConnectors(agent.InputConnectors);
+        processConnectors(agent.OutputConnectors);
+        agent.SubAgents?.forEach(subAgent => {
+            processConnectors(subAgent.InputConnectors);
+            processConnectors(subAgent.OutputConnectors);
+        });
     }
     async connectedCallback() {
         super.connectedCallback();
