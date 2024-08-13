@@ -9,6 +9,7 @@ export declare class PsServerApi extends YpServerApiBase {
     getDetailedAgentCosts(groupId: number, agentId: number): Promise<PsDetailedAgentCostResults[]>;
     addAgentAiModel(groupId: number, agentId: number, modelId: number, size: PsAiModelSize): Promise<void>;
     updateAgentConfiguration(groupId: number, agentId: number, updatedConfig: Partial<PsAgentAttributes['configuration']>): Promise<void>;
+    addExistingConnector(groupId: number, agentId: number, connectorId: number, type: 'input' | 'output'): Promise<void>;
     createAgent(name: string, agentClassId: number, aiModels: {
         [key: string]: number;
     }, parentAgentId: number, groupId?: number): Promise<PsAgentAttributes>;

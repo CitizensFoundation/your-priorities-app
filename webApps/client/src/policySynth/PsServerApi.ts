@@ -80,6 +80,21 @@ export class PsServerApi extends YpServerApiBase {
     ) as Promise<void>;
   }
 
+  public async addExistingConnector(
+    groupId: number,
+    agentId: number,
+    connectorId: number,
+    type: 'input' | 'output'
+  ): Promise<void> {
+    return this.fetchWrapper(
+      `${this.baseUrlPath}/agents/${groupId}/${agentId}/${type}Connectors`,
+      {
+        method: 'POST',
+        body: JSON.stringify({ connectorId }),
+      }
+    );
+  }
+
   public async createAgent(
     name: string,
     agentClassId: number,

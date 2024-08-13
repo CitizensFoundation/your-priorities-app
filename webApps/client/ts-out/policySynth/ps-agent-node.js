@@ -81,6 +81,13 @@ let PsAgentNode = class PsAgentNode extends PsOperationsBaseNode {
         this.fire("add-connector", { agentId: this.agent.id, type: "output" });
         this.menuOpen = false;
     }
+    addExistingConnector(connectorId, type) {
+        this.fire("add-existing-connector", {
+            agentId: this.agent.id,
+            connectorId,
+            type,
+        });
+    }
     startStatusUpdates() {
         this.statusInterval = window.setInterval(() => this.updateAgentStatus(), 1000);
     }
@@ -228,28 +235,14 @@ let PsAgentNode = class PsAgentNode extends PsOperationsBaseNode {
       ></md-linear-progress>`;
         }
     }
-    addExistingConnector(connectorId, type) {
-        this.fire("add-existing-connector", {
-            agentId: this.agent.id,
-            connectorId,
-            type,
-        });
-    }
     renderConnectorMenu() {
         if (window.psAppGlobals.activeConnectorsInstanceRegistry) {
             const allConnectors = Array.from(window.psAppGlobals.activeConnectorsInstanceRegistry.values());
-            // Log the allConnectors array to check its contents
-            console.log("All connectors:", allConnectors);
             const currentConnectorIds = new Set([
                 ...(this.agent.InputConnectors?.map((c) => c.id) || []),
                 ...(this.agent.OutputConnectors?.map((c) => c.id) || []),
             ]);
-            // Log the currentConnectorIds set to check its contents
-            console.log("Current connector IDs:", Array.from(currentConnectorIds));
             const availableConnectors = allConnectors.filter((c) => !currentConnectorIds.has(c.id));
-            // Log the availableConnectors array to check its contents
-            console.log("Available connectors:", availableConnectors);
-            debugger;
             return html `
         <md-icon-button
           id="connectorMenuAnchor"
@@ -257,7 +250,13 @@ let PsAgentNode = class PsAgentNode extends PsOperationsBaseNode {
         >
           <md-icon>add</md-icon>
         </md-icon-button>
-        <md-menu has-overflow id="agentConnectorMenu" positioning="popover">
+        <md-menu
+          has-overflow
+          id="agentConnectorMenu"
+          anchor="connectorMenuAnchor"
+          positioning="popover"
+          quick
+        >
           <md-menu-item @click="${this.addInputConnector}">
             <div slot="headline">Add Input Connector</div>
           </md-menu-item>
@@ -265,45 +264,46 @@ let PsAgentNode = class PsAgentNode extends PsOperationsBaseNode {
             <div slot="headline">Add Output Connector</div>
           </md-menu-item>
 
-          <md-sub-menu>
-            <md-menu-item slot="item">
-              <div slot="headline">Add Existing Connector</div>
-              <md-icon slot="end">arrow_right</md-icon>
-            </md-menu-item>
-            <md-menu slot="menu">
-              ${availableConnectors.map((connector) => html `
-                  <md-sub-menu>
-                    <md-menu-item slot="item">
-                      <div slot="headline">${connector.configuration.name}</div>
-                      <md-icon slot="end">arrow_right</md-icon>
-                    </md-menu-item>
-                    <md-menu slot="menu">
-                      <md-menu-item
-                        @click="${() => this.addExistingConnector(connector.id, "input")}"
-                      >
-                        <div slot="headline">Add as Input</div>
-                      </md-menu-item>
-                      <md-menu-item
-                        @click="${() => this.addExistingConnector(connector.id, "output")}"
-                      >
-                        <div slot="headline">Add as Output</div>
-                      </md-menu-item>
-                    </md-menu>
-                  </md-sub-menu>
-                `)}
-              ${availableConnectors.length === 0
+          ${availableConnectors.length > 0
                 ? html `
-                    <md-menu-item disabled>
-                      <div slot="headline">No available connectors</div>
-                    </md-menu-item>
-                  `
+                <md-divider></md-divider>
+                <md-sub-menu positioning="popover">
+                  <md-menu-item slot="item">
+                    <div slot="headline">Add Existing Connector</div>
+                    <md-icon slot="end">arrow_right</md-icon>
+                  </md-menu-item>
+                  <md-menu slot="menu" positioning="popover">
+                    ${availableConnectors.map((connector) => html `
+                        <md-sub-menu>
+                          <md-menu-item slot="item">
+                            <div slot="headline">
+                              ${connector.configuration.name}
+                            </div>
+                            <md-icon slot="end">arrow_right</md-icon>
+                          </md-menu-item>
+                          <md-menu slot="menu" positioning="popover">
+                            <md-menu-item
+                              @click="${() => this.addExistingConnector(connector.id, "input")}"
+                            >
+                              <div slot="headline">Add as Input</div>
+                            </md-menu-item>
+                            <md-menu-item
+                              @click="${() => this.addExistingConnector(connector.id, "output")}"
+                            >
+                              <div slot="headline">Add as Output</div>
+                            </md-menu-item>
+                          </md-menu>
+                        </md-sub-menu>
+                      `)}
+                  </md-menu>
+                </md-sub-menu>
+              `
                 : ""}
-            </md-menu>
-          </md-sub-menu>
         </md-menu>
       `;
         }
         else {
+            console.warn("activeConnectorsInstanceRegistry is not available");
             return nothing;
         }
     }

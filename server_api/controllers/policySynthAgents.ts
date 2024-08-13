@@ -341,7 +341,42 @@ export class PolicySynthAgentsController {
       auth.can("view group"),
       this.getAgentMemory
     );
+    this.router.post(
+      "/:groupId/:agentId/:type(input|output)Connectors/existing",
+      auth.can("edit group"),
+      this.addExistingConnector
+    );
   }
+
+  addExistingConnector = async (req: YpRequest, res: express.Response) => {
+    const { groupId, agentId, type } = req.params;
+    const { connectorId } = req.body;
+
+    if (!groupId || !agentId || !connectorId || !type) {
+      return res
+        .status(400)
+        .send(
+          "Group ID, agent ID, connector ID, and type (input/output) are required"
+        );
+    }
+
+    try {
+      await this.agentConnectorManager.addExistingConnector(
+        parseInt(groupId),
+        parseInt(agentId),
+        parseInt(connectorId),
+        type as 'input' | 'output'
+      );
+      res.status(200).json({ message: `Existing ${type} connector added successfully` });
+    } catch (error) {
+      console.error(`Error adding existing ${type} connector:`, error);
+      if (error instanceof Error) {
+        res.status(500).json({ error: error.message });
+      } else {
+        res.status(500).json({ error: "An unexpected error occurred" });
+      }
+    }
+  };
 
   getAgentMemory = async (req: YpRequest, res: express.Response) => {
     try {

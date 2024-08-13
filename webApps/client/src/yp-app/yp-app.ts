@@ -623,7 +623,7 @@ export class YpApp extends YpBaseElement {
         class="topActionItem"
         @click="${this._openNavDrawer}"
         title="${this.t("menu.help")}"
-        ><md-icon>explore</md-icon></md-icon-button
+        ><md-icon>communities</md-icon></md-icon-button
       >
 
       <div

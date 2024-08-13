@@ -37,6 +37,8 @@ export declare class PsOperationsManager extends PsBaseWithRunningAgentObserver 
     getAgent(): Promise<void>;
     private updateConnectorRegistry;
     connectedCallback(): Promise<void>;
+    disconnectedCallback(): Promise<void>;
+    addExistingConnector(event: CustomEvent): Promise<void>;
     fetchAgentCosts(): Promise<void>;
     fetchActiveAiModels(): Promise<void>;
     handleEditDialogSave(event: CustomEvent): Promise<void>;

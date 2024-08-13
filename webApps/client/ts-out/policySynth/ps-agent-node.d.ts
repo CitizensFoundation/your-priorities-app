@@ -38,6 +38,7 @@ export declare class PsAgentNode extends PsOperationsBaseNode {
     openMemoryDialog(): void;
     addInputConnector(): void;
     addOutputConnector(): void;
+    addExistingConnector(connectorId: number, type: "input" | "output"): void;
     startStatusUpdates(): void;
     stopStatusUpdates(): void;
     updateAgentStatus(): Promise<void>;
@@ -48,7 +49,6 @@ export declare class PsAgentNode extends PsOperationsBaseNode {
     renderMemoryDialog(): import("lit-html").TemplateResult<1>;
     renderActionButtons(): import("lit-html").TemplateResult<1>;
     renderProgress(): import("lit-html").TemplateResult<1>;
-    addExistingConnector(connectorId: number, type: "input" | "output"): void;
     renderConnectorMenu(): import("lit-html").TemplateResult<1> | typeof nothing;
     renderMainMenu(): import("lit-html").TemplateResult<1>;
     render(): import("lit-html").TemplateResult<1> | typeof nothing;

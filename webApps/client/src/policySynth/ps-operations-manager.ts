@@ -131,6 +131,7 @@ export class PsOperationsManager extends PsBaseWithRunningAgentObserver {
       "add-connector",
       this.openAddConnectorDialog as EventListenerOrEventListenerObject
     );
+    this.addEventListener("add-existing-connector", this.addExistingConnector as any);
     this.addEventListener(
       "get-costs",
       this.fetchAgentCosts as EventListenerOrEventListenerObject
@@ -139,6 +140,25 @@ export class PsOperationsManager extends PsBaseWithRunningAgentObserver {
       "add-agent",
       this.openAddAgentDialog as EventListenerOrEventListenerObject
     );
+  }
+
+  override async disconnectedCallback() {
+    super.disconnectedCallback();
+    this.removeListener("edit-node", this.openEditNodeDialog);
+    this.removeListener("add-connector", this.openAddConnectorDialog);
+    this.removeListener("add-existing-connector", this.addExistingConnector);
+    this.removeListener("get-costs", this.fetchAgentCosts);
+    this.removeListener("add-agent", this.openAddAgentDialog);
+  }
+
+  async addExistingConnector(event: CustomEvent) {
+    const { connectorId, agentId, type } = event.detail;
+    try {
+      await this.api.addExistingConnector(this.groupId, agentId, connectorId, type);
+      this.getAgent();
+    } catch (error) {
+      console.error("Error adding existing connector:", error);
+    }
   }
 
   async fetchAgentCosts() {

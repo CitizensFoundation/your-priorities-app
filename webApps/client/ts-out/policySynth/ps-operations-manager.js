@@ -76,8 +76,27 @@ let PsOperationsManager = class PsOperationsManager extends PsBaseWithRunningAge
         this.getAgent();
         this.addEventListener("edit-node", this.openEditNodeDialog);
         this.addEventListener("add-connector", this.openAddConnectorDialog);
+        this.addEventListener("add-existing-connector", this.addExistingConnector);
         this.addEventListener("get-costs", this.fetchAgentCosts);
         this.addEventListener("add-agent", this.openAddAgentDialog);
+    }
+    async disconnectedCallback() {
+        super.disconnectedCallback();
+        this.removeListener("edit-node", this.openEditNodeDialog);
+        this.removeListener("add-connector", this.openAddConnectorDialog);
+        this.removeListener("add-existing-connector", this.addExistingConnector);
+        this.removeListener("get-costs", this.fetchAgentCosts);
+        this.removeListener("add-agent", this.openAddAgentDialog);
+    }
+    async addExistingConnector(event) {
+        const { connectorId, agentId, type } = event.detail;
+        try {
+            await this.api.addExistingConnector(this.groupId, agentId, connectorId, type);
+            this.getAgent();
+        }
+        catch (error) {
+            console.error("Error adding existing connector:", error);
+        }
     }
     async fetchAgentCosts() {
         if (this.currentAgentId) {
