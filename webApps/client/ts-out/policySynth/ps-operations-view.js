@@ -119,14 +119,14 @@ let PsOperationsView = class PsOperationsView extends PsBaseWithRunningAgentObse
             this.zoom(2, centerX, centerY);
         }
     }
-    createLink(source, target) {
+    createLink(source, target, isInputConnector) {
         if (!source || !target) {
             console.error(`source or target is null ${source} ${target}`);
             return null;
         }
         const link = new shapes.standard.Link({
-            source: { id: source.id },
-            target: { id: target.id },
+            source: { id: isInputConnector ? target.id : source.id },
+            target: { id: isInputConnector ? source.id : target.id },
             attrs: {
                 line: {
                     stroke: "var(--md-sys-color-on-surface)",
@@ -406,8 +406,9 @@ let PsOperationsView = class PsOperationsView extends PsBaseWithRunningAgentObse
             el.addTo(this.graph);
             targetElement = el;
         }
-        if (sourceElement && targetElement) {
-            const link = this.createLink(sourceElement, targetElement);
+        if (sourceElement && targetElement && sourceAgent) {
+            const isInputConnector = sourceAgent.InputConnectors?.some((input) => input.id === connector.id);
+            const link = this.createLink(sourceElement, targetElement, isInputConnector);
             link?.addTo(this.graph);
         }
         else {
