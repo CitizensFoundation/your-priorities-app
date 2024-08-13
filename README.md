@@ -12,7 +12,7 @@
 
 * Citizen participation social network for digital democracy and social innovation
 * Communities and groups for simple organization of any type of participation project
-* Crowdsource ideas about any subject
+* Crowdsource ideas about any subjects
 * Effective debating system that is highly resistant to trolling and personal arguments
 * Users can submit ideas and debate points as text, audio or video
 * Users can prioritize ideas and debate points by voting them up or down
