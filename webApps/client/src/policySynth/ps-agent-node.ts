@@ -41,11 +41,17 @@ export class PsAgentNode extends PsOperationsBaseNode {
   @state()
   private agentMemory: object | null = null;
 
-  @query("#menuAnchor")
-  menuAnchor!: HTMLElement;
+  @query("#connectorMenuAnchor")
+  connectorMenuAnchor!: HTMLElement;
 
-  @query("#agentMenu")
-  agentMenu!: MdMenu;
+  @query("#agentConnectorMenu")
+  agentConnectorMenu!: MdMenu;
+
+  @query("#mainMenuAnchor")
+  mainMenuAnchor!: HTMLElement;
+
+  @query("#agentMainMenu")
+  agentMainMenu!: MdMenu;
 
   @query("#memoryDialog")
   memoryDialog!: MdDialog;
@@ -59,8 +65,13 @@ export class PsAgentNode extends PsOperationsBaseNode {
   }
 
   override firstUpdated() {
-    if (this.agentMenu && this.menuAnchor) {
-      (this.agentMenu as MdMenu).anchorElement = this.menuAnchor;
+    if (this.agentConnectorMenu && this.connectorMenuAnchor) {
+      (this.agentConnectorMenu as MdMenu).anchorElement =
+        this.connectorMenuAnchor;
+    }
+
+    if (this.agentMainMenu && this.mainMenuAnchor) {
+      (this.agentMainMenu as MdMenu).anchorElement = this.mainMenuAnchor;
     }
   }
 
@@ -75,10 +86,17 @@ export class PsAgentNode extends PsOperationsBaseNode {
     this.stopStatusUpdates();
   }
 
-  toggleMenu(e: Event) {
+  toggleConnectorMenu(e: Event) {
     e.stopPropagation();
-    if (this.agentMenu) {
-      this.agentMenu.open = !this.agentMenu.open;
+    if (this.agentConnectorMenu) {
+      this.agentConnectorMenu.open = !this.agentConnectorMenu.open;
+    }
+  }
+
+  toggleMainMenu(e: Event) {
+    e.stopPropagation();
+    if (this.agentMainMenu) {
+      this.agentMainMenu.open = !this.agentMainMenu.open;
     }
   }
 
@@ -229,19 +247,19 @@ export class PsAgentNode extends PsOperationsBaseNode {
     switch (this.agentState) {
       case "running":
         return html`
-          <md-icon-button @click="${this.pauseAgent}" disabled>
+          <md-icon-button class="playButtons" @click="${this.pauseAgent}" disabled>
             <md-icon>pause</md-icon>
           </md-icon-button>
-          <md-icon-button @click="${this.stopAgent}">
+          <md-icon-button class="playButtons" @click="${this.stopAgent}">
             <md-icon>stop</md-icon>
           </md-icon-button>
         `;
       case "paused":
         return html`
-          <md-icon-button @click="${this.startAgent}">
-            <md-icon>play_arrow</md-icon>
+          <md-icon-button class="playButtons" @click="${this.startAgent}">
+            <md-icon>play_circle</md-icon>
           </md-icon-button>
-          <md-icon-button @click="${this.stopAgent}">
+          <md-icon-button class="playButtons" @click="${this.stopAgent}">
             <md-icon>stop</md-icon>
           </md-icon-button>
         `;
@@ -249,8 +267,8 @@ export class PsAgentNode extends PsOperationsBaseNode {
       case "completed":
       case "error":
         return html`
-          <md-icon-button @click="${this.startAgent}">
-            <md-icon>play_arrow</md-icon>
+          <md-icon-button class="playButtons" @click="${this.startAgent}">
+            <md-icon>play_circle</md-icon>
           </md-icon-button>
         `;
     }
@@ -267,6 +285,38 @@ export class PsAgentNode extends PsOperationsBaseNode {
     }
   }
 
+  renderConnectorMenu() {
+    return html`
+      <md-icon-button
+        id="connectorMenuAnchor"
+        @click="${this.toggleConnectorMenu}"
+      >
+        <md-icon>add</md-icon>
+      </md-icon-button>
+      <md-menu id="agentConnectorMenu" positioning="popover">
+        <md-menu-item @click="${this.addInputConnector}">
+          <div slot="headline">Add Input Connector</div>
+        </md-menu-item>
+        <md-menu-item @click="${this.addOutputConnector}">
+          <div slot="headline">Add Output Connector</div>
+        </md-menu-item>
+      </md-menu>
+    `;
+  }
+
+  renderMainMenu() {
+    return html` <md-icon-button
+        id="mainMenuAnchor"
+        @click="${this.toggleMainMenu}"
+      >
+        <md-icon>more_horiz</md-icon>
+      </md-icon-button>
+      <md-menu id="agentMainMenu" positioning="popover">
+        <md-menu-item @click="${this.openMemoryDialog}">
+          <div slot="headline">Explore Memory</div>
+        </md-menu-item>
+      </md-menu>`;
+  }
   override render() {
     if (!this.agent) return nothing;
 
@@ -284,20 +334,7 @@ export class PsAgentNode extends PsOperationsBaseNode {
           <div class="statusMessage">${this.latestMessage}</div>
         </div>
         <div class="buttonContainer">
-          <md-icon-button id="menuAnchor" @click="${this.toggleMenu}">
-            <md-icon>more_vert</md-icon>
-          </md-icon-button>
-          <md-menu id="agentMenu" positioning="popover">
-            <md-menu-item @click="${this.addInputConnector}">
-              <div slot="headline">Add Input Connector</div>
-            </md-menu-item>
-            <md-menu-item @click="${this.addOutputConnector}">
-              <div slot="headline">Add Output Connector</div>
-            </md-menu-item>
-            <md-menu-item @click="${this.openMemoryDialog}">
-              <div slot="headline">Explore Memory</div>
-            </md-menu-item>
-          </md-menu>
+          ${this.renderConnectorMenu()}
 
           ${this.renderActionButtons()}
 
@@ -318,6 +355,13 @@ export class PsAgentNode extends PsOperationsBaseNode {
           display: block;
         }
 
+        .playButtons {
+          --md-icon-button-icon-size: 32px;
+          padding-bottom: 16px;
+          width: 44px;
+          height: 44px;
+        }
+
         #memoryDialog {
           width: 95vw;
           height: 95vh;
@@ -327,13 +371,15 @@ export class PsAgentNode extends PsOperationsBaseNode {
 
         .buttonContainer {
           display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 8px;
-          position: absolute;
+          padding: 0px;
+          padding-bottom: 0;
           bottom: 0;
           left: 0;
           right: 0;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          position: absolute;
         }
 
         md-icon-button {
@@ -404,16 +450,6 @@ export class PsAgentNode extends PsOperationsBaseNode {
           color: var(--md-sys-color-on-surface-variant);
         }
 
-        .buttonContainer {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 8px;
-          position: absolute;
-          bottom: 0;
-          left: 0;
-          right: 0;
-        }
 
         md-circular-progress {
           --md-circular-progress-size: 28px;

@@ -19,8 +19,10 @@ export declare class PsAgentNode extends PsOperationsBaseNode {
     private progress;
     private menuOpen;
     private agentMemory;
-    menuAnchor: HTMLElement;
-    agentMenu: MdMenu;
+    connectorMenuAnchor: HTMLElement;
+    agentConnectorMenu: MdMenu;
+    mainMenuAnchor: HTMLElement;
+    agentMainMenu: MdMenu;
     memoryDialog: MdDialog;
     api: PsServerApi;
     private statusInterval;
@@ -28,7 +30,8 @@ export declare class PsAgentNode extends PsOperationsBaseNode {
     firstUpdated(): void;
     connectedCallback(): void;
     disconnectedCallback(): void;
-    toggleMenu(e: Event): void;
+    toggleConnectorMenu(e: Event): void;
+    toggleMainMenu(e: Event): void;
     fetchAgentMemory(): Promise<void>;
     openMemoryDialog(): void;
     addInputConnector(): void;
@@ -43,6 +46,8 @@ export declare class PsAgentNode extends PsOperationsBaseNode {
     renderMemoryDialog(): import("lit-html").TemplateResult<1>;
     renderActionButtons(): import("lit-html").TemplateResult<1>;
     renderProgress(): import("lit-html").TemplateResult<1>;
+    renderConnectorMenu(): import("lit-html").TemplateResult<1>;
+    renderMainMenu(): import("lit-html").TemplateResult<1>;
     render(): import("lit-html").TemplateResult<1> | typeof nothing;
     static get styles(): (any[] | import("lit").CSSResult)[];
 }

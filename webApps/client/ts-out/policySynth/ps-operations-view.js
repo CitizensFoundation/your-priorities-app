@@ -4,21 +4,21 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { css, html } from 'lit';
-import { property, customElement } from 'lit/decorators.js';
-import { dia, shapes, highlighters, V } from '@joint/core';
-import '@material/web/iconbutton/filled-icon-button.js';
-import '@material/web/iconbutton/filled-tonal-icon-button.js';
-import '@material/web/iconbutton/icon-button.js';
-import '@material/web/iconbutton/outlined-icon-button.js';
-import './ps-agent-node.js';
-import './ps-connector-node.js';
-import { PsServerApi } from './PsServerApi.js';
-import { AgentShape, AgentsShapeView } from './ps-agent-shape.js';
-import { ConnectorShape } from './ps-connector-shape.js';
-import { PsBaseWithRunningAgentObserver } from './ps-base-with-running-agents.js';
-import { YpNavHelpers } from '../common/YpNavHelpers.js';
-import { YpMediaHelpers } from '../common/YpMediaHelpers.js';
+import { css, html } from "lit";
+import { property, customElement } from "lit/decorators.js";
+import { dia, shapes, highlighters, V } from "@joint/core";
+import "@material/web/iconbutton/filled-icon-button.js";
+import "@material/web/iconbutton/filled-tonal-icon-button.js";
+import "@material/web/iconbutton/icon-button.js";
+import "@material/web/iconbutton/outlined-icon-button.js";
+import "./ps-agent-node.js";
+import "./ps-connector-node.js";
+import { PsServerApi } from "./PsServerApi.js";
+import { AgentShape, AgentsShapeView } from "./ps-agent-shape.js";
+import { ConnectorShape } from "./ps-connector-shape.js";
+import { PsBaseWithRunningAgentObserver } from "./ps-base-with-running-agents.js";
+import { YpNavHelpers } from "../common/YpNavHelpers.js";
+import { YpMediaHelpers } from "../common/YpMediaHelpers.js";
 let PsOperationsView = class PsOperationsView extends PsBaseWithRunningAgentObserver {
     constructor() {
         super();
@@ -33,7 +33,7 @@ let PsOperationsView = class PsOperationsView extends PsBaseWithRunningAgentObse
     async connectedCallback() {
         super.connectedCallback();
         window.appGlobals.activity(`Agent Ops - open`);
-        window.addEventListener('resize', () => {
+        window.addEventListener("resize", () => {
             this.updatePaperSize();
         });
     }
@@ -67,7 +67,7 @@ let PsOperationsView = class PsOperationsView extends PsBaseWithRunningAgentObse
     firstUpdated(_changedProperties) {
         this.initializeJointJS();
         //@ts-ignore
-        this.paper.el.addEventListener('wheel', event => {
+        this.paper.el.addEventListener("wheel", (event) => {
             if (!event.shiftKey) {
                 return; // Only zoom if the Shift key is held down
             }
@@ -89,7 +89,7 @@ let PsOperationsView = class PsOperationsView extends PsBaseWithRunningAgentObse
     }
     updated(changedProperties) {
         super.updated(changedProperties);
-        if (changedProperties.has('currentAgent') && this.currentAgent) {
+        if (changedProperties.has("currentAgent") && this.currentAgent) {
             this.paper.freeze();
             this.updateGraphWithAgentData();
             this.paper.unfreeze();
@@ -129,30 +129,30 @@ let PsOperationsView = class PsOperationsView extends PsBaseWithRunningAgentObse
             target: { id: target.id },
             attrs: {
                 line: {
-                    stroke: 'var(--md-sys-color-on-surface)',
+                    stroke: "var(--md-sys-color-on-surface)",
                     strokeWidth: 2,
                     targetMarker: {
-                        type: 'path',
-                        d: 'M 10 -5 L 0 0 L 10 5 z',
-                        fill: 'var(--md-sys-color-on-surface)',
+                        type: "path",
+                        d: "M 10 -5 L 0 0 L 10 5 z",
+                        fill: "var(--md-sys-color-on-surface)",
                     },
                 },
             },
             z: 1,
             router: {
-                name: 'manhattan',
+                name: "manhattan",
                 args: {
                     step: 20,
                 },
             },
-            connector: { name: 'rounded' },
+            connector: { name: "rounded" },
         });
         return link;
     }
     async initializeJointJS() {
-        const paperContainer = this.shadowRoot?.getElementById('paper-container');
+        const paperContainer = this.shadowRoot?.getElementById("paper-container");
         if (!paperContainer) {
-            console.error('Paper container not found');
+            console.error("Paper container not found");
             return;
         }
         this.graph = new dia.Graph({}, { cellNamespace: this.jointNamespace });
@@ -162,12 +162,12 @@ let PsOperationsView = class PsOperationsView extends PsBaseWithRunningAgentObse
             el: paperContainer,
             model: this.graph,
             cellViewNamespace: this.jointNamespace,
-            width: '100%',
-            height: '100%',
+            width: "100%",
+            height: "100%",
             gridSize: 20,
             panning: {
                 enabled: false, // Initially disabled
-                modifiers: 'mouseMiddle', // Enable panning with the middle mouse button
+                modifiers: "mouseMiddle", // Enable panning with the middle mouse button
             },
             zoom: {
                 enabled: true, // Initially disabled
@@ -180,23 +180,23 @@ let PsOperationsView = class PsOperationsView extends PsBaseWithRunningAgentObse
             async: true,
             frozen: true,
             sorting: dia.Paper.sorting.APPROX,
-            background: { color: 'var(--md-sys-color-surface)' },
+            background: { color: "var(--md-sys-color-surface)" },
             clickThreshold: 10,
             defaultConnector: {
-                name: 'rounded',
+                name: "rounded",
             },
             defaultRouter: {
-                name: 'manhattan',
+                name: "manhattan",
                 args: {
                     step: 15,
                 },
             },
         });
-        this.paper.on('element:pointerclick', elementView => {
+        this.paper.on("element:pointerclick", (elementView) => {
             debugger;
             //      this.selectElement((elementView as any).model as dia.Element);
         });
-        this.paper.on('element:pointerdblclick', (cellView, evt) => {
+        this.paper.on("element:pointerdblclick", (cellView, evt) => {
             //@ts-ignore
             const element = cellView.model;
             if (evt.shiftKey) {
@@ -211,12 +211,12 @@ let PsOperationsView = class PsOperationsView extends PsBaseWithRunningAgentObse
                 //this.highlightBranch(element);
             }
         });
-        this.paper.on('blank:pointerclick', (elementView, evt) => {
+        this.paper.on("blank:pointerclick", (elementView, evt) => {
             //this.updatePaperSize();
         });
         // Initialize SVG styles for the paper
-        V(paperContainer).prepend(V('style', {
-            type: 'text/css',
+        V(paperContainer).prepend(V("style", {
+            type: "text/css",
         }).text(`
       .joint-element .selection {
           stroke: var(--md-sys-color-surface);
@@ -248,17 +248,17 @@ let PsOperationsView = class PsOperationsView extends PsBaseWithRunningAgentObse
         await this.updateComplete;
         //@ts-ignore
         const paperEl = this.paper.el;
-        paperEl.addEventListener('mousedown', (event) => {
+        paperEl.addEventListener("mousedown", (event) => {
             // Middle mouse button is pressed
             if (event.button === 1) {
                 this.panning = true;
                 this.lastClientX = event.clientX;
                 this.lastClientY = event.clientY;
-                paperEl.style.cursor = 'move'; // Optional: Change the cursor to a move icon
+                paperEl.style.cursor = "move"; // Optional: Change the cursor to a move icon
                 event.preventDefault(); // Prevent any default behavior
             }
         });
-        paperEl.addEventListener('mousemove', (event) => {
+        paperEl.addEventListener("mousemove", (event) => {
             if (this.panning) {
                 const dx = event.clientX - this.lastClientX;
                 const dy = event.clientY - this.lastClientY;
@@ -270,17 +270,17 @@ let PsOperationsView = class PsOperationsView extends PsBaseWithRunningAgentObse
             }
         });
         // Listen for mouse up on the paper element itself
-        paperEl.addEventListener('mouseup', (event) => {
+        paperEl.addEventListener("mouseup", (event) => {
             if (this.panning && event.button === 1) {
                 this.panning = false;
-                paperEl.style.cursor = 'default'; // Reset the cursor
+                paperEl.style.cursor = "default"; // Reset the cursor
             }
         });
         // Optionally, listen for the mouse leaving the paper area to also cancel panning
-        paperEl.addEventListener('mouseleave', (event) => {
+        paperEl.addEventListener("mouseleave", (event) => {
             if (this.panning) {
                 this.panning = false;
-                paperEl.style.cursor = 'default'; // Reset the cursor
+                paperEl.style.cursor = "default"; // Reset the cursor
             }
         });
     }
@@ -297,7 +297,7 @@ let PsOperationsView = class PsOperationsView extends PsBaseWithRunningAgentObse
           rankSep: 80,
         });*/
         // Additional manual adjustments if needed
-        this.graph.getElements().forEach(element => {
+        this.graph.getElements().forEach((element) => {
             // Adjust positions manually if necessary
         });
         // Translate the graph to ensure consistency in positioning
@@ -336,7 +336,7 @@ let PsOperationsView = class PsOperationsView extends PsBaseWithRunningAgentObse
     }
     updatePaperSize() {
         if (!this.paper) {
-            console.warn('Paper not initialized');
+            console.warn("Paper not initialized");
             return;
         }
         // Automatically adjust the viewport to fit all the content
@@ -349,8 +349,8 @@ let PsOperationsView = class PsOperationsView extends PsBaseWithRunningAgentObse
             preserveAspectRatio: true,
             //@ts-ignore
             contentArea: this.graph.getBBox(),
-            verticalAlign: 'top',
-            horizontalAlign: 'middle',
+            verticalAlign: "top",
+            horizontalAlign: "middle",
         });
     }
     createAgentElement(agent) {
@@ -368,11 +368,11 @@ let PsOperationsView = class PsOperationsView extends PsBaseWithRunningAgentObse
             text: agent.Class?.configuration.description,
             agentId: agent.id,
             groupId: this.groupId,
-            nodeType: 'agent',
+            nodeType: "agent",
             attrs: {
             //cause: node.description,
             },
-            type: 'html.Element',
+            type: "html.Element",
         });
         el.addTo(this.graph);
         return el;
@@ -397,11 +397,11 @@ let PsOperationsView = class PsOperationsView extends PsBaseWithRunningAgentObse
                 connectorId: connector.id,
                 agentName: sourceAgent.configuration.name,
                 groupId: this.groupId,
-                nodeType: 'connector',
+                nodeType: "connector",
                 attrs: {
                 //cause: node.description,
                 },
-                type: 'html.Element',
+                type: "html.Element",
             });
             el.addTo(this.graph);
             targetElement = el;
@@ -411,7 +411,7 @@ let PsOperationsView = class PsOperationsView extends PsBaseWithRunningAgentObse
             link?.addTo(this.graph);
         }
         else {
-            console.warn('Source or target element not found');
+            console.warn("Source or target element not found");
         }
         return el;
     }
@@ -427,21 +427,27 @@ let PsOperationsView = class PsOperationsView extends PsBaseWithRunningAgentObse
         this.elements = {};
         const renderedNodes = new Set();
         if (this.currentAgent.SubAgents && this.currentAgent.SubAgents.length > 0) {
-            this.currentAgent.SubAgents.forEach(subAgent => {
+            this.currentAgent.SubAgents.forEach((subAgent) => {
                 const el = this.createAgentElement(subAgent);
                 this.elements[this.getUniqueAgentId(subAgent)] = el;
                 renderedNodes.add(this.getUniqueAgentId(subAgent));
                 // Collect all subAgent.InputConnectors and subAgent.OutputConnectors into const connectors
-                const connectors = [...subAgent.InputConnectors, ...subAgent.OutputConnectors];
-                connectors.forEach(connector => {
+                const connectors = [
+                    ...subAgent.InputConnectors,
+                    ...subAgent.OutputConnectors,
+                ];
+                connectors.forEach((connector) => {
                     const el = this.createConnectorElement(connector, subAgent);
                     this.elements[this.getUniqueConnectorId(connector)] = el;
                     renderedNodes.add(this.getUniqueConnectorId(connector));
                 });
             });
         }
-        const connectors = [...this.currentAgent.InputConnectors, ...this.currentAgent.OutputConnectors];
-        connectors.forEach(connector => {
+        const connectors = [
+            ...this.currentAgent.InputConnectors,
+            ...this.currentAgent.OutputConnectors,
+        ];
+        connectors.forEach((connector) => {
             const el = this.createConnectorElement(connector, this.currentAgent);
             this.elements[this.getUniqueConnectorId(connector)] = el;
             renderedNodes.add(this.getUniqueConnectorId(connector));
@@ -457,7 +463,7 @@ let PsOperationsView = class PsOperationsView extends PsBaseWithRunningAgentObse
         // Deselect the current selection if any
         if (this.selection) {
             this.unhighlightCell(this.selection);
-            this.graph.getLinks().forEach(link => this.unhighlightCell(link));
+            this.graph.getLinks().forEach((link) => this.unhighlightCell(link));
         }
         // Select and highlight the new element
         if (el) {
@@ -471,13 +477,13 @@ let PsOperationsView = class PsOperationsView extends PsBaseWithRunningAgentObse
     highlightCell(cell) {
         const view = cell.findView(this.paper);
         if (view) {
-            highlighters.addClass.add(view, cell.isElement() ? 'body' : 'line', 'selection', { className: 'selection' });
+            highlighters.addClass.add(view, cell.isElement() ? "body" : "line", "selection", { className: "selection" });
         }
     }
     unhighlightCell(cell) {
         const view = cell.findView(this.paper);
         if (view) {
-            highlighters.addClass.remove(view, 'selection');
+            highlighters.addClass.remove(view, "selection");
         }
     }
     static get styles() {
@@ -490,10 +496,11 @@ let PsOperationsView = class PsOperationsView extends PsBaseWithRunningAgentObse
         }
 
         .agentHeaderText {
-          font-size: 18px;
+          font-size: 17px;
           padding: 8px;
           margin-left: 16px;
           margin-right: 16px;
+          font-family: var(--md-ref-typeface-brand);
         }
 
         .agentHeader {
@@ -618,16 +625,16 @@ let PsOperationsView = class PsOperationsView extends PsBaseWithRunningAgentObse
         let dx = 0;
         let dy = 0;
         switch (direction) {
-            case 'left':
+            case "left":
                 dx = 25;
                 break;
-            case 'right':
+            case "right":
                 dx = -25;
                 break;
-            case 'up':
+            case "up":
                 dy = 25;
                 break;
-            case 'down':
+            case "down":
                 dy = -25;
                 break;
         }
@@ -640,20 +647,18 @@ let PsOperationsView = class PsOperationsView extends PsBaseWithRunningAgentObse
           src="${YpMediaHelpers.getImageFormatUrl(this.group.GroupLogoImages, 0)}"
           class="agentHeaderImage"
         />
-        <div class="layout vertical agentHeaderText">
-          ${this.group.name}
-        </div>
+        <div class="layout vertical agentHeaderText">${this.group.name}</div>
       </div>
     `;
     }
     stop() {
-        this.fireGlobal('pause-agent', {
+        this.fireGlobal("pause-agent", {
             agentId: this.currentAgent.id,
         });
         window.psAppGlobals.setCurrentRunningAgentId(undefined);
     }
     start() {
-        this.fireGlobal('run-agent', {
+        this.fireGlobal("run-agent", {
             agentId: this.currentAgent.id,
         });
         window.psAppGlobals.setCurrentRunningAgentId(this.currentAgent.id);
@@ -684,9 +689,9 @@ let PsOperationsView = class PsOperationsView extends PsBaseWithRunningAgentObse
 
         ${this.renderHeader()}
 
-        <md-filled-tonal-button @click="${() => this.fire('add-agent')}">
+        <md-filled-tonal-button @click="${() => this.fire("add-agent")}">
           <md-icon slot="icon">add</md-icon>
-          ${this.t('Add Agent')}
+          ${this.t("Add Agent")}
         </md-filled-tonal-button>
 
         <div class="flex"></div>
@@ -709,21 +714,20 @@ let PsOperationsView = class PsOperationsView extends PsBaseWithRunningAgentObse
           >
         </div>
 
-
         <div hidden>
-          <md-icon-button @click="${() => this.pan('left')}"
+          <md-icon-button @click="${() => this.pan("left")}"
             ><md-icon>arrow_back</md-icon></md-icon-button
           >
 
-          <md-icon-button @click="${() => this.pan('up')}"
+          <md-icon-button @click="${() => this.pan("up")}"
             ><md-icon>arrow_upward</md-icon></md-icon-button
           >
 
-          <md-icon-button @click="${() => this.pan('down')}"
+          <md-icon-button @click="${() => this.pan("down")}"
             ><md-icon>arrow_downward</md-icon></md-icon-button
           >
 
-          <md-icon-button @click="${() => this.pan('right')}" class="lastButton"
+          <md-icon-button @click="${() => this.pan("right")}" class="lastButton"
             ><md-icon>arrow_forward</md-icon></md-icon-button
           >
         </div>
@@ -742,7 +746,7 @@ __decorate([
     property({ type: Object })
 ], PsOperationsView.prototype, "group", void 0);
 PsOperationsView = __decorate([
-    customElement('ps-operations-view')
+    customElement("ps-operations-view")
 ], PsOperationsView);
 export { PsOperationsView };
 //# sourceMappingURL=ps-operations-view.js.map
