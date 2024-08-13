@@ -3,7 +3,7 @@ import { YpMediaHelpers } from "../common/YpMediaHelpers.js";
 
 import { CollectionTabTypes, YpCollection } from "./yp-collection.js";
 import { YpCollectionItemsList } from "./yp-collection-items-list.js";
-import { TemplateResult, html, nothing, LitElement } from "lit";
+import { TemplateResult, html, nothing, LitElement, css } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 
 import "@material/web/tabs/tabs.js";
@@ -1043,8 +1043,16 @@ export class YpGroup extends YpCollection {
     return groupType;
   }
 
+  static override get styles() {
+    return [
+      super.styles,
+      css`
+      `];
+  }
+
   renderAgentsOps() {
     return html`<ps-operations-manager
+      class="agentManager"
       .groupId="${this.collection!.id}"
     ></ps-operations-manager>`;
   }

@@ -367,6 +367,10 @@ export abstract class YpCollection extends YpBaseElementWithLogin {
           --md-fab-container-shadow-color: transparent;
         }
 
+        .topContainer {
+          background-color: var(--md-sys-color-surface);
+        }
+
         .createFab {
           width: 225px;
           margin-left: 64px;

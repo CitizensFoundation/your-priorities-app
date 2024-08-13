@@ -117,10 +117,18 @@ export class YpPost extends YpCollection {
   static override get styles() {
     return [
       super.styles,
-      ShadowStyles,
       css`
+        .outerFrameContainer {
+          max-width: 1034px;
+          width: 1034px;
+          background-color: var(--md-sys-color-surface);
+          margin: 0 auto;
+          padding: 32px;
+        }
+
         .frameContainer {
           max-width: 970px;
+          width: 970px;
           min-height: 1000px;
           margin: 32px;
           margin-top: 0;
@@ -128,6 +136,7 @@ export class YpPost extends YpCollection {
           border-radius: 4px;
           border: 1px solid var(--md-sys-color-outline);
           position: relative;
+          background-color: var(--md-sys-color-surface);
         }
 
         .dividerLine {
@@ -251,11 +260,11 @@ export class YpPost extends YpCollection {
       this.goToPreviousPost();
     } else if (event.key === "ArrowRight" && !this.rightArrowDisabled) {
       this.goToNextPost();
-    } else if (event.key ==="Escape") {
+    } else if (event.key === "Escape") {
       if (this.post) {
         event.preventDefault();
         event.stopPropagation();
-        YpNavHelpers.redirectTo("/group/" + this.post.group_id)
+        YpNavHelpers.redirectTo("/group/" + this.post.group_id);
       }
     }
   }
@@ -428,7 +437,7 @@ export class YpPost extends YpCollection {
   override render() {
     return this.post
       ? html`
-          <div class="layout vertical center-center">
+          <div class="layout vertical center-center outerFrameContainer">
             <div class="frameContainer">
               <div class="layout vertical">
                 ${this.renderPostStaticHeader()} ${this.renderPostHeader()}

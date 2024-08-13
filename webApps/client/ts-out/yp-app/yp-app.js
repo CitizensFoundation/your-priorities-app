@@ -44,6 +44,7 @@ import "./yp-app-nav-drawer.js";
 import "../yp-post/yp-post.js";
 import { Corner } from "@material/web/menu/menu.js";
 import { YpServerApiAdmin } from "../common/YpServerApiAdmin.js";
+import { YpGroupType } from "../yp-collection/ypGroupType.js";
 let YpApp = class YpApp extends YpBaseElement {
     constructor() {
         super();
@@ -296,6 +297,9 @@ let YpApp = class YpApp extends YpBaseElement {
         this._routeChanged();
         this._routePageChanged(oldRouteData);
     }
+    get isFullScreenMode() {
+        return (this.page == "group" && window.appGlobals.currentGroup?.configuration.groupType == YpGroupType.PsAgentWorkflow);
+    }
     //TODO: Use someth8ing like https://boguz.github.io/burgton-button-docs/
     renderNavigationIcon() {
         let icons = html ``;
@@ -442,6 +446,7 @@ let YpApp = class YpApp extends YpBaseElement {
         return html `
       <yp-top-app-bar
         role="navigation"
+        .restrictWidth="${!this.isFullScreenMode}"
         .titleString="${this.page != "post" ? titleString : ""}"
         aria-label="top navigation"
         ?hideBreadcrumbs="${!titleString || titleString == ""}"

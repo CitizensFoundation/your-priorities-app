@@ -148,13 +148,14 @@ let PsAgentNode = class PsAgentNode extends PsOperationsBaseNode {
     }
     renderMemoryDialog() {
         return html `
-      <md-dialog id="memoryDialog" style="width: 90vw;height:90vh;">
+      <md-dialog id="memoryDialog">
         <div slot="headline">${this.t("agentMemoryExplorer")}</div>
         <div slot="content">
           ${this.agentMemory && !this.agentMemory.error
             ? html `
                 <fleshy-jsoneditor
-                  .content=${JSON.stringify(this.agentMemory, null, 2)}
+                  style="height: 100%;"
+                  .json=${this.agentMemory}
                   mode="view"
                 ></fleshy-jsoneditor>
               `
@@ -259,6 +260,13 @@ let PsAgentNode = class PsAgentNode extends PsOperationsBaseNode {
             css `
         :host {
           display: block;
+        }
+
+        #memoryDialog {
+          width: 95vw;
+          height: 95vh;
+          max-width: 97vw;
+          max-height: 97vh;
         }
 
         .buttonContainer {

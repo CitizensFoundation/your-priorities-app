@@ -28,6 +28,9 @@ export class YpTopAppBar extends YpBaseElement {
   @property({ type: Boolean })
   hideBreadcrumbs = false;
 
+  @property({ type: Boolean })
+  restrictWidth = false;
+
   @property({ type: String })
   titleString: string = "";
 
@@ -105,12 +108,19 @@ export class YpTopAppBar extends YpBaseElement {
           z-index: 2000;
         }
 
+        .top-app-bar[restrict-width] {
+        }
+
         .middleContainer {
-          width: 982px;
+          width: 100%;
           display: flex;
           align-items: center;
           justify-content: space-between;
           padding-left: 12px;
+        }
+
+        .middleContainer[restrict-width] {
+          width: 982px;
         }
 
         .title {
@@ -227,8 +237,11 @@ export class YpTopAppBar extends YpBaseElement {
       : "top-app-bar";
 
     return html`
-      <div class="${appBarClass} layout center-center">
-        <div class="middleContainer">
+      <div
+        class="${appBarClass} layout center-center"
+        ?restrict-width="${this.restrictWidth}"
+      >
+        <div class="middleContainer" ?restrict-width="${this.restrictWidth}">
           <slot name="navigation"></slot>
           <div class="title ${this.isTitleLong ? "expanded" : ""}">
             ${this.titleString}
@@ -236,6 +249,7 @@ export class YpTopAppBar extends YpBaseElement {
               ? this.renderBreadcrumbsDropdown()
               : ""}
           </div>
+          ${!this.restrictWidth ? html`<div class="flex"></div>` : nothing}
           <slot name="action"></slot>
         </div>
       </div>

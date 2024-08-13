@@ -15,7 +15,6 @@ import { customElement, property } from "lit/decorators.js";
 import "@material/web/fab/fab.js";
 import { YpFormattingHelpers } from "../common/YpFormattingHelpers.js";
 import { YpNavHelpers } from "../common/YpNavHelpers.js";
-import { ShadowStyles } from "../common/ShadowStyles.js";
 import "./yp-post-header.js";
 import "./yp-post-points.js";
 import "./yp-post-user-images.js";
@@ -79,10 +78,18 @@ let YpPost = class YpPost extends YpCollection {
     static get styles() {
         return [
             super.styles,
-            ShadowStyles,
             css `
+        .outerFrameContainer {
+          max-width: 1034px;
+          width: 1034px;
+          background-color: var(--md-sys-color-surface);
+          margin: 0 auto;
+          padding: 32px;
+        }
+
         .frameContainer {
           max-width: 970px;
+          width: 970px;
           min-height: 1000px;
           margin: 32px;
           margin-top: 0;
@@ -90,6 +97,7 @@ let YpPost = class YpPost extends YpCollection {
           border-radius: 4px;
           border: 1px solid var(--md-sys-color-outline);
           position: relative;
+          background-color: var(--md-sys-color-surface);
         }
 
         .dividerLine {
@@ -366,7 +374,7 @@ let YpPost = class YpPost extends YpCollection {
     render() {
         return this.post
             ? html `
-          <div class="layout vertical center-center">
+          <div class="layout vertical center-center outerFrameContainer">
             <div class="frameContainer">
               <div class="layout vertical">
                 ${this.renderPostStaticHeader()} ${this.renderPostHeader()}

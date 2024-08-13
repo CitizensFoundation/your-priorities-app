@@ -467,34 +467,46 @@ export class PolicySynthAgentsController {
 }
 _a = PolicySynthAgentsController;
 PolicySynthAgentsController.setupApiKeysForGroup = async (group) => {
-    const anthropicSonnet = await PsAiModel.findOne({
-        where: {
-            name: "Anthropic Sonnet 3.5",
-        },
-    });
-    const openAiGpt4 = await PsAiModel.findOne({
-        where: {
-            name: "GPT-4o",
-        },
-    });
-    const openAiGpt4Mini = await PsAiModel.findOne({
-        where: {
-            name: "GPT-4o Mini",
-        },
-    });
-    group.set("private_access_configuration", [
-        {
+    const findLatestActiveModel = async (name) => {
+        return await PsAiModel.findOne({
+            where: {
+                name,
+                configuration: {
+                    active: true
+                }
+            },
+            order: [['created_at', 'DESC']],
+        });
+    };
+    const anthropicSonnet = await findLatestActiveModel("Anthropic Sonnet 3.5");
+    const openAiGpt4 = await findLatestActiveModel("GPT-4o");
+    const openAiGpt4Mini = await findLatestActiveModel("GPT-4o Mini");
+    const geminiPro = await findLatestActiveModel("Gemini 1.5 Pro");
+    const groupAccessConfig = [];
+    if (anthropicSonnet && process.env.ANTHROPIC_CLAUDE_API_KEY) {
+        groupAccessConfig.push({
             aiModelId: anthropicSonnet.id,
-            apiKey: process.env.ANTHROPIC_CLAUDE_API_KEY || "",
-        },
-        {
+            apiKey: process.env.ANTHROPIC_CLAUDE_API_KEY,
+        });
+    }
+    if (openAiGpt4 && process.env.OPENAI_API_KEY) {
+        groupAccessConfig.push({
             aiModelId: openAiGpt4.id,
-            apiKey: process.env.OPENAI_API_KEY || "",
-        },
-        {
+            apiKey: process.env.OPENAI_API_KEY,
+        });
+    }
+    if (openAiGpt4Mini && process.env.OPENAI_API_KEY) {
+        groupAccessConfig.push({
             aiModelId: openAiGpt4Mini.id,
-            apiKey: process.env.OPENAI_API_KEY || "",
-        },
-    ]);
+            apiKey: process.env.OPENAI_API_KEY,
+        });
+    }
+    if (geminiPro && process.env.GEMINI_API_KEY) {
+        groupAccessConfig.push({
+            aiModelId: geminiPro.id,
+            apiKey: process.env.GEMINI_API_KEY,
+        });
+    }
+    group.set("private_access_configuration", groupAccessConfig);
     await group.save();
 };

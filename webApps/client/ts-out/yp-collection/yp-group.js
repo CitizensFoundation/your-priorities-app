@@ -7,7 +7,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 import { YpAccessHelpers } from "../common/YpAccessHelpers.js";
 import { YpMediaHelpers } from "../common/YpMediaHelpers.js";
 import { CollectionTabTypes, YpCollection } from "./yp-collection.js";
-import { html, nothing } from "lit";
+import { html, nothing, css } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import "@material/web/tabs/tabs.js";
 import "@material/web/tabs/secondary-tab.js";
@@ -824,8 +824,16 @@ let YpGroup = class YpGroup extends YpCollection {
         }
         return groupType;
     }
+    static get styles() {
+        return [
+            super.styles,
+            css `
+      `
+        ];
+    }
     renderAgentsOps() {
         return html `<ps-operations-manager
+      class="agentManager"
       .groupId="${this.collection.id}"
     ></ps-operations-manager>`;
     }

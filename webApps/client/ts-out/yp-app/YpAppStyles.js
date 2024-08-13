@@ -8,7 +8,7 @@ export const YpAppStyles = css `
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    margin: 0 auto;
+    margin: 0;
   }
 
   main {
@@ -116,7 +116,7 @@ export const YpAppStyles = css `
   }
 
   .mainPage {
-    margin-top: 64px;
+    margin-top: 52px;
   }
 
   #helpIconButton {
@@ -148,6 +148,11 @@ export const YpAppStyles = css `
   .closeButton.visible {
     opacity: 1;
     visibility: visible;
+  }
+
+  yp-top-app-bar {
+    max-width: 1048px;
+    margin: 0 auto;
   }
 `;
 //# sourceMappingURL=YpAppStyles.js.map

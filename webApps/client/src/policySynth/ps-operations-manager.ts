@@ -4,7 +4,7 @@ import { property, customElement, query, state } from "lit/decorators.js";
 import "@material/web/iconbutton/icon-button.js";
 import "@material/web/progress/linear-progress.js";
 import "@material/web/tabs/tabs.js";
-import "@material/web/tabs/primary-tab.js";
+import "@material/web/tabs/secondary-tab.js";
 import "@material/web/textfield/outlined-text-field.js";
 import "@material/web/iconbutton/outlined-icon-button.js";
 import "@material/web/button/filled-tonal-button.js";
@@ -445,20 +445,34 @@ export class PsOperationsManager extends PsBaseWithRunningAgentObserver {
           @close="${() => (this.showAddConnectorDialog = false)}"
         ></ps-add-connector-dialog>
 
-        <md-tabs id="tabBar" @change="${this.tabChanged}">
-          <md-primary-tab id="configure-tab" aria-controls="configure-panel">
-            <md-icon slot="icon">support_agent</md-icon>
-            ${this.t("Agents Operations")}
-          </md-primary-tab>
-          <md-primary-tab id="crt-tab" aria-controls="crt-panel">
-            <md-icon slot="icon">checklist</md-icon>
-            ${this.t("Audit Log")}
-          </md-primary-tab>
-          <md-primary-tab id="costs-tab" aria-controls="costs-panel">
-            <md-icon slot="icon">account_balance</md-icon>
-            ${this.renderTotalCosts()}
-          </md-primary-tab>
-        </md-tabs>
+        <div class="layout vertical self-start tabsContainer">
+          <md-tabs id="tabBar" @change="${this.tabChanged}">
+            <md-secondary-tab
+              id="configure-tab"
+              ?has-static-theme="${this.hasStaticTheme}"
+              aria-controls="configure-panel"
+            >
+              <md-icon slot="icon">support_agent</md-icon>
+              ${this.t("Agents Operations")}
+            </md-secondary-tab>
+            <md-secondary-tab
+              id="crt-tab"
+              ?has-static-theme="${this.hasStaticTheme}"
+              aria-controls="crt-panel"
+            >
+              <md-icon slot="icon">checklist</md-icon>
+              ${this.t("Audit Log")}
+            </md-secondary-tab>
+            <md-secondary-tab
+              id="costs-tab"
+              ?has-static-theme="${this.hasStaticTheme}"
+              aria-controls="costs-panel"
+            >
+              <md-icon slot="icon">account_balance</md-icon>
+              ${this.renderTotalCosts()}
+            </md-secondary-tab>
+          </md-tabs>
+        </div>
 
         ${this.activeTabIndex === 0
           ? html`
@@ -481,14 +495,26 @@ export class PsOperationsManager extends PsBaseWithRunningAgentObserver {
     return [
       super.styles,
       css`
+        .tabsContainer {
+          background-color: var(--md-sys-color-surface);
+          width: 100%;
+          padding: 0;
+          margin: 0;
+        }
+
         md-tabs {
           margin-bottom: 64px;
-          margin-top: -16px; /* Look into this hack */
+          align-self: flex-start;
+          align-items: flex-start;
+          max-width: 800px;
+          background-color: var(--md-sys-color-surface);
         }
+
         md-filled-select {
           width: 100%;
           margin-bottom: 16px;
         }
+
         .nodeEditHeadlineImage {
           max-width: 100px;
           margin-right: 16px;
@@ -515,6 +541,12 @@ export class PsOperationsManager extends PsBaseWithRunningAgentObserver {
 
         md-icon-button {
           margin-top: 32px;
+        }
+
+        md-secondary-tab[has-static-theme] {
+          --md-secondary-tab-active-indicator-color: var(
+            --md-sys-color-primary-container
+          );
         }
 
         .createOptionsButtons {

@@ -55,6 +55,7 @@ export declare class YpGroup extends YpCollection {
     renderStaticHtml(): TemplateResult<1>;
     renderHeader(): TemplateResult<1> | typeof nothing;
     get cleanedGroupType(): number;
+    static get styles(): (any[] | import("lit").CSSResult)[];
     renderAgentsOps(): TemplateResult<1>;
     render(): TemplateResult<1>;
     renderYpGroup(): TemplateResult<1>;

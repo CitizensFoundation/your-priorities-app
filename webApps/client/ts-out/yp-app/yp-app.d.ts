@@ -116,6 +116,7 @@ export declare class YpApp extends YpBaseElement {
     _appDialogsReady(event: CustomEvent): void;
     get hasStaticBadgeTheme(): boolean;
     updateLocation(): void;
+    get isFullScreenMode(): boolean;
     renderNavigationIcon(): import("lit-html").TemplateResult<1>;
     _openHelpMenu(): void;
     renderActionItems(): import("lit-html").TemplateResult<1>;

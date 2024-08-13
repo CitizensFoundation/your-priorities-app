@@ -68,6 +68,7 @@ import { PsAppGlobals } from "../policySynth/PsAppGlobals.js";
 import { PsServerApi } from "../policySynth/PsServerApi.js";
 import { YpTopAppBar } from "./yp-top-app-bar.js";
 import { skip } from "node:test";
+import { YpGroupType } from "../yp-collection/ypGroupType.js";
 
 declare global {
   interface Window {
@@ -545,6 +546,10 @@ export class YpApp extends YpBaseElement {
     this._routePageChanged(oldRouteData);
   }
 
+  get isFullScreenMode(){
+    return (this.page == "group" && window.appGlobals.currentGroup?.configuration.groupType == YpGroupType.PsAgentWorkflow)
+  }
+
   //TODO: Use someth8ing like https://boguz.github.io/burgton-button-docs/
   renderNavigationIcon() {
     let icons = html``;
@@ -699,6 +704,7 @@ export class YpApp extends YpBaseElement {
     return html`
       <yp-top-app-bar
         role="navigation"
+        .restrictWidth="${!this.isFullScreenMode}"
         .titleString="${this.page != "post" ? titleString : ""}"
         aria-label="top navigation"
         ?hideBreadcrumbs="${!titleString || titleString == ""}"
