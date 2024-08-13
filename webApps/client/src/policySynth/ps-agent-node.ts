@@ -315,6 +315,9 @@ export class PsAgentNode extends PsOperationsBaseNode {
         <md-menu-item @click="${this.openMemoryDialog}">
           <div slot="headline">Explore Memory</div>
         </md-menu-item>
+        <md-menu-item @click="${this.editNode}">
+          <div slot="headline">Settings</div>
+        </md-menu-item>
       </md-menu>`;
   }
   override render() {
@@ -328,19 +331,19 @@ export class PsAgentNode extends PsOperationsBaseNode {
           alt="${this.agent.Class?.name}"
         />
         <div class="contentContainer">
-          <div class="agentName">${this.agent.configuration["name"]}</div>
-          <div class="agentClassName">${this.agent.Class?.name}</div>
+        <div class="agentClassName">${this.agent.Class?.name}</div>
+        <div class="agentName">${this.agent.configuration["name"]}</div>
           ${this.agentState === "running" ? this.renderProgress() : nothing}
           <div class="statusMessage">${this.latestMessage}</div>
         </div>
         <div class="buttonContainer">
           ${this.renderConnectorMenu()}
+          <div class="flex"></div>
 
           ${this.renderActionButtons()}
+          <div class="flex"></div>
 
-          <md-icon-button @click="${this.editNode}">
-            <md-icon>settings</md-icon>
-          </md-icon-button>
+          ${this.renderMainMenu()}
         </div>
       </div>
       ${this.renderMemoryDialog()}
@@ -356,10 +359,18 @@ export class PsAgentNode extends PsOperationsBaseNode {
         }
 
         .playButtons {
-          --md-icon-button-icon-size: 32px;
-          padding-bottom: 16px;
-          width: 44px;
-          height: 44px;
+          --md-icon-button-icon-size: 34px;
+          width: 42px;
+          height: 42px;
+          margin-top: -16px;
+        }
+
+        #connectorMenuAnchor {
+          margin-bottom: 4px;
+        }
+
+        #mainMenuAnchor {
+          margin-bottom: 8px;
         }
 
         #memoryDialog {
@@ -372,7 +383,6 @@ export class PsAgentNode extends PsOperationsBaseNode {
         .buttonContainer {
           display: flex;
           padding: 0px;
-          padding-bottom: 0;
           bottom: 0;
           left: 0;
           right: 0;
@@ -431,14 +441,25 @@ export class PsAgentNode extends PsOperationsBaseNode {
         }
 
         .agentClassName {
-          font-size: 9px;
-          text-align: center;
+          font-size: 10px;
+          text-align: left;
           margin: 8px;
+          margin-top: 0;
+          line-height: 15px;
+          font-weight: 500;
+          color: var(--md-sys-color-primary);
+          text-transform: uppercase;
         }
 
         .agentName {
           font-size: 14px;
-          text-align: center;
+          text-align: left;
+          font-weight: 700;
+          margin: 8px;
+          margin-top: 0;
+          margin-bottom: 0;
+          line-height: 22px;
+          font-family: var(--md-ref-typeface-brand);
         }
 
         .statusMessage {
