@@ -835,6 +835,7 @@ let YpGroup = class YpGroup extends YpCollection {
         return html `<ps-operations-manager
       class="agentManager"
       .groupId="${this.collection.id}"
+      .group="${this.collection}"
     ></ps-operations-manager>`;
     }
     render() {

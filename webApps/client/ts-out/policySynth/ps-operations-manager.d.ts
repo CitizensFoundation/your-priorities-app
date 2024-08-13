@@ -29,6 +29,7 @@ export declare class PsOperationsManager extends PsBaseWithRunningAgentObserver 
     selectedInputOutputType: string | null;
     agentElement: PsOperationsView;
     groupId: number;
+    group: YpGroupData;
     detailedCosts: PsDetailedAgentCostResults[];
     private activeAiModels;
     api: PsServerApi;

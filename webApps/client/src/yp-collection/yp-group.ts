@@ -1054,6 +1054,7 @@ export class YpGroup extends YpCollection {
     return html`<ps-operations-manager
       class="agentManager"
       .groupId="${this.collection!.id}"
+      .group="${this.collection as YpGroupData}"
     ></ps-operations-manager>`;
   }
 

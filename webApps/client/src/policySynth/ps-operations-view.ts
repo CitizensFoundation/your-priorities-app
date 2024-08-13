@@ -15,6 +15,7 @@ import { AgentShape, AgentsShapeView } from './ps-agent-shape.js';
 import { ConnectorShape } from './ps-connector-shape.js';
 import { PsBaseWithRunningAgentObserver } from './ps-base-with-running-agents.js';
 import { YpNavHelpers } from '../common/YpNavHelpers.js';
+import { YpMediaHelpers } from '../common/YpMediaHelpers.js';
 
 type Cell = dia.Element | dia.Link;
 
@@ -25,6 +26,9 @@ export class PsOperationsView extends PsBaseWithRunningAgentObserver {
 
   @property({ type: Number })
   groupId!: number;
+
+  @property({ type: Object })
+  group!: YpGroupData;
 
   private graph!: dia.Graph;
   private paper!: dia.Paper;
@@ -674,10 +678,9 @@ export class PsOperationsView extends PsBaseWithRunningAgentObserver {
           top: 120px;
           left: 0;
           width: 100%;
-          height: 56px;
           padding: 0;
-          padding-top: 4px;
           opacity: 1;
+          height: 52px;
           background: transparent;
           color: var(--md-sys-color-on-surface-variant);
         }
@@ -688,8 +691,7 @@ export class PsOperationsView extends PsBaseWithRunningAgentObserver {
           top: 120px;
           left: 0;
           width: 100%;
-          height: 62px;
-          padding: 0;
+          height: 52px;
           opacity: 0.65;
           background: var(--md-sys-color-surface-variant);
         }
@@ -757,11 +759,11 @@ export class PsOperationsView extends PsBaseWithRunningAgentObserver {
     return html`
       <div class="layout horizontal center-center agentHeader">
         <img
-          src="${this.currentAgent?.Class?.configuration.imageUrl}"
+          src="${YpMediaHelpers.getImageFormatUrl(this.group.GroupLogoImages, 0)}"
           class="agentHeaderImage"
         />
         <div class="layout vertical agentHeaderText">
-          ${this.currentAgent?.Class?.name}
+          ${this.group.name}
         </div>
       </div>
     `;

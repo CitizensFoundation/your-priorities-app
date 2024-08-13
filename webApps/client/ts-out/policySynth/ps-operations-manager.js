@@ -35,7 +35,6 @@ let PsOperationsManager = class PsOperationsManager extends PsBaseWithRunningAge
         this.showAddConnectorDialog = false;
         this.selectedAgentIdForConnector = null;
         this.selectedInputOutputType = null;
-        this.groupId = 30995; //!: number;
         this.detailedCosts = [];
         this.activeAiModels = [];
         this.api = new PsServerApi();
@@ -342,6 +341,7 @@ let PsOperationsManager = class PsOperationsManager extends PsBaseWithRunningAge
               <ps-operations-view
                 .currentAgent="${this.currentAgent}"
                 .groupId="${this.groupId}"
+                .group="${this.group}"
               ></ps-operations-view>
             `
                 : ""}
@@ -629,6 +629,9 @@ __decorate([
 __decorate([
     property({ type: Number })
 ], PsOperationsManager.prototype, "groupId", void 0);
+__decorate([
+    property({ type: Object })
+], PsOperationsManager.prototype, "group", void 0);
 __decorate([
     state()
 ], PsOperationsManager.prototype, "detailedCosts", void 0);

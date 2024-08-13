@@ -67,7 +67,10 @@ export class PsOperationsManager extends PsBaseWithRunningAgentObserver {
   agentElement!: PsOperationsView;
 
   @property({ type: Number })
-  groupId = 30995; //!: number;
+  groupId!: number;
+
+  @property({ type: Object })
+  group!: YpGroupData;
 
   @state()
   detailedCosts: PsDetailedAgentCostResults[] = [];
@@ -479,6 +482,7 @@ export class PsOperationsManager extends PsBaseWithRunningAgentObserver {
               <ps-operations-view
                 .currentAgent="${this.currentAgent}"
                 .groupId="${this.groupId}"
+                .group="${this.group}"
               ></ps-operations-view>
             `
           : ""}
