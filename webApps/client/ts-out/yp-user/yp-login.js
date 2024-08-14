@@ -31,7 +31,9 @@ let YpLogin = class YpLogin extends YpBaseElement {
         this.submitText = "";
         this.forgotPasswordOpen = false;
         this.opened = false;
+        this.dialogMode = false;
         this.forceSecureSamlLogin = false;
+        this.directSamlIntegration = false;
         this.hasAnonymousLogin = false;
         this.disableFacebookLoginForGroup = false;
         this.hasOneTimeLoginWithName = false;
@@ -307,10 +309,9 @@ let YpLogin = class YpLogin extends YpBaseElement {
         }
 
         .loginField {
-            margin-bottom: 16px;
-            margin-top: 16px;
-          }
-
+          margin-bottom: 16px;
+          margin-top: 16px;
+        }
 
         @media (max-width: 900px) {
           md-filled-text-field {
@@ -319,7 +320,6 @@ let YpLogin = class YpLogin extends YpBaseElement {
           .login-user-row {
             flex-direction: column;
           }
-
 
           .login-button-row {
             justify-content: center;
@@ -560,7 +560,105 @@ let YpLogin = class YpLogin extends YpBaseElement {
       </div>
     </div>`;
     }
-    renderLogin() {
+    renderLoginButton() {
+        return html `<md-filled-button
+        autofocus
+        raised
+        class="loginButton"
+        @click="${() => this._validateAndSend(false)}"
+        ><span class="capitalize"
+          >${this.submitText}</span
+        ></md-filled-button
+      >
+    </div>`;
+    }
+    renderLoginEmail() {
+        return html `<md-outlined-text-field
+        id="email"
+        type="email"
+        .label="${this.t("user.email")}"
+        name="username"
+        pattern="^.+@.+$"
+        minLength="5"
+        required
+        class="loginField"
+        .value="${this.email}"
+        autocomplete="username"
+      ></md-outlined-text-field>
+      <md-outlined-text-field
+        id="password"
+        type="password"
+        .label="${this.t("user.password")}"
+        autocomplete="current-password"
+        class="loginField"
+        minLength="1"
+        .value="${this.password}"
+        @keyup="${this.onEnterLogin}"
+      ></md-outlined-text-field>`;
+    }
+    renderSamlInfo() {
+        return html `
+      <div
+        class="customUserRegistrationText"
+        ?hidden="${!this.forceSecureSamlLogin}"
+      >
+        <div ?hidden="${!this.customSamlLoginText}">
+          <yp-magic-text
+            disableTranslation
+            linkifyCutoff="100"
+            .content="${this.customSamlLoginText}"
+          ></yp-magic-text>
+        </div>
+        <div ?hidden="${this.customSamlLoginText != null}">
+          ${this.t("forceSecureSamlLoginInfo")}
+        </div>
+      </div>
+    `;
+    }
+    renderCustomUserRegistrationText() {
+        return html `<div
+      ?hidden="${!this.customUserRegistrationText}"
+      class="customUserRegistrationText"
+    >
+      <yp-magic-text
+        disableTranslation
+        linkifyCutoff="100"
+        .content="${this.customUserRegistrationText}"
+      ></yp-magic-text>
+    </div>`;
+    }
+    renderLoginSurface() {
+        return html ` ${this.renderCustomUserRegistrationText()}
+      ${this.renderSamlInfo()} ${this.renderAdditionalMethods()}
+
+      <div ?hidden="${this.forceSecureSamlLogin}">
+        <div class="orContainer" ?hidden="${!this.hasAdditionalAuthMethods}">
+          <div class="strike">
+            <span>${this.t("or")}</span>
+          </div>
+        </div>
+
+        <div class="login-user-row layout vertical center-center">
+          ${this.renderLoginEmail()}
+        </div>
+        <div class="login-button-row layout vertical center-center">
+          ${this.renderLoginButton()}
+        </div>
+      </div>`;
+    }
+    renderCreateUserButton() {
+        return html `<md-text-button @click="${this.openCreateUser}"
+      >${this.t("user.create")}</md-text-button
+    >`;
+    }
+    renderForgotPasswordButton() {
+        return html `<md-text-button @click="${this._forgotPassword}"
+      ><span class="capitalize"
+        >${this.t("user.newPassword")}</span
+      ></md-text-button
+    >`;
+    }
+    renderLoginDialog() {
         return html `
       <md-dialog
         id="loginDialog"
@@ -581,105 +679,76 @@ let YpLogin = class YpLogin extends YpBaseElement {
         </div>
 
         <div class="create-user-content" slot="content">
-          <div
-            ?hidden="${!this.customUserRegistrationText}"
-            class="customUserRegistrationText"
-          >
-            <yp-magic-text
-              disableTranslation
-              linkifyCutoff="100"
-              .content="${this.customUserRegistrationText}"
-            ></yp-magic-text>
-          </div>
-          <div
-            class="customUserRegistrationText"
-            ?hidden="${!this.forceSecureSamlLogin}"
-          >
-            <div ?hidden="${!this.customSamlLoginText}">
-              <yp-magic-text
-                disableTranslation
-                linkifyCutoff="100"
-                .content="${this.customSamlLoginText}"
-              ></yp-magic-text>
-            </div>
-            <div ?hidden="${this.customSamlLoginText != null}">
-              ${this.t("forceSecureSamlLoginInfo")}
-            </div>
-          </div>
-
-          ${this.renderAdditionalMethods()}
-
-          <div ?hidden="${this.forceSecureSamlLogin}">
-            <div
-              class="orContainer"
-              ?hidden="${!this.hasAdditionalAuthMethods}"
-            >
-              <div class="strike">
-                <span>${this.t("or")}</span>
-              </div>
-            </div>
-
-            <div class="login-user-row layout vertical center-center">
-              <md-outlined-text-field
-                id="email"
-                type="email"
-                .label="${this.t("user.email")}"
-                name="username"
-                pattern="^.+@.+$"
-                minLength="5"
-                required
-                class="loginField"
-                .value="${this.email}"
-                autocomplete="username"
-              ></md-outlined-text-field>
-              <md-outlined-text-field
-                id="password"
-                type="password"
-                .label="${this.t("user.password")}"
-                autocomplete="current-password"
-                class="loginField"
-                minLength="1"
-                .value="${this.password}"
-                @keyup="${this.onEnterLogin}"
-              ></md-outlined-text-field>
-            </div>
-            <div class="login-button-row layout vertical center-center">
-              <md-filled-button
-                autofocus
-                raised
-                class="loginButton"
-                @click="${() => this._validateAndSend(false)}"
-                ><span class="capitalize"
-                  >${this.submitText}</span
-                ></md-filled-button
-              >
-            </div>
-          </div>
+          ${this.renderLoginSurface()}
         </div>
         <div slot="actions">
           <div class="loginInfoOptions layout horizontal center-center wrap">
-            <md-icon-button class="closeLoginDialog" @click="${this._logingDialogClose}"
-                ><md-icon>close</md-icon></md-icon-button
-              >
+            <md-icon-button
+              class="closeLoginDialog"
+              @click="${this._logingDialogClose}"
+              ><md-icon>close</md-icon></md-icon-button
+            >
 
             <div class="loginInfoContainer layout vertical">
-              <md-text-button @click="${this.openCreateUser}"
-                >${this.t("user.create")}</md-text-button
-              >
+              ${this.renderCreateUserButton()}
             </div>
+
             <div class="loginInfoContainer layout vertical">
-              <md-text-button @click="${this._forgotPassword}"
-                ><span class="capitalize"
-                  >${this.t("user.newPassword")}</span
-                ></md-text-button
-              >
+              ${this.renderForgotPasswordButton()}
             </div>
           </div>
         </div>
       </md-dialog>
     `;
     }
-    renderCreateUser() {
+    renderCreateUserSurface() {
+        return html `<div class="create-user-content">
+      <md-filled-text-field
+        id="fullname"
+        type="text"
+        .label="${this.userNameText}"
+        maxLength="50"
+        minLength="2"
+        required
+        charCounter
+      ></md-filled-text-field>
+      <md-filled-text-field
+        id="regEmail"
+        type="email"
+        .label="${this.t("user.email")}"
+        name="username"
+        pattern=".+@.+"
+        min="5"
+        autocomplete="username"
+      ></md-filled-text-field>
+      <md-filled-text-field
+        id="regPassword"
+        type="password"
+        minLength="5"
+        .label="${this.t("user.password")}"
+        autocomplete="current-password"
+        @keyup="${this.onEnterRegistration}"
+      ></md-filled-text-field>
+      ${this.registrationQuestionsGroup
+            ? html `
+            <yp-registration-questions
+              id="registrationQuestions"
+              @questions-changed="${this._registrationQuestionsChanged}"
+              @resize-scroller="${this._registrationQuestionsChanged}"
+              .group="${this.registrationQuestionsGroup}"
+            >
+            </yp-registration-questions>
+          `
+            : nothing}
+      <div class="signupTerms" ?hidden="${!this.showSignupTerms}">
+        ${this.customTermsIntroText} -
+        <span @click="${this._openTerms}" class="openTerms"
+          >${this.t("signupTermsOpen")}</span
+        >
+      </div>
+    </div>`;
+    }
+    renderCreateUserDialog() {
         return html `
       <md-dialog
         id="createUserDialog"
@@ -692,62 +761,14 @@ let YpLogin = class YpLogin extends YpBaseElement {
         <div slot="headline" class="layout horizontal center-center">
           ${this.t("user.create")}
         </div>
-        <div slot="content">
-          <div class="create-user-content">
-            <md-filled-text-field
-              id="fullname"
-              type="text"
-              .label="${this.userNameText}"
-              maxLength="50"
-              minLength="2"
-              required
-              charCounter
-            ></md-filled-text-field>
-            <md-filled-text-field
-              id="regEmail"
-              type="email"
-              .label="${this.t("user.email")}"
-              name="username"
-              pattern=".+@.+"
-              min="5"
-              autocomplete="username"
-            ></md-filled-text-field>
-            <md-filled-text-field
-              id="regPassword"
-              type="password"
-              minLength="5"
-              .label="${this.t("user.password")}"
-              autocomplete="current-password"
-              @keyup="${this.onEnterRegistration}"
-            ></md-filled-text-field>
-            ${this.registrationQuestionsGroup
-            ? html `
-                  <yp-registration-questions
-                    id="registrationQuestions"
-                    @questions-changed="${this._registrationQuestionsChanged}"
-                    @resize-scroller="${this._registrationQuestionsChanged}"
-                    .group="${this.registrationQuestionsGroup}"
-                  >
-                  </yp-registration-questions>
-                `
-            : nothing}
-            <div class="signupTerms" ?hidden="${!this.showSignupTerms}">
-              ${this.customTermsIntroText} -
-              <span @click="${this._openTerms}" class="openTerms"
-                >${this.t("signupTermsOpen")}</span
-              >
-            </div>
-          </div>
-        </div>
+        <div slot="content">${this.renderCreateUserSurface()}</div>
         <div slot="actions">
           <md-text-button
             @click="${this.cancelRegistration}"
             dialogAction="cancel"
             >${this.t("cancel")}</md-text-button
           >
-          <md-text-button @click="${() => this._validateAndSend(true)}"
-            >${this.t("user.create")}</md-text-button
-          >
+          ${this.renderCreateUserButton()}
         </div>
       </md-dialog>
     `;
@@ -789,9 +810,10 @@ let YpLogin = class YpLogin extends YpBaseElement {
     }
     renderOneTimeDialog() {
         return html `
-      <md-dialog id="dialogOneTimeWithName"
-      @cancel="${this.scrimDisableAction}"
-      ?is-safari="${this.isSafari}"
+      <md-dialog
+        id="dialogOneTimeWithName"
+        @cancel="${this.scrimDisableAction}"
+        ?is-safari="${this.isSafari}"
       >
         <div slot="headline">[[t('oneTimeLoginWithName')]]</div>
         <div slot="content">
@@ -862,11 +884,20 @@ let YpLogin = class YpLogin extends YpBaseElement {
     `;
     }
     render() {
-        return html `
-      ${this.renderLogin()} ${this.renderCreateUser()}
-      ${this.renderForgotPassword()}
-      ${this.hasOneTimeLoginWithName ? this.renderOneTimeDialog() : nothing}
-    `;
+        if (this.dialogMode) {
+            return html `
+        ${this.renderLoginDialog()} ${this.renderCreateUserDialog()}
+        ${this.renderForgotPassword()}
+        ${this.hasOneTimeLoginWithName ? this.renderOneTimeDialog() : nothing}
+      `;
+        }
+        else {
+            return html `
+        ${this.renderForgotPassword()}
+        ${this.hasOneTimeLoginWithName ? this.renderOneTimeDialog() : nothing}
+        ${this.renderLoginSurface()} ${this.renderCreateUserSurface()}
+      `;
+        }
     }
     _registrationQuestionsChanged() {
         //this.$.dialog.fire('iron-resize');
@@ -1099,6 +1130,14 @@ let YpLogin = class YpLogin extends YpBaseElement {
             return false;
         }
     }
+    get hasGoogleLogin() {
+        if (this.domain) {
+            return this.domain.googleLoginProvided;
+        }
+        else {
+            return false;
+        }
+    }
     get hasSamlLogin() {
         if (this.domain) {
             return this.domain.samlLoginProvided;
@@ -1142,14 +1181,18 @@ let YpLogin = class YpLogin extends YpBaseElement {
             else {
                 this.customUserRegistrationText = undefined;
             }
-            if (window.appGlobals.domain &&
-                window.appGlobals.domain.configuration &&
-                window.appGlobals.domain.configuration.samlLoginButtonUrl) {
+            if (window.appGlobals.domain && window.appGlobals.domain.configuration) {
                 this.samlLoginButtonUrl =
                     window.appGlobals.domain.configuration.samlLoginButtonUrl;
+                this.directSamlIntegration =
+                    window.appGlobals.domain.configuration.directSamlIntegration !==
+                        undefined
+                        ? window.appGlobals.domain.configuration.directSamlIntegration
+                        : false;
             }
             else {
                 this.samlLoginButtonUrl = undefined;
+                this.directSamlIntegration = false;
             }
             if (window.appGlobals.domain &&
                 window.appGlobals.domain.configuration &&
@@ -1461,11 +1504,17 @@ __decorate([
     property({ type: Boolean })
 ], YpLogin.prototype, "opened", void 0);
 __decorate([
+    property({ type: Boolean })
+], YpLogin.prototype, "dialogMode", void 0);
+__decorate([
     property({ type: Object })
 ], YpLogin.prototype, "target", void 0);
 __decorate([
     property({ type: Boolean })
 ], YpLogin.prototype, "forceSecureSamlLogin", void 0);
+__decorate([
+    property({ type: Boolean })
+], YpLogin.prototype, "directSamlIntegration", void 0);
 __decorate([
     property({ type: Boolean })
 ], YpLogin.prototype, "hasAnonymousLogin", void 0);

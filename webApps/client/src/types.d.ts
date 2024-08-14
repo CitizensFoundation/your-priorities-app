@@ -425,6 +425,7 @@ interface YpDomainConfiguration extends YpCollectionConfiguration {
   hideAppBarIfWelcomeHtml?: boolean;
   ltp?: YpLtpConfiguration;
   onlyAdminsCanCreateCommunities?: boolean;
+  directSamlIntegration?: boolean;
 }
 
 interface YpHelpPageData {
