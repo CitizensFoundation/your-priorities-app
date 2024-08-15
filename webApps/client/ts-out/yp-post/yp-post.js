@@ -40,8 +40,8 @@ let YpPost = class YpPost extends YpCollection {
     setupTheme() {
         try {
             const group = this.post.Group;
-            if (group.configuration && group.configuration.theme) {
-                if (group.configuration.inheritThemeFromCommunity && group.Community) {
+            if (group.configuration && group.configuration?.theme) {
+                if (group.configuration?.inheritThemeFromCommunity && group.Community) {
                     window.appGlobals.theme.setTheme(undefined, group.Community.configuration);
                 }
                 else {
@@ -49,7 +49,7 @@ let YpPost = class YpPost extends YpCollection {
                 }
             }
             else if (group.configuration &&
-                group.configuration.themeOverrideColorPrimary) {
+                group.configuration?.themeOverrideColorPrimary) {
                 window.appGlobals.theme.setTheme(undefined, group.configuration);
             }
             else if (group.Community && group.Community.configuration.theme) {
@@ -240,7 +240,7 @@ let YpPost = class YpPost extends YpCollection {
     `;
     }
     renderPostTabs() {
-        if (this.post && !this.post.Group.configuration.hideAllTabs) {
+        if (this.post && !this.post.Group.configuration?.hideAllTabs) {
             return html `
         <md-tabs
           @change="${this._selectTab}"
@@ -386,8 +386,8 @@ let YpPost = class YpPost extends YpCollection {
               ${this.renderCurrentPostTabPage()}
               ${!this.disableNewPosts &&
                 this.post &&
-                !this.post.Group.configuration.hideNewPost &&
-                !this.post.Group.configuration.hideNewPostOnPostPage
+                !this.post.Group.configuration?.hideNewPost &&
+                !this.post.Group.configuration?.hideNewPostOnPostPage
                 ? html `<md-fab
                     hidden
                     .label="${this.t("post.new")}"
@@ -573,8 +573,8 @@ let YpPost = class YpPost extends YpCollection {
     refresh() {
         if (this.post) {
             if (this.post.Group.configuration &&
-                this.post.Group.configuration.canAddNewPosts != undefined) {
-                if (this.post.Group.configuration.canAddNewPosts === true) {
+                this.post.Group.configuration?.canAddNewPosts != undefined) {
+                if (this.post.Group.configuration?.canAddNewPosts === true) {
                     this.disableNewPosts = false;
                 }
                 else {
@@ -604,12 +604,12 @@ let YpPost = class YpPost extends YpCollection {
             window.appGlobals.setAnonymousGroupStatus(this.post.Group);
             window.appGlobals.setRegistrationQuestionGroup(this.post.Group);
             if (this.post.Group.configuration &&
-                this.post.Group.configuration.defaultLocale != null) {
-                window.appGlobals.changeLocaleIfNeeded(this.post.Group.configuration.defaultLocale);
+                this.post.Group.configuration?.defaultLocale != null) {
+                window.appGlobals.changeLocaleIfNeeded(this.post.Group.configuration?.defaultLocale);
             }
             if (this.post.Group.configuration &&
-                this.post.Group.configuration.locationHidden != undefined) {
-                this.locationHidden = this.post.Group.configuration.locationHidden;
+                this.post.Group.configuration?.locationHidden != undefined) {
+                this.locationHidden = this.post.Group.configuration?.locationHidden;
             }
             else {
                 this.locationHidden = false;
@@ -621,12 +621,12 @@ let YpPost = class YpPost extends YpCollection {
                 backPath: "/group/" + this.post.group_id,
                 backListItem: this.post,
                 hideHelpIcon: this.post.Group.configuration &&
-                    this.post.Group.configuration.hideHelpIcon
+                    this.post.Group.configuration?.hideHelpIcon
                     ? true
                     : null,
             });
             if (this.post.Group.configuration &&
-                this.post.Group.configuration.disableFacebookLoginForGroup === true) {
+                this.post.Group.configuration?.disableFacebookLoginForGroup === true) {
                 window.appGlobals.disableFacebookLoginForGroup = true;
             }
             else {
@@ -650,7 +650,7 @@ let YpPost = class YpPost extends YpCollection {
             }
             window.appGlobals.currentGroup = this.post.Group;
             if ((this.post.Group.configuration &&
-                this.post.Group.configuration.forceSecureSamlLogin &&
+                this.post.Group.configuration?.forceSecureSamlLogin &&
                 !YpAccessHelpers.checkGroupAccess(this.post.Group)) ||
                 (this.post.Group.Community &&
                     this.post.Group.Community.configuration &&
@@ -662,7 +662,7 @@ let YpPost = class YpPost extends YpCollection {
                 window.appGlobals.currentForceSaml = false;
             }
             if ((this.post.Group.configuration &&
-                this.post.Group.configuration.forceSecureSamlLogin) ||
+                this.post.Group.configuration?.forceSecureSamlLogin) ||
                 (this.post.Group.Community &&
                     this.post.Group.Community.configuration &&
                     this.post.Group.Community.configuration.forceSecureSamlLogin)) {
@@ -681,7 +681,7 @@ let YpPost = class YpPost extends YpCollection {
                 window.appGlobals.currentSamlDeniedMessage = undefined;
             }
             if (this.post.Group.configuration &&
-                this.post.Group.configuration.maxNumberOfGroupVotes) {
+                this.post.Group.configuration?.maxNumberOfGroupVotes) {
                 window.appUser.calculateVotesLeftForGroup(this.post.Group);
             }
         }

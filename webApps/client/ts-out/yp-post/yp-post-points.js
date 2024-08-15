@@ -379,7 +379,7 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
         ];
     }
     renderAudioUpload(type, hideAudio, hasCurrentAudio, uploadAudioPointHeader) {
-        return this.post.Group.configuration.allowPointAudioUploads
+        return this.post.Group.configuration?.allowPointAudioUploads
             ? html `
           <div ?hidden="${hideAudio}" class="uploadSection">
             <div
@@ -417,7 +417,7 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
             : nothing;
     }
     renderVideoUpload(type, hideVideo, hasCurrentVideo, uploadVideoHeader, videoUploadedFunc, uploadedVideoId) {
-        return this.post.Group.configuration.allowPointVideoUploads
+        return this.post.Group.configuration?.allowPointVideoUploads
             ? html `
           <div ?hidden="${hideVideo}" class="uploadSection">
             <div
@@ -466,7 +466,7 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
         html ` <div class="layout vertical end-justified">
       <div
         class="layout horizontal center-center pointButtons"
-        ?hidden="${this.post.Group.configuration.hidePointAgainst}"
+        ?hidden="${this.post.Group.configuration?.hidePointAgainst}"
       >
         <label
           >${this.t("pointForShort")}
@@ -562,7 +562,7 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
             id="point${type}Material"
             class="pointInputMaterial
                     layout vertical"
-            ?hidden="${this.post.Group.configuration.disableDebate}"
+            ?hidden="${this.post.Group.configuration?.disableDebate}"
           >
             <div class="layout horizontal">
               ${window.appUser.user
@@ -593,7 +593,7 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
                   <yp-emoji-selector
                     id="point${type}EmojiSelector"
                     ?hidden="${hideText ||
-                this.post.Group.configuration.hideEmoji}"
+                this.post.Group.configuration?.hideEmoji}"
                   ></yp-emoji-selector>
 
                   ${this.renderVideoUpload(type, hideVideo, hasCurrentVideo, uploadVideoHeader, videoUploadedFunc, uploadedVideoId)}
@@ -638,14 +638,14 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
         //TODO
     }
     renderTranslationPlaceholders() {
-        return html `${!this.post.Group.configuration.alternativePointForLabel
+        return html `${!this.post.Group.configuration?.alternativePointForLabel
             ? html `
           <yp-magic-text
             id="alternativePointForLabelId"
             hidden
             contentId="${this.post.Group.id}"
             textOnly
-            .content="${this.post.Group.configuration.alternativePointForLabel}"
+            .content="${this.post.Group.configuration?.alternativePointForLabel}"
             .contentLanguage="${this.post.Group.language}"
             @new-translation="${this._updatePointLabels}"
             role="heading"
@@ -655,15 +655,14 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
           </yp-magic-text>
         `
             : nothing}
-    ${!this.post.Group.configuration.alternativePointAgainstLabel
+    ${!this.post.Group.configuration?.alternativePointAgainstLabel
             ? html `
           <yp-magic-text
             id="alternativePointAgainstLabelId"
             hidden
             contentId="${this.post.Group.id}"
             textOnly
-            .content="${this.post.Group.configuration
-                .alternativePointAgainstLabel}"
+            .content="${this.post.Group.configuration?.alternativePointAgainstLabel}"
             .contentLanguage="${this.post.Group.language}"
             @new-translation="${this._updatePointLabels}"
             role="heading"
@@ -698,8 +697,8 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
             <div ?rtl="${this.rtl}" class="layout vertical topContainer" ?hidden="${this.fetchActive}">
               ${this.renderPointInfo()}
               <div class="main-container layout horizontal">
-                ${this.renderPointList("Up", this.t("pointsFor"), this.post.Group.configuration.alternativePointForHeader, "alternativePointForHeader", this.labelUp, this.hideUpVideo, this.hideUpText, this.hasCurrentUpVideo, this._videoUpUploaded, this.t("uploadVideoPointFor"), this.uploadedVideoUpId, this.focusUpPoint, this.hideUpAudio, this.hasCurrentUpAudio, this.t("uploadAudioPointFor"), this.ifLengthUpIsRight, this.addPointUp, this.upPoints)}
-                ${this.renderPointList("Down", this.t("pointsAgainst"), this.post.Group.configuration.alternativePointAgainstHeader, "alternativePointAgainstHeader", this.labelDown, this.hideDownVideo, this.hideDownText, this.hasCurrentDownVideo, this._videoDownUploaded, this.t("uploadVideoPointAgainst"), this.uploadedVideoDownId, this.focusDownPoint, this.hideDownAudio, this.hasCurrentDownAudio, this.t("uploadAudioPointAgainst"), this.ifLengthDownIsRight, this.addPointDown, this.downPoints)}
+                ${this.renderPointList("Up", this.t("pointsFor"), this.post.Group.configuration?.alternativePointForHeader, "alternativePointForHeader", this.labelUp, this.hideUpVideo, this.hideUpText, this.hasCurrentUpVideo, this._videoUpUploaded, this.t("uploadVideoPointFor"), this.uploadedVideoUpId, this.focusUpPoint, this.hideUpAudio, this.hasCurrentUpAudio, this.t("uploadAudioPointFor"), this.ifLengthUpIsRight, this.addPointUp, this.upPoints)}
+                ${this.renderPointList("Down", this.t("pointsAgainst"), this.post.Group.configuration?.alternativePointAgainstHeader, "alternativePointAgainstHeader", this.labelDown, this.hideDownVideo, this.hideDownText, this.hasCurrentDownVideo, this._videoDownUploaded, this.t("uploadVideoPointAgainst"), this.uploadedVideoDownId, this.focusDownPoint, this.hideDownAudio, this.hasCurrentDownAudio, this.t("uploadAudioPointAgainst"), this.ifLengthDownIsRight, this.addPointDown, this.downPoints)}
               </div>
             </div>
           `
@@ -707,7 +706,7 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
       ${this.smallReady
             ? html `
             <div ?rtl="${this.rtl}" class="layout vertical center-center">
-              ${this.renderPointList("Mobile", this.t("pointsForAndAgainst"), this.post.Group.configuration.alternativePointAgainstHeader, "alternativePointAgainstHeader", this.labelMobileUpOrDown, this.hideMobileVideo, this.hideMobileText, this.hasCurrentMobileVideo, this._videoMobileUploaded, this.t("uploadVideoPointAgainst"), this.uploadedVideoMobileId, this.focusMobilePoint, this.hideMobileAudio, this.hasCurrentMobileAudio, this.t("uploadAudioPointAgainst"), this.ifLengthMobileIsRight, this.addMobilePointUpOrDown, this.points, true)}
+              ${this.renderPointList("Mobile", this.t("pointsForAndAgainst"), this.post.Group.configuration?.alternativePointAgainstHeader, "alternativePointAgainstHeader", this.labelMobileUpOrDown, this.hideMobileVideo, this.hideMobileText, this.hasCurrentMobileVideo, this._videoMobileUploaded, this.t("uploadVideoPointAgainst"), this.uploadedVideoMobileId, this.focusMobilePoint, this.hideMobileAudio, this.hasCurrentMobileAudio, this.t("uploadAudioPointAgainst"), this.ifLengthMobileIsRight, this.addMobilePointUpOrDown, this.points, true)}
             </div>
           `
             : nothing}
@@ -732,8 +731,8 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
         if (this.post &&
             this.post.Group &&
             this.post.Group.configuration &&
-            this.post.Group.configuration.pointCharLimit) {
-            return this.post.Group.configuration.pointCharLimit;
+            this.post.Group.configuration?.pointCharLimit) {
+            return this.post.Group.configuration?.pointCharLimit;
         }
         else {
             return 500;
@@ -938,9 +937,9 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
             if (this.post &&
                 this.post.Group &&
                 this.post.Group.configuration &&
-                this.post.Group.configuration.alternativePointForLabel) {
+                this.post.Group.configuration?.alternativePointForLabel) {
                 this.labelMobileUpOrDown =
-                    this.post.Group.configuration.alternativePointForLabel;
+                    this.post.Group.configuration?.alternativePointForLabel;
             }
             else {
                 this.labelMobileUpOrDown = this.t("point.for");
@@ -951,9 +950,9 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
             if (this.post &&
                 this.post.Group &&
                 this.post.Group.configuration &&
-                this.post.Group.configuration.alternativePointAgainstLabel) {
+                this.post.Group.configuration?.alternativePointAgainstLabel) {
                 this.labelMobileUpOrDown =
-                    this.post.Group.configuration.alternativePointAgainstLabel;
+                    this.post.Group.configuration?.alternativePointAgainstLabel;
             }
             else {
                 this.labelMobileUpOrDown = this.t("point.against");
@@ -995,8 +994,8 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
         if (this.post &&
             this.post.Group &&
             this.post.Group.configuration &&
-            this.post.Group.configuration.disableDebate) {
-            if (this.isAdmin && this.post.Group.configuration.allowAdminsToDebate) {
+            this.post.Group.configuration?.disableDebate) {
+            if (this.isAdmin && this.post.Group.configuration?.allowAdminsToDebate) {
                 this.disableDebate = false;
             }
             else {
@@ -1049,7 +1048,7 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
         if (this.post) {
             if (this.post.Group &&
                 this.post.Group.configuration &&
-                this.post.Group.configuration.disableDebate) {
+                this.post.Group.configuration?.disableDebate) {
                 this.disableDebate = true;
             }
             else {
@@ -1058,8 +1057,8 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
             if (this.post &&
                 this.post.Group &&
                 this.post.Group.configuration &&
-                this.post.Group.configuration.alternativePointForLabel) {
-                this.labelUp = this.post.Group.configuration.alternativePointForLabel;
+                this.post.Group.configuration?.alternativePointForLabel) {
+                this.labelUp = this.post.Group.configuration?.alternativePointForLabel;
             }
             else {
                 this.labelUp = this.t("point.for");
@@ -1067,9 +1066,9 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
             if (this.post &&
                 this.post.Group &&
                 this.post.Group.configuration &&
-                this.post.Group.configuration.alternativePointAgainstLabel) {
+                this.post.Group.configuration?.alternativePointAgainstLabel) {
                 this.labelDown =
-                    this.post.Group.configuration.alternativePointAgainstLabel;
+                    this.post.Group.configuration?.alternativePointAgainstLabel;
             }
             else {
                 this.labelDown = this.t("point.against");

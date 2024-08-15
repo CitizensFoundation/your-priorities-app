@@ -193,13 +193,18 @@ let YpGroup = class YpGroup extends YpCollection {
             const groupResults = (await window.serverApi.getCollection(this.collectionType, this.collectionId));
             if (groupResults) {
                 this.collection = groupResults.group;
+                if (!this.collection.configuration) {
+                    this.collection.configuration = {};
+                }
                 this.hasNonOpenPosts = groupResults.hasNonOpenPosts;
                 if (!this.haveLoadedAgentsOps &&
+                    this.collection.configuration &&
                     this.collection.configuration.groupType == YpGroupType.PsAgentWorkflow) {
                     await import("../policySynth/ps-operations-manager.js");
                     this.haveLoadedAgentsOps = true;
                 }
                 else if (!this.haveLoadedAllOurIdeas &&
+                    this.collection.configuration &&
                     this.collection.configuration.groupType == YpGroupType.AllOurIdeas) {
                     await import("../allOurIdeas/aoi-survey.js");
                     this.haveLoadedAllOurIdeas = true;
@@ -675,28 +680,24 @@ let YpGroup = class YpGroup extends YpCollection {
             @change="${this._selectGroupTab}"
             .activeTabIndex="${this.selectedGroupTab}"
           >
-            <md-secondary-tab
-               ?has-static-theme="${this.hasStaticTheme}"
+            <md-secondary-tab ?has-static-theme="${this.hasStaticTheme}"
               >${this.tabLabelWithCount("open")}<md-icon slot="icon"
                 >lightbulb_outline</md-icon
               ></md-secondary-tab
             >
             ${this.hasNonOpenPosts
                 ? html `
-                  <md-secondary-tab
-                   ?has-static-theme="${this.hasStaticTheme}"
+                  <md-secondary-tab ?has-static-theme="${this.hasStaticTheme}"
                     >${this.tabLabelWithCount("inProgress")}<md-icon slot="icon"
                       >lightbulb_outline</md-icon
                     ></md-secondary-tab
                   >
-                  <md-secondary-tab
-                   ?has-static-theme="${this.hasStaticTheme}"
+                  <md-secondary-tab ?has-static-theme="${this.hasStaticTheme}"
                     >${this.tabLabelWithCount("successful")}<md-icon slot="icon"
                       >lightbulb_outline</md-icon
                     ></md-secondary-tab
                   >
-                  <md-secondary-tab
-                   ?has-static-theme="${this.hasStaticTheme}"
+                  <md-secondary-tab ?has-static-theme="${this.hasStaticTheme}"
                     >${this.tabLabelWithCount("failed")}<md-icon slot="icon"
                       >lightbulb_outline</md-icon
                     >
@@ -825,11 +826,7 @@ let YpGroup = class YpGroup extends YpCollection {
         return groupType;
     }
     static get styles() {
-        return [
-            super.styles,
-            css `
-      `
-        ];
+        return [super.styles, css ``];
     }
     renderAgentsOps() {
         return html `<ps-operations-manager

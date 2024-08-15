@@ -266,7 +266,7 @@ let YpPostActions = class YpPostActions extends YpBaseElement {
             <div
               ?rtl="${this.rtl}"
               class="action-text up-text"
-              ?hidden="${this.post.Group.configuration.hideVoteCount}"
+              ?hidden="${this.post.Group.configuration?.hideVoteCount}"
             >
               ${YpFormattingHelpers.number(this.post.counter_endorsements_up)}
             </div>
@@ -275,7 +275,7 @@ let YpPostActions = class YpPostActions extends YpBaseElement {
           <div
             id="actionDown"
             class="action-down layout horizontal layout start justified"
-            ?hidden="${this.post.Group.configuration.hideDownVoteForPost}"
+            ?hidden="${this.post.Group.configuration?.hideDownVoteForPost}"
           >
             <md-filled-icon-button
               toggle
@@ -291,7 +291,7 @@ let YpPostActions = class YpPostActions extends YpBaseElement {
             >
             <div
               class="action-text down-text"
-              ?hidden="${this.post.Group.configuration.hideVoteCount}"
+              ?hidden="${this.post.Group.configuration?.hideVoteCount}"
             >
               ${YpFormattingHelpers.number(this.post.counter_endorsements_down)}
             </div>
@@ -408,7 +408,7 @@ let YpPostActions = class YpPostActions extends YpBaseElement {
                     this.requestUpdate();
                 }
             }
-            if (this.post.Group.configuration.maxNumberOfGroupVotes) {
+            if (this.post.Group.configuration?.maxNumberOfGroupVotes) {
                 this.maxNumberOfGroupVotes =
                     this.post.Group.configuration.maxNumberOfGroupVotes;
                 this.numberOfGroupVotes =

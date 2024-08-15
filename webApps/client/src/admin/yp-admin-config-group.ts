@@ -142,6 +142,9 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
     super();
     this.action = "/groups";
     this.group = this.collection as YpGroupData;
+    if (this.group && !this.group.configuration) {
+      this.group.configuration = {} as any;
+    }
   }
 
   static override get styles() {
@@ -364,6 +367,9 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
   override connectedCallback() {
     super.connectedCallback();
     this.group = this.collection as YpGroupData;
+    if (this.group && !this.group.configuration) {
+      this.group.configuration = {} as any;
+    }
   }
 
   override _clear() {
@@ -383,6 +389,9 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
   ): void {
     if (changedProperties.has("collection") && this.collection) {
       this.group = this.collection as YpGroupData;
+      if (this.group && !this.group.configuration) {
+        this.group.configuration = {} as any;
+      }
 
       this.currentLogoImages = (this.collection as YpGroupData).GroupLogoImages;
       this.currentHeaderImages = (

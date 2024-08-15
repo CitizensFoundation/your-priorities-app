@@ -421,18 +421,18 @@ export class YpPoint extends YpBaseElement {
   renderAdminComments() {
     html`
       <div class="commentFromAdmin" ?hidden="${this.isEditingSomething}">
-        ${this.group.configuration.customAdminCommentsTitle
+        ${this.group.configuration?.customAdminCommentsTitle
           ? html`
               <yp-magic-text
                 textType="customAdminCommentsTitle"
                 .contentLanguage="${this.group.language}"
-                .content="${this.group.configuration.customAdminCommentsTitle}"
+                .content="${this.group.configuration?.customAdminCommentsTitle}"
                 .contentId="${this.group.id}"
               >
               </yp-magic-text>
             `
           : ``}
-        ${!this.group.configuration.customAdminCommentsTitle
+        ${!this.group.configuration?.customAdminCommentsTitle
           ? html` ${this.t("commentFromAdmin")} `
           : ``}
       </div>
@@ -466,7 +466,7 @@ export class YpPoint extends YpBaseElement {
               .titleDate="${this.point.created_at}"
               inverted
               mediumImage
-              ?hidden="${this.group.configuration.hidePointAuthor}"
+              ?hidden="${this.group.configuration?.hidePointAuthor}"
               .user="${this.user}"
               class="userWithOrganization"
             ></yp-user-with-organization>

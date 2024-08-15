@@ -217,7 +217,7 @@ export class YpPostListItem extends YpBaseElement {
         ? html`
             <yp-magic-text
               class="description layout horizontal"
-              ?hasCustomRatings="${this.post.Group.configuration.customRatings}"
+              ?hasCustomRatings="${this.post.Group.configuration?.customRatings}"
               ?hidden="${this.hideDescription}"
               textType="postContent"
               .contentLanguage="${this.post.language}"
@@ -254,12 +254,12 @@ export class YpPostListItem extends YpBaseElement {
       ? html`
             <div
               ?mini="${this.mini}"
-              .hide-post-cover="${this.post.Group.configuration.hidePostCover}"
+              .hide-post-cover="${this.post.Group.configuration?.hidePostCover}"
               .hide-description="${
-                this.post.Group.configuration.hidePostDescription
+                this.post.Group.configuration?.hidePostDescription
               }"
               ?hide-actions="${
-                this.post.Group.configuration.hidePostActionsInGrid
+                this.post.Group.configuration?.hidePostActionsInGrid
               }"
               audio-cover="${this.isAudioCover}"
             >
@@ -276,7 +276,7 @@ export class YpPostListItem extends YpBaseElement {
                       ?audioCover="${this.isAudioCover}"
                       .altTag="${this.post.name}"
                       .post="${this.post}"
-                      ?hidden="${this.post.Group.configuration.hidePostCover}"
+                      ?hidden="${this.post.Group.configuration?.hidePostCover}"
                     ></yp-post-cover-media>
                     <div class="postNameContainer">
                       <div
@@ -309,7 +309,7 @@ export class YpPostListItem extends YpBaseElement {
                 </a>
                 <div
                   ?hidden="${
-                    this.post.Group.configuration.hidePostActionsInGrid
+                    this.post.Group.configuration?.hidePostActionsInGrid
                   }"
                   @click="${this._onBottomClick}"
                 >
@@ -352,7 +352,7 @@ export class YpPostListItem extends YpBaseElement {
 
   renderActions() {
     return html`<div class="layout horizontal actionsBar">
-      ${this.post.Group.configuration.customRatings
+      ${this.post.Group.configuration?.customRatings
         ? html`
             <yp-post-ratings-info
               class="customRatings"
@@ -364,8 +364,7 @@ export class YpPostListItem extends YpBaseElement {
               class="postActions"
               .post="${this.post}"
               forceHideDebate
-              .forceShowDebate="${this.post.Group.configuration
-                .forceShowDebateCountOnPost}"
+              .forceShowDebate="${this.post.Group.configuration?.forceShowDebateCountOnPost}"
               ?hidden="${this.mini}"
             >
             </yp-post-actions>

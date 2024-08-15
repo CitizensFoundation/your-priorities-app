@@ -522,7 +522,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
     hasCurrentAudio: string | undefined,
     uploadAudioPointHeader: string
   ) {
-    return this.post.Group.configuration.allowPointAudioUploads
+    return this.post.Group.configuration?.allowPointAudioUploads
       ? html`
           <div ?hidden="${hideAudio}" class="uploadSection">
             <div
@@ -568,7 +568,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
     videoUploadedFunc: Function,
     uploadedVideoId: number | undefined
   ) {
-    return this.post.Group.configuration.allowPointVideoUploads
+    return this.post.Group.configuration?.allowPointVideoUploads
       ? html`
           <div ?hidden="${hideVideo}" class="uploadSection">
             <div
@@ -618,7 +618,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
     html` <div class="layout vertical end-justified">
       <div
         class="layout horizontal center-center pointButtons"
-        ?hidden="${this.post.Group.configuration.hidePointAgainst}"
+        ?hidden="${this.post.Group.configuration?.hidePointAgainst}"
       >
         <label
           >${this.t("pointForShort")}
@@ -746,7 +746,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
             id="point${type}Material"
             class="pointInputMaterial
                     layout vertical"
-            ?hidden="${this.post.Group.configuration.disableDebate}"
+            ?hidden="${this.post.Group.configuration?.disableDebate}"
           >
             <div class="layout horizontal">
               ${window.appUser.user
@@ -777,7 +777,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
                   <yp-emoji-selector
                     id="point${type}EmojiSelector"
                     ?hidden="${hideText ||
-                    this.post.Group.configuration.hideEmoji}"
+                    this.post.Group.configuration?.hideEmoji}"
                   ></yp-emoji-selector>
 
                   ${this.renderVideoUpload(
@@ -836,14 +836,14 @@ export class YpPostPoints extends YpBaseElementWithLogin {
   }
 
   renderTranslationPlaceholders() {
-    return html`${!this.post.Group.configuration.alternativePointForLabel
+    return html`${!this.post.Group.configuration?.alternativePointForLabel
       ? html`
           <yp-magic-text
             id="alternativePointForLabelId"
             hidden
             contentId="${this.post.Group.id}"
             textOnly
-            .content="${this.post.Group.configuration.alternativePointForLabel}"
+            .content="${this.post.Group.configuration?.alternativePointForLabel}"
             .contentLanguage="${this.post.Group.language}"
             @new-translation="${this._updatePointLabels}"
             role="heading"
@@ -853,15 +853,14 @@ export class YpPostPoints extends YpBaseElementWithLogin {
           </yp-magic-text>
         `
       : nothing}
-    ${!this.post.Group.configuration.alternativePointAgainstLabel
+    ${!this.post.Group.configuration?.alternativePointAgainstLabel
       ? html`
           <yp-magic-text
             id="alternativePointAgainstLabelId"
             hidden
             contentId="${this.post.Group.id}"
             textOnly
-            .content="${this.post.Group.configuration
-              .alternativePointAgainstLabel}"
+            .content="${this.post.Group.configuration?.alternativePointAgainstLabel}"
             .contentLanguage="${this.post.Group.language}"
             @new-translation="${this._updatePointLabels}"
             role="heading"
@@ -905,7 +904,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
                 ${this.renderPointList(
                   "Up",
                   this.t("pointsFor"),
-                  this.post.Group.configuration.alternativePointForHeader,
+                  this.post.Group.configuration?.alternativePointForHeader,
                   "alternativePointForHeader",
                   this.labelUp,
                   this.hideUpVideo,
@@ -925,7 +924,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
                 ${this.renderPointList(
                   "Down",
                   this.t("pointsAgainst"),
-                  this.post.Group.configuration.alternativePointAgainstHeader,
+                  this.post.Group.configuration?.alternativePointAgainstHeader,
                   "alternativePointAgainstHeader",
                   this.labelDown,
                   this.hideDownVideo,
@@ -952,7 +951,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
               ${this.renderPointList(
                 "Mobile",
                 this.t("pointsForAndAgainst"),
-                this.post.Group.configuration.alternativePointAgainstHeader,
+                this.post.Group.configuration?.alternativePointAgainstHeader,
                 "alternativePointAgainstHeader",
                 this.labelMobileUpOrDown,
                 this.hideMobileVideo,
@@ -997,9 +996,9 @@ export class YpPostPoints extends YpBaseElementWithLogin {
       this.post &&
       this.post.Group &&
       this.post.Group.configuration &&
-      this.post.Group.configuration.pointCharLimit
+      this.post.Group.configuration?.pointCharLimit
     ) {
-      return this.post.Group.configuration.pointCharLimit;
+      return this.post.Group.configuration?.pointCharLimit;
     } else {
       return 500;
     }
@@ -1231,16 +1230,17 @@ export class YpPostPoints extends YpBaseElementWithLogin {
     }, 500);
   }
 
+
   _pointUpOrDownSelectedChanged() {
     if (this.pointUpOrDownSelected == "pointFor") {
       if (
         this.post &&
         this.post.Group &&
         this.post.Group.configuration &&
-        this.post.Group.configuration.alternativePointForLabel
+        this.post.Group.configuration?.alternativePointForLabel
       ) {
         this.labelMobileUpOrDown =
-          this.post.Group.configuration.alternativePointForLabel;
+          this.post.Group.configuration?.alternativePointForLabel;
       } else {
         this.labelMobileUpOrDown = this.t("point.for");
       }
@@ -1250,10 +1250,10 @@ export class YpPostPoints extends YpBaseElementWithLogin {
         this.post &&
         this.post.Group &&
         this.post.Group.configuration &&
-        this.post.Group.configuration.alternativePointAgainstLabel
+        this.post.Group.configuration?.alternativePointAgainstLabel
       ) {
         this.labelMobileUpOrDown =
-          this.post.Group.configuration.alternativePointAgainstLabel;
+          this.post.Group.configuration?.alternativePointAgainstLabel;
       } else {
         this.labelMobileUpOrDown = this.t("point.against");
       }
@@ -1298,9 +1298,9 @@ export class YpPostPoints extends YpBaseElementWithLogin {
       this.post &&
       this.post.Group &&
       this.post.Group.configuration &&
-      this.post.Group.configuration.disableDebate
+      this.post.Group.configuration?.disableDebate
     ) {
-      if (this.isAdmin && this.post.Group.configuration.allowAdminsToDebate) {
+      if (this.isAdmin && this.post.Group.configuration?.allowAdminsToDebate) {
         this.disableDebate = false;
       } else {
         this.disableDebate = true;
@@ -1359,7 +1359,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
       if (
         this.post.Group &&
         this.post.Group.configuration &&
-        this.post.Group.configuration.disableDebate
+        this.post.Group.configuration?.disableDebate
       ) {
         this.disableDebate = true;
       } else {
@@ -1370,9 +1370,9 @@ export class YpPostPoints extends YpBaseElementWithLogin {
         this.post &&
         this.post.Group &&
         this.post.Group.configuration &&
-        this.post.Group.configuration.alternativePointForLabel
+        this.post.Group.configuration?.alternativePointForLabel
       ) {
-        this.labelUp = this.post.Group.configuration.alternativePointForLabel;
+        this.labelUp = this.post.Group.configuration?.alternativePointForLabel;
       } else {
         this.labelUp = this.t("point.for");
       }
@@ -1380,10 +1380,10 @@ export class YpPostPoints extends YpBaseElementWithLogin {
         this.post &&
         this.post.Group &&
         this.post.Group.configuration &&
-        this.post.Group.configuration.alternativePointAgainstLabel
+        this.post.Group.configuration?.alternativePointAgainstLabel
       ) {
         this.labelDown =
-          this.post.Group.configuration.alternativePointAgainstLabel;
+          this.post.Group.configuration?.alternativePointAgainstLabel;
       } else {
         this.labelDown = this.t("point.against");
       }

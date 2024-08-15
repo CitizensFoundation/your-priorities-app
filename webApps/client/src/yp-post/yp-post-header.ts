@@ -232,19 +232,14 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
                 textType="postContent"
                 .contentLanguage="${this.post.language}"
                 content="${this.post.description}"
-                ?noUserInfo="${!this.post.Group.configuration
-                  .showWhoPostedPosts}"
+                ?noUserInfo="${!this.post.Group.configuration?.showWhoPostedPosts}"
                 disableTranslation
-                .structuredQuestionsConfig="${this.post.Group.configuration
-                  .structuredQuestions}"
-                ?hasCustomRatings="${this.post.Group.configuration
-                  .customRatings}"
-                ?simpleFormat="${this.post.Group.configuration
-                  .descriptionSimpleFormat}"
+                .structuredQuestionsConfig="${this.post.Group.configuration?.structuredQuestions}"
+                ?hasCustomRatings="${this.post.Group.configuration?.customRatings}"
+                ?simpleFormat="${this.post.Group.configuration?.descriptionSimpleFormat}"
                 .contentId="${this.post.id}"
                 class="description"
-                .truncate="${this.post.Group.configuration
-                  .descriptionTruncateAmount}"
+                .truncate="${this.post.Group.configuration?.descriptionTruncateAmount}"
                 .moreText="${this.t("readMore")}"
                 .closeDialogText="${this.t("close")}"
               >
@@ -256,8 +251,7 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
                 textType="postContent"
                 .contentLanguage="${this.post.language}"
                 .content="${this.structuredAnswersFormatted}"
-                ?noUserInfo="${!this.post.Group.configuration
-                  .showWhoPostedPosts}"
+                ?noUserInfo="${!this.post.Group.configuration?.showWhoPostedPosts}"
                 simpleFormat
                 skipSanitize
                 .contentId="${this.post.id}"
@@ -340,7 +334,7 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
   }
 
   renderActions() {
-    return html`${this.post.Group.configuration.customRatings
+    return html`${this.post.Group.configuration?.customRatings
       ? html`
           <yp-post-ratings-info
             class="customRatings"
@@ -353,8 +347,7 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
             hideDebate
             headerMode
             elevation="-1"
-            ?forceShowDebate="${this.post.Group.configuration
-              .forceShowDebateCountOnPost}"
+            ?forceShowDebate="${this.post.Group.configuration?.forceShowDebateCountOnPost}"
             floating
             class="postActions"
             .post="${this.post}"
@@ -463,7 +456,7 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
         ${!this.onlyRenderTopActionBar
           ? nothing
           : html`
-              ${this.post.Group.configuration.showWhoPostedPosts
+              ${this.post.Group.configuration?.showWhoPostedPosts
                 ? this.renderUser()
                 : nothing}
               <div class="layout horizontal">

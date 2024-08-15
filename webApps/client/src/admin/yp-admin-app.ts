@@ -754,6 +754,9 @@ export class YpAdminApp extends YpBaseElement {
 
     if (this.collectionType == "group") {
       this.collection = (collectionData as YpGroupResults).group;
+      if (!this.collection.configuration) {
+        this.collection.configuration = {};
+      }
     } else {
       this.collection = collectionData as YpCollectionData;
     }
