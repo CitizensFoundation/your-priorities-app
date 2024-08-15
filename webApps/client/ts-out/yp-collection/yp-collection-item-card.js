@@ -363,7 +363,7 @@ let YpCollectionItemCard = class YpCollectionItemCard extends YpBaseElement {
           .content="${this.contentName}"
           .contentId="${this.contentId}"
         ></yp-magic-text>
-        ${true || this.collectionItemCount > 0
+        ${this.collectionItemCount > 0
             ? html `
               <div class="collectionItemCount">
                 (${this.collectionItemCount})

@@ -322,8 +322,6 @@ export class YourPrioritiesApi {
   }
 
   async initializeRateLimiting() {
-    // Wait for one second why? TOTO: Figure this out
-    //await new Promise((resolve) => setTimeout(resolve, 1000));
     const botRateLimiter = rateLimit({
       windowMs: process.env.RATE_LIMITER_WINDOW_MS
         ? parseInt(process.env.RATE_LIMITER_WINDOW_MS, 10)
@@ -342,7 +340,7 @@ export class YourPrioritiesApi {
           !req.originalUrl.endsWith("/sitemap.xml")
         ) {
           const isBotBad = isBadBot(ua.toLowerCase());
-          if (!botsWithJavascript(ua) && (isbot(ua) || isBadBot(ua))) {
+          if (!req.headers['x-api-key'] && !botsWithJavascript(ua) && (isbot(ua) || isBadBot(ua))) {
             if (isBotBad) {
               botRateLimiter(req, res, () => {
                 nonSPArouter(req, res, next);

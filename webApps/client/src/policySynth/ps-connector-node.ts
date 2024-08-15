@@ -65,8 +65,10 @@ export class PsAgentConnector extends PsOperationsBaseNode {
         }
 
         .instanceName {
-          font-size: 12px;
-          height: 72px;
+          font-size: 10px;
+          margin-top: 25px;
+          height: 52px;
+          text-transform: uppercase;
         }
 
         .connectorType {
