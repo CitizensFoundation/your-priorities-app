@@ -91,7 +91,7 @@ let YpTopAppBar = class YpTopAppBar extends YpBaseElement {
         }
 
         .middleContainer[restrict-width] {
-          width: 982px;
+          /*width: 982px;*/
         }
 
         .title {

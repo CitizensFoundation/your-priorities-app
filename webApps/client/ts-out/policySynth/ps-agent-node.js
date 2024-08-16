@@ -44,6 +44,69 @@ let PsAgentNode = class PsAgentNode extends PsOperationsBaseNode {
         super.disconnectedCallback();
         this.stopStatusUpdates();
     }
+    getSafeFileName(name) {
+        const safeName = name.toLowerCase().replace(/\s+/g, "_");
+        const date = new Date();
+        const dateString = `${date.getFullYear()}${(date.getMonth() + 1)
+            .toString()
+            .padStart(2, "0")}${date.getDate().toString().padStart(2, "0")}_${date
+            .getHours()
+            .toString()
+            .padStart(2, "0")}${date.getMinutes().toString().padStart(2, "0")}`;
+        return `${safeName}_memory_${dateString}.json`;
+    }
+    async saveMemoryToFile() {
+        try {
+            const memory = await this.api.getAgentMemory(this.groupId, this.agent.id);
+            if (memory) {
+                const fileName = this.getSafeFileName(this.agent.configuration.name);
+                const blob = new Blob([JSON.stringify(memory, null, 2)], {
+                    type: "application/json",
+                });
+                saveAs(blob, fileName);
+            }
+            else {
+                console.error("No memory available to save");
+            }
+        }
+        catch (error) {
+            console.error("Error saving agent memory:", error);
+        }
+    }
+    triggerFileInput() {
+        this.fileInput.click();
+    }
+    handleFileSelect(event) {
+        const file = event.target.files?.[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const content = JSON.parse(e.target?.result);
+                    this.confirmLoadMemory(content);
+                }
+                catch (error) {
+                    console.error("Error parsing JSON file:", error);
+                }
+            };
+            reader.readAsText(file);
+        }
+    }
+    confirmLoadMemory(content) {
+        window.appDialogs.getDialogAsync("confirmationDialog", (dialog) => {
+            dialog.open(this.t("confirmLoadMemory"), () => this.loadMemoryFromContent(content));
+        });
+    }
+    async loadMemoryFromContent(content) {
+        try {
+            await this.api.replaceAgentMemory(this.groupId, this.agent.id, content);
+            this.agentMemory = content;
+            this.requestUpdate();
+        }
+        catch (error) {
+            console.error("Error loading agent memory:", error);
+        }
+    }
     toggleConnectorMenu(e) {
         e.stopPropagation();
         if (this.agentConnectorMenu) {
@@ -315,11 +378,17 @@ let PsAgentNode = class PsAgentNode extends PsOperationsBaseNode {
         <md-icon>more_horiz</md-icon>
       </md-icon-button>
       <md-menu id="agentMainMenu" positioning="popover">
-        <md-menu-item @click="${this.openMemoryDialog}">
-          <div slot="headline">Explore Memory</div>
-        </md-menu-item>
         <md-menu-item @click="${this.editNode}">
           <div slot="headline">Settings</div>
+        </md-menu-item>
+        <md-menu-item @click="${this.saveMemoryToFile}">
+          <div slot="headline">Save Memory to File</div>
+        </md-menu-item>
+        <md-menu-item @click="${this.triggerFileInput}">
+          <div slot="headline">Load Memory from File</div>
+        </md-menu-item>
+        <md-menu-item @click="${this.openMemoryDialog}">
+          <div slot="headline">Explore Memory</div>
         </md-menu-item>
       </md-menu>`;
     }
@@ -531,6 +600,9 @@ __decorate([
 __decorate([
     query("#memoryDialog")
 ], PsAgentNode.prototype, "memoryDialog", void 0);
+__decorate([
+    query("#fileInput")
+], PsAgentNode.prototype, "fileInput", void 0);
 PsAgentNode = __decorate([
     customElement("ps-agent-node")
 ], PsAgentNode);

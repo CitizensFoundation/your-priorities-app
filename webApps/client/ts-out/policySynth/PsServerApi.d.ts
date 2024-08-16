@@ -5,6 +5,7 @@ export declare class PsServerApi extends YpServerApiBase {
     constructor(urlPath?: string);
     getAgent(groupId: number): Promise<PsAgentAttributes>;
     getAgentMemory(groupId: number, agentId: number): Promise<object>;
+    replaceAgentMemory(groupId: number, agentId: number, memory: object): Promise<void>;
     removeAgentAiModel(groupId: number, agentId: number, modelId: number): Promise<void>;
     getDetailedAgentCosts(groupId: number, agentId: number): Promise<PsDetailedAgentCostResults[]>;
     addAgentAiModel(groupId: number, agentId: number, modelId: number, size: PsAiModelSize): Promise<void>;

@@ -26,6 +26,17 @@ export class PsServerApi extends YpServerApiBase {
     ) as Promise<object>;
   }
 
+  public async replaceAgentMemory(groupId: number, agentId: number, memory: object): Promise<void> {
+    return this.fetchWrapper(
+      this.baseUrlPath + `${this.baseAgentsPath}${groupId}/${agentId}/memory`,
+      {
+        method: 'PUT',
+        body: JSON.stringify(memory),
+      },
+      false
+    ) as Promise<void>;
+  }
+
   public async removeAgentAiModel(
     groupId: number,
     agentId: number,

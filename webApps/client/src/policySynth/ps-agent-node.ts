@@ -15,6 +15,7 @@ import { PsServerApi } from "./PsServerApi.js";
 import { PsOperationsBaseNode } from "./ps-operations-base-node.js";
 import { MdMenu } from "@material/web/menu/menu.js";
 import { MdDialog } from "@material/web/dialog/dialog.js";
+import { YpConfirmationDialog } from "../yp-dialog-container/yp-confirmation-dialog.js";
 
 @customElement("ps-agent-node")
 export class PsAgentNode extends PsOperationsBaseNode {
@@ -59,6 +60,9 @@ export class PsAgentNode extends PsOperationsBaseNode {
   @query("#memoryDialog")
   memoryDialog!: MdDialog;
 
+  @query("#fileInput")
+  fileInput!: HTMLInputElement;
+
   override api: PsServerApi;
   private statusInterval: number | undefined;
 
@@ -87,6 +91,76 @@ export class PsAgentNode extends PsOperationsBaseNode {
   override disconnectedCallback(): void {
     super.disconnectedCallback();
     this.stopStatusUpdates();
+  }
+
+  private getSafeFileName(name: string): string {
+    const safeName = name.toLowerCase().replace(/\s+/g, "_");
+    const date = new Date();
+    const dateString = `${date.getFullYear()}${(date.getMonth() + 1)
+      .toString()
+      .padStart(2, "0")}${date.getDate().toString().padStart(2, "0")}_${date
+      .getHours()
+      .toString()
+      .padStart(2, "0")}${date.getMinutes().toString().padStart(2, "0")}`;
+    return `${safeName}_memory_${dateString}.json`;
+  }
+
+  async saveMemoryToFile() {
+    try {
+      const memory = await this.api.getAgentMemory(this.groupId, this.agent.id);
+      if (memory) {
+        const fileName = this.getSafeFileName(this.agent.configuration.name);
+        const blob = new Blob([JSON.stringify(memory, null, 2)], {
+          type: "application/json",
+        });
+        saveAs(blob, fileName);
+      } else {
+        console.error("No memory available to save");
+      }
+    } catch (error) {
+      console.error("Error saving agent memory:", error);
+    }
+  }
+
+  triggerFileInput() {
+    this.fileInput.click();
+  }
+
+  handleFileSelect(event: Event) {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const content = JSON.parse(e.target?.result as string);
+          this.confirmLoadMemory(content);
+        } catch (error) {
+          console.error("Error parsing JSON file:", error);
+        }
+      };
+      reader.readAsText(file);
+    }
+  }
+
+  confirmLoadMemory(content: any) {
+    window.appDialogs.getDialogAsync(
+      "confirmationDialog",
+      (dialog: YpConfirmationDialog) => {
+        dialog.open(this.t("confirmLoadMemory"), () =>
+          this.loadMemoryFromContent(content)
+        );
+      }
+    );
+  }
+
+  async loadMemoryFromContent(content: any) {
+    try {
+      await this.api.replaceAgentMemory(this.groupId, this.agent.id, content);
+      this.agentMemory = content;
+      this.requestUpdate();
+    } catch (error) {
+      console.error("Error loading agent memory:", error);
+    }
   }
 
   toggleConnectorMenu(e: Event) {
@@ -300,8 +374,6 @@ export class PsAgentNode extends PsOperationsBaseNode {
     }
   }
 
-
-
   renderConnectorMenu() {
     if (window.psAppGlobals.activeConnectorsInstanceRegistry) {
       const allConnectors = Array.from(
@@ -397,11 +469,17 @@ export class PsAgentNode extends PsOperationsBaseNode {
         <md-icon>more_horiz</md-icon>
       </md-icon-button>
       <md-menu id="agentMainMenu" positioning="popover">
-        <md-menu-item @click="${this.openMemoryDialog}">
-          <div slot="headline">Explore Memory</div>
-        </md-menu-item>
         <md-menu-item @click="${this.editNode}">
           <div slot="headline">Settings</div>
+        </md-menu-item>
+        <md-menu-item @click="${this.saveMemoryToFile}">
+          <div slot="headline">Save Memory to File</div>
+        </md-menu-item>
+        <md-menu-item @click="${this.triggerFileInput}">
+          <div slot="headline">Load Memory from File</div>
+        </md-menu-item>
+        <md-menu-item @click="${this.openMemoryDialog}">
+          <div slot="headline">Explore Memory</div>
         </md-menu-item>
       </md-menu>`;
   }

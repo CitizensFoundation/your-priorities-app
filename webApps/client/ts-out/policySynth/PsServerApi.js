@@ -13,6 +13,12 @@ export class PsServerApi extends YpServerApiBase {
             method: 'GET',
         }, false);
     }
+    async replaceAgentMemory(groupId, agentId, memory) {
+        return this.fetchWrapper(this.baseUrlPath + `${this.baseAgentsPath}${groupId}/${agentId}/memory`, {
+            method: 'PUT',
+            body: JSON.stringify(memory),
+        }, false);
+    }
     async removeAgentAiModel(groupId, agentId, modelId) {
         return this.fetchWrapper(`${this.baseUrlPath}/agents/${groupId}/${agentId}/ai-models/${modelId}`, {
             method: 'DELETE',

@@ -55,6 +55,42 @@ export class PolicySynthAgentsController {
                 process.exit(1);
             }
         };
+        this.replaceAgentMemory = async (req, res) => {
+            try {
+                const { groupId, agentId } = req.params;
+                const memory = req.body;
+                console.log(`Attempting to replace memory for agent ${agentId} in group ${groupId}`);
+                if (!memory || Object.keys(memory).length === 0) {
+                    console.log(`Received empty memory for agent ${agentId}`);
+                    return res.status(400).json({ error: "Cannot save empty memory" });
+                }
+                try {
+                    JSON.parse(JSON.stringify(memory));
+                }
+                catch (jsonError) {
+                    console.log(`Received invalid JSON for agent ${agentId}`);
+                    return res.status(400).json({ error: "Invalid JSON format for memory" });
+                }
+                const memoryKey = await this.agentManager.getSubAgentMemoryKey(groupId, parseInt(agentId));
+                if (!memoryKey) {
+                    console.log(`Memory key not found for agent ${agentId}`);
+                    return res.status(404).json({ error: "Memory key not found for the specified agent" });
+                }
+                console.log(`Memory key found: ${memoryKey}`);
+                await req.redisClient.set(memoryKey, JSON.stringify(memory));
+                console.log(`Memory contents replaced successfully`);
+                res.json({ message: "Memory replaced successfully" });
+            }
+            catch (error) {
+                console.error("Error replacing agent memory:", error);
+                if (error instanceof Error) {
+                    res.status(500).json({ error: error.message });
+                }
+                else {
+                    res.status(500).json({ error: "An unexpected error occurred" });
+                }
+            }
+        };
         this.addExistingConnector = async (req, res) => {
             const { groupId, agentId, type } = req.params;
             const { connectorId } = req.body;
@@ -485,6 +521,7 @@ export class PolicySynthAgentsController {
         this.router.delete("/:groupId/:agentId/ai-models/:modelId", auth.can("edit group"), this.removeAgentAiModel);
         this.router.post("/:groupId/:agentId/ai-models", auth.can("edit group"), this.addAgentAiModel);
         this.router.get("/:groupId/:agentId/memory", auth.can("view group"), this.getAgentMemory);
+        this.router.put("/:groupId/:agentId/memory", auth.can("edit group"), this.replaceAgentMemory);
         this.router.post("/:groupId/:agentId/:type(input|output)Connectors/existing", auth.can("edit group"), this.addExistingConnector);
     }
 }
