@@ -138,6 +138,7 @@ interface YpRequest extends express.Request {
   clientAppPath?: string;
   adminAppPath?: string;
   dirName?: string;
+  useNewVersion?: boolean;
 }
 
 export class YourPrioritiesApi {
@@ -157,6 +158,7 @@ export class YourPrioritiesApi {
     this.addDirnameToRequest();
     this.forceHttps();
     this.initializeMiddlewares();
+    this.setupNewWebAppVersionHandling();
     this.handleShortenedRedirects();
     this.initializeRateLimiting();
     this.setupDomainAndCommunity();
@@ -166,6 +168,16 @@ export class YourPrioritiesApi {
     this.checkAuthForSsoInit();
     this.initializeRoutes();
     this.initializeEsControllers();
+  }
+
+  setupNewWebAppVersionHandling() {
+    this.app.use(
+      (req: YpRequest, res: express.Response, next: NextFunction) => {
+        req.useNewVersion = this.determineVersion(req);
+        (req.session as any).useNewVersion = req.useNewVersion;
+        next();
+      }
+    );
   }
 
   async initializeRedis() {
@@ -252,6 +264,22 @@ export class YourPrioritiesApi {
       );
     }
   }
+
+  determineVersion = (req: YpRequest) => {
+    // Check query parameter first
+    if (req.query.useNewVersion === "true") return true;
+    if (req.query.useNewVersion === "false") return false;
+
+    // Then check session
+    if ((req.session as any).useNewVersion === true) return true;
+    if ((req.session as any).useNewVersion === false) return false;
+
+    // Finally, check domain configuration
+    if (req.ypDomain?.configuration?.useNewVersion === true) return true;
+
+    // Default to false (old version)
+    return false;
+  };
 
   handleShortenedRedirects(): void {
     this.app.use(
@@ -340,7 +368,11 @@ export class YourPrioritiesApi {
           !req.originalUrl.endsWith("/sitemap.xml")
         ) {
           const isBotBad = isBadBot(ua.toLowerCase());
-          if (!req.headers['x-api-key'] && !botsWithJavascript(ua) && (isbot(ua) || isBadBot(ua))) {
+          if (
+            !req.headers["x-api-key"] &&
+            !botsWithJavascript(ua) &&
+            (isbot(ua) || isBadBot(ua))
+          ) {
             if (isBotBad) {
               botRateLimiter(req, res, () => {
                 nonSPArouter(req, res, next);
@@ -450,11 +482,18 @@ export class YourPrioritiesApi {
     );
     this.app.use(aoiController.path, aoiController.router);
 
-    const { PolicySynthAgentsController } = await import( "./controllers/policySynthAgents.js");
+    const { PolicySynthAgentsController } = await import(
+      "./controllers/policySynthAgents.js"
+    );
 
-    const policySynthAgentsController = new PolicySynthAgentsController(this.wsClients);
+    const policySynthAgentsController = new PolicySynthAgentsController(
+      this.wsClients
+    );
 
-    this.app.use(policySynthAgentsController.path, policySynthAgentsController.router);
+    this.app.use(
+      policySynthAgentsController.path,
+      policySynthAgentsController.router
+    );
 
     // Setup those here so they wont override the ES controllers
     this.setupErrorHandler();
@@ -542,35 +581,11 @@ export class YourPrioritiesApi {
       (req: YpRequest, res: express.Response, next: NextFunction) => {
         const baseDir = path.join(__dirname, "../webAppsDist");
 
-        let useNewVersion =
-          req.query.useNewVersion === "true" ||
-          (req.session as any).useNewVersion === true;
-
-        let useNewVersionIsFalse = req.query.useNewVersion === "false";
-
-        if (useNewVersionIsFalse) {
-          (req.session as any).useNewVersion = false;
-          console.log(`Setting new version preference: false`);
-        } else if (useNewVersion && !useNewVersionIsFalse) {
-          (req.session as any).useNewVersion = true;
-          console.log(
-            `Setting new version preference: ${req.query.useNewVersion}`
-          );
-        }
-
-        if (
-          req.ypDomain &&
-          req.ypDomain.configuration &&
-          req.ypDomain.configuration.useNewVersion === true &&
-          !useNewVersionIsFalse
-        ) {
-          useNewVersion = true;
-        }
+        const useNewVersion = req.useNewVersion;
 
         console.log(
           `------XY-----------------------> Using new version: ${useNewVersion}`
         );
-        console.log(`${req.ypDomain.configuration.useNewVersion}`);
 
         // Set the paths depending on the version
         req.adminAppPath = useNewVersion
