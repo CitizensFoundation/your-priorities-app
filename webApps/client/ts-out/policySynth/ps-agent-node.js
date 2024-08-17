@@ -102,7 +102,7 @@ let PsAgentNode = class PsAgentNode extends PsOperationsBaseNode {
     }
     confirmLoadMemory(content) {
         window.appDialogs.getDialogAsync("confirmationDialog", (dialog) => {
-            dialog.open(this.t("confirmLoadMemory"), () => this.loadMemoryFromContent(content));
+            dialog.open(this.t("confirmLoadAndOverrideMemory"), () => this.loadMemoryFromContent(content), true, true);
         });
     }
     async loadMemoryFromContent(content) {

@@ -157,8 +157,12 @@ export class PsAgentNode extends PsOperationsBaseNode {
     window.appDialogs.getDialogAsync(
       "confirmationDialog",
       (dialog: YpConfirmationDialog) => {
-        dialog.open(this.t("confirmLoadMemory"), () =>
-          this.loadMemoryFromContent(content)
+        dialog.open(
+          this.t("confirmLoadAndOverrideMemory"),
+          () =>
+            this.loadMemoryFromContent(content),
+          true,
+          true
         );
       }
     );
@@ -501,6 +505,7 @@ export class PsAgentNode extends PsOperationsBaseNode {
         style="display: none;"
       />`;
   }
+
   override render() {
     if (!this.agent) return nothing;
 

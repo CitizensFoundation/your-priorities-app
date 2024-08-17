@@ -1,4 +1,5 @@
 {
+  "confirmLoadAndOverrideMemory": "Are you sure you want to load this memory and override the current memory?",
   "agentMemoryExplorer": "Agent Memory Explorer",
   "upvote": "Upvote",
   "orDownvote": "or downvote",

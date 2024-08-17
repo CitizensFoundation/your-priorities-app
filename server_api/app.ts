@@ -174,7 +174,11 @@ export class YourPrioritiesApi {
     this.app.use(
       (req: YpRequest, res: express.Response, next: NextFunction) => {
         req.useNewVersion = this.determineVersion(req);
-        (req.session as any).useNewVersion = req.useNewVersion;
+        if (req.session) {
+          (req.session as any).useNewVersion = req.useNewVersion;
+        } else {
+          console.error("Session not found in request");
+        }
         next();
       }
     );

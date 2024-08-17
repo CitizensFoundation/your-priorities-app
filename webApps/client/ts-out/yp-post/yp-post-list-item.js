@@ -27,6 +27,17 @@ let YpPostListItem = class YpPostListItem extends YpBaseElement {
         return [
             super.styles,
             css `
+        .outerContainer {
+          margin:0;
+          padding:0;
+        }
+
+        .innerContainer {
+          background-color: var(--md-sys-color-surface-container-low);
+          border-radius: 4px;
+          padding: 32px;
+        }
+
         .post-name {
           cursor: pointer;
           font-size: 22px;
@@ -262,8 +273,9 @@ let YpPostListItem = class YpPostListItem extends YpBaseElement {
               .hide-description="${this.post.Group.configuration?.hidePostDescription}"
               ?hide-actions="${this.post.Group.configuration?.hidePostActionsInGrid}"
               audio-cover="${this.isAudioCover}"
+              class="outerContainer"
             >
-              <div class="layout vertical">
+              <div class="layout vertical innerContainer">
                 <a
                   href="${ifDefined(this._getPostLink(this.post))}"
                   @click="${this.goToPostIfNotHeader}"

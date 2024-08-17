@@ -212,7 +212,12 @@ export class YourPrioritiesApi {
     setupNewWebAppVersionHandling() {
         this.app.use((req, res, next) => {
             req.useNewVersion = this.determineVersion(req);
-            req.session.useNewVersion = req.useNewVersion;
+            if (req.session) {
+                req.session.useNewVersion = req.useNewVersion;
+            }
+            else {
+                console.error("Session not found in request");
+            }
             next();
         });
     }

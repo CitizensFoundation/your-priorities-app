@@ -89,8 +89,8 @@ export class YpPostsList extends YpBaseElement {
         }
 
         yp-post-list-item {
-          margin-bottom: 80px;
-          margin-top: 80px;
+          margin-bottom: 38px;
+          margin-top: 38px;
         }
 
         .objectives {
@@ -114,8 +114,8 @@ export class YpPostsList extends YpBaseElement {
 
         lit-virtualizer {
           //TODO: Check this !important usage
-          max-width: 952px !important;
-          min-width: 952px !important;
+          max-width: 1012px !important;
+          min-width: 1012px !important;
         }
 
         yp-posts-filter {
