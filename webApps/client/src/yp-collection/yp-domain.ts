@@ -33,15 +33,19 @@ export class YpDomain extends YpCollection {
           width: 100%;
         }
 
+        .outerContainer {
+          width: 1080px;
+          max-width: 1080px;
+          background-color: var(--md-sys-color-surface);
+        }
+
         .loginSurface {
           max-width: 410px;
           background-color: var(--md-sys-color-surface);
           padding: 32px;
           border-radius: 4px;
-          margin-top: 32px;
-          padding-bottom: 64px;
+          padding-bottom: 640px;
         }
-
       `,
     ];
   }
@@ -186,15 +190,17 @@ export class YpDomain extends YpCollection {
 
   renderDomainLogin() {
     return html`
-    <div class="layout vertical center-center">
-    <yp-login
-      id="userLogin"
-      class="loginSurface"
-      fullWithLoginButton
-      @yp-forgot-password="${this._forgotPassword}"
-    ></yp-login>
-</div>
-`;
+      <div class="layout vertical center-center">
+        <div class="layout vertical center-center outerContainer">
+          <yp-login
+            id="userLogin"
+            class="loginSurface"
+            fullWithLoginButton
+            @yp-forgot-password="${this._forgotPassword}"
+          ></yp-login>
+        </div>
+      </div>
+    `;
   }
 
   override render() {

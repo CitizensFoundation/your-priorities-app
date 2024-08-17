@@ -54,6 +54,7 @@ export declare class YpLogin extends YpBaseElement {
     renderSamlInfo(): import("lit-html").TemplateResult<1>;
     renderCustomUserRegistrationText(): import("lit-html").TemplateResult<1>;
     renderDomainImage(): import("lit-html").TemplateResult<1> | typeof nothing;
+    renderLanguage(): import("lit-html").TemplateResult<1>;
     renderLoginSurface(): import("lit-html").TemplateResult<1>;
     renderCreateUserButton(): import("lit-html").TemplateResult<1>;
     renderForgotPasswordButton(): import("lit-html").TemplateResult<1>;

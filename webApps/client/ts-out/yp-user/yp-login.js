@@ -60,6 +60,11 @@ let YpLogin = class YpLogin extends YpBaseElement {
           ) !important;
         }
 
+        .languageSelector {
+          margin-bottom: 16px;
+          margin-top: 16px;
+        }
+
         .welcome {
           font-family: var(--md-ref-typeface-brand);
           font-size: 28px;
@@ -98,6 +103,12 @@ let YpLogin = class YpLogin extends YpBaseElement {
           width: 100%;
           --md-filled-button-container-shape: 4px;
         }
+
+        .loginButton[has-static-theme] {
+          --md-filled-button-container-color: var(--md-sys-color-primary-container);
+          --md-sys-color-on-primary: var(--md-sys-color-on-primary-container);
+        }
+
 
         .closeLoginDialog {
           margin-bottom: 6px;
@@ -605,6 +616,7 @@ let YpLogin = class YpLogin extends YpBaseElement {
     renderLoginButton() {
         return html `<md-filled-button
         autofocus
+        ?has-static-theme="${this.hasStaticTheme}"
         raised
         ?fullWithLoginButton="${this.fullWithLoginButton}"
         class="loginButton"
@@ -683,6 +695,11 @@ let YpLogin = class YpLogin extends YpBaseElement {
             return nothing;
         }
     }
+    renderLanguage() {
+        return html `<yp-language-selector autoTranslateOptionDisabled
+      class="languageSelector"
+    ></yp-language-selector>`;
+    }
     renderLoginSurface() {
         return html `${!this.dialogMode ? this.renderDomainImage() : nothing}
       <div class="welcome">${this.t("welcome")}</div>
@@ -704,6 +721,7 @@ let YpLogin = class YpLogin extends YpBaseElement {
             <span>${this.t("or")}</span>
           </div>
         </div>
+        ${!this.dialogMode ? this.renderLanguage() : nothing}
       </div>`;
     }
     renderCreateUserButton() {
