@@ -13,6 +13,7 @@ export declare class YpPostListItem extends YpBaseElement {
     isAudioCover: boolean;
     post: YpPostData;
     static get styles(): any[];
+    get structuredAnswerTruncateLength(): number;
     renderDescription(): import("lit-html").TemplateResult<1>;
     renderTags(): import("lit-html").TemplateResult<1>;
     render(): import("lit-html").TemplateResult<1> | typeof nothing;

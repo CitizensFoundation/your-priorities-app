@@ -200,6 +200,23 @@ let YpPostListItem = class YpPostListItem extends YpBaseElement {
       `,
         ];
     }
+    get structuredAnswerTruncateLength() {
+        const textLimit = 272;
+        const formattedAnswer = this.structuredAnswersFormatted;
+        const totalLength = formattedAnswer.length;
+        const urlRegex = /(https?:\/\/[^\s]+)/g;
+        const urls = formattedAnswer.match(urlRegex) || [];
+        let urlAdjustment = 0;
+        urls.forEach(url => {
+            urlAdjustment += url.length - 23;
+        });
+        if (urls.length > 0) {
+            return textLimit + urlAdjustment;
+        }
+        else {
+            return textLimit;
+        }
+    }
     renderDescription() {
         return html `
       ${!this.post.public_data?.structuredAnswersJson
@@ -226,7 +243,7 @@ let YpPostListItem = class YpPostListItem extends YpBaseElement {
               .content="${this.structuredAnswersFormatted}"
               .contentId="${this.post.id}"
               class="description"
-              truncate="120"
+              .truncate="${this.structuredAnswerTruncateLength}"
             >
             </yp-magic-text>
           `}

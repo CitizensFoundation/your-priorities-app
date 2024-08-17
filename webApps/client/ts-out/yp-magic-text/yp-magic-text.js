@@ -405,6 +405,7 @@ let YpMagicText = YpMagicText_1 = class YpMagicText extends YpBaseElement {
         }
         else if (this.processedContent) {
             this.processedContent = linkifyHtml(this.processedContent, {
+                target: "_blank",
                 format: (value, type) => {
                     if (type === "url" && value.length > this.linkifyCutoff - 1) {
                         value = value.slice(0, this.linkifyCutoff) + "…";

@@ -87,7 +87,7 @@ export declare class YpLogin extends YpBaseElement {
     _domainEvent(event: CustomEvent): void;
     get hasAdditionalAuthMethods(): boolean | undefined;
     get hasFacebookLogin(): boolean | undefined;
-    get hasGoogleLogin(): any;
+    get hasGoogleLogin(): boolean;
     get hasSamlLogin(): boolean | undefined;
     _openedChanged(): void;
     onEnterLogin(event: KeyboardEvent): void;
