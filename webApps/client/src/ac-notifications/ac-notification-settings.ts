@@ -1,4 +1,4 @@
-import { html } from 'lit';
+import { html, nothing } from 'lit';
 import { property, customElement } from 'lit/decorators.js';
 
 import { YpBaseElement } from '../common/yp-base-element.js';
@@ -10,7 +10,8 @@ export class AcNotificationSettings extends YpBaseElement {
   notificationsSettings!: AcNotificationSettingsData;
 
   override render() {
-    return html`
+    if (this.notificationsSettings) {
+      return html`
       <ac-notification-selection
         .name="${this.t('notification.myPosts')}"
         .setting="${this.notificationsSettings.my_posts}">
@@ -41,6 +42,9 @@ export class AcNotificationSettings extends YpBaseElement {
         .setting="${this.notificationsSettings.all_group}">
       </ac-notification-selection>
     `;
+    } else {
+      return nothing;
+    }
   }
 
   override connectedCallback() {

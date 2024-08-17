@@ -1,4 +1,5 @@
 {
+  "welcome": "Welcome",
   "dontHaveAnAccount": "Don't have an account?",
   "forgotPassword": "Forgot password?",
   "useLoginOnDomainIfNotLoggedIn": "Use login screen on domain if not logged in",

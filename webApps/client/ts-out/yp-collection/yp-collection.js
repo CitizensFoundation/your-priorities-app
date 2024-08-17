@@ -43,8 +43,6 @@ export class YpCollection extends YpBaseElementWithLogin {
     }
     async loggedInUserCustom() {
         this.refresh();
-        await this.updateComplete;
-        this.getCollection();
     }
     setupTheme() {
         console.error("Implement setupTheme in subclass");
@@ -52,8 +50,8 @@ export class YpCollection extends YpBaseElementWithLogin {
     // DATA PROCESSING
     connectedCallback() {
         super.connectedCallback();
-        //TODO: Look into this, it was if (this.collection) this.refresh()
-        this.getCollection();
+        if (this.collection)
+            this.refresh();
     }
     async themeApplied() {
         this.requestUpdate();

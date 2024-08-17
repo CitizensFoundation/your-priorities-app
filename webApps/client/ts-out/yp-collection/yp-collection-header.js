@@ -32,8 +32,8 @@ let YpCollectionHeader = class YpCollectionHeader extends YpBaseElement {
     }
     disconnectedCallback() {
         super.disconnectedCallback();
-        this.removeGlobalListener("yp-got-admin-rights", this.requestUpdate);
-        this.removeGlobalListener("yp-pause-media-playback", this._pauseMediaPlayback);
+        this.removeGlobalListener("yp-got-admin-rights", this.requestUpdate.bind(this));
+        this.removeGlobalListener("yp-pause-media-playback", this._pauseMediaPlayback.bind(this));
         YpMediaHelpers.detachMediaListeners(this);
     }
     firstUpdated(changedProperties) {

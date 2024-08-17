@@ -22,6 +22,7 @@ import "@material/web/progress/circular-progress.js";
 import { Dialog } from "@material/web/dialog/internal/dialog.js";
 import { TextField } from "@material/web/textfield/internal/text-field.js";
 import { YpForgotPassword } from "./yp-forgot-password.js";
+import { YpCollectionHelpers } from "../common/YpCollectionHelpers.js";
 
 @customElement("yp-login")
 export class YpLogin extends YpBaseElement {
@@ -137,6 +138,19 @@ export class YpLogin extends YpBaseElement {
           ) !important;
         }
 
+        .welcome {
+          font-family: var(--md-ref-typeface-brand);
+          font-size: 28px;
+          font-weight: 700;
+          margin-bottom: 24px;
+        }
+
+        .domainImage {
+          width: 170px;
+          height: 96px;
+          margin-bottom: 32px;
+        }
+
         .createUserInputField {
           margin: 16px;
         }
@@ -147,7 +161,7 @@ export class YpLogin extends YpBaseElement {
           text-align: left;
           align-self: start;
           margin-top: 8px;
-      }
+        }
 
         .createUserButton {
           margin-left: 4px;
@@ -374,7 +388,6 @@ export class YpLogin extends YpBaseElement {
         }
 
         .create-user {
-          --md-dialog-container-min-inline-size: calc(100vw - 212px);
         }
 
         .create-user [slot="header"] {
@@ -706,10 +719,7 @@ export class YpLogin extends YpBaseElement {
         .value="${this.password}"
         @keyup="${this.onEnterLogin}"
       ></md-outlined-text-field>
-      <div style="width: 100%">
-        ${this.renderForgotPasswordButton()}
-      </div>
-      `;
+      <div style="width: 100%">${this.renderForgotPasswordButton()}</div> `;
   }
 
   renderSamlInfo() {
@@ -745,37 +755,58 @@ export class YpLogin extends YpBaseElement {
     </div>`;
   }
 
+  renderDomainImage() {
+    if (window.appGlobals.domain) {
+      return html`<yp-image
+        class="domainImage"
+        .alt="${window.appGlobals.domain?.name}"
+        sizing="cover"
+        .src="${YpCollectionHelpers.logoImagePath(
+          "domain",
+          window.appGlobals.domain
+        )}"
+      ></yp-image>`;
+    } else {
+      return nothing;
+    }
+  }
+
   renderLoginSurface() {
-    return html`${this.renderCustomUserRegistrationText()}
-      ${this.renderSamlInfo()} ${this.renderAdditionalMethods()}
+    return html`${!this.dialogMode ? this.renderDomainImage() : nothing}
+      <div class="welcome">${this.t("welcome")}</div>
+      ${this.renderCustomUserRegistrationText()} ${this.renderSamlInfo()}
+      ${this.renderAdditionalMethods()}
 
       <div ?hidden="${this.forceSecureSamlLogin}">
-        <div class="orContainer" ?hidden="${!this.hasAdditionalAuthMethods}">
-          <div class="strike">
-            <span>${this.t("or")}</span>
-          </div>
-        </div>
-
         <div class="login-user-row layout vertical center-center">
           ${this.renderLoginInput()}
         </div>
         <div class="login-button-row layout vertical center-center">
           ${this.renderLoginButton()}
           <div class="layout horizontal dontHaveAccountInfo">
-            ${this.t('dontHaveAnAccount')} ${this.renderCreateUserButton()}
+            ${this.t("dontHaveAnAccount")} ${this.renderCreateUserButton()}
+          </div>
+        </div>
+        <div class="orContainer" ?hidden="${!this.hasAdditionalAuthMethods}">
+          <div class="strike">
+            <span>${this.t("or")}</span>
           </div>
         </div>
       </div>`;
   }
 
   renderCreateUserButton() {
-    return html`<md-text-button class="createUserButton" @click="${this.openCreateUser}"
+    return html`<md-text-button
+      class="createUserButton"
+      @click="${this.openCreateUser}"
       >${this.t("user.create")}</md-text-button
     >`;
   }
 
   renderForgotPasswordButton() {
-    return html`<md-text-button class="resetPasswordButton" @click="${this._forgotPassword}"
+    return html`<md-text-button
+      class="resetPasswordButton"
+      @click="${this._forgotPassword}"
       >${this.t("forgotPassword")}</md-text-button
     >`;
   }
@@ -784,7 +815,6 @@ export class YpLogin extends YpBaseElement {
     return html`
       <md-dialog
         id="loginDialog"
-        class="createUser"
         @cancel="${this.scrimDisableAction}"
         ?is-safari="${this.isSafari}"
         transition="grow-right"
@@ -871,7 +901,6 @@ export class YpLogin extends YpBaseElement {
     return html`
       <md-dialog
         id="createUserDialog"
-        class="createUser"
         @cancel="${this.scrimDisableAction}"
         ?is-safari="${this.isSafari}"
         transition="grow-left"
@@ -887,7 +916,9 @@ export class YpLogin extends YpBaseElement {
             dialogAction="cancel"
             >${this.t("cancel")}</md-text-button
           >
-          ${this.renderCreateUserButton()}
+          <md-text-button @click="${() => this._validateAndSend(true)}"
+            >${this.t("user.create")}</md-text-button
+          >
         </div>
       </md-dialog>
     `;
@@ -1345,7 +1376,7 @@ export class YpLogin extends YpBaseElement {
 
   get hasGoogleLogin() {
     if (this.domain) {
-      return false;//TODO: this.domain.googleLoginProvided;
+      return false; //TODO: this.domain.googleLoginProvided;
     } else {
       return false;
     }
@@ -1645,6 +1676,9 @@ export class YpLogin extends YpBaseElement {
     } else {
       window.appUser.setLoggedInUser(user);
     }
+    if (!this.dialogMode) {
+      window.appUser._handleLogin(user);
+    }
     this.close();
     this.fireGlobal("yp-logged-in", user);
   }
@@ -1679,6 +1713,7 @@ export class YpLogin extends YpBaseElement {
     email: string | undefined,
     collectionConfiguration: YpCollectionConfiguration | undefined
   ) {
+    this._setTexts();
     this.redirectToURL = redirectToURL;
     this.userSpinner = false;
 

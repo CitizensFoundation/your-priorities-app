@@ -1,3 +1,4 @@
+import { nothing } from "lit";
 import "./yp-registration-questions.js";
 import "./yp-forgot-password.js";
 import { YpBaseElement } from "../common/yp-base-element.js";
@@ -52,6 +53,7 @@ export declare class YpLogin extends YpBaseElement {
     renderLoginInput(): import("lit-html").TemplateResult<1>;
     renderSamlInfo(): import("lit-html").TemplateResult<1>;
     renderCustomUserRegistrationText(): import("lit-html").TemplateResult<1>;
+    renderDomainImage(): import("lit-html").TemplateResult<1> | typeof nothing;
     renderLoginSurface(): import("lit-html").TemplateResult<1>;
     renderCreateUserButton(): import("lit-html").TemplateResult<1>;
     renderForgotPasswordButton(): import("lit-html").TemplateResult<1>;

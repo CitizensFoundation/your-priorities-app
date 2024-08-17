@@ -189,6 +189,7 @@ export declare class YpApp extends YpBaseElement {
     scrollPageToTop(): void;
     _openUserDrawer(): Promise<void>;
     _closeUserDrawer(): Promise<void>;
+    get isOnDomainLoginPageAndNotLoggedIn(): boolean | undefined;
     _login(): void;
     _onChangeHeader(event: CustomEvent): void;
     updateBreadcrumbs(newBreadcrumb: {

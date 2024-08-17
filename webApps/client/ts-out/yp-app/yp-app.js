@@ -298,12 +298,15 @@ let YpApp = class YpApp extends YpBaseElement {
         this._routePageChanged(oldRouteData);
     }
     get isFullScreenMode() {
-        return (this.page == "group" && window.appGlobals.currentGroup?.configuration.groupType == YpGroupType.PsAgentWorkflow);
+        return (this.page == "group" &&
+            window.appGlobals.currentGroup?.configuration.groupType ==
+                YpGroupType.PsAgentWorkflow);
     }
     //TODO: Use someth8ing like https://boguz.github.io/burgton-button-docs/
     renderNavigationIcon() {
         let icons = html ``;
-        let closeButtonVisible = (this.page !== "post" || (this.page === "post" && this.scrollPosition > 64));
+        let closeButtonVisible = this.page !== "post" ||
+            (this.page === "post" && this.scrollPosition > 64);
         if (this.closePostHeader) {
             icons = html `<md-icon-button
         title="${this.t("close")}"
@@ -425,13 +428,14 @@ let YpApp = class YpApp extends YpBaseElement {
             </md-icon-button>
           `
             : html `
-            <md-icon-button
+            <md-text-button
               slot="actionItems"
+              ?hidden="${this.isOnDomainLoginPageAndNotLoggedIn}"
               class="topActionItem userImageNotificationContainer"
               @click="${this._login}"
               title="${this.t("user.login")}"
-              ><md-icon>person</md-icon>
-            </md-icon-button>
+              >${this.t("user.login")}
+            </md-text-button>
           `}
     `;
     }
@@ -1170,8 +1174,17 @@ let YpApp = class YpApp extends YpBaseElement {
         await new Promise((resolve) => setTimeout(resolve, 300));
         this.userDrawerOpened = false;
     }
+    get isOnDomainLoginPageAndNotLoggedIn() {
+        return (window.appGlobals.domain &&
+            window.appGlobals.domain.configuration?.useLoginOnDomainIfNotLoggedIn &&
+            this.page === "domain");
+    }
     _login() {
-        if (window.appUser) {
+        if (window.appGlobals.domain &&
+            window.appGlobals.domain.configuration?.useLoginOnDomainIfNotLoggedIn) {
+            YpNavHelpers.redirectTo(`/domain/${window.appGlobals.domain.id}`);
+        }
+        else if (window.appUser) {
             window.appUser.openUserlogin();
         }
     }

@@ -63,10 +63,10 @@ export class YpCollectionHeader extends YpBaseElement {
 
   override disconnectedCallback() {
     super.disconnectedCallback();
-    this.removeGlobalListener("yp-got-admin-rights", this.requestUpdate);
+    this.removeGlobalListener("yp-got-admin-rights", this.requestUpdate.bind(this));
     this.removeGlobalListener(
       "yp-pause-media-playback",
-      this._pauseMediaPlayback
+      this._pauseMediaPlayback.bind(this)
     );
     YpMediaHelpers.detachMediaListeners(this as YpElementWithPlayback);
   }

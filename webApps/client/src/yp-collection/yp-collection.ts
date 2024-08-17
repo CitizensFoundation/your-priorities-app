@@ -103,8 +103,6 @@ export abstract class YpCollection extends YpBaseElementWithLogin {
 
   async loggedInUserCustom() {
     this.refresh();
-    await this.updateComplete;
-    this.getCollection();
   }
 
   abstract scrollToCollectionItemSubClass(): void;
@@ -118,8 +116,7 @@ export abstract class YpCollection extends YpBaseElementWithLogin {
   override connectedCallback() {
     super.connectedCallback();
 
-    //TODO: Look into this, it was if (this.collection) this.refresh()
-    this.getCollection();
+    if (this.collection) this.refresh();
   }
 
   async themeApplied() {
