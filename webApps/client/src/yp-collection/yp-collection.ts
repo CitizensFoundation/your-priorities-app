@@ -103,11 +103,8 @@ export abstract class YpCollection extends YpBaseElementWithLogin {
 
   async loggedInUserCustom() {
     this.refresh();
-    //TODO: Look into this, find a better solution than waiting
-    await new Promise((r) => setTimeout(r, 1500));
-    if (!this.collection || !this.collection.id) {
-      // this.getCollection();
-    }
+    await this.updateComplete;
+    this.getCollection();
   }
 
   abstract scrollToCollectionItemSubClass(): void;
@@ -121,7 +118,8 @@ export abstract class YpCollection extends YpBaseElementWithLogin {
   override connectedCallback() {
     super.connectedCallback();
 
-    if (this.collection) this.refresh();
+    //TODO: Look into this, it was if (this.collection) this.refresh()
+    this.getCollection();
   }
 
   async themeApplied() {
@@ -166,7 +164,11 @@ export abstract class YpCollection extends YpBaseElementWithLogin {
 
       if (this.$$("#collectionItems")) {
         (this.$$("#collectionItems") as YpCollectionItemsList).refresh();
+      } else {
+        console.error("No collection items for refresh call");
       }
+    } else {
+      console.error("No collection for refresh");
     }
   }
 

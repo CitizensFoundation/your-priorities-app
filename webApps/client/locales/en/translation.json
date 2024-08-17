@@ -1,4 +1,7 @@
 {
+  "dontHaveAnAccount": "Don't have an account?",
+  "forgotPassword": "Forgot password?",
+  "useLoginOnDomainIfNotLoggedIn": "Use login screen on domain if not logged in",
   "confirmLoadAndOverrideMemory": "Are you sure you want to load this memory and override the current memory?",
   "agentMemoryExplorer": "Agent Memory Explorer",
   "upvote": "Upvote",

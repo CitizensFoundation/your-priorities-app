@@ -43,11 +43,8 @@ export class YpCollection extends YpBaseElementWithLogin {
     }
     async loggedInUserCustom() {
         this.refresh();
-        //TODO: Look into this, find a better solution than waiting
-        await new Promise((r) => setTimeout(r, 1500));
-        if (!this.collection || !this.collection.id) {
-            // this.getCollection();
-        }
+        await this.updateComplete;
+        this.getCollection();
     }
     setupTheme() {
         console.error("Implement setupTheme in subclass");
@@ -55,8 +52,8 @@ export class YpCollection extends YpBaseElementWithLogin {
     // DATA PROCESSING
     connectedCallback() {
         super.connectedCallback();
-        if (this.collection)
-            this.refresh();
+        //TODO: Look into this, it was if (this.collection) this.refresh()
+        this.getCollection();
     }
     async themeApplied() {
         this.requestUpdate();
@@ -93,6 +90,12 @@ export class YpCollection extends YpBaseElementWithLogin {
             if (this.$$("#collectionItems")) {
                 this.$$("#collectionItems").refresh();
             }
+            else {
+                console.error("No collection items for refresh call");
+            }
+        }
+        else {
+            console.error("No collection for refresh");
         }
     }
     async getCollection() {

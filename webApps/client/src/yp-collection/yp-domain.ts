@@ -11,6 +11,7 @@ import { YpNavHelpers } from "../common/YpNavHelpers.js";
 import { YpFormattingHelpers } from "../common/YpFormattingHelpers.js";
 
 import "./yp-domain-header.js";
+import { Dialog } from "@material/web/dialog/internal/dialog.js";
 
 @customElement("yp-domain")
 export class YpDomain extends YpCollection {
@@ -31,6 +32,16 @@ export class YpDomain extends YpCollection {
         yp-domain-header {
           width: 100%;
         }
+
+        .loginSurface {
+          max-width: 410px;
+          background-color: var(--md-sys-color-surface);
+          padding: 32px;
+          border-radius: 4px;
+          margin-top: 32px;
+          padding-bottom: 64px;
+        }
+
       `,
     ];
   }
@@ -152,6 +163,12 @@ export class YpDomain extends YpCollection {
     }
   }
 
+  _forgotPassword() {
+    window.appDialogs.getDialogAsync("forgotPassword", (dialog: Dialog) => {
+      dialog.open = true;
+    });
+  }
+
   override renderHeader() {
     return this.collection && !this.noHeader
       ? html`
@@ -167,8 +184,28 @@ export class YpDomain extends YpCollection {
       : nothing;
   }
 
+  renderDomainLogin() {
+    return html`
+    <div class="layout vertical center-center">
+    <yp-login
+      id="userLogin"
+      class="loginSurface"
+      fullWithLoginButton
+      @yp-forgot-password="${this._forgotPassword}"
+    ></yp-login>
+</div>
+`;
+  }
+
   override render() {
     if (
+      this.collection &&
+      !this.loggedInUser &&
+      (this.collection.configuration as YpDomainConfiguration)
+        .useLoginOnDomainIfNotLoggedIn
+    ) {
+      return this.renderDomainLogin();
+    } else if (
       this.collection &&
       !this.loggedInUser &&
       (this.collection.configuration as YpDomainConfiguration)

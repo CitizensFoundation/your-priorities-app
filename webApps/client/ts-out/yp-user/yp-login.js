@@ -37,6 +37,7 @@ let YpLogin = class YpLogin extends YpBaseElement {
         this.hasAnonymousLogin = false;
         this.disableFacebookLoginForGroup = false;
         this.hasOneTimeLoginWithName = false;
+        this.fullWithLoginButton = false;
         this.isSending = false;
         this.reloadPageOnDialogClose = true;
     }
@@ -58,6 +59,32 @@ let YpLogin = class YpLogin extends YpBaseElement {
           ) !important;
         }
 
+        .createUserInputField {
+          margin: 16px;
+        }
+
+        .dontHaveAccountInfo {
+          align-items: center;
+          width: fit-content;
+          text-align: left;
+          align-self: start;
+          margin-top: 8px;
+      }
+
+        .createUserButton {
+          margin-left: 4px;
+        }
+
+        .resetPasswordButton {
+          width: fit-content;
+          margin-left: -10px;
+        }
+
+        .loginButton[fullWithLoginButton] {
+          width: 100%;
+          --md-filled-button-container-shape: 4px;
+        }
+
         .closeLoginDialog {
           margin-bottom: 6px;
         }
@@ -75,6 +102,8 @@ let YpLogin = class YpLogin extends YpBaseElement {
         .createUser {
           padding: 16px;
           text-align: left;
+          margin-bottom: 8px;
+          margin-top: 8px;
         }
 
         .loginInfo {
@@ -309,8 +338,8 @@ let YpLogin = class YpLogin extends YpBaseElement {
         }
 
         .loginField {
-          margin-bottom: 16px;
-          margin-top: 16px;
+          margin-bottom: 8px;
+          margin-top: 8px;
         }
 
         @media (max-width: 900px) {
@@ -564,6 +593,7 @@ let YpLogin = class YpLogin extends YpBaseElement {
         return html `<md-filled-button
         autofocus
         raised
+        ?fullWithLoginButton="${this.fullWithLoginButton}"
         class="loginButton"
         @click="${() => this._validateAndSend(false)}"
         ><span class="capitalize"
@@ -572,7 +602,7 @@ let YpLogin = class YpLogin extends YpBaseElement {
       >
     </div>`;
     }
-    renderLoginEmail() {
+    renderLoginInput() {
         return html `<md-outlined-text-field
         id="email"
         type="email"
@@ -580,7 +610,6 @@ let YpLogin = class YpLogin extends YpBaseElement {
         name="username"
         pattern="^.+@.+$"
         minLength="5"
-        required
         class="loginField"
         .value="${this.email}"
         autocomplete="username"
@@ -594,7 +623,11 @@ let YpLogin = class YpLogin extends YpBaseElement {
         minLength="1"
         .value="${this.password}"
         @keyup="${this.onEnterLogin}"
-      ></md-outlined-text-field>`;
+      ></md-outlined-text-field>
+      <div style="width: 100%">
+        ${this.renderForgotPasswordButton()}
+      </div>
+      `;
     }
     renderSamlInfo() {
         return html `
@@ -628,7 +661,7 @@ let YpLogin = class YpLogin extends YpBaseElement {
     </div>`;
     }
     renderLoginSurface() {
-        return html ` ${this.renderCustomUserRegistrationText()}
+        return html `${this.renderCustomUserRegistrationText()}
       ${this.renderSamlInfo()} ${this.renderAdditionalMethods()}
 
       <div ?hidden="${this.forceSecureSamlLogin}">
@@ -639,23 +672,24 @@ let YpLogin = class YpLogin extends YpBaseElement {
         </div>
 
         <div class="login-user-row layout vertical center-center">
-          ${this.renderLoginEmail()}
+          ${this.renderLoginInput()}
         </div>
         <div class="login-button-row layout vertical center-center">
           ${this.renderLoginButton()}
+          <div class="layout horizontal dontHaveAccountInfo">
+            ${this.t('dontHaveAnAccount')} ${this.renderCreateUserButton()}
+          </div>
         </div>
       </div>`;
     }
     renderCreateUserButton() {
-        return html `<md-text-button @click="${this.openCreateUser}"
+        return html `<md-text-button class="createUserButton" @click="${this.openCreateUser}"
       >${this.t("user.create")}</md-text-button
     >`;
     }
     renderForgotPasswordButton() {
-        return html `<md-text-button @click="${this._forgotPassword}"
-      ><span class="capitalize"
-        >${this.t("user.newPassword")}</span
-      ></md-text-button
+        return html `<md-text-button class="resetPasswordButton" @click="${this._forgotPassword}"
+      >${this.t("forgotPassword")}</md-text-button
     >`;
     }
     renderLoginDialog() {
@@ -688,14 +722,6 @@ let YpLogin = class YpLogin extends YpBaseElement {
               @click="${this._logingDialogClose}"
               ><md-icon>close</md-icon></md-icon-button
             >
-
-            <div class="loginInfoContainer layout vertical">
-              ${this.renderCreateUserButton()}
-            </div>
-
-            <div class="loginInfoContainer layout vertical">
-              ${this.renderForgotPasswordButton()}
-            </div>
           </div>
         </div>
       </md-dialog>
@@ -703,32 +729,35 @@ let YpLogin = class YpLogin extends YpBaseElement {
     }
     renderCreateUserSurface() {
         return html `<div class="create-user-content">
-      <md-filled-text-field
+      <md-outlined-text-field
         id="fullname"
         type="text"
         .label="${this.userNameText}"
         maxLength="50"
         minLength="2"
+        class="createUserInputField"
         required
         charCounter
-      ></md-filled-text-field>
-      <md-filled-text-field
+      ></md-outlined-text-field>
+      <md-outlined-text-field
         id="regEmail"
         type="email"
         .label="${this.t("user.email")}"
         name="username"
+        class="createUserInputField"
         pattern=".+@.+"
         min="5"
         autocomplete="username"
-      ></md-filled-text-field>
-      <md-filled-text-field
+      ></md-outlined-text-field>
+      <md-outlined-text-field
         id="regPassword"
         type="password"
         minLength="5"
+        class="createUserInputField"
         .label="${this.t("user.password")}"
         autocomplete="current-password"
         @keyup="${this.onEnterRegistration}"
-      ></md-filled-text-field>
+      ></md-outlined-text-field>
       ${this.registrationQuestionsGroup
             ? html `
             <yp-registration-questions
@@ -853,10 +882,15 @@ let YpLogin = class YpLogin extends YpBaseElement {
     }
     openCreateUser() {
         this.$$("#createUserDialog").show();
-        this.$$("#loginDialog").close();
+        if (this.$$("#loginDialog")) {
+            this.$$("#loginDialog").close();
+        }
     }
     cancelRegistration() {
-        this.$$("#loginDialog").show();
+        this.$$("#createUserDialog").close();
+        if (this.$$("#loginDialog")) {
+            this.$$("#loginDialog").show();
+        }
     }
     _setupJsonCredentials(registerMode) {
         this.credentials = {
@@ -895,7 +929,7 @@ let YpLogin = class YpLogin extends YpBaseElement {
             return html `
         ${this.renderForgotPassword()}
         ${this.hasOneTimeLoginWithName ? this.renderOneTimeDialog() : nothing}
-        ${this.renderLoginSurface()} ${this.renderCreateUserSurface()}
+        ${this.renderLoginSurface()} ${this.renderCreateUserDialog()}
       `;
         }
     }
@@ -1265,16 +1299,17 @@ let YpLogin = class YpLogin extends YpBaseElement {
         this.addListener("yp-domain-changed", this._domainEvent.bind(this));
         this.addListener("yp-network-error", this._networkError.bind(this));
         this.addGlobalListener("yp-logged-in-via-polling", this.close.bind(this));
+        this.addGlobalListener("yp-language-loaded", this._setTexts.bind(this));
     }
     disconnectedCallback() {
         super.connectedCallback();
         this.removeListener("yp-domain-changed", this._domainEvent.bind(this));
         this.removeListener("yp-network-error", this._networkError.bind(this));
         this.removeGlobalListener("yp-logged-in-via-polling", this.close.bind(this));
+        this.removeGlobalListener("yp-language-loaded", this._setTexts.bind(this));
     }
     setup(onLoginFunction, domain) {
         this.onLoginFunction = onLoginFunction;
-        this._setTexts();
         if (domain) {
             this.domain = domain;
         }
@@ -1542,6 +1577,9 @@ __decorate([
 __decorate([
     property({ type: Boolean })
 ], YpLogin.prototype, "hasOneTimeLoginWithName", void 0);
+__decorate([
+    property({ type: Boolean })
+], YpLogin.prototype, "fullWithLoginButton", void 0);
 __decorate([
     property({ type: Object })
 ], YpLogin.prototype, "registrationQuestionsGroup", void 0);

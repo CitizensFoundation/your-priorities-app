@@ -39,6 +39,7 @@ export declare class YpLogin extends YpBaseElement {
     customSamlLoginText: string | undefined;
     oneTimeLoginName: string | undefined;
     hasOneTimeLoginWithName: boolean;
+    fullWithLoginButton: boolean;
     registrationQuestionsGroup: YpGroupData | undefined;
     onLoginFunction: Function | undefined;
     isSending: boolean;
@@ -48,7 +49,7 @@ export declare class YpLogin extends YpBaseElement {
     renderSamlLogin(): import("lit-html").TemplateResult<1>;
     renderAdditionalMethods(): import("lit-html").TemplateResult<1>;
     renderLoginButton(): import("lit-html").TemplateResult<1>;
-    renderLoginEmail(): import("lit-html").TemplateResult<1>;
+    renderLoginInput(): import("lit-html").TemplateResult<1>;
     renderSamlInfo(): import("lit-html").TemplateResult<1>;
     renderCustomUserRegistrationText(): import("lit-html").TemplateResult<1>;
     renderLoginSurface(): import("lit-html").TemplateResult<1>;

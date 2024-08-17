@@ -426,6 +426,7 @@ interface YpDomainConfiguration extends YpCollectionConfiguration {
   ltp?: YpLtpConfiguration;
   onlyAdminsCanCreateCommunities?: boolean;
   directSamlIntegration?: boolean;
+  useLoginOnDomainIfNotLoggedIn?: boolean;
 }
 
 interface YpHelpPageData {
