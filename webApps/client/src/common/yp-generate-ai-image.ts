@@ -64,11 +64,9 @@ export class YpGenerateAiImage extends YpBaseElement {
   //TODO: Fix that styleText
   get finalPrompt() {
     return `
-      ${this.name ? html`Name: ${this.name}` : ""}
-      ${this.description ? html`Description: ${this.description}` : ""}
+      ${this.name ? `Name: ${this.name}` : ""}
+      ${this.description ? `Description: ${this.description}` : ""}
       Image style: ${this.styleText?.value || "Something cool"}
-
-      Do not include text or labels in the image except if the user asks for it in the image style.
     `;
   }
 

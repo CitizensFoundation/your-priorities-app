@@ -1309,7 +1309,7 @@ export class YpLogin extends YpBaseElement {
 
   get hasGoogleLogin() {
     if (this.domain) {
-      return this.domain.googleLoginProvided;
+      return false;//TODO: this.domain.googleLoginProvided;
     } else {
       return false;
     }

@@ -110,10 +110,21 @@ export class PsAgentNode extends PsOperationsBaseNode {
       const memory = await this.api.getAgentMemory(this.groupId, this.agent.id);
       if (memory) {
         const fileName = this.getSafeFileName(this.agent.configuration.name);
-        const blob = new Blob([JSON.stringify(memory, null, 2)], {
-          type: "application/json",
-        });
-        saveAs(blob, fileName);
+        const jsonString = JSON.stringify(memory, null, 2);
+        const blob = new Blob([jsonString], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = fileName;
+
+        // Append to the document body to work in Firefox
+        document.body.appendChild(link);
+        link.click();
+
+        // Clean up
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
       } else {
         console.error("No memory available to save");
       }
@@ -481,7 +492,14 @@ export class PsAgentNode extends PsOperationsBaseNode {
         <md-menu-item @click="${this.openMemoryDialog}">
           <div slot="headline">Explore Memory</div>
         </md-menu-item>
-      </md-menu>`;
+      </md-menu>
+      <input
+        type="file"
+        id="fileInput"
+        @change="${this.handleFileSelect}"
+        accept=".json"
+        style="display: none;"
+      />`;
   }
   override render() {
     if (!this.agent) return nothing;

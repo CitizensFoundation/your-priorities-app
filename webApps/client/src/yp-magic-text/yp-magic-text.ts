@@ -557,6 +557,7 @@ export class YpMagicText extends YpBaseElement {
       this.processedContent = this.processedContent.replace(/&amp;/g, "&");
     } else if (this.processedContent) {
       this.processedContent = linkifyHtml(this.processedContent, {
+        target: "_blank",
         format: (value: string, type: string) => {
           if (type === "url" && value.length > this.linkifyCutoff - 1) {
             value = value.slice(0, this.linkifyCutoff) + "…";
