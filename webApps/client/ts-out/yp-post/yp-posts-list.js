@@ -8,12 +8,10 @@ import { html, css } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { YpBaseElement } from "../common/yp-base-element.js";
 import { flow } from "@lit-labs/virtualizer/layouts/flow.js";
-import { grid } from "@lit-labs/virtualizer/layouts/grid.js";
 import "@material/web/iconbutton/icon-button.js";
 import "@material/web/textfield/outlined-text-field.js";
 import "./yp-posts-filter.js";
-import "./yp-post-card.js";
-import { ShadowStyles } from "../common/ShadowStyles.js";
+import "./yp-post-list-item.js";
 import { nothing } from "lit";
 let YpPostsList = class YpPostsList extends YpBaseElement {
     constructor() {
@@ -22,7 +20,7 @@ let YpPostsList = class YpPostsList extends YpBaseElement {
         this.statusFilter = "open";
         this.noPosts = false;
         this.showSearchIcon = false;
-        this.grid = true;
+        this.grid = false;
         this.moreToLoad = false;
         this.moreFromScrollTriggerActive = false;
         this.skipIronListWidth = false;
@@ -30,7 +28,6 @@ let YpPostsList = class YpPostsList extends YpBaseElement {
     static get styles() {
         return [
             super.styles,
-            ShadowStyles,
             css `
         .cardContainer {
           width: 100%;
@@ -40,6 +37,11 @@ let YpPostsList = class YpPostsList extends YpBaseElement {
         .postsFilter {
           padding-left: 16px;
           height: 36px;
+        }
+
+        yp-post-list-item {
+          margin-bottom: 38px;
+          margin-top: 38px;
         }
 
         .objectives {
@@ -62,9 +64,9 @@ let YpPostsList = class YpPostsList extends YpBaseElement {
         }
 
         lit-virtualizer {
-          height: 100vh;
-          width: 100vw;
-          overflow: hidden;
+          //TODO: Check this !important usage
+          max-width: 1012px !important;
+          min-width: 1012px !important;
         }
 
         yp-posts-filter {
@@ -86,7 +88,6 @@ let YpPostsList = class YpPostsList extends YpBaseElement {
         }
 
         yp-posts-filter {
-          padding-right: 16px;
         }
 
         .half {
@@ -95,17 +96,11 @@ let YpPostsList = class YpPostsList extends YpBaseElement {
 
         .searchBox {
           margin-bottom: 22px;
-          margin-right: 8px;
         }
 
         .card {
-          margin-left: 0;
-          margin-right: 0;
-          padding-left: 0;
-          padding-right: 0;
-          height: 435px !important;
-          width: 416px !important;
-          border-radius: 4px;
+          padding: 0;
+          width: 100%;
         }
 
         yp-post-card {
@@ -151,6 +146,21 @@ let YpPostsList = class YpPostsList extends YpBaseElement {
           .postsFilter {
             padding-left: 16px;
             width: 215px !important;
+          }
+        }
+
+        @media (max-width: 600px) {
+          lit-virtualizer {
+            margin-top: 80px;
+            margin-left: 8px;
+            margin-right: 8px;
+            padding-left: 8px;
+            padding-right: 8px;
+            width: 100% !important;
+            min-width: 100% !important;
+          }
+          .card {
+            margin-bottom: 16px;
           }
         }
 
@@ -208,25 +218,53 @@ let YpPostsList = class YpPostsList extends YpBaseElement {
     }
     render() {
         return html `
-      <div class="layout vertical center-center topMost">
+      <div class="layout vertical center-centser topMost">
         ${this.noPosts
             ? html `
-                <div class="layout horiztonal center-center">
-                  <div
-                    class="noIdeas layout horizontal center-center shadow-elevation-6dp shadow-transition"
-                    ?hidden="${this.group.configuration
-                .allPostsBlockedByDefault}"
-                  >
-                    <div class="noIdeasText">${this.t("noIdeasHere")}</div>
-                  </div>
+              <div class="layout horiztonal center-center">
+                <div
+                  class="noIdeas layout horizontal center-center shadow-elevation-6dp shadow-transition"
+                  ?hidden="${this.group.configuration.allPostsBlockedByDefault}"
+                >
+                  <div class="noIdeasText">${this.t("noIdeasHere")}</div>
                 </div>
-              `
+              </div>
+            `
             : nothing}
         <div
-          class="searchContainer layout horizontal center-center wrap"
-          ?hidden="${this.group.configuration.hidePostFilterAndSearch || this.noPosts}"
+          class="searchContainer layout horizontal wrap"
+          ?hidden="${this.group.configuration.hidePostFilterAndSearch ||
+            this.noPosts}"
         >
           <div class="layout horizontal center-center">
+            <md-outlined-text-field
+              id="searchInput"
+              @keydown="${this._searchKey}"
+              .label="${this.t("searchFor")}"
+              .value="${this.searchingFor ? this.searchingFor : ""}"
+              class="searchBox"
+            >
+            </md-outlined-text-field>
+
+            ${this.searchingFor
+            ? html `
+                  <md-icon-button
+                    aria-label="${this.t("clearSearchInput")}"
+                    @click="${this._clearSearch}"
+                    class="clear-search-trigger"
+                    ><md-icon>clear</md-icon></md-icon-button
+                  >
+                `
+            : nothing}
+
+            <md-icon-button
+              .label="${this.t("startSearch")}"
+              @click="${this._search}"
+              ?hiddsen="${!this.showSearchIcon}"
+              ><md-icon>search</md-icon></md-icon-button
+            >
+          </div>
+          <div class="layout horizontal">
             <yp-posts-filter
               @click="${this._tapOnFilter}"
               .subTitle="${this.subTitle ? this.subTitle : ""}"
@@ -243,88 +281,37 @@ let YpPostsList = class YpPostsList extends YpBaseElement {
             >
             </yp-posts-filter>
           </div>
-          <div class="layout horizontal center-center">
-            <md-outlined-text-field
-              id="searchInput"
-              @keydown="${this._searchKey}"
-              .label="${this.t("searchFor")}"
-              .value="${this.searchingFor ? this.searchingFor : ""}"
-              class="searchBox"
-            >
-            </md-outlined-text-field>
-
-              ${this.searchingFor
-            ? html `
-                      <md-icon-button
-                        aria-label="${this.t("clearSearchInput")}"
-                        @click="${this._clearSearch}"
-                        class="clear-search-trigger"
-                        ><md-icon>clear</md-icon></md-icon-button
-                      >
-                    `
-            : nothing}
-
-           <md-icon-button
-              .label="${this.t("startSearch")}"
-
-              @click="${this._search}"
-              ?hiddsen="${!this.showSearchIcon}"
-            ><md-icon>search</md-icon></md-icon-button>
-          </div>
         </div>
         ${this.posts
             ? html `
-                <lit-virtualizer
-                  id="list"
-                  .items=${this.posts}
-                  .layout="${this.grid
-                ? grid({
-                    itemSize: { width: "420px", height: "442px" },
-                    gap: "64px 32px",
-                    justify: "center",
-                    padding: "0",
-                })
-                : flow()}"
-                  .scrollTarget="${window}"
-                  .renderItem=${this.renderPostItem.bind(this)}
-                  @rangeChanged=${this.scrollEvent}
-                ></lit-virtualizer>
-              `
+              <lit-virtualizer
+                id="list"
+                .items=${this.posts}
+                .layout="${flow()}"
+                .scrollTarget="${window}"
+                .renderItem=${this.renderPostItem.bind(this)}
+                @rangeChanged=${this.scrollEvent}
+              ></lit-virtualizer>
+            `
             : nothing}
       </div>
     `;
     }
     renderPostItem(post, index) {
         const tabindex = index !== undefined ? index + 1 : 0;
-        if (false && this.desktopListFormat) {
-            return html `
-        <yp-post-list-item
-          aria-label="${post.name}"
-          @keypress="${this._keypress.bind(this)}"
-          @click="${this._selectedItemChanged.bind(this)}"
-          tabindex="${tabindex}"
-          id="postCard${post.id}"
-          class="card"
-          .post="${post}"
-        >
-        </yp-post-list-item>
-      `;
-        }
-        else {
-            return html `
-        <yp-post-card
-          aria-label="${post.name}"
-          ?is-last-item="${this._isLastItem(index)}"
-          @keypress="${this._keypress.bind(this)}"
-          @click="${this._selectedItemChanged.bind(this)}"
-          tabindex="${tabindex}"
-          id="postCard${post.id}"
-          class="csard"
-          .post="${post}"
-        >
-        </yp-post-card>
-      `;
-        }
+        return html `
+      <yp-post-list-item
+        aria-label="${post.name}"
+        ?is-last-item="${this._isLastItem(index)}"
+        @keypress="${this._keypress.bind(this)}"
+        @click="${this._selectedItemChanged.bind(this)}"
+        tabindex="${tabindex}"
+        id="postCard${post.id}"
+        class="csard"
+        .post="${post}"
+      >
+      </yp-post-list-item>
+    `;
     }
     get desktopListFormat() {
         return this.wide && this.group != undefined && this.posts != undefined;
@@ -373,10 +360,30 @@ let YpPostsList = class YpPostsList extends YpBaseElement {
             this._loadMoreData();
         }
     }
+    scrollToPostForGroupId(event) {
+        const groupId = event.detail.groupId;
+        const postId = event.detail.postId;
+        if (groupId && postId && this.group && this.group.id === groupId) {
+            const posts = window.appGlobals.cache.currentPostListForGroup[groupId];
+            if (posts) {
+                for (let i = 0; i < posts.length; i++) {
+                    if (posts[i].id == postId) {
+                        this.$$("#list").scrollToIndex(i);
+                        if (posts.length < i + 3) {
+                            console.error(`Loading more data for group ${groupId} to scroll to post ${postId} at index ${i} length ${posts.length}`);
+                            this._loadMoreData();
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+    }
     async connectedCallback() {
         super.connectedCallback();
         this.addListener("yp-filter-category-change", this._categoryChanged);
         this.addListener("yp-filter-changed", this._filterChanged);
+        this.addGlobalListener("yp-scroll-to-post-for-group-id", this.scrollToPostForGroupId.bind(this));
         this.addListener("refresh", this._refreshPost);
         if (this.posts) {
             if (window.appGlobals.cache.cachedPostItem !== undefined) {
@@ -394,6 +401,7 @@ let YpPostsList = class YpPostsList extends YpBaseElement {
         this.removeListener("yp-filter-category-change", this._categoryChanged);
         this.removeListener("yp-filter-changed", this._filterChanged);
         this.removeListener("refresh", this._refreshPost);
+        this.removeGlobalListener("yp-scroll-to-post-for-group-id", this.scrollToPostForGroupId.bind(this));
     }
     _selectedItemChanged(event) {
         const postCard = event.target;
@@ -633,6 +641,9 @@ let YpPostsList = class YpPostsList extends YpBaseElement {
                 }
                 if (postsInfo.posts.length == 0 && this.posts.length == 0) {
                     this.noPosts = true;
+                }
+                else {
+                    window.appGlobals.cache.setCurrentPostListForGroup(this.group.id, this.posts);
                 }
                 if (postsInfo.posts.length > 0) {
                     this.noPosts = false;

@@ -16,6 +16,27 @@ export class PsServerApi extends YpServerApiBase {
     )) as unknown as PsAgentAttributes;
   }
 
+  public async getAgentMemory(groupId: number, agentId: number): Promise<object> {
+    return this.fetchWrapper(
+      this.baseUrlPath + `${this.baseAgentsPath}${groupId}/${agentId}/memory`,
+      {
+        method: 'GET',
+      },
+      false
+    ) as Promise<object>;
+  }
+
+  public async replaceAgentMemory(groupId: number, agentId: number, memory: object): Promise<void> {
+    return this.fetchWrapper(
+      this.baseUrlPath + `${this.baseAgentsPath}${groupId}/${agentId}/memory`,
+      {
+        method: 'PUT',
+        body: JSON.stringify(memory),
+      },
+      false
+    ) as Promise<void>;
+  }
+
   public async removeAgentAiModel(
     groupId: number,
     agentId: number,
@@ -68,6 +89,21 @@ export class PsServerApi extends YpServerApiBase {
       },
       false
     ) as Promise<void>;
+  }
+
+  public async addExistingConnector(
+    groupId: number,
+    agentId: number,
+    connectorId: number,
+    type: 'input' | 'output'
+  ): Promise<void> {
+    return this.fetchWrapper(
+      `${this.baseUrlPath}/agents/${groupId}/${agentId}/${type}Connectors`,
+      {
+        method: 'POST',
+        body: JSON.stringify({ connectorId }),
+      }
+    );
   }
 
   public async createAgent(

@@ -459,6 +459,12 @@ var updateGroupConfigParameters = function (req, group) {
     "configuration.hideVoteCount",
     truthValueFromBody(req.body.hideVoteCount)
   );
+
+  group.set(
+    "configuration.hideGroupType",
+    truthValueFromBody(req.body.hideGroupType)
+  );
+
   group.set(
     "configuration.hideVoteCountUntilVoteCompleted",
     truthValueFromBody(req.body.hideVoteCountUntilVoteCompleted)
@@ -768,13 +774,6 @@ var updateGroupConfigParameters = function (req, group) {
       group.set("configuration.audioPointUploadLimitSec", 600);
     }
   }
-
-  group.set(
-    "configuration.urlToReview",
-    req.body.urlToReview && req.body.urlToReview != ""
-      ? req.body.urlToReview
-      : null
-  );
 
   group.set(
     "configuration.urlToReviewActionText",

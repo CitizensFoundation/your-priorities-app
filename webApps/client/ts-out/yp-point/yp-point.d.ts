@@ -1,13 +1,13 @@
-import { TemplateResult, nothing } from 'lit';
-import '@material/web/textfield/outlined-text-field.js';
-import '@material/web/progress/circular-progress.js';
-import '@material/web/iconbutton/outlined-icon-button.js';
-import '@material/web/icon/icon.js';
-import '../yp-file-upload/yp-file-upload.js';
-import '../common/yp-emoji-selector.js';
-import '../yp-magic-text/yp-magic-text.js';
-import './yp-point-actions.js';
-import { YpBaseElement } from '../common/yp-base-element.js';
+import { TemplateResult, nothing } from "lit";
+import "@material/web/textfield/outlined-text-field.js";
+import "@material/web/progress/circular-progress.js";
+import "@material/web/iconbutton/outlined-icon-button.js";
+import "@material/web/icon/icon.js";
+import "../yp-file-upload/yp-file-upload.js";
+import "../common/yp-emoji-selector.js";
+import "../yp-magic-text/yp-magic-text.js";
+import "./yp-point-actions.js";
+import { YpBaseElement } from "../common/yp-base-element.js";
 export declare class YpPoint extends YpBaseElement {
     point: YpPointData;
     post: YpPostData;
@@ -18,6 +18,8 @@ export declare class YpPoint extends YpBaseElement {
     hideUser: boolean;
     hideActions: boolean;
     isEditing: boolean;
+    isUpVoted: boolean;
+    isDownVoted: boolean;
     isAdminCommentEditing: boolean;
     hasAdminComments: boolean;
     maxNumberOfPointsBeforeEditFrozen: number;
@@ -42,7 +44,10 @@ export declare class YpPoint extends YpBaseElement {
     audioEndedListener: Function | undefined;
     connectedCallback(): void;
     disconnectedCallback(): void;
+    _updateQualitiesFromSignal(): void;
+    _updateQualities(): void;
     updated(changedProperties: Map<string | number | symbol, unknown>): void;
+    get masterHideSharing(): boolean | undefined;
     static get styles(): any[];
     renderAdminComments(): void;
     renderUserHeader(): TemplateResult<1> | typeof nothing;

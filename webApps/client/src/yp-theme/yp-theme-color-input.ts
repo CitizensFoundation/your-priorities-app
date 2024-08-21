@@ -73,7 +73,9 @@ export class YpThemeColorInput extends YpBaseElement {
   }
 
   _onPaste(event: ClipboardEvent): void {
-    event.preventDefault();
+    return; //TODO: Fix below
+
+    /*event.preventDefault();
     let pastedText: string = "";
     if (event.clipboardData && event.clipboardData.getData) {
       pastedText = event.clipboardData.getData("text/plain");
@@ -81,11 +83,12 @@ export class YpThemeColorInput extends YpBaseElement {
     // Removing any non-hexadecimal characters from the pasted text
     const sanitizedText = pastedText.replace(/[^0-9A-Fa-f]/g, "");
 
+
     // Checking if the sanitized text is a valid hex color code
     if (this.isValidHex(`#${sanitizedText}`)) {
       this.color = sanitizedText;
       this.fire("input", { color: `#${this.color}` });
-    }
+    }*/
   }
 
   openPalette() {
@@ -158,10 +161,13 @@ export class YpThemeColorInput extends YpBaseElement {
       "ArrowLeft",
       "ArrowRight",
       "Delete",
+      "Control",
+      "Meta",
+      "v"  // This includes 'v' for paste (Ctrl+V / Cmd+V)
     ];
 
-    if (allowedKeys.includes(event.key)) {
-      return; // Do not interfere with navigation/control keys
+    if (allowedKeys.includes(event.key) || (event.ctrlKey && event.key === 'v') || (event.metaKey && event.key === 'v')) {
+      return; // Do not interfere with navigation/control keys and paste (Ctrl+V / Cmd+V)
     }
 
     // Check if the key is a valid hexadecimal character

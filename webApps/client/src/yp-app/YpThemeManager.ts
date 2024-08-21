@@ -16,8 +16,8 @@ import { YpBaseElement } from "../common/yp-base-element";
 
 export class YpThemeManager {
   themes: Array<Record<string, boolean | string | Record<string, string>>> = [];
-  selectedTheme: number | undefined;
   selectedFont: string | undefined;
+  currentTheme: string | undefined;
   themeColor: string | undefined = "#0327f8";
   themeDarkMode = false;
   themeHighContrast = false;
@@ -27,6 +27,8 @@ export class YpThemeManager {
   themeNeutralColor: string | undefined;
   themeNeutralVariantColor: string | undefined;
   themeVariant: MaterialDynamicVariants | undefined;
+  useLowestContainerSurface = false;
+  hasStaticTheme = false;
 
   static themeScemesOptionsWithName = [
     { name: "Tonal", value: "tonal" },
@@ -489,6 +491,11 @@ export class YpThemeManager {
       return;
     }
 
+    // Reset
+    this.themeScheme = "tonal";
+    this.useLowestContainerSurface = false;
+    this.hasStaticTheme = false;
+
     if (!configuration.theme) {
       this.setThemeFromOldConfiguration(number, configuration);
     } else {
@@ -502,6 +509,11 @@ export class YpThemeManager {
         this.themeTertiaryColor = configuration.theme.tertiaryColor;
         this.themeNeutralColor = configuration.theme.neutralColor;
         this.themeNeutralVariantColor = configuration.theme.neutralVariantColor;
+        this.useLowestContainerSurface =
+          configuration.theme.useLowestContainerSurface || false;
+        if (!configuration.theme.oneDynamicColor) {
+          this.hasStaticTheme = true;
+        }
         //this.themeVariant = configuration.theme.variant;
       }
 
@@ -552,7 +564,7 @@ export class YpThemeManager {
         this.themeTertiaryColor = theme.tertiaryColor;
         this.themeNeutralColor = theme.neutralColor;
         this.themeNeutralVariantColor = theme.neutralVariantColor;
-        this.themeVariant = theme.variant || "fidelity";
+        this.themeVariant = "fidelity"; //TODO: Look into those how those work, theme.variant || "fidelity";
       }
       this.themeChanged();
     }
@@ -591,7 +603,8 @@ export class YpThemeManager {
           this.themeVariant,
           isDark,
           this.themeScheme,
-          this.themeHighContrast ? 2.0 : 0.0
+          this.themeHighContrast ? 1.0 : 0.0,
+          this.useLowestContainerSurface
         );
       } else {
         themeCss = themeFromSourceColorWithContrast(
@@ -607,12 +620,159 @@ export class YpThemeManager {
           this.themeVariant,
           isDark,
           "dynamic",
-          this.themeHighContrast ? 2.0 : 0.0
+          this.themeHighContrast ? 1.0 : 0.0,
+          this.useLowestContainerSurface
+        );
+      }
+
+      const customColors = themeFromSourceColor(
+        argbFromHex(this.themeColor || this.themePrimaryColor || "#000000"),
+        [
+          {
+            name: "up-vote",
+            value: argbFromHex("#2ECC71"),
+            blend: true,
+          },
+          {
+            name: "down-vote",
+            value: argbFromHex("#E74C3C"),
+            blend: true,
+          },
+        ]
+      );
+
+      //console.error(JSON.stringify(customColors, null, 2));
+
+      if (customColors.customColors) {
+        let colorUp,
+          onColorUp,
+          surfaceColorUp,
+          colorContainerUp,
+          onColorContainerUp,
+          colorDown,
+          surfaceColorDown,
+          onColorDown,
+          colorContainerDown,
+          onColorContainerDown;
+
+
+        if (isDark) {
+          colorUp = customColors.customColors[0].dark.color;
+          onColorUp = customColors.customColors[0].dark.onColor;
+          colorContainerUp = customColors.customColors[0].dark.colorContainer;
+          onColorContainerUp =
+            customColors.customColors[0].dark.onColorContainer;
+
+
+          colorDown = customColors.customColors[1].dark.color;
+          onColorDown = customColors.customColors[1].dark.onColor;
+          colorContainerDown = customColors.customColors[1].dark.colorContainer;
+          onColorContainerDown =
+            customColors.customColors[1].dark.onColorContainer;
+        } else {
+          colorUp = customColors.customColors[0].light.color;
+          onColorUp = customColors.customColors[0].light.onColor;
+          colorContainerUp = customColors.customColors[0].light.colorContainer;
+
+          onColorContainerUp =
+            customColors.customColors[0].light.onColorContainer;
+
+          colorDown = customColors.customColors[1].light.color;
+          onColorDown = customColors.customColors[1].light.onColor;
+          colorContainerDown =
+            customColors.customColors[1].light.colorContainer;
+          onColorContainerDown =
+            customColors.customColors[1].light.onColorContainer;
+        }
+
+        surfaceColorUp = this.createSemiTransparentColor(colorContainerUp, 0.01);
+        surfaceColorDown = this.createSemiTransparentColor(
+          colorContainerDown,
+          0.25
+        );
+
+        document.documentElement.style.setProperty(
+          "--yp-sys-color-surface-up",
+          this.intToHex(surfaceColorUp)
+        );
+
+        document.documentElement.style.setProperty(
+          "--yp-sys-color-surface-down",
+          this.intToHex(surfaceColorDown)
+        );
+
+
+        document.documentElement.style.setProperty(
+          "--yp-sys-color-up",
+          this.intToHex(colorUp)
+        );
+        document.documentElement.style.setProperty(
+          "--yp-sys-color-up-on",
+          this.intToHex(onColorUp)
+        );
+        document.documentElement.style.setProperty(
+          "--yp-sys-color-container-up",
+          this.intToHex(colorContainerUp)
+        );
+        document.documentElement.style.setProperty(
+          "--yp-sys-color-on-container-up",
+          this.intToHex(onColorContainerUp)
+        );
+
+        document.documentElement.style.setProperty(
+          "--yp-sys-color-down",
+          this.intToHex(colorDown)
+        );
+        document.documentElement.style.setProperty(
+          "--yp-sys-color-down-on",
+          this.intToHex(onColorDown)
+        );
+        document.documentElement.style.setProperty(
+          "--yp-sys-color-container-down",
+          this.intToHex(colorContainerDown)
+        );
+        document.documentElement.style.setProperty(
+          "--yp-sys-color-on-container-down",
+          this.intToHex(onColorContainerDown)
         );
       }
 
       applyThemeWithContrast(document, themeCss);
     }
+  }
+
+  hexToRgb(hex: string): string {
+    if (hex.length === 7) {
+      hex = hex.slice(1);
+    }
+    const bigint = parseInt(hex, 16);
+    const r = (bigint >> 16) & 255;
+    const g = (bigint >> 8) & 255;
+    const b = bigint & 255;
+    return `${r},${g},${b}`;
+  }
+
+  createSemiTransparentColor(colorInt: number, opacity: number): number {
+    const r = (colorInt >> 16) & 255;
+    const g = (colorInt >> 8) & 255;
+    const b = colorInt & 255;
+    const a = Math.round(opacity * 255);
+
+    return (a << 24) | (r << 16) | (g << 8) | b;
+  }
+
+  intToHex(colorInt: number): string {
+    // Convert to hex, pad with zeros, and remove '0x' prefix
+    const hex = colorInt.toString(16).padStart(8, "0");
+
+    // Extract ARGB components
+    const alpha = hex.slice(0, 2);
+    const red = hex.slice(2, 4);
+    const green = hex.slice(4, 6);
+    const blue = hex.slice(6, 8);
+
+    // Return hex color code (with or without alpha)
+    return `#${red}${green}${blue}`;
   }
 
   getHexColor(color: string | undefined): string {

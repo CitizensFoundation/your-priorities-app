@@ -1,8 +1,10 @@
 import { YpBaseElement } from "../common/yp-base-element.js";
 import "@material/web/progress/linear-progress.js";
+import "@material/web/button/filled-tonal-button.js";
 export declare class YpMagicText extends YpBaseElement {
     content: string | undefined;
     truncatedContent: string | undefined;
+    postfixText: string;
     contentId: number | undefined;
     extraId: number | undefined;
     additionalId: number | undefined;

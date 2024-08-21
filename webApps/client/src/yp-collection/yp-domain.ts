@@ -2,21 +2,52 @@ import { YpAccessHelpers } from "../common/YpAccessHelpers.js";
 import { YpMediaHelpers } from "../common/YpMediaHelpers.js";
 
 import { YpCollection, CollectionTabTypes } from "./yp-collection.js";
-import { YpCollectionItemsGrid } from "./yp-collection-items-grid.js";
+import { YpCollectionItemsList } from "./yp-collection-items-list.js";
 import { customElement, property } from "lit/decorators.js";
 import { AcActivities } from "../ac-activities/ac-activities.js";
 import { unsafeHTML } from "lit/directives/unsafe-html.js";
-import { html, nothing } from "lit";
+import { css, html, nothing } from "lit";
 import { YpNavHelpers } from "../common/YpNavHelpers.js";
 import { YpFormattingHelpers } from "../common/YpFormattingHelpers.js";
+
+import "./yp-domain-header.js";
+import { Dialog } from "@material/web/dialog/internal/dialog.js";
 
 @customElement("yp-domain")
 export class YpDomain extends YpCollection {
   @property({ type: String })
   customWelcomeHtml: string | undefined = undefined;
 
+  @property({ type: Boolean })
+  override useEvenOddItemLayout = true;
+
   constructor() {
     super("domain", "community", "edit", "community.add");
+  }
+
+  static override get styles() {
+    return [
+      super.styles,
+      css`
+        yp-domain-header {
+          width: 100%;
+        }
+
+        .outerContainer {
+          width: 1080px;
+          max-width: 1080px;
+          background-color: var(--md-sys-color-surface);
+        }
+
+        .loginSurface {
+          max-width: 410px;
+          background-color: var(--md-sys-color-surface);
+          padding: 32px;
+          border-radius: 4px;
+          padding-bottom: 640px;
+        }
+      `,
+    ];
   }
 
   override async refresh() {
@@ -34,12 +65,10 @@ export class YpDomain extends YpCollection {
       );
 
       if (domain.DomainHeaderImages && domain.DomainHeaderImages.length > 0) {
-        YpMediaHelpers.setupTopHeaderImage(
-          this,
-          domain.DomainHeaderImages as Array<YpImageData>
+        this.headerImageUrl = YpMediaHelpers.getImageFormatUrl(
+          domain.DomainHeaderImages as Array<YpImageData>,
+          0
         );
-      } else {
-        YpMediaHelpers.setupTopHeaderImage(this, null);
       }
 
       window.appGlobals.theme.setTheme(domain.theme_id, domain.configuration);
@@ -92,6 +121,7 @@ export class YpDomain extends YpCollection {
         }
       }
     });
+    this.requestUpdate();
   }
 
   scrollToCommunityItem() {
@@ -114,7 +144,7 @@ export class YpDomain extends YpCollection {
         window.appGlobals.cache.backToDomainCommunityItems &&
         window.appGlobals.cache.backToDomainCommunityItems[this.collection.id]
       ) {
-        (this.$$("#collectionItems") as YpCollectionItemsGrid).scrollToItem(
+        (this.$$("#collectionItems") as YpCollectionItemsList).scrollToItem(
           window.appGlobals.cache.backToDomainCommunityItems[this.collection.id]
         );
         window.appGlobals.cache.backToDomainCommunityItems[this.collection.id] =
@@ -129,7 +159,7 @@ export class YpDomain extends YpCollection {
       window.appGlobals.cache.backToDomainCommunityItems &&
       window.appGlobals.cache.backToDomainCommunityItems[this.collection.id]
     ) {
-      (this.$$("#collectionItems") as YpCollectionItemsGrid).scrollToItem(
+      (this.$$("#collectionItems") as YpCollectionItemsList).scrollToItem(
         window.appGlobals.cache.backToDomainCommunityItems[this.collection.id]
       );
       window.appGlobals.cache.backToDomainCommunityItems[this.collection.id] =
@@ -137,9 +167,53 @@ export class YpDomain extends YpCollection {
     }
   }
 
+  _forgotPassword() {
+    window.appDialogs.getDialogAsync("forgotPassword", (dialog: Dialog) => {
+      dialog.open = true;
+    });
+  }
+
+  override renderHeader() {
+    return this.collection && !this.noHeader
+      ? html`
+          <div class="layout vertical center-center header">
+            <yp-domain-header
+              .collection="${this.collection}"
+              .collectionType="${this.collectionType}"
+              aria-label="${this.collectionType}"
+              role="banner"
+            ></yp-domain-header>
+          </div>
+        `
+      : nothing;
+  }
+
+  renderDomainLogin() {
+    return html`
+      <div class="layout vertical center-center">
+        <div class="layout vertical center-center outerContainer">
+          <yp-login
+            id="userLogin"
+            class="loginSurface"
+            fullWithLoginButton
+            @yp-forgot-password="${this._forgotPassword}"
+          ></yp-login>
+        </div>
+      </div>
+    `;
+  }
+
   override render() {
     if (
       this.collection &&
+      !this.loggedInUser &&
+      (this.collection.configuration as YpDomainConfiguration)
+        .useLoginOnDomainIfNotLoggedIn
+    ) {
+      return this.renderDomainLogin();
+    } else if (
+      this.collection &&
+      !this.loggedInUser &&
       (this.collection.configuration as YpDomainConfiguration)
         .welcomeHtmlInsteadOfCommunitiesList
     ) {

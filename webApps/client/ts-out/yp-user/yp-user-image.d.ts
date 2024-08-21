@@ -3,6 +3,7 @@ import '../common/yp-image.js';
 export declare class YpUserImage extends YpBaseElement {
     veryLarge: boolean;
     large: boolean;
+    medium: boolean;
     titleFromUser: string | undefined;
     user: YpUserData;
     noDefault: boolean;
@@ -11,7 +12,7 @@ export declare class YpUserImage extends YpBaseElement {
     render(): import("lit-html").TemplateResult<1>;
     get userTitle(): string;
     get profileImageUrl(): any;
-    get computeClass(): "small rounded" | "large rounded-more" | "veryLarge rounded-even-more" | "medium rounded";
+    get computeClass(): "medium rounded" | "small rounded" | "large rounded-more" | "veryLarge rounded-even-more";
     get computeFacebookSrc(): string | undefined;
 }
 //# sourceMappingURL=yp-user-image.d.ts.map

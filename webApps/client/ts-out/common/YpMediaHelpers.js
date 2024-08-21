@@ -39,6 +39,7 @@ export class YpMediaHelpers {
             return '';
         }
     }
+    //Deprecated
     static setupTopHeaderImage(element, images) {
         if (element.wide) {
             let path;

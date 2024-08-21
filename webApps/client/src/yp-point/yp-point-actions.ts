@@ -1,4 +1,4 @@
-import { html, css, nothing } from "lit";
+import { html, css, nothing, PropertyValues } from "lit";
 import { property, customElement } from "lit/decorators.js";
 
 import "@material/web/iconbutton/outlined-icon-button.js";
@@ -17,6 +17,9 @@ export class YpPointActions extends YpBaseElement {
 
   @property({ type: Boolean })
   isUpVoted = false;
+
+  @property({ type: Boolean })
+  isDownVoted = false;
 
   @property({ type: Boolean })
   allDisabled = false;
@@ -42,9 +45,17 @@ export class YpPointActions extends YpBaseElement {
         }
 
         .action-text {
-          font-size: 12px;
-          padding-top: 12px;
+          font-size: 16px;
+          padding-top: 8px;
           padding-left: 6px;
+        }
+
+        md-icon-button[down-voted] {
+          --md-sys-color-primary: var(--yp-sys-color-down);
+        }
+
+        md-icon-button[up-voted] {
+          --md-sys-color-primary: var(--yp-sys-color-up);
         }
 
         .action-up {
@@ -111,6 +122,7 @@ export class YpPointActions extends YpBaseElement {
                   : false}"
                 .label="${this.t("point.helpful")}"
                 ?disabled="${this.allDisabled}"
+                up-voted="${this.isUpVoted}"
                 icon="arrow_upward"
                 class="point-up-vote-icon myButton"
                 @click="${this.pointHelpful}"
@@ -127,6 +139,7 @@ export class YpPointActions extends YpBaseElement {
                   ? this.pointQualityValue < 0
                   : false}"
                 .label="${this.t("point.not_helpful")}"
+                down-voted="${this.isDownVoted}"
                 ?disabled="${this.allDisabled}"
                 icon="arrow_downward"
                 class="point-down-vote-icon myButton"
@@ -135,14 +148,6 @@ export class YpPointActions extends YpBaseElement {
               >
               <div class="action-text">${this.point.counter_quality_down}</div>
             </div>
-            <md-icon-button
-              icon="share"
-              ?hidden="${true || this.masterHideSharing}"
-              class="shareIcon"
-              .label="${this.t("sharePoint")}"
-              up-voted="${this.isUpVoted}"
-              @click="${this._shareTap}"
-            ></md-icon-button>
           </div>
         `
       : nothing;
@@ -162,6 +167,11 @@ export class YpPointActions extends YpBaseElement {
       "yp-got-endorsements-and-qualities",
       this._updateQualitiesFromSignal.bind(this)
     );
+  }
+
+  protected override firstUpdated(_changedProperties: PropertyValues): void {
+    super.firstUpdated(_changedProperties);
+    this._updateQualities();
   }
 
   get masterHideSharing() {
@@ -204,6 +214,7 @@ export class YpPointActions extends YpBaseElement {
       this._updateQualities();
     } else {
       this.isUpVoted = false;
+      this.isDownVoted = false;
     }
   }
 
@@ -219,19 +230,25 @@ export class YpPointActions extends YpBaseElement {
       window.appUser.user &&
       window.appUser.user.PointQualities
     ) {
+      this.isUpVoted = false;
+      this.isDownVoted = false;
       const thisPointQuality =
         window.appUser.pointQualitiesIndex[this.point.id];
       if (thisPointQuality) {
         this._setPointQuality(thisPointQuality.value);
         if (thisPointQuality.value > 0) {
           this.isUpVoted = true;
+        } else if (thisPointQuality.value < 0) {
+          this.isDownVoted = true;
         }
       } else {
         this.isUpVoted = false;
+        this.isDownVoted = false;
         this._setPointQuality(undefined);
       }
     } else {
       this.isUpVoted = false;
+      this.isDownVoted = false;
       this._setPointQuality(undefined);
     }
   }
@@ -313,6 +330,8 @@ export class YpPointActions extends YpBaseElement {
     else if (pointQuality.value < 0)
       this.point!.counter_quality_down = this.point!.counter_quality_down + 1;
 
+    this.fire("changed");
+
     this.requestUpdate();
   }
 
@@ -333,6 +352,7 @@ export class YpPointActions extends YpBaseElement {
   pointNotHelpful() {
     this.allDisabled = true;
     window.appGlobals.activity("clicked", "pointNotHelpful", this.point!.id);
+    this.isDownVoted = true;
     this.generatePointQuality(-1);
     this.requestUpdate;
   }

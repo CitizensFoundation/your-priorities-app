@@ -8,12 +8,38 @@ import { YpAccessHelpers } from "../common/YpAccessHelpers.js";
 import { YpMediaHelpers } from "../common/YpMediaHelpers.js";
 import { YpCollection, CollectionTabTypes } from "./yp-collection.js";
 import { customElement, property } from "lit/decorators.js";
-import { html } from "lit";
+import { css, html, nothing } from "lit";
 import { YpFormattingHelpers } from "../common/YpFormattingHelpers.js";
+import "./yp-domain-header.js";
 let YpDomain = class YpDomain extends YpCollection {
     constructor() {
         super("domain", "community", "edit", "community.add");
         this.customWelcomeHtml = undefined;
+        this.useEvenOddItemLayout = true;
+    }
+    static get styles() {
+        return [
+            super.styles,
+            css `
+        yp-domain-header {
+          width: 100%;
+        }
+
+        .outerContainer {
+          width: 1080px;
+          max-width: 1080px;
+          background-color: var(--md-sys-color-surface);
+        }
+
+        .loginSurface {
+          max-width: 410px;
+          background-color: var(--md-sys-color-surface);
+          padding: 32px;
+          border-radius: 4px;
+          padding-bottom: 640px;
+        }
+      `,
+        ];
     }
     async refresh() {
         super.refresh();
@@ -24,10 +50,7 @@ let YpDomain = class YpDomain extends YpCollection {
             this.collectionItems = domain.Communities;
             this.setFabIconIfAccess(domain.only_admins_can_create_communities, YpAccessHelpers.checkDomainAccess(domain));
             if (domain.DomainHeaderImages && domain.DomainHeaderImages.length > 0) {
-                YpMediaHelpers.setupTopHeaderImage(this, domain.DomainHeaderImages);
-            }
-            else {
-                YpMediaHelpers.setupTopHeaderImage(this, null);
+                this.headerImageUrl = YpMediaHelpers.getImageFormatUrl(domain.DomainHeaderImages, 0);
             }
             window.appGlobals.theme.setTheme(domain.theme_id, domain.configuration);
         }
@@ -62,6 +85,7 @@ let YpDomain = class YpDomain extends YpCollection {
                 }
             }
         });
+        this.requestUpdate();
     }
     scrollToCommunityItem() {
         if (this.selectedTab === CollectionTabTypes.Newsfeed &&
@@ -94,8 +118,48 @@ let YpDomain = class YpDomain extends YpCollection {
                 undefined;
         }
     }
+    _forgotPassword() {
+        window.appDialogs.getDialogAsync("forgotPassword", (dialog) => {
+            dialog.open = true;
+        });
+    }
+    renderHeader() {
+        return this.collection && !this.noHeader
+            ? html `
+          <div class="layout vertical center-center header">
+            <yp-domain-header
+              .collection="${this.collection}"
+              .collectionType="${this.collectionType}"
+              aria-label="${this.collectionType}"
+              role="banner"
+            ></yp-domain-header>
+          </div>
+        `
+            : nothing;
+    }
+    renderDomainLogin() {
+        return html `
+      <div class="layout vertical center-center">
+        <div class="layout vertical center-center outerContainer">
+          <yp-login
+            id="userLogin"
+            class="loginSurface"
+            fullWithLoginButton
+            @yp-forgot-password="${this._forgotPassword}"
+          ></yp-login>
+        </div>
+      </div>
+    `;
+    }
     render() {
         if (this.collection &&
+            !this.loggedInUser &&
+            this.collection.configuration
+                .useLoginOnDomainIfNotLoggedIn) {
+            return this.renderDomainLogin();
+        }
+        else if (this.collection &&
+            !this.loggedInUser &&
             this.collection.configuration
                 .welcomeHtmlInsteadOfCommunitiesList) {
             if (this.customWelcomeHtml) {
@@ -134,6 +198,9 @@ let YpDomain = class YpDomain extends YpCollection {
 __decorate([
     property({ type: String })
 ], YpDomain.prototype, "customWelcomeHtml", void 0);
+__decorate([
+    property({ type: Boolean })
+], YpDomain.prototype, "useEvenOddItemLayout", void 0);
 YpDomain = __decorate([
     customElement("yp-domain")
 ], YpDomain);

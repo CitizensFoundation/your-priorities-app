@@ -5,6 +5,7 @@ export class PsAppGlobals extends YpAppGlobals {
         this.disableParentConstruction = true;
         this.agentsInstanceRegistry = new Map();
         this.connectorsInstanceRegistry = new Map();
+        this.activeConnectorsInstanceRegistry = new Map();
         this.currentAgentListeners = [];
         this.addToAgentsRegistry = (agent) => {
             this.agentsInstanceRegistry.set(agent.id, agent);

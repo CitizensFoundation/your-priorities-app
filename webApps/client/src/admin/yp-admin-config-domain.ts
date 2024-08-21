@@ -236,6 +236,10 @@ export class YpAdminConfigDomain extends YpAdminConfigBase {
           type: "checkbox",
         },
         {
+          text: "useLoginOnDomainIfNotLoggedIn",
+          type: "checkbox",
+        },
+        {
           text: "welcomeHtmlInsteadOfCommunitiesList",
           type: "textarea",
           rows: 5,

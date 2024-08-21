@@ -25,6 +25,7 @@ let YpDrawer = class YpDrawer extends YpBaseElement {
           --scrim-background: rgba(0, 0, 0, 0.5);
           --scrim-transparent: rgba(0, 0, 0, 0);
           height: 100%;
+          z-index: 9999;
         }
         .drawer-content {
           width: var(--drawer-width);

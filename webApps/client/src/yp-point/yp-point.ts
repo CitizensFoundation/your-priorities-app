@@ -1,30 +1,30 @@
-import { YpAccessHelpers } from '../common/YpAccessHelpers.js';
-import { YpMediaHelpers } from '../common/YpMediaHelpers.js';
+import { YpAccessHelpers } from "../common/YpAccessHelpers.js";
+import { YpMediaHelpers } from "../common/YpMediaHelpers.js";
 
-import { YpCollection } from '../yp-collection/yp-collection.js';
-import { html, LitElement, css, TemplateResult, nothing} from 'lit';
-import { customElement,  property } from 'lit/decorators.js';
+import { YpCollection } from "../yp-collection/yp-collection.js";
+import { html, LitElement, css, TemplateResult, nothing } from "lit";
+import { customElement, property } from "lit/decorators.js";
 
-import '@material/web/textfield/outlined-text-field.js';
-import '@material/web/progress/circular-progress.js';
+import "@material/web/textfield/outlined-text-field.js";
+import "@material/web/progress/circular-progress.js";
 
-import '@material/web/iconbutton/outlined-icon-button.js';
-import '@material/web/icon/icon.js';
+import "@material/web/iconbutton/outlined-icon-button.js";
+import "@material/web/icon/icon.js";
 
-import '../yp-file-upload/yp-file-upload.js';
-import { YpEmojiSelector } from '../common/yp-emoji-selector.js';
-import '../common/yp-emoji-selector.js';
+import "../yp-file-upload/yp-file-upload.js";
+import { YpEmojiSelector } from "../common/yp-emoji-selector.js";
+import "../common/yp-emoji-selector.js";
 
-import '../yp-magic-text/yp-magic-text.js';
-import './yp-point-actions.js';
+import "../yp-magic-text/yp-magic-text.js";
+import "./yp-point-actions.js";
 
-import { YpNavHelpers } from '../common/YpNavHelpers.js';
-import { YpBaseElement } from '../common/yp-base-element.js';
+import { YpNavHelpers } from "../common/YpNavHelpers.js";
+import { YpBaseElement } from "../common/yp-base-element.js";
 
 //import { any /*YpApiActionDialog*/ } from '../yp-api-action-dialog/yp-api-action-dialog.js';
 //import { YpConfirmationDialog } from '../yp-dialog-container/yp-confirmation-dialog.js';
 
-@customElement('yp-point')
+@customElement("yp-point")
 export class YpPoint extends YpBaseElement {
   @property({ type: Object })
   point!: YpPointData;
@@ -52,6 +52,12 @@ export class YpPoint extends YpBaseElement {
 
   @property({ type: Boolean })
   isEditing = false;
+
+  @property({ type: Boolean })
+  isUpVoted = false;
+
+  @property({ type: Boolean })
+  isDownVoted = false;
 
   @property({ type: Boolean })
   isAdminCommentEditing = false;
@@ -109,45 +115,90 @@ export class YpPoint extends YpBaseElement {
   override connectedCallback() {
     super.connectedCallback();
     this.addGlobalListener(
-      'yp-got-admin-rights',
+      "yp-got-admin-rights",
       this.requestUpdate.bind(this)
     );
-    this.addGlobalListener('yp-logged-in', this.requestUpdate.bind(this));
+    this.addGlobalListener("yp-logged-in", this.requestUpdate.bind(this));
     this.addGlobalListener(
-      'yp-pause-media-playback',
+      "yp-pause-media-playback",
       this._pauseMediaPlayback.bind(this)
+    );
+    this.addGlobalListener(
+      "yp-got-endorsements-and-qualities",
+      this._updateQualitiesFromSignal.bind(this)
     );
   }
 
   override disconnectedCallback() {
     super.disconnectedCallback();
     this.removeGlobalListener(
-      'yp-got-admin-rights',
+      "yp-got-admin-rights",
       this.requestUpdate.bind(this)
     );
-    this.removeGlobalListener('yp-logged-in', this.requestUpdate.bind(this));
+    this.removeGlobalListener("yp-logged-in", this.requestUpdate.bind(this));
     this.removeGlobalListener(
-      'yp-pause-media-playback',
+      "yp-pause-media-playback",
       this._pauseMediaPlayback
     );
+    this.removeGlobalListener(
+      "yp-got-endorsements-and-qualities",
+      this._updateQualitiesFromSignal.bind(this)
+    );
     //TODO: Remove unknown cast
-    YpMediaHelpers.detachMediaListeners(this as unknown as YpElementWithPlayback);
+    YpMediaHelpers.detachMediaListeners(
+      this as unknown as YpElementWithPlayback
+    );
+  }
+
+  _updateQualitiesFromSignal() {
+    this._updateQualities();
+  }
+
+  _updateQualities() {
+    this.isUpVoted = false;
+    this.isDownVoted = false;
+
+    if (
+      this.point &&
+      window.appUser &&
+      window.appUser.loggedIn() &&
+      window.appUser.user &&
+      window.appUser.user.PointQualities
+    ) {
+      const thisPointQuality =
+        window.appUser.pointQualitiesIndex[this.point.id];
+      if (thisPointQuality) {
+        if (thisPointQuality.value > 0) {
+          this.isUpVoted = true;
+        } else if (thisPointQuality.value < 0) {
+          this.isDownVoted = true;
+        }
+      }
+    }
   }
 
   override updated(changedProperties: Map<string | number | symbol, unknown>) {
     super.updated(changedProperties);
 
-    if (changedProperties.has('point')) {
+    if (changedProperties.has("point")) {
       this._pointChanged();
     }
 
-    if (changedProperties.has('isAdminCommentEditing')) {
+    if (changedProperties.has("isAdminCommentEditing")) {
       this._isAdminCommentEditingChanged();
     }
 
-    if (changedProperties.has('isEditing')) {
+    if (changedProperties.has("isEditing")) {
       this._isEditingChanged();
     }
+  }
+
+  get masterHideSharing() {
+    return (
+      this.group &&
+      this.group.configuration &&
+      this.group.configuration.hideSharing
+    );
   }
 
   static override get styles() {
@@ -158,18 +209,44 @@ export class YpPoint extends YpBaseElement {
           display: block;
         }
 
+        .shareIcon {
+          margin-top: 8px;
+        }
+
+        #reportPointIconButton {
+          margin-top: 8px;
+          --md-icon-button-icon-color: var(--md-sys-color-outline-variant);
+        }
+
+        yp-user-with-organization {
+          margin-top: 16px;
+        }
+
         .pointTopContainer {
-          background-color: var(--md-sys-color-surface-container-low);
+          min-width: 384px;
+          max-width: 384px;
+          margin-top: 32px;
+          margin-bottom: 32px;
           padding: 16px;
-          border-radius: 16px;
-          padding-bottom: 0;
-          line-height: 1.5;
+          border-radius: 4px;
+          line-height: 25px;
+          border: 2px solid var(--md-sys-color-outline-variant);
+        }
+
+        .pointTopContainer[up-voted] {
+          padding: 16px;
+          border: 2px solid var(--yp-sys-color-up);
+        }
+
+        .pointTopContainer[down-voted] {
+          padding: 16px;
+          border: 2px solid var(--yp-sys-color-down);
         }
 
         .point-content {
           padding-right: 16px;
           padding-left: 16px;
-          margin-top: 16px;
+          margin-top: 8px;
         }
 
         #pointContentTranscript,
@@ -189,17 +266,8 @@ export class YpPoint extends YpBaseElement {
         }
 
         .userInfoContainer {
-          border-bottom: solid 4px;
           width: 100%;
           padding-bottom: 16px;
-        }
-
-        .userInfoContainer[up-vote] {
-          border-bottom-color: var(--master-point-up-color);
-        }
-
-        .userInfoContainer[down-vote] {
-          border-bottom-color: var(--master-point-down-color);
         }
 
         md-outlined-icon-button {
@@ -233,7 +301,7 @@ export class YpPoint extends YpBaseElement {
 
         .actionContainer {
           margin-top: 8px;
-          margin-bottom: 16px;
+          margin-bottom: 4px;
         }
 
         [hidden] {
@@ -353,20 +421,19 @@ export class YpPoint extends YpBaseElement {
   renderAdminComments() {
     html`
       <div class="commentFromAdmin" ?hidden="${this.isEditingSomething}">
-        ${this.group.configuration.customAdminCommentsTitle
+        ${this.group.configuration?.customAdminCommentsTitle
           ? html`
               <yp-magic-text
                 textType="customAdminCommentsTitle"
                 .contentLanguage="${this.group.language}"
-                .content="${this.group.configuration
-                  .customAdminCommentsTitle}"
+                .content="${this.group.configuration?.customAdminCommentsTitle}"
                 .contentId="${this.group.id}"
               >
               </yp-magic-text>
             `
           : ``}
-        ${!this.group.configuration.customAdminCommentsTitle
-          ? html` ${this.t('commentFromAdmin')} `
+        ${!this.group.configuration?.customAdminCommentsTitle
+          ? html` ${this.t("commentFromAdmin")} `
           : ``}
       </div>
       <div
@@ -392,27 +459,25 @@ export class YpPoint extends YpBaseElement {
     return this.user
       ? html`<div
           class="userInfoContainer layout horizontal"
-          ?up-vote="${this.isUpVote}"
-          ?down-vote="${this.isDownVote}"
           ?hidden="${this.hideUser}"
         >
-        <div
-            class="layout horizontal"
-            ?hidden="${this.group.configuration.hidePointAuthor}"
-          >
-          <md-icon
-            class="thumbsIcon thumbsIconUp"
-            ?hidden="${!this.isUpVote}"
-            >thumb_up</md-icon
-          >
-          <md-icon class="thumbsIcon thumbsIconDown" ?hidden="${!this.isDownVote}"
-            >thumb_down</md-icon
-          >
-          <yp-user-with-organization
+          <div class="layout horizontal" style="width: 100%">
+            <yp-user-with-organization
               .titleDate="${this.point.created_at}"
               inverted
+              mediumImage
+              ?hidden="${this.group.configuration?.hidePointAuthor}"
               .user="${this.user}"
+              class="userWithOrganization"
             ></yp-user-with-organization>
+            <div class="flex"></div>
+            <md-icon-button
+              ?hidden="${this.masterHideSharing}"
+              class="shareIcon"
+              .label="${this.t("sharePoint")}"
+              @click="${this._shareTap}"
+              ><md-icon>share</md-icon></md-icon-button
+            >
           </div>
         </div>`
       : nothing;
@@ -460,7 +525,7 @@ export class YpPoint extends YpBaseElement {
                   playsinline
                   .poster="${this.pointImageVideoPath
                     ? this.pointImageVideoPath
-                    : ''}"
+                    : ""}"
                 ></video>
               </div>
             </div>
@@ -484,10 +549,8 @@ export class YpPoint extends YpBaseElement {
       ${this.checkingTranscript
         ? html`
             <div class="layout vertical center-center checkTranscript">
-              <div>${this.t('checkingForTranscript')}</div>
-              <md-circular-progress
-                indeterminate
-              ></md-circular-progress>
+              <div>${this.t("checkingForTranscript")}</div>
+              <md-circular-progress indeterminate></md-circular-progress>
             </div>
           `
         : nothing}
@@ -496,7 +559,7 @@ export class YpPoint extends YpBaseElement {
         class="transcriptError layout horizontal center-center"
         ?hidden="${!this.checkTranscriptError}"
       >
-        ${this.t('checkTranscriptError')}
+        ${this.t("checkTranscriptError")}
       </div>
 
       ${this.point.latestContent
@@ -504,20 +567,20 @@ export class YpPoint extends YpBaseElement {
             <div class="transcriptText layout vertical center-center">
               <div class="layout horizontal">
                 <div class="transcriptHeader">
-                  ${this.t('automaticTranscript')}
+                  ${this.t("automaticTranscript")}
                 </div>
                 <div
                   ?hidden="${!this.group.configuration.collapsableTranscripts}"
                 >
                   <md-icon-button
-                    .label="${this.t('openComments')}"
+                    .label="${this.t("openComments")}"
                     class="openCloseButton"
                     icon="keyboard_arrow_right"
                     @click="${this._setOpen}"
                     ?hidden="${this.openTranscript}"
                   ></md-icon-button>
                   <md-icon-button
-                    .label="${this.t('closeComments')}"
+                    .label="${this.t("closeComments")}"
                     class="openCloseButton"
                     icon="keyboard_arrow_down"
                     @click="${this._setClosed}"
@@ -554,7 +617,7 @@ export class YpPoint extends YpBaseElement {
           id="pointContentEditor"
           charCounter
           maxlength="1500"
-          .value="${this.editText ? this.editText : ''}"
+          .value="${this.editText ? this.editText : ""}"
         ></md-outlined-text-field>
         <div class="horizontal end-justified layout">
           <yp-emoji-selector id="pointEmojiSelector"></yp-emoji-selector>
@@ -562,11 +625,11 @@ export class YpPoint extends YpBaseElement {
         <div class="layout horizontal self-end">
           <md-outlined-button
             @click="${this._cancelEdit}"
-            .label="${this.t('cancel')}"
+            .label="${this.t("cancel")}"
           ></md-outlined-button>
           <md-outlined-button
             @click="${this._saveEdit}"
-            .label="${this.t('update')}"
+            .label="${this.t("update")}"
           ></md-outlined-button>
         </div>
       </div>
@@ -577,19 +640,19 @@ export class YpPoint extends YpBaseElement {
     return html`
       <div class="layout horizontal self-end" hidden>
         <md-icon-button
-          .label="${this.t('editAdminComment')}"
+          .label="${this.t("editAdminComment")}"
           ?hidden="${!this.hasAdminCommentAccess}"
           icon="comment"
           @click="${this._editAdminComment}"
         ></md-icon-button>
         <md-icon-button
-          .label="${this.t('edit')}"
+          .label="${this.t("edit")}"
           ?hidden="${!this.canEditPoint}"
           icon="create"
           @click="${this._editPoint}"
         ></md-icon-button>
         <md-icon-button
-          .label="${this.t('delete')}"
+          .label="${this.t("delete")}"
           icon="clear"
           @click="${this._deletePoint}"
         ></md-icon-button>
@@ -599,7 +662,11 @@ export class YpPoint extends YpBaseElement {
 
   override render() {
     return html`
-      <div class="layout vertical pointTopContainer">
+      <div
+        class="layout vertical pointTopContainer"
+        ?up-voted="${this.isUpVoted}"
+        ?down-voted="${this.isDownVoted}"
+      >
         ${this.renderUserHeader()}
 
         <div class="layout vertical">
@@ -616,17 +683,15 @@ export class YpPoint extends YpBaseElement {
             <yp-point-actions
               .point="${this.point}"
               .pointUrl="${this.pointUrl}"
+              @changed="${this._updateQualities}"
               .configuration="${this.post?.Group?.configuration}"
             ></yp-point-actions>
-            <md-icon-button
-              hidden
-              .label="${this.t('point.report')}"
-              id="reportPointIconButton"
-              icon="warning"
-              @click="${this._reportPoint}"
-            ></md-icon-button>
             <div class="flex"></div>
-
+            <md-icon-button
+              .label="${this.t("point.report")}"
+              id="reportPointIconButton"
+              @click="${this._reportPoint}"
+            ><md-icon>warning</md-icon></md-icon-button>
             ${this.hasPointAccess ? this.renderEditMenu() : nothing}
           </div>
         </div>
@@ -637,7 +702,7 @@ export class YpPoint extends YpBaseElement {
   _setOpen() {
     this.openTranscript = true;
     setTimeout(() => {
-      this.fire('yp-list-resize');
+      this.fire("yp-list-resize");
       this.requestUpdate();
     }, 20);
   }
@@ -645,7 +710,7 @@ export class YpPoint extends YpBaseElement {
   _setClosed() {
     this.openTranscript = false;
     setTimeout(() => {
-      this.fire('yp-list-resize');
+      this.fire("yp-list-resize");
       this.requestUpdate();
     }, 20);
   }
@@ -698,7 +763,7 @@ export class YpPoint extends YpBaseElement {
 
   _shareTap(event: CustomEvent) {
     window.appGlobals.activity(
-      'pointShareOpen',
+      "pointShareOpen",
       event.detail.brand,
       this.point.id
     );
@@ -708,15 +773,15 @@ export class YpPoint extends YpBaseElement {
     if (this.point && this.post) {
       return (
         window.location.protocol +
-        '//' +
+        "//" +
         window.location.hostname +
-        '/post/' +
+        "/post/" +
         this.post.id +
-        '/' +
+        "/" +
         this.point.id
       );
     } else {
-      return '';
+      return "";
     }
   }
 
@@ -729,8 +794,8 @@ export class YpPoint extends YpBaseElement {
   _updateEmojiBindings() {
     if (this.isEditing) {
       setTimeout(() => {
-        const point = this.$$('#pointContentEditor') as HTMLInputElement;
-        const emoji = this.$$('#pointEmojiSelector') as YpEmojiSelector;
+        const point = this.$$("#pointContentEditor") as HTMLInputElement;
+        const emoji = this.$$("#pointEmojiSelector") as YpEmojiSelector;
         if (point && emoji) {
           emoji.inputTarget = point;
         } else {
@@ -739,9 +804,9 @@ export class YpPoint extends YpBaseElement {
       }, 500);
     } else if (this.isAdminCommentEditing) {
       setTimeout(() => {
-        const point = this.$$('#pointAdminCommentEditor') as HTMLInputElement;
+        const point = this.$$("#pointAdminCommentEditor") as HTMLInputElement;
         const emoji = this.$$(
-          '#pointAdminCommentEmojiSelector'
+          "#pointAdminCommentEmojiSelector"
         ) as YpEmojiSelector;
         if (point && emoji) {
           emoji.inputTarget = point;
@@ -762,9 +827,8 @@ export class YpPoint extends YpBaseElement {
       content: this.editText,
     })) as YpPointData;
     if (point) {
-      point.latestContent = point.PointRevisions![
-        point.PointRevisions!.length - 1
-      ].content;
+      point.latestContent =
+        point.PointRevisions![point.PointRevisions!.length - 1].content;
       this.point = point;
     }
     this.isEditing = false;
@@ -798,10 +862,10 @@ export class YpPoint extends YpBaseElement {
 
   _deletePoint() {
     window.appDialogs.getDialogAsync(
-      'confirmationDialog',
+      "confirmationDialog",
       (dialog: any /*YpConfirmationDialog*/) => {
         dialog.open(
-          this.t('point.confirmDelete'),
+          this.t("point.confirmDelete"),
           this._reallyDeletePoint.bind(this)
         );
       }
@@ -811,22 +875,22 @@ export class YpPoint extends YpBaseElement {
   async _reallyDeletePoint() {
     await window.serverApi.deletePoint(this.point.id);
 
-    this.fire('yp-point-deleted', { pointId: this.point.id });
+    this.fire("yp-point-deleted", { pointId: this.point.id });
     //TODO: Check if we need this
     //this.point = undefined;
   }
 
   _reportPoint() {
-    window.appGlobals.activity('open', 'point.report');
+    window.appGlobals.activity("open", "point.report");
     window.appDialogs.getDialogAsync(
-      'apiActionDialog',
+      "apiActionDialog",
       (dialog: any /*YpApiActionDialog*/) => {
         dialog.setup(
-          '/api/points/' + this.point.id + '/report',
-          this.t('reportConfirmation'),
+          "/api/points/" + this.point.id + "/report",
+          this.t("reportConfirmation"),
           this._onReport.bind(this),
-          this.t('point.report'),
-          'PUT'
+          this.t("point.report"),
+          "PUT"
         );
         dialog.open();
       }
@@ -835,28 +899,24 @@ export class YpPoint extends YpBaseElement {
 
   _onReport() {
     window.appGlobals.notifyUserViaToast(
-      this.t('point.report') + ': ' + this.point.content
+      this.t("point.report") + ": " + this.point.content
     );
   }
 
   _editPoint() {
     if (this.hasPointAccess && this.point.PointRevisions) {
-      this.editText = this.point.PointRevisions[
-        this.point.PointRevisions.length - 1
-      ].content;
+      this.editText =
+        this.point.PointRevisions[this.point.PointRevisions.length - 1].content;
       this.isEditing = true;
     }
   }
 
   _editAdminComment() {
-    if (
-      this.post &&
-      YpAccessHelpers.checkPostAdminOnlyAccess(this.post)
-    ) {
+    if (this.post && YpAccessHelpers.checkPostAdminOnlyAccess(this.post)) {
       this.editAdminCommentText =
         this.point.public_data && this.point.public_data.admin_comment
           ? this.point.public_data.admin_comment.text
-          : '';
+          : "";
       this.isAdminCommentEditing = true;
     }
   }
@@ -888,10 +948,14 @@ export class YpPoint extends YpBaseElement {
     }
   }
 
-  override firstUpdated(changedProperties: Map<string | number | symbol, unknown>) {
+  override firstUpdated(
+    changedProperties: Map<string | number | symbol, unknown>
+  ) {
     super.firstUpdated(changedProperties);
     //TODO: Remove unknown cast
-    YpMediaHelpers.attachMediaListeners(this as unknown as YpElementWithPlayback);
+    YpMediaHelpers.attachMediaListeners(
+      this as unknown as YpElementWithPlayback
+    );
   }
 
   _pauseMediaPlayback() {
@@ -901,6 +965,8 @@ export class YpPoint extends YpBaseElement {
 
   _pointChanged() {
     this._resetMedia();
+    this._updateQualities();
+
     if (this.point) {
       if (
         this.post &&
@@ -934,8 +1000,9 @@ export class YpPoint extends YpBaseElement {
         this.pointImageVideoPath = videoPosterURL;
         this.pointVideoId = this.point.PointVideos![0].id;
         this.checkTranscriptError = false;
-        if (!disableMachineTranscripts &&
-          this.point.checkTranscriptFor === 'video' &&
+        if (
+          !disableMachineTranscripts &&
+          this.point.checkTranscriptFor === "video" &&
           window.appGlobals.hasTranscriptSupport === true
         ) {
           this._checkTranscriptStatus();
@@ -951,7 +1018,7 @@ export class YpPoint extends YpBaseElement {
           this.checkTranscriptError = false;
           if (
             !disableMachineTranscripts &&
-            this.point.checkTranscriptFor === 'audio' &&
+            this.point.checkTranscriptFor === "audio" &&
             window.appGlobals.hasTranscriptSupport === true
           ) {
             this._checkTranscriptStatus();
@@ -968,8 +1035,8 @@ export class YpPoint extends YpBaseElement {
 
   async _checkTranscriptStatus() {
     let type;
-    if (this.videoActive) type = 'videoTranscriptStatus';
-    else type = 'audioTranscriptStatus';
+    if (this.videoActive) type = "videoTranscriptStatus";
+    else type = "audioTranscriptStatus";
 
     const pointInfo = (await window.serverApi.checkPointTranscriptStatus(
       type,
@@ -978,11 +1045,10 @@ export class YpPoint extends YpBaseElement {
     if (pointInfo.point) {
       const point = pointInfo.point;
       this.checkingTranscript = false;
-      point.latestContent = point.PointRevisions![
-        point.PointRevisions!.length - 1
-      ].content;
+      point.latestContent =
+        point.PointRevisions![point.PointRevisions!.length - 1].content;
       this.point = point;
-      this.fire('yp-update-point-in-list', point);
+      this.fire("yp-update-point-in-list", point);
       if (this.hasPointAccess) {
         this.editText = point.latestContent;
         this.isEditing = true;

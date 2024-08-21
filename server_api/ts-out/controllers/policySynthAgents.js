@@ -55,6 +55,96 @@ export class PolicySynthAgentsController {
                 process.exit(1);
             }
         };
+        this.replaceAgentMemory = async (req, res) => {
+            try {
+                const { groupId, agentId } = req.params;
+                const memory = req.body;
+                console.log(`Attempting to replace memory for agent ${agentId} in group ${groupId}`);
+                if (!memory || Object.keys(memory).length === 0) {
+                    console.log(`Received empty memory for agent ${agentId}`);
+                    return res.status(400).json({ error: "Cannot save empty memory" });
+                }
+                try {
+                    JSON.parse(JSON.stringify(memory));
+                }
+                catch (jsonError) {
+                    console.log(`Received invalid JSON for agent ${agentId}`);
+                    return res.status(400).json({ error: "Invalid JSON format for memory" });
+                }
+                const memoryKey = await this.agentManager.getSubAgentMemoryKey(groupId, parseInt(agentId));
+                if (!memoryKey) {
+                    console.log(`Memory key not found for agent ${agentId}`);
+                    return res.status(404).json({ error: "Memory key not found for the specified agent" });
+                }
+                console.log(`Memory key found: ${memoryKey}`);
+                await req.redisClient.set(memoryKey, JSON.stringify(memory));
+                console.log(`Memory contents replaced successfully`);
+                res.json({ message: "Memory replaced successfully" });
+            }
+            catch (error) {
+                console.error("Error replacing agent memory:", error);
+                if (error instanceof Error) {
+                    res.status(500).json({ error: error.message });
+                }
+                else {
+                    res.status(500).json({ error: "An unexpected error occurred" });
+                }
+            }
+        };
+        this.addExistingConnector = async (req, res) => {
+            const { groupId, agentId, type } = req.params;
+            const { connectorId } = req.body;
+            if (!groupId || !agentId || !connectorId || !type) {
+                return res
+                    .status(400)
+                    .send("Group ID, agent ID, connector ID, and type (input/output) are required");
+            }
+            try {
+                await this.agentConnectorManager.addExistingConnector(parseInt(groupId), parseInt(agentId), parseInt(connectorId), type);
+                res.status(200).json({ message: `Existing ${type} connector added successfully` });
+            }
+            catch (error) {
+                console.error(`Error adding existing ${type} connector:`, error);
+                if (error instanceof Error) {
+                    res.status(500).json({ error: error.message });
+                }
+                else {
+                    res.status(500).json({ error: "An unexpected error occurred" });
+                }
+            }
+        };
+        this.getAgentMemory = async (req, res) => {
+            try {
+                const { groupId, agentId } = req.params;
+                console.log(`Attempting to get memory for agent ${agentId} in group ${groupId}`);
+                // Get the memory key for the specified agent
+                const memoryKey = await this.agentManager.getSubAgentMemoryKey(groupId, parseInt(agentId));
+                if (!memoryKey) {
+                    console.log(`Memory key not found for agent ${agentId}`);
+                    return res.status(404).json({ error: "Memory key not found for the specified agent" });
+                }
+                console.log(`Memory key found: ${memoryKey}`);
+                // Use the Redis client to get the memory contents
+                const memoryContents = await req.redisClient.get(memoryKey);
+                if (!memoryContents) {
+                    console.log(`Memory contents not found for key ${memoryKey}`);
+                    return res.status(404).json({ error: "Memory contents not found" });
+                }
+                console.log(`Memory contents retrieved successfully`);
+                // Parse the memory contents (assuming it's stored as JSON)
+                const parsedMemoryContents = JSON.parse(memoryContents);
+                res.json(parsedMemoryContents);
+            }
+            catch (error) {
+                console.error("Error retrieving agent memory:", error);
+                if (error instanceof Error) {
+                    res.status(500).json({ error: error.message });
+                }
+                else {
+                    res.status(500).json({ error: "An unexpected error occurred" });
+                }
+            }
+        };
         this.getAgent = async (req, res) => {
             try {
                 const agent = await this.agentManager.getAgent(req.params.groupId);
@@ -430,38 +520,53 @@ export class PolicySynthAgentsController {
         this.router.get("/:groupId/:id/ai-models", auth.can("view group"), this.getAgentAiModels);
         this.router.delete("/:groupId/:agentId/ai-models/:modelId", auth.can("edit group"), this.removeAgentAiModel);
         this.router.post("/:groupId/:agentId/ai-models", auth.can("edit group"), this.addAgentAiModel);
+        this.router.get("/:groupId/:agentId/memory", auth.can("view group"), this.getAgentMemory);
+        this.router.put("/:groupId/:agentId/memory", auth.can("edit group"), this.replaceAgentMemory);
+        this.router.post("/:groupId/:agentId/:type(input|output)Connectors/existing", auth.can("edit group"), this.addExistingConnector);
     }
 }
 _a = PolicySynthAgentsController;
 PolicySynthAgentsController.setupApiKeysForGroup = async (group) => {
-    const anthropicSonnet = await PsAiModel.findOne({
-        where: {
-            name: "Anthropic Sonnet 3.5",
-        },
-    });
-    const openAiGpt4 = await PsAiModel.findOne({
-        where: {
-            name: "GPT-4o",
-        },
-    });
-    const openAiGpt4Mini = await PsAiModel.findOne({
-        where: {
-            name: "GPT-4o Mini",
-        },
-    });
-    group.set("private_access_configuration", [
-        {
+    const findLatestActiveModel = async (name) => {
+        return await PsAiModel.findOne({
+            where: {
+                name,
+                configuration: {
+                    active: true
+                }
+            },
+            order: [['created_at', 'DESC']],
+        });
+    };
+    const anthropicSonnet = await findLatestActiveModel("Anthropic Sonnet 3.5");
+    const openAiGpt4 = await findLatestActiveModel("GPT-4o");
+    const openAiGpt4Mini = await findLatestActiveModel("GPT-4o Mini");
+    const geminiPro = await findLatestActiveModel("Gemini 1.5 Pro");
+    const groupAccessConfig = [];
+    if (anthropicSonnet && process.env.ANTHROPIC_CLAUDE_API_KEY) {
+        groupAccessConfig.push({
             aiModelId: anthropicSonnet.id,
-            apiKey: process.env.ANTHROPIC_CLAUDE_API_KEY || "",
-        },
-        {
+            apiKey: process.env.ANTHROPIC_CLAUDE_API_KEY,
+        });
+    }
+    if (openAiGpt4 && process.env.OPENAI_API_KEY) {
+        groupAccessConfig.push({
             aiModelId: openAiGpt4.id,
-            apiKey: process.env.OPENAI_API_KEY || "",
-        },
-        {
+            apiKey: process.env.OPENAI_API_KEY,
+        });
+    }
+    if (openAiGpt4Mini && process.env.OPENAI_API_KEY) {
+        groupAccessConfig.push({
             aiModelId: openAiGpt4Mini.id,
-            apiKey: process.env.OPENAI_API_KEY || "",
-        },
-    ]);
+            apiKey: process.env.OPENAI_API_KEY,
+        });
+    }
+    if (geminiPro && process.env.GEMINI_API_KEY) {
+        groupAccessConfig.push({
+            aiModelId: geminiPro.id,
+            apiKey: process.env.GEMINI_API_KEY,
+        });
+    }
+    group.set("private_access_configuration", groupAccessConfig);
     await group.save();
 };

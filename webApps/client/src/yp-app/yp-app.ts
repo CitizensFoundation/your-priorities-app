@@ -67,6 +67,8 @@ import { YpSnackbar } from "./yp-snackbar.js";
 import { PsAppGlobals } from "../policySynth/PsAppGlobals.js";
 import { PsServerApi } from "../policySynth/PsServerApi.js";
 import { YpTopAppBar } from "./yp-top-app-bar.js";
+import { skip } from "node:test";
+import { YpGroupType } from "../yp-collection/ypGroupType.js";
 
 declare global {
   interface Window {
@@ -95,6 +97,9 @@ export class YpApp extends YpBaseElement {
 
   @property({ type: String })
   page: string | undefined;
+
+  @property({ type: Number })
+  scrollPosition = 0;
 
   @property({ type: String })
   appMode = "main" as YpAppModes;
@@ -171,6 +176,9 @@ export class YpApp extends YpBaseElement {
   @property({ type: Boolean })
   languageLoaded = false;
 
+  @property({ type: Object })
+  currentTheme?: YpThemeConfiguration;
+
   //TODO: Refactor this
   @property({ type: String })
   keepOpenForPost: string | undefined;
@@ -231,12 +239,19 @@ export class YpApp extends YpBaseElement {
     this._setupSamlCallback();
     this.updateLocation();
     document.addEventListener("keydown", this._handleKeyDown.bind(this));
+    window.addEventListener("scroll", this._handleScroll.bind(this));
   }
 
   override disconnectedCallback() {
     super.disconnectedCallback();
     this._removeEventListeners();
     document.removeEventListener("keydown", this._handleKeyDown.bind(this));
+    window.removeEventListener("scroll", this._handleScroll.bind(this));
+  }
+
+  _handleScroll() {
+    this.scrollPosition = window.pageYOffset;
+    this.requestUpdate("scrollPosition");
   }
 
   override async updated(
@@ -463,6 +478,14 @@ export class YpApp extends YpBaseElement {
     }
   }
 
+  get hasStaticBadgeTheme() {
+    if (this.currentTheme) {
+      return !this.currentTheme.oneDynamicColor;
+    } else {
+      return false;
+    }
+  }
+
   updateLocation() {
     let path = window.location.pathname;
 
@@ -523,13 +546,26 @@ export class YpApp extends YpBaseElement {
     this._routePageChanged(oldRouteData);
   }
 
+  get isFullScreenMode() {
+    return (
+      this.page == "group" &&
+      window.appGlobals.currentGroup?.configuration.groupType ==
+        YpGroupType.PsAgentWorkflow
+    );
+  }
+
   //TODO: Use someth8ing like https://boguz.github.io/burgton-button-docs/
   renderNavigationIcon() {
     let icons = html``;
 
+    let closeButtonVisible =
+      this.page !== "post" ||
+      (this.page === "post" && this.scrollPosition > 64);
+
     if (this.closePostHeader) {
       icons = html`<md-icon-button
         title="${this.t("close")}"
+        class="closeButton ${closeButtonVisible ? "visible" : ""}"
         @click="${this._closePost}"
         ><md-icon>close</md-icon></md-icon-button
       >`;
@@ -539,10 +575,20 @@ export class YpApp extends YpBaseElement {
         @click="${this._closeForGroup}"
         ><md-icon>close</md-icon></md-icon-button
       >`;
+      //TODO: Fix this it should show arrow up when landing on the site for the first time not going back
+    } else if (this.showBack && this.breadcrumbs.length > 1) {
+      icons = html`<md-icon-button
+        title="${this.t("goBack")}"
+        slot="actionItems"
+        ?hidden="${!this.backPath}"
+        @click="${this.goBack}"
+        ><md-icon>arrow_back</md-icon>
+      </md-icon-button>`;
     } else if (this.showBack) {
       icons = html`<md-icon-button
         title="${this.t("goBack")}"
         slot="actionItems"
+        class="closeButton ${closeButtonVisible ? "visible" : ""}"
         ?hidden="${!this.backPath}"
         @click="${this.goBack}"
         ><md-icon>arrow_upward</md-icon>
@@ -583,7 +629,7 @@ export class YpApp extends YpBaseElement {
         class="topActionItem"
         @click="${this._openNavDrawer}"
         title="${this.t("menu.help")}"
-        ><md-icon>explore</md-icon></md-icon-button
+        ><md-icon>communities</md-icon></md-icon-button
       >
 
       <div
@@ -631,6 +677,7 @@ export class YpApp extends YpBaseElement {
               <md-badge
                 id="notificationBadge"
                 class="activeBadge"
+                ?has-static-theme="${this.hasStaticBadgeTheme}"
                 .value="${this.numberOfUnViewedNotifications}"
                 ?hidden="${!this.numberOfUnViewedNotifications}"
               >
@@ -638,13 +685,14 @@ export class YpApp extends YpBaseElement {
             </md-icon-button>
           `
         : html`
-            <md-icon-button
+            <md-text-button
               slot="actionItems"
+              ?hidden="${this.isOnDomainLoginPageAndNotLoggedIn}"
               class="topActionItem userImageNotificationContainer"
               @click="${this._login}"
               title="${this.t("user.login")}"
-              ><md-icon>person</md-icon>
-            </md-icon-button>
+              >${this.t("user.login")}
+            </md-text-button>
           `}
     `;
   }
@@ -663,9 +711,10 @@ export class YpApp extends YpBaseElement {
     return html`
       <yp-top-app-bar
         role="navigation"
-        .titleString="${titleString}"
+        .restrictWidth="${!this.isFullScreenMode}"
+        .titleString="${this.page != "post" ? titleString : ""}"
         aria-label="top navigation"
-        ?hideBreadcrumbs="${!titleString || titleString==""}"
+        ?hideBreadcrumbs="${!titleString || titleString == ""}"
         ?hidden="${this.appMode !== "main" ||
         window.appGlobals.domain?.configuration.hideAppBarIfWelcomeHtml}"
       >
@@ -743,7 +792,11 @@ export class YpApp extends YpBaseElement {
 
   renderTopBar() {
     return html`
-      <yp-drawer id="leftDrawer" position="right" @closed="${this._closeNavDrawer}">
+      <yp-drawer
+        id="leftDrawer"
+        position="right"
+        @closed="${this._closeNavDrawer}"
+      >
         <yp-app-nav-drawer
           id="ypNavDrawer"
           .homeLink="${this.homeLink}"
@@ -1281,9 +1334,13 @@ export class YpApp extends YpBaseElement {
               this.routeData.page === "group"
             )
           ) {
+            if (oldRouteData && oldRouteData.page == "post") {
+              skipMasterScroll = true;
+            }
+
             if (!skipMasterScroll) {
               window.scrollTo(0, map[this.routeData.page]);
-              console.info(
+              console.error(
                 "Main window scroll " +
                   this.routeData.page +
                   " to " +
@@ -1295,7 +1352,7 @@ export class YpApp extends YpBaseElement {
               );
             }
           } else if (!skipMasterScroll) {
-            console.info("AppLayout scroll to top");
+            console.error("AppLayout scroll to top");
             setTimeout(() => {
               window.scrollTo(0, 0);
             });
@@ -1498,8 +1555,21 @@ export class YpApp extends YpBaseElement {
     this.userDrawerOpened = false;
   }
 
+  get isOnDomainLoginPageAndNotLoggedIn() {
+    return (
+      window.appGlobals.domain &&
+      window.appGlobals.domain.configuration?.useLoginOnDomainIfNotLoggedIn &&
+      this.page === "domain"
+    );
+  }
+
   _login() {
-    if (window.appUser) {
+    if (
+      window.appGlobals.domain &&
+      window.appGlobals.domain.configuration?.useLoginOnDomainIfNotLoggedIn
+    ) {
+      YpNavHelpers.redirectTo(`/domain/${window.appGlobals.domain.id}`);
+    } else if (window.appUser) {
       window.appUser.openUserlogin();
     }
   }
@@ -1584,14 +1654,20 @@ export class YpApp extends YpBaseElement {
 
     if (header.headerTitle && header.backPath) {
       this.updateBreadcrumbs({
-        name: header.headerTitle || '',
-        url: header.backPath || ''
+        name: header.headerTitle || "",
+        url: header.backPath || "",
       });
+    }
+
+    if (header.currentTheme) {
+      this.currentTheme = header.currentTheme;
     }
   }
 
-  updateBreadcrumbs(newBreadcrumb: {name: string, url: string}) {
-    const existingIndex = this.breadcrumbs.findIndex(b => b.url === newBreadcrumb.url);
+  updateBreadcrumbs(newBreadcrumb: { name: string; url: string }) {
+    const existingIndex = this.breadcrumbs.findIndex(
+      (b) => b.url === newBreadcrumb.url
+    );
     if (existingIndex !== -1) {
       // If the breadcrumb already exists, trim the array to this point
       this.breadcrumbs = this.breadcrumbs.slice(0, existingIndex + 1);

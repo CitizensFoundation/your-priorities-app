@@ -19,7 +19,16 @@ let YpMagicTextDialog = class YpMagicTextDialog extends YpMagicText {
         }
 
         #dialog {
-          max-width: 50%;
+          padding: 32px;
+          --md-dialog-container-shape: 4px;
+        }
+
+        md-text-button {
+        }
+
+        .content {
+          margin: 32px;
+          line-height: 25px;
         }
 
         @media (max-width: 1100px) {
@@ -40,6 +49,8 @@ let YpMagicTextDialog = class YpMagicTextDialog extends YpMagicText {
         }
 
         .buttons {
+          flex: none;
+          align-self: end;
         }
       `,
         ];
@@ -47,17 +58,18 @@ let YpMagicTextDialog = class YpMagicTextDialog extends YpMagicText {
     render() {
         return html `
       <md-dialog id="dialog" aria-label="${this.t("textDialog")}">
-        <div slot="content">
+        <div slot="content" class="content">
           ${this.finalContent
             ? html ` <div>${unsafeHTML(this.finalContent)}</div> `
             : html ` <div>${this.content}</div> `}
         </div>
-        <md-text-button
-          slot="actions"
-          @click="${() => (this.$$("#dialog").open = false)}"
-        >
-          ${this.closeDialogText}
-        </md-text-button>
+        <div class="buttons" slot="actions">
+          <md-text-button
+            @click="${() => (this.$$("#dialog").open = false)}"
+          >
+            ${this.closeDialogText}
+          </md-text-button>
+        </div>
       </md-dialog>
     `;
     }

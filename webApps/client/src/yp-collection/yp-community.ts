@@ -2,7 +2,7 @@ import { YpAccessHelpers } from "../common/YpAccessHelpers.js";
 import { YpMediaHelpers } from "../common/YpMediaHelpers.js";
 
 import { YpCollection, CollectionTabTypes } from "./yp-collection.js";
-import { YpCollectionItemsGrid } from "./yp-collection-items-grid.js";
+import { YpCollectionItemsList } from "./yp-collection-items-list.js";
 import { customElement } from "lit/decorators.js";
 import { AcActivities } from "../ac-activities/ac-activities.js";
 import { YpNavHelpers } from "../common/YpNavHelpers.js";
@@ -11,6 +11,27 @@ import { YpNavHelpers } from "../common/YpNavHelpers.js";
 export class YpCommunity extends YpCollection {
   constructor() {
     super("community", "group", "edit", "group.new");
+  }
+
+  override setupTheme() {
+    const community = this.collection as YpCommunityData;
+    try {
+      if (community.configuration && community.configuration.theme) {
+        window.appGlobals.theme.setTheme(undefined, community.configuration);
+      } else if (community.configuration && community.configuration.themeOverrideColorPrimary) {
+        window.appGlobals.theme.setTheme(community.theme_id, community.configuration);
+      } else if (community.configuration && community.theme_id) {
+        window.appGlobals.theme.setTheme(community.theme_id, community.configuration);
+      } else if (community.Domain && community.Domain.configuration.theme) {
+        window.appGlobals.theme.setTheme(undefined, community.Domain.configuration);
+      } else if (community.Domain && community.Domain.configuration.themeOverrideColorPrimary) {
+        window.appGlobals.theme.setTheme(community.Domain.theme_id, community.Domain.configuration);
+      } else {
+        window.appGlobals.theme.setTheme(community.theme_id || community.Domain?.theme_id || 1);
+      }
+    } catch (error) {
+      console.error("Error setting community theme", error);
+    }
   }
 
   override refresh() {
@@ -43,22 +64,12 @@ export class YpCommunity extends YpCollection {
         community.CommunityHeaderImages &&
         community.CommunityHeaderImages.length > 0
       ) {
-        YpMediaHelpers.setupTopHeaderImage(
-          this,
-          community.CommunityHeaderImages as Array<YpImageData>
-        );
-      } else {
-        YpMediaHelpers.setupTopHeaderImage(this, null);
+        this.headerImageUrl = YpMediaHelpers.getImageFormatUrl(
+          community.CommunityHeaderImages as Array<YpImageData>,
+          0);
       }
 
-      if (
-        !community.configuration.theme &&
-        community.Domain?.configuration.theme
-      ) {
-        window.appGlobals.theme.setTheme(community.Domain.theme_id, community.Domain.configuration);
-      } else if (community.configuration.theme) {
-        window.appGlobals.theme.setTheme(community.theme_id, community.configuration);
-      }
+      this.setupTheme();
 
       window.appGlobals.analytics.setCommunityAnalyticsTracker(
         community.google_analytics_code
@@ -107,6 +118,8 @@ export class YpCommunity extends YpCollection {
     window.appGlobals.disableFacebookLoginForGroup = false;
     window.appGlobals.externalGoalTriggerGroupId = undefined;
     window.appGlobals.currentGroup = undefined;
+
+    this.requestUpdate();
   }
 
   _setupCommunitySaml(community: YpCommunityData) {
@@ -161,7 +174,7 @@ export class YpCommunity extends YpCollection {
         window.appGlobals.cache.backToCommunityGroupItems &&
         window.appGlobals.cache.backToCommunityGroupItems[this.collection.id]
       ) {
-        (this.$$("#collectionItems") as YpCollectionItemsGrid).scrollToItem(
+        (this.$$("#collectionItems") as YpCollectionItemsList).scrollToItem(
           window.appGlobals.cache.backToCommunityGroupItems[this.collection.id]
         );
         window.appGlobals.cache.backToCommunityGroupItems[this.collection.id] =
@@ -210,7 +223,7 @@ export class YpCommunity extends YpCollection {
       window.appGlobals.cache.backToCommunityGroupItems &&
       window.appGlobals.cache.backToCommunityGroupItems[this.collection.id]
     ) {
-      (this.$$("#collectionItems") as YpCollectionItemsGrid).scrollToItem(
+      (this.$$("#collectionItems") as YpCollectionItemsList).scrollToItem(
         window.appGlobals.cache.backToCommunityGroupItems[this.collection.id]
       );
       window.appGlobals.cache.backToCommunityGroupItems[this.collection.id] =

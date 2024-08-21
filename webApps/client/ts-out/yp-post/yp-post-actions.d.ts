@@ -16,10 +16,13 @@ export declare class YpPostActions extends YpBaseElement {
     maxNumberOfGroupVotes: number | undefined;
     numberOfGroupVotes: number | undefined;
     forceShowDebate: boolean;
+    onlyShowDebate: boolean;
+    forceHideDebate: boolean;
     connectedCallback(): void;
     disconnectedCallback(): void;
     firstUpdated(changedProperties: Map<string | number | symbol, unknown>): void;
     static get styles(): any[];
+    renderDebate(): import("lit-html").TemplateResult<1>;
     render(): import("lit-html").TemplateResult<1>;
     get isEndorsed(): boolean;
     get isOpposed(): boolean;

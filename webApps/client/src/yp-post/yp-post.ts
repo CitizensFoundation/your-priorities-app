@@ -68,11 +68,82 @@ export class YpPost extends YpCollection {
     //TODO: Do we need this
   }
 
+  override setupTheme() {
+    try {
+      const group = this.post!.Group;
+      if (group.configuration && group.configuration?.theme) {
+        if (group.configuration?.inheritThemeFromCommunity && group.Community) {
+          window.appGlobals.theme.setTheme(
+            undefined,
+            group.Community.configuration
+          );
+        } else {
+          window.appGlobals.theme.setTheme(undefined, group.configuration);
+        }
+      } else if (
+        group.configuration &&
+        group.configuration?.themeOverrideColorPrimary
+      ) {
+        window.appGlobals.theme.setTheme(undefined, group.configuration);
+      } else if (group.Community && group.Community.configuration.theme) {
+        window.appGlobals.theme.setTheme(
+          undefined,
+          group.Community.configuration
+        );
+      } else if (group.theme_id) {
+        window.appGlobals.theme.setTheme(group.theme_id, group.configuration);
+      } else if (
+        group.Community &&
+        group.Community.configuration.themeOverrideColorPrimary
+      ) {
+        window.appGlobals.theme.setTheme(
+          group.Community.theme_id,
+          group.Community.configuration
+        );
+      } else if (
+        group.Community &&
+        group.Community.Domain &&
+        group.Community.Domain.configuration.theme
+      ) {
+        window.appGlobals.theme.setTheme(group.Community.Domain.theme_id);
+      } else {
+        window.appGlobals.theme.setTheme(1);
+      }
+    } catch (error) {
+      console.error("Error setting group theme", error);
+    }
+  }
+
   static override get styles() {
     return [
       super.styles,
-      ShadowStyles,
       css`
+        .outerFrameContainer {
+          max-width: 1034px;
+          width: 1034px;
+          background-color: var(--md-sys-color-surface);
+          margin: 0 auto;
+          padding: 32px;
+        }
+
+        .frameContainer {
+          max-width: 970px;
+          width: 970px;
+          min-height: 1000px;
+          margin: 32px;
+          margin-top: 0;
+          padding: 32px;
+          border-radius: 4px;
+          border: 1px solid var(--md-sys-color-outline);
+          position: relative;
+          background-color: var(--md-sys-color-surface);
+        }
+
+        .dividerLine {
+          opacity: 0.3;
+          max-width: 88%;
+        }
+
         .postHeader {
           padding: 16px;
           background-color: var(--md-sys-color-primary);
@@ -80,9 +151,39 @@ export class YpPost extends YpCollection {
           width: 940px;
         }
 
+        .postStaticHeader {
+          position: fixed;
+          top: 10%;
+          z-index: 1000;
+        }
+
+        .arrowNavigation {
+          --md-filled-tonal-icon-button-container-width: 64px;
+          --md-filled-tonal-icon-button-container-height: 64px;
+          --md-filled-tonal-icon-button-icon-size: 48px;
+          position: fixed;
+          top: 500px;
+          transform: translateY(-50%);
+          z-index: 20;
+        }
+
+        .leftArrowNavigationButton {
+          left: calc(50% - (940px / 2) - 80px);
+        }
+
+        .rightArrowNavigationButton {
+          right: calc(50% - (940px / 2) - 80px);
+        }
+
         md-tabs {
-          z-index: 0;
-          margin-top: 32px;
+          margin-top: 64px;
+          min-width: 90%;
+        }
+
+        .dividerLine {
+          border-top: 1px solid var(--md-sys-color-outline);
+          margin-top: 64px;
+          margin-bottom: 16px;
         }
 
         ac-activities {
@@ -120,39 +221,98 @@ export class YpPost extends YpCollection {
     ];
   }
 
+  get leftArrowDisabled() {
+    if (
+      window.appGlobals.cache.getPreviousPostInGroupList(
+        this.post!.group_id,
+        this.post!.id
+      )
+    ) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  get rightArrowDisabled() {
+    if (
+      window.appGlobals.cache.getNextPostInGroupList(
+        this.post!.group_id,
+        this.post!.id
+      )
+    ) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  get bothArrowsDisabled() {
+    if (this.leftArrowDisabled && this.rightArrowDisabled) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  handleKeydown(event: KeyboardEvent) {
+    if (event.key === "ArrowLeft" && !this.leftArrowDisabled) {
+      this.goToPreviousPost();
+    } else if (event.key === "ArrowRight" && !this.rightArrowDisabled) {
+      this.goToNextPost();
+    } else if (event.key === "Escape") {
+      if (this.post) {
+        event.preventDefault();
+        event.stopPropagation();
+        YpNavHelpers.redirectTo("/group/" + this.post.group_id);
+      }
+    }
+  }
+
+  renderPostStaticHeader() {
+    return html`
+      <yp-post-header
+        ?hasNoLeftRightButtons="${this.bothArrowsDisabled}"
+        onlyRenderTopActionBar
+        .post="${this.post!}"
+      ></yp-post-header>
+    `;
+  }
+
   renderPostHeader() {
-    return html`<yp-post-header
-      id="postCard"
-      class="largeCard"
-      .post="${this.post!}"
-      @refresh="${this._getPost}"
-      headermode
-    ></yp-post-header>`;
+    return html`
+      <yp-post-header
+        hideTopActionBar
+        id="postCard"
+        .post="${this.post!}"
+        @refresh="${this._getPost}"
+      ></yp-post-header>
+    `;
   }
 
   renderPostTabs() {
-    if (this.post && !this.post.Group.configuration.hideAllTabs) {
+    if (this.post && !this.post.Group.configuration?.hideAllTabs) {
       return html`
         <md-tabs
           @change="${this._selectTab}"
           .activeTabIndex="${this.selectedTab}"
         >
-          <md-primary-tab
+          <md-secondary-tab ?has-static-theme="${this.hasStaticTheme}"
             >${this.tabDebateCount}<md-icon slot="icon"
               >lightbulb_outline</md-icon
-            ></md-primary-tab
+            ></md-secondary-tab
           >
 
           ${this.renderNewsAndMapTabs()}
-          <md-primary-tab
+          <md-secondary-tab ?has-static-theme="${this.hasStaticTheme}"
             >${this.tabPhotosCount}<md-icon slot="icon"
               >photo_camera</md-icon
-            ></md-primary-tab
+            ></md-secondary-tab
           >
         </md-tabs>
       `;
     } else {
-      return nothing;
+      return html`<md-divider class="dividerLine"></md-divider>`;
     }
   }
 
@@ -219,25 +379,87 @@ export class YpPost extends YpCollection {
     return page;
   }
 
+  goToPreviousPost() {
+    if (this.post) {
+      const previousPost = window.appGlobals.cache.getPreviousPostInGroupList(
+        this.post.group_id,
+        this.post.id
+      );
+      if (previousPost) {
+        YpNavHelpers.goToPost(previousPost.id);
+        window.appGlobals.cache.cachedPostItem = previousPost;
+        this.fireGlobal("yp-scroll-to-post-for-group-id", {
+          groupId: this.post.group_id,
+          postId: previousPost.id,
+        });
+      }
+    }
+  }
+
+  goToNextPost() {
+    if (this.post) {
+      const nextPost = window.appGlobals.cache.getNextPostInGroupList(
+        this.post.group_id,
+        this.post.id
+      );
+      if (nextPost) {
+        YpNavHelpers.goToPost(nextPost.id);
+        window.appGlobals.cache.cachedPostItem = nextPost;
+        this.fireGlobal("yp-scroll-to-post-for-group-id", {
+          groupId: this.post.group_id,
+          postId: nextPost.id,
+        });
+      }
+    }
+  }
+
+  renderNavigationButtons() {
+    return html`
+      <div style="position: relative;" ?hidden="${this.bothArrowsDisabled}">
+        <md-filled-tonal-icon-button
+          ?disabled="${this.leftArrowDisabled}"
+          @click="${this.goToPreviousPost}"
+          class="arrowNavigation leftArrowNavigationButton"
+        >
+          <md-icon>keyboard_arrow_left</md-icon>
+        </md-filled-tonal-icon-button>
+        <md-filled-tonal-icon-button
+          ?disabled="${this.rightArrowDisabled}"
+          @click="${this.goToNextPost}"
+          class="arrowNavigation rightArrowNavigationButton"
+        >
+          <md-icon>keyboard_arrow_right</md-icon>
+        </md-filled-tonal-icon-button>
+      </div>
+    `;
+  }
+
   override render() {
     return this.post
       ? html`
-          ${this.renderPostHeader()}
-          <div class="layout vertical center-center">
-            ${this.renderPostTabs()}
+          <div class="layout vertical center-center outerFrameContainer">
+            <div class="frameContainer">
+              <div class="layout vertical">
+                ${this.renderPostStaticHeader()} ${this.renderPostHeader()}
+              </div>
+              ${this.renderNavigationButtons()}
+              <div class="layout vertical center-center">
+                ${this.renderPostTabs()}
+              </div>
+              ${this.renderCurrentPostTabPage()}
+              ${!this.disableNewPosts &&
+              this.post &&
+              !this.post.Group.configuration?.hideNewPost &&
+              !this.post.Group.configuration?.hideNewPostOnPostPage
+                ? html`<md-fab
+                    hidden
+                    .label="${this.t("post.new")}"
+                    @click="${this._newPost}"
+                    ><md-icon>lightbuld</md-icon></md-fab
+                  >`
+                : nothing}
+            </div>
           </div>
-          ${this.renderCurrentPostTabPage()}
-          ${!this.disableNewPosts &&
-          this.post &&
-          !this.post.Group.configuration.hideNewPost &&
-          !this.post.Group.configuration.hideNewPostOnPostPage
-            ? html` <md-fab
-                hidden
-                .label="${this.t("post.new")}"
-                @click="${this._newPost}"
-                ><md-icon>lightbuld</md-icon></md-fab
-              >`
-            : nothing}
         `
       : html``;
   }
@@ -253,9 +475,11 @@ export class YpPost extends YpCollection {
   get tabPhotosCount(): string {
     const labelTranslation = this.t("post.tabs.photos");
 
-    return `${labelTranslation} (${
-      this.photosCount != undefined ? this.photosCount : "..."
-    })`;
+    if (this.photosCount) {
+      return `${labelTranslation} (${this.photosCount})`;
+    } else {
+      return `${labelTranslation}`;
+    }
   }
 
   _selectedTabChanged() {
@@ -300,12 +524,14 @@ export class YpPost extends YpCollection {
     super.connectedCallback();
     this.addListener("yp-debate-info", this._updateDebateInfo);
     this.addListener("yp-post-image-count", this._updatePostImageCount);
+    document.addEventListener("keydown", this.handleKeydown.bind(this));
   }
 
   override disconnectedCallback() {
     super.disconnectedCallback();
     this.removeListener("yp-debate-info", this._updateDebateInfo);
     this.removeListener("yp-post-image-count", this._updatePostImageCount);
+    document.removeEventListener("keydown", this.handleKeydown.bind(this));
   }
 
   _updatePostImageCount(event: CustomEvent) {
@@ -357,6 +583,10 @@ export class YpPost extends YpCollection {
     }
   }
 
+  override async getCollection() {
+    console.warn("Trying to get collection in post");
+  }
+
   async _getPost() {
     if (this.collectionId) {
       this.post = undefined;
@@ -365,6 +595,7 @@ export class YpPost extends YpCollection {
         this.collectionId
       )) as YpPostData | undefined;
       if (this.post) {
+        this.setupTheme();
         this._processIncomingPost();
         this._getHelpPages("group", this.post.group_id);
       }
@@ -439,38 +670,15 @@ export class YpPost extends YpCollection {
     if (this.post) {
       if (
         this.post.Group.configuration &&
-        this.post.Group.configuration.canAddNewPosts != undefined
+        this.post.Group.configuration?.canAddNewPosts != undefined
       ) {
-        if (this.post.Group.configuration.canAddNewPosts === true) {
+        if (this.post.Group.configuration?.canAddNewPosts === true) {
           this.disableNewPosts = false;
         } else {
           this.disableNewPosts = true;
         }
       } else {
         this.disableNewPosts = false;
-      }
-
-      if (
-        this.post.Group.configuration.theme != null ||
-        (this.post.Group.configuration &&
-          this.post.Group.configuration.themeOverrideColorPrimary != null)
-      ) {
-        window.appGlobals.theme.setTheme(
-          this.post.Group.theme_id,
-          this.post.Group.configuration
-        );
-      } else if (
-        this.post.Group.Community &&
-        (this.post.Group.Community.configuration.theme != null ||
-          (this.post.Group.Community.configuration &&
-            this.post.Group.Community.configuration.themeOverrideColorPrimary))
-      ) {
-        window.appGlobals.theme.setTheme(
-          this.post.Group.Community.theme_id,
-          this.post.Group.Community.configuration
-        );
-      } else {
-        window.appGlobals.theme.setTheme(1);
       }
 
       if (this.post.Group.Community) {
@@ -502,18 +710,18 @@ export class YpPost extends YpCollection {
 
       if (
         this.post.Group.configuration &&
-        this.post.Group.configuration.defaultLocale != null
+        this.post.Group.configuration?.defaultLocale != null
       ) {
         window.appGlobals.changeLocaleIfNeeded(
-          this.post.Group.configuration.defaultLocale
+          this.post.Group.configuration?.defaultLocale
         );
       }
 
       if (
         this.post.Group.configuration &&
-        this.post.Group.configuration.locationHidden != undefined
+        this.post.Group.configuration?.locationHidden != undefined
       ) {
-        this.locationHidden = this.post.Group.configuration.locationHidden;
+        this.locationHidden = this.post.Group.configuration?.locationHidden;
       } else {
         this.locationHidden = false;
       }
@@ -526,14 +734,14 @@ export class YpPost extends YpCollection {
         backListItem: this.post,
         hideHelpIcon:
           this.post.Group.configuration &&
-          this.post.Group.configuration.hideHelpIcon
+          this.post.Group.configuration?.hideHelpIcon
             ? true
             : null,
       });
 
       if (
         this.post.Group.configuration &&
-        this.post.Group.configuration.disableFacebookLoginForGroup === true
+        this.post.Group.configuration?.disableFacebookLoginForGroup === true
       ) {
         window.appGlobals.disableFacebookLoginForGroup = true;
       } else {
@@ -563,7 +771,7 @@ export class YpPost extends YpCollection {
 
       if (
         (this.post.Group.configuration &&
-          this.post.Group.configuration.forceSecureSamlLogin &&
+          this.post.Group.configuration?.forceSecureSamlLogin &&
           !YpAccessHelpers.checkGroupAccess(this.post.Group)) ||
         (this.post.Group.Community &&
           this.post.Group.Community.configuration &&
@@ -577,7 +785,7 @@ export class YpPost extends YpCollection {
 
       if (
         (this.post.Group.configuration &&
-          this.post.Group.configuration.forceSecureSamlLogin) ||
+          this.post.Group.configuration?.forceSecureSamlLogin) ||
         (this.post.Group.Community &&
           this.post.Group.Community.configuration &&
           this.post.Group.Community.configuration.forceSecureSamlLogin)
@@ -600,7 +808,7 @@ export class YpPost extends YpCollection {
 
       if (
         this.post.Group.configuration &&
-        this.post.Group.configuration.maxNumberOfGroupVotes
+        this.post.Group.configuration?.maxNumberOfGroupVotes
       ) {
         window.appUser.calculateVotesLeftForGroup(this.post.Group);
       }

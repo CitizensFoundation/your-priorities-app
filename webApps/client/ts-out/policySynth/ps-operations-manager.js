@@ -9,7 +9,7 @@ import { property, customElement, query, state } from "lit/decorators.js";
 import "@material/web/iconbutton/icon-button.js";
 import "@material/web/progress/linear-progress.js";
 import "@material/web/tabs/tabs.js";
-import "@material/web/tabs/primary-tab.js";
+import "@material/web/tabs/secondary-tab.js";
 import "@material/web/textfield/outlined-text-field.js";
 import "@material/web/iconbutton/outlined-icon-button.js";
 import "@material/web/button/filled-tonal-button.js";
@@ -35,7 +35,6 @@ let PsOperationsManager = class PsOperationsManager extends PsBaseWithRunningAge
         this.showAddConnectorDialog = false;
         this.selectedAgentIdForConnector = null;
         this.selectedInputOutputType = null;
-        this.groupId = 30995; //!: number;
         this.detailedCosts = [];
         this.activeAiModels = [];
         this.api = new PsServerApi();
@@ -50,6 +49,7 @@ let PsOperationsManager = class PsOperationsManager extends PsBaseWithRunningAge
             const agent = await this.api.getAgent(this.groupId);
             this.currentAgent = agent;
             this.currentAgentId = agent.id;
+            this.updateConnectorRegistry(agent);
         }
         catch (error) {
             console.error("Error fetching agent:", error);
@@ -58,13 +58,45 @@ let PsOperationsManager = class PsOperationsManager extends PsBaseWithRunningAge
             this.isFetchingAgent = false;
         }
     }
+    updateConnectorRegistry(agent) {
+        const processConnectors = (connectors) => {
+            connectors?.forEach(connector => {
+                window.psAppGlobals.activeConnectorsInstanceRegistry.set(connector.id, connector);
+            });
+        };
+        processConnectors(agent.InputConnectors);
+        processConnectors(agent.OutputConnectors);
+        agent.SubAgents?.forEach(subAgent => {
+            processConnectors(subAgent.InputConnectors);
+            processConnectors(subAgent.OutputConnectors);
+        });
+    }
     async connectedCallback() {
         super.connectedCallback();
         this.getAgent();
         this.addEventListener("edit-node", this.openEditNodeDialog);
         this.addEventListener("add-connector", this.openAddConnectorDialog);
+        this.addEventListener("add-existing-connector", this.addExistingConnector);
         this.addEventListener("get-costs", this.fetchAgentCosts);
         this.addEventListener("add-agent", this.openAddAgentDialog);
+    }
+    async disconnectedCallback() {
+        super.disconnectedCallback();
+        this.removeListener("edit-node", this.openEditNodeDialog);
+        this.removeListener("add-connector", this.openAddConnectorDialog);
+        this.removeListener("add-existing-connector", this.addExistingConnector);
+        this.removeListener("get-costs", this.fetchAgentCosts);
+        this.removeListener("add-agent", this.openAddAgentDialog);
+    }
+    async addExistingConnector(event) {
+        const { connectorId, agentId, type } = event.detail;
+        try {
+            await this.api.addExistingConnector(this.groupId, agentId, connectorId, type);
+            this.getAgent();
+        }
+        catch (error) {
+            console.error("Error adding existing connector:", error);
+        }
     }
     async fetchAgentCosts() {
         if (this.currentAgentId) {
@@ -308,26 +340,41 @@ let PsOperationsManager = class PsOperationsManager extends PsBaseWithRunningAge
           @close="${() => (this.showAddConnectorDialog = false)}"
         ></ps-add-connector-dialog>
 
-        <md-tabs id="tabBar" @change="${this.tabChanged}">
-          <md-primary-tab id="configure-tab" aria-controls="configure-panel">
-            <md-icon slot="icon">support_agent</md-icon>
-            ${this.t("Agents Operations")}
-          </md-primary-tab>
-          <md-primary-tab id="crt-tab" aria-controls="crt-panel">
-            <md-icon slot="icon">checklist</md-icon>
-            ${this.t("Audit Log")}
-          </md-primary-tab>
-          <md-primary-tab id="costs-tab" aria-controls="costs-panel">
-            <md-icon slot="icon">account_balance</md-icon>
-            ${this.renderTotalCosts()}
-          </md-primary-tab>
-        </md-tabs>
+        <div class="layout vertical self-start tabsContainer">
+          <md-tabs id="tabBar" @change="${this.tabChanged}">
+            <md-secondary-tab
+              id="configure-tab"
+              ?has-static-theme="${this.hasStaticTheme}"
+              aria-controls="configure-panel"
+            >
+              <md-icon slot="icon">support_agent</md-icon>
+              ${this.t("Agents Operations")}
+            </md-secondary-tab>
+            <md-secondary-tab
+              id="crt-tab"
+              ?has-static-theme="${this.hasStaticTheme}"
+              aria-controls="crt-panel"
+            >
+              <md-icon slot="icon">checklist</md-icon>
+              ${this.t("Audit Log")}
+            </md-secondary-tab>
+            <md-secondary-tab
+              id="costs-tab"
+              ?has-static-theme="${this.hasStaticTheme}"
+              aria-controls="costs-panel"
+            >
+              <md-icon slot="icon">account_balance</md-icon>
+              ${this.renderTotalCosts()}
+            </md-secondary-tab>
+          </md-tabs>
+        </div>
 
         ${this.activeTabIndex === 0
                 ? html `
               <ps-operations-view
                 .currentAgent="${this.currentAgent}"
                 .groupId="${this.groupId}"
+                .group="${this.group}"
               ></ps-operations-view>
             `
                 : ""}
@@ -343,13 +390,26 @@ let PsOperationsManager = class PsOperationsManager extends PsBaseWithRunningAge
         return [
             super.styles,
             css `
+        .tabsContainer {
+          background-color: var(--md-sys-color-surface);
+          width: 100%;
+          padding: 0;
+          margin: 0;
+        }
+
         md-tabs {
           margin-bottom: 64px;
+          align-self: flex-start;
+          align-items: flex-start;
+          max-width: 800px;
+          background-color: var(--md-sys-color-surface);
         }
+
         md-filled-select {
           width: 100%;
           margin-bottom: 16px;
         }
+
         .nodeEditHeadlineImage {
           max-width: 100px;
           margin-right: 16px;
@@ -376,6 +436,12 @@ let PsOperationsManager = class PsOperationsManager extends PsBaseWithRunningAge
 
         md-icon-button {
           margin-top: 32px;
+        }
+
+        md-secondary-tab[has-static-theme] {
+          --md-secondary-tab-active-indicator-color: var(
+            --md-sys-color-primary-container
+          );
         }
 
         .createOptionsButtons {
@@ -596,6 +662,9 @@ __decorate([
 __decorate([
     property({ type: Number })
 ], PsOperationsManager.prototype, "groupId", void 0);
+__decorate([
+    property({ type: Object })
+], PsOperationsManager.prototype, "group", void 0);
 __decorate([
     state()
 ], PsOperationsManager.prototype, "detailedCosts", void 0);

@@ -8,6 +8,7 @@ export declare class YpTopAppBar extends YpBaseElement {
     private isTitleLong;
     private isMenuOpen;
     hideBreadcrumbs: boolean;
+    restrictWidth: boolean;
     titleString: string;
     breadcrumbs: Array<{
         name: string;

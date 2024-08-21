@@ -55,6 +55,7 @@ let YpAppDialogs = class YpAppDialogs extends YpBaseElement {
             case 'userLogin':
                 selectedDialog = html `
           <yp-login
+            dialogMode
             id="userLogin"
             @yp-forgot-password="${this._forgotPassword}"></yp-login>
         `;

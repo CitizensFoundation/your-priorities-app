@@ -152,7 +152,8 @@ let PsAiModelSelector = class PsAiModelSelector extends YpBaseElement {
 
         md-filled-select {
           flex-grow: 1;
-          margin-right: 8px;
+          margin-top: 8px;
+          margin-bottom: 8px;
         }
 
         md-outlined-icon-button-not-used {

@@ -12,7 +12,7 @@ export class AoiIconGenerator extends CollectionImageGenerator {
             const imageFilePath = path.join("/tmp", `${uuidv4()}.png`);
             const s3ImagePath = `ypGenAi/${workPackage.collectionType}/${workPackage.collectionId}/${uuidv4()}.png`;
             try {
-                const imageUrl = await this.getImageUrlFromPrompt(workPackage.prompt, workPackage.imageType);
+                const imageUrl = await this.getImageUrlFromDalle(workPackage.prompt, workPackage.imageType);
                 if (imageUrl) {
                     await this.downloadImage(imageUrl, imageFilePath);
                     console.debug(fs.existsSync(imageFilePath)

@@ -14,7 +14,7 @@ export declare class AoiSurveyIntro extends YpBaseElement {
     connectedCallback(): Promise<void>;
     disconnectedCallback(): void;
     firstUpdated(): void;
-    _openAnalyticsAndPromption(): void;
+    _openAnalyticsAndPromotions(): void;
     _openAdmin(): void;
     renderAdminButtons(): import("lit-html").TemplateResult<1>;
     setupFooterObserver(): void;

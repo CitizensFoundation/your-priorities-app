@@ -15,6 +15,7 @@ import "../yp-magic-text/yp-magic-text.js";
 import "./yp-collection-stats.js";
 import { YpGroup } from "./yp-group.js";
 import { YpNavHelpers } from "../common/YpNavHelpers.js";
+import { YpGroupType } from "./ypGroupType.js";
 
 @customElement("yp-collection-item-card")
 export class YpCollectionItemCard extends YpBaseElement {
@@ -27,66 +28,79 @@ export class YpCollectionItemCard extends YpBaseElement {
   @property({ type: Object })
   collection: YpCollectionData | undefined;
 
+  @property({ type: Boolean })
+  useEvenOddItemLayout = false;
+
+  @property({ type: Number })
+  index = 0;
+
+  get isEvenIndex() {
+    return this.index % 2 === 0;
+  }
+
   static override get styles() {
     return [
       super.styles,
       ShadowStyles,
       css`
         .description {
-          line-height: var(--description-line-height, 1.3);
-          font-size: 15px;
-          padding: 8px;
-          padding: 16px;
+          line-height: 25px;
+          font-size: 17px;
+          width: 618px;
+          min-width: 100%;
         }
 
-        .description[widetext] {
+        .groupType {
           font-size: 14px;
+          font-weight: 500;
+          color: var(--md-sys-color-primary);
+          text-transform: uppercase;
         }
 
-        .description[largefont] {
-          font-size: 16px;
+        .groupType[is-folder] {
+          color: var(--md-sys-color-secondary);
         }
 
         .stats {
-          position: absolute;
-          bottom: 0;
-          right: 38px;
+          width: 100%;
+          text-align: right;
+          justify-content: flex-end;
         }
 
         .collectionCard {
-          width: 860px;
-          background-color: var(--md-sys-color-surface-container-high);
+          padding-right: 32px;
+          padding-top: 16px;
+          padding-bottom: 16px;
+          margin-bottom: 48px;
+        }
+
+        a {
           color: var(--md-sys-color-on-surface);
-          margin: 8px;
-          position: relative;
-          border-radius: 16px;
         }
 
         .collectionCard[featured] {
         }
 
         yp-image {
-          width: 320px;
-          height: 180px;
-          border-radius: 16px 0 0 16px;
+          width: 292px;
+          height: 164px;
         }
 
         yp-image[featured] {
         }
 
         .card-content {
-          padding: 0;
-          padding-bottom: 48px;
         }
 
         yp-image {
           padding: 0;
           margin: 0;
+          margin-right: 42px;
         }
 
-        yp-image {
-          padding: 0;
-          margin: 0;
+        yp-image[is-odd] {
+          margin-right: 0;
+          margin-left: 42px;
         }
 
         .collectionCard {
@@ -97,23 +111,17 @@ export class YpCollectionItemCard extends YpBaseElement {
           vertical-align: text-top;
         }
 
-        .collection-name {
-          font-size: var(--mdc-typography-headline2-font-size);
-          font-weight: var(--mdc-typography-headline2-font-weight);
+        .collection-name,
+        .collectionItemCount {
           cursor: pointer;
-          padding: 16px;
-          padding-bottom: 0;
-          vertical-align: middle;
-          width: auto;
           font-size: 22px;
+          font-weight: 700;
+          margin-bottom: 16px;
+          font-family: var(--md-ref-typeface-brand);
         }
 
-        .collection-name[widetext] {
-          font-size: 18px;
-        }
-
-        .collection-name[largefont] {
-          font-size: 20px;
+        .collectionItemCount {
+          padding-left: 8px;
         }
 
         yp-image[archived] {
@@ -134,16 +142,6 @@ export class YpCollectionItemCard extends YpBaseElement {
           padding-right: 0;
           margin-right: 0;
           text-align: right;
-        }
-
-        .collection-name[featured] {
-        }
-
-        .collection-name[archived] {
-        }
-
-        .collection-name[has-data-viz] {
-          padding-top: 26px;
         }
 
         yp-membership-button[archived] {
@@ -191,7 +189,9 @@ export class YpCollectionItemCard extends YpBaseElement {
         }
 
         @media (max-width: 420px) {
-
+          .description {
+            width: 100%;
+          }
 
           yp-membership-button {
             top: 205px;
@@ -199,19 +199,15 @@ export class YpCollectionItemCard extends YpBaseElement {
         }
 
         @media (max-width: 375px) {
-
           yp-membership-button {
             top: 185px;
           }
         }
 
         @media (max-width: 360px) {
-
         }
 
         @media (max-width: 320px) {
-
-
           yp-membership-button {
             top: 155px;
           }
@@ -259,6 +255,32 @@ export class YpCollectionItemCard extends YpBaseElement {
     }
   }
 
+  get groupTypeName() {
+    if ((this.item as YpGroupData).configuration.hideGroupType === true) {
+      return "";
+    } else if ((this.item as YpGroupData).configuration.groupType) {
+      switch (
+        parseInt(
+          (this.item as YpGroupData).configuration
+            .groupType as unknown as string
+        )
+      ) {
+        case YpGroupType.AllOurIdeas:
+          return this.t("pairwiseVoting");
+        case YpGroupType.IdeaGenerationAndDebate:
+          return this.t("ideas");
+        case YpGroupType.PsAgentWorkflow:
+          return this.t("workflow");
+        case YpGroupType.StaticHtml:
+          return this.t("html");
+        default:
+          return this.t("ideas");
+      }
+    } else {
+      return this.t("ideas");
+    }
+  }
+
   goToItem(event: CustomEvent) {
     event.preventDefault();
     if (event.currentTarget && event.currentTarget) {
@@ -269,33 +291,27 @@ export class YpCollectionItemCard extends YpBaseElement {
     }
   }
 
-  _setupFontNameFontSize() {
-    const collectionName = this.$$("#collectionName") as HTMLElement;
-    if (collectionName && this.collection) {
-      let classNames = "collection-name ";
-      if (this.wide) {
-        if (this.collection.name.length <= 18) {
-          classNames += "collectionNameFontSize4Wide";
-        } else if (this.collection.name.length > 40) {
-          classNames += "collectionNameFontSize1Wide";
-        } else if (this.collection.name.length > 30) {
-          classNames += "collectionNameFontSize2Wide";
-        } else if (this.collection.name.length > 18) {
-          classNames += "collectionNameFontSize3Wide";
-        }
-      } else {
-        if (this.collection.name.length <= 18) {
-          classNames += "collectionNameFontSize4Mobile";
-        } else if (this.collection.name.length > 40) {
-          classNames += "collectionNameFontSize1Mobile";
-        } else if (this.collection.name.length > 30) {
-          classNames += "collectionNameFontSize2Mobile";
-        } else if (this.collection.name.length > 18) {
-          classNames += "collectionNameFontSize3Mobile";
-        }
-      }
+  // Deprecated
+  _setupFontNameFontSize() {}
 
-      collectionName.className = classNames;
+  get isGroupFolder() {
+    return (
+      (this.collection &&
+        (this.collection as YpGroupData).configuration.groupType ===
+          YpGroupType.Folder) ||
+      (this.collection as YpGroupData).is_group_folder
+    );
+  }
+
+  get collectionItemCount() {
+    if (this.statsCollectionType === "group") {
+      return (this.item as YpGroupData).counter_posts || 0;
+    } else if (this.statsCollectionType === "community") {
+      return (this.item as YpCommunityData).counter_groups || 0;
+    } else if (this.statsCollectionType === "domain") {
+      return (this.item as YpDomainData).counter_communities || 0;
+    } else {
+      return 0;
     }
   }
 
@@ -313,6 +329,7 @@ export class YpCollectionItemCard extends YpBaseElement {
       ${YpCollectionHelpers.logoImagePath(this.itemType, this.item!)
         ? html`
             <yp-image
+             ?is-odd="${this.useEvenOddItemLayout && !this.isEvenIndex}"
               sizing="cover"
               ?archived="${this.archived}"
               alt="${this.collection!.name}"
@@ -346,65 +363,119 @@ export class YpCollectionItemCard extends YpBaseElement {
     `;
   }
 
-  renderCardInfo() {
+  renderCollectionType() {
+    if (
+      this.statsCollectionType === "group" &&
+      this.item?.configuration &&
+      (this.item as YpGroupData).configuration.hideGroupType !== true
+    ) {
+      return html`<div class="groupType" ?is-folder="${this.isGroupFolder}">
+        ${this.groupTypeName}
+      </div>`;
+    } else {
+      return nothing;
+    }
+  }
+
+  renderCollectionName() {
     return html`
-      <div class="layout horizontal wrap">
-        ${this.itemType === "groupDataViz"
-          ? html` ${this.renderDataViz()} `
-          : html` ${this.renderLogoImage()} `}
-        <div class="informationText layout vertical flex">
-          <yp-magic-text
-            id="collectionName"
-            class="collection-name"
-            ?archived="${this.archived}"
-            ?featured="${this.featured}"
-            ?largefont="${this.largeFont}"
-            @click="${this.goToItem}"
-            .textType="${YpCollectionHelpers.nameTextType(this.itemType)}"
-            .contentLanguage="${this.contentLanguage}"
-            ?disableTranslation="${this.collection!.configuration
-              ?.disableNameAutoTranslation}"
-            textOnly
-            .content="${this.contentName}"
-            .contentId="${this.contentId}"
-          ></yp-magic-text>
-          <yp-magic-text
-            id="description"
-            class="description layout vertical withPointer"
-            ?featured="${this.featured}"
-            ?largefont="${this.largeFont}"
-            textType="collectionContent"
-            .textType="${YpCollectionHelpers.descriptionTextType(
-              this.itemType
-            )}"
-            .contentLanguage="${this.contentLanguage}"
-            textOnly
-            removeUrls
-            .content="${this.contentDescription}"
-            .contentId="${this.contentId}"
-            truncate="300"
-          >
-          </yp-magic-text>
-        </div>
-
-        <div class="stats layout horizontal">
-          <yp-collection-stats
-            .collectionType="${this.statsCollectionType}"
-            .collection="${this.statsCollection}"
-          ></yp-collection-stats>
-        </div>
-
-        ${!this.collection
+      <div class="layout horizontal">
+        <yp-magic-text
+          id="collectionName"
+          class="collection-name"
+          ?archived="${this.archived}"
+          ?featured="${this.featured}"
+          ?largefont="${this.largeFont}"
+          @click="${this.goToItem}"
+          .textType="${YpCollectionHelpers.nameTextType(this.itemType)}"
+          .contentLanguage="${this.contentLanguage}"
+          ?disableTranslation="${this.collection!.configuration
+            ?.disableNameAutoTranslation}"
+          textOnly
+          .content="${this.contentName}"
+          .contentId="${this.contentId}"
+        ></yp-magic-text>
+        ${this.collectionItemCount > 0
           ? html`
-              <yp-membership-button
-                .archived="${this.archived}"
-                .featured="${this.featured}"
-                .collection="${this.collection}"
-              ></yp-membership-button>
+              <div class="collectionItemCount">
+                (${this.collectionItemCount})
+              </div>
             `
-          : html``}
+          : nothing}
       </div>
     `;
+  }
+
+  renderCollectionDescription() {
+    return html`
+      <yp-magic-text
+        id="description"
+        class="description layout vertical withPointer"
+        ?featured="${this.featured}"
+        ?largefont="${this.largeFont}"
+        textType="collectionContent"
+        .textType="${YpCollectionHelpers.descriptionTextType(this.itemType)}"
+        .contentLanguage="${this.contentLanguage}"
+        textOnly
+        removeUrls
+        .content="${this.contentDescription}"
+        .contentId="${this.contentId}"
+        truncate="300"
+      >
+      </yp-magic-text>
+    `;
+  }
+
+  renderMembershipButton() {
+    if (false) {
+      return html`${!this.collection
+        ? html`
+            <yp-membership-button
+              hidden
+              .archived="${this.archived}"
+              .featured="${this.featured}"
+              .collection="${this.collection}"
+            ></yp-membership-button>
+          `
+        : html``} `;
+    } else {
+      return nothing;
+    }
+  }
+
+  renderCollectionStats() {
+    return html`<div class="stats layout horizontal">
+      <yp-collection-stats
+        .collectionType="${this.statsCollectionType}"
+        .collection="${this.statsCollection}"
+      ></yp-collection-stats>
+    </div>`;
+  }
+
+  renderCardInfo() {
+    if (this.useEvenOddItemLayout && !this.isEvenIndex) {
+      return html`
+        <div class="layout horizontal wrap">
+          <div class="informationText layout vertical flex">
+            ${this.renderCollectionType()} ${this.renderCollectionName()}
+            ${this.renderCollectionDescription()}
+            ${this.renderCollectionStats()}
+          </div>
+          ${this.renderLogoImage()}
+        </div>
+      `;
+    } else {
+      return html`
+        <div class="layout horizontal wrap">
+          ${this.renderLogoImage()}
+          <div class="informationText layout vertical flex">
+            ${this.renderCollectionType()} ${this.renderCollectionName()}
+            ${this.renderCollectionDescription()}
+            ${this.renderCollectionStats()}
+          </div>
+        </div>
+      `;
+    }
   }
 
   get statsCollection() {

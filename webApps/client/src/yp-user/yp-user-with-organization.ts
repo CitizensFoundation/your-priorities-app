@@ -21,6 +21,9 @@ export class YpUserWithOrganization extends YpBaseElement {
   hideImage = false;
 
   @property({ type: Boolean })
+  mediumImage = false;
+
+  @property({ type: Boolean })
   inverted = false;
 
   static override get styles() {
@@ -32,10 +35,13 @@ export class YpUserWithOrganization extends YpBaseElement {
         }
 
         .name {
-          padding-top: 4px;
-          font-weight: bold;
+          padding-top: 6px;
+          font-weight: 700;
           text-align: left;
           padding-right: 16px;
+          font-family: var(
+            --md-ref-typeface-brand
+          );
         }
 
         .name[inverted] {
@@ -87,6 +93,7 @@ export class YpUserWithOrganization extends YpBaseElement {
             <div class="layout horizontal mainArea" .title="${this.userTitle}">
               <yp-user-image
                 .titlefromuser="${this.userTitle}"
+                .medium="${this.mediumImage}"
                 .user="${this.user}"
                 ?hidden="${this.hideImage}"></yp-user-image>
               <div class="layout vertical">

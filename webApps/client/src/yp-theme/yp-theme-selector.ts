@@ -12,6 +12,7 @@ import { repeat } from "lit/directives/repeat.js";
 import { MdOutlinedTextField } from "@material/web/textfield/outlined-text-field.js";
 
 import "./yp-theme-color-input.js";
+import { MdCheckbox } from "@material/web/checkbox/checkbox.js";
 
 //TODO: Figure out how to implement "Use exactly the provided colors as an option" https://material-foundation.github.io/material-theme-builder/
 
@@ -57,6 +58,9 @@ export class YpThemeSelector extends YpBaseElement {
   disableMultiInputs: boolean = false;
 
   @property({ type: Boolean })
+  useLowestContainerSurface: boolean = false;
+
+  @property({ type: Boolean })
   disableOneThemeColorInputs: boolean = false;
 
   @property({ type: Boolean })
@@ -68,6 +72,10 @@ export class YpThemeSelector extends YpBaseElement {
     return [
       super.styles,
       css`
+        md-checkbox {
+          margin-right: 8px;
+        }
+
         md-outlined-select,
         md-outlined-text-field,
         yp-theme-color-input {
@@ -161,6 +169,8 @@ export class YpThemeSelector extends YpBaseElement {
       this.themeNeutralColor = this.themeConfiguration.neutralColor;
       this.themeNeutralVariantColor =
         this.themeConfiguration.neutralVariantColor;
+      this.useLowestContainerSurface =
+        this.themeConfiguration.useLowestContainerSurface || false;
 
       this.fontStyles = this.themeConfiguration.fontStyles;
       this.fontImports = this.themeConfiguration.fontImports;
@@ -198,18 +208,18 @@ export class YpThemeSelector extends YpBaseElement {
       "themeTertiaryColor",
       "themeNeutralColor",
       "themeNeutralVariantColor",
+      "useLowestContainerSurface",
       "fontStyles",
       "fontImports",
     ].forEach((prop) => {
       if (changedProperties.has(prop)) {
         shouldUpdateConfiguration = true;
         this.updateDisabledInputs();
-        this.fire("config-updated");
+        //this.fire("config-updated");
       }
     });
-
     if (changedProperties.has("oneDynamicThemeColor")) {
-      this.channel.postMessage(this.oneDynamicThemeColor);
+      //this.channel.postMessage(this.oneDynamicThemeColor);
     }
 
     if (shouldUpdateConfiguration) {
@@ -223,6 +233,7 @@ export class YpThemeSelector extends YpBaseElement {
         tertiaryColor: this.themeTertiaryColor,
         neutralColor: this.themeNeutralColor,
         neutralVariantColor: this.themeNeutralVariantColor,
+        useLowestContainerSurface: this.useLowestContainerSurface,
         fontStyles: this.fontStyles,
         fontImports: this.fontImports,
       };
@@ -318,6 +329,10 @@ export class YpThemeSelector extends YpBaseElement {
       .replace("<a href", "")
       .replace("</a>", "")
       .trim();
+  }
+
+  async setLowestContainerSurface(event: CustomEvent) {
+    this.useLowestContainerSurface = (this.$$("#useLowestContainerSurface") as MdCheckbox).checked;
   }
 
   override render() {
@@ -422,6 +437,17 @@ export class YpThemeSelector extends YpBaseElement {
               }}"
             >
             </yp-theme-color-input>
+
+            <label>
+              <md-checkbox
+                id="useLowestContainerSurface"
+                @change="${this.setLowestContainerSurface}"
+                ?checked="${this.useLowestContainerSurface}"
+              >
+              </md-checkbox>
+
+              ${this.t("useLowestContainerSurface")}
+            </label>
 
             <md-outlined-select
               hidden

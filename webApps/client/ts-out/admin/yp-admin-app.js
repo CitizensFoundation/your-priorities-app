@@ -613,6 +613,9 @@ let YpAdminApp = class YpAdminApp extends YpBaseElement {
         const collectionData = (await window.serverApi.getCollection(this.collectionType, this.collectionId));
         if (this.collectionType == "group") {
             this.collection = collectionData.group;
+            if (!this.collection.configuration) {
+                this.collection.configuration = {};
+            }
         }
         else {
             this.collection = collectionData;

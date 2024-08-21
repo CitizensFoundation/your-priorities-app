@@ -1,7 +1,7 @@
 export declare class YpThemeManager {
     themes: Array<Record<string, boolean | string | Record<string, string>>>;
-    selectedTheme: number | undefined;
     selectedFont: string | undefined;
+    currentTheme: string | undefined;
     themeColor: string | undefined;
     themeDarkMode: boolean;
     themeHighContrast: boolean;
@@ -11,6 +11,8 @@ export declare class YpThemeManager {
     themeNeutralColor: string | undefined;
     themeNeutralVariantColor: string | undefined;
     themeVariant: MaterialDynamicVariants | undefined;
+    useLowestContainerSurface: boolean;
+    hasStaticTheme: boolean;
     static themeScemesOptionsWithName: {
         name: string;
         value: string;
@@ -33,6 +35,9 @@ export declare class YpThemeManager {
     updateBrowserThemeColor(): void;
     updateLiveFromConfiguration(theme: YpThemeConfiguration): void;
     themeChanged(target?: HTMLElement | undefined): void;
+    hexToRgb(hex: string): string;
+    createSemiTransparentColor(colorInt: number, opacity: number): number;
+    intToHex(colorInt: number): string;
     getHexColor(color: string | undefined): string;
 }
 //# sourceMappingURL=YpThemeManager.d.ts.map

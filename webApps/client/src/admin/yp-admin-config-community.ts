@@ -723,6 +723,15 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
           `,
         },
         {
+          text:"mediaUploads",
+          type:"html",
+          templateData: this.renderHeaderImageUploads(),
+        },
+        {
+          text:"alwaysHideLogoImage",
+          type:"checkbox",
+        },
+        {
           text: "facebookPixelId",
           type: "textfield",
           maxLength: 40,

@@ -1,0 +1,165 @@
+version: '3.9'
+
+x-minio-common: &minio-common
+  image: minio/minio
+  restart: always
+  env_file: .env
+  volumes:
+    - ./minio_data:/minio_data
+  expose:
+    - "9000"
+    - "9002"
+    - "9004"
+    - "9006"
+  environment:
+    MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+    MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+    MINIO_HTTP_TRACE: /dev/stdout
+  healthcheck:
+    interval: 30s
+    timeout: 20s
+    retries: 3
+  network_mode: host
+  logging:
+    driver: "json-file"
+    options:
+      max-file: "100"
+      max-size: "25m"
+
+x-your-priorities-app-common: &your-priorities-app-common
+  #  build: ./your-priorities-app/
+  build:
+    context: ../../.
+    dockerfile: deployment/2024/your-priorities-app/Dockerfile
+  env_file: .env
+  environment:
+   # - FORCE_DB_SYNC=true
+  restart: always
+  image: your-priorities-app:current
+  command: node ts-out/server.js
+  healthcheck:
+    test: ["CMD", "curl", "-f", "http://localhost:9080/api/users/has/AutoTranslation"]
+    interval: 30s
+    timeout: 20s
+    retries: 3
+  network_mode: host
+  logging:
+    driver: "json-file"
+    options:
+      max-file: "7"
+      max-size: "1g"
+
+x-your-priorities-worker-common: &your-priorities-worker-common
+  #build: ./your-priorities-worker/
+  build:
+    context: ../../.
+    dockerfile: deployment/2024/your-priorities-worker/Dockerfile
+  restart: always
+  env_file: .env
+  command: node node_modules/@yrpri/api/active-citizen/workers/main.cjs
+  network_mode: host
+  logging:
+    driver: "json-file"
+    options:
+      max-file: "7"
+      max-size: "1g"
+
+services:
+  webserver:
+    container_name: webserver
+    restart: always
+    env_file: .env
+    build:
+      context: ./webserver_reverse_proxy/
+      dockerfile: Dockerfile
+      args:
+        - CERTBOT_CERT_FOLDER=${CERTBOT_CERT_FOLDER}
+    #ports:
+    #  - "80:80"
+    #  - "443:443"
+    volumes:
+      - ./webserver_reverse_proxy/templates:/etc/nginx/templates
+      - ./static_website:/static_website
+    healthcheck:
+      test: ["CMD", "curl", "-f", "https://${FULL_HOSTNAME}/api/users/has/AutoTranslation"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+    network_mode: host
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "5"
+        max-size: "1g"
+
+  your-priorities-app1:
+    <<: *your-priorities-app-common
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9080/api/users/has/AutoTranslation"]
+    environment:
+      - PORT=9080
+
+  your-priorities-worker:
+    <<: *your-priorities-worker-common
+
+  your-priorities-encoder:
+    container_name: your-priorities-encoder
+    build: ./your-priorities-encoder/
+    restart: always
+    env_file: .env
+    environment:
+      - NODE_ENV=production
+    command: node out-tsc/worker.js
+    network_mode: host
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "100"
+        max-size: "25m"
+
+  minio1:
+    <<: *minio-common
+    command: server --address localhost:9000 --console-address localhost:9001 /minio_data
+    healthcheck:
+        test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+
+  minio2:
+    <<: *minio-common
+    command: server --address localhost:9002 --console-address localhost:9003 /minio_data
+    healthcheck:
+        test: ["CMD", "curl", "-f", "http://localhost:9002/minio/health/live"]
+
+  minio3:
+    <<: *minio-common
+    command: server --address localhost:9004 --console-address localhost:9005 /minio_data
+    healthcheck:
+        test: ["CMD", "curl", "-f", "http://localhost:9004/minio/health/live"]
+
+  minio4:
+    <<: *minio-common
+    command: server --address localhost:9006 --console-address localhost:9007 /minio_data
+    healthcheck:
+        test: ["CMD", "curl", "-f", "http://localhost:9006/minio/health/live"]
+
+  mc:
+    image: minio/mc:latest
+    depends_on:
+     - minio1
+    entrypoint: >
+      /bin/sh -c "
+      /usr/bin/mc config host add --quiet --api s3v4 local https://${FULL_HOSTNAME} ${MINIO_ROOT_USER} ${MINIO_ROOT_PASSWORD};
+      /usr/bin/mc mb --quiet local/${S3_AUDIO_UPLOAD_BUCKET}/;
+      /usr/bin/mc mb --quiet local/${S3_AUDIO_PUBLIC_BUCKET}/;
+      /usr/bin/mc policy set public local/${S3_AUDIO_PUBLIC_BUCKET};
+      /usr/bin/mc mb --quiet local/${S3_VIDEO_UPLOAD_BUCKET}/;
+      /usr/bin/mc mb --quiet local/${S3_VIDEO_PUBLIC_BUCKET}/;
+      /usr/bin/mc policy set public local/${S3_VIDEO_PUBLIC_BUCKET};
+      /usr/bin/mc mb --quiet local/${S3_VIDEO_THUMBNAIL_BUCKET}/;
+      /usr/bin/mc policy set public local/${S3_VIDEO_THUMBNAIL_BUCKET};
+      /usr/bin/mc mb --quiet local/${S3_ATTACHMENTS_BUCKET}/;
+      /usr/bin/mc policy set public local/${S3_ATTACHMENTS_BUCKET};
+      /usr/bin/mc mb --quiet local/${S3_REPORTS_BUCKET}/;
+      /usr/bin/mc mb --quiet local/${S3_BUCKET}/;
+      /usr/bin/mc policy set public local/${S3_BUCKET};
+      "
+

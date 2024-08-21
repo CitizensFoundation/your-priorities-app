@@ -124,7 +124,8 @@ export function themeFromSourceColorWithContrast(
     variant: MaterialDynamicVariants | undefined,
     isDark: boolean,
     scheme: MaterialColorScheme,
-    contrast: number
+    contrast: number,
+    useLowestContainerSurface: boolean
 ) {
   if (typeof color !== 'string' && scheme !== 'dynamic' || typeof color !== 'object' && scheme === 'dynamic') {
     throw new Error('color / scheme type mismatch');
@@ -137,6 +138,9 @@ export function themeFromSourceColorWithContrast(
   if (variant) {
     variantIndex = variantIndexMap[variant!];
   }
+
+  //scheme = "vibrant";
+  console.error("scheme", scheme);
   if (scheme === 'tonal') {
     //@ts-ignore
     colorScheme = new SchemeTonalSpot(
@@ -221,10 +225,10 @@ export function themeFromSourceColorWithContrast(
     });
   }
 
-  return themeFromScheme(colorScheme!);
+  return themeFromScheme(colorScheme!, useLowestContainerSurface, isDark);
 }
 
-export function themeFromScheme(colorScheme: MatScheme) {
+export function themeFromScheme(colorScheme: MatScheme, useLowestContainerSurface: boolean, isDark: boolean) {
   //@ts-ignore
   const colors = generateMaterialColors(colorScheme);
   const theme: { [key: string]: string } = {};
@@ -232,6 +236,14 @@ export function themeFromScheme(colorScheme: MatScheme) {
   for (const [key, value] of Object.entries(colors)) {
     //@ts-ignore
     theme[key] = hexFromArgb(value.getArgb(colorScheme));
+  }
+
+  //TODO: Lookinto this
+  if (useLowestContainerSurface) {
+    theme["surface"] = theme["surface-container-lowest"];
+    if (!isDark) {
+      theme["on-primary-container"] = theme["on-surface"];
+    }
   }
 
   return theme;
@@ -279,5 +291,11 @@ export function applyThemeString(doc: DocumentOrShadowRoot, themeString: string,
     } else {
       console.error('The provided document does not have a head element.', error);
     }
+  } finally {
+    const event = new CustomEvent("yp-theme-applied", {
+      bubbles: true,
+      composed: true,
+    });
+    document.dispatchEvent(event);
   }
 }

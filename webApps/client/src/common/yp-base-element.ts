@@ -30,6 +30,9 @@ export class YpBaseElement extends LitElement {
   @property({ type: Boolean })
   themeHighContrast: boolean | undefined;
 
+  @property({ type: Boolean })
+  hasStaticTheme = false;
+
   static darkModeLocalStorageKey = "md3-yp-dark-mode";
   static highContrastLocalStorageKey = "md3-yp-high-contrast-mode";
 
@@ -74,6 +77,8 @@ export class YpBaseElement extends LitElement {
 
     this.hasLlm = window.appGlobals.hasLlm;
 
+    this.setStaticThemeFromConfig();
+
     this.addGlobalListener(
       "yp-language-loaded",
       this._languageEvent.bind(this)
@@ -83,6 +88,8 @@ export class YpBaseElement extends LitElement {
     this.addGlobalListener("yp-large-font", this._largeFont.bind(this));
 
     this.addGlobalListener("yp-theme-color", this._changeThemeColor.bind(this));
+
+    this.addGlobalListener("yp-theme-applied", this.setStaticThemeFromConfig.bind(this));
 
     this.addGlobalListener(
       "yp-theme-dark-mode",
@@ -105,6 +112,11 @@ export class YpBaseElement extends LitElement {
     });
 
     this.setupThemeSettings();
+  }
+
+  setStaticThemeFromConfig() {
+    //console.error(`hasStaticTheme is ${window.appGlobals.theme.hasStaticTheme}`);
+    this.hasStaticTheme = window.appGlobals.theme.hasStaticTheme;
   }
 
   hasBooted() {
@@ -142,6 +154,8 @@ export class YpBaseElement extends LitElement {
     );
 
     this.removeGlobalListener("yp-boot-from-server", this.hasBooted.bind(this));
+
+    this.removeGlobalListener("yp-theme-applied", this.setStaticThemeFromConfig.bind(this));
   }
 
   _changeThemeColor(event: CustomEvent) {

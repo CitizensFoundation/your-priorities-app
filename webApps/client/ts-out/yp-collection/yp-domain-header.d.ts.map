@@ -1,0 +1,1 @@
+{"version":3,"file":"yp-domain-header.d.ts","sourceRoot":"","sources":["../../src/yp-collection/yp-domain-header.ts"],"names":[],"mappings":"AAGA,OAAO,EAAE,kBAAkB,EAAE,MAAM,2BAA2B,CAAC;AAI/D,qBACa,cAAe,SAAQ,kBAAkB;IAE3C,UAAU,EAAE,WAAW,GAAG,SAAS,CAAC;IAE7C,WAAoB,MAAM,wCA6DzB;IAEQ,MAAM;CAkChB"}

@@ -1,5 +1,5 @@
 import { YpCollection } from "../yp-collection/yp-collection.js";
-import { nothing, TemplateResult } from "lit";
+import { TemplateResult } from "lit";
 import "@material/web/fab/fab.js";
 import "./yp-post-header.js";
 import "./yp-post-points.js";
@@ -15,10 +15,19 @@ export declare class YpPost extends YpCollection {
     photosCount: string | undefined;
     constructor();
     scrollToCollectionItemSubClass(): void;
+    setupTheme(): void;
     static get styles(): (any[] | import("lit").CSSResult)[];
+    get leftArrowDisabled(): boolean;
+    get rightArrowDisabled(): boolean;
+    get bothArrowsDisabled(): boolean;
+    handleKeydown(event: KeyboardEvent): void;
+    renderPostStaticHeader(): TemplateResult<1>;
     renderPostHeader(): TemplateResult<1>;
-    renderPostTabs(): TemplateResult<1> | typeof nothing;
+    renderPostTabs(): TemplateResult<1>;
     renderCurrentPostTabPage(): TemplateResult | undefined;
+    goToPreviousPost(): void;
+    goToNextPost(): void;
+    renderNavigationButtons(): TemplateResult<1>;
     render(): TemplateResult<1>;
     get tabDebateCount(): string;
     get tabPhotosCount(): string;
@@ -34,6 +43,7 @@ export declare class YpPost extends YpCollection {
     _headerClasses(): "layout vertical postHeader wrap" | "layout horizontal postHeader";
     get postName(): string;
     get postDescription(): string;
+    getCollection(): Promise<void>;
     _getPost(): Promise<void>;
     collectionIdChanged(): void;
     _processIncomingPost(fromCache?: boolean): void;

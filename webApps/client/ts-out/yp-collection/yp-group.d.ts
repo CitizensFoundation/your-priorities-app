@@ -1,7 +1,8 @@
 import { YpCollection } from "./yp-collection.js";
 import { TemplateResult, nothing } from "lit";
 import "@material/web/tabs/tabs.js";
-import "@material/web/tabs/primary-tab.js";
+import "@material/web/tabs/secondary-tab.js";
+import "@material/web/fab/fab.js";
 import "./yp-group-header.js";
 import "../ac-activities/ac-activities.js";
 import "../yp-post/yp-posts-list.js";
@@ -21,6 +22,7 @@ export declare class YpGroup extends YpCollection {
     tabCounters: Record<string, number>;
     configCheckTTL: number;
     constructor();
+    themeApplied(): Promise<void>;
     connectedCallback(): void;
     disconnectedCallback(): void;
     _cancelConfigCheckTimer(): void;
@@ -32,12 +34,6 @@ export declare class YpGroup extends YpCollection {
     tabLabelWithCount(type: string): string;
     getCurrentTabElement(): HTMLElement | undefined;
     getCollection(): Promise<void>;
-    renderGroupTabs(): TemplateResult<1> | typeof nothing;
-    renderPostList(statusFilter: string): TemplateResult;
-    renderCurrentGroupTabPage(): TemplateResult | undefined;
-    renderHeader(): TemplateResult<1> | typeof nothing;
-    render(): TemplateResult<1>;
-    renderYpGroup(): TemplateResult<1>;
     _selectGroupTab(event: CustomEvent): void;
     _openHelpPageIfNeededOnce(): void;
     _refreshAjax(): void;
@@ -47,8 +43,21 @@ export declare class YpGroup extends YpCollection {
     get _isCurrentPostsTab(): boolean;
     _loadMoreData(): void;
     goToPostOrNewsItem(): void;
+    setupTheme(): void;
+    setupThemeOld(): void;
     refresh(fromMainApp?: boolean): Promise<void>;
     _setupGroupSaml(group: YpGroupData): void;
     scrollToCollectionItemSubClass(): void;
+    renderTabs(): TemplateResult<1> | typeof nothing;
+    renderPostList(statusFilter: string): TemplateResult;
+    renderCurrentGroupTabPage(): TemplateResult | undefined;
+    renderAllOurIdeas(): TemplateResult<1>;
+    renderStaticHtml(): TemplateResult<1>;
+    renderHeader(): TemplateResult<1> | typeof nothing;
+    get cleanedGroupType(): number;
+    static get styles(): (any[] | import("lit").CSSResult)[];
+    renderAgentsOps(): TemplateResult<1>;
+    render(): TemplateResult<1>;
+    renderYpGroup(): TemplateResult<1>;
 }
 //# sourceMappingURL=yp-group.d.ts.map

@@ -42,7 +42,7 @@ let AoiSurveyIntro = class AoiSurveyIntro extends YpBaseElement {
     firstUpdated() {
         this.setupFooterObserver();
     }
-    _openAnalyticsAndPromption() {
+    _openAnalyticsAndPromotions() {
         YpNavHelpers.redirectTo(`/analytics/group/${this.group.id}`);
     }
     _openAdmin() {
@@ -53,7 +53,7 @@ let AoiSurveyIntro = class AoiSurveyIntro extends YpBaseElement {
       <div class="layout horizontal adminButtons">
         <md-icon-button
           id="menuButton"
-          @click="${this._openAnalyticsAndPromption}"
+          @click="${this._openAnalyticsAndPromotions}"
           title="${this.t("Analytics")}"
           ><md-icon>analytics</md-icon>
         </md-icon-button>

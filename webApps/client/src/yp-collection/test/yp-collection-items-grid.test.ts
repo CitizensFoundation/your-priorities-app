@@ -1,11 +1,11 @@
 import { html, fixture, expect, aTimeout } from '@open-wc/testing';
 
-import { YpCollectionItemsGrid } from '../yp-collection-items-grid.js';
-import '../yp-collection-items-grid.js';
+import { YpCollectionItemsList } from '../yp-collection-items-list.js';
+import '../yp-collection-items-list.js';
 import { YpTestHelpers } from '../../common/test/setup-app.js';
 
-describe('YpCollectionItemsGrid', () => {
-  let element: YpCollectionItemsGrid;
+describe('YpCollectionItemsList', () => {
+  let element: YpCollectionItemsList;
   let fetchMock: any;
 
   before(async () => {
@@ -24,12 +24,12 @@ describe('YpCollectionItemsGrid', () => {
 
     element = await fixture(html`
     ${YpTestHelpers.renderCommonHeader()}
-      <yp-collection-items-grid
+      <yp-collection-items-list
         .collection="${YpTestHelpers.getDomain()}"
         .collectionItems="${collectionItems}"
         .collectionType="${collectionType}"
         .collectionItemType="${collectionItemType}">
-        </yp-collection-items-grid>
+        </yp-collection-items-list>
     `);
     await aTimeout(1000)
   });

@@ -8,7 +8,7 @@ export const YpAppStyles = css `
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    margin: 0 auto;
+    margin: 0;
   }
 
   main {
@@ -39,7 +39,7 @@ export const YpAppStyles = css `
     left: 0;
     height: 100vh;
     width: 100vw;
-    background-color:var(--md-sys-color-surface);
+    background-color: var(--md-sys-color-surface);
     color: var(--md-sys-color-on-surface);
     display: flex;
     justify-content: center;
@@ -84,7 +84,6 @@ export const YpAppStyles = css `
     width: 100vw;
   }
 
-
   .loadingAppSpinnerPage {
     /* Initial state: visible and on-screen */
     visibility: visible;
@@ -117,7 +116,7 @@ export const YpAppStyles = css `
   }
 
   .mainPage {
-    margin-top: 48px;
+    margin-top: 52px;
   }
 
   #helpIconButton {
@@ -127,6 +126,33 @@ export const YpAppStyles = css `
   .activeBadge {
     margin-left: -16px;
     margin-top: 2px;
+    --md-badge-color: var(--md-sys-color-primary);
+    --md-badge-text-color: var(--md-sys-color-on-primary);
+    --md-badge-large-color: var(--md-sys-color-primary);
+    --md-badge-large-text-color: var(--md-sys-color-on-primary);
+  }
+
+  .activeBadge[has-static-theme] {
+    --md-badge-color: var(--md-sys-color-primary-container);
+    --md-badge-text-color: var(--md-sys-color-on-primary-container);
+    --md-badge-large-color: var(--md-sys-color-primary-container);
+    --md-badge-large-label-text-color: var(--md-sys-color-on-primary-container);
+  }
+
+  .closeButton {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.1s ease, visibility 0.1s ease;
+  }
+
+  .closeButton.visible {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  yp-top-app-bar {
+    max-width: 1048px;
+    margin: 0 auto;
   }
 `;
 //# sourceMappingURL=YpAppStyles.js.map

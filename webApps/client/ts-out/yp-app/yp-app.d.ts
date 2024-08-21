@@ -47,6 +47,7 @@ type YpAppModes = "main" | "admin" | "promotion" | "analytics";
 export declare class YpApp extends YpBaseElement {
     homeLink: YpHomeLinkData | undefined;
     page: string | undefined;
+    scrollPosition: number;
     appMode: YpAppModes;
     user: YpUserData | undefined;
     backPath: string | undefined;
@@ -72,6 +73,7 @@ export declare class YpApp extends YpBaseElement {
     userDrawerOpened: boolean;
     navDrawerOpened: boolean;
     languageLoaded: boolean;
+    currentTheme?: YpThemeConfiguration;
     keepOpenForPost: string | undefined;
     keepOpenForGroup: string | undefined;
     breadcrumbs: Array<{
@@ -100,6 +102,7 @@ export declare class YpApp extends YpBaseElement {
     constructor();
     connectedCallback(): void;
     disconnectedCallback(): void;
+    _handleScroll(): void;
     updated(changedProperties: Map<string | number | symbol, unknown>): Promise<void>;
     _navDrawOpened(event: CustomEvent): void;
     _languageLoaded(): void;
@@ -111,7 +114,9 @@ export declare class YpApp extends YpBaseElement {
     static get styles(): any[];
     _haveCopiedNotification(): void;
     _appDialogsReady(event: CustomEvent): void;
+    get hasStaticBadgeTheme(): boolean;
     updateLocation(): void;
+    get isFullScreenMode(): boolean;
     renderNavigationIcon(): import("lit-html").TemplateResult<1>;
     _openHelpMenu(): void;
     renderActionItems(): import("lit-html").TemplateResult<1>;
@@ -184,6 +189,7 @@ export declare class YpApp extends YpBaseElement {
     scrollPageToTop(): void;
     _openUserDrawer(): Promise<void>;
     _closeUserDrawer(): Promise<void>;
+    get isOnDomainLoginPageAndNotLoggedIn(): boolean | undefined;
     _login(): void;
     _onChangeHeader(event: CustomEvent): void;
     updateBreadcrumbs(newBreadcrumb: {

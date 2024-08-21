@@ -51,6 +51,7 @@ export class YpMediaHelpers {
     }
   }
 
+  //Deprecated
   static setupTopHeaderImage(
     element: YpBaseElement,
     images: Array<YpImageData> | null

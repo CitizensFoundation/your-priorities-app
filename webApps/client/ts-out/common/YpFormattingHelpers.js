@@ -19,7 +19,7 @@ export class YpFormattingHelpers {
             element.className = newClassName;
         }
         else {
-            console.error("Trying to remove class from a non exisisting element");
+            console.warn("Trying to remove class from a non exisisting element: " + classToRemove);
         }
     }
     static truncate(input, length, killwords = undefined, end = undefined) {

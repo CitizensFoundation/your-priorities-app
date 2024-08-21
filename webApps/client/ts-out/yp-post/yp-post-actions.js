@@ -25,10 +25,13 @@ let YpPostActions = class YpPostActions extends YpBaseElement {
         this.votingDisabled = false;
         this.smallerIcons = false;
         this.forceShowDebate = false;
+        this.onlyShowDebate = false;
+        this.forceHideDebate = false;
     }
     connectedCallback() {
         super.connectedCallback();
         this.addGlobalListener("yp-got-endorsements-and-qualities", this._updateEndorsementsFromSignal.bind(this));
+        this.setStaticThemeFromConfig();
     }
     disconnectedCallback() {
         super.disconnectedCallback();
@@ -37,8 +40,13 @@ let YpPostActions = class YpPostActions extends YpBaseElement {
     firstUpdated(changedProperties) {
         super.firstUpdated(changedProperties);
         if (this.endorsementButtons) {
-            this.$$("#actionDown").className += " " + "default-buttons-color";
-            this.$$("#actionUp").className += " " + "default-buttons-color";
+            if (this.$$("#actionDown") && this.$$("#actionUp")) {
+                this.$$("#actionDown").className += " " + "default-buttons-color";
+                this.$$("#actionUp").className += " " + "default-buttons-color";
+            }
+            else {
+                console.warn("Could not find action buttons in post actions");
+            }
         }
     }
     static get styles() {
@@ -66,11 +74,12 @@ let YpPostActions = class YpPostActions extends YpBaseElement {
         }
 
         .action-text {
-          font-size: 16px;
+          font-size: 23px;
           text-align: left;
           vertical-align: bottom;
-          padding-top: 8px;
-          margin-top: 4px;
+          padding-top: 6px;
+          margin-top: 6px;
+          margin-left: 16px;
         }
 
         .action-icon {
@@ -92,11 +101,9 @@ let YpPostActions = class YpPostActions extends YpBaseElement {
         }
 
         .hearts-up-selected {
-
         }
 
         .hearts-down-selected {
-
         }
 
         .action-debate {
@@ -104,9 +111,19 @@ let YpPostActions = class YpPostActions extends YpBaseElement {
           margin-right: 16px;
         }
 
+        md-filled-icon-button[is-static-theme] {
+          --md-sys-color-primary: var(--md-sys-color-primary-container);
+          --md-sys-color-on-primary: var(--md-sys-color-on-primary-container);
+          --md-filled-icon-button-toggle-icon-color: var(--md-sys-color-on-primary-container);
+          --md-filled-icon-button-toggle-focus-icon-color: var(--md-sys-color-on-primary-container);
+          --md-filled-icon-button-toggle-pressed-icon-color: var(--md-sys-color-on-primary-container);
+          --md-filled-icon-button-toggle-hover-icon-color: var(--md-sys-color-on-primary-container);
+        }
+
         md-badge {
           --md-badge-color: var(--md-sys-color-secondary);
           --md-badge-large-color: var(--md-sys-color-secondary);
+          margin-bottom: -18px;
         }
 
         .debate-text {
@@ -118,12 +135,12 @@ let YpPostActions = class YpPostActions extends YpBaseElement {
           padding-right: 16px;
           padding-top: 0px;
           padding-left: 4px;
-          padding-bottom: 7px;
+          padding-bottom: 8px;
         }
 
         .up-text {
-          padding-top: 4px;
-          margin-right: 12px;
+          padding-top: 0px;
+          margin-right: 32px;
           padding-left: 4px;
           padding-bottom: 8px;
         }
@@ -137,19 +154,13 @@ let YpPostActions = class YpPostActions extends YpBaseElement {
         }
 
         md-filled-tonal-icon-button.mainIcons {
-          width: 48px;
-          height: 48px;
         }
 
         md-filled-tonal-icon-button.debateIcon {
-          width: 46px;
-          height: 46px;
           margin-top: 2px;
         }
 
         md-filled-tonal-icon-button[smaller-icons] {
-          height: 48px;
-          width: 48px;
         }
 
         .debate-icon {
@@ -204,72 +215,90 @@ let YpPostActions = class YpPostActions extends YpBaseElement {
       `,
         ];
     }
-    render() {
-        return html `
+    renderDebate() {
+        return html `<div style="position: relative">
       <div
-        ?rtl="${this.rtl}"
-        title="${ifDefined(this.disabledTitle)}"
-        floating="${this.floating}"
-        class="action-bar layout horizontal center-center"
+        class="action-debate layout horizontal"
+        ?hidden="${this.hideDebate || this.forceHideDebate}"
       >
-        <div
-          id="actionUp"
-          ?only-up-vote-showing="${this.onlyUpVoteShowing}"
-          class="action-up layout horizontal layout start justified"
-        >
-          <md-icon-button toggle ?selected="${this.isEndorsed}"
-            id="iconUpButton"
-            .smaller-icons="${this.smallerIcons}"
-            ?disabled="${this.votingStateDisabled}"
-            .title="${this.customVoteUpHoverText}"
-            class="action-icon up-vote-icon largeButton"
-            @click="${this.upVote}"
-            ><md-icon slot="selected">${this.endorseModeIcon(this.endorsementButtons, "up")}</md-icon><md-icon id="actionUpIcon"
-              >${this.endorseModeIcon(this.endorsementButtons, "up")}</md-icon
-            ></md-icon-button
-          >
-          <div
-            ?rtl="${this.rtl}"
-            class="action-text up-text"
-            ?hidden="${this.post.Group.configuration.hideVoteCount}"
-          >
-            ${YpFormattingHelpers.number(this.post.counter_endorsements_up)}
-          </div>
-        </div>
-
-        <div
-          class="action-debate layout horizontal"
-          ?hidden="${this.hideDebate ||
-            (this.headerMode && !this.post.Group.configuration.hideAllTabs)}"
-        >
+        <md-filled-tonal-icon-button>
           <md-icon>chat_bubble_outline</md-icon>
-          <md-badge ?hidden="${this.post.counter_points == 0}"
-            .value="${YpFormattingHelpers.number(this.post.counter_points)}"
-          ></md-badge>
-        </div>
-
+        </md-filled-tonal-icon-button>
+        <md-badge
+          ?hidden="${this.post.counter_points == 0}"
+          .value="${YpFormattingHelpers.number(this.post.counter_points)}"
+        ></md-badge>
+      </div>
+    </div>`;
+    }
+    render() {
+        if (this.onlyShowDebate) {
+            return this.renderDebate();
+        }
+        else {
+            return html `
         <div
-          id="actionDown"
-          class="action-down layout horizontal layout center justified"
-          ?hidden="${this.post.Group.configuration.hideDownVoteForPost}"
+          ?rtl="${this.rtl}"
+          title="${ifDefined(this.disabledTitle)}"
+          floating="${this.floating}"
+          class="action-bar layout horizontal center-center"
         >
-          <md-icon-button toggle ?selected="${this.isOpposed}"
-            smaller-icons="${this.smallerIcons}"
-            ?disabled="${this.votingStateDisabled}"
-            title="${this.customVoteDownHoverText}"
-            class="action-icon down-vote-icon mainIcons"
-            @click="${this.downVote}"
-            ><md-icon slot="selected">${this.endorseModeIconDown}</md-icon><md-icon>${this.endorseModeIconDown}</md-icon></md-icon-button
-          >
           <div
-            class="action-text down-text"
-            ?hidden="${this.post.Group.configuration.hideVoteCount}"
+            id="actionUp"
+            ?only-up-vote-showing="${this.onlyUpVoteShowing}"
+            class="action-up layout horizontal layout start justified"
           >
-            ${YpFormattingHelpers.number(this.post.counter_endorsements_down)}
+            <md-filled-icon-button
+              ?is-static-theme="${this.hasStaticTheme}"
+              toggle
+              ?selected="${this.isEndorsed}"
+              .smaller-icons="${this.smallerIcons}"
+              ?disabled="${this.votingStateDisabled}"
+              .title="${this.customVoteUpHoverText}"
+               class="action-icon up-vote-icon mainIcons"
+              @click="${this.upVote}"
+              ><md-icon slot="selected"
+                >${this.endorseModeIcon(this.endorsementButtons, "up")}</md-icon
+              ><md-icon id="actionUpIcon"
+                >${this.endorseModeIcon(this.endorsementButtons, "up")}</md-icon
+              ></md-filled-icon-button
+            >
+            <div
+              ?rtl="${this.rtl}"
+              class="action-text up-text"
+              ?hidden="${this.post.Group.configuration?.hideVoteCount}"
+            >
+              ${YpFormattingHelpers.number(this.post.counter_endorsements_up)}
+            </div>
+          </div>
+
+          <div
+            id="actionDown"
+            class="action-down layout horizontal layout start justified"
+            ?hidden="${this.post.Group.configuration?.hideDownVoteForPost}"
+          >
+            <md-filled-icon-button
+              toggle
+              ?is-static-theme="${this.hasStaticTheme}"
+              ?selected="${this.isOpposed}"
+              smaller-icons="${this.smallerIcons}"
+              ?disabled="${this.votingStateDisabled}"
+              title="${this.customVoteDownHoverText}"
+              class="action-icon down-vote-icon mainIcons"
+              @click="${this.downVote}"
+              ><md-icon slot="selected">${this.endorseModeIconDown}</md-icon
+              ><md-icon>${this.endorseModeIconDown}</md-icon></md-filled-icon-button
+            >
+            <div
+              class="action-text down-text"
+              ?hidden="${this.post.Group.configuration?.hideVoteCount}"
+            >
+              ${YpFormattingHelpers.number(this.post.counter_endorsements_down)}
+            </div>
           </div>
         </div>
-      </div>
-    `;
+      `;
+        }
     }
     get isEndorsed() {
         return this.endorseValue > 0;
@@ -379,7 +408,7 @@ let YpPostActions = class YpPostActions extends YpBaseElement {
                     this.requestUpdate();
                 }
             }
-            if (this.post.Group.configuration.maxNumberOfGroupVotes) {
+            if (this.post.Group.configuration?.maxNumberOfGroupVotes) {
                 this.maxNumberOfGroupVotes =
                     this.post.Group.configuration.maxNumberOfGroupVotes;
                 this.numberOfGroupVotes =
@@ -449,46 +478,52 @@ let YpPostActions = class YpPostActions extends YpBaseElement {
     }
     _setEndorsement(value) {
         this.endorseValue = value;
-        if (value !== 0 &&
-            this.post.Group.configuration &&
-            this.post.Group.configuration.hideVoteCount &&
-            !this.post.Group.configuration.originalHideVoteCount) {
-            this.post.Group.configuration.hideVoteCount = false;
-        }
-        if (this.endorsementButtons == "hearts") {
-            if (value > 0) {
-                this.$$("#actionUp").className += " " + "hearts-up-selected";
-                YpFormattingHelpers.removeClass(this.$$("#actionDown"), "hearts-down-selected");
-                this.$$("#iconUpButton").innerHTML =
-                    "<md-icon>favorite</md-icon>";
+        if (this.$$("#actionUp")) {
+            if (value !== 0 &&
+                this.post.Group.configuration &&
+                this.post.Group.configuration.hideVoteCount &&
+                !this.post.Group.configuration.originalHideVoteCount) {
+                this.post.Group.configuration.hideVoteCount = false;
             }
-            else if (value < 0) {
-                this.$$("#actionDown").className += " " + "hearts-down-selected";
-                YpFormattingHelpers.removeClass(this.$$("#actionUp"), "hearts-up-selected");
-                this.$$("#iconUpButton").innerHTML =
-                    "<md-icon>favorite</md-icon>";
+            if (this.endorsementButtons == "hearts") {
+                if (value > 0) {
+                    this.$$("#actionUp").className += " " + "hearts-up-selected";
+                    YpFormattingHelpers.removeClass(this.$$("#actionDown"), "hearts-down-selected");
+                    this.$$("#iconUpButton").innerHTML =
+                        "<md-icon>favorite</md-icon>";
+                }
+                else if (value < 0) {
+                    this.$$("#actionDown").className += " " + "hearts-down-selected";
+                    YpFormattingHelpers.removeClass(this.$$("#actionUp"), "hearts-up-selected");
+                    this.$$("#iconUpButton").innerHTML =
+                        "<md-icon>favorite</md-icon>";
+                }
+                else {
+                    YpFormattingHelpers.removeClass(this.$$("#actionUp"), "hearts-up-selected");
+                    YpFormattingHelpers.removeClass(this.$$("#actionDown"), "hearts-down-selected");
+                    this.$$("#iconUpButton").innerHTML =
+                        "<md-icon>favorite</md-icon>";
+                }
             }
             else {
-                YpFormattingHelpers.removeClass(this.$$("#actionUp"), "hearts-up-selected");
-                YpFormattingHelpers.removeClass(this.$$("#actionDown"), "hearts-down-selected");
-                this.$$("#iconUpButton").innerHTML =
-                    "<md-icon>favorite</md-icon>";
+                if (value > 0) {
+                    this.$$("#actionUp").className +=
+                        " " + "default-buttons-up-selected";
+                    YpFormattingHelpers.removeClass(this.$$("#actionDown"), "default-buttons-down-selected");
+                }
+                else if (value < 0) {
+                    this.$$("#actionDown").className +=
+                        " " + "default-buttons-down-selected";
+                    YpFormattingHelpers.removeClass(this.$$("#actionUp"), "default-buttons-up-selected");
+                }
+                else {
+                    YpFormattingHelpers.removeClass(this.$$("#actionUp"), "default-buttons-up-selected");
+                    YpFormattingHelpers.removeClass(this.$$("#actionDown"), "default-buttons-down-selected");
+                }
             }
         }
         else {
-            if (value > 0) {
-                this.$$("#actionUp").className += " " + "default-buttons-up-selected";
-                YpFormattingHelpers.removeClass(this.$$("#actionDown"), "default-buttons-down-selected");
-            }
-            else if (value < 0) {
-                this.$$("#actionDown").className +=
-                    " " + "default-buttons-down-selected";
-                YpFormattingHelpers.removeClass(this.$$("#actionUp"), "default-buttons-up-selected");
-            }
-            else {
-                YpFormattingHelpers.removeClass(this.$$("#actionUp"), "default-buttons-up-selected");
-                YpFormattingHelpers.removeClass(this.$$("#actionDown"), "default-buttons-down-selected");
-            }
+            console.warn("Could not find action buttons in post actions");
         }
         this.requestUpdate();
     }
@@ -599,6 +634,12 @@ __decorate([
 __decorate([
     property({ type: Boolean })
 ], YpPostActions.prototype, "forceShowDebate", void 0);
+__decorate([
+    property({ type: Boolean })
+], YpPostActions.prototype, "onlyShowDebate", void 0);
+__decorate([
+    property({ type: Boolean })
+], YpPostActions.prototype, "forceHideDebate", void 0);
 YpPostActions = __decorate([
     customElement("yp-post-actions")
 ], YpPostActions);

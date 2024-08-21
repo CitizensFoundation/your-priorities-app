@@ -11,6 +11,7 @@ import "@material/web/textfield/outlined-text-field.js";
 import "@material/web/radio/radio.js";
 
 import "../yp-file-upload/yp-file-upload.js";
+import "../yp-file-upload/yp-file-upload-icon.js";
 import "../common/yp-emoji-selector.js";
 
 import { YpFileUpload } from "../yp-file-upload/yp-file-upload.js";
@@ -255,74 +256,119 @@ export class YpPostPoints extends YpBaseElementWithLogin {
           display: block;
         }
 
+        md-linear-progress {
+          width: 95%;
+          margin-top: 64px;
+        }
+
+        md-filled-button[has-static-theme] {
+          --md-filled-button-container-color: var(--md-sys-color-primary-container);
+          --md-filled-button-label-text-color: var(--md-sys-color-on-primary-container);
+        }
+
+        .happyFace {
+          color: var(--yp-sys-color-up);
+          --md-icon-size: 48px;
+          margin-right: 16px;
+          margin-top: -6px;
+          margin-left: -4px;
+        }
+
+        .sadFace {
+          color: var(--yp-sys-color-down);
+          --md-icon-size: 48px;
+          margin-right: 16px;
+          margin-top: -6px;
+          margin-left: -4px;
+        }
+
+        yp-user-image {
+          margin-right: 16px;
+        }
+
+        .topContainer {
+        }
+
+        .main-container {
+        }
+
         .processBar {
           height: 4px;
           margin: 0;
           padding: 0;
         }
 
-        .main-container {
-          margin-top: 24px;
-          border-radius: 32px;
+        .pointInfo {
+          opacity: 0.5;
+          font-size: 17px;
+          font-weight: 400;
+          margin-top: 48px;
+          margin-bottom: 32px;
+        }
+
+        .pointInfoIcon {
+          width: 24px;
+          height: 24px;
+          padding-left: 4px;
+          padding-right: 4px;
         }
 
         .point {
-          padding-top: 16px;
-          padding-bottom: 32px;
-          padding-left: 24px;
-          padding-right: 24px;
+          max-width: 420px;
+          margin-right: 32px;
+          margin-left: 32px;
         }
 
         .pointInputMaterial {
-          padding-top: 24px;
-          padding-left: 16px;
-          padding-right: 16px;
-          padding-bottom: 0;
-          margin-bottom: 16px;
-          border-radius: 16px;
-          max-width: 396px;
-          background-color: var(--md-sys-color-surface-container-lowest);
         }
 
         yp-point {
-          padding-top: 8px;
         }
 
         .pointMaterial {
-          padding-top: 8px;
-          padding-left: 0;
-          padding-right: 0;
-          width: 430px;
-          margin-bottom: 12px;
         }
 
         .thumbIcon {
-          height: 64px;
-          width: 64px;
-          padding-bottom: 16px;
         }
 
         .editIcon {
-          height: 28px;
-          width: 28px;
-          padding-bottom: 16px;
         }
 
         .addPointFab {
           width: 100%;
-          margin-bottom: 18px;
+          margin-top: 16px;
+          margin-bottom: 32px;
+          margin-left: 24px;
         }
 
-        md-outlined-text-field {
+        md-filled-text-field[is-up] {
+          --md-filled-text-field-container-color: var(--md-sys-color-surface-container);
+          --md-filled-text-field-active-indicator-color: var(--yp-sys-color-up);
+          --md-filled-text-field-caret-color: var(--yp-sys-color-on-container-up);
+          --md-filled-field-focus-label-text-color: var(--yp-sys-color-on-container-up);
+          --md-filled-field-focus-active-indicator-color: var(--yp-sys-color-up);
+        }
+
+        md-filled-text-field[is-down] {
+          --md-filled-text-field-container-color: var(--md-sys-color-surface-container);
+          --md-filled-text-field-active-indicator-color: var(--yp-sys-color-down);
+          --md-filled-text-field-caret-color: var(--yp-sys-color-on-container-down);
+          --md-filled-field-focus-label-text-color: var(--yp-sys-color-on-container-down);
+          --md-filled-field-focus-active-indicator-color: var(--yp-sys-color-down);
+        }
+
+        .submitButton[is-up] {
+          --md-filled-button-container-color: var(--yp-sys-color-up);
+          --md-filled-button-label-text-color: var(--yp-sys-color-on-up);
+        }
+
+        .submitButton[is-down] {
+          --md-filled-button-container-color: var(--yp-sys-color-down);
+          --md-filled-button-label-text-color: var(--yp-sys-color-on-down);
         }
 
         .howToWriteInfoText {
           padding-top: 4px;
-        }
-
-        .point .main-container .topContainer {
-          background-color: var(--md-sys-color-secondary-container);
-          color: var(--md-sys-color-on-secondary-container);
         }
 
         .penContainer {
@@ -334,8 +380,6 @@ export class YpPostPoints extends YpBaseElementWithLogin {
         }
 
         #pointUpOrDownMaterial {
-          margin-top: 16px;
-          width: 100%;
         }
 
         .mobileFab {
@@ -391,8 +435,10 @@ export class YpPostPoints extends YpBaseElementWithLogin {
 
         .pointMainHeader {
           font-size: 22px;
-          margin-bottom: 8px;
-          margin-top: 16px;
+          font-weight: 700;
+          font-family: var(--md-ref-typeface-brand);
+          margin-top: 32px;
+          margin-bottom: 32px;
         }
 
         @media (max-width: 420px) {
@@ -476,14 +522,15 @@ export class YpPostPoints extends YpBaseElementWithLogin {
     hasCurrentAudio: string | undefined,
     uploadAudioPointHeader: string
   ) {
-    return this.post.Group.configuration.allowPointAudioUploads
+    return this.post.Group.configuration?.allowPointAudioUploads
       ? html`
           <div ?hidden="${hideAudio}" class="uploadSection">
             <div
               class="layout vertical center-center"
               ?hidden="${!this.isLoggedIn}"
             >
-              <yp-file-upload
+              <yp-file-upload-icon
+                simple
                 id="audioFileUpload${type}"
                 current-file="${ifDefined(hasCurrentAudio)}"
                 container-type="points"
@@ -497,18 +544,16 @@ export class YpPostPoints extends YpBaseElementWithLogin {
                 method="POST"
                 @success="${this._audioUpUploaded}"
               >
-              </yp-file-upload>
+              </yp-file-upload-icon>
             </div>
             <div class="layout horizontal center-center">
-              <md-outlined-button
+              <md-icon-button
                 class="uploadNotLoggedIn"
-                icon="keyboard_voice"
-                raised
                 ?hidden="${this.isLoggedIn}"
                 @click="${this._openLogin}"
                 .label="${uploadAudioPointHeader}"
-              >
-              </md-outlined-button>
+                ><md-icon>keyboard_voice</md-icon>
+              </md-icon-button>
             </div>
           </div>
         `
@@ -523,14 +568,15 @@ export class YpPostPoints extends YpBaseElementWithLogin {
     videoUploadedFunc: Function,
     uploadedVideoId: number | undefined
   ) {
-    return this.post.Group.configuration.allowPointVideoUploads
+    return this.post.Group.configuration?.allowPointVideoUploads
       ? html`
           <div ?hidden="${hideVideo}" class="uploadSection">
             <div
               class="layout vertical center-center self-start"
               ?hidden="${!this.isLoggedIn}"
             >
-              <yp-file-upload
+              <yp-file-upload-icon
+                simple
                 id="videoFileUpload${type}"
                 noDefaultCoverImage
                 .uploadLimitSeconds="${this.post.Group.configuration
@@ -545,7 +591,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
                 .buttonText="${uploadVideoHeader}"
                 @success="${videoUploadedFunc}"
               >
-              </yp-file-upload>
+              </yp-file-upload-icon>
             </div>
             <div
               class="videoUploadDisclamer"
@@ -555,15 +601,13 @@ export class YpPostPoints extends YpBaseElementWithLogin {
               ${this.t("videoUploadDisclaimer")}
             </div>
             <div class="layout horizontal center-center">
-              <md-outlined-button
+              <md-icon-button
                 class="uploadNotLoggedIn"
-                icon="videocam"
-                raised
                 ?hidden="${this.isLoggedIn}"
                 @click="${this._openLogin}"
                 .label="${uploadVideoHeader}"
-              >
-              </md-outlined-button>
+                ><md-icon>videocam</md-icon>
+              </md-icon-button>
             </div>
           </div>
         `
@@ -574,7 +618,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
     html` <div class="layout vertical end-justified">
       <div
         class="layout horizontal center-center pointButtons"
-        ?hidden="${this.post.Group.configuration.hidePointAgainst}"
+        ?hidden="${this.post.Group.configuration?.hidePointAgainst}"
       >
         <label
           >${this.t("pointForShort")}
@@ -620,23 +664,33 @@ export class YpPostPoints extends YpBaseElementWithLogin {
     </div>`;
   }
 
+  renderHeaderIcon(headerTextType: string) {
+    if (headerTextType == "alternativePointForHeader") {
+      return html` <md-icon class="happyFace">sentiment_satisfied</md-icon> `;
+    } else {
+      return html` <md-icon class="sadFace">sentiment_dissatisfied</md-icon> `;
+    }
+  }
+
   renderPointHeader(
     header: string,
     alternativeHeader: string | undefined,
-    headerTextType: string
+    headerTextType: string,
+    pointsLength: number
   ) {
     return !alternativeHeader
       ? html`
           <div
-            class="pointMainHeader layout horizontal center-center"
+            class="pointMainHeader layout horizontal"
             role="heading"
             aria-level="2"
           >
-            ${header}
+            ${this.renderHeaderIcon(headerTextType)} ${header} (${pointsLength})
           </div>
         `
       : html`
-          <div class="pointMainHeader layout horizontal center-center">
+          <div class="pointMainHeader layout horizontal">
+            ${this.renderHeaderIcon(headerTextType)}
             <yp-magic-text
               .contentId="${this.post.Group.id}"
               textOnly
@@ -645,6 +699,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
               role="heading"
               aria-level="2"
               class="ratingName"
+              .postfixText=" (${pointsLength})"
               textType="${headerTextType}"
             >
             </yp-magic-text>
@@ -675,82 +730,88 @@ export class YpPostPoints extends YpBaseElementWithLogin {
   ) {
     if (false && points && points!.length == 0) {
       return html`<div class="point">
-        ${this.renderPointHeader(header, "Engin rök til", headerTextType)}
+        ${this.renderPointHeader(header, "Engin rök til", headerTextType, 0)}
       </div> `;
     } else {
       return html`
         <div class="point">
-          ${this.renderPointHeader(header, alternativeHeader, headerTextType)}
+          ${this.renderPointHeader(
+            header,
+            alternativeHeader,
+            headerTextType,
+            points ? points.length : 0
+          )}
 
           <div
             id="point${type}Material"
             class="pointInputMaterial
                     layout vertical"
-            ?hidden="${this.post.Group.configuration.disableDebate}"
+            ?hidden="${this.post.Group.configuration?.disableDebate}"
           >
-            <md-outlined-text-field
-              id="${type.toLowerCase()}_point"
-              @focus="${pointFocusFunction}"
-              @blur="${this.blurOutlinedTextField}"
-              .label="${label ? label : ""}"
-              charCounter
-              type="textarea"
-              rows="4"
-              @keyup="${() => {
-                this.requestUpdate();
-              }}"
-              ?hidden="${hideText}"
-              maxrows="4"
-              .maxLength="${this.pointMaxLength}"
-            >
-            </md-outlined-text-field>
+            <div class="layout horizontal">
+              ${window.appUser.user
+                ? html`<yp-user-image
+                    medium
+                    .user="${window.appUser.user}"
+                  ></yp-user-image>`
+                : nothing}
+
+              <md-filled-text-field
+                ?is-up="${type == "Up"}"
+                ?is-down="${type == "Down"}"
+                id="${type.toLowerCase()}_point"
+                @focus="${pointFocusFunction}"
+                @blur="${this.blurOutlinedTextField}"
+                .label="${label ? label : ""}"
+                charCounter
+                hasTrailingIcon
+                type="textarea"
+                rows="4"
+                @keyup="${() => {
+                  this.requestUpdate();
+                }}"
+                ?hidden="${hideText}"
+                maxrows="4"
+                .maxLength="${this.pointMaxLength}"
+                ><div class="layout vertical" slot="trailing-icon">
+                  <yp-emoji-selector
+                    id="point${type}EmojiSelector"
+                    ?hidden="${hideText ||
+                    this.post.Group.configuration?.hideEmoji}"
+                  ></yp-emoji-selector>
+
+                  ${this.renderVideoUpload(
+                    type,
+                    hideVideo,
+                    hasCurrentVideo,
+                    uploadVideoHeader,
+                    videoUploadedFunc,
+                    uploadedVideoId
+                  )}
+                  ${this.renderAudioUpload(
+                    type,
+                    hideAudio,
+                    hasCurrentAudio,
+                    uploadAudioPointHeader
+                  )}
+                </div>
+              </md-filled-text-field>
+            </div>
 
             ${mobile ? this.renderMobilePointSelection() : nothing}
 
-            <div
-              class="layout horizontal end"
-              ?rtl="${this.rtl}"
-              ?hidden="${this.post.Group.configuration.hideEmoji}"
-            >
-              <div class="flex"></div>
-              <yp-emoji-selector
-                id="point${type}EmojiSelector"
-                ?hidden="${hideText}"
-              ></yp-emoji-selector>
-            </div>
-
-            <div class="layout horizontal center-justified">
-              ${this.renderVideoUpload(
-                type,
-                hideVideo,
-                hasCurrentVideo,
-                uploadVideoHeader,
-                videoUploadedFunc,
-                uploadedVideoId
-              )}
-              ${this.renderAudioUpload(
-                type,
-                hideAudio,
-                hasCurrentAudio,
-                uploadAudioPointHeader
-              )}
-            </div>
-
-            <div>
-              <div class="addPointFab layout horizontal center-center">
-                <md-outlined-button
-                  raised
-                  trailingIcon
+            <div class="addPointFab layout horizontal center-center">
+                <md-filled-button
+                  ?has-static-theme="${this.hasStaticTheme}"
                   class="submitButton"
-                  ?disabled="${this.addPointDisabled}"
-                  ?hidden="${!ifLengthIsRight}"
+                   ?is-up="${type == "Up"}"
+                   ?is-down="${type == "Down"}"
+                   ?hidden="${!ifLengthIsRight}"
+                  ?disabled="${this.addPointDisabled || !ifLengthIsRight}"
                   @click="${addPointFunc}"
-                  >${this.t("postPoint")}<md-icon slot="icon"
-                    >add</md-icon
-                  ></md-outlined-button
+                  >${this.t("postPoint")}</md-filled-button
                 >
               </div>
-            </div>
           </div>
 
           ${points
@@ -775,14 +836,14 @@ export class YpPostPoints extends YpBaseElementWithLogin {
   }
 
   renderTranslationPlaceholders() {
-    return html`${!this.post.Group.configuration.alternativePointForLabel
+    return html`${!this.post.Group.configuration?.alternativePointForLabel
       ? html`
           <yp-magic-text
             id="alternativePointForLabelId"
             hidden
             contentId="${this.post.Group.id}"
             textOnly
-            .content="${this.post.Group.configuration.alternativePointForLabel}"
+            .content="${this.post.Group.configuration?.alternativePointForLabel}"
             .contentLanguage="${this.post.Group.language}"
             @new-translation="${this._updatePointLabels}"
             role="heading"
@@ -792,15 +853,14 @@ export class YpPostPoints extends YpBaseElementWithLogin {
           </yp-magic-text>
         `
       : nothing}
-    ${!this.post.Group.configuration.alternativePointAgainstLabel
+    ${!this.post.Group.configuration?.alternativePointAgainstLabel
       ? html`
           <yp-magic-text
             id="alternativePointAgainstLabelId"
             hidden
             contentId="${this.post.Group.id}"
             textOnly
-            .content="${this.post.Group.configuration
-              .alternativePointAgainstLabel}"
+            .content="${this.post.Group.configuration?.alternativePointAgainstLabel}"
             .contentLanguage="${this.post.Group.language}"
             @new-translation="${this._updatePointLabels}"
             role="heading"
@@ -810,6 +870,21 @@ export class YpPostPoints extends YpBaseElementWithLogin {
           </yp-magic-text>
         `
       : nothing}`;
+  }
+
+  renderPointInfo() {
+    return html`
+      <div class="pointInfo layout vertical center-center">
+        <div>
+          ${this.t("upvote")}
+          <md-icon class="pointInfoIcon">arrow_upward</md-icon> ${this.t(
+            "orDownvote"
+          )} <md-icon class="pointInfoIcon">arrow_downward</md-icon> ${this.t(
+            "pointsByPressingTheArrows"
+          )}
+        </div>
+      </div>
+    `;
   }
 
   override render() {
@@ -823,15 +898,13 @@ export class YpPostPoints extends YpBaseElementWithLogin {
 
       ${this.wideReady
         ? html`
-            <div
-              ?rtl="${this.rtl}"
-              class="layout vertical topContainer center-center"
-            >
+            <div ?rtl="${this.rtl}" class="layout vertical topContainer" ?hidden="${this.fetchActive}">
+              ${this.renderPointInfo()}
               <div class="main-container layout horizontal">
                 ${this.renderPointList(
                   "Up",
                   this.t("pointsFor"),
-                  this.post.Group.configuration.alternativePointForHeader,
+                  this.post.Group.configuration?.alternativePointForHeader,
                   "alternativePointForHeader",
                   this.labelUp,
                   this.hideUpVideo,
@@ -851,7 +924,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
                 ${this.renderPointList(
                   "Down",
                   this.t("pointsAgainst"),
-                  this.post.Group.configuration.alternativePointAgainstHeader,
+                  this.post.Group.configuration?.alternativePointAgainstHeader,
                   "alternativePointAgainstHeader",
                   this.labelDown,
                   this.hideDownVideo,
@@ -878,7 +951,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
               ${this.renderPointList(
                 "Mobile",
                 this.t("pointsForAndAgainst"),
-                this.post.Group.configuration.alternativePointAgainstHeader,
+                this.post.Group.configuration?.alternativePointAgainstHeader,
                 "alternativePointAgainstHeader",
                 this.labelMobileUpOrDown,
                 this.hideMobileVideo,
@@ -923,9 +996,9 @@ export class YpPostPoints extends YpBaseElementWithLogin {
       this.post &&
       this.post.Group &&
       this.post.Group.configuration &&
-      this.post.Group.configuration.pointCharLimit
+      this.post.Group.configuration?.pointCharLimit
     ) {
-      return this.post.Group.configuration.pointCharLimit;
+      return this.post.Group.configuration?.pointCharLimit;
     } else {
       return 500;
     }
@@ -1157,16 +1230,17 @@ export class YpPostPoints extends YpBaseElementWithLogin {
     }, 500);
   }
 
+
   _pointUpOrDownSelectedChanged() {
     if (this.pointUpOrDownSelected == "pointFor") {
       if (
         this.post &&
         this.post.Group &&
         this.post.Group.configuration &&
-        this.post.Group.configuration.alternativePointForLabel
+        this.post.Group.configuration?.alternativePointForLabel
       ) {
         this.labelMobileUpOrDown =
-          this.post.Group.configuration.alternativePointForLabel;
+          this.post.Group.configuration?.alternativePointForLabel;
       } else {
         this.labelMobileUpOrDown = this.t("point.for");
       }
@@ -1176,10 +1250,10 @@ export class YpPostPoints extends YpBaseElementWithLogin {
         this.post &&
         this.post.Group &&
         this.post.Group.configuration &&
-        this.post.Group.configuration.alternativePointAgainstLabel
+        this.post.Group.configuration?.alternativePointAgainstLabel
       ) {
         this.labelMobileUpOrDown =
-          this.post.Group.configuration.alternativePointAgainstLabel;
+          this.post.Group.configuration?.alternativePointAgainstLabel;
       } else {
         this.labelMobileUpOrDown = this.t("point.against");
       }
@@ -1224,9 +1298,9 @@ export class YpPostPoints extends YpBaseElementWithLogin {
       this.post &&
       this.post.Group &&
       this.post.Group.configuration &&
-      this.post.Group.configuration.disableDebate
+      this.post.Group.configuration?.disableDebate
     ) {
-      if (this.isAdmin && this.post.Group.configuration.allowAdminsToDebate) {
+      if (this.isAdmin && this.post.Group.configuration?.allowAdminsToDebate) {
         this.disableDebate = false;
       } else {
         this.disableDebate = true;
@@ -1285,7 +1359,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
       if (
         this.post.Group &&
         this.post.Group.configuration &&
-        this.post.Group.configuration.disableDebate
+        this.post.Group.configuration?.disableDebate
       ) {
         this.disableDebate = true;
       } else {
@@ -1296,9 +1370,9 @@ export class YpPostPoints extends YpBaseElementWithLogin {
         this.post &&
         this.post.Group &&
         this.post.Group.configuration &&
-        this.post.Group.configuration.alternativePointForLabel
+        this.post.Group.configuration?.alternativePointForLabel
       ) {
-        this.labelUp = this.post.Group.configuration.alternativePointForLabel;
+        this.labelUp = this.post.Group.configuration?.alternativePointForLabel;
       } else {
         this.labelUp = this.t("point.for");
       }
@@ -1306,10 +1380,10 @@ export class YpPostPoints extends YpBaseElementWithLogin {
         this.post &&
         this.post.Group &&
         this.post.Group.configuration &&
-        this.post.Group.configuration.alternativePointAgainstLabel
+        this.post.Group.configuration?.alternativePointAgainstLabel
       ) {
         this.labelDown =
-          this.post.Group.configuration.alternativePointAgainstLabel;
+          this.post.Group.configuration?.alternativePointAgainstLabel;
       } else {
         this.labelDown = this.t("point.against");
       }

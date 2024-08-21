@@ -2,7 +2,7 @@ import { YpBaseElement } from "../common/yp-base-element.js";
 import "@material/web/iconbutton/icon-button.js";
 import "@material/web/textfield/outlined-text-field.js";
 import "./yp-posts-filter.js";
-import "./yp-post-card.js";
+import "./yp-post-list-item.js";
 import { TemplateResult } from "lit";
 export declare class YpPostsList extends YpBaseElement {
     searchingFor: string | undefined;
@@ -39,6 +39,7 @@ export declare class YpPostsList extends YpBaseElement {
     scrollEvent(event: {
         last: number;
     }): void;
+    scrollToPostForGroupId(event: CustomEvent): void;
     connectedCallback(): Promise<void>;
     disconnectedCallback(): void;
     _selectedItemChanged(event: CustomEvent): void;

@@ -74,7 +74,7 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
             "ideaGenerationGroupType",
             "allOurIdeasGroupType",
             "htmlContentGroupType",
-            "policySynthAgentsWorkflow"
+            "policySynthAgentsWorkflow",
         ];
         this.groupAccessOptions = {
             0: "public",
@@ -84,6 +84,9 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
         };
         this.action = "/groups";
         this.group = this.collection;
+        if (this.group && !this.group.configuration) {
+            this.group.configuration = {};
+        }
     }
     static get styles() {
         return [
@@ -292,6 +295,9 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
     connectedCallback() {
         super.connectedCallback();
         this.group = this.collection;
+        if (this.group && !this.group.configuration) {
+            this.group.configuration = {};
+        }
     }
     _clear() {
         super._clear();
@@ -300,6 +306,9 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
     updated(changedProperties) {
         if (changedProperties.has("collection") && this.collection) {
             this.group = this.collection;
+            if (this.group && !this.group.configuration) {
+                this.group.configuration = {};
+            }
             this.currentLogoImages = this.collection.GroupLogoImages;
             this.currentHeaderImages = this.collection.GroupHeaderImages;
             this.collection.description = this.group.objectives;
@@ -561,6 +570,11 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
                     onChange: "_inheritThemeChanged",
                 },
                 {
+                    text: "mediaUploads",
+                    type: "html",
+                    templateData: this.renderHeaderImageUploads(),
+                },
+                {
                     text: "themeSelector",
                     type: "html",
                     templateData: html `
@@ -575,6 +589,10 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
               .themeConfiguration="${this.group.configuration.theme}"
             ></yp-theme-selector>
           `,
+                },
+                {
+                    text: "hideGroupType",
+                    type: "checkbox",
                 },
             ],
         };
@@ -1471,12 +1489,6 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
           `,
                 },
                 {
-                    text: "urlToReview",
-                    type: "textfield",
-                    value: this.group.configuration.urlToReview,
-                    translationToken: "urlToReview",
-                },
-                {
                     text: "urlToReviewActionText",
                     type: "textfield",
                     maxLength: 30,
@@ -2087,7 +2099,7 @@ YpAdminConfigGroup.GroupType = {
     ideaGeneration: 0,
     allOurIdeas: 1,
     htmlContent: 2,
-    policySynthAgentsWorkflow: 3
+    policySynthAgentsWorkflow: 3,
 };
 __decorate([
     property({ type: Number })

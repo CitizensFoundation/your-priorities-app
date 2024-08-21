@@ -1,3 +1,4 @@
+import { nothing } from "lit";
 import "./yp-registration-questions.js";
 import "./yp-forgot-password.js";
 import { YpBaseElement } from "../common/yp-base-element.js";
@@ -26,8 +27,10 @@ export declare class YpLogin extends YpBaseElement {
     heading: string | undefined;
     customUserRegistrationText: string | undefined;
     opened: boolean;
+    dialogMode: boolean;
     target: any | undefined;
     forceSecureSamlLogin: boolean;
+    directSamlIntegration: boolean;
     hasAnonymousLogin: boolean;
     disableFacebookLoginForGroup: boolean;
     credentials: Record<string, unknown> | undefined;
@@ -37,6 +40,7 @@ export declare class YpLogin extends YpBaseElement {
     customSamlLoginText: string | undefined;
     oneTimeLoginName: string | undefined;
     hasOneTimeLoginWithName: boolean;
+    fullWithLoginButton: boolean;
     registrationQuestionsGroup: YpGroupData | undefined;
     onLoginFunction: Function | undefined;
     isSending: boolean;
@@ -45,8 +49,18 @@ export declare class YpLogin extends YpBaseElement {
     static get styles(): any[];
     renderSamlLogin(): import("lit-html").TemplateResult<1>;
     renderAdditionalMethods(): import("lit-html").TemplateResult<1>;
-    renderLogin(): import("lit-html").TemplateResult<1>;
-    renderCreateUser(): import("lit-html").TemplateResult<1>;
+    renderLoginButton(): import("lit-html").TemplateResult<1>;
+    renderLoginInput(): import("lit-html").TemplateResult<1>;
+    renderSamlInfo(): import("lit-html").TemplateResult<1>;
+    renderCustomUserRegistrationText(): import("lit-html").TemplateResult<1>;
+    renderDomainImage(): import("lit-html").TemplateResult<1> | typeof nothing;
+    renderLanguage(): import("lit-html").TemplateResult<1>;
+    renderLoginSurface(): import("lit-html").TemplateResult<1>;
+    renderCreateUserButton(): import("lit-html").TemplateResult<1>;
+    renderForgotPasswordButton(): import("lit-html").TemplateResult<1>;
+    renderLoginDialog(): import("lit-html").TemplateResult<1>;
+    renderCreateUserSurface(): import("lit-html").TemplateResult<1>;
+    renderCreateUserDialog(): import("lit-html").TemplateResult<1>;
     renderButtons(): import("lit-html").TemplateResult<1>;
     closeAndReset(): void;
     renderOneTimeDialog(): import("lit-html").TemplateResult<1>;
@@ -77,6 +91,7 @@ export declare class YpLogin extends YpBaseElement {
     _domainEvent(event: CustomEvent): void;
     get hasAdditionalAuthMethods(): boolean | undefined;
     get hasFacebookLogin(): boolean | undefined;
+    get hasGoogleLogin(): boolean;
     get hasSamlLogin(): boolean | undefined;
     _openedChanged(): void;
     onEnterLogin(event: KeyboardEvent): void;

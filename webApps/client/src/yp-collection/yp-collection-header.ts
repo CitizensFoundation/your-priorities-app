@@ -13,6 +13,7 @@ import { YpCollectionHelpers } from "../common/YpCollectionHelpers.js";
 
 import "../common/yp-image.js";
 import "@material/web/iconbutton/outlined-icon-button.js";
+import "@material/web/iconbutton/filled-tonal-icon-button.js";
 import "@material/web/menu/menu.js";
 import "@material/web/menu/menu-item.js";
 
@@ -47,6 +48,63 @@ export class YpCollectionHeader extends YpBaseElement {
   audioPlayListener: Function | undefined;
   audioPauseListener: Function | undefined;
   audioEndedListener: Function | undefined;
+
+  override connectedCallback() {
+    super.connectedCallback();
+    this.addGlobalListener(
+      "yp-got-admin-rights",
+      this.requestUpdate.bind(this)
+    );
+    this.addGlobalListener(
+      "yp-pause-media-playback",
+      this._pauseMediaPlayback.bind(this)
+    );
+  }
+
+  override disconnectedCallback() {
+    super.disconnectedCallback();
+    this.removeGlobalListener("yp-got-admin-rights", this.requestUpdate.bind(this));
+    this.removeGlobalListener(
+      "yp-pause-media-playback",
+      this._pauseMediaPlayback.bind(this)
+    );
+    YpMediaHelpers.detachMediaListeners(this as YpElementWithPlayback);
+  }
+
+  override firstUpdated(
+    changedProperties: Map<string | number | symbol, unknown>
+  ) {
+    super.firstUpdated(changedProperties);
+    YpMediaHelpers.attachMediaListeners(this as YpElementWithPlayback);
+  }
+
+  override updated(changedProperties: Map<string | number | symbol, unknown>) {
+    super.updated(changedProperties);
+
+    // TODO: Test this well is it working as expected
+    if (changedProperties.has("collection")) {
+      YpMediaHelpers.detachMediaListeners(this as YpElementWithPlayback);
+    }
+
+    if (this.collection) {
+      YpMediaHelpers.attachMediaListeners(this as YpElementWithPlayback);
+    }
+  }
+
+  _pauseMediaPlayback() {
+    YpMediaHelpers.pauseMediaPlayback(this as YpElementWithPlayback);
+  }
+
+  _menuSelection(event: CustomEvent) {
+    debugger;
+    if (this.collection) {
+      if (event.detail.item.id === "editMenuItem")
+        window.location.href = `/admin/${this.collectionType}/${this.collection.id}`;
+      else if (event.detail.item.id === "openAnalyticsApp")
+        window.location.href = `/analytics/${this.collectionType}/${this.collection.id}`;
+      (this.$$("#adminMenu") as MdMenu).close();
+    }
+  }
 
   get hasCollectionAccess(): boolean {
     switch (this.collectionType) {
@@ -107,7 +165,7 @@ export class YpCollectionHeader extends YpBaseElement {
   get collectionVideoURL(): string | undefined {
     if (
       this.collection &&
-      this.collection.configuration  &&
+      this.collection.configuration &&
       this.collection.configuration.useVideoCover
     ) {
       const collectionVideos = this.collectionVideos;
@@ -148,6 +206,20 @@ export class YpCollectionHeader extends YpBaseElement {
     return YpMediaHelpers.getImageFormatUrl(this.collectionHeaderImages, 0);
   }
 
+  _openAnalyticsAndPromotions() {
+    YpNavHelpers.redirectTo(
+      `/analytics/${this.collectionType}/${this.collection!.id}`
+    );
+  }
+
+  _openAdmin() {
+    YpNavHelpers.redirectTo(
+      `/admin/${this.collectionType}/${this.collection!.id}`
+    );
+  }
+
+  _openCreateGroupFolder() {}
+
   // UI
 
   static override get styles() {
@@ -155,64 +227,61 @@ export class YpCollectionHeader extends YpBaseElement {
       super.styles,
       css`
         .stats {
-          position: absolute;
-          bottom: 0;
-          right: 8px;
+          width: 100%;
+          text-align: right;
+          justify-content: flex-end;
+          margin-left: -8px;
+          margin-top: 8px;
         }
 
-        md-icon-button {
-          margin-top: 10px;
-          margin-right: 4px;
+        .bannerImage {
+          width: 100%;
+          height: 169px;
+          object-fit: cover;
+        }
+
+        .nameAndActions {
+          width: 100%;
+          margin-top: 64px;
+          margin-bottom: 24px;
+        }
+
+        .allContent {
+          margin-left: 64px;
+          margin-right: 64px;
         }
 
         .collection-name {
-          font-family: var(--md-ref-typeface-brand); /*var(--md-sys-typescale-title-medium-font);*/
-          font-size: var(--md-sys-typescale-title-medium-size, 22px);
-          font-weight: var(--md-sys-typescale-title-medium-weight, 400);
+          font-family: var(
+            --md-ref-typeface-brand
+          ); /*var(--md-sys-typescale-title-medium-font);*/
+          font-size: var(--md-sys-typescale-title-medium-size, 36px);
+          font-weight: var(--md-sys-typescale-title-medium-weight, 700);
           line-height: var(--md-sys-typescale-title-medium-line-height);
-          padding: 16px;
-          max-width: 320px;
           text-align: left;
         }
 
-        .collection-name[widetext] {
-          font-size: var(--mdc-typography-headline1-widetext-font-size, 20px);
-        }
-
-        .collection-name[largeFont] {
-          font-size: var(--mdc-typography-headline1-widetext-font-size, 20px);
-        }
-
         .nameText {
-          background-color: var(--md-sys-color-primary-container);
-          color: var(--md-sys-color-on-primary-container);
           border-radius: 16px;
         }
 
         .descriptionContainer {
           width: 100%;
+          min-width: 532px;
         }
 
-        .large-card {
-          background-color: var(--md-sys-color-surface-container-low);
-          color: var(--md-sys-color-on-surface);
-          height: 243px;
-          width: 432px;
-          border-radius: 16px;
-          padding: 0 !important;
-          margin-top: 0 !important;
+        .description {
+          padding-left: 32px;
+        }
+
+        .description[hide-logo-image] {
+          padding-left: 0;
         }
 
         .image,
         video {
-          width: 432px;
-          height: 243px;
-        }
-
-        .menuButton {
-          position: absolute;
-          top: 0;
-          right: 0;
+          width: 420px;
+          height: 236px;
         }
 
         .textBox {
@@ -221,37 +290,33 @@ export class YpCollectionHeader extends YpBaseElement {
         }
 
         .description {
-          padding: 16px;
-          vertical-align: middle;
-          font-size: 16px;
-          line-height: 1.35;
-        }
-
-        .description[widetext] {
-          font-size: 14px;
+          font-size: 18px;
+          font-weight: 400;
+          line-height: 1.5;
         }
 
         #welcomeHTML {
-          width: 432px;
-          max-width: 432px;
+          width: 420px;
+          max-width: 420px;
           overflow: hidden;
         }
 
         :host {
-          margin-top: 32px;
           margin-bottom: 32px;
+        }
+
+        .topContainer {
+          margin: 0;
+          max-width: 1080px;
+          width: 100%;
+        }
+
+        md-filled-tonal-icon-button {
+          margin-left: 32px;
         }
 
         @media (max-width: 960px) {
           :host {
-            max-width: 423px;
-            padding: 0 !important;
-            padding-top: 8px !important;
-            width: 100%;
-            margin-top: 8px;
-          }
-
-          .cardImage {
           }
 
           #welcomeHTML {
@@ -259,16 +324,17 @@ export class YpCollectionHeader extends YpBaseElement {
             max-width: 306px;
           }
 
-          .large-card {
+          .descriptionContainer {
+            width: 100%;
+            min-width: 100%;
+          }
+
+          .collectionDescription {
             width: 100%;
             height: 100%;
             margin-left: 8px;
             margin-right: 8px;
             margin-top: 8px !important;
-          }
-
-          .top-card {
-            margin-bottom: 16px;
           }
 
           yp-image,
@@ -361,20 +427,7 @@ export class YpCollectionHeader extends YpBaseElement {
     ];
   }
 
-  renderStats() {
-    switch (this.collectionType) {
-      case "domain":
-        return html``;
-      case "community":
-        return html``;
-      case "group":
-        return html``;
-      default:
-        return nothing;
-    }
-  }
-
-  renderFirstBoxContent() {
+  renderMediaContent() {
     if (this.collection?.configuration?.welcomeHTML) {
       return html`<div id="welcomeHTML">
         ${unsafeHTML(this.collection.configuration.welcomeHTML)}
@@ -392,7 +445,7 @@ export class YpCollectionHeader extends YpBaseElement {
           poster="${ifDefined(this.collectionVideoPosterURL)}"
         ></video>
       `;
-    } else if (this.collection) {
+    } else if (this.collection && !this.hideLogoImage) {
       return html`
         <yp-image
           class="image"
@@ -410,42 +463,38 @@ export class YpCollectionHeader extends YpBaseElement {
     }
   }
 
-  _openAnalyticsAndPromption() {
-    YpNavHelpers.redirectTo(
-      `/analytics/${this.collectionType}/${this.collection!.id}`
-    );
-  }
-
-  _openAdmin() {
-    YpNavHelpers.redirectTo(
-      `/admin/${this.collectionType}/${this.collection!.id}`
-    );
+  renderFooter() {
+    return html``;
   }
 
   renderMenu() {
     return html`
       <div class="menuButton">
         <div class="layout horizontal">
-          <md-icon-button
-            id="menuButton"
-            @click="${this._openAnalyticsAndPromption}"
+          <md-filled-tonal-icon-button
+            ?hidden="${this.collectionType === "group"}"
+            @click="${this._openCreateGroupFolder}"
             title="${this.openMenuLabel}"
-            ><md-icon>analytics</md-icon>
-          </md-icon-button>
-          <md-icon-button
-            id="menuButton"
+            ><md-icon>create_new_folder</md-icon>
+          </md-filled-tonal-icon-button>
+          <md-filled-tonal-icon-button
+            @click="${this._openAnalyticsAndPromotions}"
+            title="${this.openMenuLabel}"
+            ><md-icon>monitoring</md-icon>
+          </md-filled-tonal-icon-button>
+          <md-filled-tonal-icon-button
             @click="${this._openAdmin}"
             title="${this.openMenuLabel}"
             ><md-icon>settings</md-icon>
-          </md-icon-button>
+          </md-filled-tonal-icon-button>
         </div>
       </div>
     `;
   }
 
-  renderFooter() {
+  renderStats() {
     return html`
-      <div class="stats layout horizontal">
+      <div class="layout horizontal stats">
         <yp-collection-stats
           .collectionType="${this.collectionType}"
           .collection="${this.collection}"
@@ -454,120 +503,110 @@ export class YpCollectionHeader extends YpBaseElement {
     `;
   }
 
+  get hideLogoImage(): boolean {
+    if (
+      this.collectionType == "group" &&
+      (this.collection?.configuration as YpGroupConfiguration)
+        .alwaysHideLogoImage
+    ) {
+      return true;
+    } else if (
+      this.collectionType == "community" &&
+      (this.collection?.configuration as YpCommunityConfiguration)
+        .alwaysHideLogoImage
+    ) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  renderHeaderBanner() {
+    if (this.collectionHeaderImagePath) {
+      return html`
+        <yp-image
+          class="bannerImage"
+          .alt="${this.t("bannerImage")}"
+          sizing="cover"
+          .src="${this.collectionHeaderImagePath}"
+        ></yp-image>
+      `;
+    } else {
+      return nothing;
+    }
+  }
+
+  renderName() {
+    return html`
+      <div class="nameText">
+        <yp-magic-text
+          class="collection-name"
+          role="heading"
+          aria-level="1"
+          aria-label="${this.collection!.name}"
+          .textType="${YpCollectionHelpers.nameTextType(this.collectionType)}"
+          .contentLanguage="${this.collection!.language}"
+          ?disableTranslation="${this.collection!.configuration
+            ?.disableNameAutoTranslation}"
+          textOnly
+          .content="${this.collection!.name}"
+          .contentId="${this.collection!.id}"
+        >
+        </yp-magic-text>
+      </div>
+    `;
+  }
+
+  renderDescription() {
+    return html`<yp-magic-text
+      id="description"
+      ?hide-logo-image="${this.hideLogoImage}"
+      class="description collectionDescription"
+      .textType="${YpCollectionHelpers.descriptionTextType(
+        this.collectionType
+      )}"
+      ?largeFont="${this.largeFont}"
+      .contentLanguage="${this.collection!.language}"
+      truncate="300"
+      .content="${this.collection!.description || this.collection!.objectives}"
+      .contentId="${this.collection!.id}"
+    >
+    </yp-magic-text>`;
+  }
+
   override render() {
     return html`
       ${this.collection
         ? html`
-            <div class="layout horizontal wrap">
-              <div
-                is-video="${ifDefined(this.collectionVideoURL)}"
-                id="cardImage"
-                class="large-card imageCard top-card"
-              >
-                ${this.renderFirstBoxContent()}
-              </div>
-              <div id="card" class="large-card textBox layout horizontal">
-                <div class="descriptionContainer">
-                  <div class="nameText">
-                    <yp-magic-text
-                      class="collection-name"
-                      role="heading"
-                      aria-level="1"
-                      ?largeFont="${this.largeFont}"
-                      aria-label="${this.collection.name}"
-                      .textType="${YpCollectionHelpers.nameTextType(
-                        this.collectionType
-                      )}"
-                      .contentLanguage="${this.collection.language}"
-                      ?disableTranslation="${this.collection.configuration
-                        ?.disableNameAutoTranslation}"
-                      textOnly
-                      .content="${this.collection.name}"
-                      .contentId="${this.collection.id}"
-                    >
-                    </yp-magic-text>
+            <div class="layout vertical center-center">
+              <div class="layout vertical topContainer">
+                ${this.renderHeaderBanner()}
+                <div class="allContent">
+                  <div class="layout horizontal nameAndActions wrap">
+                    ${this.renderName()}
+                    <div class="flex"></div>
+                    ${this.hasCollectionAccess ? this.renderMenu() : nothing}
                   </div>
-                  <yp-magic-text
-                    id="description"
-                    class="description collectionDescription"
-                    .textType="${YpCollectionHelpers.descriptionTextType(
-                      this.collectionType
-                    )}"
-                    ?largeFont="${this.largeFont}"
-                    .contentLanguage="${this.collection.language}"
-                    truncate="300"
-                    .content="${this.collection.description ||
-                    this.collection.objectives}"
-                    .contentId="${this.collection.id}"
-                  >
-                  </yp-magic-text>
+                  <div class="layout horizontal ${!this.wide ? "wrap" : ""}">
+                    <div
+                      is-video="${ifDefined(this.collectionVideoURL)}"
+                      id="cardImage"
+                      class="top-card"
+                    >
+                      ${this.renderMediaContent()}
+                    </div>
+                    <div id="card" class="layout vertical">
+                      <div class="descriptionContainer">
+                        ${this.renderDescription()} ${this.renderStats()}
+                      </div>
+                    </div>
+                  </div>
                 </div>
-
-                ${this.hasCollectionAccess ? this.renderMenu() : nothing}
-                ${this.renderFooter()}
               </div>
+              ${this.renderFooter()}
             </div>
           `
         : html``}
     `;
-  }
-
-  // EVENTS
-
-  override connectedCallback() {
-    super.connectedCallback();
-    this.addGlobalListener(
-      "yp-got-admin-rights",
-      this.requestUpdate.bind(this)
-    );
-    this.addGlobalListener(
-      "yp-pause-media-playback",
-      this._pauseMediaPlayback.bind(this)
-    );
-  }
-
-  override disconnectedCallback() {
-    super.disconnectedCallback();
-    this.removeGlobalListener("yp-got-admin-rights", this.requestUpdate);
-    this.removeGlobalListener(
-      "yp-pause-media-playback",
-      this._pauseMediaPlayback
-    );
-    YpMediaHelpers.detachMediaListeners(this as YpElementWithPlayback);
-  }
-
-  override firstUpdated(
-    changedProperties: Map<string | number | symbol, unknown>
-  ) {
-    super.firstUpdated(changedProperties);
-    YpMediaHelpers.attachMediaListeners(this as YpElementWithPlayback);
-  }
-
-  override updated(changedProperties: Map<string | number | symbol, unknown>) {
-    super.updated(changedProperties);
-
-    // TODO: Test this well is it working as expected
-    if (changedProperties.has("collection")) {
-      YpMediaHelpers.detachMediaListeners(this as YpElementWithPlayback);
-    }
-
-    if (this.collection) {
-      YpMediaHelpers.attachMediaListeners(this as YpElementWithPlayback);
-    }
-  }
-
-  _pauseMediaPlayback() {
-    YpMediaHelpers.pauseMediaPlayback(this as YpElementWithPlayback);
-  }
-
-  _menuSelection(event: CustomEvent) {
-    debugger;
-    if (this.collection) {
-      if (event.detail.item.id === "editMenuItem")
-        window.location.href = `/admin/${this.collectionType}/${this.collection.id}`;
-      else if (event.detail.item.id === "openAnalyticsApp")
-        window.location.href = `/analytics/${this.collectionType}/${this.collection.id}`;
-      (this.$$("#adminMenu") as MdMenu).close();
-    }
   }
 }

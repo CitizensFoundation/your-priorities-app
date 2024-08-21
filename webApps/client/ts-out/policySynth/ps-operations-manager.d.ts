@@ -1,7 +1,7 @@
 import "@material/web/iconbutton/icon-button.js";
 import "@material/web/progress/linear-progress.js";
 import "@material/web/tabs/tabs.js";
-import "@material/web/tabs/primary-tab.js";
+import "@material/web/tabs/secondary-tab.js";
 import "@material/web/textfield/outlined-text-field.js";
 import "@material/web/iconbutton/outlined-icon-button.js";
 import "@material/web/button/filled-tonal-button.js";
@@ -29,12 +29,16 @@ export declare class PsOperationsManager extends PsBaseWithRunningAgentObserver 
     selectedInputOutputType: string | null;
     agentElement: PsOperationsView;
     groupId: number;
+    group: YpGroupData;
     detailedCosts: PsDetailedAgentCostResults[];
     private activeAiModels;
     api: PsServerApi;
     constructor();
     getAgent(): Promise<void>;
+    private updateConnectorRegistry;
     connectedCallback(): Promise<void>;
+    disconnectedCallback(): Promise<void>;
+    addExistingConnector(event: CustomEvent): Promise<void>;
     fetchAgentCosts(): Promise<void>;
     fetchActiveAiModels(): Promise<void>;
     handleEditDialogSave(event: CustomEvent): Promise<void>;

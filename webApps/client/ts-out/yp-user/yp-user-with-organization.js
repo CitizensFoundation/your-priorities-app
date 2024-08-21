@@ -14,6 +14,7 @@ let YpUserWithOrganization = class YpUserWithOrganization extends YpBaseElement 
     constructor() {
         super(...arguments);
         this.hideImage = false;
+        this.mediumImage = false;
         this.inverted = false;
     }
     static get styles() {
@@ -25,10 +26,13 @@ let YpUserWithOrganization = class YpUserWithOrganization extends YpBaseElement 
         }
 
         .name {
-          padding-top: 4px;
-          font-weight: bold;
+          padding-top: 6px;
+          font-weight: 700;
           text-align: left;
           padding-right: 16px;
+          font-family: var(
+            --md-ref-typeface-brand
+          );
         }
 
         .name[inverted] {
@@ -79,6 +83,7 @@ let YpUserWithOrganization = class YpUserWithOrganization extends YpBaseElement 
             <div class="layout horizontal mainArea" .title="${this.userTitle}">
               <yp-user-image
                 .titlefromuser="${this.userTitle}"
+                .medium="${this.mediumImage}"
                 .user="${this.user}"
                 ?hidden="${this.hideImage}"></yp-user-image>
               <div class="layout vertical">
@@ -152,6 +157,9 @@ __decorate([
 __decorate([
     property({ type: Boolean })
 ], YpUserWithOrganization.prototype, "hideImage", void 0);
+__decorate([
+    property({ type: Boolean })
+], YpUserWithOrganization.prototype, "mediumImage", void 0);
 __decorate([
     property({ type: Boolean })
 ], YpUserWithOrganization.prototype, "inverted", void 0);

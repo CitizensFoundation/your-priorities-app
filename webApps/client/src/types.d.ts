@@ -37,6 +37,7 @@ interface YpThemeConfiguration {
   tertiaryColor?: string;
   neutralColor?: string;
   neutralVariantColor?: string;
+  useLowestContainerSurface?: boolean;
   iconPrompt?: string;
   fontStyles?: string;
   fontImports?: string;
@@ -281,7 +282,6 @@ interface YpGroupConfiguration extends YpCollectionConfiguration {
   forceShowDebateCountOnPost?: boolean;
   closeNewsfeedSubmissions?: boolean;
   usePostTagsForPostCards?: boolean;
-  urlToReview?: string;
   urlToReviewActionText?: string;
   dataForVisualization?: string;
   hideNewsfeeds?: boolean;
@@ -312,6 +312,7 @@ interface YpGroupConfiguration extends YpCollectionConfiguration {
   registrationQuestions?: string;
   allowGenerativeImages?: boolean;
   groupType?: number;
+  hideGroupType?: boolean;
   ltp?: YpLtpConfiguration;
   allOurIdeas?: AoiConfigurationData;
   staticHtml?: {
@@ -407,6 +408,7 @@ interface YpCommunityConfiguration extends YpCollectionConfiguration {
   ltp?: YpLtpConfiguration;
   onlyAdminsCanCreateGroups?: boolean;
   alwaysShowOnDomainPage?: boolean;
+  alwaysHideLogoImage?: boolean;
 }
 
 interface YpPromoterRights {
@@ -423,6 +425,8 @@ interface YpDomainConfiguration extends YpCollectionConfiguration {
   hideAppBarIfWelcomeHtml?: boolean;
   ltp?: YpLtpConfiguration;
   onlyAdminsCanCreateCommunities?: boolean;
+  directSamlIntegration?: boolean;
+  useLoginOnDomainIfNotLoggedIn?: boolean;
 }
 
 interface YpHelpPageData {
@@ -578,6 +582,7 @@ interface YpGroupData extends YpCollectionData {
   community_id: number;
   access: number;
   configuration: YpGroupConfiguration;
+  is_group_folder?: boolean;
   private_access_configuration?: YpGroupPrivateAccessConfiguration[];
   Community?: YpCommunityData;
   Categories?: Array<YpCategoryData>;

@@ -94,7 +94,7 @@ const variantIndexMap = {
     "rainbow": 7,
     "fruitSalad": 8
 };
-export function themeFromSourceColorWithContrast(color, variant, isDark, scheme, contrast) {
+export function themeFromSourceColorWithContrast(color, variant, isDark, scheme, contrast, useLowestContainerSurface) {
     if (typeof color !== 'string' && scheme !== 'dynamic' || typeof color !== 'object' && scheme === 'dynamic') {
         throw new Error('color / scheme type mismatch');
     }
@@ -106,6 +106,8 @@ export function themeFromSourceColorWithContrast(color, variant, isDark, scheme,
     if (variant) {
         variantIndex = variantIndexMap[variant];
     }
+    //scheme = "vibrant";
+    console.error("scheme", scheme);
     if (scheme === 'tonal') {
         //@ts-ignore
         colorScheme = new SchemeTonalSpot(
@@ -169,15 +171,22 @@ export function themeFromSourceColorWithContrast(color, variant, isDark, scheme,
             neutralVariantPalette: TonalPalette.fromHueAndChroma(neutralVariant.hue, neutralVariant.chroma),
         });
     }
-    return themeFromScheme(colorScheme);
+    return themeFromScheme(colorScheme, useLowestContainerSurface, isDark);
 }
-export function themeFromScheme(colorScheme) {
+export function themeFromScheme(colorScheme, useLowestContainerSurface, isDark) {
     //@ts-ignore
     const colors = generateMaterialColors(colorScheme);
     const theme = {};
     for (const [key, value] of Object.entries(colors)) {
         //@ts-ignore
         theme[key] = hexFromArgb(value.getArgb(colorScheme));
+    }
+    //TODO: Lookinto this
+    if (useLowestContainerSurface) {
+        theme["surface"] = theme["surface-container-lowest"];
+        if (!isDark) {
+            theme["on-primary-container"] = theme["on-surface"];
+        }
     }
     return theme;
 }
@@ -216,6 +225,13 @@ export function applyThemeString(doc, themeString, ssName) {
         else {
             console.error('The provided document does not have a head element.', error);
         }
+    }
+    finally {
+        const event = new CustomEvent("yp-theme-applied", {
+            bubbles: true,
+            composed: true,
+        });
+        document.dispatchEvent(event);
     }
 }
 //# sourceMappingURL=YpMaterialThemeHelper.js.map

@@ -1,13 +1,12 @@
-import { html, css, nothing } from 'lit';
-import { property, customElement } from 'lit/decorators.js';
+import { html, css, nothing } from "lit";
+import { property, customElement } from "lit/decorators.js";
 
+import { YpBaseElement } from "../common/yp-base-element.js";
+import { YpFormattingHelpers } from "../common/YpFormattingHelpers.js";
 
-import { YpBaseElement } from '../common/yp-base-element.js';
-import { YpFormattingHelpers } from '../common/YpFormattingHelpers.js';
+import "@material/web/icon/icon.js";
 
-import '@material/web/icon/icon.js';
-
-@customElement('yp-collection-stats')
+@customElement("yp-collection-stats")
 export class YpCollectionStats extends YpBaseElement {
   @property({ type: Object })
   collection: YpCollectionData | undefined;
@@ -19,15 +18,10 @@ export class YpCollectionStats extends YpBaseElement {
     return [
       super.styles,
       css`
-        :host {
-          display: block;
-          width: 100%;
-        }
-
         .stats {
-          padding-top: 8px;
+          padding-top: 16px;
           padding-bottom: 0;
-          opacity: 0.7;
+          opacity: 0.5;
         }
 
         .stats-text {
@@ -51,37 +45,50 @@ export class YpCollectionStats extends YpBaseElement {
       ? html`
           <div class="stats layout horizontal end-justified">
             <div class="layout horizontal">
-              <md-icon title="${this.t('stats.posts')}" class="stats-icon bulb"
+              <md-icon
+                ?hidden="${this.collectionType === "group"}"
+                title="${this.t("stats.posts")}"
+                class="stats-icon bulb"
                 >lightbulb_outline</md-icon
               >
-              <div title="${this.t('stats.posts')}" class="stats-text">
+              <div
+                title="${this.t("stats.posts")}"
+                class="stats-text"
+                ?hidden="${this.collectionType === "group"}"
+              >
                 ${YpFormattingHelpers.number(this.collection.counter_posts)}
               </div>
 
-              ${this.collectionType === 'community'
+              ${this.collectionType === "community"
                 ? html`
                     <md-icon
-                      title="${this.t('stats.groups')}"
+                      hidden
+                      title="${this.t("stats.groups")}"
                       class="stats-icon"
                       >groups</md-icon
                     >
-                    <div title="${this.t('stats.groups')}" class="stats-text">
+                    <div
+                      hidden
+                      title="${this.t("stats.groups")}"
+                      class="stats-text"
+                    >
                       ${YpFormattingHelpers.number(
                         this.collection.counter_groups
                       )}
                     </div>
                   `
                 : nothing}
-              ${this.collectionType === 'domain'
+              ${this.collectionType === "domain"
                 ? html`
-                    <md-icon
-                      title="${this.t('stats.communities')}"
+                    <md-icon hidden
+                      title="${this.t("stats.communities")}"
                       class="stats-icon"
                       >groups</md-icon
                     >
-                    <div
-                      title="${this.t('stats.communities')}"
-                      class="stats-text">
+                    <div hidden
+                      title="${this.t("stats.communities")}"
+                      class="stats-text"
+                    >
                       ${YpFormattingHelpers.number(
                         this.collection.counter_communities
                       )}
@@ -90,22 +97,27 @@ export class YpCollectionStats extends YpBaseElement {
                 : nothing}
 
               <md-icon
-                title="${this.t('statsPoints')}"
+                ?hidden="${this.collectionType === "community"}"
+                title="${this.t("statsPoints")}"
                 icon="people"
                 class="stats-icon"
                 >comment</md-icon
               >
-              <div title="${this.t('statsPoints')}" class="stats-text">
+              <div
+                ?hidden="${this.collectionType === "community"}"
+                title="${this.t("statsPoints")}"
+                class="stats-text"
+              >
                 ${YpFormattingHelpers.number(this.collection.counter_points)}
               </div>
 
               <md-icon
-                title="${this.t('stats.users')}"
+                title="${this.t("stats.users")}"
                 icon="face"
                 class="stats-icon"
                 >person</md-icon
               >
-              <div title="${this.t('stats.users')}" class="stats-text">
+              <div title="${this.t("stats.users")}" class="stats-text">
                 ${YpFormattingHelpers.number(this.collection.counter_users)}
               </div>
             </div>

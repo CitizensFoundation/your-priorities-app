@@ -1137,7 +1137,7 @@
     "forgotPasswordEmailHasBeenSent": "Tölvupóstur hefur verið sendur til þín með upplýsingum um hvernig þú býrð til nýtt lykilorð",
     "resetPassword": "Búðu til nýtt lykilorð",
     "resetPasswordInstructions": "Búðu til nýtt lykilorð sem er ekki auðvelt að giska á",
-    "login": "innskrá",
+    "login": "Innskrá",
     "create": "Nýskrá notanda",
     "cancel": "Hætta við",
     "logout": "Útskrá",

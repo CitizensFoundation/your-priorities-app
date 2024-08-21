@@ -6,6 +6,7 @@ export declare class PsAppGlobals extends YpAppGlobals {
     exernalGoalParamsWhiteList: string | undefined;
     agentsInstanceRegistry: Map<number, PsAgentAttributes>;
     connectorsInstanceRegistry: Map<number, PsAgentConnectorAttributes>;
+    activeConnectorsInstanceRegistry: Map<number, PsAgentConnectorAttributes>;
     currentRunningAgentId: number | undefined;
     currentAgentListeners: any[];
     constructor(serverApi: PsServerApi);

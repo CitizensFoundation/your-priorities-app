@@ -13,6 +13,9 @@ export class YpUserImage extends YpBaseElement {
   @property({ type: Boolean })
   large = false;
 
+  @property({ type: Boolean })
+  medium = false;
+
   @property({ type: String })
   titleFromUser: string | undefined;
 
@@ -46,14 +49,14 @@ export class YpUserImage extends YpBaseElement {
           width: 90px;
         }
 
+        .medium {
+          height: 40px;
+          width: 40px;
+        }
+
         .veryLarge {
           height: 200px;
           width: 200px;
-        }
-
-        .medium {
-          height: 48px;
-          width: 48px;
         }
 
         .rounded {
@@ -179,7 +182,8 @@ export class YpUserImage extends YpBaseElement {
 
   get computeClass() {
     //TODO: Add back very-large if needed
-    if (!this.large && !this.veryLarge) return 'small rounded';
+    if (this.medium) return "medium rounded";
+    else if (!this.large && !this.veryLarge) return 'small rounded';
     else if (this.large) return 'large rounded-more';
     else if (this.veryLarge) return 'veryLarge rounded-even-more';
     else return 'medium rounded';

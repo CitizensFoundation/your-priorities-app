@@ -8,6 +8,17 @@ export class PsServerApi extends YpServerApiBase {
     async getAgent(groupId) {
         return (await this.fetchWrapper(this.baseUrlPath + `${this.baseAgentsPath}${groupId}`, {}, false));
     }
+    async getAgentMemory(groupId, agentId) {
+        return this.fetchWrapper(this.baseUrlPath + `${this.baseAgentsPath}${groupId}/${agentId}/memory`, {
+            method: 'GET',
+        }, false);
+    }
+    async replaceAgentMemory(groupId, agentId, memory) {
+        return this.fetchWrapper(this.baseUrlPath + `${this.baseAgentsPath}${groupId}/${agentId}/memory`, {
+            method: 'PUT',
+            body: JSON.stringify(memory),
+        }, false);
+    }
     async removeAgentAiModel(groupId, agentId, modelId) {
         return this.fetchWrapper(`${this.baseUrlPath}/agents/${groupId}/${agentId}/ai-models/${modelId}`, {
             method: 'DELETE',
@@ -29,6 +40,12 @@ export class PsServerApi extends YpServerApiBase {
             method: 'PUT',
             body: JSON.stringify(updatedConfig),
         }, false);
+    }
+    async addExistingConnector(groupId, agentId, connectorId, type) {
+        return this.fetchWrapper(`${this.baseUrlPath}/agents/${groupId}/${agentId}/${type}Connectors`, {
+            method: 'POST',
+            body: JSON.stringify({ connectorId }),
+        });
     }
     async createAgent(name, agentClassId, aiModels, parentAgentId, groupId) {
         return this.fetchWrapper(this.baseUrlPath + this.baseAgentsPath + `${groupId}`, {

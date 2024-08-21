@@ -22,6 +22,7 @@ let YpThemeSelector = class YpThemeSelector extends YpBaseElement {
         this.selectedThemeVariant = "monochrome";
         this.disableSelection = false;
         this.disableMultiInputs = false;
+        this.useLowestContainerSurface = false;
         this.disableOneThemeColorInputs = false;
         this.hasLogoImage = false;
         this.channel = new BroadcastChannel("hex_color");
@@ -30,6 +31,10 @@ let YpThemeSelector = class YpThemeSelector extends YpBaseElement {
         return [
             super.styles,
             css `
+        md-checkbox {
+          margin-right: 8px;
+        }
+
         md-outlined-select,
         md-outlined-text-field,
         yp-theme-color-input {
@@ -122,6 +127,8 @@ let YpThemeSelector = class YpThemeSelector extends YpBaseElement {
             this.themeNeutralColor = this.themeConfiguration.neutralColor;
             this.themeNeutralVariantColor =
                 this.themeConfiguration.neutralVariantColor;
+            this.useLowestContainerSurface =
+                this.themeConfiguration.useLowestContainerSurface || false;
             this.fontStyles = this.themeConfiguration.fontStyles;
             this.fontImports = this.themeConfiguration.fontImports;
         }
@@ -147,17 +154,18 @@ let YpThemeSelector = class YpThemeSelector extends YpBaseElement {
             "themeTertiaryColor",
             "themeNeutralColor",
             "themeNeutralVariantColor",
+            "useLowestContainerSurface",
             "fontStyles",
             "fontImports",
         ].forEach((prop) => {
             if (changedProperties.has(prop)) {
                 shouldUpdateConfiguration = true;
                 this.updateDisabledInputs();
-                this.fire("config-updated");
+                //this.fire("config-updated");
             }
         });
         if (changedProperties.has("oneDynamicThemeColor")) {
-            this.channel.postMessage(this.oneDynamicThemeColor);
+            //this.channel.postMessage(this.oneDynamicThemeColor);
         }
         if (shouldUpdateConfiguration) {
             // Update the themeConfiguration object
@@ -170,6 +178,7 @@ let YpThemeSelector = class YpThemeSelector extends YpBaseElement {
                 tertiaryColor: this.themeTertiaryColor,
                 neutralColor: this.themeNeutralColor,
                 neutralVariantColor: this.themeNeutralVariantColor,
+                useLowestContainerSurface: this.useLowestContainerSurface,
                 fontStyles: this.fontStyles,
                 fontImports: this.fontImports,
             };
@@ -247,6 +256,9 @@ let YpThemeSelector = class YpThemeSelector extends YpBaseElement {
             .replace("<a href", "")
             .replace("</a>", "")
             .trim();
+    }
+    async setLowestContainerSurface(event) {
+        this.useLowestContainerSurface = this.$$("#useLowestContainerSurface").checked;
     }
     render() {
         return html `
@@ -348,6 +360,17 @@ let YpThemeSelector = class YpThemeSelector extends YpBaseElement {
         }}"
             >
             </yp-theme-color-input>
+
+            <label>
+              <md-checkbox
+                id="useLowestContainerSurface"
+                @change="${this.setLowestContainerSurface}"
+                ?checked="${this.useLowestContainerSurface}"
+              >
+              </md-checkbox>
+
+              ${this.t("useLowestContainerSurface")}
+            </label>
 
             <md-outlined-select
               hidden
@@ -565,6 +588,9 @@ __decorate([
 __decorate([
     property({ type: Boolean })
 ], YpThemeSelector.prototype, "disableMultiInputs", void 0);
+__decorate([
+    property({ type: Boolean })
+], YpThemeSelector.prototype, "useLowestContainerSurface", void 0);
 __decorate([
     property({ type: Boolean })
 ], YpThemeSelector.prototype, "disableOneThemeColorInputs", void 0);

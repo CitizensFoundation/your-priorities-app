@@ -1,7 +1,8 @@
-import '@material/web/iconbutton/outlined-icon-button.js';
-import { YpFileUpload } from './yp-file-upload.js';
+import "@material/web/iconbutton/outlined-icon-button.js";
+import { YpFileUpload } from "./yp-file-upload.js";
 export declare class YpFileUploadIcon extends YpFileUpload {
     buttonIcon: string;
+    simple: boolean;
     static get styles(): (any[] | import("lit").CSSResult)[];
     render(): import("lit-html").TemplateResult<1>;
 }

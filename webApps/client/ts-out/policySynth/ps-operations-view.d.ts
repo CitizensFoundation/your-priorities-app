@@ -1,16 +1,20 @@
-import { PropertyValueMap } from 'lit';
-import { dia } from '@joint/core';
-import '@material/web/iconbutton/filled-icon-button.js';
-import '@material/web/iconbutton/filled-tonal-icon-button.js';
-import '@material/web/iconbutton/icon-button.js';
-import '@material/web/iconbutton/outlined-icon-button.js';
-import './ps-agent-node.js';
-import './ps-connector-node.js';
-import { PsServerApi } from './PsServerApi.js';
-import { PsBaseWithRunningAgentObserver } from './ps-base-with-running-agents.js';
+import { PropertyValueMap } from "lit";
+import { dia } from "@joint/core";
+import "@material/web/iconbutton/filled-icon-button.js";
+import "@material/web/iconbutton/filled-tonal-icon-button.js";
+import "@material/web/iconbutton/icon-button.js";
+import "@material/web/iconbutton/outlined-icon-button.js";
+import "./ps-agent-node.js";
+import "./ps-connector-node.js";
+import { PsServerApi } from "./PsServerApi.js";
+import { PsBaseWithRunningAgentObserver } from "./ps-base-with-running-agents.js";
 export declare class PsOperationsView extends PsBaseWithRunningAgentObserver {
     currentAgent: PsAgentAttributes;
     groupId: number;
+    group: YpGroupData;
+    connectorRegistry: {
+        [key: number]: PsAgentConnectorAttributes;
+    };
     private graph;
     private paper;
     private elements;

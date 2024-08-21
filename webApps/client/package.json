@@ -1,6 +1,6 @@
 {
   "name": "@yrpri/webapp",
-  "version": "9.0.64",
+  "version": "9.0.80",
   "repository": {
     "type": "git",
     "url": "https://github.com/CitizensFoundation/your-priorities-app.git"
@@ -16,14 +16,14 @@
     "locales/**/*"
   ],
   "dependencies": {
-    "@policysynth/agents": "^1.3.28",
     "@fingerprintjs/fingerprintjs": "^3.4.2",
     "@joint/core": "^4.0.4",
     "@kano/twemoji": "^1.0.0",
     "@lit-labs/motion": "^1.0.7",
     "@lit-labs/virtualizer": "^2.0.13",
     "@material/material-color-utilities": "^0.3.0",
-    "@material/web": "^1.5.1",
+    "@material/web": "^2.0.0",
+    "@policysynth/agents": "^1.3.29",
     "@polymer/polymer": "^3.5.1",
     "@trystan2k/fleshy-jsoneditor": "^3.0.0",
     "@ungap/structured-clone": "^1.2.0",

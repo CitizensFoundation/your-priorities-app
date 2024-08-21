@@ -273,17 +273,6 @@ let indexCache = {
         lastModified: null
     }
 };
-async function cacheIndexFile(filePath, versionKey) {
-    try {
-        const stats = await fs.promises.stat(filePath);
-        const data = await fs.promises.readFile(filePath, "utf8");
-        indexCache[versionKey].lastModified = stats.mtime.toUTCString();
-        indexCache[versionKey].data = data;
-    }
-    catch (err) {
-        console.error("Error caching index file:", err);
-    }
-}
 async function replaceSiteData(indexFileData, req, useNewVersion) {
     if (process.env.ZIGGEO_ENABLED &&
         req.ypDomain.configuration.ziggeoApplicationToken) {
@@ -377,26 +366,30 @@ async function replaceSiteData(indexFileData, req, useNewVersion) {
     }
     return indexFileData;
 }
+async function cacheIndexFile(filePath, versionKey) {
+    try {
+        const stats = await fs.promises.stat(filePath);
+        const data = await fs.promises.readFile(filePath, "utf8");
+        indexCache[versionKey].lastModified = stats.mtime.toUTCString();
+        indexCache[versionKey].data = data;
+    }
+    catch (err) {
+        console.error("Error caching index file:", err);
+    }
+}
 let sendIndex = async (req, res) => {
     log.info("Index Viewed", { userId: req.user ? req.user.id : null });
-    let useNewVersion = req.query.useNewVersion === "true" || req.session.useNewVersion === true;
-    // Check domain-specific configuration and query override
-    if (req.ypDomain &&
-        req.ypDomain.configuration &&
-        req.ypDomain.configuration.useNewVersion === true &&
-        req.query.useNewVersion !== "false") {
-        useNewVersion = true;
+    if (typeof req.useNewVersion === 'undefined') {
+        log.error("req.useNewVersion is undefined. This should never happen. Check setupNewWebAppVersionHandling middleware.", {
+            path: req.path,
+            method: req.method,
+            headers: req.headers,
+            session: req.session
+        });
+        // Default to old version in this unexpected case
+        req.useNewVersion = false;
     }
-    let useNewVersionIsFalse = req.query.useNewVersion === "false";
-    // Handle user preferences for version switching
-    if (useNewVersion && !useNewVersionIsFalse) {
-        req.session.useNewVersion = true;
-        console.log(`Setting new version preference: ${req.query.useNewVersion}`);
-    }
-    else if (useNewVersionIsFalse) {
-        req.session.useNewVersion = false;
-        console.log(`Setting new version preference: false`);
-    }
+    let useNewVersion = req.useNewVersion;
     let versionKey = useNewVersion ? 'newVersion' : 'oldVersion';
     let indexFilePath = path.resolve(req.dirName, useNewVersion ? "../webAppsDist/client/dist/index.html" : "../webAppsDist/old/client/build/bundled/index.html");
     // Ensure the version file is cached
@@ -416,8 +409,19 @@ let sendIndex = async (req, res) => {
         res.status(500).send("Server error");
     }
 };
-cacheIndexFile(path.resolve(__dirname, "../../webAppsDist/client/dist/index.html"), 'newVersion');
-cacheIndexFile(path.resolve(__dirname, "../../webAppsDist/old/client/build/bundled/index.html"), 'oldVersion');
+async function initializeIndexCache() {
+    try {
+        await Promise.all([
+            cacheIndexFile(path.resolve(__dirname, "../../webAppsDist/client/dist/index.html"), 'newVersion'),
+            cacheIndexFile(path.resolve(__dirname, "../../webAppsDist/old/client/build/bundled/index.html"), 'oldVersion')
+        ]);
+        debug("Index cache initialized successfully");
+    }
+    catch (error) {
+        log.error("Failed to initialize index cache", { error });
+    }
+}
+initializeIndexCache();
 router.get("/", function (req, res) {
     sendIndex(req, res);
 });
