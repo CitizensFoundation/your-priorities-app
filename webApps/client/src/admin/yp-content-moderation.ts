@@ -164,8 +164,60 @@ export class YpContentModeration extends YpBaseElement {
           display: none !important;
         }
 
-        paper-listbox {
-          margin-right: 8px !important;
+        vaadin-grid {
+          background-color: var(--md-sys-color-surface);
+          color: var(--md-sys-color-on-surface);
+          font-family: var(--md-sys-typescale-body-medium-font-family-name);
+          font-size: var(--md-sys-typescale-body-medium-font-size);
+          font-weight: var(--md-sys-typescale-body-medium-font-weight);
+          line-height: var(--md-sys-typescale-body-medium-line-height);
+        }
+
+        vaadin-grid::part(header-cell) {
+          background-color: var(--md-sys-color-surface-container);
+          color: var(--md-sys-color-on-surface-variant);
+          font-weight: var(--md-sys-typescale-title-small-font-weight);
+        }
+
+        vaadin-grid::part(cell) {
+          color: var(--md-sys-color-on-surface-container);
+        }
+
+        vaadin-grid::part(body-cell) {
+          background-color: var(--md-sys-color-surface-container-lowest);
+          border-bottom: 1px solid var(--md-sys-color-outline-variant);
+        }
+
+        vaadin-grid::part(row) {
+          background-color: var(--md-sys-color-surface-container-lowest);
+          color: var(--md-sys-color-on-surface);
+        }
+
+        vaadin-grid::part(row):nth-child(even) {
+          background-color: var(--md-sys-color-surface-variant);
+        }
+
+        vaadin-grid::part(row:hover) {
+          background-color: var(--md-sys-color-surface-container-highest);
+        }
+
+        vaadin-grid::part(selected-row) {
+          background-color: var(--md-sys-color-secondary-container);
+          color: var(--md-sys-color-on-secondary-container);
+        }
+
+        /* Ensure proper spacing and alignment */
+        vaadin-grid-cell-content {
+          padding: 12px 16px;
+        }
+
+        /* Style for the sort indicators */
+        vaadin-grid-sorter {
+          color: var(--md-sys-color-on-surface-variant);
+        }
+
+        vaadin-grid-sorter[direction] {
+          color: var(--md-sys-color-primary);
         }
 
         .headerBox {
@@ -623,9 +675,13 @@ export class YpContentModeration extends YpBaseElement {
         textAlign="start"
         flexGrow="0"
         path="type"
-        .renderer="${(root: HTMLElement, column: any, rowData: RowData) => {
-          return this._getType(rowData.item.type);
-        }}"
+        .renderer="${(
+            root: HTMLElement,
+            _column: unknown,
+            rowData: { item: YpModerationItem }
+          ) => {
+            root.textContent = this._getType(rowData.item.type);
+          }}"
         .header="${this.t("type")}"
       >
       </vaadin-grid-sort-column>
@@ -634,9 +690,13 @@ export class YpContentModeration extends YpBaseElement {
         width="100px"
         textAlign="start"
         flexGrow="0"
-        .renderer="${(root: HTMLElement, column: any, rowData: RowData) => {
-          return rowData.item.status;
-        }}"
+        .renderer="${(
+            root: HTMLElement,
+            _column: unknown,
+            rowData: { item: YpModerationItem }
+          ) => {
+            root.textContent = rowData.item.status || "unknown";
+          }}"
         path="status"
         .header="${this.t("publishStatus")}"
       >
@@ -647,9 +707,13 @@ export class YpContentModeration extends YpBaseElement {
         textAlign="center"
         flexGrow="0"
         path="counter_flags"
-        .renderer="${(root: HTMLElement, column: any, rowData: RowData) => {
-          return rowData.item.counter_flags;
-        }}"
+        .renderer="${(
+            root: HTMLElement,
+            _column: unknown,
+            rowData: { item: YpModerationItem }
+          ) => {
+            root.textContent = `${rowData.item.counter_flags}`;
+          }}"
         .header="${this.t("flags")}"
         ?hidden="${this.userId != undefined}"
       >
@@ -660,9 +724,13 @@ export class YpContentModeration extends YpBaseElement {
         textAlign="start"
         flexGrow="0"
         path="source"
-        .renderer="${(root: HTMLElement, column: any, rowData: RowData) => {
-          return rowData.item.source;
-        }}"
+        .renderer="${(
+            root: HTMLElement,
+            _column: unknown,
+            rowData: { item: YpModerationItem }
+          ) => {
+            root.textContent = rowData.item.source || "n/a";
+          }}"
         .header="${this.t("source")}"
         ?hidden="${!this.onlyFlaggedItems}"
       >
@@ -673,9 +741,13 @@ export class YpContentModeration extends YpBaseElement {
         textAlign="center"
         flexGrow="0"
         path="toxicityScoreRaw"
-        .renderer="${(root: HTMLElement, column: any, rowData: RowData) => {
-          return rowData.item.toxicityScore;
-        }}"
+        .renderer="${(
+            root: HTMLElement,
+            _column: unknown,
+            rowData: { item: YpModerationItem }
+          ) => {
+            root.textContent = `${rowData.item.toxicityScore || "n/a"}`;
+          }}"
         .header="${this.t("toxicityScore")}?"
         ?hidden="${this.userId != undefined}"
       >
@@ -686,9 +758,13 @@ export class YpContentModeration extends YpBaseElement {
         textAlign="start"
         flexGrow="1"
         path="groupName"
-        .renderer="${(root: HTMLElement, column: any, rowData: RowData) => {
-          return rowData.item.groupName;
-        }}"
+        .renderer="${(
+            root: HTMLElement,
+            _column: unknown,
+            rowData: { item: YpModerationItem }
+          ) => {
+            root.textContent = `${rowData.item.groupName}`;
+          }}"
         .header="${this.t("groupName")}"
         ?hidden="${!this.userId}"
       >
@@ -708,9 +784,13 @@ export class YpContentModeration extends YpBaseElement {
         flexGrow="1"
         path="user_email"
         width="150px"
-        .renderer="${(root: HTMLElement, column: any, rowData: RowData) => {
-          return rowData.item.user_email;
-        }}"
+        .renderer="${(
+            root: HTMLElement,
+            _column: unknown,
+            rowData: { item: YpModerationItem }
+          ) => {
+            root.textContent = `${rowData.item.user_email || "n/a"}`;
+          }}"
         .header="${this.t("creator")}"
         ?hidden="${this.userId != undefined}"
       >
@@ -816,6 +896,7 @@ export class YpContentModeration extends YpBaseElement {
   _itemsResponse(items: Array<YpModerationItem>) {
     this.forceSpinner = false;
     this.items = items;
+    debugger;
     this._resetSelectedAndClearCache();
   }
 
@@ -924,7 +1005,7 @@ export class YpContentModeration extends YpBaseElement {
   _userIdChanged() {}
 
   _getType(type: string) {
-    if (type === "post") return this.t("posts.yp");
+    if (type === "post") return this.t("posts.posts");
     else if (type === "point") return this.t("point.point");
     else return this.t("unknown");
   }

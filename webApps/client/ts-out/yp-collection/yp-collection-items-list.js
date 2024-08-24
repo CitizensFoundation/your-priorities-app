@@ -30,6 +30,9 @@ let YpCollectionItemsList = class YpCollectionItemsList extends YpBaseElement {
           width: 100%;
         }
 
+        .topLevelListItem {
+        }
+
         lit-virtualizer {
           margin-top: 80px;
           margin-left: 32px;
@@ -81,7 +84,7 @@ let YpCollectionItemsList = class YpCollectionItemsList extends YpBaseElement {
     }
     renderItem(item, index) {
         return html `
-      <div class="layout vertical center-center">
+      <div class="layout vertical center-center topLevelListItem">
         <yp-collection-item-card
           class="card"
           .index="${index}"

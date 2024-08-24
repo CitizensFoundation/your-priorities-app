@@ -59,6 +59,62 @@ let YpUsersGrid = class YpUsersGrid extends YpBaseElement {
           width: 200px;
         }
 
+        vaadin-grid {
+          background-color: var(--md-sys-color-surface);
+          color: var(--md-sys-color-on-surface);
+          font-family: var(--md-sys-typescale-body-medium-font-family-name);
+          font-size: var(--md-sys-typescale-body-medium-font-size);
+          font-weight: var(--md-sys-typescale-body-medium-font-weight);
+          line-height: var(--md-sys-typescale-body-medium-line-height);
+        }
+
+        vaadin-grid::part(header-cell) {
+          background-color: var(--md-sys-color-surface-container);
+          color: var(--md-sys-color-on-surface-variant);
+          font-weight: var(--md-sys-typescale-title-small-font-weight);
+        }
+
+        vaadin-grid::part(cell) {
+          color: var(--md-sys-color-on-surface-container);
+        }
+
+        vaadin-grid::part(body-cell) {
+          background-color: var(--md-sys-color-surface-container-lowest);
+          border-bottom: 1px solid var(--md-sys-color-outline-variant);
+        }
+
+        vaadin-grid::part(row) {
+          background-color: var(--md-sys-color-surface-container-lowest);
+          color: var(--md-sys-color-on-surface);
+        }
+
+        vaadin-grid::part(row):nth-child(even) {
+          background-color: var(--md-sys-color-surface-variant);
+        }
+
+        vaadin-grid::part(row:hover) {
+          background-color: var(--md-sys-color-surface-container-highest);
+        }
+
+        vaadin-grid::part(selected-row) {
+          background-color: var(--md-sys-color-secondary-container);
+          color: var(--md-sys-color-on-secondary-container);
+        }
+
+        /* Ensure proper spacing and alignment */
+        vaadin-grid-cell-content {
+          padding: 12px 16px;
+        }
+
+        /* Style for the sort indicators */
+        vaadin-grid-sorter {
+          color: var(--md-sys-color-on-surface-variant);
+        }
+
+        vaadin-grid-sorter[direction] {
+          color: var(--md-sys-color-primary);
+        }
+
         md-circular-progress {
           margin-top: 8px;
           margin-left: 16px;

@@ -20,6 +20,7 @@ const fixTargetLocale = (itemTargetLocale) => {
 };
 const addItem = (targetLocale, items, textType, id, content, done) => {
     if (!content) {
+        console.log(`No content for ${textType} ${id}`);
         done();
     }
     else {
@@ -42,6 +43,7 @@ const addItem = (targetLocale, items, textType, id, content, done) => {
             done();
         })
             .catch((error) => {
+            console.error(error);
             done(error);
         });
     }
@@ -99,10 +101,20 @@ const addTranslationsForGroups = (targetLocale, items, groups, done) => {
                 addItem(targetLocale, items, "alternativeTextForNewIdeaButtonHeader", group.id, group.configuration.alternativeTextForNewIdeaButtonHeader, innerSeriesCallback);
             },
             (innerSeriesCallback) => {
-                addItem(targetLocale, items, "aoiWelcomeMessage", group.id, group.configuration.allOurIdeas.earl.configuration.welcome_message, innerSeriesCallback);
+                if (group.configuration.allOurIdeas) {
+                    addItem(targetLocale, items, "aoiWelcomeMessage", group.id, group.configuration.allOurIdeas.earl.configuration.welcome_message, innerSeriesCallback);
+                }
+                else {
+                    innerSeriesCallback();
+                }
             },
             (innerSeriesCallback) => {
-                addItem(targetLocale, items, "aoiWelcomeHtml", group.id, group.configuration.allOurIdeas.earl.configuration.welcome_html, innerSeriesCallback);
+                if (group.configuration.allOurIdeas) {
+                    addItem(targetLocale, items, "aoiWelcomeHtml", group.id, group.configuration.allOurIdeas.earl.configuration.welcome_html, innerSeriesCallback);
+                }
+                else {
+                    innerSeriesCallback();
+                }
             },
             (innerSeriesCallback) => {
                 addItem(targetLocale, items, "alternativeTextForNewIdeaSaveButton", group.id, group.configuration.alternativeTextForNewIdeaSaveButton, innerSeriesCallback);

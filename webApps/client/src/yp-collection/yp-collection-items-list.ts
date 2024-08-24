@@ -49,6 +49,9 @@ export class YpCollectionItemsList extends YpBaseElement {
           width: 100%;
         }
 
+        .topLevelListItem {
+        }
+
         lit-virtualizer {
           margin-top: 80px;
           margin-left: 32px;
@@ -102,7 +105,7 @@ export class YpCollectionItemsList extends YpBaseElement {
 
   renderItem(item: YpCollectionData, index: number): TemplateResult {
     return html`
-      <div class="layout vertical center-center">
+      <div class="layout vertical center-center topLevelListItem">
         <yp-collection-item-card
           class="card"
           .index="${index}"
