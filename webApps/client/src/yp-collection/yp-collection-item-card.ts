@@ -172,10 +172,8 @@ export class YpCollectionItemCard extends YpBaseElement {
           }
 
           yp-image {
-            width: 96vw;
-            height: calc(96vw * 9 / 16);
-            border-radius: 16px 16px 0px 0px;
-            object-fit: cover;
+            width: 80vw;
+            height: calc(80vw * 9 / 16);
             max-width: 430px;
             max-height: 242px;
           }
@@ -185,6 +183,7 @@ export class YpCollectionItemCard extends YpBaseElement {
 
           .description {
             margin-bottom: 32px;
+            width: 100%;
           }
         }
 

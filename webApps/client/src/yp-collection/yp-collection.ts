@@ -426,6 +426,17 @@ export abstract class YpCollection extends YpBaseElementWithLogin {
         @media (max-width: 960px) {
           md-tabs {
             width: 100%;
+            max-width: 100%;
+          }
+
+          md-secondary-tab {
+            width: 100%;
+            max-width: 100%;
+          }
+
+          .topContainer {
+            width: 100%;
+            max-width: 100%;
           }
         }
 
@@ -437,6 +448,10 @@ export abstract class YpCollection extends YpBaseElementWithLogin {
         @media (max-width: 960px) {
           .header {
             height: 100%;
+          }
+
+          .createFab {
+            width: 100%;
           }
 
           .currentPage {
@@ -552,7 +567,7 @@ export abstract class YpCollection extends YpBaseElementWithLogin {
         <div class="layout vertical center-center">
           <div class="layout vertical topContainer">
             ${this.renderHeader()}
-            <div class="layout horizontal mainContent">
+            <div class="layout horizontal mainContent wrap">
               ${this.renderTabs()}
               <div class="flex"></div>
               ${this.createFabIcon && this.createFabLabel

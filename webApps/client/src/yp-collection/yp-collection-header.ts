@@ -319,6 +319,11 @@ export class YpCollectionHeader extends YpBaseElement {
           :host {
           }
 
+          .topContainer {
+            margin: 0;
+            max-width: 100%;
+          }
+
           #welcomeHTML {
             width: 306px;
             max-width: 306px;

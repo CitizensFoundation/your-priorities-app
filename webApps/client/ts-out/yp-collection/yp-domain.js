@@ -38,6 +38,22 @@ let YpDomain = class YpDomain extends YpCollection {
           border-radius: 4px;
           padding-bottom: 640px;
         }
+
+        @media (max-width: 1080px) {
+          .outerContainer {
+            width: 100%;
+            max-width: 100%;
+          }
+
+          .loginSurface {
+            width: 100%;
+            max-width: 100%;
+          }
+
+          .loginSurface {
+            padding: 16px;
+          }
+        }
       `,
         ];
     }
