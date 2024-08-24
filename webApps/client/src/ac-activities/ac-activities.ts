@@ -129,7 +129,7 @@ export class AcActivities extends YpBaseElementWithLogin {
           height: 100%;
           padding-left: 16px;
           padding-right: 16px;
-          margin-top: 16px;
+          margin-top: 32px;
           margin-left: 16px;
           margin-right: 16px;
         }
@@ -160,9 +160,9 @@ export class AcActivities extends YpBaseElementWithLogin {
           width: 550px;
           margin: 0;
           padding: 0;
-          border-radius: 24px;
           margin-bottom: 16px;
           margin-top: 16px;
+          background-color: var(--md-sys-color-surface-container-low);
         }
 
         @media (max-width: 600px) {
