@@ -221,7 +221,7 @@ let YpCollectionItemCard = class YpCollectionItemCard extends YpBaseElement {
     connectedCallback() {
         super.connectedCallback();
         if (this.item && this.item.Community) {
-            this.collection = this.item.Community;
+            this.collection = this.item;
             const group = this.collection;
             if (group.CommunityLink) {
                 this.itemType = "groupCommunityLink";

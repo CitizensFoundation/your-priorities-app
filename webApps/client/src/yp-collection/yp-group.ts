@@ -284,6 +284,9 @@ export class YpGroup extends YpCollection {
           this.collection.configuration = {} as any;
         }
         this.hasNonOpenPosts = groupResults.hasNonOpenPosts;
+        if (this.collection.is_group_folder) {
+          this.collection.configuration.groupType = YpGroupType.Folder;
+        }
         if (
           !this.haveLoadedAgentsOps &&
           this.collection.configuration &&
@@ -1053,6 +1056,22 @@ export class YpGroup extends YpCollection {
     ></ps-operations-manager>`;
   }
 
+  renderGroupFolder() {
+    return html` <div class="currentPage layout vertical center-center">
+    <div class="topContainer">
+      <yp-collection-items-list
+        id="collectionItems"
+        .collectionItems="${this.collectionItems}"
+        .collection="${this.collection}"
+        .collectionType="${this.collectionType}"
+        .collectionItemType="${this.collectionItemType}"
+        .collectionId="${this.collectionId!}"
+        ?useEvenOddItemLayout="${this.useEvenOddItemLayout}"
+      ></yp-collection-items-list>
+    </div>
+  </div>`
+  }
+
   override render() {
     if (!this.collection || !this.collection.configuration) {
       return html`<md-linear-progress indeterminate></md-linear-progress>`;
@@ -1061,6 +1080,9 @@ export class YpGroup extends YpCollection {
     switch (this.cleanedGroupType) {
       case YpGroupType.IdeaGenerationAndDebate:
         return this.renderYpGroup();
+
+      case YpGroupType.Folder:
+        return this.renderGroupFolder();
 
       case YpGroupType.AllOurIdeas:
         return this.haveLoadedAllOurIdeas ? this.renderAllOurIdeas() : html``;

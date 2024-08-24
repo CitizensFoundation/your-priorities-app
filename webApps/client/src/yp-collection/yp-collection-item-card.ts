@@ -239,7 +239,7 @@ export class YpCollectionItemCard extends YpBaseElement {
   override connectedCallback() {
     super.connectedCallback();
     if (this.item && (this.item as YpGroupData).Community) {
-      this.collection = (this.item as YpGroupData).Community;
+      this.collection = (this.item as YpGroupData);
       const group = this.collection as YpGroupData;
 
       if (group.CommunityLink) {
