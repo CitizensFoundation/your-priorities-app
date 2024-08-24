@@ -38,7 +38,7 @@ export declare class YpPostActions extends YpBaseElement {
     _updateEndorsementsFromSignal(event: CustomEvent): void;
     _updateEndorsements(event?: CustomEvent | undefined): void;
     endorseModeIcon(endorsementButtons: string, upDown: string): "thumb_up" | "thumb_down" | "favorite" | "do_not_disturb" | "keyboard_arrow_up" | "keyboard_arrow_down" | "arrow_upward" | "arrow_downward" | undefined;
-    _setEndorsement(value: number): void;
+    _setEndorsement(value: number): Promise<void>;
     _enableVoting(): void;
     generateEndorsementFromLogin(value: number): void;
     generateEndorsement(value: number): Promise<void>;

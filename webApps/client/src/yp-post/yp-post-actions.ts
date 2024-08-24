@@ -554,8 +554,10 @@ export class YpPostActions extends YpBaseElement {
     return undefined;
   }
 
-  _setEndorsement(value: number) {
+  async _setEndorsement(value: number) {
     this.endorseValue = value;
+
+    await this.updateComplete;
 
     if (this.$$("#actionUp")) {
       if (
@@ -574,16 +576,14 @@ export class YpPostActions extends YpBaseElement {
             this.$$("#actionDown"),
             "hearts-down-selected"
           );
-          (this.$$("#iconUpButton") as MdOutlinedIconButton).innerHTML =
-            "<md-icon>favorite</md-icon>";
+
         } else if (value < 0) {
           this.$$("#actionDown")!.className += " " + "hearts-down-selected";
           YpFormattingHelpers.removeClass(
             this.$$("#actionUp"),
             "hearts-up-selected"
           );
-          (this.$$("#iconUpButton") as MdOutlinedIconButton).innerHTML =
-            "<md-icon>favorite</md-icon>";
+
         } else {
           YpFormattingHelpers.removeClass(
             this.$$("#actionUp"),
@@ -593,8 +593,7 @@ export class YpPostActions extends YpBaseElement {
             this.$$("#actionDown"),
             "hearts-down-selected"
           );
-          (this.$$("#iconUpButton") as MdOutlinedIconButton).innerHTML =
-            "<md-icon>favorite</md-icon>";
+
         }
       } else {
         if (value > 0) {

@@ -476,8 +476,9 @@ let YpPostActions = class YpPostActions extends YpBaseElement {
         }
         return undefined;
     }
-    _setEndorsement(value) {
+    async _setEndorsement(value) {
         this.endorseValue = value;
+        await this.updateComplete;
         if (this.$$("#actionUp")) {
             if (value !== 0 &&
                 this.post.Group.configuration &&
@@ -489,20 +490,14 @@ let YpPostActions = class YpPostActions extends YpBaseElement {
                 if (value > 0) {
                     this.$$("#actionUp").className += " " + "hearts-up-selected";
                     YpFormattingHelpers.removeClass(this.$$("#actionDown"), "hearts-down-selected");
-                    this.$$("#iconUpButton").innerHTML =
-                        "<md-icon>favorite</md-icon>";
                 }
                 else if (value < 0) {
                     this.$$("#actionDown").className += " " + "hearts-down-selected";
                     YpFormattingHelpers.removeClass(this.$$("#actionUp"), "hearts-up-selected");
-                    this.$$("#iconUpButton").innerHTML =
-                        "<md-icon>favorite</md-icon>";
                 }
                 else {
                     YpFormattingHelpers.removeClass(this.$$("#actionUp"), "hearts-up-selected");
                     YpFormattingHelpers.removeClass(this.$$("#actionDown"), "hearts-down-selected");
-                    this.$$("#iconUpButton").innerHTML =
-                        "<md-icon>favorite</md-icon>";
                 }
             }
             else {
