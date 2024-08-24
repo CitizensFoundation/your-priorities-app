@@ -8,7 +8,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 import { css, html, nothing } from 'lit';
 import { property, customElement } from 'lit/decorators.js';
 import '@material/web/textfield/outlined-text-field.js';
-import '@material/web/button/filled-button.js';
+import '@material/web/button/outlined-button.js';
 import '@material/web/select/outlined-select.js';
 import '@material/web/select/select-option.js';
 import '@material/web/progress/linear-progress.js';
@@ -25,6 +25,10 @@ let YpAdminTranslations = class YpAdminTranslations extends YpAdminPage {
           text-align: right;
           margin-right: 22px;
           margin-top: 8px;
+        }
+
+        md-outlined-button {
+          margin: 16px;
         }
 
         .wordCloudContainer {
@@ -307,14 +311,14 @@ let YpAdminTranslations = class YpAdminTranslations extends YpAdminPage {
                 >
                 </md-outlined-text-field>
                 <div class="layout horizontal endAligned">
-                  <md-filled-button
+                  <md-outlined-button
 
                     @click="${() => this.cancelEdit(item)}"
-                  >${this.t('cancel')}</md-filled-button>
-                  <md-filled-button
+                  >${this.t('cancel')}</md-outlined-button>
+                  <md-outlined-button
 
                     @click="${() => this.saveItem(item)}"
-                  >${this.t('save')}</md-filled-button>
+                  >${this.t('save')}</md-outlined-button>
                 </div>
               `
             : html `
@@ -324,15 +328,15 @@ let YpAdminTranslations = class YpAdminTranslations extends YpAdminPage {
                 : this.t('noTranslation')}
                 </div>
                 <div class="layout horizontal endAligned">
-                  <md-filled-button
+                  <md-outlined-button
 
                     @click="${() => this.openEdit(item)}"
-                  >${this.t('edit')}</md-filled-button>
-                  <md-filled-button
+                  >${this.t('edit')}</md-outlined-button>
+                  <md-outlined-button
 
                     ?hidden="${item.translatedText != null}"
                     @click="${() => this.autoTranslate(item)}"
-                  >${this.t('autoTranslate')}</md-filled-button>
+                  >${this.t('autoTranslate')}</md-outlined-button>
                 </div>
               `}
         </div>
