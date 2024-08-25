@@ -156,4 +156,12 @@ export const YpAppStyles = css`
     max-width: 1048px;
     margin: 0 auto;
   }
+
+  @media (max-width: 600px) {
+    yp-top-app-bar {
+      padding: 0;
+      max-width: 100%;
+      margin: 0;
+    }
+  }
 `;

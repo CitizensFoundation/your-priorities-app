@@ -194,15 +194,29 @@ export class YpPost extends YpCollection {
           padding-top: 32px;
         }
 
-        @media (max-width: 961px) {
+        @media (max-width: 960px) {
           .postHeader {
             width: 600px;
           }
         }
 
-        @media (max-width: 600px) {
+        @media (max-width: 960px) {
           .postHeader {
             width: 400px;
+          }
+
+          .outerFrameContainer {
+            max-width: 100%;
+            width: 100%;
+          }
+
+          .frameContainer {
+            max-width: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            border-radius: 0;
+            border: none;
           }
         }
 

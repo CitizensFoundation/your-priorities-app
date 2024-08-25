@@ -77,6 +77,7 @@ let YpTopAppBar = class YpTopAppBar extends YpBaseElement {
           right: 0;
           transition: top 0.3s;
           z-index: 2000;
+          max-width: 100vw;
         }
 
         .top-app-bar[restrict-width] {
@@ -116,10 +117,14 @@ let YpTopAppBar = class YpTopAppBar extends YpBaseElement {
             margin-bottom: 4px;
           }
 
+          .middleContainer {
+            padding-left: 4px;
+          }
+
           .top-app-bar {
             padding-top: 0;
             padding-bottom: 0;
-            padding-left: 16px;
+            padding-left: 0;
             padding-right: 0;
             background: var(--md-sys-color-surface);
           }
@@ -203,7 +208,7 @@ let YpTopAppBar = class YpTopAppBar extends YpBaseElement {
             : "top-app-bar";
         return html `
       <div
-        class="${appBarClass} layout center-center"
+        class="${appBarClass} layout"
         ?restrict-width="${this.restrictWidth}"
       >
         <div class="middleContainer" ?restrict-width="${this.restrictWidth}">
@@ -214,7 +219,7 @@ let YpTopAppBar = class YpTopAppBar extends YpBaseElement {
             ? this.renderBreadcrumbsDropdown()
             : ""}
           </div>
-          ${!this.restrictWidth ? html `<div class="flex"></div>` : nothing}
+          <div class="flex"></div>
           <slot name="action"></slot>
         </div>
       </div>

@@ -64,7 +64,7 @@ export class YpGroupHeader extends YpCollectionHeader {
           }
 
           .description {
-            width: 100%;
+            width: 90%;
           }
 
           .collectionDescriptionimageCard {
@@ -115,18 +115,17 @@ export class YpGroupHeader extends YpCollectionHeader {
                           : nothing}
                       </div>
                     </div>
-                    <div class="layout horizontal">
-                        <div class="descriptionContainer">
-                          ${this.renderDescription()} ${this.renderStats()}
-                        </div>
-                    <div
-                      is-video="${ifDefined(this.collectionVideoURL)}"
-                      id="cardImage"
-                      class="collectionDescriptionimageCard top-card"
-                    >
-                      ${this.renderMediaContent()}
-                    </div>
-
+                    <div class="layout horizontal ${!this.wide ? 'wrap' : ''}">
+                      <div class="descriptionContainer">
+                        ${this.renderDescription()} ${this.renderStats()}
+                      </div>
+                      <div
+                        is-video="${ifDefined(this.collectionVideoURL)}"
+                        id="cardImage"
+                        class="collectionDescriptionimageCard top-card"
+                      >
+                        ${this.renderMediaContent()}
+                      </div>
                     </div>
                   </div>
                 </div>

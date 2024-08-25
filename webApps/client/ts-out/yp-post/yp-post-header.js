@@ -431,7 +431,7 @@ let YpPostHeader = class YpPostHeader extends YpPostBaseWithAnswers(YpBaseElemen
               ${this.post.Group.configuration?.showWhoPostedPosts
                 ? this.renderUser()
                 : nothing}
-              <div class="layout horizontal">
+              <div class="layout horizontal ${!this.wide ? 'wrap' : ''}">
                 <div class="layout vertical center-center mediaContainer">
                   ${this.renderCoverMedia()} ${this.renderActions()}
                 </div>

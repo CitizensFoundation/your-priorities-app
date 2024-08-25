@@ -146,6 +146,11 @@ let YpPostListItem = class YpPostListItem extends YpBaseElement {
             max-width: 423px;
           }
 
+          .actionsBar {
+            margin-left: 0;
+            margin-top: 16px;
+          }
+
           .description[has-custom-ratings] {
             padding-bottom: 28px;
           }
@@ -281,7 +286,7 @@ let YpPostListItem = class YpPostListItem extends YpBaseElement {
                   @click="${this.goToPostIfNotHeader}"
                   id="mainArea"
                 >
-                  <div class="layout horizontal">
+                  <div class="layout horizontal ${!this.wide ? 'wrap' : ''}">
                     <yp-post-cover-media
                       ?mini="${this.mini}"
                       top-radius
