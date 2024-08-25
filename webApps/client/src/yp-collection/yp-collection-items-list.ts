@@ -71,10 +71,10 @@ export class YpCollectionItemsList extends YpBaseElement {
         @media (max-width: 600px) {
           lit-virtualizer {
             margin-top: 80px;
-            margin-left: 8px;
-            margin-right: 8px;
-            padding-left: 8px;
-            padding-right: 8px;
+            margin-left: 0;
+            margin-right: 0;
+            padding-left: 0;
+            padding-right: 0;
             width: 100% !important;
             min-width: 100% !important;
           }
@@ -109,7 +109,7 @@ export class YpCollectionItemsList extends YpBaseElement {
         <yp-collection-item-card
           class="card"
           .index="${index}"
-          ?useEvenOddItemLayout="${this.useEvenOddItemLayout}"
+          ?useEvenOddItemLayout="${this.useEvenOddItemLayout && this.wide}"
           aria-label="${item.name}"
           ariarole="listitem"
           .item="${item}"

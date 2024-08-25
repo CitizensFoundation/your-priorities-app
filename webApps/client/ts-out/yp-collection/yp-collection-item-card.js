@@ -150,10 +150,10 @@ let YpCollectionItemCard = class YpCollectionItemCard extends YpBaseElement {
             margin-right: 0;
             padding-left: 0;
             padding-right: 0;
-            width: 100%;
+            width: 90%;
             height: 100%;
             padding-bottom: 8px;
-            max-width: 430px;
+            max-width: 90%;
           }
 
           yp-image {

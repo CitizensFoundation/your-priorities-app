@@ -335,7 +335,7 @@ export class YpCollectionHeader extends YpBaseElement {
           }
 
           .collectionDescription {
-            width: 100%;
+            width: auto;
             height: 100%;
             margin-left: 8px;
             margin-right: 8px;
@@ -345,12 +345,13 @@ export class YpCollectionHeader extends YpBaseElement {
           yp-image,
           video,
           .image {
-            width: 100%;
+            width: 409px;
             height: 230px;
           }
 
           .imageCard {
             height: 230px;
+            width: 409px;
           }
 
           .imageCard[is-video] {
@@ -377,10 +378,12 @@ export class YpCollectionHeader extends YpBaseElement {
           video,
           .image {
             height: 225px;
+            width: 400px;
           }
 
           .imageCard {
             height: 225px;
+            width: 400px;
           }
         }
 
@@ -389,10 +392,12 @@ export class YpCollectionHeader extends YpBaseElement {
           video,
           .image {
             height: 207px;
+            width: 368px;
           }
 
           .imageCard {
             height: 205px;
+            width: 364px;
           }
         }
 
@@ -401,10 +406,13 @@ export class YpCollectionHeader extends YpBaseElement {
           video,
           .image {
             height: 200px;
+            width: 356px;
+
           }
 
           .imageCard {
             height: 200px;
+            width: 356px;
           }
         }
 
@@ -413,10 +421,12 @@ export class YpCollectionHeader extends YpBaseElement {
           video,
           .image {
             height: 180px;
+            width: 320px;
           }
 
           .imageCard {
             height: 180px;
+            width: 320px;
           }
         }
 

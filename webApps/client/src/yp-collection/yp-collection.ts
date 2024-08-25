@@ -425,8 +425,13 @@ export abstract class YpCollection extends YpBaseElementWithLogin {
 
         @media (max-width: 960px) {
           md-tabs {
-            width: 100%;
+            width: 100vw;
             max-width: 100%;
+          }
+
+          .mainContent {
+            margin-left:0;
+            margin-right: 0;
           }
 
           md-secondary-tab {
@@ -452,6 +457,7 @@ export abstract class YpCollection extends YpBaseElementWithLogin {
 
           .createFab {
             width: 100%;
+            margin-left: 0;
           }
 
           .currentPage {
