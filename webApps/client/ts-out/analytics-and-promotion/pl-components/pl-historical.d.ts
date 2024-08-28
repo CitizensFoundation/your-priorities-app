@@ -16,6 +16,6 @@ export declare class PlausibleHistorical extends PlausibleBaseElementWithState {
     highlightedGoals?: string[];
     static get styles(): import("lit").CSSResult[];
     render(): import("lit-html").TemplateResult<1>;
-    renderConversions(): typeof nothing | import("lit-html").TemplateResult<1>;
+    renderConversions(): import("lit-html").TemplateResult<1> | typeof nothing;
 }
 //# sourceMappingURL=pl-historical.d.ts.map
