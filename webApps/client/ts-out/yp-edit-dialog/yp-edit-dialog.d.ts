@@ -25,10 +25,12 @@ export declare class YpEditDialog extends YpBaseElement {
     useNextTabAction: boolean;
     nextActionText: string | undefined;
     uploadingState: boolean;
+    disableDialog: boolean;
     confirmationText: string | undefined;
     heading: string;
     name: string | undefined;
     customSubmit: boolean;
+    hideAllActions: boolean;
     static get styles(): any[];
     renderMobileView(): import("lit-html").TemplateResult<1>;
     renderDesktopView(): import("lit-html").TemplateResult<1>;

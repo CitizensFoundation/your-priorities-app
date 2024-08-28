@@ -45,7 +45,7 @@ let YpStructuredQuestionEdit = class YpStructuredQuestionEdit extends YpBaseElem
           font-size: 16px;
         }
 
-        md-filled-text-field {
+        md-outlined-text-field {
           --md-filled-field-container-color: var(
             --md-sys-color-surface
           ) !important;
@@ -103,18 +103,18 @@ let YpStructuredQuestionEdit = class YpStructuredQuestionEdit extends YpBaseElem
           margin-bottom: 16px;
         }
 
-        md-filled-text-field {
+        md-outlined-text-field {
           width: 100%;
         }
 
-        md-filled-text-field[use-small-font],
-        md-filled-text-field[use-small-font] {
-          --md-filled-text-field-container-label: {
+        md-outlined-text-field[use-small-font],
+        md-outlined-text-field[use-small-font] {
+          --md-outlined-text-field-container-label: {
             font-size: 16px;
           }
         }
 
-        md-filled-text-field {
+        md-outlined-text-field {
           margin-bottom: 32px;
         }
 
@@ -157,15 +157,15 @@ let YpStructuredQuestionEdit = class YpStructuredQuestionEdit extends YpBaseElem
           margin-top: 42px;
         }
 
-        md-filled-text-field.textAreaLong {
-          --md-filled-text-field-container: {
+        md-outlined-text-field.textAreaLong {
+          --md-outlined-text-field-container: {
             margin: 0;
             padding: 0;
           }
         }
 
-        md-filled-text-field.textAreaLong {
-          --md-filled-text-field-container: {
+        md-outlined-text-field.textAreaLong {
+          --md-outlined-text-field-container: {
             margin: 0;
             padding: 0;
           }
@@ -224,7 +224,7 @@ let YpStructuredQuestionEdit = class YpStructuredQuestionEdit extends YpBaseElem
         }
 
         @media (min-width: 800px) {
-          md-filled-text-field[half-width-desktop] {
+          md-outlined-text-field[half-width-desktop] {
             width: 50%;
           }
 
@@ -285,7 +285,7 @@ let YpStructuredQuestionEdit = class YpStructuredQuestionEdit extends YpBaseElem
     }
     renderTextField(skipLabel = false) {
         return html `
-      <md-filled-text-field
+      <md-outlined-text-field
         id="structuredQuestion_${this.index}"
         .value="${this.question.value || ""}"
         .label="${!skipLabel ? this.textWithIndex : ""}"
@@ -304,7 +304,7 @@ let YpStructuredQuestionEdit = class YpStructuredQuestionEdit extends YpBaseElem
         ?required="${this.question.required}"
         maxlength="${ifDefined(this.question.maxLength || undefined)}"
       >
-      </md-filled-text-field>
+      </md-outlined-text-field>
       ${this.question.subTitle
             ? html `<div class="subTitle" ?use-small-font="${this.useSmallFont}">${this.question.subTitle}</div>`
             : nothing}
@@ -334,8 +334,9 @@ let YpStructuredQuestionEdit = class YpStructuredQuestionEdit extends YpBaseElem
       </yp-simple-html-editor>`;
         }
         else {
+            debugger;
             return html `
-        <md-filled-text-field
+        <md-outlined-text-field
           id="structuredQuestion_${this.index}"
           data-type="text"
           type="textarea"
@@ -354,13 +355,13 @@ let YpStructuredQuestionEdit = class YpStructuredQuestionEdit extends YpBaseElem
                 this._debounceChangeEvent(e);
             }}"
           name="${this.formName || ""}"
-          rows="${ifDefined(this.question.rows || 3)}"
-          max-rows="5"
-          maxrows="5"
+          rows="${ifDefined(this.question.rows || 5)}"
+          max-rows="7"
+          maxrows="7"
           ?required="${this.question.required}"
           maxlength="${ifDefined(this.question.maxLength || undefined)}"
         >
-        </md-filled-text-field>
+        </md-outlined-text-field>
       `;
         }
     }
@@ -447,7 +448,7 @@ let YpStructuredQuestionEdit = class YpStructuredQuestionEdit extends YpBaseElem
                 ? html ` ${this.renderRadioButton(radioButton, buttonIndex)} `
                 : html `
                       ${this.renderRadioButton(radioButton, buttonIndex)}
-                      <md-filled-text-field
+                      <md-outlined-text-field
                         class="specifyInput"
                         hidden
                         @change="${this._debounceChangeEvent}"
@@ -458,7 +459,7 @@ let YpStructuredQuestionEdit = class YpStructuredQuestionEdit extends YpBaseElem
                         type="text"
                         id="structuredQuestion_${this
                     .index}_${buttonIndex}__radioOther"
-                      ></md-filled-text-field>
+                      ></md-outlined-text-field>
                     `}
               `)}
           </div>
@@ -504,14 +505,14 @@ let YpStructuredQuestionEdit = class YpStructuredQuestionEdit extends YpBaseElem
                 ? html ` ${this.renderCheckbox(checkbox.text, buttonIndex)} `
                 : html `
                       ${this.renderCheckbox(checkbox.text, buttonIndex)}
-                      <md-filled-text-field
+                      <md-outlined-text-field
                         class="specifyInput specifyCheckBox"
                         hidden
                         @change="${this._debounceChangeEvent}"
                         .type="${checkbox.subType || "text"}"
                         id="structuredQuestion_${this
                     .index}_${buttonIndex}_checkboxOther"
-                      ></md-filled-text-field>
+                      ></md-outlined-text-field>
                     `}
               `)}
           </div>

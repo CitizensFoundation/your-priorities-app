@@ -385,34 +385,50 @@ let YpPost = class YpPost extends YpCollection {
       </div>
     `;
     }
+    get isEditingPost() {
+        return (this.subRoute?.endsWith("/edit") || this.subRoute?.endsWith("/edit/"));
+    }
     render() {
-        return this.post
-            ? html `
-          <div class="layout vertical center-center outerFrameContainer">
-            <div class="frameContainer">
-              <div class="layout vertical">
-                ${this.renderPostStaticHeader()} ${this.renderPostHeader()}
-              </div>
-              ${this.renderNavigationButtons()}
-              <div class="layout vertical center-center">
-                ${this.renderPostTabs()}
-              </div>
-              ${this.renderCurrentPostTabPage()}
-              ${!this.disableNewPosts &&
+        if (this.post && !this.isEditingPost) {
+            return html `
+        <div class="layout vertical center-center outerFrameContainer">
+          <div class="frameContainer">
+            <div class="layout vertical">
+              ${this.renderPostStaticHeader()} ${this.renderPostHeader()}
+            </div>
+            ${this.renderNavigationButtons()}
+            <div class="layout vertical center-center">
+              ${this.renderPostTabs()}
+            </div>
+            ${this.renderCurrentPostTabPage()}
+            ${!this.disableNewPosts &&
                 this.post &&
                 !this.post.Group.configuration?.hideNewPost &&
                 !this.post.Group.configuration?.hideNewPostOnPostPage
                 ? html `<md-fab
-                    hidden
-                    .label="${this.t("post.new")}"
-                    @click="${this._newPost}"
-                    ><md-icon>lightbuld</md-icon></md-fab
-                  >`
+                  hidden
+                  .label="${this.t("post.new")}"
+                  @click="${this._newPost}"
+                  ><md-icon>lightbuld</md-icon></md-fab
+                >`
                 : nothing}
-            </div>
           </div>
-        `
-            : html ``;
+        </div>
+      `;
+        }
+        else if (this.post) {
+            return html `
+        <yp-post-edit
+          disableDialog
+          .new="${false}"
+          .post="${this.post}"
+          .group="${this.post.Group}"
+        ></yp-post-edit>
+      `;
+        }
+        else {
+            return html ``;
+        }
     }
     get tabDebateCount() {
         const labelTranslation = this.t("post.tabs.debate");

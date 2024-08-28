@@ -140,7 +140,7 @@ export function themeFromSourceColorWithContrast(
   }
 
   //scheme = "vibrant";
-  console.error("scheme", scheme);
+  //console.error("scheme", scheme);
   if (scheme === 'tonal') {
     //@ts-ignore
     colorScheme = new SchemeTonalSpot(

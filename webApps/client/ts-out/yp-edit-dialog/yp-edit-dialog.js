@@ -22,7 +22,9 @@ let YpEditDialog = class YpEditDialog extends YpBaseElement {
         this.opened = false;
         this.useNextTabAction = false;
         this.uploadingState = false;
+        this.disableDialog = false;
         this.customSubmit = false;
+        this.hideAllActions = false;
     }
     static get styles() {
         return [
@@ -35,7 +37,9 @@ let YpEditDialog = class YpEditDialog extends YpBaseElement {
           // height: 100%;
           width: 1024px;
           height: 100%;
-          --md-dialog-container-color: var(--md-sys-color-surface-container-lowest);
+          --md-dialog-container-color: var(
+            --md-sys-color-surface-container-lowest
+          );
         }
 
         md-dialog.popUpDialogDouble {
@@ -378,39 +382,47 @@ let YpEditDialog = class YpEditDialog extends YpBaseElement {
     `;
     }
     render() {
-        return html `
-      <md-dialog
-        ?open="${this.opened}"
-        ?rtl="${this.rtl}"
-        @cancel="${this.scrimDisableAction}"
-        ?is-safari="${this.isSafari}"
-        @closed="${this.close}"
-        .name="${this.name}"
-        .heading="${this.heading}"
-        ?long-title-text="${this.hasLongTitle}"
-        id="editDialog"
-        scrimClickAction=""
-        escapeKeyAction=""
-        .fullscreen="${this.narrow}"
-        class="${this.computeClass}"
-        with-backdrop="${!this.wide}"
-      >
-        <span slot="headline">
-          <md-icon-button @click="${this.close}"><md-icon>close</md-icon></md-icon-button> <span>${this.heading}</span></span>
-        ${this.narrow
-            ? this.renderMobileView()
-            : this.renderDesktopView()}
-      </md-dialog>
-
-      <md-dialog id="formErrorDialog" modal>
-        <div slot="content" id="errorText">${this.errorText}</div>
-        <div class="buttons" slot="actions">
-          <md-text-button autofocus @click="${this._clearErrorText}"
-            >${this.t("ok")}</md-text-button
+        if (this.disableDialog) {
+            return html ` <md-icon-button @click="${this.close}"><md-icon>close</md-icon></md-icon-button> <span>${this.heading}</span></span>
+        ${this.narrow ? this.renderMobileView() : this.renderDesktopView()}`;
+        }
+        else {
+            return html `
+        <md-dialog
+          ?open="${this.opened}"
+          ?rtl="${this.rtl}"
+          @cancel="${this.scrimDisableAction}"
+          ?is-safari="${this.isSafari}"
+          @closed="${this.close}"
+          .name="${this.name}"
+          .heading="${this.heading}"
+          ?long-title-text="${this.hasLongTitle}"
+          id="editDialog"
+          scrimClickAction=""
+          escapeKeyAction=""
+          .fullscreen="${this.narrow}"
+          class="${this.computeClass}"
+          with-backdrop="${!this.wide}"
+        >
+          <span slot="headline">
+            <md-icon-button @click="${this.close}"
+              ><md-icon>close</md-icon></md-icon-button
+            >
+            <span>${this.heading}</span></span
           >
-        </div>
-      </md-dialog>
-    `;
+          ${this.narrow ? this.renderMobileView() : this.renderDesktopView()}
+        </md-dialog>
+
+        <md-dialog id="formErrorDialog" modal>
+          <div slot="content" id="errorText">${this.errorText}</div>
+          <div class="buttons" slot="actions">
+            <md-text-button autofocus @click="${this._clearErrorText}"
+              >${this.t("ok")}</md-text-button
+            >
+          </div>
+        </md-dialog>
+      `;
+        }
     }
     get narrow() {
         return !this.wide || this.tablet;
@@ -711,6 +723,9 @@ __decorate([
     property({ type: Boolean })
 ], YpEditDialog.prototype, "uploadingState", void 0);
 __decorate([
+    property({ type: Boolean })
+], YpEditDialog.prototype, "disableDialog", void 0);
+__decorate([
     property({ type: String })
 ], YpEditDialog.prototype, "confirmationText", void 0);
 __decorate([
@@ -722,6 +737,9 @@ __decorate([
 __decorate([
     property({ type: Boolean })
 ], YpEditDialog.prototype, "customSubmit", void 0);
+__decorate([
+    property({ type: Boolean })
+], YpEditDialog.prototype, "hideAllActions", void 0);
 YpEditDialog = __decorate([
     customElement("yp-edit-dialog")
 ], YpEditDialog);

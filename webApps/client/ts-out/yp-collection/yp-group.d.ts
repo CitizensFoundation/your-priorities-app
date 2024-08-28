@@ -58,6 +58,7 @@ export declare class YpGroup extends YpCollection {
     static get styles(): (any[] | import("lit").CSSResult)[];
     renderAgentsOps(): TemplateResult<1>;
     renderGroupFolder(): TemplateResult<1>;
+    get isNewPost(): boolean | undefined;
     render(): TemplateResult<1>;
     renderYpGroup(): TemplateResult<1>;
 }

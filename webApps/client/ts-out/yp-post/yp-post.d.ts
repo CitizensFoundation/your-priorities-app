@@ -28,6 +28,7 @@ export declare class YpPost extends YpCollection {
     goToPreviousPost(): void;
     goToNextPost(): void;
     renderNavigationButtons(): TemplateResult<1>;
+    get isEditingPost(): boolean | undefined;
     render(): TemplateResult<1>;
     get tabDebateCount(): string;
     get tabPhotosCount(): string;

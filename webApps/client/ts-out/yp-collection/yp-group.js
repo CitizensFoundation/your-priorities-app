@@ -840,22 +840,45 @@ let YpGroup = class YpGroup extends YpCollection {
     }
     renderGroupFolder() {
         return html ` <div class="currentPage layout vertical center-center">
-    <div class="topContainer">
-      <yp-collection-items-list
-        id="collectionItems"
-        .collectionItems="${this.collectionItems}"
-        .collection="${this.collection}"
-        .collectionType="${this.collectionType}"
-        .collectionItemType="${this.collectionItemType}"
-        .collectionId="${this.collectionId}"
-        ?useEvenOddItemLayout="${this.useEvenOddItemLayout}"
-      ></yp-collection-items-list>
-    </div>
-  </div>`;
+      <div class="topContainer">
+        <yp-collection-items-list
+          id="collectionItems"
+          .collectionItems="${this.collectionItems}"
+          .collection="${this.collection}"
+          .collectionType="${this.collectionType}"
+          .collectionItemType="${this.collectionItemType}"
+          .collectionId="${this.collectionId}"
+          ?useEvenOddItemLayout="${this.useEvenOddItemLayout}"
+        ></yp-collection-items-list>
+      </div>
+    </div>`;
+    }
+    get isNewPost() {
+        if (this.collection) {
+            if (YpAccessHelpers.checkGroupAccess(this.collection) &&
+                !this.disableNewPosts) {
+                return (this.subRoute?.endsWith("/new_post") || this.subRoute?.endsWith("/new_post/"));
+            }
+            else {
+                return false;
+            }
+        }
+        else {
+            return false;
+        }
     }
     render() {
         if (!this.collection || !this.collection.configuration) {
             return html `<md-linear-progress indeterminate></md-linear-progress>`;
+        }
+        if (this.isNewPost) {
+            return html `
+        <yp-post-edit
+          disableDialog
+          new
+          .group="${this.collection}"
+        ></yp-post-edit>
+      `;
         }
         switch (this.cleanedGroupType) {
             case YpGroupType.IdeaGenerationAndDebate:

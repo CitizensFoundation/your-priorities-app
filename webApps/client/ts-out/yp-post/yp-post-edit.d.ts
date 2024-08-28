@@ -19,6 +19,7 @@ export declare class YpPostEdit extends YpEditBase {
     post: YpPostData | undefined;
     group: YpGroupData | undefined;
     saveSurveyAnswers: boolean;
+    disableDialog: boolean;
     skipIfSavedSurveyAnswers: boolean;
     locationHidden: boolean;
     location: YpLocationData | undefined;
@@ -54,10 +55,9 @@ export declare class YpPostEdit extends YpEditBase {
     _generateLogo(event: CustomEvent): void;
     static get styles(): any[];
     _setSelectedTab(event: CustomEvent): void;
-    renderTabs(): TemplateResult<1>;
     renderMoreContactInfo(): TemplateResult<1>;
     get titleQuestionText(): string;
-    renderDescriptionTab(): TemplateResult<1> | typeof nothing;
+    renderDescriptionInputs(): TemplateResult<1> | typeof nothing;
     renderPointTab(): TemplateResult<1> | typeof nothing;
     renderLocationTab(): TemplateResult<1> | typeof nothing;
     renderCoverMediaSelection(): TemplateResult<1>;
@@ -65,7 +65,7 @@ export declare class YpPostEdit extends YpEditBase {
     _setSelectedCoverMediaType(event: CustomEvent): void;
     get _pointPageHidden(): boolean;
     get _mediaPageHidden(): boolean;
-    renderCurrentTabPage(): TemplateResult | undefined | {};
+    renderMediaAndLocation(): TemplateResult | undefined | {};
     renderHiddenInputs(): TemplateResult<1>;
     render(): TemplateResult<1>;
     _gotAiImage(event: CustomEvent): void;

@@ -76,6 +76,9 @@ export class YpEditDialog extends YpBaseElement {
   @property({ type: Boolean })
   uploadingState = false;
 
+  @property({ type: Boolean })
+  disableDialog = false;
+
   @property({ type: String })
   confirmationText: string | undefined;
 
@@ -88,6 +91,9 @@ export class YpEditDialog extends YpBaseElement {
   @property({ type: Boolean })
   customSubmit = false;
 
+  @property({ type: Boolean })
+  hideAllActions = false;
+
   static override get styles() {
     return [
       super.styles,
@@ -99,7 +105,9 @@ export class YpEditDialog extends YpBaseElement {
           // height: 100%;
           width: 1024px;
           height: 100%;
-          --md-dialog-container-color: var(--md-sys-color-surface-container-lowest);
+          --md-dialog-container-color: var(
+            --md-sys-color-surface-container-lowest
+          );
         }
 
         md-dialog.popUpDialogDouble {
@@ -445,41 +453,50 @@ export class YpEditDialog extends YpBaseElement {
   }
 
   override render() {
-    return html`
-      <md-dialog
-        ?open="${this.opened}"
-        ?rtl="${this.rtl}"
-        @cancel="${this.scrimDisableAction}"
-        ?is-safari="${this.isSafari}"
-        @closed="${this.close}"
-        .name="${this.name}"
-        .heading="${this.heading}"
-        ?long-title-text="${this.hasLongTitle}"
-        id="editDialog"
-        scrimClickAction=""
-        escapeKeyAction=""
-        .fullscreen="${this.narrow}"
-        class="${this.computeClass}"
-        with-backdrop="${!this.wide}"
-      >
-        <span slot="headline">
-          <md-icon-button @click="${this.close}"><md-icon>close</md-icon></md-icon-button> <span>${this.heading}</span></span>
-        ${
-          this.narrow
-            ? this.renderMobileView()
-            : this.renderDesktopView()
-        }
-      </md-dialog>
-
-      <md-dialog id="formErrorDialog" modal>
-        <div slot="content" id="errorText">${this.errorText}</div>
-        <div class="buttons" slot="actions">
-          <md-text-button autofocus @click="${this._clearErrorText}"
-            >${this.t("ok")}</md-text-button
+    if (this.disableDialog) {
+      return html` <md-icon-button @click="${
+        this.close
+      }"><md-icon>close</md-icon></md-icon-button> <span>${
+        this.heading
+      }</span></span>
+        ${this.narrow ? this.renderMobileView() : this.renderDesktopView()}`;
+    } else {
+      return html`
+        <md-dialog
+          ?open="${this.opened}"
+          ?rtl="${this.rtl}"
+          @cancel="${this.scrimDisableAction}"
+          ?is-safari="${this.isSafari}"
+          @closed="${this.close}"
+          .name="${this.name}"
+          .heading="${this.heading}"
+          ?long-title-text="${this.hasLongTitle}"
+          id="editDialog"
+          scrimClickAction=""
+          escapeKeyAction=""
+          .fullscreen="${this.narrow}"
+          class="${this.computeClass}"
+          with-backdrop="${!this.wide}"
+        >
+          <span slot="headline">
+            <md-icon-button @click="${this.close}"
+              ><md-icon>close</md-icon></md-icon-button
+            >
+            <span>${this.heading}</span></span
           >
-        </div>
-      </md-dialog>
-    `;
+          ${this.narrow ? this.renderMobileView() : this.renderDesktopView()}
+        </md-dialog>
+
+        <md-dialog id="formErrorDialog" modal>
+          <div slot="content" id="errorText">${this.errorText}</div>
+          <div class="buttons" slot="actions">
+            <md-text-button autofocus @click="${this._clearErrorText}"
+              >${this.t("ok")}</md-text-button
+            >
+          </div>
+        </md-dialog>
+      `;
+    }
   }
 
   get narrow() {
