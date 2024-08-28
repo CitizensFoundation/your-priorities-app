@@ -91,7 +91,7 @@ let YpPostTranscript = class YpPostTranscript extends YpBaseElement {
           ${this.t('checkTranscriptError')}
         </div>
 
-        ${this.post.public_data.transcript.text
+        ${this.post.public_data?.transcript?.text
             ? html `
               <div class="transcriptText layout vertical center-center">
                 <div

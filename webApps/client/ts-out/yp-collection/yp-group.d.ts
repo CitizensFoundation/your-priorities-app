@@ -48,12 +48,12 @@ export declare class YpGroup extends YpCollection {
     refresh(fromMainApp?: boolean): Promise<void>;
     _setupGroupSaml(group: YpGroupData): void;
     scrollToCollectionItemSubClass(): void;
-    renderTabs(): TemplateResult<1> | typeof nothing;
+    renderTabs(): typeof nothing | TemplateResult<1>;
     renderPostList(statusFilter: string): TemplateResult;
     renderCurrentGroupTabPage(): TemplateResult | undefined;
     renderAllOurIdeas(): TemplateResult<1>;
     renderStaticHtml(): TemplateResult<1>;
-    renderHeader(): TemplateResult<1> | typeof nothing;
+    renderHeader(): typeof nothing | TemplateResult<1>;
     get cleanedGroupType(): number;
     static get styles(): (any[] | import("lit").CSSResult)[];
     renderAgentsOps(): TemplateResult<1>;

@@ -119,6 +119,10 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
           display: block;
         }
 
+        .mainPointInput {
+          width: 100%;
+        }
+
         md-linear-progress {
           width: 95%;
           margin-top: 64px;
@@ -573,6 +577,7 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
                 : nothing}
 
               <md-filled-text-field
+                class="mainPointInput"
                 ?is-up="${type == "Up"}"
                 ?is-down="${type == "Down"}"
                 id="${type.toLowerCase()}_point"
