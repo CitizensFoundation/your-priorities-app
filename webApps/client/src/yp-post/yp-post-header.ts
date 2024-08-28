@@ -290,19 +290,19 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
             </md-menu-item>
             <md-menu-item
               @click="${this._openMovePost}"
-              ?hidden="${!YpAccessHelpers.checkPostAdminOnlyAccess(this.post)}"
+              ?hidden="${true || !YpAccessHelpers.checkPostAdminOnlyAccess(this.post)}"
             >
               ${this.t("post.move")}
             </md-menu-item>
             <md-menu-item
               @click="${this._openPostStatusChange}"
-              ?hidden="${!YpAccessHelpers.checkPostAdminOnlyAccess(this.post)}"
+              ?hidden="${true || !YpAccessHelpers.checkPostAdminOnlyAccess(this.post)}"
             >
               ${this.t("post.statusChange")}
             </md-menu-item>
             <md-menu-item
               @click="${this._openPostStatusChangeNoEmails}"
-              ?hidden="${!YpAccessHelpers.checkPostAdminOnlyAccess(this.post)}"
+              ?hidden="${true || !YpAccessHelpers.checkPostAdminOnlyAccess(this.post)}"
             >
               ${this.t("post.statusChangeNoEmails")}
             </md-menu-item>
@@ -600,18 +600,7 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
 
   _openEdit() {
     window.appGlobals.activity("open", "post.edit");
-    window.appDialogs.getDialogAsync(
-      "postEdit",
-      (dialog: any /*YpApiActionDialog*/) => {
-        dialog.setup(
-          this.post,
-          false,
-          this._refresh.bind(this),
-          this.post.Group
-        );
-        dialog.open(false, { postId: this.post.id });
-      }
-    );
+    YpNavHelpers.redirectTo("/post/" + this.post.id + "/edit");
   }
 
   _openReport() {

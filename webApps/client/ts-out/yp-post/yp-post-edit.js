@@ -204,8 +204,8 @@ let YpPostEdit = class YpPostEdit extends YpEditBase {
           font-size: 36px;
           font-weight: 700;
           font-family: var(--md-ref-typeface-brand);
-          margin-bottom: 16px;
-          margin-right: 32px;
+          margin-bottom: 32px;
+          margin-top: 32px;
         }
 
         .outerFrameContainer {
@@ -220,7 +220,6 @@ let YpPostEdit = class YpPostEdit extends YpEditBase {
           max-width: 970px;
           width: 970px;
           min-height: 1000px;
-          margin: 32px;
           margin-top: 0;
           padding: 32px;
           border-radius: 4px;

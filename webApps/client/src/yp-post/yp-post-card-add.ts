@@ -5,7 +5,8 @@ import { YpBaseElement } from '../common/yp-base-element.js';
 import { ShadowStyles } from '../common/ShadowStyles.js';
 
 import '../yp-magic-text/yp-magic-text.js';
-import "@material/web/icon/icon.js";
+import '@material/web/fab/fab.js';
+import '@material/web/icon/icon.js';
 
 @customElement('yp-post-card-add')
 export class YpPostCardAdd extends YpBaseElement {
@@ -29,64 +30,47 @@ export class YpPostCardAdd extends YpBaseElement {
           width: 100%;
         }
 
-        .postCard {
-          width: 100%;
-          min-height: 75px;
-          margin-top: 8px;
+        .topContainer {
+          background-color: var(--md-sys-color-surface);
+          display: flex;
+          justify-content: center;
           padding: 16px;
-          background-color: var(--md-sys-color-primary);
-          color: var(--md-sys-color-on-primary);
-          cursor: pointer;
+        }
+
+        md-fab {
+          --md-fab-container-shape: 4px;
+          --md-fab-label-text-size: 16px !important;
+          --md-fab-label-text-weight: 600 !important;
           margin-bottom: 24px;
-          text-align: center;
-          max-width: 310px;
-          border-radius: 32px;
+          --md-fab-container-elevation: 0;
+          --md-fab-container-shadow-color: transparent;
+          width: 225px;
         }
 
-        .postCard[disabled] {
-          background-color: var(--md-sys-color-secondary-container);
-          color: var(--md-sys-color-on-secondary-container);
+        md-fab:not([has-static-theme]) {
+          --md-sys-color-primary-container: var(--md-sys-color-primary);
+          --md-sys-color-on-primary-container: var(--md-sys-color-on-primary);
         }
 
-        md-icon {
-          --md-icon-size: 64px;
+        md-fab[disabled] {
+          --md-sys-color-primary-container: var(--md-sys-color-secondary-container);
+          --md-sys-color-on-primary-container: var(--md-sys-color-on-secondary-container);
         }
 
-        .header {
-          padding: 0;
-          margin: 0;
-          padding-top: 16px;
-        }
 
-        .half {
-          width: 50%;
-        }
-
-        .addText {
-          padding-left: 0;
-          padding-right: 8px;
-        }
-
-        md-icon {
-          width: 64px;
-          height: 64px;
-          margin-right: 8px;
-          margin-left: 0;
+        .createFab {
+          width: 225px;
+          margin-left: 64px;
         }
 
         .addNewIdeaText {
-          font-size: 26px;
+          font-size: 18px;
         }
 
         .closed {
-          font-size: 22px;
-        }
-
-        div[disabled] {
-          cursor: initial;
-        }
-
-        md-icon[disabled] {
+          font-size: 16px;
+          text-align: center;
+          margin-top: 8px;
         }
 
         @media (max-width: 420px) {
@@ -94,37 +78,13 @@ export class YpPostCardAdd extends YpBaseElement {
             margin-top: 0;
           }
 
-          .postCard {
-            width: 100%;
-            margin-left: 0;
-            margin-right: 0;
-            margin-bottom: 4px;
-            padding: 16px;
-          }
-
-          .addNewIdeaText {
-            font-size: 24px;
-            width: auto;
-          }
-
-          md-icon {
-            height: 48px;
-            width: 48px;
-          }
-
           .closed {
-            font-size: 20px;
+            font-size: 14px;
           }
-        }
 
-        @media (max-width: 420px) {
-          .postCard {
-            max-width: 300px;
+          md-fab {
+            width: 100%;
           }
-        }
-
-        .container {
-          width: 100%;
         }
       `,
     ];
@@ -133,62 +93,43 @@ export class YpPostCardAdd extends YpBaseElement {
   override render() {
     return this.group
       ? html`
-          <div
-            ?disabled="${this.disableNewPosts}"
-            class="postCard shadow-elevation-8dp shadow-transaction layout vertical center-center"
-            aria-disabled="${this.disableNewPosts}"
-            role="button"
-            aria-label="${this.t('post.add_new')}"
-            tabindex="0"
-            @keydown="${this._keyDown}"
-            @click="${this._newPost}">
-            <div class="layout horizontal center-center addNewIdeaText">
-              <md-icon>lightbulb_outline</md-icon>
-              ${this.disableNewPosts
-                ? html`
-                    <div class="flex addText closed">
-                      ${!this.group.configuration
-                        .alternativeTextForNewIdeaButtonClosed
-                        ? html` ${this.t('closedForNewPosts')} `
-                        : html`
-                            <yp-magic-text
-                              .contentId="${this.group.id}"
-                              .extraId="${this.index}"
-                              textOnly
-                              .content="${this.group.configuration
-                                .alternativeTextForNewIdeaButtonClosed}"
-                              .contentLanguage="${this.group.language}"
-                              class="ratingName"
-                              textType="alternativeTextForNewIdeaButtonClosed"></yp-magic-text>
-                          `}
-                    </div>
-                  `
-                : html`
-                    <div class="flex addText">
-                      ${!this.group.configuration
-                        .alternativeTextForNewIdeaButtonClosed
-                        ? html` ${this.t('post.add_new')} `
-                        : html`
-                            <yp-magic-text
-                              .contentId="${this.group.id}"
-                              .extraId="${this.index}"
-                              textOnly
-                              .content="${this.group.configuration
-                                .alternativeTextForNewIdeaButton}"
-                              .contentLanguage="${this.group.language}"
-                              class="ratingName"
-                              textType="alternativeTextForNewIdeaButton"></yp-magic-text>
-                          `}
-                    </div>
-                  `}
-            </div>
+          <div class="topContainer">
+            <md-fab
+              ?disabled="${this.disableNewPosts}"
+              aria-label="${this.t('post.add_new')}"
+              ?has-static-theme="${this.hasStaticTheme}"
+              lowered
+              ?hidden=${(this.group!.configuration as YpGroupConfiguration)
+                .hideNewPost}
+              size="large"
+              .label="${this.disableNewPosts
+                  ? this._getClosedText().toString()
+                  : this._getAddNewText().toString()}"
+              ?extended="${this.wide}"
+              class="createFab"
+              variant="primary"
+              @click="${this._newPost}"
+              @keydown="${this._keyDown}"
+            >
+              <md-icon slot="icon">lightbulb_outline</md-icon>
+              <span slot="label" class="addNewIdeaText">
+
+              </span>
+            </md-fab>
           </div>
+          ${this.disableNewPosts
+            ? html`
+                <div class="closed">
+                  ${this._getClosedText()}
+                </div>
+              `
+            : nothing}
         `
       : nothing;
   }
 
   _keyDown(event: KeyboardEvent) {
-    if (event.keyCode === 13) {
+    if (event.key === 'Enter' || event.key === ' ') {
       this._newPost();
     }
   }
@@ -197,5 +138,38 @@ export class YpPostCardAdd extends YpBaseElement {
     if (!this.disableNewPosts) {
       this.fire('new-post');
     }
+  }
+
+  _getAddNewText() {
+    return this.group?.configuration?.alternativeTextForNewIdeaButton
+      ? html`
+          <yp-magic-text
+            .contentId="${this.group.id}"
+            .extraId="${this.index}"
+            textOnly
+            .content="${this.group.configuration.alternativeTextForNewIdeaButton}"
+            .contentLanguage="${this.group.language}"
+            class="ratingName"
+            textType="alternativeTextForNewIdeaButton"
+          ></yp-magic-text>
+        `
+      : this.t('post.add_new');
+  }
+
+  _getClosedText() {
+    return this.group?.configuration?.alternativeTextForNewIdeaButtonClosed
+      ? html`
+          <yp-magic-text
+            .contentId="${this.group.id}"
+            .extraId="${this.index}"
+            textOnly
+            .content="${this.group.configuration
+              .alternativeTextForNewIdeaButtonClosed}"
+            .contentLanguage="${this.group.language}"
+            class="ratingName"
+            textType="alternativeTextForNewIdeaButtonClosed"
+          ></yp-magic-text>
+        `
+      : this.t('closedForNewPosts');
   }
 }

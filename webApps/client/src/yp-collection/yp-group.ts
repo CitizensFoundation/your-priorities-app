@@ -25,6 +25,7 @@ import { YpSnackbar } from "../yp-app/yp-snackbar.js";
 import { unsafeHTML } from "lit/directives/unsafe-html.js";
 import { YpGroupType } from "./ypGroupType.js";
 import G from "glob";
+import { YpNavHelpers } from "../common/YpNavHelpers.js";
 
 // TODO: Remove
 interface AcActivity extends LitElement {
@@ -358,14 +359,7 @@ export class YpGroup extends YpCollection {
 
   _newPost() {
     window.appGlobals.activity("open", "newPost");
-    //TODO: Fix ts type
-    window.appDialogs.getDialogAsync("postEdit", (dialog: YpPostEdit) => {
-      dialog.setup(undefined, true, undefined, this.collection as YpGroupData);
-      dialog.open(true, {
-        groupId: this.collectionId!,
-        group: this.collection as YpGroupData,
-      });
-    });
+    YpNavHelpers.redirectTo("/group/" + this.collectionId + "/new_post");
   }
 
   _clearScrollThreshold() {
@@ -1078,7 +1072,10 @@ export class YpGroup extends YpCollection {
         YpAccessHelpers.checkGroupAccess(this.collection as YpGroupData) &&
         !this.disableNewPosts
       ) {
-        return (this.subRoute?.endsWith("/new_post") || this.subRoute?.endsWith("/new_post/"));
+        return (
+          this.subRoute?.endsWith("/new_post") ||
+          this.subRoute?.endsWith("/new_post/")
+        );
       } else {
         return false;
       }
@@ -1131,23 +1128,14 @@ export class YpGroup extends YpCollection {
           <div class="layout horizontal mainContent">
             ${this.renderTabs()}
             <div class="flex"></div>
-            <md-fab
-              ?has-static-theme="${this.hasStaticTheme}"
-              lowered
+            <yp-post-card-add
               ?hidden=${(this.collection!.configuration as YpGroupConfiguration)
                 .hideNewPost}
-              size="large"
-              ?extended="${this.wide}"
               class="createFab"
-              variant="primary"
-              @click="${this._newPost}"
-              ?is-map="${this.selectedTab === CollectionTabTypes.Map}"
-              .label="${this.t("post.new")}"
-              aria-label="${this.t("post.new")}"
-              .icon="${this.createFabIcon}"
-            >
-              <md-icon hidden slot="icon">add_circle</md-icon></md-fab
-            >
+              .group="${this.collection}"
+              .disableNewPosts="${this.disableNewPosts}"
+              @new-post="${this._newPost}"
+            ></yp-post-card-add>
           </div>
         </div>
       </div>

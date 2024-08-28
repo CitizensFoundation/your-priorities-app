@@ -6,7 +6,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 import { YpAccessHelpers } from "../common/YpAccessHelpers.js";
 import { YpMediaHelpers } from "../common/YpMediaHelpers.js";
-import { CollectionTabTypes, YpCollection } from "./yp-collection.js";
+import { YpCollection } from "./yp-collection.js";
 import { html, nothing, css } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import "@material/web/tabs/tabs.js";
@@ -18,6 +18,7 @@ import "../yp-post/yp-posts-list.js";
 import "../yp-post/yp-post-card-add.js";
 import { unsafeHTML } from "lit/directives/unsafe-html.js";
 import { YpGroupType } from "./ypGroupType.js";
+import { YpNavHelpers } from "../common/YpNavHelpers.js";
 export const GroupTabTypes = {
     Open: 0,
     InProgress: 1,
@@ -255,14 +256,7 @@ let YpGroup = class YpGroup extends YpCollection {
     }
     _newPost() {
         window.appGlobals.activity("open", "newPost");
-        //TODO: Fix ts type
-        window.appDialogs.getDialogAsync("postEdit", (dialog) => {
-            dialog.setup(undefined, true, undefined, this.collection);
-            dialog.open(true, {
-                groupId: this.collectionId,
-                group: this.collection,
-            });
-        });
+        YpNavHelpers.redirectTo("/group/" + this.collectionId + "/new_post");
     }
     _clearScrollThreshold() {
         this.$$("#scrollTheshold").clearTriggers();
@@ -857,7 +851,8 @@ let YpGroup = class YpGroup extends YpCollection {
         if (this.collection) {
             if (YpAccessHelpers.checkGroupAccess(this.collection) &&
                 !this.disableNewPosts) {
-                return (this.subRoute?.endsWith("/new_post") || this.subRoute?.endsWith("/new_post/"));
+                return (this.subRoute?.endsWith("/new_post") ||
+                    this.subRoute?.endsWith("/new_post/"));
             }
             else {
                 return false;
@@ -903,23 +898,14 @@ let YpGroup = class YpGroup extends YpCollection {
           <div class="layout horizontal mainContent">
             ${this.renderTabs()}
             <div class="flex"></div>
-            <md-fab
-              ?has-static-theme="${this.hasStaticTheme}"
-              lowered
+            <yp-post-card-add
               ?hidden=${this.collection.configuration
             .hideNewPost}
-              size="large"
-              ?extended="${this.wide}"
               class="createFab"
-              variant="primary"
-              @click="${this._newPost}"
-              ?is-map="${this.selectedTab === CollectionTabTypes.Map}"
-              .label="${this.t("post.new")}"
-              aria-label="${this.t("post.new")}"
-              .icon="${this.createFabIcon}"
-            >
-              <md-icon hidden slot="icon">add_circle</md-icon></md-fab
-            >
+              .group="${this.collection}"
+              .disableNewPosts="${this.disableNewPosts}"
+              @new-post="${this._newPost}"
+            ></yp-post-card-add>
           </div>
         </div>
       </div>

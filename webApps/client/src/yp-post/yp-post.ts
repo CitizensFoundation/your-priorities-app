@@ -455,6 +455,7 @@ export class YpPost extends YpCollection {
   }
 
   override render() {
+    //TODO: Bottom add new post button
     if (this.post && !this.isEditingPost) {
       return html`
         <div class="layout vertical center-center outerFrameContainer">
@@ -471,12 +472,7 @@ export class YpPost extends YpCollection {
             this.post &&
             !this.post.Group.configuration?.hideNewPost &&
             !this.post.Group.configuration?.hideNewPostOnPostPage
-              ? html`<md-fab
-                  hidden
-                  .label="${this.t("post.new")}"
-                  @click="${this._newPost}"
-                  ><md-icon>lightbuld</md-icon></md-fab
-                >`
+              ? html``
               : nothing}
           </div>
         </div>
