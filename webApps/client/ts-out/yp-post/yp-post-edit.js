@@ -18,6 +18,8 @@ import { YpNavHelpers } from "../common/YpNavHelpers.js";
 import "../yp-survey/yp-structured-question-edit.js";
 import "../yp-edit-dialog/yp-edit-dialog.js";
 import "@material/web/iconbutton/filled-icon-button.js";
+import { YpMediaHelpers } from "../common/YpMediaHelpers.js";
+import { ifDefined } from "lit/directives/if-defined.js";
 export const EditPostTabs = {
     Description: 0,
     Point: 1,
@@ -257,7 +259,12 @@ let YpPostEdit = class YpPostEdit extends YpEditBase {
 
         #generateButton {
           margin: 16px;
-          margin-bottom: 24px;
+          margin-bottom: 26px;
+          margin-right: 0;
+        }
+
+        .imageButtons {
+          margin-top: 16px;
         }
 
         md-secondary-tab {
@@ -351,8 +358,8 @@ let YpPostEdit = class YpPostEdit extends YpEditBase {
         }
 
         .image {
-          width: 300px;
-          height: 169px;
+          width: 400px;
+          height: 225px;
         }
 
         #description {
@@ -415,9 +422,13 @@ let YpPostEdit = class YpPostEdit extends YpEditBase {
           margin-right: 8px;
         }
 
-        @media (max-width: 600px) {
+        @media (max-width: 960px) {
           .uploadSection {
             max-width: 100%;
+          }
+          .image {
+            width: 300px;
+            height: 169px;
           }
 
           .videoCam {
@@ -526,6 +537,54 @@ let YpPostEdit = class YpPostEdit extends YpEditBase {
         }
         else {
             return this.t("title");
+        }
+    }
+    renderCoverMediaContent() {
+        if (this.uploadedVideoUrl) {
+            return html `
+        <video
+          id="videoPlayer"
+          data-id="${ifDefined(this.uploadedVideoId)}"
+          controls
+          preload="metadata"
+          class="mainImage"
+          src="${this.uploadedVideoUrl}"
+          playsinline
+        ></video>
+      `;
+        }
+        else if (this.imagePreviewUrl) {
+            return html `
+        <div style="position: relative;">
+          <yp-image
+            class="image"
+            sizing="cover"
+            .skipCloudFlare="${true}"
+            src="${this.imagePreviewUrl}"
+          ></yp-image>
+        </div>
+      `;
+        }
+        else if (this.post?.PostHeaderImages &&
+            this.post?.PostHeaderImages.length > 0) {
+            return html `
+        <div style="position: relative;">
+          <yp-image
+            class="image"
+            sizing="cover"
+            src="${YpMediaHelpers.getImageFormatUrl(this.post?.PostHeaderImages)}"
+          ></yp-image>
+        </div>
+      `;
+        }
+        else {
+            return html `
+        <yp-image
+          class="image"
+          sizing="contain"
+          src="https://yrpri-eu-direct-assets.s3.eu-west-1.amazonaws.com/ypPlaceHolder2.jpg"
+        ></yp-image>
+      `;
         }
     }
     renderDescriptionInputs() {
@@ -817,29 +876,20 @@ let YpPostEdit = class YpPostEdit extends YpEditBase {
     renderMediaTab() {
         return html `
       <div class="layout vertical center-center" style="align-self: start">
-        ${this.renderCoverMediaSelection()}
         <div class="layout vertical center-center wrap">
           <div
             class="layout vertical center-center self-start uploadSection"
             ?hidden="${this.group.configuration.hidePostImageUploads}"
           >
-            ${this.imagePreviewUrl
-            ? html `
-                  <yp-image
-                    class="image"
-                    sizing="contain"
-                    .src="${this.imagePreviewUrl}"
-                  ></yp-image>
-                `
-            : nothing}
-            <div class="layout vertical center-center">
+            ${this.renderCoverMediaContent()}
+            <div class="layout horizontal center-center imageButtons">
               <yp-file-upload
                 id="imageFileUpload"
                 raised
                 target="/api/images?itemType=post-header"
                 method="POST"
                 buttonIcon="photo_camera"
-                .buttonText="${this.t("image.upload")}"
+                .buttonText="${this.t("upload")}"
                 @success="${this._imageUploaded}"
               >
               </yp-file-upload>
@@ -848,8 +898,9 @@ let YpPostEdit = class YpPostEdit extends YpEditBase {
             ? html `
                     <md-outlined-button
                       id="generateButton"
+                      trailing-icon
                       @click="${this._generateLogo}"
-                      >${this.t("generateImageWithAi")}<md-icon slot="icon"
+                      >${this.t("generateWithAi")}<md-icon slot="icon"
                         >smart_toy</md-icon
                       ></md-outlined-button
                     >
@@ -858,59 +909,62 @@ let YpPostEdit = class YpPostEdit extends YpEditBase {
             </div>
           </div>
 
-          ${this.group.configuration.allowPostVideoUploads
+          <div class="layout horizontal">
+            ${this.group.configuration.allowPostVideoUploads
             ? html `
-                <div
-                  class="layout vertical center-center self-start uploadSection"
-                >
-                  <yp-file-upload
-                    id="videoFileUpload"
-                    container-type="posts"
-                    .group="${this.group}"
-                    raised
-                    .uploadLimitSeconds="${this.group.configuration
-                .videoPostUploadLimitSec}"
-                    videoUpload
-                    buttonIcon="videocam"
-                    .buttonText="${this.t("uploadVideo")}"
-                    method="POST"
-                    @success="${this._videoUploaded}"
-                  >
-                  </yp-file-upload>
                   <div
-                    class="videoUploadDisclamer"
-                    ?hidden="${!this.group.configuration
+                    class="layout vertical center-center self-start uploadSection"
+                  >
+                    <yp-file-upload
+                      id="videoFileUpload"
+                      container-type="posts"
+                      .group="${this.group}"
+                      raised
+                      .uploadLimitSeconds="${this.group.configuration
+                .videoPostUploadLimitSec}"
+                      videoUpload
+                      buttonIcon="videocam"
+                      .buttonText="${this.t("uploadVideo")}"
+                      method="POST"
+                      @success="${this._videoUploaded}"
+                    >
+                    </yp-file-upload>
+                    <div
+                      class="videoUploadDisclamer"
+                      ?hidden="${!this.group.configuration
                 .showVideoUploadDisclaimer || !this.uploadedVideoId}"
-                  >
-                    ${this.t("videoUploadDisclaimer")}
+                    >
+                      ${this.t("videoUploadDisclaimer")}
+                    </div>
                   </div>
-                </div>
-              `
+                `
             : nothing}
-          ${this.group.configuration.allowPostAudioUploads
+            ${this.group.configuration.allowPostAudioUploads
             ? html `
-                <div
-                  class="layout vertical center-center self-start uploadSection"
-                >
-                  <yp-file-upload
-                    id="audioFileUpload"
-                    containerType="posts"
-                    .group="${this.group}"
-                    raised
-                    .uploadLimitSeconds="${this.group.configuration
-                .audioPostUploadLimitSec}"
-                    .multi="false"
-                    audioUpload
-                    method="POST"
-                    buttonIcon="keyboard_voice"
-                    .buttonText="${this.t("uploadAudio")}"
-                    @success="${this._audioUploaded}"
+                  <div
+                    class="layout vertical center-center self-start uploadSection"
                   >
-                  </yp-file-upload>
-                </div>
-              `
+                    <yp-file-upload
+                      id="audioFileUpload"
+                      containerType="posts"
+                      .group="${this.group}"
+                      raised
+                      .uploadLimitSeconds="${this.group.configuration
+                .audioPostUploadLimitSec}"
+                      .multi="false"
+                      audioUpload
+                      method="POST"
+                      buttonIcon="keyboard_voice"
+                      .buttonText="${this.t("uploadAudio")}"
+                      @success="${this._audioUploaded}"
+                    >
+                    </yp-file-upload>
+                  </div>
+                `
             : nothing}
+          </div>
         </div>
+        ${this.renderCoverMediaSelection()}
       </div>
     `;
     }
@@ -1006,8 +1060,7 @@ let YpPostEdit = class YpPostEdit extends YpEditBase {
             this.action = this.action + "/" + this.params.postId + "/user_images";
         }
         else if (this.params && this.params.statusChange && this.params.postId) {
-            this.action =
-                this.action + "/" + this.params.postId + "/status_change";
+            this.action = this.action + "/" + this.params.postId + "/status_change";
         }
         else if (this.params && this.params.postId && this.params.imageId) {
             this.action =
@@ -1196,7 +1249,6 @@ let YpPostEdit = class YpPostEdit extends YpEditBase {
         this.imagePreviewUrl = event.detail.imageUrl;
         this.uploadedHeaderImageId = event.detail.imageId;
         this.selectedCoverMediaType = "image";
-        debugger;
     }
     _alternativeTextForNewIdeaSaveButtonTranslation() {
         setTimeout(() => {
@@ -1246,8 +1298,7 @@ let YpPostEdit = class YpPostEdit extends YpEditBase {
         this.removeListener("yp-form-error", this._formError);
         this.removeListener("yp-form-invalid", this._formInvalid);
     }
-    _formSubmitted() {
-    }
+    _formSubmitted() { }
     _formError(event) {
         if (!navigator.onLine &&
             this.method === "POST" &&
@@ -1518,6 +1569,7 @@ let YpPostEdit = class YpPostEdit extends YpEditBase {
     }
     _videoUploaded(event) {
         this.uploadedVideoId = event.detail.videoId;
+        this.uploadedVideoUrl = event.detail.videoUrl;
         this.$$("#mediaVideo").checked = true;
         setTimeout(() => {
             this.fire("iron-resize");
@@ -1690,6 +1742,7 @@ let YpPostEdit = class YpPostEdit extends YpEditBase {
     _imageUploaded(event) {
         const image = JSON.parse(event.detail.xhr.response);
         this.uploadedHeaderImageId = image.id;
+        this.imagePreviewUrl = YpMediaHelpers.getImageFormatUrl([image]);
         this.selectedCoverMediaType = "image";
     }
     async _redirectAfterVideo(post) {
@@ -1799,6 +1852,7 @@ let YpPostEdit = class YpPostEdit extends YpEditBase {
             this.selected = 0;
             this.uploadedHeaderImageId = undefined;
             this.uploadedVideoId = undefined;
+            this.uploadedVideoUrl = undefined;
             this.uploadedAudioId = undefined;
             this.currentVideoId = undefined;
             this.currentAudioId = undefined;
@@ -2064,6 +2118,9 @@ __decorate([
 __decorate([
     property({ type: String })
 ], YpPostEdit.prototype, "uploadedDocumentUrl", void 0);
+__decorate([
+    property({ type: String })
+], YpPostEdit.prototype, "uploadedVideoUrl", void 0);
 __decorate([
     property({ type: String })
 ], YpPostEdit.prototype, "uploadedDocumentFilename", void 0);

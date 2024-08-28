@@ -59,8 +59,8 @@ export class YpPostCardAdd extends YpBaseElement {
 
 
         .createFab {
-          width: 225px;
-          margin-left: 64px;
+          width: 310px;
+          margin-left: 0px;
         }
 
         .addNewIdeaText {

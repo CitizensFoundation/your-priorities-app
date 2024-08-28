@@ -417,7 +417,7 @@ export class YpAdminConfigBase extends YpAdminPage {
           <yp-image
             class="mainImage"
             @loaded="${this.getColorFromLogo}"
-            sizing="contain"
+            sizing="cover"
             .skipCloudFlare="${true}"
             src="${this.imagePreviewUrl}"
           ></yp-image>
@@ -437,7 +437,7 @@ export class YpAdminConfigBase extends YpAdminPage {
         <div style="position: relative;">
           <yp-image
             class="image"
-            sizing="contain"
+            sizing="cover"
             src="${YpMediaHelpers.getImageFormatUrl(this.currentLogoImages)}"
           ></yp-image>
           ${this.gettingImageColor

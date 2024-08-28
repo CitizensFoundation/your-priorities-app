@@ -43,6 +43,7 @@ export declare class YpPostEdit extends YpEditBase {
     autoTranslate: boolean;
     submitDisabled: boolean;
     uploadedDocumentUrl: string | undefined;
+    uploadedVideoUrl: string | undefined;
     uploadedDocumentFilename: string | undefined;
     selectedCoverMediaType: string;
     uploadedHeaderImageId: number | undefined;
@@ -62,6 +63,7 @@ export declare class YpPostEdit extends YpEditBase {
     _setSelectedTab(event: CustomEvent): void;
     renderMoreContactInfo(): TemplateResult<1>;
     get titleQuestionText(): string;
+    renderCoverMediaContent(): TemplateResult<1>;
     renderDescriptionInputs(): TemplateResult<1> | typeof nothing;
     renderPointTab(): TemplateResult<1> | typeof nothing;
     renderLocationTab(): TemplateResult<1> | typeof nothing;
