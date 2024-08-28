@@ -50,7 +50,7 @@ export declare class YpEditDialog extends YpBaseElement {
     _formResponse(event: CustomEvent): void;
     _formError(event: CustomEvent): void;
     _formInvalid(): void;
-    _submit(): void;
+    submit(): void;
     _setSubmitDisabledStatus(status: boolean): void;
     get hasLongSaveText(): boolean | "" | undefined;
     get hasLongTitle(): boolean | "";

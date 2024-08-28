@@ -28,8 +28,8 @@ export declare class YpPostActions extends YpBaseElement {
     get isOpposed(): boolean;
     get votingStateDisabled(): boolean;
     get onlyUpVoteShowing(): boolean | undefined;
-    get endorseModeIconUp(): "arrow_upward" | "thumb_up" | "thumb_down" | "favorite" | "do_not_disturb" | "keyboard_arrow_up" | "keyboard_arrow_down" | "arrow_downward" | undefined;
-    get endorseModeIconDown(): "arrow_upward" | "thumb_up" | "thumb_down" | "favorite" | "do_not_disturb" | "keyboard_arrow_up" | "keyboard_arrow_down" | "arrow_downward" | undefined;
+    get endorseModeIconUp(): "thumb_up" | "thumb_down" | "favorite" | "do_not_disturb" | "keyboard_arrow_up" | "keyboard_arrow_down" | "arrow_upward" | "arrow_downward" | undefined;
+    get endorseModeIconDown(): "thumb_up" | "thumb_down" | "favorite" | "do_not_disturb" | "keyboard_arrow_up" | "keyboard_arrow_down" | "arrow_upward" | "arrow_downward" | undefined;
     get customVoteUpHoverText(): string;
     get customVoteDownHoverText(): string;
     _goToPostIfNotHeader(): void;
@@ -37,7 +37,7 @@ export declare class YpPostActions extends YpBaseElement {
     updated(changedProperties: Map<string | number | symbol, unknown>): Promise<void>;
     _updateEndorsementsFromSignal(event: CustomEvent): void;
     _updateEndorsements(event?: CustomEvent | undefined): void;
-    endorseModeIcon(endorsementButtons: string, upDown: string): "arrow_upward" | "thumb_up" | "thumb_down" | "favorite" | "do_not_disturb" | "keyboard_arrow_up" | "keyboard_arrow_down" | "arrow_downward" | undefined;
+    endorseModeIcon(endorsementButtons: string, upDown: string): "thumb_up" | "thumb_down" | "favorite" | "do_not_disturb" | "keyboard_arrow_up" | "keyboard_arrow_down" | "arrow_upward" | "arrow_downward" | undefined;
     _setEndorsement(value: number): Promise<void>;
     _enableVoting(): void;
     generateEndorsementFromLogin(value: number): void;

@@ -263,7 +263,7 @@ let YpEditDialog = class YpEditDialog extends YpBaseElement {
                       <md-text-button
                         id="submit1"
                         ?hidden="${!this.saveText}"
-                        @click="${this._submit}"
+                        @click="${this.submit}"
                         ?long-button-text="${this.hasLongSaveText}"
                         slot="footer"
                         class="smallButtonText"
@@ -357,7 +357,7 @@ let YpEditDialog = class YpEditDialog extends YpBaseElement {
                       class="actionButtons"
                       ?hidden="${!this.saveText}"
                       id="submit2"
-                      @click="${this._submit}"
+                      @click="${this.submit}"
                       >${this.saveText ? this.saveText : ""}</md-text-button
                     >
                   `
@@ -541,7 +541,7 @@ let YpEditDialog = class YpEditDialog extends YpBaseElement {
         this._setSubmitDisabledStatus(false);
         this.$$("#spinner").hidden = false;
     }
-    _submit() {
+    submit() {
         if (this.customSubmit) {
             this.fire("yp-custom-form-submit");
         }

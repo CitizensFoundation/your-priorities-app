@@ -5,7 +5,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 import { html, css, nothing } from "lit";
-import { property, customElement } from "lit/decorators.js";
+import { property, customElement, query } from "lit/decorators.js";
 import { DateTime } from "luxon";
 import "@material/web/radio/radio.js";
 import "@material/web/tabs/secondary-tab.js";
@@ -39,6 +39,7 @@ let YpPostEdit = class YpPostEdit extends YpEditBase {
         this.structuredAnswersJson = "";
         this.structuredAnswersString = "";
         this.autoTranslate = false;
+        this.submitDisabled = false;
         this.selectedCoverMediaType = "none";
         this.emailValidationPattern = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
         this.liveQuestionIds = [];
@@ -551,6 +552,7 @@ let YpPostEdit = class YpPostEdit extends YpEditBase {
                     .label="${this.titleQuestionText}"
                     .value="${this.post.name}"
                     maxlength="60"
+                    rows="7"
                     charCounter
                   >
                   </md-outlined-text-field>
@@ -976,6 +978,110 @@ let YpPostEdit = class YpPostEdit extends YpEditBase {
       />
     `;
     }
+    renderClose() {
+        let pathBack;
+        if (this.new) {
+            pathBack = "/group/" + this.group.id;
+        }
+        else {
+            pathBack = "/post/" + this.post.id;
+        }
+        return html `<md-filled-tonal-icon-button
+      @click="${() => YpNavHelpers.redirectTo(pathBack)}"
+      title="${this.t("close")}"
+      ><md-icon>close</md-icon>
+    </md-filled-tonal-icon-button>`;
+    }
+    async submit(validate = true) {
+        this.submitDisabled = true;
+        if (this.params && this.params.communityId) {
+            this.action = this.action + "/" + this.params.communityId;
+        }
+        else if (this.params && this.params.groupId) {
+            this.action = this.action + "/" + this.params.groupId;
+        }
+        else if (this.params && this.params.organizationId) {
+            this.action = this.action + "/" + this.params.organizationId;
+        }
+        else if (this.params && this.params.userImages && this.params.postId) {
+            this.action = this.action + "/" + this.params.postId + "/user_images";
+        }
+        else if (this.params && this.params.statusChange && this.params.postId) {
+            this.action =
+                this.action + "/" + this.params.postId + "/status_change";
+        }
+        else if (this.params && this.params.postId && this.params.imageId) {
+            this.action =
+                this.action +
+                    "/" +
+                    this.params.postId +
+                    "/" +
+                    this.params.imageId +
+                    "/user_images";
+            // eslint-disable-next-line no-dupe-else-if
+        }
+        else if (this.params &&
+            this.params.statusChange &&
+            this.params.disableStatusEmails === true &&
+            this.params.postId) {
+            this.action =
+                this.action + "/" + this.params.postId + "/status_change_no_emails";
+        }
+        else if (this.params && this.params.postId) {
+            this.action = this.action + "/" + this.params.postId;
+        }
+        else if (this.params && this.params.userId) {
+            this.action = this.action + "/" + this.params.userId;
+        }
+        else if (this.params && this.params.domainId) {
+            this.action = this.action + "/" + this.params.domainId;
+        }
+        else if (this.params && this.params.categoryId) {
+            this.action = this.action + "/" + this.params.categoryId;
+        }
+        this.requestUpdate();
+        const form = this.$$("#form");
+        let validated = false;
+        if (validate) {
+            validated = form.validate();
+        }
+        else {
+            validated = true;
+        }
+        if (validated) {
+            form.submit();
+            this.$$("#spinner").hidden = false;
+        }
+        else {
+            this.fire("yp-form-invalid");
+            //const error = this.t("form.invalid");
+            //this._showErrorDialog(error);
+        }
+    }
+    renderSaveButton() {
+        return html `
+      <md-circular-progress id="spinner" hidden></md-circular-progress>
+      <md-filled-button
+        @click="${this.customSubmit}"
+        .disabled="${this.submitDisabled}"
+        >${this.saveText || this.t("save")}</md-filled-button
+      >
+    `;
+    }
+    renderHeader() {
+        return html `
+      <div class="layout horizontal actionBar">
+        ${this.renderClose()}
+        <div class="flex"></div>
+        <md-icon>lightbulb</md-icon>
+        <div class="flex"></div>
+        ${this.renderSaveButton()}
+      </div>
+      <div class="topHeader">
+        ${this.editHeaderText ? this.editHeaderText : ""}
+      </div>
+    `;
+    }
     render() {
         return html `
         <yp-form id="form" method="POST" .params="${this.params}">
@@ -986,16 +1092,9 @@ let YpPostEdit = class YpPostEdit extends YpEditBase {
           >
             ${this.group && this.post
             ? html `
-                    <div
-                      class="layout vertical center-center outerFrameContainer"
-                    >
+                    <div class="layout vertical outerFrameContainer">
                       <div class="frameContainer">
-                        <div class="layout horizontal">
-                          <div class="topHeader">
-                            ${this.editHeaderText ? this.editHeaderText : ""}
-                          </div>
-                          <md-icon>lightbulb</md-icon>
-                        </div>
+                        ${this.renderHeader()}
                         <div
                           class="layout horizontal wrap"
                           ?no-title="${this.group.configuration
@@ -1011,7 +1110,14 @@ let YpPostEdit = class YpPostEdit extends YpEditBase {
             : nothing}
           </form>
         </yp-form>
-
+        <md-dialog id="formErrorDialog" modal>
+          <div slot="content" id="errorText">${this.errorText}</div>
+          <div class="buttons" slot="actions">
+            <md-text-button autofocus @click="${this._clearErrorText}"
+              >${this.t("ok")}</md-text-button
+            >
+          </div>
+        </md-dialog>
         ${this.group &&
             this.group.configuration.alternativeTextForNewIdeaButtonHeader
             ? html `
@@ -1118,9 +1224,14 @@ let YpPostEdit = class YpPostEdit extends YpEditBase {
         this.addListener("yp-skip-to-unique-id", this._skipToId);
         this.addListener("yp-goto-next-index", this._goToNextIndex);
         this.addGlobalListener("yp-auto-translate", this._autoTranslateEvent.bind(this));
+        this.addGlobalListener("yp-language-loaded", this.setupTranslation.bind(this));
         if (this.disableDialog) {
             this.setup(this.post, this.new, undefined, this.group);
         }
+        this.addListener("yp-form-submit", this._formSubmitted);
+        this.addListener("yp-form-response", this._formResponse);
+        this.addListener("yp-form-error", this._formError);
+        this.addListener("yp-form-invalid", this._formInvalid);
     }
     disconnectedCallback() {
         super.disconnectedCallback();
@@ -1130,6 +1241,45 @@ let YpPostEdit = class YpPostEdit extends YpEditBase {
         this.removeListener("yp-open-to-unique-id", this._openToId);
         this.removeListener("yp-goto-next-index", this._goToNextIndex);
         this.removeGlobalListener("yp-auto-translate", this._autoTranslateEvent.bind(this));
+        this.removeGlobalListener("yp-language-loaded", this.setupTranslation.bind(this));
+        this.removeListener("yp-form-submit", this._formSubmitted);
+        this.removeListener("yp-form-response", this._formResponse);
+        this.removeListener("yp-form-error", this._formError);
+        this.removeListener("yp-form-invalid", this._formInvalid);
+    }
+    _formSubmitted() {
+    }
+    _formError(event) {
+        if (!navigator.onLine &&
+            this.method === "POST" &&
+            window.fetch !== undefined) {
+            const serialized = this.$$("#form").serializeForm();
+            window.appGlobals.offline.sendWhenOnlineNext({
+                body: serialized,
+                method: this.method,
+                params: this.params,
+                url: this.action,
+            });
+            this.response = { offlineSendLater: true };
+            this.close();
+        }
+        else if (!navigator.onLine) {
+            this._showErrorDialog(this.t("youAreOfflineCantSend"));
+        }
+        else {
+            this.submitDisabled = false;
+            console.log("Form error: ", event.detail.error);
+            this._showErrorDialog(event.detail.error);
+            this.$$("#spinner").hidden = false;
+        }
+    }
+    _showErrorDialog(errorText) {
+        this.errorText = errorText;
+        this.$$("#formErrorDialog").show();
+    }
+    _clearErrorText() {
+        this.$$("#formErrorDialog").close();
+        this.errorText = undefined;
     }
     hasLongSaveText() {
         return this.saveText && this.saveText.length > 9;
@@ -1218,6 +1368,17 @@ let YpPostEdit = class YpPostEdit extends YpEditBase {
             console.error("No survey container found");
         }
     }
+    firstUpdated() {
+        if (!this.params) {
+            this.params = {};
+        }
+        if (this.new) {
+            this.params.groupId = this.group?.id;
+        }
+        else {
+            this.params.postId = this.post?.id;
+        }
+    }
     get replacedName() {
         const { post } = this;
         const { group } = this;
@@ -1265,7 +1426,7 @@ let YpPostEdit = class YpPostEdit extends YpEditBase {
             }
         });
         this.structuredAnswersJson = JSON.stringify(answers);
-        this.$$("#editDialog")._reallySubmit();
+        this.submit();
     }
     _submitWithStructuredQuestionsString() {
         let description = "";
@@ -1286,9 +1447,9 @@ let YpPostEdit = class YpPostEdit extends YpEditBase {
         if (this.post)
             this.post.description = description;
         this.structuredAnswersString = answers;
-        this.$$("#editDialog")._reallySubmit();
+        this.submit();
     }
-    _customSubmit() {
+    customSubmit() {
         if (this.group &&
             this.group.configuration &&
             this.group.configuration.structuredQuestionsJson) {
@@ -1299,7 +1460,7 @@ let YpPostEdit = class YpPostEdit extends YpEditBase {
             this._submitWithStructuredQuestionsString();
         }
         else {
-            this.$$("#editDialog")._reallySubmit();
+            this.submit();
         }
     }
     _resizeScrollerIfNeeded() {
@@ -1860,6 +2021,12 @@ __decorate([
     property({ type: Number })
 ], YpPostEdit.prototype, "uploadedAudioId", void 0);
 __decorate([
+    property({ type: Object })
+], YpPostEdit.prototype, "response", void 0);
+__decorate([
+    property({ type: String })
+], YpPostEdit.prototype, "errorText", void 0);
+__decorate([
     property({ type: Number })
 ], YpPostEdit.prototype, "currentVideoId", void 0);
 __decorate([
@@ -1893,6 +2060,9 @@ __decorate([
     property({ type: Boolean })
 ], YpPostEdit.prototype, "autoTranslate", void 0);
 __decorate([
+    property({ type: Boolean })
+], YpPostEdit.prototype, "submitDisabled", void 0);
+__decorate([
     property({ type: String })
 ], YpPostEdit.prototype, "uploadedDocumentUrl", void 0);
 __decorate([
@@ -1907,6 +2077,9 @@ __decorate([
 __decorate([
     property({ type: String })
 ], YpPostEdit.prototype, "customTitleQuestionText", void 0);
+__decorate([
+    query("#form")
+], YpPostEdit.prototype, "formElement", void 0);
 YpPostEdit = __decorate([
     customElement("yp-post-edit")
 ], YpPostEdit);
