@@ -1486,7 +1486,7 @@ export class YpPostEdit extends YpEditBase {
   override connectedCallback() {
     super.connectedCallback();
     this.addListener("yp-form-invalid", this._formInvalid);
-    this.addListener("yp-custom-form-submit", this._customSubmit);
+    //this.addListener("yp-custom-form-submit", this._customSubmit);
     this.addListener("yp-open-to-unique-id", this._openToId);
     this.addListener("yp-skip-to-unique-id", this._skipToId);
     this.addListener("yp-goto-next-index", this._goToNextIndex);
@@ -1513,7 +1513,7 @@ export class YpPostEdit extends YpEditBase {
   override disconnectedCallback() {
     super.disconnectedCallback();
     this.removeListener("yp-form-invalid", this._formInvalid);
-    this.removeListener("yp-custom-form-submit", this._customSubmit);
+    //this.removeListener("yp-custom-form-submit", this._customSubmit);
     this.removeListener("yp-skip-to-unique-id", this._skipToId);
     this.removeListener("yp-open-to-unique-id", this._openToId);
     this.removeListener("yp-goto-next-index", this._goToNextIndex);
