@@ -483,11 +483,12 @@ export class YpCollectionHeader extends YpBaseElement {
   }
 
   renderMenu() {
+    //TODO: Add group folder back
     return html`
       <div class="menuButton">
         <div class="layout horizontal">
           <md-filled-tonal-icon-button
-            ?hidden="${this.collectionType === "group"}"
+            ?hidden="${true || this.collectionType === "group"}"
             @click="${this._openCreateGroupFolder}"
             title="${this.openMenuLabel}"
             ><md-icon>create_new_folder</md-icon>
