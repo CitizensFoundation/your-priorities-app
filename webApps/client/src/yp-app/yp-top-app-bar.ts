@@ -38,7 +38,7 @@ export class YpTopAppBar extends YpBaseElement {
   breadcrumbs: Array<{ name: string; url: string }> = [];
 
   renderBreadcrumbsDropdown() {
-    if (this.breadcrumbs.length > 1 && !this.hideBreadcrumbs) {
+    if (false && this.breadcrumbs.length > 1 && !this.hideBreadcrumbs) {
       return html`
         <md-icon-button id="breadCrumbTrigger" @click="${this._toggleMenu}">
           <md-icon>stat_minus_1</md-icon>

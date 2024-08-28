@@ -98,7 +98,6 @@ export abstract class YpCollection extends YpBaseElementWithLogin {
       this.getCollection.bind(this)
     );
     this.addGlobalListener("yp-theme-applied", this.themeApplied.bind(this));
-
   }
 
   async loggedInUserCustom() {
@@ -429,8 +428,17 @@ export abstract class YpCollection extends YpBaseElementWithLogin {
             max-width: 100%;
           }
 
+          @media (max-width: 960px) {
+            .createFab {
+              margin-top: 32px;
+              max-width: 310px;
+              margin-left: auto;
+              margin-right: auto;
+            }
+          }
+
           .mainContent {
-            margin-left:0;
+            margin-left: 0;
             margin-right: 0;
           }
 

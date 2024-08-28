@@ -200,7 +200,9 @@ export class YpPostEdit extends YpEditBase {
       const a = this.selected;
     }
 
-    this._setupStructuredQuestions();
+    if (!changedProperties.has("structuredQuestions")) {
+      this._setupStructuredQuestions();
+    }
   }
 
   _getQuestionLengthWithSubOptions(questions: string | any[]) {

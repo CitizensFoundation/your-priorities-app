@@ -72,7 +72,9 @@ let YpPostEdit = class YpPostEdit extends YpEditBase {
             this._selectedChanged();
             const a = this.selected;
         }
-        this._setupStructuredQuestions();
+        if (!changedProperties.has("structuredQuestions")) {
+            this._setupStructuredQuestions();
+        }
     }
     _getQuestionLengthWithSubOptions(questions) {
         let length = 0;

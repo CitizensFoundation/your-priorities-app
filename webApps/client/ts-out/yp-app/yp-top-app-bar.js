@@ -14,7 +14,7 @@ import { YpBaseElement } from "../common/yp-base-element";
 import { Corner } from "@material/web/menu/menu.js";
 let YpTopAppBar = class YpTopAppBar extends YpBaseElement {
     renderBreadcrumbsDropdown() {
-        if (this.breadcrumbs.length > 1 && !this.hideBreadcrumbs) {
+        if (false && this.breadcrumbs.length > 1 && !this.hideBreadcrumbs) {
             return html `
         <md-icon-button id="breadCrumbTrigger" @click="${this._toggleMenu}">
           <md-icon>stat_minus_1</md-icon>

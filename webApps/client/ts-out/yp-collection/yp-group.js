@@ -823,7 +823,12 @@ let YpGroup = class YpGroup extends YpCollection {
         return groupType;
     }
     static get styles() {
-        return [super.styles, css ``];
+        return [
+            super.styles,
+            css `
+
+      `,
+        ];
     }
     renderAgentsOps() {
         return html `<ps-operations-manager
@@ -895,7 +900,7 @@ let YpGroup = class YpGroup extends YpCollection {
       <div class="layout vertical center-center">
         <div class="layout vertical topContainer">
           ${this.renderHeader()}
-          <div class="layout horizontal mainContent">
+          <div class="layout horizontal mainContent wrap">
             ${this.renderTabs()}
             <div class="flex"></div>
             <yp-post-card-add

@@ -56,9 +56,9 @@ export declare class PsAgentNode extends PsOperationsBaseNode {
     renderMemoryDialog(): import("lit-html").TemplateResult<1>;
     renderActionButtons(): import("lit-html").TemplateResult<1>;
     renderProgress(): import("lit-html").TemplateResult<1>;
-    renderConnectorMenu(): typeof nothing | import("lit-html").TemplateResult<1>;
+    renderConnectorMenu(): import("lit-html").TemplateResult<1> | typeof nothing;
     renderMainMenu(): import("lit-html").TemplateResult<1>;
-    render(): typeof nothing | import("lit-html").TemplateResult<1>;
+    render(): import("lit-html").TemplateResult<1> | typeof nothing;
     static get styles(): (any[] | import("lit").CSSResult)[];
 }
 //# sourceMappingURL=ps-agent-node.d.ts.map

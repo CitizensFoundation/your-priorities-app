@@ -317,8 +317,17 @@ export class YpCollection extends YpBaseElementWithLogin {
             max-width: 100%;
           }
 
+          @media (max-width: 960px) {
+            .createFab {
+              margin-top: 32px;
+              max-width: 310px;
+              margin-left: auto;
+              margin-right: auto;
+            }
+          }
+
           .mainContent {
-            margin-left:0;
+            margin-left: 0;
             margin-right: 0;
           }
 
