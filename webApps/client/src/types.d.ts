@@ -591,6 +591,7 @@ interface YpGroupData extends YpCollectionData {
   GroupLogoVideos?: Array<YpVideoData>;
   GroupHeaderImages?: Array<YpImageData>;
   GroupLogoImages?: Array<YpImageData>;
+  Groups?: Array<YpGroupData>;
   CommunityLink?: YpCommunityData;
 }
 

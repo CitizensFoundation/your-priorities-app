@@ -21,6 +21,7 @@ export declare class YpServerApi extends YpServerApiBase {
     getPromoterRights(): Promise<any>;
     pollForGeneratingAiImage(collectionType: string, collectionId: number, jobId: number): Promise<any>;
     getCollection(collectionType: string, collectionId: number): Promise<any>;
+    getGroupFolder(groupId: number): Promise<any>;
     getCategoriesCount(id: number, tabName: string | undefined): Promise<any>;
     getGroupPosts(searchUrl: string): Promise<any>;
     getPost(postId: number): Promise<any>;

@@ -287,6 +287,12 @@ export class YpGroup extends YpCollection {
         this.hasNonOpenPosts = groupResults.hasNonOpenPosts;
         if (this.collection.is_group_folder) {
           this.collection.configuration.groupType = YpGroupType.Folder;
+          this.collectionItemType = "group";
+          this.collectionType = "group";
+          const groupFolder = (await window.serverApi.getGroupFolder(
+            this.collectionId
+          )) as YpGroupResults;
+          this.collectionItems = groupFolder.group.Groups;
         }
         if (
           !this.haveLoadedAgentsOps &&
@@ -1039,12 +1045,7 @@ export class YpGroup extends YpCollection {
   }
 
   static override get styles() {
-    return [
-      super.styles,
-      css`
-
-      `,
-    ];
+    return [super.styles, css``];
   }
 
   renderAgentsOps() {
@@ -1056,19 +1057,23 @@ export class YpGroup extends YpCollection {
   }
 
   renderGroupFolder() {
-    return html` <div class="currentPage layout vertical center-center">
-      <div class="topContainer">
-        <yp-collection-items-list
-          id="collectionItems"
-          .collectionItems="${this.collectionItems}"
-          .collection="${this.collection}"
-          .collectionType="${this.collectionType}"
-          .collectionItemType="${this.collectionItemType}"
-          .collectionId="${this.collectionId!}"
-          ?useEvenOddItemLayout="${this.useEvenOddItemLayout}"
-        ></yp-collection-items-list>
-      </div>
-    </div>`;
+    if (this.collectionItems) {
+      return html`<div class="currentPage layout vertical center-center">
+        <div class="topContainer">
+          <yp-collection-items-list
+            id="collectionItems"
+            .collectionItems="${this.collectionItems}"
+            .collection="${this.collection}"
+            .collectionType="${this.collectionType}"
+            .collectionItemType="${this.collectionItemType}"
+            .collectionId="${this.collectionId!}"
+            ?useEvenOddItemLayout="${this.useEvenOddItemLayout}"
+          ></yp-collection-items-list>
+        </div>
+      </div> `;
+    } else {
+      return html`<md-linear-progress indeterminate></md-linear-progress>`;
+    }
   }
 
   get isNewPost() {

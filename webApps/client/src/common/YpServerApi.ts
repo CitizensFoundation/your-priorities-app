@@ -179,6 +179,13 @@ export class YpServerApi extends YpServerApiBase {
     );
   }
 
+  public getGroupFolder(groupId: number) {
+    return this.fetchWrapper(
+      this.baseUrlPath +
+        `/groups/${groupId}/groupFolder`
+    );
+  }
+
   public getCategoriesCount(id: number, tabName: string | undefined) {
     return this.fetchWrapper(
       this.baseUrlPath + `/groups/${id}/categories_count/${tabName}`

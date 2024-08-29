@@ -96,6 +96,10 @@ export class YpServerApi extends YpServerApiBase {
         return this.fetchWrapper(this.baseUrlPath +
             `/${YpServerApi.transformCollectionTypeToApi(collectionType)}/${collectionId}`);
     }
+    getGroupFolder(groupId) {
+        return this.fetchWrapper(this.baseUrlPath +
+            `/groups/${groupId}/groupFolder`);
+    }
     getCategoriesCount(id, tabName) {
         return this.fetchWrapper(this.baseUrlPath + `/groups/${id}/categories_count/${tabName}`);
     }
