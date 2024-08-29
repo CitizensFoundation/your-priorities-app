@@ -707,6 +707,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
     headerTextType: string,
     pointsLength: number
   ) {
+    const pointsLengthText = pointsLength && pointsLength > 0 ? `(${pointsLength})` : "";
     return !alternativeHeader
       ? html`
           <div
@@ -714,7 +715,8 @@ export class YpPostPoints extends YpBaseElementWithLogin {
             role="heading"
             aria-level="2"
           >
-            ${this.renderHeaderIcon(headerTextType)} ${header} (${pointsLength})
+            ${this.renderHeaderIcon(headerTextType)} ${header}
+            ${pointsLengthText}
           </div>
         `
       : html`
@@ -728,7 +730,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
               role="heading"
               aria-level="2"
               class="ratingName"
-              .postfixText=" (${pointsLength})"
+              .postfixText=${` ${pointsLengthText}`}
               textType="${headerTextType}"
             >
             </yp-magic-text>
@@ -940,7 +942,12 @@ export class YpPostPoints extends YpBaseElementWithLogin {
               ?hidden="${this.fetchActive}"
             >
               ${this.renderPointInfo()}
-              <div class="main-container layout horizontal ${this.post.Group.configuration?.hidePointAgainst ? 'center-center' : ''}">
+              <div
+                class="main-container layout horizontal ${this.post.Group
+                  .configuration?.hidePointAgainst
+                  ? "center-center"
+                  : ""}"
+              >
                 ${!this.post.Group.configuration?.hidePointFor
                   ? this.renderPointList(
                       "Up",

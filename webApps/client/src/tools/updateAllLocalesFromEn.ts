@@ -18,7 +18,7 @@ interface Translation {
 // and remove the last line of the .js file (the module.exports line)
 export class YpLocaleTranslation {
   openaiClient: OpenAI;
-  modelName = "gpt-4-turbo-2024-04-09";
+  modelName = "gpt-4o-2024-08-06";
   maxTokens = 4000;
   temperature = 0.0;
 
@@ -46,6 +46,7 @@ export class YpLocaleTranslation {
       if (localeDir === "en") continue; // Skip English since it's the base
       if (localeDir === "en_gb") continue;
       if (localeDir === "en_ca") continue;
+      if (localeDir === "ae") continue;
 
       console.log(`Processing locale: ${localeDir}`);
       const translationFilePath = path.join(

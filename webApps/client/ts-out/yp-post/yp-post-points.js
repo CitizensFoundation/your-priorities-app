@@ -549,6 +549,7 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
         }
     }
     renderPointHeader(header, alternativeHeader, headerTextType, pointsLength) {
+        const pointsLengthText = pointsLength && pointsLength > 0 ? `(${pointsLength})` : "";
         return !alternativeHeader
             ? html `
           <div
@@ -556,7 +557,8 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
             role="heading"
             aria-level="2"
           >
-            ${this.renderHeaderIcon(headerTextType)} ${header} (${pointsLength})
+            ${this.renderHeaderIcon(headerTextType)} ${header}
+            ${pointsLengthText}
           </div>
         `
             : html `
@@ -570,7 +572,7 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
               role="heading"
               aria-level="2"
               class="ratingName"
-              .postfixText=" (${pointsLength})"
+              .postfixText=${` ${pointsLengthText}`}
               textType="${headerTextType}"
             >
             </yp-magic-text>
@@ -737,7 +739,12 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
               ?hidden="${this.fetchActive}"
             >
               ${this.renderPointInfo()}
-              <div class="main-container layout horizontal ${this.post.Group.configuration?.hidePointAgainst ? 'center-center' : ''}">
+              <div
+                class="main-container layout horizontal ${this.post.Group
+                .configuration?.hidePointAgainst
+                ? "center-center"
+                : ""}"
+              >
                 ${!this.post.Group.configuration?.hidePointFor
                 ? this.renderPointList("Up", this.t("pointsFor"), this.post.Group.configuration?.alternativePointForHeader, "alternativePointForHeader", this.labelUp, this.hideUpVideo, this.hideUpText, this.hasCurrentUpVideo, this._videoUpUploaded, this.t("uploadVideoPointFor"), this.uploadedVideoUpId, this.focusUpPoint, this.hideUpAudio, this.hasCurrentUpAudio, this.t("uploadAudioPointFor"), this.ifLengthUpIsRight, this.addPointUp, this.upPoints)
                 : nothing}

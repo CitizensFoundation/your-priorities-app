@@ -443,7 +443,7 @@ export class YpCollectionItemCard extends YpBaseElement {
   }
 
   renderCollectionStats() {
-    return html`<div class="stats layout horizontal">
+    return html`<div class="stats layout horizontal" ?hidden="${this.itemType == "groupCommunityLink"}">
       <yp-collection-stats
         .collectionType="${this.statsCollectionType}"
         .collection="${this.statsCollection}"
