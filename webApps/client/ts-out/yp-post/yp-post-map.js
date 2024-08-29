@@ -128,15 +128,14 @@ let YpPostMap = class YpPostMap extends YpBaseElement {
         return html `
       <div class="layout vertical center-center">
         ${this.posts
-            ? html `
-              <div
+            ? html `<div
                 id="mapContainer"
                 class="mapContainer shadow-elevation-2dp shadow-transition">
                 <lit-google-map
                   additionalMapOptions="{'keyboardShortcuts':false,'fullscreenControl': false}"
                   id="map"
                   version="weekly"
-                  api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0"
+                  .api-key="${window.appGlobals.googleMapsApiKey}"
                   fit-to-markers>
                   ${this.posts.map(post => html `
                       <lit-google-map-marker

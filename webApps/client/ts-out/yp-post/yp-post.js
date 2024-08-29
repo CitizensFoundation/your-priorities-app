@@ -308,9 +308,9 @@ let YpPost = class YpPost extends YpCollection {
                         ? html `<div
                 class="mapContainer shadow-elevation-4dp shadow-transition"
               >
-                <google-map
+                <lit-google-map
                   additionalMapOptions="{'keyboardShortcuts':false}"
-                  apiKey="XXXX"
+                  apiKey="${window.appGlobals.googleMapsApiKey}"
                   id="map"
                   libraries="places"
                   class="map"
@@ -318,13 +318,13 @@ let YpPost = class YpPost extends YpCollection {
                   .zoom="${this.post.location.map_zoom}"
                   fitToMarkers=""
                 >
-                  <google-map-marker
+                  <lit-google-map-marker
                     slot="markers"
-                    latitude="${this.post.location.latitude}"
-                    longitude="${this.post.location.longitude}"
+                    .latitude="${this.post.location.latitude}"
+                    .longitude="${this.post.location.longitude}"
                     id="marker"
-                  ></google-map-marker>
-                </google-map>
+                  ></lit-google-map-marker>
+                </lit-google-map>
               </div>`
                         : html ` <h1 style="padding-top: 16px">
                 ${this.t("post.noLocation")}

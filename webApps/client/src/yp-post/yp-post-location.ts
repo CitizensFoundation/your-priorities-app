@@ -135,7 +135,7 @@ export class YpPostLocation extends YpBaseElement {
             <lit-google-map
               id="map"
               @map-zoom-changed="${this._mapZoomChanged}"
-              api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0"
+              .api-key="${window.appGlobals.googleMapsApiKey}"
               version="weekly"
               @map-type-changed="${this._mapTypeChanged}"
               class="map"
