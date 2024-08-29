@@ -11,6 +11,7 @@ import '@material/web/button/outlined-button.js';
 import '@material/web/progress/circular-progress.js';
 import 'lit-google-map';
 import { YpBaseElement } from '../common/yp-base-element.js';
+import { ifDefined } from 'lit/directives/if-defined.js';
 let YpPostLocation = class YpPostLocation extends YpBaseElement {
     constructor() {
         super(...arguments);
@@ -103,7 +104,7 @@ let YpPostLocation = class YpPostLocation extends YpBaseElement {
             <lit-google-map
               id="map"
               @map-zoom-changed="${this._mapZoomChanged}"
-              .api-key="${window.appGlobals.googleMapsApiKey}"
+              api-key="${ifDefined(window.appGlobals.googleMapsApiKey)}"
               version="weekly"
               @map-type-changed="${this._mapTypeChanged}"
               class="map"

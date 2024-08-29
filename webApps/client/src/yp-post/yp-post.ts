@@ -23,6 +23,7 @@ import { ShadowStyles } from "../common/ShadowStyles.js";
 import "./yp-post-header.js";
 import "./yp-post-points.js";
 import "./yp-post-user-images.js";
+import { ifDefined } from "lit/directives/if-defined.js";
 
 // TODO: Remove
 interface AcActivity extends LitElement {
@@ -362,7 +363,7 @@ export class YpPost extends YpCollection {
               >
                 <lit-google-map
                   additionalMapOptions="{'keyboardShortcuts':false}"
-                  apiKey="${window.appGlobals.googleMapsApiKey}"
+                  api-key="${ifDefined(window.appGlobals.googleMapsApiKey)}"
                   id="map"
                   libraries="places"
                   class="map"

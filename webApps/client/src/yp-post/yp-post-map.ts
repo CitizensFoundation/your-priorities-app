@@ -7,6 +7,7 @@ import 'lit-google-map';
 import './yp-post-card.js';
 
 import { ShadowStyles } from '../common/ShadowStyles.js';
+import { ifDefined } from 'lit/directives/if-defined.js';
 
 @customElement('yp-post-map')
 export class YpPostMap extends YpBaseElement {
@@ -158,7 +159,7 @@ export class YpPostMap extends YpBaseElement {
                   additionalMapOptions="{'keyboardShortcuts':false,'fullscreenControl': false}"
                   id="map"
                   version="weekly"
-                  .api-key="${window.appGlobals.googleMapsApiKey}"
+                  api-key="${ifDefined(window.appGlobals.googleMapsApiKey)}"
                   fit-to-markers>
                   ${this.posts.map(
                     post => html`

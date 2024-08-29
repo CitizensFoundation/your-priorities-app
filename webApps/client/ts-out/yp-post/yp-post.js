@@ -18,6 +18,7 @@ import { YpNavHelpers } from "../common/YpNavHelpers.js";
 import "./yp-post-header.js";
 import "./yp-post-points.js";
 import "./yp-post-user-images.js";
+import { ifDefined } from "lit/directives/if-defined.js";
 export const PostTabTypes = {
     Debate: 0,
     News: 1,
@@ -310,7 +311,7 @@ let YpPost = class YpPost extends YpCollection {
               >
                 <lit-google-map
                   additionalMapOptions="{'keyboardShortcuts':false}"
-                  apiKey="${window.appGlobals.googleMapsApiKey}"
+                  api-key="${ifDefined(window.appGlobals.googleMapsApiKey)}"
                   id="map"
                   libraries="places"
                   class="map"
