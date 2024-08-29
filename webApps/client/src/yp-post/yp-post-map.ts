@@ -65,6 +65,7 @@ export class YpPostMap extends YpBaseElement {
           height: 500px;
           margin-top: 16px;
           margin-bottom: 48px;
+          max-width: 1080px;
         }
 
         .noMapContainer {
@@ -154,7 +155,7 @@ export class YpPostMap extends YpBaseElement {
         ${this.posts
           ? html`<div
                 id="mapContainer"
-                class="mapContainer shadow-elevation-2dp shadow-transition">
+                class="mapContainer">
                 <lit-google-map
                   additionalMapOptions="{'keyboardShortcuts':false,'fullscreenControl': false}"
                   id="map"

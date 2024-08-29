@@ -1174,6 +1174,18 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
                     translationToken: "hidePointAuthor",
                 },
                 {
+                    text: "hidePointForAgainstIcons",
+                    type: "checkbox",
+                    value: this.group.configuration.hidePointForAgainstIcons,
+                    translationToken: "hidePointForAgainstIcons",
+                },
+                {
+                    text: "hidePointFor",
+                    type: "checkbox",
+                    value: this.group.configuration.hidePointFor,
+                    translationToken: "hidePointFor",
+                },
+                {
                     text: "hidePointAgainst",
                     type: "checkbox",
                     value: this.group.configuration.hidePointAgainst,

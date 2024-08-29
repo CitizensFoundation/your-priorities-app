@@ -157,7 +157,8 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
         }
 
         md-outlined-text-field {
-          margin-bottom: 32px;
+          margin-bottom: 8px;
+          margin-top: 8px;
         }
 
         .radioGroup {
@@ -380,7 +381,6 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
       >
       </yp-simple-html-editor>`;
     } else {
-      debugger;
       return html`
         <md-outlined-text-field
           id="structuredQuestion_${this.index}"

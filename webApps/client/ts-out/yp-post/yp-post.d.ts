@@ -1,5 +1,6 @@
 import { YpCollection } from "../yp-collection/yp-collection.js";
 import { TemplateResult } from "lit";
+import 'lit-google-map';
 import "@material/web/fab/fab.js";
 import "./yp-post-header.js";
 import "./yp-post-points.js";

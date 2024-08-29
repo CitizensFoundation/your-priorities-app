@@ -11,6 +11,8 @@ import { customElement, property } from "lit/decorators.js";
 //import '@material/web/navigationtab/navigation-tab.js';
 //import { MdNavigationTab } from '@material/web/navigationtab/navigation-tab.js';
 
+import 'lit-google-map';
+
 import "@material/web/fab/fab.js";
 
 //import '../yp-post/yp-posts-list.js';
@@ -143,6 +145,10 @@ export class YpPost extends YpCollection {
         .dividerLine {
           opacity: 0.3;
           max-width: 88%;
+        }
+
+        .mapContainer {
+          max-width: 1080px;
         }
 
         .postHeader {

@@ -115,7 +115,8 @@ let YpStructuredQuestionEdit = class YpStructuredQuestionEdit extends YpBaseElem
         }
 
         md-outlined-text-field {
-          margin-bottom: 32px;
+          margin-bottom: 8px;
+          margin-top: 8px;
         }
 
         .radioGroup {
@@ -334,7 +335,6 @@ let YpStructuredQuestionEdit = class YpStructuredQuestionEdit extends YpBaseElem
       </yp-simple-html-editor>`;
         }
         else {
-            debugger;
             return html `
         <md-outlined-text-field
           id="structuredQuestion_${this.index}"

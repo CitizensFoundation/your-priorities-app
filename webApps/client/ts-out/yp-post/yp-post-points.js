@@ -129,8 +129,12 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
         }
 
         md-filled-button[has-static-theme] {
-          --md-filled-button-container-color: var(--md-sys-color-primary-container);
-          --md-filled-button-label-text-color: var(--md-sys-color-on-primary-container);
+          --md-filled-button-container-color: var(
+            --md-sys-color-primary-container
+          );
+          --md-filled-button-label-text-color: var(
+            --md-sys-color-on-primary-container
+          );
         }
 
         .happyFace {
@@ -209,19 +213,37 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
         }
 
         md-filled-text-field[is-up] {
-          --md-filled-text-field-container-color: var(--md-sys-color-surface-container);
+          --md-filled-text-field-container-color: var(
+            --md-sys-color-surface-container
+          );
           --md-filled-text-field-active-indicator-color: var(--yp-sys-color-up);
-          --md-filled-text-field-caret-color: var(--yp-sys-color-on-container-up);
-          --md-filled-field-focus-label-text-color: var(--yp-sys-color-on-container-up);
-          --md-filled-field-focus-active-indicator-color: var(--yp-sys-color-up);
+          --md-filled-text-field-caret-color: var(
+            --yp-sys-color-on-container-up
+          );
+          --md-filled-field-focus-label-text-color: var(
+            --yp-sys-color-on-container-up
+          );
+          --md-filled-field-focus-active-indicator-color: var(
+            --yp-sys-color-up
+          );
         }
 
         md-filled-text-field[is-down] {
-          --md-filled-text-field-container-color: var(--md-sys-color-surface-container);
-          --md-filled-text-field-active-indicator-color: var(--yp-sys-color-down);
-          --md-filled-text-field-caret-color: var(--yp-sys-color-on-container-down);
-          --md-filled-field-focus-label-text-color: var(--yp-sys-color-on-container-down);
-          --md-filled-field-focus-active-indicator-color: var(--yp-sys-color-down);
+          --md-filled-text-field-container-color: var(
+            --md-sys-color-surface-container
+          );
+          --md-filled-text-field-active-indicator-color: var(
+            --yp-sys-color-down
+          );
+          --md-filled-text-field-caret-color: var(
+            --yp-sys-color-on-container-down
+          );
+          --md-filled-field-focus-label-text-color: var(
+            --yp-sys-color-on-container-down
+          );
+          --md-filled-field-focus-active-indicator-color: var(
+            --yp-sys-color-down
+          );
         }
 
         .submitButton[is-up] {
@@ -470,9 +492,10 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
         html ` <div class="layout vertical end-justified">
       <div
         class="layout horizontal center-center pointButtons"
-        ?hidden="${this.post.Group.configuration?.hidePointAgainst}"
+        ?hidden="${this.post.Group.configuration?.hidePointAgainst &&
+            this.post.Group.configuration?.hidePointFor}"
       >
-        <label
+        <label ?hidden="${this.post.Group.configuration?.hidePointFor}"
           >${this.t("pointForShort")}
           <md-radio
             @click="${this._chooseUpOrDownRadio}"
@@ -482,7 +505,7 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
           ></md-radio>
         </label>
 
-        <label
+        <label ?hidden="${this.post.Group.configuration?.hidePointAgainst}"
           >${this.t("pointAgainstShort")}
           <md-radio
             @click="${this._chooseUpOrDownRadio}"
@@ -515,7 +538,10 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
     </div>`;
     }
     renderHeaderIcon(headerTextType) {
-        if (headerTextType == "alternativePointForHeader") {
+        if (this.post.Group.configuration.hidePointForAgainstIcons) {
+            return nothing;
+        }
+        else if (headerTextType == "alternativePointForHeader") {
             return html ` <md-icon class="happyFace">sentiment_satisfied</md-icon> `;
         }
         else {
@@ -610,17 +636,17 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
             ${mobile ? this.renderMobilePointSelection() : nothing}
 
             <div class="addPointFab layout horizontal center-center">
-                <md-filled-button
-                  ?has-static-theme="${this.hasStaticTheme}"
-                  class="submitButton"
-                   ?is-up="${type == "Up"}"
-                   ?is-down="${type == "Down"}"
-                   ?hidden="${!ifLengthIsRight}"
-                  ?disabled="${this.addPointDisabled || !ifLengthIsRight}"
-                  @click="${addPointFunc}"
-                  >${this.t("postPoint")}</md-filled-button
-                >
-              </div>
+              <md-filled-button
+                ?has-static-theme="${this.hasStaticTheme}"
+                class="submitButton"
+                ?is-up="${type == "Up"}"
+                ?is-down="${type == "Down"}"
+                ?hidden="${!ifLengthIsRight}"
+                ?disabled="${this.addPointDisabled || !ifLengthIsRight}"
+                @click="${addPointFunc}"
+                >${this.t("postPoint")}</md-filled-button
+              >
+            </div>
           </div>
 
           ${points
@@ -650,7 +676,8 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
             hidden
             contentId="${this.post.Group.id}"
             textOnly
-            .content="${this.post.Group.configuration?.alternativePointForLabel}"
+            .content="${this.post.Group.configuration
+                ?.alternativePointForLabel}"
             .contentLanguage="${this.post.Group.language}"
             @new-translation="${this._updatePointLabels}"
             role="heading"
@@ -667,7 +694,8 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
             hidden
             contentId="${this.post.Group.id}"
             textOnly
-            .content="${this.post.Group.configuration?.alternativePointAgainstLabel}"
+            .content="${this.post.Group.configuration
+                ?.alternativePointAgainstLabel}"
             .contentLanguage="${this.post.Group.language}"
             @new-translation="${this._updatePointLabels}"
             role="heading"
@@ -680,7 +708,11 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
     }
     renderPointInfo() {
         return html `
-      <div class="pointInfo layout vertical center-center">
+      <div
+        class="pointInfo layout vertical center-center"
+        ?hidden="${this.post.Group.configuration?.hidePointAgainst &&
+            this.post.Group.configuration?.hidePointFor}"
+      >
         <div>
           ${this.t("upvote")}
           <md-icon class="pointInfoIcon">arrow_upward</md-icon> ${this.t("orDownvote")} <md-icon class="pointInfoIcon">arrow_downward</md-icon> ${this.t("pointsByPressingTheArrows")}
@@ -699,11 +731,20 @@ let YpPostPoints = class YpPostPoints extends YpBaseElementWithLogin {
 
       ${this.wideReady
             ? html `
-            <div ?rtl="${this.rtl}" class="layout vertical topContainer" ?hidden="${this.fetchActive}">
+            <div
+              ?rtl="${this.rtl}"
+              class="layout vertical topContainer"
+              ?hidden="${this.fetchActive}"
+            >
               ${this.renderPointInfo()}
-              <div class="main-container layout horizontal">
-                ${this.renderPointList("Up", this.t("pointsFor"), this.post.Group.configuration?.alternativePointForHeader, "alternativePointForHeader", this.labelUp, this.hideUpVideo, this.hideUpText, this.hasCurrentUpVideo, this._videoUpUploaded, this.t("uploadVideoPointFor"), this.uploadedVideoUpId, this.focusUpPoint, this.hideUpAudio, this.hasCurrentUpAudio, this.t("uploadAudioPointFor"), this.ifLengthUpIsRight, this.addPointUp, this.upPoints)}
-                ${this.renderPointList("Down", this.t("pointsAgainst"), this.post.Group.configuration?.alternativePointAgainstHeader, "alternativePointAgainstHeader", this.labelDown, this.hideDownVideo, this.hideDownText, this.hasCurrentDownVideo, this._videoDownUploaded, this.t("uploadVideoPointAgainst"), this.uploadedVideoDownId, this.focusDownPoint, this.hideDownAudio, this.hasCurrentDownAudio, this.t("uploadAudioPointAgainst"), this.ifLengthDownIsRight, this.addPointDown, this.downPoints)}
+              <div class="main-container layout horizontal ${this.post.Group.configuration?.hidePointAgainst ? 'center-center' : ''}">
+                ${!this.post.Group.configuration?.hidePointFor
+                ? this.renderPointList("Up", this.t("pointsFor"), this.post.Group.configuration?.alternativePointForHeader, "alternativePointForHeader", this.labelUp, this.hideUpVideo, this.hideUpText, this.hasCurrentUpVideo, this._videoUpUploaded, this.t("uploadVideoPointFor"), this.uploadedVideoUpId, this.focusUpPoint, this.hideUpAudio, this.hasCurrentUpAudio, this.t("uploadAudioPointFor"), this.ifLengthUpIsRight, this.addPointUp, this.upPoints)
+                : nothing}
+                ${!this.post.Group.configuration?.hidePointAgainst
+                ? this.renderPointList("Down", this.t("pointsAgainst"), this.post.Group.configuration
+                    ?.alternativePointAgainstHeader, "alternativePointAgainstHeader", this.labelDown, this.hideDownVideo, this.hideDownText, this.hasCurrentDownVideo, this._videoDownUploaded, this.t("uploadVideoPointAgainst"), this.uploadedVideoDownId, this.focusDownPoint, this.hideDownAudio, this.hasCurrentDownAudio, this.t("uploadAudioPointAgainst"), this.ifLengthDownIsRight, this.addPointDown, this.downPoints)
+                : nothing}
               </div>
             </div>
           `

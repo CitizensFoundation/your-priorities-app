@@ -63,11 +63,11 @@ export declare class YpPostPoints extends YpBaseElementWithLogin {
     _clearTextValueMobileUpOrDown(): void;
     updated(changedProperties: Map<string | number | symbol, unknown>): void;
     static get styles(): any[];
-    renderAudioUpload(type: string, hideAudio: boolean, hasCurrentAudio: string | undefined, uploadAudioPointHeader: string): TemplateResult<1> | typeof nothing;
-    renderVideoUpload(type: string, hideVideo: boolean, hasCurrentVideo: string | undefined, uploadVideoHeader: string, videoUploadedFunc: Function, uploadedVideoId: number | undefined): TemplateResult<1> | typeof nothing;
+    renderAudioUpload(type: string, hideAudio: boolean, hasCurrentAudio: string | undefined, uploadAudioPointHeader: string): typeof nothing | TemplateResult<1>;
+    renderVideoUpload(type: string, hideVideo: boolean, hasCurrentVideo: string | undefined, uploadVideoHeader: string, videoUploadedFunc: Function, uploadedVideoId: number | undefined): typeof nothing | TemplateResult<1>;
     renderMobilePointSelection(): void;
     renderPointItem(point: YpPointData, index: number): TemplateResult;
-    renderHeaderIcon(headerTextType: string): TemplateResult<1>;
+    renderHeaderIcon(headerTextType: string): typeof nothing | TemplateResult<1>;
     renderPointHeader(header: string, alternativeHeader: string | undefined, headerTextType: string, pointsLength: number): TemplateResult<1>;
     renderPointList(type: string, header: string, alternativeHeader: string | undefined, headerTextType: string, label: string | undefined, hideVideo: boolean, hideText: boolean, hasCurrentVideo: string | undefined, videoUploadedFunc: Function, uploadVideoHeader: string, uploadedVideoId: number | undefined, pointFocusFunction: Function, hideAudio: boolean, hasCurrentAudio: string | undefined, uploadAudioPointHeader: string, ifLengthIsRight: boolean, addPointFunc: Function, points: Array<YpPointData> | undefined, mobile?: boolean): TemplateResult<1>;
     scrollEvent(event: any): void;
@@ -87,7 +87,7 @@ export declare class YpPostPoints extends YpBaseElementWithLogin {
     _audioMobileUploaded(event: CustomEvent): void;
     get mobileScrollOffset(): number;
     get listResizeScrollThreshold(): number;
-    get listPaddingTop(): 600 | 500;
+    get listPaddingTop(): 500 | 600;
     connectedCallback(): void;
     disconnectedCallback(): void;
     _listResize(): void;

@@ -149,7 +149,7 @@ async function generateDocumentation(fileList, systemPrompt) {
             try {
                 console.log(`${file}:`);
                 const completion = await openaiClient.chat.completions.create({
-                    model: 'gpt-4-0125-preview',
+                    model: 'gpt-4o-2024-08-06',
                     temperature: 0.0,
                     max_tokens: 4095,
                     messages: [

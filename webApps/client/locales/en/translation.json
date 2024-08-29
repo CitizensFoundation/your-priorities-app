@@ -1,4 +1,5 @@
 {
+  "hidePointForAgainstIcons": "Hide point for/against icons",
   "welcome": "Welcome",
   "dontHaveAnAccount": "Don't have an account?",
   "forgotPassword": "Forgot password?",
@@ -481,6 +482,7 @@
   "hideRecommendationOnNewsFeed": "Hide recommendations on news feed",
   "customSamlLoginMessage": "Custom SAML login message",
   "customSamlDeniedMessage": "Custom SAML denied message",
+  "hidePointFor": "Hide point against box",
   "hidePointAgainst": "Hide point against box",
   "ssnLoginListCount": "Ssn login list count",
   "deleteSsnLoginList": "Delete ssn login list",

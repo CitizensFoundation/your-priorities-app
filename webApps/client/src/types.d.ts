@@ -234,6 +234,7 @@ interface YpGroupConfiguration extends YpCollectionConfiguration {
   descriptionSimpleFormat?: boolean;
   disableDebate?: boolean;
   hideEmoji?: boolean;
+  hidePointFor?: boolean;
   hidePointAgainst?: boolean;
   allowPointVideoUploads?: boolean;
   showVideoUploadDisclaimer?: boolean;
@@ -311,6 +312,7 @@ interface YpGroupConfiguration extends YpCollectionConfiguration {
   hideInfoBoxExceptForAdmins?: boolean;
   registrationQuestions?: string;
   allowGenerativeImages?: boolean;
+  hidePointForAgainstIcons?: boolean;
   groupType?: number;
   hideGroupType?: boolean;
   ltp?: YpLtpConfiguration;

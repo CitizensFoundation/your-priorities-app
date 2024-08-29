@@ -20,12 +20,12 @@ export declare class YpAdminConfigCommunity extends YpAdminConfigBase {
     communityAccess: YpCommunityAccessTypes;
     constructor();
     static get styles(): (any[] | import("lit").CSSResult)[];
-    renderHeader(): import("lit-html").TemplateResult<1> | typeof nothing;
+    renderHeader(): typeof nothing | import("lit-html").TemplateResult<1>;
     renderActionMenu(): import("lit-html").TemplateResult<1>;
     _onDeleted(): void;
     _openDelete(): void;
     _menuSelection(event: CustomEvent): void;
-    renderHiddenAccessSettings(): import("lit-html").TemplateResult<1> | typeof nothing;
+    renderHiddenAccessSettings(): typeof nothing | import("lit-html").TemplateResult<1>;
     renderHiddenInputsNotActive(): import("lit-html").TemplateResult<1>;
     renderHiddenInputs(): import("lit-html").TemplateResult<1>;
     _hostnameChanged(): void;

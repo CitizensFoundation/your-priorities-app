@@ -721,6 +721,12 @@ var updateGroupConfigParameters = function (req, group) {
     "configuration.descriptionSimpleFormat",
     truthValueFromBody(req.body.descriptionSimpleFormat)
   );
+
+  group.set(
+    "configuration.hidePointForAgainstIcons",
+    truthValueFromBody(req.body.hidePointForAgainstIcons)
+  );
+
   group.set(
     "configuration.transcriptSimpleFormat",
     truthValueFromBody(req.body.transcriptSimpleFormat)

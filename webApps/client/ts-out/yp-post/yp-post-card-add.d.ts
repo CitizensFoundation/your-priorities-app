@@ -7,11 +7,17 @@ export declare class YpPostCardAdd extends YpBaseElement {
     disableNewPosts: boolean;
     group: YpGroupData | undefined;
     index: number | undefined;
+    private addNewText;
+    private closedText;
     static get styles(): any[];
-    render(): import("lit-html").TemplateResult<1> | typeof nothing;
+    connectedCallback(): void;
+    render(): typeof nothing | import("lit-html").TemplateResult<1>;
+    _renderHiddenMagicTexts(): import("lit-html").TemplateResult<1>;
+    _handleAddNewTextTranslation(e: CustomEvent): void;
+    _handleClosedTextTranslation(e: CustomEvent): void;
     _keyDown(event: KeyboardEvent): void;
     _newPost(): void;
-    _getAddNewText(): string | import("lit-html").TemplateResult<1>;
-    _getClosedText(): string | import("lit-html").TemplateResult<1>;
+    _getAddNewText(): string;
+    _getClosedText(): string;
 }
 //# sourceMappingURL=yp-post-card-add.d.ts.map

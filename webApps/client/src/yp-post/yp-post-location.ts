@@ -106,8 +106,11 @@ export class YpPostLocation extends YpBaseElement {
         }
 
         md-outlined-button {
-          font-size: 16px;
-          padding-top: 32px;
+          margin: 8px;
+        }
+
+        md-outlined-text-field {
+          margin: 8px;
         }
 
         @media (max-width: 390px) {
@@ -123,8 +126,9 @@ export class YpPostLocation extends YpBaseElement {
         }
 
         .mapContainer {
-          width: 450px;
-          height: 250px;
+          width: 400px;
+          height: 225px;
+          margin-left: 40px;
         }
       `,
     ];
@@ -132,7 +136,7 @@ export class YpPostLocation extends YpBaseElement {
 
   override render() {
     return this.group
-      ? html`<div class="mapContainer">
+      ? html`<div class="mapContainer vertical center-center">
             <lit-google-map
               id="map"
               @map-zoom-changed="${this._mapZoomChanged}"
@@ -140,6 +144,7 @@ export class YpPostLocation extends YpBaseElement {
               version="weekly"
               @map-type-changed="${this._mapTypeChanged}"
               class="map"
+              zoom="${this.mapZoom}"
               @zoom-changed="${this._zoomChanged}"
               fit-to-markers>
               <lit-google-map-marker
@@ -150,16 +155,16 @@ export class YpPostLocation extends YpBaseElement {
             </lit-google-map>
           </div>
           <div class="mapSearchInput layout vertical center-center">
-            <div class="layout horizontal center-center wrap">
+            <div class="layout horizontal">
               <md-outlined-text-field
                 maxlength="60"
                 id="mapSearchInput"
                 .label="${this.t('maps.searchInput')}"
                 .value="${this.mapSearchString}"
                 @keydown="${this._submitOnEnter}"></md-outlined-text-field>
-              <md-outlined-button
+              <md-text-button
                 @click="${this._searchMap}"
-                .label="${this.t('maps.search')}"></md-outlined-button>
+                >${this.t('maps.search')}</md-text-button>
             </div>
             <div class="searchResultText layout horizontal center-center">
               ${this.mapSearchResultAddress}
@@ -198,7 +203,7 @@ export class YpPostLocation extends YpBaseElement {
     };
 
     //@ts-ignore
-    service.findPlaceFromQuery(request, (results, status) => {
+    service.findPlaceFromQuery(request, async (results, status) => {
       //@ts-ignore
       if (status === google.maps.places.PlacesServiceStatus.OK) {
         (this.$$('#spinner') as HTMLElement).hidden = true;
@@ -210,7 +215,14 @@ export class YpPostLocation extends YpBaseElement {
             longitude: results[0].geometry.location.lng(),
             map_zoom: 15,
           };
-          (this.$$('#map') as YpLitGoogleMapElement).updateMarkers()
+          const map = this.$$('#map') as YpLitGoogleMapElement
+
+          map.requestUpdate()
+          map.updateMarkers()
+          map.fitToMarkersChanged()
+          this.requestUpdate();
+          debugger;
+
           //this.$$('#map').resize();
         }
       }
@@ -253,15 +265,18 @@ export class YpPostLocation extends YpBaseElement {
 
   _locationChanged() {
     if (this.location) {
+      console.error(JSON.stringify(this.location));
+
       const map = this.$$('#map') as YpLitGoogleMapElement
       if (this.location.map_zoom)
         map.zoom = this.location.map_zoom;
       if (this.location.mapType)
         map.mapType = this.location.mapType;
 
-//      map.updateMarkers()
-//      map.fitToMarkersChanged()
+      map.updateMarkers()
+      map.fitToMarkersChanged()
       map.requestUpdate()
+
       //TODO: See if this is needed
       //this.$$('#map').resize();
       this.encodedLocation = JSON.stringify(this.location);

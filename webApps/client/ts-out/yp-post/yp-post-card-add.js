@@ -5,7 +5,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 import { html, css, nothing } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { customElement, property, state } from 'lit/decorators.js';
 import { YpBaseElement } from '../common/yp-base-element.js';
 import { ShadowStyles } from '../common/ShadowStyles.js';
 import '../yp-magic-text/yp-magic-text.js';
@@ -15,6 +15,8 @@ let YpPostCardAdd = class YpPostCardAdd extends YpBaseElement {
     constructor() {
         super(...arguments);
         this.disableNewPosts = false;
+        this.addNewText = '';
+        this.closedText = '';
     }
     static get styles() {
         return [
@@ -54,7 +56,6 @@ let YpPostCardAdd = class YpPostCardAdd extends YpBaseElement {
           --md-sys-color-on-primary-container: var(--md-sys-color-on-secondary-container);
         }
 
-
         .createFab {
           width: 310px;
           margin-left: 0px;
@@ -83,8 +84,17 @@ let YpPostCardAdd = class YpPostCardAdd extends YpBaseElement {
             width: 100%;
           }
         }
+
+        [hidden] {
+          display: none !important;
+        }
       `,
         ];
+    }
+    connectedCallback() {
+        super.connectedCallback();
+        this.addNewText = this.group?.configuration?.alternativeTextForNewIdeaButton || '';
+        this.closedText = this.group?.configuration?.alternativeTextForNewIdeaButtonClosed || '';
     }
     render() {
         return this.group
@@ -99,8 +109,8 @@ let YpPostCardAdd = class YpPostCardAdd extends YpBaseElement {
                 .hideNewPost}
               size="large"
               .label="${this.disableNewPosts
-                ? this._getClosedText().toString()
-                : this._getAddNewText().toString()}"
+                ? this.closedText || this._getClosedText()
+                : this.addNewText || this._getAddNewText()}"
               ?extended="${this.wide}"
               class="createFab"
               variant="primary"
@@ -109,19 +119,44 @@ let YpPostCardAdd = class YpPostCardAdd extends YpBaseElement {
             >
               <md-icon slot="icon">lightbulb_outline</md-icon>
               <span slot="label" class="addNewIdeaText">
-
               </span>
             </md-fab>
           </div>
-          ${this.disableNewPosts
-                ? html `
-                <div class="closed">
-                  ${this._getClosedText()}
-                </div>
-              `
-                : nothing}
+          ${this._renderHiddenMagicTexts()}
         `
             : nothing;
+    }
+    _renderHiddenMagicTexts() {
+        return html `
+      <yp-magic-text
+        id="addNewTextId"
+        hidden
+        .contentId="${this.group?.id}"
+        .extraId="${this.index}"
+        textOnly
+        .content="${this.group?.configuration?.alternativeTextForNewIdeaButton}"
+        .contentLanguage="${this.group?.language}"
+        @new-translation="${this._handleAddNewTextTranslation}"
+        textType="alternativeTextForNewIdeaButton"
+      ></yp-magic-text>
+      <yp-magic-text
+        id="closedTextId"
+        hidden
+        .contentId="${this.group?.id}"
+        .extraId="${this.index}"
+        textOnly
+        .content="${this.group?.configuration?.alternativeTextForNewIdeaButtonClosed}"
+        .contentLanguage="${this.group?.language}"
+        @new-translation="${this._handleClosedTextTranslation}"
+        textType="alternativeTextForNewIdeaButtonClosed"
+      ></yp-magic-text>
+    `;
+    }
+    _handleAddNewTextTranslation(e) {
+        this.addNewText = e.detail.translation;
+    }
+    _handleClosedTextTranslation(e) {
+        this.closedText = e.detail.translation;
     }
     _keyDown(event) {
         if (event.key === 'Enter' || event.key === ' ') {
@@ -135,33 +170,12 @@ let YpPostCardAdd = class YpPostCardAdd extends YpBaseElement {
     }
     _getAddNewText() {
         return this.group?.configuration?.alternativeTextForNewIdeaButton
-            ? html `
-          <yp-magic-text
-            .contentId="${this.group.id}"
-            .extraId="${this.index}"
-            textOnly
-            .content="${this.group.configuration.alternativeTextForNewIdeaButton}"
-            .contentLanguage="${this.group.language}"
-            class="ratingName"
-            textType="alternativeTextForNewIdeaButton"
-          ></yp-magic-text>
-        `
+            ? ''
             : this.t('post.add_new');
     }
     _getClosedText() {
         return this.group?.configuration?.alternativeTextForNewIdeaButtonClosed
-            ? html `
-          <yp-magic-text
-            .contentId="${this.group.id}"
-            .extraId="${this.index}"
-            textOnly
-            .content="${this.group.configuration
-                .alternativeTextForNewIdeaButtonClosed}"
-            .contentLanguage="${this.group.language}"
-            class="ratingName"
-            textType="alternativeTextForNewIdeaButtonClosed"
-          ></yp-magic-text>
-        `
+            ? ''
             : this.t('closedForNewPosts');
     }
 };
@@ -174,6 +188,12 @@ __decorate([
 __decorate([
     property({ type: Number })
 ], YpPostCardAdd.prototype, "index", void 0);
+__decorate([
+    state()
+], YpPostCardAdd.prototype, "addNewText", void 0);
+__decorate([
+    state()
+], YpPostCardAdd.prototype, "closedText", void 0);
 YpPostCardAdd = __decorate([
     customElement('yp-post-card-add')
 ], YpPostCardAdd);

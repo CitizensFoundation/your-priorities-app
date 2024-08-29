@@ -13,6 +13,7 @@ import "@material/web/tabs/tabs.js";
 import "@material/web/textfield/outlined-text-field.js";
 import "../common/yp-generate-ai-image.js";
 import "../common/yp-image.js";
+import "./yp-post-location.js";
 import { YpEditBase } from "../common/yp-edit-base.js";
 import { YpNavHelpers } from "../common/YpNavHelpers.js";
 import "../yp-survey/yp-structured-question-edit.js";
@@ -776,14 +777,14 @@ let YpPostEdit = class YpPostEdit extends YpEditBase {
         return !this.locationHidden
             ? html `
           ${this.group
-                ? html `
+                ? html `<div class="layout horizontal center-center">
                 <yp-post-location
                   .encodedLocation="${this.encodedLocation}"
                   .location="${this.location}"
                   .group="${this.group}"
                   .post="${this.post}"
                 ></yp-post-location>
-              `
+              </div> `
                 : nothing}
         `
             : nothing;
