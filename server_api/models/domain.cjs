@@ -207,7 +207,13 @@ module.exports = (sequelize, DataTypes) => {
               "." +
               domain.domain_name;
           } else {
-            callbackDomainName = "login." + domain.domain_name;
+            if (domain.domain_name === "betrireykjavik.is") {
+              callbackDomainName = domain.domain_name;
+            } else if (domain.domain_name === "betraisland.is") {
+              callbackDomainName = domain.domain_name;
+            } else {
+              callbackDomainName = "login." + domain.domain_name;
+            }
           }
         }
 
