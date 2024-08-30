@@ -284,6 +284,63 @@ module.exports = (sequelize, DataTypes) => {
             }
         });
     };
+    User.serializeOidcUser = (profile, callback) => {
+        log.info("User Serialized In Serialize OIDC User", { context: 'serializeOidcUser', profile: profile });
+        let user;
+        async.series([
+            (seriesCallback) => {
+                sequelize.models.User.findOne({
+                    where: {
+                        ssn: profile.nationalRegisterId
+                    },
+                    attributes: ['id', 'email', 'description', 'name', 'facebook_id', 'google_id', 'profile_data', 'github_id', 'twitter_id', 'ssn', 'legacy_passwords_disabled']
+                }).then((userIn) => {
+                    if (userIn) {
+                        user = userIn;
+                        log.info("User Serialized Found OIDC User", { context: 'serializeOidcUser', userSsn: user.ssn });
+                        seriesCallback();
+                    }
+                    else {
+                        seriesCallback();
+                    }
+                }).catch((error) => {
+                    seriesCallback(error);
+                });
+            },
+            (seriesCallback) => {
+                if (!user) {
+                    sequelize.models.User.create({
+                        ssn: profile.nationalRegisterId,
+                        name: profile.name,
+                        private_profile_data: { oidc_provider: "oidc" },
+                        notifications_settings: sequelize.models.AcNotification.defaultNotificationSettings,
+                        status: 'active'
+                    }).then((userIn) => {
+                        if (userIn) {
+                            user = userIn;
+                            log.info("User Serialized Created OIDC User", { context: 'serializeOidcUser', userSsn: user.ssn });
+                            seriesCallback();
+                        }
+                        else {
+                            seriesCallback("Could not create user from OIDC");
+                        }
+                    }).catch((error) => {
+                        seriesCallback(error);
+                    });
+                }
+                else {
+                    seriesCallback();
+                }
+            }
+        ], (error) => {
+            if (error) {
+                callback(error);
+            }
+            else {
+                callback(null, user);
+            }
+        });
+    };
     User.serializeFacebookUser = (profile, domain, callback) => {
         let user;
         async.series([

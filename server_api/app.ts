@@ -770,6 +770,25 @@ export class YourPrioritiesApi {
             }
           }
         );
+      } else if (profile.provider === "oidc") {
+        (models as any).User.serializeOidcUser(
+          profile,
+          req,
+          (error: any, user: any) => {
+            if (error) {
+              log.error("Error in User Serialized from OIDC", { err: error });
+              done(error);
+            } else {
+              log.info("User Serialized", {
+                context: "loginFromOidc",
+                userId: user.id,
+              });
+              this.registerUserLogin(user, user.id, "oidc", req, () => {
+                done(null, { userId: user.id, loginProvider: "oidc" });
+              });
+            }
+          }
+        );
       } else {
         log.info("User Serialized", {
           context: "serializeUser",

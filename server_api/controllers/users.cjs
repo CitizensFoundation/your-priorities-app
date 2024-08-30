@@ -1907,7 +1907,7 @@ router.put('/missingEmail/linkAccounts', auth.isLoggedIn, function(req, res, nex
           } else if (req.user.loginProvider=='github') {
             user.github_id = req.user.github_id;
             req.user.github_id = null;
-          } else if (req.user.loginProvider=='saml') {
+          } else if (req.user.loginProvider=='saml' || req.user.loginProvider=='oidc') {
             user.set('ssn', req.user.ssn);
 
             var profileData = req.user.profile_data;
@@ -2158,6 +2158,24 @@ router.get('/auth/facebook', function(req, res) {
   });
 });
 
+router.get('/auth/audkenni', function(req, res) {
+  req.sso.authenticate('oidc-strategy-'+req.ypDomain.id, {}, req, res, function(error, user) {
+    if (error) {
+      log.error("Error from OIDC login init", { err: error });
+      throw error;
+    }
+  });
+});
+
+router.get('/auth/oidc', function(req, res) {
+  req.sso.authenticate('oidc-strategy-'+req.ypDomain.id, {}, req, res, function(error, user) {
+    if (error) {
+      log.error("Error from OIDC login init", { err: error });
+      throw error;
+    }
+  });
+});
+
 // SAML Authentication
 router.get('/auth/saml', function(req, res, next) {
   req.sso.authenticate('saml-strategy-'+req.ypDomain.id, {}, req, res, function(error, user) {
@@ -2179,8 +2197,27 @@ router.get('/auth/facebook/callback', function(req, res) {
   })
 });
 
-// Twitter Authentication
-//router.get('/auth/twitter', passport.authenticate('twitter'));
+router.get('/auth/oidc/callback', function(req, res) {
+  req.sso.authenticate('oidc-strategy-'+req.ypDomain.id, {}, req, res, function(error, user) {
+    if (error) {
+      log.error("Error from Facebook login", { err: error });
+      res.sendStatus(500);
+    } else {
+      res.render('facebookLoginComplete', {});
+    }
+  })
+});
+
+router.get('/auth/audkenni/callback', function(req, res) {
+  req.sso.authenticate('oidc-strategy-'+req.ypDomain.id, {}, req, res, function(error, user) {
+    if (error) {
+      log.error("Error from Facebook login", { err: error });
+      res.sendStatus(500);
+    } else {
+      res.render('facebookLoginComplete', {});
+    }
+  })
+});
 
 router.get('/auth/twitter/callback',
   passport.authenticate('twitter', { failureRedirect: '/' }),

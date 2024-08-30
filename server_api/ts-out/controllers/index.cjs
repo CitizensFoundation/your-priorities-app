@@ -415,7 +415,7 @@ async function initializeIndexCache() {
             cacheIndexFile(path.resolve(__dirname, "../../webAppsDist/client/dist/index.html"), 'newVersion'),
             cacheIndexFile(path.resolve(__dirname, "../../webAppsDist/old/client/build/bundled/index.html"), 'oldVersion')
         ]);
-        debug("Index cache initialized successfully");
+        log.debug("Index cache initialized successfully");
     }
     catch (error) {
         log.error("Failed to initialize index cache", { error });
