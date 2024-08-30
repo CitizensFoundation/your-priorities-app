@@ -248,6 +248,7 @@ var sendCommunity = function sendCommunityForBot(id, req, res) {
 
 const completeSendingGroup = async (group, postsInfo, postsOffset, req, res) => {
   var imageUrl = '';
+  var formats = '';
   if (group.GroupLogoImages && group.GroupLogoImages.length>0) {
     formats = JSON.parse(group.GroupLogoImages[0].formats);
     imageUrl = formats[0];
