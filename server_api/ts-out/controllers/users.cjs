@@ -2189,22 +2189,22 @@ router.get('/auth/facebook/callback', function (req, res) {
 router.get('/auth/oidc/callback', function (req, res) {
     req.sso.authenticate('oidc-strategy-' + req.ypDomain.id, {}, req, res, function (error, user) {
         if (error) {
-            log.error("Error from Facebook login", { err: error });
+            log.error("Error from OIDC login", { err: error });
             res.sendStatus(500);
         }
         else {
-            res.render('facebookLoginComplete', {});
+            res.render('samlLoginComplete', {});
         }
     });
 });
 router.get('/auth/audkenni/callback', function (req, res) {
     req.sso.authenticate('oidc-strategy-' + req.ypDomain.id, {}, req, res, function (error, user) {
         if (error) {
-            log.error("Error from Facebook login", { err: error });
+            log.error("Error from Audkenni login", { err: error });
             res.sendStatus(500);
         }
         else {
-            res.render('facebookLoginComplete', {});
+            res.render('samlLoginComplete', {});
         }
     });
 });
