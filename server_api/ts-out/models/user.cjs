@@ -284,14 +284,14 @@ module.exports = (sequelize, DataTypes) => {
             }
         });
     };
-    User.serializeOidcUser = (profile, callback) => {
+    User.serializeOidcUser = (profile, req, callback) => {
         log.info("User Serialized In Serialize OIDC User", { context: 'serializeOidcUser', profile: profile });
         let user;
         async.series([
             (seriesCallback) => {
                 sequelize.models.User.findOne({
                     where: {
-                        ssn: profile.nationalRegisterId
+                        ssn: profile.nationalRegistryId
                     },
                     attributes: ['id', 'email', 'description', 'name', 'facebook_id', 'google_id', 'profile_data', 'github_id', 'twitter_id', 'ssn', 'legacy_passwords_disabled']
                 }).then((userIn) => {
@@ -310,7 +310,7 @@ module.exports = (sequelize, DataTypes) => {
             (seriesCallback) => {
                 if (!user) {
                     sequelize.models.User.create({
-                        ssn: profile.nationalRegisterId,
+                        ssn: profile.nationalRegistryId,
                         name: profile.name,
                         private_profile_data: { oidc_provider: "oidc" },
                         notifications_settings: sequelize.models.AcNotification.defaultNotificationSettings,
