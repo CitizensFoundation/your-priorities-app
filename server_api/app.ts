@@ -170,6 +170,24 @@ export class YourPrioritiesApi {
     this.initializeEsControllers();
   }
 
+  async initialize() {
+    await this.initializeRedis();
+    this.addRedisToRequest();
+    this.addDirnameToRequest();
+    this.forceHttps();
+    this.initializeMiddlewares();
+    this.setupNewWebAppVersionHandling();
+    this.handleShortenedRedirects();
+    this.initializeRateLimiting();
+    this.setupDomainAndCommunity();
+    this.setupStaticFileServing();
+    this.setupSitemapRoute();
+    this.initializePassportStrategies();
+    this.checkAuthForSsoInit();
+    this.initializeRoutes();
+    this.initializeEsControllers();
+  }
+
   setupNewWebAppVersionHandling() {
     this.app.use(
       (req: YpRequest, res: express.Response, next: NextFunction) => {
