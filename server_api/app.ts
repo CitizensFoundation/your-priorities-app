@@ -464,8 +464,8 @@ export class YourPrioritiesApi {
     this.app.use(morgan("combined"));
     this.app.use(useragent.express());
     this.app.use(requestIp.mw());
-    this.app.use(bodyParser.json({ limit: "10mb", strict: false }));
-    this.app.use(bodyParser.urlencoded({ limit: "10mb", extended: true }));
+    this.app.use(bodyParser.json({ limit: "100mb", strict: false }));
+    this.app.use(bodyParser.urlencoded({ limit: "100mb", extended: true }));
     this.app.use(cors());
     this.app.use(compression());
     this.app.set("views", __dirname + "/views");

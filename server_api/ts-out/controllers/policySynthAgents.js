@@ -502,6 +502,66 @@ export class PolicySynthAgentsController {
         else {
             console.log("Test AI models already exist");
         }
+        const testOMiniModel = await PsAiModel.findOne({
+            where: {
+                name: "o1 Mini",
+            },
+        });
+        if (!testOMiniModel) {
+            const openAio1MiniConfig = {
+                type: PsAiModelType.TextReasoning,
+                modelSize: PsAiModelSize.Small,
+                provider: "openai",
+                prices: {
+                    costInTokensPerMillion: 3.0,
+                    costOutTokensPerMillion: 12.0,
+                    currency: "USD",
+                },
+                maxTokensOut: 32000,
+                defaultTemperature: 0.0,
+                model: "o1-mini",
+                active: true,
+            };
+            const openAio1Mini = await PsAiModel.create({
+                name: "o1 Mini",
+                organization_id: 1,
+                user_id: userId,
+                configuration: openAio1MiniConfig,
+            });
+        }
+        else {
+            console.log("Test O models already exist");
+        }
+        const testOPreviewModel = await PsAiModel.findOne({
+            where: {
+                name: "o1 Preview",
+            },
+        });
+        if (!testOPreviewModel) {
+            const openAio1PreviewConfig = {
+                type: PsAiModelType.TextReasoning,
+                modelSize: PsAiModelSize.Medium,
+                provider: "openai",
+                prices: {
+                    costInTokensPerMillion: 15.0,
+                    costOutTokensPerMillion: 60.0,
+                    currency: "USD",
+                },
+                maxTokensOut: 32000,
+                defaultTemperature: 0.0,
+                model: "o1-preview",
+                active: true,
+            };
+            const openAio1Preview = await PsAiModel.create({
+                name: "o1 Preview",
+                organization_id: 1,
+                user_id: userId,
+                configuration: openAio1PreviewConfig,
+            });
+        }
+        else {
+            console.log("Test O preview models already exist");
+        }
     }
     initializeRoutes() {
         this.router.get("/:groupId", auth.can("view group"), this.getAgent);
