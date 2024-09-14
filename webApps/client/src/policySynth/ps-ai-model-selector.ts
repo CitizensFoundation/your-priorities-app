@@ -1,14 +1,17 @@
-import { LitElement, html, css } from 'lit';
-import { customElement, property, state } from 'lit/decorators.js';
-import { PsAiModelSize } from '@policysynth/agents/aiModelTypes.js';
+import { LitElement, html, css } from "lit";
+import { customElement, property, state } from "lit/decorators.js";
+import {
+  PsAiModelSize,
+  PsAiModelType,
+} from "@policysynth/agents/aiModelTypes.js";
 
-import '@material/web/select/filled-select.js';
-import '@material/web/select/select-option.js';
-import '@material/web/icon/icon.js';
-import '@material/web/iconbutton/outlined-icon-button.js';
-import { YpBaseElement } from '../common/yp-base-element.js';
+import "@material/web/select/filled-select.js";
+import "@material/web/select/select-option.js";
+import "@material/web/icon/icon.js";
+import "@material/web/iconbutton/outlined-icon-button.js";
+import { YpBaseElement } from "../common/yp-base-element.js";
 
-@customElement('ps-ai-model-selector')
+@customElement("ps-ai-model-selector")
 export class PsAiModelSelector extends YpBaseElement {
   @property({ type: Array }) activeAiModels: PsAiModelAttributes[] = [];
   @property({ type: Array }) requestedAiModelSizes: PsAiModelSize[] = [];
@@ -16,10 +19,27 @@ export class PsAiModelSelector extends YpBaseElement {
     [key in PsAiModelSize]?: PsAiModelAttributes | null;
   } = {};
 
+  @state() private currentReasoningModels: {
+    [key in PsAiModelSize]?: PsAiModelAttributes | null;
+  } = {};
+
   @state() private selectedAiModelIds: {
     [key in PsAiModelSize]?: number | null;
   } = {};
+
+  @state() private selectedReasoningModelIds: {
+    [key in PsAiModelSize]?: number | null;
+  } = {};
+
   @state() private filteredAiModels: {
+    [key in PsAiModelSize]: PsAiModelAttributes[];
+  } = {
+    small: [],
+    medium: [],
+    large: [],
+  };
+
+  @state() private filteredReasoningModels: {
     [key in PsAiModelSize]: PsAiModelAttributes[];
   } = {
     small: [],
@@ -29,20 +49,16 @@ export class PsAiModelSelector extends YpBaseElement {
 
   override updated(changedProperties: Map<string, any>) {
     if (
-      changedProperties.has('activeAiModels') ||
-      changedProperties.has('requestedAiModelSizes')
+      changedProperties.has("activeAiModels") ||
+      changedProperties.has("requestedAiModelSizes")
     ) {
       this.filterAiModels();
+      this.filterReasoningModels();
     }
-    if (
-      changedProperties.has('currentModels') &&
-      Object.keys(this.selectedAiModelIds).length === 0
-    ) {
+    if (changedProperties.has("currentModels")) {
+      this.filterCurrentReasoningModels();
       this.initializeSelectedModels();
-    }
-
-    if (changedProperties.has('currentModels')) {
-      //console.error('currentModels changed', JSON.stringify(this.currentModels, null, 2));
+      this.initializeSelectedReasoningModels();
     }
   }
 
@@ -53,8 +69,13 @@ export class PsAiModelSelector extends YpBaseElement {
       large: [],
     };
 
-    this.activeAiModels.forEach(model => {
-      if (model.configuration && 'modelSize' in model.configuration) {
+    this.activeAiModels.forEach((model) => {
+      if (
+        model.configuration &&
+        "modelSize" in model.configuration &&
+        "type" in model.configuration &&
+        !this.isReasoningModel(model.configuration.type)
+      ) {
         const size = model.configuration.modelSize as PsAiModelSize;
         if (
           size in this.filteredAiModels &&
@@ -66,10 +87,69 @@ export class PsAiModelSelector extends YpBaseElement {
     });
   }
 
+  filterReasoningModels() {
+    this.filteredReasoningModels = {
+      small: [],
+      medium: [],
+      large: [],
+    };
+
+    this.activeAiModels.forEach((model) => {
+      if (
+        model.configuration &&
+        "type" in model.configuration &&
+        this.isReasoningModel(model.configuration.type) &&
+        "modelSize" in model.configuration
+      ) {
+        const size = model.configuration.modelSize as PsAiModelSize;
+        if (
+          size in this.filteredReasoningModels &&
+          this.requestedAiModelSizes.includes(size)
+        ) {
+          this.filteredReasoningModels[size].push(model);
+        }
+      }
+    });
+  }
+
+  private isReasoningModel(modelType: PsAiModelType): boolean {
+    return (
+      modelType === PsAiModelType.TextReasoning ||
+      modelType === PsAiModelType.MultiModalReasoning
+    );
+  }
+
+  filterCurrentReasoningModels() {
+    this.currentReasoningModels = {};
+    Object.entries(this.currentModels).forEach(([size, model]) => {
+      if (
+        model &&
+        model.configuration &&
+        "type" in model.configuration &&
+        this.isReasoningModel(model.configuration.type)
+      ) {
+        this.currentReasoningModels[size as PsAiModelSize] = model;
+      }
+    });
+  }
+
   initializeSelectedModels() {
     Object.entries(this.currentModels).forEach(([size, model]) => {
       if (this.selectedAiModelIds[size as PsAiModelSize] === undefined) {
-        this.selectedAiModelIds[size as PsAiModelSize] = model!.id;
+        this.selectedAiModelIds[size as PsAiModelSize] = model
+          ? model.id
+          : null;
+      }
+    });
+    this.requestUpdate();
+  }
+
+  initializeSelectedReasoningModels() {
+    Object.entries(this.currentReasoningModels).forEach(([size, model]) => {
+      if (this.selectedReasoningModelIds[size as PsAiModelSize] === undefined) {
+        this.selectedReasoningModelIds[size as PsAiModelSize] = model
+          ? model.id
+          : null;
       }
     });
     this.requestUpdate();
@@ -77,10 +157,29 @@ export class PsAiModelSelector extends YpBaseElement {
 
   override render() {
     return html`
-      <div class="ai-model-selectors">
-        ${this.requestedAiModelSizes.map(size =>
-          this.renderAiModelSelect(size)
-        )}
+      <div
+        class="layout vertical"
+        ?hidden="${!this.requestedAiModelSizes ||
+        this.requestedAiModelSizes.length == 0}"
+      >
+        <div class="modelType">${this.t("multiModalModels")}</div>
+        <div class="ai-model-selectors">
+          ${this.requestedAiModelSizes.map(
+            (size) => html`
+              <div class="model-section">${this.renderAiModelSelect(size)}</div>
+            `
+          )}
+        </div>
+        <div class="modelType">${this.t("reasoningModels")}</div>
+        <div class="ai-model-selectors">
+          ${this.requestedAiModelSizes.map(
+            (size) => html`
+              <div class="model-section">
+                ${this.renderReasoningModelSelect(size)}
+              </div>
+            `
+          )}
+        </div>
       </div>
     `;
   }
@@ -99,10 +198,10 @@ export class PsAiModelSelector extends YpBaseElement {
         >
           ${isDisabled
             ? html`<md-select-option disabled>
-                <div slot="headline">${this.t('noModelsAvailable')}</div>
+                <div slot="headline">${this.t("noModelsAvailable")}</div>
               </md-select-option>`
             : models.map(
-                aiModel => html`
+                (aiModel) => html`
                   <md-select-option
                     value="${aiModel.id}"
                     ?selected="${aiModel.id === currentModel?.id}"
@@ -118,21 +217,76 @@ export class PsAiModelSelector extends YpBaseElement {
                 <md-icon>delete</md-icon>
               </md-icon-button>
             `
-          : ''}
+          : ""}
+      </div>
+    `;
+  }
+
+  private renderReasoningModelSelect(size: PsAiModelSize) {
+    const models = this.filteredReasoningModels[size];
+    const isDisabled = models.length === 0;
+    const currentModel = this.currentReasoningModels[size];
+
+    return html`
+      <div class="ai-model-select-container reasoning">
+        <md-filled-select
+          .label="${this.getLocalizedReasoningModelLabel(size)}"
+           @change="${(e: Event) => this._handleAiModelSelection(e, size)}"
+          ?disabled="${isDisabled}"
+        >
+          ${isDisabled
+            ? html`<md-select-option disabled>
+                <div slot="headline">
+                  ${this.t("noReasoningModelsAvailable")}
+                </div>
+              </md-select-option>`
+            : models.map(
+                (aiModel) => html`
+                  <md-select-option
+                    value="${aiModel.id}"
+                    ?selected="${aiModel.id === currentModel?.id}"
+                  >
+                    <div slot="headline">${aiModel.name}</div>
+                  </md-select-option>
+                `
+              )}
+        </md-filled-select>
+        ${currentModel
+          ? html`
+              <md-icon-button
+                @click="${() => this._handleRemoveModel(size)}"
+              >
+                <md-icon>delete</md-icon>
+              </md-icon-button>
+            `
+          : ""}
       </div>
     `;
   }
 
   private getLocalizedModelLabel(size: PsAiModelSize) {
     switch (size) {
-      case 'small':
-        return this.t('selectSmallAiModel');
-      case 'medium':
-        return this.t('selectMediumAiModel');
-      case 'large':
-        return this.t('selectLargeAiModel');
+      case "small":
+        return this.t("selectSmallAiModel");
+      case "medium":
+        return this.t("selectMediumAiModel");
+      case "large":
+        return this.t("selectLargeAiModel");
       default:
-        return this.t('selectAiModel');
+        return this.t("selectAiModel");
+    }
+  }
+
+  private getLocalizedReasoningModelLabel(size: PsAiModelSize) {
+    switch (size) {
+      case "small":
+        return this.t("selectSmallReasoningModel");
+      case "medium":
+        return this.t("selectMediumReasoningModel");
+      case "large":
+        return this.t("selectLargeReasoningModel");
+      default:
+        return this.t("selectReasoningModel");
     }
   }
 
@@ -154,8 +308,11 @@ export class PsAiModelSelector extends YpBaseElement {
 
   private _emitChangeEvent() {
     this.dispatchEvent(
-      new CustomEvent('ai-models-changed', {
-        detail: { selectedAiModelIds: this.selectedAiModelIds },
+      new CustomEvent("ai-models-changed", {
+        detail: {
+          selectedAiModelIds: this.selectedAiModelIds,
+          selectedReasoningModelIds: this.selectedReasoningModelIds,
+        },
         bubbles: true,
         composed: true,
       })
@@ -169,6 +326,12 @@ export class PsAiModelSelector extends YpBaseElement {
         .ai-model-selectors {
           display: flex;
           flex-direction: column;
+          gap: 24px;
+        }
+
+        .model-section {
+          display: flex;
+          flex-direction: column;
           gap: 16px;
         }
 
@@ -177,13 +340,22 @@ export class PsAiModelSelector extends YpBaseElement {
           align-items: center;
         }
 
+        .ai-model-select-container.reasoning {
+        }
+
+        .modelType {
+          margin-top: 24px;
+          font-weight: bold;
+          margin-bottom: 8px;
+        }
+
         md-filled-select {
           flex-grow: 1;
           margin-top: 8px;
           margin-bottom: 8px;
         }
 
-        md-outlined-icon-button-not-used {
+        md-icon-button {
           --md-sys-color-on-surface-variant: var(--md-sys-color-error);
         }
       `,

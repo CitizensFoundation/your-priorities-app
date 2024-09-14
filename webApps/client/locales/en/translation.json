@@ -1,4 +1,9 @@
 {
+  "multiModalModels": "Multi-modal Models",
+  "reasoningModels": "Reasoning Models",
+  "selectSmallReasoningModel": "Small Reasoning model",
+  "selectMediumReasoningModel": "Medium Reasoning model",
+  "selectLargeReasoningModel": "Large Reasoning model",
   "hidePointForAgainstIcons": "Hide point for/against icons",
   "welcome": "Welcome",
   "dontHaveAnAccount": "Don't have an account?",
