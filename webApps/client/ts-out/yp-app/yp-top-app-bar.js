@@ -12,6 +12,7 @@ import "@material/web/menu/menu.js";
 import "@material/web/menu/menu-item.js";
 import { YpBaseElement } from "../common/yp-base-element";
 import { Corner } from "@material/web/menu/menu.js";
+import { YpNavHelpers } from "../common/YpNavHelpers";
 let YpTopAppBar = class YpTopAppBar extends YpBaseElement {
     renderBreadcrumbsDropdown() {
         if (false && this.breadcrumbs.length > 1 && !this.hideBreadcrumbs) {
@@ -63,6 +64,13 @@ let YpTopAppBar = class YpTopAppBar extends YpBaseElement {
           --top-app-bar-expanded-height: 80px;
         }
 
+        a {
+          color: var(--md-sys-color-on-surface);
+          text-decoration: none;
+          margin: 0;
+          padding: 0;
+        }
+
         .top-app-bar {
           display: flex;
           align-items: center;
@@ -89,6 +97,9 @@ let YpTopAppBar = class YpTopAppBar extends YpBaseElement {
           align-items: center;
           justify-content: space-between;
           padding-left: 12px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
         }
 
         .middleContainer[restrict-width] {
@@ -96,14 +107,20 @@ let YpTopAppBar = class YpTopAppBar extends YpBaseElement {
         }
 
         .title {
-          flex-grow: 1;
-          text-align: left;
-          margin-left: 6px;
-          transform: translateY(-15%);
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+
+
+        .titleText {
+          margin-right: 4px;
+        }
+
+        .chevronIcon {
         }
 
         .title md-icon-button {
-          transform: translateY(15%);
         }
 
         slot[name="action"]::slotted(*) {
@@ -154,6 +171,9 @@ let YpTopAppBar = class YpTopAppBar extends YpBaseElement {
             margin-top: 6px;
           }
 
+          .pathTitles {
+          }
+
           slot[name="action"] {
             position: absolute;
             right: 0;
@@ -171,6 +191,7 @@ let YpTopAppBar = class YpTopAppBar extends YpBaseElement {
         this.isMenuOpen = false;
         this.hideBreadcrumbs = false;
         this.restrictWidth = false;
+        this.disableArrowBasedNavigation = false;
         this.fixed = false;
         this.titleString = "";
         this.breadcrumbs = [];
@@ -205,6 +226,18 @@ let YpTopAppBar = class YpTopAppBar extends YpBaseElement {
             this.lastScrollY = currentScrollY;
         }
     }
+    get lastBreadcrumbItem() {
+        if (this.breadcrumbs.length > 0) {
+            return this.breadcrumbs[this.breadcrumbs.length - 1];
+        }
+        else {
+            return null;
+        }
+    }
+    goToUrl(e) {
+        e.preventDefault();
+        YpNavHelpers.redirectTo(this.lastBreadcrumbItem.url);
+    }
     render() {
         const appBarClass = this.isTitleLong
             ? "top-app-bar expanded"
@@ -217,10 +250,15 @@ let YpTopAppBar = class YpTopAppBar extends YpBaseElement {
         <div class="middleContainer" ?restrict-width="${this.restrictWidth}">
           <slot name="navigation"></slot>
           <div class="title ${this.isTitleLong ? "expanded" : ""}">
-            ${this.titleString}
-            ${this.breadcrumbs.length > 0
-            ? this.renderBreadcrumbsDropdown()
+            ${this.lastBreadcrumbItem
+            ? html `<a class="titleText" @click="${this.goToUrl}" href="${this.lastBreadcrumbItem.url}"
+                  >${this.lastBreadcrumbItem.name}</a
+                >`
             : ""}
+            ${this.breadcrumbs.length > 0
+            ? html `<md-icon class="chevronIcon">chevron_right</md-icon> `
+            : ""}
+            ${this.titleString}
           </div>
           <div class="flex"></div>
           <slot name="action"></slot>
@@ -243,7 +281,13 @@ __decorate([
 ], YpTopAppBar.prototype, "restrictWidth", void 0);
 __decorate([
     property({ type: Boolean })
+], YpTopAppBar.prototype, "disableArrowBasedNavigation", void 0);
+__decorate([
+    property({ type: Boolean })
 ], YpTopAppBar.prototype, "fixed", void 0);
+__decorate([
+    property({ type: String })
+], YpTopAppBar.prototype, "backUrl", void 0);
 __decorate([
     property({ type: String })
 ], YpTopAppBar.prototype, "titleString", void 0);

@@ -30,7 +30,6 @@ export declare class AcNotificationList extends YpBaseElementWithLogin {
     get notificationsLength(): number;
     _openedChanged(): void;
     _getNotificationTypeAndName(theType: string | undefined, name: string | undefined): string;
-    _openEdit(): void;
     _clearScrollThreshold(): void;
     _markAllAsViewed(): void;
     _reallyMarkAllAsViewed(): Promise<void>;

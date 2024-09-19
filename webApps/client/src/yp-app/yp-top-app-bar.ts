@@ -16,6 +16,7 @@ import "@material/web/menu/menu-item.js";
 
 import { YpBaseElement } from "../common/yp-base-element";
 import { Corner } from "@material/web/menu/menu.js";
+import { YpNavHelpers } from "../common/YpNavHelpers";
 
 @customElement("yp-top-app-bar")
 export class YpTopAppBar extends YpBaseElement {
@@ -32,7 +33,13 @@ export class YpTopAppBar extends YpBaseElement {
   restrictWidth = false;
 
   @property({ type: Boolean })
+  disableArrowBasedNavigation = false;
+
+  @property({ type: Boolean })
   fixed = false;
+
+  @property({ type: String })
+  backUrl: string | undefined;
 
   @property({ type: String })
   titleString: string = "";
@@ -95,6 +102,13 @@ export class YpTopAppBar extends YpBaseElement {
           --top-app-bar-expanded-height: 80px;
         }
 
+        a {
+          color: var(--md-sys-color-on-surface);
+          text-decoration: none;
+          margin: 0;
+          padding: 0;
+        }
+
         .top-app-bar {
           display: flex;
           align-items: center;
@@ -121,6 +135,9 @@ export class YpTopAppBar extends YpBaseElement {
           align-items: center;
           justify-content: space-between;
           padding-left: 12px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
         }
 
         .middleContainer[restrict-width] {
@@ -128,14 +145,20 @@ export class YpTopAppBar extends YpBaseElement {
         }
 
         .title {
-          flex-grow: 1;
-          text-align: left;
-          margin-left: 6px;
-          transform: translateY(-15%);
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+
+
+        .titleText {
+          margin-right: 4px;
+        }
+
+        .chevronIcon {
         }
 
         .title md-icon-button {
-          transform: translateY(15%);
         }
 
         slot[name="action"]::slotted(*) {
@@ -184,6 +207,9 @@ export class YpTopAppBar extends YpBaseElement {
             margin-left: 12px;
             margin-bottom: 0;
             margin-top: 6px;
+          }
+
+          .pathTitles {
           }
 
           slot[name="action"] {
@@ -241,6 +267,19 @@ export class YpTopAppBar extends YpBaseElement {
     }
   }
 
+  get lastBreadcrumbItem() {
+    if (this.breadcrumbs.length > 0) {
+     return this.breadcrumbs[this.breadcrumbs.length - 1];
+    } else {
+      return null;
+    }
+  }
+
+  goToUrl(e: Event) {
+    e.preventDefault();
+    YpNavHelpers.redirectTo(this.lastBreadcrumbItem!.url);
+  }
+
   override render(): TemplateResult {
     const appBarClass = this.isTitleLong
       ? "top-app-bar expanded"
@@ -254,10 +293,15 @@ export class YpTopAppBar extends YpBaseElement {
         <div class="middleContainer" ?restrict-width="${this.restrictWidth}">
           <slot name="navigation"></slot>
           <div class="title ${this.isTitleLong ? "expanded" : ""}">
-            ${this.titleString}
-            ${this.breadcrumbs.length > 0
-              ? this.renderBreadcrumbsDropdown()
+            ${this.lastBreadcrumbItem
+              ? html`<a class="titleText" @click="${this.goToUrl}" href="${this.lastBreadcrumbItem.url}"
+                  >${this.lastBreadcrumbItem.name}</a
+                >`
               : ""}
+            ${this.breadcrumbs.length > 0
+              ? html`<md-icon class="chevronIcon">chevron_right</md-icon> `
+              : ""}
+            ${this.titleString}
           </div>
           <div class="flex"></div>
           <slot name="action"></slot>

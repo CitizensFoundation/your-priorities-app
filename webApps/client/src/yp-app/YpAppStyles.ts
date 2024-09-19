@@ -21,6 +21,14 @@ export const YpAppStyles = css`
     --md-icon-button-icon-color: var(--md-sys-color-on-surface);
   }
 
+  yp-user-info {
+    margin-top: 80px;
+  }
+
+  yp-language-selector {
+    margin: 20px;
+  }
+
   .userImageNotificationContainer {
     margin-right: 16px;
     margin-left: 8px;

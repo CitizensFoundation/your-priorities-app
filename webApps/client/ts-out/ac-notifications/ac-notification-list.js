@@ -165,18 +165,6 @@ let AcNotificationList = class AcNotificationList extends YpBaseElementWithLogin
       <div id="material" class="oversflowSettings">
         ${this.loggedInUser
             ? html `
-              <yp-user-info
-                @open-user-edit="${this._openEdit}"
-                .user="${this.loggedInUser}"
-              ></yp-user-info>
-              <div class="layout horizontal center-center themeSelection">
-                ${this.renderThemeToggle()}
-              </div>
-              <div class="languageSelector layout vertical self-start">
-                <yp-language-selector
-                  class="languageSelector"
-                ></yp-language-selector>
-              </div>
               <div
                 class="notificationHeader layout horizontal center-center"
                 ?hidden="${!this.notificationsLength}"
@@ -239,12 +227,6 @@ let AcNotificationList = class AcNotificationList extends YpBaseElementWithLogin
     }
     _getNotificationTypeAndName(theType, name) {
         return theType ? this.t(theType) + " " + (name ? name : "") : "";
-    }
-    _openEdit() {
-        window.appDialogs.getDialogAsync("userEdit", (dialog) => {
-            dialog.setup(this.loggedInUser, false, undefined);
-            dialog.open(false, { userId: this.loggedInUser.id });
-        });
     }
     _clearScrollThreshold() {
         //TODO: See if this is needed

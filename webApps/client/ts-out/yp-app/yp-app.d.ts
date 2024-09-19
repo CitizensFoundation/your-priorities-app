@@ -69,9 +69,11 @@ export declare class YpApp extends YpBaseElement {
     notifyDialogText: string | undefined;
     route: string;
     subRoute: string | undefined;
+    currentTitle: string | undefined;
     routeData: Record<string, string>;
     userDrawerOpened: boolean;
     navDrawerOpened: boolean;
+    notificationDrawerOpened: boolean;
     languageLoaded: boolean;
     currentTheme?: YpThemeConfiguration;
     keepOpenForPost: string | undefined;
@@ -116,9 +118,12 @@ export declare class YpApp extends YpBaseElement {
     _appDialogsReady(event: CustomEvent): void;
     get hasStaticBadgeTheme(): boolean;
     updateLocation(): void;
+    _openUserEdit(): void;
     get isFullScreenMode(): boolean;
     renderNavigationIcon(): import("lit-html").TemplateResult<1>;
+    renderNavigation(): import("lit-html").TemplateResult<1>;
     _openHelpMenu(): void;
+    renderNonArrowNavigation(): import("lit-html").TemplateResult<1>;
     renderActionItems(): import("lit-html").TemplateResult<1>;
     renderMainApp(): import("lit-html").TemplateResult<1>;
     renderGroupPage(): import("lit-html").TemplateResult<1>;
@@ -152,7 +157,6 @@ export declare class YpApp extends YpBaseElement {
     _refreshCommunity(): Promise<void>;
     _refreshDomain(): void;
     _refreshByName(id: string): Promise<void>;
-    _closeRightDrawer(): void;
     _setNumberOfUnViewedNotifications(event: CustomEvent): void;
     _redirectTo(event: CustomEvent): void;
     _routeChanged(): Promise<void>;
@@ -189,6 +193,8 @@ export declare class YpApp extends YpBaseElement {
     scrollPageToTop(): void;
     _openUserDrawer(): Promise<void>;
     _closeUserDrawer(): Promise<void>;
+    _openNotificationDrawer(): Promise<void>;
+    _closeNotificationDrawer(): Promise<void>;
     get isOnDomainLoginPageAndNotLoggedIn(): boolean | undefined;
     _login(): void;
     _onChangeHeader(event: CustomEvent): void;

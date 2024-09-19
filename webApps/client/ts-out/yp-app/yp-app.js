@@ -61,6 +61,7 @@ let YpApp = class YpApp extends YpBaseElement {
         this.routeData = {};
         this.userDrawerOpened = false;
         this.navDrawerOpened = false;
+        this.notificationDrawerOpened = false;
         this.languageLoaded = false;
         this.breadcrumbs = [];
         this.anchor = null;
@@ -178,7 +179,7 @@ let YpApp = class YpApp extends YpBaseElement {
         this.addGlobalListener("yp-refresh-domain", this._refreshDomain.bind(this));
         this.addGlobalListener("yp-refresh-community", this._refreshCommunity.bind(this));
         this.addGlobalListener("yp-refresh-group", this._refreshGroup.bind(this));
-        this.addListener("yp-close-right-drawer", this._closeRightDrawer, this);
+        this.addListener("yp-close-right-drawer", this._closeUserDrawer, this);
         this.addListener("yp-set-number-of-un-viewed-notifications", this._setNumberOfUnViewedNotifications, this);
         this.addListener("yp-redirect-to", this._redirectTo, this);
         this.addListener("yp-set-home-link", this._setHomeLink, this);
@@ -213,7 +214,7 @@ let YpApp = class YpApp extends YpBaseElement {
         this.removeGlobalListener("yp-refresh-domain", this._refreshDomain);
         this.removeGlobalListener("yp-refresh-community", this._refreshCommunity);
         this.removeGlobalListener("yp-refresh-group", this._refreshGroup);
-        this.removeListener("yp-close-right-drawer", this._closeRightDrawer, this);
+        this.removeListener("yp-close-right-drawer", this._closeUserDrawer, this);
         this.removeListener("yp-set-number-of-un-viewed-notifications", this._setNumberOfUnViewedNotifications, this);
         this.removeListener("yp-redirect-to", this._redirectTo, this);
         this.removeListener("yp-set-home-link", this._setHomeLink, this);
@@ -297,13 +298,33 @@ let YpApp = class YpApp extends YpBaseElement {
         this._routeChanged();
         this._routePageChanged(oldRouteData);
     }
+    _openUserEdit() {
+        window.appDialogs.getDialogAsync("userEdit", (dialog) => {
+            dialog.setup(this.user, false, undefined);
+            dialog.open(false, { userId: this.user?.id || -1 });
+        });
+    }
     get isFullScreenMode() {
         return (this.page == "group" &&
             window.appGlobals.currentGroup?.configuration.groupType ==
                 YpGroupType.PsAgentWorkflow);
     }
-    //TODO: Use someth8ing like https://boguz.github.io/burgton-button-docs/
     renderNavigationIcon() {
+        return html `
+      <md-icon-button
+        id="helpIconButton"
+        slot="actionItems"
+        class="topActionItem"
+        @click="${this._openNavDrawer}"
+        title="${this.t("navigationMenu")}"
+        ><md-icon>apps</md-icon></md-icon-button
+      >
+    `;
+    }
+    renderNavigation() {
+        if (window.appGlobals.domain?.configuration.disableArrowBasedTopNavigation) {
+            return this.renderNavigationIcon();
+        }
         let icons = html ``;
         let closeButtonVisible = this.page !== "post" ||
             (this.page === "post" && this.scrollPosition > 64);
@@ -356,6 +377,9 @@ let YpApp = class YpApp extends YpBaseElement {
     _openHelpMenu() {
         this.$$("#helpMenu").open = true;
     }
+    renderNonArrowNavigation() {
+        return html ` ${this.renderNavigationIcon()} `;
+    }
     renderActionItems() {
         return html `
       <md-icon-button
@@ -368,14 +392,9 @@ let YpApp = class YpApp extends YpBaseElement {
         ><md-icon>translate</md-icon>
       </md-icon-button>
 
-      <md-icon-button
-        id="helpIconButton"
-        slot="actionItems"
-        class="topActionItem"
-        @click="${this._openNavDrawer}"
-        title="${this.t("menu.help")}"
-        ><md-icon>communities</md-icon></md-icon-button
-      >
+      ${window.appGlobals.domain?.configuration.disableArrowBasedTopNavigation
+            ? nothing
+            : this.renderNonArrowNavigation()}
 
       <div
         style="position: relative;"
@@ -411,12 +430,12 @@ let YpApp = class YpApp extends YpBaseElement {
       ${this.user
             ? html `
             <md-icon-button
-              class="userImageNotificationContainer layout horizontal"
-              @click="${this._openUserDrawer}"
+              class="layout horizontal"
+              @click="${this._openNotificationDrawer}"
               slot="actionItems"
             >
-              <yp-user-image id="userImage" small .user="${this.user}">
-              </yp-user-image>
+              <md-icon>notifications</md-icon>
+
               <md-badge
                 id="notificationBadge"
                 class="activeBadge"
@@ -425,6 +444,14 @@ let YpApp = class YpApp extends YpBaseElement {
                 ?hidden="${!this.numberOfUnViewedNotifications}"
               >
               </md-badge>
+            </md-icon-button>
+            <md-icon-button
+              class="userImageNotificationContainer layout horizontal"
+              @click="${this._openUserDrawer}"
+              slot="actionItems"
+            >
+              <yp-user-image id="userImage" small .user="${this.user}">
+              </yp-user-image>
             </md-icon-button>
           `
             : html `
@@ -451,14 +478,15 @@ let YpApp = class YpApp extends YpBaseElement {
       <yp-top-app-bar
         role="navigation"
         .restrictWidth="${!this.isFullScreenMode}"
-        .titleString="${this.page != "post" ? titleString : ""}"
+        .titleString="${this.currentTitle || titleString}"
         aria-label="top navigation"
         ?fixed="${window.appGlobals.domain?.configuration.useFixedTopAppBar}"
+        ?disableArrowBasedNavigation="${window.appGlobals.domain?.configuration.disableArrowBasedTopNavigation}"
         ?hideBreadcrumbs="${!titleString || titleString == ""}"
         ?hidden="${this.appMode !== "main" ||
             window.appGlobals.domain?.configuration.hideAppBarIfWelcomeHtml}"
       >
-        <div slot="navigation">${this.renderNavigationIcon()}</div>
+        <div slot="navigation">${this.renderNavigation()}</div>
         <div slot="title"></div>
         <div slot="action">${this.renderActionItems()}</div>
       </yp-top-app-bar>
@@ -531,7 +559,10 @@ let YpApp = class YpApp extends YpBaseElement {
         return html `
       <yp-drawer
         id="leftDrawer"
-        position="right"
+        position="${window.appGlobals.domain?.configuration
+            .disableArrowBasedTopNavigation
+            ? "left"
+            : "right"}"
         @closed="${this._closeNavDrawer}"
       >
         <yp-app-nav-drawer
@@ -545,19 +576,44 @@ let YpApp = class YpApp extends YpBaseElement {
       </yp-drawer>
 
       <yp-drawer
-        id="rightDrawer"
+        id="notificationDrawer"
         position="right"
-        @closed="${this._closeUserDrawer}"
+        ?hidden="${!this.notificationDrawerOpened}"
+        @closed="${this._closeNotificationDrawer}"
       >
-        ${this.userDrawerOpened
+        ${this.notificationDrawerOpened && this.user
             ? html `
               <ac-notification-list
-                @yp-close-notification-list="${this._closeUserDrawer}"
+                @yp-close-notification-list="${this._closeNotificationDrawer}"
                 id="acNotificationsList"
                 .user="${this.user}"
                 opened="${this.userDrawerOpened}"
                 .route="${this.route}"
               ></ac-notification-list>
+            `
+            : nothing}
+      </yp-drawer>
+
+      <yp-drawer
+        id="userDrawer"
+        position="right"
+        ?hidden="${!this.userDrawerOpened}"
+        @closed="${this._closeUserDrawer}"
+      >
+        ${this.userDrawerOpened && this.user
+            ? html `
+              <yp-user-info
+                @open-user-edit="${this._openUserEdit}"
+                .user="${this.user}"
+              ></yp-user-info>
+              <div class="languageSelector layout vertical self-start">
+                <yp-language-selector
+                  class="languageSelector"
+                ></yp-language-selector>
+              </div>
+              <div class="layout horizontal center-center themeSelection">
+                ${this.renderThemeToggle()}
+              </div>
             `
             : nothing}
       </yp-drawer>
@@ -828,12 +884,6 @@ let YpApp = class YpApp extends YpBaseElement {
         else {
             console.warn("Can't find element to refresh", id);
         }
-    }
-    _closeRightDrawer() {
-        setTimeout(() => {
-            // TODO: Fix
-            // this.$$("#drawer")?.close();
-        }, 100);
     }
     _setNumberOfUnViewedNotifications(event) {
         if (event.detail.count) {
@@ -1168,12 +1218,21 @@ let YpApp = class YpApp extends YpBaseElement {
     }
     async _openUserDrawer() {
         this.userDrawerOpened = true;
-        this.$$("#rightDrawer").open = true;
+        this.$$("#userDrawer").open = true;
     }
     async _closeUserDrawer() {
-        this.$$("#rightDrawer").open = false;
+        this.$$("#userDrawer").open = false;
         await new Promise((resolve) => setTimeout(resolve, 300));
         this.userDrawerOpened = false;
+    }
+    async _openNotificationDrawer() {
+        this.notificationDrawerOpened = true;
+        this.$$("#notificationDrawer").open = true;
+    }
+    async _closeNotificationDrawer() {
+        this.$$("#notificationDrawer").open = false;
+        await new Promise((resolve) => setTimeout(resolve, 300));
+        this.notificationDrawerOpened = false;
     }
     get isOnDomainLoginPageAndNotLoggedIn() {
         return (window.appGlobals.domain &&
@@ -1217,6 +1276,7 @@ let YpApp = class YpApp extends YpBaseElement {
         });
         if (header.documentTitle) {
             document.title = header.documentTitle;
+            this.currentTitle = header.documentTitle;
         }
         this.headerDescription = header.headerDescription;
         //if (header.headerIcon)
@@ -1483,6 +1543,9 @@ __decorate([
     property({ type: String })
 ], YpApp.prototype, "subRoute", void 0);
 __decorate([
+    property({ type: String })
+], YpApp.prototype, "currentTitle", void 0);
+__decorate([
     property({ type: Object })
 ], YpApp.prototype, "routeData", void 0);
 __decorate([
@@ -1491,6 +1554,9 @@ __decorate([
 __decorate([
     property({ type: Boolean })
 ], YpApp.prototype, "navDrawerOpened", void 0);
+__decorate([
+    property({ type: Boolean })
+], YpApp.prototype, "notificationDrawerOpened", void 0);
 __decorate([
     property({ type: Boolean })
 ], YpApp.prototype, "languageLoaded", void 0);

@@ -250,13 +250,6 @@ export class YpAppNavDrawer extends YpBaseElement {
               </div>
             `
           : nothing}
-        <div hidden class="languageSelector layout vertical self-start">
-          <yp-language-selector class="languageSelector"></yp-language-selector>
-        </div>
-
-        <div hidden class="layout horizontal center-center themeSelection">
-          ${this.renderThemeToggle()}
-        </div>
 
         ${this.spinner
           ? html`<div class="layout horizontal center-center">
