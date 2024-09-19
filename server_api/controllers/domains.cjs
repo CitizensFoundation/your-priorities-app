@@ -884,6 +884,10 @@ router.put('/:id', auth.can('edit domain'), function(req, res) {
       domain.set('configuration.hideDomainTabs', truthValueFromBody(req.body.hideDomainTabs));
       domain.set('configuration.hideAllTabs', truthValueFromBody(req.body.hideAllTabs));
 
+
+      domain.set('configuration.useFixedTopAppBar', truthValueFromBody(req.body.useFixedTopAppBar));
+      domain.set('configuration.disableArrowBasedTopNavigation', truthValueFromBody(req.body.disableArrowBasedTopNavigation));
+
       domain.name = req.body.name;
       domain.description = req.body.description;
       domain.only_admins_can_create_communities = req.body.onlyAdminsCanCreateCommunities ? true : false;

@@ -1,4 +1,6 @@
 {
+  "useFixedTopAppBar": "Use fixed top app bar",
+  "disableArrowBasedTopNavigation": "Disable arrow based top navigation",
   "multiModalModels": "Multi-modal Models",
   "reasoningModels": "Reasoning Models",
   "selectSmallReasoningModel": "Small Reasoning model",

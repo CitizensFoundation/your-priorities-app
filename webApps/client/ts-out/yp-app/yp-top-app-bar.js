@@ -171,6 +171,7 @@ let YpTopAppBar = class YpTopAppBar extends YpBaseElement {
         this.isMenuOpen = false;
         this.hideBreadcrumbs = false;
         this.restrictWidth = false;
+        this.fixed = false;
         this.titleString = "";
         this.breadcrumbs = [];
         this.lastScrollY = 0;
@@ -190,17 +191,19 @@ let YpTopAppBar = class YpTopAppBar extends YpBaseElement {
         super.disconnectedCallback();
     }
     handleScroll() {
-        const currentScrollY = window.scrollY;
-        const appBar = this.shadowRoot?.querySelector(".top-app-bar");
-        if (appBar) {
-            if (currentScrollY > this.lastScrollY) {
-                appBar.style.top = `-${getComputedStyle(this).getPropertyValue("--top-app-bar-height")}`;
+        if (!this.fixed) {
+            const currentScrollY = window.scrollY;
+            const appBar = this.shadowRoot?.querySelector(".top-app-bar");
+            if (appBar) {
+                if (currentScrollY > this.lastScrollY) {
+                    appBar.style.top = `-${getComputedStyle(this).getPropertyValue("--top-app-bar-height")}`;
+                }
+                else {
+                    appBar.style.top = "0";
+                }
             }
-            else {
-                appBar.style.top = "0";
-            }
+            this.lastScrollY = currentScrollY;
         }
-        this.lastScrollY = currentScrollY;
     }
     render() {
         const appBarClass = this.isTitleLong
@@ -238,6 +241,9 @@ __decorate([
 __decorate([
     property({ type: Boolean })
 ], YpTopAppBar.prototype, "restrictWidth", void 0);
+__decorate([
+    property({ type: Boolean })
+], YpTopAppBar.prototype, "fixed", void 0);
 __decorate([
     property({ type: String })
 ], YpTopAppBar.prototype, "titleString", void 0);

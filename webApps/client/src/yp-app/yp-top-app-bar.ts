@@ -31,6 +31,9 @@ export class YpTopAppBar extends YpBaseElement {
   @property({ type: Boolean })
   restrictWidth = false;
 
+  @property({ type: Boolean })
+  fixed = false;
+
   @property({ type: String })
   titleString: string = "";
 
@@ -219,21 +222,23 @@ export class YpTopAppBar extends YpBaseElement {
   }
 
   handleScroll(): void {
-    const currentScrollY: number = window.scrollY;
-    const appBar: HTMLElement | null | undefined =
-      this.shadowRoot?.querySelector(".top-app-bar");
+    if (!this.fixed) {
+      const currentScrollY: number = window.scrollY;
+      const appBar: HTMLElement | null | undefined =
+        this.shadowRoot?.querySelector(".top-app-bar");
 
-    if (appBar) {
-      if (currentScrollY > this.lastScrollY) {
-        appBar.style.top = `-${getComputedStyle(this).getPropertyValue(
-          "--top-app-bar-height"
-        )}`;
-      } else {
-        appBar.style.top = "0";
+      if (appBar) {
+        if (currentScrollY > this.lastScrollY) {
+          appBar.style.top = `-${getComputedStyle(this).getPropertyValue(
+            "--top-app-bar-height"
+          )}`;
+        } else {
+          appBar.style.top = "0";
+        }
       }
-    }
 
-    this.lastScrollY = currentScrollY;
+      this.lastScrollY = currentScrollY;
+    }
   }
 
   override render(): TemplateResult {

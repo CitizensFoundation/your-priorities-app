@@ -419,7 +419,6 @@ interface YpPromoterRights {
 }
 
 interface YpDomainConfiguration extends YpCollectionConfiguration {
-  somethingrather?: string;
   customUserRegistrationText?: string;
   customSamlLoginText?: string;
   samlLoginButtonUrl?: string;
@@ -429,6 +428,8 @@ interface YpDomainConfiguration extends YpCollectionConfiguration {
   onlyAdminsCanCreateCommunities?: boolean;
   directSamlIntegration?: boolean;
   useLoginOnDomainIfNotLoggedIn?: boolean;
+  disableArrowBasedTopNavigation?: boolean;
+  useFixedTopAppBar?: boolean;
 }
 
 interface YpHelpPageData {

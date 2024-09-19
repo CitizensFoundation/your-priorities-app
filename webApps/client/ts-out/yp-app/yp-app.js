@@ -453,6 +453,7 @@ let YpApp = class YpApp extends YpBaseElement {
         .restrictWidth="${!this.isFullScreenMode}"
         .titleString="${this.page != "post" ? titleString : ""}"
         aria-label="top navigation"
+        ?fixed="${window.appGlobals.domain?.configuration.useFixedTopAppBar}"
         ?hideBreadcrumbs="${!titleString || titleString == ""}"
         ?hidden="${this.appMode !== "main" ||
             window.appGlobals.domain?.configuration.hideAppBarIfWelcomeHtml}"

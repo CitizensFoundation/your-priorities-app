@@ -236,6 +236,14 @@ export class YpAdminConfigDomain extends YpAdminConfigBase {
           type: "checkbox",
         },
         {
+          text: "useFixedTopAppBar",
+          type: "checkbox",
+        },
+        {
+          text: "disableArrowBasedTopNavigation",
+          type: "checkbox",
+        },
+        {
           text: "useLoginOnDomainIfNotLoggedIn",
           type: "checkbox",
         },
