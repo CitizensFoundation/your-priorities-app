@@ -30,7 +30,10 @@ let PsAgentConnector = class PsAgentConnector extends PsOperationsBaseNode {
         else if (this.connector.Class?.class_base_id ==
             "3a7b2c1d-4e5f-6a7b-8c9d-0e1f2a3b4c5d") {
             //@ts-ignore
-            this.externalLink = `https://docs.google.com/document/d/${this.connector.configuration["googleSheetsId"]}/`;
+            this.externalLink = `https://docs.google.com/document/d/${this.connector.configuration["googleDocsId"]}/`;
+        }
+        else {
+            console.error(`No link for connector ${this.connectorId} ${this.connector.Class?.class_base_id}`);
         }
     }
     static get styles() {
