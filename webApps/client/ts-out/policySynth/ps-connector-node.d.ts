@@ -9,13 +9,15 @@ export declare class PsAgentConnector extends PsOperationsBaseNode {
     connectorId: number;
     groupId: number;
     agentName: string;
-    groupIdWithContent: number | undefined;
+    internalLink: string | undefined;
+    externalLink: string | undefined;
     connectedCallback(): void;
     static get styles(): (any[] | import("lit").CSSResult)[];
     editNode(): void;
     toggleMenu(): void;
     renderImage(): import("lit-html").TemplateResult<1>;
-    openGroup(): void;
+    openInternalLink(): void;
+    openExternalLink(): void;
     render(): import("lit-html").TemplateResult<1> | typeof nothing;
 }
 //# sourceMappingURL=ps-connector-node.d.ts.map
