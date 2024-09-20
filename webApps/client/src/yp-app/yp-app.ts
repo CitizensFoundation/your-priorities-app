@@ -1731,7 +1731,11 @@ export class YpApp extends YpBaseElement {
         name: header.headerTitle || "",
         url: header.backPath || "",
       });
+    } else {
+      this.breadcrumbs = [];
+      (this.$$("yp-top-app-bar") as YpTopAppBar).breadcrumbs = this.breadcrumbs;
     }
+
 
     if (header.currentTheme) {
       this.currentTheme = header.currentTheme;
@@ -1749,6 +1753,7 @@ export class YpApp extends YpBaseElement {
       // Otherwise, add the new breadcrumb
       this.breadcrumbs = [...this.breadcrumbs, newBreadcrumb];
     }
+
     (this.$$("yp-top-app-bar") as YpTopAppBar).breadcrumbs = this.breadcrumbs;
   }
 

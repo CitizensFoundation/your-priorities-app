@@ -1328,6 +1328,10 @@ let YpApp = class YpApp extends YpBaseElement {
                 url: header.backPath || "",
             });
         }
+        else {
+            this.breadcrumbs = [];
+            this.$$("yp-top-app-bar").breadcrumbs = this.breadcrumbs;
+        }
         if (header.currentTheme) {
             this.currentTheme = header.currentTheme;
         }

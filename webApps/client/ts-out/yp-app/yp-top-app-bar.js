@@ -77,7 +77,7 @@ let YpTopAppBar = class YpTopAppBar extends YpBaseElement {
           justify-content: space-between;
           height: var(--top-app-bar-height);
           padding: 0 16px;
-          background-color: var(--md-sys-color-surface);
+          background-color: var(--md-sys-color-surface-container-low);
           color: var(--md-sys-color-on-surface);
           position: fixed;
           top: 0;
