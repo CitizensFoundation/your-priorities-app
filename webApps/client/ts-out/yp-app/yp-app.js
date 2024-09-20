@@ -322,7 +322,9 @@ let YpApp = class YpApp extends YpBaseElement {
     `;
     }
     renderNavigation() {
-        if (window.appGlobals.domain?.configuration.disableArrowBasedTopNavigation) {
+        if (window.appGlobals.domain?.configuration.disableArrowBasedTopNavigation &&
+            !this.closePostHeader &&
+            !this.keepOpenForGroup) {
             return this.renderNavigationIcon();
         }
         let icons = html ``;
