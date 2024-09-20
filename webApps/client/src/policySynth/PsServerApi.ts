@@ -98,7 +98,7 @@ export class PsServerApi extends YpServerApiBase {
     type: 'input' | 'output'
   ): Promise<void> {
     return this.fetchWrapper(
-      `${this.baseUrlPath}/agents/${groupId}/${agentId}/${type}Connectors`,
+      `${this.baseUrlPath}/agents/${groupId}/${agentId}/${type}Connectors/existing`,
       {
         method: 'POST',
         body: JSON.stringify({ connectorId }),

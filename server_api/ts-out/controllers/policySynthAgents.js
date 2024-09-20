@@ -94,17 +94,17 @@ export class PolicySynthAgentsController {
         this.addExistingConnector = async (req, res) => {
             const { groupId, agentId, type } = req.params;
             const { connectorId } = req.body;
-            if (!groupId || !agentId || !connectorId || !type) {
+            if (!groupId || !agentId || !connectorId) {
                 return res
                     .status(400)
-                    .send("Group ID, agent ID, connector ID, and type (input/output) are required");
+                    .send("Group ID, agent ID and connector ID (input/output) are required");
             }
             try {
                 await this.agentConnectorManager.addExistingConnector(parseInt(groupId), parseInt(agentId), parseInt(connectorId), type);
-                res.status(200).json({ message: `Existing ${type} connector added successfully` });
+                res.status(200).json({ message: `Existing ${connectorId} connector added successfully` });
             }
             catch (error) {
-                console.error(`Error adding existing ${type} connector:`, error);
+                console.error(`Error adding existing ${connectorId} connector:`, error);
                 if (error instanceof Error) {
                     res.status(500).json({ error: error.message });
                 }

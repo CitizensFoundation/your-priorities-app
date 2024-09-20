@@ -42,7 +42,7 @@ export class PsServerApi extends YpServerApiBase {
         }, false);
     }
     async addExistingConnector(groupId, agentId, connectorId, type) {
-        return this.fetchWrapper(`${this.baseUrlPath}/agents/${groupId}/${agentId}/${type}Connectors`, {
+        return this.fetchWrapper(`${this.baseUrlPath}/agents/${groupId}/${agentId}/${type}Connectors/existing`, {
             method: 'POST',
             body: JSON.stringify({ connectorId }),
         });
