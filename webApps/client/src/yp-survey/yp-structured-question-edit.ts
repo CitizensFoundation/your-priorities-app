@@ -341,7 +341,7 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
         @keypress="${this._keyPressed}"
         .pattern="${this.question.pattern || ""}"
         type="text"
-        .allowedPattern="${this.isNumberSubType ? "[0-9]" : ""}"
+        .allowedPattern="${this.isNumberSubType ? "[0-9.]" : ""}"
         ?half-width-desktop="${this.question.halfWidthDesktop}"
         @change="${(e: any) => {
           e.detail = { value: e.currentTarget.value };

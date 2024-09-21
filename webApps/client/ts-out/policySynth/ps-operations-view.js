@@ -670,7 +670,6 @@ let PsOperationsView = class PsOperationsView extends PsBaseWithRunningAgentObse
     }
     render() {
         return html `
-      <div class="controlPanelContainer"></div>
       <div class="controlPanel">
         <div class="navControls">
           <md-icon-button @click="${this.zoomIn}" class="firstButton"
@@ -689,14 +688,7 @@ let PsOperationsView = class PsOperationsView extends PsBaseWithRunningAgentObse
 
         <div class="flex"></div>
 
-        ${this.renderHeader()}
 
-        <md-filled-tonal-button @click="${() => this.fire("add-agent")}">
-          <md-icon slot="icon">add</md-icon>
-          ${this.t("Add Agent")}
-        </md-filled-tonal-button>
-
-        <div class="flex"></div>
 
         <div class="masterPlayConfigButtons">
           ${this.currentRunningAgentId
@@ -705,7 +697,7 @@ let PsOperationsView = class PsOperationsView extends PsBaseWithRunningAgentObse
                 @click="${this.stop}"
                 ><md-icon>stop</md-icon></md-filled-icon-button
               >`
-            : html `<md-outlined-icon-button
+            : html `<md-outlined-icon-button hidden
                 class="mainAgentPlayButton"
                 @click="${this.start}"
                 ><md-icon>play_arrow</md-icon></md-outlined-icon-button

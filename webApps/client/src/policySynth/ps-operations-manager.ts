@@ -27,6 +27,7 @@ import { PsAiModelSize } from "@policysynth/agents/aiModelTypes.js";
 import { PsBaseWithRunningAgentObserver } from "./ps-base-with-running-agents.js";
 import { PsAppGlobals } from "./PsAppGlobals.js";
 import { YpFormattingHelpers } from "../common/YpFormattingHelpers.js";
+import { YpMediaHelpers } from "../common/YpMediaHelpers.js";
 
 @customElement("ps-operations-manager")
 export class PsOperationsManager extends PsBaseWithRunningAgentObserver {
@@ -104,16 +105,21 @@ export class PsOperationsManager extends PsBaseWithRunningAgentObserver {
   }
 
   private updateConnectorRegistry(agent: PsAgentAttributes) {
-    const processConnectors = (connectors: PsAgentConnectorAttributes[] | undefined) => {
-      connectors?.forEach(connector => {
-        window.psAppGlobals.activeConnectorsInstanceRegistry.set(connector.id, connector);
+    const processConnectors = (
+      connectors: PsAgentConnectorAttributes[] | undefined
+    ) => {
+      connectors?.forEach((connector) => {
+        window.psAppGlobals.activeConnectorsInstanceRegistry.set(
+          connector.id,
+          connector
+        );
       });
     };
 
     processConnectors(agent.InputConnectors);
     processConnectors(agent.OutputConnectors);
 
-    agent.SubAgents?.forEach(subAgent => {
+    agent.SubAgents?.forEach((subAgent) => {
       processConnectors(subAgent.InputConnectors);
       processConnectors(subAgent.OutputConnectors);
     });
@@ -131,7 +137,10 @@ export class PsOperationsManager extends PsBaseWithRunningAgentObserver {
       "add-connector",
       this.openAddConnectorDialog as EventListenerOrEventListenerObject
     );
-    this.addEventListener("add-existing-connector", this.addExistingConnector as any);
+    this.addEventListener(
+      "add-existing-connector",
+      this.addExistingConnector as any
+    );
     this.addEventListener(
       "get-costs",
       this.fetchAgentCosts as EventListenerOrEventListenerObject
@@ -154,7 +163,12 @@ export class PsOperationsManager extends PsBaseWithRunningAgentObserver {
   async addExistingConnector(event: CustomEvent) {
     const { connectorId, agentId, type } = event.detail;
     try {
-      await this.api.addExistingConnector(this.groupId, agentId, connectorId, type);
+      await this.api.addExistingConnector(
+        this.groupId,
+        agentId,
+        connectorId,
+        type
+      );
       this.getAgent();
     } catch (error) {
       console.error("Error adding existing connector:", error);
@@ -456,6 +470,21 @@ export class PsOperationsManager extends PsBaseWithRunningAgentObserver {
     }
   }
 
+  renderHeader() {
+    return html`
+      <div class="layout horizontal center-center agentHeader">
+        <img
+          src="${YpMediaHelpers.getImageFormatUrl(
+            this.group.GroupLogoImages,
+            0
+          )}"
+          class="agentHeaderImage"
+        />
+        <div class="layout vertical agentHeaderText">${this.group.name}</div>
+      </div>
+    `;
+  }
+
   override render() {
     if (this.isFetchingAgent) {
       return html`<md-linear-progress indeterminate></md-linear-progress>`;
@@ -486,7 +515,9 @@ export class PsOperationsManager extends PsBaseWithRunningAgentObserver {
           @close="${() => (this.showAddConnectorDialog = false)}"
         ></ps-add-connector-dialog>
 
-        <div class="layout vertical self-start tabsContainer">
+        <div class="layout horizontal self-start tabsContainer">
+          ${this.renderHeader()}
+
           <md-tabs id="tabBar" @change="${this.tabChanged}">
             <md-secondary-tab
               id="configure-tab"
@@ -513,6 +544,14 @@ export class PsOperationsManager extends PsBaseWithRunningAgentObserver {
               ${this.renderTotalCosts()}
             </md-secondary-tab>
           </md-tabs>
+          <div class="flex"></div>
+          <md-filled-tonal-button
+            class="addAgentButton"
+            @click="${() => this.fire("add-agent")}"
+          >
+            <md-icon slot="icon">add</md-icon>
+            ${this.t("Add Agent")}
+          </md-filled-tonal-button>
         </div>
 
         ${this.activeTabIndex === 0
@@ -537,6 +576,33 @@ export class PsOperationsManager extends PsBaseWithRunningAgentObserver {
     return [
       super.styles,
       css`
+        .agentHeaderImage {
+          max-width: 72px;
+          align-self: self-start;
+          border-radius: 4px;
+          margin-top: 8px;
+        }
+
+        .addAgentButton {
+          max-height: 36px;
+          margin-top: 10px;
+          margin-right: 16px;
+        }
+
+        .agentHeaderText {
+          align-self: self-start;
+          font-size: 17px;
+          padding: 8px;
+          margin-top: 8px;
+          margin-left: 16px;
+          margin-right: 16px;
+          font-family: var(--md-ref-typeface-brand);
+        }
+
+        .agentHeader {
+          margin-left: 16px;
+        }
+
         .tabsContainer {
           background-color: var(--md-sys-color-surface);
           width: 100%;
@@ -548,7 +614,7 @@ export class PsOperationsManager extends PsBaseWithRunningAgentObserver {
           margin-bottom: 64px;
           align-self: flex-start;
           align-items: flex-start;
-          max-width: 800px;
+          max-width: 600px;
           background-color: var(--md-sys-color-surface);
         }
 

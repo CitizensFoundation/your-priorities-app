@@ -24,6 +24,7 @@ import "./ps-add-connector-dialog.js";
 import { PsBaseWithRunningAgentObserver } from "./ps-base-with-running-agents.js";
 import { PsAppGlobals } from "./PsAppGlobals.js";
 import { YpFormattingHelpers } from "../common/YpFormattingHelpers.js";
+import { YpMediaHelpers } from "../common/YpMediaHelpers.js";
 let PsOperationsManager = class PsOperationsManager extends PsBaseWithRunningAgentObserver {
     constructor() {
         super();
@@ -60,13 +61,13 @@ let PsOperationsManager = class PsOperationsManager extends PsBaseWithRunningAge
     }
     updateConnectorRegistry(agent) {
         const processConnectors = (connectors) => {
-            connectors?.forEach(connector => {
+            connectors?.forEach((connector) => {
                 window.psAppGlobals.activeConnectorsInstanceRegistry.set(connector.id, connector);
             });
         };
         processConnectors(agent.InputConnectors);
         processConnectors(agent.OutputConnectors);
-        agent.SubAgents?.forEach(subAgent => {
+        agent.SubAgents?.forEach((subAgent) => {
             processConnectors(subAgent.InputConnectors);
             processConnectors(subAgent.OutputConnectors);
         });
@@ -309,6 +310,17 @@ let PsOperationsManager = class PsOperationsManager extends PsBaseWithRunningAge
             this.getDetailedAgentCosts();
         }
     }
+    renderHeader() {
+        return html `
+      <div class="layout horizontal center-center agentHeader">
+        <img
+          src="${YpMediaHelpers.getImageFormatUrl(this.group.GroupLogoImages, 0)}"
+          class="agentHeaderImage"
+        />
+        <div class="layout vertical agentHeaderText">${this.group.name}</div>
+      </div>
+    `;
+    }
     render() {
         if (this.isFetchingAgent) {
             return html `<md-linear-progress indeterminate></md-linear-progress>`;
@@ -340,7 +352,9 @@ let PsOperationsManager = class PsOperationsManager extends PsBaseWithRunningAge
           @close="${() => (this.showAddConnectorDialog = false)}"
         ></ps-add-connector-dialog>
 
-        <div class="layout vertical self-start tabsContainer">
+        <div class="layout horizontal self-start tabsContainer">
+          ${this.renderHeader()}
+
           <md-tabs id="tabBar" @change="${this.tabChanged}">
             <md-secondary-tab
               id="configure-tab"
@@ -367,6 +381,14 @@ let PsOperationsManager = class PsOperationsManager extends PsBaseWithRunningAge
               ${this.renderTotalCosts()}
             </md-secondary-tab>
           </md-tabs>
+          <div class="flex"></div>
+          <md-filled-tonal-button
+            class="addAgentButton"
+            @click="${() => this.fire("add-agent")}"
+          >
+            <md-icon slot="icon">add</md-icon>
+            ${this.t("Add Agent")}
+          </md-filled-tonal-button>
         </div>
 
         ${this.activeTabIndex === 0
@@ -390,6 +412,33 @@ let PsOperationsManager = class PsOperationsManager extends PsBaseWithRunningAge
         return [
             super.styles,
             css `
+        .agentHeaderImage {
+          max-width: 72px;
+          align-self: self-start;
+          border-radius: 4px;
+          margin-top: 8px;
+        }
+
+        .addAgentButton {
+          max-height: 36px;
+          margin-top: 10px;
+          margin-right: 16px;
+        }
+
+        .agentHeaderText {
+          align-self: self-start;
+          font-size: 17px;
+          padding: 8px;
+          margin-top: 8px;
+          margin-left: 16px;
+          margin-right: 16px;
+          font-family: var(--md-ref-typeface-brand);
+        }
+
+        .agentHeader {
+          margin-left: 16px;
+        }
+
         .tabsContainer {
           background-color: var(--md-sys-color-surface);
           width: 100%;
@@ -401,7 +450,7 @@ let PsOperationsManager = class PsOperationsManager extends PsBaseWithRunningAge
           margin-bottom: 64px;
           align-self: flex-start;
           align-items: flex-start;
-          max-width: 800px;
+          max-width: 600px;
           background-color: var(--md-sys-color-surface);
         }
 

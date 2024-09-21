@@ -347,7 +347,7 @@ export class PsAgentNode extends PsOperationsBaseNode {
     switch (this.agentState) {
       case "running":
         return html`
-          <md-icon-button
+          <md-icon-button hidden
             class="playButtons"
             @click="${this.pauseAgent}"
             disabled

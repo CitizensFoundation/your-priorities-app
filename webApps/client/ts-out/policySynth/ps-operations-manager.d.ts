@@ -50,6 +50,7 @@ export declare class PsOperationsManager extends PsBaseWithRunningAgentObserver 
     getDetailedAgentCosts(): Promise<void>;
     renderDetailedCostsTab(): import("lit-html").TemplateResult<1>;
     tabChanged(): void;
+    renderHeader(): import("lit-html").TemplateResult<1>;
     render(): import("lit-html").TemplateResult<1>;
     static get styles(): any[];
 }
