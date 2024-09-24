@@ -106,6 +106,8 @@ export class PolicySynthAgentsController {
     const openAiGpt4 = await findLatestActiveModel("GPT-4o");
     const openAiGpt4Mini = await findLatestActiveModel("GPT-4o Mini");
     const geminiPro = await findLatestActiveModel("Gemini 1.5 Pro");
+    const openAio1Preview = await findLatestActiveModel("o1 Preview");
+    const openAio1Mini = await findLatestActiveModel("o1 Mini");
 
     const groupAccessConfig = [];
 
@@ -126,6 +128,20 @@ export class PolicySynthAgentsController {
     if (openAiGpt4Mini && process.env.OPENAI_API_KEY) {
       groupAccessConfig.push( {
         aiModelId: openAiGpt4Mini!.id,
+        apiKey: process.env.OPENAI_API_KEY,
+      })
+    }
+
+    if (openAio1Preview && process.env.OPENAI_API_KEY) {
+      groupAccessConfig.push( {
+        aiModelId: openAio1Preview!.id,
+        apiKey: process.env.OPENAI_API_KEY,
+      })
+    }
+
+    if (openAio1Mini && process.env.OPENAI_API_KEY) {
+      groupAccessConfig.push( {
+        aiModelId: openAio1Mini!.id,
         apiKey: process.env.OPENAI_API_KEY,
       })
     }

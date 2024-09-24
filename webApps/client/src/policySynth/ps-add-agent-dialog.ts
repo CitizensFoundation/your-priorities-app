@@ -24,6 +24,8 @@ export class PsAddAgentDialog extends YpBaseElement {
   @state() private activeAiModels: PsAiModelAttributes[] = [];
   @state() private selectedAgentClassId: number | null = null;
   @state() private selectedAiModelIds: { [key in PsAiModelSize]?: number | null } = {};
+  @state() private selectedReasoningModelIds: { [key in PsAiModelSize]?: number | null } = {};
+
   @state() private agentName: string = '';
 
   @state() private requestedAiModelSizes: PsAiModelSize[] = [];
@@ -109,7 +111,9 @@ export class PsAddAgentDialog extends YpBaseElement {
   }
 
   private _handleAiModelsChanged(e: CustomEvent) {
+    debugger
     this.selectedAiModelIds = e.detail.selectedAiModelIds;
+    this.selectedReasoningModelIds = e.detail.selectedReasoningModelIds;
   }
 
   private _handleClose() {
@@ -122,9 +126,14 @@ export class PsAddAgentDialog extends YpBaseElement {
   }
 
   private async _handleAddAgent() {
-    const selectedModels = Object.entries(this.selectedAiModelIds)
-      .filter(([_, value]) => value !== null)
-      .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {});
+    const selectedModels = {
+      ...Object.entries(this.selectedAiModelIds)
+        .filter(([_, value]) => value !== null)
+        .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {}),
+      ...Object.entries(this.selectedReasoningModelIds)
+        .filter(([_, value]) => value !== null)
+        .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {}),
+    };
 
     if (!this.agentName || !this.selectedAgentClassId || Object.keys(selectedModels).length === 0) {
       console.error('Agent name, class, and at least one AI model must be selected');
@@ -147,6 +156,7 @@ export class PsAddAgentDialog extends YpBaseElement {
       console.error('Error creating new agent:', error);
     }
   }
+
 
   static override get styles() {
     return [

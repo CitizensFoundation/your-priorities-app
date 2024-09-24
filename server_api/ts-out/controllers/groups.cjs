@@ -2254,7 +2254,31 @@ router.put("/:id", auth.can("edit group"), function (req, res) {
                         collectionId: group.id,
                         collectionType: "group",
                     }, "medium");
-                    sendGroupOrError(res, group, "setupImages", req.user, error);
+                    if (group.configuration.groupType == 3) {
+                        import("./policySynthAgents.js").then(({ PolicySynthAgentsController }) => {
+                            PolicySynthAgentsController.setupApiKeysForGroup(group)
+                                .then(() => {
+                                log.info("Policy Synth Agents Api Keys Created", {
+                                    groupId: group.id,
+                                    context: "create",
+                                    userId: req.user.id,
+                                });
+                                sendGroupOrError(res, group, "setupImages", req.user, error);
+                            })
+                                .catch((error) => {
+                                sendGroupOrError(res, group, "createGroup", req.user, error);
+                                log.error("Policy Synth Agents Api Keys Not Created", {
+                                    groupId: group.id,
+                                    context: "create",
+                                    userId: req.user.id,
+                                    error: error,
+                                });
+                            });
+                        });
+                    }
+                    else {
+                        sendGroupOrError(res, group, "setupImages", req.user, error);
+                    }
                 });
             })
                 .catch(function (error) {

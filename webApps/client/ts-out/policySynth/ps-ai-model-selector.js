@@ -183,7 +183,7 @@ let PsAiModelSelector = class PsAiModelSelector extends YpBaseElement {
       <div class="ai-model-select-container reasoning">
         <md-filled-select
           .label="${this.getLocalizedReasoningModelLabel(size)}"
-           @change="${(e) => this._handleAiModelSelection(e, size)}"
+          @change="${(e) => this._handleAiReasoningModelSelection(e, size)}"
           ?disabled="${isDisabled}"
         >
           ${isDisabled
@@ -204,7 +204,7 @@ let PsAiModelSelector = class PsAiModelSelector extends YpBaseElement {
         ${currentModel
             ? html `
               <md-icon-button
-                @click="${() => this._handleRemoveModel(size)}"
+                @click="${() => this._handleRemoveReasoningModel(size)}"
               >
                 <md-icon>delete</md-icon>
               </md-icon-button>
@@ -243,11 +243,25 @@ let PsAiModelSelector = class PsAiModelSelector extends YpBaseElement {
         this._emitChangeEvent();
         this.requestUpdate();
     }
+    _handleAiReasoningModelSelection(e, size) {
+        const select = e.target;
+        this.selectedReasoningModelIds[size] = Number(select.value);
+        this._emitChangeEvent();
+        this.requestUpdate();
+    }
     _handleRemoveModel(size) {
         this.currentModels[size] = null;
         this.selectedAiModelIds[size] = null;
         this.currentModels = { ...this.currentModels };
         this.selectedAiModelIds = { ...this.selectedAiModelIds };
+        this._emitChangeEvent();
+        this.requestUpdate();
+    }
+    _handleRemoveReasoningModel(size) {
+        this.currentReasoningModels[size] = null;
+        this.selectedReasoningModelIds[size] = null;
+        this.currentReasoningModels = { ...this.currentReasoningModels };
+        this.selectedReasoningModelIds = { ...this.selectedReasoningModelIds };
         this._emitChangeEvent();
         this.requestUpdate();
     }
@@ -260,6 +274,7 @@ let PsAiModelSelector = class PsAiModelSelector extends YpBaseElement {
             bubbles: true,
             composed: true,
         }));
+        debugger;
     }
     static get styles() {
         return [

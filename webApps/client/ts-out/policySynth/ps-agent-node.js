@@ -39,6 +39,8 @@ let PsAgentNode = class PsAgentNode extends PsOperationsBaseNode {
         super.connectedCallback();
         this.agent = window.psAppGlobals.getAgentInstance(this.agentId);
         this.updateAgentStatus(); // Initial status check
+        const a = this.hasStaticTheme;
+        debugger;
     }
     disconnectedCallback() {
         super.disconnectedCallback();
@@ -533,7 +535,7 @@ let PsAgentNode = class PsAgentNode extends PsOperationsBaseNode {
           margin-top: 0;
           line-height: 15px;
           font-weight: 500;
-          color: var(--md-sys-color-primary);
+          color: var(--md-sys-color-tertiary);
           text-transform: uppercase;
         }
 
@@ -579,6 +581,9 @@ __decorate([
 __decorate([
     property({ type: Number })
 ], PsAgentNode.prototype, "agentId", void 0);
+__decorate([
+    property({ type: Boolean, reflect: true })
+], PsAgentNode.prototype, "hasStaticTheme", void 0);
 __decorate([
     property({ type: Number })
 ], PsAgentNode.prototype, "groupId", void 0);

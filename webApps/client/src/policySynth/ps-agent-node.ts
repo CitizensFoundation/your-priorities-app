@@ -25,6 +25,9 @@ export class PsAgentNode extends PsOperationsBaseNode {
   @property({ type: Number })
   agentId!: number;
 
+  @property({ type: Boolean, reflect: true })
+  override hasStaticTheme!: boolean;
+
   @property({ type: Number }) groupId!: number;
 
   @property({ type: Boolean, reflect: true }) running = false;
@@ -86,6 +89,8 @@ export class PsAgentNode extends PsOperationsBaseNode {
     super.connectedCallback();
     this.agent = window.psAppGlobals.getAgentInstance(this.agentId)!;
     this.updateAgentStatus(); // Initial status check
+    const a = this.hasStaticTheme;
+    debugger;
   }
 
   override disconnectedCallback(): void {
@@ -633,7 +638,7 @@ export class PsAgentNode extends PsOperationsBaseNode {
           margin-top: 0;
           line-height: 15px;
           font-weight: 500;
-          color: var(--md-sys-color-primary);
+          color: var(--md-sys-color-tertiary);
           text-transform: uppercase;
         }
 

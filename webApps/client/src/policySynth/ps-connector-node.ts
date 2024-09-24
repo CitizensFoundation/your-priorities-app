@@ -95,7 +95,7 @@ export class PsAgentConnector extends PsOperationsBaseNode {
           margin-top: 8px;
           line-height: 15px;
           font-weight: 500;
-          color: var(--md-sys-color-primary);
+          color: var(--md-sys-color-tertiary);
           text-transform: uppercase;
         }
 

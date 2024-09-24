@@ -369,12 +369,14 @@ let PsOperationsView = class PsOperationsView extends PsBaseWithRunningAgentObse
             text: agent.Class?.configuration.description,
             agentId: agent.id,
             groupId: this.groupId,
+            hasStaticTheme: this.hasStaticTheme,
             nodeType: "agent",
             attrs: {
             //cause: node.description,
             },
             type: "html.Element",
         });
+        debugger;
         el.addTo(this.graph);
         return el;
     }
@@ -397,6 +399,7 @@ let PsOperationsView = class PsOperationsView extends PsBaseWithRunningAgentObse
                 text: connector.Class?.configuration.description,
                 connectorId: connector.id,
                 agentName: sourceAgent.configuration.name,
+                hasStaticTheme: this.hasStaticTheme,
                 groupId: this.groupId,
                 nodeType: "connector",
                 attrs: {
@@ -531,9 +534,15 @@ let PsOperationsView = class PsOperationsView extends PsBaseWithRunningAgentObse
         .agentContainer {
           color: var(--md-sys-color-on-surface);
           background-color: var(--md-sys-color-surface-container-high);
-          border-radius: 16px;
           padding: 0;
         }
+
+        .agentContainer {
+          background-color: var(--md-sys-color-surface-container-lowest);
+          border-radius: 16px;
+          border: 1px solid var(--md-sys-color-surface-container-high);
+        }
+
 
         .agentContainerRunning {
           color: var(--md-sys-color-on-surface);
@@ -542,11 +551,21 @@ let PsOperationsView = class PsOperationsView extends PsBaseWithRunningAgentObse
           padding: 0;
         }
 
+        .agentContainerRunning {
+          background-color: var(--md-sys-color-surface-container-lowest);
+          border: 1px solid var(--md-sys-color-surface-container-highest);
+        }
+
         .connectorContainer {
           color: var(--md-sys-color-on-surface);
           background-color: var(--md-sys-color-surface-container-low);
           border-radius: 16px;
           padding: 0;
+        }
+
+        .connectorContainer {
+          background-color: var(--md-sys-color-surface-container-lowest);
+          border: 1px solid var(--md-sys-color-surface-container-highest);
         }
 
         /* Define your component styles here */

@@ -231,7 +231,8 @@ export class PsAiModelSelector extends YpBaseElement {
       <div class="ai-model-select-container reasoning">
         <md-filled-select
           .label="${this.getLocalizedReasoningModelLabel(size)}"
-           @change="${(e: Event) => this._handleAiModelSelection(e, size)}"
+          @change="${(e: Event) =>
+            this._handleAiReasoningModelSelection(e, size)}"
           ?disabled="${isDisabled}"
         >
           ${isDisabled
@@ -254,7 +255,7 @@ export class PsAiModelSelector extends YpBaseElement {
         ${currentModel
           ? html`
               <md-icon-button
-                @click="${() => this._handleRemoveModel(size)}"
+                @click="${() => this._handleRemoveReasoningModel(size)}"
               >
                 <md-icon>delete</md-icon>
               </md-icon-button>
@@ -297,11 +298,27 @@ export class PsAiModelSelector extends YpBaseElement {
     this.requestUpdate();
   }
 
+  _handleAiReasoningModelSelection(e: Event, size: PsAiModelSize) {
+    const select = e.target as HTMLSelectElement;
+    this.selectedReasoningModelIds[size] = Number(select.value);
+    this._emitChangeEvent();
+    this.requestUpdate();
+  }
+
   private _handleRemoveModel(size: PsAiModelSize) {
     this.currentModels[size] = null;
     this.selectedAiModelIds[size] = null;
     this.currentModels = { ...this.currentModels };
     this.selectedAiModelIds = { ...this.selectedAiModelIds };
+    this._emitChangeEvent();
+    this.requestUpdate();
+  }
+
+  _handleRemoveReasoningModel(size: PsAiModelSize) {
+    this.currentReasoningModels[size] = null;
+    this.selectedReasoningModelIds[size] = null;
+    this.currentReasoningModels = { ...this.currentReasoningModels };
+    this.selectedReasoningModelIds = { ...this.selectedReasoningModelIds };
     this._emitChangeEvent();
     this.requestUpdate();
   }
@@ -317,6 +334,7 @@ export class PsAiModelSelector extends YpBaseElement {
         composed: true,
       })
     );
+    debugger;
   }
 
   static override get styles() {

@@ -14,6 +14,7 @@ import { MdDialog } from "@material/web/dialog/dialog.js";
 export declare class PsAgentNode extends PsOperationsBaseNode {
     agent: PsAgentAttributes;
     agentId: number;
+    hasStaticTheme: boolean;
     groupId: number;
     running: boolean;
     private agentState;

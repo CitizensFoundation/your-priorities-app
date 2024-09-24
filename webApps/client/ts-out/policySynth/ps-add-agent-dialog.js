@@ -23,6 +23,7 @@ let PsAddAgentDialog = class PsAddAgentDialog extends YpBaseElement {
         this.activeAiModels = [];
         this.selectedAgentClassId = null;
         this.selectedAiModelIds = {};
+        this.selectedReasoningModelIds = {};
         this.agentName = '';
         this.requestedAiModelSizes = [];
         this.api = new PsServerApi();
@@ -100,7 +101,9 @@ let PsAddAgentDialog = class PsAddAgentDialog extends YpBaseElement {
         }
     }
     _handleAiModelsChanged(e) {
+        debugger;
         this.selectedAiModelIds = e.detail.selectedAiModelIds;
+        this.selectedReasoningModelIds = e.detail.selectedReasoningModelIds;
     }
     _handleClose() {
         this.dispatchEvent(new CustomEvent('close'));
@@ -110,9 +113,14 @@ let PsAddAgentDialog = class PsAddAgentDialog extends YpBaseElement {
         event.preventDefault();
     }
     async _handleAddAgent() {
-        const selectedModels = Object.entries(this.selectedAiModelIds)
-            .filter(([_, value]) => value !== null)
-            .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {});
+        const selectedModels = {
+            ...Object.entries(this.selectedAiModelIds)
+                .filter(([_, value]) => value !== null)
+                .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {}),
+            ...Object.entries(this.selectedReasoningModelIds)
+                .filter(([_, value]) => value !== null)
+                .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {}),
+        };
         if (!this.agentName || !this.selectedAgentClassId || Object.keys(selectedModels).length === 0) {
             console.error('Agent name, class, and at least one AI model must be selected');
             return;
@@ -167,6 +175,9 @@ __decorate([
 __decorate([
     state()
 ], PsAddAgentDialog.prototype, "selectedAiModelIds", void 0);
+__decorate([
+    state()
+], PsAddAgentDialog.prototype, "selectedReasoningModelIds", void 0);
 __decorate([
     state()
 ], PsAddAgentDialog.prototype, "agentName", void 0);

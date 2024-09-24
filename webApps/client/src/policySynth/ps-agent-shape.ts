@@ -50,6 +50,7 @@ export class AgentsShapeView extends dia.ElementView {
         div.innerHTML = `<ps-agent-node
           agentId="${this.model.attributes.agentId}"
           groupId="${this.model.attributes.groupId}"
+          hasStaticTheme="${this.model.attributes.hasStaticTheme}"
         >
      </ps-agent-node>`;
         div.className = "agentContainer";
@@ -59,6 +60,7 @@ export class AgentsShapeView extends dia.ElementView {
           connectorId="${this.model.attributes.connectorId}"
           groupId="${this.model.attributes.groupId}"
           agentName="${this.model.attributes.agentName}"
+          hasStaticTheme="${this.model.attributes.hasStaticTheme}"
         >
       </ps-connector-node>`;
         div.className = "connectorContainer";

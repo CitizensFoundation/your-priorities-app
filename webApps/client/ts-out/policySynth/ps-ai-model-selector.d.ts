@@ -28,7 +28,9 @@ export declare class PsAiModelSelector extends YpBaseElement {
     private getLocalizedModelLabel;
     private getLocalizedReasoningModelLabel;
     private _handleAiModelSelection;
+    _handleAiReasoningModelSelection(e: Event, size: PsAiModelSize): void;
     private _handleRemoveModel;
+    _handleRemoveReasoningModel(size: PsAiModelSize): void;
     private _emitChangeEvent;
     static get styles(): any[];
 }
