@@ -206,7 +206,7 @@ export class PsOperationsManager extends PsBaseWithRunningAgentObserver {
     try {
       const nodeType =
         "Class" in this.nodeToEditInfo &&
-        this.nodeToEditInfo.Class?.name.toLowerCase().includes("agent")
+        (this.nodeToEditInfo as PsAgentAttributes).parent_agent_id
           ? "agent"
           : "connector";
       const nodeId = this.nodeToEditInfo.id;
