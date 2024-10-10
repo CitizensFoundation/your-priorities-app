@@ -58,11 +58,17 @@ let YpLogin = class YpLogin extends YpBaseElement {
           --md-filled-field-container-color: var(
             --md-sys-color-surface
           ) !important;
-        }
+
 
         .languageSelector {
           margin-bottom: 16px;
           margin-top: 16px;
+        }
+
+        .loginField {
+          margin-bottom: 8px;
+          margin-top: 8px;
+          width: 100%;
         }
 
         .welcome {
@@ -364,6 +370,7 @@ let YpLogin = class YpLogin extends YpBaseElement {
         .loginField {
           margin-bottom: 8px;
           margin-top: 8px;
+          width: 100%;
         }
 
         @media (max-width: 900px) {
@@ -625,7 +632,7 @@ let YpLogin = class YpLogin extends YpBaseElement {
           >${this.submitText}</span
         ></md-filled-button
       >
-    </div>`;
+  `;
     }
     renderLoginInput() {
         return html `<md-outlined-text-field
@@ -1346,6 +1353,7 @@ let YpLogin = class YpLogin extends YpBaseElement {
         this.addListener("yp-network-error", this._networkError.bind(this));
         this.addGlobalListener("yp-logged-in-via-polling", this.close.bind(this));
         this.addGlobalListener("yp-language-loaded", this._setTexts.bind(this));
+        this._setTexts();
     }
     disconnectedCallback() {
         super.connectedCallback();

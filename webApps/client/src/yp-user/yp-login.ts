@@ -136,11 +136,17 @@ export class YpLogin extends YpBaseElement {
           --md-filled-field-container-color: var(
             --md-sys-color-surface
           ) !important;
-        }
+
 
         .languageSelector {
           margin-bottom: 16px;
           margin-top: 16px;
+        }
+
+        .loginField {
+          margin-bottom: 8px;
+          margin-top: 8px;
+          width: 100%;
         }
 
         .welcome {
@@ -442,6 +448,7 @@ export class YpLogin extends YpBaseElement {
         .loginField {
           margin-bottom: 8px;
           margin-top: 8px;
+          width: 100%;
         }
 
         @media (max-width: 900px) {
@@ -706,7 +713,7 @@ export class YpLogin extends YpBaseElement {
           >${this.submitText}</span
         ></md-filled-button
       >
-    </div>`;
+  `;
   }
 
   renderLoginInput() {
@@ -1553,6 +1560,7 @@ export class YpLogin extends YpBaseElement {
     this.addListener("yp-network-error", this._networkError.bind(this));
     this.addGlobalListener("yp-logged-in-via-polling", this.close.bind(this));
     this.addGlobalListener("yp-language-loaded", this._setTexts.bind(this));
+    this._setTexts();
   }
 
   override disconnectedCallback() {
@@ -1631,6 +1639,8 @@ export class YpLogin extends YpBaseElement {
       console.error("No user in registerUser");
     }
   }
+
+
 
   async _loginUser() {
     const user = (await window.serverApi.loginUser(
