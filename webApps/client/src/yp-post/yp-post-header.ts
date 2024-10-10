@@ -347,7 +347,7 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
             hideDebate
             headerMode
             elevation="-1"
-            ?forceShowDebate="${this.post.Group.configuration?.forceShowDebateCountOnPost}"
+            forceShowDebate
             floating
             class="postActions"
             .post="${this.post}"

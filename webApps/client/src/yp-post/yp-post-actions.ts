@@ -155,6 +155,10 @@ export class YpPostActions extends YpBaseElement {
           margin-right: 16px;
         }
 
+        .top-debate[force-show-debate] {
+          margin-left: 16px;
+        }
+
         md-filled-icon-button[is-static-theme] {
           --md-sys-color-primary: var(--md-sys-color-primary-container);
           --md-sys-color-on-primary: var(--md-sys-color-on-primary-container);
@@ -269,7 +273,11 @@ export class YpPostActions extends YpBaseElement {
   }
 
   renderDebate() {
-    return html`<div style="position: relative">
+    return html`<div
+      style="position: relative"
+      class="top-debate"
+      ?force-show-debate="${this.forceShowDebate}"
+    >
       <div
         class="action-debate layout horizontal"
         ?hidden="${this.hideDebate || this.forceHideDebate}"
@@ -278,7 +286,7 @@ export class YpPostActions extends YpBaseElement {
           <md-icon>chat_bubble_outline</md-icon>
         </md-filled-tonal-icon-button>
         <md-badge
-          ?hidden="${this.post.counter_points == 0}"
+          ?hidden="${this.post.counter_points == 0 && !this.forceShowDebate}"
           .value="${YpFormattingHelpers.number(this.post.counter_points)}"
         ></md-badge>
       </div>
@@ -348,6 +356,7 @@ export class YpPostActions extends YpBaseElement {
               ${YpFormattingHelpers.number(this.post.counter_endorsements_down)}
             </div>
           </div>
+          ${this.forceShowDebate ? this.renderDebate() : ""}
         </div>
       `;
     }
