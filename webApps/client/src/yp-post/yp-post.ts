@@ -11,7 +11,7 @@ import { customElement, property } from "lit/decorators.js";
 //import '@material/web/navigationtab/navigation-tab.js';
 //import { MdNavigationTab } from '@material/web/navigationtab/navigation-tab.js';
 
-import 'lit-google-map';
+import "lit-google-map";
 
 import "@material/web/fab/fab.js";
 
@@ -282,7 +282,7 @@ export class YpPost extends YpCollection {
     } else if (event.key === "ArrowRight" && !this.rightArrowDisabled) {
       this.goToNextPost();
     } else if (event.key === "Escape") {
-      if (this.post) {
+      if (this.post && window.location.pathname.indexOf("/edit") === -1) {
         event.preventDefault();
         event.stopPropagation();
         YpNavHelpers.redirectTo("/group/" + this.post.group_id);

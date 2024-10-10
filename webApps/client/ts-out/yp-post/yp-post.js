@@ -12,7 +12,7 @@ import { customElement, property } from "lit/decorators.js";
 //import { MdNavigationBar } from '@material/web/navigationbar/navigation-bar.js';
 //import '@material/web/navigationtab/navigation-tab.js';
 //import { MdNavigationTab } from '@material/web/navigationtab/navigation-tab.js';
-import 'lit-google-map';
+import "lit-google-map";
 import "@material/web/fab/fab.js";
 import { YpFormattingHelpers } from "../common/YpFormattingHelpers.js";
 import { YpNavHelpers } from "../common/YpNavHelpers.js";
@@ -233,7 +233,7 @@ let YpPost = class YpPost extends YpCollection {
             this.goToNextPost();
         }
         else if (event.key === "Escape") {
-            if (this.post) {
+            if (this.post && window.location.pathname.indexOf("/edit") === -1) {
                 event.preventDefault();
                 event.stopPropagation();
                 YpNavHelpers.redirectTo("/group/" + this.post.group_id);

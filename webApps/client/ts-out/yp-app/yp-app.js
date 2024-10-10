@@ -483,7 +483,8 @@ let YpApp = class YpApp extends YpBaseElement {
         .titleString="${this.currentTitle || titleString}"
         aria-label="top navigation"
         ?fixed="${window.appGlobals.domain?.configuration.useFixedTopAppBar}"
-        ?disableArrowBasedNavigation="${window.appGlobals.domain?.configuration.disableArrowBasedTopNavigation}"
+        ?disableArrowBasedNavigation="${window.appGlobals.domain?.configuration
+            .disableArrowBasedTopNavigation}"
         ?hideBreadcrumbs="${!titleString || titleString == ""}"
         ?hidden="${this.appMode !== "main" ||
             window.appGlobals.domain?.configuration.hideAppBarIfWelcomeHtml}"
@@ -1383,7 +1384,8 @@ let YpApp = class YpApp extends YpBaseElement {
         //this.$$("#search")?.toggle();
     }
     _handleKeyDown(event) {
-        if (event.key === "Escape") {
+        if (event.key === "Escape" &&
+            window.location.pathname.indexOf("/edit") === -1) {
             if (this.closePostHeader) {
                 this._closePost();
             }
