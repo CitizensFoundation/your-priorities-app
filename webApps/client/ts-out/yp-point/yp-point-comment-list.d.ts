@@ -27,7 +27,7 @@ export declare class YpPointCommentList extends YpBaseElement {
     _pointChanged(): void;
     refresh(): void;
     _imageChanged(): void;
-    get hasContent(): YpImageData | YpPointData | undefined;
+    get hasContent(): YpPointData | YpImageData | undefined;
     _getComments(): Promise<void>;
     _getCommentsCount(): Promise<void>;
 }

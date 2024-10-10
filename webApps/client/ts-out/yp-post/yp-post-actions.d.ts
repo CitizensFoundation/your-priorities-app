@@ -18,6 +18,7 @@ export declare class YpPostActions extends YpBaseElement {
     forceShowDebate: boolean;
     onlyShowDebate: boolean;
     forceHideDebate: boolean;
+    hideVoteCount: boolean;
     connectedCallback(): void;
     disconnectedCallback(): void;
     firstUpdated(changedProperties: Map<string | number | symbol, unknown>): void;

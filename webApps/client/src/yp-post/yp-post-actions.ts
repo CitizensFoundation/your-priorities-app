@@ -58,6 +58,9 @@ export class YpPostActions extends YpBaseElement {
   @property({ type: Boolean })
   forceHideDebate = false;
 
+  @property({ type: Boolean })
+  hideVoteCount = false;
+
   override connectedCallback() {
     super.connectedCallback();
     this.addGlobalListener(
@@ -122,7 +125,8 @@ export class YpPostActions extends YpBaseElement {
           margin-left: 16px;
         }
 
-        .action-icon {
+        .action-icon[hide-vote-count] {
+          margin-right: 16px;
         }
 
         .action-up {
@@ -154,10 +158,18 @@ export class YpPostActions extends YpBaseElement {
         md-filled-icon-button[is-static-theme] {
           --md-sys-color-primary: var(--md-sys-color-primary-container);
           --md-sys-color-on-primary: var(--md-sys-color-on-primary-container);
-          --md-filled-icon-button-toggle-icon-color: var(--md-sys-color-on-primary-container);
-          --md-filled-icon-button-toggle-focus-icon-color: var(--md-sys-color-on-primary-container);
-          --md-filled-icon-button-toggle-pressed-icon-color: var(--md-sys-color-on-primary-container);
-          --md-filled-icon-button-toggle-hover-icon-color: var(--md-sys-color-on-primary-container);
+          --md-filled-icon-button-toggle-icon-color: var(
+            --md-sys-color-on-primary-container
+          );
+          --md-filled-icon-button-toggle-focus-icon-color: var(
+            --md-sys-color-on-primary-container
+          );
+          --md-filled-icon-button-toggle-pressed-icon-color: var(
+            --md-sys-color-on-primary-container
+          );
+          --md-filled-icon-button-toggle-hover-icon-color: var(
+            --md-sys-color-on-primary-container
+          );
         }
 
         md-badge {
@@ -292,11 +304,12 @@ export class YpPostActions extends YpBaseElement {
             <md-filled-icon-button
               ?is-static-theme="${this.hasStaticTheme}"
               toggle
+              ?hide-vote-count="${this.hideVoteCount}"
               ?selected="${this.isEndorsed}"
               .smaller-icons="${this.smallerIcons}"
               ?disabled="${this.votingStateDisabled}"
               .title="${this.customVoteUpHoverText}"
-               class="action-icon up-vote-icon mainIcons"
+              class="action-icon up-vote-icon mainIcons"
               @click="${this.upVote}"
               ><md-icon slot="selected"
                 >${this.endorseModeIcon(this.endorsementButtons, "up")}</md-icon
@@ -307,7 +320,7 @@ export class YpPostActions extends YpBaseElement {
             <div
               ?rtl="${this.rtl}"
               class="action-text up-text"
-              ?hidden="${this.post.Group.configuration?.hideVoteCount}"
+              ?hidden="${this.hideVoteCount}"
             >
               ${YpFormattingHelpers.number(this.post.counter_endorsements_up)}
             </div>
@@ -316,7 +329,6 @@ export class YpPostActions extends YpBaseElement {
           <div
             id="actionDown"
             class="action-down layout horizontal layout start justified"
-            ?hidden="${this.post.Group.configuration?.hideDownVoteForPost}"
           >
             <md-filled-icon-button
               toggle
@@ -328,12 +340,11 @@ export class YpPostActions extends YpBaseElement {
               class="action-icon down-vote-icon mainIcons"
               @click="${this.downVote}"
               ><md-icon slot="selected">${this.endorseModeIconDown}</md-icon
-              ><md-icon>${this.endorseModeIconDown}</md-icon></md-filled-icon-button
+              ><md-icon
+                >${this.endorseModeIconDown}</md-icon
+              ></md-filled-icon-button
             >
-            <div
-              class="action-text down-text"
-              ?hidden="${this.post.Group.configuration?.hideVoteCount}"
-            >
+            <div class="action-text down-text" ?hidden="${this.hideVoteCount}">
               ${YpFormattingHelpers.number(this.post.counter_endorsements_down)}
             </div>
           </div>
@@ -477,11 +488,11 @@ export class YpPostActions extends YpBaseElement {
       }
 
       if (this.post.Group.configuration) {
-        this.post.Group.configuration.originalHideVoteCount =
-          this.post.Group.configuration.hideVoteCount;
-        if (this.post.Group.configuration.hideVoteCountUntilVoteCompleted) {
-          this.post.Group.configuration.hideVoteCount = true;
-          this.requestUpdate();
+        if (
+          this.post.Group.configuration.hideVoteCount ||
+          this.post.Group.configuration.hideVoteCountUntilVoteCompleted
+        ) {
+          this.hideVoteCount = true;
         }
       }
 
@@ -563,10 +574,9 @@ export class YpPostActions extends YpBaseElement {
       if (
         value !== 0 &&
         this.post.Group.configuration &&
-        this.post.Group.configuration.hideVoteCount &&
-        !this.post.Group.configuration.originalHideVoteCount
+        !this.post.Group.configuration.hideVoteCount
       ) {
-        this.post.Group.configuration.hideVoteCount = false;
+        this.hideVoteCount = false;
       }
 
       if (this.endorsementButtons == "hearts") {
@@ -576,14 +586,12 @@ export class YpPostActions extends YpBaseElement {
             this.$$("#actionDown"),
             "hearts-down-selected"
           );
-
         } else if (value < 0) {
           this.$$("#actionDown")!.className += " " + "hearts-down-selected";
           YpFormattingHelpers.removeClass(
             this.$$("#actionUp"),
             "hearts-up-selected"
           );
-
         } else {
           YpFormattingHelpers.removeClass(
             this.$$("#actionUp"),
@@ -593,7 +601,6 @@ export class YpPostActions extends YpBaseElement {
             this.$$("#actionDown"),
             "hearts-down-selected"
           );
-
         }
       } else {
         if (value > 0) {
@@ -712,11 +719,9 @@ export class YpPostActions extends YpBaseElement {
   _setVoteHidingStatus() {
     if (
       this.post.Group.configuration &&
-      this.post.Group.configuration.hideVoteCountUntilVoteCompleted &&
-      !this.post.Group.configuration.originalHideVoteCount
+      !this.post.Group.configuration.hideVoteCount
     ) {
-      this.post.Group.configuration.hideVoteCount = false;
-      this.requestUpdate();
+      this.hideVoteCount = false;
     }
   }
 }
