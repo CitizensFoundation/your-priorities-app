@@ -31,6 +31,9 @@ export class PsAgentConnector extends PsOperationsBaseNode {
   @property({ type: String })
   externalLink: string | undefined;
 
+  @property({ type: Boolean })
+  openInternalLinkInNewTab = true;
+
   override connectedCallback(): void {
     super.connectedCallback();
     this.connector = window.psAppGlobals.getConnectorInstance(
@@ -55,7 +58,9 @@ export class PsAgentConnector extends PsOperationsBaseNode {
       //@ts-ignore
       this.externalLink = `https://docs.google.com/document/d/${this.connector.configuration["googleDocsId"]}/`;
     } else {
-      console.error(`No link for connector ${this.connectorId} ${this.connector.Class?.class_base_id}`);
+      console.error(
+        `No link for connector ${this.connectorId} ${this.connector.Class?.class_base_id}`
+      );
     }
   }
 
@@ -86,8 +91,6 @@ export class PsAgentConnector extends PsOperationsBaseNode {
           height: 100%;
         }
 
-
-
         .connectorType {
           font-size: 10px;
           text-align: left;
@@ -99,7 +102,7 @@ export class PsAgentConnector extends PsOperationsBaseNode {
           text-transform: uppercase;
         }
 
-        .instanceName{
+        .instanceName {
           font-size: 14px;
           text-align: left;
           font-weight: 700;
@@ -151,15 +154,21 @@ export class PsAgentConnector extends PsOperationsBaseNode {
   }
 
   openInternalLink() {
-    const gotoLocation = this.internalLink!;
-    this.fire("yp-change-header", {
-      headerTitle: " ",
-      documentTitle: this.agentName,
-      headerDescription: "",
-      backPath: "/group/" + this.groupId,
-      keepOpenForGroup: `/group/${this.groupId}`,
-    });
-    YpNavHelpers.redirectTo(gotoLocation);
+    let gotoLocation = this.internalLink!;
+
+    if (this.openInternalLinkInNewTab) {
+      gotoLocation = `${window.location.origin}${gotoLocation}`;
+      window.open(gotoLocation, "_blank");
+    } else {
+      this.fire("yp-change-header", {
+        headerTitle: " ",
+        documentTitle: this.agentName,
+        headerDescription: "",
+        backPath: "/group/" + this.groupId,
+        keepOpenForGroup: `/group/${this.groupId}`,
+      });
+      YpNavHelpers.redirectTo(gotoLocation);
+    }
   }
 
   openExternalLink() {
@@ -180,7 +189,7 @@ export class PsAgentConnector extends PsOperationsBaseNode {
             : nothing}
 
           <div class="layout horizontal">
-            <md-icon-button     class="linkIcon" @click="${this.editNode}"
+            <md-icon-button class="linkIcon" @click="${this.editNode}"
               ><md-icon>settings</md-icon></md-icon-button
             >
             <div class="flex"></div>

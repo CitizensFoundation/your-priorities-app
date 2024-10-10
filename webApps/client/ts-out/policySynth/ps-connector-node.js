@@ -13,6 +13,10 @@ import "@material/web/menu/menu-item.js";
 import { PsOperationsBaseNode } from "./ps-operations-base-node.js";
 import { YpNavHelpers } from "../common/YpNavHelpers.js";
 let PsAgentConnector = class PsAgentConnector extends PsOperationsBaseNode {
+    constructor() {
+        super(...arguments);
+        this.openInternalLinkInNewTab = true;
+    }
     connectedCallback() {
         super.connectedCallback();
         this.connector = window.psAppGlobals.getConnectorInstance(this.connectorId);
@@ -63,8 +67,6 @@ let PsAgentConnector = class PsAgentConnector extends PsOperationsBaseNode {
           height: 100%;
         }
 
-
-
         .connectorType {
           font-size: 10px;
           text-align: left;
@@ -76,7 +78,7 @@ let PsAgentConnector = class PsAgentConnector extends PsOperationsBaseNode {
           text-transform: uppercase;
         }
 
-        .instanceName{
+        .instanceName {
           font-size: 14px;
           text-align: left;
           font-weight: 700;
@@ -124,15 +126,21 @@ let PsAgentConnector = class PsAgentConnector extends PsOperationsBaseNode {
     `;
     }
     openInternalLink() {
-        const gotoLocation = this.internalLink;
-        this.fire("yp-change-header", {
-            headerTitle: " ",
-            documentTitle: this.agentName,
-            headerDescription: "",
-            backPath: "/group/" + this.groupId,
-            keepOpenForGroup: `/group/${this.groupId}`,
-        });
-        YpNavHelpers.redirectTo(gotoLocation);
+        let gotoLocation = this.internalLink;
+        if (this.openInternalLinkInNewTab) {
+            gotoLocation = `${window.location.origin}${gotoLocation}`;
+            window.open(gotoLocation, "_blank");
+        }
+        else {
+            this.fire("yp-change-header", {
+                headerTitle: " ",
+                documentTitle: this.agentName,
+                headerDescription: "",
+                backPath: "/group/" + this.groupId,
+                keepOpenForGroup: `/group/${this.groupId}`,
+            });
+            YpNavHelpers.redirectTo(gotoLocation);
+        }
     }
     openExternalLink() {
         window.open(this.externalLink, "_blank");
@@ -151,7 +159,7 @@ let PsAgentConnector = class PsAgentConnector extends PsOperationsBaseNode {
                 : nothing}
 
           <div class="layout horizontal">
-            <md-icon-button     class="linkIcon" @click="${this.editNode}"
+            <md-icon-button class="linkIcon" @click="${this.editNode}"
               ><md-icon>settings</md-icon></md-icon-button
             >
             <div class="flex"></div>
@@ -202,6 +210,9 @@ __decorate([
 __decorate([
     property({ type: String })
 ], PsAgentConnector.prototype, "externalLink", void 0);
+__decorate([
+    property({ type: Boolean })
+], PsAgentConnector.prototype, "openInternalLinkInNewTab", void 0);
 PsAgentConnector = __decorate([
     customElement("ps-connector-node")
 ], PsAgentConnector);

@@ -11,6 +11,7 @@ export declare class PsAgentConnector extends PsOperationsBaseNode {
     agentName: string;
     internalLink: string | undefined;
     externalLink: string | undefined;
+    openInternalLinkInNewTab: boolean;
     connectedCallback(): void;
     static get styles(): (any[] | import("lit").CSSResult)[];
     editNode(): void;
