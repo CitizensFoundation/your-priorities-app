@@ -106,7 +106,9 @@ let YpGroup = class YpGroup extends YpCollection {
     }
     _updateTabPostCount(event) {
         const tabCounterInfo = event.detail;
-        this.tabCounters[tabCounterInfo.type] = tabCounterInfo.count;
+        if (tabCounterInfo.count) {
+            this.tabCounters[tabCounterInfo.type] = tabCounterInfo.count;
+        }
         this._setupOpenTab();
         setTimeout(() => {
             this.requestUpdate();

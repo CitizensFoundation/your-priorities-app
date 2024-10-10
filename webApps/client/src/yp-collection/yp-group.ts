@@ -174,7 +174,9 @@ export class YpGroup extends YpCollection {
 
   _updateTabPostCount(event: CustomEvent) {
     const tabCounterInfo = event.detail;
-    this.tabCounters[tabCounterInfo.type] = tabCounterInfo.count;
+    if (tabCounterInfo.count) {
+      this.tabCounters[tabCounterInfo.type] = tabCounterInfo.count;
+    }
 
     this._setupOpenTab();
 

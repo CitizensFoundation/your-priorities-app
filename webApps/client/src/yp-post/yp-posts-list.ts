@@ -406,7 +406,6 @@ export class YpPostsList extends YpBaseElement {
     changedProperties: Map<string | number | symbol, unknown>
   ) {
     super.firstUpdated(changedProperties);
-
   }
 
   _clearSearch() {
@@ -737,7 +736,7 @@ export class YpPostsList extends YpBaseElement {
 
         this.fire("yp-post-count", {
           type: this.statusFilter,
-          count: this.postsCount,
+          count: this.searchingFor ? undefined : this.postsCount,
         });
 
         if (!this.posts) {

@@ -629,7 +629,7 @@ let YpPostsList = class YpPostsList extends YpBaseElement {
                 this.postsCount = postsInfo.totalPostsCount;
                 this.fire("yp-post-count", {
                     type: this.statusFilter,
-                    count: this.postsCount,
+                    count: this.searchingFor ? undefined : this.postsCount,
                 });
                 if (!this.posts) {
                     this.posts = postsInfo.posts;

@@ -248,76 +248,85 @@ module.exports = (sequelize, DataTypes) => {
             console.log('Search is only implemented on POSTGRES database');
             return;
         }
-        query = sequelize.escape(query);
-        console.log(query);
-        return sequelize.models.Post.findAll({
-            order: [
-                ["created_at", "DESC"],
-                [{ model: sequelize.models.Video, as: "PostVideos" }, 'updated_at', 'desc'],
-                [{ model: sequelize.models.Video, as: "PostVideos" }, { model: sequelize.models.Image, as: 'VideoImages' }, 'updated_at', 'asc']
-            ],
-            where: sequelize.literal('"PostText" @@ plainto_tsquery(\'english\', :query)'),
-            replacements: {
-                query: query
-            },
-            limit: 1024,
-            attributes: ['id', 'name', 'description', 'public_data', 'status', 'content_type', 'official_status', 'counter_endorsements_up', 'cover_media_type',
-                'counter_endorsements_down', 'group_id', 'language', 'counter_points', 'counter_flags', 'location', 'created_at', 'category_id'],
-            include: [
-                {
-                    model: sequelize.models.Category,
-                    attributes: { exclude: ['ip_address', 'user_agent'] },
-                    required: false,
-                    include: [
-                        {
-                            model: sequelize.models.Image,
-                            required: false,
-                            as: 'CategoryIconImages',
-                            attributes: ['id', 'formats'],
-                            order: [
-                                [{ model: sequelize.models.Image, as: 'CategoryIconImages' }, 'updated_at', 'asc']
-                            ]
+        if (query) {
+            const tsQuery = query.split(/\s+/).map(term => {
+                term = term.replace(/'/g, "''"); // Escape single quotes
+                return term + ':*';
+            }).join(' & ');
+            console.log("Using tsQuery: " + tsQuery);
+            return sequelize.models.Post.findAll({
+                order: [
+                    ["created_at", "DESC"],
+                    [{ model: sequelize.models.Video, as: "PostVideos" }, 'updated_at', 'desc'],
+                    [{ model: sequelize.models.Video, as: "PostVideos" }, { model: sequelize.models.Image, as: 'VideoImages' }, 'updated_at', 'asc']
+                ],
+                where: sequelize.literal(`"PostText" @@ to_tsquery('english', '${tsQuery}')`),
+                replacements: {
+                    query: query
+                },
+                limit: 1024,
+                attributes: ['id', 'name', 'description', 'public_data', 'status', 'content_type', 'official_status', 'counter_endorsements_up', 'cover_media_type',
+                    'counter_endorsements_down', 'group_id', 'language', 'counter_points', 'counter_flags', 'location', 'created_at', 'category_id'],
+                include: [
+                    {
+                        model: sequelize.models.Category,
+                        attributes: { exclude: ['ip_address', 'user_agent'] },
+                        required: false,
+                        include: [
+                            {
+                                model: sequelize.models.Image,
+                                required: false,
+                                as: 'CategoryIconImages',
+                                attributes: ['id', 'formats'],
+                                order: [
+                                    [{ model: sequelize.models.Image, as: 'CategoryIconImages' }, 'updated_at', 'asc']
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        model: sequelize.models.PostRevision,
+                        required: false
+                    },
+                    {
+                        model: sequelize.models.Point,
+                        attributes: ['id', 'content'],
+                        required: false
+                    },
+                    { model: sequelize.models.Image,
+                        as: 'PostHeaderImages',
+                        attributes: ['id', 'formats', 'updated_at'],
+                        required: false
+                    },
+                    {
+                        model: sequelize.models.Video,
+                        attributes: ['id', 'formats', 'updated_at', 'viewable', 'public_meta'],
+                        as: 'PostVideos',
+                        required: false,
+                        include: [
+                            {
+                                model: sequelize.models.Image,
+                                as: 'VideoImages',
+                                attributes: ["formats", "updated_at"],
+                                required: false
+                            },
+                        ]
+                    },
+                    {
+                        model: sequelize.models.Group,
+                        required: true,
+                        attributes: ['id', 'configuration', 'name', 'theme_id', 'access'],
+                        where: {
+                            id: groupId
                         }
-                    ]
-                },
-                {
-                    model: sequelize.models.PostRevision,
-                    required: false
-                },
-                {
-                    model: sequelize.models.Point,
-                    attributes: ['id', 'content'],
-                    required: false
-                },
-                { model: sequelize.models.Image,
-                    as: 'PostHeaderImages',
-                    attributes: ['id', 'formats', 'updated_at'],
-                    required: false
-                },
-                {
-                    model: sequelize.models.Video,
-                    attributes: ['id', 'formats', 'updated_at', 'viewable', 'public_meta'],
-                    as: 'PostVideos',
-                    required: false,
-                    include: [
-                        {
-                            model: sequelize.models.Image,
-                            as: 'VideoImages',
-                            attributes: ["formats", "updated_at"],
-                            required: false
-                        },
-                    ]
-                },
-                {
-                    model: sequelize.models.Group,
-                    required: true,
-                    attributes: ['id', 'configuration', 'name', 'theme_id', 'access'],
-                    where: {
-                        id: groupId
                     }
-                }
-            ]
-        });
+                ]
+            });
+        }
+        else {
+            log.info("No query to search");
+            return [];
+        }
     };
     Post.prototype.setupModerationData = function () {
         if (!this.data) {
