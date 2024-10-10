@@ -130,13 +130,29 @@ export class YpAdminConfigDomain extends YpAdminConfigBase {
     }
 
     if (changedProperties.has("collectionId") && this.collectionId) {
-      if (this.collectionId == "new") {
-        this.action = "/domains";
-      } else {
-        this.action = `/domains/${this.collectionId}`;
-      }
+      this._collectionIdChanged();
     }
+
     super.updated(changedProperties);
+  }
+
+  _collectionIdChanged() {
+    if (this.collectionId == "new" || this.collectionId == "newFolder") {
+      this.action = `/domains/${this.parentCollectionId}`;
+      this.collection = {
+        id: -1,
+        name: "",
+        description: "",
+        counter_points: 0,
+        counter_posts: 0,
+        counter_users: 0,
+        default_locale: "en",
+        configuration: {
+        } as YpDomainConfiguration,
+      } as YpDomainData;
+    } else {
+      this.action = `/domains/${this.collectionId}`;
+    }
   }
 
   _setupTranslations() {

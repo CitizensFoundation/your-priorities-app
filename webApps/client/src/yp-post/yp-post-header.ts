@@ -285,7 +285,7 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
             .menuCorner="${Corner.START_START}"
             anchor="menuAnchor"
           >
-            <md-menu-item @click="${this._openEdit}">
+            <md-menu-item @click="${this._openEdit}" hidden>
               ${this.t("post.edit")}
             </md-menu-item>
             <md-menu-item

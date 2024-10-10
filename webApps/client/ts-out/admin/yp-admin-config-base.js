@@ -836,6 +836,9 @@ export class YpAdminConfigBase extends YpAdminPage {
             else if (this.collectionType === "group") {
                 collectionType = "community";
             }
+            else if (this.collectionType === "domain") {
+                collectionType = "domain";
+            }
             collectionId = this.parentCollectionId;
         }
         else if (this.collection) {

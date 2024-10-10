@@ -783,7 +783,8 @@ export class YpApp extends YpBaseElement {
     if (this.page) {
       switch (this.page) {
         case "domain":
-          pageHtml = cache(html`
+        case "organization":
+            pageHtml = cache(html`
             <yp-domain id="domainPage" .subRoute="${this.subRoute}"></yp-domain>
           `);
           break;
@@ -1644,7 +1645,7 @@ export class YpApp extends YpBaseElement {
       window.appGlobals.domain &&
       window.appGlobals.domain.configuration?.useLoginOnDomainIfNotLoggedIn
     ) {
-      YpNavHelpers.redirectTo(`/domain/${window.appGlobals.domain.id}`);
+      YpNavHelpers.redirectTo(`/organization/${window.appGlobals.domain.id}`);
     } else if (window.appUser) {
       window.appUser.openUserlogin();
     }

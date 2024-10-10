@@ -10,10 +10,11 @@ export declare class YpAdminConfigDomain extends YpAdminConfigBase {
     appHomeScreenIconImageId: number | undefined;
     constructor();
     static get styles(): (any[] | import("lit").CSSResult)[];
-    renderHeader(): import("lit-html").TemplateResult<1> | typeof nothing;
+    renderHeader(): typeof nothing | import("lit-html").TemplateResult<1>;
     renderHiddenInputs(): import("lit-html").TemplateResult<1>;
     _clear(): void;
     updated(changedProperties: Map<string | number | symbol, unknown>): void;
+    _collectionIdChanged(): void;
     _setupTranslations(): void;
     _formResponse(event: CustomEvent): Promise<void>;
     _finishRedirect(domain: YpDomainData): void;

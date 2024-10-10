@@ -557,6 +557,7 @@ export class YourPrioritiesApi {
     const promotionAppPath = path.join(baseDir, "old/promotion_app/dist");
     this.app.use("/promotion", express.static(promotionAppPath));
     this.app.use("/promotion/domain/*", express.static(promotionAppPath));
+    this.app.use("/promotion/organization/*", express.static(promotionAppPath));
     this.app.use("/promotion/community/*", express.static(promotionAppPath));
     this.app.use("/promotion/group/*", express.static(promotionAppPath));
     this.app.use("/promotion/post/*", express.static(promotionAppPath));
@@ -638,6 +639,7 @@ export class YourPrioritiesApi {
     this.app.use("/index.html", index);
     this.app.use("/domain", index);
     this.app.use("/community", index);
+    this.app.use("/organization", index);
     this.app.use("/group", index);
     this.app.use("/post", index);
     this.app.use("/user", index);

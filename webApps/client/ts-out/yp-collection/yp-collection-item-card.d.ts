@@ -22,10 +22,10 @@ export declare class YpCollectionItemCard extends YpBaseElement {
     updated(changedProperties: Map<string | number | symbol, unknown>): void;
     renderLogoImage(): import("lit-html").TemplateResult<1>;
     renderDataViz(): import("lit-html").TemplateResult<1>;
-    renderCollectionType(): import("lit-html").TemplateResult<1> | typeof nothing;
+    renderCollectionType(): typeof nothing | import("lit-html").TemplateResult<1>;
     renderCollectionName(): import("lit-html").TemplateResult<1>;
     renderCollectionDescription(): import("lit-html").TemplateResult<1>;
-    renderMembershipButton(): import("lit-html").TemplateResult<1> | typeof nothing;
+    renderMembershipButton(): typeof nothing | import("lit-html").TemplateResult<1>;
     renderCollectionStats(): import("lit-html").TemplateResult<1>;
     renderCardInfo(): import("lit-html").TemplateResult<1>;
     get statsCollection(): YpCollectionData;
@@ -35,6 +35,6 @@ export declare class YpCollectionItemCard extends YpBaseElement {
     get contentId(): number;
     get contentLanguage(): string | undefined;
     get contentUrlBase(): string | undefined;
-    render(): import("lit-html").TemplateResult<1> | typeof nothing;
+    render(): typeof nothing | import("lit-html").TemplateResult<1>;
 }
 //# sourceMappingURL=yp-collection-item-card.d.ts.map

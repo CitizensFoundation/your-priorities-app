@@ -23,6 +23,7 @@ const countModelRowsByTimePeriod = require('../active-citizen/engine/analytics/s
 const getDomainIncludes = require('../active-citizen/engine/analytics/statsCalc.cjs').getDomainIncludes;
 const getPointDomainIncludes = require('../active-citizen/engine/analytics/statsCalc.cjs').getPointDomainIncludes;
 const getParsedSimilaritiesContent = require('../active-citizen/engine/analytics/manager.cjs').getParsedSimilaritiesContent;
+const crypto = require('crypto');
 var sendDomainOrError = function (res, domain, context, user, error, errorStatus) {
     if (error || !domain) {
         if (errorStatus === 404 || (error && error.message && error.message.indexOf("invalid input syntax for type integer") > -1)) {
@@ -775,98 +776,103 @@ router.get('/:id', auth.can('view domain'), function (req, res) {
         res.sendStatus(404);
     }
 });
+// Function to update domain properties
+function updateDomainProperties(domain, req) {
+    domain.ensureApiKeySetup();
+    domain.set('secret_api_keys.facebook.client_id', req.body.facebookClientId);
+    domain.set('secret_api_keys.facebook.client_secret', req.body.facebookClientSecret);
+    domain.set('secret_api_keys.google.client_id', req.body.googleClientId);
+    domain.set('secret_api_keys.google.client_secret', req.body.googleClientSecret);
+    domain.set('secret_api_keys.twitter.client_id', req.body.twitterClientId);
+    domain.set('secret_api_keys.twitter.client_secret', req.body.twitterClientSecret);
+    domain.set('secret_api_keys.github.client_id', req.body.githubClientId);
+    domain.set('secret_api_keys.github.client_secret', req.body.githubClientSecret);
+    domain.set('configuration.welcomeHtmlInsteadOfCommunitiesList', (req.body.welcomeHtmlInsteadOfCommunitiesList && req.body.welcomeHtmlInsteadOfCommunitiesList !== "") ? req.body.welcomeHtmlInsteadOfCommunitiesList : null);
+    domain.set('configuration.hideAppBarIfWelcomeHtml', truthValueFromBody(req.body.hideAppBarIfWelcomeHtml));
+    if (req.body.samlEntryPoint) {
+        domain.set('secret_api_keys.saml.entryPoint', req.body.samlEntryPoint);
+        domain.set('secret_api_keys.saml.callbackUrl', req.body.samlCallbackUrl);
+        domain.set('secret_api_keys.saml.cert', req.body.samlCert);
+        domain.set('secret_api_keys.saml.issuer', req.body.samlIssuer);
+        domain.set('secret_api_keys.saml.identifierFormat', req.body.samlIdentifierFormat);
+    }
+    if (!domain.configuration) {
+        domain.set('configuration', {});
+    }
+    domain.set('configuration.customSamlLoginText', (req.body.customSamlLoginText && req.body.customSamlLoginText !== "") ? req.body.customSamlLoginText : null);
+    domain.set('configuration.samlLoginButtonUrl', (req.body.samlLoginButtonUrl && req.body.samlLoginButtonUrl !== "") ? req.body.samlLoginButtonUrl : null);
+    domain.set('configuration.customSAMLErrorHTML', (req.body.customSAMLErrorHTML && req.body.customSAMLErrorHTML !== "") ? req.body.customSAMLErrorHTML : null);
+    domain.set('configuration.preloadCssUrl', (req.body.preloadCssUrl && req.body.preloadCssUrl !== "") ? req.body.preloadCssUrl : null);
+    domain.set('configuration.plausibleDataDomains', (req.body.plausibleDataDomains && req.body.plausibleDataDomains !== "") ? req.body.plausibleDataDomains : null);
+    domain.set('configuration.ziggeoApplicationToken', (req.body.ziggeoApplicationToken && req.body.ziggeoApplicationToken !== "") ? req.body.ziggeoApplicationToken : null);
+    domain.set('configuration.ga4Tag', (req.body.ga4Tag && req.body.ga4Tag !== "") ? req.body.ga4Tag : null);
+    domain.set('configuration.useLoginOnDomainIfNotLoggedIn', truthValueFromBody(req.body.useLoginOnDomainIfNotLoggedIn));
+    if (req.body.google_analytics_code && req.body.google_analytics_code !== "") {
+        domain.google_analytics_code = req.body.google_analytics_code;
+    }
+    else {
+        domain.google_analytics_code = null;
+    }
+    const ltpConfigText = (req.body.ltp && req.body.ltp !== "") ? req.body.ltp : null;
+    if (ltpConfigText) {
+        try {
+            const cleaned = ltpConfigText.trim().replace(/\n/g, '').replace(/\r/g, '');
+            const parsedJson = JSON.parse(cleaned);
+            domain.set('configuration.ltp', parsedJson);
+        }
+        catch (error) {
+            domain.set('configuration.ltp', null);
+            log.error("Error in parsing ltp", { error });
+        }
+    }
+    else {
+        domain.set('configuration.ltp', null);
+    }
+    const theme = (req.body.theme && req.body.theme !== "") ? req.body.theme : null;
+    if (theme) {
+        try {
+            const cleaned = theme.trim().replace(/\n/g, '').replace(/\r/g, '');
+            const parsedJson = JSON.parse(cleaned);
+            domain.set('configuration.theme', parsedJson);
+        }
+        catch (error) {
+            domain.set('configuration.theme', null);
+            log.error("Error in parsing theme", { error });
+        }
+    }
+    else {
+        domain.set('configuration.theme', null);
+    }
+    domain.set('configuration.customUserRegistrationText', (req.body.customUserRegistrationText && req.body.customUserRegistrationText !== "") ? req.body.customUserRegistrationText : null);
+    domain.set('configuration.forceSecureSamlEmployeeLogin', truthValueFromBody(req.body.forceSecureSamlEmployeeLogin));
+    domain.set('configuration.disableNameAutoTranslation', truthValueFromBody(req.body.disableNameAutoTranslation));
+    if (req.body.appHomeScreenIconImageId && req.body.appHomeScreenIconImageId !== "") {
+        domain.set('configuration.appHomeScreenIconImageId', req.body.appHomeScreenIconImageId);
+    }
+    domain.set('configuration.appHomeScreenShortName', (req.body.appHomeScreenShortName && req.body.appHomeScreenShortName !== "") ? req.body.appHomeScreenShortName : null);
+    domain.set('configuration.useVideoCover', truthValueFromBody(req.body.useVideoCover));
+    domain.set('configuration.hideDomainNews', truthValueFromBody(req.body.hideDomainNews));
+    domain.set('configuration.hideDomainTabs', truthValueFromBody(req.body.hideDomainTabs));
+    domain.set('configuration.hideAllTabs', truthValueFromBody(req.body.hideAllTabs));
+    domain.set('configuration.useFixedTopAppBar', truthValueFromBody(req.body.useFixedTopAppBar));
+    domain.set('configuration.disableArrowBasedTopNavigation', truthValueFromBody(req.body.disableArrowBasedTopNavigation));
+    domain.name = req.body.name;
+    domain.description = req.body.description;
+    domain.only_admins_can_create_communities = truthValueFromBody(req.body.onlyAdminsCanCreateCommunities);
+    domain.theme_id = req.body.themeId ? parseInt(req.body.themeId) : null;
+    if (req.body.defaultLocale && req.body.defaultLocale !== "") {
+        domain.default_locale = req.body.defaultLocale;
+    }
+}
+// Update existing domain
 router.put('/:id', auth.can('edit domain'), function (req, res) {
     models.Domain.findOne({
         where: { id: req.params.id }
     }).then(function (domain) {
         if (domain) {
-            queue.add('process-similarities', { type: 'update-collection', domainId: domain.id }, 'low');
-            domain.ensureApiKeySetup();
-            domain.set('secret_api_keys.facebook.client_id', req.body.facebookClientId);
-            domain.set('secret_api_keys.facebook.client_secret', req.body.facebookClientSecret);
-            domain.set('secret_api_keys.google.client_id', req.body.googleClientId);
-            domain.set('secret_api_keys.google.client_secret', req.body.googleClientSecret);
-            domain.set('secret_api_keys.twitter.client_id', req.body.twitterClientId);
-            domain.set('secret_api_keys.twitter.client_secret', req.body.twitterClientSecret);
-            domain.set('secret_api_keys.github.client_id', req.body.githubClientId);
-            domain.set('secret_api_keys.github.client_secret', req.body.githubClientSecret);
-            domain.set('configuration.welcomeHtmlInsteadOfCommunitiesList', (req.body.welcomeHtmlInsteadOfCommunitiesList && req.body.welcomeHtmlInsteadOfCommunitiesList != "") ? req.body.welcomeHtmlInsteadOfCommunitiesList : null);
-            domain.set('configuration.hideAppBarIfWelcomeHtml', truthValueFromBody(req.body.hideAppBarIfWelcomeHtml));
-            if (req.body.samlEntryPoint) {
-                domain.set('secret_api_keys.saml.entryPoint', req.body.samlEntryPoint);
-                domain.set('secret_api_keys.saml.callbackUrl', req.body.samlCallbackUrl);
-                domain.set('secret_api_keys.saml.cert', req.body.samlCert);
-                domain.set('secret_api_keys.saml.issuer', req.body.samlIssuer);
-                domain.set('secret_api_keys.saml.identifierFormat', req.body.samlIdentifierFormat);
-            }
-            if (!domain.configuration) {
-                domain.set('configuration', {});
-            }
-            domain.set('configuration.customSamlLoginText', (req.body.customSamlLoginText && req.body.customSamlLoginText != "") ? req.body.customSamlLoginText : null);
-            domain.set('configuration.samlLoginButtonUrl', (req.body.samlLoginButtonUrl && req.body.samlLoginButtonUrl != "") ? req.body.samlLoginButtonUrl : null);
-            domain.set('configuration.customSAMLErrorHTML', (req.body.customSAMLErrorHTML && req.body.customSAMLErrorHTML != "") ? req.body.customSAMLErrorHTML : null);
-            domain.set('configuration.preloadCssUrl', (req.body.preloadCssUrl && req.body.preloadCssUrl != "") ? req.body.preloadCssUrl : null);
-            domain.set('configuration.plausibleDataDomains', (req.body.plausibleDataDomains && req.body.plausibleDataDomains != "") ? req.body.plausibleDataDomains : null);
-            domain.set('configuration.ziggeoApplicationToken', (req.body.ziggeoApplicationToken && req.body.ziggeoApplicationToken != "") ? req.body.ziggeoApplicationToken : null);
-            domain.set('configuration.ga4Tag', (req.body.ga4Tag && req.body.ga4Tag != "") ? req.body.ga4Tag : null);
-            domain.set('configuration.useLoginOnDomainIfNotLoggedIn', (req.body.useLoginOnDomainIfNotLoggedIn && req.body.useLoginOnDomainIfNotLoggedIn != "") ? true : false);
-            if (req.body.google_analytics_code && req.body.google_analytics_code != "") {
-                domain.google_analytics_code = req.body.google_analytics_code;
-            }
-            else {
-                domain.google_analytics_code = null;
-            }
-            const ltpConfigText = (req.body.ltp && req.body.ltp != "") ? req.body.ltp : null;
-            if (ltpConfigText) {
-                try {
-                    const cleaned = ltpConfigText.trim().replace(/\n/g, '').replace(/\r/g, '');
-                    const parsedJson = JSON.parse(cleaned);
-                    domain.set('configuration.ltp', parsedJson);
-                }
-                catch (error) {
-                    domain.set('configuration.ltp', null);
-                    log.error("Error in parsing ltp", { error });
-                }
-            }
-            else {
-                domain.set('configuration.ltp', null);
-            }
-            const theme = (req.body.theme && req.body.theme != "") ? req.body.theme : null;
-            if (theme) {
-                try {
-                    const cleaned = theme.trim().replace(/\n/g, '').replace(/\r/g, '');
-                    const parsedJson = JSON.parse(cleaned);
-                    domain.set('configuration.theme', parsedJson);
-                }
-                catch (error) {
-                    domain.set('configuration.theme', null);
-                    log.error("Error in parsing theme", { error });
-                }
-            }
-            else {
-                domain.set('configuration.theme', null);
-            }
-            domain.set('configuration.customUserRegistrationText', (req.body.customUserRegistrationText && req.body.customUserRegistrationText != "") ? req.body.customUserRegistrationText : null);
-            domain.set('configuration.forceSecureSamlEmployeeLogin', (req.body.forceSecureSamlEmployeeLogin && req.body.forceSecureSamlEmployeeLogin != "") ? true : false);
-            domain.set('configuration.disableNameAutoTranslation', (req.body.disableNameAutoTranslation && req.body.disableNameAutoTranslation != "") ? true : false);
-            if (req.body.appHomeScreenIconImageId && req.body.appHomeScreenIconImageId != "") {
-                domain.set('configuration.appHomeScreenIconImageId', req.body.appHomeScreenIconImageId);
-            }
-            domain.set('configuration.appHomeScreenShortName', (req.body.appHomeScreenShortName && req.body.appHomeScreenShortName != "") ? req.body.appHomeScreenShortName : null);
-            domain.set('configuration.useVideoCover', truthValueFromBody(req.body.useVideoCover));
-            domain.set('configuration.hideDomainNews', truthValueFromBody(req.body.hideDomainNews));
-            domain.set('configuration.hideDomainTabs', truthValueFromBody(req.body.hideDomainTabs));
-            domain.set('configuration.hideAllTabs', truthValueFromBody(req.body.hideAllTabs));
-            domain.set('configuration.useFixedTopAppBar', truthValueFromBody(req.body.useFixedTopAppBar));
-            domain.set('configuration.disableArrowBasedTopNavigation', truthValueFromBody(req.body.disableArrowBasedTopNavigation));
-            domain.name = req.body.name;
-            domain.description = req.body.description;
-            domain.only_admins_can_create_communities = req.body.onlyAdminsCanCreateCommunities ? true : false;
-            domain.theme_id = req.body.themeId ? parseInt(req.body.themeId) : null;
-            if (req.body.defaultLocale && req.body.defaultLocale != "") {
-                domain.default_locale = req.body.defaultLocale;
-            }
+            updateDomainProperties(domain, req);
             domain.save().then(function () {
+                queue.add('process-similarities', { type: 'update-collection', domainId: domain.id }, 'low');
                 log.info('Domain Updated', { domain: toJson(domain), user: toJson(req.user) });
                 domain.setupImages(req.body, function (err) {
                     if (err) {
@@ -884,6 +890,35 @@ router.put('/:id', auth.can('edit domain'), function (req, res) {
         }
     }).catch(function (error) {
         sendDomainOrError(res, null, 'update', req.user, error);
+    });
+});
+router.post('/:id', auth.can('edit domain'), function (req, res) {
+    const randomDomainName = crypto.randomBytes(16).toString('hex'); // Generate 32 character random string
+    var domain = models.Domain.build({
+        name: req.body.name,
+        description: req.body.description,
+        user_id: req.user.id,
+        user_agent: req.useragent.source,
+        ip_address: req.clientIp,
+        access: 0,
+        status: "active",
+        domain_name: randomDomainName
+    });
+    updateDomainProperties(domain, req);
+    domain.save().then(function () {
+        queue.add('process-similarities', { type: 'update-collection', domainId: domain.id }, 'low');
+        log.info('Domain Created', { domain: toJson(domain), context: 'create', user: toJson(req.user) });
+        domain.setupImages(req.body, function (err) {
+            if (err) {
+                res.sendStatus(500);
+                log.error('Domain Error Setup images', { domain: toJson(domain), user: toJson(req.user), err: err });
+            }
+            else {
+                res.send(domain);
+            }
+        });
+    }).catch(function (error) {
+        sendDomainOrError(res, null, 'create', req.user, error);
     });
 });
 router.delete('/:id', auth.can('edit domain'), function (req, res) {

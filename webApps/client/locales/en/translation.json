@@ -1,4 +1,6 @@
 {
+  "addOrganization": "Create organization",
+  "onlyAdminsCanCreateOrganizations": "Only admins can create organizations",
   "navigationMenu": "Navigation menu",
   "useFixedTopAppBar": "Use fixed top app bar",
   "disableArrowBasedTopNavigation": "Disable arrow based top navigation",

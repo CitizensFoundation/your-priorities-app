@@ -19,6 +19,6 @@ export declare class PsAgentConnector extends PsOperationsBaseNode {
     renderImage(): import("lit-html").TemplateResult<1>;
     openInternalLink(): void;
     openExternalLink(): void;
-    render(): import("lit-html").TemplateResult<1> | typeof nothing;
+    render(): typeof nothing | import("lit-html").TemplateResult<1>;
 }
 //# sourceMappingURL=ps-connector-node.d.ts.map

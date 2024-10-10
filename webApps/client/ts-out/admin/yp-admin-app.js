@@ -420,6 +420,7 @@ let YpAdminApp = class YpAdminApp extends YpBaseElement {
         .collectionType="${this.collectionType}"
         .collection="${this.collection}"
         .collectionId="${this.collectionId}"
+        .parentCollectionId="${this.parentCollectionId}"
       >
       </yp-admin-config-domain>
     `;
@@ -484,7 +485,7 @@ let YpAdminApp = class YpAdminApp extends YpBaseElement {
                     switch (this.collectionType) {
                         case "domain":
                             return html `
-                ${this.collection ? this.renderDomainConfigPage() : nothing}
+                ${this.collection || this.collectionId === "new" ? this.renderDomainConfigPage() : nothing}
               `;
                         case "community":
                             return html `
@@ -625,6 +626,7 @@ let YpAdminApp = class YpAdminApp extends YpBaseElement {
     async _getAdminCollection() {
         switch (this.collectionType) {
             case "community":
+            case "domain":
                 const communityParentCollection = await window.serverApi.getCollection("domain", this.parentCollectionId);
                 this._setAdminConfirmedFromParent(communityParentCollection);
                 break;
@@ -676,6 +678,7 @@ let YpAdminApp = class YpAdminApp extends YpBaseElement {
         if (collection) {
             switch (this.collectionType) {
                 case "community":
+                case "domain":
                     adminConfirmed = YpAccessHelpers.checkDomainAccess(collection);
                     if (!adminConfirmed) {
                         if (!collection.configuration
@@ -735,6 +738,8 @@ let YpAdminApp = class YpAdminApp extends YpBaseElement {
             case "group":
                 return "community";
             case "community":
+                return "domain";
+            case "domain":
                 return "domain";
             default:
                 return "";
