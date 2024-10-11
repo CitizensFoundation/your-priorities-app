@@ -127,7 +127,11 @@ let YpAdminConfigDomain = class YpAdminConfigDomain extends YpAdminConfigBase {
                 counter_users: 0,
                 access: 2,
                 default_locale: "en",
-                configuration: {},
+                configuration: {
+                    useLoginOnDomainIfNotLoggedIn: true,
+                    disableArrowBasedTopNavigation: true,
+                    useFixedTopAppBar: true,
+                },
             };
         }
         else {

@@ -167,7 +167,11 @@ export class YpAdminConfigDomain extends YpAdminConfigBase {
         counter_users: 0,
         access: 2,
         default_locale: "en",
-        configuration: {} as YpDomainConfiguration,
+        configuration: {
+          useLoginOnDomainIfNotLoggedIn: true,
+          disableArrowBasedTopNavigation: true,
+          useFixedTopAppBar: true,
+        } as YpDomainConfiguration,
       } as YpDomainData;
     } else {
       this.action = `/domains/${this.collectionId}`;
