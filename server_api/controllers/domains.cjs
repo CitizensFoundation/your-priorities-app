@@ -971,28 +971,30 @@ router.post('/:id', auth.can('edit domain'), function(req, res) {
 
   updateDomainProperties(domain, req);
 
-  domain.save().then(function() {
-    // Add the current user as a DomainAdmin
-    domain.addDomainUsers(req.user).then(function() {
-      domain.addDomainAdmins(req.user).then(function() {
-        queue.add('process-similarities', { type: 'update-collection', domainId: domain.id }, 'low');
-        log.info('Domain Created', { domain: toJson(domain), context: 'create', user: toJson(req.user) });
-        domain.setupImages(req.body, function(err) {
-          if (err) {
-            res.sendStatus(500);
-            log.error('Domain Error Setup images', { domain: toJson(domain), user: toJson(req.user), err: err });
-          } else {
-            res.send(domain);
-          }
-        });
-      });
-    }).catch(function(error) {
-      // Handle error when adding admin
-      log.error('Could not add user as DomainAdmin', { err: error, domainId: domain.id, user: toJson(req.user) });
-      res.sendStatus(500);
+  domain.save()
+  .then(function() {
+    return domain.addDomainUsers(req.user);
+  })
+  .then(function() {
+    return domain.addDomainAdmins(req.user);
+  })
+  .then(function() {
+    // Success path
+    queue.add('process-similarities', { type: 'update-collection', domainId: domain.id }, 'low');
+    log.info('Domain Created', { domain: toJson(domain), context: 'create', user: toJson(req.user) });
+    domain.setupImages(req.body, function(err) {
+      if (err) {
+        res.sendStatus(500);
+        log.error('Domain Error Setup images', { domain: toJson(domain), user: toJson(req.user), err: err });
+      } else {
+        res.send(domain);
+      }
     });
-  }).catch(function(error) {
-    sendDomainOrError(res, null, 'create', req.user, error);
+  })
+  .catch(function(error) {
+    // Handle any error that occurred in any of the previous promises
+    log.error('Error during domain creation', { err: error, domainId: domain.id, user: toJson(req.user) });
+    res.sendStatus(500);
   });
 });
 

@@ -131,6 +131,8 @@ export class YpAppGlobals extends YpCodeBase {
     if (this.domain && window.appUser && window.appUser.user) {
       this.myDomains = await this.serverApi.getMyDomains();
       this.fireGlobal("yp-my-domains-loaded", { domains: this.myDomains });
+    } else {
+      console.warn("No domain or user found while setting up my domains");
     }
   }
 

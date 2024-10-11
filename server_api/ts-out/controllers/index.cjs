@@ -428,6 +428,9 @@ router.get("/", function (req, res) {
 router.get("/domain*", function (req, res) {
     sendIndex(req, res);
 });
+router.get("/organization*", function (req, res) {
+    sendIndex(req, res);
+});
 router.get("/community*", function (req, res) {
     sendIndex(req, res);
 });
