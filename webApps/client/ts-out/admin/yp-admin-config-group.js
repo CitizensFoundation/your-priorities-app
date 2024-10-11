@@ -611,7 +611,7 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
                 {
                     text: "canAddNewPosts",
                     type: "checkbox",
-                    value: this.group.configuration.canAddNewPosts,
+                    value: this.group.configuration.canAddNewPosts === undefined ? true : this.group.configuration.canAddNewPosts,
                     translationToken: "group.canAddNewPosts",
                 },
                 {

@@ -17,6 +17,6 @@ export declare class PlausablePages extends PlausibleBaseElementWithState {
     };
     renderContent(): import("lit-html").TemplateResult<1>;
     renderPill(name: string, mode: string): import("lit-html").TemplateResult<1>;
-    render(): typeof nothing | import("lit-html").TemplateResult<1>;
+    render(): import("lit-html").TemplateResult<1> | typeof nothing;
 }
 //# sourceMappingURL=pl-pages.d.ts.map
