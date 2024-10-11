@@ -973,16 +973,18 @@ router.post('/:id', auth.can('edit domain'), function(req, res) {
 
   domain.save().then(function() {
     // Add the current user as a DomainAdmin
-    domain.addDomainAdmins(req.user).then(function() {
-      queue.add('process-similarities', { type: 'update-collection', domainId: domain.id }, 'low');
-      log.info('Domain Created', { domain: toJson(domain), context: 'create', user: toJson(req.user) });
-      domain.setupImages(req.body, function(err) {
-        if (err) {
-          res.sendStatus(500);
-          log.error('Domain Error Setup images', { domain: toJson(domain), user: toJson(req.user), err: err });
-        } else {
-          res.send(domain);
-        }
+    domain.addDomainUsers(req.user).then(function() {
+      domain.addDomainAdmins(req.user).then(function() {
+        queue.add('process-similarities', { type: 'update-collection', domainId: domain.id }, 'low');
+        log.info('Domain Created', { domain: toJson(domain), context: 'create', user: toJson(req.user) });
+        domain.setupImages(req.body, function(err) {
+          if (err) {
+            res.sendStatus(500);
+            log.error('Domain Error Setup images', { domain: toJson(domain), user: toJson(req.user), err: err });
+          } else {
+            res.send(domain);
+          }
+        });
       });
     }).catch(function(error) {
       // Handle error when adding admin
