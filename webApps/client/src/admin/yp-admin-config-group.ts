@@ -530,6 +530,9 @@ export class YpAdminConfigGroup extends YpAdminConfigBase {
   }
 
   _finishRedirect(group: YpGroupData) {
+    if (this.collectionId == "new") {
+      window.appUser.recheckAdminRights();
+    }
     YpNavHelpers.redirectTo("/group/" + group.id);
     window.appGlobals.activity("completed", "editGroup");
   }

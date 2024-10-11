@@ -413,6 +413,9 @@ let YpAdminConfigGroup = YpAdminConfigGroup_1 = class YpAdminConfigGroup extends
         }
     }
     _finishRedirect(group) {
+        if (this.collectionId == "new") {
+            window.appUser.recheckAdminRights();
+        }
         YpNavHelpers.redirectTo("/group/" + group.id);
         window.appGlobals.activity("completed", "editGroup");
     }

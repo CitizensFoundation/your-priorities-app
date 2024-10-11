@@ -179,6 +179,9 @@ let YpAdminConfigDomain = class YpAdminConfigDomain extends YpAdminConfigBase {
         }
     }
     _finishRedirect(domain) {
+        if (this.collectionId == "new") {
+            window.appUser.recheckAdminRights();
+        }
         YpNavHelpers.redirectTo("/domain/" + domain.id);
         window.appGlobals.activity("completed", "editDomain");
     }
