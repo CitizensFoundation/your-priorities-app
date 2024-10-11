@@ -64,9 +64,16 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
   @property({ type: String })
   communityAccess: YpCommunityAccessTypes = "public";
 
+  @property({ type: Boolean })
+  hideHostnameInput = false;
+
   constructor() {
     super();
     this.action = "/communities";
+  }
+
+  _generateRandomHostname() {
+    return "c" + Math.random().toString(36).substr(2, 9);
   }
 
   static override get styles() {
@@ -98,32 +105,44 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
   }
 
   renderHostname() {
-    return html`
-      <div class="layout vertical">
-        ${this.renderNameAndDescription()}
-        <md-outlined-text-field
-          id="hostname"
+    if (this.hideHostnameInput) {
+      return html`
+        <input
+          type="hidden"
           name="hostname"
-          type="text"
-          @keyup="${this._hostnameChanged}"
-          label="${this.t("community.hostname")}"
-          .value="${(this.collection as YpCommunityData).hostname}"
-          ?required="${!(this.collection as YpCommunityData)
-            .is_community_folder}"
-          maxlength="80"
-          charCounter
-          class="mainInput"
-        ></md-outlined-text-field>
-        <div class="hostnameInfo">https://${this.hostnameExample}</div>
-      </div>
-    `;
+          value="${ifDefined((this.collection as YpCommunityData).hostname)}"
+        />
+      `;
+    } else {
+      return html`
+        <div class="layout vertical">
+          <md-outlined-text-field
+            id="hostname"
+            name="hostname"
+            type="text"
+            @keyup="${this._hostnameChanged}"
+            label="${this.t("community.hostname")}"
+            .value="${(this.collection as YpCommunityData).hostname}"
+            ?required="${!(this.collection as YpCommunityData)
+              .is_community_folder}"
+            maxlength="80"
+            charCounter
+            class="mainInput"
+          ></md-outlined-text-field>
+          <div class="hostnameInfo">https://${this.hostnameExample}</div>
+        </div>
+      `;
+    }
   }
 
   renderHeader() {
     return this.collection
       ? html`
           <div class="layout horizontal wrap topInputContainer">
-            ${this.renderLogoMedia()} ${this.renderHostname()}
+            ${this.renderLogoMedia()}
+            <div class="layout vertical">
+              ${this.renderNameAndDescription()} ${this.renderHostname()}
+            </div>
             <div class="layout vertical center-center">
               <div class="layout horizontal center-center">
                 ${this.renderSaveButton()}
@@ -370,6 +389,10 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
   override updated(
     changedProperties: Map<string | number | symbol, unknown>
   ): void {
+    if (changedProperties.has("collectionId") && this.collectionId) {
+      this._collectionIdChanged();
+    }
+
     if (changedProperties.has("collection") && this.collection) {
       this.currentLogoImages = (
         this.collection as YpCommunityData
@@ -394,9 +417,6 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
       }
     }
 
-    if (changedProperties.has("collectionId") && this.collectionId) {
-      this._collectionIdChanged();
-    }
     super.updated(changedProperties);
   }
 
@@ -514,7 +534,7 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
     }
   }
 
-  _collectionIdChanged() {
+  async _collectionIdChanged() {
     if (this.collectionId == "new" || this.collectionId == "newFolder") {
       this.action = `/communities/${this.parentCollectionId}`;
       this.collection = {
@@ -533,9 +553,36 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
         hostname: "",
         is_community_folder: this.collectionId == "newFolder" ? true : false,
       } as YpCommunityData;
+
+      await this.checkDomainName();
+
     } else {
       this.action = `/communities/${this.collectionId}`;
     }
+  }
+
+  async checkDomainName() {
+    const domain = await window.serverApi.getCollection("domain", this.parentCollectionId!);
+
+    (this.collection as YpCommunityData).Domain = domain as YpDomainData;
+    if (
+      this.collection &&
+      (this.collection as YpCommunityData).Domain &&
+      (this.collection as YpCommunityData).Domain?.domain_name
+    ) {
+      const domainName = (this.collection as YpCommunityData).Domain!
+        .domain_name;
+      if (!domainName.includes(".")) {
+        if (!(this.collection as YpCommunityData).hostname) {
+          (this.collection as YpCommunityData).hostname =
+            this._generateRandomHostname();
+        }
+        this.hideHostnameInput = true;
+      } else {
+        this.hideHostnameInput = false;
+      }
+    }
+
   }
 
   async _checkCommunityFolders(community: YpCommunityData) {

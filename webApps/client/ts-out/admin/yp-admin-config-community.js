@@ -26,7 +26,11 @@ let YpAdminConfigCommunity = class YpAdminConfigCommunity extends YpAdminConfigB
         super();
         this.hasSamlLoginProvider = false;
         this.communityAccess = "public";
+        this.hideHostnameInput = false;
         this.action = "/communities";
+    }
+    _generateRandomHostname() {
+        return "c" + Math.random().toString(36).substr(2, 9);
     }
     static get styles() {
         return [
@@ -56,31 +60,44 @@ let YpAdminConfigCommunity = class YpAdminConfigCommunity extends YpAdminConfigB
         ];
     }
     renderHostname() {
-        return html `
-      <div class="layout vertical">
-        ${this.renderNameAndDescription()}
-        <md-outlined-text-field
-          id="hostname"
+        if (this.hideHostnameInput) {
+            return html `
+        <input
+          type="hidden"
           name="hostname"
-          type="text"
-          @keyup="${this._hostnameChanged}"
-          label="${this.t("community.hostname")}"
-          .value="${this.collection.hostname}"
-          ?required="${!this.collection
-            .is_community_folder}"
-          maxlength="80"
-          charCounter
-          class="mainInput"
-        ></md-outlined-text-field>
-        <div class="hostnameInfo">https://${this.hostnameExample}</div>
-      </div>
-    `;
+          value="${ifDefined(this.collection.hostname)}"
+        />
+      `;
+        }
+        else {
+            return html `
+        <div class="layout vertical">
+          <md-outlined-text-field
+            id="hostname"
+            name="hostname"
+            type="text"
+            @keyup="${this._hostnameChanged}"
+            label="${this.t("community.hostname")}"
+            .value="${this.collection.hostname}"
+            ?required="${!this.collection
+                .is_community_folder}"
+            maxlength="80"
+            charCounter
+            class="mainInput"
+          ></md-outlined-text-field>
+          <div class="hostnameInfo">https://${this.hostnameExample}</div>
+        </div>
+      `;
+        }
     }
     renderHeader() {
         return this.collection
             ? html `
           <div class="layout horizontal wrap topInputContainer">
-            ${this.renderLogoMedia()} ${this.renderHostname()}
+            ${this.renderLogoMedia()}
+            <div class="layout vertical">
+              ${this.renderNameAndDescription()} ${this.renderHostname()}
+            </div>
             <div class="layout vertical center-center">
               <div class="layout horizontal center-center">
                 ${this.renderSaveButton()}
@@ -300,6 +317,9 @@ let YpAdminConfigCommunity = class YpAdminConfigCommunity extends YpAdminConfigB
         this.$$("#appHomeScreenIconImageUpload").clear();
     }
     updated(changedProperties) {
+        if (changedProperties.has("collectionId") && this.collectionId) {
+            this._collectionIdChanged();
+        }
         if (changedProperties.has("collection") && this.collection) {
             this.currentLogoImages = this.collection.CommunityLogoImages;
             this.currentHeaderImages = this.collection.CommunityHeaderImages;
@@ -312,9 +332,6 @@ let YpAdminConfigCommunity = class YpAdminConfigCommunity extends YpAdminConfigB
                 .prompts) {
                 this.collection.configuration.ltp.crt.prompts = defaultLtpPromptsConfiguration();
             }
-        }
-        if (changedProperties.has("collectionId") && this.collectionId) {
-            this._collectionIdChanged();
         }
         super.updated(changedProperties);
     }
@@ -394,7 +411,7 @@ let YpAdminConfigCommunity = class YpAdminConfigCommunity extends YpAdminConfigB
             this.ssnLoginListDataCount = response.count;
         }
     }
-    _collectionIdChanged() {
+    async _collectionIdChanged() {
         if (this.collectionId == "new" || this.collectionId == "newFolder") {
             this.action = `/communities/${this.parentCollectionId}`;
             this.collection = {
@@ -413,9 +430,30 @@ let YpAdminConfigCommunity = class YpAdminConfigCommunity extends YpAdminConfigB
                 hostname: "",
                 is_community_folder: this.collectionId == "newFolder" ? true : false,
             };
+            await this.checkDomainName();
         }
         else {
             this.action = `/communities/${this.collectionId}`;
+        }
+    }
+    async checkDomainName() {
+        const domain = await window.serverApi.getCollection("domain", this.parentCollectionId);
+        this.collection.Domain = domain;
+        if (this.collection &&
+            this.collection.Domain &&
+            this.collection.Domain?.domain_name) {
+            const domainName = this.collection.Domain
+                .domain_name;
+            if (!domainName.includes(".")) {
+                if (!this.collection.hostname) {
+                    this.collection.hostname =
+                        this._generateRandomHostname();
+                }
+                this.hideHostnameInput = true;
+            }
+            else {
+                this.hideHostnameInput = false;
+            }
         }
     }
     async _checkCommunityFolders(community) {
@@ -933,6 +971,9 @@ __decorate([
 __decorate([
     property({ type: String })
 ], YpAdminConfigCommunity.prototype, "communityAccess", void 0);
+__decorate([
+    property({ type: Boolean })
+], YpAdminConfigCommunity.prototype, "hideHostnameInput", void 0);
 YpAdminConfigCommunity = __decorate([
     customElement("yp-admin-config-community")
 ], YpAdminConfigCommunity);

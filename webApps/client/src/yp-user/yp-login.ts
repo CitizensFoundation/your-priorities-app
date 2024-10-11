@@ -136,7 +136,7 @@ export class YpLogin extends YpBaseElement {
           --md-filled-field-container-color: var(
             --md-sys-color-surface
           ) !important;
-
+        }
 
         .languageSelector {
           margin-bottom: 16px;

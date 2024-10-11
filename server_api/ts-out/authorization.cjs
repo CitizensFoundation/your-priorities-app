@@ -1704,7 +1704,14 @@ auth.role("createDomainCommunity.createCommunity", function (domain, req, done) 
                     done(null, true);
                 }
                 else {
-                    done(null, false);
+                    domain.hasDomainAdmins(req.user).then(function (result) {
+                        if (result) {
+                            done(null, true);
+                        }
+                        else {
+                            done(null, false);
+                        }
+                    });
                 }
             });
         }

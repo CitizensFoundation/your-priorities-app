@@ -18,7 +18,9 @@ export declare class YpAdminConfigCommunity extends YpAdminConfigBase {
     signupTermsPageId: number | undefined;
     welcomePageId: number | undefined;
     communityAccess: YpCommunityAccessTypes;
+    hideHostnameInput: boolean;
     constructor();
+    _generateRandomHostname(): string;
     static get styles(): (any[] | import("lit").CSSResult)[];
     renderHostname(): import("lit-html").TemplateResult<1>;
     renderHeader(): typeof nothing | import("lit-html").TemplateResult<1>;
@@ -37,7 +39,8 @@ export declare class YpAdminConfigCommunity extends YpAdminConfigBase {
     _deleteSsnLoginList(): void;
     _ssnLoginListDataUploaded(event: CustomEvent): void;
     _getSsnListCount(): Promise<void>;
-    _collectionIdChanged(): void;
+    _collectionIdChanged(): Promise<void>;
+    checkDomainName(): Promise<void>;
     _checkCommunityFolders(community: YpCommunityData): Promise<void>;
     _setupTranslations(): void;
     _formResponse(event: CustomEvent): Promise<void>;
