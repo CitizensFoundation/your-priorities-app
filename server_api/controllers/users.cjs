@@ -484,7 +484,7 @@ const getDomainAdminAndUserIncludes = (req) => {
   let groupAdminsOrUsersInclude, communityAdminsOrUsersInclude, domainAdminsOrUsersWhere;
   domainAdminsOrUsersWhere = (req.clientIp.includes("::1") ||
                               req.clientIp.includes("127.0.0.1")) ? {} : {
-    id: req.ypDomain.id
+
   };
 
   communityAdminsOrUsersInclude = [{

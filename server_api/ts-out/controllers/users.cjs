@@ -460,9 +460,7 @@ router.get('/:id', auth.can('edit user'), function (req, res) {
 const getDomainAdminAndUserIncludes = (req) => {
     let groupAdminsOrUsersInclude, communityAdminsOrUsersInclude, domainAdminsOrUsersWhere;
     domainAdminsOrUsersWhere = (req.clientIp.includes("::1") ||
-        req.clientIp.includes("127.0.0.1")) ? {} : {
-        id: req.ypDomain.id
-    };
+        req.clientIp.includes("127.0.0.1")) ? {} : {};
     communityAdminsOrUsersInclude = [{
             model: models.Domain,
             attributes: [],
