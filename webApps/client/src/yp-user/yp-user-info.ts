@@ -112,6 +112,7 @@ export class YpUserInfo extends YpBaseElement {
 
   _createNewOrganization() {
     YpNavHelpers.redirectTo(`/admin/domain/new/${window.appGlobals.domain?.id}`);
+    this.fireGlobal("yp-close-all-drawers");
   }
 
   _openAllContentModeration() {

@@ -356,56 +356,92 @@ module.exports = (sequelize, DataTypes) => {
       domainName = "localhost";
     }
 
-    sequelize.models.Domain.findOrCreate({
-      where: { domain_name: domainName },
-      defaults: {
-        access: sequelize.models.Domain.ACCESS_PUBLIC,
-        default_locale: "en",
-        name: "New Domain",
-        configuration: {},
-        user_agent: req.useragent.source,
-        ip_address: req.clientIp,
-      },
-    })
-      .then((results) => {
-        const [domain, created] = results;
-        if (created) {
-          log.info("Domain Created", {
-            domain: toJson(domain.simple()),
-            context: "create",
-          });
-          queue.add(
-            "process-similarities",
-            { type: "update-collection", domainId: domain.id },
-            "low"
-          );
-        } else {
-          //log.info('Domain Loaded', { domain: toJson(domain.simple()), context: 'create' });
-        }
-        req.ypDomain = domain;
-        if (
-          req.url.indexOf("/auth") > -1 ||
-          req.url.indexOf("/login") > -1 ||
-          req.url.indexOf("saml_assertion") > -1
-        ) {
-          sequelize.models.Domain.getLoginProviders(
-            req,
-            domain,
-            (error, providers) => {
-              req.ypDomain.loginProviders = providers;
-              sequelize.models.Domain.getLoginHosts(domain, (error, hosts) => {
-                req.ypDomain.loginHosts = hosts;
-                next();
-              });
-            }
-          );
-        } else {
-          next();
-        }
+    if (process.env.CREATE_NEW_DOMAINS_ON_DEMAND) {
+      sequelize.models.Domain.findOrCreate({
+        where: { domain_name: domainName },
+        defaults: {
+          access: sequelize.models.Domain.ACCESS_PUBLIC,
+          default_locale: "en",
+          name: "New Domain",
+          configuration: {},
+          user_agent: req.useragent.source,
+          ip_address: req.clientIp,
+        },
       })
-      .catch((error) => {
-        next(error);
-      });
+        .then((results) => {
+          const [domain, created] = results;
+          if (created) {
+            log.info("Domain Created", {
+              domain: toJson(domain.simple()),
+              context: "create",
+            });
+            queue.add(
+              "process-similarities",
+              { type: "update-collection", domainId: domain.id },
+              "low"
+            );
+          } else {
+            //log.info('Domain Loaded', { domain: toJson(domain.simple()), context: 'create' });
+          }
+          req.ypDomain = domain;
+          if (
+            req.url.indexOf("/auth") > -1 ||
+            req.url.indexOf("/login") > -1 ||
+            req.url.indexOf("saml_assertion") > -1
+          ) {
+            sequelize.models.Domain.getLoginProviders(
+              req,
+              domain,
+              (error, providers) => {
+                req.ypDomain.loginProviders = providers;
+                sequelize.models.Domain.getLoginHosts(domain, (error, hosts) => {
+                  req.ypDomain.loginHosts = hosts;
+                  next();
+                });
+              }
+            );
+          } else {
+            next();
+          }
+        })
+        .catch((error) => {
+          next(error);
+        });
+    } else {
+      sequelize.models.Domain.findOne({
+        where: { domain_name: domainName },
+      })
+        .then((domain) => {
+          if (domain) {
+            req.ypDomain = domain;
+            if (
+              req.url.indexOf("/auth") > -1 ||
+              req.url.indexOf("/login") > -1 ||
+              req.url.indexOf("saml_assertion") > -1
+            ) {
+              sequelize.models.Domain.getLoginProviders(
+                req,
+                domain,
+                (error, providers) => {
+                  req.ypDomain.loginProviders = providers;
+                  sequelize.models.Domain.getLoginHosts(domain, (error, hosts) => {
+                    req.ypDomain.loginHosts = hosts;
+                    next();
+                  });
+                }
+              );
+            } else {
+              next();
+            }
+          } else {
+            next(`Domain ${domainName} not found`);
+          }
+        })
+        .catch((error) => {
+          next(error);
+        });
+    }
+
   };
 
   Domain.extractDomain = (url) => {

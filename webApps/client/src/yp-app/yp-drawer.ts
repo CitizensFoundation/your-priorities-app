@@ -92,12 +92,18 @@ export class YpDrawer extends YpBaseElement {
     super.connectedCallback();
     document.addEventListener("keydown", this._handleEscKey.bind(this));
     this.addEventListener("click", this._handleScrimClick);
+    this.addGlobalListener("yp-close-all-drawers", this._closeAllDrawers.bind(this));
   }
 
   override disconnectedCallback(): void {
     super.disconnectedCallback();
     document.removeEventListener("keydown", this._handleEscKey.bind(this));
     this.removeEventListener("click", this._handleScrimClick);
+    this.removeGlobalListener("yp-close-all-drawers", this._closeAllDrawers.bind(this));
+  }
+
+  _closeAllDrawers() {
+    this.open = false;
   }
 
   override updated(changedProperties: Map<string | number | symbol, unknown>): void {

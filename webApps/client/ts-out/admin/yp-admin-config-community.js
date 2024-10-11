@@ -55,28 +55,32 @@ let YpAdminConfigCommunity = class YpAdminConfigCommunity extends YpAdminConfigB
       `,
         ];
     }
+    renderHostname() {
+        return html `
+      <div class="layout vertical">
+        ${this.renderNameAndDescription()}
+        <md-outlined-text-field
+          id="hostname"
+          name="hostname"
+          type="text"
+          @keyup="${this._hostnameChanged}"
+          label="${this.t("community.hostname")}"
+          .value="${this.collection.hostname}"
+          ?required="${!this.collection
+            .is_community_folder}"
+          maxlength="80"
+          charCounter
+          class="mainInput"
+        ></md-outlined-text-field>
+        <div class="hostnameInfo">https://${this.hostnameExample}</div>
+      </div>
+    `;
+    }
     renderHeader() {
         return this.collection
             ? html `
           <div class="layout horizontal wrap topInputContainer">
-            ${this.renderLogoMedia()}
-            <div class="layout vertical">
-              ${this.renderNameAndDescription()}
-              <md-outlined-text-field
-                id="hostname"
-                name="hostname"
-                type="text"
-                @keyup="${this._hostnameChanged}"
-                label="${this.t("community.hostname")}"
-                .value="${this.collection.hostname}"
-                ?required="${!this.collection
-                .is_community_folder}"
-                maxlength="80"
-                charCounter
-                class="mainInput"
-              ></md-outlined-text-field>
-              <div class="hostnameInfo">https://${this.hostnameExample}</div>
-            </div>
+            ${this.renderLogoMedia()} ${this.renderHostname()}
             <div class="layout vertical center-center">
               <div class="layout horizontal center-center">
                 ${this.renderSaveButton()}
@@ -397,7 +401,7 @@ let YpAdminConfigCommunity = class YpAdminConfigCommunity extends YpAdminConfigB
                 id: -1,
                 name: "",
                 description: "",
-                access: 0,
+                access: 2,
                 status: "active",
                 only_admins_can_create_groups: true,
                 counter_points: 0,

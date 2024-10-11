@@ -330,6 +330,10 @@ export class YpAdminApp extends YpBaseElement {
 
     this.collectionType = splitPath[0] as CollectionTypes;
 
+    if (splitPath[0] == "organization") {
+      this.collectionType = "domain";
+    }
+
     if (splitPath[1] == "new" && splitPath[2]) {
       this.collectionId = "new";
       if (

@@ -964,28 +964,35 @@ router.post('/:id', auth.can('edit domain'), function(req, res) {
     user_id: req.user.id,
     user_agent: req.useragent.source,
     ip_address: req.clientIp,
-    access: 0,
+    access: req.body.access ? req.body.access : 2,
     status: "active",
     domain_name: randomDomainName
   });
 
   updateDomainProperties(domain, req);
+
   domain.save().then(function() {
-    queue.add('process-similarities', { type: 'update-collection', domainId: domain.id }, 'low');
-    log.info('Domain Created', { domain: toJson(domain), context: 'create', user: toJson(req.user) });
-    domain.setupImages(req.body, function(err) {
-      if (err) {
-        res.sendStatus(500);
-        log.error('Domain Error Setup images', { domain: toJson(domain), user: toJson(req.user), err: err });
-      } else {
-        res.send(domain);
-      }
+    // Add the current user as a DomainAdmin
+    domain.addDomainAdmins(req.user).then(function() {
+      queue.add('process-similarities', { type: 'update-collection', domainId: domain.id }, 'low');
+      log.info('Domain Created', { domain: toJson(domain), context: 'create', user: toJson(req.user) });
+      domain.setupImages(req.body, function(err) {
+        if (err) {
+          res.sendStatus(500);
+          log.error('Domain Error Setup images', { domain: toJson(domain), user: toJson(req.user), err: err });
+        } else {
+          res.send(domain);
+        }
+      });
+    }).catch(function(error) {
+      // Handle error when adding admin
+      log.error('Could not add user as DomainAdmin', { err: error, domainId: domain.id, user: toJson(req.user) });
+      res.sendStatus(500);
     });
   }).catch(function(error) {
     sendDomainOrError(res, null, 'create', req.user, error);
   });
 });
-
 
 router.delete('/:id', auth.can('edit domain'), function(req, res) {
   models.Domain.findOne({

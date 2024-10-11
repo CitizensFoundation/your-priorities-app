@@ -7,6 +7,7 @@ export declare class YpDrawer extends YpBaseElement {
     static get styles(): any[];
     connectedCallback(): void;
     disconnectedCallback(): void;
+    _closeAllDrawers(): void;
     updated(changedProperties: Map<string | number | symbol, unknown>): void;
     private _handleScrimClick;
     private _handleEscKey;

@@ -97,28 +97,33 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
     ];
   }
 
+  renderHostname() {
+    return html`
+      <div class="layout vertical">
+        ${this.renderNameAndDescription()}
+        <md-outlined-text-field
+          id="hostname"
+          name="hostname"
+          type="text"
+          @keyup="${this._hostnameChanged}"
+          label="${this.t("community.hostname")}"
+          .value="${(this.collection as YpCommunityData).hostname}"
+          ?required="${!(this.collection as YpCommunityData)
+            .is_community_folder}"
+          maxlength="80"
+          charCounter
+          class="mainInput"
+        ></md-outlined-text-field>
+        <div class="hostnameInfo">https://${this.hostnameExample}</div>
+      </div>
+    `;
+  }
+
   renderHeader() {
     return this.collection
       ? html`
           <div class="layout horizontal wrap topInputContainer">
-            ${this.renderLogoMedia()}
-            <div class="layout vertical">
-              ${this.renderNameAndDescription()}
-              <md-outlined-text-field
-                id="hostname"
-                name="hostname"
-                type="text"
-                @keyup="${this._hostnameChanged}"
-                label="${this.t("community.hostname")}"
-                .value="${(this.collection as YpCommunityData).hostname}"
-                ?required="${!(this.collection as YpCommunityData)
-                  .is_community_folder}"
-                maxlength="80"
-                charCounter
-                class="mainInput"
-              ></md-outlined-text-field>
-              <div class="hostnameInfo">https://${this.hostnameExample}</div>
-            </div>
+            ${this.renderLogoMedia()} ${this.renderHostname()}
             <div class="layout vertical center-center">
               <div class="layout horizontal center-center">
                 ${this.renderSaveButton()}
@@ -422,6 +427,7 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
       } else if ((this.collection as YpCommunityData).access === 2) {
         this.communityAccess = "secret";
       }
+
       if ((this.collection as YpCommunityData).status) {
         this.status = (this.collection as YpCommunityData).status;
       }
@@ -515,7 +521,7 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
         id: -1,
         name: "",
         description: "",
-        access: 0,
+        access: 2,
         status: "active",
         only_admins_can_create_groups: true,
         counter_points: 0,
@@ -723,13 +729,13 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
           `,
         },
         {
-          text:"mediaUploads",
-          type:"html",
+          text: "mediaUploads",
+          type: "html",
           templateData: this.renderHeaderImageUploads(),
         },
         {
-          text:"alwaysHideLogoImage",
-          type:"checkbox",
+          text: "alwaysHideLogoImage",
+          type: "checkbox",
         },
         {
           text: "facebookPixelId",

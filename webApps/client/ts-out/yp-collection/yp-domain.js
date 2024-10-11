@@ -39,7 +39,7 @@ let YpDomain = class YpDomain extends YpCollection {
           padding-bottom: 640px;
         }
 
-        @media (max-width: 1080px) {
+        @media (max-width: 420px) {
           .outerContainer {
             width: 100%;
             max-width: 100%;

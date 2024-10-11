@@ -545,6 +545,7 @@ interface YpDomainData extends YpCollectionData {
   samlLoginProvided?: boolean;
   loginCallbackCustomHostName?: string;
   hasLlm?: boolean;
+  access?: number;
   googleMapsApiKey?: string;
 }
 

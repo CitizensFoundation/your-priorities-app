@@ -54,8 +54,10 @@ export class YpAppGlobals extends YpCodeBase {
         }
     }
     async setupMyDomains() {
-        this.myDomains = await this.serverApi.getMyDomains();
-        this.fireGlobal("yp-my-domains-loaded", { domains: this.myDomains });
+        if (this.domain && window.appUser && window.appUser.user) {
+            this.myDomains = await this.serverApi.getMyDomains();
+            this.fireGlobal("yp-my-domains-loaded", { domains: this.myDomains });
+        }
     }
     showRecommendationInfoIfNeeded() {
         if (!localStorage.getItem("ypHaveShownRecommendationInfo")) {
@@ -206,9 +208,9 @@ export class YpAppGlobals extends YpCodeBase {
                   ga('set', '&uid', user.id);
                 }*/
             }, 250); // Wait a bit to make sure google analytics tracking id has been set up dynamically
+            await this.setupMyDomains();
         }
         this.recommendations.reset();
-        await this.setupMyDomains();
     }
     setupTranslationSystem(loadPathPrefix = "") {
         const hostname = window.location.hostname;
@@ -294,6 +296,7 @@ export class YpAppGlobals extends YpCodeBase {
             this.googleMapsApiKey = results.domain.googleMapsApiKey;
             this.hasLlm = results.domain.hasLlm !== undefined ? results.domain.hasLlm : false;
             this._domainChanged(this.domain);
+            this.setupMyDomains();
             //this.analytics.setupGoogleAnalytics(this.domain);
             if (window.location.pathname == "/") {
                 if (results.community &&

@@ -238,6 +238,9 @@ let YpAdminApp = class YpAdminApp extends YpBaseElement {
             pathname = pathname.substring(1, pathname.length);
         const splitPath = pathname.split("/");
         this.collectionType = splitPath[0];
+        if (splitPath[0] == "organization") {
+            this.collectionType = "domain";
+        }
         if (splitPath[1] == "new" && splitPath[2]) {
             this.collectionId = "new";
             if (window.appGlobals.originalQueryParameters["createCommunityForGroup"]) {

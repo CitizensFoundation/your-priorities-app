@@ -512,12 +512,19 @@ auth.role("domain.viewUser", function (domain, req, done) {
                     done(null, true);
                 }
                 else {
-                    domain.hasUser(req.user).then(function (result) {
+                    domain.hasDomainUsers(req.user).then(function (result) {
                         if (result) {
                             done(null, true);
                         }
                         else {
-                            done(null, false);
+                            domain.hasDomainAdmins(req.user).then(function (result) {
+                                if (result) {
+                                    done(null, true);
+                                }
+                                else {
+                                    done(null, false);
+                                }
+                            });
                         }
                     });
                 }

@@ -23,7 +23,28 @@ let YpAdminConfigDomain = class YpAdminConfigDomain extends YpAdminConfigBase {
         this.action = "/domains";
     }
     static get styles() {
-        return [super.styles, css ``];
+        return [
+            super.styles,
+            css `
+        .accessHeader {
+          font-weight: bold;
+          margin: 8px;
+        }
+
+        label {
+          padding: 8px;
+        }
+
+        .actionButtonContainer {
+          margin-left: 16px;
+          margin-top: 16px;
+        }
+
+        md-radio {
+          margin-right: 4px;
+        }
+      `,
+        ];
     }
     renderHeader() {
         return this.collection
@@ -104,6 +125,7 @@ let YpAdminConfigDomain = class YpAdminConfigDomain extends YpAdminConfigBase {
                 counter_points: 0,
                 counter_posts: 0,
                 counter_users: 0,
+                access: 2,
                 default_locale: "en",
                 configuration: {},
             };
@@ -113,15 +135,29 @@ let YpAdminConfigDomain = class YpAdminConfigDomain extends YpAdminConfigBase {
         }
     }
     _setupTranslations() {
-        if (this.collectionId == "new") {
-            this.editHeaderText = this.t("domain.new");
-            this.toastText = this.t("domainToastCreated");
-            this.saveText = this.t("create");
+        if (window.location.href.includes("organization")) {
+            if (this.collectionId == "new") {
+                this.editHeaderText = this.t("newOrganization");
+                this.toastText = this.t("organizationToastCreated");
+                this.saveText = this.t("create");
+            }
+            else {
+                this.saveText = this.t("save");
+                this.editHeaderText = this.t("editOrganization");
+                this.toastText = this.t("organizationToastUpdated");
+            }
         }
         else {
-            this.saveText = this.t("save");
-            this.editHeaderText = this.t("domain.edit");
-            this.toastText = this.t("domainToastUpdated");
+            if (this.collectionId == "new") {
+                this.editHeaderText = this.t("domain.new");
+                this.toastText = this.t("domainToastCreated");
+                this.saveText = this.t("create");
+            }
+            else {
+                this.saveText = this.t("save");
+                this.editHeaderText = this.t("domain.edit");
+                this.toastText = this.t("domainToastUpdated");
+            }
         }
     }
     async _formResponse(event) {
@@ -163,6 +199,33 @@ let YpAdminConfigDomain = class YpAdminConfigDomain extends YpAdminConfigBase {
               .selectedLocale="${this.collection.default_locale}"
             >
             </yp-language-selector>
+          `,
+                },
+                {
+                    text: "status",
+                    type: "html",
+                    templateData: html `
+            <div class="layout vertical accessContainer">
+              <div class="accessHeader">${this.t("access")}</div>
+              <label>
+                <md-radio
+                  @change="${this._configChanged}"
+                  value="0"
+                  ?checked="${this.collection.access == 0}"
+                  name="access"
+                ></md-radio>
+                ${this.t("public")}
+              </label>
+              <label>
+                <md-radio
+                  @change="${this._configChanged}"
+                  ?checked="${this.collection.access == 2}"
+                  value="2"
+                  name="access"
+                ></md-radio>
+                ${this.t("private")}
+              </label>
+            </div>
           `,
                 },
                 {
