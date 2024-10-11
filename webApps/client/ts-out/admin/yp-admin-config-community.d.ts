@@ -23,12 +23,12 @@ export declare class YpAdminConfigCommunity extends YpAdminConfigBase {
     _generateRandomHostname(): string;
     static get styles(): (any[] | import("lit").CSSResult)[];
     renderHostname(): import("lit-html").TemplateResult<1>;
-    renderHeader(): typeof nothing | import("lit-html").TemplateResult<1>;
+    renderHeader(): import("lit-html").TemplateResult<1> | typeof nothing;
     renderActionMenu(): import("lit-html").TemplateResult<1>;
     _onDeleted(): void;
     _openDelete(): void;
     _menuSelection(event: CustomEvent): void;
-    renderHiddenAccessSettings(): typeof nothing | import("lit-html").TemplateResult<1>;
+    renderHiddenAccessSettings(): import("lit-html").TemplateResult<1> | typeof nothing;
     renderHiddenInputsNotActive(): import("lit-html").TemplateResult<1>;
     renderHiddenInputs(): import("lit-html").TemplateResult<1>;
     _hostnameChanged(): void;
