@@ -32,6 +32,7 @@ export declare class YpAppGlobals extends YpCodeBase {
     hasTranscriptSupport: boolean;
     hasVideoUpload: boolean;
     hasAudioUpload: boolean;
+    myDomains: Array<YpShortDomainList> | undefined;
     locale: string | undefined;
     i18nTranslation: any | undefined;
     serverApi: YpServerApi;
@@ -46,6 +47,7 @@ export declare class YpAppGlobals extends YpCodeBase {
     retryMethodAfter401Login: Function | undefined;
     groupLoadNewPost: boolean;
     constructor(serverApi: YpServerApi, disableInit?: boolean);
+    setupMyDomains(): Promise<void>;
     showRecommendationInfoIfNeeded(): void;
     showSpeechToTextInfoIfNeeded(): void;
     hasVideoUploadSupport(): Promise<void>;
@@ -64,7 +66,7 @@ export declare class YpAppGlobals extends YpCodeBase {
     _domainChanged(domain: YpDomainData | undefined): void;
     notifyUserViaToast(text: string): void;
     reBoot(): void;
-    _userLoggedIn(event: CustomEvent): void;
+    _userLoggedIn(event: CustomEvent): Promise<void>;
     setupTranslationSystem(loadPathPrefix?: string): void;
     startTranslation(): void;
     stopTranslation(): void;

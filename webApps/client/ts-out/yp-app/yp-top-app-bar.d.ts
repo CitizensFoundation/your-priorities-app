@@ -10,6 +10,7 @@ export declare class YpTopAppBar extends YpBaseElement {
     hideBreadcrumbs: boolean;
     restrictWidth: boolean;
     disableArrowBasedNavigation: boolean;
+    myDomains: Array<YpShortDomainList> | undefined;
     fixed: boolean;
     backUrl: string | undefined;
     titleString: string;
@@ -17,7 +18,8 @@ export declare class YpTopAppBar extends YpBaseElement {
         name: string;
         url: string;
     }>;
-    renderBreadcrumbsDropdown(): typeof nothing | TemplateResult<1>;
+    renderBreadcrumbsDropdown(): TemplateResult<1> | typeof nothing;
+    renderMyDomainsDropdown(): TemplateResult<1> | typeof nothing;
     navigateTo(url: string): void;
     private _toggleMenu;
     private _onMenuClosed;
@@ -27,6 +29,7 @@ export declare class YpTopAppBar extends YpBaseElement {
     updated(changedProperties: PropertyValues): void;
     connectedCallback(): void;
     disconnectedCallback(): void;
+    _onMyDomainsLoaded(event: CustomEvent): void;
     handleScroll(): void;
     get lastBreadcrumbItem(): {
         name: string;

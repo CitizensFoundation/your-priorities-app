@@ -53,6 +53,10 @@ export class YpAppGlobals extends YpCodeBase {
             this.addGlobalListener("yp-logged-in", this._userLoggedIn.bind(this));
         }
     }
+    async setupMyDomains() {
+        this.myDomains = await this.serverApi.getMyDomains();
+        this.fireGlobal("yp-my-domains-loaded", { domains: this.myDomains });
+    }
     showRecommendationInfoIfNeeded() {
         if (!localStorage.getItem("ypHaveShownRecommendationInfo")) {
             localStorage.setItem("ypHaveShownRecommendationInfo", "1");
@@ -193,7 +197,7 @@ export class YpAppGlobals extends YpCodeBase {
     reBoot() {
         this.boot();
     }
-    _userLoggedIn(event) {
+    async _userLoggedIn(event) {
         const user = event.detail;
         if (user) {
             //TODO: Look at this
@@ -204,6 +208,7 @@ export class YpAppGlobals extends YpCodeBase {
             }, 250); // Wait a bit to make sure google analytics tracking id has been set up dynamically
         }
         this.recommendations.reset();
+        await this.setupMyDomains();
     }
     setupTranslationSystem(loadPathPrefix = "") {
         const hostname = window.location.hostname;

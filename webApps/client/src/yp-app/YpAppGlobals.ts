@@ -72,6 +72,8 @@ export class YpAppGlobals extends YpCodeBase {
 
   hasAudioUpload = false;
 
+  myDomains: Array<YpShortDomainList> | undefined;
+
   // Locale seleted from query or loaded
   locale: string | undefined;
 
@@ -123,6 +125,11 @@ export class YpAppGlobals extends YpCodeBase {
       this.parseQueryString();
       this.addGlobalListener("yp-logged-in", this._userLoggedIn.bind(this));
     }
+  }
+
+  async setupMyDomains() {
+    this.myDomains = await this.serverApi.getMyDomains();
+    this.fireGlobal("yp-my-domains-loaded", { domains: this.myDomains });
   }
 
   showRecommendationInfoIfNeeded() {
@@ -303,7 +310,8 @@ export class YpAppGlobals extends YpCodeBase {
     this.boot();
   }
 
-  _userLoggedIn(event: CustomEvent) {
+
+  async _userLoggedIn(event: CustomEvent) {
     const user: YpUserData = event.detail;
     if (user) {
       //TODO: Look at this
@@ -314,6 +322,7 @@ export class YpAppGlobals extends YpCodeBase {
       }, 250); // Wait a bit to make sure google analytics tracking id has been set up dynamically
     }
     this.recommendations.reset();
+    await this.setupMyDomains();
   }
 
   setupTranslationSystem(loadPathPrefix: string = "") {

@@ -179,6 +179,10 @@ export class YpServerApi extends YpServerApiBase {
     );
   }
 
+  public getMyDomains(): Promise<Array<YpShortDomainList>> {
+    return this.fetchWrapper(this.baseUrlPath + `/domains/${window.appGlobals.domain?.id}/my_domains`) as any;
+  }
+
   public getGroupFolder(groupId: number) {
     return this.fetchWrapper(
       this.baseUrlPath +

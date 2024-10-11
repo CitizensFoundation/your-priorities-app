@@ -15,7 +15,7 @@ import { Corner } from "@material/web/menu/menu.js";
 import { YpNavHelpers } from "../common/YpNavHelpers";
 let YpTopAppBar = class YpTopAppBar extends YpBaseElement {
     renderBreadcrumbsDropdown() {
-        if (false && this.breadcrumbs.length > 1 && !this.hideBreadcrumbs) {
+        if (this.breadcrumbs.length > 1 && !this.hideBreadcrumbs) {
             return html `
         <md-icon-button id="breadCrumbTrigger" @click="${this._toggleMenu}">
           <md-icon>stat_minus_1</md-icon>
@@ -38,6 +38,35 @@ let YpTopAppBar = class YpTopAppBar extends YpBaseElement {
             `)}
         </md-menu>
       `;
+        }
+        else {
+            return nothing;
+        }
+    }
+    renderMyDomainsDropdown() {
+        if (this.myDomains && this.myDomains.length > 1) {
+            return html `
+      <md-icon-button id="breadCrumbTrigger" @click="${this._toggleMenu}">
+        <md-icon>unfold_more</md-icon>
+      </md-icon-button>
+      <md-menu
+        id="breadcrumbMenu"
+        anchor="breadCrumbTrigger"
+        positioning="popover"
+        .open="${this.isMenuOpen}"
+        @closed="${this._onMenuClosed}"
+        .menuCorner="${Corner.START_END}"
+      >
+        ${this.myDomains.map((domain, index) => html `
+            <md-menu-item @click=${() => YpNavHelpers.redirectTo(`/domain/${domain.id}`)}>
+              ${domain.name}
+            </md-menu-item>
+            ${index < this.breadcrumbs.length - 1
+                ? html `<md-divider></md-divider>`
+                : ""}
+          `)}
+      </md-menu>
+    `;
         }
         else {
             return nothing;
@@ -206,10 +235,15 @@ let YpTopAppBar = class YpTopAppBar extends YpBaseElement {
     connectedCallback() {
         super.connectedCallback();
         window.addEventListener("scroll", this.handleScroll.bind(this));
+        this.addGlobalListener("yp-my-domains-loaded", this._onMyDomainsLoaded.bind(this));
     }
     disconnectedCallback() {
         window.removeEventListener("scroll", this.handleScroll.bind(this));
+        this.removeGlobalListener("yp-my-domains-loaded", this._onMyDomainsLoaded.bind(this));
         super.disconnectedCallback();
+    }
+    _onMyDomainsLoaded(event) {
+        this.myDomains = event.detail.domains;
     }
     handleScroll() {
         if (!this.fixed) {
@@ -249,6 +283,7 @@ let YpTopAppBar = class YpTopAppBar extends YpBaseElement {
       >
         <div class="middleContainer" ?restrict-width="${this.restrictWidth}">
           <slot name="navigation"></slot>
+          ${this.renderMyDomainsDropdown()}
           <div class="title ${this.isTitleLong ? "expanded" : ""}">
             ${this.lastBreadcrumbItem
             ? html `<a class="titleText" @click="${this.goToUrl}" href="${this.lastBreadcrumbItem.url}"
@@ -282,6 +317,9 @@ __decorate([
 __decorate([
     property({ type: Boolean })
 ], YpTopAppBar.prototype, "disableArrowBasedNavigation", void 0);
+__decorate([
+    property({ type: Array })
+], YpTopAppBar.prototype, "myDomains", void 0);
 __decorate([
     property({ type: Boolean })
 ], YpTopAppBar.prototype, "fixed", void 0);

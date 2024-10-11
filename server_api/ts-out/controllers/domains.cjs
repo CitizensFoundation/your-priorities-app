@@ -892,6 +892,42 @@ router.put('/:id', auth.can('edit domain'), function (req, res) {
         sendDomainOrError(res, null, 'update', req.user, error);
     });
 });
+router.get('/:id/my_domains', auth.can('view domain'), function (req, res) {
+    models.Domain.findAll({
+        attributes: ['id', 'name'],
+        include: [
+            {
+                model: models.User,
+                as: 'DomainUsers',
+                attributes: [],
+                where: { id: req.user.id },
+                required: false
+            },
+            {
+                model: models.User,
+                as: 'DomainAdmins',
+                attributes: [],
+                where: { id: req.user.id },
+                required: false
+            }
+        ],
+        where: {
+            [models.Sequelize.Op.or]: [
+                { '$DomainUsers.id$': { [models.Sequelize.Op.eq]: req.user.id } },
+                { '$DomainAdmins.id$': { [models.Sequelize.Op.eq]: req.user.id } }
+            ]
+        }
+    }).then(function (domains) {
+        // Deduplicate the domains in case the user is both an admin and a user
+        const uniqueDomains = _.uniqBy(domains, 'id');
+        const domainList = uniqueDomains.map(domain => ({ id: domain.id, name: domain.name }));
+        log.info('Retrieved user domains', { userId: req.user.id });
+        res.send(domainList);
+    }).catch(function (error) {
+        log.error('Could not retrieve user domains', { err: error, context: 'my_domains', user: toJson(req.user.simple()) });
+        res.sendStatus(500);
+    });
+});
 router.post('/:id', auth.can('edit domain'), function (req, res) {
     const randomDomainName = crypto.randomBytes(16).toString('hex'); // Generate 32 character random string
     var domain = models.Domain.build({

@@ -418,6 +418,11 @@ interface YpPromoterRights {
   CommunityPromoters: Array<YpCollectionData>;
 }
 
+interface YpShortDomainList {
+  id: number;
+  name: string;
+}
+
 interface YpDomainConfiguration extends YpCollectionConfiguration {
   customUserRegistrationText?: string;
   customSamlLoginText?: string;

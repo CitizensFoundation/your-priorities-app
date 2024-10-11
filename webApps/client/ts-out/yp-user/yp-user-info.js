@@ -10,7 +10,13 @@ import "@material/web/button/text-button.js";
 import "@material/web/button/outlined-button.js";
 import { YpBaseElement } from "../common/yp-base-element.js";
 import "./yp-user-image.js";
+import { YpNavHelpers } from "../common/YpNavHelpers.js";
+import { YpAccessHelpers } from "../common/YpAccessHelpers.js";
 let YpUserInfo = class YpUserInfo extends YpBaseElement {
+    constructor() {
+        super(...arguments);
+        this.showCreateNewOrganization = false;
+    }
     static get styles() {
         return [
             super.styles,
@@ -77,9 +83,15 @@ let YpUserInfo = class YpUserInfo extends YpBaseElement {
                   <md-outlined-button @click="${this._openEdit}"
                     >${this.t("user.edit")}</md-outlined-button
                   >
+
                   <md-outlined-button hidden @click="${this._openAllContentModeration}"
                     >${this.t("myContent")}</md-outlined-button
                   >
+
+                  <md-outlined-button @click="${this._createNewOrganization}" ?hidden="${!this.showCreateNewOrganization}"
+                    >${this.t("createOrganization")}</md-outlined-button
+                  >
+
                   <md-outlined-button @click="${this._logout}"
                     >${this.t("user.logout")}</md-outlined-button
                   >
@@ -89,6 +101,13 @@ let YpUserInfo = class YpUserInfo extends YpBaseElement {
           `
             : html ``}
     `;
+    }
+    connectedCallback() {
+        super.connectedCallback();
+        this.showCreateNewOrganization = YpAccessHelpers.checkDomainAccess(window.appGlobals.domain);
+    }
+    _createNewOrganization() {
+        YpNavHelpers.redirectTo(`/admin/domain/new/${window.appGlobals.domain?.id}`);
     }
     _openAllContentModeration() {
         window.appGlobals.activity("open", "userAllContentModeration");
@@ -108,6 +127,9 @@ let YpUserInfo = class YpUserInfo extends YpBaseElement {
 __decorate([
     property({ type: Object })
 ], YpUserInfo.prototype, "user", void 0);
+__decorate([
+    property({ type: Boolean })
+], YpUserInfo.prototype, "showCreateNewOrganization", void 0);
 YpUserInfo = __decorate([
     customElement("yp-user-info")
 ], YpUserInfo);

@@ -96,6 +96,9 @@ export class YpServerApi extends YpServerApiBase {
         return this.fetchWrapper(this.baseUrlPath +
             `/${YpServerApi.transformCollectionTypeToApi(collectionType)}/${collectionId}`);
     }
+    getMyDomains() {
+        return this.fetchWrapper(this.baseUrlPath + `/domains/${window.appGlobals.domain?.id}/my_domains`);
+    }
     getGroupFolder(groupId) {
         return this.fetchWrapper(this.baseUrlPath +
             `/groups/${groupId}/groupFolder`);
