@@ -475,7 +475,6 @@ export class PsOperationsView extends PsBaseWithRunningAgentObserver {
       },
       type: "html.Element",
     });
-    debugger;
     el.addTo(this.graph);
     return el;
   }

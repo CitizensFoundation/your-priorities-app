@@ -46,6 +46,9 @@ export declare class YpAppGlobals extends YpCodeBase {
     signupTermsPageId: number | undefined;
     retryMethodAfter401Login: Function | undefined;
     groupLoadNewPost: boolean;
+    groupNeedsRefresh: boolean;
+    communityNeedsRefresh: boolean;
+    domainNeedsRefresh: boolean;
     constructor(serverApi: YpServerApi, disableInit?: boolean);
     setupMyDomains(): Promise<void>;
     showRecommendationInfoIfNeeded(): void;

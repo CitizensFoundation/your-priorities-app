@@ -35,6 +35,9 @@ export class YpAppGlobals extends YpCodeBase {
         this.hasVideoUpload = false;
         this.hasAudioUpload = false;
         this.groupLoadNewPost = false;
+        this.groupNeedsRefresh = false;
+        this.communityNeedsRefresh = false;
+        this.domainNeedsRefresh = false;
         if (!disableInit) {
             this.appStartTime = new Date();
             this.serverApi = serverApi;

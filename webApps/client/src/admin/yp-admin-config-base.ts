@@ -1172,8 +1172,10 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
       this.fireGlobal("yp-refresh-domain");
     } else if (this.collectionType == "community") {
       this.fireGlobal("yp-refresh-community");
+      window.appGlobals.domainNeedsRefresh = true;
     } else if (this.collectionType == "group") {
       this.fireGlobal("yp-refresh-group");
+      window.appGlobals.communityNeedsRefresh = true;
     }
   }
 

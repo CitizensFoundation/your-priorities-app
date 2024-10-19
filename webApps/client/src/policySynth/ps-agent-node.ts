@@ -89,8 +89,6 @@ export class PsAgentNode extends PsOperationsBaseNode {
     super.connectedCallback();
     this.agent = window.psAppGlobals.getAgentInstance(this.agentId)!;
     this.updateAgentStatus(); // Initial status check
-    const a = this.hasStaticTheme;
-    debugger;
   }
 
   override disconnectedCallback(): void {

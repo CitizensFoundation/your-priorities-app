@@ -115,7 +115,20 @@ export abstract class YpCollection extends YpBaseElementWithLogin {
   override connectedCallback() {
     super.connectedCallback();
 
-    if (this.collection) this.refresh();
+    if (this.collection) {
+      this.refresh();
+
+      if (this.collectionType == "domain" && window.appGlobals.domainNeedsRefresh) {
+        window.appGlobals.domainNeedsRefresh = false;
+        this.getCollection();
+      } else if (this.collectionType == "community" && window.appGlobals.communityNeedsRefresh) {
+        window.appGlobals.communityNeedsRefresh = false;
+        this.getCollection();
+      } else if (this.collectionType == "group" && window.appGlobals.groupNeedsRefresh) {
+        window.appGlobals.groupNeedsRefresh = false;
+        this.getCollection();
+      }
+    }
   }
 
   async themeApplied() {

@@ -1178,12 +1178,10 @@ export class YpApp extends YpBaseElement {
   }
 
   async _refreshGroup() {
-    await this.updateComplete;
     this._refreshByName("#groupPage");
   }
 
   async _refreshCommunity() {
-    await this.updateComplete;
     this._refreshByName("#communityPage");
   }
 

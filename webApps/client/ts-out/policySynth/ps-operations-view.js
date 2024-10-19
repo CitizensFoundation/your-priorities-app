@@ -376,7 +376,6 @@ let PsOperationsView = class PsOperationsView extends PsBaseWithRunningAgentObse
             },
             type: "html.Element",
         });
-        debugger;
         el.addTo(this.graph);
         return el;
     }

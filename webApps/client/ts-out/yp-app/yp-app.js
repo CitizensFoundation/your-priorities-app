@@ -869,11 +869,9 @@ let YpApp = class YpApp extends YpBaseElement {
         this.autoTranslate = event.detail;
     }
     async _refreshGroup() {
-        await this.updateComplete;
         this._refreshByName("#groupPage");
     }
     async _refreshCommunity() {
-        await this.updateComplete;
         this._refreshByName("#communityPage");
     }
     _refreshDomain() {

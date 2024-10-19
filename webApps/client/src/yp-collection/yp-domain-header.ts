@@ -49,8 +49,8 @@ export class YpDomainHeader extends YpCollectionHeader {
         }
 
         .image {
-          width: 220px;
-          height: 124px;
+          width: 200px;
+          height: 113px;
         }
 
         @media (max-width: 600px) {

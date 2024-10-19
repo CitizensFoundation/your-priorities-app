@@ -102,6 +102,12 @@ export class YpAppGlobals extends YpCodeBase {
 
   groupLoadNewPost = false;
 
+  groupNeedsRefresh = false;
+
+  communityNeedsRefresh = false;
+
+  domainNeedsRefresh = false;
+
   constructor(serverApi: YpServerApi, disableInit = false) {
     super();
 
