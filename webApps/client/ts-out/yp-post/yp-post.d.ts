@@ -14,8 +14,10 @@ export declare class YpPost extends YpCollection {
     scrollToPointId: number | undefined;
     debateCount: string | undefined;
     photosCount: string | undefined;
+    currentPostIndex: number | undefined;
+    totalPosts: number | undefined;
     constructor();
-    scrollToCollectionItemSubClass(): void;
+    scrollToCollection_processIncomingPostItemSubClass(): void;
     setupTheme(): void;
     static get styles(): (any[] | import("lit").CSSResult)[];
     get leftArrowDisabled(): boolean;
@@ -49,6 +51,8 @@ export declare class YpPost extends YpCollection {
     _getPost(): Promise<void>;
     collectionIdChanged(): void;
     _processIncomingPost(fromCache?: boolean): void;
+    updatePostPosition(postsList: YpPostData[]): void;
+    get postPositionCounter(): string;
     _processRecommendation(recommendedPost: YpPostData): void;
     refresh(): void;
 }

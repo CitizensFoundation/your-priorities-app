@@ -268,7 +268,7 @@ export class YpCollection extends YpBaseElementWithLogin {
         }
 
         md-linear-progress {
-          --md-sys-color-primary: var(--md-sys-color-primary-container);
+          --md-sys-color-primary: var(--md-sys-color-on-surface-variant);
         }
 
         .topContainer {
@@ -289,6 +289,7 @@ export class YpCollection extends YpBaseElementWithLogin {
           border-bottom-color: transparent;
           max-width: 720px;
           overflow-y: scroll;
+          --md-divider-thickness: 0px;
         }
 
         .mainContent {

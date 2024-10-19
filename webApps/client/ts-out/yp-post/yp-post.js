@@ -35,8 +35,10 @@ let YpPost = class YpPost extends YpCollection {
         this.scrollToPointId = undefined;
         this.debateCount = undefined;
         this.photosCount = undefined;
+        this.currentPostIndex = undefined;
+        this.totalPosts = undefined;
     }
-    scrollToCollectionItemSubClass() {
+    scrollToCollection_processIncomingPostItemSubClass() {
         //TODO: Do we need this
     }
     setupTheme() {
@@ -245,6 +247,7 @@ let YpPost = class YpPost extends YpCollection {
       <yp-post-header
         ?hasNoLeftRightButtons="${this.bothArrowsDisabled}"
         onlyRenderTopActionBar
+        .postPositionCounter="${this.postPositionCounter}"
         .post="${this.post}"
       ></yp-post-header>
     `;
@@ -571,11 +574,61 @@ let YpPost = class YpPost extends YpCollection {
             this.refresh();
             if (!fromCache)
                 window.appGlobals.cache.addPostsToCacheLater([this.post]);
+            // Check if the posts list for the group is already in the cache
+            const postsList = window.appGlobals.cache.currentPostListForGroup[this.post.group_id];
+            if (postsList && postsList.length > 0) {
+                // Use the cached list to calculate the position
+                this.updatePostPosition(postsList);
+            }
+            else {
+                // Posts list not in cache, fetch it from the server
+                //this.fetchPostsListForGroup(this.post.group_id);
+            }
             window.appGlobals.recommendations.getNextRecommendationForGroup(this.post.group_id, this.post.id, this._processRecommendation.bind(this));
             this.isAdmin = YpAccessHelpers.checkPostAdminOnlyAccess(this.post);
         }
         else {
             console.error("Trying to refresh without post");
+        }
+    }
+    updatePostPosition(postsList) {
+        const index = window.appGlobals.cache.getPostPositionInTheGroupList(this.post.group_id, this.post.id);
+        if (index !== -1) {
+            this.currentPostIndex = index + 1; // Adjust for 0-based index
+            this.totalPosts = postsList.length;
+        }
+        else {
+            // Post not found in the list
+            this.currentPostIndex = undefined;
+            this.totalPosts = postsList.length;
+        }
+    }
+    /*async fetchPostsListForGroup(groupId) {
+      // Check again to ensure posts are not already in cache
+      const cachedPosts = window.appGlobals.cache.currentPostListForGroup[groupId];
+      if (cachedPosts && cachedPosts.length > 0) {
+        // Posts are already in cache, no need to fetch
+        this.updatePostPosition(cachedPosts);
+        return;
+      }
+  
+      try {
+        const postsList = await window.serverApi.getPostsForGroup(groupId);
+        if (postsList && postsList.length > 0) {
+          window.appGlobals.cache.setCurrentPostListForGroup(groupId, postsList);
+          // After fetching, update the post position
+          this.updatePostPosition(postsList);
+        }
+      } catch (error) {
+        console.error("Error fetching posts list for group:", error);
+      }
+    }*/
+    get postPositionCounter() {
+        if (this.currentPostIndex !== undefined && this.totalPosts !== undefined) {
+            return `${this.currentPostIndex} / ${this.totalPosts}`;
+        }
+        else {
+            return "";
         }
     }
     _processRecommendation(recommendedPost) {
@@ -740,6 +793,12 @@ __decorate([
 __decorate([
     property({ type: String })
 ], YpPost.prototype, "photosCount", void 0);
+__decorate([
+    property({ type: Number })
+], YpPost.prototype, "currentPostIndex", void 0);
+__decorate([
+    property({ type: Number })
+], YpPost.prototype, "totalPosts", void 0);
 YpPost = __decorate([
     customElement("yp-post")
 ], YpPost);

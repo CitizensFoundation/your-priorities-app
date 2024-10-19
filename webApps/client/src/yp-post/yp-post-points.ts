@@ -291,7 +291,8 @@ export class YpPostPoints extends YpBaseElementWithLogin {
         }
 
         yp-user-image {
-          margin-right: 16px;
+          margin-bottom: 12px;
+          margin-left: 4px;
         }
 
         .topContainer {
@@ -779,7 +780,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
                     layout vertical"
             ?hidden="${this.post.Group.configuration?.disableDebate}"
           >
-            <div class="layout horizontal">
+            <div class="layout vertical">
               ${window.appUser.user
                 ? html`<yp-user-image
                     medium
@@ -798,12 +799,12 @@ export class YpPostPoints extends YpBaseElementWithLogin {
                 charCounter
                 hasTrailingIcon
                 type="textarea"
-                rows="4"
+                rows="6"
                 @keyup="${() => {
                   this.requestUpdate();
                 }}"
                 ?hidden="${hideText}"
-                maxrows="4"
+                maxrows="6"
                 .maxLength="${this.pointMaxLength}"
                 ><div class="layout vertical" slot="trailing-icon">
                   <yp-emoji-selector

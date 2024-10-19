@@ -30,6 +30,7 @@ let YpPostHeader = class YpPostHeader extends YpPostBaseWithAnswers(YpBaseElemen
         this.onlyRenderTopActionBar = false;
         this.hideTopActionBar = false;
         this.hasNoLeftRightButtons = false;
+        this.postPositionCounter = "";
     }
     //TODO: Make corners on posts card different
     static get styles() {
@@ -39,6 +40,14 @@ let YpPostHeader = class YpPostHeader extends YpPostBaseWithAnswers(YpBaseElemen
             css `
         :host {
           display: block;
+        }
+
+        .postPositionCounter {
+          font-size: 22px;
+          font-weight: 400;
+          line-height: 33px;
+          margin-top: 2px;
+          opacity: 0.5;
         }
 
         .category-icon {
@@ -421,6 +430,12 @@ let YpPostHeader = class YpPostHeader extends YpPostBaseWithAnswers(YpBaseElemen
               <div class="layout horizontal actionBar">
                 ${this.renderClose()}
                 <div class="flex"></div>
+                ${this.postPositionCounter
+                ? html `<div class="postPositionCounter">
+                      ${this.postPositionCounter}
+                    </div>`
+                : nothing}
+                <div class="flex"></div>
                 ${this.renderTopActionButtons()} ${this.renderMenu()}
               </div>
             `
@@ -600,6 +615,9 @@ __decorate([
 __decorate([
     property({ type: Object })
 ], YpPostHeader.prototype, "post", void 0);
+__decorate([
+    property({ type: String })
+], YpPostHeader.prototype, "postPositionCounter", void 0);
 YpPostHeader = __decorate([
     customElement("yp-post-header")
 ], YpPostHeader);

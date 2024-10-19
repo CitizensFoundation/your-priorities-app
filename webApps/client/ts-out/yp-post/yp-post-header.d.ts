@@ -14,9 +14,10 @@ export declare class YpPostHeader extends YpPostHeader_base {
     hideTopActionBar: boolean;
     hasNoLeftRightButtons: boolean;
     post: YpPostData;
+    postPositionCounter: string;
     static get styles(): any[];
     renderPostInformation(): TemplateResult<1>;
-    renderMenu(): typeof nothing | TemplateResult<1>;
+    renderMenu(): TemplateResult<1> | typeof nothing;
     renderActions(): TemplateResult<1>;
     renderName(): TemplateResult<1>;
     renderUser(): TemplateResult<1>;

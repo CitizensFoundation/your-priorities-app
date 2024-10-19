@@ -51,6 +51,9 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
   @property({ type: Object })
   override post!: YpPostData;
 
+  @property({ type: String })
+  postPositionCounter = "";
+
   //TODO: Make corners on posts card different
   static override get styles() {
     return [
@@ -59,6 +62,14 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
       css`
         :host {
           display: block;
+        }
+
+        .postPositionCounter {
+          font-size: 22px;
+          font-weight: 400;
+          line-height: 33px;
+          margin-top: 2px;
+          opacity: 0.5;
         }
 
         .category-icon {
@@ -448,6 +459,12 @@ export class YpPostHeader extends YpPostBaseWithAnswers(
           ? html`
               <div class="layout horizontal actionBar">
                 ${this.renderClose()}
+                <div class="flex"></div>
+                ${this.postPositionCounter
+                  ? html`<div class="postPositionCounter">
+                      ${this.postPositionCounter}
+                    </div>`
+                  : nothing}
                 <div class="flex"></div>
                 ${this.renderTopActionButtons()} ${this.renderMenu()}
               </div>

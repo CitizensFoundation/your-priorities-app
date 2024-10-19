@@ -114,7 +114,7 @@ export class YpAppGlobals extends YpCodeBase {
     primaryColor: "ffdc2f",
     tertiaryColor: "1e90ff",
     oneColorScheme: "tonal" as MaterialColorScheme,
-    secondaryColor: "ffdc2f",
+    secondaryColor: "121212",
     neutralVariantColor: "ffffff",
     useLowestContainerSurface: true
   };
