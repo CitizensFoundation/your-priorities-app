@@ -102,8 +102,8 @@ export declare abstract class PlausibleBaseGraph extends PlausibleBaseElementWit
         tooltip: any;
     }) => void;
     onClick(e: CustomEvent): void;
-    downloadLink(): typeof nothing | import("lit-html").TemplateResult<1>;
+    downloadLink(): import("lit-html").TemplateResult<1> | typeof nothing;
     renderHeader(): void;
-    render(): typeof nothing | import("lit-html").TemplateResult<1>;
+    render(): import("lit-html").TemplateResult<1> | typeof nothing;
 }
 //# sourceMappingURL=pl-base-graph.d.ts.map

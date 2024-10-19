@@ -11,9 +11,9 @@ export declare class YpCollectionItemsList extends YpBaseElement {
     resetListSize: Function | undefined;
     skipIronListWidth: boolean;
     static get styles(): any[];
-    render(): typeof nothing | TemplateResult<1>;
+    render(): TemplateResult<1> | typeof nothing;
     renderItem(item: YpCollectionData, index: number): TemplateResult;
-    get pluralItemType(): "groups" | "communities" | "posts" | "unknownItemType";
+    get pluralItemType(): "communities" | "groups" | "posts" | "unknownItemType";
     _keypress(event: KeyboardEvent): void;
     refresh(): Promise<void>;
     firstUpdated(changedProperties: Map<string | number | symbol, unknown>): void;

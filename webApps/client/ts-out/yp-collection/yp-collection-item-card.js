@@ -38,12 +38,12 @@ let YpCollectionItemCard = class YpCollectionItemCard extends YpBaseElement {
         .groupType {
           font-size: 14px;
           font-weight: 500;
-          color: var(--md-sys-color-primary);
+          color: var(--md-sys-color-tertiary);
           text-transform: uppercase;
         }
 
         .groupType[is-folder] {
-          color: var(--md-sys-color-secondary);
+          color: var(--md-sys-color-tertiary);
         }
 
         .stats {

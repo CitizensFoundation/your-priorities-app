@@ -10,7 +10,7 @@ export declare class YpDomain extends YpCollection {
     scrollToCommunityItem(): void;
     scrollToCollectionItemSubClass(): void;
     _forgotPassword(): void;
-    renderHeader(): typeof nothing | import("lit-html").TemplateResult<1>;
+    renderHeader(): import("lit-html").TemplateResult<1> | typeof nothing;
     renderDomainLogin(): import("lit-html").TemplateResult<1>;
     render(): import("lit-html").TemplateResult<1>;
 }

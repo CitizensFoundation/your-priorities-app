@@ -19,7 +19,7 @@ export declare class YpSimpleHtmlEditor extends YpBaseElement {
     closeImageDialog(): void;
     applyImageSize(): void;
     selectImage(image: HTMLImageElement): void;
-    renderImageEditDialog(): typeof nothing | import("lit-html").TemplateResult<1>;
+    renderImageEditDialog(): import("lit-html").TemplateResult<1> | typeof nothing;
     render(): import("lit-html").TemplateResult<1>;
     deselectImage(): void;
     _setFocus(): void;
