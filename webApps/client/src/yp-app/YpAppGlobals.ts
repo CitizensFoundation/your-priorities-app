@@ -108,6 +108,17 @@ export class YpAppGlobals extends YpCodeBase {
 
   domainNeedsRefresh = false;
 
+  defaultTheme = {
+    variant: "monochrome" as MaterialDynamicVariants,
+    neutralColor: "ffffff",
+    primaryColor: "ffdc2f",
+    tertiaryColor: "1e90ff",
+    oneColorScheme: "tonal" as MaterialColorScheme,
+    secondaryColor: "ffdc2f",
+    neutralVariantColor: "ffffff",
+    useLowestContainerSurface: true
+  };
+
   constructor(serverApi: YpServerApi, disableInit = false) {
     super();
 
@@ -119,6 +130,10 @@ export class YpAppGlobals extends YpCodeBase {
       this.cache = new YpCache();
       this.analytics = new YpAnalytics();
       this.theme = new YpThemeManager();
+      if (this.defaultTheme) {
+        this.theme.setTheme(undefined, { theme: this.defaultTheme });
+      }
+
       this.offline = new YpOffline();
 
       // Boot

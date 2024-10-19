@@ -737,6 +737,9 @@ export class YpThemeManager {
         );
       }
 
+      if (this.useLowestContainerSurface) {
+      }
+
       applyThemeWithContrast(document, themeCss);
     }
   }

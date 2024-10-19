@@ -49,6 +49,16 @@ export declare class YpAppGlobals extends YpCodeBase {
     groupNeedsRefresh: boolean;
     communityNeedsRefresh: boolean;
     domainNeedsRefresh: boolean;
+    defaultTheme: {
+        variant: MaterialDynamicVariants;
+        neutralColor: string;
+        primaryColor: string;
+        tertiaryColor: string;
+        oneColorScheme: MaterialColorScheme;
+        secondaryColor: string;
+        neutralVariantColor: string;
+        useLowestContainerSurface: boolean;
+    };
     constructor(serverApi: YpServerApi, disableInit?: boolean);
     setupMyDomains(): Promise<void>;
     showRecommendationInfoIfNeeded(): void;

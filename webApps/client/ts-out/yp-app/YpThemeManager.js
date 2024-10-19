@@ -543,6 +543,8 @@ export class YpThemeManager {
                 document.documentElement.style.setProperty("--yp-sys-color-container-down", this.intToHex(colorContainerDown));
                 document.documentElement.style.setProperty("--yp-sys-color-on-container-down", this.intToHex(onColorContainerDown));
             }
+            if (this.useLowestContainerSurface) {
+            }
             applyThemeWithContrast(document, themeCss);
         }
     }

@@ -267,6 +267,10 @@ export class YpCollection extends YpBaseElementWithLogin {
           --md-fab-container-shadow-color: transparent;
         }
 
+        md-linear-progress {
+          --md-sys-color-primary: var(--md-sys-color-primary-container);
+        }
+
         .topContainer {
           background-color: var(--md-sys-color-surface);
         }
