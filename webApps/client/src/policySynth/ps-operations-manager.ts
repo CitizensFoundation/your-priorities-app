@@ -28,6 +28,7 @@ import { PsBaseWithRunningAgentObserver } from "./ps-base-with-running-agents.js
 import { PsAppGlobals } from "./PsAppGlobals.js";
 import { YpFormattingHelpers } from "../common/YpFormattingHelpers.js";
 import { YpMediaHelpers } from "../common/YpMediaHelpers.js";
+import { YpNavHelpers } from "../common/YpNavHelpers.js";
 
 @customElement("ps-operations-manager")
 export class PsOperationsManager extends PsBaseWithRunningAgentObserver {
@@ -472,8 +473,9 @@ export class PsOperationsManager extends PsBaseWithRunningAgentObserver {
 
   renderHeader() {
     return html`
-      <div class="layout horizontal center-center agentHeader">
+      <div class="layout horizontal agentHeader">
         <img
+          hidden
           src="${YpMediaHelpers.getImageFormatUrl(
             this.group.GroupLogoImages,
             0
@@ -515,45 +517,50 @@ export class PsOperationsManager extends PsBaseWithRunningAgentObserver {
           @close="${() => (this.showAddConnectorDialog = false)}"
         ></ps-add-connector-dialog>
 
-        <div class="layout horizontal self-start tabsContainer">
-          ${this.renderHeader()}
+        <div class="layout vertical">
+          <div class="layout horizontal self-start tabsContainer">
+            ${this.renderHeader()}
 
-          <md-tabs id="tabBar" @change="${this.tabChanged}">
-            <md-secondary-tab
-              id="configure-tab"
-              ?has-static-theme="${this.hasStaticTheme}"
-              aria-controls="configure-panel"
-            >
-              <md-icon slot="icon">support_agent</md-icon>
-              ${this.t("Agents Operations")}
-            </md-secondary-tab>
-            <md-secondary-tab
-              id="crt-tab"
-              ?has-static-theme="${this.hasStaticTheme}"
-              aria-controls="crt-panel"
-            >
-              <md-icon slot="icon">checklist</md-icon>
-              ${this.t("Audit Log")}
-            </md-secondary-tab>
-            <md-secondary-tab
-              id="costs-tab"
-              ?has-static-theme="${this.hasStaticTheme}"
-              aria-controls="costs-panel"
-            >
-              <md-icon slot="icon">account_balance</md-icon>
-              ${this.renderTotalCosts()}
-            </md-secondary-tab>
-          </md-tabs>
-          <div class="flex"></div>
-          <md-filled-tonal-button
-            class="addAgentButton"
-            @click="${() => this.fire("add-agent")}"
-          >
-            <md-icon slot="icon">add</md-icon>
-            ${this.t("Add Agent")}
-          </md-filled-tonal-button>
+            <md-tabs id="tabBar" @change="${this.tabChanged}">
+              <md-secondary-tab
+                id="configure-tab"
+                ?has-static-theme="${this.hasStaticTheme}"
+                aria-controls="configure-panel"
+              >
+                <md-icon slot="icon">support_agent</md-icon>
+                ${this.t("workflow")}
+              </md-secondary-tab>
+              <md-secondary-tab
+                id="costs-tab"
+                ?has-static-theme="${this.hasStaticTheme}"
+                aria-controls="costs-panel"
+              >
+                <md-icon slot="icon">account_balance</md-icon>
+                ${this.renderTotalCosts()}
+              </md-secondary-tab>
+              <md-secondary-tab
+                id="crt-tab"
+                ?has-static-theme="${this.hasStaticTheme}"
+                aria-controls="crt-panel"
+              >
+                <md-icon slot="icon">checklist</md-icon>
+                ${this.t("Audit Log")}
+              </md-secondary-tab>
+            </md-tabs>
+            <div class="flex"></div>
+            <md-filled-tonal-icon-button
+              @click="${this._openAnalyticsAndPromotions}"
+              title="${this.t("analyticsAndPromotions")}"
+              ><md-icon>monitoring</md-icon>
+            </md-filled-tonal-icon-button>
+            <md-filled-tonal-icon-button
+              @click="${this.openConfig}"
+              title="${this.t("openGroupMenu")}"
+              ><md-icon>settings</md-icon>
+            </md-filled-tonal-icon-button>
+          </div>
+          <md-divider></md-divider>
         </div>
-
         ${this.activeTabIndex === 0
           ? html`
               <ps-operations-view
@@ -572,6 +579,14 @@ export class PsOperationsManager extends PsBaseWithRunningAgentObserver {
     }
   }
 
+  openConfig() {
+    YpNavHelpers.redirectTo(`/admin/group/${this.groupId}`);
+  }
+
+  _openAnalyticsAndPromotions() {
+    YpNavHelpers.redirectTo(`/analytics/group/${this.groupId}`);
+  }
+
   static override get styles() {
     return [
       super.styles,
@@ -583,10 +598,11 @@ export class PsOperationsManager extends PsBaseWithRunningAgentObserver {
           margin-top: 8px;
         }
 
-        .addAgentButton {
-          max-height: 36px;
-          margin-top: 10px;
-          margin-right: 16px;
+        md-filled-tonal-icon-button {
+          --md-filled-tonal-icon-button-container-color: var(
+            --md-sys-color-surface-container-low
+          );
+          --md-sys-color-on-secondary-container: var(--md-sys-color-on-surface);
         }
 
         .agentHeaderText {
@@ -600,7 +616,7 @@ export class PsOperationsManager extends PsBaseWithRunningAgentObserver {
         }
 
         .agentHeader {
-          margin-left: 16px;
+          width: 300px;
         }
 
         .tabsContainer {
@@ -616,6 +632,7 @@ export class PsOperationsManager extends PsBaseWithRunningAgentObserver {
           align-items: flex-start;
           max-width: 600px;
           background-color: var(--md-sys-color-surface);
+          --md-divider-thickness: 0px;
         }
 
         md-filled-select {
@@ -648,7 +665,8 @@ export class PsOperationsManager extends PsBaseWithRunningAgentObserver {
         }
 
         md-icon-button {
-          margin-top: 32px;
+          margin-top: 12px;
+          margin-right: 16px;
         }
 
         md-secondary-tab[has-static-theme] {
@@ -831,6 +849,12 @@ export class PsOperationsManager extends PsBaseWithRunningAgentObserver {
           height: 400px;
           margin-top: 16px;
           margin-bottom: 16px;
+        }
+
+        @media (max-width: 600px) {
+          .agentHeader {
+            width: 100%;
+          }
         }
       `,
     ];

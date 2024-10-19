@@ -619,6 +619,30 @@ export class PsOperationsView extends PsBaseWithRunningAgentObserver {
     return [
       super.styles,
       css`
+       md-fab {
+          --md-fab-container-shape: 4px;
+          --md-fab-label-text-size: 16px !important;
+          --md-fab-label-text-weight: 600 !important;
+          margin-bottom: 24px;
+          --md-fab-container-elevation: 0;
+          --md-fab-container-shadow-color: transparent;
+        }
+
+        .addAgentButton {
+          width: 180px;
+        }
+
+        .addAgentButton {
+          max-height: 36px;
+          margin-top: 10px;
+          margin-right: 16px;
+        }
+
+
+        md-fab:not([has-static-theme]) {
+          --md-sys-color-primary-container: var(--md-sys-color-primary);
+          --md-sys-color-on-primary-container: var(--md-sys-color-on-primary);
+        }
         .agentHeaderImage {
           max-width: 72px;
           border-radius: 16px;
@@ -818,9 +842,6 @@ export class PsOperationsView extends PsBaseWithRunningAgentObserver {
     window.psAppGlobals.setCurrentRunningAgentId(this.currentAgent.id);
   }
 
-  openConfig() {
-    YpNavHelpers.redirectTo(`/admin/group/${this.groupId}`);
-  }
 
   override render() {
     return html`
@@ -856,10 +877,18 @@ export class PsOperationsView extends PsBaseWithRunningAgentObserver {
                 @click="${this.start}"
                 ><md-icon>play_arrow</md-icon></md-outlined-icon-button
               >`}
-
-          <md-icon-button @click="${this.openConfig}"
-            ><md-icon>settings</md-icon></md-icon-button
+              <md-fab
+            ?has-static-theme="${this.hasStaticTheme}"
+            lowered
+            size="large"
+            class="addAgentButton"
+            variant="primary"
+            @click="${() => this.fire("add-agent")}"
+            .label="   ${this.t("Add Agent")}"
           >
+            <md-icon hidden slot="icon">addExistingConnector</md-icon></md-fab
+          >
+
         </div>
 
         <div hidden>

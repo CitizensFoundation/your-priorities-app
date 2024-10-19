@@ -6,6 +6,6 @@ export declare class PlausibleCurrentVisitors extends PlausibleBaseElementWithSt
     connectedCallback(): void;
     static get styles(): import("lit").CSSResult[];
     updateCount(): Promise<void | null>;
-    render(): import("lit-html").TemplateResult<1> | typeof nothing | null;
+    render(): typeof nothing | import("lit-html").TemplateResult<1> | null;
 }
 //# sourceMappingURL=pl-current-visitors.d.ts.map

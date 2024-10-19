@@ -168,6 +168,13 @@ let YpCollectionHeader = class YpCollectionHeader extends YpBaseElement {
           margin-top: 8px;
         }
 
+        md-filled-tonal-icon-button {
+          --md-filled-tonal-icon-button-container-color: var(
+            --md-sys-color-surface-container-low
+          );
+          --md-sys-color-on-secondary-container: var(--md-sys-color-on-surface);
+        }
+
         .bannerImage {
           width: 100%;
           height: 169px;

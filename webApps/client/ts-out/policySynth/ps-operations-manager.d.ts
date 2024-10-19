@@ -52,6 +52,8 @@ export declare class PsOperationsManager extends PsBaseWithRunningAgentObserver 
     tabChanged(): void;
     renderHeader(): import("lit-html").TemplateResult<1>;
     render(): import("lit-html").TemplateResult<1>;
+    openConfig(): void;
+    _openAnalyticsAndPromotions(): void;
     static get styles(): any[];
 }
 //# sourceMappingURL=ps-operations-manager.d.ts.map

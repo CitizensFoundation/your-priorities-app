@@ -11,7 +11,7 @@ export declare class YpPostCardAdd extends YpBaseElement {
     private closedText;
     static get styles(): any[];
     connectedCallback(): void;
-    render(): import("lit-html").TemplateResult<1> | typeof nothing;
+    render(): typeof nothing | import("lit-html").TemplateResult<1>;
     _renderHiddenMagicTexts(): import("lit-html").TemplateResult<1>;
     _handleAddNewTextTranslation(e: CustomEvent): void;
     _handleClosedTextTranslation(e: CustomEvent): void;

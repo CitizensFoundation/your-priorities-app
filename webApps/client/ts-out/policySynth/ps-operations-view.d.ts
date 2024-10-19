@@ -53,7 +53,6 @@ export declare class PsOperationsView extends PsBaseWithRunningAgentObserver {
     renderHeader(): import("lit-html").TemplateResult<1>;
     stop(): void;
     start(): void;
-    openConfig(): void;
     render(): import("lit-html").TemplateResult<1>;
 }
 //# sourceMappingURL=ps-operations-view.d.ts.map
