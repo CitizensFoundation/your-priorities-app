@@ -430,14 +430,15 @@ let YpAdminConfigCommunity = class YpAdminConfigCommunity extends YpAdminConfigB
                 hostname: "",
                 is_community_folder: this.collectionId == "newFolder" ? true : false,
             };
-            await this.checkDomainName();
+            await this.checkDomainName(this.parentCollectionId);
         }
         else {
             this.action = `/communities/${this.collectionId}`;
+            await this.checkDomainName(this.collection.Domain.id);
         }
     }
-    async checkDomainName() {
-        const domain = await window.serverApi.getCollection("domain", this.parentCollectionId);
+    async checkDomainName(id) {
+        const domain = await window.serverApi.getCollection("domain", id);
         this.collection.Domain = domain;
         if (this.collection &&
             this.collection.Domain &&

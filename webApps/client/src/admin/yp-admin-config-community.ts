@@ -554,15 +554,16 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
         is_community_folder: this.collectionId == "newFolder" ? true : false,
       } as YpCommunityData;
 
-      await this.checkDomainName();
+      await this.checkDomainName(this.parentCollectionId!);
 
     } else {
       this.action = `/communities/${this.collectionId}`;
+      await this.checkDomainName((this.collection as YpCommunityData).Domain!.id);
     }
   }
 
-  async checkDomainName() {
-    const domain = await window.serverApi.getCollection("domain", this.parentCollectionId!);
+  async checkDomainName(id: number) {
+    const domain = await window.serverApi.getCollection("domain", id);
 
     (this.collection as YpCommunityData).Domain = domain as YpDomainData;
     if (

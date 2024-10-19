@@ -1127,7 +1127,7 @@ let YpAdminApp = class YpAdminApp extends YpBaseElement {
                               ${this.renderMenuListItem("reports")}
                               ${this.renderMenuListItem("translations")}
                             `
-                        : html ` ${this.renderMenuListItem("organizations")}`}
+                        : html ` ${ /*this.renderMenuListItem("organizations")*/nothing}`}
                         ${!this.isAllOurIdeasGroupType
                         ? /*this.renderMenuListItem("aiAnalysis")*/ nothing
                         : nothing}
