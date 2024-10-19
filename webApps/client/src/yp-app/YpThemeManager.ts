@@ -738,6 +738,7 @@ export class YpThemeManager {
       }
 
       if (this.useLowestContainerSurface) {
+        themeCss["on-secondary-container"] = themeCss["on-primary-container"];
       }
 
       applyThemeWithContrast(document, themeCss);
